@@ -1,0 +1,1 @@
+pngpread.o .deps/pngpread.Po: pngpread.c png.h pngconf.h pngpriv.h

@@ -1,0 +1,2 @@
+vfpu_rand_8888.o .deps/vfpu_rand_8888.Po: vfpu_rand_8888.c pspmath.h \
+ /usr/local/pspdev/psp/sdk/include/psptypes.h

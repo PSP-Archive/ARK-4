@@ -1,0 +1,24 @@
+ARK Linkless Loader.
+We handcrafted this ARK loader to function with any game exploit.
+It doesn't matter where it's loaded in RAM, and it requires no configuration.
+However, due to the heavy load of the algorithms involved in the
+process of dynamically detecting the components needed,
+this loader is much slower than the static loader.
+However it is the default loader shipped with ARK and the most recommended
+in you don't know what to do or the scenario doesn't present with the information
+needed to build a static loader.
+
+
+Original README by qwikrazor87
+
+ARK.BIN loader that works no matter where it's loaded in RAM.
+
+load address/size/file are defined at the bottom of the asm file.
+
+It passes the savedata folder path, example,
+	ms0:/PSP/SAVEDATA/LOL IM A SAVEDATA FOLDER PATH NOW USE ME TO LOAD ARK.BIN .D-<-</
+
+The path is grabbed from the original binloader path so you might want to strcpy it somewhere else in ARK.BIN.
+
+Update:
+The path is now copied to 0x08803800.

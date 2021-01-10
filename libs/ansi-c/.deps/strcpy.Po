@@ -1,0 +1,2 @@
+strcpy.o .deps/strcpy.Po: strcpy.c \
+ /home/aaron/projects/ark/common/include/ansi_c_functions.h

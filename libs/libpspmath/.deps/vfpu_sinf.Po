@@ -1,0 +1,2 @@
+vfpu_sinf.o .deps/vfpu_sinf.Po: vfpu_sinf.c pspmath.h \
+ /usr/local/pspdev/psp/sdk/include/psptypes.h

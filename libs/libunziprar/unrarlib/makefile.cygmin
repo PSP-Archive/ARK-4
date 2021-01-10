@@ -1,0 +1,55 @@
+#
+# Makefile for cygmin/mingw - unrar
+#
+# Note: you have to 'make clean' before you can build
+#	the sfx module
+#
+
+# POSIX using Cygmin GCC 3.3.1
+#CXX = g++
+#CXXFLAGS = -O2 -Wno-deprecated 
+#DEFINES = -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DLITTLE_ENDIAN
+
+# Win32 using Cygmin GCC 3.3.1
+CXX = g++ -mno-cygwin
+CXXFLAGS = -O2 -Wno-deprecated 
+DEFINES = -D_MSC_VER -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE 
+
+# Win32 using Mingw32 GCC 3.3.2
+#CXX = g++
+#CXXFLAGS = -O2 -Wno-deprecated 
+#DEFINES = -D_MSC_VER -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE 
+
+##########################
+
+COMPILE=$(CXX) $(CXXFLAGS) $(DEFINES)
+LINK=$(CXX)
+
+UNRAR_OBJ=filestr.o recvol.o rs.o scantree.o
+
+OBJECTS=rar.o strlist.o strfn.o pathfn.o int64.o savepos.o global.o \
+       	file.o filefn.o filcreat.o archive.o arcread.o unicode.o \
+	system.o isnt.o crypt.o crc.o rawread.o encname.o \
+	resource.o match.o timefn.o rdwrfn.o consio.o options.o \
+	ulinks.o errhnd.o rarvm.o rijndael.o getbits.o sha1.o \
+	extinfo.o extract.o volume.o list.o find.o unpack.o cmddata.o
+
+.cpp.o:
+	$(COMPILE) -D$(WHAT) -c $<
+
+all:	unrar
+
+clean:
+	@rm -f *.o *.bak *~
+
+unrar:	WHAT=UNRAR
+unrar:	$(OBJECTS) $(UNRAR_OBJ)
+	@rm -f makeunrar
+	$(LINK) -Wl,-s -o unrar $(LDFLAGS) $(OBJECTS) $(UNRAR_OBJ) $(LIBS)	
+
+sfx:	WHAT=SFX_MODULE
+sfx:	$(OBJECTS)
+	@rm -f default.sfx
+	$(LINK) -Wl,-s -o default.sfx $(LDFLAGS) $(OBJECTS) -DSFX_MODULE 
+
+

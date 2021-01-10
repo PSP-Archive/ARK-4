@@ -1,0 +1,3 @@
+ARK Static Loader.
+Much faster than the default linkless loader.
+At the expense that it needs to be configured and compiled per game.

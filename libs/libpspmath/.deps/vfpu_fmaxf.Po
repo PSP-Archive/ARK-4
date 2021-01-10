@@ -1,0 +1,2 @@
+vfpu_fmaxf.o .deps/vfpu_fmaxf.Po: vfpu_fmaxf.c pspmath.h \
+ /usr/local/pspdev/psp/sdk/include/psptypes.h

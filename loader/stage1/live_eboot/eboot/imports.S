@@ -1,0 +1,5 @@
+#include "pspstub.s"
+
+STUB_START  "SysMemUserForUser",0x00010000,0x00010005
+STUB_FUNC 0x91DE343C,SysMemUserForUser_91DE343C
+STUB_END

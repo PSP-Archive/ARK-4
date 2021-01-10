@@ -1,0 +1,4 @@
+ARK Vita POPS Audio Module.
+Module that mimmicks the exports of the PSP audio module.
+For now it's dummy, hopefully in the future we can get
+audio for PSX menus and homebrews.

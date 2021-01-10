@@ -1,0 +1,11 @@
+Requirements:
+
+    zlib
+
+To install, run:
+   
+    make
+    make install
+
+See the "screenshot" directory for an example how to make a screenshot and how
+to load a PNG image to screen.

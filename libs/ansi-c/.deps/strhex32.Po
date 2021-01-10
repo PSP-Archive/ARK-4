@@ -1,0 +1,2 @@
+strhex32.o .deps/strhex32.Po: strhex32.c \
+ /home/aaron/projects/ark/common/include/ansi_c_functions.h

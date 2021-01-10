@@ -1,0 +1,1 @@
+pngrutil.o .deps/pngrutil.Po: pngrutil.c png.h pngconf.h pngpriv.h

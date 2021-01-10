@@ -1,0 +1,2 @@
+vfpu_sqrtf.o .deps/vfpu_sqrtf.Po: vfpu_sqrtf.c pspmath.h \
+ /usr/local/pspdev/psp/sdk/include/psptypes.h

@@ -1,0 +1,6 @@
+ARK PreLoaders.
+
+There are several stages in the process of booting up ARK.
+This is the very first stage, the preloader.
+The objective here is to load ARK's loader (generally named ARK.BIN).
+Depending on the scenario you might want to use one loader or another.

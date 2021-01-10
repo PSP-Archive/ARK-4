@@ -1,0 +1,2 @@
+memcpy.o .deps/memcpy.Po: memcpy.c \
+ /home/aaron/projects/ark/common/include/ansi_c_functions.h

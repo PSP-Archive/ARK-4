@@ -1,0 +1,2 @@
+vfpu_zero_vector.o .deps/vfpu_zero_vector.Po: vfpu_zero_vector.c pspmath.h \
+ /usr/local/pspdev/psp/sdk/include/psptypes.h

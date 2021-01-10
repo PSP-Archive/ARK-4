@@ -1,0 +1,1 @@
+pngerror.o .deps/pngerror.Po: pngerror.c png.h pngconf.h pngpriv.h

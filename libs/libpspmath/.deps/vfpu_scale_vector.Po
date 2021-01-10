@@ -1,0 +1,2 @@
+vfpu_scale_vector.o .deps/vfpu_scale_vector.Po: vfpu_scale_vector.c pspmath.h \
+ /usr/local/pspdev/psp/sdk/include/psptypes.h

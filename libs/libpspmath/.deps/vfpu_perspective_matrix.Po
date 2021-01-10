@@ -1,0 +1,2 @@
+vfpu_perspective_matrix.o .deps/vfpu_perspective_matrix.Po: vfpu_perspective_matrix.c pspmath.h \
+ /usr/local/pspdev/psp/sdk/include/psptypes.h

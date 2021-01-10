@@ -1,0 +1,1 @@
+pngget.o .deps/pngget.Po: pngget.c png.h pngconf.h pngpriv.h

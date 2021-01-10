@@ -1,0 +1,2 @@
+vfpu_fabsf.o .deps/vfpu_fabsf.Po: vfpu_fabsf.c pspmath.h \
+ /usr/local/pspdev/psp/sdk/include/psptypes.h
