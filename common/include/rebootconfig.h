@@ -18,7 +18,19 @@
 #ifndef _REBOOTCONFIG_H_
 #define _REBOOTCONFIG_H_
 
+#include <pspsdk.h>
+#include <macros.h>
+#include <rebootconfig.h>
+#include <systemctrl_se.h>
+#include <functions.h>
+#include "ansi_c_functions.h"
 #include "globals.h"
+
+#define REBOOT_START 0x88600000
+#define REBOOTEX_START 0x88FC0000
+#define REBOOTEX_MAX_SIZE 0x4000
+#define BTCNF_MAGIC 0x0F803001
+#define BOOTCONFIG_TEMP_BUFFER 0x88FB0200
 
 // PROCFW Reboot Buffer Configuration Magic (0xCOLDBIRD)
 #define REBOOTEX_CONFIG_MAGIC 0xC01DB15D
@@ -40,7 +52,38 @@ typedef struct RebootBufferConfiguration {
 	unsigned char iso_disc_type;
 } RebootBufferConfiguration;
 
+typedef struct RebootexFunctions{
+	void* rebootex_decrypt;
+	void* rebootex_checkexec;
+	void* orig_decrypt;
+	void* orig_checkexec;
+}RebootexFunctions;
+#define REBOOTEX_FUNCTIONS (RebootexFunctions*)0x08D38000
+
 extern RebootBufferConfiguration reboot_config;
+
+// sceReboot Main Function
+extern int (* sceReboot)(int, int, int, int);
+
+// Instruction Cache Invalidator
+extern void (* sceRebootIcacheInvalidateAll)(void);
+
+// Data Cache Invalidator
+extern void (* sceRebootDacheWritebackInvalidateAll)(void);
+
+// Sony PRX Decrypter Function Pointer
+extern int (* SonyPRXDecrypt)(void *, unsigned int, unsigned int *);
+extern int (* origCheckExecFile)(unsigned char * addr, void * arg2);
+
+// Lfat
+extern void* origLfatOpen;
+extern void* origLfatClose;
+extern void* origLfatRead;
+
+// UnpackBootConfig
+extern int (* UnpackBootConfig)(char * buffer, int length);
+
+int _UnpackBootConfig(char **p_buffer, int length);
 
 #endif
 

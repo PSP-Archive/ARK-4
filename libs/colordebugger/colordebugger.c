@@ -18,9 +18,13 @@
 #include "colordebugger.h"
 #include "ansi_c_functions.h"
 #include <pspgu.h>
+#include "macros.h"
 
 static int is_vita_pops = 0;
-u32* g_vram_base = (u32*)0x44000000;
+// Framebuffer
+u32* framebuffer = (u32*)0x04000000;
+u32* vram_base = (u32*)0x44000000;
+u32* g_vram_base = (u32*)0x04000000;
 u16* ps1_vram = (u16*)0x490C0000;
 POPSVramConfigVLA* vram_config = (POPSVramConfigVLA*)0x49FE0000;
 
@@ -127,9 +131,6 @@ void setIsVitaPops(int is){
 // Framebuffer Painter (for debugging)
 void colorDebug(unsigned int color)
 {
-	// Framebuffer
-	unsigned int * framebuffer = (unsigned int *)0x04000000;
-	
 	// Paint Framebuffer
 	unsigned int i = 0; for(; i < 0x100000; i++)
 	{
@@ -141,17 +142,21 @@ void colorDebug(unsigned int color)
 }
 
 // Framebuffer Color Freeze Loop (for debugging)
-void colorLoop(void)
+void doBreakpoint(void)
 {
 	// Screen Color
-	unsigned char color = 0;
-	
+	unsigned int color = 0xFF;
+
 	// Endless Loop
 	while(1)
 	{
 		// Paint Screen in changing colors...
-		memset((void *)0x04000000, color++, 0x400000);
-		if (is_vita_pops)
-			copyPSPVram(NULL);
+		colorDebug(color);
 	}
+}
+
+void setBreakpoint(u32 addr){
+    //_sw(NOP, addr-4);
+    _sw(JUMP(doBreakpoint), addr);
+    _sw(NOP, addr+4);
 }

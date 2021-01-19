@@ -30,14 +30,13 @@ void buildRebootBufferConfig(int rebootBufferSize)
 	// Write PROCFW Reboot Buffer Size (for backup in System Control)
 	conf->reboot_buffer_size = rebootBufferSize;
 
-	if (IS_VITA_POPS){
+	if (IS_VITA_POPS(ark_conf_backup->exec_mode)){
 		conf->iso_mode = MODE_NP9660;
 		conf->iso_disc_type = PSP_UMD_TYPE_GAME;
 	}
 	else{
 		// Default ISO driver for homebrew and ISO
 		conf->iso_mode = MODE_INFERNO;
-	
 		// Default ISO disc type
 		conf->iso_disc_type = PSP_UMD_TYPE_GAME;
 	}
@@ -47,12 +46,10 @@ void buildRebootBufferConfig(int rebootBufferSize)
 int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
 {
 
-    PRTSTR("Loading reboot");
-
 	// Copy PROCFW Reboot Buffer into Memory
 	int decompressSize;
-	
-	decompressSize = k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, 0x4000, rebootbuffer, NULL);
+	memset((char *)REBOOTEX_TEXT, 0, REBOOTEX_MAX_SIZE);
+	decompressSize = k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootbuffer, NULL);
 	
 	// Clear Reboot Configuration
 	memset((char *)REBOOTEX_CONFIG, 0, REBOOTEX_CONFIG_MAXSIZE);

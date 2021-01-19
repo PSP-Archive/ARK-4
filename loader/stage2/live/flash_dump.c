@@ -44,9 +44,8 @@ void initKernelThread(void)
 	SceUID kthreadID = k_tbl->KernelCreateThread( "", (void*)(((u32)&kthread)|0x80000000), 25, 0x10000, 0, NULL );
 	
 	if (kthreadID >= 0){
-		k_tbl->KernelStartThread(kthreadID, 0, NULL);
-		void (*waitThreadEnd)(int) = FindFunction("sceThreadManager", "ThreadManForKernel", 0x278C0DF5);
-		waitThreadEnd(0);
+		k_tbl->KernelStartThread(kthreadID, NULL);
+		k_tbl->waitThreadEnd(0);
 	}
 }
 

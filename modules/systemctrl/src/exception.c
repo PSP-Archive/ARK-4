@@ -16,11 +16,17 @@
  */
 
 #include <pspiofilemgr.h>
+#include <pspdisplay.h>
 #include <stdio.h>
 #include <string.h>
 #include <systemctrl.h>
+#include <systemctrl_private.h>
 #include "imports.h"
 #include "exception.h"
+#include "graphics.h"
+#include "macros.h"
+
+int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
 // Exception Handler
 PspDebugErrorHandler curr_handler = NULL;
@@ -29,15 +35,11 @@ PspDebugErrorHandler curr_handler = NULL;
 PspDebugRegBlock * exception_regs = NULL;
 
 // ASM Exception Handler Payload
-void _pspDebugExceptionHandler(void);
-
-// Bluescreen Exception Handler
-void bluescreenHandler(PspDebugRegBlock * regs);
+extern void _pspDebugExceptionHandler(void);
 
 // Bluescreen Register Snapshot
-static PspDebugRegBlock bluescreenRegs;
+static PspDebugRegBlock screenRegs;
 
-/*
 // Exception Code String Literals
 static const char * codeTxt[32] =
 {
@@ -59,7 +61,39 @@ static const unsigned char regName[32][5] =
     "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7",
     "t8", "t9", "k0", "k1", "gp", "sp", "fp", "ra"
 };
-*/
+
+// Bluescreen Exception Handler
+void screenHandler(PspDebugRegBlock * regs)
+{
+	initScreen(DisplaySetFrameBuf);
+	colorDebug(0xFF0000);
+	PRTSTR("Exception caught!");
+    PRTSTR1("Exception - %s", codeTxt[(regs->cause >> 2) & 31]);
+	PRTSTR1("EPC       - %p", regs->epc);
+	PRTSTR1("Cause     - %p", regs->cause);
+	PRTSTR1("Status    - %p", regs->status);
+	PRTSTR1("BadVAddr  - %p", regs->badvaddr);
+	for(int i = 0; i < 32; i+=4){
+		PRTSTR8("%s:%p %s:%p %s:%p %s:%p", regName[i], regs->r[i],
+				regName[i+1], regs->r[i+1], regName[i+2], regs->r[i+2], regName[i+3], regs->r[i+3]);
+	}
+	u32 epc = regs->epc;
+	if ((epc>=0x08800000&&epc<0x0A000000) // valid user address
+	        || (epc>=0x88000000&&epc<0x88400000) // valid kernel address
+	        || (epc>=0x00010000&&epc<0x00014000) // valid scratchpad address
+	        )
+	{
+	    PRTSTR1("Instruction: %p", _lw(epc)); // TODO: disassemble instruction
+	}
+	if (DisplaySetFrameBuf==NULL && IS_PSP(ark_config->exec_mode)){
+	    // can't use sceDisplay for now, write config directly to LCD hardware regs (only do this on PSP!)
+	    // this will most likely show a mess of a screen, but it will show something at least.
+	    _sw(PSP_DISPLAY_PIXEL_FORMAT_8888, 0xBC800104); // set pixel format to PSP_DISPLAY_PIXEL_FORMAT_8888
+	    _sw(512, 0xBC800108); // set buffer width
+        _sw(0x44000000, 0xBC800100); // set LCD framebuffer
+    }
+	while (1){};
+}
 
 // Register Exception Handler
 void registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * regs)
@@ -72,21 +106,30 @@ void registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * r
 		exception_regs = regs;
 	}
 	
-	// Register Bluescreen Handler
+	// Register screen Handler
 	else
 	{
 		// Save Arguments
-		curr_handler = bluescreenHandler;
-		exception_regs = &bluescreenRegs;
+		curr_handler = screenHandler;
+		exception_regs = &screenRegs;
 	}
 	
 	// Register Exception Handler
 	sceKernelRegisterDefaultExceptionHandler((void *)_pspDebugExceptionHandler);
 }
 
-// Bluescreen Exception Handler
-void bluescreenHandler(PspDebugRegBlock * regs)
-{
-	// TODO Code Exception Handler
+void doKernelBreakpoint(){
+    u32* framebuf = (u32*)0x44000000;
+    for(int i = 0; i < 0x100000; i++)
+    {
+	    // Set Pixel Color
+	    framebuf[i] = 0xff;
+    }
+    _sw(framebuf, 0xBC800100); // set framebuffer address in hardware reg
+    while (1){};
 }
 
+void setKernelBreakpoint(u32 addr){
+    _sw(JAL(doKernelBreakpoint), addr);
+    _sw(NOP, addr+4);
+}

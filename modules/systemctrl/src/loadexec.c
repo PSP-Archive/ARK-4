@@ -24,6 +24,7 @@
 #include <module2.h>
 #include <globals.h>
 #include <systemctrl.h>
+#include <systemctrl_private.h>
 #include <loadexec_patch.h>
 #include "imports.h"
 #include "modulemanager.h"
@@ -42,7 +43,9 @@ int returnToLauncher(void)
 	// Clear Memory
 	memset(&param, 0, sizeof(param));
 
-	char* path = ark_config->menupath;
+	char path[ARK_PATH_SIZE];
+	strcpy(path, ark_config->arkpath);
+	strcat(path, ARK_MENU);
 	
 	// Configure Parameters
 	param.size = sizeof(param);
@@ -60,22 +63,43 @@ int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
 	// Restore Reboot Buffer Configuration
 	restoreRebootBuffer();
 	
+	// backup ARK configuration to user ram
+	memcpy(ark_conf_backup, ark_config, sizeof(ARKConfig));
+	
 	// Load Sony Reboot Buffer
 	return _LoadReboot(arg1, arg2, arg3, arg4);
 }
 
 // Patch loadexec_01g.prx
-void patchLoadExec(void)
+void patchLoadExec(SceModule2* loadexec)
 {
-	// Find LoadExec Module
-	SceModule2 * loadexec = (SceModule2*)sceKernelFindModuleByName("sceLoadExec");
-	
 	// Find Reboot Loader Function
 	_LoadReboot = (void *)loadexec->text_addr; //+ LOADEXEC_LOAD_REBOOT;
-	
-	patchLoadExecCommon(loadexec, (u32)LoadReboot);
+	int k1_patches;
+	if (IS_PSP(ark_config->exec_mode)){
+	    k1_patches = 2;
+	    //replace LoadReboot function
+	    _sw(JAL(LoadReboot), loadexec->text_addr + 0x00002D5C);
 
-	// Patch sceKernelExitGame Syscalls
-	sctrlHENPatchSyscall((void *)sctrlHENFindFunction(loadexec->modname, "LoadExecForUser", 0x05572A5F), returnToLauncher);
-	sctrlHENPatchSyscall((void *)sctrlHENFindFunction(loadexec->modname, "LoadExecForUser", 0x2AC9954B), returnToLauncher);
+	    //patch Rebootex position to 0x88FC0000
+	    _sw(0x3C0188FC, loadexec->text_addr + 0x00002DA8); // lui $at, 0x88FC
+
+	    //allow user $k1 configs to call sceKernelLoadExecWithApiType
+	    _sw(0x1000000C, loadexec->text_addr + 0x000023D0);
+	    //allow all user levels to call sceKernelLoadExecWithApiType
+	    _sw(NOP, loadexec->text_addr + 0x00002414);
+
+	    //allow all user levels to call sceKernelExitVSHVSH
+	    _sw(0x10000008, loadexec->text_addr + 0x000016A4);
+	    _sw(NOP, loadexec->text_addr + 0x000016D8);
+	}
+	else{
+	    k1_patches = 3;
+	    // Patch sceKernelExitGame Syscalls
+	    patchLoadExecCommon(loadexec, (u32)LoadReboot, k1_patches);
+	    sctrlHENPatchSyscall((void *)sctrlHENFindFunction(loadexec->modname, "LoadExecForUser", 0x05572A5F), returnToLauncher);
+	    sctrlHENPatchSyscall((void *)sctrlHENFindFunction(loadexec->modname, "LoadExecForUser", 0x2AC9954B), returnToLauncher);
+	}
+	// Flush Cache
+	flushCache();
 }

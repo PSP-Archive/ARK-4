@@ -2,4 +2,5 @@ colordebugger.o .deps/colordebugger.Po: colordebugger.c colordebugger.h \
  /usr/local/pspdev/psp/sdk/include/psptypes.h \
  /home/aaron/projects/ark/common/include/ansi_c_functions.h \
  /usr/local/pspdev/psp/sdk/include/pspgu.h \
- /usr/local/pspdev/psp/sdk/include/pspge.h
+ /usr/local/pspdev/psp/sdk/include/pspge.h \
+ /home/aaron/projects/ark/common/include/macros.h

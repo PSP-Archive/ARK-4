@@ -1,18 +1,18 @@
 TARGET = ARK
-C_OBJS = main.o imports.o
+C_OBJS = main.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
 CFLAGS = -Os -G0 -Wall
 PROVITA = ../../../../
-INCDIR = $(PSPSDK)/include $(PROVITA)/common/include $(PROVITA)/libs/colordebugger $(PROVITA)/libs/graphics
+INCDIR = $(PSPSDK)/include $(PROVITA)/common/include $(PROVITA)/libs/colordebugger $(PROVITA)/libs/graphics $(PROVITA)/libs/libya2d
 
-LIBS = -lpspdebug -lpspdisplay -lpspge -lpspctrl -lpspsdk -lc -lpspnet -lpspnet_inet -lpspnet_apctl -lpspnet_resolver -lpsputility -lpspuser -lpspkernel -lgraphics -lcolordebugger -lansic -L $(PROVITA)/libs
+LIBS = -lgraphics -lcolordebugger -lansic -lya2d -lpspgu -lpspvram -lpspmath
 
 CXXFLAGS = $(CFLAGS)
 ASFLAGS = $(CFLAGS)
-LDFLAGS = -L sysmem
+LDFLAGS = -L sysmem -L $(PROVITA)/libs
 BUILD_PRX = 1
-
+PSP_EBOOT_ICON = ICON0.PNG
 PSP_EBOOT_TITLE += ARK Loader
 
 EXTRA_TARGETS = EBOOT.PBP

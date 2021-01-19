@@ -30,15 +30,41 @@
 #define FLASH_SONY 0x8B000000
 
 // ARK_CONFIG
-#define SAVE_PATH_SIZE 128
-#define CONF_ADDR 0x883ffe00 //0x8BFFFF00
+#define ARK_PATH_SIZE 128
+//#define CONF_ADDR 0x883ffe00 //0x8BFFFF00
+#define ARK_MENU "MBOOT.PBP"
+#define ARK_BIN "ARK.BIN"
+#define FLASH0_ARK "FLASH0.ARK"
+#define K_FILE "K.BIN"
+#define ARK_BIN_MAX_SIZE 0x8000
 
+/*
+First two bits identify the device (PSP or PS Vita)
+Second two bits identify special cases (PSP Go, PSP Minis and PSX games on Vita)
+Dev Sub
+00  00 -> unk
+01  00 -> psp
+01  01 -> psp with extra ram (2k, 3k, street)
+01  11 -> psp go
+10  00 -> ps vita
+10  01 -> vita minis
+10  10 -> vita pops
+11  00 -> device mask
+11  11 -> subdevice mask
+*/
 typedef enum{
-	REAL_PSP = 0,
-	PS_VITA = 1,
-	PSV_POPS = 3,
-	GAME_EXPLOIT = 4,
+    DEV_UNK = 0b0000,
+	PSP_ORIG = 0b0100,
+	PSP_EXTRA = 0b0101,
+	PSP_GO = 0b0111,
+	PS_VITA = 0b1000,
+	PSV_MINIS = 0b1001,
+	PSV_POPS = 0b1010,
+	DEV_MASK = 0b1100,
+	SUB_DEV_MARK = 0b1111,
 }ExecMode;
+
+
 
 typedef struct{ /* PEOPS SPU configuration */
 	int enablepeopsspu;
@@ -53,25 +79,22 @@ typedef struct{ /* PEOPS SPU configuration */
 } PeopsConfig;
 
 typedef struct ARKConfig{
-	char arkpath[SAVE_PATH_SIZE];
-	char menupath[SAVE_PATH_SIZE];
+	char arkpath[ARK_PATH_SIZE-20]; // leave enough room to concatenate files
 	char exploit_id[20];
 	unsigned char exec_mode;
 	unsigned char override_peops_config; // remove?
 	PeopsConfig peops_config;
 } ARKConfig;
 
-#define ark_config ((ARKConfig*)CONF_ADDR)
-#define ARKPATH (ark_config->arkpath)
-#define EXPLOIT_ID (ark_config->exploit_id)
-#define _IS_PSP(config) ((config->exec_mode&PS_VITA)==REAL_PSP)
-#define _IS_VITA(config) ((config->exec_mode&PS_VITA)==PS_VITA)
-#define _IS_VITA_POPS(config) ((config->exec_mode&PSV_POPS)==PSV_POPS)
-#define _IS_GAME_EXPLOIT(config) ((config->exec_mode&GAME_EXPLOIT)==GAME_EXPLOIT)
-#define IS_PSP _IS_PSP(ark_config)
-#define IS_VITA _IS_VITA(ark_config)
-#define IS_VITA_POPS _IS_VITA_POPS(ark_config)
-#define IS_GAME_EXPLOIT _IS_GAME_EXPLOIT(ark_config)
+//#define ark_config ((ARKConfig*)CONF_ADDR)
+//#define ARKPATH (ark_config->arkpath)
+//#define EXPLOIT_ID (ark_config->exploit_id)
+#define IS_PSP(exec_mode) ((exec_mode&DEV_MASK)==PSP_ORIG)
+#define IS_VITA(exec_mode) ((exec_mode&DEV_MASK)==PS_VITA)
+#define IS_VITA_POPS(exec_mode) (exec_mode==PSV_POPS)
+//#define IS_PSP _IS_PSP(ark_config)
+//#define IS_VITA _IS_VITA(ark_config)
+//#define IS_VITA_POPS _IS_VITA_POPS(ark_config)
 
 // Memory Partition Size
 #define USER_SIZE (24 * 1024 * 1024)
@@ -82,7 +105,6 @@ typedef struct ARKConfig{
 #define MODULEMGR_PARTITION_CHECK 0x7FD0
 #define MODULEMGR_PROLOGUE_MODULE 0x8124
 #define MODULEMGR_INIT_APITYPE_FIELD 0x99A0
-//#define MODULEMGR_INIT_FILENAME_FIELD 0x99A8
 #define MODULEMGR_INIT_FILENAME_FIELD 0x99A4
 #define MODULEMGR_INIT_APPLICATION_TYPE_FIELD 0x99FC
 #define MODULEMGR_DEVICE_CHECK_1 0x760

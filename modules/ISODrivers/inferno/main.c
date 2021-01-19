@@ -65,11 +65,6 @@ int setupUMDDevice(void)
 	g_iso_fn = GetUmdFile();
 	printk("UMDFile = %s\r\n", g_iso_fn);
 
-	if (g_iso_fn[0] == '\0')
-	{
-		g_iso_fn = "flash0:/fake.cso";
-	}
-
 	infernoSetDiscType(sctrlSEGetDiscType());
 	ret = sceIoAddDrv(&g_iodrv);
 
@@ -102,6 +97,7 @@ int infernoInitialize(void)
 // 0x00000000
 int module_start(SceSize args, void* argp)
 {
+
 	int ret;
 
 	ret = setupUMDDevice();

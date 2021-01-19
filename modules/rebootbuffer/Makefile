@@ -17,9 +17,9 @@ LD = psp-ld
 STRIP = psp-strip
 OBJCOPY = psp-objcopy
 LINKFILE = linkfile.l
-LIBS = -lpsid -lansic -lcolordebugger -L $(PROVITA)/libs
 
-C_OBJS = main.o $(PROVITA)/common/functions.o $(PROVITA)/common/flashpatch.o
+C_OBJS = main.o pspbtcnf.o lib.o $(PROVITA)/common/functions.o
+LIBS = -L $(PROVITA)/libs -lansic -lcolordebugger
 
 main.elf: $(C_OBJS)
 

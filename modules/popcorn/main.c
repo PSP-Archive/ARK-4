@@ -25,6 +25,7 @@
 #include <systemctrl_private.h>
 #include <macros.h>
 #include <globals.h>
+#include <functions.h>
 #include "prospu.h"
 
 extern unsigned char g_icon_png[6108];
@@ -40,6 +41,8 @@ static int g_keysBinFound;
 static SceUID g_plain_doc_fd = -1;
 
 static char g_DiscID[32];
+
+ARKConfig config;
 
 #define PGD_ID "XX0000-XXXX00000_00-XXXXXXXXXX000XXX"
 #define ACT_DAT "flash2:/act.dat"
@@ -643,14 +646,14 @@ static int getRifPatch(char *name, char *path)
 
 static int myKernelLoadModule(char * fname, int flag, void * opt)
 {
-	char path[SAVE_PATH_SIZE];
+	char path[ARK_PATH_SIZE];
 	int result = 0;
 	int status = 0;
 	int startResult = 0;
 
 	// load peops module
 	/*
-	memset(path, 0, SAVE_PATH_SIZE);
+	memset(path, 0, ARK_PATH_SIZE);
 	strcpy(path, SAVEPATH);
 	strcat(path, "PEOPS.PRX");
 	*/
@@ -660,7 +663,7 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
 	
 	// get pops path
 	/*
-	memset(path, 0, SAVE_PATH_SIZE);
+	memset(path, 0, ARK_PATH_SIZE);
 	strcpy(path, SAVEPATH);
 	strcat(path, "POPS.PRX");
 	*/
@@ -709,7 +712,7 @@ void patchPopsMgr(void)
 		}
 	}
 
-	if (!IS_VITA_POPS){
+	if (!IS_VITA_POPS(config.exec_mode)){
 		// TN hacks
 		_sw(JR_RA, text_addr + 0x2F88);
 		_sw(LI_V0(0), text_addr + 0x2F88 + 4);
@@ -1142,7 +1145,7 @@ static void patchPops(SceModule2 *mod)
 		patchDecompressData(stub_addr, patch_addr);
 	}
 	
-	if (!IS_VITA_POPS){
+	if (!IS_VITA_POPS(config.exec_mode)){
 		// Prevent Permission Problems
 		sceMeAudio_67CD7972 = (void*)sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0x2AB4FE43);
 		hookImportByNID(mod, "sceMeAudio", 0x2AB4FE43, _sceMeAudio_67CD7972);
@@ -1160,6 +1163,8 @@ static void patchPops(SceModule2 *mod)
 int module_start(SceSize args, void* argp)
 {
 	printk("popcorn: init_file = %s\r\n", sceKernelInitFileName());
+	
+	memcpy(&config, ark_conf_backup, sizeof(ARKConfig)); // copy configuration from user ram
 	
 	u16 paramType = 0;
 	u32 paramLength = sizeof(g_DiscID);
@@ -1189,7 +1194,7 @@ int module_stop(SceSize args, void *argp)
 {
 
 	// Shutdown SPU to prevent freeze
-	if (!IS_VITA_POPS)
+	if (!IS_VITA_POPS(config.exec_mode))
 		spuShutdown();
 	
 	return 0;

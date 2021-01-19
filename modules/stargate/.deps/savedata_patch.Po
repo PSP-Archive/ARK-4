@@ -43,7 +43,7 @@ savedata_patch.o .deps/savedata_patch.Po: savedata_patch.c \
  /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
  /usr/local/pspdev/psp/sdk/include/pspthreadman_kernel.h \
- /home/aaron/projects/ark/common/include/module2.h \
  /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/kermit.h savedata_patch.h \
+ /home/aaron/projects/ark/common/include/kermit.h \
+ /home/aaron/projects/ark/common/include/module2.h savedata_patch.h \
  /home/aaron/projects/ark/common/include/module2.h

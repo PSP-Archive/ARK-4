@@ -25,12 +25,15 @@
 #include <macros.h>
 #include <string.h>
 #include <globals.h>
+#include <functions.h>
 
 PSP_MODULE_INFO("exitgame", 0x1007, 1, 0);
 PSP_MAIN_THREAD_ATTR(0);
 
 // Exit Button Mask
 #define EXIT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
+
+ARKConfig config;
 
 // Exit to Launcher
 void exitToLauncher(void)
@@ -45,10 +48,15 @@ void exitToLauncher(void)
 	// Load Execute Parameter
 	struct SceKernelLoadExecVSHParam param;
 	
+	// backup configuration to user ram
+	memcpy(ark_conf_backup, &config, sizeof(ARKConfig));
+	
 	// Clear Memory
 	memset(&param, 0, sizeof(param));
 
-	char path = ark_config->menupath;
+	char path[ARK_PATH_SIZE];
+	strcpy(path, config.arkpath);
+	strcat(path, ARK_MENU);
 	
 	// Configure Parameters
 	param.size = sizeof(param);
@@ -195,6 +203,7 @@ void hookPOPSExit(void)
 // Entry Point
 int module_start(SceSize args, void * argp)
 {
+    memcpy(&config, ark_conf_backup, sizeof(ARKConfig)); // copy configuration from user ram
 
 	// Get Apitype
 	int apitype = sceKernelInitApitype();

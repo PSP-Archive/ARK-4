@@ -22,6 +22,8 @@
 #include <globals.h>
 #include "savedata_patch.h"
 
+extern ARKConfig config;
+
 // Fix Exploit Game Save
 void fixExploitGameModule(SceModule2 * mod)
 {
@@ -29,7 +31,7 @@ void fixExploitGameModule(SceModule2 * mod)
 	char gameid[GAME_ID_MINIMUM_BUFFER_SIZE];
 	
 	// Exploit Game was set as LoadExecute Target
-	if(sctrlKernelGetGameID(gameid) == 0 && strcmp(gameid, EXPLOIT_ID) == 0)
+	if(sctrlKernelGetGameID(gameid) == 0 && strcmp(gameid, config.exploit_id) == 0)
 	{
 		// User Module
 		if((mod->text_addr & 0x80000000) == 0)
@@ -44,7 +46,7 @@ void fixExploitGameModule(SceModule2 * mod)
 				for(; base < (char *)mod->segmentaddr[i] + mod->segmentsize[i] - 9; base++)
 				{
 					// Found Game ID
-					if(strncmp(base, EXPLOIT_ID, 9) == 0)
+					if(strncmp(base, config.exploit_id, 9) == 0)
 					{
 						// Patch Game ID
 						memcpy(base, "CB", 2);

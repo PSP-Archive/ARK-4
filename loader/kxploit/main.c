@@ -3,10 +3,10 @@
 #include "flashpatch.h"
 #include "macros.h"
 
-void initKxploit()__attribute__((section(".text.startup")));
-void initKxploit(){
-	kxf->stubScanner = &stubScanner;
-	kxf->doExploit = &doExploit;
-	kxf->executeKernel = &executeKernel;
-	kxf->repairInstruction = &repairInstruction;
+void initKxploit(KxploitFunctions*)__attribute__((section(".text.startup")));
+void initKxploit(KxploitFunctions* kf){
+	kf->stubScanner = &stubScanner;
+	kf->doExploit = &doExploit;
+	kf->executeKernel = &executeKernel;
+	kf->repairInstruction = &repairInstruction;
 }

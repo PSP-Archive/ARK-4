@@ -763,8 +763,11 @@ $L163:
 	bal	$LOAD_ADDRESS
 	nop
 	lw	$2,0($ra)
-	jalr	$2
 	move	$4,$20
+	sb      $0, 108($4) # no exploit ID :(
+	move    $5, $0      # no function table, let stage 2 scan them
+	jalr	$2
+	sw      $0, 128($4) # let stage 2 autodetect device
 
 	lw	$31,16412($sp)
 	lw	$21,16408($sp)

@@ -47,10 +47,15 @@ void cls()
 	gY = 0;
 }
 
-void initScreen(int (*DisplaySetFrameBuf)())
+void initScreen(int (*DisplaySetFrameBuf)(void*, int, int, int))
 {
-	if(DisplaySetFrameBuf != NULL)
+	if(DisplaySetFrameBuf == NULL){
+	    g_vram_base = framebuffer;
+	}
+	else{
+	    g_vram_base = vram_base;
 		DisplaySetFrameBuf((void *)g_vram_base, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
+    }
 
     cls();
 }
@@ -84,7 +89,7 @@ void print_to_screen_color(const char * text, u32 color)
 {
 	if (gY > 272) 
 	{
-    	cls(0);
+    	cls();
   	}
 	
   	printTextScreen(0, gY, text, color);

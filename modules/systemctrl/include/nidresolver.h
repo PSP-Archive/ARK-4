@@ -18,6 +18,8 @@
 #ifndef NIDRESOLVER_H
 #define NIDRESOLVER_H
 
+#include "module2.h"
+
 // Missing NID
 typedef struct NidMissingEntry {
 	unsigned int nid;
@@ -65,6 +67,9 @@ NidResolverLib * getNidResolverLib(const char *libName);
 
 // Resolve Library NID
 unsigned int getNidReplacement(const NidResolverLib *lib, unsigned int nid);
+
+// Missing syscon NID
+void resolve_syscon_driver(SceModule2*);
 
 // Initialize NID Resolver
 void setupNidResolver(unsigned int text_addr);

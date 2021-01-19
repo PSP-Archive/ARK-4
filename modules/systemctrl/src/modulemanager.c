@@ -21,6 +21,7 @@
 #include <string.h>
 #include <macros.h>
 #include <globals.h>
+#include <systemctrl_private.h>
 #include "elf.h"
 #include "modulemanager.h"
 
@@ -76,13 +77,61 @@ int _ProbeExec3(u8 *buffer, int *check)
 	return result;
 }
 
+int sceIoIoctlPatch(SceUID fd, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen)
+//int PatchDevctl(const char *dev,unsigned int cmd,void *indata,int inlen,void *outdata,int outlen)
+{
+	int ret = sceIoIoctl( fd,cmd,indata,inlen,outdata,outlen);
+	if( ret < 0 ) {
+		if( cmd == 0x208001 || cmd == 0x208081
+			|| cmd == 0x208003
+			|| cmd == 0x208006
+			)
+		{
+			ret = 0;
+		}
+
+	}
+	else
+	{
+		if( cmd == 0x208082 ) {
+			ret = -1;
+		}
+	}
+
+	return ret;
+}
+
+void *search_module_stub(SceModule2 *pMod, const char *szLib, u32 nid)
+{
+	void *entTab = pMod ->stub_top;
+	int entLen = pMod->stub_size;
+	struct SceLibraryStubTable *current;
+	int i = 0 ,j;
+
+	while( i < entLen ) {
+		current = (struct SceLibraryStubTable *)(entTab + i);
+		if(strcmp(current->libname, szLib ) == 0) {
+			for(j=0;j< current->stubcount ;j++) {
+				if( current->nidtable[j] == nid ) {
+					return (void *)((u32)(current->stubtable) + 8*j );
+				}
+			}
+
+			break;
+		}
+		i += (current->len * 4);
+	}
+
+	return NULL;
+}
+
 // sceModuleManager Patch
-void patchModuleManager()
+SceModule2* patchModuleManager()
 {
 	// Find Module
-	SceModule2 * mod = (SceModule2*)sceKernelFindModuleByName("sceModuleManager");
+	SceModule2* mod = (SceModule2*)sceKernelFindModuleByName("sceModuleManager");
 
-	if (IS_VITA_POPS){
+	if (IS_VITA_POPS(ark_config->exec_mode)){
 	
 		u32 text_addr = mod->text_addr;
 		int i;
@@ -113,9 +162,9 @@ void patchModuleManager()
 			}
 		}
 		*/
-		return;
+		return mod;
 	}
-	
+
 	// Get Functions
 	realPartitionCheck = (void *)(mod->text_addr + MODULEMGR_PARTITION_CHECK);
 	prologue_module = (void *)(mod->text_addr + MODULEMGR_PROLOGUE_MODULE);
@@ -146,6 +195,16 @@ void patchModuleManager()
 	_sw(JAL(prologue_module_hook), mod->text_addr + MODULEMGR_PROLOGUE_MODULE_CALL);
 	ProbeExec3 = (void*)mod->text_addr + MODULEMGR_PROBE_EXEC_3;
 	_sw(JAL(_ProbeExec3), mod->text_addr + MODULEMGR_PROBE_EXEC_3_CALL);
+	
+	u32 ioctl = search_module_stub( mod, "IoFileMgrForKernel", 0x63632449 );
+	_sw(JUMP(sceIoIoctlPatch), ioctl);
+	_sw(NOP, ioctl+4);
+	//MAKE_JUMP( (u32)search_module_stub( mod, "IoFileMgrForKernel", 0x63632449 ), sceIoIoctlPatch );
+	
+	// Flush Cache
+	flushCache();
+	
+	return mod;
 	
 }
 
@@ -267,15 +326,10 @@ int prologue_module_hook(void * unk0, SceModule2 * mod)
 	{
 		// TODO Think about high memory unlocking on Vita lateron...
 		// Module Start Handler
-		if (IS_VITA_POPS){
-			vitaPopsOnModuleStart(mod);
-		}
-		else{
-			if(g_module_start_handler != NULL)
-			{
-				// Call Module Start Handler
-				g_module_start_handler(mod);
-			}
+		if(g_module_start_handler != NULL)
+		{
+			// Call Module Start Handler
+			g_module_start_handler(mod);
 		}
 	}
 	

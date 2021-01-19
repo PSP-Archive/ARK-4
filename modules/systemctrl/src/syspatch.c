@@ -25,6 +25,7 @@
 #include <string.h>
 #include <macros.h>
 #include <graphics.h>
+#include "libs/colordebugger/colordebugger.h"
 #include "imports.h"
 #include "modulemanager.h"
 #include "filesystem.h"
@@ -40,15 +41,28 @@
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
 
+int is_homebrews_runlevel(void)
+{
+	int apitype;
+
+	apitype = sceKernelInitApitype();
+	
+	if(apitype == 0x152 || apitype == 0x141) {
+		return 1;
+	}
+
+	return 0;
+}
+
 // Return Boot Status
 static int isSystemBooted(void)
 {
 
 	// Find Function
-	int (* sceKernelGetSystemStatus)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
+	int (* _sceKernelGetSystemStatus)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
 	
 	// Get System Status
-	int result = sceKernelGetSystemStatus();
+	int result = _sceKernelGetSystemStatus();
 		
 	// System booted
 	if(result == 0x20000) return 1;
@@ -57,88 +71,99 @@ static int isSystemBooted(void)
 	return 0;
 }
 
-void vitaPopsOnModuleStart(SceModule2* mod){
+static void patch_sceWlan_Driver(SceModule2* mod)
+{
+	_sw(NOP, mod->text_addr + 0x000026C0);
+}
 
-	#ifdef DEBUG
-	cls();
-	PRTSTR(mod->modname);
-	copyPSPVram(NULL);
-	#endif
-	
-	if(strcmp(mod->modname, "sceLoadExec") == 0){
-		// Patch loadexec_01g.prx
-		patchLoadExec();
-		flushCache();
+static void patch_scePower_Service(SceModule2* mod)
+{
+	// scePowerGetBacklightMaximum always returns 4
+	_sw(NOP, mod->text_addr + 0x00000E68);
+}
+
+static int _sceKernelBootFromForUmdMan(void)
+{
+	return 0x20;
+}
+
+static void patch_sceUmdMan_driver(SceModule2* mod)
+{
+	if(is_homebrews_runlevel()) {
+		hookImportByNID(mod, "InitForKernel", 0x27932388, _sceKernelBootFromForUmdMan);
 	}
-	else if(strcmp(mod->modname, "sceDisplay_Service") == 0){
-		// Patch Vita POPS display
-		patchVitaPopsDisplay();
-		flushCache();
-	}
-	else if(strcmp(mod->modname, "sceMediaSync") == 0){
-		// Patch mediasync.prx
-		patchMediaSync(mod->text_addr);
-		flushCache();
-	}
-	else if(strcmp(mod->modname, "sceMesgLed") == 0){
-		// Patch mesg_led_01g.prx
-		patchMesgLed(mod->text_addr);
-		flushCache();
-	}
-	/*
-	else if(strcmp(mod->modname, "scePops_Manager") == 0){
-		// Patch popsman
-		patchVitaPopsManager(mod);
-		flushCache();
-	}
-	else if(strcmp(mod->modname, "pops") == 0){
-		// Patch pops
-		patchVitaPops(mod);
-		flushCache();
-	}
+}
+
+//prevent umd-cache in homebrew, so we can drain the cache partition.
+void patch_umdcache(SceModule2* mod)
+{
+    /*
+	int ret;
+
+	ret = sceKernelApplicationType();
+
+	if (ret != PSP_INIT_KEYCONFIG_GAME)
+		return;
+
+	ret = sctrlKernelBootFrom();
+
+	if (ret != 0x40 && ret != 0x50)
+		return;
 	*/
-	else if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0){
-		// Patch Kermit Peripheral Module
-		patchKermitPeripheral(mod);
-		flushCache();
+	//kill module start
+	if (is_homebrews_runlevel()){
+	    _sw(JR_RA, mod->text_addr + 0x000009C8);
+	    _sw(LI_V0(1), mod->text_addr + 0x000009C8 + 4);
 	}
-	/*
-	else if(strcmp(mod->modname, "complex") == 0 || strcmp(mod->modname, "simple") == 0){
-		installModuleJALTrace(mod);
-		flushCache();
-	}
-	*/
+	//MAKE_DUMMY_FUNCTION_RETURN_1(mod->text_addr + 0x000009C8);
 }
 
 // Module Start Handler
-static void PROSyspatchOnModuleStart(SceModule2 * mod)
+static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 {
 
 	// System fully booted Status
 	static int booted = 0;
-
-/*
+	
 #ifdef DEBUG
 	int apitype = sceKernelInitApitype();
 	
 	printk("syspatch: %s(0x%04X)\r\n", mod->modname, apitype);
 	hookImportByNID(mod, "KDebugForKernel", 0x84F370BC, printk);
 #endif
-*/
 
-	// Apply Directory IO PSP Emulation
-	patchFileManagerImports(mod);
+    if (IS_VITA(ark_config->exec_mode)){
+	    // Apply Directory IO PSP Emulation
+	    patchFileManagerImports(mod);
+	    // Apply Game ID Patch
+    	patchGameInfoGetter(mod);
+	}
 	
-	// Apply Game ID Patch
-	patchGameInfoGetter(mod);
+	if (DisplaySetFrameBuf){
+	    PRTSTR1("Loading module %s", mod->modname);
+	}
 	
-	PRTSTR1("Loading module %s", mod->modname);
+	if (strcmp(mod->modname, "sceController_Service")==0){
+	    // can use screen now
+	    DisplaySetFrameBuf = (void *)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
+	    initScreen(DisplaySetFrameBuf);
+	    goto flush;
+	}
+	
+	// load after lflash
+	/*
+	if(0 == strcmp(mod->modname, "sceDisplay_Service")) {
+	    if (IS_VITA_POPS(ark_config->exec_mode)) patchVitaPopsDisplay();
+	    //patchLoadExec(loadexec_mod);
+		goto flush;
+	}*/
 	
 	if(strcmp(mod->modname, "sceLoadExec") == 0)
 	{
 		// Patch loadexec_01g.prx
-		patchLoadExec();
-		
+		patchLoadExec(mod);
+		// Initialize Malloc
+    	oe_mallocinit();
 		goto flush;
 	}
 	
@@ -146,7 +171,24 @@ static void PROSyspatchOnModuleStart(SceModule2 * mod)
 	if(0 == strcmp(mod->modname, "sceMediaSync"))
 	{
 		// Patch mediasync.prx
-		patchMediaSync(mod->text_addr);
+		patchMediaSync(mod);
+		/*
+		int (*IoDevctl)(char*, u32, void*, int, int*, int) = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x54F5FB11);
+	    int status = -1;
+        PRTSTR1("Ioctl: %d", IoDevctl("fatms0:", 0x02425823, NULL, 0, &status, sizeof(status)));
+        PRTSTR1("ms0 status: %p", status);
+	    if (status != 1){
+	        PRTSTR("Reassigning ms0");
+	        int (*IoAssign)(char*, char*, char*, int, void*, int) = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xB2A628C1);
+	        int (*IoUnassign)(char*) = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x6D08A871);
+	        int res = IoUnassign("ms0:");
+	        PRTSTR1("Unassign: %p", res);
+	        res = IoAssign("ms0:", "msstor0p:", "fatms0:", 0, NULL, 0);
+	        PRTSTR1("Assign: %p", res);
+	        PRTSTR("ms0 assigned");
+	    }
+        while(1){};
+        */
 		// Exit Handler
 		goto flush;
 	}
@@ -155,17 +197,17 @@ static void PROSyspatchOnModuleStart(SceModule2 * mod)
 	if(0 == strcmp(mod->modname, "sceMesgLed"))
 	{
 		// Patch mesg_led_01g.prx
-		patchMesgLed(mod->text_addr);
+		patchMesgLed(mod);
 		// Exit Handler
 		goto flush;
 	}
 	
 	// VLF Module Patches
+	/*
 	if(0 == strcmp(mod->modname, "VLF_Module"))
 	{
 		// Patch VLF Module
 		patchVLF(mod);
-		
 		// Exit Handler
 		goto flush;
 	}
@@ -178,8 +220,53 @@ static void PROSyspatchOnModuleStart(SceModule2 * mod)
 		// Exit Handler
 		goto flush;
 	}
+	*/
+	
+	/*
+	if(0 == strcmp(mod->modname, "sceSYSCON_Driver") && IS_PSP(ark_config->exec_mode)) {
+		resolve_syscon_driver(mod);
+		goto flush;
+	}
+	
+	if(0 == strcmp(mod->modname, "sceWlan_Driver")) {
+		patch_sceWlan_Driver(mod);
+		//patch_Libertas_MAC(mod);
+		goto flush;
+	}
+
+	if(0 == strcmp(mod->modname, "scePower_Service")) {
+		patch_scePower_Service(mod);
+		goto flush;
+	}
+
+    if(0 == strcmp(mod->modname, "sceUmdMan_driver")) {
+		patch_sceUmdMan_driver((SceModule*)mod);
+		goto flush;
+	}
+	if(0 == strcmp(mod->modname, "sceUmdCache_driver")) {
+		patch_umdcache(mod);
+		goto flush;
+	}
+    */
+    /*
+	if(0 == strcmp(mod->modname, "sceKernelLibrary")) {
+		printkSync();
+		goto flush;
+	}*/
+	
+	/*
+	if (strcmp(mod->modname, "sceAudio_Driver")==0){
+	    int status;
+        sceIoDevctl("fatms0:", 0x02425823, NULL, 0, &status, sizeof(status));
+        if (status != 1)
+        {
+            _sw(0,0);
+        }
+	}
+	*/
 
 	// Boot Complete Action not done yet
+	/*
 	if(booted == 0)
 	{
 		// Boot is complete
@@ -188,13 +275,15 @@ static void PROSyspatchOnModuleStart(SceModule2 * mod)
 			// Initialize Memory Stick Speedup Cache
 			msstorCacheInit();
 			
-			patchFileSystemDirSyscall();
+			if (IS_VITA(ark_config->exec_mode)) patchFileSystemDirSyscall();
 			printkSync();
 
 			// Boot Complete Action done
 			booted = 1;
+			goto flush;
 		}
 	}
+	*/
 	
 	// No need to flush
 	goto exit;
@@ -206,13 +295,11 @@ flush:
 exit:
 	// Forward to previous Handler
 	if(previous) previous(mod);
-	//PSXFlashScreen(0xff00);
 }
 
 // Add Module Start Patcher
 void syspatchInit(void)
 {
 	// Register Module Start Handler
-	if (!IS_VITA_POPS)
-		previous = sctrlHENSetStartModuleHandler(PROSyspatchOnModuleStart);
+	previous = sctrlHENSetStartModuleHandler(ARKSyspatchOnModuleStart);
 }

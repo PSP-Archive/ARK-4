@@ -20,6 +20,8 @@ typedef struct POPSVramConfigVLA{
 }POPSVramConfigVLA;
 
 extern POPSVramConfigVLA* vram_config;
+extern u32* framebuffer;
+extern u32* vram_base;
 extern u32* g_vram_base;
 extern u16* ps1_vram;
 
@@ -37,7 +39,10 @@ void copyPSPVram(u32* psp_vram);
 void colorDebug(u32 color);
 
 // fill vram with an infinite loop of colors
-void colorLoop(void);
+void doBreakpoint(void);
+
+// Set a colorLoop call at a specified address
+void setBreakpoint(u32 addr);
 
 // Set a handler for PSP to PSX Vram copy
 void* registerPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram));

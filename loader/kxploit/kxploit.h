@@ -21,7 +21,8 @@
 #include <functions.h>
 
 #ifndef PRTSTR
-#define PRTSTR10(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10) g_tbl->prtstr(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, 0)
+#define PRTSTR11(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11) g_tbl->prtstr(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11)
+#define PRTSTR10(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10) PRTSTR11(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, 0)
 #define PRTSTR9(text, x1, x2, x3, x4, x5, x6, x7, x8, x9) PRTSTR10(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, 0)
 #define PRTSTR8(text, x1, x2, x3, x4, x5, x6, x7, x8) PRTSTR9(text, x1, x2, x3, x4, x5, x6, x7, x8, 0)
 #define PRTSTR7(text, x1, x2, x3, x4, x5, x6, x7) PRTSTR8(text, x1, x2, x3, x4, x5, x6, x7, 0)
@@ -34,7 +35,7 @@
 #define PRTSTR(text) PRTSTR1(text, 0)
 #endif
 
-extern int stubScanner(void);
+extern int stubScanner(FunctionTable*);
 extern int doExploit(void);
 extern void executeKernel(u32 kernelContentFunction);
 extern void repairInstruction(void);

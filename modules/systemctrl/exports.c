@@ -1,53 +1,51 @@
 #include <pspmoduleexport.h>
 #define NULL ((void *) 0)
 
-extern void module_bootstart;
-extern void module_start;
-extern void module_info;
-static const unsigned int __syslib_exports[] __attribute__((section(".rodata.sceResident"))) = {
-	0xD3744BE0,
+extern int module_start;
+extern int module_info;
+static const unsigned int __syslib_exports[4] __attribute__((section(".rodata.sceResident"))) = {
 	0xD632ACDB,
 	0xF01D73A7,
-	(unsigned int) &module_bootstart,
 	(unsigned int) &module_start,
 	(unsigned int) &module_info,
 };
 
-extern void sctrlKernelLoadExecVSHWithApitype;
-extern void sctrlKernelSetUserLevel;
-extern void sctrlKernelSetDevkitVersion;
-extern void sctrlHENGetVersion;
-extern void sctrlHENGetMinorVersion;
-extern void sctrlHENFindFunction;
-extern void sctrlSESetUmdFile;
-extern void sctrlKernelSetInitApitype;
-extern void sctrlKernelSetInitFileName;
-extern void sctrlPatchModule;
-extern void sctrlModuleTextAddr;
-extern void sctrlKernelSetNidResolver;
-extern void sctrlKernelRand;
-extern void flushCache;
-extern void sctrlSESetBootConfFileIndex;
-extern void sctrlSEGetBootConfFileIndex;
-extern void sctrlSESetBootConfFileIndex;
-extern void sctrlSESetDiscType;
-extern void sctrlSEGetDiscType;
-extern void sctrlKernelGetGameID;
-extern void sctrlGetThreadUIDByName;
-extern void sctrlGetThreadContextByUID;
-extern void sctrlGetThreadContextByName;
-extern void sctrlDeflateDecompress;
-extern void sctrlHENGetConfig;
-extern void sctrlHENSetConfig;
-extern void sctrlHENSetStartModuleHandler;
-extern void printk;
-extern void printkCached;
-extern void printkSync;
-extern void sctrlGetInitPARAM;
-extern void sctrlHENSetPSXVramHandler;
-extern void sctrlHENEnableCustomPeopsConfig;
-extern void sctrlHENDisableCustomPeopsConfig;
-static const unsigned int __SystemCtrlForUser_exports[] __attribute__((section(".rodata.sceResident"))) = {
+extern int sctrlKernelLoadExecVSHWithApitype;
+extern int sctrlKernelSetUserLevel;
+extern int sctrlKernelSetDevkitVersion;
+extern int sctrlHENGetVersion;
+extern int sctrlHENGetMinorVersion;
+extern int sctrlHENFindFunction;
+extern int sctrlSESetUmdFile;
+extern int sctrlKernelSetInitApitype;
+extern int sctrlKernelSetInitFileName;
+extern int sctrlPatchModule;
+extern int sctrlModuleTextAddr;
+extern int sctrlKernelSetNidResolver;
+extern int sctrlKernelRand;
+extern int flushCache;
+extern int sctrlSESetBootConfFileIndex;
+extern int sctrlSEGetBootConfFileIndex;
+extern int sctrlSESetBootConfFileIndex;
+extern int sctrlSESetDiscType;
+extern int sctrlSEGetDiscType;
+extern int sctrlKernelGetGameID;
+extern int sctrlGetThreadUIDByName;
+extern int sctrlGetThreadContextByUID;
+extern int sctrlGetThreadContextByName;
+extern int sctrlDeflateDecompress;
+extern int sctrlHENGetConfig;
+extern int sctrlHENSetConfig;
+extern int sctrlHENSetStartModuleHandler;
+extern int printk;
+extern int printkCached;
+extern int printkSync;
+extern int sctrlGetInitPARAM;
+extern int sctrlHENGetArkConfig;
+extern int sctrlHENSetPSXVramHandler;
+extern int sctrlHENEnableCustomPeopsConfig;
+extern int sctrlHENDisableCustomPeopsConfig;
+static const unsigned int __SystemCtrlForUser_exports[70] __attribute__((section(".rodata.sceResident"))) = {
 	0x2D10FB28,
 	0xEB74FE45,
 	0xD8FF9B99,
@@ -72,13 +70,14 @@ static const unsigned int __SystemCtrlForUser_exports[] __attribute__((section("
 	0xF93BEC5A,
 	0x72D520D4,
 	0xF462EE55,
-	0xE8390345,
+	0x71471E9D,
+	0x9528E978,
 	0x1C90BECB,
 	0x3DF7F7D8,
 	0xCB739F42,
 	0x5C94CB48,
 	0xFCE44FB8,
-	0x2C0756A9,
+	0xFA82F439,
 	0xA7D08A24,
 	0x8823FF56,
 	0xAD3E8705,
@@ -113,63 +112,65 @@ static const unsigned int __SystemCtrlForUser_exports[] __attribute__((section("
 	(unsigned int) &printkCached,
 	(unsigned int) &printkSync,
 	(unsigned int) &sctrlGetInitPARAM,
+	(unsigned int) &sctrlHENGetArkConfig,
 	(unsigned int) &sctrlHENSetPSXVramHandler,
 	(unsigned int) &sctrlHENEnableCustomPeopsConfig,
 	(unsigned int) &sctrlHENDisableCustomPeopsConfig,
 };
 
-extern void sctrlKernelLoadExecVSHWithApitype;
-extern void sctrlKernelSetUserLevel;
-extern void sctrlKernelSetDevkitVersion;
-extern void sctrlHENGetVersion;
-extern void sctrlHENGetMinorVersion;
-extern void sctrlHENFindDriver;
-extern void sctrlHENFindFunction;
-extern void sctrlHENPatchSyscall;
-extern void sctrlHENPatchSyscall;
-extern void sctrlHENPatchSyscall;
-extern void sctrlHENSetStartModuleHandler;
-extern void sctrlHENFindFunction;
-extern void oe_mallocinit;
-extern void oe_malloc;
-extern void oe_free;
-extern void oe_mallocterminate;
-extern void sctrlSEGetUmdFile;
-extern void GetUmdFile;
-extern void sctrlSESetUmdFile;
-extern void SetUmdFile;
-extern void sctrlKernelSetInitApitype;
-extern void sctrlKernelSetInitFileName;
-extern void sctrlPatchModule;
-extern void sctrlModuleTextAddr;
-extern void sctrlGetInitTextAddr;
-extern void sctrlGetInitTextAddr;
-extern void sctrlSetCustomStartModule;
-extern void sctrlKernelSetNidResolver;
-extern void sctrlKernelRand;
-extern void findImportLib;
-extern void findImportByNID;
-extern void hookImportByNID;
-extern void flushCache;
-extern void sctrlKernelGetPSIDHash;
-extern void printk;
-extern void printkCached;
-extern void printkSync;
-extern void installJALTrace;
-extern void installMemoryJALTrace;
-extern void installModuleJALTrace;
-extern void sctrlSESetBootConfFileIndex;
-extern void sctrlSEGetBootConfFileIndex;
-extern void sctrlSESetBootConfFileIndex;
-extern void sctrlSESetDiscType;
-extern void sctrlSEGetDiscType;
-extern void sctrlKernelGetGameID;
-extern void sctrlGetThreadUIDByName;
-extern void sctrlGetThreadContextByUID;
-extern void sctrlGetThreadContextByName;
-extern void sctrlGetInitPARAM;
-extern void sctrlHENSetPSXVramHandler;
-static const unsigned int __SystemCtrlForKernel_exports[] __attribute__((section(".rodata.sceResident"))) = {
+extern int sctrlKernelLoadExecVSHWithApitype;
+extern int sctrlKernelSetUserLevel;
+extern int sctrlKernelSetDevkitVersion;
+extern int sctrlHENGetVersion;
+extern int sctrlHENGetMinorVersion;
+extern int sctrlHENFindDriver;
+extern int sctrlHENFindFunction;
+extern int sctrlHENPatchSyscall;
+extern int sctrlHENPatchSyscall;
+extern int sctrlHENPatchSyscall;
+extern int sctrlHENSetStartModuleHandler;
+extern int sctrlHENFindFunction;
+extern int oe_mallocinit;
+extern int oe_malloc;
+extern int oe_free;
+extern int oe_mallocterminate;
+extern int sctrlSEGetUmdFile;
+extern int GetUmdFile;
+extern int sctrlSESetUmdFile;
+extern int SetUmdFile;
+extern int sctrlKernelSetInitApitype;
+extern int sctrlKernelSetInitFileName;
+extern int sctrlPatchModule;
+extern int sctrlModuleTextAddr;
+extern int sctrlGetInitTextAddr;
+extern int sctrlGetInitTextAddr;
+extern int sctrlSetCustomStartModule;
+extern int sctrlKernelSetNidResolver;
+extern int sctrlKernelRand;
+extern int findImportLib;
+extern int findImportByNID;
+extern int hookImportByNID;
+extern int flushCache;
+extern int sctrlKernelGetPSIDHash;
+extern int printk;
+extern int printkCached;
+extern int printkSync;
+extern int installJALTrace;
+extern int installMemoryJALTrace;
+extern int installModuleJALTrace;
+extern int sctrlSESetBootConfFileIndex;
+extern int sctrlSEGetBootConfFileIndex;
+extern int sctrlSESetBootConfFileIndex;
+extern int sctrlSESetDiscType;
+extern int sctrlSEGetDiscType;
+extern int sctrlKernelGetGameID;
+extern int sctrlGetThreadUIDByName;
+extern int sctrlGetThreadContextByUID;
+extern int sctrlGetThreadContextByName;
+extern int sctrlGetInitPARAM;
+extern int sctrlHENGetArkConfig;
+extern int sctrlHENSetPSXVramHandler;
+static const unsigned int __SystemCtrlForKernel_exports[104] __attribute__((section(".rodata.sceResident"))) = {
 	0x2D10FB28,
 	0xEB74FE45,
 	0xD8FF9B99,
@@ -220,7 +221,7 @@ static const unsigned int __SystemCtrlForKernel_exports[] __attribute__((section
 	0xF93BEC5A,
 	0x72D520D4,
 	0xFCE44FB8,
-	0x2C0756A9,
+	0xFA82F439,
 	0xA7D08A24,
 	(unsigned int) &sctrlKernelLoadExecVSHWithApitype,
 	(unsigned int) &sctrlKernelSetUserLevel,
@@ -272,21 +273,22 @@ static const unsigned int __SystemCtrlForKernel_exports[] __attribute__((section
 	(unsigned int) &sctrlGetThreadContextByUID,
 	(unsigned int) &sctrlGetThreadContextByName,
 	(unsigned int) &sctrlGetInitPARAM,
+	(unsigned int) &sctrlHENGetArkConfig,
 	(unsigned int) &sctrlHENSetPSXVramHandler,
 };
 
-extern void kuKernelLoadModule;
-extern void kuKernelInitApitype;
-extern void kuKernelInitFileName;
-extern void kuKernelInitKeyConfig;
-extern void kuKernelBootFrom;
-extern void kuKernelGetUserLevel;
-extern void kuKernelSetDdrMemoryProtection;
-extern void kuKernelGetModel;
-extern void kuKernelPeekw;
-extern void kuKernelPokew;
-extern void kuKernelMemcpy;
-static const unsigned int __KUBridge_exports[] __attribute__((section(".rodata.sceResident"))) = {
+extern int kuKernelLoadModule;
+extern int kuKernelInitApitype;
+extern int kuKernelInitFileName;
+extern int kuKernelInitKeyConfig;
+extern int kuKernelBootFrom;
+extern int kuKernelGetUserLevel;
+extern int kuKernelSetDdrMemoryProtection;
+extern int kuKernelGetModel;
+extern int kuKernelPeekw;
+extern int kuKernelPokew;
+extern int kuKernelMemcpy;
+static const unsigned int __KUBridge_exports[22] __attribute__((section(".rodata.sceResident"))) = {
 	0x4C25EA72,
 	0x8E5A4057,
 	0x1742445F,
@@ -311,60 +313,26 @@ static const unsigned int __KUBridge_exports[] __attribute__((section(".rodata.s
 	(unsigned int) &kuKernelMemcpy,
 };
 
-extern void msstorCacheStat;
-extern void msstorCacheDisable;
-static const unsigned int __SystemCtrlPrivate_exports[] __attribute__((section(".rodata.sceResident"))) = {
+extern int msstorCacheStat;
+extern int msstorCacheDisable;
+static const unsigned int __SystemCtrlPrivate_exports[4] __attribute__((section(".rodata.sceResident"))) = {
 	0xFFC9D099,
 	0x657301D9,
 	(unsigned int) &msstorCacheStat,
 	(unsigned int) &msstorCacheDisable,
 };
 
-extern void sctrlKernelDummyFunction;
-extern void sctrlKernelDummyFunction;
-extern void sctrlKernelDummyFunction;
-static const unsigned int __sceSyscon_driver_exports[] __attribute__((section(".rodata.sceResident"))) = {
-	0x48448373,
-	0x8CBC7987,
-	0x9BC5E33B,
-	(unsigned int) &sctrlKernelDummyFunction,
-	(unsigned int) &sctrlKernelDummyFunction,
-	(unsigned int) &sctrlKernelDummyFunction,
-};
-
-extern void sctrlKernelDummyFunction;
-static const unsigned int __sceLFatFs_driver_exports[] __attribute__((section(".rodata.sceResident"))) = {
-	0x933F6E29,
-	(unsigned int) &sctrlKernelDummyFunction,
-};
-
-extern void sctrlKernelDummyFunction;
-static const unsigned int __sceClockgen_driver_exports[] __attribute__((section(".rodata.sceResident"))) = {
-	0xDAB6E612,
-	(unsigned int) &sctrlKernelDummyFunction,
-};
-
-extern void sctrlKernelDummyFunction;
-static const unsigned int __sceCodec_driver_exports[] __attribute__((section(".rodata.sceResident"))) = {
-	0x376399B6,
-	(unsigned int) &sctrlKernelDummyFunction,
-};
-
-extern void dumpJAL;
-static const unsigned int __sceJumper_lib_exports[] __attribute__((section(".rodata.sceResident"))) = {
+extern int dumpJAL;
+static const unsigned int __sceJumper_lib_exports[2] __attribute__((section(".rodata.sceResident"))) = {
 	0x5F005E45,
 	(unsigned int) &dumpJAL,
 };
 
-const struct _PspLibraryEntry __library_exports[] __attribute__((section(".lib.ent"), used)) = {
-	{ NULL, 0x0000, 0x8000, 4, 1, 2, &__syslib_exports },
-	{ "SystemCtrlForUser", 0x0000, 0x4001, 4, 0, 34, &__SystemCtrlForUser_exports },
-	{ "SystemCtrlForKernel", 0x0000, 0x0001, 4, 0, 52, &__SystemCtrlForKernel_exports },
-	{ "KUBridge", 0x0000, 0x4001, 4, 0, 11, &__KUBridge_exports },
-	{ "SystemCtrlPrivate", 0x0000, 0x0001, 4, 0, 2, &__SystemCtrlPrivate_exports },
-	{ "sceSyscon_driver", 0x0011, 0x0001, 4, 0, 3, &__sceSyscon_driver_exports },
-	{ "sceLFatFs_driver", 0x0011, 0x0001, 4, 0, 1, &__sceLFatFs_driver_exports },
-	{ "sceClockgen_driver", 0x0011, 0x0001, 4, 0, 1, &__sceClockgen_driver_exports },
-	{ "sceCodec_driver", 0x0011, 0x0001, 4, 0, 1, &__sceCodec_driver_exports },
-	{ "sceJumper_lib", 0x0000, 0x4001, 4, 0, 1, &__sceJumper_lib_exports },
+const struct _PspLibraryEntry __library_exports[6] __attribute__((section(".lib.ent"), used)) = {
+	{ NULL, 0x0000, 0x8000, 4, 1, 1, (unsigned int *) &__syslib_exports },
+	{ "SystemCtrlForUser", 0x0000, 0x4001, 4, 0, 35, (unsigned int *) &__SystemCtrlForUser_exports },
+	{ "SystemCtrlForKernel", 0x0000, 0x0001, 4, 0, 52, (unsigned int *) &__SystemCtrlForKernel_exports },
+	{ "KUBridge", 0x0000, 0x4001, 4, 0, 11, (unsigned int *) &__KUBridge_exports },
+	{ "SystemCtrlPrivate", 0x0000, 0x0001, 4, 0, 2, (unsigned int *) &__SystemCtrlPrivate_exports },
+	{ "sceJumper_lib", 0x0000, 0x4001, 4, 0, 1, (unsigned int *) &__sceJumper_lib_exports },
 };

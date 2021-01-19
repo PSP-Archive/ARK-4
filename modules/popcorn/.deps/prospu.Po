@@ -15,6 +15,8 @@ prospu.o .deps/prospu.Po: prospu.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/pspiofilemgr_dirent.h \
  /usr/local/pspdev/psp/sdk/include/pspthreadman_kernel.h \
  /usr/local/pspdev/psp/sdk/include/psploadcore.h \
+ /home/aaron/projects/ark/common/include/globals.h \
+ /home/aaron/projects/ark/common/include/kermit.h \
  /home/aaron/projects/ark/common/include/module2.h \
  /home/aaron/projects/ark/common/include/macros.h prospu.h \
  sound/registers.h

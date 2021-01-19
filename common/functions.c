@@ -30,7 +30,6 @@
 #include <string.h>
 #include "globals.h"
 #include "functions.h"
-#include "flashpatch.h"
 
 /*
  * These Mappings are Syscall Mappings! Don't bother trying them inside
@@ -40,10 +39,7 @@
 // counter for relocated stubs
 static u32 curcall = 0x08801000;
 
-FunctionTable* g_tbl = ((FunctionTable*)(0x08800010));
-KernelFunctions* k_tbl = ((KernelFunctions*)(0x08800010 + sizeof(FunctionTable)));
-KxploitFunctions* kxf = ((KxploitFunctions*)(0x08800010 + sizeof(FunctionTable) + sizeof(KernelFunctions)));
-
+/*
 typedef struct{
 	char* lib;
 	u32 nid;
@@ -81,6 +77,7 @@ ArkUserImport ark_imports[(sizeof(FunctionTable)/sizeof(void*))-7] = {
 	{"sceUtility", 0xD4B95FFB, 0}, // sceUtilitySavedataUpdate
 	{"sceUtility", 0x9790B33C, 0} // sceUtilitySavedataShutdownStart
 };
+*/
 
 // fill FunctionTable
 void scanUserFunctions(){
@@ -106,8 +103,10 @@ void scanUserFunctions(){
 	tbl->IoRead = (void*)RelocImport("IoFileMgrForUser", 0x6A638D83, 0);
 	tbl->IoClose = (void*)RelocImport("IoFileMgrForUser", 0x810C4BC3, 0);
 	tbl->IoWrite = (void*)RelocImport("IoFileMgrForUser", 0x42EC03AC, 0);
+	tbl->IoRemove = (void*)RelocImport("IoFileMgrForUser", 0xF27A9C51, 0);
 	
 	tbl->KernelLibcTime = (void*)RelocImport("UtilsForUser", 0x27CC57F0, 0);
+	tbl->KernelLibcClock = (void*)RelocImport("UtilsForUser", 0x91E4F6A7, 0);
 	tbl->KernelPowerLock = (void*)RelocImport("sceNetIfhandle_lib", 0xE80F00A4, 0);
 	tbl->KernelDcacheWritebackAll = (void*)RelocImport("UtilsForUser", 0x79D1C3FA, 0);
 	tbl->KernelIcacheInvalidateAll = (void*)RelocImport("UtilsForUser", 0x920F104A, 0);
@@ -118,7 +117,11 @@ void scanUserFunctions(){
 	tbl->KernelStartThread = (void*)RelocImport("ThreadManForUser", 0xF475845D, 0);
 	tbl->KernelWaitThreadEnd = (void*)RelocImport("ThreadManForUser", 0x278C0DF5, 0);
 	tbl->KernelExitThread = (void*)RelocImport("ThreadManForUser", 0xAA73C935, 0);
+	tbl->KernelExitDeleteThread = (void*)RelocImport("ThreadManForUser", 0x809CE29B, 0);
 
+    tbl->KernelCreateVpl = (void*)RelocImport("ThreadManForUser", 0x56C039B5, 0),
+    tbl->KernelTryAllocateVpl = (void*)RelocImport("ThreadManForUser", 0xAF36D708, 0),
+    tbl->KernelFreeVpl = (void*)RelocImport("ThreadManForUser", 0xB736E9FF, 0),
 	tbl->KernelDeleteVpl = (void*)RelocImport("ThreadManForUser", 0x89B3D48C, 0);
 	tbl->KernelDeleteFpl = (void*)RelocImport("ThreadManForUser", 0xED1410E0, 0);
 	
@@ -127,8 +130,9 @@ void scanUserFunctions(){
 	tbl->UtilityLoadNetModule = (void*)RelocImport("sceUtility", 0x1579A159, 0);
 	tbl->UtilityUnloadNetModule = (void*)RelocImport("sceUtility", 0x64D50C56, 0);
 	
-	tbl->SysMemUserForUser_91DE343C = (void*)RelocImport("SysMemUserForUser", 0x91DE343C, 0);
+	//tbl->SysMemUserForUser_91DE343C = (void*)RelocImport("SysMemUserForUser", 0x91DE343C, 0);
 	tbl->KernelFreePartitionMemory = (void*)RelocImport("SysMemUserForUser", 0xB6D61D02, 0);
+    tbl->KernelAllocPartitionMemory = (void*)RelocImport("SysMemUserForUser", 0x237DBD4F, 0);
 
 	// savedata functions
 	tbl->UtilitySavedataGetStatus = (void*)RelocImport("sceUtility", 0x8874DBE0, 0);
@@ -139,24 +143,13 @@ void scanUserFunctions(){
 	
 }
 
-void getArkFunctions(){
+void scanArkFunctions(){
     // ARK Functions
 	g_tbl->freeMem = &freeMem;
 	g_tbl->FindImportUserRam = &FindImportUserRam;
 	g_tbl->FindImportVolatileRam = &FindImportVolatileRam;
 	g_tbl->FindImportRange = &FindImportRange;
 	g_tbl->RelocSyscall = &RelocSyscall;
-	g_tbl->FindTextAddrByName = &FindTextAddrByName;
-}
-
-void kernelifyArkFunctions(){
-    g_tbl->freeMem = KERNELIFY(g_tbl->freeMem);
-    g_tbl->FindImportUserRam = KERNELIFY(g_tbl->FindImportUserRam);
-    g_tbl->FindImportVolatileRam = KERNELIFY(g_tbl->FindImportVolatileRam);
-    g_tbl->FindImportRange = KERNELIFY(g_tbl->FindImportRange);
-    g_tbl->RelocSyscall = KERNELIFY(g_tbl->RelocSyscall);
-    g_tbl->FindTextAddrByName = KERNELIFY(g_tbl->FindTextAddrByName);
-    g_tbl->prtstr = KERNELIFY(g_tbl->prtstr);
 }
 
 int IsUID(SceUID uid){
@@ -269,7 +262,6 @@ u32 qwikTrick(char* lib, u32 nid, u32 version){
 		}
 
 		k_tbl->KernelExitThread(0);
-		//sceKernelExitDeleteThread(0);
 		return 0;
 	}
 
@@ -324,7 +316,7 @@ void* RelocImport(char* libname, u32 nid, int ram){
  */
 
 
-void getKernelFunctions(){
+void scanKernelFunctions(){
 
 	register KernelFunctions* kfuncs = k_tbl;
 	
@@ -342,23 +334,18 @@ void getKernelFunctions(){
 	kfuncs->KernelIODclose = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xEB092469);
 	kfuncs->KernelIOGetStat = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xACE946E8);
 	kfuncs->KernelIORemove = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xF27A9C51);
+	kfuncs->IoLseek = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x27EB27B8);
+	kfuncs->IoAssign = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xB2A628C1);
+	kfuncs->IoUnassign = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x6D08A871);
 	
 	kfuncs->KernelIcacheInvalidateAll = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0x920F104A);
 	kfuncs->KernelDcacheWritebackInvalidateAll = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0xB435DEC5);
 	kfuncs->KernelDcacheInvalidateRange = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0xBFA98062);
 	kfuncs->KernelGzipDecompress = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0x78934841);
 	
-	/*
-	kfuncs->KernelCtrlSetSamplingCycle = (void*)FindFunction("sceController_Service", "sceCtrl", 0x6A2774F3);
-	kfuncs->KernelCtrlSetSamplingMode = (void*)FindFunction("sceController_Service", "sceCtrl", 0x1F4011E6);
-	kfuncs->KernelCtrlPeekBufferPositive = (void*)FindFunction("sceController_Service", "sceCtrl", 0x3A622550);
-	*/
-	
-	if (IS_VITA){
-	    kfuncs->Kermit_driver_4F75AA05 = (void*)FindFunction("sceKermit_Driver", "sceKermit_driver", 0x4F75AA05);
-	    if (kfuncs->Kermit_driver_4F75AA05 == NULL)
-	    	kfuncs->Kermit_driver_4F75AA05 = (void*)FindFunction("sceKermit_Driver", "sceKermit_driver", 0x36666181);
-    }
+	kfuncs->Kermit_driver_4F75AA05 = (void*)FindFunction("sceKermit_Driver", "sceKermit_driver", 0x4F75AA05);
+    if (kfuncs->Kermit_driver_4F75AA05 == NULL)
+    	kfuncs->Kermit_driver_4F75AA05 = (void*)FindFunction("sceKermit_Driver", "sceKermit_driver", 0x36666181);
 	
 	kfuncs->KernelFindModuleByName = (void*)FindFunction("sceLoaderCore", "LoadCoreForKernel", 0xF6B1BF0F);
 	
@@ -367,6 +354,10 @@ void getKernelFunctions(){
 	kfuncs->KernelDelayThread = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0xCEADEB47);
 	kfuncs->KernelExitThread = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0xAA73C935);
 	kfuncs->KernelDeleteThread = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0x9FA03CD3);
+	kfuncs->waitThreadEnd = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0x278C0DF5);
+	kfuncs->KernelExitGame = (void*)FindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F);
+	
+	kfuncs->FindTextAddrByName = (void*)&FindTextAddrByName;
 }
 
 u32 FindTextAddrByName(const char *modulename)
@@ -387,7 +378,7 @@ u32 FindTextAddrByName(const char *modulename)
 u32 FindFunction(const char *module, const char *library, u32 nid)
 {
 	u32 addr = FindTextAddrByName(module);
-
+	
 	if (addr) {
 		u32 maxaddr = 0x88400000;
 		
@@ -440,6 +431,14 @@ u32 _findJAL(u32 addr, int reversed, int skip){
 		}
 	}
 
+	return 0;
+}
+
+u32 FindFirstBEQ(u32 addr){
+	for (;;addr+=4){
+		if ((_lw(addr) & 0xFC000000) == 0x10000000)
+			return addr;
+	}
 	return 0;
 }
 
@@ -523,20 +522,10 @@ void p5_close_savedata()
 	}
 }
 
-void flashPatch(){
-	if (IS_PSP)
-		return; // flash0 will already be installed
-	// Redirect KERMIT_CMD_ERROR_EXIT loadFlash function
-	u32 knownnids[2] = { 0x3943440D, 0x0648E1A3 /* 3.3X */ };
-	u32 swaddress = 0;
-	int i;
-	for (i = 0; i < 2; i++){
-		swaddress = findFirstJALForFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", knownnids[i]);
-		if (swaddress != 0)
-			break;
-	}
-	if (swaddress){
-	    _sw(JUMP(flashLoadPatch), swaddress);
-	    _sw(NOP, swaddress+4);
-	}
+int is_kernel(int arg0){
+    __asm__ (
+		"nop\n"
+		"move $a0, $ra\n" // move return address to arg0 to check if it has kernel bit set
+	);
+	return (arg0&0x80000000) != 0;
 }

@@ -31,11 +31,12 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspkernel.h \
  /home/aaron/projects/ark/common/include/systemctrl.h \
  /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
- /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/systemctrl_private.h \
- /home/aaron/projects/ark/common/include/macros.h \
  /home/aaron/projects/ark/common/include/globals.h \
  /home/aaron/projects/ark/common/include/kermit.h \
+ /home/aaron/projects/ark/common/include/module2.h \
+ /home/aaron/projects/ark/common/include/systemctrl_private.h \
+ /home/aaron/projects/ark/common/include/globals.h \
+ /home/aaron/projects/ark/common/include/macros.h \
  /home/aaron/projects/ark/common/include/functions.h \
  /home/aaron/projects/ark/common/include/sdk.h \
  /usr/local/pspdev/psp/sdk/include/pspdisplay.h \
@@ -56,7 +57,6 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspkernel.h \
  /usr/local/pspdev/psp/sdk/include/psputility_usbmodules.h \
  /usr/local/pspdev/psp/sdk/include/psputility_modules.h \
  /usr/local/pspdev/psp/sdk/include/pspumd.h \
- /usr/local/pspdev/psp/sdk/include/pspimpose_driver.h \
- /home/aaron/projects/ark/common/include/globals.h imports.h galaxy.h \
+ /usr/local/pspdev/psp/sdk/include/pspimpose_driver.h imports.h galaxy.h \
  /home/aaron/projects/ark/common/include/ansi_c_functions.h \
  /home/aaron/projects/ark/common/include/psid.h

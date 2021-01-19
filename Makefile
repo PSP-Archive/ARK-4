@@ -15,23 +15,34 @@ SUBDIRS = libs contrib/PC/prxencrypter modules/systemctrl modules/ISODrivers/gal
 
 all: subdirs mkdir-dist encrypt-prx copy-bin
 
-copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP loader/kxploit/k.bin contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtmnf.bin contrib/PSP/fake.cso menu/provsh/EBOOT.PBP menu/arkMenu/EBOOT.PBP menu/xMenu/EBOOT.PBP
+copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP loader/kxploit/k.bin contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PSP/fake.cso menu/provsh/EBOOT.PBP
 #	Common installation
-	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234 dist/
-	$(Q)cp loader/stage2/live/ark.bin dist/ARK_01234/ARK.BIN
-	$(Q)cp loader/kxploit/k.bin dist/ARK_01234/K.BIN
-	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/FLASH0.ARK
-	$(Q)mv dist/NPDRM.PRX dist/ARK_01234/NPDRM.PRX
-	$(Q)cp menu/provsh/EBOOT.PBP dist/ARK_01234/VBOOT.PBP
+#	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234 dist/PSP/SAVEDATA/
+#	$(Q)cp loader/stage2/live/ark.bin dist/PSP/SAVEDATA/ARK_01234/ARK.BIN
+#	$(Q)cp loader/kxploit/k.bin dist/PSP/SAVEDATA/ARK_01234/K.BIN
+#	$(Q)cp dist/FLASH0.ARK dist/PSP/SAVEDATA/ARK_01234/FLASH0.ARK
+#	$(Q)cp dist/NPDRM.PRX dist/PSP/SAVEDATA/ARK_01234/NPDRM.PRX
+#	$(Q)cp menu/provsh/EBOOT.PBP dist/PSP/SAVEDATA/ARK_01234/MBOOT.PBP
+	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/PSP/GAME/ARK_Live/EBOOT.PBP
+	$(Q)cp menu/provsh/EBOOT.PBP dist/PSP/GAME/ARK_Live/MBOOT.PBP
+	$(Q)cp dist/NPDRM.PRX dist/PSP/GAME/ARK_Live/NPDRM.PRX
+	$(Q)cp dist/FLASH0.ARK dist/PSP/GAME/ARK_Live/FLASH0.ARK
+	$(Q)cp loader/kxploit/k.bin dist/PSP/GAME/ARK_Live/K.BIN
+	$(Q)cp loader/stage2/live/ark.bin dist/PSP/GAME/ARK_Live/ARK.BIN
+	$(Q)cp loader/stage1/live_eboot/eboot/EBOOT.PBP dist/VHBL/EBOOT.PBP
+	$(Q)cp menu/provsh/EBOOT.PBP dist/VHBL/MBOOT.PBP
+	$(Q)cp dist/NPDRM.PRX dist/VHBL/NPDRM.PRX
+	$(Q)cp dist/FLASH0.ARK dist/VHBL/FLASH0.ARK
+	$(Q)cp loader/kxploit/k.bin dist/VHBL/K.BIN
+	$(Q)cp loader/stage2/live/ark.bin dist/VHBL/ARK.BIN
 #	$(Q)cp menu/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP
 #	$(Q)cp menu/arkMenu/DATA.PKG dist/ARK_01234/DATA.PKG
 #	$(Q)cp menu/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP
-#	eCFW (exploits)
-	$(Q)cp loader/stage1/linkless_payload/h.bin dist/psv/exploit/H.BIN
+#	game exploits
+#	$(Q)cp loader/stage1/linkless_payload/h.bin dist/psv/exploit/H.BIN
 #	eCFW (bubbles)
-	$(Q)cp loader/stage1/live_eboot/eboot/EBOOT.PBP dist/psv/bubble/PBOOT.PBP
+#	$(Q)cp loader/stage1/live_eboot/eboot/EBOOT.PBP dist/psv/bubble/PBOOT.PBP
 #	live CFW
-	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/psp/ARK_Live/EBOOT.PBP
 #	full CFW (infinity)
 #	$(Q)cp loader/stage2/infinity/EBOOT.PBP dist/psp/ARK_Infinity/EBOOT.PBP
 #	full CFW (CIPL)
@@ -60,6 +71,7 @@ ifndef CLEANOBJ
 	$(Q)$(MAKE) $@ -C libs
 endif
 	$(Q)$(MAKE) $@ -C modules/rebootbuffer
+	$(Q)$(MAKE) $@ -C loader/stage1/live_eboot
 	$(Q)$(MAKE) $@ -C loader/stage2/live
 	$(Q)$(MAKE) $@ -C loader/kxploit
 	$(Q)$(MAKE) $@ -C loader/stage1/linkless_payload
@@ -100,13 +112,15 @@ loader: ark
 
 mkdir-dist:
 	$(Q)mkdir dist | true
-	$(Q)mkdir dist/psp | true
-	$(Q)mkdir dist/psv | true
-	$(Q)mkdir dist/psp/ARK_Live | true
-	$(Q)mkdir dist/psp/ARK_Infinity | true
-	$(Q)mkdir dist/psp/ARK_CIPL | true
-	$(Q)mkdir dist/psv/exploit | true
-	$(Q)mkdir dist/psv/bubble | true
+	$(Q)mkdir dist/PSP | true
+	$(Q)mkdir dist/VHBL | true
+#	$(Q)mkdir dist/Vita_Bubble | true
+#	$(Q)mkdir dist/PSP/SAVEDATA/ | true
+	$(Q)mkdir dist/PSP/GAME/ | true
+	$(Q)mkdir dist/PSP/GAME/ARK_Live | true
+#	$(Q)mkdir dist/PSP/ARK_Infinity | true
+#	$(Q)mkdir dist/PSP/ARK_CIPL | true
+#	$(Q)mkdir dist/PSV/exploit | true
 
 -include $(PROVITA)/.config
 include $(PROVITA)/common/make/check.mak

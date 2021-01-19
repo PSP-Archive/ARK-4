@@ -29,11 +29,32 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /home/aaron/projects/ark/common/include/systemctrl.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
  /usr/local/pspdev/psp/sdk/include/pspthreadman_kernel.h \
+ /home/aaron/projects/ark/common/include/globals.h \
+ /home/aaron/projects/ark/common/include/kermit.h \
  /home/aaron/projects/ark/common/include/module2.h \
  /home/aaron/projects/ark/common/include/systemctrl_se.h \
  /home/aaron/projects/ark/common/include/gameinfo.h \
  /home/aaron/projects/ark/common/include/macros.h \
  /usr/local/pspdev/psp/sdk/include/libc/string.h \
  /usr/local/pspdev/psp/sdk/include/libc/ctype.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/kermit.h
+ /home/aaron/projects/ark/common/include/functions.h \
+ /home/aaron/projects/ark/common/include/sdk.h \
+ /usr/local/pspdev/psp/sdk/include/pspdisplay.h \
+ /usr/local/pspdev/psp/sdk/include/pspge.h \
+ /usr/local/pspdev/psp/sdk/include/pspaudio.h \
+ /usr/local/pspdev/psp/sdk/include/psputility.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_msgdialog.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_netconf.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_netparam.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_savedata.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_gamesharing.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_htmlviewer.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_sysparam.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_osk.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_netmodules.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_avmodules.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_usbmodules.h \
+ /usr/local/pspdev/psp/sdk/include/psputility_modules.h \
+ /usr/local/pspdev/psp/sdk/include/pspumd.h \
+ /usr/local/pspdev/psp/sdk/include/pspimpose_driver.h \
+ /home/aaron/projects/ark/common/include/globals.h

@@ -188,9 +188,9 @@ u32 iojal;
 
 int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
 {
-	if (!IS_VITA_POPS && !strcmp(a0, "flash0:/kd/npdrm.prx")){
-		char path[SAVE_PATH_SIZE];
-		strcpy(path, ARKPATH);
+	if (IS_VITA(ark_config->exec_mode) && !IS_VITA_POPS(ark_config->exec_mode) && 0==strcmp(a0, "flash0:/kd/npdrm.prx")){
+		char path[ARK_PATH_SIZE];
+		strcpy(path, ark_config->arkpath);
 		strcat(path, "NPDRM.PRX");
 		a0 = path;
 	}
@@ -237,17 +237,42 @@ void patchFileManager(void)
 
 	// Hooking sceIoAddDrv
 	_sw((unsigned int)sceIoAddDrvHook, AddDrv);
-
-	iojal = mod->text_addr + 0x49F4;
-	ioctl = mod->text_addr + 0x41A0;
-
+	
+	u32 topaddr = mod->text_addr+mod->text_size;
+	int patches = 2;
+	for (u32 addr=mod->text_addr; addr<topaddr && patches; addr+=4){
+	    u32 data = _lw(data);
+	    if (data == 0x03641824){
+	        iojal = addr-4;
+	        patches--;
+	    }
+	    else if (data == 0x00005021){
+	        ioctl = addr-12;
+	        patches--;
+	    }
+	}
 	backup[0] = _lw(ioctl);
 	backup[1] = _lw(ioctl + 4);
+	_sw(JUMP(patchioctl), ioctl);
+	_sw(0, ioctl+4);
+	
+	patches = 2;
+	for (u32 addr=mod->text_addr; addr<topaddr && patches; addr+=4){
+	    u32 data = _lw(data);
+	    if (data == JAL(iojal)){
+	        _sw(JAL(patchio), addr);
+	        patches--;
+	    }
+	}
+	// Flush Cache
+	flushCache();
 
-	_sw((((u32)&patchio >> 2) & 0x03FFFFFF) | 0x0C000000, mod->text_addr + 0x3FD8);
-	_sw((((u32)&patchio >> 2) & 0x03FFFFFF) | 0x0C000000, mod->text_addr + 0x4060);
-	_sw((((u32)&patchioctl >> 2) & 0x03FFFFFF) | 0x08000000, mod->text_addr + 0x41A0);
-	_sw(0, mod->text_addr + 0x41A4);
+	//iojal = mod->text_addr + 0x00004C04; //0x49F4; // search for 0x03641824 -> addr-4
+	//ioctl = mod->text_addr + 0x000041E8; //0x41A0; // search for 0x00005021 -> addr-12
+
+	//_sw((((u32)&patchio >> 2) & 0x03FFFFFF) | 0x0C000000, mod->text_addr + 0x00004020 /*0x3FD8*/); // search for JAL(iojal)
+	//_sw((((u32)&patchio >> 2) & 0x03FFFFFF) | 0x0C000000, mod->text_addr + 0x000040A8 /*0x4060*/); // search for JAL(iojal)
+	// redirect ioctl to patched
 
 	//HIJACK_FUNCTION(K_EXTRACT_IMPORT(sceIoRead), sceIoRfilesystem.ceadHook, sceIoRead_);
 	//HIJACK_FUNCTION(K_EXTRACT_IMPORT(sceIoWrite), sceIoWriteHook, sceIoWrite_);
@@ -755,8 +780,8 @@ int patchFlash0Archive(void)
 	//if (prof0[0].name == (char*)f0)
 	//	return 0;
 
-	char path[SAVE_PATH_SIZE];
-	strcpy(path, ARKPATH);
+	char path[ARK_PATH_SIZE];
+	strcpy(path, ark_config->arkpath);
 	strcat(path, "FLASH0.ARK");
 
 	fd = sceIoOpen(path, PSP_O_RDONLY, 0777);

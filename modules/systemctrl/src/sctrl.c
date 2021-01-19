@@ -778,3 +778,9 @@ void sctrlHENDisableCustomPeopsConfig(){
 	ark_config->override_peops_config = 0;
 	pspSdkSetK1(k1);
 }
+
+void sctrlHENGetArkConfig(ARKConfig* conf){
+    u32 k1 = pspSdkSetK1(0);
+	memcpy(conf, ark_config, sizeof(ARKConfig));
+	pspSdkSetK1(k1);
+}

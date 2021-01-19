@@ -11,7 +11,7 @@ CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 
 CFLAGS += -I $(PROVITA)/loader/kxploit/
 
-C_OBJS = main.o $(PROVITA)/loader/kxploit/$(K)/kxploit.o $(PROVITA)/common/functions.o $(PROVITA)/common/flashpatch.o
+C_OBJS = main.o $(PROVITA)/loader/kxploit/$(K)/kxploit.o
 
 include $(PROVITA)/common/make/global.mak
 include $(PROVITA)/common/make/beauty_bin.mak

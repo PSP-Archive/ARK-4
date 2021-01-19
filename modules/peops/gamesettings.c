@@ -30,10 +30,12 @@ void loadGameSettings(char* gameid, PeopsConfig* conf){
 	conf->spuupdatemode = 0;
 	conf->sputhreadpriority = 0;
 	
+	/*
 	if (ark_config->override_peops_config){
 		memcpy(conf, &(ark_config->peops_config), sizeof(*conf));
 		return;
 	}
+	*/
 	
 	switch (hash){
 		case -5548781341825711198: // Bloody Roar (SCUS-94199) - NTSC-U

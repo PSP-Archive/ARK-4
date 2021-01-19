@@ -265,16 +265,16 @@ void processLine(char * line)
 void LoadPlugins(void)
 {
 
-	if (IS_VITA_POPS)
+	if (IS_VITA_POPS(ark_config->exec_mode))
 		return;
 
 	// start the mandatory qsplink plugin
-	startPlugin("flash0:/kd/ark_qsplink.prx");
+	//startPlugin("flash0:/kd/ark_qsplink.prx");
 
 	// Open Plugin Config
 	
-	char path[SAVE_PATH_SIZE+20];
-	strcpy(path, ARKPATH);
+	char path[ARK_PATH_SIZE];
+	strcpy(path, ark_config->arkpath);
 	strcat(path, "PLUGINS.TXT");
 	
 	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);

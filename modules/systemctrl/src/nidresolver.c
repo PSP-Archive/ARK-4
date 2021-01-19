@@ -23,12 +23,15 @@
 #include <macros.h>
 #include <module2.h>
 #include <systemctrl.h>
+#include <systemctrl_private.h>
 #include <globals.h>
 #include "missingfunc.h"
 #include "nidresolver.h"
 
 // Original NID Filler
 int (* g_origNIDFiller)(void *lib, unsigned int nid, unsigned int unk2, unsigned int unk3) = NULL;
+static int (*sceKernelLinkLibraryEntries)(void *buf, int size) = NULL;
+static int (*sceKernelLinkLibraryEntriesForUser)(u32 unk0, void *buf, int size) = NULL;
 
 // NID Table
 NidResolverLib * nidTable = NULL;
@@ -284,7 +287,7 @@ exit:
 void getMissingNidAddress(void)
 {
 	// sceLoaderCore Functions
-	missing_LoadCoreForKernel_entries[0].fp = sctrlModuleTextAddr("sceLoaderCore") + 0x72D8;
+	missing_LoadCoreForKernel_entries[0].fp = sctrlModuleTextAddr("sceLoaderCore") + 0x0000748C; //0x72D8;
 }
 
 // Create Sorted NID List
@@ -334,6 +337,12 @@ static void NidSortTable(NidResolverLib *table, unsigned int size)
 		// Insert into Sorted List
 		NidInsertSort(table[i].nidtable, table[i].nidcount, &NidCompare);
 	}
+}
+
+void resolve_syscon_driver(SceModule2 *syscon)
+{
+	if(syscon != NULL)
+	    missing_sceSyscon_driver_entries[0].fp = (syscon->text_addr + 0x00002D08);
 }
 
 // Setup NID Resolver in sceLoaderCore

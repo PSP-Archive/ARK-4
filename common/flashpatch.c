@@ -15,8 +15,11 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
+#include <macros.h>
 #include "flashpatch.h"
 #include "functions.h"
+
+extern ARKConfig* ark_config;
 
 // kermit_peripheral's sub_000007CC clone, called by loadexec + 0x0000299C with a0=8 (was a0=7 for fw <210)
 // Returns 0 on success
@@ -36,15 +39,6 @@ u64 kermit_flash_load(int cmd)
 	return resp;
 }
 
-int flash_load()
-{
-	int ret = kermit_flash_load(KERMIT_CMD_ERROR_EXIT);
-
-	// Wait for flash to load
-	k_tbl->KernelDelayThread(10000);
-
-	return ret;
-}
 
 int flashLoadPatch(int cmd)
 {
@@ -70,6 +64,9 @@ int flashLoadPatch(int cmd)
 
 int patchFlash0Archive()
 {
+
+    if (ark_config==NULL) return 0;
+    
 	int fd;
 
 	// Base Address
@@ -93,9 +90,9 @@ int patchFlash0Archive()
 	}
 	*/
 
-	char path[SAVE_PATH_SIZE];
+	char path[ARK_PATH_SIZE];
 	strcpy(path, ark_config->arkpath);
-	strcat(path, "FLASH0.ARK");
+	strcat(path, FLASH0_ARK);
 
 	fd = k_tbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
 
@@ -180,4 +177,152 @@ int patchFlash0Archive()
 	
 	// Return Number of Injected Files
 	return linked;
+}
+
+#ifndef PRTSTR
+#define PRTSTR11(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11) g_tbl->prtstr(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11)
+#define PRTSTR10(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10) PRTSTR11(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, 0)
+#define PRTSTR9(text, x1, x2, x3, x4, x5, x6, x7, x8, x9) PRTSTR10(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, 0)
+#define PRTSTR8(text, x1, x2, x3, x4, x5, x6, x7, x8) PRTSTR9(text, x1, x2, x3, x4, x5, x6, x7, x8, 0)
+#define PRTSTR7(text, x1, x2, x3, x4, x5, x6, x7) PRTSTR8(text, x1, x2, x3, x4, x5, x6, x7, 0)
+#define PRTSTR6(text, x1, x2, x3, x4, x5, x6) PRTSTR7(text, x1, x2, x3, x4, x5, x6, 0)
+#define PRTSTR5(text, x1, x2, x3, x4, x5) PRTSTR6(text, x1, x2, x3, x4, x5, 0)
+#define PRTSTR4(text, x1, x2, x3, x4) PRTSTR5(text, x1, x2, x3, x4, 0)
+#define PRTSTR3(text, x1, x2, x3) PRTSTR4(text, x1, x2, x3, 0)
+#define PRTSTR2(text, x1, x2) PRTSTR3(text, x1, x2, 0)
+#define PRTSTR1(text, x1) PRTSTR2(text, x1, 0)
+#define PRTSTR(text) PRTSTR1(text, 0)
+#endif
+
+void open_flash(){
+    while(k_tbl->IoUnassign("flash0:") < 0) {
+		k_tbl->KernelDelayThread(500000);
+	}
+	while (k_tbl->IoAssign("flash0:", "lflash0:0,0", "flashfat0:", 0, NULL, 0)<0){
+	    k_tbl->KernelDelayThread(500000);
+	}
+	/*
+	while(k_tbl->IoUnassign("flash1:") < 0) {
+		k_tbl->KernelDelayThread(500000);
+	}
+	while (k_tbl->IoAssign("flash1:", "lflash0:0,1", "flashfat1:", 0, NULL, 0)<0){
+	    k_tbl->KernelDelayThread(500000);
+	}
+	*/
+}
+
+void close_flash(){
+    /*
+    int (*IoSync)(const char *, unsigned int) = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xAB96437F);
+    IoSync("flashfat0:", 0);
+    IoSync("msfat0:", 0);
+    while(k_tbl->IoUnassign("flash0:") < 0) {
+		k_tbl->KernelDelayThread(500000);
+	}
+	while (k_tbl->IoAssign("flash0:", "lflash0:0,0", "flashfat0:", 1, NULL, 0)<0){
+	    k_tbl->KernelDelayThread(500000);
+	}
+	while(k_tbl->IoUnassign("flash1:") < 0) {
+		k_tbl->KernelDelayThread(500000);
+	}
+	while (k_tbl->IoAssign("flash1:", "lflash0:0,1", "flashfat1:", 1, NULL, 0)<0){
+	    k_tbl->KernelDelayThread(500000);
+	}
+	*/
+}
+
+void extractFlash0Archive(){
+
+    if (ark_config==NULL) return;
+
+    char* dest_path = "flash0:/";
+    unsigned char buf[0x10000];
+    int bufsize = sizeof(buf);
+    int path_len = strlen(dest_path);
+    static char archive[ARK_PATH_SIZE];
+    static char filepath[ARK_PATH_SIZE];
+    static char filename[ARK_PATH_SIZE];
+    strcpy(filepath, dest_path);
+    strcpy(archive, ark_config->arkpath);
+    strcat(archive, FLASH0_ARK);
+
+    PRTSTR1("Extracting %s", archive);
+    
+    int fdr = k_tbl->KernelIOOpen(archive, PSP_O_RDONLY, 0777);
+    
+    if (fdr>=0){
+        open_flash();
+        int filecount;
+        k_tbl->KernelIORead(fdr, &filecount, sizeof(filecount));
+        PRTSTR1("Extracting %d files", filecount);
+        for (int i=0; i<filecount; i++){
+            filepath[path_len] = '\0';
+            int filesize;
+            k_tbl->KernelIORead(fdr, &filesize, sizeof(filesize));
+
+            char namelen;
+            k_tbl->KernelIORead(fdr, &namelen, sizeof(namelen));
+
+            k_tbl->KernelIORead(fdr, filename, namelen);
+            filename[namelen] = '\0';
+            
+            if (strstr(filename, "psvbt")!=NULL // PS Vita btcnf replacement, not used on PSP
+                    || strstr(filename, "660")!=NULL // PSP 6.60 modules are used on Vita for better compatibility, not needed on PSP
+                    || strcmp(filename, "/fake.cso")==0){ // fake.cso used on Vita to simulate UMD drive
+                k_tbl->IoLseek(fdr, filesize, 1); // skip file
+            }
+            else{
+                strcat(filepath, (filename[0]=='/')?filename+1:filename);
+                PRTSTR1("Extracting file %s", filepath);
+                int fdw = k_tbl->KernelIOOpen(filepath, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+                if (fdw < 0){
+                    PRTSTR("ERROR: could not open file for writing");
+                    k_tbl->KernelIOClose(fdr);
+                    while(1){};
+                    return;
+                }
+                while (filesize>0){
+                    int read = k_tbl->KernelIORead(fdr, buf, (filesize>bufsize)?bufsize:filesize);
+                    k_tbl->KernelIOWrite(fdw, buf, read);
+                    filesize -= read;
+                }
+                k_tbl->KernelIOClose(fdw);
+            }
+        }
+        k_tbl->KernelIOClose(fdr);
+        k_tbl->KernelIORemove(archive);
+        close_flash();
+    }
+    else{
+        PRTSTR("Nothing to be done");
+    }
+    PRTSTR("Done");
+    k_tbl->KernelExitThread(0);
+    //doBreakpoint();
+}
+
+void flashPatch(){
+	if (IS_PSP(ark_config->exec_mode)){ // on PSP, extract FLASH0.ARK into flash0
+	    SceUID kthreadID = k_tbl->KernelCreateThread( "arkflasher", (void*)KERNELIFY(&extractFlash0Archive), 25, 0x12000, 0, NULL);
+	    if (kthreadID >= 0){
+		    k_tbl->KernelStartThread(kthreadID, 0, NULL);
+		    k_tbl->waitThreadEnd(kthreadID, NULL);
+		    k_tbl->KernelDeleteThread(kthreadID);
+	    }
+    }
+    else{ // Patching flash0 on Vita
+	    // Redirect KERMIT_CMD_ERROR_EXIT loadFlash function
+	    u32 knownnids[2] = { 0x3943440D, 0x0648E1A3 /* 3.3X */ };
+	    u32 swaddress = 0;
+	    int i;
+	    for (i = 0; i < 2; i++){
+		    swaddress = findFirstJALForFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", knownnids[i]);
+		    if (swaddress != 0)
+			    break;
+	    }
+	    if (swaddress){
+	        _sw(JUMP(flashLoadPatch), swaddress);
+	        _sw(NOP, swaddress+4);
+	    }
+	}
 }

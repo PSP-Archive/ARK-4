@@ -30,57 +30,36 @@
 #include "exception.h"
 #include "ansi_c_functions.h"
 #include "vitapops.h"
+#include "libs/graphics/graphics.h"
 
 PSP_MODULE_INFO("SystemControl", 0x3007, 1, 0);
 
-void UnprotectExtraMemory()
-{
-	if (IS_VITA_POPS)
-		return;
-
-	u32 *prot = (u32 *)0xBC000040;
-
-	int i;
-	for (i = 0; i < 0x10; i++)
-		prot[i] = 0xFFFFFFFF;
-}
-
-void protectMemory(){
-	if (IS_VITA_POPS){
-		sceKernelAllocPartitionMemory(6, "POPS VRAM CONFIG", 2, 0x1B0, (void *)0x09FE0000);
-		sceKernelAllocPartitionMemory(6, "POPS VRAM", 2, 0x3C0000, (void *)0x090C0000);
-	}
-}
+static ARKConfig _ark_conf;
+ARKConfig* ark_config = &_ark_conf;
 
 // Boot Time Entry Point
-int module_bootstart(SceSize args, void * argp)
+int module_start(SceSize args, void * argp)
 {
 
-
-	setIsVitaPops((int)(IS_VITA_POPS));
-
-	UnprotectExtraMemory();
-	protectMemory();
-
 #ifdef DEBUG
-	colorDebug(0xFF);
-
-	char path[SAVE_PATH_SIZE];
-	memset(path, 0, SAVE_PATH_SIZE);
-	strcpy(path, SAVEPATH);
-	strcat(path, "LOG.TXT");
-	
-	printkInit(path);
-	printk("systemctrl started: compiled at %s %s\r\n", __DATE__, __TIME__);
+	printkInit(NULL);
+	printk("ARK SystemControl started.\r\n");
 #endif
 
+    memcpy(ark_config, ark_conf_backup, sizeof(ARKConfig)); // copy configuration from user ram
+
+	setIsVitaPops((int)(IS_VITA_POPS(ark_config->exec_mode)));
+
+	if (IS_VITA(ark_config->exec_mode)) handleVitaMemory();
+	
 	// Apply Module Patches
 	patchSystemMemoryManager();
-	patchLoaderCore();
+	SceModule2* loadcore = patchLoaderCore();
+	setupNidResolver(loadcore->text_addr);
 	patchModuleManager();
 	patchInterruptMan();
 	patchMemlmd();
-	patchFileManager();
+	if (IS_VITA(ark_config->exec_mode)) patchFileManager();
 	
 	// Backup Reboot Buffer (including configuration)
 	backupRebootBuffer();
@@ -88,23 +67,13 @@ int module_bootstart(SceSize args, void * argp)
 	// Initialize Module Start Patching
 	syspatchInit();
 	
-	// Initialize Malloc
-	oe_mallocinit();
-	
 	// Flush Cache
 	flushCache();
 	
-	// Register Exception Handler
-	// registerExceptionHandler(NULL, NULL);
+	// Register Default Exception Handler
+	registerExceptionHandler(NULL, NULL);
 	
 	// Return Success
 	return 0;
-}
-
-// Run Time Entry Point
-int module_start(SceSize args, void * argp)
-{
-	// Simply there to ensure our Entry Point gets called...
-	return module_bootstart(args, argp);
 }
 

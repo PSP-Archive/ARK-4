@@ -34,6 +34,7 @@
 #include "loadercore.h"
 #include "cryptography.h"
 #include "rebootconfig.h"
+#include "graphics.h"
 
 // init.prx Text Address
 unsigned int sceInitTextAddr = 0;
@@ -185,26 +186,36 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
 		if(result >= 0) return result;
 	}
 	
+	/*
 	// Plugins not yet loaded
 	if(!pluginLoaded)
 	{
 		// sceMediaSync not yet loaded... too early to load plugins.
-		if(sceKernelFindModuleByName("sceMediaSync") == NULL)
+		if(sceKernelFindModuleByName("sceMediaSync") != NULL)
 		{
-			goto out;
+			// Load Plugins
+		    LoadPlugins();
+		    
+		    // Remember it
+		    pluginLoaded = 1;
 		}
 
-		// Load Plugins
-		LoadPlugins();
-		
-		// Remember it
-		pluginLoaded = 1;
 	}
+	*/
 
-out:
 	// Passthrough
 	err = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
+    /*
+    if (DisplaySetFrameBuf != NULL){
+        PRTSTR2("Module %s started with code %p", mod->modname, err);
+        if (err<0){
+            PRTSTR1("ERROR loading module: %p", *modstatus);
+            //while(1){};
+        }
+    }
+    */
 
+/*
 #ifdef DEBUG
 	// Log module error message
 	printk("mod: 0x%08X, modname: %s, modid: 0x%08X, modstatus: 0x%08X, ret: 0x%08X\n",
@@ -232,6 +243,7 @@ out:
 		}
 	}
 #endif
+*/
 
 	return err;
 }
@@ -257,72 +269,134 @@ int patch_sceKernelStartModule_in_bootstart(int (* bootstart)(SceSize, void *), 
 }
 
 // Patch Loader Core Module
-void patchLoaderCore(void)
+SceModule2* patchLoaderCore(void)
 {
 
 	// Find Module
-	SceModule2 * mod = (SceModule2 *)sceKernelFindModuleByName("sceLoaderCore");
+	SceModule2* mod = (SceModule2 *)sceKernelFindModuleByName("sceLoaderCore");
 	
 	// Fetch Text Address
 	u32 addr = mod->text_addr;
 	u32 topaddr = mod->text_addr+mod->text_size;
 	
-	// override the checkExec reference in the module globals
-	u32 checkExec = sctrlHENFindFunction("sceLoaderCore", "LoadCoreForKernel", 0xD3353EC4);
-	u32 ref = findRefInGlobals("LoadCoreForKernel", checkExec, checkExec);
-	_sw((unsigned int)KernelCheckExecFile, ref);
+	if (IS_PSP(ark_config->exec_mode)){
+	    //patch sceKernelCheckExecFile (sub_0C10)
+	    SceModule2 * loadcore = mod;
+        _sw((unsigned int)KernelCheckExecFile, loadcore->text_addr + 0x00007B5C);
+        _sw(JAL(KernelCheckExecFile), loadcore->text_addr + 0x000011F0);
+        _sw(JAL(KernelCheckExecFile), loadcore->text_addr + 0x00001240);
+        _sw(JAL(KernelCheckExecFile), loadcore->text_addr + 0x000048B4);
 
-	// Fix memlmd_EF73E85B Calls that we broke intentionally in Reboot Buffer
-	// Not doing this will keep them pointing into Reboot Buffer... which gets unloaded...
-	// It would crash...
-	typedef struct loadCoreBackup{
-		u32 data;
-		u32* addrs[2];
-	}loadCoreBackup;
-	
-	loadCoreBackup* backup = (loadCoreBackup*)0x08D20000;
-	*(backup->addrs[0]) = backup->data;
-	*(backup->addrs[1]) = backup->data;
-	
-	// start the dynamic patching
-	for (; addr<topaddr; addr+=4){
-		u32 data = _lw(addr);
-		
-		if (data == JAL(checkExec)){
-			// Hook sceKernelCheckExecFile
-			_sw(JAL(KernelCheckExecFile), addr);
-		}
-		else if (data == 0x02E0F809 && _lw(addr+4) == 0x24040004){
-			// Hook sceInit StartModule Call
-			_sw(JAL(patch_sceKernelStartModule_in_bootstart), addr);
-			// Move Real Bootstart into Argument #1
-			_sw(0x02E02021, addr+4);
-		}
-		else{
-			switch (data){
-			case 0x30ABFFFF:	ProbeExec1 = (void *)addr-0x100;	break;		// Executable Check Function #1
-			case 0x01E63823:	ProbeExec2 = (void *)addr-0x78;		break;		// Executable Check Function #2
-			case 0x30894000: 	_sw(0x3C090000, addr);				break;		// Allow Syscalls
-			case 0x14A0FFCB:	_sh(0x1000, addr + 2);				break;		// Remove POPS Check
-			case 0x14C0FFDF:	_sw(NOP, addr);						break;		// Remove Invalid PRX Type (0x80020148) Check
-			}
-		}
+        //6.35 relocation fix for rt7
+        //fake relocation type 7 to be treated like 0
+        //patches handler table so jr $t5 returns properly on type 7 ;)
+        u32 faketype = 0;
+        u32 origtype = 7;
+        _sw(_lw(loadcore->text_addr + 0x00007F94 + faketype * 4), loadcore->text_addr + 0x00007F94 + origtype * 4);
+
+        //patch ProbeExec1 (sub_001AC)
+        ProbeExec1 = (void*)loadcore->text_addr + 0x00006468; //dword_6248
+        _sw(JAL(_ProbeExec1), loadcore->text_addr + 0x000044B0);
+
+        //patch ProbeExec2 (sub_004E8)
+        ProbeExec2 = (void*)loadcore->text_addr + 0x000063C0; //dword_6364
+        _sw(JAL(_ProbeExec2), loadcore->text_addr + 0x000046B0);
+        _sw(JAL(_ProbeExec2), loadcore->text_addr + 0x000066D4);
+
+        //enable syscall exports (?)
+        _sw(0x3C090000, loadcore->text_addr + 0x00003D70);
+
+        //undo check #1
+        _sw(0, loadcore->text_addr + 0x000073A4); //bnez
+
+        //undo check #2
+        _sw(0, loadcore->text_addr + 0x00005900); //beqzl
+        _sw(0, loadcore->text_addr + 0x00005900 + 4); //lui (likely branch instruction)
+
+        //undo check #3
+        _sw(0, loadcore->text_addr + 0x00005A10); //beqzl
+        _sw(0, loadcore->text_addr + 0x00005A10 + 4); //lui (likely branch instruction)
+
+        // pops version check
+        _sw(0x1000FFCB, loadcore->text_addr + 0x00006BA4); // b loc_000075B4
+
+        //undo rebootex patches
+        void * memlmd_323366CA = (void*)FindFunction("sceMemlmd", "memlmd", 0x6192F715);
+        _sw(JAL(memlmd_323366CA), loadcore->text_addr + 0x00005994);
+        _sw(JAL(memlmd_323366CA), loadcore->text_addr + 0x000059C4);
+        _sw(JAL(memlmd_323366CA), loadcore->text_addr + 0x00005A5C);
+        void * memlmd_7CF1CD3E = (void*)FindFunction("sceMemlmd", "memlmd", 0xEF73E85B);
+        _sw(JAL(memlmd_7CF1CD3E), loadcore->text_addr + 0x00003E70);
+        _sw(JAL(memlmd_7CF1CD3E), loadcore->text_addr + 0x00005970);
 	}
 	
-	// Patch Relocation Type 7 to 0 (this makes more homebrews load)
-	addr = ref; // addr = mod->text_addr would also work, we generally just want it to be pointing at the code
-	while (strcmp((char*)addr, "sceSystemModule")) addr++; // scan for this string, reloc_type comes a few fixed bytes after
-	_sw(_lw(addr+0x7C), addr+0x98);
-	
-	// Hook Executable Checks
-	for (addr=mod->text_addr; addr<topaddr; addr+=4){
-		if (_lw(addr) == JAL(ProbeExec1))
-			_sw(JAL(_ProbeExec1), addr);
-		else if (_lw(addr) == JAL(ProbeExec2))
-			_sw (JAL(_ProbeExec2), addr);
+	else{
+        // restore rebootex pointers to original
+        RebootexFunctions* rex_funcs = REBOOTEX_FUNCTIONS;
+        u32 rebootex_decrypt_call = JAL(rex_funcs->rebootex_decrypt);
+        u32 rebootex_checkexec_call = JAL(rex_funcs->rebootex_checkexec);
+
+        // override the checkExec reference in the module globals
+	    u32 checkExec = FindFunction("sceLoaderCore", "LoadCoreForKernel", 0xD3353EC4);
+	    u32 ref = findRefInGlobals("LoadCoreForKernel", checkExec, checkExec);
+	    _sw((unsigned int)KernelCheckExecFile, ref);
+	    // Flush Cache
+	    flushCache();
+	    
+	    // start the dynamic patching
+	    for (; addr<topaddr; addr+=4){
+		    u32 data = _lw(addr);
+		    if (data == JAL(checkExec)){
+			    // Hook sceKernelCheckExecFile
+			    _sw(JAL(KernelCheckExecFile), addr);
+		    }
+		    else if (data == rebootex_decrypt_call){ // Not doing this will keep them pointing into Reboot Buffer... which gets unloaded...
+		        _sw(JAL(rex_funcs->orig_decrypt), addr); // Fix memlmd_EF73E85B Calls that we broke intentionally in Reboot Buffer
+		    }
+		    else if (data == rebootex_checkexec_call){
+		        _sw(JAL(rex_funcs->orig_checkexec), addr); // Fix memlmd_6192F715 Calls that we broke intentionally in Reboot Buffer
+		    }
+		    else if (data == 0x02E0F809 && _lw(addr+4) == 0x24040004){
+			    // Hook sceInit StartModule Call
+			    _sw(JAL(patch_sceKernelStartModule_in_bootstart), addr);
+			    // Move Real Bootstart into Argument #1
+			    _sw(0x02E02021, addr+4);
+		    }
+		    else{
+			    switch (data){
+			    case 0x30ABFFFF:	ProbeExec1 = (void *)addr-0x100; 	break;		// Executable Check Function #1
+			    case 0x01E63823:	ProbeExec2 = (void *)addr-0x78;		break;		// Executable Check Function #2
+			    case 0x30894000: 	_sw(0x3C090000, addr);				break;		// Allow Syscalls
+			    case 0x14A0FFCB:	_sh(0x1000, addr + 2);				break;		// Remove POPS Check
+			    case 0x14C0FFDF:	_sw(NOP, addr);						break;		// Remove Invalid PRX Type (0x80020148) Check
+			    case 0x5040FF98:    _sw(NOP, addr); _sw(NOP, addr+4);   break;      // Remove beqzl
+			    case 0x5040FF54:    _sw(NOP, addr); _sw(NOP, addr+4);   break;      // Remove beqzl
+			    }
+		    }
+	    }
+	    // Flush Cache
+	    flushCache();
+	    
+	    // Patch Relocation Type 7 to 0 (this makes more homebrews load)
+	    addr = ref; // addr = mod->text_addr would also work, we generally just want it to be pointing at the code
+	    while (strcmp((char*)addr, "sceSystemModule")) addr++; // scan for this string, reloc_type comes a few fixed bytes after
+	    _sw(_lw(addr+0x7C), addr+0x98);
+	    
+	    // Flush Cache
+	    flushCache();
+	    
+	    // Hook Executable Checks
+	    for (addr=mod->text_addr; addr<topaddr; addr+=4){
+		    if (_lw(addr) == JAL(ProbeExec1))
+			    _sw(JAL(_ProbeExec1), addr);
+		    else if (_lw(addr) == JAL(ProbeExec2))
+			    _sw (JAL(_ProbeExec2), addr);
+	    }
 	}
 	
-	// Setup NID Resolver
-	setupNidResolver(mod->text_addr);
+	// Flush Cache
+	flushCache();
+	
+	return mod;
 }
 

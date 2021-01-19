@@ -18,11 +18,13 @@
 #ifndef _CRYPTOGRAPHY_H_
 #define _CRYPTOGRAPHY_H_
 
+#include <module2.h>
+
 // Patch Memlmd Cryptography
-void patchMemlmd(void);
+SceModule2* patchMemlmd(void);
 
 // Patch MesgLed Cryptography
-void patchMesgLed(unsigned int text_addr);
+void patchMesgLed(SceModule2* mod);
 
 // Get PSID from OpenPSID driver
 int getPsid(unsigned char psid[16]);

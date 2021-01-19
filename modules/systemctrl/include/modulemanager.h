@@ -33,7 +33,7 @@ extern char ** kernel_init_filename;
 extern int * kernel_init_application_type;
 
 // sceModuleManager Patch
-void patchModuleManager(void);
+SceModule2* patchModuleManager(void);
 
 // Executable Patch #1
 int PatchExec1(unsigned char * buffer, int * check);

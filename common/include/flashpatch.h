@@ -24,6 +24,8 @@
 #include "functions.h"
 #include "module2.h"
 
+void setFlashPatchArkConfig(ARKConfig* conf);
+
 // Vita Flash0 patch
 
 int patchFlash0Archive();
@@ -32,5 +34,6 @@ int patchFlash0Archive();
 u64 kermit_flash_load(int cmd);
 int flash_load();
 int flashLoadPatch(int cmd);
+void flashPatch();
 
 #endif

@@ -1,10 +1,10 @@
 TARGET = galaxy
 C_OBJS = main.o
-OBJS = $(C_OBJS) imports.o $(PROVITA)/common/functions.o $(PROVITA)/common/flashpatch.o
+OBJS = $(C_OBJS) imports.o $(PROVITA)/common/functions.o
 all: $(TARGET).prx
-INCDIR = $(PSPSDK)/include $(PROVITA)/common/include $(PROVITA)/kxploit/
+INCDIR = $(PSPSDK)/include $(PROVITA)/common/include
 CFLAGS = -Os -G0 -Wall
-LDFLAGS =  -nostartfiles -L. -L$(PROVITA)/libs -L$(PROVITA)/libs/colodebugger
+LDFLAGS =  -nostartfiles -L. -L$(PROVITA)/libs
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)

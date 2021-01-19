@@ -2,7 +2,6 @@
 PSP_BEGIN_EXPORTS
 
 PSP_EXPORT_START(syslib, 0, 0x8000)
-PSP_EXPORT_FUNC_HASH(module_bootstart)
 PSP_EXPORT_FUNC_HASH(module_start)
 PSP_EXPORT_VAR_HASH(module_info)
 PSP_EXPORT_END
@@ -39,7 +38,7 @@ PSP_EXPORT_FUNC(printk)
 PSP_EXPORT_FUNC(printkCached)
 PSP_EXPORT_FUNC(printkSync)
 PSP_EXPORT_FUNC(sctrlGetInitPARAM)
-PSP_EXPORT_FUNC(sctrlHENIsVitaPops)
+PSP_EXPORT_FUNC(sctrlHENGetArkConfig)
 PSP_EXPORT_FUNC(sctrlHENSetPSXVramHandler)
 PSP_EXPORT_FUNC(sctrlHENEnableCustomPeopsConfig)
 PSP_EXPORT_FUNC(sctrlHENDisableCustomPeopsConfig)
@@ -96,6 +95,7 @@ PSP_EXPORT_FUNC(sctrlGetThreadUIDByName)
 PSP_EXPORT_FUNC(sctrlGetThreadContextByUID)
 PSP_EXPORT_FUNC(sctrlGetThreadContextByName)
 PSP_EXPORT_FUNC(sctrlGetInitPARAM)
+PSP_EXPORT_FUNC(sctrlHENGetArkConfig)
 PSP_EXPORT_FUNC(sctrlHENSetPSXVramHandler)
 PSP_EXPORT_END
 
@@ -116,24 +116,6 @@ PSP_EXPORT_END
 PSP_EXPORT_START(SystemCtrlPrivate, 0, 0x0001)
 PSP_EXPORT_FUNC(msstorCacheStat)
 PSP_EXPORT_FUNC(msstorCacheDisable)
-PSP_EXPORT_END
-
-PSP_EXPORT_START(sceSyscon_driver, 0x0011, 0x0001)
-PSP_EXPORT_FUNC_NID(sctrlKernelDummyFunction, 0x48448373)
-PSP_EXPORT_FUNC_NID(sctrlKernelDummyFunction, 0x8CBC7987)
-PSP_EXPORT_FUNC_NID(sctrlKernelDummyFunction, 0x9BC5E33B)
-PSP_EXPORT_END
-
-PSP_EXPORT_START(sceLFatFs_driver, 0x0011, 0x0001)
-PSP_EXPORT_FUNC_NID(sctrlKernelDummyFunction, 0x933F6E29)
-PSP_EXPORT_END
-
-PSP_EXPORT_START(sceClockgen_driver, 0x0011, 0x0001)
-PSP_EXPORT_FUNC_NID(sctrlKernelDummyFunction, 0xDAB6E612)
-PSP_EXPORT_END
-
-PSP_EXPORT_START(sceCodec_driver, 0x0011, 0x0001)
-PSP_EXPORT_FUNC_NID(sctrlKernelDummyFunction, 0x376399B6)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(sceJumper_lib, 0, 0x4001)

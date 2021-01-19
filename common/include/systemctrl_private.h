@@ -19,11 +19,16 @@
 #define SYSTEMCTRL_PRIVATE_H
 
 #include "module2.h"
+#include "globals.h"
 
 /*
  * This File contains the required headers for exported, but internally used
  * only functions of systemctrl.prx.
  */
+
+extern ARKConfig* ark_config;
+
+extern int (* DisplaySetFrameBuf)(void*, int, int, int);
 
 // Initialize Kernel Heap
 int oe_mallocinit(void);
@@ -40,7 +45,6 @@ int oe_mallocterminate(void);
 // Get PSID hash
 int sctrlKernelGetPSIDHash(unsigned char psidHash[16]);
 
-#ifdef DEBUG
 // Initialize printk
 int printkInit(const char* filename);
 
@@ -67,16 +71,5 @@ void installMemoryJALTrace(unsigned int start, unsigned int size);
 
 // Install Whole-Module JAL Trace (NOT STABLE! DON'T DO IT IF NOT DESPERATE!)
 void installModuleJALTrace(SceModule2 * module);
-#else
-#define printkInit(...)
-#define printk(...)
-#define printkCached(...)
-#define printkSync()
-#define printkLock()
-#define printkUnlock()
-#define installJALTrace(...)
-#define installMemoryJALTrace(...)
-#define installModuleJALTrace(...)
-#endif
 
 #endif

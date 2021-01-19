@@ -29,8 +29,8 @@
 #include <systemctrl_se.h>
 #include <string.h>
 #include <functions.h>
-#include "ansi_c_functions.h"
 #include "modules/rebootbuffer/payload.h"
+#include "libs/graphics/graphics.h"
 #include "kxploit.h"
 
 #define MAX_SAVE_SIZE 128

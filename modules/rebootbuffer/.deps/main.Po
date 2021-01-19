@@ -1,4 +1,5 @@
-main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
+main.o .deps/main.Po: main.c /home/aaron/projects/ark/common/include/rebootconfig.h \
+ /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/pspkerneltypes.h \
  /usr/local/pspdev/psp/sdk/include/psptypes.h \
  /usr/local/pspdev/psp/sdk/include/pspmodulemgr.h \
@@ -6,9 +7,6 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/pspthreadman.h \
  /usr/local/pspdev/psp/sdk/include/pspdebug.h \
  /home/aaron/projects/ark/common/include/macros.h \
- /home/aaron/projects/ark/common/include/rebootconfig.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/kermit.h \
  /home/aaron/projects/ark/common/include/systemctrl_se.h \
  /home/aaron/projects/ark/common/include/functions.h \
  /home/aaron/projects/ark/common/include/sdk.h \
@@ -52,7 +50,6 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/pspimpose_driver.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
  /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/rc4.h \
- /home/aaron/projects/ark/common/include/psid.h \
- /home/aaron/projects/ark/common/include/ansi_c_functions.h \
- rebootbuffer.h /home/aaron/projects/ark/common/include/globals.h
+ /home/aaron/projects/ark/common/include/globals.h \
+ /home/aaron/projects/ark/common/include/kermit.h \
+ /home/aaron/projects/ark/common/include/ansi_c_functions.h

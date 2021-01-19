@@ -15,30 +15,24 @@
 #include "globals.h"
 #include "functions.h"
 #include "graphics.h"
+#include "ya2d_main.h"
 
 PSP_MODULE_INFO("ARK Loader", PSP_MODULE_USER, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
 PSP_HEAP_SIZE_KB(4096);
 
-#define ARK_LOADADDR 0x08D20000
+#define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
-#define ARK_BIN "ARK.BIN"
-#define ARK_MENU "VBOOT.PBP"
-#define INSTALL_PATH "ms0:/PSP/SAVEDATA/ARK_01234/"
-#define LOADPATH (INSTALL_PATH ARK_BIN)
-
-// ARK's linkless loader must be able to find this string
-//static const char* loadpath = INSTALL_PATH ARK_BIN;
+#define EXPLOIT_ID "ARK_EBOOT_LOADER"
 
 // ARK.BIN requires these imports
-int SysMemUserForUser_91DE343C(void* unk);
+//int SysMemUserForUser_91DE343C(void* unk);
 int sceKernelPowerLock(unsigned int, unsigned int);
 
 volatile ARKConfig config = {
-    .arkpath = INSTALL_PATH,
-    .menupath = (INSTALL_PATH ARK_MENU),
-    .exec_mode = REAL_PSP,
-    .exploit_id = "PSP_LIVE",
+    .arkpath = {0}, // We can use argv[0] (eboot's path)
+    .exec_mode = DEV_UNK, // let stage 2 figure this one out
+    .exploit_id = EXPLOIT_ID,
 };
 volatile FunctionTable funcs = {
     .config = &config,
@@ -47,8 +41,10 @@ volatile FunctionTable funcs = {
 	.IoRead = &sceIoRead,
 	.IoWrite = &sceIoClose,
 	.IoClose = &sceIoWrite,
+	.IoRemove = &sceIoRemove,
     // System
 	.KernelLibcTime = &sceKernelLibcTime,
+	.KernelLibcClock = &sceKernelLibcClock,
 	.KernelPowerLock = &sceKernelPowerLock,
 	.KernelDcacheWritebackAll = &sceKernelDcacheWritebackAll,
 	.KernelIcacheInvalidateAll = &sceKernelIcacheInvalidateAll,
@@ -58,7 +54,11 @@ volatile FunctionTable funcs = {
 	.KernelDelayThread = &sceKernelDelayThread,
 	.KernelStartThread = &sceKernelStartThread,
 	.KernelExitThread = &sceKernelExitThread,
+	.KernelExitDeleteThread = &sceKernelExitDeleteThread,
 	.KernelWaitThreadEnd = &sceKernelWaitThreadEnd,
+	.KernelCreateVpl = &sceKernelCreateVpl,
+    .KernelTryAllocateVpl = &sceKernelTryAllocateVpl,
+    .KernelFreeVpl = &sceKernelFreeVpl,
 	.KernelDeleteVpl = &sceKernelDeleteVpl,
 	.KernelDeleteFpl = &sceKernelDeleteFpl,
     // Modules
@@ -67,7 +67,7 @@ volatile FunctionTable funcs = {
 	.UtilityLoadNetModule = &sceUtilityLoadNetModule,
 	.UtilityUnloadNetModule = &sceUtilityUnloadNetModule,
     // Sysmem
-	.SysMemUserForUser_91DE343C = &SysMemUserForUser_91DE343C,
+	//.SysMemUserForUser_91DE343C = &SysMemUserForUser_91DE343C,
 	.KernelFreePartitionMemory = &sceKernelFreePartitionMemory,
     // Intr
 	.KernelCpuSuspendIntr = &sceKernelCpuSuspendIntr,
@@ -78,21 +78,63 @@ volatile FunctionTable funcs = {
 	.UtilitySavedataInitStart = &sceUtilitySavedataInitStart,
 	.UtilitySavedataUpdate = &sceUtilitySavedataUpdate,
 	.UtilitySavedataShutdownStart = &sceUtilitySavedataShutdownStart,
+	.KernelAllocPartitionMemory = &sceKernelAllocPartitionMemory,
 };
 
-int main(){
+int exit_callback(int arg1, int arg2, void *common) {
+    sceKernelExitGame();
+    return 0;
+}
+ 
+int CallbackThread(SceSize args, void *argp) {
+    int cbid;
 
-    initScreen(funcs.DisplaySetFrameBuf);
+    cbid = sceKernelCreateCallback("Exit Callback", exit_callback, NULL);
+    sceKernelRegisterExitCallback(cbid);
+
+    sceKernelSleepThreadCB();
+
+    return 0;
+}
+ 
+int SetupCallbacks(void) {
+    int thid = 0;
+    thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, 0, 0);
+    if(thid >= 0) {
+        sceKernelStartThread(thid, 0, 0);
+    }
+    return thid;
+}
+
+int main(int argc, char** argv){
+
+    SetupCallbacks();
+
+    ya2d_init();
+
+    initScreen(NULL);
     
     PRTSTR("Stage 1 Starting");
-	SceUID fd = sceIoOpen(LOADPATH, PSP_O_RDONLY, 0);
+    
+    int len = strlen(argv[0]) - sizeof("EBOOT.PBP") + 1;
+    strncpy(config.arkpath, argv[0], len);
+
+    char loadpath[ARK_PATH_SIZE];
+    strcpy(loadpath, config.arkpath);
+    strcat(loadpath, ARK_BIN);
+    
+    PRTSTR1("Loading Stage 2 at: %s", loadpath);
+    
+	SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
 	sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
 	sceIoClose(fd);
 	sceKernelDcacheWritebackAll();
 
-	PRTSTR("Executing ARK");
+	PRTSTR("Executing ARK Stage 2");
 	void (* hEntryPoint)(ARKConfig*, FunctionTable*) = (void*)ARK_LOADADDR;
 	hEntryPoint(&config, &funcs);
+	
+	ya2d_shutdown();
 	
 	return 0;
 }

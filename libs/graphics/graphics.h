@@ -48,7 +48,7 @@ void PRTSTR11(const char* A, unsigned long B, unsigned long C, unsigned long D, 
 #define PRTSTR(text) PRTSTR1(text, 0)
 
 //init screen
-void initScreen(int (*DisplaySetFrameBuf)());
+void initScreen(int (*DisplaySetFrameBuf)(void*, int, int, int));
 
 //clear screen
 void cls();

@@ -26,6 +26,10 @@
 #include <string.h>
 #include "kxploit.h"
 
+/*
+ Kernel Exploit for PSP up to 6.60 and PS Vita up to 3.20, both PSP and PSX exploits
+*/
+
 int (* _sceSdGetLastIndex)(int a1, int a2, int a3) = (void *)NULL;
 int (* _sceKernelLibcTime)(u32 a0, u32 a1) = (void*)NULL;
 
@@ -59,7 +63,7 @@ void KernelFunction()
 	is_exploited = 1;
 }
 
-int stubScanner(){
+int stubScanner(FunctionTable* tbl){
 
 	// thread and interrupt functions
 	PRTSTR("Scanning interrupt stubs");

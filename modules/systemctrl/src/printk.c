@@ -35,10 +35,12 @@
 #include <pspdebug.h>
 #include <pspdisplay.h>
 #include <pspiofilemgr.h>
-
+#include <systemctrl_private.h>
 #include <stdarg.h>
 #include <string.h>
 #include <globals.h>
+
+#ifdef DEBUG
 
 // Initialize printk
 int printkInit(const char* filename);
@@ -303,7 +305,7 @@ exit:
 
 static char printk_buf[256];
 static const char *printk_output_fn;
-static char default_path[SAVE_PATH_SIZE] = "ms0:/PSP/SAVEDATA/";
+static char default_path[ARK_PATH_SIZE] = {0};
 
 static char printk_memory_log[1024*4] __attribute__((aligned(64)));
 static char *printk_memory_log_ptr = printk_memory_log;
@@ -334,8 +336,7 @@ static int printkOpenOutput(void)
 	int fd;
 
 	if (printk_output_fn == NULL) {
-		strcpy(default_path, ARKPATH);
-		//strcat(default_path, "VBOOT.PBP");
+		strcpy(default_path, ark_config->arkpath);
 		strcat(default_path, "LOG.TXT");
 		printk_output_fn = default_path;
 	}
@@ -427,9 +428,6 @@ int printk(char *fmt, ...)
 	int printed_len;
 	u32 k1;
 
-	if ( 0 )
-		return 0;
-
 	k1 = pspSdkSetK1(0);
 
 	if (0 == isCpuIntrEnabled()) {
@@ -507,7 +505,7 @@ void printkUnlock(void)
 
 int printkInit(const char *output)
 {
-	static char dynamic_path[SAVE_PATH_SIZE];
+	static char dynamic_path[ARK_PATH_SIZE];
 	
 	MLOCK_T *s = &lock;
 
@@ -542,3 +540,24 @@ int printkSync(void)
 
 	return 0;
 }
+
+#else
+
+int printkCached(char *fmt, ...){
+    return 0;
+}
+
+int printk(char *fmt, ...){
+    return 0;
+}
+
+int printkInit(const char *output){
+    return 0;
+}
+
+
+int printkSync(void){
+    return 0;
+}
+
+#endif

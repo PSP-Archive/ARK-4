@@ -23,6 +23,7 @@
 #include <pspiofilemgr_kernel.h>
 #include <pspthreadman_kernel.h>
 #include <psploadcore.h>
+#include <globals.h>
 #include "module2.h"
 
 #define GAME_ID_MINIMUM_BUFFER_SIZE 10
@@ -123,8 +124,8 @@ void flushCache(void);
 // Missing PSPSDK Functions
 int sceKernelQuerySystemCall(void * function);
 
-// Check if in a PSX exploit environment
-int sctrlHENIsVitaPops();
+// Get ARK's execution environment configuration
+void sctrlHENGetArkConfig(ARKConfig* conf);
 
 // Register the default VRAM handler for PSX exploit, returns the previous handler
 void* sctrlHENSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram));

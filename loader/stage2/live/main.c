@@ -17,15 +17,15 @@
 
 #include "main.h"
 #include <loadexec_patch.h>
-#include "libs/graphics/graphics.h"
 #include "flash_dump.h"
 #include "reboot.h"
 #include <functions.h>
 
-//char* savepath = (char*)0x08803000;
+#define TEST_EBOOT "ms0:/EBOOT.PBP"
+
 char* running_ark = "Running ARK-4 in ?PS? mode";
-char* test_eboot = "ms0:/EBOOT.PBP";
-char* menu_boot = "?BOOT.PBP";
+
+ARKConfig* ark_config = NULL;
 
 // Sony Reboot Buffer Loader
 int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
@@ -36,18 +36,9 @@ int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHPa
 // K.BIN entry point
 void (* kEntryPoint)() = (void*)KXPLOIT_LOADADDR;
 
-void initKxploitFile(){
-	char k_path[SAVE_PATH_SIZE+10];
-	strcpy(k_path, g_tbl->config->arkpath);
-	strcat(k_path, "K.BIN");
-	PRTSTR(k_path);
-	SceUID fd = g_tbl->IoOpen(k_path, PSP_O_RDONLY, 0);
-	PRTSTR1("Read: %d", g_tbl->IoRead(fd, (void *)KXPLOIT_LOADADDR, 0x4000));
-	g_tbl->IoClose(fd);
-	g_tbl->KernelDcacheWritebackAll();
-	PRTSTR("Init Kxploit");
-	kEntryPoint();
-}
+void autoDetectDevice(ARKConfig* config);
+void initKxploitFile();
+void kernelContentFunction(void);
 
 // Entry Point
 int exploitEntry(ARKConfig* arg0, FunctionTable* arg1) __attribute__((section(".text.startup")));
@@ -62,10 +53,10 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
 	else
 	    memcpy(g_tbl, arg1, sizeof(FunctionTable));
     
-    getArkFunctions();
+    scanArkFunctions();
 
     // copy the path of the save
-	g_tbl->config = arg0;
+	g_tbl->config = ark_config = arg0;
 
 	// make PRTSTR available for payloads
 	g_tbl->prtstr = (void *)&PRTSTR11;
@@ -74,109 +65,62 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
 	initScreen(g_tbl->DisplaySetFrameBuf);
 
 	// Output Exploit Reach Screen
-	PRTSTR("Starting");
+	if (arg0->exec_mode == DEV_UNK) autoDetectDevice(arg0);
+	running_ark[17] = (IS_PSP(arg0->exec_mode))? ' ' : 'e';
+	running_ark[20] = (IS_VITA_POPS(arg0->exec_mode))? 'X':'P';
+	PRTSTR(running_ark);
 	
 	// read kxploit file into memory and initialize it
 	initKxploitFile();
 	
-	PRTSTR("Doing kernel exploit");
-
-    char* err = NULL;	
-	if (kxf->stubScanner() == 0){
+    char* err = NULL;
+    PRTSTR("Scanning stubs for kxploit...");
+	if (kxf->stubScanner(g_tbl) == 0){
 		// Corrupt Kernel
-		if (kxf->doExploit() >= 0){
+		PRTSTR("Doing kernel exploit...");
+		if (kxf->doExploit() == 0){
 			// Flush Cache
 			g_tbl->KernelDcacheWritebackAll();
 
-			// Refresh screen (vram buffer screws it)
-			cls();
-			
 			// Output Loading Screen
-			PRTSTR("Loading");
-			
+			PRTSTR("Escalating privilages...");
 			// Trigger Kernel Permission Callback
 			kxf->executeKernel(KERNELIFY(&kernelContentFunction));
+			err = "Could not execute kernel function";
 		}
 		else{
-			err = "Exploit failed";
+			err = "Exploit failed!";
 		}
 	}
 	else{
-		err = "Scan failed";
+		err = "Scan failed!";
 	}
 	
-	PRTSTR(err);
+	PRTSTR1("ERROR: %s", err);
 	while(1){};
 
 	return 0;
 }
 
-// Kernel Permission Function
-void kernelContentFunction(void){
-	// Switch to Kernel Permission Level
-	setK1Kernel();
-	
-	kernelifyArkFunctions();
-	
-	PRTSTR("Kernel mode reached");
+void autoDetectDevice(ARKConfig* config){
+    // determine if can write eboot.pbp (not possible on PS Vita)
+	int test = g_tbl->IoOpen(TEST_EBOOT, PSP_O_CREAT|PSP_O_TRUNC|PSP_O_WRONLY, 0777);
+	g_tbl->IoWrite(test, "test", sizeof("test"));
+	g_tbl->IoClose(test);
+	int res = g_tbl->IoRemove(TEST_EBOOT);
+	config->exec_mode = (res < 0)? PS_VITA : PSP_ORIG;
+}
 
-	kxf->repairInstruction();
-
-    // determine global configuration that affects how ARK behaves
-	memcpy(ark_config, KERNELIFY(g_tbl->config), sizeof(ARKConfig));
-	
-	PRTSTR("Scanning kernel functions");
-	// get kernel functions
-	getKernelFunctions();
-	
-	#if FLASH_DUMP == 1
-	initKernelThread();
-	return;
-	#else
-	running_ark[17] = (IS_PSP)? ' ' : 'e';
-	running_ark[20] = (IS_VITA_POPS)? 'X':'P';
-	PRTSTR(running_ark);
-
-	// Find LoadExec Module
-	SceModule2 * loadexec = k_tbl->KernelFindModuleByName("sceLoadExec");
-	
-	// Find Reboot Loader Function
-	_LoadReboot = (void *)loadexec->text_addr;
-	
-	// Find LoadExec Functions
-	_KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
-	
-	// make the common loadexec patches
-	patchLoadExecCommon(loadexec, (u32)LoadReboot);
-
-	flashPatch();
-
-	// Invalidate Cache
-	k_tbl->KernelIcacheInvalidateAll();
-	k_tbl->KernelDcacheWritebackInvalidateAll();
-
-
-	// Prepare Homebrew Reboot
-	char * ebootpath = ark_config->menupath;
-	struct SceKernelLoadExecVSHParam param;
-	memset(&param, 0, sizeof(param));
-	param.size = sizeof(param);
-	param.args = strlen(ebootpath) + 1;
-	param.argp = ebootpath;
-	param.key = "game";
-
-	// Trigger Reboot
-	/*
-	void (*KernelExitGame)() = FindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F);
-	PRTSTR1("Trigger reboot at %p", KernelExitGame);
-	KernelExitGame();
-	*/
-	PRTSTR1("Running Menu at %s", ebootpath);
-	//PRTSTR1("LoadExec at %p", _KernelLoadExecVSHWithApitype);
-	//PRTSTR1("Sysmem 1: %p", _lw(0x88000000+0x0000CBB8));
-	//PRTSTR1("Sysmem 2: %p", _lw(0x88000000+0x0000CBF0));
-	_KernelLoadExecVSHWithApitype(0x141, ebootpath, KERNELIFY(&param), 0x10000);
-	#endif
+void initKxploitFile(){
+	char k_path[ARK_PATH_SIZE];
+	strcpy(k_path, g_tbl->config->arkpath);
+	strcat(k_path, K_FILE);
+	PRTSTR1("Loading Kxploit at %s", k_path);
+	SceUID fd = g_tbl->IoOpen(k_path, PSP_O_RDONLY, 0);
+	g_tbl->IoRead(fd, (void *)KXPLOIT_LOADADDR, 0x4000);
+	g_tbl->IoClose(fd);
+	g_tbl->KernelDcacheWritebackAll();
+	kEntryPoint(kxf);
 }
 
 // Fake K1 Kernel Setting
@@ -186,6 +130,72 @@ void setK1Kernel(void){
 		"nop\n"
 		"lui $k1,0x0\n"
 	);
+}
+
+// Kernel Permission Function
+void kernelContentFunction(void){
+	// Switch to Kernel Permission Level
+	setK1Kernel();
+	
+	g_tbl->prtstr = KERNELIFY(g_tbl->prtstr);
+	kxf->repairInstruction = KERNELIFY(kxf->repairInstruction);
+	
+    // move global configuration to static address in user space so that reboot and CFW modules can find it
+	if (g_tbl->config != ark_conf_backup) memcpy(ark_conf_backup, g_tbl->config, sizeof(ARKConfig));
+	
+	PRTSTR("Scanning kernel functions");
+	// get kernel functions
+	scanKernelFunctions();
+	
+	// repair damage done by kernel exploit
+	kxf->repairInstruction();
+	
+	#if FLASH_DUMP == 1
+	initKernelThread();
+	return;
+	#else
+
+    // Install flash0 files
+    PRTSTR("Installing "FLASH0_ARK);
+	flashPatch();
+	
+	// Invalidate Cache
+	k_tbl->KernelDcacheWritebackInvalidateAll();
+	k_tbl->KernelIcacheInvalidateAll();
+
+    PRTSTR("Patching loadexec");
+	// Find LoadExec Module
+	SceModule2 * loadexec = k_tbl->KernelFindModuleByName("sceLoadExec");
+	
+	// Find Reboot Loader Function
+	_LoadReboot = (void *)loadexec->text_addr;
+	
+	
+	// make the common loadexec patches
+	int k1_patches = IS_PSP(ark_conf_backup->exec_mode)? 2:3;
+	patchLoadExecCommon(loadexec, (u32)LoadReboot, k1_patches);
+	
+	// Invalidate Cache
+	k_tbl->KernelDcacheWritebackInvalidateAll();
+	k_tbl->KernelIcacheInvalidateAll();
+
+	// Prepare Homebrew Reboot
+	char menupath[ARK_PATH_SIZE];
+	strcpy(menupath, ark_conf_backup->arkpath);
+	strcat(menupath, ARK_MENU);
+	struct SceKernelLoadExecVSHParam param;
+	memset(&param, 0, sizeof(param));
+	param.size = sizeof(param);
+	param.args = strlen(menupath) + 1;
+	param.argp = menupath;
+	param.key = "game";
+
+	// Trigger Reboot
+	PRTSTR1("Running Menu at %s", menupath);
+	// Find LoadExec Functions
+	_KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
+	_KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
+	#endif
 }
 
 // Clear BSS Segment of Payload

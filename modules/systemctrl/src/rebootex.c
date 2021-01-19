@@ -63,6 +63,9 @@ void backupRebootBuffer(void)
 	// Copy Reboot ISO Path
 	strncpy(reboot_config_isopath, (void *)REBOOTEX_CONFIG_ISO_PATH, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
 	reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
+	
+	// Flush Cache
+	flushCache();
 }
 
 // Restore Reboot Buffer

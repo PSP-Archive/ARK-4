@@ -28,6 +28,7 @@
 #include <macros.h>
 #include <gameinfo.h>
 #include <globals.h>
+#include <functions.h>
 #include "loadmodule_patch.h"
 #include "savedata_patch.h"
 #include "nodrm_patch.h"
@@ -39,6 +40,8 @@ PSP_MAIN_THREAD_ATTR(0);
 // Previous Module Start Handler
 STMOD_HANDLER previous;
 
+ARKConfig config;
+
 // Module Start Handler
 void stargateSyspatchModuleOnStart(SceModule2 * mod)
 {
@@ -49,8 +52,8 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
 	patchLoadModuleFuncs(mod);
 	
 	// Fix Exploit Game Save
-	if (IS_GAME_EXPLOIT)
-	    fixExploitGameModule(mod);
+	//if (IS_GAME_EXPLOIT)
+	//    fixExploitGameModule(mod);
 }
 
 // Boot Time Module Start Handler
@@ -102,8 +105,15 @@ static void patchLoadExec(void)
 // Entry Point
 int module_start(SceSize args, void * argp)
 {
+    int apitype = sceKernelInitApitype();
+    if (apitype == 0x152 || apitype == 0x141) {
+		return 0;
+	}
+	
 	// Hello Message
 	printk("stargate started: compiled at %s %s\r\n", __DATE__, __TIME__);
+
+    memcpy(&config, ark_conf_backup, sizeof(ARKConfig)); // copy configuration from user ram
 	
 	// Fix Idol Master
 	patchLoadExec();
@@ -122,7 +132,7 @@ int module_start(SceSize args, void * argp)
 	
 	// Flush Cache
 	flushCache();
-
+	
 	// Module Start Success
 	return 0;
 }

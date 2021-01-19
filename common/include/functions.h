@@ -25,7 +25,7 @@
 
 // K.BIN communication interface
 typedef struct KxploitFunctions{
-	int (*stubScanner)(void);
+	int (*stubScanner)(struct FunctionTable*);
 	int (*doExploit)(void);
 	void (*executeKernel)(u32 kernelContentFunction);
 	void (*repairInstruction)(void);
@@ -56,7 +56,9 @@ typedef struct FunctionTable
 	int (* IoRead)(int, void *, int);
 	int (* IoWrite)(int, void *, int);
 	int (* IoClose)(int);
+	int (* IoRemove)(char*);
 	void (* KernelLibcTime)(int);
+	void (* KernelLibcClock)();
 	int (* KernelPowerLock)(unsigned int, unsigned int);
 	void (* KernelDcacheWritebackAll)(void);
 	void (* KernelIcacheInvalidateAll)(void);
@@ -65,7 +67,11 @@ typedef struct FunctionTable
 	int (* KernelStartThread)(SceUID thid, SceSize arglen, void *argp);
 	void (* KernelDelayThread)(uint32_t);
 	void (* KernelExitThread)(uint32_t);
+	int (* KernelExitDeleteThread)(int status);
 	int (* KernelWaitThreadEnd)(SceUID thid, SceUInt *timeout);
+    SceUID (* KernelCreateVpl)(const char*, int, int, unsigned int, void*);
+    int (* KernelTryAllocateVpl)(SceUID, unsigned int, void**);
+    int (* KernelFreeVpl)(SceUID uid, void *data);
 	int (* KernelDeleteVpl)(int);
 	int (* KernelDeleteFpl)(int);
 	unsigned int (*KernelCpuSuspendIntr)();
@@ -74,27 +80,29 @@ typedef struct FunctionTable
 	int (* UtilityUnloadModule)(int);
 	int (* UtilityLoadNetModule)(int);
 	int (* UtilityUnloadNetModule)(int);	
-	int (* SysMemUserForUser_91DE343C)( void *unk );
+	//int (* SysMemUserForUser_91DE343C)( void *unk );
+	SceUID 	(*KernelAllocPartitionMemory)(SceUID partitionid, const char *name, int type, SceSize size, void *addr);
 	int (* KernelFreePartitionMemory)(int);
 	int (* UtilitySavedataGetStatus)();
-	int (* UtilitySavedataInitStart)(SceUtilitySavedataParam *params);
+	int (* UtilitySavedataInitStart)(void* params);
 	void (* UtilitySavedataUpdate)(int a0);
 	int (* UtilitySavedataShutdownStart)();
 	int (* KernelVolatileMemUnlock)(int unknown);
 	// common ark functions
-	void (* freeMem)(struct FunctionTable* g_tbl);
+	void (* freeMem)(struct FunctionTable*);
 	u32 (* FindImportUserRam)(char *libname, u32 nid);
 	u32 (* FindImportVolatileRam)(char *libname, u32 nid);
 	u32 (* FindImportRange)(char *libname, u32 nid, u32 lower, u32 higher);
 	void* (* RelocSyscall)(u32 call);
 	void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L);
-	u32 (*FindTextAddrByName)(const char*);
+	// other functions
+	//u32 (* SdkDisableInterrupts)();
+	//void (* SdkEnableInterrupts)(u32);
 } FunctionTable;
 
 // fills a FunctionTable instance with all available imports
 extern void scanUserFunctions();
-extern void getArkFunctions();
-extern void kernelifyArkFunctions();
+extern void scanArkFunctions();
 
 // check if a pointer is in a range
 extern int AddressInRange(u32 addr, u32 lower, u32 higher);
@@ -143,13 +151,9 @@ typedef struct KernelFunctions{
 	int (* KernelIORmdir)(const char* path);
 	int (* KernelIOGetStat)(const char *file, SceIoStat *stat);
 	int (* KernelIORemove)(const char* file);
-
-	// controller functions
-	/*
-	int (* KernelCtrlSetSamplingCycle)(int zero);
-	int (* KernelCtrlSetSamplingMode)(int mode);
-	int (* KernelCtrlPeekBufferPositive)(SceCtrlData * pad_data, int count);
-    */
+	int (* IoLseek)(int, s64, int);
+	int (* IoAssign)(const char *dev1, const char *dev2, const char *dev3, int mode, void *unk1, long unk2);
+    int (* IoUnassign)(const char *dev);
     
 	// sysmem.prx Functions
 	void (* KernelIcacheInvalidateAll)(void);
@@ -167,7 +171,8 @@ typedef struct KernelFunctions{
 	int (* KernelDelayThread)(int);
 	int (*KernelDeleteThread)(int);
 	int (*KernelExitThread)(int);
-
+    void (*waitThreadEnd)(int, int*);
+    void (* KernelExitGame)();
 
 	int (* WlanGetEtherAddr)(unsigned char *destAddr);
 
@@ -175,9 +180,17 @@ typedef struct KernelFunctions{
 	
 	int (* KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int);
 	
+	// ARK functions
+	u32 (*FindTextAddrByName)(const char *);
+	
 }KernelFunctions;
 
-extern void getKernelFunctions();
+#define g_tbl ((FunctionTable*)(0x08800010))
+#define k_tbl ((KernelFunctions*)(0x08800010 + sizeof(FunctionTable)))
+#define kxf ((KxploitFunctions*)(0x08800010 + sizeof(FunctionTable) + sizeof(KernelFunctions)))
+#define ark_conf_backup ((ARKConfig*)(0x08800010 + sizeof(FunctionTable) + sizeof(KernelFunctions) + sizeof(KxploitFunctions)))
+
+extern void scanKernelFunctions();
 
 extern u32 FindTextAddrByName(const char *);
 extern u32 FindFunction(const char *modulename, const char *library, u32 nid);
@@ -192,6 +205,7 @@ extern u32 _findJAL(u32 addr, int reversed, int skip);
 #define findFirstJALReverseForFunction(modname, libname, uid) findFirstJALReverse(FindFunction(modname, libname, uid))
 #define findJALReverseForFunction(modname, libname, uid, pos) findJALReverse(FindFunction(modname, libname, uid), pos)
 
+u32 FindFirstBEQ(u32 addr);
 extern u32 findRefInGlobals(char* libname, u32 addr, u32 ptr);
 
 extern void p5_open_savedata(int mode);
@@ -199,8 +213,6 @@ extern void p5_close_savedata();
 
 extern void flashPatch();
 
-extern FunctionTable* g_tbl;
-extern KernelFunctions* k_tbl;
-extern KxploitFunctions* kxf;
+extern int is_kernel(int arg0);
 
 #endif

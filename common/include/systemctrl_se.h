@@ -28,9 +28,11 @@ enum
 enum SEUmdModes
 {
 	MODE_UMD = 0,
-	MODE_MARCH33 = 1,
+	MODE_MARCH33 = 1, // not available anymore, will default to inferno
 	MODE_NP9660 = 2,
 	MODE_INFERNO = 3,
+	MODE_VSHUMD = 4,
+	MODE_UPDATERUMD = 5,
 };
 
 enum MsSpeedFlag

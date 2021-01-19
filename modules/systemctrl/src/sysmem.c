@@ -19,25 +19,35 @@
 #include <string.h>
 #include <globals.h>
 #include <systemctrl.h>
+#include <systemctrl_private.h>
 #include "sysmem.h"
-
-u32 FindFirstBEQ(u32 addr){
-	for (;;addr+=4){
-		if ((_lw(addr) & 0xFC000000) == 0x10000000)
-			return addr;
-	}
-	return 0;
-}
+#include "functions.h"
 
 // Patch System Memory Manager
 void patchSystemMemoryManager(void)
 {
-	// Force branching
-	u32 nids[] = {0x7591C7DB, 0x342061E5, 0x315AD3A0, 0xEBD5C3E6, 0x057E7380,\
-					0x91DE343C, 0x7893F79A, 0x35669D4C, 0x1B4217BC, 0x358CA1BB };
-	int i;
-	for (i=0; i<sizeof(nids)/sizeof(u32); i++)
-		_sh(0x1000, FindFirstBEQ(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", nids[i])) + 2);
+    if (IS_PSP(ark_config->exec_mode)){
+	    _sw(0x10000000|0x1F, SYSMEM_TEXT+0x000098F0);
+	    _sw(0x10000000|0x12, SYSMEM_TEXT+0x00009A10);
+	    _sw(0x10000000|0x18, SYSMEM_TEXT+0x00009AA8);
+	    _sw(0x10000000|0x1C, SYSMEM_TEXT+0x00009B58);
+	    _sw(0x10000000|0x15, SYSMEM_TEXT+0x00009C2C);
+	    _sw(0x10000000|0x15, SYSMEM_TEXT+0x00009CD0);
+	    _sw(0x10000000|0x12, SYSMEM_TEXT+0x00009D74);
+	    _sw(0x10000000|0x18, SYSMEM_TEXT+0x00009E0C);
+	    _sw(0x10000000|0x18, SYSMEM_TEXT+0x00009EBC);
+	    _sw(0x10000000|0x12, SYSMEM_TEXT+0x00009F6C);
+    }
+    else{
+	    // Force branching
+	    u32 nids[] = {0x7591C7DB, 0x342061E5, 0x315AD3A0, 0xEBD5C3E6, 0x057E7380,\
+					    0x91DE343C, 0x7893F79A, 0x35669D4C, 0x1B4217BC, 0x358CA1BB };
+	    int i;
+	    for (i=0; i<sizeof(nids)/sizeof(u32); i++)
+	    	_sh(0x1000, FindFirstBEQ(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", nids[i])) + 2);
+    }
+    // Flush Cache
+	flushCache();
 }
 
 // Patch Game ID Getter
@@ -58,7 +68,7 @@ void * SysMemForKernel_EF29061C_Fixed(void)
 	// Default Game ID
 	const char * defaultid = "HOME00000";
 
-	if (IS_VITA_POPS)
+	if (IS_VITA_POPS(ark_config->exec_mode))
 		return defaultid;
 
 	// Find Function
@@ -72,9 +82,6 @@ void * SysMemForKernel_EF29061C_Fixed(void)
 	
 	// Structure unavailable
 	if(gameinfo == NULL) return NULL;
-	
-	// Set Default Game ID
-	memcpy(gameinfo + 0x44, defaultid, strlen(defaultid));
 	
 	// Open Disc Identifier
 	int disc = sceIoOpen("disc0:/UMD_DATA.BIN", PSP_O_RDONLY, 0777);
@@ -94,8 +101,24 @@ void * SysMemForKernel_EF29061C_Fixed(void)
 		// Close Disc Identifier
 		sceIoClose(disc);
 	}
+	else{
+	    // Set Default Game ID
+	    memcpy(gameinfo + 0x44, defaultid, strlen(defaultid));
+	}
 	
 	// Return Game Info Structure
 	return gameinfo;
 }
 
+void handleVitaMemory(){
+    if (IS_VITA_POPS(ark_config->exec_mode)){ // protect POPS Vram from being overwritten by homebrew
+		sceKernelAllocPartitionMemory(6, "POPS VRAM CONFIG", 2, 0x1B0, (void *)0x09FE0000);
+		sceKernelAllocPartitionMemory(6, "POPS VRAM", 2, 0x3C0000, (void *)0x090C0000);
+	}
+	else{ // unprotect extra RAM available on PS Vita
+	    u32 *prot = (u32 *)0xBC000040;
+	    int i;
+	    for (i = 0; i < 0x10; i++)
+		    prot[i] = 0xFFFFFFFF;
+	}
+}

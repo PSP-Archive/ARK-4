@@ -9,6 +9,7 @@ strcpy.o \
 strlen.o \
 strchr.o \
 strcmp.o \
+strstr.o \
 memfind.o \
 strhex32.o \
 strbeginswith.o \

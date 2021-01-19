@@ -25,7 +25,7 @@ extern unsigned int sceInitTextAddr;
 extern int (* customStartModule)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 
 // Patch Loader Core Module
-void patchLoaderCore(void);
+SceModule2* patchLoaderCore(void);
 
 #endif
 

@@ -5,7 +5,7 @@ ENTRY(exploitEntry)
 
 SECTIONS
 {
-  . = 0x08D20000;
+  . = 0x08D30000;
   .text.startup : {
     *(.text.startup)
   }

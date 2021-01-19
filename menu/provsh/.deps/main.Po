@@ -17,5 +17,7 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/pspiofilemgr_kernel.h \
  /usr/local/pspdev/psp/sdk/include/pspthreadman_kernel.h \
  /usr/local/pspdev/psp/sdk/include/psploadcore.h \
+ /home/aaron/projects/ark/common/include/globals.h \
+ /home/aaron/projects/ark/common/include/kermit.h \
  /home/aaron/projects/ark/common/include/module2.h \
  /home/aaron/projects/ark/common/include/systemctrl_se.h

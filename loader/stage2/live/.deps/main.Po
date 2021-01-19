@@ -49,16 +49,15 @@ main.o .deps/main.Po: main.c main.h /home/aaron/projects/ark/common/include/sdk.
  /home/aaron/projects/ark/common/include/lflash0.h \
  /home/aaron/projects/ark/common/include/macros.h \
  /home/aaron/projects/ark/common/include/rebootconfig.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/kermit.h \
  /home/aaron/projects/ark/common/include/systemctrl_se.h \
  /home/aaron/projects/ark/common/include/functions.h \
  /home/aaron/projects/ark/common/include/module2.h \
+ /home/aaron/projects/ark/common/include/globals.h \
+ /home/aaron/projects/ark/common/include/kermit.h \
  /home/aaron/projects/ark/common/include/ansi_c_functions.h \
  /home/aaron/projects/ark/modules/rebootbuffer/payload.h \
- /home/aaron/projects/ark/loader/kxploit/kxploit.h \
- /home/aaron/projects/ark/modules/systemctrl/include/loadexec_patch.h \
- /home/aaron/projects/ark/common/include/globals.h \
  /home/aaron/projects/ark/libs/graphics/graphics.h \
  /home/aaron/projects/ark/libs/graphics/../colordebugger/colordebugger.h \
- flash_dump.h reboot.h
+ /home/aaron/projects/ark/loader/kxploit/kxploit.h \
+ /home/aaron/projects/ark/modules/systemctrl/include/loadexec_patch.h \
+ /home/aaron/projects/ark/common/include/globals.h flash_dump.h reboot.h

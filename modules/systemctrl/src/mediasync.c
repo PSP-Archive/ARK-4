@@ -21,12 +21,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <macros.h>
+#include <systemctrl_private.h>
 #include <globals.h>
 
 // Patch mediasync.prx
-void patchMediaSync(unsigned int textAddr)
+void patchMediaSync(SceModule2* mod)
 {
-	if (IS_VITA_POPS){
+    /*
+	if (IS_VITA_POPS(ark_config->exec_mode)){
 		MAKE_DUMMY_FUNCTION(textAddr + 0x000006A8, 0);
 
 		// Avoid SCE_MEDIASYNC_ERROR_INVALID_MEDIA
@@ -35,6 +37,9 @@ void patchMediaSync(unsigned int textAddr)
 
 		return;
 	}
+	*/
+
+    unsigned int textAddr = mod->text_addr;
 
 	// Patch MsCheckMedia to always succeed
 	_sw(JR_RA, textAddr + MEDIASYNC_MS_CHECK_MEDIA);
@@ -50,5 +55,18 @@ void patchMediaSync(unsigned int textAddr)
 	// Patch DISC_ID Check (to make homebrews without one work)
 	_sw(NOP, textAddr + MEDIASYNC_DISC_ID_CHECK_1);
 	_sw(NOP, textAddr + MEDIASYNC_DISC_ID_CHECK_2);
+	
+	/*
+	// Dummy function that checks flash0 files
+	_sw(0x00001021, textAddr + 0xC8);
+	
+	// Fixes: ELF boot, boot not from /PSP/GAME/
+	_sw(0x00008821, textAddr + 0x864);
+	_sw(0x00008821, textAddr + 0x988);
+	
+	// Avoid SCE_MEDIASYNC_ERROR_INVALID_MEDIA
+	_sh(0x5000, textAddr + 0x3C6);
+	_sh(0x1000, textAddr + 0xDCA);
+    */
 }
 

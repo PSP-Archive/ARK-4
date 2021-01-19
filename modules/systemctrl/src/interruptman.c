@@ -23,35 +23,44 @@
 #include <macros.h>
 #include "module2.h"
 
+extern ARKConfig* ark_config;
+
 // Interrupt Manager Patch
-void patchInterruptMan(void)
+SceModule2* patchInterruptMan(void)
 {
 	// Find Module
-	SceModule2 * mod = (SceModule2 *)sceKernelFindModuleByName("sceInterruptManager");
-	
-	if (IS_VITA_POPS){
-		/* Allow execution of syscalls in kernel mode */
-		_sw(0x408F7000, mod->text_addr + 0xE98);
-		_sw(0, mod->text_addr + 0xE9C);
-		return;
-	}
+	SceModule2* mod = (SceModule2 *)sceKernelFindModuleByName("sceInterruptManager");
 	
 	// Fetch Text Address
 	u32 addr = mod->text_addr;
 	u32 topaddr = mod->text_addr + mod->text_size;
 	
-	for (; addr<topaddr; addr+=4){
-		u32 data = _lw(addr);
-		// Override Endless Loop of breaking Death with EPC = t7
-		if (data == 0x0003FF8D){
-			_sw(0x408F7000, addr-4);
-			_sw(NOP, addr);
-		}
-		// Prevent Hardware Register Writing
-		else if ((data & 0x0000FFFF) == 0xBC00){
-			_sw(NOP, addr+4);
-			_sw(NOP, addr+8);
-		}
+	if (IS_PSP(ark_config->exec_mode)){
+	    // disable writing invalid address to reset vector
+	    _sw(NOP, mod->text_addr + 0x00000DEC);
+	    _sw(NOP, mod->text_addr + 0x00000DEC+4);
+
+	    // disable crash code
+	    _sw(0x408F7000, mod->text_addr + 0x00000E98); // mct0 $t7, $EPC
+	    _sw(NOP, mod->text_addr + 0x00000E98+4);
 	}
+	else{
+	    for (; addr<topaddr; addr+=4){
+		    u32 data = _lw(addr);
+		    // Override Endless Loop of breaking Death with EPC = t7
+		    if (data == 0x0003FF8D){
+			    _sw(0x408F7000, addr-4);
+			    _sw(NOP, addr);
+		    }
+		    // Prevent Hardware Register Writing
+		    else if ((data & 0x0000FFFF) == 0xBC00){
+			    _sw(NOP, addr+4);
+			    _sw(NOP, addr+8);
+		    }
+	    }
+	}
+	// Flush Cache
+	flushCache();
+	return mod;
 }
 

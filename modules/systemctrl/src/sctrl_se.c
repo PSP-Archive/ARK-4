@@ -46,7 +46,7 @@ void SetUmdFile(char *file) __attribute__((alias("sctrlSESetUmdFile")));
 char * sctrlSEGetUmdFile(void)
 {
 	// ask march33 to load fake.cso when no iso available
-	if(reboot_config.iso_mode == MODE_MARCH33 && reboot_config_isopath[0] == '\0')
+	if(IS_VITA(ark_config->exec_mode) && reboot_config_isopath[0] == '\0')
 	{
 		return "flash0:/fake.cso";
 	}

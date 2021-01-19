@@ -5,7 +5,7 @@ ENTRY(initKxploit)
 
 SECTIONS
 {
-  . = 0x08D30000;
+  . = 0x08D20000;
   .text.startup : {
     *(.text.startup)
   }
