@@ -95,9 +95,6 @@ typedef struct FunctionTable
 	u32 (* FindImportRange)(char *libname, u32 nid, u32 lower, u32 higher);
 	void* (* RelocSyscall)(u32 call);
 	void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L);
-	// other functions
-	//u32 (* SdkDisableInterrupts)();
-	//void (* SdkEnableInterrupts)(u32);
 } FunctionTable;
 
 // fills a FunctionTable instance with all available imports
@@ -172,16 +169,6 @@ typedef struct KernelFunctions{
 	int (*KernelDeleteThread)(int);
 	int (*KernelExitThread)(int);
     void (*waitThreadEnd)(int, int*);
-    void (* KernelExitGame)();
-
-	int (* WlanGetEtherAddr)(unsigned char *destAddr);
-
-	int (* Kermit_driver_4F75AA05)(KermitPacket *packet, u32 cmd_mode, u32 cmd, u32 argc, u32 allow_callback, u64 *resp);
-	
-	int (* KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int);
-	
-	// ARK functions
-	u32 (*FindTextAddrByName)(const char *);
 	
 }KernelFunctions;
 
@@ -208,11 +195,11 @@ extern u32 _findJAL(u32 addr, int reversed, int skip);
 u32 FindFirstBEQ(u32 addr);
 extern u32 findRefInGlobals(char* libname, u32 addr, u32 ptr);
 
-extern void p5_open_savedata(int mode);
-extern void p5_close_savedata();
+extern int p5_open_savedata(int mode);
+extern int p5_close_savedata();
 
 extern void flashPatch();
 
-extern int is_kernel(int arg0);
+extern int isKernel(int arg0);
 
 #endif

@@ -2,14 +2,15 @@ ARK-4 e/CFW for the PSP and PS Vita.
 
 Features:
 
-- Full compatibility with PSP homebrews and games.
+- Core system for loading unsigned PSP homebrews and plugins.
 
-- ISO and CSO support through the Inferno ISO Driver as well as compatibility with the M33, ME and NP9660 drivers.
+- Inferno driver for ISO, CSO and ZSO games.
 
-- Compatibility with PSX games under PSP exploits with partial sound through PEOPS.
+- Galaxy controller for Sony NP9660 driver.
 
-- Partial compatibility with PSX exploits.
+- Popcorn controller for PSX games.
 
-- Compatible with up to firmware 3.52
+- Stargate No-DRM system.
 
-- Built in menu with advanced features like PMF playback, FTP, CFW settings and more. It is also compatible with other popular menus such as ONEmenu and 138Menu.
+- Compatibility layers for PSP and PS Vita.
+

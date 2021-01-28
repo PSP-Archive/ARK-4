@@ -1,53 +1,60 @@
 PYTHON=$(shell which python2)
 
-dist/SYSCTRL0.BIN: modules/systemctrl/systemctrl.prx
+dist/SYSCTRL0.BIN: core/systemctrl/systemctrl.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
 	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< SystemControl 0x3007
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
-dist/GALAXY00.BIN: modules/ISODrivers/galaxy/galaxy.prx
+dist/VITACOMP.BIN: core/vitacompat/vitacompat.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PROGalaxyController 0x1006
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< VitaCompat 0x3007
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
-dist/INFERNO0.BIN: modules/ISODrivers/inferno/inferno.prx
+dist/VITAPOPS.BIN: core/vitapops/vitapops.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PRO_Inferno_Driver 0x1006
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< VitaPops 0x3007
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
-
-dist/STARGATE.BIN: modules/stargate/stargate.prx
+	
+dist/PSPCOMPAT.BIN: core/pspcompat/pspcompat.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< stargate 0x1007
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PSPCompat 0x3007
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
-dist/EXITGAME.BIN: modules/exitgame/exitgame.prx
+dist/VSHCTRL.BIN: core/vshctrl/vshctrl.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< exitgame 0x1007
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< VshCtrl 0x3007
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
-dist/POPCORN0.BIN: modules/popcorn/popcorn.prx
+dist/INFERNO0.BIN: core/inferno/inferno.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PROPopcornManager 0x1006
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< Inferno_Driver 0x1006
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
-dist/PEOPS.PRX: modules/peops/peops.prx
-#	for some odd reason loading peops gzipped will result in an unknown prx type error...
-#	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/UserModule.hdr $< peops 0x0000
-#	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
-#	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
-	$(Q)cp $< $@
-
-dist/MARCH330.BIN: modules/ISODrivers/march33/march33.prx
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< pspMarch33_Driver 0x1006
+dist/GALAXY00.BIN: core/galaxy/galaxy.prx
+	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< GalaxyController 0x1006
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
+dist/STARGATE.BIN: core/stargate/stargate.prx
+	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< Stargate 0x1007
+	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
+	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
+
+dist/POPCORN0.BIN: core/popcorn/popcorn.prx
+	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PopcornManager 0x1006
+	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
+	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
+
+##########
 dist/MEDIASYN.BIN: contrib/PSP/f0-kd-mediasync.prx
 	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< sceMediaSync 0x1006
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
@@ -90,10 +97,5 @@ dist/PSPVMC00.BIN: contrib/PSP/f0-vsh-module-libpspvmc.prx
 
 dist/LIBFONTHV.BIN: contrib/PSP/libfont_hv.prx
 	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/UserModule.hdr $< libFont_Library_HV 0x0000
-	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
-	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
-
-dist/IMPOSE.BIN: contrib/PSP/impose_05g.prx
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< sceImpose_Driver 0x1007
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)

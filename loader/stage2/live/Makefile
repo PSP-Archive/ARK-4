@@ -8,22 +8,16 @@ PYTHON=$(shell which python2)
 all: pre-build $(TARGET)
 
 CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
-CFLAGS += -I $(PROVITA)/loader/kxploit/ -I $(PROVITA)/modules/systemctrl/include
-CFLAGS += -I $(PROVITA)/modules/systemctrl/include -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR) -DFLASH_DUMP=$(FLASH_DUMP)
+CFLAGS += -I $(PROVITA)/loader/kxploit/ -I $(PROVITA)/core/systemctrl/include
+CFLAGS += -I $(PROVITA)/core/systemctrl/include -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR)
 
-ifeq ($(FLASH_DUMP), 1)
-C_OBJS = \
-	main.o \
-	flash_dump.o\
-	$(PROVITA)/common/functions.o
-else
 C_OBJS = \
 	main.o \
 	reboot.o \
 	$(PROVITA)/common/functions.o \
-	$(PROVITA)/common/flashpatch.o \
-	$(PROVITA)/modules/systemctrl/src/loadexec_patch.o
-endif
+	$(PROVITA)/core/pspcompat/flashinstall.o \
+	$(PROVITA)/core/vitacompat/vitaflash.o \
+	$(PROVITA)/core/systemctrl/src/loadexec_patch.o
 
 include $(PROVITA)/common/make/global.mak
 include $(PROVITA)/common/make/beauty_bin.mak

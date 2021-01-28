@@ -1,6 +1,5 @@
 #include <sdk.h>
 #include "kxploit.h"
-#include "flashpatch.h"
 #include "macros.h"
 
 void initKxploit(KxploitFunctions*)__attribute__((section(".text.startup")));

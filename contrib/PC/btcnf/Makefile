@@ -1,6 +1,6 @@
 PYTHON=$(shell which python2)
 
-PSPBTCNF_TARGETS = psvbtinf psvbtxnf psvbtnnf
+PSPBTCNF_TARGETS = psvbtinf psvbtnnf psvbtxnf
 PSPBTCNF_OBJS = $(addsuffix .bin,$(PSPBTCNF_TARGETS))
 
 .PHONY: clean

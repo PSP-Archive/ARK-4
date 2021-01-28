@@ -30,10 +30,8 @@ psidcheck.o .deps/psidcheck.Po: psidcheck.c /usr/local/pspdev/psp/sdk/include/ps
  /home/aaron/projects/ark/common/include/systemctrl.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
  /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/kermit.h \
  /home/aaron/projects/ark/common/include/module2.h \
  /home/aaron/projects/ark/common/include/systemctrl_private.h \
  /home/aaron/projects/ark/common/include/globals.h \
  /home/aaron/projects/ark/common/include/macros.h \
- /home/aaron/projects/ark/common/include/gameinfo.h \
  /home/aaron/projects/ark/common/include/psid.h

@@ -3,7 +3,7 @@
 #include "pspimport.s"
 
 // Build files
-// SystemCtrlForUser_0000.o SystemCtrlForUser_0001.o SystemCtrlForUser_0002.o SystemCtrlForUser_0003.o SystemCtrlForUser_0004.o SystemCtrlForUser_0005.o SystemCtrlForUser_0006.o SystemCtrlForUser_0007.o SystemCtrlForUser_0008.o SystemCtrlForUser_0009.o SystemCtrlForUser_0010.o SystemCtrlForUser_0011.o SystemCtrlForUser_0012.o SystemCtrlForUser_0013.o SystemCtrlForUser_0014.o SystemCtrlForUser_0015.o SystemCtrlForUser_0016.o SystemCtrlForUser_0017.o SystemCtrlForUser_0018.o SystemCtrlForUser_0019.o SystemCtrlForUser_0020.o SystemCtrlForUser_0021.o SystemCtrlForUser_0022.o SystemCtrlForUser_0023.o SystemCtrlForUser_0024.o SystemCtrlForUser_0025.o SystemCtrlForUser_0026.o
+// SystemCtrlForUser_0000.o SystemCtrlForUser_0001.o SystemCtrlForUser_0002.o SystemCtrlForUser_0003.o SystemCtrlForUser_0004.o SystemCtrlForUser_0005.o SystemCtrlForUser_0006.o SystemCtrlForUser_0007.o SystemCtrlForUser_0008.o SystemCtrlForUser_0009.o SystemCtrlForUser_0010.o SystemCtrlForUser_0011.o SystemCtrlForUser_0012.o SystemCtrlForUser_0013.o SystemCtrlForUser_0014.o SystemCtrlForUser_0015.o SystemCtrlForUser_0016.o SystemCtrlForUser_0017.o SystemCtrlForUser_0018.o SystemCtrlForUser_0019.o SystemCtrlForUser_0021.o SystemCtrlForUser_0022.o SystemCtrlForUser_0023.o SystemCtrlForUser_0024.o SystemCtrlForUser_0026.o
 
 #ifdef F_SystemCtrlForUser_0000
 	IMPORT_START "SystemCtrlForUser",0x40090000
@@ -65,9 +65,6 @@
 #ifdef F_SystemCtrlForUser_0019
 	IMPORT_FUNC  "SystemCtrlForUser",0xABEF849B,sctrlSEGetDiscType
 #endif
-#ifdef F_SystemCtrlForUser_0020
-	IMPORT_FUNC  "SystemCtrlForUser",0x969306E7,sctrlKernelGetGameID
-#endif
 #ifdef F_SystemCtrlForUser_0021
 	IMPORT_FUNC  "SystemCtrlForUser",0x23833651,sctrlGetThreadUIDByName
 #endif
@@ -79,9 +76,6 @@
 #endif
 #ifdef F_SystemCtrlForUser_0024
 	IMPORT_FUNC "SystemCtrlForUser",0xF462EE55,sctrlDeflateDecompress
-#endif
-#ifdef F_SystemCtrlForUser_0025
-	IMPORT_FUNC "SystemCtrlForUser",0xE8390345,sctrlGetExploitID
 #endif
 #ifdef F_SystemCtrlForUser_0026
 	IMPORT_FUNC "SystemCtrlForUser",0x1C90BECB,sctrlHENSetStartModuleHandler

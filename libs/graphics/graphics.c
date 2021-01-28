@@ -49,14 +49,9 @@ void cls()
 
 void initScreen(int (*DisplaySetFrameBuf)(void*, int, int, int))
 {
-	if(DisplaySetFrameBuf == NULL){
-	    g_vram_base = framebuffer;
-	}
-	else{
-	    g_vram_base = vram_base;
-		DisplaySetFrameBuf((void *)g_vram_base, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
+	if(DisplaySetFrameBuf != NULL){
+		DisplaySetFrameBuf((void *)0x04000000, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
     }
-
     cls();
 }
 
@@ -115,6 +110,4 @@ void PRTSTR11(const char* A, unsigned long B, unsigned long C, unsigned long D, 
   char buff[512];
   mysprintf11(buff, A, (unsigned long)B, (unsigned long)C, (unsigned long)D,  (unsigned long)E, (unsigned long)F, (unsigned long)G, (unsigned long)H,  (unsigned long)I, (unsigned long) J, (unsigned long) K, (unsigned long) L);
   print_to_screen(buff);
-  if (isVitaPops())
-  	copyPSPVram(g_vram_base);
 }

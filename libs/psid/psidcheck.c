@@ -26,7 +26,6 @@
 #include <systemctrl.h>
 #include <systemctrl_private.h>
 #include <macros.h>
-#include <gameinfo.h>
 #include <globals.h>
 #include "psid.h"
 

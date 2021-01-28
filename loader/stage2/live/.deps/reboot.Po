@@ -47,16 +47,14 @@ reboot.o .deps/reboot.Po: reboot.c reboot.h main.h \
  /usr/local/pspdev/psp/sdk/include/pspimpose_driver.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
  /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/lflash0.h \
  /home/aaron/projects/ark/common/include/macros.h \
  /home/aaron/projects/ark/common/include/rebootconfig.h \
  /home/aaron/projects/ark/common/include/systemctrl_se.h \
  /home/aaron/projects/ark/common/include/functions.h \
  /home/aaron/projects/ark/common/include/module2.h \
  /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/kermit.h \
  /home/aaron/projects/ark/common/include/ansi_c_functions.h \
- /home/aaron/projects/ark/modules/rebootbuffer/payload.h \
+ /home/aaron/projects/ark/core/rebootex/payload.h \
  /home/aaron/projects/ark/libs/graphics/graphics.h \
  /home/aaron/projects/ark/libs/graphics/../colordebugger/colordebugger.h \
  /home/aaron/projects/ark/loader/kxploit/kxploit.h \

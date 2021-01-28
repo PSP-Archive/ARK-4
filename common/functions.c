@@ -23,7 +23,6 @@
 #include <psputility_modules.h>
 #include <pspumd.h>
 #include <module2.h>
-#include <lflash0.h>
 #include <macros.h>
 #include <rebootconfig.h>
 #include <systemctrl_se.h>
@@ -158,21 +157,6 @@ int IsUID(SceUID uid){
 
 // attempt to free as much memory as possible, some kernel/user exploits need this, others don't
 void freeMem(){
-
-/*
-	u16 utilities[] = { PSP_MODULE_NET_ADHOC, PSP_MODULE_USB_PSPCM, PSP_MODULE_USB_MIC, PSP_MODULE_USB_CAM, \
-		PSP_MODULE_USB_GPS, PSP_MODULE_AV_AVCODEC, PSP_MODULE_AV_SASCORE, PSP_MODULE_AV_ATRAC3PLUS, \
-		PSP_MODULE_AV_MPEGBASE, PSP_MODULE_AV_MP3, PSP_MODULE_AV_VAUDIO, PSP_MODULE_AV_AAC, PSP_MODULE_AV_G729, \
-		PSP_MODULE_NP_COMMON, PSP_MODULE_NP_SERVICE, PSP_MODULE_NP_MATCHING2, PSP_MODULE_NP_DRM
-	};
-	
-	if (1){
-	u32 i;
-	for (i=0; i<sizeof(utilities)/sizeof(u16); i++)
-		g_tbl->UtilityUnloadModule(utilities[i]);
-	}
-*/
-
 	register u32 (* sceKernelGetBlockHeadAddr_)(SceUID) = (void *)RelocImport("SysMemUserForUser", 0x9D9A5BA1, 0);
 	register int (* sceKernelDeleteFpl_)(SceUID) = (void *)RelocImport("ThreadManForUser", 0xED1410E0, 0);
 	register int (* sceKernelTerminateThread_)(SceUID) = (void *)RelocImport("ThreadManForUser", 0x616403BA, 0);
@@ -193,6 +177,18 @@ void freeMem(){
 			if (sceKernelDeleteFpl_)
 				sceKernelDeleteFpl_(*(SceUID*)addr);
 		}
+	}
+}
+
+void unloadUtilities(){
+    u16 utilities[] = { PSP_MODULE_NET_ADHOC, PSP_MODULE_USB_PSPCM, PSP_MODULE_USB_MIC, PSP_MODULE_USB_CAM, \
+		PSP_MODULE_USB_GPS, PSP_MODULE_AV_AVCODEC, PSP_MODULE_AV_SASCORE, PSP_MODULE_AV_ATRAC3PLUS, \
+		PSP_MODULE_AV_MPEGBASE, PSP_MODULE_AV_MP3, PSP_MODULE_AV_VAUDIO, PSP_MODULE_AV_AAC, PSP_MODULE_AV_G729, \
+		PSP_MODULE_NP_COMMON, PSP_MODULE_NP_SERVICE, PSP_MODULE_NP_MATCHING2, PSP_MODULE_NP_DRM
+	};
+	
+	for (int i=0; i<NELEMS(utilities); i++){
+		g_tbl->UtilityUnloadModule(utilities[i]);
 	}
 }
 
@@ -227,7 +223,9 @@ void _flush_cache(){
     k_tbl->KernelDcacheWritebackInvalidateAll();
 }
 
+// qwikrazor87's trick to get any usermode import from kernel
 u32 qwikTrick(char* lib, u32 nid, u32 version){
+
 	u32 ret = 0x08800E00;
 
 	while (*(u32*)ret)
@@ -272,14 +270,14 @@ u32 qwikTrick(char* lib, u32 nid, u32 version){
 
 	memcpy((void *)ret, (const void *)0x08800D00, 8);
 
-	k_tbl->KernelDcacheWritebackInvalidateAll();
+    _flush_cache();
 
 	p5_close_savedata();
 
 	memset((void *)0x08800D00, 0, 8);
 
 	k_tbl->KernelDeleteThread(qwiktrick);
-
+	
 	return ret;
 }
 
@@ -314,8 +312,6 @@ void* RelocImport(char* libname, u32 nid, int ram){
  * These functions are ment for using when initial kernel access has been
  * granted, for example through the mean of a kernel exploit.
  */
-
-
 void scanKernelFunctions(){
 
 	register KernelFunctions* kfuncs = k_tbl;
@@ -343,10 +339,6 @@ void scanKernelFunctions(){
 	kfuncs->KernelDcacheInvalidateRange = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0xBFA98062);
 	kfuncs->KernelGzipDecompress = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0x78934841);
 	
-	kfuncs->Kermit_driver_4F75AA05 = (void*)FindFunction("sceKermit_Driver", "sceKermit_driver", 0x4F75AA05);
-    if (kfuncs->Kermit_driver_4F75AA05 == NULL)
-    	kfuncs->Kermit_driver_4F75AA05 = (void*)FindFunction("sceKermit_Driver", "sceKermit_driver", 0x36666181);
-	
 	kfuncs->KernelFindModuleByName = (void*)FindFunction("sceLoaderCore", "LoadCoreForKernel", 0xF6B1BF0F);
 	
 	kfuncs->KernelCreateThread = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0x446D8DE6);
@@ -355,9 +347,6 @@ void scanKernelFunctions(){
 	kfuncs->KernelExitThread = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0xAA73C935);
 	kfuncs->KernelDeleteThread = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0x9FA03CD3);
 	kfuncs->waitThreadEnd = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0x278C0DF5);
-	kfuncs->KernelExitGame = (void*)FindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F);
-	
-	kfuncs->FindTextAddrByName = (void*)&FindTextAddrByName;
 }
 
 u32 FindTextAddrByName(const char *modulename)
@@ -381,14 +370,6 @@ u32 FindFunction(const char *module, const char *library, u32 nid)
 	
 	if (addr) {
 		u32 maxaddr = 0x88400000;
-		
-        /*
-		if (addr >= 0x08800000 && addr < 0x0A000000)
-			maxaddr = 0x0A000000;
-		else if (addr >= 0x08400000 && addr < 0x08800000)
-			maxaddr = 0x08800000;
-        */
-        
 		for (; addr < maxaddr; addr += 4) {
 			if (strcmp(library, (const char *)addr) == 0) {
 			    
@@ -454,7 +435,7 @@ u32 findRefInGlobals(char* libname, u32 addr, u32 ptr){
 	return addr;
 }
 
-void p5_open_savedata(int mode)
+int p5_open_savedata(int mode)
 {
 	p5_close_savedata();
 
@@ -479,11 +460,13 @@ void p5_open_savedata(int mode)
 	while ((status = g_tbl->UtilitySavedataGetStatus()) < 2)
 	{
 		g_tbl->KernelDelayThread(100);
+		if (status < 0) return 0; // error
 	}
+	return 1;
 }
 
 // Runs the savedata dialog loop
-void p5_close_savedata()
+int p5_close_savedata()
 {
 
 	int running = 1;
@@ -515,14 +498,15 @@ void p5_close_savedata()
 				break;
 		    default:
 		        if (status < 0) // sceUtilitySavedataGetStatus returned error?
-		            running = 0;
+		            return 0;
 		        break;
 		}
 		g_tbl->KernelDelayThread(100);
 	}
+	return 1;
 }
 
-int is_kernel(int arg0){
+int isKernel(int arg0){
     __asm__ (
 		"nop\n"
 		"move $a0, $ra\n" // move return address to arg0 to check if it has kernel bit set

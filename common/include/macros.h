@@ -45,6 +45,14 @@
 // v0 result setter
 #define LI_V0(n) ((0x2402 << 16) | ((n) & 0xFFFF))
 
+#define MAKE_DUMMY_FUNCTION_RETURN_0(a) \
+	_sw(JR_RA, a);\
+	_sw(LI_V0(0), a + 4);\
+
+#define MAKE_DUMMY_FUNCTION_RETURN_1(a) \
+	_sw(JR_RA, a);\
+	_sw(LI_V0(1), a + 4);\
+
 // Array Element Counter
 #define NELEMS(n) ((sizeof(n)) / sizeof(n[0]))
 
@@ -67,6 +75,7 @@
 #define GET_FUNCTION_OPCODE(x) (_lw(x) & 0x3F)
 
 #define MAKE_JUMP_PATCH(a, f) _sw(0x08000000 | (((u32)(f) & 0x0FFFFFFC) >> 2), a);
+#define PTR_ALIGN_64(p) ((void*)((((u32)p)+64-1)&(~(64-1))))
 
 //by Davee
 #define HIJACK_FUNCTION(a, f, ptr) \
@@ -86,12 +95,12 @@
 	u32 func = a; \
 	if(r == 0) \
 	{ \
-		_sw(0x03E00008, func); \
+		_sw(JR_RA, func); \
 		_sw(0x00001021, func + 4); \
 	} \
 	else \
 	{ \
-		_sw(0x03E00008, func); \
+		_sw(JR_RA, func); \
 		_sw(0x24020000 | r, func + 4); \
 	} \
 }

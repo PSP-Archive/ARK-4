@@ -17,9 +17,9 @@
 
 #include "main.h"
 #include <loadexec_patch.h>
-#include "flash_dump.h"
 #include "reboot.h"
 #include <functions.h>
+#include "kermit.h"
 
 #define TEST_EBOOT "ms0:/EBOOT.PBP"
 
@@ -56,7 +56,7 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
     scanArkFunctions();
 
     // copy the path of the save
-	g_tbl->config = ark_config = arg0;
+	g_tbl->config = arg0;
 
 	// make PRTSTR available for payloads
 	g_tbl->prtstr = (void *)&PRTSTR11;
@@ -66,7 +66,7 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
 
 	// Output Exploit Reach Screen
 	if (arg0->exec_mode == DEV_UNK) autoDetectDevice(arg0);
-	running_ark[17] = (IS_PSP(arg0->exec_mode))? ' ' : 'e';
+	running_ark[17] = (IS_PSP(arg0->exec_mode))? ' ' : 'v';
 	running_ark[20] = (IS_VITA_POPS(arg0->exec_mode))? 'X':'P';
 	PRTSTR(running_ark);
 	
@@ -132,8 +132,29 @@ void setK1Kernel(void){
 	);
 }
 
+void flashPatch(){
+    extern int extractFlash0Archive();
+	if (IS_PSP(ark_config->exec_mode)){ // on PSP, extract FLASH0.ARK into flash0
+	    SceUID kthreadID = k_tbl->KernelCreateThread( "arkflasher", (void*)KERNELIFY(&extractFlash0Archive), 25, 0x12000, 0, NULL);
+	    if (kthreadID >= 0){
+	        void* arg = &PRTSTR11;
+		    k_tbl->KernelStartThread(kthreadID, sizeof(void*), &arg);
+		    k_tbl->waitThreadEnd(kthreadID, NULL);
+		    k_tbl->KernelDeleteThread(kthreadID);
+	    }
+    }
+    else{ // Patching flash0 on Vita
+	    patchKermitPeripheral(k_tbl);
+	}
+}
+
 // Kernel Permission Function
 void kernelContentFunction(void){
+
+    if (!isKernel(0)){
+        return; // we don't have kernel privilages? better error out than crash
+    }
+
 	// Switch to Kernel Permission Level
 	setK1Kernel();
 	
@@ -143,17 +164,14 @@ void kernelContentFunction(void){
     // move global configuration to static address in user space so that reboot and CFW modules can find it
 	if (g_tbl->config != ark_conf_backup) memcpy(ark_conf_backup, g_tbl->config, sizeof(ARKConfig));
 	
+	ark_config = ark_conf_backup;
+	
 	PRTSTR("Scanning kernel functions");
 	// get kernel functions
 	scanKernelFunctions();
 	
 	// repair damage done by kernel exploit
 	kxf->repairInstruction();
-	
-	#if FLASH_DUMP == 1
-	initKernelThread();
-	return;
-	#else
 
     // Install flash0 files
     PRTSTR("Installing "FLASH0_ARK);
@@ -172,30 +190,43 @@ void kernelContentFunction(void){
 	
 	
 	// make the common loadexec patches
-	int k1_patches = IS_PSP(ark_conf_backup->exec_mode)? 2:3;
+	int k1_patches = IS_PSP(ark_conf_backup->exec_mode)?2:3;
 	patchLoadExecCommon(loadexec, (u32)LoadReboot, k1_patches);
 	
 	// Invalidate Cache
 	k_tbl->KernelDcacheWritebackInvalidateAll();
 	k_tbl->KernelIcacheInvalidateAll();
+	
+	int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = (void *)FindFunction("sceController_Service", "sceCtrl", 0x3A622550);
+	if (CtrlPeekBufferPositive){
+	    SceCtrlData data;
+	    memset(&data, 0, sizeof(data));
+	    CtrlPeekBufferPositive(&data, 1);
+	    if((data.Buttons & PSP_CTRL_RTRIGGER) == PSP_CTRL_RTRIGGER){
+	        ark_conf_backup->recovery = 1;
+	    }
+	}
 
-	// Prepare Homebrew Reboot
-	char menupath[ARK_PATH_SIZE];
-	strcpy(menupath, ark_conf_backup->arkpath);
-	strcat(menupath, ARK_MENU);
-	struct SceKernelLoadExecVSHParam param;
-	memset(&param, 0, sizeof(param));
-	param.size = sizeof(param);
-	param.args = strlen(menupath) + 1;
-	param.argp = menupath;
-	param.key = "game";
-
-	// Trigger Reboot
-	PRTSTR1("Running Menu at %s", menupath);
-	// Find LoadExec Functions
-	_KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
-	_KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
-	#endif
+    if (ark_conf_backup->recovery || IS_VITA(ark_conf_backup->exec_mode)){
+        // Prepare Homebrew Reboot
+	    char menupath[ARK_PATH_SIZE];
+	    strcpy(menupath, ark_conf_backup->arkpath);
+	    strcat(menupath, ARK_MENU);
+	    struct SceKernelLoadExecVSHParam param;
+	    memset(&param, 0, sizeof(param));
+	    param.size = sizeof(param);
+	    param.args = strlen(menupath) + 1;
+	    param.argp = menupath;
+	    param.key = "game";
+	    PRTSTR1("Running Menu at %s", menupath);
+	    _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
+	    _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
+    }
+	else {
+	    PRTSTR("Running VSH");
+	    void (*_KernelExitVSH)(void*) = FindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
+	    _KernelExitVSH(NULL);
+	}
 }
 
 // Clear BSS Segment of Payload

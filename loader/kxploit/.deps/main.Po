@@ -48,9 +48,4 @@ main.o .deps/main.Po: main.c /home/aaron/projects/ark/common/include/sdk.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
  /home/aaron/projects/ark/common/include/module2.h \
  /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/kermit.h \
- /home/aaron/projects/ark/common/include/flashpatch.h \
- /home/aaron/projects/ark/common/include/lflash0.h \
- /home/aaron/projects/ark/common/include/sdk.h \
- /home/aaron/projects/ark/common/include/functions.h \
  /home/aaron/projects/ark/common/include/macros.h

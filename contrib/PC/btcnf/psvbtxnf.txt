@@ -11,6 +11,7 @@ $/kd/iofilemgr.prx GP
 $/kd/memlmd_01g.prx GP
 $/kd/modulemgr.prx GP
 $/kd/ark_systemctrl.prx GP
+$/kd/ark_vitapops.prx GP
 $/kd/init.prx GP
 $/kd/loadexec_01g.prx GP
 $/kd/kermit_lowio.prx GP

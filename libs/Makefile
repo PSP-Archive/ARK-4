@@ -11,7 +11,6 @@ distclean clean:
 	$(Q)make $@ -C ansi-c $(OPT)
 	$(Q)make $@ -C graphics $(OPT)
 	$(Q)make $@ -C colordebugger $(OPT)
-	$(Q)make $@ -C psid $(OPT)
 	$(Q)make $@ -C libpspmath $(OPT)
 	$(Q)make $@ -C libunziprar $(OPT)
 	$(Q)make $@ -C libpng $(OPT)

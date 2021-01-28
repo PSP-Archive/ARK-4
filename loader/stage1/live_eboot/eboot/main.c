@@ -33,6 +33,7 @@ volatile ARKConfig config = {
     .arkpath = {0}, // We can use argv[0] (eboot's path)
     .exec_mode = DEV_UNK, // let stage 2 figure this one out
     .exploit_id = EXPLOIT_ID,
+    .recovery = 0,
 };
 volatile FunctionTable funcs = {
     .config = &config,

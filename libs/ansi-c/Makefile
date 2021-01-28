@@ -12,6 +12,7 @@ strcmp.o \
 strstr.o \
 memfind.o \
 strhex32.o \
+strsafe.o \
 strbeginswith.o \
 strreplaceall.o
 OBJS = $(C_OBJS)

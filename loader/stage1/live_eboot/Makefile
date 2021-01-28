@@ -1,5 +1,4 @@
 all:
-	$(Q)make $@ -C eboot/sysmem $(OPT)
 	$(Q)make $@ -C  eboot $(OPT)
 	$(Q)sign_np -elf eboot/ARK.elf EBOOT.BIN 00
 	$(Q)mv EBOOT.BIN disc0/psp_game/sysdir/EBOOT.BIN

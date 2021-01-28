@@ -1,0 +1,37 @@
+high_mem.o .deps/high_mem.Po: high_mem.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
+ /usr/local/pspdev/psp/sdk/include/pspkerneltypes.h \
+ /usr/local/pspdev/psp/sdk/include/psptypes.h \
+ /usr/local/pspdev/psp/sdk/include/pspmodulemgr.h \
+ /usr/local/pspdev/psp/sdk/include/pspmoduleinfo.h \
+ /usr/local/pspdev/psp/sdk/include/pspthreadman.h \
+ /usr/local/pspdev/psp/sdk/include/pspdebug.h \
+ /usr/local/pspdev/psp/sdk/include/pspsysmem_kernel.h \
+ /usr/local/pspdev/psp/sdk/include/pspsysmem.h \
+ /usr/local/pspdev/psp/sdk/include/pspkernel.h \
+ /usr/local/pspdev/psp/sdk/include/pspuser.h \
+ /usr/local/pspdev/psp/sdk/include/pspiofilemgr.h \
+ /usr/local/pspdev/psp/sdk/include/pspiofilemgr_fcntl.h \
+ /usr/local/pspdev/psp/sdk/include/pspiofilemgr_stat.h \
+ /usr/local/pspdev/psp/sdk/include/pspiofilemgr_dirent.h \
+ /usr/local/pspdev/psp/sdk/include/psploadexec.h \
+ /usr/local/pspdev/psp/sdk/include/psputils.h \
+ /usr/local/pspdev/psp/sdk/include/pspkerror.h \
+ /usr/local/pspdev/psp/sdk/include/pspstdio.h \
+ /usr/local/pspdev/psp/sdk/include/pspintrman.h \
+ /usr/local/pspdev/psp/sdk/include/pspiofilemgr_kernel.h \
+ /usr/local/pspdev/psp/sdk/include/psploadcore.h \
+ /usr/local/pspdev/psp/sdk/include/pspstdio_kernel.h \
+ /usr/local/pspdev/psp/sdk/include/pspsysreg.h \
+ /usr/local/pspdev/psp/sdk/include/pspkdebug.h \
+ /usr/local/pspdev/psp/sdk/include/pspintrman_kernel.h \
+ /usr/local/pspdev/psp/sdk/include/pspmodulemgr_kernel.h \
+ /usr/local/pspdev/psp/sdk/include/psputilsforkernel.h \
+ /usr/local/pspdev/psp/sdk/include/pspsysevent.h \
+ /usr/local/pspdev/psp/sdk/include/libc/stdio.h \
+ /usr/local/pspdev/psp/sdk/include/libc/string.h \
+ /usr/local/pspdev/psp/sdk/include/libc/ctype.h \
+ /home/aaron/projects/ark/common/include/globals.h \
+ /home/aaron/projects/ark/common/include/systemctrl.h \
+ /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
+ /usr/local/pspdev/psp/sdk/include/pspthreadman_kernel.h \
+ /home/aaron/projects/ark/common/include/module2.h

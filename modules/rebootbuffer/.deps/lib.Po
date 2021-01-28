@@ -1,1 +1,0 @@
-lib.o .deps/lib.Po: lib.c /usr/local/pspdev/psp/sdk/include/psptypes.h
