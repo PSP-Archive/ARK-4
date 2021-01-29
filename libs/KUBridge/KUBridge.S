@@ -3,7 +3,7 @@
 #include "pspimport.s"
 
 // Build files
-// KUBridge_0000.o KUBridge_0001.o KUBridge_0002.o KUBridge_0003.o KUBridge_0004.o KUBridge_0005.o KUBridge_0006.o KUBridge_0007.o KUBridge_0008.o KUBridge_0009.o KUBridge_0010.o KUBridge_0011.o 
+// KUBridge_0000.o KUBridge_0001.o KUBridge_0002.o KUBridge_0003.o KUBridge_0004.o KUBridge_0005.o KUBridge_0006.o KUBridge_0007.o KUBridge_0008.o KUBridge_0009.o KUBridge_0010.o KUBridge_0011.o KUBridge_0012.o 
 
 #ifdef F_KUBridge_0000
 	IMPORT_START "KUBridge",0x40090000
@@ -40,4 +40,7 @@
 #endif
 #ifdef F_KUBridge_0011
 	IMPORT_FUNC  "KUBridge",0x6B4B577F,kuKernelMemcpy
+#endif
+#ifdef F_KUBridge_0012
+	IMPORT_FUNC  "KUBridge",0xD0D05A5B,kuKernelGetUmdFile
 #endif

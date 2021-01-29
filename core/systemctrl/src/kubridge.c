@@ -188,3 +188,7 @@ int kuKernelInitKeyConfig(void)
 	return apptype;
 }
 
+void kuKernelGetUmdFile(char *umdfile, int size)
+{
+	strncpy(umdfile, GetUmdFile(), size);
+}

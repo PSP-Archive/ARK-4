@@ -1,7 +1,7 @@
 vitaflash.o .deps/vitaflash.Po: vitaflash.c vitaflash.h \
- /home/aaron/projects/ark/common/include/macros.h \
- /home/aaron/projects/ark/common/include/functions.h \
- /home/aaron/projects/ark/common/include/sdk.h \
+ /home/aaron/projects/ARK-4/common/include/macros.h \
+ /home/aaron/projects/ARK-4/common/include/functions.h \
+ /home/aaron/projects/ARK-4/common/include/sdk.h \
  /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/pspkerneltypes.h \
  /usr/local/pspdev/psp/sdk/include/psptypes.h \
@@ -48,6 +48,6 @@ vitaflash.o .deps/vitaflash.Po: vitaflash.c vitaflash.h \
  /usr/local/pspdev/psp/sdk/include/pspumd.h \
  /usr/local/pspdev/psp/sdk/include/pspimpose_driver.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
- /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/kermit.h
+ /home/aaron/projects/ARK-4/common/include/module2.h \
+ /home/aaron/projects/ARK-4/common/include/globals.h \
+ /home/aaron/projects/ARK-4/common/include/kermit.h

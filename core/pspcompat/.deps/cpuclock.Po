@@ -31,9 +31,9 @@ cpuclock.o .deps/cpuclock.Po: cpuclock.c /usr/local/pspdev/psp/sdk/include/pspsd
  /usr/local/pspdev/psp/sdk/include/libc/string.h \
  /usr/local/pspdev/psp/sdk/include/libc/ctype.h \
  /usr/local/pspdev/psp/sdk/include/pspinit.h \
- /home/aaron/projects/ark/common/include/systemctrl.h \
+ /home/aaron/projects/ARK-4/common/include/systemctrl.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
  /usr/local/pspdev/psp/sdk/include/pspthreadman_kernel.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/macros.h
+ /home/aaron/projects/ARK-4/common/include/globals.h \
+ /home/aaron/projects/ARK-4/common/include/module2.h \
+ /home/aaron/projects/ARK-4/common/include/macros.h

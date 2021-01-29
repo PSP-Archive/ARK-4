@@ -36,6 +36,7 @@
 #define ARK_MENU "MENU.PBP"
 #define ARK_BIN "ARK.BIN"
 #define FLASH0_ARK "FLASH0.ARK"
+#define VSH_MENU "VSHMENU.PRX"
 #define K_FILE "K.BIN"
 #define ARK_BIN_MAX_SIZE 0x8000
 

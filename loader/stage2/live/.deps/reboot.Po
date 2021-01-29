@@ -1,5 +1,5 @@
 reboot.o .deps/reboot.Po: reboot.c reboot.h main.h \
- /home/aaron/projects/ark/common/include/sdk.h \
+ /home/aaron/projects/ARK-4/common/include/sdk.h \
  /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/pspkerneltypes.h \
  /usr/local/pspdev/psp/sdk/include/psptypes.h \
@@ -46,16 +46,16 @@ reboot.o .deps/reboot.Po: reboot.c reboot.h main.h \
  /usr/local/pspdev/psp/sdk/include/pspumd.h \
  /usr/local/pspdev/psp/sdk/include/pspimpose_driver.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
- /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/macros.h \
- /home/aaron/projects/ark/common/include/rebootconfig.h \
- /home/aaron/projects/ark/common/include/systemctrl_se.h \
- /home/aaron/projects/ark/common/include/functions.h \
- /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/ansi_c_functions.h \
- /home/aaron/projects/ark/core/rebootex/payload.h \
- /home/aaron/projects/ark/libs/graphics/graphics.h \
- /home/aaron/projects/ark/libs/graphics/../colordebugger/colordebugger.h \
- /home/aaron/projects/ark/loader/kxploit/kxploit.h \
- /home/aaron/projects/ark/common/include/globals.h
+ /home/aaron/projects/ARK-4/common/include/module2.h \
+ /home/aaron/projects/ARK-4/common/include/macros.h \
+ /home/aaron/projects/ARK-4/common/include/rebootconfig.h \
+ /home/aaron/projects/ARK-4/common/include/systemctrl_se.h \
+ /home/aaron/projects/ARK-4/common/include/functions.h \
+ /home/aaron/projects/ARK-4/common/include/module2.h \
+ /home/aaron/projects/ARK-4/common/include/globals.h \
+ /home/aaron/projects/ARK-4/common/include/ansi_c_functions.h \
+ /home/aaron/projects/ARK-4/core/rebootex/payload.h \
+ /home/aaron/projects/ARK-4/libs/graphics/graphics.h \
+ /home/aaron/projects/ARK-4/libs/graphics/../colordebugger/colordebugger.h \
+ /home/aaron/projects/ARK-4/loader/kxploit/kxploit.h \
+ /home/aaron/projects/ARK-4/common/include/globals.h

@@ -159,10 +159,10 @@ unzip:
 	}
 
 	// re-calculate key with xor seed
-	if ((*sceMemlmdInitializeScrambleKey)(0, (void*)0xBFC00200) < 0)
+	if (sceMemlmdInitializeScrambleKey!= NULL && sceMemlmdInitializeScrambleKey(0, (void*)0xBFC00200) < 0)
 		return ret;
 
-	if (_memlmd_unsigner(prx, size, use_polling) < 0) {
+	if (_memlmd_unsigner != NULL && _memlmd_unsigner(prx, size, use_polling) < 0) {
 		return ret;
 	}
 
@@ -207,30 +207,34 @@ SceModule2* patchMemlmd(void)
 	// Fetch Text Address
 	unsigned int text_addr = mod->text_addr;
 
-    // Backup Decrypt Function Pointer
-    memlmdDecrypt = (void*)findJALReverseForFunction("sceMemlmd", "memlmd", 0xCF03556B, 1);
     u32 topaddr = mod->text_addr + mod->text_size;
-    sceMemlmdInitializeScrambleKey = FindFunction("sceMemlmd", "memlmd", 0xF26A33C3);
-    // search for memlmd_unsigner
-    for (u32 addr=mod->text_addr; addr<topaddr; addr+=4){
-        if (_lw(addr) == 0x3222003F){
-            do {addr-=4;} while (_lw(addr)!=0x27BDFFF0);
-            memlmd_unsigner = (void*)addr;
-            break;
-        }
-    }
 	// do the patching
-    for (u32 addr = text_addr; addr<topaddr; addr+=4){
+	int patches = 5;
+    for (u32 addr = text_addr; addr<topaddr && patches; addr+=4){
 	    u32 data = _lw(addr);
 	    if (data == JAL(memlmdDecrypt)){
 		    _sw(JAL(_memlmdDecrypt), addr);
+		    patches--;
 		}
 	    else if (data == JAL(memlmd_unsigner)){
 	        _sw(JAL(_memlmd_unsigner), addr);
+	        patches--;
 	    }
 	    else if (data == 0x3C02F009){
 	        _sh(0xF005, addr);
+	        patches--;
 	    }
+	    else if (data == 0x3222003F){
+            u32 a = addr;
+            do {a-=4;} while (_lw(a)!=0x27BDFFF0);
+            memlmd_unsigner = (void*)a;
+        }
+        else if (data == 0x27BDFF80){
+            memlmdDecrypt = addr-8; // Backup Decrypt Function Pointer
+        }
+        else if (data == 0x2403FF31 && sceMemlmdInitializeScrambleKey==NULL){
+            sceMemlmdInitializeScrambleKey = addr-8;
+        }
     }
 	// Flush Cache
 	flushCache();
@@ -240,17 +244,18 @@ SceModule2* patchMemlmd(void)
 // Patch MesgLed Cryptography
 void patchMesgLed(SceModule2 * mod)
 {
-    // Save Original Decrypt Function Pointer
-    mesgledDecrypt = (void*)findFirstJALReverseForFunction("sceMesgLed", "sceDbsvr_driver", 0x94561901);
-    // Hook Decrypt Function Calls
     u32 addr;
     u32 topaddr = mod->text_addr + mod->text_size;
-    u32 inst = JAL(_mesgledDecrypt);
-    u32 call = JAL(mesgledDecrypt);
-    for (addr = mod->text_addr; addr<topaddr; addr+=4){
+    int patches = 5;
+    for (addr = mod->text_addr; addr<topaddr && patches; addr+=4){
 	    u32 data = _lw(addr);
-	    if (data == call)
-		    _sw(inst, addr);
+	    if (data == JAL(mesgledDecrypt)){
+		    _sw(JAL(_mesgledDecrypt), addr); // Hook Decrypt Function Calls
+		    patches--;
+		}
+		else if (data == 0x2CE30001){
+		    mesgledDecrypt = addr; // Save Original Decrypt Function Pointer
+		}
     }
     // Flush Cache
 	flushCache();

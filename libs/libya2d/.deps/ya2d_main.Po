@@ -4,5 +4,5 @@ ya2d_main.o .deps/ya2d_main.Po: ya2d_main.c ya2d_main.h \
  /usr/local/pspdev/psp/sdk/include/pspge.h \
  /usr/local/pspdev/psp/sdk/include/pspgum.h \
  /usr/local/pspdev/psp/sdk/include/pspdisplay.h \
- /home/aaron/projects/ark/libs/libpspvram/vram.h \
+ /home/aaron/projects/ARK-4/libs/libpspvram/vram.h \
  /usr/local/pspdev/psp/sdk/include/psputils.h

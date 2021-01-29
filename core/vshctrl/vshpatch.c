@@ -54,7 +54,7 @@ static void patch_vsh_module(SceModule2 * mod);
 
 static void hook_iso_file_io(void);
 static void hook_iso_directory_io(void);
-//static void patch_sceCtrlReadBufferPositive(void); 
+static void patch_sceCtrlReadBufferPositive(void); 
 static void patch_Gameboot(SceModule2 *mod); 
 static void patch_hibblock(SceModule2 *mod); 
 static void patch_msvideo_main_plugin_module(u32 text_addr);
@@ -81,6 +81,7 @@ static int vshpatch_module_chain(SceModule2 *mod)
 
 	if(0 == strcmp(mod->modname, "vsh_module")) {
 		patch_vsh_module(mod);
+		patch_sceCtrlReadBufferPositive();
 		sync_cache();
 		goto exit;
 	}
@@ -101,34 +102,6 @@ static int vshpatch_module_chain(SceModule2 *mod)
 		sync_cache();
 		goto exit;
 	}
-    /*
-	if( 0 == strcmp(mod->modname, "update_plugin_module")) {
-		patch_update_plugin_module((SceModule*)mod);
-		sync_cache();
-		goto exit;
-	}
-	*/
-    /*
-	if(conf.useownupdate && 0 == strcmp(mod->modname, "SceUpdateDL_Library")) {
-		patch_SceUpdateDL_Library(text_addr);
-		sync_cache();
-		goto exit;
-	}
-	*/
-
-    /*
-	if(conf.htmlviewer_custom_save_location && 0 == strcmp(mod->modname, "htmlviewer_plugin_module")) {
-		patch_htmlviewer_plugin_module(text_addr);
-		sync_cache();
-		goto exit;
-	}
-	
-	if(0 == strcmp(mod->modname, "sceVshHVUtility_Module")) {
-		patch_htmlviewer_utility_module(text_addr);
-		sync_cache();
-		goto exit;
-	}
-	*/
 
 exit:
 	if (previous) previous(mod);
@@ -146,17 +119,15 @@ static int _sceDisplaySetHoldMode(int a0)
 	//return 0;
 }
 
-/*
 static void patch_sceCtrlReadBufferPositive(void)
 {
 	SceModule* mod;
 
 	mod = sceKernelFindModuleByName("sceVshBridge_Driver");
-	hookImportByNID(mod, "sceCtrl_driver", 0xBE30CED0, _sceCtrlReadBufferPositive, 0);
+	hookImportByNID(mod, "sceCtrl_driver", 0xBE30CED0, _sceCtrlReadBufferPositive);
 	g_sceCtrlReadBufferPositive = (void *) sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
 	sctrlHENPatchSyscall(g_sceCtrlReadBufferPositive, _sceCtrlReadBufferPositive);
 }
-*/
 
 static void patch_Gameboot(SceModule2 *mod)
 {
@@ -164,12 +135,10 @@ static void patch_Gameboot(SceModule2 *mod)
 	sceDisplaySetHoldMode = (void*)(mod->text_addr + 0x00005630);
 }
 
-/*
 static void patch_hibblock(SceModule2 *mod)
 {
 	MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x000051C8);
 }
-*/
 
 static inline void ascii2utf16(char *dest, const char *src)
 {
@@ -206,70 +175,6 @@ int myIoMkdir(const char *dir, SceMode mode)
 	ret = sceIoMkdir(dir, mode);
 	return ret;
 }
-
-/*
-static const char *g_ver_checklist[] = {
-	"release:",
-	"build:",
-	"system:",
-	"vsh:",
-	"target:",
-};
-
-static int load_version_txt(void *buf, int size)
-{
-	SceUID fd;
-
-   	fd = sceIoOpen("ms0:/seplugins/version.txt", PSP_O_RDONLY, 0777);
-
-	if(fd < 0) {
-		fd = sceIoOpen("ef0:/seplugins/version.txt", PSP_O_RDONLY, 0777);
-	}
-
-	if(fd < 0) {
-		return fd;
-	}
-
-	size = sceIoRead(fd, buf, size);
-	sceIoClose(fd);
-
-	return size;
-}
-
-static int check_valid_version_txt(const void *buf, int size)
-{
-	const char *p;
-	int i;
-
-	p = buf;
-
-	if(size < 159) {
-		return -1;
-	}
-
-	for(i=0; i<NELEMS(g_ver_checklist); ++i) {
-		if(p - (const char*)buf >= size) {
-			return -2;
-		}
-
-		if(0 != strncmp(p, g_ver_checklist[i], strlen(g_ver_checklist[i]))) {
-			return -3;
-		}
-
-		while(*p != '\n' && p - (const char*)buf < size) {
-			p++;
-		}
-
-		if(p - (const char*)buf >= size) {
-			return -4;
-		}
-
-		p++;
-	}
-
-	return 0;
-}
-*/
 
 static void patch_sysconf_plugin_module(SceModule2 *mod)
 {
@@ -343,24 +248,10 @@ int umdLoadExec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
 	//result
 	int ret = 0;
-	//SEConfig config;
 
-	printk("%s: %s %s\n", __func__, file, param->key);
-	printk("%s: %d %s\n", __func__, (int)sctrlSEGetBootConfFileIndex(), sctrlSEGetUmdFile());
+	sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
 
-	//sctrlSEGetConfig(&config);
-
-	//if(sctrlSEGetBootConfFileIndex() == MODE_VSHUMD) {
-		sctrlSESetBootConfFileIndex(MODE_VSHUMD);
-		sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
-	//}
-	
-    /*
-	//enable high memory on demand
-	if(config.retail_high_memory) sctrlHENSetMemory(55, 0);
-	*/
-
-	/*if(psp_model == PSP_GO) {
+	if(psp_model == PSP_GO) {
 		char devicename[20];
 		int apitype;
 
@@ -374,10 +265,13 @@ int umdLoadExec(char * file, struct SceKernelLoadExecVSHParam * param)
 		}
 
 		param->key = "umdemu";
+		sctrlSESetBootConfFileIndex(MODE_INFERNO);
 		ret = sctrlKernelLoadExecVSHWithApitype(apitype, file, param);
-	} else {*/
+	} else {
+	    sctrlSESetBootConfFileIndex(MODE_UMD);
+	    sctrlSESetUmdFile("");
 		ret = sceKernelLoadExecVSHDisc(file, param);
-	//}
+	}
 
 	return ret;
 }
@@ -386,22 +280,12 @@ int umdLoadExecUpdater(char * file, struct SceKernelLoadExecVSHParam * param)
 {
 	//result
 	int ret = 0;
-	//SEConfig config;
-
-	printk("%s: %s %s\n", __func__, file, param->key);
-	printk("%s: %d %s\n", __func__, (int)sctrlSEGetBootConfFileIndex(), sctrlSEGetUmdFile());
-
-	//sctrlSEGetConfig(&config);
-
-	if(sctrlSEGetBootConfFileIndex() == MODE_VSHUMD) {
-		sctrlSESetBootConfFileIndex(MODE_UPDATERUMD);
-		sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
-	}
+	sctrlSESetBootConfFileIndex(MODE_UPDATERUMD);
+	sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
 	ret = sceKernelLoadExecVSHDiscUpdater(file, param);
 	return ret;
 }
 
-/*
 static void patch_vsh_module_for_pspgo_umdvideo(SceModule2 *mod)
 {
 	u32 text_addr = mod->text_addr, prev;
@@ -417,7 +301,6 @@ static void patch_vsh_module_for_pspgo_umdvideo(SceModule2 *mod)
 		_sw(0x24020000 | PSP_4000, text_addr + offset + 4);
 	}
 }
-*/
 
 static void patch_vsh_module(SceModule2 * mod)
 {
@@ -438,11 +321,9 @@ static void patch_vsh_module(SceModule2 * mod)
     for(int i = 0; i < NELEMS(PBPFWCheck); i++) {
 		_sw(SYSCALL(sctrlKernelQuerySystemCall(fakeParamInexistance)), mod->text_addr + PBPFWCheck[i]);
 	}
-    /*
 	if(psp_model == PSP_GO && sctrlSEGetBootConfFileIndex() == MODE_VSHUMD) {
 		patch_vsh_module_for_pspgo_umdvideo(mod);
 	}
-	*/
 }
 
 static void hook_iso_file_io(void)

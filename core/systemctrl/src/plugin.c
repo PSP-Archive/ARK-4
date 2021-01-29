@@ -69,7 +69,7 @@ static int matchingRunlevel(char * runlevel)
 	if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1;
 	
 	// "game" Runlevel
-	if(( apitype == 0x123 || apitype == 0x141 ) && stricmp(runlevel, "game") == 0) return 1;
+	if(( apitype == 0x123 || apitype == 0x125 || apitype == 0x141 ) && stricmp(runlevel, "game") == 0) return 1;
 	
 	// "pops" Runlevel
 	if(apitype == 0x144 && stricmp(runlevel, "pops") == 0) return 1;

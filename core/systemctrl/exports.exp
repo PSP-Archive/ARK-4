@@ -7,6 +7,7 @@ PSP_EXPORT_VAR_HASH(module_info)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(SystemCtrlForUser, 0, 0x4001)
+PSP_EXPORT_FUNC(sctrlKernelExitVSH)
 PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHWithApitype)
 PSP_EXPORT_FUNC(sctrlKernelSetUserLevel)
 PSP_EXPORT_FUNC(sctrlKernelSetDevkitVersion)
@@ -36,10 +37,11 @@ PSP_EXPORT_FUNC(printkCached)
 PSP_EXPORT_FUNC(printkSync)
 PSP_EXPORT_FUNC(sctrlGetInitPARAM)
 PSP_EXPORT_FUNC(sctrlHENSetMemory)
-PSP_EXPORT_FUNC(sctrlHENGetArkConfig)
+PSP_EXPORT_FUNC_NID(sctrlHENGetArkConfig, 0x6EAFC02D)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(SystemCtrlForKernel, 0, 0x0001)
+PSP_EXPORT_FUNC(sctrlKernelExitVSH)
 PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHWithApitype)
 PSP_EXPORT_FUNC(sctrlKernelSetUserLevel)
 PSP_EXPORT_FUNC(sctrlKernelSetDevkitVersion)
@@ -91,7 +93,7 @@ PSP_EXPORT_FUNC(sctrlGetThreadContextByUID)
 PSP_EXPORT_FUNC(sctrlGetThreadContextByName)
 PSP_EXPORT_FUNC(sctrlGetInitPARAM)
 PSP_EXPORT_FUNC(sctrlHENSetMemory)
-PSP_EXPORT_FUNC(sctrlHENGetArkConfig)
+PSP_EXPORT_FUNC_NID(sctrlHENGetArkConfig, 0x6EAFC02D)
 PSP_EXPORT_FUNC(LZ4_decompress_fast)
 PSP_EXPORT_END
 
@@ -107,6 +109,7 @@ PSP_EXPORT_FUNC(kuKernelGetModel)
 PSP_EXPORT_FUNC(kuKernelPeekw)
 PSP_EXPORT_FUNC(kuKernelPokew)
 PSP_EXPORT_FUNC(kuKernelMemcpy)
+PSP_EXPORT_FUNC(kuKernelGetUmdFile)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(SystemCtrlPrivate, 0, 0x0001)

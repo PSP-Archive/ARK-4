@@ -1,2 +1,2 @@
 memfind.o .deps/memfind.Po: memfind.c \
- /home/aaron/projects/ark/common/include/ansi_c_functions.h
+ /home/aaron/projects/ARK-4/common/include/ansi_c_functions.h

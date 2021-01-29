@@ -51,6 +51,21 @@ int sctrlHENSetMemory(u32 p2, u32 p9)
 	return 0;
 }
 
+int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param)
+{
+	u32 k1;
+	int ret = -1;
+
+	k1 = pspSdkSetK1(0);
+
+    int (*_KernelExitVSH)(void*) = FindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
+	ret = _KernelExitVSH(param);
+	
+	pspSdkSetK1(k1);
+
+	return ret;
+}
+
 // Set User Level
 int sctrlKernelSetUserLevel(int level)
 {

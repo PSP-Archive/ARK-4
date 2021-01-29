@@ -1,6 +1,5 @@
 #include <pspkernel.h>
 #include <string.h>
-#include "utils.h"
 #include "systemctrl.h"
 #include "main.h"
 

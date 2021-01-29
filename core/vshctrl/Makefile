@@ -1,6 +1,6 @@
 TARGET = vshctrl
-OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o
-IMPORTS = imports.S
+OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o hibernation_delete.c $(PROVITA)/common/functions.o
+IMPORTS = 
 
 INCDIR = $(PROVITA)/common/include $(PROVITA)/modules/systemctrl/include
 CFLAGS = -Os -G0 -Wall -fno-pic

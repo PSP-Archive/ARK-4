@@ -24,14 +24,20 @@
 #include <pspctrl.h>
 #include <stdio.h>
 #include <string.h>
-#include "utils.h"
-#include "libs.h"
+#include "globals.h"
 #include "systemctrl.h"
-#include "printk.h"
 #include "systemctrl_se.h"
 #include "systemctrl_private.h"
-#include "../Satelite/ui.h"
-#include "main.h"
+
+#define SENSE_KEY (PSP_CTRL_CIRCLE|PSP_CTRL_TRIANGLE|PSP_CTRL_CROSS|PSP_CTRL_SQUARE|PSP_CTRL_START|PSP_CTRL_SELECT)
+
+#define ALL_ALLOW    (PSP_CTRL_UP|PSP_CTRL_RIGHT|PSP_CTRL_DOWN|PSP_CTRL_LEFT)
+#define ALL_BUTTON   (PSP_CTRL_TRIANGLE|PSP_CTRL_CIRCLE|PSP_CTRL_CROSS|PSP_CTRL_SQUARE)
+#define ALL_TRIGGER  (PSP_CTRL_LTRIGGER|PSP_CTRL_RTRIGGER)
+#define ALL_FUNCTION (PSP_CTRL_SELECT|PSP_CTRL_START|PSP_CTRL_HOME|PSP_CTRL_HOLD|PSP_CTRL_NOTE)
+#define ALL_CTRL     (ALL_ALLOW|ALL_BUTTON|ALL_TRIGGER|ALL_FUNCTION)
+
+extern ARKConfig* ark_conf;
 
 static int (*g_VshMenuCtrl) (SceCtrlData *, int);
 static SceUID g_satelite_mod_id = -1;
@@ -55,8 +61,8 @@ int vctrlVSHUpdateConfig(SEConfig *config)
 	int ret;
 
    	k1 = pspSdkSetK1(0);
-	memcpy(&conf, config, sizeof(conf));
-	ret = sctrlSESetConfig(&conf);
+	//memcpy(&conf, config, sizeof(conf));
+	//ret = sctrlSESetConfig(&conf);
 	pspSdkSetK1(k1);
 
 	return ret;
@@ -65,16 +71,10 @@ int vctrlVSHUpdateConfig(SEConfig *config)
 int vctrlVSHExitVSHMenu(SEConfig *config, char *videoiso, int disctype)
 {
 	u32 k1;
-	int ret;
+	int ret = 0;
 
    	k1 = pspSdkSetK1(0);
-	ret = vctrlVSHUpdateConfig(config);
-
-	if (conf.vshcpuspeed != 0) {
-		SetSpeed(conf.vshcpuspeed, conf.vshbusspeed);
-	} else {
-		SetSpeed(222, 111);
-	}
+	if (config) ret = vctrlVSHUpdateConfig(config);
 
 	g_VshMenuCtrl = NULL;
 	pspSdkSetK1(k1);
@@ -85,7 +85,10 @@ int vctrlVSHExitVSHMenu(SEConfig *config, char *videoiso, int disctype)
 static SceUID load_satelite(void)
 {
 	SceUID modid;
-	const char *mod = PATH_SATELITE;
+	char mod[ARK_PATH_SIZE];
+	strcpy(mod, ark_conf->arkpath);
+	strcat(mod, VSH_MENU);
+	
 	SceKernelLMOption opt = {
 		.size = 0x14,
 		.flags = 0,
@@ -94,9 +97,37 @@ static SceUID load_satelite(void)
 	};
 
 	modid = sceKernelLoadModule(mod, 0, &opt);
-	printk("%s: loading %s -> 0x%08X\n", __func__, mod, modid);
 
 	return modid;
+}
+
+SceUID get_thread_id(const char *name)
+{
+	int ret, count, i;
+	SceUID ids[128];
+
+	ret = sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, sizeof(ids), &count);
+
+	if(ret < 0) {
+		return -1;
+	}
+
+	for(i=0; i<count; ++i) {
+		SceKernelThreadInfo info;
+
+		info.size = sizeof(info);
+		ret = sceKernelReferThreadStatus(ids[i], &info);
+
+		if(ret < 0) {
+			continue;
+		}
+
+		if(0 == strcmp(info.name, name)) {
+			return ids[i];
+		}
+	}
+
+	return -2;
 }
 
 int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count)

@@ -11,6 +11,6 @@ vitamem.o .deps/vitamem.Po: vitamem.c vitamem.h /usr/local/pspdev/psp/sdk/includ
  /usr/local/pspdev/psp/sdk/include/pspiofilemgr_dirent.h \
  /usr/local/pspdev/psp/sdk/include/pspsysmem.h \
  /usr/local/pspdev/psp/sdk/include/pspsysmem_kernel.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/macros.h \
- /home/aaron/projects/ark/common/include/module2.h
+ /home/aaron/projects/ARK-4/common/include/globals.h \
+ /home/aaron/projects/ARK-4/common/include/macros.h \
+ /home/aaron/projects/ARK-4/common/include/module2.h

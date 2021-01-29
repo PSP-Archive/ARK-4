@@ -20,8 +20,6 @@
 #include "systemctrl_se.h"
 #include "systemctrl_private.h"
 #include "isoreader.h"
-//#include "printk.h"
-//#include "utils.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,6 +31,7 @@
 #define MAGIC_DFD_FOR_DELETE 0x9000
 #define MAGIC_DFD_FOR_DELETE_2 0x9001
 
+extern u32 psp_model;
 static char g_iso_dir[128];
 static char g_temp_delete_dir[128];
 static int g_delete_eboot_injected = 0;
@@ -436,16 +435,7 @@ int gamermdir(const char * path)
 int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
 	//result
-	int result = 0;
-
-	//printk("%s: %s %s\n", __func__, file, param->key);
-	
-	//enable high memory on demand
-	/*
-	SEConfig config;
-	sctrlSEGetConfig(&config);
-	if(config.retail_high_memory) sctrlHENSetMemory(55, 0);
-	*/
+	int result = -1;
 
 	//virtual iso eboot detected
 	if (is_iso_eboot(file)) {
@@ -456,10 +446,15 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 	}
 	
     u32 k1 = pspSdkSetK1(0);
-	//forward to ms0 handler
-	/*if(strncmp(file, "ms", 2) == 0)*/ result = sceKernelLoadExecVSHMs2(file, param);
-	//forward to ef0 handler
-	//else result = sceKernelLoadExecVSHEf2(file, param);
+	if(psp_model != PSP_GO || strncmp(file, "ms", 2) == 0){
+	    //forward to ms0 handler
+	    result = sceKernelLoadExecVSHMs2(file, param);
+	}
+	else{
+	    //forward to ef0 handler
+	    int (*_sceKernelLoadExecVSHEf2)(char*, void*) = FindFunction("sceLoadExec", "LoadExecForKernel", 0xD35D6403);
+	    if (_sceKernelLoadExecVSHEf2) result = _sceKernelLoadExecVSHEf2(file, param);
+	}
 	pspSdkSetK1(k1);
 
 	return result;

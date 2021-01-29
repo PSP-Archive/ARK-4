@@ -1,1 +1,1 @@
-psid.o .deps/psid.Po: psid.c /home/aaron/projects/ark/common/include/psid.h
+psid.o .deps/psid.Po: psid.c /home/aaron/projects/ARK-4/common/include/psid.h

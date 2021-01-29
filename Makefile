@@ -3,17 +3,16 @@ OPT=-j8
 
 PYTHON = $(shell which python2)
 PROVITA ?= $(CURDIR)
-SAVE ?= -1
 K ?= psp660
 
 export DEBUG PROVITA K
 
-SUBDIRS = libs contrib/PC/prxencrypter core/systemctrl core/vitacompat core/vitapops core/pspcompat core/vshctrl core/stargate menu/provsh core/popcorn core/inferno core/galaxy core/rebootex loader/stage2/live loader/kxploit loader/stage1/linkless_payload loader/stage1/live_eboot contrib/PC/btcnf
+SUBDIRS = libs contrib/PC/prxencrypter core/systemctrl core/vitacompat core/vitapops core/pspcompat core/vshctrl core/stargate menu/provsh core/popcorn core/inferno core/galaxy core/rebootex loader/stage2/live loader/kxploit loader/stage1/linkless_payload loader/stage1/live_eboot contrib/PC/btcnf extras/vshmenu/classic
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj distclean copy-bin mkdir-dist encrypt-prx
 
 all: subdirs mkdir-dist encrypt-prx copy-bin
 
-copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP loader/kxploit/k.bin contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso menu/provsh/EBOOT.PBP
+copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP loader/kxploit/k.bin contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso menu/provsh/EBOOT.PBP extras/vshmenu/classic/satelite.prx
 #	Common installation
 	$(Q)cp loader/stage1/linkless_payload/h.bin dist/H.BIN # game exploit loader
 	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/EBOOT.PBP # Signed EBOOT
@@ -21,6 +20,7 @@ copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PB
 	$(Q)cp loader/stage2/live/ark.bin dist/ARK.BIN # ARK installer and loader
 	$(Q)cp loader/kxploit/k.bin dist/K.BIN # Kernel exploit
 	$(Q)cp menu/provsh/EBOOT.PBP dist/MENU.PBP # Default menu
+	$(Q)cp extras/vshmenu/classic/satelite.prx dist/VSHMENU.PRX # Default vsh menu
 	
 encrypt-prx: \
 	dist/SYSCTRL0.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN dist/PSPCOMPAT.BIN dist/VSHCTRL.BIN dist/INFERNO0.BIN dist/GALAXY00.BIN dist/STARGATE.BIN dist/POPCORN0.BIN \
@@ -54,6 +54,7 @@ endif
 	$(Q)$(MAKE) $@ -C core/inferno
 	$(Q)$(MAKE) $@ -C core/galaxy
 	$(Q)$(MAKE) $@ -C menu/provsh
+	$(Q)$(MAKE) $@ -C extras/vshmenu/classic/
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -f contrib/PC/btcnf/psvbtinf.bin
 	$(Q)-rm -f contrib/PC/btcnf/psvbtnnf.bin

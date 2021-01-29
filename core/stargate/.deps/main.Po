@@ -30,15 +30,15 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/libc/string.h \
  /usr/local/pspdev/psp/sdk/include/libc/ctype.h \
  /usr/local/pspdev/psp/sdk/include/libc/stdio.h \
- /home/aaron/projects/ark/common/include/systemctrl.h \
+ /home/aaron/projects/ARK-4/common/include/systemctrl.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/systemctrl_private.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/macros.h \
- /home/aaron/projects/ark/common/include/functions.h \
- /home/aaron/projects/ark/common/include/sdk.h \
+ /home/aaron/projects/ARK-4/common/include/globals.h \
+ /home/aaron/projects/ARK-4/common/include/module2.h \
+ /home/aaron/projects/ARK-4/common/include/systemctrl_private.h \
+ /home/aaron/projects/ARK-4/common/include/globals.h \
+ /home/aaron/projects/ARK-4/common/include/macros.h \
+ /home/aaron/projects/ARK-4/common/include/functions.h \
+ /home/aaron/projects/ARK-4/common/include/sdk.h \
  /usr/local/pspdev/psp/sdk/include/pspdisplay.h \
  /usr/local/pspdev/psp/sdk/include/pspctrl.h \
  /usr/local/pspdev/psp/sdk/include/pspge.h \
@@ -58,4 +58,4 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/psputility_modules.h \
  /usr/local/pspdev/psp/sdk/include/pspumd.h \
  /usr/local/pspdev/psp/sdk/include/pspimpose_driver.h loadmodule_patch.h \
- /home/aaron/projects/ark/common/include/module2.h nodrm_patch.h
+ /home/aaron/projects/ARK-4/common/include/module2.h nodrm_patch.h

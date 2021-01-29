@@ -116,26 +116,30 @@ SceModule2* patchModuleManager()
 {
 	// Find Module
 	SceModule2* mod = (SceModule2*)sceKernelFindModuleByName("sceModuleManager");
-    
 	u32 text_addr = mod->text_addr;
 	u32 top_addr = text_addr+mod->text_size;
-	for(u32 addr=text_addr; addr < top_addr; addr+=4)
+	int patches = 8;
+	for(u32 addr=text_addr; addr < top_addr && patches; addr+=4)
 	{
 		u32 data = _lw(addr);
 		if(data == 0xA4A60024){
 			prologue_module = (void *)K_EXTRACT_CALL(addr - 4);
 			_sw(JAL(prologue_module_hook), addr-4);
+			patches--;
 		}
 		else if (data == 0x2C440005){
 			u32 a = addr-28;
 			ProbeExec3 = (void *)K_EXTRACT_CALL(a);
 			_sw(JAL(_ProbeExec3), a);
+			patches--;
 		}
 		else if (data == 0xAFB90148){
 			_sw(JUMP(_sceKernelCheckExecFile), K_EXTRACT_CALL(addr - 4));
+			patches--;
 		}
 		else if(data == 0x27BDFFE0 && _lw(addr + 4) == 0xAFB10014){
 			realPartitionCheck = (void*)addr;
+			patches--;
 		}
 		else if (data == 0x37258001){
 		    u32 call = _lw(addr+16);
@@ -148,26 +152,30 @@ SceModule2* patchModuleManager()
 		            addr=a;
 		        }
 		    }
+		    patches--;
 		}
 		else if (data == 0x34458003){
 		    addr = patchDeviceCheck(addr);
+		    patches--;
 		}
 		else if (data == 0x34458006){
 		    addr = patchDeviceCheck(addr);
+		    patches--;
 		}
 		else if (data == 0x2C820146){
 		    u32 offset = _lw(addr-8)&0x0000FFFF;
 		    kernel_init_apitype = (int *)(mod->text_addr + offset);
 		    kernel_init_filename = (char **)(mod->text_addr + offset + 4);
 		    kernel_init_application_type = (int *)(mod->text_addr + offset + 92);
+		    patches--;
 		}
 	}
-	flushCache();
-	
-	for (u32 addr=text_addr; addr<top_addr; addr+=4){
+	patches = 2;
+	for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
 		u32 data = _lw(addr);
 		if (data == JAL(realPartitionCheck)){
 			_sw(JAL(_PartitionCheck), addr);
+			patches--;
 		}
 	}
 	

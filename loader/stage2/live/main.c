@@ -190,7 +190,7 @@ void kernelContentFunction(void){
 	
 	
 	// make the common loadexec patches
-	int k1_patches = IS_PSP(ark_conf_backup->exec_mode)?2:3;
+	int k1_patches = 2; //IS_PSP(ark_conf_backup->exec_mode)?2:3;
 	patchLoadExecCommon(loadexec, (u32)LoadReboot, k1_patches);
 	
 	// Invalidate Cache
@@ -224,7 +224,7 @@ void kernelContentFunction(void){
     }
 	else {
 	    PRTSTR("Running VSH");
-	    void (*_KernelExitVSH)(void*) = FindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
+	    int (*_KernelExitVSH)(void*) = FindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
 	    _KernelExitVSH(NULL);
 	}
 }

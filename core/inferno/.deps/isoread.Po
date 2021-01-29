@@ -27,16 +27,16 @@ isoread.o .deps/isoread.Po: isoread.c /usr/local/pspdev/psp/sdk/include/pspkerne
  /usr/local/pspdev/psp/sdk/include/libc/stdio.h \
  /usr/local/pspdev/psp/sdk/include/libc/string.h \
  /usr/local/pspdev/psp/sdk/include/libc/ctype.h \
- /home/aaron/projects/ark/common/include/systemctrl.h \
+ /home/aaron/projects/ARK-4/common/include/systemctrl.h \
  /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
  /usr/local/pspdev/psp/sdk/include/pspthreadman_kernel.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/systemctrl_se.h \
+ /home/aaron/projects/ARK-4/common/include/globals.h \
+ /home/aaron/projects/ARK-4/common/include/module2.h \
+ /home/aaron/projects/ARK-4/common/include/systemctrl_se.h \
  /usr/local/pspdev/psp/sdk/include/pspsysmem_kernel.h \
  /usr/local/pspdev/psp/sdk/include/psprtc.h \
  /usr/local/pspdev/psp/sdk/include/psputilsforkernel.h \
- /home/aaron/projects/ark/common/include/systemctrl_private.h \
- /home/aaron/projects/ark/common/include/globals.h inferno.h \
- /home/aaron/projects/ark/core/systemctrl/include/lz4.h
+ /home/aaron/projects/ARK-4/common/include/systemctrl_private.h \
+ /home/aaron/projects/ARK-4/common/include/globals.h inferno.h \
+ /home/aaron/projects/ARK-4/core/systemctrl/include/lz4.h

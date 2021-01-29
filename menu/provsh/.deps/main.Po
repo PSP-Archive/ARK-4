@@ -11,12 +11,12 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/pspiofilemgr_dirent.h \
  /usr/local/pspdev/psp/sdk/include/pspctrl.h \
  /usr/local/pspdev/psp/sdk/include/pspinit.h \
- /home/aaron/projects/ark/common/include/systemctrl.h \
+ /home/aaron/projects/ARK-4/common/include/systemctrl.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec.h \
  /usr/local/pspdev/psp/sdk/include/pspiofilemgr_kernel.h \
  /usr/local/pspdev/psp/sdk/include/pspthreadman_kernel.h \
  /usr/local/pspdev/psp/sdk/include/psploadcore.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/systemctrl_se.h
+ /home/aaron/projects/ARK-4/common/include/globals.h \
+ /home/aaron/projects/ARK-4/common/include/module2.h \
+ /home/aaron/projects/ARK-4/common/include/systemctrl_se.h

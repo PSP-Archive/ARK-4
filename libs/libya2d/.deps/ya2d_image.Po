@@ -7,8 +7,8 @@ ya2d_image.o .deps/ya2d_image.Po: ya2d_image.c ya2d_image.h ya2d_texture.h \
  /usr/local/pspdev/psp/sdk/include/pspiofilemgr_dirent.h \
  /usr/local/pspdev/psp/sdk/include/pspgu.h \
  /usr/local/pspdev/psp/sdk/include/pspge.h \
- /home/aaron/projects/ark/libs/libpng/png.h \
- /home/aaron/projects/ark/libs/libpng/pngconf.h \
- /home/aaron/projects/ark/libs/libjpeg/jpeglib.h \
- /home/aaron/projects/ark/libs/libjpeg/jconfig.h \
- /home/aaron/projects/ark/libs/libjpeg/jmorecfg.h
+ /home/aaron/projects/ARK-4/libs/libpng/png.h \
+ /home/aaron/projects/ARK-4/libs/libpng/pngconf.h \
+ /home/aaron/projects/ARK-4/libs/libjpeg/jpeglib.h \
+ /home/aaron/projects/ARK-4/libs/libjpeg/jconfig.h \
+ /home/aaron/projects/ARK-4/libs/libjpeg/jmorecfg.h

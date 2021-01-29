@@ -1,5 +1,5 @@
 rebootex_psv.o .deps/rebootex_psv.Po: rebootex_psv.c rebootex.h \
- /home/aaron/projects/ark/common/include/rebootconfig.h \
+ /home/aaron/projects/ARK-4/common/include/rebootconfig.h \
  /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/pspkerneltypes.h \
  /usr/local/pspdev/psp/sdk/include/psptypes.h \
@@ -7,10 +7,10 @@ rebootex_psv.o .deps/rebootex_psv.Po: rebootex_psv.c rebootex.h \
  /usr/local/pspdev/psp/sdk/include/pspmoduleinfo.h \
  /usr/local/pspdev/psp/sdk/include/pspthreadman.h \
  /usr/local/pspdev/psp/sdk/include/pspdebug.h \
- /home/aaron/projects/ark/common/include/macros.h \
- /home/aaron/projects/ark/common/include/systemctrl_se.h \
- /home/aaron/projects/ark/common/include/functions.h \
- /home/aaron/projects/ark/common/include/sdk.h \
+ /home/aaron/projects/ARK-4/common/include/macros.h \
+ /home/aaron/projects/ARK-4/common/include/systemctrl_se.h \
+ /home/aaron/projects/ARK-4/common/include/functions.h \
+ /home/aaron/projects/ARK-4/common/include/sdk.h \
  /usr/local/pspdev/psp/sdk/include/pspdisplay.h \
  /usr/local/pspdev/psp/sdk/include/pspctrl.h \
  /usr/local/pspdev/psp/sdk/include/pspkernel.h \
@@ -50,6 +50,6 @@ rebootex_psv.o .deps/rebootex_psv.Po: rebootex_psv.c rebootex.h \
  /usr/local/pspdev/psp/sdk/include/pspumd.h \
  /usr/local/pspdev/psp/sdk/include/pspimpose_driver.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
- /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/ansi_c_functions.h
+ /home/aaron/projects/ARK-4/common/include/module2.h \
+ /home/aaron/projects/ARK-4/common/include/globals.h \
+ /home/aaron/projects/ARK-4/common/include/ansi_c_functions.h

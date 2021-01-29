@@ -7,7 +7,7 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/pspdebug.h \
  /usr/local/pspdev/psp/sdk/include/pspsysmem_kernel.h \
  /usr/local/pspdev/psp/sdk/include/pspsysmem.h \
- /home/aaron/projects/ark/common/include/systemctrl.h \
+ /home/aaron/projects/ARK-4/common/include/systemctrl.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec_kernel.h \
  /usr/local/pspdev/psp/sdk/include/psploadexec.h \
  /usr/local/pspdev/psp/sdk/include/pspiofilemgr_kernel.h \
@@ -17,12 +17,12 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/pspiofilemgr_dirent.h \
  /usr/local/pspdev/psp/sdk/include/pspthreadman_kernel.h \
  /usr/local/pspdev/psp/sdk/include/psploadcore.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/module2.h \
- /home/aaron/projects/ark/common/include/systemctrl_private.h \
- /home/aaron/projects/ark/common/include/globals.h \
- /home/aaron/projects/ark/common/include/functions.h \
- /home/aaron/projects/ark/common/include/sdk.h \
+ /home/aaron/projects/ARK-4/common/include/globals.h \
+ /home/aaron/projects/ARK-4/common/include/module2.h \
+ /home/aaron/projects/ARK-4/common/include/systemctrl_private.h \
+ /home/aaron/projects/ARK-4/common/include/globals.h \
+ /home/aaron/projects/ARK-4/common/include/functions.h \
+ /home/aaron/projects/ARK-4/common/include/sdk.h \
  /usr/local/pspdev/psp/sdk/include/pspdisplay.h \
  /usr/local/pspdev/psp/sdk/include/pspctrl.h \
  /usr/local/pspdev/psp/sdk/include/pspkernel.h \
@@ -53,7 +53,7 @@ main.o .deps/main.Po: main.c /usr/local/pspdev/psp/sdk/include/pspsdk.h \
  /usr/local/pspdev/psp/sdk/include/psputility_modules.h \
  /usr/local/pspdev/psp/sdk/include/pspumd.h \
  /usr/local/pspdev/psp/sdk/include/pspimpose_driver.h \
- /home/aaron/projects/ark/common/include/macros.h exitgame.h psxspu.h \
- /home/aaron/projects/ark/libs/graphics/graphics.h \
- /home/aaron/projects/ark/libs/graphics/../colordebugger/colordebugger.h \
+ /home/aaron/projects/ARK-4/common/include/macros.h exitgame.h psxspu.h \
+ /home/aaron/projects/ARK-4/libs/graphics/graphics.h \
+ /home/aaron/projects/ARK-4/libs/graphics/../colordebugger/colordebugger.h \
  /usr/local/pspdev/psp/sdk/include/libc/stdlib.h

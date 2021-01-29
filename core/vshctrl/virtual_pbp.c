@@ -1012,7 +1012,6 @@ exit:
 int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
 	int ret;
-	//SEConfig config;
 	VirtualPBP *vpbp;
 	int apitype;
 	const char *loadexec_file;
@@ -1021,71 +1020,43 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 	vpbp = get_vpbp_by_path(file);
 
 	if (vpbp == NULL) {
-		printk("%s: Unknown file %s in vpbp list\n", __func__, file);
 		unlock();
-
 		return -31;
 	}
-
-    /*
-	sctrlSEGetConfig(&config);
-	
-	if(config.chn_iso) {
-		get_ISO_shortname(vpbp->name, sizeof(vpbp->name), vpbp->name);
-	}
-	*/
 
 	//set iso file for reboot
 	sctrlSESetUmdFile(vpbp->name);
 
 	//set iso mode for reboot
-	//sctrlSESetBootConfFileIndex(config.umdmode);
 	sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
 	sctrlSESetBootConfFileIndex(MODE_INFERNO);
 
-	//printk("%s: ISO %s, UMD mode %d\n", __func__, vpbp->name, config.umdmode);
-	
 	//reset and configure reboot parameter
 	memset(param, 0, sizeof(param));
 	param->size = sizeof(param);
-
-	/*if (psp_model == PSP_GO) {
-		char devicename[20];
-
-		ret = get_device_name(devicename, sizeof(devicename), vpbp->name);
-
-		if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
-			apitype = 0x125;
-		} else {
-			apitype = 0x123;
-		}
-
-		param->key = "umdemu";
-		loadexec_file = vpbp->name;
-	} else {
-		if(config.umdmode == MODE_MARCH33) {
-			param->key = "game";
-		} else {
-		    param->key = "umdemu";
-		}
-        apitype = 0x120;
-	}*/
-
-	if (has_prometheus_module(vpbp)) {
-		printk("%s: prometheus module detected, use EBOOT.OLD\n", __func__);
-		param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
-	} else {
-		param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
-	}
-    param->key = "umdemu";
+	
+	param->key = "umdemu";
     param->args = strlen(param->argp) + 1;
     apitype = 0x123;
 	loadexec_file = vpbp->name;
 
-	//start game image
-	return sctrlKernelLoadExecVSHWithApitype(apitype, loadexec_file, param);
+	if (psp_model == PSP_GO) {
+		char devicename[20];
+		ret = get_device_name(devicename, sizeof(devicename), vpbp->name);
+		if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
+			apitype = 0x125;
+		}
+	}
 
+	if (has_prometheus_module(vpbp)) {
+		param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
+	} else {
+		param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+	}
+
+	//start game image
 	unlock();
+	return sctrlKernelLoadExecVSHWithApitype(apitype, loadexec_file, param);
 
 	return ret;
 }

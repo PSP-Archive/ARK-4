@@ -1,5 +1,5 @@
-rc4.o .deps/rc4.Po: rc4.c /home/aaron/projects/ark/common/include/ansi_c_functions.h \
- /home/aaron/projects/ark/common/include/rc4.h \
+rc4.o .deps/rc4.Po: rc4.c /home/aaron/projects/ARK-4/common/include/ansi_c_functions.h \
+ /home/aaron/projects/ARK-4/common/include/rc4.h \
  /usr/local/pspdev/psp/sdk/include/pspkernel.h \
  /usr/local/pspdev/psp/sdk/include/pspuser.h \
  /usr/local/pspdev/psp/sdk/include/psptypes.h \
