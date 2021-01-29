@@ -1,5 +1,30 @@
 ARK-4
-- comming soon...
+Update 4:
+- Added ability to have a VSH menu installed externally. Classic PRO VSH menu is included.
+*** please note that there's no configuration options for ARK, things like chaning the CPU speed or ISO driver doesn't do anything (ARK will always enable fastest CPU speed and Inferno ISO driver).
+- Added preliminary PSP Go support (untested for now).
+- Fixed issue when exiting from retail UMDs.
+- Exception handler now shows the module name of the crash.
+- Exception handler now allows to soft reset, hard reset or shutdown the device.
+
+Update 3:
+- Fixed issues with ISOs such as Tekken 6 and Peace Walker. All ISOs should work well now!
+- Fixed issue with some homebrews like PSPFiler.
+- Fixed issues with the XMB on later models. ARK now works on 2K and 3K! (PSP Go support is still not finished, PSP Street has not been tested yet).
+- Added support for high memory layout on slim models for homebrews that use it.
+- ARK is now stable!
+
+Update 2:
+- Added back plugin support, including for VSH.
+- Added recovery option, which lets you replace the XMB with a custom launcher (a minimalistic one is included with ARK).
+- Fixed some dynamic patches.
+
+Update 1:
+- Fixed issue when launching UMDs with ARK.
+- Improved dynamic patching code for SystemControl, Inferno and Popcorn.
+- Added Galaxy controller for NP9660 ISO driver (for retail PSN EBOOTs).
+- Added compatibility layer for PSP-specific patches (still in development).
+- Restructured PS Vita compatibility layer (still in development).
 
 ARK-3
 - arkMenu and xMenu are now part of the project
