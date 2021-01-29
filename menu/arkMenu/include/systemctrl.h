@@ -13,11 +13,11 @@ extern "C"{
 
 enum BootLoadFlags
 {
-	BOOTLOAD_VSH = 1,
-	BOOTLOAD_GAME = 2,
-	BOOTLOAD_UPDATER = 4,
-	BOOTLOAD_POPS = 8,
-	BOOTLOAD_UMDEMU = 64, /* for original NP9660 */
+    BOOTLOAD_VSH = 1,
+    BOOTLOAD_GAME = 2,
+    BOOTLOAD_UPDATER = 4,
+    BOOTLOAD_POPS = 8,
+    BOOTLOAD_UMDEMU = 64, /* for original NP9660 */
 };
 
 /**
@@ -159,7 +159,7 @@ int sctrlKernelSetDevkitVersion(int version);
  * @returns 1 if we are in SE-C or later, 0 if we are in HEN-D or later,
  * and < 0 (a kernel error code) in any other case
 */
-int	sctrlHENIsSE();
+int    sctrlHENIsSE();
 
 /**
  * Checks if we are in Devhook.
@@ -167,7 +167,7 @@ int	sctrlHENIsSE();
  * @returns 1 if we are in SE-C/HEN-D for devhook  or later, 0 if we are in normal SE-C/HEN-D or later,
  * and < 0 (a kernel error code) in any other case
 */
-int	sctrlHENIsDevhook();
+int    sctrlHENIsDevhook();
 
 /**
  * Gets the HEN version
@@ -226,26 +226,26 @@ typedef int (* STMOD_HANDLER)(SceModule2 *);
  *
  * void somepointofmycode()
  * {
- *		previous = sctrlHENSetStartModuleHandler(OnModuleStart);
+ *        previous = sctrlHENSetStartModuleHandler(OnModuleStart);
  * }
  *
  * int OnModuleStart(SceModule2 *mod)
  * {
- *		if (strcmp(mod->modname, "vsh_module") == 0)
- *		{
- *			// Do something with vsh module here
- *		}
+ *        if (strcmp(mod->modname, "vsh_module") == 0)
+ *        {
+ *            // Do something with vsh module here
+ *        }
  *
- *		if (!previous)
- *			return 0;
+ *        if (!previous)
+ *            return 0;
  *
- *		// Call previous handler
+ *        // Call previous handler
  *
- *		return previous(mod);
+ *        return previous(mod);
  * }
  *
  * @Note2: The above example should be compiled with the flag -fno-pic
- *			in order to avoid problems with gp register that may lead to a crash.
+ *            in order to avoid problems with gp register that may lead to a crash.
  *
 */
 STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);

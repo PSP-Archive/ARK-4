@@ -38,48 +38,48 @@ volatile ARKConfig config = {
 volatile FunctionTable funcs = {
     .config = &config,
     // File IO
-	.IoOpen = &sceIoOpen,
-	.IoRead = &sceIoRead,
-	.IoWrite = &sceIoClose,
-	.IoClose = &sceIoWrite,
-	.IoRemove = &sceIoRemove,
+    .IoOpen = &sceIoOpen,
+    .IoRead = &sceIoRead,
+    .IoWrite = &sceIoClose,
+    .IoClose = &sceIoWrite,
+    .IoRemove = &sceIoRemove,
     // System
-	.KernelLibcTime = &sceKernelLibcTime,
-	.KernelLibcClock = &sceKernelLibcClock,
-	.KernelPowerLock = &sceKernelPowerLock,
-	.KernelDcacheWritebackAll = &sceKernelDcacheWritebackAll,
-	.KernelIcacheInvalidateAll = &sceKernelIcacheInvalidateAll,
-	.DisplaySetFrameBuf = &sceDisplaySetFrameBuf,
+    .KernelLibcTime = &sceKernelLibcTime,
+    .KernelLibcClock = &sceKernelLibcClock,
+    .KernelPowerLock = &sceKernelPowerLock,
+    .KernelDcacheWritebackAll = &sceKernelDcacheWritebackAll,
+    .KernelIcacheInvalidateAll = &sceKernelIcacheInvalidateAll,
+    .DisplaySetFrameBuf = &sceDisplaySetFrameBuf,
     // Threads
-	.KernelCreateThread = &sceKernelCreateThread,
-	.KernelDelayThread = &sceKernelDelayThread,
-	.KernelStartThread = &sceKernelStartThread,
-	.KernelExitThread = &sceKernelExitThread,
-	.KernelExitDeleteThread = &sceKernelExitDeleteThread,
-	.KernelWaitThreadEnd = &sceKernelWaitThreadEnd,
-	.KernelCreateVpl = &sceKernelCreateVpl,
+    .KernelCreateThread = &sceKernelCreateThread,
+    .KernelDelayThread = &sceKernelDelayThread,
+    .KernelStartThread = &sceKernelStartThread,
+    .KernelExitThread = &sceKernelExitThread,
+    .KernelExitDeleteThread = &sceKernelExitDeleteThread,
+    .KernelWaitThreadEnd = &sceKernelWaitThreadEnd,
+    .KernelCreateVpl = &sceKernelCreateVpl,
     .KernelTryAllocateVpl = &sceKernelTryAllocateVpl,
     .KernelFreeVpl = &sceKernelFreeVpl,
-	.KernelDeleteVpl = &sceKernelDeleteVpl,
-	.KernelDeleteFpl = &sceKernelDeleteFpl,
+    .KernelDeleteVpl = &sceKernelDeleteVpl,
+    .KernelDeleteFpl = &sceKernelDeleteFpl,
     // Modules
-	.UtilityLoadModule = &sceUtilityLoadModule,
-	.UtilityUnloadModule = &sceUtilityUnloadModule,
-	.UtilityLoadNetModule = &sceUtilityLoadNetModule,
-	.UtilityUnloadNetModule = &sceUtilityUnloadNetModule,
+    .UtilityLoadModule = &sceUtilityLoadModule,
+    .UtilityUnloadModule = &sceUtilityUnloadModule,
+    .UtilityLoadNetModule = &sceUtilityLoadNetModule,
+    .UtilityUnloadNetModule = &sceUtilityUnloadNetModule,
     // Sysmem
-	//.SysMemUserForUser_91DE343C = &SysMemUserForUser_91DE343C,
-	.KernelFreePartitionMemory = &sceKernelFreePartitionMemory,
+    //.SysMemUserForUser_91DE343C = &SysMemUserForUser_91DE343C,
+    .KernelFreePartitionMemory = &sceKernelFreePartitionMemory,
     // Intr
-	.KernelCpuSuspendIntr = &sceKernelCpuSuspendIntr,
-	.KernelCpuResumeIntr = &sceKernelCpuResumeIntr,
-	.KernelVolatileMemUnlock = &sceKernelVolatileMemUnlock,
+    .KernelCpuSuspendIntr = &sceKernelCpuSuspendIntr,
+    .KernelCpuResumeIntr = &sceKernelCpuResumeIntr,
+    .KernelVolatileMemUnlock = &sceKernelVolatileMemUnlock,
     // Savedata
-	.UtilitySavedataGetStatus = &sceUtilitySavedataGetStatus,
-	.UtilitySavedataInitStart = &sceUtilitySavedataInitStart,
-	.UtilitySavedataUpdate = &sceUtilitySavedataUpdate,
-	.UtilitySavedataShutdownStart = &sceUtilitySavedataShutdownStart,
-	.KernelAllocPartitionMemory = &sceKernelAllocPartitionMemory,
+    .UtilitySavedataGetStatus = &sceUtilitySavedataGetStatus,
+    .UtilitySavedataInitStart = &sceUtilitySavedataInitStart,
+    .UtilitySavedataUpdate = &sceUtilitySavedataUpdate,
+    .UtilitySavedataShutdownStart = &sceUtilitySavedataShutdownStart,
+    .KernelAllocPartitionMemory = &sceKernelAllocPartitionMemory,
 };
 
 int exit_callback(int arg1, int arg2, void *common) {
@@ -126,16 +126,16 @@ int main(int argc, char** argv){
     
     PRTSTR1("Loading Stage 2 at: %s", loadpath);
     
-	SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
-	sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
-	sceIoClose(fd);
-	sceKernelDcacheWritebackAll();
+    SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
+    sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
+    sceIoClose(fd);
+    sceKernelDcacheWritebackAll();
 
-	PRTSTR("Executing ARK Stage 2");
-	void (* hEntryPoint)(ARKConfig*, FunctionTable*) = (void*)ARK_LOADADDR;
-	hEntryPoint(&config, &funcs);
-	
-	ya2d_shutdown();
-	
-	return 0;
+    PRTSTR("Executing ARK Stage 2");
+    void (* hEntryPoint)(ARKConfig*, FunctionTable*) = (void*)ARK_LOADADDR;
+    hEntryPoint(&config, &funcs);
+    
+    ya2d_shutdown();
+    
+    return 0;
 }

@@ -4,110 +4,110 @@
 #define CONTROL_DELAY 10
 
 Controller::Controller(){
-	this->pad = new SceCtrlData;
-	this->nowpad = this->newpad = this->oldpad = 0;
-	this->n = 0;
+    this->pad = new SceCtrlData;
+    this->nowpad = this->newpad = this->oldpad = 0;
+    this->n = 0;
 }
 
 Controller::~Controller(){
-	delete this->pad;
+    delete this->pad;
 }
-		
+        
 void Controller::update(){
-	sceCtrlReadBufferPositive(this->pad, 1);
-	
-	nowpad = pad->Buttons;
-	newpad = nowpad & ~oldpad;
-	
-	if (oldpad == nowpad){
-		n++;
-		if (n >= CONTROL_DELAY){
-			newpad = nowpad;
-		}
-	}
-	else {
-		n = 0;
-		oldpad = nowpad;
-	}
+    sceCtrlReadBufferPositive(this->pad, 1);
+    
+    nowpad = pad->Buttons;
+    newpad = nowpad & ~oldpad;
+    
+    if (oldpad == nowpad){
+        n++;
+        if (n >= CONTROL_DELAY){
+            newpad = nowpad;
+        }
+    }
+    else {
+        n = 0;
+        oldpad = nowpad;
+    }
 }
 
 void Controller::flush(){
-	while (this->pad->Buttons)
-		sceCtrlReadBufferPositive(this->pad, 1);
+    while (this->pad->Buttons)
+        sceCtrlReadBufferPositive(this->pad, 1);
 }
 
 bool Controller::wait(void* busy_wait){
-	bool ret;
-	while (true){
-		if (busy_wait != NULL){
-			void (*exec)(void) = (void (*)())busy_wait;
-			exec();
-		}
-		this->update();
-		if (this->cross()){
-			ret = true;
-			break;
-		}
-		else if (this->circle()){
-			ret = false;
-			break;
-		}
-	}
-	return ret;
+    bool ret;
+    while (true){
+        if (busy_wait != NULL){
+            void (*exec)(void) = (void (*)())busy_wait;
+            exec();
+        }
+        this->update();
+        if (this->cross()){
+            ret = true;
+            break;
+        }
+        else if (this->circle()){
+            ret = false;
+            break;
+        }
+    }
+    return ret;
 }
 
 bool Controller::accept(){
-	return (common::getConf()->swap_buttons)? this->circle() : this->cross();
+    return (common::getConf()->swap_buttons)? this->circle() : this->cross();
 }
 
 bool Controller::decline(){
-	return (common::getConf()->swap_buttons)? this->cross() : this->circle();
+    return (common::getConf()->swap_buttons)? this->cross() : this->circle();
 }
-		
+        
 bool Controller::up(){
-	return (newpad & PSP_CTRL_UP);
+    return (newpad & PSP_CTRL_UP);
 }
 
 bool Controller::down(){
-	return (newpad & PSP_CTRL_DOWN);
+    return (newpad & PSP_CTRL_DOWN);
 }
 
 bool Controller::left(){
-	return (newpad & PSP_CTRL_LEFT);
+    return (newpad & PSP_CTRL_LEFT);
 }
 
 bool Controller::right(){
-	return (newpad & PSP_CTRL_RIGHT);
+    return (newpad & PSP_CTRL_RIGHT);
 }
 
 bool Controller::cross(){
-	return (newpad & PSP_CTRL_CROSS);
+    return (newpad & PSP_CTRL_CROSS);
 }
 
 bool Controller::circle(){
-	return (newpad & PSP_CTRL_CIRCLE);
+    return (newpad & PSP_CTRL_CIRCLE);
 }
 
 bool Controller::square(){
-	return (newpad & PSP_CTRL_SQUARE);
+    return (newpad & PSP_CTRL_SQUARE);
 }
 
 bool Controller::triangle(){
-	return (newpad & PSP_CTRL_TRIANGLE);
+    return (newpad & PSP_CTRL_TRIANGLE);
 }
 
 bool Controller::RT(){
-	return (newpad & PSP_CTRL_RTRIGGER);
+    return (newpad & PSP_CTRL_RTRIGGER);
 }
 
 bool Controller::LT(){
-	return (newpad & PSP_CTRL_LTRIGGER);
+    return (newpad & PSP_CTRL_LTRIGGER);
 }
 
 bool Controller::start(){
-	return (newpad & PSP_CTRL_START);
+    return (newpad & PSP_CTRL_START);
 }
 
 bool Controller::select(){
-	return (newpad & PSP_CTRL_SELECT);
+    return (newpad & PSP_CTRL_SELECT);
 }

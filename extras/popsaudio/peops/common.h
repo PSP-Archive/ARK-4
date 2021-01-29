@@ -1,5 +1,5 @@
 #ifndef COMMON_H
-#define COMMON_H	
+#define COMMON_H    
 
 #include <pspkernel.h>
 #include <psploadcore.h>

@@ -23,20 +23,20 @@
 
 // Read Argument for Kernel Extend Stack
 struct IoReadArg {
-	unsigned int offset;
-	unsigned char * address;
-	unsigned int size;
+    unsigned int offset;
+    unsigned char * address;
+    unsigned int size;
 };
 
 // CSO Header
 struct CISO_header {
-	unsigned char magic[4];
-	unsigned int header_size;
-	uint64_t total_bytes;
-	unsigned int block_size;
-	unsigned char ver;
-	unsigned char align;
-	unsigned char rsv_06[2];
+    unsigned char magic[4];
+    unsigned int header_size;
+    uint64_t total_bytes;
+    unsigned int block_size;
+    unsigned char ver;
+    unsigned char align;
+    unsigned char rsv_06[2];
 };
 
 // ISO Sector Size

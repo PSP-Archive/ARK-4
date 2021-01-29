@@ -3,29 +3,29 @@
 
 typedef enum
 {
-	SCE_UTILITY_SAVEDATA_TYPE_AUTOLOAD = 0,
-	SCE_UTILITY_SAVEDATA_TYPE_AUTOSAVE = 1,
-	SCE_UTILITY_SAVEDATA_TYPE_LOAD = 2,
-	SCE_UTILITY_SAVEDATA_TYPE_SAVE = 3,
-	SCE_UTILITY_SAVEDATA_TYPE_LISTLOAD = 4,
-	SCE_UTILITY_SAVEDATA_TYPE_LISTSAVE = 5,
-	SCE_UTILITY_SAVEDATA_TYPE_LISTDELETE = 6,
-	SCE_UTILITY_SAVEDATA_TYPE_DELETE = 7,
-	SCE_UTILITY_SAVEDATA_TYPE_SIZES = 8,
-	SCE_UTILITY_SAVEDATA_TYPE_AUTODELETE = 9,
-	SCE_UTILITY_SAVEDATA_TYPE_SINGLEDELETE = 10,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_USERIDLIST = 11,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_FILELIST = 12,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_CREATEDATA_SECUREFILE = 13,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_CREATEDATA_NORMALFILE = 14,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_READ_SECUREFILE = 15,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_READ_NORMALFILE = 16,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_WRITE_SECUREFILE = 17,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_WRITE_NORMALFILE = 18,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_REMOVE_SECUREFILE = 19,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_REMOVE_NORMALFILE = 20,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_DELETEDATA = 21,
-	SCE_UTILITY_SAVEDATA_TYPE_MC_CHECKSIZE = 22
+    SCE_UTILITY_SAVEDATA_TYPE_AUTOLOAD = 0,
+    SCE_UTILITY_SAVEDATA_TYPE_AUTOSAVE = 1,
+    SCE_UTILITY_SAVEDATA_TYPE_LOAD = 2,
+    SCE_UTILITY_SAVEDATA_TYPE_SAVE = 3,
+    SCE_UTILITY_SAVEDATA_TYPE_LISTLOAD = 4,
+    SCE_UTILITY_SAVEDATA_TYPE_LISTSAVE = 5,
+    SCE_UTILITY_SAVEDATA_TYPE_LISTDELETE = 6,
+    SCE_UTILITY_SAVEDATA_TYPE_DELETE = 7,
+    SCE_UTILITY_SAVEDATA_TYPE_SIZES = 8,
+    SCE_UTILITY_SAVEDATA_TYPE_AUTODELETE = 9,
+    SCE_UTILITY_SAVEDATA_TYPE_SINGLEDELETE = 10,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_USERIDLIST = 11,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_FILELIST = 12,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_CREATEDATA_SECUREFILE = 13,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_CREATEDATA_NORMALFILE = 14,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_READ_SECUREFILE = 15,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_READ_NORMALFILE = 16,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_WRITE_SECUREFILE = 17,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_WRITE_NORMALFILE = 18,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_REMOVE_SECUREFILE = 19,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_REMOVE_NORMALFILE = 20,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_DELETEDATA = 21,
+    SCE_UTILITY_SAVEDATA_TYPE_MC_CHECKSIZE = 22
 } SceUtilitySavedataType;
 
 #define SCE_UTILITY_SAVEDATA_ERROR_TYPE 0x80110300
@@ -75,23 +75,23 @@ typedef enum
 
 typedef enum
 {
-	SCE_UTILITY_SD_TITLEID_SIZE = 13,
-	SCE_UTILITY_SD_USERID_SIZE = 20,
-	SCE_UTILITY_SD_FILENAME_SIZE = 13,
-	SCE_UTILITY_SD_LISTITEM_MAX = 1024,
-	SCE_UTILITY_SD_SIZESTR_SIZE = 8,
-	SCE_UTILITY_SD_SECUREFILEID_SIZE = 16,
-	SCE_UTILITY_SD_SYSTEMFILELIST_MAX = 5,
-	SCE_UTILITY_SD_SECUREFILELIST_MAX = 99,
-	SCE_UTILITY_SD_NORMALFILELIST_MAX = 8192,
-	SCE_UTILITY_SD_USERIDLIST_MAX = 2048
+    SCE_UTILITY_SD_TITLEID_SIZE = 13,
+    SCE_UTILITY_SD_USERID_SIZE = 20,
+    SCE_UTILITY_SD_FILENAME_SIZE = 13,
+    SCE_UTILITY_SD_LISTITEM_MAX = 1024,
+    SCE_UTILITY_SD_SIZESTR_SIZE = 8,
+    SCE_UTILITY_SD_SECUREFILEID_SIZE = 16,
+    SCE_UTILITY_SD_SYSTEMFILELIST_MAX = 5,
+    SCE_UTILITY_SD_SECUREFILELIST_MAX = 99,
+    SCE_UTILITY_SD_NORMALFILELIST_MAX = 8192,
+    SCE_UTILITY_SD_USERIDLIST_MAX = 2048
 } SceUtilitySavedataSize;
 
 typedef enum
 {
-	SCE_UTILITY_SD_SYSF_TITLE_SIZE = 128,
-	SCE_UTILITY_SD_SYSF_SD_TITLE_SIZE = 128,
-	SCE_UTILITY_SD_SYSF_DETAIL_SIZE = 1024
+    SCE_UTILITY_SD_SYSF_TITLE_SIZE = 128,
+    SCE_UTILITY_SD_SYSF_SD_TITLE_SIZE = 128,
+    SCE_UTILITY_SD_SYSF_DETAIL_SIZE = 1024
 } SceUtilitySavedataSystemFileParamSize;
 
 #define SCE_UTILITY_SAVEDATA_BIND_UNUSED 0
@@ -105,12 +105,12 @@ typedef enum
 
 typedef struct SceUtilitySDSystemFileParam
 {
-	char title[SCE_UTILITY_SD_SYSF_TITLE_SIZE];
-	char savedataTitle[SCE_UTILITY_SD_SYSF_SD_TITLE_SIZE];
-	char detail[SCE_UTILITY_SD_SYSF_DETAIL_SIZE];
-	unsigned char parentalLev;
-	unsigned char typeWriteRemoveUpdateParam;
-	unsigned char reserved[2];
+    char title[SCE_UTILITY_SD_SYSF_TITLE_SIZE];
+    char savedataTitle[SCE_UTILITY_SD_SYSF_SD_TITLE_SIZE];
+    char detail[SCE_UTILITY_SD_SYSF_DETAIL_SIZE];
+    unsigned char parentalLev;
+    unsigned char typeWriteRemoveUpdateParam;
+    unsigned char reserved[2];
 } SceUtilitySDSystemFileParam;
 
 #define SCE_UTILITY_SAVEDATA_UPDATE_TITLE (1 << 0)
@@ -120,190 +120,190 @@ typedef struct SceUtilitySDSystemFileParam
 
 typedef struct SceUtilitySDExtFile
 {
-	void * pDataBuf;
-	unsigned int dataBufSize;
-	unsigned int dataFileSize;
-	char * reserved;
+    void * pDataBuf;
+    unsigned int dataBufSize;
+    unsigned int dataFileSize;
+    char * reserved;
 } SceUtilitySDExtFile;
 
 typedef struct SceUtilitySavedataListSaveNewData
 {
-	SceUtilitySDExtFile icon0;
-	const char * pTitle;
+    SceUtilitySDExtFile icon0;
+    const char * pTitle;
 } SceUtilitySavedataListSaveNewData;
 
 typedef struct SceUtilitySavedataMsFreeSize
 {
-	unsigned int msClusterSizeByte;
-	unsigned int msFreeCluster;
-	unsigned int msFreeSizeKB;
-	char msFreeSizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
+    unsigned int msClusterSizeByte;
+    unsigned int msFreeCluster;
+    unsigned int msFreeSizeKB;
+    char msFreeSizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
 } SceUtilitySavedataMsFreeSize;
 
 typedef struct SceUtilitySavedataMsDataSize
 {
-	char titleId[SCE_UTILITY_SD_TITLEID_SIZE];
-	char reserved[3];
-	char userId[SCE_UTILITY_SD_USERID_SIZE];
-	unsigned int cluster;
-	unsigned int sizeKB;
-	char sizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
-	unsigned int size32KB;
-	char size32Str[SCE_UTILITY_SD_SIZESTR_SIZE];
+    char titleId[SCE_UTILITY_SD_TITLEID_SIZE];
+    char reserved[3];
+    char userId[SCE_UTILITY_SD_USERID_SIZE];
+    unsigned int cluster;
+    unsigned int sizeKB;
+    char sizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
+    unsigned int size32KB;
+    char size32Str[SCE_UTILITY_SD_SIZESTR_SIZE];
 } SceUtilitySavedataMsDataSize;
 
 typedef struct SceUtilitySavedataUtilityDataSize
 {
-	unsigned int cluster;
-	unsigned int sizeKB;
-	char sizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
-	unsigned int size32KB;
-	char size32Str[SCE_UTILITY_SD_SIZESTR_SIZE];
+    unsigned int cluster;
+    unsigned int sizeKB;
+    char sizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
+    unsigned int size32KB;
+    char size32Str[SCE_UTILITY_SD_SIZESTR_SIZE];
 } SceUtilitySavedataUtilityDataSize;
 
 typedef enum
 {
-	SCE_UTILITY_SAVEDATA_INITFOCUS_USERID = 0,
-	SCE_UTILITY_SAVEDATA_INITFOCUS_LISTFIRST,
-	SCE_UTILITY_SAVEDATA_INITFOCUS_LISTLAST,
-	SCE_UTILITY_SAVEDATA_INITFOCUS_DATALATEST,
-	SCE_UTILITY_SAVEDATA_INITFOCUS_DATAOLDEST,
-	SCE_UTILITY_SAVEDATA_INITFOCUS_DATAFIRST,
-	SCE_UTILITY_SAVEDATA_INITFOCUS_DATALAST,
-	SCE_UTILITY_SAVEDATA_INITFOCUS_EMPTYFIRST,
-	SCE_UTILITY_SAVEDATA_INITFOCUS_EMPTYLAST
+    SCE_UTILITY_SAVEDATA_INITFOCUS_USERID = 0,
+    SCE_UTILITY_SAVEDATA_INITFOCUS_LISTFIRST,
+    SCE_UTILITY_SAVEDATA_INITFOCUS_LISTLAST,
+    SCE_UTILITY_SAVEDATA_INITFOCUS_DATALATEST,
+    SCE_UTILITY_SAVEDATA_INITFOCUS_DATAOLDEST,
+    SCE_UTILITY_SAVEDATA_INITFOCUS_DATAFIRST,
+    SCE_UTILITY_SAVEDATA_INITFOCUS_DATALAST,
+    SCE_UTILITY_SAVEDATA_INITFOCUS_EMPTYFIRST,
+    SCE_UTILITY_SAVEDATA_INITFOCUS_EMPTYLAST
 } SceUtilitySavedataInitFocus;
 
 #define SCE_UTILITY_SAVEDATA_USERID_NULL "<>"
 
 typedef enum
 {
-	SCE_UTILITY_SAVEDATA_VERSION_CURRENT = 0,
-	SCE_UTILITY_SAVEDATA_VERSION_0,
-	SCE_UTILITY_SAVEDATA_VERSION_1,
-	SCE_UTILITY_SAVEDATA_VERSION_2
+    SCE_UTILITY_SAVEDATA_VERSION_CURRENT = 0,
+    SCE_UTILITY_SAVEDATA_VERSION_0,
+    SCE_UTILITY_SAVEDATA_VERSION_1,
+    SCE_UTILITY_SAVEDATA_VERSION_2
 } SceUtilitySavedataVersion;
 
 typedef enum
 {
-	SCE_UTILITY_SAVEDATA_MC_STATUS_SINGLE = 0,
-	SCE_UTILITY_SAVEDATA_MC_STATUS_START,
-	SCE_UTILITY_SAVEDATA_MC_STATUS_RELAY,
-	SCE_UTILITY_SAVEDATA_MC_STATUS_END
+    SCE_UTILITY_SAVEDATA_MC_STATUS_SINGLE = 0,
+    SCE_UTILITY_SAVEDATA_MC_STATUS_START,
+    SCE_UTILITY_SAVEDATA_MC_STATUS_RELAY,
+    SCE_UTILITY_SAVEDATA_MC_STATUS_END
 } SceUtilitySavedataMultiCallStatus;
 
 typedef struct SceUtilitySDUserIdStat
 {
-	SceMode st_mode;
-	ScePspDateTime st_ctime;
-	ScePspDateTime st_atime;
-	ScePspDateTime st_mtime;
-	char userId[SCE_UTILITY_SD_USERID_SIZE];
+    SceMode st_mode;
+    ScePspDateTime st_ctime;
+    ScePspDateTime st_atime;
+    ScePspDateTime st_mtime;
+    char userId[SCE_UTILITY_SD_USERID_SIZE];
 } SceUtilitySDUserIdStat;
 
 typedef struct SceUtilitySavedataUserIdList
 {
-	unsigned int userIdMax;
-	unsigned int userIdNum;
-	SceUtilitySDUserIdStat * pUserIds;
+    unsigned int userIdMax;
+    unsigned int userIdNum;
+    SceUtilitySDUserIdStat * pUserIds;
 } SceUtilitySavedataUserIdList;
  
 typedef struct SceUtilitySDFileStat
 {
-	SceMode st_mode;
-	unsigned int reserved;
-	SceOff st_size;
-	ScePspDateTime st_ctime;
-	ScePspDateTime st_atime;
-	ScePspDateTime st_mtime;
-	char fileName[SCE_UTILITY_SD_FILENAME_SIZE];
-	char reserved1[3];
+    SceMode st_mode;
+    unsigned int reserved;
+    SceOff st_size;
+    ScePspDateTime st_ctime;
+    ScePspDateTime st_atime;
+    ScePspDateTime st_mtime;
+    char fileName[SCE_UTILITY_SD_FILENAME_SIZE];
+    char reserved1[3];
 } SceUtilitySDFileStat;
 
 typedef struct SceUtilitySavedataFileList
 {
-	unsigned int secureFileMax;
-	unsigned int normalFileMax;
-	unsigned int systemFileMax;
-	unsigned int secureFileNum;
-	unsigned int normalFileNum;
-	unsigned int systemFileNum;
-	SceUtilitySDFileStat * pSecureFiles;
-	SceUtilitySDFileStat * pNormalFiles;
-	SceUtilitySDFileStat * pSystemFiles;
+    unsigned int secureFileMax;
+    unsigned int normalFileMax;
+    unsigned int systemFileMax;
+    unsigned int secureFileNum;
+    unsigned int normalFileNum;
+    unsigned int systemFileNum;
+    SceUtilitySDFileStat * pSecureFiles;
+    SceUtilitySDFileStat * pNormalFiles;
+    SceUtilitySDFileStat * pSystemFiles;
 } SceUtilitySavedataFileList;
 
 typedef struct SceUtilitySDFileStat2
 {
-	SceOff st_size;
-	char fileName[SCE_UTILITY_SD_FILENAME_SIZE];
-	char reserved[3];
+    SceOff st_size;
+    char fileName[SCE_UTILITY_SD_FILENAME_SIZE];
+    char reserved[3];
 } SceUtilitySDFileStat2;
 
 typedef struct SceUtilitySavedataCheckSize
 {
-	unsigned int secureFileNum;
-	unsigned int normalFileNum;
-	SceUtilitySDFileStat2 * pSecureFiles;
-	SceUtilitySDFileStat2 * pNormalFiles;
-	unsigned int msClusterSizeByte;
-	unsigned int msFreeCluster;
-	unsigned int msFreeSizeKB;
-	char msFreeSizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
-	unsigned int createNeedSizeKB;
-	char createNeedSizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
-	unsigned int overwriteNeedSizeKB;
-	char overwriteNeedSizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
+    unsigned int secureFileNum;
+    unsigned int normalFileNum;
+    SceUtilitySDFileStat2 * pSecureFiles;
+    SceUtilitySDFileStat2 * pNormalFiles;
+    unsigned int msClusterSizeByte;
+    unsigned int msFreeCluster;
+    unsigned int msFreeSizeKB;
+    char msFreeSizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
+    unsigned int createNeedSizeKB;
+    char createNeedSizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
+    unsigned int overwriteNeedSizeKB;
+    char overwriteNeedSizeStr[SCE_UTILITY_SD_SIZESTR_SIZE];
 } SceUtilitySavedataCheckSize;
 
 typedef struct SceUtilityParamBase
 {
-	unsigned int size;
-	int message_lang;
-	int ctrl_assign;
-	int main_thread_priority;
-	int sub_thread_priority;
-	int font_thread_priority;
-	int sound_thread_priority;
-	int result;
-	int reserved1;
-	int reserved2;
-	int reserved3;
-	int reserved4;
+    unsigned int size;
+    int message_lang;
+    int ctrl_assign;
+    int main_thread_priority;
+    int sub_thread_priority;
+    int font_thread_priority;
+    int sound_thread_priority;
+    int result;
+    int reserved1;
+    int reserved2;
+    int reserved3;
+    int reserved4;
 } SceUtilityParamBase;
 
 typedef struct SceUtilitySavedataParam660
 {
-	SceUtilityParamBase base;
-	int type;
-	unsigned int bind;
-	unsigned int overWriteMode;
-	char titleId[SCE_UTILITY_SD_TITLEID_SIZE];
-	char reserved[3];
-	char userId[SCE_UTILITY_SD_USERID_SIZE];
-	char (* pUserIds)[SCE_UTILITY_SD_USERID_SIZE];
-	char fileName[SCE_UTILITY_SD_FILENAME_SIZE];
-	char reserved1[3];
-	void * pDataBuf;
-	unsigned int dataBufSize;
-	unsigned int dataFileSize;
-	SceUtilitySDSystemFileParam systemFile;
-	SceUtilitySDExtFile icon0;
-	SceUtilitySDExtFile icon1;
-	SceUtilitySDExtFile pic1;
-	SceUtilitySDExtFile snd0;
-	SceUtilitySavedataListSaveNewData * pNewData;
-	unsigned int initFocus;
-	int abortedStatus;
-	SceUtilitySavedataMsFreeSize * pMs;
-	SceUtilitySavedataMsDataSize * pMsData;
-	SceUtilitySavedataUtilityDataSize * pUtilityData;
-	unsigned char secureFileId[SCE_UTILITY_SD_SECUREFILEID_SIZE];
-	unsigned int dataVersion;
-	unsigned int mcStatus;
-	SceUtilitySavedataUserIdList * pUserIdList;
-	SceUtilitySavedataFileList * pFileList;
-	SceUtilitySavedataCheckSize * pCheckSize;
+    SceUtilityParamBase base;
+    int type;
+    unsigned int bind;
+    unsigned int overWriteMode;
+    char titleId[SCE_UTILITY_SD_TITLEID_SIZE];
+    char reserved[3];
+    char userId[SCE_UTILITY_SD_USERID_SIZE];
+    char (* pUserIds)[SCE_UTILITY_SD_USERID_SIZE];
+    char fileName[SCE_UTILITY_SD_FILENAME_SIZE];
+    char reserved1[3];
+    void * pDataBuf;
+    unsigned int dataBufSize;
+    unsigned int dataFileSize;
+    SceUtilitySDSystemFileParam systemFile;
+    SceUtilitySDExtFile icon0;
+    SceUtilitySDExtFile icon1;
+    SceUtilitySDExtFile pic1;
+    SceUtilitySDExtFile snd0;
+    SceUtilitySavedataListSaveNewData * pNewData;
+    unsigned int initFocus;
+    int abortedStatus;
+    SceUtilitySavedataMsFreeSize * pMs;
+    SceUtilitySavedataMsDataSize * pMsData;
+    SceUtilitySavedataUtilityDataSize * pUtilityData;
+    unsigned char secureFileId[SCE_UTILITY_SD_SECUREFILEID_SIZE];
+    unsigned int dataVersion;
+    unsigned int mcStatus;
+    SceUtilitySavedataUserIdList * pUserIdList;
+    SceUtilitySavedataFileList * pFileList;
+    SceUtilitySavedataCheckSize * pCheckSize;
 } SceUtilitySavedataParam660;
 
 #endif

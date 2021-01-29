@@ -23,29 +23,29 @@
 // Fix VLF Module
 void patchVLF(SceModule2 * mod)
 {
-	// Flawed Function NIDs
-	unsigned int patches[5] =
-	{
-		0x2A245FE6,
-		0x7B08EAAB,
-		0x22050FC0,
-		0x158BE61A,
-		0xD495179F,
-	};
-	
-	// Iterate NIDs
-	int i = 0; for(; i < NELEMS(patches); ++i)
-	{
-		// Get Function Address
-		unsigned int funcAddr = (unsigned int)sctrlHENFindFunction("VLF_Module", "VlfGui", patches[i]);
-		
-		// Found Function
-		if(funcAddr)
-		{
-			// Dummy Function
-			_sw(JR_RA, funcAddr);
-			_sw(LI_V0(0), funcAddr + 4);
-		}
-	}
+    // Flawed Function NIDs
+    unsigned int patches[5] =
+    {
+        0x2A245FE6,
+        0x7B08EAAB,
+        0x22050FC0,
+        0x158BE61A,
+        0xD495179F,
+    };
+    
+    // Iterate NIDs
+    int i = 0; for(; i < NELEMS(patches); ++i)
+    {
+        // Get Function Address
+        unsigned int funcAddr = (unsigned int)sctrlHENFindFunction("VLF_Module", "VlfGui", patches[i]);
+        
+        // Found Function
+        if(funcAddr)
+        {
+            // Dummy Function
+            _sw(JR_RA, funcAddr);
+            _sw(LI_V0(0), funcAddr + 4);
+        }
+    }
 }
 

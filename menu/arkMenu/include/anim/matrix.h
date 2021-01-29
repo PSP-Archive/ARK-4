@@ -7,25 +7,25 @@
 
 class Matrix : public Anim {
 
-	private:
+    private:
 
-		char caRow[MAX_CHARS+1];
-		int j;
-		int k;
-		int l;
-		int m;
-		
-		void printColumn(int xoffset);
-		
-		void drawColumn(int xoffset);
-	
-	public:
-		Matrix();
-		~Matrix();
-		
-		void draw();
-		
-		bool drawBackground();
+        char caRow[MAX_CHARS+1];
+        int j;
+        int k;
+        int l;
+        int m;
+        
+        void printColumn(int xoffset);
+        
+        void drawColumn(int xoffset);
+    
+    public:
+        Matrix();
+        ~Matrix();
+        
+        void draw();
+        
+        bool drawBackground();
 };
 
 #endif

@@ -19,9 +19,9 @@
 #define DIRENT_TRACK_H
 
 struct IoDirentEntry {
-	char *path;
-	SceUID dfd, iso_dfd;
-	struct IoDirentEntry *next;
+    char *path;
+    SceUID dfd, iso_dfd;
+    struct IoDirentEntry *next;
 };
 
 int dirent_add(SceUID dfd, SceUID iso_dfd, const char *path);

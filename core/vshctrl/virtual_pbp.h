@@ -19,19 +19,19 @@
 #define VIRTUAL_PBP
 
 typedef struct _PBPSection {
-	u32 lba;
-	u32 size;
+    u32 lba;
+    u32 size;
 } PBPSection;
 
 typedef struct _VirtualPBP {
-	u32 enabled;
-	u32 pbp_total_size;
-	u32 iso_total_size;
-	u32 file_pointer;
-	char name[128];
-	u32 header[10];
-	PBPSection sects[8];
-	ScePspDateTime ctime, mtime;
+    u32 enabled;
+    u32 pbp_total_size;
+    u32 iso_total_size;
+    u32 file_pointer;
+    char name[128];
+    u32 header[10];
+    PBPSection sects[8];
+    ScePspDateTime ctime, mtime;
 } VirtualPBP;
 
 #define ISO_ID "@ISOGAME@"

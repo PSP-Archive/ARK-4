@@ -21,59 +21,59 @@
 // Memset Accelerator
 void fast_set(unsigned int * buffer, unsigned int value, unsigned int size)
 {
-	// Divide Size into Dword Chunks
-	size /= 4;
-	value = value & 0xFF;
-	value = value << 24 | value << 16 | value << 8 | value;
-	
-	// Set Data
-	while(size > 0)
-	{
-		// Set Dword
-		*buffer++ = value;
-		
-		// Reduce remaining Size
-		size--;
-	}
+    // Divide Size into Dword Chunks
+    size /= 4;
+    value = value & 0xFF;
+    value = value << 24 | value << 16 | value << 8 | value;
+    
+    // Set Data
+    while(size > 0)
+    {
+        // Set Dword
+        *buffer++ = value;
+        
+        // Reduce remaining Size
+        size--;
+    }
 }
 
 // Minimal Memset Implementation
 void *memset(void * buffer_, int value, unsigned int size)
 {
-	char *buffer = buffer_;
-	
-	// Valid Arguments
-	if(buffer != NULL && size > 0)
-	{
-		// Align Dword Size
-		unsigned int dwordsize = (size >> 2) << 2;
-		
-		// Check Alignment
-		if((((unsigned int)buffer) % 4) != 0)
-		{
-			// Invalid Alignment for Fast Copy
-			dwordsize = 0;
-		}
-		
-		// Copy Dwords
-		if(dwordsize > 0)
-		{
-			// Use Dword Setter
-			fast_set((unsigned int *)buffer, (unsigned int)value, dwordsize);
-		}
-		
-		// Set Bytes
-		if(size > dwordsize)
-		{
-			// Copy Bytes
-			unsigned int i = dwordsize; for(; i < size; i++)
-			{
-				// Set Byte
-				buffer[i] = value;
-			}
-		}
-	}
-	
-	// Return Result
-	return buffer_;
+    char *buffer = buffer_;
+    
+    // Valid Arguments
+    if(buffer != NULL && size > 0)
+    {
+        // Align Dword Size
+        unsigned int dwordsize = (size >> 2) << 2;
+        
+        // Check Alignment
+        if((((unsigned int)buffer) % 4) != 0)
+        {
+            // Invalid Alignment for Fast Copy
+            dwordsize = 0;
+        }
+        
+        // Copy Dwords
+        if(dwordsize > 0)
+        {
+            // Use Dword Setter
+            fast_set((unsigned int *)buffer, (unsigned int)value, dwordsize);
+        }
+        
+        // Set Bytes
+        if(size > dwordsize)
+        {
+            // Copy Bytes
+            unsigned int i = dwordsize; for(; i < size; i++)
+            {
+                // Set Byte
+                buffer[i] = value;
+            }
+        }
+    }
+    
+    // Return Result
+    return buffer_;
 }

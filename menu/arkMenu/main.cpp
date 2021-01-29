@@ -12,22 +12,22 @@ using namespace std;
 
 int main(int argc, char** argv){
 
-	intraFontInit();
-	ya2d_init();
+    intraFontInit();
+    ya2d_init();
 
-	common::loadData(argc, argv);
+    common::loadData(argc, argv);
 
-	SystemMgr::initMenu();
-	SystemMgr::startMenu();
-	SystemMgr::endMenu();
+    SystemMgr::initMenu();
+    SystemMgr::startMenu();
+    SystemMgr::endMenu();
 
-	common::deleteData();
-	
-	intraFontShutdown();
-	
-	ya2d_shutdown();
+    common::deleteData();
+    
+    intraFontShutdown();
+    
+    ya2d_shutdown();
 
-	sceKernelExitGame();
-	
-	return 0;
+    sceKernelExitGame();
+    
+    return 0;
 }

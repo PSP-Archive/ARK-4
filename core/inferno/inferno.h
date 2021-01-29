@@ -26,9 +26,9 @@
 
 struct IoReadArg
 {
-	unsigned int offset; // 0
-	unsigned char *address; // 4
-	unsigned int size; // 8
+    unsigned int offset; // 0
+    unsigned char *address; // 4
+    unsigned int size; // 8
 };
 
 extern unsigned int psp_model;

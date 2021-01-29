@@ -14,46 +14,46 @@ int uni_init(int codepage);
 int uni_done();
 
 int uni_toucs(           /* translate to Unicode                   */
-	      char*,     /* I - input string                       */
-	      size_t,    /* I - length of input string (chars)     */
-	      UniChar*,  /* O - output Unicode string              */
-	      size_t* ); /* O - length of output string (UniChars) */
+          char*,     /* I - input string                       */
+          size_t,    /* I - length of input string (chars)     */
+          UniChar*,  /* O - output Unicode string              */
+          size_t* ); /* O - length of output string (UniChars) */
 
 int uni_fromucs(            /* translate from Unicode                */
-		UniChar*,   /* I - input Unicode string              */
-		size_t,     /* I - length of input string (UniChars) */
-		char*,      /* O - output string                     */
-		size_t* );  /* O - length of output string (chars)   */
+        UniChar*,   /* I - input Unicode string              */
+        size_t,     /* I - length of input string (UniChars) */
+        char*,      /* O - output string                     */
+        size_t* );  /* O - length of output string (chars)   */
 
 /* IMPLEMENTATION */
 
 static int (*uniMapCpToUcsCp) (
-	  unsigned long, /* I  - Codepage to convert         */
-	  UniChar*,      /* O  - Output buffer               */
-	  size_t );      /* I  - UniChars in output buffer   */
+      unsigned long, /* I  - Codepage to convert         */
+      UniChar*,      /* O  - Output buffer               */
+      size_t );      /* I  - UniChars in output buffer   */
 
 static int (*uniCreateUconvObject) (
-	  UniChar*,      /* I  - Unicode name of uconv table */
-	  UconvObject* );/* O  - Uconv object handle         */
+      UniChar*,      /* I  - Unicode name of uconv table */
+      UconvObject* );/* O  - Uconv object handle         */
 
 static int (*uniFreeUconvObject) (
           UconvObject ); /* I  - Uconv object handle         */
 
 static int (*uniUconvToUcs) (
-	  UconvObject,   /* I  - Uconv object handle         */
-	  void**,        /* IO - Input buffer                */
-	  size_t*,       /* IO - Input buffer size (bytes)   */
-	  UniChar**,     /* IO - Output buffer size          */
-	  size_t*,       /* IO - Output size (chars)         */
-	  size_t* );     /* IO - Substitution count          */
+      UconvObject,   /* I  - Uconv object handle         */
+      void**,        /* IO - Input buffer                */
+      size_t*,       /* IO - Input buffer size (bytes)   */
+      UniChar**,     /* IO - Output buffer size          */
+      size_t*,       /* IO - Output size (chars)         */
+      size_t* );     /* IO - Substitution count          */
 
 static int (*uniUconvFromUcs) (
-	  UconvObject,   /* I  - Uconv object handle         */
-	  UniChar**,     /* IO - Input buffer                */
-	  size_t*,       /* IO - Input buffer size (bytes)   */
-	  void**,        /* IO - Output buffer size          */
-	  size_t*,       /* IO - Output size (chars)         */
-	  size_t* );     /* IO - Substitution count          */
+      UconvObject,   /* I  - Uconv object handle         */
+      UniChar**,     /* IO - Input buffer                */
+      size_t*,       /* IO - Input buffer size (bytes)   */
+      void**,        /* IO - Output buffer size          */
+      size_t*,       /* IO - Output size (chars)         */
+      size_t* );     /* IO - Substitution count          */
 
 static int uni_ready = 0;
 static HMODULE uni_UCONV;
@@ -65,13 +65,13 @@ int uni_init(int codepage) {
     uni_ready = 0;
 
     if(!&DosLoadModule) {
-	/* DOS enviroment detected */
-	return -1;
+    /* DOS enviroment detected */
+    return -1;
     }
 
     if( DosLoadModule(0,0,(PCSZ)"UCONV",&uni_UCONV) ) {
-	/* no Unicode API found (obsolete OS/2 version) */
-	return -2;
+    /* no Unicode API found (obsolete OS/2 version) */
+    return -2;
     }
 
     if( !DosQueryProcAddr(uni_UCONV,0,(PCSZ)"UniMapCpToUcsCp",     (PPFN)&uniMapCpToUcsCp     ) &&
@@ -80,11 +80,11 @@ int uni_init(int codepage) {
         !DosQueryProcAddr(uni_UCONV,0,(PCSZ)"UniCreateUconvObject",(PPFN)&uniCreateUconvObject) &&
         !DosQueryProcAddr(uni_UCONV,0,(PCSZ)"UniFreeUconvObject",  (PPFN)&uniFreeUconvObject  )
       ) {
-	unistr[0] = 0;
-	if( (!codepage || !uniMapCpToUcsCp(codepage, unistr, 256)) && !uniCreateUconvObject(unistr,&uni_obj) ) {
-	    uni_ready = 1;
-	    return 0;
-	}
+    unistr[0] = 0;
+    if( (!codepage || !uniMapCpToUcsCp(codepage, unistr, 256)) && !uniCreateUconvObject(unistr,&uni_obj) ) {
+        uni_ready = 1;
+        return 0;
+    }
     }
     DosFreeModule(uni_UCONV);
     return -2;

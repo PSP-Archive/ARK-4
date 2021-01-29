@@ -10,72 +10,72 @@
 
 enum BootLoadFlags
 {
-	BOOTLOAD_VSH = 1,
-	BOOTLOAD_GAME = 2,
-	BOOTLOAD_UPDATER = 4,
-	BOOTLOAD_POPS = 8,
-	BOOTLOAD_UMDEMU = 64, /* for original NP9660 */
+    BOOTLOAD_VSH = 1,
+    BOOTLOAD_GAME = 2,
+    BOOTLOAD_UPDATER = 4,
+    BOOTLOAD_POPS = 8,
+    BOOTLOAD_UMDEMU = 64, /* for original NP9660 */
 };
 enum SEUmdModes
 {
-	MODE_UMD = 0,
-	MODE_OE_LEGACY = 1,
-	MODE_MARCH33 = 2,
-	MODE_NP9660 = 3,
+    MODE_UMD = 0,
+    MODE_OE_LEGACY = 1,
+    MODE_MARCH33 = 2,
+    MODE_NP9660 = 3,
 };
 
 enum MEUmdModes
 {
-	ME_MODE_UMD = 0,
-	ME_MODE_OE_LEGACY = 1,
-	ME_MODE_MARCH33 = 2,
-	ME_MODE_NP9660 = 3,
-	ME_MODE_ME = 4,
+    ME_MODE_UMD = 0,
+    ME_MODE_OE_LEGACY = 1,
+    ME_MODE_MARCH33 = 2,
+    ME_MODE_NP9660 = 3,
+    ME_MODE_ME = 4,
 };
 
 typedef struct
 {
-	int magic; /*  */
-	int hidecorrupt;
-	int	skiplogo;
-	int umdactivatedplaincheck;//Hide mac
+    int magic; /*  */
+    int hidecorrupt;
+    int    skiplogo;
+    int umdactivatedplaincheck;//Hide mac
 
-	int gamekernel150;
-	int skipgameboot;//executebootbinGameboot skip
-	int startupprog;//UmdVideoPatch
-	int umdmode;
+    int gamekernel150;
+    int skipgameboot;//executebootbinGameboot skip
+    int startupprog;//UmdVideoPatch
+    int umdmode;
 
-	int execute_pboot;
-	int	vshcpuspeed;
-	int	vshbusspeed; 
-	int	umdisocpuspeed; 
+    int execute_pboot;
+    int    vshcpuspeed;
+    int    vshbusspeed; 
+    int    umdisocpuspeed; 
 
-	int	umdisobusspeed; 
-	int fakeregion;
-	int executeopnssmp;//freeumdregionexecute OPNSSMP
-	int	usbprotect;
+    int    umdisobusspeed; 
+    int fakeregion;
+    int executeopnssmp;//freeumdregionexecute OPNSSMP
+    int    usbprotect;
 
-	int usbdevice;
-	int novshmenu;
-	int usbcharge;
-	int netupdate;
+    int usbdevice;
+    int novshmenu;
+    int usbcharge;
+    int netupdate;
 
-	int hidepng;
-	int plugvsh;
-	int pluggame;
-	int plugpop;
-	
-	int versiontxt;
-	int fastms;//
-	int reserved[3];
+    int hidepng;
+    int plugvsh;
+    int pluggame;
+    int plugpop;
+    
+    int versiontxt;
+    int fastms;//
+    int reserved[3];
 } SEConfig;
 
 #define MINI_MAGIC 0x3031454D
 
 typedef struct{
-	u32 magic;
-	int vsh_color;
-	int recovery_color;
+    u32 magic;
+    int vsh_color;
+    int recovery_color;
 }VshConfig;
 
 int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
@@ -96,8 +96,8 @@ void* sctrlKernelGetPartition(int pid);
 int sctrlKernelBootFrom();
 int sctrlKernelMsIsEf();
 
-int	sctrlHENIsSE();
-int	sctrlHENIsDevhook();
+int    sctrlHENIsSE();
+int    sctrlHENIsDevhook();
 int sctrlHENGetVersion();
 
 u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);

@@ -5,14 +5,14 @@
 #include "gfx.h"
 
 class SystemEntry{
-	public:
-		virtual void draw()=0;
-		virtual void control(Controller* pad)=0;
-		virtual void pause()=0;
-		virtual void resume()=0;
-		virtual char* getInfo()=0;
-		virtual Image* getIcon()=0;
-		virtual char* getName()=0;
+    public:
+        virtual void draw()=0;
+        virtual void control(Controller* pad)=0;
+        virtual void pause()=0;
+        virtual void resume()=0;
+        virtual char* getInfo()=0;
+        virtual Image* getIcon()=0;
+        virtual char* getName()=0;
 };
 
 #endif

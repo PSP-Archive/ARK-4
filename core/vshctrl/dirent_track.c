@@ -36,93 +36,93 @@ static struct IoDirentEntry g_head = { "", -1, -1, NULL }, *g_tail = &g_head;
 
 static char *oe_strdup(const char *str)
 {
-	int len;
-	char *p;
+    int len;
+    char *p;
 
-	len = strlen(str) + 1;
-	p = oe_malloc(len);
+    len = strlen(str) + 1;
+    p = oe_malloc(len);
 
-	if(p == NULL) {
-		return p;
-	}
+    if(p == NULL) {
+        return p;
+    }
 
-	strcpy(p, str);
+    strcpy(p, str);
 
-	return p;
+    return p;
 }
 
 int dirent_add(SceUID dfd, SceUID iso_dfd, const char *path)
 {
-	struct IoDirentEntry *p;
+    struct IoDirentEntry *p;
    
-	p = oe_malloc(sizeof(*p));
+    p = oe_malloc(sizeof(*p));
 
-	if(p == NULL) {
-		return -1;
-	}
+    if(p == NULL) {
+        return -1;
+    }
 
-	p->dfd = dfd;
-	p->iso_dfd = iso_dfd;
-	p->path = oe_strdup(path);
+    p->dfd = dfd;
+    p->iso_dfd = iso_dfd;
+    p->path = oe_strdup(path);
 
-	if(p->path == NULL) {
-		oe_free(p);
+    if(p->path == NULL) {
+        oe_free(p);
 
-		return -2;
-	}
+        return -2;
+    }
 
-	lock();
-	g_tail->next = p;
-	g_tail = p;
-	g_tail->next = NULL;
-	unlock();
+    lock();
+    g_tail->next = p;
+    g_tail = p;
+    g_tail->next = NULL;
+    unlock();
 
-	return 0;
+    return 0;
 }
 
 int dirent_remove(struct IoDirentEntry *p)
 {
-	int ret;
-	struct IoDirentEntry *fds, *prev;
+    int ret;
+    struct IoDirentEntry *fds, *prev;
 
-	lock();
+    lock();
 
-	for(prev = &g_head, fds = g_head.next; fds != NULL; prev = fds, fds = fds->next) {
-		if(p == fds) {
-			break;
-		}
-	}
+    for(prev = &g_head, fds = g_head.next; fds != NULL; prev = fds, fds = fds->next) {
+        if(p == fds) {
+            break;
+        }
+    }
 
-	if(fds != NULL) {
-		prev->next = fds->next;
+    if(fds != NULL) {
+        prev->next = fds->next;
 
-		if(g_tail == fds) {
-			g_tail = prev;
-		}
+        if(g_tail == fds) {
+            g_tail = prev;
+        }
 
-		oe_free(fds->path);
-		oe_free(fds);
-		ret = 0;
-	} else {
-		ret = -1;
-	}
+        oe_free(fds->path);
+        oe_free(fds);
+        ret = 0;
+    } else {
+        ret = -1;
+    }
 
-	unlock();
+    unlock();
 
-	return ret;
+    return ret;
 }
 
 struct IoDirentEntry *dirent_search(SceUID dfd)
 {
-	struct IoDirentEntry *fds;
+    struct IoDirentEntry *fds;
 
-	if (dfd < 0)
-		return NULL;
+    if (dfd < 0)
+        return NULL;
 
-	for(fds = g_head.next; fds != NULL; fds = fds->next) {
-		if(fds->dfd == dfd)
-			break;
-	}
+    for(fds = g_head.next; fds != NULL; fds = fds->next) {
+        if(fds->dfd == dfd)
+            break;
+    }
 
-	return fds;
+    return fds;
 }

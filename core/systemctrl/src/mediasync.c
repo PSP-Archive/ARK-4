@@ -37,8 +37,8 @@ void patchMediaSync(SceModule2* mod)
         if (data == 0x00600008 && _lw(addr+4) == NOP){
             u32 ms_check_media = K_EXTRACT_CALL(addr+8);
             _sw(JR_RA, ms_check_media);
-	        _sw(LI_V0(1), ms_check_media + 4);
-	        patches--;
+            _sw(LI_V0(1), ms_check_media + 4);
+            patches--;
         }
         else if (data == 0x2406000A && _lw(addr-16) == 0x24510008 && disc_patches){
                 _sw(0x1000001D, addr+4); // MEDIASYNC_DISC_MEDIA_CHECK

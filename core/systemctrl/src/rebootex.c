@@ -44,71 +44,71 @@ char reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
 // Backup Reboot Buffer
 void backupRebootBuffer(void)
 {
-	// Reboot Buffer Configuration
-	RebootBufferConfiguration * conf = (RebootBufferConfiguration *)(REBOOTEX_CONFIG);
-	
-	// Invalid Reboot Buffer Magic
-	if(conf->magic != REBOOTEX_CONFIG_MAGIC) return;
-	
-	// Backup Reboot Buffer Size
-	reboot_size = conf->reboot_buffer_size;
-	
-	// Allocate Reboot Buffer Backup Memory
-	int bufferid = sceKernelAllocPartitionMemory(1, "RebootBuffer", PSP_SMEM_Low, reboot_size, 0);
-	
-	// Get Memory Pointer
-	reboot_backup = sceKernelGetBlockHeadAddr(bufferid);
-	
-	// Copy Reboot Buffer Payload
-	memcpy(reboot_backup, (void *)REBOOTEX_TEXT, reboot_size);
-	
-	// Copy Reboot Buffer Configuration
-	memcpy(&reboot_config, (void *)REBOOTEX_CONFIG, sizeof(reboot_config));
-	
-	// Copy Reboot ISO Path
-	strncpy(reboot_config_isopath, (void *)REBOOTEX_CONFIG_ISO_PATH, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
-	reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
-	
-	// Flush Cache
-	flushCache();
+    // Reboot Buffer Configuration
+    RebootBufferConfiguration * conf = (RebootBufferConfiguration *)(REBOOTEX_CONFIG);
+    
+    // Invalid Reboot Buffer Magic
+    if(conf->magic != REBOOTEX_CONFIG_MAGIC) return;
+    
+    // Backup Reboot Buffer Size
+    reboot_size = conf->reboot_buffer_size;
+    
+    // Allocate Reboot Buffer Backup Memory
+    int bufferid = sceKernelAllocPartitionMemory(1, "RebootBuffer", PSP_SMEM_Low, reboot_size, 0);
+    
+    // Get Memory Pointer
+    reboot_backup = sceKernelGetBlockHeadAddr(bufferid);
+    
+    // Copy Reboot Buffer Payload
+    memcpy(reboot_backup, (void *)REBOOTEX_TEXT, reboot_size);
+    
+    // Copy Reboot Buffer Configuration
+    memcpy(&reboot_config, (void *)REBOOTEX_CONFIG, sizeof(reboot_config));
+    
+    // Copy Reboot ISO Path
+    strncpy(reboot_config_isopath, (void *)REBOOTEX_CONFIG_ISO_PATH, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
+    reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
+    
+    // Flush Cache
+    flushCache();
 }
 
 // Restore Reboot Buffer
 void restoreRebootBuffer(void)
 {
-	// No Backup available
-	if(reboot_size == 0 || reboot_backup == NULL) return;
-	
-	// Restore Reboot Buffer Payload
-	memcpy((void *)REBOOTEX_TEXT, reboot_backup, reboot_size);
-	
-	// Restore Reboot Buffer Configuration
-	memcpy((void *)REBOOTEX_CONFIG, &reboot_config, sizeof(reboot_config));
-	
-	// Restore Reboot ISO Path
-	strncpy((char*)REBOOTEX_CONFIG_ISO_PATH, sctrlSEGetUmdFile(), REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
-	((char*)REBOOTEX_CONFIG_ISO_PATH)[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = '\0';
+    // No Backup available
+    if(reboot_size == 0 || reboot_backup == NULL) return;
+    
+    // Restore Reboot Buffer Payload
+    memcpy((void *)REBOOTEX_TEXT, reboot_backup, reboot_size);
+    
+    // Restore Reboot Buffer Configuration
+    memcpy((void *)REBOOTEX_CONFIG, &reboot_config, sizeof(reboot_config));
+    
+    // Restore Reboot ISO Path
+    strncpy((char*)REBOOTEX_CONFIG_ISO_PATH, sctrlSEGetUmdFile(), REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
+    ((char*)REBOOTEX_CONFIG_ISO_PATH)[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = '\0';
 }
 
 // Reboot Buffer Loader
 int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
 {
-	// Restore Reboot Buffer Configuration
-	restoreRebootBuffer();
-	
-	// backup ARK configuration to user ram
-	memcpy(ark_conf_backup, ark_config, sizeof(ARKConfig));
-	
-	// Load Sony Reboot Buffer
-	return _LoadReboot(arg1, arg2, arg3, arg4);
+    // Restore Reboot Buffer Configuration
+    restoreRebootBuffer();
+    
+    // backup ARK configuration to user ram
+    memcpy(ark_conf_backup, ark_config, sizeof(ARKConfig));
+    
+    // Load Sony Reboot Buffer
+    return _LoadReboot(arg1, arg2, arg3, arg4);
 }
 
 // Patch loadexec_01g.prx
 void patchLoadExec(SceModule2* loadexec)
 {
-	// Find Reboot Loader Function
-	_LoadReboot = (void *)loadexec->text_addr;
-	patchLoadExecCommon(loadexec, (u32)LoadReboot, 2);
-	// Flush Cache
-	flushCache();
+    // Find Reboot Loader Function
+    _LoadReboot = (void *)loadexec->text_addr;
+    patchLoadExecCommon(loadexec, (u32)LoadReboot, 2);
+    // Flush Cache
+    flushCache();
 }

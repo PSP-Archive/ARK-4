@@ -56,15 +56,15 @@ int
 mftpExitHandler(SceSize argc, void *argv) 
 {
   int err = 0;
-	Controller pad;
+    Controller pad;
   while (1) {
-  	if (print_screen) printScreen();
+      if (print_screen) printScreen();
     pad.update();
     if (pad.decline()) break;
     sceKernelDelayThread(10000);
   }
   if (sockListen) {
-	  err = sceNetInetClose(sockListen);
+      err = sceNetInetClose(sockListen);
   }
 
   thread_list  *scan_thread = mftp_thread_head; 
@@ -72,7 +72,7 @@ mftpExitHandler(SceSize argc, void *argv)
     sceKernelTerminateThread(scan_thread->thread_id);
     scan_thread = scan_thread->next;
   }
-	sceKernelExitDeleteThread(0);
+    sceKernelExitDeleteThread(0);
   return 0;
 }
 
@@ -81,43 +81,43 @@ mftpClientHandler(SceSize argc, void *argv)
 {
   int thid = sceKernelGetThreadId();
   mftpAddThread(thid);
-	MftpConnection *con = *(MftpConnection **)argv;
+    MftpConnection *con = *(MftpConnection **)argv;
 
-	con->sockData =0;
-	con->sockPASV =0;
+    con->sockData =0;
+    con->sockPASV =0;
 
   if (mftp_config.head_user) {
     strcpy(con->root,mftp_config.head_user->root);
   } else {
-	  strcpy(con->root,"ms0:");
+      strcpy(con->root,"ms0:");
   }
 
-	memset(con->sockCommandBuffer, 0, 1024);
-	memset(con->sockDataBuffer, 0, 1024);
-	strcpy(con->curDir,"/");
-	memset(con->user, 0, MAX_USER_LENGTH);
-	memset(con->pass, 0, MAX_PASS_LENGTH);
+    memset(con->sockCommandBuffer, 0, 1024);
+    memset(con->sockDataBuffer, 0, 1024);
+    strcpy(con->curDir,"/");
+    memset(con->user, 0, MAX_USER_LENGTH);
+    memset(con->pass, 0, MAX_PASS_LENGTH);
   strcpy(con->renameFromFileName,"");
   con->renameFrom = 0;
-	con->usePassiveMode=0;
-	con->userLoggedIn=0;
-	con->port_port=0;
-	con->port_addr[0] = 0;
-	con->port_addr[1] = 0;
-	con->port_addr[2] = 0;
-	con->port_addr[3] = 0;
-	con->transfertType='A';
+    con->usePassiveMode=0;
+    con->userLoggedIn=0;
+    con->port_port=0;
+    con->port_addr[0] = 0;
+    con->port_addr[1] = 0;
+    con->port_addr[2] = 0;
+    con->port_addr[3] = 0;
+    con->transfertType='A';
 
-	int err;
+    int err;
 
-	mftpServerHello(con);
+    mftpServerHello(con);
 
   char messBuffer[64];
-	char readBuffer[1024];
-	char lineBuffer[1024];
-	int lineLen=0;
-	int errLoop=0;
-	while (errLoop>=0)
+    char readBuffer[1024];
+    char lineBuffer[1024];
+    int lineLen=0;
+    int errLoop=0;
+    while (errLoop>=0)
   {
   
     common::clearScreen(CLEAR_COLOR);
@@ -128,46 +128,46 @@ mftpClientHandler(SceSize argc, void *argv)
     //mftpDisplayBatteryMessage();
     common::flipScreen();
   
-  	int nb = sceNetInetRecv(con->sockCommand, (u8*)readBuffer, 1024, 0);
-  	if (nb <= 0) break;
+      int nb = sceNetInetRecv(con->sockCommand, (u8*)readBuffer, 1024, 0);
+      if (nb <= 0) break;
 
-  	int i=0; 
-  	while (i<nb) {
-  		if (readBuffer[i]!='\r') {
-  			lineBuffer[lineLen++]=readBuffer[i];
-  			if (readBuffer[i]=='\n' || lineLen==1024) {
-  				lineBuffer[--lineLen]=0;
-  				char* command=skipWS(lineBuffer);
-  				trimEndingWS(command);
+      int i=0; 
+      while (i<nb) {
+          if (readBuffer[i]!='\r') {
+              lineBuffer[lineLen++]=readBuffer[i];
+              if (readBuffer[i]=='\n' || lineLen==1024) {
+                  lineBuffer[--lineLen]=0;
+                  char* command=skipWS(lineBuffer);
+                  trimEndingWS(command);
 
           snprintf(messBuffer, 64, "> %s from %s", command, con->clientIp);
           mftpAddNewStatusMessage(messBuffer);
 
-				  if ((errLoop=mftpDispatch(con,command))<0) break;
-				  lineLen=0;
-			  }
-		  }
-		  i++;
-	  }
+                  if ((errLoop=mftpDispatch(con,command))<0) break;
+                  lineLen=0;
+              }
+          }
+          i++;
+      }
   }
 
-	err = sceNetInetClose(con->sockCommand);
-	free(con);
+    err = sceNetInetClose(con->sockCommand);
+    free(con);
 
   mftpDelThread(thid);
-	sceKernelExitDeleteThread(0);
-	
-	return 0;
+    sceKernelExitDeleteThread(0);
+    
+    return 0;
 }
 
 void printScreen(){
-	common::clearScreen(CLEAR_COLOR);
-	common::drawScreen();
-	common::getImage(IMAGE_DIALOG)->draw_scale(10, 6, 460, 260);
-	common::printText(20, 20, buffer);
-	common::printText(20, 30,"Waiting for FTP clients");
-	common::printText(20, 40, (mftp_config.auth_required)? "User authentication required" : "Anonymous connection mode");
-	common::flipScreen();
+    common::clearScreen(CLEAR_COLOR);
+    common::drawScreen();
+    common::getImage(IMAGE_DIALOG)->draw_scale(10, 6, 460, 260);
+    common::printText(20, 20, buffer);
+    common::printText(20, 30,"Waiting for FTP clients");
+    common::printText(20, 40, (mftp_config.auth_required)? "User authentication required" : "Anonymous connection mode");
+    common::flipScreen();
 }
 
 int 
@@ -178,10 +178,10 @@ ftpdLoop(const char* szMyIPAddr)
   SOCKET sockClient;
 
 
-	char url[128];
-	strcpy(url, "ftp://");
-	strcat(url, szMyIPAddr);
-	strcat(url, "/");
+    char url[128];
+    strcpy(url, "ftp://");
+    strcat(url, szMyIPAddr);
+    strcat(url, "/");
 
    strcpy(buffer, "FTP Server is now running on ");
    strcat(buffer, url);
@@ -189,36 +189,36 @@ ftpdLoop(const char* szMyIPAddr)
 
   int exit_id = sceKernelCreateThread("ftpd_client_exit",
                                       mftpExitHandler, 0x18, 0x10000, 0, 0);
-	if(exit_id >= 0) {
-		sceKernelStartThread(exit_id, 0, 0);
-	}
+    if(exit_id >= 0) {
+        sceKernelStartThread(exit_id, 0, 0);
+    }
 
-	struct sockaddr_in addrListen;
-	struct sockaddr_in addrAccept;
-	u32 cbAddrAccept;
-	sockListen = sceNetInetSocket(AF_INET, SOCK_STREAM, 0);
-	if (sockListen & 0x80000000) goto done;
-	addrListen.sin_family = AF_INET;
-	addrListen.sin_port = htons(21);
-	addrListen.sin_addr[0] = 0;
-	addrListen.sin_addr[1] = 0;
-	addrListen.sin_addr[2] = 0;
-	addrListen.sin_addr[3] = 0;
+    struct sockaddr_in addrListen;
+    struct sockaddr_in addrAccept;
+    u32 cbAddrAccept;
+    sockListen = sceNetInetSocket(AF_INET, SOCK_STREAM, 0);
+    if (sockListen & 0x80000000) goto done;
+    addrListen.sin_family = AF_INET;
+    addrListen.sin_port = htons(21);
+    addrListen.sin_addr[0] = 0;
+    addrListen.sin_addr[1] = 0;
+    addrListen.sin_addr[2] = 0;
+    addrListen.sin_addr[3] = 0;
 
-	// any
-	err = sceNetInetBind(sockListen, &addrListen, sizeof(addrListen));
-	if (err) goto done;
-	err = sceNetInetListen(sockListen, 1);
-	if (err) goto done;
+    // any
+    err = sceNetInetBind(sockListen, &addrListen, sizeof(addrListen));
+    if (err) goto done;
+    err = sceNetInetListen(sockListen, 1);
+    if (err) goto done;
 
   while (1) {
   
-  	print_screen = true;
+      print_screen = true;
   
-	  cbAddrAccept = sizeof(addrAccept);
+      cbAddrAccept = sizeof(addrAccept);
 
-	  sockClient = sceNetInetAccept(sockListen, &addrAccept, (int*)&cbAddrAccept);
-	  if (sockClient & 0x80000000) goto done;
+      sockClient = sceNetInetAccept(sockListen, &addrAccept, (int*)&cbAddrAccept);
+      if (sockClient & 0x80000000) goto done;
 
     MftpConnection* con=(MftpConnection*)malloc(sizeof(MftpConnection));
     if (sceNetApctlGetInfo(8, (SceNetApctlInfo*)con->serverIp) != 0) {
@@ -232,16 +232,16 @@ ftpdLoop(const char* szMyIPAddr)
     mftpAddNewStatusMessage(buffer_2);
 
     con->sockCommand = sockClient;
-	  int client_id = sceKernelCreateThread("ftpd_client_loop", mftpClientHandler, 0x18, 0x10000, 0, 0);
-	  print_screen = false;
-	  if(client_id >= 0) {
-		  sceKernelStartThread(client_id, 4, &con);
-	  }
-	sceKernelWaitThreadEnd(client_id, 0);
+      int client_id = sceKernelCreateThread("ftpd_client_loop", mftpClientHandler, 0x18, 0x10000, 0, 0);
+      print_screen = false;
+      if(client_id >= 0) {
+          sceKernelStartThread(client_id, 4, &con);
+      }
+    sceKernelWaitThreadEnd(client_id, 0);
   }
 
 done:
-	err = sceNetInetClose(sockListen);
+    err = sceNetInetClose(sockListen);
 
   return 0;
 }

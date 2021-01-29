@@ -43,53 +43,53 @@ ARKConfig* ark_conf = ark_conf_backup;
 int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
 {
 
-	// GZIP Packed PRX File
-	if ( (_lb((unsigned)prx + 0x150) == 0x1F && _lb((unsigned)prx + 0x151) == 0x8B)
-	        || (*(unsigned int *)(prx + 0x130) == 0xC01DB15D) )
-	{
-		// Read GZIP Size
-		unsigned int compsize = *(unsigned int *)(prx + 0xB0);
-		
-		// Return GZIP Size
-		*newsize = compsize;
-		
-		// Remove PRX Header
-		memcpy(prx, prx + 0x150, compsize);
-		
-		// Fake Decrypt Success
-		return 0;
-	}
-	
-	// Decrypt Sony PRX Files
-	return SonyPRXDecrypt(prx, size, newsize);
+    // GZIP Packed PRX File
+    if ( (_lb((unsigned)prx + 0x150) == 0x1F && _lb((unsigned)prx + 0x151) == 0x8B)
+            || (*(unsigned int *)(prx + 0x130) == 0xC01DB15D) )
+    {
+        // Read GZIP Size
+        unsigned int compsize = *(unsigned int *)(prx + 0xB0);
+        
+        // Return GZIP Size
+        *newsize = compsize;
+        
+        // Remove PRX Header
+        memcpy(prx, prx + 0x150, compsize);
+        
+        // Fake Decrypt Success
+        return 0;
+    }
+    
+    // Decrypt Sony PRX Files
+    return SonyPRXDecrypt(prx, size, newsize);
 }
 
 
 int _sceKernelCheckExecFile(unsigned char * addr, void * arg2)
 {
-	//scan structure
-	//6.31 kernel modules use type 3 PRX... 0xd4~0x10C is zero padded
-	int pos = 0; for(; pos < 0x38; pos++)
-	{
-		//nonzero byte encountered
-		if(addr[pos + 212])
-		{
-			//forward to unsign function?
-			return origCheckExecFile(addr, arg2);
-		}
-	}
+    //scan structure
+    //6.31 kernel modules use type 3 PRX... 0xd4~0x10C is zero padded
+    int pos = 0; for(; pos < 0x38; pos++)
+    {
+        //nonzero byte encountered
+        if(addr[pos + 212])
+        {
+            //forward to unsign function?
+            return origCheckExecFile(addr, arg2);
+        }
+    }
 
-	//return success
-	return 0;
+    //return success
+    return 0;
 }
 
 void loadCoreModuleStartCommon(){
 
     // Calculate Text Address
-	unsigned int text_addr = FindTextAddrByName("sceLoaderCore");
-	// Fetch Original Decrypt Function Stub
-	SonyPRXDecrypt = (void *)FindImportRange("memlmd", 0xEF73E85B, text_addr, 0x88400000);
-	origCheckExecFile = (void *)FindImportRange("memlmd", 0x6192F715, text_addr, 0x88400000);
+    unsigned int text_addr = FindTextAddrByName("sceLoaderCore");
+    // Fetch Original Decrypt Function Stub
+    SonyPRXDecrypt = (void *)FindImportRange("memlmd", 0xEF73E85B, text_addr, 0x88400000);
+    origCheckExecFile = (void *)FindImportRange("memlmd", 0x6192F715, text_addr, 0x88400000);
 
     // save this configuration to restore loadcore later on
     RebootexFunctions* rex_funcs = REBOOTEX_FUNCTIONS;
@@ -98,54 +98,54 @@ void loadCoreModuleStartCommon(){
     rex_funcs->orig_decrypt = SonyPRXDecrypt;
     rex_funcs->orig_checkexec = origCheckExecFile;
 
-	u32 decrypt_call = JAL(SonyPRXDecrypt);
-	u32 check_call = JAL(origCheckExecFile);
+    u32 decrypt_call = JAL(SonyPRXDecrypt);
+    u32 check_call = JAL(origCheckExecFile);
 
-	// Hook Signcheck Function Calls
-	int count = 0;
-	u32 addr;
+    // Hook Signcheck Function Calls
+    int count = 0;
+    u32 addr;
     u32 top_addr = text_addr+0x8000; // read 32KB at most (more than enough to scan loadcore)
-	for (addr = text_addr; addr<top_addr; addr+=4){
-		u32 data = _lw(addr);
-		if (data == decrypt_call){
-			_sw(JAL(PROPRXDecrypt), addr);
-		}
-		else if (data == check_call){
-		    _sw(JAL(_sceKernelCheckExecFile), addr);
-		}
-	}
+    for (addr = text_addr; addr<top_addr; addr+=4){
+        u32 data = _lw(addr);
+        if (data == decrypt_call){
+            _sw(JAL(PROPRXDecrypt), addr);
+        }
+        else if (data == check_call){
+            _sw(JAL(_sceKernelCheckExecFile), addr);
+        }
+    }
 }
 
 // Invalidate Instruction and Data Cache
 void flushCache(void)
 {
-	// Invalidate Data Cache
-	sceRebootDacheWritebackInvalidateAll();
-	// Invalidate Instruction Cache
-	sceRebootIcacheInvalidateAll();
+    // Invalidate Data Cache
+    sceRebootDacheWritebackInvalidateAll();
+    // Invalidate Instruction Cache
+    sceRebootIcacheInvalidateAll();
 }
 
 void findRebootFunctions(u32 reboot_start, u32 reboot_end){
 
     register void (* Icache)(void) = NULL;
     register void (* Dcache)(void) = NULL;
-	int wanted = 3; // lfatopen not needed for psp
-	// find functions
-	for (u32 addr = reboot_start; addr<reboot_end && wanted; addr+=4){
-	    u32 data = _lw(addr);
-	    if (data == 0xBD01FFC0){ // works on PSP and Vita
-	        u32 a = addr;
+    int wanted = 3; // lfatopen not needed for psp
+    // find functions
+    for (u32 addr = reboot_start; addr<reboot_end && wanted; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0xBD01FFC0){ // works on PSP and Vita
+            u32 a = addr;
             do {a-=4;} while (_lw(a) != 0x40088000);
-			Dcache = (void*)a;
-			wanted--;
-		}
-		else if (data == 0xBD14FFC0){ // works on PSP and Vita
-			u32 a = addr;
+            Dcache = (void*)a;
+            wanted--;
+        }
+        else if (data == 0xBD14FFC0){ // works on PSP and Vita
+            u32 a = addr;
             do {a-=4;} while (_lw(a) != 0x40088000);
             Icache = (void*)a;
             wanted--;
-	    }
-	    else if (data == 0x3A230001){ // only appears inside lFatOpen on Vita
+        }
+        else if (data == 0x3A230001){ // only appears inside lFatOpen on Vita
             u32 a = addr;
             do {a-=4;} while (_lw(a) != 0x27BDFFF0);
             origLfatOpen = (void*)a;
@@ -154,21 +154,21 @@ void findRebootFunctions(u32 reboot_start, u32 reboot_end){
         else if (data == 0x3466507E){
             UnpackBootConfig = addr-12;
             wanted--;
-	    }
-	}
-	
-	sceRebootIcacheInvalidateAll = Icache;
-	sceRebootDacheWritebackInvalidateAll = Dcache;
-	Icache();
-	Dcache();
-	
+        }
+    }
+    
+    sceRebootIcacheInvalidateAll = Icache;
+    sceRebootDacheWritebackInvalidateAll = Dcache;
+    Icache();
+    Dcache();
+    
 }
 
 // more or less get the end of reboot.prx
 u32 getRebootEnd(){
-	u32 addr = REBOOT_TEXT;
-	while (strcmp("ApplyPspRelSection", (char*)addr)) addr++;
-	return (addr & -0x4);
+    u32 addr = REBOOT_TEXT;
+    while (strcmp("ApplyPspRelSection", (char*)addr)) addr++;
+    return (addr & -0x4);
 }
 
 // Entry Point
@@ -178,19 +178,19 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4)
 
     // NOTE: ARKConfig must be properly setup in user ram for reboot to function
 
-	// TODO Parse Reboot Buffer Configuration (what to configure yet? lol)
-	
-	u32 reboot_start = REBOOT_TEXT;
-	u32 reboot_end = getRebootEnd;
-	findRebootFunctions(reboot_start, reboot_end); // scan for reboot functions
-	
-	// patch reboot buffer
-	if (IS_PSP(ark_conf->exec_mode)) patchRebootBufferPSP(reboot_start, reboot_end);
-	else patchRebootBufferVita(reboot_start, reboot_end);
-	
-	// Flush Cache
-	flushCache();
-	
-	// Forward Call
-	return sceReboot(arg1, arg2, arg3, arg4);
+    // TODO Parse Reboot Buffer Configuration (what to configure yet? lol)
+    
+    u32 reboot_start = REBOOT_TEXT;
+    u32 reboot_end = getRebootEnd;
+    findRebootFunctions(reboot_start, reboot_end); // scan for reboot functions
+    
+    // patch reboot buffer
+    if (IS_PSP(ark_conf->exec_mode)) patchRebootBufferPSP(reboot_start, reboot_end);
+    else patchRebootBufferVita(reboot_start, reboot_end);
+    
+    // Flush Cache
+    flushCache();
+    
+    // Forward Call
+    return sceReboot(arg1, arg2, arg3, arg4);
 }

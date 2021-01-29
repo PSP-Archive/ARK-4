@@ -10,22 +10,22 @@ using namespace std;
 
 int main(int argc, char** argv){
 
-	common::setArgs(argc, argv);
+    common::setArgs(argc, argv);
 
-	intraFontInit();
-	initGraphics();
+    intraFontInit();
+    initGraphics();
 
-	common::loadData();
+    common::loadData();
 
-	debugScreen("starting menu");
-	Menu* menu = new Menu();
-	menu->run();
-	delete menu;
-	
-	common::deleteData();
-	
-	intraFontShutdown();
-	disableGraphics();
-		
-	sceKernelExitGame();
+    debugScreen("starting menu");
+    Menu* menu = new Menu();
+    menu->run();
+    delete menu;
+    
+    common::deleteData();
+    
+    intraFontShutdown();
+    disableGraphics();
+        
+    sceKernelExitGame();
 }

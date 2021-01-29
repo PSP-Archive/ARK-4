@@ -20,9 +20,9 @@
 
 enum
 {
-	ReaderThreadData__READER_OK = 0,
-	ReaderThreadData__READER_EOF,
-	ReaderThreadData__READER_ABORT
+    ReaderThreadData__READER_OK = 0,
+    ReaderThreadData__READER_EOF,
+    ReaderThreadData__READER_ABORT
 };
 
 #define PIXEL_SIZE          4
@@ -34,87 +34,87 @@ enum
 
 #define TEXTURE_W           256
 #define TEXTURE_H           128
-#define IMAGE_W				144
-#define IMAGE_H				80
+#define IMAGE_W                144
+#define IMAGE_H                80
 #define TEXTURE_SIZE        TEXTURE_W * TEXTURE_H * PIXEL_SIZE
 
 #define BUFFER_WIDTH            256
 
 typedef struct VideoThreadData
 {
-	SceUID                          m_SemaphoreStart;
-	SceUID                          m_SemaphoreWait;
-	SceUID                          m_SemaphoreLock;
-	SceUID                          m_ThreadID;
+    SceUID                          m_SemaphoreStart;
+    SceUID                          m_SemaphoreWait;
+    SceUID                          m_SemaphoreLock;
+    SceUID                          m_ThreadID;
 
-	ScePVoid                        m_pVideoBuffer[2];
-	SceInt32                        m_iBufferTimeStamp[2];
+    ScePVoid                        m_pVideoBuffer[2];
+    SceInt32                        m_iBufferTimeStamp[2];
 
-	SceInt32                        m_iNumBuffers;
-	SceInt32                        m_iFullBuffers;
-	SceInt32                        m_iPlayBuffer;
+    SceInt32                        m_iNumBuffers;
+    SceInt32                        m_iFullBuffers;
+    SceInt32                        m_iPlayBuffer;
 
-	SceInt32                        m_iAbort;
+    SceInt32                        m_iAbort;
 
-	SceInt32                        m_iWidth;
-	SceInt32                        m_iHeight;
+    SceInt32                        m_iWidth;
+    SceInt32                        m_iHeight;
 
 } VideoThreadData;
 
 typedef struct {
-	SceUID                          m_Semaphore;
-	SceUID                          m_ThreadID;
+    SceUID                          m_Semaphore;
+    SceUID                          m_ThreadID;
 
-	SceInt32                        m_StreamSize;
-	SceMpegRingbuffer*              m_Ringbuffer;
-	SceInt32                        m_RingbufferPackets;
-	SceInt32                        m_Status;
-	SceInt32                        m_TotalBytes;
+    SceInt32                        m_StreamSize;
+    SceMpegRingbuffer*              m_Ringbuffer;
+    SceInt32                        m_RingbufferPackets;
+    SceInt32                        m_Status;
+    SceInt32                        m_TotalBytes;
 } ReaderThreadData;
 
 typedef struct
 {
-	SceUID                          m_SemaphoreStart;
-	SceUID                          m_SemaphoreLock;
-	SceUID                          m_ThreadID;
+    SceUID                          m_SemaphoreStart;
+    SceUID                          m_SemaphoreLock;
+    SceUID                          m_ThreadID;
 
-	SceInt32                        m_AudioChannel;
+    SceInt32                        m_AudioChannel;
 
-	ScePVoid                        m_pAudioBuffer[4];
-	SceInt32                        m_iBufferTimeStamp[4];
+    ScePVoid                        m_pAudioBuffer[4];
+    SceInt32                        m_iBufferTimeStamp[4];
 
-	SceInt32                        m_iNumBuffers;
-	SceInt32                        m_iFullBuffers;
-	SceInt32                        m_iPlayBuffer;
-	SceInt32                        m_iDecodeBuffer;
+    SceInt32                        m_iNumBuffers;
+    SceInt32                        m_iFullBuffers;
+    SceInt32                        m_iPlayBuffer;
+    SceInt32                        m_iDecodeBuffer;
 
-	SceInt32                        m_iAbort;
+    SceInt32                        m_iAbort;
 } AudioThreadData;
 
 typedef struct {
-	char* at3_data;
-	int at3_size;
-	int end;
+    char* at3_data;
+    int at3_size;
+    int end;
 } AT3ThreadData;
 
 typedef struct {
-	SceUID                          m_ThreadID;
+    SceUID                          m_ThreadID;
 
-	ReaderThreadData*               Reader;
-	VideoThreadData*                Video;
-	AudioThreadData*                Audio;
+    ReaderThreadData*               Reader;
+    VideoThreadData*                Video;
+    AudioThreadData*                Audio;
 
-	SceMpeg                         m_Mpeg;
+    SceMpeg                         m_Mpeg;
 
-	SceMpegStream*                  m_MpegStreamAVC;
-	SceMpegAu*                      m_MpegAuAVC;
-	SceMpegStream*                  m_MpegStreamAtrac;
-	SceMpegAu*                      m_MpegAuAtrac;
-	SceInt32                        m_MpegAtracOutSize;
+    SceMpegStream*                  m_MpegStreamAVC;
+    SceMpegAu*                      m_MpegAuAVC;
+    SceMpegStream*                  m_MpegStreamAtrac;
+    SceMpegAu*                      m_MpegAuAtrac;
+    SceInt32                        m_MpegAtracOutSize;
 
-	SceInt32                        m_iAudioFrameDuration;
-	SceInt32                        m_iVideoFrameDuration;
-	SceInt32                        m_iLastTimeStamp;
+    SceInt32                        m_iAudioFrameDuration;
+    SceInt32                        m_iVideoFrameDuration;
+    SceInt32                        m_iLastTimeStamp;
 } DecoderThreadData;
 
 extern int retVal;

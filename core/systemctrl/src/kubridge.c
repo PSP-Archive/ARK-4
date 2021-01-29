@@ -30,165 +30,165 @@
 // Load Modules (without restrictions)
 SceUID kuKernelLoadModule(const char * path, int flags, SceKernelLMOption * option)
 {
-	// Elevate Permission Level
-	unsigned int k1 = pspSdkSetK1(0);
-	
-	// Load Module
-	int result = sceKernelLoadModule(path, flags, option);
-	
-	// Restore Permission Level
-	pspSdkSetK1(k1);
-	
-	// Return Result
-	return result;
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Load Module
+    int result = sceKernelLoadModule(path, flags, option);
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Return Result
+    return result;
 }
 
 // Return Apitype
 int kuKernelInitApitype(void)
 {
-	// Elevate Permission Level
-	unsigned int k1 = pspSdkSetK1(0);
-	
-	// Forward Call
-	int result = sceKernelInitApitype();
-	
-	// Restore Permission Level
-	pspSdkSetK1(k1);
-	
-	// Return Result
-	return result;
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Forward Call
+    int result = sceKernelInitApitype();
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Return Result
+    return result;
 }
 
 // Return Boot Device
 int kuKernelBootFrom(void)
 {
-	// Elevate Permission Level
-	unsigned int k1 = pspSdkSetK1(0);
-	
-	// Forward Call
-	int result = sceKernelBootFrom();
-	
-	// Restore Permission Level
-	pspSdkSetK1(k1);
-	
-	// Return Result
-	return result;
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Forward Call
+    int result = sceKernelBootFrom();
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Return Result
+    return result;
 }
 
 // Return Module Filename
 int kuKernelInitFileName(char * initfilename)
 {
-	// Elevate Permission Level
-	unsigned int k1 = pspSdkSetK1(0);
-	
-	// Forward Call
-	char * string = sceKernelInitFileName();
-	
-	// Copy String
-	strcpy(initfilename, string);
-	
-	// Restore Permission Level
-	pspSdkSetK1(k1);
-	
-	// Return Success
-	return 0;
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Forward Call
+    char * string = sceKernelInitFileName();
+    
+    // Copy String
+    strcpy(initfilename, string);
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Return Success
+    return 0;
 }
 
 // Return User Level
 int kuKernelGetUserLevel(void)
 {
-	// Elevate Permission Level
-	unsigned int k1 = pspSdkSetK1(0);
-	
-	// Forward Call
-	int result = sceKernelGetUserLevel();
-	
-	// Restore Permission Level
-	pspSdkSetK1(k1);
-	
-	// Return Result
-	return result;
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Forward Call
+    int result = sceKernelGetUserLevel();
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Return Result
+    return result;
 }
 
 // Allow Memory Protection Changes from User Mode Application
 int kuKernelSetDdrMemoryProtection(void * addr, int size, int prot)
 {
-	// Elevate Permission Level
-	unsigned int k1 = pspSdkSetK1(0);
-	
-	// Forward Call
-	int result = sceKernelSetDdrMemoryProtection(addr, size, prot);
-	
-	// Restore Permission Level
-	pspSdkSetK1(k1);
-	
-	// Return Result
-	return result;
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Forward Call
+    int result = sceKernelSetDdrMemoryProtection(addr, size, prot);
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Return Result
+    return result;
 }
 
 // Return Model Number
 int kuKernelGetModel(void)
 {
-	// Elevate Permission Level
-	unsigned int k1 = pspSdkSetK1(0);
-	
-	// Forward Call
-	int result = sceKernelGetModel();
-	
-	// Restore Permission Level
-	pspSdkSetK1(k1);
-	
-	// Return Result
-	return result;
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Forward Call
+    int result = sceKernelGetModel();
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Return Result
+    return result;
 }
 
 // Read Dword from Kernel
 unsigned int kuKernelPeekw(void * addr)
 {
-	// Return Dword
-	return _lw((unsigned int)addr);
+    // Return Dword
+    return _lw((unsigned int)addr);
 }
 
 // Write Dword into Kernel
 void kuKernelPokew(void * addr, unsigned int value)
 {
-	// Write Dword
-	_sw(value, (unsigned int)addr);
+    // Write Dword
+    _sw(value, (unsigned int)addr);
 }
 
 // Copy Memory Range
 void * kuKernelMemcpy(void * dest, const void * src, unsigned int num)
 {
-	// Elevate Permission Level
-	unsigned int k1 = pspSdkSetK1(0);
-	
-	// Forward Call
-	void * address = memcpy(dest, src, num);
-	
-	// Restore Permission Level
-	pspSdkSetK1(k1);
-	
-	// Return Result
-	return address;
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Forward Call
+    void * address = memcpy(dest, src, num);
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Return Result
+    return address;
 }
 
 // Get Key Config (aka. Application Type)
 int kuKernelInitKeyConfig(void)
 {
-	// Elevate Permission Level
-	unsigned int k1 = pspSdkSetK1(0);
-	
-	// Forward Call
-	int apptype = sceKernelApplicationType();
-	
-	// Restore Permission Level
-	pspSdkSetK1(k1);
-	
-	// Return Result
-	return apptype;
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Forward Call
+    int apptype = sceKernelApplicationType();
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Return Result
+    return apptype;
 }
 
 void kuKernelGetUmdFile(char *umdfile, int size)
 {
-	strncpy(umdfile, GetUmdFile(), size);
+    strncpy(umdfile, GetUmdFile(), size);
 }

@@ -5,17 +5,17 @@
 
 #define MAX_VRAM_CONFIGS 2
 typedef struct POPSVramConfig{
-	short x;
-	short y;
-	short width;
-	short height;
-	unsigned char color_width;
-	unsigned char cur_buffer;
+    short x;
+    short y;
+    short width;
+    short height;
+    unsigned char color_width;
+    unsigned char cur_buffer;
 }POPSVramConfig;
 
 typedef struct POPSVramConfigList{
-	POPSVramConfig configs[MAX_VRAM_CONFIGS];
-	unsigned char counter;
+    POPSVramConfig configs[MAX_VRAM_CONFIGS];
+    unsigned char counter;
 }POPSVramConfigList;
 
 extern POPSVramConfigList* vram_config;

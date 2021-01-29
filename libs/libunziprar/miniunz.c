@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define printf	dummy_printf//dummy_printf 
+#define printf    dummy_printf//dummy_printf 
 #include "unzip.h"
 
 #ifdef unix
@@ -111,7 +111,7 @@ int mymkdir(dirname)
     ret = mkdir(dirname);
 #else
 #ifdef unix
-	ret = sceIoMkdir(dirname,0777);
+    ret = sceIoMkdir(dirname,0777);
     //ret = mkdir (dirname,0775);
 #endif
 #endif
@@ -166,7 +166,7 @@ int makedir (newdir)
 
 void do_banner()
 {
-	printf("AnonymousTipster's .zip plugin, based on:\n");
+    printf("AnonymousTipster's .zip plugin, based on:\n");
     printf("MiniUnz 1.01b, demo of zLib + Unz package written by Gilles Vollant\n");
     printf("more info at http://www.winimage.com/zLibDll/unzip.html\n\n");
 }
@@ -269,35 +269,35 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password,
     char* filename_withoutpath;
     char* p;
     int err=UNZ_OK;
-	FILE *fot=NULL;
+    FILE *fot=NULL;
     SceUID fout=NULL;
     u8* buf;
     uInt size_buf;
-	strcpy(abs_filename, destpath);
+    strcpy(abs_filename, destpath);
 
     unz_file_info file_info;
     uLong ratio=0;
     err = unzGetCurrentFileInfo(uf,&file_info,filename_inzip,sizeof(filename_inzip),NULL,0,NULL,0);
-	
-	int i;
-	for (i = 0; filename_inzip[i] != '\0'; i++)
-		cache[i] = (char)tolower(filename_inzip[i]);
-	cache[i] = '\0';
-	
+    
+    int i;
+    for (i = 0; filename_inzip[i] != '\0'; i++)
+        cache[i] = (char)tolower(filename_inzip[i]);
+    cache[i] = '\0';
+    
     //printf("cache : %s\n",cache);
-	char *eIdx = strstr(cache, "eboot.pbp");
-	if ( eIdx != NULL )
-	{
-		int idx = eIdx - cache;
-		//printf("Transforming %s, idx= %i\n",filename_inzip,idx);
-		char nname[] = "VBOOT.PBP";
-		
-		for ( i=0; i<strlen(nname); ++i )
-			filename_inzip[idx+i] = nname[i];
-	}
-	
-	strcat(abs_filename, filename_inzip);
-	
+    char *eIdx = strstr(cache, "eboot.pbp");
+    if ( eIdx != NULL )
+    {
+        int idx = eIdx - cache;
+        //printf("Transforming %s, idx= %i\n",filename_inzip,idx);
+        char nname[] = "VBOOT.PBP";
+        
+        for ( i=0; i<strlen(nname); ++i )
+            filename_inzip[idx+i] = nname[i];
+    }
+    
+    strcat(abs_filename, filename_inzip);
+    
 
     if (err!=UNZ_OK)
     {
@@ -325,8 +325,8 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password,
     {
         if ((*popt_extract_without_path)==0)
         {
-			char* end = abs_filename + strlen(abs_filename) -1;
-            if ( end[0] == '\\' || end[0] == '/' )	end[0] = '\0';
+            char* end = abs_filename + strlen(abs_filename) -1;
+            if ( end[0] == '\\' || end[0] == '/' )    end[0] = '\0';
             printf("creating directory: %s\n",abs_filename);
             mymkdir(abs_filename);
         }
@@ -341,8 +341,8 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password,
         else
             write_filename = filename_withoutpath;
 
-		if(usePassword == 1){
-			err = unzOpenCurrentFilePassword(uf,password);}else{err = unzOpenCurrentFilePassword(uf,NULL);}
+        if(usePassword == 1){
+            err = unzOpenCurrentFilePassword(uf,password);}else{err = unzOpenCurrentFilePassword(uf,NULL);}
         if (err!=UNZ_OK)
         {
             printf("error %d with zipfile in unzOpenCurrentFilePassword\n",err);
@@ -392,8 +392,8 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password,
             {
                 char c=*(filename_withoutpath-1);
                 *(filename_withoutpath-1)='\0';
-				printf("makedir %s\n",write_filename);
-				sceKernelExitGame();
+                printf("makedir %s\n",write_filename);
+                sceKernelExitGame();
                 makedir(write_filename);
                 *(filename_withoutpath-1)=c;
                 fot=fopen(write_filename,"wb");
@@ -404,19 +404,19 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password,
                 printf("error opening %s\n",write_filename);
             }
         }
-		fclose(fot);
-		fout = sceIoOpen(write_filename,O_RDWR | O_CREAT,0777);
-		int counter;counter = 0;
+        fclose(fot);
+        fout = sceIoOpen(write_filename,O_RDWR | O_CREAT,0777);
+        int counter;counter = 0;
         if (fout!=NULL)
         {
             //printf(" extracting: %s\n",write_filename);
 
             do
             {
-				//printf(".%i",counter);
-				//pspDebugScreenSetXY(0,4);
-				printf(" extracting: %s(%i)\n",write_filename,counter);
-				counter++;
+                //printf(".%i",counter);
+                //pspDebugScreenSetXY(0,4);
+                printf(" extracting: %s(%i)\n",write_filename,counter);
+                counter++;
                 err = unzReadCurrentFile(uf,buf,size_buf);
                 if (err<0)
                 {
@@ -533,7 +533,7 @@ int unzipToDir(const char *zippath, const char *destpath, const char *pass)
     unzFile uf=NULL;
 
     do_banner();
-	/*
+    /*
     if (argc==1)
     {
         do_help();
@@ -582,13 +582,13 @@ int unzipToDir(const char *zippath, const char *destpath, const char *pass)
             }
         }
     }*/
-	zipfilename = zippath;//"ms0:/testzip.zip";
-	////filename_to_extract = "ms0:/zext/";
-	dirname = destpath;//"ms0:/zext/";
-	password = pass;
+    zipfilename = zippath;//"ms0:/testzip.zip";
+    ////filename_to_extract = "ms0:/zext/";
+    dirname = destpath;//"ms0:/zext/";
+    password = pass;
 
-	//make destpath, so we don't try to extract to nonexistant
-	makedir(dirname);
+    //make destpath, so we don't try to extract to nonexistant
+    makedir(dirname);
 
     if (zipfilename!=NULL)
     {
@@ -629,13 +629,13 @@ int unzipToDir(const char *zippath, const char *destpath, const char *pass)
         return do_list(uf);
     else if (opt_do_extract==1)
     {
-		/*
+        /*
         if (opt_extractdir && chdir(dirname))
         {
           printf("Error changing into %s, aborting\n", dirname);
           exit(-1);
         }
-		*/
+        */
 
         if (filename_to_extract == NULL)
             return do_extract(uf,opt_do_extract_withoutpath,opt_overwrite,password,dirname);
@@ -649,5 +649,5 @@ int unzipToDir(const char *zippath, const char *destpath, const char *pass)
 }
 
 void testPrint(){
-	printf("hello!");
+    printf("hello!");
 }

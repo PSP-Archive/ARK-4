@@ -8,88 +8,88 @@
 
 enum 
 {
-	FAKE_REGION_DISABLED = 0,
-	FAKE_REGION_JAPAN = 1,
-	FAKE_REGION_AMERICA = 2,
-	FAKE_REGION_EUROPE = 3,
-	FAKE_REGION_KOREA = 4, 
-	FAKE_REGION_UNK = 5,
-	FAKE_REGION_UNK2 = 6,
-	FAKE_REGION_AUSTRALIA = 7,
-	FAKE_REGION_HONGKONG = 8,
-	FAKE_REGION_TAIWAN = 9,
-	FAKE_REGION_RUSSIA = 10,
-	FAKE_REGION_CHINA = 11,
-	FAKE_REGION_DEBUG_TYPE_I = 12,
-	FAKE_REGION_DEBUG_TYPE_II = 13,
+    FAKE_REGION_DISABLED = 0,
+    FAKE_REGION_JAPAN = 1,
+    FAKE_REGION_AMERICA = 2,
+    FAKE_REGION_EUROPE = 3,
+    FAKE_REGION_KOREA = 4, 
+    FAKE_REGION_UNK = 5,
+    FAKE_REGION_UNK2 = 6,
+    FAKE_REGION_AUSTRALIA = 7,
+    FAKE_REGION_HONGKONG = 8,
+    FAKE_REGION_TAIWAN = 9,
+    FAKE_REGION_RUSSIA = 10,
+    FAKE_REGION_CHINA = 11,
+    FAKE_REGION_DEBUG_TYPE_I = 12,
+    FAKE_REGION_DEBUG_TYPE_II = 13,
 };
 
 // No MODE_OE_LEGACY any more
 enum SEUmdModes
 {
-	MODE_UMD = 0,
-	MODE_MARCH33 = 1, // not available anymore, will default to inferno
-	MODE_NP9660 = 2,
-	MODE_INFERNO = 3,
-	MODE_VSHUMD = 4,
-	MODE_UPDATERUMD = 5,
+    MODE_UMD = 0,
+    MODE_MARCH33 = 1, // not available anymore, will default to inferno
+    MODE_NP9660 = 2,
+    MODE_INFERNO = 3,
+    MODE_VSHUMD = 4,
+    MODE_UPDATERUMD = 5,
 };
 
 enum MsSpeedFlag
 {
-	MSSPEED_NONE     = 0,
-	MSSPEED_POP      = 1,
-	MSSPEED_GAME     = 2,
-	MSSPEED_VSH      = 3,
-	MSSPEED_POP_GAME = 4,
-	MSSPEED_GAME_VSH = 5,
-	MSSPEED_VSH_POP  = 6,
-	MSSPEED_ALWAYS   = 7,
+    MSSPEED_NONE     = 0,
+    MSSPEED_POP      = 1,
+    MSSPEED_GAME     = 2,
+    MSSPEED_VSH      = 3,
+    MSSPEED_POP_GAME = 4,
+    MSSPEED_GAME_VSH = 5,
+    MSSPEED_VSH_POP  = 6,
+    MSSPEED_ALWAYS   = 7,
 };
 
 enum InfernoCachePolicy
 {
-	CACHE_POLICY_LRU = 0,
-	CACHE_POLICY_RR = 1,
+    CACHE_POLICY_LRU = 0,
+    CACHE_POLICY_RR = 1,
 };
 
 typedef struct _SEConfig
 {
-	int magic;
-	s16 umdmode;
-	s16 vshcpuspeed;
-	s16 vshbusspeed;
-	s16 umdisocpuspeed;
-	s16 umdisobusspeed;
-	s16 fakeregion;
-	s16 usbdevice;
-	s16 usbcharge;
-	s16 machidden;
-	s16 skipgameboot;
-	s16 hidepic;
-	s16 plugvsh; 
-	s16 pluggame;
-	s16 plugpop;
-	s16 flashprot;
-	s16 skiplogo;
-	s16 useversion;
-	s16 useownupdate;
-	s16 usenodrm;
-	s16 hibblock;
-	s16 noanalog;
-	s16 oldplugin;
-	s16 htmlviewer_custom_save_location;
-	s16 hide_cfw_dirs;
-	s16 chn_iso;
-	s16 msspeed;
-	s16 slimcolor;
-	s16 iso_cache;
-	s16 iso_cache_total_size; // in MB
-	s16 iso_cache_num;
-	s16 iso_cache_policy;
-	s16 usbversion;
-	s16 language; /* -1 as autodetect */
-	s16 retail_high_memory;
+    int magic;
+    s16 umdmode;
+    s16 vshcpuspeed;
+    s16 vshbusspeed;
+    s16 umdisocpuspeed;
+    s16 umdisobusspeed;
+    s16 fakeregion;
+    s16 usbdevice;
+    s16 usbcharge;
+    s16 machidden;
+    s16 skipgameboot;
+    s16 hidepic;
+    s16 plugvsh; 
+    s16 pluggame;
+    s16 plugpop;
+    s16 flashprot;
+    s16 skiplogo;
+    s16 useversion;
+    s16 useownupdate;
+    s16 usenodrm;
+    s16 hibblock;
+    s16 noanalog;
+    s16 oldplugin;
+    s16 htmlviewer_custom_save_location;
+    s16 hide_cfw_dirs;
+    s16 chn_iso;
+    s16 msspeed;
+    s16 slimcolor;
+    s16 iso_cache;
+    s16 iso_cache_total_size; // in MB
+    s16 iso_cache_num;
+    s16 iso_cache_policy;
+    s16 usbversion;
+    s16 language; /* -1 as autodetect */
+    s16 retail_high_memory;
 } SEConfig;
 
 /**
@@ -163,11 +163,11 @@ int sctrlSESetConfigEx(SEConfig *config, int size);
  *
  * if (config.usenoumd)
  * {
- *		sctrlSEMountUmdFromFile("ms0:/ISO/mydisc.iso", 1, 1);
+ *        sctrlSEMountUmdFromFile("ms0:/ISO/mydisc.iso", 1, 1);
  * }
  * else
  * {
- *		sctrlSEMountUmdFromFile("ms0:/ISO/mydisc.iso", 0, config.useisofsonumdinserted);
+ *        sctrlSEMountUmdFromFile("ms0:/ISO/mydisc.iso", 0, config.useisofsonumdinserted);
  * }
 */
 int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs);

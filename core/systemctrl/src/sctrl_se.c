@@ -45,36 +45,36 @@ void SetUmdFile(char *file) __attribute__((alias("sctrlSESetUmdFile")));
 // Return Reboot Configuration UMD File
 char * sctrlSEGetUmdFile(void)
 {
-	// Return Reboot Configuration UMD File
-	return reboot_config_isopath;
+    // Return Reboot Configuration UMD File
+    return reboot_config_isopath;
 }
 
 // Set Reboot Configuration UMD File
 void sctrlSESetUmdFile(char * file)
 {
-	// Overwrite Reboot Configuration UMD File
-	strncpy(reboot_config_isopath, file, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1);
-	
-	// Terminate String
-	reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
+    // Overwrite Reboot Configuration UMD File
+    strncpy(reboot_config_isopath, file, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1);
+    
+    // Terminate String
+    reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
 }
 
 void sctrlSESetBootConfFileIndex(int index)
 {
-	reboot_config.iso_mode = index;
+    reboot_config.iso_mode = index;
 }
 
 unsigned int sctrlSEGetBootConfFileIndex(void)
 {
-	return reboot_config.iso_mode;
+    return reboot_config.iso_mode;
 }
 
 void sctrlSESetDiscType(int type)
 {
-	reboot_config.iso_disc_type = type;
+    reboot_config.iso_disc_type = type;
 }
 
 int sctrlSEGetDiscType(void)
 {
-	return reboot_config.iso_disc_type;
+    return reboot_config.iso_disc_type;
 }

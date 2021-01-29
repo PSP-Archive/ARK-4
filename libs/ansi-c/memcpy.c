@@ -21,54 +21,54 @@
 // Memcpy Accelerator
 void fast_copy(unsigned int * dst, unsigned int * src, unsigned int size)
 {
-	// Divide Size into Dword Chunks
-	size /= 4;
-	
-	// Copy Data
-	while(size > 0)
-	{
-		// Copy Dword
-		*dst++ = *src++;
-		
-		// Reduce remaining Size
-		size--;
-	}
+    // Divide Size into Dword Chunks
+    size /= 4;
+    
+    // Copy Data
+    while(size > 0)
+    {
+        // Copy Dword
+        *dst++ = *src++;
+        
+        // Reduce remaining Size
+        size--;
+    }
 }
 
 // Minimal Memcpy Implementation
 void *memcpy(void *to_, const void *from_, unsigned int size)
 {
-	char *to = to_;
-	const char *from = from_;
-	
-	// Valid Arguments
-	if(to != NULL && from != NULL && size > 0)
-	{
-		// Align Dword Size
-		unsigned int dwordsize = (size >> 2) << 2;
-		
-		// Check Alignment
-		if((((unsigned int)to) % 4) != 0 || (((unsigned int)from) % 4) != 0)
-		{
-			// Invalid Alignment for Fast Copy
-			dwordsize = 0;
-		}
-		
-		// Copy Dwords
-		if(dwordsize > 0) fast_copy((unsigned int *)to, (unsigned int *)from, dwordsize);
-		
-		// Copy Bytes
-		if(size > dwordsize)
-		{
-			// Copy Bytes
-			unsigned int i = dwordsize; for(; i < size; i++)
-			{
-				// Copy Byte
-				to[i] = from[i];
-			}
-		}
-	}
-	
-	// Return Result
-	return to_;
+    char *to = to_;
+    const char *from = from_;
+    
+    // Valid Arguments
+    if(to != NULL && from != NULL && size > 0)
+    {
+        // Align Dword Size
+        unsigned int dwordsize = (size >> 2) << 2;
+        
+        // Check Alignment
+        if((((unsigned int)to) % 4) != 0 || (((unsigned int)from) % 4) != 0)
+        {
+            // Invalid Alignment for Fast Copy
+            dwordsize = 0;
+        }
+        
+        // Copy Dwords
+        if(dwordsize > 0) fast_copy((unsigned int *)to, (unsigned int *)from, dwordsize);
+        
+        // Copy Bytes
+        if(size > dwordsize)
+        {
+            // Copy Bytes
+            unsigned int i = dwordsize; for(; i < size; i++)
+            {
+                // Copy Byte
+                to[i] = from[i];
+            }
+        }
+    }
+    
+    // Return Result
+    return to_;
 }

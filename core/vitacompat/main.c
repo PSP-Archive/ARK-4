@@ -46,128 +46,129 @@ STMOD_HANDLER previous = NULL;
 
 int sctrlARKDummyFunction(void)
 {
-	return 0;
+    return 0;
 }
 
 // Flush Instruction and Data Cache
 void flushCache()
 {
-	// Flush Instruction Cache
-	sceKernelIcacheInvalidateAll();
-	
-	// Flush Data Cache
-	sceKernelDcacheWritebackInvalidateAll();
+    // Flush Instruction Cache
+    sceKernelIcacheInvalidateAll();
+    
+    // Flush Data Cache
+    sceKernelDcacheWritebackInvalidateAll();
 }
 
 // Return Game Product ID of currently running Game
 int sctrlARKGetGameID(char gameid[GAME_ID_MINIMUM_BUFFER_SIZE])
 {
-	// Invalid Arguments
-	if(gameid == NULL) return -1;
-	
-	// Elevate Permission Level
-	unsigned int k1 = pspSdkSetK1(0);
-	
-	// Fetch Game Information Structure
-	void * gameinfo = SysMemForKernel_EF29061C_Fixed();
-	
-	// Restore Permission Level
-	pspSdkSetK1(k1);
-	
-	// Game Information unavailable
-	if(gameinfo == NULL) return -3;
-	
-	// Copy Product Code
-	memcpy(gameid, gameinfo + 0x44, GAME_ID_MINIMUM_BUFFER_SIZE - 1);
-	
-	// Terminate Product Code
-	gameid[GAME_ID_MINIMUM_BUFFER_SIZE - 1] = 0;
-	
-	// Return Success
-	return 0;
+    // Invalid Arguments
+    if(gameid == NULL) return -1;
+    
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Fetch Game Information Structure
+    void * gameinfo = SysMemForKernel_EF29061C_Fixed();
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Game Information unavailable
+    if(gameinfo == NULL) return -3;
+    
+    // Copy Product Code
+    memcpy(gameid, gameinfo + 0x44, GAME_ID_MINIMUM_BUFFER_SIZE - 1);
+    
+    // Terminate Product Code
+    gameid[GAME_ID_MINIMUM_BUFFER_SIZE - 1] = 0;
+    
+    // Return Success
+    return 0;
 }
 
 // Return Boot Status
 static int isSystemBooted(void)
 {
 
-	// Find Function
-	int (* _sceKernelGetSystemStatus)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
-	
-	// Get System Status
-	int result = _sceKernelGetSystemStatus();
-		
-	// System booted
-	if(result == 0x20000) return 1;
-	
-	// Still booting
-	return 0;
+    // Find Function
+    int (* _sceKernelGetSystemStatus)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
+    
+    // Get System Status
+    int result = _sceKernelGetSystemStatus();
+        
+    // System booted
+    if(result == 0x20000) return 1;
+    
+    // Still booting
+    return 0;
 }
 
 static void ARKVitaOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
-	static int booted = 0;
+    static int booted = 0;
 
-   	if(strcmp(mod->modname, "sceLoadExec") == 0)
-	{
-	    // Patch sceKernelExitGame Syscalls
-    	sctrlHENPatchSyscall((void *)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exitToLauncher);
-	    sctrlHENPatchSyscall((void *)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exitToLauncher);
-		goto flush;
-	}
-	
-	if (strcmp(mod->modname, "pops") == 0)
-	{
-	    // Patch POPS SPU
-	    replacePSXSPU(mod);
-	    goto flush;
-	}
-	
-	if (strcmp(mod->modname, "scePops_Manager") == 0){
-	    patchVitaPopsman(mod);
-	    goto flush;
-	}
-	
+       if(strcmp(mod->modname, "sceLoadExec") == 0)
+    {
+        // Patch sceKernelExitGame Syscalls
+        sctrlHENPatchSyscall((void *)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exitToLauncher);
+        sctrlHENPatchSyscall((void *)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exitToLauncher);
+        sctrlHENPatchSyscall((void *)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), exitToLauncher);
+        goto flush;
+    }
+    
+    if (strcmp(mod->modname, "pops") == 0)
+    {
+        // Patch POPS SPU
+        replacePSXSPU(mod);
+        goto flush;
+    }
+    
+    if (strcmp(mod->modname, "scePops_Manager") == 0){
+        patchVitaPopsman(mod);
+        goto flush;
+    }
+    
     // Kermit Peripheral Patches
-	if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
-	{
-		// Patch Kermit Peripheral Module to load flash0
-		patchKermitPeripheral(&_ktbl);
-		// Exit Handler
-		goto flush;
-	}
-   	
-   	// Boot Complete Action not done yet
-	if(booted == 0)
-	{
-		// Boot is complete
-		if(isSystemBooted())
-		{
-		    // Apply Directory IO PSP Emulation
-			patchFileSystemDirSyscall();
-			// Allow exiting through key combo
-			//patchExitGame();
-			// Boot Complete Action done
-			booted = 1;
-			goto flush;
-		}
-	}
+    if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
+    {
+        // Patch Kermit Peripheral Module to load flash0
+        patchKermitPeripheral(&_ktbl);
+        // Exit Handler
+        goto flush;
+    }
+       
+       // Boot Complete Action not done yet
+    if(booted == 0)
+    {
+        // Boot is complete
+        if(isSystemBooted())
+        {
+            // Apply Directory IO PSP Emulation
+            patchFileSystemDirSyscall();
+            // Allow exiting through key combo
+            //patchExitGame();
+            // Boot Complete Action done
+            booted = 1;
+            goto flush;
+        }
+    }
 
 flush:
     flushCache();
 
 exit:
-   	// Forward to previous Handler
-	if(previous) previous(mod);
+       // Forward to previous Handler
+    if(previous) previous(mod);
 }
 
 void doKernelBreakpoint(){
     u32* framebuf = (u32*)0x44000000;
     for(int i = 0; i < 0x100000; i++)
     {
-	    // Set Pixel Color
-	    framebuf[i] = 0xff;
+        // Set Pixel Color
+        framebuf[i] = 0xff;
     }
     while (1){};
 }
@@ -183,29 +184,29 @@ int module_start(SceSize args, void * argp)
 
     // ask iso driver load fake.cso when no iso available
     char* umdfile = GetUmdFile();
-	if(umdfile[0] == '\0')
-	{
-		SetUmdFile("flash0:/fake.cso");
-	}
+    if(umdfile[0] == '\0')
+    {
+        SetUmdFile("flash0:/fake.cso");
+    }
 
     // copy configuration
     memcpy(ark_config, ark_conf_backup, sizeof(ARKConfig));
     
     initFileSystem();
     
-	//handleVitaMemory();
+    //handleVitaMemory();
     
     patchFileManager();
-	
-	// Register Module Start Handler
-	previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);
+    
+    // Register Module Start Handler
+    previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);
 
-	// Return Success
-	return 0;
+    // Return Success
+    return 0;
 }
 
 int module_stop(SceSize args, void *argp)
 {
     spuShutdown();
-	return 0;
+    return 0;
 }

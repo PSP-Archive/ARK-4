@@ -9,21 +9,21 @@
 #define MAX_PIXELS 20
 
 typedef struct{
-	int x, y;
-	int xspeed;
-	int yspeed;
+    int x, y;
+    int xspeed;
+    int yspeed;
 } t_pixel;
 
 class PixelAnim : public Anim {
 
-	private:
-		t_pixel* pixels;
-	
-	public:
-		PixelAnim();
-		~PixelAnim();
-		
-		void draw();
+    private:
+        t_pixel* pixels;
+    
+    public:
+        PixelAnim();
+        ~PixelAnim();
+        
+        void draw();
 };
 
 #endif

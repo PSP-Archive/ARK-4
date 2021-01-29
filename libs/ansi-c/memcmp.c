@@ -19,18 +19,18 @@
 
 int memcmp(const void *_a, const void *_b, unsigned size)
 {
-	const unsigned char *a, *b;
+    const unsigned char *a, *b;
 
-	a = _a, b = _b;
+    a = _a, b = _b;
 
-	while(size > 0 && *a == *b)
-	{
-		a++, b++;
-		size--;
-	}
+    while(size > 0 && *a == *b)
+    {
+        a++, b++;
+        size--;
+    }
 
-	if(size == 0)
-		return 0;
+    if(size == 0)
+        return 0;
 
-	return *a - *b;
+    return *a - *b;
 }

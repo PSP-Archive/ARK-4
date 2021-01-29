@@ -20,7 +20,7 @@
 
 #include "../colordebugger/colordebugger.h"
 
-#define	PSP_LINE_SIZE 512
+#define    PSP_LINE_SIZE 512
 #define SCREEN_WIDTH 480
 #define SCREEN_HEIGHT 272
 

@@ -121,23 +121,23 @@ psp_callback_thread(SceSize args, void *argp)
   cid = sceKernelCreateCallback("Exit Call Back", psp_exit_callback, NULL);
   sceKernelRegisterExitCallback(cid);
 
-	sceKernelSleepThreadCB();
+    sceKernelSleepThreadCB();
   return 0;
 }
 
 int
 psp_setup_callbacks()
 {
-	int thid = 0;
+    int thid = 0;
 
-	sceCtrlSetSamplingCycle(0);
-	sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
+    sceCtrlSetSamplingCycle(0);
+    sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
 
-	thid = sceKernelCreateThread("update_thread", psp_callback_thread, 0x11, 0xFA0, 0, 0);
-	if(thid >= 0) {
-		sceKernelStartThread(thid, 0, 0);
-	}
-	return thid;
+    thid = sceKernelCreateThread("update_thread", psp_callback_thread, 0x11, 0xFA0, 0, 0);
+    if(thid >= 0) {
+        sceKernelStartThread(thid, 0, 0);
+    }
+    return thid;
 }
 
 void

@@ -58,95 +58,95 @@ pgGetVramAddr(unsigned long x,unsigned long y)
 static void 
 user_warning_fn(png_structp png_ptr, png_const_charp warning_msg)
 {
-	// ignore PNG warnings
+    // ignore PNG warnings
 }
 
 void 
 pgLoadBackgroundPng(const char* filename)
 {
-	/*
-	u32* vram32;
-	u16* vram16;
-	int bufferwidth;
-	int pixelformat;
-	int unknown;
-	png_structp png_ptr;
-	png_infop info_ptr;
-	unsigned int sig_read = 0;
-	png_uint_32 width, height;
-	int bit_depth, color_type, interlace_type, x, y;
-	u32* line;
-	FILE *fp;
+    /*
+    u32* vram32;
+    u16* vram16;
+    int bufferwidth;
+    int pixelformat;
+    int unknown;
+    png_structp png_ptr;
+    png_infop info_ptr;
+    unsigned int sig_read = 0;
+    png_uint_32 width, height;
+    int bit_depth, color_type, interlace_type, x, y;
+    u32* line;
+    FILE *fp;
 
-	if ((fp = fopen(filename, "rb")) == NULL) return;
-	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (png_ptr == NULL) {
-		fclose(fp);
-		return;
-	}
-	png_set_error_fn(png_ptr, (png_voidp) NULL, (png_error_ptr) NULL, user_warning_fn);
-	info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == NULL) {
-		fclose(fp);
-		png_destroy_read_struct(&png_ptr, png_infopp_NULL, png_infopp_NULL);
-		return;
-	}
-	png_init_io(png_ptr, fp);
-	png_set_sig_bytes(png_ptr, sig_read);
-	png_read_info(png_ptr, info_ptr);
-	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, int_p_NULL, int_p_NULL);
-	png_set_strip_16(png_ptr);
-	png_set_packing(png_ptr);
-	if (color_type == PNG_COLOR_TYPE_PALETTE) png_set_palette_to_rgb(png_ptr);
-	if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8) png_set_gray_1_2_4_to_8(png_ptr);
-	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) png_set_tRNS_to_alpha(png_ptr);
-	png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
-	line = (u32*) malloc(width * 4);
-	if (!line) {
-		fclose(fp);
-		png_destroy_read_struct(&png_ptr, png_infopp_NULL, png_infopp_NULL);
-		return;
-	}
-	sceDisplayWaitVblankStart();  // if framebuf was set with PSP_DISPLAY_SETBUF_NEXTFRAME, wait until it is changed
-	sceDisplayGetFrameBuf((void**)&vram32, &bufferwidth, &pixelformat, &unknown);
+    if ((fp = fopen(filename, "rb")) == NULL) return;
+    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (png_ptr == NULL) {
+        fclose(fp);
+        return;
+    }
+    png_set_error_fn(png_ptr, (png_voidp) NULL, (png_error_ptr) NULL, user_warning_fn);
+    info_ptr = png_create_info_struct(png_ptr);
+    if (info_ptr == NULL) {
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, png_infopp_NULL, png_infopp_NULL);
+        return;
+    }
+    png_init_io(png_ptr, fp);
+    png_set_sig_bytes(png_ptr, sig_read);
+    png_read_info(png_ptr, info_ptr);
+    png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, int_p_NULL, int_p_NULL);
+    png_set_strip_16(png_ptr);
+    png_set_packing(png_ptr);
+    if (color_type == PNG_COLOR_TYPE_PALETTE) png_set_palette_to_rgb(png_ptr);
+    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8) png_set_gray_1_2_4_to_8(png_ptr);
+    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) png_set_tRNS_to_alpha(png_ptr);
+    png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+    line = (u32*) malloc(width * 4);
+    if (!line) {
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, png_infopp_NULL, png_infopp_NULL);
+        return;
+    }
+    sceDisplayWaitVblankStart();  // if framebuf was set with PSP_DISPLAY_SETBUF_NEXTFRAME, wait until it is changed
+    sceDisplayGetFrameBuf((void**)&vram32, &bufferwidth, &pixelformat, &unknown);
 
 # if 1 //LDUO:
   vram32 = (u32 *)pgGetVramAddr(0,0);
 # endif
-	vram16 = (u16*) vram32;
-	for (y = 0; y < height; y++) {
-		png_read_row(png_ptr, (u8*) line, png_bytep_NULL);
-		for (x = 0; x < width; x++) {
-			u32 color32 = line[x];
-			u16 color16;
-			int r = color32 & 0xff;
-			int g = (color32 >> 8) & 0xff;
-			int b = (color32 >> 16) & 0xff;
-			switch (pixelformat) {
-				case PSP_DISPLAY_PIXEL_FORMAT_565:
-					color16 = (r >> 3) | ((g >> 2) << 5) | ((b >> 3) << 11);
-					vram16[x + y * bufferwidth] = color16;
-					break;
-				case PSP_DISPLAY_PIXEL_FORMAT_5551:
-					color16 = (r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10);
-					vram16[x + y * bufferwidth] = color16;
-					break;
-				case PSP_DISPLAY_PIXEL_FORMAT_4444:
-					color16 = (r >> 4) | ((g >> 4) << 4) | ((b >> 4) << 8);
-					vram16[x + y * bufferwidth] = color16;
-					break;
-				case PSP_DISPLAY_PIXEL_FORMAT_8888:
-					color32 = r | (g << 8) | (b << 16);
-					vram32[x + y * bufferwidth] = color32;
-					break;
-			}
-		}
-	}
-	free(line);
-	png_read_end(png_ptr, info_ptr);
-	png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
-	fclose(fp);
-	*/
+    vram16 = (u16*) vram32;
+    for (y = 0; y < height; y++) {
+        png_read_row(png_ptr, (u8*) line, png_bytep_NULL);
+        for (x = 0; x < width; x++) {
+            u32 color32 = line[x];
+            u16 color16;
+            int r = color32 & 0xff;
+            int g = (color32 >> 8) & 0xff;
+            int b = (color32 >> 16) & 0xff;
+            switch (pixelformat) {
+                case PSP_DISPLAY_PIXEL_FORMAT_565:
+                    color16 = (r >> 3) | ((g >> 2) << 5) | ((b >> 3) << 11);
+                    vram16[x + y * bufferwidth] = color16;
+                    break;
+                case PSP_DISPLAY_PIXEL_FORMAT_5551:
+                    color16 = (r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10);
+                    vram16[x + y * bufferwidth] = color16;
+                    break;
+                case PSP_DISPLAY_PIXEL_FORMAT_4444:
+                    color16 = (r >> 4) | ((g >> 4) << 4) | ((b >> 4) << 8);
+                    vram16[x + y * bufferwidth] = color16;
+                    break;
+                case PSP_DISPLAY_PIXEL_FORMAT_8888:
+                    color32 = r | (g << 8) | (b << 16);
+                    vram32[x + y * bufferwidth] = color32;
+                    break;
+            }
+        }
+    }
+    free(line);
+    png_read_end(png_ptr, info_ptr);
+    png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
+    fclose(fp);
+    */
 }
 
 void 

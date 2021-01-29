@@ -19,31 +19,31 @@
 
 typedef struct
 {
-	unsigned int color;
-	short x, y, z;
+    unsigned int color;
+    short x, y, z;
 } vertex;
 
 class Waves : public Anim
 {
-	public:
-	
-		Waves();
-		~Waves();
-		
-		void draw();
-	
-	private:
-	
-		float amplitude;
-		float step;
-		float angle;
-		
-		int frameskip;
-		
-		vertex* vertices; // the first wave
-		vertex* vertices2; // the second wave
-		
-		void update();
+    public:
+    
+        Waves();
+        ~Waves();
+        
+        void draw();
+    
+    private:
+    
+        float amplitude;
+        float step;
+        float angle;
+        
+        int frameskip;
+        
+        vertex* vertices; // the first wave
+        vertex* vertices2; // the second wave
+        
+        void update();
 };
 
 #endif

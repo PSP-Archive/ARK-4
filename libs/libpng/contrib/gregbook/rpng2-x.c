@@ -96,8 +96,8 @@
 #define PROGNAME  "rpng2-x"
 #define LONGNAME  "Progressive PNG Viewer for X"
 #define VERSION   "2.03 of 25 February 2010"
-#define RESNAME   "rpng2"	/* our X resource application name */
-#define RESCLASS  "Rpng"	/* our X resource class name */
+#define RESNAME   "rpng2"    /* our X resource application name */
+#define RESCLASS  "Rpng"    /* our X resource class name */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -132,7 +132,7 @@
                   (e.type == KeyPress &&   /*  v--- or 1 for shifted keys */  \
                   ((k = XLookupKeysym(&e.xkey, 0)) == XK_q || k == XK_Escape)))
 
-#define NO_24BIT_MASKS	/* undef case not fully written--only for redisplay() */
+#define NO_24BIT_MASKS    /* undef case not fully written--only for redisplay() */
 
 #define rgb1_max   bg_freq
 #define rgb1_min   bg_gray
@@ -302,7 +302,7 @@ int main(int argc, char **argv)
     int have_bg = FALSE;
 #ifdef FEATURE_LOOP
     int loop = FALSE;
-    long loop_interval = -1;		/* seconds (100,000 max) */
+    long loop_interval = -1;        /* seconds (100,000 max) */
 #endif
     double LUT_exponent;                /* just the lookup table */
     double CRT_exponent = 2.2;          /* just the monitor */
@@ -1279,7 +1279,7 @@ static int rpng2_x_load_bg_image(void)
         for (row = 0;  row < rpng2_info.height;  ++row) {
             src = bg_data + row*bg_rowbytes;
             dest = ximage->data + row*ximage_rowbytes;
-            if (bpp == 32) {	/* slightly optimized version */
+            if (bpp == 32) {    /* slightly optimized version */
                 for (i = rpng2_info.width;  i > 0;  --i) {
                     red   = *src++;
                     green = *src++;

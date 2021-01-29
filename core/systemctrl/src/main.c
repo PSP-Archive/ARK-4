@@ -40,36 +40,36 @@ int module_start(SceSize args, void * argp)
 {
 
   #ifdef DEBUG
-	printkInit(NULL);
-	printk("ARK SystemControl started.\r\n");
+    printkInit(NULL);
+    printk("ARK SystemControl started.\r\n");
   #endif
 
     memcpy(ark_config, ark_conf_backup, sizeof(ARKConfig)); // copy configuration from user ram
 
-	// Apply Module Patches
-	patchSystemMemoryManager();
-	SceModule2* loadcore = patchLoaderCore();
-	setupNidResolver(loadcore);
-	patchModuleManager();
-	patchInterruptMan();
-	patchMemlmd();
-	
-	// Backup Reboot Buffer (including configuration)
-	backupRebootBuffer();
-	
-	// Initialize Malloc
-   	oe_mallocinit();
-	
-	// Initialize Module Start Patching
-	syspatchInit();
-	
-	// Flush Cache
-	flushCache();
-	
-	// Register Default Exception Handler
-	registerExceptionHandler(NULL, NULL);
-	
-	// Return Success
-	return 0;
+    // Apply Module Patches
+    patchSystemMemoryManager();
+    SceModule2* loadcore = patchLoaderCore();
+    setupNidResolver(loadcore);
+    patchModuleManager();
+    patchInterruptMan();
+    patchMemlmd();
+    
+    // Backup Reboot Buffer (including configuration)
+    backupRebootBuffer();
+    
+    // Initialize Malloc
+       oe_mallocinit();
+    
+    // Initialize Module Start Patching
+    syspatchInit();
+    
+    // Flush Cache
+    flushCache();
+    
+    // Register Default Exception Handler
+    registerExceptionHandler(NULL, NULL);
+    
+    // Return Success
+    return 0;
 }
 

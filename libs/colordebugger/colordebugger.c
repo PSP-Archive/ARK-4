@@ -26,21 +26,21 @@ u32* g_vram_base = (u32*)0x44000000;
 // Framebuffer Painter (for debugging)
 void colorDebug(unsigned int color)
 {
-	// Paint Framebuffer
-	unsigned int i = 0; for(; i < 0x100000; i++)
-	{
-		// Set Pixel Color
-		g_vram_base[i] = color;
-	}
+    // Paint Framebuffer
+    unsigned int i = 0; for(; i < 0x100000; i++)
+    {
+        // Set Pixel Color
+        g_vram_base[i] = color;
+    }
 }
 
 // Framebuffer Color Freeze Loop (for debugging)
 void doBreakpoint(void)
 {
-	// Screen Color Red
+    // Screen Color Red
     colorDebug(0xFF);
-	// Endless Loop
-	while(1){};
+    // Endless Loop
+    while(1){};
 }
 
 void setBreakpoint(u32 addr){

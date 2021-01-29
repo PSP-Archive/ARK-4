@@ -2,9 +2,9 @@
 
 char * strchr(const char *s, int c)
 {
-	while (*s != '\0' && *s != (char)c)
-		s++;
-	return ( (*s == c) ? (char *) s : NULL );
+    while (*s != '\0' && *s != (char)c)
+        s++;
+    return ( (*s == c) ? (char *) s : NULL );
 }
 
 char * strrchr(const char *cp, int ch)
@@ -13,9 +13,9 @@ char * strrchr(const char *cp, int ch)
     char c;
 
     for (save = (char *) NULL; (c = *cp); cp++) {
-		if (c == ch)
-		    save = (char *) cp;
-	}
+        if (c == ch)
+            save = (char *) cp;
+    }
 
     return save;
 }

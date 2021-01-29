@@ -27,9 +27,9 @@
 #include "systemctrl.h"
 
 typedef struct _MemPart {
-	u32 *meminfo;
-	int offset;
-	int size;
+    u32 *meminfo;
+    int offset;
+    int size;
 } MemPart;
 
 int g_high_memory_enabled = 0;
@@ -51,79 +51,79 @@ static inline u32 *get_partition(int pid)
 {
     if (get_memory_partition == NULL) get_memory_partition = findGetPartition();
 
-	return (*get_memory_partition)(pid);
+    return (*get_memory_partition)(pid);
 }
 
 void unlock_high_memory()
 {
-	if(!is_homebrews_runlevel() && !g_high_memory_enabled) {
-		return;
-	}
-	
-	//unlock memory
-	unsigned int i = 0; for(; i < 0x40; i += 4) {
-		_sw(0xFFFFFFFF, 0xBC000040 + i);
-	}
+    if(!is_homebrews_runlevel() && !g_high_memory_enabled) {
+        return;
+    }
+    
+    //unlock memory
+    unsigned int i = 0; for(; i < 0x40; i += 4) {
+        _sw(0xFFFFFFFF, 0xBC000040 + i);
+    }
 }
 
 static void modify_partition(MemPart *part)
 {
-	u32 *meminfo;
-	u32 offset, size;
+    u32 *meminfo;
+    u32 offset, size;
 
-	meminfo = part->meminfo;
-	offset = part->offset;
-	size = part->size;
+    meminfo = part->meminfo;
+    offset = part->offset;
+    size = part->size;
 
-	if(meminfo == NULL) {
-		return;
-	}
+    if(meminfo == NULL) {
+        return;
+    }
 
-	if (offset != 0) {
-		meminfo[1] = (offset << 20) + 0x88800000;
-	}
+    if (offset != 0) {
+        meminfo[1] = (offset << 20) + 0x88800000;
+    }
 
-	meminfo[2] = size << 20;
-	((u32*)(meminfo[4]))[5] = (size << 21) | 0xFC;
+    meminfo[2] = size << 20;
+    ((u32*)(meminfo[4]))[5] = (size << 21) | 0xFC;
 }
 
 int is_homebrews_runlevel(void)
 {
-	int apitype;
+    int apitype;
 
-	apitype = sceKernelInitApitype();
-	
-	if(apitype == 0x152 || apitype == 0x141) {
-		return 1;
-	}
+    apitype = sceKernelInitApitype();
+    
+    if(apitype == 0x152 || apitype == 0x141) {
+        return 1;
+    }
 
-	return 0;
+    return 0;
 }
 
 void prepatch_partitions(void)
 {
-	MemPart p8, p11;
+    MemPart p8, p11;
 
-	if(!is_homebrews_runlevel()) {
-		return;
-	}
+    if(!is_homebrews_runlevel()) {
+        return;
+    }
 
-	p8.meminfo = get_partition(8);
-	p11.meminfo = get_partition(11);
+    p8.meminfo = get_partition(8);
+    p11.meminfo = get_partition(11);
 
-	g_p8_size = p8.size = 1;
-	
-	if(p11.meminfo != NULL) {
-		p8.offset = 56-4-p8.size;
-	} else {
-		p8.offset = 56-p8.size;
-	}
+    g_p8_size = p8.size = 1;
+    
+    if(p11.meminfo != NULL) {
+        p8.offset = 56-4-p8.size;
+    } else {
+        p8.offset = 56-p8.size;
+    }
 
-	modify_partition(&p8);
+    modify_partition(&p8);
 
-	p11.size = 4;
-	p11.offset = 56-4;
-	modify_partition(&p11);
+    p11.size = 4;
+    p11.offset = 56-4;
+    modify_partition(&p11);
 }
 
 void patch_partitions(void) 
@@ -133,70 +133,70 @@ void patch_partitions(void)
         return;
     }
     
-	MemPart p2, p9;
-	int max_user_part_size;
+    MemPart p2, p9;
+    int max_user_part_size;
 
-	p2.meminfo = get_partition(2);
-	p9.meminfo = get_partition(9);
+    p2.meminfo = get_partition(2);
+    p9.meminfo = get_partition(9);
 
-	//if(g_p2_size == 24 && g_p9_size == 24) {
-		p2.size = MAX_HIGH_MEMSIZE;
-		p9.size = 0;
-	/*
-	} else {
-		p2.size = g_p2_size;
-		p9.size = g_p9_size;
-	}
-	*/
+    //if(g_p2_size == 24 && g_p9_size == 24) {
+        p2.size = MAX_HIGH_MEMSIZE;
+        p9.size = 0;
+    /*
+    } else {
+        p2.size = g_p2_size;
+        p9.size = g_p9_size;
+    }
+    */
 
-	if(get_partition(11) != NULL) {
-		max_user_part_size = 56 - 4 - g_p8_size;
-	} else {
-		max_user_part_size = 56 - g_p8_size;
-	}
+    if(get_partition(11) != NULL) {
+        max_user_part_size = 56 - 4 - g_p8_size;
+    } else {
+        max_user_part_size = 56 - g_p8_size;
+    }
 
-	if (p2.size + p9.size > max_user_part_size) {
-		// reserved 4MB for P11
-		int reserved_len;
+    if (p2.size + p9.size > max_user_part_size) {
+        // reserved 4MB for P11
+        int reserved_len;
 
-		reserved_len = p2.size + p9.size - max_user_part_size;
+        reserved_len = p2.size + p9.size - max_user_part_size;
 
-		if(p9.size > reserved_len) {
-			p9.size -= reserved_len;
-		} else {
-			p2.size -= reserved_len - p9.size; 
-			p9.size = 0;
-		}
-	}
+        if(p9.size > reserved_len) {
+            p9.size -= reserved_len;
+        } else {
+            p2.size -= reserved_len - p9.size; 
+            p9.size = 0;
+        }
+    }
 
-	//reset partition length for next reboot
-	sctrlHENSetMemory(24, 24);
+    //reset partition length for next reboot
+    sctrlHENSetMemory(24, 24);
 
-	p2.offset = 0;
-	modify_partition(&p2);
+    p2.offset = 0;
+    modify_partition(&p2);
 
-	p9.offset = p2.size;
-	modify_partition(&p9);
+    p9.offset = p2.size;
+    modify_partition(&p9);
 
-	g_high_memory_enabled = 1;
-	unlock_high_memory(0);
+    g_high_memory_enabled = 1;
+    unlock_high_memory(0);
 }
 
 /*
 void disable_PauseGame(u32 text_addr)
 {
-	int i, apitype;
+    int i, apitype;
 
-	if(psp_model != PSP_GO) {
-		return;
-	}
+    if(psp_model != PSP_GO) {
+        return;
+    }
 
-	apitype = sceKernelInitApitype();
+    apitype = sceKernelInitApitype();
 
-	if(g_high_memory_enabled || (conf.iso_cache && apitype == 0x125)) {
-		for(i=0; i<g_offs->impose_patch.nr_nop; i++) {
-			_sw(NOP, text_addr + g_offs->impose_patch.offset + i * 4);
-		}
-	}
+    if(g_high_memory_enabled || (conf.iso_cache && apitype == 0x125)) {
+        for(i=0; i<g_offs->impose_patch.nr_nop; i++) {
+            _sw(NOP, text_addr + g_offs->impose_patch.offset + i * 4);
+        }
+    }
 }
 */

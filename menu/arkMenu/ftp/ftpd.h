@@ -14,5 +14,5 @@ char* mftpGetLastStatusMessage();
 #ifdef __cplusplus
 }
 #endif
-	
+    
 # endif

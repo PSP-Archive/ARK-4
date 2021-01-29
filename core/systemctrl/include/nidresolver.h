@@ -22,29 +22,29 @@
 
 // Missing NID
 typedef struct NidMissingEntry {
-	unsigned int nid;
-	unsigned int fp;
+    unsigned int nid;
+    unsigned int fp;
 } NidMissingEntry;
 
 // Missing NID Resolver
 typedef struct NidMissingResolver {
-	const char * libname;
-	NidMissingEntry * entry;
-	unsigned int size;
+    const char * libname;
+    NidMissingEntry * entry;
+    unsigned int size;
 } NidMissingResolver;
 
 // NID Resolver Entry
 typedef struct NidResolverEntry {
-	unsigned int old;
-	unsigned int new;
+    unsigned int old;
+    unsigned int new;
 } NidResolverEntry;
 
 // NID Resolver Library
 typedef struct NidResolverLib {
-	char * name;
-	unsigned int nidcount;
-	NidResolverEntry * nidtable;
-	unsigned int enabled;
+    char * name;
+    unsigned int nidcount;
+    NidResolverEntry * nidtable;
+    unsigned int enabled;
 } NidResolverLib;
 
 // NID Table
@@ -60,7 +60,7 @@ extern unsigned int nidTableSize660;
 
 // Table Entry Macro
 #define NID_ENTRY(libname) \
-	{ #libname, NELEMS(libname##_nid), libname##_nid, 1, }
+    { #libname, NELEMS(libname##_nid), libname##_nid, 1, }
 
 // Get NID Resolver for Library
 NidResolverLib * getNidResolverLib(const char *libName);

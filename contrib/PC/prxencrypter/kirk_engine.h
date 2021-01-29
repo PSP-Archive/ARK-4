@@ -23,26 +23,26 @@
 
 typedef struct
 {
-	int mode;    //0
-	int unk_4;   //4
-	int unk_8;   //8
-	int keyseed; //C
-	int data_size;   //10
+    int mode;    //0
+    int unk_4;   //4
+    int unk_8;   //8
+    int keyseed; //C
+    int data_size;   //10
 } KIRK_AES128CBC_HEADER; //0x14
 
 typedef struct
 {
-	u8 AES_key[16];            //0
-	u8 CMAC_key[16];           //10
-	u8 CMAC_header_hash[16];   //20
-	u8 CMAC_data_hash[16];     //30
-	u8 unused[32];             //40
-	u32 mode;                  //60
-	u8 unk3[12];               //64
-	u32 data_size;             //70
-	u32 data_offset;           //74
-	u8 unk4[8];                //78
-	u8 unk5[16];               //80
+    u8 AES_key[16];            //0
+    u8 CMAC_key[16];           //10
+    u8 CMAC_header_hash[16];   //20
+    u8 CMAC_data_hash[16];     //30
+    u8 unused[32];             //40
+    u32 mode;                  //60
+    u8 unk3[12];               //64
+    u32 data_size;             //70
+    u32 data_offset;           //74
+    u8 unk4[8];                //78
+    u8 unk5[16];               //80
 } KIRK_CMD1_HEADER; //0x90
 
 typedef struct

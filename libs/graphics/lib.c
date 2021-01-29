@@ -238,9 +238,9 @@ void mysprintf11(char *xobuff, const char *xifmt,
 }
 void mysprintf0(char *xobuff, const char *xifmt)
 {
-	while (*xifmt != '\0')
-	{
-		*xobuff++ = *xifmt++;
-	}
-	*xobuff = '\0';
+    while (*xifmt != '\0')
+    {
+        *xobuff++ = *xifmt++;
+    }
+    *xobuff = '\0';
 }

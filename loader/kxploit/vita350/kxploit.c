@@ -42,56 +42,56 @@ void (* _sceKernelLibcClock)() = NULL;
 char buf[0x4000];
 
 int doExploit(){
-	return 0;
+    return 0;
 }
 
 void repairInstruction(void){
-	//Vita 3.51, restore sceKernelLibcClock and sceKernelLibcTime pointers.
-	u32 rtc = k_tbl->FindTextAddrByName("sceRTC_Service");
-	_sw(rtc + 0x3904, sw_address);
-	_sw(rtc + 0x3924, sw_address + 4);
+    //Vita 3.51, restore sceKernelLibcClock and sceKernelLibcTime pointers.
+    u32 rtc = k_tbl->FindTextAddrByName("sceRTC_Service");
+    _sw(rtc + 0x3904, sw_address);
+    _sw(rtc + 0x3924, sw_address + 4);
 }
 
 int stubScanner(FunctionTable* tbl){
-	_sceKernelCreateVpl = g_tbl->KernelCreateVpl;
-	_sceKernelTryAllocateVpl = g_tbl->KernelTryAllocateVpl;
-	_sceKernelFreeVpl = g_tbl->KernelFreeVpl;
-	_sceKernelDeleteVpl = g_tbl->KernelDeleteVpl;
-	_sceKernelLibcClock = g_tbl->KernelLibcClock;
-	return 0;
+    _sceKernelCreateVpl = g_tbl->KernelCreateVpl;
+    _sceKernelTryAllocateVpl = g_tbl->KernelTryAllocateVpl;
+    _sceKernelFreeVpl = g_tbl->KernelFreeVpl;
+    _sceKernelDeleteVpl = g_tbl->KernelDeleteVpl;
+    _sceKernelLibcClock = g_tbl->KernelLibcClock;
+    return 0;
 }
 
 void executeKernel(u32 kernelContentFunction){
 
-	SceUID vpl = _sceKernelCreateVpl("kexploit", 2, 1, 512, NULL);
+    SceUID vpl = _sceKernelCreateVpl("kexploit", 2, 1, 512, NULL);
 
-	_sceKernelTryAllocateVpl(vpl, 256, (void *)0x08801000);
+    _sceKernelTryAllocateVpl(vpl, 256, (void *)0x08801000);
 
-	u32 addr1 = (*(u32*)0x08801000 + 0x100);
-	u32 addr2 = *(u32*)addr1;
+    u32 addr1 = (*(u32*)0x08801000 + 0x100);
+    u32 addr2 = *(u32*)addr1;
 
-	_sceKernelFreeVpl(vpl, (void *)0x08801000);
-	_sceKernelDeleteVpl(vpl);
+    _sceKernelFreeVpl(vpl, (void *)0x08801000);
+    _sceKernelDeleteVpl(vpl);
 
-	vpl = _sceKernelCreateVpl("kexploit", 2, 1, 512, NULL);
+    vpl = _sceKernelCreateVpl("kexploit", 2, 1, 512, NULL);
 
-	_sw(((sw_address - addr2) + 0x108) / 8, addr2 + 4);
+    _sw(((sw_address - addr2) + 0x108) / 8, addr2 + 4);
 
-	_sceKernelTryAllocateVpl(vpl, 256, (void *)0x08801000);
+    _sceKernelTryAllocateVpl(vpl, 256, (void *)0x08801000);
 
-	u32 jumpto = addr2 - 16;
+    u32 jumpto = addr2 - 16;
 
-	_sw(JUMP(0x10000), jumpto);
-	_sw(0, jumpto + 4);
+    _sw(JUMP(0x10000), jumpto);
+    _sw(0, jumpto + 4);
 
-	u32 kfuncaddr = (u32)kernelContentFunction | 0x80000000;
+    u32 kfuncaddr = (u32)kernelContentFunction | 0x80000000;
 
-	_sw(0x3C020000 | (kfuncaddr >> 16), 0x10000);		//lui	$v0, %high(KernelContent)
-	_sw(0x34420000 | (kfuncaddr & 0xFFFF), 0x10004);	//ori	$v0, $v0, %low(KernelContent)
-	_sw(0x00400008, 0x10008);				//jr	$v0
-	_sw(0, 0x1000C);					//nop
+    _sw(0x3C020000 | (kfuncaddr >> 16), 0x10000);        //lui    $v0, %high(KernelContent)
+    _sw(0x34420000 | (kfuncaddr & 0xFFFF), 0x10004);    //ori    $v0, $v0, %low(KernelContent)
+    _sw(0x00400008, 0x10008);                //jr    $v0
+    _sw(0, 0x1000C);                    //nop
 
-	g_tbl->KernelDcacheWritebackAll();
+    g_tbl->KernelDcacheWritebackAll();
 
-	_sceKernelLibcClock();
+    _sceKernelLibcClock();
 }

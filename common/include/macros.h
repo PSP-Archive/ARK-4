@@ -46,12 +46,12 @@
 #define LI_V0(n) ((0x2402 << 16) | ((n) & 0xFFFF))
 
 #define MAKE_DUMMY_FUNCTION_RETURN_0(a) \
-	_sw(JR_RA, a);\
-	_sw(LI_V0(0), a + 4);\
+    _sw(JR_RA, a);\
+    _sw(LI_V0(0), a + 4);\
 
 #define MAKE_DUMMY_FUNCTION_RETURN_1(a) \
-	_sw(JR_RA, a);\
-	_sw(LI_V0(1), a + 4);\
+    _sw(JR_RA, a);\
+    _sw(LI_V0(1), a + 4);\
 
 // Array Element Counter
 #define NELEMS(n) ((sizeof(n)) / sizeof(n[0]))
@@ -80,36 +80,36 @@
 //by Davee
 #define HIJACK_FUNCTION(a, f, ptr) \
 { \
-	u32 func = a; \
-	static u32 patch_buffer[3]; \
-	_sw(_lw(func), (u32)patch_buffer); \
-	_sw(_lw(func + 4), (u32)patch_buffer + 8);\
-	MAKE_JUMP_PATCH((u32)patch_buffer + 4, func + 8); \
-	_sw(0x08000000 | (((u32)(f) >> 2) & 0x03FFFFFF), func); \
-	_sw(0, func + 4); \
-	ptr = (void *)patch_buffer; \
+    u32 func = a; \
+    static u32 patch_buffer[3]; \
+    _sw(_lw(func), (u32)patch_buffer); \
+    _sw(_lw(func + 4), (u32)patch_buffer + 8);\
+    MAKE_JUMP_PATCH((u32)patch_buffer + 4, func + 8); \
+    _sw(0x08000000 | (((u32)(f) >> 2) & 0x03FFFFFF), func); \
+    _sw(0, func + 4); \
+    ptr = (void *)patch_buffer; \
 }
 
 #define MAKE_DUMMY_FUNCTION(a, r) \
 { \
-	u32 func = a; \
-	if(r == 0) \
-	{ \
-		_sw(JR_RA, func); \
-		_sw(0x00001021, func + 4); \
-	} \
-	else \
-	{ \
-		_sw(JR_RA, func); \
-		_sw(0x24020000 | r, func + 4); \
-	} \
+    u32 func = a; \
+    if(r == 0) \
+    { \
+        _sw(JR_RA, func); \
+        _sw(0x00001021, func + 4); \
+    } \
+    else \
+    { \
+        _sw(JR_RA, func); \
+        _sw(0x24020000 | r, func + 4); \
+    } \
 }
 
 #define REDIRECT_FUNCTION(a, f) \
 { \
-	u32 func = a; \
-	_sw(0x08000000 | (((u32)(f) >> 2) & 0x03FFFFFF), func); \
-	_sw(0, func + 4); \
+    u32 func = a; \
+    _sw(0x08000000 | (((u32)(f) >> 2) & 0x03FFFFFF), func); \
+    _sw(0, func + 4); \
 }
 
 #endif

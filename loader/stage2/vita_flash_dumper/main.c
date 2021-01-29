@@ -42,62 +42,62 @@ void kernelContentFunction(void);
 int exploitEntry(ARKConfig* arg0, FunctionTable* arg1) __attribute__((section(".text.startup")));
 int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
 
-	// Clear BSS Segment
-	clearBSS();
+    // Clear BSS Segment
+    clearBSS();
 
-	// init function table
-	if (arg1 == NULL)
-	    scanUserFunctions();
-	else
-	    memcpy(g_tbl, arg1, sizeof(FunctionTable));
+    // init function table
+    if (arg1 == NULL)
+        scanUserFunctions();
+    else
+        memcpy(g_tbl, arg1, sizeof(FunctionTable));
     
     scanArkFunctions();
 
     // copy the path of the save
-	g_tbl->config = ark_config = arg0;
+    g_tbl->config = ark_config = arg0;
 
-	// make PRTSTR available for payloads
-	g_tbl->prtstr = (void *)&PRTSTR11;
+    // make PRTSTR available for payloads
+    g_tbl->prtstr = (void *)&PRTSTR11;
 
-	// init screen
-	initScreen(g_tbl->DisplaySetFrameBuf);
+    // init screen
+    initScreen(g_tbl->DisplaySetFrameBuf);
 
-	// Output Exploit Reach Screen
-	if (arg0->exec_mode == DEV_UNK) autoDetectDevice(arg0);
-	running_ark[17] = (IS_PSP(arg0->exec_mode))? ' ' : 'e';
-	running_ark[20] = (IS_VITA_POPS(arg0->exec_mode))? 'X':'P';
-	PRTSTR(running_ark);
-	
-	// read kxploit file into memory and initialize it
-	initKxploitFile();
-	
+    // Output Exploit Reach Screen
+    if (arg0->exec_mode == DEV_UNK) autoDetectDevice(arg0);
+    running_ark[17] = (IS_PSP(arg0->exec_mode))? ' ' : 'e';
+    running_ark[20] = (IS_VITA_POPS(arg0->exec_mode))? 'X':'P';
+    PRTSTR(running_ark);
+    
+    // read kxploit file into memory and initialize it
+    initKxploitFile();
+    
     char* err = NULL;
     PRTSTR("Scanning stubs for kxploit...");
-	if (kxf->stubScanner(g_tbl) == 0){
-		// Corrupt Kernel
-		PRTSTR("Doing kernel exploit...");
-		if (kxf->doExploit() == 0){
-			// Flush Cache
-			g_tbl->KernelDcacheWritebackAll();
+    if (kxf->stubScanner(g_tbl) == 0){
+        // Corrupt Kernel
+        PRTSTR("Doing kernel exploit...");
+        if (kxf->doExploit() == 0){
+            // Flush Cache
+            g_tbl->KernelDcacheWritebackAll();
 
-			// Output Loading Screen
-			PRTSTR("Escalating privilages...");
-			// Trigger Kernel Permission Callback
-			kxf->executeKernel(KERNELIFY(&kernelContentFunction));
-			err = "Could not execute kernel function";
-		}
-		else{
-			err = "Exploit failed!";
-		}
-	}
-	else{
-		err = "Scan failed!";
-	}
-	
-	PRTSTR1("ERROR: %s", err);
-	while(1){};
+            // Output Loading Screen
+            PRTSTR("Escalating privilages...");
+            // Trigger Kernel Permission Callback
+            kxf->executeKernel(KERNELIFY(&kernelContentFunction));
+            err = "Could not execute kernel function";
+        }
+        else{
+            err = "Exploit failed!";
+        }
+    }
+    else{
+        err = "Scan failed!";
+    }
+    
+    PRTSTR1("ERROR: %s", err);
+    while(1){};
 
-	return 0;
+    return 0;
 }
 
 void autoDetectDevice(ARKConfig* config){
@@ -105,54 +105,54 @@ void autoDetectDevice(ARKConfig* config){
 }
 
 void initKxploitFile(){
-	char k_path[ARK_PATH_SIZE];
-	strcpy(k_path, g_tbl->config->arkpath);
-	strcat(k_path, K_FILE);
-	PRTSTR1("Loading Kxploit at %s", k_path);
-	SceUID fd = g_tbl->IoOpen(k_path, PSP_O_RDONLY, 0);
-	g_tbl->IoRead(fd, (void *)KXPLOIT_LOADADDR, 0x4000);
-	g_tbl->IoClose(fd);
-	g_tbl->KernelDcacheWritebackAll();
-	kEntryPoint(kxf);
+    char k_path[ARK_PATH_SIZE];
+    strcpy(k_path, g_tbl->config->arkpath);
+    strcat(k_path, K_FILE);
+    PRTSTR1("Loading Kxploit at %s", k_path);
+    SceUID fd = g_tbl->IoOpen(k_path, PSP_O_RDONLY, 0);
+    g_tbl->IoRead(fd, (void *)KXPLOIT_LOADADDR, 0x4000);
+    g_tbl->IoClose(fd);
+    g_tbl->KernelDcacheWritebackAll();
+    kEntryPoint(kxf);
 }
 
 // Fake K1 Kernel Setting
 void setK1Kernel(void){
-	// Set K1 to Kernel Value
-	__asm__ (
-		"nop\n"
-		"lui $k1,0x0\n"
-	);
+    // Set K1 to Kernel Value
+    __asm__ (
+        "nop\n"
+        "lui $k1,0x0\n"
+    );
 }
 
 // Kernel Permission Function
 void kernelContentFunction(void){
-	// Switch to Kernel Permission Level
-	setK1Kernel();
-	
-	g_tbl->prtstr = KERNELIFY(g_tbl->prtstr);
-	kxf->repairInstruction = KERNELIFY(kxf->repairInstruction);
-	
+    // Switch to Kernel Permission Level
+    setK1Kernel();
+    
+    g_tbl->prtstr = KERNELIFY(g_tbl->prtstr);
+    kxf->repairInstruction = KERNELIFY(kxf->repairInstruction);
+    
     // move global configuration to static address in user space so that reboot and CFW modules can find it
-	if (g_tbl->config != ark_conf_backup) memcpy(ark_conf_backup, g_tbl->config, sizeof(ARKConfig));
-	
-	PRTSTR("Scanning kernel functions");
-	// get kernel functions
-	scanKernelFunctions();
-	
-	// repair damage done by kernel exploit
-	kxf->repairInstruction();
-	
-	PRTSTR("Dumping flash0");
-	initKernelThread();
-	return;
+    if (g_tbl->config != ark_conf_backup) memcpy(ark_conf_backup, g_tbl->config, sizeof(ARKConfig));
+    
+    PRTSTR("Scanning kernel functions");
+    // get kernel functions
+    scanKernelFunctions();
+    
+    // repair damage done by kernel exploit
+    kxf->repairInstruction();
+    
+    PRTSTR("Dumping flash0");
+    initKernelThread();
+    return;
 }
 
 // Clear BSS Segment of Payload
 void clearBSS(void){
-	// BSS Start and End Address from Linkfile
-	extern char __bss_start, __bss_end;
-	
-	// Clear Memory
-	memset(&__bss_start, 0, &__bss_end - &__bss_start);
+    // BSS Start and End Address from Linkfile
+    extern char __bss_start, __bss_end;
+    
+    // Clear Memory
+    memset(&__bss_start, 0, &__bss_end - &__bss_start);
 }

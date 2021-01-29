@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#define vrelptr	vGuPointer
+#define vrelptr    vGuPointer
 #define vabsptr vCPUPointer
 
 size_t vgetMemorySize(unsigned int width, unsigned int height, unsigned int psm);
@@ -40,4 +40,4 @@ size_t vlargestblock();
 }
 #endif
 
-#endif	// _VALLOC_H
+#endif    // _VALLOC_H

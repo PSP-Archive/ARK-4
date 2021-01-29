@@ -5,17 +5,17 @@
 // Returns pointer to string
 char* memfindsz(const char* s1, char* start, unsigned int size)
 {
-	unsigned int i = 0;
-	while (i < size && strcmp(start, s1) != 0)
-	{
-		start++;
-		i++;
-	}
+    unsigned int i = 0;
+    while (i < size && strcmp(start, s1) != 0)
+    {
+        start++;
+        i++;
+    }
 
-	if (i < size)
-		return start;
-	else
-		return NULL;
+    if (i < size)
+        return start;
+    else
+        return NULL;
 }
 
 // Searches for 32-bit value on memory
@@ -23,15 +23,15 @@ char* memfindsz(const char* s1, char* start, unsigned int size)
 // Returns pointer to value
 unsigned int* memfindu32(const unsigned int val, unsigned int* start, unsigned int size)
 {
-	unsigned int i = 0;
-	while (i < size && *start != val)
-	{
-		start++;
-		i++;
-	}
+    unsigned int i = 0;
+    while (i < size && *start != val)
+    {
+        start++;
+        i++;
+    }
 
-	if (i < size)
-		return start;
-	else
-		return NULL;
+    if (i < size)
+        return start;
+    else
+        return NULL;
 }

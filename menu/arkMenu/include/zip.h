@@ -10,28 +10,28 @@
 class Zip : public Entry
 {
 
-	private:
-		char* subtype;
+    private:
+        char* subtype;
 
-	public:
-	
-		Zip(string path);
-		~Zip();
-	
-		void loadIcon();
-		void getTempData1();
-		void getTempData2();
+    public:
+    
+        Zip(string path);
+        ~Zip();
+    
+        void loadIcon();
+        void getTempData1();
+        void getTempData2();
 
 
-		void execute();
-		
-		char* getType();
-		char* getSubtype();
-		
-		void extract(string dir);
-		
-		static bool isZip(const char* path);
-		static bool isRar(const char* path);
+        void execute();
+        
+        char* getType();
+        char* getSubtype();
+        
+        void extract(string dir);
+        
+        static bool isZip(const char* path);
+        static bool isRar(const char* path);
 
 };
 

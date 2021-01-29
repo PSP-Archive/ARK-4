@@ -28,30 +28,30 @@ extern ARKConfig* ark_config;
 // Interrupt Manager Patch
 SceModule2* patchInterruptMan(void)
 {
-	// Find Module
-	SceModule2* mod = (SceModule2 *)sceKernelFindModuleByName("sceInterruptManager");
-	
-	// Fetch Text Address
-	u32 addr = mod->text_addr;
-	u32 topaddr = mod->text_addr + mod->text_size;
-	int patches = 2;
+    // Find Module
+    SceModule2* mod = (SceModule2 *)sceKernelFindModuleByName("sceInterruptManager");
+    
+    // Fetch Text Address
+    u32 addr = mod->text_addr;
+    u32 topaddr = mod->text_addr + mod->text_size;
+    int patches = 2;
     for (; addr<topaddr && patches; addr+=4){
-	    u32 data = _lw(addr);
-	    // Override Endless Loop of breaking Death with EPC = t7
-	    if (data == 0x0003FF8D){
-		    _sw(0x408F7000, addr-4);
-		    _sw(NOP, addr);
-		    patches--;
-	    }
-	    // Prevent Hardware Register Writing
-	    else if ((data & 0x0000FFFF) == 0xBC00){
-		    _sw(NOP, addr+4);
-		    _sw(NOP, addr+8);
-		    patches--;
-	    }
+        u32 data = _lw(addr);
+        // Override Endless Loop of breaking Death with EPC = t7
+        if (data == 0x0003FF8D){
+            _sw(0x408F7000, addr-4);
+            _sw(NOP, addr);
+            patches--;
+        }
+        // Prevent Hardware Register Writing
+        else if ((data & 0x0000FFFF) == 0xBC00){
+            _sw(NOP, addr+4);
+            _sw(NOP, addr+8);
+            patches--;
+        }
     }
-	// Flush Cache
-	flushCache();
-	return mod;
+    // Flush Cache
+    flushCache();
+    return mod;
 }
 

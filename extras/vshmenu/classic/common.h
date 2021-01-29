@@ -80,13 +80,13 @@ int scePaf_memcpy_660(void *path , void *name , int size);
 int scePaf_strcpy_660(char *path , const char *name);
 
 typedef struct _UmdVideoEntry {
-	char *path;
-	struct _UmdVideoEntry *next;
+    char *path;
+    struct _UmdVideoEntry *next;
 } UmdVideoEntry;
 
 typedef struct _UmdVideoList {
-	UmdVideoEntry head, *tail;
-	size_t count;
+    UmdVideoEntry head, *tail;
+    size_t count;
 } UmdVideoList;
 
 int umdvideolist_add(UmdVideoList *list, const char *path);
@@ -100,30 +100,30 @@ extern u32 psp_fw_version;
 extern UmdVideoList g_umdlist;
 
 enum {
-	MSG_DEFAULT = 0,
-	MSG_DISABLE,
-	MSG_ENABLE,
-	MSG_NORMAL,
-	MSG_MARCH33,
-	MSG_NP9660,
-	MSG_INFERNO,
-	MSG_CPU_CLOCK_XMB,
-	MSG_CPU_CLOCK_GAME,
-	MSG_USB_DEVICE,
-	MSG_UMD_ISO_MODE,
-	MSG_ISO_VIDEO_MOUNT,
-	MSG_RECOVERY_MENU,
-	MSG_SHUTDOWN_DEVICE,
-	MSG_SUSPEND_DEVICE,
-	MSG_RESET_DEVICE,
-	MSG_RESET_VSH,
-	MSG_EXIT,
-	MSG_PRO_VSH_MENU,
-	MSG_FLASH,
-	MSG_UMD_DISC,
-	MSG_MEMORY_STICK,
-	MSG_NONE,
-	MSG_END,
+    MSG_DEFAULT = 0,
+    MSG_DISABLE,
+    MSG_ENABLE,
+    MSG_NORMAL,
+    MSG_MARCH33,
+    MSG_NP9660,
+    MSG_INFERNO,
+    MSG_CPU_CLOCK_XMB,
+    MSG_CPU_CLOCK_GAME,
+    MSG_USB_DEVICE,
+    MSG_UMD_ISO_MODE,
+    MSG_ISO_VIDEO_MOUNT,
+    MSG_RECOVERY_MENU,
+    MSG_SHUTDOWN_DEVICE,
+    MSG_SUSPEND_DEVICE,
+    MSG_RESET_DEVICE,
+    MSG_RESET_VSH,
+    MSG_EXIT,
+    MSG_PRO_VSH_MENU,
+    MSG_FLASH,
+    MSG_UMD_DISC,
+    MSG_MEMORY_STICK,
+    MSG_NONE,
+    MSG_END,
 };
 
 extern const char **g_messages;

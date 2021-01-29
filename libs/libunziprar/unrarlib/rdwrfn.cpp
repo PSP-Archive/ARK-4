@@ -142,9 +142,9 @@ void ComprDataIO::UnpWrite(byte *Addr,uint Count)
     }
   }
   else
-	  if (!TestMode){
+      if (!TestMode){
       DestFile->Write(Addr,Count);
-	  }
+      }
   CurUnpWrite+=Count;
   if (!SkipUnpCRC)
 #ifndef SFX_MODULE

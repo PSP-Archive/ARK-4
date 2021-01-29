@@ -522,7 +522,7 @@ void Archive::ConvertAttributes()
 
   if (mask == (mode_t) -1)
   {
-	  /*CODE BRUTALLY REMOVED*/
+      /*CODE BRUTALLY REMOVED*/
     //mask = umask(022);
     //umask(mask);
   }

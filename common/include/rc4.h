@@ -43,7 +43,7 @@ struct rc4_state g_state;
 void *rc4_initstate(unsigned char *key, int keylen);
 
 void rc4_process_stream(void *rc4_context, unsigned char *istring,
-			unsigned int stringlen);
+            unsigned int stringlen);
 
 void rc4_destroystate(void *a);
 

@@ -25,25 +25,25 @@
 
 // K.BIN communication interface
 typedef struct KxploitFunctions{
-	int (*stubScanner)(struct FunctionTable*);
-	int (*doExploit)(void);
-	void (*executeKernel)(u32 kernelContentFunction);
-	void (*repairInstruction)(void);
+    int (*stubScanner)(struct FunctionTable*);
+    int (*doExploit)(void);
+    void (*executeKernel)(u32 kernelContentFunction);
+    void (*repairInstruction)(void);
 }KxploitFunctions;
 
 // PBP Header
 typedef struct
 {
-	u32 magic;
-	u32 version;
-	u32 param_offset;
-	u32 icon0_offset;
-	u32 icon1_offset;
-	u32 pic0_offset;
-	u32 pic1_offset;
-	u32 snd0_offset;
-	u32 elf_offset;
-	u32 psar_offset;
+    u32 magic;
+    u32 version;
+    u32 param_offset;
+    u32 icon0_offset;
+    u32 icon1_offset;
+    u32 pic0_offset;
+    u32 pic1_offset;
+    u32 snd0_offset;
+    u32 elf_offset;
+    u32 psar_offset;
 } PBPHeader;
 
 /*
@@ -51,50 +51,50 @@ typedef struct
  */
 typedef struct FunctionTable
 {
-	ARKConfig* config;
-	int (* IoOpen)(char *, int, int);
-	int (* IoRead)(int, void *, int);
-	int (* IoWrite)(int, void *, int);
-	int (* IoClose)(int);
-	int (* IoRemove)(char*);
-	void (* KernelLibcTime)(int);
-	void (* KernelLibcClock)();
-	int (* KernelPowerLock)(unsigned int, unsigned int);
-	void (* KernelDcacheWritebackAll)(void);
-	void (* KernelIcacheInvalidateAll)(void);
-	int (* DisplaySetFrameBuf)(void *topaddr, int bufferwidth, int pixelformat, int sync);
-	SceUID (* KernelCreateThread)(const char *name, SceKernelThreadEntry entry, int initPriority, int stackSize, SceUInt attr, SceKernelThreadOptParam *option);
-	int (* KernelStartThread)(SceUID thid, SceSize arglen, void *argp);
-	void (* KernelDelayThread)(uint32_t);
-	void (* KernelExitThread)(uint32_t);
-	int (* KernelExitDeleteThread)(int status);
-	int (* KernelWaitThreadEnd)(SceUID thid, SceUInt *timeout);
+    ARKConfig* config;
+    int (* IoOpen)(char *, int, int);
+    int (* IoRead)(int, void *, int);
+    int (* IoWrite)(int, void *, int);
+    int (* IoClose)(int);
+    int (* IoRemove)(char*);
+    void (* KernelLibcTime)(int);
+    void (* KernelLibcClock)();
+    int (* KernelPowerLock)(unsigned int, unsigned int);
+    void (* KernelDcacheWritebackAll)(void);
+    void (* KernelIcacheInvalidateAll)(void);
+    int (* DisplaySetFrameBuf)(void *topaddr, int bufferwidth, int pixelformat, int sync);
+    SceUID (* KernelCreateThread)(const char *name, SceKernelThreadEntry entry, int initPriority, int stackSize, SceUInt attr, SceKernelThreadOptParam *option);
+    int (* KernelStartThread)(SceUID thid, SceSize arglen, void *argp);
+    void (* KernelDelayThread)(uint32_t);
+    void (* KernelExitThread)(uint32_t);
+    int (* KernelExitDeleteThread)(int status);
+    int (* KernelWaitThreadEnd)(SceUID thid, SceUInt *timeout);
     SceUID (* KernelCreateVpl)(const char*, int, int, unsigned int, void*);
     int (* KernelTryAllocateVpl)(SceUID, unsigned int, void**);
     int (* KernelFreeVpl)(SceUID uid, void *data);
-	int (* KernelDeleteVpl)(int);
-	int (* KernelDeleteFpl)(int);
-	unsigned int (*KernelCpuSuspendIntr)();
+    int (* KernelDeleteVpl)(int);
+    int (* KernelDeleteFpl)(int);
+    unsigned int (*KernelCpuSuspendIntr)();
     void (*KernelCpuResumeIntr)(unsigned int flags);
-	int (* UtilityLoadModule)(int);
-	int (* UtilityUnloadModule)(int);
-	int (* UtilityLoadNetModule)(int);
-	int (* UtilityUnloadNetModule)(int);	
-	//int (* SysMemUserForUser_91DE343C)( void *unk );
-	SceUID 	(*KernelAllocPartitionMemory)(SceUID partitionid, const char *name, int type, SceSize size, void *addr);
-	int (* KernelFreePartitionMemory)(int);
-	int (* UtilitySavedataGetStatus)();
-	int (* UtilitySavedataInitStart)(void* params);
-	void (* UtilitySavedataUpdate)(int a0);
-	int (* UtilitySavedataShutdownStart)();
-	int (* KernelVolatileMemUnlock)(int unknown);
-	// common ark functions
-	void (* freeMem)(struct FunctionTable*);
-	u32 (* FindImportUserRam)(char *libname, u32 nid);
-	u32 (* FindImportVolatileRam)(char *libname, u32 nid);
-	u32 (* FindImportRange)(char *libname, u32 nid, u32 lower, u32 higher);
-	void* (* RelocSyscall)(u32 call);
-	void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L);
+    int (* UtilityLoadModule)(int);
+    int (* UtilityUnloadModule)(int);
+    int (* UtilityLoadNetModule)(int);
+    int (* UtilityUnloadNetModule)(int);    
+    //int (* SysMemUserForUser_91DE343C)( void *unk );
+    SceUID     (*KernelAllocPartitionMemory)(SceUID partitionid, const char *name, int type, SceSize size, void *addr);
+    int (* KernelFreePartitionMemory)(int);
+    int (* UtilitySavedataGetStatus)();
+    int (* UtilitySavedataInitStart)(void* params);
+    void (* UtilitySavedataUpdate)(int a0);
+    int (* UtilitySavedataShutdownStart)();
+    int (* KernelVolatileMemUnlock)(int unknown);
+    // common ark functions
+    void (* freeMem)(struct FunctionTable*);
+    u32 (* FindImportUserRam)(char *libname, u32 nid);
+    u32 (* FindImportVolatileRam)(char *libname, u32 nid);
+    u32 (* FindImportRange)(char *libname, u32 nid, u32 lower, u32 higher);
+    void* (* RelocSyscall)(u32 call);
+    void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L);
 } FunctionTable;
 
 // fills a FunctionTable instance with all available imports
@@ -135,41 +135,41 @@ extern void freeMem();
  * granted.
  */
 typedef struct KernelFunctions{
-	// iofilemgr.prx Functions
-	SceUID (* KernelIOOpen)(const char *, int, int);
-	int (* KernelIOWrite)(SceUID, const void *, unsigned);
-	int (* KernelIORead)(SceUID, void *, unsigned);
-	int (* KernelIOLSeek)(int fd, int offset, int whence);
-	int (* KernelIOClose)(SceUID);
-	SceUID (* KernelIODopen)(char *);
-	int (* KernelIODread)(SceUID, SceIoDirent *);
-	int (* KernelIODclose)(SceUID);
-	int (* KernelIOMkdir)(const char*, SceMode);
-	int (* KernelIORmdir)(const char* path);
-	int (* KernelIOGetStat)(const char *file, SceIoStat *stat);
-	int (* KernelIORemove)(const char* file);
-	int (* IoLseek)(int, s64, int);
-	int (* IoAssign)(const char *dev1, const char *dev2, const char *dev3, int mode, void *unk1, long unk2);
+    // iofilemgr.prx Functions
+    SceUID (* KernelIOOpen)(const char *, int, int);
+    int (* KernelIOWrite)(SceUID, const void *, unsigned);
+    int (* KernelIORead)(SceUID, void *, unsigned);
+    int (* KernelIOLSeek)(int fd, int offset, int whence);
+    int (* KernelIOClose)(SceUID);
+    SceUID (* KernelIODopen)(char *);
+    int (* KernelIODread)(SceUID, SceIoDirent *);
+    int (* KernelIODclose)(SceUID);
+    int (* KernelIOMkdir)(const char*, SceMode);
+    int (* KernelIORmdir)(const char* path);
+    int (* KernelIOGetStat)(const char *file, SceIoStat *stat);
+    int (* KernelIORemove)(const char* file);
+    int (* IoLseek)(int, s64, int);
+    int (* IoAssign)(const char *dev1, const char *dev2, const char *dev3, int mode, void *unk1, long unk2);
     int (* IoUnassign)(const char *dev);
     
-	// sysmem.prx Functions
-	void (* KernelIcacheInvalidateAll)(void);
-	void (* KernelDcacheWritebackInvalidateAll)(void);
-	int (* KernelGzipDecompress)(unsigned char *dest, unsigned int destSize, const unsigned char *src, void *unknown);
-	void (* KernelDcacheInvalidateRange)(const void *p, unsigned int size);
+    // sysmem.prx Functions
+    void (* KernelIcacheInvalidateAll)(void);
+    void (* KernelDcacheWritebackInvalidateAll)(void);
+    int (* KernelGzipDecompress)(unsigned char *dest, unsigned int destSize, const unsigned char *src, void *unknown);
+    void (* KernelDcacheInvalidateRange)(const void *p, unsigned int size);
 
-	// loadcore.prx Functions
-	SceModule2 * (* KernelFindModuleByName)(char *);
+    // loadcore.prx Functions
+    SceModule2 * (* KernelFindModuleByName)(char *);
 
-	// threadman.prx Functions
-	SceUID (* KernelCreateThread)(const char *name, SceKernelThreadEntry entry,\
-			int initPriority, int stackSize, SceUInt attr, SceKernelThreadOptParam *option);
-	int (* KernelStartThread)(SceUID thid, SceSize arglen, void *argp);
-	int (* KernelDelayThread)(int);
-	int (*KernelDeleteThread)(int);
-	int (*KernelExitThread)(int);
+    // threadman.prx Functions
+    SceUID (* KernelCreateThread)(const char *name, SceKernelThreadEntry entry,\
+            int initPriority, int stackSize, SceUInt attr, SceKernelThreadOptParam *option);
+    int (* KernelStartThread)(SceUID thid, SceSize arglen, void *argp);
+    int (* KernelDelayThread)(int);
+    int (*KernelDeleteThread)(int);
+    int (*KernelExitThread)(int);
     void (*waitThreadEnd)(int, int*);
-	
+    
 }KernelFunctions;
 
 #define g_tbl ((FunctionTable*)(0x08800010))

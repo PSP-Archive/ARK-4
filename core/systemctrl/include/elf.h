@@ -21,39 +21,39 @@
 // ELF File Header
 typedef struct
 {
-	unsigned int e_magic;
-	unsigned char e_class;
-	unsigned char e_data;
-	unsigned char e_idver;
-	unsigned char e_pad[9];
-	unsigned short e_type;
-	unsigned short e_machine;
-	unsigned int e_version;
-	unsigned int e_entry;
-	unsigned int e_phoff;
-	unsigned int e_shoff;
-	unsigned int e_flags;
-	unsigned short e_ehsize;
-	unsigned short e_phentsize;
-	unsigned short e_phnum;
-	unsigned short e_shentsize;
-	unsigned short e_shnum;
-	unsigned short e_shstrndx;
+    unsigned int e_magic;
+    unsigned char e_class;
+    unsigned char e_data;
+    unsigned char e_idver;
+    unsigned char e_pad[9];
+    unsigned short e_type;
+    unsigned short e_machine;
+    unsigned int e_version;
+    unsigned int e_entry;
+    unsigned int e_phoff;
+    unsigned int e_shoff;
+    unsigned int e_flags;
+    unsigned short e_ehsize;
+    unsigned short e_phentsize;
+    unsigned short e_phnum;
+    unsigned short e_shentsize;
+    unsigned short e_shnum;
+    unsigned short e_shstrndx;
 } __attribute__((packed)) Elf32_Ehdr;
 
 // ELF Section Header
 typedef struct
 {
-	unsigned int sh_name;
-	unsigned int sh_type;
-	unsigned int sh_flags;
-	unsigned int sh_addr;
-	unsigned int sh_offset;
-	unsigned int sh_size;
-	unsigned int sh_link;
-	unsigned int sh_info;
-	unsigned int sh_addralign;
-	unsigned int sh_entsize;
+    unsigned int sh_name;
+    unsigned int sh_type;
+    unsigned int sh_flags;
+    unsigned int sh_addr;
+    unsigned int sh_offset;
+    unsigned int sh_size;
+    unsigned int sh_link;
+    unsigned int sh_info;
+    unsigned int sh_addralign;
+    unsigned int sh_entsize;
 } __attribute__((packed)) Elf32_Shdr;
 
 // Get String Table

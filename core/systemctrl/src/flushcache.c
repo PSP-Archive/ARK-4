@@ -22,10 +22,10 @@
 // Flush Instruction and Data Cache
 void flushCache()
 {
-	// Flush Instruction Cache
-	sceKernelIcacheInvalidateAll();
-	
-	// Flush Data Cache
-	sceKernelDcacheWritebackInvalidateAll();
+    // Flush Instruction Cache
+    sceKernelIcacheInvalidateAll();
+    
+    // Flush Data Cache
+    sceKernelDcacheWritebackInvalidateAll();
 }
 

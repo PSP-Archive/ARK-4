@@ -188,7 +188,7 @@ void usage()
 BOOL png2pnm (FILE *png_file, FILE *pnm_file, FILE *alpha_file, BOOL raw, BOOL alpha)
 {
   png_struct    *png_ptr = NULL;
-  png_info	*info_ptr = NULL;
+  png_info    *info_ptr = NULL;
   png_byte      buf[8];
   png_byte      *png_pixels = NULL;
   png_byte      **row_pointers = NULL;
@@ -381,7 +381,7 @@ BOOL png2pnm (FILE *png_file, FILE *pnm_file, FILE *alpha_file, BOOL raw, BOOL a
           fputc ((int) *pix_ptr++ , pnm_file);
         else
           if (bit_depth == 16){
-	    dep_16 = (long) *pix_ptr++;
+        dep_16 = (long) *pix_ptr++;
             fprintf (pnm_file, "%ld ", (dep_16 << 8) + ((long) *pix_ptr++));
           }
           else
@@ -401,9 +401,9 @@ BOOL png2pnm (FILE *png_file, FILE *pnm_file, FILE *alpha_file, BOOL raw, BOOL a
             fputc ((int) *pix_ptr++ , alpha_file);
           else
             if (bit_depth == 16){
-	      dep_16 = (long) *pix_ptr++;
+          dep_16 = (long) *pix_ptr++;
               fprintf (alpha_file, "%ld ", (dep_16 << 8) + (long) *pix_ptr++);
-	    }  
+        }  
             else
               fprintf (alpha_file, "%ld ", (long) *pix_ptr++);
         }

@@ -40,88 +40,88 @@ STMOD_HANDLER previous;
 // Module Start Handler
 void stargateSyspatchModuleOnStart(SceModule2 * mod)
 {
-	// Call Previous Module Start Handler
-	if(previous) previous(mod);
-	
-	// Patch LoadModule Function
-	patchLoadModuleFuncs(mod);
-	
+    // Call Previous Module Start Handler
+    if(previous) previous(mod);
+    
+    // Patch LoadModule Function
+    patchLoadModuleFuncs(mod);
+    
 }
 
 // Boot Time Module Start Handler
 int stargateStartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
-	// Fetch Module
-	SceModule2 * mod = (SceModule2 *)sceKernelFindModuleByUID(modid);
-	
-	// Module not found
-	if(mod == NULL) return -1;
-	
-	// Fix Prometheus Patch #1
-	SceLibraryStubTable * import = findImportLib(mod, "Kernel_LibrarZ");
-	if(import != NULL)
-	{
-		strcpy((char *)import->libname, "Kernel_Library");
-	}
-	
-	// Fix Prometheus Patch #2
-	import = findImportLib(mod, "Kernel_Librar0");
-	if(import != NULL)
-	{
-		strcpy((char* )import->libname, "Kernel_Library");
-	}
-	
-	// Fix Prometheus Patch #3
-	import = findImportLib(mod, "sceUtilitO");
-	if(import != NULL)
-	{
-		strcpy((char*)import->libname, "sceUtility");
-	}
-	
-	// Why do we return an error...?
-	return -1;
+    // Fetch Module
+    SceModule2 * mod = (SceModule2 *)sceKernelFindModuleByUID(modid);
+    
+    // Module not found
+    if(mod == NULL) return -1;
+    
+    // Fix Prometheus Patch #1
+    SceLibraryStubTable * import = findImportLib(mod, "Kernel_LibrarZ");
+    if(import != NULL)
+    {
+        strcpy((char *)import->libname, "Kernel_Library");
+    }
+    
+    // Fix Prometheus Patch #2
+    import = findImportLib(mod, "Kernel_Librar0");
+    if(import != NULL)
+    {
+        strcpy((char* )import->libname, "Kernel_Library");
+    }
+    
+    // Fix Prometheus Patch #3
+    import = findImportLib(mod, "sceUtilitO");
+    if(import != NULL)
+    {
+        strcpy((char*)import->libname, "sceUtility");
+    }
+    
+    // Why do we return an error...?
+    return -1;
 }
 
 // Idol Master Fix
 static void patchLoadExec(void)
 {
-	// Fix Load Execute CFW Detection
-	SceModule2* mod = sceKernelFindModuleByName("sceLoadExec");
-	for (u32 addr=mod->text_addr; ;addr+=4){
-		if (_lw(addr) == 0x00250821){
-		    _sw(NOP, addr+4);
-			break;
-		}
-	}
+    // Fix Load Execute CFW Detection
+    SceModule2* mod = sceKernelFindModuleByName("sceLoadExec");
+    for (u32 addr=mod->text_addr; ;addr+=4){
+        if (_lw(addr) == 0x00250821){
+            _sw(NOP, addr+4);
+            break;
+        }
+    }
 }
 
 // Entry Point
 int module_start(SceSize args, void * argp)
 {
 
-	// Hello Message
-	printk("stargate started: compiled at %s %s\r\n", __DATE__, __TIME__);
+    // Hello Message
+    printk("stargate started: compiled at %s %s\r\n", __DATE__, __TIME__);
 
     patch_sceMesgLed();
 
-	// Fix Idol Master
-	patchLoadExec();
-	
-	// Fetch sceUtility Load Module Functions
-	getLoadModuleFuncs();
-	
-	// Initialize NPDRM
-	nodrmInit();
-	
-	// Register Start Module Handler
-	previous = sctrlHENSetStartModuleHandler(stargateSyspatchModuleOnStart);
-	
-	// Register Boot Start Module Handler
-	sctrlSetCustomStartModule(stargateStartModuleHandler);
-	
-	// Flush Cache
-	flushCache();
-	
-	// Module Start Success
-	return 0;
+    // Fix Idol Master
+    patchLoadExec();
+    
+    // Fetch sceUtility Load Module Functions
+    getLoadModuleFuncs();
+    
+    // Initialize NPDRM
+    nodrmInit();
+    
+    // Register Start Module Handler
+    previous = sctrlHENSetStartModuleHandler(stargateSyspatchModuleOnStart);
+    
+    // Register Boot Start Module Handler
+    sctrlSetCustomStartModule(stargateStartModuleHandler);
+    
+    // Flush Cache
+    flushCache();
+    
+    // Module Start Success
+    return 0;
 }

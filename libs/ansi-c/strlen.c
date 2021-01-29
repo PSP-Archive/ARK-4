@@ -20,12 +20,12 @@
 // Return Length of String in Bytes (without terminator)
 unsigned int strlen(const char * text)
 {
-	// String Length
-	unsigned int length = 0;
-	
-	// Count Characters
-	while(text[length] != 0) length++;
-	
-	// Return String Length
-	return length;
+    // String Length
+    unsigned int length = 0;
+    
+    // Count Characters
+    while(text[length] != 0) length++;
+    
+    // Return String Length
+    return length;
 }

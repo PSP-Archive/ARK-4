@@ -2,8 +2,8 @@
 
 void ExtractUnixOwner(Archive &Arc,char *FileName)
 {
-	//CODE BRUTALLY REMOVED
-	/*
+    //CODE BRUTALLY REMOVED
+    /*
   if (Arc.HeaderCRC!=Arc.UOHead.HeadCRC)
   {
     Log(Arc.FileName,St(MOwnersBroken),FileName);
@@ -45,8 +45,8 @@ void ExtractUnixOwner(Archive &Arc,char *FileName)
 
 void ExtractUnixOwnerNew(Archive &Arc,char *FileName)
 {
-	//CODE BRUTALLY REMOVED
-	/*
+    //CODE BRUTALLY REMOVED
+    /*
   char *OwnerName=(char *)&Arc.SubHead.SubData[0];
   int OwnerSize=strlen(OwnerName)+1;
   int GroupSize=Arc.SubHead.SubData.Size()-OwnerSize;

@@ -21,112 +21,112 @@
 
 int umdvideolist_add(UmdVideoList *list, const char *path)
 {
-	char *newpath;
-	UmdVideoEntry *p;
+    char *newpath;
+    UmdVideoEntry *p;
 
-	if(path == NULL)
-		return -1;
+    if(path == NULL)
+        return -1;
 
-	newpath = vpl_strdup(path);
+    newpath = vpl_strdup(path);
 
-	if(newpath == NULL) {
-		return -2;
-	}
+    if(newpath == NULL) {
+        return -2;
+    }
 
-	p = vpl_alloc(sizeof(*p));
+    p = vpl_alloc(sizeof(*p));
 
-	if(p == NULL) {
-		vpl_free(newpath);
-		return -3;
-	}
+    if(p == NULL) {
+        vpl_free(newpath);
+        return -3;
+    }
 
-	list->tail->next = p;
-	list->tail = p;
-	list->tail->path = newpath;
-	list->tail->next = NULL;
-	list->count++;
+    list->tail->next = p;
+    list->tail = p;
+    list->tail->path = newpath;
+    list->tail->next = NULL;
+    list->count++;
 
-	return 0;
+    return 0;
 }
 
 static int umdvideolist_remove(UmdVideoList *list, UmdVideoEntry *pdel)
 {
-	UmdVideoEntry *p, *prev;
+    UmdVideoEntry *p, *prev;
 
-	if(list->count == 0) {
-		return -1;
-	}
+    if(list->count == 0) {
+        return -1;
+    }
 
-	for(prev = &list->head, p = list->head.next; p != NULL; prev = p, p = p->next) {
-		if(p == pdel) {
-			break;
-		}
-	}
+    for(prev = &list->head, p = list->head.next; p != NULL; prev = p, p = p->next) {
+        if(p == pdel) {
+            break;
+        }
+    }
 
-	if(p == NULL) {
-		return -1;
-	}
+    if(p == NULL) {
+        return -1;
+    }
 
-	if(list->tail == pdel) {
-		list->tail = prev;
-	}
-	
-	prev->next = NULL;
-	vpl_free(pdel->path);
-	vpl_free(pdel);
-	list->count--;
+    if(list->tail == pdel) {
+        list->tail = prev;
+    }
+    
+    prev->next = NULL;
+    vpl_free(pdel->path);
+    vpl_free(pdel);
+    list->count--;
 
-	return 0;
+    return 0;
 }
 
 char *umdvideolist_get(UmdVideoList *list, size_t n)
 {
-	UmdVideoEntry *p;
+    UmdVideoEntry *p;
 
-	for(p=list->head.next; p != NULL && n != 0; p=p->next, n--) {
-	}
+    for(p=list->head.next; p != NULL && n != 0; p=p->next, n--) {
+    }
 
-	if(p == NULL) {
-		return NULL;
-	}
+    if(p == NULL) {
+        return NULL;
+    }
 
-	return p->path;
+    return p->path;
 }
 
 size_t umdvideolist_count(UmdVideoList *list)
 {
-	return list->count;
+    return list->count;
 }
 
 void umdvideolist_clear(UmdVideoList *list)
 {
-	while(list->tail != &list->head) {
-		umdvideolist_remove(list, list->tail);
-	}
+    while(list->tail != &list->head) {
+        umdvideolist_remove(list, list->tail);
+    }
 }
 
 int umdvideolist_find(UmdVideoList *list, const char *search)
 {
-	UmdVideoEntry *p;
-	int i;
+    UmdVideoEntry *p;
+    int i;
 
-	for(i=0, p=list->head.next; p != NULL; p=p->next, ++i) {
-		if(0 == stricmp(p->path, search)) {
-			break;
-		}
-	}
+    for(i=0, p=list->head.next; p != NULL; p=p->next, ++i) {
+        if(0 == stricmp(p->path, search)) {
+            break;
+        }
+    }
 
-	if(p == NULL) {
-		return -1;
-	}
+    if(p == NULL) {
+        return -1;
+    }
 
-	return i;
+    return i;
 }
 
 void umdvideolist_init(UmdVideoList *list)
 {
-	list->head.path = NULL;
-	list->head.next = NULL;
-	list->tail = &list->head;
-	list->count = 0;
+    list->head.path = NULL;
+    list->head.next = NULL;
+    list->tail = &list->head;
+    list->count = 0;
 }

@@ -58,7 +58,7 @@ int OSK::initOskDataEx(SceUtilityOskParams* oskParams, int idx,
     memset(&oskParams->data[idx], 0, sizeof(SceUtilityOskData));
     oskParams->data[idx].language = PSP_UTILITY_OSK_LANGUAGE_DEFAULT;
     oskParams->data[idx].lines = linesNumber;
-    oskParams->data[idx].unk_24 = 1;			    // set to 1
+    oskParams->data[idx].unk_24 = 1;                // set to 1
     oskParams->data[idx].desc = desc;
     oskParams->data[idx].intext = intext;
     oskParams->data[idx].outtextlength = textLimit;
@@ -72,17 +72,17 @@ int OSK::activateOskEx(SceUtilityOskParams* oskParams, int waitcycle)
 {
     if (!oskParams) return -1;
 
-    if (!OSK::oskParams) {			// There is no active OSK - activate the given one
+    if (!OSK::oskParams) {            // There is no active OSK - activate the given one
        OSK::oskParams = oskParams;
        int ret = sceUtilityOskInitStart(oskParams);
        if (ret < 0) OSK::oskParams = NULL;
        return ret;
     }
     else if (OSK::oskParams == oskParams)
-       return 0;			// The given OSK is currently active...
+       return 0;            // The given OSK is currently active...
     else if (!waitcycle)
-       return -2;			// Other OSK is currently active...
-    else {					// Wait for other OSK to finish and try again to activate the given one
+       return -2;            // Other OSK is currently active...
+    else {                    // Wait for other OSK to finish and try again to activate the given one
        while (OSK::oskParams) sceDisplayWaitVblankStart();
        return activateOskEx(oskParams, waitcycle);
     }
@@ -145,9 +145,9 @@ OSK::~OSK()
 void OSK::init(const char *descStr, const char *initialStr, int textLimit, int linesNumber, int language){
     int i = 0;
 
-    if (intext || desc)   return;			//<-- STAS: Is the static OSK already initialized?
+    if (intext || desc)   return;            //<-- STAS: Is the static OSK already initialized?
 
-//    intext = (unsigned short *) malloc((textLimit + 1)*sizeof(unsigned short));	//<-- STAS: textLimit ISN'T right!
+//    intext = (unsigned short *) malloc((textLimit + 1)*sizeof(unsigned short));    //<-- STAS: textLimit ISN'T right!
     intext = (unsigned short *) malloc((strlen(initialStr) + 1)*sizeof(unsigned short));
     if (!intext)
         return;
@@ -172,40 +172,40 @@ void OSK::init(const char *descStr, const char *initialStr, int textLimit, int l
 }
 
 void OSK::loop()
-{	
-	while (this->isActive()){
-		common::clearScreen(CLEAR_COLOR);
-		common::getImage(IMAGE_BG)->draw(0, 0);
-		this->draw();
-		common::flipScreen();
-		if (sceUtilityOskGetStatus() == PSP_UTILITY_DIALOG_NONE)
-			break;
-	}
-	common::clearScreen(CLEAR_COLOR);
-	common::flipScreen();
-	sceDisplayWaitVblankStart();
+{    
+    while (this->isActive()){
+        common::clearScreen(CLEAR_COLOR);
+        common::getImage(IMAGE_BG)->draw(0, 0);
+        this->draw();
+        common::flipScreen();
+        if (sceUtilityOskGetStatus() == PSP_UTILITY_DIALOG_NONE)
+            break;
+    }
+    common::clearScreen(CLEAR_COLOR);
+    common::flipScreen();
+    sceDisplayWaitVblankStart();
 }
 
 void OSK::draw()
 {
     switch(sceUtilityOskGetStatus()){
-		case PSP_UTILITY_DIALOG_INIT:			//<-- STAS: sceUtilityOskUpdate should be called only in VISIBLE state!
-			sceKernelDelayThread(100000);
-			break;
+        case PSP_UTILITY_DIALOG_INIT:            //<-- STAS: sceUtilityOskUpdate should be called only in VISIBLE state!
+            sceKernelDelayThread(100000);
+            break;
         case PSP_UTILITY_DIALOG_VISIBLE :
-        	sceDisplayWaitVblankStart();
-        	sceDisplayWaitVblankStart();
-        	sceGuFinish();
-			sceGuSync(0,0);
+            sceDisplayWaitVblankStart();
+            sceDisplayWaitVblankStart();
+            sceGuFinish();
+            sceGuSync(0,0);
             sceUtilityOskUpdate(2);
             break;
         case PSP_UTILITY_DIALOG_QUIT:
             sceUtilityOskShutdownStart();
             break;
-        case PSP_UTILITY_DIALOG_FINISHED:		//<-- STAS: nothing to do for the other states
+        case PSP_UTILITY_DIALOG_FINISHED:        //<-- STAS: nothing to do for the other states
         case PSP_UTILITY_DIALOG_NONE:
         default:
-			break;								//<-- STAS END -->
+            break;                                //<-- STAS END -->
     }
 }
 

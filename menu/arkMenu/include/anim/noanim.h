@@ -4,11 +4,11 @@
 #include "anim.h"
 
 class NoAnim : public Anim {
-	
-	public:
-		NoAnim();
-		~NoAnim();
-		void draw();
+    
+    public:
+        NoAnim();
+        ~NoAnim();
+        void draw();
 };
 
 #endif

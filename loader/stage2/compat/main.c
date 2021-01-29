@@ -36,20 +36,20 @@ static ARKConfig conf = {
 static FunctionTable tbl = {.config=&conf};
 
 void memset(u8* start, u8 data, u32 size){
-	u32 i = 0;
-	for (; i<size; i++){
-		start[i] = data;
-	}
+    u32 i = 0;
+    for (; i<size; i++){
+        start[i] = data;
+    }
 }
 
 // Clear BSS Segment of Payload
 void clearBSS(void)
 {
-	// BSS Start and End Address from Linkfile
-	extern char __bss_start, __bss_end;
-	
-	// Clear Memory
-	memset(&__bss_start, 0, &__bss_end - &__bss_start);
+    // BSS Start and End Address from Linkfile
+    extern char __bss_start, __bss_end;
+    
+    // Clear Memory
+    memset(&__bss_start, 0, &__bss_end - &__bss_start);
 }
 
 // Entry Point
@@ -62,28 +62,28 @@ int _start(char* arg0)
     /*
     if (is_kernel(0)){
         tbl.IoOpen = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x109F50BC);
-	    tbl.IoRead = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x6A638D83);
-	    tbl.IoClose = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x810C4BC3);
-	    tbl.KernelDcacheWritebackAll = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0xB435DEC5);
-	    tbl.DisplaySetFrameBuf = (void*)FindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
-	}
-	else{
-	*/
-	    tbl.IoOpen = (void*)FindImportUserRam("IoFileMgrForUser", 0x109F50BC);
-	    tbl.IoRead = (void*)FindImportUserRam("IoFileMgrForUser", 0x6A638D83);
-	    tbl.IoClose = (void*)FindImportUserRam("IoFileMgrForUser", 0x810C4BC3);
-	    tbl.KernelDcacheWritebackAll = (void*)FindImportUserRam("UtilsForUser", 0x79D1C3FA);
-	    tbl.DisplaySetFrameBuf = (void*)FindImportUserRam("sceDisplay", 0x289D82FE);
-	    tbl.KernelLibcTime = (void*)FindImportUserRam("UtilsForUser", 0x27CC57F0);
-	//}
-	
-	int fd = tbl.IoOpen(BIN_PATH, PSP_O_RDONLY, 0);
-	tbl.IoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
-	tbl.IoClose(fd);
-	
-	tbl.KernelDcacheWritebackAll();
-	
-	void (* hEntryPoint)(ARKConfig*, FunctionTable*) = (void*)ARK_LOADADDR;
-	hEntryPoint(&conf, &tbl);
-	
+        tbl.IoRead = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x6A638D83);
+        tbl.IoClose = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x810C4BC3);
+        tbl.KernelDcacheWritebackAll = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0xB435DEC5);
+        tbl.DisplaySetFrameBuf = (void*)FindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
+    }
+    else{
+    */
+        tbl.IoOpen = (void*)FindImportUserRam("IoFileMgrForUser", 0x109F50BC);
+        tbl.IoRead = (void*)FindImportUserRam("IoFileMgrForUser", 0x6A638D83);
+        tbl.IoClose = (void*)FindImportUserRam("IoFileMgrForUser", 0x810C4BC3);
+        tbl.KernelDcacheWritebackAll = (void*)FindImportUserRam("UtilsForUser", 0x79D1C3FA);
+        tbl.DisplaySetFrameBuf = (void*)FindImportUserRam("sceDisplay", 0x289D82FE);
+        tbl.KernelLibcTime = (void*)FindImportUserRam("UtilsForUser", 0x27CC57F0);
+    //}
+    
+    int fd = tbl.IoOpen(BIN_PATH, PSP_O_RDONLY, 0);
+    tbl.IoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
+    tbl.IoClose(fd);
+    
+    tbl.KernelDcacheWritebackAll();
+    
+    void (* hEntryPoint)(ARKConfig*, FunctionTable*) = (void*)ARK_LOADADDR;
+    hEntryPoint(&conf, &tbl);
+    
 }

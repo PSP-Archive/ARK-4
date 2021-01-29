@@ -19,21 +19,21 @@
 
 int strcmp(const char *a, const char *b)
 {
-	while(*a && *b && *a == *b)
-	{
-		a++, b++;
-	}
+    while(*a && *b && *a == *b)
+    {
+        a++, b++;
+    }
 
-	return *a - *b;
+    return *a - *b;
 }
 
 int strncmp(const char *a, const char *b, unsigned int count)
 {
-	while(count>0 && *a && *b && *a == *b)
-	{
-		a++, b++;
-		count--;
-	}
+    while(count>0 && *a && *b && *a == *b)
+    {
+        a++, b++;
+        count--;
+    }
 
-	return *a - *b;
+    return *a - *b;
 }

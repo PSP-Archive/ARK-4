@@ -13,37 +13,37 @@
 
 class Entry{
 
-	private:
+    private:
 
-		string name;
-		
-		int index;
-		
-		struct {
-			string path;
-			Image* screenshot;
-		} slots[10];
-				
-	public:
-		Entry(string name);
-		~Entry();
-		
-		string getName();
-		
-		string getPath();
-		
-		Image* getScreenshot();
-		
-		void freeScreenshot();
-		
-		void loadScreenshot();
-		
-		void nextSlot();
-		void prevSlot();
-		
-		bool run();
-		
-		void draw(int x, int y);
+        string name;
+        
+        int index;
+        
+        struct {
+            string path;
+            Image* screenshot;
+        } slots[10];
+                
+    public:
+        Entry(string name);
+        ~Entry();
+        
+        string getName();
+        
+        string getPath();
+        
+        Image* getScreenshot();
+        
+        void freeScreenshot();
+        
+        void loadScreenshot();
+        
+        void nextSlot();
+        void prevSlot();
+        
+        bool run();
+        
+        void draw(int x, int y);
 };
 
 #endif

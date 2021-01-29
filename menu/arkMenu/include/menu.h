@@ -13,56 +13,56 @@
 #define MAX_LOADED_ICONS 11
 
 typedef enum {
-	GAME = 0,
-	HOMEBREW = 1,
-	POPS = 2
+    GAME = 0,
+    HOMEBREW = 1,
+    POPS = 2
 }EntryType;
 
 using namespace std;
 
 class Menu{
 
-	private:
-		EntryType type;
-		int index;
-		int threadIndex;
-		int animating;
-		float animState;
-		int fastScroll;
-		bool fastScrolling;
-		bool animDelay;
-		bool initLoad;
-		bool stopLoading;
-		vector<Entry*>* entries;
-		
-		void freeIcons();
-		bool checkIconsNeeded(bool isSelected);
-		
-	public:
-		Menu(EntryType t);
-		~Menu();
-		
-		void draw(bool selected);
-		
-		void loadIconsDynamic(bool isSelected);
-		
-		bool waitIconsLoad(bool isSelected, bool forceQuit=false);
-		
-		void resumeIconLoading();
-		
-		void addEntry(Entry* e);
-		Entry* getEntry();
-		Entry* getEntry(int index);
-		void clearEntries();
-		size_t getVectorSize();
-		vector<Entry*>* getVector();
-		
-		bool empty();
-		
-		void animStart(int direction);
-		void moveUp();
-		void moveDown();
-		void stopFastScroll();
+    private:
+        EntryType type;
+        int index;
+        int threadIndex;
+        int animating;
+        float animState;
+        int fastScroll;
+        bool fastScrolling;
+        bool animDelay;
+        bool initLoad;
+        bool stopLoading;
+        vector<Entry*>* entries;
+        
+        void freeIcons();
+        bool checkIconsNeeded(bool isSelected);
+        
+    public:
+        Menu(EntryType t);
+        ~Menu();
+        
+        void draw(bool selected);
+        
+        void loadIconsDynamic(bool isSelected);
+        
+        bool waitIconsLoad(bool isSelected, bool forceQuit=false);
+        
+        void resumeIconLoading();
+        
+        void addEntry(Entry* e);
+        Entry* getEntry();
+        Entry* getEntry(int index);
+        void clearEntries();
+        size_t getVectorSize();
+        vector<Entry*>* getVector();
+        
+        bool empty();
+        
+        void animStart(int direction);
+        void moveUp();
+        void moveDown();
+        void stopFastScroll();
 };
-		
+        
 #endif

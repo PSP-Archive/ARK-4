@@ -2,7 +2,7 @@
 
 
 void DoExtractRAR(const char *rarfile,const char *extDir,const char *pass){
-	
+    
 makedir(extDir);
 int argc;int i=0;
 const char **argv = calloc ( 8, sizeof(char *) );
@@ -15,12 +15,12 @@ count = argc+1;
 
 for ( i = 0; i < count; i++ )
   {
-	if(i==0)asprintf ( currentString, "unrar");
-	if(i==1)asprintf ( currentString, "x");
-	if(i==2)asprintf ( currentString, "%s",rarfile);
-	if(i==3)asprintf ( currentString, "%s",extDir);
-	if(i==4)asprintf ( currentString, "-y");
-	if(i> 4)asprintf ( currentString, " ");
+    if(i==0)asprintf ( currentString, "unrar");
+    if(i==1)asprintf ( currentString, "x");
+    if(i==2)asprintf ( currentString, "%s",rarfile);
+    if(i==3)asprintf ( currentString, "%s",extDir);
+    if(i==4)asprintf ( currentString, "-y");
+    if(i> 4)asprintf ( currentString, " ");
     currentString++;
     //printf("currentString address: %p\n", currentString);  
   }
@@ -31,13 +31,13 @@ count = argc+1;
 
 for ( i = 0; i < count; i++ )
   {
-	if(i==0)asprintf ( currentString, "unrar");
-	if(i==1)asprintf ( currentString, "x");
-	if(i==2)asprintf ( currentString, "%s",rarfile);
-	if(i==3)asprintf ( currentString, "%s",extDir);
-	if(i==4)asprintf ( currentString, "-y");
-	if(i==5)asprintf ( currentString, "-p%s",pass);
-	if(i> 5)asprintf ( currentString, " ");
+    if(i==0)asprintf ( currentString, "unrar");
+    if(i==1)asprintf ( currentString, "x");
+    if(i==2)asprintf ( currentString, "%s",rarfile);
+    if(i==3)asprintf ( currentString, "%s",extDir);
+    if(i==4)asprintf ( currentString, "-y");
+    if(i==5)asprintf ( currentString, "-p%s",pass);
+    if(i> 5)asprintf ( currentString, " ");
     currentString++;
     //printf("currentString address: %p\n", currentString);  
   }
@@ -57,12 +57,12 @@ for ( i = 0; i < count; i++ )
   //  currentString++;
   //}
 
-	//argv[0] = "unrar";
-	//argv[1] = "x";
-	//argv[2] = rarfile;
-	//argv[3] = extDir;
-	//argv[4] = "-y";
-	mainRAR(argc,argv);
+    //argv[0] = "unrar";
+    //argv[1] = "x";
+    //argv[2] = rarfile;
+    //argv[3] = extDir;
+    //argv[4] = "-y";
+    mainRAR(argc,argv);
 
   // reset
   currentString = argv;

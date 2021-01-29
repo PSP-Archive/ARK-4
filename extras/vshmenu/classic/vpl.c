@@ -34,79 +34,79 @@ static SceUID g_vpl_uid = -1;
 
 void vpl_init(void)
 {
-	g_vpl_uid = sceKernelCreateVpl("SateliteVPL", 2, 0, VPL_POOL_SIZE, NULL);
+    g_vpl_uid = sceKernelCreateVpl("SateliteVPL", 2, 0, VPL_POOL_SIZE, NULL);
 }
 
 void vpl_finish(void)
 {
-	sceKernelDeleteVpl(g_vpl_uid);
+    sceKernelDeleteVpl(g_vpl_uid);
 }
 
 void *vpl_alloc(int size)
 {
-	void *p;
-	int ret;
+    void *p;
+    int ret;
 
-	ret = sceKernelAllocateVpl(g_vpl_uid, size, &p, NULL);
+    ret = sceKernelAllocateVpl(g_vpl_uid, size, &p, NULL);
 
-	if(ret == 0)
-		return p;
+    if(ret == 0)
+        return p;
 
-	return NULL;
+    return NULL;
 }
 
 char *vpl_strdup(const char *str)
 {
-	int len;
-	char *p;
+    int len;
+    char *p;
 
-	len = strlen(str) + 1;
-	p = vpl_alloc(len);
+    len = strlen(str) + 1;
+    p = vpl_alloc(len);
 
-	if(p == NULL) {
-		return p;
-	}
+    if(p == NULL) {
+        return p;
+    }
 
-	strcpy(p, str);
+    strcpy(p, str);
 
-	return p;
+    return p;
 }
 
 void vpl_free(void *p)
 {
-	int ret;
+    int ret;
 
-	ret = sceKernelFreeVpl(g_vpl_uid, p);
+    ret = sceKernelFreeVpl(g_vpl_uid, p);
 
 #ifdef DEBUG
-	if(ret != 0) {
-		asm("break 0x8492");
-	}
+    if(ret != 0) {
+        asm("break 0x8492");
+    }
 #endif
 }
 
 void *vpl_realloc(void *ptr, size_t size)
 {
-	void *p;
+    void *p;
 
-	if(size == 0 && ptr != NULL) {
-		vpl_free(ptr);
+    if(size == 0 && ptr != NULL) {
+        vpl_free(ptr);
 
-		return NULL;
-	}
+        return NULL;
+    }
 
-	p = vpl_alloc(size);
+    p = vpl_alloc(size);
 
-	if(p == NULL) {
-		return p;
-	}
+    if(p == NULL) {
+        return p;
+    }
 
-	if(ptr == NULL) {
-		memset(p, 0, size);
-	} else {
-		memcpy(p, ptr, size);
-		vpl_free(ptr);
-	}
+    if(ptr == NULL) {
+        memset(p, 0, size);
+    } else {
+        memcpy(p, ptr, size);
+        vpl_free(ptr);
+    }
 
-	return p;
+    return p;
 }

@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 typedef struct quat {
-	float x, y, z, w;
+    float x, y, z, w;
 } __attribute__((aligned(16))) ScePspQuatMatrix;
 
 /** @addtogroup VFPUMATH */

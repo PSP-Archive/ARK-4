@@ -24,19 +24,19 @@ typedef struct
 
 {
 
-	unsigned magic;
+    unsigned magic;
 
-	unsigned header_size;
+    unsigned header_size;
 
-	unsigned long long file_size;
+    unsigned long long file_size;
 
-	unsigned block_size;
+    unsigned block_size;
 
-	unsigned char version;
+    unsigned char version;
 
-	unsigned char align;
+    unsigned char align;
 
-	char reserved[2];
+    char reserved[2];
 
 } cso_header;
 
@@ -90,25 +90,25 @@ typedef struct
 
     char length;
 
-	char extended;
+    char extended;
 
     unsigned location;
 
-	unsigned locationLE;
+    unsigned locationLE;
 
-	unsigned size;
+    unsigned size;
 
-	unsigned sizeLE;
+    unsigned sizeLE;
 
-	char trash[7];
+    char trash[7];
 
-	char flags;
+    char flags;
 
-	char other_size;
+    char other_size;
 
-	char intervale;
+    char intervale;
 
-	unsigned vol_seq;
+    unsigned vol_seq;
 
     char nameLen;
 
@@ -121,86 +121,86 @@ typedef struct
 class Cso : public Entry{
 
 
-	private:
+    private:
 
 
-		unsigned identifyEntry(const char * name, unsigned block, unsigned * fileSize);
+        unsigned identifyEntry(const char * name, unsigned block, unsigned * fileSize);
 
-	
+    
 
-		FILE * file;
+        FILE * file;
 
-		unsigned * indices;
+        unsigned * indices;
 
-		unsigned char * data, * read_buffer;
+        unsigned char * data, * read_buffer;
 
-		unsigned total_blocks, indices_len, current_index, current_index2;
+        unsigned total_blocks, indices_len, current_index, current_index2;
 
-		cso_header file_header, head;
+        cso_header file_header, head;
 
-		primaryVolumeDescriptor pvd;
+        primaryVolumeDescriptor pvd;
 
-		z_stream dec;
-
-
-		bool open(const char * path);
-
-		void clear();
-
-		
-
-		int getPrimaryVolumeDescriptor();
-
-		unsigned findFile(const char * file, unsigned * fileSize);
-
-		unsigned char * getDataBlock(unsigned block);
-
-		
-
-		void readFile(void* dst, unsigned block, unsigned size);
-
-		void extractFile(const char * name, unsigned block, unsigned size);
-
-		
-
-		u8* block_out;
-
-		unsigned block_size, start_read;
-
-		void getInitialBlock(FILE* fp);
+        z_stream dec;
 
 
-	public:
+        bool open(const char * path);
 
-		Cso(string path);
+        void clear();
 
-		~Cso();
+        
 
-		
+        int getPrimaryVolumeDescriptor();
 
-		void loadIcon();
+        unsigned findFile(const char * file, unsigned * fileSize);
 
-		void getTempData1();
+        unsigned char * getDataBlock(unsigned block);
 
-		void getTempData2();
+        
 
-		
+        void readFile(void* dst, unsigned block, unsigned size);
 
-		char* getType();
+        void extractFile(const char * name, unsigned block, unsigned size);
 
-		char* getSubtype();
+        
 
-		
+        u8* block_out;
 
-		static bool isPatched(string path);
+        unsigned block_size, start_read;
 
-		static bool isCSO(const char* filepath);
+        void getInitialBlock(FILE* fp);
 
-		void* fastExtract(const char* path, char* file, unsigned* size=NULL);
 
-		
+    public:
 
-		void execute();
+        Cso(string path);
+
+        ~Cso();
+
+        
+
+        void loadIcon();
+
+        void getTempData1();
+
+        void getTempData2();
+
+        
+
+        char* getType();
+
+        char* getSubtype();
+
+        
+
+        static bool isPatched(string path);
+
+        static bool isCSO(const char* filepath);
+
+        void* fastExtract(const char* path, char* file, unsigned* size=NULL);
+
+        
+
+        void execute();
 
 
 };

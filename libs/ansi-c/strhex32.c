@@ -19,28 +19,28 @@
 
 char * hex32(unsigned int v)
 {
-	// Result String
-	static char result[9];
-	
-	// Iterate Nibbles
-	unsigned int i = 0; for(; i < 8; i++)
-	{
-		// Fetch Nibble
-		char nibble = (char)((v >> (i << 2)) & 0xF);
-		
-		// Number
-		if(nibble >= 0 && nibble <= 9) nibble += '0';
-		
-		// Character
-		else nibble += 'A' - 0xA;
-		
-		// Copy Character
-		result[7 - i] = nibble;
-	}
-	
-	// Terminate String
-	result[8] = 0;
-	
-	// Return String
-	return result;
+    // Result String
+    static char result[9];
+    
+    // Iterate Nibbles
+    unsigned int i = 0; for(; i < 8; i++)
+    {
+        // Fetch Nibble
+        char nibble = (char)((v >> (i << 2)) & 0xF);
+        
+        // Number
+        if(nibble >= 0 && nibble <= 9) nibble += '0';
+        
+        // Character
+        else nibble += 'A' - 0xA;
+        
+        // Copy Character
+        result[7 - i] = nibble;
+    }
+    
+    // Terminate String
+    result[8] = 0;
+    
+    // Return String
+    return result;
 }

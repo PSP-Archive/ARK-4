@@ -34,7 +34,7 @@ extern "C" void   __crt0_load_environment_file (char *progname) { }
 extern "C" int mainRAR(int argc, char *argv[])
 {
 //pspDebugScreenInit();
-	dummy_printf("extractingRar");
+    dummy_printf("extractingRar");
 //SceUID handle;
 //handle=sceIoOpen("ms0:/test.rar",O_RDWR | O_CREAT,0777);
 //dummy_printf("OPened%s","ms0:/test.rar");
@@ -82,7 +82,7 @@ dummy_printf(".");
   {
   dummy_printf(".");
     CommandData Cmd;
-	Cmd.Init();
+    Cmd.Init();
 #ifdef SFX_MODULE
     strcpy(Cmd.Command,"X");
     char *Switch=NULL;
@@ -97,7 +97,7 @@ dummy_printf(".");
       Switch=CmdLine;
     }
 #else
-	dummy_printf(".");
+    dummy_printf(".");
     Switch=argc>1 ? argv[1]:NULL;
 #endif
     if (Switch!=NULL && Cmd.IsSwitch(Switch[0]))
@@ -114,12 +114,12 @@ dummy_printf(".");
           break;
       }
     }
-	dummy_printf(".");
+    dummy_printf(".");
     Cmd.AddArcName(ModuleName,NULL);
-	dummy_printf(".");
+    dummy_printf(".");
 #else
-	//seems to die here second time round
-	
+    //seems to die here second time round
+    
     if (Cmd.IsConfigEnabled(argc,argv))
     {
       Cmd.ReadConfig(argc,argv);
@@ -127,13 +127,13 @@ dummy_printf(".");
     }
     for (int I=1;I<argc;I++)
       Cmd.ParseArg(argv[I],NULL);
-	
-	dummy_printf(".");
+    
+    dummy_printf(".");
 #endif
-	dummy_printf(".");
+    dummy_printf(".");
     Cmd.ParseDone();
 
-	dummy_printf(".");
+    dummy_printf(".");
     InitConsoleOptions(Cmd.MsgStream,Cmd.Sound);
     InitLogOptions(Cmd.LogName);
     ErrHandler.SetSilent(Cmd.AllYes || Cmd.MsgStream==MSG_NULL);
@@ -141,8 +141,8 @@ dummy_printf(".");
 
     Cmd.OutTitle();
     Cmd.ProcessCommand();
-	Cmd.Close();
-	dummy_printf(".");
+    Cmd.Close();
+    dummy_printf(".");
   }
   
 #ifdef ALLOW_EXCEPTIONS
@@ -170,7 +170,7 @@ dummy_printf(".");
   uni_done();
 #endif
   return(ErrHandler.GetErrorCode());
-  	dummy_printf("Complete");
+      dummy_printf("Complete");
 }
 
 

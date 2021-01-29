@@ -43,83 +43,83 @@ const char *g_iso_fn = NULL;
 
 // 0x00002248
 unsigned char g_umddata[16] = {
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 };
 
 extern int powerEvtHandler(int ev_id, char *ev_name, void *param, int *result);
 
 PspSysEventHandler g_powerEvt = {
-	.size = sizeof(g_powerEvt),
-	.name = "infernoSysEvent",
-	.type_mask = 0x00FFFF00, // both suspend / resume
-	.handler = &powerEvtHandler,
+    .size = sizeof(g_powerEvt),
+    .name = "infernoSysEvent",
+    .type_mask = 0x00FFFF00, // both suspend / resume
+    .handler = &powerEvtHandler,
 };
 
 // 00000090
 int setupUMDDevice(void)
 {
-	int ret;
+    int ret;
 
-	g_iso_fn = GetUmdFile();
-	printk("UMDFile = %s\r\n", g_iso_fn);
+    g_iso_fn = GetUmdFile();
+    printk("UMDFile = %s\r\n", g_iso_fn);
 
-	infernoSetDiscType(sctrlSEGetDiscType());
-	ret = sceIoAddDrv(&g_iodrv);
+    infernoSetDiscType(sctrlSEGetDiscType());
+    ret = sceIoAddDrv(&g_iodrv);
 
-	if(ret < 0)
-	{
-		return ret;
-	}
+    if(ret < 0)
+    {
+        return ret;
+    }
 
-	sceKernelSetQTGP3(g_umddata);
-	ret = 0;
+    sceKernelSetQTGP3(g_umddata);
+    ret = 0;
 
-	return ret;
+    return ret;
 }
 
 // 00001514
 int infernoInitialize(void)
 {
-	g_drive_status = PSP_UMD_INITING;
-	g_umd_cbid = -1;
-	g_umd_error_status = 0;
-	g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
-	sceKernelRegisterSysEventHandler(&g_powerEvt);
+    g_drive_status = PSP_UMD_INITING;
+    g_umd_cbid = -1;
+    g_umd_error_status = 0;
+    g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
+    sceKernelRegisterSysEventHandler(&g_powerEvt);
 
-	if (g_drive_status_evf < 0)
-		return g_drive_status_evf;
+    if (g_drive_status_evf < 0)
+        return g_drive_status_evf;
 
-	return 0;
+    return 0;
 }
 
 // 0x00000000
 int module_start(SceSize args, void* argp)
 {
 
-	int ret;
+    int ret;
 
-	ret = setupUMDDevice();
+    ret = setupUMDDevice();
 
-	if(ret < 0)
-	{
-		return ret;
-	}
+    if(ret < 0)
+    {
+        return ret;
+    }
 
-	ret = infernoInitialize();
+    ret = infernoInitialize();
 
-	if (ret < 0)
-		return ret;
+    if (ret < 0)
+        return ret;
 
-	return 0;
+    return 0;
 }
 
 // 0x0000006C
 int module_stop(SceSize args, void *argp)
 {
-	sceIoDelDrv("umd");
-	sceKernelDeleteEventFlag(g_drive_status_evf);
-	sceKernelUnregisterSysEventHandler(&g_powerEvt);
+    sceIoDelDrv("umd");
+    sceKernelDeleteEventFlag(g_drive_status_evf);
+    sceKernelUnregisterSysEventHandler(&g_powerEvt);
 
-	return 0;
+    return 0;
 }

@@ -20,42 +20,42 @@
 // Copy String Buffer
 char *strcpy(char *to, const char *from)
 {
-	char *oto = to;
-	
-	// Position
-	unsigned int position = 0;
-	
-	// Copy Bytes
-	while(from[position] != 0)
-	{
-		// Copy Byte
-		to[position] = from[position];
-		
-		// Change Position
-		position++;
-	}
-	
-	// Terminate String
-	to[position] = 0;
-	
-	return oto;
+    char *oto = to;
+    
+    // Position
+    unsigned int position = 0;
+    
+    // Copy Bytes
+    while(from[position] != 0)
+    {
+        // Copy Byte
+        to[position] = from[position];
+        
+        // Change Position
+        position++;
+    }
+    
+    // Terminate String
+    to[position] = 0;
+    
+    return oto;
 }
 
 // Concatenates string s + append
 char *strcat(char *s, const char *append)
 {
-	char *pRet = s;
-	while(*s)
-	{
-		s++;
-	}
+    char *pRet = s;
+    while(*s)
+    {
+        s++;
+    }
 
-	while(*append)
-	{
-		*s++ = *append++;
-	}
+    while(*append)
+    {
+        *s++ = *append++;
+    }
 
-	*s = 0;
+    *s = 0;
 
-	return pRet;
+    return pRet;
 }

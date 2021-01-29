@@ -30,53 +30,53 @@
 // Check Executable Type
 int IsStaticElf(void * buf)
 {
-	// Cast Header
-	Elf32_Ehdr * header = (Elf32_Ehdr *)buf;
-	
-	// Plain ELF and Static
-	if (header->e_magic == 0x464C457F && header->e_type == 2)
-	{
-		return 1;
-	}
-	
-	// Other Executable
-	return 0;
+    // Cast Header
+    Elf32_Ehdr * header = (Elf32_Ehdr *)buf;
+    
+    // Plain ELF and Static
+    if (header->e_magic == 0x464C457F && header->e_type == 2)
+    {
+        return 1;
+    }
+    
+    // Other Executable
+    return 0;
 }
 
 // Get String Table
 char * GetStrTab(unsigned char * buf)
 {
-	// Cast Header
-	Elf32_Ehdr * header = (Elf32_Ehdr *)buf;
-	
-	// Not Plain ELF
-	if(header->e_magic != 0x464C457F) return NULL;
-	
-	// Move to Section Header
-	unsigned char * pData = buf + header->e_shoff;
-	
-	// Iterate Sections
-	int i = 0; for(; i < header->e_shnum; i++)
-	{
-		// Found String Table Section Index
-		if (header->e_shstrndx == i)
-		{
-			// Cast Section Header
-			Elf32_Shdr * section = (Elf32_Shdr *)pData;
-			
-			// Valid Section Type
-			if(section->sh_type == 3)
-			{
-				// Return Section Pointer
-				return (char *)buf + section->sh_offset;
-			}
-		}
-		
-		// Move to next Section
-		pData += header->e_shentsize;
-	}
-	
-	// String Table not found
-	return NULL;
+    // Cast Header
+    Elf32_Ehdr * header = (Elf32_Ehdr *)buf;
+    
+    // Not Plain ELF
+    if(header->e_magic != 0x464C457F) return NULL;
+    
+    // Move to Section Header
+    unsigned char * pData = buf + header->e_shoff;
+    
+    // Iterate Sections
+    int i = 0; for(; i < header->e_shnum; i++)
+    {
+        // Found String Table Section Index
+        if (header->e_shstrndx == i)
+        {
+            // Cast Section Header
+            Elf32_Shdr * section = (Elf32_Shdr *)pData;
+            
+            // Valid Section Type
+            if(section->sh_type == 3)
+            {
+                // Return Section Pointer
+                return (char *)buf + section->sh_offset;
+            }
+        }
+        
+        // Move to next Section
+        pData += header->e_shentsize;
+    }
+    
+    // String Table not found
+    return NULL;
 }
 

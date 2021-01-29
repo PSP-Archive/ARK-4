@@ -411,7 +411,7 @@ extern unzFile ZEXPORT unzOpen2 (path, pzlib_filefunc_def)
                                    (same than number_entry on nospan) */
 
     int err=UNZ_OK;
-	printf("a");
+    printf("a");
 
     if (unz_copyright[0]!=' ')
         return NULL;
@@ -421,7 +421,7 @@ extern unzFile ZEXPORT unzOpen2 (path, pzlib_filefunc_def)
     else
         us.z_filefunc = *pzlib_filefunc_def;
 
-	printf("b");
+    printf("b");
     us.filestream= (*(us.z_filefunc.zopen_file))(us.z_filefunc.opaque,
                                                  path,
                                                  ZLIB_FILEFUNC_MODE_READ |
@@ -429,7 +429,7 @@ extern unzFile ZEXPORT unzOpen2 (path, pzlib_filefunc_def)
     if (us.filestream==NULL)
         return NULL;
 
-	printf("c");
+    printf("c");
     central_pos = unzlocal_SearchCentralDir(&us.z_filefunc,us.filestream);
     if (central_pos==0)
         err=UNZ_ERRNO;
@@ -458,7 +458,7 @@ extern unzFile ZEXPORT unzOpen2 (path, pzlib_filefunc_def)
     if (unzlocal_getShort(&us.z_filefunc, us.filestream,&number_entry_CD)!=UNZ_OK)
         err=UNZ_ERRNO;
 
-	printf("d");
+    printf("d");
     if ((number_entry_CD!=us.gi.number_entry) ||
         (number_disk_with_CD!=0) ||
         (number_disk!=0))
@@ -486,7 +486,7 @@ extern unzFile ZEXPORT unzOpen2 (path, pzlib_filefunc_def)
         ZCLOSE(us.z_filefunc, us.filestream);
         return NULL;
     }
-	printf("e");
+    printf("e");
 
     us.byte_before_the_zipfile = central_pos -
                             (us.offset_central_dir+us.size_central_dir);
@@ -494,12 +494,12 @@ extern unzFile ZEXPORT unzOpen2 (path, pzlib_filefunc_def)
     us.pfile_in_zip_read = NULL;
     us.encrypted = 0;
 
-	printf("f");
+    printf("f");
 
     s=(unz_s*)ALLOC(sizeof(unz_s));
     *s=us;
     unzGoToFirstFile((unzFile)s);
-	printf("g");
+    printf("g");
     return (unzFile)s;
 }
 
@@ -1608,27 +1608,27 @@ int dummy_printf(const char *format, ...)
 {
 
 #ifdef DEBUG_RZ
-	va_list args;
-	char * s = NULL;
-	
-	
-	s = malloc(strlen(format)+512);
-	
-	
-	va_start(args, format);
-	int r = vsprintf(s,format, args);
-	va_end(args);
-	
-	sceIoWrite(2, s, strlen(s));
-	
-	
-	free(s);
-	
-	
-	return r;
+    va_list args;
+    char * s = NULL;
+    
+    
+    s = malloc(strlen(format)+512);
+    
+    
+    va_start(args, format);
+    int r = vsprintf(s,format, args);
+    va_end(args);
+    
+    sceIoWrite(2, s, strlen(s));
+    
+    
+    free(s);
+    
+    
+    return r;
 #else
 
-	return 0;
+    return 0;
 #endif
 
 }

@@ -5,8 +5,8 @@ static bool IsUnicode(byte *Data,int Size);
 bool ReadTextFile(char *Name,StringList *List,bool Config,bool AbortOnError,
                   bool ConvertToAnsi,bool Unquote,bool SkipComments)
 {
-	return(false);
-	dummy_printf("READTEXT");
+    return(false);
+    dummy_printf("READTEXT");
   char FileName[NM];
   if (Config)
     GetConfigName(Name,FileName,true);
@@ -20,7 +20,7 @@ bool ReadTextFile(char *Name,StringList *List,bool Config,bool AbortOnError,
 
     if (!OpenCode)
     {
-		dummy_printf("ERRTEXT");
+        dummy_printf("ERRTEXT");
       if (AbortOnError)
         ErrHandler.Exit(OPEN_ERROR);
       return(false);

@@ -39,18 +39,18 @@
  */
 
 typedef struct _user_decryptor {
-	u32 *tag; // key tag addr
-	u8 *key;  // 16 bytes key
-	u32 code; // scramble code
-	u8 *prx;  // prx addr
-	u32 size; // prx size
-	u32 *newsize; // pointer of prx new size after decryption
-	u32 use_polling; // use sceUtilsBufferCopyByPollingWithRange when 1 is set, pass 0
-	u8 *blacklist; // module blacklist, pass NULL
-	u32 blacklistsize; // module blacklist size in byte, pass 0
-	u32 type; // prx type 2 for game, 5 for game patch etc, look up loadcore.prx if you are unsure
-	u8 *xor_key1; // optional xor key, when decrypting prx type 3/5 this key is essential, otherwise can be NULL
-   	u8 *xor_key2; // optional xor key, when decrypting DRMed module this key is essential, otherwise can be NULL
+    u32 *tag; // key tag addr
+    u8 *key;  // 16 bytes key
+    u32 code; // scramble code
+    u8 *prx;  // prx addr
+    u32 size; // prx size
+    u32 *newsize; // pointer of prx new size after decryption
+    u32 use_polling; // use sceUtilsBufferCopyByPollingWithRange when 1 is set, pass 0
+    u8 *blacklist; // module blacklist, pass NULL
+    u32 blacklistsize; // module blacklist size in byte, pass 0
+    u32 type; // prx type 2 for game, 5 for game patch etc, look up loadcore.prx if you are unsure
+    u8 *xor_key1; // optional xor key, when decrypting prx type 3/5 this key is essential, otherwise can be NULL
+       u8 *xor_key2; // optional xor key, when decrypting DRMed module this key is essential, otherwise can be NULL
 } user_decryptor;
 
 extern int _uprx_decrypt(user_decryptor *pBlock);

@@ -41,49 +41,49 @@ ARKConfig* ark_conf = &_ark_conf;
 // Flush Instruction and Data Cache
 void sync_cache()
 {
-	// Flush Instruction Cache
-	sceKernelIcacheInvalidateAll();
-	
-	// Flush Data Cache
-	sceKernelDcacheWritebackInvalidateAll();
+    // Flush Instruction Cache
+    sceKernelIcacheInvalidateAll();
+    
+    // Flush Data Cache
+    sceKernelDcacheWritebackInvalidateAll();
 }
 
 int get_device_name(char *device, int size, const char* path)
 {
-	const char *p;
+    const char *p;
 
-	if (path == NULL || device == NULL) {
-		return -1;
-	}
+    if (path == NULL || device == NULL) {
+        return -1;
+    }
 
-	p = strchr(path, '/');
+    p = strchr(path, '/');
 
-	if (p == NULL) {
-		return -2;
-	}
+    if (p == NULL) {
+        return -2;
+    }
 
-	strncpy(device, path, MIN(size, p-path+1));
-	device[MIN(size-1, p-path)] = '\0';
+    strncpy(device, path, MIN(size, p-path+1));
+    device[MIN(size-1, p-path)] = '\0';
 
-	return 0;
+    return 0;
 }
 
 int module_start(SceSize args, void* argp)
 {
 
-	//printk_init("ms0:/log_vshctrl.txt");
-	printk("VshCtrl started\n");
-	psp_model = sceKernelGetModel();
-	psp_fw_version = sceKernelDevkitVersion();
-	sctrlHENGetArkConfig(ark_conf);
-	vshpatch_init();
+    //printk_init("ms0:/log_vshctrl.txt");
+    printk("VshCtrl started\n");
+    psp_model = sceKernelGetModel();
+    psp_fw_version = sceKernelDevkitVersion();
+    sctrlHENGetArkConfig(ark_conf);
+    vshpatch_init();
 
-	// always reset to NORMAL mode in VSH
-	// to avoid ISO mode is used in homebrews in next reboot
-	if(sctrlSEGetBootConfFileIndex() != MODE_VSHUMD) {
-		sctrlSESetUmdFile("");
-		sctrlSESetBootConfFileIndex(MODE_UMD);
-	}
+    // always reset to NORMAL mode in VSH
+    // to avoid ISO mode is used in homebrews in next reboot
+    if(sctrlSEGetBootConfFileIndex() != MODE_VSHUMD) {
+        sctrlSESetUmdFile("");
+        sctrlSESetBootConfFileIndex(MODE_UMD);
+    }
 
-	return 0;
+    return 0;
 }

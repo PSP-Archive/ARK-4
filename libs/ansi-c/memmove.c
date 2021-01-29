@@ -19,23 +19,23 @@
 
 void *memmove(void * to_, const void * from_, unsigned int length)
 {
-	char *to = to_;
-	const char *from = from_;
+    char *to = to_;
+    const char *from = from_;
 
-	if (to > from) {
-		//back buffer
-		char * tob = to + length;
-		const char * fromb = from + length;
+    if (to > from) {
+        //back buffer
+        char * tob = to + length;
+        const char * fromb = from + length;
 
-		//loop copy
-		unsigned int pos = 0; for(; pos < length; pos++)
-		{
-			//copy byte
-			*--tob = *--fromb;
-		}
+        //loop copy
+        unsigned int pos = 0; for(; pos < length; pos++)
+        {
+            //copy byte
+            *--tob = *--fromb;
+        }
 
-		return to_;
-	}
+        return to_;
+    }
 
-	return memcpy(to, from, length);
+    return memcpy(to, from, length);
 }

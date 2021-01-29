@@ -26,42 +26,42 @@ static SceUID heapid = -1;
 // Initialize Heap
 int oe_mallocinit(void)
 {
-	int size;
-	// Get Application Type
-	int key_config = sceKernelApplicationType();
-	
-	if(key_config == PSP_INIT_KEYCONFIG_POPS) return 0; // PS1 Emulator = No Heap
-	else if (key_config == PSP_INIT_KEYCONFIG_VSH) size = 14*1024; // VSH = smaller heap
-	else size = 45 * 1024; // Everything else leaves us room to brawl
-	
-	// Prevent Double Tapping
-	if(heapid >= 0) return 0;
-	
-	// Create Heap
-	heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, size, 1, "SystemCtrlHeap");
-	
-	// Return Error Code on Error
-	return (heapid < 0) ? heapid : 0;
+    int size;
+    // Get Application Type
+    int key_config = sceKernelApplicationType();
+    
+    if(key_config == PSP_INIT_KEYCONFIG_POPS) return 0; // PS1 Emulator = No Heap
+    else if (key_config == PSP_INIT_KEYCONFIG_VSH) size = 14*1024; // VSH = smaller heap
+    else size = 45 * 1024; // Everything else leaves us room to brawl
+    
+    // Prevent Double Tapping
+    if(heapid >= 0) return 0;
+    
+    // Create Heap
+    heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, size, 1, "SystemCtrlHeap");
+    
+    // Return Error Code on Error
+    return (heapid < 0) ? heapid : 0;
 }
 
 // Allocate Memory from Heap
 void * oe_malloc(unsigned int size)
 {
-	// Forward Call
-	return sceKernelAllocHeapMemory(heapid, size);
+    // Forward Call
+    return sceKernelAllocHeapMemory(heapid, size);
 }
 
 // Return Memory to Heap
 void oe_free(void * p)
 {
-	// Forward Call
-	sceKernelFreeHeapMemory(heapid, p);
+    // Forward Call
+    sceKernelFreeHeapMemory(heapid, p);
 }
 
 // Terminate Heap
 int oe_mallocterminate(void)
 {
-	// Forward Call
-	return sceKernelDeleteHeap(heapid);
+    // Forward Call
+    return sceKernelDeleteHeap(heapid);
 }
 

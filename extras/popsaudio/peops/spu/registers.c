@@ -286,8 +286,8 @@ int SPUreadRegister(unsigned long reg, unsigned short * result)
        if((dwChannelOn&(1<<ch)) &&                     // same here... we haven't decoded one sample yet, so no envelope yet. return 1 as well
           !s_chan[ch].ADSRX.EnvelopeVol)
         {
-        	*result = 1;
-        	return 1;
+            *result = 1;
+            return 1;
         }
        *result = (unsigned short)(s_chan[ch].ADSRX.EnvelopeVol>>16);
        return 1;

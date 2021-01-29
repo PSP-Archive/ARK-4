@@ -34,7 +34,7 @@ struct rc4_state g_state;
 
 void abort()
 {
-	_sw(0, 0);
+    _sw(0, 0);
 }
 
 void *rc4_initstate(unsigned char *key, int keylen)
@@ -55,42 +55,42 @@ void *rc4_initstate(unsigned char *key, int keylen)
    
    for(i = 0, idx1 = idx2 = 0; i < 256; i++)
    {
-	   idx2 = (key[idx1++] + rc4->mstate[i] + idx2);
+       idx2 = (key[idx1++] + rc4->mstate[i] + idx2);
 
-	   if(idx2 > 255)
-		   abort(); /* let the braindead compiler die here
-					 * instead of causing memleaks */
+       if(idx2 > 255)
+           abort(); /* let the braindead compiler die here
+                     * instead of causing memleaks */
 
-	   tmp = rc4->mstate[i];
-	   rc4->mstate[i] = rc4->mstate[idx2];
-	   rc4->mstate[idx2] = tmp;
+       tmp = rc4->mstate[i];
+       rc4->mstate[i] = rc4->mstate[idx2];
+       rc4->mstate[idx2] = tmp;
 
-	   if(idx1 >= keylen)
-		   idx1 = 0;
+       if(idx1 >= keylen)
+           idx1 = 0;
    }
    
    return (void *) rc4;
 }
 
 void rc4_process_stream(void *rc4_context, unsigned char *istring,
-			unsigned int stringlen)
+            unsigned int stringlen)
 {
     struct rc4_state *rc4 = (struct rc4_state *) rc4_context;
     RC4BYTE *s = rc4->mstate;
     RC4DWORD x = rc4->x, y = rc4->y;
     
     while(stringlen--)
-	{
-		RC4DWORD a, b;
+    {
+        RC4DWORD a, b;
 
-		x = (x+1) & 0xFF;
-		a = s[x];
-		y = (y+a) & 0xFF;
-		b = s[y];
-		s[x] = b;
-		s[y] = a;
-		*istring++ ^= s[(a + b) & 0xFF];
-	}
+        x = (x+1) & 0xFF;
+        a = s[x];
+        y = (y+a) & 0xFF;
+        b = s[y];
+        s[x] = b;
+        s[y] = a;
+        *istring++ ^= s[(a + b) & 0xFF];
+    }
     
     rc4->x = (RC4BYTE) x;
     rc4->y = (RC4BYTE) y;
@@ -99,5 +99,5 @@ void rc4_process_stream(void *rc4_context, unsigned char *istring,
 void rc4_destroystate(void *a)
 {
     memset(a, 0, sizeof(struct rc4_state));
-//	oe_free(a);
+//    oe_free(a);
 }

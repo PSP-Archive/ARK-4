@@ -45,18 +45,18 @@
 
 // PROCFW Reboot Buffer Configuration
 typedef struct RebootBufferConfiguration {
-	unsigned int magic;
-	unsigned int reboot_buffer_size;
-	unsigned char psidHash[16];
-	unsigned char iso_mode;
-	unsigned char iso_disc_type;
+    unsigned int magic;
+    unsigned int reboot_buffer_size;
+    unsigned char psidHash[16];
+    unsigned char iso_mode;
+    unsigned char iso_disc_type;
 } RebootBufferConfiguration;
 
 typedef struct RebootexFunctions{
-	void* rebootex_decrypt;
-	void* rebootex_checkexec;
-	void* orig_decrypt;
-	void* orig_checkexec;
+    void* rebootex_decrypt;
+    void* rebootex_checkexec;
+    void* orig_decrypt;
+    void* orig_checkexec;
 }RebootexFunctions;
 #define REBOOTEX_FUNCTIONS (RebootexFunctions*)0x08D38000
 

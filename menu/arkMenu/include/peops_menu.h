@@ -3,18 +3,18 @@
 
 class PeopsMenu {
 
-	private:
-		int index;
-		
-		void processPeopsConf();
+    private:
+        int index;
+        
+        void processPeopsConf();
 
-	public:
-		PeopsMenu();
-		~PeopsMenu();
+    public:
+        PeopsMenu();
+        ~PeopsMenu();
 
-		void draw();
-	
-		void control();
+        void draw();
+    
+        void control();
 
 };
 

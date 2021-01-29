@@ -43,188 +43,188 @@ static int (*sceMemlmdInitializeScrambleKey)(u32 unk, void *hash_addr) = NULL;
 // sub_334
 int _memlmd_unsigner(u8 *prx, u32 size, u32 use_polling)
 {
-	if (prx != NULL && *(u32*)prx == 0x5053507E) { // ~PSP
-		u32 i;
-		int result = 0;
+    if (prx != NULL && *(u32*)prx == 0x5053507E) { // ~PSP
+        u32 i;
+        int result = 0;
 
-		// 6.60 kernel modules use type 9 PRX... 0xd4~0x104 is zero padded
-		for(i=0; i<0x30; ++i) {
-			if (prx[i+0xd4]) {
-				result = 1;
-				break;
-			}
-		}
+        // 6.60 kernel modules use type 9 PRX... 0xd4~0x104 is zero padded
+        for(i=0; i<0x30; ++i) {
+            if (prx[i+0xd4]) {
+                result = 1;
+                break;
+            }
+        }
 
-		if (result == 0) {
-			return 0;
-		}
+        if (result == 0) {
+            return 0;
+        }
 
-		result = 0;
+        result = 0;
 
-		// updater prx ... 0xB8~0x18 is zero padded
-		for(i=0; i<0x18; ++i) {
-			if (prx[i+0xB8]) {
-				result = 1;
-				break;
-			}
-		}
+        // updater prx ... 0xB8~0x18 is zero padded
+        for(i=0; i<0x18; ++i) {
+            if (prx[i+0xB8]) {
+                result = 1;
+                break;
+            }
+        }
 
-		if (result == 0) {
-			return 0;
-		}
-	}
+        if (result == 0) {
+            return 0;
+        }
+    }
 
-	return (*memlmd_unsigner)(prx, size, use_polling);
+    return (*memlmd_unsigner)(prx, size, use_polling);
 }
 
 // Known GZIP Compression Tags
 unsigned int compressTag[] = {
-	0x28796DAA,
-	0x7316308C,
-	0x3EAD0AEE,
-	0x8555ABF2,
-	0xC6BA41D3,
-	0x55668D96,
-	0xC01DB15D,
+    0x28796DAA,
+    0x7316308C,
+    0x3EAD0AEE,
+    0x8555ABF2,
+    0xC6BA41D3,
+    0x55668D96,
+    0xC01DB15D,
 };
 
 // PRX Tag Compression Check
 int isTagCompressed(unsigned int tag)
 {
-	// Iterate Supported GZIP Tags
-	int i = 0; for(; i < NELEMS(compressTag); ++i)
-	{
-		// Matching Tag found
-		if(compressTag[i] == tag)
-		{
-			// GZIP PRX
-			return 1;
-		}
-	}
-	
-	// Encrypted PRX
-	return 0;
+    // Iterate Supported GZIP Tags
+    int i = 0; for(; i < NELEMS(compressTag); ++i)
+    {
+        // Matching Tag found
+        if(compressTag[i] == tag)
+        {
+            // GZIP PRX
+            return 1;
+        }
+    }
+    
+    // Encrypted PRX
+    return 0;
 }
 
 // PRX Compression Check
 int isPrxCompressed(unsigned char * prx, unsigned int size)
 {
-	// Minimum PRX Size Check
-	if(size < 0x160) return 0;
-	
-	// GZIP Magic detected
-	if(*(unsigned short *)(prx + 0x150) == 0x8B1F)
-	{
-		// Supported Compression Tag
-		if(isTagCompressed(*(unsigned int *)(prx + 0x130)))
-		{
-			// GZIP PRX
-			return 1;
-		}
-	}
-	
-	// Encrypted PRX
-	return 0;
+    // Minimum PRX Size Check
+    if(size < 0x160) return 0;
+    
+    // GZIP Magic detected
+    if(*(unsigned short *)(prx + 0x150) == 0x8B1F)
+    {
+        // Supported Compression Tag
+        if(isTagCompressed(*(unsigned int *)(prx + 0x130)))
+        {
+            // GZIP PRX
+            return 1;
+        }
+    }
+    
+    // Encrypted PRX
+    return 0;
 }
 
 // Memlmd Decrypt Function Hook
 int _memlmdDecrypt(unsigned char * prx, unsigned int size, unsigned int * newsize, unsigned int use_polling)
 {
-	// Valid Parameters
-	if(prx != NULL && newsize != NULL)
-	{
-		// Read GZIP Payload Size
-		unsigned int compsize = *(unsigned int*)(prx + 0xB0);
-		
-		// GZIP Compressed PRX
-		if(isPrxCompressed(prx, size))
-		{
+    // Valid Parameters
+    if(prx != NULL && newsize != NULL)
+    {
+        // Read GZIP Payload Size
+        unsigned int compsize = *(unsigned int*)(prx + 0xB0);
+        
+        // GZIP Compressed PRX
+        if(isPrxCompressed(prx, size))
+        {
 unzip:
-			// Remove PRX Header
-			memcpy(prx, prx + 0x150, compsize);
-			
-			// Write GZIP Payload Size
-			*newsize = compsize;
-			
-			// Return Decrypt Success
-			return 0;
-		}
-	}
-	
-	// Passthrough
-	int ret = memlmdDecrypt(prx, size, newsize, use_polling);
+            // Remove PRX Header
+            memcpy(prx, prx + 0x150, compsize);
+            
+            // Write GZIP Payload Size
+            *newsize = compsize;
+            
+            // Return Decrypt Success
+            return 0;
+        }
+    }
+    
+    // Passthrough
+    int ret = memlmdDecrypt(prx, size, newsize, use_polling);
 
-	if (ret >= 0) {
-		return ret;
-	}
+    if (ret >= 0) {
+        return ret;
+    }
 
-	// re-calculate key with xor seed
-	if (sceMemlmdInitializeScrambleKey!= NULL && sceMemlmdInitializeScrambleKey(0, (void*)0xBFC00200) < 0)
-		return ret;
+    // re-calculate key with xor seed
+    if (sceMemlmdInitializeScrambleKey!= NULL && sceMemlmdInitializeScrambleKey(0, (void*)0xBFC00200) < 0)
+        return ret;
 
-	if (_memlmd_unsigner != NULL && _memlmd_unsigner(prx, size, use_polling) < 0) {
-		return ret;
-	}
+    if (_memlmd_unsigner != NULL && _memlmd_unsigner(prx, size, use_polling) < 0) {
+        return ret;
+    }
 
-	return (*memlmdDecrypt)(prx, size, newsize, use_polling);
-	
+    return (*memlmdDecrypt)(prx, size, newsize, use_polling);
+    
 }
 
 // Mesgled Decrypt Function Hook
 int _mesgledDecrypt(unsigned int * tag, unsigned char * key, unsigned int code, unsigned char * prx, unsigned int size, unsigned int * newsize, unsigned int use_polling, unsigned char * blacklist, unsigned int blacklistsize, unsigned int type, unsigned char * xor_key1, unsigned char * xor_key2)
 {
-	// Valid Parameters
-	if(prx != NULL && newsize != NULL)
-	{
-		// Read GZIP Payload Size from PRX Header
-		unsigned int compsize = *(unsigned int *)(prx + 0xB0);
-		
-		// GZIP Compressed PRX
-		if(isPrxCompressed(prx, size))
-		{
+    // Valid Parameters
+    if(prx != NULL && newsize != NULL)
+    {
+        // Read GZIP Payload Size from PRX Header
+        unsigned int compsize = *(unsigned int *)(prx + 0xB0);
+        
+        // GZIP Compressed PRX
+        if(isPrxCompressed(prx, size))
+        {
 unzip:
-			// Remove PRX Header
-			memcpy(prx, prx + 0x150, compsize);
-			
-			// Write GZIP Payload Size
-			*newsize = compsize;
-			
-			// Return Decrypt Success
-			return 0;
-		}
-	}
-	
-	// Passthrough
-	return mesgledDecrypt(tag, key, code, prx, size, newsize, use_polling, blacklist, blacklistsize, type, xor_key1, xor_key2);
+            // Remove PRX Header
+            memcpy(prx, prx + 0x150, compsize);
+            
+            // Write GZIP Payload Size
+            *newsize = compsize;
+            
+            // Return Decrypt Success
+            return 0;
+        }
+    }
+    
+    // Passthrough
+    return mesgledDecrypt(tag, key, code, prx, size, newsize, use_polling, blacklist, blacklistsize, type, xor_key1, xor_key2);
 }
 
 // Patch Memlmd Cryptography
 SceModule2* patchMemlmd(void)
 {
-	// Find Module
-	SceModule2* mod = (SceModule2*)sceKernelFindModuleByName("sceMemlmd");
-	
-	// Fetch Text Address
-	unsigned int text_addr = mod->text_addr;
+    // Find Module
+    SceModule2* mod = (SceModule2*)sceKernelFindModuleByName("sceMemlmd");
+    
+    // Fetch Text Address
+    unsigned int text_addr = mod->text_addr;
 
     u32 topaddr = mod->text_addr + mod->text_size;
-	// do the patching
-	int patches = 5;
+    // do the patching
+    int patches = 5;
     for (u32 addr = text_addr; addr<topaddr && patches; addr+=4){
-	    u32 data = _lw(addr);
-	    if (data == JAL(memlmdDecrypt)){
-		    _sw(JAL(_memlmdDecrypt), addr);
-		    patches--;
-		}
-	    else if (data == JAL(memlmd_unsigner)){
-	        _sw(JAL(_memlmd_unsigner), addr);
-	        patches--;
-	    }
-	    else if (data == 0x3C02F009){
-	        _sh(0xF005, addr);
-	        patches--;
-	    }
-	    else if (data == 0x3222003F){
+        u32 data = _lw(addr);
+        if (data == JAL(memlmdDecrypt)){
+            _sw(JAL(_memlmdDecrypt), addr);
+            patches--;
+        }
+        else if (data == JAL(memlmd_unsigner)){
+            _sw(JAL(_memlmd_unsigner), addr);
+            patches--;
+        }
+        else if (data == 0x3C02F009){
+            _sh(0xF005, addr);
+            patches--;
+        }
+        else if (data == 0x3222003F){
             u32 a = addr;
             do {a-=4;} while (_lw(a)!=0x27BDFFF0);
             memlmd_unsigner = (void*)a;
@@ -236,9 +236,9 @@ SceModule2* patchMemlmd(void)
             sceMemlmdInitializeScrambleKey = addr-8;
         }
     }
-	// Flush Cache
-	flushCache();
-	return mod;
+    // Flush Cache
+    flushCache();
+    return mod;
 }
 
 // Patch MesgLed Cryptography
@@ -248,15 +248,15 @@ void patchMesgLed(SceModule2 * mod)
     u32 topaddr = mod->text_addr + mod->text_size;
     int patches = 5;
     for (addr = mod->text_addr; addr<topaddr && patches; addr+=4){
-	    u32 data = _lw(addr);
-	    if (data == JAL(mesgledDecrypt)){
-		    _sw(JAL(_mesgledDecrypt), addr); // Hook Decrypt Function Calls
-		    patches--;
-		}
-		else if (data == 0x2CE30001){
-		    mesgledDecrypt = addr; // Save Original Decrypt Function Pointer
-		}
+        u32 data = _lw(addr);
+        if (data == JAL(mesgledDecrypt)){
+            _sw(JAL(_mesgledDecrypt), addr); // Hook Decrypt Function Calls
+            patches--;
+        }
+        else if (data == 0x2CE30001){
+            mesgledDecrypt = addr; // Save Original Decrypt Function Pointer
+        }
     }
     // Flush Cache
-	flushCache();
+    flushCache();
 }

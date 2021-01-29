@@ -2,13 +2,13 @@
 
 int mymkdirRAR(const char*dirname)
 {
-	printf("Make2:%s",dirname);
+    printf("Make2:%s",dirname);
     int ret=0;
 #ifdef WIN32
     ret = mkdir(dirname);
 #else
 #ifdef unix
-	//ret = sceIoMkdir(dirname,0777);
+    //ret = sceIoMkdir(dirname,0777);
     ret = mkdir (dirname,0777);
 #endif
 #endif
@@ -64,27 +64,27 @@ int i=0;
 int len=0;
 len = strlen(string);
 for(i=len;i>0;i--){
-	if(string[i] == '/'){break;}else{string[i] = '\0';}
+    if(string[i] == '/'){break;}else{string[i] = '\0';}
 }
 return string;
 }
 
 MKDIR_CODE MakeDir(const char *Name,const wchar *NameW,uint Attr)
 {
-	printf("MakeDir");
-	//create dir if necessary
-	char* tempname;tempname = (char*)memalign(16,512);
-	char* tempname2;tempname2 = (char*)memalign(16,512);
-	sprintf(tempname,"%s",Name);
-	sprintf(tempname2,"%s",stripToSlashRAR(tempname));
-	tempname2[strlen(tempname2)-1] = '\0';
-	printf("MakeDir:%s",tempname2);
-	mymakedirRAR(tempname2);
-	free(tempname);
-	free(tempname2);
-	//mymakedirRAR((char*)Name);
-	return(MKDIR_SUCCESS);
-	/*
+    printf("MakeDir");
+    //create dir if necessary
+    char* tempname;tempname = (char*)memalign(16,512);
+    char* tempname2;tempname2 = (char*)memalign(16,512);
+    sprintf(tempname,"%s",Name);
+    sprintf(tempname2,"%s",stripToSlashRAR(tempname));
+    tempname2[strlen(tempname2)-1] = '\0';
+    printf("MakeDir:%s",tempname2);
+    mymakedirRAR(tempname2);
+    free(tempname);
+    free(tempname2);
+    //mymakedirRAR((char*)Name);
+    return(MKDIR_SUCCESS);
+    /*
 #ifdef _WIN_32
   int Success;
   if (WinNT() && NameW!=NULL && *NameW!=0)

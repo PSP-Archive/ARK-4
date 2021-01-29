@@ -21,145 +21,145 @@
 #include <psputility.h>
 
 enum {
-	PRO_RECOVERY_MENU = 0,
-	MAIN_MENU,
-	ENTERING,
-	EXITING,
-	BACK,
-	DEFAULT,
-	ENABLED,
-	DISABLED,
-	TOGGLE_USB,
-	USB_ENABLED,
-	USB_DISABLED,
-	CONFIGURATION,
-	FAKE_REGION,
-	RECOVERY_FONT,
-	ISO_MODE,
-	NORMAL,
-	MARCH33,
-	NP9660,
-	INFERNO,
-	XMB_USBDEVICE,
-	FLASH0,
-	FLASH1,
-	FLASH2,
-	FLASH3,
-	UMD9660,
-	USB_CHARGE,
-	SLIM_COLOR,
-	HTMLVIEWER_CUSTOM_SAVE_LOCATION,
-	HIDE_MAC,
-	SKIP_SONY_LOGO,
-	SKIP_GAME_BOOT,
-	HIDE_PIC,
-	FLASH_PROTECT,
-	USE_VERSION_TXT,
-	USE_USBVERSION_TXT,
-	USE_CUSTOM_UPDATE_SERVER,
-	PREVENT_HIB_DEL,
-	ADVANCED,
-	XMB_PLUGIN,
-	GAME_PLUGIN,
-	POPS_PLUGIN,
-	USE_NODRM_ENGINE,
-	HIDE_CFW_DIRS,
-	BLOCK_ANALOG_INPUT,
-	OLD_PLUGINS_SUPPORT,
-	ISO_CACHE,
-	ISO_CACHE_TOTAL_SIZE,
-	ISO_CACHE_NUMBER,
-	ISO_CACHE_POLICY,
-	ALLOW_NON_LATIN1_ISO_FILENAME,
-	MSSPEED_UP,
-	NONE,
-	POP,
-	GAME,
-	VSH,
-	POP_GAME,
-	GAME_VSH,
-	VSH_POP,
-	ALWAYS,
-	CPU_SPEED,
-	XMB_CPU_BUS,
-	GAME_CPU_BUS,
-	PLUGINS,
-	SYSTEM_STORAGE,
-	MEMORY_STICK,
-	PLUGINS_ON_SYSTEM_STORAGE,
-	PLUGINS_ON_MEMORY_STICK,
-	REGISTERY_HACKS,
-	WMA_ACTIVATED,
-	FLASH_ACTIVATED,
-	BUTTONS_SWAPPED,
-	CONFIRM_BUTTON_IS_X,
-	CONFIRM_BUTTON_IS_O,
-	ACTIVATE_WMA,
-	ACTIVATE_FLASH,
-	SWAP_BUTTONS,
-	SWAP_BUTTONS_FULL,
-	DELETE_HIBERNATION,
-	HIBERNATION_DELETED,
-	RUN_RECOVERY_EBOOT,
-	SHUTDOWN_DEVICE,
-	SUSPEND_DEVICE,
-	RESET_DEVICE,
-	RESET_VSH,
-	PAGE,
-	JAPAN,
-	AMERICA,
-	EUROPE,
-	KOREA,
-	UNITED_KINGDOM,
-	MEXIQUE,
-	AUSTRALIA,
-	HONGKONG,
-	TAIWAN,
-	RUSSIA,
-	CHINA,
-	DEBUG_TYPE_I,
-	DEBUG_TYPE_II,
-	RETAIL_HIGH_MEMORY,
-	MAC_SPOOFER,
-	MSG_END,
+    PRO_RECOVERY_MENU = 0,
+    MAIN_MENU,
+    ENTERING,
+    EXITING,
+    BACK,
+    DEFAULT,
+    ENABLED,
+    DISABLED,
+    TOGGLE_USB,
+    USB_ENABLED,
+    USB_DISABLED,
+    CONFIGURATION,
+    FAKE_REGION,
+    RECOVERY_FONT,
+    ISO_MODE,
+    NORMAL,
+    MARCH33,
+    NP9660,
+    INFERNO,
+    XMB_USBDEVICE,
+    FLASH0,
+    FLASH1,
+    FLASH2,
+    FLASH3,
+    UMD9660,
+    USB_CHARGE,
+    SLIM_COLOR,
+    HTMLVIEWER_CUSTOM_SAVE_LOCATION,
+    HIDE_MAC,
+    SKIP_SONY_LOGO,
+    SKIP_GAME_BOOT,
+    HIDE_PIC,
+    FLASH_PROTECT,
+    USE_VERSION_TXT,
+    USE_USBVERSION_TXT,
+    USE_CUSTOM_UPDATE_SERVER,
+    PREVENT_HIB_DEL,
+    ADVANCED,
+    XMB_PLUGIN,
+    GAME_PLUGIN,
+    POPS_PLUGIN,
+    USE_NODRM_ENGINE,
+    HIDE_CFW_DIRS,
+    BLOCK_ANALOG_INPUT,
+    OLD_PLUGINS_SUPPORT,
+    ISO_CACHE,
+    ISO_CACHE_TOTAL_SIZE,
+    ISO_CACHE_NUMBER,
+    ISO_CACHE_POLICY,
+    ALLOW_NON_LATIN1_ISO_FILENAME,
+    MSSPEED_UP,
+    NONE,
+    POP,
+    GAME,
+    VSH,
+    POP_GAME,
+    GAME_VSH,
+    VSH_POP,
+    ALWAYS,
+    CPU_SPEED,
+    XMB_CPU_BUS,
+    GAME_CPU_BUS,
+    PLUGINS,
+    SYSTEM_STORAGE,
+    MEMORY_STICK,
+    PLUGINS_ON_SYSTEM_STORAGE,
+    PLUGINS_ON_MEMORY_STICK,
+    REGISTERY_HACKS,
+    WMA_ACTIVATED,
+    FLASH_ACTIVATED,
+    BUTTONS_SWAPPED,
+    CONFIRM_BUTTON_IS_X,
+    CONFIRM_BUTTON_IS_O,
+    ACTIVATE_WMA,
+    ACTIVATE_FLASH,
+    SWAP_BUTTONS,
+    SWAP_BUTTONS_FULL,
+    DELETE_HIBERNATION,
+    HIBERNATION_DELETED,
+    RUN_RECOVERY_EBOOT,
+    SHUTDOWN_DEVICE,
+    SUSPEND_DEVICE,
+    RESET_DEVICE,
+    RESET_VSH,
+    PAGE,
+    JAPAN,
+    AMERICA,
+    EUROPE,
+    KOREA,
+    UNITED_KINGDOM,
+    MEXIQUE,
+    AUSTRALIA,
+    HONGKONG,
+    TAIWAN,
+    RUSSIA,
+    CHINA,
+    DEBUG_TYPE_I,
+    DEBUG_TYPE_II,
+    RETAIL_HIGH_MEMORY,
+    MAC_SPOOFER,
+    MSG_END,
 };
 
 extern const char ** g_messages;
 extern const char * g_messages_en[];
 
 enum {
-	TYPE_NORMAL = 0,
-	TYPE_SUBMENU = 1,
+    TYPE_NORMAL = 0,
+    TYPE_SUBMENU = 1,
 };
 
 enum {
-	TYPE_VSH = 0,
-	TYPE_GAME,
-	TYPE_POPS,
+    TYPE_VSH = 0,
+    TYPE_GAME,
+    TYPE_POPS,
 };
 
 struct MenuEntry {
-	int info_idx;
-	int type;
-	int color;
-	int (*display_callback)(struct MenuEntry*, char *, int);
-	int (*change_value_callback)(struct MenuEntry *, int);
-	int (*enter_callback)(struct MenuEntry *);
-	void *arg;
+    int info_idx;
+    int type;
+    int color;
+    int (*display_callback)(struct MenuEntry*, char *, int);
+    int (*change_value_callback)(struct MenuEntry *, int);
+    int (*enter_callback)(struct MenuEntry *);
+    void *arg;
 };
 
 struct ValueOption {
-	s16 *value;
-	int limit_start;
-	int limit_end;
+    s16 *value;
+    int limit_start;
+    int limit_end;
 };
 
 struct Menu {
-	int banner_id;
-	struct MenuEntry *submenu;
-	int submenu_size;
-	int cur_sel;
-	int banner_color;
+    int banner_id;
+    struct MenuEntry *submenu;
+    int submenu_size;
+    int cur_sel;
+    int banner_color;
 };
 
 #define CUR_SEL_COLOR 0xFF

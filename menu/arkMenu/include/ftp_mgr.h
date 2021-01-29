@@ -5,13 +5,13 @@
 #include "common.h"
 
 class FTPManager : public SystemEntry{
-	void draw();
-	void control(Controller* pad);
-	void pause();
-	void resume();
-	char* getInfo();
-	char* getName();
-	Image* getIcon();
+    void draw();
+    void control(Controller* pad);
+    void pause();
+    void resume();
+    char* getInfo();
+    char* getName();
+    Image* getIcon();
 };
 
 #endif

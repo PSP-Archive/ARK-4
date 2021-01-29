@@ -1,11 +1,11 @@
 #include "pspmath.h"
 
 void vfpu_quaternion_to_matrix(ScePspQuatMatrix *q, ScePspFMatrix4 *m) {
-	__asm__ volatile (
+    __asm__ volatile (
        "lv.q      C000, %1\n"                               // C000 = [x,  y,  z,  w ]
        "vmul.q    C010, C000, C000\n"                       // C010 = [x2, y2, z2, w2]
        "vcrs.t    C020, C000, C000\n"                       // C020 = [yz, xz, xy ]
-       "vmul.q    C030, C000[x,y,z,1], C000[w,w,w,2]\n"	    // C030 = [wx, wy, wz ]
+       "vmul.q    C030, C000[x,y,z,1], C000[w,w,w,2]\n"        // C030 = [wx, wy, wz ]
 
        "vadd.q    C100, C020[0,z,y,0], C030[0,z,-y,0]\n"    // C100 = [0,     xy+wz, xz-wy]
        "vadd.s    S100, S011, S012\n"                       // C100 = [y2+z2, xy+wz, xz-wy]
@@ -30,5 +30,5 @@ void vfpu_quaternion_to_matrix(ScePspQuatMatrix *q, ScePspFMatrix4 *m) {
        "sv.q      R101, 16 + %0\n"
        "sv.q      R102, 32 + %0\n"
        "sv.q      R103, 48 + %0\n"
-	: "=m"(*m) : "m"(*q));
+    : "=m"(*m) : "m"(*q));
 }

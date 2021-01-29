@@ -15,8 +15,11 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
+#include <pspkernel.h>
 #include <pspiofilemgr.h>
 #include <pspdisplay.h>
+#include <pspctrl.h>
+#include <psppower.h>
 #include <stdio.h>
 #include <string.h>
 #include <systemctrl.h>
@@ -65,81 +68,107 @@ static const unsigned char regName[32][5] =
 static int isValidAddr(u32 addr){
     return (
         (addr>=0x08800000&&addr<0x0A000000) // valid user address
-	        || (addr>=0x88000000&&addr<0x88400000) // valid kernel address
-	        || (addr>=0x00010000&&addr<0x00014000) // valid scratchpad address
+            || (addr>=0x88000000&&addr<0x88400000) // valid kernel address
+            || (addr>=0x00010000&&addr<0x00014000) // valid scratchpad address
     );
 }
 
 // Bluescreen Exception Handler
 void screenHandler(PspDebugRegBlock * regs)
 {
-	initScreen(DisplaySetFrameBuf);
-	colorDebug(0xFF0000); // Blue Screen of Death
-	PRTSTR("Exception caught!");
+    initScreen(DisplaySetFrameBuf);
+    colorDebug(0xFF0000); // Blue Screen of Death
+    PRTSTR("Exception caught!");
     PRTSTR1("Exception - %s", codeTxt[(regs->cause >> 2) & 31]);
-	PRTSTR1("EPC       - %p", regs->epc);
-	PRTSTR1("Cause     - %p", regs->cause);
-	PRTSTR1("Status    - %p", regs->status);
-	PRTSTR1("BadVAddr  - %p", regs->badvaddr);
-	for(int i = 0; i < 32; i+=4){
-		PRTSTR8("%s:%p %s:%p %s:%p %s:%p", regName[i], regs->r[i],
-				regName[i+1], regs->r[i+1], regName[i+2], regs->r[i+2], regName[i+3], regs->r[i+3]);
-	}
-	u32 epc = regs->epc;
-	if (isValidAddr(epc)){
-	    PRTSTR1("Instruction at EPC: %p", _lw(epc)); // TODO: disassemble instruction
-	}
-	u32 ra = regs->r[31];
-	if (isValidAddr(ra)){
-	    PRTSTR1("Instruction at RA:  %p", _lw(ra)); // TODO: disassemble instruction
-	}
-	
-	// find crashing module
-	if ((ra&KERNEL_BASE)==KERNEL_BASE){
-	    SceModule2* mod = sceKernelFindModuleByName("sceSystemMemoryManager");
-	    while (mod){
-	        u32 addr = mod->text_addr;
-	        u32 top = addr+mod->text_size;
-	        if (ra >= addr && ra < top){
-	            PRTSTR2("Module: %s @ %p", mod->modname, ra-addr);
-	            break;
-	        }
-	        mod = mod->next;
-	    }
-	}
-	
-	while (1){};
+    PRTSTR1("EPC       - %p", regs->epc);
+    PRTSTR1("Cause     - %p", regs->cause);
+    PRTSTR1("Status    - %p", regs->status);
+    PRTSTR1("BadVAddr  - %p", regs->badvaddr);
+    for(int i = 0; i < 32; i+=4){
+        PRTSTR8("%s:%p %s:%p %s:%p %s:%p", regName[i], regs->r[i],
+                regName[i+1], regs->r[i+1], regName[i+2], regs->r[i+2], regName[i+3], regs->r[i+3]);
+    }
+    u32 epc = regs->epc;
+    if (isValidAddr(epc)){
+        PRTSTR1("Instruction at EPC: %p", _lw(epc)); // TODO: disassemble instruction
+    }
+    u32 ra = regs->r[31];
+    if (isValidAddr(ra)){
+        PRTSTR1("Instruction at RA:  %p", _lw(ra)); // TODO: disassemble instruction
+    }
+    
+    // find crashing module
+    if ((ra&KERNEL_BASE)==KERNEL_BASE){
+        SceModule2* mod = sceKernelFindModuleByName("sceSystemMemoryManager");
+        while (mod){
+            u32 addr = mod->text_addr;
+            u32 top = addr+mod->text_size;
+            if (ra >= addr && ra < top){
+                PRTSTR2("Module: %s @ %p", mod->modname, ra-addr);
+                break;
+            }
+            mod = mod->next;
+        }
+    }
+    
+    int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = (void *)FindFunction("sceController_Service", "sceCtrl", 0x3A622550);
+    if (CtrlPeekBufferPositive){
+        PRTSTR("Press cross to soft reset");
+        PRTSTR("Press square to hard reset");
+        PRTSTR("Press triangle to shudown");
+    }
+    
+    SceCtrlData data;
+    memset(&data, 0, sizeof(data));
+    
+    while (1){
+        if (CtrlPeekBufferPositive){
+            CtrlPeekBufferPositive(&data, 1);
+            if((data.Buttons & PSP_CTRL_CROSS) == PSP_CTRL_CROSS){
+                if (ark_config->recovery) exitToLauncher();
+                else sctrlKernelExitVSH(NULL);
+            }
+            else if((data.Buttons & PSP_CTRL_SQUARE) == PSP_CTRL_SQUARE){
+                void (*ColdReset)(int) = FindFunction("scePower_Service", "scePower", 0x0442D852);
+                if (ColdReset) ColdReset(0);
+            }
+            else if((data.Buttons & PSP_CTRL_TRIANGLE) == PSP_CTRL_TRIANGLE){
+                void (*Shutdown)() = FindFunction("scePower_Service", "scePower", 0x2B7C7CF4);
+                if (Shutdown) Shutdown();
+            }
+        }
+    };
 }
 
 // Register Exception Handler
 void registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * regs)
 {
-	// Valid Arguments
-	if(handler != NULL && regs != NULL)
-	{
-		// Save Arguments
-		curr_handler = handler;
-		exception_regs = regs;
-	}
-	
-	// Register default screen Handler
-	else
-	{
-		// Save Arguments
-		curr_handler = screenHandler;
-		exception_regs = &screenRegs;
-	}
-	
-	// Register Exception Handler
-	sceKernelRegisterDefaultExceptionHandler((void *)_pspDebugExceptionHandler);
+    // Valid Arguments
+    if(handler != NULL && regs != NULL)
+    {
+        // Save Arguments
+        curr_handler = handler;
+        exception_regs = regs;
+    }
+    
+    // Register default screen Handler
+    else
+    {
+        // Save Arguments
+        curr_handler = screenHandler;
+        exception_regs = &screenRegs;
+    }
+    
+    // Register Exception Handler
+    sceKernelRegisterDefaultExceptionHandler((void *)_pspDebugExceptionHandler);
 }
 
 void doKernelBreakpoint(){
     u32* framebuf = (u32*)0x44000000;
     for(int i = 0; i < 0x100000; i++)
     {
-	    // Set Pixel Color
-	    framebuf[i] = 0xff;
+        // Set Pixel Color
+        framebuf[i] = 0xff;
     }
      _sw(0x44000000, 0xBC800100);
     while (1){};

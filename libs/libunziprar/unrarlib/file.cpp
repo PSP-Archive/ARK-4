@@ -1,19 +1,19 @@
 #include "rar.hpp"
 
-#define O_RDONLY	0x0001
-#define O_WRONLY	0x0002
-#define O_RDWR	(O_RDONLY | O_WRONLY)
-#define O_NBLOCK	0x0004
-#define O_DIROPEN	0x0008	// Internal use for dopen
-#define O_APPEND	0x0100
-#define O_CREAT	0x0200
-#define O_TRUNC	0x0400
-#define	O_EXCL	0x0800
-#define O_NOWAIT	0x8000
+#define O_RDONLY    0x0001
+#define O_WRONLY    0x0002
+#define O_RDWR    (O_RDONLY | O_WRONLY)
+#define O_NBLOCK    0x0004
+#define O_DIROPEN    0x0008    // Internal use for dopen
+#define O_APPEND    0x0100
+#define O_CREAT    0x0200
+#define O_TRUNC    0x0400
+#define    O_EXCL    0x0800
+#define O_NOWAIT    0x8000
 
-#define SEEK_SET	0
-#define SEEK_CUR	1
-#define SEEK_END	2
+#define SEEK_SET    0
+#define SEEK_CUR    1
+#define SEEK_END    2
 
 static File *CreatedFiles[256];
 static int RemoveCreatedActive=0;
@@ -61,16 +61,16 @@ void File::operator = (File &SrcFile)
 
 int mymkdirR(char*dirname)
 {
-	printf("MakeDir:%s\n",dirname);
+    printf("MakeDir:%s\n",dirname);
     int ret=0;
-	ret = sceIoMkdir(dirname,0777);
+    ret = sceIoMkdir(dirname,0777);
     //ret = mkdir (dirname,0777);
     return ret;
 }
 
 int mymakedirR(char *newdir)
 {
-	//printf("CallmymakedirR");
+    //printf("CallmymakedirR");
   char *buffer ;
   char *p;
   int  len = (int)strlen(newdir);
@@ -115,26 +115,26 @@ int mymakedirR(char *newdir)
 }
 
 char* stripToSlashR(char* string){
-	//printf("CallStrip");
+    //printf("CallStrip");
 int i=0;
 int len=0;
 len = strlen(string);
 for(i=len;i>0;i--){
-	if(string[i] == '/'){break;}else{string[i] = '\0';}
+    if(string[i] == '/'){break;}else{string[i] = '\0';}
 }
 return string;
 }
 
 bool File::Open(const char *Name,const wchar *NameW,bool OpenShared,bool Update)
 {
-	//printf("Open:%s",Name);
-	/*
-	printf("Open:%s",Name);
-	//create dir if necessary
-	char* tempname;tempname = (char*)memalign(16,512);
-	sprintf(tempname,"%s",Name);
-	mymakedirR(stripToSlashR(tempname));
-	free(tempname);*/
+    //printf("Open:%s",Name);
+    /*
+    printf("Open:%s",Name);
+    //create dir if necessary
+    char* tempname;tempname = (char*)memalign(16,512);
+    sprintf(tempname,"%s",Name);
+    mymakedirR(stripToSlashR(tempname));
+    free(tempname);*/
 
   ErrorType=FILE_SUCCESS;
   SceUID hNewFile;
@@ -178,7 +178,7 @@ bool File::Open(const char *Name,const wchar *NameW,bool OpenShared,bool Update)
   if (!OpenShared && Update && handle>=0)
   {
     //close(handle);
-	  sceIoClose(handle);
+      sceIoClose(handle);
     return(false);
   }*/
 #endif
@@ -199,7 +199,7 @@ bool File::Open(const char *Name,const wchar *NameW,bool OpenShared,bool Update)
   bool Success=hNewFile!=BAD_HANDLE;
   if (Success)
   {
-	  //dummy_printf("Success!");
+      //dummy_printf("Success!");
     hFile=hNewFile;
     if (NameW!=NULL)
       strcpyw(FileNameW,NameW);
@@ -235,18 +235,18 @@ bool File::WOpen(const char *Name,const wchar *NameW)
 
 bool File::Create(const char *Name,const wchar *NameW)
 {
-	//sceIoMkdir("ms0:/Dae",0777);
-	//printf("Create:%s",Name);
-	//create dir if necessary
-	char* tempname;tempname = (char*)memalign(16,512);
-	char* tempname2;tempname2 = (char*)memalign(16,512);
-	sprintf(tempname,"%s",Name);
-	sprintf(tempname2,"%s",stripToSlashR(tempname));
-	tempname2[strlen(tempname2)-1] = '\0';
-	//printf("MakeDirC:%s\n",tempname2);
-	mymakedirR(tempname2);
-	free(tempname);
-	free(tempname2);
+    //sceIoMkdir("ms0:/Dae",0777);
+    //printf("Create:%s",Name);
+    //create dir if necessary
+    char* tempname;tempname = (char*)memalign(16,512);
+    char* tempname2;tempname2 = (char*)memalign(16,512);
+    sprintf(tempname,"%s",Name);
+    sprintf(tempname2,"%s",stripToSlashR(tempname));
+    tempname2[strlen(tempname2)-1] = '\0';
+    //printf("MakeDirC:%s\n",tempname2);
+    mymakedirR(tempname2);
+    free(tempname);
+    free(tempname2);
 
 #ifdef _WIN_32
   if (WinNT() && NameW!=NULL && *NameW!=0)
@@ -321,16 +321,16 @@ bool File::Close()
 #ifdef _WIN_32
         Success=CloseHandle(hFile);
 #else
-		//dummy_printf("Closing");
-		//dummy_printf("Closing:%s",this->FileName);
-		Success=sceIoClose(hFile)>=0;
+        //dummy_printf("Closing");
+        //dummy_printf("Closing:%s",this->FileName);
+        Success=sceIoClose(hFile)>=0;
         //Success=0;//fclose(hFile)!=EOF;
 #endif
         if (Success || !RemoveCreatedActive)
           for (int I=0;I<sizeof(CreatedFiles)/sizeof(CreatedFiles[0]);I++)
             if (CreatedFiles[I]==this)
             {
-				//dummy_printf("DoneClose");
+                //dummy_printf("DoneClose");
               CreatedFiles[I]=NULL;
               break;
             }
@@ -358,7 +358,7 @@ void File::Flush()
 
 bool File::Delete()
 {
-	//dummy_printf("Delete");
+    //dummy_printf("Delete");
   if (HandleType!=FILE_HANDLENORMAL || !AllowDelete)
     return(false);
   if (hFile!=BAD_HANDLE)
@@ -369,7 +369,7 @@ bool File::Delete()
 
 bool File::Rename(const char *NewName)
 {
-	//dummy_printf("Rename");
+    //dummy_printf("Rename");
   bool Success=strcmp(FileName,NewName)==0;
   if (!Success)
     Success=sceIoRename(FileName,NewName)==0;
@@ -384,7 +384,7 @@ bool File::Rename(const char *NewName)
 
 void File::Write(const void *Data,int Size)
 {
-	//dummy_printf("Writing:%s",this->FileName);
+    //dummy_printf("Writing:%s",this->FileName);
   if (Size==0)
     return;
 #ifndef _WIN_CE
@@ -422,14 +422,14 @@ void File::Write(const void *Data,int Size)
     else
       Success=WriteFile(hFile,Data,Size,&Written,NULL);
 #else
-	//dummy_printf("DoWrite");
-	u8* data2;data2=(u8*)memalign(64,Size);
-	memcpy(data2,Data,Size);
+    //dummy_printf("DoWrite");
+    u8* data2;data2=(u8*)memalign(64,Size);
+    memcpy(data2,Data,Size);
     int Written=sceIoWrite(hFile,data2,Size);//fwrite(Data,1,Size,hFile);
-	//CODE BRUTALLY REMOVED
-	//dummy_printf("%i",Written);
-	free(data2);
-	if(Written==Size){}else{dummy_printf("hFileWERROR!%s!",FileName);}
+    //CODE BRUTALLY REMOVED
+    //dummy_printf("%i",Written);
+    free(data2);
+    if(Written==Size){}else{dummy_printf("hFileWERROR!%s!",FileName);}
     Success=Written==Size;// && !0;ferror(hFile);
 #endif
     if (!Success && AllowExceptions && HandleType==FILE_HANDLENORMAL)
@@ -445,7 +445,7 @@ void File::Write(const void *Data,int Size)
       if (ErrHandler.AskRepeatWrite(FileName))
       {
 #ifndef _WIN_32
-		  //CODE BRUTALLY REMOVED
+          //CODE BRUTALLY REMOVED
         //clearerr(hFile);
 #endif
         if (Written<Size && Written>0)
@@ -462,7 +462,7 @@ void File::Write(const void *Data,int Size)
 
 int File::Read(void *Data,int Size)
 {
-	//dummy_printf("Read:%s",this->FileName);
+    //dummy_printf("Read:%s",this->FileName);
   Int64 FilePos;
   if (IgnoreReadErrors)
     FilePos=Tell();
@@ -500,7 +500,7 @@ int File::Read(void *Data,int Size)
 
 int File::DirectRead(void *Data,int Size)
 {
-	//dummy_printf("DR");
+    //dummy_printf("DR");
 #ifdef _WIN_32
   const int MaxDeviceRead=20000;
 #endif
@@ -530,9 +530,9 @@ int File::DirectRead(void *Data,int Size)
 #else
   if (LastWrite)
   {
-	  //CODE BRUTALLY REMOVED
+      //CODE BRUTALLY REMOVED
     //fflush(hFile);
-	  //dummy_printf("flushA");
+      //dummy_printf("flushA");
     LastWrite=false;
   }
   if(hFile){}else{dummy_printf("hFileERROR!");}
@@ -575,7 +575,7 @@ bool File::RawSeek(Int64 Offset,int Method)
 #else
   //if (fseek(hFile,int64to32(Offset),Method)!=0)
   //dummy_printf("Seek:
-	if(sceIoLseek(hFile,(SceOff)int64to32(Offset),Method)<0)
+    if(sceIoLseek(hFile,(SceOff)int64to32(Offset),Method)<0)
 #endif
     return(false);
 #endif
@@ -671,7 +671,7 @@ void File::SetCloseFileTime(RarTime *ftm,RarTime *fta)
 
 void File::SetCloseFileTimeByName(const char *Name,RarTime *ftm,RarTime *fta)
 {
-	/*
+    /*
 #if defined(_UNIX) || defined(_EMX)
   bool setm=ftm!=NULL && ftm->IsSet();
   bool seta=fta!=NULL && fta->IsSet();

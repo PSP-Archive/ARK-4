@@ -169,11 +169,11 @@ LvX7LaX28fIf6UnyeXA4O0F0cmrr3gp3R19XhYAgf9D4ykgMfwAJ2HCEMBMAAA==
 """
 
 def usage():
-	print ("Usage: %s <infile> [short_name] [detail_name]" % (sys.argv[0]))
-	print ("\t - Transfer ISO to CMA psp savedata directory")
+    print ("Usage: %s <infile> [short_name] [detail_name]" % (sys.argv[0]))
+    print ("\t - Transfer ISO to CMA psp savedata directory")
 
 def replaceBinary(data, pos, replace):
-	return data[0:pos] + replace + data[pos + len(replace):]
+    return data[0:pos] + replace + data[pos + len(replace):]
 
 SHORT_NAME_OFFSET = 0x510
 SHORT_NAME_MAX_LENGTH = 0x40
@@ -181,116 +181,116 @@ LONG_NAME_OFFSET = 0x12B0
 LONG_NAME_MAX_LENGTH = 0x80
 
 def gzipDecompress(data):
-	sio = StringIO.StringIO(data)
+    sio = StringIO.StringIO(data)
 
-	with gzip.GzipFile(fileobj=sio, mode='rb') as gz:
-		data = gz.read()
-		return data
+    with gzip.GzipFile(fileobj=sio, mode='rb') as gz:
+        data = gz.read()
+        return data
 
 def getISOFile(isofn, path):
-	iso = ISO(isofn)
-	re = iso.findPath(path)
+    iso = ISO(isofn)
+    re = iso.findPath(path)
 
-	if re:
-		lba, fileSize = re
-		return iso.read(lba * ISO_SECTOR_SIZE, fileSize)
-	else:
-		return None
+    if re:
+        lba, fileSize = re
+        return iso.read(lba * ISO_SECTOR_SIZE, fileSize)
+    else:
+        return None
 
 def getPARAM_SFO(isofn):
-	return getISOFile(isofn, "/PSP_GAME/PARAM.SFO")
+    return getISOFile(isofn, "/PSP_GAME/PARAM.SFO")
 
 def getICON0(isofn):
-	return getISOFile(isofn, "/PSP_GAME/ICON0.PNG")
+    return getISOFile(isofn, "/PSP_GAME/ICON0.PNG")
 
 def getParamData(data, pos, size):
-	return data[pos:pos+size]
+    return data[pos:pos+size]
 
 def getString(data, pos):
-	r = []
+    r = []
 
-	while pos < len(data) and data[pos] != '\0':
-		r.append(data[pos])
-		pos += 1
+    while pos < len(data) and data[pos] != '\0':
+        r.append(data[pos])
+        pos += 1
 
-	return "".join(r)
+    return "".join(r)
 
 def getGameTitle(param):
-	s = struct.Struct("<IIIII")
-	s = s.unpack(param[0:s.size])
-	nameOff, valOff, count = s[2:5]
+    s = struct.Struct("<IIIII")
+    s = s.unpack(param[0:s.size])
+    nameOff, valOff, count = s[2:5]
 
-	s = struct.Struct("<HBBIIHH")
-	i = 0
+    s = struct.Struct("<HBBIIHH")
+    i = 0
 
-	while i < count:
-		pos = 0x14+i*s.size
-		v = s.unpack(param[pos:pos+s.size])
-		name = getString(param, nameOff + v[0])
+    while i < count:
+        pos = 0x14+i*s.size
+        v = s.unpack(param[pos:pos+s.size])
+        name = getString(param, nameOff + v[0])
 
-		if name == "TITLE":
-			return getParamData(param, valOff + v[5], v[3])
-		i += 1
+        if name == "TITLE":
+            return getParamData(param, valOff + v[5], v[3])
+        i += 1
 
-	return None
+    return None
 
 def createSave(isofn, shortfn, longfn):
-	sfo = gzipDecompress(PARAM_SFO.decode("base64"))
-	data_bin=DATA_BIN.decode("base64")
+    sfo = gzipDecompress(PARAM_SFO.decode("base64"))
+    data_bin=DATA_BIN.decode("base64")
 
-	if not shortfn:
-		shortfn = os.path.splitext(os.path.split(isofn)[-1])[0]
+    if not shortfn:
+        shortfn = os.path.splitext(os.path.split(isofn)[-1])[0]
 
-	shortname = shortfn[0:min(SHORT_NAME_MAX_LENGTH, len(shortfn))]
+    shortname = shortfn[0:min(SHORT_NAME_MAX_LENGTH, len(shortfn))]
 
-	if not longfn:
-		try:
-			param = getPARAM_SFO(isofn)
-		except RuntimeError as e:
-			param = None
+    if not longfn:
+        try:
+            param = getPARAM_SFO(isofn)
+        except RuntimeError as e:
+            param = None
 
-		if not param:
-			longfn = os.path.splitext(os.path.split(isofn)[-1])[0]
-			longfn += "\00"
-		else:
-			longfn = getGameTitle(param)
+        if not param:
+            longfn = os.path.splitext(os.path.split(isofn)[-1])[0]
+            longfn += "\00"
+        else:
+            longfn = getGameTitle(param)
 
-	longname = longfn[0:min(LONG_NAME_MAX_LENGTH, len(longfn))]
+    longname = longfn[0:min(LONG_NAME_MAX_LENGTH, len(longfn))]
 
-	sfo = replaceBinary(sfo, SHORT_NAME_OFFSET, shortname + "\00")
-	sfo = replaceBinary(sfo, LONG_NAME_OFFSET, longname)
-	sfo = replaceBinary(sfo, 0x48, struct.pack('<B', len(shortname)+1))
-	sfo = replaceBinary(sfo, 0x88, struct.pack('<B', len(longname)))
-	shortname = os.path.join(CMA_PSP_SAVE_ROOT, shortname)
+    sfo = replaceBinary(sfo, SHORT_NAME_OFFSET, shortname + "\00")
+    sfo = replaceBinary(sfo, LONG_NAME_OFFSET, longname)
+    sfo = replaceBinary(sfo, 0x48, struct.pack('<B', len(shortname)+1))
+    sfo = replaceBinary(sfo, 0x88, struct.pack('<B', len(longname)))
+    shortname = os.path.join(CMA_PSP_SAVE_ROOT, shortname)
 
-	try:
-		os.mkdir(shortname)
-	except OSError as e:
-		pass
+    try:
+        os.mkdir(shortname)
+    except OSError as e:
+        pass
 
-	with open(os.path.join(shortname, "PARAM.SFO"), "wb") as of:
-		of.write(sfo)
+    with open(os.path.join(shortname, "PARAM.SFO"), "wb") as of:
+        of.write(sfo)
 
-	with open(os.path.join(shortname, "DATA.BIN"), "wb") as of:
-		of.write(data_bin)
+    with open(os.path.join(shortname, "DATA.BIN"), "wb") as of:
+        of.write(data_bin)
 
-	try:
-		icon0 = getICON0(isofn)
-	except RuntimeError as e:
-		icon0 = None
+    try:
+        icon0 = getICON0(isofn)
+    except RuntimeError as e:
+        icon0 = None
 
-	if icon0:
-		with open(os.path.join(shortname, "ICON0.PNG"), "wb") as of:
-			of.write(icon0)
+    if icon0:
+        with open(os.path.join(shortname, "ICON0.PNG"), "wb") as of:
+            of.write(icon0)
 
-	shutil.copy(isofn, shortname)
-	print ("%s transfer as %s done" %(isofn, shortname))
+    shutil.copy(isofn, shortname)
+    print ("%s transfer as %s done" %(isofn, shortname))
 
 def checkString(string):
-	for s in string:
-		if s not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' and s not in '0123456789' and s not in '.':
-			return False
-	return True
+    for s in string:
+        if s not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' and s not in '0123456789' and s not in '.':
+            return False
+    return True
 
 '''Check filename for 1.80 CMA limit
 1. 8.3 filename
@@ -298,42 +298,42 @@ def checkString(string):
 3. only A-Z, 0-9 allowed
 '''
 def checkFilename(fn):
-	basename = os.path.basename(fn)
+    basename = os.path.basename(fn)
 
-	if not checkString(basename):
-		return False
+    if not checkString(basename):
+        return False
 
-	prefix, suffix = os.path.splitext(basename)
+    prefix, suffix = os.path.splitext(basename)
 
-	if len(suffix) > 3 + 1:
-		return False
+    if len(suffix) > 3 + 1:
+        return False
 
-	if len(prefix) > 8:
-		return False
+    if len(prefix) > 8:
+        return False
 
-	return True 
+    return True 
 
 def main():
-	if len(sys.argv) < 2:
-		usage()
-		sys.exit(1)
+    if len(sys.argv) < 2:
+        usage()
+        sys.exit(1)
 
-	isofn = sys.argv[1]
+    isofn = sys.argv[1]
 
-	if not checkFilename(isofn):
-		print ("WARNING: CMA for FW 1.80 only accepts 8.3 file name with only UPPERCASE letters and digits")
+    if not checkFilename(isofn):
+        print ("WARNING: CMA for FW 1.80 only accepts 8.3 file name with only UPPERCASE letters and digits")
 
-	if len(sys.argv) >= 3:
-		shortfn = sys.argv[2]
-	else:
-		shortfn = ""
+    if len(sys.argv) >= 3:
+        shortfn = sys.argv[2]
+    else:
+        shortfn = ""
 
-	if len(sys.argv) >= 4:
-		longfn = sys.argv[3]
-	else:
-		longfn = ""
+    if len(sys.argv) >= 4:
+        longfn = sys.argv[3]
+    else:
+        longfn = ""
 
-	createSave(isofn, shortfn, longfn)
+    createSave(isofn, shortfn, longfn)
 
 if __name__ == "__main__":
-	main()
+    main()

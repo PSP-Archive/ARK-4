@@ -56,34 +56,34 @@ Dev Sub
 */
 typedef enum{
     DEV_UNK = 0b0000,
-	PSP_ORIG = 0b0100,
-	//PSP_SLIM = 0b0101,
-	//PSP_GO = 0b0111,
-	PS_VITA = 0b1000,
-	//PSV_MINIS = 0b1001,
-	PSV_POPS = 0b1010,
-	DEV_MASK = 0b1100,
-	SUB_DEV_MARK = 0b1111,
+    PSP_ORIG = 0b0100,
+    //PSP_SLIM = 0b0101,
+    //PSP_GO = 0b0111,
+    PS_VITA = 0b1000,
+    //PSV_MINIS = 0b1001,
+    PSV_POPS = 0b1010,
+    DEV_MASK = 0b1100,
+    SUB_DEV_MARK = 0b1111,
 }ExecMode;
 
 // Different PSP models
 enum {
-	PSP_1000 = 0,
-	PSP_2000 = 1,
-	PSP_3000 = 2,
-	PSP_4000 = 3,
-	PSP_GO   = 4,
-	PSP_7000 = 6,
-	PSP_9000 = 8,
-	PSP_11000 = 10,
+    PSP_1000 = 0,
+    PSP_2000 = 1,
+    PSP_3000 = 2,
+    PSP_4000 = 3,
+    PSP_GO   = 4,
+    PSP_7000 = 6,
+    PSP_9000 = 8,
+    PSP_11000 = 10,
 };
 
 
 typedef struct ARKConfig{
-	char arkpath[ARK_PATH_SIZE-20]; // leave enough room to concatenate files
-	char exploit_id[20];
-	unsigned char exec_mode;
-	unsigned char recovery;
+    char arkpath[ARK_PATH_SIZE-20]; // leave enough room to concatenate files
+    char exploit_id[20];
+    unsigned char exec_mode;
+    unsigned char recovery;
 } ARKConfig;
 
 #define IS_PSP(exec_mode) ((exec_mode&DEV_MASK)==PSP_ORIG)

@@ -20,30 +20,30 @@
 // Replace Character in String
 unsigned int strreplaceall(char * base, char from, char to)
 {
-	// Replaced Characters
-	unsigned int replaced = 0;
-	
-	// Position
-	unsigned int position = 0;
-	
-	// Check String
-	while(base[position] != 0)
-	{
-		// Target Character
-		if(base[position] == from)
-		{
-			// Replace Character
-			base[position] = to;
-			
-			// Increase Counter
-			replaced++;
-		}
-		
-		// Change Position
-		position++;
-	}
-	
-	// Return Replaced Characters
-	return replaced;
+    // Replaced Characters
+    unsigned int replaced = 0;
+    
+    // Position
+    unsigned int position = 0;
+    
+    // Check String
+    while(base[position] != 0)
+    {
+        // Target Character
+        if(base[position] == from)
+        {
+            // Replace Character
+            base[position] = to;
+            
+            // Increase Counter
+            replaced++;
+        }
+        
+        // Change Position
+        position++;
+    }
+    
+    // Return Replaced Characters
+    return replaced;
 }
 

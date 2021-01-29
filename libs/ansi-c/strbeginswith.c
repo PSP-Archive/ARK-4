@@ -20,30 +20,30 @@
 // Check String Prefix
 int strbeginswith(char * base, char * prefix)
 {
-	// Result
-	int result = 1;
-	
-	// Position
-	unsigned int position = 0;
-	
-	// Compare
-	while(prefix[position] != 0)
-	{
-		// Invalid Match
-		if(base[position] != prefix[position])
-		{
-			// Set Result
-			result = 0;
-			
-			// Stop Comparison
-			break;
-		}
-		
-		// Change Position
-		position++;
-	}
-	
-	// Return Result
-	return result;
+    // Result
+    int result = 1;
+    
+    // Position
+    unsigned int position = 0;
+    
+    // Compare
+    while(prefix[position] != 0)
+    {
+        // Invalid Match
+        if(base[position] != prefix[position])
+        {
+            // Set Result
+            result = 0;
+            
+            // Stop Comparison
+            break;
+        }
+        
+        // Change Position
+        position++;
+    }
+    
+    // Return Result
+    return result;
 }
 

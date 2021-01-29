@@ -10,9 +10,9 @@
 // Vita Buffered RAM flash0 Filesystem Structure
 typedef struct VitaFlashBufferFile
 {
-	char * name;
-	void * content;
-	unsigned int size;
+    char * name;
+    void * content;
+    unsigned int size;
 } VitaFlashBufferFile;
 
 int patchKermitPeripheral(KernelFunctions*);

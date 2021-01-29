@@ -23,9 +23,9 @@
 // Hook Table Entry
 struct HookMap
 {
-	char * libName;
-	unsigned int nid;
-	void * funcAddr;
+    char * libName;
+    unsigned int nid;
+    void * funcAddr;
 };
 
 // Fetch Original Function Pointer

@@ -154,9 +154,9 @@ static void alsa_feed(void *pSound, int lBytes)
 
 void out_register_alsa(struct out_driver *drv)
 {
-	drv->name = "alsa";
-	drv->init = alsa_init;
-	drv->finish = alsa_finish;
-	drv->busy = alsa_busy;
-	drv->feed = alsa_feed;
+    drv->name = "alsa";
+    drv->init = alsa_init;
+    drv->finish = alsa_finish;
+    drv->busy = alsa_busy;
+    drv->feed = alsa_feed;
 }

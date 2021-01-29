@@ -39,11 +39,11 @@ static void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned 
 
 static inline void open_flash(){
     while(k_tbl->IoUnassign("flash0:") < 0) {
-		k_tbl->KernelDelayThread(500000);
-	}
-	while (k_tbl->IoAssign("flash0:", "lflash0:0,0", "flashfat0:", 0, NULL, 0)<0){
-	    k_tbl->KernelDelayThread(500000);
-	}
+        k_tbl->KernelDelayThread(500000);
+    }
+    while (k_tbl->IoAssign("flash0:", "lflash0:0,0", "flashfat0:", 0, NULL, 0)<0){
+        k_tbl->KernelDelayThread(500000);
+    }
 }
 
 static inline isVitaFile(char* filename){

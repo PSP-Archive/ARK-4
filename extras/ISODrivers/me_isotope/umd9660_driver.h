@@ -2,7 +2,7 @@
 
 #define __UMD9660_DRIVER_H__
 
-#define SECTOR_SIZE	0x800
+#define SECTOR_SIZE    0x800
 
 
 typedef struct

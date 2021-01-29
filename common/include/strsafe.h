@@ -28,12 +28,12 @@ int strcasecmp(const char *s1, const char *s2);
 
 static inline size_t strcpy_s(char *strDestination, size_t numberOfElements, const char *strSource)
 {
-	return strncpy_s(strDestination, numberOfElements, strSource, -1);
+    return strncpy_s(strDestination, numberOfElements, strSource, -1);
 }
 
 static inline size_t strcat_s(char *strDestination, size_t numberOfElements, const char *strSource)
 {
-	return strncat_s(strDestination, numberOfElements, strSource, -1);
+    return strncat_s(strDestination, numberOfElements, strSource, -1);
 }
 
 #endif

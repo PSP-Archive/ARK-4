@@ -113,11 +113,11 @@ static inline void MixXA(void)
 
 static unsigned long timeGetTime_spu()
 {
-	unsigned long long tick = 0;
-	sceRtcGetCurrentTick(&tick);
-	
-	// return runtime milliseconds
-	return (unsigned long)(tick / (sceRtcGetTickResolution() / 1000.0f));
+    unsigned long long tick = 0;
+    sceRtcGetCurrentTick(&tick);
+    
+    // return runtime milliseconds
+    return (unsigned long)(tick / (sceRtcGetTickResolution() / 1000.0f));
 }
 
 ////////////////////////////////////////////////////////////////////////
