@@ -91,7 +91,9 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 	{
 	    // can use screen now
 	    DisplaySetFrameBuf = (void *)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
+	    #ifdef DEBUG
 	    initScreen(DisplaySetFrameBuf);
+	    #endif
 		// Patch loadexec_01g.prx
 		patchLoadExec(loadexec);
 		goto flush;

@@ -22,6 +22,8 @@ STMOD_HANDLER previous = NULL;
 // for some model specific patches
 u32 psp_model = 0;
 
+extern void SetSpeed(int cpuspd, int busspd);
+
 // Flush Instruction and Data Cache
 void flushCache()
 {
@@ -77,17 +79,19 @@ static void patch_scePower_Service(SceModule2* mod)
 }
 
 static void patch_tekken(SceModule2* mod){
-    u32 func = sctrlHENFindImport(mod->modname, "scePower", 0x34F9C463);
+    u32 func = sctrlHENFindImport("tekken", "scePower", 0x34F9C463);
 	_sw(JR_RA, func);
 	_sw(LI_V0(222), func+4);
 }
 
 static void PSPOnModuleStart(SceModule2 * mod){
 
+    /*
 	if (strcmp(mod->modname, "tekken") == 0) { // fixes Tekken 6 with any CPU speed
 		patch_tekken(mod);
 		goto flush;
     }
+    */
     
 	if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
 		patch_sceUmdMan_driver((SceModule*)mod);
@@ -110,16 +114,15 @@ static void PSPOnModuleStart(SceModule2 * mod){
 	}
 	
 	if (strcmp(mod->modname, "sceLoadExec") == 0){
-		if (psp_model != PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
+		if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
 			prepatch_partitions();
 			goto flush;
 		}
 	}
 	
 	if (strcmp(mod->modname, "sceMediaSync") == 0){
-	    int (*set_clock)(int, int, int) = (void*)FindFunction("scePower_Service", "scePower", 0x737486F2);
-		set_clock(333, 333, 166);
-		if (psp_model != PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
+		SetSpeed(333, 166); // overclock
+		if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
 			patch_partitions();
 			goto flush;
 		}

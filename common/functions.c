@@ -435,6 +435,19 @@ u32 findRefInGlobals(char* libname, u32 addr, u32 ptr){
 	return addr;
 }
 
+u32 patchNextInstruction(u32 orig, u32 instr, u32 addr, int skip){
+    for (;; addr+=4){
+        if (_lw(addr) == orig){
+            if (skip==0){
+                _sw(instr, addr);
+                break;
+            }
+            else skip--;
+        }
+    }
+    return addr;
+}
+
 int p5_open_savedata(int mode)
 {
 	p5_close_savedata();

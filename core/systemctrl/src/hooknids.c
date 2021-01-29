@@ -129,7 +129,7 @@ int hookImportByNID(SceModule2 * pMod, char * library, unsigned int nid, void * 
 	else
 	{
 		// Syscall Hook
-		if((stub & USER_BASE) == USER_BASE && (func_int & KERNEL_BASE) == KERNEL_BASE)
+		if((stub & 0x80000000) == 0 && (func_int & KERNEL_BASE) == KERNEL_BASE)
 		{
 			// Query Syscall Number
 			int syscall = sceKernelQuerySystemCall(func);

@@ -438,7 +438,7 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 	//result
 	int result = 0;
 
-	printk("%s: %s %s\n", __func__, file, param->key);
+	//printk("%s: %s %s\n", __func__, file, param->key);
 	
 	//enable high memory on demand
 	/*
@@ -446,14 +446,15 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 	sctrlSEGetConfig(&config);
 	if(config.retail_high_memory) sctrlHENSetMemory(55, 0);
 	*/
+
 	//virtual iso eboot detected
 	if (is_iso_eboot(file)) {
 		u32 k1 = pspSdkSetK1(0);
 		result = vpbp_loadexec(file, param);
 		pspSdkSetK1(k1);
-
 		return result;
 	}
+	
     u32 k1 = pspSdkSetK1(0);
 	//forward to ms0 handler
 	/*if(strncmp(file, "ms", 2) == 0)*/ result = sceKernelLoadExecVSHMs2(file, param);

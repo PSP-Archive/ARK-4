@@ -195,6 +195,9 @@ extern u32 _findJAL(u32 addr, int reversed, int skip);
 u32 FindFirstBEQ(u32 addr);
 extern u32 findRefInGlobals(char* libname, u32 addr, u32 ptr);
 
+// search for (starting from given address) and replace the next instruction with the one given (optional skip parameter to skips first few)
+extern u32 patchNextInstruction(u32 orig, u32 instr, u32 addr, int skip);
+
 extern int p5_open_savedata(int mode);
 extern int p5_close_savedata();
 

@@ -25,14 +25,11 @@
 #include <string.h>
 #include <pspumd.h>
 #include "main.h"
-//#include "utils.h"
 #include "systemctrl.h"
 #include "systemctrl_se.h"
 #include "macros.h"
 #include "globals.h"
 #include "functions.h"
-//#include "printk.h"
-//#include "vshctrl_patch_offset.h"
 
 PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 0);
 
@@ -76,7 +73,6 @@ int module_start(SceSize args, void* argp)
 	printk("VshCtrl started\n");
 	psp_model = sceKernelGetModel();
 	psp_fw_version = sceKernelDevkitVersion();
-	//setup_patch_offset_table(psp_fw_version);
 	vshpatch_init();
 
 	// always reset to NORMAL mode in VSH

@@ -25,8 +25,6 @@
 #include "systemctrl_se.h"
 #include "systemctrl_private.h"
 #include "isoreader.h"
-//#include "printk.h"
-//#include "utils.h"
 #include "strsafe.h"
 #include "virtual_pbp.h"
 #include "main.h"

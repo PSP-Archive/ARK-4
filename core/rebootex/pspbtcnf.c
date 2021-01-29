@@ -255,10 +255,11 @@ int _UnpackBootConfig(char **p_buffer, int length)
 		    newsize = patch_bootconf_np9660(buffer, length);
 			if (newsize > 0) result = newsize;
 		case MODE_INFERNO:
-		default:
 			newsize = patch_bootconf_inferno(buffer, length);
 			if (newsize > 0) result = newsize;
 			break;
+		default:
+		    break;
 	}
 	
 	return result;

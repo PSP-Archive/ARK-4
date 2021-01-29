@@ -1,5 +1,5 @@
 TARGET = stargate
-C_OBJS = main.o loadmodule_patch.o nodrm_patch.o 
+C_OBJS = main.o loadmodule_patch.o nodrm_patch.o key_decrypt.o pspcipher.o $(PROVITA)/common/functions.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
 INCDIR = $(PROVITA)/common/include

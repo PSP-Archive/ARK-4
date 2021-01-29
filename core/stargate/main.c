@@ -86,12 +86,13 @@ int stargateStartModuleHandler(int modid, SceSize argsize, void * argp, int * mo
 static void patchLoadExec(void)
 {
 	// Fix Load Execute CFW Detection
-	u32 addr = sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x362A956B);
-	for (;;addr+=4){
-		if (_lw(addr) == 0xAC800004)
+	SceModule2* mod = sceKernelFindModuleByName("sceLoadExec");
+	for (u32 addr=mod->text_addr; ;addr+=4){
+		if (_lw(addr) == 0x00250821){
+		    _sw(NOP, addr+4);
 			break;
+		}
 	}
-	*(u32*)(addr-4) = 0;
 }
 
 // Entry Point
@@ -100,6 +101,8 @@ int module_start(SceSize args, void * argp)
 
 	// Hello Message
 	printk("stargate started: compiled at %s %s\r\n", __DATE__, __TIME__);
+
+    patch_sceMesgLed();
 
 	// Fix Idol Master
 	patchLoadExec();

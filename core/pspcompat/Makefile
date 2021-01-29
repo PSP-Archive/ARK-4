@@ -3,6 +3,7 @@ TARGET = pspcompat
 C_OBJS = \
 	main.o \
 	high_mem.o \
+	cpuclock.o \
 	$(PROVITA)/common/functions.o
 		
 OBJS = \

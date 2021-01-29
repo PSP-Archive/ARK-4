@@ -93,6 +93,21 @@ void screenHandler(PspDebugRegBlock * regs)
 	if (isValidAddr(ra)){
 	    PRTSTR1("Instruction at RA:  %p", _lw(ra)); // TODO: disassemble instruction
 	}
+	
+	// find crashing module
+	if ((ra&KERNEL_BASE)==KERNEL_BASE){
+	    SceModule2* mod = sceKernelFindModuleByName("sceSystemMemoryManager");
+	    while (mod){
+	        u32 addr = mod->text_addr;
+	        u32 top = addr+mod->text_size;
+	        if (ra >= addr && ra < top){
+	            PRTSTR2("Module: %s @ %p", mod->modname, ra-addr);
+	            break;
+	        }
+	        mod = mod->next;
+	    }
+	}
+	
 	while (1){};
 }
 

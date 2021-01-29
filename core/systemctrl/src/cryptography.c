@@ -210,6 +210,7 @@ SceModule2* patchMemlmd(void)
     // Backup Decrypt Function Pointer
     memlmdDecrypt = (void*)findJALReverseForFunction("sceMemlmd", "memlmd", 0xCF03556B, 1);
     u32 topaddr = mod->text_addr + mod->text_size;
+    sceMemlmdInitializeScrambleKey = FindFunction("sceMemlmd", "memlmd", 0xF26A33C3);
     // search for memlmd_unsigner
     for (u32 addr=mod->text_addr; addr<topaddr; addr+=4){
         if (_lw(addr) == 0x3222003F){
@@ -244,10 +245,12 @@ void patchMesgLed(SceModule2 * mod)
     // Hook Decrypt Function Calls
     u32 addr;
     u32 topaddr = mod->text_addr + mod->text_size;
+    u32 inst = JAL(_mesgledDecrypt);
+    u32 call = JAL(mesgledDecrypt);
     for (addr = mod->text_addr; addr<topaddr; addr+=4){
 	    u32 data = _lw(addr);
-	    if (data == JAL(mesgledDecrypt))
-		    _sw(JAL(_mesgledDecrypt), addr);
+	    if (data == call)
+		    _sw(inst, addr);
     }
     // Flush Cache
 	flushCache();
