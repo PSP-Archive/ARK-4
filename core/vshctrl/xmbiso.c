@@ -436,7 +436,6 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
     //result
     int result = -1;
-
     //virtual iso eboot detected
     if (is_iso_eboot(file)) {
         u32 k1 = pspSdkSetK1(0);
@@ -444,19 +443,9 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         pspSdkSetK1(k1);
         return result;
     }
-    
     u32 k1 = pspSdkSetK1(0);
-    if(psp_model != PSP_GO || strncmp(file, "ms", 2) == 0){
-        //forward to ms0 handler
-        result = sceKernelLoadExecVSHMs2(file, param);
-    }
-    else{
-        //forward to ef0 handler
-        int (*_sceKernelLoadExecVSHEf2)(char*, void*) = FindFunction("sceLoadExec", "LoadExecForKernel", 0xD35D6403);
-        if (_sceKernelLoadExecVSHEf2) result = _sceKernelLoadExecVSHEf2(file, param);
-    }
+    result = sceKernelLoadExecVSHMs2(file, param);
     pspSdkSetK1(k1);
-
     return result;
 }
 

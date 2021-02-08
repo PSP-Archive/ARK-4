@@ -1,5 +1,5 @@
 TARGET = inferno
-C_OBJS = main.o iodrv_funcs.o umd.o isoread.o $(PROVITA)/common/functions.o
+C_OBJS = main.o iodrv_funcs.o umd.o isoread.o
 OBJS = $(C_OBJS) imports.o
 all: $(TARGET).prx
 INCDIR = $(PROVITA)/common/include $(PROVITA)/core/systemctrl/include

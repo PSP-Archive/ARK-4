@@ -271,13 +271,13 @@ SceModule2* patchLoaderCore(void)
         }
         else{
             switch (data){
-            case 0x30ABFFFF:    ProbeExec1 = (void *)addr-0x100;     break;        // Executable Check Function #1
-            case 0x01E63823:    ProbeExec2 = (void *)addr-0x78;        break;        // Executable Check Function #2
-            case 0x30894000:     _sw(0x3C090000, addr);                break;        // Allow Syscalls
-            case 0x00E8282B:    _sh(0x1000, addr + 6);                break;        // Remove POPS Check
-            case 0x01A3302B:    _sw(NOP, addr+4);                    break;        // Remove Invalid PRX Type (0x80020148) Check
-            case 0x5040FF98:    _sw(NOP, addr); _sw(NOP, addr+4);   break;      // Remove beqzl
-            case 0x5040FF54:    _sw(NOP, addr); _sw(NOP, addr+4);   break;      // Remove beqzl
+            case 0x30ABFFFF:    ProbeExec1 = (void *)addr-0x100;    break;        // Executable Check Function #1
+            case 0x01E63823:    ProbeExec2 = (void *)addr-0x78;     break;        // Executable Check Function #2
+            case 0x30894000:    _sw(0x3C090000, addr);              break;        // Allow Syscalls
+            case 0x00E8282B:    _sh(0x1000, addr + 6);              break;        // Remove POPS Check
+            case 0x01A3302B:    _sw(NOP, addr+4);                   break;        // Remove Invalid PRX Type (0x80020148) Check
+            case 0x5040FF98:    _sw(NOP, addr); _sw(NOP, addr+4);   break;        // Remove beqzl
+            case 0x5040FF54:    _sw(NOP, addr); _sw(NOP, addr+4);   break;        // Remove beqzl
             }
         }
     }
