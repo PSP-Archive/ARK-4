@@ -1,5 +1,0 @@
-ya2d_draw.o .deps/ya2d_draw.Po: ya2d_draw.c /usr/local/pspdev/psp/sdk/include/pspgu.h \
- /usr/local/pspdev/psp/sdk/include/psptypes.h \
- /usr/local/pspdev/psp/sdk/include/pspge.h \
- /usr/local/pspdev/psp/sdk/include/pspgum.h \
- /home/aaron/projects/ARK-4/libs/libpspmath/pspmath.h ya2d_utils.h

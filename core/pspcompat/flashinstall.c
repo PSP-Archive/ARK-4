@@ -19,7 +19,6 @@
 #include "functions.h"
 
 extern ARKConfig* ark_config;
-KernelFunctions* ktbl = k_tbl;
 
 static void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L) = NULL;
 

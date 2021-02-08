@@ -1,2 +1,0 @@
-printMatrixFloat.o .deps/printMatrixFloat.Po: printMatrixFloat.c pspmath.h \
- /usr/local/pspdev/psp/sdk/include/psptypes.h

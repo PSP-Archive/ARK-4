@@ -1055,8 +1055,9 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     }
 
     //start game image
+    ret = sctrlKernelLoadExecVSHWithApitype(apitype, loadexec_file, param);
+
     unlock();
-    return sctrlKernelLoadExecVSHWithApitype(apitype, loadexec_file, param);
 
     return ret;
 }

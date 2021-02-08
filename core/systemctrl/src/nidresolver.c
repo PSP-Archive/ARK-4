@@ -358,24 +358,29 @@ void setupNidResolver(SceModule2* mod)
     // Fetch missing NIDs
     getMissingNidAddress();
 
-    u32 addr = mod->text_addr;
+    u32 text_addr = mod->text_addr;
     u32 topaddr = mod->text_addr+mod->text_size;
-    for (; addr<topaddr; addr+=4){
+    int patches = 3;
+    for (u32 addr=text_addr; addr<topaddr && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0xADA00004 && _lw(addr+8) == 0xADAE0000){
             // Don't write Syscall 0x15 if Resolve failed
             _sw(NOP, addr);
             _sw(NOP, addr+8);
+            patches--;
         }
         else if (data == 0x0007C823){
             // Backup Original NID Filler Function Pointer
             g_origNIDFiller = (void *)addr-0x44;
+            patches--;
         }
         else if (data == JAL(g_origNIDFiller)){
             _sw(0x02203021, addr - 4);
             _sw(JAL(fillLibraryStubs), addr);
             _sw(0x02403821, addr + 4);
+            patches--;
         }
     }
+    flushCache();
 }
 

@@ -1,1 +1,0 @@
-strchr.o .deps/strchr.Po: strchr.c

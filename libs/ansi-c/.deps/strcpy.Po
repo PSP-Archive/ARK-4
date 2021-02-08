@@ -1,2 +1,0 @@
-strcpy.o .deps/strcpy.Po: strcpy.c \
- /home/aaron/projects/ARK-4/common/include/ansi_c_functions.h

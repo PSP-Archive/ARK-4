@@ -31,7 +31,7 @@ PSP_MODULE_INFO("VitaCompat", 0x3007, 1, 0);
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
 
-KernelFunctions _ktbl = {
+KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
     .KernelIcacheInvalidateAll = &sceKernelIcacheInvalidateAll,
     .KernelDcacheWritebackInvalidateAll = &sceKernelDcacheWritebackInvalidateAll,
@@ -39,15 +39,10 @@ KernelFunctions _ktbl = {
     .KernelIORead = &sceIoRead,
     .KernelIOClose = &sceIoClose,
     .KernelDelayThread = &sceKernelDelayThread,
-}; // for vita flash patcher
+};
 
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
-
-int sctrlARKDummyFunction(void)
-{
-    return 0;
-}
 
 // Flush Instruction and Data Cache
 void flushCache()
@@ -92,7 +87,7 @@ static int isSystemBooted(void)
 {
 
     // Find Function
-    int (* _sceKernelGetSystemStatus)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
+    int (* _sceKernelGetSystemStatus)(void) = (void*)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
     
     // Get System Status
     int result = _sceKernelGetSystemStatus();
@@ -109,19 +104,19 @@ static void ARKVitaOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
 
-       if(strcmp(mod->modname, "sceLoadExec") == 0)
+    if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
         // Patch sceKernelExitGame Syscalls
-        sctrlHENPatchSyscall((void *)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exitToLauncher);
-        sctrlHENPatchSyscall((void *)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exitToLauncher);
-        sctrlHENPatchSyscall((void *)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), exitToLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exitToLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exitToLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), exitToLauncher);
         goto flush;
     }
     
     if (strcmp(mod->modname, "pops") == 0)
     {
         // Patch POPS SPU
-        replacePSXSPU(mod);
+        patchVitaPopsSpu(mod);
         goto flush;
     }
     
@@ -163,21 +158,6 @@ exit:
     if(previous) previous(mod);
 }
 
-void doKernelBreakpoint(){
-    u32* framebuf = (u32*)0x44000000;
-    for(int i = 0; i < 0x100000; i++)
-    {
-        // Set Pixel Color
-        framebuf[i] = 0xff;
-    }
-    while (1){};
-}
-
-void setKernelBreakpoint(u32 addr){
-    _sw(JAL(doKernelBreakpoint), addr);
-    _sw(NOP, addr+4);
-}
-
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
@@ -190,13 +170,13 @@ int module_start(SceSize args, void * argp)
     }
 
     // copy configuration
-    memcpy(ark_config, ark_conf_backup, sizeof(ARKConfig));
+    sctrlHENGetArkConfig(ark_config);
     
     initFileSystem();
     
-    //handleVitaMemory();
+    //unprotectVitaMemory();
     
-    patchFileManager();
+    //patchFileManager();
     
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);

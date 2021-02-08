@@ -1,1 +1,0 @@
-ioapi.o .deps/ioapi.Po: ioapi.c ioapi.h

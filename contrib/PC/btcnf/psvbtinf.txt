@@ -59,7 +59,6 @@ $/kd/ark_stargate.prx E
 $/kd/kermit_me_wrapper.prx VGUAEM
 $/kd/impose_kermit.prx VGUPAEM
 $/kd/660mediasync.prx VGUPAEM
-$/kd/ark_exitgame.prx VGUPAEM
 $%/kd/usersystemlib.prx VGUPAEM
 # pops uses libfont_hv and pafmini
 $%/vsh/module/libfont_hv.prx P

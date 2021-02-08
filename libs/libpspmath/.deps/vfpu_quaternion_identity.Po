@@ -1,2 +1,0 @@
-vfpu_quaternion_identity.o .deps/vfpu_quaternion_identity.Po: vfpu_quaternion_identity.c pspmath.h \
- /usr/local/pspdev/psp/sdk/include/psptypes.h

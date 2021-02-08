@@ -1,1 +1,0 @@
-pngwutil.o .deps/pngwutil.Po: pngwutil.c png.h pngconf.h pngpriv.h

@@ -1,2 +1,0 @@
-vfpu_sphere_to_cartesian.o .deps/vfpu_sphere_to_cartesian.Po: vfpu_sphere_to_cartesian.c pspmath.h \
- /usr/local/pspdev/psp/sdk/include/psptypes.h

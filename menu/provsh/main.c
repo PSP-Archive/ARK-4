@@ -609,6 +609,7 @@ int getRunlevelMode(int mode)
 // Start Application
 void start(void)
 {
+
     // Find File
     File * file = findindex(position);
     
@@ -685,6 +686,7 @@ void start(void)
     }
     
     int runlevel = getRunlevelMode(mode);
+
     // Trigger Reboot
     sctrlKernelLoadExecVSHWithApitype(runlevel, bootpath, &param);
 }

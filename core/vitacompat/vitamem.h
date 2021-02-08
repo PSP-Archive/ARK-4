@@ -18,7 +18,6 @@
 #define VITAMEM_H
 #include <pspsdk.h>
 #include <pspiofilemgr.h>
-#include <pspsysmem.h>
 #include <pspsysmem_kernel.h>
 
 #include "globals.h"
@@ -45,10 +44,13 @@ typedef struct {
     SceSysmemPartInfo extVshell; // 76
 } SceSysmemPartTable;
 
+// extra RAM
+void (*SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table);
 void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *table);
 int PatchSysMem(void *a0, void *sysmem_config);
-void patchVitaMem();
-void handleVitaMemory();
+void unprotectVitaMemory();
+
+// game info
+void* SysMemForKernel_EF29061C_Fixed(void);
 void patchGameInfoGetter(SceModule2 * mod);
-void * SysMemForKernel_EF29061C_Fixed(void);
 #endif

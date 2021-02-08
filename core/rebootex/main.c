@@ -85,11 +85,13 @@ int _sceKernelCheckExecFile(unsigned char * addr, void * arg2)
 
 void loadCoreModuleStartCommon(){
 
-    // Calculate Text Address
-    unsigned int text_addr = FindTextAddrByName("sceLoaderCore");
+    // Calculate Text Address and size
+    u32 text_addr = FindTextAddrByName("sceLoaderCore");
+    u32 top_addr = text_addr+0x8000; // read 32KB at most (more than enough to scan loadcore)
+    
     // Fetch Original Decrypt Function Stub
-    SonyPRXDecrypt = (void *)FindImportRange("memlmd", 0xEF73E85B, text_addr, 0x88400000);
-    origCheckExecFile = (void *)FindImportRange("memlmd", 0x6192F715, text_addr, 0x88400000);
+    SonyPRXDecrypt = (void *)FindImportRange("memlmd", 0xEF73E85B, text_addr, top_addr);
+    origCheckExecFile = (void *)FindImportRange("memlmd", 0x6192F715, text_addr, top_addr);
 
     // save this configuration to restore loadcore later on
     RebootexFunctions* rex_funcs = REBOOTEX_FUNCTIONS;
@@ -104,7 +106,6 @@ void loadCoreModuleStartCommon(){
     // Hook Signcheck Function Calls
     int count = 0;
     u32 addr;
-    u32 top_addr = text_addr+0x8000; // read 32KB at most (more than enough to scan loadcore)
     for (addr = text_addr; addr<top_addr; addr+=4){
         u32 data = _lw(addr);
         if (data == decrypt_call){
@@ -126,10 +127,9 @@ void flushCache(void)
 }
 
 void findRebootFunctions(u32 reboot_start, u32 reboot_end){
-
     register void (* Icache)(void) = NULL;
     register void (* Dcache)(void) = NULL;
-    int wanted = 3; // lfatopen not needed for psp
+    int wanted = 3; // lfatopen not needed for psp, UnpackBootConfig not needed for vita
     // find functions
     for (u32 addr = reboot_start; addr<reboot_end && wanted; addr+=4){
         u32 data = _lw(addr);
@@ -151,12 +151,11 @@ void findRebootFunctions(u32 reboot_start, u32 reboot_end){
             origLfatOpen = (void*)a;
             wanted--;
         }
-        else if (data == 0x3466507E){
+        else if (data == 0x3466507E){ // only appears inside UnpackBootConfig on psp
             UnpackBootConfig = addr-12;
             wanted--;
         }
     }
-    
     sceRebootIcacheInvalidateAll = Icache;
     sceRebootDacheWritebackInvalidateAll = Dcache;
     Icache();
@@ -181,7 +180,7 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4)
     // TODO Parse Reboot Buffer Configuration (what to configure yet? lol)
     
     u32 reboot_start = REBOOT_TEXT;
-    u32 reboot_end = getRebootEnd;
+    u32 reboot_end = getRebootEnd();
     findRebootFunctions(reboot_start, reboot_end); // scan for reboot functions
     
     // patch reboot buffer

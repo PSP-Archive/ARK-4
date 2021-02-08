@@ -86,6 +86,8 @@ typedef struct ARKConfig{
     unsigned char recovery;
 } ARKConfig;
 
+#define ARK_CONF_ADDR 0x08800010
+#define ark_conf_backup ((ARKConfig*)(ARK_CONF_ADDR))
 #define IS_PSP(exec_mode) ((exec_mode&DEV_MASK)==PSP_ORIG)
 #define IS_VITA(exec_mode) ((exec_mode&DEV_MASK)==PS_VITA)
 #define IS_VITA_POPS(exec_mode) (exec_mode==PSV_POPS)

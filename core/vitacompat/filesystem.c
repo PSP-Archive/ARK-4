@@ -378,7 +378,6 @@ int    sceIoMkdirHook(char *dir, SceMode mode)
 int sceIoAddDrvHook(PspIoDrv * driver)
 {
 
-    /*
     // "flash" Driver
     if (strcmp(driver->name, "flash") == 0) {
         // Hook IoOpen Function
@@ -395,7 +394,7 @@ int sceIoAddDrvHook(PspIoDrv * driver)
         driver->funcs->IoWrite = sceIoFlashWriteHook;
         
     }
-    else*/ if(strcmp(driver->name, "ms") == 0) { // "ms" Driver
+    else if(strcmp(driver->name, "ms") == 0) { // "ms" Driver
         // Hook IoOpen Function
         sceIoMsOpen = driver->funcs->IoOpen;
         driver->funcs->IoOpen = sceIoMsOpenHook;

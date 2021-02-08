@@ -101,20 +101,10 @@ static void wait_until_ms0_ready(void)
     const char *drvname;
 
     drvname = "mscmhc0:";
-
-    /*
-    if(psp_model == PSP_GO) {
-        bootfrom = sctrlKernelBootFrom();
-        printk("%s: bootfrom: 0x%08X\n", __func__, bootfrom);
-
-        if(bootfrom == 0x50) {
-            drvname = "mscmhcemu0:";
-        } else {
-            // vsh mode?
-            return;
-        }
+    
+    if (sceKernelInitApitype() == 0x125){
+        drvname = "mscmhcemu0:";
     }
-    */
 
     while( 1 ) {
         ret = sceIoDevctl(drvname, 0x02025801, 0, 0, &status, sizeof(status));

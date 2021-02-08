@@ -44,7 +44,8 @@ int module_start(SceSize args, void * argp)
     printk("ARK SystemControl started.\r\n");
   #endif
 
-    memcpy(ark_config, ark_conf_backup, sizeof(ARKConfig)); // copy configuration from user ram
+    // copy configuration from user ram
+    memcpy(ark_config, ark_conf_backup, sizeof(ARKConfig));
 
     // Apply Module Patches
     patchSystemMemoryManager();
@@ -58,7 +59,7 @@ int module_start(SceSize args, void * argp)
     backupRebootBuffer();
     
     // Initialize Malloc
-       oe_mallocinit();
+    oe_mallocinit();
     
     // Initialize Module Start Patching
     syspatchInit();

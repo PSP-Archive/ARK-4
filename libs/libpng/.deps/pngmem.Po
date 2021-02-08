@@ -1,1 +1,0 @@
-pngmem.o .deps/pngmem.Po: pngmem.c png.h pngconf.h pngpriv.h

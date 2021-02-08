@@ -1,1 +1,0 @@
-pngwrite.o .deps/pngwrite.Po: pngwrite.c png.h pngconf.h pngpriv.h

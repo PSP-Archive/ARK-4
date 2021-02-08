@@ -27,11 +27,7 @@ char* running_ark = "Running ARK-4 in ?PS? mode";
 
 ARKConfig* ark_config = NULL;
 
-// Sony Reboot Buffer Loader
-int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
-
-// LoadExecVSHWithApitype Direct Call
-int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int) = NULL;
+extern void loadKernelArk();
 
 // K.BIN entry point
 void (* kEntryPoint)() = (void*)KXPLOIT_LOADADDR;
@@ -56,7 +52,7 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
     scanArkFunctions();
 
     // copy the path of the save
-    g_tbl->config = arg0;
+    g_tbl->config = ark_config = arg0;
 
     // make PRTSTR available for payloads
     g_tbl->prtstr = (void *)&PRTSTR11;
@@ -132,22 +128,6 @@ void setK1Kernel(void){
     );
 }
 
-void flashPatch(){
-    extern int extractFlash0Archive();
-    if (IS_PSP(ark_config->exec_mode)){ // on PSP, extract FLASH0.ARK into flash0
-        SceUID kthreadID = k_tbl->KernelCreateThread( "arkflasher", (void*)KERNELIFY(&extractFlash0Archive), 25, 0x12000, 0, NULL);
-        if (kthreadID >= 0){
-            void* arg = &PRTSTR11;
-            k_tbl->KernelStartThread(kthreadID, sizeof(void*), &arg);
-            k_tbl->waitThreadEnd(kthreadID, NULL);
-            k_tbl->KernelDeleteThread(kthreadID);
-        }
-    }
-    else{ // Patching flash0 on Vita
-        patchKermitPeripheral(k_tbl);
-    }
-}
-
 // Kernel Permission Function
 void kernelContentFunction(void){
 
@@ -162,7 +142,7 @@ void kernelContentFunction(void){
     kxf->repairInstruction = KERNELIFY(kxf->repairInstruction);
     
     // move global configuration to static address in user space so that reboot and CFW modules can find it
-    if (g_tbl->config != ark_conf_backup) memcpy(ark_conf_backup, g_tbl->config, sizeof(ARKConfig));
+    if (ark_config != ark_conf_backup) memcpy(ark_conf_backup, ark_config, sizeof(ARKConfig));
     
     ark_config = ark_conf_backup;
     
@@ -173,60 +153,7 @@ void kernelContentFunction(void){
     // repair damage done by kernel exploit
     kxf->repairInstruction();
 
-    // Install flash0 files
-    PRTSTR("Installing "FLASH0_ARK);
-    flashPatch();
-    
-    // Invalidate Cache
-    k_tbl->KernelDcacheWritebackInvalidateAll();
-    k_tbl->KernelIcacheInvalidateAll();
-
-    PRTSTR("Patching loadexec");
-    // Find LoadExec Module
-    SceModule2 * loadexec = k_tbl->KernelFindModuleByName("sceLoadExec");
-    
-    // Find Reboot Loader Function
-    _LoadReboot = (void *)loadexec->text_addr;
-    
-    
-    // make the common loadexec patches
-    int k1_patches = 2; //IS_PSP(ark_conf_backup->exec_mode)?2:3;
-    patchLoadExecCommon(loadexec, (u32)LoadReboot, k1_patches);
-    
-    // Invalidate Cache
-    k_tbl->KernelDcacheWritebackInvalidateAll();
-    k_tbl->KernelIcacheInvalidateAll();
-    
-    int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = (void *)FindFunction("sceController_Service", "sceCtrl", 0x3A622550);
-    if (CtrlPeekBufferPositive){
-        SceCtrlData data;
-        memset(&data, 0, sizeof(data));
-        CtrlPeekBufferPositive(&data, 1);
-        if((data.Buttons & PSP_CTRL_RTRIGGER) == PSP_CTRL_RTRIGGER){
-            ark_conf_backup->recovery = 1;
-        }
-    }
-
-    if (ark_conf_backup->recovery || IS_VITA(ark_conf_backup->exec_mode)){
-        // Prepare Homebrew Reboot
-        char menupath[ARK_PATH_SIZE];
-        strcpy(menupath, ark_conf_backup->arkpath);
-        strcat(menupath, ARK_MENU);
-        struct SceKernelLoadExecVSHParam param;
-        memset(&param, 0, sizeof(param));
-        param.size = sizeof(param);
-        param.args = strlen(menupath) + 1;
-        param.argp = menupath;
-        param.key = "game";
-        PRTSTR1("Running Menu at %s", menupath);
-        _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
-        _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
-    }
-    else {
-        PRTSTR("Running VSH");
-        int (*_KernelExitVSH)(void*) = FindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
-        _KernelExitVSH(NULL);
-    }
+    loadKernelArk();
 }
 
 // Clear BSS Segment of Payload

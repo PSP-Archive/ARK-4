@@ -1,2 +1,0 @@
-vfpu_quaternion_hermite_tangent.o .deps/vfpu_quaternion_hermite_tangent.Po: vfpu_quaternion_hermite_tangent.c \
- pspmath.h /usr/local/pspdev/psp/sdk/include/psptypes.h

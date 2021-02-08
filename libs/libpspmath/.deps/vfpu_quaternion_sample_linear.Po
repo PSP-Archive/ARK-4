@@ -1,2 +1,0 @@
-vfpu_quaternion_sample_linear.o .deps/vfpu_quaternion_sample_linear.Po: vfpu_quaternion_sample_linear.c \
- pspmath.h /usr/local/pspdev/psp/sdk/include/psptypes.h

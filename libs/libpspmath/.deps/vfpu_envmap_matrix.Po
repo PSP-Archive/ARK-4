@@ -1,2 +1,0 @@
-vfpu_envmap_matrix.o .deps/vfpu_envmap_matrix.Po: vfpu_envmap_matrix.c pspmath.h \
- /usr/local/pspdev/psp/sdk/include/psptypes.h

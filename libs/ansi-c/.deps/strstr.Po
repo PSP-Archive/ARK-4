@@ -1,1 +1,0 @@
-strstr.o .deps/strstr.Po: strstr.c

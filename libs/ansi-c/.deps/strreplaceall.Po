@@ -1,2 +1,0 @@
-strreplaceall.o .deps/strreplaceall.Po: strreplaceall.c \
- /home/aaron/projects/ARK-4/common/include/ansi_c_functions.h

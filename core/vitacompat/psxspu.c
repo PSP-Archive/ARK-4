@@ -26,6 +26,7 @@ extern ARKConfig* ark_config;
 
 // SPU Status
 static int running = 0;
+static int spu_plugin = 0;
 
 // SPU Background Thread
 int spuThread(SceSize args, void * argp)
@@ -78,11 +79,23 @@ void _sceMeAudio_DE630CD2(void * loopCore, void * stack)
     // Elevate Permission Level
     unsigned int k1 = pspSdkSetK1(0);
     
-    // Spawn Background Thread
     sceKernelStartThread(sceKernelCreateThread("SPUThread", spuThread, 0x10, 32 * 1024, 0, NULL), 0, NULL);
     
     // Restore Permission Level
     pspSdkSetK1(k1);
+}
+
+void patchVitaPopsSpu(SceModule2 * mod)
+{
+
+    if (spu_plugin) return; // don't patch pops if spu plugin loaded
+    
+    // Fetch Text Address
+    unsigned int text_addr = mod->text_addr;
+
+    UNUSED(text_addr);
+    // Replace Media Engine SPU Background Thread Starter
+    hookImportByNID(mod, "sceMeAudio", 0xDE630CD2, _sceMeAudio_DE630CD2);
 }
 
 // Shutdown SPU
@@ -109,6 +122,8 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     strcat(path, "PS1SPU.PRX");
     result = sceKernelLoadModule(path, 0, NULL);
 
+    spu_plugin = (result>=0); // prevent dummy thread from running if spu plugin is loaded
+
     static char g_DiscID[32];
     u16 paramType = 0;
     u32 paramLength = sizeof(g_DiscID);
@@ -117,48 +132,10 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     printk("%s: fname %s load 0x%08X, start 0x%08X -> 0x%08X\r\n", __func__, path, result, startResult, status);
     
     // load pops module
-    result = sceKernelLoadModule("flash0:/kd/660pops.prx" /*path*/, flag, opt);
+    result = sceKernelLoadModule("flash0:/kd/660pops.prx", flag, opt);
     printk("%s: fname %s flag 0x%08X -> 0x%08X\r\n", __func__, fname, flag, result);
 
     return result;
-}
-
-void replacePSXSPU(SceModule2 * mod)
-{
-    // Fetch Text Address
-    unsigned int text_addr = mod->text_addr;
-
-    UNUSED(text_addr);
-    // Replace Media Engine SPU Background Thread Starter
-    hookImportByNID(mod, "sceMeAudio", 0xDE630CD2, _sceMeAudio_DE630CD2);
-    
-    /*
-    #ifdef WITH_PEOPS_SPU
-    // Replace SPU Register Read Callback
-    void * read_stub_addr = (void *)(text_addr + 0x000D5424 + 8);
-    patchSyscallStub(spuReadCallback, read_stub_addr);
-    unsigned int spuRCB = text_addr + 0x85F4;
-    _sw(0x27BDFFFC, spuRCB); // addiu $sp, $sp, -4
-    _sw(0xAFBF0000, spuRCB + 4); // sw $ra, 0($sp)
-    _sw(JAL(read_stub_addr), spuRCB + 8); // jal callback stub
-    _sw(NOP, spuRCB + 12); // nop
-    _sw(0x8FBF0000, spuRCB + 16); // lw $ra, 0($sp)
-    _sw(0x03E00008, spuRCB + 20); // jr $ra
-    _sw(0x27BD0004, spuRCB + 24); // addiu $sp, $sp, 4
-    
-    // Replace SPU Register Write Callback
-    void * write_stub_addr = read_stub_addr + 8;
-    patchSyscallStub(spuWriteCallback, write_stub_addr);
-    unsigned int spuWCB = text_addr + 0x7F00;
-    _sw(0x27BDFFFC, spuWCB); // addiu $sp, $sp, -4
-    _sw(0xAFBF0000, spuWCB + 4); // sw $ra, 0($sp)
-    _sw(JAL(write_stub_addr), spuWCB + 8); // jal callback stub
-    _sw(NOP, spuWCB + 12); // nop
-    _sw(0x8FBF0000, spuWCB + 16); // lw $ra, 0($sp)
-    _sw(0x03E00008, spuWCB + 20); // jr $ra
-    _sw(0x27BD0004, spuWCB + 24); // addiu $sp, $sp, 4
-    #endif
-    */
 }
 
 void patchVitaPopsman(SceModule2* mod){

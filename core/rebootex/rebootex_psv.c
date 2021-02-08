@@ -1,22 +1,20 @@
 #include "rebootex.h"
 
-
-int (*pspemuLfatOpen)(char **filename, int unk) = NULL;
+int (*pspemuLfatOpen)(char** filename, int unk) = NULL;
 
 // Load Core module_start Hook
-int loadcoreModuleStartVita(unsigned int args, void * argp, int (* start)(SceSize, void *))
+int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize, void *))
 {
     loadCoreModuleStartCommon();
     flushCache();
     return start(args, argp);
 }
 
-int _pspemuLfatOpen(char **filename, int unk)
+int _pspemuLfatOpen(char** filename, int unk)
 {
     if (filename != NULL && 0 == strcmp(*filename, "pspbtcnf.bin")){
-        RebootBufferConfiguration * conf = (RebootBufferConfiguration*)REBOOTEX_CONFIG;
-        char *p = filename;
-
+        RebootBufferConfiguration* conf = (RebootBufferConfiguration*)REBOOTEX_CONFIG;
+        char* p = *filename;
         p[2] = 'v'; // custom btcnf for PS Vita
 
         if (IS_VITA_POPS(ark_conf->exec_mode)){
@@ -25,11 +23,11 @@ int _pspemuLfatOpen(char **filename, int unk)
         else{
             switch(conf->iso_mode)
             {
-                case MODE_UMD:
                 case MODE_NP9660:
                     // pspbtnnf.bin
                     p[5] = 'n';
                     break;
+                case MODE_UMD:
                 case MODE_INFERNO:
                 default:
                     // pspbtinf.bin
@@ -63,5 +61,11 @@ void patchRebootBufferVita(u32 reboot_start, u32 reboot_end){
         else if ((data & 0x0000FFFF) == 0x8B00){
             _sb(0xA0, addr); // Link Filesystem Buffer to 0x8BA00000
         }
+        /*
+        else if (data == 0x24040004) {
+            _sw(0x02402021, addr); //move $a0, $s2
+            _sw(JAL(PatchSysMem), addr + 0x64); // Patch call to SysMem module_bootstart
+        }
+        */
     }
 }

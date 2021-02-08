@@ -12,7 +12,8 @@ CFLAGS += -I $(PROVITA)/loader/kxploit/ -I $(PROVITA)/modules/systemctrl/include
 CFLAGS += -I $(PROVITA)/modules/systemctrl/include -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR)
 
 C_OBJS = \
-	main.o \
+	$(PROVITA)/loader/stage2/live/main.o \
+	loader.o \
 	flash_dump.o\
 	$(PROVITA)/common/functions.o
 

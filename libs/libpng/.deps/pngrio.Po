@@ -1,1 +1,0 @@
-pngrio.o .deps/pngrio.Po: pngrio.c png.h pngconf.h pngpriv.h

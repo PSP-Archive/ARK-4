@@ -13,6 +13,7 @@ CFLAGS += -I $(PROVITA)/core/systemctrl/include -DKXPLOIT_LOADADDR=$(KXPLOIT_LOA
 
 C_OBJS = \
 	main.o \
+	loader.o \
 	reboot.o \
 	$(PROVITA)/common/functions.o \
 	$(PROVITA)/core/pspcompat/flashinstall.o \

@@ -176,7 +176,7 @@ void sctrlHENPatchSyscall(void * addr, void * newaddr)
     syscalls += 4; // 4 * 4 = 16
     
     // Iterate Syscalls
-    int i = 0; for(; i < 0xFF4; ++i)
+    for(int i = 0; i < 0xFF4; ++i)
     {
         // Found Matching Function
         if((syscalls[i] & 0x0FFFFFFF) == (((unsigned int)addr) & 0x0FFFFFFF))
@@ -310,7 +310,7 @@ unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid)
     void * entTab = pMod->ent_top;
     
     // Iterate Exports
-    int i = 0; while(i < pMod->ent_size)
+    for (int i = 0; i < pMod->ent_size;)
     {
         // Cast Export Table Entry
         struct SceLibraryEntryTable * entry = (struct SceLibraryEntryTable *)(entTab + i);
@@ -328,7 +328,7 @@ unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid)
             if(total > 0)
             {
                 // Iterate Exports
-                int j = 0; for(; j < total; j++)
+                for(int j = 0; j < total; j++)
                 {
                     // Found Matching NID
                     if(vars[j] == nid) return vars[total + j];
@@ -384,7 +384,7 @@ unsigned int sctrlKernelRand(void)
 int sctrlKernelSetNidResolver(char * libname, unsigned int enabled)
 {
     // Iterate Libraries
-    unsigned int i = 0; for(; i < nidTableSize; i++)
+    for(int i = 0; i < nidTableSize; i++)
     {
         // Found Matching Library
         if(0 == strcmp(libname, nidTable[i].name))
@@ -482,8 +482,7 @@ u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid)
     SceModule2 *mod = sceKernelFindModuleByName(szMod);
     if(!mod) return 0;
 
-    int i = 0;
-    while(i < mod->stub_size)
+    for(int i = 0; i < mod->stub_size;)
     {
         SceLibraryStubTable *stub = (SceLibraryStubTable *)(mod->stub_top + i);
 
@@ -491,8 +490,7 @@ u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid)
         {
             u32 *table = stub->nidtable;
 
-            int j;
-            for(j = 0; j < stub->stubcount; j++)
+            for(int j = 0; j < stub->stubcount; j++)
             {
                 if(table[j] == nid)
                 {

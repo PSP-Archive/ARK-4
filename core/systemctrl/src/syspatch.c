@@ -73,7 +73,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     if (DisplaySetFrameBuf){
         PRTSTR1("Loading module %s", mod->modname);
     }
-
   #endif
   
     if(strcmp(mod->modname, "sceLoadExec") == 0)
@@ -81,8 +80,8 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         loadexec = mod;
         if (ark_config->recovery){
             // Patch sceKernelExitGame Syscalls
-            sctrlHENPatchSyscall((void *)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exitToLauncher);
-            sctrlHENPatchSyscall((void *)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exitToLauncher);
+            sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exitToLauncher);
+            sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exitToLauncher);
         }
         goto flush;
     }
@@ -90,7 +89,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     if(strcmp(mod->modname, "sceDisplay_Service") == 0)
     {
         // can use screen now
-        DisplaySetFrameBuf = (void *)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
+        DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         #ifdef DEBUG
         initScreen(DisplaySetFrameBuf);
         #endif

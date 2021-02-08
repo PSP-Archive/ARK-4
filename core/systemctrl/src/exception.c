@@ -162,19 +162,3 @@ void registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * r
     // Register Exception Handler
     sceKernelRegisterDefaultExceptionHandler((void *)_pspDebugExceptionHandler);
 }
-
-void doKernelBreakpoint(){
-    u32* framebuf = (u32*)0x44000000;
-    for(int i = 0; i < 0x100000; i++)
-    {
-        // Set Pixel Color
-        framebuf[i] = 0xff;
-    }
-     _sw(0x44000000, 0xBC800100);
-    while (1){};
-}
-
-void setKernelBreakpoint(u32 addr){
-    _sw(JAL(doKernelBreakpoint), addr);
-    _sw(NOP, addr+4);
-}

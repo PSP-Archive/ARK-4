@@ -1,2 +1,0 @@
-memmove.o .deps/memmove.Po: memmove.c \
- /home/aaron/projects/ARK-4/common/include/ansi_c_functions.h

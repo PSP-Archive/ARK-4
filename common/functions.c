@@ -30,10 +30,14 @@
 #include "globals.h"
 #include "functions.h"
 
-/*
- * These Mappings are Syscall Mappings! Don't bother trying them inside
- * of a Kernel Permission Context! You will crash!
- */
+static FunctionTable _g_tbl;
+static KernelFunctions _k_tbl;
+static KxploitFunctions _kxf;
+
+FunctionTable* g_tbl = &_g_tbl;
+KernelFunctions* k_tbl = &_k_tbl;
+KxploitFunctions* kxf = &_kxf;
+
 
 // counter for relocated stubs
 static u32 curcall = 0x08801000;

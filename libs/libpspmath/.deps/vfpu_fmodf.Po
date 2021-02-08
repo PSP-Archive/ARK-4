@@ -1,2 +1,0 @@
-vfpu_fmodf.o .deps/vfpu_fmodf.Po: vfpu_fmodf.c pspmath.h \
- /usr/local/pspdev/psp/sdk/include/psptypes.h

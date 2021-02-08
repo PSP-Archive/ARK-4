@@ -1,1 +1,3 @@
-- dynamic patches for: rebootex, modulemanager, mediasync, np9660, npdrm, syscon, ...
+- Fix compatibility with PS Vita 3.60+
+- Add ms speedup
+- Create simple VHS Menu with GUI

@@ -172,10 +172,9 @@ typedef struct KernelFunctions{
     
 }KernelFunctions;
 
-#define g_tbl ((FunctionTable*)(0x08800010))
-#define k_tbl ((KernelFunctions*)(0x08800010 + sizeof(FunctionTable)))
-#define kxf ((KxploitFunctions*)(0x08800010 + sizeof(FunctionTable) + sizeof(KernelFunctions)))
-#define ark_conf_backup ((ARKConfig*)(0x08800010 + sizeof(FunctionTable) + sizeof(KernelFunctions) + sizeof(KxploitFunctions)))
+extern FunctionTable* g_tbl;
+extern KernelFunctions* k_tbl;
+extern KxploitFunctions* kxf;
 
 extern void scanKernelFunctions();
 

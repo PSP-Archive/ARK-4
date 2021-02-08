@@ -1,2 +1,0 @@
-vfpu_quaternion_normalize.o .deps/vfpu_quaternion_normalize.Po: vfpu_quaternion_normalize.c pspmath.h \
- /usr/local/pspdev/psp/sdk/include/psptypes.h

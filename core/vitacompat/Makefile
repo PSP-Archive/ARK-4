@@ -1,13 +1,15 @@
 TARGET = vitacompat
 
-C_OBJS = \
-	main.o \
-	vitamem.o \
-	exitgame.o  \
-	filesystem.o \
-	vitaflash.o   \
+C_OBJS =   \
+	main.o  \
 	psxspu.o \
+	vitamem.o \
+	gameinfo.o \
+	exitgame.o  \
+	vitaflash.o  \
+	filesystem.o  \
 	$(PROVITA)/common/functions.o \
+	$(PROVITA)/core/systemctrl/src/dummy.o \
 		
 OBJS = \
 	$(C_OBJS)
