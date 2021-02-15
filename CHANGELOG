@@ -7,6 +7,7 @@ Update 5:
 - Added ability to create external settings file.
 ---- Added "overclock" option to set max CPU speed.
 ---- Added "powersave" option to set lower CPU speed.
+---- Added "usbcharge" option.
 
 Update 4:
 - Added ability to have a VSH menu installed externally. Classic PRO VSH menu is included.
