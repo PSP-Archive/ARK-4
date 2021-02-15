@@ -91,7 +91,7 @@ static void settingsHandler(char* path){
         SetSpeed(333, 166);
     }
     else if (strcasecmp(path, "powersave") == 0){
-        SetSpeed(111, 55);
+        SetSpeed(133, 66);
         // set brightness
     }
 }
