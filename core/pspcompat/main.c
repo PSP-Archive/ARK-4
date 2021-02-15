@@ -94,6 +94,9 @@ static void settingsHandler(char* path){
         SetSpeed(133, 66);
         // set brightness
     }
+    else if (strcasecmp(path, "usbcharge") == 0){
+        usb_charge();
+    }
 }
 
 static void loadSettings(){
@@ -128,7 +131,6 @@ static void PSPOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
         //patch_sceChkreg();
         disable_PauseGame(mod);
-        usb_charge();
         goto flush;
     }
     

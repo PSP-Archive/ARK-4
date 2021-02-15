@@ -21,6 +21,7 @@ copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PB
 	$(Q)cp loader/kxploit/k.bin dist/K.BIN # Kernel exploit
 	$(Q)cp menu/provsh/EBOOT.PBP dist/MENU.PBP # Default menu
 	$(Q)cp extras/vshmenu/classic/satelite.prx dist/VSHMENU.PRX # Default vsh menu
+	$(Q)cp contrib/SETTINGS.TXT dist/SETTINGS.TXT # Default settings
 	
 encrypt-prx: \
 	dist/SYSCTRL0.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN dist/PSPCOMPAT.BIN dist/VSHCTRL.BIN dist/INFERNO0.BIN dist/GALAXY00.BIN dist/STARGATE.BIN dist/POPCORN0.BIN \

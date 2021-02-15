@@ -1,0 +1,3 @@
+always, usbcharge, on
+always, overclock, off
+always, powersave, off
