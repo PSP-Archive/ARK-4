@@ -1,5 +1,5 @@
 TARGET = satelite
-OBJS = main.o blit.o ui.o menu.o clock.o umdvideo_list.o vpl.o trans.o trans_en.o stubkk.o
+OBJS = main.o blit.o ui.o menu.o vpl.o trans.o trans_en.o stubkk.o
 
 PROVITA ?= $(CURDIR)/../../../
 

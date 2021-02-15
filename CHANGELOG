@@ -1,4 +1,13 @@
 ARK-4
+
+Update 5:
+- Fixed ISOs and homebrews on PSP Go.
+- Added USB Charging (not for PSP 1K).
+- Simplified and fixed VSH Menu for ARK.
+- Added ability to create external settings file.
+---- Added "overclock" option to set max CPU speed.
+---- Added "powersave" option to set lower CPU speed.
+
 Update 4:
 - Added ability to have a VSH menu installed externally. Classic PRO VSH menu is included.
 *** please note that there's no configuration options for ARK, things like chaning the CPU speed or ISO driver doesn't do anything (ARK will always enable fastest CPU speed and Inferno ISO driver).

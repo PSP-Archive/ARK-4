@@ -79,7 +79,7 @@ void extractFlash0Archive(SceSize args, void** argp){
         open_flash();
         int filecount;
         k_tbl->KernelIORead(fdr, &filecount, sizeof(filecount));
-        PRTSTR1("Extracting %d files", filecount);
+        PRTSTR1("Processing %d files", filecount);
         for (int i=0; i<filecount; i++){
             filepath[path_len] = '\0';
             int filesize;

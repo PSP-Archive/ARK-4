@@ -27,6 +27,8 @@
 #define LINE_BUFFER_SIZE 1024
 #define LINE_TOKEN_DELIMITER ','
 
+extern ARKConfig* ark_config;
+
 // Missing Libc Function strcasecmp (needed for stricmp to work)
 int strcasecmp(const char * a, const char * b)
 {
@@ -96,6 +98,7 @@ static int booleanOn(char * text)
 // Load and Start Plugin Module
 static void startPlugin(char * path)
 {
+    // external user plugin
     // Load Module
     int uid = sceKernelLoadModule(path, 0, NULL);
     
@@ -197,10 +200,10 @@ static char * readLine(int fd, char * buf, unsigned int buflen)
 }
 
 // Parse and Process Line
-void processLine(char * line)
+void processLine(char * line, void (*handler)(char*))
 {
     // Skip Comment Lines
-    if(strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#')
+    if(!handler || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#')
         return;
     
     // String Token
@@ -260,20 +263,15 @@ void processLine(char * line)
         if(booleanOn(enabled))
         {
             // Start Plugin
-            startPlugin(path);
+            handler(path);
         }
     }
 }
 
 // Load Plugins
-void LoadPlugins(void)
+void ProcessConfigFile(char* path, void (*handler)(char*))
 {
 
-    // Open Plugin Config
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, "PLUGINS.TXT");
-    
     int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
     
     // Opened Plugin Config
@@ -289,7 +287,7 @@ void LoadPlugins(void)
             while(readLine(fd, line, LINE_BUFFER_SIZE) != NULL)
             {
                 // Process Line
-                processLine(strtrim(line));
+                processLine(strtrim(line), handler);
             }
             
             // Free Buffer
@@ -301,3 +299,10 @@ void LoadPlugins(void)
     }
 }
 
+void LoadPlugins(){
+    // Open Plugin Config
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, "PLUGINS.TXT");
+    ProcessConfigFile(path, &startPlugin);
+}

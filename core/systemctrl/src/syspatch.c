@@ -78,11 +78,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
         loadexec = mod;
-        if (ark_config->recovery){
-            // Patch sceKernelExitGame Syscalls
-            sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exitToLauncher);
-            sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exitToLauncher);
-        }
         goto flush;
     }
     

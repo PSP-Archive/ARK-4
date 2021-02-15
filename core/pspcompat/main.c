@@ -22,6 +22,9 @@ STMOD_HANDLER previous = NULL;
 // for some model specific patches
 u32 psp_model = 0;
 
+static ARKConfig _ark_conf;
+ARKConfig* ark_config = &_ark_conf;
+
 extern void SetSpeed(int cpuspd, int busspd);
 
 // Flush Instruction and Data Cache
@@ -51,22 +54,17 @@ static void patch_sceUmdMan_driver(SceModule* mod)
 static void patch_umdcache(SceModule2* mod)
 {
     int apitype = sceKernelInitApitype();
-    if (apitype == 0x152 || apitype == 0x141)
-        return;
-
-    int ret = sceKernelBootFrom();
-
-    if (ret != 0x40 && ret != 0x50)
-        return;
-    
-    //kill module start
-    u32 text_addr = mod->text_addr;
-    _sw(JR_RA, text_addr+0x000009C8);
-    _sw(LI_V0(1), text_addr+0x000009C8+4);
+    if (apitype == 0x152 || apitype == 0x141){
+        //kill module start
+        u32 text_addr = mod->text_addr;
+        _sw(JR_RA, text_addr+0x000009C8);
+        _sw(LI_V0(1), text_addr+0x000009C8+4);
+    }
 }
 
 static void patch_sceWlan_Driver(SceModule2* mod)
 {
+    // disable frequency check
     u32 text_addr = mod->text_addr;
     _sw(NOP, text_addr + 0x000026C0);
 }
@@ -76,6 +74,33 @@ static void patch_scePower_Service(SceModule2* mod)
     u32 text_addr = mod->text_addr;
     // scePowerGetBacklightMaximum always returns 4
     _sw(NOP, text_addr + 0x00000E68);
+}
+
+static void disable_PauseGame(SceModule2* mod)
+{
+    u32 text_addr = mod->text_addr;
+    if(psp_model == PSP_GO) {
+        for(int i=0; i<2; i++) {
+            _sw(NOP, text_addr + 0x00000574 + i * 4);
+        }
+    }
+}
+
+static void settingsHandler(char* path){
+    if (strcasecmp(path, "overclock") == 0){
+        SetSpeed(333, 166);
+    }
+    else if (strcasecmp(path, "powersave") == 0){
+        SetSpeed(111, 55);
+        // set brightness
+    }
+}
+
+static void loadSettings(){
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, "SETTINGS.TXT");
+    ProcessConfigFile(path, &settingsHandler);
 }
 
 static void PSPOnModuleStart(SceModule2 * mod){
@@ -100,6 +125,13 @@ static void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
+    if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
+        //patch_sceChkreg();
+        disable_PauseGame(mod);
+        usb_charge();
+        goto flush;
+    }
+    
     if (strcmp(mod->modname, "sceLoadExec") == 0){
         if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
             prepatch_partitions();
@@ -108,7 +140,8 @@ static void PSPOnModuleStart(SceModule2 * mod){
     }
     
     if (strcmp(mod->modname, "sceMediaSync") == 0){
-        SetSpeed(333, 166); // overclock
+        SetSpeed(222, 111); // default CPU Speed
+        loadSettings(); // load and process settings file
         if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
             patch_partitions();
             goto flush;
@@ -129,6 +162,8 @@ int module_start(SceSize args, void * argp)
     _sw(0x44000000, 0xBC800100);
     // get psp model
     psp_model = sceKernelGetModel();
+    // get ark config
+    sctrlHENGetArkConfig(ark_config);
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
     // Return Success

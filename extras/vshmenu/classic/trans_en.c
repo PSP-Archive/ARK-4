@@ -37,7 +37,7 @@ const char *g_messages_en[] = {
     "HARD RESET",
     "SOFT RESET",
     "EXIT",
-    "PRO VSH MENU",
+    "ARK VSH MENU",
     "Flash",
     "UMD Disc",
     "Memory Stick",

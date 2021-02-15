@@ -39,6 +39,7 @@
 #define VSH_MENU "VSHMENU.PRX"
 #define K_FILE "K.BIN"
 #define ARK_BIN_MAX_SIZE 0x8000
+#define ARK_NAME "ARK 4.5"
 
 /*
 First two bits identify the device (PSP or PS Vita)

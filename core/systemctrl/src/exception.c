@@ -114,6 +114,7 @@ void screenHandler(PspDebugRegBlock * regs)
     int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = (void *)FindFunction("sceController_Service", "sceCtrl", 0x3A622550);
     if (CtrlPeekBufferPositive){
         PRTSTR("Press cross to soft reset");
+        PRTSTR("Press circle to launch recovery");
         PRTSTR("Press square to hard reset");
         PRTSTR("Press triangle to shudown");
     }
@@ -125,8 +126,10 @@ void screenHandler(PspDebugRegBlock * regs)
         if (CtrlPeekBufferPositive){
             CtrlPeekBufferPositive(&data, 1);
             if((data.Buttons & PSP_CTRL_CROSS) == PSP_CTRL_CROSS){
-                if (ark_config->recovery) exitToLauncher();
-                else sctrlKernelExitVSH(NULL);
+                sctrlKernelExitVSH(NULL);
+            }
+            else if((data.Buttons & PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE){
+                exitToLauncher();
             }
             else if((data.Buttons & PSP_CTRL_SQUARE) == PSP_CTRL_SQUARE){
                 void (*ColdReset)(int) = FindFunction("scePower_Service", "scePower", 0x0442D852);

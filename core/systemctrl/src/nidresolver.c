@@ -341,8 +341,7 @@ static void NidSortTable(NidResolverLib *table, unsigned int size)
 
 void resolve_syscon_driver(SceModule2 *syscon)
 {
-    if(syscon != NULL)
-        missing_sceSyscon_driver_entries[0].fp = (syscon->text_addr + 0x00002D08);
+    missing_sceSyscon_driver_entries[0].fp = (syscon->text_addr + 0x00002D08);
 }
 
 // Setup NID Resolver in sceLoaderCore

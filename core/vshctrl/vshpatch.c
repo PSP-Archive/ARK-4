@@ -184,7 +184,7 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     text_addr = mod->text_addr;
 
     p = (void*)(text_addr + 0x0002A62C);
-    ascii2utf16(p, "ARK-4");
+    ascii2utf16(p, ARK_NAME);
     _sw(0x3C020000 | ((u32)(p) >> 16), text_addr + 0x000192E0); // lui $v0, 
     _sw(0x34420000 | ((u32)(p) & 0xFFFF), text_addr + 0x000192E0 + 4); // or $v0, $v0, 
 

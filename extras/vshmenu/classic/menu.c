@@ -25,35 +25,12 @@
 
 const char **g_messages = g_messages_en;
 
-void change_clock(int dir, int a);
-
 extern int pwidth;
-extern char umd_path[72];
-extern SEConfig cnf;
 
-char freq_buf[3+3+2] = "";
-char freq2_buf[3+3+2] = "";
-char device_buf[13] = "";
-char umdvideo_path[256] = "";
-
-#define TMENU_MAX 11
+#define TMENU_MAX 6
 
 enum{
-    TMENU_XMB_CLOCK,
-    TMENU_GAME_CLOCK,
-    TMENU_USB_DEVICE,
-    TMENU_UMD_MODE,
-    TMENU_UMD_VIDEO,
-//    TMENU_XMB_PLUGINS,
-//    TMENU_GAME_PLUGINS,
-//    TMENU_POPS_PLUGINS,
     TMENU_RECOVERY_MENU,
-//    TMENU_USB_CHARGE,
-//    TMENU_HIDE_MAC,
-//    TMENU_SKIP_GAMEBOOT,
-//    TMENU_HIDE_PIC,
-//    TMENU_FLASH_PROT,
-//    TMENU_FAKE_REGION,
     TMENU_SHUTDOWN_DEVICE,
     TMENU_SUSPEND_DEVICE,
     TMENU_RESET_DEVICE,
@@ -64,7 +41,7 @@ enum{
 int item_fcolor[TMENU_MAX];
 const char *item_str[TMENU_MAX];
 
-static int menu_sel = TMENU_XMB_CLOCK;
+static int menu_sel = TMENU_RECOVERY_MENU;
 
 const int xyPoint[] ={0x98, 0x30, 0xC0, 0xA0, 0x70, 0x08, 0x0E, 0xA8};//data243C=
 const int xyPoint2[] ={0xB0, 0x30, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data2458=
@@ -95,7 +72,7 @@ int menu_draw(void)
         bc = (max_menu==menu_sel) ? 0xff8080 : 0xc00000ff;
         blit_set_color(fc,bc);
 
-        msg = g_messages[MSG_CPU_CLOCK_XMB + max_menu];
+        msg = g_messages[MSG_RECOVERY_MENU + max_menu];
 
         if(msg) {
             switch(max_menu) {
@@ -103,20 +80,10 @@ int menu_draw(void)
                     xPointer = pointer[2];
                     break;
                 case TMENU_RESET_DEVICE:
-                    if (cur_language == PSP_SYSTEMPARAM_LANGUAGE_GERMAN) {
-                        xPointer = pointer[3] - 2 * 8 - 1;
-                    } else {
-                        xPointer = pointer[3];
-                    }
-                    
+                    xPointer = pointer[3];
                     break;
                 case TMENU_RESET_VSH:
-                    if (cur_language == PSP_SYSTEMPARAM_LANGUAGE_GERMAN) {
-                        xPointer = pointer[7] - 2 * 8 - 1;
-                    } else {
-                        xPointer = pointer[7];
-                    }
-                    
+                    xPointer = pointer[7];
                     break;
                 case TMENU_RECOVERY_MENU:
                     xPointer = 168;
@@ -168,123 +135,6 @@ int menu_setup(void)
         item_str[i] = NULL;
         item_fcolor[i] = RGB(255,255,255);
     }
-
-    //xmb clock
-    if( cpu2no(cnf.vshcpuspeed) && ( bus2no(cnf.vshbusspeed)))    {        
-
-#ifdef CONFIG_639
-        if(psp_fw_version == FW_639)
-            scePaf_sprintf(freq_buf, "%d/%d", cnf.vshcpuspeed, cnf.vshbusspeed);
-#endif
-
-#ifdef CONFIG_635
-        if(psp_fw_version == FW_635)
-            scePaf_sprintf(freq_buf, "%d/%d", cnf.vshcpuspeed, cnf.vshbusspeed);
-#endif
-
-#ifdef CONFIG_620
-        if (psp_fw_version == FW_620)
-            scePaf_sprintf_620(freq_buf, "%d/%d", cnf.vshcpuspeed, cnf.vshbusspeed);
-#endif
-        
-#if defined(CONFIG_660) || defined(CONFIG_661)
-        if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
-            scePaf_sprintf_660(freq_buf, "%d/%d", cnf.vshcpuspeed, cnf.vshbusspeed);
-#endif
-        
-        bridge = freq_buf;
-    } else {
-        bridge = g_messages[MSG_DEFAULT];
-    }
-
-    item_str[TMENU_XMB_CLOCK] = bridge;
-
-    //game clock
-    if(cpu2no(cnf.umdisocpuspeed) && (bus2no(cnf.umdisobusspeed))) {        
-#ifdef CONFIG_639
-        if(psp_fw_version == FW_639)
-            scePaf_sprintf(freq2_buf, "%d/%d", cnf.umdisocpuspeed, cnf.umdisobusspeed);
-#endif
-
-#ifdef CONFIG_635
-        if(psp_fw_version == FW_635)
-            scePaf_sprintf(freq2_buf, "%d/%d", cnf.umdisocpuspeed, cnf.umdisobusspeed);
-#endif
-
-#ifdef CONFIG_620
-        if (psp_fw_version == FW_620)
-            scePaf_sprintf_620(freq2_buf, "%d/%d", cnf.umdisocpuspeed, cnf.umdisobusspeed);
-#endif
-        
-#if defined(CONFIG_660) || defined(CONFIG_661)
-        if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
-            scePaf_sprintf_660(freq2_buf, "%d/%d", cnf.umdisocpuspeed, cnf.umdisobusspeed);
-#endif
-        
-        bridge = freq2_buf;
-    } else {
-        bridge = g_messages[MSG_DEFAULT];
-    }
-
-    item_str[TMENU_GAME_CLOCK] = bridge;
-
-    //usb device
-    if((cnf.usbdevice>0) && (cnf.usbdevice<5)) {
-#ifdef CONFIG_639
-        if(psp_fw_version == FW_639)
-            scePaf_sprintf(device_buf, "%s %d", g_messages[MSG_FLASH], cnf.usbdevice-1);    
-#endif
-
-#ifdef CONFIG_635
-        if(psp_fw_version == FW_635)
-            scePaf_sprintf(device_buf, "%s %d", g_messages[MSG_FLASH], cnf.usbdevice-1);    
-#endif
-
-#ifdef CONFIG_620
-        if (psp_fw_version == FW_620)
-            scePaf_sprintf_620(device_buf, "%s %d", g_messages[MSG_FLASH], cnf.usbdevice-1);    
-#endif
-
-#if defined(CONFIG_660) || defined(CONFIG_661)
-        if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
-            scePaf_sprintf_660(device_buf, "%s %d", g_messages[MSG_FLASH], cnf.usbdevice-1);    
-#endif
-
-        bridge = device_buf;
-    } else {
-        const char *device;
-
-        if(cnf.usbdevice==5)
-            device= g_messages[MSG_UMD_DISC];
-        else
-            device= g_messages[MSG_MEMORY_STICK];
-
-        bridge = device;
-    }
-
-    umdvideo_disp = strrchr(umdvideo_path, '/');
-
-    if(umdvideo_disp == NULL) {
-        umdvideo_disp = umdvideo_path;
-    } else {
-        umdvideo_disp++;
-    }
-
-    item_str[TMENU_UMD_VIDEO] = umdvideo_disp;
-    item_str[TMENU_USB_DEVICE] = bridge;
-
-    switch(cnf.umdmode) {
-        case MODE_MARCH33:
-            item_str[TMENU_UMD_MODE] = g_messages[MSG_MARCH33];
-            break;
-        case MODE_NP9660:
-            item_str[TMENU_UMD_MODE] = g_messages[MSG_NP9660];
-            break;
-        case MODE_INFERNO:
-            item_str[TMENU_UMD_MODE] = g_messages[MSG_INFERNO];
-            break;
-    }
-
     return 0;
 }
 
@@ -318,41 +168,6 @@ int menu_ctrl(u32 button_on)
         return 0;
 
     switch(menu_sel) {
-        case TMENU_XMB_CLOCK:
-            if(direction) change_clock( direction, 0);
-            break;
-        case TMENU_GAME_CLOCK:
-            if(direction) change_clock( direction, 1);
-            break;
-        case TMENU_USB_DEVICE:
-            if(direction) change_usb( direction );
-            break;
-        case TMENU_UMD_MODE:
-            if(direction) change_umd_mode( direction );
-            break;
-        case TMENU_UMD_VIDEO:
-            if(direction) {
-                   change_umd_mount_idx(direction);
-
-                if(umdvideo_idx != 0) {
-                    char *umdpath;
-
-                    umdpath = umdvideolist_get(&g_umdlist, umdvideo_idx-1);
-
-                    if(umdpath != NULL) {
-                        strncpy(umdvideo_path, umdpath, sizeof(umdvideo_path));
-                        umdvideo_path[sizeof(umdvideo_path)-1] = '\0';
-                    } else {
-                        goto none;
-                    }
-                } else {
-none:
-                    strcpy(umdvideo_path, g_messages[MSG_NONE]);
-                }
-            } else {
-                return 7; // Mount UMDVideo ISO flag
-            }
-            break;
         case TMENU_RECOVERY_MENU:
             if(direction==0) {
                 return 6; // Recovery menu flag

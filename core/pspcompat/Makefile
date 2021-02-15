@@ -4,7 +4,9 @@ C_OBJS = \
 	main.o \
 	high_mem.o \
 	cpuclock.o \
-	$(PROVITA)/common/functions.o
+	usb_charge.o \
+	$(PROVITA)/common/functions.o \
+	$(PROVITA)/core/systemctrl/src/plugin.o
 		
 OBJS = \
 	$(C_OBJS) imports.o
