@@ -4,12 +4,12 @@ C_OBJS =   \
 	main.o  \
 	psxspu.o \
 	vitamem.o \
-	gameinfo.o \
-	exitgame.o  \
-	vitaflash.o  \
-	filesystem.o  \
+	vitaflash.o \
+	filesystem.o \
 	$(PROVITA)/common/functions.o \
 	$(PROVITA)/core/systemctrl/src/dummy.o \
+	$(PROVITA)/core/systemctrl/src/exitgame.o \
+	$(PROVITA)/core/systemctrl/src/gameinfo.o \
 		
 OBJS = \
 	$(C_OBJS)
@@ -18,7 +18,7 @@ all: $(TARGET).prx
 INCDIR = $(PROVITA)/common $(PROVITA)
 CFLAGS = -Os -G0 -Wall -fno-pic
 
-CFLAGS += -I include -I $(PROVITA)/common/include/ -I $(PROVITA)/libs/graphics/ -I $(PROVITA)/modules/systemctrl/include/
+CFLAGS += -I include -I $(PROVITA)/common/include/ -I $(PROVITA)/libs/graphics/ -I $(PROVITA)/core/systemctrl/include/
 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)

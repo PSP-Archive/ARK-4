@@ -31,8 +31,7 @@
 
 extern ARKConfig* ark_config;
 
-// Exit to Launcher
-void exitToLauncher(void)
+static void exitgame(const char* path)
 {
     
     // Refuse Operation in Save dialog
@@ -50,10 +49,6 @@ void exitToLauncher(void)
     // Clear Memory
     memset(&param, 0, sizeof(param));
 
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, ARK_MENU);
-    
     // Configure Parameters
     param.size = sizeof(param);
     param.args = strlen(path) + 1;
@@ -65,6 +60,22 @@ void exitToLauncher(void)
     
     // Trigger Reboot
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
+}
+
+// Exit to Launcher
+void exitToLauncher(void){
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, ARK_MENU);
+    exitgame(path);
+}
+
+// Exit to Recovery
+void exitToRecovery(void){
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, ARK_RECOVERY);
+    exitgame(path);
 }
 
 // Gamepad Hook #1

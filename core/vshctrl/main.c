@@ -36,7 +36,7 @@ PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 0);
 u32 psp_model = 0;
 u32 psp_fw_version = 0;
 ARKConfig _ark_conf;
-ARKConfig* ark_conf = &_ark_conf;
+ARKConfig* ark_config = &_ark_conf;
 
 // Flush Instruction and Data Cache
 void sync_cache()
@@ -75,7 +75,7 @@ int module_start(SceSize args, void* argp)
     printk("VshCtrl started\n");
     psp_model = sceKernelGetModel();
     psp_fw_version = sceKernelDevkitVersion();
-    sctrlHENGetArkConfig(ark_conf);
+    sctrlHENGetArkConfig(ark_config);
     vshpatch_init();
 
     // always reset to NORMAL mode in VSH

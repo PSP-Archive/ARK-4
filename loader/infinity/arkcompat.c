@@ -91,7 +91,7 @@ typedef struct ARKConfig{
 
 ARKConfig _arkconf = {
     .arkpath = "ms0:/ARK/", // default path for permanent CFW
-    .exploit_id = "INFINITY",
+    .exploit_id = "Infinity",
     .exec_mode = PSP_ORIG,
     .recovery = 0,
 };

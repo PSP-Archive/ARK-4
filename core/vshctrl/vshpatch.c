@@ -178,13 +178,13 @@ int myIoMkdir(const char *dir, SceMode mode)
 
 static void patch_sysconf_plugin_module(SceModule2 *mod)
 {
-    void *p = NULL;
-    u32 text_addr;
+    u32 text_addr = mod->text_addr;
+    void *p = (void*)(text_addr + 0x0002A62C);
 
-    text_addr = mod->text_addr;
-
-    p = (void*)(text_addr + 0x0002A62C);
-    ascii2utf16(p, ARK_NAME);
+    char str[50];
+    sprintf(str, "ARK %d.%d %s", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ark_config->exploit_id);
+    ascii2utf16(p, str);
+    
     _sw(0x3C020000 | ((u32)(p) >> 16), text_addr + 0x000192E0); // lui $v0, 
     _sw(0x34420000 | ((u32)(p) & 0xFFFF), text_addr + 0x000192E0 + 4); // or $v0, $v0, 
 

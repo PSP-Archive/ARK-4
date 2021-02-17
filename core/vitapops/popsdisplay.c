@@ -23,6 +23,7 @@ POPSVramConfigList* vram_config = (POPSVramConfigList*)0x49FE0000;
 // Registered Vram handler
 void (*_psxVramHandler)(u32* psp_vram, u16* ps1_vram) = (void*)NULL;
 
+// initialize POPS VRAM
 static void initVitaPopsVram(){
     memset((void *)pops_vram, 0, 0x3C0000);
     vram_config->counter = 0;
@@ -34,6 +35,7 @@ static void initVitaPopsVram(){
     vram_config->configs[0].cur_buffer = 0;
 }
 
+// PSP to PSX Color Conversion
 static u16 RGBA8888_to_RGBA5551(u32 color)
 {
     int r, g, b, a;
@@ -43,6 +45,7 @@ static u16 RGBA8888_to_RGBA5551(u32 color)
     r = (color >> 3) & 0x1F;
     return a | r | (g << 5) | (b << 10);
 }
+
 
 static u32 GetPopsVramAddr(u32 framebuffer, int x, int y)
 {
@@ -54,6 +57,7 @@ static u32 GetPspVramAddr(u32 framebuffer, int x, int y)
     return framebuffer + x * 4 + y * 512 * 4;
 }
 
+// Copy PSP VRAM to PSX VRAM
 static void RelocateVram(u32* psp_vram, u16* ps1_vram)
 {
     if(psp_vram)
@@ -71,12 +75,14 @@ static void RelocateVram(u32* psp_vram, u16* ps1_vram)
     }
 }
 
+// hooked function to copy framebuffer
 static int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr,
         int width, int format, int sync){
     if (_psxVramHandler) _psxVramHandler(topaddr, pops_vram);
     return _sceDisplaySetFrameBufferInternal(pri, topaddr, width, format, sync); 
 }
 
+// register custom vram handler
 static void* registerPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram)){
     void* prev = _psxVramHandler;
     if (handler) _psxVramHandler = handler;
@@ -90,6 +96,7 @@ void* sctrlARKSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram)){
     return prev;
 }
 
+// patch pops display to set up our own screen handler
 void patchVitaPopsDisplay(SceModule2* mod){
     u32 display_func = FindFunction("sceDisplay_Service", "sceDisplay_driver", 0x3E17FE8D);
     if (display_func){

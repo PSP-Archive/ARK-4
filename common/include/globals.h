@@ -32,14 +32,15 @@
 
 // ARK_CONFIG
 #define ARK_PATH_SIZE 128
-//#define CONF_ADDR 0x883ffe00 //0x8BFFFF00
 #define ARK_MENU "MENU.PBP"
+#define ARK_RECOVERY "RECOVERY.PBP"
 #define ARK_BIN "ARK.BIN"
 #define FLASH0_ARK "FLASH0.ARK"
 #define VSH_MENU "VSHMENU.PRX"
 #define K_FILE "K.BIN"
 #define ARK_BIN_MAX_SIZE 0x8000
-#define ARK_NAME "ARK 4.5"
+#define ARK_MAJOR_VERSION 4
+#define ARK_MINOR_VERSION 6
 
 /*
 First two bits identify the device (PSP or PS Vita)
@@ -82,7 +83,8 @@ enum {
 
 typedef struct ARKConfig{
     char arkpath[ARK_PATH_SIZE-20]; // leave enough room to concatenate files
-    char exploit_id[20];
+    char exploit_id[12];
+    char kxploit[ARK_PATH_SIZE];
     unsigned char exec_mode;
     unsigned char recovery;
 } ARKConfig;

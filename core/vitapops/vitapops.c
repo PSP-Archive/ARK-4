@@ -12,7 +12,7 @@
 #include <functions.h>
 #include "popsdisplay.h"
 
-PSP_MODULE_INFO("VitaPops", 0x3007, 1, 0);
+PSP_MODULE_INFO("ARKVitaPopsCompat", 0x3007, 1, 0);
 
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;

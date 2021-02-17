@@ -26,7 +26,7 @@
 #include "psxspu.h"
 #include "libs/graphics/graphics.h"
 
-PSP_MODULE_INFO("VitaCompat", 0x3007, 1, 0);
+PSP_MODULE_INFO("ARKVitaCompat", 0x3007, 1, 0);
 
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
@@ -134,7 +134,7 @@ static void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
     }
        
-       // Boot Complete Action not done yet
+    // Boot Complete Action not done yet
     if(booted == 0)
     {
         // Boot is complete

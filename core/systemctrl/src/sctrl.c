@@ -450,10 +450,12 @@ unsigned int sctrlGetInitTextAddr(void)
 }
 
 // Register Custom init.prx sceKernelStartModule Handler
-void sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt))
+void* sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt))
 {
+    void* prev = customStartModule;
     // Register Handler
     customStartModule = func;
+    return prev;
 }
 
 // Return PSID Hash

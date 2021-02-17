@@ -19,7 +19,6 @@ C_OBJS = \
 	src/nidresolver.o \
 	src/nid_660_data.o \
 	src/missingfunc.o \
-	src/plugin.o \
 	src/rebootex.o \
 	src/sysmem.o \
 	src/vlffix.o \
@@ -29,7 +28,9 @@ C_OBJS = \
 	src/threadctx.o \
 	src/lz4.o \
 	src/loadexec_patch.o \
-	$(PROVITA)/core/vitacompat/exitgame.o \
+	src/exitgame.o \
+	src/gameinfo.o \
+	src/plugin.o \
 	$(PROVITA)/common/functions.o
 		
 OBJS = \

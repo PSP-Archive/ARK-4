@@ -5,9 +5,9 @@ C_OBJS = \
 	nullaudio.o \
 	popsdisplay.o \
 	$(PROVITA)/common/functions.o \
-	$(PROVITA)/core/vitacompat/exitgame.o \
 	$(PROVITA)/core/vitacompat/vitaflash.o \
 	$(PROVITA)/core/systemctrl/src/dummy.o \
+	$(PROVITA)/core/systemctrl/src/exitgame.o \
 		
 OBJS = \
 	$(C_OBJS)

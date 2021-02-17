@@ -23,7 +23,7 @@ PSP_HEAP_SIZE_KB(4096);
 
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
-#define EXPLOIT_ID "ARK_EBOOT_LOADER"
+#define EXPLOIT_ID "Live"
 
 // ARK.BIN requires these imports
 //int SysMemUserForUser_91DE343C(void* unk);
@@ -31,6 +31,7 @@ int sceKernelPowerLock(unsigned int, unsigned int);
 
 volatile ARKConfig config = {
     .arkpath = {0}, // We can use argv[0] (eboot's path)
+    .kxploit = {0}, // should be in same folder as eboot
     .exec_mode = DEV_UNK, // let stage 2 figure this one out
     .exploit_id = EXPLOIT_ID,
     .recovery = 0,
@@ -117,9 +118,15 @@ int main(int argc, char** argv){
     
     PRTSTR("Stage 1 Starting");
     
+    // determine install path
     int len = strlen(argv[0]) - sizeof("EBOOT.PBP") + 1;
     strncpy(config.arkpath, argv[0], len);
 
+    // determine kxploit path
+    strcpy(config.kxploit, config.arkpath);
+    strcat(config.kxploit, K_FILE);
+
+    // determine ARK stage 2 loader
     char loadpath[ARK_PATH_SIZE];
     strcpy(loadpath, config.arkpath);
     strcat(loadpath, ARK_BIN);

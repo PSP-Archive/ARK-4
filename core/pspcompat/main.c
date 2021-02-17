@@ -12,9 +12,10 @@
 #include <pspgu.h>
 #include <functions.h>
 #include "high_mem.h"
+#include "exitgame.h"
 #include "libs/graphics/graphics.h"
 
-PSP_MODULE_INFO("PSPCompat", 0x3007, 1, 0);
+PSP_MODULE_INFO("ARKPSPCompat", 0x3007, 1, 0);
 
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
@@ -35,6 +36,23 @@ void flushCache()
     
     // Flush Data Cache
     sceKernelDcacheWritebackInvalidateAll();
+}
+
+// Return Boot Status
+static int isSystemBooted(void)
+{
+
+    // Find Function
+    int (* _sceKernelGetSystemStatus)(void) = (void*)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
+    
+    // Get System Status
+    int result = _sceKernelGetSystemStatus();
+        
+    // System booted
+    if(result == 0x20000) return 1;
+    
+    // Still booting
+    return 0;
 }
 
 static int _sceKernelBootFromForUmdMan(void)
@@ -71,8 +89,8 @@ static void patch_sceWlan_Driver(SceModule2* mod)
 
 static void patch_scePower_Service(SceModule2* mod)
 {
-    u32 text_addr = mod->text_addr;
     // scePowerGetBacklightMaximum always returns 4
+    u32 text_addr = mod->text_addr;
     _sw(NOP, text_addr + 0x00000E68);
 }
 
@@ -86,30 +104,49 @@ static void disable_PauseGame(SceModule2* mod)
     }
 }
 
+static int is_launcher_mode = 0;
 static void settingsHandler(char* path){
     if (strcasecmp(path, "overclock") == 0){
         SetSpeed(333, 166);
     }
     else if (strcasecmp(path, "powersave") == 0){
         SetSpeed(133, 66);
-        // set brightness
     }
     else if (strcasecmp(path, "usbcharge") == 0){
         usb_charge();
     }
+    else if (strcasecmp(path, "disablepause") == 0){
+        disable_PauseGame(sceKernelFindModuleByName("sceImpose_Driver"));
+    }
+    else if (strcasecmp(path, "launcher") == 0){
+        is_launcher_mode = 1;
+        // Patch sceKernelExitGame Syscalls
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), exitToLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x2AC9954B), exitToLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x08F7166C), exitToLauncher);
+        flushCache();
+    }
 }
 
-static void loadSettings(){
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, "SETTINGS.TXT");
-    ProcessConfigFile(path, &settingsHandler);
+static int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
+static int PSPModuleStartHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
+    SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
+    if (strcmp(mod->modname, "vsh_module") == 0){
+        if (is_launcher_mode){ // system in launcher mode
+            exitToLauncher(); // reboot VSH into launcher
+        }
+    }
+    if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
+    return -1; // pass through
 }
 
 static void PSPOnModuleStart(SceModule2 * mod){
+
+    // System fully booted Status
+    static int booted = 0;
     
     if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
-        patch_sceUmdMan_driver((SceModule*)mod);
+        patch_sceUmdMan_driver(mod);
         goto flush;
     }
 
@@ -128,12 +165,6 @@ static void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
-    if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
-        //patch_sceChkreg();
-        disable_PauseGame(mod);
-        goto flush;
-    }
-    
     if (strcmp(mod->modname, "sceLoadExec") == 0){
         if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
             prepatch_partitions();
@@ -142,13 +173,27 @@ static void PSPOnModuleStart(SceModule2 * mod){
     }
     
     if (strcmp(mod->modname, "sceMediaSync") == 0){
-        SetSpeed(222, 111); // default CPU Speed
-        loadSettings(); // load and process settings file
+        // load and process settings file
+        loadSettings(&settingsHandler);
+        // enable high mem in homebrews
         if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
             patch_partitions();
             goto flush;
         }
     }
+    
+    /*
+    if(booted == 0)
+    {
+        // Boot is complete
+        if(isSystemBooted())
+        {
+            // Boot Complete Action done
+            booted = 1;
+            goto flush;
+        }
+    }
+    */
     
 flush:
     flushCache();
@@ -168,6 +213,8 @@ int module_start(SceSize args, void * argp)
     sctrlHENGetArkConfig(ark_config);
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
+    // Register custom module start
+    prev_start = sctrlSetCustomStartModule(PSPModuleStartHandler);
     // Return Success
     return 0;
 }

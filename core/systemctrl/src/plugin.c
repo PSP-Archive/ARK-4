@@ -29,6 +29,8 @@
 
 extern ARKConfig* ark_config;
 
+extern int readGameIdFromDisc(char* gameid);
+
 // Missing Libc Function strcasecmp (needed for stricmp to work)
 int strcasecmp(const char * a, const char * b)
 {
@@ -67,17 +69,17 @@ static int matchingRunlevel(char * runlevel)
     // Fetch Apitype
     int apitype = sceKernelInitApitype();
     
-    // always on
-    if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1;
-    
-    // "game" Runlevel
-    if(( apitype == 0x123 || apitype == 0x125 || apitype == 0x141 ) && stricmp(runlevel, "game") == 0) return 1;
-    
-    // "pops" Runlevel
-    if(apitype == 0x144 && stricmp(runlevel, "pops") == 0) return 1;
-    
-    // "vsh" Runlevel
-    if ((apitype ==  0x210 || apitype ==  0x220) && stricmp(runlevel, "vsh") == 0) return 1;
+    if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1; // always on
+    else if (stricmp(runlevel, "pops") == 0) return (apitype == 0x144); // PS1 games only
+    else if (stricmp(runlevel, "game") == 0) return (apitype == 0x123 || apitype == 0x125 || apitype == 0x141 || apitype == 0x151); // umdemu+homebrew
+    else if (stricmp(runlevel, "umd") == 0) return (apitype == 0x123 || apitype == 0x125); // UMD games only
+    else if (stricmp(runlevel, "homebrew") == 0) return (apitype == 0x141 || apitype == 0x151); // homebrews only
+    else if (stricmp(runlevel, "vsh") == 0) return (apitype ==  0x210 || apitype ==  0x220); // VSH only
+    else{
+        // check if plugin loads on specific game
+        char gameid[10]; memset(gameid, 0, sizeof(gameid));
+        if (getGameId(gameid) && stricmp(runlevel, gameid) == 0) return 1;
+    }
     
     // Unsupported Runlevel (we don't touch those to keep stability up)
     return 0;
@@ -305,4 +307,12 @@ void LoadPlugins(){
     strcpy(path, ark_config->arkpath);
     strcat(path, "PLUGINS.TXT");
     ProcessConfigFile(path, &startPlugin);
+}
+
+void loadSettings(void* settingsHandler){
+    // process settings file
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, "SETTINGS.TXT");
+    ProcessConfigFile(path, settingsHandler);
 }

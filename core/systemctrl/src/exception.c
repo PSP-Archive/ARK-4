@@ -111,6 +111,7 @@ void screenHandler(PspDebugRegBlock * regs)
         }
     }
     
+    // present user menu for recovery options
     int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = (void *)FindFunction("sceController_Service", "sceCtrl", 0x3A622550);
     if (CtrlPeekBufferPositive){
         PRTSTR("Press cross to soft reset");
@@ -118,10 +119,10 @@ void screenHandler(PspDebugRegBlock * regs)
         PRTSTR("Press square to hard reset");
         PRTSTR("Press triangle to shudown");
     }
-    
+
+    // await user input    
     SceCtrlData data;
     memset(&data, 0, sizeof(data));
-    
     while (1){
         if (CtrlPeekBufferPositive){
             CtrlPeekBufferPositive(&data, 1);
@@ -129,7 +130,7 @@ void screenHandler(PspDebugRegBlock * regs)
                 sctrlKernelExitVSH(NULL);
             }
             else if((data.Buttons & PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE){
-                exitToLauncher();
+                exitToRecovery();
             }
             else if((data.Buttons & PSP_CTRL_SQUARE) == PSP_CTRL_SQUARE){
                 void (*ColdReset)(int) = FindFunction("scePower_Service", "scePower", 0x0442D852);

@@ -172,7 +172,7 @@ int load_start_module(char *path)
 void exec_recovery_menu(){
     char menupath[ARK_PATH_SIZE];
     strcpy(menupath, ark_config->arkpath);
-    strcat(menupath, ARK_MENU);
+    strcat(menupath, ARK_RECOVERY);
     
     struct SceKernelLoadExecVSHParam param;
     memset(&param, 0, sizeof(param));

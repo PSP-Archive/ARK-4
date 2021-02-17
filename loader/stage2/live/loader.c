@@ -65,7 +65,7 @@ void loadKernelArk(){
         // Prepare Homebrew Reboot
         char menupath[ARK_PATH_SIZE];
         strcpy(menupath, ark_conf_backup->arkpath);
-        strcat(menupath, ARK_MENU);
+        strcat(menupath, (ark_conf_backup->recovery)? ARK_RECOVERY : ARK_MENU);
         struct SceKernelLoadExecVSHParam param;
         memset(&param, 0, sizeof(param));
         param.size = sizeof(param);

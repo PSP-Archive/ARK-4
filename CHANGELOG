@@ -1,5 +1,14 @@
 ARK-4
 
+Update 6:
+- Added "launcher" setting to replace XMB with a custom launcher.
+--- In settings file add the following line: always, launcher, on
+- Included neur0n's vMenu as a sample launcher.
+- Added "disablepause" feature to settings (only works on PSP Go).
+- You can now enable plugins on a per-game basis.
+- Added "umd" runlevel for plugins that only load in official games.
+- Added "homebrew" runlevel for plugins that only load in homebrews.
+
 Update 5:
 - Fixed ISOs and homebrews on PSP Go.
 - Added USB Charging (not for PSP 1K).
@@ -48,6 +57,7 @@ ARK-2
 - separated ARK loader from Kernel exploit for easier deployment of ARK
 
 ARK-1
+- initial port of PRO CFW to the PS Vita by Team PRO.
 - support for ISO and CSO with the Inferno ISO Driver
 - support for homebrew games and apps
 - playback of soundless PSX games

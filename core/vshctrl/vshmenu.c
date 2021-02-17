@@ -86,7 +86,7 @@ static SceUID load_satelite(void)
 {
     SceUID modid;
     char mod[ARK_PATH_SIZE];
-    strcpy(mod, ark_conf->arkpath);
+    strcpy(mod, ark_config->arkpath);
     strcat(mod, VSH_MENU);
     
     SceKernelLMOption opt = {

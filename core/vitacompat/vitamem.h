@@ -50,7 +50,4 @@ void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *tab
 int PatchSysMem(void *a0, void *sysmem_config);
 void unprotectVitaMemory();
 
-// game info
-void* SysMemForKernel_EF29061C_Fixed(void);
-void patchGameInfoGetter(SceModule2 * mod);
 #endif

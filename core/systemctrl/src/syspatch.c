@@ -35,7 +35,6 @@
 #include "vlffix.h"
 #include "rebootconfig.h"
 #include "sysmem.h"
-#include "core/vitacompat/exitgame.h"
 
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
@@ -156,6 +155,7 @@ exit:
 // Add Module Start Patcher
 void syspatchInit(void)
 {
+
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKSyspatchOnModuleStart);
 }

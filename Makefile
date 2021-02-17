@@ -19,7 +19,8 @@ copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PB
 	$(Q)cp loader/stage1/live_eboot/eboot/EBOOT.PBP dist/WMENU.BIN # Unsigned EBOOT for VHBL
 	$(Q)cp loader/stage2/live/ark.bin dist/ARK.BIN # ARK installer and loader
 	$(Q)cp loader/kxploit/k.bin dist/K.BIN # Kernel exploit
-	$(Q)cp menu/provsh/EBOOT.PBP dist/MENU.PBP # Default menu
+	$(Q)cp menu/provsh/EBOOT.PBP dist/RECOVERY.PBP # Default recovery menu
+	$(Q)cp menu/vMenu/EBOOT.PBP dist/MENU.PBP # Default launcher
 	$(Q)cp extras/vshmenu/classic/satelite.prx dist/VSHMENU.PRX # Default vsh menu
 	$(Q)cp contrib/SETTINGS.TXT dist/SETTINGS.TXT # Default settings
 	
