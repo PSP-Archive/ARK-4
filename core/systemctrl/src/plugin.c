@@ -66,12 +66,13 @@ int strcasecmp(const char * a, const char * b)
 // Runlevel Check
 static int matchingRunlevel(char * runlevel)
 {
+
     // Fetch Apitype
     int apitype = sceKernelInitApitype();
     
     if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1; // always on
-    else if (stricmp(runlevel, "pops") == 0) return (apitype == 0x144); // PS1 games only
-    else if (stricmp(runlevel, "game") == 0) return (apitype == 0x123 || apitype == 0x125 || apitype == 0x141 || apitype == 0x151); // umdemu+homebrew
+    else if (stricmp(runlevel, "pops") == 0) return (apitype == 0x144 || apitype == 0x155); // PS1 games only
+    else if (stricmp(runlevel, "game") == 0) return (apitype == 0x123 || apitype == 0x125 || apitype == 0x141 || apitype == 0x151); // umd+homebrew
     else if (stricmp(runlevel, "umd") == 0) return (apitype == 0x123 || apitype == 0x125); // UMD games only
     else if (stricmp(runlevel, "homebrew") == 0) return (apitype == 0x141 || apitype == 0x151); // homebrews only
     else if (stricmp(runlevel, "vsh") == 0) return (apitype ==  0x210 || apitype ==  0x220); // VSH only
