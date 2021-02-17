@@ -1,5 +1,5 @@
 Vita POPS (PSX exploits on PS Vita) compatibility layer for ARK.
-Rescued from early TN-X source code.
+Rescued from early TN-X source code by TheFl0w.
 
 PSX games on PS Vita run on a limited PSP environment.
 - The emulator itself is POPS, same exact as PSP 6.60, but audio is handled by Vita OS.

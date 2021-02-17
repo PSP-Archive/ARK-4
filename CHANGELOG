@@ -9,6 +9,7 @@ Update 6:
 - Added "umd" runlevel for plugins that only load in official games.
 - Added "homebrew" runlevel for plugins that only load in homebrews.
 - Fixed pops plugins loaded from PSP Go internal memory (ef0).
+- Fixed homebrew plugins loaded from PSP Go internal memory (ef0).
 
 Update 5:
 - Fixed ISOs and homebrews on PSP Go.
