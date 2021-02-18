@@ -86,16 +86,16 @@ static int vshpatch_module_chain(SceModule2 *mod)
         goto exit;
     }
 
+    /*
     if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
         patch_Gameboot(mod);
-        /*
-        if(psp_model == PSP_GO && conf.hibblock) {
+        if(psp_model == PSP_GO) {
             patch_hibblock(mod);
         }
-        */
         sync_cache();
         goto exit;
     }
+    */
 
     if(0 == strcmp(mod->modname, "msvideo_main_plugin_module")) {
         patch_msvideo_main_plugin_module(text_addr);

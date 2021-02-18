@@ -65,7 +65,7 @@ typedef struct { /* PEOPS SPU configuration */
 
 typedef struct {
     unsigned char iso_driver; // M33 = 0, NP9660 = 1, Inferno = 2, ME = 3
-    unsigned char hide_exploit; // hide exploited game on vita
+    //unsigned char hide_exploit; // hide exploited game on vita
     unsigned char fast_gameboot; // skip pmf/at3 and gameboot animation
     unsigned char language; // default language for the menu
     unsigned char font; // default font (either the ones in flash0 or the custom one in DATA.PKG
@@ -81,7 +81,7 @@ namespace common{
 
     extern int getArgc();
     extern char** getArgv();
-    extern char* getExploitID();
+    //extern char* getExploitID();
     extern bool has_suffix(const std::string &str, const std::string &suffix);
     SceOff findPkgOffset(const char* filename, unsigned* size = NULL);
     extern void* readFromPKG(const char* filename, unsigned* size = NULL);

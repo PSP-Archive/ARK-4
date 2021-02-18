@@ -23,8 +23,6 @@
 #include "systemctrl.h"
 #include "systemctrl_se.h"
 #include "systemctrl_private.h"
-//#include "printk.h"
-//#include "utils.h"
 #include "strsafe.h"
 #include "dirent_track.h"
 #include "main.h"

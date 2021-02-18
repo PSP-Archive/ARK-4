@@ -55,8 +55,8 @@ Entry::Entry(string path){
 
 
 string Entry::getName(){
-    if (common::getConf()->hide_exploit && this->name == string(common::getExploitID()))
-        return string("Game Exploit");
+    //if (common::getConf()->hide_exploit && this->name == string(common::getExploitID()))
+    //    return string("Game Exploit");
     return this->name;
 }
 
@@ -65,20 +65,20 @@ string Entry::getPath(){
 }
 
 Image* Entry::getIcon(){
-    if (common::getConf()->hide_exploit && this->name == string(common::getExploitID()))
-        return (this->icon0 == common::getImage(IMAGE_WAITICON))? this->icon0 : common::getImage(IMAGE_NOICON);
+    //if (common::getConf()->hide_exploit && this->name == string(common::getExploitID()))
+    //    return (this->icon0 == common::getImage(IMAGE_WAITICON))? this->icon0 : common::getImage(IMAGE_NOICON);
     return this->icon0;
 }
 
 Image* Entry::getPic0(){
-    if (common::getConf()->hide_exploit && this->name == string(common::getExploitID()))
-        return NULL;
+    //if (common::getConf()->hide_exploit && this->name == string(common::getExploitID()))
+    //    return NULL;
     return (this->pic0 == NULL)? NULL : this->pic0;
 }
 
 Image* Entry::getPic1(){
-    if (common::getConf()->hide_exploit && this->name == string(common::getExploitID()))
-        return common::getImage(IMAGE_BG);
+    //if (common::getConf()->hide_exploit && this->name == string(common::getExploitID()))
+    //    return common::getImage(IMAGE_BG);
     return (this->pic1 == NULL)? common::getImage(IMAGE_BG) : this->pic1;
 }
 
@@ -207,11 +207,13 @@ bool Entry::run(){
     img->draw((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2);
     common::flipScreen();
     
+    /*
     if (common::getConf()->hide_exploit && this->name == string(common::getExploitID())){
         this->icon1 = NULL;
         this->snd0 = NULL;
     }
     else
+    */
         getTempData2();
     
     bool pmfPlayback = this->icon1 != NULL || this->snd0 != NULL;

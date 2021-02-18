@@ -1,5 +1,10 @@
 ARK-4
 
+Update 6.1:
+- Fixed pops plugins loaded from PSP Go internal memory (ef0).
+- Fixed homebrew plugins loaded from PSP Go internal memory (ef0).
+- Added "highmem" option to settings file.
+
 Update 6:
 - Added "launcher" setting to replace XMB with a custom launcher.
 --- In settings file add the following line: always, launcher, on
@@ -8,8 +13,6 @@ Update 6:
 - You can now enable plugins on a per-game basis.
 - Added "umd" runlevel for plugins that only load in official games.
 - Added "homebrew" runlevel for plugins that only load in homebrews.
-- Fixed pops plugins loaded from PSP Go internal memory (ef0).
-- Fixed homebrew plugins loaded from PSP Go internal memory (ef0).
 
 Update 5:
 - Fixed ISOs and homebrews on PSP Go.

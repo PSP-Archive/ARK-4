@@ -35,8 +35,8 @@ class Browser : public SystemEntry{
         void pause(){}
         void resume(){}
         
-        char* getInfo(){
-            return (char*)(this->cwd.c_str());
+        string getInfo(){
+            return this->cwd;
         }
         
         char* getName(){

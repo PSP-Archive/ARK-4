@@ -43,7 +43,7 @@ class VSHMenu : public SystemEntry{
         
         void resume();
         
-        char* getInfo(){
+        string getInfo(){
             return "System Settings";
         }
         

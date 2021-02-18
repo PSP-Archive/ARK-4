@@ -28,6 +28,7 @@ static struct {
 };
 
 /* Hide game Exploit entry */
+/*
 static struct {
     char* description;
     unsigned char max_options;
@@ -41,6 +42,7 @@ static struct {
     &(common::getConf()->hide_exploit),
     {"Disabled", "Enabled"}
 };
+*/
 
 /* Fastboot entry */
 static struct {
@@ -182,7 +184,7 @@ static struct {
 
 static vsh_entry* vsh_entries[MAX_OPTIONS] = {
     (vsh_entry*)&iso_driver,
-    (vsh_entry*)&hide_exploit,
+    //(vsh_entry*)&hide_exploit,
     (vsh_entry*)&fast_gameboot,
     (vsh_entry*)&language,
     (vsh_entry*)&font,

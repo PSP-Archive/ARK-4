@@ -8,3 +8,5 @@ vsh, powersave, off
 always, launcher, off
 # disable pause game (only for PSP Go)
 always, disablepause, off
+# enable high memory for homebrews
+homebrew, highmem, on

@@ -20,8 +20,6 @@
 #include <pspiofilemgr.h>
 #include <psputilsforkernel.h>
 #include <pspumd.h>
-//#include "printk.h"
-//#include "utils.h"
 #include "systemctrl_private.h"
 
 static int has_file(char *file)

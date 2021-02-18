@@ -37,6 +37,6 @@ void PixelAnim::draw(){
         if (this->pixels[i].x > 480)
             this->pixels[i].x = 0;
             
-        common::printText((float)(pixels[i].x), (float)(pixels[i].y), ".", LITEGRAY, SIZE_LITTLE, true);
+        common::printText((float)(pixels[i].x), (float)(pixels[i].y), ".", LITEGRAY, SIZE_BIG, true);
     }
 }

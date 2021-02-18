@@ -56,7 +56,7 @@ static inline u32 *get_partition(int pid)
 
 void unlock_high_memory()
 {
-    if(!is_homebrews_runlevel() && !g_high_memory_enabled) {
+    if(!g_high_memory_enabled) {
         return;
     }
     
@@ -129,25 +129,14 @@ void prepatch_partitions(void)
 void patch_partitions(void) 
 {
 
-    if (!is_homebrews_runlevel()){
-        return;
-    }
-    
     MemPart p2, p9;
     int max_user_part_size;
 
     p2.meminfo = get_partition(2);
     p9.meminfo = get_partition(9);
 
-    //if(g_p2_size == 24 && g_p9_size == 24) {
-        p2.size = MAX_HIGH_MEMSIZE;
-        p9.size = 0;
-    /*
-    } else {
-        p2.size = g_p2_size;
-        p9.size = g_p9_size;
-    }
-    */
+    p2.size = MAX_HIGH_MEMSIZE;
+    p9.size = 0;
 
     if(get_partition(11) != NULL) {
         max_user_part_size = 56 - 4 - g_p8_size;
@@ -181,22 +170,3 @@ void patch_partitions(void)
     g_high_memory_enabled = 1;
     unlock_high_memory(0);
 }
-
-/*
-void disable_PauseGame(u32 text_addr)
-{
-    int i, apitype;
-
-    if(psp_model != PSP_GO) {
-        return;
-    }
-
-    apitype = sceKernelInitApitype();
-
-    if(g_high_memory_enabled || (conf.iso_cache && apitype == 0x125)) {
-        for(i=0; i<g_offs->impose_patch.nr_nop; i++) {
-            _sw(NOP, text_addr + g_offs->impose_patch.offset + i * 4);
-        }
-    }
-}
-*/

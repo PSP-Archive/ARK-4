@@ -285,8 +285,8 @@ void GameManager::stopFastScroll(){
     this->categories[this->selectedCategory]->stopFastScroll();
 }
 
-char* GameManager::getInfo(){
-    return (selectedCategory >= 0)? (char*)getEntry()->getName().c_str() : (char*)"No games available";
+string GameManager::getInfo(){
+    return (selectedCategory >= 0)? getEntry()->getName() : "No games available";
 }
 
 void GameManager::draw(){

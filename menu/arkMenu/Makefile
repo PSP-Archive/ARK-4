@@ -4,7 +4,7 @@ CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 INCDIR = include include/anim pmf ftp graphics graphics/ya2d graphics/intraFont graphics/jpeg $(PROVITA)/common/include
 LIBDIR = $(PROVITA)/libs
-LIBS = -lunziprar -lstdc++ -lc -lya2d -ljpeg -lintraFont -lpng -lpspvfpu -lpspmpeg -lpspaudio -lpspatrac3 -lpspwlan -lpsppower -lpspgum -lpspgu -lz -lm -lpspvram -lpspmath -lpspumd -lpspmp3 -lpspsystemctrl_user
+LIBS = -lunziprar -lstdc++ -lc -lya2d -ljpeg -lpng -lpspvfpu -lpspmpeg -lpspaudio -lpspatrac3 -lpspwlan -lpsppower -lpspgum -lpspgu -lz -lm -lpspvram -lpspmath -lpspumd -lpspmp3 -lpspsystemctrl_user
 LDFLAGS =
 EXTRA_TARGETS = EBOOT.PBP
 PSP_EBOOT_TITLE = arkMenu
@@ -51,7 +51,9 @@ OBJS = \
 		src/anim/fire.o \
 		src/anim/tetris.o \
 		src/anim/matrix.o \
-		src/anim/noanim.o
+		src/anim/noanim.o \
+		$(PROVITA)/libs/libintraFont/intraFont.o \
+		$(PROVITA)/libs/libintraFont/libccc.o \
 
 all: $(TARGET).prx
 	$(Q)$(PYTHON) ./pkg.py

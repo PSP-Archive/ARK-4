@@ -20,7 +20,7 @@ static float scrollX = 0.f;
 static float scrollY = 0.f;
 static float scrollXTmp = 0.f;
 static int currentFont = 0;
-static char exploitID[10] = {0};
+//static char exploitID[10] = {0};
 /* Instance of the animations that are drawn on the menu */
 static Anim* animations[ANIM_COUNT];
 
@@ -73,9 +73,11 @@ void loadConfig(){
     fclose(fp);
 }
 
+/*
 char* common::getExploitID(){
     return exploitID;
 }
+*/
 
 void common::saveConf(){
 
@@ -100,7 +102,7 @@ t_conf* common::getConf(){
 
 void common::resetConf(){
     config.iso_driver = 2;
-    config.hide_exploit = 1;
+    //config.hide_exploit = 1;
     config.fast_gameboot = 0;
     config.language = 0;
     config.font = 1;
@@ -246,8 +248,8 @@ u32 common::getMagic(const char* filename, unsigned int offset){
 
 void common::loadData(int ac, char** av){
 
-    if (sctrlHENGetVersion() >= 0x2003)
-        sctrlGetExploitID(exploitID);
+    //if (sctrlHENGetVersion() >= 0x2003)
+    //    sctrlGetExploitID(exploitID);
     
     animations[0] = new PixelAnim();
     animations[1] = new Waves();
@@ -264,7 +266,7 @@ void common::loadData(int ac, char** av){
     
     if (!fileExists(fonts[config.font]))
         config.font = 1;
-    font = intraFontLoad(fonts[config.font], 0);
+    font = intraFontLoad(fonts[config.font], INTRAFONT_CACHE_ALL);
     
     currentFont = config.font;
     
@@ -342,13 +344,13 @@ void common::playMenuSound(){
     //sound_mp3->play();
 }
 
-void common::printText(float x, float y, const char *text, u32 color, float size, int glow, int scroll){
+void common::printText(float x, float y, const char* text, u32 color, float size, int glow, int scroll){
 
     if (font == NULL)
         return;
 
     u32 secondColor = BLACK_COLOR;
-    u32 arg5 = 0;
+    u32 arg5 = INTRAFONT_WIDTH_VAR;
     
     if (glow){
         float t = (float)((float)(clock() % CLOCKS_PER_SEC)) / ((float)CLOCKS_PER_SEC);
@@ -359,7 +361,7 @@ void common::printText(float x, float y, const char *text, u32 color, float size
         arg5 = INTRAFONT_SCROLL_LEFT;
     }
     
-    intraFontSetStyle(font, size, color, secondColor, arg5);
+    intraFontSetStyle(font, size, color, secondColor, 0.f, arg5);
 
     if (scroll){
         if (x != scrollX || y != scrollY){
@@ -371,6 +373,7 @@ void common::printText(float x, float y, const char *text, u32 color, float size
     }
     else
         intraFontPrint(font, x, y, text);
+    
 }
 
 void common::clearScreen(u32 color){

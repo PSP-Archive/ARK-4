@@ -9,7 +9,7 @@ class FTPManager : public SystemEntry{
     void control(Controller* pad);
     void pause();
     void resume();
-    char* getInfo();
+    string getInfo();
     char* getName();
     Image* getIcon();
 };

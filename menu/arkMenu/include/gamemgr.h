@@ -97,7 +97,7 @@ class GameManager : public SystemEntry{
             resumeIcons();
         }
         
-        char* getInfo();
+        string getInfo();
         
         char* getName(){
             return "Game";

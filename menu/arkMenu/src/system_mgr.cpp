@@ -172,7 +172,7 @@ static void systemDrawer(){
         case 0: // draw border and battery
             common::getImage(IMAGE_DIALOG)->draw_scale(0, 0, 480, 20);
             drawBattery();
-            common::printText(0, 13, entries[cur_entry]->getInfo(), LITEGRAY, SIZE_BIG, true);
+            common::printText(0, 13, entries[cur_entry]->getInfo().c_str(), LITEGRAY, SIZE_BIG, true);
             break;
         case 1: // draw opening animation
             drawOptionsMenuCommon();

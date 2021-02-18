@@ -1,8 +1,8 @@
 ARK-4 e/CFW for the PSP and PS Vita.
 
-Features:
+FEATURES:
 
-- Core system for loading unsigned PSP homebrews and plugins.
+- Core system for loading unsigned PSP homebrews and plugins compatible with all PSP and PS Vita models.
 
 - Inferno driver for ISO, CSO and ZSO games.
 
@@ -10,7 +10,98 @@ Features:
 
 - Popcorn controller for PSX games.
 
-- Stargate No-DRM system.
+- Stargate No-DRM engine.
+
+- Plugin support for PSP games, PSX games and VSH (XMB).
 
 - Compatibility layers for PSP and PS Vita.
+
+- On PSP, it patches VSH so you can launch games (ISO, homebrew, PS1) directly from the XMB.
+
+- Allows you to install your favorite menu launcher (gMenu, ONEmenu, vMenu, etc). This is the default behaviour on PS Vita, but can be also be used on PSP using the "launcher" option in settings file.
+
+- More readable, robust and structured code that is still being maintained (it's also open source).
+
+- Legacy support for PSP game exploits and PSX exploits on PS Vita (includes TN-X patches): this is however useless nowadays, but still kept in there for legacy and conservation purposes.
+
+- Minimalistic CFW: ARK only install the bare minimum to have CFW functionality, both VSH menu and recovery menu are external to the CFW (a minimalistic one is included).
+
+
+
+
+
+
+INSTALATION
+
+Download the precompiled binaries.
+
+On PSP:
+- Create a PSP GAME folder, i.e. ms0:/PSP/GAME/ARK
+- Copy the following files: EBOOT.PBP, ARK.BIN, K.BIN, FLASH0.ARK.
+- You can optionally copy VSHMENU.PRX (for XMB VSH Menu), MENU.PBP (custom launcher) and RECOVERY.PBP (recovery menu).
+- Launch from the XMB on OFW (launching from permanent CFW such as CIPL or Infinity won't work!, though there are reports of people being able to load it from infinity, it's not a good idea until proper support is added to the Infinity bootloader).
+- It will install FLASH0.ARK into flash0 and then detele the package (so it doesn't get reinstalled every time you boot into the CFW). To reinstall flash0 files, copy FLASH0.ARK again into the ARK folder.
+
+On PS Vita:
+- I haven't yet added support for PS Vita since there's already a good working build of ARK-2 for PS Vita 3.60 including a PBOOT.PBP bubble. Support for PS Vita in ARK-4 needs to be tested and fixed, which is not the priority now.
+
+
+
+
+
+
+CUSTOMIZATION
+
+
+
+* By installing Plugins
+You can install plugins by creating a file called PLUGINS.TXT in the same folder where you installed ARK files (ms0:/PSP/GAME/ARK).
+
+- Add a line of text for each plugin using the following format:
+game, ms0:/path_to_my_game_plugin.prx, enabled
+pops, ms0:/path_to_my_psx_plugin.prx, 1
+vsh, ms0:/path_to_my_vsh_plugin.prx, true
+
+- You can use keywords "enabled", "on", "1" or "true" to indicate that the plugin is enabled, anything else disables it. You can use game, pops or vsh keywords to run the plugin in the corresponding runlevel.
+
+- You can use the following keywords to tell ARK when the plugin loads:
+---- all/always: if either of these keywords are used, the plugin will always load.
+---- umd: plugin should only load on retail games (UMD/ISO/PSN).
+---- homebrew: plugin should only load on homebrews.
+---- game: plugin can load on both retail games and homebrews.
+---- pops: plugin only loads in PSX games.
+---- vsh: plugin only loads in the XMB.
+---- game ID: if you specify a game ID (i.e. SLUS000000), then the plugin will only load on that game.
+
+
+
+
+* By configuring ARK
+
+- You can create a SETTINGS.TXT file using the same format as PLUGINS.TXT to enable/disable some CFW functionality on different parts of the system.
+
+- For example, you can overclock to highest CPU speed like this:
+always, overclock, on
+
+- Another example, overclock only on games, use powersaving on VSH:
+game, overclock, on
+vsh, powersave, on
+
+- You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
+
+* Configuration settings for ARK:
+- overclock: use this for better performance at the expense of battery time. Sets CPU/BUS speed to 333/166.
+- powersave: use this for better battery life at the expense of performance. Sets CPU/BUS speed to 133/66.
+- usbcharge: enables USB charging whereever you want.
+- launcher: replaces the XMB with a custom menu launcher.
+- disablepause: disables the pause game feature on PSP Go.
+- highmem: enables high memory on models above 1K. You should only use this on homebrew runlevel as retail games were not meant to use the extra memory, and this can cause issues with cheat devices or other plugins that except games to have their data at specific memory addresses.
+
+
+* You can also customize ARK by using the "launcher" setting, which replaces the XMB with whatever custom launcher you have installed. There have been many custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
+- ONEMenu: https://github.com/ONElua/ONEmenu/releases
+- vMenu: http://www.mediafire.com/file/7acb5mhawx4gr9t/vMenu_ARK.7z/file
+- yMenu: https://docs.google.com/uc?export=download&id=0B0kWUCdtGmJwLUhRUlNJSWhMWVE
+- gMenu: http://www.mediafire.com/file/oou5490qc99vr7d/gmenuARK.rar/file
+* Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
 

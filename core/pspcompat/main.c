@@ -75,8 +75,7 @@ static void patch_umdcache(SceModule2* mod)
     if (apitype == 0x152 || apitype == 0x141){
         //kill module start
         u32 text_addr = mod->text_addr;
-        _sw(JR_RA, text_addr+0x000009C8);
-        _sw(LI_V0(1), text_addr+0x000009C8+4);
+        MAKE_DUMMY_FUNCTION_RETURN_1(text_addr+0x000009C8);
     }
 }
 
@@ -107,18 +106,24 @@ static void disable_PauseGame(SceModule2* mod)
 static int is_launcher_mode = 0;
 static void settingsHandler(char* path){
     if (strcasecmp(path, "overclock") == 0){
-        SetSpeed(333, 166);
+        SetSpeed(333, 166); // set CPU speed to max
     }
     else if (strcasecmp(path, "powersave") == 0){
-        SetSpeed(133, 66);
+        SetSpeed(133, 66); // underclock
     }
     else if (strcasecmp(path, "usbcharge") == 0){
-        usb_charge();
+        usb_charge(); // enable usb charging
     }
-    else if (strcasecmp(path, "disablepause") == 0){
+    else if (strcasecmp(path, "highmem") == 0){
+        if (psp_model > PSP_1000) {  // enable high memory
+            patch_partitions();
+            flushCache();
+        }
+    }
+    else if (strcasecmp(path, "disablepause") == 0){ // disable pause game feature on psp go
         disable_PauseGame(sceKernelFindModuleByName("sceImpose_Driver"));
     }
-    else if (strcasecmp(path, "launcher") == 0){
+    else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
         is_launcher_mode = 1;
         // Patch sceKernelExitGame Syscalls
         sctrlHENPatchSyscall((void*)sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), exitToLauncher);
@@ -175,11 +180,6 @@ static void PSPOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceMediaSync") == 0){
         // load and process settings file
         loadSettings(&settingsHandler);
-        // enable high mem in homebrews
-        if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
-            patch_partitions();
-            goto flush;
-        }
     }
     
     /*

@@ -56,6 +56,7 @@ endif
 	$(Q)$(MAKE) $@ -C core/inferno
 	$(Q)$(MAKE) $@ -C core/galaxy
 	$(Q)$(MAKE) $@ -C menu/provsh
+	$(Q)$(MAKE) $@ -C menu/arkMenu
 	$(Q)$(MAKE) $@ -C extras/vshmenu/classic/
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -f contrib/PC/btcnf/psvbtinf.bin

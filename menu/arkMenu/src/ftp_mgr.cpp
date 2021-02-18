@@ -43,8 +43,8 @@ void FTPManager::resume(){
     //ftpdInit();
 }
 
-char* FTPManager::getInfo(){
-    return (char*)"FTP Server (Under Construction)";
+string FTPManager::getInfo(){
+    return "FTP Server (Under Construction)";
 }
 
 char* FTPManager::getName(){

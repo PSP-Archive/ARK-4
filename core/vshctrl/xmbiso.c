@@ -147,15 +147,11 @@ SceUID gamedopen(const char * dirname)
         g_delete_eboot_injected = 0;
         strncpy(g_iso_dir, dirname, sizeof(g_iso_dir));
         g_iso_dir[sizeof(g_iso_dir)-1] = '\0';
-//        printk("%s:<virtual> %s -> 0x%08X\n", __func__, dirname, result);
-        
         return result;
     }
 
     if(0 == strcmp(dirname, g_temp_delete_dir)) {
         result = MAGIC_DFD_FOR_DELETE_2;
-//        printk("%s:<virtual2> %s -> 0x%08X\n", __func__, dirname, result);
-        
         return result;
     }
    
@@ -231,7 +227,6 @@ int gamedread(SceUID fd, SceIoDirent * dir)
             result = 0;
         }
         
-//        printk("%s:<virtual> 0x%08X -> 0x%08X\n", __func__, fd, result);
         
         return result;
     }
@@ -265,7 +260,6 @@ int gamedclose(SceUID fd)
     if(fd == MAGIC_DFD_FOR_DELETE || fd == MAGIC_DFD_FOR_DELETE_2) {
         result = 0;
         g_delete_eboot_injected = 0;
-//        printk("%s:<virtual> 0x%08X -> 0x%08X\n", __func__, fd, result);
         
         return result;
     }
@@ -304,11 +298,9 @@ SceUID gameopen(const char * file, int flags, SceMode mode)
     SceUID result;
    
     if (is_iso_eboot(file)) {
-//        printk("%s:<virtual> %s", __func__, file);
         u32 k1 = pspSdkSetK1(0);
         result = vpbp_open(file, flags, mode);
         pspSdkSetK1(k1);
-//        printk(" -> 0x%08X\n", result);
     } else {
         result = sceIoOpen(file, flags, mode);
     }
@@ -323,11 +315,9 @@ int gameread(SceUID fd, void * data, SceSize size)
     int result;
    
     if (vpbp_is_fd(fd)) {
-//        printk("%s: 0x%04X %d", __func__, fd, size);
         u32 k1 = pspSdkSetK1(0);
         result = vpbp_read(fd, data, size);
         pspSdkSetK1(k1);
-//        printk(" -> 0x%08X\n", result);
     } else {
         result = sceIoRead(fd, data, size);
     }
@@ -341,11 +331,9 @@ int gameclose(SceUID fd)
     int result;
 
     if (vpbp_is_fd(fd)) {
-//        printk("%s: %04X", __func__, fd);
         u32 k1 = pspSdkSetK1(0);
         result = vpbp_close(fd);
         pspSdkSetK1(k1);
-//        printk(" -> 0x%08X\n", result);
     } else {
         result = sceIoClose(fd);
     }
@@ -358,11 +346,9 @@ SceOff gamelseek(SceUID fd, SceOff offset, int whence)
     SceOff result = 0;
 
     if (vpbp_is_fd(fd)) {
-//        printk("%s: 0x%04X 0x%08X %d", __func__, fd, (u32)offset, whence);
         u32 k1 = pspSdkSetK1(0);
         result = vpbp_lseek(fd, offset, whence);
         pspSdkSetK1(k1);
-//        printk(" -> 0x%08X\n", (u32)result);
     } else {
         result = sceIoLseek(fd, offset, whence);
     }
@@ -377,11 +363,9 @@ int gamegetstat(const char * file, SceIoStat * stat)
    
     //virtual iso eboot detected
     if (is_iso_eboot(file)) {
-//        printk("%s:<virtual> %s", __func__, file);
         u32 k1 = pspSdkSetK1(0);
         result = vpbp_getstat(file, stat);
         pspSdkSetK1(k1);
-//        printk(" -> 0x%08X\n", result);
     } else {
         result = sceIoGetstat(file, stat);
     }

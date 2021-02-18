@@ -39,12 +39,14 @@
 
 extern ARKConfig* ark_conf;
 
+SEConfig conf;
+
 static int (*g_VshMenuCtrl) (SceCtrlData *, int);
 static SceUID g_satelite_mod_id = -1;
 
 int (*g_sceCtrlReadBufferPositive) (SceCtrlData *, int) = NULL;
 
-int vctrlVSHRegisterVshMenu(int (* ctrl)(SceCtrlData *, int))
+int vctrlVSHRegisterVshMenu(int (*ctrl)(SceCtrlData *, int))
 {
     u32 k1;
    
@@ -59,12 +61,10 @@ int vctrlVSHUpdateConfig(SEConfig *config)
 {
     u32 k1;
     int ret;
-
-       k1 = pspSdkSetK1(0);
-    //memcpy(&conf, config, sizeof(conf));
-    //ret = sctrlSESetConfig(&conf);
+    k1 = pspSdkSetK1(0);
+    memcpy(&conf, config, sizeof(conf));
+    ret = sctrlSESetConfig(&conf);
     pspSdkSetK1(k1);
-
     return ret;
 }
 
