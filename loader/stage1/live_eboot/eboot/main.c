@@ -24,6 +24,7 @@ PSP_HEAP_SIZE_KB(4096);
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
 #define EXPLOIT_ID "Live"
+#define DEFAULT_ARK_PATH "PSP/SAVEDATA/ARK_01234/"
 
 // ARK.BIN requires these imports
 //int SysMemUserForUser_91DE343C(void* unk);
@@ -125,6 +126,9 @@ int main(int argc, char** argv){
     // determine kxploit path
     strcpy(config.kxploit, config.arkpath);
     strcat(config.kxploit, K_FILE);
+
+    // set default ARK install path
+    strcpy(&(config.arkpath[5]), DEFAULT_ARK_PATH);
 
     // determine ARK stage 2 loader
     char loadpath[ARK_PATH_SIZE];

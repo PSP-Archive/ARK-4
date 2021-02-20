@@ -73,13 +73,9 @@ typedef struct
 typedef enum{
     DEV_UNK = 0b0000,
     PSP_ORIG = 0b0100,
-    //PSP_SLIM = 0b0101,
-    //PSP_GO = 0b0111,
     PS_VITA = 0b1000,
-    //PSV_MINIS = 0b1001,
     PSV_POPS = 0b1010,
     DEV_MASK = 0b1100,
-    SUB_DEV_MARK = 0b1111,
 }ExecMode;
 
 typedef struct ARKConfig{
@@ -90,12 +86,13 @@ typedef struct ARKConfig{
 } ARKConfig;
 
 ARKConfig _arkconf = {
-    .arkpath = "ms0:/ARK/", // default path for permanent CFW
-    .exploit_id = "Infinity",
-    .exec_mode = PSP_ORIG,
+    .arkpath = "ms0:/PSP/SAVEDATA/ARK_01234/", // default path for ARK
+    .exploit_id = "Infinity", // name of exploit/bootloader
+    .exec_mode = PSP_ORIG, // run ARK in PSP mode
     .recovery = 0,
 };
 
+// temp address to store ARK configuration for SystemControl
 #define ark_conf_backup ((ARKConfig*)(0x08800010))
 
 int (*memlmd_E42AFE2E)(void* buf, void* check, void* s) = NULL;
@@ -189,11 +186,13 @@ int compat_entry(BtcnfHeader* btcnf,
 
     rebootex_config* conf = (rebootex_config*)(REBOOTEX_CONFIG);
     conf->magic = REBOOTEX_CONFIG_MAGIC;
-    conf->psp_model = model;
-    conf->rebootex_size = 0;
-    conf->psp_fw_version = firmware;
+    conf->reboot_buffer_size = 0;
     
     _arkconf.recovery = is_recovery; // let ARK handle recovery mode
+    if (model == PSP_MODEL_PSPGO){ // switch ARK install path to Go's internal memory
+        _arkconf.arkpath[0] = 'e';
+        _arkconf.arkpath[1] = 'f';
+    }
 
     insert_btcnf("/kd/ark_systemctrl.prx", // add ARK's SystemControl
                  "/kd/init.prx",
@@ -201,13 +200,14 @@ int compat_entry(BtcnfHeader* btcnf,
                  &btcnf_size,
                  (BOOTLOAD_VSH | BOOTLOAD_GAME | BOOTLOAD_POPS | BOOTLOAD_UPDATER |
                   BOOTLOAD_UMDEMU | BOOTLOAD_APP | BOOTLOAD_MLNAPP));
-    insert_btcnf("/kd/ark_pspcompat.prx", // add ARK's PSP compatibility layer
+    insert_btcnf("/kd/ark_pspcompat.prx", // add ARK's PSP compatibility layer (must run just after SystemControl)
                  "/kd/init.prx",
                  btcnf,
                  &btcnf_size,
                  (BOOTLOAD_VSH | BOOTLOAD_GAME | BOOTLOAD_POPS | BOOTLOAD_UPDATER |
                   BOOTLOAD_UMDEMU | BOOTLOAD_APP | BOOTLOAD_MLNAPP));
-                  
+    
+    // Insert VSH Control              
     insert_btcnf("/kd/ark_vshctrl.prx", "/kd/vshbridge.prx", btcnf, &btcnf_size, (BOOTLOAD_VSH));
 
     // copy ARK configuration for SystemControl

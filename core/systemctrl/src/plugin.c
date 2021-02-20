@@ -303,6 +303,8 @@ void ProcessConfigFile(char* path, void (*handler)(char*))
 }
 
 void LoadPlugins(){
+    if (ark_config->recovery)
+        return; // don't load plugins in recovery mode
     // Open Plugin Config
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
@@ -311,6 +313,8 @@ void LoadPlugins(){
 }
 
 void loadSettings(void* settingsHandler){
+    if (ark_config->recovery)
+        return; // don't load settings in recovery mode
     // process settings file
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);

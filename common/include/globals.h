@@ -40,7 +40,7 @@
 #define K_FILE "K.BIN"
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
-#define ARK_MINOR_VERSION 6
+#define ARK_MINOR_VERSION 7
 
 /*
 First two bits identify the device (PSP or PS Vita)
@@ -59,13 +59,9 @@ Dev Sub
 typedef enum{
     DEV_UNK = 0b0000,
     PSP_ORIG = 0b0100,
-    //PSP_SLIM = 0b0101,
-    //PSP_GO = 0b0111,
     PS_VITA = 0b1000,
-    //PSV_MINIS = 0b1001,
     PSV_POPS = 0b1010,
     DEV_MASK = 0b1100,
-    SUB_DEV_MARK = 0b1111,
 }ExecMode;
 
 // Different PSP models

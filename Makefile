@@ -13,16 +13,18 @@ SUBDIRS = libs contrib/PC/prxencrypter core/systemctrl core/vitacompat core/vita
 all: subdirs mkdir-dist encrypt-prx copy-bin
 
 copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP loader/kxploit/k.bin contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso menu/provsh/EBOOT.PBP extras/vshmenu/classic/satelite.prx
-#	Common installation
-	$(Q)cp loader/stage1/linkless_payload/h.bin dist/H.BIN # game exploit loader
-	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/EBOOT.PBP # Signed EBOOT
-	$(Q)cp loader/stage1/live_eboot/eboot/EBOOT.PBP dist/WMENU.BIN # Unsigned EBOOT for VHBL
-	$(Q)cp loader/stage2/live/ark.bin dist/ARK.BIN # ARK installer and loader
-	$(Q)cp loader/kxploit/k.bin dist/K.BIN # Kernel exploit
-	$(Q)cp menu/provsh/EBOOT.PBP dist/RECOVERY.PBP # Default recovery menu
-	$(Q)cp menu/vMenu/EBOOT.PBP dist/MENU.PBP # Default launcher
-	$(Q)cp extras/vshmenu/classic/satelite.prx dist/VSHMENU.PRX # Default vsh menu
-	$(Q)cp contrib/SETTINGS.TXT dist/SETTINGS.TXT # Default settings
+#	Common installation 
+	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/PSP/SAVEDATA/ # game exploit loader
+	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/PSP/GAME/ARK_Live/EBOOT.PBP # Signed EBOOT
+	$(Q)cp loader/stage2/live/ark.bin dist/PSP/SAVEDATA/ARK_01234/ARK.BIN # ARK installer and loader
+	$(Q)cp loader/kxploit/k.bin dist/PSP/GAME/ARK_Live/K.BIN # Kernel exploit
+	$(Q)cp menu/provsh/EBOOT.PBP dist/PSP/SAVEDATA/ARK_01234/RECOVERY.PBP # Default recovery menu
+	$(Q)cp menu/vMenu/EBOOT.PBP dist/PSP/SAVEDATA/ARK_01234/MENU.PBP # Default launcher
+	$(Q)cp extras/vshmenu/classic/satelite.prx dist/PSP/SAVEDATA/ARK_01234/VSHMENU.PRX # Default vsh menu
+	$(Q)cp contrib/SETTINGS.TXT dist/PSP/SAVEDATA/ARK_01234/SETTINGS.TXT # Default settings
+	$(Q)mv dist/FLASH0.ARK dist/PSP/SAVEDATA/ARK_01234/
+	$(Q)cp loader/stage1/linkless_payload/h.bin dist/VHBL/H.BIN # game exploit loader
+	$(Q)cp loader/stage1/live_eboot/eboot/EBOOT.PBP dist/VHBL/WMENU.BIN # Unsigned EBOOT for VHBL
 	
 encrypt-prx: \
 	dist/SYSCTRL0.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN dist/PSPCOMPAT.BIN dist/VSHCTRL.BIN dist/INFERNO0.BIN dist/GALAXY00.BIN dist/STARGATE.BIN dist/POPCORN0.BIN \
@@ -84,6 +86,11 @@ loader: ark
 
 mkdir-dist:
 	$(Q)mkdir dist | true
+	$(Q)mkdir dist/VHBL | true
+	$(Q)mkdir dist/PSP | true
+	$(Q)mkdir dist/PSP/GAME/ | true
+	$(Q)mkdir dist/PSP/GAME/ARK_Live | true
+	$(Q)mkdir dist/PSP/SAVEDATA | true
 
 -include $(PROVITA)/.config
 include $(PROVITA)/common/make/check.mak

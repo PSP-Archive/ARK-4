@@ -1,9 +1,15 @@
 ARK-4
 
-Update 6.1:
+Update 7:
 - Fixed pops plugins loaded from PSP Go internal memory (ef0).
 - Fixed homebrew plugins loaded from PSP Go internal memory (ef0).
 - Added "highmem" option to settings file.
+- Added "mscache" option for Memory Stick speedup.
+- Fixed handling of recovery mode (plugins and settings are disabled).
+- Restructured installation so that core CFW files are separated from loaders.
+---- The default ARK installation path is /PSP/GAME/SAVEDATA/ARK_01234/
+---- This makes it compatible with Live CFW, Permanent CFW and PS Vita QCMA.
+
 
 Update 6:
 - Added "launcher" setting to replace XMB with a custom launcher.

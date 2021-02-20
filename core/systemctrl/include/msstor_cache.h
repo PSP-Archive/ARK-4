@@ -18,8 +18,12 @@
 #ifndef _MSSTOR_CACHE_H_
 #define _MSSTOR_CACHE_H_
 
+// Cache Buffer Size
+#define CACHE_BUFSIZE (16 * 1024)
+#define CACHE_BUFSIZE_GO (8 * 1024)
+
 // Initialize "ms" Driver Cache
-int msstorCacheInit(void);
+int msstorCacheInit(const char* driver, int bufSize);
 
 #endif
 

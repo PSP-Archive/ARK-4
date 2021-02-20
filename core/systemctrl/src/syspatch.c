@@ -130,8 +130,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         // Boot is complete
         if(isSystemBooted())
         {
-            // Initialize Memory Stick Speedup Cache
-            msstorCacheInit();
             // syncronize printk
             printkSync();
             // Boot Complete Action done

@@ -98,6 +98,7 @@ int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
     
     // backup ARK configuration to user ram
     memcpy(ark_conf_backup, ark_config, sizeof(ARKConfig));
+    ark_conf_backup->recovery = 0; // reset recovery mode
     
     // Load Sony Reboot Buffer
     return _LoadReboot(arg1, arg2, arg3, arg4);

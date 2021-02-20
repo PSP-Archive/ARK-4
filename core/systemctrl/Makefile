@@ -14,7 +14,6 @@ C_OBJS = \
 	src/oe_malloc.o \
 	src/syspatch.o \
 	src/mediasync.o \
-	src/msstor_cache.o \
 	src/hooknids.o \
 	src/nidresolver.o \
 	src/nid_660_data.o \
@@ -31,6 +30,7 @@ C_OBJS = \
 	src/exitgame.o \
 	src/gameinfo.o \
 	src/plugin.o \
+	src/msstor_cache.o \
 	$(PROVITA)/common/functions.o
 		
 OBJS = \

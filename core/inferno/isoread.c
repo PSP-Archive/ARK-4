@@ -103,7 +103,7 @@ static void wait_until_ms0_ready(void)
     drvname = "mscmhc0:";
     
     if (sceKernelInitApitype() == 0x125){
-        drvname = "mscmhcemu0:";
+        drvname = "mscmhcemu0:"; // PSP Go Internal Memory
     }
 
     while( 1 ) {

@@ -10,3 +10,5 @@ always, launcher, off
 always, disablepause, off
 # enable high memory for homebrews
 homebrew, highmem, on
+# enable mscache speedup
+always, mscache, off

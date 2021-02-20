@@ -31,9 +31,6 @@
 //#define CHECK_MODE
 #undef CHECK_MODE
 
-// Cache Buffer Size
-#define CACHE_BUFSIZE (8 * 1024)
-
 // Original Function Pointer
 int (* msstorRead)(PspIoDrvFileArg * arg, char * data, int len) = NULL;
 int (* msstorWrite)(PspIoDrvFileArg * arg, const char * data, int len) = NULL;
@@ -343,17 +340,14 @@ static int msstorIoUnk21Cache(PspIoDrvFileArg *arg)
 }
 
 // Initialize "ms" Driver Cache
-int msstorCacheInit(void)
+int msstorCacheInit(const char* driver, int bufSize)
 {
 
     // Find Driver
-    PspIoDrv * pdrv = sctrlHENFindDriver("ms");
+    PspIoDrv * pdrv = sctrlHENFindDriver(driver);
     
     // Driver unavailable
     if(pdrv == NULL) return -1;
-    
-    // Set Cache Size
-    int bufSize = CACHE_BUFSIZE;
     
     // Invalid Buffer Size (must be a multiple of 512)
     if((bufSize % 0x200) != 0) return -2;

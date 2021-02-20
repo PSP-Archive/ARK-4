@@ -4,6 +4,7 @@ C_OBJS =   \
 	main.o  \
 	psxspu.o \
 	vitamem.o \
+	syspatch.o \
 	vitaflash.o \
 	filesystem.o \
 	$(PROVITA)/common/functions.o \
@@ -12,7 +13,7 @@ C_OBJS =   \
 	$(PROVITA)/core/systemctrl/src/gameinfo.o \
 		
 OBJS = \
-	$(C_OBJS)
+	$(C_OBJS) imports.o
 
 all: $(TARGET).prx
 INCDIR = $(PROVITA)/common $(PROVITA)
