@@ -1,5 +1,5 @@
 /*
-    procompat.prx : a compatibility layer between infinity and procfw
+    arkcompat.prx : a compatibility layer between infinity and ark cfw
     Copyright (C) 2015 David "Davee" Morgan
 
     This program is free software; you can redistribute it and/or modify
@@ -26,8 +26,8 @@
 
 #include <compat_interface.h>
 
-// procfw
-#include "rebootex_conf.h"
+// ark's reboot
+#include "rebootconfig.h"
 
 #define SENSE_MASK                                                                                 \
     (SYSCON_CTRL_TRIANGLE | SYSCON_CTRL_CIRCLE | SYSCON_CTRL_CROSS | SYSCON_CTRL_RECTANGLE |       \
@@ -70,6 +70,7 @@ typedef struct
     u8 main_data;       // 150
 } PSP_Header;
 
+// ARK execution modes
 typedef enum{
     DEV_UNK = 0b0000,
     PSP_ORIG = 0b0100,
@@ -78,6 +79,7 @@ typedef enum{
     DEV_MASK = 0b1100,
 }ExecMode;
 
+// ARK runtime configuration
 typedef struct ARKConfig{
     char arkpath[ARK_PATH_SIZE-20]; // leave enough room to concatenate files
     char exploit_id[20];
@@ -86,7 +88,7 @@ typedef struct ARKConfig{
 } ARKConfig;
 
 ARKConfig _arkconf = {
-    .arkpath = "ms0:/PSP/SAVEDATA/ARK_01234/", // default path for ARK
+    .arkpath = "ms0:/PSP/SAVEDATA/ARK_01234/", // default path for ARK files
     .exploit_id = "Infinity", // name of exploit/bootloader
     .exec_mode = PSP_ORIG, // run ARK in PSP mode
     .recovery = 0,
@@ -182,7 +184,7 @@ int compat_entry(BtcnfHeader* btcnf,
                  int firmware)
 {
     // clear location for configuration and set default akin to CIPL
-    memset((void*)REBOOTEX_CONFIG, 0, 0x200);
+    memset((void*)REBOOTEX_CONFIG, 0, REBOOTEX_CONFIG_MAXSIZE);
 
     rebootex_config* conf = (rebootex_config*)(REBOOTEX_CONFIG);
     conf->magic = REBOOTEX_CONFIG_MAGIC;
