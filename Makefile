@@ -4,23 +4,24 @@ OPT=-j8
 PYTHON = $(shell which python2)
 PROVITA ?= $(CURDIR)
 K ?= psp660
+LAUNCHER ?= vMenu
 
 export DEBUG PROVITA K
 
-SUBDIRS = libs contrib/PC/prxencrypter core/systemctrl core/vitacompat core/vitapops core/pspcompat core/vshctrl core/stargate menu/provsh core/popcorn core/inferno core/galaxy core/rebootex loader/stage2/live loader/kxploit loader/stage1/linkless_payload loader/stage1/live_eboot contrib/PC/btcnf extras/vshmenu/classic
+SUBDIRS = libs contrib/PC/prxencrypter core/systemctrl core/vitacompat core/vitapops core/pspcompat core/vshctrl core/stargate extras/menus/provsh core/popcorn core/inferno core/galaxy core/rebootex loader/stage2/live loader/kxploit loader/stage1/linkless_payload loader/stage1/live_eboot contrib/PC/btcnf extras/menus/vshmenu
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj distclean copy-bin mkdir-dist encrypt-prx
 
 all: subdirs mkdir-dist encrypt-prx copy-bin
 
-copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP loader/kxploit/k.bin contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso menu/provsh/EBOOT.PBP extras/vshmenu/classic/satelite.prx
+copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP loader/kxploit/k.bin contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso extras/menus/provsh/EBOOT.PBP extras/menus/vshmenu/satelite.prx
 #	Common installation 
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/PSP/SAVEDATA/ # game exploit loader
 	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/PSP/GAME/ARK_Live/EBOOT.PBP # Signed EBOOT
 	$(Q)cp loader/stage2/live/ark.bin dist/PSP/SAVEDATA/ARK_01234/ARK.BIN # ARK installer and loader
 	$(Q)cp loader/kxploit/k.bin dist/PSP/GAME/ARK_Live/K.BIN # Kernel exploit
-	$(Q)cp menu/provsh/EBOOT.PBP dist/PSP/SAVEDATA/ARK_01234/RECOVERY.PBP # Default recovery menu
-	$(Q)cp menu/vMenu/EBOOT.PBP dist/PSP/SAVEDATA/ARK_01234/MENU.PBP # Default launcher
-	$(Q)cp extras/vshmenu/classic/satelite.prx dist/PSP/SAVEDATA/ARK_01234/VSHMENU.PRX # Default vsh menu
+	$(Q)cp extras/menus/provsh/EBOOT.PBP dist/PSP/SAVEDATA/ARK_01234/RECOVERY.PBP # Default recovery menu
+	$(Q)cp extras/menus/$(LAUNCHER)/EBOOT.PBP dist/PSP/SAVEDATA/ARK_01234/MENU.PBP # Default launcher
+	$(Q)cp extras/menus/vshmenu/satelite.prx dist/PSP/SAVEDATA/ARK_01234/VSHMENU.PRX # Default vsh menu
 	$(Q)cp contrib/SETTINGS.TXT dist/PSP/SAVEDATA/ARK_01234/SETTINGS.TXT # Default settings
 	$(Q)mv dist/FLASH0.ARK dist/PSP/SAVEDATA/ARK_01234/
 	$(Q)cp loader/stage1/linkless_payload/h.bin dist/VHBL/H.BIN # game exploit loader
@@ -57,9 +58,9 @@ endif
 	$(Q)$(MAKE) $@ -C core/popcorn
 	$(Q)$(MAKE) $@ -C core/inferno
 	$(Q)$(MAKE) $@ -C core/galaxy
-	$(Q)$(MAKE) $@ -C menu/provsh
-	$(Q)$(MAKE) $@ -C menu/arkMenu
-	$(Q)$(MAKE) $@ -C extras/vshmenu/classic/
+	$(Q)$(MAKE) $@ -C extras/menus/provsh
+	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
+	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -f contrib/PC/btcnf/psvbtinf.bin
 	$(Q)-rm -f contrib/PC/btcnf/psvbtnnf.bin
@@ -75,10 +76,10 @@ libs:
 	$(Q)$(MAKE) $(OPT) -C $@
 
 arkmenu: libs
-	$(Q)$(MAKE) $@ -C menu/arkMenu
+	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 
 xmenu: libs
-	$(Q)$(MAKE) $@ -C menu/xMenu
+	$(Q)$(MAKE) $@ -C extras/menus/xMenu
 
 ark: rebootex
 

@@ -4,3 +4,7 @@ There are several stages in the process of booting up ARK.
 This is the very first stage, the preloader.
 The objective here is to load ARK's loader (generally named ARK.BIN).
 Depending on the scenario you might want to use one loader or another.
+
+- Linkless Loader: specially handcrafted loader that works anywhere in RAM (doesn't require linking), useful for fast game exploit deployment.
+- Static Payload: classical method to inject payloads into game exploits.
+- Live Eboot: loader that compiles to an EBOOT.PBP that can be signed and used on OFW.

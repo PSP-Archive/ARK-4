@@ -171,6 +171,13 @@ int PatchLoadCore(void* a0, void* a1, void* a2, int (*module_start)(void*, void*
 
     memlmd_3F2AC9C6 = (void*)(text_addr + 0x00007824);
     memlmd_E42AFE2E = (void*)(text_addr + 0x0000783C);
+    
+    // save this configuration to restore loadcore later on
+    RebootexFunctions* rex_funcs = REBOOTEX_FUNCTIONS;
+    rex_funcs->rebootex_decrypt = &memlmd_Decrypt_patched;
+    rex_funcs->rebootex_checkexec = &memlmd_Sigcheck_patched;
+    rex_funcs->orig_decrypt = memlmd_E42AFE2E;
+    rex_funcs->orig_checkexec = memlmd_3F2AC9C6;
 
     return module_start(a0, a1, a2);
 }

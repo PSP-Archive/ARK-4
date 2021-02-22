@@ -1,0 +1,6 @@
+ARK Stage 2 loader.
+
+This one takes care of setting up and executing kernel exploit to escalate priviledge.
+Proeeeds to install flash0, patch what's needed, inject rebootex and reboot into the CFW.
+
+Other tools also available to dump kernel ram and ePSP flash0.

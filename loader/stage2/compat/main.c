@@ -23,9 +23,9 @@
 
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
-#define EXPLOIT_ID "ARK_PBOOT_LOADER"
-#define ARK_PATH "ms0:/PSP/VHBL/ARK_Live/"
-#define BIN_PATH ARK_PATH "ARK.BIN"
+#define EXPLOIT_ID "Live"
+#define ARK_PATH "ms0:/PSP/SAVEDATA/ARK_01234/"
+#define BIN_PATH ARK_PATH "ARK4.BIN"
 
 static ARKConfig conf = {
     .arkpath = ARK_PATH,
