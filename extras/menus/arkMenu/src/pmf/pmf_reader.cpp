@@ -22,7 +22,7 @@ int T_Reader(SceSize _args, void *_argp)
     
         iPackets = 0;
 
-        if (D->m_Status == ReaderThreadData__READER_ABORT || !work) break;
+        if (D->m_Status == ReaderThreadData__READER_ABORT) break;
 
         iFreePackets = sceMpegRingbufferAvailableSize(D->m_Ringbuffer);
         if (iFreeLast != iFreePackets)

@@ -281,9 +281,10 @@ SceVoid pmfShutdown()
     sceMpegDelete(&m_Mpeg);
     sceMpegRingbufferDestruct(&m_Ringbuffer);
     sceMpegFinish();
-
-    if (m_RingbufferData != NULL) free(m_RingbufferData);
-    if (m_MpegMemData    != NULL) free(m_MpegMemData);
+    
+    // This crashes....double free?
+    //if (m_RingbufferData  != NULL) free(m_RingbufferData);
+    //if (m_MpegMemData     != NULL) free(m_MpegMemData);
 }
 
 void T_pmf(){

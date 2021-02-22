@@ -69,7 +69,7 @@ int T_Video(SceSize _args, void *_argp)
 
     for (;;)
     {
-        if (D->Video->m_iAbort != 0 || !work) break;
+        if (D->Video->m_iAbort != 0) break;
 
         if (D->Video->m_iFullBuffers > 0)
         {
@@ -100,7 +100,7 @@ int T_Video(SceSize _args, void *_argp)
             sceKernelDelayThread(0);
     }
 
-    while (work && D->Video->m_iFullBuffers > 0)
+    while (D->Video->m_iFullBuffers > 0)
     {
         RenderFrame(D->Video->m_iWidth, D->Video->m_iHeight, D->Video->m_pVideoBuffer[D->Video->m_iPlayBuffer]);
 

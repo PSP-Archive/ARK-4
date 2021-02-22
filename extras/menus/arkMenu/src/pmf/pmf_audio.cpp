@@ -64,7 +64,7 @@ int T_Audio(SceSize _args, void *_argp)
             }
         }
 
-        while (work && D->Audio->m_iFullBuffers > 0)
+        while (D->Audio->m_iFullBuffers > 0)
         {
             sceAudioOutputBlocking(D->Audio->m_AudioChannel, PSP_AUDIO_VOLUME_MAX, D->Audio->m_pAudioBuffer[D->Audio->m_iPlayBuffer]);
             D->Audio->m_iPlayBuffer = (D->Audio->m_iPlayBuffer + 1) % D->Audio->m_iNumBuffers;
@@ -174,7 +174,6 @@ SceInt32 ShutdownAudio()
 
     if (playAT3){
         if (at3_end){
-            
             sceKernelDeleteThread(Audio.m_ThreadID);
             at3_started = 0;
         }

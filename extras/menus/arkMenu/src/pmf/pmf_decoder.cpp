@@ -16,12 +16,31 @@ int T_Decoder(SceSize _args, void *_argp)
 {
 
     DecoderThreadData* D = *((DecoderThreadData**)_argp);
-    
+    Controller pad;
 
     if (!playPMF){
-        sceKernelExitThread(0);
-        return 0;
-    }
+		while (true){
+			pad.update();
+			if (pad.decline())
+			{
+				run = false;
+				break;
+			}
+			else if (pad.accept())
+			{
+				run = true;
+				break;
+			}
+			//else if (AT3->end)
+			//	break;
+		}
+		D->Audio->m_iAbort = 1;
+		D->Video->m_iAbort = 1;
+		D->Reader->m_Status = ReaderThreadData__READER_ABORT;
+		work = 0;
+		sceKernelExitThread(0);
+		return 0;
+	}
 
     int retVal;
 
@@ -43,8 +62,6 @@ int T_Decoder(SceSize _args, void *_argp)
 
     //D->Connector->initConnector();
 
-    Controller pad;
-
     for (;;)
     {
         pad.update();
@@ -52,15 +69,11 @@ int T_Decoder(SceSize _args, void *_argp)
         {
             run = false;
             work = 0;
-            D->Audio->m_iAbort = 1;
-            D->Video->m_iAbort = 1;
         }
         else if (pad.accept())
         {
             run = true;
             work = 0;
-            D->Audio->m_iAbort = 1;
-            D->Video->m_iAbort = 1;
         }
 
         if (!work) break;
@@ -124,7 +137,7 @@ int T_Decoder(SceSize _args, void *_argp)
                     m_iAudioCurrentTimeStamp = D->m_MpegAuAtrac->iPts;
                 }
 
-                if (m_iAudioCurrentTimeStamp <= 0x15F90 /* video start ts */ - D->m_iAudioFrameDuration) {
+                if (m_iAudioCurrentTimeStamp <= 0x15F90 - D->m_iAudioFrameDuration) {
                     iInitAudio = 1;
                 }
 
@@ -295,8 +308,6 @@ SceInt32 InitDecoder()
 
 SceInt32 ShutdownDecoder()
 {
-
     sceKernelDeleteThread(Decoder.m_ThreadID);
-
     return 0;
 }

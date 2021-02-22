@@ -207,7 +207,6 @@ bool Entry::run(){
         ret = pmfStart(this, this->icon1, this->icon1_size, this->snd0, this->at3_size, 10, 98);
     }
     else{
-
         common::clearScreen(CLEAR_COLOR);
         common::getImage(IMAGE_BG)->draw(0, 0);
         this->drawBG();
