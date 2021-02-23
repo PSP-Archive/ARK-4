@@ -1,4 +1,9 @@
 #include <pspkernel.h>
+#include <iostream>
+#include <vector>
+#include <sstream>
+#include <fstream>
+#include <cstring>
 #include "gfx.h"
 #include "debug.h"
 #include "common.h"
@@ -6,7 +11,9 @@
 #include "gamemgr.h"
 #include "browser.h"
 #include "vshmenu.h"
-#include "vshmenu_entries.h"
+#include "ark_settings.h"
+#include "ark_plugins.h"
+#include "exit_mgr.h"
 
 PSP_MODULE_INFO("ARKMENU", 0, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);
@@ -26,11 +33,26 @@ int main(int argc, char** argv){
 
         common::loadData(argc, argv);
 
-        entries[2] = new VSHMenu(vsh_entries, MAX_VSH_OPTIONS, common::saveConf);
-        entries[1] = new Browser();
-        entries[0] = new GameManager();
-        
+        // Add ARK settings manager
+        loadSettings();
+        VSHMenu* settings_menu = new VSHMenu(ark_conf_entries, MAX_ARK_CONF, saveSettings);
+        settings_menu->setName("Settings");
+        settings_menu->setInfo("ARK Settings");
+        settings_menu->readConf();
+        entries[0] = settings_menu;
+
+        // Add ARK plugins manager
+        loadPlugins();
+        VSHMenu* plugins_menu = new VSHMenu(ark_plugin_entries, ark_plugins_count, savePlugins);
+        plugins_menu->setName("Plugins");
+        plugins_menu->setInfo("ARK Plugins");
+        entries[1] = plugins_menu;
+
+        // Add exit game
+        entries[2] = new ExitManager();
+
         SystemMgr::initMenu(entries, MAX_ENTRIES);
+        
         SystemMgr::startMenu();
         SystemMgr::endMenu();
 

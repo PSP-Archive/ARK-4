@@ -56,7 +56,7 @@ void Matrix::drawColumn(int xoffset){
 void Matrix::draw(){
     ya2d_clear_screen(CLEAR_COLOR);
     
-    for (int i=10; i<480; i+=30)
+    for (int i=10; i<480; i+=40)
         drawColumn(i);
 }
 

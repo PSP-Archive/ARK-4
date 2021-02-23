@@ -35,18 +35,21 @@ class Browser : public SystemEntry{
         void pause(){}
         void resume(){}
         
+        void setInfo(string info){};
+        void setName(string name){};
+        
         string getInfo(){
             return this->cwd;
         }
         
-        char* getName(){
+        string getName(){
             return "Files";
         }
         
         Image* getIcon(){
             return common::getImage(IMAGE_BROWSER);
         }
-    
+        
     private:
     
         string cwd; // Current Working Directory

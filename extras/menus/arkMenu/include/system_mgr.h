@@ -4,7 +4,7 @@
 #include "system_entry.h"
 
 namespace SystemMgr{
-    extern void initMenu();
+    extern void initMenu(SystemEntry**, int);
     extern void startMenu();
     extern void flushFiles();
     extern void endMenu();

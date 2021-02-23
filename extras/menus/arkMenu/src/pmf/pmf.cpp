@@ -5,12 +5,10 @@
 
 #define DISPLAY_VIDEO 1
 
-//#include "pmfplayer.h"
 #include <psputilsforkernel.h>
 #include <pspdisplay.h>
 #include <pspge.h>
 #include <pspgu.h>
-//#include <pspctrl.h>
 #include <pspaudio.h>
 #include <psputility.h>
 #include <pspatrac3.h>
@@ -47,11 +45,11 @@ SceInt32                            m_MpegStreamSize;
 
 SceMpeg                             m_Mpeg;
 SceInt32                            m_MpegMemSize;
-ScePVoid                            m_MpegMemData;
+ScePVoid                            m_MpegMemData = NULL;
 
 SceInt32                            m_RingbufferPackets;
 SceInt32                            m_RingbufferSize;
-ScePVoid                            m_RingbufferData;
+ScePVoid                            m_RingbufferData = NULL;
 SceMpegRingbuffer                   m_Ringbuffer;
 
 SceMpegStream*                      m_MpegStreamAVC;
@@ -110,9 +108,6 @@ SceInt32 ParseHeader()
     int retVal;
     char * pHeader = (char *)malloc(2048);
 
-    //sceIoLseek(m_FileHandle, 0, SEEK_SET);
-
-    //retVal = sceIoRead(m_FileHandle, pHeader, 2048);
     if (PMFsize < 2048)
     {
         goto error;
@@ -137,7 +132,6 @@ SceInt32 ParseHeader()
 
     free(pHeader);
 
-    //sceIoLseek(m_FileHandle, m_MpegStreamOffset, SEEK_SET);
     PMFcounter = m_MpegStreamOffset;
 
     return 0;
@@ -273,7 +267,6 @@ exit_reader:
 SceVoid pmfShutdown()
 {
 
-    if (m_pEsBufferAtrac  != NULL) free(m_pEsBufferAtrac);
     if (m_pEsBufferAVC    != NULL) sceMpegFreeAvcEsBuf(&m_Mpeg, m_pEsBufferAVC);
     if (m_MpegStreamAVC   != NULL) sceMpegUnRegistStream(&m_Mpeg, m_MpegStreamAVC);
     if (m_MpegStreamAtrac != NULL) sceMpegUnRegistStream(&m_Mpeg, m_MpegStreamAtrac);
@@ -282,9 +275,16 @@ SceVoid pmfShutdown()
     sceMpegRingbufferDestruct(&m_Ringbuffer);
     sceMpegFinish();
     
-    // This crashes....double free?
-    //if (m_RingbufferData  != NULL) free(m_RingbufferData);
-    //if (m_MpegMemData     != NULL) free(m_MpegMemData);
+    sceUtilityUnloadModule(PSP_MODULE_AV_VAUDIO);
+    sceUtilityUnloadModule(PSP_MODULE_AV_MPEGBASE);
+    sceUtilityUnloadModule(PSP_MODULE_AV_MP3);
+    sceUtilityUnloadModule(PSP_MODULE_AV_ATRAC3PLUS);
+    sceUtilityUnloadModule(PSP_MODULE_AV_AVCODEC);
+    
+    if (m_pEsBufferAtrac  != NULL) free(m_pEsBufferAtrac);
+    //if (m_RingbufferData  != NULL) free(m_RingbufferData); // This crashes....double free?
+    if (m_MpegMemData     != NULL) free(m_MpegMemData);
+    
 }
 
 void T_pmf(){
@@ -316,12 +316,6 @@ bool pmfStart(Entry* e, void* pmfData, int pmfSize, void* at3data, int at3size, 
     dx = x;
     dy = y;
     T_pmf();
-
-    sceUtilityUnloadModule(PSP_MODULE_AV_VAUDIO);
-    sceUtilityUnloadModule(PSP_MODULE_AV_MPEGBASE);
-    sceUtilityUnloadModule(PSP_MODULE_AV_MP3);
-    sceUtilityUnloadModule(PSP_MODULE_AV_ATRAC3PLUS);
-    sceUtilityUnloadModule(PSP_MODULE_AV_AVCODEC);
     
     return run;
 }

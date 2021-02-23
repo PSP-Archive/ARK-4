@@ -11,6 +11,7 @@ Update 7:
 ---- This makes it compatible with Live CFW, Permanent CFW and PS Vita QCMA.
 - Fixed xMenu.
 - Fixed arkMenu.
+- Created recovery menu for handling ARK settings and installed plugins.
 
 Update 6:
 - Added "launcher" setting to replace XMB with a custom launcher.

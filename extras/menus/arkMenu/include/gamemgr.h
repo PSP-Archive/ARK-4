@@ -99,9 +99,12 @@ class GameManager : public SystemEntry{
         
         string getInfo();
         
-        char* getName(){
+        string getName(){
             return "Game";
         }
+        
+        void setInfo(string info){};
+        void setName(string name){};
         
         Image* getIcon(){
             return common::getImage(IMAGE_GAME);

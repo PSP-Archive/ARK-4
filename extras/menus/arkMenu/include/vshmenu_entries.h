@@ -2,14 +2,6 @@
 
 /* structure defining a common entry layout */
 
-typedef struct {
-    char* description;
-    unsigned char max_options;
-    unsigned char selection;
-    unsigned char* config_ptr;
-    char* options[];
-} vsh_entry;
-
 /* Fastboot entry */
 static struct {
     char* description;
@@ -119,7 +111,7 @@ static struct {
     {"Default", "Waves", "Sprites", "Fire", "Tetris", "Matrix", "None"}
 };
 
-static vsh_entry* vsh_entries[] = {
+vsh_entry* vsh_entries[] = {
     (vsh_entry*)&fast_gameboot,
     (vsh_entry*)&language,
     (vsh_entry*)&font,
@@ -128,4 +120,4 @@ static vsh_entry* vsh_entries[] = {
     (vsh_entry*)&animations,
 };
 
-#define MAX_OPTIONS 6
+#define MAX_VSH_OPTIONS 6

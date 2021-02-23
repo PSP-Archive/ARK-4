@@ -73,7 +73,7 @@ Browser::~Browser(){
 
 void Browser::moveDirUp(){
     // Move to the parent directory of this->cwd
-    if (this->cwd == INITIAL_DIR)
+    if (this->cwd == INITIAL_DIR || this->cwd == GO_DIR)
         return;
     size_t lastSlash = this->cwd.rfind("/", this->cwd.rfind("/", string::npos)-1);
     this->cwd = this->cwd.substr(0, lastSlash+1);
@@ -199,7 +199,7 @@ void Browser::drawScreen(){
     const int xoffset = 165;
     int yoffset = 50;
     
-    common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, 365, 230);
+    common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, 360, 230);
     
     for (int i=this->start; i<min(this->start+PAGE_SIZE, (int)entries->size()); i++){
         File* e = (File*)this->entries->at(i);
@@ -231,12 +231,6 @@ void Browser::drawScreen(){
 void Browser::drawProgress(){
     if (!draw_progress || progress>=max_progress)
         return;
-    
-    if (progress_desc[4] == ""){
-        ostringstream s;
-        s<<progress<<" / "<<max_progress;    
-        progress_desc[4] = s.str();
-    }
         
     int w = min(480, 10*common::maxString(progress_desc, 5));
     int h = 30 + 15*4;
@@ -246,7 +240,12 @@ void Browser::drawProgress(){
     
     int yoffset = y+10;
     for (int i=0; i<5; i++){
-        common::printText(x+20, yoffset, progress_desc[i].c_str());
+        if (i==4 && progress_desc[4] == ""){
+            ostringstream s;
+            s<<progress<<" / "<<max_progress;  
+            common::printText(x+20, yoffset, s.str().c_str());  
+        }
+        else common::printText(x+20, yoffset, progress_desc[i].c_str());
         yoffset+=15;
     }
     
@@ -735,7 +734,7 @@ void Browser::optionsMenu(){
                 pEntryIndex = MAX_OPTIONS-1;
             }
         }
-        else if (pad->decline()){
+        else if (pad->decline() || pad->LT()){
             pEntryIndex = 0;
             break;
         }
@@ -762,15 +761,15 @@ void Browser::options(){
     this->optionsMenu();
 
     switch (pEntryIndex){
-    case NO_MODE:                                 break;
-    case COPY:        this->copy();               break;
-    case CUT:         this->cut();                break;
-    case PASTE:       this->paste();              break;
-    case DELETE:      this->removeSelection();    break;
-    case RENAME:      this->rename();             break;
-    case MKDIR:       this->makedir();            break;
-    case MS0_DIR:     this->cwd = INITIAL_DIR; this->refreshDirs(); break;
-    case EF0_DIR:     this->cwd = GO_DIR;      this->refreshDirs(); break;
+    case NO_MODE:                                                     break;
+    case COPY:        this->copy();                                   break;
+    case CUT:         this->cut();                                    break;
+    case PASTE:       this->paste();                                  break;
+    case DELETE:      this->removeSelection();                        break;
+    case RENAME:      this->rename();                                 break;
+    case MKDIR:       this->makedir();                                break;
+    case MS0_DIR:     this->cwd = INITIAL_DIR; this->refreshDirs();   break;
+    case EF0_DIR:     this->cwd = GO_DIR;      this->refreshDirs();   break;
     }
     
     if (pEntryIndex != NO_MODE && pEntryIndex != COPY && pEntryIndex != CUT){

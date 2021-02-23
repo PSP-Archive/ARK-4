@@ -8,9 +8,6 @@
 #include "vshmenu.h"
 #include "controller.h"
 
-#define MAX_ENTRIES 3
-
-static SystemEntry* entries[MAX_ENTRIES];
 static SceUID draw_thread = -1;
 static SceUID draw_sema = -1;
 static bool running = true;
@@ -33,6 +30,9 @@ static int cur_entry = 0;
 static int page_start = 0;
 static int menu_anim_state = 0;
 static int menu_draw_state = 0;
+
+static int MAX_ENTRIES = 0;
+static SystemEntry** entries = NULL;
 
 static void changeMenuState(){
     if (optionsDrawState == 1 || optionsDrawState == 3)
@@ -108,7 +108,7 @@ static void drawOptionsMenuCommon(){
         }
         entries[i]->getIcon()->draw(x+menu_anim_state, optionsAnimState+10);
         if (i==pEntryIndex && optionsDrawState==2)
-            common::printText(x+25, 125, entries[i]->getName(), LITEGRAY, SIZE_BIG);
+            common::printText(x+25, 125, entries[i]->getName().c_str(), LITEGRAY, SIZE_BIG);
         x += 160;
     }
     switch (menu_draw_state){
@@ -224,11 +224,10 @@ static int controlThread(SceSize _args, void *_argp){
     return 0;
 }
 
-void SystemMgr::initMenu(){
+void SystemMgr::initMenu(SystemEntry** e, int ne){
     draw_sema = sceKernelCreateSema("draw_sema", 0, 1, 1, NULL);
-    entries[2] = new VSHMenu();
-    entries[1] = new Browser();
-    entries[0] = new GameManager();
+    entries = e;
+    MAX_ENTRIES = ne;
 }
 
 void SystemMgr::startMenu(){

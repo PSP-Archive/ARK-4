@@ -12,8 +12,10 @@ class SystemEntry{
         virtual void pause()=0;
         virtual void resume()=0;
         virtual std::string getInfo()=0;
+        virtual void setInfo(std::string info)=0;
         virtual Image* getIcon()=0;
-        virtual char* getName()=0;
+        virtual void setName(std::string name)=0;
+        virtual std::string getName()=0;
 };
 
 #endif
