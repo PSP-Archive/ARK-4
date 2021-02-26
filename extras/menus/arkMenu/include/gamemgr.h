@@ -17,6 +17,12 @@
 
 using namespace std;
 
+enum{
+    ICONS_STOPPED,
+    ICONS_LOADING,
+    ICONS_PAUSED,
+};
+
 class GameManager : public SystemEntry{
 
     private:
@@ -32,7 +38,7 @@ class GameManager : public SystemEntry{
         /* Multithreading variables */
         SceUID iconThread; // UID's of the icon thread
         SceUID iconSema; // semaphore to lock the thread when sleeping
-        bool dynamicIconRunning;
+        int dynamicIconRunning;
         /* Control the icon threads */
         void pauseIcons();
         void resumeIcons();

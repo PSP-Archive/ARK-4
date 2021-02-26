@@ -86,23 +86,27 @@ void Entry::executeHomebrew(){
     
     memset(&param, 0, sizeof(param));
     
+    int runlevel = (this->path[0]=='e' && this->path[1]=='f')? HOMEBREW_RUNLEVEL_GO : HOMEBREW_RUNLEVEL;
+    
     param.args = strlen(this->path.c_str()) + 1;
     param.argp = (char*)this->path.c_str();
     param.key = "game";
-    sctrlKernelLoadExecVSHWithApitype(HOMEBREW_RUNLEVEL, this->path.c_str(), &param);
+    sctrlKernelLoadExecVSHWithApitype(runlevel, this->path.c_str(), &param);
 }
 
 void Entry::executePSN(){
     struct SceKernelLoadExecVSHParam param;
     
     memset(&param, 0, sizeof(param));
+    
+    int runlevel = (this->path[0]=='e' && this->path[1]=='f')? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
 
     param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
     param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
     param.key = "umdemu";
     sctrlSESetBootConfFileIndex(PSN_DRIVER);
     sctrlSESetUmdFile("");
-    sctrlKernelLoadExecVSHWithApitype(ISO_RUNLEVEL, this->path.c_str(), &param);
+    sctrlKernelLoadExecVSHWithApitype(runlevel, this->path.c_str(), &param);
 }
 
 void Entry::executePOPS(){
@@ -110,10 +114,12 @@ void Entry::executePOPS(){
     
     memset(&param, 0, sizeof(param));
     
+    int runlevel = (this->path[0]=='e' && this->path[1]=='f')? POPS_RUNLEVEL_GO : POPS_RUNLEVEL;
+    
     param.args = strlen(this->path.c_str()) + 1;
     param.argp = (char*)this->path.c_str();
     param.key = "pops";
-    sctrlKernelLoadExecVSHWithApitype(POPS_RUNLEVEL, this->path.c_str(), &param);
+    sctrlKernelLoadExecVSHWithApitype(runlevel, this->path.c_str(), &param);
 }
 
 void Entry::executeEboot(){
@@ -138,11 +144,13 @@ void Entry::executeISO(){
     else
         param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
 
+    int runlevel = (this->path[0]=='e' && this->path[1]=='f')? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
+
     param.key = "umdemu";
     param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
     sctrlSESetBootConfFileIndex(ISO_DRIVER);
     sctrlSESetUmdFile((char*)this->path.c_str());
-    sctrlKernelLoadExecVSHWithApitype(ISO_RUNLEVEL, this->path.c_str(), &param);
+    sctrlKernelLoadExecVSHWithApitype(runlevel, this->path.c_str(), &param);
 }
 
 void Entry::gameBoot(){

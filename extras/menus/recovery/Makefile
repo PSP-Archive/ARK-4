@@ -1,4 +1,4 @@
-TARGET = ARKMENU
+TARGET = ARKRECOVERY
 CFLAGS = -O2 -G0 -Wall -Wno-unused -Wno-write-strings -Wno-sign-compare
 CXXFLAGS = $(CFLAGS) -fexceptions -fno-rtti
 ASFLAGS = $(CFLAGS)

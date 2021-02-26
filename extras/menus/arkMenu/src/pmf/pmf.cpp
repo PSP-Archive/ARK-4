@@ -19,6 +19,8 @@
 
 #include <pspmpeg.h>
 
+#include <sstream>
+
 #include "pmf.h"
 #include "pmf_common.h"
 #include "pmf_video.h"
@@ -167,7 +169,11 @@ typedef struct {
 
 void pmfInit() {
 
-    m_RingbufferPackets = 0x3C0;
+    m_RingbufferPackets = 100; //0x3C0;
+    // 0x3C0 -> 2065920 bytes
+    // 100 -> 215200 bytes
+    
+    static u8 ringbuf[215200]; // use static buffer
 
     int status = 0;
     status |= sceUtilityLoadModule(PSP_MODULE_AV_AVCODEC);
@@ -180,7 +186,7 @@ void pmfInit() {
     m_RingbufferSize = sceMpegRingbufferQueryMemSize(m_RingbufferPackets);
     
     m_MpegMemSize    = sceMpegQueryMemSize(0);
-    m_RingbufferData = malloc(m_RingbufferSize);
+    m_RingbufferData = ringbuf; //malloc(m_RingbufferSize);
     m_MpegMemData    = malloc(m_MpegMemSize);
     sceMpegRingbufferConstruct(&m_Ringbuffer, m_RingbufferPackets, m_RingbufferData, m_RingbufferSize, &RingbufferCallback, PMFdata);
     sceMpegCreate(&m_Mpeg, m_MpegMemData, m_MpegMemSize, &m_Ringbuffer, BUFFER_WIDTH, 0, 0);
@@ -282,7 +288,7 @@ SceVoid pmfShutdown()
     sceUtilityUnloadModule(PSP_MODULE_AV_AVCODEC);
     
     if (m_pEsBufferAtrac  != NULL) free(m_pEsBufferAtrac);
-    //if (m_RingbufferData  != NULL) free(m_RingbufferData); // This crashes....double free?
+    //if (m_RingbufferData  != NULL) free(m_RingbufferData); // This crashes....double free or corruption?
     if (m_MpegMemData     != NULL) free(m_MpegMemData);
     
 }

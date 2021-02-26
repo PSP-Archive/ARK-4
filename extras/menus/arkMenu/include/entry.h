@@ -16,8 +16,11 @@
 #define ISO_DRIVER 3
 
 #define HOMEBREW_RUNLEVEL 0x141
+#define HOMEBREW_RUNLEVEL_GO 0x152
 #define ISO_RUNLEVEL 0x123
+#define ISO_RUNLEVEL_GO 0x125
 #define POPS_RUNLEVEL 0x144
+#define POPS_RUNLEVEL_GO 0x155
 
 int loadIconThread(SceSize _args, void *_argp);
 

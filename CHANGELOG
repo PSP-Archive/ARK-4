@@ -1,5 +1,11 @@
 ARK-4
 
+Update 7.1:
+- Fixed arkMenu file browser when doing operations on /ISO or /PSP/GAME.
+- Fixed arkMenu file browser file copying dialog.
+- Fixed arkMenu file browser deleting dialog.
+- Fixed arkMenu issue when playing PMF that caused a memory leak.
+
 Update 7:
 - Fixed pops plugins loaded from PSP Go internal memory (ef0).
 - Fixed homebrew plugins loaded from PSP Go internal memory (ef0).

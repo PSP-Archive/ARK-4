@@ -34,7 +34,7 @@ GameManager::GameManager(){
     this->findEntries();
     
     // start the multithreaded icon loading
-    this->dynamicIconRunning = true;
+    this->dynamicIconRunning = ICONS_LOADING;
     this->iconSema = sceKernelCreateSema("icon0_sema",  0, 1, 1, NULL);
     this->iconThread = sceKernelCreateThread("icon0_thread", GameManager::loadIcons, 0x10, 0x10000, PSP_THREAD_ATTR_USER, NULL);
     sceKernelStartThread(this->iconThread,  0, NULL);
@@ -50,7 +50,7 @@ int GameManager::loadIcons(SceSize _args, void *_argp){
 
     sceKernelDelayThread(0);
 
-    while (self->dynamicIconRunning){
+    while (self->dynamicIconRunning != ICONS_STOPPED){
         for (int i=0; i<MAX_CATEGORIES; i++){
             sceKernelWaitSema(self->iconSema, 1, NULL);
             self->categories[i]->loadIconsDynamic(i == self->selectedCategory);
@@ -65,16 +65,20 @@ int GameManager::loadIcons(SceSize _args, void *_argp){
 }
 
 void GameManager::pauseIcons(){
+    if (self->dynamicIconRunning == ICONS_PAUSED) return; // already paused
     for (int i=0; i<MAX_CATEGORIES; i++)
         categories[i]->waitIconsLoad(i == selectedCategory, true);
     sceKernelWaitSema(iconSema, 1, NULL);
+    self->dynamicIconRunning = ICONS_PAUSED;
 }
 
 void GameManager::resumeIcons(){
+    if (self->dynamicIconRunning == ICONS_LOADING) return; // already running
     for (int i=0; i<MAX_CATEGORIES; i++)
         categories[i]->resumeIconLoading();
     sceKernelSignalSema(iconSema, 1);
     sceKernelDelayThread(0);
+    self->dynamicIconRunning = ICONS_LOADING;
 }
 
 bool GameManager::waitIconsLoad(bool forceQuit){
@@ -348,7 +352,7 @@ void GameManager::animDisappear(){
 }
 
 void GameManager::endAllThreads(){
-    dynamicIconRunning = false;
+    dynamicIconRunning = ICONS_STOPPED;
     sceKernelWaitThreadEnd(iconThread, 0);
 }
 
@@ -398,9 +402,10 @@ void GameManager::control(Controller* pad){
 }
 
 void GameManager::updateGameList(){
-    self->pauseIcons();
+    int icons_state = self->dynamicIconRunning;
+    if (icons_state == ICONS_LOADING) self->pauseIcons();
     self->findEntries();
-    self->resumeIcons();
+    if (icons_state == ICONS_LOADING) self->resumeIcons();
 }
 
 void GameManager::execApp(){

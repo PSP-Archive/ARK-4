@@ -229,7 +229,7 @@ void Browser::drawScreen(){
 }
 
 void Browser::drawProgress(){
-    if (!draw_progress || progress>=max_progress)
+    if (!draw_progress /*|| progress>=max_progress*/)
         return;
         
     int w = min(480, 10*common::maxString(progress_desc, 5));
@@ -408,6 +408,9 @@ void Browser::deleteFile(string path){
 
 int Browser::copy_folder_recursive(const char * source, const char * destination)
 {
+
+    draw_progress = true;
+
     //create new folder
     sceIoMkdir(destination, 0777);
     
@@ -468,6 +471,8 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
     
     //free allocated path
     delete [] new_destination;
+    
+    draw_progress = false;
     
     return 1;
 };
@@ -630,6 +635,7 @@ void Browser::rename(){
 
 void Browser::removeSelection(){
     // Delete all paths in the paste buffer
+    draw_progress = true;
     this->fillSelectedBuffer();
     if (this->selectedBuffer->size() == 0)
         this->selectedBuffer->push_back(this->get()->getPath());
@@ -644,6 +650,7 @@ void Browser::removeSelection(){
         }
         this->selectedBuffer->clear();
     }
+    draw_progress = false;
 }
 
 void Browser::makedir(){
