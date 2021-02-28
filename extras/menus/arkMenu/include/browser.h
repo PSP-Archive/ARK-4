@@ -124,6 +124,8 @@ class Browser : public SystemEntry{
         void copyFile(string path);
         void copyFile(string path, string destination);
         
+        string checkDestExists(string src, string destination, string name);
+        
         void extractArchive(int type);
         
         void copy();

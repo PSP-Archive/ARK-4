@@ -477,6 +477,42 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
     return 1;
 };
 
+string Browser::checkDestExists(string path, string destination, string name){
+    string dest = destination+name;
+    int copies = 1;
+    int src_equals_dest = ( (path==dest) || (path == dest+"/") );
+    while (common::fileExists(dest) || common::folderExists(dest)){
+        char* description = "Destination exists, what to do?";
+        t_options_entry options_entries[3] = {
+            {OPTIONS_CANCELLED, "Cancel"}, {1, "Rename destination"}, {0, "Overwrite"}
+        };
+        optionsmenu = new OptionsMenu(description, (src_equals_dest)? 2 : 3, options_entries);
+        int ret = optionsmenu->control();
+        OptionsMenu* aux = optionsmenu;
+        optionsmenu = NULL;
+        delete aux;
+        
+        switch (ret){
+        case 0:
+             if (common::fileExists(dest))
+                deleteFile(dest);
+             else
+                deleteFolder(dest+"/");
+             break;
+        case 1:
+            do{
+                stringstream ss;
+                ss << destination << '(' << copies++ << ')' << name;
+                dest = ss.str();
+            }while (common::fileExists(dest) || common::folderExists(dest));
+            return dest;
+        default: return "";
+        }
+    }
+    return dest;
+}
+
+
 void Browser::copyFolder(string path){
     // Copy the folder into cwd
 
@@ -488,7 +524,9 @@ void Browser::copyFolder(string path){
     
     Folder* f = new Folder(path);
     
-    string destination = this->cwd + f->getName().substr(0, f->getName().length()-1);
+    string destination = checkDestExists(path, this->cwd, f->getName().substr(0, f->getName().length()-1));
+    
+    if (destination.size() == 0) return; // copy cancelled
     
     copy_folder_recursive(path.substr(0, path.length()-1).c_str(), destination.c_str());
 }
@@ -496,45 +534,9 @@ void Browser::copyFolder(string path){
 void Browser::copyFile(string path, string destination){
     size_t lastSlash = path.rfind("/", string::npos);
     string name = path.substr(lastSlash+1, string::npos);
-    string dest = destination + name;
+    string dest = checkDestExists(path, destination, name);
     
-    check_destination:
-    if (common::fileExists(dest)){
-        char* description = "Destination file exists, what to do?";
-        t_options_entry options_entries[3] = {
-            {OPTIONS_CANCELLED, "Cancel"}, {1, "Rename destination"}, {0, "Overwrite"}
-        };
-        optionsmenu = new OptionsMenu(description, (path == dest)? 2 : 3, options_entries);
-        int ret = optionsmenu->control();
-        
-        OptionsMenu* aux = optionsmenu;
-        optionsmenu = NULL;
-        delete aux;
-        
-        switch (ret){
-        case OPTIONS_CANCELLED: return; break;
-        case 0: sceIoRemove(dest.c_str()); break;
-        case 1:
-            {
-                SystemMgr::pauseDraw();
-                OSK osk;
-                osk.init("New name for destination", name.c_str(), 50);
-                osk.loop();
-                if(osk.getResult() != OSK_CANCEL)
-                {
-                    char tmpText[51];
-                    osk.getText((char*)tmpText);
-                    string dirName = string(tmpText);
-                    dest = destination + string(tmpText);
-                }
-                osk.end();
-                SystemMgr::resumeDraw();
-                goto check_destination;
-            }
-            break;
-        default: return; break;
-        }
-    }
+    if (dest.size() == 0) return; // copy canceled
     
     SceUID src = sceIoOpen(path.c_str(), PSP_O_RDONLY, 0777);
     SceUID dst = sceIoOpen(dest.c_str(), PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);

@@ -12,6 +12,7 @@ $/kd/iofilemgr.prx VGUPAEM
 $/kd/memlmd_01g.prx VGUPAEM
 $/kd/660modulemgr.prx VGUPAEM
 $/kd/ark_systemctrl.prx VGUPAEM
+$/kd/ark_vitacompat.prx VGUPAEM
 $/kd/init.prx VGUPAEM
 $/kd/loadexec_01g.prx VGUPAEM
 $/kd/kermit_lowio.prx VGUPAEM

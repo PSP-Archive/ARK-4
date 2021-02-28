@@ -1,6 +1,7 @@
 /* Game Manager class */
 
 #include <sstream>
+#include <unistd.h>
 #include "system_mgr.h"
 #include "gamemgr.h"
 #include "zip.h"
@@ -94,13 +95,29 @@ Menu* GameManager::getMenu(EntryType t){
 }
 
 void GameManager::findEntries(){
+    // clear entries
     this->categories[0]->clearEntries();
     this->categories[1]->clearEntries();
     this->categories[2]->clearEntries();
+    
+    // add recovery menu
+    char cwd[128];
+    getcwd((char*)cwd, sizeof(cwd));
+    string recovery_path = string(cwd) + "/" + "RECOVERY.PBP";
+    if (common::fileExists(recovery_path)){
+        Eboot* recovery_menu = new Eboot(recovery_path);
+        recovery_menu->setName("Recovery Menu");
+        this->categories[HOMEBREW]->addEntry(recovery_menu);
+    }
+    
+    // scan eboots
+    this->findEboots("ms0:/PSP/VHBL/");
     this->findEboots("ms0:/PSP/GAME/");
     this->findEboots("ef0:/PSP/GAME/");
+    // scan ISOs
     this->findISOs("ms0:/ISO/");
     this->findISOs("ef0:/ISO/");
+    // scan saves
     if (common::getConf()->scan_save){
         this->findSaveEntries("ms0:/PSP/SAVEDATA/");
         this->findSaveEntries("ef0:/PSP/SAVEDATA/");
@@ -132,7 +149,7 @@ void GameManager::findEboots(const char* path){
         Eboot* e = new Eboot(fullpath);
         switch (Eboot::getEbootType(fullpath.c_str())){
         case TYPE_HOMEBREW:    this->categories[HOMEBREW]->addEntry(e);    break;
-        case TYPE_PSN:        this->categories[GAME]->addEntry(e);        break;
+        case TYPE_PSN:         this->categories[GAME]->addEntry(e);        break;
         case TYPE_POPS:        this->categories[POPS]->addEntry(e);        break;
         }
     }

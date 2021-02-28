@@ -6,7 +6,7 @@ CFLAGS = -Os -G0 -Wall
 PROVITA = ../../../../
 INCDIR = $(PSPSDK)/include $(PROVITA)/common/include $(PROVITA)/libs/colordebugger $(PROVITA)/libs/graphics $(PROVITA)/libs/libya2d
 
-LIBS = -lgraphics -lcolordebugger -lansic -lya2d -lpspgu -lpspvram -lpspmath
+LIBS = -lgraphics -lcolordebugger -lansic -lpspvram
 
 CXXFLAGS = $(CFLAGS)
 ASFLAGS = $(CFLAGS)

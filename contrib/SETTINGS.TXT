@@ -1,9 +1,9 @@
 # enable usb_charge everywhere
 always, usbcharge, on
 # enable cpu overclock in games
-game, overclock, off
+game, overclock, on
 # enable powersave (cpu underclock) in xmb
-vsh, powersave, off
+vsh, powersave, on
 # enable custom menu launcher
 always, launcher, off
 # disable pause game (only for PSP Go)
@@ -11,4 +11,4 @@ always, disablepause, off
 # enable high memory for homebrews
 homebrew, highmem, on
 # enable mscache speedup
-always, mscache, off
+always, mscache, on

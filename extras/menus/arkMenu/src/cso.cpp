@@ -38,7 +38,7 @@ void Cso::loadIcon(){
     Image* icon = NULL;
     void* buffer = this->fastExtract(this->path.c_str(), "ICON0.PNG");
     if (buffer != NULL){
-        icon = new Image(buffer, YA2D_PLACE_VRAM);
+        icon = new Image(buffer, YA2D_PLACE_RAM);
         free(buffer);
     }
     if (icon == NULL)

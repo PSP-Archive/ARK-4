@@ -31,7 +31,7 @@ void Eboot::readHeader(){
 void Eboot::loadIcon(){
     Image* icon = NULL;
     if (this->header->icon1_offset-this->header->icon0_offset)
-        icon = new Image(this->path.c_str(), YA2D_PLACE_VRAM, this->header->icon0_offset);
+        icon = new Image(this->path.c_str(), YA2D_PLACE_RAM, this->header->icon0_offset);
     
     if (icon == NULL)
         sceKernelDelayThread(50000);

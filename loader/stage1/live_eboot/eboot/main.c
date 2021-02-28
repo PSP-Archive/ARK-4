@@ -24,14 +24,15 @@ PSP_HEAP_SIZE_KB(4096);
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
 #define EXPLOIT_ID "Live"
-#define DEFAULT_ARK_PATH "PSP/SAVEDATA/ARK_01234/"
+#define DEFAULT_ARK_PATH "ms0:/PSP/SAVEDATA/ARK_01234/"
+#define ARK_BIN "ARK4.BIN"
 
 // ARK.BIN requires these imports
 //int SysMemUserForUser_91DE343C(void* unk);
 int sceKernelPowerLock(unsigned int, unsigned int);
 
 volatile ARKConfig config = {
-    .arkpath = {0}, // We can use argv[0] (eboot's path)
+    .arkpath = DEFAULT_ARK_PATH, // We can use argv[0] (eboot's path)
     .kxploit = {0}, // should be in same folder as eboot
     .exec_mode = DEV_UNK, // let stage 2 figure this one out
     .exploit_id = EXPLOIT_ID,
@@ -113,40 +114,38 @@ int main(int argc, char** argv){
 
     SetupCallbacks();
 
-    ya2d_init();
-
     initScreen(NULL);
     
     PRTSTR("Stage 1 Starting");
     
-    // determine install path
-    int len = strlen(argv[0]) - sizeof("EBOOT.PBP") + 1;
-    strncpy(config.arkpath, argv[0], len);
-
-    // determine kxploit path
-    strcpy(config.kxploit, config.arkpath);
+    char* cwd = argv[0];
+    
+    // set kxploit path (same dir as this loader)
+    int len = strlen(cwd) - sizeof("EBOOT.PBP") + 1;
+    strncpy(config.kxploit, cwd, len);
     strcat(config.kxploit, K_FILE);
+    
+    // set install path device (makes it compatible with ef0)
+    config.arkpath[0] = cwd[0];
+    config.arkpath[1] = cwd[1];
 
-    // set default ARK install path
-    strcpy(&(config.arkpath[5]), DEFAULT_ARK_PATH);
-
-    // determine ARK stage 2 loader
+    // set ARK stage 2 loader
     char loadpath[ARK_PATH_SIZE];
     strcpy(loadpath, config.arkpath);
     strcat(loadpath, ARK_BIN);
     
     PRTSTR1("Loading Stage 2 at: %s", loadpath);
     
+    // load ARK binary
     SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
     sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
     sceIoClose(fd);
     sceKernelDcacheWritebackAll();
 
     PRTSTR("Executing ARK Stage 2");
+    // execute main function
     void (* hEntryPoint)(ARKConfig*, FunctionTable*) = (void*)ARK_LOADADDR;
     hEntryPoint(&config, &funcs);
-    
-    ya2d_shutdown();
     
     return 0;
 }

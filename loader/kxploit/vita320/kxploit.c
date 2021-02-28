@@ -88,7 +88,15 @@ int stubScanner(FunctionTable* tbl){
 
     g_tbl->KernelDcacheWritebackAll();
 
-    return 0;
+    return (
+        _sceKernelCpuSuspendIntr == NULL ||
+        _sceKernelCpuResumeIntr == NULL ||
+        _sceSdGetLastIndex == NULL ||
+        (
+            _sceKernelLibcTime == NULL &&
+            _sceKernelPowerLock == NULL
+        )
+    );
 }
 
 int doExploit()

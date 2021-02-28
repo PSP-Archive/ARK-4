@@ -31,6 +31,7 @@ int main(int argc, char** argv){
         entries[0] = new GameManager();
         
         SystemMgr::initMenu(entries, MAX_ENTRIES);
+        
         SystemMgr::startMenu();
         SystemMgr::endMenu();
 

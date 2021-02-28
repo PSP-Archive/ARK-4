@@ -58,7 +58,13 @@ int stubScanner(FunctionTable* tbl){
     _sceKernelFreeVpl = g_tbl->KernelFreeVpl;
     _sceKernelDeleteVpl = g_tbl->KernelDeleteVpl;
     _sceKernelLibcClock = g_tbl->KernelLibcClock;
-    return 0;
+    return (
+            _sceKernelCreateVpl == NULL ||
+            _sceKernelTryAllocateVpl == NULL ||
+            _sceKernelFreeVpl == NULL ||
+            _sceKernelDeleteVpl == NULL ||
+            _sceKernelLibcClock == NULL
+    );
 }
 
 void executeKernel(u32 kernelContentFunction){

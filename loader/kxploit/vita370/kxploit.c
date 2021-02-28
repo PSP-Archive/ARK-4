@@ -84,8 +84,7 @@ static u32 read_kernel_word(u32 addr) {
 
 int stubScanner(FunctionTable* tbl){
     _sceNpCore_8AFAB4A0 = tbl->FindImportUserRam("sceNpCore", 0x8AFAB4A0);
-    if (_sceNpCore_8AFAB4A0 == NULL) return -1;
-    return 0;
+    return (_sceNpCore_8AFAB4A0 == NULL);
 }
 
 int doExploit(void) {

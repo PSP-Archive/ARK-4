@@ -5,6 +5,7 @@
 #include "globals.h"
 #include "macros.h"
 #include "module2.h"
+#include "graphics.h"
 
 int readGameIdFromDisc(char* gameid){
     // Open Disc Identifier
@@ -28,21 +29,26 @@ int readGameIdFromDisc(char* gameid){
     return 0;
 }
 
+int readGameIdFromISO(char* gameid){
+    
+}
+
 int getGameId(char* gameid){
-    // Find Function
-    void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
-    
-    // Function unavailable (how?!)
-    if(SysMemForKernel_EF29061C == NULL) return readGameIdFromDisc(gameid);
-    
-    // Get Game Info Structure
-    void * gameinfo = SysMemForKernel_EF29061C();
-    
-    // Structure unavailable
-    if(gameinfo == NULL) return readGameIdFromDisc(gameid);
-    
-    memcpy(gameid, gameinfo+0x44, 9);
-    
+    if (!readGameIdFromDisc(gameid)){
+        // Find Function
+        void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
+        
+        // Function unavailable (how?!)
+        if(SysMemForKernel_EF29061C == NULL) return 0;
+        
+        // Get Game Info Structure
+        void * gameinfo = SysMemForKernel_EF29061C();
+        
+        // Structure unavailable
+        if(gameinfo == NULL) return 0;
+        
+        memcpy(gameid, gameinfo+0x44, 9);
+    }
     return 1;
 }
 

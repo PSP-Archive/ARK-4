@@ -18,7 +18,13 @@ STRIP = psp-strip
 OBJCOPY = psp-objcopy
 LINKFILE = linkfile.l
 
-C_OBJS = main.o rebootex_psp.o rebootex_psv.o pspbtcnf.o $(PROVITA)/common/functions.o $(PROVITA)/core/vitacompat/vitamem.o
+C_OBJS = main.o \
+	pspbtcnf.o \
+	psp_patches.o \
+	psv_patches.o \
+	$(PROVITA)/common/functions.o \
+	$(PROVITA)/core/vitacompat/vitamem.o
+
 LIBS = -L $(PROVITA)/libs -lansic -lcolordebugger
 
 main.elf: $(C_OBJS)

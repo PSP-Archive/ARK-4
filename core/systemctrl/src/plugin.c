@@ -79,7 +79,8 @@ static int matchingRunlevel(char * runlevel)
     else{
         // check if plugin loads on specific game
         char gameid[10]; memset(gameid, 0, sizeof(gameid));
-        if (getGameId(gameid) && stricmp(runlevel, gameid) == 0) return 1;
+        int res = getGameId(gameid);
+        if (res && stricmp(runlevel, gameid) == 0) return 1;
     }
     
     // Unsupported Runlevel (we don't touch those to keep stability up)
@@ -305,11 +306,14 @@ void ProcessConfigFile(char* path, void (*handler)(char*))
 void LoadPlugins(){
     if (ark_config->recovery)
         return; // don't load plugins in recovery mode
-    // Open Plugin Config
+    // Open Plugin Config from ARK's installation folder
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, "PLUGINS.TXT");
     ProcessConfigFile(path, &startPlugin);
+    // Open Plugin Config from SEPLUGINS
+    ProcessConfigFile("ms0:/SEPLUGINS/PLUGINS.TXT", &startPlugin);
+    ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &startPlugin);
 }
 
 void loadSettings(void* settingsHandler){

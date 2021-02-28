@@ -1,9 +1,16 @@
+enum{
+    PLACE_ARK_SAVE,
+    PLACE_MS0_SEPLUGINS,
+    PLACE_EF0_SEPLUGINS
+};
+
 typedef struct {
     char* description;
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[2];
+    unsigned char place;
 } plugin_t;
 
 // variable length array
@@ -28,7 +35,7 @@ static void addPlugin(plugin_t* plugin){
     ark_plugin_entries[ark_plugins_count++] = (vsh_entry*)plugin;
 }
 
-static plugin_t* createPlugin(const char* description, unsigned char enable){
+static plugin_t* createPlugin(const char* description, unsigned char enable, unsigned char place){
     plugin_t* plugin = (plugin_t*)malloc(sizeof(plugin_t));
     plugin->description = strdup(description);
     plugin->max_options = 2;
@@ -36,11 +43,12 @@ static plugin_t* createPlugin(const char* description, unsigned char enable){
     plugin->config_ptr = &(plugin->selection);
     plugin->options[0] = "Disable";
     plugin->options[1] = "Enable";
+    plugin->place = place;
     return plugin;
 }
 
-void loadPlugins(){
-    std::ifstream input("PLUGINS.TXT");
+static void loadPluginsFile(const char* path, unsigned char place){
+    std::ifstream input(path);
     for( std::string line; getline( input, line ); ){
         if (isComment(line)) continue;
         string description;
@@ -55,17 +63,28 @@ void loadPlugins(){
         trimmer.clear();
         trimmer >> enabled;
         
-        plugin_t* plugin = createPlugin(description.c_str(), isRunlevelEnabled(enabled)?1:0);
+        plugin_t* plugin = createPlugin(description.c_str(), isRunlevelEnabled(enabled)?1:0, place);
         addPlugin(plugin);
     }
     input.close();
 }
 
+void loadPlugins(){
+    loadPluginsFile("PLUGINS.TXT", 0);
+    loadPluginsFile("ms0:/SEPLUGINS/PLUGINS.TXT", 1);
+    loadPluginsFile("ef0:/SEPLUGINS/PLUGINS.TXT", 2);
+}
+
 void savePlugins(){
-    std::ofstream output("PLUGINS.TXT");
+    std::ofstream output[3];
+    output[0] = std::ofstream("PLUGINS.TXT");
+    output[1] = std::ofstream("ms0:/SEPLUGINS/PLUGINS.TXT");
+    output[2] = std::ofstream("ef0:/SEPLUGINS/PLUGINS.TXT");
     for (int i=0; i<ark_plugins_count; i++){
         plugin_t* plugin = (plugin_t*)(ark_plugin_entries[i]);
-        output << plugin->description << ", " << ((plugin->selection)? "on":"off") << endl;
+        output[plugin->place] << plugin->description << ", " << ((plugin->selection)? "on":"off") << endl;
     }
-    output.close();
+    output[0].close();
+    output[1].close();
+    output[2].close();
 }

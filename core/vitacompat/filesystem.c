@@ -295,19 +295,19 @@ void patchFileSystemDirSyscall(void)
         return;
     
     // Hooking sceIoDopen for User Modules
-    sctrlHENPatchSyscall((void *)FindFunction("sceIOFileManager", "IoFileMgrForUser", 0xB29DDF9C), sceIoDopenHook);
+    sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0xB29DDF9C), sceIoDopenHook);
     
     // Hooking sceIoDread for User Modules
-    sctrlHENPatchSyscall((void *)FindFunction("sceIOFileManager", "IoFileMgrForUser", 0xE3EB004C), sceIoDreadHook);
+    sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0xE3EB004C), sceIoDreadHook);
     
     // Hooking sceIoDclose for User Modules
-    sctrlHENPatchSyscall((void *)FindFunction("sceIOFileManager", "IoFileMgrForUser", 0xEB092469), sceIoDcloseHook);
+    sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0xEB092469), sceIoDcloseHook);
     
     // Hooking sceIoMkdir for User Modules
-    sctrlHENPatchSyscall((void *)FindFunction("sceIOFileManager", "IoFileMgrForUser", 0x06A70004), sceIoMkdirHook);
+    sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x06A70004), sceIoMkdirHook);
     
-    sctrlHENPatchSyscall((void *)FindFunction("sceIOFileManager", "IoFileMgrForUser", 0x6A638D83), sceIoReadHookCommon);
-    sctrlHENPatchSyscall((void *)FindFunction("sceIOFileManager", "IoFileMgrForUser", 0x42EC03AC), sceIoWriteHookCommon);
+    //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x6A638D83), sceIoReadHookCommon);
+    //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x42EC03AC), sceIoWriteHookCommon);
 }
 
 // Directory IO Patch for PSP-like Behaviour

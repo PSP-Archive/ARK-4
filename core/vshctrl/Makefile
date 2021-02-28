@@ -1,5 +1,5 @@
 TARGET = vshctrl
-OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o hibernation_delete.c $(PROVITA)/common/functions.o
+OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o hibernation_delete.o $(PROVITA)/common/functions.o
 IMPORTS = 
 
 INCDIR = $(PROVITA)/common/include $(PROVITA)/core/systemctrl/include

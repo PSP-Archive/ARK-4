@@ -1,10 +1,21 @@
 ARK-4
 
-Update 7.1:
-- Fixed arkMenu file browser when doing operations on /ISO or /PSP/GAME.
-- Fixed arkMenu file browser file copying dialog.
-- Fixed arkMenu file browser deleting dialog.
-- Fixed arkMenu issue when playing PMF that caused a memory leak.
+Update 8:
+- Several fixes to arkMenu custom launcher.
+---- Fixed file browser when doing operations on /ISO or /PSP/GAME.
+---- Fixed file browser copying dialog.
+---- Fixed file browser deleting dialog.
+---- Fixed file browser when copying a file or folder that already exists.
+---- Fixed issue launching a game when one of the menu categories was empty.
+---- Added compatibility with VHBL homebrew.
+- Fixed issue when playing PMF that caused a memory leak.
+- Added compatibility with legacy loaders for users with previous installations of ARK-2.
+---- Users with previous instalations of ARK-2 for firmwares other than 3.60 must keep their previous0 K.BIN file.
+- Fixed compatibility with PS Vita.
+---- Per-game plugins now work well on PS Vita.
+---- Fixed exitgame.
+---- Fixed PSP IO emulation.
+- You can now have your PLUGINS.TXT file in /SEPLUGINS/ folder (and/or ARK's save folder).
 
 Update 7:
 - Fixed pops plugins loaded from PSP Go internal memory (ef0).

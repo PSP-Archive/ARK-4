@@ -18,8 +18,7 @@
 #ifndef _VERSION_H_
 #define _VERSION_H_
 
-#define PRO_VERSION 0x3000
-#define PRO_MINOR_VERSION 2
+#define PRO_VERSION 0x4000 // identify as ARK
 
 #endif
 

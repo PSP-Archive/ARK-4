@@ -70,10 +70,11 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     printk("syspatch: %s(0x%04X)\r\n", mod->modname, apitype);
     hookImportByNID(mod, "KDebugForKernel", 0x84F370BC, printk);
     if (DisplaySetFrameBuf){
+        initScreen(DisplaySetFrameBuf);
         PRTSTR1("Loading module %s", mod->modname);
     }
   #endif
-  
+
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
         loadexec = mod;
@@ -84,9 +85,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     {
         // can use screen now
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
-        #ifdef DEBUG
-        initScreen(DisplaySetFrameBuf);
-        #endif
         // Patch loadexec_01g.prx
         patchLoadExec(loadexec);
         goto flush;

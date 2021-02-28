@@ -1,12 +1,12 @@
 TARGET = vitapops
 
 C_OBJS = \
-	vitapops.o \
+	main.o \
 	nullaudio.o \
 	popsdisplay.o \
 	$(PROVITA)/common/functions.o \
 	$(PROVITA)/core/vitacompat/vitaflash.o \
-	$(PROVITA)/core/systemctrl/src/dummy.o \
+	$(PROVITA)/core/systemctrl/src/dummy.o  \
 	$(PROVITA)/core/systemctrl/src/exitgame.o \
 		
 OBJS = \

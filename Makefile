@@ -7,25 +7,27 @@ K ?= psp660
 
 export DEBUG PROVITA K
 
-SUBDIRS = libs contrib/PC/prxencrypter core/systemctrl core/vitacompat core/vitapops core/pspcompat core/vshctrl core/stargate extras/menus/arkMenu extras/menus/recovery core/popcorn core/inferno core/galaxy core/rebootex loader/stage2/live loader/kxploit loader/stage1/linkless_payload loader/stage1/live_eboot contrib/PC/btcnf extras/menus/vshmenu
+SUBDIRS = libs contrib/PC/prxencrypter core/systemctrl core/vitacompat core/vitapops core/pspcompat core/vshctrl core/stargate extras/menus/provsh extras/menus/arkMenu extras/menus/recovery core/popcorn core/inferno core/galaxy core/rebootex loader/stage2/live loader/stage2/compat loader/kxploit loader/stage1/linkless_payload loader/stage1/live_eboot contrib/PC/btcnf extras/menus/vshmenu
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj distclean copy-bin mkdir-dist encrypt-prx
 
 all: subdirs mkdir-dist encrypt-prx copy-bin
 
 copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP loader/kxploit/k.bin contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso extras/menus/arkMenu/EBOOT.PBP extras/menus/recovery/EBOOT.PBP extras/menus/vshmenu/satelite.prx
-#	Common installation 
-	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/PSP/SAVEDATA/ # game exploit loader
-	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/PSP/GAME/ARK_Live/EBOOT.PBP # Signed EBOOT
-	$(Q)cp loader/stage2/live/ark.bin dist/PSP/SAVEDATA/ARK_01234/ARK.BIN # ARK installer and loader
-	$(Q)cp loader/kxploit/k.bin dist/PSP/GAME/ARK_Live/K.BIN # Kernel exploit
-	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/PSP/SAVEDATA/ARK_01234/RECOVERY.PBP # Default recovery menu
-	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/PSP/SAVEDATA/ARK_01234/MENU.PBP # Default launcher
-	$(Q)cp extras/menus/arkMenu/DATA.PKG dist/PSP/SAVEDATA/ARK_01234/DATA.PKG # Default launcher
-	$(Q)cp extras/menus/vshmenu/satelite.prx dist/PSP/SAVEDATA/ARK_01234/VSHMENU.PRX # Default vsh menu
-	$(Q)cp contrib/SETTINGS.TXT dist/PSP/SAVEDATA/ARK_01234/SETTINGS.TXT # Default settings
-	$(Q)mv dist/FLASH0.ARK dist/PSP/SAVEDATA/ARK_01234/
-	$(Q)cp loader/stage1/linkless_payload/h.bin dist/VHBL/H.BIN # game exploit loader
-	$(Q)cp loader/stage1/live_eboot/eboot/EBOOT.PBP dist/VHBL/WMENU.BIN # Unsigned EBOOT for VHBL
+#	Common installation
+	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
+	$(Q)cp loader/kxploit/k.bin dist/ARK_Live/K.BIN # Kernel exploit for PSP
+	$(Q)cp loader/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
+	$(Q)cp loader/vitabubble/SAVEPATH.TXT dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
+	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
+	$(Q)cp loader/stage2/compat/ark.bin dist/ARK_01234/ARK.BIN # ARK-2 chainloader
+	$(Q)cp loader/stage2/live/ark.bin dist/ARK_01234/ARK4.BIN # ARK-4 loader
+	$(Q)cp loader/kxploit/vita360/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PS Vita 3.60 Henkaku
+	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
+	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/MENU.PBP # Default launcher
+	$(Q)cp extras/menus/arkMenu/DATA.PKG dist/ARK_01234/DATA.PKG # Launcher and Recovery resources
+	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
+	$(Q)cp loader/stage1/linkless_payload/h.bin dist/ARK_01234/H.BIN # game exploit loader
+	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	
 encrypt-prx: \
 	dist/SYSCTRL0.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN dist/PSPCOMPAT.BIN dist/VSHCTRL.BIN dist/INFERNO0.BIN dist/GALAXY00.BIN dist/STARGATE.BIN dist/POPCORN0.BIN \
@@ -48,12 +50,14 @@ endif
 	$(Q)$(MAKE) $@ -C loader/stage1/linkless_payload
 	$(Q)$(MAKE) $@ -C loader/stage1/live_eboot
 	$(Q)$(MAKE) $@ -C loader/stage2/live
+	$(Q)$(MAKE) $@ -C loader/stage2/compat
 	$(Q)$(MAKE) $@ -C loader/kxploit
 	$(Q)$(MAKE) $@ -C core/rebootex
 	$(Q)$(MAKE) $@ -C core/systemctrl
 	$(Q)$(MAKE) $@ -C core/vitacompat
 	$(Q)$(MAKE) $@ -C core/vitapops
 	$(Q)$(MAKE) $@ -C core/pspcompat
+	$(Q)$(MAKE) $@ -C core/vshctrl
 	$(Q)$(MAKE) $@ -C core/stargate
 	$(Q)$(MAKE) $@ -C core/popcorn
 	$(Q)$(MAKE) $@ -C core/inferno
@@ -61,6 +65,7 @@ endif
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
+	$(Q)$(MAKE) $@ -C extras/menus/provsh
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -f contrib/PC/btcnf/psvbtinf.bin
 	$(Q)-rm -f contrib/PC/btcnf/psvbtnnf.bin
@@ -90,11 +95,8 @@ loader: ark
 
 mkdir-dist:
 	$(Q)mkdir dist | true
-	$(Q)mkdir dist/VHBL | true
-	$(Q)mkdir dist/PSP | true
-	$(Q)mkdir dist/PSP/GAME/ | true
-	$(Q)mkdir dist/PSP/GAME/ARK_Live | true
-	$(Q)mkdir dist/PSP/SAVEDATA | true
+	$(Q)mkdir dist/VitaBubble | true
+	$(Q)mkdir dist/ARK_Live | true
 
 -include $(PROVITA)/.config
 include $(PROVITA)/common/make/check.mak

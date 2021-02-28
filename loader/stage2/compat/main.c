@@ -31,6 +31,7 @@ static ARKConfig conf = {
     .arkpath = ARK_PATH,
     .exec_mode = PS_VITA,
     .exploit_id = EXPLOIT_ID,
+    .kxploit = {0},
 };
 
 static FunctionTable tbl = {.config=&conf};
@@ -54,28 +55,19 @@ void clearBSS(void)
 
 // Entry Point
 int _start(char*) __attribute__((section(".text.startup")));
-int _start(char* arg0)
+int _start(char* savepath)
 {
 
     clearBSS();
+    
+    if (savepath) strcpy(conf.arkpath, savepath);
 
-    /*
-    if (is_kernel(0)){
-        tbl.IoOpen = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x109F50BC);
-        tbl.IoRead = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x6A638D83);
-        tbl.IoClose = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x810C4BC3);
-        tbl.KernelDcacheWritebackAll = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0xB435DEC5);
-        tbl.DisplaySetFrameBuf = (void*)FindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
-    }
-    else{
-    */
-        tbl.IoOpen = (void*)FindImportUserRam("IoFileMgrForUser", 0x109F50BC);
-        tbl.IoRead = (void*)FindImportUserRam("IoFileMgrForUser", 0x6A638D83);
-        tbl.IoClose = (void*)FindImportUserRam("IoFileMgrForUser", 0x810C4BC3);
-        tbl.KernelDcacheWritebackAll = (void*)FindImportUserRam("UtilsForUser", 0x79D1C3FA);
-        tbl.DisplaySetFrameBuf = (void*)FindImportUserRam("sceDisplay", 0x289D82FE);
-        tbl.KernelLibcTime = (void*)FindImportUserRam("UtilsForUser", 0x27CC57F0);
-    //}
+    tbl.IoOpen = (void*)FindImportUserRam("IoFileMgrForUser", 0x109F50BC);
+    tbl.IoRead = (void*)FindImportUserRam("IoFileMgrForUser", 0x6A638D83);
+    tbl.IoClose = (void*)FindImportUserRam("IoFileMgrForUser", 0x810C4BC3);
+    tbl.KernelDcacheWritebackAll = (void*)FindImportUserRam("UtilsForUser", 0x79D1C3FA);
+    tbl.DisplaySetFrameBuf = (void*)FindImportUserRam("sceDisplay", 0x289D82FE);
+    tbl.KernelLibcTime = (void*)FindImportUserRam("UtilsForUser", 0x27CC57F0);
     
     int fd = tbl.IoOpen(BIN_PATH, PSP_O_RDONLY, 0);
     tbl.IoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
@@ -84,6 +76,6 @@ int _start(char* arg0)
     tbl.KernelDcacheWritebackAll();
     
     void (* hEntryPoint)(ARKConfig*, FunctionTable*) = (void*)ARK_LOADADDR;
-    hEntryPoint(&conf, &tbl);
+    hEntryPoint(&conf, NULL);
     
 }

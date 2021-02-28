@@ -6,8 +6,8 @@
 #define MP3BUF_SIZE 128*1024
 #define PCMBUF_SIZE 128*(1152/2)
 
-static char mp3Buf[MP3BUF_SIZE]  __attribute__((aligned(64)));
-static short pcmBuf[PCMBUF_SIZE]  __attribute__((aligned(64)));
+//static char mp3Buf[MP3BUF_SIZE]  __attribute__((aligned(64)));
+//static short pcmBuf[PCMBUF_SIZE]  __attribute__((aligned(64)));
 
 static int running = 0;
 static int eof = 0;
@@ -113,16 +113,18 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     // Reserve a mp3 handle for our playback
     SceMp3InitArg mp3Init;
-    memset(mp3Buf, 0, sizeof(mp3Buf));
-    memset(pcmBuf, 0, sizeof(pcmBuf));
+    char* mp3Buf = (char*)memalign(64, MP3BUF_SIZE);
+    short* pcmBuf = (short*)memalign(64, PCMBUF_SIZE);
+    memset(mp3Buf, 0, MP3BUF_SIZE);
+    memset(pcmBuf, 0, PCMBUF_SIZE);
     mp3Init.mp3StreamStart = 0;
     mp3Init.mp3StreamEnd = (buffer == NULL)? sceIoLseek32( file_handle, 0, SEEK_END ) : buffer_size;
     mp3Init.unk1 = 0;
     mp3Init.unk2 = 0;
     mp3Init.mp3Buf = mp3Buf;
-    mp3Init.mp3BufSize = sizeof(mp3Buf);
+    mp3Init.mp3BufSize = MP3BUF_SIZE;
     mp3Init.pcmBuf = pcmBuf;
-    mp3Init.pcmBufSize = sizeof(pcmBuf);
+    mp3Init.pcmBufSize = PCMBUF_SIZE;
 
     mp3_handle = sceMp3ReserveMp3Handle( &mp3Init );
 
@@ -225,6 +227,8 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     file_handle = -1;
     mp3_handle = -1;
     running = 0;
+    free(mp3Buf);
+    free(pcmBuf);
 }
 
 MP3::MP3(void* buffer, int size){

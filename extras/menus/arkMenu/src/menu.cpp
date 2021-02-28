@@ -70,6 +70,7 @@ void Menu::loadIconsDynamic(bool isSelected){
 }
 
 bool Menu::waitIconsLoad(bool isSelected, bool forceQuit){
+    if (this->getVectorSize() == 0) return true;
     this->stopLoading = forceQuit;
     sceKernelWaitSema(iconSema, 1, NULL); // wait for the thread to release the semaphore
     if (this->getEntry()->getIcon() == common::getImage(IMAGE_WAITICON))

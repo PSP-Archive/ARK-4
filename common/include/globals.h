@@ -32,15 +32,15 @@
 
 // ARK_CONFIG
 #define ARK_PATH_SIZE 128
-#define ARK_MENU "MENU.PBP"
-#define ARK_RECOVERY "RECOVERY.PBP"
-#define ARK_BIN "ARK.BIN"
-#define FLASH0_ARK "FLASH0.ARK"
-#define VSH_MENU "VSHMENU.PRX"
-#define K_FILE "K.BIN"
+#define ARK_MENU "MENU.PBP" // default launcher
+#define ARK_RECOVERY "RECOVERY.PBP" // recovery app
+#define FLASH0_ARK "FLASH0.ARK" // ARK flash0 package
+#define VSH_MENU "VSHMENU.PRX" // ARK VSH Menu for XMB
+#define K_FILE "K.BIN" // kernel exploit file for Live loaders
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
-#define ARK_MINOR_VERSION 7
+#define ARK_MINOR_VERSION 8
+#define ARK_MICRO_VERSION 0
 
 /*
 First two bits identify the device (PSP or PS Vita)
@@ -54,7 +54,6 @@ Dev Sub
 10  01 -> vita minis, useless for now (use better base game!)
 10  10 -> vita pops, useless for now (extremely limited in later firmwares, though there are ways around them...)
 11  00 -> device mask
-11  11 -> subdevice mask
 */
 typedef enum{
     DEV_UNK = 0b0000,
@@ -76,16 +75,17 @@ enum {
     PSP_11000 = 10,
 };
 
-
+// These settings should be global and constant during the entire execution of ARK.
+// It should not be possible to change these (except for recovery flag).
 typedef struct ARKConfig{
-    char arkpath[ARK_PATH_SIZE-20]; // leave enough room to concatenate files
-    char exploit_id[12];
-    char kxploit[ARK_PATH_SIZE];
-    unsigned char exec_mode;
-    unsigned char recovery;
+    char arkpath[ARK_PATH_SIZE-20]; // ARK installation folder, leave enough room to concatenate files
+    char exploit_id[12]; // ID of the game exploit, or name of the bootloader
+    char kxploit[ARK_PATH_SIZE]; // path to the K.BIN file (if not set, will attemp to read from ARK install path)
+    unsigned char exec_mode; // ARK execution mode (PSP, PS Vita, Vita POPS, etc)
+    unsigned char recovery; // run ARK in recovery mode (disables settings, plugins and autoboots RECOVERY.PBP)
 } ARKConfig;
 
-#define ARK_CONF_ADDR 0x08800010
+#define ARK_CONF_ADDR 0x08800010 // global address to backup ARK configuration during reboot
 #define ark_conf_backup ((ARKConfig*)(ARK_CONF_ADDR))
 #define IS_PSP(exec_mode) ((exec_mode&DEV_MASK)==PSP_ORIG)
 #define IS_VITA(exec_mode) ((exec_mode&DEV_MASK)==PS_VITA)

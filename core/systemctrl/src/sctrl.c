@@ -128,7 +128,7 @@ int sctrlHENGetVersion()
 // Get HEN Minor Version
 int sctrlHENGetMinorVersion()
 {
-    return PRO_MINOR_VERSION;
+    return ( (ARK_MAJOR_VERSION << 16) | (ARK_MINOR_VERSION << 8) | ARK_MICRO_VERSION );
 }
 
 // Find Filesystem Driver

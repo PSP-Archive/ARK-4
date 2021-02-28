@@ -78,6 +78,7 @@ int at3_thread_started = 0;
 void* PMFdata = NULL;
 int PMFsize = 0;
 int PMFcounter = 0;
+int PMFstart = 0;
 
 Entry* entry = NULL;
 
@@ -89,8 +90,8 @@ int dy;
 SceInt32 RingbufferCallback(ScePVoid pData, SceInt32 iNumPackets, ScePVoid pParam)
 {
 
-    if (PMFcounter == PMFsize)
-        return -1;
+    if (PMFcounter >= PMFsize)
+        PMFcounter = PMFstart;
 
     unsigned char* pmfData = (unsigned char*)pParam+PMFcounter;
 
@@ -134,8 +135,7 @@ SceInt32 ParseHeader()
 
     free(pHeader);
 
-    PMFcounter = m_MpegStreamOffset;
-
+    PMFcounter = PMFstart = m_MpegStreamOffset;
     return 0;
 
 error:
@@ -198,6 +198,7 @@ void pmfInit() {
 
 void pmfLoad() {
     PMFcounter = 0;
+    PMFstart = 0;
     ParseHeader();
     m_MpegStreamAVC = sceMpegRegistStream(&m_Mpeg, 0, 0);
     m_MpegStreamAtrac = sceMpegRegistStream(&m_Mpeg, 1, 0);
@@ -298,9 +299,8 @@ void T_pmf(){
     // init and start PMF
     pmfInit();
     pmfLoad();
-    int counter = PMFcounter;
     while (work){
-        PMFcounter = counter; // reset PMF to play on loop
+        PMFcounter = PMFstart; // reset PMF to play on loop
         pmfPlay(); // play PMF
     }
     pmfShutdown(); // shutdown PMF

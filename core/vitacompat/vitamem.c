@@ -44,7 +44,7 @@ int PatchSysMem(void *a0, void *sysmem_config)
 
 
 // unprotect extra RAM for user apps
-// call this from systemcontrol
+// call this from systemcontrol/vitacompat
 void unprotectVitaMemory(){
     u32 *prot = (u32 *)0xBC000040;
     for (int i = 0; i < 0x10; i++)

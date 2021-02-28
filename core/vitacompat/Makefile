@@ -1,12 +1,20 @@
 TARGET = vitacompat
 
+SPU_OBJS = \
+	psxspu/dma.o \
+	psxspu/out.o \
+	psxspu/registers.o \
+	psxspu/spu.o \
+	psxspu/xa.o \
+	psxspu/nullsnd.o \
+
 C_OBJS =   \
 	main.o  \
-	psxspu.o \
 	vitamem.o \
 	syspatch.o \
 	vitaflash.o \
-	filesystem.o \
+	popspatch.o  \
+	filesystem.o  \
 	$(PROVITA)/common/functions.o \
 	$(PROVITA)/core/systemctrl/src/dummy.o \
 	$(PROVITA)/core/systemctrl/src/exitgame.o \
@@ -17,9 +25,9 @@ OBJS = \
 
 all: $(TARGET).prx
 INCDIR = $(PROVITA)/common $(PROVITA)
-CFLAGS = -Os -G0 -Wall -fno-pic
+CFLAGS = -Os -G0 -Wall -fno-pic -std=gnu11
 
-CFLAGS += -I include -I $(PROVITA)/common/include/ -I $(PROVITA)/libs/graphics/ -I $(PROVITA)/core/systemctrl/include/
+CFLAGS += -I psxspu/ -I $(PROVITA)/common/include/ -I $(PROVITA)/libs/graphics/ -I $(PROVITA)/core/systemctrl/include/
 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
@@ -32,7 +40,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(PROVITA)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lcolordebugger -lgraphics -lpspsystemctrl_kernel
+LIBS = -lpspsemaphore -lcolordebugger -lgraphics -lpspsystemctrl_kernel -lpspaudio
 
 PSP_FW_VERSION = 660
 

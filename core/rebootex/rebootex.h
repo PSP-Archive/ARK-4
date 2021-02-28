@@ -3,8 +3,6 @@
 
 #include "rebootconfig.h"
 
-extern ARKConfig* ark_conf;
-
 // Original Sony functions
 extern int (* sceReboot)(int, int, int, int);
 extern void (* sceRebootIcacheInvalidateAll)(void);

@@ -6,7 +6,7 @@
 #include "functions.h"
 #include "macros.h"
 #include "exitgame.h"
-#include "psxspu.h"
+#include "popspatch.h"
 #include "libs/graphics/graphics.h"
 
 extern STMOD_HANDLER previous;
@@ -66,11 +66,17 @@ static int isSystemBooted(void)
     return 0;
 }
 
+int doColorDebug(){
+    colorDebug(0xff);
+    _sw(0x44000000, 0xBC800100);
+    return 0;
+}
+
 void ARKVitaOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
-
+    
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
         // Patch sceKernelExitGame Syscalls
@@ -87,7 +93,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
-    if (strcmp(mod->modname, "scePops_Manager") == 0){
+    if (strcmp(mod->modname, "PopcornManager") == 0){
         patchVitaPopsman(mod);
         goto flush;
     }
@@ -107,12 +113,12 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
-            // Apply Directory IO PSP Emulation
-            patchFileSystemDirSyscall();
             // Allow exiting through key combo
-            //patchExitGame();
+            patchExitGame();
             // Initialize Memory Stick Speedup Cache
             msstorCacheInit("ms", 16 * 1024);
+            // Apply Directory IO PSP Emulation
+            patchFileSystemDirSyscall();
             // Boot Complete Action done
             booted = 1;
             goto flush;

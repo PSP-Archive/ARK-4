@@ -644,7 +644,7 @@ static int getRifPatch(char *name, char *path)
 
 void patchPopsMgr(void)
 {
-    SceModule2 *mod = (SceModule2*) sceKernelFindModuleByName("scePops_Manager");;
+    SceModule2 *mod = (SceModule2*) sceKernelFindModuleByName("scePops_Manager");
     unsigned int text_addr = mod->text_addr;
     int i;
     
@@ -1059,6 +1059,7 @@ static void patchPops(SceModule2 *mod)
 
 int module_start(SceSize args, void* argp)
 {
+
     printk("popcorn: init_file = %s\r\n", sceKernelInitFileName());
     
     u16 paramType = 0;
@@ -1081,7 +1082,7 @@ int module_start(SceSize args, void* argp)
     patchPopsMgr();
     
     flushCache();
-
+    
     return 0;
 }
 

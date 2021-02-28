@@ -8,6 +8,7 @@
 #include "animations.h"
 
 #define CONFIG_PATH "ARKMENU.CFG"
+#define RESOURCES_LOAD_PLACE YA2D_PLACE_VRAM
 
 using namespace common;
 
@@ -258,16 +259,16 @@ void common::loadData(int ac, char** av){
     
     currentFont = config.font;
     
-    images[IMAGE_BG] = new Image(PKG_PATH, YA2D_PLACE_VRAM, findPkgOffset("DEFBG.PNG"));
-    images[IMAGE_SPRITE] = new Image(PKG_PATH, YA2D_PLACE_VRAM, findPkgOffset("SPRITE.PNG"));
-    images[IMAGE_LOADING] = new Image(PKG_PATH, YA2D_PLACE_VRAM, findPkgOffset("LOADING.PNG"));
-    images[IMAGE_NOICON] = new Image(PKG_PATH, YA2D_PLACE_VRAM, findPkgOffset("NOICON.PNG"));
-    images[IMAGE_WAITICON] = new Image(PKG_PATH, YA2D_PLACE_VRAM, findPkgOffset("WAIT.PNG"));
-    images[IMAGE_GAME] = new Image(PKG_PATH, YA2D_PLACE_VRAM, findPkgOffset("GAME.PNG"));
-    images[IMAGE_SETTINGS] = new Image(PKG_PATH, YA2D_PLACE_VRAM, findPkgOffset("SETTINGS.PNG"));
-    images[IMAGE_BROWSER] = new Image(PKG_PATH, YA2D_PLACE_VRAM, findPkgOffset("BROWSER.PNG"));
-    images[IMAGE_DIALOG] = new Image(PKG_PATH, YA2D_PLACE_VRAM, findPkgOffset("BOX.PNG"));
-    images[IMAGE_ZIP] = new Image(PKG_PATH, YA2D_PLACE_VRAM, findPkgOffset("ZIP.PNG"));
+    images[IMAGE_BG] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
+    images[IMAGE_SPRITE] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
+    images[IMAGE_LOADING] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("LOADING.PNG"));
+    images[IMAGE_NOICON] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("NOICON.PNG"));
+    images[IMAGE_WAITICON] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
+    images[IMAGE_GAME] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("GAME.PNG"));
+    images[IMAGE_SETTINGS] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SETTINGS.PNG"));
+    images[IMAGE_BROWSER] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("BROWSER.PNG"));
+    images[IMAGE_DIALOG] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("BOX.PNG"));
+    images[IMAGE_ZIP] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("ZIP.PNG"));
     
     for (int i=0; i<MAX_IMAGES; i++){
         images[i]->swizzle();

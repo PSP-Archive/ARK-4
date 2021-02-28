@@ -176,13 +176,16 @@ int control_poller(SceSize args, void * argp)
     return 0;
 }
 
-// Hook Gamepad Input
-void patchController(void)
-{
+void initController(){
     CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
     CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A);
     CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
     CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86);
+}
+
+// Hook Gamepad Input
+void patchController(void)
+{
     // Hook Gamepad Input Syscalls (user input hooking only)
     sctrlHENPatchSyscall(CtrlPeekBufferPositive, peek_positive);
     sctrlHENPatchSyscall(CtrlPeekBufferNegative, peek_negative);
@@ -218,6 +221,9 @@ void hookPOPSExit(void)
 // Start exit game handler
 void patchExitGame()
 {
+
+    initController();
+
     // Get Apitype
     int apitype = sceKernelInitApitype();
     
@@ -228,7 +234,7 @@ void patchExitGame()
         patchController();
         
         // Start Polling Thread
-        startControlPoller();
+        //startControlPoller();
     }
     
     // POPS Apitype

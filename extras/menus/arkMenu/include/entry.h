@@ -57,7 +57,7 @@ class Entry{
         virtual ~Entry()=0;
         
         string getName();
-        
+        void setName(string name);
         string getPath();
         
         Image* getIcon();

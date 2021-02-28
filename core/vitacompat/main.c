@@ -23,7 +23,6 @@
 #include "functions.h"
 #include "macros.h"
 #include "exitgame.h"
-#include "psxspu.h"
 #include "libs/graphics/graphics.h"
 
 PSP_MODULE_INFO("ARKVitaCompat", 0x3007, 1, 0);
@@ -64,11 +63,11 @@ int module_start(SceSize args, void * argp)
     
     //unprotectVitaMemory();
     
-    //patchFileManager();
+    patchFileManager();
     
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);
-
+    
     // Return Success
     return 0;
 }

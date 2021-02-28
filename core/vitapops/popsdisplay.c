@@ -14,17 +14,17 @@
 #include "libs/graphics/graphics.h"
 
 // Internal function
-int (* _sceDisplaySetFrameBufferInternal)(int pri, void *topaddr, int width, int format, int sync) = 0;
+int (* _sceDisplaySetFrameBufferInternal)(int pri, void *topaddr, int width, int format, int sync) = NULL;
 
 // Vram address and config
 u16* pops_vram = (u16*)0x490C0000;
 POPSVramConfigList* vram_config = (POPSVramConfigList*)0x49FE0000;
 
 // Registered Vram handler
-void (*_psxVramHandler)(u32* psp_vram, u16* ps1_vram) = (void*)NULL;
+void (*_psxVramHandler)(u32* psp_vram, u16* ps1_vram) = &SoftRelocateVram; // soft render by default
 
 // initialize POPS VRAM
-static void initVitaPopsVram(){
+void initVitaPopsVram(){
     memset((void *)pops_vram, 0, 0x3C0000);
     vram_config->counter = 0;
     vram_config->configs[0].x = 0x1F6;
@@ -58,7 +58,7 @@ static u32 GetPspVramAddr(u32 framebuffer, int x, int y)
 }
 
 // Copy PSP VRAM to PSX VRAM
-static void RelocateVram(u32* psp_vram, u16* ps1_vram)
+void SoftRelocateVram(u32* psp_vram, u16* ps1_vram)
 {
     if(psp_vram)
     {
@@ -76,41 +76,18 @@ static void RelocateVram(u32* psp_vram, u16* ps1_vram)
 }
 
 // hooked function to copy framebuffer
-static int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr,
+int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr,
         int width, int format, int sync){
-    if (_psxVramHandler) _psxVramHandler(topaddr, pops_vram);
-    return _sceDisplaySetFrameBufferInternal(pri, topaddr, width, format, sync); 
+    if (_psxVramHandler)
+        _psxVramHandler(topaddr, pops_vram); // handle vram copy
+    if (_sceDisplaySetFrameBufferInternal) // passthrough
+        return _sceDisplaySetFrameBufferInternal(pri, topaddr, width, format, sync); 
+    return -1;
 }
 
 // register custom vram handler
-static void* registerPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram)){
+void* registerPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram)){
     void* prev = _psxVramHandler;
     if (handler) _psxVramHandler = handler;
     return prev;
-}
-
-void* sctrlARKSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram)){
-    int k1 = pspSdkSetK1(0);
-    void* prev = registerPSXVramHandler(handler);
-    pspSdkSetK1(k1);
-    return prev;
-}
-
-// patch pops display to set up our own screen handler
-void patchVitaPopsDisplay(SceModule2* mod){
-    u32 display_func = FindFunction("sceDisplay_Service", "sceDisplay_driver", 0x3E17FE8D);
-    if (display_func){
-        // protect vita pops vram
-        sceKernelAllocPartitionMemory(6, "POPS VRAM CONFIG", 2, 0x1B0, (void *)0x09FE0000);
-        sceKernelAllocPartitionMemory(6, "POPS VRAM", 2, 0x3C0000, (void *)0x090C0000);
-        memset((void *)0x49FE0000, 0, 0x1B0);
-        memset((void *)0x490C0000, 0, 0x3C0000);
-        // register default screen handler
-        registerPSXVramHandler(&RelocateVram);
-        // initialize screen configuration
-        initVitaPopsVram();
-        // patch display function
-        HIJACK_FUNCTION(display_func, sceDisplaySetFrameBufferInternalHook,
-            _sceDisplaySetFrameBufferInternal);
-    }
 }

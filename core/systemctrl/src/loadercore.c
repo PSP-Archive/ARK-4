@@ -189,8 +189,8 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // Plugins not yet loaded
     if(!pluginLoaded)
     {
-        // sceMediaSync not yet loaded... too early to load plugins.
-        if(sceKernelFindModuleByName("sceMediaSync") != NULL)
+        // sceKernelLibrary not yet loaded... too early to load plugins.
+        if(sceKernelFindModuleByName("sceKernelLibrary") != NULL)
         {
             // Load Plugins
             LoadPlugins();

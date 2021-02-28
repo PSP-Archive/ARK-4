@@ -7,4 +7,4 @@ PSX games on PS Vita run on a limited PSP environment.
 - Can make use of PSP GPU, but Vita ignores PSP framebuffer and directly reads from PSX VRAM.
 - Very minimal PSP homebrews can run due to limited performance.
 
-ARK's SystemControl and Popcorn can run under this environment, along this module for especifics.
+ARK's SystemControl and Popcorn can run under this environment, along this module for especific patches.

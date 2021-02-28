@@ -37,8 +37,6 @@ int (* UnpackBootConfig)(char * buffer, int length) = NULL;
 void* origLfatOpen = NULL;
 
 //
-ARKConfig* ark_conf = ark_conf_backup;
-
 // PRO GZIP Decrypt Support
 int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
 {
@@ -148,7 +146,7 @@ void findRebootFunctions(u32 reboot_start, u32 reboot_end){
         else if (data == 0x3A230001){ // only appears inside lFatOpen on Vita
             u32 a = addr;
             do {a-=4;} while (_lw(a) != 0x27BDFFF0);
-            origLfatOpen = (void*)a;
+            pspemuLfatOpen = (void*)a;
             wanted--;
         }
         else if (data == 0x3466507E){ // only appears inside UnpackBootConfig on psp
@@ -184,7 +182,7 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4)
     findRebootFunctions(reboot_start, reboot_end); // scan for reboot functions
     
     // patch reboot buffer
-    if (IS_PSP(ark_conf->exec_mode)) patchRebootBufferPSP(reboot_start, reboot_end);
+    if (IS_PSP(ark_conf_backup->exec_mode)) patchRebootBufferPSP(reboot_start, reboot_end);
     else patchRebootBufferVita(reboot_start, reboot_end);
     
     // Flush Cache

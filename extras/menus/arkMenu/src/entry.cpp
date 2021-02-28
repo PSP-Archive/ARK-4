@@ -53,6 +53,9 @@ Entry::Entry(){
 Entry::Entry(string path){
 }
 
+void Entry::setName(string name){
+    this->name = name;
+}
 
 string Entry::getName(){
     return this->name;
