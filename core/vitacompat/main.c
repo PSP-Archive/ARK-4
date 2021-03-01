@@ -60,10 +60,9 @@ int module_start(SceSize args, void * argp)
     sctrlHENGetArkConfig(ark_config);
     
     initFileSystem();
+    patchFileManager();
     
     //unprotectVitaMemory();
-    
-    patchFileManager();
     
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);

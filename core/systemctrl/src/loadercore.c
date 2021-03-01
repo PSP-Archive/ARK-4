@@ -170,10 +170,14 @@ int KernelCheckExecFile(unsigned char * buffer, int * check)
     return result;
 }
 
+static int doColorDebug(){
+    colorDebug(0xff);
+    return 0;
+}
+
 // Init Start Module Hook
 int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
-    int err;
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
     // Custom Handler registered
@@ -190,7 +194,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     if(!pluginLoaded)
     {
         // sceKernelLibrary not yet loaded... too early to load plugins.
-        if(sceKernelFindModuleByName("sceKernelLibrary") != NULL)
+        if(strcmp(mod->modname, "sceKernelLibrary") == 0)
         {
             // Load Plugins
             LoadPlugins();
@@ -202,26 +206,52 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     }
 
     // Passthrough
-    err = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
-
-    return err;
+    int res = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
+    
+    /*
+    if(strcmp(mod->modname, "sceVshCommonUtil_Module") == 0)
+    {
+        if (DisplaySetFrameBuf){
+            initScreen(DisplaySetFrameBuf);
+            PRTSTR1("Starting module %s", mod->modname);
+            PRTSTR1("ModuleStart result: %p", res);
+        }
+    }
+    */
+    
+    return res;
 }
+
+/*
+int (*OrigLoadModule)(const char *path, int flags, SceKernelLMOption *option);
+static int MyLoadModule(const char *path, int flags, SceKernelLMOption *option){
+    if (DisplaySetFrameBuf){
+        initScreen(DisplaySetFrameBuf);
+        PRTSTR1("Loading module %s", path);
+    }
+    return OrigLoadModule(path, flags, option);
+}
+*/
 
 // sceKernelStartModule Hook
 int patch_sceKernelStartModule_in_bootstart(int (* bootstart)(SceSize, void *), void * argp)
 {
     
     u32 StartModule = JUMP(FindFunction("sceModuleManager", "ModuleMgrForUser", 0x50F0C1EC));
+
+    //u32 LoadModule = FindFunction("sceModuleManager", "ModuleMgrForUser", 0x977DE386);
+    //HIJACK_FUNCTION(LoadModule, MyLoadModule, OrigLoadModule);
     
     u32 addr = (u32)bootstart;
-    for (;; addr+=4){
-        if (_lw(addr) == StartModule)
-            break;
+    int patches = 1;
+    for (;patches; addr+=4){
+        if (_lw(addr) == StartModule){
+            // Replace Stub
+            _sw(JUMP(InitKernelStartModule), addr);
+            _sw(NOP, addr + 4);
+            patches--;
+        }
     }
-    
-    // Replace Stub
-    _sw(JUMP(InitKernelStartModule), addr);
-    _sw(NOP, addr + 4);
     
     // Passthrough
     return bootstart(4, argp);
@@ -271,13 +301,15 @@ SceModule2* patchLoaderCore(void)
         }
         else{
             switch (data){
-            case 0x30ABFFFF:    ProbeExec1 = (void *)addr-0x100;    break;        // Executable Check Function #1
-            case 0x01E63823:    ProbeExec2 = (void *)addr-0x78;     break;        // Executable Check Function #2
-            case 0x30894000:    _sw(0x3C090000, addr);              break;        // Allow Syscalls
-            case 0x00E8282B:    _sh(0x1000, addr + 6);              break;        // Remove POPS Check
-            case 0x01A3302B:    _sw(NOP, addr+4);                   break;        // Remove Invalid PRX Type (0x80020148) Check
-            case 0x5040FF98:    _sw(NOP, addr); _sw(NOP, addr+4);   break;        // Remove beqzl
-            case 0x5040FF54:    _sw(NOP, addr); _sw(NOP, addr+4);   break;        // Remove beqzl
+            case 0x30ABFFFF:    ProbeExec1 = (void *)addr-0x100;     break;        // Executable Check Function #1
+            case 0x01E63823:    ProbeExec2 = (void *)addr-0x78;      break;        // Executable Check Function #2
+            case 0x30894000:    _sw(0x3C090000, addr);               break;        // Allow Syscalls
+            case 0x00E8282B:    _sh(0x1000, addr + 6);               break;        // Remove POPS Check
+            case 0x01A3302B:    _sw(NOP, addr+4);                    break;        // Remove Invalid PRX Type (0x80020148) Check
+            case 0x5040FF98:    _sw(NOP, addr); _sw(NOP, addr+4);    break;        // Remove beqzl (PSP)
+            case 0x5040FF54:    _sw(NOP, addr); _sw(NOP, addr+4);    break;        // Remove beqzl (PSP)
+            //case 0x3C09BFC0:    _sw(NOP, addr-20);                   break;        // beqz (PSV)
+            //case 0x240A0800:    _sw(NOP, addr+8); _sw(NOP, addr+12); break;        // bnel (PSV)
             }
         }
     }

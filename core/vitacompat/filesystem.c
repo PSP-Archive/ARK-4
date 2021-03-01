@@ -328,8 +328,8 @@ void patchFileManagerImports(SceModule2 * mod)
     // Hooking sceIoMkdir for Kernel Modules
     hookImportByNID(mod, "IoFileMgrForKernel", 0x06A70004, sceIoMkdirHook);
     
-    hookImportByNID(mod, "IoFileMgrForKernel", 0x6A638D83, sceIoReadHookCommon);
-    hookImportByNID(mod, "IoFileMgrForKernel", 0x42EC03AC, sceIoWriteHookCommon);
+    //hookImportByNID(mod, "IoFileMgrForKernel", 0x6A638D83, sceIoReadHookCommon);
+    //hookImportByNID(mod, "IoFileMgrForKernel", 0x42EC03AC, sceIoWriteHookCommon);
 }
 
 void lowerString(char* orig, char* ret, int strSize){
@@ -377,7 +377,7 @@ int    sceIoMkdirHook(char *dir, SceMode mode)
 // sceIoAddDrv Hook
 int sceIoAddDrvHook(PspIoDrv * driver)
 {
-
+    /*
     // "flash" Driver
     if (strcmp(driver->name, "flash") == 0) {
         // Hook IoOpen Function
@@ -394,7 +394,7 @@ int sceIoAddDrvHook(PspIoDrv * driver)
         driver->funcs->IoWrite = sceIoFlashWriteHook;
         
     }
-    else if(strcmp(driver->name, "ms") == 0) { // "ms" Driver
+    else*/ if(strcmp(driver->name, "ms") == 0) { // "ms" Driver
         // Hook IoOpen Function
         sceIoMsOpen = driver->funcs->IoOpen;
         driver->funcs->IoOpen = sceIoMsOpenHook;

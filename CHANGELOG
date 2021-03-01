@@ -8,6 +8,7 @@ Update 8:
 ---- Fixed file browser when copying a file or folder that already exists.
 ---- Fixed issue launching a game when one of the menu categories was empty.
 ---- Added compatibility with VHBL homebrew.
+---- Added Recovery Menu to list of installed homebrews.
 - Fixed issue when playing PMF that caused a memory leak.
 - Added compatibility with legacy loaders for users with previous installations of ARK-2.
 ---- Users with previous instalations of ARK-2 for firmwares other than 3.60 must keep their previous0 K.BIN file.

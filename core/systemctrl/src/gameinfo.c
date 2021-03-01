@@ -29,10 +29,6 @@ int readGameIdFromDisc(char* gameid){
     return 0;
 }
 
-int readGameIdFromISO(char* gameid){
-    
-}
-
 int getGameId(char* gameid){
     if (!readGameIdFromDisc(gameid)){
         // Find Function

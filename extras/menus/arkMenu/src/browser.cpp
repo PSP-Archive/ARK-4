@@ -199,6 +199,12 @@ void Browser::drawScreen(){
     const int xoffset = 165;
     int yoffset = 50;
     
+    if (entries->size() > 0){
+        int height = 230/entries->size();
+        int x = xoffset-65;
+        int y = yoffset-20;
+        common::getImage(IMAGE_DIALOG)->draw_scale(x, y + (index*height), 5, height);
+    }
     common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, 360, 230);
     
     for (int i=this->start; i<min(this->start+PAGE_SIZE, (int)entries->size()); i++){
@@ -208,7 +214,8 @@ void Browser::drawScreen(){
             this->checkBox->draw(xoffset-30, yoffset-10);
         }else{
             this->uncheckBox->draw(xoffset-30, yoffset-10);
-        }if (e == this->get() && this->enableSelection){
+        }
+        if (i == index && this->enableSelection){
             if (animating){
                 common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, true, true);
                 animating = false;

@@ -116,7 +116,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             // Allow exiting through key combo
             patchExitGame();
             // Initialize Memory Stick Speedup Cache
-            msstorCacheInit("ms", 16 * 1024);
+            msstorCacheInit("ms", 8 * 1024);
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
             // Boot Complete Action done

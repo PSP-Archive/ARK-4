@@ -95,8 +95,6 @@ void spuShutdown(void)
 static int myKernelLoadModule(char * fname, int flag, void * opt)
 {
 
-    doColorDebug();
-
     char path[ARK_PATH_SIZE];
     int result = 0;
     int status = 0;
@@ -121,8 +119,13 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     
     // load pops module
     result = sceKernelLoadModule("flash0:/kd/660pops.prx", flag, opt);
-    //printk("%s: fname %s flag 0x%08X -> 0x%08X\r\n", __func__, fname, flag, result);
-    
+    printk("%s: fname %s flag 0x%08X -> 0x%08X\r\n", __func__, fname, flag, result);
+
+    /*    
+    strcpy(path, ark_config->arkpath);
+    strcat(path, "POPS.PRX");
+	result = sceKernelLoadModule(path, flag, opt);
+    */
     return result;
 }
 
