@@ -35,15 +35,25 @@ INSTALATION
 
 Download the precompiled binaries.
 
+
 On PSP:
-- Create a PSP GAME folder, i.e. ms0:/PSP/GAME/ARK
-- Copy the following files: EBOOT.PBP, ARK.BIN, K.BIN, FLASH0.ARK.
-- You can optionally copy VSHMENU.PRX (for XMB VSH Menu), MENU.PBP (custom launcher) and RECOVERY.PBP (recovery menu).
+
+- Copy the folder ARK_Live to /PSP/GAME/
+
+- Copy the folder ARK_01234 into /PSP/SAVEDATA/
+
 - Launch from the XMB on OFW (launching from permanent CFW such as CIPL or Infinity won't work!, though there are reports of people being able to load it from infinity, it's not a good idea until proper support is added to the Infinity bootloader).
-- It will install FLASH0.ARK into flash0 and then detele the package (so it doesn't get reinstalled every time you boot into the CFW). To reinstall flash0 files, copy FLASH0.ARK again into the ARK folder.
+
+- It will install FLASH0.ARK into flash0 and then detele the package (so it doesn't get reinstalled every time you boot into the CFW). To reinstall flash0 files, copy FLASH0.ARK again into the PSP/SAVEDATA/ARK_01234/ folder.
+
 
 On PS Vita:
-- I haven't yet added support for PS Vita since there's already a good working build of ARK-2 for PS Vita 3.60 including a PBOOT.PBP bubble. Support for PS Vita in ARK-4 needs to be tested and fixed, which is not the priority now.
+
+- Install ARK-2 for 3.60 using FastARK: https://github.com/ONElua/ArkFast/
+
+- Once installed, replace ARK_01234 in /PSP/SAVEDATA with the one in ARK-4 (delete the old folder and install the new one, don't just merge them).
+
+- Replaced the PBOOT.PBP file installed in your base game with the one provided in ARK-4 (including SAVEPATH.TXT).
 
 
 
@@ -98,7 +108,9 @@ vsh, powersave, on
 - highmem: enables high memory on models above 1K. You should only use this on homebrew runlevel as retail games were not meant to use the extra memory, and this can cause issues with cheat devices or other plugins that except games to have their data at specific memory addresses.
 
 
-* You can also customize ARK by using the "launcher" setting, which replaces the XMB with whatever custom launcher you have installed. There have been many custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
+* You can also customize ARK by using the "launcher" setting, which replaces the XMB with whatever custom launcher you have installed.
+ARK includes a custom launcher, but there have been many others created by scene members, some better looking, some with more features,
+some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
 - ONEMenu: https://github.com/ONElua/ONEmenu/releases
 - vMenu: http://www.mediafire.com/file/7acb5mhawx4gr9t/vMenu_ARK.7z/file
 - yMenu: https://docs.google.com/uc?export=download&id=0B0kWUCdtGmJwLUhRUlNJSWhMWVE
