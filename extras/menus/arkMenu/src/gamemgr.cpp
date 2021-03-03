@@ -112,6 +112,7 @@ void GameManager::findEntries(){
     
     // scan eboots
     this->findEboots("ms0:/PSP/VHBL/");
+    this->findEboots("ms0:/PSP/APPS/");
     this->findEboots("ms0:/PSP/GAME/");
     this->findEboots("ef0:/PSP/GAME/");
     // scan ISOs
@@ -325,12 +326,10 @@ void GameManager::draw(){
             }
             this->categories[this->selectedCategory]->draw(true);
         }
-        /*
         if (loadingData){
             Image* img = common::getImage(IMAGE_WAITICON);
             img->draw((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2);
         }
-        */
     }
 }
 
@@ -400,29 +399,23 @@ void GameManager::control(Controller* pad){
         }
     }
     else if (pad->start()){
-        //this->waitIconsLoad(true);
         this->endAllThreads();
         if (selectedCategory >= 0)
             this->getEntry()->execute();
     }
-    /*if (GameManager::update_game_list){
-        //SystemMgr::pauseDraw();
-        this->hasLoaded = false;
-        this->pauseIcons();
-        this->findEntries();
-        //GameManager::update_game_list = false;
-        this->hasLoaded = true;
-        //SystemMgr::resumeDraw();
-        this->resumeIcons();
-    }
-    */
 }
 
-void GameManager::updateGameList(){
-    int icons_state = self->dynamicIconRunning;
-    if (icons_state == ICONS_LOADING) self->pauseIcons();
-    self->findEntries();
-    if (icons_state == ICONS_LOADING) self->resumeIcons();
+void GameManager::updateGameList(const char* path){
+    if (path == NULL 
+          || strncmp(path, "ms0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ms0:/ISO/", 9) == 0
+          || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ef0:/ISO/", 9) == 0
+          || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ms0:/PSP/APPS/", 9) == 0
+      ){
+        int icons_state = self->dynamicIconRunning;
+        if (icons_state == ICONS_LOADING) self->pauseIcons();
+        self->findEntries();
+        if (icons_state == ICONS_LOADING) self->resumeIcons();
+    }
 }
 
 void GameManager::execApp(){
@@ -433,10 +426,10 @@ void GameManager::execApp(){
     }
 
     this->pauseIcons();
-    //loadingData = true;
+    loadingData = true;
     SystemMgr::pauseDraw();
     this->getEntry()->getTempData1();
-    //loadingData = false;
+    loadingData = false;
     animAppear();
     if (this->getEntry()->run()){
         this->resumeIcons();
@@ -470,5 +463,5 @@ void GameManager::extractHomebrew(){
     // do extraction
     unzipToDir(src_path, dest_path, NULL);
     // refresh game list
-    GameManager::updateGameList();
+    GameManager::updateGameList(NULL);
 }

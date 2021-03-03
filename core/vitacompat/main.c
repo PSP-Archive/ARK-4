@@ -19,7 +19,7 @@
 #include <pspsysmem_kernel.h>
 #include <systemctrl.h>
 #include <systemctrl_private.h>
-#include <globals.h> 
+#include <globals.h>
 #include "functions.h"
 #include "macros.h"
 #include "exitgame.h"
@@ -61,8 +61,6 @@ int module_start(SceSize args, void * argp)
     
     initFileSystem();
     patchFileManager();
-    
-    //unprotectVitaMemory();
     
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);

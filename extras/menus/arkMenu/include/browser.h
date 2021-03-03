@@ -64,6 +64,7 @@ class Browser : public SystemEntry{
         int index;  // index of currently selected item
         int start; // where to start drawing the menu
         bool animating; // animate the menu transition?
+        unsigned int moving;
         
         /* Screen drawing thread data */
         bool draw_progress;

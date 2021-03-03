@@ -245,7 +245,7 @@ void patchFileIoCtl(SceModule2* mod){
     u32 topaddr = mod->text_addr+mod->text_size;
     int patches = 2;
     for (u32 addr=mod->text_addr; addr<topaddr && patches; addr+=4){
-        u32 data = _lw(data);
+        u32 data = _lw(addr);
         if (data == 0x03641824){
             iojal = addr-4;
             patches--;
@@ -262,7 +262,7 @@ void patchFileIoCtl(SceModule2* mod){
     
     patches = 2;
     for (u32 addr=mod->text_addr; addr<topaddr && patches; addr+=4){
-        u32 data = _lw(data);
+        u32 data = _lw(addr);
         if (data == JAL(iojal)){
             _sw(JAL(patchio), addr);
             patches--;

@@ -1,6 +1,7 @@
 #include "rebootex.h"
 
 int (*pspemuLfatOpen)(char** filename, int unk) = NULL;
+extern int PatchSysMem(void *a0, void *sysmem_config);
 
 // Load Core module_start Hook
 int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize, void *))

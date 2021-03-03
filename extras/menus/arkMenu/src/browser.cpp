@@ -19,6 +19,8 @@
 #define PAGE_SIZE 10 // maximum entries shown on screen
 #define BUF_SIZE 1024*16 // 16 kB buffer for copying files
 
+#define MAX_SCROLL_TIME 50
+
 #include "browser_entries.h"
 
 static Browser* self;
@@ -48,6 +50,7 @@ Browser::Browser(){
     this->index = 0;
     this->start = 0;
     this->animating = false;
+    this->moving = 0;
     this->enableSelection = true;
     this->selectedBuffer = new vector<string>(); // list of paths to paste
     this->draw_progress = false;
@@ -139,9 +142,7 @@ void Browser::extractArchive(int type){
     
     this->refreshDirs();
     
-    if (!strncmp(dest.c_str(), "ms0:/PSP/GAME/", 14) || !strncmp(dest.c_str(), "ms0:/ISO/", 9)
-        || !strncmp(dest.c_str(), "ef0:/PSP/GAME/", 14) || !strncmp(dest.c_str(), "ef0:/ISO/", 9))
-        GameManager::updateGameList(); // if something has been done in ms0:/PSP/GAME or ms0:/ISO, tell GameManager
+    GameManager::updateGameList(dest.c_str()); // tell GameManager to update if needed
 }
 
 void Browser::refreshDirs(){
@@ -199,7 +200,7 @@ void Browser::drawScreen(){
     const int xoffset = 165;
     int yoffset = 50;
     
-    if (entries->size() > 0){
+    if (moving && entries->size() > 0){
         int height = 230/entries->size();
         int x = xoffset-65;
         int y = yoffset-20;
@@ -298,6 +299,7 @@ void Browser::down(){
     // Move the cursor down, this updates index and page
     if (this->entries->size() == 0)
         return;
+    this->moving = MAX_SCROLL_TIME;
     if (this->index == (entries->size()-1)){
         this->index = 0;
         this->start = 0;
@@ -318,6 +320,7 @@ void Browser::up(){
     // Move the cursor up, this updates index and page
     if (this->entries->size() == 0)
         return;
+    this->moving = MAX_SCROLL_TIME;
     if (this->index == 0){
         this->index = entries->size()-1;
         this->start = entries->size() - PAGE_SIZE;
@@ -790,10 +793,7 @@ void Browser::options(){
     
     if (pEntryIndex != NO_MODE && pEntryIndex != COPY && pEntryIndex != CUT){
         this->refreshDirs();
-        if (!strncmp(cwd.c_str(), "ms0:/PSP/GAME/", 14) || !strncmp(cwd.c_str(), "ms0:/ISO/", 9)
-            || !strncmp(cwd.c_str(), "ef0:/PSP/GAME/", 14) || !strncmp(cwd.c_str(), "ef0:/ISO/", 9)){
-            GameManager::updateGameList(); // if something has been done in /PSP/GAME or /ISO, tell GameManager
-        }
+        GameManager::updateGameList(cwd.c_str()); // tell GameManager to update
     }
 }
         
@@ -816,5 +816,8 @@ void Browser::control(Controller* pad){
     else if (pad->LT()){
         common::playMenuSound();
         this->options();
+    }
+    else{
+        if (moving) moving--;
     }
 }

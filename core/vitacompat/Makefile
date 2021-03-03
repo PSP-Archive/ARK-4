@@ -40,7 +40,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(PROVITA)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lcolordebugger -lgraphics -lpspsystemctrl_kernel -lpspaudio
+LIBS = -lpspsemaphore -lcolordebugger -lgraphics -lpspsystemctrl_kernel
 
 PSP_FW_VERSION = 660
 

@@ -84,7 +84,8 @@ class GameManager : public SystemEntry{
         /* thread to load icon0 in the background */
         static int loadIcons(SceSize _args, void *_argp);
         
-        static void updateGameList();
+        // update game list if specific path has changed
+        static void updateGameList(const char* path);
         
         /* obtain the currently selected entry */
         Entry* getEntry();

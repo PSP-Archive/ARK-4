@@ -7,6 +7,7 @@
 #include "macros.h"
 #include "exitgame.h"
 #include "popspatch.h"
+#include "vitamem.h"
 #include "libs/graphics/graphics.h"
 
 extern STMOD_HANDLER previous;
@@ -66,10 +67,26 @@ static int isSystemBooted(void)
     return 0;
 }
 
-int doColorDebug(){
-    colorDebug(0xff);
-    _sw(0x44000000, 0xBC800100);
-    return 0;
+static int use_mscache = 0;
+void settingsHandler(char* path){
+    if (strcasecmp(path, "overclock") == 0){
+    }
+    else if (strcasecmp(path, "powersave") == 0){
+    }
+    else if (strcasecmp(path, "usbcharge") == 0){
+    }
+    else if (strcasecmp(path, "highmem") == 0){
+        //unlockVitaMemory();
+        //sctrlHENSetMemory(36, 0);
+        //flushCache();
+    }
+    else if (strcasecmp(path, "mscache") == 0){
+        use_mscache = 1; // enable ms cache for speedup
+    }
+    else if (strcasecmp(path, "disablepause") == 0){ // disable pause game feature on psp go
+    }
+    else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
+    }
 }
 
 void ARKVitaOnModuleStart(SceModule2 * mod){
@@ -106,6 +123,11 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         // Exit Handler
         goto flush;
     }
+    
+    if (strcmp(mod->modname, "sceMediaSync") == 0){
+        // load and process settings file
+        //loadSettings(&settingsHandler);
+    }
        
     // Boot Complete Action not done yet
     if(booted == 0)
@@ -116,7 +138,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             // Allow exiting through key combo
             patchExitGame();
             // Initialize Memory Stick Speedup Cache
-            msstorCacheInit("ms", 8 * 1024);
+            if (use_mscache) msstorCacheInit("ms", 8 * 1024);
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
             // Boot Complete Action done

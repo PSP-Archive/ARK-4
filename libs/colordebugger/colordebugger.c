@@ -24,7 +24,7 @@
 u32* g_vram_base = (u32*)0x44000000;
 
 // Framebuffer Painter (for debugging)
-void colorDebug(unsigned int color)
+void colorDebug(u32 color)
 {
     // Paint Framebuffer
     unsigned int i = 0; for(; i < 0x100000; i++)

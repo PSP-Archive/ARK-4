@@ -44,10 +44,26 @@ typedef struct {
     SceSysmemPartInfo extVshell; // 76
 } SceSysmemPartTable;
 
+typedef struct PartitionData {
+	u32 unk[5];
+	u32 size;
+} PartitionData;
+
+typedef struct SysMemPartition {
+	struct SysMemPartition *next;
+	u32	address;
+	u32 size;
+	u32 attributes;
+	PartitionData *data;
+} SysMemPartition;
+
 // extra RAM
 void (*SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table);
 void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *table);
 int PatchSysMem(void *a0, void *sysmem_config);
-void unprotectVitaMemory();
+
+// unprotect extra RAM for user apps
+// call this from systemcontrol/vitacompat
+void unlockVitaMemory();
 
 #endif

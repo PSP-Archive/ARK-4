@@ -9,13 +9,14 @@ Update 8:
 ---- Fixed issue launching a game when one of the menu categories was empty.
 ---- Added compatibility with VHBL homebrew.
 ---- Added Recovery Menu to list of installed homebrews.
-- Fixed issue when playing PMF that caused a memory leak.
+---- Fixed issue when playing PMF that caused a memory leak.
 - Added compatibility with legacy loaders for users with previous installations of ARK-2.
 ---- Users with previous instalations of ARK-2 for firmwares other than 3.60 must keep their previous0 K.BIN file.
 - Fixed compatibility with PS Vita.
 ---- Per-game plugins now work well on PS Vita.
 ---- Fixed exitgame.
 ---- Fixed PSP IO emulation.
+---- Ms Speedup is now a setting (as opposed to always being active).
 - You can now have your PLUGINS.TXT file in /SEPLUGINS/ folder (and/or ARK's save folder).
 
 Update 7:
