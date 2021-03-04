@@ -208,7 +208,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // Passthrough
     int res = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
     
-    {
+    /*{
         if (DisplaySetFrameBuf){
             initScreen(DisplaySetFrameBuf);
             PRTSTR1("Starting module %s", mod->modname);
@@ -219,15 +219,9 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
                 sceIoClose(fd);
                 PRTSTR1("Opening libpspvmc: %p", fd);
                 }
-                {/*
-                int fd = sceIoOpen("flash0:/kd/pops_01g.prx", PSP_O_RDONLY, 0777);
-                sceIoClose(fd);
-                PRTSTR1("Opening POPS: %p", fd);
-                */}
-                //sceKernelDelayThread(10000000);
             }
         }
-    }
+    }*/
     
     return res;
 }

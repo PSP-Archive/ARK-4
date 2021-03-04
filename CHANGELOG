@@ -4,6 +4,7 @@ Update 8.1:
 - Removed all PSP 6.60 files.
 - Fixed mediasync patches on PS Vita.
 - Fixed bug when opening an empty directory.
+- Improved PSP IO emulation.
 
 Update 8:
 - Several fixes to arkMenu custom launcher.
