@@ -172,7 +172,6 @@ void Browser::refreshDirs(){
     vector<Entry*> files;
         
     while ((dit = readdir(dir))){
-    
         if (common::fileExists(string(this->cwd)+string(dit->d_name)))
             files.push_back(new File(string(this->cwd)+string(dit->d_name)));
         else

@@ -42,10 +42,8 @@ encrypt-prx: \
 cleanobj:
 	$(Q)$(MAKE) clean CLEANOBJ=1
 
-distclean clean:
-ifndef CLEANOBJ
+clean:
 	$(Q)$(MAKE) $@ -C libs
-endif
 	$(Q)$(MAKE) $@ -C loader/stage1/linkless_payload
 	$(Q)$(MAKE) $@ -C loader/stage1/live_eboot
 	$(Q)$(MAKE) $@ -C loader/stage2/live

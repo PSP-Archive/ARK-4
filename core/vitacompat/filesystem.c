@@ -51,9 +51,6 @@ typedef struct OpenDirectory
 // Open Directory List
 OpenDirectory * opendirs = NULL;
 
-// sceIoMkdirHook semaphore
-static SceUID mkDirSema = -1;
-
 // Directory IO Semaphore
 static SceUID dreadSema = -1;
 
@@ -102,7 +99,6 @@ PspIoDrvArg * ms_driver = NULL;
 void initFileSystem(){
     // Create Semaphore
     dreadSema = sceKernelCreateSema("sceIoDreadSema", 0, 1, 1, NULL);
-    mkDirSema = sceKernelCreateSema("sceMkdirPatch", 0, 1, 1, NULL);
 }
 
 // Homebrew Runlevel Check
@@ -188,28 +184,22 @@ int sceIoFlashWriteHook(SceUID fd, void* data, SceSize size){
     return sceIoWriteHookCommon(fd, data, size, sceIoFlashWrite_);
 }
 
-u32 iojal;
+int (*iojal)(const char *, u32, u32, u32, u32, u32) = NULL;
 int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
 {
-    /*
-    if (0==strcmp(a0, "flash0:/kd/npdrm.prx")){
-        char path[ARK_PATH_SIZE];
-        strcpy(path, ark_config->arkpath);
-        strcat(path, "NPDRM.PRX");
-        a0 = path;
-    }
-    */
-    
     if (strcmp(a0, "flash0:/vsh/module/libpspvmc.prx") == 0){
         char path[ARK_PATH_SIZE];
         strcpy(path, ark_config->arkpath);
         strcat(path, "PSPVMC.PRX");
         a0 = path;
     }
-
-    int (* _iojal)(const char *, u32, u32, u32, u32, u32) = (void *)iojal;
-
-    return _iojal(a0, a1, a2, a3, t0, t1);
+    else if (strcmp(a0, "flash0:/kd/pops_01g.prx") == 0){
+        char path[ARK_PATH_SIZE];
+        strcpy(path, ark_config->arkpath);
+        strcat(path, "POPS.PRX");
+        a0 = path;
+    }
+    return iojal(a0, a1, a2, a3, t0, t1);
 }
 
 u32 backup[2], ioctl;
@@ -237,18 +227,6 @@ int patchioctl(SceUID a0, u32 a1, void *a2, int a3, void *t0, int t1)
 }
 
 void patchFileIoCtl(SceModule2* mod){
-    /*
-    iojal = mod->text_addr + 0x49F4;
-    ioctl = mod->text_addr + 0x41A0;
-
-    backup[0] = _lw(ioctl);
-    backup[1] = _lw(ioctl + 4);
-
-    _sw((((u32)&patchio >> 2) & 0x03FFFFFF) | 0x0C000000, mod->text_addr + 0x3FD8);
-    _sw((((u32)&patchio >> 2) & 0x03FFFFFF) | 0x0C000000, mod->text_addr + 0x4060);
-    _sw((((u32)&patchioctl >> 2) & 0x03FFFFFF) | 0x08000000, mod->text_addr + 0x41A0);
-    _sw(0, mod->text_addr + 0x41A4);
-    */
     // redirect ioctl to patched
 
     u32 topaddr = mod->text_addr+mod->text_size;
@@ -341,42 +319,28 @@ void patchFileManagerImports(SceModule2 * mod)
     //hookImportByNID(mod, "IoFileMgrForKernel", 0x42EC03AC, sceIoWriteHookCommon);
 }
 
-void lowerString(char* orig, char* ret, int strSize){
-    int i=0;
-    while (*(orig+i) && i<strSize-1){
-        *(ret+i) = *(orig+i);
-        if (*(orig+i) >= 'A' && *(orig+i) <= 'Z')
-            *(ret+i) += 0x20;
-        i++;
-    }
-    *(ret+i) = 0;
-}
-
 // sceIoMkdir Hook to allow creating folders in ms0:/PSP/GAME
-int    sceIoMkdirHook(char *dir, SceMode mode)
+int sceIoMkdirHook(char *dir, SceMode mode)
 {
 
     u32 k1 = pspSdkSetK1(0);
     
-    sceKernelWaitSema(mkDirSema, 1, NULL);
-    
-    char lower[14];
-    lowerString(dir, lower, 14);
-    int needsPatch = (strncmp(lower, "ms0:/psp/game", 13)==0);
+    char lower[15];
+    lowerString(dir, lower, 15);
+    int needsPatch = (strncmp(lower, "ms0:/psp/game/", 14)==0);
     char bak[4];
     
     if (needsPatch){
-        *(unsigned int*)bak = *(unsigned int*)(&dir[9]);
-        *(unsigned int*)(&dir[9]) = 0x73707061; // redirect to ms0:/psp/apps
+        memcpy(bak, &dir[9], 4);
+        memcpy(&dir[9], "APPS", 4);
     }
     
+    sceIoMkdir("ms0:/PSP/APPS", 0777);
     int ret = sceIoMkdir(dir, mode);
     
     if (needsPatch){
-        *(unsigned int*)(&dir[9]) = *(unsigned int*)bak;
+        memcpy(&dir[9], bak, 4);
     }
-    
-    sceKernelSignalSema(mkDirSema, 1);
     
     pspSdkSetK1(k1);
     
@@ -465,6 +429,15 @@ int sceIoMsOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
         if (occurence != NULL) {
             occurence[1] = 'V';
         }
+        /*
+        // trying to write file to ms0:/PSP/GAME -> redirect to ms0:/PSP/APPS/
+        char lower[15];
+        lowerString(file, lower, 15);
+        if (strncmp(lower, "ms0:/psp/game/", 13)==0){
+            sceIoMkdir("ms0:/PSP/APPS", 0777);
+            memcpy(&file[9], "APPS", 4);
+        }
+        */
     }
     
     // Forward Call
@@ -506,11 +479,10 @@ OpenDirectory * findOpenDirectory(int fd)
     for(; item != NULL; item = item->next) {
         // Matching File Descriptor
         if (item->fd == fd)
-            break;
+            return item;
     }
-    
     // Directory not found
-    return item;
+    return NULL;
 }
 
 // sceIoDopen Hook
@@ -520,7 +492,7 @@ int sceIoDopenHook(const char * dirname)
     int result = sceIoDopen(dirname);
 
     // Open Success
-    if (result >= 0 && 0 == strncmp(dirname, "ms0:/", sizeof("ms0:/") - 1)) {
+    if (result >= 0 && 0 == strncmp(dirname, "ms0:/", 4)) {
         // Allocate Memory
         OpenDirectory * item = (OpenDirectory *)oe_malloc(sizeof(OpenDirectory));
         
@@ -564,6 +536,7 @@ int sceIoDopenHook(const char * dirname)
             
             // Unlock Semaphore
             dreadUnlock();
+            
         }
     }
     
@@ -574,6 +547,7 @@ int sceIoDopenHook(const char * dirname)
 // sceIoDread Hook
 int sceIoDreadHook(int fd, SceIoDirent * dir)
 {
+
     // Lock List Access
     dreadLock();
     
@@ -597,24 +571,20 @@ int sceIoDreadHook(int fd, SceIoDirent * dir)
             // Restore Permission Level
             pspSdkSetK1(k1);
 
-            if (err != 0)
-                goto forward;
-
             // Valid Output Argument
-            if (dir != NULL) {
+            if (err == 0 && dir != NULL) {
                 // Clear Memory
                 memset(dir, 0, sizeof(SceIoDirent));
                 
                 // Copy Status
                 memcpy(&dir->d_stat, &stat, sizeof(stat));
                 
+                dir->d_name[0] = '.';
+                dir->d_name[1] = '.';
+                
                 // Fake "." Output Stage
                 if (item->stage == 0) {
-                    // Set File Name
-                    strcpy(dir->d_name, ".");
-                } else { // Fake ".." Output Stage
-                    // Set File Name
-                    strcpy(dir->d_name, "..");
+                    dir->d_name[1] = 0;
                 }
                 
                 // Move to next Stage
@@ -629,7 +599,6 @@ int sceIoDreadHook(int fd, SceIoDirent * dir)
         }
     }
 
-forward:
     // Unlock List Access
     dreadUnlock();
     
@@ -670,3 +639,4 @@ int sceIoDcloseHook(int fd)
     // Forward Call
     return sceIoDclose(fd);
 }
+

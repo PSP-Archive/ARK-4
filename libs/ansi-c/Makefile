@@ -14,7 +14,9 @@ memfind.o \
 strhex32.o \
 strsafe.o \
 strbeginswith.o \
-strreplaceall.o
+strreplaceall.o \
+lowerstring.o
+
 OBJS = $(C_OBJS)
 
 all: $(TARGET_LIB)
