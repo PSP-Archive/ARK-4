@@ -18,6 +18,8 @@
 #include <macros.h>
 #include "functions.h"
 
+#define BUF_SIZE 16*1024
+
 extern ARKConfig* ark_config;
 
 static void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L) = NULL;
@@ -61,8 +63,7 @@ void extractFlash0Archive(SceSize args, void** argp){
     if (args==sizeof(void*)) prtstr = *argp;
 
     char* dest_path = "flash0:/";
-    unsigned char buf[0x10000];
-    int bufsize = sizeof(buf);
+    unsigned char buf[BUF_SIZE];
     int path_len = strlen(dest_path);
     static char archive[ARK_PATH_SIZE];
     static char filepath[ARK_PATH_SIZE];
@@ -105,7 +106,7 @@ void extractFlash0Archive(SceSize args, void** argp){
                     return;
                 }
                 while (filesize>0){
-                    int read = k_tbl->KernelIORead(fdr, buf, (filesize>bufsize)?bufsize:filesize);
+                    int read = k_tbl->KernelIORead(fdr, buf, (filesize>BUF_SIZE)?BUF_SIZE:filesize);
                     k_tbl->KernelIOWrite(fdw, buf, read);
                     filesize -= read;
                 }

@@ -58,7 +58,7 @@ Update 5:
 
 Update 4:
 - Added ability to have a VSH menu installed externally. Classic PRO VSH menu is included.
-*** please note that there's no configuration options for ARK, things like chaning the CPU speed or ISO driver doesn't do anything (ARK will always enable fastest CPU speed and Inferno ISO driver).
+*** please note that there's no configuration options for ARK, things like changing the CPU speed or ISO driver doesn't do anything (ARK will always enable fastest CPU speed and Inferno ISO driver).
 - Added preliminary PSP Go support (untested for now).
 - Fixed issue when exiting from retail UMDs.
 - Exception handler now shows the module name of the crash.

@@ -66,7 +66,7 @@ int menu_draw(void)
 
     // show menu list
     blit_set_color(0xffffff,0x8000ff00);
-    blit_string(pointer[0], pointer[1], g_messages[MSG_PRO_VSH_MENU]);
+    blit_string(pointer[0], pointer[1], g_messages[MSG_ARK_VSH_MENU]);
 
     for(max_menu=0;max_menu<TMENU_MAX;max_menu++) {
         fc = 0xffffff;
@@ -117,15 +117,6 @@ int menu_draw(void)
     blit_set_color(0x00ffffff,0x00000000);
 
     return 0;
-}
-
-static inline const char *get_enable_disable(int opt)
-{
-    if(opt) {
-        return g_messages[MSG_ENABLE];
-    }
-
-    return g_messages[MSG_DISABLE];
 }
 
 int menu_setup(void)

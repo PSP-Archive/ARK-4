@@ -37,16 +37,6 @@ int menu_draw(void);
 int menu_setup(void);
 int menu_ctrl(u32 button_on);
 
-int cpu2no(int cpu);
-int bus2no(int cpu);
-void change_clock(int dir , int flag);
-void change_usb(int dir );
-void change_umd_mode(int dir );
-void change_umd_mount_idx(int dir);
-void change_plugins(int dir , int flag);
-void change_bool_option(int *p, int direction);
-void change_region(int dir, int max);
-
 #define scePaf_967A56EF_strlen scePaf_strlen
 #define scePaf_6439FDBC_memset scePaf_memset
 #define scePaf_B6ADE52D_memcmp scePaf_memcmp
@@ -79,39 +69,11 @@ int scePaf_snprintf_660(char *buffer,int c , const char *format, ...);
 int scePaf_memcpy_660(void *path , void *name , int size);
 int scePaf_strcpy_660(char *path , const char *name);
 
-typedef struct _UmdVideoEntry {
-    char *path;
-    struct _UmdVideoEntry *next;
-} UmdVideoEntry;
 
-typedef struct _UmdVideoList {
-    UmdVideoEntry head, *tail;
-    size_t count;
-} UmdVideoList;
-
-int umdvideolist_add(UmdVideoList *list, const char *path);
-char *umdvideolist_get(UmdVideoList *list, size_t n);
-size_t umdvideolist_count(UmdVideoList *list);
-void umdvideolist_clear(UmdVideoList *list);
-int umdvideolist_find(UmdVideoList *list, const char *search);
-void umdvideolist_init(UmdVideoList *list);
 
 extern u32 psp_fw_version;
-extern UmdVideoList g_umdlist;
 
 enum {
-    MSG_DEFAULT = 0,
-    MSG_DISABLE,
-    MSG_ENABLE,
-    MSG_NORMAL,
-    MSG_MARCH33,
-    MSG_NP9660,
-    MSG_INFERNO,
-    MSG_CPU_CLOCK_XMB,
-    MSG_CPU_CLOCK_GAME,
-    MSG_USB_DEVICE,
-    MSG_UMD_ISO_MODE,
-    MSG_ISO_VIDEO_MOUNT,
     MSG_RECOVERY_MENU,
     MSG_CUSTOM_LAUNCHER,
     MSG_SHUTDOWN_DEVICE,
@@ -119,11 +81,7 @@ enum {
     MSG_RESET_DEVICE,
     MSG_RESET_VSH,
     MSG_EXIT,
-    MSG_PRO_VSH_MENU,
-    MSG_FLASH,
-    MSG_UMD_DISC,
-    MSG_MEMORY_STICK,
-    MSG_NONE,
+    MSG_ARK_VSH_MENU,
     MSG_END,
 };
 

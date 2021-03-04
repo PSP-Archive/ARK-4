@@ -19,18 +19,6 @@
 #include "macros.h"
 
 const char *g_messages_en[] = {
-    "Default",
-    "Disable",
-    "Enable",
-    "Normal",
-    "External Driver",
-    "Sony NP9660",
-    "Inferno",
-    "CPU CLOCK XMB  ",
-    "CPU CLOCK GAME ",
-    "USB DEVICE     ",
-    "UMD ISO MODE   ",
-    "ISO VIDEO MOUNT",
     "RECOVERY MENU  ->",
     "CUSTOM LAUNCHER ->",
     "SHUTDOWN DEVICE",
@@ -39,10 +27,6 @@ const char *g_messages_en[] = {
     "SOFT RESET",
     "EXIT",
     "ARK VSH MENU",
-    "Flash",
-    "UMD Disc",
-    "Memory Stick",
-    "None",
 };
 
 u8 message_test_en[NELEMS(g_messages_en) == MSG_END ? 0 : -1];
