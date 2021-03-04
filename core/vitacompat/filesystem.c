@@ -191,10 +191,19 @@ int sceIoFlashWriteHook(SceUID fd, void* data, SceSize size){
 u32 iojal;
 int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
 {
+    /*
     if (0==strcmp(a0, "flash0:/kd/npdrm.prx")){
         char path[ARK_PATH_SIZE];
         strcpy(path, ark_config->arkpath);
         strcat(path, "NPDRM.PRX");
+        a0 = path;
+    }
+    */
+    
+    if (strcmp(a0, "flash0:/vsh/module/libpspvmc.prx") == 0){
+        char path[ARK_PATH_SIZE];
+        strcpy(path, ark_config->arkpath);
+        strcat(path, "PSPVMC.PRX");
         a0 = path;
     }
 
@@ -283,7 +292,7 @@ void patchFileManager(void)
     // Hooking sceIoAddDrv
     _sw((unsigned int)sceIoAddDrvHook, AddDrv);
 
-    //patchFileIoCtl(mod);
+    patchFileIoCtl(mod);
 
     // Flush Cache
     flushCache();

@@ -53,7 +53,7 @@ $/kd/isofs.prx GEM
 $/kd/chnnlsv.prx VP
 $/kd/kermit_utility.prx VGUPAEM
 # pops needs popsman
-$/kd/660popsman.prx P
+$/kd/popsman.prx P
 # pops needs pops
 $/kd/ark_popcorn.prx P
 # umdemu needs stargate
@@ -69,5 +69,5 @@ $%/vsh/module/pafmini.prx P
 # vsh & pops use common_util
 $%/vsh/module/common_util.prx VP
 # pops uses libpspvmc
-$%/vsh/module/660libpspvmc.prx P
+$%/vsh/module/libpspvmc.prx P
 %%/kd/dummy_anchor_IhariUafaayk98.prx GUPAEM

@@ -30,8 +30,7 @@ copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PB
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	
 encrypt-prx: \
-	dist/SYSCTRL.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN dist/PSPCOMPAT.BIN dist/VSHCTRL.BIN dist/INFERNO.BIN dist/GALAXY.BIN dist/STARGATE.BIN dist/POPCORN.BIN \
-	dist/POPSMAN.BIN dist/POPS.PRX dist/PSPVMC.BIN
+	dist/SYSCTRL.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN dist/PSPCOMPAT.BIN dist/VSHCTRL.BIN dist/INFERNO.BIN dist/GALAXY.BIN dist/STARGATE.BIN dist/POPCORN.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTNNF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN

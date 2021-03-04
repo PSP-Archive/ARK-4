@@ -59,6 +59,7 @@ int module_start(SceSize args, void * argp)
     // copy configuration
     sctrlHENGetArkConfig(ark_config);
     
+    // filesystem patches
     initFileSystem();
     patchFileManager();
     

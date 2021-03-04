@@ -11,6 +11,3 @@ psvbtxnf.bin,dist/PSVBTXNF.BIN
 /kd/ark_galaxy.prx,dist/GALAXY.BIN
 /kd/ark_stargate.prx,dist/STARGATE.BIN
 /kd/ark_popcorn.prx,dist/POPCORN.BIN
-/kd/660popsman.prx,dist/POPSMAN.BIN
-/kd/660pops.prx,dist/POPS.PRX
-/vsh/module/660libpspvmc.prx,dist/PSPVMC.BIN

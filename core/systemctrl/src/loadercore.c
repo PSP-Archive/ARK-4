@@ -208,30 +208,29 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // Passthrough
     int res = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
     
-    /*
-    if(strcmp(mod->modname, "sceVshCommonUtil_Module") == 0)
     {
         if (DisplaySetFrameBuf){
             initScreen(DisplaySetFrameBuf);
             PRTSTR1("Starting module %s", mod->modname);
             PRTSTR1("ModuleStart result: %p", res);
+            if(strcmp(mod->modname, "sceVshCommonUtil_Module") == 0){
+                {
+                int fd = sceIoOpen("flash0:/vsh/module/libpspvmc.prx", PSP_O_RDONLY, 0777);
+                sceIoClose(fd);
+                PRTSTR1("Opening libpspvmc: %p", fd);
+                }
+                {/*
+                int fd = sceIoOpen("flash0:/kd/pops_01g.prx", PSP_O_RDONLY, 0777);
+                sceIoClose(fd);
+                PRTSTR1("Opening POPS: %p", fd);
+                */}
+                //sceKernelDelayThread(10000000);
+            }
         }
     }
-    */
     
     return res;
 }
-
-/*
-int (*OrigLoadModule)(const char *path, int flags, SceKernelLMOption *option);
-static int MyLoadModule(const char *path, int flags, SceKernelLMOption *option){
-    if (DisplaySetFrameBuf){
-        initScreen(DisplaySetFrameBuf);
-        PRTSTR1("Loading module %s", path);
-    }
-    return OrigLoadModule(path, flags, option);
-}
-*/
 
 // sceKernelStartModule Hook
 int patch_sceKernelStartModule_in_bootstart(int (* bootstart)(SceSize, void *), void * argp)
@@ -239,9 +238,6 @@ int patch_sceKernelStartModule_in_bootstart(int (* bootstart)(SceSize, void *), 
     
     u32 StartModule = JUMP(FindFunction("sceModuleManager", "ModuleMgrForUser", 0x50F0C1EC));
 
-    //u32 LoadModule = FindFunction("sceModuleManager", "ModuleMgrForUser", 0x977DE386);
-    //HIJACK_FUNCTION(LoadModule, MyLoadModule, OrigLoadModule);
-    
     u32 addr = (u32)bootstart;
     int patches = 1;
     for (;patches; addr+=4){

@@ -53,24 +53,3 @@ dist/POPCORN.BIN: core/popcorn/popcorn.prx
 	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PopcornManager 0x1006
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
-
-##########
-dist/POPSMAN.BIN: contrib/PSP/f0-kd-popsman.prx
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< scePops_Manager 0x1007
-	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
-	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
-
-dist/POPS.PRX: contrib/PSP/pops.prx
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/UserModule.hdr $< pops 0x0000
-	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
-	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
-
-dist/PSPVMC.BIN: contrib/PSP/f0-vsh-module-libpspvmc.prx
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/UserModule.hdr $< pspvmc_Library 0x0000
-	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
-	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
-
-dist/LIBFONTHV.BIN: contrib/PSP/libfont_hv.prx
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/UserModule.hdr $< libFont_Library_HV 0x0000
-	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
-	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
