@@ -41,7 +41,7 @@ void patchMediaSync(SceModule2* mod)
             patches--;
         }
         else if (data == 0x2406000A && _lw(addr-16) == 0x24510008 && disc_patches){
-                _sw(0x1000001D, addr+4); // MEDIASYNC_DISC_MEDIA_CHECK
+            _sw(0x1000001D, addr+4); // MEDIASYNC_DISC_MEDIA_CHECK
             disc_patches--;
             patches--;
         }

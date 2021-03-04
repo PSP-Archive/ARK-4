@@ -12,7 +12,7 @@ void flashPatch(){
     extern int extractFlash0Archive();
     if (IS_PSP(ark_config->exec_mode)){ // on PSP, extract FLASH0.ARK into flash0
         PRTSTR("Installing on psp");
-        SceUID kthreadID = k_tbl->KernelCreateThread( "arkflasher", (void*)KERNELIFY(&extractFlash0Archive), 25, 0x13000, 0, NULL);
+        SceUID kthreadID = k_tbl->KernelCreateThread( "arkflasher", (void*)KERNELIFY(&extractFlash0Archive), 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
         if (kthreadID >= 0){
             void* arg = &PRTSTR11;
             k_tbl->KernelStartThread(kthreadID, sizeof(void*), &arg);

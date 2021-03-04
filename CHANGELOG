@@ -5,6 +5,7 @@ Update 8.1:
 - Fixed mediasync patches on PS Vita.
 - Fixed bug when opening an empty directory.
 - Improved PSP IO emulation.
+- Improved flash0 instalation on PSP (should be less buggy now).
 
 Update 8:
 - Several fixes to arkMenu custom launcher.

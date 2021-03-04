@@ -46,9 +46,6 @@ static char g_DiscID[32];
 #define RIF_MAGIC_FD 0x10000
 #define ACT_DAT_FD 0x10001
 
-#define VERSION_PSP 0
-#define VERSION_180 1
-
 enum {
     ICON0_OK = 0,
     ICON0_MISSING = 1,

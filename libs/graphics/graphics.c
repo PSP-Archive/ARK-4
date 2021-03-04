@@ -59,10 +59,10 @@ void printTextScreen(int x, int y, const char * text, u32 color)
 {
     int c, i, j, l;
     u8 *font;
-    Color *vram_ptr;
-    Color *vram;
+    u32* vram_ptr;
+    u32* vram;
 
-    for (c = 0; c < strlen(text); c++) {
+    for (c = 0; text[c]; c++) {
         if (x < 0 || x + 8 > SCREEN_WIDTH || y < 0 || y + 8 > SCREEN_HEIGHT) break;
         char ch = text[c];
         vram = g_vram_base + x + y * PSP_LINE_SIZE;
@@ -108,6 +108,7 @@ void print_to_screen(const char * text)
 void PRTSTR11(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L)
 {
   char buff[512];
+  for (int i=0; i<sizeof(buff); i++) buff[i] = 0;
   mysprintf11(buff, A, (unsigned long)B, (unsigned long)C, (unsigned long)D,  (unsigned long)E, (unsigned long)F, (unsigned long)G, (unsigned long)H,  (unsigned long)I, (unsigned long) J, (unsigned long) K, (unsigned long) L);
   print_to_screen(buff);
 }

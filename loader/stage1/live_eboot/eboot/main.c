@@ -19,7 +19,6 @@
 
 PSP_MODULE_INFO("ARK Loader", PSP_MODULE_USER, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
-PSP_HEAP_SIZE_KB(4096);
 
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
@@ -112,9 +111,9 @@ int SetupCallbacks(void) {
 
 int main(int argc, char** argv){
 
-    SetupCallbacks();
+    //SetupCallbacks();
 
-    initScreen(NULL);
+    initScreen(&sceDisplaySetFrameBuf);
     
     PRTSTR("Stage 1 Starting");
     
