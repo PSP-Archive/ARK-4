@@ -6,9 +6,6 @@ all: $(TARGET).prx
 INCDIR = $(PROVITA)/common/include
 CFLAGS = -Os -G0 -Wall -fno-pic
 
-# POPS Version
-CFLAGS += -DPOPSMAN_VERSION=$(POPSMAN_VERSION) -DPOPS_VERSION=$(POPS_VERSION)
-
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
 endif

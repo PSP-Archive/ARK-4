@@ -34,7 +34,7 @@ void patchMediaSync(SceModule2* mod)
     int patches = 3+disc_patches;
     for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
         u32 data = _lw(addr);
-        if (data == 0x00600008 && _lw(addr+4) == NOP){
+        if (data == 0x00600008 && _lw(addr+4) == NOP && _lw(addr-4) == 0x8D030000){
             u32 ms_check_media = K_EXTRACT_CALL(addr+8);
             _sw(JR_RA, ms_check_media);
             _sw(LI_V0(1), ms_check_media + 4);

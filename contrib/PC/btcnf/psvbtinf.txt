@@ -10,7 +10,7 @@ $/kd/dmacman.prx VGUPAEM
 $/kd/systimer.prx VGUPAEM
 $/kd/iofilemgr.prx VGUPAEM
 $/kd/memlmd_01g.prx VGUPAEM
-$/kd/660modulemgr.prx VGUPAEM
+$/kd/modulemgr.prx VGUPAEM
 $/kd/ark_systemctrl.prx VGUPAEM
 $/kd/ark_vitacompat.prx VGUPAEM
 $/kd/init.prx VGUPAEM
@@ -59,7 +59,7 @@ $/kd/ark_stargate.prx E
 # pops doesn't need kermit_me_wrapper
 $/kd/kermit_me_wrapper.prx VGUAEM
 $/kd/impose_kermit.prx VGUPAEM
-$/kd/660mediasync.prx VGUPAEM
+$/kd/mediasync.prx VGUPAEM
 $%/kd/usersystemlib.prx VGUPAEM
 # pops uses libfont_hv and pafmini
 $%/vsh/module/libfont_hv.prx P
