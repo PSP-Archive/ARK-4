@@ -202,7 +202,6 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
             // Remember it
             pluginLoaded = 1;
         }
-
     }
 
     // Passthrough

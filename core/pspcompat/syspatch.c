@@ -118,11 +118,6 @@ void settingsHandler(char* path){
     }
     else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
         is_launcher_mode = 1;
-        // Patch sceKernelExitGame Syscalls
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), exitToLauncher);
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x2AC9954B), exitToLauncher);
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x08F7166C), exitToLauncher);
-        flushCache();
     }
 }
 
