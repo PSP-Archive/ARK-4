@@ -14,7 +14,7 @@ void flashPatch(){
         PRTSTR("Installing on psp");
         SceUID kthreadID = k_tbl->KernelCreateThread( "arkflasher", (void*)KERNELIFY(&extractFlash0Archive), 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
         if (kthreadID >= 0){
-            void* arg = &PRTSTR11;
+            void* arg = KERNELIFY(&PRTSTR11);
             k_tbl->KernelStartThread(kthreadID, sizeof(void*), &arg);
             k_tbl->waitThreadEnd(kthreadID, NULL);
             k_tbl->KernelDeleteThread(kthreadID);

@@ -66,8 +66,14 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
     running_ark[20] = (IS_VITA_POPS(arg0->exec_mode))? 'X':'P';
     PRTSTR(running_ark);
     
+    if (isKernel()){ // already in kernel mode
+        kernelContentFunction();
+        return 0;
+    }
+    
     // read kxploit file into memory and initialize it
     char* err = NULL;
+    PRTSTR("Reading kxploit file...");
     if (initKxploitFile() == 0){
         PRTSTR("Scanning stubs for kxploit...");
         if (kxf->stubScanner(g_tbl) == 0){
@@ -143,7 +149,7 @@ void setK1Kernel(void){
 // Kernel Permission Function
 void kernelContentFunction(void){
 
-    if (!isKernel(0)){
+    if (!isKernel()){
         return; // we don't have kernel privilages? better error out than crash
     }
 

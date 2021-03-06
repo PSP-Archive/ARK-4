@@ -1,10 +1,18 @@
 ARK-4
 
+Update 8.3:
+- Fixed PSN eboots launched from custom menu.
+- Removed Galaxy ISO Driver from the core CFW (was not used).
+
+Update 8.2:
+- Prevent some settings from running on incorrect runlevels.
+- Improved file browser navigation.
+
 Update 8.1:
 - Removed all PSP 6.60 files.
 - Fixed mediasync patches on PS Vita.
 - Fixed bug when opening an empty directory.
-- Improved PSP IO emulation.
+- Improved PSP IO emulation on Vita.
 - Improved flash0 instalation on PSP (should be less buggy now).
 
 Update 8:

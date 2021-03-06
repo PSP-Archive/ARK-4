@@ -36,12 +36,6 @@ dist/INFERNO.BIN: core/inferno/inferno.prx
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
-dist/GALAXY.BIN: core/galaxy/galaxy.prx
-	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< GalaxyController 0x1006
-	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
-	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
-
 dist/STARGATE.BIN: core/stargate/stargate.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
 	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< Stargate 0x1007

@@ -610,6 +610,7 @@ u32 findReferenceInGlobalScope(u32 ref){
 // Entry Point
 int module_start(SceSize args, void* argp)
 {
+
     printk("galaxy started: compiled at %s %s\r\n", __DATE__, __TIME__);
     
     // Get ISO Path

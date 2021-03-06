@@ -43,8 +43,6 @@ $/kd/amctrl.prx VGPAEM
 $/kd/npdrm.prx VPEM
 # updater doesn't need amctrl
 $/kd/iofilemgr_dnas.prx VGPAEM
-# game & umdemu & mlnapp need galaxy as ISO driver
-$/kd/ark_galaxy.prx GEM
 # game & umdemu & mlnapp need np9660 as ISO driver
 $/kd/np9660.prx GEM
 # game & umdemu & mlnapp need isofs

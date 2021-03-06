@@ -4,7 +4,6 @@
 #define PATH_SYSTEMCTRL PATH_FLASH0 "kd/ark_systemctrl.prx"
 #define PATH_PSPCOMPAT PATH_FLASH0 "kd/ark_pspcompat.prx"
 #define PATH_VSHCTRL PATH_FLASH0 "kd/ark_vshctrl.prx"
-#define PATH_GALAXY PATH_FLASH0 "kd/ark_galaxy.prx"
 #define PATH_STARGATE PATH_FLASH0 "kd/ark_stargate.prx"
 #define PATH_INFERNO PATH_FLASH0 "kd/ark_inferno.prx"
 #define PATH_POPCORN PATH_FLASH0 "kd/ark_popcorn.prx"
@@ -79,42 +78,6 @@ struct del_module {
     char *prxname;
     u32 flags;
 };
-
-static struct add_module np9660_add_mods[] = {
-    { "/kd/mgr.prx", "/kd/amctrl.prx", GAME_RUNLEVEL },
-    { "/kd/npdrm.prx", "/kd/iofilemgr_dnas.prx", GAME_RUNLEVEL },
-    { PATH_GALAXY+sizeof(PATH_FLASH0)-2, "/kd/np9660.prx", UMDEMU_RUNLEVEL },
-    { PATH_GALAXY+sizeof(PATH_FLASH0)-2, "/kd/utility.prx", GAME_RUNLEVEL },
-    { "/kd/np9660.prx", "/kd/utility.prx", GAME_RUNLEVEL },
-    { "/kd/isofs.prx", "/kd/utility.prx", GAME_RUNLEVEL },
-};
-
-static struct del_module np9660_del_mods[] = {
-    { "/kd/mediaman.prx", GAME_RUNLEVEL },
-    { "/kd/ata.prx", GAME_RUNLEVEL },
-    { "/kd/umdman.prx", GAME_RUNLEVEL },
-    { "/kd/umdcache.prx", GAME_RUNLEVEL },
-    { "/kd/umd9660.prx", GAME_RUNLEVEL },
-};
-
-int patch_bootconf_np9660(char *buffer, int length)
-{
-    int newsize, result, ret;
-
-    result = length;
-
-    int i; for(i=0; i<NELEMS(np9660_del_mods); ++i) {
-        RemovePrx(buffer, np9660_del_mods[i].prxname, np9660_del_mods[i].flags);
-    }
-
-    for(i=0; i<NELEMS(np9660_add_mods); ++i) {
-        newsize = MovePrx(buffer, np9660_add_mods[i].insertbefore, np9660_add_mods[i].prxname, np9660_add_mods[i].flags);
-
-        if (newsize > 0) result = newsize;
-    }
-
-    return result;
-}
 
 static struct add_module inferno_add_mods[] = {
     { "/kd/mgr.prx", "/kd/amctrl.prx", GAME_RUNLEVEL },
@@ -251,9 +214,6 @@ int _UnpackBootConfig(char **p_buffer, int length)
             newsize = patch_bootconf_updaterumd(buffer, length);
             if (newsize > 0) result = newsize;
             break;
-        case MODE_NP9660:
-            newsize = patch_bootconf_np9660(buffer, length);
-            if (newsize > 0) result = newsize;
         case MODE_INFERNO:
             newsize = patch_bootconf_inferno(buffer, length);
             if (newsize > 0) result = newsize;

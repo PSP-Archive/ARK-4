@@ -9,7 +9,7 @@ extern ARKConfig* ark_config;
 
 // SPU Status
 static int running = 0;
-static int spu_plugin = 0;
+static int spu_plugin = -1; // spu thread UID
 
 // SPU Background Thread
 int spuThread(SceSize args, void * argp)
@@ -71,7 +71,7 @@ void _sceMeAudio_DE630CD2(void * loopCore, void * stack)
 void patchVitaPopsSpu(SceModule2 * mod)
 {
 
-    if (spu_plugin) return; // don't patch pops if spu plugin loaded
+    if (spu_plugin>=0) return; // don't patch pops if spu plugin loaded
     
     // Fetch Text Address
     unsigned int text_addr = mod->text_addr;
@@ -109,7 +109,7 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     strcat(path, "PS1SPU.PRX");
     result = sceKernelLoadModule(path, 0, NULL);
 
-    spu_plugin = (result>=0); // prevent dummy thread from running if spu plugin is loaded
+    spu_plugin = result; // remember spu plugin UID
 
     static char g_DiscID[32];
     u16 paramType = 0;
@@ -120,18 +120,9 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     */
     
     // load pops module
-    memset(path, 0, ARK_PATH_SIZE);
-    strcpy(path, ark_config->arkpath);
-    strcat(path, "POPS.PRX");
-    result = sceKernelLoadModule(path, flag, opt); // try loading local pops
-    if (result < 0) result = sceKernelLoadModule("flash0:/kd/pops_01g.prx", flag, opt); // try loading official pops
+    result = sceKernelLoadModule("flash0:/kd/pops_01g.prx", flag, opt); // ARK IO patch will try to load local first
     printk("%s: fname %s flag 0x%08X -> 0x%08X\r\n", __func__, fname, flag, result);
 
-    /*    
-    strcpy(path, ark_config->arkpath);
-    strcat(path, "POPS.PRX");
-	result = sceKernelLoadModule(path, flag, opt);
-    */
     return result;
 }
 

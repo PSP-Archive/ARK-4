@@ -88,19 +88,26 @@ static void disable_PauseGame(SceModule2* mod)
 static int is_launcher_mode = 0;
 static int use_mscache = 0;
 void settingsHandler(char* path){
-    if (strcasecmp(path, "overclock") == 0){
-        SetSpeed(333, 166); // set CPU speed to max
+    if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
+        SetSpeed(333, 166);
     }
-    else if (strcasecmp(path, "powersave") == 0){
-        SetSpeed(133, 66); // underclock
+    else if (strcasecmp(path, "powersave") == 0){ // underclock to save battery
+        int apitype = sceKernelInitApitype();
+        if (apitype != 0x144 && apitype != 0x155) // prevent operation in pops
+            SetSpeed(133, 66);
     }
     else if (strcasecmp(path, "usbcharge") == 0){
         usb_charge(); // enable usb charging
     }
-    else if (strcasecmp(path, "highmem") == 0){
-        if (psp_model > PSP_1000) {  // enable high memory
-            patch_partitions();
-            flushCache();
+    else if (strcasecmp(path, "highmem") == 0){ // enable high memory
+        if (psp_model > PSP_1000) { // prevent operation in PSP 1K
+            int apitype = sceKernelInitApitype();
+            if (apitype !=  0x210 && apitype !=  0x220 // prevent operation in VSH
+                  && apitype != 0x144 && apitype != 0x155 // prevent operation in pops
+              ){
+                patch_partitions();
+                flushCache();
+            }
         }
     }
     else if (strcasecmp(path, "mscache") == 0){
@@ -123,7 +130,7 @@ int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceK
 int PSPModuleStartHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
     if (strcmp(mod->modname, "vsh_module") == 0){
-        if (ark_config->recovery){
+        if (ark_config->recovery){ // system in recovery mode
             exitToRecovery();
         }
         else if (is_launcher_mode){ // system in launcher mode

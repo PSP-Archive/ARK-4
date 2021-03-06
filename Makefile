@@ -7,7 +7,7 @@ K ?= psp660
 
 export DEBUG PROVITA K
 
-SUBDIRS = libs contrib/PC/prxencrypter core/systemctrl core/vitacompat core/vitapops core/pspcompat core/vshctrl core/stargate extras/menus/provsh extras/menus/arkMenu extras/menus/recovery core/popcorn core/inferno core/galaxy core/rebootex loader/stage2/live loader/stage2/compat loader/kxploit loader/stage1/linkless_payload loader/stage1/live_eboot contrib/PC/btcnf extras/menus/vshmenu
+SUBDIRS = libs contrib/PC/prxencrypter core/systemctrl core/vitacompat core/vitapops core/pspcompat core/vshctrl core/stargate extras/menus/provsh extras/menus/arkMenu extras/menus/recovery core/popcorn core/inferno core/rebootex loader/stage2/live loader/stage2/compat loader/kxploit loader/stage1/linkless_payload loader/stage1/live_eboot contrib/PC/btcnf extras/menus/vshmenu
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj distclean copy-bin mkdir-dist encrypt-prx
 
 all: subdirs mkdir-dist encrypt-prx copy-bin
@@ -30,9 +30,9 @@ copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PB
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	
 encrypt-prx: \
-	dist/SYSCTRL.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN dist/PSPCOMPAT.BIN dist/VSHCTRL.BIN dist/INFERNO.BIN dist/GALAXY.BIN dist/STARGATE.BIN dist/POPCORN.BIN
+	dist/SYSCTRL.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN dist/PSPCOMPAT.BIN dist/VSHCTRL.BIN dist/INFERNO.BIN dist/STARGATE.BIN dist/POPCORN.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
-	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTNNF.BIN
+	$(Q)cp contrib/PC/btcnf/psvbtnnf.bin dist/PSVBTNNF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
 	$(Q)cp contrib/PSP/fake.cso dist/FAKECSO.BIN
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
@@ -58,7 +58,6 @@ clean:
 	$(Q)$(MAKE) $@ -C core/stargate
 	$(Q)$(MAKE) $@ -C core/popcorn
 	$(Q)$(MAKE) $@ -C core/inferno
-	$(Q)$(MAKE) $@ -C core/galaxy
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu

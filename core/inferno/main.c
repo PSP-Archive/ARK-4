@@ -62,6 +62,9 @@ int setupUMDDevice(void)
     int ret;
 
     g_iso_fn = GetUmdFile();
+    
+    if (g_iso_fn[0] == 0) return -1; // empty ISO file
+    
     printk("UMDFile = %s\r\n", g_iso_fn);
 
     infernoSetDiscType(sctrlSEGetDiscType());

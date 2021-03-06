@@ -70,12 +70,16 @@ static int isSystemBooted(void)
 static int use_mscache = 0;
 void settingsHandler(char* path){
     if (strcasecmp(path, "overclock") == 0){
+        // useless on vita
     }
     else if (strcasecmp(path, "powersave") == 0){
+        // useless on vita
     }
     else if (strcasecmp(path, "usbcharge") == 0){
+        // useless on vita
     }
     else if (strcasecmp(path, "highmem") == 0){
+        // does this still work on 3.60?
         //unlockVitaMemory();
         //sctrlHENSetMemory(36, 0);
         //flushCache();
@@ -84,8 +88,10 @@ void settingsHandler(char* path){
         use_mscache = 1; // enable ms cache for speedup
     }
     else if (strcasecmp(path, "disablepause") == 0){ // disable pause game feature on psp go
+        // useless on vita
     }
     else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
+        // useless on vita
     }
 }
 
@@ -126,7 +132,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     
     if (strcmp(mod->modname, "sceMediaSync") == 0){
         // load and process settings file
-        //loadSettings(&settingsHandler);
+        loadSettings(&settingsHandler);
     }
        
     // Boot Complete Action not done yet

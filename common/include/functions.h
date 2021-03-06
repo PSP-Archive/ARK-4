@@ -202,6 +202,6 @@ extern int p5_close_savedata();
 
 extern void flashPatch();
 
-extern int isKernel(int arg0);
+extern int isKernel();
 
 #endif

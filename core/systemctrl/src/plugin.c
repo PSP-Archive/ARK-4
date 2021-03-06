@@ -76,11 +76,9 @@ static int matchingRunlevel(char * runlevel)
     else if (stricmp(runlevel, "umd") == 0) return (apitype == 0x123 || apitype == 0x125); // UMD games only
     else if (stricmp(runlevel, "homebrew") == 0) return (apitype == 0x141 || apitype == 0x152); // homebrews only
     else if (stricmp(runlevel, "vsh") == 0) return (apitype ==  0x210 || apitype ==  0x220); // VSH only
-    else{
-        // check if plugin loads on specific game
+    else if (apitype == 0x123 || apitype == 0x125){ // check if plugin loads on specific game
         char gameid[10]; memset(gameid, 0, sizeof(gameid));
-        int res = getGameId(gameid);
-        if (res && stricmp(runlevel, gameid) == 0) return 1;
+        return (getGameId(gameid) && stricmp(runlevel, gameid) == 0);
     }
     
     // Unsupported Runlevel (we don't touch those to keep stability up)

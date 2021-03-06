@@ -618,6 +618,10 @@ void Browser::paste(){
             if (pasteMode == CUT) this->deleteFolder(e);
         }
     }
+    if (selectedBuffer->size()){
+        this->refreshDirs();
+        GameManager::updateGameList(cwd.c_str()); // tell GameManager to update
+    }
     this->selectedBuffer->clear();
 }
 
@@ -638,6 +642,8 @@ void Browser::rename(){
         char tmpText[51];
         osk.getText((char*)tmpText);
         sceIoRename((this->cwd+string(oldname)).c_str(), (this->cwd+string(tmpText)).c_str());
+        this->refreshDirs();
+        GameManager::updateGameList(cwd.c_str()); // tell GameManager to update
     }
     osk.end();
     free(oldname);
@@ -660,6 +666,8 @@ void Browser::removeSelection(){
                 this->deleteFolder(e);
         }
         this->selectedBuffer->clear();
+        this->refreshDirs();
+        GameManager::updateGameList(cwd.c_str()); // tell GameManager to update
     }
     draw_progress = false;
 }
@@ -788,11 +796,6 @@ void Browser::options(){
     case MKDIR:       this->makedir();                                break;
     case MS0_DIR:     this->cwd = INITIAL_DIR; this->refreshDirs();   break;
     case EF0_DIR:     this->cwd = GO_DIR;      this->refreshDirs();   break;
-    }
-    
-    if (pEntryIndex != NO_MODE && pEntryIndex != COPY && pEntryIndex != CUT){
-        this->refreshDirs();
-        GameManager::updateGameList(cwd.c_str()); // tell GameManager to update
     }
 }
         

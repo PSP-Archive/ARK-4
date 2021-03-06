@@ -523,10 +523,8 @@ int p5_close_savedata()
     return 1;
 }
 
-int isKernel(int arg0){
-    __asm__ (
-        "nop\n"
-        "move $a0, $ra\n" // move return address to arg0 to check if it has kernel bit set
-    );
-    return (arg0&0x80000000) != 0;
+int isKernel(){
+    u32 ra;
+    __asm__ volatile ("move %0, $ra;" : "=r"(ra));
+    return (ra&0x80000000) != 0;
 }

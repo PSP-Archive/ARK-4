@@ -207,21 +207,15 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
 
     // Passthrough
     int res = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
-    
-    /*{
+    /*
+    {
         if (DisplaySetFrameBuf){
             initScreen(DisplaySetFrameBuf);
             PRTSTR1("Starting module %s", mod->modname);
             PRTSTR1("ModuleStart result: %p", res);
-            if(strcmp(mod->modname, "sceVshCommonUtil_Module") == 0){
-                {
-                int fd = sceIoOpen("flash0:/vsh/module/libpspvmc.prx", PSP_O_RDONLY, 0777);
-                sceIoClose(fd);
-                PRTSTR1("Opening libpspvmc: %p", fd);
-                }
-            }
         }
-    }*/
+    }
+    */
     
     return res;
 }

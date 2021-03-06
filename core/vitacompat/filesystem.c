@@ -184,20 +184,44 @@ int sceIoFlashWriteHook(SceUID fd, void* data, SceSize size){
     return sceIoWriteHookCommon(fd, data, size, sceIoFlashWrite_);
 }
 
+// define all possible file replacements here
+static struct{
+    char* orig;
+    char* new;
+} ioreplacements[] = {
+    {
+        .orig = "flash0:/vsh/module/libpspvmc.prx",
+        .new = "PSPVMC.PRX",
+    },
+    {
+        .orig = "flash0:/kd/pops_01g.prx",
+        .new = "POPS.PRX",
+    },
+    {
+        .orig = "flash0:/kd/popsman.prx",
+        .new = "POPSMAN.PRX",
+    },
+    {
+        .orig = "flash0:/kd/npdrm.prx",
+        .new = "NPDRM.PRX",
+    },
+    {
+        .orig = "flash0:/kd/np9660.prx",
+        .new = "NP9660.PRX",
+    },
+};
 int (*iojal)(const char *, u32, u32, u32, u32, u32) = NULL;
 int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
 {
-    if (strcmp(a0, "flash0:/vsh/module/libpspvmc.prx") == 0){
-        char path[ARK_PATH_SIZE];
-        strcpy(path, ark_config->arkpath);
-        strcat(path, "PSPVMC.PRX");
-        a0 = path;
-    }
-    else if (strcmp(a0, "flash0:/kd/pops_01g.prx") == 0){
-        char path[ARK_PATH_SIZE];
-        strcpy(path, ark_config->arkpath);
-        strcat(path, "POPS.PRX");
-        a0 = path;
+    for (int i=0; i<NELEMS(ioreplacements); i++){
+        if (strcmp(a0, ioreplacements[i].orig) == 0){
+            char path[ARK_PATH_SIZE];
+            strcpy(path, ark_config->arkpath);
+            strcat(path, ioreplacements[i].new);
+            int res = iojal(path, a1, a2, a3, t0, t1);
+            if (res>=0) return res;
+            break;
+        }
     }
     return iojal(a0, a1, a2, a3, t0, t1);
 }

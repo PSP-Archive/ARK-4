@@ -77,11 +77,15 @@ void loadPlugins(){
 
 void savePlugins(){
     std::ofstream output[3];
-    output[0] = std::ofstream("PLUGINS.TXT");
-    output[1] = std::ofstream("ms0:/SEPLUGINS/PLUGINS.TXT");
-    output[2] = std::ofstream("ef0:/SEPLUGINS/PLUGINS.TXT");
+    char* plugins_path[3] = {
+        "PLUGINS.TXT",
+        "ms0:/SEPLUGINS/PLUGINS.TXT",
+        "ef0:/SEPLUGINS/PLUGINS.TXT"
+    };
     for (int i=0; i<ark_plugins_count; i++){
         plugin_t* plugin = (plugin_t*)(ark_plugin_entries[i]);
+        int place = plugin->place;
+        if (!output[place].is_open()) output[place] = std::ofstream(plugins_path[place]);
         output[plugin->place] << plugin->description << ", " << ((plugin->selection)? "on":"off") << endl;
     }
     output[0].close();
