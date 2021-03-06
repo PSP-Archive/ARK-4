@@ -42,6 +42,8 @@ char *GetUmdFile(void) __attribute__((alias("sctrlSEGetUmdFile")));
 
 void SetUmdFile(char *file) __attribute__((alias("sctrlSESetUmdFile")));
 
+// we keep this here for compatibility
+// ARK doesn't use this and it isn't persistent
 SEConfig se_config = { // default SE/PRO configuration
     .magic = 0x47434554,
     .umdmode = MODE_INFERNO,

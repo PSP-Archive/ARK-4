@@ -18,21 +18,15 @@ int _pspemuLfatOpen(char** filename, int unk)
         char* p = *filename;
         p[2] = 'v'; // custom btcnf for PS Vita
         if (IS_VITA_POPS(ark_conf_backup->exec_mode)){
-            p[5] = 'x';
+            p[5] = 'x'; // psvbtxnf.bin for PS1 exploits
         }
         else{
-            switch(conf->iso_mode)
-            {
-                case MODE_NP9660:
-                    // pspbtnnf.bin
-                    p[5] = 'n';
-                    break;
-                case MODE_UMD:
-                case MODE_INFERNO:
-                default:
-                    // pspbtinf.bin
-                    p[5] = 'i';
-                    break;
+            char* iso_path = (char*)REBOOTEX_CONFIG_ISO_PATH;
+            if (conf->iso_mode == MODE_NP9660 && iso_path[0] == 0){
+                p[5] = 'n'; // use NP9660 for PSN EBOOTS
+            }
+            else{
+                p[5] = 'i'; // use inferno otherwise
             }
         }
     }

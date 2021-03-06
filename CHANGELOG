@@ -3,6 +3,7 @@ ARK-4
 Update 8.3:
 - Fixed PSN eboots launched from custom menu.
 - Removed Galaxy ISO Driver from the core CFW (was not used).
+- Configuring rebootex for other ISO Drivers (M33, NP9660) will default to inferno instead of crashing.
 
 Update 8.2:
 - Prevent some settings from running on incorrect runlevels.

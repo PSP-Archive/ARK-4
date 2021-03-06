@@ -205,6 +205,7 @@ int _UnpackBootConfig(char **p_buffer, int length)
     if (newsize > 0) result = newsize;
     
     RebootBufferConfiguration * conf = (RebootBufferConfiguration*)REBOOTEX_CONFIG;
+    char* iso_path = (char*)REBOOTEX_CONFIG_ISO_PATH;
     switch(conf->iso_mode) {
         case MODE_VSHUMD:
             newsize = patch_bootconf_vshumd(buffer, length);
@@ -214,6 +215,11 @@ int _UnpackBootConfig(char **p_buffer, int length)
             newsize = patch_bootconf_updaterumd(buffer, length);
             if (newsize > 0) result = newsize;
             break;
+        case MODE_NP9660:
+            if (iso_path[0] == 0) break; // launching PSN EBOOT
+            // launching ISO with NP9660 Driver, default to inferno
+        case MODE_MARCH33:
+            // launching ISO with M332 Driver, default to inferno
         case MODE_INFERNO:
             newsize = patch_bootconf_inferno(buffer, length);
             if (newsize > 0) result = newsize;
