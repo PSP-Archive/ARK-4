@@ -2,11 +2,9 @@ ARK-4 e/CFW for the PSP and PS Vita.
 
 FEATURES:
 
-- Core system for loading unsigned PSP homebrews and plugins compatible with all PSP and PS Vita models.
+- Launch unsigned homebrew.
 
 - Inferno driver for ISO, CSO and ZSO games.
-
-- Galaxy controller for Sony NP9660 driver.
 
 - Popcorn controller for PSX games.
 
@@ -14,20 +12,11 @@ FEATURES:
 
 - Plugin support for PSP games, PSX games and VSH (XMB).
 
-- Compatibility layers for PSP and PS Vita.
+- Compatible with all PSP models on firmwares 6.60 and 6.61.
 
-- On PSP, it patches VSH so you can launch games (ISO, homebrew, PS1) directly from the XMB.
+- Compatible with all PS Vita models on firmware 3.60.
 
-- Allows you to install your favorite menu launcher (gMenu, ONEmenu, vMenu, etc). This is the default behaviour on PS Vita, but can be also be used on PSP using the "launcher" option in settings file.
-
-- More readable, robust and structured code that is still being maintained (it's also open source).
-
-- Legacy support for PSP game exploits and PSX exploits on PS Vita (includes TN-X patches): this is however useless nowadays, but still kept in there for legacy and conservation purposes.
-
-- Minimalistic CFW: ARK only install the bare minimum to have CFW functionality, both VSH menu and recovery menu are external to the CFW (a minimalistic one is included).
-
-
-
+- Minimalistic: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
 
 
@@ -42,9 +31,10 @@ On PSP:
 
 - Copy the folder ARK_01234 into /PSP/SAVEDATA/
 
-- Launch from the XMB on OFW (launching from permanent CFW such as CIPL or Infinity won't work!, though there are reports of people being able to load it from infinity, it's not a good idea until proper support is added to the Infinity bootloader).
+- Launch ARK Loader from the XMB.
 
-- It will install FLASH0.ARK into flash0 and then detele the package (so it doesn't get reinstalled every time you boot into the CFW). To reinstall flash0 files, copy FLASH0.ARK again into the PSP/SAVEDATA/ARK_01234/ folder.
+- It will install FLASH0.ARK into flash0 and then detele the package (so it doesn't get reinstalled every time you boot into the CFW).
+---- To reinstall flash0 files, copy FLASH0.ARK again into the PSP/SAVEDATA/ARK_01234/ folder.
 
 
 On PS Vita:
@@ -53,7 +43,7 @@ On PS Vita:
 
 - Once installed, replace ARK_01234 in /PSP/SAVEDATA with the one in ARK-4 (delete the old folder and install the new one, don't just merge them).
 
-- Replaced the PBOOT.PBP file installed in your base game with the one provided in ARK-4 (including SAVEPATH.TXT).
+- Replace the PBOOT.PBP file installed in your base game with the one provided in ARK-4 (including SAVEPATH.TXT).
 
 
 
