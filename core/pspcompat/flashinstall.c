@@ -16,11 +16,10 @@
  */
 
 #include <macros.h>
+#include <globals.h>
 #include "functions.h"
 
 #define BUF_SIZE 16*1024
-
-extern ARKConfig* ark_config;
 
 static void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L) = NULL;
 
@@ -58,19 +57,17 @@ static inline isVitaFile(char* filename){
 
 void extractFlash0Archive(SceSize args, void** argp){
 
-    if (ark_config==NULL) return;
-    
-    if (args==sizeof(void*)) prtstr = *argp;
+    int nargs = args/sizeof(void*);
+    if (args<1) return; // at least one parameter (path of archive)
+    char* archive = argp[0];
+    if (nargs==2) prtstr = argp[1];
 
     char* dest_path = "flash0:/";
     unsigned char buf[BUF_SIZE];
     int path_len = strlen(dest_path);
-    static char archive[ARK_PATH_SIZE];
     static char filepath[ARK_PATH_SIZE];
     static char filename[ARK_PATH_SIZE];
     strcpy(filepath, dest_path);
-    strcpy(archive, ark_config->arkpath);
-    strcat(archive, FLASH0_ARK);
 
     PRTSTR1("Extracting %s", archive);
     

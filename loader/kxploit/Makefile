@@ -5,8 +5,6 @@ TARGET = k.bin
 
 PYTHON=$(shell which python2)
 
-all: pre-build $(TARGET)
-
 CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 
 CFLAGS += -I $(PROVITA)/loader/kxploit/
@@ -37,7 +35,11 @@ main.elf: $(C_OBJS)
 $(TARGET): main.elf
 	$(Q)$(STRIP) -s $<
 	$(Q)$(OBJCOPY) -O binary $< $@
-	@echo GET $@
+	$(Q)mv $(TARGET) $(PROVITA)/loader/kxploit/$(K)/
+
+kxploits: link.l $(TARGET)
+
+all: kxploits
 
 clean:
-	$(Q)rm -rf *~ *.s *.o *.elf k.bin exploit.h link.l $(PROVITA)/loader/kxploit/$(K)/kxploit.o
+	$(Q)rm -rf *~ *.s *.o *.elf k.bin exploit.h link.l $(PROVITA)/loader/kxploit/$(K)/k.bin $(Q)rm $(PROVITA)/loader/kxploit/$(K)/kxploit.o

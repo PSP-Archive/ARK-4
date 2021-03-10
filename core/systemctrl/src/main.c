@@ -32,7 +32,13 @@
 
 PSP_MODULE_INFO("SystemControl", 0x3007, 1, 0);
 
-static ARKConfig _ark_conf;
+static ARKConfig _ark_conf = { // default config
+    .magic = ARK_CONFIG_MAGIC,
+    .arkpath = DEFAULT_ARK_PATH,
+    .exploit_id = LIVE_EXPLOIT_ID,
+    .exec_mode = DEV_UNK, // system files don't need to know the device, as long as the compat layer is running, it should be fine
+    .recovery = 0,
+};
 ARKConfig* ark_config = &_ark_conf;
 
 // Boot Time Entry Point
@@ -43,17 +49,17 @@ int module_start(SceSize args, void * argp)
     printkInit(NULL);
     printk("ARK SystemControl started.\r\n");
   #endif
-
-    // copy configuration from user ram
-    memcpy(ark_config, ark_conf_backup, sizeof(ARKConfig));
-
+  
     // Apply Module Patches
     patchSystemMemoryManager();
     SceModule2* loadcore = patchLoaderCore();
+    SceModule2* modman = patchModuleManager();
+    SceModule2* intrman = patchInterruptMan();
+    SceModule2* memlmd = patchMemlmd();
+    SceModule2* ioman = patchFileIO();
+    
+    // setup NID resolver on loadercore
     setupNidResolver(loadcore);
-    patchModuleManager();
-    patchInterruptMan();
-    patchMemlmd();
     
     // Backup Reboot Buffer (including configuration)
     backupRebootBuffer();

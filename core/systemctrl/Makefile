@@ -31,6 +31,7 @@ C_OBJS = \
 	src/gameinfo.o \
 	src/plugin.o \
 	src/msstor_cache.o \
+	src/iopatch.o \
 	$(PROVITA)/common/functions.o
 		
 OBJS = \

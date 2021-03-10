@@ -1,7 +1,6 @@
 #include "rebootex.h"
 
 int (*pspemuLfatOpen)(char** filename, int unk) = NULL;
-extern int PatchSysMem(void *a0, void *sysmem_config);
 
 // Load Core module_start Hook
 int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize, void *))
@@ -14,15 +13,14 @@ int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize
 int _pspemuLfatOpen(char** filename, int unk)
 {
     if (filename != NULL && 0 == strcmp(*filename, "pspbtcnf.bin")){
-        RebootBufferConfiguration* conf = (RebootBufferConfiguration*)REBOOTEX_CONFIG;
         char* p = *filename;
         p[2] = 'v'; // custom btcnf for PS Vita
-        if (IS_VITA_POPS(ark_conf_backup->exec_mode)){
+        if (IS_VITA_POPS(ark_config)){
             p[5] = 'x'; // psvbtxnf.bin for PS1 exploits
         }
         else{
             char* iso_path = (char*)REBOOTEX_CONFIG_ISO_PATH;
-            if (conf->iso_mode == MODE_NP9660 && iso_path[0] == 0){
+            if (reboot_conf->iso_mode == MODE_NP9660 && iso_path[0] == 0){
                 p[5] = 'n'; // use NP9660 for PSN EBOOTS
             }
             else{
@@ -56,6 +54,7 @@ void patchRebootBufferVita(u32 reboot_start, u32 reboot_end){
         }
         /*
         else if (data == 0x24040004) {
+            extern int PatchSysMem(void *a0, void *sysmem_config);
             _sw(0x02402021, addr); //move $a0, $s2
             _sw(JAL(PatchSysMem), addr + 0x64); // Patch call to SysMem module_bootstart
         }

@@ -20,7 +20,6 @@
 #include <psploadexec_kernel.h>
 #include <psputility_modules.h>
 #include <module2.h>
-#include <lflash0.h>
 #include <rebootconfig.h>
 #include <systemctrl_se.h>
 #include <string.h>

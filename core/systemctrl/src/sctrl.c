@@ -255,8 +255,6 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct Sce
     int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
         = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
 
-    memcpy(ark_conf_backup, ark_config, sizeof(ARKConfig));
-    
     // Load Execute Module
     int result = _LoadExecVSHWithApitype(apitype, file, param, 0x10000);
     
@@ -456,14 +454,6 @@ void* sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * 
     // Register Handler
     customStartModule = func;
     return prev;
-}
-
-// Return PSID Hash
-int sctrlKernelGetPSIDHash(unsigned char psidHash[16])
-{
-    memcpy(psidHash, reboot_config.psidHash, sizeof(reboot_config.psidHash));
-
-    return 0;
 }
 
 int sctrlDeflateDecompress(void* dest, void* src, int size){

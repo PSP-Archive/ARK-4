@@ -617,8 +617,8 @@ int module_start(SceSize args, void* argp)
     g_iso_fn = sctrlSEGetUmdFile();
     printk("UmdFile: %s\r\n", g_iso_fn);
 
-    // Leave NP9660 alone, we got no ISO
-    if(g_iso_fn[0] == 0) return 1;
+    // we got no ISO
+    if(g_iso_fn[0] == 0) return -1;
     
     // Find Thread Manager
     SceModule2 * pMod = (SceModule2 *)sceKernelFindModuleByName("sceThreadManager");
@@ -638,6 +638,10 @@ int module_start(SceSize args, void* argp)
     
     // Flush Cache
     flushCache();
+    
+    // load NP9660 a wait to patch it
+    int modid = sceKernelLoadModule("flash0:/kd/np9660.prx", 0, NULL);
+    int status, res = sceKernelStartModule(modid, 0, NULL, &status, NULL);
     
     // ISO File Descriptor
     int fd = -1;

@@ -100,6 +100,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
     
+    patchGameInfoGetter(mod);
+    
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
         // Patch sceKernelExitGame Syscalls

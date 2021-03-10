@@ -44,6 +44,10 @@ char reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
 // Backup Reboot Buffer
 void backupRebootBuffer(void)
 {
+    // Copy ARK runtime Config
+    if (*(u32*)ARK_CONFIG == ARK_CONFIG_MAGIC)
+        memcpy(ark_config, ARK_CONFIG, sizeof(ARKConfig));
+    
     // Reboot Buffer Configuration
     RebootBufferConfiguration * conf = (RebootBufferConfiguration *)(REBOOTEX_CONFIG);
     
@@ -76,18 +80,23 @@ void backupRebootBuffer(void)
 // Restore Reboot Buffer
 void restoreRebootBuffer(void)
 {
-    // No Backup available
-    if(reboot_size == 0 || reboot_backup == NULL) return;
-    
-    // Restore Reboot Buffer Payload
-    memcpy((void *)REBOOTEX_TEXT, reboot_backup, reboot_size);
-    
+
+    // Reboot Buffer Configuration
+    RebootBufferConfiguration * conf = (RebootBufferConfiguration *)(REBOOTEX_CONFIG);
+
     // Restore Reboot Buffer Configuration
     memcpy((void *)REBOOTEX_CONFIG, &reboot_config, sizeof(reboot_config));
+    
+    // Restore ARK Config
+    ark_config->recovery = 0; // reset recovery mode for next reboot
+    memcpy(ARK_CONFIG, ark_config, sizeof(ARKConfig));
     
     // Restore Reboot ISO Path
     strncpy((char*)REBOOTEX_CONFIG_ISO_PATH, sctrlSEGetUmdFile(), REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
     ((char*)REBOOTEX_CONFIG_ISO_PATH)[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = '\0';
+    
+    // Restore Reboot Buffer Payload
+    memcpy((void *)REBOOTEX_TEXT, reboot_backup, reboot_size);
 }
 
 // Reboot Buffer Loader
@@ -96,15 +105,11 @@ int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
     // Restore Reboot Buffer Configuration
     restoreRebootBuffer();
     
-    // backup ARK configuration to user ram
-    memcpy(ark_conf_backup, ark_config, sizeof(ARKConfig));
-    ark_conf_backup->recovery = 0; // reset recovery mode
-    
     // Load Sony Reboot Buffer
     return _LoadReboot(arg1, arg2, arg3, arg4);
 }
 
-// Patch loadexec_01g.prx
+// Patch loadexec
 void patchLoadExec(SceModule2* loadexec)
 {
     // Find Reboot Loader Function

@@ -47,7 +47,6 @@
 typedef struct RebootBufferConfiguration {
     unsigned int magic;
     unsigned int reboot_buffer_size;
-    unsigned char psidHash[16];
     unsigned char iso_mode;
     unsigned char iso_disc_type;
 } RebootBufferConfiguration;

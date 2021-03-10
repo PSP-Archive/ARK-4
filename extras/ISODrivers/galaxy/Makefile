@@ -1,3 +1,5 @@
+PROVITA = ../../../
+K=psp660
 TARGET = galaxy
 C_OBJS = main.o
 OBJS = $(C_OBJS) imports.o $(PROVITA)/common/functions.o

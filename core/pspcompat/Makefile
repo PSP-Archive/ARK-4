@@ -6,6 +6,7 @@ C_OBJS = \
 	high_mem.o  \
 	cpuclock.o   \
 	usb_charge.o  \
+	flashinstall.o \
 	$(PROVITA)/common/functions.o \
 	$(PROVITA)/core/systemctrl/src/exitgame.o \
 	$(PROVITA)/core/systemctrl/src/gameinfo.o \

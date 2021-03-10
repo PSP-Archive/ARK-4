@@ -37,10 +37,12 @@
 #define FLASH0_ARK "FLASH0.ARK" // ARK flash0 package
 #define VSH_MENU "VSHMENU.PRX" // ARK VSH Menu for XMB
 #define K_FILE "K.BIN" // kernel exploit file for Live loaders
+#define ARK2_BIN "ARK.BIN" // ARK-2 payload
+#define ARK4_BIN "ARK4.BIN" // ARK-4 payload
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 8
-#define ARK_MICRO_VERSION 3
+#define ARK_MICRO_VERSION 4
 
 /*
 First two bits identify the device (PSP or PS Vita)
@@ -78,6 +80,7 @@ enum {
 // These settings should be global and constant during the entire execution of ARK.
 // It should not be possible to change these (except for recovery flag).
 typedef struct ARKConfig{
+    u32 magic;
     char arkpath[ARK_PATH_SIZE-20]; // ARK installation folder, leave enough room to concatenate files
     char exploit_id[12]; // ID of the game exploit, or name of the bootloader
     char kxploit[ARK_PATH_SIZE]; // path to the K.BIN file (if not set, will attemp to read from ARK install path)
@@ -85,11 +88,15 @@ typedef struct ARKConfig{
     unsigned char recovery; // run ARK in recovery mode (disables settings, plugins and autoboots RECOVERY.PBP)
 } ARKConfig;
 
-#define ARK_CONF_ADDR 0x08800010 // global address to backup ARK configuration during reboot
-#define ark_conf_backup ((ARKConfig*)(ARK_CONF_ADDR))
-#define IS_PSP(exec_mode) ((exec_mode&DEV_MASK)==PSP_ORIG)
-#define IS_VITA(exec_mode) ((exec_mode&DEV_MASK)==PS_VITA)
-#define IS_VITA_POPS(exec_mode) (exec_mode==PSV_POPS)
+// ARK Runtime configuration backup address
+#define ARK_CONFIG 0x08800010
+#define ARK_CONFIG_MAGIC 0xB00B1E55
+#define LIVE_EXPLOIT_ID "Live" // default loader name
+#define DEFAULT_ARK_PATH "ms0:/PSP/SAVEDATA/ARK_01234/" // default path for ARK files
+
+#define IS_PSP(ark_config) ((ark_config->exec_mode&DEV_MASK)==PSP_ORIG)
+#define IS_VITA(ark_config) ((ark_config->exec_mode&DEV_MASK)==PS_VITA)
+#define IS_VITA_POPS(ark_config) (ark_config->exec_mode==PSV_POPS)
 
 // Memory Partition Size
 #define USER_SIZE (24 * 1024 * 1024)

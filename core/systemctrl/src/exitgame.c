@@ -43,9 +43,6 @@ static void exitgame(const char* path)
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
     
-    // backup configuration to user ram
-    memcpy(ark_conf_backup, ark_config, sizeof(ARKConfig));
-    
     // Clear Memory
     memset(&param, 0, sizeof(param));
 

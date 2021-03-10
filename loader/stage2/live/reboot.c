@@ -17,6 +17,7 @@
 
 #include "reboot.h"
 #include "globals.h"
+#include "main.h"
 
 // Build Reboot Configuration
 void buildRebootBufferConfig(int rebootBufferSize)
@@ -30,16 +31,13 @@ void buildRebootBufferConfig(int rebootBufferSize)
     // Write PROCFW Reboot Buffer Size (for backup in System Control)
     conf->reboot_buffer_size = rebootBufferSize;
 
-    if (IS_VITA_POPS(ark_conf_backup->exec_mode)){
-        conf->iso_mode = MODE_NP9660;
-        conf->iso_disc_type = PSP_UMD_TYPE_GAME;
-    }
-    else{
-        // Default ISO driver for homebrew and ISO
-        conf->iso_mode = MODE_INFERNO;
-        // Default ISO disc type
-        conf->iso_disc_type = PSP_UMD_TYPE_GAME;
-    }
+    // Default ISO driver for homebrew and ISO
+    conf->iso_mode = MODE_INFERNO;
+    // Default ISO disc type
+    conf->iso_disc_type = PSP_UMD_TYPE_GAME;
+    
+    // copy runtime ARK config
+    memcpy(ARK_CONFIG, ark_config, sizeof(ARKConfig));
 }
 
 // PROCFW Reboot Buffer Loader

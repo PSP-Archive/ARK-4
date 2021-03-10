@@ -101,21 +101,6 @@ void initFileSystem(){
     dreadSema = sceKernelCreateSema("sceIoDreadSema", 0, 1, 1, NULL);
 }
 
-// Homebrew Runlevel Check
-int isHomebrewRunlevel(void)
-{
-    // Get Apitype
-    int apitype = sceKernelInitApitype();
-    
-    if (apitype == 0x141) {
-        // Homebrew Runlevel
-        return 1;
-    }
-    
-    // Other Runlevel
-    return 0;
-}
-
 u32 UnprotectAddress(u32 addr){
     if ((addr >= 0x0B000000 && addr < 0x0BC00000)
         || (addr >= 0x0A000000 && addr < 0x0C000000)
@@ -184,50 +169,7 @@ int sceIoFlashWriteHook(SceUID fd, void* data, SceSize size){
     return sceIoWriteHookCommon(fd, data, size, sceIoFlashWrite_);
 }
 
-// define all possible file replacements here
-static struct{
-    char* orig;
-    char* new;
-} ioreplacements[] = {
-    {
-        .orig = "flash0:/vsh/module/libpspvmc.prx",
-        .new = "PSPVMC.PRX",
-    },
-    {
-        .orig = "flash0:/kd/pops_01g.prx",
-        .new = "POPS.PRX",
-    },
-    {
-        .orig = "flash0:/kd/popsman.prx",
-        .new = "POPSMAN.PRX",
-    },
-    {
-        .orig = "flash0:/kd/npdrm.prx",
-        .new = "NPDRM.PRX",
-    },
-    {
-        .orig = "flash0:/kd/np9660.prx",
-        .new = "NP9660.PRX",
-    },
-};
-int (*iojal)(const char *, u32, u32, u32, u32, u32) = NULL;
-int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
-{
-    for (int i=0; i<NELEMS(ioreplacements); i++){
-        if (strcmp(a0, ioreplacements[i].orig) == 0){
-            char path[ARK_PATH_SIZE];
-            strcpy(path, ark_config->arkpath);
-            strcat(path, ioreplacements[i].new);
-            int res = iojal(path, a1, a2, a3, t0, t1);
-            if (res>=0) return res;
-            break;
-        }
-    }
-    return iojal(a0, a1, a2, a3, t0, t1);
-}
-
 u32 backup[2], ioctl;
-
 int patchioctl(SceUID a0, u32 a1, void *a2, int a3, void *t0, int t1)
 {
     _sw(backup[0], ioctl);
@@ -250,37 +192,6 @@ int patchioctl(SceUID a0, u32 a1, void *a2, int a3, void *t0, int t1)
     return ret;
 }
 
-void patchFileIoCtl(SceModule2* mod){
-    // redirect ioctl to patched
-
-    u32 topaddr = mod->text_addr+mod->text_size;
-    int patches = 2;
-    for (u32 addr=mod->text_addr; addr<topaddr && patches; addr+=4){
-        u32 data = _lw(addr);
-        if (data == 0x03641824){
-            iojal = addr-4;
-            patches--;
-        }
-        else if (data == 0x00005021){
-            ioctl = addr-12;
-            patches--;
-        }
-    }
-    backup[0] = _lw(ioctl);
-    backup[1] = _lw(ioctl + 4);
-    _sw(JUMP(patchioctl), ioctl);
-    _sw(0, ioctl+4);
-    
-    patches = 2;
-    for (u32 addr=mod->text_addr; addr<topaddr && patches; addr+=4){
-        u32 data = _lw(addr);
-        if (data == JAL(iojal)){
-            _sw(JAL(patchio), addr);
-            patches--;
-        }
-    }
-}
-
 // sceIOFileManager Patch
 void patchFileManager(void)
 {
@@ -293,8 +204,20 @@ void patchFileManager(void)
 
     // Hooking sceIoAddDrv
     _sw((unsigned int)sceIoAddDrvHook, AddDrv);
-
-    patchFileIoCtl(mod);
+    
+    // redirect ioctl to patched
+    u32 topaddr = mod->text_addr+mod->text_size;
+    for (u32 addr=mod->text_addr; addr<topaddr; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x00005021){
+            ioctl = addr-12;
+            break;
+        }
+    }
+    backup[0] = _lw(ioctl);
+    backup[1] = _lw(ioctl + 4);
+    _sw(JUMP(patchioctl), ioctl);
+    _sw(0, ioctl+4);
 
     // Flush Cache
     flushCache();
@@ -302,7 +225,7 @@ void patchFileManager(void)
 
 void patchFileSystemDirSyscall(void)
 {
-    if (!isHomebrewRunlevel())
+    if (sceKernelInitApitype() != 0x141)
         return;
     
     // Hooking sceIoDopen for User Modules
@@ -324,7 +247,7 @@ void patchFileSystemDirSyscall(void)
 // Directory IO Patch for PSP-like Behaviour
 void patchFileManagerImports(SceModule2 * mod)
 {
-    if (!isHomebrewRunlevel())
+    if (sceKernelInitApitype() != 0x141)
         return;
     
     // Hooking sceIoDopen for Kernel Modules
@@ -349,22 +272,25 @@ int sceIoMkdirHook(char *dir, SceMode mode)
 
     u32 k1 = pspSdkSetK1(0);
     
+    /*
     char lower[15];
     lowerString(dir, lower, 15);
     int needsPatch = (strncmp(lower, "ms0:/psp/game/", 14)==0);
     char bak[4];
-    
     if (needsPatch){
+        sceIoMkdir("ms0:/PSP/APPS", 0777);
         memcpy(bak, &dir[9], 4);
         memcpy(&dir[9], "APPS", 4);
     }
+    */
     
-    sceIoMkdir("ms0:/PSP/APPS", 0777);
     int ret = sceIoMkdir(dir, mode);
     
+    /*
     if (needsPatch){
         memcpy(&dir[9], bak, 4);
     }
+    */
     
     pspSdkSetK1(k1);
     

@@ -41,7 +41,7 @@ PspDebugRegBlock * exception_regs = NULL;
 extern void _pspDebugExceptionHandler(void);
 
 // Bluescreen Register Snapshot
-static PspDebugRegBlock screenRegs;
+static PspDebugRegBlock cpuRegs;
 
 // Exception Code String Literals
 static const char * codeTxt[32] =
@@ -73,8 +73,22 @@ static int isValidAddr(u32 addr){
     );
 }
 
+// find crashing module
+static void printModuleByAddr(u32 p){
+    SceModule2* mod = sceKernelFindModuleByName("sceSystemMemoryManager");
+    while (mod){
+        u32 addr = mod->text_addr;
+        u32 top = addr+mod->text_size;
+        if (p >= addr && p < top){
+            PRTSTR2("From Module: %s @ %p", mod->modname, p-addr);
+            break;
+        }
+        mod = mod->next;
+    }
+}
+
 // Bluescreen Exception Handler
-void screenHandler(PspDebugRegBlock * regs)
+static void ARKExceptionHandler(PspDebugRegBlock * regs)
 {
     initScreen(DisplaySetFrameBuf);
     colorDebug(0xFF0000); // Blue Screen of Death
@@ -91,24 +105,12 @@ void screenHandler(PspDebugRegBlock * regs)
     u32 epc = regs->epc;
     if (isValidAddr(epc)){
         PRTSTR1("Instruction at EPC: %p", _lw(epc)); // TODO: disassemble instruction
+        printModuleByAddr(epc);
     }
     u32 ra = regs->r[31];
     if (isValidAddr(ra)){
         PRTSTR1("Instruction at RA:  %p", _lw(ra)); // TODO: disassemble instruction
-    }
-    
-    // find crashing module
-    if ((ra&KERNEL_BASE)==KERNEL_BASE){
-        SceModule2* mod = sceKernelFindModuleByName("sceSystemMemoryManager");
-        while (mod){
-            u32 addr = mod->text_addr;
-            u32 top = addr+mod->text_size;
-            if (ra >= addr && ra < top){
-                PRTSTR2("Module: %s @ %p", mod->modname, ra-addr);
-                break;
-            }
-            mod = mod->next;
-        }
+        printModuleByAddr(ra);
     }
     
     // present user menu for recovery options
@@ -120,7 +122,7 @@ void screenHandler(PspDebugRegBlock * regs)
         PRTSTR("Press triangle to shudown");
     }
 
-    // await user input    
+    // await user input
     SceCtrlData data;
     memset(&data, 0, sizeof(data));
     while (1){
@@ -159,8 +161,8 @@ void registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * r
     else
     {
         // Save Arguments
-        curr_handler = screenHandler;
-        exception_regs = &screenRegs;
+        curr_handler = &ARKExceptionHandler;
+        exception_regs = &cpuRegs;
     }
     
     // Register Exception Handler

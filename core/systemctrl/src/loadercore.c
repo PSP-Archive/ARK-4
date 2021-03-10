@@ -215,7 +215,6 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         }
     }
     */
-    
     return res;
 }
 
@@ -289,10 +288,6 @@ SceModule2* patchLoaderCore(void)
             case 0x30894000:    _sw(0x3C090000, addr);               break;        // Allow Syscalls
             case 0x00E8282B:    _sh(0x1000, addr + 6);               break;        // Remove POPS Check
             case 0x01A3302B:    _sw(NOP, addr+4);                    break;        // Remove Invalid PRX Type (0x80020148) Check
-            case 0x5040FF98:    _sw(NOP, addr); _sw(NOP, addr+4);    break;        // Remove beqzl (PSP)
-            case 0x5040FF54:    _sw(NOP, addr); _sw(NOP, addr+4);    break;        // Remove beqzl (PSP)
-            //case 0x3C09BFC0:    _sw(NOP, addr-20);                   break;        // beqz (PSV)
-            //case 0x240A0800:    _sw(NOP, addr+8); _sw(NOP, addr+12); break;        // bnel (PSV)
             }
         }
     }

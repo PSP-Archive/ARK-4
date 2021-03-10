@@ -10,18 +10,23 @@ int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHPa
 void flashPatch(){
     extern ARKConfig* ark_config;
     extern int extractFlash0Archive();
-    if (IS_PSP(ark_config->exec_mode)){ // on PSP, extract FLASH0.ARK into flash0
-        PRTSTR("Installing on psp");
+    if (IS_PSP(ark_config)){ // on PSP, extract FLASH0.ARK into flash0
+        PRTSTR("Installing on PSP");
         SceUID kthreadID = k_tbl->KernelCreateThread( "arkflasher", (void*)KERNELIFY(&extractFlash0Archive), 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
         if (kthreadID >= 0){
-            void* arg = KERNELIFY(&PRTSTR11);
-            k_tbl->KernelStartThread(kthreadID, sizeof(void*), &arg);
+            // create thread parameters
+            char archive[ARK_PATH_SIZE];
+            strcpy(archive, ark_config->arkpath);
+            strcat(archive, FLASH0_ARK);
+            void* args[2] = {(void*)archive, (void*)KERNELIFY(&PRTSTR11)};
+            // start thread and wait for it to end
+            k_tbl->KernelStartThread(kthreadID, sizeof(void*)*2, &args);
             k_tbl->waitThreadEnd(kthreadID, NULL);
             k_tbl->KernelDeleteThread(kthreadID);
         }
     }
     else{ // Patching flash0 on Vita
-        PRTSTR("Installing on vita");
+        PRTSTR("Installing on PS Vita");
         patchKermitPeripheral(k_tbl);
     }
 }
@@ -35,37 +40,37 @@ void loadKernelArk(){
     k_tbl->KernelDcacheWritebackInvalidateAll();
     k_tbl->KernelIcacheInvalidateAll();
 
-    PRTSTR("Patching loadexec");
-    // Find LoadExec Module
-    SceModule2 * loadexec = k_tbl->KernelFindModuleByName("sceLoadExec");
-    
-    // Find Reboot Loader Function
-    _LoadReboot = (void *)loadexec->text_addr;
-    
-    
-    // make the common loadexec patches
-    int k1_patches = 2; //IS_PSP(ark_conf_backup->exec_mode)?2:3;
-    patchLoadExecCommon(loadexec, (u32)LoadReboot, k1_patches);
-    
-    // Invalidate Cache
-    k_tbl->KernelDcacheWritebackInvalidateAll();
-    k_tbl->KernelIcacheInvalidateAll();
-    
+    // check for recovery flag (R1 button)
     int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = (void *)FindFunction("sceController_Service", "sceCtrl", 0x3A622550);
     if (CtrlPeekBufferPositive){
         SceCtrlData data;
         memset(&data, 0, sizeof(data));
         CtrlPeekBufferPositive(&data, 1);
         if((data.Buttons & PSP_CTRL_RTRIGGER) == PSP_CTRL_RTRIGGER){
-            ark_conf_backup->recovery = 1;
+            ark_config->recovery = 1;
         }
     }
 
-    if (IS_VITA(ark_conf_backup->exec_mode)){
+    PRTSTR("Patching loadexec");
+    // Find LoadExec Module
+    SceModule2 * loadexec = k_tbl->KernelFindModuleByName("sceLoadExec");
+    
+    // Find Reboot Loader Function
+    _LoadReboot = (void *)loadexec->text_addr;    
+    
+    // make the common loadexec patches
+    int k1_patches = 2;
+    patchLoadExecCommon(loadexec, (u32)LoadReboot, k1_patches);
+    
+    // Invalidate Cache
+    k_tbl->KernelDcacheWritebackInvalidateAll();
+    k_tbl->KernelIcacheInvalidateAll();
+    
+    if (IS_VITA(ark_config)){
         // Prepare Homebrew Reboot
         char menupath[ARK_PATH_SIZE];
-        strcpy(menupath, ark_conf_backup->arkpath);
-        strcat(menupath, (ark_conf_backup->recovery)? ARK_RECOVERY : ARK_MENU);
+        strcpy(menupath, ark_config->arkpath);
+        strcat(menupath, (ark_config->recovery)? ARK_RECOVERY : ARK_MENU);
         struct SceKernelLoadExecVSHParam param;
         memset(&param, 0, sizeof(param));
         param.size = sizeof(param);

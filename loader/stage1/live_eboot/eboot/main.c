@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 #include "globals.h"
+#include "rebootconfig.h"
 #include "functions.h"
 #include "graphics.h"
 #include "ya2d_main.h"
@@ -22,19 +23,17 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
 
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
-#define EXPLOIT_ID "Live"
-#define DEFAULT_ARK_PATH "ms0:/PSP/SAVEDATA/ARK_01234/"
-#define ARK_BIN "ARK4.BIN"
 
 // ARK.BIN requires these imports
 //int SysMemUserForUser_91DE343C(void* unk);
 int sceKernelPowerLock(unsigned int, unsigned int);
 
 volatile ARKConfig config = {
+    .magic = ARK_CONFIG_MAGIC,
     .arkpath = DEFAULT_ARK_PATH, // We can use argv[0] (eboot's path)
     .kxploit = {0}, // should be in same folder as eboot
     .exec_mode = DEV_UNK, // let stage 2 figure this one out
-    .exploit_id = EXPLOIT_ID,
+    .exploit_id = LIVE_EXPLOIT_ID,
     .recovery = 0,
 };
 volatile FunctionTable funcs = {
@@ -131,7 +130,7 @@ int main(int argc, char** argv){
     // set ARK stage 2 loader
     char loadpath[ARK_PATH_SIZE];
     strcpy(loadpath, config.arkpath);
-    strcat(loadpath, ARK_BIN);
+    strcat(loadpath, ARK4_BIN);
     
     PRTSTR1("Loading Stage 2 at: %s", loadpath);
     

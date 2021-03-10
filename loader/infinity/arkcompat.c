@@ -26,9 +26,6 @@
 
 #include <compat_interface.h>
 
-// ark's reboot
-#include "rebootconfig.h"
-
 #define SENSE_MASK                                                                                 \
     (SYSCON_CTRL_TRIANGLE | SYSCON_CTRL_CIRCLE | SYSCON_CTRL_CROSS | SYSCON_CTRL_RECTANGLE |       \
      SYSCON_CTRL_SELECT | SYSCON_CTRL_LTRG | SYSCON_CTRL_RTRG | SYSCON_CTRL_START |                \
@@ -81,21 +78,57 @@ typedef enum{
 
 // ARK runtime configuration
 typedef struct ARKConfig{
+    u32 magic;
     char arkpath[ARK_PATH_SIZE-20]; // leave enough room to concatenate files
     char exploit_id[20];
     unsigned char exec_mode;
     unsigned char recovery;
 } ARKConfig;
 
+// ARK Runtime configuration
+#define ARK_CONFIG 0x08800010
+#define ARK_CONFIG_MAGIC 0xB00B1E55
+
+#define REBOOT_START 0x88600000
+#define REBOOTEX_START 0x88FC0000
+#define REBOOTEX_MAX_SIZE 0x4000
+#define BTCNF_MAGIC 0x0F803001
+#define BOOTCONFIG_TEMP_BUFFER 0x88FB0200
+
+// PROCFW Reboot Buffer Configuration Magic (0xCOLDBIRD)
+#define REBOOTEX_CONFIG_MAGIC 0xC01DB15D
+
+// PROCFW Reboot Buffer Configuration Address
+#define REBOOTEX_CONFIG (REBOOTEX_TEXT - 0x10000)
+#define REBOOTEX_CONFIG_MAXSIZE 0x100
+
+// PROCFW Reboot Buffer ISO Path (so we don't lose that information)
+#define REBOOTEX_CONFIG_ISO_PATH (REBOOTEX_CONFIG + REBOOTEX_CONFIG_MAXSIZE)
+#define REBOOTEX_CONFIG_ISO_PATH_MAXSIZE 0x100
+
+// PROCFW Reboot Buffer Configuration
+typedef struct RebootBufferConfiguration {
+    unsigned int magic;
+    unsigned int reboot_buffer_size;
+    unsigned char iso_mode;
+    unsigned char iso_disc_type;
+} RebootBufferConfiguration;
+
+typedef struct RebootexFunctions{
+    void* rebootex_decrypt;
+    void* rebootex_checkexec;
+    void* orig_decrypt;
+    void* orig_checkexec;
+}RebootexFunctions;
+#define REBOOTEX_FUNCTIONS (RebootexFunctions*)0x08D38000
+
 ARKConfig _arkconf = {
+    .magic = ARK_CONFIG_MAGIC,
     .arkpath = "ms0:/PSP/SAVEDATA/ARK_01234/", // default path for ARK files
     .exploit_id = "Infinity", // name of exploit/bootloader
     .exec_mode = PSP_ORIG, // run ARK in PSP mode
     .recovery = 0,
 };
-
-// temp address to store ARK configuration for SystemControl
-#define ark_conf_backup ((ARKConfig*)(0x08800010))
 
 int (*memlmd_E42AFE2E)(void* buf, void* check, void* s) = NULL;
 int (*memlmd_3F2AC9C6)(void* a0, void* a1) = NULL;
@@ -193,7 +226,7 @@ int compat_entry(BtcnfHeader* btcnf,
     // clear location for configuration and set default akin to CIPL
     memset((void*)REBOOTEX_CONFIG, 0, REBOOTEX_CONFIG_MAXSIZE);
 
-    rebootex_config* conf = (rebootex_config*)(REBOOTEX_CONFIG);
+    RebootBufferConfiguration* conf = (RebootBufferConfiguration*)(REBOOTEX_CONFIG);
     conf->magic = REBOOTEX_CONFIG_MAGIC;
     conf->reboot_buffer_size = 0;
     
@@ -219,8 +252,8 @@ int compat_entry(BtcnfHeader* btcnf,
     // Insert VSH Control              
     insert_btcnf("/kd/ark_vshctrl.prx", "/kd/vshbridge.prx", btcnf, &btcnf_size, (BOOTLOAD_VSH));
 
-    // copy ARK configuration for SystemControl
-    _memcpy(ark_conf_backup, &_arkconf, sizeof(ARKConfig));
+    // copy ARK configuration for SystemControl to find
+    _memcpy(ARK_CONFIG, &_arkconf, sizeof(ARKConfig));
 
     // PRO patches work well with ARK...
     // need to patch loadcore too

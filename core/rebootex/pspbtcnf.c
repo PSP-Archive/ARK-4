@@ -1,4 +1,5 @@
 #include "rebootconfig.h"
+#include "rebootex.h"
 
 #define PATH_FLASH0 "flash0:/"
 #define PATH_SYSTEMCTRL PATH_FLASH0 "kd/ark_systemctrl.prx"
@@ -204,9 +205,8 @@ int _UnpackBootConfig(char **p_buffer, int length)
     newsize = AddPRX(buffer, "/kd/me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, GAME_RUNLEVEL | UMDEMU_RUNLEVEL);
     if (newsize > 0) result = newsize;
     
-    RebootBufferConfiguration * conf = (RebootBufferConfiguration*)REBOOTEX_CONFIG;
     char* iso_path = (char*)REBOOTEX_CONFIG_ISO_PATH;
-    switch(conf->iso_mode) {
+    switch(reboot_conf->iso_mode) {
         case MODE_VSHUMD:
             newsize = patch_bootconf_vshumd(buffer, length);
             if (newsize > 0) result = newsize;

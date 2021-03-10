@@ -5,7 +5,7 @@ static KernelFunctions* ktbl = NULL;
 
 int (* Kermit_driver_4F75AA05)(void* kermit_packet, u32 cmd_mode, u32 cmd, u32 argc, u32 allow_callback, u64 *resp) = NULL;
 
-int installFlash0Archive()
+int installFlash0Archive(char* path)
 {
     int fd;
 
@@ -22,10 +22,6 @@ int installFlash0Archive()
     // flash0 Filecounts
     uint32_t procfw_filecount = 0;
     uint32_t flash0_filecount = 0;
-
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, FLASH0_ARK);
 
     fd = ktbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
 
@@ -137,7 +133,10 @@ int flashLoadPatch(int cmd)
         // Wait for flash to load
         ktbl->KernelDelayThread(10000);
         // Patch flash0 Filesystem Driver
-        linked = installFlash0Archive();
+        char path[ARK_PATH_SIZE];
+        strcpy(path, ark_config->arkpath);
+        strcat(path, FLASH0_ARK);
+        linked = installFlash0Archive(path);
         ktbl->KernelIcacheInvalidateAll();
         ktbl->KernelDcacheWritebackInvalidateAll();
     }

@@ -25,6 +25,14 @@
 
 char* running_ark = "Running ARK-4 in ?PS? mode";
 
+ARKConfig default_config = {
+    .magic = ARK_CONFIG_MAGIC,
+    .arkpath = DEFAULT_ARK_PATH,
+    .exploit_id = LIVE_EXPLOIT_ID,
+    .kxploit = {0},
+    .exec_mode = DEV_UNK,
+    .recovery = 0,
+};
 ARKConfig* ark_config = NULL;
 
 extern void loadKernelArk();
@@ -49,6 +57,8 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
     else
         memcpy(g_tbl, arg1, sizeof(FunctionTable));
     
+    if (arg0 == NULL) arg0 = &default_config;
+    
     scanArkFunctions();
 
     // copy the path of the save
@@ -62,8 +72,8 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
 
     // Output Exploit Reach Screen
     if (arg0->exec_mode == DEV_UNK) autoDetectDevice(arg0);
-    running_ark[17] = (IS_PSP(arg0->exec_mode))? ' ' : 'v';
-    running_ark[20] = (IS_VITA_POPS(arg0->exec_mode))? 'X':'P';
+    running_ark[17] = (IS_PSP(arg0))? ' ' : 'v';
+    running_ark[20] = (IS_VITA_POPS(arg0))? 'X':'P';
     PRTSTR(running_ark);
     
     if (isKernel()){ // already in kernel mode
@@ -158,11 +168,6 @@ void kernelContentFunction(void){
     
     g_tbl->prtstr = KERNELIFY(g_tbl->prtstr);
     kxf->repairInstruction = KERNELIFY(kxf->repairInstruction);
-    
-    // move global configuration to static address in user space so that reboot and CFW modules can find it
-    if (ark_config != ark_conf_backup) memcpy(ark_conf_backup, ark_config, sizeof(ARKConfig));
-    
-    ark_config = ark_conf_backup;
     
     PRTSTR("Scanning kernel functions");
     // get kernel functions

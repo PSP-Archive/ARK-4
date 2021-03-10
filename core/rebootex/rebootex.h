@@ -3,6 +3,9 @@
 
 #include "rebootconfig.h"
 
+extern RebootBufferConfiguration* reboot_conf;
+extern ARKConfig* ark_config;
+
 // Original Sony functions
 extern int (* sceReboot)(int, int, int, int);
 extern void (* sceRebootIcacheInvalidateAll)(void);

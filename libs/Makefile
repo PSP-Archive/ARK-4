@@ -17,6 +17,7 @@ distclean clean:
 	$(Q)make $@ -C libjpeg $(OPT)
 	$(Q)make $@ -C libpspvram $(OPT)
 	$(Q)make $@ -C libya2d $(OPT)
+	$(Q)make $@ -C psid $(OPT)
 	$(Q)make $@ -C libintraFont $(OPT)
 	$(Q)rm -rf *.a *~ | true
 

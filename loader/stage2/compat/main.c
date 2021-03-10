@@ -23,18 +23,16 @@
 
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
-#define EXPLOIT_ID "Live"
-#define ARK_PATH "ms0:/PSP/SAVEDATA/ARK_01234/"
-#define BIN_PATH ARK_PATH "ARK4.BIN"
 
 static ARKConfig conf = {
-    .arkpath = ARK_PATH,
+    .magic = ARK_CONFIG_MAGIC,
+    .arkpath = DEFAULT_ARK_PATH,
     .exec_mode = PS_VITA,
-    .exploit_id = EXPLOIT_ID,
+    .exploit_id = LIVE_EXPLOIT_ID,
     .kxploit = {0},
 };
 
-static FunctionTable tbl = {.config=&conf};
+static FunctionTable tbl;
 
 void memset(u8* start, u8 data, u32 size){
     u32 i = 0;
@@ -69,7 +67,10 @@ int _start(char* savepath)
     tbl.DisplaySetFrameBuf = (void*)FindImportUserRam("sceDisplay", 0x289D82FE);
     tbl.KernelLibcTime = (void*)FindImportUserRam("UtilsForUser", 0x27CC57F0);
     
-    int fd = tbl.IoOpen(BIN_PATH, PSP_O_RDONLY, 0);
+    char binpath[ARK_PATH_SIZE];
+    strcpy(binpath, conf.arkpath);
+    strcat(binpath, ARK4_BIN);
+    int fd = tbl.IoOpen(binpath, PSP_O_RDONLY, 0);
     tbl.IoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
     tbl.IoClose(fd);
     

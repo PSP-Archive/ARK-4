@@ -17,6 +17,9 @@
 
 #include "rebootex.h"
 
+RebootBufferConfiguration* reboot_conf = (RebootBufferConfiguration*)REBOOTEX_CONFIG;
+ARKConfig* ark_config = (ARKConfig*)ARK_CONFIG;
+
 // sceReboot Main Function
 int (* sceReboot)(int, int, int, int) = (void *)(REBOOT_TEXT);
 
@@ -33,10 +36,6 @@ int (* origCheckExecFile)(unsigned char * addr, void * arg2) = NULL;
 // UnpackBootConfig
 int (* UnpackBootConfig)(char * buffer, int length) = NULL;
 
-// LfatOpen
-void* origLfatOpen = NULL;
-
-//
 // PRO GZIP Decrypt Support
 int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
 {
@@ -124,48 +123,41 @@ void flushCache(void)
     sceRebootIcacheInvalidateAll();
 }
 
-void findRebootFunctions(u32 reboot_start, u32 reboot_end){
+u32 findRebootFunctions(u32 reboot_start){
     register void (* Icache)(void) = NULL;
     register void (* Dcache)(void) = NULL;
-    int wanted = 3; // lfatopen not needed for psp, UnpackBootConfig not needed for vita
+    u32 reboot_end = 0;
     // find functions
-    for (u32 addr = reboot_start; addr<reboot_end && wanted; addr+=4){
+    for (u32 addr = reboot_start; ; addr+=4){
         u32 data = _lw(addr);
         if (data == 0xBD01FFC0){ // works on PSP and Vita
             u32 a = addr;
             do {a-=4;} while (_lw(a) != 0x40088000);
             Dcache = (void*)a;
-            wanted--;
         }
         else if (data == 0xBD14FFC0){ // works on PSP and Vita
             u32 a = addr;
             do {a-=4;} while (_lw(a) != 0x40088000);
             Icache = (void*)a;
-            wanted--;
         }
-        else if (data == 0x3A230001){ // only appears inside lFatOpen on Vita
+        else if (data == 0x3A230001){
             u32 a = addr;
             do {a-=4;} while (_lw(a) != 0x27BDFFF0);
             pspemuLfatOpen = (void*)a;
-            wanted--;
         }
-        else if (data == 0x3466507E){ // only appears inside UnpackBootConfig on psp
+        else if (data == 0x3466507E){
             UnpackBootConfig = addr-12;
-            wanted--;
+        }
+        else if (strcmp("ApplyPspRelSection", (char*)addr) == 0){
+            reboot_end = (addr & -0x4); // found end of reboot buffer
+            break;
         }
     }
     sceRebootIcacheInvalidateAll = Icache;
     sceRebootDacheWritebackInvalidateAll = Dcache;
     Icache();
     Dcache();
-    
-}
-
-// more or less get the end of reboot.prx
-u32 getRebootEnd(){
-    u32 addr = REBOOT_TEXT;
-    while (strcmp("ApplyPspRelSection", (char*)addr)) addr++;
-    return (addr & -0x4);
+    return reboot_end;
 }
 
 // Entry Point
@@ -173,17 +165,16 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4) __attribute__((section(".
 int _arkReboot(int arg1, int arg2, int arg3, int arg4)
 {
 
-    // NOTE: ARKConfig must be properly setup in user ram for reboot to function
-
-    // TODO Parse Reboot Buffer Configuration (what to configure yet? lol)
-    
     u32 reboot_start = REBOOT_TEXT;
-    u32 reboot_end = getRebootEnd();
-    findRebootFunctions(reboot_start, reboot_end); // scan for reboot functions
+    u32 reboot_end = findRebootFunctions(reboot_start); // scan for reboot functions
     
     // patch reboot buffer
-    if (IS_PSP(ark_conf_backup->exec_mode)) patchRebootBufferPSP(reboot_start, reboot_end);
-    else patchRebootBufferVita(reboot_start, reboot_end);
+    if (ark_config->magic == ARK_CONFIG_MAGIC){
+        if (IS_PSP(ark_config)) patchRebootBufferPSP(reboot_start, reboot_end);
+        else if (IS_VITA(ark_config)) patchRebootBufferVita(reboot_start, reboot_end);
+        else colorDebug(0xff); // unknown device (?), don't touch it
+    }
+    else colorDebug(0xff); // incorrect configuration
     
     // Flush Cache
     flushCache();

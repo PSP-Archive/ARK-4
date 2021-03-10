@@ -1,5 +1,12 @@
 ARK-4
 
+Update 8.4:
+- Some code cleanup regarding rebootex and loaders.
+- Added built-in popsloader to run other versions of POPS installed on ARK's savedata folder.
+---- PSPVMC.PRX will replace flash0:/vsh/module/libpspvmc.prx
+---- POPSMAN.PRX will replace flash0:/kd/popsman.prx
+---- POPS.PRX will replace flash0:/kd/pops_0Xg.prx
+
 Update 8.3:
 - Fixed PSN eboots launched from custom menu.
 - Removed Galaxy ISO Driver from the core CFW (was not used).
