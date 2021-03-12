@@ -8,13 +8,14 @@ SPU_OBJS = \
 	psxspu/xa.o \
 	psxspu/nullsnd.o \
 
-C_OBJS =   \
-	main.o  \
+C_OBJS =    \
+	main.o   \
 	vitamem.o \
-	syspatch.o \
-	vitaflash.o \
-	popspatch.o  \
-	filesystem.o  \
+	iopatch.o  \
+	syspatch.o  \
+	vitaflash.o  \
+	popspatch.o   \
+	filesystem.o   \
 	$(PROVITA)/common/functions.o \
 	$(PROVITA)/core/systemctrl/src/dummy.o \
 	$(PROVITA)/core/systemctrl/src/exitgame.o \
@@ -40,7 +41,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(PROVITA)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lcolordebugger -lgraphics -lpspsystemctrl_kernel -lansic
+LIBS = -lpspsemaphore -lgraphics -lcolordebugger -lpspsystemctrl_kernel -lansic
 
 PSP_FW_VERSION = 660
 

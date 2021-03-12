@@ -56,7 +56,6 @@ int module_start(SceSize args, void * argp)
     SceModule2* modman = patchModuleManager();
     SceModule2* intrman = patchInterruptMan();
     SceModule2* memlmd = patchMemlmd();
-    SceModule2* ioman = patchFileIO();
     
     // setup NID resolver on loadercore
     setupNidResolver(loadcore);

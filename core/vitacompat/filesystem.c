@@ -95,10 +95,16 @@ int (* sceIoMsOpen)(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
 
 // "ms" Driver Reference
 PspIoDrvArg * ms_driver = NULL;
+PspIoDrvArg * flash_driver = NULL;
 
 void initFileSystem(){
     // Create Semaphore
     dreadSema = sceKernelCreateSema("sceIoDreadSema", 0, 1, 1, NULL);
+    // patch Driver
+    u32 IOAddDrv = FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
+    u32 AddDrv = findRefInGlobals("IoFileMgrForKernel", IOAddDrv, IOAddDrv);
+    // Hooking sceIoAddDrv
+    _sw((unsigned int)sceIoAddDrvHook, AddDrv);
 }
 
 u32 UnprotectAddress(u32 addr){
@@ -169,60 +175,6 @@ int sceIoFlashWriteHook(SceUID fd, void* data, SceSize size){
     return sceIoWriteHookCommon(fd, data, size, sceIoFlashWrite_);
 }
 
-u32 backup[2], ioctl;
-int patchioctl(SceUID a0, u32 a1, void *a2, int a3, void *t0, int t1)
-{
-    _sw(backup[0], ioctl);
-    _sw(backup[1], ioctl + 4);
-
-    sceKernelDcacheWritebackInvalidateRange((void *)ioctl, 8);
-    sceKernelIcacheInvalidateRange((void *)ioctl, 8);
-
-    int ret = sceIoIoctl(a0, a1, a2, a3, t0, t1);
-
-    _sw((((u32)&patchioctl >> 2) & 0x03FFFFFF) | 0x08000000, ioctl);
-    _sw(0, ioctl + 4);
-
-    sceKernelDcacheWritebackInvalidateRange((void *)ioctl, 8);
-    sceKernelIcacheInvalidateRange((void *)ioctl, 8);
-
-    if (ret < 0 && ((a1 & 0x208000) == 0x208000))
-        return 0;
-
-    return ret;
-}
-
-// sceIOFileManager Patch
-void patchFileManager(void)
-{
-    // Find Module
-    SceModule2 * mod = (SceModule2 *)sceKernelFindModuleByName("sceIOFileManager");
-    
-    u32 IOAddDrv = FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
-    
-    u32 AddDrv = findRefInGlobals("IoFileMgrForKernel", IOAddDrv, IOAddDrv);
-
-    // Hooking sceIoAddDrv
-    _sw((unsigned int)sceIoAddDrvHook, AddDrv);
-    
-    // redirect ioctl to patched
-    u32 topaddr = mod->text_addr+mod->text_size;
-    for (u32 addr=mod->text_addr; addr<topaddr; addr+=4){
-        u32 data = _lw(addr);
-        if (data == 0x00005021){
-            ioctl = addr-12;
-            break;
-        }
-    }
-    backup[0] = _lw(ioctl);
-    backup[1] = _lw(ioctl + 4);
-    _sw(JUMP(patchioctl), ioctl);
-    _sw(0, ioctl+4);
-
-    // Flush Cache
-    flushCache();
-}
-
 void patchFileSystemDirSyscall(void)
 {
     if (sceKernelInitApitype() != 0x141)
@@ -272,25 +224,7 @@ int sceIoMkdirHook(char *dir, SceMode mode)
 
     u32 k1 = pspSdkSetK1(0);
     
-    /*
-    char lower[15];
-    lowerString(dir, lower, 15);
-    int needsPatch = (strncmp(lower, "ms0:/psp/game/", 14)==0);
-    char bak[4];
-    if (needsPatch){
-        sceIoMkdir("ms0:/PSP/APPS", 0777);
-        memcpy(bak, &dir[9], 4);
-        memcpy(&dir[9], "APPS", 4);
-    }
-    */
-    
     int ret = sceIoMkdir(dir, mode);
-    
-    /*
-    if (needsPatch){
-        memcpy(&dir[9], bak, 4);
-    }
-    */
     
     pspSdkSetK1(k1);
     
@@ -300,7 +234,6 @@ int sceIoMkdirHook(char *dir, SceMode mode)
 // sceIoAddDrv Hook
 int sceIoAddDrvHook(PspIoDrv * driver)
 {
-    /*
     // "flash" Driver
     if (strcmp(driver->name, "flash") == 0) {
         // Hook IoOpen Function
@@ -317,7 +250,8 @@ int sceIoAddDrvHook(PspIoDrv * driver)
         driver->funcs->IoWrite = sceIoFlashWriteHook;
         
     }
-    else*/ if(strcmp(driver->name, "ms") == 0) { // "ms" Driver
+    // "ms" Driver
+    else if(strcmp(driver->name, "ms") == 0) {
         // Hook IoOpen Function
         sceIoMsOpen = driver->funcs->IoOpen;
         driver->funcs->IoOpen = sceIoMsOpenHook;
@@ -336,6 +270,7 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 // "flash" Driver IoOpen Hook
 int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
 {
+    flash_driver = arg->drv;
     // flash0 File Access Attempt
     if (arg->fs_num == 0) {
         // File Path Buffer
@@ -343,9 +278,6 @@ int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mo
         
         // Create "ms" File Path (links to flash0 folder on ms0)
         sprintf(msfile, "/flash0%s", file);
-        
-        // Backup "flash" Filesystem Driver
-        PspIoDrvArg * backup = arg->drv;
         
         // Exchange Filesystem Driver for "ms"
         arg->drv = ms_driver;
@@ -358,7 +290,7 @@ int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mo
             return fd;
         
         // Restore Filesystem Driver to "flash"
-        arg->drv = backup;
+        arg->drv = flash_driver;
     }
     
     // Forward Call
@@ -379,15 +311,6 @@ int sceIoMsOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
         if (occurence != NULL) {
             occurence[1] = 'V';
         }
-        /*
-        // trying to write file to ms0:/PSP/GAME -> redirect to ms0:/PSP/APPS/
-        char lower[15];
-        lowerString(file, lower, 15);
-        if (strncmp(lower, "ms0:/psp/game/", 13)==0){
-            sceIoMkdir("ms0:/PSP/APPS", 0777);
-            memcpy(&file[9], "APPS", 4);
-        }
-        */
     }
     
     // Forward Call

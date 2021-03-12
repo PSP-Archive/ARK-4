@@ -21,15 +21,15 @@
 #include <pspiofilemgr.h>
 #include <pspiofilemgr_kernel.h>
 
-void initFileSystem();
-
 // sceIOFileManager Patch
-void patchFileManager(void);
+void initFileSystem();
 
 // Directory IO Patch for PSP-like Behaviour
 void patchFileManagerImports(SceModule2 * mod);
-
 void patchFileSystemDirSyscall(void);
+
+// FileIO patch
+extern SceModule2* patchFileIO();
 
 #endif
 

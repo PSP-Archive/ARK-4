@@ -3,7 +3,7 @@ TARGET = popcorn
 OBJS = main.o icon.o
 
 all: $(TARGET).prx
-INCDIR = $(PROVITA)/common/include
+INCDIR = $(PROVITA)/common/include $(PROVITA)/libs/graphics
 CFLAGS = -Os -G0 -Wall -fno-pic
 
 ifdef DEBUG
@@ -23,7 +23,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(PROVITA)/libs
 LDFLAGS = -nostartfiles
-LIBS = -lpsid -lpspsystemctrl_kernel -lpspsemaphore -lpsprtc -lpspaudio -lcolordebugger
+LIBS = -lpsid -lpspsystemctrl_kernel -lpspsemaphore -lpsprtc -lpspaudio -lgraphics -lcolordebugger
 
 include $(PROVITA)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)

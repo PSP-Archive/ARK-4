@@ -49,19 +49,12 @@ void flushCache()
 int module_start(SceSize args, void * argp)
 {
 
-    // ask iso driver load fake.cso when no iso available
-    char* umdfile = GetUmdFile();
-    if(umdfile[0] == '\0')
-    {
-        SetUmdFile("flash0:/fake.cso");
-    }
-
     // copy configuration
     sctrlHENGetArkConfig(ark_config);
     
     // filesystem patches
     initFileSystem();
-    patchFileManager();
+    SceModule2* ioman = patchFileIO();
     
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);

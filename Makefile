@@ -16,8 +16,8 @@ copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PB
 #	Common installation
 	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
 	$(Q)cp loader/kxploit/psp660/k.bin dist/ARK_Live/K.BIN # Kernel exploit for PSP
-	$(Q)cp loader/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
-	$(Q)cp loader/vitabubble/SAVEPATH.TXT dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
+	$(Q)cp loader/stage1/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
+	$(Q)cp loader/stage1/vitabubble/SAVEPATH.TXT dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
 	$(Q)cp loader/stage2/compat/ark.bin dist/ARK_01234/ARK.BIN # ARK-2 chainloader
 	$(Q)cp loader/stage2/live/ark.bin dist/ARK_01234/ARK4.BIN # ARK-4 loader
@@ -34,7 +34,6 @@ encrypt-prx: \
 	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtnnf.bin dist/PSVBTNNF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
-	$(Q)cp contrib/PSP/fake.cso dist/FAKECSO.BIN
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
 
 

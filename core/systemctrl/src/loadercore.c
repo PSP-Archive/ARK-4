@@ -180,42 +180,41 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
 {
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
+    int result = -1;
+
     // Custom Handler registered
     if(customStartModule != NULL)
     {
         // Forward to Handler
-        int result = customStartModule(modid, argsize, argp, modstatus, opt);
-        
-        // Positive Result
-        if(result >= 0) return result;
-    }
-    
-    // Plugins not yet loaded
-    if(!pluginLoaded)
-    {
-        // sceKernelLibrary not yet loaded... too early to load plugins.
-        if(strcmp(mod->modname, "sceKernelLibrary") == 0)
-        {
-            // Load Plugins
-            LoadPlugins();
-            
-            // Remember it
-            pluginLoaded = 1;
-        }
+        result = customStartModule(modid, argsize, argp, modstatus, opt);
     }
 
-    // Passthrough
-    int res = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
+    if(result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
+
     /*
     {
         if (DisplaySetFrameBuf){
             initScreen(DisplaySetFrameBuf);
             PRTSTR1("Starting module %s", mod->modname);
-            PRTSTR1("ModuleStart result: %p", res);
+            PRTSTR1("ModuleStart result: %p", result);
         }
     }
     */
-    return res;
+    
+    // Plugins not yet loaded
+    if(!pluginLoaded)
+    {
+        // MediaSync not yet loaded... too early to load plugins.
+        if(strcmp(mod->modname, "sceMediaSync") == 0)
+        {
+            // Load Plugins
+            LoadPlugins();
+            // Remember it
+            pluginLoaded = 1;
+        }
+    }
+
+    return result;
 }
 
 // sceKernelStartModule Hook

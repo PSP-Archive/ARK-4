@@ -1,5 +1,10 @@
 ARK-4
 
+Update 8.5:
+- Fixed issue when launching recovery menu from custom launcher on PSP Go causing plugins to be duplicated.
+- Fixed heap memory consumption of recovery menu and custom launcher.
+- Moved popsloader code back to Vita compat layer.
+
 Update 8.4:
 - Some code cleanup regarding rebootex and loaders.
 - Added built-in popsloader to run other versions of POPS installed on ARK's savedata folder.

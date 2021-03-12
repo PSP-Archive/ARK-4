@@ -89,7 +89,10 @@ void Entry::executeHomebrew(){
     
     memset(&param, 0, sizeof(param));
     
-    int runlevel = (this->path[0]=='e' && this->path[1]=='f')? HOMEBREW_RUNLEVEL_GO : HOMEBREW_RUNLEVEL;
+    int runlevel = (
+        this->path[0]=='e' && this->path[1]=='f'
+        && this->name != "Recovery Menu"
+    )? HOMEBREW_RUNLEVEL_GO : HOMEBREW_RUNLEVEL;
     
     param.args = strlen(this->path.c_str()) + 1;
     param.argp = (char*)this->path.c_str();

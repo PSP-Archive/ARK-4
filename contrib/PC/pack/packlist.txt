@@ -1,7 +1,6 @@
 psvbtinf.bin,dist/PSVBTINF.BIN
 psvbtnnf.bin,dist/PSVBTNNF.BIN
 psvbtxnf.bin,dist/PSVBTXNF.BIN
-/fake.cso,dist/FAKECSO.BIN
 /kd/ark_systemctrl.prx,dist/SYSCTRL.BIN
 /kd/ark_vitacompat.prx,dist/VITACOMP.BIN
 /kd/ark_vitapops.prx,dist/VITAPOPS.BIN

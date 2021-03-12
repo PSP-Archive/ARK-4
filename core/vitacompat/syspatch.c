@@ -22,6 +22,8 @@ KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDelayThread = &sceKernelDelayThread,
 };
 
+int (* DisplaySetFrameBuf)(void*, int, int, int);
+
 // Return Game Product ID of currently running Game
 int sctrlARKGetGameID(char gameid[GAME_ID_MINIMUM_BUFFER_SIZE])
 {
@@ -102,6 +104,13 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     
     patchGameInfoGetter(mod);
     
+    if(strcmp(mod->modname, "sceDisplay_Service") == 0)
+    {
+        // can use screen now
+        DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
+        goto flush;
+    }
+    
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
         // Patch sceKernelExitGame Syscalls
@@ -118,7 +127,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
-    if (strcmp(mod->modname, "PopcornManager") == 0){
+    if (strcmp(mod->modname, "scePops_Manager")==0){
+        // Patch Vita Popsman to load our own pops module
         patchVitaPopsman(mod);
         goto flush;
     }
@@ -146,7 +156,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             // Allow exiting through key combo
             patchExitGame();
             // Initialize Memory Stick Speedup Cache
-            if (use_mscache) msstorCacheInit("ms", 8 * 1024);
+            if (use_mscache) msstorCacheInit("ms", 16 * 1024);
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
             // Boot Complete Action done
