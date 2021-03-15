@@ -2,7 +2,7 @@ TARGET = ARKRECOVERY
 CFLAGS = -O2 -G0 -Wall -Wno-unused -Wno-write-strings -Wno-sign-compare
 CXXFLAGS = $(CFLAGS) -fexceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
-INCDIR = ../arkMenu/include ../arkMenu/include/anim ../arkMenu/graphics ../arkMenu/graphics/ya2d ../arkMenu/graphics/intraFont ../arkMenu/graphics/jpeg $(PROVITA)/common/include
+INCDIR = ../arkMenu/include ../arkMenu/include/anim $(PROVITA)/libs/libya2d $(PROVITA)/libs/libintraFont $(PROVITA)/libs/libjpeg $(PROVITA)/common/include
 LIBDIR = $(PROVITA)/libs
 LIBS = -lstdc++ -lc -lya2d -lintraFont -ljpeg -lpng -lpspvfpu -lpspmpeg -lpspaudio -lpspatrac3 -lpspwlan -lpsppower -lpspgum -lpspgu -lz -lm -lpspvram -lpspmath -lpspmp3 -lpspsystemctrl_user
 LDFLAGS =
@@ -20,7 +20,7 @@ OBJS = \
 		../arkMenu/src/controller.o \
 		../arkMenu/src/ya2d++.o \
 		../arkMenu/src/mp3.o \
-		../arkMenu/src/vshmenu.o \
+		../arkMenu/src/settingsmenu.o \
 		../arkMenu/src/optionsMenu.o \
 		../arkMenu/src/anim/anim.o \
 		../arkMenu/src/anim/pixel.o \

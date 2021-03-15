@@ -2,7 +2,7 @@ TARGET = ARKMENU
 CFLAGS = -Os -G0 -Wall -Wno-unused -Wno-write-strings -Wno-sign-compare
 CXXFLAGS = $(CFLAGS) -fexceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
-INCDIR = include include/anim src/pmf ftp graphics graphics/ya2d graphics/intraFont graphics/jpeg $(PROVITA)/common/include
+INCDIR = include include/anim include/pmf $(PROVITA)/libs/libya2d $(PROVITA)/libs/libintraFont $(PROVITA)/libs/libjpeg $(PROVITA)/common/include
 LIBDIR = $(PROVITA)/libs
 LIBS = -lunziprar -lstdc++ -lc -lya2d -lintraFont -ljpeg -lpng -lpspvfpu -lpspmpeg -lpspaudio -lpspatrac3 -lpsppower -lpspgum -lpspgu -lz -lm -lpspvram -lpspmath -lpspumd -lpspmp3 -lpspsystemctrl_user
 LDFLAGS =
@@ -29,7 +29,7 @@ OBJS = \
 		src/zip.o \
 		src/browser.o \
 		src/osk.o \
-		src/vshmenu.o \
+		src/settingsmenu.o \
 		src/optionsMenu.o \
 		src/anim/anim.o \
 		src/anim/pixel.o \

@@ -138,14 +138,14 @@ static struct {
     ARK_OPTIONS
 };
 
-vsh_entry* ark_conf_entries[] = {
-    (vsh_entry*)&usbcharge,
-    (vsh_entry*)&overclock,
-    (vsh_entry*)&powersave,
-    (vsh_entry*)&launcher,
-    (vsh_entry*)&disablepause,
-    (vsh_entry*)&highmem,
-    (vsh_entry*)&mscache,
+settings_entry* ark_conf_entries[] = {
+    (settings_entry*)&usbcharge,
+    (settings_entry*)&overclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&launcher,
+    (settings_entry*)&disablepause,
+    (settings_entry*)&highmem,
+    (settings_entry*)&mscache,
 };
 
 #define MAX_ARK_CONF 7

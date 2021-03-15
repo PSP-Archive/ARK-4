@@ -1,5 +1,3 @@
-/* DO NOT INCLUDE THIS FILE ANYWHERE OTHER THAN vshmenu.cpp ! */
-
 /* structure defining a common entry layout */
 
 /* Fastboot entry */
@@ -111,13 +109,13 @@ static struct {
     {"Default", "Waves", "Sprites", "Fire", "Tetris", "Matrix", "None"}
 };
 
-vsh_entry* vsh_entries[] = {
-    (vsh_entry*)&fast_gameboot,
-    (vsh_entry*)&language,
-    (vsh_entry*)&font,
-    (vsh_entry*)&scan_save,
-    (vsh_entry*)&swap_buttons,
-    (vsh_entry*)&animations,
+settings_entry* settings_entries[] = {
+    (settings_entry*)&fast_gameboot,
+    (settings_entry*)&language,
+    (settings_entry*)&font,
+    (settings_entry*)&scan_save,
+    (settings_entry*)&swap_buttons,
+    (settings_entry*)&animations,
 };
 
-#define MAX_VSH_OPTIONS 6
+#define MAX_SETTINGS_OPTIONS 6

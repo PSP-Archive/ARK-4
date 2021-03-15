@@ -10,14 +10,14 @@
 #include "system_mgr.h"
 #include "gamemgr.h"
 #include "browser.h"
-#include "vshmenu.h"
+#include "settingsmenu.h"
 #include "ark_settings.h"
 #include "ark_plugins.h"
 #include "exit_mgr.h"
 
 PSP_MODULE_INFO("ARKMENU", 0, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);
-PSP_HEAP_SIZE_KB(10*1024);
+PSP_HEAP_SIZE_KB(7*1024);
 
 using namespace std;
 
@@ -35,7 +35,7 @@ int main(int argc, char** argv){
 
         // Add ARK settings manager
         loadSettings();
-        VSHMenu* settings_menu = new VSHMenu(ark_conf_entries, MAX_ARK_CONF, saveSettings);
+        SettingsMenu* settings_menu = new SettingsMenu(ark_conf_entries, MAX_ARK_CONF, saveSettings);
         settings_menu->setName("Settings");
         settings_menu->setInfo("ARK Settings");
         settings_menu->readConf();
@@ -43,7 +43,7 @@ int main(int argc, char** argv){
 
         // Add ARK plugins manager
         loadPlugins();
-        VSHMenu* plugins_menu = new VSHMenu(ark_plugin_entries, ark_plugins_count, savePlugins);
+        SettingsMenu* plugins_menu = new SettingsMenu(ark_plugin_entries, ark_plugins_count, savePlugins);
         plugins_menu->setName("Plugins");
         plugins_menu->setInfo("ARK Plugins");
         entries[1] = plugins_menu;

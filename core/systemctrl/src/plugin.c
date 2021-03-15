@@ -301,8 +301,17 @@ void ProcessConfigFile(char* path, void (*handler)(char*))
     }
 }
 
+static int isRecoveryMode(){
+    if (ark_config->recovery) return 1;
+    // check if launching recovery menu
+    static char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, ARK_RECOVERY);
+    return (strcmp(path, sceKernelInitFileName())==0);
+}
+
 void LoadPlugins(){
-    if (ark_config->recovery)
+    if (isRecoveryMode())
         return; // don't load plugins in recovery mode
     // Open Plugin Config from ARK's installation folder
     char path[ARK_PATH_SIZE];
@@ -315,7 +324,7 @@ void LoadPlugins(){
 }
 
 void loadSettings(void* settingsHandler){
-    if (ark_config->recovery)
+    if (isRecoveryMode())
         return; // don't load settings in recovery mode
     // process settings file
     char path[ARK_PATH_SIZE];

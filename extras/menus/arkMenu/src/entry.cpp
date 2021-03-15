@@ -89,10 +89,10 @@ void Entry::executeHomebrew(){
     
     memset(&param, 0, sizeof(param));
     
-    int runlevel = (
-        this->path[0]=='e' && this->path[1]=='f'
-        && this->name != "Recovery Menu"
-    )? HOMEBREW_RUNLEVEL_GO : HOMEBREW_RUNLEVEL;
+    int runlevel;
+    if (this->name == "Recovery Menu") runlevel = RECOVERY_RUNLEVEL;
+    else if (this->path[0]=='e') runlevel = HOMEBREW_RUNLEVEL_GO;
+    else runlevel = HOMEBREW_RUNLEVEL;
     
     param.args = strlen(this->path.c_str()) + 1;
     param.argp = (char*)this->path.c_str();
@@ -105,7 +105,7 @@ void Entry::executePSN(){
     
     memset(&param, 0, sizeof(param));
     
-    int runlevel = (this->path[0]=='e' && this->path[1]=='f')? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
+    int runlevel = (this->path[0]=='e')? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
 
     param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
     param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";

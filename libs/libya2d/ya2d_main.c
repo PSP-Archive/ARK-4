@@ -81,6 +81,8 @@ int ya2d_init()
     
     sceDisplayWaitVblankStart();
     sceGuDisplay(GU_TRUE);
+    
+    sceDisplaySetFrameBuf(_ya2d_drawfbp, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
         
     _ya2d_inited = 1;
     return 1;

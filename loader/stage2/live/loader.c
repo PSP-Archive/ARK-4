@@ -66,7 +66,7 @@ void loadKernelArk(){
     k_tbl->KernelDcacheWritebackInvalidateAll();
     k_tbl->KernelIcacheInvalidateAll();
     
-    if (IS_VITA(ark_config)){
+    if (ark_config->recovery || IS_VITA(ark_config)){
         // Prepare Homebrew Reboot
         char menupath[ARK_PATH_SIZE];
         strcpy(menupath, ark_config->arkpath);

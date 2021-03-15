@@ -3,9 +3,6 @@
 
 #include "system_mgr.h"
 #include "common.h"
-#include "gamemgr.h"
-#include "browser.h"
-#include "vshmenu.h"
 #include "controller.h"
 
 static SceUID draw_thread = -1;

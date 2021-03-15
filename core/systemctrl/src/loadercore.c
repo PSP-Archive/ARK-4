@@ -201,17 +201,13 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     }
     */
     
-    // Plugins not yet loaded
-    if(!pluginLoaded)
+    // MediaSync not yet loaded... too early to load plugins.
+    if(!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
     {
-        // MediaSync not yet loaded... too early to load plugins.
-        if(strcmp(mod->modname, "sceMediaSync") == 0)
-        {
-            // Load Plugins
-            LoadPlugins();
-            // Remember it
-            pluginLoaded = 1;
-        }
+        // Load Plugins
+        LoadPlugins();
+        // Remember it
+        pluginLoaded = 1;
     }
 
     return result;

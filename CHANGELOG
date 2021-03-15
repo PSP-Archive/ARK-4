@@ -1,5 +1,11 @@
 ARK-4
 
+Update 8.6:
+- Small fix to recovery menu causing files to be written twice.
+- Force recovery mode when launching recovery menu (disables plugins and settings).
+- Fixed screen issues in libya2d.
+- Added scrolling to plugins menu for users with many plugins installed.
+
 Update 8.5:
 - Fixed issue when launching recovery menu from custom launcher on PSP Go causing plugins to be duplicated.
 - Fixed heap memory consumption of recovery menu and custom launcher.

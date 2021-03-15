@@ -38,6 +38,8 @@ void * reboot_backup = NULL;
 // Reboot Buffer Configuration
 RebootBufferConfiguration reboot_config;
 
+int recovery_launch = 0;
+
 // Reboot ISO Path
 char reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
 
@@ -88,7 +90,7 @@ void restoreRebootBuffer(void)
     memcpy((void *)REBOOTEX_CONFIG, &reboot_config, sizeof(reboot_config));
     
     // Restore ARK Config
-    ark_config->recovery = 0; // reset recovery mode for next reboot
+    ark_config->recovery = recovery_launch; // reset recovery mode for next reboot
     memcpy(ARK_CONFIG, ark_config, sizeof(ARKConfig));
     
     // Restore Reboot ISO Path

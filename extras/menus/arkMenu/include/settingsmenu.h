@@ -1,5 +1,5 @@
-#ifndef VSHMENU_H
-#define VSHMENU_H
+#ifndef SETTINGS_MENU_H
+#define SETTINGS_MENU_H
 
 #include "common.h"
 #include "entry.h"
@@ -11,22 +11,22 @@ typedef struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[];
-} vsh_entry;
+} settings_entry;
 
-class VSHMenu : public SystemEntry{
+class SettingsMenu : public SystemEntry{
 
     private:
     
         int animation;
         int w, h, x, y;
-        int index;
+        int index, start;
         
         string* customText;
         int ntext;
         
         bool changed;
         
-        vsh_entry** vsh_entries;
+        settings_entry** settings_entries;
         int max_options;
         int max_height;
         
@@ -37,8 +37,8 @@ class VSHMenu : public SystemEntry{
         
     public:
     
-        VSHMenu(vsh_entry**, int, void (*callback)());
-        ~VSHMenu();
+        SettingsMenu(settings_entry**, int, void (*callback)());
+        ~SettingsMenu();
     
         void setCustomText(string text[], int n);
         void unsetCustomText();

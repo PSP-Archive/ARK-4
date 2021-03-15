@@ -21,6 +21,7 @@
 #define ISO_RUNLEVEL_GO 0x125
 #define POPS_RUNLEVEL 0x144
 #define POPS_RUNLEVEL_GO 0x155
+#define RECOVERY_RUNLEVEL 0x141
 
 int loadIconThread(SceSize _args, void *_argp);
 

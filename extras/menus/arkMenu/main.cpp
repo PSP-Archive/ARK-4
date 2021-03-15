@@ -5,8 +5,8 @@
 #include "system_mgr.h"
 #include "gamemgr.h"
 #include "browser.h"
-#include "vshmenu.h"
-#include "vshmenu_entries.h"
+#include "settingsmenu.h"
+#include "settings_entries.h"
 
 PSP_MODULE_INFO("ARKMENU", 0, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);
@@ -26,7 +26,7 @@ int main(int argc, char** argv){
 
         common::loadData(argc, argv);
 
-        entries[2] = new VSHMenu(vsh_entries, MAX_VSH_OPTIONS, common::saveConf);
+        entries[2] = new SettingsMenu(settings_entries, MAX_SETTINGS_OPTIONS, common::saveConf);
         entries[1] = new Browser();
         entries[0] = new GameManager();
         
