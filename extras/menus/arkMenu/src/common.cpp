@@ -240,29 +240,13 @@ u32 common::getMagic(const char* filename, unsigned int offset){
 
 void common::loadData(int ac, char** av){
 
-    animations[0] = new PixelAnim();
-    animations[1] = new Waves();
-    animations[2] = new Sprites();
-    animations[3] = new Fire();
-    animations[4] = new Tetris();
-    animations[5] = new Matrix();
-    animations[6] = new NoAnim();
-
     argc = ac;
     argv = av;
 
-    loadConfig();
-    
-    if (!fileExists(fonts[config.font]))
-        config.font = 1;
-    font = intraFontLoad(fonts[config.font], INTRAFONT_CACHE_ALL);
-    
-    currentFont = config.font;
-    
     images[IMAGE_BG] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
     
     common::clearScreen(CLEAR_COLOR);
-    common::drawScreen();
+    images[IMAGE_BG]->draw(0, 0);
     common::flipScreen();
     
     images[IMAGE_SPRITE] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
@@ -283,6 +267,22 @@ void common::loadData(int ac, char** av){
     unsigned mp3_size;
     void* mp3_buffer = readFromPKG("SOUND.MP3", &mp3_size);
     sound_mp3 = new MP3(mp3_buffer, mp3_size);
+    
+    animations[0] = new PixelAnim();
+    animations[1] = new Waves();
+    animations[2] = new Sprites();
+    animations[3] = new Fire();
+    animations[4] = new Tetris();
+    animations[5] = new Matrix();
+    animations[6] = new NoAnim();
+    
+    loadConfig();
+    
+    if (!fileExists(fonts[config.font]))
+        config.font = 1;
+    font = intraFontLoad(fonts[config.font], INTRAFONT_CACHE_ALL);
+    
+    currentFont = config.font;
 }
 
 void common::deleteData(){
