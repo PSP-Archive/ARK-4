@@ -1,42 +1,49 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import os
+import sys
 
-IMAGE_DIRECTORY = "resources/"
-DEST_FILE = "DATA.PKG"
+SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
+THEMES_DIR = os.path.join(SCRIPT_DIR, 'themes')
+THEMES = os.listdir(THEMES_DIR)
 
-def int2bin(number):
+
+def int2bytes(number):
     hex = '%08X' %(number)
-    return chr(int('0x' + hex[6:8], 16)) + chr(int('0x' + hex[4:6], 16)) + chr(int('0x' + hex[2:4], 16)) + chr(int('0x' + hex[0:2], 16))
 
-dir = os.listdir(IMAGE_DIRECTORY)
-dir.sort()
+    A = int('0x' + hex[6:8], 16).to_bytes(1, 'little')
+    B = int('0x' + hex[4:6], 16).to_bytes(1, 'little')
+    C = int('0x' + hex[2:4], 16).to_bytes(1, 'little')
+    D = int('0x' + hex[0:2], 16).to_bytes(1, 'little')
 
-track = []
+    return A + B + C + D
 
-pkg = open(DEST_FILE, 'wb')
-pkg.close()
+for theme in THEMES:
+    print("Theme: {}".format(theme))
 
-pkg = open(DEST_FILE, 'w+')
+    THEME_DIR = os.path.join(THEMES_DIR, theme)
+    RES_DIR = os.path.join(THEME_DIR, 'resources')
+    dir = os.listdir(RES_DIR)
+    dir.sort()
 
-for i in xrange(len(dir)):
-    if os.path.isfile(IMAGE_DIRECTORY+dir[i]) and dir[i] != DEST_FILE:
-        track.append(pkg.tell())
-        pkg.write(int2bin(0) + int2bin(len(dir[i])))
-        pkg.write(dir[i]+"\0")
+    DEST_FILE = os.path.join(THEME_DIR, "DATA.PKG")
 
-pkg.write(int2bin(0xFFFFFFFF))
+    track = []
+    with open(DEST_FILE, 'wb+') as pkg:
+        for item in dir:
+            track.append(pkg.tell())
+            pkg.write(int2bytes(0) + int2bytes(len(item)))
+            pkg.write(bytes(item + '\0', "UTF8"))
 
-track.reverse()
+        pkg.write(bytes.fromhex("FFFFFFFF"))
 
-for i in xrange(len(dir)):
-    if os.path.isfile(IMAGE_DIRECTORY+dir[i]) and dir[i] != DEST_FILE:
-        fd = open(IMAGE_DIRECTORY+dir[i], 'rb')
-        cur = pkg.tell()
-        pkg.seek(track.pop())
-        pkg.write(int2bin(cur))
-        pkg.seek(cur)
-        pkg.write(fd.read())
-        fd.close()
+        track.reverse()
 
-pkg.close()
+        for item in dir:
+            cur = pkg.tell()
+            pkg.seek(track.pop())
+            pkg.write(int2bytes(cur))
+            pkg.seek(cur)
+
+            with open(os.path.join(RES_DIR, item), 'rb') as fd:
+                pkg.write(fd.read())
