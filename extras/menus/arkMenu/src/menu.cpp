@@ -183,6 +183,10 @@ void Menu::animStart(int direction){
     animDelay = false;
 }
 
+bool Menu::isAnimating(){
+    return animating != 0;
+}
+
 bool Menu::empty(){
     bool ret = !this->entries->size();
     return ret;
@@ -217,7 +221,6 @@ vector<Entry*>* Menu::getVector(){
 
 void Menu::moveUp(){
     if (animating || fastScrolling){
-        //animating = 0;
         fastScrolling = true;
         this->index -= fastScroll;
         fastScroll++;
@@ -240,7 +243,6 @@ void Menu::moveUp(){
 
 void Menu::moveDown(){
     if (animating || fastScrolling){
-        //animating = 0;
         fastScrolling = true;
         this->index += fastScroll;
         fastScroll++;

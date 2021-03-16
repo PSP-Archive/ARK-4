@@ -7,8 +7,6 @@
 #include "zip.h"
 #include "osk.h"
 
-//bool GameManager::update_game_list = false;
-
 static GameManager* self = NULL;
 
 static bool loadingData = false;
@@ -20,19 +18,11 @@ GameManager::GameManager(){
     
     this->use_categories = true;
 
-    // start the drawing thread
-    this->hasLoaded = false;
-    
-    //GameManager::update_game_list = false;
-    
     // initialize the categories
     this->selectedCategory = -1;
     for (int i=0; i<MAX_CATEGORIES; i++){
         this->categories[i] = new Menu((EntryType)i);
     }
-    
-    // find all available entries
-    this->findEntries();
     
     // start the multithreaded icon loading
     this->dynamicIconRunning = ICONS_LOADING;
@@ -52,6 +42,10 @@ int GameManager::loadIcons(SceSize _args, void *_argp){
     sceKernelDelayThread(0);
 
     while (self->dynamicIconRunning != ICONS_STOPPED){
+        if (self->selectedCategory < 0){
+            if (self->selectedCategory == -1) self->findEntries();
+            continue;
+        }
         for (int i=0; i<MAX_CATEGORIES; i++){
             sceKernelWaitSema(self->iconSema, 1, NULL);
             self->categories[i]->loadIconsDynamic(i == self->selectedCategory);
@@ -123,7 +117,7 @@ void GameManager::findEntries(){
         this->findSaveEntries("ms0:/PSP/SAVEDATA/");
         this->findSaveEntries("ef0:/PSP/SAVEDATA/");
     }
-    this->selectedCategory = -1;
+    this->selectedCategory = -2;
     // find the first category with entries
     for (int i=0; i<MAX_CATEGORIES && selectedCategory < 0; i++){
         if (!this->categories[i]->empty())
@@ -308,28 +302,24 @@ void GameManager::stopFastScroll(){
 }
 
 string GameManager::getInfo(){
-    return (selectedCategory >= 0)? getEntry()->getName() : "No games available";
+    if (selectedCategory >= 0) return getEntry()->getName();
+    else if (selectedCategory == -1) return "Loading games...";
+    else if (selectedCategory == -2) return "No games available";
 }
 
 void GameManager::draw(){
-
-    if (this->hasLoaded){
-
-        //char* entryName;
-
-        if (this->selectedCategory >= 0){
-            for (int i=0; i<MAX_CATEGORIES; i++){
-                if (i == (int)this->selectedCategory)
-                    continue;
-                this->categories[i]->draw(false);
-                sceKernelDelayThread(0);
-            }
-            this->categories[this->selectedCategory]->draw(true);
+    if (this->selectedCategory >= 0){
+        for (int i=0; i<MAX_CATEGORIES; i++){
+            if (i == (int)this->selectedCategory)
+                continue;
+            this->categories[i]->draw(false);
+            sceKernelDelayThread(0);
         }
-        if (loadingData){
-            Image* img = common::getImage(IMAGE_WAITICON);
-            img->draw((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2);
-        }
+        this->categories[this->selectedCategory]->draw(true);
+    }
+    if (loadingData){
+        Image* img = common::getImage(IMAGE_WAITICON);
+        img->draw((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2);
     }
 }
 
@@ -339,12 +329,9 @@ void GameManager::animAppear(){
         common::drawScreen();
         this->draw();
         Image* pic1 = this->getEntry()->getPic1();
-        bool canDrawBg = !common::canDrawBackground();
-        if (pic1 != common::getImage(IMAGE_BG) || canDrawBg)
-            pic1->draw(i, 0);
+        if (pic1 != NULL) pic1->draw(i, 0);
         Image* pic0 = this->getEntry()->getPic0();
-        if (pic0 != NULL)
-            pic1->draw(i+160, 85);
+        if (pic0 != NULL) pic0->draw(i+160, 85);
         this->getEntry()->getIcon()->draw(i+10, 98);
         common::flipScreen();
     }
@@ -356,12 +343,9 @@ void GameManager::animDisappear(){
         common::drawScreen();
         this->draw();
         Image* pic1 = this->getEntry()->getPic1();
-        bool canDrawBg = !common::canDrawBackground();
-        if (pic1 != common::getImage(IMAGE_BG) || canDrawBg)
-            pic1->draw(i, 0);
+        if (pic1 != NULL) pic1->draw(i, 0);
         Image* pic0 = this->getEntry()->getPic0();
-        if (pic0 != NULL)
-            pic1->draw(i+160, 85);
+        if (pic0 != NULL) pic0->draw(i+160, 85);
         this->getEntry()->getIcon()->draw(i+10, 98);
         common::flipScreen();
     }
@@ -373,8 +357,6 @@ void GameManager::endAllThreads(){
 }
 
 void GameManager::control(Controller* pad){
-
-    this->hasLoaded = true;
 
     if (pad->down()){
         this->moveDown();
@@ -391,7 +373,7 @@ void GameManager::control(Controller* pad){
     else if (pad->right())
         this->moveRight();
     else if (pad->accept()){
-        if (selectedCategory >= 0){
+        if (selectedCategory >= 0 && !categories[selectedCategory]->isAnimating()){
             if (string(this->getEntry()->getType()) == string("ZIP"))
                 this->extractHomebrew();
             else
@@ -399,9 +381,11 @@ void GameManager::control(Controller* pad){
         }
     }
     else if (pad->start()){
-        this->endAllThreads();
-        if (selectedCategory >= 0)
-            this->getEntry()->execute();
+        if (!categories[selectedCategory]->isAnimating()){
+            this->endAllThreads();
+            if (selectedCategory >= 0)
+                this->getEntry()->execute();
+        }
     }
 }
 
@@ -411,10 +395,7 @@ void GameManager::updateGameList(const char* path){
           || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ef0:/ISO/", 9) == 0
           || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ms0:/PSP/APPS/", 9) == 0
       ){
-        int icons_state = self->dynamicIconRunning;
-        if (icons_state == ICONS_LOADING) self->pauseIcons();
-        self->findEntries();
-        if (icons_state == ICONS_LOADING) self->resumeIcons();
+        self->selectedCategory = -1;
     }
 }
 

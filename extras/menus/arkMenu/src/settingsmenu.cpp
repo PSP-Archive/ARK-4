@@ -87,7 +87,9 @@ void SettingsMenu::draw(){
                     common::printText(xoffset+215, yoffset, settings_entries[i]->options[sel], GRAY_COLOR, SIZE_LITTLE, 1);
                 }
                 else{
-                    string desc(settings_entries[i]->description);
+                    string desc = settings_entries[i]->description;
+                    size_t lastSlash = desc.rfind('/');
+                    desc = desc.substr(lastSlash+1, -1);
                     if (desc.size() > 35) desc = desc.substr(0, 30) + "...";
                     common::printText(xoffset, yoffset, desc.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
                     common::printText(xoffset+215, yoffset, settings_entries[i]->options[sel], GRAY_COLOR, SIZE_LITTLE, 0);

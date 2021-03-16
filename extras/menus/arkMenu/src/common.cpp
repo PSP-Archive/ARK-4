@@ -260,6 +260,11 @@ void common::loadData(int ac, char** av){
     currentFont = config.font;
     
     images[IMAGE_BG] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
+    
+    common::clearScreen(CLEAR_COLOR);
+    common::drawScreen();
+    common::flipScreen();
+    
     images[IMAGE_SPRITE] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
     images[IMAGE_LOADING] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("LOADING.PNG"));
     images[IMAGE_NOICON] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("NOICON.PNG"));

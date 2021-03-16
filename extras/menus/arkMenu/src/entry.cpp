@@ -70,11 +70,11 @@ Image* Entry::getIcon(){
 }
 
 Image* Entry::getPic0(){
-    return (this->pic0 == NULL)? NULL : this->pic0;
+    return this->pic0;
 }
 
 Image* Entry::getPic1(){
-    return (this->pic1 == NULL)? common::getImage(IMAGE_BG) : this->pic1;
+    return this->pic1;
 }
 
 void Entry::freeIcon(){
@@ -182,15 +182,15 @@ void Entry::gameBoot(){
 }
 
 void Entry::drawBG(){
-    this->getPic1()->draw(0, 0);
-    if (this->getPic0() != NULL)
-        this->getPic0()->draw(160, 85);
+    if (this->pic1 != NULL) this->pic1->draw(0, 0);
+    else common::drawScreen();
+    if (this->pic0 != NULL) this->pic0->draw(160, 85);
 }
 
 void Entry::freeTempData(){
     if (this->pic0 != NULL)
         delete this->pic0;
-    if (this->pic1 != common::getImage(IMAGE_BG))
+    if (this->pic1 != NULL)
         delete this->pic1;
     if (this->icon1 != NULL)
         free(this->icon1);
@@ -202,18 +202,14 @@ bool Entry::run(){
 
     bool ret;
 
-    if (this->pic1 == NULL)
-        this->pic1 = common::getImage(IMAGE_BG);
-    
     common::clearScreen(CLEAR_COLOR);
-    common::getImage(IMAGE_BG)->draw(0, 0);
     this->drawBG();
     this->getIcon()->draw(10, 98);
     Image* img = common::getImage(IMAGE_WAITICON);
     img->draw((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2);
     common::flipScreen();
     
-    getTempData2();
+    this->getTempData2();
     
     bool pmfPlayback = this->icon1 != NULL || this->snd0 != NULL;
         
@@ -221,17 +217,13 @@ bool Entry::run(){
         ret = pmfStart(this, this->icon1, this->icon1_size, this->snd0, this->at3_size, 10, 98);
     }
     else{
-        common::clearScreen(CLEAR_COLOR);
-        common::getImage(IMAGE_BG)->draw(0, 0);
-        this->drawBG();
-        this->getIcon()->draw(10, 98);
-        common::flipScreen();
-
-        sceKernelDelayThread(100000);
-
         Controller control;
     
         while (true){
+            common::clearScreen(CLEAR_COLOR);
+            this->drawBG();
+            this->getIcon()->draw(10, 98);
+            common::flipScreen();
             control.update();
             if (control.accept()){
                 ret = true;

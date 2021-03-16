@@ -56,6 +56,7 @@ class Menu{
         size_t getVectorSize();
         vector<Entry*>* getVector();
         
+        bool isAnimating();
         bool empty();
         
         void animStart(int direction);
