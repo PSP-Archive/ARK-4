@@ -47,7 +47,7 @@ OBJS = \
 		src/pmf/at3.o \
 
 all: $(TARGET).prx
-	$(Q)$(PYTHON) ./pkg.py
+	$(Q)python3 ./pkg.py
 
 distclean:
 	make clean

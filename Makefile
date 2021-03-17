@@ -24,7 +24,7 @@ copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PB
 	$(Q)cp loader/kxploit/vita360/k.bin dist/ARK_01234/K.BIN # Kernel exploit for PS Vita 3.60 Henkaku
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/MENU.PBP # Default launcher
-	$(Q)cp extras/menus/arkMenu/DATA.PKG dist/ARK_01234/DATA.PKG # Launcher and Recovery resources
+	$(Q)cp extras/menus/arkMenu/themes/classic/DATA.PKG dist/ARK_01234/DATA.PKG # Launcher and Recovery resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
 	$(Q)cp loader/stage1/linkless_payload/h.bin dist/ARK_01234/H.BIN # game exploit loader
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package

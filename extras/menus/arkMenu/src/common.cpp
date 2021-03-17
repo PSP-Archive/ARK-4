@@ -244,15 +244,19 @@ void common::loadData(int ac, char** av){
     argv = av;
 
     images[IMAGE_BG] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
+    images[IMAGE_WAITICON] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
     
     common::clearScreen(CLEAR_COLOR);
     images[IMAGE_BG]->draw(0, 0);
+    images[IMAGE_WAITICON]->draw(
+        (480 - images[IMAGE_WAITICON]->getTexture()->width)/2,
+        (272 - images[IMAGE_WAITICON]->getTexture()->height)/2
+    );
     common::flipScreen();
     
-    images[IMAGE_SPRITE] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
     images[IMAGE_LOADING] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("LOADING.PNG"));
+    images[IMAGE_SPRITE] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
     images[IMAGE_NOICON] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("NOICON.PNG"));
-    images[IMAGE_WAITICON] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
     images[IMAGE_GAME] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("GAME.PNG"));
     images[IMAGE_SETTINGS] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SETTINGS.PNG"));
     images[IMAGE_BROWSER] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("BROWSER.PNG"));
