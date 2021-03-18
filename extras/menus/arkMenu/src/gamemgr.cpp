@@ -44,6 +44,7 @@ int GameManager::loadIcons(SceSize _args, void *_argp){
     while (self->dynamicIconRunning != ICONS_STOPPED){
         if (self->selectedCategory < 0){
             if (self->selectedCategory == -1) self->findEntries();
+            sceKernelDelayThread(0);
             continue;
         }
         for (int i=0; i<MAX_CATEGORIES; i++){
@@ -381,10 +382,9 @@ void GameManager::control(Controller* pad){
         }
     }
     else if (pad->start()){
-        if (!categories[selectedCategory]->isAnimating()){
+        if (selectedCategory >= 0 && !categories[selectedCategory]->isAnimating()){
             this->endAllThreads();
-            if (selectedCategory >= 0)
-                this->getEntry()->execute();
+            this->getEntry()->execute();
         }
     }
 }

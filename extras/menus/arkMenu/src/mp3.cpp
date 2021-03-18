@@ -272,7 +272,6 @@ void MP3::play(){
         //stop();
         sceKernelWaitThreadEnd(mp3Thread, 0);
     }
-    printf("starting mp3 thread\n");
     running = true;
     mp3Thread = sceKernelCreateThread("mp3_thread", MP3::playThread, 0x3D, 0x10000, PSP_THREAD_ATTR_USER, NULL);
     sceKernelStartThread(mp3Thread,  sizeof(this), this);

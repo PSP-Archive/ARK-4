@@ -216,6 +216,7 @@ static int controlThread(SceSize _args, void *_argp){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
         }
+        sceKernelDelayThread(0);
     }
     sceKernelExitDeleteThread(0);
     return 0;

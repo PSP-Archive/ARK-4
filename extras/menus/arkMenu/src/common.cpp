@@ -242,7 +242,15 @@ void common::loadData(int ac, char** av){
 
     argc = ac;
     argv = av;
-
+    
+    animations[0] = new PixelAnim();
+    animations[1] = new Waves();
+    animations[2] = new Sprites();
+    animations[3] = new Fire();
+    animations[4] = new Tetris();
+    animations[5] = new Matrix();
+    animations[6] = new NoAnim();
+    
     images[IMAGE_BG] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
     images[IMAGE_WAITICON] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
     
@@ -272,14 +280,6 @@ void common::loadData(int ac, char** av){
     void* mp3_buffer = readFromPKG("SOUND.MP3", &mp3_size);
     sound_mp3 = new MP3(mp3_buffer, mp3_size);
     
-    animations[0] = new PixelAnim();
-    animations[1] = new Waves();
-    animations[2] = new Sprites();
-    animations[3] = new Fire();
-    animations[4] = new Tetris();
-    animations[5] = new Matrix();
-    animations[6] = new NoAnim();
-    
     loadConfig();
     
     if (!fileExists(fonts[config.font]))
@@ -287,6 +287,7 @@ void common::loadData(int ac, char** av){
     font = intraFontLoad(fonts[config.font], INTRAFONT_CACHE_ALL);
     
     currentFont = config.font;
+    
 }
 
 void common::deleteData(){
@@ -396,7 +397,6 @@ bool common::canDrawBackground(){
 }
 
 void common::flipScreen(){
-
     if (!flipControl)
         return;
 
