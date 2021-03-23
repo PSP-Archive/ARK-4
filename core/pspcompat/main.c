@@ -27,8 +27,6 @@ static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
 
 extern void PSPOnModuleStart(SceModule2 * mod);
-extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
-extern int PSPModuleStartHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 
 // Flush Instruction and Data Cache
 void flushCache()
@@ -43,16 +41,17 @@ void flushCache()
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
+    #ifdef DEBUG
     // set LCD framebuffer in hardware reg so we can do color debbuging
     _sw(0x44000000, 0xBC800100);
+    #endif
+    
     // get psp model
     psp_model = sceKernelGetModel();
     // get ark config
     sctrlHENGetArkConfig(ark_config);
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
-    // Register custom module start
-    prev_start = sctrlSetCustomStartModule(PSPModuleStartHandler);
     // Return Success
     return 0;
 }

@@ -70,9 +70,11 @@ int get_device_name(char *device, int size, const char* path)
 
 int module_start(SceSize args, void* argp)
 {
-
-    //printk_init("ms0:/log_vshctrl.txt");
+    #ifdef DEBUG
+    printk_init("ms0:/log_vshctrl.txt");
     printk("VshCtrl started\n");
+    #endif
+    
     psp_model = sceKernelGetModel();
     psp_fw_version = sceKernelDevkitVersion();
     sctrlHENGetArkConfig(ark_config);

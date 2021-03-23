@@ -101,7 +101,7 @@ int sctrlKernelSetInitFileName(char * filename);
 unsigned int sctrlGetInitTextAddr(void);
 
 // Register Custom init.prx sceKernelStartModule Handler, returns previous handler (if any)
-void* sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt));
+void sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt));
 
 // Return Game Product ID of currently running Game
 int sctrlKernelGetGameID(char gameid[GAME_ID_MINIMUM_BUFFER_SIZE]);

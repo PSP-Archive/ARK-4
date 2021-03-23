@@ -448,12 +448,10 @@ unsigned int sctrlGetInitTextAddr(void)
 }
 
 // Register Custom init.prx sceKernelStartModule Handler
-void* sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt))
+void sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt))
 {
-    void* prev = customStartModule;
     // Register Handler
     customStartModule = func;
-    return prev;
 }
 
 int sctrlDeflateDecompress(void* dest, void* src, int size){
@@ -696,5 +694,12 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
 void sctrlHENGetArkConfig(ARKConfig* conf){
     u32 k1 = pspSdkSetK1(0);
     memcpy(conf, ark_config, sizeof(ARKConfig));
+    pspSdkSetK1(k1);
+}
+
+void sctrlHENSetArkConfig(ARKConfig* conf){
+    u32 k1 = pspSdkSetK1(0);
+    if ( ( (k1<<11) & 0x80000000 ) == 0 )
+        memcpy(ark_config, conf, sizeof(ARKConfig));
     pspSdkSetK1(k1);
 }

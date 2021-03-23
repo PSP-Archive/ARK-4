@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include "system_mgr.h"
 #include "gamemgr.h"
-#include "zip.h"
 #include "osk.h"
 
 static GameManager* self = NULL;
@@ -199,13 +198,9 @@ void GameManager::findSaveEntries(const char* path){
                     if (Iso::isISO(fullentrypath.c_str()))
                         this->categories[GAME]->addEntry(new Iso(fullentrypath));
                 }
-                else if ((common::getExtension(fullentrypath) == string("cso"))){
+                else if ((common::getExtension(fullentrypath) == string("cso")) || (common::getExtension(fullentrypath) == string("zso"))){
                     if (Cso::isCSO(fullentrypath.c_str()))
                         this->categories[GAME]->addEntry(new Cso(fullentrypath));
-                }
-                else if ((common::getExtension(fullentrypath) == string("zip"))){
-                    if (Zip::isZip(fullentrypath.c_str()))
-                        this->categories[HOMEBREW]->addEntry(new Zip(fullentrypath));
                 }
                 else if ((common::getExtension(fullentrypath) == string("pbp"))){
                     if (Eboot::isEboot(fullentrypath.c_str())){
@@ -330,7 +325,12 @@ void GameManager::animAppear(){
         common::drawScreen();
         this->draw();
         Image* pic1 = this->getEntry()->getPic1();
-        if (pic1 != NULL) pic1->draw(i, 0);
+        if (pic1 != NULL){
+            if (pic1->getWidth() == 480 && pic1->getHeight() == 272)
+                pic1->draw(i, 0);
+            else
+                pic1->draw_scale(i, 0, 480, 272);
+        }
         Image* pic0 = this->getEntry()->getPic0();
         if (pic0 != NULL) pic0->draw(i+160, 85);
         this->getEntry()->getIcon()->draw(i+10, 98);
@@ -344,7 +344,12 @@ void GameManager::animDisappear(){
         common::drawScreen();
         this->draw();
         Image* pic1 = this->getEntry()->getPic1();
-        if (pic1 != NULL) pic1->draw(i, 0);
+        if (pic1 != NULL){
+            if (pic1->getWidth() == 480 && pic1->getHeight() == 272)
+                pic1->draw(i, 0);
+            else
+                pic1->draw_scale(i, 0, 480, 272);
+        }
         Image* pic0 = this->getEntry()->getPic0();
         if (pic0 != NULL) pic0->draw(i+160, 85);
         this->getEntry()->getIcon()->draw(i+10, 98);
@@ -375,10 +380,7 @@ void GameManager::control(Controller* pad){
         this->moveRight();
     else if (pad->accept()){
         if (selectedCategory >= 0 && !categories[selectedCategory]->isAnimating()){
-            if (string(this->getEntry()->getType()) == string("ZIP"))
-                this->extractHomebrew();
-            else
-                this->execApp();
+            this->execApp();
         }
     }
     else if (pad->start()){
@@ -424,25 +426,4 @@ void GameManager::execApp(){
     SystemMgr::resumeDraw();
     this->resumeIcons();
     sceKernelDelayThread(0);
-}
-
-void GameManager::extractHomebrew(){
-    string text[6] = {
-        "Extracting",
-        "    "+this->getEntry()->getPath(),
-        "into",
-        "    /PSP/GAME/",
-        "    ",
-        "please wait..."
-    };
-    // get src and dest
-    const char* src_path = this->getEntry()->getPath().c_str();
-    char* dest_path = "ms0:/PSP/GAME/";
-    // if extracting to same device as source file
-    dest_path[0] = src_path[0];
-    dest_path[1] = src_path[1];
-    // do extraction
-    unzipToDir(src_path, dest_path, NULL);
-    // refresh game list
-    GameManager::updateGameList(NULL);
 }

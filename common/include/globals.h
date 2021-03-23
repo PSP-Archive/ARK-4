@@ -42,7 +42,7 @@
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 8
-#define ARK_MICRO_VERSION 6
+#define ARK_MICRO_VERSION 7
 
 /*
 First two bits identify the device (PSP or PS Vita)
@@ -86,6 +86,7 @@ typedef struct ARKConfig{
     char kxploit[ARK_PATH_SIZE]; // path to the K.BIN file (if not set, will attemp to read from ARK install path)
     unsigned char exec_mode; // ARK execution mode (PSP, PS Vita, Vita POPS, etc)
     unsigned char recovery; // run ARK in recovery mode (disables settings, plugins and autoboots RECOVERY.PBP)
+    unsigned char launcher; // run ARK in launcher mode (autoboots MENU.PBP)
 } ARKConfig;
 
 // ARK Runtime configuration backup address

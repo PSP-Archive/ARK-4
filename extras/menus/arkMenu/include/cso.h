@@ -18,7 +18,7 @@
 
 
 #define CSO_MAGIC 0x4F534943
-
+#define ZSO_MAGIC 0x4F53495A
 
 typedef struct 
 
@@ -168,6 +168,8 @@ class Cso : public Entry{
         unsigned block_size, start_read;
 
         void getInitialBlock(FILE* fp);
+        
+        int is_lz4;
 
 
     public:

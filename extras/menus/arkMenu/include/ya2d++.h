@@ -42,6 +42,9 @@ class Image{
         void draw_rotate(int x, int y, float angle);
         void draw_rotate_hotspot(int x, int y, float angle, int center_x, int center_y);
         
+        int getWidth();
+        int getHeight();
+        
         bool operator==(Image* other);
 };
 

@@ -64,7 +64,6 @@ namespace common{
 
     extern int getArgc();
     extern char** getArgv();
-    //extern char* getExploitID();
     extern bool has_suffix(const std::string &str, const std::string &suffix);
     SceOff findPkgOffset(const char* filename, unsigned* size = NULL);
     extern void* readFromPKG(const char* filename, unsigned* size = NULL);
@@ -91,6 +90,7 @@ namespace common{
     extern int maxString(string* strings, int n_strings);
     extern std::string getExtension(std::string path);
     extern void launchRecovery();
+    extern bool canInstallGame();
 }
 
 #endif

@@ -75,6 +75,14 @@ ya2d_texture* Image::getTexture(){
     return this->texture;
 }
 
+int Image::getWidth(){
+    return this->texture->width;
+}
+
+int Image::getHeight(){
+    return this->texture->height;
+}
+
 void Image::swizzle(){
     ya2d_swizzle_texture(this->texture);
     flush();

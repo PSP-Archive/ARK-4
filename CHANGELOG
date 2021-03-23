@@ -1,5 +1,12 @@
 ARK-4
 
+Update 8.7:
+- Fixed and improved some internal APIs.
+- Improved plugins menu display.
+- Improved custom launcher.
+---- It is now usable before all games load.
+---- Added support for ZSO files in the launcher.
+
 Update 8.6:
 - Small fix to recovery menu causing files to be written twice.
 - Force recovery mode when launching recovery menu (disables plugins and settings).

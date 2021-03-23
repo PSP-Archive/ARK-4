@@ -12,7 +12,7 @@
 #include "iso.h"
 #include "cso.h"
 #include "eboot.h"
-#include "zip.h"
+#include "unziprar.h"
 
 #define INITIAL_DIR "ms0:/" // Initial directory
 #define GO_DIR "ef0:/" // PSP Go initial directory
@@ -108,10 +108,10 @@ void Browser::update(){
         Eboot* eboot = new Eboot(this->get()->getPath());
         eboot->execute();
     }
-    else if (Zip::isZip(this->get()->getPath().c_str())){
+    else if (Entry::isZip(this->get()->getPath().c_str())){
         extractArchive(0);
     }
-    else if (Zip::isRar(this->get()->getPath().c_str())){
+    else if (Entry::isRar(this->get()->getPath().c_str())){
         extractArchive(1);
     }
 }

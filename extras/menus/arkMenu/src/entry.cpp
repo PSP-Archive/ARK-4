@@ -182,7 +182,12 @@ void Entry::gameBoot(){
 }
 
 void Entry::drawBG(){
-    if (this->pic1 != NULL) this->pic1->draw(0, 0);
+    if (this->pic1 != NULL){
+        if (this->pic1->getWidth() == 480 && this->pic1->getHeight() == 272)
+            this->pic1->draw(0, 0);
+        else
+            this->pic1->draw_scale(0, 0, 480, 272);
+    }
     else common::drawScreen();
     if (this->pic0 != NULL) this->pic0->draw(160, 85);
 }
@@ -206,7 +211,7 @@ bool Entry::run(){
     this->drawBG();
     this->getIcon()->draw(10, 98);
     Image* img = common::getImage(IMAGE_WAITICON);
-    img->draw((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2);
+    img->draw((480-img->getWidth())/2, (272-img->getHeight())/2);
     common::flipScreen();
     
     this->getTempData2();
@@ -237,6 +242,15 @@ bool Entry::run(){
     }
     sceKernelDelayThread(100000);
     return ret;
+}
+
+
+bool Entry::isZip(const char* path){
+    return (common::getMagic(path, 0) == ZIP_MAGIC);
+}
+
+bool Entry::isRar(const char* path){
+    return (common::getMagic(path, 0) == RAR_MAGIC);
 }
 
 Entry::~Entry(){

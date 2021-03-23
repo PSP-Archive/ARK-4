@@ -23,6 +23,9 @@
 #define POPS_RUNLEVEL_GO 0x155
 #define RECOVERY_RUNLEVEL 0x141
 
+#define ZIP_MAGIC 0x04034b50
+#define RAR_MAGIC 0x21726152
+
 int loadIconThread(SceSize _args, void *_argp);
 
 class Entry{
@@ -81,6 +84,9 @@ class Entry{
         
         virtual char* getType()=0;
         virtual char* getSubtype()=0;
+        
+        static bool isZip(const char* path);
+        static bool isRar(const char* path);
         
 };
 

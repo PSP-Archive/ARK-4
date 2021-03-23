@@ -429,3 +429,9 @@ std::string common::getExtension(std::string path){
     std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
     return ext;
 }
+
+bool common::canInstallGame(){
+    static char* test_dir = "ms0:/PSP/GAME/ARKTEST/";
+    sceIoMkdir(test_dir, 0777);
+    return (sceIoRmdir(test_dir) >= 0);
+}

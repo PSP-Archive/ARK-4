@@ -117,23 +117,9 @@ void settingsHandler(char* path){
         disable_PauseGame(sceKernelFindModuleByName("sceImpose_Driver"));
     }
     else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
-        is_launcher_mode = 1;
+        ark_config->launcher = 1; // set CFW in launcher mode
+        sctrlHENSetArkConfig(ark_config);
     }
-}
-
-int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
-int PSPModuleStartHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
-    SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
-    if (strcmp(mod->modname, "vsh_module") == 0){
-        if (ark_config->recovery){ // system in recovery mode
-            exitToRecovery();
-        }
-        else if (is_launcher_mode){ // system in launcher mode
-            exitToLauncher(); // reboot VSH into launcher
-        }
-    }
-    if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
-    return -1; // pass through
 }
 
 void PSPOnModuleStart(SceModule2 * mod){
@@ -171,6 +157,7 @@ void PSPOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceMediaSync") == 0){
         // load and process settings file
         loadSettings(&settingsHandler);
+        goto flush;
     }
     
     if(booted == 0)

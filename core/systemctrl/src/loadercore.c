@@ -188,6 +188,16 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         // Forward to Handler
         result = customStartModule(modid, argsize, argp, modstatus, opt);
     }
+    
+    // VSH replacement
+    if (strcmp(mod->modname, "vsh_module") == 0){
+        if (ark_config->recovery){ // system in recovery mode
+            exitToRecovery(); // reboot VSH into recovery menu
+        }
+        else if (ark_config->launcher){ // system in launcher mode
+            exitToLauncher(); // reboot VSH into custom menu
+        }
+    }
 
     if(result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
 

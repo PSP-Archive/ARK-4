@@ -1,5 +1,5 @@
 TARGET = ARKMENU
-CFLAGS = -O2 -G0 -Wall -Wno-unused -Wno-write-strings -Wno-sign-compare
+CFLAGS = -Os -G0 -Wall -Wno-unused -Wno-write-strings -Wno-sign-compare
 CXXFLAGS = $(CFLAGS) -fexceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 INCDIR = include include/anim include/pmf $(PROVITA)/libs/libya2d $(PROVITA)/libs/libintraFont $(PROVITA)/libs/libjpeg $(PROVITA)/common/include
@@ -26,7 +26,6 @@ OBJS = \
 		src/controller.o \
 		src/ya2d++.o \
 		src/mp3.o \
-		src/zip.o \
 		src/browser.o \
 		src/osk.o \
 		src/settingsmenu.o \
