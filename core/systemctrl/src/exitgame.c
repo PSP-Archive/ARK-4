@@ -63,7 +63,8 @@ static void exitgame(const char* path)
 void exitToLauncher(void){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
-    strcat(path, ARK_MENU);
+    if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
+    else strcat(path, ARK_MENU);
     exitgame(path);
 }
 

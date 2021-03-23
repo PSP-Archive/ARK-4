@@ -38,6 +38,14 @@ void flushCache()
     sceKernelDcacheWritebackInvalidateAll();
 }
 
+static void processArkConfig(ARKConfig* ark_config){
+    sctrlHENGetArkConfig(ark_config);
+    if (ark_config->exec_mode == DEV_UNK){
+        ark_config->exec_mode = PSP_ORIG; // assume running on PSP
+        sctrlHENSetArkConfig(ark_config); // notify SystemControl
+    }
+}
+
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
@@ -49,7 +57,7 @@ int module_start(SceSize args, void * argp)
     // get psp model
     psp_model = sceKernelGetModel();
     // get ark config
-    sctrlHENGetArkConfig(ark_config);
+    processArkConfig(ark_config);
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
     // Return Success

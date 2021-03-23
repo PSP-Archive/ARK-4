@@ -30,6 +30,7 @@ ARKConfig default_config = {
     .arkpath = DEFAULT_ARK_PATH,
     .exploit_id = LIVE_EXPLOIT_ID,
     .kxploit = {0},
+    .launcher = {0},
     .exec_mode = DEV_UNK,
     .recovery = 0,
 };
@@ -43,6 +44,10 @@ void (* kEntryPoint)() = (void*)KXPLOIT_LOADADDR;
 void autoDetectDevice(ARKConfig* config);
 int initKxploitFile();
 void kernelContentFunction(void);
+
+static void pops_vram_handler(u32 vram){
+    SoftRelocateVram(vram, NULL);
+}
 
 // Entry Point
 int exploitEntry(ARKConfig* arg0, FunctionTable* arg1) __attribute__((section(".text.startup")));
@@ -72,8 +77,21 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
 
     // Output Exploit Reach Screen
     if (arg0->exec_mode == DEV_UNK) autoDetectDevice(arg0);
-    running_ark[17] = (IS_PSP(arg0))? ' ' : 'v';
-    running_ark[20] = (IS_VITA_POPS(arg0))? 'X':'P';
+    if (IS_PSP(arg0)){
+        running_ark[17] = ' ';
+        running_ark[20] = 'P';
+    }
+    else{
+        running_ark[17] = 'e';
+        if (IS_VITA_POPS(arg0)){
+            running_ark[20] = 'X';
+            initVitaPopsVram();
+            setScreenHandler(&pops_vram_handler);
+        }
+        else{
+            running_ark[20] = 'P';
+        }
+    }
     PRTSTR(running_ark);
     
     if (isKernel()){ // already in kernel mode
@@ -124,6 +142,7 @@ void autoDetectDevice(ARKConfig* config){
     g_tbl->IoClose(test);
     int res = g_tbl->IoRemove(TEST_EBOOT);
     config->exec_mode = (res < 0)? PS_VITA : PSP_ORIG;
+    // TODO: determine if VitaPops
 }
 
 int initKxploitFile(){

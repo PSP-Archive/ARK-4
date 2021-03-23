@@ -70,7 +70,14 @@ void loadKernelArk(){
         // Prepare Homebrew Reboot
         char menupath[ARK_PATH_SIZE];
         strcpy(menupath, ark_config->arkpath);
-        strcat(menupath, (ark_config->recovery)? ARK_RECOVERY : ARK_MENU);
+        if (IS_VITA_POPS(ark_config)){
+            strcpy(ark_config->launcher, ARK_XMENU);
+            strcat(menupath, ark_config->launcher);
+        }
+        else if (ark_config->recovery == ARK_RECOVERY)
+            strcat(menupath, ARK_RECOVERY);
+        else
+            strcat(menupath, ARK_MENU);
         struct SceKernelLoadExecVSHParam param;
         memset(&param, 0, sizeof(param));
         param.size = sizeof(param);

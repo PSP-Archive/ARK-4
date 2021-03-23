@@ -27,9 +27,11 @@
 static ARKConfig conf = {
     .magic = ARK_CONFIG_MAGIC,
     .arkpath = DEFAULT_ARK_PATH,
-    .exec_mode = PS_VITA,
     .exploit_id = LIVE_EXPLOIT_ID,
     .kxploit = {0},
+    .launcher = {0},
+    .exec_mode = PS_VITA, // ARK-2 loaders are only on PS Vita
+    .recovery = 0,
 };
 
 static FunctionTable tbl;

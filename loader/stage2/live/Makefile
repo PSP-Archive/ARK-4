@@ -18,6 +18,7 @@ C_OBJS = \
 	$(PROVITA)/common/functions.o \
 	$(PROVITA)/core/pspcompat/flashinstall.o \
 	$(PROVITA)/core/vitacompat/vitaflash.o \
+	$(PROVITA)/core/vitapops/popsdisplay.o \
 	$(PROVITA)/core/systemctrl/src/loadexec_patch.o
 
 include $(PROVITA)/common/make/global.mak

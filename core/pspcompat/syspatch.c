@@ -117,8 +117,7 @@ void settingsHandler(char* path){
         disable_PauseGame(sceKernelFindModuleByName("sceImpose_Driver"));
     }
     else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
-        ark_config->launcher = 1; // set CFW in launcher mode
-        sctrlHENSetArkConfig(ark_config);
+        is_launcher_mode = 1;
     }
 }
 
@@ -157,6 +156,13 @@ void PSPOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceMediaSync") == 0){
         // load and process settings file
         loadSettings(&settingsHandler);
+        if (is_launcher_mode){
+            strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
+        }
+        else{
+            ark_config->launcher[0] = 0; // disable launcher mode
+        }
+        sctrlHENSetArkConfig(ark_config); // notify SystemControl of changes in runtime config
         goto flush;
     }
     

@@ -45,12 +45,20 @@ void flushCache()
     sceKernelDcacheWritebackInvalidateAll();
 }
 
+static void processArkConfig(ARKConfig* ark_config){
+    sctrlHENGetArkConfig(ark_config);
+    if (ark_config->exec_mode == DEV_UNK){
+        ark_config->exec_mode = PS_VITA; // assume running on PS Vita
+        sctrlHENSetArkConfig(ark_config); // notify SystemControl
+    }
+}
+
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
 
     // copy configuration
-    sctrlHENGetArkConfig(ark_config);
+    processArkConfig(ark_config);
     
     // filesystem patches
     initFileSystem();

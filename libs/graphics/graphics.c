@@ -39,12 +39,15 @@ typedef union
 
 extern u8 msx[];
 
+void (*screen_handler)(u32 vram);
+
 int gY = 0;
 
 void cls()
 {
     colorDebug(0);
     gY = 0;
+    if (screen_handler) screen_handler(g_vram_base);
 }
 
 void initScreen(int (*DisplaySetFrameBuf)(void*, int, int, int))
@@ -53,6 +56,10 @@ void initScreen(int (*DisplaySetFrameBuf)(void*, int, int, int))
         DisplaySetFrameBuf((void *)0x04000000, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
     }
     cls();
+}
+
+void setScreenHandler(void (*handler)(u32 vram)){
+    screen_handler = handler;
 }
 
 void printTextScreen(int x, int y, const char * text, u32 color)
@@ -111,4 +118,5 @@ void PRTSTR11(const char* A, unsigned long B, unsigned long C, unsigned long D, 
   for (int i=0; i<sizeof(buff); i++) buff[i] = 0;
   mysprintf11(buff, A, (unsigned long)B, (unsigned long)C, (unsigned long)D,  (unsigned long)E, (unsigned long)F, (unsigned long)G, (unsigned long)H,  (unsigned long)I, (unsigned long) J, (unsigned long) K, (unsigned long) L);
   print_to_screen(buff);
+  if (screen_handler) screen_handler(g_vram_base);
 }

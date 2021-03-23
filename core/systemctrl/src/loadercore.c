@@ -194,7 +194,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         if (ark_config->recovery){ // system in recovery mode
             exitToRecovery(); // reboot VSH into recovery menu
         }
-        else if (ark_config->launcher){ // system in launcher mode
+        else if (ark_config->launcher[0]){ // system in launcher mode
             exitToLauncher(); // reboot VSH into custom menu
         }
     }

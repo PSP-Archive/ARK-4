@@ -32,6 +32,7 @@ volatile ARKConfig config = {
     .magic = ARK_CONFIG_MAGIC,
     .arkpath = DEFAULT_ARK_PATH, // We can use argv[0] (eboot's path)
     .kxploit = {0}, // should be in same folder as eboot
+    .launcher = {0}, // use default (if needed)
     .exec_mode = DEV_UNK, // let stage 2 figure this one out
     .exploit_id = LIVE_EXPLOIT_ID,
     .recovery = 0,

@@ -2,6 +2,7 @@ TARGET = vitapops
 
 C_OBJS = \
 	main.o \
+	syspatch.o \
 	nullaudio.o \
 	popsdisplay.o \
 	$(PROVITA)/common/functions.o \
@@ -10,7 +11,7 @@ C_OBJS = \
 	$(PROVITA)/core/systemctrl/src/exitgame.o \
 		
 OBJS = \
-	$(C_OBJS)
+	$(C_OBJS) imports.o
 
 all: $(TARGET).prx
 INCDIR = $(PROVITA)/common $(PROVITA)

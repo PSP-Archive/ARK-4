@@ -63,13 +63,14 @@ void SoftRelocateVram(u32* psp_vram, u16* ps1_vram)
     if(psp_vram)
     {
         int y;
+        if (ps1_vram == NULL) ps1_vram = pops_vram;
         for(y = 0; y < 272; y++)
         {
             int x;
             for(x = 0; x < 480; x++)
             {
                 u32 color = *(u32 *)GetPspVramAddr((u32)psp_vram, x, y);
-                *(u16 *)GetPopsVramAddr((u32)pops_vram, x, y) = RGBA8888_to_RGBA5551(color);
+                *(u16 *)GetPopsVramAddr(ps1_vram, x, y) = RGBA8888_to_RGBA5551(color);
             }
         }
     }

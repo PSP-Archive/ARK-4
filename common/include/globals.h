@@ -33,6 +33,7 @@
 // ARK_CONFIG
 #define ARK_PATH_SIZE 128
 #define ARK_MENU "MENU.PBP" // default launcher
+#define ARK_XMENU "XMENU.PBP" // PS1 launcher
 #define ARK_RECOVERY "RECOVERY.PBP" // recovery app
 #define FLASH0_ARK "FLASH0.ARK" // ARK flash0 package
 #define VSH_MENU "VSHMENU.PRX" // ARK VSH Menu for XMB
@@ -84,9 +85,9 @@ typedef struct ARKConfig{
     char arkpath[ARK_PATH_SIZE-20]; // ARK installation folder, leave enough room to concatenate files
     char exploit_id[12]; // ID of the game exploit, or name of the bootloader
     char kxploit[ARK_PATH_SIZE]; // path to the K.BIN file (if not set, will attemp to read from ARK install path)
+    char launcher[20]; // run ARK in launcher mode if launcher specified
     unsigned char exec_mode; // ARK execution mode (PSP, PS Vita, Vita POPS, etc)
     unsigned char recovery; // run ARK in recovery mode (disables settings, plugins and autoboots RECOVERY.PBP)
-    unsigned char launcher; // run ARK in launcher mode (autoboots MENU.PBP)
 } ARKConfig;
 
 // ARK Runtime configuration backup address
