@@ -6,13 +6,33 @@ PROVITA ?= $(CURDIR)
 
 export DEBUG PROVITA
 
-SUBDIRS = libs contrib/PC/prxencrypter core/systemctrl core/vitacompat core/vitapops core/pspcompat core/vshctrl core/stargate extras/menus/provsh extras/menus/arkMenu extras/menus/recovery core/popcorn core/inferno core/rebootex loader/stage2/live loader/stage2/compat loader/stage1/linkless_payload loader/stage1/live_eboot contrib/PC/btcnf extras/menus/vshmenu
+SUBDIRS = libs \
+	contrib/PC/btcnf \
+	contrib/PC/prxencrypter \
+	core/rebootex \
+	core/systemctrl \
+	core/pspcompat \
+	core/vitacompat \
+	core/vitapops \
+	core/inferno \
+	core/stargate \
+	core/popcorn \
+	core/vshctrl \
+	loader/stage1/linkless_payload \
+	loader/stage1/live_eboot \
+	loader/stage2/live \
+	loader/stage2/compat \
+	extras/menus/arkMenu \
+	extras/menus/recovery \
+	extras/menus/xMenu \
+	extras/menus/vshmenu
+
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx
 
 all: subdirs kxploits mkdir-dist encrypt-prx copy-bin
 	@echo "Build Done"
 
-copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso extras/menus/arkMenu/EBOOT.PBP extras/menus/recovery/EBOOT.PBP extras/menus/vshmenu/satelite.prx
+copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso extras/menus/arkMenu/EBOOT.PBP extras/menus/recovery/EBOOT.PBP extras/menus/xMenu/EBOOT.PBP extras/menus/vshmenu/satelite.prx
 #	Common installation
 	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
 	$(Q)cp loader/kxploit/psp660/k.bin dist/ARK_Live/K.BIN # Kernel exploit for PSP
@@ -24,6 +44,7 @@ copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PB
 	$(Q)cp loader/kxploit/vita360/k.bin dist/ARK_01234/K.BIN # Kernel exploit for PS Vita 3.60 Henkaku
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/MENU.PBP # Default launcher
+	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XMENU.PBP # PS1 launcher
 	$(Q)cp extras/menus/arkMenu/themes/classic/DATA.PKG dist/ARK_01234/DATA.PKG # Launcher and Recovery resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
 	$(Q)cp loader/stage1/linkless_payload/h.bin dist/ARK_01234/H.BIN # game exploit loader

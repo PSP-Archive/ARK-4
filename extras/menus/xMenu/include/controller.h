@@ -8,14 +8,25 @@ class Controller{
 
     private:
         SceCtrlData* pad;
+        
+        u32 nowpad, newpad, oldpad;
+        
+        int n;
     
     public:
     
         Controller();
         ~Controller();
         
+        // update controller data
         void update();
+        // wait until there's no input in controller
+        void flush();
         
+        // generic wait for user input, returns true if cross pressed, false if circle is pressed
+        bool wait(void* busy_wait=NULL);
+        
+        // check if the corresponding button has been pressed
         bool up();
         bool down();
         bool left();

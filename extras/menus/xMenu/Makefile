@@ -2,26 +2,26 @@ TARGET = XMENU
 CFLAGS = -O2 -G0 -Wall
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
-INCDIR = ../../libs/libpng ../../libs/libintraFont
-LIBDIR = ../../libs
-LIBS = -lstdc++ -lpng -lintraFont -lpspgu -lpspgum -lz -lm -lpspsystemctrl_user
+INCDIR = $(PROVITA)/libs/libpng include
+LIBDIR = $(PROVITA)/libs
+LIBS = -lstdc++ -lpng -lpspgu -lpspgum -lz -lm -lpspsystemctrl_user
 LDFLAGS = -L libs
 EXTRA_TARGETS = EBOOT.PBP
 PSP_EBOOT_TITLE = xMenu
-PSP_EBOOT_ICON = ICON0.PNG
-PSP_EBOOT_PIC1 = PIC1.PNG
+PSP_EBOOT_ICON = resources/ICON0.PNG
+PSP_EBOOT_PIC1 = resources/PIC1.PNG
 
 OBJS = \
 		main.o \
-		graphics/font.o \
-		graphics/framebuffer.o \
-		graphics/graphics.o \
-		xmenu/debug.o \
-		xmenu/common.o \
-		xmenu/menu.o \
-		xmenu/entry.o \
-		xmenu/controller.o \
-		xmenu/text.o
+		src/font.o \
+		src/framebuffer.o \
+		src/graphics.o \
+		src/debug.o \
+		src/common.o \
+		src/menu.o \
+		src/entry.o \
+		src/controller.o \
+		src/text.o
 
 
 all: $(TARGET).prx
