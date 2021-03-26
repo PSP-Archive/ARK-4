@@ -35,13 +35,13 @@ all: subdirs kxploits mkdir-dist encrypt-prx copy-bin
 copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso extras/menus/arkMenu/EBOOT.PBP extras/menus/recovery/EBOOT.PBP extras/menus/xMenu/EBOOT.PBP extras/menus/vshmenu/satelite.prx
 #	Common installation
 	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
-	$(Q)cp loader/kxploit/psp660/k.bin dist/ARK_Live/K.BIN # Kernel exploit for PSP
+	$(Q)cp loader/kxploit/psp660/K.BIN dist/ARK_Live/K.BIN # Kernel exploit for PSP
 	$(Q)cp loader/stage1/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
 	$(Q)cp loader/stage1/vitabubble/SAVEPATH.TXT dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
 	$(Q)cp loader/stage2/compat/ark.bin dist/ARK_01234/ARK.BIN # ARK-2 chainloader
 	$(Q)cp loader/stage2/live/ark.bin dist/ARK_01234/ARK4.BIN # ARK-4 loader
-	$(Q)cp loader/kxploit/vita360/k.bin dist/ARK_01234/K.BIN # Kernel exploit for PS Vita 3.60 Henkaku
+	$(Q)cp loader/kxploit/vita360/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PS Vita 3.60 Henkaku
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/MENU.PBP # Default launcher
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XMENU.PBP # PS1 launcher

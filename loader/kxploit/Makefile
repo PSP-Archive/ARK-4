@@ -1,7 +1,7 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
 INCDIR = $(PSPSDK)/include $(PROVITA)/common/include $(PROVITA)
 LIBS= -L$(PROVITA)/libs -lcolordebugger -lansic
-TARGET = k.bin
+TARGET = K.BIN
 
 PYTHON=$(shell which python2)
 
