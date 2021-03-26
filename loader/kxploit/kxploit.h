@@ -38,6 +38,6 @@
 extern int stubScanner(FunctionTable*);
 extern int doExploit(void);
 extern void executeKernel(u32 kernelContentFunction);
-extern void repairInstruction(void);
+extern void repairInstruction(KernelFunctions*);
 
 #endif

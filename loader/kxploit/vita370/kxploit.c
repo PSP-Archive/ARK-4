@@ -24,9 +24,11 @@ Kernel exploit from the trinity chain exploit by The Flow. Works on Vita 3.70
 #define SYSMEM_SEED_OFFSET 0x88014e38
 #define FAKE_UID_OFFSET    0x8814cfa8
 
+FunctionTable* g_tbl;
+
 int (*_sceNpCore_8AFAB4A0)(int *input, char *string, int length);
 
-void repairInstruction(void) {
+void repairInstruction(KernelFunctions* k_tbl) {
   SceModule2 *mod = k_tbl->KernelFindModuleByName("sceRTC_Service");
   _sw(mod->text_addr + 0x3904, LIBC_CLOCK_OFFSET);
   k_tbl->KernelIcacheInvalidateAll();
@@ -83,6 +85,7 @@ static u32 read_kernel_word(u32 addr) {
 }
 
 int stubScanner(FunctionTable* tbl){
+    g_tbl = tbl;
     _sceNpCore_8AFAB4A0 = tbl->FindImportUserRam("sceNpCore", 0x8AFAB4A0);
     return (_sceNpCore_8AFAB4A0 == NULL);
 }

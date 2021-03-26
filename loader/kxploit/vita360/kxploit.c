@@ -33,7 +33,7 @@ int stubScanner(FunctionTable* arg0){
     return 0;
 }
 
-void repairInstruction(void){
+void repairInstruction(KernelFunctions* k_tbl){
     _sw(0x3C038801, 0x88010040);
     _sw(0x8C654D84, 0x88010044);
 }

@@ -51,7 +51,7 @@ void executeKernel(u32 kernelContentFunction)
         _sceKernelLibcTime(0x08800000, kernelContentFunction|0x80000000);
 }
 
-void repairInstruction(void){
+void repairInstruction(KernelFunctions* k_tbl){
     //Vita 2.61
     if (_sceKernelLibcTime == NULL)
         _sw(0x0040F809, 0x8800CB64);

@@ -193,7 +193,7 @@ void kernelContentFunction(void){
     scanKernelFunctions(k_tbl);
     
     // repair damage done by kernel exploit
-    kxf->repairInstruction();
+    kxf->repairInstruction(k_tbl);
 
     loadKernelArk();
 }

@@ -61,8 +61,8 @@ int stubScanner(FunctionTable* tbl){
     return (_sceNetMPulldown==NULL);
 }
 
-void repairInstruction(void){
-    //_sw(PATCHED_INST, PATCH_ADDR);
+void repairInstruction(KernelFunctions* k_tbl){
+    _sw(PATCHED_INST, PATCH_ADDR);
 }
 
 int doExploit(void){

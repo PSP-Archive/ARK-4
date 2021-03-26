@@ -31,7 +31,7 @@
 */
 
 u32 sw_address = 0x88014B00;
-
+FunctionTable* g_tbl;
 
 SceUID (* _sceKernelCreateVpl)(const char *name, int part, int attr, unsigned int size, struct SceKernelVplOptParam *opt);
 int (* _sceKernelTryAllocateVpl)(SceUID uid, unsigned int size, void **data);
@@ -45,7 +45,7 @@ int doExploit(){
     return 0;
 }
 
-void repairInstruction(void){
+void repairInstruction(KernelFunctions* k_tbl){
     //Vita 3.51, restore sceKernelLibcClock and sceKernelLibcTime pointers.
     u32 rtc = k_tbl->FindTextAddrByName("sceRTC_Service");
     _sw(rtc + 0x3904, sw_address);
@@ -53,6 +53,7 @@ void repairInstruction(void){
 }
 
 int stubScanner(FunctionTable* tbl){
+    g_tbl = tbl;
     _sceKernelCreateVpl = g_tbl->KernelCreateVpl;
     _sceKernelTryAllocateVpl = g_tbl->KernelTryAllocateVpl;
     _sceKernelFreeVpl = g_tbl->KernelFreeVpl;

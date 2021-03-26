@@ -28,7 +28,7 @@ typedef struct KxploitFunctions{
     int (*stubScanner)(struct FunctionTable*);
     int (*doExploit)(void);
     void (*executeKernel)(u32 kernelContentFunction);
-    void (*repairInstruction)(void);
+    void (*repairInstruction)(struct KernelFunctions*);
 }KxploitFunctions;
 
 // PBP Header

@@ -39,7 +39,7 @@ $(TARGET): main.elf
 
 kxploits: link.l $(TARGET)
 
-all: kxploits
+all: clean kxploits
 
 clean:
-	$(Q)rm -rf *~ *.s *.o *.elf k.bin exploit.h link.l $(PROVITA)/loader/kxploit/$(K)/k.bin $(Q)rm $(PROVITA)/loader/kxploit/$(K)/kxploit.o
+	$(Q)rm -rf *~ *.s *.o *.elf $(TARGET) exploit.h link.l $(PROVITA)/loader/kxploit/$(K)/$(TARGET) $(Q)rm $(PROVITA)/loader/kxploit/$(K)/kxploit.o
