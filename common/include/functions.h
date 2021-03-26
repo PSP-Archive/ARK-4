@@ -94,12 +94,15 @@ typedef struct FunctionTable
     u32 (* FindImportVolatileRam)(char *libname, u32 nid);
     u32 (* FindImportRange)(char *libname, u32 nid, u32 lower, u32 higher);
     void* (* RelocSyscall)(u32 call);
+    int (* p5_open_savedata)(int mode);
+    int (* p5_close_savedata)();
+    u32 (* qwikTrick)(char* lib, u32 nid, u32 version);
     void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L);
 } FunctionTable;
 
 // fills a FunctionTable instance with all available imports
-extern void scanUserFunctions();
-extern void scanArkFunctions();
+extern void scanUserFunctions(FunctionTable* tbl);
+extern void scanArkFunctions(FunctionTable* tbl);
 
 // check if a pointer is in a range
 extern int AddressInRange(u32 addr, u32 lower, u32 higher);
@@ -170,13 +173,17 @@ typedef struct KernelFunctions{
     int (*KernelExitThread)(int);
     void (*waitThreadEnd)(int, int*);
     
+    // ARK functions
+    u32 (* FindTextAddrByName)(const char *modulename);
+    u32 (* FindFunction)(const char *module, const char *library, u32 nid);
+    
 }KernelFunctions;
 
 extern FunctionTable* g_tbl;
 extern KernelFunctions* k_tbl;
 extern KxploitFunctions* kxf;
 
-extern void scanKernelFunctions();
+extern void scanKernelFunctions(KernelFunctions* kfuncs);
 
 extern u32 FindTextAddrByName(const char *);
 extern u32 FindFunction(const char *modulename, const char *library, u32 nid);

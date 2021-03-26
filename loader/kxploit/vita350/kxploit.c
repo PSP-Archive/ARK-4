@@ -20,7 +20,6 @@
 #include <psploadexec_kernel.h>
 #include <psputility_modules.h>
 #include <module2.h>
-#include <lflash0.h>
 #include <rebootconfig.h>
 #include <systemctrl_se.h>
 #include <string.h>
@@ -32,6 +31,7 @@
 */
 
 u32 sw_address = 0x88014B00;
+
 
 SceUID (* _sceKernelCreateVpl)(const char *name, int part, int attr, unsigned int size, struct SceKernelVplOptParam *opt);
 int (* _sceKernelTryAllocateVpl)(SceUID uid, unsigned int size, void **data);

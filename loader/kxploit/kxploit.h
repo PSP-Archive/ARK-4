@@ -40,8 +40,4 @@ extern int doExploit(void);
 extern void executeKernel(u32 kernelContentFunction);
 extern void repairInstruction(void);
 
-// p5 stubs
-extern int p5_open_savedata(int mode);
-extern int p5_close_savedata();
-
 #endif

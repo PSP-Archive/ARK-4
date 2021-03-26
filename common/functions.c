@@ -42,66 +42,11 @@ KxploitFunctions* kxf = &_kxf;
 // counter for relocated stubs
 static u32 curcall = 0x08801000;
 
-/*
-typedef struct{
-    char* lib;
-    u32 nid;
-    int where;
-} ArkUserImport;
-ArkUserImport ark_imports[(sizeof(FunctionTable)/sizeof(void*))-7] = {
-    {"IoFileMgrForUser", 0x109F50BC, 0}, // sceIoOpen
-    {"IoFileMgrForUser", 0x6A638D83, 0}, // sceIoRead
-    {"IoFileMgrForUser", 0x42EC03AC, 0}, // sceIoWrite
-    {"IoFileMgrForUser", 0x810C4BC3, 0}, // sceIoClose
-    
-    {"UtilsForUser", 0x27CC57F0, 0}, // sceKernelLibcTime
-    {"UtilsForUser", 0x79D1C3FA, 0}, // sceKernelDcacheWritebackAll
-    {"sceDisplay", 0x289D82FE, 0}, // sceDisplaySetFrameBuf
-
-    {"ThreadManForUser", 0x446D8DE6, 0}, // sceKernelCreateThread
-    {"ThreadManForUser", 0xF475845D, 0}, // sceKernelStartThread
-    {"ThreadManForUser", 0xCEADEB47, 0}, // sceKernelDelayThread
-    {"ThreadManForUser", 0x278C0DF5, 0}, // sceKernelWaitThreadEnd
-
-    {"ThreadManForUser", 0x89B3D48C, 0}, // sceKernelDeleteVpl
-    {"ThreadManForUser", 0xED1410E0, 0}, // sceKernelDeleteFpl
-    
-    {"sceUtility", 0x2A2B3DE0, 0}, // sceUtilityLoadModule
-    {"sceUtility", 0xE49BFE92, 0}, // sceUtilityUnloadModule
-    {"sceUtility", 0x1579A159, 0}, // sceUtilityLoadNetModule
-    {"sceUtility", 0x64D50C56, 0}, // sceUtilityUnloadNetModule
-
-    
-    {"SysMemUserForUser", 0x91DE343C, 0}, // SysMemUserForUser_91DE343C
-    {"SysMemUserForUser", 0xB6D61D02, 0}, // sceKernelFreePartitionMemory
-
-    {"sceUtility", 0x8874DBE0, 0}, // sceUtilitySavedataGetStatus
-    {"sceUtility", 0x50C4CD57, 0}, // sceUtilitySavedataInitStart
-    {"sceUtility", 0xD4B95FFB, 0}, // sceUtilitySavedataUpdate
-    {"sceUtility", 0x9790B33C, 0} // sceUtilitySavedataShutdownStart
-};
-*/
-
 // fill FunctionTable
-void scanUserFunctions(){
+void scanUserFunctions(FunctionTable* tbl){
 
     memset(g_tbl, 0, sizeof(FunctionTable));
-
-    /*
-    u32* tbl = &(g_tbl->IoOpen);
-    colorDebug(0xff00);
-    u32 i=0;
-    for (; i<((sizeof(FunctionTable)/sizeof(void*))-7); i++){
-        tbl[i] = RelocImport(ark_imports[i].lib, ark_imports[i].nid, ark_imports[i].where);
-        if (tbl[i] == NULL){
-            //PRTSTR3("ERROR: failed to find ARK import: %s/%d/%d\n", ark_imports[i].lib, ark_imports[i].nid, ark_imports[i].where);
-            colorDebug(0xff);
-            _sw(0,0);    
-        }
-    }
-    colorDebug(0xff0000);
-    */
-    register FunctionTable* tbl = g_tbl;
+    
     tbl->IoOpen = (void*)RelocImport("IoFileMgrForUser", 0x109F50BC, 0);
     tbl->IoRead = (void*)RelocImport("IoFileMgrForUser", 0x6A638D83, 0);
     tbl->IoClose = (void*)RelocImport("IoFileMgrForUser", 0x810C4BC3, 0);
@@ -146,13 +91,16 @@ void scanUserFunctions(){
     
 }
 
-void scanArkFunctions(){
+void scanArkFunctions(FunctionTable* tbl){
     // ARK Functions
-    g_tbl->freeMem = &freeMem;
-    g_tbl->FindImportUserRam = &FindImportUserRam;
-    g_tbl->FindImportVolatileRam = &FindImportVolatileRam;
-    g_tbl->FindImportRange = &FindImportRange;
-    g_tbl->RelocSyscall = &RelocSyscall;
+    tbl->freeMem = &freeMem;
+    tbl->FindImportUserRam = &FindImportUserRam;
+    tbl->FindImportVolatileRam = &FindImportVolatileRam;
+    tbl->FindImportRange = &FindImportRange;
+    tbl->RelocSyscall = &RelocSyscall;
+    tbl->p5_open_savedata = &p5_open_savedata;
+    tbl->p5_close_savedata = &p5_close_savedata;
+    tbl->qwikTrick = &qwikTrick;
 }
 
 int IsUID(SceUID uid){
@@ -316,10 +264,8 @@ void* RelocImport(char* libname, u32 nid, int ram){
  * These functions are ment for using when initial kernel access has been
  * granted, for example through the mean of a kernel exploit.
  */
-void scanKernelFunctions(){
+void scanKernelFunctions(KernelFunctions* kfuncs){
 
-    register KernelFunctions* kfuncs = k_tbl;
-    
     memset(kfuncs, 0, sizeof(KernelFunctions));
 
     kfuncs->KernelIOOpen = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x109F50BC);
@@ -351,6 +297,10 @@ void scanKernelFunctions(){
     kfuncs->KernelExitThread = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0xAA73C935);
     kfuncs->KernelDeleteThread = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0x9FA03CD3);
     kfuncs->waitThreadEnd = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0x278C0DF5);
+    
+    // ARK kernel functions
+    kfuncs->FindTextAddrByName = &FindTextAddrByName;
+    kfuncs->FindFunction = &FindFunction;
 }
 
 u32 FindTextAddrByName(const char *modulename)

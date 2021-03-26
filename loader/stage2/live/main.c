@@ -58,13 +58,13 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
 
     // init function table
     if (arg1 == NULL)
-        scanUserFunctions();
+        scanUserFunctions(g_tbl);
     else
         memcpy(g_tbl, arg1, sizeof(FunctionTable));
     
     if (arg0 == NULL) arg0 = &default_config;
     
-    scanArkFunctions();
+    scanArkFunctions(g_tbl);
 
     // copy the path of the save
     g_tbl->config = ark_config = arg0;
@@ -190,7 +190,7 @@ void kernelContentFunction(void){
     
     PRTSTR("Scanning kernel functions");
     // get kernel functions
-    scanKernelFunctions();
+    scanKernelFunctions(k_tbl);
     
     // repair damage done by kernel exploit
     kxf->repairInstruction();

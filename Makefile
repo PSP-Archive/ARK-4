@@ -60,7 +60,9 @@ encrypt-prx: \
 
 kxploits:
 	$(Q)$(MAKE) $@ K=psp660 -C loader/kxploit
+	$(Q)$(MAKE) $@ K=vita320 -C loader/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/kxploit
+	$(Q)$(MAKE) $@ K=vita370 -C loader/kxploit
 
 # Only clean non-library code
 cleanobj:

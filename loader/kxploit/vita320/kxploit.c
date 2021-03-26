@@ -29,6 +29,8 @@
  sceSdGetLastIndex Kernel Exploit for PSP up to 6.60 and PS Vita up to 3.20, both PSP and PSX exploits
 */
 
+FunctionTable* g_tbl;
+
 int (* _sceSdGetLastIndex)(int a1, int a2, int a3) = (void *)NULL;
 int (* _sceKernelLibcTime)(u32 a0, u32 a1) = (void*)NULL;
 
@@ -64,6 +66,8 @@ void KernelFunction()
 
 int stubScanner(FunctionTable* tbl){
 
+    g_tbl = tbl;
+
     // thread and interrupt functions
     PRTSTR("Scanning interrupt stubs");
     _sceKernelCpuSuspendIntr = g_tbl->KernelCpuSuspendIntr;
@@ -74,7 +78,7 @@ int stubScanner(FunctionTable* tbl){
     _sceSdGetLastIndex = (void*)g_tbl->FindImportUserRam("sceChnnlsv", 0xC4C494F8);
     if (_sceSdGetLastIndex == NULL){
         PRTSTR("Opening savedata utility");
-        p5_open_savedata(PSP_UTILITY_SAVEDATA_AUTOLOAD);
+        g_tbl->p5_open_savedata(PSP_UTILITY_SAVEDATA_AUTOLOAD);
         _sceSdGetLastIndex = (void*)g_tbl->FindImportVolatileRam("sceChnnlsv", 0xC4C494F8);
         savedata_open = 1;
     }
@@ -103,7 +107,7 @@ int doExploit()
 
     PRTSTR("Attempting kernel exploit");
 
-    if (_IS_PSP(g_tbl->config)){
+    if (IS_PSP(g_tbl->config)){
         libctime_addr = 0x8800F798;
         PRTSTR("Kxploit in PSP mode");
     }
@@ -140,7 +144,7 @@ int doExploit()
     }
 
     if (savedata_open)
-        p5_close_savedata();
+        g_tbl->p5_close_savedata();
 
     PRTSTR("kxploit done");
 
