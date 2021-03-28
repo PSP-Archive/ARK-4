@@ -24,11 +24,9 @@
 #include <psputility_modules.h>
 #include <module2.h>
 #include <macros.h>
-#include <rebootconfig.h>
 #include <systemctrl_se.h>
 #include <string.h>
 #include <functions.h>
-#include "core/rebootex/payload.h"
 #include "libs/graphics/graphics.h"
 #include "kxploit.h"
 

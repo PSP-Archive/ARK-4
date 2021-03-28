@@ -15,34 +15,18 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
+#ifndef _LFLASH0_H_
+#define _LFLASH0_H_
 
-#ifndef FLASH_DUMP_H
-#define FLASH_DUMP_H
+#define FLASH_BACKUP "ms0:/flash.bak"
 
-#include <pspsdk.h>
-#include <pspiofilemgr.h>
-#include <psploadexec.h>
-#include <psploadexec_kernel.h>
-#include <psputility_modules.h>
-#include <pspumd.h>
-#include <pspctrl.h>
-#include <module2.h>
-#include <macros.h>
-#include <rebootconfig.h>
-#include <systemctrl_se.h>
-#include <string.h>
-#include "lflash0.h"
-#include "libs/graphics/graphics.h"
-
-
-int kthread(SceSize args, void *argp);
-void initKernelThread(void);
-
-unsigned addWriteFile( SceUID packFileID, void *data, unsigned size, char *name, u8 found_nb );
-int findFlashIndex( const VitaFlashBufferFile *f0, void *origContent );
-void flashVitaDump( char *packName );
-
-
+// Vita Buffered RAM flash0 Filesystem Structure
+typedef struct VitaFlashBufferFile
+{
+	char * name;
+	void * content;
+	unsigned int size;
+} VitaFlashBufferFile;
 
 #endif
 

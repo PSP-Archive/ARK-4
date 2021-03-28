@@ -19,6 +19,7 @@
 #define REBOOT_H
 
 #include "main.h"
+#include <rebootconfig.h>
 
 void buildRebootBufferConfig(int rebootBufferSize);
 int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4);

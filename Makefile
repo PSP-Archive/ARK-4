@@ -9,7 +9,6 @@ export DEBUG PROVITA
 SUBDIRS = libs \
 	contrib/PC/btcnf \
 	contrib/PC/prxencrypter \
-	core/rebootex \
 	core/systemctrl \
 	core/pspcompat \
 	core/vitacompat \
@@ -18,10 +17,13 @@ SUBDIRS = libs \
 	core/stargate \
 	core/popcorn \
 	core/vshctrl \
+	loader/rebootex \
 	loader/stage1/linkless_payload \
 	loader/stage1/live_eboot \
 	loader/stage2/live \
 	loader/stage2/compat \
+	loader/stage2/kram_dumper \
+	loader/stage2/vita_flash_dumper \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
 	extras/menus/xMenu \
@@ -39,9 +41,10 @@ copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PB
 	$(Q)cp loader/stage1/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
 	$(Q)cp loader/stage1/vitabubble/SAVEPATH.TXT dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
-	$(Q)cp loader/stage2/compat/ark.bin dist/ARK_01234/ARK.BIN # ARK-2 chainloader
-	$(Q)cp loader/stage2/live/ark.bin dist/ARK_01234/ARK4.BIN # ARK-4 loader
-	$(Q)cp loader/kxploit/vita360/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PS Vita 3.60 Henkaku
+	$(Q)cp loader/stage2/compat/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
+	$(Q)cp loader/stage2/live/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
+	$(Q)cp loader/kxploit/vita360/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PS Vita
+	$(Q)cp loader/rebootex/reboot.bin.gz dist/ARK_01234/REBOOT.BIN # Kernel exploit for PS Vita
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/MENU.PBP # Default launcher
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XMENU.PBP # PS1 launcher
@@ -61,7 +64,6 @@ encrypt-prx: \
 kxploits:
 	$(Q)$(MAKE) $@ K=psp660 -C loader/kxploit
 	$(Q)$(MAKE) $@ K=vita320 -C loader/kxploit
-	$(Q)$(MAKE) $@ K=vita350 -C loader/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/kxploit
 	$(Q)$(MAKE) $@ K=vita370 -C loader/kxploit
 
@@ -75,7 +77,9 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/stage1/live_eboot
 	$(Q)$(MAKE) $@ -C loader/stage2/live
 	$(Q)$(MAKE) $@ -C loader/stage2/compat
-	$(Q)$(MAKE) $@ -C core/rebootex
+	$(Q)$(MAKE) $@ -C loader/stage2/kram_dumper
+	$(Q)$(MAKE) $@ -C loader/stage2/vita_flash_dumper
+	$(Q)$(MAKE) $@ -C loader/rebootex
 	$(Q)$(MAKE) $@ -C core/systemctrl
 	$(Q)$(MAKE) $@ -C core/vitacompat
 	$(Q)$(MAKE) $@ -C core/vitapops
@@ -89,7 +93,9 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
 	$(Q)$(MAKE) $@ K=psp660 -C loader/kxploit
+	$(Q)$(MAKE) $@ K=vita320 -C loader/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/kxploit
+	$(Q)$(MAKE) $@ K=vita370 -C loader/kxploit
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -f contrib/PC/btcnf/psvbtinf.bin
 	$(Q)-rm -f contrib/PC/btcnf/psvbtnnf.bin

@@ -23,6 +23,19 @@
 #include "module2.h"
 #include "globals.h"
 
+struct minZipHeader {
+    char pk[2];
+    unsigned nb;
+    char space[12];
+    unsigned fileSize;
+    unsigned fileSizeClone;
+    unsigned pathLen;
+    /*
+    path
+    data
+    */
+};
+
 // K.BIN communication interface
 typedef struct KxploitFunctions{
     int (*stubScanner)(struct FunctionTable*);

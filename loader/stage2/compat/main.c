@@ -30,7 +30,7 @@ static ARKConfig conf = {
     .exploit_id = LIVE_EXPLOIT_ID,
     .kxploit = {0},
     .launcher = {0},
-    .exec_mode = PS_VITA, // ARK-2 loaders are only on PS Vita
+    .exec_mode = DEV_UNK, // best to autodetect
     .recovery = 0,
 };
 

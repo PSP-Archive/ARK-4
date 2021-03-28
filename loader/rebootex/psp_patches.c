@@ -1,5 +1,7 @@
 #include "rebootex.h"
 
+extern int _UnpackBootConfig(char **p_buffer, int length);
+
 int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(void *, void *, void *)){
     loadCoreModuleStartCommon();
     flushCache();

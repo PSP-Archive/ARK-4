@@ -114,6 +114,7 @@ typedef struct RebootBufferConfiguration {
     unsigned int reboot_buffer_size;
     unsigned char iso_mode;
     unsigned char iso_disc_type;
+    void* ark_config;
 } RebootBufferConfiguration;
 
 typedef struct RebootexFunctions{
@@ -257,6 +258,7 @@ int compat_entry(BtcnfHeader* btcnf,
     insert_btcnf("/kd/ark_vshctrl.prx", "/kd/vshbridge.prx", btcnf, &btcnf_size, (BOOTLOAD_VSH));
 
     // copy ARK configuration for SystemControl to find
+    conf->ark_config = ARK_CONFIG
     _memcpy(ARK_CONFIG, &_arkconf, sizeof(ARKConfig));
 
     // PRO patches work well with ARK...

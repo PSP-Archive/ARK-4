@@ -1,7 +1,7 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
 INCDIR = $(PSPSDK)/include $(PROVITA)/common/include $(PROVITA)
 LIBS = -L $(PROVITA)/libs -lgraphics -lcolordebugger -lansic
-TARGET = ark.bin
+TARGET = ARK4.BIN
 
 PYTHON=$(shell which python2)
 
@@ -51,4 +51,4 @@ $(TARGET): main.elf
 	@echo GET $@
 
 clean:
-	$(Q)rm -rf *~ *.s *.o *.elf ark.bin exploit.h link.l
+	$(Q)rm -rf *~ *.s *.o *.elf $(TARGET) exploit.h link.l

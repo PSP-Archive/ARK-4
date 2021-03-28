@@ -16,10 +16,7 @@
  */
 
 #include "main.h"
-#include <loadexec_patch.h>
-#include "reboot.h"
 #include <functions.h>
-#include "kermit.h"
 
 #define TEST_EBOOT "ms0:/EBOOT.PBP"
 
@@ -75,47 +72,48 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
     // init screen
     initScreen(g_tbl->DisplaySetFrameBuf);
 
+    if (arg0->exec_mode == DEV_UNK)
+        autoDetectDevice(arg0); // attempt to autodetect configuration
+
     // Output Exploit Reach Screen
-    if (arg0->exec_mode == DEV_UNK) autoDetectDevice(arg0);
+    running_ark[20] = 'P';
     if (IS_PSP(arg0)){
-        running_ark[17] = ' ';
-        running_ark[20] = 'P';
+        running_ark[17] = ' '; // show 'PSP'
     }
     else{
-        running_ark[17] = 'e';
+        running_ark[17] = 'e'; // show 'ePSP'
         if (IS_VITA_POPS(arg0)){
-            running_ark[20] = 'X';
+            running_ark[20] = 'X'; // show 'ePSX'
+            // configure to handle POPS screen
             initVitaPopsVram();
             setScreenHandler(&pops_vram_handler);
-        }
-        else{
-            running_ark[20] = 'P';
         }
     }
     PRTSTR(running_ark);
     
-    if (isKernel()){ // already in kernel mode
+    if (isKernel()){ // already in kernel mode?
         kernelContentFunction();
         return 0;
     }
     
     // read kxploit file into memory and initialize it
     char* err = NULL;
+    int res = 0;
     PRTSTR("Reading kxploit file...");
-    if (initKxploitFile() == 0){
+    if ((res=initKxploitFile()) == 0){
         PRTSTR("Scanning stubs for kxploit...");
-        if (kxf->stubScanner(g_tbl) == 0){
+        if ((res=kxf->stubScanner(g_tbl)) == 0){
             // Corrupt Kernel
             PRTSTR("Doing kernel exploit...");
-            if (kxf->doExploit() == 0){
+            if ((res=kxf->doExploit()) == 0){
                 // Flush Cache
                 g_tbl->KernelDcacheWritebackAll();
-
                 // Output Loading Screen
                 PRTSTR("Escalating privilages...");
                 // Trigger Kernel Permission Callback
                 kxf->executeKernel(KERNELIFY(&kernelContentFunction));
                 err = "Could not execute kernel function";
+                res = -1;
             }
             else{
                 err = "Exploit failed!";
@@ -129,10 +127,10 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
         err = "Could not open kxploit file!";
     }
     
-    PRTSTR1("ERROR: %s", err);
+    PRTSTR2("ERROR (%d): %s", res, err);
     while(1){};
 
-    return 0;
+    return res;
 }
 
 void autoDetectDevice(ARKConfig* config){

@@ -36,7 +36,12 @@ unsigned int reboot_size = 0;
 void * reboot_backup = NULL;
 
 // Reboot Buffer Configuration
-RebootBufferConfiguration reboot_config;
+union {
+    RebootBufferConfiguration config;
+    u8 buf[REBOOTEX_CONFIG_MAXSIZE];
+} reboot;
+
+RebootBufferConfiguration* reboot_config = &(reboot.config);
 
 int recovery_launch = 0;
 
@@ -69,7 +74,7 @@ void backupRebootBuffer(void)
     memcpy(reboot_backup, (void *)REBOOTEX_TEXT, reboot_size);
     
     // Copy Reboot Buffer Configuration
-    memcpy(&reboot_config, (void *)REBOOTEX_CONFIG, sizeof(reboot_config));
+    memcpy(&reboot, (void *)REBOOTEX_CONFIG, REBOOTEX_CONFIG_MAXSIZE);
     
     // Copy Reboot ISO Path
     strncpy(reboot_config_isopath, (void *)REBOOTEX_CONFIG_ISO_PATH, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
@@ -87,7 +92,7 @@ void restoreRebootBuffer(void)
     RebootBufferConfiguration * conf = (RebootBufferConfiguration *)(REBOOTEX_CONFIG);
 
     // Restore Reboot Buffer Configuration
-    memcpy((void *)REBOOTEX_CONFIG, &reboot_config, sizeof(reboot_config));
+    memcpy((void *)REBOOTEX_CONFIG, &reboot, REBOOTEX_CONFIG_MAXSIZE);
     
     // Restore ARK Config
     ark_config->recovery = recovery_launch; // reset recovery mode for next reboot

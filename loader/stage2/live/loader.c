@@ -1,5 +1,9 @@
 #include "main.h"
 #include <functions.h>
+#include <loadexec_patch.h>
+#include "reboot.h"
+
+extern u8 rebootbuffer[REBOOTEX_MAX_SIZE];
 
 // Sony Reboot Buffer Loader
 int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
@@ -31,6 +35,22 @@ void flashPatch(){
     }
 }
 
+void setupRebootBuffer(){
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, "REBOOT.BIN");
+    
+    int fd = k_tbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
+    if (fd >= 0){ // read external rebootex
+        k_tbl->KernelIORead(fd, rebootbuffer, REBOOTEX_MAX_SIZE);
+        k_tbl->KernelIOClose(fd);
+    }
+    else{ // error
+        PRTSTR("ERROR: Could not read REBOOT.BIN");
+        while (1);
+    }
+}
+
 void loadKernelArk(){
      // Install flash0 files
     PRTSTR("Installing "FLASH0_ARK);
@@ -51,12 +71,15 @@ void loadKernelArk(){
         }
     }
 
-    PRTSTR("Patching loadexec");
+    PRTSTR("Preparing reboot.");
     // Find LoadExec Module
     SceModule2 * loadexec = k_tbl->KernelFindModuleByName("sceLoadExec");
     
+    
     // Find Reboot Loader Function
     _LoadReboot = (void *)loadexec->text_addr;    
+    
+    setupRebootBuffer();
     
     // make the common loadexec patches
     int k1_patches = 2;

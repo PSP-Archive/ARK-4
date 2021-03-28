@@ -155,20 +155,20 @@ void sctrlSESetUmdFile(char * file)
 
 void sctrlSESetBootConfFileIndex(int index)
 {
-    reboot_config.iso_mode = index;
+    reboot_config->iso_mode = index;
 }
 
 unsigned int sctrlSEGetBootConfFileIndex(void)
 {
-    return reboot_config.iso_mode;
+    return reboot_config->iso_mode;
 }
 
 void sctrlSESetDiscType(int type)
 {
-    reboot_config.iso_disc_type = type;
+    reboot_config->iso_disc_type = type;
 }
 
 int sctrlSEGetDiscType(void)
 {
-    return reboot_config.iso_disc_type;
+    return reboot_config->iso_disc_type;
 }

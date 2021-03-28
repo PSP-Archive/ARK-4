@@ -59,28 +59,5 @@ typedef struct RebootexFunctions{
 }RebootexFunctions;
 #define REBOOTEX_FUNCTIONS (RebootexFunctions*)0x08D38000
 
-extern RebootBufferConfiguration reboot_config;
-
-// sceReboot Main Function
-extern int (* sceReboot)(int, int, int, int);
-
-// Instruction Cache Invalidator
-extern void (* sceRebootIcacheInvalidateAll)(void);
-
-// Data Cache Invalidator
-extern void (* sceRebootDacheWritebackInvalidateAll)(void);
-
-// Sony PRX Decrypter Function Pointer
-extern int (* SonyPRXDecrypt)(void *, unsigned int, unsigned int *);
-extern int (* origCheckExecFile)(unsigned char * addr, void * arg2);
-
-// LfatOpen on PS Vita
-extern int (*pspemuLfatOpen)(char** filename, int unk);
-
-// UnpackBootConfig on PSP
-extern int (* UnpackBootConfig)(char * buffer, int length);
-
-int _UnpackBootConfig(char **p_buffer, int length);
-
 #endif
 

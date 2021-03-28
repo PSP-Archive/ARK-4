@@ -1,5 +1,9 @@
 ARK-4
 
+Update 8.8:
+- Rebootex is now an external part of the CFW and can be easily replaced.
+- Some fixes and refactor for Vita Pops.
+
 Update 8.7:
 - Fixed and improved some internal APIs.
 - Improved plugins menu display.

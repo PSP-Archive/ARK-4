@@ -19,11 +19,17 @@
 #include "globals.h"
 #include "main.h"
 
+u8 rebootbuffer[REBOOTEX_MAX_SIZE];
+
 // Build Reboot Configuration
 void buildRebootBufferConfig(int rebootBufferSize)
 {
     // Fetch Memory Range
     RebootBufferConfiguration * conf = (RebootBufferConfiguration *)(REBOOTEX_CONFIG);
+    
+    // Clear Reboot Configuration
+    memset((char *)REBOOTEX_CONFIG, 0, REBOOTEX_CONFIG_MAXSIZE);
+    memset((char *)REBOOTEX_CONFIG_ISO_PATH, 0, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
     
     // Write Configuration Magic
     conf->magic = REBOOTEX_CONFIG_MAGIC;
@@ -36,7 +42,7 @@ void buildRebootBufferConfig(int rebootBufferSize)
     // Default ISO disc type
     conf->iso_disc_type = PSP_UMD_TYPE_GAME;
     
-    // copy runtime ARK config
+    // backup runtime ARK config
     memcpy(ARK_CONFIG, ark_config, sizeof(ARKConfig));
 }
 
@@ -45,16 +51,15 @@ int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
 {
 
     // Copy PROCFW Reboot Buffer into Memory
-    int decompressSize;
     memset((char *)REBOOTEX_TEXT, 0, REBOOTEX_MAX_SIZE);
-    decompressSize = k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootbuffer, NULL);
-    
-    // Clear Reboot Configuration
-    memset((char *)REBOOTEX_CONFIG, 0, REBOOTEX_CONFIG_MAXSIZE);
-    memset((char *)REBOOTEX_CONFIG_ISO_PATH, 0, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
-    
+    int rebootBufferSize = REBOOTEX_MAX_SIZE;
+    if (rebootbuffer[0] == 0x1F && rebootbuffer[1] == 0x8B) // gzip packed rebootex
+        rebootBufferSize = k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootbuffer, NULL);
+    else // plain payload
+        memcpy(REBOOTEX_TEXT, rebootbuffer, REBOOTEX_MAX_SIZE);
+        
     // Build Configuration
-    buildRebootBufferConfig(decompressSize);
+    buildRebootBufferConfig(rebootBufferSize);
     
     // Load Sony Reboot Buffer
     return _LoadReboot(arg1, arg2, arg3, arg4);

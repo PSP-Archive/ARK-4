@@ -21,7 +21,7 @@
 #include <rebootconfig.h>
 
 // Reboot Buffer Configuration
-extern RebootBufferConfiguration reboot_config;
+extern RebootBufferConfiguration* reboot_config;
 
 // Reboot ISO Path
 extern char reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
