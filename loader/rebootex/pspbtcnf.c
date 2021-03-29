@@ -4,6 +4,8 @@
 #define PATH_FLASH0 "flash0:/"
 #define PATH_SYSTEMCTRL PATH_FLASH0 "kd/ark_systemctrl.prx"
 #define PATH_PSPCOMPAT PATH_FLASH0 "kd/ark_pspcompat.prx"
+#define PATH_VITACOMPAT PATH_FLASH0 "kd/ark_vitacompat.prx"
+#define PATH_VITAPOPS PATH_FLASH0 "kd/ark_vitapops.prx"
 #define PATH_VSHCTRL PATH_FLASH0 "kd/ark_vshctrl.prx"
 #define PATH_STARGATE PATH_FLASH0 "kd/ark_stargate.prx"
 #define PATH_INFERNO PATH_FLASH0 "kd/ark_inferno.prx"
@@ -177,7 +179,39 @@ int patch_bootconf_updaterumd(char *buffer, int length)
     return result;
 }
 
-int _UnpackBootConfig(char **p_buffer, int length)
+int patch_bootconf_psp(char* buffer, int length){
+    int newsize=-1, result=length;
+    newsize = AddPRX(buffer, "/kd/init.prx", PATH_PSPCOMPAT+sizeof(PATH_FLASH0)-2, 0x000000EF);
+    if (newsize > 0) result = newsize;
+    
+    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, GAME_RUNLEVEL | UMDEMU_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    
+    return result;
+}
+
+int patch_bootconf_vita(char* buffer, int length){
+    int newsize=-1, result=length;
+    
+    newsize = AddPRX(buffer, "/kd/init.prx", PATH_VITACOMPAT+sizeof(PATH_FLASH0)-2, 0x000000EF);
+    if (newsize > 0) result = newsize;
+    
+    newsize = AddPRX(buffer, "/kd/kermit_me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, GAME_RUNLEVEL | UMDEMU_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    
+    return result;
+}
+
+int patch_bootconf_vitapops(char* buffer, int length){
+    int newsize=-1, result=length;
+    
+    newsize = AddPRX(buffer, "/kd/init.prx", PATH_VITAPOPS+sizeof(PATH_FLASH0)-2, 0x000000EF);
+    if (newsize > 0) result = newsize;
+    
+    return result;
+}
+
+int UnpackBootConfigPatched(char **p_buffer, int length)
 {
     int result;
     int newsize;
@@ -187,24 +221,41 @@ int _UnpackBootConfig(char **p_buffer, int length)
     buffer = (void*)BOOTCONFIG_TEMP_BUFFER;
     memcpy(buffer, *p_buffer, length);
     *p_buffer = buffer;
-    
+
+    // Insert SystemControl
     newsize = AddPRX(buffer, "/kd/init.prx", PATH_SYSTEMCTRL+sizeof(PATH_FLASH0)-2, 0x000000EF);
     if (newsize > 0) result = newsize;
     
-    newsize = AddPRX(buffer, "/kd/init.prx", PATH_PSPCOMPAT+sizeof(PATH_FLASH0)-2, 0x000000EF);
-    if (newsize > 0) result = newsize;
+    // Insert compat layer and Stargate if needed
+    if (ark_config->magic == ARK_CONFIG_MAGIC){
+        if (IS_PSP(ark_config)){
+            newsize = patch_bootconf_psp(buffer, length);
+            if (newsize > 0) result = newsize;
+        }
+        else if (IS_VITA(ark_config)){
+            if (IS_VITA_POPS(ark_config)){
+                newsize = patch_bootconf_vitapops(buffer, length);
+                if (newsize > 0) result = newsize;
+            }
+            else{
+                newsize = patch_bootconf_vita(buffer, length);
+                if (newsize > 0) result = newsize;
+            }
+        }
+        else colorDebug(0xff); // unknown device (?), don't touch it
+    }
     
+    // Insert VSHControl
     if (SearchPrx(buffer, "/vsh/module/vshmain.prx") >= 0) {
         newsize = patch_bootconf_vsh(buffer, length);
         if (newsize > 0) result = newsize;
     }
 
+    // Insert Popcorn
     newsize = patch_bootconf_pops(buffer, length);
     if (newsize > 0) result = newsize;
 
-    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, GAME_RUNLEVEL | UMDEMU_RUNLEVEL);
-    if (newsize > 0) result = newsize;
-    
+    // Insert Inferno if needed
     char* iso_path = (char*)REBOOTEX_CONFIG_ISO_PATH;
     switch(reboot_conf->iso_mode) {
         case MODE_VSHUMD:
@@ -219,7 +270,7 @@ int _UnpackBootConfig(char **p_buffer, int length)
             if (iso_path[0] == 0) break; // launching PSN EBOOT
             // launching ISO with NP9660 Driver, default to inferno
         case MODE_MARCH33:
-            // launching ISO with M332 Driver, default to inferno
+            // launching ISO with M33 Driver, default to inferno
         case MODE_INFERNO:
             newsize = patch_bootconf_inferno(buffer, length);
             if (newsize > 0) result = newsize;

@@ -35,6 +35,7 @@ int (* origCheckExecFile)(unsigned char * addr, void * arg2) = NULL;
 
 // UnpackBootConfig
 int (* UnpackBootConfig)(char * buffer, int length) = NULL;
+extern int UnpackBootConfigPatched(char **p_buffer, int length);
 
 // PRO GZIP Decrypt Support
 int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
@@ -62,7 +63,7 @@ int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
 }
 
 
-int _sceKernelCheckExecFile(unsigned char * addr, void * arg2)
+int CheckExecFilePatched(unsigned char * addr, void * arg2)
 {
     //scan structure
     //6.31 kernel modules use type 3 PRX... 0xd4~0x10C is zero padded
@@ -93,7 +94,7 @@ void loadCoreModuleStartCommon(){
     // save this configuration to restore loadcore later on
     RebootexFunctions* rex_funcs = REBOOTEX_FUNCTIONS;
     rex_funcs->rebootex_decrypt = &PROPRXDecrypt;
-    rex_funcs->rebootex_checkexec = &_sceKernelCheckExecFile;
+    rex_funcs->rebootex_checkexec = &CheckExecFilePatched;
     rex_funcs->orig_decrypt = SonyPRXDecrypt;
     rex_funcs->orig_checkexec = origCheckExecFile;
 
@@ -109,7 +110,7 @@ void loadCoreModuleStartCommon(){
             _sw(JAL(PROPRXDecrypt), addr);
         }
         else if (data == check_call){
-            _sw(JAL(_sceKernelCheckExecFile), addr);
+            _sw(JAL(CheckExecFilePatched), addr);
         }
     }
 }
@@ -123,6 +124,7 @@ void flushCache(void)
     sceRebootIcacheInvalidateAll();
 }
 
+// Common rebootex patches for PSP and Vita
 u32 findRebootFunctions(u32 reboot_start){
     register void (* Icache)(void) = NULL;
     register void (* Dcache)(void) = NULL;
@@ -130,23 +132,27 @@ u32 findRebootFunctions(u32 reboot_start){
     // find functions
     for (u32 addr = reboot_start; ; addr+=4){
         u32 data = _lw(addr);
-        if (data == 0xBD01FFC0){ // works on PSP and Vita
+        if (data == 0xBD01FFC0){ // sceRebootDacheWritebackInvalidateAll
             u32 a = addr;
             do {a-=4;} while (_lw(a) != 0x40088000);
             Dcache = (void*)a;
         }
-        else if (data == 0xBD14FFC0){ // works on PSP and Vita
+        else if (data == 0xBD14FFC0){ // sceRebootIcacheInvalidateAll
             u32 a = addr;
             do {a-=4;} while (_lw(a) != 0x40088000);
             Icache = (void*)a;
         }
-        else if (data == 0x3A230001){
+        else if (data == 0x8FA50008 && _lw(addr+8) == 0x8FA40004){ // UnpackBootConfig
+            _sw(0x27A40004, addr+8); // addiu $a0, $sp, 4
             u32 a = addr;
-            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
-            pspemuLfatOpen = (void*)a;
+            do { a+=4; } while (_lw(a) != 0x24060001);
+            UnpackBootConfig = K_EXTRACT_CALL(a-4);
+            _sw(JAL(UnpackBootConfigPatched), a-4); // Hook UnpackBootConfig
         }
-        else if (data == 0x3466507E){
-            UnpackBootConfig = addr-12;
+        else if ((data == _lw(addr+4)) && (data & 0xFC000000) == 0xAC000000){ // Patch ~PSP header check
+            // Returns size of the buffer on loading whatever modules
+            _sw(0xAFA50000, addr+4); // sw a1, 0(sp)
+            _sw(0x20A30000, addr+8); // move v1, a1
         }
         else if (strcmp("ApplyPspRelSection", (char*)addr) == 0){
             reboot_end = (addr & -0x4); // found end of reboot buffer
