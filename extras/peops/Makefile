@@ -5,7 +5,7 @@ OBJS = $(C_OBJS)
 
 all: $(TARGET).prx
 
-INCDIR = $(PROVITA)/common/include
+INCDIR = $(ARKROOT)/common/include
 CFLAGS = -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
 
 # POPS Version
@@ -26,12 +26,12 @@ PRX_EXPORTS = exports.exp
 #USE_KERNEL_LIBC = 1
 #USE_KERNEL_LIBS = 1
 
-LIBDIR = $(PROVITA)/libs
+LIBDIR = $(ARKROOT)/libs
 LDFLAGS = -nostartfiles
 LIBS = -lpspsystemctrl_user -lpspaudio -lgraphics
 
-include $(PROVITA)/common/make/global.mak
+include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)
 #include $(PSPSDK)/lib/build.mak
 include $(PSPSDK)/lib/build_prx.mak
-include $(PROVITA)/common/make/beauty.mak
+include $(ARKROOT)/common/make/beauty.mak

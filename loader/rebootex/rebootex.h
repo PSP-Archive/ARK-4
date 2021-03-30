@@ -3,7 +3,7 @@
 
 #include "rebootconfig.h"
 
-extern RebootBufferConfiguration* reboot_conf;
+extern RebootConfigARK* reboot_conf;
 extern ARKConfig* ark_config;
 
 // sceReboot Main Function

@@ -21,8 +21,7 @@ int _pspemuLfatOpen(char** filename, int unk)
             p[5] = 'x'; // psvbtxnf.bin for PS1 exploits
         }
         else{
-            char* iso_path = (char*)REBOOTEX_CONFIG_ISO_PATH;
-            if (reboot_conf->iso_mode == MODE_NP9660 && iso_path[0] == 0){
+            if (reboot_conf->iso_mode == MODE_NP9660){
                 p[5] = 'n'; // use NP9660 for PSN EBOOTS
             }
             else{

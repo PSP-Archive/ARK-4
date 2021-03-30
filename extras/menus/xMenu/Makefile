@@ -2,8 +2,8 @@ TARGET = XMENU
 CFLAGS = -O2 -G0 -Wall
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
-INCDIR = $(PROVITA)/libs/libpng include
-LIBDIR = $(PROVITA)/libs
+INCDIR = $(ARKROOT)/libs/libpng include
+LIBDIR = $(ARKROOT)/libs
 LIBS = -lstdc++ -lpng -lpspgu -lpspgum -lz -lm -lpspsystemctrl_user
 LDFLAGS = -L libs
 EXTRA_TARGETS = EBOOT.PBP
@@ -29,7 +29,7 @@ distclean: clean
 
 xmenu: all
 
-include $(PROVITA)/common/make/global.mak
+include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
-include $(PROVITA)/common/make/beauty.mak
+include $(ARKROOT)/common/make/beauty.mak

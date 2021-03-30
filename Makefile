@@ -2,9 +2,9 @@
 OPT=-j8
 
 PYTHON = $(shell which python2)
-PROVITA ?= $(CURDIR)
+ARKROOT ?= $(CURDIR)
 
-export DEBUG PROVITA
+export DEBUG ARKROOT
 
 SUBDIRS = libs \
 	contrib/PC/btcnf \
@@ -34,7 +34,7 @@ SUBDIRS = libs \
 all: subdirs kxploits mkdir-dist encrypt-prx copy-bin
 	@echo "Build Done"
 
-copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PBP contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso extras/menus/arkMenu/EBOOT.PBP extras/menus/recovery/EBOOT.PBP extras/menus/xMenu/EBOOT.PBP extras/menus/vshmenu/satelite.prx
+copy-bin: loader/stage1/linkless_payload/H.BIN loader/stage1/live_eboot/EBOOT.PBP contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso extras/menus/arkMenu/EBOOT.PBP extras/menus/recovery/EBOOT.PBP extras/menus/xMenu/EBOOT.PBP extras/menus/vshmenu/satelite.prx
 #	Common installation
 	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
 	$(Q)cp loader/kxploit/psp660/K.BIN dist/ARK_Live/K.BIN # Kernel exploit for PSP
@@ -50,7 +50,7 @@ copy-bin: loader/stage1/linkless_payload/h.bin loader/stage1/live_eboot/EBOOT.PB
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XMENU.PBP # PS1 launcher
 	$(Q)cp extras/menus/arkMenu/themes/classic/DATA.PKG dist/ARK_01234/DATA.PKG # Launcher and Recovery resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
-	$(Q)cp loader/stage1/linkless_payload/h.bin dist/ARK_01234/H.BIN # game exploit loader
+	$(Q)cp loader/stage1/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	
 encrypt-prx: \
@@ -128,6 +128,6 @@ mkdir-dist:
 	$(Q)mkdir dist/VitaBubble | true
 	$(Q)mkdir dist/ARK_Live | true
 
--include $(PROVITA)/.config
-include $(PROVITA)/common/make/quiet.mak
-include $(PROVITA)/common/make/mod_enc.mak
+-include $(ARKROOT)/.config
+include $(ARKROOT)/common/make/quiet.mak
+include $(ARKROOT)/common/make/mod_enc.mak

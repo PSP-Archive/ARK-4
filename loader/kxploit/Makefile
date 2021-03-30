@@ -1,19 +1,19 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
-INCDIR = $(PSPSDK)/include $(PROVITA)/common/include $(PROVITA)
-LIBS= -L$(PROVITA)/libs -lcolordebugger -lansic
+INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)
+LIBS= -L$(ARKROOT)/libs -lcolordebugger -lansic
 TARGET = K.BIN
 
 PYTHON=$(shell which python2)
 
 CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 
-CFLAGS += -I $(PROVITA)/loader/kxploit/
+CFLAGS += -I $(ARKROOT)/loader/kxploit/
 
-C_OBJS = main.o $(PROVITA)/loader/kxploit/$(K)/kxploit.o
+C_OBJS = main.o $(ARKROOT)/loader/kxploit/$(K)/kxploit.o
 
-include $(PROVITA)/common/make/global.mak
-include $(PROVITA)/common/make/beauty_bin.mak
-include $(PROVITA)/common/make/exploit_config.mak
+include $(ARKROOT)/common/make/global.mak
+include $(ARKROOT)/common/make/beauty_bin.mak
+include $(ARKROOT)/common/make/exploit_config.mak
 
 LINKFILE = link.l
 
@@ -24,22 +24,22 @@ OBJCOPY = psp-objcopy
 
 pre-build: link.l
 
-cmd_genlink = $(PYTHON) $(PROVITA)/contrib/PC/genlink/genlink.py $(KXPLOIT_LOADADDR) initKxploit > $(LINKFILE)
+cmd_genlink = $(PYTHON) $(ARKROOT)/contrib/PC/genlink/genlink.py $(KXPLOIT_LOADADDR) initKxploit > $(LINKFILE)
 
 link.l:
 	$(Q)$(cmd_genlink)
 
 main.elf: $(C_OBJS)
-	$(Q)$(LD) -T $(LINKFILE) $(C_OBJS) -o $(PROVITA)/loader/kxploit/main.elf $(LIBS)
+	$(Q)$(LD) -T $(LINKFILE) $(C_OBJS) -o $(ARKROOT)/loader/kxploit/main.elf $(LIBS)
 
 $(TARGET): main.elf
 	$(Q)$(STRIP) -s $<
 	$(Q)$(OBJCOPY) -O binary $< $@
-	$(Q)mv $(TARGET) $(PROVITA)/loader/kxploit/$(K)/
+	$(Q)mv $(TARGET) $(ARKROOT)/loader/kxploit/$(K)/
 
 kxploits: link.l $(TARGET)
 
 all: clean kxploits
 
 clean:
-	$(Q)rm -rf *~ *.s *.o *.elf $(TARGET) exploit.h link.l $(PROVITA)/loader/kxploit/$(K)/$(TARGET) $(Q)rm $(PROVITA)/loader/kxploit/$(K)/kxploit.o
+	$(Q)rm -rf *~ *.s *.o *.elf $(TARGET) exploit.h link.l $(ARKROOT)/loader/kxploit/$(K)/$(TARGET) $(Q)rm $(ARKROOT)/loader/kxploit/$(K)/kxploit.o

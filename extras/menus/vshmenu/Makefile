@@ -1,11 +1,11 @@
 TARGET = satelite
 OBJS = main.o blit.o ui.o menu.o vpl.o trans.o trans_en.o stubkk.o
 
-PROVITA ?= $(CURDIR)/../../../
+ARKROOT ?= $(CURDIR)/../../../
 
 BUILD_PRX=1
 
-INCDIR = $(PROVITA)/common/include
+INCDIR = $(ARKROOT)/common/include
 CFLAGS = -Os -G0 -Wall
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
@@ -13,7 +13,7 @@ ASFLAGS = $(CFLAGS)
 PRX_EXPORTS = exports.exp
 
 LIBS = -lpspsystemctrl_user -lpspkubridge
-LIBDIR = . $(PROVITA)/libs
+LIBDIR = . $(ARKROOT)/libs
 LDFLAGS =
 
 PSPSDK=$(shell psp-config --pspsdk-path)

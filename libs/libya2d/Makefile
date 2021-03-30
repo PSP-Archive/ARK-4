@@ -12,13 +12,13 @@ all: $(TARGET_LIB)
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 
-INCDIR = $(PROVITA)/libs/libpspvram $(PROVITA)/libs/libpng $(PROVITA)/libs/libjpeg $(PROVITA)/libs/libpspmath $(PROVITA)/common/include $(PSPSDK)/include
+INCDIR = $(ARKROOT)/libs/libpspvram $(ARKROOT)/libs/libpng $(ARKROOT)/libs/libjpeg $(ARKROOT)/libs/libpspmath $(ARKROOT)/common/include $(PSPSDK)/include
 CFLAGS = -G0 -Wall -O2
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 LIBDIR =
 LDFLAGS = -lstdc++
 
-include $(PROVITA)/common/make/global.mak
+include $(ARKROOT)/common/make/global.mak
 include $(PSPSDK)/lib/build.mak
-include $(PROVITA)/common/make/beauty_lib.mak
+include $(ARKROOT)/common/make/beauty_lib.mak

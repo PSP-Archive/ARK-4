@@ -1,12 +1,14 @@
-all: H.BIN
+TARGET = H.BIN
 
-H.BIN:
+all: $(TARGET)
+
+$(TARGET):
 	psp-as linkless_loader.S
-	psp-objcopy -O binary a.out h.bin
+	psp-objcopy -O binary a.out $(TARGET)
 	rm a.out
 
 clean:
-	rm -rf h.bin
+	rm -rf $(TARGET)
 
-include $(PROVITA)/common/make/global.mak
-include $(PROVITA)/common/make/beauty_bin.mak
+include $(ARKROOT)/common/make/global.mak
+include $(ARKROOT)/common/make/beauty_bin.mak

@@ -5,19 +5,19 @@ C_OBJS = \
 	syspatch.o \
 	nullaudio.o \
 	popsdisplay.o \
-	$(PROVITA)/common/functions.o \
-	$(PROVITA)/core/vitacompat/vitaflash.o \
-	$(PROVITA)/core/systemctrl/src/dummy.o  \
-	$(PROVITA)/core/systemctrl/src/exitgame.o \
+	$(ARKROOT)/common/functions.o \
+	$(ARKROOT)/core/vitacompat/vitaflash.o \
+	$(ARKROOT)/core/systemctrl/src/dummy.o  \
+	$(ARKROOT)/core/systemctrl/src/exitgame.o \
 		
 OBJS = \
 	$(C_OBJS) imports.o
 
 all: $(TARGET).prx
-INCDIR = $(PROVITA)/common $(PROVITA)
+INCDIR = $(ARKROOT)/common $(ARKROOT)
 CFLAGS = -Os -G0 -Wall -fno-pic
 
-CFLAGS += -I include -I $(PROVITA)/common/include/ -I $(PROVITA)/libs/graphics/ -I $(PROVITA)/modules/systemctrl/include/
+CFLAGS += -I include -I $(ARKROOT)/common/include/ -I $(ARKROOT)/libs/graphics/ -I $(ARKROOT)/modules/systemctrl/include/
 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
@@ -28,13 +28,13 @@ PRX_EXPORTS = exports.exp
 USE_KERNEL_LIBC=1
 USE_KERNEL_LIBS=1
 
-LIBDIR = $(PROVITA)/libs
+LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
 LIBS = -lpspsemaphore -lcolordebugger -lgraphics -lpspsystemctrl_kernel
 
 PSP_FW_VERSION = 660
 
-include $(PROVITA)/common/make/global.mak
+include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
-include $(PROVITA)/common/make/beauty.mak
+include $(ARKROOT)/common/make/beauty.mak

@@ -7,7 +7,7 @@ all: $(TARGET_LIB)
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 
-INCDIR = $(PROVITA)/common/include $(PSPSDK)/include
+INCDIR = $(ARKROOT)/common/include $(PSPSDK)/include
 CFLAGS = -G0 -O2
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)

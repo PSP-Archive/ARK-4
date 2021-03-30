@@ -151,7 +151,6 @@ exit:
 // Add Module Start Patcher
 void syspatchInit(void)
 {
-
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKSyspatchOnModuleStart);
 }

@@ -1,8 +1,8 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
-PROVITA = ../../../
-INCDIR = $(PSPSDK)/include $(PROVITA)/common/include $(PROVITA)/libs/graphics
-LIBDIR = $(PROVITA)/libs/graphics $(PROVITA)/libs/ansic $(PROVITA)/libs/colordebugger
-LIBS = -lgraphics -lansic -lcolordebugger -L $(PROVITA)/libs
+ARKROOT = ../../../
+INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)/libs/graphics
+LIBDIR = $(ARKROOT)/libs/graphics $(ARKROOT)/libs/ansic $(ARKROOT)/libs/colordebugger
+LIBS = -lgraphics -lansic -lcolordebugger -L $(ARKROOT)/libs
 TARGET = ARK.BIN
 
 PYTHON=$(shell which python2)
@@ -13,7 +13,7 @@ CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 
 C_OBJS = \
 	main.o \
-	$(PROVITA)/common/functions.o
+	$(ARKROOT)/common/functions.o
 
 LINKFILE = link.l
 CC = psp-gcc

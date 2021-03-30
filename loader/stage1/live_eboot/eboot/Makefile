@@ -3,14 +3,14 @@ C_OBJS = main.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
 CFLAGS = -Os -G0 -Wall
-PROVITA = ../../../../
-INCDIR = $(PSPSDK)/include $(PROVITA)/common/include $(PROVITA)/libs/colordebugger $(PROVITA)/libs/graphics $(PROVITA)/libs/libya2d
+ARKROOT = ../../../../
+INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)/libs/colordebugger $(ARKROOT)/libs/graphics $(ARKROOT)/libs/libya2d
 
 LIBS = -lgraphics -lcolordebugger -lansic -lpspvram
 
 CXXFLAGS = $(CFLAGS)
 ASFLAGS = $(CFLAGS)
-LDFLAGS = -L sysmem -L $(PROVITA)/libs
+LDFLAGS = -L sysmem -L $(ARKROOT)/libs
 BUILD_PRX = 1
 PSP_EBOOT_ICON = ICON0.PNG
 PSP_EBOOT_TITLE += ARK Loader

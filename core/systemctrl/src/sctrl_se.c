@@ -155,20 +155,26 @@ void sctrlSESetUmdFile(char * file)
 
 void sctrlSESetBootConfFileIndex(int index)
 {
-    reboot_config->iso_mode = index;
+    if (reboot_funcs)
+        reboot_funcs->SetBootConfFileIndex(index);
 }
 
 unsigned int sctrlSEGetBootConfFileIndex(void)
 {
-    return reboot_config->iso_mode;
+    if (reboot_funcs)
+        return reboot_funcs->GetBootConfFileIndex();
+    return MODE_INFERNO;
 }
 
 void sctrlSESetDiscType(int type)
 {
-    reboot_config->iso_disc_type = type;
+    if (reboot_funcs)
+        return reboot_funcs->SetDiscType(type);
 }
 
 int sctrlSEGetDiscType(void)
 {
-    return reboot_config->iso_disc_type;
+    if (reboot_funcs)
+        return reboot_funcs->GetDiscType();
+    return PSP_UMD_TYPE_GAME;
 }

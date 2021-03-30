@@ -20,36 +20,64 @@
 
 #include <pspsdk.h>
 #include <macros.h>
-#include <rebootconfig.h>
 #include <systemctrl_se.h>
 #include <functions.h>
 #include "ansi_c_functions.h"
 #include "globals.h"
 
-#define REBOOT_START 0x88600000
-#define REBOOTEX_START 0x88FC0000
 #define REBOOTEX_MAX_SIZE 0x4000
 #define BTCNF_MAGIC 0x0F803001
 #define BOOTCONFIG_TEMP_BUFFER 0x88FB0200
 
-// PROCFW Reboot Buffer Configuration Magic (0xCOLDBIRD)
-#define REBOOTEX_CONFIG_MAGIC 0xC01DB15D
-
 // PROCFW Reboot Buffer Configuration Address
 #define REBOOTEX_CONFIG (REBOOTEX_TEXT - 0x10000)
-#define REBOOTEX_CONFIG_MAXSIZE 0x100
+#define REBOOTEX_CONFIG_MAXSIZE 0x200
 
 // PROCFW Reboot Buffer ISO Path (so we don't lose that information)
-#define REBOOTEX_CONFIG_ISO_PATH (REBOOTEX_CONFIG + REBOOTEX_CONFIG_MAXSIZE)
 #define REBOOTEX_CONFIG_ISO_PATH_MAXSIZE 0x100
 
 // PROCFW Reboot Buffer Configuration
-typedef struct RebootBufferConfiguration {
+typedef struct RebootConfigARK {
     unsigned int magic;
     unsigned int reboot_buffer_size;
     unsigned char iso_mode;
     unsigned char iso_disc_type;
-} RebootBufferConfiguration;
+    char iso_path[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
+} RebootConfigARK;
+
+typedef struct RebootConfigPRO {
+	u32 magic;
+	u32 rebootex_size;
+	u32 p2_size;
+	u32 p9_size;
+	char *insert_module_before;
+	void *insert_module_binary;
+	u32 insert_module_size;
+	u32 insert_module_flags;
+	u32 psp_fw_version;
+	u8 psp_model;
+	u8 iso_mode;
+	u8 recovery_mode;
+	u8 ofw_mode;
+	u8 iso_disc_type;
+} RebootConfigPRO;
+
+// PROCFW Reboot Buffer Configuration Magic (0xCOLDBIRD)
+#define PRO_CONFIG_MAGIC 0xC01DB15D
+
+typedef struct {
+	int bootfileindex;
+
+	char *module_after;
+	void *buf;
+	int size;
+	int flags;
+
+	u32 ram2;
+	u32 ram11;
+
+	char umdfilename[256];
+} RebootConfigAdrenaline;
 
 typedef struct RebootexFunctions{
     void* rebootex_decrypt;

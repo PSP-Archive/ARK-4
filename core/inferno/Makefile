@@ -2,14 +2,14 @@ TARGET = inferno
 C_OBJS = main.o iodrv_funcs.o umd.o isoread.o
 OBJS = $(C_OBJS) imports.o
 all: $(TARGET).prx
-INCDIR = $(PROVITA)/common/include $(PROVITA)/core/systemctrl/include
+INCDIR = $(ARKROOT)/common/include $(ARKROOT)/core/systemctrl/include
 CFLAGS = -Os -G0 -Wall
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
 endif
 
-LDFLAGS =  -nostartfiles -L $(PROVITA)/libs
+LDFLAGS =  -nostartfiles -L $(ARKROOT)/libs
 LIBS = -lpsid -lpspsystemctrl_kernel -lpspsemaphore -lcolordebugger
 
 PSP_FW_VERSION = 660
@@ -20,7 +20,7 @@ BUILD_PRX=1
 USE_KERNEL_LIBS=1
 USE_KERNEL_LIBC=1
 
-include $(PROVITA)/common/make/global.mak
+include $(ARKROOT)/common/make/global.mak
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
-include $(PROVITA)/common/make/beauty.mak
+include $(ARKROOT)/common/make/beauty.mak

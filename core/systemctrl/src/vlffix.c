@@ -34,7 +34,7 @@ void patchVLF(SceModule2 * mod)
     };
     
     // Iterate NIDs
-    int i = 0; for(; i < NELEMS(patches); ++i)
+    for(int i = 0; i < NELEMS(patches); i++)
     {
         // Get Function Address
         unsigned int funcAddr = (unsigned int)sctrlHENFindFunction("VLF_Module", "VlfGui", patches[i]);

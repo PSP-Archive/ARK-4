@@ -2,8 +2,8 @@ TARGET = ARKMENU
 CFLAGS = -Os -G0 -Wall -Wno-unused -Wno-write-strings -Wno-sign-compare
 CXXFLAGS = $(CFLAGS) -fexceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
-INCDIR = include include/anim include/pmf $(PROVITA)/libs/libya2d $(PROVITA)/libs/libintraFont $(PROVITA)/libs/libjpeg $(PROVITA)/common/include
-LIBDIR = $(PROVITA)/libs
+INCDIR = include include/anim include/pmf $(ARKROOT)/libs/libya2d $(ARKROOT)/libs/libintraFont $(ARKROOT)/libs/libjpeg $(ARKROOT)/common/include
+LIBDIR = $(ARKROOT)/libs
 LIBS = -lunziprar -lstdc++ -lc -lya2d -lintraFont -ljpeg -lpng -lpspvfpu -lpspmpeg -lpspaudio -lpspatrac3 -lpsppower -lpspgum -lpspgu -lz -lm -lpspvram -lpspmath -lpspumd -lpspmp3 -lpspsystemctrl_user
 LDFLAGS =
 EXTRA_TARGETS = EBOOT.PBP
@@ -54,7 +54,7 @@ distclean:
 
 arkmenu: all
 
-include $(PROVITA)/common/make/global.mak
+include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
-include $(PROVITA)/common/make/beauty.mak
+include $(ARKROOT)/common/make/beauty.mak

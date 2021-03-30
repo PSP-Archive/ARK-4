@@ -18,4 +18,4 @@ cmd_btcnf = $(PYTHON) ./btcnf.py build $<
 	@$(cmd_btcnf)
 
 #include ../../../common/make/quiet.mak
-include $(PROVITA)/common/make/quiet.mak
+include $(ARKROOT)/common/make/quiet.mak

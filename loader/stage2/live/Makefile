@@ -1,6 +1,6 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
-INCDIR = $(PSPSDK)/include $(PROVITA)/common/include $(PROVITA)
-LIBS = -L $(PROVITA)/libs -lgraphics -lcolordebugger -lansic
+INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)
+LIBS = -L $(ARKROOT)/libs -lgraphics -lcolordebugger -lansic
 TARGET = ARK4.BIN
 
 PYTHON=$(shell which python2)
@@ -8,22 +8,22 @@ PYTHON=$(shell which python2)
 all: pre-build $(TARGET)
 
 CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
-CFLAGS += -I $(PROVITA)/loader/kxploit/ -I $(PROVITA)/core/systemctrl/include
-CFLAGS += -I $(PROVITA)/core/systemctrl/include -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR)
+CFLAGS += -I $(ARKROOT)/loader/kxploit/ -I $(ARKROOT)/core/systemctrl/include
+CFLAGS += -I $(ARKROOT)/core/systemctrl/include -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR)
 
 C_OBJS = \
 	main.o \
 	loader.o \
 	reboot.o \
-	$(PROVITA)/common/functions.o \
-	$(PROVITA)/core/pspcompat/flashinstall.o \
-	$(PROVITA)/core/vitacompat/vitaflash.o \
-	$(PROVITA)/core/vitapops/popsdisplay.o \
-	$(PROVITA)/core/systemctrl/src/loadexec_patch.o
+	$(ARKROOT)/common/functions.o \
+	$(ARKROOT)/core/pspcompat/flashinstall.o \
+	$(ARKROOT)/core/vitacompat/vitaflash.o \
+	$(ARKROOT)/core/vitapops/popsdisplay.o \
+	$(ARKROOT)/core/systemctrl/src/loadexec_patch.o
 
-include $(PROVITA)/common/make/global.mak
-include $(PROVITA)/common/make/beauty_bin.mak
-include $(PROVITA)/common/make/exploit_config.mak
+include $(ARKROOT)/common/make/global.mak
+include $(ARKROOT)/common/make/beauty_bin.mak
+include $(ARKROOT)/common/make/exploit_config.mak
 
 LINKFILE = link.l
 
@@ -38,7 +38,7 @@ OBJCOPY = psp-objcopy
 
 pre-build: link.l
 
-cmd_genlink = $(PYTHON) $(PROVITA)/contrib/PC/genlink/genlink.py $(EXPLOIT_LOADADDR) exploitEntry > $(LINKFILE)
+cmd_genlink = $(PYTHON) $(ARKROOT)/contrib/PC/genlink/genlink.py $(EXPLOIT_LOADADDR) exploitEntry > $(LINKFILE)
 
 link.l:
 	$(Q)$(cmd_genlink)

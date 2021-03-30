@@ -53,13 +53,13 @@ all: $(TARGET_LIB)
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 
-INCDIR = $(PROVITA)/common/include $(PSPSDK)/include
+INCDIR = $(ARKROOT)/common/include $(PSPSDK)/include
 CFLAGS = -O2 -G0
 CXXFLAGS = $(CFLAGS)
 ASFLAGS = $(CFLAGS)
 LIBDIR =
 LDFLAGS = -lstdc++
 
-include $(PROVITA)/common/make/global.mak
+include $(ARKROOT)/common/make/global.mak
 include $(PSPSDK)/lib/build.mak
-include $(PROVITA)/common/make/beauty_lib.mak
+include $(ARKROOT)/common/make/beauty_lib.mak

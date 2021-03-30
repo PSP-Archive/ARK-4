@@ -31,14 +31,14 @@ C_OBJS = \
 	src/gameinfo.o \
 	src/plugin.o \
 	src/msstor_cache.o \
-	$(PROVITA)/common/functions.o
+	$(ARKROOT)/common/functions.o
 		
 OBJS = \
 	$(C_OBJS) \
 	exception_asm.o \
 	setlongjmp.o
 all: $(TARGET).prx
-INCDIR = $(PROVITA)/common $(PROVITA)
+INCDIR = $(ARKROOT)/common $(ARKROOT)
 CFLAGS = -Os -G0 -Wall -fno-pic
 
 ifdef DISABLE_PSID_CHECK
@@ -49,7 +49,7 @@ ifdef FLASH_RESTORE
 CFLAGS += -DFLASH_RESTORE=$(FLASH_RESTORE)
 endif
 
-CFLAGS += -I include -I $(PROVITA)/common/include/ -I $(PROVITA)/libs/graphics/
+CFLAGS += -I include -I $(ARKROOT)/common/include/ -I $(ARKROOT)/libs/graphics/
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
@@ -64,13 +64,13 @@ PRX_EXPORTS = exports.exp
 USE_KERNEL_LIBC=1
 USE_KERNEL_LIBS=1
 
-LIBDIR = $(PROVITA)/libs
+LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
 LIBS = -lpspsemaphore -lgraphics -lcolordebugger -lpsppower
 
 PSP_FW_VERSION = 660
 
-include $(PROVITA)/common/make/global.mak
+include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
-include $(PROVITA)/common/make/beauty.mak
+include $(ARKROOT)/common/make/beauty.mak

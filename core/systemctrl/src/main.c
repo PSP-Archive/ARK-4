@@ -57,11 +57,11 @@ int module_start(SceSize args, void * argp)
     SceModule2* intrman = patchInterruptMan();
     SceModule2* memlmd = patchMemlmd();
     
+    // Flush Cache
+    flushCache();
+    
     // setup NID resolver on loadercore
     setupNidResolver(loadcore);
-    
-    // Backup Reboot Buffer (including configuration)
-    backupRebootBuffer();
     
     // Initialize Malloc
     oe_mallocinit();
@@ -69,11 +69,14 @@ int module_start(SceSize args, void * argp)
     // Initialize Module Start Patching
     syspatchInit();
     
-    // Flush Cache
-    flushCache();
-    
     // Register Default Exception Handler
     registerExceptionHandler(NULL, NULL);
+    
+    // Backup Reboot Buffer (including configuration)
+    backupRebootBuffer();
+    
+    // Flush Cache
+    flushCache();
     
     // Return Success
     return 0;

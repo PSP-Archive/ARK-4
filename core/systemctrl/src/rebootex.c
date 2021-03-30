@@ -29,56 +29,154 @@ extern ARKConfig* ark_config;
 // Original Load Reboot Buffer Function
 int (* _LoadReboot)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4) = NULL;
 
-// Reboot Buffer Backup Size
-unsigned int reboot_size = 0;
-
 // Reboot Buffer Backup
-void * reboot_backup = NULL;
-
-// Reboot Buffer Configuration
-union {
-    RebootBufferConfiguration config;
-    u8 buf[REBOOTEX_CONFIG_MAXSIZE];
-} reboot;
-
-RebootBufferConfiguration* reboot_config = &(reboot.config);
-
-int recovery_launch = 0;
-
+u8 reboot_backup[REBOOTEX_MAX_SIZE];
+u8 rebootex_config[REBOOTEX_CONFIG_MAXSIZE];
+RebootConfigFunctions* reboot_funcs = NULL;
+static RebootConfigFunctions _reboot_funcs;
 // Reboot ISO Path
-char reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
+char* reboot_config_isopath = NULL;
+
+static void ARKSetBootConfFileIndex(int index)
+{
+    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
+    reboot_config->iso_mode = index;
+}
+
+static unsigned int ARKGetBootConfFileIndex(void)
+{
+    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
+    return reboot_config->iso_mode;
+}
+
+static void ARKSetDiscType(int type)
+{
+    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
+    reboot_config->iso_disc_type = type;
+}
+
+static int ARKGetDiscType(void)
+{
+    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
+    reboot_config->iso_disc_type;
+}
+
+static void PROSetBootConfFileIndex(int index)
+{
+    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
+    reboot_config->iso_mode = index;
+}
+
+static unsigned int PROGetBootConfFileIndex(void)
+{
+    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
+    return reboot_config->iso_mode;
+}
+
+static void PROSetDiscType(int type)
+{
+    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
+    reboot_config->iso_disc_type = type;
+}
+
+static int PROGetDiscType(void)
+{
+    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
+    reboot_config->iso_disc_type;
+}
+
+static void AdrenalineSetBootConfFileIndex(int index)
+{
+    RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
+    reboot_config->bootfileindex = index;
+}
+
+static unsigned int AdrenalineGetBootConfFileIndex(void)
+{
+    RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
+    return reboot_config->bootfileindex;
+}
+
+static void AdrenalineSetDiscType(int type)
+{
+    RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
+}
+
+static int AdrenalineGetDiscType(void)
+{
+    RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
+    return PSP_UMD_TYPE_GAME;
+}
+
+static void setRebootConfigAdrenaline(){
+    RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
+    _reboot_funcs.SetBootConfFileIndex = &AdrenalineSetBootConfFileIndex;
+    _reboot_funcs.GetBootConfFileIndex = &AdrenalineGetBootConfFileIndex;
+    _reboot_funcs.SetDiscType = &AdrenalineSetDiscType;
+    _reboot_funcs.GetDiscType = &AdrenalineGetDiscType;
+    reboot_funcs = &_reboot_funcs;
+    reboot_config_isopath = reboot_config->umdfilename;
+}
+
+static void setRebootConfigPRO(){
+    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
+    _reboot_funcs.SetBootConfFileIndex = &PROSetBootConfFileIndex;
+    _reboot_funcs.GetBootConfFileIndex = &PROGetBootConfFileIndex;
+    _reboot_funcs.SetDiscType = &PROSetDiscType;
+    _reboot_funcs.GetDiscType = &PROGetDiscType;
+    reboot_funcs = &_reboot_funcs;
+    reboot_config_isopath = (char*)&(rebootex_config[0x100]);
+}
+
+static void setRebootConfigARK(){
+    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
+    _reboot_funcs.SetBootConfFileIndex = &ARKSetBootConfFileIndex;
+    _reboot_funcs.GetBootConfFileIndex = &ARKGetBootConfFileIndex;
+    _reboot_funcs.SetDiscType = &ARKSetDiscType;
+    _reboot_funcs.GetDiscType = &ARKGetDiscType;
+    reboot_funcs = &_reboot_funcs;
+    reboot_config_isopath = reboot_config->iso_path;
+}
+
+static int findRebootISOPath(){
+    // Find Reboot ISO Path
+    for (int i=0; i<REBOOTEX_CONFIG_MAXSIZE; i++){
+        char* iso_path = (char*)&(rebootex_config[i]);
+        if ( (iso_path[0] == 'm' && iso_path[1] == 's' && iso_path[2] == '0' && iso_path[3] == ':')
+          || (iso_path[0] == 'e' && iso_path[1] == 'f' && iso_path[2] == '0' && iso_path[3] == ':') ){
+            reboot_config_isopath = iso_path;
+            return 1;
+        }
+    }
+    return 0;
+}
 
 // Backup Reboot Buffer
 void backupRebootBuffer(void)
 {
+    // Copy Reboot Buffer Payload
+    memcpy(reboot_backup, (void *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE);
+    
+    // Copy Reboot Buffer Configuration
+    memcpy(rebootex_config, (void *)REBOOTEX_CONFIG, REBOOTEX_CONFIG_MAXSIZE);
+    
     // Copy ARK runtime Config
     if (*(u32*)ARK_CONFIG == ARK_CONFIG_MAGIC)
         memcpy(ark_config, ARK_CONFIG, sizeof(ARKConfig));
     
-    // Reboot Buffer Configuration
-    RebootBufferConfiguration * conf = (RebootBufferConfiguration *)(REBOOTEX_CONFIG);
-    
-    // Invalid Reboot Buffer Magic
-    if(conf->magic != REBOOTEX_CONFIG_MAGIC) return;
-    
-    // Backup Reboot Buffer Size
-    reboot_size = conf->reboot_buffer_size;
-    
-    // Allocate Reboot Buffer Backup Memory
-    int bufferid = sceKernelAllocPartitionMemory(1, "RebootBuffer", PSP_SMEM_Low, reboot_size, 0);
-    
-    // Get Memory Pointer
-    reboot_backup = sceKernelGetBlockHeadAddr(bufferid);
-    
-    // Copy Reboot Buffer Payload
-    memcpy(reboot_backup, (void *)REBOOTEX_TEXT, reboot_size);
-    
-    // Copy Reboot Buffer Configuration
-    memcpy(&reboot, (void *)REBOOTEX_CONFIG, REBOOTEX_CONFIG_MAXSIZE);
-    
-    // Copy Reboot ISO Path
-    strncpy(reboot_config_isopath, (void *)REBOOTEX_CONFIG_ISO_PATH, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
-    reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
+    // Figure out how to handle rebootex config
+    if (((RebootConfigARK*)rebootex_config)->magic == ARK_CONFIG_MAGIC){
+        setRebootConfigARK(); // ARK
+    }
+    else if (((RebootConfigPRO*)rebootex_config)->magic == PRO_CONFIG_MAGIC){
+        setRebootConfigPRO(); // PRO
+        // Load PSP Compat layer since PRO's rebootex won't
+        int uid = sceKernelLoadModule("flash0:/kd/ark_pspcompat.prx", 0, NULL);
+        int status; sceKernelStartModule(uid, 0, NULL, &status, NULL);
+    }
+    else {
+        setRebootConfigAdrenaline(); // Assume Adrenaline
+    }
     
     // Flush Cache
     flushCache();
@@ -87,23 +185,15 @@ void backupRebootBuffer(void)
 // Restore Reboot Buffer
 void restoreRebootBuffer(void)
 {
-
-    // Reboot Buffer Configuration
-    RebootBufferConfiguration * conf = (RebootBufferConfiguration *)(REBOOTEX_CONFIG);
-
+    // Restore Reboot Buffer Payload
+    memcpy((void *)REBOOTEX_TEXT, reboot_backup, REBOOTEX_MAX_SIZE);
+    
     // Restore Reboot Buffer Configuration
-    memcpy((void *)REBOOTEX_CONFIG, &reboot, REBOOTEX_CONFIG_MAXSIZE);
+    memcpy((void *)REBOOTEX_CONFIG, rebootex_config, REBOOTEX_CONFIG_MAXSIZE);
     
     // Restore ARK Config
-    ark_config->recovery = recovery_launch; // reset recovery mode for next reboot
+    ark_config->recovery = 0; // reset recovery mode for next reboot
     memcpy(ARK_CONFIG, ark_config, sizeof(ARKConfig));
-    
-    // Restore Reboot ISO Path
-    strncpy((char*)REBOOTEX_CONFIG_ISO_PATH, sctrlSEGetUmdFile(), REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
-    ((char*)REBOOTEX_CONFIG_ISO_PATH)[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = '\0';
-    
-    // Restore Reboot Buffer Payload
-    memcpy((void *)REBOOTEX_TEXT, reboot_backup, reboot_size);
 }
 
 // Reboot Buffer Loader

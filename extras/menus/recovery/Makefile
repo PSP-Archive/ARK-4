@@ -2,8 +2,8 @@ TARGET = ARKRECOVERY
 CFLAGS = -Os -G0 -Wall -Wno-unused -Wno-write-strings -Wno-sign-compare
 CXXFLAGS = $(CFLAGS) -fexceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
-INCDIR = ../arkMenu/include ../arkMenu/include/anim $(PROVITA)/libs/libya2d $(PROVITA)/libs/libintraFont $(PROVITA)/libs/libjpeg $(PROVITA)/common/include
-LIBDIR = $(PROVITA)/libs
+INCDIR = ../arkMenu/include ../arkMenu/include/anim $(ARKROOT)/libs/libya2d $(ARKROOT)/libs/libintraFont $(ARKROOT)/libs/libjpeg $(ARKROOT)/common/include
+LIBDIR = $(ARKROOT)/libs
 LIBS = -lstdc++ -lc -lya2d -lintraFont -ljpeg -lpng -lpspvfpu -lpspmpeg -lpspaudio -lpspatrac3 -lpspwlan -lpsppower -lpspgum -lpspgu -lz -lm -lpspvram -lpspmath -lpspmp3 -lpspsystemctrl_user
 LDFLAGS =
 EXTRA_TARGETS = EBOOT.PBP
@@ -38,7 +38,7 @@ distclean:
 
 recovery: all
 
-include $(PROVITA)/common/make/global.mak
+include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
-include $(PROVITA)/common/make/beauty.mak
+include $(ARKROOT)/common/make/beauty.mak

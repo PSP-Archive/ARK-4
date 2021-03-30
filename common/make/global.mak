@@ -1,3 +1,3 @@
--include $(PROVITA)/.config
-include $(PROVITA)/common/make/quiet.mak
-include $(PROVITA)/common/make/beauty_gendep.mak
+-include $(ARKROOT)/.config
+include $(ARKROOT)/common/make/quiet.mak
+include $(ARKROOT)/common/make/beauty_gendep.mak

@@ -25,14 +25,13 @@ u8 rebootbuffer[REBOOTEX_MAX_SIZE];
 void buildRebootBufferConfig(int rebootBufferSize)
 {
     // Fetch Memory Range
-    RebootBufferConfiguration * conf = (RebootBufferConfiguration *)(REBOOTEX_CONFIG);
+    RebootConfigARK* conf = (RebootConfigARK*)(REBOOTEX_CONFIG);
     
     // Clear Reboot Configuration
     memset((char *)REBOOTEX_CONFIG, 0, REBOOTEX_CONFIG_MAXSIZE);
-    memset((char *)REBOOTEX_CONFIG_ISO_PATH, 0, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
     
     // Write Configuration Magic
-    conf->magic = REBOOTEX_CONFIG_MAGIC;
+    conf->magic = ARK_CONFIG_MAGIC;
     
     // Write PROCFW Reboot Buffer Size (for backup in System Control)
     conf->reboot_buffer_size = rebootBufferSize;

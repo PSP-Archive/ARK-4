@@ -3,7 +3,7 @@ TARGET = popcorn
 OBJS = main.o icon.o
 
 all: $(TARGET).prx
-INCDIR = $(PROVITA)/common/include $(PROVITA)/libs/graphics
+INCDIR = $(ARKROOT)/common/include $(ARKROOT)/libs/graphics
 CFLAGS = -Os -G0 -Wall -fno-pic
 
 ifdef DEBUG
@@ -21,11 +21,11 @@ PRX_EXPORTS = exports.exp
 USE_KERNEL_LIBC=1
 USE_KERNEL_LIBS=1
 
-LIBDIR = $(PROVITA)/libs
+LIBDIR = $(ARKROOT)/libs
 LDFLAGS = -nostartfiles
 LIBS = -lpsid -lpspsystemctrl_kernel -lpspsemaphore -lpsprtc -lpspaudio -lgraphics -lcolordebugger
 
-include $(PROVITA)/common/make/global.mak
+include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
-include $(PROVITA)/common/make/beauty.mak
+include $(ARKROOT)/common/make/beauty.mak

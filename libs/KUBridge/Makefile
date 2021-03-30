@@ -15,5 +15,5 @@ LDFLAGS=-nodefaultlibs
 
 LIBDIR =
 
-include $(PROVITA)/common/make/global.mak
-include $(PROVITA)/common/make/beauty_stub.mak
+include $(ARKROOT)/common/make/global.mak
+include $(ARKROOT)/common/make/beauty_stub.mak

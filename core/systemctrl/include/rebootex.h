@@ -20,11 +20,17 @@
 
 #include <rebootconfig.h>
 
-// Reboot Buffer Configuration
-extern RebootBufferConfiguration* reboot_config;
+// Reboot Buffer Configuration Functions
+typedef struct{
+    void (*SetBootConfFileIndex)(int index);
+    unsigned int (*GetBootConfFileIndex)(void);
+    void (*SetDiscType)(int type);
+    int (*GetDiscType)(void);
+}RebootConfigFunctions;
+extern RebootConfigFunctions* reboot_funcs;
 
 // Reboot ISO Path
-extern char reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
+extern char* reboot_config_isopath;
 
 // Backup Reboot Buffer
 void backupRebootBuffer(void);

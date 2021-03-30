@@ -1,8 +1,8 @@
 TARGET = stargate
-C_OBJS = main.o loadmodule_patch.o nodrm_patch.o key_decrypt.o pspcipher.o $(PROVITA)/common/functions.o
+C_OBJS = main.o loadmodule_patch.o nodrm_patch.o key_decrypt.o pspcipher.o $(ARKROOT)/common/functions.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
-INCDIR = $(PROVITA)/common/include
+INCDIR = $(ARKROOT)/common/include
 CFLAGS = -Os -G0 -Wall -fno-pic
 
 ifdef DEBUG
@@ -20,11 +20,11 @@ PRX_EXPORTS = exports.exp
 USE_KERNEL_LIBC=1
 USE_KERNEL_LIBS=1
 
-LIBDIR = $(PROVITA)/libs
+LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
 LIBS = -lpsid -lcolordebugger -lpspsystemctrl_kernel -lpspsemaphore
 
-include $(PROVITA)/common/make/global.mak
+include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
-include $(PROVITA)/common/make/beauty.mak
+include $(ARKROOT)/common/make/beauty.mak

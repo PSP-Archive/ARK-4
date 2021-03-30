@@ -17,7 +17,7 @@
 
 #include "rebootex.h"
 
-RebootBufferConfiguration* reboot_conf = (RebootBufferConfiguration*)REBOOTEX_CONFIG;
+RebootConfigARK* reboot_conf = (RebootConfigARK*)REBOOTEX_CONFIG;
 ARKConfig* ark_config = (ARKConfig*)ARK_CONFIG;
 
 // sceReboot Main Function

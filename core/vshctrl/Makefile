@@ -1,8 +1,8 @@
 TARGET = vshctrl
-OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o hibernation_delete.o $(PROVITA)/common/functions.o
+OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o hibernation_delete.o $(ARKROOT)/common/functions.o
 IMPORTS = 
 
-INCDIR = $(PROVITA)/common/include $(PROVITA)/core/systemctrl/include
+INCDIR = $(ARKROOT)/common/include $(ARKROOT)/core/systemctrl/include
 CFLAGS = -Os -G0 -Wall -fno-pic
 
 CFLAGS += -DCONFIG_661=1
@@ -19,7 +19,7 @@ PRX_EXPORTS = exports.exp
 USE_KERNEL_LIBC=1
 USE_KERNEL_LIBS=1
 
-LIBDIR = $(PROVITA)/libs/
+LIBDIR = $(ARKROOT)/libs/
 LDFLAGS =  -nostartfiles
 LIBS = -lpspsystemctrl_kernel -lansic -lcolordebugger
 
