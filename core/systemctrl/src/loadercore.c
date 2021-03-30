@@ -200,16 +200,6 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     }
 
     if(result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
-
-    /*
-    {
-        if (DisplaySetFrameBuf){
-            initScreen(DisplaySetFrameBuf);
-            PRTSTR1("Starting module %s", mod->modname);
-            PRTSTR1("ModuleStart result: %p", result);
-        }
-    }
-    */
     
     // MediaSync not yet loaded... too early to load plugins.
     if(!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
@@ -252,13 +242,23 @@ SceModule2* patchLoaderCore(void)
     SceModule2* mod = (SceModule2 *)sceKernelFindModuleByName("sceLoaderCore");
     
     // Fetch Text Address
-    u32 addr = mod->text_addr;
+    u32 start_addr = mod->text_addr;
     u32 topaddr = mod->text_addr+mod->text_size;
 
     // restore rebootex pointers to original
-    RebootexFunctions* rex_funcs = REBOOTEX_FUNCTIONS;
-    u32 rebootex_decrypt_call = JAL(rex_funcs->rebootex_decrypt);
-    u32 rebootex_checkexec_call = JAL(rex_funcs->rebootex_checkexec);
+    u32 rebootex_decrypt = 0;
+    u32 rebootex_checkexec = 0;
+    void * memlmd_decrypt = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0xEF73E85B);
+    void * memlmd_checkexec = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0x6192F715);
+    // find patched functions pointing to rebootex
+    for (u32 addr = start_addr; addr<topaddr; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x35450200 || data == 0x35250200){ // ori $a1, $t1/t2, 0x200
+            rebootex_decrypt = K_EXTRACT_CALL(addr-0x18);
+            if (data == 0x35450200) rebootex_checkexec = K_EXTRACT_CALL(addr+12);
+            break;
+        }
+    }
 
     // override the checkExec reference in the module globals
     u32 checkExec = FindFunction("sceLoaderCore", "LoadCoreForKernel", 0xD3353EC4);
@@ -266,19 +266,21 @@ SceModule2* patchLoaderCore(void)
     _sw((unsigned int)KernelCheckExecFile, ref);
     // Flush Cache
     flushCache();
-    
-    // start the dynamic patching
-    for (; addr<topaddr; addr+=4){
+
+    // start the dynamic patching    
+    u32 rebootex_decrypt_call = JAL(rebootex_decrypt);
+    u32 rebootex_checkexec_call = JAL(rebootex_checkexec);
+    for (u32 addr = start_addr; addr<topaddr; addr+=4){
         u32 data = _lw(addr);
         if (data == JAL(checkExec)){
             // Hook sceKernelCheckExecFile
             _sw(JAL(KernelCheckExecFile), addr);
         }
         else if (data == rebootex_decrypt_call){ // Not doing this will keep them pointing into Reboot Buffer... which gets unloaded...
-            _sw(JAL(rex_funcs->orig_decrypt), addr); // Fix memlmd_EF73E85B Calls that we broke intentionally in Reboot Buffer
+            _sw(JAL(memlmd_decrypt), addr); // Fix memlmd_EF73E85B Calls that we broke intentionally in Reboot Buffer
         }
         else if (data == rebootex_checkexec_call){
-            _sw(JAL(rex_funcs->orig_checkexec), addr); // Fix memlmd_6192F715 Calls that we broke intentionally in Reboot Buffer
+            _sw(JAL(memlmd_checkexec), addr); // Fix memlmd_6192F715 Calls that we broke intentionally in Reboot Buffer
         }
         else if (data == 0x02E0F809 && _lw(addr+4) == 0x24040004){
             // Hook sceInit StartModule Call
@@ -300,15 +302,17 @@ SceModule2* patchLoaderCore(void)
     flushCache();
     
     // Patch Relocation Type 7 to 0 (this makes more homebrews load)
-    addr = ref; // addr = mod->text_addr would also work, we generally just want it to be pointing at the code
+    {
+    u32 addr = ref; // addr = mod->text_addr would also work, we generally just want it to be pointing at the code
     while (strcmp((char*)addr, "sceSystemModule")) addr++; // scan for this string, reloc_type comes a few fixed bytes after
     _sw(_lw(addr+0x7C), addr+0x98);
+    }
     
     // Flush Cache
     flushCache();
     
     // Hook Executable Checks
-    for (addr=mod->text_addr; addr<topaddr; addr+=4){
+    for (u32 addr=start_addr; addr<topaddr; addr+=4){
         if (_lw(addr) == JAL(ProbeExec1))
             _sw(JAL(_ProbeExec1), addr);
         else if (_lw(addr) == JAL(ProbeExec2))

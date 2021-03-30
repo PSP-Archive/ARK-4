@@ -97,33 +97,21 @@ typedef struct ARKConfig{
 #define BTCNF_MAGIC 0x0F803001
 #define BOOTCONFIG_TEMP_BUFFER 0x88FB0200
 
-// PROCFW Reboot Buffer Configuration Magic (0xCOLDBIRD)
-#define REBOOTEX_CONFIG_MAGIC 0xC01DB15D
+// ARK Reboot Buffer Configuration Address
+#define REBOOTEX_CONFIG (REBOOTEX_START - 0x10000)
+#define REBOOTEX_CONFIG_MAXSIZE 0x200
 
-// PROCFW Reboot Buffer Configuration Address
-#define REBOOTEX_CONFIG (REBOOTEX_TEXT - 0x10000)
-#define REBOOTEX_CONFIG_MAXSIZE 0x100
-
-// PROCFW Reboot Buffer ISO Path (so we don't lose that information)
-#define REBOOTEX_CONFIG_ISO_PATH (REBOOTEX_CONFIG + REBOOTEX_CONFIG_MAXSIZE)
+// ARK Reboot Buffer ISO Path (so we don't lose that information)
 #define REBOOTEX_CONFIG_ISO_PATH_MAXSIZE 0x100
 
-// PROCFW Reboot Buffer Configuration
+// ARK Reboot Buffer Configuration
 typedef struct RebootBufferConfiguration {
     unsigned int magic;
     unsigned int reboot_buffer_size;
     unsigned char iso_mode;
     unsigned char iso_disc_type;
-    void* ark_config;
+    char iso_path[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
 } RebootBufferConfiguration;
-
-typedef struct RebootexFunctions{
-    void* rebootex_decrypt;
-    void* rebootex_checkexec;
-    void* orig_decrypt;
-    void* orig_checkexec;
-}RebootexFunctions;
-#define REBOOTEX_FUNCTIONS (RebootexFunctions*)0x08D38000
 
 ARKConfig _arkconf = {
     .magic = ARK_CONFIG_MAGIC,
@@ -209,13 +197,6 @@ int PatchLoadCore(void* a0, void* a1, void* a2, int (*module_start)(void*, void*
 
     memlmd_3F2AC9C6 = (void*)(text_addr + 0x00007824);
     memlmd_E42AFE2E = (void*)(text_addr + 0x0000783C);
-    
-    // save this configuration to restore loadcore later on
-    RebootexFunctions* rex_funcs = REBOOTEX_FUNCTIONS;
-    rex_funcs->rebootex_decrypt = &memlmd_Decrypt_patched;
-    rex_funcs->rebootex_checkexec = &memlmd_Sigcheck_patched;
-    rex_funcs->orig_decrypt = memlmd_E42AFE2E;
-    rex_funcs->orig_checkexec = memlmd_3F2AC9C6;
 
     return module_start(a0, a1, a2);
 }
@@ -232,7 +213,7 @@ int compat_entry(BtcnfHeader* btcnf,
     memset((void*)REBOOTEX_CONFIG, 0, REBOOTEX_CONFIG_MAXSIZE);
 
     RebootBufferConfiguration* conf = (RebootBufferConfiguration*)(REBOOTEX_CONFIG);
-    conf->magic = REBOOTEX_CONFIG_MAGIC;
+    conf->magic = ARK_CONFIG_MAGIC;
     conf->reboot_buffer_size = 0;
     
     _arkconf.recovery = is_recovery; // let ARK handle recovery mode

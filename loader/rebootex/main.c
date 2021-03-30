@@ -91,13 +91,6 @@ void loadCoreModuleStartCommon(){
     SonyPRXDecrypt = (void *)FindImportRange("memlmd", 0xEF73E85B, text_addr, top_addr);
     origCheckExecFile = (void *)FindImportRange("memlmd", 0x6192F715, text_addr, top_addr);
 
-    // save this configuration to restore loadcore later on
-    RebootexFunctions* rex_funcs = REBOOTEX_FUNCTIONS;
-    rex_funcs->rebootex_decrypt = &PROPRXDecrypt;
-    rex_funcs->rebootex_checkexec = &CheckExecFilePatched;
-    rex_funcs->orig_decrypt = SonyPRXDecrypt;
-    rex_funcs->orig_checkexec = origCheckExecFile;
-
     u32 decrypt_call = JAL(SonyPRXDecrypt);
     u32 check_call = JAL(origCheckExecFile);
 

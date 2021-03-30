@@ -45,6 +45,8 @@ typedef struct RebootConfigARK {
     char iso_path[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
 } RebootConfigARK;
 
+#define IS_ARK_CONFIG(config) (*((u32*)config) == ARK_CONFIG_MAGIC)
+
 typedef struct RebootConfigPRO {
 	u32 magic;
 	u32 rebootex_size;
@@ -64,6 +66,8 @@ typedef struct RebootConfigPRO {
 
 // PROCFW Reboot Buffer Configuration Magic (0xCOLDBIRD)
 #define PRO_CONFIG_MAGIC 0xC01DB15D
+#define PRO_CONFIG_ISO_PATH (REBOOTEX_CONFIG + 0x100)
+#define IS_PRO_CONFIG(config) (*((u32*)config) == PRO_CONFIG_MAGIC)
 
 typedef struct {
 	int bootfileindex;
@@ -78,14 +82,6 @@ typedef struct {
 
 	char umdfilename[256];
 } RebootConfigAdrenaline;
-
-typedef struct RebootexFunctions{
-    void* rebootex_decrypt;
-    void* rebootex_checkexec;
-    void* orig_decrypt;
-    void* orig_checkexec;
-}RebootexFunctions;
-#define REBOOTEX_FUNCTIONS (RebootexFunctions*)0x08D38000
 
 #endif
 
