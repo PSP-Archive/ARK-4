@@ -31,7 +31,8 @@ C_OBJS = \
 	src/gameinfo.o \
 	src/plugin.o \
 	src/msstor_cache.o \
-	$(ARKROOT)/common/functions.o
+	$(ARKROOT)/common/functions.o \
+	$(ARKROOT)/core/pspcompat/high_mem.o
 		
 OBJS = \
 	$(C_OBJS) \

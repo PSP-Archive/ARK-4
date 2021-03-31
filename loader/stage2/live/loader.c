@@ -11,6 +11,15 @@ int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
 // LoadExecVSHWithApitype Direct Call
 int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int) = NULL;
 
+static int isVitaFile(char* filename){
+    return (strstr(filename, "psvbt")!=NULL // PS Vita btcnf replacement, not used on PSP
+            || strstr(filename, "660")!=NULL // PSP 6.60 modules can be used on Vita, not needed for PSP
+            || strcmp(filename, "/fake.cso")==0 // fake.cso used on Vita to simulate UMD drive when no ISO available
+            || strcmp(filename, "/kd/ark_vitacompat.prx")==0 // ARK compat layer for PS Vita
+            || strcmp(filename, "/kd/ark_vitapops.prx")==0 // ARK compat layer for PS Vita POPS
+    );
+}
+
 void flashPatch(){
     extern ARKConfig* ark_config;
     extern int extractFlash0Archive();
@@ -22,11 +31,13 @@ void flashPatch(){
             char archive[ARK_PATH_SIZE];
             strcpy(archive, ark_config->arkpath);
             strcat(archive, FLASH0_ARK);
-            void* args[2] = {(void*)archive, (void*)KERNELIFY(&PRTSTR11)};
+            void* args[3] = {(void*)archive, (void*)&isVitaFile, (void*)KERNELIFY(&PRTSTR11)};
             // start thread and wait for it to end
-            k_tbl->KernelStartThread(kthreadID, sizeof(void*)*2, &args);
+            k_tbl->KernelStartThread(kthreadID, sizeof(void*)*3, &args);
             k_tbl->waitThreadEnd(kthreadID, NULL);
             k_tbl->KernelDeleteThread(kthreadID);
+            // delete archive
+            //k_tbl->KernelIORemove(archive);
         }
     }
     else{ // Patching flash0 on Vita

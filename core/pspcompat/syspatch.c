@@ -21,7 +21,7 @@ extern STMOD_HANDLER previous;
 extern void SetSpeed(int cpuspd, int busspd);
 
 // Return Boot Status
-static int isSystemBooted(void)
+int isSystemBooted(void)
 {
 
     // Find Function
@@ -42,7 +42,7 @@ static int _sceKernelBootFromForUmdMan(void)
     return 0x20;
 }
 
-static void patch_sceUmdMan_driver(SceModule* mod)
+void patch_sceUmdMan_driver(SceModule* mod)
 {
     int apitype = sceKernelInitApitype();
     if (apitype == 0x152 || apitype == 0x141) {
@@ -51,7 +51,7 @@ static void patch_sceUmdMan_driver(SceModule* mod)
 }
 
 //prevent umd-cache in homebrew, so we can drain the cache partition.
-static void patch_umdcache(SceModule2* mod)
+void patch_umdcache(SceModule2* mod)
 {
     int apitype = sceKernelInitApitype();
     if (apitype == 0x152 || apitype == 0x141){
@@ -61,21 +61,21 @@ static void patch_umdcache(SceModule2* mod)
     }
 }
 
-static void patch_sceWlan_Driver(SceModule2* mod)
+void patch_sceWlan_Driver(SceModule2* mod)
 {
     // disable frequency check
     u32 text_addr = mod->text_addr;
     _sw(NOP, text_addr + 0x000026C0);
 }
 
-static void patch_scePower_Service(SceModule2* mod)
+void patch_scePower_Service(SceModule2* mod)
 {
     // scePowerGetBacklightMaximum always returns 4
     u32 text_addr = mod->text_addr;
     _sw(NOP, text_addr + 0x00000E68);
 }
 
-static void disable_PauseGame(SceModule2* mod)
+void disable_PauseGame(SceModule2* mod)
 {
     u32 text_addr = mod->text_addr;
     if(psp_model == PSP_GO) {
@@ -85,8 +85,8 @@ static void disable_PauseGame(SceModule2* mod)
     }
 }
 
-static int is_launcher_mode = 0;
-static int use_mscache = 0;
+int is_launcher_mode = 0;
+int use_mscache = 0;
 void settingsHandler(char* path){
     if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
         SetSpeed(333, 166);
@@ -146,12 +146,14 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
+    /*
     if (strcmp(mod->modname, "sceLoadExec") == 0){
         if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
             prepatch_partitions();
             goto flush;
         }
     }
+    */
     
     if (strcmp(mod->modname, "sceMediaSync") == 0){
         // load and process settings file

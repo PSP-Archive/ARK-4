@@ -23,6 +23,7 @@
 #include <systemctrl.h>
 #include "imports.h"
 #include "rebootex.h"
+#include "extras/procompat/pro_rebootex.h"
 
 extern ARKConfig* ark_config;
 
@@ -126,6 +127,10 @@ static void setRebootConfigPRO(){
     _reboot_funcs.GetDiscType = &PROGetDiscType;
     reboot_funcs = &_reboot_funcs;
     reboot_config_isopath = (char*)&(rebootex_config[0x100]);
+    if (reboot_config->rebootex_size == 0){ // Infinity setup, must inject PRO rebootex
+        memcpy(reboot_backup, pro_rebootex, size_pro_rebootex);
+        reboot_config->rebootex_size = size_pro_rebootex;
+    }
 }
 
 static void setRebootConfigARK(){
@@ -138,6 +143,7 @@ static void setRebootConfigARK(){
     reboot_config_isopath = reboot_config->iso_path;
 }
 
+/*
 static int findRebootISOPath(){
     // Find Reboot ISO Path
     for (int i=0; i<REBOOTEX_CONFIG_MAXSIZE; i++){
@@ -150,6 +156,7 @@ static int findRebootISOPath(){
     }
     return 0;
 }
+*/
 
 // Backup Reboot Buffer
 void backupRebootBuffer(void)
@@ -170,10 +177,12 @@ void backupRebootBuffer(void)
     }
     else if (IS_PRO_CONFIG(rebootex_config)){
         setRebootConfigPRO(); // PRO
-        // Load PSP Compat layer since PRO's rebootex won't
-        int uid = sceKernelLoadModule("flash0:/kd/ark_pspcompat.prx", 0, NULL);
-        int status; sceKernelStartModule(uid, 0, NULL, &status, NULL);
-        // Fix loadcore
+        // set ARK Config
+        ark_config->exec_mode = PSP_ORIG;
+        if (sceKernelGetModel() == PSP_GO){
+            ark_config->arkpath[0] = 'e';
+            ark_config->arkpath[1] = 'f';
+        }
     }
     else {
         setRebootConfigAdrenaline(); // Assume Adrenaline
@@ -183,8 +192,10 @@ void backupRebootBuffer(void)
     flushCache();
 }
 
+/*
 static int convertPROtoARK(){
     if (IS_PRO_CONFIG(rebootex_config)){
+        // try loading rebootex from ARK save
         char path[ARK_PATH_SIZE];
         strcpy(path, ark_config->arkpath);
         strcat(path, "REBOOT.BIN");
@@ -213,18 +224,15 @@ static int convertPROtoARK(){
     }
     return 0;
 }
+*/
 
 // Restore Reboot Buffer
 void restoreRebootBuffer(void)
 {
-    
-    if (!convertPROtoARK()){
-        // Restore Reboot Buffer Payload
-        memcpy((void *)REBOOTEX_TEXT, reboot_backup, REBOOTEX_MAX_SIZE);
-        // Restore Reboot Buffer Configuration
-        memcpy((void *)REBOOTEX_CONFIG, rebootex_config, REBOOTEX_CONFIG_MAXSIZE);
-    }
-
+    // Restore Reboot Buffer Payload
+    memcpy((void *)REBOOTEX_TEXT, reboot_backup, REBOOTEX_MAX_SIZE);
+    // Restore Reboot Buffer Configuration
+    memcpy((void *)REBOOTEX_CONFIG, rebootex_config, REBOOTEX_CONFIG_MAXSIZE);
     // Restore ARK Config
     ark_config->recovery = 0; // reset recovery mode for next reboot
     memcpy(ARK_CONFIG, ark_config, sizeof(ARKConfig));
@@ -235,7 +243,6 @@ int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
 {
     // Restore Reboot Buffer Configuration
     restoreRebootBuffer();
-    
     // Load Sony Reboot Buffer
     return _LoadReboot(arg1, arg2, arg3, arg4);
 }

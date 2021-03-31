@@ -21,8 +21,6 @@
 
 #define BUF_SIZE 16*1024
 
-static void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L) = NULL;
-
 #define PRTSTR11(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11) {if (prtstr) prtstr(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11);}
 #define PRTSTR10(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10) PRTSTR11(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, 0)
 #define PRTSTR9(text, x1, x2, x3, x4, x5, x6, x7, x8, x9) PRTSTR10(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, 0)
@@ -46,21 +44,22 @@ static inline void open_flash(){
     }
 }
 
-static inline isVitaFile(char* filename){
-    return (strstr(filename, "psvbt")!=NULL // PS Vita btcnf replacement, not used on PSP
-            || strstr(filename, "660")!=NULL // PSP 6.60 modules can be used on Vita, not needed for PSP
-            || strcmp(filename, "/fake.cso")==0 // fake.cso used on Vita to simulate UMD drive when no ISO available
-            || strcmp(filename, "/kd/ark_vitacompat.prx")==0 // ARK compat layer for PS Vita
-            || strcmp(filename, "/kd/ark_vitapops.prx")==0 // ARK compat layer for PS Vita POPS
-    );
+static int dummyFilter(char* filename){
+    return 0;
 }
 
 void extractFlash0Archive(SceSize args, void** argp){
 
+    void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L) = NULL;
+    int (*filter)(char*) = NULL;
+
     int nargs = args/sizeof(void*);
-    if (args<1) return; // at least one parameter (path of archive)
+    if (nargs!=3) return;
     char* archive = argp[0];
-    if (nargs==2) prtstr = argp[1];
+    filter = argp[1];
+    prtstr = argp[2];
+    
+    if (filter == NULL) filter = &dummyFilter;
 
     char* dest_path = "flash0:/";
     unsigned char buf[BUF_SIZE];
@@ -89,8 +88,8 @@ void extractFlash0Archive(SceSize args, void** argp){
             k_tbl->KernelIORead(fdr, filename, namelen);
             filename[namelen] = '\0';
             
-            if (isVitaFile(filename)){ // check if file is not needed on PSP
-                k_tbl->IoLseek(fdr, filesize, 1); // skip file
+            if (filter(filename)){ // check if file is not needed on PSP
+                k_tbl->KernelIOLSeek(fdr, filesize, 1); // skip file
             }
             else{
                 strcat(filepath, (filename[0]=='/')?filename+1:filename);
@@ -111,7 +110,6 @@ void extractFlash0Archive(SceSize args, void** argp){
             }
         }
         k_tbl->KernelIOClose(fdr);
-        k_tbl->KernelIORemove(archive);
     }
     else{
         PRTSTR("Nothing to be done");

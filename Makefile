@@ -20,10 +20,12 @@ SUBDIRS = libs \
 	loader/rebootex \
 	loader/stage1/linkless_payload \
 	loader/stage1/live_eboot \
+	loader/stage1/pro_updater \
 	loader/stage2/live \
 	loader/stage2/compat \
 	loader/stage2/kram_dumper \
 	loader/stage2/vita_flash_dumper \
+	extras/procompat \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
 	extras/menus/xMenu \
@@ -34,9 +36,10 @@ SUBDIRS = libs \
 all: subdirs kxploits mkdir-dist encrypt-prx copy-bin
 	@echo "Build Done"
 
-copy-bin: loader/stage1/linkless_payload/H.BIN loader/stage1/live_eboot/EBOOT.PBP contrib/PC/btcnf/psvbtinf.bin contrib/PC/btcnf/psvbtnnf.bin contrib/PC/btcnf/psvbtxnf.bin contrib/PSP/fake.cso extras/menus/arkMenu/EBOOT.PBP extras/menus/recovery/EBOOT.PBP extras/menus/xMenu/EBOOT.PBP extras/menus/vshmenu/satelite.prx
+copy-bin:
 #	Common installation
 	$(Q)cp loader/stage1/live_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
+	$(Q)cp loader/stage1/pro_updater/EBOOT.PBP dist/ARK_PRO_Updater/EBOOT.PBP # PRO Updater
 	$(Q)cp loader/kxploit/psp660/K.BIN dist/ARK_Live/K.BIN # Kernel exploit for PSP
 	$(Q)cp loader/stage1/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
 	$(Q)cp loader/stage1/vitabubble/SAVEPATH.TXT dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
@@ -51,6 +54,7 @@ copy-bin: loader/stage1/linkless_payload/H.BIN loader/stage1/live_eboot/EBOOT.PB
 	$(Q)cp extras/menus/arkMenu/themes/classic/DATA.PKG dist/ARK_01234/DATA.PKG # Launcher and Recovery resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
 	$(Q)cp loader/stage1/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
+	$(Q)cp extras/procompat/procompat.prx dist/ARK_01234/PROCOMPT.PRX # PSP Compat layer when running under PRO loaders
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	
 encrypt-prx: \
@@ -75,6 +79,7 @@ clean:
 	$(Q)$(MAKE) $@ -C libs
 	$(Q)$(MAKE) $@ -C loader/stage1/linkless_payload
 	$(Q)$(MAKE) $@ -C loader/stage1/live_eboot
+	$(Q)$(MAKE) $@ -C loader/stage1/pro_updater
 	$(Q)$(MAKE) $@ -C loader/stage2/live
 	$(Q)$(MAKE) $@ -C loader/stage2/compat
 	$(Q)$(MAKE) $@ -C loader/stage2/kram_dumper
@@ -88,6 +93,7 @@ clean:
 	$(Q)$(MAKE) $@ -C core/stargate
 	$(Q)$(MAKE) $@ -C core/popcorn
 	$(Q)$(MAKE) $@ -C core/inferno
+	$(Q)$(MAKE) $@ -C extras/procompat
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
@@ -127,6 +133,7 @@ mkdir-dist:
 	$(Q)mkdir dist | true
 	$(Q)mkdir dist/VitaBubble | true
 	$(Q)mkdir dist/ARK_Live | true
+	$(Q)mkdir dist/ARK_PRO_Updater | true
 
 -include $(ARKROOT)/.config
 include $(ARKROOT)/common/make/quiet.mak

@@ -78,6 +78,9 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
         loadexec = mod;
+        if (sceKernelGetModel() > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
+            prepatch_partitions();
+        }
         goto flush;
     }
     

@@ -16,7 +16,6 @@
 #include "rebootconfig.h"
 #include "functions.h"
 #include "graphics.h"
-#include "ya2d_main.h"
 
 PSP_MODULE_INFO("ARK Loader", PSP_MODULE_USER, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);

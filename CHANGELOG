@@ -1,5 +1,9 @@
 ARK-4
 
+Update 8.9:
+- Created ARK_PRO_Updater, allowing to update an existing PRO installation to ARK.
+- Tested and working with PRO Infinity.
+
 Update 8.8:
 - Rebootex is now an external part of the CFW and can be easily replaced.
 - Added compatibility with PRO and Adrenaline Rebootex.

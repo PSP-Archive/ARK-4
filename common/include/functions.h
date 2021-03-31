@@ -155,7 +155,7 @@ typedef struct KernelFunctions{
     SceUID (* KernelIOOpen)(const char *, int, int);
     int (* KernelIOWrite)(SceUID, const void *, unsigned);
     int (* KernelIORead)(SceUID, void *, unsigned);
-    int (* KernelIOLSeek)(int fd, int offset, int whence);
+    int (* KernelIOLSeek)(int fd, s64 offset, int whence);
     int (* KernelIOClose)(SceUID);
     SceUID (* KernelIODopen)(char *);
     int (* KernelIODread)(SceUID, SceIoDirent *);
@@ -164,7 +164,6 @@ typedef struct KernelFunctions{
     int (* KernelIORmdir)(const char* path);
     int (* KernelIOGetStat)(const char *file, SceIoStat *stat);
     int (* KernelIORemove)(const char* file);
-    int (* IoLseek)(int, s64, int);
     int (* IoAssign)(const char *dev1, const char *dev2, const char *dev3, int mode, void *unk1, long unk2);
     int (* IoUnassign)(const char *dev);
     

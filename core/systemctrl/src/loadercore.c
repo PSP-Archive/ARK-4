@@ -206,6 +206,19 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     {
         // Load Plugins
         LoadPlugins();
+        // Load PRO compat if needed
+        extern u8 rebootex_config[];
+        if (IS_PRO_CONFIG(rebootex_config)){
+            char path[ARK_PATH_SIZE];
+            strcpy(path, ark_config->arkpath);
+            strcat(path, "PROCOMPT.PRX");
+            int uid = sceKernelLoadModule(path, 0, NULL);
+            int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
+            if (uid < 0 || res < 0){
+                PRTSTR2("PRO Compat: %p, %p", uid, res);
+                sceKernelDelayThread(10000000);
+            }
+        }
         // Remember it
         pluginLoaded = 1;
     }
@@ -234,6 +247,9 @@ int patch_sceKernelStartModule_in_bootstart(int (* bootstart)(SceSize, void *), 
     return bootstart(4, argp);
 }
 
+// Sony PRX Decrypter Function Pointer
+int (* SonyPRXDecrypt)(void *, unsigned int, unsigned int *) = NULL;
+int (* origCheckExecFile)(unsigned char * addr, void * arg2) = NULL;
 // Patch Loader Core Module
 SceModule2* patchLoaderCore(void)
 {
@@ -248,8 +264,8 @@ SceModule2* patchLoaderCore(void)
     // restore rebootex pointers to original
     u32 rebootex_decrypt = 0;
     u32 rebootex_checkexec = 0;
-    void * memlmd_decrypt = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0xEF73E85B);
-    void * memlmd_checkexec = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0x6192F715);
+    SonyPRXDecrypt = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0xEF73E85B);
+    origCheckExecFile = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0x6192F715);
     // find patched functions pointing to rebootex
     for (u32 addr = start_addr; addr<topaddr; addr+=4){
         u32 data = _lw(addr);
@@ -277,10 +293,10 @@ SceModule2* patchLoaderCore(void)
             _sw(JAL(KernelCheckExecFile), addr);
         }
         else if (data == rebootex_decrypt_call){ // Not doing this will keep them pointing into Reboot Buffer... which gets unloaded...
-            _sw(JAL(memlmd_decrypt), addr); // Fix memlmd_EF73E85B Calls that we broke intentionally in Reboot Buffer
+            _sw(JAL(SonyPRXDecrypt), addr); // Fix memlmd_EF73E85B Calls that we broke intentionally in Reboot Buffer
         }
         else if (data == rebootex_checkexec_call){
-            _sw(JAL(memlmd_checkexec), addr); // Fix memlmd_6192F715 Calls that we broke intentionally in Reboot Buffer
+            _sw(JAL(origCheckExecFile), addr); // Fix memlmd_6192F715 Calls that we broke intentionally in Reboot Buffer
         }
         else if (data == 0x02E0F809 && _lw(addr+4) == 0x24040004){
             // Hook sceInit StartModule Call

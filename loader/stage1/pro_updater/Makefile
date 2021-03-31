@@ -1,5 +1,5 @@
 TARGET = ARK
-C_OBJS = main.o
+C_OBJS = main.o $(ARKROOT)/core/pspcompat/flashinstall.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
 CFLAGS = -Os -G0 -Wall
@@ -12,7 +12,7 @@ ASFLAGS = $(CFLAGS)
 LDFLAGS = -L sysmem -L $(ARKROOT)/libs
 BUILD_PRX = 1
 PSP_EBOOT_ICON = ICON0.PNG
-PSP_EBOOT_TITLE += ARK Loader
+PSP_EBOOT_TITLE += ARK PRO Updater
 
 EXTRA_TARGETS = EBOOT.PBP
 

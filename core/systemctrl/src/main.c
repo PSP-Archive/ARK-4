@@ -35,7 +35,7 @@ PSP_MODULE_INFO("SystemControl", 0x3007, 1, 0);
 static ARKConfig _ark_conf = { // default config
     .magic = ARK_CONFIG_MAGIC,
     .arkpath = DEFAULT_ARK_PATH,
-    .exploit_id = LIVE_EXPLOIT_ID,
+    .exploit_id = {0}, // None by default
     .exec_mode = DEV_UNK, // system files don't need to know the device, as long as the compat layer is running, it should be fine
     .recovery = 0,
 };
