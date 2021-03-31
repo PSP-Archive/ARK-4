@@ -27,14 +27,16 @@ Download the precompiled binaries.
 
 On PSP:
 
-- Copy the folder ARK_Live to /PSP/GAME/
-
 - Copy the folder ARK_01234 into /PSP/SAVEDATA/
 
-- Launch ARK Loader from the XMB.
+* For PRO Infinity Users:
+- If you are running an existing PRO Infinity installation, simply copy ARK_PRO_Update to /PSP/GAME and run it from PRO. It will update PRO to ARK.
+- To go back to running PRO, simply run PRO Update to reinstall PRO CFW files.
 
-- It will install FLASH0.ARK into flash0 and then detele the package (so it doesn't get reinstalled every time you boot into the CFW).
----- To reinstall flash0 files, copy FLASH0.ARK again into the PSP/SAVEDATA/ARK_01234/ folder.
+* For Official Firmware Users:
+- Copy the folder ARK_Live to /PSP/GAME/
+- Launch from the XMB on OFW.
+- It will install FLASH0.ARK into flash0.
 
 
 On PS Vita:
