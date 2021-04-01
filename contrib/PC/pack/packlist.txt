@@ -1,5 +1,5 @@
 psvbtinf.bin,dist/PSVBTINF.BIN
-psvbtnnf.bin,dist/PSVBTNNF.BIN
+psvbtcnf.bin,dist/PSVBTCNF.BIN
 psvbtxnf.bin,dist/PSVBTXNF.BIN
 /kd/ark_systemctrl.prx,dist/SYSCTRL.BIN
 /kd/ark_vitacompat.prx,dist/VITACOMP.BIN

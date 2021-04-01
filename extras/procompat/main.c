@@ -44,6 +44,17 @@ void PROOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
     
+    if (strcmp(mod->modname, "sceMediaSync") == 0){
+        loadSettings(&settingsHandler);
+        if (is_launcher_mode){
+            strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
+        }
+        else{
+            ark_config->launcher[0] = 0; // disable launcher mode
+        }
+        goto flush;
+    }
+    
     if(booted == 0)
     {
         // Boot is complete
@@ -90,15 +101,6 @@ void PROSysPatch(){
 
 void processArkConfig(ARKConfig* ark_config){
     sctrlHENGetArkConfig(ark_config);
-    if (ark_config->exec_mode == DEV_UNK){
-        ark_config->exec_mode = PSP_ORIG; // assume running on PSP
-        sctrlHENSetArkConfig(ark_config); // notify SystemControl
-    }
-    if (psp_model == PSP_GO){
-        ark_config->arkpath[0] = 'e';
-        ark_config->arkpath[1] = 'f';
-        sctrlHENSetArkConfig(ark_config);
-    }
 }
 
 // Boot Time Entry Point
@@ -115,14 +117,6 @@ int module_start(SceSize args, void * argp)
     processArkConfig(ark_config);
     // Do PRO patches
     PROSysPatch();
-    // load and process settings file
-    loadSettings(&settingsHandler);
-    if (is_launcher_mode){
-        strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
-    }
-    else{
-        ark_config->launcher[0] = 0; // disable launcher mode
-    }
     // notify SystemControl of changes in runtime config
     sctrlHENSetArkConfig(ark_config);
     // Register Module Start Handler

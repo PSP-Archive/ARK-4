@@ -28,6 +28,7 @@
 #include <psppower.h>
 #include <string.h>
 
+#include "macros.h"
 #include "globals.h"
 #include "functions.h"
 #include "kxploit.h"
@@ -36,12 +37,14 @@
 Dummy kernel exploit to use when ARK.BIN is already loaded with kernel priviledges.
 */
 
+FunctionTable* g_tbl = NULL;
 
 int stubScanner(FunctionTable* tbl){
+    g_tbl = tbl;
     return 0;
 }
 
-void repairInstruction(void){
+void repairInstruction(KernelFunctions* k_tbl){
 }
 
 int doExploit(void){
@@ -49,7 +52,6 @@ int doExploit(void){
 }
 
 void executeKernel(u32 kfuncaddr){
-    void (*kernelContentFunction)(void) = (void*)kfuncaddr;
-    kernelContentFunction();
+    g_tbl->KernelLibcTime(KERNELIFY(kfuncaddr));
 }
 

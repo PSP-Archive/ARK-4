@@ -389,9 +389,11 @@ void GameManager::control(Controller* pad){
             this->getEntry()->execute();
         }
     }
+    /*
     else if (pad->decline()){
         sceKernelExitGame();
     }
+    */
 }
 
 void GameManager::updateGameList(const char* path){

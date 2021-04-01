@@ -21,11 +21,8 @@ int _pspemuLfatOpen(char** filename, int unk)
             p[5] = 'x'; // psvbtxnf.bin for PS1 exploits
         }
         else{
-            if (reboot_conf->iso_mode == MODE_NP9660){
-                p[5] = 'n'; // use NP9660 for PSN EBOOTS
-            }
-            else{
-                p[5] = 'i'; // use inferno otherwise
+            if (reboot_conf->iso_mode == MODE_INFERNO){
+                p[5] = 'i'; // use inferno ISO mode
             }
         }
     }

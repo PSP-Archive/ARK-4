@@ -12,7 +12,7 @@
 #include "controller.h"
 #include "gfx.h"
 
-#define PSN_DRIVER 2
+#define PSN_DRIVER 0
 #define ISO_DRIVER 3
 
 #define HOMEBREW_RUNLEVEL 0x141

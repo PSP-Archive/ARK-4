@@ -178,6 +178,7 @@ static int doColorDebug(){
 // Init Start Module Hook
 int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
+    extern u8 rebootex_config[];
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
     int result = -1;
@@ -198,29 +199,24 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
             exitToLauncher(); // reboot VSH into custom menu
         }
     }
-
+    // start module
     if(result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
     
-    // MediaSync not yet loaded... too early to load plugins.
+    // MediaSync not yet started... too early to load plugins.
     if(!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
     {
         // Load Plugins
         LoadPlugins();
+        // Remember it
+        pluginLoaded = 1;
         // Load PRO compat if needed
-        extern u8 rebootex_config[];
         if (IS_PRO_CONFIG(rebootex_config)){
             char path[ARK_PATH_SIZE];
             strcpy(path, ark_config->arkpath);
             strcat(path, "PROCOMPT.PRX");
             int uid = sceKernelLoadModule(path, 0, NULL);
             int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
-            if (uid < 0 || res < 0){
-                PRTSTR2("PRO Compat: %p, %p", uid, res);
-                sceKernelDelayThread(10000000);
-            }
         }
-        // Remember it
-        pluginLoaded = 1;
     }
 
     return result;

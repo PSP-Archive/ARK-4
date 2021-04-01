@@ -266,9 +266,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
             if (newsize > 0) result = newsize;
             break;
         case MODE_NP9660:
-            break; // launching PSN EBOOT
         case MODE_MARCH33:
-            // launching ISO with M33 Driver, default to inferno
         case MODE_INFERNO:
             newsize = patch_bootconf_inferno(buffer, length);
             if (newsize > 0) result = newsize;

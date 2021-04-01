@@ -639,10 +639,6 @@ int module_start(SceSize args, void* argp)
     // Flush Cache
     flushCache();
     
-    // load NP9660 a wait to patch it
-    int modid = sceKernelLoadModule("flash0:/kd/np9660.prx", 0, NULL);
-    int status, res = sceKernelStartModule(modid, 0, NULL, &status, NULL);
-    
     // ISO File Descriptor
     int fd = -1;
     

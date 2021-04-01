@@ -23,6 +23,7 @@
 #include <systemctrl.h>
 #include "imports.h"
 #include "rebootex.h"
+#include "loader/rebootex/payload.h"
 #include "extras/procompat/pro_rebootex.h"
 
 extern ARKConfig* ark_config;
@@ -36,74 +37,74 @@ u8 rebootex_config[REBOOTEX_CONFIG_MAXSIZE];
 RebootConfigFunctions* reboot_funcs = NULL;
 static RebootConfigFunctions _reboot_funcs;
 // Reboot ISO Path
-char* reboot_config_isopath = NULL;
+char* reboot_config_isopath = rebootex_config;
 
-static void ARKSetBootConfFileIndex(int index)
+static void SetBootConfFileIndexARK(int index)
 {
     RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
     reboot_config->iso_mode = index;
 }
 
-static unsigned int ARKGetBootConfFileIndex(void)
+static unsigned int GetBootConfFileIndexARK(void)
 {
     RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
     return reboot_config->iso_mode;
 }
 
-static void ARKSetDiscType(int type)
+static void SetDiscTypeARK(int type)
 {
     RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
     reboot_config->iso_disc_type = type;
 }
 
-static int ARKGetDiscType(void)
+static int GetDiscTypeARK(void)
 {
     RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
     reboot_config->iso_disc_type;
 }
 
-static void PROSetBootConfFileIndex(int index)
+static void SetBootConfFileIndexPRO(int index)
 {
     RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
     reboot_config->iso_mode = index;
 }
 
-static unsigned int PROGetBootConfFileIndex(void)
+static unsigned int GetBootConfFileIndexPRO(void)
 {
     RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
     return reboot_config->iso_mode;
 }
 
-static void PROSetDiscType(int type)
+static void SetDiscTypePRO(int type)
 {
     RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
     reboot_config->iso_disc_type = type;
 }
 
-static int PROGetDiscType(void)
+static int GetDiscTypePRO(void)
 {
     RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
     reboot_config->iso_disc_type;
 }
 
-static void AdrenalineSetBootConfFileIndex(int index)
+static void SetBootConfFileIndexAdrenaline(int index)
 {
     RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
     reboot_config->bootfileindex = index;
 }
 
-static unsigned int AdrenalineGetBootConfFileIndex(void)
+static unsigned int GetBootConfFileIndexAdrenaline(void)
 {
     RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
     return reboot_config->bootfileindex;
 }
 
-static void AdrenalineSetDiscType(int type)
+static void SetDiscTypeAdrenaline(int type)
 {
     RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
 }
 
-static int AdrenalineGetDiscType(void)
+static int GetDiscTypeAdrenaline(void)
 {
     RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
     return PSP_UMD_TYPE_GAME;
@@ -111,20 +112,20 @@ static int AdrenalineGetDiscType(void)
 
 static void setRebootConfigAdrenaline(){
     RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
-    _reboot_funcs.SetBootConfFileIndex = &AdrenalineSetBootConfFileIndex;
-    _reboot_funcs.GetBootConfFileIndex = &AdrenalineGetBootConfFileIndex;
-    _reboot_funcs.SetDiscType = &AdrenalineSetDiscType;
-    _reboot_funcs.GetDiscType = &AdrenalineGetDiscType;
+    _reboot_funcs.SetBootConfFileIndex = &SetBootConfFileIndexAdrenaline;
+    _reboot_funcs.GetBootConfFileIndex = &GetBootConfFileIndexAdrenaline;
+    _reboot_funcs.SetDiscType = &SetDiscTypeAdrenaline;
+    _reboot_funcs.GetDiscType = &GetDiscTypeAdrenaline;
     reboot_funcs = &_reboot_funcs;
     reboot_config_isopath = reboot_config->umdfilename;
 }
 
 static void setRebootConfigPRO(){
     RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
-    _reboot_funcs.SetBootConfFileIndex = &PROSetBootConfFileIndex;
-    _reboot_funcs.GetBootConfFileIndex = &PROGetBootConfFileIndex;
-    _reboot_funcs.SetDiscType = &PROSetDiscType;
-    _reboot_funcs.GetDiscType = &PROGetDiscType;
+    _reboot_funcs.SetBootConfFileIndex = &SetBootConfFileIndexPRO;
+    _reboot_funcs.GetBootConfFileIndex = &GetBootConfFileIndexPRO;
+    _reboot_funcs.SetDiscType = &SetDiscTypePRO;
+    _reboot_funcs.GetDiscType = &GetDiscTypePRO;
     reboot_funcs = &_reboot_funcs;
     reboot_config_isopath = (char*)&(rebootex_config[0x100]);
     if (reboot_config->rebootex_size == 0){ // Infinity setup, must inject PRO rebootex
@@ -135,12 +136,16 @@ static void setRebootConfigPRO(){
 
 static void setRebootConfigARK(){
     RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
-    _reboot_funcs.SetBootConfFileIndex = &ARKSetBootConfFileIndex;
-    _reboot_funcs.GetBootConfFileIndex = &ARKGetBootConfFileIndex;
-    _reboot_funcs.SetDiscType = &ARKSetDiscType;
-    _reboot_funcs.GetDiscType = &ARKGetDiscType;
+    _reboot_funcs.SetBootConfFileIndex = &SetBootConfFileIndexARK;
+    _reboot_funcs.GetBootConfFileIndex = &GetBootConfFileIndexARK;
+    _reboot_funcs.SetDiscType = &SetDiscTypeARK;
+    _reboot_funcs.GetDiscType = &GetDiscTypeARK;
     reboot_funcs = &_reboot_funcs;
     reboot_config_isopath = reboot_config->iso_path;
+    if (reboot_config->reboot_buffer_size == 0){ // Infinity setup, must inject ARK rebootex
+        memcpy(reboot_backup, rebootbuffer, size_rebootbuffer);
+        reboot_config->reboot_buffer_size = size_rebootbuffer;
+    }
 }
 
 /*
@@ -193,6 +198,7 @@ void backupRebootBuffer(void)
 }
 
 /*
+// Should we really do this?
 static int convertPROtoARK(){
     if (IS_PRO_CONFIG(rebootex_config)){
         // try loading rebootex from ARK save
@@ -230,10 +236,15 @@ static int convertPROtoARK(){
 void restoreRebootBuffer(void)
 {
     // Restore Reboot Buffer Payload
-    memcpy((void *)REBOOTEX_TEXT, reboot_backup, REBOOTEX_MAX_SIZE);
+    if (reboot_backup[0] == 0x1F && reboot_backup[1] == 0x8B) // gzip packed rebootex
+        sceKernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, reboot_backup, NULL);
+    else // plain payload
+        memcpy((void *)REBOOTEX_TEXT, reboot_backup, REBOOTEX_MAX_SIZE);
+        
     // Restore Reboot Buffer Configuration
     memcpy((void *)REBOOTEX_CONFIG, rebootex_config, REBOOTEX_CONFIG_MAXSIZE);
-    // Restore ARK Config
+
+    // Restore ARK Configuration
     ark_config->recovery = 0; // reset recovery mode for next reboot
     memcpy(ARK_CONFIG, ark_config, sizeof(ARKConfig));
 }

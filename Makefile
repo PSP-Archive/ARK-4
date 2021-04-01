@@ -9,6 +9,7 @@ export DEBUG ARKROOT
 SUBDIRS = libs \
 	contrib/PC/btcnf \
 	contrib/PC/prxencrypter \
+	loader/rebootex \
 	core/systemctrl \
 	core/pspcompat \
 	core/vitacompat \
@@ -17,7 +18,6 @@ SUBDIRS = libs \
 	core/stargate \
 	core/popcorn \
 	core/vshctrl \
-	loader/rebootex \
 	loader/stage1/linkless_payload \
 	loader/stage1/live_eboot \
 	loader/stage1/pro_updater \
@@ -46,7 +46,7 @@ copy-bin:
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
 	$(Q)cp loader/stage2/compat/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
 	$(Q)cp loader/stage2/live/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
-	$(Q)cp loader/kxploit/vita360/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PS Vita
+	$(Q)cp loader/kxploit/dummy/K.BIN dist/ARK_01234/K.BIN # Dummy Kernel exploit
 	$(Q)cp loader/rebootex/reboot.bin.gz dist/ARK_01234/REBOOT.BIN # Kernel exploit for PS Vita
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/MENU.PBP # Default launcher
@@ -60,16 +60,16 @@ copy-bin:
 encrypt-prx: \
 	dist/SYSCTRL.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN dist/PSPCOMPAT.BIN dist/VSHCTRL.BIN dist/INFERNO.BIN dist/STARGATE.BIN dist/POPCORN.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
-	$(Q)cp contrib/PC/btcnf/psvbtnnf.bin dist/PSVBTNNF.BIN
+	$(Q)cp contrib/PC/btcnf/psvbtcnf.bin dist/PSVBTCNF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
 
 
 kxploits:
+	$(Q)$(MAKE) $@ K=dummy -C loader/kxploit
 	$(Q)$(MAKE) $@ K=psp660 -C loader/kxploit
 	$(Q)$(MAKE) $@ K=vita320 -C loader/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/kxploit
-	$(Q)$(MAKE) $@ K=vita370 -C loader/kxploit
 
 # Only clean non-library code
 cleanobj:
@@ -98,14 +98,12 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
+	$(Q)$(MAKE) $@ K=dummy -C loader/kxploit
 	$(Q)$(MAKE) $@ K=psp660 -C loader/kxploit
 	$(Q)$(MAKE) $@ K=vita320 -C loader/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/kxploit
-	$(Q)$(MAKE) $@ K=vita370 -C loader/kxploit
+	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)-rm -rf dist *~ | true
-	$(Q)-rm -f contrib/PC/btcnf/psvbtinf.bin
-	$(Q)-rm -f contrib/PC/btcnf/psvbtnnf.bin
-	$(Q)-rm -f contrib/PC/btcnf/psvbtxnf.bin
 	$(Q)$(PYTHON) cleandeps.py
 
 subdirs: $(SUBDIRS)
