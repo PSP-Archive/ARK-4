@@ -44,17 +44,6 @@ void PROOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
     
-    if (strcmp(mod->modname, "sceMediaSync") == 0){
-        loadSettings(&settingsHandler);
-        if (is_launcher_mode){
-            strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
-        }
-        else{
-            ark_config->launcher[0] = 0; // disable launcher mode
-        }
-        goto flush;
-    }
-    
     if(booted == 0)
     {
         // Boot is complete
@@ -96,6 +85,21 @@ void PROSysPatch(){
     if((mod = sceKernelFindModuleByName("scePower_Service")) != NULL) {
         patch_scePower_Service(mod);
     }
+    
+    if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
+        prepatch_partitions();
+    }
+    
+    loadSettings(&settingsHandler);
+    
+    if (is_launcher_mode){
+        strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
+    }
+    else{
+        ark_config->launcher[0] = 0; // disable launcher mode
+    }
+    sctrlHENSetArkConfig(ark_config);
+    
     flushCache();
 }
 

@@ -146,14 +146,12 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
-    /*
     if (strcmp(mod->modname, "sceLoadExec") == 0){
         if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
             prepatch_partitions();
             goto flush;
         }
     }
-    */
     
     if (strcmp(mod->modname, "sceMediaSync") == 0){
         // load and process settings file

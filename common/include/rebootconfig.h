@@ -69,19 +69,5 @@ typedef struct RebootConfigPRO {
 #define PRO_CONFIG_ISO_PATH (REBOOTEX_CONFIG + 0x100)
 #define IS_PRO_CONFIG(config) (*((u32*)config) == PRO_CONFIG_MAGIC)
 
-typedef struct {
-	int bootfileindex;
-
-	char *module_after;
-	void *buf;
-	int size;
-	int flags;
-
-	u32 ram2;
-	u32 ram11;
-
-	char umdfilename[256];
-} RebootConfigAdrenaline;
-
 #endif
 

@@ -199,6 +199,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
             exitToLauncher(); // reboot VSH into custom menu
         }
     }
+    
     // start module
     if(result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
     

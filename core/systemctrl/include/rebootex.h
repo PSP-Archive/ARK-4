@@ -32,6 +32,8 @@ extern RebootConfigFunctions* reboot_funcs;
 // Reboot ISO Path
 extern char* reboot_config_isopath;
 
+char* findRebootISOPath();
+
 // Backup Reboot Buffer
 void backupRebootBuffer(void);
 

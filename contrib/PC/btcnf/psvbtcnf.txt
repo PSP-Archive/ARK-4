@@ -1,0 +1,71 @@
+# pspbtcnf for NP9660 mode
+0x06060010
+$/kd/sysmem.prx VGUPAEM
+$/kd/loadcore.prx VGUPAEM
+$/kd/exceptionman.prx VGUPAEM
+$/kd/interruptman.prx VGUPAEM
+$/kd/threadman.prx VGUPAEM
+$/kd/kermit.prx VGUPAEM
+$/kd/dmacman.prx VGUPAEM
+$/kd/systimer.prx VGUPAEM
+$/kd/iofilemgr.prx VGUPAEM
+$/kd/memlmd_01g.prx VGUPAEM
+$/kd/modulemgr.prx VGUPAEM
+$/kd/ark_systemctrl.prx VGUPAEM
+$/kd/ark_vitacompat.prx VGUPAEM
+$/kd/init.prx VGUPAEM
+$/kd/loadexec_01g.prx VGUPAEM
+$/kd/kermit_lowio.prx VGUPAEM
+$/kd/ge.prx VGUPAEM
+$/kd/kermit_peripheral.prx VGUPAEM
+$/kd/kermit_idstorage.prx VGUPAEM
+$/kd/kermit_rtc.prx VGUPAEM
+$/kd/kermit_display.prx VGUPAEM
+$/kd/kermit_ctrl.prx VGUPAEM
+$/kd/kermit_flashfs.prx VGUPAEM
+$/kd/kermit_msfs.prx VGUPAEM
+$/kd/kermit_power.prx VGUPAEM
+$/kd/kermit_msemu.prx VGUPAEM
+$/kd/kermit_audio.prx VGUPAEM
+$/kd/kermit_hpremote.prx VGUPAEM
+$/kd/openpsid.prx VGUPAEM
+# updater & pops doesn't need usb
+$/kd/kermit_usb.prx VGAEM
+# pops doesn't need wlan
+$/kd/kermit_wlan.prx VGUAEM
+$/kd/registry.prx VGUPAEM
+# vsh & updater & pops use chkreg
+$/kd/chkreg.prx VUP
+$/kd/mesg_led_01g.prx VGUPAEM
+# updater doesn't need amctrl
+$/kd/amctrl.prx VGPAEM
+# game & updater & app don't need npdrm
+$/kd/npdrm.prx VPEM
+# updater doesn't need amctrl
+$/kd/iofilemgr_dnas.prx VGPAEM
+# game & umdemu & mlnapp need np9660 as ISO driver
+$/kd/np9660.prx GEM
+# game & umdemu & mlnapp need isofs
+$/kd/isofs.prx GEM
+# vsh & pops need chnnlsv
+$/kd/chnnlsv.prx VP
+$/kd/kermit_utility.prx VGUPAEM
+# pops needs popsman
+$/kd/popsman.prx P
+# pops needs pops
+$/kd/ark_popcorn.prx P
+# umdemu needs stargate
+$/kd/ark_stargate.prx E
+# pops doesn't need kermit_me_wrapper
+$/kd/kermit_me_wrapper.prx VGUAEM
+$/kd/impose_kermit.prx VGUPAEM
+$/kd/mediasync.prx VGUPAEM
+$%/kd/usersystemlib.prx VGUPAEM
+# pops uses libfont_hv and pafmini
+$%/vsh/module/libfont_hv.prx P
+$%/vsh/module/pafmini.prx P
+# vsh & pops use common_util
+$%/vsh/module/common_util.prx VP
+# pops uses libpspvmc
+$%/vsh/module/libpspvmc.prx P
+%%/kd/dummy_anchor_IhariUafaayk98.prx GUPAEM

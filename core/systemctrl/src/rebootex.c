@@ -37,7 +37,7 @@ u8 rebootex_config[REBOOTEX_CONFIG_MAXSIZE];
 RebootConfigFunctions* reboot_funcs = NULL;
 static RebootConfigFunctions _reboot_funcs;
 // Reboot ISO Path
-char* reboot_config_isopath = rebootex_config;
+char* reboot_config_isopath = NULL;
 
 static void SetBootConfFileIndexARK(int index)
 {
@@ -87,39 +87,6 @@ static int GetDiscTypePRO(void)
     reboot_config->iso_disc_type;
 }
 
-static void SetBootConfFileIndexAdrenaline(int index)
-{
-    RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
-    reboot_config->bootfileindex = index;
-}
-
-static unsigned int GetBootConfFileIndexAdrenaline(void)
-{
-    RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
-    return reboot_config->bootfileindex;
-}
-
-static void SetDiscTypeAdrenaline(int type)
-{
-    RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
-}
-
-static int GetDiscTypeAdrenaline(void)
-{
-    RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
-    return PSP_UMD_TYPE_GAME;
-}
-
-static void setRebootConfigAdrenaline(){
-    RebootConfigAdrenaline* reboot_config = (RebootConfigAdrenaline*)rebootex_config;
-    _reboot_funcs.SetBootConfFileIndex = &SetBootConfFileIndexAdrenaline;
-    _reboot_funcs.GetBootConfFileIndex = &GetBootConfFileIndexAdrenaline;
-    _reboot_funcs.SetDiscType = &SetDiscTypeAdrenaline;
-    _reboot_funcs.GetDiscType = &GetDiscTypeAdrenaline;
-    reboot_funcs = &_reboot_funcs;
-    reboot_config_isopath = reboot_config->umdfilename;
-}
-
 static void setRebootConfigPRO(){
     RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
     _reboot_funcs.SetBootConfFileIndex = &SetBootConfFileIndexPRO;
@@ -148,20 +115,17 @@ static void setRebootConfigARK(){
     }
 }
 
-/*
-static int findRebootISOPath(){
+char* findRebootISOPath(){
     // Find Reboot ISO Path
     for (int i=0; i<REBOOTEX_CONFIG_MAXSIZE; i++){
         char* iso_path = (char*)&(rebootex_config[i]);
         if ( (iso_path[0] == 'm' && iso_path[1] == 's' && iso_path[2] == '0' && iso_path[3] == ':')
           || (iso_path[0] == 'e' && iso_path[1] == 'f' && iso_path[2] == '0' && iso_path[3] == ':') ){
-            reboot_config_isopath = iso_path;
-            return 1;
+            return iso_path;
         }
     }
-    return 0;
+    return NULL;
 }
-*/
 
 // Backup Reboot Buffer
 void backupRebootBuffer(void)
@@ -189,48 +153,13 @@ void backupRebootBuffer(void)
             ark_config->arkpath[1] = 'f';
         }
     }
-    else {
-        setRebootConfigAdrenaline(); // Assume Adrenaline
+    else{
+        // can't handle it :P
     }
     
     // Flush Cache
     flushCache();
 }
-
-/*
-// Should we really do this?
-static int convertPROtoARK(){
-    if (IS_PRO_CONFIG(rebootex_config)){
-        // try loading rebootex from ARK save
-        char path[ARK_PATH_SIZE];
-        strcpy(path, ark_config->arkpath);
-        strcat(path, "REBOOT.BIN");
-        int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
-        if (fd >= 0){
-            int read = sceIoRead(fd, reboot_backup, REBOOTEX_MAX_SIZE);
-            sceIoClose(fd);
-            if (read > 0){
-                // convert PRO rebootex config to ARK
-                RebootConfigARK reboot_ark;
-                RebootConfigPRO* reboot_pro = (RebootConfigPRO*)rebootex_config;
-                reboot_ark.magic = ARK_CONFIG_MAGIC;
-                reboot_ark.reboot_buffer_size = REBOOTEX_MAX_SIZE;
-                reboot_ark.iso_mode = reboot_pro->iso_mode;
-                reboot_ark.iso_disc_type = reboot_pro->iso_disc_type;
-                strncpy(reboot_ark.iso_path, (const char*)PRO_CONFIG_ISO_PATH, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE);
-                memcpy(rebootex_config, &reboot_ark, sizeof(RebootConfigARK));
-                // process gzip packed rebootex
-                if (reboot_backup[0] == 0x1F && reboot_backup[1] == 0x8B){
-                    sceKernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, reboot_backup, NULL);
-                    memcpy((void *)REBOOTEX_CONFIG, rebootex_config, REBOOTEX_CONFIG_MAXSIZE);
-                    return 1;   
-                }
-            }
-        }
-    }
-    return 0;
-}
-*/
 
 // Restore Reboot Buffer
 void restoreRebootBuffer(void)

@@ -140,15 +140,16 @@ int sctrlSESetConfigEx(SEConfig *config, int size){
 char * sctrlSEGetUmdFile(void)
 {
     // Return Reboot Configuration UMD File
-    return reboot_config_isopath;
+    if (reboot_config_isopath != NULL) return reboot_config_isopath;
+    return findRebootISOPath(); // try to find an iso path in rebootex config
 }
 
 // Set Reboot Configuration UMD File
 void sctrlSESetUmdFile(char * file)
 {
+    if (reboot_config_isopath == NULL) return; // no idea how to use rebootex config...
     // Overwrite Reboot Configuration UMD File
     strncpy(reboot_config_isopath, file, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1);
-    
     // Terminate String
     reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
 }

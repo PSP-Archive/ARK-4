@@ -63,7 +63,7 @@ int setupUMDDevice(void)
 
     g_iso_fn = GetUmdFile();
     
-    if (g_iso_fn[0] == 0) return -1; // empty ISO file
+    if (g_iso_fn==NULL || g_iso_fn[0] == 0) return -1; // no ISO file
     
     printk("UMDFile = %s\r\n", g_iso_fn);
 
