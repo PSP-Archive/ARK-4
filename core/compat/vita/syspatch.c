@@ -22,8 +22,6 @@ KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDelayThread = &sceKernelDelayThread,
 };
 
-int (* DisplaySetFrameBuf)(void*, int, int, int);
-
 // Return Game Product ID of currently running Game
 int sctrlARKGetGameID(char gameid[GAME_ID_MINIMUM_BUFFER_SIZE])
 {
@@ -53,7 +51,7 @@ int sctrlARKGetGameID(char gameid[GAME_ID_MINIMUM_BUFFER_SIZE])
 }
 
 // Return Boot Status
-static int isSystemBooted(void)
+int isSystemBooted(void)
 {
 
     // Find Function
@@ -69,7 +67,7 @@ static int isSystemBooted(void)
     return 0;
 }
 
-static int use_mscache = 0;
+int use_mscache = 0;
 void settingsHandler(char* path){
     if (strcasecmp(path, "overclock") == 0){
         // useless on vita
@@ -104,47 +102,39 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     
     patchGameInfoGetter(mod);
     
-    if(strcmp(mod->modname, "sceDisplay_Service") == 0)
-    {
-        // can use screen now
-        DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
-        goto flush;
-    }
-    
+    // Patch sceKernelExitGame Syscalls
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
-        // Patch sceKernelExitGame Syscalls
         sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exitToLauncher);
         sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exitToLauncher);
         sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), exitToLauncher);
         goto flush;
     }
     
-    if (strcmp(mod->modname, "pops") == 0)
+    // Patch Kermit Peripheral Module to load flash0
+    if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
     {
-        // Patch POPS SPU
-        patchVitaPopsSpu(mod);
+        patchKermitPeripheral(&_ktbl);
         goto flush;
     }
-    
-    if (strcmp(mod->modname, "scePops_Manager")==0){
-        // Patch Vita Popsman to load our own pops module
+    // Patch Vita Popsman
+    if (strcmp(mod->modname, "scePops_Manager") == 0){
         patchVitaPopsman(mod);
         goto flush;
     }
     
-    // Kermit Peripheral Patches
-    if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
+    // Patch POPS SPU
+    if (strcmp(mod->modname, "pops") == 0)
     {
-        // Patch Kermit Peripheral Module to load flash0
-        patchKermitPeripheral(&_ktbl);
-        // Exit Handler
+        patchVitaPopsSpu(mod);
         goto flush;
     }
     
-    if (strcmp(mod->modname, "sceMediaSync") == 0){
-        // load and process settings file
+    // load and process settings file
+    if(strcmp(mod->modname, "sceMediaSync") == 0)
+    {
         loadSettings(&settingsHandler);
+        goto flush;
     }
        
     // Boot Complete Action not done yet
@@ -171,4 +161,11 @@ flush:
 exit:
        // Forward to previous Handler
     if(previous) previous(mod);
+}
+
+void PROVitaSysPatch(){
+    SceModule2* mod = NULL;
+    // filesystem patches
+    initFileSystem();
+    SceModule2* ioman = patchFileIO();
 }

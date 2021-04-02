@@ -26,6 +26,9 @@ u32 psp_model = 0;
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
 
+extern int is_launcher_mode;
+extern int use_mscache;
+extern void settingsHandler(char* path);
 extern void PSPOnModuleStart(SceModule2 * mod);
 
 // Flush Instruction and Data Cache
@@ -38,7 +41,7 @@ void flushCache()
     sceKernelDcacheWritebackInvalidateAll();
 }
 
-static void processArkConfig(ARKConfig* ark_config){
+void processArkConfig(ARKConfig* ark_config){
     sctrlHENGetArkConfig(ark_config);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSP_ORIG; // assume running on PSP
@@ -63,6 +66,10 @@ int module_start(SceSize args, void * argp)
     psp_model = sceKernelGetModel();
     // get ark config
     processArkConfig(ark_config);
+    // Do PRO patches
+    PROSysPatch();
+    // notify SystemControl of changes in runtime config
+    sctrlHENSetArkConfig(ark_config);
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
     // Return Success

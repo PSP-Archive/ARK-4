@@ -2,10 +2,9 @@ psvbtinf.bin,dist/PSVBTINF.BIN
 psvbtcnf.bin,dist/PSVBTCNF.BIN
 psvbtxnf.bin,dist/PSVBTXNF.BIN
 /kd/ark_systemctrl.prx,dist/SYSCTRL.BIN
-/kd/ark_vitacompat.prx,dist/VITACOMP.BIN
-/kd/ark_vitapops.prx,dist/VITAPOPS.BIN
-/kd/ark_pspcompat.prx,dist/PSPCOMPAT.BIN
 /kd/ark_vshctrl.prx,dist/VSHCTRL.BIN
 /kd/ark_inferno.prx,dist/INFERNO.BIN
 /kd/ark_stargate.prx,dist/STARGATE.BIN
 /kd/ark_popcorn.prx,dist/POPCORN.BIN
+/kd/ark_vitacompat.prx,dist/VITACOMP.BIN
+/kd/ark_vitapops.prx,dist/VITAPOPS.BIN

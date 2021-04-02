@@ -28,7 +28,6 @@ static ARKConfig conf = {
     .magic = ARK_CONFIG_MAGIC,
     .arkpath = DEFAULT_ARK_PATH,
     .exploit_id = LIVE_EXPLOIT_ID,
-    .kxploit = {0},
     .launcher = {0},
     .exec_mode = DEV_UNK, // best to autodetect
     .recovery = 0,

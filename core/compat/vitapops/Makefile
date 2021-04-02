@@ -6,7 +6,7 @@ C_OBJS = \
 	nullaudio.o \
 	popsdisplay.o \
 	$(ARKROOT)/common/functions.o \
-	$(ARKROOT)/core/vitacompat/vitaflash.o \
+	$(ARKROOT)/core/compat/vita/vitaflash.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o  \
 	$(ARKROOT)/core/systemctrl/src/exitgame.o \
 		

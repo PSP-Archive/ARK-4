@@ -1,7 +1,7 @@
 TARGET = systemctrl
 
 C_OBJS = \
-	src/main.o \
+	main.o \
 	src/modulemanager.o \
 	src/elf.o \
 	src/flushcache.o \

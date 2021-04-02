@@ -26,7 +26,6 @@ ARKConfig default_config = {
     .magic = ARK_CONFIG_MAGIC,
     .arkpath = DEFAULT_ARK_PATH,
     .exploit_id = LIVE_EXPLOIT_ID,
-    .kxploit = {0},
     .launcher = {0},
     .exec_mode = DEV_UNK,
     .recovery = 0,
@@ -145,15 +144,9 @@ void autoDetectDevice(ARKConfig* config){
 
 int initKxploitFile(){
     char k_path[ARK_PATH_SIZE];
-    if (g_tbl->config->kxploit[0] == 0){
-        // try to find kxploit file in ARK install path 
-        strcpy(k_path, g_tbl->config->arkpath);
-        strcat(k_path, K_FILE);
-    }
-    else{
-        // use kxploit file specificied by stage 1 loader
-        strcpy(k_path, g_tbl->config->kxploit);
-    }
+    // try to find kxploit file in ARK install path 
+    strcpy(k_path, g_tbl->config->arkpath);
+    strcat(k_path, K_FILE);
     PRTSTR1("Loading Kxploit at %s", k_path);
     SceUID fd = g_tbl->IoOpen(k_path, PSP_O_RDONLY, 0);
     if (fd < 0) return -1;

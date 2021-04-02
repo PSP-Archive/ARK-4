@@ -60,9 +60,8 @@ int module_start(SceSize args, void * argp)
     // copy configuration
     processArkConfig(ark_config);
     
-    // filesystem patches
-    initFileSystem();
-    SceModule2* ioman = patchFileIO();
+    // Vita patches
+    PROVitaSysPatch();
     
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);

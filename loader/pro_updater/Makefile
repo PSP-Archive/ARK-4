@@ -1,5 +1,5 @@
 TARGET = ARK
-C_OBJS = main.o $(ARKROOT)/core/pspcompat/flashinstall.o
+C_OBJS = main.o $(ARKROOT)/core/compat/psp/flashinstall.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
 CFLAGS = -Os -G0 -Wall

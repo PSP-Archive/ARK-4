@@ -2,7 +2,7 @@ ARK-4 e/CFW for the PSP and PS Vita.
 
 FEATURES:
 
-- Launch unsigned homebrew.
+- Core system for unsigned code execution on every PSP device based on 6.60 kernel.
 
 - Inferno driver for ISO, CSO and ZSO games.
 
@@ -14,9 +14,9 @@ FEATURES:
 
 - Compatible with all PSP models on firmwares 6.60 and 6.61.
 
-- Compatible with all PS Vita models on firmware 3.60.
+- Compatible with all PS Vita models on firmware 2.10 and up.
 
-- Minimalistic: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
+- Minimalistic: only 5 files installed on PSP flash, CFW extensions are installed on memory stick.
 
 
 
@@ -24,31 +24,35 @@ INSTALATION
 
 Download the precompiled binaries.
 
-
 On PSP:
 
+* For PRO Users:
+- If you are running an existing PRO installation (Including Infinity).
+- Copy ARK_PRO_Update to /PSP/GAME.
 - Copy the folder ARK_01234 into /PSP/SAVEDATA/
-
-* For PRO Infinity Users:
-- If you are running an existing PRO Infinity installation, simply copy ARK_PRO_Update to /PSP/GAME and run it from PRO. It will update PRO to ARK.
+- Run the updater from PRO, it will replace PRO files with ARK files.
 - To go back to running PRO, simply run PRO Update to reinstall PRO CFW files.
 
 * For Official Firmware Users:
-- Copy the folder ARK_Live to /PSP/GAME/
+- Move the K.BIN file from ARK_Live folder into ARK_01234 folder (replace).
+- Copy ARK_Live folder to /PSP/GAME/
+- Copy ARK_01234 folder into /PSP/SAVEDATA/
 - Launch from the XMB on OFW.
-- It will install FLASH0.ARK into flash0.
+- It will install FLASH0.ARK into flash0 and launch the CFW.
 
 
 On PS Vita:
 
+* For 3.60 Henkaku users:
 - Install ARK-2 for 3.60 using FastARK: https://github.com/ONElua/ArkFast/
-
-- Once installed, replace ARK_01234 in /PSP/SAVEDATA with the one in ARK-4 (delete the old folder and install the new one, don't just merge them).
-
-- Replace the PBOOT.PBP file installed in your base game with the one provided in ARK-4 (including SAVEPATH.TXT).
+- copy H.BIN file from vitabubble folder into ARK_01234 folder (replace).
+- Delete the old ARK-2 savedata folder (ux0:pspemu/PSP/SAVEDATA/ARK_01234/) and copy ARK-4.
 
 
-
+* For game exploits on both PSP and PS Vita:
+- Considering the savedata exploit loads H.BIN from the savedata path.
+- Copy all files from ARK_01234 into exploited savedata folder...
+---- except actual savedata files: ICON0.PNG, PARAM.SFO, SECURE.BIN, SAVEAUTO.BIN, SAVEUTIL.BIN
 
 
 

@@ -23,7 +23,6 @@ C_OBJS = main.o \
 	psp_patches.o \
 	psv_patches.o \
 	$(ARKROOT)/common/functions.o \
-	$(ARKROOT)/core/vitacompat/vitamem.o
 
 LIBS = -L $(ARKROOT)/libs -lansic -lcolordebugger
 

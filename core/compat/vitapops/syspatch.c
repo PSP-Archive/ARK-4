@@ -64,22 +64,20 @@ void patchVitaPopsDisplay(SceModule2* mod){
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
-
+    
     // Patch display in PSX exploits
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
         patchVitaPopsDisplay(mod);
         goto flush;
     }
     
-    // Kermit Peripheral Patches
+    // Patch Kermit Peripheral Module to load flash0
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
     {
-        // Patch Kermit Peripheral Module to load flash0
         patchKermitPeripheral(&_ktbl);
-        // Exit Handler
         goto flush;
     }
-    
+
     // Boot Complete Action not done yet
     if(booted == 0)
     {

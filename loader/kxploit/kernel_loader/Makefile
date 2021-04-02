@@ -16,9 +16,9 @@ C_OBJS = \
 	loader.o \
 	reboot.o \
 	$(ARKROOT)/common/functions.o \
-	$(ARKROOT)/core/pspcompat/flashinstall.o \
-	$(ARKROOT)/core/vitacompat/vitaflash.o \
-	$(ARKROOT)/core/vitapops/popsdisplay.o \
+	$(ARKROOT)/core/compat/psp/flashinstall.o \
+	$(ARKROOT)/core/compat/vita/vitaflash.o \
+	$(ARKROOT)/core/compat/vitapops/popsdisplay.o \
 	$(ARKROOT)/core/systemctrl/src/loadexec_patch.o
 
 include $(ARKROOT)/common/make/global.mak

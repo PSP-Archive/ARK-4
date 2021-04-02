@@ -122,49 +122,8 @@ void settingsHandler(char* path){
 }
 
 void PSPOnModuleStart(SceModule2 * mod){
-
     // System fully booted Status
     static int booted = 0;
-    
-    if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
-        patch_sceUmdMan_driver(mod);
-        goto flush;
-    }
-
-    if(strcmp(mod->modname, "sceUmdCache_driver") == 0) {
-        patch_umdcache(mod);
-        goto flush;
-    }
-
-    if(strcmp(mod->modname, "sceWlan_Driver") == 0) {
-        patch_sceWlan_Driver(mod);
-        goto flush;
-    }
-
-    if(strcmp(mod->modname, "scePower_Service") == 0) {
-        patch_scePower_Service(mod);
-        goto flush;
-    }
-    
-    if (strcmp(mod->modname, "sceLoadExec") == 0){
-        if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
-            prepatch_partitions();
-            goto flush;
-        }
-    }
-    
-    if (strcmp(mod->modname, "sceMediaSync") == 0){
-        // load and process settings file
-        loadSettings(&settingsHandler);
-        if (is_launcher_mode){
-            strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
-        }
-        else{
-            ark_config->launcher[0] = 0; // disable launcher mode
-        }
-        sctrlHENSetArkConfig(ark_config); // notify SystemControl of changes in runtime config
-        goto flush;
-    }
     
     if(booted == 0)
     {
@@ -188,5 +147,40 @@ flush:
 
     // Forward to previous Handler
     if(previous) previous(mod);
+}
+
+void PROSysPatch(){
+    SceModule2* mod = NULL;
+    if((mod = sceKernelFindModuleByName("sceUmdMan_driver")) != NULL) {
+        patch_sceUmdMan_driver(mod);
+    }
+
+    if((mod = sceKernelFindModuleByName("sceUmdCache_driver")) != NULL) {
+        patch_umdcache(mod);
+    }
+
+    if((mod = sceKernelFindModuleByName("sceWlan_Driver")) != NULL) {
+        patch_sceWlan_Driver(mod);
+    }
+
+    if((mod = sceKernelFindModuleByName("scePower_Service")) != NULL) {
+        patch_scePower_Service(mod);
+    }
+    
+    if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
+        prepatch_partitions();
+    }
+    
+    loadSettings(&settingsHandler);
+    
+    if (is_launcher_mode){
+        strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
+    }
+    else{
+        ark_config->launcher[0] = 0; // disable launcher mode
+    }
+    sctrlHENSetArkConfig(ark_config);
+    
+    flushCache();
 }
 

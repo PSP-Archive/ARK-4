@@ -131,8 +131,7 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     //strcat(path, "POPS.PRX");
     strcpy(path, "flash0:/kd/pops_660.prx");
     
-    extern int (* DisplaySetFrameBuf)(void*, int, int, int);
-    initScreen(DisplaySetFrameBuf);
+    initScreen(NULL);
     PRTSTR1("Loading POPS at: %s", path);
     
     result = sceKernelLoadModule(path, flag, opt);

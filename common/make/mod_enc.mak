@@ -6,24 +6,6 @@ dist/SYSCTRL.BIN: core/systemctrl/systemctrl.prx
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
-dist/VITACOMP.BIN: core/vitacompat/vitacompat.prx
-	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< VitaCompat 0x3007
-	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
-	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
-
-dist/VITAPOPS.BIN: core/vitapops/vitapops.prx
-	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< VitaPops 0x3007
-	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
-	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
-	
-dist/PSPCOMPAT.BIN: core/pspcompat/pspcompat.prx
-	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PSPCompat 0x3007
-	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
-	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
-
 dist/VSHCTRL.BIN: core/vshctrl/vshctrl.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
 	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< VshCtrl 0x3007
@@ -45,5 +27,17 @@ dist/STARGATE.BIN: core/stargate/stargate.prx
 dist/POPCORN.BIN: core/popcorn/popcorn.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
 	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PopcornManager 0x1006
+	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
+	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
+
+dist/VITACOMP.BIN: core/compat/vita/vitacompat.prx
+	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< ARKVitaCompat 0x3007
+	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
+	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
+
+dist/VITAPOPS.BIN: core/compat/vitapops/vitapops.prx
+	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< ARKVitaPopsCompat 0x3007
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)

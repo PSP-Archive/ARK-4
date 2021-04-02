@@ -169,6 +169,26 @@ int KernelCheckExecFile(unsigned char * buffer, int * check)
     // Return Result
     return result;
 }
+
+static void loadCompatLayer(){
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    if (IS_PSP(ark_config)){
+        strcat(path, "PSPCOMP.PRX");
+    }
+    else if (IS_VITA_POPS(ark_config)){
+        strcat(path, "VITAPOPS.PRX");
+    }
+    else if (IS_VITA(ark_config)){
+        strcat(path, "VITACOMP.PRX");
+    }
+    else{
+        strcat(path, "COMPAT.PRX");
+    }
+    int uid = sceKernelLoadModule(path, 0, NULL);
+    int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
+}
+
 // Init Start Module Hook
 int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
@@ -204,14 +224,8 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         LoadPlugins();
         // Remember it
         pluginLoaded = 1;
-        // Load PRO compat if needed
-        if (IS_PRO_CONFIG(rebootex_config)){
-            char path[ARK_PATH_SIZE];
-            strcpy(path, ark_config->arkpath);
-            strcat(path, "PROCOMPT.PRX");
-            int uid = sceKernelLoadModule(path, 0, NULL);
-            int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
-        }
+        // Load Compatibility layers
+        loadCompatLayer();
     }
 
     return result;
