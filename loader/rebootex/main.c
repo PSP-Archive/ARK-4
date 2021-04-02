@@ -36,6 +36,8 @@ int (* origCheckExecFile)(unsigned char * addr, void * arg2) = NULL;
 // UnpackBootConfig
 int (* UnpackBootConfig)(char * buffer, int length) = NULL;
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
+u32 UnpackBootConfigCall = 0;
+u32 UnpackBootConfigArg = 0;
 
 // PRO GZIP Decrypt Support
 int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
@@ -136,11 +138,11 @@ u32 findRebootFunctions(u32 reboot_start){
             Icache = (void*)a;
         }
         else if (data == 0x8FA50008 && _lw(addr+8) == 0x8FA40004){ // UnpackBootConfig
-            _sw(0x27A40004, addr+8); // addiu $a0, $sp, 4
+            UnpackBootConfigArg = addr+8;
             u32 a = addr;
             do { a+=4; } while (_lw(a) != 0x24060001);
             UnpackBootConfig = K_EXTRACT_CALL(a-4);
-            _sw(JAL(UnpackBootConfigPatched), a-4); // Hook UnpackBootConfig
+            UnpackBootConfigCall = a-4;
         }
         else if ((data == _lw(addr+4)) && (data & 0xFC000000) == 0xAC000000){ // Patch ~PSP header check
             // Returns size of the buffer on loading whatever modules

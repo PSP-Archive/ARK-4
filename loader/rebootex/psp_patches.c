@@ -20,6 +20,8 @@ void patchRebootBufferPSP(u32 reboot_start, u32 reboot_end){
             break;
         }
     }
+    _sw(0x27A40004, UnpackBootConfigArg); // addiu $a0, $sp, 4
+    _sw(JAL(UnpackBootConfigPatched), UnpackBootConfigCall); // Hook UnpackBootConfig
     int patches = 4;
     for (u32 addr = reboot_start; addr<reboot_end && patches; addr+=4){
         u32 data = _lw(addr);

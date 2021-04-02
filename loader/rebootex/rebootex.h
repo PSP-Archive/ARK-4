@@ -24,6 +24,8 @@ extern int (*pspemuLfatOpen)(char** filename, int unk);
 
 // UnpackBootConfig on PSP
 extern int (* UnpackBootConfig)(char * buffer, int length);
+extern u32 UnpackBootConfigCall;
+extern u32 UnpackBootConfigArg;
 
 // Rebootex functions
 void loadCoreModuleStartCommon();

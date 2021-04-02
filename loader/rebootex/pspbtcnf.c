@@ -184,9 +184,6 @@ int patch_bootconf_psp(char* buffer, int length){
     newsize = AddPRX(buffer, "/kd/init.prx", PATH_PSPCOMPAT+sizeof(PATH_FLASH0)-2, 0x000000EF);
     if (newsize > 0) result = newsize;
     
-    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, GAME_RUNLEVEL | UMDEMU_RUNLEVEL);
-    if (newsize > 0) result = newsize;
-    
     return result;
 }
 
@@ -194,9 +191,6 @@ int patch_bootconf_vita(char* buffer, int length){
     int newsize=-1, result=length;
     
     newsize = AddPRX(buffer, "/kd/init.prx", PATH_VITACOMPAT+sizeof(PATH_FLASH0)-2, 0x000000EF);
-    if (newsize > 0) result = newsize;
-    
-    newsize = AddPRX(buffer, "/kd/kermit_me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, GAME_RUNLEVEL | UMDEMU_RUNLEVEL);
     if (newsize > 0) result = newsize;
     
     return result;
@@ -226,8 +220,8 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     newsize = AddPRX(buffer, "/kd/init.prx", PATH_SYSTEMCTRL+sizeof(PATH_FLASH0)-2, 0x000000EF);
     if (newsize > 0) result = newsize;
     
-    // Insert compat layer and Stargate if needed
-    if (ark_config->magic == ARK_CONFIG_MAGIC){
+    // Insert compat layer
+    if (IS_ARK_CONFIG(ark_config)){
         if (IS_PSP(ark_config)){
             newsize = patch_bootconf_psp(buffer, length);
             if (newsize > 0) result = newsize;
@@ -245,6 +239,16 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
         else colorDebug(0xff); // unknown device (?), don't touch it
     }
     
+    // Insert Stargate No-DRM Engine
+    if (SearchPrx(buffer, "/vsh/me_wrapper.prx") >= 0){
+        newsize = AddPRX(buffer, "/kd/me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, GAME_RUNLEVEL | UMDEMU_RUNLEVEL);
+        if (newsize > 0) result = newsize;
+    }
+    else if (SearchPrx(buffer, "/vsh/kermit_me_wrapper.prx") >= 0){
+        newsize = AddPRX(buffer, "/kd/kermit_me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, GAME_RUNLEVEL | UMDEMU_RUNLEVEL);
+        if (newsize > 0) result = newsize;
+    }
+    
     // Insert VSHControl
     if (SearchPrx(buffer, "/vsh/module/vshmain.prx") >= 0) {
         newsize = patch_bootconf_vsh(buffer, length);
@@ -255,26 +259,27 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     newsize = patch_bootconf_pops(buffer, length);
     if (newsize > 0) result = newsize;
 
-    // Insert Inferno if needed
-    switch(reboot_conf->iso_mode) {
-        case MODE_VSHUMD:
-            newsize = patch_bootconf_vshumd(buffer, length);
-            if (newsize > 0) result = newsize;
-            break;
-        case MODE_UPDATERUMD:
-            newsize = patch_bootconf_updaterumd(buffer, length);
-            if (newsize > 0) result = newsize;
-            break;
-        case MODE_NP9660:
-        case MODE_MARCH33:
-        case MODE_INFERNO:
-            newsize = patch_bootconf_inferno(buffer, length);
-            if (newsize > 0) result = newsize;
-            break;
-        default:
-            break;
+    // Insert Inferno
+    if (IS_ARK_CONFIG(reboot_conf)){
+        switch(reboot_conf->iso_mode) {
+            case MODE_VSHUMD:
+                newsize = patch_bootconf_vshumd(buffer, length);
+                if (newsize > 0) result = newsize;
+                break;
+            case MODE_UPDATERUMD:
+                newsize = patch_bootconf_updaterumd(buffer, length);
+                if (newsize > 0) result = newsize;
+                break;
+            case MODE_NP9660:
+            case MODE_MARCH33:
+            case MODE_INFERNO:
+                newsize = patch_bootconf_inferno(buffer, length);
+                if (newsize > 0) result = newsize;
+                break;
+            default:
+                break;
+        }
     }
-    
     return result;
 }
 

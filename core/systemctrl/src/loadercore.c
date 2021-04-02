@@ -120,7 +120,7 @@ int _ProbeExec2(u8 *buffer, int *check)
                 unsigned char * pData = buffer + header->e_shoff;
                 
                 // Iterate Section Headers
-                int i = 0; for (; i < header->e_shnum; i++)
+                for (int i = 0; i < header->e_shnum; i++)
                 {
                     // Cast Section Header
                     Elf32_Shdr * section = (Elf32_Shdr *)pData;
@@ -169,12 +169,6 @@ int KernelCheckExecFile(unsigned char * buffer, int * check)
     // Return Result
     return result;
 }
-
-static int doColorDebug(){
-    colorDebug(0xff);
-    return 0;
-}
-
 // Init Start Module Hook
 int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
