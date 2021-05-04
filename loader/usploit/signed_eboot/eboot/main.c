@@ -117,6 +117,12 @@ int main(int argc, char** argv){
     
     char* cwd = argv[0];
     
+    // set kxploit path (same dir as this loader)
+    char kxploit[ARK_PATH_SIZE];
+    int len = strlen(cwd) - sizeof("EBOOT.PBP") + 1;
+    strncpy(kxploit, cwd, len);
+    strcat(kxploit, K_FILE);
+    
     // set install path device (makes it compatible with ef0)
     config.arkpath[0] = cwd[0];
     config.arkpath[1] = cwd[1];
@@ -136,8 +142,8 @@ int main(int argc, char** argv){
 
     PRTSTR("Executing ARK Stage 2");
     // execute main function
-    void (* hEntryPoint)(ARKConfig*, FunctionTable*) = (void*)ARK_LOADADDR;
-    hEntryPoint(&config, &funcs);
+    void (* hEntryPoint)(ARKConfig*, FunctionTable*, char*) = (void*)ARK_LOADADDR;
+    hEntryPoint(&config, &funcs, kxploit);
     
     return 0;
 }

@@ -77,7 +77,7 @@ int _start(char* savepath)
     
     tbl.KernelDcacheWritebackAll();
     
-    void (* hEntryPoint)(ARKConfig*, FunctionTable*) = (void*)ARK_LOADADDR;
-    hEntryPoint(&conf, NULL);
+    void (* hEntryPoint)(ARKConfig*, FunctionTable*, char*) = (void*)ARK_LOADADDR;
+    hEntryPoint(&conf, NULL, NULL);
     
 }

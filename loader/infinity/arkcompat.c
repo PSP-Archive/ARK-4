@@ -108,7 +108,6 @@ typedef struct ARKConfig{
     u32 magic;
     char arkpath[ARK_PATH_SIZE-20]; // ARK installation folder, leave enough room to concatenate files
     char exploit_id[12]; // ID of the game exploit, or name of the bootloader
-    char kxploit[ARK_PATH_SIZE]; // path to the K.BIN file (if not set, will attemp to read from ARK install path)
     char launcher[20]; // run ARK in launcher mode if launcher specified
     unsigned char exec_mode; // ARK execution mode (PSP, PS Vita, Vita POPS, etc)
     unsigned char recovery; // run ARK in recovery mode (disables settings, plugins and autoboots RECOVERY.PBP)
@@ -118,7 +117,6 @@ ARKConfig _arkconf = {
     .magic = ARK_CONFIG_MAGIC,
     .arkpath = "ms0:/PSP/SAVEDATA/ARK_01234/", // default path for ARK files
     .exploit_id = {0},
-    .kxploit = {0},
     .launcher = {0},
     .exec_mode = PSP_ORIG, // run ARK in PSP mode
     .recovery = 0,

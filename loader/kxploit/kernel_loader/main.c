@@ -46,8 +46,8 @@ static void pops_vram_handler(u32 vram){
 }
 
 // Entry Point
-int exploitEntry(ARKConfig* arg0, FunctionTable* arg1) __attribute__((section(".text.startup")));
-int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
+int exploitEntry(ARKConfig* arg0, FunctionTable* arg1, char* kxploit_file) __attribute__((section(".text.startup")));
+int exploitEntry(ARKConfig* arg0, FunctionTable* arg1, char* kxploit_file){
 
     // Clear BSS Segment
     clearBSS();
@@ -99,7 +99,7 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1){
     char* err = NULL;
     int res = 0;
     PRTSTR("Reading kxploit file...");
-    if ((res=initKxploitFile()) == 0){
+    if ((res=initKxploitFile(kxploit_file)) == 0){
         PRTSTR("Scanning stubs for kxploit...");
         if ((res=kxf->stubScanner(g_tbl)) == 0){
             // Corrupt Kernel
@@ -142,11 +142,17 @@ void autoDetectDevice(ARKConfig* config){
     // TODO: determine if VitaPops
 }
 
-int initKxploitFile(){
+int initKxploitFile(char* kxploit_file){
     char k_path[ARK_PATH_SIZE];
-    // try to find kxploit file in ARK install path 
-    strcpy(k_path, g_tbl->config->arkpath);
-    strcat(k_path, K_FILE);
+    if (kxploit_file == NULL){
+        // try to find kxploit file in ARK install path 
+        strcpy(k_path, g_tbl->config->arkpath);
+        strcat(k_path, K_FILE);
+    }
+    else{
+        // use specified kxploit file
+        strcpy(k_path, kxploit_file);
+    }
     PRTSTR1("Loading Kxploit at %s", k_path);
     SceUID fd = g_tbl->IoOpen(k_path, PSP_O_RDONLY, 0);
     if (fd < 0) return -1;
