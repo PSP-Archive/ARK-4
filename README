@@ -44,9 +44,8 @@ On PSP:
 On PS Vita:
 
 * For 3.60 Henkaku users:
-- Install ARK-2 for 3.60 using FastARK: https://github.com/ONElua/ArkFast/
-- copy H.BIN file from vitabubble folder into ARK_01234 folder (replace).
-- Delete the old ARK-2 savedata folder (ux0:pspemu/PSP/SAVEDATA/ARK_01234/) and copy ARK-4.
+- Install an ARK-4 bubble for 3.60 using FastARK: https://github.com/theheroGAC/ArkFast/releases/
+- Replace ARK savedata with latest release.
 
 
 * For game exploits on both PSP and PS Vita:

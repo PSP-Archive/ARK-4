@@ -1,5 +1,5 @@
-#ifndef __pro_rebootex__
-#define __pro_rebootex__
+#ifndef __rebootex__
+#define __rebootex__
 
 static unsigned int size_pro_rebootex = 5652;
 static unsigned char pro_rebootex[] __attribute__((aligned(16))) = {

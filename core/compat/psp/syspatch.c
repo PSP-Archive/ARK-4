@@ -105,6 +105,7 @@ void settingsHandler(char* path){
             if (apitype !=  0x210 && apitype !=  0x220 // prevent operation in VSH
                   && apitype != 0x144 && apitype != 0x155 // prevent operation in pops
               ){
+                prepatch_partitions();
                 patch_partitions();
                 flushCache();
             }
@@ -167,12 +168,8 @@ void PROSysPatch(){
         patch_scePower_Service(mod);
     }
     
-    if (psp_model > PSP_1000 && sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME) {
-        prepatch_partitions();
-    }
-    
     loadSettings(&settingsHandler);
-    
+
     if (is_launcher_mode){
         strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
     }
@@ -181,6 +178,5 @@ void PROSysPatch(){
     }
     sctrlHENSetArkConfig(ark_config);
     
-    flushCache();
 }
 

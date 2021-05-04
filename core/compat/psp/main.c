@@ -57,11 +57,6 @@ void processArkConfig(ARKConfig* ark_config){
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
-    #ifdef DEBUG
-    // set LCD framebuffer in hardware reg so we can do color debbuging
-    _sw(0x44000000, 0xBC800100);
-    #endif
-    
     // get psp model
     psp_model = sceKernelGetModel();
     // get ark config

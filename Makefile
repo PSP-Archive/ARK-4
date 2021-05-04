@@ -41,6 +41,7 @@ copy-bin:
 	$(Q)cp loader/kxploit/crossfw/psp660/K.BIN dist/ARK_Live/K.BIN # Kernel exploit for PSP
 	$(Q)cp loader/usploit/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
 	$(Q)cp loader/usploit/vitabubble/H.BIN dist/VitaBubble/ # Kernel exploit for Vita 3.60
+	$(Q)cp loader/kxploit/crossfw/vita360/K.BIN dist/VitaBubble/K.BIN # Kernel exploit for Vita 3.60+
 	$(Q)cp loader/pro_updater/EBOOT.PBP dist/ARK_PRO_Updater/EBOOT.PBP # PRO Updater
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
 	$(Q)cp loader/kxploit/compat/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
@@ -68,6 +69,7 @@ kxploits:
 	$(Q)$(MAKE) $@ K=dummy -C loader/kxploit
 	$(Q)$(MAKE) $@ K=psp660 -C loader/kxploit
 	$(Q)$(MAKE) $@ K=vita320 -C loader/kxploit
+	$(Q)$(MAKE) $@ K=vita360 -C loader/kxploit
 
 # Only clean non-library code
 cleanobj:
@@ -98,6 +100,7 @@ clean:
 	$(Q)$(MAKE) $@ K=dummy -C loader/kxploit
 	$(Q)$(MAKE) $@ K=psp660 -C loader/kxploit
 	$(Q)$(MAKE) $@ K=vita320 -C loader/kxploit
+	$(Q)$(MAKE) $@ K=vita360 -C loader/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)-rm -rf dist *~ | true
 	$(Q)$(PYTHON) cleandeps.py

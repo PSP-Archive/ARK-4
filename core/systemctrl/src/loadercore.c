@@ -222,10 +222,10 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     {
         // Load Plugins
         LoadPlugins();
+        // Load Compatibility layer
+        loadCompatLayer();
         // Remember it
         pluginLoaded = 1;
-        // Load Compatibility layers
-        loadCompatLayer();
     }
 
     return result;

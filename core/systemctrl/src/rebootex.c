@@ -24,7 +24,7 @@
 #include "imports.h"
 #include "rebootex.h"
 #include "loader/rebootex/payload.h"
-#include "extras/procompat/pro_rebootex.h"
+#include "core/compat/psp/pro_rebootex.h"
 
 extern ARKConfig* ark_config;
 

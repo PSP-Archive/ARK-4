@@ -29,8 +29,6 @@
 
 extern ARKConfig* ark_config;
 
-extern int readGameIdFromDisc(char* gameid);
-
 // Missing Libc Function strcasecmp (needed for stricmp to work)
 int strcasecmp(const char * a, const char * b)
 {

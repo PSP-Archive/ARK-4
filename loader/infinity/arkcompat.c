@@ -67,29 +67,10 @@ typedef struct
     u8 main_data;       // 150
 } PSP_Header;
 
-// ARK execution modes
-typedef enum{
-    DEV_UNK = 0b0000,
-    PSP_ORIG = 0b0100,
-    PS_VITA = 0b1000,
-    PSV_POPS = 0b1010,
-    DEV_MASK = 0b1100,
-}ExecMode;
-
-// ARK runtime configuration
-typedef struct ARKConfig{
-    u32 magic;
-    char arkpath[ARK_PATH_SIZE-20]; // ARK installation folder, leave enough room to concatenate files
-    char exploit_id[12]; // ID of the game exploit, or name of the bootloader
-    char kxploit[ARK_PATH_SIZE]; // path to the K.BIN file (if not set, will attemp to read from ARK install path)
-    char launcher[20]; // run ARK in launcher mode if launcher specified
-    unsigned char exec_mode; // ARK execution mode (PSP, PS Vita, Vita POPS, etc)
-    unsigned char recovery; // run ARK in recovery mode (disables settings, plugins and autoboots RECOVERY.PBP)
-} ARKConfig;
-
 // ARK Runtime configuration
 #define ARK_CONFIG 0x08800010
 #define ARK_CONFIG_MAGIC 0xB00B1E55
+#define ARK_PATH_SIZE 128
 
 #define REBOOT_START 0x88600000
 #define REBOOTEX_START 0x88FC0000
@@ -113,10 +94,30 @@ typedef struct RebootBufferConfiguration {
     char iso_path[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
 } RebootBufferConfiguration;
 
+// ARK execution modes
+typedef enum{
+    DEV_UNK = 0b0000,
+    PSP_ORIG = 0b0100,
+    PS_VITA = 0b1000,
+    PSV_POPS = 0b1010,
+    DEV_MASK = 0b1100,
+}ExecMode;
+
+// ARK runtime configuration
+typedef struct ARKConfig{
+    u32 magic;
+    char arkpath[ARK_PATH_SIZE-20]; // ARK installation folder, leave enough room to concatenate files
+    char exploit_id[12]; // ID of the game exploit, or name of the bootloader
+    char kxploit[ARK_PATH_SIZE]; // path to the K.BIN file (if not set, will attemp to read from ARK install path)
+    char launcher[20]; // run ARK in launcher mode if launcher specified
+    unsigned char exec_mode; // ARK execution mode (PSP, PS Vita, Vita POPS, etc)
+    unsigned char recovery; // run ARK in recovery mode (disables settings, plugins and autoboots RECOVERY.PBP)
+} ARKConfig;
+
 ARKConfig _arkconf = {
     .magic = ARK_CONFIG_MAGIC,
     .arkpath = "ms0:/PSP/SAVEDATA/ARK_01234/", // default path for ARK files
-    .exploit_id = "Infinity", // name of exploit/bootloader
+    .exploit_id = {0},
     .kxploit = {0},
     .launcher = {0},
     .exec_mode = PSP_ORIG, // run ARK in PSP mode
@@ -163,7 +164,7 @@ int _memcpy(char* to, char* from, unsigned int length)
 int memlmd_Decrypt_patched(PSP_Header* buf, int* check, int* s)
 {
     if (buf->oe_tag == 0xC01DB15D
-        || (_lb((unsigned)prx + 0x150) == 0x1F && _lb((unsigned)prx + 0x151) == 0x8B ) )
+        || (_lb((unsigned)buf + 0x150) == 0x1F && _lb((unsigned)buf + 0x151) == 0x8B ) )
     {
         _memcpy((char*)buf, (char*)&(buf->main_data), buf->comp_size);
         *s = buf->comp_size;
@@ -228,18 +229,11 @@ int compat_entry(BtcnfHeader* btcnf,
                  &btcnf_size,
                  (BOOTLOAD_VSH | BOOTLOAD_GAME | BOOTLOAD_POPS | BOOTLOAD_UPDATER |
                   BOOTLOAD_UMDEMU | BOOTLOAD_APP | BOOTLOAD_MLNAPP));
-    insert_btcnf("/kd/ark_pspcompat.prx", // add ARK's PSP compatibility layer (must run just after SystemControl)
-                 "/kd/init.prx",
-                 btcnf,
-                 &btcnf_size,
-                 (BOOTLOAD_VSH | BOOTLOAD_GAME | BOOTLOAD_POPS | BOOTLOAD_UPDATER |
-                  BOOTLOAD_UMDEMU | BOOTLOAD_APP | BOOTLOAD_MLNAPP));
     
     // Insert VSH Control              
     insert_btcnf("/kd/ark_vshctrl.prx", "/kd/vshbridge.prx", btcnf, &btcnf_size, (BOOTLOAD_VSH));
 
     // copy ARK configuration for SystemControl to find
-    conf->ark_config = ARK_CONFIG
     _memcpy(ARK_CONFIG, &_arkconf, sizeof(ARKConfig));
 
     // PRO patches work well with ARK...

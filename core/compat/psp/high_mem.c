@@ -38,6 +38,8 @@ static u8 g_p8_size = 4;
 
 static u32 * (*get_memory_partition)(int pid) = NULL;
 
+extern u32 psp_model;
+
 static u32 findGetPartition(){
     int found = 0;
     for (u32 addr = SYSMEM_TEXT; !found; addr+=4){
@@ -45,12 +47,12 @@ static u32 findGetPartition(){
             return addr-4;
         }
     }
+    return 0;
 }
 
 static inline u32 *get_partition(int pid)
 {
     if (get_memory_partition == NULL) get_memory_partition = findGetPartition();
-
     return (*get_memory_partition)(pid);
 }
 
