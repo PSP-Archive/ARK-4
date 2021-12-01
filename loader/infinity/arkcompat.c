@@ -116,7 +116,7 @@ typedef struct ARKConfig{
 ARKConfig _arkconf = {
     .magic = ARK_CONFIG_MAGIC,
     .arkpath = "ms0:/PSP/SAVEDATA/ARK_01234/", // default path for ARK files
-    .exploit_id = {0},
+    .exploit_id = "Infinity",
     .launcher = {0},
     .exec_mode = PSP_ORIG, // run ARK in PSP mode
     .recovery = 0,
@@ -222,6 +222,13 @@ int compat_entry(BtcnfHeader* btcnf,
     }
 
     insert_btcnf("/kd/ark_systemctrl.prx", // add ARK's SystemControl
+                 "/kd/init.prx",
+                 btcnf,
+                 &btcnf_size,
+                 (BOOTLOAD_VSH | BOOTLOAD_GAME | BOOTLOAD_POPS | BOOTLOAD_UPDATER |
+                  BOOTLOAD_UMDEMU | BOOTLOAD_APP | BOOTLOAD_MLNAPP));
+    
+    insert_btcnf("/kd/ark_pspcompat.prx", // add ARK's PSP Compat layer
                  "/kd/init.prx",
                  btcnf,
                  &btcnf_size,

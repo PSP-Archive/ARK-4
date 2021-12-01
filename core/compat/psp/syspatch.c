@@ -105,7 +105,6 @@ void settingsHandler(char* path){
             if (apitype !=  0x210 && apitype !=  0x220 // prevent operation in VSH
                   && apitype != 0x144 && apitype != 0x155 // prevent operation in pops
               ){
-                prepatch_partitions();
                 patch_partitions();
                 flushCache();
             }
@@ -122,9 +121,57 @@ void settingsHandler(char* path){
     }
 }
 
+void processSettings(){
+    loadSettings(&settingsHandler);
+    if (is_launcher_mode){
+        strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
+    }
+    else{
+        ark_config->launcher[0] = 0; // disable launcher mode
+    }
+    sctrlHENSetArkConfig(ark_config);
+}
+
 void PSPOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
+    
+    if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
+        patch_sceUmdMan_driver(mod);
+        goto flush;
+    }
+
+    if(strcmp(mod->modname, "sceUmdCache_driver") == 0) {
+        patch_umdcache(mod);
+        goto flush;
+    }
+
+    if(strcmp(mod->modname, "sceWlan_Driver") == 0) {
+        patch_sceWlan_Driver(mod);
+        goto flush;
+    }
+
+    if(strcmp(mod->modname, "scePower_Service") == 0) {
+        patch_scePower_Service(mod);
+        goto flush;
+    }
+    
+    if(strcmp(mod->modname, "sceMediaSync") == 0) {
+        processSettings();
+        goto flush;
+    }
+    
+    if (strcmp(mod->modname, "sceLoadExec") == 0){
+        if (psp_model > PSP_1000) { // prevent operation in PSP 1K
+            int apitype = sceKernelInitApitype();
+            if (apitype !=  0x210 && apitype !=  0x220 // prevent operation in VSH
+                  && apitype != 0x144 && apitype != 0x155 // prevent operation in pops
+              ){
+                prepatch_partitions();
+                goto flush;
+            }
+        }
+    }
     
     if(booted == 0)
     {
@@ -150,7 +197,7 @@ flush:
     if(previous) previous(mod);
 }
 
-void PROSysPatch(){
+void PSPSysPatch(){
     SceModule2* mod = NULL;
     if((mod = sceKernelFindModuleByName("sceUmdMan_driver")) != NULL) {
         patch_sceUmdMan_driver(mod);
@@ -168,15 +215,21 @@ void PROSysPatch(){
         patch_scePower_Service(mod);
     }
     
-    loadSettings(&settingsHandler);
-
-    if (is_launcher_mode){
-        strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
+    if ((mod = sceKernelFindModuleByName("sceLoadExec")) != NULL){
+        if (psp_model > PSP_1000) { // prevent operation in PSP 1K
+            int apitype = sceKernelInitApitype();
+            if (apitype !=  0x210 && apitype !=  0x220 // prevent operation in VSH
+                  && apitype != 0x144 && apitype != 0x155 // prevent operation in pops
+              ){
+                prepatch_partitions();
+            }
+        }
     }
-    else{
-        ark_config->launcher[0] = 0; // disable launcher mode
-    }
-    sctrlHENSetArkConfig(ark_config);
     
+    if((mod = sceKernelFindModuleByName("sceMediaSync")) != NULL) {
+        processSettings();
+    }
+    
+    flushCache();
 }
 

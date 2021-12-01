@@ -30,6 +30,12 @@ dist/POPCORN.BIN: core/popcorn/popcorn.prx
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
+dist/PSPCOMP.BIN: core/compat/psp/pspcompat.prx
+	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< ARKPSPCompat 0x3007
+	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
+	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
+
 dist/VITACOMP.BIN: core/compat/vita/vitacompat.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
 	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< ARKVitaCompat 0x3007

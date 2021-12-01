@@ -3,6 +3,7 @@
 
 #define PATH_FLASH0 "flash0:/"
 #define PATH_SYSTEMCTRL PATH_FLASH0 "kd/ark_systemctrl.prx"
+#define PATH_PSPCOMPAT PATH_FLASH0 "kd/ark_pspcompat.prx"
 #define PATH_VITACOMPAT PATH_FLASH0 "kd/ark_vitacompat.prx"
 #define PATH_VITAPOPS PATH_FLASH0 "kd/ark_vitapops.prx"
 #define PATH_VSHCTRL PATH_FLASH0 "kd/ark_vshctrl.prx"
@@ -179,7 +180,13 @@ int patch_bootconf_updaterumd(char *buffer, int length)
 }
 
 int patch_bootconf_psp(char* buffer, int length){
-    return length;
+    int newsize=-1, result=length;
+    
+    newsize = AddPRX(buffer, "/kd/init.prx", PATH_PSPCOMPAT+sizeof(PATH_FLASH0)-2, 0x000000EF);
+    if (newsize > 0) result = newsize;
+    
+    return result;
+
 }
 
 int patch_bootconf_vita(char* buffer, int length){

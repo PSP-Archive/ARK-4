@@ -43,6 +43,8 @@ copy-bin:
 	$(Q)cp loader/usploit/vitabubble/H.BIN dist/VitaBubble/ # Kernel exploit for Vita 3.60
 	$(Q)cp loader/kxploit/crossfw/vita360/K.BIN dist/VitaBubble/K.BIN # Kernel exploit for Vita 3.60+
 	$(Q)cp loader/pro_updater/EBOOT.PBP dist/ARK_PRO_Updater/EBOOT.PBP # PRO Updater
+	$(Q)cp loader/infinity/EBOOT.PBP dist/Infinity/ # Infinity with ARK support
+	$(Q)cp loader/infinity/EBOOT_GO.PBP dist/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
 	$(Q)cp loader/kxploit/compat/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
 	$(Q)cp loader/kxploit/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
@@ -54,11 +56,10 @@ copy-bin:
 	$(Q)cp extras/menus/arkMenu/themes/classic/DATA.PKG dist/ARK_01234/DATA.PKG # Launcher and Recovery resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
 	$(Q)cp loader/usploit/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
-	$(Q)cp core/compat/psp/pspcompat.prx dist/ARK_01234/PSPCOMP.PRX # PSP Compat layer
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	
 encrypt-prx: \
-	dist/SYSCTRL.BIN dist/VSHCTRL.BIN dist/INFERNO.BIN dist/STARGATE.BIN dist/POPCORN.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN
+	dist/SYSCTRL.BIN dist/VSHCTRL.BIN dist/INFERNO.BIN dist/STARGATE.BIN dist/POPCORN.BIN dist/PSPCOMP.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtcnf.bin dist/PSVBTCNF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
@@ -127,6 +128,7 @@ mkdir-dist:
 	$(Q)mkdir dist/VitaBubble | true
 	$(Q)mkdir dist/ARK_Live | true
 	$(Q)mkdir dist/ARK_PRO_Updater | true
+	$(Q)mkdir dist/Infinity | true
 
 -include $(ARKROOT)/.config
 include $(ARKROOT)/common/make/quiet.mak

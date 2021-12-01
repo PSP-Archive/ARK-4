@@ -6,5 +6,6 @@ psvbtxnf.bin,dist/PSVBTXNF.BIN
 /kd/ark_inferno.prx,dist/INFERNO.BIN
 /kd/ark_stargate.prx,dist/STARGATE.BIN
 /kd/ark_popcorn.prx,dist/POPCORN.BIN
+/kd/ark_pspcompat.prx,dist/PSPCOMP.BIN
 /kd/ark_vitacompat.prx,dist/VITACOMP.BIN
 /kd/ark_vitapops.prx,dist/VITAPOPS.BIN

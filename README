@@ -10,7 +10,7 @@ FEATURES:
 
 - Stargate No-DRM engine.
 
-- Plugin support for PSP games, PSX games and VSH (XMB).
+- Plugin support for PSP games, PSX games and VSH (XMB), including per-game plugins.
 
 - Compatible with all PSP models on firmwares 6.60 and 6.61.
 
@@ -26,20 +26,11 @@ Download the precompiled binaries.
 
 On PSP:
 
-* For PRO Users:
-- If you are running an existing PRO installation (Including Infinity).
-- Copy ARK_PRO_Update to /PSP/GAME.
-- Copy the folder ARK_01234 into /PSP/SAVEDATA/
-- Run the updater from PRO, it will replace PRO files with ARK files.
-- To go back to running PRO, simply run PRO Update to reinstall PRO CFW files.
-
-* For Official Firmware Users:
-- Move the K.BIN file from ARK_Live folder into ARK_01234 folder (replace).
-- Copy ARK_Live folder to /PSP/GAME/
-- Copy ARK_01234 folder into /PSP/SAVEDATA/
-- Launch from the XMB on OFW.
-- It will install FLASH0.ARK into flash0 and launch the CFW.
-
+- Install ARK_01234 folder into /PSP/SAVEDATA/ folder.
+- Install ARK Live folder into /PSP/GAME/ folder.
+- Launch ARK Live Loader. It will install ARK modules on PSP Flash and boot the CFW.
+- Install Infinity update found in ARK download (might have to run it using OFW).
+  This will allow you to use ARK permanently and tripple boot with PRO and ME.
 
 On PS Vita:
 
@@ -72,7 +63,8 @@ For example, enable lcscheatdevice on GTA Liberty City Stories US Version:
 ULUS10041, ms0:/seplugins/lcscheatdevice.prx, on
 
 
-- You can use keywords "enabled", "on", "1" or "true" to indicate that the plugin is enabled, anything else disables it. You can use game, pops or vsh keywords to run the plugin in the corresponding runlevel.
+- You can use keywords "enabled", "on", "1" or "true" to indicate that the plugin is enabled, anything else disables it.
+  You can use game, pops or vsh keywords to run the plugin in the corresponding runlevel, or the game ID for game-specific plugins.
 
 - You can use the following keywords to tell ARK when the plugin loads:
 ---- all/always: if either of these keywords are used, the plugin will always load.
@@ -105,15 +97,21 @@ vsh, powersave, on
 - usbcharge: enables USB charging whereever you want.
 - launcher: replaces the XMB with a custom menu launcher.
 - disablepause: disables the pause game feature on PSP Go.
-- highmem: enables high memory on models above 1K. You should only use this on homebrew runlevel as retail games were not meant to use the extra memory, and this can cause issues with cheat devices or other plugins that except games to have their data at specific memory addresses.
+- highmem: enables high memory on models above 1K.
+  You should only use this on homebrew runlevel as retail games were not meant to use the extra memory,
+  and this can cause issues with cheat devices or other plugins that expect games to have their data at specific memory addresses.
 
 
 * You can also customize ARK by using the "launcher" setting, which replaces the XMB with whatever custom launcher you have installed.
 ARK includes a custom launcher, but there have been many others created by scene members, some better looking, some with more features,
 some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
-- ONEMenu: https://github.com/ONElua/ONEmenu/releases
-- vMenu: http://www.mediafire.com/file/7acb5mhawx4gr9t/vMenu_ARK.7z/file
-- yMenu: https://docs.google.com/uc?export=download&id=0B0kWUCdtGmJwLUhRUlNJSWhMWVE
-- gMenu: http://www.mediafire.com/file/oou5490qc99vr7d/gmenuARK.rar/file
-* Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
+
+- ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
+- vMenu by neur0n: http://www.mediafire.com/file/7acb5mhawx4gr9t/vMenu_ARK.7z/file
+- yMenu by yosh: https://docs.google.com/uc?export=download&id=0B0kWUCdtGmJwLUhRUlNJSWhMWVE
+- gMenu by gbot: http://www.mediafire.com/file/oou5490qc99vr7d/gmenuARK.rar/file
+- 138Menu by gbot: https://wololo.net/talk/viewtopic.php?f=53&t=33511
+- pyMenu by Acid_Snake: https://wololo.net/talk/viewtopic.php?t=21942
+
+Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
 
