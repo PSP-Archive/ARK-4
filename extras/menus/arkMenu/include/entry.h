@@ -31,9 +31,7 @@ int loadIconThread(SceSize _args, void *_argp);
 class Entry{
 
     private:
-        void executeHomebrew();
-        void executePSN();
-        void executePOPS();
+
         void gameBoot();
 
     protected:
@@ -51,9 +49,7 @@ class Entry{
 
         //virtual void extractFile(const char * name, unsigned block, unsigned size)=0;
         
-        void executeISO();
-        
-        void executeEboot();
+        virtual void doExecute()=0;
                 
     public:
         Entry();
@@ -80,7 +76,7 @@ class Entry{
         
         void drawBG();
         
-        virtual void execute()=0;
+        void execute();
         
         virtual char* getType()=0;
         virtual char* getSubtype()=0;

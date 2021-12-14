@@ -4,8 +4,6 @@
 #define CSO_H
 
 
-#include "entry.h"
-
 #include <stdio.h>
 
 #include <stdlib.h>
@@ -16,6 +14,7 @@
 
 #include <string.h>
 
+#include "iso.h"
 
 #define CSO_MAGIC 0x4F534943
 #define ZSO_MAGIC 0x4F53495A
@@ -118,7 +117,7 @@ typedef struct
 #define SECTOR_SIZE 0x800
 
 
-class Cso : public Entry{
+class Cso : public Iso{
 
 
     private:
@@ -199,11 +198,6 @@ class Cso : public Entry{
         static bool isCSO(const char* filepath);
 
         void* fastExtract(const char* path, char* file, unsigned* size=NULL);
-
-        
-
-        void execute();
-
 
 };
 

@@ -97,6 +97,30 @@ SceModule2* patchModuleManager()
     SceModule2* mod = (SceModule2*)sceKernelFindModuleByName("sceModuleManager");
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr+mod->text_size;
+    
+    /*
+    ProbeExec3 = (void*)mod->text_addr + 0x00008824;
+	_sw(JAL(_ProbeExec3), mod->text_addr + 0x00007C5C);
+	_sw(JUMP(_sceKernelCheckExecFile), mod->text_addr + 0x00008884);
+
+	realPartitionCheck = (void*)mod->text_addr + 0x00007FD0;
+	_sw(JAL(_PartitionCheck), mod->text_addr + 0x0000651C);
+	_sw(JAL(_PartitionCheck), mod->text_addr + 0x00006898);
+
+	//no device check patches
+	_sw(NOP, mod->text_addr + 0x00000760);
+	_sw(0x24020000, mod->text_addr + 0x000007C0);
+	_sw(NOP, mod->text_addr + 0x000030B0);
+	_sw(NOP, mod->text_addr + 0x0000310C);
+	_sw(0x10000009, mod->text_addr + 0x00003138);
+	_sw(NOP, mod->text_addr + 0x00003444);
+	_sw(NOP, mod->text_addr + 0x0000349C);
+	_sw(0x10000010, mod->text_addr + 0x000034C8);
+
+	prologue_module = (void*)(mod->text_addr + 0x00008124);
+	_sw(JAL(prologue_module_hook), mod->text_addr + 0x00007048);
+	*/
+    
     int patches = 8;
     for(u32 addr=text_addr; addr < top_addr && patches; addr+=4)
     {

@@ -293,11 +293,6 @@ int Cso :: getPrimaryVolumeDescriptor(){
 };
 
 
-void Cso::execute(){
-    this->executeISO();
-}
-
-
 char* Cso::getType(){
     return "ISO";
 }

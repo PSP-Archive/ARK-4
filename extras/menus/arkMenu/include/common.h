@@ -36,13 +36,14 @@ enum images {
     IMAGE_GAME,
     IMAGE_SETTINGS,
     IMAGE_BROWSER,
+    IMAGE_FTP,
     IMAGE_DIALOG,
     IMAGE_LOADING,
     IMAGE_SPRITE,
     IMAGE_ZIP
 };
 
-#define MAX_IMAGES 10
+#define MAX_IMAGES 11
 
 #define SIZE_LITTLE 0.51f
 #define SIZE_MEDIUM 0.6f
@@ -72,6 +73,7 @@ namespace common{
     extern void deleteData();
     extern bool fileExists(const std::string &path);
     extern bool folderExists(const std::string &path);
+    extern long fileSize(const std::string &path);
     extern Image* getImage(int which);
     extern bool isSharedImage(Image* img);
     extern intraFont* getFont();

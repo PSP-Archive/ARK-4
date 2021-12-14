@@ -24,7 +24,6 @@ SUBDIRS = libs \
 	loader/kxploit/compat \
 	loader/kxploit/kram_dumper \
 	loader/kxploit/vita_flash_dumper \
-	loader/pro_updater \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
 	extras/menus/xMenu \
@@ -42,7 +41,6 @@ copy-bin:
 	$(Q)cp loader/usploit/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
 	$(Q)cp loader/usploit/vitabubble/H.BIN dist/VitaBubble/ # Kernel exploit for Vita 3.60
 	$(Q)cp loader/kxploit/crossfw/vita360/K.BIN dist/VitaBubble/K.BIN # Kernel exploit for Vita 3.60+
-	$(Q)cp loader/pro_updater/EBOOT.PBP dist/ARK_PRO_Updater/EBOOT.PBP # PRO Updater
 	$(Q)cp loader/infinity/EBOOT.PBP dist/Infinity/ # Infinity with ARK support
 	$(Q)cp loader/infinity/EBOOT_GO.PBP dist/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
@@ -80,7 +78,6 @@ clean:
 	$(Q)$(MAKE) $@ -C libs
 	$(Q)$(MAKE) $@ -C loader/usploit/linkless_payload
 	$(Q)$(MAKE) $@ -C loader/usploit/signed_eboot
-	$(Q)$(MAKE) $@ -C loader/pro_updater
 	$(Q)$(MAKE) $@ -C loader/kxploit/kernel_loader
 	$(Q)$(MAKE) $@ -C loader/kxploit/compat
 	$(Q)$(MAKE) $@ -C loader/kxploit/kram_dumper
@@ -127,7 +124,6 @@ mkdir-dist:
 	$(Q)mkdir dist | true
 	$(Q)mkdir dist/VitaBubble | true
 	$(Q)mkdir dist/ARK_Live | true
-	$(Q)mkdir dist/ARK_PRO_Updater | true
 	$(Q)mkdir dist/Infinity | true
 
 -include $(ARKROOT)/.config

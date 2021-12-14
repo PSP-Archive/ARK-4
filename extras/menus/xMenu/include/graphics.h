@@ -257,6 +257,8 @@ extern void flipScreen();
  */
 extern void initGraphics();
 
+extern void enableGraphics();
+
 /**
  * Disable graphics, used for debug text output.
  */

@@ -85,7 +85,7 @@ class File : public Entry{
         void getTempData2(){
         }
         
-        void execute(){
+        void doExecute(){
         }
 };
 

@@ -1,57 +1,69 @@
-ARK-4
+# ARK-4
 
-Update 8.9:
+## Update 9.2
+- Added UMD game support for custom launcher.
+- Fixed memlmd patches.
+- PRO Updater has been deprecated.
+
+## Update 9.1
+- Fixed issues with PSP compatibility layer that would prevent high memory from functioning correctly.
+
+## Update 9.0:
+- Added compatibility with Infinity.
+- Fixed issues with PRO compatibility.
+
+## Update 8.9:
 - Created ARK_PRO_Updater, allowing to update an existing PRO installation to ARK.
 - Tested and working with PRO Infinity.
 
-Update 8.8:
+## Update 8.8:
 - Rebootex is now an external part of the CFW and can be easily replaced.
 - Added compatibility with PRO and Adrenaline Rebootex.
 - Some fixes and refactor.
 
-Update 8.7:
+## Update 8.7:
 - Fixed and improved some internal APIs.
 - Improved plugins menu display.
 - Improved custom launcher.
 ---- It is now usable before all games load.
 ---- Added support for ZSO files in the launcher.
 
-Update 8.6:
+## Update 8.6:
 - Small fix to recovery menu causing files to be written twice.
 - Force recovery mode when launching recovery menu (disables plugins and settings).
 - Fixed screen issues in libya2d.
 - Added scrolling to plugins menu for users with many plugins installed.
 
-Update 8.5:
+## Update 8.5:
 - Fixed issue when launching recovery menu from custom launcher on PSP Go causing plugins to be duplicated.
 - Fixed heap memory consumption of recovery menu and custom launcher.
 - Moved popsloader code back to Vita compat layer.
 
-Update 8.4:
+## Update 8.4:
 - Some code cleanup regarding rebootex and loaders.
 - Added built-in popsloader to run other versions of POPS installed on ARK's savedata folder.
 ---- PSPVMC.PRX will replace flash0:/vsh/module/libpspvmc.prx
 ---- POPSMAN.PRX will replace flash0:/kd/popsman.prx
 ---- POPS.PRX will replace flash0:/kd/pops_0Xg.prx
 
-Update 8.3:
+## Update 8.3:
 - Fixed PSN eboots launched from custom menu.
 - Removed Galaxy ISO Driver from the core CFW (was not used).
 - Configuring rebootex for other ISO Drivers (M33, NP9660) will default to inferno instead of crashing.
 - Fixed issue when disabling launcher mode that required a soft reboot to take effect.
 
-Update 8.2:
+## Update 8.2:
 - Prevent some settings from running on incorrect runlevels.
 - Improved file browser navigation.
 
-Update 8.1:
+## Update 8.1:
 - Removed all PSP 6.60 files.
 - Fixed mediasync patches on PS Vita.
 - Fixed bug when opening an empty directory.
 - Improved PSP IO emulation on Vita.
 - Improved flash0 instalation on PSP (should be less buggy now).
 
-Update 8:
+## Update 8:
 - Several fixes to arkMenu custom launcher.
 ---- Fixed file browser when doing operations on /ISO or /PSP/GAME.
 ---- Fixed file browser copying dialog.
@@ -70,7 +82,7 @@ Update 8:
 ---- Ms Speedup is now a setting (as opposed to always being active).
 - You can now have your PLUGINS.TXT file in /SEPLUGINS/ folder (and/or ARK's save folder).
 
-Update 7:
+## Update 7:
 - Fixed pops plugins loaded from PSP Go internal memory (ef0).
 - Fixed homebrew plugins loaded from PSP Go internal memory (ef0).
 - Added "highmem" option to settings file.
@@ -83,7 +95,7 @@ Update 7:
 - Fixed arkMenu.
 - Created recovery menu for handling ARK settings and installed plugins.
 
-Update 6:
+## Update 6:
 - Added "launcher" setting to replace XMB with a custom launcher.
 --- In settings file add the following line: always, launcher, on
 - Included neur0n's vMenu as a sample launcher.
@@ -92,7 +104,7 @@ Update 6:
 - Added "umd" runlevel for plugins that only load in official games.
 - Added "homebrew" runlevel for plugins that only load in homebrews.
 
-Update 5:
+## Update 5:
 - Fixed ISOs and homebrews on PSP Go.
 - Added USB Charging (not for PSP 1K).
 - Simplified and fixed VSH Menu for ARK.
@@ -101,7 +113,7 @@ Update 5:
 ---- Added "powersave" option to set lower CPU speed.
 ---- Added "usbcharge" option.
 
-Update 4:
+## Update 4:
 - Added ability to have a VSH menu installed externally. Classic PRO VSH menu is included.
 *** please note that there's no configuration options for ARK, things like changing the CPU speed or ISO driver doesn't do anything (ARK will always enable fastest CPU speed and Inferno ISO driver).
 - Added preliminary PSP Go support (untested for now).
@@ -109,37 +121,37 @@ Update 4:
 - Exception handler now shows the module name of the crash.
 - Exception handler now allows to soft reset, hard reset or shutdown the device.
 
-Update 3:
+## Update 3:
 - Fixed issues with ISOs such as Tekken 6 and Peace Walker. All ISOs should work well now!
 - Fixed issue with some homebrews like PSPFiler.
 - Fixed issues with the XMB on later models. ARK now works on 2K and 3K! (PSP Go support is still not finished, PSP Street has not been tested yet).
 - Added support for high memory layout on slim models for homebrews that use it.
 - ARK is now stable!
 
-Update 2:
+## Update 2:
 - Added back plugin support, including for VSH.
 - Added recovery option, which lets you replace the XMB with a custom launcher (a minimalistic one is included with ARK).
 - Fixed some dynamic patches.
 
-Update 1:
+## Update 1:
 - Fixed issue when launching UMDs with ARK.
 - Improved dynamic patching code for SystemControl, Inferno and Popcorn.
 - Added Galaxy controller for NP9660 ISO driver (for retail PSN EBOOTs).
 - Added compatibility layer for PSP-specific patches (still in development).
 - Restructured PS Vita compatibility layer (still in development).
 
-ARK-3
+# ARK-3
 - arkMenu and xMenu are now part of the project
 - added PEOPS PSX SPU Plugin for partial working sound on PSX games running through PSP exploits
-- added partial support for PSX exploits
+- added support for PSX exploits
 
-ARK-2
+# ARK-2
 - replaced static patches with dynamic algorithms
 - updated to run on higher firmwares
 - replaced static loader with linkless loader
 - separated ARK loader from Kernel exploit for easier deployment of ARK
 
-ARK-1
+# ARK-1 (PROVITA)
 - initial port of PRO CFW to the PS Vita by Team PRO.
 - support for ISO and CSO with the Inferno ISO Driver
 - support for homebrew games and apps

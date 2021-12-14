@@ -1,4 +1,5 @@
 #include "iso.h"
+#include "cso.h"
 
 using namespace std;
 
@@ -274,8 +275,23 @@ char * Iso :: get_name_end(const char * str)
     return (char *)str;
 };
 
-void Iso::execute(){
-    this->executeISO();
+void Iso::doExecute(){
+    struct SceKernelLoadExecVSHParam param;
+    
+    memset(&param, 0, sizeof(param));
+
+    if (Iso::isPatched(this->path) || Cso::isPatched(this->path))
+        param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
+    else
+        param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+
+    int runlevel = (this->path[0]=='e' && this->path[1]=='f')? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
+
+    param.key = "umdemu";
+    param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
+    sctrlSESetBootConfFileIndex(ISO_DRIVER);
+    sctrlSESetUmdFile((char*)this->path.c_str());
+    sctrlKernelLoadExecVSHWithApitype(runlevel, this->path.c_str(), &param);
 }
 
 char* Iso::getType(){

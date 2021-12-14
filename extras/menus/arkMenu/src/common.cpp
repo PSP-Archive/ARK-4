@@ -3,6 +3,7 @@
 #include <dirent.h>
 #include <algorithm>
 #include <unistd.h>
+#include <sys/stat.h>
 #include "controller.h"
 #include "systemctrl.h"
 #include "animations.h"
@@ -266,6 +267,7 @@ void common::loadData(int ac, char** av){
     images[IMAGE_SPRITE] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
     images[IMAGE_NOICON] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("NOICON.PNG"));
     images[IMAGE_GAME] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("GAME.PNG"));
+    images[IMAGE_FTP] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("FTP.PNG"));
     images[IMAGE_SETTINGS] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SETTINGS.PNG"));
     images[IMAGE_BROWSER] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("BROWSER.PNG"));
     images[IMAGE_DIALOG] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("BOX.PNG"));
@@ -311,6 +313,12 @@ bool common::folderExists(const std::string &path){
         return false;
     closedir(dir);
     return true;
+}
+
+long common::fileSize(const std::string &path){
+    struct stat stat_buf;
+    int rc = stat(path.c_str(), &stat_buf);
+    return rc == 0 ? stat_buf.st_size : -1;
 }
 
 Image* common::getImage(int which){

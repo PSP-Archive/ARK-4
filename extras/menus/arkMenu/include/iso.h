@@ -128,8 +128,8 @@ class Iso : public Entry
         
         /* Much faster function for extracting files in PSP_GAME/ */
         static void* fastExtract(const char* path, char* file, unsigned* size=NULL);
-        
-        void execute();
+
+        void doExecute();
         
         char* getType();
         char* getSubtype();

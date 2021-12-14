@@ -203,21 +203,22 @@ SceModule2* patchMemlmd(void)
     unsigned int text_addr = mod->text_addr;
 
     u32 topaddr = mod->text_addr + mod->text_size;
+    
     // do the patching
     int patches = 5;
     for (u32 addr = text_addr; addr<topaddr && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == JAL(memlmdDecrypt)){
             _sw(JAL(_memlmdDecrypt), addr);
-            patches--;
+            patches--; // 2
         }
         else if (data == JAL(memlmd_unsigner)){
             _sw(JAL(_memlmd_unsigner), addr);
-            patches--;
+            patches--; // 2
         }
         else if (data == 0x3C02F009){
             _sh(0xF005, addr);
-            patches--;
+            patches--; // 1
         }
         else if (data == 0x3222003F){
             u32 a = addr;
@@ -241,15 +242,14 @@ void patchMesgLed(SceModule2 * mod)
 {
     u32 addr;
     u32 topaddr = mod->text_addr + mod->text_size;
-    int patches = 5;
-    for (addr = mod->text_addr; addr<topaddr && patches; addr+=4){
+
+    for (addr = mod->text_addr; addr<topaddr; addr+=4){
         u32 data = _lw(addr);
-        if (data == JAL(mesgledDecrypt)){
-            _sw(JAL(_mesgledDecrypt), addr); // Hook Decrypt Function Calls
-            patches--;
-        }
-        else if (data == 0x2CE30001){
+        if (data == 0x2CE30001){
             mesgledDecrypt = addr; // Save Original Decrypt Function Pointer
+        }
+        else if (data == JAL(mesgledDecrypt)){
+            _sw(JAL(_mesgledDecrypt), addr);
         }
     }
     // Flush Cache

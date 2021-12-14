@@ -25,7 +25,7 @@
 #include "exitgame.h"
 #include "libs/graphics/graphics.h"
 
-PSP_MODULE_INFO("ARKVitaCompat", 0x3007, 1, 0);
+PSP_MODULE_INFO("ARKCompatLayer", 0x3007, 1, 0);
 
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;

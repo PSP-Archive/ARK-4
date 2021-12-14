@@ -1,6 +1,7 @@
 /* Game Manager class */
 
 #include <sstream>
+#include <fstream>
 #include <unistd.h>
 #include "system_mgr.h"
 #include "gamemgr.h"
@@ -28,6 +29,7 @@ GameManager::GameManager(){
     this->iconSema = sceKernelCreateSema("icon0_sema",  0, 1, 1, NULL);
     this->iconThread = sceKernelCreateThread("icon0_thread", GameManager::loadIcons, 0x10, 0x10000, PSP_THREAD_ATTR_USER, NULL);
     sceKernelStartThread(this->iconThread,  0, NULL);
+    
 }
 
 GameManager::~GameManager(){
@@ -41,6 +43,19 @@ int GameManager::loadIcons(SceSize _args, void *_argp){
     sceKernelDelayThread(0);
 
     while (self->dynamicIconRunning != ICONS_STOPPED){
+        // check UMD status
+        std::vector<Entry*>* game_entries = self->categories[GAME]->getVector();
+        bool has_umd = UMD::isUMD();
+        bool umd_loaded = game_entries->size() > 0 && string("UMD") == game_entries->at(0)->getType();
+        if (has_umd && !umd_loaded){ // UMD inserted but not loaded
+            game_entries->insert(game_entries->begin(), new UMD());
+        }
+        else if (umd_loaded && !has_umd){ // UMD loaded but not inserted
+            UMD* umd = (UMD*)game_entries->at(0);
+            game_entries->erase(game_entries->begin());
+            delete umd;
+        }
+        // load icons
         if (self->selectedCategory < 0){
             if (self->selectedCategory == -1) self->findEntries();
             sceKernelDelayThread(0);
@@ -88,6 +103,7 @@ Menu* GameManager::getMenu(EntryType t){
     return this->categories[(int)t];
 }
 
+
 void GameManager::findEntries(){
     // clear entries
     this->categories[0]->clearEntries();
@@ -103,6 +119,12 @@ void GameManager::findEntries(){
         recovery_menu->setName("Recovery Menu");
         this->categories[HOMEBREW]->addEntry(recovery_menu);
     }
+    
+    /*
+    if (UMD::isUMD()){
+        this->categories[GAME]->addEntry(new UMD());
+    }
+    */
     
     // scan eboots
     this->findEboots("ms0:/PSP/VHBL/");

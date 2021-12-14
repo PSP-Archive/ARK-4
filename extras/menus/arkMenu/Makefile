@@ -2,9 +2,8 @@ TARGET = ARKMENU
 CFLAGS = -Os -G0 -Wall -Wno-unused -Wno-write-strings -Wno-sign-compare
 CXXFLAGS = $(CFLAGS) -fexceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
-INCDIR = include include/anim include/pmf $(ARKROOT)/libs/libya2d $(ARKROOT)/libs/libintraFont $(ARKROOT)/libs/libjpeg $(ARKROOT)/common/include
+INCDIR = include include/anim include/pmf include/ftp $(ARKROOT)/libs/libya2d $(ARKROOT)/libs/libintraFont $(ARKROOT)/libs/libjpeg $(ARKROOT)/common/include
 LIBDIR = $(ARKROOT)/libs
-LIBS = -lunziprar -lstdc++ -lc -lya2d -lintraFont -ljpeg -lpng -lpspvfpu -lpspmpeg -lpspaudio -lpspatrac3 -lpsppower -lpspgum -lpspgu -lz -lm -lpspvram -lpspmath -lpspumd -lpspmp3 -lpspsystemctrl_user
 LDFLAGS =
 EXTRA_TARGETS = EBOOT.PBP
 PSP_EBOOT_TITLE = arkMenu
@@ -18,9 +17,11 @@ OBJS = \
 		src/common.o \
 		src/system_mgr.o \
 		src/gamemgr.o \
+		src/ftp_mgr.o \
 		src/entry.o \
 		src/iso.o \
 		src/cso.o \
+		src/umd.o \
 		src/eboot.o \
 		src/menu.o \
 		src/controller.o \
@@ -28,6 +29,7 @@ OBJS = \
 		src/mp3.o \
 		src/browser.o \
 		src/osk.o \
+		src/network.o \
 		src/settingsmenu.o \
 		src/optionsMenu.o \
 		src/anim/anim.o \
@@ -44,6 +46,36 @@ OBJS = \
 		src/pmf/pmf_audio.o \
 		src/pmf/pmf_reader.o \
 		src/pmf/at3.o \
+		src/ftp/ftpsp.o \
+		src/ftp/mutex-imports.o \
+		src/ftp/utils.o \
+		src/ftp/psp_functions.o \
+
+LIBS = \
+		-lunziprar \
+		-lstdc++ \
+		-lc \
+		-lya2d \
+		-lintraFont \
+		-ljpeg \
+		-lpng \
+		-lpspvfpu \
+		-lpspmpeg \
+		-lpspaudio \
+		-lpspatrac3 \
+		-lpsppower \
+		-lpspgum \
+		-lpspgu \
+		-lz \
+		-lm \
+		-lpspvram \
+		-lpspmath \
+		-lpspumd \
+		-lpspmp3 \
+		-lpspwlan \
+		-lpspnet \
+		-lpspnet_inet \
+		-lpspsystemctrl_user
 
 all: $(TARGET).prx
 	$(Q)python3 ./pkg.py

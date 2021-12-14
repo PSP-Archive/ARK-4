@@ -50,6 +50,10 @@ class Eboot : public Entry{
         void readFile(void* dst, unsigned offset, unsigned size);
         void extractFile(const char * name, unsigned block, unsigned size);
         
+        void executeHomebrew();
+        void executePSN();
+        void executePOPS();
+        
     public:
     
         Eboot(string path);
@@ -61,7 +65,7 @@ class Eboot : public Entry{
         void getTempData1();
         void getTempData2();
         
-        void execute();
+        void doExecute();
         
         char* getType();
         char* getSubtype();

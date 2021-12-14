@@ -15,7 +15,7 @@
 #include "exitgame.h"
 #include "libs/graphics/graphics.h"
 
-PSP_MODULE_INFO("ARKPSPCompat", 0x3007, 1, 0);
+PSP_MODULE_INFO("ARKCompatLayer", 0x3007, 1, 0);
 
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;

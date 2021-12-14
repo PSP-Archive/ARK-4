@@ -44,12 +44,6 @@ unsigned int strlen(const char * text);
 // Replace Character in String
 unsigned int strreplaceall(char * base, char from, char to);
 
-// Framebuffer Painter (for debugging)
-void colorDebug(unsigned int color);
-
-// Framebuffer Color Freeze Loop (for debugging)
-void colorLoop(void);
-
 // Lightweight String Conversion for Debug Screen Output (not threadsafe)
 char * hex32(unsigned int v);
 

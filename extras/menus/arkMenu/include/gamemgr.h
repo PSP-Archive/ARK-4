@@ -12,6 +12,7 @@
 #include "gfx.h"
 #include "animations.h"
 #include "browser.h"
+#include "umd.h"
 
 #define MAX_CATEGORIES 3
 

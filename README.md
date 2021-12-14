@@ -1,6 +1,6 @@
-ARK-4 e/CFW for the PSP and PS Vita.
+# ARK-4 e/CFW for the PSP and PS Vita.
 
-FEATURES:
+## FEATURES:
 
 - Core system for unsigned code execution on every PSP device based on 6.60 kernel.
 
@@ -20,20 +20,18 @@ FEATURES:
 
 
 
-INSTALATION
+## INSTALATION
 
-Download the precompiled binaries.
+- Download the precompiled binaries.
 
-On PSP:
-
+### On PSP:
 - Install ARK_01234 folder into /PSP/SAVEDATA/ folder.
 - Install ARK Live folder into /PSP/GAME/ folder.
 - Launch ARK Live Loader. It will install ARK modules on PSP Flash and boot the CFW.
 - Install Infinity update found in ARK download (might have to run it using OFW).
   This will allow you to use ARK permanently and tripple boot with PRO and ME.
 
-On PS Vita:
-
+### On PS Vita:
 * For 3.60 Henkaku users:
 - Install an ARK-4 bubble for 3.60 using FastARK: https://github.com/theheroGAC/ArkFast/releases/
 - Replace ARK savedata with latest release.
@@ -46,11 +44,9 @@ On PS Vita:
 
 
 
-CUSTOMIZATION
+## CUSTOMIZATION
 
-
-
-* By installing Plugins
+### By installing Plugins
 You can install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
 - Add a line of text for each plugin using the following format:
@@ -78,7 +74,7 @@ ULUS10041, ms0:/seplugins/lcscheatdevice.prx, on
 
 
 
-* By configuring ARK
+### By configuring ARK
 
 - You can create a SETTINGS.TXT file using the same format as PLUGINS.TXT to enable/disable some CFW functionality on different parts of the system.
 
@@ -102,7 +98,8 @@ vsh, powersave, on
   and this can cause issues with cheat devices or other plugins that expect games to have their data at specific memory addresses.
 
 
-* You can also customize ARK by using the "launcher" setting, which replaces the XMB with whatever custom launcher you have installed.
+### Using Custom Launchers
+You can also customize ARK by using the "launcher" setting, which replaces the XMB with whatever custom launcher you have installed.
 ARK includes a custom launcher, but there have been many others created by scene members, some better looking, some with more features,
 some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
 

@@ -28,7 +28,7 @@ typedef struct
 extern u8 msx[];
 
 unsigned int __attribute__((aligned(16))) list[262144];
-static int dispBufferNumber;
+static int dispBufferNumber = 0;
 static int initialized = 0;
 
 static int getNextPower2(int width)
@@ -455,7 +455,6 @@ void drawLineImage(int x0, int y0, int x1, int y1, Color color, Image* image)
 
 void initGraphics()
 {
-	dispBufferNumber = 0;
 	sceGuInit();
 	guStart();
 	sceGuDrawBuffer(GU_PSM_8888, (void*)FRAMEBUFFER_SIZE, PSP_LINE_SIZE);
@@ -486,7 +485,13 @@ void initGraphics()
 	sceGuSync(0, 0);
 	sceDisplayWaitVblankStart();
 	sceGuDisplay(GU_TRUE);
-	initialized = 1;
+	enableGraphics();
+}
+
+void enableGraphics()
+{
+    dispBufferNumber = 0;
+    initialized = 1;
 }
 
 void disableGraphics()
