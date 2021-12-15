@@ -30,11 +30,11 @@
 #include "globals.h"
 #include "functions.h"
 
-static FunctionTable _g_tbl;
+static UserFunctions _g_tbl;
 static KernelFunctions _k_tbl;
 static KxploitFunctions _kxf;
 
-FunctionTable* g_tbl = &_g_tbl;
+UserFunctions* g_tbl = &_g_tbl;
 KernelFunctions* k_tbl = &_k_tbl;
 KxploitFunctions* kxf = &_kxf;
 
@@ -42,10 +42,10 @@ KxploitFunctions* kxf = &_kxf;
 // counter for relocated stubs
 static u32 curcall = 0x08801000;
 
-// fill FunctionTable
-void scanUserFunctions(FunctionTable* tbl){
+// fill UserFunctions
+void scanUserFunctions(UserFunctions* tbl){
 
-    memset(g_tbl, 0, sizeof(FunctionTable));
+    memset(g_tbl, 0, sizeof(UserFunctions));
     
     tbl->IoOpen = (void*)RelocImport("IoFileMgrForUser", 0x109F50BC, 0);
     tbl->IoRead = (void*)RelocImport("IoFileMgrForUser", 0x6A638D83, 0);
@@ -91,7 +91,7 @@ void scanUserFunctions(FunctionTable* tbl){
     
 }
 
-void scanArkFunctions(FunctionTable* tbl){
+void scanArkFunctions(UserFunctions* tbl){
     // ARK Functions
     tbl->freeMem = &freeMem;
     tbl->FindImportUserRam = &FindImportUserRam;
@@ -476,4 +476,21 @@ int isKernel(){
     u32 ra;
     __asm__ volatile ("move %0, $ra;" : "=r"(ra));
     return (ra&0x80000000) != 0;
+}
+
+void AccurateError(u32 text_addr, u32 text_size)
+{
+    u32 counter = 0;
+    u32 text_end = text_addr+text_size;
+
+    for (; text_addr < text_end; text_addr += 4)
+    {
+        u32 code = _lw(text_addr);
+
+        if ((code & 0xFC00FFFF) == 0x34000148)
+        {
+            counter++;
+            _sw((code & 0xFFFF0000) | (0xA000 + counter), text_addr);
+        }
+    }
 }

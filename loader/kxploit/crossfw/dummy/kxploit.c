@@ -37,9 +37,9 @@
 Dummy kernel exploit to use when ARK.BIN is already loaded with kernel priviledges.
 */
 
-FunctionTable* g_tbl = NULL;
+UserFunctions* g_tbl = NULL;
 
-int stubScanner(FunctionTable* tbl){
+int stubScanner(UserFunctions* tbl){
     g_tbl = tbl;
     return 0;
 }

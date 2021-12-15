@@ -38,7 +38,7 @@ struct minZipHeader {
 
 // K.BIN communication interface
 typedef struct KxploitFunctions{
-    int (*stubScanner)(struct FunctionTable*);
+    int (*stubScanner)(struct UserFunctions*);
     int (*doExploit)(void);
     void (*executeKernel)(u32 kernelContentFunction);
     void (*repairInstruction)(struct KernelFunctions*);
@@ -62,7 +62,7 @@ typedef struct
 /*
  * These functions are usermode syscalls, not meant to be used from kernelmode.
  */
-typedef struct FunctionTable
+typedef struct UserFunctions
 {
     ARKConfig* config;
     int (* IoOpen)(char *, int, int);
@@ -102,7 +102,7 @@ typedef struct FunctionTable
     int (* UtilitySavedataShutdownStart)();
     int (* KernelVolatileMemUnlock)(int unknown);
     // common ark functions
-    void (* freeMem)(struct FunctionTable*);
+    void (* freeMem)(struct UserFunctions*);
     u32 (* FindImportUserRam)(char *libname, u32 nid);
     u32 (* FindImportVolatileRam)(char *libname, u32 nid);
     u32 (* FindImportRange)(char *libname, u32 nid, u32 lower, u32 higher);
@@ -111,11 +111,11 @@ typedef struct FunctionTable
     int (* p5_close_savedata)();
     u32 (* qwikTrick)(char* lib, u32 nid, u32 version);
     void (*prtstr)(const char* A, unsigned long B, unsigned long C, unsigned long D, unsigned long E, unsigned long F, unsigned long G, unsigned long H, unsigned long I, unsigned long J, unsigned long K, unsigned long L);
-} FunctionTable;
+} UserFunctions;
 
-// fills a FunctionTable instance with all available imports
-extern void scanUserFunctions(FunctionTable* tbl);
-extern void scanArkFunctions(FunctionTable* tbl);
+// fills a UserFunctions instance with all available imports
+extern void scanUserFunctions(UserFunctions* tbl);
+extern void scanArkFunctions(UserFunctions* tbl);
 
 // check if a pointer is in a range
 extern int AddressInRange(u32 addr, u32 lower, u32 higher);
@@ -191,7 +191,7 @@ typedef struct KernelFunctions{
     
 }KernelFunctions;
 
-extern FunctionTable* g_tbl;
+extern UserFunctions* g_tbl;
 extern KernelFunctions* k_tbl;
 extern KxploitFunctions* kxf;
 
@@ -222,5 +222,7 @@ extern int p5_close_savedata();
 extern void flashPatch();
 
 extern int isKernel();
+
+extern void AccurateError(u32 text_addr, u32 text_size);
 
 #endif

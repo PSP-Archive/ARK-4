@@ -35,7 +35,7 @@
 #define PRTSTR(text) PRTSTR1(text, 0)
 #endif
 
-extern int stubScanner(FunctionTable*);
+extern int stubScanner(UserFunctions*);
 extern int doExploit(void);
 extern void executeKernel(u32 kernelContentFunction);
 extern void repairInstruction(KernelFunctions*);

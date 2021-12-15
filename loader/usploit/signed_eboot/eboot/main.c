@@ -35,7 +35,7 @@ volatile ARKConfig config = {
     .exploit_id = LIVE_EXPLOIT_ID,
     .recovery = 0,
 };
-volatile FunctionTable funcs = {
+volatile UserFunctions funcs = {
     .config = &config,
     // File IO
     .IoOpen = &sceIoOpen,
@@ -142,7 +142,7 @@ int main(int argc, char** argv){
 
     PRTSTR("Executing ARK Stage 2");
     // execute main function
-    void (* hEntryPoint)(ARKConfig*, FunctionTable*, char*) = (void*)ARK_LOADADDR;
+    void (* hEntryPoint)(ARKConfig*, UserFunctions*, char*) = (void*)ARK_LOADADDR;
     hEntryPoint(&config, &funcs, kxploit);
     
     return 0;

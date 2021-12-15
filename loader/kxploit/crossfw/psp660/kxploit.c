@@ -41,7 +41,7 @@ sceNetMPulldown Kernel Exploit for PSP 6.60 and 6.61
 #define PATCH_ADDR SYSMEM_TEXT_ADDR+PATCH_OFFSET // exact address of patch
 #define PATCHED_INST 0x3C058801 // the original instruction
 
-FunctionTable* g_tbl;
+UserFunctions* g_tbl;
 
 struct MPulldownExploit;
 int (* _sceNetMPulldown)(struct MPulldownExploit *data, int unk1, int unk2, int unk3);
@@ -54,7 +54,7 @@ struct MPulldownExploit {
     u32 unk_data[80]; // embeeded it
 };
 
-int stubScanner(FunctionTable* tbl){
+int stubScanner(UserFunctions* tbl){
     g_tbl = tbl;
     for (int i=0; i<7; i++) g_tbl->UtilityLoadModule(0x100+i);
     _sceNetMPulldown = g_tbl->FindImportUserRam("sceNetIfhandle_lib", 0xE80F00A4);

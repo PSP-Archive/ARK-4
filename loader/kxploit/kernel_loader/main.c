@@ -46,8 +46,8 @@ static void pops_vram_handler(u32 vram){
 }
 
 // Entry Point
-int exploitEntry(ARKConfig* arg0, FunctionTable* arg1, char* kxploit_file) __attribute__((section(".text.startup")));
-int exploitEntry(ARKConfig* arg0, FunctionTable* arg1, char* kxploit_file){
+int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file) __attribute__((section(".text.startup")));
+int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
 
     // Clear BSS Segment
     clearBSS();
@@ -56,7 +56,7 @@ int exploitEntry(ARKConfig* arg0, FunctionTable* arg1, char* kxploit_file){
     if (arg1 == NULL)
         scanUserFunctions(g_tbl);
     else
-        memcpy(g_tbl, arg1, sizeof(FunctionTable));
+        memcpy(g_tbl, arg1, sizeof(UserFunctions));
     
     if (arg0 == NULL) arg0 = &default_config;
     

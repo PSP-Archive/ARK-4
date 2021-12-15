@@ -29,7 +29,7 @@
  sceSdGetLastIndex Kernel Exploit for PSP up to 6.60 and PS Vita up to 3.20, both PSP and PSX exploits
 */
 
-FunctionTable* g_tbl;
+UserFunctions* g_tbl;
 
 int (* _sceSdGetLastIndex)(int a1, int a2, int a3) = (void *)NULL;
 int (* _sceKernelLibcTime)(u32 a0, u32 a1) = (void*)NULL;
@@ -64,7 +64,7 @@ void KernelFunction()
     is_exploited = 1;
 }
 
-int stubScanner(FunctionTable* tbl){
+int stubScanner(UserFunctions* tbl){
 
     g_tbl = tbl;
 

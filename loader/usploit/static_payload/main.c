@@ -14,7 +14,7 @@ int exploitEntry(){
     int (* IoRead)(int, void *, int) = (void*)SCE_IO_READ;
     int (* IoClose)(int) = (void*)SCE_IO_CLOSE;
     void (* KernelDcacheWritebackAll)(void) = (void*)CLEAR_CACHE;
-    void (* arkEntry)(ARKConfig*, FunctionTable*) = (void*)ARK_ENTRY;
+    void (* arkEntry)(ARKConfig*, UserFunctions*) = (void*)ARK_ENTRY;
 
     
     int fd = IoOpen(ARK_PATH ARK_BIN, PSP_O_RONLY);

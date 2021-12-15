@@ -96,6 +96,16 @@ static void systemController(Controller* pad){
 
 static void drawOptionsMenuCommon(){
     common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 140);
+
+    int offset = (480-(MAX_ENTRIES*15))/2;
+    for (int i=0; i<MAX_ENTRIES; i++){
+        if (i==pEntryIndex){
+            common::printText(offset + (i+1)*15, 15, "*", LITEGRAY, SIZE_BIG, true);
+        }
+        else{
+            common::printText(offset + (i+1)*15, 15, "*", LITEGRAY, SIZE_LITTLE);
+        }
+    }    
     
     int x = -130;
     for (int i=page_start-1; i<min(page_start+4, MAX_ENTRIES); i++){
@@ -103,9 +113,9 @@ static void drawOptionsMenuCommon(){
             x += 160;
             continue;
         }
-        entries[i]->getIcon()->draw(x+menu_anim_state, optionsAnimState+10);
+        entries[i]->getIcon()->draw(x+menu_anim_state, optionsAnimState+15);
         if (i==pEntryIndex && optionsDrawState==2)
-            common::printText(x+25, 125, entries[i]->getName().c_str(), LITEGRAY, SIZE_BIG);
+            common::printText(x+25, 130, entries[i]->getName().c_str(), LITEGRAY, SIZE_BIG);
         x += 160;
     }
     switch (menu_draw_state){

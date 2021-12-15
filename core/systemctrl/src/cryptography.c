@@ -157,7 +157,7 @@ unzip:
     if (sceMemlmdInitializeScrambleKey!= NULL && sceMemlmdInitializeScrambleKey(0, (void*)0xBFC00200) < 0)
         return ret;
 
-    if (_memlmd_unsigner != NULL && _memlmd_unsigner(prx, size, use_polling) < 0) {
+    if (memlmd_unsigner != NULL && _memlmd_unsigner(prx, size, use_polling) < 0) {
         return ret;
     }
 
@@ -204,7 +204,6 @@ SceModule2* patchMemlmd(void)
 
     u32 topaddr = mod->text_addr + mod->text_size;
     
-    // do the patching
     int patches = 5;
     for (u32 addr = text_addr; addr<topaddr && patches; addr+=4){
         u32 data = _lw(addr);
@@ -217,13 +216,13 @@ SceModule2* patchMemlmd(void)
             patches--; // 2
         }
         else if (data == 0x3C02F009){
-            _sh(0xF005, addr);
+            _sh(0xF005, addr); //This patch allow to load packed usermode module.
             patches--; // 1
         }
         else if (data == 0x3222003F){
             u32 a = addr;
             do {a-=4;} while (_lw(a)!=0x27BDFFF0);
-            memlmd_unsigner = (void*)a;
+            memlmd_unsigner = (void*)a; // inner function which unsigns a PRX module 
         }
         else if (data == 0x27BDFF80){
             memlmdDecrypt = addr-8; // Backup Decrypt Function Pointer
@@ -234,6 +233,7 @@ SceModule2* patchMemlmd(void)
     }
     // Flush Cache
     flushCache();
+    
     return mod;
 }
 
@@ -252,6 +252,31 @@ void patchMesgLed(SceModule2 * mod)
             _sw(JAL(_mesgledDecrypt), addr);
         }
     }
+
+    /*
+    for (addr = mod->text_addr; addr<topaddr; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x2CE30001){
+            mesgledDecrypt = addr; // Save Original Decrypt Function Pointer
+            //HIJACK_FUNCTION(addr, _mesgledDecrypt, mesgledDecrypt);
+            break;
+        }
+    }
+    
+    u32 addrs[] = { 0x00003850, 0x00004A70, 0x00004D5C, 0x000038E0, 0x00001FAC }; // 3g
+    for (int i=0; i<5; i++){
+        _sw(JAL(_mesgledDecrypt), mod->text_addr+addrs[i]);
+    }
+    */
+
+    /*
+    for (; addr<topaddr; addr+=4){
+        u32 data = _lw(addr);
+        if (data == JAL(mesgledDecrypt)){
+            _sw(JAL(_mesgledDecrypt), addr);
+        }
+    }
+    */
     // Flush Cache
     flushCache();
 }

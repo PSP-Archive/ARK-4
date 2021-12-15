@@ -212,7 +212,7 @@ static int _mesgled_decrypt(u32 *tag, u8 *key, u32 code, u8 *prx, u32 size, u32 
     int ret;
     u32 keytag;
     GameCipher *cipher = NULL;
-
+    
     // try default decrypt
     ret = (*mesgled_decrypt)(tag, key, code, prx, size, newsize, use_polling, blacklist, blacklistsize, type, xor_key1, xor_key2);
 
@@ -239,28 +239,39 @@ static int _mesgled_decrypt(u32 *tag, u8 *key, u32 code, u8 *prx, u32 size, u32 
             return ret;
         }
     }
-
+    
+    colorDebug(0xFF);
+    
     return -301;
 }
 
 void patch_sceMesgLed()
 {
     SceModule2 *mod;
-    u32 intr, text_addr;
+    u32 intr, text_addr, topaddr;
 
     mod = (SceModule2*)sceKernelFindModuleByName("sceMesgLed");
 
     if (mod == NULL) {
         return;
     }
-
+    
     intr = JAL(_mesgled_decrypt);
     text_addr = mod->text_addr;
-    mesgled_decrypt = (void*)findFirstJALReverseForFunction("sceMesgLed", "sceDbsvr_driver", 0x94561901);
+    topaddr = text_addr+mod->text_size;
+    
+    for (u32 addr = text_addr; addr<topaddr; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x2CE30001){
+            mesgled_decrypt = addr; // Save Original Decrypt Function Pointer
+            break;
+        }
+    }
+    
     u32 call = JAL(mesgled_decrypt);
-
     u32 func1 = (void*)FindFunction("sceMesgLed", "sceMesgLed_driver", 0x792A6126);
     u32 func2 = (void*)FindFunction("sceMesgLed", "sceMesgLed_driver", 0x337D0DD3);
-    patchNextInstruction(call, intr, func1, 0); // patch the first call to mesgled_decrypt in sceMesgLed_driver_792A6126
-    patchNextInstruction(call, intr, func2, 1); // patch the second call to mesgled_decrypt in sceMesgLed_driver_337D0DD3
+    
+    _sw(intr, func1+140); // patch the first call to mesgled_decrypt in sceMesgLed_driver_792A6126
+    _sw(intr, func2+920); // patch the second call to mesgled_decrypt in sceMesgLed_driver_337D0DD3
 }

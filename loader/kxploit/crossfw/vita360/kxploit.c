@@ -30,7 +30,7 @@ Part of Trinity exploit chain.
 #define SYSMEM_SEED_OFFSET 0x88014EB8 //0x88014E38
 #define FAKE_UID_OFFSET    0x8814CFA8
 
-FunctionTable* g_tbl;
+UserFunctions* g_tbl;
 int (*_sceNpCore_8AFAB4A0)(int *input, char *string, int length);
 
 /* Actual code to trigger the kram read vulnerability.
@@ -116,7 +116,7 @@ void repairInstruction(KernelFunctions* k_tbl) {
     k_tbl->KernelDcacheWritebackInvalidateAll(); 
 }
 
-int stubScanner(FunctionTable* tbl){
+int stubScanner(UserFunctions* tbl){
     g_tbl = tbl;
     
     if (g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON) < 0)

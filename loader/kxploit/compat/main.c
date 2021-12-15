@@ -33,7 +33,7 @@ static ARKConfig conf = {
     .recovery = 0,
 };
 
-static FunctionTable tbl;
+static UserFunctions tbl;
 
 void memset(u8* start, u8 data, u32 size){
     u32 i = 0;
@@ -77,7 +77,7 @@ int _start(char* savepath)
     
     tbl.KernelDcacheWritebackAll();
     
-    void (* hEntryPoint)(ARKConfig*, FunctionTable*, char*) = (void*)ARK_LOADADDR;
+    void (* hEntryPoint)(ARKConfig*, UserFunctions*, char*) = (void*)ARK_LOADADDR;
     hEntryPoint(&conf, NULL, NULL);
     
 }

@@ -1,5 +1,9 @@
 # ARK-4
 
+## Update 9.3
+- Fixed mesgled patches in Stargate.
+- Some small improvements in the custom launcher.
+
 ## Update 9.2
 - Added UMD game support for custom launcher.
 - Fixed memlmd patches.
