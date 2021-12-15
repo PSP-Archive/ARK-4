@@ -84,7 +84,10 @@ void UMD::doExecute(){
     struct SceKernelLoadExecVSHParam param;
     memset(&param, 0, sizeof(param));
     
+    param.size = sizeof(param);
     param.argp = (char*)UMD_EBOOT_BIN;
+    param.args = 33;
+    param.key = "game";
     
     sctrlSESetBootConfFileIndex(MODE_UMD);
     sctrlSESetUmdFile("");

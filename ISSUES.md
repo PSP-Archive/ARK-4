@@ -5,5 +5,4 @@
 
 # Launcher Issues
 - Some UMD games crash.
-- Ejecting UMD when icon is not loaded causes a crash.
 - Infinite loop in access point dialog.
