@@ -36,6 +36,7 @@ class Menu{
         
         void freeIcons();
         bool checkIconsNeeded(bool isSelected);
+        void checkIndex();
         
     public:
         Menu(EntryType t);

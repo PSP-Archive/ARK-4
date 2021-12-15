@@ -48,12 +48,18 @@ int GameManager::loadIcons(SceSize _args, void *_argp){
         bool has_umd = UMD::isUMD();
         bool umd_loaded = game_entries->size() > 0 && string("UMD") == game_entries->at(0)->getType();
         if (has_umd && !umd_loaded){ // UMD inserted but not loaded
+            SystemMgr::pauseDraw();
             game_entries->insert(game_entries->begin(), new UMD());
+            SystemMgr::resumeDraw();
+            common::playMenuSound();
         }
         else if (umd_loaded && !has_umd){ // UMD loaded but not inserted
+            SystemMgr::pauseDraw();
             UMD* umd = (UMD*)game_entries->at(0);
             game_entries->erase(game_entries->begin());
             delete umd;
+            SystemMgr::resumeDraw();
+            common::playMenuSound();
         }
         // load icons
         if (self->selectedCategory < 0){
@@ -410,6 +416,9 @@ void GameManager::control(Controller* pad){
             this->endAllThreads();
             this->getEntry()->execute();
         }
+    }
+    else if (pad->select()){
+        GameManager::updateGameList(NULL);
     }
     /*
     else if (pad->decline()){

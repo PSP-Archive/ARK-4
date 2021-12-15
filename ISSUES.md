@@ -1,5 +1,9 @@
 # CFW Issues
-- Some games, homebrews and plugins give an Unsuported PRX Type error (80020148).
+- PS1 games on Vita are not working in ePSP mode.
+- Loading PRX files from ms0 with the ~PSP flag instead of the .ELF flag gives Unsuported PRX Type Error (0x80020148)
+- Some plugins don't load (i.e. lcscheatdevice)
 
 # Launcher Issues
-- FTP server not working due to infinite loop in access point dialog.
+- Some UMD games crash.
+- Ejecting UMD when icon is not loaded causes a crash.
+- Infinite loop in access point dialog.

@@ -44,10 +44,21 @@ bool Menu::checkIconsNeeded(bool isSelected){
     return false;
 }
 
+void Menu::checkIndex(){
+    if (this->index>=this->getVectorSize()){
+        this->index = this->getVectorSize()-1;
+    }
+    if (this->index<0){
+        this->index = 0;
+    }
+}
+
 void Menu::loadIconsDynamic(bool isSelected){
 
     if (this->fastScrolling || this->getVectorSize() == 0 || stopLoading)
         return; // we don't need to load any icons
+
+    this->checkIndex();
 
     sceKernelWaitSema(iconSema, 1, NULL);
 
@@ -87,6 +98,8 @@ void Menu::draw(bool selected){
 
     if (this->getVectorSize() == 0)
         return;
+
+    this->checkIndex();
 
     int xoffset = ((int)this->type)*144 + ((int)this->type+1)*10 + 5;
     int yoffset = 20;

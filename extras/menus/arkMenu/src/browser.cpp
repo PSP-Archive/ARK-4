@@ -819,6 +819,9 @@ void Browser::control(Controller* pad){
         common::playMenuSound();
         this->options();
     }
+    else if (pad->select()){
+        this->refreshDirs();
+    }
     else{
         if (moving) moving--;
     }
