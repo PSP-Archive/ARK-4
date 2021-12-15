@@ -252,31 +252,6 @@ void patchMesgLed(SceModule2 * mod)
             _sw(JAL(_mesgledDecrypt), addr);
         }
     }
-
-    /*
-    for (addr = mod->text_addr; addr<topaddr; addr+=4){
-        u32 data = _lw(addr);
-        if (data == 0x2CE30001){
-            mesgledDecrypt = addr; // Save Original Decrypt Function Pointer
-            //HIJACK_FUNCTION(addr, _mesgledDecrypt, mesgledDecrypt);
-            break;
-        }
-    }
-    
-    u32 addrs[] = { 0x00003850, 0x00004A70, 0x00004D5C, 0x000038E0, 0x00001FAC }; // 3g
-    for (int i=0; i<5; i++){
-        _sw(JAL(_mesgledDecrypt), mod->text_addr+addrs[i]);
-    }
-    */
-
-    /*
-    for (; addr<topaddr; addr+=4){
-        u32 data = _lw(addr);
-        if (data == JAL(mesgledDecrypt)){
-            _sw(JAL(_mesgledDecrypt), addr);
-        }
-    }
-    */
     // Flush Cache
     flushCache();
 }
