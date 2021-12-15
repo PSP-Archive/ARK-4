@@ -240,8 +240,6 @@ static int _mesgled_decrypt(u32 *tag, u8 *key, u32 code, u8 *prx, u32 size, u32 
         }
     }
     
-    colorDebug(0xFF);
-    
     return -301;
 }
 

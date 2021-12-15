@@ -152,31 +152,6 @@ int _ProbeExec2(u8 *buffer, int *check)
     return result;
 }
 
-// PRO GZIP Decrypt Support
-int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
-{
-
-    // GZIP Packed PRX File
-    if ( (_lb((unsigned)prx + 0x150) == 0x1F && _lb((unsigned)prx + 0x151) == 0x8B)
-            || (*(unsigned int *)(prx + 0x130) == 0xC01DB15D) )
-    {
-        // Read GZIP Size
-        unsigned int compsize = *(unsigned int *)(prx + 0xB0);
-        
-        // Return GZIP Size
-        *newsize = compsize;
-        
-        // Remove PRX Header
-        memcpy(prx, prx + 0x150, compsize);
-        
-        // Fake Decrypt Success
-        return 0;
-    }
-    
-    // Decrypt Sony PRX Files
-    return SonyPRXDecrypt(prx, size, newsize);
-}
-
 // Executable File Check
 int KernelCheckExecFile(unsigned char * buffer, int * check)
 {
@@ -244,7 +219,6 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
 int patch_sceKernelStartModule_in_bootstart(int (* bootstart)(SceSize, void *), void * argp)
 {
     
-    /*
     u32 StartModule = JUMP(FindFunction("sceModuleManager", "ModuleMgrForUser", 0x50F0C1EC));
 
     u32 addr = (u32)bootstart;
@@ -257,18 +231,7 @@ int patch_sceKernelStartModule_in_bootstart(int (* bootstart)(SceSize, void *), 
             patches--;
         }
     }
-    */
-    
-        /*
-		.sceInitBootStartCall = ,
-		.sceKernelLinkLibraryEntries = 0x00001110,
-		.sceKernelLinkLibraryEntriesForUser = 0x000025A4,
-		.sceKernelIcacheClearAll = 0x0000748C,
-		*/
-    
-    u32 addr = ((u32)bootstart) + 0x00001C3C - 0x00001A4C;
-	_sw(JUMP(InitKernelStartModule), addr);
-    _sw(NOP, addr + 4);
+
     
     // Passthrough
     return bootstart(4, argp);
