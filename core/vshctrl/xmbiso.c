@@ -27,6 +27,7 @@
 #include "virtual_pbp.h"
 #include "strsafe.h"
 #include "dirent_track.h"
+#include "ansi_c_functions.h"
 
 #define MAGIC_DFD_FOR_DELETE 0x9000
 #define MAGIC_DFD_FOR_DELETE_2 0x9001

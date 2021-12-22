@@ -17,7 +17,7 @@
 
 #include <pspsdk.h>
 #include <psptypes.h>
-#include <graphics.h>
+#include "graphics.h"
 #include "globals.h"
 #include "functions.h"
 

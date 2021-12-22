@@ -31,6 +31,7 @@ char * ownstrtok(char * s, const char * delim);
 char * ownstrtok_r(char * s, const char * delim, char ** last);
 char * strncat(char * dst, const char * src, size_t n);
 int ownstrtol(const char * str, int * res);
+int strcasecmp(const char * a, const char * b);
 
 #endif
 

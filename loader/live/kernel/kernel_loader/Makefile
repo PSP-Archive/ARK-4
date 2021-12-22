@@ -8,8 +8,8 @@ PYTHON=$(shell which python2)
 all: pre-build $(TARGET)
 
 CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
-CFLAGS += -I $(ARKROOT)/loader/kxploit/ -I $(ARKROOT)/core/systemctrl/include
-CFLAGS += -I $(ARKROOT)/core/systemctrl/include -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR)
+CFLAGS += -I $(ARKROOT)/loader/live/kernel/kxploit/ -I $(ARKROOT)/core/systemctrl/include
+CFLAGS += -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR)
 
 C_OBJS = \
 	main.o \

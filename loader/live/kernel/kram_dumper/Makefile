@@ -8,13 +8,13 @@ PYTHON=$(shell which python2)
 all: pre-build $(TARGET)
 
 CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR)) $(LIBS)
-CFLAGS += -I $(ARKROOT)/loader/kxploit/ -I $(ARKROOT)/modules/systemctrl/include -I $(ARKROOT)/loader/kxploit/kernel_loader
+CFLAGS += -I $(ARKROOT)/loader/live/kernel/kxploit/ -I $(ARKROOT)/modules/systemctrl/include -I $(ARKROOT)/loader/live/kernel/kernel_loader
 CFLAGS += -I $(ARKROOT)/modules/systemctrl/include -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR)
 
 C_OBJS = \
 	loader.o \
 	$(ARKROOT)/common/functions.o \
-	$(ARKROOT)/loader/kxploit/kernel_loader/main.o \
+	$(ARKROOT)/loader/live/kernel/kernel_loader/main.o \
 	$(ARKROOT)/core/compat/vitapops/popsdisplay.o \
 
 include $(ARKROOT)/common/make/global.mak

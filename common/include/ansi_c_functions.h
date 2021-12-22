@@ -23,6 +23,9 @@
  * Use it if your lowlevel binary consists of multiple source files.
  */
 
+#define stricmp strcasecmp
+#define strnicmp strncasecmp
+
 // Minimal Memcpy Implementation
 void *memcpy(void *to_, const void *from_, unsigned int size);
 
@@ -55,6 +58,10 @@ int strcmp(const char *a, const char *b);
 
 // compare string a with string b for a certain amount of characters
 int strncmp(const char *a, const char *b, unsigned int count);
+
+int strcasecmp(const char * a, const char * b);
+
+int strncasecmp(const char *s1, const char *s2, unsigned int n);
 
 char* memfindsz(const char* s1, char* start, unsigned int size);
 

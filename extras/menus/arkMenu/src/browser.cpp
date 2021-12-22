@@ -605,6 +605,23 @@ void Browser::cut(){
     this->fillSelectedBuffer();
 }
 
+static int pspIoMove(string src, string dest)
+{
+    if ( dest.find(src) != 0 )
+    {
+        const char deviceSize = 4;
+
+        u32 data[2];
+        data[0] = (u32)src.c_str() + deviceSize;
+        data[1] = (u32)dest.c_str() + deviceSize;
+
+        int res = sceIoDevctl("ms0:", 0x02415830, data, sizeof(data), NULL, 0);
+
+        return res;
+    }
+    else    return -1;
+}
+
 void Browser::paste(){
     // Copy or cut all paths in the paste buffer to the cwd
     for (int i = 0; i<selectedBuffer->size(); i++){

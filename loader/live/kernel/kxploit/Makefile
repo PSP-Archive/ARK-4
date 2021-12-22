@@ -7,9 +7,9 @@ PYTHON=$(shell which python2)
 
 CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 
-CFLAGS += -I $(ARKROOT)/loader/kxploit/
+CFLAGS += -I $(ARKROOT)/loader/live/kernel/kxploit/
 
-C_OBJS = main.o $(ARKROOT)/loader/kxploit/crossfw/$(K)/kxploit.o
+C_OBJS = main.o $(ARKROOT)/loader/live/kernel/kxploit/$(K)/kxploit.o
 
 include $(ARKROOT)/common/make/global.mak
 include $(ARKROOT)/common/make/beauty_bin.mak
@@ -30,16 +30,16 @@ link.l:
 	$(Q)$(cmd_genlink)
 
 main.elf: $(C_OBJS)
-	$(Q)$(LD) -T $(LINKFILE) $(C_OBJS) -o $(ARKROOT)/loader/kxploit/main.elf $(LIBS)
+	$(Q)$(LD) -T $(LINKFILE) $(C_OBJS) -o $(ARKROOT)/loader/live/kernel/kxploit/main.elf $(LIBS)
 
 $(TARGET): main.elf
 	$(Q)$(STRIP) -s $<
 	$(Q)$(OBJCOPY) -O binary $< $@
-	$(Q)mv $(TARGET) $(ARKROOT)/loader/kxploit/crossfw/$(K)/
+	$(Q)mv $(TARGET) $(ARKROOT)/loader/live/kernel/kxploit/$(K)/
 
 kxploits: link.l $(TARGET)
 
 all: clean kxploits
 
 clean:
-	$(Q)rm -rf *~ *.s *.o *.elf $(TARGET) exploit.h link.l $(ARKROOT)/loader/kxploit/crossfw/$(K)/$(TARGET) $(Q)rm $(ARKROOT)/loader/kxploit/crossfw/$(K)/kxploit.o
+	$(Q)rm -rf *~ *.s *.o *.elf $(TARGET) exploit.h link.l $(ARKROOT)/loader/live/kernel/kxploit/$(K)/$(TARGET) $(Q)rm $(ARKROOT)/loader/live/kernel/kxploit/$(K)/kxploit.o

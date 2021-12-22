@@ -18,12 +18,12 @@ SUBDIRS = libs \
 	core/stargate \
 	core/popcorn \
 	core/vshctrl \
-	loader/usploit/linkless_payload \
-	loader/usploit/signed_eboot \
-	loader/kxploit/kernel_loader \
-	loader/kxploit/compat \
-	loader/kxploit/kram_dumper \
-	loader/kxploit/vita_flash_dumper \
+	loader/live/user/linkless_payload \
+	loader/live/user/signed_eboot \
+	loader/live/kernel/kernel_loader \
+	loader/live/kernel/chain_loader \
+	loader/live/kernel/kram_dumper \
+	loader/live/kernel/vita_flash_dumper \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
 	extras/menus/xMenu \
@@ -36,24 +36,24 @@ all: subdirs kxploits mkdir-dist encrypt-prx copy-bin
 
 copy-bin:
 #	Common installation
-	$(Q)cp loader/usploit/signed_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
-	$(Q)cp loader/kxploit/crossfw/psp660/K.BIN dist/ARK_Live/K.BIN # Kernel exploit for PSP
-	$(Q)cp loader/usploit/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
-	$(Q)cp loader/usploit/vitabubble/H.BIN dist/VitaBubble/ # Kernel exploit for Vita 3.60
-	$(Q)cp loader/kxploit/crossfw/vita360/K.BIN dist/VitaBubble/K.BIN # Kernel exploit for Vita 3.60+
-	$(Q)cp loader/infinity/EBOOT.PBP dist/Infinity/ # Infinity with ARK support
-	$(Q)cp loader/infinity/EBOOT_GO.PBP dist/Infinity/ # Infinity with ARK support (PSP Go)
+	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
+	$(Q)cp loader/live/kernel/kxploit/psp660/K.BIN dist/ARK_Live/K.BIN # Kernel exploit for PSP
+	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
+	$(Q)cp loader/live/user/vitabubble/H.BIN dist/VitaBubble/ # Kernel exploit for Vita 3.60
+	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/VitaBubble/K.BIN # Kernel exploit for Vita 3.60+
+	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/Infinity/ # Infinity with ARK support
+	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
-	$(Q)cp loader/kxploit/compat/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
-	$(Q)cp loader/kxploit/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
-	$(Q)cp loader/kxploit/crossfw/dummy/K.BIN dist/ARK_01234/K.BIN # Dummy Kernel exploit
+	$(Q)cp loader/live/kernel/chain_loader/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
+	$(Q)cp loader/live/kernel/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
+	$(Q)cp loader/live/kernel/kxploit/dummy/K.BIN dist/ARK_01234/K.BIN # Dummy Kernel exploit
 	$(Q)cp loader/rebootex/reboot.bin.gz dist/ARK_01234/REBOOT.BIN # Kernel exploit for PS Vita
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/MENU.PBP # Default launcher
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XMENU.PBP # PS1 launcher
 	$(Q)cp extras/menus/arkMenu/themes/classic/DATA.PKG dist/ARK_01234/DATA.PKG # Launcher and Recovery resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
-	$(Q)cp loader/usploit/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
+	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	
 encrypt-prx: \
@@ -65,10 +65,10 @@ encrypt-prx: \
 
 
 kxploits:
-	$(Q)$(MAKE) $@ K=dummy -C loader/kxploit
-	$(Q)$(MAKE) $@ K=psp660 -C loader/kxploit
-	$(Q)$(MAKE) $@ K=vita320 -C loader/kxploit
-	$(Q)$(MAKE) $@ K=vita360 -C loader/kxploit
+	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
 
 # Only clean non-library code
 cleanobj:
@@ -76,12 +76,12 @@ cleanobj:
 
 clean:
 	$(Q)$(MAKE) $@ -C libs
-	$(Q)$(MAKE) $@ -C loader/usploit/linkless_payload
-	$(Q)$(MAKE) $@ -C loader/usploit/signed_eboot
-	$(Q)$(MAKE) $@ -C loader/kxploit/kernel_loader
-	$(Q)$(MAKE) $@ -C loader/kxploit/compat
-	$(Q)$(MAKE) $@ -C loader/kxploit/kram_dumper
-	$(Q)$(MAKE) $@ -C loader/kxploit/vita_flash_dumper
+	$(Q)$(MAKE) $@ -C loader/live/user/linkless_payload
+	$(Q)$(MAKE) $@ -C loader/live/user/signed_eboot
+	$(Q)$(MAKE) $@ -C loader/live/kernel/kernel_loader
+	$(Q)$(MAKE) $@ -C loader/live/kernel/chain_loader
+	$(Q)$(MAKE) $@ -C loader/live/kernel/kram_dumper
+	$(Q)$(MAKE) $@ -C loader/live/kernel/vita_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/rebootex
 	$(Q)$(MAKE) $@ -C core/systemctrl
 	$(Q)$(MAKE) $@ -C core/vshctrl
@@ -95,10 +95,10 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
-	$(Q)$(MAKE) $@ K=dummy -C loader/kxploit
-	$(Q)$(MAKE) $@ K=psp660 -C loader/kxploit
-	$(Q)$(MAKE) $@ K=vita320 -C loader/kxploit
-	$(Q)$(MAKE) $@ K=vita360 -C loader/kxploit
+	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)-rm -rf dist *~ | true
 	$(Q)$(PYTHON) cleandeps.py

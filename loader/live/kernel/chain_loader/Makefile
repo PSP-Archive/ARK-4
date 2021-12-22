@@ -1,5 +1,4 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
-ARKROOT = ../../../
 INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)/libs/graphics
 LIBDIR = $(ARKROOT)/libs/graphics $(ARKROOT)/libs/ansic $(ARKROOT)/libs/colordebugger
 LIBS = -lgraphics -lansic -lcolordebugger -L $(ARKROOT)/libs

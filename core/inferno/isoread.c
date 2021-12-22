@@ -669,7 +669,7 @@ int isoRead(struct IoReadArg *args)
 }
 
 // 0x000003E0
-int isoReadStack(u32 offset, void *ptr, u32 data_len)
+int isoReadStack(unsigned int offset, void *ptr, unsigned int data_len)
 {
     int ret, retv;
 
