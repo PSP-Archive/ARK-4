@@ -46,10 +46,13 @@ OBJS = \
 		src/pmf/pmf_audio.o \
 		src/pmf/pmf_reader.o \
 		src/pmf/at3.o \
-		src/ftp/ftpsp.o \
-		src/ftp/mutex-imports.o \
-		src/ftp/utils.o \
-		src/ftp/psp_functions.o \
+		src/ftp/ftp.o \
+		src/ftp/ftpd.o \
+		src/ftp/sutils.o \
+		src/ftp/util.o \
+		src/ftp/loadutil.o \
+		src/ftp/psp_cfg.o \
+		src/ftp/psp_init.o \
 
 LIBS = \
 		-lunziprar \

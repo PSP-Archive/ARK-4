@@ -4,16 +4,18 @@
 
 #define MAX_LINES 10
 
-extern "C"{
-#include "utils.h"
-#include "ftpsp.h"
+//extern "C"{
+#include "ftpd.h"
 extern void setFtpMsgHandler(void*);
-}
+extern int mftpExitHandler(SceSize argc, void *argv);
+//}
 
 static struct {
     string msg[MAX_LINES];
     unsigned char cont;
 } vla;
+
+SceUID ftp_thread = -1;
 
 static void addMessage(char* msg){
     if (msg==NULL)
@@ -30,7 +32,7 @@ void FTPManager::draw(){
 
     int y = 50;
     
-    common::getImage(IMAGE_DIALOG)->draw_scale(50, 20, 400, 230);
+    common::getImage(IMAGE_DIALOG)->draw_scale(20, 30, 400, 230);
     
     for (int i=0; i<MAX_LINES; i++){
         common::printText(30, y, vla.msg[i].c_str());
@@ -39,25 +41,25 @@ void FTPManager::draw(){
 }
 
 void FTPManager::control(Controller* pad){
+
+    if (pad->decline()){
+        addMessage("Disconnecting FTP server");
+        mftpExitHandler(0, NULL);
+        sceKernelWaitThreadEnd(ftp_thread, NULL);
+    }
+
 }
 
 void FTPManager::pause(){
-
-    ftpsp_shutdown();
-    
-    deinit_net();
-    unload_net_modules();
 
 }
 
 void FTPManager::resume(){
 
-    //load_net_modules();
-    //init_net();
-    //connect_net(3);
-    
+    if (ftp_thread >= 0) return;
+
     SystemMgr::pauseDraw();
-    
+
     int ret;
     if ((ret=initializeNetwork()) < 0){
         char buf[128];
@@ -77,8 +79,10 @@ void FTPManager::resume(){
     
     SystemMgr::resumeDraw();
     
-    ftpsp_init();
-
+    if (ftp_thread < 0){
+        ftp_thread = sceKernelCreateThread("ftpd_main_thread", ftpdLoop, 0x18, 0x10000, 0, 0);
+        sceKernelStartThread(ftp_thread, 0, 0);
+    }
 }
 
 std::string FTPManager::getInfo(){

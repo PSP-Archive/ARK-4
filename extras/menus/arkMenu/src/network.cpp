@@ -15,6 +15,9 @@
 #include "network.h"
 #include "common.h"
 
+static bool net_initialized = false;
+static bool ap_connected = false;
+
 void apctl_handler(int prev_state, int new_state, int event, int error, void *arg)
 {
 	// Do nothing
@@ -24,6 +27,8 @@ void apctl_handler(int prev_state, int new_state, int event, int error, void *ar
 int initializeNetwork(void)
 {
 
+    if (net_initialized) return 0;
+    
 	int ret;
 
 	ret = sceUtilityLoadModule(PSP_MODULE_NET_COMMON);
@@ -58,12 +63,23 @@ int initializeNetwork(void)
 	
 	ret = sceNetApctlAddHandler(apctl_handler, NULL);
 
+    if (ret>=0) net_initialized = true;
+
 	return ret;
+}
+
+int shutdownNetwork(){
+    if (!net_initialized) return 0;
+    sceUtilityUnloadModule(PSP_MODULE_NET_INET);
+    sceUtilityUnloadModule(PSP_MODULE_NET_COMMON);
 }
 
 /* Connect to an access point */
 int connect_to_apctl(void)
 {
+
+    if (ap_connected) return 0;
+
 	SceUtilityNetconfParam p;
 	SceUtilityNetconfAdhocParam a;
 	memset(&p, 0, sizeof(p));
@@ -117,5 +133,6 @@ int connect_to_apctl(void)
 			return 1;
 		}
 	}
+	ap_connected = true;
 	return 0;
 }
