@@ -123,14 +123,11 @@ class Iso : public Entry
         void getTempData1();
         void getTempData2();
         
-        static bool isPatched(string path);
         static bool isISO(const char* filepath);
         
         /* Much faster function for extracting files in PSP_GAME/ */
         static void* fastExtract(const char* path, char* file, unsigned* size=NULL);
 
-        void doExecute();
-        
         char* getType();
         char* getSubtype();
 
@@ -154,6 +151,9 @@ class Iso : public Entry
         FILE * stream;
         primary_volume_descriptor pvd;
         path_entry main_path_entry;
+        void doExecute();
+        
+        virtual bool isPatched();
 };
 
 #endif

@@ -171,6 +171,11 @@ class Cso : public Iso{
         int is_lz4;
 
 
+    protected:
+    
+        bool isPatched();
+
+
     public:
 
         Cso(string path);

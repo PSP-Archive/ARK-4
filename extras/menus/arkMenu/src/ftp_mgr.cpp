@@ -1,5 +1,6 @@
 #include "ftp_mgr.h"
 #include "network.h"
+#include "system_mgr.h"
 
 #define MAX_LINES 10
 
@@ -29,6 +30,8 @@ void FTPManager::draw(){
 
     int y = 50;
     
+    common::getImage(IMAGE_DIALOG)->draw_scale(50, 20, 400, 230);
+    
     for (int i=0; i<MAX_LINES; i++){
         common::printText(30, y, vla.msg[i].c_str());
         y+=20;
@@ -53,6 +56,8 @@ void FTPManager::resume(){
     //init_net();
     //connect_net(3);
     
+    SystemMgr::pauseDraw();
+    
     int ret;
     if ((ret=initializeNetwork()) < 0){
         char buf[128];
@@ -69,6 +74,8 @@ void FTPManager::resume(){
     }
 
     setFtpMsgHandler((void*)&addMessage);
+    
+    SystemMgr::resumeDraw();
     
     ftpsp_init();
 

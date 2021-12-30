@@ -305,17 +305,11 @@ char* Cso::getSubtype(){
 }
 
 
-bool Cso::isPatched(string path){
-    // yes, this is a copy-paste of the icon0 code, I didn't even change the variable names, problem?
-    if (!Cso::isCSO(path.c_str()))
-        return false;
-
-    Cso* iso = new Cso(path);
-    iso->open(path.c_str());
-    iso->getPrimaryVolumeDescriptor();
-    unsigned cso_icon0_size, cso_icon0_off = iso->findFile("SYSDIR/EBOOT.OLD", &cso_icon0_size);
-    iso->clear();
-    delete iso;
+bool Cso::isPatched(){
+    this->open(path.c_str());
+    this->getPrimaryVolumeDescriptor();
+    unsigned cso_icon0_size, cso_icon0_off = this->findFile("SYSDIR/EBOOT.OLD", &cso_icon0_size);
+    this->clear();
     return cso_icon0_off;
 
 }

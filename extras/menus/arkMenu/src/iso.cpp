@@ -280,7 +280,7 @@ void Iso::doExecute(){
     
     memset(&param, 0, sizeof(param));
 
-    if (Iso::isPatched(this->path) || Cso::isPatched(this->path))
+    if (this->isPatched())
         param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
     else
         param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
@@ -302,13 +302,9 @@ char* Iso::getSubtype(){
     return getType();
 }
 
-bool Iso::isPatched(string path){
-    if (!Iso::isISO(path.c_str()))
-        return false;
-    Iso* iso = new Iso(path);
-    iso->open(path.c_str());
-    int found = iso->find("PSP_GAME/SYSDIR/EBOOT.OLD");
-    delete iso;
+bool Iso::isPatched(){
+    this->open(path.c_str());
+    int found = this->find("PSP_GAME/SYSDIR/EBOOT.OLD");
     return found;
 }
 
