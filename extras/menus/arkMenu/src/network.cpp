@@ -16,7 +16,6 @@
 #include "common.h"
 
 static bool net_initialized = false;
-static bool ap_connected = false;
 
 void apctl_handler(int prev_state, int new_state, int event, int error, void *arg)
 {
@@ -70,15 +69,19 @@ int initializeNetwork(void)
 
 int shutdownNetwork(){
     if (!net_initialized) return 0;
+    sceNetApctlDisconnect();
+    sceNetApctlTerm();
+    sceNetResolverTerm();
+    sceNetInetTerm();
+    sceNetTerm();
     sceUtilityUnloadModule(PSP_MODULE_NET_INET);
     sceUtilityUnloadModule(PSP_MODULE_NET_COMMON);
+    net_initialized = false;
 }
 
 /* Connect to an access point */
 int connect_to_apctl(void)
 {
-
-    if (ap_connected) return 0;
 
 	SceUtilityNetconfParam p;
 	SceUtilityNetconfAdhocParam a;
@@ -133,6 +136,5 @@ int connect_to_apctl(void)
 			return 1;
 		}
 	}
-	ap_connected = true;
 	return 0;
 }

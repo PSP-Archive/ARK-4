@@ -34,5 +34,6 @@ typedef struct
 
 extern int initializeNetwork(void);
 extern int connect_to_apctl(void);
+extern int shutdownNetwork();
 
 #endif

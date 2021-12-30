@@ -17,7 +17,7 @@ static struct {
 
 SceUID ftp_thread = -1;
 
-static void addMessage(char* msg){
+static void addMessage(const char* msg){
     if (msg==NULL)
         return;
     if (vla.cont >= MAX_LINES){
@@ -42,10 +42,14 @@ void FTPManager::draw(){
 
 void FTPManager::control(Controller* pad){
 
-    if (pad->decline()){
+    if (pad->decline() && ftp_thread>=0){
         addMessage("Disconnecting FTP server");
         mftpExitHandler(0, NULL);
         sceKernelWaitThreadEnd(ftp_thread, NULL);
+        sceKernelTerminateDeleteThread(ftp_thread);
+        ftp_thread = -1;
+        shutdownNetwork();
+        addMessage("FTP Disconnected");
     }
 
 }
@@ -80,6 +84,7 @@ void FTPManager::resume(){
     SystemMgr::resumeDraw();
     
     if (ftp_thread < 0){
+        addMessage((common::getConf()->swap_buttons)? "Press X to shutdown FTP !" : "Press () to shutdown FTP !");
         ftp_thread = sceKernelCreateThread("ftpd_main_thread", ftpdLoop, 0x18, 0x10000, 0, 0);
         sceKernelStartThread(ftp_thread, 0, 0);
     }
