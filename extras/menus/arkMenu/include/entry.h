@@ -61,8 +61,12 @@ class Entry{
         string getPath();
         
         Image* getIcon();
+        void* getIcon1();
+        int getIcon1Size();
         Image* getPic1();
         Image* getPic0();
+        void* getSnd();
+        int getSndSize();
         
         void freeIcon();
         
@@ -71,8 +75,6 @@ class Entry{
         virtual void getTempData2()=0;
         
         void freeTempData();
-        
-        bool run();
         
         void drawBG();
         

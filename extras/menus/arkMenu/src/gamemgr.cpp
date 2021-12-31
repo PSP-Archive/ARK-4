@@ -6,6 +6,7 @@
 #include "system_mgr.h"
 #include "gamemgr.h"
 #include "osk.h"
+#include "pmf.h"
 
 static GameManager* self = NULL;
 
@@ -450,7 +451,7 @@ void GameManager::execApp(){
     this->getEntry()->getTempData1();
     loadingData = false;
     animAppear();
-    if (this->getEntry()->run()){
+    if (this->pmfPrompt()){
         this->resumeIcons();
         SystemMgr::resumeDraw();
         //this->waitIconsLoad(true);
@@ -462,4 +463,47 @@ void GameManager::execApp(){
     SystemMgr::resumeDraw();
     this->resumeIcons();
     sceKernelDelayThread(0);
+}
+
+bool GameManager::pmfPrompt(){
+
+    bool ret;
+    
+    Entry* entry = this->getEntry();
+
+    common::clearScreen(CLEAR_COLOR);
+    entry->drawBG();
+    entry->getIcon()->draw(10, 98);
+    Image* img = common::getImage(IMAGE_WAITICON);
+    img->draw((480-img->getWidth())/2, (272-img->getHeight())/2);
+    common::flipScreen();
+    
+    entry->getTempData2();
+    
+    bool pmfPlayback = entry->getIcon1() != NULL || entry->getSnd() != NULL;
+        
+    if (pmfPlayback){
+        ret = pmfStart(entry, 10, 98);
+    }
+    else{
+        Controller control;
+    
+        while (true){
+            common::clearScreen(CLEAR_COLOR);
+            entry->drawBG();
+            entry->getIcon()->draw(10, 98);
+            common::flipScreen();
+            control.update();
+            if (control.accept()){
+                ret = true;
+                break;
+            }
+            else if (control.decline()){
+                ret = false;
+                break;
+            }
+        }
+    }
+    sceKernelDelayThread(100000);
+    return ret;
 }

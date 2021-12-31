@@ -17,11 +17,11 @@
 
 PSP_MODULE_INFO("ARKMENU", 0, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);
-PSP_HEAP_SIZE_KB(7*1024);
+PSP_HEAP_SIZE_KB(20*1024);
 
 using namespace std;
 
-#define MAX_ENTRIES 3
+#define MAX_ENTRIES 4
 static SystemEntry* entries[MAX_ENTRIES];
 
 int main(int argc, char** argv){
@@ -48,8 +48,11 @@ int main(int argc, char** argv){
         plugins_menu->setInfo("ARK Plugins");
         entries[1] = plugins_menu;
 
+        // Add browser
+        entries[2] = new Browser();
+
         // Add exit game
-        entries[2] = new ExitManager();
+        entries[3] = new ExitManager();
 
         SystemMgr::initMenu(entries, MAX_ENTRIES);
         

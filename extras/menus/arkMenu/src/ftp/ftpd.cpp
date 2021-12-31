@@ -151,23 +151,9 @@ mftpClientHandler(SceSize argc, void *argv)
 int 
 ftpdLoop(SceSize argc, void *argv)
 {
-    char buffer[128];
   char buffer_2[64];
   u32 err;
   SOCKET sockClient;
-
-    char szMyIPAddr[32];
-    
-    sceNetApctlGetInfo(8, (SceNetApctlInfo*)szMyIPAddr);
-
-	char url[128];
-	strcpy(url, "ftp://");
-	strcat(url, szMyIPAddr);
-	strcat(url, "/");
-
-   strcpy(buffer, "FTP Server is now running on ");
-   strcat(buffer, url);
-    mftpPrint(buffer);
 
 	struct sockaddr_in addrListen;
 	struct sockaddr_in addrAccept;

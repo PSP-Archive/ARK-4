@@ -4,7 +4,6 @@ CXXFLAGS = $(CFLAGS) -fexceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 INCDIR = ../arkMenu/include ../arkMenu/include/anim $(ARKROOT)/libs/libya2d $(ARKROOT)/libs/libintraFont $(ARKROOT)/libs/libjpeg $(ARKROOT)/common/include
 LIBDIR = $(ARKROOT)/libs
-LIBS = -lstdc++ -lc -lya2d -lintraFont -ljpeg -lpng -lpspvfpu -lpspmpeg -lpspaudio -lpspatrac3 -lpspwlan -lpsppower -lpspgum -lpspgu -lz -lm -lpspvram -lpspmath -lpspmp3 -lpspsystemctrl_user
 LDFLAGS =
 EXTRA_TARGETS = EBOOT.PBP
 PSP_EBOOT_TITLE = ARK Recovery
@@ -20,6 +19,12 @@ OBJS = \
 		../arkMenu/src/controller.o \
 		../arkMenu/src/ya2d++.o \
 		../arkMenu/src/mp3.o \
+		../arkMenu/src/osk.o \
+		../arkMenu/src/entry.o \
+		../arkMenu/src/eboot.o \
+		../arkMenu/src/iso.o \
+		../arkMenu/src/cso.o \
+		../arkMenu/src/browser.o \
 		../arkMenu/src/settingsmenu.o \
 		../arkMenu/src/optionsMenu.o \
 		../arkMenu/src/anim/anim.o \
@@ -30,6 +35,26 @@ OBJS = \
 		../arkMenu/src/anim/tetris.o \
 		../arkMenu/src/anim/matrix.o \
 		../arkMenu/src/anim/noanim.o \
+
+LIBS = \
+		-lunziprar \
+		-lstdc++ \
+		-lc \
+		-lya2d \
+		-lintraFont \
+		-ljpeg \
+		-lpng \
+		-lpspvfpu \
+		-lpspaudio \
+		-lpsppower \
+		-lpspgum \
+		-lpspgu \
+		-lz \
+		-lm \
+		-lpspvram \
+		-lpspmath \
+		-lpspmp3 \
+		-lpspsystemctrl_user
 
 all: $(TARGET).prx
 

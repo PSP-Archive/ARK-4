@@ -76,6 +76,7 @@ class GameManager : public SystemEntry{
         
         void execApp();
         void extractHomebrew();
+        bool pmfPrompt();
         
     public:
     

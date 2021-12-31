@@ -306,7 +306,12 @@ void T_pmf(){
     pmfShutdown(); // shutdown PMF
 }
 
-bool pmfStart(Entry* e, void* pmfData, int pmfSize, void* at3data, int at3size, int x, int y){
+bool pmfStart(Entry* e, int x, int y){
+    void* pmfData = e->getIcon1();
+    int pmfSize = e->getIcon1Size();
+    void* at3data = e->getSnd();
+    int at3size = e->getSndSize();
+    
     playAT3 = at3data != NULL; // are we gonna play an at3 file?
     playPMF = pmfData != NULL; // are we gonna play a pmf file too?
     playPMFAudio = playPMF;

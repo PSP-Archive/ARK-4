@@ -3,6 +3,6 @@
 
 #include "entry.h"
 
-bool pmfStart(Entry* e, void* pmfData, int pmfSize, void* at3data, int at3size, int x, int y);
+bool pmfStart(Entry* e, int x, int y);
 
 #endif

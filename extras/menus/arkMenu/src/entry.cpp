@@ -3,7 +3,6 @@
 #include "eboot.h"
 #include "iso.h"
 #include "cso.h"
-#include "pmf.h"
 #include "sprites.h"
 #include "system_mgr.h"
 
@@ -69,12 +68,28 @@ Image* Entry::getIcon(){
     return this->icon0;
 }
 
+void* Entry::getIcon1(){
+    return this->icon1;
+}
+
+int Entry::getIcon1Size(){
+    return this->icon1_size;
+}
+
 Image* Entry::getPic0(){
     return this->pic0;
 }
 
 Image* Entry::getPic1(){
     return this->pic1;
+}
+
+void* Entry::getSnd(){
+    return this->snd0;
+}
+
+int Entry::getSndSize(){
+    return this->at3_size;
 }
 
 void Entry::freeIcon(){
@@ -132,48 +147,6 @@ void Entry::freeTempData(){
     if (this->snd0 != NULL)
         free(this->snd0);
 }
-
-bool Entry::run(){
-
-    bool ret;
-
-    common::clearScreen(CLEAR_COLOR);
-    this->drawBG();
-    this->getIcon()->draw(10, 98);
-    Image* img = common::getImage(IMAGE_WAITICON);
-    img->draw((480-img->getWidth())/2, (272-img->getHeight())/2);
-    common::flipScreen();
-    
-    this->getTempData2();
-    
-    bool pmfPlayback = this->icon1 != NULL || this->snd0 != NULL;
-        
-    if (pmfPlayback){
-        ret = pmfStart(this, this->icon1, this->icon1_size, this->snd0, this->at3_size, 10, 98);
-    }
-    else{
-        Controller control;
-    
-        while (true){
-            common::clearScreen(CLEAR_COLOR);
-            this->drawBG();
-            this->getIcon()->draw(10, 98);
-            common::flipScreen();
-            control.update();
-            if (control.accept()){
-                ret = true;
-                break;
-            }
-            else if (control.decline()){
-                ret = false;
-                break;
-            }
-        }
-    }
-    sceKernelDelayThread(100000);
-    return ret;
-}
-
 
 bool Entry::isZip(const char* path){
     return (common::getMagic(path, 0) == ZIP_MAGIC);
