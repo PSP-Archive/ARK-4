@@ -117,8 +117,6 @@ int connect_to_apctl(void)
 		// Render Screen
 		while(sceUtilityNetconfGetStatus() == PSP_UTILITY_DIALOG_VISIBLE)
 		{
-		    sceDisplayWaitVblankStart();
-		    
 		    common::clearScreen(CLEAR_COLOR);
             common::getImage(IMAGE_BG)->draw(0, 0);
 		

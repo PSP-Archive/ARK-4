@@ -82,6 +82,9 @@ int ya2d_init()
     sceDisplayWaitVblankStart();
     sceGuDisplay(GU_TRUE);
     
+    sceGuFinish();
+    sceGuSync(GU_SYNC_WHAT_DONE, GU_SYNC_FINISH);
+    
     _ya2d_inited = 1;
     return 1;
 }

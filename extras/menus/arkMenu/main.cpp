@@ -22,7 +22,7 @@ int main(int argc, char** argv){
 
     intraFontInit();
     ya2d_init();
-    
+
     // setup UMD disc
     sceUmdReplacePermit();
 
