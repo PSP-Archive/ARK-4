@@ -58,7 +58,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } overclock = {
-    "Overclock",
+    "OverClock",
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.overclock),
@@ -73,7 +73,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } powersave = {
-    "Power Saving",
+    "PowerSave",
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.powersave),
@@ -88,7 +88,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } launcher = {
-    "Custom Launcher",
+    "Autoboot Launcher",
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.launcher),
@@ -103,7 +103,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } disablepause = {
-    "Disable Pause (Go)",
+    "Disable PSP Go Pause",
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.disablepause),
@@ -117,7 +117,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } highmem = {
-    "High Memory Layout",
+    "Unlock Extra Memory",
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.highmem),
