@@ -52,9 +52,6 @@ static void exitgame(const char* path)
     param.argp = path;
     param.key = "game";
 
-    // Always use inferno to simulate UMD driver
-    sctrlSESetBootConfFileIndex(MODE_INFERNO);
-    
     // Trigger Reboot
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 }

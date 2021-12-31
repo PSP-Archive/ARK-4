@@ -6,4 +6,4 @@
 - UMD ripping tools fail.
 
 # Launcher Issues
-- Autoboot Launcher setting results in a softbrick.
+- Weird dual screen bug that seems to be random.
