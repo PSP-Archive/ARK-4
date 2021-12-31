@@ -67,7 +67,7 @@ void UMD::getTempData2(){
     }
 
     // grab icon1.pmf
-    if (size){
+    if (common::fileExists(UMD_ICON1_PATH)){
         size = common::fileSize(UMD_ICON1_PATH);
         this->icon1 = malloc(size);
         memset(this->icon1, 0, size);

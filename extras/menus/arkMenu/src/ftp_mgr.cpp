@@ -82,7 +82,7 @@ static void startFTP(){
     
     if (err){
         char buf[128];
-        snprintf(buf, 128, "Could not initialize network: 0x%X", ret);
+        snprintf(buf, 128, "%s: 0x%X", err, ret);
         addMessage(buf);
     }
     
