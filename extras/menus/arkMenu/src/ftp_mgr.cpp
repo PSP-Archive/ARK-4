@@ -32,7 +32,7 @@ static void addMessage(const char* msg){
 
 void FTPManager::draw(){
 
-    common::getImage(IMAGE_DIALOG)->draw_scale(20, 30, 400, 235);
+    common::getImage(IMAGE_DIALOG)->draw_scale(20, 30, 450, 235);
     
     char buffer[128];
     
@@ -95,11 +95,11 @@ static void stopFTP(){
     mftpExitHandler(0, NULL);
     sceKernelWaitThreadEnd(ftp_thread, NULL);
     sceKernelTerminateDeleteThread(ftp_thread);
-    ftp_thread = -1;
     shutdownNetwork();
     memset(pspIpAddr, 0, sizeof(pspIpAddr));
     //SystemMgr::resumeDraw();
     addMessage("FTP Disconnected");
+    ftp_thread = -1;
 }
 
 void FTPManager::control(Controller* pad){
