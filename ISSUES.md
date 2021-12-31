@@ -7,4 +7,3 @@
 
 # Launcher Issues
 - Autoboot Launcher setting results in a softbrick.
-- Creating new access point configuration results in flickering screen.

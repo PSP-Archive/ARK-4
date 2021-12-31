@@ -62,7 +62,7 @@ int module_start(SceSize args, void * argp)
     // get ark config
     processArkConfig(ark_config);
     // Do PRO patches
-    PSPSysPatch();
+    //PSPSysPatch();
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
     // Return Success

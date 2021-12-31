@@ -91,15 +91,13 @@ static void startFTP(){
 
 static void stopFTP(){
     addMessage("Disconnecting FTP server");
-    //SystemMgr::pauseDraw();
     mftpExitHandler(0, NULL);
     sceKernelWaitThreadEnd(ftp_thread, NULL);
     sceKernelTerminateDeleteThread(ftp_thread);
     shutdownNetwork();
-    memset(pspIpAddr, 0, sizeof(pspIpAddr));
-    //SystemMgr::resumeDraw();
     addMessage("FTP Disconnected");
     ftp_thread = -1;
+    memset(pspIpAddr, 0, sizeof(pspIpAddr));
 }
 
 void FTPManager::control(Controller* pad){
