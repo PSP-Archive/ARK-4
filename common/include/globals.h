@@ -34,6 +34,7 @@
 #define ARK_PATH_SIZE 128
 #define ARK_MENU "MENU.PBP" // default launcher
 #define ARK_XMENU "XMENU.PBP" // PS1 launcher
+#define ARK_INGAME "INGAME.PRX" // in-game menu
 #define ARK_RECOVERY "RECOVERY.PBP" // recovery app
 #define FLASH0_ARK "FLASH0.ARK" // ARK flash0 package
 #define VSH_MENU "VSHMENU.PRX" // ARK VSH Menu for XMB
@@ -43,7 +44,7 @@
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 9
-#define ARK_MICRO_VERSION 4
+#define ARK_MICRO_VERSION 5
 
 /*
 First two bits identify the device (PSP or PS Vita)

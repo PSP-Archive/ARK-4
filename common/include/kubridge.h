@@ -1,59 +1,175 @@
-/*
- * This file is part of PRO CFW.
+#ifndef __KULIBRARY__
 
- * PRO CFW is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
-
- * PRO CFW is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
- */
-
-#ifndef _KUBRIDGE_H_
-#define _KUBRIDGE_H_
+#define __KULIBRARY__
 
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <pspsysmem_kernel.h>
+#include <pspctrl.h>
 
-// Load Modules (without restrictions)
-SceUID kuKernelLoadModule(const char * path, int flags, SceKernelLMOption * option);
+/**
+ * Functions to let user mode access certain functions only available in
+ * kernel mode
+*/
 
-// Return Apitype
-int kuKernelInitApitype(void);
+/**
+  * Load a module using ModuleMgrForKernel.
+  * 
+  * @param path - The path to the module to load.
+  * @param flags - Unused, always 0 .
+  * @param option  - Pointer to a mod_param_t structure. Can be NULL.
+  *
+  * @returns The UID of the loaded module on success, otherwise one of ::PspKernelErrorCodes.
+ */
+SceUID kuKernelLoadModule(const char *path, int flags, SceKernelLMOption *option);
 
-// Return Boot Device
-int kuKernelBootFrom(void);
 
-// Return Module Filename
-int kuKernelInitFileName(char * initfilename);
+/**
+  * Load a module with a specific apitype
+  * 
+  * @param apìtype - The apitype
+  * @param path - The path to the module to load.
+  * @param flags - Unused, always 0 .
+  * @param option  - Pointer to a mod_param_t structure. Can be NULL.
+  *
+  * @returns The UID of the loaded module on success, otherwise one of ::PspKernelErrorCodes.
+  */
+SceUID kuKernelLoadModuleWithApitype2(int apitype, const char *path, int flags, SceKernelLMOption *option);
 
-// Return User Level
+/**
+ * Gets the api type 
+ *
+ * @returns the api type in which the system has booted
+*/
+int kuKernelInitApitype();
+
+/**
+ * Gets the filename of the executable to be launched after all modules of the api.
+ *
+ * @param initfilename - String where copy the initfilename
+ * @returns 0 on success
+*/
+int kuKernelInitFileName(char *initfilename);
+
+/**
+ *
+ * Gets the device in which the application was launched.
+ *
+ * @returns the device code, one of PSPBootFrom values.
+*/
+int kuKernelBootFrom();
+
+/**
+ * Get the key configuration in which the system has booted.
+ *
+ * @returns the key configuration code, one of PSPKeyConfig values 
+*/
+int kuKernelInitKeyConfig();
+
+/**
+ * Get the user level of the current thread
+ *
+ * @return The user level, < 0 on error
+ */
 int kuKernelGetUserLevel(void);
 
-// Allow Memory Protection Changes from User Mode Application
-int kuKernelSetDdrMemoryProtection(void * addr, int size, int prot);
+/**
+ * Set the protection of a block of ddr memory
+ *
+ * @param addr - Address to set protection on
+ * @param size - Size of block
+ * @param prot - Protection bitmask
+ *
+ * @return < 0 on error
+ */
+int kuKernelSetDdrMemoryProtection(void *addr, int size, int prot);
 
-// Return Model Number
+/**
+ * Gets the model of the PSP from user mode.
+ * This function is available since 3.60 M33.
+ * In previous version, use the kernel function sceKernelGetModel
+ *
+ * @return one of PspModel values
+*/
 int kuKernelGetModel(void);
 
-// Read Dword from Kernel
-unsigned int kuKernelPeekw(void * addr);
+/**
+ * Find module by name
+ *
+ * @param modname - Name of Module
+ * @param mod - module structure for output (actually treated as SceModule2)
+ *
+ * @return < 0 on error
+ */
+int kuKernelFindModuleByName(char *modname, SceModule *mod);
 
-// Write Dword into Kernel
-void kuKernelPokew(void * addr, unsigned int value);
+/**
+ * Invalidate the entire instruction cache
+ */
+void kuKernelIcacheInvalidateAll(void);
 
-// Copy Memory Range
-void * kuKernelMemcpy(void * dest, const void * src, unsigned int num);
+/**
+ * Read 4 bytes from memory (with kernel memory access)
+ *
+ * @param addr - Address to read, must have 4 bytes alignment
+ */
+u32 kuKernelPeekw(void *addr);
 
-// Get Key Config (aka. Application Type)
-int kuKernelInitKeyConfig(void);
+/**
+ * Write 4 bytes to memory (with kernel memory access)
+ *
+ * @param addr - Address to write, must have 4 bytes alignment
+ */
+void kuKernelPokew(void *addr, u32 value);
+
+/**
+ * memcpy (with kernel memory access)
+ *
+ * @param dest - Destination address
+ * @param src - Source address
+ * @param num - copy bytes count
+ *
+ * @return Destination address
+ */
+void *kuKernelMemcpy(void *dest, const void *src, size_t num);
+
+struct KernelCallArg {
+	u32 arg1;
+	u32 arg2;
+	u32 arg3;
+	u32 arg4;
+	u32 arg5;
+	u32 arg6;
+	u32 arg7;
+	u32 arg8;
+	u32 arg9;
+	u32 arg10;
+	u32 arg11;
+	u32 arg12;
+	u32 ret1;
+	u32 ret2;
+};
+
+/**
+ * Call a kernel function with kernel privilege
+ *
+ * @param func_addr - kernel function address
+ * @param args - kernel arguments and return values
+ *
+ * return < 0 on error
+ */
+int kuKernelCall(void *func_addr, struct KernelCallArg *args);
+
+/**
+ * Call a kernel function with kernel privilege and extended stack
+ *
+ * @param func_addr - kernel function address
+ * @param args - kernel arguments and return values
+ *
+ * return < 0 on error
+ */
+int kuKernelCallExtendStack(void *func_addr, struct KernelCallArg *args, int stack_size);
+
+void kuKernelGetUmdFile(char *umdfile, int size);
 
 #endif
-

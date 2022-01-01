@@ -150,3 +150,85 @@ int sctrlGetThreadContextByName(const char * name, SceKernelThreadKInfo * ctx)
     return sctrlGetThreadContextByUID(sctrlGetThreadUIDByName(name), ctx);
 }
 
+#define MAX_THREADS 32
+
+SceUID threads[MAX_THREADS];
+int thread_count = 0;
+
+int sctrlKermitIsDone(){
+    int (*_sceKermitIsDone)() = FindFunction("sceKermit_Driver", "sceKermit_driver", 0x351B5CC4);
+    if (_sceKermitIsDone) return _sceKermitIsDone();
+    return 1;
+}
+
+void sctrlGetThreads()
+{    
+    int k1 = pspSdkSetK1(0);
+
+    sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, threads, sizeof(threads) / sizeof(SceUID), &thread_count);
+
+    int i;
+    for(i = 0; i < thread_count; i++)
+    {
+        SceKernelThreadInfo info;
+        info.size = sizeof(SceKernelThreadInfo);
+        if(sceKernelReferThreadStatus(threads[i], &info) == 0)
+        {
+            if((info.status & PSP_THREAD_RUNNING) == 0 && (info.status & PSP_THREAD_SUSPEND) == 0)
+            {
+                if(strcmp(info.name, "ScePowerMain") != 0 && strcmp(info.name, "SceKermitMsfsClose") != 0)
+                {
+                    continue;
+                }
+/*
+                // User only
+                if(info.attr & PSP_THREAD_ATTR_USER)
+                {
+                    continue;
+                }
+*/
+            }
+        }
+
+        threads[i] = -1;
+    }
+
+    pspSdkSetK1(k1);
+}
+
+void sctrlSuspendThreads()
+{
+    int k1 = pspSdkSetK1(0);
+
+    int i;
+    for(i = thread_count; i > 0; i--)
+    {
+        if(threads[i] >= 0)
+        {
+            while(sctrlKermitIsDone() == 0)
+            {
+                sceKernelDelayThread(10);
+            }
+
+            sceKernelSuspendThread(threads[i]);
+        }
+    }
+
+    pspSdkSetK1(k1);
+}
+
+void sctrlResumeThreads()
+{
+    int k1 = pspSdkSetK1(0);
+
+    int i;
+    for(i = 0; i < thread_count; i++)
+    {
+        if(threads[i] >= 0)
+        {
+            sceKernelResumeThread(threads[i]);
+        }
+    }
+
+    pspSdkSetK1(k1);
+}

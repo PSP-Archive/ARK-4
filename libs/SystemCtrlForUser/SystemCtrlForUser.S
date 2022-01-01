@@ -3,7 +3,7 @@
 #include "pspimport.s"
 
 // Build files
-// SystemCtrlForUser_0000.o SystemCtrlForUser_0001.o SystemCtrlForUser_0002.o SystemCtrlForUser_0003.o SystemCtrlForUser_0004.o SystemCtrlForUser_0005.o SystemCtrlForUser_0006.o SystemCtrlForUser_0007.o SystemCtrlForUser_0008.o SystemCtrlForUser_0009.o SystemCtrlForUser_0010.o SystemCtrlForUser_0011.o SystemCtrlForUser_0012.o SystemCtrlForUser_0013.o SystemCtrlForUser_0014.o SystemCtrlForUser_0015.o SystemCtrlForUser_0016.o SystemCtrlForUser_0017.o SystemCtrlForUser_0018.o SystemCtrlForUser_0019.o SystemCtrlForUser_0021.o SystemCtrlForUser_0022.o SystemCtrlForUser_0023.o SystemCtrlForUser_0024.o SystemCtrlForUser_0026.o SystemCtrlForUser_0027.o SystemCtrlForUser_0028.o SystemCtrlForUser_0029.o SystemCtrlForUser_0030.o SystemCtrlForUser_0031.o SystemCtrlForUser_0032.o SystemCtrlForUser_0033.o SystemCtrlForUser_0034.o SystemCtrlForUser_0035.o SystemCtrlForUser_0036.o SystemCtrlForUser_0037.o
+// SystemCtrlForUser_0000.o SystemCtrlForUser_0001.o SystemCtrlForUser_0002.o SystemCtrlForUser_0003.o SystemCtrlForUser_0004.o SystemCtrlForUser_0005.o SystemCtrlForUser_0006.o SystemCtrlForUser_0007.o SystemCtrlForUser_0008.o SystemCtrlForUser_0009.o SystemCtrlForUser_0010.o SystemCtrlForUser_0011.o SystemCtrlForUser_0012.o SystemCtrlForUser_0013.o SystemCtrlForUser_0014.o SystemCtrlForUser_0015.o SystemCtrlForUser_0016.o SystemCtrlForUser_0017.o SystemCtrlForUser_0018.o SystemCtrlForUser_0019.o SystemCtrlForUser_0020.o SystemCtrlForUser_0021.o SystemCtrlForUser_0022.o SystemCtrlForUser_0023.o SystemCtrlForUser_0024.o SystemCtrlForUser_0025.o SystemCtrlForUser_0026.o SystemCtrlForUser_0027.o SystemCtrlForUser_0028.o SystemCtrlForUser_0029.o SystemCtrlForUser_0030.o SystemCtrlForUser_0031.o SystemCtrlForUser_0032.o SystemCtrlForUser_0033.o SystemCtrlForUser_0034.o SystemCtrlForUser_0035.o SystemCtrlForUser_0036.o SystemCtrlForUser_0037.o SystemCtrlForUser_0038.o SystemCtrlForUser_0039.o SystemCtrlForUser_0040.o SystemCtrlForUser_0041.o SystemCtrlForUser_0042.o SystemCtrlForUser_0043.o SystemCtrlForUser_0044.o SystemCtrlForUser_0045.o SystemCtrlForUser_0046.o SystemCtrlForUser_0047.o
 
 #ifdef F_SystemCtrlForUser_0000
 	IMPORT_START "SystemCtrlForUser",0x40090000
@@ -65,6 +65,9 @@
 #ifdef F_SystemCtrlForUser_0019
 	IMPORT_FUNC  "SystemCtrlForUser",0xABEF849B,sctrlSEGetDiscType
 #endif
+#ifdef F_SystemCtrlForUser_0020
+	IMPORT_FUNC  "SystemCtrlForUser",0xCC9ADCF8,sctrlHENSetSpeed
+#endif
 #ifdef F_SystemCtrlForUser_0021
 	IMPORT_FUNC  "SystemCtrlForUser",0x23833651,sctrlGetThreadUIDByName
 #endif
@@ -76,6 +79,9 @@
 #endif
 #ifdef F_SystemCtrlForUser_0024
 	IMPORT_FUNC "SystemCtrlForUser",0xF462EE55,sctrlDeflateDecompress
+#endif
+#ifdef F_SystemCtrlForUser_0025
+	IMPORT_FUNC  "SystemCtrlForUser",0x2BA770CD,sctrlKernelSetUMDEmuFile
 #endif
 #ifdef F_SystemCtrlForUser_0026
 	IMPORT_FUNC "SystemCtrlForUser",0x1C90BECB,sctrlHENSetStartModuleHandler
@@ -112,4 +118,34 @@
 #endif
 #ifdef F_SystemCtrlForUser_0037
 	IMPORT_FUNC  "SystemCtrlForUser",0x16100529,LZ4_decompress_fast
+#endif
+#ifdef F_SystemCtrlForUser_0038
+    IMPORT_FUNC  "SystemCtrlForUser",0xAA6274F8,sctrlGetThreads
+#endif
+#ifdef F_SystemCtrlForUser_0039
+    IMPORT_FUNC "SystemCtrlForUser",0x373C8373,sctrlSuspendThreads
+#endif
+#ifdef F_SystemCtrlForUser_0040
+    IMPORT_FUNC "SystemCtrlForUser",0xE2A48BE5,sctrlResumeThreads
+#endif
+#ifdef F_SystemCtrlForUser_0041
+    IMPORT_FUNC "SystemCtrlForUser",0x287C1E4F,sctrlPatchExitGame
+#endif
+#ifdef F_SystemCtrlForUser_0042
+    IMPORT_FUNC "SystemCtrlForUser",0x79553CCE,sctrlExitGameMenu
+#endif
+#ifdef F_SystemCtrlForUser_0043
+    IMPORT_FUNC "SystemCtrlForUser",0x99C088A5,sctrlExitToRecovery
+#endif
+#ifdef F_SystemCtrlForUser_0044
+    IMPORT_FUNC "SystemCtrlForUser",0x162DC9FC,sctrlExitToLauncher
+#endif
+#ifdef F_SystemCtrlForUser_0045
+    IMPORT_FUNC "SystemCtrlForUser",0xD339E2E9,sctrlHENIsSE
+#endif
+#ifdef F_SystemCtrlForUser_0046
+    IMPORT_FUNC "SystemCtrlForUser",0x2E2935EF,sctrlHENIsDevhook
+#endif
+#ifdef F_SystemCtrlForUser_0047
+	IMPORT_FUNC  "SystemCtrlForUser",0xCE0A654E,sctrlHENLoadModuleOnReboot
 #endif

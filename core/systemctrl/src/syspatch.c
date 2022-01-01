@@ -39,6 +39,9 @@
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
 
+// for screen debugging
+int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
+
 // Return Boot Status
 static int isSystemBooted(void)
 {
@@ -128,6 +131,8 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         // Boot is complete
         if(isSystemBooted())
         {
+            // Allow exiting through key combo
+            sctrlPatchExitGame();
             // syncronize printk
             printkSync();
             // Boot Complete Action done

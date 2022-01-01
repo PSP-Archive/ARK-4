@@ -29,8 +29,6 @@
 #include "graphics.h"
 #include "macros.h"
 
-int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
-
 // Exception Handler
 PspDebugErrorHandler curr_handler = NULL;
 
@@ -132,7 +130,7 @@ static void ARKExceptionHandler(PspDebugRegBlock * regs)
                 sctrlKernelExitVSH(NULL);
             }
             else if((data.Buttons & PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE){
-                exitToRecovery();
+                sctrlExitToRecovery();
             }
             else if((data.Buttons & PSP_CTRL_SQUARE) == PSP_CTRL_SQUARE){
                 void (*ColdReset)(int) = FindFunction("scePower_Service", "scePower", 0x0442D852);

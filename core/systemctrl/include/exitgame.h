@@ -2,12 +2,15 @@
 #define EXITGAME_H
 
 // Exit to Launcher
-void exitToLauncher(void);
+void sctrlExitToLauncher(void);
 
 // Exit to Recovery
-void exitToRecovery(void);
+void sctrlExitToRecovery(void);
+
+// Start in-game menu
+void sctrlExitGameMenu();
 
 // Start exit game handler
-void patchExitGame();
+void sctrlPatchExitGame();
 
 #endif

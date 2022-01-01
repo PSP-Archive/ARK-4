@@ -27,7 +27,8 @@ SUBDIRS = libs \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
 	extras/menus/xMenu \
-	extras/menus/vshmenu
+	extras/menus/vshmenu \
+	extras/menus/ingame \
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx
 
@@ -53,6 +54,7 @@ copy-bin:
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XMENU.PBP # PS1 launcher
 	$(Q)cp extras/menus/arkMenu/themes/classic/DATA.PKG dist/ARK_01234/DATA.PKG # Launcher and Recovery resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
+	$(Q)cp extras/menus/ingame/ingame_menu.prx dist/ARK_01234/INGAME.PRX # Default in-game menu
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	
@@ -94,6 +96,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
+	$(Q)$(MAKE) $@ -C extras/menus/ingame
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit

@@ -16,11 +16,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __UTILS__H__
-#define __UTILS__H__
+#ifndef __START_H__
+#define __START_H__
 
-void GetThreads();
-void SuspendThreads();
-void ResumeThreads();
+extern "C"{
+
+extern int pmode, pwidth, pheight, pbufferwidth, ppixelformat;
+extern void *vram_buffer, *pvram, *pvram_bak;
+
+void sctrlGetThreads();
+void sctrlSuspendThreads();
+void sctrlResumeThreads();
+
+int sceDmacMemcpy(void *pDst, const void *pSrc, unsigned int uiSize);
+
+unsigned int _sceKernelAllocPartitionMemory(unsigned int partitionid, const char *name, int type, unsigned int size, void *addr);
+
+int __psp_free_heap(void);
+
+}
 
 #endif

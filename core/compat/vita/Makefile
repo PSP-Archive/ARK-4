@@ -13,12 +13,12 @@ C_OBJS =    \
 	vitamem.o \
 	iopatch.o  \
 	syspatch.o  \
-	vitaflash.o  \
-	popspatch.o   \
-	filesystem.o   \
+	gameinfo.o   \
+	vitaflash.o   \
+	popspatch.o    \
+	filesystem.o    \
 	$(ARKROOT)/common/functions.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
-	$(ARKROOT)/core/systemctrl/src/exitgame.o \
 	$(ARKROOT)/core/systemctrl/src/gameinfo.o \
 		
 OBJS = \

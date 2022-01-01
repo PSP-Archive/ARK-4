@@ -336,25 +336,8 @@ void Browser::up(){
     common::playMenuSound();
 }
 
-void Browser::deleteFolder(string path){
-    // Recursively delete the path
-    
-    progress_desc[0] = "Deleting folder";
-    progress_desc[1] = "    "+path;
-    progress_desc[2] = "";
-    progress_desc[3] = "";
-    progress_desc[4] = "Please Wait";
-    
-    bool noRedraw = draw_progress;
-    if (!noRedraw)
-        draw_progress = true;
-    
-     //protect some folders
-    if(path == "ms0:/PSP/" || path == "ms0:/PSP/GAME/" || path == "ms0:/PSP/LICENSE/"
-            || path == "ef0:/PSP/" || path == "ef0:/PSP/GAME/" || path == "ef0:/PSP/LICENSE/")
-        return;
-
-    //try to open directory
+void Browser::recursiveFolderDelete(string path){
+        //try to open directory
     SceUID d = sceIoDopen(path.c_str());
     
     if(d >= 0)
@@ -380,11 +363,11 @@ void Browser::deleteFolder(string path){
             strcat(new_path, entry.d_name);
             
             if(common::fileExists(new_path))
-                deleteFile(new_path);
+                self->deleteFile(new_path);
             else {
                 //not a file? must be a folder
                 strcat(new_path, "/");
-                deleteFolder(string(new_path)); //try to delete folder content
+                recursiveFolderDelete(string(new_path)); //try to delete folder content
             }
             
         };
@@ -394,6 +377,28 @@ void Browser::deleteFolder(string path){
 
         delete [] new_path; //clear allocated memory
     };
+}
+
+void Browser::deleteFolder(string path){
+    // Recursively delete the path
+    
+    progress_desc[0] = "Deleting folder";
+    progress_desc[1] = "    "+path;
+    progress_desc[2] = "";
+    progress_desc[3] = "";
+    progress_desc[4] = "Please Wait";
+    
+    bool noRedraw = draw_progress;
+    if (!noRedraw)
+        draw_progress = true;
+    
+     //protect some folders
+    if(path == "ms0:/PSP/" || path == "ms0:/PSP/GAME/" || path == "ms0:/PSP/LICENSE/"
+            || path == "ef0:/PSP/" || path == "ef0:/PSP/GAME/" || path == "ef0:/PSP/LICENSE/")
+        return;
+
+    recursiveFolderDelete(path);
+
     if (!noRedraw)
         draw_progress = false;
 }

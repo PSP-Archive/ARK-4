@@ -244,9 +244,14 @@ void SystemMgr::startMenu(){
     controlThread(0, NULL);
 }
 
+void SystemMgr::stopMenu(){
+    running = false;
+    sceKernelWaitThreadEnd(draw_thread, NULL);
+    sceKernelTerminateDeleteThread(draw_thread);
+}
+
 void SystemMgr::endMenu(){
     for (int i=0; i<MAX_ENTRIES; i++) delete entries[i];
-    running = false;
 }
 
 void SystemMgr::pauseDraw(){

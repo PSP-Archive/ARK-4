@@ -84,8 +84,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
-            // Allow exiting through key combo
-            patchExitGame();
             // Boot Complete Action done
             booted = 1;
             goto flush;

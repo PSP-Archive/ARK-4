@@ -165,11 +165,3 @@ void SetSpeed(int cpuspd, int busspd)
         }
     }
 }
-
-void sctrlHENSetSpeed(int cpuspd, int busspd)
-{
-    int (*_scePowerSetClockFrequency)(int, int, int);
-    g_scePowerSetClockFrequency_orig = find_power_function(0x545A7F3C); /* scePowerSetClockFrequency */
-    _scePowerSetClockFrequency = (void *) g_scePowerSetClockFrequency_orig;
-    _scePowerSetClockFrequency(cpuspd, cpuspd, busspd);
-}

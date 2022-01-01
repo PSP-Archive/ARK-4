@@ -8,7 +8,6 @@ C_OBJS = \
 	usb_charge.o  \
 	flashinstall.o \
 	$(ARKROOT)/common/functions.o \
-	$(ARKROOT)/core/systemctrl/src/exitgame.o \
 	$(ARKROOT)/core/systemctrl/src/gameinfo.o \
 		
 OBJS = \

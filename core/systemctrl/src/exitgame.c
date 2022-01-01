@@ -25,20 +25,16 @@
 #include <string.h>
 #include <globals.h>
 #include <functions.h>
+#include <graphics.h>
 
 // Exit Button Mask
 #define EXIT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
+#define MENU_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_UP)
 
 extern ARKConfig* ark_config;
 
-static void exitgame(const char* path)
+static void execgame(const char* path)
 {
-    
-    // Refuse Operation in Save dialog
-    if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return;
-    
-    // Refuse Operation in Dialog
-    if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return;
     
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
@@ -51,26 +47,101 @@ static void exitgame(const char* path)
     param.args = strlen(path) + 1;
     param.argp = path;
     param.key = "game";
+    
+    sctrlSESetBootConfFileIndex(MODE_UMD);
+    sctrlSESetUmdFile("");
 
     // Trigger Reboot
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 }
 
 // Exit to Launcher
-void exitToLauncher(void){
+void sctrlExitToLauncher(void){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
     else strcat(path, ARK_MENU);
-    exitgame(path);
+    execgame(path);
 }
 
 // Exit to Recovery
-void exitToRecovery(void){
+void sctrlExitToRecovery(void){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, ARK_RECOVERY);
-    exitgame(path);
+    execgame(path);
+}
+
+/*
+static int exitgame_thread(SceSize args, void *argp)
+{
+    SceKernelLMOption lmoption;
+    memset(&lmoption, 0, sizeof(SceKernelLMOption));
+    lmoption.size = sizeof(SceKernelLMOption);
+    lmoption.mpidtext = 11;
+    lmoption.mpiddata = 11;
+    lmoption.access = 1;
+
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, ARK_INGAME);
+    SceUID mod = sceKernelLoadModule(path, 0, &lmoption);
+    if(mod >= 0){
+        int res = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+        if (res < 0){
+            return res;
+        }
+    }
+    else {
+        return mod;
+    }
+
+    return 0;
+}
+*/
+
+void sctrlExitGameMenu(){
+    // Refuse Operation in Save dialog
+    if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return;
+    
+    // Refuse Operation in Dialog
+    if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return;
+    
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, ARK_INGAME);
+    
+    SceKernelLMOption opt = {
+        .size = 0x14,
+        .flags = 0,
+        .access = 1,
+        .position = 1,
+    };
+    
+    SceUID mod = sceKernelLoadModule(path, 0, &opt);
+    if(mod >= 0){
+        int res = sceKernelStartModule(mod, strlen(path) + 1, path, NULL, NULL);
+        if (res < 0){
+            colorDebug(0xFF);
+            return res;
+        }
+    }
+    else {
+        colorDebug(0xFF0000);
+        return mod;
+    }
+
+    return 0;
+    
+}
+
+static void exitgame(){
+    if (ark_config->launcher[0]){
+        sctrlExitToLauncher();
+    }
+    else{
+        sctrlKernelExitVSH(NULL);
+    }
 }
 
 // Gamepad Hook #1
@@ -81,10 +152,11 @@ int peek_positive(SceCtrlData * pad_data, int count)
     count = CtrlPeekBufferPositive(pad_data, count);
     
     // Check for Exit Mask
-    int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK)
+    for(int i = 0; i < count; i++)
     {
-        // Exit to PRO VSH
-        exitToLauncher();
+        // Execute launcher
+        if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
+        if((pad_data[i].Buttons & MENU_MASK) == MENU_MASK) sctrlExitGameMenu();
     }
     
     // Return Number of Input Frames
@@ -99,10 +171,11 @@ int peek_negative(SceCtrlData * pad_data, int count)
     count = CtrlPeekBufferNegative(pad_data, count);
     
     // Check for Exit Mask
-    int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == 0)
+    for(int i = 0; i < count; i++)
     {
-        // Exit to PRO VSH
-        exitToLauncher();
+        // Execute launcher
+        if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
+        if((pad_data[i].Buttons & MENU_MASK) == MENU_MASK) sctrlExitGameMenu();
     }
     
     // Return Number of Input Frames
@@ -117,10 +190,11 @@ int read_positive(SceCtrlData * pad_data, int count)
     count = CtrlReadBufferPositive(pad_data, count);
     
     // Check for Exit Mask
-    int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK)
+    for(int i = 0; i < count; i++)
     {
-        // Exit to PRO VSH
-        exitToLauncher();
+        // Execute launcher
+        if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
+        if((pad_data[i].Buttons & MENU_MASK) == MENU_MASK) sctrlExitGameMenu();
     }
     
     // Return Number of Input Frames
@@ -135,10 +209,11 @@ int read_negative(SceCtrlData * pad_data, int count)
     count = CtrlReadBufferNegative(pad_data, count);
     
     // Check for Exit Mask
-    int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == 0)
+    for(int i = 0; i < count; i++)
     {
-        // Exit to PRO VSH
-        exitToLauncher();
+        // Execute launcher
+        if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
+        if((pad_data[i].Buttons & MENU_MASK) == MENU_MASK) sctrlExitGameMenu();
     }
     
     // Return Number of Input Frames
@@ -210,11 +285,11 @@ void startControlPoller(void)
 void hookPOPSExit(void)
 {
     // Hook scePopsManExitVSHKernel
-    sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), exitToLauncher);
+    sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), exitgame);
 }
 
 // Start exit game handler
-void patchExitGame()
+void sctrlPatchExitGame()
 {
 
     initController();
@@ -222,23 +297,20 @@ void patchExitGame()
     // Get Apitype
     int apitype = sceKernelInitApitype();
     
-    // Not POPS Apitype (aka. no PSP homescreen available)
-    if(apitype != 0x144)
-    {
+    if (apitype ==  0x210 || apitype ==  0x220){
+        // Do nothing on VSH
+    }
+    else if (apitype == 0x144 || apitype == 0x155){
+        // Hook POPS Exit Calls
+        hookPOPSExit();
+    }
+    else {
         // Hook Gamepad Input
         patchController();
         
         // Start Polling Thread
         //startControlPoller();
     }
-    
-    // POPS Apitype
-    else
-    {
-        // Hook POPS Exit Calls
-        hookPOPSExit();
-    }
-    
     // Flush Cache
     flushCache();
 }

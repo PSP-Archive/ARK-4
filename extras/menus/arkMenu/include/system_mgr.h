@@ -7,6 +7,7 @@ namespace SystemMgr{
     extern void initMenu(SystemEntry**, int);
     extern void startMenu();
     extern void flushFiles();
+    extern void stopMenu();
     extern void endMenu();
     extern void pauseDraw();
     extern void resumeDraw();

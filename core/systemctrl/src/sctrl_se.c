@@ -179,3 +179,13 @@ int sctrlSEGetDiscType(void)
         return reboot_funcs->GetDiscType();
     return PSP_UMD_TYPE_GAME;
 }
+
+int	sctrlHENIsSE()
+{
+	return 1;
+}
+
+int	sctrlHENIsDevhook()
+{
+	return 0;
+}

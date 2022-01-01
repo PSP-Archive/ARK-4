@@ -5,10 +5,10 @@
 
 extern "C" {
 
-PSP_MODULE_INFO("SaveStateUser", 0, 1, 0);
+PSP_MODULE_INFO("InGameMenu", 0, 1, 0);
 PSP_HEAP_SIZE_KB(8 * 1024); //-4096
 
-int main();
+extern int main();
 
 PspGeContext __attribute__((aligned(16))) context;
 
@@ -19,16 +19,11 @@ int running = 1;
 
 SceUID user_thid = -1;
 
-SceUID sceKernelAllocPartitionMemory(SceUID partitionid, const char *name, int type, SceSize size, void *addr)
-{
-    return _sceKernelAllocPartitionMemory(11, name, type, size, addr);
-}
-
 int user_thread(SceSize args, void *argp)
 {
     /* Suspend threads */
-    GetThreads();
-    SuspendThreads();
+    sctrlGetThreads();
+    sctrlSuspendThreads();
 
     sceDisplayWaitVblankStart(); //stability purpose
 
@@ -68,7 +63,7 @@ int user_thread(SceSize args, void *argp)
     sceDisplayWaitVblankStart(); //stability purpose
 
     /* Resume threads */
-    ResumeThreads();
+    sctrlResumeThreads();
 
     __psp_free_heap();
     sceKernelSelfStopUnloadModule(0, 0, NULL);
@@ -77,6 +72,10 @@ int user_thread(SceSize args, void *argp)
 
 int module_start(SceSize args, void *argp)
 {
+
+    sceKernelExitGame();
+    return 0;
+
     user_thid = sceKernelCreateThread("user_thread", user_thread, 32, 0x10000, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
     if(user_thid >= 0) sceKernelStartThread(user_thid, 0, NULL);
     return 0;

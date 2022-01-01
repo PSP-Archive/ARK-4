@@ -18,26 +18,44 @@
 
 #include <time.h>
 
-#include "../common.h"
-
 #include "start.h"
-#include "ya2d.h"
-#include "intraFont.h"
-#include "menucommon.h"
-#include "menumgr.h"
+#include <pspkernel.h>
+#include "gfx.h"
+#include "debug.h"
+#include "common.h"
+#include "system_mgr.h"
+#include "exitmgr.h"
+//#include "browser.h"
+
+#define MAX_ENTRIES 1
+static SystemEntry* entries[MAX_ENTRIES];
 
 int main(int argc, char** argv)
 {
-
     intraFontInit();
     ya2d_init();
 
     common::loadData(argc, argv);
+
+    /*
+    //entries[1] = new Browser();
+    entries[0] = new ExitManager();
     
-    MenuManager* menu = new MenuManager();
-    menu->run();
-    delete menu;
+    SystemMgr::initMenu(entries, MAX_ENTRIES);
+    SystemMgr::startMenu();
+    SystemMgr::endMenu();
+    */
     
+    Controller control;
+    while (1){
+        common::clearScreen();
+        common::getImage(IMAGE_BG)->draw(0, 0);
+        common::flipScreen();
+        if (control.decline()){
+            break;
+        }
+    }
+
     common::deleteData();
     
     intraFontShutdown();

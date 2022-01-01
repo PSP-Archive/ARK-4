@@ -3,7 +3,7 @@
 #include "pspimport.s"
 
 // Build files
-// SystemCtrlForKernel_0000.o SystemCtrlForKernel_0001.o SystemCtrlForKernel_0002.o SystemCtrlForKernel_0003.o SystemCtrlForKernel_0004.o SystemCtrlForKernel_0005.o SystemCtrlForKernel_0006.o SystemCtrlForKernel_0007.o SystemCtrlForKernel_0008.o SystemCtrlForKernel_0009.o SystemCtrlForKernel_0010.o SystemCtrlForKernel_0011.o SystemCtrlForKernel_0012.o SystemCtrlForKernel_0013.o SystemCtrlForKernel_0014.o SystemCtrlForKernel_0015.o SystemCtrlForKernel_0016.o SystemCtrlForKernel_0017.o SystemCtrlForKernel_0018.o SystemCtrlForKernel_0019.o SystemCtrlForKernel_0020.o SystemCtrlForKernel_0021.o SystemCtrlForKernel_0022.o SystemCtrlForKernel_0023.o SystemCtrlForKernel_0024.o SystemCtrlForKernel_0025.o SystemCtrlForKernel_0026.o SystemCtrlForKernel_0027.o SystemCtrlForKernel_0028.o SystemCtrlForKernel_0029.o SystemCtrlForKernel_0030.o SystemCtrlForKernel_0031.o SystemCtrlForKernel_0032.o SystemCtrlForKernel_0033.o SystemCtrlForKernel_0035.o SystemCtrlForKernel_0036.o SystemCtrlForKernel_0037.o SystemCtrlForKernel_0038.o SystemCtrlForKernel_0039.o SystemCtrlForKernel_0040.o SystemCtrlForKernel_0041.o SystemCtrlForKernel_0042.o SystemCtrlForKernel_0043.o SystemCtrlForKernel_0044.o SystemCtrlForKernel_0045.o SystemCtrlForKernel_0047.o SystemCtrlForKernel_0048.o SystemCtrlForKernel_0049.o SystemCtrlForKernel_0050.o SystemCtrlForKernel_0051.o SystemCtrlForKernel_0052.o SystemCtrlForKernel_0053.o SystemCtrlForKernel_0054.o SystemCtrlForKernel_0055.o SystemCtrlForKernel_0056.o SystemCtrlForKernel_0057.o SystemCtrlForKernel_0058.o
+// SystemCtrlForKernel_0000.o SystemCtrlForKernel_0001.o SystemCtrlForKernel_0002.o SystemCtrlForKernel_0003.o SystemCtrlForKernel_0004.o SystemCtrlForKernel_0005.o SystemCtrlForKernel_0006.o SystemCtrlForKernel_0007.o SystemCtrlForKernel_0008.o SystemCtrlForKernel_0009.o SystemCtrlForKernel_0010.o SystemCtrlForKernel_0011.o SystemCtrlForKernel_0012.o SystemCtrlForKernel_0013.o SystemCtrlForKernel_0014.o SystemCtrlForKernel_0015.o SystemCtrlForKernel_0016.o SystemCtrlForKernel_0017.o SystemCtrlForKernel_0018.o SystemCtrlForKernel_0019.o SystemCtrlForKernel_0020.o SystemCtrlForKernel_0021.o SystemCtrlForKernel_0022.o SystemCtrlForKernel_0023.o SystemCtrlForKernel_0024.o SystemCtrlForKernel_0025.o SystemCtrlForKernel_0026.o SystemCtrlForKernel_0027.o SystemCtrlForKernel_0028.o SystemCtrlForKernel_0029.o SystemCtrlForKernel_0030.o SystemCtrlForKernel_0031.o SystemCtrlForKernel_0032.o SystemCtrlForKernel_0033.o SystemCtrlForKernel_0034.o SystemCtrlForKernel_0035.o SystemCtrlForKernel_0036.o SystemCtrlForKernel_0037.o SystemCtrlForKernel_0038.o SystemCtrlForKernel_0039.o SystemCtrlForKernel_0040.o SystemCtrlForKernel_0041.o SystemCtrlForKernel_0042.o SystemCtrlForKernel_0043.o SystemCtrlForKernel_0044.o SystemCtrlForKernel_0045.o SystemCtrlForKernel_0046.o SystemCtrlForKernel_0047.o SystemCtrlForKernel_0048.o SystemCtrlForKernel_0049.o SystemCtrlForKernel_0050.o SystemCtrlForKernel_0051.o SystemCtrlForKernel_0052.o SystemCtrlForKernel_0053.o SystemCtrlForKernel_0054.o SystemCtrlForKernel_0055.o SystemCtrlForKernel_0056.o SystemCtrlForKernel_0057.o SystemCtrlForKernel_0058.o SystemCtrlForKernel_0059.o SystemCtrlForKernel_0060.o SystemCtrlForKernel_0061.o SystemCtrlForKernel_0062.o SystemCtrlForKernel_0063.o SystemCtrlForKernel_0064.o SystemCtrlForKernel_0065.o SystemCtrlForKernel_0066.o SystemCtrlForKernel_0067.o SystemCtrlForKernel_0068.o
 
 #ifdef F_SystemCtrlForKernel_0000
 	IMPORT_START "SystemCtrlForKernel",0x00090000
@@ -107,6 +107,9 @@
 #ifdef F_SystemCtrlForKernel_0033
 	IMPORT_FUNC  "SystemCtrlForKernel",0x324DF3DD,flushCache
 #endif
+#ifdef F_SystemCtrlForKernel_0034
+	IMPORT_FUNC  "SystemCtrlForKernel",0xCC9ADCF8,sctrlHENSetSpeed
+#endif
 #ifdef F_SystemCtrlForKernel_0035
 	IMPORT_FUNC  "SystemCtrlForKernel",0x3DF7F7D8,printk
 #endif
@@ -140,6 +143,10 @@
 #ifdef F_SystemCtrlForKernel_0045
 	IMPORT_FUNC  "SystemCtrlForKernel",0xABEF849B,sctrlSEGetDiscType
 #endif
+#ifdef F_SystemCtrlForKernel_0046
+	IMPORT_FUNC  "SystemCtrlForKernel",0x2BA770CD,sctrlKernelSetUMDEmuFile
+#endif
+
 #ifdef F_SystemCtrlForKernel_0047
 	IMPORT_FUNC  "SystemCtrlForKernel",0x23833651,sctrlGetThreadUIDByName
 #endif
@@ -175,4 +182,34 @@
 #endif
 #ifdef F_SystemCtrlForKernel_0058
 	IMPORT_FUNC  "SystemCtrlForKernel",0x16C3B7EE,sctrlSEGetConfig
+#endif
+#ifdef F_SystemCtrlForKernel_0059
+    IMPORT_FUNC  "SystemCtrlForKernel",0xAA6274F8,sctrlGetThreads
+#endif
+#ifdef F_SystemCtrlForKernel_0060
+    IMPORT_FUNC "SystemCtrlForKernel",0x373C8373,sctrlSuspendThreads
+#endif
+#ifdef F_SystemCtrlForKernel_0061
+    IMPORT_FUNC "SystemCtrlForKernel",0xE2A48BE5,sctrlResumeThreads
+#endif
+#ifdef F_SystemCtrlForKernel_0062
+    IMPORT_FUNC "SystemCtrlForKernel",0x287C1E4F,sctrlPatchExitGame
+#endif
+#ifdef F_SystemCtrlForKernel_0063
+    IMPORT_FUNC "SystemCtrlForKernel",0x79553CCE,sctrlExitGameMenu
+#endif
+#ifdef F_SystemCtrlForKernel_0064
+    IMPORT_FUNC "SystemCtrlForKernel",0x99C088A5,sctrlExitToRecovery
+#endif
+#ifdef F_SystemCtrlForKernel_0065
+    IMPORT_FUNC "SystemCtrlForKernel",0x162DC9FC,sctrlExitToLauncher
+#endif
+#ifdef F_SystemCtrlForKernel_0066
+    IMPORT_FUNC "SystemCtrlForKernel",0xD339E2E9,sctrlHENIsSE
+#endif
+#ifdef F_SystemCtrlForKernel_0067
+    IMPORT_FUNC "SystemCtrlForKernel",0x2E2935EF,sctrlHENIsDevhook
+#endif
+#ifdef F_SystemCtrlForKernel_0068
+	IMPORT_FUNC  "SystemCtrlForKernel",0xCE0A654E,sctrlHENLoadModuleOnReboot
 #endif

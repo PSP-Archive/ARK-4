@@ -48,6 +48,7 @@ enum images {
 #define SIZE_LITTLE 0.51f
 #define SIZE_MEDIUM 0.6f
 #define SIZE_BIG 0.7f
+#define SIZE_HUGE 1.5f
 
 #define PKG_PATH "DATA.PKG"
 

@@ -8,7 +8,6 @@ C_OBJS = \
 	$(ARKROOT)/common/functions.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o  \
-	$(ARKROOT)/core/systemctrl/src/exitgame.o \
 		
 OBJS = \
 	$(C_OBJS) imports.o

@@ -524,8 +524,15 @@ int mftpCommandDELE(MftpConnection *con, char* command)
 				strcat(filePath, fileName);
 			}
 
-			sceIoRemove(filePath);
-			
+            if(common::fileExists(filePath)){
+                sceIoRemove(filePath);
+            }
+            else {
+                //not a file? must be a folder
+                strcat(filePath, "/");
+                Browser::recursiveFolderDelete(filePath); //try to delete folder content
+            }
+
 			GameManager::updateGameList(filePath);
 
 			sendResponseLn(con, (char*)"250 DELE command successful.");

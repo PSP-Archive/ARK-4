@@ -105,9 +105,9 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     // Patch sceKernelExitGame Syscalls
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exitToLauncher);
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exitToLauncher);
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), exitToLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), sctrlExitToLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), sctrlExitToLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), sctrlExitToLauncher);
         goto flush;
     }
     
@@ -143,8 +143,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
-            // Allow exiting through key combo
-            patchExitGame();
             // Initialize Memory Stick Speedup Cache
             if (use_mscache) msstorCacheInit("ms", 16 * 1024);
             // Apply Directory IO PSP Emulation

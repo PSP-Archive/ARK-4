@@ -703,3 +703,36 @@ void sctrlHENSetArkConfig(ARKConfig* conf){
         memcpy(ark_config, conf, sizeof(ARKConfig));
     pspSdkSetK1(k1);
 }
+
+void sctrlHENLoadModuleOnReboot(char *module_before, void *buf, int size, int flags)
+{
+    /*
+	rebootex_conf.insert_module_before = module_before;
+	rebootex_conf.insert_module_binary = buf;
+	rebootex_conf.insert_module_size = size;
+	rebootex_conf.insert_module_flags = flags;
+	*/
+}
+
+int sctrlKernelSetUMDEmuFile(const char *iso)
+{
+	SceModule2 *modmgr = (SceModule2*)sceKernelFindModuleByName("sceModuleManager");
+
+	if (modmgr == NULL) {
+		return -1;
+	}
+
+    /*
+	STRCPY_S(g_iso_filename, iso);
+	*(const char**)(modmgr->text_addr+g_offs->modulemgr_patch.sctrlKernelSetUMDEmuFile) = g_iso_filename;
+	*/
+
+	return 0;
+}
+
+void sctrlHENSetSpeed(int cpuspd, int busspd)
+{
+    int (*_scePowerSetClockFrequency)(int, int, int);
+    _scePowerSetClockFrequency = sctrlHENFindFunction("scePower_Service", "scePower", 0x545A7F3C);
+    _scePowerSetClockFrequency(cpuspd, cpuspd, busspd);
+}

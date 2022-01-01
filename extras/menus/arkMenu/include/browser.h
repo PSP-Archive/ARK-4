@@ -50,6 +50,8 @@ class Browser : public SystemEntry{
             return common::getImage(IMAGE_BROWSER);
         }
         
+        static void recursiveFolderDelete(string path);
+        
     private:
     
         string cwd; // Current Working Directory

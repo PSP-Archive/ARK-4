@@ -193,10 +193,10 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // VSH replacement
     if (strcmp(mod->modname, "vsh_module") == 0){
         if (ark_config->recovery){ // system in recovery mode
-            exitToRecovery(); // reboot VSH into recovery menu
+            sctrlExitToRecovery(); // reboot VSH into recovery menu
         }
         else if (ark_config->launcher[0]){ // system in launcher mode
-            exitToLauncher(); // reboot VSH into custom menu
+            sctrlExitToLauncher(); // reboot VSH into custom menu
         }
     }
     
