@@ -36,7 +36,7 @@ int sceKernelCheckExecFile(unsigned char * buffer, int * check);
 int sceUtilsBufferCopyWithRange(void * inbuf, SceSize insize, void * outbuf, int outsize, int cmd);
 
 // Query System Call Number of Function
-int sceKernelQuerySystemCall(void * funcAddr);
+u32 sceKernelQuerySystemCall(void * funcAddr);
 
 // Register Exception Handler
 int sceKernelRegisterDefaultExceptionHandler(void * exceptionHandler);

@@ -21,18 +21,22 @@
 #include <string.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <systemctrl_private.h>
 #include <pspsysmem_kernel.h>
 #include <pspsysevent.h>
 #include <pspumd.h>
 #include <psprtc.h>
-#include <globals.h>
-#include <macros.h>
+#include <pspinit.h>
 #include "systemctrl.h"
 #include "systemctrl_se.h"
+#include "systemctrl_private.h"
 #include "inferno.h"
+#include "globals.h"
+#include "macros.h"
 
-PSP_MODULE_INFO("Inferno_Driver", 0x1000, 1, 1);
+PSP_MODULE_INFO("PRO_Inferno_Driver", 0x1000, 1, 1);
+
+u32 psp_model;
+u32 psp_fw_version;
 
 extern int sceKernelApplicationType(void);
 extern int sceKernelSetQTGP3(void *unk0);
@@ -42,87 +46,89 @@ extern char *GetUmdFile();
 const char *g_iso_fn = NULL;
 
 // 0x00002248
-unsigned char g_umddata[16] = {
-    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+u8 g_umddata[16] = {
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 };
 
-extern int powerEvtHandler(int ev_id, char *ev_name, void *param, int *result);
+extern int power_event_handler(int ev_id, char *ev_name, void *param, int *result);
 
-PspSysEventHandler g_powerEvt = {
-    .size = sizeof(g_powerEvt),
-    .name = "infernoSysEvent",
-    .type_mask = 0x00FFFF00, // both suspend / resume
-    .handler = &powerEvtHandler,
+PspSysEventHandler g_power_event = {
+	.size = sizeof(g_power_event),
+	.name = "infernoSysEvent",
+	.type_mask = 0x00FFFF00, // both suspend / resume
+	.handler = &power_event_handler,
 };
 
 // 00000090
-int setupUMDDevice(void)
+int setup_umd_device(void)
 {
-    int ret;
+	int ret;
 
-    g_iso_fn = GetUmdFile();
-    
-    if (g_iso_fn==NULL || g_iso_fn[0] == 0) return -1; // no ISO file
-    
-    printk("UMDFile = %s\r\n", g_iso_fn);
+	g_iso_fn = GetUmdFile();
+	infernoSetDiscType(sctrlSEGetDiscType());
+	ret = sceIoAddDrv(&g_iodrv);
 
-    infernoSetDiscType(sctrlSEGetDiscType());
-    ret = sceIoAddDrv(&g_iodrv);
+	if(ret < 0) {
+		return ret;
+	}
 
-    if(ret < 0)
-    {
-        return ret;
-    }
+	sceKernelSetQTGP3(g_umddata);
+	ret = 0;
 
-    sceKernelSetQTGP3(g_umddata);
-    ret = 0;
-
-    return ret;
+	return ret;
 }
 
 // 00001514
-int infernoInitialize(void)
+int init_inferno(void)
 {
-    g_drive_status = PSP_UMD_INITING;
-    g_umd_cbid = -1;
-    g_umd_error_status = 0;
-    g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
-    sceKernelRegisterSysEventHandler(&g_powerEvt);
+	g_drive_status = PSP_UMD_INITING;
+	g_umd_cbid = -1;
+	g_umd_error_status = 0;
+	g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
+	sceKernelRegisterSysEventHandler(&g_power_event);
 
-    if (g_drive_status_evf < 0)
-        return g_drive_status_evf;
-
-    return 0;
+	return MIN(g_drive_status_evf, 0);
 }
 
 // 0x00000000
 int module_start(SceSize args, void* argp)
 {
+	int ret, key_config;
+	SEConfig config;
 
-    int ret;
+	psp_model = sceKernelGetModel();
+	psp_fw_version = sceKernelDevkitVersion();
 
-    ret = setupUMDDevice();
+	printk("Inferno started FW=0x%08X %02dg\n", (uint)psp_fw_version, (int)psp_model+1);
 
-    if(ret < 0)
-    {
-        return ret;
-    }
+	key_config = sceKernelApplicationType();
+	sctrlSEGetConfig(&config);
 
-    ret = infernoInitialize();
+	if(psp_model != PSP_1000 && key_config == PSP_INIT_KEYCONFIG_GAME) {
+		int bufsize = 64 * 1024;
+		int number = 64;
+		infernoCacheSetPolicy(CACHE_POLICY_LRU);
+		infernoCacheInit(bufsize, number);
+	}
 
-    if (ret < 0)
-        return ret;
+	ret = setup_umd_device();
 
-    return 0;
+	if(ret < 0) {
+		return ret;
+	}
+
+	ret = init_inferno();
+
+	return MIN(ret, 0);
 }
 
 // 0x0000006C
 int module_stop(SceSize args, void *argp)
 {
-    sceIoDelDrv("umd");
-    sceKernelDeleteEventFlag(g_drive_status_evf);
-    sceKernelUnregisterSysEventHandler(&g_powerEvt);
+	sceIoDelDrv("umd");
+	sceKernelDeleteEventFlag(g_drive_status_evf);
+	sceKernelUnregisterSysEventHandler(&g_power_event);
 
-    return 0;
+	return 0;
 }

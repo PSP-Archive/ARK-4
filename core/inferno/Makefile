@@ -1,5 +1,5 @@
 TARGET = inferno
-C_OBJS = main.o iodrv_funcs.o umd.o isoread.o
+C_OBJS = main.o iodrv_funcs.o umd.o isoread.o isocache.o
 OBJS = $(C_OBJS) imports.o
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/core/systemctrl/include

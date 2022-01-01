@@ -122,7 +122,7 @@ int sctrlGetThreadContextByName(const char * name, SceKernelThreadKInfo * ctx);
 void flushCache(void);
 
 // Missing PSPSDK Functions
-int sceKernelQuerySystemCall(void * function);
+u32 sceKernelQuerySystemCall(void * function);
 
 // Get ARK's execution environment configuration
 void sctrlHENGetArkConfig(ARKConfig* conf);

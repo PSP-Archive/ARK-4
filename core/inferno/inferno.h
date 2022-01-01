@@ -24,15 +24,22 @@
 
 #define MAX_FILES_NR 8
 
-struct IoReadArg
-{
-    unsigned int offset; // 0
-    unsigned char *address; // 4
-    unsigned int size; // 8
+#define SAFE_FREE(p) \
+do { \
+	if(p != NULL) { \
+		oe_free(p); \
+		p = NULL; \
+	} \
+} while ( 0 )
+
+struct IoReadArg {
+	u32 offset; // 0
+	u8 *address; // 4
+	u32 size; // 8
 };
 
-extern unsigned int psp_model;
-extern unsigned int psp_fw_version;
+extern u32 psp_model;
+extern u32 psp_fw_version;
 extern PspIoDrv g_iodrv;
 
 extern SceUID g_umd_cbid;
@@ -52,12 +59,16 @@ extern int g_disc_type;
 
 extern void sceUmdSetDriveStatus(int status);
 
-extern int powerEvtHandler(int ev_id, char *ev_name, void *param, int *result);
+extern int power_event_handler(int ev_id, char *ev_name, void *param, int *result);
 
-extern int isoOpen(void);
-extern int isoRead(struct IoReadArg *args);
-extern int isoReadStack(unsigned int offset, void *ptr, unsigned int data_len);
+extern int iso_open(void);
+extern int iso_read(struct IoReadArg *args);
+extern int iso_cache_read(struct IoReadArg *args);
+extern int iso_read_with_stack(u32 offset, void *ptr, u32 data_len);
 
 extern int infernoSetDiscType(int type);
+extern int infernoCacheInit(int cache_size, int cache_num);
+extern int infernoCacheAdd(u32 pos, int len);
+extern void infernoCacheSetPolicy(int policy);
 
 #endif
