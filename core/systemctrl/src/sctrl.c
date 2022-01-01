@@ -39,6 +39,9 @@
 #include "imports.h"
 #include "sysmem.h"
 
+// Static Buffer
+static char bignamebuffer[256];
+
 u32 g_p2_size = 24;
 u32 g_p9_size = 0; //24;
 int sctrlHENSetMemory(u32 p2, u32 p9)
@@ -421,9 +424,6 @@ int sctrlKernelSetInitApitype(int apitype)
 // Set Init Filename
 int sctrlKernelSetInitFileName(char * filename)
 {
-    // Static Buffer
-    static char bignamebuffer[256];
-    
     // Invalid Argument
     if(filename == NULL) return -1;
     
@@ -706,28 +706,26 @@ void sctrlHENSetArkConfig(ARKConfig* conf){
 
 void sctrlHENLoadModuleOnReboot(char *module_before, void *buf, int size, int flags)
 {
-    /*
-	rebootex_conf.insert_module_before = module_before;
-	rebootex_conf.insert_module_binary = buf;
-	rebootex_conf.insert_module_size = size;
-	rebootex_conf.insert_module_flags = flags;
-	*/
+    if (reboot_funcs)
+        reboot_funcs->SetRebootModule(module_before, buf, size, flags);
 }
 
-int sctrlKernelSetUMDEmuFile(const char *iso)
+int sctrlKernelSetUMDEmuFile(const char *filename)
 {
-	SceModule2 *modmgr = (SceModule2*)sceKernelFindModuleByName("sceModuleManager");
-
-	if (modmgr == NULL) {
-		return -1;
-	}
-
-    /*
-	STRCPY_S(g_iso_filename, iso);
-	*(const char**)(modmgr->text_addr+g_offs->modulemgr_patch.sctrlKernelSetUMDEmuFile) = g_iso_filename;
-	*/
-
-	return 0;
+	// Invalid Argument
+    if(filename == NULL) return -1;
+    
+    // Field unavailable
+    if(kernel_init_filename == NULL) return -2;
+    
+    // Copy Filename
+    strncpy(bignamebuffer, filename, sizeof(bignamebuffer) - 1);
+    
+    // Link Buffer
+    kernel_init_filename[1] = bignamebuffer;
+    
+    // Return Success
+    return 0;
 }
 
 void sctrlHENSetSpeed(int cpuspd, int busspd)

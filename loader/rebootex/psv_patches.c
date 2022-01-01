@@ -34,7 +34,7 @@ int UnpackBootConfigDummy(char **p_buffer, int length){
 }
 
 // patch reboot on ps vita
-void patchRebootBufferVita(u32 reboot_start, u32 reboot_end){
+void patchRebootBufferVita(){
 
     for (u32 addr = reboot_start; addr<reboot_end; addr+=4){
         u32 data = _lw(addr);

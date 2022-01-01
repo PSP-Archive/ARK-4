@@ -6,6 +6,9 @@
 extern RebootConfigARK* reboot_conf;
 extern ARKConfig* ark_config;
 
+extern u32 reboot_start;
+extern u32 reboot_end;
+
 // sceReboot Main Function
 extern int (* sceReboot)(int, int, int, int);
 
@@ -29,7 +32,8 @@ extern u32 UnpackBootConfigArg;
 
 // Rebootex functions
 void loadCoreModuleStartCommon();
-void patchRebootBufferPSP(u32 reboot_start, u32 reboot_end);
-void patchRebootBufferVita(u32 reboot_start, u32 reboot_end);
+void patchRebootBufferPSP();
+void patchRebootBufferVita();
+void patchRebootIoPSP();
 
 #endif

@@ -43,6 +43,12 @@ typedef struct RebootConfigARK {
     unsigned char iso_mode;
     unsigned char iso_disc_type;
     char iso_path[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
+    struct {
+        char *before;
+	    void *buffer;
+	    u32 size;
+	    u32 flags;
+    } rtm_mod;
 } RebootConfigARK;
 
 #define IS_ARK_CONFIG(config) (*((u32*)config) == ARK_CONFIG_MAGIC)

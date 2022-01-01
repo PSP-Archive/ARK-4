@@ -63,6 +63,14 @@ static int GetDiscTypeARK(void)
     reboot_config->iso_disc_type;
 }
 
+static void SetRebootModuleARK(char *module_before, void *buf, int size, int flags){
+    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
+    reboot_config->rtm_mod.before = module_before;
+	reboot_config->rtm_mod.buffer = buf;
+	reboot_config->rtm_mod.size = size;
+	reboot_config->rtm_mod.flags = flags;
+}
+
 static void SetBootConfFileIndexPRO(int index)
 {
     RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
@@ -85,6 +93,14 @@ static int GetDiscTypePRO(void)
 {
     RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
     reboot_config->iso_disc_type;
+}
+
+static void SetRebootModulePRO(char *module_before, void *buf, int size, int flags){
+    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
+    reboot_config->insert_module_before = module_before;
+	reboot_config->insert_module_binary = buf;
+	reboot_config->insert_module_size = size;
+	reboot_config->insert_module_flags = flags;
 }
 
 static void setRebootConfigPRO(){

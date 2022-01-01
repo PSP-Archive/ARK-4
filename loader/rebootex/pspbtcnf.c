@@ -257,7 +257,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     newsize = patch_bootconf_pops(buffer, length);
     if (newsize > 0) result = newsize;
 
-    // Insert Inferno
+    // Insert Inferno and RTM
     if (IS_ARK_CONFIG(reboot_conf)){
         switch(reboot_conf->iso_mode) {
             case MODE_VSHUMD:
@@ -277,7 +277,18 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
             default:
                 break;
         }
+        //reboot variable set
+	    if(reboot_conf->rtm_mod.before && reboot_conf->rtm_mod.buffer && reboot_conf->rtm_mod.size)
+	    {
+		    //add reboot prx entry
+		    newsize = AddPRX(buffer, reboot_conf->rtm_mod.before, "/rtm.prx", reboot_conf->rtm_mod.flags);
+		    if(newsize > 0){
+		        result = newsize;
+	            patchRebootIoPSP();
+	        }
+	    }
     }
+    
     return result;
 }
 

@@ -38,6 +38,8 @@ int (* UnpackBootConfig)(char * buffer, int length) = NULL;
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 u32 UnpackBootConfigCall = 0;
 u32 UnpackBootConfigArg = 0;
+u32 reboot_start = 0;
+u32 reboot_end = 0;
 
 // PRO GZIP Decrypt Support
 int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
@@ -166,13 +168,13 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4) __attribute__((section(".
 int _arkReboot(int arg1, int arg2, int arg3, int arg4)
 {
 
-    u32 reboot_start = REBOOT_TEXT;
-    u32 reboot_end = findRebootFunctions(reboot_start); // scan for reboot functions
+    reboot_start = REBOOT_TEXT;
+    reboot_end = findRebootFunctions(reboot_start); // scan for reboot functions
     
     // patch reboot buffer
     if (ark_config->magic == ARK_CONFIG_MAGIC){
-        if (IS_PSP(ark_config)) patchRebootBufferPSP(reboot_start, reboot_end);
-        else if (IS_VITA(ark_config)) patchRebootBufferVita(reboot_start, reboot_end);
+        if (IS_PSP(ark_config)) patchRebootBufferPSP();
+        else if (IS_VITA(ark_config)) patchRebootBufferVita();
         else colorDebug(0xff); // unknown device (?), don't touch it
     }
     else colorDebug(0xff); // incorrect configuration

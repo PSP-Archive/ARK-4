@@ -9,7 +9,8 @@ int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(
 }
 
 // patch reboot on psp
-void patchRebootBufferPSP(u32 reboot_start, u32 reboot_end){
+void patchRebootBufferPSP(){
+
     // due to cache inconsistency, we must do these patches first and also make sure we read as little ram as possible
     for (u32 addr = (u32)UnpackBootConfig; addr<reboot_end; addr+=4){
         u32 data = _lw(addr);
@@ -48,4 +49,99 @@ void patchRebootBufferPSP(u32 reboot_start, u32 reboot_end){
             patches--;
         }
     }
+}
+
+// IO Patches
+
+
+
+//io flags
+static int rebootmodule_open = 0;
+static char *p_rmod;
+static int size_rmod;
+
+//io functions
+int (* sceBootLfatOpen)(char * filename) = NULL;
+int (* sceBootLfatRead)(char * buffer, int length) = NULL;
+int (* sceBootLfatClose)(void) = NULL;
+
+
+int _sceBootLfatRead(char * buffer, int length)
+{
+	//load on reboot module
+	if(rebootmodule_open)
+	{
+		int min;
+
+		//copy load on reboot module
+		min = size_rmod < length ? size_rmod : length;
+		memcpy(buffer, p_rmod, min);
+		p_rmod += min;
+		size_rmod -= min;
+
+		//set filesize
+		return min;
+	}
+
+	//forward to original function
+	return sceBootLfatRead(buffer, length);
+}
+
+int _sceBootLfatOpen(char * filename)
+{
+	//load on reboot module open
+	if(strcmp(filename, "/rtm.prx") == 0)
+	{
+		//mark for read
+		rebootmodule_open = 1;
+		p_rmod = reboot_conf->rtm_mod.buffer;
+		size_rmod = reboot_conf->rtm_mod.size;
+
+		//return success
+		return 0;
+	}
+
+	//forward to original function
+	return sceBootLfatOpen(filename);
+}
+
+int _sceBootLfatClose(void)
+{
+	//reboot module close
+	if(rebootmodule_open)
+	{
+		//mark as closed
+		rebootmodule_open = 0;
+
+		//return success
+		return 0;
+	}
+
+	//forward to original function
+	return sceBootLfatClose();
+}
+
+void patchRebootIoPSP(){
+	int patches = 3;
+    for (u32 addr = reboot_start; addr<reboot_end && patches; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x8E840000){
+            sceBootLfatOpen = K_EXTRACT_CALL(addr-4);
+            _sw(JAL(_sceBootLfatOpen), addr-4);
+            patches--;
+        }
+        else if (data == 0xAE840004){
+            sceBootLfatRead = K_EXTRACT_CALL(addr+4);
+            _sw(JAL(_sceBootLfatRead), addr+4);
+            patches--;
+        }
+        else if (data == 0xAE930008){
+            sceBootLfatClose = K_EXTRACT_CALL(addr-4);
+            _sw(JAL(_sceBootLfatClose), addr-4);
+            patches--;
+        }
+    }
+	
+	// Flush Cache
+    flushCache();
 }
