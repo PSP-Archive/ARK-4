@@ -33,7 +33,7 @@ extern "C"{
 #define GAME_ID_MINIMUM_BUFFER_SIZE 10
 
 // Function Name Clones (of old but gold times)
-#define sctrlKernelQuerySystemCall sceKernelQuerySystemCall
+//#define sctrlKernelQuerySystemCall sceKernelQuerySystemCall
 
 // Prologue Module Start Handler
 typedef void (* STMOD_HANDLER)(SceModule2 *);

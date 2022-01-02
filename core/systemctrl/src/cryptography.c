@@ -31,6 +31,10 @@
 #include "rebootconfig.h"
 #include "psid.h"
 
+// custom user crypto functions
+static int (*ExtendDecryption)() = NULL;
+static int (*MesgLedDecryptEX)() = NULL;
+
 // Memlmd Decrypt Function
 int (*memlmd_unsigner)(u8 *prx, u32 size, u32 use_polling) = NULL;
 int (* memlmdDecrypt)(unsigned char * prx, unsigned int size, unsigned int * newsize, unsigned int use_polling) = NULL;
@@ -125,6 +129,13 @@ int isPrxCompressed(unsigned char * prx, unsigned int size)
 // Memlmd Decrypt Function Hook
 int _memlmdDecrypt(unsigned char * prx, unsigned int size, unsigned int * newsize, unsigned int use_polling)
 {
+    if(ExtendDecryption)
+	{
+		int res;
+		if( ( res = ExtendDecryption(prx, size, newsize, use_polling)) >=0)
+			return res;
+	}
+
     // Valid Parameters
     if(prx != NULL && newsize != NULL)
     {
@@ -171,6 +182,14 @@ int _mesgledDecrypt(unsigned int * tag, unsigned char * key, unsigned int code, 
     // Valid Parameters
     if(prx != NULL && newsize != NULL)
     {
+    
+        if( MesgLedDecryptEX )
+		{
+			int ret = MesgLedDecryptEX(prx, size, newsize, use_polling);
+			if( ret >= 0 )
+				return ret;
+		}
+    
         // Read GZIP Payload Size from PRX Header
         unsigned int compsize = *(unsigned int *)(prx + 0xB0);
         
@@ -191,6 +210,20 @@ unzip:
     
     // Passthrough
     return mesgledDecrypt(tag, key, code, prx, size, newsize, use_polling, blacklist, blacklistsize, type, xor_key1, xor_key2);
+}
+
+void *SystemCtrlForKernel_AC0E84D1(int (* func)())
+{
+	int (* r)() = ExtendDecryption;
+	ExtendDecryption = func;
+	return r;
+}
+
+void *SystemCtrlForKernel_1F3037FB(int (* func)())
+{
+	int (* r)() = (void *)MesgLedDecryptEX;
+	MesgLedDecryptEX = (void *)func;
+	return (void *)r;
 }
 
 // Patch Memlmd Cryptography

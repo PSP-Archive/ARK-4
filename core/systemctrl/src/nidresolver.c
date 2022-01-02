@@ -347,20 +347,6 @@ void resolve_syscon_driver(SceModule2 *syscon)
 // Setup NID Resolver in sceLoaderCore
 void setupNidResolver(SceModule2* mod)
 {
-
-    /*
-    SceModule2 *modmgr, *loadcore;
-
-	modmgr = (SceModule2*)sctrlKernelFindModuleByName("sceModuleManager");
-	loadcore = (SceModule2*)sctrlKernelFindModuleByName("sceLoaderCore");
-
-	missing_LoadCoreForKernel_entries[0].fp = (loadcore->text_addr + 0x0000748C);
-	sceKernelLinkLibraryEntries = (void*)(loadcore->text_addr + 0x00001110);
-	sceKernelLinkLibraryEntriesForUser = (void*)(loadcore->text_addr + 0x000025A4);
-	_sw(JAL(_sceKernelLinkLibraryEntries), modmgr->text_addr + 0x0000843C);
-	_sw(JAL(_sceKernelLinkLibraryEntriesForUser), modmgr->text_addr + 0x00008188);
-	*/
-
     // Link 660 NID Resolver Table
     nidTable = nidTable660;
     nidTableSize = nidTableSize660;

@@ -44,7 +44,6 @@ u32 reboot_end = 0;
 // PRO GZIP Decrypt Support
 int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
 {
-
     // GZIP Packed PRX File
     if ( (_lb((unsigned)prx + 0x150) == 0x1F && _lb((unsigned)prx + 0x151) == 0x8B)
             || (*(unsigned int *)(prx + 0x130) == 0xC01DB15D) )

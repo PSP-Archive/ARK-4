@@ -109,6 +109,7 @@ static void setRebootConfigPRO(){
     _reboot_funcs.GetBootConfFileIndex = &GetBootConfFileIndexPRO;
     _reboot_funcs.SetDiscType = &SetDiscTypePRO;
     _reboot_funcs.GetDiscType = &GetDiscTypePRO;
+    _reboot_funcs.SetRebootModule = &SetRebootModulePRO;
     reboot_funcs = &_reboot_funcs;
     reboot_config_isopath = (char*)&(rebootex_config[0x100]);
     if (reboot_config->rebootex_size == 0){ // Infinity setup, must inject PRO rebootex
@@ -123,6 +124,7 @@ static void setRebootConfigARK(){
     _reboot_funcs.GetBootConfFileIndex = &GetBootConfFileIndexARK;
     _reboot_funcs.SetDiscType = &SetDiscTypeARK;
     _reboot_funcs.GetDiscType = &GetDiscTypeARK;
+    _reboot_funcs.SetRebootModule = &SetRebootModuleARK;
     reboot_funcs = &_reboot_funcs;
     reboot_config_isopath = reboot_config->iso_path;
     if (reboot_config->reboot_buffer_size == 0){ // Infinity setup, must inject ARK rebootex

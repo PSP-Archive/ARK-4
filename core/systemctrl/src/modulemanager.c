@@ -37,6 +37,9 @@ int * kernel_init_apitype = NULL;
 // Internal Module Manager Init Filename Field
 char ** kernel_init_filename = NULL;
 
+// Internal Module Manager Init Key Config Field
+int* kernel_init_keyconfig = NULL;
+
 // Internal Module Manager Init Application Type Field
 int * kernel_init_application_type = NULL;
 
@@ -145,7 +148,8 @@ SceModule2* patchModuleManager()
         else if (data == 0x2C820146){
             u32 offset = _lw(addr-8)&0x0000FFFF;
             kernel_init_apitype = (int *)(mod->text_addr + offset);
-            kernel_init_filename = (char **)(mod->text_addr + offset + 4);
+            kernel_init_filename = (char**)(mod->text_addr + offset + 4);
+            kernel_init_keyconfig = (int*)(mod->text_addr + offset + 8);
             kernel_init_application_type = (int *)(mod->text_addr + offset + 92);
             patches--;
         }

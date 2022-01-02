@@ -122,6 +122,11 @@ int sctrlSESetConfig(SEConfig *config){
     return 0;
 }
 
+void sctrlSEApplyConfig(SEConfig *config)
+{
+    sctrlSESetConfig(config);
+}
+
 /**
  * Sets the SE configuration
  *
@@ -144,14 +149,26 @@ char * sctrlSEGetUmdFile(void)
     return findRebootISOPath(); // try to find an iso path in rebootex config
 }
 
+char *sctrlSEGetUmdFileEx(char *input)
+{
+	char* umdfilename = sctrlSEGetUmdFile();
+	sctrlSESetUmdFile(input);
+	return umdfilename;
+}
+
 // Set Reboot Configuration UMD File
 void sctrlSESetUmdFile(char * file)
 {
-    if (reboot_config_isopath == NULL) return; // no idea how to use rebootex config...
+    if (reboot_config_isopath == NULL || file == NULL) return; // no idea how to use rebootex config...
     // Overwrite Reboot Configuration UMD File
     strncpy(reboot_config_isopath, file, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1);
     // Terminate String
     reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
+}
+
+void sctrlSESetUmdFileEx(const char *umd, char *input)
+{
+	sctrlSESetUmdFile(umd);
 }
 
 void sctrlSESetBootConfFileIndex(int index)
@@ -188,4 +205,36 @@ int	sctrlHENIsSE()
 int	sctrlHENIsDevhook()
 {
 	return 0;
+}
+
+int sctrlSEGetVersion()
+{
+	return 0x00010008;
+}
+
+int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs){
+    return -1;
+}
+
+int sctrlSEUmountUmd(){
+    return 0;
+}
+
+void sctrlSESetDiscOut(int out){
+    return;
+}
+
+void SystemCtrlForKernel_07232EA5(void *func)
+{
+	//get sceInit text_addr.
+	SceModule2 *mod = sceKernelFindModuleByName("sceInit");
+	u32 text_addr = mod->text_addr;
+
+	//hook sceKernelLoadModuleMs2
+	u32 import = text_addr+0x00001C64; //sctrlHENFindImport(mod, "ModuleMgrForKernel", 0x7BD53193);
+	MAKE_JUMP_PATCH(import, func);
+	//_sw(JUMP(func), import);
+
+
+	flushCache();
 }

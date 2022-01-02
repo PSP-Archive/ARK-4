@@ -188,6 +188,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     {
         // Forward to Handler
         result = customStartModule(modid, argsize, argp, modstatus, opt);
+        if (result >= 0) return result;
     }
     
     // VSH replacement

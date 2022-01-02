@@ -54,6 +54,76 @@ int sctrlHENSetMemory(u32 p2, u32 p9)
     return 0;
 }
 
+int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param)
+{
+	int k1 = pspSdkSetK1(0);
+	int res = -1;
+	int (*LoadExecVSHDisc)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
+	if (LoadExecVSHDisc) res = LoadExecVSHDisc(file, param);
+	pspSdkSetK1(k1);
+	return res;
+}
+
+int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExecVSHParam *param)
+{
+	int k1 = pspSdkSetK1(0);
+	int res = -1;
+	int (*LoadExecVSHDiscUpdater)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xD4B49C4B);
+	if (LoadExecVSHDiscUpdater) res = LoadExecVSHDiscUpdater(file, param);
+	pspSdkSetK1(k1);
+	return res;
+}
+
+int sctrlKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam *param)
+{
+	int k1 = pspSdkSetK1(0);
+	int res = -1;
+	int (*LoadExecVSHMs1)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0x4FB44D27);
+	if (LoadExecVSHMs1) res = LoadExecVSHMs1(file, param);
+	pspSdkSetK1(k1);
+	return res;
+}
+
+int sctrlKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam *param)
+{
+	int k1 = pspSdkSetK1(0);	
+	int res = -1;
+	int (*LoadExecVSHMs2)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xD940C83C);
+	if (LoadExecVSHMs2) res = LoadExecVSHMs2(file, param);
+	pspSdkSetK1(k1);
+	return res;
+}
+
+int sctrlKernelLoadExecVSHMs3(const char *file, struct SceKernelLoadExecVSHParam *param)
+{
+	int k1 = pspSdkSetK1(0);	
+	int res = -1;
+	int (*LoadExecVSHMs3)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xCC6A47D2);
+	if (LoadExecVSHMs3) res = LoadExecVSHMs3(file, param);
+	pspSdkSetK1(k1);
+	return res;
+}
+
+int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam *param)
+{
+	int k1 = pspSdkSetK1(0);	
+	int res = -1;
+	int (*LoadExecVSHMs4)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0x00745486);
+	if (LoadExecVSHMs4) res = LoadExecVSHMs4(file, param);
+	pspSdkSetK1(k1);
+	return res;
+}
+
+int sctrlKernelLoadExecVSHEf2(const char *file, struct SceKernelLoadExecVSHParam *param)
+{
+	int k1 = pspSdkSetK1(0);
+	int res = -1;
+	int (*LoadExecVSHEf2)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0x032A7938);
+	if (LoadExecVSHEf2) res = LoadExecVSHEf2(file, param);
+	pspSdkSetK1(k1);
+	return res;
+}
+
 int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param)
 {
     u32 k1;
@@ -440,6 +510,27 @@ int sctrlKernelSetInitFileName(char * filename)
     return 0;
 }
 
+int sctrlKernelSetInitKeyConfig(int key)//old sctrlKernelSetInitMode
+{
+	int k1 = pspSdkSetK1(0);
+	int r = sceKernelInitKeyConfig();
+
+	if (kernel_init_keyconfig != NULL){
+	    *kernel_init_keyconfig = key;
+	}
+	
+	pspSdkSetK1(k1);
+	return r;
+}
+
+int sctrlKernelMsIsEf(){
+    int k1 = pspSdkSetK1(0);
+    int apitype = sceKernelInitApitype();
+    int res = (apitype == 0x155 || apitype == 0x125 || apitype == 0x152 || apitype ==  0x220);
+    pspSdkSetK1(k1);
+    return res;
+}
+
 // Return Text Address of init.prx
 unsigned int sctrlGetInitTextAddr(void)
 {
@@ -452,6 +543,13 @@ void sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * a
 {
     // Register Handler
     customStartModule = func;
+}
+
+void* sctrlSetStartModuleExtra(int (*func)() )
+{
+	void * ret = (void *)customStartModule;
+	customStartModule = func;
+	return ret;
 }
 
 int sctrlDeflateDecompress(void* dest, void* src, int size){
@@ -733,4 +831,45 @@ void sctrlHENSetSpeed(int cpuspd, int busspd)
     int (*_scePowerSetClockFrequency)(int, int, int);
     _scePowerSetClockFrequency = sctrlHENFindFunction("scePower_Service", "scePower", 0x545A7F3C);
     _scePowerSetClockFrequency(cpuspd, cpuspd, busspd);
+}
+
+int sctrlKernelBootFrom()
+{
+	/*
+	int k1 = pspSdkSetK1(0);
+	int (* BootFrom)() = (void *)(init_addrs[3]);
+	int ret = BootFrom();
+	pspSdkSetK1(k1);
+	return ret;
+	*/
+	return sceKernelBootFrom();
+}
+
+int sctrlKernelQuerySystemCall(void *func_addr)
+{
+	int ret = -1;
+	u32 k1;
+
+	k1 = pspSdkSetK1(0);
+
+	ret = sceKernelQuerySystemCall(func_addr);
+
+	pspSdkSetK1(k1);
+
+	return ret;
+}
+
+void *sctrlKernelMalloc(size_t size)
+{
+	return oe_malloc(size); 
+}
+
+int sctrlKernelFree(void *p)
+{
+	oe_free(p);
+	return 0;
+}
+
+u32 sctrlKernelResolveNid(const char *szLib, u32 nid){
+    return resolveMissingNid(szLib, nid);
 }

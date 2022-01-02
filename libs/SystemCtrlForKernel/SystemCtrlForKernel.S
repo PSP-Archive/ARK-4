@@ -42,7 +42,7 @@
 	IMPORT_FUNC  "SystemCtrlForKernel",0x1C90BECB,sctrlHENSetStartModuleHandler
 #endif
 #ifdef F_SystemCtrlForKernel_0012
-	IMPORT_FUNC  "SystemCtrlForKernel",0x159AF5CC,sctrlHENFindFunction
+	IMPORT_FUNC  "SystemCtrlForKernel",0xCE0A654E,sctrlHENLoadModuleOnReboot
 #endif
 #ifdef F_SystemCtrlForKernel_0013
 	IMPORT_FUNC  "SystemCtrlForKernel",0x1E5436EE,oe_mallocinit
@@ -211,5 +211,5 @@
     IMPORT_FUNC "SystemCtrlForKernel",0x2E2935EF,sctrlHENIsDevhook
 #endif
 #ifdef F_SystemCtrlForKernel_0068
-	IMPORT_FUNC  "SystemCtrlForKernel",0xCE0A654E,sctrlHENLoadModuleOnReboot
+	IMPORT_FUNC  "SystemCtrlForKernel",0x56CEAF00,sctrlKernelQuerySystemCall
 #endif

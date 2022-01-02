@@ -58,7 +58,7 @@ int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, 
     unsigned int k1 = pspSdkSetK1(0);
     
     if (apitype == 0x141){ // homebrew API
-        sctrlSESetBootConfFileIndex(MODE_INFERNO);
+        sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
         sctrlSESetUmdFile("");
     }
     
