@@ -45,13 +45,12 @@ void processArkConfig(ARKConfig* ark_config){
     sctrlHENGetArkConfig(ark_config);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSP_ORIG; // assume running on PSP
-        sctrlHENSetArkConfig(ark_config); // notify SystemControl
     }
     if (psp_model == PSP_GO){
         ark_config->arkpath[0] = 'e';
         ark_config->arkpath[1] = 'f';
-        sctrlHENSetArkConfig(ark_config);
     }
+    sctrlHENSetArkConfig(ark_config); // notify SystemControl
 }
 
 // Boot Time Entry Point

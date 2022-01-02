@@ -18,6 +18,10 @@
 #ifndef _SYSTEMCTRL_H_
 #define _SYSTEMCTRL_H_
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 #include <pspsdk.h>
 #include <psploadexec_kernel.h>
 #include <pspiofilemgr_kernel.h>
@@ -135,6 +139,13 @@ void sctrlHENEnableCustomPeopsConfig(void* config);
 
 // Disable Custom PEOPS configuration (use database config)
 void sctrlHENDisableCustomPeopsConfig();
+
+// GZIP decompress
+int sctrlDeflateDecompress(void* dest, void* src, int size);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

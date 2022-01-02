@@ -18,6 +18,10 @@
 #ifndef SYSTEMCTRL_PRIVATE_H
 #define SYSTEMCTRL_PRIVATE_H
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 #include "module2.h"
 #include "globals.h"
 
@@ -74,5 +78,9 @@ void installModuleJALTrace(SceModule2 * module);
 
 // Set ARK's execution environment configuration
 void sctrlHENSetArkConfig(ARKConfig* conf);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -11,7 +11,5 @@
 	STUB_END
 
 	STUB_START "InitForKernel",0x00090011,0x00030005
-	STUB_FUNC  0xEE67E450,sceKernelBootFromGo635
-	STUB_FUNC  0x977A0F90,sceKernelBootFromGo620
 	STUB_FUNC  0x7233B5BC,sceKernelApplicationType
 	STUB_END

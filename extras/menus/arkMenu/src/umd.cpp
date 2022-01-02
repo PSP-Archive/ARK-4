@@ -104,5 +104,7 @@ char* UMD::getSubtype(){
 }
 
 bool UMD::isUMD(){
+    extern ARKConfig* ark_config;
+    if (IS_VITA(ark_config)) return false;
     return (bool)sceUmdCheckMedium();
 }

@@ -9,7 +9,7 @@ PSP_EXPORT_VAR_HASH(module_info)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(PopcornPrivate, 0x0011, 0x4001)
-PSP_EXPORT_FUNC(decompressData)
+PSP_EXPORT_FUNC(decompress_data)
 PSP_EXPORT_FUNC(_sceMeAudio_67CD7972)
 PSP_EXPORT_END
 

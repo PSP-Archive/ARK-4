@@ -1,6 +1,10 @@
 #ifndef __SCTRLLIBRARY_SE_H__
 #define __SCTRLLIBRARY_SE_H__
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 /**
  * These functions are only available in SE-C and later, 
  * and they are not in HEN 
@@ -230,5 +234,9 @@ void sctrlSESetBootConfFileIndex(int index);
  * Get the boot config index
  */
 unsigned int sctrlSEGetBootConfFileIndex(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

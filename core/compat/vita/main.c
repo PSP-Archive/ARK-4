@@ -49,8 +49,11 @@ static void processArkConfig(ARKConfig* ark_config){
     sctrlHENGetArkConfig(ark_config);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PS_VITA; // assume running on PS Vita
-        sctrlHENSetArkConfig(ark_config); // notify SystemControl
     }
+    if (ark_config->launcher[0] == '\0'){
+        strcpy(ark_config->launcher, ARK_MENU);
+    }
+    sctrlHENSetArkConfig(ark_config); // notify SystemControl
 }
 
 // Boot Time Entry Point

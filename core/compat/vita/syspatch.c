@@ -1,6 +1,7 @@
 #include <pspsdk.h>
 #include <pspsysmem_kernel.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include <globals.h> 
 #include "functions.h"
@@ -48,6 +49,39 @@ int sctrlARKGetGameID(char gameid[GAME_ID_MINIMUM_BUFFER_SIZE])
     
     // Return Success
     return 0;
+}
+
+// Load Execute Module via Kernel Internal Function
+int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
+{
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    if (apitype == 0x141){ // homebrew API
+        sctrlSESetBootConfFileIndex(MODE_INFERNO);
+        sctrlSESetUmdFile("");
+    }
+    
+    // Find Target Function
+    int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
+        = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
+
+
+    // Load Execute Module
+    int result = _LoadExecVSHWithApitype(apitype, file, param, 0x10000);
+    
+    // Restore Permission Level on Failure
+    pspSdkSetK1(k1);
+    
+    // Return Error Code
+    return result;
+}
+
+void patchLoadExecUMDemu(){
+    u32 func = K_EXTRACT_IMPORT(&sctrlKernelLoadExecVSHWithApitype);
+    _sw(JUMP(sctrlKernelLoadExecVSHWithApitypeWithUMDemu), func);
+    _sw(NOP, func+4);
+    flushCache();
 }
 
 // Return Boot Status
@@ -166,4 +200,7 @@ void PROVitaSysPatch(){
     // filesystem patches
     initFileSystem();
     SceModule2* ioman = patchFileIO();
+    
+    // patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
+    patchLoadExecUMDemu();
 }

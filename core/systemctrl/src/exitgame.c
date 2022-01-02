@@ -48,9 +48,6 @@ static void execgame(const char* path)
     param.argp = path;
     param.key = "game";
     
-    sctrlSESetBootConfFileIndex(MODE_UMD);
-    sctrlSESetUmdFile("");
-
     // Trigger Reboot
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 }
@@ -72,34 +69,6 @@ void sctrlExitToRecovery(void){
     execgame(path);
 }
 
-/*
-static int exitgame_thread(SceSize args, void *argp)
-{
-    SceKernelLMOption lmoption;
-    memset(&lmoption, 0, sizeof(SceKernelLMOption));
-    lmoption.size = sizeof(SceKernelLMOption);
-    lmoption.mpidtext = 11;
-    lmoption.mpiddata = 11;
-    lmoption.access = 1;
-
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, ARK_INGAME);
-    SceUID mod = sceKernelLoadModule(path, 0, &lmoption);
-    if(mod >= 0){
-        int res = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
-        if (res < 0){
-            return res;
-        }
-    }
-    else {
-        return mod;
-    }
-
-    return 0;
-}
-*/
-
 void sctrlExitGameMenu(){
     // Refuse Operation in Save dialog
     if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return;
@@ -111,14 +80,16 @@ void sctrlExitGameMenu(){
     strcpy(path, ark_config->arkpath);
     strcat(path, ARK_INGAME);
     
+    /*
     SceKernelLMOption opt = {
         .size = 0x14,
         .flags = 0,
         .access = 1,
         .position = 1,
     };
+    */
     
-    SceUID mod = sceKernelLoadModule(path, 0, &opt);
+    SceUID mod = sceKernelLoadModule(path, 0, NULL);
     if(mod >= 0){
         int res = sceKernelStartModule(mod, strlen(path) + 1, path, NULL, NULL);
         if (res < 0){
