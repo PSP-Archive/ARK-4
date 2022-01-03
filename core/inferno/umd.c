@@ -79,6 +79,9 @@ int sceUmdCheckMedium(void)
 
 	while(!g_iso_opened) {
 		sceKernelDelayThread(10000);
+		if (g_iso_fn == NULL || g_iso_fn[0] == '\0'){
+		    return 0;
+		}
 	}
 
 	ret = 1;

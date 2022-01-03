@@ -18,12 +18,7 @@ using namespace std;
 #define MAX_ENTRIES 4
 static SystemEntry* entries[MAX_ENTRIES];
 
-static ARKConfig _ark_conf;
-ARKConfig* ark_config = &_ark_conf;
-
 int main(int argc, char** argv){
-
-    sctrlHENGetArkConfig(ark_config);
 
     intraFontInit();
     ya2d_init();

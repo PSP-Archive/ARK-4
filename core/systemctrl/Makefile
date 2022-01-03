@@ -30,6 +30,7 @@ C_OBJS = \
 	src/exitgame.o \
 	src/gameinfo.o \
 	src/plugin.o \
+	src/leda.o \
 	src/msstor_cache.o \
 	$(ARKROOT)/common/functions.o \
 		

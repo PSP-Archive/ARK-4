@@ -69,12 +69,13 @@ static void startPlugin(char * path)
     // external user plugin
     // Load Module
     int uid = sceKernelLoadModule(path, 0, NULL);
+    int res = -1;
     
     // Loaded Module
     if(uid >= 0)
     {
         // Start Module
-        int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
+        res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
     }
 }
 

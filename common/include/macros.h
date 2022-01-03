@@ -30,6 +30,9 @@
 // jal addr
 #define JAL(f) (0x0C000000 | (((unsigned int)(f) >> 2) & 0x03ffffff))
 
+#define MAKE_JUMP(a, f) _sw(JUMP(f), a);
+#define MAKE_CALL(a, f) _sw(JAL(f), a);
+
 // jal checker
 #define IS_JAL(i) ((((unsigned int)i) & 0xFC000000) == 0x0C000000)
 

@@ -223,18 +223,3 @@ int sctrlSEUmountUmd(){
 void sctrlSESetDiscOut(int out){
     return;
 }
-
-void SystemCtrlForKernel_07232EA5(void *func)
-{
-	//get sceInit text_addr.
-	SceModule2 *mod = sceKernelFindModuleByName("sceInit");
-	u32 text_addr = mod->text_addr;
-
-	//hook sceKernelLoadModuleMs2
-	u32 import = text_addr+0x00001C64; //sctrlHENFindImport(mod, "ModuleMgrForKernel", 0x7BD53193);
-	MAKE_JUMP_PATCH(import, func);
-	//_sw(JUMP(func), import);
-
-
-	flushCache();
-}
