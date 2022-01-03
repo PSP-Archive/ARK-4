@@ -7,6 +7,7 @@
 #include <pspkernel.h>
 #include <psputility.h>
 #include <pspsuspend.h>
+#include <psputilsforkernel.h>
 #include <psppower.h>
 #include <malloc.h>
 #include <string.h>

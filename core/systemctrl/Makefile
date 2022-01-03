@@ -40,7 +40,7 @@ OBJS = \
 	setlongjmp.o
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common $(ARKROOT)
-CFLAGS = -Os -G0 -Wall -fno-pic
+CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
 
 ifdef DISABLE_PSID_CHECK
 CFLAGS += -DDISABLE_PSID_CHECK=$(DISABLE_PSID_CHECK)

@@ -10,7 +10,7 @@ all: $(TARGET_LIB)
 PSPSDK=$(shell psp-config --pspsdk-path)
 
 INCDIR = $(ARKROOT)/common/include $(PSPSDK)/include
-CFLAGS = -G0 -O2
+CFLAGS = -std=c99 -G0 -O2
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 LIBDIR =

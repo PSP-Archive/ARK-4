@@ -7,7 +7,7 @@ PYTHON=$(shell which python2)
 
 all: pre-build $(TARGET)
 
-CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
+CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 CFLAGS += -I $(ARKROOT)/loader/live/kernel/kxploit/ -I $(ARKROOT)/core/systemctrl/include
 CFLAGS += -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR)
 

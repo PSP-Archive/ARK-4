@@ -6,5 +6,5 @@
 - Loading PRX files from ms0 with the ~PSP flag instead of the .ELF flag gives Unsuported PRX Type Error (0x80020148)
 
 # Launcher Issues
-- Weird dual screen bug that seems to be random.
+- Weird dual screen bug that seems to be random <- seems to be related to newer SDKs.
 - Incompatible with non-ASCII characters.

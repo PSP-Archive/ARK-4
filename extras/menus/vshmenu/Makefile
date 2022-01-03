@@ -6,7 +6,7 @@ ARKROOT ?= $(CURDIR)/../../../
 BUILD_PRX=1
 
 INCDIR = $(ARKROOT)/common/include
-CFLAGS = -Os -G0 -Wall
+CFLAGS = -std=c99 -Os -G0 -Wall
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 

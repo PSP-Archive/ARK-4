@@ -165,6 +165,7 @@ void Browser::refreshDirs(){
     this->animating = false;
     this->draw_progress = false;
     this->optionsmenu = NULL;
+    SystemMgr::resumeDraw();
 
     struct dirent* dit;
 
@@ -179,18 +180,18 @@ void Browser::refreshDirs(){
     }
     closedir(dir);
     
+    SystemMgr::pauseDraw();
     for (int i=0; i<folders.size(); i++)
         entries->push_back(folders.at(i));
     for (int i=0; i<files.size(); i++)
         entries->push_back(files.at(i));
+    SystemMgr::resumeDraw();
     
     if (this->entries->size() == 0){
         this->cwd = INITIAL_DIR;
         refreshDirs();
         return;
     }
-    
-    SystemMgr::resumeDraw();
 }
         
 
@@ -199,6 +200,7 @@ void Browser::drawScreen(){
     const int xoffset = 165;
     int yoffset = 50;
     
+    
     if (moving && entries->size() > 0){
         int height = 230/entries->size();
         int x = xoffset-65;
@@ -206,6 +208,12 @@ void Browser::drawScreen(){
         common::getImage(IMAGE_DIALOG)->draw_scale(x, y + (index*height), 5, height);
     }
     common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, 360, 230);
+    
+    if (entries->size() == 0){
+        Image* img = common::getImage(IMAGE_WAITICON);
+        img->draw((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2);
+        return;
+    }
     
     for (int i=this->start; i<min(this->start+PAGE_SIZE, (int)entries->size()); i++){
         File* e = (File*)this->entries->at(i);

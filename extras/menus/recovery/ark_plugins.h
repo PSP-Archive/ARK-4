@@ -85,7 +85,7 @@ void savePlugins(){
     for (int i=0; i<ark_plugins_count; i++){
         plugin_t* plugin = (plugin_t*)(ark_plugin_entries[i]);
         int place = plugin->place;
-        if (!output[place].is_open()) output[place] = std::ofstream(plugins_path[place]);
+        if (!output[place].is_open()) output[place].open(plugins_path[place]);
         output[plugin->place] << plugin->description << ", " << ((plugin->selection)? "on":"off") << endl;
     }
     output[0].close();

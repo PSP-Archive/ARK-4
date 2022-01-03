@@ -222,7 +222,7 @@ static int add_cache(struct IoReadArg *arg)
 		if(last_cache != NULL) {
 			if(pos + len <= last_cache->pos + last_cache->bufsize) {
 				printk("%s: error pos\n", __func__);
-				asm("break");
+				__asm__ volatile("break");
 			}
 
 			cur = last_cache->pos + last_cache->bufsize;
@@ -296,7 +296,7 @@ void cache_test(struct IoReadArg *arg)
 	memid = sceKernelAllocPartitionMemory(1, "infernoCacheTest", PSP_SMEM_High, testarg.size + 64, NULL);
 
 	if(memid < 0) {
-		asm("break 1");
+		__asm__ volatile("break 1");
 		return;
 	}
 
@@ -315,7 +315,7 @@ void cache_test(struct IoReadArg *arg)
 
 				sprintf(buf, "%s: 0x%08X <%d> unexpected EOF for %d bytes\n", __func__, (uint)testarg.offset, (int)testarg.size, cur);
 				sceIoWrite(2, buf, strlen(buf));
-				asm("break 2");
+				__asm__ volatile("break 2");
 			}
 
 			break;
@@ -329,7 +329,7 @@ void cache_test(struct IoReadArg *arg)
 
 			sprintf(buf, "%s: cbuf: 0x%08X tbuf: 0x%08X\n", __func__, (uint)arg->address + cur, (int)testarg.address);
 			sceIoWrite(2, buf, strlen(buf));
-			asm("break 3");
+			__asm__ volatile("break 3");
 			break;
 		}
 

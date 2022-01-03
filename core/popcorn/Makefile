@@ -4,7 +4,7 @@ OBJS = main.o icon.o
 
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/libs/graphics
-CFLAGS = -Os -G0 -Wall -fno-pic
+CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)

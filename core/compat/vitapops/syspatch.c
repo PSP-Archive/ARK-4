@@ -5,6 +5,7 @@
 #include <module2.h>
 #include <pspdisplay_kernel.h>
 #include <pspsysmem_kernel.h>
+#include <psputilsforkernel.h>
 #include <systemctrl.h>
 #include <systemctrl_private.h>
 #include <pspiofilemgr.h>

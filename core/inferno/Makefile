@@ -3,7 +3,7 @@ C_OBJS = main.o iodrv_funcs.o umd.o isoread.o isocache.o
 OBJS = $(C_OBJS) imports.o
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/core/systemctrl/include
-CFLAGS = -Os -G0 -Wall
+CFLAGS = -std=c99 -Os -G0 -Wall
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)

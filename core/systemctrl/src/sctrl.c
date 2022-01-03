@@ -240,7 +240,7 @@ void sctrlHENPatchSyscall(void * addr, void * newaddr)
     unsigned int * syscalls = NULL;
     
     // Get Syscall Table Pointer from Coprocessor
-    asm("cfc0 %0, $12\n" : "=r"(syscalls));
+    __asm__ volatile("cfc0 %0, $12\n" : "=r"(syscalls));
     
     // Invalid Syscall Table
     if(syscalls == NULL) return;
@@ -425,7 +425,7 @@ unsigned int sctrlKernelRand(void)
     unsigned char * alloc = oe_malloc(20 + 4);
     
     // Allocation Error
-    if(alloc == NULL) asm("break");
+    if(alloc == NULL) __asm__ volatile ("break");
     
     // Align Buffer to 4 Bytes
     unsigned char * buffer = (void *)(((unsigned int)alloc & (~(4-1))) + 4);

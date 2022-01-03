@@ -3,7 +3,7 @@ C_OBJS = main.o loadmodule_patch.o nodrm_patch.o key_decrypt.o pspcipher.o $(ARK
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common/include
-CFLAGS = -Os -G0 -Wall -fno-pic
+CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)

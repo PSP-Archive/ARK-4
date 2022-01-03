@@ -5,7 +5,7 @@ TARGET = K.BIN
 
 PYTHON=$(shell which python2)
 
-CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
+CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 
 CFLAGS += -I $(ARKROOT)/loader/live/kernel/kxploit/
 

@@ -2,7 +2,7 @@ TARGET = proshell
 C_OBJS = main.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
-CFLAGS = -Os -G0 -Wall
+CFLAGS = -std=c99 -Os -G0 -Wall
 INCDIR = $(ARKROOT)/common/include
 LIBDIR = $(ARKROOT)/libs
 

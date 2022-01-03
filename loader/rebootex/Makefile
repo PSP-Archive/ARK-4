@@ -6,7 +6,7 @@ PYTHON=$(shell which python2)
 
 all: $(TARGET)
 
-CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
+CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)

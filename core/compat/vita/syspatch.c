@@ -1,5 +1,6 @@
 #include <pspsdk.h>
 #include <pspsysmem_kernel.h>
+#include <psputilsforkernel.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>

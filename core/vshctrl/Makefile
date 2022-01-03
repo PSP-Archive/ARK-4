@@ -3,7 +3,7 @@ OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disct
 IMPORTS = 
 
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/core/systemctrl/include
-CFLAGS = -Os -G0 -Wall -fno-pic
+CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
 
 CFLAGS += -DCONFIG_661=1
 PSP_FW_VERSION = 661

@@ -14,7 +14,7 @@ PSPSDK=$(shell psp-config --pspsdk-path)
 
 CC=psp-gcc
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/common $(PSPSDK)/include
-CFLAGS = -Wall -Os -G0 -fno-pic
+CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 

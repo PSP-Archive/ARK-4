@@ -26,7 +26,7 @@ OBJS = \
 
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common $(ARKROOT)
-CFLAGS = -Os -G0 -Wall -fno-pic -std=gnu11
+CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
 
 CFLAGS += -I psxspu/ -I $(ARKROOT)/common/include/ -I $(ARKROOT)/libs/graphics/ -I $(ARKROOT)/core/systemctrl/include/
 

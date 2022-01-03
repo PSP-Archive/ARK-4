@@ -6,7 +6,7 @@ OBJS = $(C_OBJS)
 all: $(TARGET).prx
 
 INCDIR = $(ARKROOT)/common/include
-CFLAGS = -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
+CFLAGS = -std=c99 -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
 
 # POPS Version
 CFLAGS += -DPOPSMAN_VERSION=$(POPSMAN_VERSION) -DPOPS_VERSION=$(POPS_VERSION)
