@@ -14,13 +14,22 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install Dependencies
-      run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget
+      run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget git
     - name: Extract SDK
       run: sudo 7z -o/usr/local/ x ./contrib/PC/PSPSDK/pspdev.7z 
     - name: Change Permissions
       run: sudo chown $USER:$USER /usr/local/pspdev && sudo chmod 755 -R /usr/local/pspdev
     - name: Setup Path
-      run: export PATH="/usr/local/pspdev/bin:$PATH"
-    - name: make
+      run: export PATH="/usr/local/pspdev/bin:$PATH" && export PSPDEV="/usr/local/pspdev"
+    - name: Fix libmpfr
+      run: sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+    - name: Curl sign_np
+      run: cd .. && curl -OJL "https://github.com/swarzesherz/sign_np/archive/refs/tags/v1.0.2.tar.gz" && tar xvf sign_np-1.0.2.tar.gz && cd sign_np-1.0.2
+    - name: Making sign_np
       run: make
+    - name: Moving sign_np
+      run: cp sign_np /usr/local/pspdev/bin/
+    - name: Making ARK-4
+      run: cd ../ARK-4 && make
+
 
