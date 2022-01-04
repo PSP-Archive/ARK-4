@@ -14,11 +14,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install Dependencies
-    - run: apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget
+      run: apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget
     - name: Extract SDK
-    - run: 7z x ./contrib/PC/PSPSDK/pspdev.7z -o /usr/local/
+      run: 7z x ./contrib/PC/PSPSDK/pspdev.7z -o /usr/local/
     - name: Setup Path
-    - run: export PATH="/usr/local/pspdev/bin:$PATH"
+      run: export PATH="/usr/local/pspdev/bin:$PATH"
     - name: make
       run: make
 
