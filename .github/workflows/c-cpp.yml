@@ -18,7 +18,7 @@ jobs:
     - name: Extract SDK
       run: sudo 7z -o/usr/local/ x ./contrib/PC/PSPSDK/pspdev.7z 
     - name: Change Permissions
-      run: sudo chown $USER:$USER /usr/local/pspdev && sudo chmod 755 -R /usr/local/pspdev
+      run: sudo chown $GITHUB_USER:$GITHUB_USER /usr/local/pspdev && sudo chmod 755 -R /usr/local/pspdev
     - name: Setup Path
       run: echo "/usr/local/pspdev/bin" >> $GITHUB_PATH #export $GITHUB_PATH="/usr/local/pspdev/bin:$GITHUB_PATH" && export PSPDEV="/usr/local/pspdev"
     - name: Print PATH
