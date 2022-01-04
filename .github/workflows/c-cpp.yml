@@ -20,7 +20,7 @@ jobs:
     - name: Change Permissions
       run: sudo chown $USER:$USER /usr/local/pspdev && sudo chmod 755 -R /usr/local/pspdev
     - name: Setup Path
-      run: export PATH="/usr/local/pspdev/bin:$PATH" && export PSPDEV="/usr/local/pspdev"
+      run: export $GITHUB_PATH="/usr/local/pspdev/bin:$GITHUB_PATH" && export PSPDEV="/usr/local/pspdev"
     - name: Print PATH
       run: echo $PATH
     - name: Fix libmpfr
