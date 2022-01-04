@@ -18,7 +18,7 @@ jobs:
     - name: Extract SDK
       run: sudo 7z -o/usr/local/ x ./contrib/PC/PSPSDK/pspdev.7z 
     - name: Change Permissions
-      run: sudo chown $USER:$USER /usr/local/pspdev && chmod 755 -R /usr/local/pspdev
+      run: sudo chown $USER:$USER /usr/local/pspdev && sudo chmod 755 -R /usr/local/pspdev
     - name: Setup Path
       run: export PATH="/usr/local/pspdev/bin:$PATH"
     - name: make
