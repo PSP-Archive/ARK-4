@@ -21,12 +21,12 @@ jobs:
       run: sudo chown $USER:$USER /usr/local/pspdev && sudo chmod 755 -R /usr/local/pspdev
     - name: Setup Path
       run: export PATH="/usr/local/pspdev/bin:$PATH" && export PSPDEV="/usr/local/pspdev"
+    - name: Print PATH
+      run: echo $PATH
     - name: Fix libmpfr
       run: sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
     - name: sign_np
       run: cd .. && curl -OJL "https://github.com/swarzesherz/sign_np/archive/refs/tags/v1.0.2.tar.gz" && tar xvf sign_np-1.0.2.tar.gz && cd sign_np-1.0.2 && make && sudo cp sign_np /usr/local/pspdev/bin
-    - name: PATH
-      run: echo $PATH
     - name: Making ARK-4
       run: make
 
