@@ -16,7 +16,7 @@ jobs:
     - name: Install Dependencies
       run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget
     - name: Extract SDK
-      run: sudo 7z x ./contrib/PC/PSPSDK/pspdev.7z -o /usr/local/
+      run: sudo 7z -o/usr/local/ x ./contrib/PC/PSPSDK/pspdev.7z 
     - name: Change Permissions
       run: sudo chown $USER:$USER /usr/local/pspdev && chmod 755 -R /usr/local/pspdev
     - name: Setup Path
