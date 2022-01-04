@@ -20,9 +20,9 @@ jobs:
     - name: Change Permissions
       run: sudo chown $USER:$USER /usr/local/pspdev && sudo chmod 755 -R /usr/local/pspdev
     - name: Setup Path
-      run: export $GITHUB_PATH="/usr/local/pspdev/bin:$GITHUB_PATH" && export PSPDEV="/usr/local/pspdev"
+      run: echo "/usr/local/pspdev/bin" >> $GITHUB_PATH #export $GITHUB_PATH="/usr/local/pspdev/bin:$GITHUB_PATH" && export PSPDEV="/usr/local/pspdev"
     - name: Print PATH
-      run: echo $PATH
+      run: echo $GITHUB_PATH
     - name: Fix libmpfr
       run: sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
     - name: sign_np
