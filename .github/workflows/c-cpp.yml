@@ -30,4 +30,9 @@ jobs:
     - name: Making ARK-4
       run: make
 
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        path: "./dist"
+
 
