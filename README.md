@@ -1,5 +1,5 @@
 # ARK-4 e/CFW for the PSP and PS Vita.
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/krazynez/ARK-4/ARK-4)
+
 ## FEATURES:
 
 - Core system for unsigned code execution on every PSP device based on 6.60 kernel.
