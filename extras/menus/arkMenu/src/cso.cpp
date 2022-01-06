@@ -406,7 +406,7 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
     if (fp == NULL)
         return NULL;
 
-    u8* block_out = block_out = (u8*)memalign(64, SECTOR_SIZE);
+    u8* block_out = (u8*)memalign(64, SECTOR_SIZE);
     this->getInitialBlock(fp, block_out);
 
     if (size_out != NULL)
@@ -418,7 +418,6 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
     common::upperString(file);
 
     int pos = 0;
-    unsigned offset, size;
 
     while (true){
 
@@ -445,13 +444,17 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
 
             fseek(fp, b_offset, SEEK_SET);
 
-            void** blocks = (void**)malloc(sizeof(void*)*(b_iter+1));
-            int* blocks_size = (int*)malloc(sizeof(int)*(b_iter+1));
-
+            int buf_size = SECTOR_SIZE*b_iter + trail_size;
+            buffer = memalign(64, buf_size);
+            int compressed_size = 0;
+            u32 buf = (u32)buffer;
+            compressed = (uint8_t*)malloc(SECTOR_SIZE);
             for (int x = 1; x<b_iter; x++){
 
                 unsigned cur_pos = ftell(fp);
                 bool is_compressed = true;
+
+                unsigned offset, size;
 
                 fread(&offset, 4, 1, fp);
 
@@ -469,49 +472,27 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
 
                 if (is_compressed){
                     if (x < b_iter - 1){
-                        blocks_size[x-1] = SECTOR_SIZE;
-                        blocks[x-1] = memalign(64, SECTOR_SIZE);
-                        compressed = (uint8_t*)malloc(size);
                         fread(compressed, 1, size, fp);
-                        zlib_decompress(compressed, (uint8_t*)blocks[x-1], is_lz4);
-                        free(compressed);
+                        zlib_decompress(compressed, (uint8_t*)buf, is_lz4);
+                        buf += SECTOR_SIZE;
                     }
                     else{
-                        blocks_size[x-1] = trail_size;
-                        blocks[x-1] = memalign(64, SECTOR_SIZE);
-                        compressed = (uint8_t*)malloc(size);
                         fread(compressed, 1, size, fp);
-                        zlib_decompress(compressed, (uint8_t*)blocks[x-1], is_lz4);
-                        free(compressed);
+                        zlib_decompress(compressed, (uint8_t*)buf, is_lz4);
+                        buf += trail_size;
                     }
                 }
                 else{
-                    blocks_size[x-1] = size;
-                    blocks[x-1] = memalign(64, size);
-                    fread(blocks[x-1], 1, size, fp);
+                    fread((uint8_t*)buf, 1, size, fp);
+                    buf += size;
                 }
                 fseek(fp, cur_pos+4, SEEK_SET);
             }
 
-            int total_size = 0;
-            for (int i=0; i<b_iter-1; i++)
-                total_size += blocks_size[i];
-
-            buffer = memalign(64, total_size);
-            memset(buffer, 0, total_size);
-            int counter = 0;
-
-            for (int i=0; i<b_iter-1; i++){
-                memcpy((void*)((char*)buffer+counter), blocks[i], blocks_size[i]);
-                counter += blocks_size[i];
-                free(blocks[i]);
-            }
-
-            free(blocks);
-            free(blocks_size);
+            free(compressed);
 
             if (size_out != NULL)
-                *size_out = total_size;
+                *size_out = buf_size;
 
             fclose(fp);
             free(block_out);
