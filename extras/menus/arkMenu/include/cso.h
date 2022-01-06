@@ -117,7 +117,7 @@ typedef struct
 #define SECTOR_SIZE 0x800
 
 
-class Cso : public Iso{
+class Cso : public Entry{
 
 
     private:
@@ -162,11 +162,12 @@ class Cso : public Iso{
 
         
 
-        u8* block_out;
+        //u8* block_out;
+        int buf_size;
 
         unsigned block_size, start_read;
 
-        void getInitialBlock(FILE* fp);
+        void getInitialBlock(FILE* fp, u8* block_out);
         
         int is_lz4;
 
@@ -174,6 +175,7 @@ class Cso : public Iso{
     protected:
     
         bool isPatched();
+        void doExecute();
 
 
     public:

@@ -14,6 +14,7 @@
 #include "ark_settings.h"
 #include "ark_plugins.h"
 #include "exit_mgr.h"
+#include "game_mgr.h" // dummy GameManager for missing Browser dependency
 
 PSP_MODULE_INFO("ARKMENU", 0, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);

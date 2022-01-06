@@ -40,10 +40,6 @@ class GameManager : public SystemEntry{
         SceUID iconThread; // UID's of the icon thread
         SceUID iconSema; // semaphore to lock the thread when sleeping
         int dynamicIconRunning;
-        /* Control the icon threads */
-        void pauseIcons();
-        void resumeIcons();
-        bool waitIconsLoad(bool forceQuit=false);
         
         /* Screen drawing thread data */
         bool hasLoaded; // whether the main thread has finished loading or not, if not then only draw the background and animation
@@ -111,6 +107,11 @@ class GameManager : public SystemEntry{
         string getName(){
             return "Game";
         }
+        
+        /* Control the icon threads */
+        void pauseIcons();
+        void resumeIcons();
+        bool waitIconsLoad(bool forceQuit=false);
         
         void setInfo(string info){};
         void setName(string name){};

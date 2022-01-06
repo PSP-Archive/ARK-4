@@ -218,6 +218,11 @@ Entry* Menu::getEntry(int index){
 }
 
 void Menu::clearEntries(){
+    for (int i=0; i<entries->size(); i++){
+        Entry* entry = entries->at(i);
+        entries->at(i) = NULL;
+        delete entry;
+    }
     this->entries->clear();
     this->index = 0;
     this->initLoad = false;

@@ -3,7 +3,7 @@
 #include <cmath>
 #include "systemctrl.h"
 
-void zlib_decompress(uint8_t *data, uint8_t* block_out, unsigned size, int is_lz4);
+void zlib_decompress(uint8_t *data, uint8_t* block_out, int is_lz4);
 
 extern "C"{
     int LZ4_decompress_fast(uint8_t* source, uint8_t* dest, int outputSize);
@@ -28,7 +28,7 @@ Cso :: Cso(string path)
     size_t lastSlash = path.rfind("/", string::npos);
     this->name = path.substr(lastSlash+1, string::npos);
     this->icon0 = common::getImage(IMAGE_WAITICON);
-    this->block_out = NULL;
+    //this->block_out = NULL;
     this->is_lz4 = (common::getMagic(path.c_str(), 0) == ZSO_MAGIC);
 };
 
@@ -36,7 +36,7 @@ Cso :: Cso(string path)
 Cso::~Cso(){
     if (this->icon0 != common::getImage(IMAGE_NOICON) && this->icon0 != common::getImage(IMAGE_WAITICON))
         delete this->icon0;
-    free(this->block_out);
+    this->clear();
 }
 
 
@@ -124,8 +124,9 @@ bool Cso :: open(const char * path)
     current_index = 0;
 
     this->indices = (unsigned *)malloc(indices_len);
-    this->data = (unsigned char *)malloc(head.block_size*2);
-    this->read_buffer = (unsigned char *)malloc(head.block_size*2);
+    this->buf_size = head.block_size*2;
+    this->data = (unsigned char *)memalign(64, buf_size);
+    this->read_buffer = (unsigned char *)memalign(64, buf_size);
     dec.zalloc = NULL;
     dec.zfree = NULL;
     dec.opaque = NULL;
@@ -141,6 +142,12 @@ void Cso :: clear()
     if(indices) free(indices);
     if(data) free(data);
     if(read_buffer) free(read_buffer);
+    //if (block_out) free(block_out);
+    file = NULL;
+    indices = NULL;
+    data = NULL;
+    read_buffer = NULL;
+    //block_out = NULL;
 };
 
 unsigned char * Cso :: getDataBlock(unsigned block)
@@ -159,7 +166,7 @@ unsigned char * Cso :: getDataBlock(unsigned block)
         get_size = (current_index2-current_index) << (head.align);
     }
     else get_size = head.block_size;
-
+    
     fseek(file, read_position, SEEK_SET);    
     dec.avail_in = fread(this->read_buffer, 1, get_size, file);
 
@@ -170,7 +177,7 @@ unsigned char * Cso :: getDataBlock(unsigned block)
     }
     else
     {
-        zlib_decompress(this->read_buffer, this->data, head.block_size, is_lz4);
+        zlib_decompress(this->read_buffer, this->data, is_lz4);
     };
 
     return this->data;
@@ -196,7 +203,7 @@ unsigned Cso :: identifyEntry(const char * name, unsigned block, unsigned * file
 
             entry_name = (char *)malloc(dr.nameLen+1);
             strncpy(entry_name, (char *)(ptr+33), dr.nameLen);
-            *(entry_name+dr.nameLen)='\0';
+            *(entry_name+dr.nameLen) = '\0';
             if(!strcmp(entry_name, name)) //File was found!
             {
                 ret = dr.location;
@@ -253,7 +260,6 @@ void Cso :: extractFile(const char * name, unsigned block, unsigned size)
 
 unsigned Cso :: findFile(const char * name, unsigned * fileSize)
 {
-
     pathTable pt;
     this->getDataBlock(this->pvd.pathTableOffset);
     unsigned char * ptr = this->data;
@@ -314,6 +320,25 @@ bool Cso::isPatched(){
 
 }
 
+void Cso::doExecute(){
+    struct SceKernelLoadExecVSHParam param;
+    
+    memset(&param, 0, sizeof(param));
+
+    if (this->isPatched())
+        param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
+    else
+        param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+
+    int runlevel = (this->path[0]=='e' && this->path[1]=='f')? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
+
+    param.key = "umdemu";
+    param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
+    sctrlSESetBootConfFileIndex(ISO_DRIVER);
+    sctrlSESetUmdFile((char*)this->path.c_str());
+    sctrlKernelLoadExecVSHWithApitype(runlevel, this->path.c_str(), &param);
+}
+
 
 bool Cso::isCSO(const char* filename){
     u32 magic = common::getMagic(filename, 0);
@@ -321,22 +346,22 @@ bool Cso::isCSO(const char* filename){
 }
 
 
-void zlib_decompress(uint8_t *data, uint8_t* block_out, unsigned size, int is_lz4)
+void zlib_decompress(uint8_t *input, uint8_t* output, int is_lz4)
 
 {
     if (is_lz4)
-        LZ4_decompress_fast(data, block_out, SECTOR_SIZE);
+        LZ4_decompress_fast(input, output, SECTOR_SIZE);
     else
-        sctrlDeflateDecompress(block_out, data, SECTOR_SIZE);
+        sctrlDeflateDecompress(output, input, SECTOR_SIZE);
 }
 
 
-void Cso::getInitialBlock(FILE* fp){
+void Cso::getInitialBlock(FILE* fp, u8* block_out){
 
     if (fp == NULL)
         return;
 
-    uint8_t* compressed;
+    uint8_t compressed[SECTOR_SIZE];
 
     fseek(fp, 16, SEEK_SET);
     fread(&block_size, 4, 1, fp);
@@ -350,11 +375,11 @@ void Cso::getInitialBlock(FILE* fp){
 
     fs = min((int)fs, 200);
 
-    compressed = (uint8_t*)malloc(fs);
+    //compressed = (uint8_t*)malloc(fs);
     fread(compressed, 1, fs, fp);
 
-    zlib_decompress(compressed, block_out, fs, is_lz4);
-    free(compressed);
+    zlib_decompress(compressed, block_out, is_lz4);
+    //free(compressed);
     unsigned start = (block_out[158] + block_out[159] + block_out[160] + block_out[161]) * 4;
     fseek(fp, start+28, SEEK_SET);
 
@@ -367,26 +392,22 @@ void Cso::getInitialBlock(FILE* fp){
 
     fseek(fp, offset, SEEK_SET);
 
-    compressed = (uint8_t*)malloc(size);
+    //compressed = (uint8_t*)malloc(size);
     fread(compressed, 1, size, fp);
-    zlib_decompress(compressed, block_out, size, is_lz4);
-    free(compressed);
+    zlib_decompress(compressed, block_out, is_lz4);
+    //free(compressed);
 
 }
 
 
 void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
 
-
     FILE* fp = fopen(path, "rb");
     if (fp == NULL)
         return NULL;
 
-
-    if (block_out == NULL){
-        this->block_out = (u8*)memalign(64, SECTOR_SIZE);
-        this->getInitialBlock(fp);
-    }
+    u8* block_out = block_out = (u8*)memalign(64, SECTOR_SIZE);
+    this->getInitialBlock(fp, block_out);
 
     if (size_out != NULL)
         *size_out = 0;
@@ -403,6 +424,7 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
 
         if (pos > block_size){
             fclose(fp);
+            free(block_out);
             return NULL;
         }
 
@@ -423,8 +445,8 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
 
             fseek(fp, b_offset, SEEK_SET);
 
-            void** blocks = (void**)malloc(sizeof(void*)*b_iter+1);
-            int* blocks_size = (int*)malloc(sizeof(int)*b_iter+1);
+            void** blocks = (void**)malloc(sizeof(void*)*(b_iter+1));
+            int* blocks_size = (int*)malloc(sizeof(int)*(b_iter+1));
 
             for (int x = 1; x<b_iter; x++){
 
@@ -451,7 +473,7 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
                         blocks[x-1] = memalign(64, SECTOR_SIZE);
                         compressed = (uint8_t*)malloc(size);
                         fread(compressed, 1, size, fp);
-                        zlib_decompress(compressed, (uint8_t*)blocks[x-1], size, is_lz4);
+                        zlib_decompress(compressed, (uint8_t*)blocks[x-1], is_lz4);
                         free(compressed);
                     }
                     else{
@@ -459,7 +481,7 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
                         blocks[x-1] = memalign(64, SECTOR_SIZE);
                         compressed = (uint8_t*)malloc(size);
                         fread(compressed, 1, size, fp);
-                        zlib_decompress(compressed, (uint8_t*)blocks[x-1], size, is_lz4);
+                        zlib_decompress(compressed, (uint8_t*)blocks[x-1], is_lz4);
                         free(compressed);
                     }
                 }
@@ -492,11 +514,13 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
                 *size_out = total_size;
 
             fclose(fp);
+            free(block_out);
             return buffer;
         }
         pos++;
     }
     fclose(fp);
+    free(block_out);
     return NULL;
 
 }
