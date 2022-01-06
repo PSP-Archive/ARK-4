@@ -239,7 +239,7 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
 }
 
 void SystemMgr::startMenu(){
-    draw_thread = sceKernelCreateThread("draw_thread", &drawThread, 0x10, 0x8000, PSP_THREAD_ATTR_USER, NULL);
+    draw_thread = sceKernelCreateThread("draw_thread", &drawThread, 0x10, 0x10000, PSP_THREAD_ATTR_USER, NULL);
     sceKernelStartThread(draw_thread, 0, NULL);
     controlThread(0, NULL);
 }

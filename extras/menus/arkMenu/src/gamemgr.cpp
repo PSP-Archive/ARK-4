@@ -28,7 +28,7 @@ GameManager::GameManager(){
     // start the multithreaded icon loading
     this->dynamicIconRunning = ICONS_LOADING;
     this->iconSema = sceKernelCreateSema("icon0_sema",  0, 1, 1, NULL);
-    this->iconThread = sceKernelCreateThread("icon0_thread", GameManager::loadIcons, 0x10, 0x10000, PSP_THREAD_ATTR_USER, NULL);
+    this->iconThread = sceKernelCreateThread("icon0_thread", GameManager::loadIcons, 0x10, 0x20000, PSP_THREAD_ATTR_USER, NULL);
     sceKernelStartThread(this->iconThread,  0, NULL);
     
 }
@@ -126,12 +126,6 @@ void GameManager::findEntries(){
         recovery_menu->setName("Recovery Menu");
         this->categories[HOMEBREW]->addEntry(recovery_menu);
     }
-    
-    /*
-    if (UMD::isUMD()){
-        this->categories[GAME]->addEntry(new UMD());
-    }
-    */
     
     // scan eboots
     this->findEboots("ms0:/PSP/VHBL/");
@@ -434,7 +428,18 @@ void GameManager::updateGameList(const char* path){
           || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ef0:/ISO/", 9) == 0
           || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ms0:/PSP/APPS/", 9) == 0
       ){
+        int icon_status = self->dynamicIconRunning;
+        if (icon_status == ICONS_LOADING){
+            self->waitIconsLoad();
+            self->pauseIcons();
+        }
+        SystemMgr::pauseDraw();
         self->selectedCategory = -1;
+        SystemMgr::resumeDraw();
+        if (icon_status == ICONS_LOADING){
+            self->resumeIcons();
+            self->waitIconsLoad();
+        }
     }
 }
 

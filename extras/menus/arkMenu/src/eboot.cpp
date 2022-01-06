@@ -16,15 +16,15 @@ Eboot::Eboot(string path){
 Eboot::~Eboot(){
     if (this->icon0 != common::getImage(IMAGE_NOICON) && this->icon0 != common::getImage(IMAGE_WAITICON))
         delete this->icon0;
+    if (this->header != NULL) free(this->header);
 }
 
 void Eboot::readHeader(){
+    this->header = NULL;
     void* data = malloc(sizeof(PBPHeader));
-    
     FILE* fp = fopen(this->path.c_str(), "rb");
     fread(data, 1, sizeof(PBPHeader), fp);
     fclose(fp);
-    
     this->header = (PBPHeader*)data;
 }
 

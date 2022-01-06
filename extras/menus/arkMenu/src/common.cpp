@@ -143,8 +143,6 @@ static void missingFileHandler(const char* filename){
 
 SceOff common::findPkgOffset(const char* filename, unsigned* size){
     
-    printf("finding file %s\n", filename);
-    
     FILE* pkg = fopen(PKG_PATH, "rb");
     if (pkg == NULL)
         return 0;
