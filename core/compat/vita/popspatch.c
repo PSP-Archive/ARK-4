@@ -109,8 +109,6 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     int startResult = 0;
 
     // load spu module
-    /*
-    memset(path, 0, ARK_PATH_SIZE);
     strcpy(path, ark_config->arkpath);
     strcat(path, "PS1SPU.PRX");
     result = sceKernelLoadModule(path, 0, NULL);
@@ -123,18 +121,15 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     sctrlGetInitPARAM("DISC_ID", &paramType, &paramLength, g_DiscID);
     startResult = sceKernelStartModule(result, strlen(g_DiscID) + 1, g_DiscID, &status, NULL);
     printk("%s: fname %s load 0x%08X, start 0x%08X -> 0x%08X\r\n", __func__, path, result, startResult, status);
-    */
     
-    // load pops module
-    //memset(path, 0, ARK_PATH_SIZE);
+    // load pops module from ARK savedata path
     strcpy(path, ark_config->arkpath);
     strcat(path, "POPS.PRX");
-    //strcpy(path, "flash0:/kd/pops_660.prx");
-    
-    //initScreen(NULL);
-    //PRTSTR1("Loading POPS at: %s", path);
-    
     result = sceKernelLoadModule(path, flag, opt);
+
+    if (result<0) result = sceKernelLoadModule("flash0:/kd/pops_660.prx", flag, opt); // load pops modules from injected flash0
+    if (result<0) result = sceKernelLoadModule(fname, flag, opt); // passthrough
+
     printk("%s: fname %s flag 0x%08X -> 0x%08X\r\n", __func__, fname, flag, result);
 
     //PRTSTR1("Load result: %p", result);
