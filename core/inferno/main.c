@@ -106,7 +106,7 @@ int module_start(SceSize args, void* argp)
 	sctrlSEGetConfig(&config);
 
 	if(psp_model != PSP_1000 && key_config == PSP_INIT_KEYCONFIG_GAME) {
-		int bufsize = 64 * 1024;
+		int bufsize = 1024;
 		int number = 64;
 		infernoCacheSetPolicy(CACHE_POLICY_LRU);
 		infernoCacheInit(bufsize, number);
