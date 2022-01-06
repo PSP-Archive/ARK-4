@@ -414,8 +414,12 @@ void GameManager::control(Controller* pad){
         }
     }
     else if (pad->select()){
-        common::playMenuSound();
-        GameManager::updateGameList(NULL);
+        if (selectedCategory >= 0){
+            common::playMenuSound();
+            self->waitIconsLoad();
+            GameManager::updateGameList(NULL);
+            self->waitIconsLoad();
+        }
     }
     /*
     else if (pad->decline()){
@@ -432,7 +436,6 @@ void GameManager::updateGameList(const char* path){
       ){
         int icon_status = self->dynamicIconRunning;
         if (icon_status == ICONS_LOADING){
-            self->waitIconsLoad();
             self->pauseIcons();
         }
         SystemMgr::pauseDraw();
@@ -440,7 +443,6 @@ void GameManager::updateGameList(const char* path){
         SystemMgr::resumeDraw();
         if (icon_status == ICONS_LOADING){
             self->resumeIcons();
-            self->waitIconsLoad();
         }
     }
 }

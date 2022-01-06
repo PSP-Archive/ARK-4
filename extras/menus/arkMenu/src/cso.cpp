@@ -321,22 +321,7 @@ bool Cso::isPatched(){
 }
 
 void Cso::doExecute(){
-    struct SceKernelLoadExecVSHParam param;
-    
-    memset(&param, 0, sizeof(param));
-
-    if (this->isPatched())
-        param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
-    else
-        param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
-
-    int runlevel = (this->path[0]=='e' && this->path[1]=='f')? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
-
-    param.key = "umdemu";
-    param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
-    sctrlSESetBootConfFileIndex(ISO_DRIVER);
-    sctrlSESetUmdFile((char*)this->path.c_str());
-    sctrlKernelLoadExecVSHWithApitype(runlevel, this->path.c_str(), &param);
+    Iso::executeISO(this->path.c_str(), this->isPatched());
 }
 
 
@@ -375,11 +360,9 @@ void Cso::getInitialBlock(FILE* fp, u8* block_out){
 
     fs = min((int)fs, 200);
 
-    //compressed = (uint8_t*)malloc(fs);
     fread(compressed, 1, fs, fp);
 
     zlib_decompress(compressed, block_out, is_lz4);
-    //free(compressed);
     unsigned start = (block_out[158] + block_out[159] + block_out[160] + block_out[161]) * 4;
     fseek(fp, start+28, SEEK_SET);
 
@@ -392,10 +375,8 @@ void Cso::getInitialBlock(FILE* fp, u8* block_out){
 
     fseek(fp, offset, SEEK_SET);
 
-    //compressed = (uint8_t*)malloc(size);
     fread(compressed, 1, size, fp);
     zlib_decompress(compressed, block_out, is_lz4);
-    //free(compressed);
 
 }
 
@@ -413,7 +394,7 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
         *size_out = 0;
 
     void* buffer = NULL;
-    uint8_t* compressed;
+    uint8_t compressed[SECTOR_SIZE];
 
     common::upperString(file);
 
@@ -448,7 +429,6 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
             buffer = memalign(64, buf_size);
             int compressed_size = 0;
             u32 buf = (u32)buffer;
-            compressed = (uint8_t*)malloc(SECTOR_SIZE);
             for (int x = 1; x<b_iter; x++){
 
                 unsigned cur_pos = ftell(fp);
@@ -488,8 +468,6 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
                 }
                 fseek(fp, cur_pos+4, SEEK_SET);
             }
-
-            free(compressed);
 
             if (size_out != NULL)
                 *size_out = buf_size;

@@ -1,12 +1,11 @@
 TARGET = vshctrl
-OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o hibernation_delete.o $(ARKROOT)/common/functions.o
+OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o hibernation_delete.o $(ARKROOT)/common/functions.o $(ARKROOT)/libs/ansi-c/strsafe.o
 IMPORTS = 
 
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/core/systemctrl/include
 CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
 
-CFLAGS += -DCONFIG_661=1
-PSP_FW_VERSION = 661
+PSP_FW_VERSION = 660
 
 OBJS += $(IMPORTS)
 all: $(TARGET).prx
@@ -21,7 +20,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs/
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsystemctrl_kernel -lansic -lcolordebugger
+LIBS = -lpspsystemctrl_kernel
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak

@@ -84,7 +84,7 @@ int strncasecmp(const char *s1, const char *s2, size_t n)
         c1 = tolower(*p1);
         c2 = tolower(*p2);
 
-        if (--n == 0 || c1 == '\0')
+        if (--n == 0 || c1 == '\0' || c2 == '\0')
             break;
 
         ++p1;
