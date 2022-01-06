@@ -94,7 +94,7 @@ int init_inferno(void)
 // 0x00000000
 int module_start(SceSize args, void* argp)
 {
-	int ret, key_config;
+	int ret, apitype;
 	SEConfig config;
 
 	psp_model = sceKernelGetModel();
@@ -102,11 +102,11 @@ int module_start(SceSize args, void* argp)
 
 	printk("Inferno started FW=0x%08X %02dg\n", (uint)psp_fw_version, (int)psp_model+1);
 
-	key_config = sceKernelApplicationType();
+	apitype = sceKernelInitApitype();
 	sctrlSEGetConfig(&config);
 
-	if(psp_model != PSP_1000 && key_config == PSP_INIT_KEYCONFIG_GAME) {
-		int bufsize = 1024;
+	if(psp_model != PSP_1000 && (apitype == 0x123 || apitype == 0x125)) {
+		int bufsize = 32*1024;
 		int number = 64;
 		infernoCacheSetPolicy(CACHE_POLICY_LRU);
 		infernoCacheInit(bufsize, number);
