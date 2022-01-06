@@ -403,6 +403,7 @@ void GameManager::control(Controller* pad){
         this->moveRight();
     else if (pad->accept()){
         if (selectedCategory >= 0 && !categories[selectedCategory]->isAnimating()){
+            common::playMenuSound();
             this->execApp();
         }
     }
@@ -413,6 +414,7 @@ void GameManager::control(Controller* pad){
         }
     }
     else if (pad->select()){
+        common::playMenuSound();
         GameManager::updateGameList(NULL);
     }
     /*
@@ -444,35 +446,31 @@ void GameManager::updateGameList(const char* path){
 }
 
 void GameManager::execApp(){
-    //this->waitIconsLoad();            
     if (common::getConf()->fast_gameboot){
         this->endAllThreads();
         this->getEntry()->execute();
     }
 
-    this->pauseIcons();
     loadingData = true;
-    SystemMgr::pauseDraw();
+    this->waitIconsLoad();
     this->getEntry()->getTempData1();
     loadingData = false;
-    animAppear();
     if (this->pmfPrompt()){
-        this->resumeIcons();
-        SystemMgr::resumeDraw();
-        //this->waitIconsLoad(true);
         this->endAllThreads();
         this->getEntry()->execute();
     }
-    animDisappear();
     this->getEntry()->freeTempData();
-    SystemMgr::resumeDraw();
-    this->resumeIcons();
     sceKernelDelayThread(0);
 }
 
 bool GameManager::pmfPrompt(){
 
+
     bool ret;
+    
+    SystemMgr::pauseDraw();
+    
+    animAppear();
     
     Entry* entry = this->getEntry();
 
@@ -509,6 +507,10 @@ bool GameManager::pmfPrompt(){
             }
         }
     }
-    sceKernelDelayThread(100000);
+    if (!ret){
+        common::playMenuSound();
+        animDisappear();
+    }
+    SystemMgr::resumeDraw();
     return ret;
 }

@@ -85,7 +85,7 @@ void patchVitaPopsSpu(SceModule2 * mod)
 	// Kill Loop #6
 	_sw(NOP, text_addr + 0x00006BD0);
     // Replace Media Engine SPU Background Thread Starter
-    if (spu_plugin<0) // don't patch pops if spu plugin loaded
+    //if (spu_plugin<0) // don't patch pops if spu plugin loaded
         hookImportByNID(mod, "sceMeAudio", 0xDE630CD2, _sceMeAudio_DE630CD2);
 }
 
@@ -127,17 +127,17 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     
     // load pops module
     //memset(path, 0, ARK_PATH_SIZE);
-    //strcpy(path, ark_config->arkpath);
-    //strcat(path, "POPS.PRX");
-    strcpy(path, "flash0:/kd/pops_660.prx");
+    strcpy(path, ark_config->arkpath);
+    strcat(path, "POPS.PRX");
+    //strcpy(path, "flash0:/kd/pops_660.prx");
     
-    initScreen(NULL);
-    PRTSTR1("Loading POPS at: %s", path);
+    //initScreen(NULL);
+    //PRTSTR1("Loading POPS at: %s", path);
     
     result = sceKernelLoadModule(path, flag, opt);
     printk("%s: fname %s flag 0x%08X -> 0x%08X\r\n", __func__, fname, flag, result);
 
-    PRTSTR1("Load result: %p", result);
+    //PRTSTR1("Load result: %p", result);
     sceKernelDelayThread(3000000);
 
     return result;
