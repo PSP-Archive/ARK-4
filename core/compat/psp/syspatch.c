@@ -100,15 +100,8 @@ void settingsHandler(char* path){
         usb_charge(); // enable usb charging
     }
     else if (strcasecmp(path, "highmem") == 0){ // enable high memory
-        if (psp_model > PSP_1000) { // prevent operation in PSP 1K
-            int apitype = sceKernelInitApitype();
-            if (apitype !=  0x210 && apitype !=  0x220 // prevent operation in VSH
-                  && apitype != 0x144 && apitype != 0x155 // prevent operation in pops
-              ){
-                patch_partitions();
-                flushCache();
-            }
-        }
+        patch_partitions();
+        flushCache();
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup
@@ -162,15 +155,8 @@ void PSPOnModuleStart(SceModule2 * mod){
     }
     
     if (strcmp(mod->modname, "sceLoadExec") == 0){
-        if (psp_model > PSP_1000) { // prevent operation in PSP 1K
-            int apitype = sceKernelInitApitype();
-            if (apitype !=  0x210 && apitype !=  0x220 // prevent operation in VSH
-                  && apitype != 0x144 && apitype != 0x155 // prevent operation in pops
-              ){
-                prepatch_partitions();
-                goto flush;
-            }
-        }
+        prepatch_partitions();
+        goto flush;
     }
     
     if(booted == 0)
@@ -216,14 +202,7 @@ void PSPSysPatch(){
     }
     
     if ((mod = sceKernelFindModuleByName("sceLoadExec")) != NULL){
-        if (psp_model > PSP_1000) { // prevent operation in PSP 1K
-            int apitype = sceKernelInitApitype();
-            if (apitype !=  0x210 && apitype !=  0x220 // prevent operation in VSH
-                  && apitype != 0x144 && apitype != 0x155 // prevent operation in pops
-              ){
-                prepatch_partitions();
-            }
-        }
+        prepatch_partitions();
     }
     
     if((mod = sceKernelFindModuleByName("sceMediaSync")) != NULL) {

@@ -17,6 +17,8 @@ class SnowAnim : public Anim {
 
     private:
         Snowflake snowflakes[MAX_SNOWFLAKES];
+        
+        void printSnowFlake(int x, int y, float size);
     
     public:
         SnowAnim();

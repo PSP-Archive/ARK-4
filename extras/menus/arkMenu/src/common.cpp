@@ -360,13 +360,13 @@ void common::printText(float x, float y, const char* text, u32 color, float size
     if (glow){
         float t = (float)((float)(clock() % CLOCKS_PER_SEC)) / ((float)CLOCKS_PER_SEC);
         int val = (t < 0.5f) ? t*511 : (1.0f-t)*511;
-        color = (0xFF<<24)+(val<<16)+(val<<8)+(val);
+        secondColor = (0xFF<<24)+(val<<16)+(val<<8)+(val);
     }
     if (int(scroll)){
         arg5 = INTRAFONT_SCROLL_LEFT;
     }
     
-    intraFontSetStyle(font, size, color, 0, 0.f, arg5);
+    intraFontSetStyle(font, size, color, secondColor, 0.f, arg5);
 
     if (int(scroll)){
         if (x != scrollX || y != scrollY){

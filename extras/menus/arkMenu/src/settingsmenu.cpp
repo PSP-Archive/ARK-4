@@ -77,6 +77,11 @@ void SettingsMenu::draw(){
             y = (272-max_height)/2;
             common::getImage(IMAGE_DIALOG)->draw_scale(x, y, MENU_W, max_height);
         
+            if (max_options > PAGE_SIZE){
+                int height = max_height/max_options;
+                common::getImage(IMAGE_DIALOG)->draw_scale(x-10, y + (index*height), 5, height);
+            }
+        
             int yoffset = y+30;
             int xoffset = x+10;
         

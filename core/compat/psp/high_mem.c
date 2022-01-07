@@ -89,26 +89,27 @@ static void modify_partition(MemPart *part)
     ((u32*)(meminfo[4]))[5] = (size << 21) | 0xFC;
 }
 
-int is_homebrews_runlevel(void)
-{
-    int apitype;
+int prevent_highmem(){
 
-    apitype = sceKernelInitApitype();
-    
-    if(apitype == 0x152 || apitype == 0x141) {
-        return 1;
-    }
+    if (psp_model == PSP_1000) return 1;
+
+    int apitype = sceKernelInitApitype();
+
+    if (apitype ==  0x210 || apitype ==  0x220 // prevent operation in VSH
+       || apitype == 0x144 || apitype == 0x155 // prevent operation in pops
+       || apitype == 0x123 || apitype == 0x125 // prevent operation in retail games
+    ) return 1; 
 
     return 0;
 }
 
 void prepatch_partitions(void)
 {
-    MemPart p8, p11;
-
-    if(!is_homebrews_runlevel()) {
+    if(prevent_highmem()){
         return;
     }
+
+    MemPart p8, p11;
 
     p8.meminfo = get_partition(8);
     p11.meminfo = get_partition(11);
@@ -130,6 +131,10 @@ void prepatch_partitions(void)
 
 void patch_partitions(void) 
 {
+
+    if (prevent_highmem()){
+        return;
+    }
 
     MemPart p2, p9;
     int max_user_part_size;

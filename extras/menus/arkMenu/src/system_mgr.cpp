@@ -115,7 +115,7 @@ static void drawOptionsMenuCommon(){
         }
         entries[i]->getIcon()->draw(x+menu_anim_state, optionsAnimState+15);
         if (i==pEntryIndex && optionsDrawState==2)
-            common::printText(x+25, 130, entries[i]->getName().c_str(), LITEGRAY, SIZE_BIG);
+            common::printText(x+25, 130, entries[i]->getName().c_str(), LITEGRAY, SIZE_BIG, 1);
         x += 160;
     }
     switch (menu_draw_state){
