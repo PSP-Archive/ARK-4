@@ -13,10 +13,13 @@ SnowAnim::SnowAnim(){
 SnowAnim::~SnowAnim(){
 }
 
+void SnowAnim::printSnowFlake(int x, int y, float size){
+    intraFontSetStyle(common::getFont(), size, LITEGRAY, 0, 0.f, INTRAFONT_WIDTH_VAR);
+    intraFontPrint(common::getFont(), x, y, ".");
+}
 
 void SnowAnim::draw()
 {
-
   int a=0, sway=0;
      for (a = 0;a<100;a++) {
           sway = rand()%4;
@@ -33,13 +36,13 @@ void SnowAnim::draw()
           }
           switch(snowflakes[a].flake){
           case 0:
-                common::printText((float)(snowflakes[a].x), (float)(snowflakes[a].y), ".", LITEGRAY, 0.5f);
+                printSnowFlake((float)(snowflakes[a].x), (float)(snowflakes[a].y), 0.5f);
                 break;
           case 1:
-                common::printText((float)(snowflakes[a].x), (float)(snowflakes[a].y), ".", LITEGRAY, 1.0f);
+                printSnowFlake((float)(snowflakes[a].x), (float)(snowflakes[a].y), 1.0f);
                 break;
           case 2:
-                common::printText((float)(snowflakes[a].x), (float)(snowflakes[a].y), ".", LITEGRAY, 2.f);
+                printSnowFlake((float)(snowflakes[a].x), (float)(snowflakes[a].y), 2.f);
                 break;
           }
      }
