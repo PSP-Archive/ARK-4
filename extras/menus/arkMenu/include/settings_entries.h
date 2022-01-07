@@ -88,7 +88,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[2];
 } swap_buttons = {
-    "Swap X/O buttons",
+    "Swap X and O buttons",
     2,
     0,
     &(common::getConf()->swap_buttons),
@@ -100,13 +100,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[8];
+    char* options[9];
 } animations = {
     "Menu animation",
-    8,
+    9,
     0,
     &(common::getConf()->animation),
-    {"Default", "Waves", "Sprites", "Fire", "Tetris", "Matrix", "Snow", "None"}
+    {"Default", "Waves", "Sprites", "Fire", "Tetris", "Matrix", "Snow", "Game of Life", "None"}
 };
 
 settings_entry* settings_entries[] = {

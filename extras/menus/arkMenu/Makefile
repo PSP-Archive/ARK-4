@@ -40,6 +40,7 @@ OBJS = \
 		src/anim/tetris.o \
 		src/anim/matrix.o \
 		src/anim/snow.o \
+		src/anim/gol.o \
 		src/anim/noanim.o \
 		src/pmf/pmf.o \
 		src/pmf/pmf_video.o \
