@@ -52,6 +52,10 @@ enum images {
 
 #define PKG_PATH "DATA.PKG"
 
+#define MS0_PATH 0x3A30736D // 'ms0:' as u32
+#define EF0_PATH 0x3A306665 // 'ef0:' as u32
+
+
 typedef struct {
     unsigned char fast_gameboot; // skip pmf/at3 and gameboot animation
     unsigned char language; // default language for the menu

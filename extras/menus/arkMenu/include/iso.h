@@ -146,14 +146,15 @@ class Iso : public Entry
         int read(void * destination, unsigned size, unsigned count, void * p);
         int seek(void * p, unsigned bytes, int flag);
 
+        static void executeISO(const char* path, bool is_patched);
+
     protected:
 
         FILE * stream;
         primary_volume_descriptor pvd;
         path_entry main_path_entry;
         void doExecute();
-        
-        virtual bool isPatched();
+        bool isPatched();
 };
 
 #endif

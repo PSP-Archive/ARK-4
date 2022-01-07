@@ -1,0 +1,109 @@
+#include "../config/sdk.h"
+#include "common.h"
+
+
+void memcpy(char *dest, char *src, int size)
+{
+  while (size--)
+  {
+    *dest++ = *src++;
+  }
+}
+
+
+int strlen(char * xistr)
+{
+  int i = 0;
+  while (*xistr)
+  {
+    i++;
+  }
+  return(i);
+}
+
+
+void memdump()
+{
+  int file;
+
+  file = sceIoOpen("ms0:/mem.dmp",PSP_O_CREAT | PSP_O_TRUNC | PSP_O_RDWR, 0777);
+  sceIoWrite(file,0x08800000, 0x01800000);
+  sceIoClose(file);
+}
+
+
+int Sleep(unsigned int xicount)
+{
+  int ldummy = 2;
+  unsigned int i;
+  unsigned int j;
+
+  for (i=0; i < xicount; i++)
+  {
+    for (j=0; j < 65000; j++)
+    {
+      ldummy = ldummy * ldummy;
+    }
+  }
+
+  return(ldummy);
+}
+
+
+/*****************************************************************************/
+/* Screenshot code borrowed from PSPSokoban: Niklas Nordebo                  */
+/*****************************************************************************/
+#define PIXELSIZE 4
+void createScreenshot(char* savePath) {
+
+  unsigned char  bmpHeader24[] = { 0x42, 0x4d, 0x38, 0xfa, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x36, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0xe0, 0x01, 0x00, 0x00, 0x10, 0x01, 0x00, 0x00, 0x01, 0x00, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x12, 0x0b, 0x00, 0x00, 0x12, 0x0b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+  unsigned char  buffer[SCREEN_WIDTH*3];
+  unsigned char  r,g,b;
+  int bufferIndex = 0;
+  unsigned long p;
+  int file;
+  unsigned char *vptr;
+  unsigned char *vptr0;
+  int i=0;
+  int e=0;
+
+  file = sceIoOpen(savePath,PSP_O_CREAT | PSP_O_TRUNC | PSP_O_RDWR, 0777);
+
+  // write bmp header
+  sceIoWrite(file,bmpHeader24,54);
+
+  // write bmp data
+  vptr0 = GetVramAddr(0,271);
+
+  for(i=0; i<SCREEN_HEIGHT; i++)
+    {
+      vptr=vptr0;
+      for(e=0; e<480; e++)
+	{
+	  p = *(unsigned long *)vptr;
+	  r = (unsigned char)(p & 0x000000FFL);
+	  g = (unsigned char)((p & 0x0000FF00L) >> 8);
+	  b = (unsigned char)((p & 0x00FF0000L) >> 16);
+
+	  buffer[bufferIndex] = b;
+	  bufferIndex++;
+	  buffer[bufferIndex] = g;
+	  bufferIndex++;
+	  buffer[bufferIndex] = r;
+	  bufferIndex++;
+
+	  vptr+=PIXELSIZE;
+	}
+      // write chunk
+      sceIoWrite(file,buffer,480*3);
+      bufferIndex=0;
+      vptr0-=LINESIZE*4;
+    }
+
+  // bmp end
+  unsigned char end[] = { 0x00, 0x00 };
+  sceIoWrite(file,end,2);
+
+  sceIoClose(file);
+
+}

@@ -23,7 +23,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS = -nostartfiles
-LIBS = -lpsid -lpspsystemctrl_kernel -lpspsemaphore -lpsprtc -lpspaudio -lgraphics -lcolordebugger
+LIBS = -lpspsystemctrl_kernel -lpspsemaphore -lpsprtc -lpspaudio
 
 include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)

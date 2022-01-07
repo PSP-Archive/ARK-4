@@ -50,10 +50,6 @@ class Eboot : public Entry{
         void readFile(void* dst, unsigned offset, unsigned size);
         void extractFile(const char * name, unsigned block, unsigned size);
         
-        void executeHomebrew();
-        void executePSN();
-        void executePOPS();
-        
     public:
     
         Eboot(string path);
@@ -73,6 +69,11 @@ class Eboot : public Entry{
         static bool isEboot(const char* path);
         static int getEbootType(const char* path);
         static string fullEbootPath(string path, string app);
+        
+        static void executeEboot(const char* path);
+        static void executeHomebrew(const char* path);
+        static void executePSN(const char* path);
+        static void executePOPS(const char* path);
 };
 
 #endif

@@ -276,22 +276,26 @@ char * Iso :: get_name_end(const char * str)
 };
 
 void Iso::doExecute(){
+    Iso::executeISO(this->path.c_str(), this->isPatched());
+}
+
+void Iso::executeISO(const char* path, bool is_patched){
     struct SceKernelLoadExecVSHParam param;
     
     memset(&param, 0, sizeof(param));
 
-    if (this->isPatched())
+    if (is_patched)
         param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
     else
         param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
 
-    int runlevel = (this->path[0]=='e' && this->path[1]=='f')? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
+    int runlevel = (*(u32*)path == EF0_PATH)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
 
     param.key = "umdemu";
     param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
     sctrlSESetBootConfFileIndex(ISO_DRIVER);
-    sctrlSESetUmdFile((char*)this->path.c_str());
-    sctrlKernelLoadExecVSHWithApitype(runlevel, this->path.c_str(), &param);
+    sctrlSESetUmdFile((char*)path);
+    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 
 char* Iso::getType(){

@@ -185,6 +185,10 @@ int patch_bootconf_psp(char* buffer, int length){
     newsize = AddPRX(buffer, "/kd/init.prx", PATH_PSPCOMPAT+sizeof(PATH_FLASH0)-2, 0x000000EF);
     if (newsize > 0) result = newsize;
     
+    // Insert Stargate No-DRM Engine
+    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, UMDEMU_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    
     return result;
 
 }
@@ -193,6 +197,10 @@ int patch_bootconf_vita(char* buffer, int length){
     int newsize=-1, result=length;
     
     newsize = AddPRX(buffer, "/kd/init.prx", PATH_VITACOMPAT+sizeof(PATH_FLASH0)-2, 0x000000EF);
+    if (newsize > 0) result = newsize;
+    
+    // Insert Stargate No-DRM Engine
+    newsize = AddPRX(buffer, "/kd/kermit_me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, UMDEMU_RUNLEVEL);
     if (newsize > 0) result = newsize;
     
     return result;
@@ -227,9 +235,6 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
         if (IS_PSP(ark_config)){
             newsize = patch_bootconf_psp(buffer, length);
             if (newsize > 0) result = newsize;
-            // Insert Stargate No-DRM Engine
-            newsize = AddPRX(buffer, "/kd/me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, GAME_RUNLEVEL | UMDEMU_RUNLEVEL);
-            if (newsize > 0) result = newsize;
         }
         else if (IS_VITA(ark_config)){
             if (IS_VITA_POPS(ark_config)){
@@ -238,9 +243,6 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
             }
             else{
                 newsize = patch_bootconf_vita(buffer, length);
-                if (newsize > 0) result = newsize;
-                // Insert Stargate No-DRM Engine
-                newsize = AddPRX(buffer, "/kd/kermit_me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, GAME_RUNLEVEL | UMDEMU_RUNLEVEL);
                 if (newsize > 0) result = newsize;
             }
         }

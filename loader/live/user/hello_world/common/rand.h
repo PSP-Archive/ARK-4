@@ -1,0 +1,25 @@
+#ifndef RAND_H
+#define RAND_H
+
+#define N 624
+#define M 397
+#define MATRIX_A 0x9908b0dfUL   /* constant vector a */
+#define UMASK 0x80000000UL /* most significant w-r bits */
+#define LMASK 0x7fffffffUL /* least significant r bits */
+#define MIXBITS(u,v) ( ((u) & UMASK) | ((v) & LMASK) )
+#define TWIST(u,v) ((MIXBITS(u,v) >> 1) ^ ((v)&1UL ? MATRIX_A : 0UL))
+
+static unsigned long state[N]; /* the array for the state vector  */
+static int left = 1;
+static int initf = 0;
+static unsigned long *next;
+
+
+static void init_genrand(unsigned long s);
+static void init_by_array(unsigned long init_key[], int key_length);
+static void next_state();
+unsigned long genrand_int32(void);
+static double genrand_real(void);
+
+
+#endif

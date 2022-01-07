@@ -24,6 +24,7 @@ OBJS = \
 		../arkMenu/src/anim/fire.o \
 		../arkMenu/src/anim/tetris.o \
 		../arkMenu/src/anim/matrix.o \
+		../arkMenu/src/anim/snow.o \
 		../arkMenu/src/anim/noanim.o \
 #		../arkMenu/src/browser.o \
 

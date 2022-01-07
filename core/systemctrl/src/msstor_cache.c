@@ -27,6 +27,7 @@
 #include <globals.h>
 #include "systemctrl.h"
 #include "systemctrl_private.h"
+#include "imports.h"
 
 //#define CHECK_MODE
 #undef CHECK_MODE
@@ -342,6 +343,11 @@ static int msstorIoUnk21Cache(PspIoDrvFileArg *arg)
 // Initialize "ms" Driver Cache
 int msstorCacheInit(const char* driver, int bufSize)
 {
+
+    // Get Application Type
+    int key_config = sceKernelApplicationType();
+    
+    if(key_config == PSP_INIT_KEYCONFIG_POPS) return 5; // PS1 Emulator = No cache
 
     // Find Driver
     PspIoDrv * pdrv = sctrlHENFindDriver(driver);

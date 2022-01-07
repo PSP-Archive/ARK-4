@@ -207,54 +207,55 @@ bool Eboot::isEboot(const char* path){
     return (common::getMagic(path, 0) == EBOOT_MAGIC);
 }
 
-void Eboot::executeHomebrew(){
-    struct SceKernelLoadExecVSHParam param;
-    
-    memset(&param, 0, sizeof(param));
-    
-    int runlevel;
-    if (this->name == "Recovery Menu") runlevel = RECOVERY_RUNLEVEL;
-    else if (this->path[0]=='e') runlevel = HOMEBREW_RUNLEVEL_GO;
-    else runlevel = HOMEBREW_RUNLEVEL;
-    
-    param.args = strlen(this->path.c_str()) + 1;
-    param.argp = (char*)this->path.c_str();
-    param.key = "game";
-    sctrlKernelLoadExecVSHWithApitype(runlevel, this->path.c_str(), &param);
+void Eboot::doExecute(){
+    Eboot:executeEboot(this->path.c_str());
 }
 
-void Eboot::executePSN(){
+void Eboot::executeHomebrew(const char* path){
     struct SceKernelLoadExecVSHParam param;
     
     memset(&param, 0, sizeof(param));
     
-    int runlevel = (this->path[0]=='e')? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
+    int runlevel = (*(u32*)path == EF0_PATH)? HOMEBREW_RUNLEVEL_GO : HOMEBREW_RUNLEVEL;
+    
+    param.args = strlen(path) + 1;
+    param.argp = (char*)path;
+    param.key = "game";
+    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+}
+
+void Eboot::executePSN(const char* path){
+    struct SceKernelLoadExecVSHParam param;
+    
+    memset(&param, 0, sizeof(param));
+    
+    int runlevel = (*(u32*)path == EF0_PATH)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
 
     param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
     param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
     param.key = "umdemu";
     sctrlSESetBootConfFileIndex(PSN_DRIVER);
     sctrlSESetUmdFile("");
-    sctrlKernelLoadExecVSHWithApitype(runlevel, this->path.c_str(), &param);
+    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 
-void Eboot::executePOPS(){
+void Eboot::executePOPS(const char* path){
     struct SceKernelLoadExecVSHParam param;
     
     memset(&param, 0, sizeof(param));
     
-    int runlevel = (this->path[0]=='e' && this->path[1]=='f')? POPS_RUNLEVEL_GO : POPS_RUNLEVEL;
+    int runlevel = (*(u32*)path == EF0_PATH)? POPS_RUNLEVEL_GO : POPS_RUNLEVEL;
     
-    param.args = strlen(this->path.c_str()) + 1;
-    param.argp = (char*)this->path.c_str();
+    param.args = strlen(path) + 1;
+    param.argp = (char*)path;
     param.key = "pops";
-    sctrlKernelLoadExecVSHWithApitype(runlevel, this->path.c_str(), &param);
+    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 
-void Eboot::doExecute(){
-    switch (Eboot::getEbootType(this->path.c_str())){
-    case TYPE_HOMEBREW:    this->executeHomebrew();    break;
-    case TYPE_PSN:        this->executePSN();            break;
-    case TYPE_POPS:        this->executePOPS();        break;
+void Eboot::executeEboot(const char* path){
+    switch (Eboot::getEbootType(path)){
+    case TYPE_HOMEBREW:    Eboot::executeHomebrew(path);    break;
+    case TYPE_PSN:         Eboot::executePSN(path);         break;
+    case TYPE_POPS:        Eboot::executePOPS(path);        break;
     }
 }
