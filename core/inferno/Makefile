@@ -10,7 +10,7 @@ CFLAGS += -DDEBUG=$(DEBUG)
 endif
 
 LDFLAGS =  -nostartfiles -L $(ARKROOT)/libs
-LIBS = -lpsid -lpspsystemctrl_kernel -lpspsemaphore -lcolordebugger
+LIBS = -lpspsystemctrl_kernel -lpspsemaphore -lcolordebugger
 
 PSP_FW_VERSION = 660
 

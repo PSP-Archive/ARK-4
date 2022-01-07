@@ -29,6 +29,26 @@ void patchMediaSync(SceModule2* mod)
 {
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr+mod->text_size;
+ 
+    /*
+	// patch MsCheckMedia
+	// MsCheckMedia: mediasync used it to check EBOOT.PBP
+	// Let it return 1 always
+	MAKE_DUMMY_FUNCTION_RETURN_1(text_addr + 0x00000744);
+
+	// patch DiscCheckMedia
+	_sw(0x1000001D, text_addr + 0x000003C4);
+	_sw(0x1000001D, text_addr + 0x00000DC8);
+
+	// patch MsSystemFile
+	_sw(0x1000FFDB, text_addr + 0x000010B4);
+
+	// Patch check on homebrews without DISC_ID
+	_sw(NOP, text_addr + 0x00000FC0);
+	_sw(NOP, text_addr + 0x00000FDC); 
+    
+    return;
+    */
     
     int disc_patches = 2;
     int patches = 3+disc_patches;

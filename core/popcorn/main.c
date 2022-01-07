@@ -326,6 +326,8 @@ static int sceIoOpenPlain(const char *file, int flag, int mode)
 static int myIoOpen(const char *file, int flag, int mode)
 {
 	int ret;
+	
+	int k1 = pspSdkSetK1(0);
 
 	if(g_keys_bin_found || g_is_custom_ps1) {
 		if(strstr(file, PGD_ID)) {
@@ -343,12 +345,16 @@ static int myIoOpen(const char *file, int flag, int mode)
 
 	printk("%s: %s 0x%08X -> 0x%08X\n", __func__, file, flag, ret);
 
+    pspSdkSetK1(k1);
+
 	return ret;
 }
 
 static int myIoIoctl(SceUID fd, unsigned int cmd, void * indata, int inlen, void * outdata, int outlen)
 {
 	int ret;
+	
+	int k1 = pspSdkSetK1(0);
 
 	if(cmd == 0x04100001) {
 		printk("%s: setting PGD key\n", __func__);
@@ -383,6 +389,8 @@ static int myIoIoctl(SceUID fd, unsigned int cmd, void * indata, int inlen, void
 
 exit:
 	printk("%s: 0x%08X -> 0x%08X\n", __func__, fd, ret);
+
+    pspSdkSetK1(k1);
 
 	return ret;
 }
