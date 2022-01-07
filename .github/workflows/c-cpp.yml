@@ -1,0 +1,38 @@
+name: ARK-4
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Dependencies
+      run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget git
+    - name: Extract SDK
+      run: sudo 7z -o/usr/local/ x ./contrib/PC/PSPSDK/pspdev.7z 
+    - name: Change Permissions
+      run: sudo chown $GITHUB_USER:$GITHUB_USER /usr/local/pspdev && sudo chmod 755 -R /usr/local/pspdev
+    - name: Setup Path
+      run: echo "/usr/local/pspdev/bin" >> $GITHUB_PATH #export $GITHUB_PATH="/usr/local/pspdev/bin:$GITHUB_PATH" && export PSPDEV="/usr/local/pspdev"
+    - name: Print PATH
+      run: echo $GITHUB_PATH
+    - name: Fix libmpfr
+      run: sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+    - name: sign_np
+      run: cd .. && curl -OJL "https://github.com/swarzesherz/sign_np/archive/refs/tags/v1.0.2.tar.gz" && tar xvf sign_np-1.0.2.tar.gz && cd sign_np-1.0.2 && make && sudo cp sign_np /usr/local/pspdev/bin
+    - name: Making ARK-4
+      run: make
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        path: "./dist"
+
+
