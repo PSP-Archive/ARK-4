@@ -324,6 +324,7 @@ string GameManager::getInfo(){
     if (selectedCategory >= 0) return getEntry()->getName();
     else if (selectedCategory == -1) return "Loading games...";
     else if (selectedCategory == -2) return "No games available";
+    return "Unknown Menu State";
 }
 
 void GameManager::draw(){
