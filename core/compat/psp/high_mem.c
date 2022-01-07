@@ -91,16 +91,14 @@ static void modify_partition(MemPart *part)
 
 int prevent_highmem(){
 
-    if (psp_model == PSP_1000) return 1;
+    if (psp_model == PSP_1000) return 1; // disallow on 1K
 
     int apitype = sceKernelInitApitype();
 
-    if (apitype ==  0x210 || apitype ==  0x220 // prevent operation in VSH
-       || apitype == 0x144 || apitype == 0x155 // prevent operation in pops
-       || apitype == 0x123 || apitype == 0x125 // prevent operation in retail games
-    ) return 1; 
+    if (apitype == 0x141 || apitype == 0x152) return 0; // allow on homebrew
 
-    return 0;
+    // disallow by deafult
+    return 1;
 }
 
 void prepatch_partitions(void)
