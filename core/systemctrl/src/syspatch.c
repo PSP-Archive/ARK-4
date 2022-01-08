@@ -125,11 +125,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
     
-    if(strcmp(mod->modname, "Software_Legacy_Loader") == 0) {
-        colorDebug(0xff);
-        goto flush;
-    }
-    
     // Boot Complete Action not done yet
     if(booted == 0)
     {

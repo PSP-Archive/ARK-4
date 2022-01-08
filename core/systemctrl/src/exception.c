@@ -63,28 +63,6 @@ static const unsigned char regName[32][5] =
     "t8", "t9", "k0", "k1", "gp", "sp", "fp", "ra"
 };
 
-static int isValidAddr(u32 addr){
-    return (
-        (addr>=0x08800000&&addr<0x0A000000) // valid user address
-            || (addr>=0x88000000&&addr<0x88400000) // valid kernel address
-            || (addr>=0x00010000&&addr<0x00014000) // valid scratchpad address
-    );
-}
-
-// find crashing module
-static void printModuleByAddr(u32 p){
-    SceModule2* mod = sceKernelFindModuleByName("sceSystemMemoryManager");
-    while (mod){
-        u32 addr = mod->text_addr;
-        u32 top = addr+mod->text_size;
-        if (p >= addr && p < top){
-            PRTSTR2("From Module: %s @ %p", mod->modname, p-addr);
-            break;
-        }
-        mod = mod->next;
-    }
-}
-
 // Bluescreen Exception Handler
 static void ARKExceptionHandler(PspDebugRegBlock * regs)
 {
@@ -101,14 +79,20 @@ static void ARKExceptionHandler(PspDebugRegBlock * regs)
                 regName[i+1], regs->r[i+1], regName[i+2], regs->r[i+2], regName[i+3], regs->r[i+3]);
     }
     u32 epc = regs->epc;
-    if (isValidAddr(epc)){
-        PRTSTR1("Instruction at EPC: %p", _lw(epc)); // TODO: disassemble instruction
-        printModuleByAddr(epc);
+    {
+        SceModule2* mod = sceKernelFindModuleByAddress(epc);
+        if (mod != NULL){
+            PRTSTR1("Instruction at EPC: %p", _lw(epc)); // TODO: disassemble instruction
+            PRTSTR2("From Module: %s @ %p", mod->modname, epc-mod->text_addr);
+        }
     }
     u32 ra = regs->r[31];
-    if (isValidAddr(ra)){
-        PRTSTR1("Instruction at RA:  %p", _lw(ra)); // TODO: disassemble instruction
-        printModuleByAddr(ra);
+    {        
+        SceModule2* mod = sceKernelFindModuleByAddress(ra);
+        if (mod != NULL){
+            PRTSTR1("Instruction at RA:  %p", _lw(ra)); // TODO: disassemble instruction
+            PRTSTR2("From Module: %s @ %p", mod->modname, ra-mod->text_addr);
+        }
     }
     
     // present user menu for recovery options
