@@ -224,9 +224,9 @@ int TSRThread(SceSize args, void *argp)
     } else if (stop_flag == 5) {
         scePowerRequestSuspend();
     } else if (stop_flag == 6) {
-        exec_recovery_menu();
-    } else if (stop_flag == 7) {
         exec_launcher();
+    } else if (stop_flag == 7) {
+        exec_recovery_menu();
     }
 
     vpl_finish();

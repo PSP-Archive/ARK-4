@@ -30,8 +30,8 @@ extern int pwidth;
 #define TMENU_MAX 7
 
 enum{
-    TMENU_RECOVERY_MENU,
     TMENU_LAUNCHER,
+    TMENU_RECOVERY_MENU,
     TMENU_SHUTDOWN_DEVICE,
     TMENU_SUSPEND_DEVICE,
     TMENU_RESET_DEVICE,
@@ -42,7 +42,7 @@ enum{
 int item_fcolor[TMENU_MAX];
 const char *item_str[TMENU_MAX];
 
-static int menu_sel = TMENU_RECOVERY_MENU;
+static int menu_sel = TMENU_LAUNCHER;
 
 const int xyPoint[] ={0x98, 0x30, 0xC0, 0xA0, 0x70, 0x08, 0x0E, 0xA8};//data243C=
 const int xyPoint2[] ={0xB0, 0x30, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data2458=
@@ -73,7 +73,7 @@ int menu_draw(void)
         bc = (max_menu==menu_sel) ? 0xff8080 : 0xc00000ff;
         blit_set_color(fc,bc);
 
-        msg = g_messages[MSG_RECOVERY_MENU + max_menu];
+        msg = g_messages[MSG_CUSTOM_LAUNCHER + max_menu];
 
         if(msg) {
             switch(max_menu) {
@@ -86,10 +86,10 @@ int menu_draw(void)
                 case TMENU_RESET_VSH:
                     xPointer = 0xC0; //pointer[7];
                     break;
-                case TMENU_RECOVERY_MENU:
+                case TMENU_LAUNCHER:
                     xPointer = 168;
                     break;
-                case TMENU_LAUNCHER:
+                case TMENU_RECOVERY_MENU:
                     xPointer = 168;
                     break;
                 case TMENU_SHUTDOWN_DEVICE:
@@ -163,12 +163,12 @@ int menu_ctrl(u32 button_on)
         return 0;
 
     switch(menu_sel) {
-        case TMENU_RECOVERY_MENU:
+        case TMENU_LAUNCHER:
             if(direction==0) {
                 return 6; // Recovery menu flag
             }
             break;
-        case TMENU_LAUNCHER:
+        case TMENU_RECOVERY_MENU:
             if(direction==0) {
                 return 7; // Recovery menu flag
             }

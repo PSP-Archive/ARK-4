@@ -74,8 +74,8 @@ int scePaf_strcpy_660(char *path , const char *name);
 extern u32 psp_fw_version;
 
 enum {
-    MSG_RECOVERY_MENU,
     MSG_CUSTOM_LAUNCHER,
+    MSG_RECOVERY_MENU,
     MSG_SHUTDOWN_DEVICE,
     MSG_SUSPEND_DEVICE,
     MSG_RESET_DEVICE,

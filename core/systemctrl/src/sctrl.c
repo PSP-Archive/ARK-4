@@ -59,7 +59,7 @@ int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHPara
 	int k1 = pspSdkSetK1(0);
 	int res = -1;
 	int (*LoadExecVSHDisc)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
-	if (LoadExecVSHDisc) res = LoadExecVSHDisc(file, param);
+	res = LoadExecVSHDisc(file, param);
 	pspSdkSetK1(k1);
 	return res;
 }
@@ -69,7 +69,7 @@ int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExec
 	int k1 = pspSdkSetK1(0);
 	int res = -1;
 	int (*LoadExecVSHDiscUpdater)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xD4B49C4B);
-	if (LoadExecVSHDiscUpdater) res = LoadExecVSHDiscUpdater(file, param);
+	res = LoadExecVSHDiscUpdater(file, param);
 	pspSdkSetK1(k1);
 	return res;
 }
@@ -79,7 +79,7 @@ int sctrlKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam
 	int k1 = pspSdkSetK1(0);
 	int res = -1;
 	int (*LoadExecVSHMs1)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0x4FB44D27);
-	if (LoadExecVSHMs1) res = LoadExecVSHMs1(file, param);
+	res = LoadExecVSHMs1(file, param);
 	pspSdkSetK1(k1);
 	return res;
 }
@@ -89,7 +89,7 @@ int sctrlKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam
 	int k1 = pspSdkSetK1(0);	
 	int res = -1;
 	int (*LoadExecVSHMs2)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xD940C83C);
-	if (LoadExecVSHMs2) res = LoadExecVSHMs2(file, param);
+	res = LoadExecVSHMs2(file, param);
 	pspSdkSetK1(k1);
 	return res;
 }
@@ -99,7 +99,7 @@ int sctrlKernelLoadExecVSHMs3(const char *file, struct SceKernelLoadExecVSHParam
 	int k1 = pspSdkSetK1(0);	
 	int res = -1;
 	int (*LoadExecVSHMs3)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xCC6A47D2);
-	if (LoadExecVSHMs3) res = LoadExecVSHMs3(file, param);
+	res = LoadExecVSHMs3(file, param);
 	pspSdkSetK1(k1);
 	return res;
 }
@@ -109,7 +109,7 @@ int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam
 	int k1 = pspSdkSetK1(0);	
 	int res = -1;
 	int (*LoadExecVSHMs4)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0x00745486);
-	if (LoadExecVSHMs4) res = LoadExecVSHMs4(file, param);
+	res = LoadExecVSHMs4(file, param);
 	pspSdkSetK1(k1);
 	return res;
 }
@@ -119,7 +119,7 @@ int sctrlKernelLoadExecVSHEf2(const char *file, struct SceKernelLoadExecVSHParam
 	int k1 = pspSdkSetK1(0);
 	int res = -1;
 	int (*LoadExecVSHEf2)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0x032A7938);
-	if (LoadExecVSHEf2) res = LoadExecVSHEf2(file, param);
+	res = LoadExecVSHEf2(file, param);
 	pspSdkSetK1(k1);
 	return res;
 }

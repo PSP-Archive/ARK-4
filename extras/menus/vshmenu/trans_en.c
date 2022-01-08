@@ -19,8 +19,8 @@
 #include "macros.h"
 
 const char *g_messages_en[] = {
-    "RECOVERY MENU  ->",
     "CUSTOM LAUNCHER ->",
+    "RECOVERY MENU  ->",
     "SHUTDOWN DEVICE",
     "SUSPEND DEVICE",
     "HARD RESET",
