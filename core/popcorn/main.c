@@ -672,8 +672,8 @@ void patchPopsMgr(void)
             _sw(NOP, addr); // remove the check in scePopsManLoadModule that only allows loading module below the FW 3.XX
             patches--;
         }
-        else if (data == JAL(scePspNpDrm_driver_9A34AC9F)){
-            _sw(JAL(_scePspNpDrm_driver_9A34AC9F), addr); // hook scePspNpDrm_driver_9A34AC9F call
+        else if (data == JUMP(scePspNpDrm_driver_9A34AC9F)){
+            _sw(JUMP(_scePspNpDrm_driver_9A34AC9F), addr); // hook scePspNpDrm_driver_9A34AC9F call
             patches--;
         }
         else if (data == JUMP(sceNpDrmGetVersionKey)){

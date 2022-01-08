@@ -9,7 +9,7 @@
 #define GOL_W 480/GOL_COL
 #define GOL_H 272/GOL_ROW
 
-#define MAX_GENERATIONS 1000
+#define MAX_GENERATIONS 500
 
 // Game of Life background animation
 

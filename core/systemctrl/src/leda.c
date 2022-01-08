@@ -18,6 +18,7 @@ static int execute_apitype = 0x141;
 
 SceUID sceKernelLoadModuleMs2_bridge(const char *path, int flags, SceKernelLMOption *option)
 {
+    KernelLoadModuleMs2_orig = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x7BD53193);
 	SceUID ret = KernelLoadModuleMs2_orig(execute_apitype, path , flags , option);
     return ret;
 }
@@ -93,9 +94,10 @@ int SystemCtrlForKernel_07232EA5(void *func)
 	//u32 import = sctrlHENFindImport(mod, "ModuleMgrForKernel", 0x7BD53193); // init_addr+0x1C64
 	//if (import == init_addr+0x1C64) colorDebug(0xff00);
 	//else colorDebug(0xff);
-	u32 import = init_addr+0x1C64;
-	KernelLoadModuleMs2_orig = K_EXTRACT_IMPORT(import);
-	MAKE_JUMP(import, sceKernelLoadModuleMs2_patched);
+	//u32 import = init_addr+0x1C64;
+	//KernelLoadModuleMs2_orig = K_EXTRACT_IMPORT(import);
+	//MAKE_JUMP(import, sceKernelLoadModuleMs2_patched);
+    hookImportByNID(mod, "ModuleMgrForKernel", 0x7BD53193, sceKernelLoadModuleMs2_patched);
 
 	leda_previous = sctrlHENSetStartModuleHandler( LedaModulePatch );
 	flushCache();
