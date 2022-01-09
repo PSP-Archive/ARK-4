@@ -106,10 +106,8 @@ int module_start(SceSize args, void* argp)
 	sctrlSEGetConfig(&config);
 
 	if (apitype == 0x123 || apitype == 0x125) {
-		int bufsize = 64*1024;
-		int number = 64;
 		infernoCacheSetPolicy(CACHE_POLICY_LRU);
-		infernoCacheInit(bufsize, number);
+		infernoCacheInit(16 * 1024, 16); // 256KB cache
 	}
 
 	ret = setup_umd_device();
