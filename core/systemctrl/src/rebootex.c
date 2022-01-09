@@ -166,13 +166,10 @@ void backupRebootBuffer(void)
         setRebootConfigPRO(); // PRO
         // set ARK Config
         ark_config->exec_mode = PSP_ORIG;
-        if (sceKernelGetModel() == PSP_GO){
-            ark_config->arkpath[0] = 'e';
-            ark_config->arkpath[1] = 'f';
-        }
     }
     else{
         // can't handle it :P
+        reboot_funcs = NULL;
     }
     
     // Flush Cache

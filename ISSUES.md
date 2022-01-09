@@ -1,5 +1,5 @@
 # CFW Issues
-- PopsLoader not working. This plugin is heavily CFW-specific, need to make one for ARK.
+- PopsLoader not working.
 - Leda not working.
 - PS1 games on Vita are not working.
 
