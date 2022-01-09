@@ -68,27 +68,6 @@ void _sceMeAudio_DE630CD2(void * loopCore, void * stack)
     pspSdkSetK1(k1);
 }
 
-void patchVitaPopsSpu(SceModule2 * mod)
-{
-    // Fetch Text Address
-    unsigned int text_addr = mod->text_addr;
-    // Kill Loop #1
-	_sw(NOP, text_addr + 0x00006908);
-	// Kill Loop #2
-	_sw(NOP, text_addr + 0x00006D28);
-	// Kill Loop #3
-	_sw(NOP, text_addr + 0x00006778);
-	// Kill Loop #4
-	_sw(NOP, text_addr + 0x000065EC);
-	// Kill Loop #5
-	_sw(NOP, text_addr + 0x000070AC);
-	// Kill Loop #6
-	_sw(NOP, text_addr + 0x00006BD0);
-    // Replace Media Engine SPU Background Thread Starter
-    //if (spu_plugin<0) // don't patch pops if spu plugin loaded
-        hookImportByNID(mod, "sceMeAudio", 0xDE630CD2, _sceMeAudio_DE630CD2);
-}
-
 // Shutdown SPU
 void spuShutdown(void)
 {
@@ -138,7 +117,10 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     return result;
 }
 
-static void patch660PopsMan(u32 text_addr){
+void patchVitaPopsman(SceModule2* mod){
+    u32 text_addr = mod->text_addr;
+    u32 top_addr = text_addr + mod->text_size;
+    
     // TN hacks
     _sw(JR_RA, text_addr + 0x2F88);
     _sw(LI_V0(0), text_addr + 0x2F88 + 4);
@@ -157,20 +139,16 @@ static void patch660PopsMan(u32 text_addr){
     _sw(LI_V0(0), text_addr + 0x0000342C + 4);
     _sw(JR_RA, text_addr + 0x00003490);
     _sw(LI_V0(0), text_addr + 0x00003490 + 4);
+    
+    // patch loadmodule to load our own pops.prx
+	_sw(JAL(myKernelLoadModule), text_addr + 0x00001EE0);
 }
 
-void patchVitaPopsman(SceModule2* mod){
-    u32 text_addr = mod->text_addr;
-    u32 top_addr = text_addr + mod->text_size;
-    
-    for (u32 addr=text_addr; addr<top_addr; addr+=4){
-        u32 data = _lw(addr);
-        if (data == 0x004C800B){ // patch loadmodule to load our own spu plugin
-            _sw(JAL(myKernelLoadModule), addr - 0x2C);
-            if (addr == text_addr+0x00001F0C){ // patch PSP 6.60 POPS
-                patch660PopsMan(text_addr);
-            }
-            break;
-        }
-    }
+void patchVitaPopsSpu(SceModule2 * mod)
+{
+    // Fetch Text Address
+    unsigned int text_addr = mod->text_addr;
+    // Replace Media Engine SPU Background Thread Starter
+    //if (spu_plugin<0) // don't patch pops if spu plugin loaded
+    hookImportByNID(mod, "sceMeAudio", 0xDE630CD2, _sceMeAudio_DE630CD2);
 }

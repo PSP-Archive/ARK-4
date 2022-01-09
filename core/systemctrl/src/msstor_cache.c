@@ -347,8 +347,6 @@ int msstorCacheInit(const char* driver, int bufSize)
     // Get Application Type
     int key_config = sceKernelApplicationType();
     
-    if(key_config == PSP_INIT_KEYCONFIG_POPS) return 5; // PS1 Emulator = No cache
-
     // Find Driver
     PspIoDrv * pdrv = sctrlHENFindDriver(driver);
     
