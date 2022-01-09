@@ -105,8 +105,8 @@ int module_start(SceSize args, void* argp)
 	apitype = sceKernelInitApitype();
 	sctrlSEGetConfig(&config);
 
-	if(psp_model != PSP_1000 && (apitype == 0x123 || apitype == 0x125)) {
-		int bufsize = 32*1024;
+	if (apitype == 0x123 || apitype == 0x125) {
+		int bufsize = 64*1024;
 		int number = 64;
 		infernoCacheSetPolicy(CACHE_POLICY_LRU);
 		infernoCacheInit(bufsize, number);
