@@ -104,7 +104,7 @@ clean:
 	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)-rm -rf dist *~ | true
-	$(Q)$(PYTHON) cleandeps.py
+	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
 
 subdirs: $(SUBDIRS)
 

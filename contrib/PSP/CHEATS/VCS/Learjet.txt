@@ -1,0 +1,111 @@
+#cheat Teleport to the Biplane
+teleport(-1266.37, -1076.81, 14.87)
+
+#cheat The Learjet
+setshort(0x98A2F70, 1, ' ', 'L', 'e', 'a', 'r', 'j', 'e', 't', 0);
+setint(pplayer+0x5bc, 0xffffff);
+setchar(pplayer+0xCB8, 0x2);
+setchar(pplayer+0x5B0, 0xE);
+for(pbomb = 0x08BF9E50; pbomb < 0x08BFA420; pbomb += 0x30)
+setchar(pbomb+0xC, 0x0);
+setchar(0x09f69054, 1);
+ptow = getint(0x0994f460);
+if(ptow){
+setchar(pplayer+0xCB8, 0x0);
+setchar(pplayer+0x5B0, 0x0);
+door = getchar(pplayer+0x8B4);
+check = getshort(ptow+0x56);}
+checkid = getshort(pcar+0x56);
+if(ptow&&checkid&&checkid == 222&&check&&check == 368){
+setchar(pcar+0x4A, 0x15);
+setshort(ptow+0x56, 7453);}
+if(pcar&&checkid&&checkid == 222&&ptow&&check&&check == 7453){
+setchar(pcar+0x49, 0x82);
+setchar(pcar+0x277, 0xEF);
+setfloat(0x8bc8684, 10);
+a1 = getfloat(pcar+0x0);
+a2 = getfloat(pcar+0x4);
+a3 = getfloat(pcar+0x8);
+b1 = getfloat(pcar+0x10);
+b2 = getfloat(pcar+0x14);
+b3 = getfloat(pcar+0x18);
+c1 = getfloat(pcar+0x20);
+c2 = getfloat(pcar+0x24);
+c3 = getfloat(pcar+0x28);
+d1 = getfloat(pcar+0x30);
+d2 = getfloat(pcar+0x34);
+d3 = getfloat(pcar+0x38);
+e1 = getfloat(pcar+0x70);
+e2 = getfloat(pcar+0x74);
+e3 = getfloat(pcar+0x78);
+f1 = getfloat(pcar+0x140);
+f2 = getfloat(pcar+0x144);
+f3 = getfloat(pcar+0x148);
+if(buttons&CTRL_DOWN){
+setchar(0x08E937B5, 0x01);
+setfloat(pcar+0x38, d3+5);}
+static obj;
+if(!obj){
+obj = ptow;}
+else{
+selectobject(obj);
+setfloat(obj+0x0, a1);
+setfloat(obj+0x4, a2);
+setfloat(obj+0x8, a3);
+setfloat(obj+0x10, b1);
+setfloat(obj+0x14, b2);
+setfloat(obj+0x18, b3);
+setfloat(obj+0x20, c1);
+setfloat(obj+0x24, c2);
+setfloat(obj+0x28, c3);
+setfloat(obj+0x30, d1);
+setfloat(obj+0x34, d2);
+setfloat(obj+0x38, d3);
+setfloat(obj+0x70, e1);
+setfloat(obj+0x74, e2);
+setfloat(obj+0x78, e3);
+setfloat(obj+0x140, f1);
+setfloat(obj+0x144, f2);
+setfloat(obj+0x148, f3);
+propagateobject();}}
+if(obj){
+checkobj = getshort(obj+0x56);}
+if(obj&&checkobj&&checkobj == 7454){
+setchar(pcar+0x49, 0x81);
+selectobject(obj);
+setfloat(obj+0x0, a1);
+setfloat(obj+0x4, a2);
+setfloat(obj+0x8, a3);
+setfloat(obj+0x10, b1);
+setfloat(obj+0x14, b2);
+setfloat(obj+0x18, b3);
+setfloat(obj+0x20, c1);
+setfloat(obj+0x24, c2);
+setfloat(obj+0x28, c3);
+setfloat(obj+0x30, d1);
+setfloat(obj+0x34, d2);
+setfloat(obj+0x38, d3-0.5);
+setfloat(obj+0x70, e1);
+setfloat(obj+0x74, e2);
+setfloat(obj+0x78, e3);
+setfloat(obj+0x140, f1);
+setfloat(obj+0x144, f2);
+setfloat(obj+0x148, f3);
+propagateobject();}
+if(obj&&checkobj&&checkobj == 7453&&buttons&CTRL_TRIANGLE&&door != 0x37){
+setshort(obj+0x56, 7454);}
+if(obj&&checkobj&&checkobj == 7454&&door == 0x37){
+setshort(obj+0x56, 7453);}
+if(obj&&checkobj&&checkobj == 7454&&buttons&CTRL_TRIANGLE){
+setchar(pcar+0x49, 0x82);}
+if(pcar&&checkid&&checkid != 222){
+setchar(pcar+0x277, 0x20);}
+#off
+obj = state = 0;
+setchar(0x09f69054, 0);
+setchar(pcar+0x277, 0x20);
+setchar(pcar+0x49, 0x82);
+setchar(pcar+0x4A, 0x18);
+setshort(0x98A2F70, 1, ' ', 'B', 'i', 'p', 'l', 'a', 'n', 'e', 0);
+
+
