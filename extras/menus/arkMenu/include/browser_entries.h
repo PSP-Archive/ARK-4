@@ -1,6 +1,9 @@
-// DO NOT INCLUDE THIS FILE OTHER THAN IN BROWSER.CPP!!!
+#ifndef BROWSER_ENTRIES_H
+#define BROWSER_ENTRIES_H
 
-class File : public Entry{
+#include "browser.h"
+
+class BrowserFile : public Entry{
 
     protected:
         bool selected;
@@ -8,112 +11,50 @@ class File : public Entry{
 
     public:
     
-        File(){
-        }
+        BrowserFile();
     
-        File(string path){
-            this->path = path;
-            size_t lastSlash = path.rfind("/", string::npos);
-            this->name = path.substr(lastSlash+1, string::npos);
-            this->selected = false;
-            this->calcSize();
-        }
+        BrowserFile(string path);
         
-        File(File* orig){
-            this->path = orig->path;
-            this->selected = false;
-            this->fileSize = orig->fileSize;
-        }
+        BrowserFile(BrowserFile* orig);
         
-        ~File(){
-        }
+        ~BrowserFile();
         
-    void calcSize(){
-        // Calculate the size (in Bytes, KB, MB or GB) of a file, if it's a folder, simply return its type
-        FILE* fp = fopen(this->getPath().c_str(), "rb");
-        fseek(fp, 0, SEEK_END);
-        unsigned size = ftell(fp);
-        fclose(fp);
-    
-        ostringstream txt;
-    
-        if (size < 1024)
-            txt<<size<<" Bytes";
-        else if (1024 < size && size < 1048576)
-            txt<<float(size)/1024.f<<" KB";
-        else if (1048576 < size && size < 1073741824)
-            txt<<float(size)/1048576.f<<" MB";
-        else
-            txt<<float(size)/1073741824.f<<" GB";
-        this->fileSize = txt.str();
-    }
+        void calcSize();
         
-        bool isSelected(){
-            return this->selected;
-        }
+        bool isSelected();
         
-        void changeSelection(){
-            this->selected = !this->selected;
-        }
+        void changeSelection();
         
-        string getPath(){
-            return this->path;
-        }
+        string getPath();
         
-        string getName(){
-            return this->name;
-        }
+        string getName();
         
-        string getSize(){
-            return this->fileSize;
-        }
+        string getSize();
         
-        char* getType(){
-            return "FILE";
-        }
+        char* getType();
         
-        char* getSubtype(){
-            return getType();
-        }
+        char* getSubtype();
         
-        void loadIcon(){
-        }
+        void loadIcon();
         
-        void getTempData1(){
-        }
+        void getTempData1();
         
-        void getTempData2(){
-        }
+        void getTempData2();
         
-        void doExecute(){
-        }
+        void doExecute();
 };
 
-class Folder : public File{
+class BrowserFolder : public BrowserFile{
     public:
-        Folder(string path){
-            this->path = path;
-            size_t lastSlash = path.rfind("/", path.length()-2);
-            this->name = path.substr(lastSlash+1, string::npos);
-            this->selected = false;
-            this->fileSize = "Folder";
-        }
+        BrowserFolder(string path);
         
-        Folder(Folder* orig){
-            this->path = orig->path;
-            this->name = orig->name;
-            this->selected = false;
-            this->fileSize = "Folder";
-        }
+        BrowserFolder(BrowserFolder* orig);
         
-        ~Folder(){
-        }
+        ~BrowserFolder();
         
-        char* getType(){
-            return "FOLDER";
-        }
+        char* getType();
         
-        char* getSubtype(){
-            return getType();
-        }
+        char* getSubtype();
 };
+
+#endif

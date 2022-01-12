@@ -28,6 +28,7 @@ OBJS = \
 		src/ya2d++.o \
 		src/mp3.o \
 		src/browser.o \
+		src/browser_entries.o \
 		src/osk.o \
 		src/network.o \
 		src/settingsmenu.o \
@@ -55,6 +56,7 @@ OBJS = \
 		src/ftp/loadutil.o \
 		src/ftp/psp_cfg.o \
 		src/ftp/psp_init.o \
+		src/ftp/ftpclient.o \
 
 
 LIBS = \

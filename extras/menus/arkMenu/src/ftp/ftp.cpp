@@ -98,7 +98,7 @@ openDataConnectionPASV(MftpConnection *con)
 	struct sockaddr_in addrPort;
 	memset(&addrPort, 0, sizeof(struct sockaddr_in));
 
-	addrPort.sin_reserved = sizeof(struct sockaddr_in);
+	addrPort.sin_size = sizeof(struct sockaddr_in);
 	addrPort.sin_family = AF_INET;
 	addrPort.sin_port = htons(pasvPort);
 	addrPort.sin_addr[0] = 0;
@@ -134,7 +134,7 @@ int openDataConnection(MftpConnection *con) {
 		struct sockaddr_in addrPort;
 		memset(&addrPort, 0, sizeof(struct sockaddr_in));
 
-		addrPort.sin_reserved = sizeof(struct sockaddr_in);
+		addrPort.sin_size = sizeof(struct sockaddr_in);
 		addrPort.sin_family = AF_INET;
 		addrPort.sin_port = htons(con->port_port);
 		addrPort.sin_addr[0] = con->port_addr[0];

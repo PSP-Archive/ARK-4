@@ -25,7 +25,10 @@
 
 static Browser* self;
 
-#define MAX_OPTIONS 9
+typedef BrowserFile File;
+typedef BrowserFolder Folder;
+
+#define MAX_OPTIONS 10
 static const struct {
         int x;
         int y;
@@ -40,7 +43,10 @@ static const struct {
     {10, 200, "New Dir"},
     {10, 220, "Go to ms0:/"},
     {10, 240, "Go to ef0:/"},
+    {10, 260, "Go to ftp:/"}
 };
+
+BrowserDriver* Browser::ftp_driver = NULL;
 
 Browser::Browser(){
     self = this;

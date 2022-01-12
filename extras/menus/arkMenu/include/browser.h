@@ -20,6 +20,18 @@ enum{
     MKDIR,
     MS0_DIR,
     EF0_DIR,
+    FTP_DIR,
+};
+
+class BrowserDriver{
+    public:
+        virtual string getDevicePath() = 0;
+        virtual vector<Entry*> listDirectory(string path) = 0;
+        virtual void deleteFile(string path) = 0;
+        virtual void deleteFolder(string path) = 0;
+        virtual void createFolder(string path) = 0;
+        virtual void copyFileTo(string orig, string dest, int* progress) = 0;
+        virtual void copyFileFrom(string orig, string dest, int* progress) = 0;
 };
 
 class Browser : public SystemEntry{
@@ -51,6 +63,8 @@ class Browser : public SystemEntry{
         }
         
         static void recursiveFolderDelete(string path);
+        
+        static BrowserDriver* ftp_driver;
         
     private:
     
