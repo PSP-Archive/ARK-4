@@ -69,6 +69,8 @@ class Browser : public SystemEntry{
         
         static BrowserDriver* ftp_driver;
         
+        static const char* getCWD();
+        
     private:
     
         string cwd; // Current Working Directory
@@ -162,5 +164,7 @@ class Browser : public SystemEntry{
         void options();
         
 };
+
+const char* getBrowserCWD();
 
 #endif

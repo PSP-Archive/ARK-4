@@ -34,6 +34,7 @@ static SystemEntry** entries = NULL;
 static void changeMenuState(){
     if (optionsDrawState == 1 || optionsDrawState == 3)
         return;
+    common::playMenuSound();
     if (system_menu){
         optionsAnimState = 0;
         optionsDrawState = 3;
@@ -46,7 +47,6 @@ static void changeMenuState(){
         system_menu = true;
     }
     
-    common::playMenuSound();
 }
 
 static void systemController(Controller* pad){

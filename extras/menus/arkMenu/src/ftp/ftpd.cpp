@@ -8,14 +8,16 @@
 #include "sutils.h"
 #include "psp_init.h"
 
-  typedef struct thread_list {
+typedef struct thread_list {
     struct thread_list *next;
     int                 thread_id; 
-  } thread_list;
+} thread_list;
 
-  thread_list *mftp_thread_head = NULL;
+thread_list *mftp_thread_head = NULL;
 
-  SOCKET sockListen = 0;
+SOCKET sockListen = 0;
+
+extern const char* getBrowserCWD();
 
 static void (*msg_handler)(char* msg) = NULL;
 
@@ -84,7 +86,15 @@ mftpClientHandler(SceSize argc, void *argv)
   if (mftp_config.head_user) {
     strcpy(con->root,mftp_config.head_user->root);
   } else {
-	  strcpy(con->root,"ms0:");
+    const char* cwd = getBrowserCWD();
+    con->root[0] = cwd[0]; // m/e
+    con->root[1] = cwd[1]; // s/f
+    con->root[2] = cwd[2]; //  0
+    con->root[3] = cwd[3]; //  :
+    con->root[4] = 0;
+    if (strcmp(con->root, "ms0:") != 0 && strcmp(con->root, "ef0:") != 0){
+        strcpy(con->root, "ms0:");
+    }
   }
 
 	memset(con->sockCommandBuffer, 0, 1024);

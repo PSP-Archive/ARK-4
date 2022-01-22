@@ -92,25 +92,32 @@ void FTPDriver::disconnect(){
 
 vector<Entry*> FTPDriver::listDirectory(string path){
     printf("FTP::Path -> %s\n", path.c_str());
-    string ftp_path = path.substr(getDevicePath().size()-1, path.size());
+    string ftp_path = path.substr(getDevicePath().size(), path.size());
+    if (ftp_path.size() == 0) ftp_path = "/";
+    if (ftp_path[0] != '/') ftp_path = string("/") + ftp_path;
     printf("FTP::CWD -> %s\n", ftp_path.c_str());
     ftpCWD((char*)ftp_path.c_str());
     printf("FTP::List\n");
     remoteDirent* dir = ftpLIST();
-    
-    printf("FTP::Entries -> %d\n", dir->totalCount);
     vector<BrowserFile*> files;
     vector<BrowserFolder*> folders;
     vector<Entry*> ret;
     
-    for (int i=0; i<dir->totalCount; i++){
-        printf("Processing entry: %s\n", dir->files[i].d_name);
-        printf("Is Dir: %d\n", FIO_SO_ISDIR(dir->files[i].st_attr));
-        if (FIO_SO_ISDIR(dir->files[i].st_attr)) {
-			folders.push_back(new BrowserFolder(path + "/" + dir->files[i].d_name));
-		} else if (FIO_SO_ISREG(dir->files[i].st_attr)) {
-		    files.push_back(new FTPFile(path, dir->files[i].d_name, dir->files[i].st_size));
-		}
+    if (dir != NULL){
+        printf("FTP::Entries -> %d\n", dir->totalCount);    
+        for (int i=0; i<dir->totalCount; i++){
+            if (dir->files[i].d_name[0] == 0) break;
+            printf("Processing entry: %s\n", dir->files[i].d_name);
+            printf("Is Dir: %d\n", FIO_SO_ISDIR(dir->files[i].st_attr));
+            int code; char file_name[256];
+            if (sscanf(dir->files[i].d_name, "%d%s", &code, file_name) == 2){
+                if (FIO_SO_ISDIR(dir->files[i].st_attr)) {
+			        folders.push_back(new BrowserFolder(path + file_name + "/"));
+		        } else if (FIO_SO_ISREG(dir->files[i].st_attr)) {
+		            files.push_back(new FTPFile(path, file_name, dir->files[i].st_size));
+		        }
+		    }
+        }
     }
     
     ret.push_back(new BrowserFolder("ftp:/<disconnect>"));

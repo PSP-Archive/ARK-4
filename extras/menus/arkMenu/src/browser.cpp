@@ -81,9 +81,17 @@ Browser::~Browser(){
     delete this->selectedBuffer;
 }
 
+const char* Browser::getCWD(){
+    return self->cwd.c_str();
+}
+
+const char* getBrowserCWD(){
+    return Browser::getCWD();
+}
+
 void Browser::moveDirUp(){
     // Move to the parent directory of this->cwd
-    if (this->cwd == ROOT_DIR || this->cwd == GO_ROOT)
+    if (this->cwd == ROOT_DIR || this->cwd == GO_ROOT || this->cwd == FTP_ROOT)
         return;
     size_t lastSlash = this->cwd.rfind("/", this->cwd.rfind("/", string::npos)-1);
     this->cwd = this->cwd.substr(0, lastSlash+1);
