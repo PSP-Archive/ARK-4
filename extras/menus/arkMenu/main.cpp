@@ -8,6 +8,7 @@
 #include "settingsmenu.h"
 #include "settings_entries.h"
 #include "ftp_mgr.h"
+#include "ftp_driver.h"
 
 PSP_MODULE_INFO("ARKMENU", 0, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);
@@ -29,6 +30,8 @@ int main(int argc, char** argv){
     try{
 
         common::loadData(argc, argv);
+
+        Browser::ftp_driver = new FTPDriver();
 
         entries[3] = new SettingsMenu(settings_entries, MAX_SETTINGS_OPTIONS, common::saveConf);
         entries[2] = new FTPManager();

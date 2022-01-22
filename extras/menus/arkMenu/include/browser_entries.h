@@ -9,6 +9,8 @@ class BrowserFile : public Entry{
         bool selected;
         string fileSize;
 
+        virtual unsigned getFileSize();
+
     public:
     
         BrowserFile();

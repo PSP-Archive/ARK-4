@@ -57,6 +57,7 @@ OBJS = \
 		src/ftp/psp_cfg.o \
 		src/ftp/psp_init.o \
 		src/ftp/ftpclient.o \
+		src/ftp/ftp_driver.o
 
 
 LIBS = \

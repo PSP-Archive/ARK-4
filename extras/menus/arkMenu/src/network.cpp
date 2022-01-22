@@ -15,7 +15,7 @@
 #include "network.h"
 #include "common.h"
 
-static bool net_initialized = false;
+static int net_users = 0; // count number of network users
 
 void apctl_handler(int prev_state, int new_state, int event, int error, void *arg)
 {
@@ -25,8 +25,7 @@ void apctl_handler(int prev_state, int new_state, int event, int error, void *ar
 
 int initializeNetwork(void)
 {
-
-    if (net_initialized) return 0;
+    if (++net_users > 1) return 0; // already initialized
     
 	int ret;
 
@@ -62,13 +61,11 @@ int initializeNetwork(void)
 	
 	ret = sceNetApctlAddHandler(apctl_handler, NULL);
 
-    if (ret>=0) net_initialized = true;
-
 	return ret;
 }
 
 int shutdownNetwork(){
-    if (!net_initialized) return 0;
+    if (--net_users > 0) return 0; // network still has users
     sceNetApctlDisconnect();
     sceNetApctlTerm();
     sceNetResolverTerm();
@@ -76,7 +73,6 @@ int shutdownNetwork(){
     sceNetTerm();
     sceUtilityUnloadModule(PSP_MODULE_NET_INET);
     sceUtilityUnloadModule(PSP_MODULE_NET_COMMON);
-    net_initialized = false;
 }
 
 /* Connect to an access point */

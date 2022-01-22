@@ -73,6 +73,8 @@ typedef struct remoteDirent {
 
 // implementation functions
 //int startFTP(SceModuleInfo *modInfoPtr);	// starts the ftp thread loop and waits for a ftpConnect() call
+void ftpInit();
+void ftpClean();
 int ftpConnect(char* ip, int port);			// connects to remote address
 int ftpLogin(char* user, char* pass);		// called once connected, to login
 void ftpDisconnect(void);					// disconnects from remote if connected

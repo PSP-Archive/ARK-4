@@ -25,6 +25,9 @@ enum{
 
 class BrowserDriver{
     public:
+        virtual bool connect() = 0;
+        virtual void disconnect() = 0;
+        virtual bool isDevicePath(string path) = 0;
         virtual string getDevicePath() = 0;
         virtual vector<Entry*> listDirectory(string path) = 0;
         virtual void deleteFile(string path) = 0;

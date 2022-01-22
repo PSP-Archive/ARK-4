@@ -24,12 +24,17 @@ BrowserFile::BrowserFile(BrowserFile* orig){
 BrowserFile::~BrowserFile(){
 }
 
-void BrowserFile::calcSize(){
-    // Calculate the size (in Bytes, KB, MB or GB) of a BrowserFile, if it's a BrowserFolder, simply return its type
+unsigned BrowserFile::getFileSize(){
     FILE* fp = fopen(this->getPath().c_str(), "rb");
     fseek(fp, 0, SEEK_END);
     unsigned size = ftell(fp);
     fclose(fp);
+    return size;
+}
+
+void BrowserFile::calcSize(){
+    // Calculate the size (in Bytes, KB, MB or GB) of a BrowserFile, if it's a BrowserFolder, simply return its type
+    unsigned size = this->getFileSize();
 
     ostringstream txt;
 
@@ -103,7 +108,7 @@ BrowserFolder::~BrowserFolder(){
 }
 
 char* BrowserFolder::getType(){
-    return "Folder";
+    return "FOLDER";
 }
 
 char* BrowserFolder::getSubtype(){

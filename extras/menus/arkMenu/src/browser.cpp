@@ -14,8 +14,9 @@
 #include "eboot.h"
 #include "unziprar.h"
 
-#define INITIAL_DIR "ms0:/" // Initial directory
-#define GO_DIR "ef0:/" // PSP Go initial directory
+#define ROOT_DIR "ms0:/" // Initial directory
+#define GO_ROOT "ef0:/" // PSP Go initial directory
+#define FTP_ROOT "ftp:/" // FTP directory
 #define PAGE_SIZE 10 // maximum entries shown on screen
 #define BUF_SIZE 1024*16 // 16 kB buffer for copying files
 
@@ -50,7 +51,7 @@ BrowserDriver* Browser::ftp_driver = NULL;
 
 Browser::Browser(){
     self = this;
-    this->cwd = GO_DIR; // current working directory (cwd)
+    this->cwd = GO_ROOT; // current working directory (cwd)
     this->entries = new vector<Entry*>(); // list of files and folders in cwd
     this->pasteMode = NO_MODE;
     this->index = 0;
@@ -82,7 +83,7 @@ Browser::~Browser(){
 
 void Browser::moveDirUp(){
     // Move to the parent directory of this->cwd
-    if (this->cwd == INITIAL_DIR || this->cwd == GO_DIR)
+    if (this->cwd == ROOT_DIR || this->cwd == GO_ROOT)
         return;
     size_t lastSlash = this->cwd.rfind("/", this->cwd.rfind("/", string::npos)-1);
     this->cwd = this->cwd.substr(0, lastSlash+1);
@@ -98,6 +99,11 @@ void Browser::update(){
         refreshDirs();
     else if (this->get()->getName() == "../")
         moveDirUp();
+    else if (this->get()->getName() == "<disconnect>"){ // FTP disconnect entry
+        if (ftp_driver != NULL) ftp_driver->disconnect();
+        this->cwd = MS0_DIR;
+        this->refreshDirs();
+    }
     else if (string(this->get()->getType()) == "FOLDER"){
         this->cwd = this->get()->getPath();
         this->refreshDirs();
@@ -153,12 +159,31 @@ void Browser::extractArchive(int type){
 
 void Browser::refreshDirs(){
 
+    if (ftp_driver != NULL && ftp_driver->isDevicePath(this->cwd)){
+        SystemMgr::pauseDraw();
+        this->entries->clear();
+        bool ftp_con = ftp_driver->connect();
+        SystemMgr::resumeDraw();
+        if (!ftp_con){
+            this->cwd = ROOT_DIR;
+            refreshDirs();
+            return;
+        }
+        vector<Entry*> ftp_dir = ftp_driver->listDirectory(this->cwd);
+        SystemMgr::pauseDraw();
+        for (int i=0; i<ftp_dir.size(); i++){
+            this->entries->push_back(ftp_dir[i]);
+        }
+        SystemMgr::resumeDraw();
+        return;
+    }
+
     DIR* dir = opendir(this->cwd.c_str());
     if (dir == NULL){ // can't open directory
-        if (this->cwd == INITIAL_DIR) // ms0 failed
-            this->cwd = GO_DIR; // go to ef0
+        if (this->cwd == ROOT_DIR) // ms0 failed
+            this->cwd = GO_ROOT; // go to ef0
         else
-            this->cwd = INITIAL_DIR;
+            this->cwd = ROOT_DIR;
         refreshDirs();
         return;
     }
@@ -194,7 +219,7 @@ void Browser::refreshDirs(){
     SystemMgr::resumeDraw();
     
     if (this->entries->size() == 0){
-        this->cwd = INITIAL_DIR;
+        this->cwd = ROOT_DIR;
         refreshDirs();
         return;
     }
@@ -411,8 +436,13 @@ void Browser::deleteFolder(string path){
             || path == "ef0:/PSP/" || path == "ef0:/PSP/GAME/" || path == "ef0:/PSP/LICENSE/")
         return;
 
-    recursiveFolderDelete(path);
-
+    if (ftp_driver != NULL && ftp_driver->isDevicePath(path)){
+        ftp_driver->deleteFolder(path);
+    }
+    else {
+        recursiveFolderDelete(path);
+    }
+    
     if (!noRedraw)
         draw_progress = false;
 }
@@ -428,7 +458,12 @@ void Browser::deleteFile(string path){
     if (!noRedraw)
         draw_progress = true;
     
-    sceIoRemove(path.c_str());
+    if (ftp_driver != NULL && ftp_driver->isDevicePath(path)){
+        ftp_driver->deleteFile(path);
+    }
+    else{
+        sceIoRemove(path.c_str());
+    }
     
     if (!noRedraw)
         draw_progress = false;
@@ -566,34 +601,46 @@ void Browser::copyFile(string path, string destination){
     
     if (dest.size() == 0) return; // copy canceled
     
-    SceUID src = sceIoOpen(path.c_str(), PSP_O_RDONLY, 0777);
-    SceUID dst = sceIoOpen(dest.c_str(), PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-    
     progress_desc[0] = "Copying file";
     progress_desc[1] = "    "+path;
     progress_desc[2] = "into";
     progress_desc[3] = "    "+dest;
     progress_desc[4] = "";
-    
     progress = 0;
-    max_progress = sceIoLseek(src, 0, SEEK_END);
-    sceIoLseek(src, 0, SEEK_SET);
-
+    max_progress = 100;
+    
     bool noRedraw = draw_progress;
-    if (!noRedraw)    
+    if (!noRedraw)
         draw_progress = true;
     
-    int read;
-    u8* buffer = new u8[BUF_SIZE];
-    
-    do {
-        read = sceIoRead(src, buffer, BUF_SIZE);
-        sceIoWrite(dst, buffer, read);
-        progress += read;
-    } while (read > 0 && progress < max_progress);
-    sceIoClose(src);
-    sceIoClose(dst);
-    delete buffer;
+    if (ftp_driver != NULL && ftp_driver->isDevicePath(path)){
+        // download from FTP
+        ftp_driver->copyFileFrom(dest, path, &progress);
+    }
+    else if (ftp_driver != NULL && ftp_driver->isDevicePath(destination)){
+        // upload to FTP
+        ftp_driver->copyFileTo(path, dest, &progress);
+    }
+    else{
+        // local copy
+        SceUID src = sceIoOpen(path.c_str(), PSP_O_RDONLY, 0777);
+        SceUID dst = sceIoOpen(dest.c_str(), PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+        progress = 0;
+        max_progress = sceIoLseek(src, 0, SEEK_END);
+        sceIoLseek(src, 0, SEEK_SET);
+
+        int read;
+        u8* buffer = new u8[BUF_SIZE];
+        
+        do {
+            read = sceIoRead(src, buffer, BUF_SIZE);
+            sceIoWrite(dst, buffer, read);
+            progress += read;
+        } while (read > 0 && progress < max_progress);
+        sceIoClose(src);
+        sceIoClose(dst);
+        delete buffer;
+    }
     
     if (!noRedraw)
         draw_progress = false;
@@ -647,7 +694,14 @@ void Browser::paste(){
         string e = selectedBuffer->at(i);
         if (common::fileExists(e)){
             this->copyFile(e);
-            if (pasteMode == CUT) sceIoRemove(e.c_str());
+            if (pasteMode == CUT){
+                if (ftp_driver != NULL && ftp_driver->isDevicePath(e)){
+                    ftp_driver->deleteFile(e);
+                }
+                else {
+                    sceIoRemove(e.c_str());
+                }
+            }
         }
         else {
             this->copyFolder(e);
@@ -662,6 +716,9 @@ void Browser::paste(){
 }
 
 void Browser::rename(){
+    if (ftp_driver != NULL && ftp_driver->isDevicePath(this->get()->getPath())){
+        return; // can't rename remote files
+    }
     SystemMgr::pauseDraw();
     string name = this->get()->getName();
     OSK osk;
@@ -718,7 +775,10 @@ void Browser::makedir(){
         char tmpText[51];
         osk.getText((char*)tmpText);
         string dirName = string(tmpText);
-        sceIoMkdir((this->cwd+dirName).c_str(), 0777);
+        if (ftp_driver != NULL && ftp_driver->isDevicePath(this->cwd)){
+            ftp_driver->createFolder(dirName);
+        }
+        else sceIoMkdir((this->cwd+dirName).c_str(), 0777);
     }
     osk.end();
     SystemMgr::resumeDraw();
@@ -830,8 +890,9 @@ void Browser::options(){
     case DELETE:      this->removeSelection();                        break;
     case RENAME:      this->rename();                                 break;
     case MKDIR:       this->makedir();                                break;
-    case MS0_DIR:     this->cwd = INITIAL_DIR; this->refreshDirs();   break;
-    case EF0_DIR:     this->cwd = GO_DIR;      this->refreshDirs();   break;
+    case MS0_DIR:     this->cwd = ROOT_DIR;     this->refreshDirs();   break;
+    case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;
+    case FTP_DIR:     this->cwd = FTP_ROOT;     this->refreshDirs();   break;
     }
 }
         
