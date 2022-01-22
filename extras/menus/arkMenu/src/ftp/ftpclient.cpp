@@ -541,7 +541,7 @@ remoteDirent *ftpLIST(void) {
 		
 		// Send Request for Remote File Listing
 		printf("LIST");
-		sendclientResponseLn("LIST -a");
+		sendclientResponseLn("LIST");
 		
 			
 		// Wait for Data connection accepted for Transfer to Start

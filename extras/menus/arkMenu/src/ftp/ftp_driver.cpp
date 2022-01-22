@@ -50,7 +50,7 @@ bool FTPDriver::connect(){
     bool ret = false;
     char tmpText[51];
     OSK osk;
-    osk.init("Hostname or IP address of FTP Server", "", 50);
+    osk.init("Enter IP address of FTP Server", "", 50);
     osk.loop();
     if(osk.getResult() != OSK_CANCEL)
     {
@@ -102,6 +102,9 @@ vector<Entry*> FTPDriver::listDirectory(string path){
     vector<BrowserFile*> files;
     vector<BrowserFolder*> folders;
     vector<Entry*> ret;
+    files.clear();
+    folders.clear();
+    ret.clear();
     
     if (dir != NULL){
         printf("FTP::Entries -> %d\n", dir->totalCount);    
@@ -109,8 +112,10 @@ vector<Entry*> FTPDriver::listDirectory(string path){
             if (dir->files[i].d_name[0] == 0) break;
             printf("Processing entry: %s\n", dir->files[i].d_name);
             printf("Is Dir: %d\n", FIO_SO_ISDIR(dir->files[i].st_attr));
-            int code; char file_name[256];
-            if (sscanf(dir->files[i].d_name, "%d%s", &code, file_name) == 2){
+            int code;
+            if (sscanf(dir->files[i].d_name, "%d ", &code) == 1){
+                string file_name(dir->files[i].d_name);
+                file_name = file_name.substr(file_name.find(' ')+1);
                 if (FIO_SO_ISDIR(dir->files[i].st_attr)) {
 			        folders.push_back(new BrowserFolder(path + file_name + "/"));
 		        } else if (FIO_SO_ISREG(dir->files[i].st_attr)) {
@@ -120,6 +125,7 @@ vector<Entry*> FTPDriver::listDirectory(string path){
         }
     }
     
+    ret.push_back(new BrowserFolder("ftp:/<refresh>"));
     ret.push_back(new BrowserFolder("ftp:/<disconnect>"));
     
     printf("FTP::Folders -> %d\n", folders.size());
@@ -145,8 +151,7 @@ void FTPDriver::deleteFolder(string path){
 }
 
 void FTPDriver::createFolder(string path){
-    string ftp_path = path.substr(this->getDevicePath().size(), path.size());
-    ftpMKD((char*)ftp_path.c_str());
+    ftpMKD((char*)path.c_str());
 }
 
 void FTPDriver::copyFileTo(string orig, string dest, int* progress){

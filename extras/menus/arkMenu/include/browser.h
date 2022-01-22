@@ -113,6 +113,8 @@ class Browser : public SystemEntry{
         /* Highlight the currently selected item? */
         bool enableSelection;
     
+        void clearEntries();
+    
         void moveDirUp();
         
         void update();

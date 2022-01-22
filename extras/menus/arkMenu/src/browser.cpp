@@ -75,7 +75,7 @@ Browser::Browser(){
 }
 
 Browser::~Browser(){
-    this->entries->clear();
+    this->clearEntries();
     this->selectedBuffer->clear();
     delete this->entries;
     delete this->selectedBuffer;
@@ -87,6 +87,13 @@ const char* Browser::getCWD(){
 
 const char* getBrowserCWD(){
     return Browser::getCWD();
+}
+
+void Browser::clearEntries(){
+    for (int i=0; i<entries->size(); i++){
+        delete entries->at(i);
+    }
+    entries->clear();
 }
 
 void Browser::moveDirUp(){
@@ -107,6 +114,9 @@ void Browser::update(){
         refreshDirs();
     else if (this->get()->getName() == "../")
         moveDirUp();
+    else if (this->get()->getName() == "<refresh>"){
+        this->refreshDirs();
+    }
     else if (this->get()->getName() == "<disconnect>"){ // FTP disconnect entry
         if (ftp_driver != NULL) ftp_driver->disconnect();
         this->cwd = MS0_DIR;
@@ -167,23 +177,32 @@ void Browser::extractArchive(int type){
 
 void Browser::refreshDirs(){
 
+    // Refresh the list of files and dirs
+    SystemMgr::pauseDraw();
+    this->index = 0;
+    this->start = 0;
+    this->clearEntries();
+    this->animating = false;
+    this->draw_progress = false;
+    this->optionsmenu = NULL;
+    SystemMgr::resumeDraw();
+
     if (ftp_driver != NULL && ftp_driver->isDevicePath(this->cwd)){
         SystemMgr::pauseDraw();
-        this->entries->clear();
         bool ftp_con = ftp_driver->connect();
         SystemMgr::resumeDraw();
-        if (!ftp_con){
-            this->cwd = ROOT_DIR;
-            refreshDirs();
+        if (ftp_con){
+            vector<Entry*> ftp_dir = ftp_driver->listDirectory(this->cwd);
+            SystemMgr::pauseDraw();
+            for (int i=0; i<ftp_dir.size(); i++){
+                this->entries->push_back(ftp_dir[i]);
+            }
+            SystemMgr::resumeDraw();
             return;
         }
-        vector<Entry*> ftp_dir = ftp_driver->listDirectory(this->cwd);
-        SystemMgr::pauseDraw();
-        for (int i=0; i<ftp_dir.size(); i++){
-            this->entries->push_back(ftp_dir[i]);
-        }
-        SystemMgr::resumeDraw();
-        return;
+        else{
+            this->cwd = ROOT_DIR;
+        }    
     }
 
     DIR* dir = opendir(this->cwd.c_str());
@@ -195,16 +214,6 @@ void Browser::refreshDirs(){
         refreshDirs();
         return;
     }
-
-    // Refresh the list of files and dirs
-    SystemMgr::pauseDraw();
-    this->index = 0;
-    this->start = 0;
-    this->entries->clear();
-    this->animating = false;
-    this->draw_progress = false;
-    this->optionsmenu = NULL;
-    SystemMgr::resumeDraw();
 
     struct dirent* dit;
 
