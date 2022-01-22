@@ -13,7 +13,7 @@ class FTPFile : public BrowserFile{
         }
     public:
         FTPFile(string path, string name, string size){
-            this->path = path;
+            this->path = path+name;
             this->name = name;
             this->st_size = size;
             this->selected = false;
@@ -155,11 +155,13 @@ void FTPDriver::createFolder(string path){
 }
 
 void FTPDriver::copyFileTo(string orig, string dest, int* progress){
-    string ftp_path = dest.substr(this->getDevicePath().size(), dest.size());
-    int res = ftpSTOR((char*)orig.c_str(), (char*)ftp_path.c_str());	// uploads a file to FTP server
+    //string ftp_path = dest.substr(this->getDevicePath().size(), dest.size());
+    size_t lastSlash = orig.rfind("/", string::npos);
+    //int res = ftpSTOR((char*)orig.c_str(), (char*)ftp_path.c_str());	// uploads a file to FTP server
+    int res = ftpSTOR((char*)orig.substr(0, lastSlash+1).c_str(), (char*)orig.substr(lastSlash+1).c_str());
 }
 
 void FTPDriver::copyFileFrom(string orig, string dest, int* progress){
     string ftp_path = orig.substr(this->getDevicePath().size(), orig.size());
-    int res = ftpRETR((char*)ftp_path.c_str(), (char*)dest.c_str()); // downloads a file from FTP server
+    int res = ftpRETR((char*)dest.c_str(), (char*)ftp_path.c_str()); // downloads a file from FTP server
 }

@@ -630,13 +630,16 @@ void Browser::copyFile(string path, string destination){
     if (!noRedraw)
         draw_progress = true;
     
+    printf("source file: %s\n", path.c_str());
+    printf("destination: %s\n", destination.c_str());
+    
     if (ftp_driver != NULL && ftp_driver->isDevicePath(path)){
         // download from FTP
-        ftp_driver->copyFileFrom(dest, path, &progress);
+        ftp_driver->copyFileFrom(path, destination, &progress);
     }
     else if (ftp_driver != NULL && ftp_driver->isDevicePath(destination)){
         // upload to FTP
-        ftp_driver->copyFileTo(path, dest, &progress);
+        ftp_driver->copyFileTo(path, destination, &progress);
     }
     else{
         // local copy
@@ -709,7 +712,14 @@ void Browser::paste(){
     // Copy or cut all paths in the paste buffer to the cwd
     for (int i = 0; i<selectedBuffer->size(); i++){
         string e = selectedBuffer->at(i);
-        if (common::fileExists(e)){
+        printf("pasting %s\n", e.c_str());
+        if (e[e.length()-1] == '/'){
+            printf("copy folder\n");
+            this->copyFolder(e);
+            if (pasteMode == CUT) this->deleteFolder(e);
+        }
+        else{
+            printf("copy file\n");
             this->copyFile(e);
             if (pasteMode == CUT){
                 if (ftp_driver != NULL && ftp_driver->isDevicePath(e)){
@@ -719,10 +729,6 @@ void Browser::paste(){
                     sceIoRemove(e.c_str());
                 }
             }
-        }
-        else {
-            this->copyFolder(e);
-            if (pasteMode == CUT) this->deleteFolder(e);
         }
     }
     if (selectedBuffer->size()){
@@ -770,10 +776,12 @@ void Browser::removeSelection(){
     if (this->selectedBuffer->size() > 0){
         for (int i = 0; i<selectedBuffer->size(); i++){
             string e = selectedBuffer->at(i);
-            if (common::fileExists(e))
+            if (e[e.length()-1] == '/'){
+                deleteFolder(e);
+            }
+            else{
                 deleteFile(e);
-            else
-                this->deleteFolder(e);
+            }
         }
         this->selectedBuffer->clear();
         this->refreshDirs();
