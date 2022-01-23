@@ -491,8 +491,15 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
 
     draw_progress = true;
 
+    printf("Source: %s\n", source);
+    printf("Destination: %s\n", destination);
+
     //create new folder
-    sceIoMkdir(destination, 0777);
+    if (ftp_driver != NULL && ftp_driver->isDevicePath(destination)){
+        string ftp_path = string(destination);
+        ftp_driver->createFolder(ftp_path);
+    }
+    else sceIoMkdir(destination, 0777);
     
     char * new_destination = new char[strlen(destination) + 256];
     strcpy(new_destination, destination);
@@ -531,8 +538,10 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
 
             //pspDebugScreenPrintf("to %s\n", new_destination);
             
-            if (common::fileExists(read_path)) //is it a file
+            if (common::fileExists(read_path)){ //is it a file
+                printf("Copying file from %s -> %s\n", read_path, destination);
                 copyFile(string(read_path), string(destination)+string("/")); //copy file
+            }
             else
             {
                 //try to copy as a folder

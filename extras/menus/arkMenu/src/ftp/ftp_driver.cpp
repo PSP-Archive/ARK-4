@@ -141,16 +141,23 @@ vector<Entry*> FTPDriver::listDirectory(string path){
 }
 
 void FTPDriver::deleteFile(string path){
-    string ftp_path = path.substr(this->getDevicePath().size(), path.size());
-    ftpDELE((char*)ftp_path.c_str());
+    if (this->isDevicePath(path)){
+        path = path.substr(this->getDevicePath().size(), path.size());
+    }
+    ftpDELE((char*)path.c_str());
 }
 
 void FTPDriver::deleteFolder(string path){
-    string ftp_path = path.substr(this->getDevicePath().size(), path.size());
-    ftpRMD((char*)ftp_path.c_str());
+    if (this->isDevicePath(path)){
+        path = path.substr(this->getDevicePath().size(), path.size());
+    }
+    ftpRMD((char*)path.c_str());
 }
 
 void FTPDriver::createFolder(string path){
+    if (this->isDevicePath(path)){
+        path = path.substr(this->getDevicePath().size(), path.size());
+    }
     ftpMKD((char*)path.c_str());
 }
 
@@ -158,7 +165,16 @@ void FTPDriver::copyFileTo(string orig, string dest, int* progress){
     //string ftp_path = dest.substr(this->getDevicePath().size(), dest.size());
     size_t lastSlash = orig.rfind("/", string::npos);
     //int res = ftpSTOR((char*)orig.c_str(), (char*)ftp_path.c_str());	// uploads a file to FTP server
-    int res = ftpSTOR((char*)orig.substr(0, lastSlash+1).c_str(), (char*)orig.substr(lastSlash+1).c_str());
+    string localdir = orig.substr(0, lastSlash+1);
+    string filename = orig.substr(lastSlash+1);
+    if (isDevicePath(dest)){
+        string remotedir = dest.substr(this->getDevicePath().size()-1, dest.size());
+        printf("CWD %s\n", remotedir.c_str());
+        ftpCWD((char*)remotedir.c_str());
+    }
+    printf("localdir: %s\n", localdir.c_str());
+    printf("filename: %s\n", filename.c_str());
+    int res = ftpSTOR((char*)localdir.c_str(), (char*)filename.c_str());
 }
 
 void FTPDriver::copyFileFrom(string orig, string dest, int* progress){
