@@ -577,11 +577,14 @@ remoteDirent *ftpLIST(void) {
 			// Begin Receiving Data
 			int c=0;
 			
-			char buf[TRANSFER_BUFFER_SIZE];
+			static char buf[sizeof(remoteDirent)*2];
+			memset(buf, 0, sizeof(buf));
+			char tmp_buf[TRANSFER_BUFFER_SIZE];
+			int totalBuf = 0;
 			
-			
-			while ((c=sceNetInetRecv(con->dataSocket, (u8*)buf, TRANSFER_BUFFER_SIZE, 0))>0 && ftpquit == 0 ) {
-				
+			while ((c=sceNetInetRecv(con->dataSocket, (u8*)tmp_buf, TRANSFER_BUFFER_SIZE, 0))>0 && ftpquit == 0 ) {
+				memcpy(&buf[totalBuf], tmp_buf, c);
+				totalBuf += c;
 			}
 	
 			if ( ftpquit == 1 ) {
@@ -598,8 +601,7 @@ remoteDirent *ftpLIST(void) {
 			
 			int i=0;
 			
-			
-			while ( i < sizeof(buf) ) {
+			while ( i < totalBuf ) {
 			
 				// INFO ISN'T SEPERATED BY TABS??? checking for spaces instead
 				
@@ -831,7 +833,7 @@ int ftpRETR(char* localdir, char* file) {
 					dbytes = 0;
 				}
 				
-				sceIoWrite(fdFile, buff, c); 
+				sceIoWrite(fdFile, buff, c);
 			}
 	
 			// close file

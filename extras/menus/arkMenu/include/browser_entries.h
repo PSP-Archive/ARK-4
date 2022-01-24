@@ -52,6 +52,8 @@ class BrowserFolder : public BrowserFile{
         
         BrowserFolder(BrowserFolder* orig);
         
+        BrowserFolder(string parent, string name);
+        
         ~BrowserFolder();
         
         char* getType();

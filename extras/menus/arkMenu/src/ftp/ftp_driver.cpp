@@ -117,9 +117,13 @@ vector<Entry*> FTPDriver::listDirectory(string path){
                 string file_name(dir->files[i].d_name);
                 file_name = file_name.substr(file_name.find(' ')+1);
                 if (FIO_SO_ISDIR(dir->files[i].st_attr)) {
-			        folders.push_back(new BrowserFolder(path + file_name + "/"));
+			        BrowserFolder* folder = new BrowserFolder(path + file_name + "/");
+			        printf("adding folder: %s -> %s\n", file_name.c_str(), folder->getName().c_str());
+			        folders.push_back(folder);
 		        } else if (FIO_SO_ISREG(dir->files[i].st_attr)) {
-		            files.push_back(new FTPFile(path, file_name, dir->files[i].st_size));
+		            BrowserFile* file = new FTPFile(path, file_name, dir->files[i].st_size);
+		            printf("adding file: %s -> %s\n", file_name.c_str(), file->getName().c_str());
+		            files.push_back(file);
 		        }
 		    }
         }
@@ -142,21 +146,21 @@ vector<Entry*> FTPDriver::listDirectory(string path){
 
 void FTPDriver::deleteFile(string path){
     if (this->isDevicePath(path)){
-        path = path.substr(this->getDevicePath().size(), path.size());
+        path = path.substr(this->getDevicePath().size()-1, path.size());
     }
     ftpDELE((char*)path.c_str());
 }
 
 void FTPDriver::deleteFolder(string path){
     if (this->isDevicePath(path)){
-        path = path.substr(this->getDevicePath().size(), path.size());
+        path = path.substr(this->getDevicePath().size()-1, path.size());
     }
     ftpRMD((char*)path.c_str());
 }
 
 void FTPDriver::createFolder(string path){
     if (this->isDevicePath(path)){
-        path = path.substr(this->getDevicePath().size(), path.size());
+        path = path.substr(this->getDevicePath().size()-1, path.size());
     }
     ftpMKD((char*)path.c_str());
 }
@@ -178,6 +182,14 @@ void FTPDriver::copyFileTo(string orig, string dest, int* progress){
 }
 
 void FTPDriver::copyFileFrom(string orig, string dest, int* progress){
-    string ftp_path = orig.substr(this->getDevicePath().size(), orig.size());
+    string ftp_path = orig;
+    if (isDevicePath(orig)){
+        size_t lastSlash = orig.rfind("/", string::npos);
+        ftp_path = orig.substr(lastSlash+1); //orig.substr(this->getDevicePath().size(), orig.size());
+        string remotedir = orig.substr(0, lastSlash);
+        remotedir = remotedir.substr(this->getDevicePath().size()-1);
+        printf("CWD %s\n", remotedir.c_str());
+        ftpCWD((char*)remotedir.c_str());
+    }
     int res = ftpRETR((char*)dest.c_str(), (char*)ftp_path.c_str()); // downloads a file from FTP server
 }

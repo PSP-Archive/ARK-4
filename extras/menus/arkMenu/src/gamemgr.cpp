@@ -41,10 +41,9 @@ GameManager::~GameManager(){
 
 int GameManager::loadIcons(SceSize _args, void *_argp){
 
-    sceKernelDelayThread(0);
-
     while (self->dynamicIconRunning != ICONS_STOPPED){
         // check UMD status
+        sceKernelDelayThread(100000);
         std::vector<Entry*>* game_entries = self->categories[GAME]->getVector();
         bool has_umd = UMD::isUMD();
         bool umd_loaded = game_entries->size() > 0 && string("UMD") == game_entries->at(0)->getType();
@@ -59,6 +58,9 @@ int GameManager::loadIcons(SceSize _args, void *_argp){
             UMD* umd = (UMD*)game_entries->at(0);
             game_entries->erase(game_entries->begin());
             delete umd;
+            if (game_entries->size() == 0 && self->selectedCategory == GAME){
+                self->selectedCategory = HOMEBREW;
+            }
             SystemMgr::resumeDraw();
             common::playMenuSound();
         }

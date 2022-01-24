@@ -104,6 +104,13 @@ BrowserFolder::BrowserFolder(BrowserFolder* orig){
     this->fileSize = "Folder";
 }
 
+BrowserFolder::BrowserFolder(string parent, string name){
+    this->path = parent;
+    this->name = name;
+    this->selected = false;
+    this->fileSize = "Folder";
+}
+
 BrowserFolder::~BrowserFolder(){
 }
 

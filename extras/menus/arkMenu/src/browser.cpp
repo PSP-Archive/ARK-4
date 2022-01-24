@@ -501,65 +501,67 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
     }
     else sceIoMkdir(destination, 0777);
     
-    char * new_destination = new char[strlen(destination) + 256];
-    strcpy(new_destination, destination);
-    strcat(new_destination, "/");
+    string new_destination = destination;
+    if (new_destination[new_destination.length()-1] != '/') new_destination += "/";
+    string new_source = source;
+    if (new_source[new_source.length()-1] != '/') new_source += "/";
     
-    char* entry_copy = new_destination + strlen(destination) + 1;
-    
-    //try to open source folder
-    SceUID dir = sceIoDopen(source);
-    
-    if(dir >= 0)
-    {
-        SceIoDirent entry;
-        memset(&entry, 0, sizeof(SceIoDirent));
-        
-        char * read_path = new char[strlen(source) + 256];
-        
-        //start reading directory entries
-        while(sceIoDread(dir, &entry) > 0)
-        {
-            //skip . and .. entries
-            if (!strcmp(".", entry.d_name) || !strcmp("..", entry.d_name)) 
-            {
-                memset(&entry, 0, sizeof(SceIoDirent));
-                continue;
-            };
-        
-            //build read path
-            strcpy(read_path, source);
-            strcat(read_path, "/");
-            strcat(read_path, entry.d_name);
-        
-            //pspDebugScreenPrintf("file copy from: %s\n", read_path);
-        
-            strcpy(entry_copy, entry.d_name); //new file
-
-            //pspDebugScreenPrintf("to %s\n", new_destination);
-            
-            if (common::fileExists(read_path)){ //is it a file
-                printf("Copying file from %s -> %s\n", read_path, destination);
-                copyFile(string(read_path), string(destination)+string("/")); //copy file
+    if (ftp_driver != NULL && ftp_driver->isDevicePath(source)){
+        vector<Entry*> entries = ftp_driver->listDirectory(new_source);
+        for (int i=0; i<entries.size(); i++){
+            Entry* e = entries[i];
+            entries[i] = NULL;
+            printf("Copying %s\n", e->getName().c_str());
+            if (e->getName() != "<refresh>" && e->getName() != "<disconnect>" && e->getName() != "./" && e->getName() != "../"){
+                string src = new_source + e->getName();
+                if (e->getType() == "FOLDER"){
+                    string dst = new_destination + e->getName().substr(0, e->getName().length()-1);
+                    copy_folder_recursive(src.c_str(), dst.c_str());
+                }
+                else{
+                    copyFile(src, new_destination); //copy file
+                }
             }
-            else
+            delete e;
+        }
+    }
+    else{
+        //try to open source folder
+        SceUID dir = sceIoDopen(source);
+        
+        if(dir >= 0)
+        {
+            SceIoDirent entry;
+            memset(&entry, 0, sizeof(SceIoDirent));
+            
+            char * read_path = new char[strlen(source) + 256];
+            
+            //start reading directory entries
+            while(sceIoDread(dir, &entry) > 0)
             {
-                //try to copy as a folder
-                //strcat(new_destination, "/");
-                //strcat(read_path, "/");
-                copy_folder_recursive(read_path, new_destination);
-            };
+                //skip . and .. entries
+                if (!strcmp(".", entry.d_name) || !strcmp("..", entry.d_name)) 
+                {
+                    memset(&entry, 0, sizeof(SceIoDirent));
+                    continue;
+                };
+                string src = new_source + entry.d_name;
+                if (common::fileExists(src)){ //is it a file
+                    printf("Copying file from %s -> %s\n", src.c_str(), new_destination.c_str());
+                    copyFile(src, new_destination); //copy file
+                }
+                else
+                {
+                    //try to copy as a folder
+                    string dst = new_destination + entry.d_name;
+                    copy_folder_recursive(src.c_str(), dst.c_str());
+                };
 
+            };
+            //close folder
+            sceIoDclose(dir);
         };
-        
-        delete [] read_path;
-        
-        //close folder
-        sceIoDclose(dir);
-    };
-    
-    //free allocated path
-    delete [] new_destination;
+    }
     
     draw_progress = false;
     
@@ -767,12 +769,12 @@ void Browser::rename(){
         char tmpText[51];
         osk.getText((char*)tmpText);
         sceIoRename((this->cwd+string(oldname)).c_str(), (this->cwd+string(tmpText)).c_str());
-        GameManager::updateGameList(cwd.c_str()); // tell GameManager to update
     }
     osk.end();
     free(oldname);
     SystemMgr::resumeDraw();
     this->refreshDirs();
+    GameManager::updateGameList(cwd.c_str()); // tell GameManager to update
 }
 
 void Browser::removeSelection(){
