@@ -18,6 +18,9 @@
 
 #define CSO_MAGIC 0x4F534943
 #define ZSO_MAGIC 0x4F53495A
+#define DAX_MAGIC 0x00584144
+
+#define DAX_BLOCK_SIZE 0x2000
 
 typedef struct 
 
@@ -39,138 +42,20 @@ typedef struct
 
 } cso_header;
 
-
-typedef struct
-
-{
-
-    char type;
-
-    char id[5];
-
-    char version;
-
-} volumeDescriptor;
-
-
-typedef struct
-
-{
-
-    unsigned pathTableSize;
-
-    unsigned pathTableSizeLE;
-
-    unsigned pathTableOffset;
-
-    unsigned pathTableOptionalOffset;
-
-} primaryVolumeDescriptor;
-
-
-typedef struct
-
-{
-
-    char length;
-
-    char extended;
-
-    unsigned location;
-
-    short parent;
-
-} pathTable; //8
-
-
-typedef struct
-
-{
-
-    char length;
-
-    char extended;
-
-    unsigned location;
-
-    unsigned locationLE;
-
-    unsigned size;
-
-    unsigned sizeLE;
-
-    char trash[7];
-
-    char flags;
-
-    char other_size;
-
-    char intervale;
-
-    unsigned vol_seq;
-
-    char nameLen;
-
-} dirRecord;
-
-
-#define SECTOR_SIZE 0x800
-
+enum {
+    TYPE_CSO,
+    TYPE_ZSO,
+    TYPE_DAX,
+};
 
 class Cso : public Entry{
 
 
     private:
 
-
-        unsigned identifyEntry(const char * name, unsigned block, unsigned * fileSize);
-
-    
-
-        FILE * file;
-
-        unsigned * indices;
-
-        unsigned char * data, * read_buffer;
-
-        unsigned total_blocks, indices_len, current_index, current_index2;
-
-        cso_header file_header, head;
-
-        primaryVolumeDescriptor pvd;
-
-        z_stream dec;
-
-
-        bool open(const char * path);
+        int ciso_type;
 
         void clear();
-
-        
-
-        int getPrimaryVolumeDescriptor();
-
-        unsigned findFile(const char * file, unsigned * fileSize);
-
-        unsigned char * getDataBlock(unsigned block);
-
-        
-
-        void readFile(void* dst, unsigned block, unsigned size);
-
-        void extractFile(const char * name, unsigned block, unsigned size);
-
-        
-
-        //u8* block_out;
-        int buf_size;
-
-        unsigned block_size, start_read;
-
-        void getInitialBlock(FILE* fp, u8* block_out);
-        
-        int is_lz4;
-
 
     protected:
     
