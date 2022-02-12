@@ -244,7 +244,11 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
         common::upperString(tmpText);
 
         if (!strcmp(tmpText, file)){
-            if (size_out == NULL) return (void*)-1;
+            if (size_out == NULL){
+                fclose(fp);
+                free(block_out);
+                return (void*)-1;
+            }
             pos -= 31;
             unsigned b_offset, b_size;
 
