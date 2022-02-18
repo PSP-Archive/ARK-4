@@ -152,16 +152,19 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         patchKermitPeripheral(&_ktbl);
         goto flush;
     }
+    
     // Patch Vita Popsman
     if (strcmp(mod->modname, "scePops_Manager") == 0){
-        patchVitaPopsman(mod);
+        //patchVitaPopsman(mod);
+        colorDebug(0xFF0000);
         goto flush;
     }
     
     // Patch POPS SPU
     if (strcmp(mod->modname, "pops") == 0)
     {
-        patchVitaPopsSpu(mod);
+        //patchVitaPopsSpu(mod);
+        colorDebug(0xFF00);
         goto flush;
     }
     

@@ -21,6 +21,7 @@
 #define DAX_MAGIC 0x00584144
 
 #define DAX_BLOCK_SIZE 0x2000
+#define DAX_COMP_BUF 0x2400
 
 typedef struct 
 

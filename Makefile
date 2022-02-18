@@ -14,6 +14,7 @@ SUBDIRS = libs \
 	core/compat/psp \
 	core/compat/vita \
 	core/compat/vitapops \
+	core/compat/vita/popcorn \
 	core/inferno \
 	core/stargate \
 	core/popcorn \
@@ -56,10 +57,22 @@ copy-bin:
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
 	$(Q)cp extras/menus/ingame/ingame_menu.prx dist/ARK_01234/INGAME.PRX # Default in-game menu
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
+	$(Q)cp contrib/PSP/pops.prx dist/ARK_01234/POPS.PRX # 6.60 pops file for Vita ePSP
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	
 encrypt-prx: \
-	dist/SYSCTRL.BIN dist/VSHCTRL.BIN dist/INFERNO.BIN dist/STARGATE.BIN dist/POPCORN.BIN dist/PSPCOMP.BIN dist/VITACOMP.BIN dist/VITAPOPS.BIN
+	dist/SYSCTRL.BIN \
+	dist/VSHCTRL.BIN \
+	dist/INFERNO.BIN \
+	dist/STARGATE.BIN \
+	dist/POPCORN.BIN \
+	dist/PSPCOMP.BIN \
+	dist/VITACOMP.BIN \
+	dist/VITAPOPS.BIN \
+	dist/MEDIASYNC.BIN \
+	dist/POPCORNV.BIN \
+	dist/POPSMAN.BIN \
+	dist/PSPVMC.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtcnf.bin dist/PSVBTCNF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
@@ -93,6 +106,7 @@ clean:
 	$(Q)$(MAKE) $@ -C core/compat/psp
 	$(Q)$(MAKE) $@ -C core/compat/vita
 	$(Q)$(MAKE) $@ -C core/compat/vitapops
+	$(Q)$(MAKE) $@ -C core/compat/vita/popcorn
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu

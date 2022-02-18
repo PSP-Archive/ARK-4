@@ -51,15 +51,16 @@ $/kd/isofs.prx GEM
 $/kd/chnnlsv.prx VP
 $/kd/kermit_utility.prx VGUPAEM
 # pops needs popsman
-$/kd/popsman.prx P
+$/kd/popsman660.prx P
 # pops needs pops
-$/kd/ark_popcorn.prx P
+$/kd/ark_popcorn660.prx P
 # umdemu needs stargate
 $/kd/ark_stargate.prx E
 # pops doesn't need kermit_me_wrapper
 $/kd/kermit_me_wrapper.prx VGUAEM
 $/kd/impose_kermit.prx VGUPAEM
-$/kd/mediasync.prx VGUPAEM
+$/kd/mediasync.prx VGUAEM
+$/kd/mediasync660.prx P
 $%/kd/usersystemlib.prx VGUPAEM
 # pops uses libfont_hv and pafmini
 $%/vsh/module/libfont_hv.prx P
@@ -67,5 +68,5 @@ $%/vsh/module/pafmini.prx P
 # vsh & pops use common_util
 $%/vsh/module/common_util.prx VP
 # pops uses libpspvmc
-$%/vsh/module/libpspvmc.prx P
+$%/vsh/module/libpspvmc660.prx P
 %%/kd/dummy_anchor_IhariUafaayk98.prx GUPAEM

@@ -136,9 +136,9 @@ bool Cso::isCSO(const char* filename){
 }
 
 
-void zlib_decompress(uint8_t *input, uint8_t* output, int in_size, int type)
-
+int zlib_decompress(uint8_t *input, uint8_t* output, int in_size, int out_size, int type)
 {
+    int ret = 0;
     switch (type){
     case TYPE_CSO:
         sctrlDeflateDecompress(output, input, SECTOR_SIZE);
@@ -154,12 +154,26 @@ void zlib_decompress(uint8_t *input, uint8_t* output, int in_size, int type)
             z.next_in = input;
 	        z.avail_in = in_size;
 	        z.next_out = output;
-	        z.avail_out = SECTOR_SIZE;
-	        inflate(&z, Z_FINISH);
+	        z.avail_out = out_size;
+	        int res = 0;
+	        res = inflate(&z, Z_FINISH);
+	        printf("in_size: %d\n", in_size);
+	        printf("out_size: %d\n", out_size);
+	        printf("total out: %lu\n", z.total_out);
+	        printf("msg: %s\n", z.msg);
 	        inflateEnd(&z);
+	        ret = (int)z.total_out;
+	        /*
+	        unsigned long dsize = out_size;
+	        int res = uncompress(output, &dsize, input, in_size);
+            ret = (int)dsize;
+            */
+            printf("res: %d\n", res);
         }
         break;
     }
+    printf("Decompressed: %d\n", ret);
+    return ret;
 }
 
 
@@ -168,7 +182,7 @@ int getInitialBlock(FILE* fp, u8* block_out, int ciso_type){
     if (fp == NULL)
         return 0;
 
-    uint8_t compressed[SECTOR_SIZE];
+    uint8_t compressed[DAX_BLOCK_SIZE];
 
     int block_size = 0;
 
@@ -180,32 +194,93 @@ int getInitialBlock(FILE* fp, u8* block_out, int ciso_type){
         fread(&block_size, 4, 1, fp);
     }
     int start_read = (32768 / block_size) * 4 + 24;
+    if (ciso_type == TYPE_DAX)
+        start_read += 8;
+    
+    /*
     fseek(fp, start_read, SEEK_SET);
+    
+    printf("start_read: %d\n", start_read);
 
     unsigned fo, fs;
     fread(&fo, 4, 1, fp);
-    fread(&fs, 4, 1, fp);
+    
+    if (ciso_type == TYPE_DAX){
+        fs = DAX_BLOCK_SIZE;
+    }
+    else{
+        fread(&fs, 4, 1, fp);
+        fs = min((int)fs, 200);
+    }
+    
+    printf("fo: %d\n", fo);
+    printf("fs: %d\n", fs);
+    
     fseek(fp, fo, SEEK_SET);
-
-    fs = min((int)fs, 200);
-
     fread(compressed, 1, fs, fp);
 
+    {
+    FILE* fp = fopen("compressed1", "wb");
+    fwrite(compressed, 1, DAX_BLOCK_SIZE, fp);
+    fclose(fp);    
+    }
+
     zlib_decompress(compressed, block_out, fs, ciso_type);
-    unsigned start = (block_out[158] + block_out[159] + block_out[160] + block_out[161]) * 4;
-    fseek(fp, start+28, SEEK_SET);
+    
+    {
+    FILE* fp = fopen("block_out1.bin", "wb");
+    fwrite(block_out, 1, DAX_BLOCK_SIZE, fp);
+    fclose(fp);    
+    }
+    
+    printf("158.159.160.161: %d.%d.%d.%d\n", block_out[158], block_out[159], block_out[160], block_out[161]);
+    unsigned idx = (block_out[158] + (block_out[159]<<8) + (block_out[160]<<16) + (block_out[161]<<24));
+    */
+    
+    unsigned start = 0;
+    if (ciso_type == TYPE_DAX){
+        start = start_read + 4;
+    }
+    else{
+        start = start_read + 28;
+    }
+    
+    fseek(fp, start, SEEK_SET);
+
+    printf("start: %d\n", start);
 
     unsigned offset;
     fread(&offset, 4, 1, fp);
 
     unsigned size;
-    fread(&size, 4, 1, fp);
-    size -= offset;
-
+    if (ciso_type == TYPE_DAX){
+        size = DAX_BLOCK_SIZE;
+    }
+    else{
+        fread(&size, 4, 1, fp);
+        size -= offset;
+        size = min((int)size, 200);
+    }
+    
     fseek(fp, offset, SEEK_SET);
 
+    printf("Offset: %d\n", offset);
+    printf("Size: %d\n", size);
+
     fread(compressed, 1, size, fp);
-    zlib_decompress(compressed, block_out, size, ciso_type);
+    zlib_decompress(compressed, block_out, size, DAX_BLOCK_SIZE, ciso_type);
+
+    {
+    FILE* fp = fopen("compressed.bin", "wb");
+    fwrite(compressed, 1, DAX_BLOCK_SIZE, fp);
+    fclose(fp);
+    }
+
+    {
+    FILE* fp = fopen("block_out.bin", "wb");
+    fwrite(block_out, 1, DAX_BLOCK_SIZE, fp);
+    fclose(fp);
+    }
 
     return block_size;
 }
@@ -216,15 +291,15 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
     FILE* fp = fopen(path, "rb");
     if (fp == NULL)
         return NULL;
-
-    u8* block_out = (u8*)memalign(64, SECTOR_SIZE);
+        
+    u8* block_out = (u8*)memalign(64, DAX_BLOCK_SIZE);
     int block_size = getInitialBlock(fp, block_out, ciso_type);
 
     if (size_out != NULL)
         *size_out = 0;
 
     void* buffer = NULL;
-    uint8_t compressed[SECTOR_SIZE];
+    uint8_t compressed[DAX_COMP_BUF];
 
     common::upperString(file);
 
@@ -252,18 +327,30 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
             pos -= 31;
             unsigned b_offset, b_size;
 
-            b_offset = ((block_out[pos]) + (block_out[pos+1]<<8) + (block_out[pos+2]<<16) + (block_out[pos+3]<<24))*4 + 24;
+            b_offset = ((block_out[pos]) + (block_out[pos+1]<<8) + (block_out[pos+2]<<16) + (block_out[pos+3]<<24));
             b_size = ((block_out[pos+8]) + (block_out[pos+9]<<8) + (block_out[pos+10]<<16) + (block_out[pos+11]<<24));
-
-            int b_iter = (int)ceil(b_size/2048.f) + 1;
+            if (ciso_type == TYPE_DAX){
+                b_offset += 32;
+            }
+            else{
+                b_offset = b_offset*4 + 24;
+            }
+            
+            int b_iter = (int)ceil(b_size/(float)block_size) + 1;
             int trail_size = block_size - (((b_iter -1) * block_size) - b_size);
 
             fseek(fp, b_offset, SEEK_SET);
 
-            int buf_size = SECTOR_SIZE*b_iter + trail_size;
-            buffer = memalign(64, buf_size);
+            buffer = memalign(64, b_size);
             int compressed_size = 0;
-            u32 buf = (u32)buffer;
+            u8* buf = (u8*)buffer;
+            int buf_s = b_size;
+            
+            printf("b_offset: %d\n", b_offset);
+            printf("b_size: %d\n", b_size);
+            printf("b_iter: %d\n", b_iter);
+            printf("trail_size: %d\n", b_iter);
+            
             for (int x = 1; x<b_iter; x++){
 
                 unsigned cur_pos = ftell(fp);
@@ -272,40 +359,61 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
                 unsigned offset, size;
 
                 fread(&offset, 4, 1, fp);
+                
+                printf("offset: %d\n", offset);
 
-                if (offset >= 0x80000000){
-                    is_compressed = false;
-                    offset -= 0x80000000;
-                }
-
-                fread(&size, 4, 1, fp);
-                if (size >= 0x80000000)
-                    size -= 0x80000000;
-
-                size -= offset;
-                fseek(fp, offset, SEEK_SET);
-
-                if (is_compressed){
+                if (ciso_type == TYPE_DAX){
+                    fseek(fp, offset, SEEK_SET);
                     if (x < b_iter - 1){
-                        fread(compressed, 1, size, fp);
-                        zlib_decompress(compressed, (uint8_t*)buf, size, ciso_type);
-                        buf += SECTOR_SIZE;
+                        fread(compressed, 1, DAX_COMP_BUF, fp);
+                        zlib_decompress(compressed, (uint8_t*)buf, DAX_COMP_BUF, buf_s, ciso_type);
+                        buf += DAX_BLOCK_SIZE;
+                        buf_s -= DAX_BLOCK_SIZE;
                     }
                     else{
-                        fread(compressed, 1, size, fp);
-                        zlib_decompress(compressed, (uint8_t*)buf, size, ciso_type);
+                        fread(compressed, 1, DAX_COMP_BUF, fp);
+                        zlib_decompress(compressed, (uint8_t*)buf, DAX_COMP_BUF, buf_s, ciso_type);
                         buf += trail_size;
+                        buf_s -= trail_size;
                     }
                 }
                 else{
-                    fread((uint8_t*)buf, 1, size, fp);
-                    buf += size;
+                    if (offset >= 0x80000000){
+                        is_compressed = false;
+                        offset -= 0x80000000;
+                    }
+
+                    fread(&size, 4, 1, fp);
+                    if (size >= 0x80000000)
+                        size -= 0x80000000;
+
+                    size -= offset;
+                    fseek(fp, offset, SEEK_SET);
+
+                    if (is_compressed){
+                        if (x < b_iter - 1){
+                            fread(compressed, 1, size, fp);
+                            zlib_decompress(compressed, (uint8_t*)buf, size, buf_s, ciso_type);
+                            buf += SECTOR_SIZE;
+                            buf_s -= SECTOR_SIZE;
+                        }
+                        else{
+                            fread(compressed, 1, size, fp);
+                            zlib_decompress(compressed, (uint8_t*)buf, size, buf_s, ciso_type);
+                            buf += trail_size;
+                            buf_s -= trail_size;
+                        }
+                    }
+                    else{
+                        fread((uint8_t*)buf, 1, size, fp);
+                        buf += size;
+                    }
                 }
                 fseek(fp, cur_pos+4, SEEK_SET);
             }
 
             if (size_out != NULL)
-                *size_out = buf_size;
+                *size_out = b_size;
 
             fclose(fp);
             free(block_out);
@@ -316,6 +424,5 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
     fclose(fp);
     free(block_out);
     return NULL;
-
 }
 
