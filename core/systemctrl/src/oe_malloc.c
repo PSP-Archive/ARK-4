@@ -65,3 +65,10 @@ int oe_mallocterminate(void)
     return sceKernelDeleteHeap(heapid);
 }
 
+void* malloc(unsigned int size){
+    return oe_malloc(size);
+}
+
+void free(void* p){
+    oe_free(p);
+}

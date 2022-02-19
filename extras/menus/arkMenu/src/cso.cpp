@@ -144,17 +144,7 @@ void zlib_decompress(uint8_t *input, uint8_t* output, int type)
         LZ4_decompress_fast(input, output, SECTOR_SIZE);
         break;
     case TYPE_DAX:
-        { // use zlib decompress
-            z_stream z;
-            memset(&z, 0, sizeof(z));
-            inflateInit2(&z, 15);
-            z.next_in = input;
-	        z.avail_in = DAX_COMP_BUF;
-	        z.next_out = output;
-	        z.avail_out = DAX_BLOCK_SIZE;
-	        inflate(&z, Z_FINISH);
-	        inflateEnd(&z);
-        }
+        sctrlDaxDecompress(output, input);
         break;
     }
 }

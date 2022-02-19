@@ -143,6 +143,8 @@ void sctrlHENDisableCustomPeopsConfig();
 // GZIP decompress
 int sctrlDeflateDecompress(void* dest, void* src, int size);
 
+void sctrlDaxDecompress(void* output, void* input);
+
 int sctrlKernelMsIsEf();
 
 #ifdef __cplusplus

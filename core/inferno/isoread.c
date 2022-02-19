@@ -689,27 +689,6 @@ static int read_cso_data_ng(u8 *addr, u32 size, u32 offset)
 	return size + first_block_size + last_block_size;
 }
 
-static void dax_decompress(void* input, void* output){
-    z_stream z;
-    memset(&z, 0, sizeof(z));
-    inflateInit2(&z, 15);
-    z.next_in = input;
-    z.avail_in = DAX_COMP_BUF;
-    z.next_out = output;
-    z.avail_out = DAX_BLOCK_SIZE;
-    inflate(&z, Z_FINISH);
-    inflateEnd(&z);
-}
-
-// for zlib
-void* malloc(size_t size){
-    return oe_malloc(size);
-}
-
-void free(void* ptr){
-    oe_free(ptr);
-}
-
 /*
 static int read_dax_data(u32 offset, void* ptr, u32 size){
 
@@ -788,7 +767,7 @@ static int read_dax_data(u8* addr, u32 size, u32 offset)
 		//ret = read_cso_sector(g_ciso_block_buf, cur_block);
         u32 b_offset = g_cso_idx_cache[cur_block];
         read_raw_data(g_ciso_block_buf, DAX_COMP_BUF, b_offset);
-	    dax_decompress(g_ciso_block_buf, g_ciso_dec_buf);
+	    sctrlDaxDecompress(g_ciso_block_buf, g_ciso_dec_buf);
 
 		read_bytes = MIN(size, (DAX_BLOCK_SIZE - pos));
 		memcpy(addr, g_ciso_dec_buf + pos, read_bytes);
