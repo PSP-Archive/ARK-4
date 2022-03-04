@@ -2,9 +2,9 @@ name: ARK-4
 
 on:
   schedule:
-      - cron "0 0 * * *"
+    - cron: '0 0 * * *'
   tags:
-      - 'v*'
+    - 'v*'
 jobs:
   build:
 
