@@ -1,11 +1,10 @@
 name: ARK-4
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
+  schedule:
+      - cron '0 0 * * *'
+    tags:
+      - 'v*'
 jobs:
   build:
 
@@ -36,10 +35,8 @@ jobs:
         path: "./dist"
 
     - name: Nightly release
-      uses: ./dist
-      with:
-        tag_name: $(git rev-parse --short HEAD) 
-        keep_num: -1
-        keep_tags: false
+      uses: elgohr/Github-Release-Action@master 
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
 
