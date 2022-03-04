@@ -76,12 +76,13 @@ static int check_memory(const void *addr, int size)
 int sceUmdCheckMedium(void)
 {
 	int ret;
+	
+	if (g_iso_fn == NULL || g_iso_fn[0] == '\0'){
+	    return 0;
+    }
 
 	while(!g_iso_opened) {
 		sceKernelDelayThread(10000);
-		if (g_iso_fn == NULL || g_iso_fn[0] == '\0'){
-		    return 0;
-		}
 	}
 
 	ret = 1;

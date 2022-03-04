@@ -55,16 +55,16 @@ dist/POPCORNV.BIN: core/compat/vita/popcorn/popcorn.prx
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
 dist/POPSMAN.BIN: contrib/PSP/popsman.prx
-	$(Q)python ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< scePops_Manager 0x1007
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< scePops_Manager 0x1007
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
 dist/PSPVMC.BIN: contrib/PSP/libpspvmc.prx
-	$(Q)python ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/UserModule.hdr $< pspvmc_Library 0x0000
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/UserModule.hdr $< pspvmc_Library 0x0000
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
 dist/MEDIASYNC.BIN: contrib/PSP/mediasync.prx
-	$(Q)python ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< sceMediaSync 0x1006
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< sceMediaSync 0x1006
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
