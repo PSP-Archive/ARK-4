@@ -36,11 +36,11 @@ jobs:
         path: "./dist"
 
     - name: Nightly release
-      uses: eine/tip@master
+      uses: pyTooling/Actions/releaser@main
       with:
         tag: $GITHUB_SHA
         rm: true
         token: ${{ secrets.GITHUB_TOKEN }}
-        files: "./dist/*.*"
+        files: "./dist"
 
 
