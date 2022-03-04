@@ -37,8 +37,12 @@ jobs:
         path: "./dist"
 
     - name: Nightly release
-      uses: elgohr/Github-Release-Action@master 
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: ${{ secrets.RELEASE_TOKEN }}
+        automatic_release_tag: ${GITHUB_SHA::8}
+        prerelease: true
+        title: "Nightly Builds"
+        path: "./dist"
 
 
