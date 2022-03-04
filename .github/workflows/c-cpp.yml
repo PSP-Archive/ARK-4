@@ -38,7 +38,7 @@ jobs:
     - name: Nightly release
       uses: eine/tip@master
       with:
-        tag: ${{ GITHUB_SHA }}
+        tag: $GITHUB_SHA
         rm: true
         token: ${{ secrets.GITHUB_TOKEN }}
         files: "./dist/*.*"
