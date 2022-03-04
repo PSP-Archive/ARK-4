@@ -37,10 +37,9 @@ jobs:
 
     - name: Nightly release
       uses: ./dist
-      token: ${{ secrets.GITHUB_TOKEN }}
       with:
-      tag_name: $(git rev-parse --short HEAD) 
-      keep_num: -1
-      keep_tags: false
+        tag_name: $(git rev-parse --short HEAD) 
+        keep_num: -1
+        keep_tags: false
 
 
