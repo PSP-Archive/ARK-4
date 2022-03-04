@@ -188,7 +188,7 @@ static int get_nsector(void)
 static int is_ciso(SceUID fd)
 {
 	int ret;
-	u32 *magic;
+	u32 *magic = (u32*)g_CISO_hdr.magic;
 
 	g_CISO_hdr.magic[0] = '\0';
 	g_ciso_dec_buf_offset = (u32)-1;
@@ -203,13 +203,13 @@ static int is_ciso(SceUID fd)
 		goto exit;
 	}
 
-	magic = (u32*)g_CISO_hdr.magic;
-
 	if(*magic == CSO_MAGIC || *magic == ZSO_MAGIC || *magic == DAX_MAGIC) { // CISO or ZISO or DAX
-		lz4_compressed = (*magic == 0x4F53495A) ? 1 : 0;
+		lz4_compressed = (*magic == ZSO_MAGIC) ? 1 : 0;
 		g_CISO_cur_idx = -1;
-		g_ciso_total_block = g_CISO_hdr.total_bytes / g_CISO_hdr.block_size;
+		if (*magic == DAX_MAGIC) g_ciso_total_block = dax_header->uncompressed_size / DAX_BLOCK_SIZE;
+		else g_ciso_total_block = g_CISO_hdr.total_bytes / g_CISO_hdr.block_size;
 		printk("%s: total block %d\n", __func__, (int)g_ciso_total_block);
+
 
 		if(g_ciso_dec_buf == NULL) {
 			g_ciso_dec_buf = oe_malloc(DAX_BLOCK_SIZE + (1 << g_CISO_hdr.align) + 64);
@@ -240,7 +240,7 @@ static int is_ciso(SceUID fd)
 		if (g_cso_idx_cache == NULL) {
 			g_cso_idx_cache = oe_malloc((CISO_IDX_MAX_ENTRIES * 4) + 64);
 			if (g_cso_idx_cache == NULL) {
-				ret = -3;
+				ret = -4;
 				printk("%s: -> %d\n", __func__, ret);
 				goto exit;
 			}
@@ -689,71 +689,11 @@ static int read_cso_data_ng(u8 *addr, u32 size, u32 offset)
 	return size + first_block_size + last_block_size;
 }
 
-/*
-static int read_dax_data(u32 offset, void* ptr, u32 size){
-
-
-    if(offset > dax_header->uncompressed_size) {
-		// return if the offset goes beyond the iso size
-		return 0;
-	} else if(offset + size > dax_header->uncompressed_size) {
-		// adjust size if it tries to read beyond the game data
-		size = dax_header->uncompressed_size - offset;
-	}
-
-    // seek the first block offset
-	u32 starting_block = offset / DAX_BLOCK_SIZE;
-
-	// calculate the last needed block and read the index
-	u32 ending_block = (offset + size) / DAX_BLOCK_SIZE + 1;
-	
-	// calculate offset within block
-	u32 f_offset = offset & (DAX_BLOCK_SIZE - 1);
-	
-	// read offset table
-	if (g_cso_idx_start_block < 0){
-	    int ret = read_raw_data(g_cso_idx_cache, dax_get_nsector(-1)*4, 32);
-		if(ret < 0) {
-		    return ret;
-		}
-		g_cso_idx_start_block = 0;
-    }
-	
-	u32 n_bytes = size;
-	u8* buf = ptr;
-	for (int i=starting_block; i<=ending_block; i++){
-	    u32 b_offset = g_cso_idx_cache[i];
-	    u32 s = (n_bytes<DAX_BLOCK_SIZE)? n_bytes : DAX_BLOCK_SIZE;
-	    read_raw_data(g_ciso_block_buf, DAX_COMP_BUF, b_offset);
-	    dax_decompress(g_ciso_block_buf, g_ciso_dec_buf);
-	    if (i==starting_block){
-	        if (f_offset+s > DAX_BLOCK_SIZE) s = DAX_BLOCK_SIZE - offset;
-	        memcpy(buf, (u8*)g_ciso_dec_buf+f_offset, s);
-	    }
-	    else{
-	        memcpy(buf, g_ciso_dec_buf, s);
-	    }
-	    buf += s;
-	    n_bytes -= s;
-	}
-	return size - n_bytes;
-}
-*/
-
 static int read_dax_data(u8* addr, u32 size, u32 offset)
 {
 	u32 cur_block;
 	int pos, ret, read_bytes;
 	u32 o_offset = offset;
-	
-	// read offset table
-	if (g_cso_idx_start_block < 0){
-	    int ret = read_raw_data(g_cso_idx_cache, get_nsector()*4, 32);
-		if(ret < 0) {
-		    return ret;
-		}
-		g_cso_idx_start_block = 0;
-    }
 
 	while(size > 0) {
 		cur_block = offset / DAX_BLOCK_SIZE;
@@ -764,10 +704,11 @@ static int read_dax_data(u8* addr, u32 size, u32 offset)
 			break;
 		}
 
-		//ret = read_cso_sector(g_ciso_block_buf, cur_block);
-        u32 b_offset = g_cso_idx_cache[cur_block];
-        read_raw_data(g_ciso_block_buf, DAX_COMP_BUF, b_offset);
-	    sctrlDaxDecompress(g_ciso_block_buf, g_ciso_dec_buf);
+        u32 b_offset = 0; read_raw_data(&b_offset, sizeof(u32), 32 + (4*cur_block));
+        
+        int ret = read_raw_data(g_ciso_block_buf, DAX_COMP_BUF, b_offset);
+	    
+	    sctrlDaxDecompress(g_ciso_dec_buf, g_ciso_block_buf);
 
 		read_bytes = MIN(size, (DAX_BLOCK_SIZE - pos));
 		memcpy(addr, g_ciso_dec_buf + pos, read_bytes);
