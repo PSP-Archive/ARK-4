@@ -36,13 +36,12 @@ jobs:
         path: "./dist"
 
     - name: Nightly release
-        id: create_release
-        uses: ./dist
+      uses: ./dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: $(git rev-parse --short HEAD) 
-          keep_num: -1
-          keep_tags: false
+      with:
+      tag_name: $(git rev-parse --short HEAD) 
+      keep_num: -1
+      keep_tags: false
 
 
