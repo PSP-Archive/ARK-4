@@ -1,5 +1,7 @@
 name: ARK-4
 on:
+  push:
+    branches: [ master ]
   schedule:
     - cron: '*/1 * * * *'
 jobs:
