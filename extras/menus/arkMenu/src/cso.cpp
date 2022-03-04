@@ -168,12 +168,30 @@ int getInitialBlock(FILE* fp, u8* block_out, u8* compressed, int ciso_type){
     if (ciso_type == TYPE_DAX)
         start_read += 8;
     
-    unsigned start = 0;
+    unsigned fo, fs;
+    fseek(fp, start_read, SEEK_SET);
+    fread(&fo, 4, 1, fp);
+    
     if (ciso_type == TYPE_DAX){
-        start = start_read + 4;
+        fs = DAX_BLOCK_SIZE;
     }
     else{
-        start = start_read + 28;
+        fread(&fs, 4, 1, fp);
+        fs = min((int)fs, 200);
+    }
+    
+    fseek(fp, fo, SEEK_SET);
+    fread(compressed, 1, fs, fp);
+    zlib_decompress(compressed, block_out, ciso_type);
+    
+    unsigned idx = (block_out[158] + (block_out[159]<<8) + (block_out[160]<<16) + (block_out[161]<<24));
+    
+    unsigned start = 0;
+    if (ciso_type == TYPE_DAX){
+        start = idx + 30;
+    }
+    else{
+        start = idx*4 + 28;
     }
     
     fseek(fp, start, SEEK_SET);
@@ -188,7 +206,7 @@ int getInitialBlock(FILE* fp, u8* block_out, u8* compressed, int ciso_type){
     else{
         fread(&size, 4, 1, fp);
         size -= offset;
-        size = min((int)size, SECTOR_SIZE);
+        size = min((int)size, 200);
     }
     
     fseek(fp, offset, SEEK_SET);

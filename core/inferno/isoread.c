@@ -152,12 +152,9 @@ static void wait_until_ms0_ready(void)
 // 0x00000EE4
 static int ciso_get_nsector(SceUID fd)
 {
-//	return g_CISO_hdr.total_bytes / g_CISO_hdr.block_size;;
+    // return g_CISO_hdr.total_bytes / g_CISO_hdr.block_size;
+    // return dax_header->uncompressed_size / DAX_BLOCK_SIZE;
 	return g_ciso_total_block;
-}
-
-static int dax_get_nsector(SceUID fd){
-    return dax_header->uncompressed_size / DAX_BLOCK_SIZE;
 }
 
 // 0x00000E58
@@ -176,8 +173,6 @@ static int iso_get_nsector(SceUID fd)
 static int get_nsector(void)
 {
 	if(g_is_ciso) {
-	    if (dax_header->magic == DAX_MAGIC)
-	        return dax_get_nsector(g_iso_fd);
 		return ciso_get_nsector(g_iso_fd);
 	}
 
@@ -210,7 +205,6 @@ static int is_ciso(SceUID fd)
 		else g_ciso_total_block = g_CISO_hdr.total_bytes / g_CISO_hdr.block_size;
 		printk("%s: total block %d\n", __func__, (int)g_ciso_total_block);
 
-
 		if(g_ciso_dec_buf == NULL) {
 			g_ciso_dec_buf = oe_malloc(DAX_BLOCK_SIZE + (1 << g_CISO_hdr.align) + 64);
 
@@ -236,8 +230,8 @@ static int is_ciso(SceUID fd)
 			if((u32)g_ciso_block_buf & 63)
 				g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
 		}
-		
-		if (g_cso_idx_cache == NULL) {
+
+		if (*magic != DAX_MAGIC && g_cso_idx_cache == NULL) {
 			g_cso_idx_cache = oe_malloc((CISO_IDX_MAX_ENTRIES * 4) + 64);
 			if (g_cso_idx_cache == NULL) {
 				ret = -4;
@@ -245,7 +239,7 @@ static int is_ciso(SceUID fd)
 				goto exit;
 			}
 
-			if((u32)g_ciso_block_buf & 63)
+			if((u32)g_cso_idx_cache & 63)
 				g_cso_idx_cache = (void*)(((u32)g_cso_idx_cache & (~63)) + 64);
 		}
 		ret = 0;
@@ -694,6 +688,15 @@ static int read_dax_data(u8* addr, u32 size, u32 offset)
 	u32 cur_block;
 	int pos, ret, read_bytes;
 	u32 o_offset = offset;
+	
+	if(offset > dax_header->uncompressed_size) {
+		// return if the offset goes beyond the iso size
+		return 0;
+	}
+	else if(offset + size > dax_header->uncompressed_size) {
+		// adjust size if it tries to read beyond the game data
+		size = dax_header->uncompressed_size - offset;
+	}
 
 	while(size > 0) {
 		cur_block = offset / DAX_BLOCK_SIZE;
