@@ -35,16 +35,13 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         path: "./dist"
-
-    - name: Nightly release
-      uses: "marvinpinto/action-automatic-releases@latest"
-      env:
-        SHA8: $
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        automatic_release_tag: ${{ github.event.workflow_run.head_sha }}
-        prerelease: true
-        title: "Nightly Builds"
-        files: "./dist/*"
-
-
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Nightly release
+      - uses: avakar/tag-and-release@v1
+        with:
+          tag_name: ${{ GITHUB_SHA }}
+          files: "./dist/*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
