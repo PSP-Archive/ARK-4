@@ -177,7 +177,7 @@ int getInitialBlock(FILE* fp, u8* block_out, u8* compressed, int ciso_type){
     }
     else{
         fread(&fs, 4, 1, fp);
-        fs = min((int)fs, 200);
+        fs = min((int)fs, SECTOR_SIZE);
     }
     
     fseek(fp, fo, SEEK_SET);
@@ -206,7 +206,7 @@ int getInitialBlock(FILE* fp, u8* block_out, u8* compressed, int ciso_type){
     else{
         fread(&size, 4, 1, fp);
         size -= offset;
-        size = min((int)size, 200);
+        size = min((int)size, SECTOR_SIZE);
     }
     
     fseek(fp, offset, SEEK_SET);
@@ -309,8 +309,9 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
                     if (x < b_iter - 1){
                         fread(compressed, 1, size, fp);
                         zlib_decompress(compressed, (uint8_t*)buf, ciso_type);
-                        if (ciso_type == TYPE_DAX) buf += block_size;
-                        else buf += SECTOR_SIZE;
+                        buf += block_size;
+                        //if (ciso_type == TYPE_DAX) buf += block_size;
+                        //else buf += SECTOR_SIZE;
                     }
                     else{
                         fread(compressed, 1, size, fp);
