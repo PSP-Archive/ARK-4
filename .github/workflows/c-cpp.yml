@@ -39,10 +39,10 @@ jobs:
     - name: Nightly release
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        repo_token: ${{ secrets.RELEASE_TOKEN }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
         automatic_release_tag: ${GITHUB_SHA::8}
         prerelease: true
         title: "Nightly Builds"
-        path: "./dist"
+        files: "./dist/*"
 
 
