@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Nightly release
-      - uses: avakar/tag-and-release@v1
+        uses: avakar/tag-and-release@v1
         with:
           tag_name: ${{ GITHUB_SHA }}
           files: "./dist/*"
