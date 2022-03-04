@@ -149,34 +149,20 @@ static void wait_until_ms0_ready(void)
 	}
 }
 
-// 0x00000EE4
-static int ciso_get_nsector(SceUID fd)
-{
-    // return g_CISO_hdr.total_bytes / g_CISO_hdr.block_size;
-    // return dax_header->uncompressed_size / DAX_BLOCK_SIZE;
-	return g_ciso_total_block;
-}
-
-// 0x00000E58
-static int iso_get_nsector(SceUID fd)
-{
-	SceOff off, total;
-
-	off = sceIoLseek(fd, 0, PSP_SEEK_CUR);
-	total = sceIoLseek(fd, 0, PSP_SEEK_END);
-	sceIoLseek(fd, off, PSP_SEEK_SET);
-
-	return total / ISO_SECTOR_SIZE;
-}
-
 // 0x00000E58
 static int get_nsector(void)
 {
-	if(g_is_ciso) {
-		return ciso_get_nsector(g_iso_fd);
+	if(g_ciso_total_block <= 0) {
+		SceOff off, total;
+
+	    off = sceIoLseek(g_iso_fd, 0, PSP_SEEK_CUR);
+	    total = sceIoLseek(g_iso_fd, 0, PSP_SEEK_END);
+	    sceIoLseek(g_iso_fd, off, PSP_SEEK_SET);
+
+	    g_ciso_total_block = total / ISO_SECTOR_SIZE;
 	}
 
-	return iso_get_nsector(g_iso_fd);
+	return g_ciso_total_block;
 }
 
 // 0x00000F00

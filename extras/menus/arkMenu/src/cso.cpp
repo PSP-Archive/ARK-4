@@ -310,8 +310,6 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
                         fread(compressed, 1, size, fp);
                         zlib_decompress(compressed, (uint8_t*)buf, ciso_type);
                         buf += block_size;
-                        //if (ciso_type == TYPE_DAX) buf += block_size;
-                        //else buf += SECTOR_SIZE;
                     }
                     else{
                         fread(compressed, 1, size, fp);
