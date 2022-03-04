@@ -38,12 +38,11 @@ jobs:
 
     - name: Nightly release
       uses: "marvinpinto/action-automatic-releases@latest"
-      uses: "pr-mpt/actions-commit-hash@v1"
       env:
         SHA8: $
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        automatic_release_tag: ${{ steps.commit.outputs.short }}
+        automatic_release_tag: ${{ github.event.workflow_run.head_sha }}
         prerelease: true
         title: "Nightly Builds"
         files: "./dist/*"
