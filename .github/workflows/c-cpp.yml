@@ -1,7 +1,7 @@
 name: ARK-4
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '*/30 0 * * *'
 jobs:
   build:
 
