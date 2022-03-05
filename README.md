@@ -51,18 +51,19 @@
 ### By installing Plugins
 You can install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
-- Add a line of text for each plugin using the following format:
-- game, ms0:/path_to_my_game_plugin.prx, enabled
-- pops, ms0:/path_to_my_psx_plugin.prx, 1
-- vsh, ms0:/path_to_my_vsh_plugin.prx, true
-
-You can also enable plugins on a per game basis.
-For example, enable lcscheatdevice on GTA Liberty City Stories US Version:
+To install plugins use the comma-separated format (CSV).
+Where the header is: runlevel, path, switch.
+A few samples:
+- game, ms0:/seplugins/cwcheat/cwcheat.prx, enabled
+- pops, ms0:/seplugins/cdda_enabler.prx, 1
+- vsh, ms0:/seplugins/cxmb.prx, true
 - ULUS10041, ms0:/seplugins/lcscheatdevice.prx, on
 
-
-You can use keywords "enabled", "on", "1" or "true" to indicate that the plugin is enabled, anything else disables it.
-You can use game, pops or vsh keywords to run the plugin in the corresponding runlevel, or the game ID for game-specific plugins.
+You can use the following keywords to enable a plugin:
+- 1
+- on
+- true
+- enabled
 
 You can use the following keywords to tell ARK when the plugin loads:
 - all/always: if either of these keywords are used, the plugin will always load.
