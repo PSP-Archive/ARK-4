@@ -52,13 +52,8 @@ jobs:
       with:
         tag_name: ${{ github.ref }} 
         release_name: ${{ github.sha }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-
     - name: upload GZIP artifact 
       uses: actions/upload-artifact@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: "./dist/*"
