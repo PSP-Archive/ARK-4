@@ -45,6 +45,8 @@ jobs:
       run: cd .. && curl -OJL "https://github.com/swarzesherz/sign_np/archive/refs/tags/v1.0.2.tar.gz" && tar xvf sign_np-1.0.2.tar.gz && cd sign_np-1.0.2 && make && sudo cp sign_np /usr/local/pspdev/bin
     - name: Making ARK-4
       run: make
+    - name: Compressing dist directory up
+      run: cd ./dist && sudo tar czvf ARK-4.tar.gz * && sudo zip -r ARK-4.zip *
 
     - name: release
       uses: actions/create-release@latest
@@ -60,7 +62,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: "./dist/*"
+        asset_path: "./dist/ARK-4.tar.gz"
         asset_name: "ARK-4.tar.gz"
         asset_content_type: application/gzip
     - name: upload ZIP artifact 
@@ -69,6 +71,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: "./dist/*"
-        asset_name: "ARK-4.tar.gz"
+        asset_path: "./dist/ARK-4.zip"
+        asset_name: "ARK-4.zip"
         asset_content_type: application/zip
