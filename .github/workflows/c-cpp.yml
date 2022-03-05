@@ -55,16 +55,16 @@ jobs:
         tag_name: nightly-1 
         release_name: ${{ github.sha }}
     - name: upload GZIP artifact 
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-release-artifact@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         path: "./dist"
-        asset_name: "ARK-4.tar.gz"
+        name: "ARK-4.tar.gz"
         asset_content_type: application/gzip
     - name: upload ZIP artifact 
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-release-artifact@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
