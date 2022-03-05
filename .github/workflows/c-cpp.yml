@@ -51,7 +51,6 @@ jobs:
     - name: release
       uses: actions/create-release@latest
       id: create_release
-      run: export TAG=$(git rev-parse --short HEAD)
       env:
         DATE: $(date +%Y%m%d)
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
