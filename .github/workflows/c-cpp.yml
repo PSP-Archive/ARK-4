@@ -48,11 +48,12 @@ jobs:
 
     - name: release
       uses: actions/create-release@latest
+      run: TAG=$(git rev-parse --short HEAD)
       id: create_release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
-        tag_name: nightly 
+        tag_name: $TAG 
         release_name: ${{ github.sha }}
     - name: upload GZIP artifact 
       uses: actions/upload-artifact@v2
