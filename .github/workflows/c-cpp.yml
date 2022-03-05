@@ -51,9 +51,9 @@ jobs:
     - name: release
       uses: actions/create-release@latest
       id: create_release
-        with:
-          tag_name: ${{ github.ref }} 
-          release_name: ${{ github.sha }}
+      with:
+        tag_name: ${{ github.ref }} 
+        release_name: ${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
@@ -76,5 +76,3 @@ jobs:
         asset_path: "./dist/*"
         asset_name: "ARK-4.tar.gz"
         asset_content_type: application/zip
-
-
