@@ -24,6 +24,12 @@ jobs:
         if: ${{ github.event_name == 'schedule' }}
         run: test -z $(git rev-list  --after="24 hours"  ${{ github.sha }}) && echo "::set-output name=should_run::false"
 
+    - name: Create Version
+        id: get_version 
+        run: |
+          VERSION=v$(date +%Y.%m.%d)
+          echo "::set-output name=version::${VERSION}"
+
   build:
     runs-on: ubuntu-latest
 
@@ -52,10 +58,9 @@ jobs:
       uses: actions/create-release@latest
       id: create_release
       env:
-        DATE: $(date +%Y.%m.%d)
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
-        tag_name: $DATE 
+        tag_name: ${{ steps.get_version.outputs.version }} 
         release_name: ${{ github.sha }}
     - name: upload GZIP artifact 
       uses: actions/upload-release-asset@v1
