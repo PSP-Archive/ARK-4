@@ -23,9 +23,11 @@ jobs:
         name: check latest commit is less than a day
         if: ${{ github.event_name == 'schedule' }}
         run: test -z $(git rev-list  --after="24 hours"  ${{ github.sha }}) && echo "::set-output name=should_run::false"
+
   get_version:
+    runs-on: ubuntu-latest
+    name: Create Version
     steps:
-      - name: Create Version
       - id: get_version 
         run: VERSION=v$(date +%Y.%m.%d) && echo "::set-output name=version::${VERSION}"
 
