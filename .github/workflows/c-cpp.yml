@@ -24,14 +24,7 @@ jobs:
         if: ${{ github.event_name == 'schedule' }}
         run: test -z $(git rev-list  --after="24 hours"  ${{ github.sha }}) && echo "::set-output name=should_run::false"
 
-  get_version:
-    runs-on: ubuntu-latest
-    name: Create Version
-    steps:
-      - id: get_version 
-        run: VERSION=v$(date +%Y.%m.%d) && echo "::set-output name=version::${VERSION}"
-
-  build:
+      build:
     runs-on: ubuntu-latest
 
     steps:
@@ -54,6 +47,11 @@ jobs:
       run: make
     - name: Compressing dist directory up
       run: cd ./dist && sudo tar czvf ARK-4.tar.gz * && mv ARK-4.tar.gz .. && sudo zip -r ARK-4.zip * && mv ARK-4.zip ..
+
+    - name: Create Version
+      id: get_version 
+      run: VERSION=v$(date +%Y.%m.%d) && echo "::set-output name=version::${VERSION}"
+
 
     - name: release
       uses: actions/create-release@latest
