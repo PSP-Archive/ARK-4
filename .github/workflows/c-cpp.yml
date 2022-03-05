@@ -54,7 +54,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
-        tag_name: nightly-1 
+        tag_name: $(git rev-parse --short HEAD) 
         release_name: ${{ github.sha }}
     - name: upload GZIP artifact 
       uses: actions/upload-release-asset@v1
