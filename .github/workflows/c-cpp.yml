@@ -52,10 +52,10 @@ jobs:
       uses: actions/create-release@latest
       id: create_release
       env:
-        DATE: $(date +%Y%m%d)
+        DATE: $(date +%Y.%m.%d)
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
-        tag_name: echo $DATE 
+        tag_name: $DATE 
         release_name: ${{ github.sha }}
     - name: upload GZIP artifact 
       uses: actions/upload-release-asset@v1
