@@ -36,13 +36,14 @@
 * For 3.60 Henkaku users:
 - Install an ARK-4 bubble for 3.60 using FastARK: https://github.com/theheroGAC/ArkFast/releases/
 - Replace ARK savedata with latest release.
+- Copy H.BIN from Vitabubble folder into ARK savedata folder.
 
 
-* For game exploits on both PSP and PS Vita:
+## For legacy game exploits on both PSP and PS Vita:
 - Considering the savedata exploit loads H.BIN from the savedata path.
-- Copy all files from ARK_01234 into exploited savedata folder...
----- except actual savedata files: ICON0.PNG, PARAM.SFO, SECURE.BIN, SAVEAUTO.BIN, SAVEUTIL.BIN
-
+- Copy the following files from ARK_01234 savedata folder into game exploit folder:
+- H.BIN, ARK.BIN, ARK4.BIN FLASH0.ARK, MENU.PBP, RECOVERY.PBP, DATA.PKG and other extras.
+- Don't copy K.BIN if running on an ancient firmware.
 
 
 ## CUSTOMIZATION
