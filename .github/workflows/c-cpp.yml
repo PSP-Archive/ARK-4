@@ -46,7 +46,7 @@ jobs:
     - name: Making ARK-4
       run: make
     - name: Compressing dist directory up
-      run: cd ./dist && sudo tar czvf ARK-4.tar.gz * && sudo zip -r ARK-4.zip *
+      run: cd ./dist && sudo tar czvf ARK-4.tar.gz * && mv ARK-4.tar.gz .. && sudo zip -r ARK-4.zip * && mv ARK-4.zip ..
 
     - name: release
       uses: actions/create-release@latest
@@ -62,7 +62,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: "./dist/ARK-4.tar.gz"
+        asset_path: "ARK-4.tar.gz"
         asset_name: "ARK-4.tar.gz"
         asset_content_type: application/gzip
     - name: upload ZIP artifact 
@@ -71,6 +71,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: "./dist/ARK-4.zip"
+        asset_path: "ARK-4.zip"
         asset_name: "ARK-4.zip"
         asset_content_type: application/zip
