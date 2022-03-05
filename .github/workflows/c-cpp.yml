@@ -4,6 +4,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  tags:
+    - '*'
 
   schedule:
     - cron: '0 0 * * *'
@@ -46,17 +48,33 @@ jobs:
     - name: Making ARK-4
       run: make
 
-    - name: Upload Artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        path: "./dist"
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Nightly release
-        uses: actions/create-release@latest
+    - name: release
+      uses: actions/create-release@latest
+      id: create_release
+        with:
+          tag_name: ${{ github.ref }} 
+          release_name: ${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-        with:
-          tag_name: nightly 
-          release_name: ${{ github.sha }}
+
+    - name: upload GZIP artifact 
+      uses: actions/upload-artifact@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./dist/*"
+        asset_name: "ARK-4.tar.gz"
+        asset_content_type: application/gzip
+
+    - name: upload ZIP artifact 
+      uses: actions/upload-artifact@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: "./dist/*"
+        asset_name: "ARK-4.tar.gz"
+        asset_content_type: application/zip
+
+
