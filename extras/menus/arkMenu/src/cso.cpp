@@ -4,12 +4,9 @@
 
 #include <cmath>
 #include "systemctrl.h"
+#include "kubridge.h"
 
 void zlib_decompress(uint8_t *data, uint8_t* block_out, int type);
-
-extern "C"{
-    int LZ4_decompress_fast(uint8_t* source, uint8_t* dest, int outputSize);
-};
 
 Cso :: Cso(string path)
 {
@@ -141,10 +138,27 @@ void zlib_decompress(uint8_t *input, uint8_t* output, int type)
         sctrlDeflateDecompress(output, input, SECTOR_SIZE);
         break;
     case TYPE_ZSO:
-        LZ4_decompress_fast(input, output, SECTOR_SIZE);
+        LZ4_decompress_fast((const char*)input, (char*)output, SECTOR_SIZE);
         break;
     case TYPE_DAX:
         sctrlDaxDecompress(output, input, DAX_COMP_BUF);
+        /*
+        int sceKernelGzipDecompress 	(
+            u8 *  	dest,
+		    u32  	destSize,
+		    const u8 *  	src,
+		    u32  	unknown 
+	    )
+	    */
+        /*
+        struct KernelCallArg args;
+        memset(&args, 0, sizeof(args));
+        args.arg1 = (u32)output;
+        args.arg2 = (u32)DAX_BLOCK_SIZE;
+        args.arg3 = (u32)input;
+        void* func = (void*)sctrlHENFindFunction("sceSystemMemoryManager", "UtilsForKernel", 0x78934841);
+        u32 ret = kuKernelCall(func, &args);
+        */
         break;
     }
 }

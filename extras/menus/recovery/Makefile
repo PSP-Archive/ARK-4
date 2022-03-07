@@ -57,7 +57,8 @@ LIBS = \
 		-lpspvram \
 		-lpspmath \
 		-lpspmp3 \
-		-lpspsystemctrl_user
+		-lpspsystemctrl_user \
+		-lpspkubridge \
 
 all: $(TARGET).prx
 

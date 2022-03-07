@@ -565,11 +565,24 @@ int sctrlDeflateDecompress(void* dest, void* src, int size){
     
     return ret;
 }
+	
+int sctrlGzipDecompress(void* dest, void* src, int size){
+    if (dest == NULL || src == NULL || size == 0)
+        return -1;
+        
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    int ret = sceKernelGzipDecompress(dest, size, src, 0);
+    
+    pspSdkSetK1(k1);
+    
+    return ret;
+}
 
 int sctrlDaxDecompress(void* output, void* input, u32 in_size){
     static const int DAX_BLOCK_SIZE = 0x2000;
     static const int DAX_COMP_BUF = 0x2400;
-    u32 s = DAX_BLOCK_SIZE;
+    long s = DAX_BLOCK_SIZE;
     uncompress(output, &s, input, MIN(DAX_COMP_BUF, in_size));
     return s;
 }

@@ -84,7 +84,8 @@ LIBS = \
 		-lpspwlan \
 		-lpspnet \
 		-lpspnet_inet \
-		-lpspsystemctrl_user
+		-lpspsystemctrl_user \
+		-lpspkubridge \
 
 all: $(TARGET).prx
 	$(Q)python3 ./pkg.py

@@ -678,11 +678,11 @@ static int read_dax_data(u8* addr, u32 size, u32 offset)
 	u32 pos, ret, read_bytes;
 	u32 o_offset = offset;
 	
-	//static u8 dax_com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
-	//static u8 dax_dec_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
+	//static u8 com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
+	//static u8 dec_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
 	
-	u8* dax_com_buf = g_ciso_block_buf;
-	u8* dax_dec_buf = g_ciso_dec_buf;
+	u8* com_buf = g_ciso_block_buf;
+	u8* dec_buf = g_ciso_dec_buf;
 	
 	printf("Reading %u bytes at offset %u into %p....", size, offset, addr);
 	
@@ -702,25 +702,25 @@ static int read_dax_data(u8* addr, u32 size, u32 offset)
 		cur_block = offset / DAX_BLOCK_SIZE;
 		pos = offset & (DAX_BLOCK_SIZE - 1);
 
-		if(cur_block >= g_ciso_total_block) {
+		if(cur_block >= g_total_sectors) {
 			// EOF reached
 			break;
 		}
 
         // read block offset and size
-        u32 b_offset; read_raw_data(&b_offset, sizeof(u32), sizeof(DAXHeader) + (4*cur_block));
-        u32 b_size; read_raw_data(&b_size, sizeof(u32), sizeof(DAXHeader) + (4*cur_block) + (4*g_ciso_total_block));
+        u32 b_info[2]; read_raw_data(b_info, sizeof(u32)*2, sizeof(DAXHeader) + (4*cur_block));
+        if (cur_block == g_total_sectors-1) b_info[1] = DAX_COMP_BUF;
+        else b_info[1] -= b_info[0]; // 0=b_offset, 1=b_size
         
         // read block
-        ret = read_raw_data(dax_com_buf, MIN(b_size, DAX_COMP_BUF), b_offset);
+        ret = read_raw_data(com_buf, MIN(b_info[1], DAX_COMP_BUF), b_info[0]);
 	    
-	    // decompress block if needed
-	    if (ret != DAX_BLOCK_SIZE) sctrlDaxDecompress(dax_dec_buf, dax_com_buf, ret);
-        else memcpy(dax_dec_buf, dax_com_buf, DAX_BLOCK_SIZE); // uncompressed block
+	    // decompress block
+	    sctrlDaxDecompress(dec_buf, com_buf, ret);
 
         // read data from block into buffer
 		read_bytes = MIN(size, (DAX_BLOCK_SIZE - pos));
-		memcpy(addr, dax_dec_buf + pos, read_bytes);
+		memcpy(addr, dec_buf + pos, read_bytes);
 		size -= read_bytes;
 		addr += read_bytes;
 		offset += read_bytes;
@@ -758,7 +758,7 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
 	g_read_arg.offset = offset;
 	g_read_arg.address = ptr;
 	g_read_arg.size = data_len;
-	retv = sceKernelExtendKernelStack(0x2400, (void*)&iso_cache_read, &g_read_arg);
+	retv = sceKernelExtendKernelStack(0x2000, (void*)&iso_cache_read, &g_read_arg);
 
 	ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
 
