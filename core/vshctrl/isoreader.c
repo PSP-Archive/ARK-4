@@ -70,8 +70,8 @@ static SceUID g_isofd = -1;
 static u32 g_total_sectors = 0;
 static u32 g_is_compressed = 0;
 
-static u8 dax_com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
-static u8 dax_dec_buf[DAX_BLOCK_SIZE] __attribute__((aligned(64)));
+static u8* dax_com_buf = NULL; //[DAX_COMP_BUF] __attribute__((aligned(64)));
+static u8* dax_dec_buf = NULL; //[DAX_BLOCK_SIZE] __attribute__((aligned(64)));
 
 static Iso9660DirectoryRecord g_root_record;
 
@@ -236,19 +236,22 @@ static int read_dax_sector(u32 sector, u8* buf){
     u32 cur_block = pos/DAX_BLOCK_SIZE;
     u32 offset = pos & (DAX_BLOCK_SIZE-1);
     
+    u8* com_buf = PTR_ALIGN_64(dax_com_buf);
+    u8* dec_buf = PTR_ALIGN_64(dax_dec_buf);
+    
     // get block offset and size
     u32 b_offset; readRawData(&b_offset, sizeof(u32), sizeof(DAXHeader) + (4*cur_block));
     u32 b_size; readRawData(&b_size, sizeof(u32), sizeof(DAXHeader) + (4*cur_block) + (4*g_total_sectors));
     
     // read block
-    int ret = readRawData(dax_com_buf, MIN(b_size, DAX_COMP_BUF), b_offset);
+    int ret = readRawData(com_buf, MIN(b_size, DAX_COMP_BUF), b_offset);
     
     // decompress block if needed
-    if (ret != DAX_BLOCK_SIZE) sctrlDaxDecompress(dax_dec_buf, dax_com_buf, ret);
-    else memcpy(dax_dec_buf, dax_com_buf, DAX_BLOCK_SIZE); // uncompressed block
+    if (ret != DAX_BLOCK_SIZE) sctrlDaxDecompress(dec_buf, com_buf, ret);
+    else memcpy(dec_buf, com_buf, DAX_BLOCK_SIZE); // uncompressed block
     
     // copy sector
-    memcpy(buf, dax_dec_buf+offset, SECTOR_SIZE);
+    memcpy(buf, dec_buf+offset, SECTOR_SIZE);
     
     return SECTOR_SIZE;
 }
@@ -463,7 +466,6 @@ int isoOpen(const char *path)
 
         if (g_ciso_dec_buf == NULL) {
             g_ciso_dec_buf = oe_malloc(CISO_DEC_BUFFER_SIZE + (1 << g_ciso_h.align) + 64);
-
             if (g_ciso_dec_buf == NULL) {
                 printk("oe_malloc -> 0x%08x\n", (uint)g_ciso_dec_buf);
                 ret = -6;
@@ -481,6 +483,13 @@ int isoOpen(const char *path)
         g_CISO_cur_idx = -1;
         g_ciso_dec_buf_offset = (u32)-1;
         g_ciso_dec_buf_size = 0;
+        dax_com_buf = oe_malloc(DAX_COMP_BUF + 64);
+        dax_dec_buf = oe_malloc(DAX_BLOCK_SIZE + 64);
+        if (dax_com_buf == NULL || dax_dec_buf == NULL) {
+            printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)dax_com_buf, (uint)dax_dec_buf);
+            ret = -6;
+            goto error;
+        }
     }
     else {
         g_is_compressed = 0;
@@ -533,6 +542,16 @@ void isoClose(void)
     if (g_ciso_dec_buf != NULL) {
         oe_free(g_ciso_dec_buf);
         g_ciso_dec_buf = NULL;
+    }
+    
+    if (dax_com_buf != NULL) {
+        oe_free(dax_com_buf);
+        dax_com_buf = NULL;
+    }
+    
+    if (dax_dec_buf != NULL) {
+        oe_free(dax_dec_buf);
+        dax_dec_buf = NULL;
     }
 
     g_total_sectors = 0;
