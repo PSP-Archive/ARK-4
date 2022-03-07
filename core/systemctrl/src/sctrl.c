@@ -566,18 +566,12 @@ int sctrlDeflateDecompress(void* dest, void* src, int size){
     return ret;
 }
 
-void sctrlDaxDecompress(void* output, void* input){
+int sctrlDaxDecompress(void* output, void* input, u32 in_size){
     static const int DAX_BLOCK_SIZE = 0x2000;
     static const int DAX_COMP_BUF = 0x2400;
-    z_stream z;
-    memset(&z, 0, sizeof(z));
-    inflateInit2(&z, 15);
-    z.next_in = input;
-    z.avail_in = DAX_COMP_BUF;
-    z.next_out = output;
-    z.avail_out = DAX_BLOCK_SIZE;
-    inflate(&z, Z_FINISH);
-    inflateEnd(&z);
+    u32 s = DAX_BLOCK_SIZE;
+    uncompress(output, &s, input, MIN(DAX_COMP_BUF, in_size));
+    return s;
 }
 
 u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid)

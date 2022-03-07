@@ -66,10 +66,10 @@ int g_total_sectors = -1;
 static int g_is_ciso = 0;
 
 // 0x000024C0
-static void *g_ciso_block_buf = NULL;
+static u8 *g_ciso_block_buf = NULL;
 
 // 0x000024C4, size CISO_DEC_BUFFER_SIZE + (1 << g_CISO_hdr.align), align 64
-static void *g_ciso_dec_buf = NULL;
+static u8 *g_ciso_dec_buf = NULL;
 
 // 0x00002704
 static int g_CISO_cur_idx = 0;
@@ -185,14 +185,17 @@ static int is_ciso(SceUID fd)
 	}
 
 	if(*magic == CSO_MAGIC || *magic == ZSO_MAGIC || *magic == DAX_MAGIC) { // CISO or ZISO or DAX
-		lz4_compressed = (*magic == ZSO_MAGIC) ? 1 : 0;
+		lz4_compressed = (*magic == ZSO_MAGIC);
 		g_CISO_cur_idx = -1;
 		if (*magic == DAX_MAGIC) g_ciso_total_block = dax_header->uncompressed_size / DAX_BLOCK_SIZE;
 		else g_ciso_total_block = g_CISO_hdr.total_bytes / g_CISO_hdr.block_size;
 		printk("%s: total block %d\n", __func__, (int)g_ciso_total_block);
 
 		if(g_ciso_dec_buf == NULL) {
-			g_ciso_dec_buf = oe_malloc(DAX_BLOCK_SIZE + (1 << g_CISO_hdr.align) + 64);
+		    u32 size = 0;
+		    if (*magic == DAX_MAGIC) size = DAX_BLOCK_SIZE;
+		    else size = CISO_DEC_BUFFER_SIZE + (1 << g_CISO_hdr.align);
+			g_ciso_dec_buf = oe_malloc(size + 64);
 
 			if(g_ciso_dec_buf == NULL) {
 				ret = -2;
@@ -205,7 +208,7 @@ static int is_ciso(SceUID fd)
 		}
 
 		if(g_ciso_block_buf == NULL) {
-			g_ciso_block_buf = oe_malloc(DAX_COMP_BUF + 64);
+			g_ciso_block_buf = oe_malloc(((*magic==DAX_MAGIC)?DAX_COMP_BUF:ISO_SECTOR_SIZE) + 64);
 
 			if(g_ciso_block_buf == NULL) {
 				ret = -3;
@@ -672,41 +675,61 @@ static int read_cso_data_ng(u8 *addr, u32 size, u32 offset)
 static int read_dax_data(u8* addr, u32 size, u32 offset)
 {
 	u32 cur_block;
-	int pos, ret, read_bytes;
+	u32 pos, ret, read_bytes;
 	u32 o_offset = offset;
+	
+	//static u8 dax_com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
+	//static u8 dax_dec_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
+	
+	u8* dax_com_buf = g_ciso_block_buf;
+	u8* dax_dec_buf = g_ciso_dec_buf;
+	
+	printf("Reading %u bytes at offset %u into %p....", size, offset, addr);
 	
 	if(offset > dax_header->uncompressed_size) {
 		// return if the offset goes beyond the iso size
+		printf("offset out of bounds\n");
 		return 0;
 	}
 	else if(offset + size > dax_header->uncompressed_size) {
 		// adjust size if it tries to read beyond the game data
 		size = dax_header->uncompressed_size - offset;
+		printf("adjusted size is %u...", size);
 	}
-
+	
 	while(size > 0) {
+	    // calculate block number and offset within block
 		cur_block = offset / DAX_BLOCK_SIZE;
 		pos = offset & (DAX_BLOCK_SIZE - 1);
 
-		if(cur_block >= get_nsector()) {
+		if(cur_block >= g_ciso_total_block) {
 			// EOF reached
 			break;
 		}
 
-        u32 b_offset = 0; read_raw_data(&b_offset, sizeof(u32), 32 + (4*cur_block));
+        // read block offset and size
+        u32 b_offset; read_raw_data(&b_offset, sizeof(u32), sizeof(DAXHeader) + (4*cur_block));
+        u32 b_size; read_raw_data(&b_size, sizeof(u32), sizeof(DAXHeader) + (4*cur_block) + (4*g_ciso_total_block));
         
-        int ret = read_raw_data(g_ciso_block_buf, DAX_COMP_BUF, b_offset);
+        // read block
+        ret = read_raw_data(dax_com_buf, MIN(b_size, DAX_COMP_BUF), b_offset);
 	    
-	    sctrlDaxDecompress(g_ciso_dec_buf, g_ciso_block_buf);
+	    // decompress block if needed
+	    if (ret != DAX_BLOCK_SIZE) sctrlDaxDecompress(dax_dec_buf, dax_com_buf, ret);
+        else memcpy(dax_dec_buf, dax_com_buf, DAX_BLOCK_SIZE); // uncompressed block
 
+        // read data from block into buffer
 		read_bytes = MIN(size, (DAX_BLOCK_SIZE - pos));
-		memcpy(addr, g_ciso_dec_buf + pos, read_bytes);
+		memcpy(addr, dax_dec_buf + pos, read_bytes);
 		size -= read_bytes;
 		addr += read_bytes;
 		offset += read_bytes;
 	}
 
-	return offset - o_offset;
+	u32 res = offset - o_offset;
+    printf("finally read %u bytes\n", res);
+    
+    return res;
 }
 
 // 0x00000C7C
@@ -735,7 +758,7 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
 	g_read_arg.offset = offset;
 	g_read_arg.address = ptr;
 	g_read_arg.size = data_len;
-	retv = sceKernelExtendKernelStack(0x2000, (void*)&iso_cache_read, &g_read_arg);
+	retv = sceKernelExtendKernelStack(0x2400, (void*)&iso_cache_read, &g_read_arg);
 
 	ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
 

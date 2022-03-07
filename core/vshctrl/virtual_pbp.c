@@ -156,7 +156,7 @@ static int is_iso(SceIoDirent * dir)
     //filename length check
     if (ext > dir->d_name) {
         //check extension
-        if (stricmp(ext, ".iso") == 0 || stricmp(ext, ".cso") == 0 || stricmp(ext, ".zso") == 0) {
+        if (stricmp(ext, ".iso") == 0 || stricmp(ext, ".cso") == 0 || stricmp(ext, ".zso") == 0 || stricmp(ext, ".dax") == 0) {
             result = 1;
         }
     }

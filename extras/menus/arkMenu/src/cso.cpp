@@ -144,7 +144,7 @@ void zlib_decompress(uint8_t *input, uint8_t* output, int type)
         LZ4_decompress_fast(input, output, SECTOR_SIZE);
         break;
     case TYPE_DAX:
-        sctrlDaxDecompress(output, input);
+        sctrlDaxDecompress(output, input, DAX_COMP_BUF);
         break;
     }
 }

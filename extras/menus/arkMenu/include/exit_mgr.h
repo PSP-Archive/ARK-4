@@ -3,13 +3,17 @@
 
 #include "system_entry.h"
 
+extern "C"{
+    void sctrlKernelExitVSH(void*);
+}
+
 class ExitManager : public SystemEntry{
 
     public:
         void draw(){};
         void control(Controller* pad){};
         void pause(){};
-        void resume(){sceKernelExitGame();};
+        void resume(){sctrlKernelExitVSH(NULL);};
         std::string getInfo(){return "Exit";};
         void setInfo(std::string info){};
         Image* getIcon(){return common::getImage(IMAGE_SETTINGS);};

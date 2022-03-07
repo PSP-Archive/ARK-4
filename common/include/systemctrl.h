@@ -143,7 +143,7 @@ void sctrlHENDisableCustomPeopsConfig();
 // GZIP decompress
 int sctrlDeflateDecompress(void* dest, void* src, int size);
 
-void sctrlDaxDecompress(void* output, void* input);
+int sctrlDaxDecompress(void* output, void* input, u32 in_size);
 
 int sctrlKernelMsIsEf();
 

@@ -29,6 +29,13 @@
 #define CISO_DEC_BUFFER_SIZE 0x2000
 #define ISO_STANDARD_ID "CD001"
 
+#define CSO_MAGIC 0x4F534943
+#define ZSO_MAGIC 0x4F53495A
+#define DAX_MAGIC 0x00584144
+
+#define DAX_BLOCK_SIZE 0x2000
+#define DAX_COMP_BUF 0x2400
+
 typedef struct _CISOHeader {
     u8 magic[4];            /* +00 : 'C','I','S','O'                           */
     u32 header_size;
@@ -39,6 +46,14 @@ typedef struct _CISOHeader {
     u8 rsv_06[2];        /* +16 : reserved                                  */
 } __attribute__ ((packed)) CISOHeader;
 
+typedef struct{ 
+    uint32_t magic;
+    uint32_t uncompressed_size;
+    uint32_t version; 
+    uint32_t nc_areas; 
+    uint32_t unused[4]; 
+} DAXHeader;
+
 typedef unsigned int uint;
 
 static void *g_ciso_dec_buf = NULL;
@@ -46,6 +61,7 @@ static u32 g_CISO_idx_cache[CISO_IDX_BUFFER_SIZE/4] __attribute__((aligned(64)))
 static u32 g_ciso_dec_buf_offset = (u32)-1;
 static int g_ciso_dec_buf_size = 0;
 static CISOHeader g_ciso_h;
+static DAXHeader* dax_header = (DAXHeader*)&g_ciso_h;
 static int g_CISO_cur_idx = -1;
 
 static const char * g_filename = NULL;
@@ -53,6 +69,9 @@ static char g_sector_buffer[SECTOR_SIZE] __attribute__((aligned(64)));
 static SceUID g_isofd = -1;
 static u32 g_total_sectors = 0;
 static u32 g_is_compressed = 0;
+
+static u8 dax_com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
+static u8 dax_dec_buf[DAX_BLOCK_SIZE] __attribute__((aligned(64)));
 
 static Iso9660DirectoryRecord g_root_record;
 
@@ -212,13 +231,38 @@ static int readSectorCompressed(int sector, void *addr)
     return ret < 0 ? ret : SECTOR_SIZE;
 }
 
+static int read_dax_sector(u32 sector, u8* buf){
+    u32 pos = isoLBA2Pos(sector, 0);
+    u32 cur_block = pos/DAX_BLOCK_SIZE;
+    u32 offset = pos & (DAX_BLOCK_SIZE-1);
+    
+    // get block offset and size
+    u32 b_offset; readRawData(&b_offset, sizeof(u32), sizeof(DAXHeader) + (4*cur_block));
+    u32 b_size; readRawData(&b_size, sizeof(u32), sizeof(DAXHeader) + (4*cur_block) + (4*g_total_sectors));
+    
+    // read block
+    int ret = readRawData(dax_com_buf, MIN(b_size, DAX_COMP_BUF), b_offset);
+    
+    // decompress block if needed
+    if (ret != DAX_BLOCK_SIZE) sctrlDaxDecompress(dax_dec_buf, dax_com_buf, ret);
+    else memcpy(dax_dec_buf, dax_com_buf, DAX_BLOCK_SIZE); // uncompressed block
+    
+    // copy sector
+    memcpy(buf, dax_dec_buf+offset, SECTOR_SIZE);
+    
+    return SECTOR_SIZE;
+}
+
 static int readSector(u32 sector, void *buf)
 {
     int ret;
     u32 pos;
 
     if (g_is_compressed) {
-        ret = readSectorCompressed(sector, buf);
+        if (dax_header->magic == DAX_MAGIC)
+            ret = read_dax_sector(sector, buf);
+        else
+            ret = readSectorCompressed(sector, buf);
     } else {
         pos = isoLBA2Pos(sector, 0);
         ret = readRawData(buf, SECTOR_SIZE, pos);
@@ -411,14 +455,9 @@ int isoOpen(const char *path)
 
     magic = (u32*)g_ciso_h.magic;
 
-    if ((*magic == 0x4F534943 || *magic == 0x4F53495A) && g_ciso_h.block_size == SECTOR_SIZE) {
-        lz4_compressed = (*magic == 0x4F53495A) ? 1 : 0;
+    if ((*magic == CSO_MAGIC || *magic == ZSO_MAGIC) && g_ciso_h.block_size == SECTOR_SIZE) {
+        lz4_compressed = (*magic == ZSO_MAGIC);
         g_is_compressed = 1;
-    } else {
-        g_is_compressed = 0;
-    }
-
-    if (g_is_compressed) {
         g_total_sectors = g_ciso_h.total_bytes / g_ciso_h.block_size;
         g_CISO_cur_idx = -1;
 
@@ -435,8 +474,16 @@ int isoOpen(const char *path)
         memset(g_CISO_idx_cache, 0, sizeof(g_CISO_idx_cache));
         g_ciso_dec_buf_offset = (u32)-1;
         g_ciso_dec_buf_size = 0;
+    }
+    else if (*magic == DAX_MAGIC){
+        g_total_sectors = dax_header->uncompressed_size / DAX_BLOCK_SIZE;
+        g_is_compressed = 1;
         g_CISO_cur_idx = -1;
-    } else {
+        g_ciso_dec_buf_offset = (u32)-1;
+        g_ciso_dec_buf_size = 0;
+    }
+    else {
+        g_is_compressed = 0;
         SceOff size, orig;
 
         orig = sceIoLseek(g_isofd, 0, PSP_SEEK_CUR);

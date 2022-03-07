@@ -69,7 +69,7 @@ static void systemController(Controller* pad){
         else if (pEntryIndex == page_start){
             pEntryIndex--;
             if (page_start>0){
-                //page_start--;
+                page_start--;
                 menu_draw_state = 1;
             }
         }
@@ -84,7 +84,7 @@ static void systemController(Controller* pad){
             if (pEntryIndex+1 < MAX_ENTRIES)
                 pEntryIndex++;
             if (page_start+3 < MAX_ENTRIES){
-                //page_start++;
+                page_start++;
                 menu_draw_state = -1;
             }
         }
@@ -122,7 +122,7 @@ static void drawOptionsMenuCommon(){
         case -1:
             menu_anim_state -= 20;
             if (menu_anim_state <= -160){
-                page_start++;
+                //page_start++;
                 menu_draw_state = 0;
             }
             break;
@@ -132,7 +132,7 @@ static void drawOptionsMenuCommon(){
         case 1:
             menu_anim_state += 20;
             if (menu_anim_state >= 160){
-                page_start--;
+                //page_start--;
                 menu_draw_state = 0;
             }
             break;
