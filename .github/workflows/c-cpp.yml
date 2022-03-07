@@ -52,7 +52,7 @@ jobs:
 
     - name: Create Version
       id: get_version 
-      run: VERSION=v$(date +%Y.%m.%d) && echo "::set-output name=version::${VERSION}"
+      run: VERSION=v$(date +%s) && echo "::set-output name=version::${VERSION}"
 
 
     - name: release
