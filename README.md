@@ -36,13 +36,14 @@
 * For 3.60 Henkaku users:
 - Install an ARK-4 bubble for 3.60 using FastARK: https://github.com/theheroGAC/ArkFast/releases/
 - Replace ARK savedata with latest release.
+- Copy H.BIN from Vitabubble folder into ARK savedata folder.
 
 
-* For game exploits on both PSP and PS Vita:
+### For legacy game exploits on both PSP and PS Vita:
 - Considering the savedata exploit loads H.BIN from the savedata path.
-- Copy all files from ARK_01234 into exploited savedata folder...
----- except actual savedata files: ICON0.PNG, PARAM.SFO, SECURE.BIN, SAVEAUTO.BIN, SAVEUTIL.BIN
-
+- Copy the following files from ARK_01234 savedata folder into game exploit folder:
+- H.BIN, ARK.BIN, ARK4.BIN FLASH0.ARK, MENU.PBP, RECOVERY.PBP, DATA.PKG and other extras.
+- Don't copy K.BIN if running on an ancient firmware.
 
 
 ## CUSTOMIZATION
@@ -50,43 +51,43 @@
 ### By installing Plugins
 You can install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
-- Add a line of text for each plugin using the following format:
-game, ms0:/path_to_my_game_plugin.prx, enabled
-pops, ms0:/path_to_my_psx_plugin.prx, 1
-vsh, ms0:/path_to_my_vsh_plugin.prx, true
+To install plugins use the comma-separated format (CSV).
+Where the header is: runlevel, path, switch.
+A few samples:
+- game, ms0:/seplugins/cwcheat/cwcheat.prx, enabled
+- pops, ms0:/seplugins/cdda_enabler.prx, 1
+- vsh, ms0:/seplugins/cxmb.prx, true
+- ULUS10041, ms0:/seplugins/lcscheatdevice.prx, on
 
-You can also enable plugins on a per game basis.
-For example, enable lcscheatdevice on GTA Liberty City Stories US Version:
-ULUS10041, ms0:/seplugins/lcscheatdevice.prx, on
+You can use the following keywords to enable a plugin:
+- 1
+- on
+- true
+- enabled
 
-
-- You can use keywords "enabled", "on", "1" or "true" to indicate that the plugin is enabled, anything else disables it.
-  You can use game, pops or vsh keywords to run the plugin in the corresponding runlevel, or the game ID for game-specific plugins.
-
-- You can use the following keywords to tell ARK when the plugin loads:
----- all/always: if either of these keywords are used, the plugin will always load.
----- umd: plugin should only load on retail games (UMD/ISO/PSN).
----- homebrew: plugin should only load on homebrews.
----- game: plugin can load on both retail games and homebrews.
----- pops: plugin only loads in PSX games.
----- vsh: plugin only loads in the XMB.
----- game ID: if you specify a game ID (i.e. SLUS000000), then the plugin will only load on that game.
+You can use the following keywords to tell ARK when the plugin loads:
+- all/always: if either of these keywords are used, the plugin will always load.
+- umd: plugin should only load on retail games (UMD/ISO/PSN).
+- homebrew: plugin should only load on homebrews.
+- game: plugin can load on both retail games and homebrews.
+- pops: plugin only loads in PSX games.
+- vsh: plugin only loads in the XMB.
+- game ID: if you specify a game ID (i.e. SLUS000000), then the plugin will only load on that game.
 
 
 
 
 ### By configuring ARK
 
-- You can create a SETTINGS.TXT file using the same format as PLUGINS.TXT to enable/disable some CFW functionality on different parts of the system.
+You can create a SETTINGS.TXT file using the same format as PLUGINS.TXT to enable/disable some CFW functionality on different parts of the system.
+For example, you can overclock to highest CPU speed like this:
+- always, overclock, on
 
-- For example, you can overclock to highest CPU speed like this:
-always, overclock, on
+Another example, overclock only on games, use powersaving on VSH:
+- game, overclock, on
+- vsh, powersave, on
 
-- Another example, overclock only on games, use powersaving on VSH:
-game, overclock, on
-vsh, powersave, on
-
-- You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
+You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
 
 * Configuration settings for ARK:
 - overclock: use this for better performance at the expense of battery time. Sets CPU/BUS speed to 333/166.
@@ -95,8 +96,8 @@ vsh, powersave, on
 - launcher: replaces the XMB with a custom menu launcher.
 - disablepause: disables the pause game feature on PSP Go.
 - highmem: enables high memory on models above 1K.
-  You should only use this on homebrew runlevel as retail games were not meant to use the extra memory,
-  and this can cause issues with cheat devices or other plugins that expect games to have their data at specific memory addresses.
+ You should only use this on homebrew runlevel as retail games were not meant to use the extra memory,
+ and this can cause issues with cheat devices or other plugins that expect games to have their data at specific memory addresses.
 
 
 ### Using Custom Launchers
