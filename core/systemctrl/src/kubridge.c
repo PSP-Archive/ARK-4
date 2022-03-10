@@ -46,20 +46,20 @@ SceUID kuKernelLoadModule(const char * path, int flags, SceKernelLMOption * opti
 
 SceUID kuKernelLoadModuleWithApitype2(int apitype, const char *path, int flags, SceKernelLMOption *option)
 {
-	u32 k1;
-	int ret = -1;
+    u32 k1;
+    int ret = -1;
 
-	k1 = pspSdkSetK1(0);
-	
-	SceUID (*KernelLoadModuleWithApitype2)(int apitype, const char *path, int flags, SceKernelLMOption *option) = NULL;
-	KernelLoadModuleWithApitype2 = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x2B7FC10D);
-	
-	if (KernelLoadModuleWithApitype2)
-	    ret = KernelLoadModuleWithApitype2(apitype, path, flags, option);
-	    
-	pspSdkSetK1(k1);
+    k1 = pspSdkSetK1(0);
+    
+    SceUID (*KernelLoadModuleWithApitype2)(int apitype, const char *path, int flags, SceKernelLMOption *option) = NULL;
+    KernelLoadModuleWithApitype2 = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x2B7FC10D);
+    
+    if (KernelLoadModuleWithApitype2)
+        ret = KernelLoadModuleWithApitype2(apitype, path, flags, option);
+        
+    pspSdkSetK1(k1);
 
-	return ret;
+    return ret;
 }
 
 // Return Apitype
@@ -209,84 +209,84 @@ int kuKernelInitKeyConfig(void)
 
 int kuKernelFindModuleByName(char *modname, SceModule *mod)
 {
-	SceModule2 *pmod;
+    SceModule2 *pmod;
 
-	if(modname == NULL || mod == NULL) {
-		return -1;
-	}
+    if(modname == NULL || mod == NULL) {
+        return -1;
+    }
 
-	pmod = (SceModule2*) sceKernelFindModuleByName(modname);
+    pmod = (SceModule2*) sceKernelFindModuleByName(modname);
 
-	if(pmod == NULL) {
-		return -2;
-	}
+    if(pmod == NULL) {
+        return -2;
+    }
 
-	memcpy(mod, pmod, sizeof(*pmod));
-	
-	return 0;
+    memcpy(mod, pmod, sizeof(*pmod));
+    
+    return 0;
 }
 
 int kuKernelCall(void *func_addr, struct KernelCallArg *args)
 {
-	u32 k1, level;
-	u64 ret;
-	u64 (*func)(u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32);
+    u32 k1, level;
+    u64 ret;
+    u64 (*func)(u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32);
 
-	if(func_addr == NULL || args == NULL) {
-		return -1;
-	}
+    if(func_addr == NULL || args == NULL) {
+        return -1;
+    }
 
-	k1 = pspSdkSetK1(0);
-	level = sctrlKernelSetUserLevel(8);
-	func = func_addr;
-	ret = (*func)(args->arg1, args->arg2, args->arg3, args->arg4, args->arg5, args->arg6, args->arg7, args->arg8, args->arg9, args->arg10, args->arg11, args->arg12);
-	args->ret1 = (u32)(ret);
-	args->ret2 = (u32)(ret >> 32);
-	sctrlKernelSetUserLevel(level);
-	pspSdkSetK1(k1);
+    k1 = pspSdkSetK1(0);
+    level = sctrlKernelSetUserLevel(8);
+    func = func_addr;
+    ret = (*func)(args->arg1, args->arg2, args->arg3, args->arg4, args->arg5, args->arg6, args->arg7, args->arg8, args->arg9, args->arg10, args->arg11, args->arg12);
+    args->ret1 = (u32)(ret);
+    args->ret2 = (u32)(ret >> 32);
+    sctrlKernelSetUserLevel(level);
+    pspSdkSetK1(k1);
 
-	return 0;
+    return 0;
 }
 
 struct KernelCallArgExtendStack {
-	struct KernelCallArg args;
-	void *func_addr;
+    struct KernelCallArg args;
+    void *func_addr;
 };
 
 static int kernel_call_stack(struct KernelCallArgExtendStack *args_stack)
 {
-	u64 ret;
-	struct KernelCallArg *args;
-	int (*func)(u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32);
+    u64 ret;
+    struct KernelCallArg *args;
+    int (*func)(u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32);
 
-	args = &args_stack->args;
-	func = args_stack->func_addr;
-	ret = (*func)(args->arg1, args->arg2, args->arg3, args->arg4, args->arg5, args->arg6, args->arg7, args->arg8, args->arg9, args->arg10, args->arg11, args->arg12);
-	args->ret1 = (u32)(ret);
-	args->ret2 = (u32)(ret >> 32);
+    args = &args_stack->args;
+    func = args_stack->func_addr;
+    ret = (*func)(args->arg1, args->arg2, args->arg3, args->arg4, args->arg5, args->arg6, args->arg7, args->arg8, args->arg9, args->arg10, args->arg11, args->arg12);
+    args->ret1 = (u32)(ret);
+    args->ret2 = (u32)(ret >> 32);
 
-	return 0;
+    return 0;
 }
 
 int kuKernelCallExtendStack(void *func_addr, struct KernelCallArg *args, int stack_size)
 {
-	u32 k1, level;
-	int ret;
-	struct KernelCallArgExtendStack args_stack;
+    u32 k1, level;
+    int ret;
+    struct KernelCallArgExtendStack args_stack;
 
-	if(func_addr == NULL || args == NULL) {
-		return -1;
-	}
+    if(func_addr == NULL || args == NULL) {
+        return -1;
+    }
 
-	k1 = pspSdkSetK1(0);
-	level = sctrlKernelSetUserLevel(8);
-	memcpy(&args_stack.args, args, sizeof(*args));
-	args_stack.func_addr = func_addr;
-	ret = sceKernelExtendKernelStack(stack_size, (void*)&kernel_call_stack, &args_stack);
-	sctrlKernelSetUserLevel(level);
-	pspSdkSetK1(k1);
+    k1 = pspSdkSetK1(0);
+    level = sctrlKernelSetUserLevel(8);
+    memcpy(&args_stack.args, args, sizeof(*args));
+    args_stack.func_addr = func_addr;
+    ret = sceKernelExtendKernelStack(stack_size, (void*)&kernel_call_stack, &args_stack);
+    sctrlKernelSetUserLevel(level);
+    pspSdkSetK1(k1);
 
-	return ret;
+    return ret;
 }
 
 void kuKernelGetUmdFile(char *umdfile, int size)
@@ -296,7 +296,7 @@ void kuKernelGetUmdFile(char *umdfile, int size)
 
 void kuKernelIcacheInvalidateAll(void)
 {
-	u32 k1 = pspSdkSetK1(0);
-	flushCache();
-	pspSdkSetK1(k1);
+    u32 k1 = pspSdkSetK1(0);
+    flushCache();
+    pspSdkSetK1(k1);
 }

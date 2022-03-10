@@ -68,61 +68,61 @@ int (* sceBootLfatClose)(void) = NULL;
 
 int _sceBootLfatRead(char * buffer, int length)
 {
-	//load on reboot module
-	if(rebootmodule_open)
-	{
-		int min;
+    //load on reboot module
+    if(rebootmodule_open)
+    {
+        int min;
 
-		//copy load on reboot module
-		min = size_rmod < length ? size_rmod : length;
-		memcpy(buffer, p_rmod, min);
-		p_rmod += min;
-		size_rmod -= min;
+        //copy load on reboot module
+        min = size_rmod < length ? size_rmod : length;
+        memcpy(buffer, p_rmod, min);
+        p_rmod += min;
+        size_rmod -= min;
 
-		//set filesize
-		return min;
-	}
+        //set filesize
+        return min;
+    }
 
-	//forward to original function
-	return sceBootLfatRead(buffer, length);
+    //forward to original function
+    return sceBootLfatRead(buffer, length);
 }
 
 int _sceBootLfatOpen(char * filename)
 {
-	//load on reboot module open
-	if(strcmp(filename, "/rtm.prx") == 0)
-	{
-		//mark for read
-		rebootmodule_open = 1;
-		p_rmod = reboot_conf->rtm_mod.buffer;
-		size_rmod = reboot_conf->rtm_mod.size;
+    //load on reboot module open
+    if(strcmp(filename, "/rtm.prx") == 0)
+    {
+        //mark for read
+        rebootmodule_open = 1;
+        p_rmod = reboot_conf->rtm_mod.buffer;
+        size_rmod = reboot_conf->rtm_mod.size;
 
-		//return success
-		return 0;
-	}
+        //return success
+        return 0;
+    }
 
-	//forward to original function
-	return sceBootLfatOpen(filename);
+    //forward to original function
+    return sceBootLfatOpen(filename);
 }
 
 int _sceBootLfatClose(void)
 {
-	//reboot module close
-	if(rebootmodule_open)
-	{
-		//mark as closed
-		rebootmodule_open = 0;
+    //reboot module close
+    if(rebootmodule_open)
+    {
+        //mark as closed
+        rebootmodule_open = 0;
 
-		//return success
-		return 0;
-	}
+        //return success
+        return 0;
+    }
 
-	//forward to original function
-	return sceBootLfatClose();
+    //forward to original function
+    return sceBootLfatClose();
 }
 
 void patchRebootIoPSP(){
-	int patches = 3;
+    int patches = 3;
     for (u32 addr = reboot_start; addr<reboot_end && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x8E840000){
@@ -141,7 +141,7 @@ void patchRebootIoPSP(){
             patches--;
         }
     }
-	
-	// Flush Cache
+    
+    // Flush Cache
     flushCache();
 }

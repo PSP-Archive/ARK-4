@@ -20,124 +20,124 @@
 #include <SDL.h>
 #include "out.h"
 
-#define BUFFER_SIZE		22050
+#define BUFFER_SIZE        22050
 
-short			*pSndBuffer = NULL;
-int				iBufSize = 0;
-volatile int	iReadPos = 0, iWritePos = 0;
+short            *pSndBuffer = NULL;
+int                iBufSize = 0;
+volatile int    iReadPos = 0, iWritePos = 0;
 
 static void SOUND_FillAudio(void *unused, Uint8 *stream, int len) {
-	short *p = (short *)stream;
+    short *p = (short *)stream;
 
-	len /= sizeof(short);
+    len /= sizeof(short);
 
-	while (iReadPos != iWritePos && len > 0) {
-		*p++ = pSndBuffer[iReadPos++];
-		if (iReadPos >= iBufSize) iReadPos = 0;
-		--len;
-	}
+    while (iReadPos != iWritePos && len > 0) {
+        *p++ = pSndBuffer[iReadPos++];
+        if (iReadPos >= iBufSize) iReadPos = 0;
+        --len;
+    }
 
-	// Fill remaining space with zero
-	while (len > 0) {
-		*p++ = 0;
-		--len;
-	}
+    // Fill remaining space with zero
+    while (len > 0) {
+        *p++ = 0;
+        --len;
+    }
 }
 
 static void InitSDL() {
-	if (SDL_WasInit(SDL_INIT_EVERYTHING)) {
-		SDL_InitSubSystem(SDL_INIT_AUDIO);
-	} else {
-		SDL_Init(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE);
-	}
+    if (SDL_WasInit(SDL_INIT_EVERYTHING)) {
+        SDL_InitSubSystem(SDL_INIT_AUDIO);
+    } else {
+        SDL_Init(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE);
+    }
 }
 
 static void DestroySDL() {
-	if (SDL_WasInit(SDL_INIT_EVERYTHING & ~SDL_INIT_AUDIO)) {
-		SDL_QuitSubSystem(SDL_INIT_AUDIO);
-	} else {
-		SDL_Quit();
-	}
+    if (SDL_WasInit(SDL_INIT_EVERYTHING & ~SDL_INIT_AUDIO)) {
+        SDL_QuitSubSystem(SDL_INIT_AUDIO);
+    } else {
+        SDL_Quit();
+    }
 }
 
 static int sdl_init(void) {
-	SDL_AudioSpec				spec;
+    SDL_AudioSpec                spec;
 
-	if (pSndBuffer != NULL) return -1;
+    if (pSndBuffer != NULL) return -1;
 
-	InitSDL();
+    InitSDL();
 
-	spec.freq = 44100;
-	spec.format = AUDIO_S16SYS;
-	spec.channels = 2;
-	spec.samples = 512;
-	spec.callback = SOUND_FillAudio;
+    spec.freq = 44100;
+    spec.format = AUDIO_S16SYS;
+    spec.channels = 2;
+    spec.samples = 512;
+    spec.callback = SOUND_FillAudio;
 
-	if (SDL_OpenAudio(&spec, NULL) < 0) {
-		DestroySDL();
-		return -1;
-	}
+    if (SDL_OpenAudio(&spec, NULL) < 0) {
+        DestroySDL();
+        return -1;
+    }
 
-	iBufSize = BUFFER_SIZE;
+    iBufSize = BUFFER_SIZE;
 
-	pSndBuffer = (short *)malloc(iBufSize * sizeof(short));
-	if (pSndBuffer == NULL) {
-		SDL_CloseAudio();
-		return -1;
-	}
+    pSndBuffer = (short *)malloc(iBufSize * sizeof(short));
+    if (pSndBuffer == NULL) {
+        SDL_CloseAudio();
+        return -1;
+    }
 
-	iReadPos = 0;
-	iWritePos = 0;
+    iReadPos = 0;
+    iWritePos = 0;
 
-	SDL_PauseAudio(0);
-	return 0;
+    SDL_PauseAudio(0);
+    return 0;
 }
 
 static void sdl_finish(void) {
-	if (pSndBuffer == NULL) return;
+    if (pSndBuffer == NULL) return;
 
-	SDL_CloseAudio();
-	DestroySDL();
+    SDL_CloseAudio();
+    DestroySDL();
 
-	free(pSndBuffer);
-	pSndBuffer = NULL;
+    free(pSndBuffer);
+    pSndBuffer = NULL;
 }
 
 static int sdl_busy(void) {
-	int size;
+    int size;
 
-	if (pSndBuffer == NULL) return 1;
+    if (pSndBuffer == NULL) return 1;
 
-	size = iReadPos - iWritePos;
-	if (size <= 0) size += iBufSize;
+    size = iReadPos - iWritePos;
+    if (size <= 0) size += iBufSize;
 
-	if (size < iBufSize / 2) return 1;
+    if (size < iBufSize / 2) return 1;
 
-	return 0;
+    return 0;
 }
 
 static void sdl_feed(void *pSound, int lBytes) {
-	short *p = (short *)pSound;
+    short *p = (short *)pSound;
 
-	if (pSndBuffer == NULL) return;
+    if (pSndBuffer == NULL) return;
 
-	while (lBytes > 0) {
-		if (((iWritePos + 1) % iBufSize) == iReadPos) break;
+    while (lBytes > 0) {
+        if (((iWritePos + 1) % iBufSize) == iReadPos) break;
 
-		pSndBuffer[iWritePos] = *p++;
+        pSndBuffer[iWritePos] = *p++;
 
-		++iWritePos;
-		if (iWritePos >= iBufSize) iWritePos = 0;
+        ++iWritePos;
+        if (iWritePos >= iBufSize) iWritePos = 0;
 
-		lBytes -= sizeof(short);
-	}
+        lBytes -= sizeof(short);
+    }
 }
 
 void out_register_sdl(struct out_driver *drv)
 {
-	drv->name = "sdl";
-	drv->init = sdl_init;
-	drv->finish = sdl_finish;
-	drv->busy = sdl_busy;
-	drv->feed = sdl_feed;
+    drv->name = "sdl";
+    drv->init = sdl_init;
+    drv->finish = sdl_finish;
+    drv->busy = sdl_busy;
+    drv->feed = sdl_feed;
 }

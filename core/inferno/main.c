@@ -47,86 +47,86 @@ const char *g_iso_fn = NULL;
 
 // 0x00002248
 u8 g_umddata[16] = {
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 };
 
 extern int power_event_handler(int ev_id, char *ev_name, void *param, int *result);
 
 PspSysEventHandler g_power_event = {
-	.size = sizeof(g_power_event),
-	.name = "infernoSysEvent",
-	.type_mask = 0x00FFFF00, // both suspend / resume
-	.handler = &power_event_handler,
+    .size = sizeof(g_power_event),
+    .name = "infernoSysEvent",
+    .type_mask = 0x00FFFF00, // both suspend / resume
+    .handler = &power_event_handler,
 };
 
 // 00000090
 int setup_umd_device(void)
 {
-	int ret;
+    int ret;
 
-	g_iso_fn = GetUmdFile();
-	infernoSetDiscType(sctrlSEGetDiscType());
-	ret = sceIoAddDrv(&g_iodrv);
+    g_iso_fn = GetUmdFile();
+    infernoSetDiscType(sctrlSEGetDiscType());
+    ret = sceIoAddDrv(&g_iodrv);
 
-	if(ret < 0) {
-		return ret;
-	}
+    if(ret < 0) {
+        return ret;
+    }
 
-	sceKernelSetQTGP3(g_umddata);
-	ret = 0;
+    sceKernelSetQTGP3(g_umddata);
+    ret = 0;
 
-	return ret;
+    return ret;
 }
 
 // 00001514
 int init_inferno(void)
 {
-	g_drive_status = PSP_UMD_INITING;
-	g_umd_cbid = -1;
-	g_umd_error_status = 0;
-	g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
-	sceKernelRegisterSysEventHandler(&g_power_event);
+    g_drive_status = PSP_UMD_INITING;
+    g_umd_cbid = -1;
+    g_umd_error_status = 0;
+    g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
+    sceKernelRegisterSysEventHandler(&g_power_event);
 
-	return MIN(g_drive_status_evf, 0);
+    return MIN(g_drive_status_evf, 0);
 }
 
 // 0x00000000
 int module_start(SceSize args, void* argp)
 {
-	int ret, apitype;
-	SEConfig config;
+    int ret, apitype;
+    SEConfig config;
 
-	psp_model = sceKernelGetModel();
-	psp_fw_version = sceKernelDevkitVersion();
+    psp_model = sceKernelGetModel();
+    psp_fw_version = sceKernelDevkitVersion();
 
-	printk("Inferno started FW=0x%08X %02dg\n", (uint)psp_fw_version, (int)psp_model+1);
+    printk("Inferno started FW=0x%08X %02dg\n", (uint)psp_fw_version, (int)psp_model+1);
 
-	apitype = sceKernelInitApitype();
-	sctrlSEGetConfig(&config);
+    apitype = sceKernelInitApitype();
+    sctrlSEGetConfig(&config);
 
-	if (apitype == 0x123 || apitype == 0x125) {
-		infernoCacheSetPolicy(CACHE_POLICY_LRU);
-		infernoCacheInit(16 * 1024, 16); // 256KB cache
-	}
+    if (apitype == 0x123 || apitype == 0x125) {
+        infernoCacheSetPolicy(CACHE_POLICY_LRU);
+        infernoCacheInit(16 * 1024, 16); // 256KB cache
+    }
 
-	ret = setup_umd_device();
+    ret = setup_umd_device();
 
-	if(ret < 0) {
-		return ret;
-	}
+    if(ret < 0) {
+        return ret;
+    }
 
-	ret = init_inferno();
+    ret = init_inferno();
 
-	return MIN(ret, 0);
+    return MIN(ret, 0);
 }
 
 // 0x0000006C
 int module_stop(SceSize args, void *argp)
 {
-	sceIoDelDrv("umd");
-	sceKernelDeleteEventFlag(g_drive_status_evf);
-	sceKernelUnregisterSysEventHandler(&g_power_event);
+    sceIoDelDrv("umd");
+    sceKernelDeleteEventFlag(g_drive_status_evf);
+    sceKernelUnregisterSysEventHandler(&g_power_event);
 
-	return 0;
+    return 0;
 }

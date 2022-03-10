@@ -72,6 +72,7 @@ static u32 g_is_compressed = 0;
 
 static u8* dax_com_buf = NULL;
 static u8* dax_dec_buf = NULL;
+static u32 dax_cur_block = (u32)-1;
 
 static Iso9660DirectoryRecord g_root_record;
 
@@ -237,24 +238,36 @@ static int read_dax_sector(u32 sector, u8* buf){
     u32 cur_block = pos/DAX_BLOCK_SIZE;
     u32 offset = pos & (DAX_BLOCK_SIZE-1);
     
-    static u8 com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
-    static u8 dec_buf[DAX_BLOCK_SIZE] __attribute__((aligned(64)));
-    static u32 dax_cur_block = (u32)-1;
+    //static u8 com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
+    //static u8 dec_buf[DAX_BLOCK_SIZE] __attribute__((aligned(64)));
     
-    //u8* com_buf = PTR_ALIGN_64(dax_com_buf);
-    //u8* dec_buf = PTR_ALIGN_64(dax_dec_buf);
+    
+    u8* com_buf = PTR_ALIGN_64(dax_com_buf);
+    u8* dec_buf = (u8*)0x00010000; //PTR_ALIGN_64(dax_dec_buf);
+
+    //memset(com_buf, 0, DAX_COMP_BUF);
+    //memset(dec_buf, 0, DAX_BLOCK_SIZE);
     
     if (dax_cur_block != cur_block){
         // read block offset and size
+        /*
         u32 b_info[2]; readRawData(b_info, sizeof(u32)*2, sizeof(DAXHeader) + (4*cur_block));
         if (cur_block == g_total_sectors-1) b_info[1] = DAX_COMP_BUF;
         else b_info[1] -= b_info[0]; // 0=b_offset, 1=b_size
         
         // read block
         int ret = readRawData(com_buf, MIN(b_info[1], DAX_COMP_BUF), b_info[0]);
+        */
+        
+        u32 b_offset; readRawData(&b_offset, sizeof(u32), sizeof(DAXHeader) + (4*cur_block));
+        
+        int ret = readRawData(com_buf, DAX_COMP_BUF, b_offset);
+        
+        memcpy(com_buf, com_buf+2, DAX_COMP_BUF-6);
+        sceKernelDeflateDecompress(dec_buf, DAX_BLOCK_SIZE, com_buf, 0);
         
         // decompress block if needed
-        /*if (ret != DAX_BLOCK_SIZE)*/ sctrlDaxDecompress(dec_buf, com_buf, ret);
+        /*if (ret != DAX_BLOCK_SIZE)sctrlDaxDecompress(dec_buf, com_buf, DAX_COMP_BUF); */
         //else memcpy(dec_buf, com_buf, DAX_BLOCK_SIZE); // uncompressed block
         dax_cur_block = cur_block;
     }
@@ -492,7 +505,7 @@ int isoOpen(const char *path)
         g_CISO_cur_idx = -1;
         g_ciso_dec_buf_offset = (u32)-1;
         g_ciso_dec_buf_size = 0;
-        /*
+        dax_cur_block = (u32)-1;
         dax_com_buf = oe_malloc(DAX_COMP_BUF + 64);
         dax_dec_buf = oe_malloc(DAX_BLOCK_SIZE + 64);
         if (dax_com_buf == NULL || dax_dec_buf == NULL) {
@@ -500,7 +513,6 @@ int isoOpen(const char *path)
             ret = -6;
             goto error;
         }
-        */
     }
     else {
         g_is_compressed = 0;
@@ -566,6 +578,7 @@ void isoClose(void)
     }
 
     g_total_sectors = 0;
+    dax_cur_block = (u32)-1;
 }
 
 int isoGetFileInfo(char * path, u32 *filesize, u32 *lba)

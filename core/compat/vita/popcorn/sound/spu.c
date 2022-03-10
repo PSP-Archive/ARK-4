@@ -46,7 +46,7 @@
  } while (0)
 #endif
 
-#define PSXCLK	33868800	/* 33.8688 MHz */
+#define PSXCLK    33868800    /* 33.8688 MHz */
 
 /*
 #if defined (USEMACOSX)

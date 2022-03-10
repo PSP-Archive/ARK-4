@@ -45,29 +45,29 @@ typedef struct RebootConfigARK {
     char iso_path[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
     struct {
         char *before;
-	    void *buffer;
-	    u32 size;
-	    u32 flags;
+        void *buffer;
+        u32 size;
+        u32 flags;
     } rtm_mod;
 } RebootConfigARK;
 
 #define IS_ARK_CONFIG(config) (*((u32*)config) == ARK_CONFIG_MAGIC)
 
 typedef struct RebootConfigPRO {
-	u32 magic;
-	u32 rebootex_size;
-	u32 p2_size;
-	u32 p9_size;
-	char *insert_module_before;
-	void *insert_module_binary;
-	u32 insert_module_size;
-	u32 insert_module_flags;
-	u32 psp_fw_version;
-	u8 psp_model;
-	u8 iso_mode;
-	u8 recovery_mode;
-	u8 ofw_mode;
-	u8 iso_disc_type;
+    u32 magic;
+    u32 rebootex_size;
+    u32 p2_size;
+    u32 p9_size;
+    char *insert_module_before;
+    void *insert_module_binary;
+    u32 insert_module_size;
+    u32 insert_module_flags;
+    u32 psp_fw_version;
+    u8 psp_model;
+    u8 iso_mode;
+    u8 recovery_mode;
+    u8 ofw_mode;
+    u8 iso_disc_type;
 } RebootConfigPRO;
 
 // PROCFW Reboot Buffer Configuration Magic (0xCOLDBIRD)

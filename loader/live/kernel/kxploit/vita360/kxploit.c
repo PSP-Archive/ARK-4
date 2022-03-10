@@ -34,7 +34,7 @@ UserFunctions* g_tbl;
 int (*_sceNpCore_8AFAB4A0)(int *input, char *string, int length);
 
 /* Actual code to trigger the kram read vulnerability.
-	We can read the value stored at any location in Kram.
+    We can read the value stored at any location in Kram.
 */
 static volatile int running;
 static volatile int idx;
@@ -85,28 +85,28 @@ u32 readKram(u32 addr){
 }
 
 void dumpKram(){
-	SceUID fd = g_tbl->IoOpen(DUMP_PATH, PSP_O_CREAT | PSP_O_TRUNC | PSP_O_WRONLY, 0777);
-	if (fd < 0){
-		return;
-	}
-	
-	u32 kptr = 0x88000000;
-	u32 size = 0x400000;
-	u32 i;
-	static u32 buf[BUF_SIZE];
-	u32 count = 0;
-	for (i=0; i<size; i+=4){
-		u32 val = readKram((void*)(kptr+i));
-		if (count >= BUF_SIZE){
-			count = 0;
-			g_tbl->IoWrite(fd, buf, sizeof(buf));
-		}
-		buf[count++] = val;
-	}
-	if (count > 0){
-		g_tbl->IoWrite(fd, buf, count*sizeof(u32));
-	}
-	g_tbl->IoClose(fd);
+    SceUID fd = g_tbl->IoOpen(DUMP_PATH, PSP_O_CREAT | PSP_O_TRUNC | PSP_O_WRONLY, 0777);
+    if (fd < 0){
+        return;
+    }
+    
+    u32 kptr = 0x88000000;
+    u32 size = 0x400000;
+    u32 i;
+    static u32 buf[BUF_SIZE];
+    u32 count = 0;
+    for (i=0; i<size; i+=4){
+        u32 val = readKram((void*)(kptr+i));
+        if (count >= BUF_SIZE){
+            count = 0;
+            g_tbl->IoWrite(fd, buf, sizeof(buf));
+        }
+        buf[count++] = val;
+    }
+    if (count > 0){
+        g_tbl->IoWrite(fd, buf, count*sizeof(u32));
+    }
+    g_tbl->IoClose(fd);
 }
 
 void repairInstruction(KernelFunctions* k_tbl) {

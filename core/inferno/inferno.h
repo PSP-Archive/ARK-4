@@ -26,16 +26,16 @@
 
 #define SAFE_FREE(p) \
 do { \
-	if(p != NULL) { \
-		oe_free(p); \
-		p = NULL; \
-	} \
+    if(p != NULL) { \
+        oe_free(p); \
+        p = NULL; \
+    } \
 } while ( 0 )
 
 struct IoReadArg {
-	u32 offset; // 0
-	u8 *address; // 4
-	u32 size; // 8
+    u32 offset; // 0
+    u8 *address; // 4
+    u32 size; // 8
 };
 
 extern u32 psp_model;

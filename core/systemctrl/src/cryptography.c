@@ -130,11 +130,11 @@ int isPrxCompressed(unsigned char * prx, unsigned int size)
 int _memlmdDecrypt(unsigned char * prx, unsigned int size, unsigned int * newsize, unsigned int use_polling)
 {
     if(ExtendDecryption)
-	{
-		int res;
-		if( ( res = ExtendDecryption(prx, size, newsize, use_polling)) >=0)
-			return res;
-	}
+    {
+        int res;
+        if( ( res = ExtendDecryption(prx, size, newsize, use_polling)) >=0)
+            return res;
+    }
 
     // Valid Parameters
     if(prx != NULL && newsize != NULL)
@@ -184,11 +184,11 @@ int _mesgledDecrypt(unsigned int * tag, unsigned char * key, unsigned int code, 
     {
     
         if( MesgLedDecryptEX )
-		{
-			int ret = MesgLedDecryptEX(prx, size, newsize, use_polling);
-			if( ret >= 0 )
-				return ret;
-		}
+        {
+            int ret = MesgLedDecryptEX(prx, size, newsize, use_polling);
+            if( ret >= 0 )
+                return ret;
+        }
     
         // Read GZIP Payload Size from PRX Header
         unsigned int compsize = *(unsigned int *)(prx + 0xB0);
@@ -212,18 +212,18 @@ unzip:
     return mesgledDecrypt(tag, key, code, prx, size, newsize, use_polling, blacklist, blacklistsize, type, xor_key1, xor_key2);
 }
 
-void *SystemCtrlForKernel_AC0E84D1(int (* func)())
+void* sctrlHENRegisterKDecryptHandler(int (* func)())
 {
-	int (* r)() = ExtendDecryption;
-	ExtendDecryption = func;
-	return r;
+    int (* r)() = ExtendDecryption;
+    ExtendDecryption = func;
+    return r;
 }
 
-void *SystemCtrlForKernel_1F3037FB(int (* func)())
+void* sctrlHENRegisterMDecryptHandler(int (* func)())
 {
-	int (* r)() = (void *)MesgLedDecryptEX;
-	MesgLedDecryptEX = (void *)func;
-	return (void *)r;
+    int (* r)() = (void *)MesgLedDecryptEX;
+    MesgLedDecryptEX = (void *)func;
+    return (void *)r;
 }
 
 // Patch Memlmd Cryptography

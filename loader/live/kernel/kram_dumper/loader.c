@@ -55,23 +55,23 @@ void loadKernelArk(){
     // Dump kram
     strcpy(path, ark_config->arkpath);
     strcat(path, "KMEM.BIN");
-	fd = k_tbl->KernelIOOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-	if (fd >= 0) {
-		k_tbl->KernelIOWrite(fd, (void*)0x88000000, 0x400000);
-		k_tbl->KernelIOClose(fd);
-	}
+    fd = k_tbl->KernelIOOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+    if (fd >= 0) {
+        k_tbl->KernelIOWrite(fd, (void*)0x88000000, 0x400000);
+        k_tbl->KernelIOClose(fd);
+    }
 
     // Dump seed
     strcpy(path, ark_config->arkpath);
     strcat(path, "SEED.BIN");
-	fd = k_tbl->KernelIOOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-	if (fd >= 0) {
-		k_tbl->KernelIOWrite(fd, (void*)0xBFC00200, 0x100);
-		k_tbl->KernelIOClose(fd);
-	}
-	
-	// Dump loaded modules
-	strcpy(path, ark_config->arkpath);
+    fd = k_tbl->KernelIOOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+    if (fd >= 0) {
+        k_tbl->KernelIOWrite(fd, (void*)0xBFC00200, 0x100);
+        k_tbl->KernelIOClose(fd);
+    }
+    
+    // Dump loaded modules
+    strcpy(path, ark_config->arkpath);
     strcat(path, "KMEM.ARK");
     modulesDump(path);
 }

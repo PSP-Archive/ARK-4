@@ -6,8 +6,8 @@
 #define SCREEN_WIDTH  512
 #define CMAX_X 60
 #define CMAX_Y 38
-#define LINESIZE 	512				//in long
-#define FRAMESIZE  0xAA000			//in byte
+#define LINESIZE     512                //in long
+#define FRAMESIZE  0xAA000            //in byte
 
 #define TEXTCOLOUR 0x00FFFFFFL
 #define BLACK      0x00000000L

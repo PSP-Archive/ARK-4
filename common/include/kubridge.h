@@ -138,20 +138,20 @@ void kuKernelPokew(void *addr, u32 value);
 void *kuKernelMemcpy(void *dest, const void *src, size_t num);
 
 struct KernelCallArg {
-	u32 arg1;
-	u32 arg2;
-	u32 arg3;
-	u32 arg4;
-	u32 arg5;
-	u32 arg6;
-	u32 arg7;
-	u32 arg8;
-	u32 arg9;
-	u32 arg10;
-	u32 arg11;
-	u32 arg12;
-	u32 ret1;
-	u32 ret2;
+    u32 arg1;
+    u32 arg2;
+    u32 arg3;
+    u32 arg4;
+    u32 arg5;
+    u32 arg6;
+    u32 arg7;
+    u32 arg8;
+    u32 arg9;
+    u32 arg10;
+    u32 arg11;
+    u32 arg12;
+    u32 ret1;
+    u32 ret2;
 };
 
 /**

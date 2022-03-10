@@ -55,29 +55,29 @@ void unlockVitaMemory(){
     
     // apply partition info
     SysMemPartition *(* GetPartition)(int partition) = NULL;
-	SysMemPartition *partition;
-	u32 user_size;
+    SysMemPartition *partition;
+    u32 user_size;
 
-	u32 i;
-	for (i = 0; i < 0x4000; i += 4) {
-		u32 addr = 0x88000000 + i;
-		if (_lw(addr) == 0x2C85000D) {
-			GetPartition = (void *)(addr - 4);
-			break;
-		}
-	}
+    u32 i;
+    for (i = 0; i < 0x4000; i += 4) {
+        u32 addr = 0x88000000 + i;
+        if (_lw(addr) == 0x2C85000D) {
+            GetPartition = (void *)(addr - 4);
+            break;
+        }
+    }
 
-	if (!GetPartition)
-		return;
+    if (!GetPartition)
+        return;
 
-	user_size = 36;
-	partition = GetPartition(PSP_MEMORY_PARTITION_USER);
-	partition->size = user_size;
-	partition->data->size = (((user_size >> 8) << 9) | 0xFC);
+    user_size = 36;
+    partition = GetPartition(PSP_MEMORY_PARTITION_USER);
+    partition->size = user_size;
+    partition->data->size = (((user_size >> 8) << 9) | 0xFC);
 
-	partition = GetPartition(11);
-	partition->size = 0;
-	partition->address = 0x88800000 + user_size;
-	partition->data->size = (((partition->size >> 8) << 9) | 0xFC);
+    partition = GetPartition(11);
+    partition->size = 0;
+    partition->address = 0x88800000 + user_size;
+    partition->data->size = (((partition->size >> 8) << 9) | 0xFC);
     
 }

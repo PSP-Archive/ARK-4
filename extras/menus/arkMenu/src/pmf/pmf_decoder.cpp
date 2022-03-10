@@ -19,28 +19,28 @@ int T_Decoder(SceSize _args, void *_argp)
     Controller pad;
 
     if (!playPMF){
-		while (true){
-			pad.update();
-			if (pad.decline())
-			{
-				run = false;
-				break;
-			}
-			else if (pad.accept())
-			{
-				run = true;
-				break;
-			}
-			//else if (AT3->end)
-			//	break;
-		}
-		D->Audio->m_iAbort = 1;
-		D->Video->m_iAbort = 1;
-		D->Reader->m_Status = ReaderThreadData__READER_ABORT;
-		work = 0;
-		sceKernelExitThread(0);
-		return 0;
-	}
+        while (true){
+            pad.update();
+            if (pad.decline())
+            {
+                run = false;
+                break;
+            }
+            else if (pad.accept())
+            {
+                run = true;
+                break;
+            }
+            //else if (AT3->end)
+            //    break;
+        }
+        D->Audio->m_iAbort = 1;
+        D->Video->m_iAbort = 1;
+        D->Reader->m_Status = ReaderThreadData__READER_ABORT;
+        work = 0;
+        sceKernelExitThread(0);
+        return 0;
+    }
 
     int retVal;
 

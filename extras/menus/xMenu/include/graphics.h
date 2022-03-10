@@ -7,7 +7,7 @@ extern "C" {
 
 #include <psptypes.h>
 
-#define	PSP_LINE_SIZE 512
+#define    PSP_LINE_SIZE 512
 #define SCREEN_WIDTH 480
 #define SCREEN_HEIGHT 272
 
@@ -24,11 +24,11 @@ typedef u32 Color;
 
 typedef struct
 {
-	int textureWidth;  // the real width of data, 2^n with n>=0
-	int textureHeight;  // the real height of data, 2^n with n>=0
-	int imageWidth;  // the image width
-	int imageHeight;
-	Color* data;
+    int textureWidth;  // the real width of data, 2^n with n>=0
+    int textureHeight;  // the real height of data, 2^n with n>=0
+    int imageWidth;  // the image width
+    int imageHeight;
+    Color* data;
 } Image;
 
 /**

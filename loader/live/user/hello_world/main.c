@@ -23,20 +23,20 @@ int color, i;
 
 void InitGlobals()
 {
-	colours[10] = 0x00000000L;
- 	colours[1] = 0x00FFFFFFL;
- 	colours[2] = 0x00FF00FFL;
- 	colours[3] = 0x000000FFL;
- 	colours[4] = 0x00FF0000L;
- 	colours[5] = 0x0000FF00L;
- 	colours[6] = 0x0000FFFFL;
- 	colours[7] = 0x00FFFF00L;
- 	colours[8] = 0x00FFFF88L;
- 	colours[9] = 0x00888888L;
- 	colours[0] = 0x00008800L;
-	
- 	i=0;
- 	color=INDEX_GRAY;
+    colours[10] = 0x00000000L;
+     colours[1] = 0x00FFFFFFL;
+     colours[2] = 0x00FF00FFL;
+     colours[3] = 0x000000FFL;
+     colours[4] = 0x00FF0000L;
+     colours[5] = 0x0000FF00L;
+     colours[6] = 0x0000FFFFL;
+     colours[7] = 0x00FFFF00L;
+     colours[8] = 0x00FFFF88L;
+     colours[9] = 0x00888888L;
+     colours[0] = 0x00008800L;
+    
+     i=0;
+     color=INDEX_GRAY;
 }
 
 void ProcessKeys(unsigned long xikeys)
@@ -59,7 +59,7 @@ void ProcessKeys(unsigned long xikeys)
              changeBuffer();                                        // flip the buffer back to drawing mode for fade* functions
              fadeIn();                                              // fadeIn  -----|  Nice Cute
              fadeOut();                                             // fadeOut -----|    Effect
-		   sceKernelExitGame();                             // exit
+           sceKernelExitGame();                             // exit
   }
 
   if (xikeys & PSP_CTRL_TRIANGLE) createScreenshot("ms0:/screen.bmp");
@@ -82,7 +82,7 @@ void _start(unsigned long, unsigned long *) __attribute__ ((section (".text.star
 void _start(unsigned long arglen, unsigned long *argp)
 {
    
-	sceKernelDcacheWritebackAll();
+    sceKernelDcacheWritebackAll();
 
   InitGlobals();
 

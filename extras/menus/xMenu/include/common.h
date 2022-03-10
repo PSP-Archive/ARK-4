@@ -12,19 +12,19 @@
 
 namespace common{
 
-	static int argc;
-	static char** argv;
-	static Image* background;
-	static Image* noicon;
+    static int argc;
+    static char** argv;
+    static Image* background;
+    static Image* noicon;
 
-	extern void setArgs(int c, char** v);
-	extern bool fileExists(const std::string &path);
-	extern void loadData();
-	extern void deleteData();
-	extern Image* getBG();
-	extern Image* getNoIcon();
-	extern void printText(float x, float y, const char *text);
-	extern void flip();
+    extern void setArgs(int c, char** v);
+    extern bool fileExists(const std::string &path);
+    extern void loadData();
+    extern void deleteData();
+    extern Image* getBG();
+    extern Image* getNoIcon();
+    extern void printText(float x, float y, const char *text);
+    extern void flip();
 
 }
 

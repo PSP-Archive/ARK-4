@@ -10,20 +10,20 @@ using namespace std;
 
 int main(int argc, char** argv){
 
-	common::setArgs(argc, argv);
+    common::setArgs(argc, argv);
 
-	initGraphics();
+    initGraphics();
 
-	common::loadData();
+    common::loadData();
 
-	debugScreen("starting menu");
-	Menu* menu = new Menu();
-	menu->run();
-	delete menu;
-	
-	common::deleteData();
-	
-	disableGraphics();
-		
-	sceKernelExitGame();
+    debugScreen("starting menu");
+    Menu* menu = new Menu();
+    menu->run();
+    delete menu;
+    
+    common::deleteData();
+    
+    disableGraphics();
+        
+    sceKernelExitGame();
 }

@@ -141,7 +141,7 @@ void patchVitaPopsman(SceModule2* mod){
     _sw(LI_V0(0), text_addr + 0x00003490 + 4);
     
     // patch loadmodule to load our own pops.prx
-	_sw(JAL(myKernelLoadModule), text_addr + 0x00001EE0);
+    _sw(JAL(myKernelLoadModule), text_addr + 0x00001EE0);
 }
 
 void patchVitaPopsSpu(SceModule2 * mod)

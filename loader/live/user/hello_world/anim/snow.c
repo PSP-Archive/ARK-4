@@ -64,7 +64,7 @@ void fadeOut()
     changeBuffer();
   }
 
-	Fillvram(0);
-	changeBuffer();
-	Fillvram(0);
+    Fillvram(0);
+    changeBuffer();
+    Fillvram(0);
 }

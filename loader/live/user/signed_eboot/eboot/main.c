@@ -137,18 +137,18 @@ int main(int argc, char** argv){
     
     // load ARK binary
     SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
-	if (fd < 0) {
-		PRTSTR1("ERROR: %s NOT FOUND!", loadpath);
-		PRTSTR("Press O to go back to XMB.");
-		while (1) {
-			SceCtrlData pad;
-			sceCtrlPeekBufferPositive(&pad, 1);
+    if (fd < 0) {
+        PRTSTR1("ERROR: %s NOT FOUND!", loadpath);
+        PRTSTR("Press O to go back to XMB.");
+        while (1) {
+            SceCtrlData pad;
+            sceCtrlPeekBufferPositive(&pad, 1);
 
-			if(pad.Buttons & PSP_CTRL_CIRCLE){
-    			sceKernelExitGame();
-			}
-		}
-	}
+            if(pad.Buttons & PSP_CTRL_CIRCLE){
+                sceKernelExitGame();
+            }
+        }
+    }
     sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
     sceIoClose(fd);
     sceKernelDcacheWritebackAll();

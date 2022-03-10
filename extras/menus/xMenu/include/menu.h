@@ -17,13 +17,13 @@
 #include "graphics.h"
 
 #define PS1_CAT 0x454D
-#define PSN_CAT	0x4745
+#define PSN_CAT    0x4745
 #define HMB_CAT 0x474D
 
 #define TEXT_HEIGHT 10
 #define TEXT_WIDTH 7
 
-#define POPS_RUNLEVEL		0x144
+#define POPS_RUNLEVEL        0x144
 #define POPS_RUNLEVEL_GO    0x155
 
 extern "C"{
@@ -36,39 +36,39 @@ using namespace std;
 
 class Menu{
 
-	private:
-	
-		vector<Entry*> eboots;
-		TextAnim* txt;
-		int index;
-		int start;
-		
-		void readEbootList(string path);
-		
-		string fullPath(string path, string name);
-		
-		int getEbootType(const char* path);
-		
-		bool isPOPS(string path);
-		
-		void updateScreen();
-		
-		void updateTextAnim();
-		
-		void moveDown();
-		
-		void moveUp();
-		
-		void control();
-		
-		void loadGame();
-		
-	public:
-	
-		Menu();
-		~Menu();
-	
-		void run();
+    private:
+    
+        vector<Entry*> eboots;
+        TextAnim* txt;
+        int index;
+        int start;
+        
+        void readEbootList(string path);
+        
+        string fullPath(string path, string name);
+        
+        int getEbootType(const char* path);
+        
+        bool isPOPS(string path);
+        
+        void updateScreen();
+        
+        void updateTextAnim();
+        
+        void moveDown();
+        
+        void moveUp();
+        
+        void control();
+        
+        void loadGame();
+        
+    public:
+    
+        Menu();
+        ~Menu();
+    
+        void run();
 
 };
 

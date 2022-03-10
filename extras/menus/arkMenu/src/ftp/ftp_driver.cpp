@@ -117,15 +117,15 @@ vector<Entry*> FTPDriver::listDirectory(string path){
                 string file_name(dir->files[i].d_name);
                 file_name = file_name.substr(file_name.find(' ')+1);
                 if (FIO_SO_ISDIR(dir->files[i].st_attr)) {
-			        BrowserFolder* folder = new BrowserFolder(path + file_name + "/");
-			        printf("adding folder: %s -> %s\n", file_name.c_str(), folder->getName().c_str());
-			        folders.push_back(folder);
-		        } else if (FIO_SO_ISREG(dir->files[i].st_attr)) {
-		            BrowserFile* file = new FTPFile(path, file_name, dir->files[i].st_size);
-		            printf("adding file: %s -> %s\n", file_name.c_str(), file->getName().c_str());
-		            files.push_back(file);
-		        }
-		    }
+                    BrowserFolder* folder = new BrowserFolder(path + file_name + "/");
+                    printf("adding folder: %s -> %s\n", file_name.c_str(), folder->getName().c_str());
+                    folders.push_back(folder);
+                } else if (FIO_SO_ISREG(dir->files[i].st_attr)) {
+                    BrowserFile* file = new FTPFile(path, file_name, dir->files[i].st_size);
+                    printf("adding file: %s -> %s\n", file_name.c_str(), file->getName().c_str());
+                    files.push_back(file);
+                }
+            }
         }
     }
     
@@ -168,7 +168,7 @@ void FTPDriver::createFolder(string path){
 void FTPDriver::copyFileTo(string orig, string dest, int* progress){
     //string ftp_path = dest.substr(this->getDevicePath().size(), dest.size());
     size_t lastSlash = orig.rfind("/", string::npos);
-    //int res = ftpSTOR((char*)orig.c_str(), (char*)ftp_path.c_str());	// uploads a file to FTP server
+    //int res = ftpSTOR((char*)orig.c_str(), (char*)ftp_path.c_str());    // uploads a file to FTP server
     string localdir = orig.substr(0, lastSlash+1);
     string filename = orig.substr(lastSlash+1);
     if (isDevicePath(dest)){

@@ -84,18 +84,18 @@ void CALLBACK SPUwriteRegister(unsigned long reg, unsigned short val)
        break;
      //------------------------------------------------// level with pre-calcs
      case 8:
-	 {
+     {
         //---------------------------------------------//
         s_chan[ch].ADSRX.AttackModeExp=(val&0x8000)?1:0; 
         s_chan[ch].ADSRX.AttackRate = ((val>>8) & 0x007f)^0x7f;
         s_chan[ch].ADSRX.DecayRate = 4*(((val>>4) & 0x000f)^0x1f);
         s_chan[ch].ADSRX.SustainLevel = (val & 0x000f) << 27;
         //---------------------------------------------//
-	 }
+     }
       break;
      //------------------------------------------------// adsr times with pre-calcs
      case 10:
-	 {
+     {
        //----------------------------------------------//
        s_chan[ch].ADSRX.SustainModeExp = (val&0x8000)?1:0;
        s_chan[ch].ADSRX.SustainIncrease= (val&0x4000)?0:1;
@@ -103,7 +103,7 @@ void CALLBACK SPUwriteRegister(unsigned long reg, unsigned short val)
        s_chan[ch].ADSRX.ReleaseModeExp = (val&0x0020)?1:0;
        s_chan[ch].ADSRX.ReleaseRate = 4*((val & 0x001f)^0x1f);
        //----------------------------------------------//
-	   }
+       }
      break;
      //------------------------------------------------// adsr volume... mmm have to investigate this
      case 12:

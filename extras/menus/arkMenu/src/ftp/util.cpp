@@ -111,7 +111,7 @@ my_picker(const PICKER* pickerP)
 # endif
 
       if (bRedraw) {
-      	common::clearScreen(CLEAR_COLOR);
+          common::clearScreen(CLEAR_COLOR);
         common::getImage(IMAGE_BG)->draw(0, 0);
         common::printText(0,0, pickerP->szTitle, PICKER_TITLE_COLOR);
 

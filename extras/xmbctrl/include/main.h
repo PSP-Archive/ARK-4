@@ -1,22 +1,22 @@
 /*
-	6.39 TN-A, XmbControl
-	Copyright (C) 2011, Total_Noob
-	Copyright (C) 2011, Frostegater
+    6.39 TN-A, XmbControl
+    Copyright (C) 2011, Total_Noob
+    Copyright (C) 2011, Frostegater
 
-	main.h: XmbControl main header file
-	
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    main.h: XmbControl main header file
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef __MAIN_H__
@@ -34,60 +34,60 @@
 
 typedef struct
 {
-	int magic;
-	int test1;
-	int test2;
+    int magic;
+    int test1;
+    int test2;
 } CFWConfig;
 
 typedef struct
 {
-	char text[48];
-	int play_sound;
-	int action;
-	int action_arg;
+    char text[48];
+    int play_sound;
+    int action;
+    int action_arg;
 } SceContextItem;
 
 typedef struct
 {
-	int id;
-	int relocate;
-	int action;
-	int action_arg;
-	SceContextItem *context;
-	char *subtitle;
-	int unk;
-	char play_sound;
-	char memstick;
-	char umd_icon;
-	char image[4];
-	char image_shadow[4];
-	char image_glow[4];
-	char text[0x25];
+    int id;
+    int relocate;
+    int action;
+    int action_arg;
+    SceContextItem *context;
+    char *subtitle;
+    int unk;
+    char play_sound;
+    char memstick;
+    char umd_icon;
+    char image[4];
+    char image_shadow[4];
+    char image_glow[4];
+    char text[0x25];
 } SceVshItem;
 
 typedef struct
 {
-	void *unk;
-	int id;
-	char *regkey;
-	char *text;
-	char *subtitle;
-	char *page;
+    void *unk;
+    int id;
+    char *regkey;
+    char *text;
+    char *subtitle;
+    char *page;
 } SceSysconfItem;
 
 typedef struct
 {
-	u8 id;
-	u8 type;
-	u16 unk1;
-	u32 label;
-	u32 param;
-	u32 first_child;
-	int child_count;
-	u32 next_entry;
-	u32 prev_entry;
-	u32 parent;
-	u32 unknown[2];
+    u8 id;
+    u8 type;
+    u16 unk1;
+    u32 label;
+    u32 param;
+    u32 first_child;
+    int child_count;
+    u32 next_entry;
+    u32 prev_entry;
+    u32 parent;
+    u32 unknown[2];
 } SceRcoEntry;
 
 int sce_paf_private_wcslen(wchar_t *);

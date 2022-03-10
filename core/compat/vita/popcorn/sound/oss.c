@@ -28,7 +28,7 @@
 // oss globals
 ////////////////////////////////////////////////////////////////////////
 
-#define OSS_MODE_STEREO	    1
+#define OSS_MODE_STEREO        1
 #define OSS_MODE_MONO       0
 
 #define OSS_SPEED_44100     44100
@@ -159,9 +159,9 @@ static void oss_feed(void *buf, int bytes)
 
 void out_register_oss(struct out_driver *drv)
 {
-	drv->name = "oss";
-	drv->init = oss_init;
-	drv->finish = oss_finish;
-	drv->busy = oss_busy;
-	drv->feed = oss_feed;
+    drv->name = "oss";
+    drv->init = oss_init;
+    drv->finish = oss_finish;
+    drv->busy = oss_busy;
+    drv->feed = oss_feed;
 }

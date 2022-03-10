@@ -1,5 +1,3 @@
-#include <zlib.h>
-
 #include "cso.h"
 
 #include <cmath>
@@ -141,24 +139,9 @@ void zlib_decompress(uint8_t *input, uint8_t* output, int type)
         LZ4_decompress_fast((const char*)input, (char*)output, SECTOR_SIZE);
         break;
     case TYPE_DAX:
-        sctrlDaxDecompress(output, input, DAX_COMP_BUF);
-        /*
-        int sceKernelGzipDecompress 	(
-            u8 *  	dest,
-		    u32  	destSize,
-		    const u8 *  	src,
-		    u32  	unknown 
-	    )
-	    */
-        /*
-        struct KernelCallArg args;
-        memset(&args, 0, sizeof(args));
-        args.arg1 = (u32)output;
-        args.arg2 = (u32)DAX_BLOCK_SIZE;
-        args.arg3 = (u32)input;
-        void* func = (void*)sctrlHENFindFunction("sceSystemMemoryManager", "UtilsForKernel", 0x78934841);
-        u32 ret = kuKernelCall(func, &args);
-        */
+        memcpy(input, input+2, DAX_COMP_BUF-6);
+        sctrlDeflateDecompress(output, input, DAX_BLOCK_SIZE);
+        //sctrlDaxDecompress(output, input, DAX_COMP_BUF);
         break;
     }
 }
@@ -302,20 +285,15 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
                 unsigned offset, size;
 
                 fread(&offset, 4, 1, fp);
-                
-                if (ciso_type == TYPE_DAX){
-                    size = DAX_COMP_BUF;
+
+                if (offset >= 0x80000000){
+                    is_compressed = false;
+                    offset -= 0x80000000;
                 }
-                else{
-                    if (offset >= 0x80000000){
-                        is_compressed = false;
-                        offset -= 0x80000000;
-                    }
-                    fread(&size, 4, 1, fp);
-                    if (size >= 0x80000000)
-                        size -= 0x80000000;
-                    size -= offset;
-                }
+                fread(&size, 4, 1, fp);
+                if (size >= 0x80000000)
+                    size -= 0x80000000;
+                size -= offset;                
                     
                 fseek(fp, offset, SEEK_SET);
 

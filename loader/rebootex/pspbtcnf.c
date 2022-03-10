@@ -280,15 +280,15 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
                 break;
         }
         //reboot variable set
-	    if(reboot_conf->rtm_mod.before && reboot_conf->rtm_mod.buffer && reboot_conf->rtm_mod.size)
-	    {
-		    //add reboot prx entry
-		    newsize = AddPRX(buffer, reboot_conf->rtm_mod.before, "/rtm.prx", reboot_conf->rtm_mod.flags);
-		    if(newsize > 0){
-		        result = newsize;
-	            patchRebootIoPSP();
-	        }
-	    }
+        if(reboot_conf->rtm_mod.before && reboot_conf->rtm_mod.buffer && reboot_conf->rtm_mod.size)
+        {
+            //add reboot prx entry
+            newsize = AddPRX(buffer, reboot_conf->rtm_mod.before, "/rtm.prx", reboot_conf->rtm_mod.flags);
+            if(newsize > 0){
+                result = newsize;
+                patchRebootIoPSP();
+            }
+        }
     }
     
     return result;

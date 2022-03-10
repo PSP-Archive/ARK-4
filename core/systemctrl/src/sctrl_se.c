@@ -151,9 +151,9 @@ char * sctrlSEGetUmdFile(void)
 
 char *sctrlSEGetUmdFileEx(char *input)
 {
-	char* umdfilename = sctrlSEGetUmdFile();
-	sctrlSESetUmdFile(input);
-	return umdfilename;
+    char* umdfilename = sctrlSEGetUmdFile();
+    sctrlSESetUmdFile(input);
+    return umdfilename;
 }
 
 // Set Reboot Configuration UMD File
@@ -168,7 +168,7 @@ void sctrlSESetUmdFile(char * file)
 
 void sctrlSESetUmdFileEx(const char *umd, char *input)
 {
-	sctrlSESetUmdFile(umd);
+    sctrlSESetUmdFile(umd);
 }
 
 void sctrlSESetBootConfFileIndex(int index)
@@ -197,19 +197,19 @@ int sctrlSEGetDiscType(void)
     return PSP_UMD_TYPE_GAME;
 }
 
-int	sctrlHENIsSE()
+int    sctrlHENIsSE()
 {
-	return 1;
+    return 1;
 }
 
-int	sctrlHENIsDevhook()
+int    sctrlHENIsDevhook()
 {
-	return 0;
+    return 0;
 }
 
 int sctrlSEGetVersion()
 {
-	return 0x00010008;
+    return 0x00010008;
 }
 
 int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs){
