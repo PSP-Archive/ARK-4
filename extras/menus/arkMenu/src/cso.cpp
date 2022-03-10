@@ -141,7 +141,6 @@ void zlib_decompress(uint8_t *input, uint8_t* output, int type)
     case TYPE_DAX:
         memcpy(input, input+2, DAX_COMP_BUF-6);
         sctrlDeflateDecompress(output, input, DAX_BLOCK_SIZE);
-        //sctrlDaxDecompress(output, input, DAX_COMP_BUF);
         break;
     }
 }

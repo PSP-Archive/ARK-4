@@ -678,23 +678,16 @@ static int read_dax_data(u8* addr, u32 size, u32 offset)
     u32 pos, ret, read_bytes;
     u32 o_offset = offset;
     
-    //static u8 com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
-    //static u8 dec_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
-    
     u8* com_buf = g_ciso_block_buf;
-    u8* dec_buf = (u8*)0x00010000; //g_ciso_dec_buf;
-    
-    printf("Reading %u bytes at offset %u into %p....", size, offset, addr);
+    u8* dec_buf = g_ciso_dec_buf;
     
     if(offset > dax_header->uncompressed_size) {
         // return if the offset goes beyond the iso size
-        printf("offset out of bounds\n");
         return 0;
     }
     else if(offset + size > dax_header->uncompressed_size) {
         // adjust size if it tries to read beyond the game data
         size = dax_header->uncompressed_size - offset;
-        printf("adjusted size is %u...", size);
     }
     
     while(size > 0) {
@@ -706,23 +699,15 @@ static int read_dax_data(u8* addr, u32 size, u32 offset)
             // EOF reached
             break;
         }
-
-        // read block offset and size
-        //u32 b_info[2]; read_raw_data(b_info, sizeof(u32)*2, sizeof(DAXHeader) + (4*cur_block));
-        //if (cur_block == g_total_sectors-1) b_info[1] = DAX_COMP_BUF;
-        //else b_info[1] -= b_info[0]; // 0=b_offset, 1=b_size
         
-        // read block
-        //ret = read_raw_data(com_buf, MIN(b_info[1], DAX_COMP_BUF), b_info[0]);
-        
+        // read compressed block offset
         u32 b_offset; read_raw_data(&b_offset, sizeof(u32), sizeof(DAXHeader) + (4*cur_block));
-        
-        ret = read_raw_data(com_buf, DAX_COMP_BUF, b_offset);
+
+        // read block, skipping over zlib header and trail        
+        ret = read_raw_data(com_buf, DAX_COMP_BUF-6, b_offset+2);
         
         // decompress block
-        memcpy(com_buf, com_buf+2, DAX_COMP_BUF-6); // remove zlib header
         sceKernelDeflateDecompress(dec_buf, DAX_BLOCK_SIZE, com_buf, 0); // use raw inflate
-        //sctrlDaxDecompress(dec_buf, com_buf, DAX_COMP_BUF);
 
         // read data from block into buffer
         read_bytes = MIN(size, (DAX_BLOCK_SIZE - pos));
@@ -733,7 +718,6 @@ static int read_dax_data(u8* addr, u32 size, u32 offset)
     }
 
     u32 res = offset - o_offset;
-    printf("finally read %u bytes\n", res);
     
     return res;
 }

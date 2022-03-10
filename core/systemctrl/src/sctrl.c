@@ -578,19 +578,6 @@ int sctrlGzipDecompress(void* dest, void* src, int size){
     return ret;
 }
 
-int sctrlDaxDecompress(void* output, void* input, u32 in_size){
-    static const int DAX_BLOCK_SIZE = 0x2000;
-    static const int DAX_COMP_BUF = 0x2400;
-    
-    // remove ZLIB header and trailing
-    memcpy(input, (u8*)input+2, MIN(DAX_COMP_BUF, in_size)-6);
-
-    // use raw deflate
-    int ret = sctrlDeflateDecompress(output, input, DAX_BLOCK_SIZE);
-    
-    return ret;
-}
-
 u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid)
 {
     SceModule2 *mod = sceKernelFindModuleByName(szMod);

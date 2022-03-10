@@ -238,37 +238,20 @@ static int read_dax_sector(u32 sector, u8* buf){
     u32 cur_block = pos/DAX_BLOCK_SIZE;
     u32 offset = pos & (DAX_BLOCK_SIZE-1);
     
-    //static u8 com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
-    //static u8 dec_buf[DAX_BLOCK_SIZE] __attribute__((aligned(64)));
-    
-    
     u8* com_buf = PTR_ALIGN_64(dax_com_buf);
-    u8* dec_buf = (u8*)0x00010000; //PTR_ALIGN_64(dax_dec_buf);
-
-    //memset(com_buf, 0, DAX_COMP_BUF);
-    //memset(dec_buf, 0, DAX_BLOCK_SIZE);
+    u8* dec_buf = PTR_ALIGN_64(dax_dec_buf);
     
     if (dax_cur_block != cur_block){
-        // read block offset and size
-        /*
-        u32 b_info[2]; readRawData(b_info, sizeof(u32)*2, sizeof(DAXHeader) + (4*cur_block));
-        if (cur_block == g_total_sectors-1) b_info[1] = DAX_COMP_BUF;
-        else b_info[1] -= b_info[0]; // 0=b_offset, 1=b_size
         
-        // read block
-        int ret = readRawData(com_buf, MIN(b_info[1], DAX_COMP_BUF), b_info[0]);
-        */
-        
+        // read block offset
         u32 b_offset; readRawData(&b_offset, sizeof(u32), sizeof(DAXHeader) + (4*cur_block));
         
-        int ret = readRawData(com_buf, DAX_COMP_BUF, b_offset);
-        
-        memcpy(com_buf, com_buf+2, DAX_COMP_BUF-6);
+        // read block, skipping zlib header
+        readRawData(com_buf, DAX_COMP_BUF-6, b_offset+2);
+
+        // decompress block
         sceKernelDeflateDecompress(dec_buf, DAX_BLOCK_SIZE, com_buf, 0);
         
-        // decompress block if needed
-        /*if (ret != DAX_BLOCK_SIZE)sctrlDaxDecompress(dec_buf, com_buf, DAX_COMP_BUF); */
-        //else memcpy(dec_buf, com_buf, DAX_BLOCK_SIZE); // uncompressed block
         dax_cur_block = cur_block;
     }
     

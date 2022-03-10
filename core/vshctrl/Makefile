@@ -20,7 +20,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs/
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsystemctrl_kernel -lz
+LIBS = -lpspsystemctrl_kernel
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
