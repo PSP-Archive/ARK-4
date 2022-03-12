@@ -4,7 +4,7 @@
 
 - Core system for unsigned code execution on every PSP device based on 6.60 kernel.
 
-- Inferno driver for games in ISO, CSO, ZSO and DAX format.
+- Inferno driver Version 2 compatible with ISO, CSO, ZSO, JSO and DAX format.
 
 - Popcorn controller for PSX games.
 

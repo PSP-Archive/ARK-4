@@ -34,9 +34,10 @@
 #include "globals.h"
 #include "macros.h"
 
-#define CSO_MAGIC 0x4F534943
-#define ZSO_MAGIC 0x4F53495A
-#define DAX_MAGIC 0x00584144
+#define CSO_MAGIC 0x4F534943 // CISO
+#define ZSO_MAGIC 0x4F53495A // ZISO
+#define DAX_MAGIC 0x00584144 // DAX
+#define JSO_MAGIC 0x4F53494A // JISO
 
 #define DAX_BLOCK_SIZE 0x2000
 #define DAX_COMP_BUF 0x2400
@@ -102,9 +103,31 @@ typedef struct{
     uint32_t unused[4]; 
 } DAXHeader;
 
+typedef struct _JisoHeader {
+    uint32_t magic; // [0x000] 'JISO'
+    uint8_t unk_x001; // [0x004] 0x03?
+    uint8_t unk_x002; // [0x005] 0x01?
+    uint16_t block_size; // [0x006] Block size, usually 2048.
+    // TODO: Are block_headers and method 8-bit or 16-bit?
+    uint8_t block_headers; // [0x008] Block headers. (1 if present; 0 if not.)
+    uint8_t unk_x009; // [0x009]
+    uint8_t method; // [0x00A] Method. (See JisoAlgorithm_e.)
+    uint8_t unk_x00b; // [0x00B]
+    uint32_t uncompressed_size; // [0x00C] Uncompressed data size.
+    uint8_t md5sum[16]; // [0x010] MD5 hash of the original image.
+    uint32_t header_size; // [0x020] Header size? (0x30)
+    uint8_t unknown[12]; // [0x024]
+} JisoHeader;
+
+typedef enum {
+	JISO_METHOD_LZO		= 0,
+	JISO_METHOD_ZLIB	= 1,
+} JisoMethod;
+
 // 0x00002708
 static struct CISO_header g_CISO_hdr __attribute__((aligned(64)));
 static DAXHeader* dax_header = (DAXHeader*)&g_CISO_hdr;
+static JisoHeader* jiso_header = (JisoHeader*)&g_CISO_hdr;
 
 // 0x00002500
 static u32 g_CISO_idx_cache[CISO_IDX_BUFFER_SIZE/4] __attribute__((aligned(64)));
@@ -184,16 +207,18 @@ static int is_ciso(SceUID fd)
         goto exit;
     }
 
-    if(*magic == CSO_MAGIC || *magic == ZSO_MAGIC || *magic == DAX_MAGIC) { // CISO or ZISO or DAX
+    if(*magic == CSO_MAGIC || *magic == ZSO_MAGIC || *magic == DAX_MAGIC || *magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
         lz4_compressed = (*magic == ZSO_MAGIC);
         g_CISO_cur_idx = -1;
         if (*magic == DAX_MAGIC) g_ciso_total_block = dax_header->uncompressed_size / DAX_BLOCK_SIZE;
+        else if (*magic == JSO_MAGIC) g_ciso_total_block = jiso_header->uncompressed_size / jiso_header->block_size;
         else g_ciso_total_block = g_CISO_hdr.total_bytes / g_CISO_hdr.block_size;
         printk("%s: total block %d\n", __func__, (int)g_ciso_total_block);
 
         if(g_ciso_dec_buf == NULL) {
             u32 size = 0;
             if (*magic == DAX_MAGIC) size = DAX_BLOCK_SIZE;
+            else if (*magic == JSO_MAGIC) size = jiso_header->block_size;
             else size = CISO_DEC_BUFFER_SIZE + (1 << g_CISO_hdr.align);
             g_ciso_dec_buf = oe_malloc(size + 64);
 
@@ -208,7 +233,11 @@ static int is_ciso(SceUID fd)
         }
 
         if(g_ciso_block_buf == NULL) {
-            g_ciso_block_buf = oe_malloc(((*magic==DAX_MAGIC)?DAX_COMP_BUF:ISO_SECTOR_SIZE) + 64);
+            u32 size = 0;
+            if (*magic == DAX_MAGIC) size = DAX_COMP_BUF;
+            else if (*magic == JSO_MAGIC) size = jiso_header->block_size + ISO_SECTOR_SIZE/4;
+            else size = ISO_SECTOR_SIZE;
+            g_ciso_block_buf = oe_malloc(size + 64);
 
             if(g_ciso_block_buf == NULL) {
                 ret = -3;
@@ -220,7 +249,7 @@ static int is_ciso(SceUID fd)
                 g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
         }
 
-        if (*magic != DAX_MAGIC && g_cso_idx_cache == NULL) {
+        if ((*magic == CSO_MAGIC || *magic == ZSO_MAGIC) && g_cso_idx_cache == NULL) {
             g_cso_idx_cache = oe_malloc((CISO_IDX_MAX_ENTRIES * 4) + 64);
             if (g_cso_idx_cache == NULL) {
                 ret = -4;
@@ -722,12 +751,73 @@ static int read_dax_data(u8* addr, u32 size, u32 offset)
     return res;
 }
 
+static int read_jiso_data(u8* addr, u32 size, u32 offset)
+{
+    u32 cur_block;
+    u32 pos, ret, read_bytes;
+    u32 o_offset = offset;
+    
+    u8* com_buf = g_ciso_block_buf;
+    u8* dec_buf = g_ciso_dec_buf;
+    
+    if(offset > jiso_header->uncompressed_size) {
+        // return if the offset goes beyond the iso size
+        return 0;
+    }
+    else if(offset + size > jiso_header->uncompressed_size) {
+        // adjust size if it tries to read beyond the game data
+        size = jiso_header->uncompressed_size - offset;
+    }
+    
+    while(size > 0) {
+        // calculate block number and offset within block
+        cur_block = offset / jiso_header->block_size;
+        pos = offset & (jiso_header->block_size - 1);
+
+        if(cur_block >= g_total_sectors) {
+            // EOF reached
+            break;
+        }
+        
+        // read compressed block offset
+        u32 b_offset; read_raw_data(&b_offset, sizeof(u32), sizeof(JisoHeader) + (4*cur_block));
+        u32 b_size; read_raw_data(&b_size, sizeof(u32), sizeof(JisoHeader) + (4*cur_block) + 4);
+        u32 d_size = jiso_header->block_size;
+        b_size -= b_offset;
+
+        // read block, skipping header if needed
+        b_size = read_raw_data(com_buf, b_size, b_offset + (4*jiso_header->block_headers));
+
+        // decompress block
+        if (b_size == jiso_header->block_size) memcpy(dec_buf, com_buf, b_size);
+        else{
+            switch (jiso_header->method){
+            case JISO_METHOD_LZO: lzo1x_decompress(com_buf, b_size, dec_buf, &d_size, 0); break;
+            case JISO_METHOD_ZLIB: sceKernelDeflateDecompress(dec_buf, jiso_header->block_size, com_buf, 0); break;
+            }
+        }        
+
+        // read data from block into buffer
+        read_bytes = MIN(size, (jiso_header->block_size - pos));
+        memcpy(addr, dec_buf + pos, read_bytes);
+        size -= read_bytes;
+        addr += read_bytes;
+        offset += read_bytes;
+    }
+
+    u32 res = offset - o_offset;
+    
+    return res;
+}
+
 // 0x00000C7C
 int iso_read(struct IoReadArg *args)
 {
     if(g_is_ciso != 0) {
         if (dax_header->magic == DAX_MAGIC)
             return read_dax_data(args->address, args->size, args->offset);
+        else if (jiso_header->magic == JSO_MAGIC)
+            return read_jiso_data(args->address, args->size, args->offset);
         return read_cso_data_ng(args->address, args->size, args->offset);
     }
 

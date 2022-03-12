@@ -21,6 +21,7 @@
 #include <psputilsforkernel.h>
 #include "systemctrl_private.h"
 #include "lz4.h"
+#include "minilzo.h"
 #include "macros.h"
 
 #define MAX_RETRIES 8
@@ -29,9 +30,10 @@
 #define CISO_DEC_BUFFER_SIZE 0x2000
 #define ISO_STANDARD_ID "CD001"
 
-#define CSO_MAGIC 0x4F534943
-#define ZSO_MAGIC 0x4F53495A
-#define DAX_MAGIC 0x00584144
+#define CSO_MAGIC 0x4F534943 // CISO
+#define ZSO_MAGIC 0x4F53495A // ZISO
+#define DAX_MAGIC 0x00584144 // DAX
+#define JSO_MAGIC 0x4F53494A // JISO
 
 #define DAX_BLOCK_SIZE 0x2000
 #define DAX_COMP_BUF 0x2400
@@ -54,6 +56,27 @@ typedef struct{
     uint32_t unused[4]; 
 } DAXHeader;
 
+typedef struct _JisoHeader {
+    uint32_t magic; // [0x000] 'JISO'
+    uint8_t unk_x001; // [0x004] 0x03?
+    uint8_t unk_x002; // [0x005] 0x01?
+    uint16_t block_size; // [0x006] Block size, usually 2048.
+    // TODO: Are block_headers and method 8-bit or 16-bit?
+    uint8_t block_headers; // [0x008] Block headers. (1 if present; 0 if not.)
+    uint8_t unk_x009; // [0x009]
+    uint8_t method; // [0x00A] Method. (See JisoAlgorithm_e.)
+    uint8_t unk_x00b; // [0x00B]
+    uint32_t uncompressed_size; // [0x00C] Uncompressed data size.
+    uint8_t md5sum[16]; // [0x010] MD5 hash of the original image.
+    uint32_t header_size; // [0x020] Header size? (0x30)
+    uint8_t unknown[12]; // [0x024]
+} JisoHeader;
+
+typedef enum {
+	JISO_METHOD_LZO		= 0,
+	JISO_METHOD_ZLIB	= 1,
+} JisoMethod;
+
 typedef unsigned int uint;
 
 static void *g_ciso_dec_buf = NULL;
@@ -62,6 +85,7 @@ static u32 g_ciso_dec_buf_offset = (u32)-1;
 static int g_ciso_dec_buf_size = 0;
 static CISOHeader g_ciso_h;
 static DAXHeader* dax_header = (DAXHeader*)&g_ciso_h;
+static JisoHeader* jiso_header = (JisoHeader*)&g_ciso_h;
 static int g_CISO_cur_idx = -1;
 
 static const char * g_filename = NULL;
@@ -261,6 +285,44 @@ static int read_dax_sector(u32 sector, u8* buf){
     return SECTOR_SIZE;
 }
 
+static int read_jiso_sector(u32 sector, u8* buf){
+    // calculate DAX block and offset within block
+    u32 pos = isoLBA2Pos(sector, 0);
+    u32 cur_block = pos/jiso_header->block_size;
+    u32 offset = pos & (jiso_header->block_size-1);
+    
+    u8* com_buf = PTR_ALIGN_64(dax_com_buf);
+    u8* dec_buf = PTR_ALIGN_64(dax_dec_buf);
+    
+    if (dax_cur_block != cur_block){
+        
+        // read block offset
+        u32 b_offset; readRawData(&b_offset, sizeof(u32), sizeof(JisoHeader) + (4*cur_block));
+        u32 b_size; readRawData(&b_size, sizeof(u32), sizeof(JisoHeader) + (4*cur_block) + 4);
+        u32 d_size = jiso_header->block_size;
+        b_size -= b_offset;
+
+        // read block, skipping header if needed
+        b_size = readRawData(com_buf, b_size, b_offset + (4*jiso_header->block_headers));
+
+        // decompress block
+        if (b_size == jiso_header->block_size) memcpy(dec_buf, com_buf, b_size);
+        else{
+            switch (jiso_header->method){
+            case JISO_METHOD_LZO: lzo1x_decompress(com_buf, b_size, dec_buf, &d_size, 0); break;
+            case JISO_METHOD_ZLIB: sceKernelDeflateDecompress(dec_buf, jiso_header->block_size, com_buf, 0); break;
+            }
+        }
+        
+        dax_cur_block = cur_block;
+    }
+    
+    // copy sector
+    memcpy(buf, dec_buf+offset, SECTOR_SIZE);
+    
+    return SECTOR_SIZE;
+}
+
 static int readSector(u32 sector, void *buf)
 {
     int ret;
@@ -269,6 +331,8 @@ static int readSector(u32 sector, void *buf)
     if (g_is_compressed) {
         if (dax_header->magic == DAX_MAGIC)
             ret = read_dax_sector(sector, buf);
+        else if (jiso_header->magic == JSO_MAGIC)
+            ret = read_jiso_sector(sector, buf);
         else
             ret = readSectorCompressed(sector, buf);
     } else {
@@ -491,6 +555,25 @@ int isoOpen(const char *path)
         dax_cur_block = (u32)-1;
         dax_com_buf = oe_malloc(DAX_COMP_BUF + 64);
         dax_dec_buf = oe_malloc(DAX_BLOCK_SIZE + 64);
+        if (dax_com_buf == NULL || dax_dec_buf == NULL) {
+            printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)dax_com_buf, (uint)dax_dec_buf);
+            ret = -6;
+            goto error;
+        }
+    }
+    else if (*magic == JSO_MAGIC){
+        printf("JSO block_size: %d\n", jiso_header->block_size);
+        printf("JSO uncompressed_size: %d\n", jiso_header->uncompressed_size);
+        printf("JSO method: %d\n", jiso_header->method);
+        printf("JSO block header: %d\n", jiso_header->block_headers);
+        g_total_sectors = jiso_header->uncompressed_size / jiso_header->block_size;
+        g_is_compressed = 1;
+        g_CISO_cur_idx = -1;
+        g_ciso_dec_buf_offset = (u32)-1;
+        g_ciso_dec_buf_size = 0;
+        dax_cur_block = (u32)-1;
+        dax_com_buf = oe_malloc(jiso_header->block_size + (SECTOR_SIZE/4) + 64);
+        dax_dec_buf = oe_malloc(jiso_header->block_size + 64);
         if (dax_com_buf == NULL || dax_dec_buf == NULL) {
             printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)dax_com_buf, (uint)dax_dec_buf);
             ret = -6;

@@ -147,8 +147,8 @@ int sctrlGzipDecompress(void* dest, void* src, int size);
 // LZ4 decompress
 int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
 
-// Deflate decompress for DAX blocks
-int sctrlDaxDecompress(void* output, void* input, u32 in_size);
+// LZO decompress
+int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
 
 int sctrlKernelMsIsEf();
 

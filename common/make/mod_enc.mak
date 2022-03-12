@@ -50,7 +50,7 @@ dist/VITAPOPS.BIN: core/compat/vitapops/vitapops.prx
 
 dist/POPCORNV.BIN: core/compat/vita/popcorn/popcorn.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PopcornManager 0x3007
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PopcornManager 0x1006
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
@@ -66,5 +66,30 @@ dist/PSPVMC.BIN: contrib/PSP/libpspvmc.prx
 
 dist/MEDIASYNC.BIN: contrib/PSP/mediasync.prx
 	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< sceMediaSync 0x1006
+	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
+	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
+
+dist/MODMAN.BIN: contrib/PSP/modulemgr.prx
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< sceModuleManager 0x1006
+	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
+	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
+
+dist/NP966000.BIN: contrib/PSP/np9660.prx
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< sceNp9660_driver 0x1006
+	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
+	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
+
+dist/INTERRUP.BIN: contrib/PSP/interruptman.prx
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< sceInterruptManager 0x1006
+	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
+	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
+
+dist/LIBFONTHV.BIN: contrib/PSP/libfont_hv.prx
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/UserModule.hdr $< libFont_Library_HV 0x0000
+	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
+	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
+
+dist/IMPOSE.BIN: contrib/PSP/impose_05g.prx
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< sceImpose_Driver 0x1007
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)

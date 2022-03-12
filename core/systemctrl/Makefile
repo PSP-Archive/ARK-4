@@ -26,6 +26,7 @@ C_OBJS = \
 	src/jumper.o \
 	src/threadctx.o \
 	src/lz4.o \
+	src/minilzo.o \
 	src/loadexec_patch.o \
 	src/exitgame.o \
 	src/gameinfo.o \

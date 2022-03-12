@@ -2,7 +2,7 @@ Inferno Version 2 for ARK.
 
 - Based on the original Inferno ISO Driver for PRO.
 
-- Added support for DAX file format.
+- Added support for JSO and DAX file format.
 
 - Fixed bug in sceUmdCheckMedium that would return true when no ISO was actually set.
 

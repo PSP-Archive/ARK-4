@@ -3,7 +3,8 @@
 $/kd/sysmem.prx VGUPAEM
 $/kd/loadcore.prx VGUPAEM
 $/kd/exceptionman.prx VGUPAEM
-$/kd/interruptman.prx VGUPAEM
+$/kd/interruptman.prx VGUAEM
+$/kd/interruptman660.prx P
 $/kd/threadman.prx VGUPAEM
 $/kd/kermit.prx VGUPAEM
 $/kd/dmacman.prx VGUPAEM
@@ -53,7 +54,7 @@ $/kd/kermit_utility.prx VGUPAEM
 # pops needs popsman
 $/kd/popsman660.prx P
 # pops needs pops
-$/kd/ark_popcorn660.prx P
+$/kd/ark_vitapopcorn.prx P
 # umdemu needs stargate
 $/kd/ark_stargate.prx E
 # pops doesn't need kermit_me_wrapper
@@ -63,7 +64,7 @@ $/kd/mediasync.prx VGUAEM
 $/kd/mediasync660.prx P
 $%/kd/usersystemlib.prx VGUPAEM
 # pops uses libfont_hv and pafmini
-$%/vsh/module/libfont_hv.prx P
+$%/vsh/module/libfont_hv660.prx P
 $%/vsh/module/pafmini.prx P
 # vsh & pops use common_util
 $%/vsh/module/common_util.prx VP

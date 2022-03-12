@@ -12,11 +12,10 @@ int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
 int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int) = NULL;
 
 static int isVitaFile(char* filename){
-    return (strstr(filename, "psvbt")!=NULL // PS Vita btcnf replacement, not used on PSP
+    return (strstr(filename, "psv")!=NULL // PS Vita btcnf replacement, not used on PSP
             || strstr(filename, "660")!=NULL // PSP 6.60 modules can be used on Vita, not needed for PSP
+            || strstr(filename, "vita")!=NULL // Vita modules
             || strcmp(filename, "/fake.cso")==0 // fake.cso used on Vita to simulate UMD drive when no ISO available
-            || strcmp(filename, "/kd/ark_vitacompat.prx")==0 // ARK compat layer for PS Vita
-            || strcmp(filename, "/kd/ark_vitapops.prx")==0 // ARK compat layer for PS Vita POPS
     );
 }
 

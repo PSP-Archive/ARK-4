@@ -70,7 +70,10 @@ encrypt-prx: \
 	dist/MEDIASYNC.BIN \
 	dist/POPCORNV.BIN \
 	dist/POPSMAN.BIN \
-	dist/PSPVMC.BIN
+	dist/PSPVMC.BIN \
+	dist/MODMAN.BIN \
+	dist/INTERRUP.BIN \
+	dist/LIBFONTHV.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtcnf.bin dist/PSVBTCNF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
