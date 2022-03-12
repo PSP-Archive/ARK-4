@@ -1,5 +1,8 @@
 # ARK-4 e/CFW for the PSP and PS Vita.
 
+New, updated, improved and modern CFW for PSP and Vita.
+Simple to use and full of unique features, ARK CFW aims at keeping the PSP experience fresh.
+
 ## FEATURES:
 
 - Core system for unsigned code execution on every PSP device based on 6.60 kernel.
@@ -88,8 +91,8 @@ Another example, overclock only on games, use powersaving on VSH:
 - vsh, powersave, on
 
 You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
+Configuration settings for ARK:
 
-* Configuration settings for ARK:
 - overclock: use this for better performance at the expense of battery time. Sets CPU/BUS speed to 333/166.
 - powersave: use this for better battery life at the expense of performance. Sets CPU/BUS speed to 133/66.
 - usbcharge: enables USB charging whereever you want.
@@ -98,19 +101,28 @@ You can use the same runlevels as used in plugins to tell ARK when the settings 
 - highmem: enables high memory on models above 1K.
  You should only use this on homebrew runlevel as retail games were not meant to use the extra memory,
  and this can cause issues with cheat devices or other plugins that expect games to have their data at specific memory addresses.
+- NOTE: You should use the recovery menu to handle settings easier.
 
 
 ### Using Custom Launchers
-You can also customize ARK by using the "launcher" setting, which replaces the XMB with whatever custom launcher you have installed.
-ARK includes a custom launcher, but there have been many others created by scene members, some better looking, some with more features,
-some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
+ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing DATA.PKG with your own.
 
-- ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
-- vMenu by neur0n: http://www.mediafire.com/file/7acb5mhawx4gr9t/vMenu_ARK.7z/file
-- yMenu by yosh: https://docs.google.com/uc?export=download&id=0B0kWUCdtGmJwLUhRUlNJSWhMWVE
-- gMenu by gbot: http://www.mediafire.com/file/oou5490qc99vr7d/gmenuARK.rar/file
+
+Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
+
+
+- ONEMenu: https://github.com/ONElua/ONEmenu/releases
+
+- vMenu: http://www.mediafire.com/file/7acb5mhawx4gr9t/vMenu_ARK.7z/file
+
+- yMenu: https://docs.google.com/uc?export=download&id=0B0kWUCdtGmJwLUhRUlNJSWhMWVE
+
+- gMenu: http://www.mediafire.com/file/oou5490qc99vr7d/gmenuARK.rar/file
+
 - 138Menu by gbot: https://wololo.net/talk/viewtopic.php?f=53&t=33511
+
 - pyMenu by Acid_Snake: https://wololo.net/talk/viewtopic.php?t=21942
+
 
 Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
 
