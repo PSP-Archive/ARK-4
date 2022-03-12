@@ -475,6 +475,40 @@ int sctrlKernelSetNidResolver(char * libname, unsigned int enabled)
     return -1;
 }
 
+u32 sctrlHENGetInitControl()
+{
+    if (kernel_init_apitype == NULL)
+        return 0;
+	return (u32)kernel_init_apitype - 8;
+}
+
+void sctrlHENTakeInitControl(int (* ictrl)(void *))
+{
+    /*
+    u32 addr = initcontrol.text_addr + 0xCB8;
+	u16 high = addr >> 16;
+	u16 low = addr & 0xFFFF;
+
+	// lui ra, high
+	_sw(0x3c1f0000 | high, initcontrol.text_addr + 0xC30);
+	// ori ra, ra, low
+	_sw(0x37ff0000 | low, initcontrol.text_addr + 0xC34);
+
+	high = ((u32) &initcontrol) >> 16;
+	low  = ((u32) &initcontrol) & 0xFFFF;
+
+	// lui a0, high
+	_sw(0x3c040000 | high, initcontrol.text_addr + 0xC38);
+	MAKE_JUMP(initcontrol.text_addr + 0xC3C, ictrl);
+	// ori a0, a0, low
+	_sw(0x34840000 | low, initcontrol.text_addr + 0xC40);
+
+	initcontrol.bootinfo->nextmodule++;
+
+	ClearCaches();
+    */
+}
+
 // Set Init Apitype
 int sctrlKernelSetInitApitype(int apitype)
 {

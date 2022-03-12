@@ -211,3 +211,8 @@ void patchLoadExec(SceModule2* loadexec)
     // Flush Cache
     flushCache();
 }
+
+void sctrlHENSetRebootexOverride(const u8 *rebootex)
+{
+	memcpy(reboot_backup, rebootex, REBOOTEX_MAX_SIZE);
+}

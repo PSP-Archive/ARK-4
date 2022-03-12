@@ -113,6 +113,22 @@ int kuKernelInitFileName(char * initfilename)
     return 0;
 }
 
+int kuKernelInitMode()
+{
+
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+
+    // Forward Call
+	int result = sceKernelInitKeyConfig();
+	
+	// Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Return Result
+    return result;
+}
+
 // Return User Level
 int kuKernelGetUserLevel(void)
 {

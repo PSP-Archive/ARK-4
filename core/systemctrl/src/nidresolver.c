@@ -219,6 +219,13 @@ unsigned int resolveMissingNid(const char * libName, unsigned int nid)
     return 0;
 }
 
+static void (*lle_handler)(void*) = NULL;
+
+void sctrlHENRegisterLLEHandler(void* handler)
+{
+	lle_handler = handler;
+}
+
 // Fill Library Stubs
 int fillLibraryStubs(void * lib, unsigned int nid, void * stub, unsigned int nidPos)
 {
@@ -252,6 +259,11 @@ int fillLibraryStubs(void * lib, unsigned int nid, void * stub, unsigned int nid
         
         // Early Exit
         return -1;
+    }
+    
+    if (lle_handler)
+    {
+        lle_handler(stub);
     }
     
     // Get Library Resolver

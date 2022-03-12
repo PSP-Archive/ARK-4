@@ -209,7 +209,7 @@ int    sctrlHENIsDevhook()
 
 int sctrlSEGetVersion()
 {
-    return 0x00010008;
+	return 0x00040005;
 }
 
 int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs){
@@ -222,4 +222,16 @@ int sctrlSEUmountUmd(){
 
 void sctrlSESetDiscOut(int out){
     return;
+}
+
+static int testingtool;
+
+int sctrlHENIsTestingTool()
+{
+	return testingtool == 2;
+}
+
+void sctrlHENSetTestingTool(int tt)
+{
+	testingtool = tt ? 2 : 1;
 }
