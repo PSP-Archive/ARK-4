@@ -133,12 +133,12 @@ Note: some of these menus have not been updated or supported by their developers
 
 - Total_Noob/TheFl0w for his advancements and research in CFW development and overall contributions to the scene.
 
-- qwikrazor87 for being such a genius and all his hard work with kernel exploits and ARK-2. I miss you bro, come back to the scene!
+- qwikrazor87 for being such a genius and all his hard work with kernel exploits and ARK-2.
 
 - Codestation for his incredible work improving CSO speeds and creating the ZSO format.
 
 - Zer01ne, noname120, astart and other devs that have blessed me with their knowledge and wisdom.
 
-- balika for his research in porting M33 to modern firmware that has helped improved compatiblity in ARK.
+- balika for his research in porting M33 to modern firmware that has helped improve compatiblity in ARK.
 
 - Every other giant shoulder I am standing on.
