@@ -25,7 +25,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 ## INSTALATION
 
-- Download the precompiled binaries.
+- Download the precompiled binaries from: https://github.com/PSP-Archive/ARK-4/releases/
 
 ### On PSP:
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
