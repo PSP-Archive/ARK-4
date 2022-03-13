@@ -67,6 +67,7 @@ You can use the following keywords to enable a plugin:
 - on
 - true
 - enabled
+- Anything else disables the plugin
 
 You can use the following keywords to tell ARK when the plugin loads:
 - all/always: if either of these keywords are used, the plugin will always load.
