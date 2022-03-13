@@ -19,7 +19,9 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Compatible with all PS Vita models on firmware 2.10 and up.
 
-- Minimalistic: only 5 files installed on PSP flash, CFW extensions are installed on memory stick.
+- Minimalistic: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
+
+- Custom game launcher with built-in file browser, FTP server and client, modernized look, game categories and more.
 
 
 
