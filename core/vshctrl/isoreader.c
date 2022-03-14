@@ -256,40 +256,22 @@ static int readSectorCompressed(int sector, void *addr)
     return ret < 0 ? ret : SECTOR_SIZE;
 }
 
-static int read_dax_sector(u32 sector, u8* buf){
-    // calculate DAX block and offset within block
-    u32 pos = isoLBA2Pos(sector, 0);
-    u32 cur_block = pos/DAX_BLOCK_SIZE;
-    u32 offset = pos & (DAX_BLOCK_SIZE-1);
-    
-    u8* com_buf = PTR_ALIGN_64(dax_com_buf);
-    u8* dec_buf = PTR_ALIGN_64(dax_dec_buf);
-    
-    if (dax_cur_block != cur_block){
-        
-        // read block offset
-        u32 b_offset; readRawData(&b_offset, sizeof(u32), sizeof(DAXHeader) + (4*cur_block));
-        
-        // read block, skipping zlib header
-        readRawData(com_buf, DAX_COMP_BUF-6, b_offset+2);
-
-        // decompress block
-        sceKernelDeflateDecompress(dec_buf, DAX_BLOCK_SIZE, com_buf, 0);
-        
-        dax_cur_block = cur_block;
-    }
-    
-    // copy sector
-    memcpy(buf, dec_buf+offset, SECTOR_SIZE);
-    
-    return SECTOR_SIZE;
+void decompress_zlib(void* src, int src_len, void* dst, int dst_len){
+    sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
 }
 
-static int read_jiso_sector(u32 sector, u8* buf){
-    // calculate DAX block and offset within block
+void decompress_lzo(void* src, int src_len, void* dst, int dst_len){
+    lzo1x_decompress(src, src_len, dst, &dst_len, 0); // use lzo
+}
+
+static int read_compressed_sector_generic(u32 sector, u8* buf,
+        u32 header_size, u32 block_size, u32 block_skip,
+        void (*decompress)(void* src, int src_len, void* dst, int dst_len)
+){
+    // calculate block and offset within block
     u32 pos = isoLBA2Pos(sector, 0);
-    u32 cur_block = pos/jiso_header->block_size;
-    u32 offset = pos & (jiso_header->block_size-1);
+    u32 cur_block = pos/block_size;
+    u32 offset = pos & (block_size-1);
     
     u8* com_buf = PTR_ALIGN_64(dax_com_buf);
     u8* dec_buf = PTR_ALIGN_64(dax_dec_buf);
@@ -297,21 +279,17 @@ static int read_jiso_sector(u32 sector, u8* buf){
     if (dax_cur_block != cur_block){
         
         // read block offset
-        u32 b_offset; readRawData(&b_offset, sizeof(u32), sizeof(JisoHeader) + (4*cur_block));
-        u32 b_size; readRawData(&b_size, sizeof(u32), sizeof(JisoHeader) + (4*cur_block) + 4);
-        u32 d_size = jiso_header->block_size;
+        u32 b_offset; readRawData(&b_offset, sizeof(u32), header_size + (4*cur_block));
+        u32 b_size; readRawData(&b_size, sizeof(u32), header_size + (4*cur_block) + 4);
         b_size -= b_offset;
 
         // read block, skipping header if needed
-        b_size = readRawData(com_buf, b_size, b_offset + (4*jiso_header->block_headers));
+        b_size = readRawData(com_buf, b_size, b_offset + block_skip);
 
         // decompress block
-        if (b_size == jiso_header->block_size) memcpy(dec_buf, com_buf, b_size);
+        if (b_size == block_size) memcpy(dec_buf, com_buf, b_size);
         else{
-            switch (jiso_header->method){
-            case JISO_METHOD_LZO: lzo1x_decompress(com_buf, b_size, dec_buf, &d_size, 0); break;
-            case JISO_METHOD_ZLIB: sceKernelDeflateDecompress(dec_buf, jiso_header->block_size, com_buf, 0); break;
-            }
+            decompress(com_buf, b_size, dec_buf, block_size);
         }
         
         dax_cur_block = cur_block;
@@ -329,10 +307,21 @@ static int readSector(u32 sector, void *buf)
     u32 pos;
 
     if (g_is_compressed) {
-        if (dax_header->magic == DAX_MAGIC)
-            ret = read_dax_sector(sector, buf);
-        else if (jiso_header->magic == JSO_MAGIC)
-            ret = read_jiso_sector(sector, buf);
+        if (dax_header->magic == DAX_MAGIC){
+            ret = read_compressed_sector_generic(
+                    sector, buf,
+                    sizeof(DAXHeader), DAX_BLOCK_SIZE, 2,
+                    &decompress_zlib
+            );
+        }
+        else if (jiso_header->magic == JSO_MAGIC){
+            ret = read_compressed_sector_generic(
+                    sector, buf,
+                    sizeof(JisoHeader), jiso_header->block_size,
+                    4*jiso_header->block_headers,
+                    (jiso_header->method)? &decompress_zlib : &decompress_lzo
+            );
+        }
         else
             ret = readSectorCompressed(sector, buf);
     } else {
