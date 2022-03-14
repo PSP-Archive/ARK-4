@@ -18,7 +18,6 @@ static int execute_apitype = 0x141;
 
 SceUID sceKernelLoadModuleMs2_bridge(const char *path, int flags, SceKernelLMOption *option)
 {
-    KernelLoadModuleMs2_orig = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x7BD53193);
     SceUID ret = KernelLoadModuleMs2_orig(execute_apitype, path , flags , option);
     return ret;
 }
@@ -77,26 +76,26 @@ void LedaModulePatch(SceModule2 *mod)
 //hook sceKernelLoadModuleMs2
 int sctrlHENRegisterHomebrewLoader(void *func)
 {
+
     //get sceInit text_addr.
     SceModule2 *mod = sceKernelFindModuleByName("sceInit");
     u32 init_addr = mod->text_addr;
 
     KernelLoadModuleMs2_hook = func;
 
-    //patch sceKernelLoadModuleMs2
     u32 text_addr = ((u32)func) - 0xCE8;
+    
     // Remove version check
     _sw(0, text_addr + 0xC58);
+    
     // Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
     //_sw(0, text_addr + 0x1140);
+    
     // Fix sceKernelLoadModuleMs2 call
     MAKE_JUMP(text_addr + 0x2E28, sceKernelLoadModuleMs2_bridge);
-    //u32 import = sctrlHENFindImport(mod, "ModuleMgrForKernel", 0x7BD53193); // init_addr+0x1C64
-    //if (import == init_addr+0x1C64) colorDebug(0xff00);
-    //else colorDebug(0xff);
-    //u32 import = init_addr+0x1C64;
-    //KernelLoadModuleMs2_orig = K_EXTRACT_IMPORT(import);
-    //MAKE_JUMP(import, sceKernelLoadModuleMs2_patched);
+
+    //patch sceKernelLoadModuleMs2
+    KernelLoadModuleMs2_orig = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x7BD53193);
     hookImportByNID(mod, "ModuleMgrForKernel", 0x7BD53193, sceKernelLoadModuleMs2_patched);
 
     leda_previous = sctrlHENSetStartModuleHandler( LedaModulePatch );
