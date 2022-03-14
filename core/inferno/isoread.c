@@ -760,12 +760,16 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
         u32 b_size = g_cso_idx_cache[cur_block-g_cso_idx_start_block+1];
         b_size -= b_offset;
 
+        if (cur_block == g_total_sectors-1 && block_size == DAX_BLOCK_SIZE)
+            b_size = DAX_COMP_BUF; // fix for last DAX block
+
         // read block, skipping header if needed
         b_size = read_raw_data(com_buf, b_size, b_offset + block_skip);
 
-        // decompress block
-        if (b_size == block_size) memcpy(dec_buf, com_buf, b_size);
-        else{
+        if (b_size == block_size && block_size != DAX_BLOCK_SIZE){ // non-compressed block
+            memcpy(dec_buf, com_buf, b_size);
+        }
+        else{ // decompress block
             decompress(com_buf, b_size, dec_buf, block_size);
         }        
 
