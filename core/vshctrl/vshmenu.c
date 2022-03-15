@@ -73,7 +73,7 @@ int vctrlVSHExitVSHMenu(SEConfig *config, char *videoiso, int disctype)
     u32 k1;
     int ret = 0;
 
-       k1 = pspSdkSetK1(0);
+    k1 = pspSdkSetK1(0);
     if (config) ret = vctrlVSHUpdateConfig(config);
 
     g_VshMenuCtrl = NULL;
@@ -209,11 +209,11 @@ int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count)
         if (modid >= 0) {
             g_satelite_mod_id = modid;
             modid = sceKernelStartModule(g_satelite_mod_id, 0, 0, 0, 0);
-
+            
             if (modid < 0) {
                 printk("%s: start module -> 0x%08X\n", __func__, modid);
             }
-
+            
             ctrl->Buttons &= (~PSP_CTRL_SELECT); // Filter SELECT
         }
     }

@@ -99,7 +99,7 @@
 	IMPORT_FUNC  "SystemCtrlForUser",0xFCE44FB8,sctrlGetInitPARAM
 #endif
 #ifdef F_SystemCtrlForUser_0031
-	IMPORT_FUNC  "SystemCtrlForUser",0x6EAFC02D,sctrlHENGetArkConfig
+	IMPORT_FUNC  "SystemCtrlForUser",0xB00B1E55,sctrlHENGetArkConfig
 #endif
 #ifdef F_SystemCtrlForUser_0032
 	IMPORT_FUNC  "SystemCtrlForUser",0x2794CCF4,sctrlKernelExitVSH
@@ -153,5 +153,8 @@
 	IMPORT_FUNC  "SystemCtrlForUser",0x5D665044,sctrlGzipDecompress
 #endif
 #ifdef F_SystemCtrlForUser_0049
-	IMPORT_FUNC  "SystemCtrlForUser",0x8B591EB8,lzo1x_decompress
+	IMPORT_FUNC  "SystemCtrlForUser",0x76C382FF,lzo1x_decompress
+#endif
+#ifdef F_SystemCtrlForUser_0050
+	IMPORT_FUNC  "SystemCtrlForUser",0xAD9849FE,sctrlKernelMsIsEf
 #endif

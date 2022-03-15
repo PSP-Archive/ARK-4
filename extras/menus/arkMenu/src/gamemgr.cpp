@@ -114,6 +114,9 @@ Menu* GameManager::getMenu(EntryType t){
 
 
 void GameManager::findEntries(){
+
+    int ms_is_ef = sctrlKernelMsIsEf();
+
     // clear entries
     this->categories[0]->clearEntries();
     this->categories[1]->clearEntries();
@@ -133,14 +136,14 @@ void GameManager::findEntries(){
     this->findEboots("ms0:/PSP/VHBL/");
     this->findEboots("ms0:/PSP/APPS/");
     this->findEboots("ms0:/PSP/GAME/");
-    this->findEboots("ef0:/PSP/GAME/");
+    if (!ms_is_ef) this->findEboots("ef0:/PSP/GAME/");
     // scan ISOs
     this->findISOs("ms0:/ISO/");
-    this->findISOs("ef0:/ISO/");
+    if (!ms_is_ef) this->findISOs("ef0:/ISO/");
     // scan saves
     if (common::getConf()->scan_save){
         this->findSaveEntries("ms0:/PSP/SAVEDATA/");
-        this->findSaveEntries("ef0:/PSP/SAVEDATA/");
+        if (!ms_is_ef) this->findSaveEntries("ef0:/PSP/SAVEDATA/");
     }
     this->selectedCategory = -2;
     // find the first category with entries

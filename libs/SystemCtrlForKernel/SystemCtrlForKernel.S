@@ -163,7 +163,7 @@
 	IMPORT_FUNC  "SystemCtrlForKernel",0x39DF1C8B,sctrlHENFindImport
 #endif
 #ifdef F_SystemCtrlForKernel_0052
-	IMPORT_FUNC  "SystemCtrlForKernel",0x6EAFC02D,sctrlHENGetArkConfig
+	IMPORT_FUNC  "SystemCtrlForKernel",0xB00B1E55,sctrlHENGetArkConfig
 #endif
 #ifdef F_SystemCtrlForKernel_0053
 	IMPORT_FUNC  "SystemCtrlForKernel",0x16100529,LZ4_decompress_fast
@@ -214,5 +214,8 @@
 	IMPORT_FUNC  "SystemCtrlForKernel",0x56CEAF00,sctrlKernelQuerySystemCall
 #endif
 #ifdef F_SystemCtrlForKernel_0069
-	IMPORT_FUNC  "SystemCtrlForKernel",0x8B591EB8,lzo1x_decompress
+	IMPORT_FUNC  "SystemCtrlForKernel",0x76C382FF,lzo1x_decompress
+#endif
+#ifdef F_SystemCtrlForKernel_0070
+	IMPORT_FUNC  "SystemCtrlForKernel",0xAD9849FE,sctrlKernelMsIsEf
 #endif

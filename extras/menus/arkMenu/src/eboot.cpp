@@ -208,7 +208,21 @@ bool Eboot::isEboot(const char* path){
 }
 
 void Eboot::doExecute(){
-    Eboot:executeEboot(this->path.c_str());
+    if (this->name == "Recovery Menu") Eboot::executeRecovery(this->path.c_str());
+    else Eboot:executeEboot(this->path.c_str());
+}
+
+void Eboot::executeRecovery(const char* path){
+    struct SceKernelLoadExecVSHParam param;
+    
+    memset(&param, 0, sizeof(param));
+    
+    int runlevel = HOMEBREW_RUNLEVEL;
+    
+    param.args = strlen(path) + 1;
+    param.argp = (char*)path;
+    param.key = "game";
+    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 
 void Eboot::executeHomebrew(const char* path){
