@@ -256,21 +256,29 @@ static int readSectorCompressed(int sector, void *addr)
     return ret < 0 ? ret : SECTOR_SIZE;
 }
 
-void decompress_zlib(void* src, int src_len, void* dst, int dst_len){
+static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
     sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
 }
 
-void decompress_lzo(void* src, int src_len, void* dst, int dst_len){
-    lzo1x_decompress(src, src_len, dst, &dst_len, 0); // use lzo
+static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
+    else sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
 }
 
-static void decompress_lz4(void* src, int src_len, void* dst, int dst_len){
-    LZ4_decompress_fast(src, dst, dst_len);
+static void decompress_lzo(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
+    else lzo1x_decompress(src, src_len, dst, &dst_len, 0); // use lzo
+}
+
+static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
+    else if (is_nc) LZ4_decompress_fast(src, dst, dst_len);
+    else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 
 static int read_compressed_sector_generic(u32 sector, u8* buf,
-        u32 header_size, u32 block_size, u32 block_skip,
-        void (*decompress)(void* src, int src_len, void* dst, int dst_len)
+        u32 header_size, u32 block_size, u32 block_skip, u32 align,
+        void (*decompress)(void* src, int src_len, void* dst, int dst_len, u32 is_nc)
 ){
     // calculate block and offset within block
     u32 pos = isoLBA2Pos(sector, 0);
@@ -289,19 +297,19 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
         b_offset &= 0x7FFFFFFF;
         b_size &= 0x7FFFFFFF;
         b_size -= b_offset;
-
+        
+        if (align){
+            b_size += 1 << align;
+            b_offset = b_offset << align;
+        }
+        
         if (cur_block == g_total_sectors-1 && header_size == sizeof(DAXHeader))
             b_size = DAX_COMP_BUF; // fix for last DAX block
 
         // read block, skipping header if needed
         b_size = readRawData(com_buf, b_size, b_offset + block_skip);
 
-        if (is_nc || b_size == block_size && header_size != sizeof(DAXHeader)){ // non-compressed block
-            memcpy(dec_buf, com_buf, b_size);
-        }
-        else{ // decompress block
-            decompress(com_buf, b_size, dec_buf, block_size);
-        }
+        decompress(com_buf, b_size, dec_buf, block_size, is_nc);
         
         dax_cur_block = cur_block;
     }
@@ -322,8 +330,8 @@ static int readSector(u32 sector, void *buf)
             // DAX
             ret = read_compressed_sector_generic(
                 sector, buf,
-                sizeof(DAXHeader), DAX_BLOCK_SIZE, 2,
-                &decompress_zlib
+                sizeof(DAXHeader), DAX_BLOCK_SIZE, 2, 0,
+                (dax_header->version == 1)? &decompress_dax1 : &decompress_zlib
             );
         }
         else if (jiso_header->magic == JSO_MAGIC){
@@ -331,19 +339,19 @@ static int readSector(u32 sector, void *buf)
             ret = read_compressed_sector_generic(
                 sector, buf,
                 sizeof(JisoHeader), jiso_header->block_size,
-                4*jiso_header->block_headers,
-                (jiso_header->method)? &decompress_zlib : &decompress_lzo
+                4*jiso_header->block_headers, 0,
+                (jiso_header->method)? &decompress_dax1 : &decompress_lzo
             );
         }
         else if (g_ciso_h.ver == 2){
-            // CSOv2
+            // CISOv2
             ret = read_compressed_sector_generic(
                 sector, buf,
-                sizeof(CISOHeader), g_ciso_h.block_size, 0,
-                (lz4_compressed)? &decompress_lz4 : &decompress_zlib
+                sizeof(CISOHeader), g_ciso_h.block_size, 0, g_ciso_h.align,
+                &decompress_cso2
             );
         }
-        else
+        else // CISO/ZISO v1
             ret = readSectorCompressed(sector, buf);
     } else {
         pos = isoLBA2Pos(sector, 0);

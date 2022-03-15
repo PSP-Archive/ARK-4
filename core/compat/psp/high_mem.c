@@ -95,9 +95,10 @@ int prevent_highmem(){
 
     int apitype = sceKernelInitApitype();
 
-    if (apitype == 0x141 || apitype == 0x152) return 0; // allow on homebrew
+    if (apitype == 0x141 || apitype == 0x152 || apitype == 0x120 || apitype == 0x123 || apitype == 0x125)
+        return 0; // allow on homebrew and game
 
-    // disallow by deafult
+    // disallow by default
     return 1;
 }
 

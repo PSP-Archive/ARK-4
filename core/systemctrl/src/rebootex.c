@@ -29,7 +29,7 @@
 extern ARKConfig* ark_config;
 
 // Original Load Reboot Buffer Function
-int (* _LoadReboot)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4) = NULL;
+int (* OrigLoadReboot)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4) = NULL;
 
 // Reboot Buffer Backup
 u8 reboot_backup[REBOOTEX_MAX_SIZE];
@@ -199,17 +199,7 @@ int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
     // Restore Reboot Buffer Configuration
     restoreRebootBuffer();
     // Load Sony Reboot Buffer
-    return _LoadReboot(arg1, arg2, arg3, arg4);
-}
-
-// Patch loadexec
-void patchLoadExec(SceModule2* loadexec)
-{
-    // Find Reboot Loader Function
-    _LoadReboot = (void *)loadexec->text_addr;
-    patchLoadExecCommon(loadexec, (u32)LoadReboot, 2);
-    // Flush Cache
-    flushCache();
+    return OrigLoadReboot(arg1, arg2, arg3, arg4);
 }
 
 void sctrlHENSetRebootexOverride(const u8 *rebootex)

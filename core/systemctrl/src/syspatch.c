@@ -88,8 +88,12 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     {
         // can use screen now
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
-        // Patch loadexec_01g.prx
-        patchLoadExec(loadexec);
+        // Find Reboot Loader Function
+        extern void* OrigLoadReboot;
+        extern int LoadReboot();
+        OrigLoadReboot = (void *)loadexec->text_addr;
+        // Patch loadexec
+        patchLoadExecCommon(loadexec, (u32)LoadReboot, 2);
         goto flush;
     }
     

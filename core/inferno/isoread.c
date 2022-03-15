@@ -701,21 +701,30 @@ static int read_cso_data_ng(u8 *addr, u32 size, u32 offset)
     return size + first_block_size + last_block_size;
 }
 
-static void decompress_zlib(void* src, int src_len, void* dst, int dst_len){
+static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
     sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
 }
 
-static void decompress_lzo(void* src, int src_len, void* dst, int dst_len){
-    lzo1x_decompress(src, src_len, dst, &dst_len, 0); // use lzo
+static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
+    else sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
 }
 
-static void decompress_lz4(void* src, int src_len, void* dst, int dst_len){
-    LZ4_decompress_fast(src, dst, dst_len);
+static void decompress_lzo(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
+    else lzo1x_decompress(src, src_len, dst, &dst_len, 0); // use lzo
+}
+
+static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    printf("Decompressing block of size %d into block of size %d and nc is %d\n", src_len, dst_len, is_nc);
+    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
+    else if (is_nc) LZ4_decompress_fast(src, dst, dst_len);
+    else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 
 static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
-    u32 header_size, u32 block_size, u32 uncompressed_size, u32 block_skip,
-    void (*decompress)(void* src, int src_len, void* dst, int dst_len)
+    u32 header_size, u32 block_size, u32 uncompressed_size, u32 block_skip, u32 align,
+    void (*decompress)(void* src, int src_len, void* dst, int dst_len, u32 is_nc)
 )
 {
     u32 cur_block;
@@ -770,15 +779,16 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
         if (cur_block == g_total_sectors-1 && header_size == sizeof(DAXHeader))
             b_size = DAX_COMP_BUF; // fix for last DAX block
 
+        if (align){
+            b_size += 1 << align;
+            b_offset = b_offset << align;
+        }
+
         // read block, skipping header if needed
         b_size = read_raw_data(com_buf, b_size, b_offset + block_skip);
 
-        if (is_nc || b_size == block_size && header_size != sizeof(DAXHeader)){ // non-compressed block
-            memcpy(dec_buf, com_buf, b_size); // doesn't work with DAX...
-        }
-        else{ // decompress block
-            decompress(com_buf, b_size, dec_buf, block_size);
-        }        
+        // decompress block
+        decompress(com_buf, b_size, dec_buf, block_size, is_nc);
 
         // read data from block into buffer
         read_bytes = MIN(size, (block_size - pos));
@@ -801,27 +811,27 @@ int iso_read(struct IoReadArg *args)
             // DAX
             return read_compressed_data_generic(
                 args->address, args->size, args->offset,
-                sizeof(DAXHeader), DAX_BLOCK_SIZE, dax_header->uncompressed_size, 2,
-                &decompress_zlib
+                sizeof(DAXHeader), DAX_BLOCK_SIZE, dax_header->uncompressed_size, 2, 0,
+                (dax_header->version == 1)? &decompress_dax1 : &decompress_zlib
             );
         }
         else if (jiso_header->magic == JSO_MAGIC){
             // JISO
             return read_compressed_data_generic(
                 args->address, args->size, args->offset,
-                sizeof(JisoHeader), jiso_header->block_size, jiso_header->uncompressed_size, 4*jiso_header->block_headers,
-                (jiso_header->method)? &decompress_zlib : &decompress_lzo
+                sizeof(JisoHeader), jiso_header->block_size, jiso_header->uncompressed_size, 4*jiso_header->block_headers, 0,
+                (jiso_header->method)? &decompress_dax1 : &decompress_lzo
             );
         }
         else if (g_CISO_hdr.ver == 2){
             // CISOv2
             return read_compressed_data_generic(
                 args->address, args->size, args->offset,
-                sizeof(struct CISO_header), g_CISO_hdr.block_size, g_CISO_hdr.total_bytes, 0,
-                (lz4_compressed)? &decompress_lz4 : &decompress_zlib
+                sizeof(struct CISO_header), g_CISO_hdr.block_size, g_CISO_hdr.total_bytes, 0, g_CISO_hdr.align,
+                &decompress_cso2
             );
         }
-        // CISO
+        // CISO/ZISO v1
         return read_cso_data_ng(args->address, args->size, args->offset);
     }
 

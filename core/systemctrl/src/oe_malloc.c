@@ -26,6 +26,9 @@ static SceUID heapid = -1;
 // Initialize Heap
 int oe_mallocinit(void)
 {
+    // Prevent Double Tapping
+    if(heapid >= 0) return 0;
+
     int size;
     // Get Application Type
     int key_config = sceKernelApplicationType();
@@ -33,9 +36,6 @@ int oe_mallocinit(void)
     if(key_config == PSP_INIT_KEYCONFIG_POPS) return 0; // PS1 Emulator = No Heap
     else if (key_config == PSP_INIT_KEYCONFIG_VSH) size = 14*1024; // VSH = smaller heap
     else size = 45 * 1024; // Everything else leaves us room to brawl
-    
-    // Prevent Double Tapping
-    if(heapid >= 0) return 0;
     
     // Create Heap
     heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, size, 1, "SystemCtrlHeap");
