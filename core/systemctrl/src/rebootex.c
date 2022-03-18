@@ -114,6 +114,8 @@ static void setRebootConfigPRO(){
     reboot_config_isopath = (char*)&(rebootex_config[0x100]);
     if (reboot_config->rebootex_size == 0){ // Infinity setup, must inject PRO rebootex
         memcpy(reboot_backup, pro_rebootex, size_pro_rebootex);
+        memset(reboot_config, 0, REBOOTEX_CONFIG_MAXSIZE);
+        reboot_config->magic = PRO_CONFIG_MAGIC;
         reboot_config->rebootex_size = size_pro_rebootex;
     }
 }
@@ -129,6 +131,8 @@ static void setRebootConfigARK(){
     reboot_config_isopath = reboot_config->iso_path;
     if (reboot_config->reboot_buffer_size == 0){ // Infinity setup, must inject ARK rebootex
         memcpy(reboot_backup, rebootbuffer, size_rebootbuffer);
+        memset(reboot_config, 0, REBOOTEX_CONFIG_MAXSIZE);
+        reboot_config->magic = ARK_CONFIG_MAGIC;
         reboot_config->reboot_buffer_size = size_rebootbuffer;
     }
 }

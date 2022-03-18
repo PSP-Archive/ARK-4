@@ -159,6 +159,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
+    /*
     if (strcmp(mod->modname, "popscore") == 0){
         colorDebug(0xFF);
         u32 start = mod->text_addr+mod->text_size;
@@ -171,6 +172,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         }
         goto flush;
     }
+    */
     
     if(booted == 0)
     {
