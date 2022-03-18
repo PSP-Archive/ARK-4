@@ -15,10 +15,15 @@
 #include "exitgame.h"
 #include "libs/graphics/graphics.h"
 
+extern u32 psp_fw_version;
 extern u32 psp_model;
 extern ARKConfig* ark_config;
 extern STMOD_HANDLER previous;
 extern void SetSpeed(int cpuspd, int busspd);
+
+static u32 fakeDevkitVersion(){
+    return FW_660;
+}
 
 // Return Boot Status
 int isSystemBooted(void)
@@ -159,20 +164,10 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
-    /*
     if (strcmp(mod->modname, "popscore") == 0){
-        colorDebug(0xFF);
-        u32 start = mod->text_addr+mod->text_size;
-        u32 end = start + mod->data_size;
-        for (u32 addr = start; addr<end; addr++){
-            if (strcmp("PROPopcornManager", addr) == 0){ // find PRO's Popcorn reference
-                colorDebug(0xFF00);
-                strcpy(addr, "PopcornManager"); // change to ARK's popcorn
-            }
-        }
+        hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &fakeDevkitVersion);
         goto flush;
     }
-    */
     
     if(booted == 0)
     {

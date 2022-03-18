@@ -29,7 +29,7 @@
 
 extern unsigned char g_icon_png[6108];
 
-PSP_MODULE_INFO("PopcornManager", 0x1007, 1, 1);
+PSP_MODULE_INFO("PROPopcornManager", 0x1007, 1, 1);
 
 static STMOD_HANDLER g_previous = NULL;
 

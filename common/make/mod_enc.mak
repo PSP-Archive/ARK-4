@@ -50,7 +50,7 @@ dist/VITAPOPS.BIN: core/compat/vitapops/vitapops.prx
 
 dist/POPCORNV.BIN: core/compat/vita/popcorn/popcorn.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
-	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PopcornManager 0x1006
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< PROPopcornManager 0x1006
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
 
