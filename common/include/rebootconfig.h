@@ -36,7 +36,17 @@
 // PROCFW Reboot Buffer ISO Path (so we don't lose that information)
 #define REBOOTEX_CONFIG_ISO_PATH_MAXSIZE 0x100
 
-// PROCFW Reboot Buffer Configuration
+/**
+    Originally ARK used a similar rebootex config as PRO with the same magic number.
+    Yet it wasn't fully binary compatible with PRO's rebootex config.
+    Now we are using a different magic number to identify ARK's rebootconfig vs PRO's.
+    This allows ARK SystemControl to work with PRO's reboot buffer configuration.
+    
+    If ARK can't detect rebootex configuration, several CFW functions that work with it will be disabled
+        (such as being able to change ISO driver, ISO path, reboot module and such). 
+*/
+
+// ARK Rebootex config
 typedef struct RebootConfigARK {
     unsigned int magic;
     unsigned int reboot_buffer_size;
@@ -53,6 +63,7 @@ typedef struct RebootConfigARK {
 
 #define IS_ARK_CONFIG(config) (*((u32*)config) == ARK_CONFIG_MAGIC)
 
+// PROCFW Reboot Buffer Configuration
 typedef struct RebootConfigPRO {
     u32 magic;
     u32 rebootex_size;

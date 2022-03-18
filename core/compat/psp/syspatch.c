@@ -159,6 +159,19 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
+    if (strcmp(mod->modname, "popscore") == 0){
+        colorDebug(0xFF);
+        u32 start = mod->text_addr+mod->text_size;
+        u32 end = start + mod->data_size;
+        for (u32 addr = start; addr<end; addr++){
+            if (strcmp("PROPopcornManager", addr) == 0){ // find PRO's Popcorn reference
+                colorDebug(0xFF00);
+                strcpy(addr, "PopcornManager"); // change to ARK's popcorn
+            }
+        }
+        goto flush;
+    }
+    
     if(booted == 0)
     {
         // Boot is complete

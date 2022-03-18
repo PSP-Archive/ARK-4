@@ -716,7 +716,6 @@ static void decompress_lzo(void* src, int src_len, void* dst, int dst_len, u32 i
 }
 
 static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
-    printf("Decompressing block of size %d into block of size %d and nc is %d\n", src_len, dst_len, is_nc);
     if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
     else if (is_nc) LZ4_decompress_fast(src, dst, dst_len);
     else sceKernelDeflateDecompress(dst, dst_len, src, 0);
@@ -756,7 +755,6 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
         read_raw_data(g_cso_idx_cache, idx_size, starting_block * 4 + header_size);
         g_cso_idx_start_block = starting_block;
     }
-    
     
     while(size > 0) {
         // calculate block number and offset within block
@@ -812,7 +810,8 @@ int iso_read(struct IoReadArg *args)
             return read_compressed_data_generic(
                 args->address, args->size, args->offset,
                 sizeof(DAXHeader), DAX_BLOCK_SIZE, dax_header->uncompressed_size, 2, 0,
-                (dax_header->version == 1)? &decompress_dax1 : &decompress_zlib
+                // for DAX Version 1 we can skip parsing NC-Areas and just use the block_size trick as in JSO and CSOv2
+                (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib
             );
         }
         else if (jiso_header->magic == JSO_MAGIC){
@@ -834,7 +833,7 @@ int iso_read(struct IoReadArg *args)
         // CISO/ZISO v1
         return read_cso_data_ng(args->address, args->size, args->offset);
     }
-
+    // plain ISO
     return read_raw_data(args->address, args->size, args->offset);
 }
 

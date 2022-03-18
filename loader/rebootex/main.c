@@ -41,6 +41,18 @@ u32 UnpackBootConfigArg = 0;
 u32 reboot_start = 0;
 u32 reboot_end = 0;
 
+//io flags
+int rebootmodule_open = 0;
+char *p_rmod = NULL;
+int size_rmod = 0;
+void* rtm_buf = NULL;
+int rtm_size = 0;
+
+//io functions
+int (* sceBootLfatOpen)(char * filename) = NULL;
+int (* sceBootLfatRead)(char * buffer, int length) = NULL;
+int (* sceBootLfatClose)(void) = NULL;
+
 // PRO GZIP Decrypt Support
 int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
 {
@@ -172,14 +184,21 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4)
     
     // patch reboot buffer
     if (ark_config->magic == ARK_CONFIG_MAGIC){
-        if (IS_PSP(ark_config)) patchRebootBufferPSP();
-        else if (IS_VITA(ark_config)) patchRebootBufferVita();
+        if (reboot_conf->magic == ARK_CONFIG_MAGIC){
+            rtm_buf = reboot_conf->rtm_mod.buffer;
+            rtm_size = reboot_conf->rtm_mod.size;
+        }
+        if (IS_PSP(ark_config)){
+            patchRebootBufferPSP();
+            if (rtm_buf) patchRebootIoPSP();
+        }
+        else if (IS_VITA(ark_config)){
+            patchRebootBufferVita();
+        }
         else colorDebug(0xff); // unknown device (?), don't touch it
     }
     else colorDebug(0xff); // incorrect configuration
     
-    // Flush Cache
-    flushCache();
     
     // Forward Call
     return sceReboot(arg1, arg2, arg3, arg4);

@@ -49,35 +49,38 @@ void patchRebootBufferPSP(){
             patches--;
         }
     }
+    // Flush Cache
+    flushCache();
 }
 
 // IO Patches
 
-
-
 //io flags
-static int rebootmodule_open = 0;
-static char *p_rmod;
-static int size_rmod;
+extern volatile int rebootmodule_open;
+extern volatile char *p_rmod;
+extern volatile int size_rmod;
+extern void* rtm_buf;
+extern int rtm_size;
 
 //io functions
-int (* sceBootLfatOpen)(char * filename) = NULL;
-int (* sceBootLfatRead)(char * buffer, int length) = NULL;
-int (* sceBootLfatClose)(void) = NULL;
-
+extern int (* sceBootLfatOpen)(char * filename);
+extern int (* sceBootLfatRead)(char * buffer, int length);
+extern int (* sceBootLfatClose)(void);
 
 int _sceBootLfatRead(char * buffer, int length)
 {
     //load on reboot module
-    if(rebootmodule_open)
+    if(rebootmodule_open && p_rmod != NULL && size_rmod > 0)
     {
         int min;
 
         //copy load on reboot module
         min = size_rmod < length ? size_rmod : length;
-        memcpy(buffer, p_rmod, min);
-        p_rmod += min;
-        size_rmod -= min;
+        if (min > 0){
+            memcpy(buffer, p_rmod, min);
+            p_rmod += min;
+            size_rmod -= min;
+        }
 
         //set filesize
         return min;
@@ -89,13 +92,15 @@ int _sceBootLfatRead(char * buffer, int length)
 
 int _sceBootLfatOpen(char * filename)
 {
+
     //load on reboot module open
     if(strcmp(filename, "/rtm.prx") == 0)
     {
+    
         //mark for read
         rebootmodule_open = 1;
-        p_rmod = reboot_conf->rtm_mod.buffer;
-        size_rmod = reboot_conf->rtm_mod.size;
+        p_rmod = rtm_buf;
+        size_rmod = rtm_size;
 
         //return success
         return 0;
@@ -108,15 +113,17 @@ int _sceBootLfatOpen(char * filename)
 int _sceBootLfatClose(void)
 {
     //reboot module close
-    if(rebootmodule_open)
+    if(rebootmodule_open && p_rmod != NULL && size_rmod == 0)
     {
         //mark as closed
         rebootmodule_open = 0;
+        p_rmod = NULL;
+        size_rmod = 0;
 
         //return success
         return 0;
     }
-
+    
     //forward to original function
     return sceBootLfatClose();
 }
@@ -141,7 +148,6 @@ void patchRebootIoPSP(){
             patches--;
         }
     }
-    
     // Flush Cache
     flushCache();
 }

@@ -286,7 +286,6 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
             newsize = AddPRX(buffer, reboot_conf->rtm_mod.before, "/rtm.prx", reboot_conf->rtm_mod.flags);
             if(newsize > 0){
                 result = newsize;
-                patchRebootIoPSP();
             }
         }
     }
@@ -378,7 +377,7 @@ int AddPRXNoCopyName(char * buffer, char * insertbefore, int prxname_offset, u32
 int AddPRX(char * buffer, char * insertbefore, char * prxname, u32 flags)
 {
     int modnum;
-
+    
     modnum = SearchPrx(buffer, prxname);
 
     if (modnum >= 0) {

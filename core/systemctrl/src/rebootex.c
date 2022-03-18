@@ -204,5 +204,6 @@ int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
 
 void sctrlHENSetRebootexOverride(const u8 *rebootex)
 {
-	memcpy(reboot_backup, rebootex, REBOOTEX_MAX_SIZE);
+    if (rebootex)
+	    memcpy(reboot_backup, rebootex, REBOOTEX_MAX_SIZE);
 }

@@ -68,4 +68,6 @@ void patchRebootBufferVita(){
         }
         */
     }
+    // Flush Cache
+    flushCache();
 }

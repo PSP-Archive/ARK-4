@@ -331,7 +331,7 @@ static int readSector(u32 sector, void *buf)
             ret = read_compressed_sector_generic(
                 sector, buf,
                 sizeof(DAXHeader), DAX_BLOCK_SIZE, 2, 0,
-                (dax_header->version == 1)? &decompress_dax1 : &decompress_zlib
+                (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib
             );
         }
         else if (jiso_header->magic == JSO_MAGIC){
