@@ -1,6 +1,6 @@
 # ARK-4 e/CFW for the PSP and PS Vita.
 
-New, updated, improved and modern CFW for PSP and Vita.
+New, updated, improved and modern CFW for PSP and Vita's ePSP.
 Simple to use and full of unique features, ARK CFW aims at keeping the PSP experience fresh.
 
 ## FEATURES:
