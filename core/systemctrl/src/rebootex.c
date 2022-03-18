@@ -137,7 +137,7 @@ static void setRebootConfigARK(){
     }
 }
 
-char* findRebootISOPath(){
+static char* findRebootISOPath(){
     // Find Reboot ISO Path
     for (int i=0; i<REBOOTEX_CONFIG_MAXSIZE; i++){
         char* iso_path = (char*)&(rebootex_config[i]);
@@ -168,12 +168,11 @@ void backupRebootBuffer(void)
     }
     else if (IS_PRO_CONFIG(rebootex_config)){
         setRebootConfigPRO(); // PRO
-        // set ARK Config
-        ark_config->exec_mode = PSP_ORIG;
     }
     else{
         // can't handle it :P
         reboot_funcs = NULL;
+        reboot_config_isopath = findRebootISOPath(); // try to find an iso path in rebootex config
     }
     
     // Flush Cache

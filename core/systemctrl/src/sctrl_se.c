@@ -145,8 +145,7 @@ int sctrlSESetConfigEx(SEConfig *config, int size){
 char * sctrlSEGetUmdFile(void)
 {
     // Return Reboot Configuration UMD File
-    if (reboot_config_isopath != NULL) return reboot_config_isopath;
-    return findRebootISOPath(); // try to find an iso path in rebootex config
+    return reboot_config_isopath;
 }
 
 char *sctrlSEGetUmdFileEx(char *input)
