@@ -9,7 +9,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Inferno driver Version 2 compatible with ISO, CSO, ZSO, JSO and DAX format.
 
-- Popcorn controller for PSX games.
+- Popcorn controller for custom PS1 games.
 
 - Stargate No-DRM engine.
 
@@ -21,7 +21,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Minimalistic: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
-- Custom game launcher with built-in file browser, FTP server and client, modernized look, game categories and more.
+- Custom game launcher with built-in game categories file browser, FTP server and client, modernized look and more.
 
 
 
