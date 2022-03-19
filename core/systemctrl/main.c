@@ -41,8 +41,6 @@ static ARKConfig _ark_conf = { // default config
 };
 ARKConfig* ark_config = &_ark_conf;
 
-u32 psp_model = 0;
-
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
@@ -53,8 +51,6 @@ int module_start(SceSize args, void * argp)
     // set LCD framebuffer in hardware reg so we can do color debbuging
     _sw(0x44000000, 0xBC800100);
   #endif
-  
-    psp_model = sceKernelGetModel();
   
     // Apply Module Patches
     patchSystemMemoryManager();

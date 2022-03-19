@@ -4787,6 +4787,7 @@ DVAL_ASSERT(lzo_xint dv, const lzo_bytep p)
 #  define do_compress       LZO_PP_ECONCAT2(DO_COMPRESS,_core)
 #endif
 
+/*
 static __lzo_noinline lzo_uint
 do_compress ( const lzo_bytep in , lzo_uint  in_len,
                     lzo_bytep out, lzo_uintp out_len,
@@ -5139,6 +5140,7 @@ DO_COMPRESS      ( const lzo_bytep in , lzo_uint  in_len,
     *out_len = pd(op, out);
     return LZO_E_OK;
 }
+*/
 
 #endif
 

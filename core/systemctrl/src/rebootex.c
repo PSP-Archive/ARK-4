@@ -23,8 +23,6 @@
 #include <systemctrl.h>
 #include "imports.h"
 #include "rebootex.h"
-#include "loader/rebootex/payload.h"
-#include "core/compat/psp/pro_rebootex.h"
 
 extern ARKConfig* ark_config;
 
@@ -32,12 +30,14 @@ extern ARKConfig* ark_config;
 int (* OrigLoadReboot)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4) = NULL;
 
 // Reboot Buffer Backup
-u8 reboot_backup[REBOOTEX_MAX_SIZE];
+#include "loader/rebootex/payload.h"
 u8 rebootex_config[REBOOTEX_CONFIG_MAXSIZE];
 RebootConfigFunctions* reboot_funcs = NULL;
 static RebootConfigFunctions _reboot_funcs;
 // Reboot ISO Path
 char* reboot_config_isopath = NULL;
+// custom rebootex
+static void* custom_rebootex = NULL;
 
 static void SetBootConfFileIndexARK(int index)
 {
@@ -112,11 +112,10 @@ static void setRebootConfigPRO(){
     _reboot_funcs.SetRebootModule = &SetRebootModulePRO;
     reboot_funcs = &_reboot_funcs;
     reboot_config_isopath = (char*)&(rebootex_config[0x100]);
-    if (reboot_config->rebootex_size == 0){ // Infinity setup, must inject PRO rebootex
-        memcpy(reboot_backup, pro_rebootex, size_pro_rebootex);
+    if (reboot_config->rebootex_size == 0){ // Infinity setup, must inject rebootex
         memset(reboot_config, 0, REBOOTEX_CONFIG_MAXSIZE);
         reboot_config->magic = PRO_CONFIG_MAGIC;
-        reboot_config->rebootex_size = size_pro_rebootex;
+        reboot_config->rebootex_size = size_rebootbuffer;
     }
 }
 
@@ -129,8 +128,7 @@ static void setRebootConfigARK(){
     _reboot_funcs.SetRebootModule = &SetRebootModuleARK;
     reboot_funcs = &_reboot_funcs;
     reboot_config_isopath = reboot_config->iso_path;
-    if (reboot_config->reboot_buffer_size == 0){ // Infinity setup, must inject ARK rebootex
-        memcpy(reboot_backup, rebootbuffer, size_rebootbuffer);
+    if (reboot_config->reboot_buffer_size == 0){ // Infinity setup, must inject rebootex
         memset(reboot_config, 0, REBOOTEX_CONFIG_MAXSIZE);
         reboot_config->magic = ARK_CONFIG_MAGIC;
         reboot_config->reboot_buffer_size = size_rebootbuffer;
@@ -152,9 +150,7 @@ static char* findRebootISOPath(){
 // Backup Reboot Buffer
 void backupRebootBuffer(void)
 {
-    // Copy Reboot Buffer Payload
-    memcpy(reboot_backup, (void *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE);
-    
+
     // Copy Reboot Buffer Configuration
     memcpy(rebootex_config, (void *)REBOOTEX_CONFIG, REBOOTEX_CONFIG_MAXSIZE);
     
@@ -182,11 +178,14 @@ void backupRebootBuffer(void)
 // Restore Reboot Buffer
 void restoreRebootBuffer(void)
 {
+
+    void* rebootex = (custom_rebootex)? custom_rebootex : rebootbuffer;
+
     // Restore Reboot Buffer Payload
-    if (reboot_backup[0] == 0x1F && reboot_backup[1] == 0x8B) // gzip packed rebootex
-        sceKernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, reboot_backup, NULL);
+    if (rebootbuffer[0] == 0x1F && rebootbuffer[1] == 0x8B) // gzip packed rebootex
+        sceKernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootex, NULL);
     else // plain payload
-        memcpy((void *)REBOOTEX_TEXT, reboot_backup, REBOOTEX_MAX_SIZE);
+        memcpy((void *)REBOOTEX_TEXT, rebootex, REBOOTEX_MAX_SIZE);
         
     // Restore Reboot Buffer Configuration
     memcpy((void *)REBOOTEX_CONFIG, rebootex_config, REBOOTEX_CONFIG_MAXSIZE);
@@ -207,6 +206,5 @@ int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
 
 void sctrlHENSetRebootexOverride(const u8 *rebootex)
 {
-    if (rebootex)
-	    memcpy(reboot_backup, rebootex, REBOOTEX_MAX_SIZE);
+    custom_rebootex = rebootex;
 }

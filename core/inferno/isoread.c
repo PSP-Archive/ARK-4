@@ -43,11 +43,6 @@
 #define DAX_COMP_BUF 0x2400
 
 #define CISO_IDX_MAX_ENTRIES 4096
-
-#define REMAINDER(a,b) ((a) % (b))
-#define IS_DIVISIBLE(a,b) (REMAINDER(a,b) == 0)
-#define GET_CSO_OFFSET(block) ((g_cso_idx_cache[block] & 0x7FFFFFFF) << g_CISO_hdr.align)
-
 // 0x00002784
 struct IoReadArg g_read_arg;
 
@@ -62,9 +57,6 @@ SceUID g_iso_fd = -1;
 
 // 0x000023D4
 int g_total_sectors = -1;
-
-// 0x00002488
-static int g_is_ciso = 0;
 
 // 0x000024C0
 static u8 *g_ciso_block_buf = NULL;
@@ -82,8 +74,6 @@ static int g_ciso_dec_buf_size = 0;
 
 // 0x00002720
 static u32 g_ciso_total_block = 0;
-
-static int lz4_compressed = 0;
 
 struct CISO_header {
     u8 magic[4];  // 0
@@ -124,13 +114,9 @@ typedef enum {
 	JISO_METHOD_ZLIB	= 1,
 } JisoMethod;
 
-// 0x00002708
 static struct CISO_header g_CISO_hdr __attribute__((aligned(64)));
 static DAXHeader* dax_header = (DAXHeader*)&g_CISO_hdr;
 static JisoHeader* jiso_header = (JisoHeader*)&g_CISO_hdr;
-
-// 0x00002500
-static u32 g_CISO_idx_cache[CISO_IDX_BUFFER_SIZE/4] __attribute__((aligned(64)));
 
 static u32 *g_cso_idx_cache = NULL;
 
@@ -217,7 +203,6 @@ static int is_ciso(SceUID fd)
     }
 
     if(*magic == CSO_MAGIC || *magic == ZSO_MAGIC || *magic == DAX_MAGIC || *magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
-        lz4_compressed = (*magic == ZSO_MAGIC);
         g_CISO_cur_idx = -1;
         
         u32 dec_size = 0;
@@ -240,16 +225,13 @@ static int is_ciso(SceUID fd)
             dec_size = CISO_DEC_BUFFER_SIZE + (1 << g_CISO_hdr.align);
             com_size = ISO_SECTOR_SIZE;
             if (g_CISO_hdr.ver == 2) read_iso_data = &read_ciso2_data;
-            else read_iso_data = (lz4_compressed)? &read_ziso_data : &read_ciso_data;
+            else read_iso_data = (*magic == ZSO_MAGIC)? &read_ziso_data : &read_ciso_data;
         }
         
-        printk("%s: total block %d\n", __func__, (int)g_ciso_total_block);
-
         if(g_ciso_dec_buf == NULL) {
             g_ciso_dec_buf = oe_malloc(dec_size + 64);
             if(g_ciso_dec_buf == NULL) {
                 ret = -2;
-                printk("%s: -> %d\n", __func__, ret);
                 goto exit;
             }
             if((u32)g_ciso_dec_buf & 63) // align 64
@@ -260,7 +242,6 @@ static int is_ciso(SceUID fd)
             g_ciso_block_buf = oe_malloc(com_size + 64);
             if(g_ciso_block_buf == NULL) {
                 ret = -3;
-                printk("%s: -> %d\n", __func__, ret);
                 goto exit;
             }
             if((u32)g_ciso_block_buf & 63) // align 64
@@ -271,7 +252,6 @@ static int is_ciso(SceUID fd)
             g_cso_idx_cache = oe_malloc((CISO_IDX_MAX_ENTRIES * 4) + 64);
             if (g_cso_idx_cache == NULL) {
                 ret = -4;
-                printk("%s: -> %d\n", __func__, ret);
                 goto exit;
             }
             if((u32)g_cso_idx_cache & 63) // align 64
@@ -279,7 +259,6 @@ static int is_ciso(SceUID fd)
         }
         ret = 0;
     } else {
-        read_iso_data = &read_raw_data;
         ret = 0x8002012F;
     }
 
@@ -313,12 +292,8 @@ int iso_open(void)
         return -1;
     }
 
-    g_is_ciso = 0;
-    ret = is_ciso(g_iso_fd);
-
-    if(ret >= 0) {
-        g_is_ciso = 1;
-    }
+    if (is_ciso(g_iso_fd) == 0x8002012F)
+        read_iso_data = &read_raw_data;
 
     g_iso_opened = 1;
     g_total_sectors = get_nsector();
@@ -371,36 +346,6 @@ static int read_raw_data(u8* addr, u32 size, u32 offset)
 
 exit:
     return ret;
-}
-
-static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
-    sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
-}
-
-static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
-    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
-    else sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
-}
-
-static void decompress_lzo(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
-    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
-    else lzo1x_decompress(src, src_len, dst, &dst_len, 0); // use lzo
-}
-
-static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
-    if (is_nc) memcpy(dst, src, dst_len); // check for NC area
-    else sceKernelDeflateDecompress(dst, dst_len, src, 0);
-}
-
-static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
-    if (is_nc) memcpy(dst, src, dst_len); // check for NC area
-    else LZ4_decompress_fast(src, dst, dst_len);
-}
-
-static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
-    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
-    else if (is_nc) LZ4_decompress_fast(src, dst, dst_len);
-    else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 
 static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
@@ -487,6 +432,36 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
     u32 res = offset - o_offset;
     
     return res;
+}
+
+static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
+}
+
+static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
+    else sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
+}
+
+static void decompress_lzo(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
+    else lzo1x_decompress(src, src_len, dst, &dst_len, 0); // use lzo
+}
+
+static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (is_nc) memcpy(dst, src, dst_len); // check for NC area
+    else sceKernelDeflateDecompress(dst, dst_len, src, 0);
+}
+
+static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (is_nc) memcpy(dst, src, dst_len); // check for NC area
+    else LZ4_decompress_fast(src, dst, dst_len);
+}
+
+static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
+    else if (is_nc) LZ4_decompress_fast(src, dst, dst_len);
+    else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 
 static int read_ciso_data(u8* addr, u32 size, u32 offset){
