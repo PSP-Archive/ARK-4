@@ -1,8 +1,50 @@
 # ARK-4
 
+## Update 9.9
+- Fixed reboot runtime module on PSP.
+- Added fix for Team PRO's Popsloader V3 on firmware 6.61.
+- Popsloader is now working with ARK!
+
+## Update 9.8
+- Added DAX and JISO support.
+- Improved core compatibility by adding missing M33 functions.
+- Several improvements and bugfixes.
+- Now using Yoti's updated and improved savedata folder.
+
+## Update 9.7
+- Fixed standby in PS1 games.
+- Fixed plugins not loading in UMD games.
+- Allow ms speedup in pops.
+- Added FTP client to custom launcher's file browser.
+- You can now browse and copy entire files and folders from another PSP.
+- And you can use the FTP client and the FTP server simultaneously.
+
+## Update 9.6
+- Fixed error when deleting ISO games in XMB.
+- Prevent high memory patches in anything but homebrew.
+- Improved visuals in custom launcher and recovery.
+- Added "snow" and "game of life" background animations to launcher and recovery.
+
+
+## Update 9.5
+- Fixed memory leak when refreshing games in custom launcher.
+- Fixed custom launcher crash when freeing memory from CSO games.
+- Updated Inferno driver to the latest one from PRO. Should fix all ISO/CSO issues.
+- Added missing SystemControl exports. Should improve homebrew compatibility.
+
+## Update 9.4
+- Fixed launcher Autoboot.
+- Fixed FTP server.
+- Fixed UMD games in launcher.
+
 ## Update 9.3
 - Fixed mesgled patches in Stargate.
 - Some small improvements in the custom launcher.
+- Added file browser to recovery menu.
+- Added FTP server to custom launcher.
+- Fixed rename operation in file browser (launcher and recovery).
+- Fixed some UMD games crashing in custom launcher when no PMF animation present.
+- Some other fixes to recovery and launcher.
 
 ## Update 9.2
 - Added UMD game support for custom launcher.

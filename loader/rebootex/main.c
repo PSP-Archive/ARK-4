@@ -184,13 +184,8 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4)
     
     // patch reboot buffer
     if (ark_config->magic == ARK_CONFIG_MAGIC){
-        if (reboot_conf->magic == ARK_CONFIG_MAGIC){
-            rtm_buf = reboot_conf->rtm_mod.buffer;
-            rtm_size = reboot_conf->rtm_mod.size;
-        }
         if (IS_PSP(ark_config)){
             patchRebootBufferPSP();
-            if (rtm_buf) patchRebootIoPSP();
         }
         else if (IS_VITA(ark_config)){
             patchRebootBufferVita();

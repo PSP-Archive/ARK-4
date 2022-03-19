@@ -286,6 +286,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
             newsize = AddPRX(buffer, reboot_conf->rtm_mod.before, "/rtm.prx", reboot_conf->rtm_mod.flags);
             if(newsize > 0){
                 result = newsize;
+                patchRebootIoPSP();
             }
         }
     }

@@ -129,6 +129,8 @@ int _sceBootLfatClose(void)
 }
 
 void patchRebootIoPSP(){
+    rtm_buf = reboot_conf->rtm_mod.buffer;
+    rtm_size = reboot_conf->rtm_mod.size;
     int patches = 3;
     for (u32 addr = reboot_start; addr<reboot_end && patches; addr+=4){
         u32 data = _lw(addr);

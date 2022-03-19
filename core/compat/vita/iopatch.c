@@ -33,6 +33,11 @@ static struct{
         .new = "POPSMAN.PRX",
         .len = 22,
     },
+    {
+        .orig = "flash0:/kd/npdrm.prx",
+        .new = "NPDRM.PRX",
+        .len = 20,
+    }
 };
 int (*iojal)(const char *, u32, u32, u32, u32, u32) = NULL;
 int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
