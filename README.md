@@ -34,7 +34,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 - Install `ARK_Live` folder into `/PSP/GAME/` folder.
 - Launch ARK Live Loader. It will install ARK modules on PSP Flash and boot the CFW.
 - If using Infinity place the `EBOOT.PBP` from the `Infinity` folder found in the ARK download into \
-`/PSP/GAME/UPDATE`. (might have to run it using OFW). \
+`/PSP/GAME/UPDATE`. Run the initial infinity installation from OFW and re-run the installer again from ARK to configure autoboot. \
   This will allow you to use ARK permanently and tripple boot with PRO and ME.
 
 ### On PS Vita:
