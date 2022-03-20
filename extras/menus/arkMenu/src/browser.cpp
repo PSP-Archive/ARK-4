@@ -953,6 +953,7 @@ void Browser::control(Controller* pad){
         this->options();
     }
     else if (pad->select()){
+        common::playMenuSound();
         this->refreshDirs();
     }
     else{
