@@ -7,9 +7,9 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Core system for unsigned code execution on every PSP device based on 6.60 kernel.
 
-- Inferno driver Version 2 compatible with ISO, CSO, ZSO, JSO and DAX format.
+- Inferno driver Version 2 compatible with ISO, CSO, ZSO, JSO, CSOv2 and DAX formats.
 
-- Popcorn controller for custom PS1 games.
+- Popcorn controller for custom PS1 games. Compatible with PopsLoader V3 by Team PRO.
 
 - Stargate No-DRM engine.
 

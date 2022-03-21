@@ -26,8 +26,6 @@
 
 #define MAX_RETRIES 8
 #define MAX_DIR_LEVEL 8
-#define CISO_IDX_BUFFER_SIZE 0x200
-#define CISO_DEC_BUFFER_SIZE 0x2000
 #define ISO_STANDARD_ID "CD001"
 
 #define CSO_MAGIC 0x4F534943 // CISO
@@ -37,9 +35,10 @@
 
 #define DAX_BLOCK_SIZE 0x2000
 #define DAX_COMP_BUF 0x2400
+#define CISO_IDX_MAX_ENTRIES 4096
 
 typedef struct _CISOHeader {
-    u8 magic[4];            /* +00 : 'C','I','S','O'                           */
+    uint32_t magic;            /* +00 : 'C','I','S','O'                           */
     u32 header_size;
     u64 total_bytes;    /* +08 : number of original data size              */
     u32 block_size;        /* +10 : number of compressed block size           */
@@ -79,24 +78,24 @@ typedef enum {
 
 typedef unsigned int uint;
 
-static void *g_ciso_dec_buf = NULL;
-static u32 g_CISO_idx_cache[CISO_IDX_BUFFER_SIZE/4] __attribute__((aligned(64)));
-static u32 g_ciso_dec_buf_offset = (u32)-1;
-static int g_ciso_dec_buf_size = 0;
+//static void *g_ciso_dec_buf = NULL;
+//static u32 g_ciso_dec_buf_offset = (u32)-1;
+//static int g_ciso_dec_buf_size = 0;
 static CISOHeader g_ciso_h;
 static DAXHeader* dax_header = (DAXHeader*)&g_ciso_h;
 static JisoHeader* jiso_header = (JisoHeader*)&g_ciso_h;
+
+// block offset cache
+static u32 g_CISO_idx_cache[CISO_IDX_MAX_ENTRIES] __attribute__((aligned(64)));
 static int g_CISO_cur_idx = -1;
 
+static u8* ciso_com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));;
+static u8* ciso_dec_buf[DAX_BLOCK_SIZE] __attribute__((aligned(64)));;
+static u32 ciso_cur_block = (u32)-1;
 static const char * g_filename = NULL;
 static char g_sector_buffer[SECTOR_SIZE] __attribute__((aligned(64)));
 static SceUID g_isofd = -1;
 static u32 g_total_sectors = 0;
-static u32 g_is_compressed = 0;
-
-static u8* dax_com_buf = NULL;
-static u8* dax_dec_buf = NULL;
-static u32 dax_cur_block = (u32)-1;
 
 static Iso9660DirectoryRecord g_root_record;
 
@@ -180,6 +179,7 @@ static int readRawData(void* addr, u32 size, u32 offset)
     return ret;
 }
 
+/*
 static int readSectorCompressed(int sector, void *addr)
 {
     int ret;
@@ -255,6 +255,7 @@ static int readSectorCompressed(int sector, void *addr)
     }
     return ret < 0 ? ret : SECTOR_SIZE;
 }
+*/
 
 static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
     sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
@@ -263,6 +264,16 @@ static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 
 static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
     if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area
     else sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
+}
+
+static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (is_nc) memcpy(dst, src, dst_len); // check for NC area
+    else sceKernelDeflateDecompress(dst, dst_len, src, 0);
+}
+
+static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+    if (is_nc) memcpy(dst, src, dst_len); // check for NC area
+    else LZ4_decompress_fast(src, dst, dst_len);
 }
 
 static void decompress_lzo(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
@@ -285,10 +296,16 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
     u32 cur_block = pos/block_size;
     u32 offset = pos & (block_size-1);
     
-    u8* com_buf = PTR_ALIGN_64(dax_com_buf);
-    u8* dec_buf = PTR_ALIGN_64(dax_dec_buf);
+    u8* com_buf = ciso_com_buf;
+    u8* dec_buf = ciso_dec_buf;
     
-    if (dax_cur_block != cur_block){
+    if (g_CISO_cur_idx < 0 || cur_block < g_CISO_cur_idx || cur_block >= g_CISO_cur_idx + CISO_IDX_MAX_ENTRIES){
+        u32 idx_size = 0;
+        readRawData(g_CISO_idx_cache, CISO_IDX_MAX_ENTRIES * 4, cur_block * 4 + header_size);
+        g_CISO_cur_idx = cur_block;
+    }
+    
+    if (ciso_cur_block != cur_block){
         
         // read block offset
         u32 b_offset; readRawData(&b_offset, sizeof(u32), header_size + (4*cur_block));
@@ -311,7 +328,7 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
 
         decompress(com_buf, b_size, dec_buf, block_size, is_nc);
         
-        dax_cur_block = cur_block;
+        ciso_cur_block = cur_block;
     }
     
     // copy sector
@@ -320,46 +337,48 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
     return SECTOR_SIZE;
 }
 
-static int readSector(u32 sector, void *buf)
-{
-    int ret;
-    u32 pos;
-
-    if (g_is_compressed) {
-        if (dax_header->magic == DAX_MAGIC){
-            // DAX
-            ret = read_compressed_sector_generic(
-                sector, buf,
-                sizeof(DAXHeader), DAX_BLOCK_SIZE, 2, 0,
-                (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib
-            );
-        }
-        else if (jiso_header->magic == JSO_MAGIC){
-            // JISO
-            ret = read_compressed_sector_generic(
-                sector, buf,
-                sizeof(JisoHeader), jiso_header->block_size,
-                4*jiso_header->block_headers, 0,
-                (jiso_header->method)? &decompress_dax1 : &decompress_lzo
-            );
-        }
-        else if (g_ciso_h.ver == 2){
-            // CISOv2
-            ret = read_compressed_sector_generic(
-                sector, buf,
-                sizeof(CISOHeader), g_ciso_h.block_size, 0, g_ciso_h.align,
-                &decompress_cso2
-            );
-        }
-        else // CISO/ZISO v1
-            ret = readSectorCompressed(sector, buf);
-    } else {
-        pos = isoLBA2Pos(sector, 0);
-        ret = readRawData(buf, SECTOR_SIZE, pos);
-    }
-
-    return ret;
+static int read_sector_plain(u32 sector, u8* buf){
+    return readRawData(buf, SECTOR_SIZE, isoLBA2Pos(sector, 0));
 }
+
+static int read_sector_cso(u32 sector, u8* buf){
+    // CISO/ZISO
+    return read_compressed_sector_generic(
+        sector, buf,
+        sizeof(CISOHeader), g_ciso_h.block_size, 0, g_ciso_h.align,
+        (g_ciso_h.magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso
+    );
+}
+
+static int read_sector_jso(u32 sector, u8* buf){
+    // JISO
+    return read_compressed_sector_generic(
+        sector, buf,
+        sizeof(JisoHeader), jiso_header->block_size,
+        4*jiso_header->block_headers, 0,
+        (jiso_header->method)? &decompress_dax1 : &decompress_lzo
+    );
+}
+
+static int read_sector_dax(u32 sector, u8* buf){
+    // DAX
+    return read_compressed_sector_generic(
+        sector, buf,
+        sizeof(DAXHeader), DAX_BLOCK_SIZE, 2, 0,
+        (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib
+    );
+}
+
+static int read_sector_cso2(u32 sector, u8* buf){
+    // CISOv2
+    return read_compressed_sector_generic(
+        sector, buf,
+        sizeof(CISOHeader), g_ciso_h.block_size, 0, g_ciso_h.align,
+        &decompress_cso2
+    );
+}
+
+static int (*readSector)(u32 sector, void *buf) = NULL;
 
 static void normalizeName(char *filename)
 {
@@ -543,70 +562,72 @@ int isoOpen(const char *path)
         goto error;
     }
 
-    magic = (u32*)g_ciso_h.magic;
+    magic = g_ciso_h.magic;
 
-    if ((*magic == CSO_MAGIC || *magic == ZSO_MAGIC)) {
-        lz4_compressed = (*magic == ZSO_MAGIC);
-        g_is_compressed = 1;
+    if (magic == CSO_MAGIC || magic == ZSO_MAGIC) {
+        //g_is_compressed = 1;
         g_total_sectors = g_ciso_h.total_bytes / g_ciso_h.block_size;
         g_CISO_cur_idx = -1;
-        g_ciso_dec_buf_offset = (u32)-1;
-        g_ciso_dec_buf_size = 0;
+        //g_ciso_dec_buf_offset = (u32)-1;
+        //g_ciso_dec_buf_size = 0;
 
-        if (g_ciso_h.ver < 2 && g_ciso_h.block_size == SECTOR_SIZE){
-            if (g_ciso_dec_buf == NULL) {
-                g_ciso_dec_buf = oe_malloc(CISO_DEC_BUFFER_SIZE + (1 << g_ciso_h.align) + 64);
-                if (g_ciso_dec_buf == NULL) {
-                    printk("oe_malloc -> 0x%08x\n", (uint)g_ciso_dec_buf);
-                    ret = -6;
-                    goto error;
-                }
-            }
-            memset(g_CISO_idx_cache, 0, sizeof(g_CISO_idx_cache));
+        ciso_cur_block = (u32)-1;
+        /*
+        ciso_com_buf = oe_malloc(g_ciso_h.block_size + (SECTOR_SIZE/4) + 64);
+        ciso_dec_buf = oe_malloc(g_ciso_h.block_size + 64);
+        if (ciso_com_buf == NULL || ciso_dec_buf == NULL) {
+            printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)ciso_com_buf, (uint)ciso_dec_buf);
+            ret = -6;
+            goto error;
+        }
+        */
+        if (g_ciso_h.ver < 2){
+            readSector = &read_sector_cso;
+            //memset(g_CISO_idx_cache, 0, sizeof(g_CISO_idx_cache));
         }
         else{
-            dax_cur_block = (u32)-1;
-            dax_com_buf = oe_malloc(g_ciso_h.block_size + (SECTOR_SIZE/4) + 64);
-            dax_dec_buf = oe_malloc(g_ciso_h.block_size + 64);
-            if (dax_com_buf == NULL || dax_dec_buf == NULL) {
-                printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)dax_com_buf, (uint)dax_dec_buf);
-                ret = -6;
-                goto error;
-            }
+            readSector = &read_sector_cso2;
         }
     }
-    else if (*magic == DAX_MAGIC){
+    else if (magic == DAX_MAGIC){
+        readSector = &read_sector_dax;
         g_total_sectors = dax_header->uncompressed_size / DAX_BLOCK_SIZE;
-        g_is_compressed = 1;
+        //g_is_compressed = 1;
         g_CISO_cur_idx = -1;
-        g_ciso_dec_buf_offset = (u32)-1;
-        g_ciso_dec_buf_size = 0;
-        dax_cur_block = (u32)-1;
-        dax_com_buf = oe_malloc(DAX_COMP_BUF + 64);
-        dax_dec_buf = oe_malloc(DAX_BLOCK_SIZE + 64);
-        if (dax_com_buf == NULL || dax_dec_buf == NULL) {
-            printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)dax_com_buf, (uint)dax_dec_buf);
+        //g_ciso_dec_buf_offset = (u32)-1;
+        //g_ciso_dec_buf_size = 0;
+        ciso_cur_block = (u32)-1;
+        /*
+        ciso_com_buf = oe_malloc(DAX_COMP_BUF + 64);
+        ciso_dec_buf = oe_malloc(DAX_BLOCK_SIZE + 64);
+        if (ciso_com_buf == NULL || ciso_dec_buf == NULL) {
+            printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)ciso_com_buf, (uint)ciso_dec_buf);
             ret = -6;
             goto error;
         }
+        */
     }
-    else if (*magic == JSO_MAGIC){
+    else if (magic == JSO_MAGIC){
+        readSector = &read_sector_jso;
         g_total_sectors = jiso_header->uncompressed_size / jiso_header->block_size;
-        g_is_compressed = 1;
+        //g_is_compressed = 1;
         g_CISO_cur_idx = -1;
-        g_ciso_dec_buf_offset = (u32)-1;
-        g_ciso_dec_buf_size = 0;
-        dax_cur_block = (u32)-1;
-        dax_com_buf = oe_malloc(jiso_header->block_size + (SECTOR_SIZE/4) + 64);
-        dax_dec_buf = oe_malloc(jiso_header->block_size + 64);
-        if (dax_com_buf == NULL || dax_dec_buf == NULL) {
-            printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)dax_com_buf, (uint)dax_dec_buf);
+        //g_ciso_dec_buf_offset = (u32)-1;
+        //g_ciso_dec_buf_size = 0;
+        ciso_cur_block = (u32)-1;
+        /*
+        ciso_com_buf = oe_malloc(jiso_header->block_size + (SECTOR_SIZE/4) + 64);
+        ciso_dec_buf = oe_malloc(jiso_header->block_size + 64);
+        if (ciso_com_buf == NULL || ciso_dec_buf == NULL) {
+            printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)ciso_com_buf, (uint)ciso_dec_buf);
             ret = -6;
             goto error;
         }
+        */
     }
     else {
-        g_is_compressed = 0;
+        readSector = &read_sector_plain;
+        //g_is_compressed = 0;
         SceOff size, orig;
 
         orig = sceIoLseek(g_isofd, 0, PSP_SEEK_CUR);
@@ -652,24 +673,21 @@ void isoClose(void)
     sceIoClose(g_isofd);
     g_isofd = -1;
     g_filename = NULL;
-
-    if (g_ciso_dec_buf != NULL) {
-        oe_free(g_ciso_dec_buf);
-        g_ciso_dec_buf = NULL;
+    
+    /*
+    if (ciso_com_buf != NULL) {
+        oe_free(ciso_com_buf);
+        ciso_com_buf = NULL;
     }
     
-    if (dax_com_buf != NULL) {
-        oe_free(dax_com_buf);
-        dax_com_buf = NULL;
+    if (ciso_dec_buf != NULL) {
+        oe_free(ciso_dec_buf);
+        ciso_dec_buf = NULL;
     }
-    
-    if (dax_dec_buf != NULL) {
-        oe_free(dax_dec_buf);
-        dax_dec_buf = NULL;
-    }
+    */
 
     g_total_sectors = 0;
-    dax_cur_block = (u32)-1;
+    ciso_cur_block = (u32)-1;
 }
 
 int isoGetFileInfo(char * path, u32 *filesize, u32 *lba)

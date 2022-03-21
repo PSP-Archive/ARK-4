@@ -46,6 +46,8 @@
 // 0x00002784
 struct IoReadArg g_read_arg;
 
+SceUID heapid = -1;
+
 // 0x00002484
 void *g_sector_buf = NULL;
 
@@ -76,7 +78,7 @@ static int g_ciso_dec_buf_size = 0;
 static u32 g_ciso_total_block = 0;
 
 struct CISO_header {
-    u8 magic[4];  // 0
+    uint32_t magic;  // 0
     u32 header_size;  // 4
     u64 total_bytes; // 8
     u32 block_size; // 16
@@ -187,9 +189,8 @@ static int get_nsector(void)
 static int is_ciso(SceUID fd)
 {
     int ret;
-    u32 *magic = (u32*)g_CISO_hdr.magic;
 
-    g_CISO_hdr.magic[0] = '\0';
+    g_CISO_hdr.magic = 0;
     g_ciso_dec_buf_offset = (u32)-1;
     g_ciso_dec_buf_size = 0;
 
@@ -202,19 +203,21 @@ static int is_ciso(SceUID fd)
         goto exit;
     }
 
-    if(*magic == CSO_MAGIC || *magic == ZSO_MAGIC || *magic == DAX_MAGIC || *magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
+    u32 magic = g_CISO_hdr.magic;
+
+    if(magic == CSO_MAGIC || magic == ZSO_MAGIC || magic == DAX_MAGIC || magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
         g_CISO_cur_idx = -1;
         
         u32 dec_size = 0;
         u32 com_size = 0;
         
-        if (*magic == DAX_MAGIC){
+        if (magic == DAX_MAGIC){
             g_ciso_total_block = dax_header->uncompressed_size / DAX_BLOCK_SIZE;
             dec_size = DAX_BLOCK_SIZE;
             com_size = DAX_COMP_BUF;
             read_iso_data = &read_dax_data;
         }
-        else if (*magic == JSO_MAGIC){
+        else if (magic == JSO_MAGIC){
             g_ciso_total_block = jiso_header->uncompressed_size / jiso_header->block_size;
             dec_size = jiso_header->block_size;
             com_size = jiso_header->block_size + ISO_SECTOR_SIZE/4;
@@ -222,14 +225,22 @@ static int is_ciso(SceUID fd)
         }
         else{
             g_ciso_total_block = g_CISO_hdr.total_bytes / g_CISO_hdr.block_size;
-            dec_size = CISO_DEC_BUFFER_SIZE + (1 << g_CISO_hdr.align);
-            com_size = ISO_SECTOR_SIZE;
+            dec_size = g_CISO_hdr.block_size;
+            com_size = dec_size + (1 << g_CISO_hdr.align);
             if (g_CISO_hdr.ver == 2) read_iso_data = &read_ciso2_data;
-            else read_iso_data = (*magic == ZSO_MAGIC)? &read_ziso_data : &read_ciso_data;
+            else read_iso_data = (magic == ZSO_MAGIC)? &read_ziso_data : &read_ciso_data;
+        }
+        
+        if (heapid<0){
+            heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, dec_size + com_size + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
+            if (heapid<0){
+                ret = -5;
+                goto exit;
+            }
         }
         
         if(g_ciso_dec_buf == NULL) {
-            g_ciso_dec_buf = oe_malloc(dec_size + 64);
+            g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, dec_size+64); //oe_malloc(dec_size + 64);
             if(g_ciso_dec_buf == NULL) {
                 ret = -2;
                 goto exit;
@@ -239,7 +250,7 @@ static int is_ciso(SceUID fd)
         }
 
         if(g_ciso_block_buf == NULL) {
-            g_ciso_block_buf = oe_malloc(com_size + 64);
+            g_ciso_block_buf = sceKernelAllocHeapMemory(heapid, com_size+64); //oe_malloc(com_size + 64);
             if(g_ciso_block_buf == NULL) {
                 ret = -3;
                 goto exit;
@@ -249,7 +260,7 @@ static int is_ciso(SceUID fd)
         }
 
         if (g_cso_idx_cache == NULL) {
-            g_cso_idx_cache = oe_malloc((CISO_IDX_MAX_ENTRIES * 4) + 64);
+            g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4) + 64); //oe_malloc((CISO_IDX_MAX_ENTRIES * 4) + 64);
             if (g_cso_idx_cache == NULL) {
                 ret = -4;
                 goto exit;

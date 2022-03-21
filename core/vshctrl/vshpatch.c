@@ -183,7 +183,11 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     void *p = (void*)(text_addr + 0x0002A62C);
 
     char str[50];
+    #if ARK_MICRO_VERSION > 0
     sprintf(str, "ARK %d.%d.%d %s", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ARK_MICRO_VERSION, ark_config->exploit_id);
+    #else
+    sprintf(str, "ARK %d.%d %s", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ark_config->exploit_id);
+    #endif
     ascii2utf16(p, str);
     
     _sw(0x3C020000 | ((u32)(p) >> 16), text_addr + 0x000192E0); // lui $v0, 

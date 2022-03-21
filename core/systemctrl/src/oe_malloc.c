@@ -21,6 +21,8 @@
 #include <malloc.h>
 #include "imports.h"
 
+#define SYSCTRL_HEAP_SIZE 14*1024 // 14KB is enough
+
 static SceUID heapid = -1;
 
 // Initialize Heap
@@ -29,16 +31,13 @@ int oe_mallocinit(void)
     // Prevent Double Tapping
     if(heapid >= 0) return 0;
 
-    int size;
     // Get Application Type
     int key_config = sceKernelApplicationType();
     
     if(key_config == PSP_INIT_KEYCONFIG_POPS) return 0; // PS1 Emulator = No Heap
-    else if (key_config == PSP_INIT_KEYCONFIG_VSH) size = 14*1024; // VSH = smaller heap
-    else size = 45 * 1024; // Everything else leaves us room to brawl
     
     // Create Heap
-    heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, size, 1, "SystemCtrlHeap");
+    heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, SYSCTRL_HEAP_SIZE, 1, "SystemCtrlHeap");
     
     // Return Error Code on Error
     return (heapid < 0) ? heapid : 0;

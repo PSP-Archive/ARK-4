@@ -19,8 +19,6 @@
 #define INFERNO_H
 
 #define ISO_SECTOR_SIZE 2048
-#define CISO_IDX_BUFFER_SIZE 0x200
-#define CISO_DEC_BUFFER_SIZE 0x2000
 
 #define MAX_FILES_NR 8
 
