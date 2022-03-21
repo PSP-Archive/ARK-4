@@ -193,32 +193,3 @@ flush:
     if(previous) previous(mod);
 }
 
-void PSPSysPatch(){
-    SceModule2* mod = NULL;
-    if((mod = sceKernelFindModuleByName("sceUmdMan_driver")) != NULL) {
-        patch_sceUmdMan_driver(mod);
-    }
-
-    if((mod = sceKernelFindModuleByName("sceUmdCache_driver")) != NULL) {
-        patch_umdcache(mod);
-    }
-
-    if((mod = sceKernelFindModuleByName("sceWlan_Driver")) != NULL) {
-        patch_sceWlan_Driver(mod);
-    }
-
-    if((mod = sceKernelFindModuleByName("scePower_Service")) != NULL) {
-        patch_scePower_Service(mod);
-    }
-    
-    if ((mod = sceKernelFindModuleByName("sceLoadExec")) != NULL){
-        prepatch_partitions();
-    }
-    
-    if((mod = sceKernelFindModuleByName("sceMediaSync")) != NULL) {
-        processSettings();
-    }
-    
-    flushCache();
-}
-

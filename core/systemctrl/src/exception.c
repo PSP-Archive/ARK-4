@@ -29,6 +29,8 @@
 #include "graphics.h"
 #include "macros.h"
 
+#ifdef DEBUG
+
 // Exception Handler
 PspDebugErrorHandler curr_handler = NULL;
 
@@ -150,3 +152,5 @@ void registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * r
     // Register Exception Handler
     sceKernelRegisterDefaultExceptionHandler((void *)_pspDebugExceptionHandler);
 }
+
+#endif

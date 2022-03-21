@@ -52,10 +52,6 @@ endif
 
 CFLAGS += -I include -I $(ARKROOT)/common/include/ -I $(ARKROOT)/libs/graphics/
 
-ifdef DEBUG
-CFLAGS += -DDEBUG=$(DEBUG)
-endif
-
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 
@@ -67,7 +63,12 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lgraphics -lcolordebugger -lpsppower
+LIBS = -lpspsemaphore
+
+ifdef DEBUG
+CFLAGS += -DDEBUG=$(DEBUG)
+LIBS += -lgraphics -lcolordebugger
+endif
 
 PSP_FW_VERSION = 660
 

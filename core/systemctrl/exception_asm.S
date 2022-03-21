@@ -88,6 +88,8 @@
 #define REG_FIR      (REG_FSR + 4)
 #define REG_FP       (REG_FIR + 4)
 
+#ifdef DEBUG
+
    .extern exception_regs
    .extern curr_handler
 
@@ -208,3 +210,4 @@ _pspDebugExceptionHandler:
 
    .end _pspDebugExceptionHandler
 
+#endif

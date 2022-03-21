@@ -71,8 +71,10 @@ int module_start(SceSize args, void * argp)
     // Initialize Module Start Patching
     syspatchInit();
     
+    #ifdef DEBUG
     // Register Default Exception Handler
     registerExceptionHandler(NULL, NULL);
+    #endif
     
     // Backup Reboot Buffer (including configuration)
     backupRebootBuffer();
