@@ -29,11 +29,10 @@
 
 // Exit Button Mask
 #define EXIT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
-#define MENU_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_UP)
 
 extern ARKConfig* ark_config;
 
-static void execgame(const char* path)
+void doExitGame(int recovery)
 {
 
     // Refuse Operation in Save dialog
@@ -44,6 +43,13 @@ static void execgame(const char* path)
     
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
+    
+    // set exit app
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    if (recovery) strcat(path, ARK_RECOVERY);
+    else if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
+    else strcat(path, ARK_MENU);
     
     // Clear Memory
     memset(&param, 0, sizeof(param));
@@ -58,125 +64,14 @@ static void execgame(const char* path)
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 }
 
-// Exit to Launcher
-void sctrlExitToLauncher(void){
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
-    else strcat(path, ARK_MENU);
-    execgame(path);
-}
-
-// Exit to Recovery
-void sctrlExitToRecovery(void){
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, ARK_RECOVERY);
-    execgame(path);
-}
-
 static void exitgame(){
     if (ark_config->launcher[0]){
-        sctrlExitToLauncher();
+        doExitGame(0);
     }
     else{
         sctrlKernelExitVSH(NULL);
     }
 }
-
-// Gamepad Hook #1
-int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = NULL;
-int peek_positive(SceCtrlData * pad_data, int count)
-{
-    // Capture Gamepad Input
-    count = CtrlPeekBufferPositive(pad_data, count);
-    
-    // Check for Exit Mask
-    for(int i = 0; i < count; i++)
-    {
-        // Execute launcher
-        if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
-    }
-    
-    // Return Number of Input Frames
-    return count;
-}
-
-/*
-// Gamepad Hook #2
-int (*CtrlPeekBufferNegative)(SceCtrlData *, int) = NULL;
-int peek_negative(SceCtrlData * pad_data, int count)
-{
-    // Capture Gamepad Input
-    count = CtrlPeekBufferNegative(pad_data, count);
-    
-    // Check for Exit Mask
-    for(int i = 0; i < count; i++)
-    {
-        // Execute launcher
-        if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
-        if((pad_data[i].Buttons & MENU_MASK) == MENU_MASK) sctrlExitGameMenu();
-    }
-    
-    // Return Number of Input Frames
-    return count;
-}
-
-// Gamepad Hook #3
-int (*CtrlReadBufferPositive)(SceCtrlData *, int) = NULL;
-int read_positive(SceCtrlData * pad_data, int count)
-{
-    // Capture Gamepad Input
-    count = CtrlReadBufferPositive(pad_data, count);
-    
-    // Check for Exit Mask
-    for(int i = 0; i < count; i++)
-    {
-        // Execute launcher
-        if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
-        if((pad_data[i].Buttons & MENU_MASK) == MENU_MASK) sctrlExitGameMenu();
-    }
-    
-    // Return Number of Input Frames
-    return count;
-}
-
-// Gamepad Hook #4
-int (*CtrlReadBufferNegative)(SceCtrlData *, int) = NULL;
-int read_negative(SceCtrlData * pad_data, int count)
-{
-    // Capture Gamepad Input
-    count = CtrlReadBufferNegative(pad_data, count);
-    
-    // Check for Exit Mask
-    for(int i = 0; i < count; i++)
-    {
-        // Execute launcher
-        if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
-        if((pad_data[i].Buttons & MENU_MASK) == MENU_MASK) sctrlExitGameMenu();
-    }
-    
-    // Return Number of Input Frames
-    return count;
-}
-
-void initController(){
-    CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
-    CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A);
-    CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
-    CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86);
-}
-
-// Hook Gamepad Input
-void patchController(void)
-{
-    // Hook Gamepad Input Syscalls (user input hooking only)
-    sctrlHENPatchSyscall(CtrlPeekBufferPositive, peek_positive);
-    sctrlHENPatchSyscall(CtrlPeekBufferNegative, peek_negative);
-    sctrlHENPatchSyscall(CtrlReadBufferPositive, read_positive);
-    sctrlHENPatchSyscall(CtrlReadBufferNegative, read_negative);
-}
-*/
 
 // Gamepad Polling Thread
 int control_poller(SceSize args, void * argp)
@@ -184,6 +79,7 @@ int control_poller(SceSize args, void * argp)
     // Control Buffer
     SceCtrlData pad_data[16];
     
+    int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = NULL;
     CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
     
     // Endless Loop
@@ -193,7 +89,13 @@ int control_poller(SceSize args, void * argp)
         memset(pad_data, 0, sizeof(pad_data));
         
         // Poll Gamepad
-        peek_positive(pad_data, NELEMS(pad_data));
+        int count = CtrlPeekBufferPositive(pad_data, NELEMS(pad_data));
+        // Check for Exit Mask
+        for(int i = 0; i < count; i++)
+        {
+            // Execute launcher
+            if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
+        }
         
         // Save CPU Time (30fps)
         sceKernelDelayThread((unsigned int)(1000000.0f / 30.0f));
@@ -248,9 +150,6 @@ void sctrlPatchExitGame()
         hookPOPSExit();
     }
     else {
-        // Hook Gamepad Input
-        //patchController();
-        
         // Start Polling Thread
         startControlPoller();
     }

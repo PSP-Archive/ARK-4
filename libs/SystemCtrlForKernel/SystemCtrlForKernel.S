@@ -146,15 +146,14 @@
 #ifdef F_SystemCtrlForKernel_0046
 	IMPORT_FUNC  "SystemCtrlForKernel",0x2BA770CD,sctrlKernelSetUMDEmuFile
 #endif
-
 #ifdef F_SystemCtrlForKernel_0047
-	IMPORT_FUNC  "SystemCtrlForKernel",0x23833651,sctrlGetThreadUIDByName
+	IMPORT_FUNC  "SystemCtrlForKernel",0x56CEAF00,sctrlKernelQuerySystemCall
 #endif
 #ifdef F_SystemCtrlForKernel_0048
-	IMPORT_FUNC  "SystemCtrlForKernel",0xF93BEC5A,sctrlGetThreadContextByUID
+	IMPORT_FUNC  "SystemCtrlForKernel",0x76C382FF,lzo1x_decompress
 #endif
 #ifdef F_SystemCtrlForKernel_0049
-	IMPORT_FUNC  "SystemCtrlForKernel",0x72D520D4,sctrlGetThreadContextByName
+	IMPORT_FUNC  "SystemCtrlForKernel",0xAD9849FE,sctrlKernelMsIsEf
 #endif
 #ifdef F_SystemCtrlForKernel_0050
 	IMPORT_FUNC  "SystemCtrlForKernel",0xFCE44FB8,sctrlGetInitPARAM
@@ -184,13 +183,13 @@
 	IMPORT_FUNC  "SystemCtrlForKernel",0x16C3B7EE,sctrlSEGetConfig
 #endif
 #ifdef F_SystemCtrlForKernel_0059
-    IMPORT_FUNC  "SystemCtrlForKernel",0xAA6274F8,sctrlGetThreads
+    IMPORT_FUNC "SystemCtrlForKernel",0x162DC9FC,sctrlExitToLauncher
 #endif
 #ifdef F_SystemCtrlForKernel_0060
-    IMPORT_FUNC "SystemCtrlForKernel",0x373C8373,sctrlSuspendThreads
+    IMPORT_FUNC "SystemCtrlForKernel",0xD339E2E9,sctrlHENIsSE
 #endif
 #ifdef F_SystemCtrlForKernel_0061
-    IMPORT_FUNC "SystemCtrlForKernel",0xE2A48BE5,sctrlResumeThreads
+    IMPORT_FUNC "SystemCtrlForKernel",0x2E2935EF,sctrlHENIsDevhook
 #endif
 #ifdef F_SystemCtrlForKernel_0062
     IMPORT_FUNC "SystemCtrlForKernel",0x287C1E4F,sctrlPatchExitGame
@@ -200,22 +199,4 @@
 #endif
 #ifdef F_SystemCtrlForKernel_0064
     IMPORT_FUNC "SystemCtrlForKernel",0x99C088A5,sctrlExitToRecovery
-#endif
-#ifdef F_SystemCtrlForKernel_0065
-    IMPORT_FUNC "SystemCtrlForKernel",0x162DC9FC,sctrlExitToLauncher
-#endif
-#ifdef F_SystemCtrlForKernel_0066
-    IMPORT_FUNC "SystemCtrlForKernel",0xD339E2E9,sctrlHENIsSE
-#endif
-#ifdef F_SystemCtrlForKernel_0067
-    IMPORT_FUNC "SystemCtrlForKernel",0x2E2935EF,sctrlHENIsDevhook
-#endif
-#ifdef F_SystemCtrlForKernel_0068
-	IMPORT_FUNC  "SystemCtrlForKernel",0x56CEAF00,sctrlKernelQuerySystemCall
-#endif
-#ifdef F_SystemCtrlForKernel_0069
-	IMPORT_FUNC  "SystemCtrlForKernel",0x76C382FF,lzo1x_decompress
-#endif
-#ifdef F_SystemCtrlForKernel_0070
-	IMPORT_FUNC  "SystemCtrlForKernel",0xAD9849FE,sctrlKernelMsIsEf
 #endif

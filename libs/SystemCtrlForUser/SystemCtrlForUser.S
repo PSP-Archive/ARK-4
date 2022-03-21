@@ -69,13 +69,13 @@
 	IMPORT_FUNC  "SystemCtrlForUser",0xCC9ADCF8,sctrlHENSetSpeed
 #endif
 #ifdef F_SystemCtrlForUser_0021
-	IMPORT_FUNC  "SystemCtrlForUser",0x23833651,sctrlGetThreadUIDByName
+	IMPORT_FUNC  "SystemCtrlForUser",0x5D665044,sctrlGzipDecompress
 #endif
 #ifdef F_SystemCtrlForUser_0022
-	IMPORT_FUNC  "SystemCtrlForUser",0xF93BEC5A,sctrlGetThreadContextByUID
+	IMPORT_FUNC  "SystemCtrlForUser",0x76C382FF,lzo1x_decompress
 #endif
 #ifdef F_SystemCtrlForUser_0023
-	IMPORT_FUNC  "SystemCtrlForUser",0x72D520D4,sctrlGetThreadContextByName
+	IMPORT_FUNC  "SystemCtrlForUser",0xAD9849FE,sctrlKernelMsIsEf
 #endif
 #ifdef F_SystemCtrlForUser_0024
 	IMPORT_FUNC "SystemCtrlForUser",0xF462EE55,sctrlDeflateDecompress
@@ -120,13 +120,13 @@
 	IMPORT_FUNC  "SystemCtrlForUser",0x16100529,LZ4_decompress_fast
 #endif
 #ifdef F_SystemCtrlForUser_0038
-    IMPORT_FUNC  "SystemCtrlForUser",0xAA6274F8,sctrlGetThreads
+    IMPORT_FUNC "SystemCtrlForUser",0xD339E2E9,sctrlHENIsSE
 #endif
 #ifdef F_SystemCtrlForUser_0039
-    IMPORT_FUNC "SystemCtrlForUser",0x373C8373,sctrlSuspendThreads
+    IMPORT_FUNC "SystemCtrlForUser",0x2E2935EF,sctrlHENIsDevhook
 #endif
 #ifdef F_SystemCtrlForUser_0040
-    IMPORT_FUNC "SystemCtrlForUser",0xE2A48BE5,sctrlResumeThreads
+	IMPORT_FUNC  "SystemCtrlForUser",0xCE0A654E,sctrlHENLoadModuleOnReboot
 #endif
 #ifdef F_SystemCtrlForUser_0041
     IMPORT_FUNC "SystemCtrlForUser",0x287C1E4F,sctrlPatchExitGame
@@ -139,22 +139,4 @@
 #endif
 #ifdef F_SystemCtrlForUser_0044
     IMPORT_FUNC "SystemCtrlForUser",0x162DC9FC,sctrlExitToLauncher
-#endif
-#ifdef F_SystemCtrlForUser_0045
-    IMPORT_FUNC "SystemCtrlForUser",0xD339E2E9,sctrlHENIsSE
-#endif
-#ifdef F_SystemCtrlForUser_0046
-    IMPORT_FUNC "SystemCtrlForUser",0x2E2935EF,sctrlHENIsDevhook
-#endif
-#ifdef F_SystemCtrlForUser_0047
-	IMPORT_FUNC  "SystemCtrlForUser",0xCE0A654E,sctrlHENLoadModuleOnReboot
-#endif
-#ifdef F_SystemCtrlForUser_0048
-	IMPORT_FUNC  "SystemCtrlForUser",0x5D665044,sctrlGzipDecompress
-#endif
-#ifdef F_SystemCtrlForUser_0049
-	IMPORT_FUNC  "SystemCtrlForUser",0x76C382FF,lzo1x_decompress
-#endif
-#ifdef F_SystemCtrlForUser_0050
-	IMPORT_FUNC  "SystemCtrlForUser",0xAD9849FE,sctrlKernelMsIsEf
 #endif

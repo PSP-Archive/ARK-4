@@ -48,12 +48,6 @@ OBJS = \
 	SystemCtrlForUser_0042.o \
 	SystemCtrlForUser_0043.o \
 	SystemCtrlForUser_0044.o \
-	SystemCtrlForUser_0045.o \
-	SystemCtrlForUser_0046.o \
-	SystemCtrlForUser_0047.o \
-	SystemCtrlForUser_0048.o \
-	SystemCtrlForUser_0049.o \
-	SystemCtrlForUser_0050.o \
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 
