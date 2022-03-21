@@ -238,11 +238,6 @@ int patch_sceKernelStartModule_in_bootstart(int (* bootstart)(SceSize, void *), 
     return bootstart(4, argp);
 }
 
-static void myDebug(int a0){
-    if (a0<0) doBreakpoint();
-    return;
-}
-
 // Patch Loader Core Module
 SceModule2* patchLoaderCore(void)
 {
@@ -332,4 +327,3 @@ SceModule2* patchLoaderCore(void)
 
     return mod;
 }
-

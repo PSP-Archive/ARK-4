@@ -75,43 +75,6 @@ void sctrlExitToRecovery(void){
     execgame(path);
 }
 
-void sctrlExitGameMenu(){
-    // Refuse Operation in Save dialog
-    if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return;
-    
-    // Refuse Operation in Dialog
-    if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return;
-    
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, ARK_INGAME);
-    
-    /*
-    SceKernelLMOption opt = {
-        .size = 0x14,
-        .flags = 0,
-        .access = 1,
-        .position = 1,
-    };
-    */
-    
-    SceUID mod = sceKernelLoadModule(path, 0, NULL);
-    if(mod >= 0){
-        int res = sceKernelStartModule(mod, strlen(path) + 1, path, NULL, NULL);
-        if (res < 0){
-            colorDebug(0xFF);
-            return res;
-        }
-    }
-    else {
-        colorDebug(0xFF0000);
-        return mod;
-    }
-
-    return 0;
-    
-}
-
 static void exitgame(){
     if (ark_config->launcher[0]){
         sctrlExitToLauncher();
@@ -133,13 +96,13 @@ int peek_positive(SceCtrlData * pad_data, int count)
     {
         // Execute launcher
         if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
-        if((pad_data[i].Buttons & MENU_MASK) == MENU_MASK) sctrlExitGameMenu();
     }
     
     // Return Number of Input Frames
     return count;
 }
 
+/*
 // Gamepad Hook #2
 int (*CtrlPeekBufferNegative)(SceCtrlData *, int) = NULL;
 int peek_negative(SceCtrlData * pad_data, int count)
@@ -197,11 +160,31 @@ int read_negative(SceCtrlData * pad_data, int count)
     return count;
 }
 
+void initController(){
+    CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
+    CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A);
+    CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
+    CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86);
+}
+
+// Hook Gamepad Input
+void patchController(void)
+{
+    // Hook Gamepad Input Syscalls (user input hooking only)
+    sctrlHENPatchSyscall(CtrlPeekBufferPositive, peek_positive);
+    sctrlHENPatchSyscall(CtrlPeekBufferNegative, peek_negative);
+    sctrlHENPatchSyscall(CtrlReadBufferPositive, read_positive);
+    sctrlHENPatchSyscall(CtrlReadBufferNegative, read_negative);
+}
+*/
+
 // Gamepad Polling Thread
 int control_poller(SceSize args, void * argp)
 {
     // Control Buffer
     SceCtrlData pad_data[16];
+    
+    CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
     
     // Endless Loop
     while(1)
@@ -221,23 +204,6 @@ int control_poller(SceSize args, void * argp)
     
     // Never reached return (shut up compiler!)
     return 0;
-}
-
-void initController(){
-    CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
-    CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A);
-    CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
-    CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86);
-}
-
-// Hook Gamepad Input
-void patchController(void)
-{
-    // Hook Gamepad Input Syscalls (user input hooking only)
-    sctrlHENPatchSyscall(CtrlPeekBufferPositive, peek_positive);
-    sctrlHENPatchSyscall(CtrlPeekBufferNegative, peek_negative);
-    sctrlHENPatchSyscall(CtrlReadBufferPositive, read_positive);
-    sctrlHENPatchSyscall(CtrlReadBufferNegative, read_negative);
 }
 
 // Start Gamepad Polling Thread
@@ -269,7 +235,7 @@ void hookPOPSExit(void)
 void sctrlPatchExitGame()
 {
 
-    initController();
+    //initController();
 
     // Get Apitype
     int apitype = sceKernelInitApitype();
@@ -283,10 +249,10 @@ void sctrlPatchExitGame()
     }
     else {
         // Hook Gamepad Input
-        patchController();
+        //patchController();
         
         // Start Polling Thread
-        //startControlPoller();
+        startControlPoller();
     }
     // Flush Cache
     flushCache();

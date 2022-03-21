@@ -1,9 +1,9 @@
-int sctrlARKDummyFunction(void)
+int sctrlARKDummyFunction()
 {
     return 0;
 }
 
-int sctrlARKDummyError(void)
+int sctrlARKDummyError()
 {
     return -1;
 }

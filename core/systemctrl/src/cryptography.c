@@ -27,9 +27,7 @@
 #include <functions.h>
 #include "imports.h"
 #include "elf.h"
-#include "rc4.h"
 #include "rebootconfig.h"
-#include "psid.h"
 
 // custom user crypto functions
 static int (*ExtendDecryption)() = NULL;

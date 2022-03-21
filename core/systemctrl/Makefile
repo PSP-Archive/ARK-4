@@ -23,7 +23,6 @@ C_OBJS = \
 	src/vlffix.o \
 	src/exception.o \
 	src/printk.o \
-	src/jumper.o \
 	src/threadctx.o \
 	src/lz4.o \
 	src/minilzo.o \

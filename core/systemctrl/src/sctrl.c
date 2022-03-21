@@ -39,9 +39,6 @@
 #include "imports.h"
 #include "sysmem.h"
 
-// Static Buffer
-static char bignamebuffer[256];
-
 u32 g_p2_size = 24;
 u32 g_p9_size = 0; //24;
 int sctrlHENSetMemory(u32 p2, u32 p9)
@@ -534,11 +531,8 @@ int sctrlKernelSetInitFileName(char * filename)
     // Field unavailable
     if(kernel_init_filename == NULL) return -2;
     
-    // Copy Filename
-    strncpy(bignamebuffer, filename, sizeof(bignamebuffer) - 1);
-    
     // Link Buffer
-    *kernel_init_filename = bignamebuffer;
+    *kernel_init_filename = filename;
     
     // Return Success
     return 0;
@@ -844,15 +838,16 @@ void sctrlHENGetArkConfig(ARKConfig* conf){
 
 void sctrlHENSetArkConfig(ARKConfig* conf){
     u32 k1 = pspSdkSetK1(0);
-    if ( ( (k1<<11) & 0x80000000 ) == 0 )
-        memcpy(ark_config, conf, sizeof(ARKConfig));
+    memcpy(ark_config, conf, sizeof(ARKConfig));
     pspSdkSetK1(k1);
 }
 
 void sctrlHENLoadModuleOnReboot(char *module_before, void *buf, int size, int flags)
 {
-    if (reboot_funcs)
-        reboot_funcs->SetRebootModule(module_before, buf, size, flags);
+    rebootex_config.rtm_mod.before = module_before;
+    rebootex_config.rtm_mod.buffer = buf;
+    rebootex_config.rtm_mod.size = size;
+    rebootex_config.rtm_mod.flags = flags;
 }
 
 int sctrlKernelSetUMDEmuFile(const char *filename)
@@ -863,11 +858,8 @@ int sctrlKernelSetUMDEmuFile(const char *filename)
     // Field unavailable
     if(kernel_init_filename == NULL) return -2;
     
-    // Copy Filename
-    strncpy(bignamebuffer, filename, sizeof(bignamebuffer) - 1);
-    
     // Link Buffer
-    kernel_init_filename[1] = bignamebuffer;
+    kernel_init_filename[1] = filename;
     
     // Return Success
     return 0;
@@ -877,7 +869,7 @@ void sctrlHENSetSpeed(int cpuspd, int busspd)
 {
     int (*_scePowerSetClockFrequency)(int, int, int);
     _scePowerSetClockFrequency = sctrlHENFindFunction("scePower_Service", "scePower", 0x545A7F3C);
-    _scePowerSetClockFrequency(cpuspd, cpuspd, busspd);
+    if (_scePowerSetClockFrequency) _scePowerSetClockFrequency(cpuspd, cpuspd, busspd);
 }
 
 int sctrlKernelBootFrom()
@@ -904,17 +896,6 @@ int sctrlKernelQuerySystemCall(void *func_addr)
     pspSdkSetK1(k1);
 
     return ret;
-}
-
-void *sctrlKernelMalloc(size_t size)
-{
-    return oe_malloc(size); 
-}
-
-int sctrlKernelFree(void *p)
-{
-    oe_free(p);
-    return 0;
 }
 
 u32 sctrlKernelResolveNid(const char *szLib, u32 nid){

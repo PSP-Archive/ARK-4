@@ -28,7 +28,7 @@
 #include "elf.h"
 
 // Check Executable Type
-int IsStaticElf(void * buf)
+inline int IsStaticElf(void * buf)
 {
     // Cast Header
     Elf32_Ehdr * header = (Elf32_Ehdr *)buf;

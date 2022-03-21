@@ -31,145 +31,30 @@ int (* OrigLoadReboot)(void * arg1, unsigned int arg2, void * arg3, unsigned int
 
 // Reboot Buffer Backup
 #include "loader/rebootex/payload.h"
-u8 rebootex_config[REBOOTEX_CONFIG_MAXSIZE];
-RebootConfigFunctions* reboot_funcs = NULL;
-static RebootConfigFunctions _reboot_funcs;
-// Reboot ISO Path
-char* reboot_config_isopath = NULL;
+RebootConfigARK rebootex_config;
+
 // custom rebootex
 static void* custom_rebootex = NULL;
-
-static void SetBootConfFileIndexARK(int index)
-{
-    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
-    reboot_config->iso_mode = index;
-}
-
-static unsigned int GetBootConfFileIndexARK(void)
-{
-    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
-    return reboot_config->iso_mode;
-}
-
-static void SetDiscTypeARK(int type)
-{
-    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
-    reboot_config->iso_disc_type = type;
-}
-
-static int GetDiscTypeARK(void)
-{
-    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
-    reboot_config->iso_disc_type;
-}
-
-static void SetRebootModuleARK(char *module_before, void *buf, int size, int flags){
-    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
-    reboot_config->rtm_mod.before = module_before;
-    reboot_config->rtm_mod.buffer = buf;
-    reboot_config->rtm_mod.size = size;
-    reboot_config->rtm_mod.flags = flags;
-}
-
-static void SetBootConfFileIndexPRO(int index)
-{
-    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
-    reboot_config->iso_mode = index;
-}
-
-static unsigned int GetBootConfFileIndexPRO(void)
-{
-    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
-    return reboot_config->iso_mode;
-}
-
-static void SetDiscTypePRO(int type)
-{
-    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
-    reboot_config->iso_disc_type = type;
-}
-
-static int GetDiscTypePRO(void)
-{
-    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
-    reboot_config->iso_disc_type;
-}
-
-static void SetRebootModulePRO(char *module_before, void *buf, int size, int flags){
-    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
-    reboot_config->insert_module_before = module_before;
-    reboot_config->insert_module_binary = buf;
-    reboot_config->insert_module_size = size;
-    reboot_config->insert_module_flags = flags;
-}
-
-static void setRebootConfigPRO(){
-    RebootConfigPRO* reboot_config = (RebootConfigPRO*)rebootex_config;
-    _reboot_funcs.SetBootConfFileIndex = &SetBootConfFileIndexPRO;
-    _reboot_funcs.GetBootConfFileIndex = &GetBootConfFileIndexPRO;
-    _reboot_funcs.SetDiscType = &SetDiscTypePRO;
-    _reboot_funcs.GetDiscType = &GetDiscTypePRO;
-    _reboot_funcs.SetRebootModule = &SetRebootModulePRO;
-    reboot_funcs = &_reboot_funcs;
-    reboot_config_isopath = (char*)&(rebootex_config[0x100]);
-    if (reboot_config->rebootex_size == 0){ // Infinity setup, must inject rebootex
-        memset(reboot_config, 0, REBOOTEX_CONFIG_MAXSIZE);
-        reboot_config->magic = PRO_CONFIG_MAGIC;
-        reboot_config->rebootex_size = size_rebootbuffer;
-    }
-}
-
-static void setRebootConfigARK(){
-    RebootConfigARK* reboot_config = (RebootConfigARK*)rebootex_config;
-    _reboot_funcs.SetBootConfFileIndex = &SetBootConfFileIndexARK;
-    _reboot_funcs.GetBootConfFileIndex = &GetBootConfFileIndexARK;
-    _reboot_funcs.SetDiscType = &SetDiscTypeARK;
-    _reboot_funcs.GetDiscType = &GetDiscTypeARK;
-    _reboot_funcs.SetRebootModule = &SetRebootModuleARK;
-    reboot_funcs = &_reboot_funcs;
-    reboot_config_isopath = reboot_config->iso_path;
-    if (reboot_config->reboot_buffer_size == 0){ // Infinity setup, must inject rebootex
-        memset(reboot_config, 0, REBOOTEX_CONFIG_MAXSIZE);
-        reboot_config->magic = ARK_CONFIG_MAGIC;
-        reboot_config->reboot_buffer_size = size_rebootbuffer;
-    }
-}
-
-static char* findRebootISOPath(){
-    // Find Reboot ISO Path
-    for (int i=0; i<REBOOTEX_CONFIG_MAXSIZE; i++){
-        char* iso_path = (char*)&(rebootex_config[i]);
-        if ( (iso_path[0] == 'm' && iso_path[1] == 's' && iso_path[2] == '0' && iso_path[3] == ':')
-          || (iso_path[0] == 'e' && iso_path[1] == 'f' && iso_path[2] == '0' && iso_path[3] == ':') ){
-            return iso_path;
-        }
-    }
-    return NULL;
-}
 
 // Backup Reboot Buffer
 void backupRebootBuffer(void)
 {
 
     // Copy Reboot Buffer Configuration
-    memcpy(rebootex_config, (void *)REBOOTEX_CONFIG, REBOOTEX_CONFIG_MAXSIZE);
+    RebootConfigARK* backup_conf = (RebootConfigARK*)REBOOTEX_CONFIG;
+    if (backup_conf->magic != ARK_CONFIG_MAGIC || backup_conf->reboot_buffer_size == 0){
+        // Fix for Infinity/CIPL setup
+        memset(&rebootex_config, 0, sizeof(RebootConfigARK));
+        rebootex_config.magic = ARK_CONFIG_MAGIC;
+        rebootex_config.reboot_buffer_size = size_rebootbuffer;
+    }
+    else{
+        memcpy(&rebootex_config, backup_conf, sizeof(RebootConfigARK));
+    }
     
     // Copy ARK runtime Config
     if (IS_ARK_CONFIG(ARK_CONFIG))
         memcpy(ark_config, ARK_CONFIG, sizeof(ARKConfig));
-    
-    // Figure out how to handle rebootex config
-    if (IS_ARK_CONFIG(rebootex_config)){
-        setRebootConfigARK(); // ARK
-    }
-    else if (IS_PRO_CONFIG(rebootex_config)){
-        setRebootConfigPRO(); // PRO
-    }
-    else{
-        // can't handle it :P
-        reboot_funcs = NULL;
-        reboot_config_isopath = findRebootISOPath(); // try to find an iso path in rebootex config
-    }
     
     // Flush Cache
     flushCache();
@@ -188,7 +73,7 @@ void restoreRebootBuffer(void)
         memcpy((void *)REBOOTEX_TEXT, rebootex, REBOOTEX_MAX_SIZE);
         
     // Restore Reboot Buffer Configuration
-    memcpy((void *)REBOOTEX_CONFIG, rebootex_config, REBOOTEX_CONFIG_MAXSIZE);
+    memcpy((void *)REBOOTEX_CONFIG, &rebootex_config, sizeof(RebootConfigARK));
 
     // Restore ARK Configuration
     ark_config->recovery = 0; // reset recovery mode for next reboot

@@ -52,10 +52,11 @@ void * oe_malloc(unsigned int size)
 }
 
 // Return Memory to Heap
-void oe_free(void * p)
+int oe_free(void * p)
 {
     // Forward Call
     sceKernelFreeHeapMemory(heapid, p);
+    return 0;
 }
 
 // Terminate Heap
@@ -63,12 +64,4 @@ int oe_mallocterminate(void)
 {
     // Forward Call
     return sceKernelDeleteHeap(heapid);
-}
-
-void* malloc(unsigned int size){
-    return oe_malloc(size);
-}
-
-void free(void* p){
-    oe_free(p);
 }

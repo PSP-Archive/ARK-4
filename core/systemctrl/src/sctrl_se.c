@@ -44,6 +44,7 @@ void SetUmdFile(char *file) __attribute__((alias("sctrlSESetUmdFile")));
 
 // we keep this here for compatibility
 // ARK doesn't use this and it isn't persistent
+/*
 SEConfig se_config = { // default SE/PRO configuration
     .magic = 0x47434554,
     .umdmode = MODE_INFERNO,
@@ -77,6 +78,7 @@ SEConfig se_config = { // default SE/PRO configuration
     .language = -1,
     .retail_high_memory = 0,
 };
+*/
 
 /**
  * Gets the SE configuration.
@@ -87,9 +89,9 @@ SEConfig se_config = { // default SE/PRO configuration
  * @returns 0 on success
 */
 int sctrlSEGetConfig(SEConfig *config){
-    u32 k1 = pspSdkSetK1(0);
-    memcpy(config, &se_config, sizeof(SEConfig));
-    pspSdkSetK1(k1);
+    //u32 k1 = pspSdkSetK1(0);
+    //memcpy(config, &se_config, sizeof(SEConfig));
+    //pspSdkSetK1(k1);
     return 0;
 }
 
@@ -101,9 +103,9 @@ int sctrlSEGetConfig(SEConfig *config){
  * @returns 0 on success
 */
 int sctrlSEGetConfigEx(SEConfig *config, int size){
-    u32 k1 = pspSdkSetK1(0);
-    memcpy(config, &se_config, size);
-    pspSdkSetK1(k1);
+    //u32 k1 = pspSdkSetK1(0);
+    //memcpy(config, &se_config, size);
+    //pspSdkSetK1(k1);
     return 0;
 }
 
@@ -116,15 +118,15 @@ int sctrlSEGetConfigEx(SEConfig *config, int size){
  * @returns 0 on success
 */
 int sctrlSESetConfig(SEConfig *config){
-    u32 k1 = pspSdkSetK1(0);
-    memcpy(&se_config, config, sizeof(SEConfig));
-    pspSdkSetK1(k1);
+    //u32 k1 = pspSdkSetK1(0);
+    //memcpy(&se_config, config, sizeof(SEConfig));
+    //pspSdkSetK1(k1);
     return 0;
 }
 
 void sctrlSEApplyConfig(SEConfig *config)
 {
-    sctrlSESetConfig(config);
+    //sctrlSESetConfig(config);
 }
 
 /**
@@ -135,9 +137,9 @@ void sctrlSEApplyConfig(SEConfig *config)
  * @returns 0 on success
 */
 int sctrlSESetConfigEx(SEConfig *config, int size){
-    u32 k1 = pspSdkSetK1(0);
-    memcpy(&se_config, config, size);
-    pspSdkSetK1(k1);
+    //u32 k1 = pspSdkSetK1(0);
+    //memcpy(&se_config, config, size);
+    //pspSdkSetK1(k1);
     return 0;
 }
 
@@ -145,7 +147,7 @@ int sctrlSESetConfigEx(SEConfig *config, int size){
 char * sctrlSEGetUmdFile(void)
 {
     // Return Reboot Configuration UMD File
-    return reboot_config_isopath;
+    return rebootex_config.iso_path;
 }
 
 char *sctrlSEGetUmdFileEx(char *input)
@@ -158,50 +160,44 @@ char *sctrlSEGetUmdFileEx(char *input)
 // Set Reboot Configuration UMD File
 void sctrlSESetUmdFile(char * file)
 {
-    if (reboot_config_isopath == NULL || file == NULL) return; // no idea how to use rebootex config...
     // Overwrite Reboot Configuration UMD File
-    strncpy(reboot_config_isopath, file, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1);
+    strncpy(rebootex_config.iso_path, file, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1);
     // Terminate String
-    reboot_config_isopath[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
+    rebootex_config.iso_path[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
 }
 
 void sctrlSESetUmdFileEx(const char *umd, char *input)
 {
+    strcpy(input, rebootex_config.iso_path);
     sctrlSESetUmdFile(umd);
 }
 
 void sctrlSESetBootConfFileIndex(int index)
 {
-    if (reboot_funcs)
-        reboot_funcs->SetBootConfFileIndex(index);
+    rebootex_config.iso_mode = index;
 }
 
 unsigned int sctrlSEGetBootConfFileIndex(void)
 {
-    if (reboot_funcs)
-        return reboot_funcs->GetBootConfFileIndex();
-    return MODE_INFERNO;
+    return rebootex_config.iso_mode;
 }
 
 void sctrlSESetDiscType(int type)
 {
-    if (reboot_funcs)
-        return reboot_funcs->SetDiscType(type);
+    rebootex_config.iso_disc_type = type;
 }
 
 int sctrlSEGetDiscType(void)
 {
-    if (reboot_funcs)
-        return reboot_funcs->GetDiscType();
-    return PSP_UMD_TYPE_GAME;
+    return rebootex_config.iso_disc_type;
 }
 
-int    sctrlHENIsSE()
+int sctrlHENIsSE()
 {
     return 1;
 }
 
-int    sctrlHENIsDevhook()
+int sctrlHENIsDevhook()
 {
     return 0;
 }

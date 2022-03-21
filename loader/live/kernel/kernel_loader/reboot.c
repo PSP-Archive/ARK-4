@@ -28,7 +28,7 @@ void buildRebootBufferConfig(int rebootBufferSize)
     RebootConfigARK* conf = (RebootConfigARK*)(REBOOTEX_CONFIG);
     
     // Clear Reboot Configuration
-    memset((char *)REBOOTEX_CONFIG, 0, REBOOTEX_CONFIG_MAXSIZE);
+    memset((char *)REBOOTEX_CONFIG, 0, sizeof(RebootConfigARK));
     
     // Write Configuration Magic
     conf->magic = ARK_CONFIG_MAGIC;
