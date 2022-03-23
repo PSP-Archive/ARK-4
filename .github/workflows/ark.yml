@@ -49,6 +49,9 @@ jobs:
       run: make
     - name: Compressing dist directory up
       run: cd ./dist && sudo tar czvf ARK-4.tar.gz * && mv ARK-4.tar.gz .. && sudo zip -r ARK-4.zip * && mv ARK-4.zip ..
+    - name: Making DEBUG version
+      run: |
+        make clean && DEBUG=1 make && cd ./dist && sudo tar czvf ARK-4-DEBUG.tar.gz * && mv ARK-4-DEBUG.tar.gz .. && sudo zip -r ARK-4-DEBUG.zip * && mv ARK-4-DEBUG.zip ..
 
     - name: Create Version
       id: get_version 
@@ -80,4 +83,30 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: "ARK-4.zip"
         asset_name: "ARK-4.zip"
+        asset_content_type: application/zip
+    - name: debug
+      uses: actions/create-release@latest
+      id: create_debug
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      with:
+        tag_name: ${{ steps.get_version.outputs.version }} 
+        release_name: ${{ github.sha }}
+    - name: upload GZIP artifact 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      with:
+        upload_url: ${{ steps.create_debug.outputs.upload_url }}
+        asset_path: "ARK-4-DEBUG.tar.gz"
+        asset_name: "ARK-4-DEBUG.tar.gz"
+        asset_content_type: application/gzip
+    - name: upload ZIP artifact 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      with:
+        upload_url: ${{ steps.create_debug.outputs.upload_url }}
+        asset_path: "ARK-4-DEBUG.zip"
+        asset_name: "ARK-4-DEBUG.zip"
         asset_content_type: application/zip
