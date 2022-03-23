@@ -53,6 +53,10 @@ jobs:
       run: |
         make clean && make DEBUG=1 && cd ./dist && sudo tar czvf ARK-4-DEBUG.tar.gz * && mv ARK-4-DEBUG.tar.gz .. && sudo zip -r ARK-4-DEBUG.zip * && mv ARK-4-DEBUG.zip ..
     
+    - name: Create Version
+      id: get_version
+      run: VERSION=v$(date +%s) && echo "::set-output name=version::${VERSION}"
+      
     - name: upload ARK Release & DEBUG artifact 
       id: create_release
       uses: softprops/action-gh-release@v1
@@ -60,7 +64,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        tag_name: ${{ github.sha }} 
+        tag_name: ${{ steps.get_version.outputs.version }} 
+        name: ${{ github.sha }}
         files: |
             ARK-4.zip
             ARK-4.tar.gz
