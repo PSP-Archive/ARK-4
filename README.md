@@ -32,7 +32,8 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 ### Compiling ARK ( For Developers ) 
 
-- `./build.sh`
+- Release: `./build.sh` 
+- Debug: `./build.sh --debug`
 
 ### On PSP:
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.

@@ -2,13 +2,13 @@
 
 
 ####### ARK Builder Script ##########
-#									#
-# Author  : Krazynez				#
-#									#
-# Date    : 2022-03-23				#
-#									#
-# Script Version : 0.2				#
-#									#
+#                                   #
+# Author  : Krazynez                #
+#                                   #
+# Date    : 2022-03-23              #
+#                                   #
+# Script Version : 0.3              #
+#                                   #
 #####################################
 
 # Usually I do this but to keep file permissions sane I will avoid running as root until needed 
@@ -85,8 +85,12 @@ function original {
 	        rm -rf sign_np
 	
 	    fi
-	
-	    eval make
+
+		if [[ ${BASH_ARGV} == "--debug" ]] ; then
+			eval make DEBUG=1
+		else	
+	    	eval make
+		fi
 }
 
 export -f original
@@ -158,7 +162,12 @@ $
 		rm -rf sign_np
 	fi
 	
-	eval make
+	if [[ ${BASH_ARGV} == "--debug" ]] ; then
+			eval make DEBUG=1
+	else	
+	    	eval make
+	fi
+
 
 }
 
