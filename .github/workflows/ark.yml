@@ -65,6 +65,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
+        tag_name: ${{ steps.get_version.outputs.version }}
         files: |
             ARK-4.zip
             ARK-4.tar.gz
