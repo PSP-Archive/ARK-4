@@ -58,55 +58,15 @@ jobs:
       run: VERSION=v$(date +%s) && echo "::set-output name=version::${VERSION}"
 
 
-    - name: release
-      uses: actions/create-release@latest
+    - name: upload ARK Release & DEBUG artifact 
       id: create_release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-      with:
-        tag_name: ${{ steps.get_version.outputs.version }} 
-        release_name: ${{ github.sha }}
-    - name: upload GZIP artifact 
-      uses: actions/upload-release-asset@v1
+      uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: "ARK-4.tar.gz"
-        asset_name: "ARK-4.tar.gz"
-        asset_content_type: application/gzip
-    - name: upload ZIP artifact 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: "ARK-4.zip"
-        asset_name: "ARK-4.zip"
-        asset_content_type: application/zip
-    - name: debug
-      uses: actions/create-release@latest
-      id: create_debug
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-      with:
-        tag_name: ${{ steps.get_version.outputs.version }} 
-        release_name: ${{ github.sha }}
-    - name: upload GZIP artifact 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-      with:
-        upload_url: ${{ steps.create_debug.outputs.upload_url }}
-        asset_path: "ARK-4-DEBUG.tar.gz"
-        asset_name: "ARK-4-DEBUG.tar.gz"
-        asset_content_type: application/gzip
-    - name: upload ZIP artifact 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-      with:
-        upload_url: ${{ steps.create_debug.outputs.upload_url }}
-        asset_path: "ARK-4-DEBUG.zip"
-        asset_name: "ARK-4-DEBUG.zip"
-        asset_content_type: application/zip
+        files: |
+            ARK-4.zip
+            ARK-4.tar.gz
+            ARK-4-DEBUG.zip
+            ARK-4-DEBUG.tar.gz
