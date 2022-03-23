@@ -93,11 +93,11 @@ void disable_PauseGame(SceModule2* mod)
 int is_launcher_mode = 0;
 int use_mscache = 0;
 void settingsHandler(char* path){
+    int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
         SetSpeed(333, 166);
     }
     else if (strcasecmp(path, "powersave") == 0){ // underclock to save battery
-        int apitype = sceKernelInitApitype();
         if (apitype != 0x144 && apitype != 0x155) // prevent operation in pops
             SetSpeed(133, 66);
     }
@@ -105,7 +105,8 @@ void settingsHandler(char* path){
         usb_charge(); // enable usb charging
     }
     else if (strcasecmp(path, "highmem") == 0){ // enable high memory
-        patch_partitions();
+        if (apitype != 0x144 && apitype != 0x155 && apitype !=  0x210 && apitype !=  0x220)
+            patch_partitions();
         flushCache();
     }
     else if (strcasecmp(path, "mscache") == 0){

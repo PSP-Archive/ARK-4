@@ -80,21 +80,26 @@ int control_poller(SceSize args, void * argp)
     SceCtrlData pad_data[16];
     
     int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = NULL;
-    CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
     
     // Endless Loop
     while(1)
     {
-        // Clear Memory
-        memset(pad_data, 0, sizeof(pad_data));
-        
-        // Poll Gamepad
-        int count = CtrlPeekBufferPositive(pad_data, NELEMS(pad_data));
-        // Check for Exit Mask
-        for(int i = 0; i < count; i++)
-        {
-            // Execute launcher
-            if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
+    
+        if (CtrlPeekBufferPositive == NULL){
+            CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
+        }
+        else{
+            // Clear Memory
+            memset(pad_data, 0, sizeof(pad_data));
+            
+            // Poll Gamepad
+            int count = CtrlPeekBufferPositive(pad_data, NELEMS(pad_data));
+            // Check for Exit Mask
+            for(int i = 0; i < count; i++)
+            {
+                // Execute launcher
+                if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
+            }
         }
         
         // Save CPU Time (30fps)

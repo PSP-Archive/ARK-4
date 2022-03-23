@@ -95,8 +95,8 @@ int prevent_highmem(){
 
     int apitype = sceKernelInitApitype();
 
-    if (apitype == 0x141 || apitype == 0x152 || apitype == 0x120 || apitype == 0x123 || apitype == 0x125)
-        return 0; // allow on homebrew and game
+    if (apitype == 0x141 || apitype == 0x152)
+        return 0; // allow on homebrew
 
     // disallow by default
     return 1;
@@ -130,10 +130,6 @@ void prepatch_partitions(void)
 
 void patch_partitions(void) 
 {
-
-    if (prevent_highmem()){
-        return;
-    }
 
     MemPart p2, p9;
     int max_user_part_size;

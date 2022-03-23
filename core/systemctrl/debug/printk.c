@@ -40,8 +40,6 @@
 #include <string.h>
 #include <globals.h>
 
-#ifdef DEBUG
-
 // Initialize printk
 int printkInit(const char* filename);
 
@@ -372,7 +370,7 @@ int isCpuIntrEnabled(void)
 {
     int ret;
 
-    asm volatile ("mfic    %0, $0\n"
+    __asm__ volatile ("mfic    %0, $0\n"
             "nop\n"
             "nop\n"
             "nop\n"
@@ -540,24 +538,3 @@ int printkSync(void)
 
     return 0;
 }
-
-#else
-
-int printkCached(char *fmt, ...){
-    return 0;
-}
-
-int printk(char *fmt, ...){
-    return 0;
-}
-
-int printkInit(const char *output){
-    return 0;
-}
-
-
-int printkSync(void){
-    return 0;
-}
-
-#endif

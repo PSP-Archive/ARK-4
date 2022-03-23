@@ -10,10 +10,9 @@
 #include "globals.h"
 #include "macros.h"
 #include "systemctrl.h"
-#include "leda.h"
 
-static SceUID (* KernelLoadModuleMs2_hook)() = NULL;
-static SceUID (* KernelLoadModuleMs2_orig)() = NULL;
+SceUID (* KernelLoadModuleMs2_hook)() = NULL;
+SceUID (* KernelLoadModuleMs2_orig)() = NULL;
 static int execute_apitype = 0x141;
 
 SceUID sceKernelLoadModuleMs2_bridge(const char *path, int flags, SceKernelLMOption *option)
@@ -71,34 +70,4 @@ void LedaModulePatch(SceModule2 *mod)
     }
    
     if( leda_previous ) leda_previous( mod );
-}
-
-//hook sceKernelLoadModuleMs2
-int sctrlHENRegisterHomebrewLoader(void *func)
-{
-
-    //get sceInit text_addr.
-    SceModule2 *mod = sceKernelFindModuleByName("sceInit");
-    u32 init_addr = mod->text_addr;
-
-    KernelLoadModuleMs2_hook = func;
-
-    u32 text_addr = ((u32)func) - 0xCE8;
-    
-    // Remove version check
-    _sw(0, text_addr + 0xC58);
-    
-    // Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
-    //_sw(0, text_addr + 0x1140);
-    
-    // Fix sceKernelLoadModuleMs2 call
-    MAKE_JUMP(text_addr + 0x2E28, sceKernelLoadModuleMs2_bridge);
-
-    //patch sceKernelLoadModuleMs2
-    KernelLoadModuleMs2_orig = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x7BD53193);
-    hookImportByNID(mod, "ModuleMgrForKernel", 0x7BD53193, sceKernelLoadModuleMs2_patched);
-
-    leda_previous = sctrlHENSetStartModuleHandler( LedaModulePatch );
-    flushCache();
-    return 0;
 }

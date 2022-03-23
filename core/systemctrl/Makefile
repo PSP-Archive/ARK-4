@@ -11,6 +11,7 @@ C_OBJS = \
 	src/kubridge.o \
 	src/sctrl.o \
 	src/sctrl_se.o \
+	src/sctrl_hen.o \
 	src/oe_malloc.o \
 	src/syspatch.o \
 	src/mediasync.o \
@@ -21,8 +22,6 @@ C_OBJS = \
 	src/rebootex.o \
 	src/sysmem.o \
 	src/vlffix.o \
-	src/exception.o \
-	src/printk.o \
 	src/lz4.o \
 	src/minilzo.o \
 	src/loadexec_patch.o \
@@ -35,8 +34,8 @@ C_OBJS = \
 		
 OBJS = \
 	$(C_OBJS) \
-	exception_asm.o \
 	setlongjmp.o
+	
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common $(ARKROOT)
 CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
@@ -67,6 +66,7 @@ LIBS = -lpspsemaphore
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
 LIBS += -lgraphics -lcolordebugger
+OBJS += debug/exception.o debug/exception_asm.o debug/printk.o debug/jumper.o
 endif
 
 PSP_FW_VERSION = 660

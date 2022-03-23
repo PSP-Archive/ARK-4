@@ -37,6 +37,9 @@ static int (*sceKernelLinkLibraryEntriesForUser)(u32 unk0, void *buf, int size) 
 NidResolverLib * nidTable = NULL;
 unsigned int nidTableSize = 0;
 
+// LLE Handler
+void (*lle_handler)(void*) = NULL;
+
 // Get NID Resolver Library
 NidResolverLib * getNidResolverLib(const char * libName)
 {
@@ -217,13 +220,6 @@ unsigned int resolveMissingNid(const char * libName, unsigned int nid)
     
     // Unimplemented NID
     return 0;
-}
-
-static void (*lle_handler)(void*) = NULL;
-
-void sctrlHENRegisterLLEHandler(void* handler)
-{
-	lle_handler = handler;
 }
 
 // Fill Library Stubs

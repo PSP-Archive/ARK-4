@@ -30,8 +30,8 @@
 #include "rebootconfig.h"
 
 // custom user crypto functions
-static int (*ExtendDecryption)() = NULL;
-static int (*MesgLedDecryptEX)() = NULL;
+int (*ExtendDecryption)() = NULL;
+int (*MesgLedDecryptEX)() = NULL;
 
 // Memlmd Decrypt Function
 int (*memlmd_unsigner)(u8 *prx, u32 size, u32 use_polling) = NULL;
@@ -208,20 +208,6 @@ unzip:
     
     // Passthrough
     return mesgledDecrypt(tag, key, code, prx, size, newsize, use_polling, blacklist, blacklistsize, type, xor_key1, xor_key2);
-}
-
-void* sctrlHENRegisterKDecryptHandler(int (* func)())
-{
-    int (* r)() = ExtendDecryption;
-    ExtendDecryption = func;
-    return r;
-}
-
-void* sctrlHENRegisterMDecryptHandler(int (* func)())
-{
-    int (* r)() = (void *)MesgLedDecryptEX;
-    MesgLedDecryptEX = (void *)func;
-    return (void *)r;
 }
 
 // Patch Memlmd Cryptography

@@ -34,7 +34,7 @@ int (* OrigLoadReboot)(void * arg1, unsigned int arg2, void * arg3, unsigned int
 RebootConfigARK rebootex_config;
 
 // custom rebootex
-static void* custom_rebootex = NULL;
+void* custom_rebootex = NULL;
 
 // Backup Reboot Buffer
 void backupRebootBuffer(void)
@@ -87,9 +87,4 @@ int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
     restoreRebootBuffer();
     // Load Sony Reboot Buffer
     return OrigLoadReboot(arg1, arg2, arg3, arg4);
-}
-
-void sctrlHENSetRebootexOverride(const u8 *rebootex)
-{
-    custom_rebootex = rebootex;
 }
