@@ -25,9 +25,14 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 
 
-## INSTALATION
+## INSTALLATION ( Recommended )
 
 - Download the precompiled binaries from: https://github.com/PSP-Archive/ARK-4/releases/
+
+
+### Compiling ARK ( For Developers ) 
+
+- `./build.sh`
 
 ### On PSP:
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
@@ -35,7 +40,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 - Launch ARK Live Loader. It will install ARK modules on PSP Flash and boot the CFW.
 - If using Infinity place the `EBOOT.PBP` from the `Infinity` folder found in the ARK download into \
 `/PSP/GAME/UPDATE`. Run the initial infinity installation from OFW and re-run the installer again from ARK to configure autoboot. \
-  This will allow you to use ARK permanently and tripple boot with PRO and ME.
+  This will allow you to use ARK permanently and triple boot with PRO and ME.
 
 ### On PS Vita:
 * For 3.60 Henkaku users:
