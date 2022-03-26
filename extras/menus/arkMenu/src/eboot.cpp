@@ -173,6 +173,9 @@ string Eboot::fullEbootPath(string path, string app){
     if (common::fileExists(app))
         return app; // it's already a full path
 
+	else if (common::fileExists(path+app+"/PBOOT.PBP"))
+		return path+app+"/PBOOT.PBP"; // DLC
+
     else if (common::fileExists(path+app+"/FBOOT.PBP"))
         return path+app+"/FBOOT.PBP"; // TN CEF EBOOT
 

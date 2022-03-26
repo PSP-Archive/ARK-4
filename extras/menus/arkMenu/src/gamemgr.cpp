@@ -162,7 +162,7 @@ void GameManager::findEboots(const char* path){
         return;
         
     while ((dit = readdir(dir))){
-
+		if (strstr(dit->d_name, "%") != NULL) continue;
         string fullpath = Eboot::fullEbootPath(path, dit->d_name);
         if (fullpath == "") continue;
         if (strcmp(dit->d_name, ".") == 0) continue;
