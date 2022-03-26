@@ -65,6 +65,7 @@ jobs:
       with:
         tag_name: ${{ steps.get_version.outputs.version }} 
         name: ${{ github.sha }}
+        prerelease: true
         files: |
             ARK-4.zip
             ARK-4.tar.gz
