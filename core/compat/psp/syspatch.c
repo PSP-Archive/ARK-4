@@ -21,10 +21,6 @@ extern ARKConfig* ark_config;
 extern STMOD_HANDLER previous;
 extern void SetSpeed(int cpuspd, int busspd);
 
-static u32 fakeDevkitVersion(){
-    return FW_660;
-}
-
 // Return Boot Status
 int isSystemBooted(void)
 {
@@ -40,6 +36,16 @@ int isSystemBooted(void)
     
     // Still booting
     return 0;
+}
+
+static u32 fakeDevkitVersion(){
+    return FW_660;
+}
+
+static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int nid){
+    if (nid == 0x221400A6 && strcmp(szMod, "SystemControl") == 0)
+        return 0;
+    return sctrlHENFindFunction(szMod, szLib, nid);
 }
 
 static int _sceKernelBootFromForUmdMan(void)
@@ -165,8 +171,11 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
-    if (strcmp(mod->modname, "popscore") == 0){
+    if (strcmp(mod->modname, "popsloader") == 0 || strcmp(mod->modname, "popscore") == 0){
+        // fix for 6.60 check on 6.61
         hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &fakeDevkitVersion);
+        // fix to prevent ME detection
+        hookImportByNID(mod, "SystemCtrlForKernel", 0x159AF5CC, &fakeFindFunction);
         goto flush;
     }
     
