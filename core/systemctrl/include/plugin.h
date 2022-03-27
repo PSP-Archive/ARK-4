@@ -18,10 +18,9 @@
 #ifndef _PLUGIN_H_
 #define _PLUGIN_H_
 
-// process ARK config file
-void ProcessConfigFile(char* path, void (*handler)(char*));
 // Load Plugins
 void LoadPlugins(void);
+
 // Load Settings with callback handler
 void loadSettings(void* settingsHandler);
 

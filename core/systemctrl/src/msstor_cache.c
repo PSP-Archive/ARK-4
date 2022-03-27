@@ -38,11 +38,13 @@ int (* msstorWrite)(PspIoDrvFileArg * arg, const char * data, int len) = NULL;
 SceOff (* msstorLseek)(PspIoDrvFileArg * arg, SceOff ofs, int whence) = NULL;
 int(* msstorOpen)(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) = NULL;
 
+#ifdef DEBUG
 // Cache Statistic
 unsigned int cacheReadTimes = 0;
 unsigned int cacheHit = 0;
 unsigned int cacheMissed = 0;
 unsigned int cacheUncacheable = 0;
+#endif
 
 // Cache Structure
 struct MsCache
@@ -149,9 +151,11 @@ static int msstorReadCache(PspIoDrvFileArg * arg, char * data, int len)
             _sw(0, 0);
         }
 #endif
-        
+
+        #ifdef DEBUG        
         // Log cacheable data
         cacheHit += len;
+        #endif
     }
     
     // No Cache available
@@ -190,8 +194,10 @@ static int msstorReadCache(PspIoDrvFileArg * arg, char * data, int len)
                 msstorLseek(arg, pos + result, PSP_SEEK_SET);
             }
             
+            #ifdef DEBUG
             // Log caching length
             cacheMissed += len;
+            #endif
         }
         
         // Too big to cache...
@@ -200,13 +206,17 @@ static int msstorReadCache(PspIoDrvFileArg * arg, char * data, int len)
             // Forward Call
             result = msstorRead(arg, data, len);
             
+            #ifdef DEBUG
             // Log uncacheable data
             cacheUncacheable += len;
+            #endif
         }
     }
-    
+
+    #ifdef DEBUG    
     // Log read data
     cacheReadTimes += len;
+    #endif
     
     // Return Result
     return result;
@@ -426,6 +436,7 @@ int msstorCacheInit(const char* driver, int bufSize)
 // call @SystemControl:SystemCtrlPrivate,0xFFC9D099@
 void msstorCacheStat(int reset)
 {
+    #ifdef DEBUG
     // Output Buffer
     char buf[256];
     
@@ -461,6 +472,7 @@ void msstorCacheStat(int reset)
         // Delete Statistic
         cacheReadTimes = cacheHit = cacheMissed = cacheUncacheable = 0;
     }
+    #endif
 }
 
 // For PSPLink Debugging

@@ -29,6 +29,43 @@
 
 extern ARKConfig* ark_config;
 
+#define MAX_PLUGINS 32
+#define MAX_PLUGIN_PATH 64
+
+static struct{
+    int count;
+    char paths[MAX_PLUGINS][MAX_PLUGIN_PATH];
+} plugins;
+
+static addPlugin(char* path){
+    if (plugins.count < MAX_PLUGINS)
+        strcpy(plugins.paths[plugins.count++], path);
+}
+
+static removePlugin(char* path){
+    for (int i=0; i<plugins.count; i++){
+        if (strcpy(plugins.paths[i], path) == 0){
+            if (--plugins.count > i){
+                strcpy(plugins.paths[i], plugins.paths[plugins.count]);
+            }
+            break;
+        }
+    }
+}
+
+// Load and Start Plugin Module
+static void startPlugins()
+{
+
+    for (int i=0; i<plugins.count; i++){
+        char* path = plugins.paths[i];
+        // Load Module
+        int uid = sceKernelLoadModule(path, 0, NULL);
+        // Start Module
+        int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
+    }
+}
+
 // Runlevel Check
 static int matchingRunlevel(char * runlevel)
 {
@@ -61,22 +98,6 @@ static int booleanOn(char * text)
     
     // Default to False
     return 0;
-}
-
-// Load and Start Plugin Module
-static void startPlugin(char * path)
-{
-    // external user plugin
-    // Load Module
-    int uid = sceKernelLoadModule(path, 0, NULL);
-    int res = -1;
-    
-    // Loaded Module
-    if(uid >= 0)
-    {
-        // Start Module
-        res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
-    }
 }
 
 // Whitespace Detection
@@ -169,10 +190,10 @@ static char * readLine(int fd, char * buf, unsigned int buflen)
 }
 
 // Parse and Process Line
-void processLine(char * line, void (*handler)(char*))
+void processLine(char * line, void (*enabler)(char*), void (*disabler)(char*))
 {
     // Skip Comment Lines
-    if(!handler || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#')
+    if(!enabler || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#')
         return;
     
     // String Token
@@ -232,13 +253,16 @@ void processLine(char * line, void (*handler)(char*))
         if(booleanOn(enabled))
         {
             // Start Plugin
-            handler(path);
+            enabler(path);
+        }
+        else{
+            if (disabler) disabler(path);
         }
     }
 }
 
 // Load Plugins
-void ProcessConfigFile(char* path, void (*handler)(char*))
+static void ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler)(char*))
 {
 
     int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
@@ -256,7 +280,7 @@ void ProcessConfigFile(char* path, void (*handler)(char*))
             while(readLine(fd, line, LINE_BUFFER_SIZE) != NULL)
             {
                 // Process Line
-                processLine(strtrim(line), handler);
+                processLine(strtrim(line), enabler, disabler);
             }
             
             // Free Buffer
@@ -284,10 +308,13 @@ void LoadPlugins(){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, "PLUGINS.TXT");
-    ProcessConfigFile(path, &startPlugin);
+    ProcessConfigFile(path, &addPlugin, &removePlugin);
     // Open Plugin Config from SEPLUGINS
-    ProcessConfigFile("ms0:/SEPLUGINS/PLUGINS.TXT", &startPlugin);
-    ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &startPlugin);
+    ProcessConfigFile("ms0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
+    if (!sctrlKernelMsIsEf()) // process ef0 plugins
+        ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
+    // start all loaded plugins
+    startPlugins();
 }
 
 void loadSettings(void* settingsHandler){
@@ -297,5 +324,5 @@ void loadSettings(void* settingsHandler){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, "SETTINGS.TXT");
-    ProcessConfigFile(path, settingsHandler);
+    ProcessConfigFile(path, settingsHandler, NULL);
 }
