@@ -12,10 +12,10 @@ int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize
     return start(args, argp);
 }
 
-int _pspemuLfatOpen(char** filename, int unk)
+int _pspemuLfatOpen(BootFile* file, int unk)
 {
-    if (filename != NULL && 0 == strcmp(*filename, "pspbtcnf.bin")){
-        char* p = *filename;
+    char* p = file->name;
+    if (strcmp(p, "pspbtcnf.bin") == 0){
         p[2] = 'v'; // custom btcnf for PS Vita
         if (IS_VITA_POPS(ark_config)){
             p[5] = 'x'; // psvbtxnf.bin for PS1 exploits
@@ -26,11 +26,22 @@ int _pspemuLfatOpen(char** filename, int unk)
             }
         }
     }
-    return pspemuLfatOpen(filename, unk);
+    else if (strcmp(p, REBOOT_MODULE) == 0){
+        file->buffer = (void *)0x89000000;
+		file->size = reboot_conf->rtm_mod.size;
+		memcpy(file->buffer, reboot_conf->rtm_mod.buffer, file->size);
+    }
+    return pspemuLfatOpen(file, unk);
 }
 
-int UnpackBootConfigDummy(char **p_buffer, int length){
-    return (*UnpackBootConfig)(*p_buffer, length);
+int UnpackBootConfigVita(char **p_buffer, int length){
+    int res = (*UnpackBootConfig)(*p_buffer, length);
+    if(reboot_conf->rtm_mod.before && reboot_conf->rtm_mod.buffer && reboot_conf->rtm_mod.size)
+    {
+        //add reboot prx entry
+        res = AddPRX(*p_buffer, reboot_conf->rtm_mod.before, REBOOT_MODULE, reboot_conf->rtm_mod.flags);
+    }
+    return res;
 }
 
 // patch reboot on ps vita
@@ -40,9 +51,8 @@ void patchRebootBufferVita(){
         u32 data = _lw(addr);
         if (data == JAL(pspemuLfatOpen)){
             _sw(JAL(_pspemuLfatOpen), addr); // Hook pspemuLfatOpen
-            // dummy out _UnpackBootConfig since we are using pspemuLfatOpen
             u32 _UnpackBootConfigPatched = &UnpackBootConfigPatched;
-            _sw(JUMP(UnpackBootConfigDummy), _UnpackBootConfigPatched);
+            _sw(JUMP(UnpackBootConfigVita), _UnpackBootConfigPatched);
             _sw(NOP, _UnpackBootConfigPatched+4);
         }
         else if (data == 0x3A230001){ // found pspemuLfatOpen

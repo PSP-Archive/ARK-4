@@ -3,6 +3,14 @@
 
 #include "rebootconfig.h"
 
+#define REBOOT_MODULE "/rtm.prx"
+
+typedef struct {
+	char *name;
+	void *buffer;
+	u32 size;
+} BootFile;
+
 extern RebootConfigARK* reboot_conf;
 extern ARKConfig* ark_config;
 

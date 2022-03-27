@@ -92,14 +92,8 @@ static void modify_partition(MemPart *part)
 int prevent_highmem(){
 
     if (psp_model == PSP_1000) return 1; // disallow on 1K
-
     int apitype = sceKernelInitApitype();
-
-    if (apitype == 0x141 || apitype == 0x152)
-        return 0; // allow on homebrew
-
-    // disallow by default
-    return 1;
+    return (apitype == 0x144 || apitype == 0x155 || apitype ==  0x210 || apitype ==  0x220);
 }
 
 void prepatch_partitions(void)
@@ -130,6 +124,10 @@ void prepatch_partitions(void)
 
 void patch_partitions(void) 
 {
+
+    if(prevent_highmem()){
+        return;
+    }
 
     MemPart p2, p9;
     int max_user_part_size;

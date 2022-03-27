@@ -39,12 +39,12 @@ int isSystemBooted(void)
 }
 
 static u32 fakeDevkitVersion(){
-    return FW_660;
+    return FW_660; // Popsloader V3 will check for 6.60, it fails on 6.61 so let's make it think it's on 6.60
 }
 
 static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int nid){
     if (nid == 0x221400A6 && strcmp(szMod, "SystemControl") == 0)
-        return 0;
+        return 0; // Popsloader V4 looks for this function to check for ME, let's pretend ARK doesn't have it ;)
     return sctrlHENFindFunction(szMod, szLib, nid);
 }
 
@@ -111,8 +111,7 @@ void settingsHandler(char* path){
         usb_charge(); // enable usb charging
     }
     else if (strcasecmp(path, "highmem") == 0){ // enable high memory
-        if (apitype != 0x144 && apitype != 0x155 && apitype !=  0x210 && apitype !=  0x220)
-            patch_partitions();
+        patch_partitions();
         flushCache();
     }
     else if (strcasecmp(path, "mscache") == 0){
