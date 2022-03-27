@@ -86,7 +86,12 @@ You can use the following keywords to tell ARK when the plugin loads:
 - vsh: plugin only loads in the XMB.
 - game ID: if you specify a game ID (i.e. SLUS000000), then the plugin will only load on that game.
 
-
+You can also disable a plugin on certain games where they might be problematic.
+To do so, just add a disable line for the specific game ID after the enable line.
+For example, enable cwcheat on all retail games except for GTA LCS and VCS.
+- umd, ms0:/seplugins/cwcheat/cwcheat.prx, on
+- ULUS10041, ms0:/seplugins/cwcheat/cwcheat.prx, off
+- ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 
 
 ### By configuring ARK
