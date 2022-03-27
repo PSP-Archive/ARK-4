@@ -34,7 +34,6 @@ extern ARKConfig* ark_config;
 
 static struct{
     int count;
-    int uids[MAX_PLUGINS];
     char paths[MAX_PLUGINS][MAX_PLUGIN_PATH];
 } plugins;
 
@@ -49,7 +48,7 @@ static addPlugin(char* path){
 
 static removePlugin(char* path){
     for (int i=0; i<plugins.count; i++){
-        if (strcpy(plugins.paths[i], path) == 0){
+        if (strcmp(plugins.paths[i], path) == 0){
             if (--plugins.count > i){
                 strcpy(plugins.paths[i], plugins.paths[plugins.count]);
             }
@@ -61,14 +60,12 @@ static removePlugin(char* path){
 // Load and Start Plugin Module
 static void startPlugins()
 {
-
     for (int i=0; i<plugins.count; i++){
         char* path = plugins.paths[i];
         // Load Module
         int uid = sceKernelLoadModule(path, 0, NULL);
         // Start Module
         int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
-        plugins.uids[i] = uid;
     }
 }
 
@@ -82,9 +79,9 @@ static int matchingRunlevel(char * runlevel)
     if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1; // always on
     else if (stricmp(runlevel, "vsh") == 0) return (apitype ==  0x210 || apitype ==  0x220); // VSH only
     else if (stricmp(runlevel, "pops") == 0) return (apitype == 0x144 || apitype == 0x155); // PS1 games only
-    else if (stricmp(runlevel, "homebrew") == 0) return (apitype == 0x141 || apitype == 0x152); // homebrews only
     else if (stricmp(runlevel, "umd") == 0) return (apitype == 0x120 || apitype == 0x123 || apitype == 0x125); // UMD games only
     else if (stricmp(runlevel, "game") == 0) return (apitype == 0x120 || apitype == 0x123 || apitype == 0x125 || apitype == 0x141 || apitype == 0x152); // umd+homebrew
+    else if (stricmp(runlevel, "homebrew") == 0) return (apitype == 0x141 || apitype == 0x152); // homebrews only
     else if (apitype == 0x120 || apitype == 0x123 || apitype == 0x125){ // check if plugin loads on specific game
         char gameid[10]; memset(gameid, 0, sizeof(gameid));
         return (getGameId(gameid) && stricmp(runlevel, gameid) == 0);
