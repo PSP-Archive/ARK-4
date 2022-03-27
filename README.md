@@ -9,7 +9,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Inferno driver Version 2 compatible with ISO, CSO, ZSO, JSO, CSOv2 and DAX formats.
 
-- Popcorn controller for custom PS1 games. Compatible with PopsLoader V3 by Team PRO.
+- Popcorn controller for custom PS1 games. Compatible with PopsLoader V3 and V4i.
 
 - Stargate No-DRM engine.
 

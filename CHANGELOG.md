@@ -1,5 +1,15 @@
 # ARK-4
 
+## Update 12
+- More cleanup of Core CFW files.
+- Fixed Popsloader V4i by PopsDeco.
+
+## Update 11
+- Huge cleanup and improvements in Core CFW modules SystemControl, Inferno and VshControl.
+
+## Update 10
+- Heavily improved SystemControl and Inferno Driver.
+
 ## Update 9.9
 - Fixed reboot runtime module on PSP.
 - Added fix for Team PRO's Popsloader V3 on firmware 6.61.
