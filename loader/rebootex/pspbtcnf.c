@@ -179,43 +179,6 @@ int patch_bootconf_updaterumd(char *buffer, int length)
     return result;
 }
 
-int patch_bootconf_psp(char* buffer, int length){
-    int newsize=-1, result=length;
-    
-    newsize = AddPRX(buffer, "/kd/init.prx", PATH_PSPCOMPAT+sizeof(PATH_FLASH0)-2, 0x000000EF);
-    if (newsize > 0) result = newsize;
-    
-    // Insert Stargate No-DRM Engine
-    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, UMDEMU_RUNLEVEL);
-    if (newsize > 0) result = newsize;
-    
-    return result;
-}
-
-/*
-int patch_bootconf_vita(char* buffer, int length){
-    int newsize=-1, result=length;
-    
-    newsize = AddPRX(buffer, "/kd/init.prx", PATH_VITACOMPAT+sizeof(PATH_FLASH0)-2, 0x000000EF);
-    if (newsize > 0) result = newsize;
-    
-    // Insert Stargate No-DRM Engine
-    newsize = AddPRX(buffer, "/kd/kermit_me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, UMDEMU_RUNLEVEL);
-    if (newsize > 0) result = newsize;
-    
-    return result;
-}
-
-int patch_bootconf_vitapops(char* buffer, int length){
-    int newsize=-1, result=length;
-    
-    newsize = AddPRX(buffer, "/kd/init.prx", PATH_VITAPOPS+sizeof(PATH_FLASH0)-2, 0x000000EF);
-    if (newsize > 0) result = newsize;
-    
-    return result;
-}
-*/
-
 int UnpackBootConfigPatched(char **p_buffer, int length)
 {
     int result;
@@ -232,27 +195,12 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     if (newsize > 0) result = newsize;
     
     // Insert compat layer
-    newsize = patch_bootconf_psp(buffer, length);
+    newsize = AddPRX(buffer, "/kd/init.prx", PATH_PSPCOMPAT+sizeof(PATH_FLASH0)-2, 0x000000EF);
     if (newsize > 0) result = newsize;
-    /*
-    if (IS_ARK_CONFIG(ark_config)){
-        if (IS_PSP(ark_config)){
-            newsize = patch_bootconf_psp(buffer, length);
-            if (newsize > 0) result = newsize;
-        }
-        else if (IS_VITA(ark_config)){
-            if (IS_VITA_POPS(ark_config)){
-                newsize = patch_bootconf_vitapops(buffer, length);
-                if (newsize > 0) result = newsize;
-            }
-            else{
-                newsize = patch_bootconf_vita(buffer, length);
-                if (newsize > 0) result = newsize;
-            }
-        }
-        else colorDebug(0xff); // unknown device (?), don't touch it
-    }
-    */
+    
+    // Insert Stargate No-DRM Engine
+    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, UMDEMU_RUNLEVEL);
+    if (newsize > 0) result = newsize;
     
     // Insert VSHControl
     if (SearchPrx(buffer, "/vsh/module/vshmain.prx") >= 0) {
@@ -470,27 +418,6 @@ int GetPrxFlag(char *buffer, const char* modname, u32 *flags)
     _btcnf_module * module = (_btcnf_module *)(buffer + header->modulestart);
 
     *flags = module[modnum].flags;
-
-    return 0;
-}
-
-// Note: new_mod_name cannot have longer filename than mod_name 
-int RenameModule(void *buffer, char *mod_name, char *new_mod_name)
-{
-    int modnum;
-
-    modnum = SearchPrx(buffer, mod_name);
-
-    if (modnum < 0) {
-        return modnum;
-    }
-
-    _btcnf_header * header = (_btcnf_header *)buffer;
-    
-    //cast module list
-    _btcnf_module * module = (_btcnf_module *)(buffer + header->modulestart);
-
-    strcpy((char*)(buffer + header->modnamestart + module[modnum].module_path), new_mod_name);
 
     return 0;
 }
