@@ -190,9 +190,9 @@ int patch_bootconf_psp(char* buffer, int length){
     if (newsize > 0) result = newsize;
     
     return result;
-
 }
 
+/*
 int patch_bootconf_vita(char* buffer, int length){
     int newsize=-1, result=length;
     
@@ -214,6 +214,7 @@ int patch_bootconf_vitapops(char* buffer, int length){
     
     return result;
 }
+*/
 
 int UnpackBootConfigPatched(char **p_buffer, int length)
 {
@@ -231,6 +232,9 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     if (newsize > 0) result = newsize;
     
     // Insert compat layer
+    newsize = patch_bootconf_psp(buffer, length);
+    if (newsize > 0) result = newsize;
+    /*
     if (IS_ARK_CONFIG(ark_config)){
         if (IS_PSP(ark_config)){
             newsize = patch_bootconf_psp(buffer, length);
@@ -248,6 +252,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
         }
         else colorDebug(0xff); // unknown device (?), don't touch it
     }
+    */
     
     // Insert VSHControl
     if (SearchPrx(buffer, "/vsh/module/vshmain.prx") >= 0) {

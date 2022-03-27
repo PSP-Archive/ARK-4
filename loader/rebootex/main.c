@@ -190,10 +190,13 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4)
         else if (IS_VITA(ark_config)){
             patchRebootBufferVita();
         }
+        #ifdef DEBUG
         else colorDebug(0xff); // unknown device (?), don't touch it
+        #endif
     }
+    #ifdef DEBUG
     else colorDebug(0xff); // incorrect configuration
-    
+    #endif
     
     // Forward Call
     return sceReboot(arg1, arg2, arg3, arg4);

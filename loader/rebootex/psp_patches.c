@@ -96,7 +96,6 @@ int _sceBootLfatOpen(char * filename)
     //load on reboot module open
     if(strcmp(filename, "/rtm.prx") == 0)
     {
-    
         //mark for read
         rebootmodule_open = 1;
         p_rmod = rtm_buf;

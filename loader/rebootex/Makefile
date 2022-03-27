@@ -8,10 +8,6 @@ all: $(TARGET)
 
 CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 
-ifdef DEBUG
-CFLAGS += -DDEBUG=$(DEBUG)
-endif
-
 CC = psp-gcc
 LD = psp-ld
 STRIP = psp-strip
@@ -24,7 +20,12 @@ C_OBJS = main.o \
 	psv_patches.o \
 	$(ARKROOT)/common/functions.o \
 
-LIBS = -L $(ARKROOT)/libs -lansic -lcolordebugger
+LIBS = -L $(ARKROOT)/libs -lansic
+
+ifdef DEBUG
+CFLAGS += -DDEBUG=$(DEBUG)
+LIBS += -lcolordebugger
+endif
 
 main.elf: $(C_OBJS)
 

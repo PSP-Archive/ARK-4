@@ -9,10 +9,3 @@ psvbtxnf.bin,dist/PSVBTXNF.BIN
 /kd/ark_pspcompat.prx,dist/PSPCOMP.BIN
 /kd/ark_vitacompat.prx,dist/VITACOMP.BIN
 /kd/ark_vitapops.prx,dist/VITAPOPS.BIN
-/kd/ark_vitapopcorn.prx,dist/POPCORNV.BIN
-/kd/popsman660.prx,dist/POPSMAN.BIN
-/kd/mediasync660.prx,dist/MEDIASYNC.BIN
-/kd/modulemgr660.prx,dist/MODMAN.BIN
-/kd/interruptman660.prx,dist/INTERRUP.BIN
-/vsh/module/libpspvmc660.prx,dist/PSPVMC.BIN
-/vsh/module/libfont_hv660.prx,dist/LIBFONTHV.BIN
