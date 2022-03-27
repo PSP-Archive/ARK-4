@@ -14,13 +14,15 @@ STRIP = psp-strip
 OBJCOPY = psp-objcopy
 LINKFILE = linkfile.l
 
-C_OBJS = main.o \
+C_OBJS = \
+	main.o \
+	lib.o \
 	pspbtcnf.o \
 	psp_patches.o \
 	psv_patches.o \
 	$(ARKROOT)/common/functions.o \
 
-LIBS = -L $(ARKROOT)/libs -lansic
+LIBS = -L $(ARKROOT)/libs
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)

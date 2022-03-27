@@ -1,6 +1,5 @@
 #include <psptypes.h>
 
-/*
 void* memcpy(void *dst,void *src,int size)
 {
     u8 *p1 = (u8 *)dst;
@@ -10,31 +9,6 @@ void* memcpy(void *dst,void *src,int size)
         *p1++ = *p2++;
     }
     return dst;
-}
-*/
-
-void memcpy_b(void *dst, void *src, int len)
-{
-    u8 *d = (u8 *)dst;
-    u8 *s = (u8 *)src;
-    while(len--) 
-    {
-        d[len] = s[len];
-    } 
-}
-
-/*
-int memcmp(char *m1, char *m2, int size)
-{
-    int i;
-
-    for (i = 0; i < size; i++)
-    {
-        if (m1[i] != m2[i])
-            return m2[i] - m1[i];
-    }
-
-    return 0;
 }
 
 int strcmp(const char *s, const char *t)
@@ -59,12 +33,33 @@ void* memset(void *dst, u8 code, int size)
     return p1;
 }
 
-int strlen(char *str)
-{
-    char *p;
-    for(p=str; *p; ++p)
-        ;
-
-    return (p - str);
+int strcpy(char* dest, char* orig){
+    int i = 0;
+    do{
+        dest[i] = orig[i];
+    } while (orig[i++]);
+    return i-1;
 }
-*/
+
+void *memmove(void * to_, const void * from_, unsigned int length)
+{
+    char *to = to_;
+    const char *from = from_;
+
+    if (to > from) {
+        //back buffer
+        char * tob = to + length;
+        const char * fromb = from + length;
+
+        //loop copy
+        unsigned int pos = 0; for(; pos < length; pos++)
+        {
+            //copy byte
+            *--tob = *--fromb;
+        }
+
+        return to_;
+    }
+
+    return memcpy(to, from, length);
+}

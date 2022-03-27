@@ -348,8 +348,7 @@ int AddPRX(char * buffer, char * insertbefore, char * prxname, u32 flags)
     }
 
     _btcnf_header * header = (_btcnf_header *)buffer;
-    strcpy(buffer + header->modnameend, prxname);
-    int len = strlen(prxname);
+    int len = strcpy(buffer + header->modnameend, prxname); //strlen(prxname);
     header->modnameend += len+1;
     return AddPRXNoCopyName(buffer, insertbefore, header->modnameend - len - 1, flags);
 }
