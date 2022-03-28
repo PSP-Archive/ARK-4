@@ -21,137 +21,109 @@
 3.
 4.
 
-#### Recovery settings ( Default is disabled )
-- [ ] USB Charge  
+#### Recovery settings
+- USB Charge  
 	<details>
 		<summary>Option type (click to view)</summary>
-
+	
+	- [X] Disabled
 	- [ ] Always
-
-		- [ ] Game
-
-		- [ ] UMD
-
-		- [ ] Homebrew
-
-		- [ ] Pops
-
-		- [ ] VSH
+	- [ ] Game
+	- [ ] UMD
+	- [ ] Homebrew
+	- [ ] Pops
+	- [ ] VSH
 
 	</details>
 
-- [ ] OverClock 
+- OverClock 
 
 	<details>
 		<summary>Option type (click to view)</summary>
-
+	
+	- [X] Disabled
 	- [ ] Always
-
-		- [ ] Game
-
-		- [ ] UMD
-
-		- [ ] Homebrew
-
-		- [ ] Pops
-
-		- [ ] VSH
+	- [ ] Game
+	- [ ] UMD
+	- [ ] Homebrew
+	- [ ] Pops
+	- [ ] VSH
 
 	</details>
 
-- [ ] PowerSave
+- PowerSave
 
 	<details>
 		<summary>Option type (click to view)</summary>
-
+	
+	- [X] Disabled
 	- [ ] Always
-
-		- [ ] Game
-
-		- [ ] UMD
-
-		- [ ] Homebrew
-
-		- [ ] Pops
-
-		- [ ] VSH
+	- [ ] Game
+	- [ ] UMD
+	- [ ] Homebrew
+	- [ ] Pops
+	- [ ] VSH
 
 	</details>
 
 
-- [ ] Autoboot Launcher
+- Autoboot Launcher
 
 	<details>
 		<summary>Option type (click to view)</summary>
 
+	- [X] Disabled
 	- [ ] Always
-
-		- [ ] Game
-
-		- [ ] UMD
-
-		- [ ] Homebrew
-
-		- [ ] Pops
-
-		- [ ] VSH
+	- [ ] Game
+	- [ ] UMD
+	- [ ] Homebrew
+	- [ ] Pops
+	- [ ] VSH
 
 	</details>
 
-- [ ] Disable PSP Go Pause
+- Disable PSP Go Pause
 
 	<details>
 		<summary>Option type (click to view)</summary>
 
+	- [X] Disabled
 	- [ ] Always
-
-		- [ ] Game
-
-		- [ ] UMD
-
-		- [ ] Homebrew
-
-		- [ ] Pops
-
-		- [ ] VSH
+	- [ ] Game
+	- [ ] UMD
+	- [ ] Homebrew
+	- [ ] Pops
+	- [ ] VSH
 
 	</details>
 
-- [ ] Unlock Extra Memory
+- Unlock Extra Memory
 
 	<details>
 		<summary>Option type (click to view)</summary>
 
+	- [X] Disabled
 	- [ ] Always
-
-		- [ ] Game
-
-		- [ ] UMD
-
-		- [ ] Homebrew
-
-		- [ ] Pops
-
-		- [ ] VSH
+	- [ ] Game
+	- [ ] UMD
+	- [ ] Homebrew
+	- [ ] Pops
+	- [ ] VSH
 
 	</details>
 
-- [ ] Memory Stick Speedup
+- Memory Stick Speedup
 
 	<details>
 		<summary>Option type (click to view)</summary>
 
+	- [X] Disabled
 	- [ ] Always
-
-		- [ ] Game
-
-		- [ ] UMD
-
-		- [ ] Homebrew
-
-		- [ ] Pops
-
-		- [ ] VSH
+	- [ ] Game
+	- [ ] UMD
+	- [ ] Homebrew
+	- [ ] Pops
+	- [ ] VSH
 
 	</details>
 
