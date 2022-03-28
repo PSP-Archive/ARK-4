@@ -87,7 +87,12 @@ function original {
 	    fi
 
 		if [[ ${BASH_ARGV} == "--debug" ]] ; then
-			eval make DEBUG=1
+			dialog --colors --title "\Z1DEBUG ISSUE\Z0" --infobox "\nCurrently DEBUG mode is not working properly. I Will re-add when working.\n\nRunning normal \`make\`" 10 50
+			sleep 2;
+			dialog --clear
+			#eval make CFLAGS=-DDEBUG=1
+			eval make
+
 		else	
 	    	eval make
 		fi
