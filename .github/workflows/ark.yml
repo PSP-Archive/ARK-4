@@ -71,6 +71,6 @@ jobs:
           #    ARK-4.tar.gz
           #    ARK-4-DEBUG.zip
           #    ARK-4-DEBUG.tar.gz
-         files: |
-            ARK-4.zip
-            ARK-4.tar.gz
+        files: |
+          ARK-4.zip
+          ARK-4.tar.gz
