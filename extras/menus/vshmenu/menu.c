@@ -39,10 +39,17 @@ enum{
     TMENU_EXIT
 };
 
+
+
+//version = strncpy(version[0], "%d.%d" major, minor);
+//if (micro>0) version = sprintf(version, "%d.%d.%d", major, minor, micro);
+//ark_version = version.str();
+
 int item_fcolor[TMENU_MAX];
 const char *item_str[TMENU_MAX];
 
 static int menu_sel = TMENU_LAUNCHER;
+
 
 const int xyPoint[] ={0x98, 0x30, 0xC0, 0xA0, 0x70, 0x08, 0x0E, 0xA8};//data243C=
 const int xyPoint2[] ={0xB0, 0x30, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data2458=
@@ -53,8 +60,18 @@ int menu_draw(void)
     const char *msg;
     int max_menu, cur_menu;
     const int *pointer;
+	const char ark_version[16];
     int xPointer;
-    
+	int ver = sctrlHENGetMinorVersion();
+ 	int major = (ver&0xFF0000)>>16;
+	int minor = (ver&0xFF00)>>8;
+	int micro = (ver&0xFF);
+	int version;
+
+	// Get ARK Version
+  	version = snprintf(ark_version, sizeof(ark_version), "   ARK %d.%d   ", major, minor); 
+	if (micro>0) version = snprintf(ark_version, sizeof(ark_version), "   ARK %d.%d.%d   ", major, minor, micro);
+
     // check & setup video mode
     if( blit_setup() < 0) return -1;
 
@@ -66,7 +83,8 @@ int menu_draw(void)
 
     // show menu list
     blit_set_color(0xffffff,0x8000ff00);
-    blit_string(pointer[0], pointer[1], g_messages[MSG_ARK_VSH_MENU]);
+    //blit_string(pointer[0], pointer[1], g_messages[MSG_ARK_VSH_MENU]);
+    blit_string(pointer[0], pointer[1], ark_version);
 
     for(max_menu=0;max_menu<TMENU_MAX;max_menu++) {
         fc = 0xffffff;
