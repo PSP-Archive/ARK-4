@@ -146,7 +146,7 @@ int flashLoadPatch(int cmd)
 u32 findKermitFlashDriver(){
     u32 nids[] = {0x4F75AA05, 0x36666181};
     for (int i=0; i<sizeof(nids)/sizeof(u32) && Kermit_driver_4F75AA05 == NULL; i++){
-        Kermit_driver_4F75AA05 = FindFunction("sceKermit_Driver", "sceKermit_driver", nids[i]);
+        Kermit_driver_4F75AA05 = sctrlHENFindFunction("sceKermit_Driver", "sceKermit_driver", nids[i]);
     }
     return Kermit_driver_4F75AA05;
 }
@@ -161,7 +161,7 @@ int patchKermitPeripheral(KernelFunctions* kf)
     u32 i;
     for (i = 0; i < 2; i++)
     {
-        swaddress = findFirstJALForFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", knownnids[i]);
+        swaddress = findFirstJAL(sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", knownnids[i]));
         if (swaddress != 0)
             break;
     }

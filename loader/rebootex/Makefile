@@ -20,7 +20,7 @@ C_OBJS = \
 	pspbtcnf.o \
 	psp_patches.o \
 	psv_patches.o \
-	$(ARKROOT)/common/functions.o \
+	$(ARKROOT)/common/utils/scanner.o \
 
 LIBS = -L $(ARKROOT)/libs
 

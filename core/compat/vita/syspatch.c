@@ -65,7 +65,7 @@ int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, 
     
     // Find Target Function
     int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
-        = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
+        = (void *)findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
 
 
     // Load Execute Module
@@ -156,7 +156,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     // Patch Vita Popsman
     if (strcmp(mod->modname, "scePops_Manager") == 0){
         //patchVitaPopsman(mod);
-        colorDebug(0xFF0000);
         goto flush;
     }
     
@@ -164,7 +163,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "pops") == 0)
     {
         //patchVitaPopsSpu(mod);
-        colorDebug(0xFF00);
         goto flush;
     }
     

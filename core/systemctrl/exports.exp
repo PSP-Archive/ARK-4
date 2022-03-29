@@ -71,6 +71,7 @@ PSP_EXPORT_FUNC(sctrlSESetDiscOut)
 PSP_EXPORT_FUNC(sctrlKernelMsIsEf)
 PSP_EXPORT_FUNC(sctrlHENIsTestingTool)
 PSP_EXPORT_FUNC(sctrlHENSetTestingTool)
+PSP_EXPORT_FUNC(flushCache)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(SystemCtrlForKernel, 0, 0x0001)
@@ -163,6 +164,7 @@ PSP_EXPORT_FUNC(sctrlHENSetTestingTool)
 PSP_EXPORT_FUNC(sctrlHENSetRebootexOverride)
 PSP_EXPORT_FUNC(sctrlHENRegisterLLEHandler)
 PSP_EXPORT_FUNC(sctrlHENTakeInitControl)
+PSP_EXPORT_FUNC(flushCache)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(KUBridge, 0, 0x4001)

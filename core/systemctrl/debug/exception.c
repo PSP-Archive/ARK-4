@@ -96,7 +96,7 @@ static void ARKExceptionHandler(PspDebugRegBlock * regs)
     }
     
     // present user menu for recovery options
-    int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = (void *)FindFunction("sceController_Service", "sceCtrl", 0x3A622550);
+    int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
     if (CtrlPeekBufferPositive){
         PRTSTR("Press cross to soft reset");
         PRTSTR("Press circle to launch recovery");
@@ -118,11 +118,11 @@ static void ARKExceptionHandler(PspDebugRegBlock * regs)
                 doExitGame(1);
             }
             else if((data.Buttons & PSP_CTRL_SQUARE) == PSP_CTRL_SQUARE){
-                void (*ColdReset)(int) = FindFunction("scePower_Service", "scePower", 0x0442D852);
+                void (*ColdReset)(int) = sctrlHENFindFunction("scePower_Service", "scePower", 0x0442D852);
                 if (ColdReset) ColdReset(0);
             }
             else if((data.Buttons & PSP_CTRL_TRIANGLE) == PSP_CTRL_TRIANGLE){
-                void (*Shutdown)() = FindFunction("scePower_Service", "scePower", 0x2B7C7CF4);
+                void (*Shutdown)() = sctrlHENFindFunction("scePower_Service", "scePower", 0x2B7C7CF4);
                 if (Shutdown) Shutdown();
             }
         }

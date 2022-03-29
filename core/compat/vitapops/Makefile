@@ -5,7 +5,7 @@ C_OBJS = \
 	syspatch.o \
 	nullaudio.o \
 	popsdisplay.o \
-	$(ARKROOT)/common/functions.o \
+	$(ARKROOT)/common/utils/patches.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o  \
 		

@@ -5,7 +5,6 @@
 #include "globals.h"
 #include "macros.h"
 #include "module2.h"
-#include "graphics.h"
 
 // Fixed Game Info Getter Function
 void * SysMemForKernel_EF29061C_Fixed(void)

@@ -267,8 +267,8 @@ void patch_sceMesgLed()
     }
     
     u32 call = JAL(mesgled_decrypt);
-    u32 func1 = (void*)FindFunction("sceMesgLed", "sceMesgLed_driver", 0x792A6126);
-    u32 func2 = (void*)FindFunction("sceMesgLed", "sceMesgLed_driver", 0x337D0DD3);
+    u32 func1 = (void*)sctrlHENFindFunction("sceMesgLed", "sceMesgLed_driver", 0x792A6126);
+    u32 func2 = (void*)sctrlHENFindFunction("sceMesgLed", "sceMesgLed_driver", 0x337D0DD3);
     
     _sw(intr, func1+140); // patch the first call to mesgled_decrypt in sceMesgLed_driver_792A6126
     _sw(intr, func2+920); // patch the second call to mesgled_decrypt in sceMesgLed_driver_337D0DD3

@@ -1,5 +1,5 @@
 TARGET = vshctrl
-OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o hibernation_delete.o $(ARKROOT)/common/functions.o $(ARKROOT)/libs/ansi-c/strsafe.o
+OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o hibernation_delete.o $(ARKROOT)/libs/ansi-c/strsafe.o
 IMPORTS = 
 
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/core/systemctrl/include

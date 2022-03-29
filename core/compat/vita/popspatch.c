@@ -1,7 +1,6 @@
 #include <pspsdk.h>
 #include <systemctrl.h>
 #include <macros.h>
-#include <graphics.h>
 #include "popspatch.h"
 
 #define PSP_SPU_REGISTER 0x49F40000

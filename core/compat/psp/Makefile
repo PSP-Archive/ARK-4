@@ -6,8 +6,6 @@ C_OBJS = \
 	high_mem.o  \
 	cpuclock.o   \
 	usb_charge.o  \
-	flashinstall.o \
-	$(ARKROOT)/common/functions.o \
 	$(ARKROOT)/core/systemctrl/src/gameinfo.o \
 		
 OBJS = \

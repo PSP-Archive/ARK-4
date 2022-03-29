@@ -45,7 +45,7 @@ static int isSystemBooted(void)
 
 // patch pops display to set up our own screen handler
 void patchVitaPopsDisplay(SceModule2* mod){
-    u32 display_func = FindFunction("sceDisplay_Service", "sceDisplay_driver", 0x3E17FE8D);
+    u32 display_func = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay_driver", 0x3E17FE8D);
     if (display_func){
         // protect vita pops vram
         sceKernelAllocPartitionMemory(6, "POPS VRAM CONFIG", 2, 0x1B0, (void *)0x09FE0000);

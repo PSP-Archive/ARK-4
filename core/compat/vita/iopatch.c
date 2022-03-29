@@ -9,7 +9,6 @@
 #include <systemctrl_private.h>
 #include <macros.h>
 #include <functions.h>
-#include <graphics.h>
 
 // define all possible file replacements here
 static struct{

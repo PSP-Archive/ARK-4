@@ -17,7 +17,7 @@ C_OBJS =    \
 	vitaflash.o   \
 	popspatch.o    \
 	filesystem.o    \
-	$(ARKROOT)/common/functions.o \
+	$(ARKROOT)/common/utils/patches.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
 	$(ARKROOT)/core/systemctrl/src/gameinfo.o \
 		
@@ -28,7 +28,7 @@ all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common $(ARKROOT)
 CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
 
-CFLAGS += -I psxspu/ -I $(ARKROOT)/common/include/ -I $(ARKROOT)/libs/graphics/ -I $(ARKROOT)/core/systemctrl/include/
+CFLAGS += -I psxspu/ -I $(ARKROOT)/common/include/ -I $(ARKROOT)/core/systemctrl/include/
 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
@@ -41,7 +41,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lgraphics -lcolordebugger -lpspsystemctrl_kernel -lansic
+LIBS = -lpspsemaphore -lpspsystemctrl_kernel
 
 PSP_FW_VERSION = 660
 

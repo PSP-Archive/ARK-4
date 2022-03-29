@@ -65,8 +65,8 @@ LIBS = -lpspsemaphore
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
-LIBS += -lgraphics -lcolordebugger
 OBJS += debug/exception.o debug/exception_asm.o debug/printk.o debug/jumper.o
+LIBS += -lcolordebugger -lgraphics
 else
 OBJS += debug/dummy.o
 endif

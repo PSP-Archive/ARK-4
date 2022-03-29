@@ -203,3 +203,7 @@ void clearBSS(void){
     // Clear Memory
     memset(&__bss_start, 0, &__bss_end - &__bss_start);
 }
+
+u32 sctrlHENFindFunction(char* mod, char* lib, u32 nid){
+    return FindFunction(mod, lib, nid);
+}

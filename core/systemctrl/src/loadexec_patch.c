@@ -1,6 +1,5 @@
 #include "loadexec_patch.h"
 #include <functions.h>
-#include <graphics.h>
 
 void patchLoadExecCommon(SceModule2* loadexec, u32 LoadReboot, u32 GetUserLevel, int k1_patches){
     u32 addr = 0;
