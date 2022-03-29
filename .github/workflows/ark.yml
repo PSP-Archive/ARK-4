@@ -49,9 +49,9 @@ jobs:
       run: make
     - name: Compressing dist directory up
       run: cd ./dist && sudo tar czvf ARK-4.tar.gz * && mv ARK-4.tar.gz .. && sudo zip -r ARK-4.zip * && mv ARK-4.zip ..
-    - name: Making DEBUG version
-      run: |
-        make clean && make DEBUG=1 && cd ./dist && sudo tar czvf ARK-4-DEBUG.tar.gz * && mv ARK-4-DEBUG.tar.gz .. && sudo zip -r ARK-4-DEBUG.zip * && mv ARK-4-DEBUG.zip ..
+        #- name: Making DEBUG version
+        #run: |
+        #make clean && make DEBUG=1 && cd ./dist && sudo tar czvf ARK-4-DEBUG.tar.gz * && mv ARK-4-DEBUG.tar.gz .. && sudo zip -r ARK-4-DEBUG.zip * && mv ARK-4-DEBUG.zip ..
     
     - name: Create Version
       id: get_version
