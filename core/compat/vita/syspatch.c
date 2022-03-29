@@ -14,6 +14,8 @@
 
 extern STMOD_HANDLER previous;
 
+extern int sctrlKernelExitVSH(void*);
+
 KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
     .KernelIcacheInvalidateAll = &sceKernelIcacheInvalidateAll,
@@ -140,9 +142,9 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     // Patch sceKernelExitGame Syscalls
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), sctrlExitToLauncher);
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), sctrlExitToLauncher);
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), sctrlExitToLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), sctrlKernelExitVSH);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), sctrlKernelExitVSH);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), sctrlKernelExitVSH);
         goto flush;
     }
     
@@ -156,6 +158,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     // Patch Vita Popsman
     if (strcmp(mod->modname, "scePops_Manager") == 0){
         //patchVitaPopsman(mod);
+        // Hook scePopsManExitVSHKernel
+        //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), sctrlKernelExitVSH);
         goto flush;
     }
     
@@ -201,8 +205,7 @@ void PROVitaSysPatch(){
     SceModule2* mod = NULL;
     // filesystem patches
     initFileSystem();
-    SceModule2* ioman = patchFileIO();
-    
+    SceModule2* ioman = patchFileIO();    
     // patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
     patchLoadExecUMDemu();
 }

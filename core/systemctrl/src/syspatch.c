@@ -69,12 +69,10 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     
   #ifdef DEBUG
     int apitype = sceKernelInitApitype();
-    
     printk("syspatch: %s(0x%04X)\r\n", mod->modname, apitype);
     hookImportByNID(mod, "KDebugForKernel", 0x84F370BC, printk);
     if (DisplaySetFrameBuf){
         initScreen(DisplaySetFrameBuf);
-        PRTSTR1("Loading module %s", mod->modname);
     }
   #endif
 
@@ -136,7 +134,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         if(isSystemBooted())
         {
             // Allow exiting through key combo
-            sctrlPatchExitGame();
+            patchExitGame();
             // syncronize printk
             printkSync();
             // Boot Complete Action done

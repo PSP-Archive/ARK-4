@@ -32,22 +32,18 @@
 
 extern ARKConfig* ark_config;
 
-void doExitGame(int recovery)
+extern void sctrlExitToLauncher();
+
+void exitLauncher()
 {
 
-    // Refuse Operation in Save dialog
-    if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return;
-    
-    // Refuse Operation in Dialog
-    if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return;
-    
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
     
     // set exit app
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
-    if (recovery) strcat(path, ARK_RECOVERY);
+    if (ark_config->recovery) strcat(path, ARK_RECOVERY);
     else if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
     else strcat(path, ARK_MENU);
     
@@ -64,15 +60,6 @@ void doExitGame(int recovery)
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 }
 
-static void exitgame(){
-    if (ark_config->launcher[0]){
-        doExitGame(0);
-    }
-    else{
-        sctrlKernelExitVSH(NULL);
-    }
-}
-
 // Gamepad Polling Thread
 int control_poller(SceSize args, void * argp)
 {
@@ -84,6 +71,14 @@ int control_poller(SceSize args, void * argp)
     // Endless Loop
     while(1)
     {
+        // Save CPU Time (30fps)
+        sceKernelDelayThread((unsigned int)(1000000.0f / 30.0f));
+        
+        // Refuse Operation in Save dialog
+        if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) continue;
+        
+        // Refuse Operation in Dialog
+        if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) continue;
     
         if (CtrlPeekBufferPositive == NULL){
             CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
@@ -98,12 +93,9 @@ int control_poller(SceSize args, void * argp)
             for(int i = 0; i < count; i++)
             {
                 // Execute launcher
-                if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitgame();
+                if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) exitLauncher();
             }
         }
-        
-        // Save CPU Time (30fps)
-        sceKernelDelayThread((unsigned int)(1000000.0f / 30.0f));
     }
     
     // Exit and Delete Thread
@@ -117,7 +109,7 @@ int control_poller(SceSize args, void * argp)
 void startControlPoller(void)
 {
     // Create Thread (with USER_PRIORITY_HIGHEST - 1)
-    int uid = sceKernelCreateThread("ExitGamePollThread", control_poller, 16 - 1, 1024, 0, NULL);
+    int uid = sceKernelCreateThread("ExitGamePollThread", control_poller, 16 - 1, 1024, PSP_THREAD_ATTR_VFPU, NULL);
     
     // Created Thread Handle
     if(uid >= 0)
@@ -131,28 +123,14 @@ void startControlPoller(void)
     }
 }
 
-// POPS Specific Hooks
-void hookPOPSExit(void)
-{
-    // Hook scePopsManExitVSHKernel
-    sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), exitgame);
-}
-
 // Start exit game handler
-void sctrlPatchExitGame()
+void patchExitGame()
 {
-
-    //initController();
-
     // Get Apitype
     int apitype = sceKernelInitApitype();
     
     if (apitype ==  0x210 || apitype ==  0x220){
         // Do nothing on VSH
-    }
-    else if (apitype == 0x144 || apitype == 0x155){
-        // Hook POPS Exit Calls
-        hookPOPSExit();
     }
     else {
         // Start Polling Thread

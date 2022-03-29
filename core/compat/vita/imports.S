@@ -10,4 +10,3 @@
 
 	IMPORT_START "SystemCtrlForKernel",0x00090000
 	IMPORT_FUNC  "SystemCtrlForKernel",0x745286D1,sctrlHENSetMemory
-	IMPORT_FUNC  "SystemCtrlForKernel",0x162DC9FC,sctrlExitToLauncher
