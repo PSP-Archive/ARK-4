@@ -1,9 +1,15 @@
+#include <sstream>
 #include <pspkernel.h>
 #include <psppower.h>
 
 #include "system_mgr.h"
 #include "common.h"
 #include "controller.h"
+
+
+extern "C" u32 sctrlHENGetMinorVersion();
+
+string ark_version = "";
 
 static SceUID draw_thread = -1;
 static SceUID draw_sema = -1;
@@ -236,6 +242,15 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     draw_sema = sceKernelCreateSema("draw_sema", 0, 1, 1, NULL);
     entries = e;
     MAX_ENTRIES = ne;
+    
+    u32 ver = sctrlHENGetMinorVersion();
+    u32 major = (ver&0xFF0000)>>16;
+    u32 minor = (ver&0xFF00)>>8;
+    u32 micro = (ver&0xFF);
+    stringstream version;
+    version << "ARK Version " << major << "." << minor;
+    if (micro>0) version << "." << micro;
+    ark_version = version.str();
 }
 
 void SystemMgr::startMenu(){

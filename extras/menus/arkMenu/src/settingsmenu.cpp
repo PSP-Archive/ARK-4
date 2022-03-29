@@ -8,6 +8,8 @@
 #define MENU_H_SPEED 30
 #define PAGE_SIZE 10
 
+extern string ark_version;
+
 SettingsMenu::SettingsMenu(settings_entry** settings_entries, int max_options, void (*save_callback)()){
     this->animation = -1;
     this->index = 0;
@@ -25,6 +27,7 @@ SettingsMenu::SettingsMenu(settings_entry** settings_entries, int max_options, v
     this->info = "Menu Settings";
     this->name = "Settings";
     this->callback = save_callback;
+    
 }
 
 SettingsMenu::~SettingsMenu(){
@@ -81,6 +84,8 @@ void SettingsMenu::draw(){
                 int height = max_height/max_options;
                 common::getImage(IMAGE_DIALOG)->draw_scale(x-10, y + (index*height), 5, height);
             }
+        
+            common::printText(x+40, y+15, ark_version.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
         
             int yoffset = y+30;
             int xoffset = x+10;

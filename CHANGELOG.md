@@ -1,5 +1,9 @@
 # ARK-4
 
+## Update 13.1
+- Fixed exitgame
+- Added ARK version to custom launcher and recovery.
+
 ## Update 13
 - Huge cleanup of all Core CFW modules, reducing memory consumption.
 - You can now disable plugins on a per-game or per-runlevel basis.
