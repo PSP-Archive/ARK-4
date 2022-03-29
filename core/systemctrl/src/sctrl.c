@@ -109,6 +109,26 @@ int sctrlKernelLoadExecVSHEf2(const char *file, struct SceKernelLoadExecVSHParam
     return res;
 }
 
+// Load Execute Module via Kernel Internal Function
+int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
+{
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Find Target Function
+    int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
+        = findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
+
+    // Load Execute Module
+    int result = _LoadExecVSHWithApitype(apitype, file, param, 0x10000);
+    
+    // Restore Permission Level on Failure
+    pspSdkSetK1(k1);
+    
+    // Return Error Code
+    return result;
+}
+
 int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param)
 {
     u32 k1;
@@ -235,26 +255,6 @@ unsigned int sctrlModuleTextAddr(char * modname)
     
     // Return Result
     return text_addr;
-}
-
-// Load Execute Module via Kernel Internal Function
-int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
-{
-    // Elevate Permission Level
-    unsigned int k1 = pspSdkSetK1(0);
-    
-    // Find Target Function
-    int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
-        = findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
-
-    // Load Execute Module
-    int result = _LoadExecVSHWithApitype(apitype, file, param, 0x10000);
-    
-    // Restore Permission Level on Failure
-    pspSdkSetK1(k1);
-    
-    // Return Error Code
-    return result;
 }
 
 // Calculate Random Number via KIRK

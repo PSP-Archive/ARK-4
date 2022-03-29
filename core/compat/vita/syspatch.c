@@ -54,7 +54,7 @@ int sctrlARKGetGameID(char gameid[GAME_ID_MINIMUM_BUFFER_SIZE])
     return 0;
 }
 
-// Load Execute Module via Kernel Internal Function
+// This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
 int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
 {
     // Elevate Permission Level
@@ -68,7 +68,6 @@ int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, 
     // Find Target Function
     int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
         = (void *)findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
-
 
     // Load Execute Module
     int result = _LoadExecVSHWithApitype(apitype, file, param, 0x10000);

@@ -29,6 +29,8 @@
 #include "graphics.h"
 #include "macros.h"
 
+extern ARKConfig* ark_config;
+
 // Exception Handler
 PspDebugErrorHandler curr_handler = NULL;
 
@@ -114,8 +116,9 @@ static void ARKExceptionHandler(PspDebugRegBlock * regs)
                 sctrlKernelExitVSH(NULL);
             }
             else if((data.Buttons & PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE){
-                extern void doExitGame(int recovery);
-                doExitGame(1);
+                extern void exitLauncher();
+                ark_config->recovery = 1;
+                exitLauncher();
             }
             else if((data.Buttons & PSP_CTRL_SQUARE) == PSP_CTRL_SQUARE){
                 void (*ColdReset)(int) = sctrlHENFindFunction("scePower_Service", "scePower", 0x0442D852);

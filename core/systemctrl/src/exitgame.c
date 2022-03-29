@@ -55,6 +55,10 @@ void exitLauncher()
     param.args = strlen(path) + 1;
     param.argp = path;
     param.key = "game";
+
+    // set default mode
+    sctrlSESetUmdFile("");
+    sctrlSESetBootConfFileIndex(MODE_UMD);
     
     // Trigger Reboot
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
@@ -109,7 +113,7 @@ int control_poller(SceSize args, void * argp)
 void startControlPoller(void)
 {
     // Create Thread (with USER_PRIORITY_HIGHEST - 1)
-    int uid = sceKernelCreateThread("ExitGamePollThread", control_poller, 16 - 1, 1024, PSP_THREAD_ATTR_VFPU, NULL);
+    int uid = sceKernelCreateThread("ExitGamePollThread", control_poller, 16 - 1, 2048, PSP_THREAD_ATTR_VFPU, NULL);
     
     // Created Thread Handle
     if(uid >= 0)
