@@ -1,5 +1,8 @@
 # ARK-4
 
+## Update 13.2
+- Added reboot runtime module support on PS Vita.
+
 ## Update 13.1
 - Fixed exitgame
 - Added ARK version to custom launcher and recovery.

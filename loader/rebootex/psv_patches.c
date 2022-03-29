@@ -30,6 +30,7 @@ int _pspemuLfatOpen(BootFile* file, int unk)
         file->buffer = (void *)0x89000000;
 		file->size = reboot_conf->rtm_mod.size;
 		memcpy(file->buffer, reboot_conf->rtm_mod.buffer, file->size);
+		return 0;
     }
     return pspemuLfatOpen(file, unk);
 }
@@ -47,13 +48,13 @@ int UnpackBootConfigVita(char **p_buffer, int length){
 // patch reboot on ps vita
 void patchRebootBufferVita(){
 
+    _sw(0x27A40004, UnpackBootConfigArg); // addiu $a0, $sp, 4
+    _sw(JAL(UnpackBootConfigVita), UnpackBootConfigCall); // Hook UnpackBootConfig
+
     for (u32 addr = reboot_start; addr<reboot_end; addr+=4){
         u32 data = _lw(addr);
         if (data == JAL(pspemuLfatOpen)){
             _sw(JAL(_pspemuLfatOpen), addr); // Hook pspemuLfatOpen
-            u32 _UnpackBootConfigPatched = &UnpackBootConfigPatched;
-            _sw(JUMP(UnpackBootConfigVita), _UnpackBootConfigPatched);
-            _sw(NOP, _UnpackBootConfigPatched+4);
         }
         else if (data == 0x3A230001){ // found pspemuLfatOpen
             u32 a = addr;
@@ -69,7 +70,6 @@ void patchRebootBufferVita(){
         else if ((data & 0x0000FFFF) == 0x8B00){
             _sb(0xA0, addr); // Link Filesystem Buffer to 0x8BA00000
         }
-        
         /*
         else if (data == 0x24040004) {
             extern int PatchSysMem(void *a0, void *sysmem_config);

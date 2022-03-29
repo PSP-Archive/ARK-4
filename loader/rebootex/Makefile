@@ -22,7 +22,7 @@ C_OBJS = \
 	psv_patches.o \
 	$(ARKROOT)/common/utils/scanner.o \
 
-LIBS = -L $(ARKROOT)/libs
+LIBS = -L $(ARKROOT)/libs -lcolordebugger
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
