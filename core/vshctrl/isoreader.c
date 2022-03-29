@@ -78,9 +78,6 @@ typedef enum {
 
 typedef unsigned int uint;
 
-//static void *g_ciso_dec_buf = NULL;
-//static u32 g_ciso_dec_buf_offset = (u32)-1;
-//static int g_ciso_dec_buf_size = 0;
 static CISOHeader g_ciso_h;
 static DAXHeader* dax_header = (DAXHeader*)&g_ciso_h;
 static JisoHeader* jiso_header = (JisoHeader*)&g_ciso_h;
@@ -89,8 +86,8 @@ static JisoHeader* jiso_header = (JisoHeader*)&g_ciso_h;
 static u32 g_CISO_idx_cache[CISO_IDX_MAX_ENTRIES] __attribute__((aligned(64)));
 static int g_CISO_cur_idx = -1;
 
-static u8* ciso_com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));;
-static u8* ciso_dec_buf[DAX_BLOCK_SIZE] __attribute__((aligned(64)));;
+static u8 ciso_com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
+static u8 ciso_dec_buf[DAX_BLOCK_SIZE] __attribute__((aligned(64)));
 static u32 ciso_cur_block = (u32)-1;
 static const char * g_filename = NULL;
 static char g_sector_buffer[SECTOR_SIZE] __attribute__((aligned(64)));
@@ -179,84 +176,6 @@ static int readRawData(void* addr, u32 size, u32 offset)
     return ret;
 }
 
-/*
-static int readSectorCompressed(int sector, void *addr)
-{
-    int ret;
-    int n_sector;
-    u32 offset, next_offset;
-    int size;
-
-    n_sector = sector - g_CISO_cur_idx;
-
-    // not within sector idx cache?
-    if (g_CISO_cur_idx == -1 || n_sector < 0 || n_sector >= NELEMS(g_CISO_idx_cache)) {
-        ret = readRawData(g_CISO_idx_cache, sizeof(g_CISO_idx_cache), (sector << 2) + sizeof(CISOHeader));
-
-        if (ret != sizeof(g_CISO_idx_cache)) {
-            return -21;
-        }
-
-        g_CISO_cur_idx = sector;
-        n_sector = 0;
-    }
-
-    offset = (g_CISO_idx_cache[n_sector] & 0x7FFFFFFF) << g_ciso_h.align;
-
-    // is uncompressed data?
-    if (g_CISO_idx_cache[n_sector] & 0x80000000) {
-        return readRawData(addr, SECTOR_SIZE, offset);
-    }
-
-    sector++;
-    n_sector = sector - g_CISO_cur_idx;
-
-    if (g_CISO_cur_idx == -1 || n_sector < 0 || n_sector >= NELEMS(g_CISO_idx_cache)) {
-        ret = readRawData(g_CISO_idx_cache, sizeof(g_CISO_idx_cache), (sector << 2) + sizeof(CISOHeader));
-
-        if (ret != sizeof(g_CISO_idx_cache)) {
-            return -22;
-        }
-
-        g_CISO_cur_idx = sector;
-        n_sector = 0;
-    }
-
-    next_offset = (g_CISO_idx_cache[n_sector] & 0x7FFFFFFF) << g_ciso_h.align;
-    size = next_offset - offset;
-    
-    if(g_ciso_h.align)
-        size += 1 << g_ciso_h.align;
-
-    if (size <= SECTOR_SIZE)
-        size = SECTOR_SIZE;
-
-    if (g_ciso_dec_buf_offset == (u32)-1 || offset < g_ciso_dec_buf_offset || offset + size >= g_ciso_dec_buf_offset + g_ciso_dec_buf_size) {
-        ret = readRawData(PTR_ALIGN_64(g_ciso_dec_buf), size, offset);
-
-        if (ret < 0) {
-            g_ciso_dec_buf_offset = (u32)-1;
-
-            return -24;
-        }
-
-        g_ciso_dec_buf_offset = offset;
-        g_ciso_dec_buf_size = ret;
-    }
-
-    if(!lz4_compressed) {
-        ret = sceKernelDeflateDecompress(addr, SECTOR_SIZE, PTR_ALIGN_64(g_ciso_dec_buf) + offset - g_ciso_dec_buf_offset, 0);
-    } else {
-        ret = LZ4_decompress_fast(PTR_ALIGN_64(g_ciso_dec_buf) + offset - g_ciso_dec_buf_offset, addr, SECTOR_SIZE);
-        if(ret < 0) {
-            ret = -20;
-            printk("%s: -> %d\n", __func__, ret);
-        }
-    }
-    return ret < 0 ? ret : SECTOR_SIZE;
-}
-*/
-
 static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
     sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
 }
@@ -296,8 +215,8 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
     u32 cur_block = pos/block_size;
     u32 offset = pos & (block_size-1);
     
-    u8* com_buf = ciso_com_buf;
-    u8* dec_buf = ciso_dec_buf;
+    u8* com_buf = PTR_ALIGN_64(ciso_com_buf);
+    u8* dec_buf = PTR_ALIGN_64(ciso_dec_buf);
     
     if (g_CISO_cur_idx < 0 || cur_block < g_CISO_cur_idx || cur_block >= g_CISO_cur_idx + CISO_IDX_MAX_ENTRIES){
         u32 idx_size = 0;
