@@ -220,7 +220,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
 int patch_sceKernelStartModule_in_bootstart(int (* bootstart)(SceSize, void *), void * argp)
 {
     
-    u32 StartModule = JUMP(FindFunction("sceModuleManager", "ModuleMgrForUser", 0x50F0C1EC));
+    u32 StartModule = JUMP(sctrlHENFindFunction("sceModuleManager", "ModuleMgrForUser", 0x50F0C1EC));
 
     u32 addr = (u32)bootstart;
     int patches = 1;
@@ -265,7 +265,7 @@ SceModule2* patchLoaderCore(void)
     }
 
     // override the checkExec reference in the module globals
-    u32 checkExec = FindFunction("sceLoaderCore", "LoadCoreForKernel", 0xD3353EC4);
+    u32 checkExec = sctrlHENFindFunction("sceLoaderCore", "LoadCoreForKernel", 0xD3353EC4);
     u32 ref = findRefInGlobals("LoadCoreForKernel", checkExec, checkExec);
     _sw((unsigned int)KernelCheckExecFile, ref);
     // Flush Cache

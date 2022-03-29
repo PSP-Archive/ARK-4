@@ -93,7 +93,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         extern int LoadReboot();
         OrigLoadReboot = (void *)loadexec->text_addr;
         // Patch loadexec
-        patchLoadExecCommon(loadexec, (u32)LoadReboot, 2);
+        patchLoadExecCommon(loadexec, (u32)LoadReboot, (u32)sctrlHENFindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 2);
         goto flush;
     }
     

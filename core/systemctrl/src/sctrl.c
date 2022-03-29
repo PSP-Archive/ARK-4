@@ -43,7 +43,7 @@ int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHPara
 {
     int k1 = pspSdkSetK1(0);
     int res = -1;
-    int (*LoadExecVSHDisc)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
+    int (*LoadExecVSHDisc)() = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
     res = LoadExecVSHDisc(file, param);
     pspSdkSetK1(k1);
     return res;
@@ -53,7 +53,7 @@ int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExec
 {
     int k1 = pspSdkSetK1(0);
     int res = -1;
-    int (*LoadExecVSHDiscUpdater)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xD4B49C4B);
+    int (*LoadExecVSHDiscUpdater)() = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD4B49C4B);
     res = LoadExecVSHDiscUpdater(file, param);
     pspSdkSetK1(k1);
     return res;
@@ -63,7 +63,7 @@ int sctrlKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam
 {
     int k1 = pspSdkSetK1(0);
     int res = -1;
-    int (*LoadExecVSHMs1)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0x4FB44D27);
+    int (*LoadExecVSHMs1)() = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0x4FB44D27);
     res = LoadExecVSHMs1(file, param);
     pspSdkSetK1(k1);
     return res;
@@ -73,7 +73,7 @@ int sctrlKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam
 {
     int k1 = pspSdkSetK1(0);    
     int res = -1;
-    int (*LoadExecVSHMs2)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xD940C83C);
+    int (*LoadExecVSHMs2)() = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD940C83C);
     res = LoadExecVSHMs2(file, param);
     pspSdkSetK1(k1);
     return res;
@@ -83,7 +83,7 @@ int sctrlKernelLoadExecVSHMs3(const char *file, struct SceKernelLoadExecVSHParam
 {
     int k1 = pspSdkSetK1(0);    
     int res = -1;
-    int (*LoadExecVSHMs3)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0xCC6A47D2);
+    int (*LoadExecVSHMs3)() = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xCC6A47D2);
     res = LoadExecVSHMs3(file, param);
     pspSdkSetK1(k1);
     return res;
@@ -93,7 +93,7 @@ int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam
 {
     int k1 = pspSdkSetK1(0);    
     int res = -1;
-    int (*LoadExecVSHMs4)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0x00745486);
+    int (*LoadExecVSHMs4)() = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0x00745486);
     res = LoadExecVSHMs4(file, param);
     pspSdkSetK1(k1);
     return res;
@@ -103,7 +103,7 @@ int sctrlKernelLoadExecVSHEf2(const char *file, struct SceKernelLoadExecVSHParam
 {
     int k1 = pspSdkSetK1(0);
     int res = -1;
-    int (*LoadExecVSHEf2)() = FindFunction("sceLoadExec", "LoadExecForKernel", 0x032A7938);
+    int (*LoadExecVSHEf2)() = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0x032A7938);
     res = LoadExecVSHEf2(file, param);
     pspSdkSetK1(k1);
     return res;
@@ -114,7 +114,7 @@ int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param)
     u32 k1;
     int ret = -1;
     k1 = pspSdkSetK1(0);
-    int (*_KernelExitVSH)(void*) = FindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
+    int (*_KernelExitVSH)(void*) = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
     ret = _KernelExitVSH(param);
     pspSdkSetK1(k1);
     return ret;
@@ -130,7 +130,7 @@ int sctrlKernelSetUserLevel(int level)
     int previouslevel = sceKernelGetUserLevel();
     
     
-    u32 _sceKernelReleaseThreadEventHandler = FindFunction("sceThreadManager", "ThreadManForKernel", 0x72F3C145);
+    u32 _sceKernelReleaseThreadEventHandler = sctrlHENFindFunction("sceThreadManager", "ThreadManForKernel", 0x72F3C145);
     
     u32 threadman_userlevel_struct = _lh(_sceKernelReleaseThreadEventHandler + 0x4)<<16;
     threadman_userlevel_struct += (short)_lh(_sceKernelReleaseThreadEventHandler + 0x18);
@@ -239,7 +239,7 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct Sce
     
     // Find Target Function
     int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
-        = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
+        = findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
 
     // Load Execute Module
     int result = _LoadExecVSHWithApitype(apitype, file, param, 0x10000);

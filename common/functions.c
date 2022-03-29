@@ -103,10 +103,6 @@ void scanArkFunctions(UserFunctions* tbl){
     tbl->qwikTrick = &qwikTrick;
 }
 
-int IsUID(SceUID uid){
-    return ((uid > 0 && uid < 0x05000000) && ((uid & 1) == 1));
-}
-
 // attempt to free as much memory as possible, some kernel/user exploits need this, others don't
 void freeMem(){
     register u32 (* sceKernelGetBlockHeadAddr_)(SceUID) = (void *)RelocImport("SysMemUserForUser", 0x9D9A5BA1, 0);
@@ -388,19 +384,6 @@ u32 findRefInGlobals(char* libname, u32 addr, u32 ptr){
     return addr;
 }
 
-u32 patchNextInstruction(u32 orig, u32 instr, u32 addr, int skip){
-    for (;; addr+=4){
-        if (_lw(addr) == orig){
-            if (skip==0){
-                _sw(instr, addr);
-                break;
-            }
-            else skip--;
-        }
-    }
-    return addr;
-}
-
 int p5_open_savedata(int mode)
 {
     p5_close_savedata();
@@ -478,6 +461,7 @@ int isKernel(){
     return (ra&0x80000000) != 0;
 }
 
+#ifdef DEBUG
 void AccurateError(u32 text_addr, u32 text_size)
 {
     u32 counter = 0;
@@ -494,3 +478,4 @@ void AccurateError(u32 text_addr, u32 text_size)
         }
     }
 }
+#endif

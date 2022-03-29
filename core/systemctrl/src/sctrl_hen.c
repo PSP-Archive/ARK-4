@@ -52,7 +52,7 @@ PspIoDrv * sctrlHENFindDriver(char * drvname)
     unsigned int k1 = pspSdkSetK1(0);
     
     // Find Function
-    int * (* findDriver)(char * drvname) = (void*)findFirstJALForFunction("sceIOFileManager", "IoFileMgrForKernel", 0x76DA16E3);
+    int * (* findDriver)(char * drvname) = (void*)findFirstJAL(sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x76DA16E3));
     
     // Find Driver Wrapper
     int * wrapper = findDriver(drvname);
@@ -323,7 +323,7 @@ int sctrlHENRegisterHomebrewLoader(void *func)
     _sw(JUMP(sceKernelLoadModuleMs2_bridge), text_addr + 0x2E28);
 
     //patch sceKernelLoadModuleMs2
-    KernelLoadModuleMs2_orig = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x7BD53193);
+    KernelLoadModuleMs2_orig = sctrlHENFindFunction("sceModuleManager", "ModuleMgrForKernel", 0x7BD53193);
     hookImportByNID(mod, "ModuleMgrForKernel", 0x7BD53193, sceKernelLoadModuleMs2_patched);
 
     leda_previous = sctrlHENSetStartModuleHandler( LedaModulePatch );

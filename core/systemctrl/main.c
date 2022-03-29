@@ -27,7 +27,6 @@
 #include "syspatch.h"
 #include "sysmem.h"
 #include "exception.h"
-#include "ansi_c_functions.h"
 #include "libs/graphics/graphics.h"
 
 PSP_MODULE_INFO("SystemControl", 0x3007, 1, 0);
@@ -41,19 +40,6 @@ static ARKConfig _ark_conf = {
     .recovery = 0,
 };
 ARKConfig* ark_config = &_ark_conf;
-
-#ifndef DEBUG
-// dummy debug exports
-int printkCached(char *fmt, ...){return 0;}
-int printk(char *fmt, ...){return 0;}
-int printkInit(const char *output){return 0;}
-int printkSync(void){return 0;}
-void installJALTrace(unsigned int address){}
-void installMemoryJALTrace(unsigned int start, unsigned int size){}
-void installModuleJALTrace(SceModule2 * module){}
-void dumpJAL(unsigned int target, unsigned int ra, unsigned int result){}
-void registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * regs){}
-#endif
 
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)

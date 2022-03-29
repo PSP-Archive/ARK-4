@@ -59,6 +59,9 @@
 // Array Element Counter
 #define NELEMS(n) ((sizeof(n)) / sizeof(n[0]))
 
+// is UID
+#define IsUID(uid) ((uid > 0 && uid < 0x05000000) && ((uid & 1) == 1))
+
 // Min & Max Macros
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))

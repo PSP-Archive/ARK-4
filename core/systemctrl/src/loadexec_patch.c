@@ -2,13 +2,13 @@
 #include <functions.h>
 #include <graphics.h>
 
-void patchLoadExecCommon(SceModule2* loadexec, u32 LoadReboot, int k1_patches){
+void patchLoadExecCommon(SceModule2* loadexec, u32 LoadReboot, u32 GetUserLevel, int k1_patches){
     u32 addr = 0;
     u32 text_addr = loadexec->text_addr;
     u32 topaddr = text_addr+loadexec->text_size;
 
     u32 rebootcall = JAL(text_addr);
-    u32 GetUserLevelJump = JUMP(FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665));
+    u32 GetUserLevelJump = JUMP(GetUserLevel);
 
     int patches = 3 + k1_patches;
     for (addr=text_addr; addr<topaddr && patches; addr+=4){

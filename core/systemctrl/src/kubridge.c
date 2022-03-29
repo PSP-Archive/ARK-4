@@ -52,7 +52,7 @@ SceUID kuKernelLoadModuleWithApitype2(int apitype, const char *path, int flags, 
     k1 = pspSdkSetK1(0);
     
     SceUID (*KernelLoadModuleWithApitype2)(int apitype, const char *path, int flags, SceKernelLMOption *option) = NULL;
-    KernelLoadModuleWithApitype2 = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x2B7FC10D);
+    KernelLoadModuleWithApitype2 = sctrlHENFindFunction("sceModuleManager", "ModuleMgrForKernel", 0x2B7FC10D);
     
     if (KernelLoadModuleWithApitype2)
         ret = KernelLoadModuleWithApitype2(apitype, path, flags, option);

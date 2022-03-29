@@ -30,7 +30,7 @@ C_OBJS = \
 	src/plugin.o \
 	src/leda.o \
 	src/msstor_cache.o \
-	$(ARKROOT)/common/functions.o \
+	$(ARKROOT)/common/utils/patches.o \
 		
 OBJS = \
 	$(C_OBJS) \
@@ -67,6 +67,8 @@ ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
 LIBS += -lgraphics -lcolordebugger
 OBJS += debug/exception.o debug/exception_asm.o debug/printk.o debug/jumper.o
+else
+OBJS += debug/dummy.o
 endif
 
 PSP_FW_VERSION = 660

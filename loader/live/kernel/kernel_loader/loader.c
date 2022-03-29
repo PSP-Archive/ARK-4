@@ -93,7 +93,7 @@ void loadKernelArk(){
     
     // make the common loadexec patches
     int k1_patches = 2;
-    patchLoadExecCommon(loadexec, (u32)LoadReboot, k1_patches);
+    patchLoadExecCommon(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), k1_patches);
     
     // Invalidate Cache
     k_tbl->KernelDcacheWritebackInvalidateAll();
