@@ -242,15 +242,21 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     draw_sema = sceKernelCreateSema("draw_sema", 0, 1, 1, NULL);
     entries = e;
     MAX_ENTRIES = ne;
-    
     u32 ver = sctrlHENGetMinorVersion();
     u32 major = (ver&0xFF0000)>>16;
     u32 minor = (ver&0xFF00)>>8;
     u32 micro = (ver&0xFF);
     stringstream version;
+    #ifdef DEBUG 
     version << "ARK Version " << major << "." << minor;
+    if (micro>0) version << "." << micro << " DEBUG";
+	else version << " DEBUG";
+    ark_version = version.str();
+	#else
+	version << "ARK Version " << major << "." << minor;
     if (micro>0) version << "." << micro;
     ark_version = version.str();
+	#endif
 }
 
 void SystemMgr::startMenu(){
