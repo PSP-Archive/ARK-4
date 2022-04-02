@@ -9,6 +9,9 @@ INCDIR = $(ARKROOT)/common/include
 CFLAGS = -std=c99 -Os -G0 -Wall
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
+ifdef DEBUG
+CFLAGS += -DDEBUG=$(DEBUG)
+endif
 
 PRX_EXPORTS = exports.exp
 

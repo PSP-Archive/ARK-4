@@ -13,7 +13,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Stargate No-DRM engine.
 
-- Plugin support for PSP games, PSX games and VSH (XMB), including per-game plugins.
+- Plugin support for PSP games, PSX games and VSH (XMB), including the ability to enable and disable plugins per-game.
 
 - Compatible with all PSP models on firmwares 6.60 and 6.61.
 

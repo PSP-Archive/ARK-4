@@ -60,7 +60,7 @@ int menu_draw(void)
     const char *msg;
     int max_menu, cur_menu;
     const int *pointer;
-	const char ark_version[16];
+	const char ark_version[24];
     int xPointer;
 	int ver = sctrlHENGetMinorVersion();
  	int major = (ver&0xFF0000)>>16;
@@ -69,8 +69,13 @@ int menu_draw(void)
 	int version;
 
 	// Get ARK Version
-  	version = snprintf(ark_version, sizeof(ark_version), "   ARK %d.%d   ", major, minor); 
-	if (micro>0) version = snprintf(ark_version, sizeof(ark_version), "   ARK %d.%d.%d   ", major, minor, micro);
+#ifdef DEBUG
+version = snprintf(ark_version, sizeof(ark_version), " ARK %d.%d DEBUG ", major, minor); 
+if (micro>0) version = snprintf(ark_version, sizeof(ark_version), " ARK %d.%d.%d DEBUG ", major, minor, micro);
+#else
+version = snprintf(ark_version, sizeof(ark_version), "   ARK %d.%d   ", major, minor); 
+if (micro>0) version = snprintf(ark_version, sizeof(ark_version), "   ARK %d.%d.%d   ", major, minor, micro);
+#endif
 
     // check & setup video mode
     if( blit_setup() < 0) return -1;
