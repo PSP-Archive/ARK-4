@@ -8,6 +8,9 @@ all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common/include
 CFLAGS = -std=c99 -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
 
+POPSMAN_VERSION ?= VERSION_PSP
+POPS_VERSION ?= VERSION_PSP
+
 # POPS Version
 CFLAGS += -DPOPSMAN_VERSION=$(POPSMAN_VERSION) -DPOPS_VERSION=$(POPS_VERSION)
 

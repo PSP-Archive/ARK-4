@@ -158,9 +158,6 @@ void patch_partitions(void)
         }
     }
 
-    //reset partition length for next reboot
-    sctrlHENSetMemory(24, 24);
-
     p2.offset = 0;
     modify_partition(&p2);
 
@@ -169,4 +166,6 @@ void patch_partitions(void)
 
     g_high_memory_enabled = 1;
     unlock_high_memory(0);
+    
+    sctrlHENSetMemory(MAX_HIGH_MEMSIZE, 0);
 }

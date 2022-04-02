@@ -11,7 +11,6 @@ SPU_OBJS = \
 C_OBJS =    \
 	main.o   \
 	vitamem.o \
-	iopatch.o  \
 	syspatch.o  \
 	gameinfo.o   \
 	vitaflash.o   \

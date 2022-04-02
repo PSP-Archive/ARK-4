@@ -206,7 +206,8 @@ void PROVitaSysPatch(){
     SceModule2* mod = NULL;
     // filesystem patches
     initFileSystem();
-    SceModule2* ioman = patchFileIO();    
     // patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
     patchLoadExecUMDemu();
+    // unprotect flash0 ramfs for user access
+    unprotectVitaMem();
 }

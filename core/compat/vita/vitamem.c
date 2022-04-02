@@ -3,7 +3,7 @@
 static int pid = -1;
 
 int prevent_highmem(){
-    int apitype = sceKernelInitApitype();
+    int apitype = sceKernelInitApitype(); // prevent in pops and vsh(?)
     return (apitype == 0x144 || apitype == 0x155 || apitype ==  0x210 || apitype ==  0x220);
 }
 
@@ -14,8 +14,7 @@ void unprotectVitaMem(){
         prot[i] = 0xFFFFFFFF;
 }
 
-// unprotect extra RAM for user apps
-// call this from systemcontrol/vitacompat
+// use flash0 RAM for user apps
 void unlockVitaMemory(){
 
     if (prevent_highmem()) return;
@@ -37,7 +36,7 @@ void unlockVitaMemory(){
         return;
     }
 
-    u32 user_size = 36 * 1024 * 1024;
+    u32 user_size = USER_SIZE + FLASH_SIZE;
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
     partition->size = user_size;
     partition->data->size = (((user_size >> 8) << 9) | 0xFC);
@@ -47,7 +46,5 @@ void unlockVitaMemory(){
     partition->address = 0x88800000 + user_size;
     partition->data->size = (((partition->size >> 8) << 9) | 0xFC);
     
-    //reset partition length for next reboot
-    sctrlHENSetMemory(24, 0);
-    
+    sctrlHENSetMemory(40, 0);
 }

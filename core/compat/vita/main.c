@@ -69,8 +69,6 @@ int module_start(SceSize args, void * argp)
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);
    
-    unprotectVitaMem();
-    
     flushCache();
     
     // Return Success
