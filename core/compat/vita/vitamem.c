@@ -44,7 +44,7 @@ void unlockVitaMemory(){
     partition = GetPartition(11);
     partition->size = 0;
     partition->address = 0x88800000 + user_size;
-    partition->data->size = (((partition->size >> 8) << 9) | 0xFC);
+    partition->data->size = 0xFC;
     
     sctrlHENSetMemory(40, 0);
 }

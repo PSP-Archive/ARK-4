@@ -25,6 +25,7 @@
 #include <string.h>
 #include "globals.h"
 #include "systemctrl.h"
+#include "sysmem.h"
 
 typedef struct _MemPart {
     u32 *meminfo;
@@ -91,14 +92,13 @@ static void modify_partition(MemPart *part)
 
 int prevent_highmem(){
 
-    if (psp_model == PSP_1000) return 1; // disallow on 1K
     int apitype = sceKernelInitApitype();
     return (apitype == 0x144 || apitype == 0x155 || apitype ==  0x210 || apitype ==  0x220);
 }
 
 void prepatch_partitions(void)
 {
-    if(prevent_highmem()){
+    if(psp_model == PSP_1000 || prevent_highmem()){
         return;
     }
 
@@ -126,6 +126,21 @@ void patch_partitions(void)
 {
 
     if(prevent_highmem()){
+        return;
+    }
+    
+    if (psp_model == PSP_1000){
+        // patch to use volatile RAM as highmem
+        SysMemPartition *partition;
+        u32 user_size = USER_SIZE + (4*1024*1024);
+        partition = get_partition(PSP_MEMORY_PARTITION_USER);
+        partition->size = user_size;
+        partition->data->size = (((user_size >> 8) << 9) | 0xFC);
+        partition = get_partition(5);
+        partition->size = 0;
+        partition->address = 0x88800000 + user_size;
+        partition->data->size = 0xFC;
+        sctrlHENSetMemory(28, 0);
         return;
     }
 

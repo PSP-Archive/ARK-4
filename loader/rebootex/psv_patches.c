@@ -72,7 +72,7 @@ int PatchSysMem(void *a0, void *sysmem_config)
             patches--;
         }
         else if (data == 0x2405000C && (_lw(addr + 8) == 0x00608821)) {
-            // Change attribute to 0xF (user accessable)
+            // Change attribute to 0xF (user accessible)
             _sh(0xF, addr);
             patches--;
         }
