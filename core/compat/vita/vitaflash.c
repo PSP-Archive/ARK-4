@@ -31,6 +31,7 @@ void backupFlash0(KernelFunctions* kf){
         char* filename = prof0[i].name;
         void* buf = prof0[i].content;
         int buf_size = prof0[i].size;
+        if (strncmp(filename, "/kd/ark_", 8) == 0) continue; // don't backup ARK files
         strcpy(path, "ms0:/flash0");
         if (filename[0] != "/") strcat(path, "/");
         strcat(path, filename);

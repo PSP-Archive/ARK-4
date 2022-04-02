@@ -106,6 +106,7 @@ int isSystemBooted(void)
 }
 
 int use_mscache = 0;
+int use_highmem = 0;
 void settingsHandler(char* path){
     if (strcasecmp(path, "overclock") == 0){
         // useless on vita
@@ -117,7 +118,7 @@ void settingsHandler(char* path){
         // useless on vita
     }
     else if (strcasecmp(path, "highmem") == 0){
-        unlockVitaMemory();
+        use_highmem = 1;
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup
@@ -181,6 +182,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
+            // do a backup of flash0 to ms to prevent corruption
+            if (use_highmem) unlockVitaMemory();
             // Initialize Memory Stick Speedup Cache
             if (use_mscache) msstorCacheInit("ms", 16 * 1024);
             // Apply Directory IO PSP Emulation

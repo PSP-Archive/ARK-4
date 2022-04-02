@@ -22,8 +22,6 @@ static SystemEntry* entries[MAX_ENTRIES];
 
 int main(int argc, char** argv){
 
-    memset((void*)0x0B000000, 0, 16*1024*1024);
-
     intraFontInit();
     ya2d_init();
 

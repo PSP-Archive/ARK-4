@@ -8,8 +8,6 @@ int prevent_highmem(){
 }
 
 void unprotectVitaMem(){
-    // protect against allocations by kernel
-    pid = sceKernelAllocPartitionMemory(11, "HIGHMEM", 2, 16*1024*1024, (void *)0x8B000000);
     // unprotect from user access
     u32 *prot = (u32 *)0xBC000040;
     for (int i = 0; i < 0x10; i++)
@@ -55,7 +53,5 @@ void unlockVitaMemory(){
     
     //reset partition length for next reboot
     sctrlHENSetMemory(24, 0);
-    
-    sceKernelFreePartitionMemory(pid);
     
 }
