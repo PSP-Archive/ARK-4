@@ -26,15 +26,6 @@ extern void (* g_module_start_handler)(SceModule2 *);
 // Internal Module Manager Apitype Field
 extern int * kernel_init_apitype;
 
-// Internal Module Manager Init Filename Field
-extern char ** kernel_init_filename;
-
-// Internal Module Manager Init Key Config Field
-extern int* kernel_init_keyconfig;
-
-// Internal Module Manager Init Application Type Field
-extern int * kernel_init_application_type;
-
 // sceModuleManager Patch
 SceModule2* patchModuleManager(void);
 

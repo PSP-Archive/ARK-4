@@ -1,6 +1,7 @@
 #include "rebootex.h"
 
 int (*pspemuLfatOpen)(char** filename, int unk) = NULL;
+void (*SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table) = NULL;
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 extern int (* UnpackBootConfig)(char * buffer, int length);
 
@@ -30,6 +31,8 @@ int _pspemuLfatOpen(BootFile* file, int unk)
         file->buffer = (void *)0x89000000;
 		file->size = reboot_conf->rtm_mod.size;
 		memcpy(file->buffer, reboot_conf->rtm_mod.buffer, file->size);
+		reboot_conf->rtm_mod.buffer = NULL;
+        reboot_conf->rtm_mod.size = 0;
 		return 0;
     }
     return pspemuLfatOpen(file, unk);
@@ -44,6 +47,42 @@ int UnpackBootConfigVita(char **p_buffer, int length){
     }
     return res;
 }
+
+//12 MB extra ram through p11 on Vita
+void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *table)
+{
+    // Add partition 11
+    SetMemoryPartitionTable(sysmem_config, table);
+    table->extVshell.addr = 0x8B000000;
+    table->extVshell.size = 16 * 1024 * 1024;
+}
+// call this from rebootex
+int PatchSysMem(void *a0, void *sysmem_config)
+{
+
+    int (* module_bootstart)(SceSize args, void *sysmem_config) = (void *)_lw((u32)a0 + 0x28);
+    u32 text_addr = 0x88000000;
+    u32 top_addr = text_addr+0x14000;
+    int patches = 2;
+    for (u32 addr = text_addr; addr<top_addr && patches; addr += 4) {
+        u32 data = _lw(addr);
+        if (data == 0x247300FF){
+            SetMemoryPartitionTable = K_EXTRACT_CALL(addr-20);
+            _sw(JAL(SetMemoryPartitionTablePatched), addr-20);
+            patches--;
+        }
+        else if (data == 0x2405000C && (_lw(addr + 8) == 0x00608821)) {
+            // Change attribute to 0xF (user accessable)
+            _sh(0xF, addr);
+            patches--;
+        }
+    }
+
+    flushCache();
+
+    return module_bootstart(4, sysmem_config);
+}
+
 
 // patch reboot on ps vita
 void patchRebootBufferVita(){
@@ -70,13 +109,10 @@ void patchRebootBufferVita(){
         else if ((data & 0x0000FFFF) == 0x8B00){
             _sb(0xA0, addr); // Link Filesystem Buffer to 0x8BA00000
         }
-        /*
         else if (data == 0x24040004) {
-            extern int PatchSysMem(void *a0, void *sysmem_config);
             _sw(0x02402021, addr); //move $a0, $s2
             _sw(JAL(PatchSysMem), addr + 0x64); // Patch call to SysMem module_bootstart
         }
-        */
     }
     // Flush Cache
     flushCache();

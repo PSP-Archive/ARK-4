@@ -116,9 +116,8 @@ void settingsHandler(char* path){
     }
     else if (strcasecmp(path, "highmem") == 0){
         // does this still work on 3.60?
-        //unlockVitaMemory();
-        //sctrlHENSetMemory(36, 0);
-        //flushCache();
+        unlockVitaMemory();
+        flushCache();
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup

@@ -147,6 +147,9 @@ int doExploit(void) {
     int res;
 
     u32 seed = readKram(SYSMEM_SEED_OFFSET);
+    //u32 seed_addr = (readKram(0x8800C3EC) << 16) + (readKram(0x8800C3F0)&0xFFFF);
+    //u32 seed = readKram(seed_addr);
+    //PRTSTR1("Seed addr: %p", seed_addr);
     PRTSTR1("Seed: %p", seed);
     if (!seed)
         return -1;
@@ -163,8 +166,9 @@ int doExploit(void) {
     u32 string[] = { LIBC_CLOCK_OFFSET - 4, 0x88888888, 0x88016dc0, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
     SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)&string, PSP_SMEM_Low, 0x10, NULL);
 
+    /*
     for (u32 a=0x88010000; a<0x88017000; a+=4){
-        u32 data = readKram(SYSMEM_SEED_OFFSET);
+        u32 data = readKram(a);
         if (data == encrypted_uid){
             PRTSTR1("Found fake uid at: %p", a);
         }
@@ -172,6 +176,7 @@ int doExploit(void) {
             PRTSTR1("Found dummy block at: %p", a);
         }
     }
+    */
 
     g_tbl->KernelDcacheWritebackAll();
 

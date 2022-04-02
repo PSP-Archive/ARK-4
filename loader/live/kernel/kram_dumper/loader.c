@@ -74,4 +74,6 @@ void loadKernelArk(){
     strcpy(path, ark_config->arkpath);
     strcat(path, "KMEM.ARK");
     modulesDump(path);
+    
+    PRTSTR1("Sysmem Seed: %p", *(u32*)0x88014EB8);
 }

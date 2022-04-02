@@ -11,6 +11,26 @@ typedef struct {
 	u32 size;
 } BootFile;
 
+typedef struct {
+    u32 addr;
+    u32 size;
+} SceSysmemPartInfo;
+
+typedef struct {
+    u32 memSize;
+    u32 unk4;
+    u32 unk8;
+    SceSysmemPartInfo other1; // 12
+    SceSysmemPartInfo other2; // 20
+    SceSysmemPartInfo vshell; // 28
+    SceSysmemPartInfo scUser; // 36
+    SceSysmemPartInfo meUser; // 44
+    SceSysmemPartInfo extSc2Kernel; // 52
+    SceSysmemPartInfo extScKernel; // 60
+    SceSysmemPartInfo extMeKernel; // 68
+    SceSysmemPartInfo extVshell; // 76
+} SceSysmemPartTable;
+
 extern RebootConfigARK* reboot_conf;
 extern ARKConfig* ark_config;
 

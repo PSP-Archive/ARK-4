@@ -2,6 +2,7 @@
 
 ## Update 13.2
 - Added reboot runtime module support on PS Vita.
+- Added ARK Version to vsh menu.
 
 ## Update 13.1
 - Fixed exitgame

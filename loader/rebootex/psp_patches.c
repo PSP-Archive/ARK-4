@@ -118,6 +118,8 @@ int _sceBootLfatClose(void)
         rebootmodule_open = 0;
         p_rmod = NULL;
         size_rmod = 0;
+        reboot_conf->rtm_mod.buffer = NULL;
+        reboot_conf->rtm_mod.size = 0;
 
         //return success
         return 0;

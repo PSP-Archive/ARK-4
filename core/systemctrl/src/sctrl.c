@@ -340,9 +340,10 @@ int sctrlKernelSetInitFileName(char * filename)
     if(filename == NULL) return -1;
     
     // Field unavailable
-    if(kernel_init_filename == NULL) return -2;
+    if(kernel_init_apitype == NULL) return -2;
     
     // Link Buffer
+    char** kernel_init_filename = (char**)(kernel_init_apitype + 4);
     *kernel_init_filename = filename;
     
     // Return Success
@@ -354,7 +355,8 @@ int sctrlKernelSetInitKeyConfig(int key)//old sctrlKernelSetInitMode
     int k1 = pspSdkSetK1(0);
     int r = sceKernelInitKeyConfig();
 
-    if (kernel_init_keyconfig != NULL){
+    if (kernel_init_apitype != NULL){
+        int* kernel_init_keyconfig = (int*)(kernel_init_apitype + 8);
         *kernel_init_keyconfig = key;
     }
     
@@ -607,9 +609,10 @@ int sctrlKernelSetUMDEmuFile(const char *filename)
     if(filename == NULL) return -1;
     
     // Field unavailable
-    if(kernel_init_filename == NULL) return -2;
+    if(kernel_init_apitype == NULL) return -2;
     
     // Link Buffer
+    char** kernel_init_filename = (char**)(kernel_init_apitype + 4);
     kernel_init_filename[1] = filename;
     
     // Return Success
