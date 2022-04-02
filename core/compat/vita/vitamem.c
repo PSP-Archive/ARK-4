@@ -37,10 +37,6 @@ void unlockVitaMemory(){
         return;
     }
 
-    // do a backup of flash0 to ms to prevent corruption
-    //extern struct KernelFunctions _ktbl;
-    //dumpVitaFlash0(&_ktbl);
-
     u32 user_size = 36 * 1024 * 1024;
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
     partition->size = user_size;

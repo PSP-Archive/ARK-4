@@ -98,6 +98,7 @@ void disable_PauseGame(SceModule2* mod)
 
 int is_launcher_mode = 0;
 int use_mscache = 0;
+int use_highmem = 0;
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
@@ -111,8 +112,7 @@ void settingsHandler(char* path){
         usb_charge(); // enable usb charging
     }
     else if (strcasecmp(path, "highmem") == 0){ // enable high memory
-        patch_partitions();
-        flushCache();
+        use_highmem = 1;
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup
@@ -183,6 +183,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
+            if (use_highmem) patch_partitions();
             if (use_mscache){
                 if (psp_model == PSP_GO)
                     msstorCacheInit("eflash0a0f1p", 8 * 1024);

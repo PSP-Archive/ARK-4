@@ -6,6 +6,7 @@ static KernelFunctions* ktbl = NULL;
 
 int (* Kermit_driver_4F75AA05)(void* kermit_packet, u32 cmd_mode, u32 cmd, u32 argc, u32 allow_callback, u64 *resp) = NULL;
 
+#ifdef DEBUG
 void dumpVitaFlash0(KernelFunctions* kf){
     ktbl = kf;
     ktbl->KernelIOMkdir("ms0:/flash0", 0777);
@@ -41,6 +42,7 @@ void dumpVitaFlash0(KernelFunctions* kf){
         i++;
     }
 }
+#endif
 
 int installFlash0Archive(char* path)
 {
