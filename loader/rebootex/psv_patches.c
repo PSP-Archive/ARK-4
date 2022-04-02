@@ -48,15 +48,15 @@ int UnpackBootConfigVita(char **p_buffer, int length){
     return res;
 }
 
-//12 MB extra ram through p11 on Vita
+//16 MB extra ram through p11 on Vita
 void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *table)
 {
     // Add partition 11
     SetMemoryPartitionTable(sysmem_config, table);
-    table->extVshell.addr = 0x8B000000;
-    table->extVshell.size = 16 * 1024 * 1024;
+    table->extVshell.addr = 0x8B000000; // flash0 ramfs
+    table->extVshell.size = 12*1024*1024; // 16MiB
 }
-// call this from rebootex
+
 int PatchSysMem(void *a0, void *sysmem_config)
 {
 

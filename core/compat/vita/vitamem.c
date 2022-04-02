@@ -1,12 +1,16 @@
 #include "vitamem.h"
 
+static int pid = -1;
+
 int prevent_highmem(){
     int apitype = sceKernelInitApitype();
     return (apitype == 0x144 || apitype == 0x155 || apitype ==  0x210 || apitype ==  0x220);
 }
 
 void unprotectVitaMem(){
-    // unprotect
+    // protect against allocations by kernel
+    pid = sceKernelAllocPartitionMemory(11, "HIGHMEM", 2, 16*1024*1024, (void *)0x8B000000);
+    // unprotect from user access
     u32 *prot = (u32 *)0xBC000040;
     for (int i = 0; i < 0x10; i++)
         prot[i] = 0xFFFFFFFF;
@@ -15,8 +19,6 @@ void unprotectVitaMem(){
 // unprotect extra RAM for user apps
 // call this from systemcontrol/vitacompat
 void unlockVitaMemory(){
-
-    _sw(0x44000000, 0xBC800100);
 
     if (prevent_highmem()) return;
 
@@ -37,7 +39,11 @@ void unlockVitaMemory(){
         return;
     }
 
-    u32 user_size = 40 * 1024 * 1024;
+    // do a backup of flash0 to ms to prevent corruption
+    extern struct KernelFunctions _ktbl;
+    backupFlash0(&_ktbl);
+
+    u32 user_size = 36 * 1024 * 1024;
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
     partition->size = user_size;
     partition->data->size = (((user_size >> 8) << 9) | 0xFC);
@@ -49,5 +55,7 @@ void unlockVitaMemory(){
     
     //reset partition length for next reboot
     sctrlHENSetMemory(24, 0);
+    
+    sceKernelFreePartitionMemory(pid);
     
 }

@@ -22,7 +22,9 @@ KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDcacheWritebackInvalidateAll = &sceKernelDcacheWritebackInvalidateAll,
     .KernelIOOpen = &sceIoOpen,
     .KernelIORead = &sceIoRead,
+    .KernelIOWrite = &sceIoWrite,
     .KernelIOClose = &sceIoClose,
+    .KernelIOMkdir = &sceIoMkdir,
     .KernelDelayThread = &sceKernelDelayThread,
 };
 
@@ -115,9 +117,7 @@ void settingsHandler(char* path){
         // useless on vita
     }
     else if (strcasecmp(path, "highmem") == 0){
-        // does this still work on 3.60?
         unlockVitaMemory();
-        flushCache();
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup

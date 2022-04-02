@@ -28,7 +28,7 @@ all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common $(ARKROOT)
 CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
 
-CFLAGS += -I psxspu/ -I $(ARKROOT)/common/include/ -I $(ARKROOT)/core/systemctrl/include/
+CFLAGS += -I psxspu/ -I $(ARKROOT)/common/include/ -I $(ARKROOT)/core/systemctrl/include/ -I $(ARKROOT)/libs/graphics/
 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
@@ -41,7 +41,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lpspsystemctrl_kernel -lcolordebugger
+LIBS = -lpspsemaphore -lpspsystemctrl_kernel -lgraphics -lcolordebugger
 
 PSP_FW_VERSION = 660
 
