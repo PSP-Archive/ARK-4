@@ -133,16 +133,10 @@ int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param)
 {
     u32 k1;
     int ret = -1;
-    
-    if (ark_config->launcher[0]){
-        exitLauncher();
-    }
-    else{
-        k1 = pspSdkSetK1(0);
-        int (*_KernelExitVSH)(void*) = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
-        ret = _KernelExitVSH(param);
-        pspSdkSetK1(k1);
-    }
+    k1 = pspSdkSetK1(0);
+    int (*_KernelExitVSH)(void*) = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
+    ret = _KernelExitVSH(param);
+    pspSdkSetK1(k1);
     return ret;
 }
 

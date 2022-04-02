@@ -97,7 +97,14 @@ int control_poller(SceSize args, void * argp)
             for(int i = 0; i < count; i++)
             {
                 // Execute launcher
-                if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK) sctrlKernelExitVSH(NULL);
+                if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK){
+                    if (ark_config->launcher[0]){
+                        exitLauncher();
+                    }
+                    else{
+                        sctrlKernelExitVSH(NULL);
+                    }
+                }
             }
         }
     }

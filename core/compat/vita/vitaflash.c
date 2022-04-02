@@ -6,7 +6,7 @@ static KernelFunctions* ktbl = NULL;
 
 int (* Kermit_driver_4F75AA05)(void* kermit_packet, u32 cmd_mode, u32 cmd, u32 argc, u32 allow_callback, u64 *resp) = NULL;
 
-void backupFlash0(KernelFunctions* kf){
+void dumpVitaFlash0(KernelFunctions* kf){
     ktbl = kf;
     ktbl->KernelIOMkdir("ms0:/flash0", 0777);
     ktbl->KernelIOMkdir("ms0:/flash0/kd", 0777);
@@ -21,19 +21,16 @@ void backupFlash0(KernelFunctions* kf){
     ktbl->KernelIOMkdir("ms0:/flash0/codepage", 0777);
     ktbl->KernelIOMkdir("ms0:/flash0/dic", 0777);
 
-    uint32_t procfw = 0x8BA00000;
-    VitaFlashBufferFile * prof0 = (VitaFlashBufferFile *)procfw;
-    
     int i = 0;
     char path[128];
+    VitaFlashBufferFile * f0 = (VitaFlashBufferFile*)FLASH_SONY;
     
-    while (prof0[i].name != NULL){
-        char* filename = prof0[i].name;
-        void* buf = prof0[i].content;
-        int buf_size = prof0[i].size;
-        if (strncmp(filename, "/kd/ark_", 8) == 0) continue; // don't backup ARK files
+    while (f0[i].name != NULL){
+        char* filename = f0[i].name;
+        void* buf = f0[i].content;
+        int buf_size = f0[i].size;
         strcpy(path, "ms0:/flash0");
-        if (filename[0] != "/") strcat(path, "/");
+        if (filename[0] != '/') strcat(path, "/");
         strcat(path, filename);
         int fd = ktbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
         if (fd < 0){
@@ -207,5 +204,6 @@ int patchKermitPeripheral(KernelFunctions* kf)
     }
     _sw(JUMP(flashLoadPatch), swaddress);
     _sw(NOP, swaddress+4);
+    
     return 0;
 }

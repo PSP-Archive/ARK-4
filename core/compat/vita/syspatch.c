@@ -14,7 +14,7 @@
 
 extern STMOD_HANDLER previous;
 
-extern int sctrlKernelExitVSH(void*);
+extern void exitLauncher();
 
 KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
@@ -141,9 +141,9 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     // Patch sceKernelExitGame Syscalls
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), sctrlKernelExitVSH);
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), sctrlKernelExitVSH);
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), sctrlKernelExitVSH);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exitLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exitLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), exitLauncher);
         goto flush;
     }
     
@@ -158,7 +158,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "scePops_Manager") == 0){
         //patchVitaPopsman(mod);
         // Hook scePopsManExitVSHKernel
-        //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), sctrlKernelExitVSH);
+        //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), exitLauncher);
         goto flush;
     }
     
