@@ -138,7 +138,7 @@ void settingsHandler(char* path){
             int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
             if (CacheSetPolicy && CacheInit){
                 CacheSetPolicy(CACHE_POLICY_LRU);
-                CacheInit(16 * 1024, 16, (use_highmem)?2:11);
+                CacheInit(16 * 1024, 16, 2);
             }
         }
     }
