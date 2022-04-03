@@ -20,6 +20,7 @@ typedef struct {
     unsigned char disablepause;
     unsigned char highmem;
     unsigned char mscache;
+    unsigned char infernocache;
 }ArkConf;
 
 ArkConf ark_config;
@@ -35,7 +36,6 @@ ArkConf ark_config;
     "VSH" \
 }
 
-/* Fastboot entry */
 static struct {
     char* description;
     unsigned char max_options;
@@ -50,7 +50,6 @@ static struct {
     ARK_OPTIONS
 };
 
-/* Language entry */
 static struct {
     char* description;
     unsigned char max_options;
@@ -65,7 +64,6 @@ static struct {
     ARK_OPTIONS
 };
 
-/* Font entry */
 static struct {
     char* description;
     unsigned char max_options;
@@ -80,7 +78,6 @@ static struct {
     ARK_OPTIONS
 };
 
-/* Scan savedata */
 static struct {
     char* description;
     unsigned char max_options;
@@ -95,7 +92,6 @@ static struct {
     ARK_OPTIONS
 };
 
-/* Button swap */
 static struct {
     char* description;
     unsigned char max_options;
@@ -138,6 +134,20 @@ static struct {
     ARK_OPTIONS
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} infernocache = {
+    "Inferno Cache",
+    MAX_ARK_OPTIONS,
+    0,
+    &(ark_config.infernocache),
+    ARK_OPTIONS
+};
+
 settings_entry* ark_conf_entries[] = {
     (settings_entry*)&usbcharge,
     (settings_entry*)&overclock,
@@ -146,9 +156,10 @@ settings_entry* ark_conf_entries[] = {
     (settings_entry*)&disablepause,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
+    (settings_entry*)&infernocache,
 };
 
-#define MAX_ARK_CONF 7
+#define MAX_ARK_CONF 8
 
 bool isComment(string line){
     return (line[0] == '#' || line[0] == ';' || (line[0]=='/'&&line[1]=='/'));
@@ -202,6 +213,9 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "mscache") == 0){
         return &(ark_config.mscache);
+    }
+    else if (strcasecmp(conf.c_str(), "infernocache") == 0){
+        return &(ark_config.infernocache);
     }
     return NULL;
 }
@@ -268,5 +282,6 @@ void saveSettings(){
     output << processSetting("disablepause", ark_config.disablepause) << endl;
     output << processSetting("highmem", ark_config.highmem) << endl;
     output << processSetting("mscache", ark_config.mscache) << endl;
+    output << processSetting("infernocache", ark_config.infernocache) << endl;
     output.close();
 }

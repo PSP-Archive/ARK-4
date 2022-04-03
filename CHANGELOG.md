@@ -1,5 +1,12 @@
 # ARK-4
 
+## Update 14.1
+- Added experimental highmem on PSP 1K.
+
+## Update 14
+- Fixed highmem on PSP.
+- Added experimental highmem on PS Vita.
+
 ## Update 13.2
 - Added reboot runtime module support on PS Vita.
 - Added ARK Version to vsh menu.

@@ -82,6 +82,7 @@ int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, 
 }
 
 void patchLoadExecUMDemu(){
+    // highjack SystemControl
     u32 func = K_EXTRACT_IMPORT(&sctrlKernelLoadExecVSHWithApitype);
     _sw(JUMP(sctrlKernelLoadExecVSHWithApitypeWithUMDemu), func);
     _sw(NOP, func+4);
@@ -108,6 +109,7 @@ int isSystemBooted(void)
 int use_mscache = 0;
 int use_highmem = 0;
 void settingsHandler(char* path){
+    int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "overclock") == 0){
         // useless on vita
     }
@@ -119,6 +121,7 @@ void settingsHandler(char* path){
     }
     else if (strcasecmp(path, "highmem") == 0){
         use_highmem = 1;
+        unlockVitaMemory();
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup
@@ -128,6 +131,16 @@ void settingsHandler(char* path){
     }
     else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
         // useless on vita
+    }
+    else if (strcasecmp(path, "infernocache") == 0){
+        if (apitype == 0x123 || apitype == 0x125){
+            void (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
+            int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+            if (CacheSetPolicy && CacheInit){
+                CacheSetPolicy(CACHE_POLICY_LRU);
+                CacheInit(16 * 1024, 16, (use_highmem)?2:11);
+            }
+        }
     }
 }
 
@@ -141,9 +154,9 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     // Patch sceKernelExitGame Syscalls
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exitLauncher);
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exitLauncher);
-        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), exitLauncher);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), K_EXTRACT_IMPORT(exitLauncher));
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), K_EXTRACT_IMPORT(exitLauncher));
         goto flush;
     }
     
@@ -158,7 +171,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "scePops_Manager") == 0){
         //patchVitaPopsman(mod);
         // Hook scePopsManExitVSHKernel
-        //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), exitLauncher);
+        //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), K_EXTRACT_IMPORT(exitLauncher));
         goto flush;
     }
     
@@ -182,8 +195,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
-            // do a backup of flash0 to ms to prevent corruption
-            if (use_highmem) unlockVitaMemory();
             // Initialize Memory Stick Speedup Cache
             if (use_mscache) msstorCacheInit("ms", 16 * 1024);
             // Apply Directory IO PSP Emulation

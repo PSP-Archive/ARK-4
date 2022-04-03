@@ -74,6 +74,8 @@ SceUID g_umd9660_sema_id = -1;
 // 0x00002744
 static struct IsoOpenSlot g_open_slot[MAX_FILES_NR];
 
+void* g_sector_buf = NULL;
+
 // 0x000023D8
 // it's the serial of Coded arms
 static const char *g_umd_ids[] = {

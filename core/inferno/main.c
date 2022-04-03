@@ -105,10 +105,12 @@ int module_start(SceSize args, void* argp)
     apitype = sceKernelInitApitype();
     sctrlSEGetConfig(&config);
 
+    /*
     if (apitype == 0x123 || apitype == 0x125) {
         infernoCacheSetPolicy(CACHE_POLICY_LRU);
-        infernoCacheInit(16 * 1024, 16); // 256KB cache
+        infernoCacheInit(16 * 1024, 16, 9); // 256KB cache in P9
     }
+    */
 
     ret = setup_umd_device();
 

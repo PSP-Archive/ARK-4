@@ -48,9 +48,6 @@ struct IoReadArg g_read_arg;
 
 SceUID heapid = -1;
 
-// 0x00002484
-void *g_sector_buf = NULL;
-
 // 0x0000248C
 int g_iso_opened = 0;
 
@@ -121,8 +118,7 @@ static DAXHeader* dax_header = (DAXHeader*)&g_CISO_hdr;
 static JisoHeader* jiso_header = (JisoHeader*)&g_CISO_hdr;
 
 static u32 *g_cso_idx_cache = NULL;
-
-u32 g_cso_idx_start_block = -1;
+static u32 g_cso_idx_start_block = -1;
 
 static int (*read_iso_data)(u8* addr, u32 size, u32 offset);
 static int read_raw_data(u8* addr, u32 size, u32 offset);
@@ -230,7 +226,6 @@ static int is_ciso(SceUID fd)
             if (g_CISO_hdr.ver == 2) read_iso_data = &read_ciso2_data;
             else read_iso_data = (magic == ZSO_MAGIC)? &read_ziso_data : &read_ciso_data;
         }
-        
         if (heapid<0){
             heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, dec_size + com_size + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
             if (heapid<0){
@@ -238,7 +233,6 @@ static int is_ciso(SceUID fd)
                 goto exit;
             }
         }
-        
         if(g_ciso_dec_buf == NULL) {
             g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, dec_size+64); //oe_malloc(dec_size + 64);
             if(g_ciso_dec_buf == NULL) {
@@ -248,7 +242,6 @@ static int is_ciso(SceUID fd)
             if((u32)g_ciso_dec_buf & 63) // align 64
                 g_ciso_dec_buf = (void*)(((u32)g_ciso_dec_buf & (~63)) + 64);
         }
-
         if(g_ciso_block_buf == NULL) {
             g_ciso_block_buf = sceKernelAllocHeapMemory(heapid, com_size+64); //oe_malloc(com_size + 64);
             if(g_ciso_block_buf == NULL) {
@@ -258,7 +251,6 @@ static int is_ciso(SceUID fd)
             if((u32)g_ciso_block_buf & 63) // align 64
                 g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
         }
-
         if (g_cso_idx_cache == NULL) {
             g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4) + 64); //oe_malloc((CISO_IDX_MAX_ENTRIES * 4) + 64);
             if (g_cso_idx_cache == NULL) {

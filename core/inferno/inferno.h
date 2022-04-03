@@ -65,7 +65,7 @@ extern int iso_cache_read(struct IoReadArg *args);
 extern int iso_read_with_stack(u32 offset, void *ptr, u32 data_len);
 
 extern int infernoSetDiscType(int type);
-extern int infernoCacheInit(int cache_size, int cache_num);
+extern int infernoCacheInit(int cache_size, int cache_num, int partition);
 extern int infernoCacheAdd(u32 pos, int len);
 extern void infernoCacheSetPolicy(int policy);
 

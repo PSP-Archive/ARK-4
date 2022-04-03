@@ -7,6 +7,7 @@
 #include <pspdisplay_kernel.h>
 #include <pspsysmem_kernel.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include <pspiofilemgr.h>
 #include <pspgu.h>
@@ -113,6 +114,7 @@ void settingsHandler(char* path){
     }
     else if (strcasecmp(path, "highmem") == 0){ // enable high memory
         use_highmem = 1;
+        patch_partitions();
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup
@@ -122,6 +124,16 @@ void settingsHandler(char* path){
     }
     else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
         is_launcher_mode = 1;
+    }
+    else if (strcasecmp(path, "infernocache") == 0){
+        if (apitype == 0x123 || apitype == 0x125){
+            void (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
+            int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+            if (CacheSetPolicy && CacheInit){
+                CacheSetPolicy(CACHE_POLICY_LRU);
+                CacheInit(16 * 1024, 16, (use_highmem)?2:9);
+            }
+        }
     }
 }
 
@@ -183,7 +195,6 @@ void PSPOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
-            if (use_highmem) patch_partitions();
             if (use_mscache){
                 if (psp_model == PSP_GO)
                     msstorCacheInit("eflash0a0f1p", 8 * 1024);
