@@ -125,13 +125,13 @@ ARK comes prepacked with a very powerful launcher with a built-in file browser a
 Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
 
 
-- ONEMenu: https://github.com/ONElua/ONEmenu/releases
+- ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
 
-- vMenu: http://www.mediafire.com/file/7acb5mhawx4gr9t/vMenu_ARK.7z/file
+- vMenu by neur0n: http://www.mediafire.com/file/7acb5mhawx4gr9t/vMenu_ARK.7z/file
 
-- yMenu: https://docs.google.com/uc?export=download&id=0B0kWUCdtGmJwLUhRUlNJSWhMWVE
+- yMenu by wth/yosh: https://docs.google.com/uc?export=download&id=0B0kWUCdtGmJwLUhRUlNJSWhMWVE
 
-- gMenu: http://www.mediafire.com/file/oou5490qc99vr7d/gmenuARK.rar/file
+- gMenu by gbot: http://www.mediafire.com/file/oou5490qc99vr7d/gmenuARK.rar/file
 
 - 138Menu by gbot: https://wololo.net/talk/viewtopic.php?f=53&t=33511
 
