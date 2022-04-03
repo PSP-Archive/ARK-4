@@ -87,13 +87,16 @@ void patch_scePower_Service(SceModule2* mod)
     _sw(NOP, text_addr + 0x00000E68);
 }
 
-void disable_PauseGame(SceModule2* mod)
+int pause_disabled = 0;
+void disable_PauseGame()
 {
-    u32 text_addr = mod->text_addr;
-    if(psp_model == PSP_GO) {
+    if(psp_model == PSP_GO && !pause_disabled) {
+        SceModule2* mod = sceKernelFindModuleByName("sceImpose_Driver");
+        u32 text_addr = mod->text_addr;
         for(int i=0; i<2; i++) {
             _sw(NOP, text_addr + 0x00000574 + i * 4);
         }
+        pause_disabled = 1;
     }
 }
 
@@ -115,12 +118,14 @@ void settingsHandler(char* path){
     else if (strcasecmp(path, "highmem") == 0){ // enable high memory
         use_highmem = 1;
         patch_partitions();
+        disable_PauseGame(); // disable pause feature to maintain stability
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup
     }
     else if (strcasecmp(path, "disablepause") == 0){ // disable pause game feature on psp go
-        disable_PauseGame(sceKernelFindModuleByName("sceImpose_Driver"));
+        if (apitype != 0x144 && apitype != 0x155 && apitype !=  0x210 && apitype !=  0x220) // prevent in pops and vsh
+            disable_PauseGame();
     }
     else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
         is_launcher_mode = 1;
@@ -131,7 +136,8 @@ void settingsHandler(char* path){
             int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
             if (CacheSetPolicy && CacheInit){
                 CacheSetPolicy(CACHE_POLICY_LRU);
-                CacheInit(16 * 1024, 16, 2);
+                CacheInit(16 * 1024, 16, (use_highmem||psp_model==PSP_1000)?2:9);
+                disable_PauseGame(); // disable pause feature to maintain stability
             }
         }
     }
