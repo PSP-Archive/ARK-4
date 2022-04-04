@@ -71,3 +71,31 @@ void LedaModulePatch(SceModule2 *mod)
    
     if( leda_previous ) leda_previous( mod );
 }
+
+void applyLedaPatches(void* handler){
+    // register handler
+    KernelLoadModuleMs2_hook = handler;
+
+    // patch leda
+    u32 text_addr = ((u32)handler) - 0xCE8;
+
+    // Remove version check
+    _sw(0, text_addr + 0xC58);
+
+    // Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
+    //_sw(0, text_addr + 0x1140);
+
+    // Fix sceKernelLoadModuleMs2 call
+    _sw(JUMP(sceKernelLoadModuleMs2_bridge), text_addr + 0x2E28);
+    //hookImportByNID(sceKernelFindModuleByAddress(func), "ModuleMgrForKernel", 0x49C5B9E1, sceKernelLoadModuleMs2_bridge);
+
+    // patch init sceKernelLoadModuleMs2
+    SceModule2 *mod = sceKernelFindModuleByName("sceInit");
+    KernelLoadModuleMs2_orig = sctrlHENFindFunction("sceModuleManager", "ModuleMgrForKernel", 0x7BD53193);
+    hookImportByNID(mod, "ModuleMgrForKernel", 0x7BD53193, sceKernelLoadModuleMs2_patched);
+
+    // register handler for custom fixes to legacy games
+    leda_previous = sctrlHENSetStartModuleHandler( LedaModulePatch );
+    
+    flushCache();
+}
