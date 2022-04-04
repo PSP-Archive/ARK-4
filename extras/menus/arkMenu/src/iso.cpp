@@ -120,7 +120,7 @@ char* Iso::getSubtype(){
 }
 
 bool Iso::isPatched(){
-    return (this->fastExtract(path.c_str(), "PSP_GAME/SYSDIR/EBOOT.OLD") != NULL);
+    return (this->fastExtract(path.c_str(), "EBOOT.OLD") != NULL);
 }
 
 bool Iso::isISO(const char* filename){
@@ -150,7 +150,7 @@ void* Iso::fastExtract(const char* path, char* file, unsigned* size){
     
     fseek(fp, dir_start, SEEK_SET);
 
-    unsigned search_end = ftell(fp) + 2048;
+    unsigned search_end = ftell(fp) + 4096;
     
     while (true){
         

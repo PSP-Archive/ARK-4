@@ -257,6 +257,21 @@ int getInitialBlock(FILE* fp, u8* block_out, u8* compressed, int ciso_type){
 
     fread(compressed, 1, size, fp);
     zlib_decompress(compressed, block_out, ciso_type);
+    
+    if (block_size == SECTOR_SIZE){
+        fseek(fp, start+4, SEEK_SET);
+        fread(&offset, 4, 1, fp);
+        fread(&size, 4, 1, fp);
+        fseek(fp, offset, SEEK_SET);
+        fread(compressed, 1, size, fp);
+        zlib_decompress(compressed, block_out+SECTOR_SIZE, ciso_type);
+    }
+    
+    {
+        FILE* fp = fopen("block_out2.bin", "wb");
+        fwrite(block_out, 1, DAX_BLOCK_SIZE, fp);
+        fclose(fp);
+    }
 
     return block_size;
 }
@@ -282,7 +297,7 @@ void* fastExtract(const char* path, char* file, unsigned* size_out, int ciso_typ
 
     while (true){
 
-        if (pos > block_size){
+        if (pos >= DAX_BLOCK_SIZE){
             fclose(fp);
             return NULL;
         }
@@ -295,8 +310,6 @@ void* fastExtract(const char* path, char* file, unsigned* size_out, int ciso_typ
         if (!strcmp(tmpText, file)){
             if (size_out == NULL){
                 fclose(fp);
-                free(block_out);
-                free(compressed);
                 return (void*)-1;
             }
             pos -= 31;
@@ -514,6 +527,8 @@ void testIconExtract(int argc, char** argv){
     else{
         printf("ERROR: could not read "FILE_TO_EXTRACT"\n");
     }
+    
+    printf("Is prome patched: %d\n", fastExtract(isopath, "EBOOT.OLD", NULL, ciso_type));
 }
 
 void testIsoExtract(int argc, char** argv){

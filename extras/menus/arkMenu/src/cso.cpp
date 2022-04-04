@@ -213,6 +213,17 @@ int getInitialBlock(FILE* fp, u8* block_out, u8* compressed, int ciso_type){
     fread(compressed, 1, size, fp);
     zlib_decompress(compressed, block_out, ciso_type);
 
+    if (block_size == SECTOR_SIZE){
+        // decompress next sector so we can scan for EBOOT.OLD
+        fseek(fp, start+4, SEEK_SET);
+        fread(&offset, 4, 1, fp);
+        fread(&size, 4, 1, fp);
+        fseek(fp, offset, SEEK_SET);
+        size -= offset;
+        fread(compressed, 1, size, fp);
+        zlib_decompress(compressed, block_out+SECTOR_SIZE, ciso_type);
+    }
+
     return block_size;
 }
 
@@ -224,6 +235,7 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
         
     static u8 block_out[DAX_BLOCK_SIZE] __attribute__((aligned(64)));
     static u8 compressed[DAX_COMP_BUF] __attribute__((aligned(64)));
+    memset(block_out, 0, DAX_BLOCK_SIZE);
     int block_size = getInitialBlock(fp, block_out, compressed, ciso_type);
 
     if (size_out != NULL)
@@ -237,7 +249,7 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
 
     while (true){
 
-        if (pos > block_size){
+        if (pos >= DAX_BLOCK_SIZE){
             fclose(fp);
             return NULL;
         }
@@ -250,8 +262,6 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
         if (!strcmp(tmpText, file)){
             if (size_out == NULL){
                 fclose(fp);
-                free(block_out);
-                free(compressed);
                 return (void*)-1;
             }
             pos -= 31;
