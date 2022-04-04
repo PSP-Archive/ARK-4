@@ -298,7 +298,7 @@ void* Cso::fastExtract(const char* path, char* file, unsigned* size_out){
                     
                 fseek(fp, offset, SEEK_SET);
                 
-                if (size == block_size) is_compressed = false; // for DAX, JSO and CSOv2
+                if (size == block_size && ciso_type == TYPE_JSO) is_compressed = false; // for DAX, JSO and CSOv2
 
                 if (is_compressed){
                     if (x < b_iter - 1){

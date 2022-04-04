@@ -93,7 +93,6 @@ static const char * g_filename = NULL;
 static char g_sector_buffer[SECTOR_SIZE] __attribute__((aligned(64)));
 static SceUID g_isofd = -1;
 static u32 g_total_sectors = 0;
-static u32 g_total_blocks = 0;
 
 static Iso9660DirectoryRecord g_root_record;
 
@@ -208,13 +207,15 @@ static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 
 }
 
 static int read_compressed_sector_generic(u32 sector, u8* buf,
-        u32 header_size, u32 block_size, u32 block_skip, u32 align,
+        u32 header_size, u32 uncompressed_size, u32 block_size, u32 block_skip, u32 align,
         void (*decompress)(void* src, int src_len, void* dst, int dst_len, u32 is_nc)
 ){
     // calculate block and offset within block
     u32 pos = isoLBA2Pos(sector, 0);
     u32 cur_block = pos/block_size;
     u32 offset = pos & (block_size-1);
+    
+    u32 g_total_blocks = uncompressed_size/block_size;
     
     u8* com_buf = PTR_ALIGN_64(ciso_com_buf);
     u8* dec_buf = PTR_ALIGN_64(ciso_dec_buf);
@@ -265,7 +266,7 @@ static int read_sector_cso(u32 sector, u8* buf){
     // CISO/ZISO
     return read_compressed_sector_generic(
         sector, buf,
-        sizeof(CISOHeader), g_ciso_h.block_size, 0, g_ciso_h.align,
+        sizeof(CISOHeader), g_ciso_h.total_bytes, g_ciso_h.block_size, 0, g_ciso_h.align,
         (g_ciso_h.magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso
     );
 }
@@ -274,7 +275,7 @@ static int read_sector_jso(u32 sector, u8* buf){
     // JISO
     return read_compressed_sector_generic(
         sector, buf,
-        sizeof(JisoHeader), jiso_header->block_size,
+        sizeof(JisoHeader), jiso_header->uncompressed_size, jiso_header->block_size,
         4*jiso_header->block_headers, 0,
         (jiso_header->method)? &decompress_dax1 : &decompress_lzo
     );
@@ -284,7 +285,7 @@ static int read_sector_dax(u32 sector, u8* buf){
     // DAX
     return read_compressed_sector_generic(
         sector, buf,
-        sizeof(DAXHeader), DAX_BLOCK_SIZE, 2, 0,
+        sizeof(DAXHeader), dax_header->uncompressed_size, DAX_BLOCK_SIZE, 2, 0,
         (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib
     );
 }
@@ -293,7 +294,7 @@ static int read_sector_cso2(u32 sector, u8* buf){
     // CISOv2
     return read_compressed_sector_generic(
         sector, buf,
-        sizeof(CISOHeader), g_ciso_h.block_size, 0, g_ciso_h.align,
+        sizeof(CISOHeader), g_ciso_h.total_bytes, g_ciso_h.block_size, 0, g_ciso_h.align,
         &decompress_cso2
     );
 }
@@ -486,7 +487,6 @@ int isoOpen(const char *path)
 
     if (magic == CSO_MAGIC || magic == ZSO_MAGIC) {
         g_total_sectors = g_ciso_h.total_bytes / SECTOR_SIZE;
-        g_total_blocks = g_ciso_h.total_bytes / g_ciso_h.block_size;
         g_CISO_cur_idx = -1;
 
         ciso_cur_block = (u32)-1;
@@ -500,14 +500,12 @@ int isoOpen(const char *path)
     else if (magic == DAX_MAGIC){
         readSector = &read_sector_dax;
         g_total_sectors = dax_header->uncompressed_size / SECTOR_SIZE;
-        g_total_blocks = dax_header->uncompressed_size / DAX_BLOCK_SIZE;
         g_CISO_cur_idx = -1;
         ciso_cur_block = (u32)-1;
     }
     else if (magic == JSO_MAGIC){
         readSector = &read_sector_jso;
         g_total_sectors = jiso_header->uncompressed_size / SECTOR_SIZE;
-        g_total_blocks = jiso_header->uncompressed_size / jiso_header->block_size;
         g_CISO_cur_idx = -1;
         ciso_cur_block = (u32)-1;
     }
@@ -521,7 +519,6 @@ int isoOpen(const char *path)
         sceIoLseek(g_isofd, orig, PSP_SEEK_SET);
 
         g_total_sectors = isoPos2LBA((u32)size);
-        g_total_blocks = g_total_sectors;
     }
 
     ret = readSector(16, g_sector_buffer);
@@ -561,7 +558,7 @@ void isoClose(void)
     g_isofd = -1;
     g_filename = NULL;
 
-    g_total_sectors = g_total_blocks = 0;
+    g_total_sectors = 0;
     ciso_cur_block = (u32)-1;
 }
 
