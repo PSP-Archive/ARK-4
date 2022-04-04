@@ -168,17 +168,17 @@ static void wait_until_ms0_ready(void)
 // 0x00000E58
 static int get_nsector(void)
 {
-    if(g_ciso_total_block <= 0) {
+    if(g_total_sectors <= 0) {
         SceOff off, total;
 
         off = sceIoLseek(g_iso_fd, 0, PSP_SEEK_CUR);
         total = sceIoLseek(g_iso_fd, 0, PSP_SEEK_END);
         sceIoLseek(g_iso_fd, off, PSP_SEEK_SET);
 
-        g_ciso_total_block = total / ISO_SECTOR_SIZE;
+        g_total_sectors = total / ISO_SECTOR_SIZE;
     }
 
-    return g_ciso_total_block;
+    return g_total_sectors;
 }
 
 // 0x00000F00
@@ -208,18 +208,21 @@ static int is_ciso(SceUID fd)
         u32 com_size = 0;
         
         if (magic == DAX_MAGIC){
+            g_total_sectors = dax_header->uncompressed_size / ISO_SECTOR_SIZE;
             g_ciso_total_block = dax_header->uncompressed_size / DAX_BLOCK_SIZE;
             dec_size = DAX_BLOCK_SIZE;
             com_size = DAX_COMP_BUF;
             read_iso_data = &read_dax_data;
         }
         else if (magic == JSO_MAGIC){
+            g_total_sectors = jiso_header->uncompressed_size / ISO_SECTOR_SIZE;
             g_ciso_total_block = jiso_header->uncompressed_size / jiso_header->block_size;
             dec_size = jiso_header->block_size;
             com_size = jiso_header->block_size + ISO_SECTOR_SIZE/4;
             read_iso_data = &read_jiso_data;
         }
         else{
+            g_total_sectors = g_CISO_hdr.total_bytes / ISO_SECTOR_SIZE;
             g_ciso_total_block = g_CISO_hdr.total_bytes / g_CISO_hdr.block_size;
             dec_size = g_CISO_hdr.block_size;
             com_size = dec_size + (1 << g_CISO_hdr.align);
@@ -377,8 +380,8 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
     u32 ending_block = ((o_offset+size) / block_size) + 1;
     if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
         u32 idx_size = 0;
-        if (starting_block + CISO_IDX_MAX_ENTRIES > g_total_sectors) {
-            idx_size = (g_total_sectors - starting_block + 1) * 4;
+        if (starting_block + CISO_IDX_MAX_ENTRIES > g_ciso_total_block) {
+            idx_size = (g_ciso_total_block - starting_block + 1) * 4;
         } else {
             idx_size = CISO_IDX_MAX_ENTRIES * 4;
         }
@@ -391,7 +394,7 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
         cur_block = offset / block_size;
         pos = offset & (block_size - 1);
 
-        if(cur_block >= g_total_sectors) {
+        if(cur_block >= g_ciso_total_block) {
             // EOF reached
             break;
         }
@@ -410,7 +413,7 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
         b_size &= 0x7FFFFFFF;
         b_size -= b_offset;
 
-        if (cur_block == g_total_sectors-1 && header_size == sizeof(DAXHeader))
+        if (cur_block == g_ciso_total_block-1 && header_size == sizeof(DAXHeader))
             b_size = DAX_COMP_BUF; // fix for last DAX block
 
         if (align){

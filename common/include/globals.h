@@ -28,6 +28,7 @@
 #define REBOOT_TEXT (KERNEL_BASE + 0x600000)
 #define REBOOTEX_TEXT (KERNEL_BASE + 0xFC0000)
 #define FLASH_SONY 0x8B000000
+#define ARK_FLASH 0x8BA00000
 #define MAX_HIGH_MEMSIZE 55
 
 // ARK_CONFIG
@@ -44,7 +45,7 @@
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 14
-#define ARK_MICRO_VERSION 2
+#define ARK_MICRO_VERSION 4
 
 /*
 First two bits identify the device (PSP or PS Vita)
@@ -135,6 +136,7 @@ typedef struct ARKConfig{
 #define USER_SIZE (24 * 1024 * 1024)
 #define KERNEL_SIZE (4 * 1024 * 1024)
 #define FLASH_SIZE 0x01000000
+#define ARK_FLASH_SIZE 0x600000
 
 #endif
 

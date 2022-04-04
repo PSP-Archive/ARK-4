@@ -49,7 +49,7 @@ int installFlash0Archive(char* path)
     int fd;
 
     // Base Address
-    uint32_t procfw = 0x8BA00000;
+    uint32_t procfw = ARK_FLASH;
     uint32_t sony = FLASH_SONY;
 
     // Cast PROCFW flash0 Filesystem

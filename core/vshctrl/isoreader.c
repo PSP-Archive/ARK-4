@@ -93,6 +93,7 @@ static const char * g_filename = NULL;
 static char g_sector_buffer[SECTOR_SIZE] __attribute__((aligned(64)));
 static SceUID g_isofd = -1;
 static u32 g_total_sectors = 0;
+static u32 g_total_blocks = 0;
 
 static Iso9660DirectoryRecord g_root_record;
 
@@ -239,7 +240,7 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
             b_offset = b_offset << align;
         }
         
-        if (cur_block == g_total_sectors-1 && header_size == sizeof(DAXHeader))
+        if (cur_block == g_total_blocks-1 && header_size == sizeof(DAXHeader))
             b_size = DAX_COMP_BUF; // fix for last DAX block
 
         // read block, skipping header if needed
@@ -484,25 +485,13 @@ int isoOpen(const char *path)
     magic = g_ciso_h.magic;
 
     if (magic == CSO_MAGIC || magic == ZSO_MAGIC) {
-        //g_is_compressed = 1;
-        g_total_sectors = g_ciso_h.total_bytes / g_ciso_h.block_size;
+        g_total_sectors = g_ciso_h.total_bytes / SECTOR_SIZE;
+        g_total_blocks = g_ciso_h.total_bytes / g_ciso_h.block_size;
         g_CISO_cur_idx = -1;
-        //g_ciso_dec_buf_offset = (u32)-1;
-        //g_ciso_dec_buf_size = 0;
 
         ciso_cur_block = (u32)-1;
-        /*
-        ciso_com_buf = oe_malloc(g_ciso_h.block_size + (SECTOR_SIZE/4) + 64);
-        ciso_dec_buf = oe_malloc(g_ciso_h.block_size + 64);
-        if (ciso_com_buf == NULL || ciso_dec_buf == NULL) {
-            printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)ciso_com_buf, (uint)ciso_dec_buf);
-            ret = -6;
-            goto error;
-        }
-        */
         if (g_ciso_h.ver < 2){
             readSector = &read_sector_cso;
-            //memset(g_CISO_idx_cache, 0, sizeof(g_CISO_idx_cache));
         }
         else{
             readSector = &read_sector_cso2;
@@ -510,39 +499,17 @@ int isoOpen(const char *path)
     }
     else if (magic == DAX_MAGIC){
         readSector = &read_sector_dax;
-        g_total_sectors = dax_header->uncompressed_size / DAX_BLOCK_SIZE;
-        //g_is_compressed = 1;
+        g_total_sectors = dax_header->uncompressed_size / SECTOR_SIZE;
+        g_total_blocks = dax_header->uncompressed_size / DAX_BLOCK_SIZE;
         g_CISO_cur_idx = -1;
-        //g_ciso_dec_buf_offset = (u32)-1;
-        //g_ciso_dec_buf_size = 0;
         ciso_cur_block = (u32)-1;
-        /*
-        ciso_com_buf = oe_malloc(DAX_COMP_BUF + 64);
-        ciso_dec_buf = oe_malloc(DAX_BLOCK_SIZE + 64);
-        if (ciso_com_buf == NULL || ciso_dec_buf == NULL) {
-            printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)ciso_com_buf, (uint)ciso_dec_buf);
-            ret = -6;
-            goto error;
-        }
-        */
     }
     else if (magic == JSO_MAGIC){
         readSector = &read_sector_jso;
-        g_total_sectors = jiso_header->uncompressed_size / jiso_header->block_size;
-        //g_is_compressed = 1;
+        g_total_sectors = jiso_header->uncompressed_size / SECTOR_SIZE;
+        g_total_blocks = jiso_header->uncompressed_size / jiso_header->block_size;
         g_CISO_cur_idx = -1;
-        //g_ciso_dec_buf_offset = (u32)-1;
-        //g_ciso_dec_buf_size = 0;
         ciso_cur_block = (u32)-1;
-        /*
-        ciso_com_buf = oe_malloc(jiso_header->block_size + (SECTOR_SIZE/4) + 64);
-        ciso_dec_buf = oe_malloc(jiso_header->block_size + 64);
-        if (ciso_com_buf == NULL || ciso_dec_buf == NULL) {
-            printk("oe_malloc -> 0x%08x / 0x%08x\n", (uint)ciso_com_buf, (uint)ciso_dec_buf);
-            ret = -6;
-            goto error;
-        }
-        */
     }
     else {
         readSector = &read_sector_plain;
@@ -554,6 +521,7 @@ int isoOpen(const char *path)
         sceIoLseek(g_isofd, orig, PSP_SEEK_SET);
 
         g_total_sectors = isoPos2LBA((u32)size);
+        g_total_blocks = g_total_sectors;
     }
 
     ret = readSector(16, g_sector_buffer);
@@ -592,20 +560,8 @@ void isoClose(void)
     sceIoClose(g_isofd);
     g_isofd = -1;
     g_filename = NULL;
-    
-    /*
-    if (ciso_com_buf != NULL) {
-        oe_free(ciso_com_buf);
-        ciso_com_buf = NULL;
-    }
-    
-    if (ciso_dec_buf != NULL) {
-        oe_free(ciso_dec_buf);
-        ciso_dec_buf = NULL;
-    }
-    */
 
-    g_total_sectors = 0;
+    g_total_sectors = g_total_blocks = 0;
     ciso_cur_block = (u32)-1;
 }
 

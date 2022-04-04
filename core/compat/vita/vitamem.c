@@ -36,7 +36,7 @@ void unlockVitaMemory(){
         return;
     }
 
-    u32 user_size = USER_SIZE + FLASH_SIZE;
+    u32 user_size = USER_SIZE + ARK_FLASH_SIZE;
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
     partition->size = user_size;
     partition->data->size = (((user_size >> 8) << 9) | 0xFC);
@@ -46,5 +46,5 @@ void unlockVitaMemory(){
     partition->address = 0x88800000 + user_size;
     partition->data->size = 0xFC;
     
-    sctrlHENSetMemory(40, 0);
+    sctrlHENSetMemory(30, 0);
 }

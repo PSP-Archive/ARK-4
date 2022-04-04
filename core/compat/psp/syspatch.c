@@ -136,7 +136,8 @@ void settingsHandler(char* path){
             int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
             if (CacheSetPolicy && CacheInit){
                 CacheSetPolicy(CACHE_POLICY_LRU);
-                CacheInit(16 * 1024, 16, (use_highmem||psp_model==PSP_1000)?2:9);
+                if (psp_model==PSP_1000) CacheInit(4 * 1024, 8, 2); // 32K cache on 1K
+                else CacheInit(64 * 1024, 128, (use_highmem)?2:9); // 8M cache on other models
                 disable_PauseGame(); // disable pause feature to maintain stability
             }
         }
