@@ -21,7 +21,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Minimalistic: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
-- Custom game launcher with built-in game categories file browser, FTP server and client, modernized look and more.
+- Custom game launcher with built-in game categories, file browser, FTP server and client, modernized look and more.
 
 
 
@@ -115,6 +115,7 @@ Configuration settings for ARK:
 - highmem: enables high memory on models above 1K.
  You should only use this on homebrew runlevel as retail games were not meant to use the extra memory,
  and this can cause issues with cheat devices or other plugins that expect games to have their data at specific memory addresses.
+ - infernocache: enables cache for Inferno driver, improving performance of some games.
 - NOTE: You should use the recovery menu to handle settings easier.
 
 
