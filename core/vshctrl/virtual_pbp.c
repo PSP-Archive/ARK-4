@@ -1042,7 +1042,7 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     param->size = sizeof(param);
     
     param->key = "umdemu";
-    param->args = strlen(param->argp) + 1;
+    param->args = strlen(vpbp) + 1;
     apitype = 0x123;
     loadexec_file = vpbp->name;
 
