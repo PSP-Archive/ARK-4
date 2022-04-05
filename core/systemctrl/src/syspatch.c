@@ -71,9 +71,11 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     int apitype = sceKernelInitApitype();
     printk("syspatch: %s(0x%04X)\r\n", mod->modname, apitype);
     hookImportByNID(mod, "KDebugForKernel", 0x84F370BC, printk);
+	/* Removed to allow DEBUG to run
     if (DisplaySetFrameBuf){
         initScreen(DisplaySetFrameBuf);
     }
+	*/
   #endif
 
     if(strcmp(mod->modname, "sceLoadExec") == 0)
