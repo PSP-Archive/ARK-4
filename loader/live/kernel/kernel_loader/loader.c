@@ -99,7 +99,7 @@ void loadKernelArk(){
     k_tbl->KernelDcacheWritebackInvalidateAll();
     k_tbl->KernelIcacheInvalidateAll();
     
-    if (ark_config->recovery || IS_VITA(ark_config)){
+    if (IS_VITA(ark_config)){
         // Prepare Homebrew Reboot
         char menupath[ARK_PATH_SIZE];
         strcpy(menupath, ark_config->arkpath);
@@ -107,8 +107,10 @@ void loadKernelArk(){
             strcpy(ark_config->launcher, ARK_XMENU);
             strcat(menupath, ark_config->launcher);
         }
-        else if (ark_config->recovery == ARK_RECOVERY)
+        else if (ark_config->recovery){
             strcat(menupath, ARK_RECOVERY);
+            ark_config->recovery = 0;
+        }
         else
             strcat(menupath, ARK_MENU);
         struct SceKernelLoadExecVSHParam param;

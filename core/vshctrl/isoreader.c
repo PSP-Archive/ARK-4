@@ -210,6 +210,7 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
         u32 header_size, u32 uncompressed_size, u32 block_size, u32 block_skip, u32 align,
         void (*decompress)(void* src, int src_len, void* dst, int dst_len, u32 is_nc)
 ){
+
     // calculate block and offset within block
     u32 pos = isoLBA2Pos(sector, 0);
     u32 cur_block = pos/block_size;
@@ -219,14 +220,17 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
     
     u8* com_buf = PTR_ALIGN_64(ciso_com_buf);
     u8* dec_buf = PTR_ALIGN_64(ciso_dec_buf);
-    
-    if (g_CISO_cur_idx < 0 || cur_block < g_CISO_cur_idx || cur_block >= g_CISO_cur_idx + CISO_IDX_MAX_ENTRIES){
-        u32 idx_size = 0;
-        readRawData(g_CISO_idx_cache, CISO_IDX_MAX_ENTRIES * 4, cur_block * 4 + header_size);
-        g_CISO_cur_idx = cur_block;
-    }
-    
+
+    // don't work if block was already decompressed by previous reads
+    // this only happends when the block size is greater than sector size (i.e. DAX)
+    // improves reading since we don't have to decompress next sector again
     if (ciso_cur_block != cur_block){
+    
+        if (g_CISO_cur_idx < 0 || cur_block < g_CISO_cur_idx || cur_block >= g_CISO_cur_idx + CISO_IDX_MAX_ENTRIES){
+            u32 idx_size = 0;
+            readRawData(g_CISO_idx_cache, CISO_IDX_MAX_ENTRIES * 4, cur_block * 4 + header_size);
+            g_CISO_cur_idx = cur_block;
+        }
         
         // read block offset
         u32 b_offset; readRawData(&b_offset, sizeof(u32), header_size + (4*cur_block));

@@ -54,8 +54,7 @@ void * oe_malloc(unsigned int size)
 int oe_free(void * p)
 {
     // Forward Call
-    sceKernelFreeHeapMemory(heapid, p);
-    return 0;
+    return sceKernelFreeHeapMemory(heapid, p);
 }
 
 // Terminate Heap

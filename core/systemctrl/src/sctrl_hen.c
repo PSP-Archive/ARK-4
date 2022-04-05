@@ -297,6 +297,6 @@ void sctrlHENRegisterLLEHandler(void* handler)
 
 int sctrlHENRegisterHomebrewLoader(void* handler)
 {
-    applyLedaPatches(handler);
+    patchLedaPlugin(handler);
     return 0;
 }

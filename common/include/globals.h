@@ -136,7 +136,6 @@ typedef struct ARKConfig{
 #define USER_SIZE (24 * 1024 * 1024)
 #define KERNEL_SIZE (4 * 1024 * 1024)
 #define FLASH_SIZE 0x01000000
-#define ARK_FLASH_SIZE 0x600000
 
 #endif
 

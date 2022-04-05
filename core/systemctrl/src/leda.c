@@ -72,7 +72,7 @@ void LedaModulePatch(SceModule2 *mod)
     if( leda_previous ) leda_previous( mod );
 }
 
-void applyLedaPatches(void* handler){
+void patchLedaPlugin(void* handler){
     // register handler
     KernelLoadModuleMs2_hook = handler;
 
@@ -81,6 +81,8 @@ void applyLedaPatches(void* handler){
 
     // Remove version check
     _sw(0, text_addr + 0xC58);
+    //_sw(0, text_addr + 0x00000D50);
+    //_sw(0, text_addr + 0x00000D64);
 
     // Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
     //_sw(0, text_addr + 0x1140);

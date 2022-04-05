@@ -1,6 +1,6 @@
 #include <pspkernel.h>
-//#include <kubridge.h>
-//#include <fstream>
+#include <kubridge.h>
+#include <fstream>
 #include "gfx.h"
 #include "debug.h"
 #include "common.h"
@@ -28,11 +28,12 @@ int kfunc(){
     output << "References found:" << endl;
     
     for (u32 a=KERNEL_BASE; a<0x88300000; a+=4){
-        u32 d = _lw(a)&0xFFFF0000;
+        u32 p = _lw(a);
+        u32 d = p&0xFFFF0000;
         if (d >= FLASH_SONY && d<=FLASH_SONY+FLASH_SIZE){
             SceModule2* (*FindModuleByAddress)(u32) = (SceModule2* (*)(u32))sctrlHENFindFunction("sceLoaderCore", "LoadCoreForKernel", 0xBC99C625);
             SceModule2* mod = FindModuleByAddress(a);
-            output << "Found ref at " << (void*)a << " with data " << (void*)d;
+            output << "Found ref at " << (void*)a << " with data " << (void*)p;
             if (mod) output << " and module " << mod->modname << " at offset " << a-mod->text_addr;
             output << endl;
         }
