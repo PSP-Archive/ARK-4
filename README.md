@@ -23,6 +23,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Custom game launcher with built-in game categories, file browser, FTP server and client, modernized look and more.
 
+- Compatible with PRO Online.
 
 
 ## INSTALLATION ( Recommended )
