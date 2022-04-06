@@ -34,7 +34,7 @@ function checkDepends {
 
 	if [[ $python2Ret || $makeRet -eq 1 ]] ; then
 		if [[ $python2Ret && $makeRet -eq 1 ]] ; then
-			if [ -f $dialogCheck ]; then
+			if [[ -f $dialogCheck ]]; then
 				dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python2 ] and  [ make ] are required packages" 10 50 
 				sleep 2;
 				dialog --clear
@@ -45,7 +45,7 @@ function checkDepends {
 			fi
 
 		elif [[ $python2Ret -eq 1 && $makeRet -eq 0 ]] ; then
-			if [ -f $dialogCheck ]; then
+			if [[ -f $dialogCheck ]]; then
                 dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python2 ] is a required package" 10 50
                 sleep 2;
                 dialog --clear
@@ -56,7 +56,7 @@ function checkDepends {
 			fi
 
 		elif [[ $python2Ret -eq 0 && $makeRet -eq 1 ]] ; then
-			if [ -f $dialogCheck ]; then
+			if [ -f $dialogCheck ]]; then
                 dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ make ] is a required package" 10 50
                 sleep 2;
                 dialog --clear
