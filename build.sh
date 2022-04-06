@@ -19,7 +19,7 @@
 export PSPDEV=/usr/local/pspdev && export PATH=$PATH:$PSPDEV/bin 
 
 function elevatePrivs {
-	if [[ ! '/usr/bin/dialog' ]] ; then
+	if [[ ! -f '/usr/bin/dialog' ]] ; then
 		eval sudo "$@"
 	else
 		t=$(dialog --insecure --passwordbox "Password" 10 25  3>&1 1>&2 2>&3)
