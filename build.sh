@@ -5,11 +5,10 @@
 #                                   #
 # Author  : Krazynez                #
 #                                   #
-# Date    : 2022-03-23              #
-#                                   #
-# Script Version : 0.3              #
+# Date    : 2022-04-06              #
 #                                   #
 #####################################
+version=0.5
 
 # Usually I do this but to keep file permissions sane I will avoid running as root until needed 
 #if [[ $EUID -ne 0 ]] ; then
@@ -17,6 +16,64 @@
 #    exit 1;
 #fi
 export PSPDEV=/usr/local/pspdev && export PATH=$PATH:$PSPDEV/bin 
+
+dialogCheck=$(command -v dialog 2>/dev/null)
+
+function checkDepends {
+	python2Check=$(command -v python2 2>/dev/null)
+	python2Ret=$?
+
+	makeCheck=$(command -v make 2>/dev/null)
+	makeRet=$?
+
+	# libmpfrCheck (soft check used later on in script to actualy maniplate later version to be used or if actually found)
+	# Might just shift the check to here to make more since later on, will work on another revision to implement it. Fine for now.
+	#[[ -f '/lib/libmpfr.so.4' ]]	
+	#libmpfrRet=$?
+
+
+	if [[ $python2Ret || $makeRet -eq 1 ]] ; then
+		if [[ $python2Ret && $makeRet -eq 1 ]] ; then
+			if [ -f $dialogCheck ]; then
+				dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python2 ] and  [ make ] are required packages" 10 50 
+				sleep 2;
+				dialog --clear
+				exit 1;	
+			else
+				printf "You need both \`python2\` and \`make\`\n"
+				exit 1;
+			fi
+
+		elif [[ $python2Ret -eq 1 && $makeRet -eq 0 ]] ; then
+			if [ -f $dialogCheck ]; then
+                dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python2 ] is a required package" 10 50
+                sleep 2;
+                dialog --clear
+                exit 1; 
+            else
+                printf " \`python2\` is required\n"
+                exit 1;
+			fi
+
+		elif [[ $python2Ret -eq 0 && $makeRet -eq 1 ]] ; then
+			if [ -f $dialogCheck ]; then
+                dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ make ] is a required package" 10 50
+                sleep 2;
+                dialog --clear
+                exit 1;
+            else
+                printf " \`make\` is required\n"
+                exit 1;
+			fi
+		fi
+	fi
+
+
+
+}
+
+export -f checkDepends
+
 
 function elevatePrivs {
 	if [[ ! -f '/usr/bin/dialog' ]] ; then
@@ -101,6 +158,10 @@ export -f original
 
 
 function withDialog {
+
+	# Check for python2 and Make first before moving onwards
+	checkDepends 
+
 	if [[ ! -f '/usr/bin/dialog' ]] ; then
 		original
 		exit 0;
@@ -108,15 +169,15 @@ function withDialog {
 
 	dialog \
 		--title "Welcome to the ARK Compiler" \
-		--backtitle "Script created by Krazynez (W.I.P)" \
+		--backtitle "Script created by Krazynez Version: $version" \
 		--msgbox "This script will setup the correct SDK to build ARK, get sign_np dependency and temporarly setup the enivorment to build ARK-4." 10 80 
 
 $
-	dialog 	--title "Checking for existitng SDK" 
+	dialog 	--title "Checking for existitng SDK"
 
 	if [[ -d "/usr/local/pspdev" ]] ; then
 		response=$(dialog \
-			--title "EXISITING PSDSDK!" \
+			--title "EXISITING PSPSDK!" \
 			--no-cancel \
 			--radiolist \
 			"Choose an Option" \
