@@ -1,8 +1,9 @@
 name: ARK-4
 on:
   push:
+    paths-ignore: 
+      - [ 'README.md', 'build.sh' '.github/ISSUES_TEMPLATE.md' ]
     branches: [ main ]
-    paths-ignore: [ 'README.md', 'build.sh' '.github/ISSUES_TEMPLATE.md' ]
   pull_request:
     branches: [ main ]
 
