@@ -13,7 +13,15 @@
 
 #### Ark Version
 
-- Enter Ark Release here (check under system settings on PSP). If using beta build put commit version.
+- Enter Ark Release here (press Select it shows the version at the top of vshmenu). If using beta build put commit version.
+
+#### Homebrew/GAME (if applicable)
+
+- If using retail game please add GAME ID i.e: UCUS-98713 
+
+#### Plugins ( if applicable )
+
+ - Please list all plugins enabled here.
 
 #### Steps to Reproduce
 1.
@@ -52,7 +60,6 @@
 	</details>
 
 - PowerSave
-
 	<details>
 		<summary>Option type (click to view)</summary>
 	
@@ -127,5 +134,17 @@
 
 	</details>
 
-#### Plugins ( if applicable )
- - Please list all plugins enabled here.
+- Inferno Cache 
+
+	<details>
+		<summary>Option type (click to view)</summary>
+
+	- [X] Disabled
+	- [ ] Always
+	- [ ] Game
+	- [ ] UMD
+	- [ ] Homebrew
+	- [ ] Pops
+	- [ ] VSH
+
+	</details>
