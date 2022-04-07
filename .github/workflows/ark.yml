@@ -1,6 +1,11 @@
 name: ARK-4
 on:
   push:
+    paths-ignore: 
+      - 'README.md'
+      - 'build.sh' 
+      - '.github/ISSUES_TEMPLATE.md'
+      - '*.pptx'
     branches: [ main ]
   pull_request:
     branches: [ main ]
