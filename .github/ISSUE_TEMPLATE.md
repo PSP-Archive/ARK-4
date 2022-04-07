@@ -60,7 +60,6 @@
 	</details>
 
 - PowerSave
-
 	<details>
 		<summary>Option type (click to view)</summary>
 	
@@ -121,6 +120,21 @@
 	</details>
 
 - Memory Stick Speedup
+
+	<details>
+		<summary>Option type (click to view)</summary>
+
+	- [X] Disabled
+	- [ ] Always
+	- [ ] Game
+	- [ ] UMD
+	- [ ] Homebrew
+	- [ ] Pops
+	- [ ] VSH
+
+	</details>
+
+- Inferno Cache 
 
 	<details>
 		<summary>Option type (click to view)</summary>
