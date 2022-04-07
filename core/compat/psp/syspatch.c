@@ -206,7 +206,7 @@ void PSPOnModuleStart(SceModule2 * mod){
                 if (psp_model == PSP_GO)
                     msstorCacheInit("eflash0a0f1p", 8 * 1024);
                 else
-                    msstorCacheInit("msstor0p", 16 * 1024);
+                    msstorCacheInit("msstor0p", 8 * 1024);
             }
             // Boot Complete Action done
             booted = 1;

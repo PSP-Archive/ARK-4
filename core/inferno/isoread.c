@@ -118,15 +118,8 @@ static u32 *g_cso_idx_cache = NULL;
 static u32 g_cso_idx_start_block = -1;
 
 static int (*read_iso_data)(u8* addr, u32 size, u32 offset);
-static int read_raw_data(u8* addr, u32 size, u32 offset);
-static int read_ciso_data(u8* addr, u32 size, u32 offset);
-static int read_jiso_data(u8* addr, u32 size, u32 offset);
-static int read_dax_data(u8* addr, u32 size, u32 offset);
 
 static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 is_nc);
-static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 is_nc);
-static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 is_nc);
-static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 is_nc);
 
 
 // 0x00000368
@@ -179,130 +172,6 @@ static int get_nsector(void)
     }
 
     return g_total_sectors;
-}
-
-// 0x00000F00
-static int is_ciso(SceUID fd)
-{
-    int ret;
-
-    g_CISO_hdr.magic = 0;
-    g_ciso_dec_buf_offset = (u32)-1;
-    g_ciso_dec_buf_size = 0;
-
-    sceIoLseek(fd, 0, PSP_SEEK_SET);
-    ret = sceIoRead(fd, &g_CISO_hdr, sizeof(g_CISO_hdr));
-
-    if(ret != sizeof(g_CISO_hdr)) {
-        ret = -1;
-        printk("%s: -> %d\n", __func__, ret);
-        goto exit;
-    }
-
-    u32 magic = g_CISO_hdr.magic;
-
-    if(magic == CSO_MAGIC || magic == ZSO_MAGIC || magic == DAX_MAGIC || magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
-        g_CISO_cur_idx = -1;
-        
-        u32 dec_size = 0;
-        u32 com_size = 0;
-        
-        if (magic == DAX_MAGIC){
-            g_total_sectors = dax_header->uncompressed_size / ISO_SECTOR_SIZE;
-            dec_size = DAX_BLOCK_SIZE;
-            com_size = DAX_COMP_BUF;
-            read_iso_data = &read_dax_data;
-        }
-        else if (magic == JSO_MAGIC){
-            g_total_sectors = jiso_header->uncompressed_size / ISO_SECTOR_SIZE;
-            dec_size = jiso_header->block_size;
-            com_size = jiso_header->block_size + ISO_SECTOR_SIZE/4;
-            read_iso_data = &read_jiso_data;
-        }
-        else{
-            g_total_sectors = g_CISO_hdr.total_bytes / ISO_SECTOR_SIZE;
-            dec_size = g_CISO_hdr.block_size;
-            com_size = dec_size + (1 << g_CISO_hdr.align);
-            read_iso_data = &read_ciso_data;
-            if (g_CISO_hdr.ver == 2) ciso_decompressor = &decompress_cso2;
-            else ciso_decompressor = (magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso;
-        }
-        if (heapid<0){
-            heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, dec_size + com_size + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
-            if (heapid<0){
-                ret = -5;
-                goto exit;
-            }
-        }
-        if(g_ciso_dec_buf == NULL) {
-            g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, dec_size+64); //oe_malloc(dec_size + 64);
-            if(g_ciso_dec_buf == NULL) {
-                ret = -2;
-                goto exit;
-            }
-            if((u32)g_ciso_dec_buf & 63) // align 64
-                g_ciso_dec_buf = (void*)(((u32)g_ciso_dec_buf & (~63)) + 64);
-        }
-        if(g_ciso_block_buf == NULL) {
-            g_ciso_block_buf = sceKernelAllocHeapMemory(heapid, com_size+64); //oe_malloc(com_size + 64);
-            if(g_ciso_block_buf == NULL) {
-                ret = -3;
-                goto exit;
-            }
-            if((u32)g_ciso_block_buf & 63) // align 64
-                g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
-        }
-        if (g_cso_idx_cache == NULL) {
-            g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4) + 64); //oe_malloc((CISO_IDX_MAX_ENTRIES * 4) + 64);
-            if (g_cso_idx_cache == NULL) {
-                ret = -4;
-                goto exit;
-            }
-            if((u32)g_cso_idx_cache & 63) // align 64
-                g_cso_idx_cache = (void*)(((u32)g_cso_idx_cache & (~63)) + 64);
-        }
-        ret = 0;
-    } else {
-        ret = 0x8002012F;
-    }
-
-exit:
-    return ret;
-}
-
-// 0x000009D4
-int iso_open(void)
-{
-    int ret, retries;
-
-    wait_until_ms0_ready();
-    sceIoClose(g_iso_fd);
-    g_iso_opened = 0;
-    retries = 0;
-
-    do {
-        g_iso_fd = sceIoOpen(g_iso_fn, 0x000F0001, 0777);
-
-        if(g_iso_fd < 0) {
-            if(++retries >= 16) {
-                return -1;
-            }
-
-            sceKernelDelayThread(20000);
-        }
-    } while(g_iso_fd < 0);
-
-    if(g_iso_fd < 0) {
-        return -1;
-    }
-
-    if (is_ciso(g_iso_fd) == 0x8002012F)
-        read_iso_data = &read_raw_data;
-
-    g_iso_opened = 1;
-    g_total_sectors = get_nsector();
-
-    return 0;
 }
 
 // 0x00000BB4
@@ -479,7 +348,7 @@ static int read_jiso_data(u8* addr, u32 size, u32 offset){
         addr, size, offset,
         sizeof(JisoHeader), jiso_header->block_size,
         jiso_header->uncompressed_size, 4*jiso_header->block_headers, 0,
-        (jiso_header->method)? &decompress_dax1 : &decompress_lzo
+        ciso_decompressor
     );
 }
 
@@ -488,10 +357,135 @@ static int read_dax_data(u8* addr, u32 size, u32 offset){
     return read_compressed_data_generic(
         addr, size, offset,
         sizeof(DAXHeader), DAX_BLOCK_SIZE,
-        dax_header->uncompressed_size, 2, 0,
-        // for DAX Version 1 we can skip parsing NC-Areas and just use the block_size trick as in JSO and CSOv2
-        (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib
+        dax_header->uncompressed_size, 2, 0, ciso_decompressor
     );
+}
+
+// 0x00000F00
+static int is_ciso(SceUID fd)
+{
+    int ret;
+
+    g_CISO_hdr.magic = 0;
+    g_ciso_dec_buf_offset = (u32)-1;
+    g_ciso_dec_buf_size = 0;
+
+    sceIoLseek(fd, 0, PSP_SEEK_SET);
+    ret = sceIoRead(fd, &g_CISO_hdr, sizeof(g_CISO_hdr));
+
+    if(ret != sizeof(g_CISO_hdr)) {
+        ret = -1;
+        printk("%s: -> %d\n", __func__, ret);
+        goto exit;
+    }
+
+    u32 magic = g_CISO_hdr.magic;
+
+    if(magic == CSO_MAGIC || magic == ZSO_MAGIC || magic == DAX_MAGIC || magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
+        g_CISO_cur_idx = -1;
+        
+        u32 dec_size = 0;
+        u32 com_size = 0;
+        
+        if (magic == DAX_MAGIC){
+            g_total_sectors = dax_header->uncompressed_size / ISO_SECTOR_SIZE;
+            dec_size = DAX_BLOCK_SIZE;
+            com_size = DAX_COMP_BUF;
+            read_iso_data = &read_dax_data;
+            // for DAX Version 1 we can skip parsing NC-Areas and just use the block_size trick as in JSO and CSOv2
+            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib;
+        }
+        else if (magic == JSO_MAGIC){
+            g_total_sectors = jiso_header->uncompressed_size / ISO_SECTOR_SIZE;
+            dec_size = jiso_header->block_size;
+            com_size = jiso_header->block_size + ISO_SECTOR_SIZE/4;
+            read_iso_data = &read_jiso_data;
+            ciso_decompressor = (jiso_header->method)? &decompress_dax1 : &decompress_lzo;
+        }
+        else{
+            g_total_sectors = g_CISO_hdr.total_bytes / ISO_SECTOR_SIZE;
+            dec_size = g_CISO_hdr.block_size;
+            com_size = dec_size + (1 << g_CISO_hdr.align);
+            read_iso_data = &read_ciso_data;
+            if (g_CISO_hdr.ver == 2) ciso_decompressor = &decompress_cso2;
+            else ciso_decompressor = (magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso;
+        }
+        if (heapid<0){
+            heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, dec_size + com_size + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
+            if (heapid<0){
+                ret = -5;
+                goto exit;
+            }
+        }
+        if(g_ciso_dec_buf == NULL) {
+            g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, dec_size+64); //oe_malloc(dec_size + 64);
+            if(g_ciso_dec_buf == NULL) {
+                ret = -2;
+                goto exit;
+            }
+            if((u32)g_ciso_dec_buf & 63) // align 64
+                g_ciso_dec_buf = (void*)(((u32)g_ciso_dec_buf & (~63)) + 64);
+        }
+        if(g_ciso_block_buf == NULL) {
+            g_ciso_block_buf = sceKernelAllocHeapMemory(heapid, com_size+64); //oe_malloc(com_size + 64);
+            if(g_ciso_block_buf == NULL) {
+                ret = -3;
+                goto exit;
+            }
+            if((u32)g_ciso_block_buf & 63) // align 64
+                g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
+        }
+        if (g_cso_idx_cache == NULL) {
+            g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4) + 64); //oe_malloc((CISO_IDX_MAX_ENTRIES * 4) + 64);
+            if (g_cso_idx_cache == NULL) {
+                ret = -4;
+                goto exit;
+            }
+            if((u32)g_cso_idx_cache & 63) // align 64
+                g_cso_idx_cache = (void*)(((u32)g_cso_idx_cache & (~63)) + 64);
+        }
+        ret = 0;
+    } else {
+        ret = 0x8002012F;
+    }
+
+exit:
+    return ret;
+}
+
+// 0x000009D4
+int iso_open(void)
+{
+    int ret, retries;
+
+    wait_until_ms0_ready();
+    sceIoClose(g_iso_fd);
+    g_iso_opened = 0;
+    retries = 0;
+
+    do {
+        g_iso_fd = sceIoOpen(g_iso_fn, 0x000F0001, 0777);
+
+        if(g_iso_fd < 0) {
+            if(++retries >= 16) {
+                return -1;
+            }
+
+            sceKernelDelayThread(20000);
+        }
+    } while(g_iso_fd < 0);
+
+    if(g_iso_fd < 0) {
+        return -1;
+    }
+
+    if (is_ciso(g_iso_fd) == 0x8002012F)
+        read_iso_data = &read_raw_data;
+
+    g_iso_opened = 1;
+    g_total_sectors = get_nsector();
+
+    return 0;
 }
 
 // 0x00000C7C

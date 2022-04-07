@@ -31,10 +31,12 @@
 #include "globals.h"
 #include "functions.h"
 
+#define DAX_BLOCK_SIZE 0x2000
+#define DAX_COMP_BUF 0x2400
+
 PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 0);
 
 u32 psp_model = 0;
-u32 psp_fw_version = 0;
 ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
 
@@ -75,13 +77,10 @@ int module_start(SceSize args, void* argp)
     printk("VshCtrl started\n");
     #endif
     
-    colorDebug(0);
-    
     psp_model = sceKernelGetModel();
-    psp_fw_version = sceKernelDevkitVersion();
     sctrlHENGetArkConfig(ark_config);
     vshpatch_init();
-
+    
     // always reset to NORMAL mode in VSH
     // to avoid ISO mode is used in homebrews in next reboot
     if(sctrlSEGetBootConfFileIndex() != MODE_VSHUMD) {
