@@ -45,7 +45,8 @@
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 14
-#define ARK_MICRO_VERSION 4
+#define ARK_MICRO_VERSION 5
+#define PRO_VERSION 0x4000 // identify as ARK
 
 /*
 First two bits identify the device (PSP or PS Vita)

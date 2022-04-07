@@ -39,12 +39,6 @@ enum{
     TMENU_EXIT
 };
 
-
-
-//version = strncpy(version[0], "%d.%d" major, minor);
-//if (micro>0) version = sprintf(version, "%d.%d.%d", major, minor, micro);
-//ark_version = version.str();
-
 int item_fcolor[TMENU_MAX];
 const char *item_str[TMENU_MAX];
 
@@ -66,16 +60,15 @@ int menu_draw(void)
  	int major = (ver&0xFF0000)>>16;
 	int minor = (ver&0xFF00)>>8;
 	int micro = (ver&0xFF);
-	int version;
 
 	// Get ARK Version
-#ifdef DEBUG
-version = snprintf(ark_version, sizeof(ark_version), " ARK %d.%d DEBUG ", major, minor); 
-if (micro>0) version = snprintf(ark_version, sizeof(ark_version), " ARK %d.%d.%d DEBUG ", major, minor, micro);
-#else
-version = snprintf(ark_version, sizeof(ark_version), "   ARK %d.%d   ", major, minor); 
-if (micro>0) version = snprintf(ark_version, sizeof(ark_version), "   ARK %d.%d.%d   ", major, minor, micro);
-#endif
+    #ifdef DEBUG
+    if (micro>0) snprintf(ark_version, sizeof(ark_version), " ARK %d.%d.%d DEBUG ", major, minor, micro);
+    else snprintf(ark_version, sizeof(ark_version), " ARK %d.%d DEBUG ", major, minor);
+    #else
+    if (micro>0) snprintf(ark_version, sizeof(ark_version), "   ARK %d.%d.%d   ", major, minor, micro);
+    else snprintf(ark_version, sizeof(ark_version), "   ARK %d.%d   ", major, minor); 
+    #endif
 
     // check & setup video mode
     if( blit_setup() < 0) return -1;

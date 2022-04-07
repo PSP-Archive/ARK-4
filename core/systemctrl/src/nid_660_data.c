@@ -383,7 +383,7 @@ static NidResolverEntry InterruptManagerForKernel_nid[] = {
     { 0xD2E8363F, 0x68B5CA51, }, // QueryIntrHandlerInfo
     { 0x8B61808B, 0xF153B371, }, // sceKernelQuerySystemCall
     { 0x85F7766D, 0x6042AEE0, }, // SaveThreadContext
-    { 0x00B6B0F3, UNKNOWNNID, }, // QueryInterruptManCB removed in 6.60
+    //{ 0x00B6B0F3, 0xA6A4981E, }, // QueryInterruptManCB removed in 6.60
     { 0x15894D0B, 0xA1B88367, }, // InterruptManagerForKernel_15894D0B
     { 0xB5A15B30, 0xB941600E, }, // sceKernelSetIntrLevel
     { 0x43A7BBDC, 0xAB1FC793, }, // InterruptManagerForKernel_43A7BBDC
@@ -391,7 +391,7 @@ static NidResolverEntry InterruptManagerForKernel_nid[] = {
     { 0x494D6D2B, 0xDB14CBE0, }, // sceKernelResumeIntr
     { 0x55242A8B, 0xDB9A5496, }, // ReleaseContextHooks
     { 0x27BC9A45, 0x8357E7FA, }, // UnSupportIntr
-    { 0x0E224D66, UNKNOWNNID, }, // SupportIntr removed in 6.60
+    //{ 0x0E224D66, 0xFBCB2E5E, }, // SupportIntr removed in 6.60
     { 0xCDC86B64, 0x0C5F7AE3, }, // sceKernelCallSubIntrHandler
     { 0xD6878EB6, 0xCD36EB65, }, // sceKernelGetUserIntrStack
     { 0xF4454E44, 0xAF799F96, }, // sceKernelCallUserIntrHandler

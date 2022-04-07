@@ -228,6 +228,11 @@ int fillLibraryStubs(void * lib, unsigned int nid, void * stub, unsigned int nid
     // Result
     int result = 0;
     
+    if (lle_handler)
+    {
+        lle_handler(stub);
+    }
+    
     // Calculate Stub Destination Address
     unsigned int dest = nidPos * 8 + _lw((unsigned int)stub + 24);
     
@@ -255,11 +260,6 @@ int fillLibraryStubs(void * lib, unsigned int nid, void * stub, unsigned int nid
         
         // Early Exit
         return -1;
-    }
-    
-    if (lle_handler)
-    {
-        lle_handler(stub);
     }
     
     // Get Library Resolver

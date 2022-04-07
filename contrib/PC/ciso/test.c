@@ -105,7 +105,7 @@ static int read_raw_data(u8* addr, u32 size, u32 offset){
     return res;
 }
 
-void zlib_decompress(uint8_t *input, uint8_t* output, int type)
+void zlib_decompress(uint8_t *input, uint8_t* output, int type, int block_size)
 {
     switch (type){
     case TYPE_CSO:
@@ -115,16 +115,16 @@ void zlib_decompress(uint8_t *input, uint8_t* output, int type)
             memset(&z, 0, sizeof(z));
             inflateInit2(&z, -15);
             z.next_in = input;
-	        z.avail_in = SECTOR_SIZE;
+	        z.avail_in = block_size;
 	        z.next_out = output;
-	        z.avail_out = SECTOR_SIZE;
+	        z.avail_out = block_size;
 	        inflate(&z, Z_FINISH);
 	        printf("total out: %lu\n", z.total_out);
 	        inflateEnd(&z);
         }
         break;
     case TYPE_ZSO:
-        LZ4_decompress_fast(input, output, SECTOR_SIZE);
+        LZ4_decompress_fast(input, output, int block_size);
         break;
     case TYPE_DAX:
         { // use zlib decompress
@@ -149,8 +149,8 @@ void zlib_decompress(uint8_t *input, uint8_t* output, int type)
         break;
     case TYPE_JSO:
         {
-        u32 d_size = SECTOR_SIZE;
-        lzo1x_decompress(input, SECTOR_SIZE, output, &d_size, 0);
+        u32 d_size = int block_size;
+        lzo1x_decompress(input, int block_size, output, &d_size, 0);
         }
         break;
     }
@@ -208,11 +208,11 @@ int getInitialBlock(FILE* fp, u8* block_out, u8* compressed, int ciso_type){
     
     fseek(fp, fo, SEEK_SET);
     fread(compressed, 1, fs, fp);
-    zlib_decompress(compressed, block_out, ciso_type);
+    zlib_decompress(compressed, block_out, ciso_type, block_size);
     
     {
         FILE* fp = fopen("block_out1.bin", "wb");
-        fwrite(block_out, 1, SECTOR_SIZE, fp);
+        fwrite(block_out, 1, block_size, fp);
         fclose(fp);
     }
     
@@ -256,7 +256,7 @@ int getInitialBlock(FILE* fp, u8* block_out, u8* compressed, int ciso_type){
     printf("size: %d\n", size);
 
     fread(compressed, 1, size, fp);
-    zlib_decompress(compressed, block_out, ciso_type);
+    zlib_decompress(compressed, block_out, ciso_type, block_size);
     
     if (block_size == SECTOR_SIZE){
         fseek(fp, start+4, SEEK_SET);
@@ -264,7 +264,7 @@ int getInitialBlock(FILE* fp, u8* block_out, u8* compressed, int ciso_type){
         fread(&size, 4, 1, fp);
         fseek(fp, offset, SEEK_SET);
         fread(compressed, 1, size, fp);
-        zlib_decompress(compressed, block_out+SECTOR_SIZE, ciso_type);
+        zlib_decompress(compressed, block_out+SECTOR_SIZE, ciso_type, block_size);
     }
     
     {
@@ -371,12 +371,12 @@ void* fastExtract(const char* path, char* file, unsigned* size_out, int ciso_typ
                 if (is_compressed){
                     if (x < b_iter - 1){
                         fread(compressed, 1, size, fp);
-                        zlib_decompress(compressed, (uint8_t*)buf, ciso_type);
+                        zlib_decompress(compressed, (uint8_t*)buf, ciso_type, block_size);
                         buf += block_size;
                     }
                     else{
                         fread(compressed, 1, size, fp);
-                        zlib_decompress(compressed, (uint8_t*)buf, ciso_type);
+                        zlib_decompress(compressed, (uint8_t*)buf, ciso_type, block_size);
                         buf += trail_size;
                     }
                 }
@@ -432,7 +432,7 @@ int read_dax_data(u8* addr, u32 size, u32 offset)
         fclose(fp);
         }
 	    
-        zlib_decompress(g_ciso_block_buf, g_ciso_dec_buf, ciso_type);
+        zlib_decompress(g_ciso_block_buf, g_ciso_dec_buf, ciso_type, DAX_BLOCK_SIZE);
         
         {
         FILE* fp = fopen("dec.bin", "wb");

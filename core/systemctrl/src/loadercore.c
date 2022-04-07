@@ -252,12 +252,12 @@ SceModule2* patchLoaderCore(void)
     SonyPRXDecrypt = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0xEF73E85B);
     origCheckExecFile = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0x6192F715);
     // find patched functions pointing to rebootex
-    for (u32 addr = start_addr; addr<topaddr; addr+=4){
+    int found = 0;
+    for (u32 addr = start_addr; addr<topaddr&&!found; addr+=4){
         u32 data = _lw(addr);
-        if (data == 0x35450200 || data == 0x35250200){ // ori $a1, $t1/t2, 0x200
-            rebootex_decrypt = K_EXTRACT_CALL(addr-0x18);
-            if (data == 0x35450200) rebootex_checkexec = K_EXTRACT_CALL(addr+12);
-            break;
+        switch (data){
+        case 0x35450200: rebootex_checkexec = K_EXTRACT_CALL(addr+12);
+        case 0x35250200: rebootex_decrypt = K_EXTRACT_CALL(addr-0x18); found=1; break;
         }
     }
 
@@ -283,19 +283,22 @@ SceModule2* patchLoaderCore(void)
         else if (data == rebootex_checkexec_call){
             _sw(JAL(origCheckExecFile), addr); // Fix memlmd_6192F715 Calls that we broke intentionally in Reboot Buffer
         }
-        else if (data == 0x02E0F809 && _lw(addr+4) == 0x24040004){
-            // Hook sceInit StartModule Call
-            _sw(JAL(patch_sceKernelStartModule_in_bootstart), addr);
-            // Move Real Bootstart into Argument #1
-            _sw(0x02E02021, addr+4);
-        }
         else{
             switch (data){
+            case 0x02E0F809: 
+                // Hook sceInit StartModule Call
+                _sw(JAL(patch_sceKernelStartModule_in_bootstart), addr);
+                // Move Real Bootstart into Argument #1
+                _sw(0x02E02021, addr+4);
+                break;
             case 0x30ABFFFF:    ProbeExec1 = (void *)addr-0x100;     break;        // Executable Check Function #1
             case 0x01E63823:    ProbeExec2 = (void *)addr-0x78;      break;        // Executable Check Function #2
             case 0x30894000:    _sw(0x3C090000, addr);               break;        // Allow Syscalls
             case 0x00E8282B:    _sh(0x1000, addr + 6);               break;        // Remove POPS Check
             case 0x01A3302B:    _sw(NOP, addr+4);                    break;        // Remove Invalid PRX Type (0x80020148) Check
+            //case 0x5040FF98:    // Remove beqzl
+		    //case 0x5040FF54:    // are these really needed?
+		    //case 0x5040FF2E:    _sw(NOP, addr); _sw(NOP, addr+4);    break;
             }
         }
     }
@@ -319,6 +322,7 @@ SceModule2* patchLoaderCore(void)
         else if (_lw(addr) == JAL(ProbeExec2))
             _sw (JAL(_ProbeExec2), addr);
     }
+
     // Flush Cache
     flushCache();
 

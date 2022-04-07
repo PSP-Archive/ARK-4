@@ -26,7 +26,6 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
-#include <version.h>
 #include <stdio.h>
 #include <string.h>
 #include <module2.h>
@@ -190,16 +189,6 @@ void sctrlSESetDiscType(int type)
 int sctrlSEGetDiscType(void)
 {
     return rebootex_config.iso_disc_type;
-}
-
-int sctrlHENIsSE()
-{
-    return 1;
-}
-
-int sctrlHENIsDevhook()
-{
-    return 0;
 }
 
 int sctrlSEGetVersion()

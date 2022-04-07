@@ -25,7 +25,6 @@
 #include <pspinit.h>
 #include <systemctrl.h>
 #include <systemctrl_private.h>
-#include <version.h>
 #include <stdio.h>
 #include <string.h>
 #include <module2.h>

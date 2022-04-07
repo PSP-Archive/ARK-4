@@ -52,7 +52,7 @@ u32 findRefInGlobals(char* libname, u32 addr, u32 ptr){
     return addr;
 }
 
-#ifdef DEBUG
+//#ifdef DEBUG
 void AccurateError(u32 text_addr, u32 text_size)
 {
     u32 counter = 0;
@@ -62,11 +62,11 @@ void AccurateError(u32 text_addr, u32 text_size)
     {
         u32 code = _lw(text_addr);
 
-        if ((code & 0xFC00FFFF) == 0x34000148)
+        if ((code & 0xFC00FFFF) == 0x3400013C)
         {
             counter++;
             _sw((code & 0xFFFF0000) | (0xA000 + counter), text_addr);
         }
     }
 }
-#endif
+//#endif

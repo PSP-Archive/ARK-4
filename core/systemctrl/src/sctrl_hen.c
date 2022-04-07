@@ -8,7 +8,6 @@
 #include <pspinit.h>
 #include <systemctrl.h>
 #include <systemctrl_private.h>
-#include <version.h>
 #include <stdio.h>
 #include <string.h>
 #include <module2.h>
@@ -43,6 +42,16 @@ int sctrlHENGetVersion()
 int sctrlHENGetMinorVersion()
 {
     return ( (ARK_MAJOR_VERSION << 16) | (ARK_MINOR_VERSION << 8) | ARK_MICRO_VERSION );
+}
+
+int sctrlHENIsSE()
+{
+    return 1;
+}
+
+int sctrlHENIsDevhook()
+{
+    return 0;
 }
 
 // Find Filesystem Driver
