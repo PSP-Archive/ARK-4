@@ -1,5 +1,25 @@
 # ARK-4
 
+## Update 14.6
+- Fixed memory issues in VSH.
+
+## Update 14.5
+- Several bug fixes and improvements.
+- Some more cleanup.
+
+## Update 14.4
+- Fixed DAX format games.
+- Fixed Prometheus-patched games in custom launcher.
+
+## Update 14.3
+Improved Inferno Cache on all models:
+- 32KB cache for PSP 1K.
+- 8MB cache for 2K and newer.
+- 4MB cache for Vita.
+
+## Update 14.2
+- Improved stability between the highmem, inferno cache and psp go pause features.
+
 ## Update 14.1
 - Added experimental highmem on PSP 1K.
 
