@@ -50,6 +50,9 @@ int PatchExec3(u8 *buffer, int *check, int isplain, int checkresult);
 
 int (* ProbeExec3)(u8 *buffer, int *check) = NULL;
 
+// Leda patch
+extern void* KernelLoadModuleMs2_hook;
+
 int _ProbeExec3(u8 *buffer, int *check)
 {
     //check executable
@@ -69,19 +72,6 @@ int _ProbeExec3(u8 *buffer, int *check)
     }
 
     return result;
-}
-
-u32 patchDeviceCheck(u32 addr){
-    u32 a = addr;
-    int found = 0;
-    for (; found<3; a+=4){
-        if ((_lw(a)&0xFFFF0000) == 0x04400000){
-            if (found<2) _sw(NOP, a);
-            else _sh(0x1000, a+2);
-            found++;
-        }
-    }
-    return a;
 }
 
 // Partition Check
@@ -215,6 +205,10 @@ int prologue_module_hook(void * unk0, SceModule2 * mod)
 // sceKernelCheckExecFile Hook
 int _sceKernelCheckExecFile(unsigned char * buffer, int * check)
 {
+
+    if (KernelLoadModuleMs2_hook)
+        return sceKernelCheckExecFile(buffer, check); // forward to allow leda do its thing
+
     // PatchExec1
     int result = PatchExec1(buffer, check);
     
@@ -346,6 +340,19 @@ int PatchExec3(unsigned char * buffer, int * check, int isplain, int checkresult
     return checkresult;
 }
 
+u32 patchDeviceCheck(u32 addr){
+    u32 a = addr;
+    int found = 0;
+    for (; found<3; a+=4){
+        if ((_lw(a)&0xFFFF0000) == 0x04400000){
+            if (found<2) _sw(NOP, a);
+            else _sh(0x1000, a+2);
+            found++;
+        }
+    }
+    return a;
+}
+
 // sceModuleManager Patch
 SceModule2* patchModuleManager()
 {
@@ -381,11 +388,10 @@ SceModule2* patchModuleManager()
             u32 call = _lw(addr+16);
             _sw(0x24020000, addr+16); // MODULEMGR_DEVICE_CHECK_1
             int found = 0;
-            for (u32 a=addr+20; !found; a+=4){
-                if (_lw(a) == call){
-                    _sw(0x24020000, a); // MODULEMGR_DEVICE_CHECK_2
+            for (addr+=20; !found; addr+=4){
+                if (_lw(addr) == call){
+                    _sw(0x24020000, addr); // MODULEMGR_DEVICE_CHECK_2
                     found=1;
-                    addr=a;
                 }
             }
             patches--;
