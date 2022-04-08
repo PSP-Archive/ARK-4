@@ -65,7 +65,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 
     // System fully booted Status
     static int booted = 0;
-    static SceModule2* loadexec = NULL;
     
   #ifdef DEBUG
     int apitype = sceKernelInitApitype();
@@ -80,7 +79,10 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
-        loadexec = mod;
+        // Find Reboot Loader Function
+        OrigLoadReboot = (void *)mod->text_addr;
+        // Patch loadexec
+        patchLoadExec(mod, (u32)LoadReboot, (u32)sctrlHENFindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
         goto flush;
     }
     
@@ -88,12 +90,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     {
         // can use screen now
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
-        // Find Reboot Loader Function
-        extern void* OrigLoadReboot;
-        extern int LoadReboot();
-        OrigLoadReboot = (void *)loadexec->text_addr;
-        // Patch loadexec
-        patchLoadExecCommon(loadexec, (u32)LoadReboot, (u32)sctrlHENFindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 2);
         goto flush;
     }
     
@@ -121,11 +117,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         // Patch VLF Module
         patchVLF(mod);
         // Exit Handler
-        goto flush;
-    }
-    
-    if(strcmp(mod->modname, "sceSYSCON_Driver") == 0) {
-        resolve_syscon_driver((SceModule*)mod);
         goto flush;
     }
     

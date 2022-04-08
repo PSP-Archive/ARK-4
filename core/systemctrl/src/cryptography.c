@@ -143,7 +143,6 @@ int _memlmdDecrypt(unsigned char * prx, unsigned int size, unsigned int * newsiz
         // GZIP Compressed PRX
         if(isPrxCompressed(prx, size))
         {
-unzip:
             // Remove PRX Header
             memcpy(prx, prx + 0x150, compsize);
             
@@ -194,7 +193,6 @@ int _mesgledDecrypt(unsigned int * tag, unsigned char * key, unsigned int code, 
         // GZIP Compressed PRX
         if(isPrxCompressed(prx, size))
         {
-unzip:
             // Remove PRX Header
             memcpy(prx, prx + 0x150, compsize);
             

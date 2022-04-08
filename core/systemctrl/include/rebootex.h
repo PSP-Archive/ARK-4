@@ -23,14 +23,14 @@
 // Reboot Buffer Configuration
 extern RebootConfigARK rebootex_config;
 
+extern int (* OrigLoadReboot)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4);
+int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4);
+
 // Backup Reboot Buffer
 void backupRebootBuffer(void);
 
 // Restore Reboot Buffer
 void restoreRebootBuffer(void);
-
-// Patch loadexec_01g.prx
-void patchLoadExec(SceModule2*);
 
 #endif
 

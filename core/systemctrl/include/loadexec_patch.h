@@ -6,6 +6,6 @@
 #include <macros.h>
 #include <globals.h>
 
-extern void patchLoadExecCommon(SceModule2* loadexec, u32 LoadReboot, u32 GetUserLevel, int k1_checks);
+extern void patchLoadExec(SceModule2* loadexec, u32 LoadReboot, u32 GetUserLevel, int k1_checks);
 
 #endif

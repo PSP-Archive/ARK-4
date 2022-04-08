@@ -1,7 +1,7 @@
 #include "loadexec_patch.h"
 #include <functions.h>
 
-void patchLoadExecCommon(SceModule2* loadexec, u32 LoadReboot, u32 GetUserLevel, int k1_patches){
+void patchLoadExec(SceModule2* loadexec, u32 LoadReboot, u32 GetUserLevel, int k1_patches){
     u32 addr = 0;
     u32 text_addr = loadexec->text_addr;
     u32 topaddr = text_addr+loadexec->text_size;

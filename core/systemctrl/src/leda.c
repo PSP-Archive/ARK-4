@@ -18,12 +18,15 @@ static int execute_apitype = 0x141;
 SceUID sceKernelLoadModuleMs2_bridge(const char *path, int flags, SceKernelLMOption *option)
 {
     SceUID ret = KernelLoadModuleMs2_orig(execute_apitype, path , flags , option);
+    #ifdef DEBUG
+    if (ret == 0x80020148) colorDebug(0xff0000);
+    #endif
     return ret;
 }
 
 SceUID sceKernelLoadModuleMs2_patched(int apitype, const char *path, int flags, SceKernelLMOption *option)
 {    
-    //execute_apitype = apitype;
+    execute_apitype = apitype;
     SceUID ret = KernelLoadModuleMs2_hook(path , flags , option);
     return ret;
 }
