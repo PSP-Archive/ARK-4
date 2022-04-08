@@ -223,6 +223,6 @@ extern void flashPatch();
 
 extern int isKernel();
 
-extern void AccurateError(u32 text_addr, u32 text_size);
+extern void AccurateError(u32 text_addr, u32 text_size, u16 error);
 
 #endif

@@ -44,8 +44,8 @@
 #define ARK4_BIN "ARK4.BIN" // ARK-4 payload
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
-#define ARK_MINOR_VERSION 14
-#define ARK_MICRO_VERSION 6
+#define ARK_MINOR_VERSION 15
+#define ARK_MICRO_VERSION 0
 #define PRO_VERSION 0x4000 // identify as ARK
 
 /*

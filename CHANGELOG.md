@@ -1,5 +1,8 @@
 # ARK-4
 
+## Update 15
+- Fixed compatibility with Leda plugin.
+
 ## Update 14.6
 - Fixed memory issues in VSH.
 

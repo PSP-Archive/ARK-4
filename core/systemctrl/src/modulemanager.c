@@ -51,7 +51,7 @@ int PatchExec3(u8 *buffer, int *check, int isplain, int checkresult);
 int (* ProbeExec3)(u8 *buffer, int *check) = NULL;
 
 // Leda patch
-extern void* KernelLoadModuleMs2_hook;
+extern int leda_running;
 
 int _ProbeExec3(u8 *buffer, int *check)
 {
@@ -206,7 +206,7 @@ int prologue_module_hook(void * unk0, SceModule2 * mod)
 int _sceKernelCheckExecFile(unsigned char * buffer, int * check)
 {
 
-    if (KernelLoadModuleMs2_hook)
+    if (leda_running)
         return sceKernelCheckExecFile(buffer, check); // forward to allow leda do its thing
 
     // PatchExec1

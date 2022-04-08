@@ -25,6 +25,8 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Compatible with PRO Online.
 
+- Compatible with Legacy Homebrew via eLoader and Leda.
+
 
 ## INSTALLATION ( Recommended )
 

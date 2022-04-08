@@ -11,6 +11,7 @@
 #include "macros.h"
 #include "systemctrl.h"
 
+int leda_running = 0;
 SceUID (* KernelLoadModuleMs2_hook)() = NULL;
 SceUID (* KernelLoadModuleMs2_orig)() = NULL;
 static int execute_apitype = 0x141;
@@ -18,9 +19,9 @@ static int execute_apitype = 0x141;
 SceUID sceKernelLoadModuleMs2_bridge(const char *path, int flags, SceKernelLMOption *option)
 {
     SceUID ret = KernelLoadModuleMs2_orig(execute_apitype, path , flags , option);
-    #ifdef DEBUG
-    if (ret == 0x80020148) colorDebug(0xff0000);
-    #endif
+    if (ret == 0x80020148){
+        leda_running = 0; // enable checkexec in modman
+    }
     return ret;
 }
 
@@ -100,6 +101,8 @@ void patchLedaPlugin(void* handler){
 
     // register handler for custom fixes to legacy games
     leda_previous = sctrlHENSetStartModuleHandler( LedaModulePatch );
+    
+    leda_running = 1; // disable checkexec in modman
     
     flushCache();
 }
