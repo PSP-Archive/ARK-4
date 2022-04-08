@@ -79,6 +79,7 @@ int module_start(SceSize args, void* argp)
     
     psp_model = sceKernelGetModel();
     sctrlHENGetArkConfig(ark_config);
+    isoInit();
     vshpatch_init();
     
     // always reset to NORMAL mode in VSH

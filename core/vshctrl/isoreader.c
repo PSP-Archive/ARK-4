@@ -19,6 +19,7 @@
 #include <string.h>
 #include <pspiofilemgr.h>
 #include <psputilsforkernel.h>
+#include <pspsysmem_kernel.h>
 #include "systemctrl_private.h"
 #include "lz4.h"
 #include "minilzo.h"
@@ -82,21 +83,30 @@ static CISOHeader g_ciso_h;
 static DAXHeader* dax_header = (DAXHeader*)&g_ciso_h;
 static JisoHeader* jiso_header = (JisoHeader*)&g_ciso_h;
 
-// block offset cache
-static u32 g_CISO_idx_cache[CISO_IDX_MAX_ENTRIES] __attribute__((aligned(64)));
-static int g_CISO_cur_idx = -1;
+// buffers
+static u32* g_CISO_idx_cache = NULL; // block offset cache
+static u8* ciso_com_buf = NULL; // compressed block
+static u8* ciso_dec_buf = NULL; // decompressed block
+static char* g_sector_buffer = NULL; // ISO sector
 
-static u8 ciso_com_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
-static u8 ciso_dec_buf[DAX_BLOCK_SIZE] __attribute__((aligned(64)));
-static u32 ciso_cur_block = (u32)-1;
+static int g_CISO_cur_idx = -1;
+static int ciso_cur_block = -1;
 static const char * g_filename = NULL;
-static char g_sector_buffer[SECTOR_SIZE] __attribute__((aligned(64)));
 static SceUID g_isofd = -1;
 static u32 g_total_sectors = 0;
 
 static Iso9660DirectoryRecord g_root_record;
 
-static int lz4_compressed = 0;
+int isoInit(){
+    SceUID memid = sceKernelAllocPartitionMemory(2, "CisoBuffer", PSP_SMEM_High, DAX_BLOCK_SIZE + DAX_COMP_BUF + SECTOR_SIZE + 4*CISO_IDX_MAX_ENTRIES + 64, NULL);
+    if (memid < 0) return memid;
+    u8* buf = sceKernelGetBlockHeadAddr(memid);
+    ciso_dec_buf = PTR_ALIGN_64(buf);
+    ciso_com_buf = ciso_dec_buf + DAX_BLOCK_SIZE;
+    g_sector_buffer = ciso_com_buf + DAX_COMP_BUF;
+    g_CISO_idx_cache = g_sector_buffer + SECTOR_SIZE;
+    return 0;
+}
 
 static inline u32 isoPos2LBA(u32 pos)
 {
@@ -227,7 +237,6 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
     if (ciso_cur_block != cur_block){
     
         if (g_CISO_cur_idx < 0 || cur_block < g_CISO_cur_idx || cur_block >= g_CISO_cur_idx + CISO_IDX_MAX_ENTRIES){
-            u32 idx_size = 0;
             readRawData(g_CISO_idx_cache, CISO_IDX_MAX_ENTRIES * 4, cur_block * 4 + header_size);
             g_CISO_cur_idx = cur_block;
         }
@@ -481,9 +490,7 @@ int isoOpen(const char *path)
 
     if (magic == CSO_MAGIC || magic == ZSO_MAGIC) {
         g_total_sectors = g_ciso_h.total_bytes / SECTOR_SIZE;
-        g_CISO_cur_idx = -1;
         readSector = &read_sector_cso;
-        ciso_cur_block = (u32)-1;
         if (g_ciso_h.ver < 2){
             ciso_decompressor = (g_ciso_h.magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso;
         }
@@ -494,15 +501,11 @@ int isoOpen(const char *path)
     else if (magic == DAX_MAGIC){
         readSector = &read_sector_dax;
         g_total_sectors = dax_header->uncompressed_size / SECTOR_SIZE;
-        g_CISO_cur_idx = -1;
-        ciso_cur_block = (u32)-1;
         ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib;
     }
     else if (magic == JSO_MAGIC){
         readSector = &read_sector_jso;
         g_total_sectors = jiso_header->uncompressed_size / SECTOR_SIZE;
-        g_CISO_cur_idx = -1;
-        ciso_cur_block = (u32)-1;
         ciso_decompressor = (jiso_header->method)? &decompress_dax1 : &decompress_lzo;
     }
     else {
@@ -552,7 +555,8 @@ void isoClose(void)
     g_filename = NULL;
 
     g_total_sectors = 0;
-    ciso_cur_block = (u32)-1;
+    ciso_cur_block = -1;
+    g_CISO_cur_idx = -1;
 }
 
 int isoGetFileInfo(char * path, u32 *filesize, u32 *lba)

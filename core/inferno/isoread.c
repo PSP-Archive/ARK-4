@@ -43,33 +43,6 @@
 #define DAX_COMP_BUF 0x2400
 
 #define CISO_IDX_MAX_ENTRIES 4096
-// 0x00002784
-struct IoReadArg g_read_arg;
-
-SceUID heapid = -1;
-
-// 0x0000248C
-int g_iso_opened = 0;
-
-// 0x000023D0
-SceUID g_iso_fd = -1;
-
-// 0x000023D4
-int g_total_sectors = -1;
-
-// 0x000024C0
-static u8 *g_ciso_block_buf = NULL;
-
-// 0x000024C4, size CISO_DEC_BUFFER_SIZE + (1 << g_CISO_hdr.align), align 64
-static u8 *g_ciso_dec_buf = NULL;
-
-// 0x00002704
-static int g_CISO_cur_idx = 0;
-
-// 0x00002700
-static u32 g_ciso_dec_buf_offset = (u32)-1;
-
-static int g_ciso_dec_buf_size = 0;
 
 struct CISO_header {
     uint32_t magic;  // 0
@@ -114,11 +87,34 @@ static struct CISO_header g_CISO_hdr __attribute__((aligned(64)));
 static DAXHeader* dax_header = (DAXHeader*)&g_CISO_hdr;
 static JisoHeader* jiso_header = (JisoHeader*)&g_CISO_hdr;
 
+// 0x00002784
+struct IoReadArg g_read_arg;
+
+SceUID heapid = -1;
+
+// 0x0000248C
+int g_iso_opened = 0;
+
+// 0x000023D0
+SceUID g_iso_fd = -1;
+
+// 0x000023D4
+int g_total_sectors = -1;
+
+// 0x000024C0
+static u8 *g_ciso_block_buf = NULL;
+
+// 0x000024C4, size CISO_DEC_BUFFER_SIZE + (1 << g_CISO_hdr.align), align 64
+static u8 *g_ciso_dec_buf = NULL;
+
+// 0x00002704
+static int g_CISO_cur_idx = 0;
+
 static u32 *g_cso_idx_cache = NULL;
-static u32 g_cso_idx_start_block = -1;
+static int g_cso_idx_start_block = -1;
 
+// reader functions
 static int (*read_iso_data)(u8* addr, u32 size, u32 offset);
-
 static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 is_nc);
 
 
@@ -367,8 +363,6 @@ static int is_ciso(SceUID fd)
     int ret;
 
     g_CISO_hdr.magic = 0;
-    g_ciso_dec_buf_offset = (u32)-1;
-    g_ciso_dec_buf_size = 0;
 
     sceIoLseek(fd, 0, PSP_SEEK_SET);
     ret = sceIoRead(fd, &g_CISO_hdr, sizeof(g_CISO_hdr));
