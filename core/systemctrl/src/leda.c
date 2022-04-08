@@ -88,9 +88,6 @@ void patchLedaPlugin(void* handler){
     // Remove version check
     _sw(0, text_addr + 0xC58);
 
-    // Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
-    //_sw(0, text_addr + 0x1140);
-
     // Fix sceKernelLoadModuleMs2 call
     _sw(JUMP(sceKernelLoadModuleMs2_bridge), text_addr + 0x2E28);
     _sw(NOP, text_addr + 0x2E28 + 4);

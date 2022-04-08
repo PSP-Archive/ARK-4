@@ -188,6 +188,12 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         loadSettings(&settingsHandler);
         goto flush;
     }
+    
+    if (strcmp(mod->modname, "Legacy_Software_Loader") == 0){
+        // Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
+        _sw(0, mod->text_addr + 0x1140);
+        goto flush;
+    }
        
     // Boot Complete Action not done yet
     if(booted == 0)
