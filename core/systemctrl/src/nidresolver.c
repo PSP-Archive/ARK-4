@@ -166,6 +166,7 @@ NidMissingResolver missing_sceSyscon_driver =
     NELEMS(missing_sceSyscon_driver_entries),
 };
 
+/*
 NidMissingEntry missing_scePower_driver_entries[] =
 {
     { 0x737486F2 , 0, } // @scePower_Service@ + 0x3678
@@ -177,6 +178,7 @@ NidMissingResolver missing_scePower_driver =
     missing_scePower_driver_entries,
     NELEMS(missing_scePower_driver_entries),
 };
+*/
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -185,7 +187,7 @@ NidMissingResolver *g_missing_resolver[] =
     &missing_SysclibForKernel,
     &missing_LoadCoreForKernel,
     &missing_sceSyscon_driver,
-    &missing_scePower_driver,
+    //&missing_scePower_driver,
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -248,19 +250,24 @@ int fillLibraryStubs(void * lib, unsigned int nid, void * stub, unsigned int nid
     // Get Module Name
     const char * name = (const char *)_lw((unsigned int)lib + 68);
     
-    // Resolve Missing NID
-    unsigned int targetAddress = resolveMissingNid(name, nid);
+    printk("filling library %s, nid %p\n", name, nid);
     
-    // Missing Function
-    if(targetAddress != 0)
-    {
-        // Write Stub
-        _sw(JUMP(targetAddress), dest);
-        _sw(NOP, dest + 4);
-        
-        // Early Exit
-        return -1;
-    }
+    //int is_user_mode = ((u32 *)stub)[0x34/4];
+    
+    //if (!is_user_mode){
+        // Resolve Missing NID
+        unsigned int targetAddress = resolveMissingNid(name, nid);
+        // Missing Function
+        if(targetAddress != 0)
+        {
+            // Write Stub
+            _sw(JUMP(targetAddress), dest);
+            _sw(NOP, dest + 4);
+            
+            // Early Exit
+            return -1;
+        }
+    //}
     
     // Get Library Resolver
     NidResolverLib * resolver = getNidResolverLib(name);
@@ -289,13 +296,6 @@ exit:
     
     // Return Result
     return result;
-}
-
-// Find still existing, but no longer exported Functions
-void getMissingNidAddress(void)
-{
-    // sceLoaderCore Functions
-    missing_LoadCoreForKernel_entries[0].fp = sctrlModuleTextAddr("sceLoaderCore") + 0x0000748C; //0x72D8;
 }
 
 // Create Sorted NID List
@@ -347,9 +347,15 @@ static void NidSortTable(NidResolverLib *table, unsigned int size)
     }
 }
 
-void resolve_syscon_driver(SceModule2 *syscon)
+void resolve_syscon_driver(SceModule2* mod)
 {
-    missing_sceSyscon_driver_entries[0].fp = (syscon->text_addr + 0x00002D08);
+    for (u32 a=mod->text_addr; a<mod->text_addr+mod->text_size; a+=4){
+        if (_lw(a) == 0x0020F809){ // found target function
+            do {a-=4;} while (_lw(a)!=0x27BDFFF0); // scan for start of the function
+            missing_sceSyscon_driver_entries[0].fp = a;
+            break;
+        }
+    }
 }
 
 // Setup NID Resolver in sceLoaderCore
@@ -362,12 +368,9 @@ void setupNidResolver(SceModule2* mod)
     // Binary Sort Table
     NidSortTable(nidTable, nidTableSize);
     
-    // Fetch missing NIDs
-    getMissingNidAddress();
-
     u32 text_addr = mod->text_addr;
     u32 topaddr = mod->text_addr+mod->text_size;
-    int patches = 3;
+    int patches = 6;
     for (u32 addr=text_addr; addr<topaddr && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0xADA00004 && _lw(addr+8) == 0xADAE0000){
@@ -385,6 +388,14 @@ void setupNidResolver(SceModule2* mod)
             _sw(0x02203021, addr - 4);
             _sw(JAL(fillLibraryStubs), addr);
             _sw(0x02403821, addr + 4);
+            patches--;
+        }
+        else if (data == 0x7CC51240){ // sceKernelIcacheClearAll
+            missing_LoadCoreForKernel_entries[0].fp = addr-4;
+            patches--;
+        }
+        else if (data == 0x7CC51180){ // sceKernelDcacheWBinvAll
+            missing_LoadCoreForKernel_entries[1].fp = addr-4;
             patches--;
         }
     }

@@ -151,6 +151,8 @@ static NidResolverEntry KDebugForKernel_nid[] = {
 };
 
 static NidResolverEntry LoadCoreForKernel_nid[] = {
+    //{ 0xD8779AC6, 0x77E3CB6B, }, // sceKernelIcacheClearAll
+    //{ 0x2952F5AC, 0xC237D677, }, // sceKernelWritebackInvalidate
     { 0xCF8A41B1, 0xF6B1BF0F, }, // sceKernelFindModuleByName
     { 0xCCE4A157, 0x40972E6E, }, // sceKernelFindModuleByUID
     { 0xDD303D79, 0xBC99C625, }, // sceKernelFindModuleByAddress (5.XX NID)
