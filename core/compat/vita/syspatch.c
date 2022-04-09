@@ -110,27 +110,12 @@ int use_mscache = 0;
 int use_highmem = 0;
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
-    if (strcasecmp(path, "overclock") == 0){
-        // useless on vita
-    }
-    else if (strcasecmp(path, "powersave") == 0){
-        // useless on vita
-    }
-    else if (strcasecmp(path, "usbcharge") == 0){
-        // useless on vita
-    }
-    else if (strcasecmp(path, "highmem") == 0){
+    if (strcasecmp(path, "highmem") == 0){
         use_highmem = 1;
         unlockVitaMemory();
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup
-    }
-    else if (strcasecmp(path, "disablepause") == 0){ // disable pause game feature on psp go
-        // useless on vita
-    }
-    else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
-        // useless on vita
     }
     else if (strcasecmp(path, "infernocache") == 0){
         if (apitype == 0x123 || apitype == 0x125){
