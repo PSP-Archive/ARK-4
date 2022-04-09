@@ -243,6 +243,8 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
         size = uncompressed_size - offset;
     }
     
+    static u32 ciso_cur_block = -1;
+    
     // refresh index table if needed
     u32 starting_block = o_offset / block_size;
     u32 ending_block = ((o_offset+size) / block_size) + 1;
@@ -261,33 +263,38 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
             break;
         }
         
-        if (cur_block>=g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES){
-            // refresh index cache
-            read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES, cur_block * 4 + header_size);
-            g_cso_idx_start_block = cur_block;
-        }
+        if (cur_block != ciso_cur_block){
         
-        // read compressed block offset
-        u32 b_offset = g_cso_idx_cache[cur_block-g_cso_idx_start_block];
-        u32 b_size = g_cso_idx_cache[cur_block-g_cso_idx_start_block+1];
-        u32 is_nc = b_offset>>31;
-        b_offset &= 0x7FFFFFFF;
-        b_size &= 0x7FFFFFFF;
-        b_size -= b_offset;
+            if (cur_block>=g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES){
+                // refresh index cache
+                read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES, cur_block * 4 + header_size);
+                g_cso_idx_start_block = cur_block;
+            }
+            
+            // read compressed block offset
+            u32 b_offset = g_cso_idx_cache[cur_block-g_cso_idx_start_block];
+            u32 b_size = g_cso_idx_cache[cur_block-g_cso_idx_start_block+1];
+            u32 is_nc = b_offset>>31;
+            b_offset &= 0x7FFFFFFF;
+            b_size &= 0x7FFFFFFF;
+            b_size -= b_offset;
 
-        if (cur_block == g_ciso_total_block-1 && header_size == sizeof(DAXHeader))
-            b_size = DAX_COMP_BUF; // fix for last DAX block
+            if (cur_block == g_ciso_total_block-1 && header_size == sizeof(DAXHeader))
+                b_size = DAX_COMP_BUF; // fix for last DAX block
 
-        if (align){
-            b_size += 1 << align;
-            b_offset = b_offset << align;
+            if (align){
+                b_size += 1 << align;
+                b_offset = b_offset << align;
+            }
+
+            // read block, skipping header if needed
+            b_size = read_raw_data(com_buf, b_size, b_offset + block_skip);
+
+            // decompress block
+            decompress(com_buf, b_size, dec_buf, block_size, is_nc);
+        
+            ciso_cur_block = cur_block;
         }
-
-        // read block, skipping header if needed
-        b_size = read_raw_data(com_buf, b_size, b_offset + block_skip);
-
-        // decompress block
-        decompress(com_buf, b_size, dec_buf, block_size, is_nc);
 
         // read data from block into buffer
         read_bytes = MIN(size, (block_size - pos));
