@@ -13,6 +13,9 @@
 
 #ifndef DEBUG
 // dummy debug exports
+void colorDebug(u32 c){}
+void initScreen(){}
+void PRTSTR11(){}
 int printkCached(char *fmt, ...){return 0;}
 int printk(char *fmt, ...){return 0;}
 int printkInit(const char *output){return 0;}
