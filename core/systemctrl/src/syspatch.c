@@ -128,8 +128,10 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         {
             // Allow exiting through key combo
             patchExitGame();
+            #ifdef DEBUG
             // syncronize printk
             printkSync();
+            #endif
             // Boot Complete Action done
             booted = 1;
             goto flush;

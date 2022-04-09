@@ -695,8 +695,6 @@ int myIoWaitAsyncCB(SceUID fd, SceIores *result)
         }
     }
 
-//    printk("%s: %d -> 0x%08X\r\n", __func__, fd, ret);
-
     return ret;
 }
 
@@ -718,8 +716,6 @@ int myIoPollAsync(SceUID fd, SceIores *result)
             ret = 0;
         }
     }
-
-//    printk("%s: %d -> 0x%08X\r\n", __func__, fd, ret);
 
     return ret;
 }

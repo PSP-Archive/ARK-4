@@ -188,16 +188,18 @@ SceUID gamedopen(const char * dirname)
         ret = dirent_add(result, iso_dfd, dirname); 
 
         if(ret < 0) {
+            #ifdef DEBUG
             printk("%s: dirent_add -> %d\n", __func__, ret);
-
+            #endif
             result = -1;
             goto exit;
         }
     }
 
 exit:
+    #ifdef DEBUG
     printk("%s: %s -> 0x%08X\n", __func__, dirname, result);
-
+    #endif
     return result;
 }
 
@@ -245,9 +247,9 @@ int gamedread(SceUID fd, SceIoDirent * dir)
             pspSdkSetK1(k1);
         }
     }
-
+    #ifdef DEBUG
     printk("%s: 0x%08X %s -> 0x%08X\n", __func__, fd, dir->d_name, result);
-
+    #endif
     return result;
 }
 
@@ -286,9 +288,9 @@ int gamedclose(SceUID fd)
     } else {
         result = sceIoDclose(fd);
     }
-
+    #ifdef DEBUG
     printk("%s: 0x%08X -> 0x%08X\n", __func__, fd, result);
-
+    #endif
     return result;
 }
 
@@ -382,14 +384,16 @@ int gameremove(const char * file)
     if(g_temp_delete_dir[0] != '\0' && 
             0 == strncmp(file, g_temp_delete_dir, strlen(g_temp_delete_dir))) {
         result = 0;
+        #ifdef DEBUG
         printk("%s:<virtual> %s -> 0x%08X\n", __func__, file, result);
-        
+        #endif
         return result;
     }
     
     result = sceIoRemove(file);
+    #ifdef DEBUG
     printk("%s: %s -> 0x%08X\n", __func__, file, result);
-
+    #endif
     return result;
 }
 
@@ -403,7 +407,9 @@ int gamermdir(const char * path)
         u32 k1 = pspSdkSetK1(0);
         result = vpbp_remove(g_iso_dir);
         pspSdkSetK1(k1);
+        #ifdef DEBUG
         printk("%s:<virtual> %s -> 0x%08X\n", __func__, path, result);
+        #endif
         g_iso_dir[0] = '\0';
         g_temp_delete_dir[0] = '\0';
 
@@ -411,8 +417,9 @@ int gamermdir(const char * path)
     }
 
     result = sceIoRmdir(path);
+    #ifdef DEBUG
     printk("%s: %s 0x%08X\n", __func__, path, result);
-
+    #endif
     return result;
 }
 
@@ -444,23 +451,25 @@ int gamerename(const char *oldname, const char *newfile)
         g_iso_dir[sizeof(g_iso_dir)-1] = '\0';
         strncpy(g_temp_delete_dir, newfile, sizeof(g_temp_delete_dir));
         g_temp_delete_dir[sizeof(g_temp_delete_dir)-1] = '\0';
-
+        #ifdef DEBUG
         printk("%s:<virtual> %s %s -> 0x%08X\n", __func__, oldname, newfile, result);
-
+        #endif
         return 0;
     }
 
     if(g_temp_delete_dir[0] != '\0' &&
             0 == strncmp(oldname, g_temp_delete_dir, strlen(g_temp_delete_dir))) {
         result = 0;
+        #ifdef DEBUG
         printk("%s:<virtual2> %s %s -> 0x%08X\n", __func__, oldname, newfile, result);
-
+        #endif
         return 0;
     }
 
     result = sceIoRename(oldname, newfile);
+    #ifdef DEBUG
     printk("%s: %s %s -> 0x%08X\n", __func__, oldname, newfile, result);
-
+    #endif
     return result;
 }
 
@@ -471,13 +480,15 @@ int gamechstat(const char *file, SceIoStat *stat, int bits)
     if(g_temp_delete_dir[0] != '\0' && 
             0 == strncmp(file, g_temp_delete_dir, strlen(g_temp_delete_dir))) {
         result = 0;
+        #ifdef DEBUG
         printk("%s:<virtual> %s -> 0x%08X\n", __func__, file, result);
-
+        #endif
         return 0;
     }
 
     result = sceIoChstat(file, stat, bits);
+    #ifdef DEBUG
     printk("%s: %s -> 0x%08X\n", __func__, file, result);
-
+    #endif
     return result;
 }

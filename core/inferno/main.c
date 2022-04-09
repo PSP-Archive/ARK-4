@@ -99,9 +99,9 @@ int module_start(SceSize args, void* argp)
 
     psp_model = sceKernelGetModel();
     psp_fw_version = sceKernelDevkitVersion();
-
+    #ifdef DEBUG
     printk("Inferno started FW=0x%08X %02dg\n", (uint)psp_fw_version, (int)psp_model+1);
-
+    #endif
     apitype = sceKernelInitApitype();
     sctrlSEGetConfig(&config);
 

@@ -200,7 +200,8 @@ int fillLibraryStubs(void * lib, unsigned int nid, void * stub, unsigned int nid
     
     if (lle_handler)
     {
-        lle_handler(stub);
+        void* stubtable = ((void**)stub)[0x18/4];
+        lle_handler(stubtable);
     }
     
     // Calculate Stub Destination Address
@@ -217,8 +218,6 @@ int fillLibraryStubs(void * lib, unsigned int nid, void * stub, unsigned int nid
     
     // Get Module Name
     const char * name = (const char *)_lw((unsigned int)lib + 68);
-    
-    //printk("filling library %s, nid %p\n", name, nid);
     
     int is_user_mode = ((u32 *)stub)[0x34/4];
     

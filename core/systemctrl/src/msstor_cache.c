@@ -147,7 +147,9 @@ static int msstorReadCache(PspIoDrvFileArg * arg, char * data, int len)
 
         if(0 != memcmp(data, cache->buf + pos - cache->pos, len))
         {
+            #ifdef DEBUG
             printk("%s: 0x%08X <%d> cache mismatched!!!\r\n", __func__, (uint)pos, (int)len);
+            #endif
             _sw(0, 0);
         }
 #endif

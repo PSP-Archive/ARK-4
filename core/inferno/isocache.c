@@ -178,7 +178,9 @@ static void reorder_iso_cache(int idx)
     int i;
 
     if(idx < 0 && idx >= g_caches_num) {
+        #ifdef DEBUG
         printk("%s: wrong idx\n", __func__);
+        #endif
         return;
     }
 
@@ -221,7 +223,9 @@ static int add_cache(struct IoReadArg *arg)
 
         if(last_cache != NULL) {
             if(pos + len <= last_cache->pos + last_cache->bufsize) {
+                #ifdef DEBUG
                 printk("%s: error pos\n", __func__);
+                #endif
                 __asm__ volatile("break");
             }
 
@@ -255,7 +259,9 @@ static int add_cache(struct IoReadArg *arg)
             break;
         } else {
             reorder_iso_cache(cache - g_caches);
+            #ifdef DEBUG
             printk("%s: read -> 0x%08X\n", __func__, ret);
+            #endif
             return ret;
         }
     }
@@ -409,7 +415,9 @@ int infernoCacheInit(int cache_size, int cache_num, int partition)
     memid = sceKernelAllocPartitionMemory(partition, "infernoCacheCtl", PSP_SMEM_High, g_caches_num * sizeof(g_caches[0]), NULL);
 
     if(memid < 0) {
-        printk("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid); 
+        #ifdef DEBUG
+        printk("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
+        #endif
         return -2;
     }
 
@@ -422,7 +430,9 @@ int infernoCacheInit(int cache_size, int cache_num, int partition)
     memid = sceKernelAllocPartitionMemory(partition, "infernoCache", PSP_SMEM_High, g_caches_cap * g_caches_num + 64, NULL);
 
     if(memid < 0) {
+        #ifdef DEBUG
         printk("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
+        #endif
         return -4;
     }
 

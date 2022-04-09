@@ -128,8 +128,9 @@ static void wait_until_ms0_ready(void)
 
     if(psp_model == PSP_GO) {
         bootfrom = sceKernelBootFrom();
+        #ifdef DEBUG
         printk("%s: bootfrom: 0x%08X\n", __func__, bootfrom);
-
+        #endif
         if(bootfrom == 0x50) {
             drvname = "mscmhcemu0:";
         } else {
@@ -186,7 +187,9 @@ static int read_raw_data(u8* addr, u32 size, u32 offset)
             i = 0;
             break;
         } else {
+            #ifdef DEBUG
             printk("%s: lseek retry %d error 0x%08X\n", __func__, i, (int)ofs);
+            #endif
             iso_open();
         }
     } while(i < 16);
@@ -203,7 +206,9 @@ static int read_raw_data(u8* addr, u32 size, u32 offset)
             i = 0;
             break;
         } else {
+            #ifdef DEBUG
             printk("%s: read retry %d error 0x%08X\n", __func__, i, ret);
+            #endif
             iso_open();
         }
     }
@@ -369,7 +374,9 @@ static int is_ciso(SceUID fd)
 
     if(ret != sizeof(g_CISO_hdr)) {
         ret = -1;
+        #ifdef DEBUG
         printk("%s: -> %d\n", __func__, ret);
+        #endif
         goto exit;
     }
 

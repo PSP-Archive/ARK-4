@@ -98,9 +98,10 @@ static void patchLoadExec(void)
 // Entry Point
 int module_start(SceSize args, void * argp)
 {
-
+    #ifdef DEBUG
     // Hello Message
     printk("stargate started: compiled at %s %s\r\n", __DATE__, __TIME__);
+    #endif
     
     // work only on retail games
     int apitype = sceKernelInitApitype();

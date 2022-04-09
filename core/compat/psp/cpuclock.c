@@ -43,43 +43,49 @@ static u32 g_scePowerSetClockFrequency_orig;
 
 static int myPowerGetPllClockFrequencyInt(void)
 {
+    #ifdef DEBUG
     printk("%s: %d/%d/%d\n", __func__, g_fake_pll, g_fake_cpu, g_fake_bus);
-
+    #endif
     return g_fake_pll;
 }
 
 static float myPowerGetPllClockFrequencyFloat(void)
 {
+    #ifdef DEBUG
     printk("%s: %d/%d/%d\n", __func__, g_fake_pll, g_fake_cpu, g_fake_bus);
-
+    #endif
     return g_fake_pll;
 }
 
 static int myPowerGetCpuClockFrequency(void)
 {
+    #ifdef DEBUG
     printk("%s: %d/%d/%d\n", __func__, g_fake_pll, g_fake_cpu, g_fake_bus);
-
+    #endif
     return g_fake_cpu;
 }
 
 static float myPowerGetCpuClockFrequencyFloat(void)
 {
+    #ifdef DEBUG
     printk("%s: %d/%d/%d\n", __func__, g_fake_pll, g_fake_cpu, g_fake_bus);
-
+    #endif
     return g_fake_cpu;
 }
 
 static int myPowerGetBusClockFrequency(void)
 {
+    #ifdef DEBUG
     printk("%s: %d/%d/%d\n", __func__, g_fake_pll, g_fake_cpu, g_fake_bus);
-
+    #endif
     return g_fake_bus;
 }
 
 static float myPowerGetBusClockFrequencyFloat(void)
 {
+    #ifdef DEBUG
     printk("%s: %d/%d/%d\n", __func__, g_fake_pll, g_fake_cpu, g_fake_bus);
-
+    #endif
     return g_fake_bus;
 }
 
@@ -88,24 +94,27 @@ static int myPowerSetClockFrequency(int pllfreq, int cpufreq, int busfreq)
     g_fake_pll = pllfreq;
     g_fake_cpu = cpufreq;
     g_fake_bus = busfreq;
+    #ifdef DEBUG
     printk("%s: %d/%d/%d\n", __func__, g_fake_pll, g_fake_cpu, g_fake_bus);
-
+    #endif
     return 0;
 }
 
 static int myPowerSetCpuClockFrequency(int cpufreq)
 {
     g_fake_cpu = cpufreq;
+    #ifdef DEBUG
     printk("%s: %d/%d/%d\n", __func__, g_fake_pll, g_fake_cpu, g_fake_bus);
-
+    #endif
     return 0;
 }
 
 static int myPowerSetBusClockFrequency(int busfreq)
 {
     g_fake_bus = busfreq;
+    #ifdef DEBUG
     printk("%s: %d/%d/%d\n", __func__, g_fake_pll, g_fake_cpu, g_fake_bus);
-    
+    #endif
     return 0;
 }
 
@@ -160,8 +169,11 @@ void SetSpeed(int cpuspd, int busspd)
 
         if(fp != 0) {
             REDIRECT_FUNCTION(g_power_func_redir[i].fp, fp);
-        } else {
+        }
+        #ifdef DEBUG
+        else {
             printk("%s: scePower_%08X not found\n", __func__, (uint)g_power_func_redir[i].nid);
         }
+        #endif
     }
 }

@@ -203,17 +203,19 @@ int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count)
         if (sceKernelFindModuleByName("camera_plugin_module"))
             goto exit;
 
+        #ifdef DEBUG
         printk("%s: loading satelite\n", __func__);
+        #endif
         modid = load_satelite();
 
         if (modid >= 0) {
             g_satelite_mod_id = modid;
             modid = sceKernelStartModule(g_satelite_mod_id, 0, 0, 0, 0);
-            
+            #ifdef DEBUG
             if (modid < 0) {
                 printk("%s: start module -> 0x%08X\n", __func__, modid);
             }
-            
+            #endif
             ctrl->Buttons &= (~PSP_CTRL_SELECT); // Filter SELECT
         }
     }

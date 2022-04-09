@@ -98,7 +98,10 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     u32 paramLength = sizeof(g_DiscID);
     sctrlGetInitPARAM("DISC_ID", &paramType, &paramLength, g_DiscID);
     startResult = sceKernelStartModule(result, strlen(g_DiscID) + 1, g_DiscID, &status, NULL);
+    
+    #ifdef DEBUG
     printk("%s: fname %s load 0x%08X, start 0x%08X -> 0x%08X\r\n", __func__, path, result, startResult, status);
+    #endif
     
     // load pops module from ARK savedata path
     strcpy(path, ark_config->arkpath);
@@ -108,7 +111,9 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     if (result<0) result = sceKernelLoadModule("flash0:/kd/pops_660.prx", flag, opt); // load pops modules from injected flash0
     if (result<0) result = sceKernelLoadModule(fname, flag, opt); // passthrough
 
+    #ifdef DEBUG
     printk("%s: fname %s flag 0x%08X -> 0x%08X\r\n", __func__, fname, flag, result);
+    #endif
 
     //PRTSTR1("Load result: %p", result);
     sceKernelDelayThread(3000000);

@@ -89,7 +89,9 @@ void usb_charge(void)
     vtimer = sceKernelCreateVTimer("", NULL);
 
     if(vtimer < 0) {
+        #ifdef DEBUG
         printk("%s: sceKernelCreateVTimer -> 0x%08X\n", __func__, vtimer);
+        #endif
 
         return;
     }
