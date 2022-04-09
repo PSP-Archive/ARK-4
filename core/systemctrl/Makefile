@@ -1,6 +1,6 @@
 TARGET = systemctrl
 
-C_OBJS = \
+OBJS = \
 	main.o \
 	src/modulemanager.o \
 	src/elf.o \
@@ -30,11 +30,9 @@ C_OBJS = \
 	src/plugin.o \
 	src/leda.o \
 	src/msstor_cache.o \
+	src/setlongjmp.o \
 	$(ARKROOT)/common/utils/patches.o \
-		
-OBJS = \
-	$(C_OBJS) \
-	setlongjmp.o
+	
 	
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common $(ARKROOT)

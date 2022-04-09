@@ -19,9 +19,7 @@ static int execute_apitype = 0x141;
 SceUID sceKernelLoadModuleMs2_bridge(const char *path, int flags, SceKernelLMOption *option)
 {
     SceUID ret = KernelLoadModuleMs2_orig(execute_apitype, path , flags , option);
-    if (ret == 0x80020148){
-        leda_running = 0; // enable checkexec in modman
-    }
+    leda_running = 0; // enable checkexec in modman
     return ret;
 }
 
