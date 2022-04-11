@@ -37,6 +37,8 @@ static struct{
     char paths[MAX_PLUGINS][MAX_PLUGIN_PATH];
 } plugins;
 
+void (*plugin_handler)(const char* path, int modid) = NULL;
+
 static addPlugin(char* path){
     for (int i=0; i<plugins.count; i++){
         if (strcmp(plugins.paths[i], path) == 0)
@@ -64,6 +66,8 @@ static void startPlugins()
         char* path = plugins.paths[i];
         // Load Module
         int uid = sceKernelLoadModule(path, 0, NULL);
+        // Call handler
+        if (plugin_handler) plugin_handler(path, uid);
         // Start Module
         int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
     }
@@ -82,6 +86,13 @@ static int matchingRunlevel(char * runlevel)
     else if (stricmp(runlevel, "umd") == 0) return (apitype == 0x120 || apitype == 0x123 || apitype == 0x125); // UMD games only
     else if (stricmp(runlevel, "game") == 0) return (apitype == 0x120 || apitype == 0x123 || apitype == 0x125 || apitype == 0x141 || apitype == 0x152); // umd+homebrew
     else if (stricmp(runlevel, "homebrew") == 0) return (apitype == 0x141 || apitype == 0x152); // homebrews only
+    else if (stricmp(runlevel, "launcher") == 0){
+        // check if running custom launcher
+        static char path[ARK_PATH_SIZE];
+        strcpy(path, ark_config->arkpath);
+        strcat(path, ark_config->launcher);
+        return (strcmp(path, sceKernelInitFileName())==0);
+    }
     else if (apitype == 0x120 || apitype == 0x123 || apitype == 0x125){ // check if plugin loads on specific game
         char gameid[10]; memset(gameid, 0, sizeof(gameid));
         return (getGameId(gameid) && stricmp(runlevel, gameid) == 0);
@@ -327,4 +338,10 @@ void loadSettings(void* settingsHandler){
     strcpy(path, ark_config->arkpath);
     strcat(path, "SETTINGS.TXT");
     ProcessConfigFile(path, settingsHandler, NULL);
+}
+
+void* registerPluginHandler(void* handler){
+    void* ret = plugin_handler;
+    plugin_handler = handler;
+    return ret;
 }

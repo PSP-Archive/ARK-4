@@ -154,6 +154,8 @@ Note: some of these menus have not been updated or supported by their developers
 
 - Codestation for his incredible work improving CSO speeds and creating the ZSO format.
 
+- UnkownBrackets for his help understanding the DAX format and Inferno speed hacks.
+
 - Zer01ne, noname120, astart and other devs that have blessed me with their knowledge and wisdom.
 
 - balika for his research in porting M33 to modern firmware that has helped improve compatiblity in ARK.

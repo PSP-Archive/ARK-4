@@ -190,39 +190,39 @@ static int readRawData(void* addr, u32 size, u32 offset)
     return ret;
 }
 
-static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
 }
 
-static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
     else sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
 }
 
-static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
-    if (is_nc) memcpy(dst, src, dst_len); // check for NC area
+static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+    if (topbit) memcpy(dst, src, dst_len); // check for NC area
     else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 
-static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
-    if (is_nc) memcpy(dst, src, dst_len); // check for NC area
+static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+    if (topbit) memcpy(dst, src, dst_len); // check for NC area
     else LZ4_decompress_fast(src, dst, dst_len);
 }
 
-static void decompress_lzo(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+static void decompress_lzo(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
     else lzo1x_decompress(src, src_len, dst, &dst_len, 0); // use lzo
 }
 
-static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
-    else if (is_nc) LZ4_decompress_fast(src, dst, dst_len);
+    else if (topbit) LZ4_decompress_fast(src, dst, dst_len);
     else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 
 static int read_compressed_sector_generic(u32 sector, u8* buf,
         u32 header_size, u32 uncompressed_size, u32 block_size, u32 block_skip, u32 align,
-        void (*decompress)(void* src, int src_len, void* dst, int dst_len, u32 is_nc)
+        void (*decompress)(void* src, int src_len, void* dst, int dst_len, u32 topbit)
 ){
 
     // calculate block and offset within block
@@ -248,23 +248,18 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
         // read block offset
         u32 b_offset = g_CISO_idx_cache[cur_block-g_CISO_cur_idx];
         u32 b_size = g_CISO_idx_cache[cur_block-g_CISO_cur_idx+1];
-        u32 is_nc = b_offset>>31;
-        b_offset &= 0x7FFFFFFF;
-        b_size &= 0x7FFFFFFF;
+        u32 topbit = b_offset&0x80000000;
+        b_offset = (b_offset&0x7FFFFFFF) << align;
+        b_size = (b_size&0x7FFFFFFF) << align;
         b_size -= b_offset;
         
-        if (align){
-            b_size += 1 << align;
-            b_offset = b_offset << align;
-        }
-        
         if (cur_block == g_total_blocks-1 && header_size == sizeof(DAXHeader))
-            b_size = DAX_COMP_BUF; // fix for last DAX block
+            b_size = DAX_COMP_BUF; // fix for last DAX block (you can't trust the value of b_size since there's no offset for last_block+1)
 
         // read block, skipping header if needed
         b_size = readRawData(com_buf, b_size, b_offset + block_skip);
 
-        decompress(com_buf, b_size, dec_buf, block_size, is_nc);
+        decompress(com_buf, b_size, dec_buf, block_size, topbit);
         
         ciso_cur_block = cur_block;
     }
@@ -279,7 +274,7 @@ static int read_sector_plain(u32 sector, u8* buf){
     return readRawData(buf, SECTOR_SIZE, isoLBA2Pos(sector, 0));
 }
 
-static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 is_nc) = NULL;
+static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit) = NULL;
 static int read_sector_cso(u32 sector, u8* buf){
     // CISO/ZISO
     return read_compressed_sector_generic(

@@ -87,6 +87,52 @@ void patch_scePower_Service(SceModule2* mod)
     _sw(NOP, text_addr + 0x00000E68);
 }
 
+static void patch_devicename(SceUID modid)
+{
+	SceModule2 *mod;
+	int i;
+
+	mod = (SceModule2*)sceKernelFindModuleByUID(modid);
+
+	if(mod == NULL) {
+		return;
+	}
+
+	for(i=0; i<mod->nsegment; ++i) {
+		u32 addr;
+		u32 end;
+
+		end = mod->segmentaddr[i] + mod->segmentsize[i];
+
+		for(addr = mod->segmentaddr[i]; addr < end; addr ++) {
+			char *str = (char*)addr;
+
+			if (0 == strncmp(str, "ms0", 3)) {
+				str[0] = 'e';
+				str[1] = 'f';
+			} else if (0 == strncmp(str, "fatms", 5)) {
+				str[3] = 'e';
+				str[4] = 'f';
+			}
+		}
+	}
+	
+	u32 start = mod->text_addr+mod->text_size;
+	u32 end = start + mod->data_size;
+	for (u32 addr=start; addr<end; addr++){
+	    char *str = (char*)addr;
+		if (0 == strncmp(str, "ms0", 3)) {
+			str[0] = 'e';
+			str[1] = 'f';
+		} else if (0 == strncmp(str, "fatms", 5)) {
+			str[3] = 'e';
+			str[4] = 'f';
+		}
+	}
+
+	flushCache();
+}
+
 int pause_disabled = 0;
 void disable_PauseGame()
 {
@@ -103,6 +149,7 @@ void disable_PauseGame()
 int is_launcher_mode = 0;
 int use_mscache = 0;
 int use_highmem = 0;
+int oldplugin = 0;
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
@@ -130,6 +177,9 @@ void settingsHandler(char* path){
     else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
         is_launcher_mode = 1;
     }
+    else if (strcasecmp(path, "oldplugin") == 0){ // replace XMB with custom launcher
+        oldplugin = 1;
+    }
     else if (strcasecmp(path, "infernocache") == 0){
         if (apitype == 0x123 || apitype == 0x125){
             void (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
@@ -153,6 +203,14 @@ void processSettings(){
         ark_config->launcher[0] = 0; // disable launcher mode
     }
     sctrlHENSetArkConfig(ark_config);
+}
+
+void (*prevPluginHandler)(const char* path, int modid) = NULL;
+void pluginHandler(const char* path, int modid){
+    if(oldplugin && psp_model == PSP_GO && (strncmp(path, "ef0", 2)==0 || strncmp(path, "EF0", 2)==0)) {
+		patch_devicename(modid);
+	}
+	if (prevPluginHandler) prevPluginHandler(path, modid);
 }
 
 void PSPOnModuleStart(SceModule2 * mod){

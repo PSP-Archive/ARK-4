@@ -1,5 +1,12 @@
 # ARK-4
 
+## Update 16
+- Greatly improved Inferno read speeds.
+- Fixed bug that affected CSO (v1 and v2) and ZSO formats.
+- Added Old Plugin Support for PSP Go.
+- Added "launcher" runlevel to enable/disable plugins on the custom launcher.
+- Some cleanup and fixes.
+
 ## Update 15
 - Fixed compatibility with Leda plugin.
 

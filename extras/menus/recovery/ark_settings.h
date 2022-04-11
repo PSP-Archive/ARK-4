@@ -21,6 +21,7 @@ typedef struct {
     unsigned char highmem;
     unsigned char mscache;
     unsigned char infernocache;
+    unsigned char oldplugin;
 }ArkConf;
 
 ArkConf ark_config;
@@ -148,6 +149,20 @@ static struct {
     ARK_OPTIONS
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} oldplugin = {
+    "Old Plugins on PSP Go",
+    MAX_ARK_OPTIONS,
+    0,
+    &(ark_config.oldplugin),
+    ARK_OPTIONS
+};
+
 settings_entry* ark_conf_entries[] = {
     (settings_entry*)&usbcharge,
     (settings_entry*)&overclock,
@@ -157,9 +172,10 @@ settings_entry* ark_conf_entries[] = {
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
+    (settings_entry*)&oldplugin,
 };
 
-#define MAX_ARK_CONF 8
+#define MAX_ARK_CONF 9
 
 bool isComment(string line){
     return (line[0] == '#' || line[0] == ';' || (line[0]=='/'&&line[1]=='/'));
@@ -216,6 +232,9 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "infernocache") == 0){
         return &(ark_config.infernocache);
+    }
+    else if (strcasecmp(conf.c_str(), "oldplugin") == 0){
+        return &(ark_config.oldplugin);
     }
     return NULL;
 }
@@ -283,5 +302,6 @@ void saveSettings(){
     output << processSetting("highmem", ark_config.highmem) << endl;
     output << processSetting("mscache", ark_config.mscache) << endl;
     output << processSetting("infernocache", ark_config.infernocache) << endl;
+    output << processSetting("oldplugin", ark_config.oldplugin) << endl;
     output.close();
 }
