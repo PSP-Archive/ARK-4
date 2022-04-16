@@ -100,8 +100,7 @@ class Iso : public Entry
         int read_jiso_data(u8* addr, u32 size, u32 offset);
         int read_dax_data(u8* addr, u32 size, u32 offset);        
         int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
-            u32 header_size, u32 block_size, u32 uncompressed_size, u32 block_skip, u32 align,
-            void (*decompress)(void* src, int src_len, void* dst, int dst_len, u32 topbit)
+            u32 header_size, u32 block_size, u32 uncompressed_size, u32 block_header, u32 align
         );
 
         // decompressor functions

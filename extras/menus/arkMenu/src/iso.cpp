@@ -206,8 +206,7 @@ int Iso::read_raw_data(u8* addr, u32 size, u32 offset){
 }
 
 int Iso::read_compressed_data_generic(u8* addr, u32 size, u32 offset,
-    u32 header_size, u32 block_size, u32 uncompressed_size, u32 block_skip, u32 align,
-    void (*decompress)(void* src, int src_len, void* dst, int dst_len, u32 topbit)
+    u32 header_size, u32 block_size, u32 uncompressed_size, u32 block_header, u32 align
 )
 {
     u32 cur_block;
@@ -275,15 +274,15 @@ int Iso::read_compressed_data_generic(u8* addr, u32 size, u32 offset,
 
         // read block, skipping header if needed
         if (c_offset > addr){
-            memcpy(com_buf, c_offset+block_skip, b_size);
+            memcpy(com_buf, c_offset+block_header, b_size);
             c_offset += b_size;
         }
         else{
-            b_size = read_raw_data(com_buf, b_size, b_offset + block_skip);
+            b_size = read_raw_data(com_buf, b_size, b_offset + block_header);
         }
 
         // decompress block
-        decompress(com_buf, b_size, dec_buf, block_size, topbit);
+        ciso_decompressor(com_buf, b_size, dec_buf, block_size, topbit);
     
         // read data from block into buffer
         read_bytes = min(size, (block_size - pos));
@@ -303,8 +302,7 @@ int Iso::read_ciso_data(u8* addr, u32 size, u32 offset){
     return read_compressed_data_generic(
         addr, size, offset,
         sizeof(CSOHeader), header.block_size,
-        header.file_size, 0, header.align,
-        ciso_decompressor
+        header.file_size, 0, header.align
     );
 }
 
@@ -314,8 +312,7 @@ int Iso::read_jiso_data(u8* addr, u32 size, u32 offset){
     return read_compressed_data_generic(
         addr, size, offset,
         sizeof(JisoHeader), jiso_header->block_size,
-        jiso_header->uncompressed_size, 4*jiso_header->block_headers, 0,
-        ciso_decompressor
+        jiso_header->uncompressed_size, 4*jiso_header->block_headers, 0
     );
 }
 
@@ -325,7 +322,7 @@ int Iso::read_dax_data(u8* addr, u32 size, u32 offset){
     return read_compressed_data_generic(
         addr, size, offset,
         sizeof(DAXHeader), DAX_BLOCK_SIZE,
-        dax_header->uncompressed_size, 2, 0, ciso_decompressor
+        dax_header->uncompressed_size, 2, 0
     );
 }
 
@@ -348,7 +345,7 @@ void* Iso::fastExtract(char* file, unsigned* size){
     
     static u8 initial_block[SECTOR_SIZE*2];
     
-    (this->*read_iso_data)(initial_block, SECTOR_SIZE, 32926);
+    (this->*read_iso_data)(initial_block, 12, 32926);
     
     unsigned dir_lba = ((unsigned*)initial_block)[0];
     unsigned block_size = ((unsigned*)initial_block)[2];
@@ -361,7 +358,7 @@ void* Iso::fastExtract(char* file, unsigned* size){
             if (size == NULL){
                 return (void*)-1;
             }
-            u8* sfo = (u8*)&initial_block[i-33+2];
+            u8* sfo = (u8*)&initial_block[i-31];
             FileData file_data;
             file_data.offset = (sfo[0] + (sfo[1]<<8) + (sfo[2]<<16) + (sfo[3]<<24))*block_size;
             file_data.size = (sfo[8] + (sfo[9]<<8) + (sfo[10]<<16) + (sfo[11]<<24));

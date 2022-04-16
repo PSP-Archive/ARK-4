@@ -95,6 +95,9 @@ static const char * g_filename = NULL;
 static SceUID g_isofd = -1;
 static u32 g_total_sectors = 0;
 
+static int (*readSector)(u32 sector, void *buf) = NULL;
+static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit) = NULL;
+
 static Iso9660DirectoryRecord g_root_record;
 
 int isoInit(){
@@ -221,8 +224,7 @@ static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 
 }
 
 static int read_compressed_sector_generic(u32 sector, u8* buf,
-        u32 header_size, u32 uncompressed_size, u32 block_size, u32 block_skip, u32 align,
-        void (*decompress)(void* src, int src_len, void* dst, int dst_len, u32 topbit)
+        u32 header_size, u32 uncompressed_size, u32 block_size, u32 block_header, u32 align
 ){
 
     // calculate block and offset within block
@@ -257,9 +259,9 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
             b_size = DAX_COMP_BUF; // fix for last DAX block (you can't trust the value of b_size since there's no offset for last_block+1)
 
         // read block, skipping header if needed
-        b_size = readRawData(com_buf, b_size, b_offset + block_skip);
+        b_size = readRawData(com_buf, b_size, b_offset + block_header);
 
-        decompress(com_buf, b_size, dec_buf, block_size, topbit);
+        ciso_decompressor(com_buf, b_size, dec_buf, block_size, topbit);
         
         ciso_cur_block = cur_block;
     }
@@ -274,13 +276,11 @@ static int read_sector_plain(u32 sector, u8* buf){
     return readRawData(buf, SECTOR_SIZE, isoLBA2Pos(sector, 0));
 }
 
-static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit) = NULL;
 static int read_sector_cso(u32 sector, u8* buf){
     // CISO/ZISO
     return read_compressed_sector_generic(
         sector, buf,
-        sizeof(CISOHeader), g_ciso_h.total_bytes, g_ciso_h.block_size, 0, g_ciso_h.align,
-        ciso_decompressor
+        sizeof(CISOHeader), g_ciso_h.total_bytes, g_ciso_h.block_size, 0, g_ciso_h.align
     );
 }
 
@@ -289,7 +289,7 @@ static int read_sector_jso(u32 sector, u8* buf){
     return read_compressed_sector_generic(
         sector, buf,
         sizeof(JisoHeader), jiso_header->uncompressed_size, jiso_header->block_size,
-        4*jiso_header->block_headers, 0, ciso_decompressor
+        4*jiso_header->block_headers, 0
     );
 }
 
@@ -297,12 +297,9 @@ static int read_sector_dax(u32 sector, u8* buf){
     // DAX
     return read_compressed_sector_generic(
         sector, buf,
-        sizeof(DAXHeader), dax_header->uncompressed_size, DAX_BLOCK_SIZE, 2, 0,
-        ciso_decompressor
+        sizeof(DAXHeader), dax_header->uncompressed_size, DAX_BLOCK_SIZE, 2, 0
     );
 }
-
-static int (*readSector)(u32 sector, void *buf) = NULL;
 
 static void normalizeName(char *filename)
 {

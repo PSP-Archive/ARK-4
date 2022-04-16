@@ -419,11 +419,6 @@ void GameManager::control(Controller* pad){
             self->waitIconsLoad();
         }
     }
-    /*
-    else if (pad->decline()){
-        sceKernelExitGame();
-    }
-    */
 }
 
 void GameManager::updateGameList(const char* path){

@@ -222,9 +222,30 @@ exit:
     return ret;
 }
 
+
+/**
+    The meat of all compressed format readers.
+    All compressed formats have the same overall structure:
+    - A header followed by an array of block offsets (uint32).
+    
+    We just need to know the size of the header and some information from it.
+    - block size: the size of a block once uncompressed.
+    - uncompressed size: total size of the original (uncompressed) ISO file.
+    - block header: size of block header if any (zlib header in DAX, JISO block_header).
+    - align: CISO block alignment.
+    
+    Technical Information:
+    - Block offsets can use the top bit to represent aditional information for the decompressor (NCarea, compression method, etc).
+    - Block size is calculated via the difference with the next block. Works for DAX allowing us to skip parsing block size array (with correction for last block).
+    - Non-Compressed Area can be determined if size of compressed block is equal to size of uncompressed.
+    
+    IO Speed hacks:
+    - a 4K table for block offsets, so we reduce block offset IO to 1.
+    - reading the entire compressed data at the end of provided buffer to reduce block IO to 1.
+
+*/
 static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
-    u32 header_size, u32 block_size, u32 uncompressed_size, u32 block_skip, u32 align,
-    void (*decompress)(void* src, int src_len, void* dst, int dst_len, u32 topbit)
+    u32 header_size, u32 block_size, u32 uncompressed_size, u32 block_header, u32 align
 )
 {
     u32 cur_block;
@@ -292,15 +313,15 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
 
         // read block, skipping header if needed
         if (c_buf > addr){
-            memcpy(com_buf, c_buf+block_skip, b_size);
+            memcpy(com_buf, c_buf+block_header, b_size);
             c_buf += b_size;
         }
         else{
-            b_size = read_raw_data(com_buf, b_size, b_offset + block_skip);
+            b_size = read_raw_data(com_buf, b_size, b_offset + block_header);
         }
 
         // decompress block
-        decompress(com_buf, b_size, dec_buf, block_size, topbit);
+        ciso_decompressor(com_buf, b_size, dec_buf, block_size, topbit);
     
         // read data from block into buffer
         read_bytes = MIN(size, (block_size - pos));
@@ -351,8 +372,7 @@ static int read_ciso_data(u8* addr, u32 size, u32 offset){
     return read_compressed_data_generic(
         addr, size, offset,
         sizeof(struct CISO_header), g_CISO_hdr.block_size,
-        g_CISO_hdr.total_bytes, 0, g_CISO_hdr.align,
-        ciso_decompressor
+        g_CISO_hdr.total_bytes, 0, g_CISO_hdr.align
     );
 }
 
@@ -361,8 +381,7 @@ static int read_jiso_data(u8* addr, u32 size, u32 offset){
     return read_compressed_data_generic(
         addr, size, offset,
         sizeof(JisoHeader), jiso_header->block_size,
-        jiso_header->uncompressed_size, 4*jiso_header->block_headers, 0,
-        ciso_decompressor
+        jiso_header->uncompressed_size, 4*jiso_header->block_headers, 0
     );
 }
 
@@ -371,7 +390,7 @@ static int read_dax_data(u8* addr, u32 size, u32 offset){
     return read_compressed_data_generic(
         addr, size, offset,
         sizeof(DAXHeader), DAX_BLOCK_SIZE,
-        dax_header->uncompressed_size, 2, 0, ciso_decompressor
+        dax_header->uncompressed_size, 2, 0
     );
 }
 
@@ -400,7 +419,7 @@ static int is_ciso(SceUID fd)
         
         u32 dec_size = 0;
         u32 com_size = 0;
-        
+        // set reader and decompressor functions according to format
         if (magic == DAX_MAGIC){
             g_total_sectors = dax_header->uncompressed_size / ISO_SECTOR_SIZE;
             dec_size = DAX_BLOCK_SIZE;
@@ -424,6 +443,7 @@ static int is_ciso(SceUID fd)
             if (g_CISO_hdr.ver == 2) ciso_decompressor = &decompress_cso2;
             else ciso_decompressor = (magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso;
         }
+        // lets use our own heap so that kram usage depends on game format (less heap needed for systemcontrol; better memory management)
         if (heapid<0){
             heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, dec_size + com_size + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
             if (heapid<0){
@@ -432,7 +452,7 @@ static int is_ciso(SceUID fd)
             }
         }
         if(g_ciso_dec_buf == NULL) {
-            g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, dec_size+64); //oe_malloc(dec_size + 64);
+            g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, dec_size+64);
             if(g_ciso_dec_buf == NULL) {
                 ret = -2;
                 goto exit;
@@ -441,7 +461,7 @@ static int is_ciso(SceUID fd)
                 g_ciso_dec_buf = (void*)(((u32)g_ciso_dec_buf & (~63)) + 64);
         }
         if(g_ciso_block_buf == NULL) {
-            g_ciso_block_buf = sceKernelAllocHeapMemory(heapid, com_size+64); //oe_malloc(com_size + 64);
+            g_ciso_block_buf = sceKernelAllocHeapMemory(heapid, com_size+64);
             if(g_ciso_block_buf == NULL) {
                 ret = -3;
                 goto exit;
@@ -450,7 +470,7 @@ static int is_ciso(SceUID fd)
                 g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
         }
         if (g_cso_idx_cache == NULL) {
-            g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4) + 64); //oe_malloc((CISO_IDX_MAX_ENTRIES * 4) + 64);
+            g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4) + 64);
             if (g_cso_idx_cache == NULL) {
                 ret = -4;
                 goto exit;
@@ -461,6 +481,7 @@ static int is_ciso(SceUID fd)
         ret = 0;
     } else {
         ret = 0x8002012F;
+        read_iso_data = &read_raw_data;
     }
 
 exit:
@@ -493,8 +514,7 @@ int iso_open(void)
         return -1;
     }
 
-    if (is_ciso(g_iso_fd) == 0x8002012F)
-        read_iso_data = &read_raw_data;
+    is_ciso(g_iso_fd);
 
     g_iso_opened = 1;
     g_total_sectors = get_nsector();
