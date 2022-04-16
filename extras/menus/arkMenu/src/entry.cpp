@@ -2,7 +2,6 @@
 
 #include "eboot.h"
 #include "iso.h"
-#include "cso.h"
 #include "sprites.h"
 #include "system_mgr.h"
 

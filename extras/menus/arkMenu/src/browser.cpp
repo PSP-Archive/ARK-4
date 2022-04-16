@@ -10,7 +10,6 @@
 #include "osk.h"
 
 #include "iso.h"
-#include "cso.h"
 #include "eboot.h"
 #include "unziprar.h"
 
@@ -129,10 +128,6 @@ void Browser::update(){
     else if (Iso::isISO(this->get()->getPath().c_str())){
         Iso* iso = new Iso(this->get()->getPath());
         iso->execute();
-    }
-    else if (Cso::isCSO(this->get()->getPath().c_str())){
-        Cso* cso = new Cso(this->get()->getPath());
-        cso->execute();
     }
     else if (Eboot::isEboot(this->get()->getPath().c_str())){
         Eboot* eboot = new Eboot(this->get()->getPath());

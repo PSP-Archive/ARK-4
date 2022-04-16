@@ -195,7 +195,6 @@ void GameManager::findISOs(const char* path){
         if (strcmp(dit->d_name, "..") == 0) continue;
         if (!common::fileExists(fullpath)) continue;
         if (Iso::isISO(fullpath.c_str())) this->categories[GAME]->addEntry(new Iso(fullpath));
-        else if (Cso::isCSO(fullpath.c_str())) this->categories[GAME]->addEntry(new Cso(fullpath));
     }
     closedir(dir);
 }
@@ -222,14 +221,7 @@ void GameManager::findSaveEntries(const char* path){
                 if (strcmp(savedit->d_name, ".") == 0) continue;
                 if (strcmp(savedit->d_name, "..") == 0) continue;
                 string fullentrypath = fullpath + "/" + string(savedit->d_name);
-                if ((common::getExtension(fullentrypath) == string("iso"))){
-                    if (Iso::isISO(fullentrypath.c_str()))
-                        this->categories[GAME]->addEntry(new Iso(fullentrypath));
-                }
-                else if ((common::getExtension(fullentrypath) == string("cso")) || (common::getExtension(fullentrypath) == string("zso"))){
-                    if (Cso::isCSO(fullentrypath.c_str()))
-                        this->categories[GAME]->addEntry(new Cso(fullentrypath));
-                }
+                if (Iso::isISO(fullentrypath.c_str())) this->categories[GAME]->addEntry(new Iso(fullentrypath));
                 else if ((common::getExtension(fullentrypath) == string("pbp"))){
                     if (Eboot::isEboot(fullentrypath.c_str())){
                         Eboot* e = new Eboot(fullentrypath);

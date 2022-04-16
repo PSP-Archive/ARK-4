@@ -244,8 +244,6 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
         size = uncompressed_size - offset;
     }
     
-    static u32 ciso_cur_block = -1;
-    
     // refresh index table if needed
     u32 starting_block = o_offset / block_size;
     u32 ending_block = o_offset+size;
@@ -255,7 +253,7 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
         read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
         g_cso_idx_start_block = starting_block;
     }
-    if (ending_block <= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
+    if (ending_block < g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
         // faster read
         u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
         u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
@@ -304,8 +302,6 @@ static int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
         // decompress block
         decompress(com_buf, b_size, dec_buf, block_size, topbit);
     
-        ciso_cur_block = cur_block;
-
         // read data from block into buffer
         read_bytes = MIN(size, (block_size - pos));
         memcpy(addr, dec_buf + pos, read_bytes);

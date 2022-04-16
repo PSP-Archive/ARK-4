@@ -4,7 +4,6 @@
 #include <vector>
 #include <cstdlib>
 #include "iso.h"
-#include "cso.h"
 #include "eboot.h"
 #include "gfx.h"
 

@@ -23,7 +23,7 @@ C_OBJS = \
 	$(ARKROOT)/core/compat/psp/flashinstall.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
 	$(ARKROOT)/core/compat/vitapops/popsdisplay.o \
-	$(ARKROOT)/core/systemctrl/src/loadexec_patch.o
+	$(ARKROOT)/core/systemctrl/src/loadexec.o
 
 include $(ARKROOT)/common/make/global.mak
 include $(ARKROOT)/common/make/beauty_bin.mak

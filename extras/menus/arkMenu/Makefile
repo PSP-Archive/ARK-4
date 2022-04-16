@@ -23,7 +23,6 @@ OBJS = \
 		src/ftp_mgr.o \
 		src/entry.o \
 		src/iso.o \
-		src/cso.o \
 		src/umd.o \
 		src/eboot.o \
 		src/menu.o \

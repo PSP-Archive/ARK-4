@@ -198,14 +198,16 @@ int fillLibraryStubs(void * lib, unsigned int nid, void * stub, unsigned int nid
     // Result
     int result = 0;
     
+    u32 stubtable = _lw((unsigned int)stub + 24);
+
+    // NidResolverEx
     if (lle_handler)
     {
-        void* stubtable = ((void**)stub)[0x18/4];
         lle_handler(stubtable);
     }
     
     // Calculate Stub Destination Address
-    unsigned int dest = nidPos * 8 + _lw((unsigned int)stub + 24);
+    unsigned int dest = nidPos * 8 + stubtable;
     
     // ???
     if(_lw((unsigned int)stub+52) != 0) goto exit;
