@@ -96,6 +96,15 @@ For example, enable cwcheat on all retail games except for GTA LCS and VCS.
 - ULUS10041, ms0:/seplugins/cwcheat/cwcheat.prx, off
 - ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 
+Some noteworthy plugins that are compatible with ARK include (but not limited to):
+- CXMB.
+- Leda.
+- PopsLoader V3 and V4i.
+- Custom Firmware Extender.
+- PSPLink.
+- GTA LCS and VCS cheadevice (including the remastered version).
+- CWCheat.
+- pspstates kai.
 
 ### By configuring ARK
 
