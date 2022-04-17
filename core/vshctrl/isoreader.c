@@ -79,9 +79,12 @@ typedef enum {
 
 typedef unsigned int uint;
 
-static CISOHeader g_ciso_h;
-static DAXHeader* dax_header = (DAXHeader*)&g_ciso_h;
-static JisoHeader* jiso_header = (JisoHeader*)&g_ciso_h;
+// header information
+static u32 header_size;
+static u32 uncompressed_size;
+static u32 block_size;
+static u32 block_header;
+static u32 align;
 
 // buffers
 static u32* g_CISO_idx_cache = NULL; // block offset cache
@@ -212,7 +215,7 @@ static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 
     else LZ4_decompress_fast(src, dst, dst_len);
 }
 
-static void decompress_lzo(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+static void decompress_jiso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
     else lzo1x_decompress(src, src_len, dst, &dst_len, 0); // use lzo
 }
@@ -223,9 +226,7 @@ static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 
     else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 
-static int read_compressed_sector_generic(u32 sector, u8* buf,
-        u32 header_size, u32 uncompressed_size, u32 block_size, u32 block_header, u32 align
-){
+static int read_compressed_sector(u32 sector, u8* buf){
 
     // calculate block and offset within block
     u32 pos = isoLBA2Pos(sector, 0);
@@ -274,31 +275,6 @@ static int read_compressed_sector_generic(u32 sector, u8* buf,
 
 static int read_sector_plain(u32 sector, u8* buf){
     return readRawData(buf, SECTOR_SIZE, isoLBA2Pos(sector, 0));
-}
-
-static int read_sector_cso(u32 sector, u8* buf){
-    // CISO/ZISO
-    return read_compressed_sector_generic(
-        sector, buf,
-        sizeof(CISOHeader), g_ciso_h.total_bytes, g_ciso_h.block_size, 0, g_ciso_h.align
-    );
-}
-
-static int read_sector_jso(u32 sector, u8* buf){
-    // JISO
-    return read_compressed_sector_generic(
-        sector, buf,
-        sizeof(JisoHeader), jiso_header->uncompressed_size, jiso_header->block_size,
-        4*jiso_header->block_headers, 0
-    );
-}
-
-static int read_sector_dax(u32 sector, u8* buf){
-    // DAX
-    return read_compressed_sector_generic(
-        sector, buf,
-        sizeof(DAXHeader), dax_header->uncompressed_size, DAX_BLOCK_SIZE, 2, 0
-    );
 }
 
 static void normalizeName(char *filename)
@@ -475,6 +451,8 @@ int isoOpen(const char *path)
         goto error;
     }
 
+    CISOHeader g_ciso_h;
+
     sceIoLseek(g_isofd, 0, PSP_SEEK_SET);
     memset(&g_ciso_h, 0, sizeof(g_ciso_h));
     ret = sceIoRead(g_isofd, &g_ciso_h, sizeof(g_ciso_h));
@@ -485,10 +463,15 @@ int isoOpen(const char *path)
     }
 
     u32 magic = g_ciso_h.magic;
-
+    
+    readSector = &read_compressed_sector;
     if (magic == CSO_MAGIC || magic == ZSO_MAGIC) {
+        header_size = sizeof(CISOHeader);
+        uncompressed_size = g_ciso_h.total_bytes;
+        block_size = g_ciso_h.block_size;
+        block_header = 0;
+        align = g_ciso_h.align;
         g_total_sectors = g_ciso_h.total_bytes / SECTOR_SIZE;
-        readSector = &read_sector_cso;
         if (g_ciso_h.ver < 2){
             ciso_decompressor = (g_ciso_h.magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso;
         }
@@ -497,14 +480,24 @@ int isoOpen(const char *path)
         }
     }
     else if (magic == DAX_MAGIC){
-        readSector = &read_sector_dax;
+        DAXHeader* dax_header = (DAXHeader*)&g_ciso_h;
+        header_size = sizeof(DAXHeader);
+        uncompressed_size = dax_header->uncompressed_size;
+        block_size = DAX_BLOCK_SIZE;
+        block_header = 2;
+        align = 0;
         g_total_sectors = dax_header->uncompressed_size / SECTOR_SIZE;
         ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib;
     }
     else if (magic == JSO_MAGIC){
-        readSector = &read_sector_jso;
+        JisoHeader* jiso_header = (JisoHeader*)&g_ciso_h;
+        header_size = sizeof(JisoHeader);
+        uncompressed_size = jiso_header->uncompressed_size;
+        block_size = jiso_header->block_size;
+        block_header = 4*jiso_header->block_headers;
+        align = 0;
         g_total_sectors = jiso_header->uncompressed_size / SECTOR_SIZE;
-        ciso_decompressor = (jiso_header->method)? &decompress_dax1 : &decompress_lzo;
+        ciso_decompressor = (jiso_header->method)? &decompress_dax1 : &decompress_jiso;
     }
     else {
         readSector = &read_sector_plain;

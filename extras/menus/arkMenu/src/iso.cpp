@@ -18,7 +18,7 @@ static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 
     else sctrlDeflateDecompress(dst, src, dst_len); // use raw inflate
 }
 
-static void decompress_lzo(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+static void decompress_jiso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
     else lzo1x_decompress(src, src_len, dst, (unsigned*)&dst_len, 0); // use lzo
 }
@@ -50,29 +50,43 @@ Iso :: Iso(string path)
     size_t lastSlash = path.rfind("/", string::npos);
     this->name = path.substr(lastSlash+1, string::npos);
     this->icon0 = common::getImage(IMAGE_WAITICON);
+    this->read_iso_data = &Iso::read_compressed_data;
     
+    CSOHeader header;
     DAXHeader* dax_header = (DAXHeader*)&header;
     JisoHeader* jiso_header = (JisoHeader*)&header;
     this->read_raw_data((u8*)&header, sizeof(CSOHeader), 0);
     u32 magic = common::getMagic(path.c_str(), 0);
     switch (magic){
-    case CSO_MAGIC:
-    case ZSO_MAGIC:
-        if (header.version == 2) ciso_decompressor = &decompress_cso2;
-        else ciso_decompressor = (header.magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso;
-        read_iso_data = &Iso::read_ciso_data;
-        break;
-    case DAX_MAGIC:
-        ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib;
-        read_iso_data = &Iso::read_dax_data;
-        break;
-    case JSO_MAGIC:
-        ciso_decompressor = (jiso_header->method)? &decompress_dax1 : &decompress_lzo;
-        read_iso_data = &Iso::read_jiso_data;
-        break;
-    default: // plain ISO
-        read_iso_data = &Iso::read_raw_data;
-        break;
+        case CSO_MAGIC:
+        case ZSO_MAGIC:
+            header_size = sizeof(CSOHeader);
+            block_size = header.block_size;
+            uncompressed_size = header.file_size;
+            block_header = 0;
+            align = header.align;
+            if (header.version == 2) ciso_decompressor = &decompress_cso2;
+            else ciso_decompressor = (header.magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso;
+            break;
+        case DAX_MAGIC:
+            header_size = sizeof(DAXHeader);
+            block_size = DAX_BLOCK_SIZE;
+            uncompressed_size = dax_header->uncompressed_size;
+            block_header = 2;
+            align = 0;
+            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib;
+            break;
+        case JSO_MAGIC:
+            header_size = sizeof(JisoHeader);
+            block_size = jiso_header->block_size;
+            uncompressed_size = jiso_header->uncompressed_size;
+            block_header = 4*jiso_header->block_headers;
+            align = 0;
+            ciso_decompressor = (jiso_header->method)? &decompress_dax1 : &decompress_jiso;
+            break;
+        default: // plain ISO
+            this->read_iso_data = &Iso::read_raw_data;
+            break;
     }
 };
 
@@ -205,9 +219,7 @@ int Iso::read_raw_data(u8* addr, u32 size, u32 offset){
     return res;
 }
 
-int Iso::read_compressed_data_generic(u8* addr, u32 size, u32 offset,
-    u32 header_size, u32 block_size, u32 uncompressed_size, u32 block_header, u32 align
-)
+int Iso::read_compressed_data(u8* addr, u32 size, u32 offset)
 {
     u32 cur_block;
     u32 pos, ret, read_bytes;
@@ -295,35 +307,6 @@ int Iso::read_compressed_data_generic(u8* addr, u32 size, u32 offset,
     u32 res = offset - o_offset;
     
     return res;
-}
-
-int Iso::read_ciso_data(u8* addr, u32 size, u32 offset){
-    // CISO
-    return read_compressed_data_generic(
-        addr, size, offset,
-        sizeof(CSOHeader), header.block_size,
-        header.file_size, 0, header.align
-    );
-}
-
-int Iso::read_jiso_data(u8* addr, u32 size, u32 offset){
-    // JISO
-    JisoHeader* jiso_header = (JisoHeader*)&header;
-    return read_compressed_data_generic(
-        addr, size, offset,
-        sizeof(JisoHeader), jiso_header->block_size,
-        jiso_header->uncompressed_size, 4*jiso_header->block_headers, 0
-    );
-}
-
-int Iso::read_dax_data(u8* addr, u32 size, u32 offset){
-    // DAX
-    DAXHeader* dax_header = (DAXHeader*)&header;
-    return read_compressed_data_generic(
-        addr, size, offset,
-        sizeof(DAXHeader), DAX_BLOCK_SIZE,
-        dax_header->uncompressed_size, 2, 0
-    );
 }
 
 void* Iso::fastExtract(char* file, unsigned* size){

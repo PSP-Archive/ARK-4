@@ -89,19 +89,20 @@ class Iso : public Entry
 
     protected:
 
-        CSOHeader header;
-
+        // keep track to the offset and size of loaded files (icon, pmf, etc) for faster extraction
         map<string, FileData> file_cache;
 
+        // reader information        
+        u32 header_size;
+        u32 block_size;
+        u32 uncompressed_size;
+        u32 block_header;
+        u32 align;   
+        
         // reader functions
         int (Iso::*read_iso_data)(u8* addr, u32 size, u32 offset);
         int read_raw_data(u8* addr, u32 size, u32 offset);
-        int read_ciso_data(u8* addr, u32 size, u32 offset);
-        int read_jiso_data(u8* addr, u32 size, u32 offset);
-        int read_dax_data(u8* addr, u32 size, u32 offset);        
-        int read_compressed_data_generic(u8* addr, u32 size, u32 offset,
-            u32 header_size, u32 block_size, u32 uncompressed_size, u32 block_header, u32 align
-        );
+        int read_compressed_data(u8* addr, u32 size, u32 offset);
 
         // decompressor functions
         void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 is_nc);
