@@ -24,7 +24,6 @@ OBJS = \
 	src/vlffix.o \
 	src/lz4.o \
 	src/minilzo.o \
-	src/loadexec.o \
 	src/exitgame.o \
 	src/gameinfo.o \
 	src/plugin.o \
