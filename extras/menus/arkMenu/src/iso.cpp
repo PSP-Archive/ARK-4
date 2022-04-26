@@ -9,35 +9,38 @@ static u8 g_ciso_block_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
 static u8 g_ciso_dec_buf[DAX_BLOCK_SIZE] __attribute__((aligned(64)));
 static u32 g_cso_idx_cache[CISO_IDX_MAX_ENTRIES];
 
-static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+    // use raw inflate with no NCarea check (DAX V0)
     sctrlDeflateDecompress(dst, src, dst_len); // use raw inflate
 }
 
-static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+    // for DAX Version 1 we can skip parsing NC-Areas and just use the block_size trick as in JSO and CSOv2
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
     else sctrlDeflateDecompress(dst, src, dst_len); // use raw inflate
 }
 
-static void decompress_jiso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+static void decompress_jiso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+    // while JISO allows for DAX-like NCarea, it by default uses compressed size check
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
-    else lzo1x_decompress(src, src_len, dst, (unsigned*)&dst_len, 0); // use lzo
+    else lzo1x_decompress(src, src_len, dst, (unsigned int*)&dst_len, 0); // use lzo
 }
 
-static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
-    if (is_nc) memcpy(dst, src, dst_len); // check for NC area
-    else sctrlDeflateDecompress(dst, src, dst_len);
+static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+    if (topbit) memcpy(dst, src, dst_len); // check for NC area
+    else sctrlDeflateDecompress(dst, src, dst_len); // use raw inflate
 }
 
-static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
-    if (is_nc) memcpy(dst, src, dst_len); // check for NC area
+static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+    if (topbit) memcpy(dst, src, dst_len); // check for NC area
     else LZ4_decompress_fast((const char*)src, (char*)dst, dst_len);
 }
 
-static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 is_nc){
+static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // in CSOv2, top bit represents compression method instead of NCarea
-    if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
-    else if (is_nc) LZ4_decompress_fast((const char*)src, (char*)dst, dst_len);
-    else sctrlDeflateDecompress(dst, src, dst_len);
+    if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area (JSO-like)
+    else if (topbit) LZ4_decompress_fast((const char*)src, (char*)dst, dst_len);
+    else sctrlDeflateDecompress(dst, src, dst_len); // use raw inflate
 }
 
 Iso :: Iso()

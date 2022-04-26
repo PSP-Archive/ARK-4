@@ -75,8 +75,9 @@ static struct{
         .orig = "flash0:/kd/npdrm.prx",
         .new = "NPDRM.PRX",
         .len = 20,
-    }
+    },
     */
+    {.orig = NULL, .new = NULL, .len=0}
 };
 
 // Open Directory List

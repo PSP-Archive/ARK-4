@@ -226,23 +226,25 @@ exit:
 
 
 /**
-    The meat of all compressed format readers.
+    The core of compressed iso reader.
+    Abstracted to be compatible with all formats (CSO/ZSO/JSO/DAX).
+    
     All compressed formats have the same overall structure:
     - A header followed by an array of block offsets (uint32).
     
-    We just need to know the size of the header and some information from it.
+    We only need to know the size of the header and some information from it.
     - block size: the size of a block once uncompressed.
     - uncompressed size: total size of the original (uncompressed) ISO file.
     - block header: size of block header if any (zlib header in DAX, JISO block_header, none for CSO/ZSO).
     - align: CISO block alignment (none for others).
     
-    Technical Information:
+    Some other Technical Information:
     - Block offsets can use the top bit to represent aditional information for the decompressor (NCarea, compression method, etc).
     - Block size is calculated via the difference with the next block. Works for DAX allowing us to skip parsing block size array (with correction for last block).
     - Non-Compressed Area can be determined if size of compressed block is equal to size of uncompressed.
     
-    IO Speed hacks:
-    - a 4K table for block offsets, so we reduce block offset IO to 1.
+    Includes IO Speed improvements:
+    - a 4K cache for block offsets, so we reduce block offset IO to 1.
     - reading the entire compressed data at the end of provided buffer to reduce block IO to 1.
 
 */
