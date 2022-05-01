@@ -49,8 +49,8 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 ### On PS Vita:
 * For 3.60 Henkaku users:
 - Install an ARK-4 bubble for 3.60 using FastARK: https://github.com/theheroGAC/ArkFast/releases/
-- Replace ARK savedata with latest release.
-- Copy H.BIN from Vitabubble folder into ARK savedata folder.
+- Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
+- Copy `H.BIN` from `Vitabubble` folder of release into ARK savedata folder.
 
 
 ### For legacy game exploits on both PSP and PS Vita:
