@@ -8,8 +8,6 @@
 #include "entry.h"
 
 #define SECTOR_SIZE 0x800
-#define VOLUME_DESCRIPTOR_START_SECTOR 0x10
-#define PVD_MAGIC "CD001"
 #define ISO_MAGIC 0x30444301
 
 #define CSO_MAGIC 0x4F534943 // CISO

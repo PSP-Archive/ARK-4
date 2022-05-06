@@ -29,10 +29,15 @@
 
 // Exit Button Mask
 #define EXIT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
+#define RESET_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_UP)
 
 extern ARKConfig* ark_config;
 
 extern void sctrlExitToLauncher();
+
+char* param_key[] = {
+    "vsh", "game", "pops"
+};
 
 void exitLauncher()
 {
@@ -54,7 +59,7 @@ void exitLauncher()
     param.size = sizeof(param);
     param.args = strlen(path) + 1;
     param.argp = path;
-    param.key = "game";
+    param.key = param_key[1];
 
     // set default mode
     sctrlSESetUmdFile("");
@@ -62,6 +67,31 @@ void exitLauncher()
     
     // Trigger Reboot
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
+}
+
+void resetGame()
+{
+
+    // Load Execute Parameter
+    struct SceKernelLoadExecVSHParam param;
+
+    int apitype = sceKernelInitApitype();
+    char path[ARK_PATH_SIZE];
+    strcpy(path, sceKernelInitFileName());
+
+    // Clear Memory
+    memset(&param, 0, sizeof(param));
+
+    // Configure Parameters
+    param.size = sizeof(param);
+    param.argp = path;
+    param.args = strlen(param.argp) + 1;
+    if (apitype&0x200 == 0x200) param.key = param_key[0];
+    else if (apitype == 0x144 || apitype == 0x155) param.key = param_key[2];
+    else param.key = param_key[1];
+    
+    // Trigger Reboot
+    sctrlKernelLoadExecVSHWithApitype(apitype, param.argp, &param);
 }
 
 // Gamepad Polling Thread
@@ -104,6 +134,9 @@ int control_poller(SceSize args, void * argp)
                     else{
                         sctrlKernelExitVSH(NULL);
                     }
+                }
+                else if ((pad_data[i].Buttons & RESET_MASK) == RESET_MASK){
+                    resetGame();
                 }
             }
         }

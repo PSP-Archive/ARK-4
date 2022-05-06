@@ -23,7 +23,7 @@ static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 
 static void decompress_jiso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // while JISO allows for DAX-like NCarea, it by default uses compressed size check
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
-    else lzo1x_decompress(src, src_len, dst, (unsigned int*)&dst_len, 0); // use lzo
+    else lzo1x_decompress((unsigned char*)src, src_len, (unsigned char*)dst, (unsigned int*)&dst_len, (void*)0); // use lzo
 }
 
 static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
@@ -258,6 +258,7 @@ int Iso::read_compressed_data(u8* addr, u32 size, u32 offset)
         if (size >= compressed_size){
             c_offset = addr + size - compressed_size;
             read_raw_data(c_offset, compressed_size, o_start);
+
         }
     }
     while(size > 0) {

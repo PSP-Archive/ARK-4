@@ -124,7 +124,7 @@ void zlib_decompress(uint8_t *input, uint8_t* output, int type, int block_size)
         }
         break;
     case TYPE_ZSO:
-        LZ4_decompress_fast(input, output, int block_size);
+        LZ4_decompress_fast(input, output, block_size);
         break;
     case TYPE_DAX:
         { // use zlib decompress
@@ -149,8 +149,8 @@ void zlib_decompress(uint8_t *input, uint8_t* output, int type, int block_size)
         break;
     case TYPE_JSO:
         {
-        u32 d_size = int block_size;
-        lzo1x_decompress(input, int block_size, output, &d_size, 0);
+        u32 d_size = block_size;
+        lzo1x_decompress(input, block_size, output, &d_size, 0);
         }
         break;
     }
