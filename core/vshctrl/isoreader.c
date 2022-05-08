@@ -466,7 +466,7 @@ int isoOpen(const char *path)
     
     readSector = &read_compressed_sector;
     if (magic == CSO_MAGIC || magic == ZSO_MAGIC) {
-        header_size = sizeof(CISOHeader);
+        header_size = g_ciso_h.header_size;
         uncompressed_size = g_ciso_h.total_bytes;
         block_size = g_ciso_h.block_size;
         block_header = 0;
