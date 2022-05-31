@@ -42,7 +42,7 @@
 #define DAX_BLOCK_SIZE 0x2000
 #define DAX_COMP_BUF 0x2400
 
-#define CISO_IDX_MAX_ENTRIES 4096
+#define CISO_IDX_MAX_ENTRIES 256
 
 struct CISO_header {
     uint32_t magic;  // 0
@@ -267,25 +267,35 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         size = uncompressed_size - offset;
     }
     
-    // refresh index table if needed
-    u32 starting_block = o_offset / block_size;
-    u32 ending_block = o_offset+size;
-    if (ending_block%block_size == 0) ending_block = ending_block/block_size;
-    else ending_block = (ending_block/block_size)+1;
-    if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
-        read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
-        g_cso_idx_start_block = starting_block;
-    }
-    if (ending_block < g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
+    // IO speedup tricks
+    {
+        // refresh index table if needed
+        u32 starting_block = o_offset / block_size;
+        u32 ending_block = o_offset+size;
+        if (ending_block%block_size == 0) ending_block = ending_block/block_size;
+        else ending_block = (ending_block/block_size)+1;
+        if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
+            read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
+            g_cso_idx_start_block = starting_block;
+        }
+
         // reduce IO by doing one read of all compressed data into the end of the provided buffer
-        u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
-        u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
-        u32 compressed_size = o_end - o_start;
-        if (size >= compressed_size){
-            c_buf = addr + size - compressed_size;
+        u32 o_start = (g_cso_idx_cache[starting_block - g_cso_idx_start_block] & 0x7FFFFFFF);
+        u32 o_end;
+        if (ending_block < g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES) {
+            o_end = g_cso_idx_cache[ending_block - g_cso_idx_start_block];
+        }
+        else{
+            read_raw_data(&o_end, sizeof(u32), ending_block * 4 + header_size);
+        }
+        o_end &= 0x7FFFFFFF;
+        u32 compressed_size = (o_end - o_start) << align;
+        if (size >= compressed_size) {
+            c_buf = (void *)((u32)addr + size - compressed_size);
             read_raw_data(c_buf, compressed_size, o_start);
         }
     }
+
     while(size > 0) {
         // calculate block number and offset within block
         cur_block = offset / block_size;
@@ -399,10 +409,10 @@ static int is_ciso(SceUID fd)
         if (magic == DAX_MAGIC){
             DAXHeader* dax_header = (DAXHeader*)&g_CISO_hdr;
             header_size = sizeof(DAXHeader);
-            block_size = DAX_BLOCK_SIZE;
+            block_size = DAX_BLOCK_SIZE; // DAX uses static block size (8K)
             uncompressed_size = dax_header->uncompressed_size;
-            block_header = 2;
-            align = 0;
+            block_header = 2; // skip over the zlib header (2 bytes)
+            align = 0; // no alignment for DAX
             com_size = DAX_COMP_BUF;
             ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib;
         }
@@ -411,41 +421,42 @@ static int is_ciso(SceUID fd)
             header_size = sizeof(JisoHeader);
             block_size = jiso_header->block_size;
             uncompressed_size = jiso_header->uncompressed_size;
-            block_header = 4*jiso_header->block_headers;
-            align = 0;
+            block_header = 4*jiso_header->block_headers; // if set to 1, each block has a 4 byte header, 0 otherwise
+            align = 0; // no alignment for JISO
             com_size = jiso_header->block_size + ISO_SECTOR_SIZE/4;
-            ciso_decompressor = (jiso_header->method)? &decompress_dax1 : &decompress_jiso;
+            ciso_decompressor = (jiso_header->method)? &decompress_dax1 : &decompress_jiso; //  zlib or lzo, depends on method
         }
-        else{
+        else{ // CSO/ZSO/v2
             header_size = g_CISO_hdr.header_size;
             block_size = g_CISO_hdr.block_size;
             uncompressed_size = g_CISO_hdr.total_bytes;
-            block_header = 0;
+            block_header = 0; // CSO/ZSO uses raw blocks
             align = g_CISO_hdr.align;
             com_size = block_size + (1 << g_CISO_hdr.align);
-            if (g_CISO_hdr.ver == 2) ciso_decompressor = &decompress_cso2;
-            else ciso_decompressor = (magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso;
+            if (g_CISO_hdr.ver == 2) ciso_decompressor = &decompress_cso2; // CSOv2 uses both zlib and lz4
+            else ciso_decompressor = (magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso; // CSO/ZSO v1 (zlib or lz4)
         }
-        g_total_sectors = uncompressed_size / ISO_SECTOR_SIZE;
+        g_total_sectors = uncompressed_size / ISO_SECTOR_SIZE; // total number of DVD sectors (2K) in the original ISO.
         // lets use our own heap so that kram usage depends on game format (less heap needed for systemcontrol; better memory management)
         heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, block_size + com_size + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
         if (heapid<0){
             return -5;
         }
+        // allocate buffer for decompressed block
         g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, block_size+64);
         if(g_ciso_dec_buf == NULL) {
             return -2;
         }
         if((u32)g_ciso_dec_buf & 63) // align 64
             g_ciso_dec_buf = (void*)(((u32)g_ciso_dec_buf & (~63)) + 64);
-
+        // allocate buffer for compressed block
         g_ciso_block_buf = sceKernelAllocHeapMemory(heapid, com_size+64);
         if(g_ciso_block_buf == NULL) {
             return -3;
         }
         if((u32)g_ciso_block_buf & 63) // align 64
             g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
-
+        // allocate buffer for block offset cache
         g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4) + 64);
         if (g_cso_idx_cache == NULL) {
             return -4;
