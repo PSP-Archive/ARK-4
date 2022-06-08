@@ -52,8 +52,11 @@ int patch_bootconf_vsh(char *buffer, int length)
     int newsize, result;
 
     result = length;
-    newsize = AddPRX(buffer, "/kd/vshbridge.prx", PATH_VSHCTRL+sizeof(PATH_FLASH0)-2, VSH_RUNLEVEL );
 
+    newsize = AddPRX(buffer, "/kd/vshbridge.prx", PATH_VSHCTRL+sizeof(PATH_FLASH0)-2, VSH_RUNLEVEL );
+    if (newsize > 0) result = newsize;
+
+    newsize = AddPRX(buffer, "/kd/vshbridge_tool.prx", PATH_VSHCTRL+sizeof(PATH_FLASH0)-2, VSH_RUNLEVEL );
     if (newsize > 0) result = newsize;
 
     return result;
