@@ -147,8 +147,8 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
 {
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr+mod->text_size;
-    u32 p = 0; //text_addr + 0x0002A62C;
-    u32 a = 0; // text_addr + 0x000192E0;
+    u32 p = 0;
+    u32 a = 0;
     char str[50];
     u32 addr;
     for (addr=text_addr; addr<top_addr; addr+=4){
@@ -188,7 +188,6 @@ static void patch_game_plugin_module(SceModule2* mod)
 {
 
     u32 text_addr = mod->text_addr;
-    /*
     u32 top_addr = text_addr + mod->text_size;
     int patches = 5;
     for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
@@ -226,28 +225,6 @@ static void patch_game_plugin_module(SceModule2* mod)
             patches--;
         }
     }
-    */
-
-    
-    //disable executable check for normal homebrew
-    MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0x00020528);
-
-    //kill ps1 eboot check
-    MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0x00020E6C);
-
-    //kill multi-disc ps1 check
-    _sw(NOP, text_addr + 0x00014850);
-
-    // disable check for custom psx eboot restore 
-    // rif file check
-    _sw(0x00001021, text_addr + 0x0002062C);
-    // rif content memcmp check
-    _sw(NOP, text_addr + 0x00020654);
-    // some type check, branch it
-    _sw(0x10000010, text_addr + 0x00020668);
-    // fake npdrm call
-    _sw(0x00001021, text_addr + 0x000206D0);
-    
 }
 
 static void patch_msvideo_main_plugin_module(u32 text_addr)
@@ -337,12 +314,6 @@ static void patch_vsh_module_for_pspgo_umdvideo(SceModule2 *mod)
 static void patch_vsh_module(SceModule2 * mod)
 {
     //enable homebrew boot
-    
-    _sw(NOP, mod->text_addr + 0x000122B0);
-    _sw(NOP, mod->text_addr + 0x00012058);
-    _sw(NOP, mod->text_addr + 0x00012060);
-    
-    /*
     u32 top_addr = mod->text_addr+mod->text_size;
     u32 fakeparam = SYSCALL(sctrlKernelQuerySystemCall(fakeParamInexistance));
     int patches = 6;
@@ -375,22 +346,11 @@ static void patch_vsh_module(SceModule2 * mod)
         }
         
     }
-    */
+    
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x21D4D038, gameloadexec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0xE533E98C, gameloadexec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x63E69956, umdLoadExec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x81682A40, umdLoadExecUpdater);
-    
-    u32 PBPFWCheck[] = {
-        0x000119C0,
-        0x000121A4,
-        0x00012BA4,
-        0x00013288,
-    };
-    for(int i = 0; i < NELEMS(PBPFWCheck); i++) {
-        _sw(SYSCALL(sctrlKernelQuerySystemCall(fakeParamInexistance)), mod->text_addr + PBPFWCheck[i]);
-    }
-    
     if(psp_model == PSP_GO && sctrlSEGetBootConfFileIndex() == MODE_VSHUMD) {
         patch_vsh_module_for_pspgo_umdvideo(mod);
     }
