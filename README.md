@@ -7,7 +7,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Core system for unsigned code execution on every PSP device based on 6.60 kernel.
 
-- Inferno driver Version 2 compatible with ISO, CSO, ZSO, JSO, CSOv2 and DAX formats.
+- Inferno 2 Driver compatible with ISO, CSO, ZSO, JSO, CSOv2 and DAX formats.
 
 - Popcorn controller for custom PS1 games. Compatible with PopsLoader V3 and V4i.
 
@@ -15,9 +15,9 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Plugin support for PSP games, PSX games and VSH (XMB), including the ability to enable and disable plugins per-game.
 
-- Compatible with all PSP models on firmwares 6.60 and 6.61.
+- Compatible with all PSP models on firmwares 6.60, 6.61 and 6.60 Testing Tool.
 
-- Compatible with all PS Vita models on firmware 2.10 and up.
+- Compatible with all PS Vita models on firmware 2.10 up to 3.60, either original or Henkaku.
 
 - Minimalistic: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
