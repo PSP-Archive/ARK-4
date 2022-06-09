@@ -81,13 +81,13 @@ You can use the following keywords to enable a plugin:
 - Anything else disables the plugin
 
 You can use the following keywords to tell ARK when the plugin loads:
-- all/always: if either of these keywords are used, the plugin will always load.
-- umd: plugin should only load on retail games (UMD/ISO/PSN).
-- homebrew: plugin should only load on homebrews.
-- game: plugin can load on both retail games and homebrews.
-- pops: plugin only loads in PSX games.
-- vsh: plugin only loads in the XMB.
-- game ID: if you specify a game ID (i.e. SLUS000000), then the plugin will only load on that game.
+- `all/always`: if either of these keywords are used, the plugin will always load.
+- `umd`: plugin should only load on retail games (UMD/ISO/PSN).
+- `homebrew`: plugin should only load on homebrews.
+- `game`: plugin can load on both retail games and homebrews.
+- `pops`: plugin only loads in PSX games.
+- `vsh`: plugin only loads in the XMB.
+- `game ID`: if you specify a game ID (i.e. `SLUS000000`), then the plugin will only load on that game.
 
 You can also disable a plugin on certain games where they might be problematic.
 To do so, just add a disable line for the specific game ID after the enable line.
@@ -119,15 +119,16 @@ Another example, overclock only on games, use powersaving on VSH:
 You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
 Configuration settings for ARK:
 
-- overclock: use this for better performance at the expense of battery time. Sets CPU/BUS speed to 333/166.
-- powersave: use this for better battery life at the expense of performance. Sets CPU/BUS speed to 133/66.
-- usbcharge: enables USB charging whereever you want.
-- launcher: replaces the XMB with a custom menu launcher.
-- disablepause: disables the pause game feature on PSP Go.
-- highmem: enables high memory on models above 1K.
+- `overclock`: use this for better performance at the expense of battery time. Sets CPU/BUS speed to 333/166.
+- `powersave`: use this for better battery life at the expense of performance. Sets CPU/BUS speed to 133/66.
+- `usbcharge`: enables USB charging whereever you want.
+- `launcher`: replaces the XMB with a custom menu launcher.
+- `disablepause`: disables the pause game feature on PSP Go.
+- `highmem`: enables high memory on models above 1K.
  You should only use this on homebrew runlevel as retail games were not meant to use the extra memory,
  and this can cause issues with cheat devices or other plugins that expect games to have their data at specific memory addresses.
- - infernocache: enables cache for Inferno driver, improving performance of some games.
+ - `infernocache`: enables cache for Inferno driver, improving performance of some games.
+ - `oldplugin`: enables old plugins support on PSP Go (redirects `ms0` to `ef0`).
 - NOTE: You should use the recovery menu to handle settings easier.
 
 
