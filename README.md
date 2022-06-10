@@ -7,7 +7,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Core system for unsigned code execution on every PSP device based on 6.60 kernel.
 
-- Inferno driver Version 2 compatible with ISO, CSO, ZSO, JSO, CSOv2 and DAX formats.
+- Inferno 2 Driver compatible with ISO, CSO, ZSO, JSO, CSOv2 and DAX formats.
 
 - Popcorn controller for custom PS1 games. Compatible with PopsLoader V3 and V4i.
 
@@ -15,9 +15,9 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 
 - Plugin support for PSP games, PSX games and VSH (XMB), including the ability to enable and disable plugins per-game.
 
-- Compatible with all PSP models on firmwares 6.60 and 6.61.
+- Compatible with all PSP models on firmwares 6.60, 6.61 and 6.60 Testing Tool.
 
-- Compatible with all PS Vita models on firmware 2.10 and up.
+- Compatible with all PS Vita models on firmware 2.10 up to 3.60, either original or Henkaku.
 
 - Minimalistic: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
@@ -45,6 +45,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 - If using Infinity place the `EBOOT.PBP` from the `Infinity` folder found in the ARK download into \
 `/PSP/GAME/UPDATE`. Run the initial infinity installation from OFW and re-run the installer again from ARK to configure autoboot. \
   This will allow you to use ARK permanently and triple boot with PRO and ME.
+ - If you will be using the Live loader version of ARK instead of a permanent solution, it is recommended that you delete `FLASH0.ARK` from the savedata file after the first installation and bootup of ARK, otherwise the flash0 files will be installed every time you boot back to ARK and this is detrimental to the flash even if ARK installs very little and small files. Doing this will also make the Live loader boot up ARK faster.
 
 ### On PS Vita:
 * For 3.60 Henkaku users:
@@ -81,13 +82,13 @@ You can use the following keywords to enable a plugin:
 - Anything else disables the plugin
 
 You can use the following keywords to tell ARK when the plugin loads:
-- all/always: if either of these keywords are used, the plugin will always load.
-- umd: plugin should only load on retail games (UMD/ISO/PSN).
-- homebrew: plugin should only load on homebrews.
-- game: plugin can load on both retail games and homebrews.
-- pops: plugin only loads in PSX games.
-- vsh: plugin only loads in the XMB.
-- game ID: if you specify a game ID (i.e. SLUS000000), then the plugin will only load on that game.
+- `all/always`: if either of these keywords are used, the plugin will always load.
+- `umd`: plugin should only load on retail games (UMD/ISO/PSN).
+- `homebrew`: plugin should only load on homebrews.
+- `game`: plugin can load on both retail games and homebrews.
+- `pops`: plugin only loads in PSX games.
+- `vsh`: plugin only loads in the XMB.
+- `game ID`: if you specify a game ID (i.e. `SLUS000000`), then the plugin will only load on that game.
 
 You can also disable a plugin on certain games where they might be problematic.
 To do so, just add a disable line for the specific game ID after the enable line.
@@ -119,15 +120,16 @@ Another example, overclock only on games, use powersaving on VSH:
 You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
 Configuration settings for ARK:
 
-- overclock: use this for better performance at the expense of battery time. Sets CPU/BUS speed to 333/166.
-- powersave: use this for better battery life at the expense of performance. Sets CPU/BUS speed to 133/66.
-- usbcharge: enables USB charging whereever you want.
-- launcher: replaces the XMB with a custom menu launcher.
-- disablepause: disables the pause game feature on PSP Go.
-- highmem: enables high memory on models above 1K.
+- `overclock`: use this for better performance at the expense of battery time. Sets CPU/BUS speed to 333/166.
+- `powersave`: use this for better battery life at the expense of performance. Sets CPU/BUS speed to 133/66.
+- `usbcharge`: enables USB charging whereever you want.
+- `launcher`: replaces the XMB with a custom menu launcher.
+- `disablepause`: disables the pause game feature on PSP Go.
+- `highmem`: enables high memory on models above 1K.
  You should only use this on homebrew runlevel as retail games were not meant to use the extra memory,
  and this can cause issues with cheat devices or other plugins that expect games to have their data at specific memory addresses.
- - infernocache: enables cache for Inferno driver, improving performance of some games.
+ - `infernocache`: enables cache for Inferno driver, improving performance of some games.
+ - `oldplugin`: enables old plugins support on PSP Go (redirects `ms0` to `ef0`).
 - NOTE: You should use the recovery menu to handle settings easier.
 
 
