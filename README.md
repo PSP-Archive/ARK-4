@@ -45,7 +45,7 @@ Simple to use and full of unique features, ARK CFW aims at keeping the PSP exper
 - If using Infinity place the `EBOOT.PBP` from the `Infinity` folder found in the ARK download into \
 `/PSP/GAME/UPDATE`. Run the initial infinity installation from OFW and re-run the installer again from ARK to configure autoboot. \
   This will allow you to use ARK permanently and triple boot with PRO and ME.
- - If you will be using the Live loader version of ARK instead of a permanent solution, it is recommended that you delete `FLASH0.ARK` from the savedata file after the first installation and bootup of ARK, otherwise the flash0 files will be installed every time you boot back to ARK and this is detrimental to the flash even if ARK installs very little and small files.
+ - If you will be using the Live loader version of ARK instead of a permanent solution, it is recommended that you delete `FLASH0.ARK` from the savedata file after the first installation and bootup of ARK, otherwise the flash0 files will be installed every time you boot back to ARK and this is detrimental to the flash even if ARK installs very little and small files. Doing this will also make the Live loader boot up ARK faster.
 
 ### On PS Vita:
 * For 3.60 Henkaku users:
