@@ -529,8 +529,6 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
             SceIoDirent entry;
             memset(&entry, 0, sizeof(SceIoDirent));
             
-            char * read_path = new char[strlen(source) + 256];
-            
             //start reading directory entries
             while(sceIoDread(dir, &entry) > 0)
             {
@@ -582,8 +580,6 @@ string Browser::checkDestExists(string path, string destination, string name){
         case 0:
              if (common::fileExists(dest))
                 deleteFile(dest);
-             else
-                deleteFolder(dest+"/");
              break;
         case 1:
             do{

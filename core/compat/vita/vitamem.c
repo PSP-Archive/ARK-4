@@ -36,7 +36,7 @@ void unlockVitaMemory(){
         return;
     }
 
-    u32 user_size = USER_SIZE + FLASH_SIZE;
+    u32 user_size = USER_SIZE + VITA_EXTRA_RAM;
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
     partition->size = user_size;
     partition->data->size = (((user_size >> 8) << 9) | 0xFC);
@@ -46,7 +46,7 @@ void unlockVitaMemory(){
     partition->address = 0x88800000 + user_size;
     partition->data->size = 0xFC;
     
-    sceKernelAllocPartitionMemory(2, "FLASH0", 2, FLASH_SIZE-0x400000, (void *)(USER_BASE+USER_SIZE));
+    //sceKernelAllocPartitionMemory(2, "FLASH0", 2, FLASH_SIZE-0x400000, (void *)(USER_BASE+USER_SIZE));
     //sceKernelAllocPartitionMemory(2, "FLASH0", 2, 0x200000, (void *)(USER_BASE+USER_SIZE));
     
     sctrlHENSetMemory(30, 0);

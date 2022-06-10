@@ -37,7 +37,15 @@ sceNetMPulldown Kernel Exploit for PSP 6.60 and 6.61
 */
 
 #define SYSMEM_TEXT_ADDR 0x88000000
+
+#ifdef BETA_660
+#define PATCH_OFFSET 0x0000D464
+#define POWERLOCK_OFFSET 0x00006640
+#else
 #define PATCH_OFFSET 0x0000CBB8
+#define POWERLOCK_OFFSET 0x000040F8
+#endif
+
 #define PATCH_ADDR SYSMEM_TEXT_ADDR+PATCH_OFFSET // exact address of patch
 #define PATCHED_INST 0x3C058801 // the original instruction
 
@@ -94,6 +102,6 @@ void executeKernel(u32 kfuncaddr){
     u32 kernel_entry, entry_addr;
     kernel_entry = kfuncaddr;
     entry_addr = ((u32) &kernel_entry) - 16;
-    g_tbl->KernelPowerLock(0, ((u32) &entry_addr) - 0x000040F8);
+    g_tbl->KernelPowerLock(0, ((u32) &entry_addr) - POWERLOCK_OFFSET);
 }
 

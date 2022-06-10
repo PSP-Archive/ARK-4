@@ -54,7 +54,7 @@ void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *tab
     // Add flash0 ramfs as partition 11
     SetMemoryPartitionTable(sysmem_config, table);
     table->extVshell.addr = FLASH_SONY; // flash0 ramfs
-    table->extVshell.size = FLASH_SIZE; // 16MiB
+    table->extVshell.size = VITA_EXTRA_RAM; // 12MiB
 }
 
 int PatchSysMem(void *a0, void *sysmem_config)

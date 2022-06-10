@@ -177,7 +177,7 @@ void settingsHandler(char* path){
     else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
         is_launcher_mode = 1;
     }
-    else if (strcasecmp(path, "oldplugin") == 0){ // replace XMB with custom launcher
+    else if (strcasecmp(path, "oldplugin") == 0){ // redirect ms0 to ef0 on psp go
         oldplugin = 1;
     }
     else if (strcasecmp(path, "infernocache") == 0){
