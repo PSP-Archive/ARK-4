@@ -160,5 +160,7 @@ int main(int argc, char** argv){
     void (* hEntryPoint)(ARKConfig*, UserFunctions*, char*) = (void*)ARK_LOADADDR;
     hEntryPoint(&config, &funcs, kxploit);
     
+    sceKernelExitGame();
+
     return 0;
 }

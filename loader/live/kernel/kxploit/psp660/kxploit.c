@@ -38,6 +38,8 @@ sceNetMPulldown Kernel Exploit for PSP 6.60 and 6.61
 
 #define SYSMEM_TEXT_ADDR 0x88000000
 
+#define BETA_660
+
 #ifdef BETA_660
 #define PATCH_OFFSET 0x0000D464
 #define POWERLOCK_OFFSET 0x00006640
