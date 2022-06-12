@@ -94,7 +94,8 @@ typedef struct UserFunctions
     int (* UtilityLoadNetModule)(int);
     int (* UtilityUnloadNetModule)(int);    
     //int (* SysMemUserForUser_91DE343C)( void *unk );
-    SceUID     (*KernelAllocPartitionMemory)(SceUID partitionid, const char *name, int type, SceSize size, void *addr);
+    SceUID (*KernelAllocPartitionMemory)(SceUID partitionid, const char *name, int type, SceSize size, void *addr);
+    void * (*KernelGetBlockHeadAddr)(SceUID blockid);
     int (* KernelFreePartitionMemory)(int);
     int (* UtilitySavedataGetStatus)();
     int (* UtilitySavedataInitStart)(void* params);
@@ -168,6 +169,9 @@ typedef struct KernelFunctions{
     int (* IoUnassign)(const char *dev);
     
     // sysmem.prx Functions
+    SceUID 	(*KernelAllocPartitionMemory)(SceUID partitionid, const char *name, int type, SceSize size, void *addr);
+    void * 	(*KernelGetBlockHeadAddr)(SceUID blockid);
+    int (* KernelFreePartitionMemory)(int);
     void (* KernelIcacheInvalidateAll)(void);
     void (* KernelDcacheWritebackInvalidateAll)(void);
     int (* KernelGzipDecompress)(unsigned char *dest, unsigned int destSize, const unsigned char *src, void *unknown);

@@ -23,6 +23,7 @@ SUBDIRS = libs \
 	loader/live/kernel/kernel_loader \
 	loader/live/kernel/chain_loader \
 	loader/live/kernel/kram_dumper \
+	loader/live/kernel/idstorage_dumper \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
 	extras/menus/arkMenu \
@@ -89,6 +90,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/live/kernel/kernel_loader
 	$(Q)$(MAKE) $@ -C loader/live/kernel/chain_loader
 	$(Q)$(MAKE) $@ -C loader/live/kernel/kram_dumper
+	$(Q)$(MAKE) $@ -C loader/live/kernel/idstorage_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/psp_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/vita_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/rebootex

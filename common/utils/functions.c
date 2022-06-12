@@ -64,9 +64,9 @@ void scanUserFunctions(UserFunctions* tbl){
     tbl->KernelExitThread = (void*)RelocImport("ThreadManForUser", 0xAA73C935, 0);
     tbl->KernelExitDeleteThread = (void*)RelocImport("ThreadManForUser", 0x809CE29B, 0);
 
-    tbl->KernelCreateVpl = (void*)RelocImport("ThreadManForUser", 0x56C039B5, 0),
+    tbl->KernelCreateVpl = (void*)RelocImport("ThreadManForUser", 0x56C039B5, 0);
     tbl->KernelTryAllocateVpl = (void*)RelocImport("ThreadManForUser", 0xAF36D708, 0),
-    tbl->KernelFreeVpl = (void*)RelocImport("ThreadManForUser", 0xB736E9FF, 0),
+    tbl->KernelFreeVpl = (void*)RelocImport("ThreadManForUser", 0xB736E9FF, 0);
     tbl->KernelDeleteVpl = (void*)RelocImport("ThreadManForUser", 0x89B3D48C, 0);
     tbl->KernelDeleteFpl = (void*)RelocImport("ThreadManForUser", 0xED1410E0, 0);
     
@@ -78,6 +78,7 @@ void scanUserFunctions(UserFunctions* tbl){
     //tbl->SysMemUserForUser_91DE343C = (void*)RelocImport("SysMemUserForUser", 0x91DE343C, 0);
     tbl->KernelFreePartitionMemory = (void*)RelocImport("SysMemUserForUser", 0xB6D61D02, 0);
     tbl->KernelAllocPartitionMemory = (void*)RelocImport("SysMemUserForUser", 0x237DBD4F, 0);
+    tbl->KernelGetBlockHeadAddr = (void*)RelocImport("SysMemUserForUser", 0x9D9A5BA1, 0);
 
     // savedata functions
     tbl->UtilitySavedataGetStatus = (void*)RelocImport("sceUtility", 0x8874DBE0, 0);
@@ -123,6 +124,9 @@ void scanKernelFunctions(KernelFunctions* kfuncs){
     kfuncs->IoAssign = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xB2A628C1);
     kfuncs->IoUnassign = (void*)FindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x6D08A871);
     
+    kfuncs->KernelAllocPartitionMemory = (void*)FindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x237DBD4F);
+    kfuncs->KernelGetBlockHeadAddr = (void*)FindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x9D9A5BA1);
+    kfuncs->KernelFreePartitionMemory = (void*)FindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xB6D61D02);
     kfuncs->KernelIcacheInvalidateAll = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0x920F104A);
     kfuncs->KernelDcacheWritebackInvalidateAll = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0xB435DEC5);
     kfuncs->KernelDcacheInvalidateRange = (void*)FindFunction("sceSystemMemoryManager", "UtilsForKernel", 0xBFA98062);

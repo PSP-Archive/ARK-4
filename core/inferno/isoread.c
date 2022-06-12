@@ -25,7 +25,6 @@
 #include <psprtc.h>
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
-#include <zlib.h>
 #include "systemctrl.h"
 #include "systemctrl_se.h"
 #include "systemctrl_private.h"

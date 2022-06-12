@@ -70,7 +70,9 @@ volatile UserFunctions funcs = {
     .UtilityUnloadNetModule = &sceUtilityUnloadNetModule,
     // Sysmem
     //.SysMemUserForUser_91DE343C = &SysMemUserForUser_91DE343C,
+    .KernelAllocPartitionMemory = &sceKernelAllocPartitionMemory,
     .KernelFreePartitionMemory = &sceKernelFreePartitionMemory,
+    .KernelGetBlockHeadAddr = &sceKernelGetBlockHeadAddr,
     // Intr
     .KernelCpuSuspendIntr = &sceKernelCpuSuspendIntr,
     .KernelCpuResumeIntr = &sceKernelCpuResumeIntr,
