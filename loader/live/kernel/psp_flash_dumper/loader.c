@@ -50,43 +50,43 @@ int folderExists(const char* path){
 
 static int Decrypt(u32 *buf, int size)
 {
- buf[0] = 5;
- buf[1] = buf[2] = 0;
- buf[3] = 0x100;
- buf[4] = size;
+    buf[0] = 5;
+    buf[1] = buf[2] = 0;
+    buf[3] = 0x100;
+    buf[4] = size;
 
- if (BufferCopyWithRange((u8*)buf, size+0x14, (u8*)buf, size+0x14, 8) != 0)
-  return -1;
- 
- return 0;
+    if (BufferCopyWithRange((u8*)buf, size+0x14, (u8*)buf, size+0x14, 8) != 0)
+        return -1;
+
+    return 0;
 }
 
 int pspUnsignCheck(u8 *buf)
 {
- u8 enc[0xD0+0x14];
- int iXOR, res;
+    u8 enc[0xD0+0x14];
+    int iXOR, res;
 
- memcpy(enc+0x14, buf+0x80, 0xD0);
+    memcpy(enc+0x14, buf+0x80, 0xD0);
 
- for (iXOR = 0; iXOR < 0xD0; iXOR++)
- {
-  enc[iXOR+0x14] ^= check_keys1[iXOR&0xF]; 
- }
+    for (iXOR = 0; iXOR < 0xD0; iXOR++)
+    {
+        enc[iXOR+0x14] ^= check_keys1[iXOR&0xF]; 
+    }
 
- if ((res = Decrypt((u32 *)enc, 0xD0)) < 0)
- {
-  return res;
- }
+    if ((res = Decrypt((u32 *)enc, 0xD0)) < 0)
+    {
+        return res;
+    }
 
- for (iXOR = 0; iXOR < 0xD0; iXOR++)
- {
-  enc[iXOR] ^= check_keys0[iXOR&0xF];
- }
+    for (iXOR = 0; iXOR < 0xD0; iXOR++)
+    {
+        enc[iXOR] ^= check_keys0[iXOR&0xF];
+    }
 
- memcpy(buf+0x80, enc+0x40, 0x90);
- memcpy(buf+0x110, enc, 0x40);
+    memcpy(buf+0x80, enc+0x40, 0x90);
+    memcpy(buf+0x110, enc, 0x40);
 
- return 0;
+    return 0;
 }
 
 void copyFile(char* path, char* destination){
