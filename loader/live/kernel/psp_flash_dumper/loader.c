@@ -16,11 +16,12 @@ u8 check_keys1[0x10] = {
     0xAA, 0x85, 0x4D, 0xB0, 0xFF, 0xCA, 0x47, 0xEB,
     0x38, 0x7F, 0xD7, 0xE4, 0x3D, 0x62, 0xB0, 0x10
 };
-u8* bigbuf = NULL;
 
-int (*BufferCopyWithRange)() = NULL;
-int (*IdStorageReadLeaf)(u16, u8*) = NULL;
-int (*KernelGetUserLevel)();
+u8* bigbuf = (u8*)0x8930000;
+
+int (*BufferCopyWithRange)(void*, int, void*, int, int);
+
+
 
 static inline void open_flash(){
     while(k_tbl->IoUnassign("flash0:") < 0) {
@@ -98,6 +99,7 @@ void copyFile(char* path, char* destination){
 
     if (strcmp(&path[len-4], ".prx") == 0){
         size_t fsize = k_tbl->KernelIOLSeek(src, 0, PSP_SEEK_END);
+		
         k_tbl->KernelIOLSeek(src, 0, PSP_SEEK_SET);
         read = k_tbl->KernelIORead(src, bigbuf, fsize);
         pspUnsignCheck(bigbuf);
@@ -105,6 +107,8 @@ void copyFile(char* path, char* destination){
     }
     else{
         do {
+			size_t fsize = k_tbl->KernelIOLSeek(src, 0, PSP_SEEK_END);
+			
             read = k_tbl->KernelIORead(src, bigbuf, BUF_SIZE);
             k_tbl->KernelIOWrite(dst, bigbuf, read);
         } while (read > 0);
@@ -183,56 +187,10 @@ int copy_folder_recursive(const char * source, const char * destination)
     return 1;
 };
 
-// Set User Level
-int sctrlKernelSetUserLevel(int level)
-{
-    
-    // Backup User Level
-    int previouslevel = KernelGetUserLevel();
-    
-    
-    u32 _sceKernelReleaseThreadEventHandler = FindFunction("sceThreadManager", "ThreadManForKernel", 0x72F3C145);
-    
-    u32 threadman_userlevel_struct = _lh(_sceKernelReleaseThreadEventHandler + 0x4)<<16;
-    threadman_userlevel_struct += (short)_lh(_sceKernelReleaseThreadEventHandler + 0x18);
-    
-    
-    // Set User Level
-    _sw((level ^ 8) << 28, *(unsigned int *)(threadman_userlevel_struct) + 0x14);
-    
-    // Flush Cache
-    k_tbl->KernelDcacheWritebackInvalidateAll();
-    
-    // Return previous User Level
-    return previouslevel;
-}
 
-int dcIdStorageReadLeaf(u16 leafid, u8 *buf)
-{
-    int level = sctrlKernelSetUserLevel(8);
 
-    int res = IdStorageReadLeaf(leafid, buf);
-
-    sctrlKernelSetUserLevel(level);
-
-    return res;
-}
-
-void dump_idStorage(){
-    static u8 buf[512];
-    int fd = k_tbl->KernelIOOpen("ms0:/idStorage.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-    
-    for (int i=0; i<0x140; i++){
-        dcIdStorageReadLeaf(i, buf);
-        k_tbl->KernelIOWrite(fd, buf, 512);
-    }
-    k_tbl->KernelIOClose(fd);
-}
 
 int kthread(SceSize args, void *argp){
-
-    PRTSTR("Dumping idStorage");
-    dump_idStorage();
 
     open_flash();
 
@@ -258,8 +216,7 @@ void initKernelThread(){
 // Kernel Permission Function
 void loadKernelArk(){
 
-    KernelGetUserLevel = FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665);
-    IdStorageReadLeaf = FindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0xEB00C509);
+    
     BufferCopyWithRange = FindFunction("sceMemlmd", "semaphore", 0x4C537C72);
 
     if (BufferCopyWithRange == NULL){
@@ -267,27 +224,15 @@ void loadKernelArk(){
         return;
     }
 
-    if (IdStorageReadLeaf == NULL){
-        PRTSTR("ERROR: cannot find import IdStorageReadLeaf");
-        return;
-    }
+   
 
-    if (KernelGetUserLevel == NULL){
-        PRTSTR("ERROR: cannot find import KernelGetUserLevel");
-        return;
-    }
+    
 
-    memcpy(seed, (void*)0xBFC00200, 0x100);
-
-    int memid = k_tbl->KernelAllocPartitionMemory(2, "ark heap", PSP_SMEM_Low, 1024*1024, NULL);
-    bigbuf = k_tbl->KernelGetBlockHeadAddr(memid);
-
-    if((u32)bigbuf & 63) // align 64
-            bigbuf = (void*)(((u32)bigbuf & (~63)) + 64);
+    
 
     initKernelThread();
 
-    k_tbl->KernelFreePartitionMemory(memid);
+    
 
     PRTSTR("Done");
     
