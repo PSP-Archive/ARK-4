@@ -21,8 +21,6 @@ u8* bigbuf = (u8*)0x8930000;
 
 int (*BufferCopyWithRange)(void*, int, void*, int, int);
 
-
-
 static inline void open_flash(){
     while(k_tbl->IoUnassign("flash0:") < 0) {
         k_tbl->KernelDelayThread(500000);
@@ -224,15 +222,7 @@ void loadKernelArk(){
         return;
     }
 
-   
-
-    
-
-    
-
     initKernelThread();
-
-    
 
     PRTSTR("Done");
     

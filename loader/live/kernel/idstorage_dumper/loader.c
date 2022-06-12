@@ -92,14 +92,7 @@ void loadKernelArk(){
         return;
     }
 
-    
-
-    
-    
-
     initKernelThread();
-
-    
 
     PRTSTR("Done");
     
