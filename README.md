@@ -1,31 +1,35 @@
 # ARK-4 e/CFW for the PSP and PS Vita.
 
-New, updated, improved and modern CFW for PSP and Vita's ePSP.
-Simple to use and full of unique features, ARK CFW aims at keeping the PSP experience fresh.
+New, updated, improved and modern `CFW` for `PSP` and `Vita`'s `ePSP`.
+Simple to use and full of unique features, `ARK CFW` aims at keeping the `PSP` experience fresh.
+`ARK` is now the most feature-complete `CFW` for the `PSP`, having all features from `PRO` and `ME`
+as well as unique and exclusive new features not found anywhere else.
 
 ## FEATURES:
 
-- Core system for unsigned code execution on every PSP device based on 6.60 kernel.
+- `Core` system heavily updated from traditional CFW with new exclusive features.
 
-- Inferno 2 Driver compatible with ISO, CSO, ZSO, JSO, CSOv2 and DAX formats.
+- `Inferno 2` Driver compatible with all formats (ISO, CSO, ZSO, JSO, CSOv2 and DAX).
 
-- Popcorn controller for custom PS1 games. Compatible with PopsLoader V3 and V4i.
+- `Popcorn` controller for custom `PS1` games. Compatible with `PopsLoader` V3 and V4i.
 
-- Stargate No-DRM engine.
+- Built-in `No-DRM` engine `Stargate`.
 
-- Plugin support for PSP games, PSX games and VSH (XMB), including the ability to enable and disable plugins per-game.
+- `Plugin` support for `PSP` games, `PS1` games and `VSH` (XMB), including the ability to enable and disable plugins `per-game`.
 
-- Compatible with all PSP models on firmwares 6.60, 6.61 and 6.60 Testing Tool.
+- Compatible with all `PSP` models on firmwares `6.60` and `6.61`.
 
-- Compatible with all PS Vita models on firmware 2.10 up to 3.60, either original or Henkaku.
+- Compatible with all `PS Vita` models on firmware `2.10` up to `3.60`, either official firmware or Henkaku.
 
-- Minimalistic: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
+- Compatible with `6.60` `Testing Tool` Firmware and `Testkit` Units.
 
-- Custom game launcher with built-in game categories, file browser, FTP server and client, modernized look and more.
+- `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
-- Compatible with PRO Online.
+- `Custom game launcher` with built-in game categories, file browser, FTP server and client, modernized look and more.
 
-- Compatible with Legacy Homebrew via eLoader and Leda.
+- Compatible with `PRO Online` client.
+
+- Compatible with Legacy Homebrew via `eLoader` and `Leda`.
 
 
 ## INSTALLATION ( Recommended )
@@ -168,6 +172,8 @@ Note: some of these menus have not been updated or supported by their developers
 - UnkownBrackets for his help understanding the DAX format and Inferno speed hacks.
 
 - Zer01ne, noname120, astart and other devs that have blessed me with their knowledge and wisdom.
+
+- Zecoxao for his great work creating dumpers that would allow us to archive rare firmwares.
 
 - balika for his research in porting M33 to modern firmware that has helped improve compatiblity in ARK.
 
