@@ -63,7 +63,7 @@ Iso :: Iso(string path)
     switch (magic){
         case CSO_MAGIC:
         case ZSO_MAGIC:
-            header_size = header.header_size;
+            header_size = sizeof(CSOHeader);
             block_size = header.block_size;
             uncompressed_size = header.file_size;
             block_header = 0;

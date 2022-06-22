@@ -41,7 +41,7 @@
 #define DAX_BLOCK_SIZE 0x2000
 #define DAX_COMP_BUF 0x2400
 
-#define CISO_IDX_MAX_ENTRIES 256
+#define CISO_IDX_MAX_ENTRIES 4096
 
 struct CISO_header {
     uint32_t magic;  // 0
@@ -273,25 +273,19 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         u32 ending_block = o_offset+size;
         if (ending_block%block_size == 0) ending_block = ending_block/block_size;
         else ending_block = (ending_block/block_size)+1;
-        if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
+        if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
             read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
             g_cso_idx_start_block = starting_block;
         }
-
-        // reduce IO by doing one read of all compressed data into the end of the provided buffer
-        u32 o_start = (g_cso_idx_cache[starting_block - g_cso_idx_start_block] & 0x7FFFFFFF);
-        u32 o_end;
-        if (ending_block < g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES) {
-            o_end = g_cso_idx_cache[ending_block - g_cso_idx_start_block];
-        }
-        else{
-            read_raw_data(&o_end, sizeof(u32), ending_block * 4 + header_size);
-        }
-        o_end &= 0x7FFFFFFF;
-        u32 compressed_size = (o_end - o_start) << align;
-        if (size >= compressed_size) {
-            c_buf = (void *)((u32)addr + size - compressed_size);
-            read_raw_data(c_buf, compressed_size, o_start);
+        if (ending_block < g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
+            // reduce IO by doing one read of all compressed data into the end of the provided buffer
+            u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
+            u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
+            u32 compressed_size = o_end - o_start;
+            if (size >= compressed_size){
+                c_buf = addr + size - compressed_size;
+                read_raw_data(c_buf, compressed_size, o_start);
+            }
         }
     }
 
@@ -426,7 +420,7 @@ static int is_ciso(SceUID fd)
             ciso_decompressor = (jiso_header->method)? &decompress_dax1 : &decompress_jiso; //  zlib or lzo, depends on method
         }
         else{ // CSO/ZSO/v2
-            header_size = g_CISO_hdr.header_size;
+            header_size = sizeof(struct CISO_header);
             block_size = g_CISO_hdr.block_size;
             uncompressed_size = g_CISO_hdr.total_bytes;
             block_header = 0; // CSO/ZSO uses raw blocks
