@@ -2,6 +2,7 @@
 
 # PSPSDK installer script by Yoti for ARK-4 project
 # 2022-07-01: initial release
+# 2022-07-03: python2 + chown
 
 if [ -d "/usr/local/pspdev" ]; then
     echo "Error: PSPSDK is already installed!"
@@ -10,7 +11,7 @@ if [ -d "/usr/local/pspdev" ]; then
 fi
 
 sudo apt update
-pkgs="autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make p7zip-full patch subversion texinfo wget zlib1g-dev"
+pkgs="autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make p7zip-full patch python2 subversion texinfo wget zlib1g-dev"
 for pkg in $pkgs; do
     echo "Installing $pkg..."
     sudo apt install $pkg -y
@@ -22,6 +23,7 @@ link="https://github.com/PSP-Archive/ARK-4/raw/main/contrib/PC/PSPSDK/pspdev.7z"
 wget -q --show-progress $link
 sudo 7z x pspdev.7z -o/usr/local/
 rm pspdev.7z
+chown -R $USER:$USER /usr/local/pspdev
 
 if [ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.6" ]; then
     if [ ! -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.4" ]; then
