@@ -32,7 +32,6 @@
 #include "mediasync.h"
 #include "msstor_cache.h"
 #include "rebootex.h"
-#include "vlffix.h"
 #include "rebootconfig.h"
 #include "sysmem.h"
 
@@ -107,15 +106,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     {
         // Patch mesg_led_01g.prx
         patchMesgLed(mod);
-        // Exit Handler
-        goto flush;
-    }
-    
-    // VLF Module Patches
-    if(strcmp(mod->modname, "VLF_Module") == 0)
-    {
-        // Patch VLF Module
-        patchVLF(mod);
         // Exit Handler
         goto flush;
     }

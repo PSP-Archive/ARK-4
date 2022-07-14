@@ -179,6 +179,15 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         _sw(0, mod->text_addr + 0x1140);
         goto flush;
     }
+
+    // VLF Module Patches
+    if(strcmp(mod->modname, "VLF_Module") == 0)
+    {
+        // Patch VLF Module
+        patchVLF(mod);
+        // Exit Handler
+        goto flush;
+    }
        
     // Boot Complete Action not done yet
     if(booted == 0)

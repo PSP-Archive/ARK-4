@@ -114,6 +114,7 @@ static u32 block_size;
 static u32 uncompressed_size;
 static u32 block_header;
 static u32 align;
+static u32 g_ciso_total_block;
 
 // reader functions
 static int (*read_iso_data)(u8* addr, u32 size, u32 offset);
@@ -247,16 +248,9 @@ exit:
     - reading the entire compressed data at the end of provided buffer to reduce block IO to 1.
 
 */
-static int read_compressed_data(u8* addr, u32 size, u32 offset)
+static int read_compressed_data(u8 *addr, u32 size, u32 offset)
 {
-    u32 cur_block;
-    u32 pos, ret, read_bytes;
-    u32 o_offset = offset;
-    u32 g_ciso_total_block = uncompressed_size/block_size;
-    u8* com_buf = g_ciso_block_buf;
-    u8* dec_buf = g_ciso_dec_buf;
-    u8* c_buf = NULL;
-    
+
     if(offset > uncompressed_size) {
         // return if the offset goes beyond the iso size
         return 0;
@@ -265,81 +259,125 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         // adjust size if it tries to read beyond the game data
         size = uncompressed_size - offset;
     }
-    
-    // IO speedup tricks
-    {
-        // refresh index table if needed
-        u32 starting_block = o_offset / block_size;
-        u32 ending_block = o_offset+size;
-        if (ending_block%block_size == 0) ending_block = ending_block/block_size;
-        else ending_block = (ending_block/block_size)+1;
-        if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
-            read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
-            g_cso_idx_start_block = starting_block;
-        }
-        if (ending_block < g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
-            // reduce IO by doing one read of all compressed data into the end of the provided buffer
-            u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
-            u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
-            u32 compressed_size = o_end - o_start;
-            if (size >= compressed_size){
-                c_buf = addr + size - compressed_size;
-                read_raw_data(c_buf, compressed_size, o_start);
-            }
-        }
+
+    u8* com_buf = g_ciso_block_buf;
+    u8* dec_buf = g_ciso_dec_buf;
+    u32 starting_block = offset / block_size;
+    u32 ending_block = (offset+size)/block_size;
+    u32 pos = offset & (block_size-1);
+    u32 o_size = size;
+    u32 cur_block = starting_block;
+    if (ending_block%block_size) ending_block++;
+
+    // refresh index table if needed
+    if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || starting_block >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES - 1){
+        read_raw_data((u8*)g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
+        g_cso_idx_start_block = starting_block;
     }
 
-    while(size > 0) {
-        // calculate block number and offset within block
-        cur_block = offset / block_size;
-        pos = offset & (block_size - 1);
-
-        if(cur_block >= g_ciso_total_block) {
-            // EOF reached
-            break;
-        }
+    // read first block if not aligned to sector size
+    if (pos) {
         
-        if (cur_block>=g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES){
-            // refresh index cache
-            read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), cur_block * 4 + header_size);
-            g_cso_idx_start_block = cur_block;
-        }
+        int r = MIN(size, (block_size - pos));
         
-        // read compressed block offset and size
         u32 b_offset = g_cso_idx_cache[cur_block-g_cso_idx_start_block];
         u32 b_size = g_cso_idx_cache[cur_block-g_cso_idx_start_block+1];
-        u32 topbit = b_offset&0x80000000; // extract top bit for decompressor
+        u32 topbit = b_offset&0x80000000;
         b_offset = (b_offset&0x7FFFFFFF) << align;
         b_size = (b_size&0x7FFFFFFF) << align;
         b_size -= b_offset;
 
         if (cur_block == g_ciso_total_block-1 && header_size == sizeof(DAXHeader))
-            // fix for last DAX block (you can't trust the value of b_size since there's no offset for last_block+1)
-            b_size = DAX_COMP_BUF;
+            b_size = DAX_COMP_BUF; // fix for last DAX block (you can't trust the value of b_size since there's no offset for last_block+1)
 
-        // read block, skipping header if needed
-        if (c_buf > addr){
-            memcpy(com_buf, c_buf+block_header, b_size); // fast read
-            c_buf += b_size;
+        // read block, skipping header if needed        
+        b_size = read_raw_data(com_buf, b_size, b_offset + block_header);
+
+        // decompress block
+        ciso_decompressor(com_buf, b_size, dec_buf, block_size, topbit);
+        
+        memcpy(addr, dec_buf + pos, r);
+        
+        size -= r;
+        cur_block++;
+        addr += r;
+    }
+
+    // read intermediate blocks if more than one block is left
+    u32 n_blocks = size / block_size;
+    if (n_blocks) {
+        
+        u32 last_block;
+        if (cur_block+n_blocks < g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES)
+            last_block = g_cso_idx_cache[cur_block+n_blocks-g_cso_idx_start_block];
+        else
+            read_raw_data(&last_block, sizeof(u32), (cur_block+n_blocks)*4 + header_size);
+        
+        u32 o_start = (g_cso_idx_cache[cur_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
+        u32 o_end = (last_block&0x7FFFFFFF)<<align;
+        u32 compressed_size = o_end - o_start;
+        u8* c_offset = addr + size - compressed_size;
+        
+        read_raw_data(c_offset, compressed_size, o_start);
+
+        for (int i=0; i<n_blocks; i++){
+            if (cur_block>=g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES-1){
+                read_raw_data((u8*)g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), cur_block * 4 + header_size);
+                g_cso_idx_start_block = cur_block;
+            }
+        
+            u32 b_offset = g_cso_idx_cache[cur_block-g_cso_idx_start_block];
+            u32 b_size = g_cso_idx_cache[cur_block-g_cso_idx_start_block+1];
+            u32 topbit = b_offset&0x80000000;
+            b_offset = (b_offset&0x7FFFFFFF) << align;
+            b_size = (b_size&0x7FFFFFFF) << align;
+            b_size -= b_offset;
+            
+            if (cur_block == g_ciso_total_block-1 && header_size == sizeof(DAXHeader))
+                b_size = DAX_COMP_BUF; // fix for last DAX block (you can't trust the value of b_size since there's no offset for last_block+1)
+            
+            memcpy(com_buf, c_offset+block_header, b_size);
+            c_offset += b_size;
+            
+            // decompress block
+            ciso_decompressor(com_buf, b_size, dec_buf, block_size, topbit);
+            
+            memcpy(addr, dec_buf, block_size);
+            addr += block_size;
+            size -= block_size;
+            cur_block++;
         }
-        else{ // slow read
-            b_size = read_raw_data(com_buf, b_size, b_offset + block_header);
+    }
+
+    // read remaining data
+    if (size) {
+        if (cur_block>=g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES-1){
+            read_raw_data((u8*)g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), cur_block * 4 + header_size);
+            g_cso_idx_start_block = cur_block;
         }
+        
+        u32 b_offset = g_cso_idx_cache[cur_block-g_cso_idx_start_block];
+        u32 b_size = g_cso_idx_cache[cur_block-g_cso_idx_start_block+1];
+        u32 topbit = b_offset&0x80000000;
+        b_offset = (b_offset&0x7FFFFFFF) << align;
+        b_size = (b_size&0x7FFFFFFF) << align;
+        b_size -= b_offset;
+
+        if (cur_block == g_ciso_total_block-1 && header_size == sizeof(DAXHeader))
+            b_size = DAX_COMP_BUF; // fix for last DAX block (you can't trust the value of b_size since there's no offset for last_block+1)
+
+        // read block, skipping header if needed        
+        b_size = read_raw_data(com_buf, b_size, b_offset + block_header);
 
         // decompress block
         ciso_decompressor(com_buf, b_size, dec_buf, block_size, topbit);
     
-        // read data from block into buffer
-        read_bytes = MIN(size, (block_size - pos));
-        memcpy(addr, dec_buf + pos, read_bytes);
-        size -= read_bytes;
-        addr += read_bytes;
-        offset += read_bytes;
+        memcpy(addr, dec_buf, size);
+        size = 0;
     }
 
-    u32 res = offset - o_offset;
-    
-    return res;
+    // return remaining size
+    return o_size - size;
 }
 
 static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 topbit){
@@ -430,6 +468,7 @@ static int is_ciso(SceUID fd)
             else ciso_decompressor = (magic == ZSO_MAGIC)? &decompress_ziso : &decompress_ciso; // CSO/ZSO v1 (zlib or lz4)
         }
         g_total_sectors = uncompressed_size / ISO_SECTOR_SIZE; // total number of DVD sectors (2K) in the original ISO.
+        g_ciso_total_block = uncompressed_size / block_size;
         // lets use our own heap so that kram usage depends on game format (less heap needed for systemcontrol; better memory management)
         heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, block_size + com_size + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
         if (heapid<0){

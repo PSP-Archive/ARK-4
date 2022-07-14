@@ -21,7 +21,6 @@ OBJS = \
 	src/missingfunc.o \
 	src/rebootex.o \
 	src/sysmem.o \
-	src/vlffix.o \
 	src/lz4.o \
 	src/minilzo.o \
     src/loadexec.o \
