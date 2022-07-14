@@ -41,7 +41,7 @@
 #define DAX_BLOCK_SIZE 0x2000
 #define DAX_COMP_BUF 0x2400
 
-#define CISO_IDX_MAX_ENTRIES 4096
+#define CISO_IDX_MAX_ENTRIES 512
 
 struct CISO_header {
     uint32_t magic;  // 0

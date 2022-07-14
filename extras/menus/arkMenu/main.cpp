@@ -66,8 +66,16 @@ int main(int argc, char** argv){
         entries[4] = new ExitManager();
         entries[3] = new SettingsMenu(settings_entries, MAX_SETTINGS_OPTIONS, common::saveConf);
         entries[2] = new FTPManager();
-        entries[1] = new Browser();
-        entries[0] = new GameManager();
+
+        if (common::getConf()->main_menu == 0){
+            entries[1] = new Browser();
+            entries[0] = new GameManager();
+            GameManager::updateGameList(NULL);
+        }
+        else{
+            entries[0] = new Browser();
+            entries[1] = new GameManager();
+        }
         
         SystemMgr::initMenu(entries, MAX_ENTRIES);
         SystemMgr::startMenu();

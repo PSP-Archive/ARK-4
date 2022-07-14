@@ -109,6 +109,20 @@ static struct {
     {"Default", "Waves", "Sprites", "Fire", "Tetris", "Matrix", "Snow", "Game of Life", "None"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[9];
+} main_menu = {
+    "Default Menu",
+    2,
+    0,
+    &(common::getConf()->main_menu),
+    {"Games", "Files"}
+};
+
 settings_entry* settings_entries[] = {
     (settings_entry*)&fast_gameboot,
     (settings_entry*)&language,
@@ -116,6 +130,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&scan_save,
     (settings_entry*)&swap_buttons,
     (settings_entry*)&animations,
+    (settings_entry*)&main_menu,
 };
 
-#define MAX_SETTINGS_OPTIONS 6
+#define MAX_SETTINGS_OPTIONS 7

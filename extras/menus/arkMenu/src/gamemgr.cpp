@@ -20,7 +20,7 @@ GameManager::GameManager(){
     this->use_categories = true;
 
     // initialize the categories
-    this->selectedCategory = -1;
+    this->selectedCategory = -2;
     for (int i=0; i<MAX_CATEGORIES; i++){
         this->categories[i] = new Menu((EntryType)i);
     }
@@ -111,7 +111,6 @@ bool GameManager::waitIconsLoad(bool forceQuit){
 Menu* GameManager::getMenu(EntryType t){
     return this->categories[(int)t];
 }
-
 
 void GameManager::findEntries(){
 
@@ -412,7 +411,7 @@ void GameManager::control(Controller* pad){
         }
     }
     else if (pad->select()){
-        if (selectedCategory >= 0){
+        if (selectedCategory != -1){
             common::playMenuSound();
             self->waitIconsLoad();
             GameManager::updateGameList(NULL);

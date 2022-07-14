@@ -103,6 +103,7 @@ void common::resetConf(){
     config.scan_save = 0;
     config.swap_buttons = 0;
     config.animation = 0;
+    config.main_menu = 0;
 }
 
 void common::launchRecovery(){
