@@ -90,12 +90,6 @@ lzo1x_decompress        ( const lzo_bytep src, lzo_uint  src_len,
                                 lzo_bytep dst, lzo_uintp dst_len,
                                 lzo_voidp wrkmem /* NOT USED */ );
 
-/* safe decompression with overrun testing */
-LZO_EXTERN(int)
-lzo1x_decompress_safe   ( const lzo_bytep src, lzo_uint  src_len,
-                                lzo_bytep dst, lzo_uintp dst_len,
-                                lzo_voidp wrkmem /* NOT USED */ );
-
 
 #ifdef __cplusplus
 } /* extern "C" */

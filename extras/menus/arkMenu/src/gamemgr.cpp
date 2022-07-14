@@ -8,6 +8,8 @@
 #include "osk.h"
 #include "pmf.h"
 
+extern int sctrlKernelMsIsEf();
+
 static GameManager* self = NULL;
 
 static bool loadingData = false;
