@@ -9,7 +9,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - `Core` system heavily updated from traditional CFW with new exclusive features.
 
-- `Inferno 2` Driver compatible with all formats (ISO, CSO, ZSO, JSO, CSOv2 and DAX).
+- `Inferno 2` Driver compatible with all formats (`ISO`, `CSO`, `ZSO`, `JSO`, `CSOv2` and `DAX`).
 
 - `Popcorn` controller for custom `PS1` games. Compatible with `PopsLoader` V3 and V4i.
 
