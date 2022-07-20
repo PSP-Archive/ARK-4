@@ -2,7 +2,7 @@
 
 using namespace std;
 
-#define CISO_IDX_MAX_ENTRIES 512
+#define CISO_IDX_MAX_ENTRIES 4096
 
 static int g_ciso_total_block;
 static int g_cso_idx_start_block = -1;
