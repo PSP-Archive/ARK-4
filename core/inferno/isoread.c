@@ -41,7 +41,7 @@
 #define DAX_BLOCK_SIZE 0x2000
 #define DAX_COMP_BUF 0x2400
 
-#define CISO_IDX_MAX_ENTRIES 4096
+#define CISO_IDX_MAX_ENTRIES 512 //4096
 
 struct CISO_header {
     uint32_t magic;  // 0
@@ -117,7 +117,7 @@ static u32 align;
 static u32 g_ciso_total_block;
 
 // reader functions
-static int (*read_iso_data)(u8* addr, u32 size, u32 offset);
+static int is_compressed = 0; //(*read_iso_data)(u8* addr, u32 size, u32 offset);
 static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit);
 
 // 0x00000368
@@ -308,7 +308,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
             break;
         }
         
-        if (cur_block>=g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES){
+        if (cur_block>=g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES-1){
             // refresh index cache
             read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), cur_block * 4 + header_size);
             g_cso_idx_start_block = cur_block;
@@ -405,7 +405,7 @@ static int is_ciso(SceUID fd)
 
     if(magic == CSO_MAGIC || magic == ZSO_MAGIC || magic == DAX_MAGIC || magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
         g_CISO_cur_idx = -1;
-        read_iso_data = &read_compressed_data;
+        //read_iso_data = &read_compressed_data;
         u32 com_size = 0;
         // set reader and decompressor functions according to format
         if (magic == DAX_MAGIC){
@@ -468,7 +468,7 @@ static int is_ciso(SceUID fd)
             g_cso_idx_cache = (void*)(((u32)g_cso_idx_cache & (~63)) + 64);
         return 1;
     } else {
-        read_iso_data = &read_raw_data;
+        //read_iso_data = &read_raw_data;
         return 0;
     }
 }
@@ -499,7 +499,9 @@ int iso_open(void)
         return -1;
     }
 
-    is_ciso(g_iso_fd);
+    is_compressed = is_ciso(g_iso_fd);
+
+    if (is_compressed < 0) return is_compressed;
 
     g_iso_opened = 1;
     g_total_sectors = get_nsector();
@@ -510,7 +512,9 @@ int iso_open(void)
 // 0x00000C7C
 int iso_read(struct IoReadArg *args)
 {
-    return read_iso_data(args->address, args->size, args->offset);
+    if (is_compressed)
+        return read_compressed_data(args->address, args->size, args->offset);
+    return read_raw_data(args->address, args->size, args->offset);
 }
 
 // 0x000003E0
