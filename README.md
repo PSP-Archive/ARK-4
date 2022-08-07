@@ -160,12 +160,14 @@ Aside from the default launcher provided, there have been many  other custom lau
 Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
 
 
+
 ### CREDITS
+
+- qwikrazor87 for being such a genius and all his hard work with kernel exploits and ARK-2.
+
 - The original Team PRO members: Coldbird, Liquid Snake and Neur0n.
 
 - Total_Noob/TheFl0w for his advancements and research in CFW development and overall contributions to the scene.
-
-- qwikrazor87 for being such a genius and all his hard work with kernel exploits and ARK-2.
 
 - Codestation for his incredible work improving CSO speeds and creating the ZSO format.
 
