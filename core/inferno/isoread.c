@@ -41,7 +41,7 @@
 #define DAX_BLOCK_SIZE 0x2000
 #define DAX_COMP_BUF 0x2400
 
-#define CISO_IDX_MAX_ENTRIES 512 //4096
+#define CISO_IDX_MAX_ENTRIES 512
 
 struct CISO_header {
     uint32_t magic;  // 0
@@ -117,7 +117,7 @@ static u32 align;
 static u32 g_ciso_total_block;
 
 // reader functions
-static int is_compressed = 0; //(*read_iso_data)(u8* addr, u32 size, u32 offset);
+static int is_compressed = 0;
 static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit);
 
 // 0x00000368
@@ -380,7 +380,7 @@ static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 
 
 static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // in CSOv2, top bit represents compression method instead of NCarea
-    if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area (JSO-like)
+    if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area (JSO-like, but considering padding, thus >=)
     else if (topbit) LZ4_decompress_fast(src, dst, dst_len);
     else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
@@ -405,7 +405,6 @@ static int is_ciso(SceUID fd)
 
     if(magic == CSO_MAGIC || magic == ZSO_MAGIC || magic == DAX_MAGIC || magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
         g_CISO_cur_idx = -1;
-        //read_iso_data = &read_compressed_data;
         u32 com_size = 0;
         // set reader and decompressor functions according to format
         if (magic == DAX_MAGIC){
@@ -468,7 +467,6 @@ static int is_ciso(SceUID fd)
             g_cso_idx_cache = (void*)(((u32)g_cso_idx_cache & (~63)) + 64);
         return 1;
     } else {
-        //read_iso_data = &read_raw_data;
         return 0;
     }
 }
