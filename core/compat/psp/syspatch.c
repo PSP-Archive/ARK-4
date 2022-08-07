@@ -266,6 +266,16 @@ void PSPOnModuleStart(SceModule2 * mod){
         hookImportByNID(mod, "sceUmdUser", 0xC6183D47, &fakeUmdActivate);
         hookImportByNID(mod, "sceUmdUser", 0xE83742BA, &fakeUmdActivate);
     }
+
+    if (strcmp(mod->modname, "DayViewer_User") == 0){
+        hookImportByNID(mod, "scePaf", 0x2BE8DDBB, sctrlHENFindFunction("scePaf_Module", "scePaf", 0x2BE8DDBB));
+        hookImportByNID(mod, "scePaf", 0xE8CCC611, sctrlHENFindFunction("scePaf_Module", "scePaf", 0xE8CCC611));
+        hookImportByNID(mod, "scePaf", 0xCDDCFFB3, sctrlHENFindFunction("scePaf_Module", "scePaf", 0xCDDCFFB3));
+        hookImportByNID(mod, "scePaf", 0x48BB05D5, sctrlHENFindFunction("scePaf_Module", "scePaf", 0x48BB05D5));
+        hookImportByNID(mod, "scePaf", 0x22FB4177, sctrlHENFindFunction("scePaf_Module", "scePaf", 0x22FB4177));
+        hookImportByNID(mod, "scePaf", 0xBC8DC92B, sctrlHENFindFunction("scePaf_Module", "scePaf", 0xBC8DC92B));
+        hookImportByNID(mod, "scePaf", 0xE3D530AE, sctrlHENFindFunction("scePaf_Module", "scePaf", 0xE3D530AE));
+    }
     
     if(booted == 0)
     {
