@@ -49,6 +49,10 @@ static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int ni
     return sctrlHENFindFunction(szMod, szLib, nid);
 }
 
+static int fakeUmdActivate(){
+    return 0;
+}
+
 static int _sceKernelBootFromForUmdMan(void)
 {
     return 0x20;
@@ -253,6 +257,14 @@ void PSPOnModuleStart(SceModule2 * mod){
         // fix to prevent ME detection
         hookImportByNID(mod, "SystemCtrlForKernel", 0x159AF5CC, &fakeFindFunction);
         goto flush;
+    }
+
+    if (strcmp(mod->modname, "MacroFire") == 0){
+        // fix for MacroFire (disables sceUmdActivate/Deactivate functions)
+        // this is needed because ARK loads plugins when UMD is already active (MediaSync fully loaded and started)
+        // while older CFW load plugins a bit earlier (MediaSync loaded but not started)
+        hookImportByNID(mod, "sceUmdUser", 0xC6183D47, &fakeUmdActivate);
+        hookImportByNID(mod, "sceUmdUser", 0xE83742BA, &fakeUmdActivate);
     }
     
     if(booted == 0)

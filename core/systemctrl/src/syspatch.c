@@ -109,7 +109,8 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         // Exit Handler
         goto flush;
     }
-    
+
+
     // Boot Complete Action not done yet
     if(booted == 0)
     {
@@ -143,6 +144,7 @@ exit:
 // Add Module Start Patcher
 void syspatchInit(void)
 {
+
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKSyspatchOnModuleStart);
 }

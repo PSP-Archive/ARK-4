@@ -6,3 +6,7 @@
 
 # Launcher Issues
 - Incompatible with non-ASCII characters.
+
+
+# Plugins Issues
+- Dayviewer crashes (memory corruption?)
