@@ -268,13 +268,13 @@ void PSPOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "DayViewer_User") == 0){
-        hookImportByNID(mod, "scePaf", 0x2BE8DDBB, sctrlHENFindFunction("scePaf_Module", "scePaf", 0x2BE8DDBB));
-        hookImportByNID(mod, "scePaf", 0xE8CCC611, sctrlHENFindFunction("scePaf_Module", "scePaf", 0xE8CCC611));
-        hookImportByNID(mod, "scePaf", 0xCDDCFFB3, sctrlHENFindFunction("scePaf_Module", "scePaf", 0xCDDCFFB3));
-        hookImportByNID(mod, "scePaf", 0x48BB05D5, sctrlHENFindFunction("scePaf_Module", "scePaf", 0x48BB05D5));
-        hookImportByNID(mod, "scePaf", 0x22FB4177, sctrlHENFindFunction("scePaf_Module", "scePaf", 0x22FB4177));
-        hookImportByNID(mod, "scePaf", 0xBC8DC92B, sctrlHENFindFunction("scePaf_Module", "scePaf", 0xBC8DC92B));
-        hookImportByNID(mod, "scePaf", 0xE3D530AE, sctrlHENFindFunction("scePaf_Module", "scePaf", 0xE3D530AE));
+        // fix scePaf imports in DayViewer
+        static u32 nids[] = {
+            0x2BE8DDBB, 0xE8CCC611, 0xCDDCFFB3, 0x48BB05D5, 0x22FB4177, 0xBC8DC92B, 0xE3D530AE
+        };
+        for (int i=0; i<NELEMS(nids); i++){
+            hookImportByNID(mod, "scePaf", nids[i], sctrlHENFindFunction("scePaf_Module", "scePaf", nids[i]));
+        }
     }
     
     if(booted == 0)
