@@ -257,6 +257,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     u8* com_buf = g_ciso_block_buf;
     u8* dec_buf = g_ciso_dec_buf;
     u8* c_buf = NULL;
+    u8* top_addr = addr+size;
     
     if(offset > uncompressed_size) {
         // return if the offset goes beyond the iso size
@@ -278,16 +279,23 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
             read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
             g_cso_idx_start_block = starting_block;
         }
-        if (ending_block < g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
-            // reduce IO by doing one read of all compressed data into the end of the provided buffer
-            u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
-            u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
-            u32 compressed_size = o_end - o_start;
-            if (size >= compressed_size){
-                c_buf = addr + size - compressed_size;
-                read_raw_data(c_buf, compressed_size, o_start);
-            }
+
+        // IO data call
+        u32 o_off;
+        if (ending_block < g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES)
+            o_off = g_cso_idx_cache[ending_block-g_cso_idx_start_block+1];
+        else
+            read_raw_data(&o_off, sizeof(u32), (ending_block+1)*sizeof(u32) + header_size);
+        u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
+        u32 o_end = (o_off&0x7FFFFFFF)<<align;
+        u32 compressed_size = o_end - o_start;
+
+        if (size < compressed_size){ // compressed data is bigger than uncompressed data
+            compressed_size = size-1;
         }
+
+        c_buf = top_addr - compressed_size;
+        read_raw_data(c_buf, compressed_size, o_start);
     }
 
     while(size > 0) {
@@ -319,7 +327,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
             b_size = DAX_COMP_BUF;
 
         // read block, skipping header if needed
-        if (c_buf > addr){
+        if (c_buf > addr && c_buf+b_size < top_addr){
             memcpy(com_buf, c_buf+block_header, b_size); // fast read
             c_buf += b_size;
         }

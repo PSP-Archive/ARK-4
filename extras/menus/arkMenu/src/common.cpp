@@ -74,6 +74,13 @@ void loadConfig(){
     fclose(fp);
 }
 
+struct tm common::getDateTime(){
+    struct tm  ts;
+    time_t now = sceKernelLibcTime(NULL);
+    ts = *localtime(&now);
+    return ts;
+}
+
 void common::saveConf(){
 
     if (currentFont != config.font){

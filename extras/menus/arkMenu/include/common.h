@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <malloc.h>
+#include <time.h>
 #include "gfx.h"
 #include "mp3.h"
 
@@ -71,6 +72,7 @@ namespace common{
 
     extern int getArgc();
     extern char** getArgv();
+    extern struct tm getDateTime();
     extern bool has_suffix(const std::string &str, const std::string &suffix);
     SceOff findPkgOffset(const char* filename, unsigned* size = NULL);
     extern void* readFromPKG(const char* filename, unsigned* size = NULL);

@@ -9,6 +9,7 @@
 #define PAGE_SIZE 10
 
 extern string ark_version;
+extern struct tm today;
 
 SettingsMenu::SettingsMenu(settings_entry** settings_entries, int max_options, void (*save_callback)()){
     this->animation = -1;
@@ -85,7 +86,10 @@ void SettingsMenu::draw(){
                 common::getImage(IMAGE_DIALOG)->draw_scale(x-10, y + (index*height), 5, height);
             }
         
-            common::printText(x+40, y+15, ark_version.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
+            if (today.tm_mday == 3 && today.tm_mon == 6)
+                common::printText(x+10, y+15, "In Loving Memory of Gregory Pitka (qwikrazor87). R.I.P.", GRAY_COLOR, SIZE_LITTLE, 0, 0);
+            else
+                common::printText(x+40, y+15, ark_version.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
         
             int yoffset = y+30;
             int xoffset = x+10;

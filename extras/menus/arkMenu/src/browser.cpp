@@ -240,7 +240,7 @@ void Browser::refreshDirs(){
 
 void Browser::drawScreen(){
 
-    const int xoffset = 165;
+    const int xoffset = 115;
     int yoffset = 50;
     
     
@@ -250,7 +250,7 @@ void Browser::drawScreen(){
         int y = yoffset-20;
         common::getImage(IMAGE_DIALOG)->draw_scale(x, y + (index*height), 5, height);
     }
-    common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, 360, 230);
+    common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, 410, 230);
     
     if (entries->size() == 0){
         Image* img = common::getImage(IMAGE_WAITICON);
@@ -319,10 +319,10 @@ void Browser::draw(){
 
 string Browser::formatText(string text){
     // Format the text shown, text with more than 13 characters will be truncated and ... be appended to the name
-    if (text.length() <= 25)
+    if (text.length() <= 40)
         return text;
     else{
-        string* ret = new string(text.substr(0, 22));
+        string* ret = new string(text.substr(0, 37));
         *ret += "...";
         return *ret;
     }

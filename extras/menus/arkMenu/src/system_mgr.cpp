@@ -10,6 +10,7 @@
 extern "C" u32 sctrlHENGetMinorVersion();
 
 string ark_version = "";
+struct tm today;
 
 static SceUID draw_thread = -1;
 static SceUID draw_sema = -1;
@@ -242,6 +243,7 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     draw_sema = sceKernelCreateSema("draw_sema", 0, 1, 1, NULL);
     entries = e;
     MAX_ENTRIES = ne;
+    today = common::getDateTime();
     u32 ver = sctrlHENGetMinorVersion();
     u32 major = (ver&0xFF0000)>>16;
     u32 minor = (ver&0xFF00)>>8;
