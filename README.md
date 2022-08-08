@@ -27,7 +27,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - `Custom game launcher` with built-in game categories, file browser, FTP server and client, modernized look and more.
 
-- Compatible with `PRO Online` client.
+- Compatible with `PRO Online` and `Xlink Kai`.
 
 - Compatible with Legacy Homebrew via `eLoader` and `Leda`.
 
@@ -50,6 +50,7 @@ as well as unique and exclusive new features not found anywhere else.
 `/PSP/GAME/UPDATE`. Run the initial infinity installation from OFW and re-run the installer again from ARK to configure autoboot. \
   This will allow you to use ARK permanently and triple boot with PRO and ME.
  - If you will be using the Live loader version of ARK instead of a permanent solution, it is recommended that you delete `FLASH0.ARK` from the savedata file after the first installation and bootup of ARK, otherwise the flash0 files will be installed every time you boot back to ARK and this is detrimental to the flash even if ARK installs very little and small files. Doing this will also make the Live loader boot up ARK faster.
+- To `update ARK` simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` from `OFW`.
 
 ### On PS Vita:
 * For 3.60 Henkaku users:
