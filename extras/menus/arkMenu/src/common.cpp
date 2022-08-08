@@ -13,6 +13,7 @@
 
 using namespace common;
 
+static ARKConfig ark_config = {0};
 static Image* images[MAX_IMAGES];
 static intraFont* font;
 static MP3* sound_mp3;
@@ -72,6 +73,13 @@ void loadConfig(){
     fseek(fp, 0, SEEK_SET);
     fread(&config, 1, sizeof(t_conf), fp);
     fclose(fp);
+}
+
+ARKConfig* common::getArkConfig(){
+    if (ark_config.magic != ARK_CONFIG_MAGIC){
+        sctrlHENGetArkConfig(&ark_config);
+    }
+    return &ark_config;
 }
 
 struct tm common::getDateTime(){

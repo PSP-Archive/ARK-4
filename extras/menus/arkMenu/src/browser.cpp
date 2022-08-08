@@ -481,6 +481,45 @@ void Browser::deleteFile(string path){
         draw_progress = false;
 }
 
+int Browser::moveFile(string src, string dest)
+{
+
+    progress_desc[0] = "Moving file/folder";
+    progress_desc[1] = "    "+src;
+    progress_desc[2] = "into";
+    progress_desc[3] = "    "+dest;
+    progress_desc[4] = "";
+    progress = 0;
+    max_progress = 100;
+    
+    bool noRedraw = draw_progress;
+    if (!noRedraw)
+        draw_progress = true;
+
+    const char deviceSize = 4;
+
+    if (dest[dest.length()-1] != '/') dest += "/";
+    size_t lastSlash = src.rfind("/", string::npos);
+    string name = src.substr(lastSlash+1, string::npos);
+    string new_dest = dest+name;
+
+    if (src[src.length()-1] == '/'){
+        src = src.substr(0, src.length()-1);
+        new_dest = new_dest.substr(0, new_dest.length()-1);
+    }
+
+    u32 data[2];
+    data[0] = (u32)src.c_str() + deviceSize;
+    data[1] = (u32)new_dest.c_str() + deviceSize;
+
+    int res = sceIoDevctl("ms0:", 0x02415830, data, sizeof(data), NULL, 0);
+
+    if (!noRedraw)
+        draw_progress = false;
+
+    return res;
+}
+
 int Browser::copy_folder_recursive(const char * source, const char * destination)
 {
 
@@ -541,7 +580,8 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
                 string src = new_source + entry.d_name;
                 if (common::fileExists(src)){ //is it a file
                     printf("Copying file from %s -> %s\n", src.c_str(), new_destination.c_str());
-                    copyFile(src, new_destination); //copy file
+                    if (pasteMode == COPY || (pasteMode == CUT && moveFile(src, new_destination) < 0))
+                        copyFile(src, new_destination); //copy file
                 }
                 else
                 {
@@ -693,43 +733,34 @@ void Browser::cut(){
     this->fillSelectedBuffer();
 }
 
-static int pspIoMove(string src, string dest)
-{
-    if ( dest.find(src) != 0 )
-    {
-        const char deviceSize = 4;
-
-        u32 data[2];
-        data[0] = (u32)src.c_str() + deviceSize;
-        data[1] = (u32)dest.c_str() + deviceSize;
-
-        int res = sceIoDevctl("ms0:", 0x02415830, data, sizeof(data), NULL, 0);
-
-        return res;
-    }
-    else    return -1;
-}
-
 void Browser::paste(){
     // Copy or cut all paths in the paste buffer to the cwd
     for (int i = 0; i<selectedBuffer->size(); i++){
         string e = selectedBuffer->at(i);
         printf("pasting %s\n", e.c_str());
         if (e[e.length()-1] == '/'){
-            printf("copy folder\n");
-            this->copyFolder(e);
-            if (pasteMode == CUT) this->deleteFolder(e);
+            if (pasteMode == CUT){
+                if (moveFile(e, this->cwd) < 0){
+                    this->copyFolder(e);
+                    this->deleteFolder(e);
+                }
+            }
+            else{
+                printf("copy folder\n");
+                this->copyFolder(e);
+            }
         }
         else{
-            printf("copy file\n");
-            this->copyFile(e);
             if (pasteMode == CUT){
-                if (ftp_driver != NULL && ftp_driver->isDevicePath(e)){
-                    ftp_driver->deleteFile(e);
+                printf("move file\n");
+                if (moveFile(e, this->cwd) < 0){
+                    this->copyFile(e);
+                    this->deleteFile(e);
                 }
-                else {
-                    sceIoRemove(e.c_str());
-                }
+            }
+            else{
+                printf("copy file\n");
+                this->copyFile(e);
             }
         }
     }

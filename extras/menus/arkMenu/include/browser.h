@@ -147,6 +147,7 @@ class Browser : public SystemEntry{
         int copy_folder_recursive(const char * source, const char * destination);
         void copyFile(string path);
         void copyFile(string path, string destination);
+        int moveFile(string src, string dest);
         
         string checkDestExists(string src, string destination, string name);
         

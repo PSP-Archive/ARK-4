@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <malloc.h>
 #include <time.h>
+#include <globals.h>
 #include "gfx.h"
 #include "mp3.h"
 
@@ -68,8 +69,13 @@ typedef struct {
     unsigned char main_menu; // default menu opened at startup (game by default)
 } t_conf;
 
+extern "C" {
+    void sctrlHENGetArkConfig(ARKConfig* conf);
+};
+
 namespace common{
 
+    extern ARKConfig* getArkConfig();
     extern int getArgc();
     extern char** getArgv();
     extern struct tm getDateTime();
