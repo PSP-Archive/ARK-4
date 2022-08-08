@@ -116,6 +116,7 @@ void common::resetConf(){
     config.font = 1;
     config.plugins = 1;
     config.scan_save = 0;
+    config.scan_cat = 0;
     config.swap_buttons = 0;
     config.animation = 0;
     config.main_menu = 0;

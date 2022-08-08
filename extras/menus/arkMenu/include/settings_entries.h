@@ -80,6 +80,21 @@ static struct {
     {"Disabled", "Enabled"}
 };
 
+/* Scan categories */
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[2];
+} scan_cat = {
+    "Scan category entries",
+    2,
+    0,
+    &(common::getConf()->scan_cat),
+    {"Disabled", "Enabled"}
+};
+
 /* Button swap */
 static struct {
     char* description;
@@ -128,9 +143,10 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&language,
     (settings_entry*)&font,
     (settings_entry*)&scan_save,
+    (settings_entry*)&scan_cat,
     (settings_entry*)&swap_buttons,
     (settings_entry*)&animations,
     (settings_entry*)&main_menu,
 };
 
-#define MAX_SETTINGS_OPTIONS 7
+#define MAX_SETTINGS_OPTIONS 8

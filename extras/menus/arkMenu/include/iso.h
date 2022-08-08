@@ -79,11 +79,13 @@ class Iso : public Entry
         
         /* Much faster function for extracting files in PSP_GAME/ */
         void* fastExtract(char* file, unsigned* size=NULL);
+        int checkAudioVideo();
 
         char* getType();
         char* getSubtype();
 
         static void executeISO(const char* path, bool is_patched);
+        static void executeVideoISO(const char* path);
 
     protected:
 

@@ -220,6 +220,8 @@ int TSRThread(SceSize args, void *argp)
     } else if (stop_flag ==3) {
         scePowerRequestStandby();
     } else if (stop_flag ==4) {
+        sctrlSESetUmdFile("");
+       	sctrlSESetBootConfFileIndex(MODE_UMD);
         sctrlKernelExitVSH(NULL);
     } else if (stop_flag == 5) {
         scePowerRequestSuspend();

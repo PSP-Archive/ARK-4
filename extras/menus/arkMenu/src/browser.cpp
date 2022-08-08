@@ -126,8 +126,12 @@ void Browser::update(){
         this->refreshDirs();
     }
     else if (Iso::isISO(this->get()->getPath().c_str())){
-        Iso* iso = new Iso(this->get()->getPath());
-        iso->execute();
+        if (this->cwd == "ms0:/ISO/VIDEO/" || this->cwd == "ef0:/ISO/VIDEO")
+            Iso::executeVideoISO(this->get()->getPath().c_str());
+        else{
+            Iso* iso = new Iso(this->get()->getPath());
+            iso->execute();
+        }
     }
     else if (Eboot::isEboot(this->get()->getPath().c_str())){
         Eboot* eboot = new Eboot(this->get()->getPath());
@@ -481,8 +485,11 @@ void Browser::deleteFile(string path){
         draw_progress = false;
 }
 
-int Browser::moveFile(string src, string dest)
+int Browser::pspIoMove(string src, string dest)
 {
+
+    if ( *(u32*)(src.c_str()) != *(u32*)(dest.c_str()) )
+        return -1;
 
     progress_desc[0] = "Moving file/folder";
     progress_desc[1] = "    "+src;
@@ -512,7 +519,7 @@ int Browser::moveFile(string src, string dest)
     data[0] = (u32)src.c_str() + deviceSize;
     data[1] = (u32)new_dest.c_str() + deviceSize;
 
-    int res = sceIoDevctl("ms0:", 0x02415830, data, sizeof(data), NULL, 0);
+    int res = sceIoDevctl((*(u32*)(src.c_str()) == EF0_PATH)?"ef0:":"ms0:", 0x02415830, data, sizeof(data), NULL, 0);
 
     if (!noRedraw)
         draw_progress = false;
@@ -580,7 +587,7 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
                 string src = new_source + entry.d_name;
                 if (common::fileExists(src)){ //is it a file
                     printf("Copying file from %s -> %s\n", src.c_str(), new_destination.c_str());
-                    if (pasteMode == COPY || (pasteMode == CUT && moveFile(src, new_destination) < 0))
+                    if (pasteMode == COPY || (pasteMode == CUT && pspIoMove(src, new_destination) < 0))
                         copyFile(src, new_destination); //copy file
                 }
                 else
@@ -740,7 +747,7 @@ void Browser::paste(){
         printf("pasting %s\n", e.c_str());
         if (e[e.length()-1] == '/'){
             if (pasteMode == CUT){
-                if (moveFile(e, this->cwd) < 0){
+                if (pspIoMove(e, this->cwd) < 0){
                     this->copyFolder(e);
                     this->deleteFolder(e);
                 }
@@ -753,7 +760,7 @@ void Browser::paste(){
         else{
             if (pasteMode == CUT){
                 printf("move file\n");
-                if (moveFile(e, this->cwd) < 0){
+                if (pspIoMove(e, this->cwd) < 0){
                     this->copyFile(e);
                     this->deleteFile(e);
                 }

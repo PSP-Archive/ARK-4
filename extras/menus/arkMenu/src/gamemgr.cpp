@@ -164,12 +164,18 @@ void GameManager::findEboots(const char* path){
         
     while ((dit = readdir(dir))){
 		if (strstr(dit->d_name, "%") != NULL) continue;
-        string fullpath = Eboot::fullEbootPath(path, dit->d_name);
-        if (fullpath == "") continue;
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
         if (common::fileExists(string(path)+string(dit->d_name))) continue;
         
+        string fullpath = Eboot::fullEbootPath(path, dit->d_name);
+        if (fullpath == ""){
+            if (common::getConf()->scan_cat){
+                findEboots((string(path) + dit->d_name + "/").c_str());
+            }
+            continue;
+        }
+
         Eboot* e = new Eboot(fullpath);
         switch (Eboot::getEbootType(fullpath.c_str())){
         case TYPE_HOMEBREW:    this->categories[HOMEBREW]->addEntry(e);    break;
@@ -194,7 +200,12 @@ void GameManager::findISOs(const char* path){
 
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
-        if (!common::fileExists(fullpath)) continue;
+        if (!common::fileExists(fullpath)){
+            if (common::getConf()->scan_cat && string(dit->d_name) != string("VIDEO")){
+                findISOs((string(path) + dit->d_name + "/").c_str());
+            }
+            continue;
+        }
         if (Iso::isISO(fullpath.c_str())) this->categories[GAME]->addEntry(new Iso(fullpath));
     }
     closedir(dir);

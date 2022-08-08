@@ -13,7 +13,11 @@ class ExitManager : public SystemEntry{
         void draw(){};
         void control(Controller* pad){};
         void pause(){};
-        void resume(){sctrlKernelExitVSH(NULL);};
+        void resume(){
+            sctrlSESetUmdFile("");
+          	sctrlSESetBootConfFileIndex(MODE_UMD);
+            sctrlKernelExitVSH(NULL);
+        };
         std::string getInfo(){return "Exit";};
         void setInfo(std::string info){};
         Image* getIcon(){return common::getImage(IMAGE_SETTINGS);};
