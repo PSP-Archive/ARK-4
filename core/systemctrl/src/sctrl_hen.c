@@ -309,3 +309,10 @@ int sctrlHENRegisterHomebrewLoader(void* handler)
     patchLedaPlugin(handler);
     return 0;
 }
+
+extern void* plugin_handler;
+void* sctrlHENSetPluginHandler(void* handler){
+    void* ret = plugin_handler;
+    plugin_handler = handler;
+    return ret;
+}

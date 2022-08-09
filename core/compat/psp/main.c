@@ -62,7 +62,7 @@ int module_start(SceSize args, void * argp)
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
     // Register plugin handler
-    prevPluginHandler = registerPluginHandler(&pluginHandler);
+    prevPluginHandler = sctrlHENSetPluginHandler(&pluginHandler);
     // Return Success
     return 0;
 }

@@ -339,9 +339,3 @@ void loadSettings(void* settingsHandler){
     strcat(path, "SETTINGS.TXT");
     ProcessConfigFile(path, settingsHandler, NULL);
 }
-
-void* registerPluginHandler(void* handler){
-    void* ret = plugin_handler;
-    plugin_handler = handler;
-    return ret;
-}
