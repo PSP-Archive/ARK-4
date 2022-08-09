@@ -76,15 +76,10 @@ int peek_positive(SceCtrlData * pad_data, int count)
 	count = CtrlPeekBufferPositive(pad_data, count);
 	
 	// Check for Exit Mask
-	int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK)
+	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
 		// Exit to PRO VSH
-		if (ark_config->launcher[0]){
-            exitLauncher();
-        }
-        else{
-            sctrlKernelExitVSH(NULL);
-        }
+		exitLauncher();
 	}
 	
 	// Return Number of Input Frames
@@ -99,15 +94,10 @@ int peek_negative(SceCtrlData * pad_data, int count)
 	count = CtrlPeekBufferNegative(pad_data, count);
 	
 	// Check for Exit Mask
-	int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == 0)
+	if((pad_data[0].Buttons & EXIT_MASK) == 0)
 	{
 		// Exit to PRO VSH
-		if (ark_config->launcher[0]){
-            exitLauncher();
-        }
-        else{
-            sctrlKernelExitVSH(NULL);
-        }
+		exitLauncher();
 	}
 	
 	// Return Number of Input Frames
@@ -122,15 +112,10 @@ int read_positive(SceCtrlData * pad_data, int count)
 	count = CtrlReadBufferPositive(pad_data, count);
 	
 	// Check for Exit Mask
-	int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK)
+	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
 		// Exit to PRO VSH
-		if (ark_config->launcher[0]){
-            exitLauncher();
-        }
-        else{
-            sctrlKernelExitVSH(NULL);
-        }
+		exitLauncher();
 	}
 	
 	// Return Number of Input Frames
@@ -145,15 +130,10 @@ int read_negative(SceCtrlData * pad_data, int count)
 	count = CtrlReadBufferNegative(pad_data, count);
 	
 	// Check for Exit Mask
-	int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == 0)
+	if((pad_data[0].Buttons & EXIT_MASK) == 0)
 	{
 		// Exit to PRO VSH
-		if (ark_config->launcher[0]){
-            exitLauncher();
-        }
-        else{
-            sctrlKernelExitVSH(NULL);
-        }
+		exitLauncher();
 	}
 	
 	// Return Number of Input Frames
