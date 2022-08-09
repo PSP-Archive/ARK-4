@@ -35,6 +35,12 @@ extern ARKConfig* ark_config;
 void exitLauncher()
 {
 
+    // Refuse Operation in Save dialog
+	if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return;
+	
+	// Refuse Operation in Dialog
+	if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return;
+
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
     
