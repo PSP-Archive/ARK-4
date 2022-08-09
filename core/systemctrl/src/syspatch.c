@@ -38,8 +38,10 @@
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
 
+#ifdef DEBUG
 // for screen debugging
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
+#endif
 
 // Return Boot Status
 static int isSystemBooted(void)
@@ -65,16 +67,16 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     // System fully booted Status
     static int booted = 0;
     
-  #ifdef DEBUG
-    int apitype = sceKernelInitApitype();
-    printk("syspatch: %s(0x%04X)\r\n", mod->modname, apitype);
+    #ifdef DEBUG
+    printk("syspatch: %s(0x%04X)\r\n", mod->modname, sceKernelInitApitype());
     hookImportByNID(mod, "KDebugForKernel", 0x84F370BC, printk);
-	/* Removed to allow DEBUG to run
-    if (DisplaySetFrameBuf){
-        initScreen(DisplaySetFrameBuf);
+    if(strcmp(mod->modname, "sceDisplay_Service") == 0)
+    {
+        // can use screen now
+        DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
+        goto flush;
     }
-	*/
-  #endif
+    #endif
 
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
@@ -82,13 +84,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         OrigLoadReboot = (void *)mod->text_addr;
         // Patch loadexec
         patchLoadExec(mod, (u32)LoadReboot, (u32)sctrlHENFindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
-        goto flush;
-    }
-    
-    if(strcmp(mod->modname, "sceDisplay_Service") == 0)
-    {
-        // can use screen now
-        DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         goto flush;
     }
     
@@ -119,10 +114,12 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         {
             // Allow exiting through key combo
             patchExitGame();
+            
             #ifdef DEBUG
             // syncronize printk
             printkSync();
             #endif
+
             // Boot Complete Action done
             booted = 1;
             goto flush;

@@ -126,7 +126,7 @@ int isspace(int c)
 }
 
 // Trim Leading and Trailing Whitespaces
-static char * strtrim(char * text)
+char * strtrim(char * text)
 {
     // Invalid Argument
     if(text == NULL) return NULL;
@@ -204,7 +204,7 @@ static char * readLine(int fd, char * buf, unsigned int buflen)
 }
 
 // Parse and Process Line
-void processLine(char * line, void (*enabler)(char*), void (*disabler)(char*))
+static void processLine(char * line, void (*enabler)(char*), void (*disabler)(char*))
 {
     // Skip Comment Lines
     if(!enabler || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#')

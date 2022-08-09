@@ -31,7 +31,10 @@ int (* OrigLoadReboot)(void * arg1, unsigned int arg2, void * arg3, unsigned int
 
 // Reboot Buffer Backup
 #include "loader/rebootex/payload.h"
-RebootConfigARK rebootex_config;
+RebootConfigARK rebootex_config = {
+    .magic = ARK_CONFIG_MAGIC,
+    .reboot_buffer_size = REBOOTEX_MAX_SIZE
+};
 
 // custom rebootex
 void* custom_rebootex = NULL;
@@ -42,13 +45,7 @@ void backupRebootBuffer(void)
 
     // Copy Reboot Buffer Configuration
     RebootConfigARK* backup_conf = (RebootConfigARK*)REBOOTEX_CONFIG;
-    if (backup_conf->magic != ARK_CONFIG_MAGIC || backup_conf->reboot_buffer_size == 0){
-        // Fix for Infinity/CIPL setup
-        memset(&rebootex_config, 0, sizeof(RebootConfigARK));
-        rebootex_config.magic = ARK_CONFIG_MAGIC;
-        rebootex_config.reboot_buffer_size = size_rebootbuffer;
-    }
-    else{
+    if (IS_ARK_CONFIG(backup_conf) && backup_conf->reboot_buffer_size){
         memcpy(&rebootex_config, backup_conf, sizeof(RebootConfigARK));
     }
     
@@ -83,7 +80,7 @@ void restoreRebootBuffer(void)
 // Reboot Buffer Loader
 int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
 {
-    // Restore Reboot Buffer Configuration
+    // Restore Reboot Buffer
     restoreRebootBuffer();
     // Load Sony Reboot Buffer
     return OrigLoadReboot(arg1, arg2, arg3, arg4);

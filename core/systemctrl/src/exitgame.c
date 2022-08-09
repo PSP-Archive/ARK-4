@@ -149,38 +149,26 @@ int control_poller(SceSize args, void * argp)
     return 0;
 }
 
-// Start Gamepad Polling Thread
-void startControlPoller(void)
-{
-    // Create Thread (with USER_PRIORITY_HIGHEST - 1)
-    int uid = sceKernelCreateThread("ExitGamePollThread", control_poller, 16 - 1, 2048, PSP_THREAD_ATTR_VFPU, NULL);
-    
-    // Created Thread Handle
-    if(uid >= 0)
-    {
-        // Start Thread
-        if(sceKernelStartThread(uid, 0, NULL) < 0)
-        {
-            // Delete Thread on Start Error
-            sceKernelDeleteThread(uid);
-        }
-    }
-}
-
 // Start exit game handler
 void patchExitGame()
 {
     // Get Apitype
     int apitype = sceKernelInitApitype();
     
-    if (apitype ==  0x210 || apitype ==  0x220){
-        // Do nothing on VSH
-    }
-    else {
+    if (apitype !=  0x210 && apitype !=  0x220){ // Do nothing on VSH
         // Start Polling Thread
-        startControlPoller();
+        // Create Thread (with USER_PRIORITY_HIGHEST - 1)
+        int uid = sceKernelCreateThread("ExitGamePollThread", control_poller, 16 - 1, 2048, PSP_THREAD_ATTR_VFPU, NULL);
+        // Created Thread Handle
+        if(uid >= 0)
+        {
+            // Start Thread
+            if(sceKernelStartThread(uid, 0, NULL) < 0)
+            {
+                // Delete Thread on Start Error
+                sceKernelDeleteThread(uid);
+            }
+        }
     }
-    // Flush Cache
-    flushCache();
 }
 
