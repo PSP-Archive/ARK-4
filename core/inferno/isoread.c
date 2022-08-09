@@ -41,7 +41,7 @@
 #define DAX_BLOCK_SIZE 0x2000
 #define DAX_COMP_BUF 0x2400
 
-#define CISO_IDX_MAX_ENTRIES 512
+#define CISO_IDX_MAX_ENTRIES 4096
 
 struct CISO_header {
     uint32_t magic;  // 0
@@ -275,19 +275,15 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         u32 ending_block = o_offset+size;
         if (ending_block%block_size == 0) ending_block = ending_block/block_size;
         else ending_block = (ending_block/block_size)+1;
+        
         if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
             read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
             g_cso_idx_start_block = starting_block;
         }
 
         // IO data call
-        u32 o_off;
-        if (ending_block < g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES)
-            o_off = g_cso_idx_cache[ending_block-g_cso_idx_start_block+1];
-        else
-            read_raw_data(&o_off, sizeof(u32), (ending_block+1)*sizeof(u32) + header_size);
         u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
-        u32 o_end = (o_off&0x7FFFFFFF)<<align;
+        u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
         u32 compressed_size = o_end - o_start;
 
         if (size < compressed_size){ // compressed data is bigger than uncompressed data
@@ -302,17 +298,6 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         // calculate block number and offset within block
         cur_block = offset / block_size;
         pos = offset & (block_size - 1);
-
-        if(cur_block >= g_ciso_total_block) {
-            // EOF reached
-            break;
-        }
-        
-        if (cur_block>=g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES-1){
-            // refresh index cache
-            read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), cur_block * 4 + header_size);
-            g_cso_idx_start_block = cur_block;
-        }
         
         // read compressed block offset and size
         u32 b_offset = g_cso_idx_cache[cur_block-g_cso_idx_start_block];
