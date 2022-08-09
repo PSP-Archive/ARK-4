@@ -113,7 +113,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         if(isSystemBooted())
         {
             // Allow exiting through key combo
-            patchExitGame();
+            patchController();
             
             #ifdef DEBUG
             // syncronize printk

@@ -29,15 +29,8 @@
 
 // Exit Button Mask
 #define EXIT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
-#define RESET_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_UP)
 
 extern ARKConfig* ark_config;
-
-extern void sctrlExitToLauncher();
-
-char* param_key[] = {
-    "vsh", "game", "pops"
-};
 
 void exitLauncher()
 {
@@ -59,7 +52,7 @@ void exitLauncher()
     param.size = sizeof(param);
     param.args = strlen(path) + 1;
     param.argp = path;
-    param.key = param_key[1];
+    param.key = "game";
 
     // set default mode
     sctrlSESetUmdFile("");
@@ -69,106 +62,108 @@ void exitLauncher()
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 }
 
-void resetGame()
+// Gamepad Hook #1
+int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = NULL;
+int peek_positive(SceCtrlData * pad_data, int count)
 {
-
-    // Load Execute Parameter
-    struct SceKernelLoadExecVSHParam param;
-
-    int apitype = sceKernelInitApitype();
-    char path[ARK_PATH_SIZE];
-    strcpy(path, sceKernelInitFileName());
-
-    // Clear Memory
-    memset(&param, 0, sizeof(param));
-
-    // Configure Parameters
-    param.size = sizeof(param);
-    param.argp = path;
-    param.args = strlen(param.argp) + 1;
-    if (apitype&0x200 == 0x200) param.key = param_key[0];
-    else if (apitype == 0x144 || apitype == 0x155) param.key = param_key[2];
-    else param.key = param_key[1];
-    
-    // Trigger Reboot
-    sctrlKernelLoadExecVSHWithApitype(apitype, param.argp, &param);
-}
-
-// Gamepad Polling Thread
-int control_poller(SceSize args, void * argp)
-{
-    // Control Buffer
-    SceCtrlData pad_data[16];
-    
-    int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = NULL;
-    
-    // Endless Loop
-    while(1)
-    {
-        // Save CPU Time (30fps)
-        sceKernelDelayThread((unsigned int)(1000000.0f / 30.0f));
-        
-        // Refuse Operation in Save dialog
-        if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) continue;
-        
-        // Refuse Operation in Dialog
-        if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) continue;
-    
-        if (CtrlPeekBufferPositive == NULL){
-            CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
+	// Capture Gamepad Input
+	count = CtrlPeekBufferPositive(pad_data, count);
+	
+	// Check for Exit Mask
+	int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK)
+	{
+		// Exit to PRO VSH
+		if (ark_config->launcher[0]){
+            exitLauncher();
         }
         else{
-            // Clear Memory
-            memset(pad_data, 0, sizeof(pad_data));
-            
-            // Poll Gamepad
-            int count = CtrlPeekBufferPositive(pad_data, NELEMS(pad_data));
-            // Check for Exit Mask
-            for(int i = 0; i < count; i++)
-            {
-                // Execute launcher
-                if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK){
-                    if (ark_config->launcher[0]){
-                        exitLauncher();
-                    }
-                    else{
-                        sctrlKernelExitVSH(NULL);
-                    }
-                }
-                else if ((pad_data[i].Buttons & RESET_MASK) == RESET_MASK){
-                    resetGame();
-                }
-            }
+            sctrlKernelExitVSH(NULL);
         }
-    }
-    
-    // Exit and Delete Thread
-    sceKernelExitDeleteThread(0);
-    
-    // Never reached return (shut up compiler!)
-    return 0;
+	}
+	
+	// Return Number of Input Frames
+	return count;
 }
 
-// Start exit game handler
-void patchExitGame()
+// Gamepad Hook #2
+int (*CtrlPeekBufferNegative)(SceCtrlData *, int) = NULL;
+int peek_negative(SceCtrlData * pad_data, int count)
 {
-    // Get Apitype
-    int apitype = sceKernelInitApitype();
-    
-    if (apitype !=  0x210 && apitype !=  0x220){ // Do nothing on VSH
-        // Start Polling Thread
-        // Create Thread (with USER_PRIORITY_HIGHEST - 1)
-        int uid = sceKernelCreateThread("ExitGamePollThread", control_poller, 16 - 1, 2048, PSP_THREAD_ATTR_VFPU, NULL);
-        // Created Thread Handle
-        if(uid >= 0)
-        {
-            // Start Thread
-            if(sceKernelStartThread(uid, 0, NULL) < 0)
-            {
-                // Delete Thread on Start Error
-                sceKernelDeleteThread(uid);
-            }
+	// Capture Gamepad Input
+	count = CtrlPeekBufferNegative(pad_data, count);
+	
+	// Check for Exit Mask
+	int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == 0)
+	{
+		// Exit to PRO VSH
+		if (ark_config->launcher[0]){
+            exitLauncher();
         }
-    }
+        else{
+            sctrlKernelExitVSH(NULL);
+        }
+	}
+	
+	// Return Number of Input Frames
+	return count;
 }
 
+// Gamepad Hook #3
+int (*CtrlReadBufferPositive)(SceCtrlData *, int) = NULL;
+int read_positive(SceCtrlData * pad_data, int count)
+{
+	// Capture Gamepad Input
+	count = CtrlReadBufferPositive(pad_data, count);
+	
+	// Check for Exit Mask
+	int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == EXIT_MASK)
+	{
+		// Exit to PRO VSH
+		if (ark_config->launcher[0]){
+            exitLauncher();
+        }
+        else{
+            sctrlKernelExitVSH(NULL);
+        }
+	}
+	
+	// Return Number of Input Frames
+	return count;
+}
+
+// Gamepad Hook #4
+int (*CtrlReadBufferNegative)(SceCtrlData *, int) = NULL;
+int read_negative(SceCtrlData * pad_data, int count)
+{
+	// Capture Gamepad Input
+	count = CtrlReadBufferNegative(pad_data, count);
+	
+	// Check for Exit Mask
+	int i = 0; for(; i < count; i++) if((pad_data[i].Buttons & EXIT_MASK) == 0)
+	{
+		// Exit to PRO VSH
+		if (ark_config->launcher[0]){
+            exitLauncher();
+        }
+        else{
+            sctrlKernelExitVSH(NULL);
+        }
+	}
+	
+	// Return Number of Input Frames
+	return count;
+}
+
+// Hook Gamepad Input
+void patchController(void)
+{
+	// Hook Gamepad Input Syscalls (user input hooking only)
+    CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
+    CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A);
+    CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
+    CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86);
+	sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550), peek_positive);
+	sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A), peek_negative);
+	sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938), read_positive);
+	sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86), read_negative);
+}
