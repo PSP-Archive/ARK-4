@@ -286,7 +286,10 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
         u32 compressed_size = o_end - o_start;
 
-        if (size < compressed_size){ // compressed data is bigger than uncompressed data
+        if (size < compressed_size // compressed data is bigger than uncompressed data
+            || (ending_block == g_ciso_total_block-1 // trying to read last block of DAX file...
+                && header_size == sizeof(DAXHeader)) // we can't trust the value of compressed_size
+        ){
             compressed_size = size-1;
         }
 
