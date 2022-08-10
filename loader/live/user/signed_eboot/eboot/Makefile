@@ -1,5 +1,5 @@
 TARGET = ARK
-C_OBJS = main.o
+C_OBJS = main.o imports.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
 CFLAGS = -std=c99 -Os -G0 -Wall
@@ -15,6 +15,8 @@ PSP_EBOOT_ICON = ICON0.PNG
 PSP_EBOOT_TITLE += ARK Loader
 
 EXTRA_TARGETS = EBOOT.PBP
+
+PSP_FW_VERSION = 660
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
