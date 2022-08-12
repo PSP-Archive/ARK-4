@@ -41,6 +41,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Release: `./build.sh` 
 - Debug: `./build.sh --debug`
+- Manually: install the oldest possible SDK (ideally the one that used to compile M33), then run `make`
 
 ### On PSP:
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
