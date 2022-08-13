@@ -59,7 +59,7 @@ extern u32 UnpackBootConfigCall;
 extern u32 UnpackBootConfigArg;
 
 // Rebootex functions
-void loadCoreModuleStartCommon();
+u32 loadCoreModuleStartCommon();
 void patchRebootBufferPSP();
 void patchRebootBufferVita();
 void patchRebootIoPSP();

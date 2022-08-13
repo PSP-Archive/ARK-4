@@ -23,6 +23,8 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with `6.60` `Testing Tool` Firmware and `Testkit` Units.
 
+- Compatible with `6.60` `Development Tool` Firmware and `Devkit` Units.
+
 - `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
 - `Custom game launcher` with built-in game categories, file browser, FTP server and client, modernized look and more.
@@ -41,13 +43,14 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Release: `./build.sh` 
 - Debug: `./build.sh --debug`
+- Manually: install the oldest possible SDK (ideally the one used to compile M33), then run `make`
 
 ### On PSP:
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Install `ARK_Live` folder into `/PSP/GAME/` folder.
 - Launch ARK Live Loader. It will install ARK modules on PSP Flash and boot the CFW.
-- If using Infinity place the `EBOOT.PBP` from the `Infinity` folder found in the ARK download into \
-`/PSP/GAME/UPDATE`. Run the initial infinity installation from OFW and re-run the installer again from ARK to configure autoboot. \
+- To use `Infinity` place the `EBOOT.PBP` from the `Infinity` folder found in the ARK download into \
+`/PSP/GAME/UPDATE`. Install `Infinity` as you normally would. \
   This will allow you to use ARK permanently and triple boot with PRO and ME.
  - If you will be using the Live loader version of ARK instead of a permanent solution, it is recommended that you delete `FLASH0.ARK` from the savedata file after the first installation and bootup of ARK, otherwise the flash0 files will be installed every time you boot back to ARK and this is detrimental to the flash even if ARK installs very little and small files. Doing this will also make the Live loader boot up ARK faster.
 - To `update ARK` simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` from `OFW`.
