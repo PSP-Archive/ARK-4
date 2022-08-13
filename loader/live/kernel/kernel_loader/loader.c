@@ -3,12 +3,14 @@
 #include <loadexec_patch.h>
 #include "reboot.h"
 
+#include "loader/rebootex/payload.h"
+
 #define EF0_PATH 0x3A306665
 #define ISO_RUNLEVEL 0x123
 #define ISO_RUNLEVEL_GO 0x125
 #define ISO_DRIVER 3
 
-extern u8 rebootbuffer[REBOOTEX_MAX_SIZE];
+extern u8 rebootbuffer_ex[REBOOTEX_MAX_SIZE];
 
 // Sony Reboot Buffer Loader
 int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
@@ -57,12 +59,11 @@ void setupRebootBuffer(){
     
     int fd = k_tbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
     if (fd >= 0){ // read external rebootex
-        k_tbl->KernelIORead(fd, rebootbuffer, REBOOTEX_MAX_SIZE);
+        k_tbl->KernelIORead(fd, rebootbuffer_ex, REBOOTEX_MAX_SIZE);
         k_tbl->KernelIOClose(fd);
     }
-    else{ // error
-        PRTSTR("ERROR: Could not read REBOOT.BIN");
-        while (1);
+    else{ // no external REBOOT.BIN, use built-in rebootex
+        memcpy(rebootbuffer_ex, rebootbuffer, size_rebootbuffer);
     }
 }
 

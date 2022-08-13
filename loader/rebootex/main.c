@@ -179,6 +179,10 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4) __attribute__((section(".
 int _arkReboot(int arg1, int arg2, int arg3, int arg4)
 {
 
+    #ifdef DEBUG
+    colorDebug(0xff00);
+    #endif
+
     reboot_start = REBOOT_TEXT;
     reboot_end = findRebootFunctions(reboot_start); // scan for reboot functions
     

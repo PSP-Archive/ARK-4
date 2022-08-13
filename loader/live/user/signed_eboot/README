@@ -1,3 +1,4 @@
 ARK Eboot Loader.
 This preloader compiles into an EBOOT.PBP that can be signed
 and used load ARK from the PSP XMB or create a Vita Bubble.
+It simulates the same loading process as an exploited game.

@@ -21,6 +21,7 @@ extern u32 psp_model;
 extern ARKConfig* ark_config;
 extern STMOD_HANDLER previous;
 extern void SetSpeed(int cpuspd, int busspd);
+extern void patch_sceChkreg();
 
 // Return Boot Status
 int isSystemBooted(void)
@@ -195,6 +196,10 @@ void settingsHandler(char* path){
                 disable_PauseGame(); // disable pause feature to maintain stability
             }
         }
+    }
+    else if (strcasecmp(path, "regionfree") == 0){
+        patch_sceChkreg();
+        flushCache();
     }
 }
 

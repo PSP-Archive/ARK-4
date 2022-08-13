@@ -2,4 +2,4 @@ Use this loader for compatibility with ARK-2 legacy loaders.
 In ARK-2, stage-1 would load ARK.BIN into scratchpad ram.
 In ARK-4 this was changed to user ram due to limitations in scratchpad size (16KB).
 The stage-2 loader's main function interface was also changed.
-This loader acts as if it were ARK-2's ARK.BIN, but simply chainloads to ARK-4's ARK.BIN, acting as a wrapper.
+This loader acts as if it were ARK-2's ARK.BIN, but simply chainloads to ARK-4's ARK4.BIN, acting as a wrapper.

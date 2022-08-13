@@ -164,20 +164,31 @@ Note: some of these menus have not been updated or supported by their developers
 
 ### CREDITS
 
-- qwikrazor87 for being such a genius and all his hard work with kernel exploits and ARK-2.
+- `qwikrazor87` for being such a genius and all his hard work with kernel exploits and ARK-2.
 
-- The original Team PRO members: Coldbird, Liquid Snake and Neur0n.
+- `Team PRO` (the original developers of ARK): `Coldbird`, `hrimfaxi` and `Neur0n`.
 
-- Total_Noob/TheFl0w for his advancements and research in CFW development and overall contributions to the scene.
+- `TheFl0w` for his advancements and research in CFW development and overall contributions to the scene.
 
-- Codestation for his incredible work improving CSO speeds and creating the ZSO format.
+- `Codestation` for his incredible work improving CSO speeds and creating the ZSO format.
 
-- UnkownBrackets for his help understanding the DAX format and Inferno speed hacks.
+- `UnkownBrackets` (maxcso) for his help understanding the DAX format and Inferno speed hacks as well as creating the CSOv2 format.
 
-- Zer01ne, noname120, astart and other devs that have blessed me with their knowledge and wisdom.
+- `Zer01ne`, `noname120`, `astart` and other devs that have blessed me with their knowledge and wisdom.
 
-- Zecoxao for his great work creating dumpers that would allow us to archive rare firmwares.
+- `Zecoxao` for his great work creating dumpers that would allow us to archive rare firmwares.
 
-- balika for his research in porting M33 to modern firmware that has helped improve compatiblity in ARK.
+- `balika` for his research in porting M33 to modern firmware that has helped improve compatiblity in ARK.
 
 - Every other giant shoulder I am standing on.
+
+
+
+
+### WARNINGS
+
+- ARK comes with no warranty whatsoever. It was designed to be noob-proof, however it is possible for the universe to create an even greater noob capable of using ARK to destroy the Earth (or his PSP). I cannot be held responsible for this.
+
+- ARK may cause ejectile malfunction if your hard drive is not hard enough.
+
+- If this software malfunctions, you can turn it off and on again.

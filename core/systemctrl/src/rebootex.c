@@ -38,6 +38,8 @@ RebootConfigARK rebootex_config = {
 
 // custom rebootex
 void* custom_rebootex = NULL;
+void* external_rebootex = NULL;
+int rebootheap = -1;
 
 // Backup Reboot Buffer
 void backupRebootBuffer(void)
@@ -61,10 +63,12 @@ void backupRebootBuffer(void)
 void restoreRebootBuffer(void)
 {
 
-    void* rebootex = (custom_rebootex)? custom_rebootex : rebootbuffer;
+    u8* rebootex = custom_rebootex; // try custom rebootex from sctrlHENSetRebootexOverride
+    if (rebootex == NULL) rebootex = external_rebootex; // try custom rebootex from REBOOT.BIN in ARK savedata
+    if (rebootex == NULL) rebootex = rebootbuffer; // use built-in rebootex
 
     // Restore Reboot Buffer Payload
-    if (rebootbuffer[0] == 0x1F && rebootbuffer[1] == 0x8B) // gzip packed rebootex
+    if (rebootex[0] == 0x1F && rebootex[1] == 0x8B) // gzip packed rebootex
         sceKernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootex, NULL);
     else // plain payload
         memcpy((void *)REBOOTEX_TEXT, rebootex, REBOOTEX_MAX_SIZE);

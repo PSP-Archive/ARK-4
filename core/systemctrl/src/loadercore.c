@@ -175,6 +175,26 @@ int KernelCheckExecFile(unsigned char * buffer, int * check)
     return result;
 }
 
+extern void* external_rebootex;
+extern int rebootheap;
+static u8* loadExternalRebootex(){
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, "REBOOT.BIN");
+    
+    int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+    if (fd >= 0){ // read external rebootex
+        // allocate memory
+        int size = sceIoLseek32(fd, 0, PSP_SEEK_END);
+        sceIoLseek32(fd, 0, PSP_SEEK_SET);
+        rebootheap = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, size+64, 1, "ExternalRebootex");
+        external_rebootex = (u8*)sceKernelAllocHeapMemory(rebootheap, size);
+        // read rebootex file
+        sceIoRead(fd, external_rebootex, size);
+        sceIoClose(fd);
+    }
+}
+
 // Init Start Module Hook
 int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
@@ -204,6 +224,8 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // MediaSync not yet started... too early to load plugins.
     if(!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
     {
+        // Load external rebootex from savedata folder
+        loadExternalRebootex();
         // Load Plugins
         LoadPlugins();
         // Remember it

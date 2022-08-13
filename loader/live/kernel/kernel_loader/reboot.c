@@ -19,7 +19,7 @@
 #include "globals.h"
 #include "main.h"
 
-u8 rebootbuffer[REBOOTEX_MAX_SIZE];
+u8 rebootbuffer_ex[REBOOTEX_MAX_SIZE];
 
 // Build Reboot Configuration
 void buildRebootBufferConfig(int rebootBufferSize)
@@ -52,10 +52,10 @@ int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
     // Copy PROCFW Reboot Buffer into Memory
     memset((char *)REBOOTEX_TEXT, 0, REBOOTEX_MAX_SIZE);
     int rebootBufferSize = REBOOTEX_MAX_SIZE;
-    if (rebootbuffer[0] == 0x1F && rebootbuffer[1] == 0x8B) // gzip packed rebootex
-        rebootBufferSize = k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootbuffer, NULL);
+    if (rebootbuffer_ex[0] == 0x1F && rebootbuffer_ex[1] == 0x8B) // gzip packed rebootex
+        rebootBufferSize = k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootbuffer_ex, NULL);
     else // plain payload
-        memcpy(REBOOTEX_TEXT, rebootbuffer, REBOOTEX_MAX_SIZE);
+        memcpy(REBOOTEX_TEXT, rebootbuffer_ex, REBOOTEX_MAX_SIZE);
         
     // Build Configuration
     buildRebootBufferConfig(rebootBufferSize);
