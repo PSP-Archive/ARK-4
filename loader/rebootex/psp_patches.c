@@ -6,6 +6,7 @@ int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(
     loadCoreModuleStartCommon();
 
     // Don't break on unresolved syscalls
+    u32 text_addr = FindTextAddrByName("sceLoaderCore");
     _sw(0x00001021, text_addr + 0x00002CA4);
 
     flushCache();
