@@ -96,7 +96,7 @@ int CheckExecFilePatched(unsigned char * addr, void * arg2)
     return 0;
 }
 
-void loadCoreModuleStartCommon(){
+u32 loadCoreModuleStartCommon(){
 
     // Calculate Text Address and size
     u32 text_addr = FindTextAddrByName("sceLoaderCore");
@@ -121,6 +121,8 @@ void loadCoreModuleStartCommon(){
             _sw(JAL(CheckExecFilePatched), addr);
         }
     }
+
+    return text_addr;
 }
 
 // Invalidate Instruction and Data Cache

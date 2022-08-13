@@ -3,10 +3,9 @@
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 
 int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(void *, void *, void *)){
-    loadCoreModuleStartCommon();
+    u32 text_addr = loadCoreModuleStartCommon();
 
     // Don't break on unresolved syscalls
-    u32 text_addr = FindTextAddrByName("sceLoaderCore");
     _sw(0x00001021, text_addr + 0x00002CA4);
 
     flushCache();
