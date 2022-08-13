@@ -23,6 +23,8 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with `6.60` `Testing Tool` Firmware and `Testkit` Units.
 
+- Compatible with `6.60` `Development Tool` Firmware and `Devkit` Units.
+
 - `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
 - `Custom game launcher` with built-in game categories, file browser, FTP server and client, modernized look and more.
