@@ -66,7 +66,6 @@ int region_change = 0;
 
 static int (*IdStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
 static void* umd_buf = NULL;
-static u16 umd_key = 0;
 
 static int _sceChkregGetPsCode(u8 *pscode)
 {
@@ -85,13 +84,13 @@ static int _sceChkregGetPsCode(u8 *pscode)
 static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
     if (offset == 0 && len==512 && umd_buf == NULL){ // obtain buffer where UMD keys are stored in umdman.prx
         umd_buf = buf;
-        umd_key = key;
     }
     return IdStorageLookup(key, offset, buf, len); // passthrough
 }
 
 int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pfuseid)
 {
+    // taken from Despertar del Cementerio
 	u32 tachyon = 0;
 	u32 baryon = 0;
 	u32 pommel = 0;
