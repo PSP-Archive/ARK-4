@@ -12,6 +12,13 @@ enum{
     VSH_ONLY
 };
 
+enum{
+    REGION_DEFAULT,
+    REGION_JAPAN,
+    REGION_AMERICA,
+    REGION_EUROPE
+};
+
 typedef struct {
     unsigned char usbcharge;
     unsigned char overclock;
@@ -22,7 +29,7 @@ typedef struct {
     unsigned char mscache;
     unsigned char infernocache;
     unsigned char oldplugin;
-    unsigned char regionfree;
+    unsigned char regionchange;
 }ArkConf;
 
 ArkConf ark_config;
@@ -170,12 +177,12 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
-} regionfree = {
-    "UMD Region Free",
-    MAX_ARK_OPTIONS,
+} regionchange = {
+    "UMD Region Change",
+    4,
     0,
-    &(ark_config.regionfree),
-    ARK_OPTIONS
+    &(ark_config.regionchange),
+    {"Default", "Japan", "America", "Europe"}
 };
 
 settings_entry* ark_conf_entries[] = {
@@ -188,7 +195,7 @@ settings_entry* ark_conf_entries[] = {
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
     (settings_entry*)&oldplugin,
-    (settings_entry*)&regionfree,
+    (settings_entry*)&regionchange,
 };
 
 #define MAX_ARK_CONF 10
@@ -252,8 +259,17 @@ static unsigned char* configConvert(string conf){
     else if (strcasecmp(conf.c_str(), "oldplugin") == 0){
         return &(ark_config.oldplugin);
     }
-    else if (strcasecmp(conf.c_str(), "regionfree") == 0){
-        return &(ark_config.regionfree);
+    else if (strcasecmp(conf.c_str(), "region_jp") == 0){
+        ark_config.regionchange = REGION_JAPAN;
+        return NULL;
+    }
+    else if (strcasecmp(conf.c_str(), "region_us") == 0){
+        ark_config.regionchange = REGION_AMERICA;
+        return NULL;
+    }
+    else if (strcasecmp(conf.c_str(), "region_eu") == 0){
+        ark_config.regionchange = REGION_EUROPE;
+        return NULL;
     }
     return NULL;
 }
@@ -322,6 +338,18 @@ void saveSettings(){
     output << processSetting("mscache", ark_config.mscache) << endl;
     output << processSetting("infernocache", ark_config.infernocache) << endl;
     output << processSetting("oldplugin", ark_config.oldplugin) << endl;
-    output << processSetting("regionfree", ark_config.regionfree) << endl;
+    
+    switch (ark_config.regionchange){
+        case REGION_JAPAN:
+            output << "vsh, region_jp, on" << endl;
+            break;
+        case REGION_AMERICA:
+            output << "vsh, region_us, on" << endl;
+            break;
+        case REGION_EUROPE:
+            output << "vsh, region_eu, on" << endl;
+            break;
+    }
+    
     output.close();
 }

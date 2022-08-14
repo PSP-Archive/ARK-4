@@ -14,6 +14,7 @@
 #include <functions.h>
 #include "high_mem.h"
 #include "exitgame.h"
+#include "region_free.h"
 #include "libs/graphics/graphics.h"
 
 extern u32 psp_fw_version;
@@ -197,9 +198,20 @@ void settingsHandler(char* path){
             }
         }
     }
-    else if (strcasecmp(path, "regionfree") == 0){
-        patch_region();
-        flushCache();
+    else if (strcasecmp(path, "region_jp") == 0){
+        if (psp_model < PSP_3000){
+            region_change = REGION_JAPAN;
+        }
+    }
+    else if (strcasecmp(path, "region_us") == 0){
+        if (psp_model < PSP_3000){
+            region_change = REGION_AMERICA;
+        }
+    }
+    else if (strcasecmp(path, "region_eu") == 0){
+        if (psp_model < PSP_3000){
+            region_change = REGION_EUROPE;
+        }
     }
 }
 
@@ -212,6 +224,11 @@ void processSettings(){
         ark_config->launcher[0] = 0; // disable launcher mode
     }
     sctrlHENSetArkConfig(ark_config);
+
+    if (region_change){
+        patch_region();
+        flushCache();
+    }
 }
 
 void (*prevPluginHandler)(const char* path, int modid) = NULL;
@@ -228,6 +245,7 @@ void PSPOnModuleStart(SceModule2 * mod){
     
     if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
         patch_sceUmdMan_driver(mod);
+        patch_umd_idslookup(mod);
         goto flush;
     }
 
@@ -270,6 +288,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         // while older CFW load plugins a bit earlier (MediaSync loaded but not started)
         hookImportByNID(mod, "sceUmdUser", 0xC6183D47, &fakeUmdActivate);
         hookImportByNID(mod, "sceUmdUser", 0xE83742BA, &fakeUmdActivate);
+        goto flush;
     }
 
     if (strcmp(mod->modname, "DayViewer_User") == 0){
@@ -280,6 +299,19 @@ void PSPOnModuleStart(SceModule2 * mod){
         for (int i=0; i<NELEMS(nids); i++){
             hookImportByNID(mod, "scePaf", nids[i], sctrlHENFindFunction("scePaf_Module", "scePaf", nids[i]));
         }
+        goto flush;
+    }
+
+    if (strcmp(mod->modname, "vsh_module") == 0){
+        if (region_change)
+        {
+            SceUID kthreadID = sceKernelCreateThread( "arkflasher", &patch_umd_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
+            if (kthreadID >= 0){
+                // start thread and wait for it to end
+                sceKernelStartThread(kthreadID, 0, NULL);
+            }
+        }
+        goto flush;
     }
     
     if(booted == 0)

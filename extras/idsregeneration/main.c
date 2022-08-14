@@ -5984,7 +5984,7 @@ int idsRegenerationCreateCertificatesAndUMDKeys(u8 *buf)
 	sceKernelWaitThreadEnd(gen_thid, NULL);
 
 	sceKernelDcacheWritebackAll();
-	sceKernelIcacheClearAll();
+	sceKernelIcacheInvalidateAll();
 		
 	pspSdkSetK1(k1);
 	return g_result;

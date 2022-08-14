@@ -26,12 +26,7 @@
 #include "globals.h"
 #include "macros.h"
 #include "module2.h"
-
-#define REGION_DEBUG_CODE 1
-
-#define REGION_JAPAN 3
-#define REGION_AMERICA 4
-#define REGION_EUROPE 5
+#include "region_free.h"
 
 extern ARKConfig* ark_config;
 
@@ -66,6 +61,8 @@ enum
 	TA_096_TA_097,
 	UNKNOWN
 };
+
+int region_change = 0;
 
 static int _sceChkregGetPsCode(u8 *pscode)
 {
@@ -207,57 +204,67 @@ int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pf
 }
 
 static int (*IdStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
+static void* umd_buf = NULL;
+static u16 umd_key = 0;
 static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
-    if (key == 258 && offset == 140 && len == 4){
-        memset(buf, 0, len);
-        *(u8*)buf = 0x60;
-        return 0;
-    }
-    else if (key >= 0x100 && key < 0x120){
-        int res = -1;
-        SceUID bufid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, 256*1024+64, 1, "idSHeap");
-        void* big_buffer = sceKernelAllocHeapMemory(bufid, 256*1024);
-
-        if (big_buffer == NULL) goto fake_ids_end;
-
-        static char path[ARK_PATH_SIZE];
-        strcpy(path, ark_config->arkpath);
-        strcat(path, "IDSREG.PRX");
-        SceUID modid = sceKernelLoadModule(path, 0, NULL);
-
-        if (modid < 0) goto fake_ids_end;
-
-        int r = sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
-
-        if (r < 0) goto fake_ids_end;
-
-        int (*idsRegenerationSetup)(u32, u32, u32, u32, u64, u32, void*) = 
-            sctrlHENFindFunction("pspIdsRegeneration_Driver", "idsRegeneration", 0xBDE13E76);
-        int (*idsRegenerationCreateCertificatesAndUMDKeys)(void*) = 
-            sctrlHENFindFunction("pspIdsRegeneration_Driver", "idsRegeneration", 0xB79A6C46);
-
-        if (idsRegenerationCreateCertificatesAndUMDKeys == NULL || idsRegenerationSetup == NULL) goto fake_ids_end;
-
-        u32 tachyon, baryon, pommel, mb, region;
-    	u64 fuseid;
-
-        if (GetHardwareInfo(&tachyon, &baryon, &pommel, &mb, &fuseid) < 0) goto fake_ids_end;
-
-        idsRegenerationSetup(tachyon, baryon, pommel, mb, fuseid, REGION_AMERICA, NULL);
-
-        idsRegenerationCreateCertificatesAndUMDKeys(big_buffer);
-        
-        int i = key-0x100;
-        memcpy(buf, big_buffer+(0x200*i)+offset, len);
-        res = 0;
-
-        fake_ids_end:
-        sceKernelFreeHeapMemory(bufid, big_buffer);
-        sceKernelDeleteHeap(bufid);
-
-        if (res == 0) return 0;
+    if (offset == 0 && len==512){
+        umd_buf = buf;
+        umd_key = key;
     }
     return IdStorageLookup(key, offset, buf, len); // passthrough
+}
+
+int replace_umd_keys(){
+    int res = -1;
+    SceUID memid = sceKernelAllocPartitionMemory(2, "idsBuffer", PSP_SMEM_High, 256*1024, NULL);
+    void* big_buffer = sceKernelGetBlockHeadAddr(memid);
+
+    if (memid < 0 || big_buffer == NULL) goto fake_ids_end;
+
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, "IDSREG.PRX");
+    SceUID modid = sceKernelLoadModule(path, 0, NULL);
+
+    if (modid < 0) goto fake_ids_end;
+
+    int r = sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
+
+    if (r < 0) goto fake_ids_end;
+
+    int (*idsRegenerationSetup)(u32, u32, u32, u32, u64, u32, void*) = 
+        sctrlHENFindFunction("pspIdsRegeneration_Driver", "idsRegeneration", 0xBDE13E76);
+    int (*idsRegenerationCreateCertificatesAndUMDKeys)(void*) = 
+        sctrlHENFindFunction("pspIdsRegeneration_Driver", "idsRegeneration", 0xB79A6C46);
+
+    if (idsRegenerationCreateCertificatesAndUMDKeys == NULL || idsRegenerationSetup == NULL) goto fake_ids_end;
+
+    u32 tachyon, baryon, pommel, mb, region;
+    u64 fuseid;
+
+    if (GetHardwareInfo(&tachyon, &baryon, &pommel, &mb, &fuseid) < 0) goto fake_ids_end;
+
+    idsRegenerationSetup(tachyon, baryon, pommel, mb, fuseid, region_change, NULL);
+
+    idsRegenerationCreateCertificatesAndUMDKeys(big_buffer);
+
+    int i = umd_key-0x100;
+    memcpy(umd_buf, big_buffer+(0x200*i), 512);
+    res = 0;
+
+    fake_ids_end:
+    sceKernelFreePartitionMemory(memid);
+    sceKernelStopModule(modid, 0, NULL, NULL, NULL);
+    sceKernelUnloadModule(modid);
+
+    return res;
+}
+
+void patch_umd_idslookup(SceModule2* mod){
+    IdStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
+    if (mod){
+        hookImportByNID(mod, "sceIdStorage_driver", 0x6FE062D1, &fakeIdStorageLookupForUmd);
+    }
 }
 
 void patch_region(void)
@@ -269,9 +276,11 @@ void patch_region(void)
         _sw(NOP, fp+4);
     }
 
-    IdStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
-    SceModule2* mod = sceKernelFindModuleByName("sceUmdMan_driver");
-    if (mod){
-        hookImportByNID(mod, "sceIdStorage_driver", 0x6FE062D1, &fakeIdStorageLookupForUmd);
-    }
+}
+
+int patch_umd_thread(SceSize args, void *argp){
+    sceKernelDelayThread(3000000); // wait for system to load
+    replace_umd_keys(); // replace UMD keys
+    sceKernelExitDeleteThread(0);
+    return 0;
 }
