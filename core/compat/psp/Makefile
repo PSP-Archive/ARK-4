@@ -6,7 +6,7 @@ C_OBJS = \
 	high_mem.o  \
 	cpuclock.o   \
 	usb_charge.o  \
-	region_fake.o \
+	region_free.o \
 	$(ARKROOT)/core/systemctrl/src/gameinfo.o \
 		
 OBJS = \
