@@ -83,7 +83,7 @@ static int _sceChkregGetPsCode(u8 *pscode)
 }
 
 static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
-    if (offset == 0 && len==512){ // obtain buffer where UMD keys are stored in umdman.prx
+    if (offset == 0 && len==512 && umd_buf == NULL){ // obtain buffer where UMD keys are stored in umdman.prx
         umd_buf = buf;
         umd_key = key;
     }
@@ -217,11 +217,14 @@ int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pf
 
 int replace_umd_keys(){
     int res = -1;
+
+    // allocate memory buffer
     SceUID memid = sceKernelAllocPartitionMemory(2, "idsBuffer", PSP_SMEM_High, 256*1024, NULL);
     void* big_buffer = sceKernelGetBlockHeadAddr(memid);
 
     if (memid < 0 || big_buffer == NULL) goto fake_ids_end;
 
+    // load and start idsRegeneration module
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, "IDSREG.PRX");
@@ -233,6 +236,7 @@ int replace_umd_keys(){
 
     if (r < 0) goto fake_ids_end;
 
+    // initialize idsRegeneration and calculate the new UMD keys
     int (*idsRegenerationSetup)(u32, u32, u32, u32, u64, u32, void*) = 
         sctrlHENFindFunction("pspIdsRegeneration_Driver", "idsRegeneration", 0xBDE13E76);
     int (*idsRegenerationCreateCertificatesAndUMDKeys)(void*) = 
@@ -249,10 +253,11 @@ int replace_umd_keys(){
 
     idsRegenerationCreateCertificatesAndUMDKeys(big_buffer);
 
-    int i = umd_key-0x100;
-    memcpy(umd_buf, big_buffer+(0x200*i), 512);
+    // copy the generated UMD keys to the buffer in umdman
+    memcpy(umd_buf, big_buffer+(0x200*2), 512*5);
     res = 0;
 
+    // free resources
     fake_ids_end:
     sceKernelFreePartitionMemory(memid);
     sceKernelStopModule(modid, 0, NULL, NULL, NULL);
@@ -262,6 +267,7 @@ int replace_umd_keys(){
 }
 
 void patch_umd_idslookup(SceModule2* mod){
+    // this patch allows us to obtain the buffer where umdman stores the UMD keys
     IdStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
     if (mod){
         hookImportByNID(mod, "sceIdStorage_driver", 0x6FE062D1, &fakeIdStorageLookupForUmd);

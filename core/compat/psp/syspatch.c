@@ -199,19 +199,13 @@ void settingsHandler(char* path){
         }
     }
     else if (strcasecmp(path, "region_jp") == 0){
-        if (psp_model < PSP_3000){
-            region_change = REGION_JAPAN;
-        }
+        region_change = REGION_JAPAN;
     }
     else if (strcasecmp(path, "region_us") == 0){
-        if (psp_model < PSP_3000){
-            region_change = REGION_AMERICA;
-        }
+        region_change = REGION_AMERICA;
     }
     else if (strcasecmp(path, "region_eu") == 0){
-        if (psp_model < PSP_3000){
-            region_change = REGION_EUROPE;
-        }
+        region_change = REGION_EUROPE;
     }
 }
 
@@ -302,7 +296,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    if (strcmp(mod->modname, "vsh_module") == 0){
+    if (strcmp(mod->modname, "impose_plugin_module") == 0){
         if (region_change)
         {
             SceUID kthreadID = sceKernelCreateThread( "arkflasher", &patch_umd_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
