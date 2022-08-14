@@ -22,7 +22,7 @@ typedef struct {
     unsigned char mscache;
     unsigned char infernocache;
     unsigned char oldplugin;
-    unsigned char fakeregion;
+    unsigned char regionfree;
 }ArkConf;
 
 ArkConf ark_config;
@@ -170,11 +170,11 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
-} fakeregion = {
-    "Fake Region",
+} regionfree = {
+    "UMD Region Free",
     MAX_ARK_OPTIONS,
     0,
-    &(ark_config.fakeregion),
+    &(ark_config.regionfree),
     ARK_OPTIONS
 };
 
@@ -188,7 +188,7 @@ settings_entry* ark_conf_entries[] = {
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
     (settings_entry*)&oldplugin,
-    (settings_entry*)&fakeregion,
+    (settings_entry*)&regionfree,
 };
 
 #define MAX_ARK_CONF 10
@@ -252,8 +252,8 @@ static unsigned char* configConvert(string conf){
     else if (strcasecmp(conf.c_str(), "oldplugin") == 0){
         return &(ark_config.oldplugin);
     }
-    else if (strcasecmp(conf.c_str(), "fakeregion") == 0){
-        return &(ark_config.fakeregion);
+    else if (strcasecmp(conf.c_str(), "regionfree") == 0){
+        return &(ark_config.regionfree);
     }
     return NULL;
 }
@@ -322,6 +322,6 @@ void saveSettings(){
     output << processSetting("mscache", ark_config.mscache) << endl;
     output << processSetting("infernocache", ark_config.infernocache) << endl;
     output << processSetting("oldplugin", ark_config.oldplugin) << endl;
-    output << processSetting("fakeregion", ark_config.fakeregion) << endl;
+    output << processSetting("regionfree", ark_config.regionfree) << endl;
     output.close();
 }

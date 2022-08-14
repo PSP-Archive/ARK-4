@@ -197,7 +197,7 @@ void settingsHandler(char* path){
             }
         }
     }
-    else if (strcasecmp(path, "fakeregion") == 0){
+    else if (strcasecmp(path, "regionfree") == 0){
         patch_region();
         flushCache();
     }

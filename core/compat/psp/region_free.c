@@ -28,9 +28,6 @@
 
 #define REGION_DEBUG_CODE 1
 
-#define REGION_EUROPE 0x60
-#define REGION_JAPAN 0x78
-
 
 static int _sceChkregGetPsCode(u8 *pscode)
 {
@@ -50,10 +47,22 @@ static int (*IdStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
 static int fakeIdStorageLookupForRegion(u16 key, u32 offset, void *buf, u32 len){
     if (key == 258 && offset == 140 && len == 4){
         memset(buf, 0, len);
-        *(u8*)buf = REGION_JAPAN;
+        *(u8*)buf = 0x60;
         return 0;
     }
-    return IdStorageLookup(key, offset, buf, len);
+    /*
+    else if (key >= 0x100 && key < 0x120){
+        SceUID modid = sceKernelLoadModule("IDSREG.PRX");
+        sceKernelStartModule(modid);
+        int (*idsRegenerationCreateCertificatesAndUMDKeys)(void*) = 
+            sctrlHENFindFunction("pspIdsRegeneration_Driver", "idsRegeneration", 0xB79A6C46);
+        idsRegenerationCreateCertificatesAndUMDKeys(big_buffer); // big_buffer = 256KB
+        int i = key-0x100;
+        memcpy(buf, big_buffer+(0x200*i)+offset, len);
+        return 0;
+    }
+    */
+    return IdStorageLookup(key, offset, buf, len); // idsregenarator...
 }
 
 void patch_region(void)
