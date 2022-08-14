@@ -21,7 +21,7 @@ extern u32 psp_model;
 extern ARKConfig* ark_config;
 extern STMOD_HANDLER previous;
 extern void SetSpeed(int cpuspd, int busspd);
-extern void patch_sceChkreg();
+extern void patch_region();
 
 // Return Boot Status
 int isSystemBooted(void)
@@ -197,8 +197,8 @@ void settingsHandler(char* path){
             }
         }
     }
-    else if (strcasecmp(path, "regionfree") == 0){
-        patch_sceChkreg();
+    else if (strcasecmp(path, "fakeregion") == 0){
+        patch_region();
         flushCache();
     }
 }

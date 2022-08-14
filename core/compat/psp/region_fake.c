@@ -24,14 +24,19 @@
 #include <stdio.h>
 #include <string.h>
 #include "macros.h"
+#include "module2.h"
 
-#define REGION_FREE_CODE 1
+#define REGION_DEBUG_CODE 1
+
+#define REGION_EUROPE 0x60
+#define REGION_JAPAN 0x78
+
 
 static int _sceChkregGetPsCode(u8 *pscode)
 {
 	pscode[0] = 1;
 	pscode[1] = 0;
-	pscode[2] = REGION_FREE_CODE;
+	pscode[2] = REGION_DEBUG_CODE;
 	pscode[3] = 0;
 	pscode[4] = 1;
 	pscode[5] = 0;
@@ -41,14 +46,28 @@ static int _sceChkregGetPsCode(u8 *pscode)
 	return 0;
 }
 
-void patch_sceChkreg(void)
-{
+static int (*IdStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
+static int fakeIdStorageLookupForRegion(u16 key, u32 offset, void *buf, u32 len){
+    if (key == 258 && offset == 140 && len == 4){
+        memset(buf, 0, len);
+        *(u8*)buf = REGION_JAPAN;
+        return 0;
+    }
+    return IdStorageLookup(key, offset, buf, len);
+}
 
+void patch_region(void)
+{
 	// sceChkregGetPsCode
 	u32 fp = sctrlHENFindFunction("sceChkreg", "sceChkreg_driver", 0x59F8491D); 
-
 	if (fp) {
         _sw(JUMP(_sceChkregGetPsCode), fp);
         _sw(NOP, fp+4);
+    }
+
+    IdStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
+    SceModule2* mod = sceKernelFindModuleByName("sceUmdMan_driver");
+    if (mod){
+        hookImportByNID(mod, "sceIdStorage_driver", 0x6FE062D1, &fakeIdStorageLookupForRegion);
     }
 }
