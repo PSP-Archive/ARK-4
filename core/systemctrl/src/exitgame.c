@@ -78,8 +78,12 @@ int peek_positive(SceCtrlData * pad_data, int count)
 	// Check for Exit Mask
 	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
-		// Exit to PRO VSH
-		exitLauncher();
+		// Exit to custom launcher
+		int k1 = pspSdkSetK1(0);
+		int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
+		sceKernelStartThread(uid, 0, NULL);
+		sceKernelWaitThreadEnd(uid, NULL);
+		pspSdkSetK1(k1);
 	}
 	
 	// Return Number of Input Frames
@@ -96,8 +100,12 @@ int peek_negative(SceCtrlData * pad_data, int count)
 	// Check for Exit Mask
 	if((pad_data[0].Buttons & EXIT_MASK) == 0)
 	{
-		// Exit to PRO VSH
-		exitLauncher();
+		// Exit to custom launcher
+		int k1 = pspSdkSetK1(0);
+		int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
+		sceKernelStartThread(uid, 0, NULL);
+		sceKernelWaitThreadEnd(uid, NULL);
+		pspSdkSetK1(k1);
 	}
 	
 	// Return Number of Input Frames
@@ -114,8 +122,12 @@ int read_positive(SceCtrlData * pad_data, int count)
 	// Check for Exit Mask
 	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
-		// Exit to PRO VSH
-		exitLauncher();
+		// Exit to custom launcher
+		int k1 = pspSdkSetK1(0);
+		int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
+		sceKernelStartThread(uid, 0, NULL);
+		sceKernelWaitThreadEnd(uid, NULL);
+		pspSdkSetK1(k1);
 	}
 	
 	// Return Number of Input Frames
@@ -132,8 +144,12 @@ int read_negative(SceCtrlData * pad_data, int count)
 	// Check for Exit Mask
 	if((pad_data[0].Buttons & EXIT_MASK) == 0)
 	{
-		// Exit to PRO VSH
-		exitLauncher();
+		// Exit to custom launcher
+		int k1 = pspSdkSetK1(0);
+		int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
+		sceKernelStartThread(uid, 0, NULL);
+		sceKernelWaitThreadEnd(uid, NULL);
+		pspSdkSetK1(k1);
 	}
 	
 	// Return Number of Input Frames
