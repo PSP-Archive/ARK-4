@@ -1,0 +1,317 @@
+#name	Admiral
+#type	car
+
+#name	Blista
+#type	car
+
+#name	Dukes
+#type	car
+
+#name	Heli 1
+#type	helicopter
+
+#name	Noose Enforcer
+#type	boat
+
+#name	Buccaneer
+#type	car
+
+#name	Fire Truck
+#type	car
+
+#name	Rhino
+#type	tank
+
+#name	Ambulance
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Flatbed
+#type	car
+
+#name	Speeder
+#type	boat
+
+#name	Angel
+#type	bike
+
+#name	Cabbie
+#type	car
+
+#name	Hellenbach
+#type	car
+
+#name	Tanker
+#type	car
+
+#name	Banshee
+#type	car
+
+#name	Comet
+#type	car
+
+#name	Police Patrol
+#type	car
+
+#name	Yankee
+#type	car
+
+#name	Turismo
+#type	car
+
+#name	Cognoscenti
+#type	car
+
+#name	Chavos
+#type	car
+
+#name	Cavalcade
+#type	car
+
+#name	Cavalcade FXT
+#type	car
+
+#name	Bobcat
+#type	car
+
+#name	Recovery
+#type	car
+
+#name	Formula R
+#type	car
+
+#name	Resolution X
+#type	car
+
+#name	MK GT9
+#type	car
+
+#name	500 XLR8
+#type	car
+
+#name	Style SR
+#type	car
+
+#name	Cityscape
+#type	car
+
+#name	Bulldozer
+#type	tractor
+
+#name	Fib Rancher
+#type	car
+
+#name	Reefer
+#type	boat
+
+#name	Heli 2
+#type	helicopter
+
+#name	Coast Guard Launch
+#type	boat
+
+#name	Destroyer
+#type	boat
+
+#name	Dinghy
+#type	boat
+
+#name	Bus
+#type	car
+
+#name	Resolution X
+#type	car
+
+#name	Gumshoe
+#type	car
+
+#name	Wet Ski
+#type	boat
+
+#name	Cruiser
+#type	boat
+
+#name	Heli 4
+#type	helicopter
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Go Kart
+#type	car
+
+#name	Yankee
+#type	car
+
+#name	Yankee
+#type	car
+
+#name	Yankee
+#type	car
+
+#name	Yankee
+#type	car
+
+#name	Yankee
+#type	car
+
+#name	Infernus
+#type	car
+
+#name	Patriot
+#type	car
+
+#name	Sabre GT
+#type	car
+
+#name	Stallion
+#type	car
+
+#name	Sultan
+#type	car
+
+#name	Peyote
+#type	car
+
+#name	Ingot
+#type	car
+
+#name	Perennial
+#type	car
+
+#name	Hearse
+#type	car
+
+#name	Limo
+#type	car
+
+#name	Admiral
+#type	car
+
+#name	Banshee
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Angel
+#type	car
+
+#name	Bobcat
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Chavos
+#type	car
+
+#name	Cognoscenti
+#type	car
+
+#name	Comet
+#type	car
+
+#name	Turismo
+#type	car
+
+#name	Dukes
+#type	car
+
+#name	Cavalcade FXT
+#type	car
+
+#name	Hellenbach
+#type	car
+
+#name	Manana
+#type	car
+
+#name	NRG 900
+#type	bike
+
+#name	Alphamail
+#type	car
+
+#name	Angel
+#type	bike
+
+#name	Baggage Handler
+#type	car
+
+#name	Chopper
+#type	bike
+
+#name	Voodoo
+#type	car
+
+#name	Heli 5
+#type	helicopter
+
+#name	Zhouboat
+#type	boat
+
+#name	Angel
+#type	bike
+
+#name	Sanchez
+#type	bike
+
+#name	Jetmax
+#type	boat
+
+#name	Dragon Wagon
+#type	car
+
+#name	Cognoscenti
+#type	car
+
+#name	Recovery
+#type	car
+
+#name	Burrito
+#type	car
+
+#name	Heli 6
+#type	helicopter
+
+#name	Fists
+#type	car

@@ -33,6 +33,7 @@ class GameManager : public SystemEntry{
         
         /* Selected game menu */
         int selectedCategory;
+        int maxDraw;
         
         bool use_categories;
         
@@ -95,10 +96,18 @@ class GameManager : public SystemEntry{
         void control(Controller* pad);
         
         void pause(){
+            for (int i=MAX_CATEGORIES; i>=0; i--){
+                this->maxDraw = i;
+                sceKernelDelayThread(60000);
+            }
             pauseIcons();
         };
         
         void resume(){
+            for (int i=0; i<=MAX_CATEGORIES; i++){
+                this->maxDraw = i;
+                sceKernelDelayThread(60000);
+            }
             resumeIcons();
         }
         

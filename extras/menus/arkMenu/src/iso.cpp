@@ -208,7 +208,7 @@ int Iso::checkAudioVideo(){
         if (strcmp((char*)&initial_block[i], "UMD_VIDEO") == 0){
             type |= PSP_UMD_TYPE_VIDEO;
         }
-        if (strcmp((char*)&initial_block[i], "UMD_AUDIO") == 0){
+        else if (strcmp((char*)&initial_block[i], "UMD_AUDIO") == 0){
             type |= PSP_UMD_TYPE_AUDIO;
         }
     }

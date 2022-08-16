@@ -285,7 +285,7 @@ void patch_region(void)
 }
 
 int patch_umd_thread(SceSize args, void *argp){
-    sceKernelDelayThread(3000000); // wait for system to load
+    sceKernelDelayThread(5000000); // wait for system to load
     replace_umd_keys(); // replace UMD keys
     sceKernelExitDeleteThread(0);
     return 0;

@@ -58,7 +58,7 @@ Browser::Browser(){
     this->animating = false;
     this->moving = 0;
     this->enableSelection = true;
-    this->selectedBuffer = new vector<string>(); // list of paths to paste
+    this->selectedBuffer = new vector<Entry*>(); // list of paths to paste
     this->draw_progress = false;
     this->optionsmenu = NULL;
     this->checkBox = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("CHECK.PNG"));
@@ -70,6 +70,7 @@ Browser::Browser(){
     this->optionsAnimX = 0;
     this->optionsAnimY = 0;
     this->pEntryIndex = 0;
+    this->animation = 0;
     this->refreshDirs();
 }
 
@@ -299,7 +300,7 @@ void Browser::drawProgress(){
     int x = (480-w)/2;
     int y = (272-h)/2;
     common::getImage(IMAGE_DIALOG)->draw_scale(x, y, w, h);
-    
+
     int yoffset = y+10;
     for (int i=0; i<5; i++){
         if (i==4 && progress_desc[4] == ""){
@@ -314,11 +315,58 @@ void Browser::drawProgress(){
 }    
 
 void Browser::draw(){
-    this->drawScreen();
-    this->drawOptionsMenu();
-    this->drawProgress();
-    if (this->optionsmenu != NULL)
-        this->optionsmenu->draw();
+    static int x, y, w, h;
+    switch (animation){
+    case -1:
+        if (w < 410 || h < 230){
+            
+            w += 50;
+            if (w > 410)
+                w = 410;
+            
+            h += 30;
+            if (h > 230)
+                h = 230;
+
+            x = (480-w)/2;
+            y = (272-h)/2;
+
+            common::getImage(IMAGE_DIALOG)->draw_scale(x, y, w, h);
+        }
+        else {
+            animation = 0;
+            common::getImage(IMAGE_DIALOG)->draw_scale(x, y, w, h);
+        }
+        break;
+    case 0:
+        this->drawScreen();
+        this->drawOptionsMenu();
+        this->drawProgress();
+        if (this->optionsmenu != NULL)
+            this->optionsmenu->draw();
+        break;
+    case 1:
+        if (w > 0 || h > 0){
+        
+            w -= 50;
+            if (w < 0)
+                w = 0;
+            
+            h -= 30;
+            if (h < 0)
+                h = 0;
+            
+            x = (480-w)/2;
+            y = (272-h)/2;
+            
+            common::getImage(IMAGE_DIALOG)->draw_scale(x, y, w, h);
+        }
+        else {
+            animation = -2;
+        }
+        break;
+    default: break;
+    }
 }
 
 string Browser::formatText(string text){
@@ -724,7 +772,7 @@ void Browser::fillSelectedBuffer(){
     for (int i=0; i<entries->size(); i++){
         File* e = (File*)entries->at(i);
         if (e->isSelected())
-            this->selectedBuffer->push_back(e->getPath());
+            this->selectedBuffer->push_back(e);
     }
 }
 
@@ -743,31 +791,32 @@ void Browser::cut(){
 void Browser::paste(){
     // Copy or cut all paths in the paste buffer to the cwd
     for (int i = 0; i<selectedBuffer->size(); i++){
-        string e = selectedBuffer->at(i);
-        printf("pasting %s\n", e.c_str());
-        if (e[e.length()-1] == '/'){
+        Entry* e = selectedBuffer->at(i);
+        string path = e->getPath();
+        printf("pasting %s\n", path.c_str());
+        if (e->getType() == string("FOLDER")){
             if (pasteMode == CUT){
-                if (pspIoMove(e, this->cwd) < 0){
-                    this->copyFolder(e);
-                    this->deleteFolder(e);
+                if (pspIoMove(path, this->cwd) < 0){
+                    this->copyFolder(path);
+                    this->deleteFolder(path);
                 }
             }
             else{
                 printf("copy folder\n");
-                this->copyFolder(e);
+                this->copyFolder(path);
             }
         }
         else{
             if (pasteMode == CUT){
                 printf("move file\n");
-                if (pspIoMove(e, this->cwd) < 0){
-                    this->copyFile(e);
-                    this->deleteFile(e);
+                if (pspIoMove(path, this->cwd) < 0){
+                    this->copyFile(path);
+                    this->deleteFile(path);
                 }
             }
             else{
                 printf("copy file\n");
-                this->copyFile(e);
+                this->copyFile(path);
             }
         }
     }
@@ -811,16 +860,17 @@ void Browser::removeSelection(){
     draw_progress = true;
     this->fillSelectedBuffer();
     if (this->selectedBuffer->size() == 0)
-        this->selectedBuffer->push_back(this->get()->getPath());
+        this->selectedBuffer->push_back(this->get());
         
     if (this->selectedBuffer->size() > 0){
         for (int i = 0; i<selectedBuffer->size(); i++){
-            string e = selectedBuffer->at(i);
-            if (e[e.length()-1] == '/'){
-                deleteFolder(e);
+            Entry* e = selectedBuffer->at(i);
+            string path = e->getPath();
+            if (e->getType() == string("FOLDER")){
+                deleteFolder(path);
             }
             else{
-                deleteFile(e);
+                deleteFile(path);
             }
         }
         this->selectedBuffer->clear();

@@ -147,12 +147,10 @@ int doExploit(void) {
     int res;
 
     u32 seed = readKram(SYSMEM_SEED_OFFSET);
-    //u32 seed_addr = (readKram(0x8800C3EC) << 16) + (readKram(0x8800C3F0)&0xFFFF);
-    //u32 seed = readKram(seed_addr);
-    //PRTSTR1("Seed addr: %p", seed_addr);
     PRTSTR1("Seed: %p", seed);
-    if (!seed)
-        return -1;
+
+    //if (!seed)
+    //    return -1;
 
     SceUID uid = (((FAKE_UID_OFFSET & 0x00ffffff) >> 2) << 7) | 0x1;
     SceUID encrypted_uid = uid ^ seed;

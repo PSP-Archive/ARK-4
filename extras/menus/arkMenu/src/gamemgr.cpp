@@ -28,6 +28,7 @@ GameManager::GameManager(){
     }
     
     // start the multithreaded icon loading
+    this->maxDraw = MAX_CATEGORIES;
     this->dynamicIconRunning = ICONS_LOADING;
     this->iconSema = sceKernelCreateSema("icon0_sema",  0, 1, 1, NULL);
     this->iconThread = sceKernelCreateThread("icon0_thread", GameManager::loadIcons, 0x10, 0x20000, PSP_THREAD_ATTR_USER, NULL);
@@ -239,7 +240,7 @@ void GameManager::findSaveEntries(const char* path){
                         Eboot* e = new Eboot(fullentrypath);
                         switch (Eboot::getEbootType(fullentrypath.c_str())){
                         case TYPE_HOMEBREW:    this->categories[HOMEBREW]->addEntry(e);    break;
-                        case TYPE_PSN:        this->categories[GAME]->addEntry(e);        break;
+                        case TYPE_PSN:         this->categories[GAME]->addEntry(e);        break;
                         case TYPE_POPS:        this->categories[POPS]->addEntry(e);        break;
                         }
                     }
@@ -338,7 +339,7 @@ string GameManager::getInfo(){
 
 void GameManager::draw(){
     if (this->selectedCategory >= 0){
-        for (int i=0; i<MAX_CATEGORIES; i++){
+        for (int i=0; i<this->maxDraw; i++){
             if (i == (int)this->selectedCategory)
                 continue;
             this->categories[i]->draw(false);

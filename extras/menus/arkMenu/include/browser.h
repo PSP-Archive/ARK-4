@@ -47,8 +47,16 @@ class Browser : public SystemEntry{
         
         void control(Controller* pad);
         
-        void pause(){}
-        void resume(){}
+        void pause(){
+            animation = 1;
+            while (animation != -2)
+                sceKernelDelayThread(0);
+        }
+        void resume(){
+            animation = -1;
+            while (animation != 0)
+                sceKernelDelayThread(0);
+        }
         
         void setInfo(string info){};
         void setName(string name){};
@@ -77,7 +85,7 @@ class Browser : public SystemEntry{
         
         vector<Entry*>* entries; // entries in the current directory
         
-        vector<string>* selectedBuffer; // currently selected items
+        vector<Entry*>* selectedBuffer; // currently selected items
         
         int pasteMode; // COPY or CUT
         
@@ -86,6 +94,7 @@ class Browser : public SystemEntry{
         int start; // where to start drawing the menu
         bool animating; // animate the menu transition?
         unsigned int moving;
+        int animation;
         
         /* Screen drawing thread data */
         bool draw_progress;

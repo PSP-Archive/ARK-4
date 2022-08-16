@@ -5,6 +5,7 @@
 #include "common.h"
 
 class FTPManager : public SystemEntry{
+    int animation;
     void draw();
     void control(Controller* pad);
     void pause();

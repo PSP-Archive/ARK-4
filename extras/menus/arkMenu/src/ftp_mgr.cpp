@@ -32,23 +32,71 @@ static void addMessage(const char* msg){
 
 void FTPManager::draw(){
 
-    common::getImage(IMAGE_DIALOG)->draw_scale(20, 30, 450, 235);
-    
-    char buffer[128];
-    
-    if (ftp_thread>=0){
-        snprintf(buffer, 128, "FTP Server is running @ %s. Press %s to stop.", pspIpAddr, (common::getConf()->swap_buttons)? "X" : "()");
-    }
-    else{
-        snprintf(buffer, 128, "FTP Server is stopped. Press %s to start.", (common::getConf()->swap_buttons)? "()" : "X");
-    }
-    common::printText(30, 50, buffer, GRAY_COLOR, SIZE_BIG);
-    
-    int y = 70;
-    
-    for (int i=0; i<MAX_LINES; i++){
-        common::printText(30, y, vla.msg[i].c_str());
-        y+=20;
+    static int x, y, w, h;
+
+    switch (animation){
+    case -1:
+        if (w < 450 || h < 235){
+            
+            w += 50;
+            if (w > 450)
+                w = 450;
+            
+            h += 30;
+            if (h > 235)
+                h = 235;
+
+            x = (480-w)/2;
+            y = (272-h)/2;
+
+            common::getImage(IMAGE_DIALOG)->draw_scale(x, y, w, h);
+        }
+        else {
+            animation = 0;
+            common::getImage(IMAGE_DIALOG)->draw_scale(x, y, w, h);
+        }
+        break;
+    case 0:
+        common::getImage(IMAGE_DIALOG)->draw_scale(20, 30, 450, 235);
+        
+        char buffer[128];
+        
+        if (ftp_thread>=0){
+            snprintf(buffer, 128, "FTP Server is running @ %s. Press %s to stop.", pspIpAddr, (common::getConf()->swap_buttons)? "X" : "()");
+        }
+        else{
+            snprintf(buffer, 128, "FTP Server is stopped. Press %s to start.", (common::getConf()->swap_buttons)? "()" : "X");
+        }
+        common::printText(30, 50, buffer, GRAY_COLOR, SIZE_BIG);
+        
+        y = 70;
+        
+        for (int i=0; i<MAX_LINES; i++){
+            common::printText(30, y, vla.msg[i].c_str());
+            y+=20;
+        }
+        break;
+    case 1:
+        if (w > 0 || h > 0){
+        
+            w -= 50;
+            if (w < 0)
+                w = 0;
+            
+            h -= 30;
+            if (h < 0)
+                h = 0;
+            
+            x = (480-w)/2;
+            y = (272-h)/2;
+            
+            common::getImage(IMAGE_DIALOG)->draw_scale(x, y, w, h);
+        }
+        else {
+            animation = -2;
+        }
+        break;
+    default: break;
     }
 }
 
@@ -112,11 +160,15 @@ void FTPManager::control(Controller* pad){
 }
 
 void FTPManager::pause(){
-
+    animation = 1;
+    while (animation != -2)
+        sceKernelDelayThread(0);
 }
 
 void FTPManager::resume(){
-
+    animation = -1;
+    while (animation != 0)
+        sceKernelDelayThread(0);
 }
 
 std::string FTPManager::getInfo(){
