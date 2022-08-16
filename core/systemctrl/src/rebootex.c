@@ -67,6 +67,9 @@ void restoreRebootBuffer(void)
     if (rebootex == NULL) rebootex = external_rebootex; // try custom rebootex from REBOOT.BIN in ARK savedata
     if (rebootex == NULL) rebootex = rebootbuffer; // use built-in rebootex
 
+    // clean rebootex memory
+    memset((char *)REBOOTEX_TEXT, 0, REBOOTEX_MAX_SIZE);
+
     // Restore Reboot Buffer Payload
     if (rebootex[0] == 0x1F && rebootex[1] == 0x8B) // gzip packed rebootex
         sceKernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootex, NULL);
