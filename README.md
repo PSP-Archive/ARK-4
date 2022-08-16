@@ -60,6 +60,7 @@ as well as unique and exclusive new features not found anywhere else.
 - Install an ARK-4 bubble for 3.60 using FastARK: https://github.com/theheroGAC/ArkFast/releases/
 - Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
 - Copy `H.BIN` from `Vitabubble` folder of release into ARK savedata folder.
+- To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
 
 
 ### For legacy game exploits on both PSP and PS Vita:
