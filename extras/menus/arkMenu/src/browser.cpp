@@ -58,7 +58,7 @@ Browser::Browser(){
     this->animating = false;
     this->moving = 0;
     this->enableSelection = true;
-    this->selectedBuffer = new vector<Entry*>(); // list of paths to paste
+    this->clipboard = new vector<string>(); // list of paths to paste
     this->draw_progress = false;
     this->optionsmenu = NULL;
     this->checkBox = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("CHECK.PNG"));
@@ -76,9 +76,9 @@ Browser::Browser(){
 
 Browser::~Browser(){
     this->clearEntries();
-    this->selectedBuffer->clear();
+    this->clipboard->clear();
     delete this->entries;
-    delete this->selectedBuffer;
+    delete this->clipboard;
 }
 
 const char* Browser::getCWD(){
@@ -537,7 +537,7 @@ int Browser::pspIoMove(string src, string dest)
 {
 
     if ( *(u32*)(src.c_str()) != *(u32*)(dest.c_str()) )
-        return -1;
+        return -1; // not in the same device
 
     progress_desc[0] = "Moving file/folder";
     progress_desc[1] = "    "+src;
@@ -767,34 +767,34 @@ void Browser::copyFile(string path){
     copyFile(path, this->cwd);
 }
 
-void Browser::fillSelectedBuffer(){
-    this->selectedBuffer->clear();
+void Browser::fillClipboard(){
+    this->clipboard->clear();
     for (int i=0; i<entries->size(); i++){
-        File* e = (File*)entries->at(i);
+        BrowserFile* e = (File*)entries->at(i);
         if (e->isSelected())
-            this->selectedBuffer->push_back(e);
+            this->clipboard->push_back(e->getPath());
     }
 }
 
 void Browser::copy(){
     // Mark the paste mode as copy
     this->pasteMode = COPY;
-    this->fillSelectedBuffer();
+    this->fillClipboard();
 }
 
 void Browser::cut(){
     // Mark the paste mode as cut
     this->pasteMode = CUT;
-    this->fillSelectedBuffer();
+    this->fillClipboard();
 }
 
 void Browser::paste(){
     // Copy or cut all paths in the paste buffer to the cwd
-    for (int i = 0; i<selectedBuffer->size(); i++){
-        Entry* e = selectedBuffer->at(i);
-        string path = e->getPath();
+    printf("paste command\n");
+    for (int i = 0; i<clipboard->size(); i++){
+        string path = clipboard->at(i);
         printf("pasting %s\n", path.c_str());
-        if (e->getType() == string("FOLDER")){
+        if (path[path.length()-1] == '/'){
             if (pasteMode == CUT){
                 if (pspIoMove(path, this->cwd) < 0){
                     this->copyFolder(path);
@@ -820,11 +820,11 @@ void Browser::paste(){
             }
         }
     }
-    if (selectedBuffer->size()){
+    if (clipboard->size()){
         this->refreshDirs();
         GameManager::updateGameList(cwd.c_str()); // tell GameManager to update
     }
-    this->selectedBuffer->clear();
+    this->clipboard->clear();
 }
 
 void Browser::rename(){
@@ -858,22 +858,21 @@ void Browser::rename(){
 void Browser::removeSelection(){
     // Delete all paths in the paste buffer
     draw_progress = true;
-    this->fillSelectedBuffer();
-    if (this->selectedBuffer->size() == 0)
-        this->selectedBuffer->push_back(this->get());
+    this->fillClipboard();
+    if (this->clipboard->size() == 0)
+        this->clipboard->push_back(this->get()->getPath());
         
-    if (this->selectedBuffer->size() > 0){
-        for (int i = 0; i<selectedBuffer->size(); i++){
-            Entry* e = selectedBuffer->at(i);
-            string path = e->getPath();
-            if (e->getType() == string("FOLDER")){
+    if (this->clipboard->size() > 0){
+        for (int i = 0; i<clipboard->size(); i++){
+            string path = clipboard->at(i);
+            if (path[path.length()-1] == '/'){
                 deleteFolder(path);
             }
             else{
                 deleteFile(path);
             }
         }
-        this->selectedBuffer->clear();
+        this->clipboard->clear();
         this->refreshDirs();
         GameManager::updateGameList(cwd.c_str()); // tell GameManager to update
     }

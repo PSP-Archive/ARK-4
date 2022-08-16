@@ -85,7 +85,7 @@ class Browser : public SystemEntry{
         
         vector<Entry*>* entries; // entries in the current directory
         
-        vector<Entry*>* selectedBuffer; // currently selected items
+        vector<string>* clipboard; // currently selected items
         
         int pasteMode; // COPY or CUT
         
@@ -140,7 +140,7 @@ class Browser : public SystemEntry{
         
         void select();
         
-        void fillSelectedBuffer();
+        void fillClipboard();
         
         Entry* get();
         
