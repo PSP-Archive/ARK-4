@@ -345,7 +345,8 @@ void GameManager::draw(){
             this->categories[i]->draw(false);
             sceKernelDelayThread(0);
         }
-        this->categories[this->selectedCategory]->draw(true);
+        if (this->selectedCategory < this->maxDraw)
+            this->categories[this->selectedCategory]->draw(true);
     }
     if (loadingData){
         Image* img = common::getImage(IMAGE_WAITICON);
