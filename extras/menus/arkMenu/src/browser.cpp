@@ -963,7 +963,7 @@ void Browser::optionsMenu(){
         }
         else if (pad->up()){
             common::playMenuSound();
-            if (pEntryIndex > 0){        
+            if (pEntryIndex > 0){
                 pEntryIndex--;
             }
             else{
