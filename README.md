@@ -61,6 +61,7 @@ as well as unique and exclusive new features not found anywhere else.
 - Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
 - Copy `H.BIN` from `Vitabubble` folder of release into ARK savedata folder.
 - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
+- To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP too`.
 
 
 ### For legacy game exploits on both PSP and PS Vita:
