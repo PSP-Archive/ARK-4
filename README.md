@@ -34,18 +34,26 @@ as well as unique and exclusive new features not found anywhere else.
 - Compatible with Legacy Homebrew via `eLoader` and `Leda`.
 
 
-## INSTALLATION ( Recommended )
+## INSTALLATION
 
 - Download the precompiled binaries from: https://github.com/PSP-Archive/ARK-4/releases/
 
 
-### Compiling ARK ( For Developers ) 
+<details>
+  <summary> <b> Compiling ARK ( For Developers ) </b> </summary>
+<p>
 
 - Release: `./build.sh` 
 - Debug: `./build.sh --debug`
 - Manually: install the oldest possible SDK (ideally the one used to compile M33), then run `make`
 
-### On PSP:
+</p>
+</details>
+
+<details>
+  <summary> <b> On PSP </b> </summary>
+<p>
+
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Install `ARK_Live` folder into `/PSP/GAME/` folder.
 - Launch ARK Live Loader. It will install ARK modules on PSP Flash and boot the CFW.
@@ -55,7 +63,13 @@ as well as unique and exclusive new features not found anywhere else.
  - If you will be using the Live loader version of ARK instead of a permanent solution, it is recommended that you delete `FLASH0.ARK` from the savedata file after the first installation and bootup of ARK, otherwise the flash0 files will be installed every time you boot back to ARK and this is detrimental to the flash even if ARK installs very little and small files. Doing this will also make the Live loader boot up ARK faster.
 - To `update ARK` simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` from `OFW`.
 
-### On PS Vita:
+</p>
+</details>
+
+<details>
+  <summary> <b> On PS Vita </b> </summary>
+<p>
+
 * For 3.60 Henkaku users:
 - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` is recommended. Minis are NOT recommended.
 - Install an ARK-4 bubble for 3.60 using FastARK: https://github.com/theheroGAC/ArkFast/releases/
@@ -65,17 +79,26 @@ as well as unique and exclusive new features not found anywhere else.
 - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP too`.
 - Some features are not available to Vita users, mainly the official Sony `XMB` and `PS1` games.
 
+</p>
+</details>
 
-### For legacy game exploits on both PSP and PS Vita:
+<details>
+  <summary> <b> Legacy Game Exploits (PSP & Vita) </b> </summary>
+<p>
+
 - Considering the savedata exploit loads H.BIN from the savedata path.
 - Copy the following files from ARK_01234 savedata folder into game exploit folder:
 - H.BIN, ARK.BIN, ARK4.BIN FLASH0.ARK, MENU.PBP, RECOVERY.PBP, DATA.PKG and other extras.
 - Don't copy K.BIN if running on an ancient firmware.
 
+</p>
+</details>
 
 ## CUSTOMIZATION
 
-### By installing Plugins
+<details>
+  <summary> <b> Installing Plug-Ins </b> </summary>
+<p>
 You can install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
 To install plugins use the comma-separated format (CSV).
@@ -100,6 +123,7 @@ You can use the following keywords to tell ARK when the plugin loads:
 - `game`: plugin can load on both retail games and homebrews.
 - `pops`: plugin only loads in PSX games.
 - `vsh`: plugin only loads in the XMB.
+- `launcher`: use this if the plugin should only load in the custom launcher.
 - `game ID`: if you specify a game ID (i.e. `SLUS000000`), then the plugin will only load on that game.
 
 You can also disable a plugin on certain games where they might be problematic.
@@ -119,7 +143,12 @@ Some noteworthy plugins that are compatible with ARK include (but not limited to
 - CWCheat.
 - pspstates kai.
 
-### By configuring ARK
+</p>
+</details>
+
+<details>
+  <summary> <b> Configuration and Settings </b> </summary>
+<p>
 
 You can create a SETTINGS.TXT file using the same format as PLUGINS.TXT to enable/disable some CFW functionality on different parts of the system.
 For example, you can overclock to highest CPU speed like this:
@@ -144,8 +173,12 @@ Configuration settings for ARK:
  - `oldplugin`: enables old plugins support on PSP Go (redirects `ms0` to `ef0`).
 - NOTE: You should use the recovery menu to handle settings easier.
 
+</p>
+</details>
 
-### Using Custom Launchers
+<details>
+  <summary> <b> Custom Launcher </b> </summary>
+<p>
 ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing DATA.PKG with your own.
 
 
@@ -166,10 +199,15 @@ Aside from the default launcher provided, there have been many  other custom lau
 
 
 Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
+</p>
+</details>
 
 
+## Other
 
-### CREDITS
+<details>
+  <summary> <b> Credits </b> </summary>
+<p>
 
 - `qwikrazor87` for being such a genius and all his hard work with kernel exploits and ARK-2.
 
@@ -188,14 +226,19 @@ Note: some of these menus have not been updated or supported by their developers
 - `balika` for his research in porting M33 to modern firmware that has helped improve compatiblity in ARK.
 
 - Every other giant shoulder I am standing on.
+</p>
+</details>
 
 
 
-
-### WARNINGS
+<details>
+  <summary> <b> Warnings </b> </summary>
+<p>
 
 - ARK comes with no warranty whatsoever. It was designed to be noob-proof, however it is possible for the universe to create an even greater noob capable of using ARK to destroy the Earth (or his PSP). I cannot be held responsible for this.
 
 - ARK may cause ejectile malfunction if your hard drive is not hard enough.
 
 - If this software malfunctions, you can turn it off and on again.
+</p>
+</details>
