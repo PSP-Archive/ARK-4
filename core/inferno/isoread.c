@@ -174,10 +174,13 @@ static int get_nsector(void)
 }
 
 // 0x00000BB4
+//static int raw_calls = 0;
 static int read_raw_data(u8* addr, u32 size, u32 offset)
 {
     int ret, i;
     SceOff ofs;
+
+    //raw_calls++;
 
     i = 0;
 
@@ -258,6 +261,9 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     u8* dec_buf = g_ciso_dec_buf;
     u8* c_buf = NULL;
     u8* top_addr = addr+size;
+
+    //printf("reading %d bytes at %d\n", size, offset);
+    //raw_calls = 0;
     
     if(offset > uncompressed_size) {
         // return if the offset goes beyond the iso size
@@ -269,30 +275,23 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     }
     
     // IO speedup tricks
-    {
-        // refresh index table if needed
-        u32 starting_block = o_offset / block_size;
-        u32 ending_block = o_offset+size;
-        if (ending_block%block_size == 0) ending_block = ending_block/block_size;
-        else ending_block = (ending_block/block_size)+1;
-        
-        if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
-            read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
-            g_cso_idx_start_block = starting_block;
-        }
+    // refresh index table if needed
+    u32 starting_block = o_offset / block_size;
+    u32 ending_block = o_offset+size;
+    if (ending_block%block_size == 0) ending_block = ending_block/block_size;
+    else ending_block = (ending_block/block_size)+1;
+    
+    if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
+        read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
+        g_cso_idx_start_block = starting_block;
+    }
 
-        // IO data call
-        u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
-        u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
-        u32 compressed_size = o_end - o_start;
-
-        if (size < compressed_size // compressed data is bigger than uncompressed data
-            || (ending_block == g_ciso_total_block-1 // trying to read last block of DAX file...
-                && header_size == sizeof(DAXHeader)) // we can't trust the value of compressed_size
-        ){
-            compressed_size = size-1;
-        }
-
+    // IO data call
+    u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
+    u32 compressed_size = 0;
+    if (size > block_size*2){ // more than one block, do fast read
+        compressed_size = size-block_size;
+        if (header_size == sizeof(DAXHeader)) compressed_size = size-1;
         c_buf = top_addr - compressed_size;
         read_raw_data(c_buf, compressed_size, o_start);
     }
@@ -314,13 +313,22 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
             // fix for last DAX block (you can't trust the value of b_size since there's no offset for last_block+1)
             b_size = DAX_COMP_BUF;
 
+        if (c_buf <= addr || c_buf+b_size >= top_addr){
+            if (size > block_size*2){ // don't read last block
+                compressed_size = size-block_size;
+                if (header_size == sizeof(DAXHeader)) compressed_size = size-1;
+                c_buf = top_addr - compressed_size;
+                read_raw_data(c_buf, compressed_size, b_offset);
+            }
+        }
+
         // read block, skipping header if needed
         if (c_buf > addr && c_buf+b_size < top_addr){
-            memcpy(com_buf, c_buf+block_header, b_size-block_header); // fast read
+            memcpy(com_buf, c_buf+block_header, b_size); // fast read
             c_buf += b_size;
         }
         else{ // slow read
-            b_size = read_raw_data(com_buf, b_size-block_header, b_offset + block_header);
+            b_size = read_raw_data(com_buf, b_size, b_offset + block_header);
         }
 
         // decompress block
@@ -335,6 +343,12 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     }
 
     u32 res = offset - o_offset;
+
+    /*
+    if (raw_calls > 4){
+        printf("Got abnormal amount of IO calls (%d) when reading %d bytes at %d\n", raw_calls, res, o_offset);
+    }
+    */
     
     return res;
 }
