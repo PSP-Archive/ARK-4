@@ -8,7 +8,7 @@ using namespace std;
 static int g_ciso_total_block;
 static int g_cso_idx_start_block = -1;
 static u8 g_ciso_block_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
-static u8 g_ciso_dec_buf[DAX_BLOCK_SIZE] __attribute__((aligned(64)));
+static u8 g_ciso_dec_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
 static u32 g_cso_idx_cache[CISO_IDX_MAX_ENTRIES];
 
 extern "C"{
@@ -18,9 +18,9 @@ extern "C"{
     int LZ4_decompress_fast(const char*, char*, int);
 }
 
-static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+static void decompress_dax0(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // use raw inflate with no NCarea check (DAX V0)
-    sctrlDeflateDecompress(dst, src, dst_len); // use raw inflate
+    sctrlDeflateDecompress(dst, src, DAX_COMP_BUF); // use raw inflate
 }
 
 static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 topbit){
@@ -87,7 +87,7 @@ Iso :: Iso(string path)
             uncompressed_size = dax_header->uncompressed_size;
             block_header = 2;
             align = 0;
-            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib;
+            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_dax0;
             break;
         case JSO_MAGIC:
             header_size = sizeof(JisoHeader);
@@ -287,30 +287,23 @@ int Iso::read_compressed_data(u8 *addr, u32 size, u32 offset)
     }
     
     // IO speedup tricks
-    {
-        // refresh index table if needed
-        u32 starting_block = o_offset / block_size;
-        u32 ending_block = o_offset+size;
-        if (ending_block%block_size == 0) ending_block = ending_block/block_size;
-        else ending_block = (ending_block/block_size)+1;
-        
-        if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
-            read_raw_data((u8*)g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
-            g_cso_idx_start_block = starting_block;
-        }
+    u32 starting_block = o_offset / block_size;
+    u32 ending_block = o_offset+size;
+    if (ending_block%block_size == 0) ending_block = ending_block/block_size;
+    else ending_block = (ending_block/block_size)+1;
+    
+    // refresh index table if needed
+    if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
+        read_raw_data((u8*)g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
+        g_cso_idx_start_block = starting_block;
+    }
 
-        // IO data call
-        u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
-        u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
-        u32 compressed_size = o_end - o_start;
-
-        if (size < compressed_size // compressed data is bigger than uncompressed data
-            || (ending_block == g_ciso_total_block-1 // trying to read last block of DAX file...
-                && header_size == sizeof(DAXHeader)) // we can't trust the value of compressed_size
-        ){
-            compressed_size = size-1;
-        }
-
+    // IO data call
+    u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
+    u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
+    u32 compressed_size = o_end-o_start;
+    if (size >= block_size*2){ // more than one block, do fast read
+        if (size < compressed_size) compressed_size = size-block_size;
         c_buf = top_addr - compressed_size;
         read_raw_data(c_buf, compressed_size, o_start);
     }
@@ -332,13 +325,22 @@ int Iso::read_compressed_data(u8 *addr, u32 size, u32 offset)
             // fix for last DAX block (you can't trust the value of b_size since there's no offset for last_block+1)
             b_size = DAX_COMP_BUF;
 
+        if (c_buf <= addr || c_buf+b_size > top_addr){
+            if (size >= block_size*2){ // don't read last block
+                compressed_size = o_end-b_offset;
+                if (size < compressed_size) compressed_size = size-block_size;
+                c_buf = top_addr - compressed_size;
+                read_raw_data(c_buf, compressed_size, b_offset);
+            }
+        }
+
         // read block, skipping header if needed
-        if (c_buf > addr && c_buf+b_size < top_addr){
-            memcpy(com_buf, c_buf+block_header, b_size-block_header); // fast read
+        if (c_buf > addr && c_buf+b_size <= top_addr){
+            memcpy(com_buf, c_buf+block_header, b_size); // fast read
             c_buf += b_size;
         }
         else{ // slow read
-            b_size = read_raw_data(com_buf, b_size-block_header, b_offset + block_header);
+            b_size = read_raw_data(com_buf, b_size, b_offset + block_header);
         }
 
         // decompress block

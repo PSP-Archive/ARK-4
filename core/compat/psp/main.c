@@ -30,6 +30,8 @@ ARKConfig* ark_config = &_ark_conf;
 extern void (*prevPluginHandler)(const char* path, int modid);
 extern void pluginHandler(const char* path, int modid);
 extern void PSPOnModuleStart(SceModule2 * mod);
+extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
+extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 
 // Flush Instruction and Data Cache
 void flushCache()
@@ -61,6 +63,8 @@ int module_start(SceSize args, void * argp)
     processArkConfig(ark_config);
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
+    // Register custom start module
+    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
     // Register plugin handler
     prevPluginHandler = sctrlHENSetPluginHandler(&pluginHandler);
     // Return Success

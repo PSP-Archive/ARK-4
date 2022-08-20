@@ -200,3 +200,6 @@
 #ifdef F_SystemCtrlForKernel_0064
     IMPORT_FUNC "SystemCtrlForKernel",0x99C088A5,sctrlExitToRecovery
 #endif
+#ifdef F_SystemCtrlForKernel_0065
+	IMPORT_FUNC "SystemCtrlForKernel",0x221400A6,sctrlSetStartModuleExtra
+#endif

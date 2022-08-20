@@ -156,6 +156,7 @@ int is_launcher_mode = 0;
 int use_mscache = 0;
 int use_highmem = 0;
 int oldplugin = 0;
+int skip_logos = 0;
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
@@ -197,6 +198,9 @@ void settingsHandler(char* path){
                 disable_PauseGame(); // disable pause feature to maintain stability
             }
         }
+    }
+    else if (strcasecmp(path, "skiplogos") == 0){
+        skip_logos = 1;
     }
     else if (strcasecmp(path, "region_jp") == 0){
         region_change = REGION_JAPAN;
@@ -267,6 +271,22 @@ void PSPOnModuleStart(SceModule2 * mod){
         prepatch_partitions();
         goto flush;
     }
+
+    if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
+		if (skip_logos){
+            // patch GameBoot
+            MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x00005630);
+        }
+        goto flush;
+	}
+
+    if(0 == strcmp(mod->modname, "game_plugin_module")) {
+		if (skip_logos) {
+		    _sw(JAL(mod->text_addr + 0x000194B0), mod->text_addr + 0x00019130);
+		    _sw(0x24040002, mod->text_addr + 0x00019130 + 4);
+	    }
+        goto flush;
+	}
     
     if (strcmp(mod->modname, "popsloader") == 0 || strcmp(mod->modname, "popscore") == 0){
         // fix for 6.60 check on 6.61
@@ -332,3 +352,31 @@ flush:
     if(previous) previous(mod);
 }
 
+int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
+int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
+
+    SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
+
+    if(skip_logos && mod != NULL && 0 == strcmp(mod->modname, "vsh_module")) {
+		u32* vshmain_args = oe_malloc(1024);
+
+		memset(vshmain_args, 0, 1024);
+
+		if(argp != NULL && argsize != 0 ) {
+			memcpy( vshmain_args , argp ,  argsize);
+		}
+
+		vshmain_args[0] = 1024;
+		vshmain_args[1] = 0x20;
+		vshmain_args[16] = 1;
+
+		int ret = sceKernelStartModule(modid, 1024, vshmain_args, modstatus, opt);
+		oe_free(vshmain_args);
+
+		return ret;
+	}
+
+    // forward to previous or default StartModule
+    if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
+    return -1;
+}

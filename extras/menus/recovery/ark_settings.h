@@ -29,6 +29,7 @@ typedef struct {
     unsigned char mscache;
     unsigned char infernocache;
     unsigned char oldplugin;
+    unsigned char skiplogos;
     unsigned char regionchange;
 }ArkConf;
 
@@ -177,6 +178,20 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
+} skiplogos = {
+    "Skip Sony logos in XMB.",
+    MAX_ARK_OPTIONS,
+    0,
+    &(ark_config.skiplogos),
+    ARK_OPTIONS
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
 } regionchange = {
     "UMD Region Change",
     4,
@@ -195,6 +210,7 @@ settings_entry* ark_conf_entries[] = {
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
     (settings_entry*)&oldplugin,
+    (settings_entry*)&skiplogos,
     (settings_entry*)&regionchange,
 };
 
@@ -258,6 +274,9 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "oldplugin") == 0){
         return &(ark_config.oldplugin);
+    }
+    else if (strcasecmp(conf.c_str(), "skiplogos") == 0){
+        return &(ark_config.skiplogos);
     }
     else if (strcasecmp(conf.c_str(), "region_jp") == 0){
         ark_config.regionchange = REGION_JAPAN;
@@ -338,6 +357,7 @@ void saveSettings(){
     output << processSetting("mscache", ark_config.mscache) << endl;
     output << processSetting("infernocache", ark_config.infernocache) << endl;
     output << processSetting("oldplugin", ark_config.oldplugin) << endl;
+    output << processSetting("skiplogos", ark_config.skiplogos) << endl;
     
     switch (ark_config.regionchange){
         case REGION_JAPAN:

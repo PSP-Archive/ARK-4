@@ -49,6 +49,7 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
 }
 
 // Boot Time Module Start Handler
+int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
 int stargateStartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
     // Fetch Module
@@ -78,7 +79,8 @@ int stargateStartModuleHandler(int modid, SceSize argsize, void * argp, int * mo
         strcpy((char*)import->libname, "sceUtility");
     }
     
-    // forward to default StartModule
+    // forward to previous or default StartModule
+    if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
     return -1;
 }
 
@@ -122,7 +124,7 @@ int module_start(SceSize args, void * argp)
     previous = sctrlHENSetStartModuleHandler(stargateSyspatchModuleOnStart);
     
     // Register Boot Start Module Handler
-    sctrlSetCustomStartModule(stargateStartModuleHandler);
+    prev_start = sctrlSetStartModuleExtra(stargateStartModuleHandler);
     
     // Flush Cache
     flushCache();

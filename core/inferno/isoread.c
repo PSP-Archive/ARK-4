@@ -174,13 +174,10 @@ static int get_nsector(void)
 }
 
 // 0x00000BB4
-//static int raw_calls = 0;
 static int read_raw_data(u8* addr, u32 size, u32 offset)
 {
     int ret, i;
     SceOff ofs;
-
-    //raw_calls++;
 
     i = 0;
 
@@ -261,9 +258,6 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     u8* dec_buf = g_ciso_dec_buf;
     u8* c_buf = NULL;
     u8* top_addr = addr+size;
-
-    //printf("reading %d bytes at %d\n", size, offset);
-    //raw_calls = 0;
     
     if(offset > uncompressed_size) {
         // return if the offset goes beyond the iso size
@@ -275,12 +269,12 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     }
     
     // IO speedup tricks
-    // refresh index table if needed
     u32 starting_block = o_offset / block_size;
     u32 ending_block = o_offset+size;
     if (ending_block%block_size == 0) ending_block = ending_block/block_size;
     else ending_block = (ending_block/block_size)+1;
     
+    // refresh index table if needed
     if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
         read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
         g_cso_idx_start_block = starting_block;
@@ -292,7 +286,6 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     u32 compressed_size = o_end-o_start;
     if (size >= block_size*2){ // more than one block, do fast read
         if (size < compressed_size) compressed_size = size-block_size;
-        if (header_size == sizeof(DAXHeader)) compressed_size = size-1;
         c_buf = top_addr - compressed_size;
         read_raw_data(c_buf, compressed_size, o_start);
     }
@@ -301,11 +294,6 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         // calculate block number and offset within block
         cur_block = offset / block_size;
         pos = offset & (block_size - 1);
-
-        if (cur_block >= g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES){
-            read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
-            g_cso_idx_start_block = starting_block;
-        }
         
         // read compressed block offset and size
         u32 b_offset = g_cso_idx_cache[cur_block-g_cso_idx_start_block];
@@ -323,7 +311,6 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
             if (size >= block_size*2){ // don't read last block
                 compressed_size = o_end-b_offset;
                 if (size < compressed_size) compressed_size = size-block_size;
-                if (header_size == sizeof(DAXHeader)) compressed_size = size-1;
                 c_buf = top_addr - compressed_size;
                 read_raw_data(c_buf, compressed_size, b_offset);
             }
@@ -361,9 +348,9 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     return res;
 }
 
-static void decompress_zlib(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+static void decompress_dax0(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // use raw inflate with no NCarea check (DAX V0)
-    sceKernelDeflateDecompress(dst, dst_len, src, 0);
+    sceKernelDeflateDecompress(dst, DAX_COMP_BUF, src, 0);
 }
 
 static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 topbit){
@@ -425,7 +412,7 @@ static int is_ciso(SceUID fd)
             block_header = 2; // skip over the zlib header (2 bytes)
             align = 0; // no alignment for DAX
             com_size = DAX_COMP_BUF;
-            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_zlib;
+            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_dax0;
         }
         else if (magic == JSO_MAGIC){
             JisoHeader* jiso_header = (JisoHeader*)&g_CISO_hdr;
@@ -450,12 +437,12 @@ static int is_ciso(SceUID fd)
         g_total_sectors = uncompressed_size / ISO_SECTOR_SIZE; // total number of DVD sectors (2K) in the original ISO.
         g_ciso_total_block = uncompressed_size / block_size;
         // lets use our own heap so that kram usage depends on game format (less heap needed for systemcontrol; better memory management)
-        heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, block_size + com_size + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
+        heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, (2*com_size) + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
         if (heapid<0){
             return -5;
         }
         // allocate buffer for decompressed block
-        g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, block_size+64);
+        g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, com_size+64);
         if(g_ciso_dec_buf == NULL) {
             return -2;
         }
