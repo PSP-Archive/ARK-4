@@ -103,7 +103,7 @@ static u8 *g_ciso_block_buf = NULL;
 static u8 *g_ciso_dec_buf = NULL;
 
 // 0x00002704
-static int g_CISO_cur_idx = 0;
+//static int g_CISO_cur_idx = 0;
 
 static u32 *g_cso_idx_cache = NULL;
 static int g_cso_idx_start_block = -1;
@@ -288,9 +288,10 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
 
     // IO data call
     u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
-    u32 compressed_size = 0;
-    if (size > block_size*2){ // more than one block, do fast read
-        compressed_size = size-block_size;
+    u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
+    u32 compressed_size = o_end-o_start;
+    if (size >= block_size*2){ // more than one block, do fast read
+        if (size < compressed_size) compressed_size = size-block_size;
         if (header_size == sizeof(DAXHeader)) compressed_size = size-1;
         c_buf = top_addr - compressed_size;
         read_raw_data(c_buf, compressed_size, o_start);
@@ -300,6 +301,11 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         // calculate block number and offset within block
         cur_block = offset / block_size;
         pos = offset & (block_size - 1);
+
+        if (cur_block >= g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES){
+            read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
+            g_cso_idx_start_block = starting_block;
+        }
         
         // read compressed block offset and size
         u32 b_offset = g_cso_idx_cache[cur_block-g_cso_idx_start_block];
@@ -313,9 +319,10 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
             // fix for last DAX block (you can't trust the value of b_size since there's no offset for last_block+1)
             b_size = DAX_COMP_BUF;
 
-        if (c_buf <= addr || c_buf+b_size >= top_addr){
-            if (size > block_size*2){ // don't read last block
-                compressed_size = size-block_size;
+        if (c_buf <= addr || c_buf+b_size > top_addr){
+            if (size >= block_size*2){ // don't read last block
+                compressed_size = o_end-b_offset;
+                if (size < compressed_size) compressed_size = size-block_size;
                 if (header_size == sizeof(DAXHeader)) compressed_size = size-1;
                 c_buf = top_addr - compressed_size;
                 read_raw_data(c_buf, compressed_size, b_offset);
@@ -323,7 +330,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         }
 
         // read block, skipping header if needed
-        if (c_buf > addr && c_buf+b_size < top_addr){
+        if (c_buf > addr && c_buf+b_size <= top_addr){
             memcpy(com_buf, c_buf+block_header, b_size); // fast read
             c_buf += b_size;
         }
@@ -346,7 +353,8 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
 
     /*
     if (raw_calls > 4){
-        printf("Got abnormal amount of IO calls (%d) when reading %d bytes at %d\n", raw_calls, res, o_offset);
+        //printf("Got abnormal amount of IO calls (%d) when reading %d bytes at %d\n", raw_calls, res, o_offset);
+        printf("read_compressed_data(buf, %d, %d); // %d calls\n", res, o_offset, raw_calls);
     }
     */
     
@@ -406,7 +414,7 @@ static int is_ciso(SceUID fd)
     u32 magic = g_CISO_hdr.magic;
 
     if(magic == CSO_MAGIC || magic == ZSO_MAGIC || magic == DAX_MAGIC || magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
-        g_CISO_cur_idx = -1;
+        //g_CISO_cur_idx = -1;
         u32 com_size = 0;
         // set reader and decompressor functions according to format
         if (magic == DAX_MAGIC){
