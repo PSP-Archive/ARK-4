@@ -104,7 +104,7 @@ int module_start(SceSize args, void * argp)
     // Hello Message
     printk("stargate started: compiled at %s %s\r\n", __DATE__, __TIME__);
     #endif
-    
+
     // work only on retail games
     int apitype = sceKernelInitApitype();
     if (apitype != 0x120 && apitype != 0x123 && apitype != 0x125) return;

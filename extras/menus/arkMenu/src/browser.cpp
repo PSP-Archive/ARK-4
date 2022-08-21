@@ -255,6 +255,7 @@ void Browser::drawScreen(){
         int y = yoffset-20;
         common::getImage(IMAGE_DIALOG)->draw_scale(x, y + (index*height), 5, height);
     }
+
     common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, 410, 230);
     
     if (entries->size() == 0){
@@ -318,15 +319,15 @@ void Browser::draw(){
     static int x, y, w, h;
     switch (animation){
     case -1:
-        if (w < 410 || h < 230){
+        if (w < 350 || h < 150){
             
             w += 50;
-            if (w > 410)
-                w = 410;
+            if (w > 350)
+                w = 350;
             
             h += 30;
-            if (h > 230)
-                h = 230;
+            if (h > 150)
+                h = 150;
 
             x = (480-w)/2;
             y = (272-h)/2;

@@ -45,44 +45,44 @@ ARKConfig* ark_config = &_ark_conf;
 int module_start(SceSize args, void * argp)
 {
 
-  #ifdef DEBUG
+    #ifdef DEBUG
     printkInit(NULL);
     printk("ARK SystemControl started.\r\n");
     // set LCD framebuffer in hardware reg so we can do color debbuging
     _sw(0x44000000, 0xBC800100);
     colorDebug(0xFF00);
-  #endif
-  
+    #endif
+
     // Apply Module Patches
     patchSystemMemoryManager();
     SceModule2* loadcore = patchLoaderCore();
     SceModule2* modman = patchModuleManager();
     SceModule2* intrman = patchInterruptMan();
     SceModule2* memlmd = patchMemlmd();
-    
+
     // Flush Cache
     flushCache();
-    
+
     // setup NID resolver on loadercore
     setupNidResolver(loadcore);
-    
+
     // Initialize Malloc
     oe_mallocinit();
-    
+
     // Initialize Module Start Patching
     syspatchInit();
-    
+
+    // Backup Reboot Buffer (including configuration)
+    backupRebootBuffer();
+
     #ifdef DEBUG
     // Register Default Exception Handler
     registerExceptionHandler(NULL, NULL);
     #endif
-    
-    // Backup Reboot Buffer (including configuration)
-    backupRebootBuffer();
-    
+
     // Flush Cache
     flushCache();
-    
+
     // Return Success
     return 0;
 }

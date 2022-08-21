@@ -308,9 +308,6 @@ static inline void set_gp(u32 gp)
 
 int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2)
 {
-    SceModule2 *mod;
-    u32 text_addr, intr;
-
     if(0 != g_0000279C)
     {
         return 0x8001000C;
@@ -321,33 +318,37 @@ int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2)
     g_000027A0 = a2;
     g_00002798 = (void*)a1;
     
-    mod = (SceModule2*)sceKernelFindModuleByName("sceIsofs_driver");
-    text_addr = mod->text_addr;
-    intr = LI_V0(0);
 
-    int patches = 4;
-    u32 top_addr = text_addr+mod->text_size;
-    for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
-        u32 data = _lw(addr);
-        if (data == 0x86430048){
-            _sw(intr, addr-16);
-            patches--;
+    static int patched = 0;
+    if (!patched){
+        SceModule2* mod = (SceModule2*)sceKernelFindModuleByName("sceIsofs_driver");
+        u32 text_addr = mod->text_addr;
+        u32 intr = LI_V0(0);
+
+        int patches = 4;
+        u32 top_addr = text_addr+mod->text_size;
+        for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
+            u32 data = _lw(addr);
+            if (data == 0x86430048){
+                _sw(intr, addr-16);
+                patches--;
+            }
+            else if (data == 0x3C147FDE){
+                _sw(intr, addr+8);
+                patches--;
+            }
+            else if (data == 0x8D240018){
+                _sw(intr, addr+4);
+                patches--;
+            }
+            else if (data == 0x34C30016){
+                _sw(intr, addr-16);
+                patches--;
+            }
         }
-        else if (data == 0x3C147FDE){
-            _sw(intr, addr+8);
-            patches--;
-        }
-        else if (data == 0x8D240018){
-            _sw(intr, addr+4);
-            patches--;
-        }
-        else if (data == 0x34C30016){
-            _sw(intr, addr-16);
-            patches--;
-        }
+        patched = 1;
+        flushCache();
     }
-
-    flushCache();
 
     if(0 == g_00002798)
     {

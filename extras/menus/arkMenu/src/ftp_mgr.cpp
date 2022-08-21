@@ -36,15 +36,15 @@ void FTPManager::draw(){
 
     switch (animation){
     case -1:
-        if (w < 450 || h < 235){
+        if (w < 400 || h < 200){
             
             w += 50;
-            if (w > 450)
-                w = 450;
+            if (w > 400)
+                w = 400;
             
             h += 30;
-            if (h > 235)
-                h = 235;
+            if (h > 200)
+                h = 200;
 
             x = (480-w)/2;
             y = (272-h)/2;

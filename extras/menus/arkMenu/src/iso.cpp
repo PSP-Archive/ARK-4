@@ -3,7 +3,7 @@
 
 using namespace std;
 
-#define CISO_IDX_MAX_ENTRIES 4096
+#define CISO_IDX_MAX_ENTRIES 512
 
 static int g_ciso_total_block;
 static int g_cso_idx_start_block = -1;
@@ -300,7 +300,12 @@ int Iso::read_compressed_data(u8 *addr, u32 size, u32 offset)
 
     // IO data call
     u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
-    u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
+    u32 o_end;
+    if (ending_block+1 < g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES)
+        o_end = g_cso_idx_cache[ending_block-g_cso_idx_start_block+1];
+    else
+        read_raw_data((u8*)&o_end, sizeof(u32), (ending_block+1)*sizeof(u32)+header_size);
+    o_end = (o_end&0x7FFFFFFF)<<align;
     u32 compressed_size = o_end-o_start;
     if (size >= block_size*2){ // more than one block, do fast read
         if (size < compressed_size) compressed_size = size-block_size;
@@ -312,6 +317,11 @@ int Iso::read_compressed_data(u8 *addr, u32 size, u32 offset)
         // calculate block number and offset within block
         cur_block = offset / block_size;
         pos = offset & (block_size - 1);
+
+        if (cur_block >= g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES){
+            read_raw_data((u8*)g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
+            g_cso_idx_start_block = starting_block;
+        }
         
         // read compressed block offset and size
         u32 b_offset = g_cso_idx_cache[cur_block-g_cso_idx_start_block];

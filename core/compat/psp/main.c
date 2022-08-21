@@ -54,7 +54,6 @@ void processArkConfig(ARKConfig* ark_config){
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
-
     // get firmware version
     psp_fw_version = sceKernelDevkitVersion();
     // get psp model
