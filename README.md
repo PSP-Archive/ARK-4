@@ -151,19 +151,11 @@ Some noteworthy plugins that are compatible with ARK include (but not limited to
 <p>
 
 You can create a SETTINGS.TXT file using the same format as PLUGINS.TXT to enable/disable some CFW functionality on different parts of the system.
-For example, you can overclock to highest CPU speed like this:
-- always, overclock, on
-
-Another example, overclock only on games, use powersaving on VSH:
-- game, overclock, on
-- vsh, powersave, on
-
-You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
-Configuration settings for ARK:
+Configuration settings you can use in ARK include:
 
 - `overclock`: use this for better performance at the expense of battery time. Sets CPU/BUS speed to 333/166.
 - `powersave`: use this for better battery life at the expense of performance. Sets CPU/BUS speed to 133/66.
-- `usbcharge`: enables USB charging whereever you want.
+- `usbcharge`: enables USB charging wherever you want.
 - `launcher`: replaces the XMB with a custom menu launcher.
 - `disablepause`: disables the pause game feature on PSP Go.
 - `highmem`: enables high memory on models above 1K.
@@ -171,7 +163,18 @@ Configuration settings for ARK:
  and this can cause issues with cheat devices or other plugins that expect games to have their data at specific memory addresses.
  - `infernocache`: enables cache for Inferno driver, improving performance of some games.
  - `oldplugin`: enables old plugins support on PSP Go (redirects `ms0` to `ef0`).
-- NOTE: You should use the recovery menu to handle settings easier.
+ - `skiplogos`: skips the coldboot and gameboot logos.
+
+However, you should use the `recovery menu` to handle settings easier.
+
+You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
+
+For example, you can overclock to highest CPU speed like this:
+- always, overclock, on
+
+Another example, overclock only on games, use powersaving on VSH:
+- game, overclock, on
+- vsh, powersave, on
 
 </p>
 </details>
