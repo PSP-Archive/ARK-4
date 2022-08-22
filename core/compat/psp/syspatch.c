@@ -157,14 +157,15 @@ int use_mscache = 0;
 int use_highmem = 0;
 int oldplugin = 0;
 int skip_logos = 0;
+int clock = 0;
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
-        SetSpeed(333, 166);
+        clock = 1;
     }
     else if (strcasecmp(path, "powersave") == 0){ // underclock to save battery
         if (apitype != 0x144 && apitype != 0x155) // prevent operation in pops
-            SetSpeed(133, 66);
+            clock = 2;
     }
     else if (strcasecmp(path, "usbcharge") == 0){
         usb_charge(); // enable usb charging
@@ -333,11 +334,17 @@ void PSPOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
+            // handle mscache
             if (use_mscache){
                 if (psp_model == PSP_GO)
                     msstorCacheInit("eflash0a0f1p", 8 * 1024);
                 else
                     msstorCacheInit("msstor0p", 16 * 1024);
+            }
+            // handle CPU speed
+            switch (clock){
+                case 1: SetSpeed(333, 166); break;
+                case 2: SetSpeed(133, 66); break;
             }
             // Boot Complete Action done
             booted = 1;
