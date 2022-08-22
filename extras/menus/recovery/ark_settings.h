@@ -179,7 +179,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } skiplogos = {
-    "Skip Sony logos in XMB.",
+    "Skip Sony logos in XMB",
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.skiplogos),
