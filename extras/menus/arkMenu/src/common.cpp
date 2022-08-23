@@ -120,6 +120,8 @@ void common::resetConf(){
     config.swap_buttons = 0;
     config.animation = 0;
     config.main_menu = 0;
+    config.sort_entries = 1;
+    config.show_recovery = 1;
 }
 
 void common::launchRecovery(){

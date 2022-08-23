@@ -152,6 +152,20 @@ static struct {
     {"Disabled", "Enabled"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[9];
+} recovery_menu = {
+    "Show Recovery Menu",
+    2,
+    0,
+    &(common::getConf()->show_recovery),
+    {"Disabled", "Enabled"}
+};
+
 settings_entry* settings_entries[] = {
     (settings_entry*)&fast_gameboot,
     (settings_entry*)&language,
@@ -162,6 +176,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&animations,
     (settings_entry*)&main_menu,
     (settings_entry*)&sort_entries,
+    (settings_entry*)&recovery_menu,
 };
 
-#define MAX_SETTINGS_OPTIONS 9
+#define MAX_SETTINGS_OPTIONS 10

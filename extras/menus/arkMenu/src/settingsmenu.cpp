@@ -83,6 +83,7 @@ void SettingsMenu::draw(){
         
             if (max_options > PAGE_SIZE){
                 int height = max_height/max_options;
+                common::getImage(IMAGE_DIALOG)->draw_scale(x-8, y, 1, max_options*height);
                 common::getImage(IMAGE_DIALOG)->draw_scale(x-10, y + (index*height), 5, height);
             }
         
@@ -91,7 +92,7 @@ void SettingsMenu::draw(){
             else
                 common::printText(x+40, y+15, ark_version.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
         
-            int yoffset = y+30;
+            int yoffset = y+40;
             int xoffset = x+10;
         
             for (int i=start; i<min(start+PAGE_SIZE, max_options); i++){

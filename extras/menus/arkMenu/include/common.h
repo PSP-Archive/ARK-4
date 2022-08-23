@@ -69,6 +69,7 @@ typedef struct {
     unsigned char animation; // the background animation of the menu
     unsigned char main_menu; // default menu opened at startup (game by default)
     unsigned char sort_entries; // sort entries by name
+    unsigned char show_recovery; // show recovery menu entry
 } t_conf;
 
 extern "C" {

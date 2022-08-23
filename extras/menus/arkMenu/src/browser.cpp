@@ -40,7 +40,7 @@ static const struct {
     {10, 140, "Paste"},
     {10, 160, "Delete"},
     {10, 180, "Rename"},
-    {10, 200, "New Dir"},
+    {10, 200, "New Folder"},
     {10, 220, "Go to ms0:/"},
     {10, 240, "Go to ef0:/"},
     {10, 260, "Go to ftp:/"}
@@ -272,8 +272,9 @@ void Browser::drawScreen(){
     if (moving && entries->size() > 0){
         int height = 230/entries->size();
         int x = xoffset-65;
-        int y = yoffset-20;
-        common::getImage(IMAGE_DIALOG)->draw_scale(x, y + (index*height), 5, height);
+        int y = yoffset-13;
+        common::getImage(IMAGE_DIALOG)->draw_scale(x+2, y, 1, height*entries->size());
+        common::getImage(IMAGE_DIALOG)->draw_scale(x, y + index*height, 5, height);
     }
 
     common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, 410, 230);
@@ -903,7 +904,7 @@ void Browser::removeSelection(){
 void Browser::makedir(){
     SystemMgr::pauseDraw();
     OSK osk;
-    osk.init("Name of new directory", "new dir", 50);
+    osk.init("Name of new folder", "new folder", 50);
     osk.loop();
     if(osk.getResult() != OSK_CANCEL)
     {

@@ -146,13 +146,15 @@ void GameManager::findEntries(){
     }
 
     // add recovery menu
-    char cwd[128];
-    getcwd((char*)cwd, sizeof(cwd));
-    string recovery_path = string(cwd) + "/" + "RECOVERY.PBP";
-    if (common::fileExists(recovery_path)){
-        Eboot* recovery_menu = new Eboot(recovery_path);
-        recovery_menu->setName("Recovery Menu");
-        this->categories[HOMEBREW]->getVector()->insert(this->categories[HOMEBREW]->getVector()->begin(), recovery_menu);
+    if (common::getConf()->show_recovery){
+        char cwd[128];
+        getcwd((char*)cwd, sizeof(cwd));
+        string recovery_path = string(cwd) + "/" + "RECOVERY.PBP";
+        if (common::fileExists(recovery_path)){
+            Eboot* recovery_menu = new Eboot(recovery_path);
+            recovery_menu->setName("Recovery Menu");
+            this->categories[HOMEBREW]->getVector()->insert(this->categories[HOMEBREW]->getVector()->begin(), recovery_menu);
+        }
     }
 
     // find the first category with entries
