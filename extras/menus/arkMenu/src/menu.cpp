@@ -104,6 +104,14 @@ void Menu::draw(bool selected){
     int xoffset = ((int)this->type)*144 + ((int)this->type+1)*10 + 5;
     int yoffset = 20;
     int curentry_yoffset = 0;
+
+    if (selected && fastScrolling){
+        int height = 240/entries->size();
+        int x = xoffset-7;
+        int y = yoffset+10;
+        common::getImage(IMAGE_DIALOG)->draw_scale(x+2, y, 1, height*entries->size());
+        common::getImage(IMAGE_DIALOG)->draw_scale(x, y + index*height, 5, height);
+    }
     
     float anim = 0.0f;
     if (animState >= 1.0f){
