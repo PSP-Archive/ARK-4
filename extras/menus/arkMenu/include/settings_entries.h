@@ -138,6 +138,20 @@ static struct {
     {"Games", "Files"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[9];
+} sort_entries = {
+    "Sort Entries by Name",
+    2,
+    0,
+    &(common::getConf()->sort_entries),
+    {"Disabled", "Enabled"}
+};
+
 settings_entry* settings_entries[] = {
     (settings_entry*)&fast_gameboot,
     (settings_entry*)&language,
@@ -147,6 +161,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&swap_buttons,
     (settings_entry*)&animations,
     (settings_entry*)&main_menu,
+    (settings_entry*)&sort_entries,
 };
 
-#define MAX_SETTINGS_OPTIONS 8
+#define MAX_SETTINGS_OPTIONS 9

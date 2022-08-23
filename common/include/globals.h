@@ -45,7 +45,7 @@
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 18
-#define ARK_MICRO_VERSION 9
+#define ARK_MICRO_VERSION 10
 #define PRO_VERSION 0x4000 // identify as ARK
 
 /*

@@ -1,4 +1,5 @@
 #include <cstring>
+#include <algorithm>
 #include "ftp_driver.h"
 #include "osk.h"
 #include "network.h"
@@ -129,6 +130,26 @@ vector<Entry*> FTPDriver::listDirectory(string path){
         }
     }
     
+    if (common::getConf()->sort_entries){
+
+        BrowserFolder* dot = NULL;
+        BrowserFolder* dotdot = NULL;
+        if (folders[0]->getName() == "./"){
+            dot = folders[0];
+            folders.erase(folders.begin());
+        }
+        if (folders[0]->getName() == "../"){
+            dotdot = folders[0];
+            folders.erase(folders.begin());
+        }
+
+        std::sort(folders.begin(), folders.end(), Entry::cmpEntriesForSort);
+        std::sort(files.begin(), files.end(), Entry::cmpEntriesForSort);
+
+        if (dotdot) folders.insert(folders.begin(), dotdot);
+        if (dot) folders.insert(folders.begin(), dot);
+    }
+
     ret.push_back(new BrowserFolder("ftp:/<refresh>"));
     ret.push_back(new BrowserFolder("ftp:/<disconnect>"));
     

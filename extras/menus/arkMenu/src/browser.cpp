@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <sstream>
 #include <dirent.h>
-
+#include <algorithm>
 #include <pspiofilemgr.h>
 
 #include "browser.h"
@@ -227,6 +227,26 @@ void Browser::refreshDirs(){
             folders.push_back(new Folder(string(this->cwd)+string(dit->d_name)+"/"));
     }
     closedir(dir);
+
+    if (common::getConf()->sort_entries){
+
+        Entry* dot = NULL;
+        Entry* dotdot = NULL;
+        if (folders[0]->getName() == "./"){
+            dot = folders[0];
+            folders.erase(folders.begin());
+        }
+        if (folders[0]->getName() == "../"){
+            dotdot = folders[0];
+            folders.erase(folders.begin());
+        }
+
+        std::sort(folders.begin(), folders.end(), Entry::cmpEntriesForSort);
+        std::sort(files.begin(), files.end(), Entry::cmpEntriesForSort);
+
+        if (dotdot) folders.insert(folders.begin(), dotdot);
+        if (dot) folders.insert(folders.begin(), dot);
+    }
     
     SystemMgr::pauseDraw();
     for (int i=0; i<folders.size(); i++)

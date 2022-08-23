@@ -68,6 +68,7 @@ typedef struct {
     unsigned char swap_buttons; // whether to swap Cross and Circle
     unsigned char animation; // the background animation of the menu
     unsigned char main_menu; // default menu opened at startup (game by default)
+    unsigned char sort_entries; // sort entries by name
 } t_conf;
 
 extern "C" {

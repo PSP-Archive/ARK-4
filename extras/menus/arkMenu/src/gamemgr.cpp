@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include <unistd.h>
+#include <algorithm>
 #include "system_mgr.h"
 #include "gamemgr.h"
 #include "osk.h"
@@ -124,16 +125,6 @@ void GameManager::findEntries(){
     this->categories[1]->clearEntries();
     this->categories[2]->clearEntries();
     
-    // add recovery menu
-    char cwd[128];
-    getcwd((char*)cwd, sizeof(cwd));
-    string recovery_path = string(cwd) + "/" + "RECOVERY.PBP";
-    if (common::fileExists(recovery_path)){
-        Eboot* recovery_menu = new Eboot(recovery_path);
-        recovery_menu->setName("Recovery Menu");
-        this->categories[HOMEBREW]->addEntry(recovery_menu);
-    }
-    
     // scan eboots
     this->findEboots("ms0:/PSP/VHBL/");
     this->findEboots("ms0:/PSP/APPS/");
@@ -147,8 +138,25 @@ void GameManager::findEntries(){
         this->findSaveEntries("ms0:/PSP/SAVEDATA/");
         if (!ms_is_ef) this->findSaveEntries("ef0:/PSP/SAVEDATA/");
     }
-    this->selectedCategory = -2;
+
+    if (common::getConf()->sort_entries){
+        std::sort(this->categories[0]->getVector()->begin(), this->categories[0]->getVector()->end(), Entry::cmpEntriesForSort);
+        std::sort(this->categories[1]->getVector()->begin(), this->categories[1]->getVector()->end(), Entry::cmpEntriesForSort);
+        std::sort(this->categories[2]->getVector()->begin(), this->categories[2]->getVector()->end(), Entry::cmpEntriesForSort);
+    }
+
+    // add recovery menu
+    char cwd[128];
+    getcwd((char*)cwd, sizeof(cwd));
+    string recovery_path = string(cwd) + "/" + "RECOVERY.PBP";
+    if (common::fileExists(recovery_path)){
+        Eboot* recovery_menu = new Eboot(recovery_path);
+        recovery_menu->setName("Recovery Menu");
+        this->categories[HOMEBREW]->getVector()->insert(this->categories[HOMEBREW]->getVector()->begin(), recovery_menu);
+    }
+
     // find the first category with entries
+    this->selectedCategory = -2;
     for (int i=0; i<MAX_CATEGORIES && selectedCategory < 0; i++){
         if (!this->categories[i]->empty())
             this->selectedCategory = i;

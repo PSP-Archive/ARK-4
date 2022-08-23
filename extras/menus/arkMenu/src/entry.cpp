@@ -1,5 +1,5 @@
+#include <cstring>
 #include "entry.h"
-
 #include "eboot.h"
 #include "iso.h"
 #include "sprites.h"
@@ -156,4 +156,8 @@ bool Entry::isRar(const char* path){
 }
 
 Entry::~Entry(){
+}
+
+bool Entry::cmpEntriesForSort (Entry* i, Entry* j) {
+    return (strcasecmp(i->getName().c_str(), j->getName().c_str())<0);
 }
