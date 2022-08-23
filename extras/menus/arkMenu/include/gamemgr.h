@@ -108,6 +108,7 @@ class GameManager : public SystemEntry{
                 this->maxDraw = i;
                 sceKernelDelayThread(60000);
             }
+            if (selectedCategory == -2) selectedCategory = -1;
             resumeIcons();
         }
         
