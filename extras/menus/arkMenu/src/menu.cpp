@@ -36,8 +36,8 @@ void Menu::freeIcons(){
 }
 
 bool Menu::checkIconsNeeded(bool isSelected){
-    int umbral = (isSelected)? 2 : 5;
-    for (int i = max(this->threadIndex-umbral, 0); i < min((int)this->getVectorSize(), this->threadIndex+umbral+1); i++){
+    int threshold = (isSelected)? 2 : 5;
+    for (int i = max(this->threadIndex-threshold, 0); i < min((int)this->getVectorSize(), this->threadIndex+threshold+1); i++){
         if (this->getEntry(i)->getIcon() == common::getImage(IMAGE_WAITICON))
             return true;
     }
