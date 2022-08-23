@@ -285,7 +285,7 @@ int Iso::read_compressed_data(u8 *addr, u32 size, u32 offset)
         // adjust size if it tries to read beyond the game data
         size = uncompressed_size - offset;
     }
-    
+
     // IO speedup tricks
     u32 starting_block = o_offset / block_size;
     u32 ending_block = o_offset+size;
@@ -294,22 +294,24 @@ int Iso::read_compressed_data(u8 *addr, u32 size, u32 offset)
     
     // refresh index table if needed
     if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
-        read_raw_data((u8*)g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
+        read_raw_data((u8*)g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * sizeof(u32) + header_size);
         g_cso_idx_start_block = starting_block;
     }
 
-    // IO data call
+    // Calculate total size of compressed data
     u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
     u32 o_end;
     if (ending_block+1 < g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES)
         o_end = g_cso_idx_cache[ending_block-g_cso_idx_start_block+1];
-    else
+    else // last block index is off the cache, read it from IO (this depends on the size of the cache)
         read_raw_data((u8*)&o_end, sizeof(u32), (ending_block+1)*sizeof(u32)+header_size);
     o_end = (o_end&0x7FFFFFFF)<<align;
     u32 compressed_size = o_end-o_start;
-    if (size >= block_size*2){ // more than one block, do fast read
-        if (size < compressed_size) compressed_size = size-block_size;
-        c_buf = top_addr - compressed_size;
+
+    // try to read at once as much compressed data as possible
+    if (size >= block_size*2){ // only if going to read more than two blocks
+        if (size < compressed_size) compressed_size = size-block_size; // adjust chunk size if compressed data is bigger than uncompressed
+        c_buf = top_addr - compressed_size; // read into the end of the user buffer
         read_raw_data(c_buf, compressed_size, o_start);
     }
 
@@ -318,9 +320,10 @@ int Iso::read_compressed_data(u8 *addr, u32 size, u32 offset)
         cur_block = offset / block_size;
         pos = offset & (block_size - 1);
 
-        if (cur_block >= g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES){
-            read_raw_data((u8*)g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
-            g_cso_idx_start_block = starting_block;
+        // check if we need to refresh index table
+        if (cur_block >= g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES-1){
+            read_raw_data((u8*)g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), cur_block * 4 + header_size);
+            g_cso_idx_start_block = cur_block;
         }
         
         // read compressed block offset and size
@@ -335,11 +338,12 @@ int Iso::read_compressed_data(u8 *addr, u32 size, u32 offset)
             // fix for last DAX block (you can't trust the value of b_size since there's no offset for last_block+1)
             b_size = DAX_COMP_BUF;
 
+        // check if we need to (and can) read another chunk of data
         if (c_buf <= addr || c_buf+b_size > top_addr){
-            if (size >= block_size*2){ // don't read last block
-                compressed_size = o_end-b_offset;
-                if (size < compressed_size) compressed_size = size-block_size;
-                c_buf = top_addr - compressed_size;
+            if (size >= block_size*2){ // only if more than two blocks left, otherwise just use normal reading
+                compressed_size = o_end-b_offset; // recalculate remaining compressed data
+                if (size < compressed_size) compressed_size = size-block_size; // adjust if bigger than uncompressed
+                c_buf = top_addr - compressed_size; // read into the end of the user buffer
                 read_raw_data(c_buf, compressed_size, b_offset);
             }
         }

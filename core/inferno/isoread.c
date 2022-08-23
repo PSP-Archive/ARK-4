@@ -277,7 +277,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     
     // refresh index table if needed
     if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
-        read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
+        read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * sizeof(u32) + header_size);
         g_cso_idx_start_block = starting_block;
     }
 
@@ -304,9 +304,9 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         pos = offset & (block_size - 1);
 
         // check if we need to refresh index table
-        if (cur_block >= g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES){
-            read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
-            g_cso_idx_start_block = starting_block;
+        if (cur_block >= g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES-1){
+            read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), cur_block * 4 + header_size);
+            g_cso_idx_start_block = cur_block;
         }
         
         // read compressed block offset and size
