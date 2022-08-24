@@ -151,10 +151,14 @@ void Menu::draw(bool selected){
             scale = 0.75f;
     }
 
-    for (int i=this->index-2; yoffset<272 && i >= this->getVectorSize(); i++){
+    for (int i=this->index-2; yoffset<272; i++){
         if (i < 0){
             yoffset+=40;
             continue;
+        }
+
+        if (i >= this->getVectorSize()){
+            break;
         }
             
         if (selected && i == this->index){
