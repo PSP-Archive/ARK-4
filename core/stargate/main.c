@@ -45,6 +45,9 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
     
     // Patch LoadModule Function
     patchLoadModuleFuncs(mod);
+
+    // Patch CFW dirs
+    hide_cfw_folder(mod);
     
 }
 

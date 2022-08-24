@@ -181,6 +181,7 @@ void Menu::draw(bool selected){
             }
         }
     }
+
     if (selected){
         int height = getEntry(this->index)->getIcon()->getTexture()->height;
         if (height != 80)
@@ -191,8 +192,7 @@ void Menu::draw(bool selected){
         }
         else {
             getEntry(this->index)->getIcon()->draw(xoffset+5, curentry_yoffset+5+anim*40);
-        }
-        
+        }   
     }
 }
 
