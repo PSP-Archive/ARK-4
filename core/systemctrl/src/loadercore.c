@@ -238,23 +238,17 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
 // sceKernelStartModule Hook
 int patch_sceKernelStartModule_in_bootstart(int (* bootstart)(SceSize, void *), void * argp)
 {
-    
-    static int patched = 0;
-    if (!patched){
-        u32 StartModule = JUMP(sctrlHENFindFunction("sceModuleManager", "ModuleMgrForUser", 0x50F0C1EC));
-        u32 addr = (u32)bootstart;
-        int patches = 1;
-        for (;patches; addr+=4){
-            if (_lw(addr) == StartModule){
-                // Replace Stub
-                _sw(JUMP(InitKernelStartModule), addr);
-                _sw(NOP, addr + 4);
-                patches--;
-            }
+    u32 StartModule = JUMP(sctrlHENFindFunction("sceModuleManager", "ModuleMgrForUser", 0x50F0C1EC));
+    u32 addr = (u32)bootstart;
+    int patches = 1;
+    for (;patches; addr+=4){
+        if (_lw(addr) == StartModule){
+            // Replace Stub
+            _sw(JUMP(InitKernelStartModule), addr);
+            _sw(NOP, addr + 4);
+            patches--;
         }
-        patched = 1;
     }
-    
     // Passthrough
     return bootstart(4, argp);
 }
