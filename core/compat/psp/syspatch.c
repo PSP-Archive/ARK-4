@@ -238,6 +238,7 @@ void pluginHandler(const char* path, int modid){
 	if (prevPluginHandler) prevPluginHandler(path, modid);
 }
 
+
 void PSPOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
@@ -265,6 +266,15 @@ void PSPOnModuleStart(SceModule2 * mod){
     
     if(strcmp(mod->modname, "sceMediaSync") == 0) {
         processSettings();
+        int apitype = sceKernelInitApitype();
+        if(!use_highmem && (apitype == 0x141 || apitype == 0x152) ){
+            int paramsize=4;
+            sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem);
+            if (use_highmem){
+                patch_partitions();
+                disable_PauseGame();
+            }
+        }
         goto flush;
     }
     

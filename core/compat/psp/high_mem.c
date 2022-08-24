@@ -27,6 +27,26 @@
 #include "systemctrl.h"
 #include "sysmem.h"
 
+typedef struct  __attribute__((packed))
+{
+	u32 signature;
+	u32 version;
+	u32 fields_table_offs;
+	u32 values_table_offs;
+	int nitems;
+} SFOHeader;
+
+typedef struct __attribute__((packed))
+{
+	u16 field_offs;
+	u8  unk;
+	u8  type; // 0x2 -> string, 0x4 -> number
+	u32 unk2;
+	u32 unk3;
+	u16 val_offs;
+	u16 unk4;
+} SFODir;
+
 typedef struct _MemPart {
     u32 *meminfo;
     int offset;
