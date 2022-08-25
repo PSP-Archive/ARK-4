@@ -45,26 +45,22 @@ static const u32 cpu_nid_list[] = {
 
 void SetSpeed(int cpu, int bus)
 {
-	{
-		scePowerSetClockFrequency_k = sctrlHENFindFunction("scePower_Service", "scePower", 0x737486F2); //scePowerSetClockFrequency
-		scePowerSetClockFrequency_k(cpu, cpu, bus);
+    scePowerSetClockFrequency_k = sctrlHENFindFunction("scePower_Service", "scePower", 0x737486F2); //scePowerSetClockFrequency
+    scePowerSetClockFrequency_k(cpu, cpu, bus);
 
-		int apitype = sceKernelInitApitype();
-		if(apitype ==  0x210 || apitype ==  0x220) {
-            hookImportByNID(sceKernelFindModuleByName("vsh_module"), "scePower", 0x469989AD, NULL);
+    int apitype = sceKernelInitApitype();
+    if(apitype ==  0x210 || apitype ==  0x220) {
+        hookImportByNID(sceKernelFindModuleByName("vsh_module"), "scePower", 0x469989AD, NULL);
+    }
+    else {
+        MAKE_DUMMY_FUNCTION_RETURN_0((u32)scePowerSetClockFrequency_k);
+
+        for(int i=0;i<sizeof(cpu_nid_list)/sizeof(u32);i++)
+        {
+            u32 patch_addr = sctrlHENFindFunction("scePower_Service", "scePower", cpu_nid_list[i]);
+            MAKE_DUMMY_FUNCTION_RETURN_0( patch_addr );
         }
-		else {
-			MAKE_DUMMY_FUNCTION_RETURN_0((u32)scePowerSetClockFrequency_k);
 
-			int i;
-			for(i=0;i<sizeof(cpu_nid_list)/sizeof(u32);i++)
-			{
-				u32 patch_addr = sctrlHENFindFunction("scePower_Service", "scePower", cpu_nid_list[i]);
-				MAKE_DUMMY_FUNCTION_RETURN_0( patch_addr );
-			}
-
-			flushCache();
-		}
-	}
-
+        flushCache();
+    }
 }
