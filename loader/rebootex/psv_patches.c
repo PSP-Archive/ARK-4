@@ -48,13 +48,13 @@ int UnpackBootConfigVita(char **p_buffer, int length){
     return res;
 }
 
-//16 MB extra ram through p11 on Vita
+//extra ram through flash0 ramfs on Vita
 void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *table)
 {
     // Add flash0 ramfs as partition 11
     SetMemoryPartitionTable(sysmem_config, table);
-    table->extVshell.addr = FLASH_SONY; // flash0 ramfs
-    table->extVshell.size = VITA_EXTRA_RAM; // 12MiB
+    table->extVshell.addr = 0x0B000000; //FLASH_SONY; // flash0 ramfs
+    table->extVshell.size = VITA_FLASH_SIZE; // 16MiB
 }
 
 int PatchSysMem(void *a0, void *sysmem_config)
@@ -70,10 +70,10 @@ int PatchSysMem(void *a0, void *sysmem_config)
             SetMemoryPartitionTable = K_EXTRACT_CALL(addr-20);
             _sw(JAL(SetMemoryPartitionTablePatched), addr-20);
             patches--;
+            break;
         }
-        else if (data == 0x2405000C && (_lw(addr + 8) == 0x00608821)) {
-            // Change attribute to 0xF (user accessible)
-            _sh(0xF, addr);
+        else if (data == 0x8E86004C){
+            _sw(0x2405000F, addr+16);
             patches--;
         }
     }

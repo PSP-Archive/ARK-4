@@ -105,13 +105,13 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
-
     // Boot Complete Action not done yet
     if(booted == 0)
     {
         // Boot is complete
         if(isSystemBooted())
         {
+
             // Allow exiting through key combo
             patchController();
             

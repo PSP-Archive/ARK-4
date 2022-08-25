@@ -110,7 +110,12 @@ int module_start(SceSize args, void * argp)
 
     // work only on retail games
     int apitype = sceKernelInitApitype();
-    if (apitype != 0x120 && apitype != 0x123 && apitype != 0x125) return;
+    if (
+        apitype != 0x120 &&
+        apitype != 0x123 &&
+        apitype != 0x125 &&
+        apitype > 0x115
+    ) return;
 
     patch_sceMesgLed();
 

@@ -2,11 +2,6 @@
 
 static int pid = -1;
 
-int prevent_highmem(){
-    int apitype = sceKernelInitApitype(); // prevent in pops and vsh(?)
-    return (apitype == 0x144 || apitype == 0x155 || apitype ==  0x210 || apitype ==  0x220);
-}
-
 void unprotectVitaMem(){
     // unprotect from user access
     u32 *prot = (u32 *)0xBC000040;
@@ -17,7 +12,8 @@ void unprotectVitaMem(){
 // use flash0 RAM for user apps
 void unlockVitaMemory(){
 
-    if (prevent_highmem()) return;
+    int apitype = sceKernelInitApitype(); // prevent in pops and vsh(?)
+    if (apitype == 0x144 || apitype == 0x155 || apitype ==  0x210 || apitype ==  0x220) return;
 
     // apply partition info
     SysMemPartition *(* GetPartition)(int partition) = NULL;
@@ -36,7 +32,9 @@ void unlockVitaMemory(){
         return;
     }
 
-    u32 user_size = USER_SIZE + VITA_EXTRA_RAM;
+
+
+    u32 user_size = USER_SIZE + VITA_FLASH_SIZE;
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
     partition->size = user_size;
     partition->data->size = (((user_size >> 8) << 9) | 0xFC);
@@ -46,5 +44,5 @@ void unlockVitaMemory(){
     partition->address = 0x88800000 + user_size;
     partition->data->size = 0xFC;
     
-    sctrlHENSetMemory(30, 0);
+    sctrlHENSetMemory(user_size/1024/1024, 0);
 }

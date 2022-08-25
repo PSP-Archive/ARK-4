@@ -45,7 +45,7 @@
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 18
-#define ARK_MICRO_VERSION 11
+#define ARK_MICRO_VERSION 12
 #define PRO_VERSION 0x4000 // identify as ARK
 
 /*
@@ -109,8 +109,9 @@ typedef struct ARKConfig{
 // Memory Partition Size
 #define USER_SIZE (24 * 1024 * 1024)
 #define KERNEL_SIZE (4 * 1024 * 1024)
-#define FLASH_SIZE 0x01000000
-#define VITA_EXTRA_RAM 11*1024*1024
+#define VITA_FLASH_SIZE 0x01000000
+#define VITA_EXTRA_RAM_HB 11*1024*1024
+#define VITA_EXTRA_RAM_UMD 12*1024*1024
 
 #endif
 

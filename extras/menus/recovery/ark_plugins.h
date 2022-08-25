@@ -51,6 +51,7 @@ static void loadPluginsFile(const char* path, unsigned char place){
     std::ifstream input(path);
     for( std::string line; getline( input, line ); ){
         if (isComment(line)) continue;
+        
         string description;
         string enabled;
         int pos = line.rfind(',');
@@ -86,7 +87,7 @@ void savePlugins(){
         plugin_t* plugin = (plugin_t*)(ark_plugin_entries[i]);
         int place = plugin->place;
         if (!output[place].is_open()) output[place].open(plugins_path[place]);
-        output[plugin->place] << plugin->description << ", " << ((plugin->selection)? "on":"off") << endl;
+        output[place] << plugin->description << ", " << ((plugin->selection)? "on":"off") << endl;
     }
     output[0].close();
     output[1].close();

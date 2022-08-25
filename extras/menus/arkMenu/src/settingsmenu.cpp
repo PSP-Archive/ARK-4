@@ -22,7 +22,7 @@ SettingsMenu::SettingsMenu(settings_entry** settings_entries, int max_options, v
     this->customText = NULL;
     this->ntext = 0;
     this->changed = false;
-    this->max_height = (max_options>0 && max_options<PAGE_SIZE)? 20*max_options : 20*PAGE_SIZE;
+    this->max_height = (max_options>0 && max_options<PAGE_SIZE)? 20*(max_options+2) : 20*PAGE_SIZE;
     this->max_options = max_options;
     this->settings_entries = settings_entries;
     this->info = "Menu Settings";

@@ -118,7 +118,7 @@ void settingsHandler(char* path){
         use_mscache = 1; // enable ms cache for speedup
     }
     else if (strcasecmp(path, "infernocache") == 0){
-        if (apitype == 0x123 || apitype == 0x125){
+        if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x110 && apitype <= 0x115)){
             void (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
             int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
             if (CacheSetPolicy && CacheInit){
