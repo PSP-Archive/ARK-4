@@ -30,45 +30,35 @@ int main(int argc, char** argv){
     intraFontInit();
     ya2d_init();
 
-    try{
+    common::loadData(argc, argv);
 
-        common::loadData(argc, argv);
+    // Add ARK settings manager
+    loadSettings();
+    SettingsMenu* settings_menu = new SettingsMenu(ark_conf_entries, MAX_ARK_CONF, saveSettings);
+    settings_menu->setName("Settings");
+    settings_menu->setInfo("ARK Settings");
+    settings_menu->readConf();
+    entries[0] = settings_menu;
 
-        // Add ARK settings manager
-        loadSettings();
-        SettingsMenu* settings_menu = new SettingsMenu(ark_conf_entries, MAX_ARK_CONF, saveSettings);
-        settings_menu->setName("Settings");
-        settings_menu->setInfo("ARK Settings");
-        settings_menu->readConf();
-        entries[0] = settings_menu;
+    // Add ARK plugins manager
+    loadPlugins();
+    SettingsMenu* plugins_menu = new SettingsMenu(ark_plugin_entries, ark_plugins_count, savePlugins);
+    plugins_menu->setName("Plugins");
+    plugins_menu->setInfo("ARK Plugins");
+    entries[1] = plugins_menu;
 
-        // Add ARK plugins manager
-        loadPlugins();
-        SettingsMenu* plugins_menu = new SettingsMenu(ark_plugin_entries, ark_plugins_count, savePlugins);
-        plugins_menu->setName("Plugins");
-        plugins_menu->setInfo("ARK Plugins");
-        entries[1] = plugins_menu;
+    // Add browser
+    entries[2] = new Browser();
 
-        // Add browser
-        entries[2] = new Browser();
+    // Add exit game
+    entries[3] = new ExitManager();
 
-        // Add exit game
-        entries[3] = new ExitManager();
-
-        SystemMgr::initMenu(entries, MAX_ENTRIES);
-        
-        SystemMgr::startMenu();
-        SystemMgr::endMenu();
-
-        common::deleteData();
+    SystemMgr::initMenu(entries, MAX_ENTRIES);
     
-    }
-    catch (const std::exception& e){
-        FILE* fp = fopen("EXCEPTION.TXT", "w");
-        string msg = e.what();
-        fwrite(msg.c_str(), 1, msg.size(), fp);
-        fclose(fp);
-    }
+    SystemMgr::startMenu();
+    SystemMgr::endMenu();
+
+    common::deleteData();
     
     intraFontShutdown();
     

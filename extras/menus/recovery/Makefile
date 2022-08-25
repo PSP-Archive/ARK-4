@@ -1,6 +1,6 @@
 TARGET = ARKRECOVERY
 CFLAGS = -O3 -G0 -Wall -Wno-unused -Wno-write-strings -Wno-sign-compare
-CXXFLAGS = $(CFLAGS) -fexceptions -fno-rtti
+CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 INCDIR = ../arkMenu/include ../arkMenu/include/anim $(ARKROOT)/libs/libya2d $(ARKROOT)/libs/libintraFont $(ARKROOT)/libs/libjpeg $(ARKROOT)/common/include
 LIBDIR = $(ARKROOT)/libs

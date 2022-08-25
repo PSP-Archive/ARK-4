@@ -30,41 +30,31 @@ int main(int argc, char** argv){
     // setup UMD disc
     sceUmdReplacePermit();
 
-    try{
+    common::loadData(argc, argv);
 
-        common::loadData(argc, argv);
+    Browser::ftp_driver = new FTPDriver();
 
-        Browser::ftp_driver = new FTPDriver();
+    // System Entries
+    entries[4] = new ExitManager();
+    entries[3] = new SettingsMenu(settings_entries, MAX_SETTINGS_OPTIONS, common::saveConf);
+    entries[2] = new FTPManager();
 
-        // System Entries
-        entries[4] = new ExitManager();
-        entries[3] = new SettingsMenu(settings_entries, MAX_SETTINGS_OPTIONS, common::saveConf);
-        entries[2] = new FTPManager();
-
-        if (common::getConf()->main_menu == 0){
-            entries[1] = new Browser();
-            entries[0] = new GameManager();
-            GameManager::updateGameList(NULL);
-        }
-        else{
-            entries[0] = new Browser();
-            entries[1] = new GameManager();
-        }
-        
-        SystemMgr::initMenu(entries, MAX_ENTRIES);
-        SystemMgr::startMenu();
-        SystemMgr::endMenu();
-
-        common::deleteData();
-    
+    if (common::getConf()->main_menu == 0){
+        entries[1] = new Browser();
+        entries[0] = new GameManager();
+        GameManager::updateGameList(NULL);
     }
-    catch (const std::exception& e){
-        FILE* fp = fopen("EXCEPTION.TXT", "w");
-        string msg = e.what();
-        fwrite(msg.c_str(), 1, msg.size(), fp);
-        fclose(fp);
+    else{
+        entries[0] = new Browser();
+        entries[1] = new GameManager();
     }
     
+    SystemMgr::initMenu(entries, MAX_ENTRIES);
+    SystemMgr::startMenu();
+    SystemMgr::endMenu();
+
+    common::deleteData();
+
     intraFontShutdown();
     
     ya2d_shutdown();

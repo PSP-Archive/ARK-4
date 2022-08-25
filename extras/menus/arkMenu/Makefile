@@ -1,6 +1,6 @@
 TARGET = ARKMENU
 CFLAGS = -Os -G0 -Wall -Wno-unused -Wno-write-strings -Wno-sign-compare
-CXXFLAGS = $(CFLAGS) -fexceptions -fno-rtti
+CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
