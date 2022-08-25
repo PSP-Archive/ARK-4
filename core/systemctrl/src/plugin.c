@@ -86,9 +86,9 @@ static int matchingRunlevel(char * runlevel)
     else if (stricmp(runlevel, "pops") == 0)
         return (apitype == 0x144 || apitype == 0x155); // PS1 games only
     else if (stricmp(runlevel, "umd") == 0)
-        return (apitype == 0x120 || apitype == 0x123 || apitype == 0x125 || apitype == 0x130 || (apitype >= 0x110 && apitype <= 0x115)); // UMD games only
+        return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115)); // UMD games only
     else if (stricmp(runlevel, "game") == 0)
-        return (apitype == 0x120 || apitype == 0x123 || apitype == 0x125 || apitype == 0x141 || apitype == 0x152 || apitype == 0x130 || (apitype >= 0x110 && apitype <= 0x115)); // umd+homebrew
+        return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x141 || apitype == 0x152 || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115)); // umd+homebrew
     else if (stricmp(runlevel, "homebrew") == 0)
         return (apitype == 0x141 || apitype == 0x152); // homebrews only
     else if (stricmp(runlevel, "launcher") == 0){
