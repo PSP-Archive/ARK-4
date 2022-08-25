@@ -1,7 +1,5 @@
 #include "vitamem.h"
 
-static int pid = -1;
-
 void unprotectVitaMem(){
     // unprotect from user access
     u32 *prot = (u32 *)0xBC000040;
@@ -33,7 +31,6 @@ void unlockVitaMemory(){
     }
 
 
-
     u32 user_size = USER_SIZE + VITA_FLASH_SIZE;
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
     partition->size = user_size;
@@ -44,5 +41,5 @@ void unlockVitaMemory(){
     partition->address = 0x88800000 + user_size;
     partition->data->size = 0xFC;
     
-    sctrlHENSetMemory(user_size/1024/1024, 0);
+    sctrlHENSetMemory(40, 0);
 }

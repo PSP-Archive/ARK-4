@@ -109,7 +109,7 @@ typedef struct ARKConfig{
 // Memory Partition Size
 #define USER_SIZE (24 * 1024 * 1024)
 #define KERNEL_SIZE (4 * 1024 * 1024)
-#define VITA_FLASH_SIZE 0x01000000
+#define VITA_FLASH_SIZE 0x01000000 // 16MiB
 
 #endif
 

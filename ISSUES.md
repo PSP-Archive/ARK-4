@@ -9,4 +9,3 @@
 
 
 # Plugins Issues
-- Some plugins might have issues with PBP-format games if they require extra RAM to function.

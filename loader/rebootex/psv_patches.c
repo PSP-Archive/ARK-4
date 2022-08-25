@@ -53,8 +53,8 @@ void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *tab
 {
     // Add flash0 ramfs as partition 11
     SetMemoryPartitionTable(sysmem_config, table);
-    table->extVshell.addr = FLASH_SONY; // flash0 ramfs
-    table->extVshell.size = VITA_FLASH_SIZE; // 16MiB
+    table->extVshell.addr = FLASH_SONY;
+    table->extVshell.size = VITA_FLASH_SIZE;
 }
 
 int PatchSysMem(void *a0, void *sysmem_config)
@@ -70,7 +70,6 @@ int PatchSysMem(void *a0, void *sysmem_config)
             SetMemoryPartitionTable = K_EXTRACT_CALL(addr-20);
             _sw(JAL(SetMemoryPartitionTablePatched), addr-20);
             patches--;
-            break;
         }
         else if (data == 0x8E86004C){
             _sw(0x2405000F, addr+16);
