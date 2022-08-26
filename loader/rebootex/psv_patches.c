@@ -61,7 +61,7 @@ int PatchSysMem(void *a0, void *sysmem_config)
 {
 
     int (* module_bootstart)(SceSize args, void *sysmem_config) = (void *)_lw((u32)a0 + 0x28);
-    u32 text_addr = 0x88000000;
+    u32 text_addr = SYSMEM_TEXT;
     u32 top_addr = text_addr+0x14000;
     int patches = 2;
     for (u32 addr = text_addr; addr<top_addr && patches; addr += 4) {

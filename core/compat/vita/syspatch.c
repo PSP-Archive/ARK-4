@@ -112,7 +112,6 @@ void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "highmem") == 0){
         use_highmem = 1;
-        unlockVitaMemory();
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup
@@ -197,6 +196,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         {
             // Initialize Memory Stick Speedup Cache
             if (use_mscache) msstorCacheInit("ms", 8 * 1024);
+            // apply extra memory patch
+            if (use_highmem) unlockVitaMemory();
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
             // Boot Complete Action done

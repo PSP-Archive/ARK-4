@@ -330,7 +330,7 @@ void PSPOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "impose_plugin_module") == 0){
         if (region_change)
         {
-            SceUID kthreadID = sceKernelCreateThread( "arkflasher", &patch_umd_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
+            SceUID kthreadID = sceKernelCreateThread( "ark_region_change", &patch_umd_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
             if (kthreadID >= 0){
                 // start thread and wait for it to end
                 sceKernelStartThread(kthreadID, 0, NULL);

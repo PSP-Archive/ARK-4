@@ -26,8 +26,8 @@ Part of Trinity exploit chain.
 #define DUMP_PATH "ms0:/kram.bin"
 #define BUF_SIZE 10*1024 // 10KB buffer to minimize IO
 
-#define LIBC_CLOCK_OFFSET  0x88014D80 //0x88014D00
-#define SYSMEM_SEED_OFFSET 0x88014EB8 //0x88014E38
+#define LIBC_CLOCK_OFFSET  0x88014D00 // 360: 0x88014D80
+#define SYSMEM_SEED_OFFSET 0x88014E38 // 360: 0x88014EB8
 #define FAKE_UID_OFFSET    0x8814CFA8
 
 UserFunctions* g_tbl;

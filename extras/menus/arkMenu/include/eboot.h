@@ -7,7 +7,7 @@
 #define EBOOT_MAGIC 0x50425000
 
 #define PS1_CAT 0x454D
-#define PSN_CAT    0x4745
+#define PSN_CAT 0x4745
 #define HMB_CAT 0x474D
 
 typedef struct
@@ -33,7 +33,7 @@ typedef struct
     unsigned entries;
 } sfoHeader;
 
-enum { TYPE_HOMEBREW, TYPE_PSN, TYPE_POPS, UNKNOWN_TYPE };
+enum { UNKNOWN_TYPE, TYPE_HOMEBREW, TYPE_PSN, TYPE_POPS, TYPE_UPDATER };
 
 using namespace std;
 
@@ -75,6 +75,7 @@ class Eboot : public Entry{
         static void executePSN(const char* path);
         static void executePOPS(const char* path);
         static void executeRecovery(const char* path);
+        static void executeUpdate(const char* path);
 };
 
 #endif

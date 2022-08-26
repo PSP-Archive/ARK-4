@@ -124,6 +124,9 @@ int Eboot::getEbootType(const char* path){
 
     int ret = UNKNOWN_TYPE;
 
+    if (strcasecmp("ms0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp("ef0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 )
+        return TYPE_UPDATER;
+
     FILE* fp = fopen(path, "rb");
     if (fp == NULL)
         return ret;
@@ -201,6 +204,7 @@ char* Eboot::getSubtype(){
         case TYPE_HOMEBREW: this->subtype = "HOMEBREW"; break;
         case TYPE_PSN: this->subtype = "PSN"; break;
         case TYPE_POPS: this->subtype = "POPS"; break;
+        case TYPE_UPDATER: this->subtype = "UPDATER"; break;
         }
     }
     return this->subtype;
@@ -225,6 +229,19 @@ void Eboot::executeRecovery(const char* path){
     param.args = strlen(path) + 1;
     param.argp = (char*)path;
     param.key = "game";
+    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+}
+
+void Eboot::executeUpdate(const char* path){
+    struct SceKernelLoadExecVSHParam param;
+    
+    memset(&param, 0, sizeof(param));
+    
+    int runlevel = UPDATER_RUNLEVEL;
+    
+    param.args = strlen(path) + 1;
+    param.argp = (char*)path;
+    param.key = "updater";
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 
@@ -274,5 +291,6 @@ void Eboot::executeEboot(const char* path){
     case TYPE_HOMEBREW:    Eboot::executeHomebrew(path);    break;
     case TYPE_PSN:         Eboot::executePSN(path);         break;
     case TYPE_POPS:        Eboot::executePOPS(path);        break;
+    case TYPE_UPDATER:     Eboot::executeUpdate(path);      break;
     }
 }

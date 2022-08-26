@@ -189,9 +189,9 @@ void GameManager::findEboots(const char* path){
 
         Eboot* e = new Eboot(fullpath);
         switch (Eboot::getEbootType(fullpath.c_str())){
-        case TYPE_HOMEBREW:    this->categories[HOMEBREW]->addEntry(e);    break;
         case TYPE_PSN:         this->categories[GAME]->addEntry(e);        break;
         case TYPE_POPS:        this->categories[POPS]->addEntry(e);        break;
+        default:               this->categories[HOMEBREW]->addEntry(e);    break;
         }
     }
     closedir(dir);
@@ -249,9 +249,9 @@ void GameManager::findSaveEntries(const char* path){
                     if (Eboot::isEboot(fullentrypath.c_str())){
                         Eboot* e = new Eboot(fullentrypath);
                         switch (Eboot::getEbootType(fullentrypath.c_str())){
-                        case TYPE_HOMEBREW:    this->categories[HOMEBREW]->addEntry(e);    break;
                         case TYPE_PSN:         this->categories[GAME]->addEntry(e);        break;
                         case TYPE_POPS:        this->categories[POPS]->addEntry(e);        break;
+                        default:               this->categories[HOMEBREW]->addEntry(e);    break;
                         }
                     }
                 }

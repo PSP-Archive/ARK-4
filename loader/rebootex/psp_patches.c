@@ -34,6 +34,7 @@ void patchRebootBufferPSP(){
             _sw(0x00113821, addr-4); // move a3, s1
             _sw(JUMP(loadcoreModuleStartPSP), addr);
             _sw(0x02A0E821, addr + 4);
+            addr += 4;
             patches--;
         }
         else if (data == 0x2C860040){ // kdebug patch
