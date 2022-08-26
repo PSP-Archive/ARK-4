@@ -112,6 +112,8 @@ void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "highmem") == 0){
         use_highmem = 1;
+        // apply extra memory patch
+        unlockVitaMemory();
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup
@@ -122,7 +124,7 @@ void settingsHandler(char* path){
             int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
             if (CacheSetPolicy && CacheInit){
                 CacheSetPolicy(CACHE_POLICY_LRU);
-                CacheInit(32 * 1024, 32, 11); // 2M cache
+                CacheInit(32 * 1024, 32, 11); // 2M cache in P11
             }
         }
     }
@@ -141,7 +143,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));
         sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), K_EXTRACT_IMPORT(exitLauncher));
         sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), K_EXTRACT_IMPORT(exitLauncher));
-        //prepatch_partitions();
         goto flush;
     }
     
@@ -197,8 +198,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         {
             // Initialize Memory Stick Speedup Cache
             if (use_mscache) msstorCacheInit("ms", 8 * 1024);
-            // apply extra memory patch
-            if (use_highmem) unlockVitaMemory();
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
             // Boot Complete Action done
