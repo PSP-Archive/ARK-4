@@ -33,6 +33,8 @@ class SettingsMenu : public SystemEntry{
         string info;
         string name;
         
+        Image* icon;
+
         void (*callback)();
         
     public:
@@ -43,6 +45,10 @@ class SettingsMenu : public SystemEntry{
         void setCustomText(string text[], int n);
         void unsetCustomText();
     
+        void setIcon(Image* icon){
+            if (icon) this->icon = icon;
+        }
+
         void draw();
         
         void control(Controller* pad);
@@ -64,7 +70,7 @@ class SettingsMenu : public SystemEntry{
         }
         
         Image* getIcon(){
-            return common::getImage(IMAGE_SETTINGS);
+            return this->icon;
         }
         
         string getName(){

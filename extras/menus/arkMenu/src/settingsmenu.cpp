@@ -28,7 +28,7 @@ SettingsMenu::SettingsMenu(settings_entry** settings_entries, int max_options, v
     this->info = "Menu Settings";
     this->name = "Settings";
     this->callback = save_callback;
-    
+    this->icon = common::getImage(IMAGE_SETTINGS);
 }
 
 SettingsMenu::~SettingsMenu(){

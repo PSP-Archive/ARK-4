@@ -42,17 +42,17 @@ enum images {
     IMAGE_DIALOG,
     IMAGE_LOADING,
     IMAGE_SPRITE,
-    IMAGE_ZIP
+    IMAGE_EXIT,
+    IMAGE_PLUGINS,
+    MAX_IMAGES
 };
-
-#define MAX_IMAGES 11
 
 #define SIZE_LITTLE 0.51f
 #define SIZE_MEDIUM 0.6f
 #define SIZE_BIG 0.7f
 #define SIZE_HUGE 1.5f
 
-#define PKG_PATH "DATA.PKG"
+#define PKG_PATH "THEME.ARK"
 
 #define MS0_PATH 0x3A30736D // 'ms0:' as u32
 #define EF0_PATH 0x3A306665 // 'ef0:' as u32
@@ -61,7 +61,7 @@ enum images {
 typedef struct {
     unsigned char fast_gameboot; // skip pmf/at3 and gameboot animation
     unsigned char language; // default language for the menu
-    unsigned char font; // default font (either the ones in flash0 or the custom one in DATA.PKG
+    unsigned char font; // default font (either the ones in flash0 or the custom one in THEME.ARK
     unsigned char plugins; // enable or disable plugins in game
     unsigned char scan_save; // enable or disable scanning savedata
     unsigned char scan_cat; // allow scanning for categorized content in /ISO and /PSP/GAME

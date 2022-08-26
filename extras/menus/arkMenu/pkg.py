@@ -25,7 +25,7 @@ for theme in THEMES:
     dir = os.listdir(RES_DIR)
     dir.sort()
 
-    DEST_FILE = os.path.join(THEME_DIR, "DATA.PKG")
+    DEST_FILE = os.path.join(THEME_DIR, "THEME.ARK")
 
     track = []
     with open(DEST_FILE, 'wb+') as pkg:

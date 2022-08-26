@@ -45,6 +45,7 @@ int main(int argc, char** argv){
     SettingsMenu* plugins_menu = new SettingsMenu(ark_plugin_entries, ark_plugins_count, savePlugins);
     plugins_menu->setName("Plugins");
     plugins_menu->setInfo("ARK Plugins");
+    plugins_menu->setIcon(common::getImage(IMAGE_PLUGINS));
     entries[1] = plugins_menu;
 
     // Add browser

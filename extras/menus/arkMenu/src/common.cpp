@@ -290,7 +290,8 @@ void common::loadData(int ac, char** av){
     images[IMAGE_SETTINGS] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SETTINGS.PNG"));
     images[IMAGE_BROWSER] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("BROWSER.PNG"));
     images[IMAGE_DIALOG] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("BOX.PNG"));
-    images[IMAGE_ZIP] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("ZIP.PNG"));
+    images[IMAGE_EXIT] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("EXIT.PNG"));
+    images[IMAGE_PLUGINS] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("PLUGINS.PNG"));
     
     for (int i=0; i<MAX_IMAGES; i++){
         images[i]->swizzle();
@@ -341,7 +342,7 @@ long common::fileSize(const std::string &path){
 }
 
 Image* common::getImage(int which){
-    return (which < MAX_IMAGES)? images[which] : images[IMAGE_BG];
+    return (which < MAX_IMAGES)? images[which] : images[IMAGE_LOADING];
 }
 
 bool common::isSharedImage(Image* img){

@@ -33,8 +33,8 @@
 
 // ARK_CONFIG
 #define ARK_PATH_SIZE 128
-#define ARK_MENU "MENU.PBP" // default launcher
-#define ARK_XMENU "XMENU.PBP" // PS1 launcher
+#define ARK_MENU "VBOOT.PBP" // default launcher
+#define ARK_XMENU "XBOOT.PBP" // PS1 launcher
 #define ARK_INGAME "INGAME.PRX" // in-game menu
 #define ARK_RECOVERY "RECOVERY.PBP" // recovery app
 #define FLASH0_ARK "FLASH0.ARK" // ARK flash0 package
@@ -45,7 +45,7 @@
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 18
-#define ARK_MICRO_VERSION 12
+#define ARK_MICRO_VERSION 13
 #define PRO_VERSION 0x4000 // identify as ARK
 
 /*

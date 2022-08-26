@@ -94,7 +94,7 @@ all: $(TARGET).prx
 
 distclean:
 	make clean
-	$(Q)-rm -f DATA.PKG
+	$(Q)-rm -f THEME.ARK
 
 arkmenu: all
 

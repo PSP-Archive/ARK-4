@@ -88,7 +88,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Considering the savedata exploit loads H.BIN from the savedata path.
 - Copy the following files from ARK_01234 savedata folder into game exploit folder:
-- H.BIN, ARK.BIN, ARK4.BIN FLASH0.ARK, MENU.PBP, RECOVERY.PBP, DATA.PKG and other extras.
+- H.BIN, ARK.BIN, ARK4.BIN FLASH0.ARK, VBOOT.PBP, RECOVERY.PBP, THEME.ARK and other extras.
 - Don't copy K.BIN if running on an ancient firmware.
 
 </p>
@@ -182,7 +182,7 @@ Another example, overclock only on games, use powersaving on VSH:
 <details>
   <summary> <b> Custom Launcher </b> </summary>
 <p>
-ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing DATA.PKG with your own.
+ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
 
 
 Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
