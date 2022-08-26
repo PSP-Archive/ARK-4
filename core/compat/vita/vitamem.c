@@ -7,7 +7,6 @@ void unprotectVitaMem(){
         prot[i] = 0xFFFFFFFF;
 }
 
-// use flash0 RAM for user apps
 void unlockVitaMemory(){
 
     int apitype = sceKernelInitApitype(); // prevent in pops and vsh(?)
@@ -31,15 +30,19 @@ void unlockVitaMemory(){
     }
 
 
-    u32 user_size = USER_SIZE + VITA_FLASH_SIZE;
+    u32 user_size = (52 * 1024 * 1024);
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
     partition->size = user_size;
     partition->data->size = (((user_size >> 8) << 9) | 0xFC);
 
+    u32 kernel_size = (4 * 1024 * 1024);
     partition = GetPartition(11);
-    partition->size = 0;
+    partition->size = kernel_size;
     partition->address = 0x88800000 + user_size;
-    partition->data->size = 0xFC;
+    partition->data->size = (((kernel_size >> 8) << 9) | 0xFC);
+
+    // unprotect flash0 ramfs for user access
+    unprotectVitaMem();
     
-    sctrlHENSetMemory(40, 0);
+    sctrlHENSetMemory(52, 4);
 }

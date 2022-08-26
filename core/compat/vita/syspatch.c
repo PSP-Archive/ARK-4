@@ -122,7 +122,7 @@ void settingsHandler(char* path){
             int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
             if (CacheSetPolicy && CacheInit){
                 CacheSetPolicy(CACHE_POLICY_LRU);
-                CacheInit(32 * 1024, 64, (use_highmem)?2:11); // 4M cache
+                CacheInit(32 * 1024, 32, 11); // 2M cache
             }
         }
     }
@@ -141,6 +141,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));
         sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), K_EXTRACT_IMPORT(exitLauncher));
         sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x08F7166C), K_EXTRACT_IMPORT(exitLauncher));
+        //prepatch_partitions();
         goto flush;
     }
     
@@ -220,6 +221,4 @@ void PROVitaSysPatch(){
     initFileSystem();
     // patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
     patchLoadExecUMDemu();
-    // unprotect flash0 ramfs for user access
-    unprotectVitaMem();
 }
