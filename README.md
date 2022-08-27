@@ -19,7 +19,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with all `PSP` models on firmwares `6.60` and `6.61`.
 
-- Compatible with all `PS Vita` models on firmware `2.10` up to `3.60`, either official firmware or Henkaku.
+- Compatible with all `PS Vita` models on firmware `2.10` up to `3.74`, either official firmware or Henkaku/h-encore.
 
 - Compatible with `6.60` `Testing Tool` Firmware and `Testkit` Units.
 
@@ -70,11 +70,11 @@ as well as unique and exclusive new features not found anywhere else.
   <summary> <b> On PS Vita </b> </summary>
 <p>
 
-* For 3.60 Henkaku users:
+<<<<<<< HEAD
+* For 3.60+ Henkaku/h-encore users:
 - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended. `Minis` are `NOT` recommended.
 - Install an ARK-4 bubble for 3.60 using FastARK: https://github.com/theheroGAC/ArkFast/releases/
 - Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
-- Copy `H.BIN` from `Vitabubble` folder of release into ARK savedata folder.
 - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
 - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
 - Some features are not available to Vita users, mainly the official Sony `XMB` and `PS1` games.
