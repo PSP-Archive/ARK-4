@@ -69,15 +69,16 @@ as well as unique and exclusive new features not found anywhere else.
 <details>
   <summary> <b> On PS Vita </b> </summary>
 <p>
-- Works on 3.60 up to 3.74, either with or without Henkaku/h-encore.
-- Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended. `Minis` are `NOT` recommended.
-- For Henkaku/h-encore users, install an ARK bubble using FastARK: https://github.com/theheroGAC/ArkFast/
-- Official Firmware users (no henkaku/h-encore) can install the PBOOT bubble manually: https://github.com/TheOfficialFloW/Trinity#preparation
-- Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
-- Copy `K.BIN` from VitaBubble folder into `ARK_01234` savedata folder.
-- To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
-- To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
-- Some features are not available to Vita users, mainly the official Sony `XMB` and `PS1` games.
+
+  - Works on 3.60 up to 3.74, either with or without Henkaku/h-encore.
+  - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended. `Minis` are `NOT` recommended.
+  - For Henkaku/h-encore users, install an ARK bubble using FastARK: https://github.com/theheroGAC/ArkFast/
+  - Official Firmware users (no henkaku/h-encore) can install the PBOOT bubble manually: https://github.com/TheOfficialFloW/Trinity#preparation
+  - Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
+  - Copy `K.BIN` from VitaBubble folder into `ARK_01234` savedata folder.
+  - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
+  - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
+  - Some features are not available to Vita users, mainly the official Sony `XMB` and `PS1` games.
 
 </p>
 </details>
