@@ -71,7 +71,7 @@ as well as unique and exclusive new features not found anywhere else.
 <p>
 
 * For 3.60 Henkaku users:
-- Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` is recommended. Minis are NOT recommended.
+- Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended. `Minis` are `NOT` recommended.
 - Install an ARK-4 bubble for 3.60 using FastARK: https://github.com/theheroGAC/ArkFast/releases/
 - Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
 - Copy `H.BIN` from `Vitabubble` folder of release into ARK savedata folder.
