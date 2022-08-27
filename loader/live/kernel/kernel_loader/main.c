@@ -121,22 +121,22 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
 void autoDetectDevice(ARKConfig* config){
     // determine execution mode by scanning for certain modules
     SceModule2* kermit_peripheral = k_tbl->KernelFindModuleByName("sceKermitPeripheral_Driver");
-    if (kermit_peripheral){
+    if (kermit_peripheral){ // kermit is Vita-only
         SceModule2* pspvmc = k_tbl->KernelFindModuleByName("pspvmc_Library");
-        if (pspvmc){
+        if (pspvmc){ // pspvmc loaded means we're in Vita POPS
             config->exec_mode = PSV_POPS;
         }
         else{
             SceModule2* sctrl = k_tbl->KernelFindModuleByName("SystemControl");
-            if (sctrl){
+            if (sctrl){ // SystemControl loaded mean's we're running under Adrenaline
                 config->exec_mode = PSV_ADR;
             }
-            else{
+            else{ // no module found, must be stock pspemu
                 config->exec_mode = PS_VITA;
             }
         }
     }
-    else{
+    else{ // no kermit, not a vita
         config->exec_mode = PSP_ORIG;
     }
 }
