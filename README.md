@@ -69,12 +69,12 @@ as well as unique and exclusive new features not found anywhere else.
 <details>
   <summary> <b> On PS Vita </b> </summary>
 <p>
-
-<<<<<<< HEAD
-* For 3.60+ Henkaku/h-encore users:
+- Works on 3.60 up to 3.74, either with or without Henkaku/h-encore.
 - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended. `Minis` are `NOT` recommended.
-- Install an ARK-4 bubble for 3.60 using FastARK: https://github.com/theheroGAC/ArkFast/releases/
+- For Henkaku/h-encore users, install an ARK bubble using FastARK: https://github.com/theheroGAC/ArkFast/
+- Official Firmware users (no henkaku/h-encore) can install the PBOOT bubble manually: https://github.com/TheOfficialFloW/Trinity#preparation
 - Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
+- Copy `K.BIN` from VitaBubble folder into `ARK_01234` savedata folder.
 - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
 - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
 - Some features are not available to Vita users, mainly the official Sony `XMB` and `PS1` games.
@@ -89,7 +89,7 @@ as well as unique and exclusive new features not found anywhere else.
 - Considering the savedata exploit loads H.BIN from the savedata path.
 - Copy the following files from ARK_01234 savedata folder into game exploit folder:
 - H.BIN, ARK.BIN, ARK4.BIN FLASH0.ARK, VBOOT.PBP, RECOVERY.PBP, THEME.ARK and other extras.
-- Don't copy K.BIN if running on an ancient firmware.
+- You need to have a `K.BIN` if you are running on an ancient Vita firmware (there's plenty of kernel exploit sources in ARK-2 and ARK-3 for reference).
 
 </p>
 </details>
@@ -217,6 +217,8 @@ Note: some of these menus have not been updated or supported by their developers
 - `Team PRO` (the original developers of ARK): `Coldbird`, `hrimfaxi` and `Neur0n`.
 
 - `TheFl0w` for his advancements and research in CFW development and overall contributions to the scene.
+
+- `meetpatty` for his excellent work in fixing bugs and adding features.
 
 - `Codestation` for his incredible work improving CSO speeds and creating the ZSO format.
 
