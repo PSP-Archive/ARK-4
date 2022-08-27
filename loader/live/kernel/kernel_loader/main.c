@@ -152,9 +152,17 @@ int initKxploitFile(char* kxploit_file){
         // use specified kxploit file
         strcpy(k_path, kxploit_file);
     }
-    PRTSTR1("Loading Kxploit at %s", k_path);
     SceUID fd = g_tbl->IoOpen(k_path, PSP_O_RDONLY, 0);
-    if (fd < 0) return -1;
+    if (fd < 0){
+        if (kxploit_file == NULL) return -1;
+        else{ // provided k path failed, try savedata
+            strcpy(k_path, g_tbl->config->arkpath);
+            strcat(k_path, K_FILE);
+            fd = g_tbl->IoOpen(k_path, PSP_O_RDONLY, 0);
+            if (fd<0) return -1;
+        }
+    }
+    PRTSTR1("Loading Kxploit at %s", k_path);
     g_tbl->IoRead(fd, (void *)KXPLOIT_LOADADDR, 0x4000);
     g_tbl->IoClose(fd);
     g_tbl->KernelDcacheWritebackAll();
