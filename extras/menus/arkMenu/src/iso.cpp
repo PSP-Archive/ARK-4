@@ -18,7 +18,7 @@ extern "C"{
     int LZ4_decompress_fast(const char*, char*, int);
 }
 
-static void decompress_dax0(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+static void decompress_dax(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // use raw inflate with no NCarea check (DAX V0)
     sctrlDeflateDecompress(dst, src, DAX_COMP_BUF); // use raw inflate
 }
@@ -87,7 +87,7 @@ Iso :: Iso(string path)
             uncompressed_size = dax_header->uncompressed_size;
             block_header = 2;
             align = 0;
-            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_dax0;
+            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_dax;
             break;
         case JSO_MAGIC:
             header_size = sizeof(JisoHeader);

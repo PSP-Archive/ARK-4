@@ -71,24 +71,7 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
     // init screen
     initScreen(g_tbl->DisplaySetFrameBuf);
 
-    if (arg0->exec_mode == DEV_UNK)
-        autoDetectDevice(arg0); // attempt to autodetect configuration
-
-    // Output Exploit Reach Screen
-    running_ark[20] = 'P';
-    if (IS_PSP(arg0)){
-        running_ark[17] = ' '; // show 'PSP'
-    }
-    else{
-        running_ark[17] = 'e'; // show 'ePSP'
-        if (IS_VITA_POPS(arg0)){
-            running_ark[20] = 'X'; // show 'ePSX'
-            // configure to handle POPS screen
-            initVitaPopsVram();
-            setScreenHandler(&pops_vram_handler);
-        }
-    }
-    PRTSTR(running_ark);
+    PRTSTR("Loading ARK-4");
     
     if (isKernel()){ // already in kernel mode?
         kernelContentFunction();
@@ -130,19 +113,32 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
     PRTSTR("Exiting in 10 seconds...");
     g_tbl->KernelDelayThread(10000000);
     void (*KernelExitGame)() = (void*)RelocImport("LoadExecForUser", 0x05572A5F, 0);
-    KernelExitGame();
+    if (KernelExitGame) KernelExitGame();
 
     return res;
 }
 
 void autoDetectDevice(ARKConfig* config){
-    // determine if can write eboot.pbp (not possible on PS Vita)
-    int test = g_tbl->IoOpen(TEST_EBOOT, PSP_O_CREAT|PSP_O_TRUNC|PSP_O_WRONLY, 0777);
-    g_tbl->IoWrite(test, "test", sizeof("test"));
-    g_tbl->IoClose(test);
-    int res = g_tbl->IoRemove(TEST_EBOOT);
-    config->exec_mode = (res < 0)? PS_VITA : PSP_ORIG;
-    // TODO: determine if VitaPops
+    // determine execution mode by scanning for certain modules
+    SceModule2* kermit_peripheral = k_tbl->KernelFindModuleByName("sceKermitPeripheral_Driver");
+    if (kermit_peripheral){
+        SceModule2* pspvmc = k_tbl->KernelFindModuleByName("pspvmc_Library");
+        if (pspvmc){
+            config->exec_mode = PSV_POPS;
+        }
+        else{
+            SceModule2* sctrl = k_tbl->KernelFindModuleByName("SystemControl");
+            if (sctrl){
+                config->exec_mode = PSV_ADR;
+            }
+            else{
+                config->exec_mode = PS_VITA;
+            }
+        }
+    }
+    else{
+        config->exec_mode = PSP_ORIG;
+    }
 }
 
 int initKxploitFile(char* kxploit_file){
@@ -187,13 +183,43 @@ void kernelContentFunction(void){
     
     g_tbl->prtstr = KERNELIFY(g_tbl->prtstr);
     kxf->repairInstruction = KERNELIFY(kxf->repairInstruction);
-    
+
     PRTSTR("Scanning kernel functions");
     // get kernel functions
     scanKernelFunctions(k_tbl);
-    
+
     // repair damage done by kernel exploit
+    PRTSTR("Repairing kernel");
     kxf->repairInstruction(k_tbl);
+
+    if (ark_config->exec_mode == DEV_UNK)
+        autoDetectDevice(ark_config); // attempt to autodetect configuration
+
+    // Output Exploit Reach Screen
+    running_ark[20] = 'P';
+    if (IS_PSP(ark_config)){
+        running_ark[17] = ' '; // show 'PSP'
+    }
+    else{
+        if (IS_VITA_ADR(ark_config)){
+            running_ark[17] = 'v'; // show 'vPSP'
+        }
+        else{
+            running_ark[17] = 'e'; // show 'ePSP'
+            if (IS_VITA_POPS(ark_config)){
+                running_ark[20] = 'X'; // show 'ePSX'
+                // configure to handle POPS screen
+                initVitaPopsVram();
+                setScreenHandler(&pops_vram_handler);
+            }
+        }
+    }
+    PRTSTR(running_ark);
+
+    if (IS_VITA_ADR(ark_config)){
+        PRTSTR("ERROR: not yet implemented");
+        while(1){};
+    }
 
     loadKernelArk();
 }

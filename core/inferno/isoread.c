@@ -353,7 +353,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     return res;
 }
 
-static void decompress_dax0(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+static void decompress_dax(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // use raw inflate with no NCarea check (DAX V0)
     sceKernelDeflateDecompress(dst, DAX_COMP_BUF, src, 0);
 }
@@ -417,7 +417,7 @@ static int is_ciso(SceUID fd)
             block_header = 2; // skip over the zlib header (2 bytes)
             align = 0; // no alignment for DAX
             com_size = DAX_COMP_BUF;
-            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_dax0;
+            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_dax;
         }
         else if (magic == JSO_MAGIC){
             JisoHeader* jiso_header = (JisoHeader*)&g_CISO_hdr;

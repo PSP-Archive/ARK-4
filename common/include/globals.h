@@ -57,14 +57,15 @@ Dev Sub
 01  01 -> psp with extra ram, useless for now (use sceKernelGetModel)
 01  11 -> psp go, useless fow now (use sceKernelGetModel)
 10  00 -> ps vita
-10  01 -> vita minis, useless for now (use better base game!)
-10  10 -> vita pops, useless for now (extremely limited in later firmwares, though there are ways around them...)
+10  01 -> vita adrenaline
+10  10 -> vita pops
 11  00 -> device mask
 */
 typedef enum{
     DEV_UNK = 0b0000,
     PSP_ORIG = 0b0100,
     PS_VITA = 0b1000,
+    PSV_ADR = 0b1001,
     PSV_POPS = 0b1010,
     DEV_MASK = 0b1100,
 }ExecMode;
@@ -104,6 +105,7 @@ typedef struct ARKConfig{
 
 #define IS_PSP(ark_config) ((ark_config->exec_mode&DEV_MASK)==PSP_ORIG)
 #define IS_VITA(ark_config) ((ark_config->exec_mode&DEV_MASK)==PS_VITA)
+#define IS_VITA_ADR(ark_config) (ark_config->exec_mode==PSV_ADR)
 #define IS_VITA_POPS(ark_config) (ark_config->exec_mode==PSV_POPS)
 
 // Memory Partition Size
