@@ -36,14 +36,14 @@
 1.2. Supports changing CPU frequency at will.
 1.3. Support for high memory layout (not compatible with PSP 1K).
 1.4. Supports USB Charging anywhere.
-1.5. Support for PRO rebootex (if launching ARK as a PRO update).
+1.5. Fixed and patches specific to PSP.
 1.6. FLASH0.ARK package installer.
 
 2. PS Vita Compatibility Layer.
 1.1. Filesystem and IO patches to better mimick PSP IO.
-1.2. POPS Patches to allow loading of custom PEOPS SPU plugin.
+1.2. POPS Patches to allow loading of custom PEOPS SPU plugin. Deprecated.
 1.3. FLASH0.ARK installation in ePSP flashram.
-1.4. Vita Memory patches allowing to unlock extra RAM in lower firmwares.
+1.4. Vita Memory patches allowing to unlock extra RAM. Experimental.
 1.5. Other Vita related patches and fixes.
 
 3. PS Vita POPS (PS1) Compatibility Layer.
