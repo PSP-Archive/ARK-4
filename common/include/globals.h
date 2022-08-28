@@ -35,7 +35,6 @@
 #define ARK_PATH_SIZE 128
 #define ARK_MENU "VBOOT.PBP" // default launcher
 #define ARK_XMENU "XBOOT.PBP" // PS1 launcher
-#define ARK_INGAME "INGAME.PRX" // in-game menu
 #define ARK_RECOVERY "RECOVERY.PBP" // recovery app
 #define FLASH0_ARK "FLASH0.ARK" // ARK flash0 package
 #define VSH_MENU "VSHMENU.PRX" // ARK VSH Menu for XMB
@@ -50,12 +49,12 @@
 
 /*
 First two bits identify the device (PSP or PS Vita)
-Second two bits identify special cases (PSP Slim/Go, Vita Minis, Vita PSX, etc)
+Second two bits identify special cases (PSP, Vita, Vita PSX, etc)
 Dev Sub
 00  00 -> unknown device (attempt to autodetect)
 01  00 -> psp
-01  01 -> psp with extra ram, useless for now (use sceKernelGetModel)
-01  11 -> psp go, useless fow now (use sceKernelGetModel)
+01  01 -> unused
+01  11 -> unused
 10  00 -> ps vita
 10  01 -> vita adrenaline
 10  10 -> vita pops

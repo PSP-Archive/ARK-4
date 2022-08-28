@@ -406,7 +406,6 @@ static int is_ciso(SceUID fd)
     u32 magic = g_CISO_hdr.magic;
 
     if(magic == CSO_MAGIC || magic == ZSO_MAGIC || magic == DAX_MAGIC || magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
-        //g_CISO_cur_idx = -1;
         u32 com_size = 0;
         // set reader and decompressor functions according to format
         if (magic == DAX_MAGIC){
@@ -426,7 +425,7 @@ static int is_ciso(SceUID fd)
             uncompressed_size = jiso_header->uncompressed_size;
             block_header = 4*jiso_header->block_headers; // if set to 1, each block has a 4 byte header, 0 otherwise
             align = 0; // no alignment for JISO
-            com_size = jiso_header->block_size + ISO_SECTOR_SIZE/4;
+            com_size = jiso_header->block_size;
             ciso_decompressor = (jiso_header->method)? &decompress_dax1 : &decompress_jiso; //  zlib or lzo, depends on method
         }
         else{ // CSO/ZSO/v2

