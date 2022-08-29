@@ -231,6 +231,8 @@ Note: some of these menus have not been updated or supported by their developers
 
 - `balika` for his research in porting M33 to modern firmware that has helped improve compatiblity in ARK.
 
+- `hrydgard` for the PMF player as well as being an inspiration for the custom launcher.
+
 - Every other giant shoulder I am standing on.
 </p>
 </details>
