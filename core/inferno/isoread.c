@@ -282,7 +282,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     // Calculate total size of compressed data
     u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
     // last block index might be outside the block offset cache, better read it from disk
-    u32 o_end[2]; read_raw_data(&o_end[0], sizeof(u32)*2, (ending_block)*sizeof(u32)+header_size);
+    u32 o_end[2]; read_raw_data(&o_end[0], sizeof(u32)*2, ending_block*sizeof(u32)+header_size);
     o_end[0] = (o_end[0]&0x7FFFFFFF)<<align;
     o_end[1] = (o_end[1]&0x7FFFFFFF)<<align;
     u32 compressed_size = o_end[1]-o_start;
@@ -331,11 +331,11 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
 
         // read block, skipping header if needed
         if (c_buf > addr && c_buf+b_size <= top_addr){
-            memcpy(com_buf, c_buf+block_header, b_size); // fast read
+            memcpy(com_buf, c_buf+block_header, MIN(b_size, DAX_COMP_BUF)); // fast read
             c_buf += b_size;
         }
         else{ // slow read
-            b_size = read_raw_data(com_buf, b_size, b_offset + block_header);
+            b_size = read_raw_data(com_buf, MIN(b_size, DAX_COMP_BUF), b_offset + block_header);
         }
 
         // decompress block
@@ -442,31 +442,33 @@ static int is_ciso(SceUID fd)
         g_total_sectors = uncompressed_size / ISO_SECTOR_SIZE; // total number of DVD sectors (2K) in the original ISO.
         g_ciso_total_block = uncompressed_size / block_size;
         // lets use our own heap so that kram usage depends on game format (less heap needed for systemcontrol; better memory management)
-        heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, (2*com_size) + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
-        if (heapid<0){
-            return -5;
+        if (heapid < 0){
+            heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, (2*com_size) + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
+            if (heapid<0){
+                return -5;
+            }
+            // allocate buffer for decompressed block
+            g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, com_size+64);
+            if(g_ciso_dec_buf == NULL) {
+                return -2;
+            }
+            if((u32)g_ciso_dec_buf & 63) // align 64
+                g_ciso_dec_buf = (void*)(((u32)g_ciso_dec_buf & (~63)) + 64);
+            // allocate buffer for compressed block
+            g_ciso_block_buf = sceKernelAllocHeapMemory(heapid, com_size+64);
+            if(g_ciso_block_buf == NULL) {
+                return -3;
+            }
+            if((u32)g_ciso_block_buf & 63) // align 64
+                g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
+            // allocate buffer for block offset cache
+            g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4) + 64);
+            if (g_cso_idx_cache == NULL) {
+                return -4;
+            }
+            if((u32)g_cso_idx_cache & 63) // align 64
+                g_cso_idx_cache = (void*)(((u32)g_cso_idx_cache & (~63)) + 64);
         }
-        // allocate buffer for decompressed block
-        g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, com_size+64);
-        if(g_ciso_dec_buf == NULL) {
-            return -2;
-        }
-        if((u32)g_ciso_dec_buf & 63) // align 64
-            g_ciso_dec_buf = (void*)(((u32)g_ciso_dec_buf & (~63)) + 64);
-        // allocate buffer for compressed block
-        g_ciso_block_buf = sceKernelAllocHeapMemory(heapid, com_size+64);
-        if(g_ciso_block_buf == NULL) {
-            return -3;
-        }
-        if((u32)g_ciso_block_buf & 63) // align 64
-            g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
-        // allocate buffer for block offset cache
-        g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4) + 64);
-        if (g_cso_idx_cache == NULL) {
-            return -4;
-        }
-        if((u32)g_cso_idx_cache & 63) // align 64
-            g_cso_idx_cache = (void*)(((u32)g_cso_idx_cache & (~63)) + 64);
         return 1;
     } else {
         return 0;
