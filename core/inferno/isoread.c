@@ -331,11 +331,11 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
 
         // read block, skipping header if needed
         if (c_buf > addr && c_buf+b_size <= top_addr){
-            memcpy(com_buf, c_buf+block_header, MIN(b_size, DAX_COMP_BUF)); // fast read
+            memcpy(com_buf, c_buf+block_header, b_size); // fast read
             c_buf += b_size;
         }
         else{ // slow read
-            b_size = read_raw_data(com_buf, MIN(b_size, DAX_COMP_BUF), b_offset + block_header);
+            b_size = read_raw_data(com_buf, b_size, b_offset + block_header);
         }
 
         // decompress block
