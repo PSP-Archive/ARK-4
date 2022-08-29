@@ -118,7 +118,7 @@ static u32 g_ciso_total_block;
 
 // reader functions
 static int is_compressed = 0;
-static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit);
+static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit) = NULL;
 
 // 0x00000368
 static void wait_until_ms0_ready(void)
@@ -128,17 +128,15 @@ static void wait_until_ms0_ready(void)
 
     drvname = "mscmhc0:";
 
-    if(psp_model == PSP_GO) {
-        bootfrom = sceKernelBootFrom();
-        #ifdef DEBUG
-        printk("%s: bootfrom: 0x%08X\n", __func__, bootfrom);
-        #endif
-        if(bootfrom == 0x50) {
-            drvname = "mscmhcemu0:";
-        } else {
-            // vsh mode?
-            return;
-        }
+    bootfrom = sceKernelBootFrom();
+    #ifdef DEBUG
+    printk("%s: bootfrom: 0x%08X\n", __func__, bootfrom);
+    #endif
+    if(bootfrom == 0x50) {
+        drvname = "mscmhcemu0:";
+    } else {
+        // vsh mode?
+        return;
     }
 
     while( 1 ) {

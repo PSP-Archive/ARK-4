@@ -21,6 +21,8 @@
 #include <macros.h>
 #include <module2.h>
 
+#if DEBUG >= 2
+
 // Log info
 int printk(char *fmt, ...)__attribute__((format (printf, 1, 2)));
 
@@ -331,3 +333,9 @@ void clearTraceTable(void)
 	hook_count_user = 0;
 }
 
+#else
+void installJALTrace(unsigned int address){}
+void installMemoryJALTrace(unsigned int start, unsigned int size){}
+void installModuleJALTrace(SceModule2 * module){}
+void dumpJAL(unsigned int target, unsigned int ra, unsigned int result){}
+#endif

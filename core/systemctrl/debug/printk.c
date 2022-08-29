@@ -40,6 +40,8 @@
 #include <string.h>
 #include <globals.h>
 
+#if DEBUG >= 3
+
 // Initialize printk
 int printkInit(const char* filename);
 
@@ -538,3 +540,10 @@ int printkSync(void)
 
     return 0;
 }
+
+#else
+int printkCached(char *fmt, ...){return 0;}
+int printk(char *fmt, ...){return 0;}
+int printkInit(const char *output){return 0;}
+int printkSync(void){return 0;}
+#endif
