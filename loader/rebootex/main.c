@@ -120,6 +120,10 @@ u32 loadCoreModuleStartCommon(){
         else if (data == check_call){
             _sw(JAL(CheckExecFilePatched), addr);
         }
+        else if (data == 0x26E50028){
+            // Don't break on unresolved syscalls
+            _sw(0x00001021, addr-20);
+        }
     }
 
     return text_addr;
