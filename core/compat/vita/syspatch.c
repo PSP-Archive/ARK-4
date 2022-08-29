@@ -124,7 +124,7 @@ void settingsHandler(char* path){
             int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
             if (CacheSetPolicy && CacheInit){
                 CacheSetPolicy(CACHE_POLICY_LRU);
-                CacheInit(32 * 1024, 32, 9); // 2M cache in P11
+                CacheInit(32 * 1024, (use_highmem)?32:128, 11); // cache in P11, 2M or 8M (depends if highmem is used)
             }
         }
     }

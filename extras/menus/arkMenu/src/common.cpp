@@ -122,6 +122,7 @@ void common::resetConf(){
     config.main_menu = 0;
     config.sort_entries = 1;
     config.show_recovery = 1;
+    config.show_fps = 0;
 }
 
 void common::launchRecovery(){

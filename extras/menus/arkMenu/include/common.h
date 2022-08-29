@@ -70,6 +70,7 @@ typedef struct {
     unsigned char main_menu; // default menu opened at startup (game by default)
     unsigned char sort_entries; // sort entries by name
     unsigned char show_recovery; // show recovery menu entry
+    unsigned char show_fps; // show menu FPS
 } t_conf;
 
 extern "C" {

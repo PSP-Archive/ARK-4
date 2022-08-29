@@ -208,12 +208,12 @@ static int drawThread(SceSize _args, void *_argp){
         common::drawScreen();
         entries[cur_entry]->draw();
         systemDrawer();
-        /*
-        ostringstream fps;
-        ya2d_calc_fps();
-        fps<<ya2d_get_fps();
-        common::printText(460, 260, fps.str().c_str());
-        */
+        if (common::getConf()->show_fps){
+            ostringstream fps;
+            ya2d_calc_fps();
+            fps<<ya2d_get_fps();
+            common::printText(460, 260, fps.str().c_str());
+        }
         common::flipScreen();
         sceKernelSignalSema(draw_sema, 1);
         sceKernelDelayThread(0);

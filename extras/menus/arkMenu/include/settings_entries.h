@@ -166,6 +166,20 @@ static struct {
     {"Disabled", "Enabled"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[9];
+} show_fps = {
+    "Show FPS",
+    2,
+    0,
+    &(common::getConf()->show_fps),
+    {"Disabled", "Enabled"}
+};
+
 settings_entry* settings_entries[] = {
     (settings_entry*)&fast_gameboot,
     (settings_entry*)&language,
@@ -177,6 +191,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&main_menu,
     (settings_entry*)&sort_entries,
     (settings_entry*)&recovery_menu,
+    (settings_entry*)&show_fps,
 };
 
-#define MAX_SETTINGS_OPTIONS 10
+#define MAX_SETTINGS_OPTIONS (sizeof(settings_entries)/sizeof(settings_entries[0]))
