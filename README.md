@@ -13,7 +13,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - `Popcorn` controller for custom `PS1` games. Compatible with `PopsLoader` V3 and V4i.
 
-- Built-in `No-DRM` engine `Stargate`.
+- Built-in `No-DRM` engine `Stargate`. Compatible with `npdrm_free` by qwikrazor87.
 
 - `Plugin` support for `PSP` games, `PS1` games and `VSH` (XMB), including the ability to enable and disable plugins `per-game`.
 
@@ -33,6 +33,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with Legacy Homebrew via `eLoader` and `Leda`.
 
+- Compatible with `Infinity 2` bootloader.
 
 ## INSTALLATION
 
@@ -213,10 +214,10 @@ Note: some of these menus have not been updated or supported by their developers
   <summary> <b> Credits </b> </summary>
 <p>
 
-- `qwikrazor87` for being such a genius and all his hard work with kernel exploits and ARK-2.
-
 - `Team PRO` (the original developers of ARK): `Coldbird`, `hrimfaxi` and `Neur0n`.
 
+- `qwikrazor87` for being such a genius and all his hard work with kernel exploits and ARK-2.
+  
 - `TheFl0w` for his advancements and research in CFW development and overall contributions to the scene.
 
 - `meetpatty` for his excellent work in fixing bugs and adding features.
