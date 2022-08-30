@@ -11,6 +11,8 @@
 
 - [ ] Street (E-1000)  
 
+- [ ] Vita
+
 #### Ark Version
 
 - Enter Ark Release here (press Select it shows the version at the top of vshmenu). If using beta build put commit version.
