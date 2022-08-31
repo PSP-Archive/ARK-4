@@ -147,18 +147,12 @@ int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	return res;
 }
 
+// this patch makes sceAudioOutput2Release behave like on real PSP (audio is not released if there are still samples left)
 int (*_sceAudioOutput2Release)(void);
 int (*_sceAudioOutput2GetRestSample)();
 int sceAudioOutput2ReleaseFixed(){
-    if (_sceAudioOutput2GetRestSample() > 0) return 0;
+    if (_sceAudioOutput2GetRestSample() > 0) return -1;
 	return _sceAudioOutput2Release();
-}
-
-void PatchVolatileMemBug() {
-	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
-		_sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
-		sctrlHENPatchSyscall((u32)_sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
-	}
 }
 
 void ARKVitaOnModuleStart(SceModule2 * mod){
@@ -184,9 +178,10 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
+    /*
     // Patch Vita Popsman
     if (strcmp(mod->modname, "scePops_Manager") == 0){
-        //patchVitaPopsman(mod);
+        patchVitaPopsman(mod);
         // Hook scePopsManExitVSHKernel
         sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), K_EXTRACT_IMPORT(exitLauncher));
         goto flush;
@@ -195,9 +190,10 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     // Patch POPS SPU
     if (strcmp(mod->modname, "pops") == 0)
     {
-        //patchVitaPopsSpu(mod);
+        patchVitaPopsSpu(mod);
         goto flush;
     }
+    */
     
     // load and process settings file
     if(strcmp(mod->modname, "sceMediaSync") == 0)
@@ -208,7 +204,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     
     if (strcmp(mod->modname, "Legacy_Software_Loader") == 0){
         // Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
-        _sw(0, mod->text_addr + 0x1140);
+        _sw(NOP, mod->text_addr + 0x1140);
         goto flush;
     }
 
@@ -220,14 +216,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         // Exit Handler
         goto flush;
     }
-
-    if (strcmp(mod->modname, "MSPSP")){
-        // fix MotorStorm Arctic Edge sound
-        _sceAudioOutput2GetRestSample = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x647CEF33);
-        _sceAudioOutput2Release = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x43196845);
-        sctrlHENPatchSyscall((u32)_sceAudioOutput2Release, sceAudioOutput2ReleaseFixed);
-        goto flush;
-    }
        
     // Boot Complete Action not done yet
     if(booted == 0)
@@ -237,10 +225,19 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         {
             // Initialize Memory Stick Speedup Cache
             if (use_mscache) msstorCacheInit("ms", 8 * 1024);
+            
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
+
             // patch bug in ePSP volatile mem
-            PatchVolatileMemBug();
+            _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
+            sctrlHENPatchSyscall((u32)_sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
+            
+            // fix sound bug in ePSP (make sceAudioOutput2Release behave like real PSP)
+            _sceAudioOutput2GetRestSample = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x647CEF33);
+            _sceAudioOutput2Release = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x43196845);
+            sctrlHENPatchSyscall((u32)_sceAudioOutput2Release, sceAudioOutput2ReleaseFixed);
+
             // Boot Complete Action done
             booted = 1;
             goto flush;
