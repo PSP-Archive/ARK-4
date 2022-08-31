@@ -214,7 +214,7 @@ settings_entry* ark_conf_entries[] = {
     (settings_entry*)&regionchange,
 };
 
-#define MAX_ARK_CONF 10
+#define MAX_ARK_CONF (sizeof(ark_conf_entries)/sizeof(ark_conf_entries[0]))
 
 bool isComment(string line){
     return (line[0] == '#' || line[0] == ';' || (line[0]=='/'&&line[1]=='/'));

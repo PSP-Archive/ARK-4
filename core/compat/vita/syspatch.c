@@ -1,6 +1,7 @@
 #include <pspsdk.h>
 #include <pspsysmem_kernel.h>
 #include <psputilsforkernel.h>
+#include <pspinit.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
@@ -130,13 +131,36 @@ void settingsHandler(char* path){
     }
 }
 
+int (* sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
+int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
+	int res = 0;
+
+	int i;
+	for (i = 0; i < 0x10; i++) {
+		res = sceKernelVolatileMemTryLock(unk, ptr, size);
+		if (res >= 0)
+			break;
+
+		sceKernelDelayThread(100);
+	}
+
+	return res;
+}
+
+void PatchVolatileMemBug() {
+	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
+		sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
+		sctrlHENPatchSyscall((u32)sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
+	}
+}
+
 void ARKVitaOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
     
     patchGameInfoGetter(mod);
-    
+
     // Patch sceKernelExitGame Syscalls
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
@@ -200,6 +224,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             if (use_mscache) msstorCacheInit("ms", 8 * 1024);
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
+            // patch bug in ePSP volatile mem
+            PatchVolatileMemBug();
             // Boot Complete Action done
             booted = 1;
             goto flush;
