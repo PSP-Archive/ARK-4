@@ -131,13 +131,13 @@ void settingsHandler(char* path){
     }
 }
 
-int (* sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
+int (*_sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
 int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	int res = 0;
 
 	int i;
 	for (i = 0; i < 0x10; i++) {
-		res = sceKernelVolatileMemTryLock(unk, ptr, size);
+		res = _sceKernelVolatileMemTryLock(unk, ptr, size);
 		if (res >= 0)
 			break;
 
@@ -147,10 +147,17 @@ int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	return res;
 }
 
+int (*_sceAudioOutput2Release)(void);
+int (*_sceAudioOutput2GetRestSample)();
+int sceAudioOutput2ReleaseFixed(){
+    if (_sceAudioOutput2GetRestSample() > 0) return 0;
+	return _sceAudioOutput2Release();
+}
+
 void PatchVolatileMemBug() {
 	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
-		sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
-		sctrlHENPatchSyscall((u32)sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
+		_sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
+		sctrlHENPatchSyscall((u32)_sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
 	}
 }
 
@@ -211,6 +218,14 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         // Patch VLF Module
         patchVLF(mod);
         // Exit Handler
+        goto flush;
+    }
+
+    if (strcmp(mod->modname, "MSPSP")){
+        // fix MotorStorm Arctic Edge sound
+        _sceAudioOutput2GetRestSample = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x647CEF33);
+        _sceAudioOutput2Release = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x43196845);
+        sctrlHENPatchSyscall((u32)_sceAudioOutput2Release, sceAudioOutput2ReleaseFixed);
         goto flush;
     }
        
