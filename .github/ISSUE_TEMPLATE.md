@@ -1,17 +1,21 @@
 ## ARK-4 Bugs/Issues
 
 #### PSP Model
-- [ ] 1000 (1k/Phat)
+- [ ] PSP-1000 (Fat)
  
-- [ ] 2000 (2k/Slim)
+- [ ] PSP-2000 (Slim)
 
-- [ ] 3000 (3k/slim & brite)
+- [ ] PSP-3000 (Slim & Bright)
 
-- [ ] GO
+- [ ] PSP-N1000 (PSP Go)
 
-- [ ] Street (E-1000)  
+- [ ] PSP-E1000 (Street)
 
-- [ ] Vita
+- [ ] PCH-1000/1100 (Vita Fat)
+
+- [ ] PCH-2000 (Vita Slim)
+
+- [ ] VTE-1000 (Vita TV)
 
 #### Ark Version
 
