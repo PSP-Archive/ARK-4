@@ -40,6 +40,10 @@ sceNetMPulldown Kernel Exploit for PSP 6.60 and 6.61
 
 //#define BETA_660
 
+/*
+6.00 DT: 0x0000CCA4 - 0x000041F4
+*/
+
 #ifdef BETA_660
 #define PATCH_OFFSET 0x0000D464
 #define POWERLOCK_OFFSET 0x00006640

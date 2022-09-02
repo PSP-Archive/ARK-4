@@ -120,6 +120,7 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
 
 void autoDetectDevice(ARKConfig* config){
     // determine execution mode by scanning for certain modules
+    if (k_tbl->KernelFindModuleByName == NULL) return;
     SceModule2* kermit_peripheral = k_tbl->KernelFindModuleByName("sceKermitPeripheral_Driver");
     if (kermit_peripheral){ // kermit is Vita-only
         SceModule2* pspvmc = k_tbl->KernelFindModuleByName("pspvmc_Library");
@@ -200,8 +201,10 @@ void kernelContentFunction(void){
     PRTSTR("Repairing kernel");
     kxf->repairInstruction(k_tbl);
 
-    if (ark_config->exec_mode == DEV_UNK)
+    if (ark_config->exec_mode == DEV_UNK){
+        PRTSTR("Autodetecting device");
         autoDetectDevice(ark_config); // attempt to autodetect configuration
+    }
 
     // Output Exploit Reach Screen
     running_ark[20] = 'P';

@@ -60,6 +60,10 @@ static int isSystemBooted(void)
     return 0;
 }
 
+static int freeVPLFixed(int uid, void* data){
+    return sceKernelFreeVpl(uid, data);
+};
+
 // Module Start Handler
 static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 {
@@ -102,6 +106,14 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         // Patch mesg_led_01g.prx
         patchMesgLed(mod);
         // Exit Handler
+        goto flush;
+    }
+
+    if (strcmp(mod->modname, "NOVA") == 0){
+        // NOVA fix: keep track of VPL to prevent double-free
+        //sctrlHENPatchSyscall(sctrlHENFindFunction("sceThreadManager", "ThreadManForUser", 0xBED27435), sctrlHENFindFunction("sceThreadManager", "ThreadManForUser", 0xAF36D708));
+        sctrlHENPatchSyscall(sctrlHENFindFunction("sceThreadManager", "ThreadManForUser", 0xB736E9FF), freeVPLFixed);
+        hookImportByNID(mod, "ThreadManForUser", 0xB736E9FF, freeVPLFixed);
         goto flush;
     }
 

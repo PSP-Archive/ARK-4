@@ -97,16 +97,15 @@ void copyFile(char* path, char* destination){
 
     if (strcmp(&path[len-4], ".prx") == 0){
         size_t fsize = k_tbl->KernelIOLSeek(src, 0, PSP_SEEK_END);
-		
         k_tbl->KernelIOLSeek(src, 0, PSP_SEEK_SET);
         read = k_tbl->KernelIORead(src, bigbuf, fsize);
         pspUnsignCheck(bigbuf);
         k_tbl->KernelIOWrite(dst, bigbuf, read);
     }
     else{
+        size_t fsize = k_tbl->KernelIOLSeek(src, 0, PSP_SEEK_END);
+		k_tbl->KernelIOLSeek(src, 0, PSP_SEEK_SET);
         do {
-			size_t fsize = k_tbl->KernelIOLSeek(src, 0, PSP_SEEK_END);
-			
             read = k_tbl->KernelIORead(src, bigbuf, BUF_SIZE);
             k_tbl->KernelIOWrite(dst, bigbuf, read);
         } while (read > 0);
