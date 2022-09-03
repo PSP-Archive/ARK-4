@@ -5,10 +5,10 @@
 #                                   #
 # Author  : Krazynez                #
 #                                   #
-# Date    : 2022-04-06              #
+# Date    : 2022-09-02              #
 #                                   #
 #####################################
-version=0.5
+version=0.6
 
 # Usually I do this but to keep file permissions sane I will avoid running as root until needed 
 #if [[ $EUID -ne 0 ]] ; then
@@ -56,8 +56,8 @@ function checkDepends {
 			fi
 
 		elif [[ $python2Ret -eq 0 && $makeRet -eq 1 ]] ; then
-			if [ -f $dialogCheck ]]; then
-                dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ make ] is a required package" 10 50
+			if [[ -f $dialogCheck ]]; then
+                dialog --colors --title "\Z1 ERROR! \Z0" --[infobox "[ make ] is a required package" 10 50
                 sleep 2;
                 dialog --clear
                 exit 1;
