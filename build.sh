@@ -57,7 +57,7 @@ function checkDepends {
 
 		elif [[ $python2Ret -eq 0 && $makeRet -eq 1 ]] ; then
 			if [[ -f $dialogCheck ]]; then
-                dialog --colors --title "\Z1 ERROR! \Z0" --[infobox "[ make ] is a required package" 10 50
+                dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ make ] is a required package" 10 50
                 sleep 2;
                 dialog --clear
                 exit 1;
