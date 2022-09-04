@@ -3,6 +3,7 @@
 # PSPSDK installer script by Yoti for ARK-4 project
 # 2022-07-01: initial release
 # 2022-07-03: python2 + chown
+# 2020-09-05: use local file
 
 if [ -d "/usr/local/pspdev" ]; then
     echo "Error: PSPSDK is already installed!"
@@ -17,12 +18,16 @@ for pkg in $pkgs; do
     sudo apt install $pkg -y
 done
 
-link="https://github.com/PSP-Archive/ARK-4/raw/main/contrib/PC/PSPSDK/pspdev.7z"
-#7z program can't read 7z archives from stdin
-#wget -qO- $link | 7z x -si -o/usr/local/
-wget -q --show-progress $link
-sudo 7z x pspdev.7z -o/usr/local/
-rm pspdev.7z
+if [ ! -f "./pspdev.7z" ]; then
+    link="https://github.com/PSP-Archive/ARK-4/raw/main/contrib/PC/PSPSDK/pspdev.7z"
+    #7z program can't read 7z archives from stdin
+    #wget -qO- $link | 7z x -si -o/usr/local/
+    wget -q --show-progress $link
+    sudo 7z x pspdev.7z -o/usr/local/
+    rm pspdev.7z
+else
+    sudo 7z x pspdev.7z -o/usr/local/
+fi
 chown -R $USER:$USER /usr/local/pspdev
 
 if [ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.6" ]; then
