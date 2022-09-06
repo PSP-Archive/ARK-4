@@ -73,24 +73,22 @@ int main(int argc, char *argv[]) {
 
 		int i;
 		SfoRecord fpSfoRecord;
+		unsigned int KtOffsetTemp = 0;
 		unsigned int DtOffsetTemp = 0;
 		for (i = 0; i < fpSfoHeader.RecCount; i++) {
 			memset(&fpSfoRecord, 0, sizeof(fpSfoRecord));
 			switch (i) {
 				case 0: // CATEGORY
-					fpSfoRecord.KtOffset = 0x0000;
 					fpSfoRecord.DataType = 0x0204;
 					fpSfoRecord.RecLength = 0x00000003; // fixed length for this record
 					fpSfoRecord.MaxLength = 0x00000004;
 				break;
 				case 1: // PARENTAL_LEVEL
-					fpSfoRecord.KtOffset = 0x0009;
 					fpSfoRecord.DataType = 0x0404;
 					fpSfoRecord.RecLength = 0x00000004; // fixed length for type 0x0404
 					fpSfoRecord.MaxLength = 0x00000004;
 				break;
 				case 2: // SAVEDATA_DETAIL
-					fpSfoRecord.KtOffset = 0x0018;
 					fpSfoRecord.DataType = 0x0204;
 					if (strlen(argv[i]) > 0x3FF)
 						fpSfoRecord.RecLength = 0x00000400;
@@ -99,7 +97,6 @@ int main(int argc, char *argv[]) {
 					fpSfoRecord.MaxLength = 0x00000400;
 				break;
 				case 3: // SAVEDATA_DIRECTORY
-					fpSfoRecord.KtOffset = 0x0028;
 					fpSfoRecord.DataType = 0x0204;
 					if (strlen(argv[i]) > 0x3F)
 						fpSfoRecord.RecLength = 0x00000040;
@@ -108,19 +105,16 @@ int main(int argc, char *argv[]) {
 					fpSfoRecord.MaxLength = 0x00000040;
 				break;
 				case 4: // SAVEDATA_FILE_LIST
-					fpSfoRecord.KtOffset = 0x003B;
 					fpSfoRecord.DataType = 0x0004;
 					fpSfoRecord.RecLength = 0x00000C60; // fixed length for type 0x0004
 					fpSfoRecord.MaxLength = 0x00000C60; // RecLength is same as MaxLength
 				break;
 				case 5: // SAVEDATA_PARAMS
-					fpSfoRecord.KtOffset = 0x004E;
 					fpSfoRecord.DataType = 0x0004;
 					fpSfoRecord.RecLength = 0x00000080; // fixed length for type 0x0004
 					fpSfoRecord.MaxLength = 0x00000080; // RecLength is same as MaxLength
 				break;
 				case 6: // SAVEDATA_TITLE
-					fpSfoRecord.KtOffset = 0x005E;
 					fpSfoRecord.DataType = 0x0204;
 					if (strlen(argv[i]) > 0x7F)
 						fpSfoRecord.RecLength = 0x00000080;
@@ -129,7 +123,6 @@ int main(int argc, char *argv[]) {
 					fpSfoRecord.MaxLength = 0x00000080;
 				break;
 				case 7: // TITLE
-					fpSfoRecord.KtOffset = 0x006D;
 					fpSfoRecord.DataType = 0x0204;
 					if (strlen(argv[i]) > 0x7F)
 						fpSfoRecord.RecLength = 0x00000080;
@@ -138,6 +131,8 @@ int main(int argc, char *argv[]) {
 					fpSfoRecord.MaxLength = 0x00000080;
 				break;
 			}
+			fpSfoRecord.KtOffset = KtOffsetTemp;
+			KtOffsetTemp += strlen(SfoRecordName[i]) + 1;
 			fpSfoRecord.DtOffset = DtOffsetTemp;
 			DtOffsetTemp += fpSfoRecord.MaxLength;
 			fwrite(&fpSfoRecord, sizeof(fpSfoRecord), 1, fp);
