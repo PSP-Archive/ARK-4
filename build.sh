@@ -8,7 +8,7 @@
 # Date    : 2022-09-02              #
 #                                   #
 #####################################
-version=0.6
+version=0.6.1
 
 # Usually I do this but to keep file permissions sane I will avoid running as root until needed 
 #if [[ $EUID -ne 0 ]] ; then
@@ -109,7 +109,9 @@ function original {
 	    fi
 	
 	    if [[ ! -f "/lib/libmpfr.so.4" ]] ; then
-	        if [[ -f "/lib/libmpfr.so" ]] ; then
+			if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so" ]] ; then
+				elevatePrivs ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+	        elif [[ -f "/lib/libmpfr.so" ]] ; then
 	            elevatePrivs ln -s /lib/libmpfr.so /lib/libmpfr.so.4
 	        elif [[ -f "/lib/libmpfr.so*" ]] ; then 
 	            elevatePrivs ln -s /lib/libmpfr.so* /lib/libmpfr.so.4
@@ -200,11 +202,13 @@ $
 	fi
 
 	if [[ ! -f "/lib/libmpfr.so.4" ]] ; then
-		if [[ -f "/lib/libmpfr.so" ]] ; then
+		if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so" ]] ; then
+			elevatePrivs ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+		elif [[ -f "/lib/libmpfr.so" ]] ; then
 	         elevatePrivs ln -s /lib/libmpfr.so /lib/libmpfr.so.4
-	      elif [[ -f "/lib/libmpfr.so*" ]] ; then 
+	    elif [[ -f "/lib/libmpfr.so*" ]] ; then 
 	         elevatePrivs ln -s /lib/libmpfr.so* /lib/libmpfr.so.4
-	      else
+	    else
 	          dialog --colors --title "\Zb\Z1 ! ERROR !\ZB" --infobox "libmpfr is not installed. Please install before continuing.\n" 10 40
 			  sleep 3;
 			  dialog --clear
