@@ -37,7 +37,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 ## INSTALLATION
 
-- Download the precompiled binaries from: https://github.com/PSP-Archive/ARK-4/releases/
+- Download the precompiled binaries from: https://github.com/PSP-Archive/ARK-4/releases/latest
 
 
 <details>
