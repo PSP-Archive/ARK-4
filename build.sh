@@ -90,6 +90,7 @@ function elevatePrivs {
 export -f elevatePrivs
 
 function original {
+	clear
 	read -p "
 	This script will setup the correct SDK to build ARK, get sign_np
 	dependency and temporarly setup the enivorment to build ARK-4. 
@@ -146,10 +147,14 @@ function original {
 	    fi
 
 		if [[ ${BASH_ARGV} == "--debug" ]] ; then
-			#dialog --colors --title "\Z1DEBUG ISSUE\Z0" --infobox "\nCurrently DEBUG mode is not working properly. I Will re-add when working.\n\nRunning normal \`make\`" 10 50
-			#sleep 2;
-			dialog --clear
-			eval make CFLAGS=-DDEBUG=1
+			clear
+			printf "Please Specifiy the debug level you would like:\n"
+			printf "1 (enable BSoD and color debugging)\n"
+			printf "2 (enable BSoD, color debugger and JAL tracer)\n"
+			printf "3 (enable BSoD, color debugger, JAL tracer and file logging)\n"
+			read -p "Choice: " debugLevel
+			eval make clean
+			eval make DEBUG=$debugLevel
 
 		else	
 	    	eval make
@@ -232,7 +237,9 @@ $
 	fi
 	
 	if [[ ${BASH_ARGV} == "--debug" ]] ; then
-			eval make DEBUG=1
+			eval make clean
+			debugLevel=$(dialog --colors --radiolist "\Z1DEBUG Types/Levels\Z0" 10 80 3 1 "DEBUG 1 (enable BSoD and color debugging)" on 2 "DEBUG 2 (enable BSoD, color debugger and JAL tracer)" off 3 "DEBUG 3 (enable BSoD, color debugger, JAL tracer and file logging)" off 3>&1 1>&2 2>&3)
+			eval make DEBUG=$debugLevel
 	else	
 	    	eval make
 	fi
