@@ -5,16 +5,11 @@
 #                                   #
 # Author  : Krazynez                #
 #                                   #
-# Date    : 2022-09-02              #
+# Date    : 2022-09-09              #
 #                                   #
 #####################################
 version=0.6.1
 
-# Usually I do this but to keep file permissions sane I will avoid running as root until needed 
-#if [[ $EUID -ne 0 ]] ; then
-#    printf "ERROR: Need to run as root!\n"
-#    exit 1;
-#fi
 export PSPDEV=/usr/local/pspdev && export PATH=$PATH:$PSPDEV/bin 
 
 dialogCheck=$(command -v dialog 2>/dev/null)
@@ -26,15 +21,12 @@ function checkDepends {
 	makeCheck=$(command -v make 2>/dev/null)
 	makeRet=$?
 
-	# libmpfrCheck (soft check used later on in script to actualy maniplate later version to be used or if actually found)
-	# Might just shift the check to here to make more since later on, will work on another revision to implement it. Fine for now.
-	#[[ -f '/lib/libmpfr.so.4' ]]	
-	#libmpfrRet=$?
+	sevenzCheck=$(command -v 7z 2>/dev/null)
+	sevenzRet=$?
 
-
-	if [[ $python2Ret || $makeRet -eq 1 ]] ; then
+	if [[ $python2Ret -eq 1 || $makeRet -eq 1 ]] ; then
 		if [[ $python2Ret && $makeRet -eq 1 ]] ; then
-			if [[ -f $dialogCheck ]]; then
+			if [[ -f $dialogCheck ]] ; then
 				dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python2 ] and  [ make ] are required packages" 10 50 
 				sleep 2;
 				dialog --clear
@@ -43,32 +35,40 @@ function checkDepends {
 				printf "You need both \`python2\` and \`make\`\n"
 				exit 1;
 			fi
+		fi
 
-		elif [[ $python2Ret -eq 1 && $makeRet -eq 0 ]] ; then
-			if [[ -f $dialogCheck ]]; then
-                dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python2 ] is a required package" 10 50
-                sleep 2;
-                dialog --clear
-                exit 1; 
-            else
-                printf " \`python2\` is required\n"
-                exit 1;
-			fi
+	elif [[ $python2Ret -eq 1 && $makeRet -eq 0 ]] ; then
+		if [[ -f $dialogCheck ]] ; then
+            dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python2 ] is a required package" 10 50
+            sleep 2;
+            dialog --clear
+            exit 1; 
+        else
+            printf " \`python2\` is required\n"
+            exit 1;
+		fi
 
-		elif [[ $python2Ret -eq 0 && $makeRet -eq 1 ]] ; then
-			if [[ -f $dialogCheck ]]; then
-                dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ make ] is a required package" 10 50
-                sleep 2;
-                dialog --clear
-                exit 1;
-            else
-                printf " \`make\` is required\n"
-                exit 1;
-			fi
+	elif [[ $python2Ret -eq 0 && $makeRet -eq 1 ]] ; then
+		if [[ -f $dialogCheck ]] ; then
+            dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ make ] is a required package" 10 50
+            sleep 2;
+            dialog --clear
+            exit 1;
+        else
+            printf " \`make\` is required\n"
+            exit 1;
+		fi
+	elif [[ $sevenzRet -eq 1 ]] ; then
+		if [[ -f $dialogCheck ]] ; then
+			dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ 7z ] is a required package" 10 50
+			sleep 2;
+			dialog --clear
+			exit 1;
+		else
+			printf " \`7z\` is required\n"
+			exit 1;
 		fi
 	fi
-
-
 
 }
 
@@ -90,6 +90,7 @@ function elevatePrivs {
 export -f elevatePrivs
 
 function original {
+	
 	clear
 	read -p "
 	This script will setup the correct SDK to build ARK, get sign_np
@@ -104,21 +105,23 @@ function original {
 	
 	if you continue ARK will try to build with already installed SDK: " input
 	
-	    if [[ ! "$input" =~ ^(Y|Yes|YEs|YES|yES|yeS|yes|y|c|C)$ ]] ; then
-	        printf "Exiting....\n"
-			exit 0;
-	    fi
+	if [[ ! "$input" =~ ^(Y|Yes|YEs|YES|yES|yeS|yes|y|c|C)$ ]] ; then
+		printf "Exiting....\n"
+		exit 0;
+	fi
 	
-	    if [[ ! -f "/lib/libmpfr.so.4" ]] ; then
-			if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so" ]] ; then
-				elevatePrivs ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libmpfr.so.4
-	        elif [[ -f "/lib/libmpfr.so" ]] ; then
-	            elevatePrivs ln -s /lib/libmpfr.so /lib/libmpfr.so.4
-	        elif [[ -f "/lib/libmpfr.so*" ]] ; then 
-	            elevatePrivs ln -s /lib/libmpfr.so* /lib/libmpfr.so.4
-	        else
-	            printf "libmpfr is not installed. Please install before continuing.\n"
-	            exit 1;
+	if [[ ! -f "/lib/libmpfr.so.4" ]] ; then
+		if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.4" ]] ; then
+			printf "Already Exist\n"
+		elif [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so" ]] ; then
+			elevatePrivs ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+	    elif [[ -f "/lib/libmpfr.so" ]] ; then
+	        elevatePrivs ln -s /lib/libmpfr.so /lib/libmpfr.so.4
+	    elif [[ -f "/lib/libmpfr.so*" ]] ; then 
+	        elevatePrivs ln -s /lib/libmpfr.so* /lib/libmpfr.so.4
+	    else
+	        printf "\nlibmpfr is not installed. Please install before continuing.\n"
+	        exit 1;
 	        fi
 	    fi
 	fi
@@ -146,7 +149,7 @@ function original {
 	
 	    fi
 
-		if [[ ${BASH_ARGV} == "--debug" ]] ; then
+		if [[ $1 == "--debug" ]] ; then
 			clear
 			printf "Please Specifiy the debug level you would like:\n"
 			printf "1 (enable BSoD and color debugging)\n"
@@ -169,8 +172,20 @@ function withDialog {
 	# Check for python2 and Make first before moving onwards
 	checkDepends 
 
+	if [[ $1 == '-h' || $1 == '--help' ]] ; then
+			echo "$0         | Compiles & Builds Release builds"
+			echo "$0 --debug | Allows different levels of debugging"
+			echo "$0 --clean | Runs \`make clean\` (in case your path is not setup correctly)"
+			exit 0;
+	fi
+
+	if [[ $1 == '--clean' ]] ; then
+			eval make clean
+			exit 0;
+	fi
+
 	if [[ ! -f '/usr/bin/dialog' ]] ; then
-		original
+		original $1
 		exit 0;
 	fi
 
@@ -236,7 +251,7 @@ $
 		rm -rf sign_np
 	fi
 	
-	if [[ ${BASH_ARGV} == "--debug" ]] ; then
+	if [[ $1 == "--debug" ]] ; then
 			eval make clean
 			debugLevel=$(dialog --colors --radiolist "\Z1DEBUG Types/Levels\Z0" 10 80 3 1 "DEBUG 1 (enable BSoD and color debugging)" on 2 "DEBUG 2 (enable BSoD, color debugger and JAL tracer)" off 3 "DEBUG 3 (enable BSoD, color debugger, JAL tracer and file logging)" off 3>&1 1>&2 2>&3)
 			eval make DEBUG=$debugLevel
@@ -249,4 +264,8 @@ $
 
 export -f withDialog
 
-withDialog
+if [ -z "$1" ]; then
+	withDialog
+else
+	withDialog $1
+fi
