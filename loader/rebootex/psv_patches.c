@@ -8,7 +8,7 @@ extern int (* UnpackBootConfig)(char * buffer, int length);
 // Load Core module_start Hook
 int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize, void *))
 {
-    loadCoreModuleStartCommon();
+    loadCoreModuleStartCommon(start);
     flushCache();
     return start(args, argp);
 }
@@ -23,8 +23,9 @@ int _pspemuLfatOpen(BootFile* file, int unk)
         }
         else{
             if (reboot_conf->iso_mode == MODE_INFERNO){
-                p[5] = 'i'; // use inferno ISO mode
+                p[5] = 'i'; // use inferno ISO mode (psvbtinf.bin)
             }
+            // else use psvbtcnf.bin for np9660
         }
     }
     else if (strcmp(p, REBOOT_MODULE) == 0){
@@ -59,7 +60,6 @@ void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *tab
 
 int PatchSysMem(void *a0, void *sysmem_config)
 {
-
     int (* module_bootstart)(SceSize args, void *sysmem_config) = (void *)_lw((u32)a0 + 0x28);
     u32 text_addr = SYSMEM_TEXT;
     u32 top_addr = text_addr+0x14000;
@@ -86,6 +86,7 @@ int PatchSysMem(void *a0, void *sysmem_config)
 // patch reboot on ps vita
 void patchRebootBufferVita(){
 
+    // hijack UnpackBootConfig to insert modules at runtime
     _sw(0x27A40004, UnpackBootConfigArg); // addiu $a0, $sp, 4
     _sw(JAL(UnpackBootConfigVita), UnpackBootConfigCall); // Hook UnpackBootConfig
 

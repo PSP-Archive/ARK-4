@@ -206,7 +206,7 @@ int prologue_module_hook(void * unk0, SceModule2 * mod)
 int _sceKernelCheckExecFile(unsigned char * buffer, int * check)
 {
 
-    if (leda_running)
+    if (leda_running) // this patch prevents leda from working
         return sceKernelCheckExecFile(buffer, check); // forward to allow leda do its thing
 
     // PatchExec1

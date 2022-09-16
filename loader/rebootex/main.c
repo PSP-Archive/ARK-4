@@ -96,10 +96,10 @@ int CheckExecFilePatched(unsigned char * addr, void * arg2)
     return 0;
 }
 
-u32 loadCoreModuleStartCommon(){
+u32 loadCoreModuleStartCommon(u32 module_start){
 
     // Calculate Text Address and size
-    u32 text_addr = FindTextAddrByName("sceLoaderCore");
+    u32 text_addr = module_start-0xAF8;
     u32 top_addr = text_addr+0x8000; // read 32KB at most (more than enough to scan loadcore)
     
     // Fetch Original Decrypt Function Stub

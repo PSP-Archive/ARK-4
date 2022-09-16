@@ -3,8 +3,7 @@
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 
 int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(void *, void *, void *)){
-    u32 text_addr = loadCoreModuleStartCommon();
-
+    u32 text_addr = loadCoreModuleStartCommon(start);
     flushCache();
     return start(arg1, arg2, arg3);
 }
