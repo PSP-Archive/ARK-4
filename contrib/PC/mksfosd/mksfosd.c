@@ -9,7 +9,8 @@
 #define SfoHeaderVersion 0x00000101
 #define SfoHeaderKtOffset 0x00000094
 #define SfoHeaderDtOffset 0x00000108
-#define SfoHeaderRecCount 0x00000008
+
+#define CATEGORY_NAME "MS"
 
 typedef struct {
 	unsigned int Magic;
@@ -68,7 +69,7 @@ int main(int argc, char *argv[]) {
 		fpSfoHeader.Version = SfoHeaderVersion;
 		fpSfoHeader.KtOffset = SfoHeaderKtOffset;
 		fpSfoHeader.DtOffset = SfoHeaderDtOffset;
-		fpSfoHeader.RecCount = SfoHeaderRecCount;
+		fpSfoHeader.RecCount = sizeof(SfoRecordName) / sizeof(SfoRecordName[0]);
 		fwrite(&fpSfoHeader, sizeof(fpSfoHeader), 1, fp);
 
 		int i;
@@ -154,7 +155,7 @@ int main(int argc, char *argv[]) {
 			switch (i) {
 				case 0: // CATEGORY
 					//fwrite("MS\0\0", 4, 1, fp);
-					memcpy(buf, "MS", strlen("MS"));
+					memcpy(buf, CATEGORY_NAME, strlen(CATEGORY_NAME));
 					fwrite(buf, 4, 1, fp);
 				break;
 				case 1: // PARENTAL_LEVEL
