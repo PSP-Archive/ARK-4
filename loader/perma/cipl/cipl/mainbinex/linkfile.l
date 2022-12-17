@@ -1,7 +1,7 @@
 OUTPUT_FORMAT("elf32-littlemips")
 OUTPUT_ARCH(mips)
 
-ENTRY(Patch_Entry)
+ENTRY(_arkBoot)
 
 SECTIONS
 {

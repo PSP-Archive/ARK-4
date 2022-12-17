@@ -1,5 +1,6 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
 INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include
+LIBS = -lansic -L $(ARKROOT)/libs
 TARGET = patch.bin
 
 all: $(TARGET)
@@ -13,7 +14,8 @@ OBJCOPY = psp-objcopy
 LINKFILE = linkfile.l
 
 C_OBJS = \
-	main.o
+	main.o \
+	cache.o
 
 main.elf: $(C_OBJS) 
 
