@@ -17,11 +17,26 @@
 
 #include "rebootex.h"
 
+#ifdef REBOOTEX
+#define END_BUF_STR "ApplyPspRelSection"
+#else
+#define END_BUF_STR "StopBoot"
+
+ARKConfig _arkconf = {
+    .magic = ARK_CONFIG_MAGIC,
+    .arkpath = "ms0:/PSP/SAVEDATA/ARK_01234/", // default path for ARK files
+    .exploit_id = "cIPL",
+    .launcher = {0},
+    .exec_mode = PSP_ORIG, // run ARK in PSP mode
+    .recovery = 0,
+};
+#endif
+
 RebootConfigARK* reboot_conf = (RebootConfigARK*)REBOOTEX_CONFIG;
 ARKConfig* ark_config = (ARKConfig*)ARK_CONFIG;
 
 // sceReboot Main Function
-int (* sceReboot)(int, int, int, int) = (void *)(REBOOT_TEXT);
+int (* sceReboot)(int, int, int, int, int, int, int) = (void *)(REBOOT_TEXT);
 
 // Instruction Cache Invalidator
 void (* sceRebootIcacheInvalidateAll)(void) = NULL;
@@ -156,6 +171,7 @@ u32 findRebootFunctions(u32 reboot_start){
             do {a-=4;} while (_lw(a) != 0x40088000);
             Icache = (void*)a;
         }
+#ifdef REBOOTEX
         else if (data == 0x8FA50008 && _lw(addr+8) == 0x8FA40004){ // UnpackBootConfig
             UnpackBootConfigArg = addr+8;
             u32 a = addr;
@@ -163,12 +179,26 @@ u32 findRebootFunctions(u32 reboot_start){
             UnpackBootConfig = K_EXTRACT_CALL(a-4);
             UnpackBootConfigCall = a-4;
         }
+#else
+        else if (data == 0x8FA40004){ // UnpackBootConfig
+            if (_lw(addr+8) == 0x8FA50008) {
+                UnpackBootConfigArg = addr;
+                UnpackBootConfig = K_EXTRACT_CALL(addr+4);
+                UnpackBootConfigCall = addr+4;
+            }
+            else if (_lw(addr+4) == 0x8FA50008) {
+                UnpackBootConfigArg = addr;
+                UnpackBootConfig = K_EXTRACT_CALL(addr+8);
+                UnpackBootConfigCall = addr+8;
+            }
+        }
+#endif
         else if ((data == _lw(addr+4)) && (data & 0xFC000000) == 0xAC000000){ // Patch ~PSP header check
             // Returns size of the buffer on loading whatever modules
             _sw(0xAFA50000, addr+4); // sw a1, 0(sp)
             _sw(0x20A30000, addr+8); // move v1, a1
         }
-        else if (strcmp("ApplyPspRelSection", (char*)addr) == 0){
+        else if (strcmp(END_BUF_STR, (char*)addr) == 0){
             reboot_end = (addr & -0x4); // found end of reboot buffer
             break;
         }
@@ -181,13 +211,17 @@ u32 findRebootFunctions(u32 reboot_start){
 }
 
 // Entry Point
-int _arkReboot(int arg1, int arg2, int arg3, int arg4) __attribute__((section(".text.startup")));
-int _arkReboot(int arg1, int arg2, int arg3, int arg4)
+int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7) __attribute__((section(".text.startup")));
+int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7)
 {
 
     #ifdef DEBUG
     colorDebug(0xff00);
     #endif
+    
+#ifdef PAYLOADEX
+    memcpy(ark_config, &_arkconf, sizeof(ARKConfig));
+#endif
 
     reboot_start = REBOOT_TEXT;
     reboot_end = findRebootFunctions(reboot_start); // scan for reboot functions
@@ -197,9 +231,11 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4)
         if (IS_PSP(ark_config)){
             patchRebootBufferPSP();
         }
+#ifdef REBOOTEX
         else if (IS_VITA(ark_config)){
             patchRebootBufferVita();
         }
+#endif
         #ifdef DEBUG
         else colorDebug(0xff); // unknown device (?), don't touch it
         #endif
@@ -209,5 +245,5 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4)
     #endif
     
     // Forward Call
-    return sceReboot(arg1, arg2, arg3, arg4);
+    return sceReboot(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }

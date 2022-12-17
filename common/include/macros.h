@@ -74,6 +74,7 @@
 #define K_EXTRACT_IMPORT(x) (((((u32)_lw((u32)x)) & ~0x08000000) << 2) | 0x80000000)
 #define U_EXTRACT_CALL(x) ((((u32)_lw((u32)x)) & ~0x0C000000) << 2)
 #define K_EXTRACT_CALL(x) (((((u32)_lw((u32)x)) & ~0x0C000000) << 2) | 0x80000000)
+#define K_EXTRACT_BRANCH(x) ((((((u32)_lw((u32)x)) & 0x0000FFFF) << 2) + x + 4) | 0x80000000)
 
 // by Acid_Snake
 // the opcode is filled with two 0's to the right and shifted to make it a byte long

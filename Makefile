@@ -31,6 +31,11 @@ SUBDIRS = libs \
 	extras/menus/xMenu \
 	extras/menus/vshmenu \
 	extras/idsregeneration \
+	cipl/cipl/payloadex \
+	cipl/cipl/mainbinex \
+	cipl/cipl/combine \
+	cipl/installer \
+	cipl/installer/kpspident
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx
 
@@ -58,6 +63,9 @@ copy-bin:
 	$(Q)cp extras/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
+	$(Q)cp cipl/installer/EBOOT.PBP dist/ARK_cIPL/EBOOT.PBP
+	$(Q)cp contrib/PSP/GAME/ARK_cIPL/ipl_update.prx dist/ARK_cIPL/ipl_update.prx
+	$(Q)cp cipl/installer/kpspident/kpspident.prx dist/ARK_cIPL/kpspident.prx
 	
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
@@ -113,6 +121,11 @@ clean:
 	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
+	$(Q)$(MAKE) $@ -C cipl/cipl/payloadex
+	$(Q)$(MAKE) $@ -C cipl/cipl/mainbinex
+	$(Q)$(MAKE) $@ -C cipl/cipl/combine
+	$(Q)$(MAKE) $@ -C cipl/installer
+	$(Q)$(MAKE) $@ -C cipl/installer/kpspident
 	$(Q)-rm -rf dist *~ | true
 	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
 
@@ -138,6 +151,7 @@ mkdir-dist:
 	$(Q)mkdir dist/VitaBubble | true
 	$(Q)mkdir dist/ARK_Live | true
 	$(Q)mkdir dist/Infinity | true
+	$(Q)mkdir dist/ARK_cIPL | true
 
 -include $(ARKROOT)/.config
 include $(ARKROOT)/common/make/quiet.mak
