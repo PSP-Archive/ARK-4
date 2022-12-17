@@ -16,8 +16,12 @@ void patchRebootBufferPSP(){
         u32 data = _lw(addr);
         if (data == 0x24D90001 || data == 0x256A0001){  // rebootexcheck5
             u32 a = addr;
-            do {a-=4;} while ((_lw(a) & 0xFFFF0000) != 0x04420000);
-            _sw(NOP, a); // Killing Branch Check bltz ...
+            u32 insMask;
+            do {
+                a-=4;
+                insMask = _lw(a) & 0xFFFF0000;
+            } while (insMask != 0x04400000 && insMask != 0x04420000);
+            _sw(NOP, a); // Killing Branch Check bltz/bltzl ...
             break;
         }
     }
