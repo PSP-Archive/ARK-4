@@ -60,10 +60,6 @@ static int isSystemBooted(void)
     return 0;
 }
 
-static int freeVPLFixed(int uid, void* data){
-    return sceKernelFreeVpl(uid, data);
-};
-
 // Module Start Handler
 static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 {
@@ -109,13 +105,14 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
-    if (strcmp(mod->modname, "NOVA") == 0){
-        // NOVA fix: keep track of VPL to prevent double-free
-        //sctrlHENPatchSyscall(sctrlHENFindFunction("sceThreadManager", "ThreadManForUser", 0xBED27435), sctrlHENFindFunction("sceThreadManager", "ThreadManForUser", 0xAF36D708));
-        sctrlHENPatchSyscall(sctrlHENFindFunction("sceThreadManager", "ThreadManForUser", 0xB736E9FF), freeVPLFixed);
-        hookImportByNID(mod, "ThreadManForUser", 0xB736E9FF, freeVPLFixed);
-        goto flush;
-    }
+    if (strcmp(mod->modname, "tekken") == 0) {
+		u32 func = sctrlHENFindImport(mod->modname, "scePower", 0x34F9C463);
+		if (func) {
+			_sw(JR_RA, func);
+            _sw(LI_V0(222), func+4);
+            goto flush;
+		}
+	}
 
     // Boot Complete Action not done yet
     if(booted == 0)
