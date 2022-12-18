@@ -12,12 +12,16 @@ int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(
 void patchRebootBufferPSP(){
 
     // due to cache inconsistency, we must do these patches first and also make sure we read as little ram as possible
-    for (u32 addr = (u32)UnpackBootConfig; addr<reboot_end; addr+=4){
+    for (u32 addr = (u32)reboot_start; addr<reboot_end; addr+=4){
         u32 data = _lw(addr);
-        if (data == 0x24D90001){  // rebootexcheck5
+        if (data == 0x24D90001 || data == 0x256A0001){  // rebootexcheck5
             u32 a = addr;
-            do {a-=4;} while (_lw(a) != NOP);
-            _sw(NOP, a-4); // Killing Branch Check bltz ...
+            u32 insMask;
+            do {
+                a-=4;
+                insMask = _lw(a) & 0xFFFF0000;
+            } while (insMask != 0x04400000 && insMask != 0x04420000);
+            _sw(NOP, a); // Killing Branch Check bltz/bltzl ...
             break;
         }
     }
@@ -26,18 +30,19 @@ void patchRebootBufferPSP(){
     int patches = 4;
     for (u32 addr = reboot_start; addr<reboot_end && patches; addr+=4){
         u32 data = _lw(addr);
-        if (data == 0x02A0E821){ // found loadcore jump on PSP
-            _sw(0x00113821, addr-4); // move a3, s1
+        if (data == 0x02A0E821 || data == 0x0280E821){ // found loadcore jump on PSP
+            _sw(0x3821 | ((_lw(addr-4) & 0x3E00000) >> 5), addr-4); // ADDU $a3 $zero <reg>
             _sw(JUMP(loadcoreModuleStartPSP), addr);
-            _sw(0x02A0E821, addr + 4);
-            addr += 4;
+            _sw(data, addr + 4);
             patches--;
+            addr += 4;
         }
-        else if (data == 0x2C860040){ // kdebug patch
+        else if (data == 0x2C860040 || data == 0x2C850040){ // kdebug patch
             _sw(0x03E00008, addr-4); // make it return 1
             _sw(0x24020001, addr); // rebootexcheck1
             patches--;
         }
+#ifdef REBOOTEX
         else if (data == 0x34650001){ // rebootexcheck2
             _sw(NOP, addr-4); // Killing Branch Check bltz ...
             patches--;
@@ -49,6 +54,17 @@ void patchRebootBufferPSP(){
             _sw(NOP, addr+8); // Killing Branch Check bltz ...
             patches--;
         }
+#else
+        else if (data == 0x0440004f){ // payloadexcheck2
+            _sw(NOP, addr); // Killing Branch Check bltz ...
+            patches--;
+        }
+        else if (data == 0x01F7702B){ // rebootexcheck3 and rebootexcheck4
+            _sw(NOP, addr-12); // Killing Branch Check bltz
+            _sw(NOP, addr+4); // Killing Branch Check beqz ...
+            patches--;
+        }
+#endif
     }
     // Flush Cache
     flushCache();
@@ -136,17 +152,17 @@ void patchRebootIoPSP(){
     int patches = 3;
     for (u32 addr = reboot_start; addr<reboot_end && patches; addr+=4){
         u32 data = _lw(addr);
-        if (data == 0x8E840000){
+        if (data == 0x8E840000 || data == 0x8EA40000){
             sceBootLfatOpen = K_EXTRACT_CALL(addr-4);
             _sw(JAL(_sceBootLfatOpen), addr-4);
             patches--;
         }
-        else if (data == 0xAE840004){
+        else if (data == 0xAE840004 || data == 0xAEA30004){
             sceBootLfatRead = K_EXTRACT_CALL(addr+4);
             _sw(JAL(_sceBootLfatRead), addr+4);
             patches--;
         }
-        else if (data == 0xAE930008){
+        else if (data == 0xAE930008 || data == 0xAEB40008){
             sceBootLfatClose = K_EXTRACT_CALL(addr-4);
             _sw(JAL(_sceBootLfatClose), addr-4);
             patches--;

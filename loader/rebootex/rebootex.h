@@ -38,7 +38,7 @@ extern u32 reboot_start;
 extern u32 reboot_end;
 
 // sceReboot Main Function
-extern int (* sceReboot)(int, int, int, int);
+extern int (* sceReboot)(int, int, int, int, int, int, int);
 
 // Instruction Cache Invalidator
 extern void (* sceRebootIcacheInvalidateAll)(void);
@@ -59,9 +59,11 @@ extern u32 UnpackBootConfigCall;
 extern u32 UnpackBootConfigArg;
 
 // Rebootex functions
-u32 loadCoreModuleStartCommon();
+u32 loadCoreModuleStartCommon(u32 entry);
 void patchRebootBufferPSP();
+#ifdef REBOOTEX
 void patchRebootBufferVita();
+#endif
 void patchRebootIoPSP();
 
 #endif

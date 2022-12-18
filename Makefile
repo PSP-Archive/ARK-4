@@ -26,11 +26,16 @@ SUBDIRS = libs \
 	loader/live/kernel/idstorage_dumper \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
+	loader/perma/cipl/cipl/payloadex \
+	loader/perma/cipl/cipl/mainbinex \
+	loader/perma/cipl/cipl/combine \
+	loader/perma/cipl/installer \
+	loader/perma/cipl/installer/kpspident \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
 	extras/menus/xMenu \
 	extras/menus/vshmenu \
-	extras/idsregeneration \
+	extras/idsregeneration
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx
 
@@ -50,6 +55,9 @@ copy-bin:
 	$(Q)cp loader/live/kernel/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
 	$(Q)cp loader/live/kernel/kxploit/dummy/K.BIN dist/ARK_01234/K.BIN # Dummy Kernel exploit
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
+	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/ARK_cIPL/EBOOT.PBP
+	$(Q)cp loader/perma/cipl/installer/kpspident/kpspident.prx dist/ARK_cIPL/kpspident.prx
+	$(Q)cp contrib/PSP/GAME/ARK_cIPL/ipl_update.prx dist/ARK_cIPL/ipl_update.prx
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
@@ -113,6 +121,11 @@ clean:
 	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/cipl/payloadex
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/cipl/mainbinex
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/cipl/combine
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer/kpspident
 	$(Q)-rm -rf dist *~ | true
 	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
 
@@ -138,6 +151,7 @@ mkdir-dist:
 	$(Q)mkdir dist/VitaBubble | true
 	$(Q)mkdir dist/ARK_Live | true
 	$(Q)mkdir dist/Infinity | true
+	$(Q)mkdir dist/ARK_cIPL | true
 
 -include $(ARKROOT)/.config
 include $(ARKROOT)/common/make/quiet.mak
