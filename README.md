@@ -33,7 +33,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with Legacy Homebrew via `eLoader` and `Leda`.
 
-- Compatible with `Infinity 2` bootloader.
+- Compatible with `cIPL` and `Infinity 2` bootloaders for permanent CFW.
 
 ## INSTALLATION
 
@@ -61,7 +61,8 @@ as well as unique and exclusive new features not found anywhere else.
 - To use `Infinity` place the `EBOOT.PBP` from the `Infinity` folder found in the ARK download into \
 `/PSP/GAME/UPDATE`. Install `Infinity` as you normally would. \
   This will allow you to use ARK permanently and triple boot with PRO and ME.
- - If you will be using the Live loader version of ARK instead of a permanent solution, it is recommended that you delete `FLASH0.ARK` from the savedata file after the first installation and bootup of ARK, otherwise the flash0 files will be installed every time you boot back to ARK and this is detrimental to the flash even if ARK installs very little and small files. Doing this will also make the Live loader boot up ARK faster.
+- You can also use the `cIPL` installer for a faster permanent CFW on 1K and early 2K models (models compatible with Pandora).
+- If you will be using the Live loader version of ARK instead of a permanent solution, it is recommended that you delete `FLASH0.ARK` from the savedata file after the first installation and bootup of ARK, otherwise the flash0 files will be installed every time you boot back to ARK and this is detrimental to the flash even if ARK installs very little and small files. Doing this will also make the Live loader boot up ARK faster.
 - To `update ARK` simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` from `OFW`.
 
 </p>
@@ -220,7 +221,7 @@ Note: some of these menus have not been updated or supported by their developers
   
 - `TheFl0w` for his advancements and research in CFW development and overall contributions to the scene.
 
-- `meetpatty` for his excellent work in fixing bugs and adding features.
+- `meetpatty` for his excellent work in fixing bugs and adding important features like cIPL and DevKit support.
 
 - `Codestation` for his incredible work improving CSO speeds and creating the ZSO format.
 
