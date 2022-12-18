@@ -3,7 +3,8 @@
 # PSPSDK installer script by Yoti for ARK-4 project
 # 2022-07-01: initial release
 # 2022-07-03: python2 + chown
-# 2020-09-05: use local file
+# 2022-09-05: use local file
+# 2022-12-19: fix for chown
 
 if [ -d "/usr/local/pspdev" ]; then
     echo "Error: PSPSDK is already installed!"
@@ -28,7 +29,7 @@ if [ ! -f "./pspdev.7z" ]; then
 else
     sudo 7z x pspdev.7z -o/usr/local/
 fi
-chown -R $USER:$USER /usr/local/pspdev
+sudo chown -R $USER:$USER /usr/local/pspdev/
 
 if [ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.6" ]; then
     if [ ! -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.4" ]; then
