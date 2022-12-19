@@ -22,7 +22,7 @@ C_OBJS = \
 	$(REBOOTEX_DIR)/pspbtcnf.o \
 	$(ARKROOT)/common/utils/scanner.o \
 
-LIBS = -L $(ARKROOT)/libs -lcolordebugger
+LIBS = -L $(ARKROOT)/libs
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
@@ -30,7 +30,7 @@ LIBS += -lcolordebugger
 endif
 
 main.elf: $(C_OBJS)
-	$(LD) -o main.elf $(C_OBJS)
+	$(LD) -o main.elf $(C_OBJS) $(LIBS)
 
 $(TARGET): main.elf
 	$(Q)$(STRIP) -s $<
