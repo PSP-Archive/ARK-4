@@ -18,15 +18,7 @@ int _pspemuLfatOpen(BootFile* file, int unk)
     char* p = file->name;
     if (strcmp(p, "pspbtcnf.bin") == 0){
         p[2] = 'v'; // custom btcnf for PS Vita
-        if (IS_VITA_POPS(ark_config)){
-            p[5] = 'x'; // psvbtxnf.bin for PS1 exploits
-        }
-        else{
-            if (reboot_conf->iso_mode == MODE_INFERNO){
-                p[5] = 'i'; // use inferno ISO mode (psvbtinf.bin)
-            }
-            // else use psvbtcnf.bin for np9660
-        }
+        p[5] = 'x'; // psvbtxnf.bin for PS1 exploits
     }
     else if (strcmp(p, REBOOT_MODULE) == 0){
         file->buffer = (void *)0x89000000;
@@ -49,42 +41,9 @@ int UnpackBootConfigVita(char **p_buffer, int length){
     return res;
 }
 
-//extra ram through flash0 ramfs on Vita
-void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *table)
-{
-    // Add flash0 ramfs as partition 11
-    SetMemoryPartitionTable(sysmem_config, table);
-    table->extVshell.addr = VITA_EXTRA_RAM;
-    table->extVshell.size = 32 * 1024 * 1024;
-}
-
-int PatchSysMem(void *a0, void *sysmem_config)
-{
-    int (* module_bootstart)(SceSize args, void *sysmem_config) = (void *)_lw((u32)a0 + 0x28);
-    u32 text_addr = SYSMEM_TEXT;
-    u32 top_addr = text_addr+0x14000;
-    int patches = 2;
-    for (u32 addr = text_addr; addr<top_addr && patches; addr += 4) {
-        u32 data = _lw(addr);
-        if (data == 0x247300FF){
-            SetMemoryPartitionTable = K_EXTRACT_CALL(addr-20);
-            _sw(JAL(SetMemoryPartitionTablePatched), addr-20);
-            patches--;
-        }
-        else if (data == 0x8E86004C){
-            _sw(0x2405000F, addr+16);
-            patches--;
-        }
-    }
-
-    flushCache();
-
-    return module_bootstart(4, sysmem_config);
-}
-
 
 // patch reboot on ps vita
-void patchRebootBufferVita(){
+void patchRebootBuffer(){
 
     // hijack UnpackBootConfig to insert modules at runtime
     _sw(0x27A40004, UnpackBootConfigArg); // addiu $a0, $sp, 4
@@ -108,10 +67,6 @@ void patchRebootBufferVita(){
         }
         else if ((data & 0x0000FFFF) == 0x8B00){
             _sb(0xA0, addr); // Link Filesystem Buffer to 0x8BA00000
-        }
-        else if (data == 0x24040004) {
-            _sw(0x02402021, addr); //move $a0, $s2
-            _sw(JAL(PatchSysMem), addr + 0x64); // Patch call to SysMem module_bootstart
         }
     }
     // Flush Cache

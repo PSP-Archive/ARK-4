@@ -19,10 +19,9 @@ REBOOT_OBJS = \
 	main.o \
 	lib.o \
 	pspbtcnf.o \
-	psp_patches.o \
-
+	
 C_OBJS = \
-	$(ARKROOT)/common/utils/scanner.o
+	$(ARKROOT)/common/utils/scanner.o \
 
 LIBS = -L $(ARKROOT)/libs -lcolordebugger
 
@@ -34,7 +33,10 @@ endif
 $(REBOOT_OBJS) : %.o : $(REBOOTEXDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-main.elf: $(REBOOT_OBJS) $(C_OBJS) 
+patches.o: $(ARKROOT)/core/compat/psp/rebootex/patches.c
+	$(CC) $(CFLAGS) -I$(REBOOTEXDIR) -c $< -o $@
+
+main.elf: $(REBOOT_OBJS) $(C_OBJS) patches.o
 
 $(TARGET): main.elf
 	$(Q)$(STRIP) -s $<

@@ -9,10 +9,12 @@ export DEBUG ARKROOT
 SUBDIRS = libs \
 	contrib/PC/btcnf \
 	contrib/PC/prxencrypter \
-	loader/rebootex \
 	core/systemctrl \
+	core/compat/psp/rebootex \
 	core/compat/psp \
+	core/compat/vita/rebootex \
 	core/compat/vita \
+	core/compat/vitapops/rebootex \
 	core/compat/vitapops \
 	core/inferno \
 	core/stargate \
@@ -102,7 +104,9 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/live/kernel/idstorage_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/psp_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/vita_flash_dumper
-	$(Q)$(MAKE) $@ -C loader/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/psp/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex
 	$(Q)$(MAKE) $@ -C core/systemctrl
 	$(Q)$(MAKE) $@ -C core/vshctrl
 	$(Q)$(MAKE) $@ -C core/stargate

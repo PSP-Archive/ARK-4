@@ -203,3 +203,6 @@
 #ifdef F_SystemCtrlForKernel_0065
 	IMPORT_FUNC "SystemCtrlForKernel",0x221400A6,sctrlSetStartModuleExtra
 #endif
+#ifdef F_SystemCtrlForKernel_0066
+	IMPORT_FUNC "SystemCtrlForKernel",0xDCDC3891,sctrlHENSetRebootexOverride
+#endif

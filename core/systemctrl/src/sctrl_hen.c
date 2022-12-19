@@ -281,12 +281,8 @@ extern void* external_rebootex;
 extern int rebootheap;
 void sctrlHENSetRebootexOverride(const u8 *rebootex)
 {
-    custom_rebootex = rebootex;
-    if (custom_rebootex && external_rebootex){
-        // free up memory used by external rebootex since it will be overriden by custom rebootex from this function call
-        sceKernelFreeHeapMemory(rebootheap, external_rebootex);
-        sceKernelDeleteHeap(rebootheap);
-    }
+    if (external_rebootex == NULL) // external rebootex (REBOOT.BIN file in savedata) takes precedence
+        custom_rebootex = rebootex;
 }
 
 extern int (*ExtendDecryption)();

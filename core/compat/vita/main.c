@@ -25,6 +25,8 @@
 #include "exitgame.h"
 #include "libs/graphics/graphics.h"
 
+#include "core/compat/vita/rebootex/payload.h"
+
 PSP_MODULE_INFO("ARKCompatLayer", 0x3007, 1, 0);
 
 static ARKConfig _ark_conf;
@@ -59,6 +61,9 @@ static void processArkConfig(ARKConfig* ark_config){
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
+
+    // set rebootex for Vita
+    sctrlHENSetRebootexOverride(rebootbuffer_vita);
 
     // copy configuration
     processArkConfig(ark_config);
