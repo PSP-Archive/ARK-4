@@ -1,6 +1,6 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
-REBOOTEX_DIR = $(ARKROOT)/loader/rebootex
-INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)/kxploit/ $(REBOOTEX_DIR)
+REBOOTEXDIR = $(ARKROOT)/loader/rebootex
+INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)/kxploit/ $(REBOOTEXDIR)
 TARGET = reboot.bin.gz
 
 PYTHON=$(shell which python2)
@@ -13,13 +13,15 @@ CC = psp-gcc
 LD = psp-ld
 STRIP = psp-strip
 OBJCOPY = psp-objcopy
-LINKFILE = linkfile.l
+LINKFILE = $(REBOOTEXDIR)/linkfile.l
+
+REBOOT_OBJS = \
+	main.o \
+	lib.o \
+	pspbtcnf.o \
 
 C_OBJS = \
 	patches.o \
-	$(REBOOTEX_DIR)/main.o \
-	$(REBOOTEX_DIR)/lib.o \
-	$(REBOOTEX_DIR)/pspbtcnf.o \
 	$(ARKROOT)/common/utils/scanner.o \
 
 LIBS = -L $(ARKROOT)/libs
@@ -29,8 +31,10 @@ CFLAGS += -DDEBUG=$(DEBUG)
 LIBS += -lcolordebugger
 endif
 
-main.elf: $(C_OBJS)
-	$(LD) -o main.elf $(C_OBJS) $(LIBS)
+$(REBOOT_OBJS) : %.o : $(REBOOTEXDIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+main.elf: $(C_OBJS) $(REBOOT_OBJS)
 
 $(TARGET): main.elf
 	$(Q)$(STRIP) -s $<
