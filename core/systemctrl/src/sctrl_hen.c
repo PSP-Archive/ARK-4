@@ -281,7 +281,7 @@ extern void* external_rebootex;
 extern int rebootheap;
 void sctrlHENSetRebootexOverride(const u8 *rebootex)
 {
-    if (rebootex != NULL && external_rebootex == NULL) // external rebootex (REBOOT.BIN file in savedata) takes precedence
+    if (rebootex != NULL && external_rebootex == NULL) // external rebootex (REBOOT.BIN file in savedata) has priority
         custom_rebootex = rebootex;
 }
 
