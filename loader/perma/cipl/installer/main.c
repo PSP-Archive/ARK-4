@@ -12,8 +12,8 @@
 #include <kubridge.h>
 
 #include "pspipl_update.h"
-#include "../cipl/ipl_block_large.h"
-#include "../cipl/ipl_block_01g.h"
+#include "../ipl_block_large.h"
+#include "../ipl_block_01g.h"
 
 PSP_MODULE_INFO("IPLFlasher", 0x0800, 1, 0); 
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);

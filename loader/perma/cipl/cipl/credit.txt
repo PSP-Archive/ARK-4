@@ -1,6 +1,0 @@
-
--- credit --
-
-Team C+D :For PandoraExploit.
-Dark_AleX:For his CustomIPL sample.
-Booster  :For his IPLSDK.
