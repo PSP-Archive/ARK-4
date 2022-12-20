@@ -9,15 +9,17 @@ export DEBUG ARKROOT
 SUBDIRS = libs \
 	contrib/PC/btcnf \
 	contrib/PC/prxencrypter \
-	loader/rebootex \
 	core/systemctrl \
-	core/compat/psp \
-	core/compat/vita \
-	core/compat/vitapops \
 	core/inferno \
 	core/stargate \
 	core/popcorn \
 	core/vshctrl \
+	core/compat/psp/rebootex \
+	core/compat/psp \
+	core/compat/vita/rebootex \
+	core/compat/vita \
+	core/compat/vitapops/rebootex \
+	core/compat/vitapops \
 	loader/live/user/linkless_payload \
 	loader/live/user/signed_eboot \
 	loader/live/kernel/kernel_loader \
@@ -26,9 +28,9 @@ SUBDIRS = libs \
 	loader/live/kernel/idstorage_dumper \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
-	loader/perma/cipl/cipl/payloadex \
-	loader/perma/cipl/cipl/mainbinex \
-	loader/perma/cipl/cipl/combine \
+	loader/perma/cipl/payloadex \
+	loader/perma/cipl/mainbinex \
+	loader/perma/cipl/combine \
 	loader/perma/cipl/installer \
 	loader/perma/cipl/installer/kpspident \
 	extras/menus/arkMenu \
@@ -102,7 +104,9 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/live/kernel/idstorage_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/psp_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/vita_flash_dumper
-	$(Q)$(MAKE) $@ -C loader/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/psp/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex
 	$(Q)$(MAKE) $@ -C core/systemctrl
 	$(Q)$(MAKE) $@ -C core/vshctrl
 	$(Q)$(MAKE) $@ -C core/stargate
@@ -121,9 +125,9 @@ clean:
 	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
-	$(Q)$(MAKE) $@ -C loader/perma/cipl/cipl/payloadex
-	$(Q)$(MAKE) $@ -C loader/perma/cipl/cipl/mainbinex
-	$(Q)$(MAKE) $@ -C loader/perma/cipl/cipl/combine
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/payloadex
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/mainbinex
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/combine
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer/kpspident
 	$(Q)-rm -rf dist *~ | true

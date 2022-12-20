@@ -169,6 +169,7 @@ PSP_EXPORT_FUNC(exitLauncher)
 PSP_EXPORT_FUNC(flushCache)
 PSP_EXPORT_END
 
+
 PSP_EXPORT_START(KUBridge, 0, 0x4001)
 PSP_EXPORT_FUNC(kuKernelLoadModule)
 PSP_EXPORT_FUNC(kuKernelLoadModuleWithApitype2)

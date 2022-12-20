@@ -15,6 +15,8 @@
 #include "exitgame.h"
 #include "libs/graphics/graphics.h"
 
+#include "core/compat/psp/rebootex/payload.h"
+
 PSP_MODULE_INFO("ARKCompatLayer", 0x3007, 1, 0);
 
 // Previous Module Start Handler
@@ -54,18 +56,27 @@ void processArkConfig(ARKConfig* ark_config){
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
+    // set rebootex for PSP
+    sctrlHENSetRebootexOverride(rebootbuffer_psp);
+
     // get firmware version
     psp_fw_version = sceKernelDevkitVersion();
+    
     // get psp model
     psp_model = sceKernelGetModel();
+    
     // get ark config
     processArkConfig(ark_config);
+    
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
+    
     // Register custom start module
     prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
+    
     // Register plugin handler
     prevPluginHandler = sctrlHENSetPluginHandler(&pluginHandler);
+    
     // Return Success
     return 0;
 }

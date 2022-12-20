@@ -25,7 +25,7 @@ $(TARGET): main.elf
 	@echo GET $@
 
 clean:
-	$(Q)rm -rf *~ *.s *.o *.elf nand_payloadex.bin nand_payloadex.h $(EXTRA_CLEAN)
+	$(Q)rm -rf *~ *.s *.o *.elf nand_payloadex.bin nand_payloadex.h $(TARGET) $(EXTRA_CLEAN)
 
 include $(ARKROOT)/common/make/global.mak
 include $(ARKROOT)/common/make/beauty_bin.mak

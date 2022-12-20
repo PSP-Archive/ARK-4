@@ -41,7 +41,7 @@ void (*plugin_handler)(const char* path, int modid) = NULL;
 
 static addPlugin(char* path){
     for (int i=0; i<plugins.count; i++){
-        if (strcmp(plugins.paths[i], path) == 0)
+        if (stricmp(plugins.paths[i], path) == 0)
             return; // plugin already added
     }
     if (plugins.count < MAX_PLUGINS)
@@ -50,7 +50,7 @@ static addPlugin(char* path){
 
 static removePlugin(char* path){
     for (int i=0; i<plugins.count; i++){
-        if (strcmp(plugins.paths[i], path) == 0){
+        if (stricmp(plugins.paths[i], path) == 0){
             if (--plugins.count > i){
                 strcpy(plugins.paths[i], plugins.paths[plugins.count]);
             }

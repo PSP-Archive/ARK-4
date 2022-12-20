@@ -234,22 +234,7 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int a
     reboot_end = findRebootFunctions(reboot_start); // scan for reboot functions
     
     // patch reboot buffer
-    if (ark_config->magic == ARK_CONFIG_MAGIC){
-        if (IS_PSP(ark_config)){
-            patchRebootBufferPSP();
-        }
-#ifdef REBOOTEX
-        else if (IS_VITA(ark_config)){
-            patchRebootBufferVita();
-        }
-#endif
-        #ifdef DEBUG
-        else colorDebug(0xff); // unknown device (?), don't touch it
-        #endif
-    }
-    #ifdef DEBUG
-    else colorDebug(0xff); // incorrect configuration
-    #endif
+    patchRebootBuffer();
     
     // Forward Call
     return sceReboot(arg1, arg2, arg3, arg4, arg5, arg6, arg7);

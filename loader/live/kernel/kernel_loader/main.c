@@ -228,7 +228,7 @@ void kernelContentFunction(void){
     PRTSTR(running_ark);
 
     if (IS_VITA_ADR(ark_config)){
-        PRTSTR("ERROR: not yet implemented");
+        PRTSTR("Comming soon");
         while(1){};
     }
 

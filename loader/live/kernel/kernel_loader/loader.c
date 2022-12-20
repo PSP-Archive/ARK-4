@@ -3,7 +3,9 @@
 #include <loadexec_patch.h>
 #include "reboot.h"
 
-#include "loader/rebootex/payload.h"
+#include "core/compat/psp/rebootex/payload.h"
+#include "core/compat/vita/rebootex/payload.h"
+#include "core/compat/vitapops/rebootex/payload.h"
 
 #define EF0_PATH 0x3A306665
 #define ISO_RUNLEVEL 0x123
@@ -63,6 +65,22 @@ void setupRebootBuffer(){
         k_tbl->KernelIOClose(fd);
     }
     else{ // no external REBOOT.BIN, use built-in rebootex
+        u8* rebootbuffer;
+        u32 size_rebootbuffer;
+        if (IS_VITA(ark_config)){
+            if (IS_VITA_POPS(ark_config)){
+                rebootbuffer = rebootbuffer_vitapops;
+                size_rebootbuffer = size_rebootbuffer_vitapops;
+            }
+            else{
+                rebootbuffer = rebootbuffer_vita;
+                size_rebootbuffer = size_rebootbuffer_vita;
+            }
+        }
+        else{
+            rebootbuffer = rebootbuffer_psp;
+            size_rebootbuffer = size_rebootbuffer_psp;
+        }
         memcpy(rebootbuffer_ex, rebootbuffer, size_rebootbuffer);
     }
 }

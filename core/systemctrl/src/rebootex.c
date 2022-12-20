@@ -30,7 +30,6 @@ extern ARKConfig* ark_config;
 int (* OrigLoadReboot)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4) = NULL;
 
 // Reboot Buffer Backup
-#include "loader/rebootex/payload.h"
 RebootConfigARK rebootex_config = {
     .magic = ARK_CONFIG_MAGIC,
     .reboot_buffer_size = REBOOTEX_MAX_SIZE
@@ -63,9 +62,9 @@ void backupRebootBuffer(void)
 void restoreRebootBuffer(void)
 {
 
-    u8* rebootex = custom_rebootex; // try custom rebootex from sctrlHENSetRebootexOverride
-    if (rebootex == NULL) rebootex = external_rebootex; // try custom rebootex from REBOOT.BIN in ARK savedata
-    if (rebootex == NULL) rebootex = rebootbuffer; // use built-in rebootex
+    u8* rebootex = external_rebootex; // try custom rebootex from sctrlHENSetRebootexOverride
+    if (rebootex == NULL) rebootex = custom_rebootex; // try custom rebootex from REBOOT.BIN in ARK savedata
+    if (rebootex == NULL) return; // can't inject custom rebootex, make sure compat layer has defined one using sctrlHENSetRebootexOverride
 
     // clean rebootex memory
     memset((char *)REBOOTEX_TEXT, 0, REBOOTEX_MAX_SIZE);

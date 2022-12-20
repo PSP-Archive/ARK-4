@@ -12,6 +12,8 @@
 #include <functions.h>
 #include "popsdisplay.h"
 
+#include "core/compat/vitapops/rebootex/payload.h"
+
 PSP_MODULE_INFO("ARKCompatLayer", 0x3007, 1, 0);
 
 // Previous Module Start Handler
@@ -59,14 +61,23 @@ static void pops_vram_handler(u32 vram){
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
+
+    // set rebootex for VitaPOPS
+    sctrlHENSetRebootexOverride(rebootbuffer_vitapops);
+
+
     #ifdef DEBUG
+    // set screen handler for color debugging
     setScreenHandler(&pops_vram_handler);
     #endif
     
+    
     // copy configuration
     processArkConfig(ark_config);
+
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaPopsOnModuleStart);
+    
     // Return Success
     return 0;
 }
