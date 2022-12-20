@@ -39,6 +39,7 @@ Dummy kernel exploit to use when ARK.BIN is already loaded with kernel priviledg
 
 UserFunctions* g_tbl = NULL;
 
+/*
 int stubScanner(UserFunctions* tbl){
     g_tbl = tbl;
     return 0;
@@ -54,4 +55,24 @@ int doExploit(void){
 void executeKernel(u32 kfuncaddr){
     g_tbl->KernelLibcTime(KERNELIFY(kfuncaddr));
 }
+*/
 
+int (*query_syscall)(void*) = NULL;
+
+int stubScanner(UserFunctions* tbl){
+    g_tbl = tbl;
+    query_syscall = tbl->qwikTrick("SystemCtrlForUser", 0x56CEAF00, 0);
+    PRTSTR1("query_syscall: %p", query_syscall);
+    return (query_syscall==NULL);
+}
+
+void repairInstruction(KernelFunctions* k_tbl){
+}
+
+int doExploit(void){
+    return 0;
+}
+
+void executeKernel(u32 kfuncaddr){
+    g_tbl->KernelLibcTime(KERNELIFY(kfuncaddr));
+}
