@@ -129,8 +129,22 @@ void autoDetectDevice(ARKConfig* config){
         }
         else{
             SceModule2* sctrl = k_tbl->KernelFindModuleByName("SystemControl");
-            if (sctrl){ // SystemControl loaded mean's we're running under Adrenaline
-                config->exec_mode = PSV_ADR;
+            if (sctrl){ // SystemControl loaded mean's we're running under a Custom Firmware
+                // check if running ARK-4 (sctrlHENGetArkConfig)
+                void (*get_ark_config)(ARKConfig*) = NULL;
+                if ((get_ark_config=FindFunction("SystemControl", "SystemControlForKernel", ARK_CONFIG_MAGIC)) != NULL){
+                    // ARK-4
+                    get_ark_config(config); // retrieve current config
+                }
+                // check if running Adrenaline (sctrlRebootDevice)
+                else if (FindFunction("SystemControl", "SystemControlForKernel", 0x053172F8)){
+                    // Adrenaline
+                    config->exec_mode = PSV_ADR;
+                }
+                else{
+                    // older CFW?
+                    config->exec_mode = PS_VITA;
+                }
             }
             else{ // no module found, must be stock pspemu
                 config->exec_mode = PS_VITA;
