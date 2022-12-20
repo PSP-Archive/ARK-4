@@ -206,3 +206,84 @@
 #ifdef F_SystemCtrlForKernel_0066
 	IMPORT_FUNC "SystemCtrlForKernel",0xDCDC3891,sctrlHENSetRebootexOverride
 #endif
+#ifdef F_SystemCtrlForKernel_0067
+    IMPORT_FUNC "SystemCtrlForUser",0x577AF198,sctrlKernelLoadExecVSHDisc
+#endif
+#ifdef F_SystemCtrlForKernel_0068
+    IMPORT_FUNC "SystemCtrlForKernel",0x94FE5E4B,sctrlKernelLoadExecVSHDiscUpdater
+#endif
+#ifdef F_SystemCtrlForKernel_0069
+    IMPORT_FUNC "SystemCtrlForKernel",0x75643FCA,sctrlKernelLoadExecVSHMs1
+#endif
+#ifdef F_SystemCtrlForKernel_0070
+    IMPORT_FUNC "SystemCtrlForKernel",0xABA7F1B0,sctrlKernelLoadExecVSHMs2
+#endif
+#ifdef F_SystemCtrlForKernel_0071
+    IMPORT_FUNC "SystemCtrlForKernel",0x7B369596,sctrlKernelLoadExecVSHMs3
+#endif
+#ifdef F_SystemCtrlForKernel_0072
+    IMPORT_FUNC "SystemCtrlForKernel",0xD690750F,sctrlKernelLoadExecVSHMs4
+#endif
+#ifdef F_SystemCtrlForKernel_0073
+    IMPORT_FUNC "SystemCtrlForKernel",0xAF22D576,sctrlKernelLoadExecVSHEf2
+#endif
+#ifdef F_SystemCtrlForKernel_0074
+    IMPORT_FUNC "SystemCtrlForKernel",0xB47C9D77,sctrlSEGetVersion
+#endif
+#ifdef F_SystemCtrlForKernel_0075
+    IMPORT_FUNC "SystemCtrlForKernel",0xE6B0F656,sctrlHENFindImport
+#endif
+#ifdef F_SystemCtrlForKernel_0076
+    IMPORT_FUNC "SystemCtrlForKernel",0xBBF21F64,sctrlSEGetUmdFileEx
+#endif
+#ifdef F_SystemCtrlForKernel_0077
+    IMPORT_FUNC "SystemCtrlForKernel",0xCF817542,sctrlSESetUmdFileEx
+#endif
+#ifdef F_SystemCtrlForKernel_0078
+    IMPORT_FUNC "SystemCtrlForKernel",0xCB76B778,sctrlKernelSetInitKeyConfig
+#endif
+#ifdef F_SystemCtrlForKernel_0079
+    IMPORT_FUNC "SystemCtrlForKernel",0x32677DD3,sctrlKernelResolveNid
+#endif
+#ifdef F_SystemCtrlForKernel_0080
+    IMPORT_FUNC "SystemCtrlForKernel",0x745286D1,sctrlHENSetMemory
+#endif
+#ifdef F_SystemCtrlForKernel_0081
+    IMPORT_FUNC "SystemCtrlForKernel",0x2F157BAF,sctrlSEApplyConfig
+#endif
+#ifdef F_SystemCtrlForKernel_0082
+    IMPORT_FUNC "SystemCtrlForKernel",0x07232EA5,sctrlHENRegisterHomebrewLoader
+#endif
+#ifdef F_SystemCtrlForKernel_0083
+    IMPORT_FUNC "SystemCtrlForKernel",0xAC0E84D1,sctrlHENRegisterKDecryptHandler
+#endif
+#ifdef F_SystemCtrlForKernel_0084
+    IMPORT_FUNC "SystemCtrlForKernel",0x1F3037FB,sctrlHENRegisterMDecryptHandler
+#endif
+#ifdef F_SystemCtrlForKernel_0085
+    IMPORT_FUNC "SystemCtrlForKernel",0x053FAC1D,sctrlKernelBootFrom
+#endif
+#ifdef F_SystemCtrlForKernel_0086
+    IMPORT_FUNC "SystemCtrlForKernel",0x85B520C6,sctrlSEMountUmdFromFile
+#endif
+#ifdef F_SystemCtrlForKernel_0087
+    IMPORT_FUNC "SystemCtrlForKernel",0x512E0CD8,sctrlSEUmountUmd
+#endif
+#ifdef F_SystemCtrlForKernel_0088
+    IMPORT_FUNC "SystemCtrlForKernel",0xFFEFA034,sctrlSESetDiscOut
+#endif
+#ifdef F_SystemCtrlForKernel_0089
+    IMPORT_FUNC "SystemCtrlForKernel",0x22A45DB7,sctrlHENIsTestingTool
+#endif
+#ifdef F_SystemCtrlForKernel_0090
+    IMPORT_FUNC "SystemCtrlForKernel",0xE918D837,sctrlHENSetTestingTool
+#endif
+#ifdef F_SystemCtrlForKernel_0091
+    IMPORT_FUNC "SystemCtrlForKernel",0x6A5F76B5,sctrlHENRegisterLLEHandler
+#endif
+#ifdef F_SystemCtrlForKernel_0092
+    IMPORT_FUNC "SystemCtrlForKernel",0x344A971E,sctrlHENTakeInitControl
+#endif
+#ifdef F_SystemCtrlForKernel_0093
+    IMPORT_FUNC "SystemCtrlForKernel",0xFF73C3A3,exitLauncher
+#endif

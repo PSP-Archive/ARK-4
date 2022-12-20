@@ -140,3 +140,66 @@
 #ifdef F_SystemCtrlForUser_0044
     IMPORT_FUNC "SystemCtrlForUser",0x162DC9FC,sctrlExitToLauncher
 #endif
+#ifdef F_SystemCtrlForUser_0045
+    IMPORT_FUNC "SystemCtrlForUser",0x577AF198,sctrlKernelLoadExecVSHDisc
+#endif
+#ifdef F_SystemCtrlForUser_0046
+    IMPORT_FUNC "SystemCtrlForUser",0x94FE5E4B,sctrlKernelLoadExecVSHDiscUpdater
+#endif
+#ifdef F_SystemCtrlForUser_0047
+    IMPORT_FUNC "SystemCtrlForUser",0x75643FCA,sctrlKernelLoadExecVSHMs1
+#endif
+#ifdef F_SystemCtrlForUser_0048
+    IMPORT_FUNC "SystemCtrlForUser",0xABA7F1B0,sctrlKernelLoadExecVSHMs2
+#endif
+#ifdef F_SystemCtrlForUser_0049
+    IMPORT_FUNC "SystemCtrlForUser",0x7B369596,sctrlKernelLoadExecVSHMs3
+#endif
+#ifdef F_SystemCtrlForUser_0050
+    IMPORT_FUNC "SystemCtrlForUser",0xD690750F,sctrlKernelLoadExecVSHMs4
+#endif
+#ifdef F_SystemCtrlForUser_0051
+    IMPORT_FUNC "SystemCtrlForUser",0xAF22D576,sctrlKernelLoadExecVSHEf2
+#endif
+#ifdef F_SystemCtrlForUser_0052
+    IMPORT_FUNC "SystemCtrlForUser",0xB47C9D77,sctrlSEGetVersion
+#endif
+#ifdef F_SystemCtrlForUser_0053
+    IMPORT_FUNC "SystemCtrlForUser",0x78E46415,sctrlHENFindDriver
+#endif
+#ifdef F_SystemCtrlForUser_0054
+    IMPORT_FUNC "SystemCtrlForUser",0xCB76B778,sctrlKernelSetInitKeyConfig
+#endif
+#ifdef F_SystemCtrlForUser_0055
+    IMPORT_FUNC "SystemCtrlForUser",0x32677DD3,sctrlKernelResolveNid
+#endif
+#ifdef F_SystemCtrlForUser_0056
+    IMPORT_FUNC "SystemCtrlForUser",0xF988C1DC,sctrlHENPatchSyscall
+#endif
+#ifdef F_SystemCtrlForUser_0057
+    IMPORT_FUNC "SystemCtrlForUser",0x745286D1,sctrlHENSetMemory
+#endif
+#ifdef F_SystemCtrlForUser_0058
+    IMPORT_FUNC "SystemCtrlForUser",0x053FAC1D,sctrlKernelBootFrom
+#endif
+#ifdef F_SystemCtrlForUser_0059
+    IMPORT_FUNC "SystemCtrlForUser",0x56CEAF00,sctrlKernelQuerySystemCall
+#endif
+#ifdef F_SystemCtrlForUser_0060
+    IMPORT_FUNC "SystemCtrlForUser",0x85B520C6,sctrlSEMountUmdFromFile
+#endif
+#ifdef F_SystemCtrlForUser_0061
+    IMPORT_FUNC "SystemCtrlForUser",0x512E0CD8,sctrlSEUmountUmd
+#endif
+#ifdef F_SystemCtrlForUser_0062
+    IMPORT_FUNC "SystemCtrlForUser",0xFFEFA034,sctrlSESetDiscOut
+#endif
+#ifdef F_SystemCtrlForUser_0063
+    IMPORT_FUNC "SystemCtrlForUser",0x22A45DB7,sctrlHENIsTestingTool
+#endif
+#ifdef F_SystemCtrlForUser_0064
+    IMPORT_FUNC "SystemCtrlForUser",0xE918D837,sctrlHENSetTestingTool
+#endif
+#ifdef F_SystemCtrlForUser_0065
+    IMPORT_FUNC "SystemCtrlForUser",0xFF73C3A3,exitLauncher
+#endif
