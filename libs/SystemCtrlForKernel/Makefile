@@ -70,6 +70,33 @@ OBJS = \
 	SystemCtrlForKernel_0064.o \
 	SystemCtrlForKernel_0065.o \
 	SystemCtrlForKernel_0066.o \
+	SystemCtrlForKernel_0067.o \
+	SystemCtrlForKernel_0068.o \
+	SystemCtrlForKernel_0069.o \
+	SystemCtrlForKernel_0070.o \
+	SystemCtrlForKernel_0071.o \
+	SystemCtrlForKernel_0072.o \
+	SystemCtrlForKernel_0073.o \
+	SystemCtrlForKernel_0074.o \
+	SystemCtrlForKernel_0075.o \
+	SystemCtrlForKernel_0076.o \
+	SystemCtrlForKernel_0077.o \
+	SystemCtrlForKernel_0078.o \
+	SystemCtrlForKernel_0079.o \
+	SystemCtrlForKernel_0080.o \
+	SystemCtrlForKernel_0081.o \
+	SystemCtrlForKernel_0082.o \
+	SystemCtrlForKernel_0083.o \
+	SystemCtrlForKernel_0084.o \
+	SystemCtrlForKernel_0085.o \
+	SystemCtrlForKernel_0086.o \
+	SystemCtrlForKernel_0087.o \
+	SystemCtrlForKernel_0088.o \
+	SystemCtrlForKernel_0089.o \
+	SystemCtrlForKernel_0090.o \
+	SystemCtrlForKernel_0091.o \
+	SystemCtrlForKernel_0092.o \
+	SystemCtrlForKernel_0093.o \
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 

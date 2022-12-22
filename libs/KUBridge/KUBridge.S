@@ -60,5 +60,5 @@
 	IMPORT_FUNC  "KUBridge",0x219DE4D2,kuKernelIcacheInvalidateAll
 #endif
 #ifdef F_KUBridge_0018
-	IMPORT_FUNC  "KUBridge",0xB0B8824E,kuKernelInitMode
+	IMPORT_FUNC  "KUBridge",0x501E983D,kuKernelInitMode
 #endif
