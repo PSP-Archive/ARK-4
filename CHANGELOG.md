@@ -1,5 +1,134 @@
 # ARK-4
 
+## Version 4.19.2 (2022-12-25)
+- Fixed SystemControl API and SDK libraries.
+- Added "Merry Christmas!" message in custom launcher and recovery, shown every 25th of December.
+- Compiled using PS4 Linux.
+
+## Version 4.19.1 (2022-12-20)
+- Refactor and cleanup of rebootex module (#60).
+- Fixed case sensitivity issue in plugin system.
+
+## Version 4.19 (2022-12-18)
+- Implemented cIPL support (#58).
+- Added fix for Tekken 6 when using overclock.
+- Several bugfixes and improvements to rebootex.
+
+## Version 4.18.17 (2022-09-16)
+- Some small fixes, cleanup and improvements.
+- Added Peace Walker theme for custom launcher.
+
+## Version 4.18.16 (2022-08-31)
+- Added patch for Vita's emulation issue with volatile RAM (Star Wars Force Unleashed, Tony Hawk Project 8, etc).
+- Added patch for Vita's emulation issue with sound processing (MotorStorm Arctic Edge).
+
+## Version 4.18.15 (2022-08-30)
+- Fixed rare crash with Inferno CSO reader.
+- Fixed memory leak with Inferno CSO reader when returning from sleep mode.
+- Added "Show FPS" option to custom launcher.
+
+## Version 4.18.14 (2022-08-27)
+- Added support for PS Vita firmwares 3.65 up to 3.74 included.
+- Some cleanup and fixes.
+
+Note: if you wish to use an older version of ARK-4 in 3.65+ you can simply use the K.BIN provided in this release's VitaBubble folder with the savedata from the older version.
+
+## Version 4.18.13 Rev 2 (2022-08-26)
+- Added new files EXIT.PNG and PLUGINS.PNG to the theme.
+- Renamed theme file from DATA.PKG to THEME.ARK for more readability.
+- Renamed custom launcher from MENU.PBP to VBOOT.PBP for better compatibility with ARK-2 launchers.
+- Renamed PS1 custom launcher from XMENU.PBP to XBOOT.PBP for standarization.
+- New themes are now packed into the release. Credit to TheSubPlayer for MaterialDark theme.
+- Fixed bug where autoboot launcher would not work with skip sony logos (#47).
+- You can now run Infinity (and any other updater) from custom launcher or recovery menu, either game or browser apps (#48).
+
+## Version 4.18.12 Rev 3 (2022-08-25)
+- Fixed issue where plugins wouldn't load on certain games (#38), DLC and game sharing. For game-specific plugins too.
+- Cleanup and fix cpu clock code.
+- Fixed plugins manager window size when very few plugins are installed.
+
+## Version 4.18.11 (2022-08-24)
+- Added patch to hide CFW folders in retail games.
+- Extra memory is now automatically unlocked for homebrews that are compatible.
+- Fixed bug in Inferno Driver.
+
+## Version 4.18.10 Rev 2 (2022-08-23)
+- Implemented Sorting by Name in Custom Launcher (#42).
+- Implemented automatic game loading (#44).
+- Fixes and improvements to Inferno driver.
+- Added option to hide Recovery Menu entry in custom launcher.
+- Other fixes and improvements to custom launcher (i.e scrollbar).
+
+## Version 4.18.9 Rev 2 (2022-08-22)
+- Fixed overclock and powersave options not actually working (PSP).
+- Fixed games crashing when inferno cache was disabled.
+- Some other fixes and improvements in custom launcher.
+
+## Version 4.18.8 Rev 3 (2022-08-20)
+- Added "Skip Sony Logos" feature in recovery menu.
+- Improved Inferno CSO reads.
+- Reduced Inferno memory consumption by 14KB without affecting performance.
+- Visual improvements in the custom launcher and recovery menu.
+
+## Version 4.18.7 (2022-08-17)
+- Improved custom launcher transitions between screens.
+- Several other improvements and bug fixes.
+
+## Version 4.18.6 (2022-08-14)
+- You can now change the region of your UMD drive on demand via the recovery menu without having to permanently modify the flash. Allows playback of region locked UMD movies. Wait a few seconds after the XMB has loaded for the patch to be applied, then insert the UMD disc.
+- NOTE: region change patch might only work on 1K and 2K models, though some 3K models are known to work too.
+
+## Version 4.18.5 (2022-08-13)
+- Added support for DTP-T1000 development kits.
+- Fixed "Old Plugin Support on PSP Go".
+- Fixed issue in ARK Loader.
+- Added "UMD Region Free" option to recovery menu, experimental.
+- Fixed the way REBOOT.BIN file is used. It is now not needed to have, but can be used to replace ARK's rebootex easily.
+- Several other fixes and improvements.
+
+Credit goes to meetpatty for adding DTP-T1000 support as well as other bugfixes and improvements.
+
+## Version 4.18.4 (2022-08-09)
+- General cleanup of core CFW files and performance improvements.
+- Exit key combo (L+R+start+down) now goes to the custom launcher.
+
+## Version 4.18.3 (2022-08-08)
+- You can now scan categorized items on the custom launcher, useful for user of GCL plugin (#19).
+- You can now mount and playback UMD Video ISOs via the file browser in custom launcher or recovery menu. You can't use this feature if autoboot launcher is enabled since playback is handled by the XMB.
+
+## Version 4.18.2 (2022-08-08)
+- Reduced Inferno memory consumption.
+- File Browser now moves files instantly (only on PSP).
+
+## Version 4.18.1 (2022-08-07)
+- Improved file browser design (#37).
+- Experimental improvements to Inferno driver.
+- Fixed MacroFire plugin.
+- Fixed DayViewer plugin.
+
+## Version 4.18 (2022-07-25)
+- Cleanup of LZO library, reduces memory consumption of CFW core.
+- Moved VLF patches to Vita compat layer, should fix VLF issues on PSP (if there were any).
+- Custom Launcher can now be set to start on file browser instead of game menu.
+- Added dedicatory message every 3rd of July for Gregory Pitka.
+
+In Loving Memory of Gregory Pitka (qwikrazor87).
+You will forever be missed and your legacy will live on in this project.
+Rest In Peace Dear Friend.
+
+## Version 4.17.1 (2022-06-22)
+- Fixed issues introduced in 4.17
+
+## Version 4.17 (2022-06-08)
+- Added support for 6.60 Testing Tool firmware.
+- Memory usage has been reduced.
+- Several other improvements.
+
+NOTE: this release is experimental and known to have issues.
+
+## Version 4.16 Rev 2 (2022-04-16)
+- Fixed custom launcher for some of the new file formats (CSOv2, JSO, etc).
+
 ## Update 16
 - Greatly improved Inferno read speeds.
 - Fixed bug that affected CSO (v1 and v2) and ZSO formats.
