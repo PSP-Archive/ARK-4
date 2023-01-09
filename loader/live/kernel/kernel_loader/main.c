@@ -237,7 +237,7 @@ void kernelContentFunction(void){
     PRTSTR(running_ark);
 
     if (IS_VITA_ADR(ark_config)){
-        PRTSTR("You made it far! But ARK can't run like this...not yet...");
+        PRTSTR("You made it far! But ARK can't run like this...can it?...");
         while(1){};
     }
 
