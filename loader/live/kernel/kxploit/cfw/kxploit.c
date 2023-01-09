@@ -34,24 +34,45 @@
 #include "kxploit.h"
 
 /*
-Dummy kernel exploit to use when ARK.BIN is already loaded with kernel priviledges.
+Kernel exploit to use when ARK.BIN is already loaded within a Custom Firmware.
+Uses qwiktrick to grab the usermode import for sctrlHENSetStartModuleHandler.
+By calling this function we can pass a pointer to be executed with kernel priviledges when a new module is loaded.
+We then use UtilityLoadModule to trigger this function call.
+It should work on every CFW since they all export this function to usermode using the same NID.
 */
 
 UserFunctions* g_tbl = NULL;
 
+void* (*set_start_module_handler)(void*) = NULL;
+void (*prev)(void*) = NULL;
+void (*kfunc)() = NULL;
 
 int stubScanner(UserFunctions* tbl){
     g_tbl = tbl;
-    return 0;
+    set_start_module_handler = tbl->qwikTrick("SystemCtrlForUser", 0x1C90BECB, 0);
+    PRTSTR1("set_start_module_handler: %p", set_start_module_handler);
+    return (set_start_module_handler==NULL);
 }
 
 void repairInstruction(KernelFunctions* k_tbl){
 }
 
+void my_mod_handler(void* mod){
+    if (kfunc){
+        kfunc();
+    }
+    if (prev){
+        prev(mod);
+    }
+}
+
 int doExploit(void){
-    return 0;
+    prev = set_start_module_handler(my_mod_handler);
+    return (prev == NULL);
 }
 
 void executeKernel(u32 kfuncaddr){
-    g_tbl->KernelLibcTime(KERNELIFY(kfuncaddr));
+    kfunc = KERNELIFY(kfuncaddr);
+    g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON);
+    g_tbl->UtilityUnloadModule(PSP_MODULE_NP_COMMON);
 }
