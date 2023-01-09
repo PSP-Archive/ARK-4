@@ -66,10 +66,6 @@ int doExploit(void){
     return (prev == NULL);
 }
 
-void kthread(SceSize args, void** argp){
-    kfunc();
-}
-
 void executeKernel(u32 kfuncaddr){
     kfunc = KERNELIFY(kfuncaddr);
     g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON);
