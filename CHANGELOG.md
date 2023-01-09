@@ -1,4 +1,4 @@
-# ARK-4 Changelog
+# ARK Changelog
 
 ## Version 4.19.3 (2022-01-09)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4193
@@ -454,12 +454,10 @@ Rest In Peace Dear Friend.
 - Re-wrote Inferno CSO reader (adds compatibility with other formats as well as better speeds and less memory consumption).
 - Many bug fixes and improvements.
 
-
-
 # ARK-3
 - arkMenu and xMenu are now part of the project
 - added PEOPS PSX SPU Plugin for partial working sound on PSX games running through PSP exploits
-- added support for PSX exploits
+- added support for PSX exploits (TN-X patches)
 
 # ARK-2
 - replaced static patches with dynamic algorithms
@@ -468,7 +466,7 @@ Rest In Peace Dear Friend.
 - separated ARK loader from Kernel exploit for easier deployment of ARK
 
 # ARK-1 (PROVITA)
-- initial port of PRO CFW to the PS Vita by Team PRO.
+- initial rewrite of PRO CFW to the PS Vita by Team PRO.
 - support for ISO and CSO with the Inferno ISO Driver
 - support for homebrew games and apps
 - playback of soundless PSX games
