@@ -64,7 +64,6 @@ void my_mod_handler(void* mod){
 int doExploit(void){
     prev = set_start_module_handler(my_mod_handler);
     return (prev == NULL);
-    return 0;
 }
 
 void kthread(SceSize args, void** argp){
