@@ -129,7 +129,7 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[9];
+    char* options[2];
 } main_menu = {
     "Default Menu",
     2,
@@ -143,7 +143,7 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[9];
+    char* options[2];
 } sort_entries = {
     "Sort Entries by Name",
     2,
@@ -157,7 +157,7 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[9];
+    char* options[2];
 } recovery_menu = {
     "Show Recovery Menu",
     2,
@@ -171,12 +171,26 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[9];
+    char* options[2];
 } show_fps = {
     "Show FPS",
     2,
     0,
     &(common::getConf()->show_fps),
+    {"Disabled", "Enabled"}
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[2];
+} text_glow = {
+    "Text Glow",
+    2,
+    0,
+    &(common::getConf()->text_glow),
     {"Disabled", "Enabled"}
 };
 
@@ -192,6 +206,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&sort_entries,
     (settings_entry*)&recovery_menu,
     (settings_entry*)&show_fps,
+    (settings_entry*)&text_glow,
 };
 
 #define MAX_SETTINGS_OPTIONS (sizeof(settings_entries)/sizeof(settings_entries[0]))

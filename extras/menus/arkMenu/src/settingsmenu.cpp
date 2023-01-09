@@ -89,6 +89,8 @@ void SettingsMenu::draw(){
         
             if (today.tm_mday == 3 && today.tm_mon == 6)
                 common::printText(x+10, y+15, "In Loving Memory of Gregory Pitka (qwikrazor87). R.I.P.", GRAY_COLOR, SIZE_LITTLE, 0, 0);
+            else if (today.tm_mday == 25 && today.tm_mon == 11)
+                common::printText(x+10, y+15, "Merry Christmas!", GRAY_COLOR, SIZE_LITTLE, 0, 0);
             else
                 common::printText(x+40, y+15, ark_version.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
         
@@ -98,8 +100,8 @@ void SettingsMenu::draw(){
             for (int i=start; i<min(start+PAGE_SIZE, max_options); i++){
                 unsigned char sel = settings_entries[i]->selection;
                 if (i==index){
-                    common::printText(xoffset, yoffset, settings_entries[i]->description, GRAY_COLOR, SIZE_LITTLE, 1, 1);
-                    common::printText(xoffset+215, yoffset, settings_entries[i]->options[sel], GRAY_COLOR, SIZE_LITTLE, 1);
+                    common::printText(xoffset, yoffset, settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, 1);
+                    common::printText(xoffset+215, yoffset, settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1);
                 }
                 else{
                     string desc = settings_entries[i]->description;

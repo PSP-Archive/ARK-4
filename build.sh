@@ -256,10 +256,6 @@ $
 			eval make clean
 			debugLevel=$(dialog --colors --radiolist "\Z1DEBUG Types/Levels\Z0" 10 80 3 1 "DEBUG 1 (enable BSoD and color debugging)" on 2 "DEBUG 2 (enable BSoD, color debugger and JAL tracer)" off 3 "DEBUG 3 (enable BSoD, color debugger, JAL tracer and file logging)" off 3>&1 1>&2 2>&3)
 			eval make DEBUG=$debugLevel
-	elif [[ $1 == "--cIPL" ]] ; then
-		git fetch && git pull && git checkout cIPL
-		eval make clean
-		eval make
 	else	
 	    	eval make
 	fi

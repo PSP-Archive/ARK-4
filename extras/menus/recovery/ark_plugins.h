@@ -1,7 +1,8 @@
 enum{
     PLACE_ARK_SAVE,
     PLACE_MS0_SEPLUGINS,
-    PLACE_EF0_SEPLUGINS
+    PLACE_EF0_SEPLUGINS,
+    MAX_PLUGINS_PLACES
 };
 
 typedef struct {
@@ -13,7 +14,19 @@ typedef struct {
     unsigned char place;
 } plugin_t;
 
+typedef struct {
+    string line;
+    plugin_t* plugin;
+} plugin_line;
+
+char* plugins_path[] = {
+    "PLUGINS.TXT",
+    "ms0:/SEPLUGINS/PLUGINS.TXT",
+    "ef0:/SEPLUGINS/PLUGINS.TXT"
+};
+
 // variable length array
+std::vector<plugin_line> plugin_lines[MAX_PLUGINS_PLACES];
 settings_entry** ark_plugin_entries = NULL;
 int ark_plugins_count = 0;
 int ark_plugins_max = 0;
@@ -47,49 +60,53 @@ static plugin_t* createPlugin(const char* description, unsigned char enable, uns
     return plugin;
 }
 
-static void loadPluginsFile(const char* path, unsigned char place){
-    std::ifstream input(path);
+static void loadPluginsFile(unsigned char place){
+    std::ifstream input(plugins_path[place]);
     for( std::string line; getline( input, line ); ){
-        if (isComment(line)) continue;
-        
-        string description;
-        string enabled;
-        int pos = line.rfind(',');
-        description = line.substr(0, pos);
-        enabled = line.substr(pos+1, line.size());
-        
-        // trim string
-        std::stringstream trimmer;
-        trimmer << enabled;
-        trimmer.clear();
-        trimmer >> enabled;
-        
-        plugin_t* plugin = createPlugin(description.c_str(), isRunlevelEnabled(enabled)?1:0, place);
-        addPlugin(plugin);
+        plugin_line pl = { line, NULL };
+        if (!isComment(line)){
+            string description;
+            string enabled;
+            int pos = line.rfind(',');
+            if (pos != string::npos){
+                description = line.substr(0, pos);
+                enabled = line.substr(pos+1, line.size());
+                
+                // trim string
+                std::stringstream trimmer;
+                trimmer << enabled;
+                trimmer.clear();
+                trimmer >> enabled;
+                
+                pl.plugin = createPlugin(description.c_str(), isRunlevelEnabled(enabled)?1:0, place);
+                addPlugin(pl.plugin);
+            }
+        }
+        plugin_lines[place].push_back(pl);
     }
     input.close();
 }
 
 void loadPlugins(){
-    loadPluginsFile("PLUGINS.TXT", 0);
-    loadPluginsFile("ms0:/SEPLUGINS/PLUGINS.TXT", 1);
-    loadPluginsFile("ef0:/SEPLUGINS/PLUGINS.TXT", 2);
+    loadPluginsFile(PLACE_ARK_SAVE);
+    loadPluginsFile(PLACE_MS0_SEPLUGINS);
+    loadPluginsFile(PLACE_EF0_SEPLUGINS);
 }
 
 void savePlugins(){
-    std::ofstream output[3];
-    char* plugins_path[3] = {
-        "PLUGINS.TXT",
-        "ms0:/SEPLUGINS/PLUGINS.TXT",
-        "ef0:/SEPLUGINS/PLUGINS.TXT"
-    };
-    for (int i=0; i<ark_plugins_count; i++){
-        plugin_t* plugin = (plugin_t*)(ark_plugin_entries[i]);
-        int place = plugin->place;
-        if (!output[place].is_open()) output[place].open(plugins_path[place]);
-        output[place] << plugin->description << ", " << ((plugin->selection)? "on":"off") << endl;
+    std::ofstream output[MAX_PLUGINS_PLACES];
+
+    for (int i=0; i<MAX_PLUGINS_PLACES; i++){
+        output[i].open(plugins_path[i]);
+        for (int j=0; j<plugin_lines[i].size(); j++){
+            plugin_line pl = plugin_lines[i][j];
+            if (pl.plugin != NULL){
+                output[i] << pl.plugin->description << ", " << ((pl.plugin->selection)? "on":"off") << endl;
+            }
+            else{
+                output[i] << pl.line << endl;
+            }
+        }
+        output[i].close();
     }
-    output[0].close();
-    output[1].close();
-    output[2].close();
 }

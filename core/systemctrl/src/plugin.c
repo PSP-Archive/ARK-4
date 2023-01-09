@@ -195,7 +195,7 @@ static char * readLine(int fd, char * buf, unsigned int buflen)
         }
         
         // End of File
-        if(pos == 0) return NULL;
+        if(pos == 0 && buf[pos] == 0) return NULL;
         
         // Remove \r\n
         if(buf[pos] == '\r' || buf[pos] == '\n') buf[pos] = 0;

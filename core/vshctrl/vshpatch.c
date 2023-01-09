@@ -186,10 +186,11 @@ int fakeParamInexistance(void)
 
 static void patch_game_plugin_module(SceModule2* mod)
 {
-
+    extern int hidepics;
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr + mod->text_size;
     int patches = 5;
+    if (hidepics) patches++;
     for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x8FA400A4){
@@ -222,6 +223,11 @@ static void patch_game_plugin_module(SceModule2* mod)
         }
         else if (data == 0x3C028000){
             _sw(0x00001021, addr-24);
+            patches--;
+        }
+        else if (data == 0x0062A023 && hidepics){
+            _sw(0x00601021, addr+36);
+            _sw(0x00601021, addr+48);
             patches--;
         }
     }

@@ -1,6 +1,6 @@
 TARGET = vshctrl
 OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o hibernation_delete.o $(ARKROOT)/libs/ansi-c/strsafe.o
-IMPORTS = 
+IMPORTS = imports.o
 
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/core/systemctrl/include
 CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
