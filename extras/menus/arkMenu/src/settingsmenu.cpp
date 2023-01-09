@@ -100,8 +100,8 @@ void SettingsMenu::draw(){
             for (int i=start; i<min(start+PAGE_SIZE, max_options); i++){
                 unsigned char sel = settings_entries[i]->selection;
                 if (i==index){
-                    common::printText(xoffset, yoffset, settings_entries[i]->description, GRAY_COLOR, SIZE_LITTLE, 1, 1);
-                    common::printText(xoffset+215, yoffset, settings_entries[i]->options[sel], GRAY_COLOR, SIZE_LITTLE, 1);
+                    common::printText(xoffset, yoffset, settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, 1);
+                    common::printText(xoffset+215, yoffset, settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1);
                 }
                 else{
                     string desc = settings_entries[i]->description;

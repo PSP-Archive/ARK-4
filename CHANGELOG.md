@@ -1,5 +1,13 @@
 # ARK-4
 
+## Version 4.19.3 (2022-01-09)
+- Improved Recovery menu plugin handling to properly restore comments.
+- Fixed bug in plugin system where blank lines would be treated as EOF.
+- Added option to hide PIC0 and PIC1 in XMB.
+- Added option to disable text glow in custom launcher and recovery.
+- Unlock High Memory gets disabled if UMD cache is enabled to prevent a crash.
+
+
 ## Version 4.19.2 (2022-12-25)
 - Fixed SystemControl API and SDK libraries.
 - Added "Merry Christmas!" message in custom launcher and recovery, shown every 25th of December.
