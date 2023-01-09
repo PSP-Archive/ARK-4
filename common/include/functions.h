@@ -92,7 +92,7 @@ typedef struct UserFunctions
     int (* UtilityLoadModule)(int);
     int (* UtilityUnloadModule)(int);
     int (* UtilityLoadNetModule)(int);
-    int (* UtilityUnloadNetModule)(int);    
+    int (* UtilityUnloadNetModule)(int);
     //int (* SysMemUserForUser_91DE343C)( void *unk );
     SceUID (*KernelAllocPartitionMemory)(SceUID partitionid, const char *name, int type, SceSize size, void *addr);
     void * (*KernelGetBlockHeadAddr)(SceUID blockid);

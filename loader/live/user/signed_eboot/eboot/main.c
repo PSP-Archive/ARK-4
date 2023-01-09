@@ -26,7 +26,9 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
 
 // ARK.BIN requires these imports
 //int SysMemUserForUser_91DE343C(void* unk);
-int sceKernelPowerLock(unsigned int, unsigned int);
+extern int sceKernelPowerLock(unsigned int, unsigned int);
+extern void* sctrlHENSetStartModuleHandler(void*);
+volatile void* set_start_module_handler = &sctrlHENSetStartModuleHandler;
 
 volatile ARKConfig config = {
     .magic = ARK_CONFIG_MAGIC,

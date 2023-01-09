@@ -35,10 +35,6 @@
 
 /*
 Kernel exploit to use when ARK.BIN is already loaded within a Custom Firmware.
-Uses qwiktrick to grab the usermode import for sctrlHENSetStartModuleHandler.
-By calling this function we can pass a pointer to be executed with kernel priviledges when a new module is loaded.
-We then use UtilityLoadModule to trigger this function call.
-It should work on every CFW since they all export this function to usermode using the same NID.
 */
 
 UserFunctions* g_tbl = NULL;
@@ -49,9 +45,8 @@ void (*kfunc)() = NULL;
 
 int stubScanner(UserFunctions* tbl){
     g_tbl = tbl;
-    set_start_module_handler = tbl->qwikTrick("SystemCtrlForUser", 0x1C90BECB, 0);
-    PRTSTR1("set_start_module_handler: %p", set_start_module_handler);
-    return (set_start_module_handler==NULL);
+    set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB);
+    return (set_start_module_handler==NULL || *(u32*)set_start_module_handler == JR_RA);
 }
 
 void repairInstruction(KernelFunctions* k_tbl){
@@ -69,6 +64,11 @@ void my_mod_handler(void* mod){
 int doExploit(void){
     prev = set_start_module_handler(my_mod_handler);
     return (prev == NULL);
+    return 0;
+}
+
+void kthread(SceSize args, void** argp){
+    kfunc();
 }
 
 void executeKernel(u32 kfuncaddr){

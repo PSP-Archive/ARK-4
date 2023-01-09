@@ -50,6 +50,7 @@ copy-bin:
 	$(Q)cp loader/live/kernel/kxploit/psp660/K.BIN dist/ARK_Live/K.BIN # Kernel exploit for PSP
 	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
 	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/VitaBubble/K.BIN # Kernel exploit for Vita 3.60+
+	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/VitaBubble/easter/EGG.BIN # ???
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/Infinity/ # Infinity with ARK support
 	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
@@ -89,6 +90,7 @@ kxploits:
 	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
 
 # Only clean non-library code
 cleanobj:
@@ -124,6 +126,7 @@ clean:
 	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/mainbinex
@@ -156,6 +159,7 @@ mkdir-dist:
 	$(Q)mkdir dist/ARK_Live | true
 	$(Q)mkdir dist/Infinity | true
 	$(Q)mkdir dist/ARK_cIPL | true
+	$(Q)mkdir dist/VitaBubble/easter | true
 
 -include $(ARKROOT)/.config
 include $(ARKROOT)/common/make/quiet.mak
