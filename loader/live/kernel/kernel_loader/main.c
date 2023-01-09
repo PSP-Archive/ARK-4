@@ -133,7 +133,7 @@ void autoDetectDevice(ARKConfig* config){
                 // check if running ARK-4 (CompatLayer)
                 if (k_tbl->KernelFindModuleByName("ARKCompatLayer") != NULL){
                     // ARK-4 -> exit game
-                    void (*KernelExitGame)() = (void*)RelocImport("LoadExecForUser", 0x05572A5F, 0);
+                    void (*KernelExitGame)() = (void*)FindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F);
                     KernelExitGame();
                 }
                 else{
