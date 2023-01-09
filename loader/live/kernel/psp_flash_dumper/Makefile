@@ -17,6 +17,7 @@ C_OBJS = \
 	$(ARKROOT)/core/compat/vitapops/popsdisplay.o \
 	$(ARKROOT)/common/utils/functions.o \
 	$(ARKROOT)/common/utils/scanner.o \
+	$(ARKROOT)/common/utils/patches.o \
 	$(ARKROOT)/common/utils/imports.o \
 	$(ARKROOT)/common/utils/freemem.o \
 

@@ -132,15 +132,9 @@ void autoDetectDevice(ARKConfig* config){
             if (sctrl){ // SystemControl loaded mean's we're running under a Custom Firmware
                 // check if running ARK-4 (CompatLayer)
                 if (k_tbl->KernelFindModuleByName("ARKCompatLayer") != NULL){
-                    // ARK-4 -> scan for ARKConfig structure and copy it
-                    config->exec_mode = PS_VITA;
-                    for (u32 addr=sctrl->text_addr; addr<sctrl->text_addr+sctrl->text_size; addr+=4){
-                        // check for ARK magic and ms0: path
-                        if (_lw(addr) == ARK_CONFIG_MAGIC && _lw(addr+4) == 0x3A30736D){
-                            memcpy(ark_config, (void*)addr, sizeof(ARKConfig));
-                            break;
-                        }
-                    }
+                    // ARK-4 -> exit game
+                    void (*KernelExitGame)() = (void*)RelocImport("LoadExecForUser", 0x05572A5F, 0);
+                    KernelExitGame();
                 }
                 else{
                     // Adrenaline
