@@ -447,7 +447,7 @@ Rest In Peace Dear Friend.
 - Added compatibility layer for PSP-specific patches (still in development).
 - Restructured PS Vita compatibility layer (still in development).
 
-# ARK-4 (summary)
+# ARK-4
 - Added compatibility with real PSP hardware.
 - Refactored Vita and VitaPOPS compatibility.
 - Improved arkMenu (custom launcher).
@@ -455,17 +455,20 @@ Rest In Peace Dear Friend.
 - Many bug fixes and improvements.
 
 # ARK-3
+- https://github.com/PSP-Archive/ARK-3
 - arkMenu and xMenu are now part of the project
 - added PEOPS PSX SPU Plugin for partial working sound on PSX games running through PSP exploits
 - added support for PSX exploits (TN-X patches)
 
 # ARK-2
+- https://github.com/PSP-Archive/ARK-2
 - replaced static patches with dynamic algorithms
 - updated to run on higher firmwares
 - replaced static loader with linkless loader
 - separated ARK loader from Kernel exploit for easier deployment of ARK
 
 # ARK-1 (PROVITA)
+- https://github.com/PSP-Archive/ARK-1-PROVita-
 - initial rewrite of PRO CFW to the PS Vita by Team PRO.
 - support for ISO and CSO with the Inferno ISO Driver
 - support for homebrew games and apps
