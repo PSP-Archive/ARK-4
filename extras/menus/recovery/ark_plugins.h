@@ -60,8 +60,8 @@ static plugin_t* createPlugin(const char* description, unsigned char enable, uns
     return plugin;
 }
 
-static void loadPluginsFile(const char* path, unsigned char place){
-    std::ifstream input(path);
+static void loadPluginsFile(unsigned char place){
+    std::ifstream input(plugins_path[place]);
     for( std::string line; getline( input, line ); ){
         plugin_line pl = { line, NULL };
         if (!isComment(line)){
@@ -88,9 +88,9 @@ static void loadPluginsFile(const char* path, unsigned char place){
 }
 
 void loadPlugins(){
-    loadPluginsFile(plugins_path[PLACE_ARK_SAVE], PLACE_ARK_SAVE);
-    loadPluginsFile(plugins_path[PLACE_MS0_SEPLUGINS], PLACE_MS0_SEPLUGINS);
-    loadPluginsFile(plugins_path[PLACE_EF0_SEPLUGINS], PLACE_EF0_SEPLUGINS);
+    loadPluginsFile(PLACE_ARK_SAVE);
+    loadPluginsFile(PLACE_MS0_SEPLUGINS);
+    loadPluginsFile(PLACE_EF0_SEPLUGINS);
 }
 
 void savePlugins(){
