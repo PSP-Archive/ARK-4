@@ -70,6 +70,13 @@ int get_device_name(char *device, int size, const char* path)
     return 0;
 }
 
+int hidepics = 0;
+void settingsHandler(char* path){
+    if (strcasecmp(path, "hidepics") == 0){ // hide PIC0 and PIC1
+        hidepics = 1;
+    }
+}
+
 int module_start(SceSize args, void* argp)
 {
     #ifdef DEBUG
@@ -81,6 +88,7 @@ int module_start(SceSize args, void* argp)
     sctrlHENGetArkConfig(ark_config);
     isoInit();
     vshpatch_init();
+    loadSettings(&settingsHandler);
     
     // always reset to NORMAL mode in VSH
     // to avoid ISO mode is used in homebrews in next reboot

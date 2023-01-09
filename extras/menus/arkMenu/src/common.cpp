@@ -123,6 +123,7 @@ void common::resetConf(){
     config.sort_entries = 1;
     config.show_recovery = 1;
     config.show_fps = 0;
+    config.text_glow = 1;
 }
 
 void common::launchRecovery(){
@@ -378,7 +379,7 @@ void common::printText(float x, float y, const char* text, u32 color, float size
     u32 secondColor = BLACK_COLOR;
     u32 arg5 = INTRAFONT_WIDTH_VAR;
     
-    if (glow){
+    if (glow && config.text_glow){
         float t = (float)((float)(clock() % CLOCKS_PER_SEC)) / ((float)CLOCKS_PER_SEC);
         int val = (t < 0.5f) ? t*511 : (1.0f-t)*511;
         secondColor = (0xFF<<24)+(val<<16)+(val<<8)+(val);

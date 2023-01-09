@@ -31,6 +31,7 @@ typedef struct {
     unsigned char oldplugin;
     unsigned char skiplogos;
     unsigned char regionchange;
+    unsigned char hidepics;
 }ArkConf;
 
 ArkConf ark_config;
@@ -192,6 +193,20 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
+} hidepics = {
+    "Hide PIC0 and PIC1 in XMB",
+    MAX_ARK_OPTIONS,
+    0,
+    &(ark_config.hidepics),
+    ARK_OPTIONS
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
 } regionchange = {
     "UMD Region Change",
     4,
@@ -211,6 +226,7 @@ settings_entry* ark_conf_entries[] = {
     (settings_entry*)&infernocache,
     (settings_entry*)&oldplugin,
     (settings_entry*)&skiplogos,
+    (settings_entry*)&hidepics,
     (settings_entry*)&regionchange,
 };
 
@@ -278,17 +294,17 @@ static unsigned char* configConvert(string conf){
     else if (strcasecmp(conf.c_str(), "skiplogos") == 0){
         return &(ark_config.skiplogos);
     }
+    else if (strcasecmp(conf.c_str(), "hidepics") == 0){
+        return &(ark_config.hidepics);
+    }
     else if (strcasecmp(conf.c_str(), "region_jp") == 0){
         ark_config.regionchange = REGION_JAPAN;
-        return NULL;
     }
     else if (strcasecmp(conf.c_str(), "region_us") == 0){
         ark_config.regionchange = REGION_AMERICA;
-        return NULL;
     }
     else if (strcasecmp(conf.c_str(), "region_eu") == 0){
         ark_config.regionchange = REGION_EUROPE;
-        return NULL;
     }
     return NULL;
 }
@@ -358,6 +374,7 @@ void saveSettings(){
     output << processSetting("infernocache", ark_config.infernocache) << endl;
     output << processSetting("oldplugin", ark_config.oldplugin) << endl;
     output << processSetting("skiplogos", ark_config.skiplogos) << endl;
+    output << processSetting("hidepics", ark_config.hidepics) << endl;
     
     switch (ark_config.regionchange){
         case REGION_JAPAN:
