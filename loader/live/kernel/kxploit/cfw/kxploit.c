@@ -46,7 +46,7 @@ void (*kfunc)() = NULL;
 int stubScanner(UserFunctions* tbl){
     g_tbl = tbl;
     set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB);
-    return (set_start_module_handler==NULL || *(u32*)set_start_module_handler == JR_RA);
+    return (set_start_module_handler==NULL);
 }
 
 void repairInstruction(KernelFunctions* k_tbl){

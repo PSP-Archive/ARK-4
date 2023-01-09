@@ -130,20 +130,21 @@ void autoDetectDevice(ARKConfig* config){
         else{
             SceModule2* sctrl = k_tbl->KernelFindModuleByName("SystemControl");
             if (sctrl){ // SystemControl loaded mean's we're running under a Custom Firmware
-                // check if running ARK-4 (sctrlHENGetArkConfig)
-                void (*get_ark_config)(ARKConfig*) = NULL;
-                if ((get_ark_config=FindFunction("SystemControl", "SystemControlForKernel", ARK_CONFIG_MAGIC)) != NULL){
-                    // ARK-4
-                    get_ark_config(config); // retrieve current config
-                }
-                // check if running Adrenaline (sctrlRebootDevice)
-                else if (FindFunction("SystemControl", "SystemControlForKernel", 0x053172F8)){
-                    // Adrenaline
-                    config->exec_mode = PSV_ADR;
+                // check if running ARK-4 (CompatLayer)
+                if (k_tbl->KernelFindModuleByName("ARKCompatLayer") != NULL){
+                    // ARK-4 -> scan for ARKConfig structure and copy it
+                    config->exec_mode = PS_VITA;
+                    for (u32 addr=sctrl->text_addr; addr<sctrl->text_addr+sctrl->text_size; addr+=4){
+                        // check for ARK magic and ms0: path
+                        if (_lw(addr) == ARK_CONFIG_MAGIC && _lw(addr+4) == 0x3A30736D){
+                            memcpy(ark_config, (void*)addr, sizeof(ARKConfig));
+                            break;
+                        }
+                    }
                 }
                 else{
-                    // older CFW?
-                    config->exec_mode = PS_VITA;
+                    // Adrenaline
+                    config->exec_mode = PSV_ADR;
                 }
             }
             else{ // no module found, must be stock pspemu
@@ -242,7 +243,7 @@ void kernelContentFunction(void){
     PRTSTR(running_ark);
 
     if (IS_VITA_ADR(ark_config)){
-        PRTSTR("Comming soon");
+        PRTSTR("You made it far! But ARK can't run like this...not yet...");
         while(1){};
     }
 
