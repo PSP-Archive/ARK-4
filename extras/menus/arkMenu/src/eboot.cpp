@@ -160,9 +160,9 @@ int Eboot::getEbootType(const char* path){
             fread(&categoryType, 2, 1, fp);
             switch(categoryType){
             case HMB_CAT:            ret = TYPE_HOMEBREW;    break;
-            case PSN_CAT:            ret = TYPE_PSN;            break;
+            case PSN_CAT:            ret = TYPE_PSN;         break;
             case PS1_CAT:            ret = TYPE_POPS;        break;
-            default:                                        break;
+            default:                                         break;
             }
         }
         fseek(fp, cur+16, SEEK_SET);
@@ -176,7 +176,7 @@ string Eboot::fullEbootPath(string path, string app){
     if (common::fileExists(app))
         return app; // it's already a full path
 
-	else if (common::fileExists(path+app+"/PBOOT.PBP"))
+	else if (common::getConf()->scan_dlc && common::fileExists(path+app+"/PBOOT.PBP"))
 		return path+app+"/PBOOT.PBP"; // DLC
 
     else if (common::fileExists(path+app+"/FBOOT.PBP"))

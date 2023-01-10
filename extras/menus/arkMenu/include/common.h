@@ -65,6 +65,7 @@ typedef struct {
     unsigned char plugins; // enable or disable plugins in game
     unsigned char scan_save; // enable or disable scanning savedata
     unsigned char scan_cat; // allow scanning for categorized content in /ISO and /PSP/GAME
+    unsigned char scan_dlc; // allow scanning for DLC files (PBOOT.PBP)
     unsigned char swap_buttons; // whether to swap Cross and Circle
     unsigned char animation; // the background animation of the menu
     unsigned char main_menu; // default menu opened at startup (game by default)
