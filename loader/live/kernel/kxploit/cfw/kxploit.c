@@ -45,29 +45,38 @@ void (*kfunc)() = NULL;
 
 int stubScanner(UserFunctions* tbl){
     g_tbl = tbl;
-    set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB);
+    set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB); // weak import in ARK Live
     return (set_start_module_handler==NULL);
 }
 
 void repairInstruction(KernelFunctions* k_tbl){
+    if (set_start_module_handler && prev){
+        // restore previous handler
+        set_start_module_handler(prev);
+        prev = NULL;
+    }
 }
 
 void my_mod_handler(void* mod){
     if (kfunc){
+        // execute kernel context function
         kfunc();
     }
     if (prev){
+        // fallback to previous handler (shouldn't be called)
         prev(mod);
     }
 }
 
 int doExploit(void){
-    prev = set_start_module_handler(my_mod_handler);
+    prev = NULL;
+    if (set_start_module_handler)
+        prev = set_start_module_handler(my_mod_handler); // register our custom handler
     return (prev == NULL);
 }
 
 void executeKernel(u32 kfuncaddr){
     kfunc = KERNELIFY(kfuncaddr);
-    g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON);
+    g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON); // trigger StartModule handler
     g_tbl->UtilityUnloadModule(PSP_MODULE_NP_COMMON);
 }
