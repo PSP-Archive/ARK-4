@@ -1,5 +1,9 @@
 # ARK Changelog
 
+## Version 4.19.4 (2022-01-09)
+- Fixed device autodetection in ARK Live Loader.
+- Added easter egg.
+
 ## Version 4.19.3 (2022-01-09)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4193
 - Improved Recovery menu plugin handling to properly restore comments.
@@ -446,6 +450,9 @@ Rest In Peace Dear Friend.
 - Added Galaxy controller for NP9660 ISO driver (for retail PSN EBOOTs).
 - Added compatibility layer for PSP-specific patches (still in development).
 - Restructured PS Vita compatibility layer (still in development).
+
+## Version 4.0.0:
+- Initial experimental release working on PSP 3K.
 
 # ARK-4
 - Added compatibility with real PSP hardware.
