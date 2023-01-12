@@ -9,7 +9,8 @@ enum{
     UMD_ONLY,
     HOMEBREW_ONLY,
     POPS_ONLY,
-    VSH_ONLY
+    VSH_ONLY,
+    CUSTOM
 };
 
 enum{
@@ -232,6 +233,8 @@ settings_entry* ark_conf_entries[] = {
 
 #define MAX_ARK_CONF (sizeof(ark_conf_entries)/sizeof(ark_conf_entries[0]))
 
+std::vector<string> custom_config;
+
 bool isComment(string line){
     return (line[0] == '#' || line[0] == ';' || (line[0]=='/'&&line[1]=='/'));
 }
@@ -260,7 +263,7 @@ static unsigned char runlevelConvert(string runlevel, string enable){
     else if (strcasecmp(runlevel.c_str(), "vsh") == 0){
         return VSH_ONLY;
     }
-    return DISABLED;
+    return CUSTOM;
 }
 
 static unsigned char* configConvert(string conf){
@@ -309,10 +312,13 @@ static unsigned char* configConvert(string conf){
     return NULL;
 }
 
-static void processConfig(string runlevel, string conf, string enable){
+static void processConfig(string line, string runlevel, string conf, string enable){
     unsigned char* config_ptr = configConvert(conf);
     unsigned char config = runlevelConvert(runlevel, enable);
-    if (config_ptr != NULL){
+    if (config == CUSTOM){
+        custom_config.push_back(line);
+    }
+    else if (config_ptr != NULL){
         *config_ptr = config;
     }
 }
@@ -332,18 +338,26 @@ static void processLine(string line){
 
         result.push_back(substr);
     }
-    
+
+    if (result.size() != 3){
+        custom_config.push_back(line);
+        return;
+    }
+
     string runlevel = result[0];
     string conf = result[1];
     string enable = result[2];
     
-    processConfig(runlevel, conf, enable);
+    processConfig(line, runlevel, conf, enable);
 }
 
 void loadSettings(){
     std::ifstream input("SETTINGS.TXT");
     for( std::string line; getline( input, line ); ){
-        if (isComment(line)) continue;
+        if (isComment(line)){
+            custom_config.push_back(line);
+            continue;
+        };
         processLine(line);
     }
     input.close();
@@ -386,6 +400,10 @@ void saveSettings(){
         case REGION_EUROPE:
             output << "vsh, region_eu, on" << endl;
             break;
+    }
+
+    for (int i=0; i<custom_config.size(); i++){
+        output << custom_config[i] << endl;
     }
     
     output.close();
