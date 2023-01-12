@@ -1,6 +1,13 @@
 # ARK Changelog
 
+## Version 4.19.5 (2022-01-12)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4195
+- Fixed issue where VSH plugins would not load after pausing game in PSP Go.
+- Recovery menu no longer deletes custom config lines.
+- You can now enable/disable DLC scanning in custom launcher (previously always enabled).
+
 ## Version 4.19.4 (2022-01-09)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4194
 - Fixed device autodetection in ARK Live Loader.
 - Added easter egg.
 
