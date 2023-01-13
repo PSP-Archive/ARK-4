@@ -3,30 +3,17 @@
 #include "common.h"
 #include "gfx.h"
 
-int Modulus(int iN, int iMod) {
-    int iQ = (iN/iMod);
-    return iN - (iQ*iMod);
-}
-
 char GetChar(int iGenerator, char cBase, int iRange) {
-    return (cBase + Modulus(iGenerator, iRange));
+    return (cBase + iGenerator%iRange);
 }
 
 Matrix::Matrix(){
 
-    cur_col = rand()%MAX_COLS;
+    r = rand();
+    cur_col = r%MAX_COLS;
     cur_row = 0;
 
-    // Output a random row of characters
-    for (int i=0; i<MAX_COLS; i++){
-        for (int j=0; j<MAX_CHARS; j++){
-            if (caRow[i][j] != ' ') {
-                caRow[i][j] = 0;
-            }
-        }
-        caRow[i][MAX_CHARS] = 0;
-        r += 31;
-    }
+    memset(caRow, 0, sizeof(caRow));
 }
 
 Matrix::~Matrix(){
@@ -50,13 +37,14 @@ void Matrix::draw(){
         caRow[cur_col][cur_row] = 0;
     }
     else{
-        caRow[cur_col][cur_row] = GetChar(r + cur_row*cur_row, 33, 30);
+        caRow[cur_col][cur_row] = GetChar(r, 33, 30);
         r += 7;
     }
 
     cur_row++;
     if (cur_row >= MAX_CHARS){
-        cur_col = rand()%MAX_COLS;
+        r = rand();
+        cur_col = r%MAX_COLS;
         cur_row = 0;
     }
     
