@@ -134,6 +134,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer/kpspident
 	$(Q)-rm -rf dist *~ | true
+	$(Q)-rm -rf common/utils/*.o
 	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
 
 subdirs: $(SUBDIRS)

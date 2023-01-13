@@ -56,6 +56,10 @@ bool Controller::wait(void* busy_wait){
     return ret;
 }
 
+bool Controller::any(){
+    return (newpad!=0);
+}
+
 bool Controller::accept(){
     return (common::getConf()->swap_buttons)? this->circle() : this->cross();
 }

@@ -27,6 +27,7 @@ class Controller{
         bool wait(void* busy_wait=NULL);
         
         // check for accept or decline from user (depending on the button configuration)
+        bool any();
         bool accept();
         bool decline();
         

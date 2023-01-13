@@ -227,17 +227,27 @@ static int drawThread(SceSize _args, void *_argp){
 
 static int controlThread(SceSize _args, void *_argp){
     Controller pad;
+    clock_t last_pressed = clock();
     while (running){
         pad.update();
+        if (pad.any()){
+            last_pressed = clock();
+            if (screensaver){
+                screensaver = 0;
+                continue;
+            }
+        }
         if (pad.triangle() && !screensaver){
             changeMenuState();
-        }
-        else if (pad.RT()){
-            screensaver ^= 1;
         }
         else if (!screensaver){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
+        }
+        clock_t elapsed = clock() - last_pressed;
+        double time_taken = ((double)elapsed)/CLOCKS_PER_SEC;
+        if (time_taken > 5){
+            screensaver = 1;
         }
         sceKernelDelayThread(0);
     }
