@@ -4,20 +4,18 @@
 #include "anim.h"
 
 #define MAX_CHARS 30
+#define MAX_COLS 12
 
 class Matrix : public Anim {
 
     private:
 
-        char caRow[MAX_CHARS+1];
-        int j;
-        int k;
-        int l;
-        int m;
+        char caRow[MAX_COLS][MAX_CHARS+1];
+        int cur_row, cur_col, r;
         
-        void printColumn(int xoffset);
+        void printColumn(int xoffset, int i);
         
-        void drawColumn(int xoffset);
+        void drawColumn(int xoffset, int i);
     
     public:
         Matrix();
