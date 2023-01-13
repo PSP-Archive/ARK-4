@@ -30,15 +30,18 @@ int main(int argc, char** argv){
     // setup UMD disc
     sceUmdReplacePermit();
 
+    // Load data (theme, config, font, etc)
     common::loadData(argc, argv);
 
+    // initialize FTP client driver for file browser
     Browser::ftp_driver = new FTPDriver();
 
-    // System Entries
+    // Setup System Apps
     entries[4] = new ExitManager();
     entries[3] = new SettingsMenu(settings_entries, MAX_SETTINGS_OPTIONS, common::saveConf);
     entries[2] = new FTPManager();
 
+    // Setup main App (Game or Browser)
     if (common::getConf()->main_menu == 0){
         entries[1] = new Browser();
         entries[0] = new GameManager();
@@ -49,14 +52,16 @@ int main(int argc, char** argv){
         entries[1] = new GameManager();
     }
     
+    // Initialize Menu
     SystemMgr::initMenu(entries, MAX_ENTRIES);
+
+    // Handle control to Menu
     SystemMgr::startMenu();
+
+    // Cleanup data and exit
     SystemMgr::endMenu();
-
     common::deleteData();
-
     intraFontShutdown();
-    
     ya2d_shutdown();
 
     sceKernelExitGame();

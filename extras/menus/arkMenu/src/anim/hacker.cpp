@@ -1,23 +1,74 @@
-#include "cstdlib"
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 #include "hacker.h"
 #include "common.h"
 #include "gfx.h"
 
-extern char GetChar(int iGenerator, char cBase, int iRange);
+#define NELEMS(x) (sizeof(x)/sizeof(x[0]))
+
+
+static void generateGoto(int i, int r, char* code){
+    snprintf(code, MAX_CHARS, "GOTO %p", (i*r)/31);
+}
+
+static void generateALUop(int i, int r, char* code){
+    static char* alu_ops[] = {
+        (char*)"and", (char*)"or", (char*)"xor", (char*)"sll", (char*)"slr",
+        (char*)"add", (char*)"sub", (char*)"mul", (char*)"div", (char*)"pow",
+    };
+    int op = (i*code[0]+r) % NELEMS(alu_ops);
+    int r1 = ((int)code*r) % 32;
+    int r2 = ((int)r/(int)code) % 32;
+    int r3 = ((i*r)/(int)code) % 32;
+
+    snprintf(code, MAX_CHARS, "%s $r%d, $r%d, $r%d", alu_ops[op], r1, r2, r3);
+}
+
+static void generateFunctionCall(int i, int r, char* code){
+    int p = r/(i+1);
+    snprintf(code, MAX_CHARS, "call sub_%p()", p);
+}
+
+static void generateForLoop(int i, int r, char* code){
+    int m = r%(i+1) + 7;
+    snprintf(code, MAX_CHARS, "for (int i=0; i<%d; i++)", m);
+}
+
+static void generatePointer(int i, int r, char* code){
+    int e = ((int)code+r) / (i+1);
+    snprintf(code, MAX_CHARS, "0x%p = %d", e, i);
+}
+
+static void generateSyscall(int i, int r, char* code){
+    int e = ((int)code+r) % 255;
+    snprintf(code, MAX_CHARS, "SYSCALL %d", e);
+}
+
+
+void generateHackerCode(int i, int r, char* code){
+    static void* functions[] = {
+        (void*)&generateGoto,
+        (void*)&generateALUop,
+        (void*)&generateALUop,
+        (void*)&generateALUop,
+        (void*)&generateALUop,
+        (void*)&generateALUop,
+        (void*)&generateFunctionCall,
+        (void*)&generateForLoop,
+        (void*)&generatePointer,
+        (void*)&generateSyscall,
+    };
+
+    int f = r % NELEMS(functions);
+    void (*generator)(int, int, char*) = (void (*)(int, int, char*))(functions[f]);
+    generator(i, r, code);
+}
 
 Hacker::Hacker(){
     r = rand();
-    cur_col = r%MAX_CHARS;
     cur_row = 0;
-
-    // Output a random row of characters
-    for (int i=0; i<MAX_ROWS; i++){
-        for (int j=0; j<MAX_CHARS; j++){
-            caRow[i][j] = GetChar(r, 33, 30);
-            r += 7;
-        }
-        caRow[i][MAX_CHARS] = 0;
-    }
+    memset(caRow, 0, sizeof(caRow));
 }
 
 Hacker::~Hacker(){
@@ -25,24 +76,26 @@ Hacker::~Hacker(){
 
 void Hacker::draw(){
 
-    if (caRow[cur_col][cur_row] != ' '){
-        caRow[cur_col][cur_row] = ' ';
+    if (cur_row < MAX_ROWS-1){
+        cur_row++;
     }
     else{
-        cur_row++;
-        r += 7;
-        caRow[cur_row-1][cur_col] = GetChar(r, 33, 30);
-        if (cur_row >= MAX_ROWS){
-            r = rand();
-            cur_col = r%MAX_CHARS;
-            cur_row = 0;
-        }
+        cur_row = 0;
+        r = rand();
     }
+
+    r += 7;
+    generateHackerCode(cur_row, r, &(caRow[cur_row][0]));
     
-    int yoffset = 45;
+    int yoffset = 10;
+    int xoffset = 10;
     for (int i=0; i<MAX_ROWS; i++){
-        common::printText(10, yoffset, &(caRow[i][0]), GREEN, SIZE_HUGE);
-        yoffset += 37;
+        common::printText(xoffset, yoffset, &(caRow[i][0]), GREEN, SIZE_MEDIUM);
+        yoffset += 20;
+        if (yoffset >= 272){
+            yoffset = 10;
+            xoffset += 160;
+        }
     }
 }
 

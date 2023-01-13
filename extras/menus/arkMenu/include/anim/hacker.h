@@ -3,15 +3,15 @@
 
 #include "anim.h"
 
-#define MAX_CHARS 30
-#define MAX_ROWS 7
+#define MAX_CHARS 64
+#define MAX_ROWS 42
 
 class Hacker : public Anim {
 
     private:
 
         char caRow[MAX_ROWS][MAX_CHARS+1];
-        int cur_row, cur_col, r;
+        int cur_row, r;
     
     public:
         Hacker();
