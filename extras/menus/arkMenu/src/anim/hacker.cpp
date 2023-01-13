@@ -48,12 +48,12 @@ static void generateIfCondition(int i, int r, char* code){
 }
 
 static void generatePointer(int i, int r, char* code){
-    u32 e = ((int)code+r) / (i+1);
+    u32 e = ((u32)code+r) / (i+1);
     snprintf(code, MAX_CHARS, "%p = %d", e, i);
 }
 
 static void generateSyscall(int i, int r, char* code){
-    u32 e = ((int)code+r) % 255;
+    u32 e = ((u32)code+r) % 255;
     snprintf(code, MAX_CHARS, "SYSCALL %d", e);
 }
 
