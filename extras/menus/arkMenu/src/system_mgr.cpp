@@ -27,6 +27,7 @@ static bool system_menu = false;
 static int optionsDrawState = 0;
 static int optionsAnimState; // state of the animation
 static int optionsTextAnim; // -1 for no animation, other for animation
+static int screensaver = 0;
 
 // options menu entries position of the entries
 static int pEntryIndex;
@@ -206,13 +207,15 @@ static int drawThread(SceSize _args, void *_argp){
         sceKernelWaitSema(draw_sema, 1, NULL);
         common::clearScreen(CLEAR_COLOR);
         common::drawScreen();
-        entries[cur_entry]->draw();
-        systemDrawer();
-        if (common::getConf()->show_fps){
-            ostringstream fps;
-            ya2d_calc_fps();
-            fps<<ya2d_get_fps();
-            common::printText(460, 260, fps.str().c_str());
+        if (!screensaver){
+            entries[cur_entry]->draw();
+            systemDrawer();
+            if (common::getConf()->show_fps){
+                ostringstream fps;
+                ya2d_calc_fps();
+                fps<<ya2d_get_fps();
+                common::printText(460, 260, fps.str().c_str());
+            }
         }
         common::flipScreen();
         sceKernelSignalSema(draw_sema, 1);
@@ -226,10 +229,13 @@ static int controlThread(SceSize _args, void *_argp){
     Controller pad;
     while (running){
         pad.update();
-        if (pad.triangle()){
+        if (pad.triangle() && !screensaver){
             changeMenuState();
         }
-        else{
+        else if (pad.RT()){
+            screensaver ^= 1;
+        }
+        else if (!screensaver){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
         }
