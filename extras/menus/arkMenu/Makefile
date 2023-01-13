@@ -42,6 +42,7 @@ OBJS = \
 		src/anim/fire.o \
 		src/anim/tetris.o \
 		src/anim/matrix.o \
+		src/anim/hacker.o \
 		src/anim/snow.o \
 		src/anim/gol.o \
 		src/anim/noanim.o \
