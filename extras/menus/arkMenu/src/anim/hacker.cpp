@@ -27,7 +27,7 @@ static void generateALUop(int i, int r, char* code){
 
 static void generateFunctionCall(int i, int r, char* code){
     int p = r/(i+1);
-    snprintf(code, MAX_CHARS, "call sub_%p()", p);
+    snprintf(code, MAX_CHARS, "call sub_%d()", p);
 }
 
 static void generateForLoop(int i, int r, char* code){
@@ -37,7 +37,7 @@ static void generateForLoop(int i, int r, char* code){
 
 static void generatePointer(int i, int r, char* code){
     int e = ((int)code+r) / (i+1);
-    snprintf(code, MAX_CHARS, "0x%p = %d", e, i);
+    snprintf(code, MAX_CHARS, "%p = %d", e, i);
 }
 
 static void generateSyscall(int i, int r, char* code){
