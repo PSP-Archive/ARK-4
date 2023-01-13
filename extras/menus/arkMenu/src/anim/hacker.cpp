@@ -18,30 +18,30 @@ static void generateALUop(int i, int r, char* code){
         (char*)"add", (char*)"sub", (char*)"mul", (char*)"div", (char*)"pow",
     };
     int op = (i*code[0]+r) % NELEMS(alu_ops);
-    int r1 = ((int)code*r) % 32;
-    int r2 = ((int)r/(int)code) % 32;
-    int r3 = ((i*r)/(int)code) % 32;
+    u32 r1 = ((u32)code*(u32)r) % 32;
+    u32 r2 = ((u32)r/(u32)code) % 32;
+    u32 r3 = ((i*r)/(u32)code) % 32;
 
     snprintf(code, MAX_CHARS, "%s $r%d, $r%d, $r%d", alu_ops[op], r1, r2, r3);
 }
 
 static void generateFunctionCall(int i, int r, char* code){
-    int p = r/(i+1);
+    u32 p = r/(i+1);
     snprintf(code, MAX_CHARS, "call sub_%d()", p);
 }
 
 static void generateForLoop(int i, int r, char* code){
-    int m = r%(i+1) + 7;
+    u32 m = r%(i+1) + 7;
     snprintf(code, MAX_CHARS, "for (int i=0; i<%d; i++)", m);
 }
 
 static void generatePointer(int i, int r, char* code){
-    int e = ((int)code+r) / (i+1);
+    u32 e = ((int)code+r) / (i+1);
     snprintf(code, MAX_CHARS, "%p = %d", e, i);
 }
 
 static void generateSyscall(int i, int r, char* code){
-    int e = ((int)code+r) % 255;
+    u32 e = ((int)code+r) % 255;
     snprintf(code, MAX_CHARS, "SYSCALL %d", e);
 }
 
