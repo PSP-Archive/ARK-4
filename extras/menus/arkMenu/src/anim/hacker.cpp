@@ -35,6 +35,18 @@ static void generateForLoop(int i, int r, char* code){
     snprintf(code, MAX_CHARS, "for (int i=0; i<%d; i++)", m);
 }
 
+static void generateIfCondition(int i, int r, char* code){
+    static char* if_cmp[] = {
+        (char*)"==", (char*)"!=",
+        (char*)">",  (char*)">=",
+        (char*)"<",  (char*)"<=",
+    };
+    int op = (i*code[0]+r) % NELEMS(if_cmp);
+    u32 r1 = ((u32)code*(u32)r) % 32;
+    u32 r2 = ((u32)r/(u32)code) % 32;
+    snprintf(code, MAX_CHARS, "if ( $r%d %s $r%d )", r1, if_cmp[op], r2);
+}
+
 static void generatePointer(int i, int r, char* code){
     u32 e = ((int)code+r) / (i+1);
     snprintf(code, MAX_CHARS, "%p = %d", e, i);
@@ -54,6 +66,9 @@ void generateHackerCode(int i, int r, char* code){
         (void*)&generateALUop,
         (void*)&generateALUop,
         (void*)&generateALUop,
+        (void*)&generateIfCondition,
+        (void*)&generateIfCondition,
+        (void*)&generateIfCondition,
         (void*)&generateFunctionCall,
         (void*)&generateForLoop,
         (void*)&generatePointer,
