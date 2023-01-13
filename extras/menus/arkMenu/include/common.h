@@ -73,6 +73,7 @@ typedef struct {
     unsigned char show_recovery; // show recovery menu entry
     unsigned char show_fps; // show menu FPS
     unsigned char text_glow; // enable/disable text glowing function
+    unsigned char screensaver; // Screensaver time (or disabled)
 } t_conf;
 
 extern "C" {

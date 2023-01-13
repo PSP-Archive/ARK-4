@@ -226,6 +226,7 @@ static int drawThread(SceSize _args, void *_argp){
 }
 
 static int controlThread(SceSize _args, void *_argp){
+    static int screensaver_times[] = {0, 5, 10, 20, 30, 60};
     Controller pad;
     clock_t last_pressed = clock();
     while (running){
@@ -244,10 +245,13 @@ static int controlThread(SceSize _args, void *_argp){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
         }
-        clock_t elapsed = clock() - last_pressed;
-        double time_taken = ((double)elapsed)/CLOCKS_PER_SEC;
-        if (time_taken > 5){
-            screensaver = 1;
+        int screensaver_time = screensaver_times[common::getConf()->screensaver];
+        if (screensaver_time > 0){
+            clock_t elapsed = clock() - last_pressed;
+            double time_taken = ((double)elapsed)/CLOCKS_PER_SEC;
+            if (time_taken > screensaver_time){
+                screensaver = 1;
+            }
         }
         sceKernelDelayThread(0);
     }

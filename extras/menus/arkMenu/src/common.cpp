@@ -125,6 +125,7 @@ void common::resetConf(){
     config.show_recovery = 1;
     config.show_fps = 0;
     config.text_glow = 1;
+    config.screensaver = 2;
 }
 
 void common::launchRecovery(){

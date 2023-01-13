@@ -209,6 +209,20 @@ static struct {
     {"Disabled", "Enabled"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[6];
+} screensaver = {
+    "Screensaver time",
+    6,
+    0,
+    &(common::getConf()->screensaver),
+    {"Disabled", "5s", "10s", "20s", "30s", "1m"}
+};
+
 settings_entry* settings_entries[] = {
     (settings_entry*)&fast_gameboot,
     (settings_entry*)&language,
