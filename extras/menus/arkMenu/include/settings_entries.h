@@ -237,6 +237,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&recovery_menu,
     (settings_entry*)&show_fps,
     (settings_entry*)&text_glow,
+    (settings_entry*)&screensaver,
 };
 
 #define MAX_SETTINGS_OPTIONS (sizeof(settings_entries)/sizeof(settings_entries[0]))
