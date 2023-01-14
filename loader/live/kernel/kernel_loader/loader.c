@@ -13,9 +13,12 @@
 #define ISO_RUNLEVEL_GO 0x125
 #define ISO_DRIVER 3
 
+#define MAX_FLASH0_SIZE 0x32000
+
 extern u8 rebootbuffer_ex[REBOOTEX_MAX_SIZE];
-u8* rebootbuffer = NULL;
-u32 size_rebootbuffer = 0;
+extern u8* rebootbuffer;
+extern u32 size_rebootbuffer;
+extern void* flashfs;
 
 // Sony Reboot Buffer Loader
 int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
@@ -34,15 +37,22 @@ static int isVitaFile(char* filename){
 void flashPatch(){
     extern ARKConfig* ark_config;
     extern int extractFlash0Archive();
-    if (IS_VITA_ADR(ark_config)) return; // no flash install
+    char archive[ARK_PATH_SIZE];
+    strcpy(archive, ark_config->arkpath);
+    strcat(archive, FLASH0_ARK);
+
+    if (IS_VITA_ADR(ark_config)){ // read FLASH0.ARK into RAM
+        PRTSTR("Reading FLASH0.ARK into RAMFS");
+        flashfs = USER_BASE + USER_SIZE - MAX_FLASH0_SIZE;
+        int fd = k_tbl->KernelIOOpen(archive, PSP_O_RDONLY, 0777);
+        k_tbl->KernelIORead(fd, flashfs, MAX_FLASH0_SIZE);
+        k_tbl->KernelIOClose(fd);
+    }
     else if (IS_PSP(ark_config)){ // on PSP, extract FLASH0.ARK into flash0
         PRTSTR("Installing on PSP");
         SceUID kthreadID = k_tbl->KernelCreateThread( "arkflasher", (void*)KERNELIFY(&extractFlash0Archive), 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
         if (kthreadID >= 0){
             // create thread parameters
-            char archive[ARK_PATH_SIZE];
-            strcpy(archive, ark_config->arkpath);
-            strcat(archive, FLASH0_ARK);
             void* args[3] = {(void*)archive, (void*)&isVitaFile, (void*)KERNELIFY(&PRTSTR11)};
             // start thread and wait for it to end
             k_tbl->KernelStartThread(kthreadID, sizeof(void*)*3, &args);
@@ -60,10 +70,10 @@ void flashPatch(){
 
 void patchedmemcpy(void* a1, void* a2, u32 size){
     if ((u32)a1 == 0x88FC0000){ // Rebootex payload
-        a2 = rebootbuffer_ex;
+        a2 = rebootbuffer;
         size = size_rebootbuffer;
-        if (rebootbuffer_ex[0] == 0x1F && rebootbuffer_ex[1] == 0x8B){ // gzip packed rebootex
-            k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootbuffer_ex, NULL);
+        if (rebootbuffer[0] == 0x1F && rebootbuffer[1] == 0x8B){ // gzip packed rebootex
+            k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootbuffer, NULL);
             return;
         }
     }
@@ -102,7 +112,6 @@ void setupRebootBuffer(){
     
     int fd = k_tbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
     if (fd >= 0){ // read external rebootex
-        rebootbuffer = rebootbuffer_ex;
         size_rebootbuffer = k_tbl->KernelIORead(fd, rebootbuffer_ex, REBOOTEX_MAX_SIZE);
         k_tbl->KernelIOClose(fd);
     }
@@ -125,7 +134,6 @@ void setupRebootBuffer(){
             rebootbuffer = rebootbuffer_psp;
             size_rebootbuffer = size_rebootbuffer_psp;
         }
-        memcpy(rebootbuffer_ex, rebootbuffer, size_rebootbuffer);
     }
 }
 

@@ -7,6 +7,32 @@ void (*SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table) 
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 extern int (* UnpackBootConfig)(char * buffer, int length);
 
+
+typedef struct{
+    u8 filesize[4];
+    char namelen;
+    char name[1];
+} Flash0File;
+
+int findFlash0File(BootFile* file, const char* path){
+    void* flashfs = reboot_conf->flashfs;
+    if (flashfs == NULL) return -1;
+    u32 nfiles = *(u32*)(flashfs);
+    Flash0File* cur = (Flash0File*)((size_t)(flashfs)+4);
+
+    for (int i=0; i<nfiles; i++){
+        size_t filesize = (cur->filesize[0]) + (cur->filesize[1]<<8) + (cur->filesize[2]<<16) + (cur->filesize[3]<<24);
+        if (strncmp(path, cur->name, cur->namelen) == 0){
+            file->buffer = (void*)((size_t)(&(cur->name[0])) + cur->namelen);
+            file->size = filesize;
+            return 0;
+        }
+        cur = (Flash0File*)((size_t)(cur)+filesize+cur->namelen+5);
+    }
+    return -1;
+}
+
+
 // Load Core module_start Hook
 int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize, void *))
 {
@@ -21,16 +47,26 @@ int _pspemuLfatOpen(BootFile* file, int unk)
     int is_bootfile = 0;
     if (strcmp(p, "pspbtcnf.bin") == 0){
         is_bootfile = 1;
+        int ret = -1;
         switch(reboot_conf->iso_mode) {
             case MODE_NP9660:
             case MODE_MARCH33:
             case MODE_INFERNO:
-                file->name = "/kd/psvbtknf.bin"; // use inferno ISO mode (psvbtknf.bin)
+                ret = findFlash0File(file, "psvbtknf.bin"); // use inferno ISO mode (psvbtknf.bin)
                 break;
             default:
-                file->name = "/kd/psvbtknf.bin"; // normal mode (psvbtjnf.bin)
+                ret = findFlash0File(file, "psvbtjnf.bin"); // normal mode (psvbtjnf.bin)
                 break;
         }
+        if (ret == 0){
+            memcpy((void *)0x89000000, file->buffer, file->size);
+            file->buffer = (void *)0x89000000;
+            return ret;
+        }
+    }
+    else if (strncmp(p, "/kd/ark_", 8) == 0){ // ARK module
+        colorDebug(0xff00);
+        return findFlash0File(file, p);
     }
     else if (strcmp(p, REBOOT_MODULE) == 0){
         file->buffer = (void *)0x89000000;
@@ -41,12 +77,6 @@ int _pspemuLfatOpen(BootFile* file, int unk)
 		return 0;
     }
     int res = pspemuLfatOpen(file, unk);
-    if (res < 0 && is_bootfile){
-        colorDebug(0xff);
-        if (pspemuLfatOpen("/kd/ark_systemctrl.prx", unk) >= 0){
-            colorDebug(0xff0000);
-        }
-    }
     return 0;
 }
 
@@ -96,7 +126,6 @@ int PatchSysMem(void *a0, void *sysmem_config)
 
 // patch reboot on ps vita
 void patchRebootBuffer(){
-
     // hijack UnpackBootConfig to insert modules at runtime
     _sw(0x27A40004, UnpackBootConfigArg); // addiu $a0, $sp, 4
     _sw(JAL(UnpackBootConfigVita), UnpackBootConfigCall); // Hook UnpackBootConfig
