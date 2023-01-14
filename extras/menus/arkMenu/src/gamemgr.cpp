@@ -266,26 +266,26 @@ Entry* GameManager::getEntry(){
 }
 
 int GameManager::getPreviousCategory(int current){
-    if (current > 0){
-        current--;
-    }
-    else{
-        current = MAX_CATEGORIES-1;
-    }
-    if (this->categories[current]->empty())
-        return getPreviousCategory(current);
+    do { 
+        if (current > 0){
+            current--;
+        }
+        else{
+            current = MAX_CATEGORIES-1;
+        }
+    } while (this->categories[current]->empty());
     return current;
 }
 
 int GameManager::getNextCategory(int current){
-    if (current < MAX_CATEGORIES-1){
-        current++;
-    }
-    else{
-        current = 0;
-    }
-    if (this->categories[current]->empty())
-        return getNextCategory(current);
+    do {
+        if (current < MAX_CATEGORIES-1){
+            current++;
+        }
+        else{
+            current = 0;
+        }
+    } while (this->categories[current]->empty());
     return current;
 }
 
