@@ -326,19 +326,13 @@ void common::deleteData(){
 }
 
 bool common::fileExists(const std::string &path){
-    FILE* fp = fopen(path.c_str(), "rb");
-    if (fp == NULL)
-        return false;
-    fclose(fp);
-    return true;
+    struct stat sb;
+    return (stat(path.c_str(), &sb) == 0 && S_ISREG(sb.st_mode));
 }
 
 bool common::folderExists(const std::string &path){
-    DIR* dir = opendir(path.c_str());
-    if (dir == NULL)
-        return false;
-    closedir(dir);
-    return true;
+    struct stat sb;
+    return (stat(path.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode));
 }
 
 long common::fileSize(const std::string &path){

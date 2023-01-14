@@ -179,17 +179,17 @@ string Eboot::fullEbootPath(string path, string app){
 	else if (common::getConf()->scan_dlc && common::fileExists(path+app+"/PBOOT.PBP"))
 		return path+app+"/PBOOT.PBP"; // DLC
 
-    else if (common::fileExists(path+app+"/FBOOT.PBP"))
-        return path+app+"/FBOOT.PBP"; // TN CEF EBOOT
+    if (common::fileExists(path+app+"/EBOOT.PBP"))
+        return path+app+"/EBOOT.PBP"; // Normal EBOOT
 
     else if (common::fileExists(path+app+"/VBOOT.PBP"))
         return path+app+"/VBOOT.PBP"; // ARK EBOOT
 
+    else if (common::fileExists(path+app+"/FBOOT.PBP"))
+        return path+app+"/FBOOT.PBP"; // TN CEF EBOOT
+
     else if (common::fileExists(path+app+"/WMENU.BIN"))
         return path+app+"/WMENU.BIN"; // VHBL EBOOT
-
-    else if (common::fileExists(path+app+"/EBOOT.PBP"))
-        return path+app+"/EBOOT.PBP"; // Normal EBOOT
 
     return "";
 }
