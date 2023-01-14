@@ -231,13 +231,6 @@ static int controlThread(SceSize _args, void *_argp){
     clock_t last_pressed = clock();
     while (running){
         pad.update();
-        if (pad.any()){
-            last_pressed = clock();
-            if (screensaver){
-                screensaver = 0;
-                continue;
-            }
-        }
         if (pad.triangle() && !screensaver){
             changeMenuState();
         }
@@ -247,6 +240,13 @@ static int controlThread(SceSize _args, void *_argp){
         }
         int screensaver_time = screensaver_times[common::getConf()->screensaver];
         if (screensaver_time > 0){
+            if (pad.any()){
+                last_pressed = clock();
+                if (screensaver){
+                    screensaver = 0;
+                    continue;
+                }
+            }
             clock_t elapsed = clock() - last_pressed;
             double time_taken = ((double)elapsed)/CLOCKS_PER_SEC;
             if (time_taken > screensaver_time){
