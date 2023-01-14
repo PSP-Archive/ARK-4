@@ -272,9 +272,10 @@ void common::loadData(int ac, char** av){
     animations[4] = new Tetris();
     animations[5] = new Matrix();
     animations[6] = new Hacker();
-    animations[7] = new SnowAnim();
-    animations[8] = new GoLAnim();
-    animations[9] = new NoAnim();
+    animations[7] = new BSoD();
+    animations[8] = new SnowAnim();
+    animations[9] = new GoLAnim();
+    animations[10] = new NoAnim();
     
     images[IMAGE_BG] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
     images[IMAGE_WAITICON] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));

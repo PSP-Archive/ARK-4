@@ -130,13 +130,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[10];
+    char* options[11];
 } animations = {
     "Menu animation",
-    10,
+    11,
     0,
     &(common::getConf()->animation),
-    {"Default", "Waves", "Sprites", "Fire", "Tetris", "Matrix", "Hacker", "Snow", "Game of Life", "None"}
+    {"Default", "Waves", "Sprites", "Fire", "Tetris", "Matrix", "Hacker", "BSoD", "Snow", "Game of Life", "None"}
 };
 
 static struct {
