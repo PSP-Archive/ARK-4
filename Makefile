@@ -121,6 +121,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
+	$(Q)$(MAKE) $@ -C extras/menus/xMenu
 	$(Q)$(MAKE) $@ -C extras/idsregeneration
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
