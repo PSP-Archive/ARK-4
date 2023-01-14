@@ -1,7 +1,5 @@
 #include "rebootex.h"
 
-#include "rebootex.h"
-
 int (*pspemuLfatOpen)(char** filename, int unk) = NULL;
 void (*SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table) = NULL;
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
@@ -65,7 +63,13 @@ int _pspemuLfatOpen(BootFile* file, int unk)
         }
     }
     else if (strncmp(p, "/kd/ark_", 8) == 0){ // ARK module
-        return findFlash0File(file, p);
+        int ret = findFlash0File(file, p);
+        if (ret == 0){
+            memcpy((void *)0x89000000, file->buffer, file->size);
+            file->buffer = (void *)0x89000000;
+            colorDebug(0xFF00);
+            return ret;
+        }
     }
     else if (strcmp(p, REBOOT_MODULE) == 0){
         file->buffer = (void *)0x89000000;
@@ -145,9 +149,11 @@ void patchRebootBuffer(){
             // Hook LoadCore module_start Call
             _sw(JUMP(loadcoreModuleStartVita), addr+8);
         }
+        /*
         else if ((data & 0x0000FFFF) == 0x8B00){
             _sb(0xA0, addr); // Link Filesystem Buffer to 0x8BA00000
         }
+        */
         else if (data == 0x24040004) {
             _sw(0x02402021, addr); //move $a0, $s2
             _sw(JAL(PatchSysMem), addr + 0x64); // Patch call to SysMem module_bootstart
