@@ -34,8 +34,8 @@ BSoD::~BSoD(){
 
 void BSoD::draw(){
 
-    if (caRow[cur_col][cur_row] != ' '){
-        caRow[cur_col][cur_row] = ' ';
+    if (caRow[cur_row][cur_col] != ' '){
+        caRow[cur_row][cur_col] = ' ';
     }
     else{
         cur_row++;
