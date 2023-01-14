@@ -217,12 +217,14 @@ void SettingsMenu::control(Controller* pad){
 }
 
 void SettingsMenu::applyConf(){
+    SystemMgr::pauseDraw();
     if (changed){
         for (int i=0; i<max_options; i++)
             *(settings_entries[i]->config_ptr) = settings_entries[i]->selection;
         if (this->callback != NULL) this->callback();
         changed = false;
     }
+    SystemMgr::resumeDraw();
 }
 
 void SettingsMenu::readConf(){
