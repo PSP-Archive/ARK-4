@@ -52,25 +52,25 @@ void BSoD::draw(){
     u32* random_data = (u32*)caRow;
     static char temp[255];
 
-    common::printText(10, 20, "Exception caught!", WHITE, SIZE_MEDIUM);
-    common::printText(20, 40, "Type - Address load/inst fetch", WHITE);
+    common::printText(10, 18, "Exception caught!", WHITE, SIZE_MEDIUM);
+    common::printText(20, 35, "Type - Address load/inst fetch", WHITE);
 
-    snprintf(temp, 255, "EPC       - %p", random_data[0]);
+    snprintf(temp, 255, "EPC       - 0x%8.8X", random_data[0]);
     common::printText(20, 55, temp, WHITE);
 
-    snprintf(temp, 255, "Cause     - %p", random_data[1]);
+    snprintf(temp, 255, "Cause     - 0x%8.8X", random_data[1]);
     common::printText(20, 75, temp, WHITE);
 
-    snprintf(temp, 255, "Status    - %p", random_data[2]);
+    snprintf(temp, 255, "Status    - 0x%8.8X", random_data[2]);
     common::printText(20, 95, temp, WHITE);
 
-    snprintf(temp, 255, "BadVAddr  - %p", random_data[3]);
+    snprintf(temp, 255, "BadVAddr  - 0x%8.8X", random_data[3]);
     common::printText(20, 115, temp, WHITE);
 
     int yoffset = 135;
     for(int i = 0; i < 32; i+=4){
-        snprintf(temp, 255, "%s:%p %s:%p %s:%p %s:%p", regName[i], random_data[i+5],
-                regName[i+1], random_data[i+6], regName[i+2], random_data[i+7], regName[i+3], random_data[i+8]);
+        snprintf(temp, 255, "%s:0x%8.8X %s:0x%8.8X %s:0x%8.8X %s:0x%8.8X", regName[i], (i==0)?0:random_data[i+4],
+                regName[i+1], random_data[i+5], regName[i+2], random_data[i+6], regName[i+3], (i==24)?ARK_CONFIG_MAGIC:random_data[i+7]);
         common::printText(20, yoffset, temp, WHITE, SIZE_MEDIUM);
         yoffset += 17;
     }
