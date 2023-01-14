@@ -1,4 +1,4 @@
-TARGET = vitacompat
+TARGET = pentazemin
 
 C_OBJS =    \
 	main.o   \

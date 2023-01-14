@@ -57,6 +57,7 @@ static void processArkConfig(ARKConfig* ark_config){
 int module_start(SceSize args, void * argp)
 {
 
+    _sw(0x44000000, 0xBC800100);
     colorDebug(0xff);
 
     // set rebootex for Vita

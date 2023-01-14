@@ -59,7 +59,7 @@ void flashPatch(){
 }
 
 void patchedmemcpy(void* a1, void* a2, u32 size){
-    if ((u32)a1 == 0x88FC0000){
+    if ((u32)a1 == 0x88FC0000){ // Rebootex payload
         a2 = rebootbuffer_ex;
         size = size_rebootbuffer;
         if (rebootbuffer_ex[0] == 0x1F && rebootbuffer_ex[1] == 0x8B){ // gzip packed rebootex
@@ -67,7 +67,7 @@ void patchedmemcpy(void* a1, void* a2, u32 size){
             return;
         }
     }
-    else if (a1 == 0x88FB0000){
+    else if (a1 == 0x88FB0000){ // Rebootex config
         buildRebootBufferConfig(size_rebootbuffer);
         return;
     }

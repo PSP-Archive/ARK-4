@@ -80,10 +80,13 @@ encrypt-prx: \
 	dist/POPCORN.BIN \
 	dist/PSPCOMP.BIN \
 	dist/VITACOMP.BIN \
-	dist/VITAPOPS.BIN
+	dist/VITAPOPS.BIN \
+	dist/VITAPLUS.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtcnf.bin dist/PSVBTCNF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
+	$(Q)cp contrib/PC/btcnf/psvbtjnf.bin dist/PSVBTJNF.BIN
+	$(Q)cp contrib/PC/btcnf/psvbtknf.bin dist/PSVBTKNF.BIN
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
 
 
