@@ -23,7 +23,7 @@ class ExitManager : public SystemEntry{
         Image* getIcon(){return common::getImage(IMAGE_EXIT);};
         void setName(std::string name){};
         std::string getName(){return "Exit";};
-
+        bool isStillLoading(){ return false; };
 };
 
 #endif

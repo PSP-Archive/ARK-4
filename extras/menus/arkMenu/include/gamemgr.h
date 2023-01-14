@@ -130,6 +130,10 @@ class GameManager : public SystemEntry{
             return common::getImage(IMAGE_GAME);
         }
 
+        bool isStillLoading(){
+            return (this->selectedCategory < 0);
+        }
+
         /* Popup Menu */
         void MenuPopup();
         

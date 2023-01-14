@@ -39,6 +39,14 @@ static int menu_draw_state = 0;
 static int MAX_ENTRIES = 0;
 static SystemEntry** entries = NULL;
 
+static bool stillLoading(){
+    for (int i=0; i<MAX_ENTRIES; i++){
+        if (entries[i]->isStillLoading())
+            return true;
+    }
+    return false;
+}
+
 static void changeMenuState(){
     if (optionsDrawState == 1 || optionsDrawState == 3)
         return;
@@ -206,7 +214,12 @@ static int drawThread(SceSize _args, void *_argp){
     while (running){
         sceKernelWaitSema(draw_sema, 1, NULL);
         common::clearScreen(CLEAR_COLOR);
-        common::drawScreen();
+        if (stillLoading()){
+            common::getImage(IMAGE_BG)->draw(0, 0);
+        }
+        else{
+            common::drawScreen();
+        }
         if (!screensaver){
             entries[cur_entry]->draw();
             systemDrawer();
@@ -239,7 +252,7 @@ static int controlThread(SceSize _args, void *_argp){
             else entries[cur_entry]->control(&pad);
         }
         int screensaver_time = screensaver_times[common::getConf()->screensaver];
-        if (screensaver_time > 0){
+        if (screensaver_time > 0 && !stillLoading()){
             if (pad.any()){
                 last_pressed = clock();
                 if (screensaver){

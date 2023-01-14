@@ -15,6 +15,7 @@ class FTPManager : public SystemEntry{
     std::string getName();
     void setName(std::string name);
     Image* getIcon();
+    bool isStillLoading(){ return false; }
 };
 
 #endif

@@ -16,6 +16,7 @@ class SystemEntry{
         virtual Image* getIcon()=0;
         virtual void setName(std::string name)=0;
         virtual std::string getName()=0;
+        virtual bool isStillLoading()=0;
 };
 
 #endif

@@ -72,6 +72,8 @@ class Browser : public SystemEntry{
         Image* getIcon(){
             return common::getImage(IMAGE_BROWSER);
         }
+
+        bool isStillLoading(){ return false; }
         
         static void recursiveFolderDelete(string path);
         

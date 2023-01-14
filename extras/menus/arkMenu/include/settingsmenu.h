@@ -76,6 +76,8 @@ class SettingsMenu : public SystemEntry{
         string getName(){
             return this->name;
         }
+
+        bool isStillLoading(){ return false; }
         
         void applyConf();
         void readConf();
