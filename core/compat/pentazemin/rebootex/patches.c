@@ -18,16 +18,17 @@ int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize
 int _pspemuLfatOpen(BootFile* file, int unk)
 {
     char* p = file->name;
+    int is_bootfile = 0;
     if (strcmp(p, "pspbtcnf.bin") == 0){
-        p[2] = 'v'; // custom btcnf for PS Vita
+        is_bootfile = 1;
         switch(reboot_conf->iso_mode) {
             case MODE_NP9660:
             case MODE_MARCH33:
             case MODE_INFERNO:
-                p[5] = 'k'; // use inferno ISO mode (psvbtknf.bin)
+                file->name = "/kd/psvbtknf.bin"; // use inferno ISO mode (psvbtknf.bin)
                 break;
             default:
-                p[5] = 'j'; // normal mode (psvbtjnf.bin)
+                file->name = "/kd/psvbtknf.bin"; // normal mode (psvbtjnf.bin)
                 break;
         }
     }
@@ -39,7 +40,13 @@ int _pspemuLfatOpen(BootFile* file, int unk)
         reboot_conf->rtm_mod.size = 0;
 		return 0;
     }
-    pspemuLfatOpen(file, unk);
+    int res = pspemuLfatOpen(file, unk);
+    if (res < 0 && is_bootfile){
+        colorDebug(0xff);
+        if (pspemuLfatOpen("/kd/ark_systemctrl.prx", unk) >= 0){
+            colorDebug(0xff0000);
+        }
+    }
     return 0;
 }
 
