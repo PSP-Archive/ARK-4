@@ -14,6 +14,8 @@
 #define ISO_DRIVER 3
 
 extern u8 rebootbuffer_ex[REBOOTEX_MAX_SIZE];
+u8* rebootbuffer = NULL;
+u32 size_rebootbuffer = 0;
 
 // Sony Reboot Buffer Loader
 int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
@@ -56,6 +58,43 @@ void flashPatch(){
     }
 }
 
+void patchedmemcpy(void* a1, void* a2, u32 size){
+    if ((u32)a1 == 0x88FC0000){
+        a2 = rebootbuffer_ex;
+        size = size_rebootbuffer;
+        if (rebootbuffer_ex[0] == 0x1F && rebootbuffer_ex[1] == 0x8B){ // gzip packed rebootex
+            k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootbuffer_ex, NULL);
+            return;
+        }
+    }
+    else if (a1 == 0x88FB0000){
+        buildRebootBufferConfig(size_rebootbuffer);
+        return;
+    }
+    memcpy(a1, a2, size);
+}
+
+void patchAdrenalineReboot(SceModule2* loadexec){
+    for (u32 addr = loadexec->text_addr; addr < loadexec->text_addr+loadexec->text_size; addr+=4){
+        if (_lw(addr) == 0x04400020) {
+            // found patch that injects rebootex
+            void* DecodeKL4EPatched = K_EXTRACT_CALL(addr-8);
+            int calls = 2;
+            u32 a = DecodeKL4EPatched;
+            while (calls){
+                // scan for two JALs (to memcpy) and redirect them
+                u32 d = _lw(a);
+                if (IS_JAL(d)){
+                    _sw(JAL(patchedmemcpy), a);
+                    calls--;
+                }
+                a+=4;
+            }
+			break;
+		}
+    }
+}
+
 void setupRebootBuffer(){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
@@ -63,12 +102,11 @@ void setupRebootBuffer(){
     
     int fd = k_tbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
     if (fd >= 0){ // read external rebootex
-        k_tbl->KernelIORead(fd, rebootbuffer_ex, REBOOTEX_MAX_SIZE);
+        rebootbuffer = rebootbuffer_ex;
+        size_rebootbuffer = k_tbl->KernelIORead(fd, rebootbuffer_ex, REBOOTEX_MAX_SIZE);
         k_tbl->KernelIOClose(fd);
     }
     else{ // no external REBOOT.BIN, use built-in rebootex
-        u8* rebootbuffer;
-        u32 size_rebootbuffer;
         if (IS_VITA(ark_config)){
             if (IS_VITA_POPS(ark_config)){
                 rebootbuffer = rebootbuffer_vitapops;
@@ -171,7 +209,8 @@ void loadKernelArk(){
     setupRebootBuffer();
     
     // make the common loadexec patches
-    if (!IS_VITA_ADR(ark_config)) patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
+    if (IS_VITA_ADR(ark_config)) patchAdrenalineReboot(loadexec);
+    else patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
     _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
     
     // Invalidate Cache
