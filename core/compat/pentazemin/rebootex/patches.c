@@ -65,7 +65,6 @@ int _pspemuLfatOpen(BootFile* file, int unk)
         }
     }
     else if (strncmp(p, "/kd/ark_", 8) == 0){ // ARK module
-        colorDebug(0xff00);
         return findFlash0File(file, p);
     }
     else if (strcmp(p, REBOOT_MODULE) == 0){
