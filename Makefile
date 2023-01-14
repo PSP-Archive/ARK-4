@@ -20,6 +20,8 @@ SUBDIRS = libs \
 	core/compat/vita \
 	core/compat/vitapops/rebootex \
 	core/compat/vitapops \
+	core/compat/pentazemin/rebootex \
+	core/compat/pentazemin \
 	loader/live/user/linkless_payload \
 	loader/live/user/signed_eboot \
 	loader/live/kernel/kernel_loader \
@@ -109,6 +111,7 @@ clean:
 	$(Q)$(MAKE) $@ -C core/compat/psp/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/pentazemin/rebootex
 	$(Q)$(MAKE) $@ -C core/systemctrl
 	$(Q)$(MAKE) $@ -C core/vshctrl
 	$(Q)$(MAKE) $@ -C core/stargate
@@ -117,6 +120,7 @@ clean:
 	$(Q)$(MAKE) $@ -C core/compat/psp
 	$(Q)$(MAKE) $@ -C core/compat/vita
 	$(Q)$(MAKE) $@ -C core/compat/vitapops
+	$(Q)$(MAKE) $@ -C core/compat/pentazemin
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu

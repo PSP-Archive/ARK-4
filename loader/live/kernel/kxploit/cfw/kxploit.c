@@ -33,6 +33,8 @@
 #include "functions.h"
 #include "kxploit.h"
 
+#include "common/utils/scanner.c"
+
 /*
 Kernel exploit to use when ARK.BIN is already loaded within a Custom Firmware.
 */
@@ -60,7 +62,13 @@ void repairInstruction(KernelFunctions* k_tbl){
 void my_mod_handler(void* mod){
     if (kfunc){
         // execute kernel context function
-        kfunc();
+        SceUID (* KernelCreateThread)(const char *name, SceKernelThreadEntry entry,\
+            int initPriority, int stackSize, SceUInt attr, SceKernelThreadOptParam *option);
+        int (* KernelStartThread)(SceUID thid, SceSize arglen, void *argp);
+        KernelCreateThread = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0x446D8DE6);
+        KernelStartThread = (void*)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF475845D);
+        int kthreadID = KernelCreateThread( "cfw_kxploit", (void*)kfunc, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
+        KernelStartThread(kthreadID, 0, NULL);
     }
     if (prev){
         // fallback to previous handler (shouldn't be called)
@@ -79,4 +87,5 @@ void executeKernel(u32 kfuncaddr){
     kfunc = KERNELIFY(kfuncaddr);
     g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON); // trigger StartModule handler
     g_tbl->UtilityUnloadModule(PSP_MODULE_NP_COMMON);
+    while (1){};
 }

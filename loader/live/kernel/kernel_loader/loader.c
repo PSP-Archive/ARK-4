@@ -6,6 +6,7 @@
 #include "core/compat/psp/rebootex/payload.h"
 #include "core/compat/vita/rebootex/payload.h"
 #include "core/compat/vitapops/rebootex/payload.h"
+#include "core/compat/pentazemin/rebootex/payload.h"
 
 #define EF0_PATH 0x3A306665
 #define ISO_RUNLEVEL 0x123
@@ -31,7 +32,8 @@ static int isVitaFile(char* filename){
 void flashPatch(){
     extern ARKConfig* ark_config;
     extern int extractFlash0Archive();
-    if (IS_PSP(ark_config)){ // on PSP, extract FLASH0.ARK into flash0
+    if (IS_VITA_ADR(ark_config)) return; // no flash install
+    else if (IS_PSP(ark_config)){ // on PSP, extract FLASH0.ARK into flash0
         PRTSTR("Installing on PSP");
         SceUID kthreadID = k_tbl->KernelCreateThread( "arkflasher", (void*)KERNELIFY(&extractFlash0Archive), 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
         if (kthreadID >= 0){
@@ -71,6 +73,10 @@ void setupRebootBuffer(){
             if (IS_VITA_POPS(ark_config)){
                 rebootbuffer = rebootbuffer_vitapops;
                 size_rebootbuffer = size_rebootbuffer_vitapops;
+            }
+            else if (IS_VITA_ADR(ark_config)){
+                rebootbuffer = rebootbuffer_pentazemin;
+                size_rebootbuffer = size_rebootbuffer_pentazemin;
             }
             else{
                 rebootbuffer = rebootbuffer_vita;
@@ -165,7 +171,7 @@ void loadKernelArk(){
     setupRebootBuffer();
     
     // make the common loadexec patches
-    patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
+    if (!IS_VITA_ADR(ark_config)) patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
     _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
     
     // Invalidate Cache
@@ -176,7 +182,7 @@ void loadKernelArk(){
         return;
     }
 
-    if (IS_VITA(ark_config)){
+    if (IS_VITA(ark_config) && !IS_VITA_ADR(ark_config)){
         // Prepare Homebrew Reboot
         char menupath[ARK_PATH_SIZE];
         strcpy(menupath, ark_config->arkpath);
