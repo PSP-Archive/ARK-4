@@ -50,7 +50,7 @@ void flushCache()
 static void processArkConfig(ARKConfig* ark_config){
     sctrlHENGetArkConfig(ark_config);
     if (ark_config->exec_mode == DEV_UNK){
-        ark_config->exec_mode = PS_VITA; // assume running on PS Vita
+        ark_config->exec_mode = PSV_ADR; // assume running on Adrenaline
     }
     if (ark_config->launcher[0] == '\0'){
         strcpy(ark_config->launcher, ARK_MENU);
@@ -79,7 +79,6 @@ int module_start(SceSize args, void * argp)
     flushCache();
 
     colorDebug(0xff0000);
-    //while (1) _sw(0, 0);
     
     // Return Success
     return 0;

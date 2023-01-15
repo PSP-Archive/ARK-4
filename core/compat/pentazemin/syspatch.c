@@ -254,10 +254,24 @@ void PatchImposeDriver(u32 text_addr) {
 	REDIRECT_FUNCTION(text_addr + 0x92B0, sceKernelWaitEventFlagPatched);
 }
 
+// for screen debugging
+int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 void AdrenalineOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
+
+    if(strcmp(mod->modname, "sceDisplay_Service") == 0)
+    {
+        // can use screen now
+        DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
+        goto flush;
+    }
+
+    if (DisplaySetFrameBuf){
+        initScreen(DisplaySetFrameBuf);
+        PRTSTR(mod->modname);
+    }
     
     // load and process settings file
     if(strcmp(mod->modname, "sceMediaSync") == 0)
