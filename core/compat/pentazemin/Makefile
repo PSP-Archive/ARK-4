@@ -2,9 +2,12 @@ TARGET = pentazemin
 
 C_OBJS =    \
 	main.o   \
+	syspatch.o \
+	adrenaline.o \
 	$(ARKROOT)/common/utils/patches.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
 	$(ARKROOT)/core/systemctrl/src/gameinfo.o \
+	$(ARKROOT)/core/compat/vita/vlf.o \
 		
 OBJS = \
 	$(C_OBJS) imports.o
@@ -26,7 +29,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lpspsystemctrl_kernel -lcolordebugger
+LIBS = -lpspsystemctrl_kernel -lcolordebugger -lpspsemaphore
 
 PSP_FW_VERSION = 660
 

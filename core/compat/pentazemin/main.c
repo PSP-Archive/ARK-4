@@ -32,6 +32,11 @@ PSP_MODULE_INFO("ARKCompatLayer", 0x3007, 1, 0);
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
 
+// Previous Module Start Handler
+STMOD_HANDLER previous = NULL;
+
+extern void AdrenalineOnModuleStart(SceModule2 * mod);
+
 // Flush Instruction and Data Cache
 void flushCache()
 {
@@ -58,15 +63,24 @@ int module_start(SceSize args, void * argp)
 {
 
     _sw(0x44000000, 0xBC800100);
-    colorDebug(0xff0000);
+    colorDebug(0xff);
 
     // set rebootex for Vita
     sctrlHENSetRebootexOverride(rebootbuffer_pentazemin);
 
     // copy configuration
     processArkConfig(ark_config);
+
+    // Vita patches
+    AdrenalineSysPatch();
+
+    // Register Module Start Handler
+    previous = sctrlHENSetStartModuleHandler(AdrenalineOnModuleStart);
    
     flushCache();
+
+    colorDebug(0xff0000);
+    while (1) _sw(0, 0);
     
     // Return Success
     return 0;

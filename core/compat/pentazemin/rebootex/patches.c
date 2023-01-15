@@ -41,11 +41,19 @@ int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize
 
 #define PTR_ALIGN_64(p) (((u32)p & (~63)) + 64)
 
+void relocateFlashFile(BootFile* file){
+    static u8* curbuf = (u8*)PTR_ALIGN_64(FLASH_SONY+(12*1024*1024));
+    memcpy((void *)curbuf, file->buffer, file->size);
+    file->buffer = (void *)curbuf;
+    curbuf += file->size;
+    curbuf = PTR_ALIGN_64(curbuf);
+}
+
 int _pspemuLfatOpen(BootFile* file, int unk)
 {
     char* p = file->name;
     int is_bootfile = 0;
-    static u8* curbuf = (u8*)PTR_ALIGN_64(FLASH_SONY+(10*1024*1024));
+    
     if (strcmp(p, "pspbtcnf.bin") == 0){
         is_bootfile = 1;
         int ret = -1;
@@ -60,19 +68,14 @@ int _pspemuLfatOpen(BootFile* file, int unk)
                 break;
         }
         if (ret == 0){
-            memcpy((void *)0x89000000, file->buffer, file->size);
-            file->buffer = (void *)0x89000000;
+            relocateFlashFile(file);
             return ret;
         }
     }
     else if (strncmp(p, "/kd/ark_", 8) == 0){ // ARK module
         int ret = findFlash0File(file, p);
         if (ret == 0){
-            char* tmp = (char*)(file->buffer);
-            memcpy((void *)curbuf, file->buffer, file->size);
-            file->buffer = (void *)curbuf;
-            curbuf += file->size;
-            curbuf = PTR_ALIGN_64(curbuf);
+            relocateFlashFile(file);
             return ret;
         }
     }
