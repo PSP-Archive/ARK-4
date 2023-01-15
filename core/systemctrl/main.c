@@ -53,8 +53,6 @@ int module_start(SceSize args, void * argp)
     colorDebug(0xFF00);
     #endif
 
-    colorDebug(0xFF);
-
     // Apply Module Patches
     patchSystemMemoryManager();
     SceModule2* loadcore = patchLoaderCore();

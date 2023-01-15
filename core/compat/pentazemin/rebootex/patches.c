@@ -39,10 +39,13 @@ int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize
     return start(args, argp);
 }
 
+#define PTR_ALIGN_64(p) (((u32)p & (~63)) + 64)
+
 int _pspemuLfatOpen(BootFile* file, int unk)
 {
     char* p = file->name;
     int is_bootfile = 0;
+    static u8* curbuf = (u8*)PTR_ALIGN_64(FLASH_SONY+(10*1024*1024));
     if (strcmp(p, "pspbtcnf.bin") == 0){
         is_bootfile = 1;
         int ret = -1;
@@ -65,9 +68,11 @@ int _pspemuLfatOpen(BootFile* file, int unk)
     else if (strncmp(p, "/kd/ark_", 8) == 0){ // ARK module
         int ret = findFlash0File(file, p);
         if (ret == 0){
-            memcpy((void *)0x89000000, file->buffer, file->size);
-            file->buffer = (void *)0x89000000;
-            colorDebug(0xFF00);
+            char* tmp = (char*)(file->buffer);
+            memcpy((void *)curbuf, file->buffer, file->size);
+            file->buffer = (void *)curbuf;
+            curbuf += file->size;
+            curbuf = PTR_ALIGN_64(curbuf);
             return ret;
         }
     }
@@ -149,11 +154,6 @@ void patchRebootBuffer(){
             // Hook LoadCore module_start Call
             _sw(JUMP(loadcoreModuleStartVita), addr+8);
         }
-        /*
-        else if ((data & 0x0000FFFF) == 0x8B00){
-            _sb(0xA0, addr); // Link Filesystem Buffer to 0x8BA00000
-        }
-        */
         else if (data == 0x24040004) {
             _sw(0x02402021, addr); //move $a0, $s2
             _sw(JAL(PatchSysMem), addr + 0x64); // Patch call to SysMem module_bootstart
