@@ -83,6 +83,9 @@ int module_start(SceSize args, void* argp)
     printk_init("ms0:/log_vshctrl.txt");
     printk("VshCtrl started\n");
     #endif
+
+    _sw(0x44000000, 0xBC800100);
+    colorDebug(0xff);
     
     psp_model = sceKernelGetModel();
     sctrlHENGetArkConfig(ark_config);

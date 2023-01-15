@@ -5,6 +5,7 @@
 #include <pspkernel.h>
 
 #include <psperror.h>
+#include <pspinit.h>
 
 #include <kubridge.h>
 #include <systemctrl.h>

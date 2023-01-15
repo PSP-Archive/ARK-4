@@ -1,5 +1,7 @@
 #include "rebootex.h"
 
+#define PTR_ALIGN_64(p) (((u32)p & (~63)) + 64)
+
 int (*pspemuLfatOpen)(char** filename, int unk) = NULL;
 void (*SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table) = NULL;
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
@@ -10,13 +12,13 @@ typedef struct{
     u8 filesize[4];
     char namelen;
     char name[1];
-} Flash0File;
+} FlashFile;
 
-int findFlash0File(BootFile* file, const char* path){
+int findFlashFile(BootFile* file, const char* path){
     void* flashfs = reboot_conf->flashfs;
     if (flashfs == NULL) return -1;
     u32 nfiles = *(u32*)(flashfs);
-    Flash0File* cur = (Flash0File*)((size_t)(flashfs)+4);
+    FlashFile* cur = (FlashFile*)((size_t)(flashfs)+4);
 
     for (int i=0; i<nfiles; i++){
         size_t filesize = (cur->filesize[0]) + (cur->filesize[1]<<8) + (cur->filesize[2]<<16) + (cur->filesize[3]<<24);
@@ -25,21 +27,10 @@ int findFlash0File(BootFile* file, const char* path){
             file->size = filesize;
             return 0;
         }
-        cur = (Flash0File*)((size_t)(cur)+filesize+cur->namelen+5);
+        cur = (FlashFile*)((size_t)(cur)+filesize+cur->namelen+5);
     }
     return -1;
 }
-
-
-// Load Core module_start Hook
-int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize, void *))
-{
-    loadCoreModuleStartCommon(start);
-    flushCache();
-    return start(args, argp);
-}
-
-#define PTR_ALIGN_64(p) (((u32)p & (~63)) + 64)
 
 void relocateFlashFile(BootFile* file){
     static u8* curbuf = (u8*)PTR_ALIGN_64(FLASH_SONY+(12*1024*1024));
@@ -47,6 +38,14 @@ void relocateFlashFile(BootFile* file){
     file->buffer = (void *)curbuf;
     curbuf += file->size;
     curbuf = PTR_ALIGN_64(curbuf);
+}
+
+// Load Core module_start Hook
+int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize, void *))
+{
+    loadCoreModuleStartCommon(start);
+    flushCache();
+    return start(args, argp);
 }
 
 int _pspemuLfatOpen(BootFile* file, int unk)
@@ -61,10 +60,10 @@ int _pspemuLfatOpen(BootFile* file, int unk)
             case MODE_NP9660:
             case MODE_MARCH33:
             case MODE_INFERNO:
-                ret = findFlash0File(file, "psvbtknf.bin"); // use inferno ISO mode (psvbtknf.bin)
+                ret = findFlashFile(file, "psvbtknf.bin"); // use inferno ISO mode (psvbtknf.bin)
                 break;
             default:
-                ret = findFlash0File(file, "psvbtjnf.bin"); // normal mode (psvbtjnf.bin)
+                ret = findFlashFile(file, "psvbtjnf.bin"); // normal mode (psvbtjnf.bin)
                 break;
         }
         if (ret == 0){
@@ -73,7 +72,7 @@ int _pspemuLfatOpen(BootFile* file, int unk)
         }
     }
     else if (strncmp(p, "/kd/ark_", 8) == 0){ // ARK module
-        int ret = findFlash0File(file, p);
+        int ret = findFlashFile(file, p);
         if (ret == 0){
             relocateFlashFile(file);
             return ret;

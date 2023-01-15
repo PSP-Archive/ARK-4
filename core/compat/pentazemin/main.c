@@ -63,7 +63,6 @@ int module_start(SceSize args, void * argp)
 {
 
     _sw(0x44000000, 0xBC800100);
-    colorDebug(0xff);
 
     // set rebootex for Vita
     sctrlHENSetRebootexOverride(rebootbuffer_pentazemin);
@@ -80,7 +79,7 @@ int module_start(SceSize args, void * argp)
     flushCache();
 
     colorDebug(0xff0000);
-    while (1) _sw(0, 0);
+    //while (1) _sw(0, 0);
     
     // Return Success
     return 0;

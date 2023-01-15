@@ -20,7 +20,6 @@
 //#include "main.h"
 
 #include "common.h"
-#include "pspinit.h"
 #include "binary.h"
 
 #define ClearCaches flushCache
@@ -296,8 +295,6 @@ void PatchPowerService2(u32 text_addr) {
 	K_HIJACK_CALL(text_addr + 0x22FC, VitaSyncPatched, VitaSync);
 
 	_scePowerSuspendOperation = (void *)text_addr + 0x1710;
-
-	ClearCaches();
 }
 
 int initAdrenaline() {

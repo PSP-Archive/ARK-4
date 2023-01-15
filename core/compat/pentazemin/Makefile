@@ -4,11 +4,15 @@ C_OBJS =    \
 	main.o   \
 	funcs.o   \
 	syspatch.o \
+	io_patch.o  \
 	adrenaline.o \
-	$(ARKROOT)/common/utils/patches.o \
+	power_patch.o \
+	LflashFatfmt.o \
+	utility_patch.o \
+	$(ARKROOT)/core/compat/vita/vlf.o \
+	$(ARKROOT)/common/utils/patches.o   \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
 	$(ARKROOT)/core/systemctrl/src/gameinfo.o \
-	$(ARKROOT)/core/compat/vita/vlf.o \
 		
 OBJS = \
 	$(C_OBJS) imports.o
