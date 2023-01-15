@@ -124,13 +124,12 @@ SceModule2* patchLoaderCore(void)
     u32 start_addr = mod->text_addr;
     u32 topaddr = mod->text_addr+mod->text_size;
 
-    int found = 0;
-    for (u32 addr = start_addr; addr<topaddr&&!found; addr+=4){
+    for (u32 addr = start_addr; addr<topaddr; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x02E02021){
             ARKPatchInit = K_EXTRACT_CALL(addr-4);
             _sw(JAL(AdrenalinePatchInit), addr-4);
-            found = 1;
+            break;
         }
     }
 
@@ -254,6 +253,87 @@ void PatchImposeDriver(u32 text_addr) {
 	REDIRECT_FUNCTION(text_addr + 0x92B0, sceKernelWaitEventFlagPatched);
 }
 
+int memcmp_patched(const void *b1, const void *b2, size_t len) {
+	u32 tag = 0x4C9494F0;
+	if (memcmp(&tag, b2, len) == 0) {
+		static u8 kernel661_keys[0x10] = { 0x76, 0xF2, 0x6C, 0x0A, 0xCA, 0x3A, 0xBA, 0x4E, 0xAC, 0x76, 0xD2, 0x40, 0xF5, 0xC3, 0xBF, 0xF9 };
+		memcpy((void *)0xBFC00220, kernel661_keys, sizeof(kernel661_keys));
+		return 0;
+	}
+
+	return memcmp(b1, b2, len);
+}
+
+void PatchMemlmd() {
+	SceModule2 *mod = sceKernelFindModuleByName("sceMemlmd");
+	u32 text_addr = mod->text_addr;
+
+	// Allow 6.61 kernel modules
+	MAKE_CALL(text_addr + 0x2C8, memcmp_patched);
+}
+
+int ReadFile(char *file, void *buf, int size) {
+	SceUID fd = sceIoOpen(file, PSP_O_RDONLY, 0);
+	if (fd < 0)
+		return fd;
+
+	int read = sceIoRead(fd, buf, size);
+
+	sceIoClose(fd);
+	return read;
+}
+
+int sceResmgrDecryptIndexPatched(void *buf, int size, int *retSize) {
+	int k1 = pspSdkSetK1(0);
+	*retSize = ReadFile("flash0:/vsh/etc/version.txt", buf, size);
+	pspSdkSetK1(k1);
+	return 0;
+}
+
+void PatchLoadExec(u32 text_addr, u32 text_size) {
+	u32 jump = 0;
+
+	int i;
+	for (i = 0; i < text_size; i += 4) {
+		u32 addr = text_addr + i;
+
+		// Remove apitype check in FW's above 2.60
+		if (_lw(addr) == 0x24070200) {
+			memset((void *)addr, 0, 0x20);
+			continue;
+		}
+
+		// Ignore kermit calls
+		if (_lw(addr) == 0x17C001D3) {
+			_sw(0, addr);
+			jump = addr + 8;
+			continue;
+		}
+
+		// Fix type check
+		if (_lw(addr) == 0x34650002) {
+			_sw(0x24050002, addr); //ori $a1, $v1, 0x2 -> li $a1, 2
+			_sw(0x12E500B7, addr + 4); //bnez $s7, loc_XXXXXXXX -> beq $s7, $a1, loc_XXXXXXXX
+			_sw(0xAC570018, addr + 8); //sw $a1, 24($v0) -> sw $s7, 24($v0)
+			continue;
+		}
+
+		if (_lw(addr) == 0x24100200) {
+			// Some registers are reserved. Use other registers to avoid malfunction
+			_sw(0x24050200, addr); //li $s0, 0x200 -> li $a1, 0x200
+			_sw(0x12650003, addr + 4); //beq $s3, $s0, loc_XXXXXXXX - > beq $s3, $a1, loc_XXXXXXXX
+			_sw(0x241E0210, addr + 8); //li $s5, 0x210 -> li $fp, 0x210
+			_sw(0x567EFFDE, addr + 0xC); //bne $s3, $s5, loc_XXXXXXXX -> bne $s3, $fp, loc_XXXXXXXX
+
+			// Allow LoadExecVSH type 1. Ignore peripheralCommon KERMIT_CMD_ERROR_EXIT
+			MAKE_JUMP(addr + 0x14, jump);
+			_sw(0x24170001, addr + 0x18); //li $s7, 1
+
+			continue;
+		}
+	}
+}
+
 // for screen debugging
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 void AdrenalineOnModuleStart(SceModule2 * mod){
@@ -272,13 +352,24 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         initScreen(DisplaySetFrameBuf);
         PRTSTR(mod->modname);
     }
+
+    if (strcmp(mod->modname, "sceLoadExec") == 0) {
+		PatchLoadExec(mod->text_addr, mod->text_size);
+        goto flush;
+	}
     
     // load and process settings file
     if(strcmp(mod->modname, "sceMediaSync") == 0)
     {
+        //PatchMediaSync(mod->text_addr);
         loadSettings(&settingsHandler);
         goto flush;
     }
+
+    if (strcmp(mod->modname, "sceMesgLed") == 0) {
+		REDIRECT_FUNCTION(sctrlHENFindFunction("sceMesgLed", "sceResmgr_driver", 0x9DC14891), sceResmgrDecryptIndexPatched);
+		goto flush;
+	}
 
     if (strcmp(mod->modname, "scePower_Service") == 0) {
 		PatchPowerService(mod->text_addr);
@@ -398,5 +489,6 @@ exit:
 void AdrenalineSysPatch(){
     SceModule2* loadcore = patchLoaderCore();
     PatchIoFileMgr();
+    PatchMemlmd();
     initAdrenaline();
 }
