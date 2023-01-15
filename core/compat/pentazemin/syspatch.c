@@ -398,4 +398,5 @@ exit:
 void AdrenalineSysPatch(){
     SceModule2* loadcore = patchLoaderCore();
     PatchIoFileMgr();
+    initAdrenaline();
 }
