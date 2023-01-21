@@ -173,10 +173,11 @@ function withDialog {
 	checkDepends 
 
 	if [[ $1 == '-h' || $1 == '--help' ]] ; then
-			echo "$0         | Compiles & Builds Release builds"
-			echo "$0 --debug | Allows different levels of debugging"
-			echo "$0 --cIPL  | Compile with cIPL support"
-			echo "$0 --clean | Runs \`make clean\` (in case your path is not setup correctly)"
+			echo "$0                | Compiles & Builds Release builds"
+			echo "$0 --debug        | Allows different levels of debugging"
+			echo "$0 --no-cfw-vita  | Automattically downloads Trinity PBOOT.PBP"
+			echo "$0 --cfw-vita     | Automattically downloads ArkFast.vpk"
+			echo "$0 --clean        | Runs \`make clean\` (in case your path is not setup correctly)"
 			exit 0;
 	fi
 
