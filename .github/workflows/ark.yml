@@ -34,11 +34,11 @@ jobs:
     if: ${{ needs.check_date.outputs.should_run != 'false' }}
     runs-on: ubuntu-latest
 
+    steps:
     - name: Create Version
       id: get_version
       run: VERSION=v$(date +%s) && echo "::set-output name=version::${VERSION}"
  
-    steps:
     - uses: actions/checkout@v2
     - name: Install Dependencies
       run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget git python2
