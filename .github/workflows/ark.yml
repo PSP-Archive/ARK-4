@@ -62,10 +62,6 @@ jobs:
       run: |
         make clean && make DEBUG=1 && cd ./dist && sudo tar czvf ARK-4-v${{ steps.get_version.ouputs.version }}-DEBUG.tar.gz * && mv ARK-4-v${{ steps.get_version.ouputs.version }}-DEBUG.tar.gz .. && sudo zip -r ARK-4-v${{ steps.get_version.ouputs.version }}-DEBUG.zip * && mv ARK-4-v${{ steps.get_version.ouputs.version }}-DEBUG.zip ..
     
-    - name: Create Version
-      id: get_version
-      run: VERSION=v$(date +%s) && echo "::set-output name=version::${VERSION}"
-      
     - name: upload ARK Release & DEBUG artifact 
       id: create_release
       uses: softprops/action-gh-release@v1
