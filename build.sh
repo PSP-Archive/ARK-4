@@ -173,10 +173,11 @@ function withDialog {
 	checkDepends 
 
 	if [[ $1 == '-h' || $1 == '--help' ]] ; then
-			echo "$0         | Compiles & Builds Release builds"
-			echo "$0 --debug | Allows different levels of debugging"
-			echo "$0 --cIPL  | Compile with cIPL support"
-			echo "$0 --clean | Runs \`make clean\` (in case your path is not setup correctly)"
+			echo "$0                | Compiles & Builds Release builds"
+			echo "$0 --debug        | Allows different levels of debugging"
+			echo "$0 --no-cfw-vita  | Automattically downloads Trinity PBOOT.PBP"
+			echo "$0 --cfw-vita     | Automattically downloads ArkFast.vpk"
+			echo "$0 --clean        | Runs \`make clean\` (in case your path is not setup correctly)"
 			exit 0;
 	fi
 
@@ -258,6 +259,52 @@ $
 			eval make DEBUG=$debugLevel
 	else	
 	    	eval make
+	fi
+
+	if [[ $1 == "--cfw-vita" ]]; then
+		check_curl=$(command -v curl)
+		curl_ret=$?
+		check_wget=$(command -v wget)
+		wget_ret=$?
+
+		if [ ! -d "dist/ArkFast" ]; then
+			$(command -v mkdir) dist/ArkFast
+		fi
+
+	
+		# ArkFast
+		if [[ $curl_ret -eq 0 ]]; then
+			${check_curl} -o dist/ArkFast/ArkFast.vpk -JL "https://github.com/theheroGAC/ArkFast/releases/download/2.31/ArkFast.vpk"
+			exit
+		elif [[ $wget_ret -eq 0 ]]; then
+			${check_wget} -O dist/ArkFast/ArkFast.vpk "https://github.com/theheroGAC/ArkFast/releases/download/2.31/ArkFast.vpk"
+			exit
+		fi
+		
+
+
+
+    # Trinity
+	elif [[ $1 == "--no-cfw-vita" ]]; then
+		check_curl=$(command -v curl)
+		curl_ret=$?
+		check_wget=$(command -v wget)
+		wget_ret=$?
+
+
+		if [ ! -d "dist/Trinity" ]; then
+			$(command -v mkdir) dist/Trinity
+		fi
+
+
+		if [[ $curl_ret -eq 0 ]]; then
+			${check_curl} -o dist/Trinity/PBOOT.PBP -JL "https://github.com/TheOfficialFloW/Trinity/releases/download/v1.0/PBOOT.PBP"
+			exit
+		elif [[ $wget_ret -eq 0 ]]; then
+			${check_wget} -O dist/Trinity/PBOOT.PBP "https://github.com/TheOfficialFloW/Trinity/releases/download/v1.0/PBOOT.PBP"
+			exit
+		fi
+
 	fi
 
 

@@ -79,9 +79,6 @@ static inline u32 *get_partition(int pid)
 
 void unlock_high_memory()
 {
-    if(!g_high_memory_enabled) {
-        return;
-    }
     
     //unlock memory
     unsigned int i = 0; for(; i < 0x40; i += 4) {
@@ -185,7 +182,6 @@ void patch_partitions(void)
     modify_partition(&p9);
 
     g_high_memory_enabled = 1;
-    unlock_high_memory(0);
     
     sctrlHENSetMemory(MAX_HIGH_MEMSIZE, 0);
 }
