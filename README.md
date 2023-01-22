@@ -44,9 +44,13 @@ as well as unique and exclusive new features not found anywhere else.
   <summary> <b> Compiling ARK ( For Developers ) </b> </summary>
 <p>
 
+    Build script will allow you to use the correct SDK that ARK was built with.
+
 - Release: `./build.sh` 
 - Debug: `./build.sh --debug`
 - Manually: install the oldest possible SDK (ideally the one used to compile M33), then run `make`
+
+Use `-h` or `--help` to show all available flags 
 
 </p>
 </details>
