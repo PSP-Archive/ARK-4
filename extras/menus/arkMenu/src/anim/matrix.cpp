@@ -47,6 +47,11 @@ void Matrix::draw(){
         cur_col = r%MAX_COLS;
         cur_row = 0;
     }
+
+    char* c = &(caRow[rand()%MAX_COLS][rand()%MAX_CHARS]);
+    if (*c != 0){
+        *c = GetChar(r/(u32)c, 33, 30);
+    }
     
     int xoffset = 10;
     for (int i=0; i<MAX_COLS; i++){
