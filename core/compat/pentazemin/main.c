@@ -59,8 +59,6 @@ static void processArkConfig(ARKConfig* ark_config){
 int module_start(SceSize args, void * argp)
 {
 
-    _sw(0x44000000, 0xBC800100);
-
     // set rebootex for Vita
     sctrlHENSetRebootexOverride(rebootbuffer_pentazemin);
 
@@ -74,8 +72,6 @@ int module_start(SceSize args, void * argp)
     previous = sctrlHENSetStartModuleHandler(AdrenalineOnModuleStart);
    
     flushCache();
-
-    colorDebug(0xff0000);
     
     // Return Success
     return 0;

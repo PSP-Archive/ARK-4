@@ -254,9 +254,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         {
             // Initialize Memory Stick Speedup Cache
             //if (use_mscache) msstorCacheInit("ms", 8 * 1024);
-            
-            // Apply Directory IO PSP Emulation
-            //patchFileSystemDirSyscall();
 
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
