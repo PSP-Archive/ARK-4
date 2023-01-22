@@ -14,6 +14,10 @@
 
 extern STMOD_HANDLER previous;
 
+int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
+
+static SceModule2* lastmod = NULL;
+
 // Return Boot Status
 int isSystemBooted(void)
 {
@@ -31,8 +35,18 @@ int isSystemBooted(void)
     return 0;
 }
 
-void settingsHandler(char* path){
-    //int apitype = sceKernelInitApitype();
+void OnSystemStatusIdle() {
+	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
+
+	initAdrenalineInfo();
+
+	// Set fake framebuffer so that cwcheat can be displayed
+	if (adrenaline->pops_mode) {
+		DisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
+		memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+	} else {
+		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
+	}
 }
 
 int (*_sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
@@ -93,6 +107,7 @@ int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
 
 int memcmp_patched(const void *b1, const void *b2, size_t len) {
 	u32 tag = 0x4C9494F0;
+
 	if (memcmp(&tag, b2, len) == 0) {
 		static u8 kernel661_keys[0x10] = { 0x76, 0xF2, 0x6C, 0x0A, 0xCA, 0x3A, 0xBA, 0x4E, 0xAC, 0x76, 0xD2, 0x40, 0xF5, 0xC3, 0xBF, 0xF9 };
 		memcpy((void *)0xBFC00220, kernel661_keys, sizeof(kernel661_keys));
@@ -128,23 +143,21 @@ int sceResmgrDecryptIndexPatched(void *buf, int size, int *retSize) {
 	return 0;
 }
 
-// for screen debugging
-int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
+void settingsHandler(char* path){
+    //int apitype = sceKernelInitApitype();
+}
+
 void AdrenalineOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
+
 
     if(strcmp(mod->modname, "sceDisplay_Service") == 0)
     {
         // can use screen now
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         goto flush;
-    }
-
-    if (DisplaySetFrameBuf){
-        initScreen(DisplaySetFrameBuf);
-        PRTSTR(mod->modname);
     }
 
 	if (strcmp(mod->modname, "sceLowIO_Driver") == 0) {
@@ -264,6 +277,8 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
             _sceAudioOutput2Release = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x43196845);
             sctrlHENPatchSyscall((u32)_sceAudioOutput2Release, sceAudioOutput2ReleaseFixed);
 
+			OnSystemStatusIdle();
+
             // Boot Complete Action done
             booted = 1;
             goto flush;
@@ -276,6 +291,28 @@ flush:
 exit:
        // Forward to previous Handler
     if(previous) previous(mod);
+}
+
+int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
+int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
+
+    SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
+
+	if (DisplaySetFrameBuf){
+        initScreen(DisplaySetFrameBuf);
+        PRTSTR1("Cur Mod ID: %p", modid);
+		if (mod) PRTSTR1("Cur Mod Name", mod->modname);
+		if (lastmod) PRTSTR1("Last mod: %s", lastmod->modname);
+		if (mod == NULL || modid < 0){
+			while(1){};
+		}
+	}
+
+	lastmod = mod;
+
+    // forward to previous or default StartModule
+    if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
+    return -1;
 }
 
 void AdrenalineSysPatch(){

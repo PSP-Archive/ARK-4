@@ -36,6 +36,8 @@ ARKConfig* ark_config = &_ark_conf;
 STMOD_HANDLER previous = NULL;
 
 extern void AdrenalineOnModuleStart(SceModule2 * mod);
+extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
+extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 
 // Flush Instruction and Data Cache
 void flushCache()
@@ -70,6 +72,9 @@ int module_start(SceSize args, void * argp)
 
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(AdrenalineOnModuleStart);
+
+    // Register custom start module
+    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
    
     flushCache();
     
