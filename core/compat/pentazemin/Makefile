@@ -5,10 +5,13 @@ C_OBJS =    \
 	funcs.o   \
 	syspatch.o \
 	io_patch.o  \
+	loadexec.o  \
 	adrenaline.o \
-	power_patch.o \
-	LflashFatfmt.o \
-	utility_patch.o \
+	init_patch.o  \
+	power_patch.o  \
+	LflashFatfmt.o  \
+	impose_patch.o   \
+	utility_patch.o   \
 	$(ARKROOT)/core/compat/vita/vlf.o \
 	$(ARKROOT)/common/utils/patches.o   \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \

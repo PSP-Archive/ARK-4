@@ -52,9 +52,6 @@ static void processArkConfig(ARKConfig* ark_config){
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSV_ADR; // assume running on Adrenaline
     }
-    if (ark_config->launcher[0] == '\0'){
-        strcpy(ark_config->launcher, ARK_MENU);
-    }
     sctrlHENSetArkConfig(ark_config); // notify SystemControl
 }
 
