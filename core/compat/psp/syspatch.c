@@ -227,7 +227,6 @@ void processSettings(){
         ark_config->launcher[0] = 0; // disable launcher mode
     }
     sctrlHENSetArkConfig(ark_config);
-
     if (region_change){
         patch_region();
         flushCache();
@@ -279,6 +278,8 @@ void PSPOnModuleStart(SceModule2 * mod){
                 disable_PauseGame();
             }
         }
+        // Allow usermode to use high memory
+        unlock_high_memory();
         goto flush;
     }
     
