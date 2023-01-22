@@ -34,6 +34,10 @@ jobs:
     if: ${{ needs.check_date.outputs.should_run != 'false' }}
     runs-on: ubuntu-latest
 
+    - name: Create Version
+      id: get_version
+      run: VERSION=v$(date +%s) && echo "::set-output name=version::${VERSION}"
+ 
     steps:
     - uses: actions/checkout@v2
     - name: Install Dependencies
@@ -43,7 +47,7 @@ jobs:
     - name: Change Permissions
       run: sudo chown $GITHUB_USER:$GITHUB_USER /usr/local/pspdev && sudo chmod 755 -R /usr/local/pspdev
     - name: Setup Path
-      run: echo "/usr/local/pspdev/bin" >> $GITHUB_PATH #export $GITHUB_PATH="/usr/local/pspdev/bin:$GITHUB_PATH" && export PSPDEV="/usr/local/pspdev"
+      run: echo "/usr/local/pspdev/bin" >> $GITHUB_PATH
     - name: Print PATH
       run: echo $GITHUB_PATH
     - name: Fix libmpfr
@@ -53,10 +57,10 @@ jobs:
     - name: Making ARK-4
       run: make
     - name: Compressing dist directory up
-      run: cd ./dist && sudo tar czvf ARK-4.tar.gz * && mv ARK-4.tar.gz .. && sudo zip -r ARK-4.zip * && mv ARK-4.zip ..
+      run: cd ./dist && sudo tar czvf ARK-4.tar.gz * && mv ARK-4-v${{ steps.get_version.ouputs.version }}.tar.gz .. && sudo zip -r ARK-v${{ steps.get_version.ouputs.version }}-4.zip * && mv ARK-4-v${{ steps.get_version.ouputs.version }}.zip ..
     - name: Making DEBUG version
       run: |
-        make clean && make DEBUG=1 && cd ./dist && sudo tar czvf ARK-4-DEBUG.tar.gz * && mv ARK-4-DEBUG.tar.gz .. && sudo zip -r ARK-4-DEBUG.zip * && mv ARK-4-DEBUG.zip ..
+        make clean && make DEBUG=1 && cd ./dist && sudo tar czvf ARK-4-v${{ steps.get_version.ouputs.version }}-DEBUG.tar.gz * && mv ARK-4-v${{ steps.get_version.ouputs.version }}-DEBUG.tar.gz .. && sudo zip -r ARK-4-v${{ steps.get_version.ouputs.version }}-DEBUG.zip * && mv ARK-4-v${{ steps.get_version.ouputs.version }}-DEBUG.zip ..
     
     - name: Create Version
       id: get_version
@@ -72,7 +76,7 @@ jobs:
         name: ${{ github.sha }}
         prerelease: true
         files: |
-              ARK-4.zip
-              ARK-4.tar.gz
-              ARK-4-DEBUG.zip
-              ARK-4-DEBUG.tar.gz
+              ARK-4-v${{ steps.get_version.ouputs.version }}.zip
+              ARK-4-v${{ steps.get_version.ouputs.version }}.tar.gz
+              ARK-4-v${{ steps.get_version.ouputs.version }}-DEBUG.zip
+              ARK-4-v${{ steps.get_version.ouputs.version }}-DEBUG.tar.gz
