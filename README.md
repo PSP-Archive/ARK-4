@@ -241,7 +241,6 @@ Note: some of these menus have not been updated or supported by their developers
 
 - Every other giant shoulder I am standing on.
 
-- krazynez testing to see if this triggers main branch when pushing to other branches ;-)
 </p>
 </details>
 
