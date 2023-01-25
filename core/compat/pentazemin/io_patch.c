@@ -619,10 +619,16 @@ int sceIoAssignPatched(const char *dev1, const char *dev2, const char *dev3, int
 }
 
 void PatchIoFileMgr() {
-	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceIoAddDrv), sceIoAddDrvPatched, _sceIoAddDrv);
-	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceIoDelDrv), sceIoDelDrvPatched, _sceIoDelDrv);
+
+	u32 IoAddDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
+	u32 IoDelDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
+	u32 IoAssign = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xB2A628C1);
+	u32 IoUnassign = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x6D08A871);
+
+	HIJACK_FUNCTION(IoAddDrv, sceIoAddDrvPatched, _sceIoAddDrv);
+	HIJACK_FUNCTION(IoDelDrv, sceIoDelDrvPatched, _sceIoDelDrv);
 
 	// This fixes popsman flash2 assign
-	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceIoUnassign), sceIoUnassignPatched, _sceIoUnassign);
-	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceIoAssign), sceIoAssignPatched, _sceIoAssign);
+	HIJACK_FUNCTION(IoUnassign, sceIoUnassignPatched, _sceIoUnassign);
+	HIJACK_FUNCTION(IoAssign, sceIoAssignPatched, _sceIoAssign);
 }
