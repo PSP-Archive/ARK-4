@@ -194,10 +194,8 @@ void settingsHandler(char* path){
     }
     else if (strcasecmp(path, "infernocache") == 0){
         if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x112 && apitype <= 0x115)){
-            void (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
             int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
-            if (CacheSetPolicy && CacheInit){
-                CacheSetPolicy(CACHE_POLICY_LRU);
+            if (CacheInit){
                 if (psp_model==PSP_1000) CacheInit(4 * 1024, 8, 2); // 32K cache on 1K
                 else CacheInit(64 * 1024, 128, (use_highmem)?2:9); // 8M cache on other models
                 disable_PauseGame(); // disable pause feature to maintain stability
@@ -278,8 +276,6 @@ void PSPOnModuleStart(SceModule2 * mod){
                 disable_PauseGame();
             }
         }
-        // Allow usermode to use high memory
-        unlock_high_memory();
         goto flush;
     }
     

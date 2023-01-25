@@ -1,12 +1,5 @@
 #include "vitamem.h"
 
-void unprotectVitaMem(){
-    // unprotect from user access
-    u32 *prot = (u32 *)0xBC000040;
-    for (int i = 0; i < 0x10; i++)
-        prot[i] = 0xFFFFFFFF;
-}
-
 void unlockVitaMemory(){
 
     int apitype = sceKernelInitApitype(); // prevent in pops and vsh(?)
@@ -30,7 +23,7 @@ void unlockVitaMemory(){
     }
 
 
-    u32 user_size = (52 * 1024 * 1024);
+    u32 user_size = (36 * 1024 * 1024);
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
     partition->size = user_size;
     partition->data->size = (((user_size >> 8) << 9) | 0xFC);
@@ -40,9 +33,6 @@ void unlockVitaMemory(){
     partition->size = kernel_size;
     partition->address = 0x88800000 + user_size;
     partition->data->size = (((kernel_size >> 8) << 9) | 0xFC);
-
-    // unprotect flash0 ramfs for user access
-    unprotectVitaMem();
     
     sctrlHENSetMemory(52, 4);
 }
