@@ -400,6 +400,9 @@ int iso_cache_read(struct IoReadArg *arg)
 
 int infernoCacheInit(int cache_size, int cache_num, int partition)
 {
+
+    if (cache_on) return 0; // cache already on
+
     SceUID memid;
     int i;
     struct ISOCache *cache;
