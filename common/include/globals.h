@@ -29,9 +29,16 @@
 #define REBOOTEX_TEXT (KERNEL_BASE + 0xFC0000)
 #define LOADER_TEXT (0x040EC000)
 #define MAINBIN_TEXT (0x04000000)
+#define EXTRA_RAM 0x8A000000
 #define FLASH_SONY 0x8B000000
 #define ARK_FLASH 0x8BA00000
 #define BOOT_KEY_BUFFER (KERNEL_BASE + 0xFB0000)
+
+// Memory Partition Size
+#define USER_SIZE (24 * 1024 * 1024)
+#define KERNEL_SIZE (4 * 1024 * 1024)
+#define VITA_FLASH_SIZE 0x01000000 // 16MiB
+#define VITA_EXTRA_RAM_SIZE (32 * 1024 * 1024)
 #define MAX_HIGH_MEMSIZE 55
 
 // ARK_CONFIG
@@ -109,12 +116,6 @@ typedef struct ARKConfig{
 #define IS_VITA(ark_config) ((ark_config->exec_mode&DEV_MASK)==PS_VITA)
 #define IS_VITA_ADR(ark_config) (ark_config->exec_mode==PSV_ADR)
 #define IS_VITA_POPS(ark_config) (ark_config->exec_mode==PSV_POPS)
-
-// Memory Partition Size
-#define USER_SIZE (24 * 1024 * 1024)
-#define KERNEL_SIZE (4 * 1024 * 1024)
-#define VITA_EXTRA_RAM 0x8A000000
-#define VITA_FLASH_SIZE 0x01000000 // 16MiB
 
 #endif
 

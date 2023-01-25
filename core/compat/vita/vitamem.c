@@ -23,16 +23,19 @@ void unlockVitaMemory(){
     }
 
 
-    u32 user_size = (36 * 1024 * 1024);
+    u32 kernel_size = (4 * 1024 * 1024); // p11 size
+    u32 user_size = USER_SIZE + VITA_EXTRA_RAM_SIZE - kernel_size; // new p2 size
+
+    // modify p2
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
     partition->size = user_size;
     partition->data->size = (((user_size >> 8) << 9) | 0xFC);
 
-    u32 kernel_size = (4 * 1024 * 1024);
+    // modify p11
     partition = GetPartition(11);
     partition->size = kernel_size;
     partition->address = 0x88800000 + user_size;
     partition->data->size = (((kernel_size >> 8) << 9) | 0xFC);
-    
+
     sctrlHENSetMemory(52, 4);
 }

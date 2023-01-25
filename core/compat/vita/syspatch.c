@@ -65,7 +65,7 @@ int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, 
     
     if (apitype == 0x141){ // homebrew API
         sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
-        sctrlSESetUmdFile("");
+        sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
     }
     
     // Find Target Function
@@ -226,7 +226,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             if (use_infernocache){
                 int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
                 if (CacheInit){
-                    CacheInit(32 * 1024, 32, (use_highmem)?2:11); // 2MB cache for PS Vita
+                    CacheInit(32 * 1024, 32, 11); // 2MB cache for PS Vita
                 }
             }
             
