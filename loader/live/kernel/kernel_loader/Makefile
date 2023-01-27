@@ -55,4 +55,4 @@ $(TARGET): main.elf
 	@echo GET $@
 
 clean:
-	$(Q)rm -rf *~ *.s *.o *.elf $(TARGET) exploit.h link.l
+	$(Q)rm -rf *~ *.s *.o *.elf $(TARGET) exploit.h link.l $(ARKROOT)/core/compat/psp/flashinstall.o
