@@ -24,13 +24,20 @@
 
 char *settings[] =
 {
-    "Advanced System Settings",
+    "Custom Firmware Settings",
     "Configuration",
-//    "Advanced",
-    "test1",
-    "test2",
-//    "test21",
-//    "test22",
+    //"Plugins",
+    "Overclock",
+    "PowerSave",
+    "USB Charge",
+    "Autoboot Launcher",
+    "Disable Pause on PSP Go",
+    "Force Extra Memory",
+    "Memory Stick Speedup",
+    "Inferno Cache",
+    "Old Plugin Support on PSP Go",
+    "Skip Sony Logos",
+    "Hide PIC0 and PIC1",
 };
 
 #endif

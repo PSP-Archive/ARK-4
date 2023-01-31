@@ -48,6 +48,7 @@
 #define ARK_RECOVERY "RECOVERY.PBP" // recovery app
 #define FLASH0_ARK "FLASH0.ARK" // ARK flash0 package
 #define VSH_MENU "VSHMENU.PRX" // ARK VSH Menu for XMB
+#define XMBCTRL_PRX "XMBCTRL.PRX" // XMB Control
 #define K_FILE "K.BIN" // kernel exploit file for Live loaders
 #define ARK2_BIN "ARK.BIN" // ARK-2 payload
 #define ARK4_BIN "ARK4.BIN" // ARK-4 payload

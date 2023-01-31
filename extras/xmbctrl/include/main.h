@@ -35,8 +35,18 @@
 typedef struct
 {
     int magic;
-    int test1;
-    int test2;
+    int overclock;
+    int powersave;
+    int usbcharge;
+    int launcher;
+    int disablepause;
+    int highmem;
+    int mscache;
+    int infernocache;
+    int oldplugin;
+    int skiplogos;
+    int regionchange;
+    int hidepics;
 } CFWConfig;
 
 typedef struct

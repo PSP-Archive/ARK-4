@@ -37,7 +37,7 @@ typedef struct
 {
     char *name;
     char *items[1];
-    char *options[2];
+    char *options[11];
 } StringContainer;
 
 StringContainer string;
@@ -53,8 +53,27 @@ typedef struct
 
 GetItem GetItemes[] =
 {
-    { 0, 1, "msg_test1" },
-    { 0, 1, "msg_test2" },
+    { 1, 0, "Overclock" },
+    { 1, 0, "PowerSave" },
+    { 1, 0, "USB Charge" },
+    { 1, 0, "Autoboot Launcher" },
+    { 1, 0, "Disable Pause on PSP Go" },
+    { 1, 0, "Force Extra Memory" },
+    { 1, 0, "Memory Stick Speedup" },
+    { 1, 0, "Inferno Cache" },
+    { 1, 0, "Old Plugin Support on PSP Go" },
+    { 1, 0, "Skip Sony Logos" },
+    { 1, 0, "Hide PIC0 and PIC1" },
+};
+
+char* ark_settings_options[] = {
+    (char*)"Disabled",
+    (char*)"Always",
+    (char*)"Game",
+    (char*)"UMD",
+    (char*)"Homebrew",
+    (char*)"Pops",
+    (char*)"VSH"
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
@@ -356,8 +375,18 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         {
             int configs[] =
             {
-                config.test1,
-                config.test2,
+                config.usbcharge,
+                config.overclock,
+                config.powersave,
+                config.launcher,
+                config.disablepause,
+                config.highmem,
+                config.mscache,
+                config.infernocache,
+                config.oldplugin,
+                config.skiplogos,
+                config.regionchange,
+                config.hidepics,
             };
             
             int i;
@@ -385,8 +414,18 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
         {
             static int *configs[] =
             {
-                &config.test1,
-                &config.test2,
+                &config.usbcharge,
+                &config.overclock,
+                &config.powersave,
+                &config.launcher,
+                &config.disablepause,
+                &config.highmem,
+                &config.mscache,
+                &config.infernocache,
+                &config.oldplugin,
+                &config.skiplogos,
+                &config.regionchange,
+                &config.hidepics,
             };
             
             int i;
@@ -479,6 +518,9 @@ int PAF_Resource_GetPageNodeByID_Patched(void *resource, char *name, SceRcoEntry
                 {
                     case 0:
                         HijackContext(*child, NULL, 0);
+                        break;
+                    default:
+                        HijackContext(*child, ark_settings_options, sizeof(ark_settings_options) / sizeof(char *));
                         break;
                 }
             }
@@ -592,6 +634,7 @@ int OnModuleStart(SceModule2 *mod)
 
 int module_start(SceSize args, void *argp)
 {        
+    colorDebug(0xff);
     psp_model = kuKernelGetModel();
 //    sctrlSEGetConfig(&config);
     
