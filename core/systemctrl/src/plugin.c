@@ -140,8 +140,9 @@ char * strtrim(char * text)
     while(isspace(text[0])) text++;
     
     // Scan Position
-    unsigned int pos = strlen(text)-1;
-    
+    int pos = strlen(text)-1;
+    if (pos<0) return text;
+
     // Find Trailing Whitespaces
     while(isspace(text[pos])) pos--;
     
@@ -212,7 +213,7 @@ static char * readLine(int fd, char * buf, unsigned int buflen)
 static void processLine(char * line, void (*enabler)(char*), void (*disabler)(char*))
 {
     // Skip Comment Lines
-    if(!enabler || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#')
+    if(!enabler || line == NULL || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#')
         return;
     
     // String Token

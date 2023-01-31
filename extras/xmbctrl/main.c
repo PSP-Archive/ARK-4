@@ -27,11 +27,16 @@
 #include <kubridge.h>
 #include <stddef.h>
 
+#include "globals.h"
+
 #include "include/main.h"
 #include "include/utils.h"
 #include "include/settings.h"
 
 PSP_MODULE_INFO("XmbControl", 0x0007, 1, 0);
+
+ARKConfig _arkconf;
+ARKConfig* ark_config = &_arkconf;
 
 typedef struct
 {
@@ -53,9 +58,9 @@ typedef struct
 
 GetItem GetItemes[] =
 {
+    { 1, 0, "USB Charge" },
     { 1, 0, "Overclock" },
     { 1, 0, "PowerSave" },
-    { 1, 0, "USB Charge" },
     { 1, 0, "Autoboot Launcher" },
     { 1, 0, "Disable Pause on PSP Go" },
     { 1, 0, "Force Extra Memory" },
@@ -124,6 +129,18 @@ int startup = 1;
 SceContextItem *context;
 SceVshItem *new_item;
 void *xmb_arg0, *xmb_arg1;
+
+void* my_malloc(size_t size){
+    SceUID uid = sceKernelAllocPartitionMemory(2, "", PSP_SMEM_High, size+sizeof(u32), NULL);
+    int* ptr = sceKernelGetBlockHeadAddr(uid);
+    ptr[0] = uid;
+    return &(ptr[1]);
+}
+
+void my_free(int* ptr){
+    int uid = ptr[-1];
+    sceKernelFreePartitionMemory(uid);
+}
 
 void ClearCaches()
 {
@@ -231,7 +248,7 @@ int ExecuteActionPatched(int action, int action_arg)
     {
         if(action_arg == sysconf_tnconfig_action_arg)
         {
-//            sctrlSEGetConfig(&config);
+            loadSettings();
             int n = 1;
 
             sce_paf_private_memset(context, 0, (4 * sizeof(SceContextItem)) + 1);
@@ -385,7 +402,6 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.infernocache,
                 config.oldplugin,
                 config.skiplogos,
-                config.regionchange,
                 config.hidepics,
             };
             
@@ -424,7 +440,6 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.infernocache,
                 &config.oldplugin,
                 &config.skiplogos,
-                &config.regionchange,
                 &config.hidepics,
             };
             
@@ -434,8 +449,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 if(sce_paf_private_strcmp(name, GetItemes[i].item) == 0)
                 {
                     *configs[i] = GetItemes[i].negative ? !(*value) : *value;
-                    
-//                    sctrlSESetConfig(&config);
+                    saveSettings();
                     vctrlVSHExitVSHMenu(&config, NULL, 0);
                     return 0;
                 }
@@ -634,11 +648,13 @@ int OnModuleStart(SceModule2 *mod)
 
 int module_start(SceSize args, void *argp)
 {        
-    colorDebug(0xff);
     psp_model = kuKernelGetModel();
-//    sctrlSEGetConfig(&config);
     
     previous = sctrlHENSetStartModuleHandler(OnModuleStart);
-            
+    
+    sctrlHENGetArkConfig(ark_config);
+
+    loadSettings();
+
     return 0;
 }
