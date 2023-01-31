@@ -75,7 +75,7 @@ char* ark_settings_options[] = {
     (char*)"Disabled",
     (char*)"Always",
     (char*)"Game",
-    (char*)"UMD",
+    (char*)"UMD/ISO",
     (char*)"Homebrew",
     (char*)"Pops",
     (char*)"VSH"

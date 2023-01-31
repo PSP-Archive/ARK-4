@@ -42,7 +42,7 @@ ArkConf ark_config;
     "Disabled", \
     "Always", \
     "Game", \
-    "UMD", \
+    "UMD/ISO", \
     "Homebrew", \
     "Pops", \
     "VSH" \
