@@ -108,8 +108,6 @@ Use `-h` or `--help` to show all available flags
 <p>
 You can install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
-If coming from PRO/ME you can use this tool to automate your plugins.txt: [ARK-Plugin-Converter](https://github.com/krazynez/ARK-Plugin-Converter)
-
 To install plugins use the comma-separated format (CSV).
 Where the header is: runlevel, path, switch.
 A few samples:
@@ -196,6 +194,49 @@ ARK comes prepacked with a very powerful launcher with a built-in file browser a
 
 Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
 
+<details>
+<summary> <b> Custom Launcher Themes </b> </summary>
+<p>
+
+<i>Orbs are animations and not part of the actual Themes </i>
+
+Theme: RED 
+
+![Red](.github/wallpapers/red.png "RED")
+
+Theme: Peace Walker 
+
+![Peace Walker](.github/wallpapers/peacewalker.png "Peace Walker")
+
+Theme: Material Dark
+
+![Material Dark](.github/wallpapers/materialdark.png "Material Dark")
+
+Theme: GX Classic
+
+![GX Classic](.github/wallpapers/gxclassic.png "GX Classic")
+
+Theme: Classic
+
+![Classic](.github/wallpapers/classic.png "Classic")
+
+Theme: Blue 2
+
+![Blue 2](.github/wallpapers/blue2.png "Blue 2")
+
+Theme: Blue
+
+![Blue](.github/wallpapers/blue.png "Blue")
+
+Theme: BadgerOS_Sprunk
+
+![BadgerOS_Sprunk](.github/wallpapers/badgerOS_sprunk.png "BadgerOS_Sprunk")
+
+Theme: BadgerOS
+
+![BadgerOS](.github/wallpapers/badgerOS.png "BadgerOS")
+
+</details>
 
 - ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
 
@@ -242,6 +283,7 @@ Note: some of these menus have not been updated or supported by their developers
 - `hrydgard` for the PMF player as well as being an inspiration for the custom launcher.
 
 - Every other giant shoulder I am standing on.
+
 </p>
 </details>
 
