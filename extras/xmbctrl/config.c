@@ -19,9 +19,6 @@ char** custom_config = NULL;
 int n_custom_config = 0;
 int max_custom_config = 0;
 
-// Allocate Line Buffer
-static char line[LINE_BUFFER_SIZE];
-
 enum{
     DISABLED,
     ALWAYS_ON,
@@ -302,7 +299,8 @@ static void ProcessConfigFile(char* path)
     // Opened Plugin Config
     if(fd >= 0)
     {
-        
+        // Allocate Line Buffer
+        char* line = my_malloc(LINE_BUFFER_SIZE);        
         // Buffer Allocation Success
         if(line != NULL)
         {
@@ -319,6 +317,7 @@ static void ProcessConfigFile(char* path)
                     add_custom_config(dupline);
                 }
             }
+            my_free(line);
         }
         // Close Plugin Config
         sceIoClose(fd);
@@ -334,7 +333,7 @@ void loadSettings(){
     ProcessConfigFile(path);
 }
 
-void processSetting(char* line, char* name, int setting){
+void processSetting(int fd, char* line, char* name, int setting){
     switch (setting){
     default:
     case DISABLED:            snprintf(line, LINE_BUFFER_SIZE, "always, %s, off\n", name);   break;
@@ -345,6 +344,7 @@ void processSetting(char* line, char* name, int setting){
     case POPS_ONLY:           snprintf(line, LINE_BUFFER_SIZE, "pops, %s, on\n", name);     break;
     case VSH_ONLY:            snprintf(line, LINE_BUFFER_SIZE, "vsh, %s, on\n", name);      break;
     }
+    sceIoWrite(fd, line, strlen(line));
 }
 
 void saveSettings(){
@@ -359,28 +359,20 @@ void saveSettings(){
         return;
     }
 
-    processSetting(line, "usbcharge", config.usbcharge);
-    sceIoWrite(fd, line, strlen(line));
-    processSetting(line, "overclock", config.overclock);
-    sceIoWrite(fd, line, strlen(line));
-    processSetting(line, "powersave", config.powersave);
-    sceIoWrite(fd, line, strlen(line));
-    processSetting(line, "launcher", config.launcher);
-    sceIoWrite(fd, line, strlen(line));
-    processSetting(line, "disablepause", config.disablepause);
-    sceIoWrite(fd, line, strlen(line));
-    processSetting(line, "highmem", config.highmem);
-    sceIoWrite(fd, line, strlen(line));
-    processSetting(line, "mscache", config.mscache);
-    sceIoWrite(fd, line, strlen(line));
-    processSetting(line, "infernocache", config.infernocache);
-    sceIoWrite(fd, line, strlen(line));
-    processSetting(line, "oldplugin", config.oldplugin);
-    sceIoWrite(fd, line, strlen(line));
-    processSetting(line, "skiplogos", config.skiplogos);
-    sceIoWrite(fd, line, strlen(line));
-    processSetting(line, "hidepics", config.hidepics);
-    sceIoWrite(fd, line, strlen(line));
+    char* line = my_malloc(LINE_BUFFER_SIZE);
+
+    processSetting(fd, line, "usbcharge", config.usbcharge);
+    processSetting(fd, line, "overclock", config.overclock);
+    processSetting(fd, line, "powersave", config.powersave);
+    processSetting(fd, line, "launcher", config.launcher);
+    processSetting(fd, line, "disablepause", config.disablepause);
+    processSetting(fd, line, "highmem", config.highmem);
+    processSetting(fd, line, "mscache", config.mscache);
+    processSetting(fd, line, "infernocache", config.infernocache);
+    processSetting(fd, line, "oldplugin", config.oldplugin);
+    processSetting(fd, line, "skiplogos", config.skiplogos);
+    processSetting(fd, line, "hidepics", config.hidepics);
+    
 
     for (int i=0; i<n_custom_config; i++){
         sceIoWrite(fd, custom_config[i], strlen(custom_config[i]));

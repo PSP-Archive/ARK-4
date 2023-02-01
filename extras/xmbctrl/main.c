@@ -28,6 +28,7 @@
 #include <stddef.h>
 
 #include "globals.h"
+#include "macros.h"
 
 #include "include/main.h"
 #include "include/utils.h"
@@ -129,6 +130,20 @@ int startup = 1;
 SceContextItem *context;
 SceVshItem *new_item;
 void *xmb_arg0, *xmb_arg1;
+
+static char tmp[512];
+
+void logtext(char* text){
+    int fd = sceIoOpen("ms0:/log.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
+    sceIoWrite(fd, text, strlen(text));
+    sceIoClose(fd);
+}
+
+void logbuffer(char* path, void* buf, u32 size){
+    int fd = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+    sceIoWrite(fd, buf, size);
+    sceIoClose(fd);
+}
 
 void* my_malloc(size_t size){
     SceUID uid = sceKernelAllocPartitionMemory(2, "", PSP_SMEM_High, size+sizeof(u32), NULL);
@@ -572,8 +587,9 @@ int sceVshCommonGuiBottomDialogPatched(void *a0, void *a1, void *a2, int (* canc
     return sceVshCommonGuiBottomDialog(a0, a1, a2, startup ? OnRetry : (void *)cancel_handler, t0, t1, handler, t3);
 }
 
-void PatchVshMain(u32 text_addr)
+void PatchVshMain(u32 text_addr, u32 text_size)
 {
+    /*
     AddVshItem = (void *)text_addr + 0x22648;
     ExecuteAction = (void *)text_addr + 0x16A70;
     UnloadModule = (void *)text_addr + 0x16E64;
@@ -595,26 +611,112 @@ void PatchVshMain(u32 text_addr)
     _sw((u32)OnXmbPushPatched, text_addr + 0x530A8);
     _sw((u32)OnXmbContextMenuPatched, text_addr + 0x530B4);
 
+    */
+    int patches = 14;
+    u32 scePafGetText_call = _lw(&scePafGetText);
+    for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x00A21826){
+            u32 a = addr-4;
+            do {a-=4;} while (_lw(a) != 0x27BDFFC0);
+            AddVshItem = (void*)a;
+            patches--;
+        }
+        else if (data == 0x3A14000F){
+            u32 a = addr-4;
+            do {a-=4;} while (_lw(a) != 0x27BDFFE0);
+            ExecuteAction = (void*)a;
+            MAKE_CALL(a - 36, ExecuteActionPatched);
+            patches--;
+        }
+        else if (data == 0xA0C3019C){
+            u32 a = addr-4;
+            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
+            UnloadModule = (void*)a;
+            patches--;
+        }
+        else if (data == 0x9042001C){
+            u32 a = addr-4;
+            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
+            OnXmbPush = (void*)a;
+            patches--;
+        }
+        else if (data == 0x00021202 && OnXmbContextMenu==NULL){
+            u32 a = addr-4;
+            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
+            OnXmbContextMenu = (void*)a;
+            patches--;
+        }
+        else if (data == 0x34420080 && LoadStartAuth==NULL){
+            u32 a = addr-4;
+            do {a-=4;} while (_lw(a) != 0x27BDFF70);
+            LoadStartAuth = (void*)a;
+            patches--;
+        }
+        else if (data == 0xA040014D){
+            u32 a = addr-4;
+            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
+            auth_handler = (void*)a;
+            patches--;
+        }
+        else if (data == 0x8E050038){
+            MAKE_CALL(addr + 4, ExecuteActionPatched);
+            patches--;
+        }
+        else if (data == 0x00063100){
+            MAKE_CALL(addr + 12, AddVshItemPatched);
+            patches--;
+        }
+        else if (data == 0xAC520124){
+            MAKE_CALL(addr + 4, UnloadModulePatched);
+            patches--;
+        }
+        else if (data == 0x24040010 && _lw(addr+20) == 0x0040F809){
+            _sw(0x8C48000C, addr + 16); //lw $t0, 12($v0)
+            MAKE_CALL(addr + 20, OnInitAuthPatched);
+            patches--;
+        }
+        else if (data == scePafGetText_call){
+            REDIRECT_FUNCTION(addr, scePafGetTextPatched);
+            patches--;
+        }
+        else if (data == OnXmbPush && OnXmbPush != NULL && addr > text_addr+0x50000){
+            _sw((u32)OnXmbPushPatched, addr);
+            patches--;
+        }
+        else if (data == OnXmbContextMenu && OnXmbContextMenu != NULL && addr > text_addr+0x50000){
+            _sw((u32)OnXmbContextMenu, addr);
+            patches--;
+        }
+    }
     ClearCaches();
 }
 
-void PatchAuthPlugin(u32 text_addr)
+void PatchAuthPlugin(u32 text_addr, u32 text_size)
 {
-    OnRetry = (void *)text_addr + 0x5C8;
-    MAKE_CALL(text_addr + 0x13A0, sceVshCommonGuiBottomDialogPatched);
+    for (u32 addr=text_addr; addr<text_addr+text_size; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x27BE0040){
+            u32 a = addr-4;
+            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
+            OnRetry = (void*)a;
+        }
+        else if (data == 0x44816000 && _lw(addr-4) == 0x3C0141F0){
+            MAKE_CALL(addr+4, sceVshCommonGuiBottomDialogPatched);
+            break;
+        }
+    }
     ClearCaches();
 }
 
-void PatchSysconfPlugin(u32 text_addr)
+void PatchSysconfPlugin(u32 text_addr, u32 text_size)
 {
+    /*
     AddSysconfItem = (void *)text_addr + 0x286AC;
     GetSysconfItem = (void *)text_addr + 0x23C74;
     OnInitMenuPspConfig = (void *)text_addr + 0x1D054;
 
-    sysconf_unk = text_addr + 0x33600;
-    sysconf_option = text_addr + 0x33ACC; //CHECK
-
-    /* Allows more than 18 items */
+    // Allows more than 18 items
     _sh(0xFF, text_addr + 0x29AC);
 
     MAKE_CALL(text_addr + 0x1714, vshGetRegistryValuePatched);
@@ -622,11 +724,79 @@ void PatchSysconfPlugin(u32 text_addr)
 
     MAKE_CALL(text_addr + 0x2A28, GetSysconfItemPatched);
 
+    _sw((u32)OnInitMenuPspConfigPatched, text_addr + 0x30908);
+
     REDIRECT_FUNCTION(text_addr + 0x29A90, PAF_Resource_GetPageNodeByID_Patched);
     REDIRECT_FUNCTION(text_addr + 0x29B18, PAF_Resource_ResolveRefWString_Patched);
     REDIRECT_FUNCTION(text_addr + 0x299E0, scePafGetTextPatched);
 
-    _sw((u32)OnInitMenuPspConfigPatched, text_addr + 0x30908);
+    sysconf_unk = text_addr + 0x33600;
+    sysconf_option = text_addr + 0x33ACC; //CHECK
+    */
+    u32 PAF_Resource_GetPageNodeByID_call = _lw(&PAF_Resource_GetPageNodeByID);
+    u32 PAF_Resource_ResolveRefWString_call = _lw(&PAF_Resource_ResolveRefWString);
+    u32 scePafGetText_call = _lw(&scePafGetText);
+    int patches = 10;
+    for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x24420008 && _lw(addr-4) == 0x00402821){
+            u32 a = addr-4;
+            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
+            AddSysconfItem = (void*)a;
+            patches--;
+        }
+        else if (data == 0x8C840008 && _lw(addr+4) == 0x27BDFFD0){
+            GetSysconfItem = (void*)addr;
+            patches--;
+        }
+        else if (data == 0xAFBF0060 && _lw(addr+4) == 0xAFB3005C && _lw(addr-12) == 0xAFB00050){
+            u32 a = addr-4;
+            do {a-=4;} while (_lw(a) != 0x27BDFF90);
+            OnInitMenuPspConfig = (void*)a;
+            patches--;
+        }
+        else if (data == 0x2C420012){
+            // Allows more than 18 items
+            _sh(0xFF, addr);
+            patches--;
+        }
+        else if (data == 0x01202821){
+            MAKE_CALL(addr + 8, vshGetRegistryValuePatched);
+            u32 a = addr+4;
+            do {a+=4;} while(_lw(a) != 0x00802821);
+            MAKE_CALL(a + 4, vshSetRegistryValuePatched);
+            patches--;
+        }
+        else if (data == 0x2C620012 && _lw(addr-4) == 0x00408821){
+            MAKE_CALL(addr - 16, GetSysconfItemPatched);
+            patches--;
+        }
+        else if (data == OnInitMenuPspConfig && OnInitMenuPspConfig != NULL){
+            _sw((u32)OnInitMenuPspConfigPatched, addr);
+            patches--;
+        }
+        else if (data == PAF_Resource_GetPageNodeByID_call){
+            REDIRECT_FUNCTION(addr, PAF_Resource_GetPageNodeByID_Patched);
+            patches--;
+        }
+        else if (data == PAF_Resource_ResolveRefWString_call){
+            REDIRECT_FUNCTION(addr, PAF_Resource_ResolveRefWString_Patched);
+            patches--;
+        }
+        else if (data == scePafGetText_call){
+            REDIRECT_FUNCTION(addr, scePafGetTextPatched);
+            patches--;
+        }
+    }
+
+    for (u32 addr=text_addr+0x33000; addr<text_addr+0x40000; addr++){
+        if (strcmp((char*)addr, "fiji") == 0){
+            sysconf_unk = addr+216;
+            if (_lw(sysconf_unk+4) == 0) sysconf_unk -= 4;
+            sysconf_option = sysconf_unk + 0x4cc; //CHECK
+            break;
+        }
+    }
 
     ClearCaches();
 }
@@ -635,13 +805,14 @@ int OnModuleStart(SceModule2 *mod)
 {
     char *modname = mod->modname;
     u32 text_addr = mod->text_addr;
+    u32 text_size = mod->text_size;
 
     if(sce_paf_private_strcmp(modname, "vsh_module") == 0)
-        PatchVshMain(text_addr);
+        PatchVshMain(text_addr, text_size);
     else if(sce_paf_private_strcmp(modname, "sceVshAuthPlugin_Module") == 0)
-        PatchAuthPlugin(text_addr);
+        PatchAuthPlugin(text_addr, text_size);
     else if(sce_paf_private_strcmp(modname, "sysconf_plugin_module") == 0)
-        PatchSysconfPlugin(text_addr);
+        PatchSysconfPlugin(text_addr, text_size);
 
     return previous ? previous(mod) : 0;
 }
