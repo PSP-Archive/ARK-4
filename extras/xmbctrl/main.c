@@ -612,6 +612,11 @@ void PatchVshMain(u32 text_addr, u32 text_size)
     _sw((u32)OnXmbContextMenuPatched, text_addr + 0x530B4);
 
     */
+   /*
+    logbuffer("ms0:/vsh_main.bin", text_addr, text_size);
+    snprintf(tmp, 512, "vsh_main at %p\n", text_addr);
+    logtext(tmp);
+    */
     int patches = 14;
     u32 scePafGetText_call = _lw(&scePafGetText);
     for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
@@ -733,6 +738,11 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
     sysconf_unk = text_addr + 0x33600;
     sysconf_option = text_addr + 0x33ACC; //CHECK
     */
+    /*
+    logbuffer("ms0:/sysconf_plugin.bin", text_addr, text_size);
+    snprintf(tmp, 512, "sysconf_plugin at %p\n", text_addr);
+    logtext(tmp);
+    */
     u32 PAF_Resource_GetPageNodeByID_call = _lw(&PAF_Resource_GetPageNodeByID);
     u32 PAF_Resource_ResolveRefWString_call = _lw(&PAF_Resource_ResolveRefWString);
     u32 scePafGetText_call = _lw(&scePafGetText);
@@ -824,8 +834,6 @@ int module_start(SceSize args, void *argp)
     previous = sctrlHENSetStartModuleHandler(OnModuleStart);
     
     sctrlHENGetArkConfig(ark_config);
-
-    loadSettings();
 
     return 0;
 }
