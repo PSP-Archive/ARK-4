@@ -612,11 +612,9 @@ void PatchVshMain(u32 text_addr, u32 text_size)
     _sw((u32)OnXmbContextMenuPatched, text_addr + 0x530B4);
 
     */
-   /*
     logbuffer("ms0:/vsh_main.bin", text_addr, text_size);
     snprintf(tmp, 512, "vsh_main at %p\n", text_addr);
     logtext(tmp);
-    */
     int patches = 14;
     u32 scePafGetText_call = _lw(&scePafGetText);
     for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
@@ -626,6 +624,10 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             do {a-=4;} while (_lw(a) != 0x27BDFFC0);
             AddVshItem = (void*)a;
             patches--;
+            if (a != text_addr + 0x22648){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x22648, (a-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0x3A14000F){
             u32 a = addr-4;
@@ -633,65 +635,121 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             ExecuteAction = (void*)a;
             MAKE_CALL(a - 36, ExecuteActionPatched);
             patches--;
+            if (a != text_addr + 0x16A70){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16A70, (a-text_addr));
+                logtext(tmp);
+            }
+            if (a-36 != text_addr + 0x16A4C){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16A4C, (a-36-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0xA0C3019C){
             u32 a = addr-4;
             do {a-=4;} while (_lw(a) != 0x27BDFFF0);
             UnloadModule = (void*)a;
             patches--;
+            if (a != text_addr + 0x16E64){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16E64, (a-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0x9042001C){
             u32 a = addr-4;
             do {a-=4;} while (_lw(a) != 0x27BDFFF0);
             OnXmbPush = (void*)a;
             patches--;
+            if (a != text_addr + 0x169B4){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x169B4, (a-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0x00021202 && OnXmbContextMenu==NULL){
             u32 a = addr-4;
             do {a-=4;} while (_lw(a) != 0x27BDFFF0);
             OnXmbContextMenu = (void*)a;
             patches--;
+            if (a != text_addr + 0x16468){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16468, (a-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0x34420080 && LoadStartAuth==NULL){
             u32 a = addr-4;
             do {a-=4;} while (_lw(a) != 0x27BDFF70);
             LoadStartAuth = (void*)a;
             patches--;
+            if (a != text_addr + 0x5DA0){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x5DA0, (a-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0xA040014D){
             u32 a = addr-4;
             do {a-=4;} while (_lw(a) != 0x27BDFFF0);
             auth_handler = (void*)a;
             patches--;
+            if (a != text_addr + 0x1A2D0){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x1A2D0, (a-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0x8E050038){
             MAKE_CALL(addr + 4, ExecuteActionPatched);
             patches--;
+            if (addr+4 != text_addr + 0x308B4){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x308B4, (addr+4-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0x00063100){
             MAKE_CALL(addr + 12, AddVshItemPatched);
             patches--;
+            if (addr+12 != text_addr + 0x20EFC){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x20EFC, (addr+12-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0xAC520124){
             MAKE_CALL(addr + 4, UnloadModulePatched);
             patches--;
+            if (addr+4 != text_addr + 0x16C44){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16C44, (addr+4-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0x24040010 && _lw(addr+20) == 0x0040F809){
             _sw(0x8C48000C, addr + 16); //lw $t0, 12($v0)
             MAKE_CALL(addr + 20, OnInitAuthPatched);
             patches--;
+            if (addr+20 != text_addr + 0x5ED8){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x5ED8, (addr+20-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == scePafGetText_call){
             REDIRECT_FUNCTION(addr, scePafGetTextPatched);
             patches--;
+            if (addr != text_addr + 0x3F1B0){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x3F1B0, (addr-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == OnXmbPush && OnXmbPush != NULL && addr > text_addr+0x50000){
             _sw((u32)OnXmbPushPatched, addr);
             patches--;
+            if (addr != text_addr + 0x530A8){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x530A8, (addr-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == OnXmbContextMenu && OnXmbContextMenu != NULL && addr > text_addr+0x50000){
-            _sw((u32)OnXmbContextMenu, addr);
+            _sw((u32)OnXmbContextMenuPatched, addr);
             patches--;
+            if (addr != text_addr + 0x530B4){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x530B4, (addr-text_addr));
+                logtext(tmp);
+            }
         }
     }
     ClearCaches();
@@ -738,11 +796,9 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
     sysconf_unk = text_addr + 0x33600;
     sysconf_option = text_addr + 0x33ACC; //CHECK
     */
-    /*
     logbuffer("ms0:/sysconf_plugin.bin", text_addr, text_size);
     snprintf(tmp, 512, "sysconf_plugin at %p\n", text_addr);
     logtext(tmp);
-    */
     u32 PAF_Resource_GetPageNodeByID_call = _lw(&PAF_Resource_GetPageNodeByID);
     u32 PAF_Resource_ResolveRefWString_call = _lw(&PAF_Resource_ResolveRefWString);
     u32 scePafGetText_call = _lw(&scePafGetText);
@@ -754,21 +810,37 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
             do {a-=4;} while (_lw(a) != 0x27BDFFF0);
             AddSysconfItem = (void*)a;
             patches--;
+            if (a != text_addr + 0x286AC){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x286AC, (a-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0x8C840008 && _lw(addr+4) == 0x27BDFFD0){
             GetSysconfItem = (void*)addr;
             patches--;
+            if (addr != text_addr + 0x23C74){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x23C74, (addr-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0xAFBF0060 && _lw(addr+4) == 0xAFB3005C && _lw(addr-12) == 0xAFB00050){
             u32 a = addr-4;
             do {a-=4;} while (_lw(a) != 0x27BDFF90);
             OnInitMenuPspConfig = (void*)a;
             patches--;
+            if (a != text_addr + 0x1D054){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x1D054, (a-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0x2C420012){
             // Allows more than 18 items
             _sh(0xFF, addr);
             patches--;
+            if (addr != text_addr + 0x29AC){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x29AC, (addr-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0x01202821){
             MAKE_CALL(addr + 8, vshGetRegistryValuePatched);
@@ -776,26 +848,54 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
             do {a+=4;} while(_lw(a) != 0x00802821);
             MAKE_CALL(a + 4, vshSetRegistryValuePatched);
             patches--;
+            if (addr+8 != text_addr + 0x1714){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x1714, ((addr+8)-text_addr));
+                logtext(tmp);
+            }
+            if (a+4 != text_addr + 0x1738){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x1738, ((a+4)-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == 0x2C620012 && _lw(addr-4) == 0x00408821){
             MAKE_CALL(addr - 16, GetSysconfItemPatched);
             patches--;
+            if (addr-16 != text_addr + 0x2A28){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x2A28, ((addr-16)-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == OnInitMenuPspConfig && OnInitMenuPspConfig != NULL){
             _sw((u32)OnInitMenuPspConfigPatched, addr);
             patches--;
+            if (addr != text_addr + 0x30908){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x30908, (addr-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == PAF_Resource_GetPageNodeByID_call){
             REDIRECT_FUNCTION(addr, PAF_Resource_GetPageNodeByID_Patched);
             patches--;
+            if (addr != text_addr + 0x29A90){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x29A90, (addr-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == PAF_Resource_ResolveRefWString_call){
             REDIRECT_FUNCTION(addr, PAF_Resource_ResolveRefWString_Patched);
             patches--;
+            if (addr != text_addr + 0x29B18){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x29B18, (addr-text_addr));
+                logtext(tmp);
+            }
         }
         else if (data == scePafGetText_call){
             REDIRECT_FUNCTION(addr, scePafGetTextPatched);
             patches--;
+            if (addr != text_addr + 0x299E0){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x299E0, (addr-text_addr));
+                logtext(tmp);
+            }
         }
     }
 
@@ -806,6 +906,16 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
             sysconf_option = sysconf_unk + 0x4cc; //CHECK
             break;
         }
+    }
+
+    if (sysconf_unk != text_addr + 0x33600){
+        snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x33600, (sysconf_unk-text_addr));
+        logtext(tmp);
+    }
+
+    if (sysconf_option != text_addr + 0x33ACC){
+        snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x33ACC, (sysconf_option-text_addr));
+        logtext(tmp);
     }
 
     ClearCaches();
