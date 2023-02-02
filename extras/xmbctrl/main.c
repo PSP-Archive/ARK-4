@@ -622,9 +622,7 @@ void PatchVshMain(u32 text_addr, u32 text_size)
     for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x00A21826){
-            u32 a = addr-4;
-            do {a-=4;} while (_lw(a) != 0x27BDFFC0);
-            AddVshItem = (void*)a;
+            AddVshItem = (void*)addr-88;
             patches--;
             /*
             if (a != text_addr + 0x22648){
@@ -634,10 +632,8 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             */
         }
         else if (data == 0x3A14000F){
-            u32 a = addr-4;
-            do {a-=4;} while (_lw(a) != 0x27BDFFE0);
-            ExecuteAction = (void*)a;
-            MAKE_CALL(a - 36, ExecuteActionPatched);
+            ExecuteAction = (void*)addr-72;
+            MAKE_CALL(addr - 72 - 36, ExecuteActionPatched);
             patches--;
             /*
             if (a != text_addr + 0x16A70){
@@ -651,9 +647,7 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             */
         }
         else if (data == 0xA0C3019C){
-            u32 a = addr-4;
-            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
-            UnloadModule = (void*)a;
+            UnloadModule = (void*)addr-52;
             patches--;
             /*
             if (a != text_addr + 0x16E64){
@@ -663,9 +657,7 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             */
         }
         else if (data == 0x9042001C){
-            u32 a = addr-4;
-            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
-            OnXmbPush = (void*)a;
+            OnXmbPush = (void*)addr-124;
             patches--;
             /*
             if (a != text_addr + 0x169B4){
@@ -675,9 +667,7 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             */
         }
         else if (data == 0x00021202 && OnXmbContextMenu==NULL){
-            u32 a = addr-4;
-            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
-            OnXmbContextMenu = (void*)a;
+            OnXmbContextMenu = (void*)addr-24;
             patches--;
             /*
             if (a != text_addr + 0x16468){
@@ -687,9 +677,7 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             */
         }
         else if (data == 0x34420080 && LoadStartAuth==NULL){
-            u32 a = addr-4;
-            do {a-=4;} while (_lw(a) != 0x27BDFF70);
-            LoadStartAuth = (void*)a;
+            LoadStartAuth = (void*)addr-208;
             patches--;
             /*
             if (a != text_addr + 0x5DA0){
@@ -699,9 +687,7 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             */
         }
         else if (data == 0xA040014D){
-            u32 a = addr-4;
-            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
-            auth_handler = (void*)a;
+            auth_handler = (void*)addr-32;
             patches--;
             /*
             if (a != text_addr + 0x1A2D0){
@@ -838,9 +824,7 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
     for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x24420008 && _lw(addr-4) == 0x00402821){
-            u32 a = addr-4;
-            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
-            AddSysconfItem = (void*)a;
+            AddSysconfItem = (void*)addr-36;
             patches--;
             /*
             if (a != text_addr + 0x286AC){
@@ -860,9 +844,7 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
             */
         }
         else if (data == 0xAFBF0060 && _lw(addr+4) == 0xAFB3005C && _lw(addr-12) == 0xAFB00050){
-            u32 a = addr-4;
-            do {a-=4;} while (_lw(a) != 0x27BDFF90);
-            OnInitMenuPspConfig = (void*)a;
+            OnInitMenuPspConfig = (void*)addr-20;
             patches--;
             /*
             if (a != text_addr + 0x1D054){
@@ -884,9 +866,7 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
         }
         else if (data == 0x01202821){
             MAKE_CALL(addr + 8, vshGetRegistryValuePatched);
-            u32 a = addr+4;
-            do {a+=4;} while(_lw(a) != 0x00802821);
-            MAKE_CALL(a + 4, vshSetRegistryValuePatched);
+            MAKE_CALL(addr + 44, vshSetRegistryValuePatched);
             patches--;
             /*
             if (addr+8 != text_addr + 0x1714){
