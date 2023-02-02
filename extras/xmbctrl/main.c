@@ -165,7 +165,7 @@ void ClearCaches()
 
 int LoadTextLanguage(int new_id)
 {
-
+    logtext("called LoadTextLanguage\n");
     int id;
     sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &id);
 
@@ -220,6 +220,7 @@ int LoadTextLanguage(int new_id)
 
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
+    logtext("called AddVshItemPatched\n");
     if(sce_paf_private_strcmp(item->text, "msgtop_sysconf_console") == 0)
     {
         startup = 0;
@@ -244,6 +245,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 
 int OnXmbPushPatched(void *arg0, void *arg1)
 {
+    logtext("called OnXmbPushPatched\n");
     xmb_arg0 = arg0;
     xmb_arg1 = arg1;
     return OnXmbPush(arg0, arg1);
@@ -251,12 +253,14 @@ int OnXmbPushPatched(void *arg0, void *arg1)
 
 int OnXmbContextMenuPatched(void *arg0, void *arg1)
 {
+    logtext("called OnXmbContextMenuPatched\n");
     new_item->context = NULL;
     return OnXmbContextMenu(arg0, arg1);
 }
 
 int ExecuteActionPatched(int action, int action_arg)
 {
+    logtext("called ExecuteActionPatched\n");
     int old_is_cfw_config = is_cfw_config;
 
     if(action == sysconf_console_action)
@@ -305,6 +309,7 @@ int ExecuteActionPatched(int action, int action_arg)
 
 int UnloadModulePatched(int skip)
 {
+    logtext("called UnloadModulePatched\n");
     if(unload)
     {
         skip = -1;
@@ -315,6 +320,7 @@ int UnloadModulePatched(int skip)
 
 void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 {
+    logtext("called AddSysconfContextItem\n");
     SceSysconfItem *item = (SceSysconfItem *)sce_paf_private_malloc(sizeof(SceSysconfItem));
 
     item->id = 5;
@@ -331,6 +337,7 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 
 void OnInitMenuPspConfigPatched()
 {
+    logtext("called OnInitMenuPspConfigPatched\n");
     if(is_cfw_config == 1)
     {
         if(((u32 *)sysconf_option)[2] == 0)
@@ -350,6 +357,7 @@ void OnInitMenuPspConfigPatched()
 
 SceSysconfItem *GetSysconfItemPatched(void *a0, void *a1)
 {
+    logtext("called GetSysconfItemPatched\n");
     SceSysconfItem *item = GetSysconfItem(a0, a1);
 
     if(is_cfw_config == 1)
@@ -368,6 +376,7 @@ SceSysconfItem *GetSysconfItemPatched(void *a0, void *a1)
 
 wchar_t *scePafGetTextPatched(void *a0, char *name)
 {
+    logtext("called scePafGetTextPatched\n");
     if(name)
     {
         if(is_cfw_config == 1)
@@ -401,6 +410,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
 
 int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, int *value)
 {
+    logtext("called vshGetRegistryValuePatched\n");
     if(name)
     {
         if(is_cfw_config == 1)
@@ -439,6 +449,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
 
 int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
 {
+    logtext("called vshSetRegistryValuePatched\n");
     if(name)
     {
         if(is_cfw_config == 1)
@@ -481,6 +492,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
 
 void HijackContext(SceRcoEntry *src, char **options, int n)
 {
+    logtext("called HijackContext\n");
     SceRcoEntry *plane = (SceRcoEntry *)((u32)src + src->first_child);
     SceRcoEntry *mlist = (SceRcoEntry *)((u32)plane + plane->first_child);
     u32 *mlist_param = (u32 *)((u32)mlist + mlist->param);
@@ -535,6 +547,7 @@ void HijackContext(SceRcoEntry *src, char **options, int n)
 
 int PAF_Resource_GetPageNodeByID_Patched(void *resource, char *name, SceRcoEntry **child)
 {
+    logtext("called PAF_Resource_GetPageNodeByID_Patched\n");
     int res = PAF_Resource_GetPageNodeByID(resource, name, child);
 
     if(name)
@@ -561,6 +574,7 @@ int PAF_Resource_GetPageNodeByID_Patched(void *resource, char *name, SceRcoEntry
 
 int PAF_Resource_ResolveRefWString_Patched(void *resource, u32 *data, int *a2, char **string, int *t0)
 {
+    logtext("called PAF_Resource_ResolveRefWString_Patched\n");
     if(data[0] == 0xDEAD)
     {
         utf8_to_unicode((wchar_t *)user_buffer, (char *)data[1]);
@@ -573,17 +587,20 @@ int PAF_Resource_ResolveRefWString_Patched(void *resource, u32 *data, int *a2, c
 
 int auth_handler_new(int a0)
 {
+    logtext("called auth_handler_new\n");
     startup = a0;
     return auth_handler(a0);
 }
 
 int OnInitAuthPatched(void *a0, int (* handler)(), void *a2, void *a3, int (* OnInitAuth)())
 {
+    logtext("called OnInitAuthPatched\n");
     return OnInitAuth(a0, startup ? auth_handler_new : handler, a2, a3);
 }
 
 int sceVshCommonGuiBottomDialogPatched(void *a0, void *a1, void *a2, int (* cancel_handler)(), void *t0, void *t1, int (* handler)(), void *t3)
 {
+    logtext("called sceVshCommonGuiBottomDialogPatched\n");
     return sceVshCommonGuiBottomDialog(a0, a1, a2, startup ? OnRetry : (void *)cancel_handler, t0, t1, handler, t3);
 }
 
@@ -625,8 +642,8 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             AddVshItem = (void*)addr-88;
             patches--;
             /*
-            if (a != text_addr + 0x22648){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x22648, (a-text_addr));
+            if (addr-88 != text_addr + 0x22648){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x22648, (addr-88-text_addr));
                 logtext(tmp);
             }
             */
@@ -636,12 +653,12 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             MAKE_CALL(addr - 72 - 36, ExecuteActionPatched);
             patches--;
             /*
-            if (a != text_addr + 0x16A70){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16A70, (a-text_addr));
+            if (addr-72 != text_addr + 0x16A70){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16A70, (addr-72-text_addr));
                 logtext(tmp);
             }
-            if (a-36 != text_addr + 0x16A4C){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16A4C, (a-36-text_addr));
+            if (addr-72-36 != text_addr + 0x16A4C){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16A4C, (addr-72-36-text_addr));
                 logtext(tmp);
             }
             */
@@ -650,8 +667,8 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             UnloadModule = (void*)addr-52;
             patches--;
             /*
-            if (a != text_addr + 0x16E64){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16E64, (a-text_addr));
+            if (addr-52 != text_addr + 0x16E64){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16E64, (addr-52-text_addr));
                 logtext(tmp);
             }
             */
@@ -660,8 +677,8 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             OnXmbPush = (void*)addr-124;
             patches--;
             /*
-            if (a != text_addr + 0x169B4){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x169B4, (a-text_addr));
+            if (addr-124 != text_addr + 0x169B4){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x169B4, (addr-124-text_addr));
                 logtext(tmp);
             }
             */
@@ -670,8 +687,8 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             OnXmbContextMenu = (void*)addr-24;
             patches--;
             /*
-            if (a != text_addr + 0x16468){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16468, (a-text_addr));
+            if (addr-24 != text_addr + 0x16468){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x16468, (addr-24-text_addr));
                 logtext(tmp);
             }
             */
@@ -680,8 +697,8 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             LoadStartAuth = (void*)addr-208;
             patches--;
             /*
-            if (a != text_addr + 0x5DA0){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x5DA0, (a-text_addr));
+            if (addr-208 != text_addr + 0x5DA0){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x5DA0, (addr-208-text_addr));
                 logtext(tmp);
             }
             */
@@ -690,8 +707,8 @@ void PatchVshMain(u32 text_addr, u32 text_size)
             auth_handler = (void*)addr-32;
             patches--;
             /*
-            if (a != text_addr + 0x1A2D0){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x1A2D0, (a-text_addr));
+            if (addr-32 != text_addr + 0x1A2D0){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x1A2D0, (addr-32-text_addr));
                 logtext(tmp);
             }
             */
@@ -827,8 +844,8 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
             AddSysconfItem = (void*)addr-36;
             patches--;
             /*
-            if (a != text_addr + 0x286AC){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x286AC, (a-text_addr));
+            if (addr-36 != text_addr + 0x286AC){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x286AC, (addr-36-text_addr));
                 logtext(tmp);
             }
             */
@@ -847,8 +864,8 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
             OnInitMenuPspConfig = (void*)addr-20;
             patches--;
             /*
-            if (a != text_addr + 0x1D054){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x1D054, (a-text_addr));
+            if (addr-20 != text_addr + 0x1D054){
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x1D054, (addr-20-text_addr));
                 logtext(tmp);
             }
             */
@@ -870,11 +887,7 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
             patches--;
             /*
             if (addr+8 != text_addr + 0x1714){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x1714, ((addr+8)-text_addr));
-                logtext(tmp);
-            }
-            if (a+4 != text_addr + 0x1738){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x1738, ((a+4)-text_addr));
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x1714, (addr+8-text_addr));
                 logtext(tmp);
             }
             */
@@ -884,7 +897,7 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
             patches--;
             /*
             if (addr-16 != text_addr + 0x2A28){
-                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x2A28, ((addr-16)-text_addr));
+                snprintf(tmp, 512, "mismatch! expected %p, got %p\n", 0x2A28, (addr-16-text_addr));
                 logtext(tmp);
             }
             */
@@ -934,7 +947,7 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
     for (u32 addr=text_addr+0x33000; addr<text_addr+0x40000; addr++){
         if (strcmp((char*)addr, "fiji") == 0){
             sysconf_unk = addr+216;
-            if (_lw(sysconf_unk+4) == 0) sysconf_unk -= 4;
+            if (_lw(sysconf_unk+4) == 0) sysconf_unk -= 4; // adjust on TT/DT firmware
             sysconf_option = sysconf_unk + 0x4cc; //CHECK
             break;
         }
