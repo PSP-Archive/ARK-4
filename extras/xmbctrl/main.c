@@ -165,7 +165,7 @@ void ClearCaches()
 
 int LoadTextLanguage(int new_id)
 {
-    logtext("called LoadTextLanguage\n");
+    //logtext("called LoadTextLanguage\n");
     int id;
     sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &id);
 
@@ -220,7 +220,7 @@ int LoadTextLanguage(int new_id)
 
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
-    logtext("called AddVshItemPatched\n");
+    //logtext("called AddVshItemPatched\n");
     if(sce_paf_private_strcmp(item->text, "msgtop_sysconf_console") == 0)
     {
         startup = 0;
@@ -245,7 +245,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 
 int OnXmbPushPatched(void *arg0, void *arg1)
 {
-    logtext("called OnXmbPushPatched\n");
+    //logtext("called OnXmbPushPatched\n");
     xmb_arg0 = arg0;
     xmb_arg1 = arg1;
     return OnXmbPush(arg0, arg1);
@@ -253,14 +253,14 @@ int OnXmbPushPatched(void *arg0, void *arg1)
 
 int OnXmbContextMenuPatched(void *arg0, void *arg1)
 {
-    logtext("called OnXmbContextMenuPatched\n");
+    //logtext("called OnXmbContextMenuPatched\n");
     new_item->context = NULL;
     return OnXmbContextMenu(arg0, arg1);
 }
 
 int ExecuteActionPatched(int action, int action_arg)
 {
-    logtext("called ExecuteActionPatched\n");
+    //logtext("called ExecuteActionPatched\n");
     int old_is_cfw_config = is_cfw_config;
 
     if(action == sysconf_console_action)
@@ -309,7 +309,7 @@ int ExecuteActionPatched(int action, int action_arg)
 
 int UnloadModulePatched(int skip)
 {
-    logtext("called UnloadModulePatched\n");
+    //logtext("called UnloadModulePatched\n");
     if(unload)
     {
         skip = -1;
@@ -320,7 +320,7 @@ int UnloadModulePatched(int skip)
 
 void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 {
-    logtext("called AddSysconfContextItem\n");
+    //logtext("called AddSysconfContextItem\n");
     SceSysconfItem *item = (SceSysconfItem *)sce_paf_private_malloc(sizeof(SceSysconfItem));
 
     item->id = 5;
@@ -337,7 +337,7 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 
 void OnInitMenuPspConfigPatched()
 {
-    logtext("called OnInitMenuPspConfigPatched\n");
+    //logtext("called OnInitMenuPspConfigPatched\n");
     if(is_cfw_config == 1)
     {
         if(((u32 *)sysconf_option)[2] == 0)
@@ -357,7 +357,7 @@ void OnInitMenuPspConfigPatched()
 
 SceSysconfItem *GetSysconfItemPatched(void *a0, void *a1)
 {
-    logtext("called GetSysconfItemPatched\n");
+    //logtext("called GetSysconfItemPatched\n");
     SceSysconfItem *item = GetSysconfItem(a0, a1);
 
     if(is_cfw_config == 1)
@@ -376,7 +376,7 @@ SceSysconfItem *GetSysconfItemPatched(void *a0, void *a1)
 
 wchar_t *scePafGetTextPatched(void *a0, char *name)
 {
-    logtext("called scePafGetTextPatched\n");
+    //logtext("called scePafGetTextPatched\n");
     if(name)
     {
         if(is_cfw_config == 1)
@@ -410,7 +410,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
 
 int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, int *value)
 {
-    logtext("called vshGetRegistryValuePatched\n");
+    //logtext("called vshGetRegistryValuePatched\n");
     if(name)
     {
         if(is_cfw_config == 1)
@@ -449,7 +449,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
 
 int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
 {
-    logtext("called vshSetRegistryValuePatched\n");
+    //logtext("called vshSetRegistryValuePatched\n");
     if(name)
     {
         if(is_cfw_config == 1)
@@ -492,7 +492,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
 
 void HijackContext(SceRcoEntry *src, char **options, int n)
 {
-    logtext("called HijackContext\n");
+    //logtext("called HijackContext\n");
     SceRcoEntry *plane = (SceRcoEntry *)((u32)src + src->first_child);
     SceRcoEntry *mlist = (SceRcoEntry *)((u32)plane + plane->first_child);
     u32 *mlist_param = (u32 *)((u32)mlist + mlist->param);
@@ -547,7 +547,7 @@ void HijackContext(SceRcoEntry *src, char **options, int n)
 
 int PAF_Resource_GetPageNodeByID_Patched(void *resource, char *name, SceRcoEntry **child)
 {
-    logtext("called PAF_Resource_GetPageNodeByID_Patched\n");
+    //logtext("called PAF_Resource_GetPageNodeByID_Patched\n");
     int res = PAF_Resource_GetPageNodeByID(resource, name, child);
 
     if(name)
@@ -574,7 +574,7 @@ int PAF_Resource_GetPageNodeByID_Patched(void *resource, char *name, SceRcoEntry
 
 int PAF_Resource_ResolveRefWString_Patched(void *resource, u32 *data, int *a2, char **string, int *t0)
 {
-    logtext("called PAF_Resource_ResolveRefWString_Patched\n");
+    //logtext("called PAF_Resource_ResolveRefWString_Patched\n");
     if(data[0] == 0xDEAD)
     {
         utf8_to_unicode((wchar_t *)user_buffer, (char *)data[1]);
@@ -587,20 +587,20 @@ int PAF_Resource_ResolveRefWString_Patched(void *resource, u32 *data, int *a2, c
 
 int auth_handler_new(int a0)
 {
-    logtext("called auth_handler_new\n");
+    //logtext("called auth_handler_new\n");
     startup = a0;
     return auth_handler(a0);
 }
 
 int OnInitAuthPatched(void *a0, int (* handler)(), void *a2, void *a3, int (* OnInitAuth)())
 {
-    logtext("called OnInitAuthPatched\n");
+    //logtext("called OnInitAuthPatched\n");
     return OnInitAuth(a0, startup ? auth_handler_new : handler, a2, a3);
 }
 
 int sceVshCommonGuiBottomDialogPatched(void *a0, void *a1, void *a2, int (* cancel_handler)(), void *t0, void *t1, int (* handler)(), void *t3)
 {
-    logtext("called sceVshCommonGuiBottomDialogPatched\n");
+    //logtext("called sceVshCommonGuiBottomDialogPatched\n");
     return sceVshCommonGuiBottomDialog(a0, a1, a2, startup ? OnRetry : (void *)cancel_handler, t0, t1, handler, t3);
 }
 
