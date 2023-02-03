@@ -214,7 +214,8 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // VSH replacement
     if (strcmp(mod->modname, "vsh_module") == 0){
         if (ark_config->recovery || ark_config->launcher[0]){ // system in recovery or launcher mode
-            exitLauncher(); // reboot VSH into custom menu
+            if (sctrlSEGetUmdFile()[0] == 0) // don't load launcher if ISO mounted
+                exitLauncher(); // reboot VSH into custom menu
         }
     }
     
