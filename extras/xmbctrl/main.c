@@ -34,10 +34,14 @@
 #include "include/utils.h"
 #include "include/settings.h"
 
+#include "list.h"
+#include "plugins.h"
+
 PSP_MODULE_INFO("XmbControl", 0x0007, 1, 5);
 
 ARKConfig _arkconf;
 ARKConfig* ark_config = &_arkconf;
+extern List plugins;
 
 typedef struct
 {
@@ -153,18 +157,6 @@ void logbuffer(char* path, void* buf, u32 size){
     sceIoClose(fd);
 }
 
-void* my_malloc(size_t size){
-    SceUID uid = sceKernelAllocPartitionMemory(2, "", PSP_SMEM_High, size+sizeof(u32), NULL);
-    int* ptr = sceKernelGetBlockHeadAddr(uid);
-    ptr[0] = uid;
-    return &(ptr[1]);
-}
-
-void my_free(int* ptr){
-    int uid = ptr[-1];
-    sceKernelFreePartitionMemory(uid);
-}
-
 void ClearCaches()
 {
     sceKernelDcacheWritebackAll();
@@ -232,7 +224,7 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
 
     item->id = id; //information board id
     item->action_arg = action_arg;
-    item->play_sound = 0;
+    item->play_sound = 1;
     sce_paf_private_strcpy(item->text, text);
 
     context = (SceContextItem *)sce_paf_private_malloc((4 * sizeof(SceContextItem)) + 1);
@@ -380,8 +372,13 @@ void OnInitMenuPspConfigPatched()
     else if (is_cfw_config == 2){
         if(((u32 *)sysconf_option)[2] == 0)
         {
-            // TODO
-            AddSysconfContextItem("plugin_0", NULL, "plugin_0");
+            loadPlugins();
+            for (int i=0; i<plugins.count; i++){
+                Plugin* plugin = (Plugin*)(plugins.table[i]);
+                if (plugin->name != NULL){
+                    AddSysconfContextItem(plugin->name, NULL, plugin->name);
+                }
+            }
         }
     }
     else
@@ -431,9 +428,25 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
         else if (is_cfw_config == 2){
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0){
-                //TODO: u32 i = sce_paf_private_strtoul(name + 7, NULL, 16);
-                utf8_to_unicode((wchar_t *)user_buffer, "Plugin Test");
-                return (wchar_t *)user_buffer;
+                u32 i = sce_paf_private_strtoul(name + 7, NULL, 16);
+                Plugin* plugin = (Plugin*)(plugins.table[i]);
+				char file[64];
+				sce_paf_private_strcpy(file, plugin->path);
+
+				char *p = sce_paf_private_strrchr(plugin->path, '/');
+				if(p)
+				{
+					char *p2 = sce_paf_private_strchr(p + 1, '.');
+					if(p2)
+					{
+						int len = (int)(p2 - (p + 1));
+						sce_paf_private_strncpy(file, p + 1, len);
+						file[len] = '\0';
+					}
+				}
+
+				utf8_to_unicode((wchar_t *)user_buffer, file);
+				return (wchar_t *)user_buffer;
             }
         }
         else if(sce_paf_private_strcmp(name, "msgtop_sysconf_configuration") == 0)
@@ -491,8 +504,9 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0)
 			{
 				u32 i = sce_paf_private_strtoul(name + 7, NULL, 16);
+                Plugin* plugin = (Plugin*)(plugins.table[i]);
 				context_mode = 11;
-				//TODO: *value = table[i].activated;
+				*value = plugin->active;
 				return 0;
 			}
         }
@@ -539,9 +553,11 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0)
 			{
 				u32 i = sce_paf_private_strtoul(name + 7, NULL, 16);
-				//TODO: table[i].activated = *value;
-				//writePlugins(table[i].mode, table, count);
-				return 0;
+                Plugin* plugin = (Plugin*)(plugins.table[i]);
+				context_mode = 11;
+				plugin->active = *value;
+                savePlugins();
+            	return 0;
 			}
         }
         if(sce_paf_private_strcmp(name, "/CONFIG/SYSTEM/XMB/language") == 0)

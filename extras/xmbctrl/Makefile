@@ -1,5 +1,5 @@
 TARGET = xmbctrl
-OBJS = main.o config.o utils.o stub.o exports.o
+OBJS = main.o list.o settings.o config.o plugins.o utils.o stub.o exports.o
 
 CFLAGS = -std=c99 -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division -std=c99 -I$(ARKROOT)/common/include/
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
