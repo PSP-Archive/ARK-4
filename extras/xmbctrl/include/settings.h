@@ -25,8 +25,7 @@
 char *settings[] =
 {
     "Custom Firmware Settings",
-    "Configuration",
-    //"Plugins",
+    "Plugins Manager",
     "USB Charge",
     "Overclock",
     "PowerSave",
