@@ -275,8 +275,8 @@ int OnXmbContextMenuPatched(void *arg0, void *arg1)
 
 int ExecuteActionPatched(int action, int action_arg)
 {
-    snprintf(tmp, 512, "called ExecuteActionPatched with %p and %p\n", action, action_arg);
-    logtext(tmp);
+    //snprintf(tmp, 512, "called ExecuteActionPatched with %p and %p\n", action, action_arg);
+    //logtext(tmp);
     int old_is_cfw_config = is_cfw_config;
 
     if(action == sysconf_console_action)
