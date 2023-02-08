@@ -17,6 +17,8 @@ as well as unique and exclusive new features not found anywhere else.
 
 - `Plugin` support for `PSP` games, `PS1` games and `VSH` (XMB), including the ability to enable and disable plugins `per-game`.
 
+- `Region Free` playback of `UMD Video` on all PSP models. Change the region of your `UMD` drive on-the-fly.
+
 - Compatible with all `PSP` models on firmwares `6.60` and `6.61`.
 
 - Compatible with all `PS Vita` models on firmware `2.10` up to `3.74`, either official firmware or Henkaku/h-encore.
