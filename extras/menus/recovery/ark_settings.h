@@ -228,7 +228,7 @@ settings_entry* ark_conf_entries[] = {
     (settings_entry*)&oldplugin,
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
-    //(settings_entry*)&regionchange,
+    (settings_entry*)&regionchange,
 };
 
 #define MAX_ARK_CONF (sizeof(ark_conf_entries)/sizeof(ark_conf_entries[0]))

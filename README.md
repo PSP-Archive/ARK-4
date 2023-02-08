@@ -130,12 +130,12 @@ You can use the following keywords to enable a plugin:
 - Anything else disables the plugin
 
 You can use the following keywords to tell ARK when the plugin loads:
-- `all/always`: if either of these keywords are used, the plugin will always load.
-- `umd`: plugin should only load on retail games (UMD/ISO/PSN).
+- `all`/`always`: if either of these keywords are used, the plugin will always load.
+- `psp`/`umd`: plugin should only load on retail games (UMD/ISO/PSN).
 - `homebrew`: plugin should only load on homebrews.
 - `game`: plugin can load on both retail games and homebrews.
-- `pops`: plugin only loads in PSX games.
-- `vsh`: plugin only loads in the XMB.
+- `psx`/`ps1`/`pops`: plugin only loads in PSX games.
+- `xmb`/`vsh`: plugin only loads in the XMB.
 - `launcher`: use this if the plugin should only load in the custom launcher.
 - `game ID`: if you specify a game ID (i.e. `SLUS000000`), then the plugin will only load on that game.
 
