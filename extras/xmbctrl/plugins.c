@@ -9,6 +9,8 @@ List plugins;
 
 extern ARKConfig* ark_config;
 
+static char* sample_plugin_path = "ULUS01234, ms0:/SEPLUGINS/example.prx";
+
 int cur_place = 0;
 
 static void list_cleaner(void* item){
@@ -66,9 +68,33 @@ void loadPlugins(){
     
     cur_place = PLACE_EF0;
     ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &processPlugin, &processCustomLine);
+
+    if (plugins.count == 0){
+        // Add example plugin
+        Plugin* plugin = (Plugin*)my_malloc(sizeof(Plugin));
+        plugin->name = (char*)my_malloc(20);
+        plugin->surname = (char*)my_malloc(20);
+        plugin->path = (char*)my_malloc(strlen(sample_plugin_path)+1);
+        plugin->active = 1;
+        plugin->place = 0;
+        strcpy(plugin->name, "plugin_0");
+        strcpy(plugin->surname, "plugins0");
+        strcpy(plugin->path, sample_plugin_path);
+        add_list(&plugins, plugin);
+    }
 }
 
 void savePlugins(){
+
+    if (plugins.count == 0) return;
+
+    if (plugins.count == 1){
+        Plugin* plugin = (Plugin*)(plugins.table[0]);
+        if (strcmp(plugin->path, sample_plugin_path) == 0){
+            return;
+        }
+    }
+
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, "PLUGINS.TXT");
