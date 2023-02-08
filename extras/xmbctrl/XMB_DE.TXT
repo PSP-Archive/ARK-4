@@ -1,0 +1,13 @@
+Custom Firmware Einstellungen
+Plugin Manager
+USB-Aufladung
+CPU Übertakten
+Energiesparen
+Autoboot Startprogramm
+Deaktiviere Pausenfunktion für PSP Go
+Erzwinge zusätzlichen Speicher
+Memory Stick beschleunigen
+Inferno Zwischenspeicher
+Alte Plugins unterstützung für PSP Go
+Sony Logos überspringen
+Verstecke PIC0 und PIC1
