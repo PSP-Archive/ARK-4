@@ -227,7 +227,6 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
     item->play_sound = 1;
     sce_paf_private_strcpy(item->text, text);
 
-    context = (SceContextItem *)sce_paf_private_malloc((4 * sizeof(SceContextItem)) + 1);
     return item;
 }
 
@@ -238,6 +237,8 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         startup = 0;
         
         LoadTextLanguage(-1);
+
+        context = (SceContextItem *)sce_paf_private_malloc((4 * sizeof(SceContextItem)) + 1);
 
         new_item = addCustomVshItem(46, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, item);
         AddVshItem(a0, topitem, new_item);
@@ -428,7 +429,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
         else if (is_cfw_config == 2){
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0){
-                u32 i = sce_paf_private_strtoul(name + 7, NULL, 16);
+                u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
 				char file[64];
 				sce_paf_private_strcpy(file, plugin->path);
@@ -503,7 +504,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         else if (is_cfw_config == 2){
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0)
 			{
-				u32 i = sce_paf_private_strtoul(name + 7, NULL, 16);
+				u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
 				context_mode = 11;
 				*value = plugin->active;
@@ -552,7 +553,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
         else if (is_cfw_config == 2){
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0)
 			{
-				u32 i = sce_paf_private_strtoul(name + 7, NULL, 16);
+				u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
 				context_mode = 11;
 				plugin->active = *value;
