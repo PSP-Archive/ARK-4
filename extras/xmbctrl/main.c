@@ -396,7 +396,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
 				return (wchar_t *)user_buffer;
             }
         }
-        else if(sce_paf_private_strcmp(name, "msgtop_sysconf_configuration") == 0)
+        if(sce_paf_private_strcmp(name, "msgtop_sysconf_configuration") == 0)
         {
             utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
             return (wchar_t *)user_buffer;
