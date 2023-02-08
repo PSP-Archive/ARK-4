@@ -243,7 +243,7 @@ int replace_umd_keys(){
     res = sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
     if (res < 0) goto fake_ids_end;
 
-    // initialize idsRegeneration and calculate the new UMD keys
+    // find idsRegeneration exports
     int (*idsRegenerationSetup)(u32, u32, u32, u32, u64, u32, void*) = 
         sctrlHENFindFunction("pspIdsRegeneration_Driver", "idsRegeneration", 0xBDE13E76);
     int (*idsRegenerationCreateCertificatesAndUMDKeys)(void*) = 
@@ -257,12 +257,15 @@ int replace_umd_keys(){
     u32 tachyon, baryon, pommel, mb, region;
     u64 fuseid;
 
+	// get hardware info
 	res = GetHardwareInfo(&tachyon, &baryon, &pommel, &mb, &fuseid);
     if (res < 0) goto fake_ids_end;
 
+	// initialize idsRegeneration with hardware info and new region
     res = idsRegenerationSetup(tachyon, baryon, pommel, mb, fuseid, region_change, NULL);
 	if (res < 0) goto fake_ids_end;
 
+	// calculate the new UMD keys
     res = idsRegenerationCreateCertificatesAndUMDKeys(big_buffer);
 	if (res < 0) goto fake_ids_end;
 
