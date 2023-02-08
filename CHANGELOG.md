@@ -1,5 +1,22 @@
 # ARK Changelog
 
+## Version 4.19.8 (2023-02-08)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4198
+- Fixed regression introduced in 4.19.7 where having Inferno Cache and High Memory enabled at the same time would cause a crash.
+- Fixes and improvements to the plugin system.
+- You can now configure Custom Firmware settings and plugins on the XMB (changes take effect on next game boot or reboot).
+
+## Version 4.19.7 (2023-01-22)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4197
+- Fixed patch to allow usermode to access high memory.
+- Improved Matrix animation.
+
+## Version 4.19.6 (2023-01-14)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4196
+- Several fixes and improvements to the custom launcher and recovery.
+- Fixed and improved "Matrix" animation.
+- Added new "Hacker" and "BSoD" animations.
+
 ## Version 4.19.5 (2022-01-12)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4195
 - Fixed issue where VSH plugins would not load after pausing game in PSP Go.
