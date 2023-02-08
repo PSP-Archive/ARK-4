@@ -108,6 +108,8 @@ Use `-h` or `--help` to show all available flags
 <p>
 You can install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
+If coming from PRO/ME you can use this tool to automate your plugins.txt: [ARK-Plugin-Converter](https://github.com/krazynez/ARK-Plugin-Converter)
+
 To install plugins use the comma-separated format (CSV).
 Where the header is: runlevel, path, switch.
 A few samples:
