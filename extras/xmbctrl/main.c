@@ -333,7 +333,7 @@ void OnInitMenuPspConfigPatched()
             for (int i=0; i<plugins.count; i++){
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
                 if (plugin->name != NULL){
-                    AddSysconfContextItem(plugin->name, NULL, plugin->name);
+                    AddSysconfContextItem(plugin->name, plugin->surname, plugin->name);
                 }
             }
         }
@@ -401,6 +401,12 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
 				}
 
 				utf8_to_unicode((wchar_t *)user_buffer, file);
+				return (wchar_t *)user_buffer;
+            }
+            else if (sce_paf_private_strncmp(name, "plugins", 7) == 0){
+                u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
+                Plugin* plugin = (Plugin*)(plugins.table[i]);
+                utf8_to_unicode((wchar_t *)user_buffer, plugin->path);
 				return (wchar_t *)user_buffer;
             }
         }

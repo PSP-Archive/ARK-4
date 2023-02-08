@@ -15,6 +15,7 @@ static void list_cleaner(void* item){
     Plugin* plugin = (Plugin*)item;
     my_free(plugin->path);
     if (plugin->name) my_free(plugin->name);
+    if (plugin->surname) my_free(plugin->surname);
     my_free(plugin);
 }
 
@@ -31,12 +32,16 @@ static void processPlugin(char* runlevel, char* path, char* enabled){
     char* name = my_malloc(20);
     snprintf(name, 20, "plugin_%d", n);
 
+    char* surname = my_malloc(20);
+    snprintf(surname, 20, "plugins%d", n);
+
     int path_len = strlen(runlevel) + strlen(path) + 10;
     char* full_path = (char*)my_malloc(path_len);
     snprintf(full_path, path_len, "%s, %s", runlevel, path);
 
     Plugin* plugin = (Plugin*)my_malloc(sizeof(Plugin));
     plugin->name = name;
+    plugin->surname = surname;
     plugin->path = full_path;
     plugin->place = cur_place;
     plugin->active = isRunlevelEnabled(enabled);
