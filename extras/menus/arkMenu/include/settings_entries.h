@@ -223,6 +223,20 @@ static struct {
     {"Disabled", "5s", "10s", "20s", "30s", "1m"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[2];
+} redirect_ms0 = {
+    "Redirect ms0 to ef0",
+    2,
+    0,
+    &(common::getConf()->redirect_ms0),
+    {"Disabled", "Enabled"}
+};
+
 settings_entry* settings_entries[] = {
     (settings_entry*)&fast_gameboot,
     (settings_entry*)&language,
@@ -238,6 +252,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&show_fps,
     (settings_entry*)&text_glow,
     (settings_entry*)&screensaver,
+    (settings_entry*)&redirect_ms0,
 };
 
 #define MAX_SETTINGS_OPTIONS (sizeof(settings_entries)/sizeof(settings_entries[0]))

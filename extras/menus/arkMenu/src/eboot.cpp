@@ -250,7 +250,7 @@ void Eboot::executeHomebrew(const char* path){
     
     memset(&param, 0, sizeof(param));
     
-    int runlevel = (*(u32*)path == EF0_PATH)? HOMEBREW_RUNLEVEL_GO : HOMEBREW_RUNLEVEL;
+    int runlevel = (*(u32*)path == EF0_PATH && common::getConf()->redirect_ms0)? HOMEBREW_RUNLEVEL_GO : HOMEBREW_RUNLEVEL;
     
     param.args = strlen(path) + 1;
     param.argp = (char*)path;
@@ -263,7 +263,7 @@ void Eboot::executePSN(const char* path){
     
     memset(&param, 0, sizeof(param));
     
-    int runlevel = (*(u32*)path == EF0_PATH)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
+    int runlevel = (*(u32*)path == EF0_PATH && common::getConf()->redirect_ms0)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
 
     param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
     param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
@@ -278,7 +278,7 @@ void Eboot::executePOPS(const char* path){
     
     memset(&param, 0, sizeof(param));
     
-    int runlevel = (*(u32*)path == EF0_PATH)? POPS_RUNLEVEL_GO : POPS_RUNLEVEL;
+    int runlevel = (*(u32*)path == EF0_PATH && common::getConf()->redirect_ms0)? POPS_RUNLEVEL_GO : POPS_RUNLEVEL;
     
     param.args = strlen(path) + 1;
     param.argp = (char*)path;
