@@ -66,7 +66,6 @@ int region_change = 0;
 
 int count = 0;
 int key_start = 0;
-SceModule2* umdman = NULL;
 
 static int (*IdStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
 static void* umd_buf = NULL;
@@ -282,7 +281,6 @@ int replace_umd_keys(){
 }
 
 void patch_umd_idslookup(SceModule2* mod){
-	umdman = mod;
     // this patch allows us to obtain the buffer where umdman stores the UMD keys
     IdStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
     if (mod){

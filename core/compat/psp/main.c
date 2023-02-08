@@ -11,7 +11,6 @@
 #include <pspiofilemgr.h>
 #include <pspgu.h>
 #include <functions.h>
-#include <rebootconfig.h>
 #include "high_mem.h"
 #include "exitgame.h"
 #include "libs/graphics/graphics.h"
@@ -29,7 +28,6 @@ u32 psp_fw_version = 0;
 
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
-RebootConfigARK rebootex_config;
 
 extern void (*prevPluginHandler)(const char* path, int modid);
 extern void pluginHandler(const char* path, int modid);
@@ -69,9 +67,6 @@ int module_start(SceSize args, void * argp)
     
     // get ark config
     processArkConfig(ark_config);
-    
-    // get rebootex config
-    sctrlHENGetRebootexConfig(&rebootex_config);
 
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);

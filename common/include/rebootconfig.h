@@ -58,7 +58,6 @@ typedef struct RebootConfigARK {
         u32 size;
         u32 flags;
     } rtm_mod;
-    u8* umd_keys;
 } RebootConfigARK;
 
 #define IS_ARK_CONFIG(config) (*((u32*)config) == ARK_CONFIG_MAGIC)
