@@ -121,7 +121,7 @@ int unload = 0;
 u32 backup[4];
 int context_mode = 0;
 
-char user_buffer[128];
+char user_buffer[512];
 
 STMOD_HANDLER previous;
 CFWConfig config;
@@ -134,6 +134,20 @@ SceContextItem *context;
 SceVshItem *new_item;
 SceVshItem *new_item2;
 void *xmb_arg0, *xmb_arg1;
+
+static char tmp[512];
+
+void logtext(char* text){
+    int fd = sceIoOpen("ms0:/log.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
+    sceIoWrite(fd, text, strlen(text));
+    sceIoClose(fd);
+}
+
+void logbuffer(char* path, void* buf, u32 size){
+    int fd = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+    sceIoWrite(fd, buf, size);
+    sceIoClose(fd);
+}
 
 void ClearCaches()
 {
@@ -371,7 +385,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0){
                 u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
-				char file[64];
+				static char file[128];
 				sce_paf_private_strcpy(file, plugin->path);
 
 				char *p = sce_paf_private_strrchr(plugin->path, '/');
