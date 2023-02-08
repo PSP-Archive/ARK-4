@@ -8,6 +8,6 @@ Deshabilitar pausa en PSP Go
 Forzar memoria extra
 Aceleración de Memory Stick
 Caché de Inferno
-Soporte para plugins viejos en PSP Go
+Corregir plugins clásicos en PSP Go
 Saltarse logos de Sony
 Ocultar PIC0 y PIC1
