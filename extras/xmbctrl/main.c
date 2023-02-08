@@ -154,9 +154,12 @@ int LoadTextLanguage(int new_id)
         id = new_id;
     }
 
-    char file[64];
-    sce_paf_private_sprintf(file, "%sXMB_%s.TXT", ark_config->arkpath, language[id]);
-    SceUID fd = sceIoOpen(file, PSP_O_RDONLY, 0);
+    SceUID fd = -1;
+    if (id < NELEMS(language)){
+        char file[64];
+        sce_paf_private_sprintf(file, "%sXMB_%s.TXT", ark_config->arkpath, language[id]);
+        fd = sceIoOpen(file, PSP_O_RDONLY, 0);
+    }
 
     if(fd >= 0)
     {
