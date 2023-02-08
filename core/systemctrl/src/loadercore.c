@@ -197,7 +197,7 @@ static void loadExternalRebootex(){
 
 static void loadXmbControl(){
     int apitype = sceKernelInitApitype();
-    if (apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300){
+    if (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300){
         // load XMB Control Module
         char path[ARK_PATH_SIZE];
         strcpy(path, ark_config->arkpath);

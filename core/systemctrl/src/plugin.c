@@ -82,7 +82,7 @@ static int matchingRunlevel(char * runlevel)
     
     if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1; // always on
     else if (stricmp(runlevel, "vsh") == 0) // VSH only
-        return (apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300);
+        return (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300);
     else if (stricmp(runlevel, "pops") == 0) // PS1 games only
         return (apitype == 0x144 || apitype == 0x155);
     else if (stricmp(runlevel, "umd") == 0) // Retail games only

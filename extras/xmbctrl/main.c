@@ -135,20 +135,6 @@ SceVshItem *new_item;
 SceVshItem *new_item2;
 void *xmb_arg0, *xmb_arg1;
 
-static char tmp[512];
-
-void logtext(char* text){
-    int fd = sceIoOpen("ms0:/log.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
-    sceIoWrite(fd, text, strlen(text));
-    sceIoClose(fd);
-}
-
-void logbuffer(char* path, void* buf, u32 size){
-    int fd = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-    sceIoWrite(fd, buf, size);
-    sceIoClose(fd);
-}
-
 void ClearCaches()
 {
     sceKernelDcacheWritebackAll();
