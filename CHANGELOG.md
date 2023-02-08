@@ -1,5 +1,9 @@
 # ARK Changelog
 
+## Version 4.19.9 (2023-02-08)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4199
+- UMD Region Change is finally working! You can now play region locked UMD movies on any PSP model from any region. To change the UMD drive region, enter recovery menu and scroll to the last option, choose your region and exit recovery menu. Wait for the XMB to finish loading (the memory stick LED stops blinking) and insert the UMD you want to play.
+
 ## Version 4.19.8 (2023-02-08)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4198
 - Fixed regression introduced in 4.19.7 where having Inferno Cache and High Memory enabled at the same time would cause a crash.
