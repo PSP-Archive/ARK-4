@@ -89,9 +89,9 @@ static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
     if (offset == 0 && len==512){ // obtain buffer where UMD keys are stored in umdman.prx
         if (umd_buf == NULL){
 			umd_buf = buf;
-			key_start = key-0x100;
+			key_start = key-0x100; // should be 2
 		}
-		count++;
+		count++; // should end up being 5
 	}
     return IdStorageLookup(key, offset, buf, len); // passthrough
 }
@@ -237,12 +237,10 @@ int replace_umd_keys(){
     strcpy(path, ark_config->arkpath);
     strcat(path, "IDSREG.PRX");
 
-	printf("loading idsreg module at: %s\n", path);
     SceUID modid = sceKernelLoadModule(path, 0, NULL);
 
     if (modid < 0) goto fake_ids_end;
 
-	printf("starting module...");
     res = sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
     if (res < 0) goto fake_ids_end;
 
@@ -257,25 +255,17 @@ int replace_umd_keys(){
 		goto fake_ids_end;
 	}
 	
-	printf("found exports\n");
-
     u32 tachyon, baryon, pommel, mb, region;
     u64 fuseid;
 
 	res = GetHardwareInfo(&tachyon, &baryon, &pommel, &mb, &fuseid);
     if (res < 0) goto fake_ids_end;
 
-	printf("got hardware info\n");
-
     res = idsRegenerationSetup(tachyon, baryon, pommel, mb, fuseid, region_change, NULL);
 	if (res < 0) goto fake_ids_end;
 
-	printf("ids set up\n");
-
     res = idsRegenerationCreateCertificatesAndUMDKeys(big_buffer);
 	if (res < 0) goto fake_ids_end;
-
-	printf("umd keys generated\n");
 
     // copy the generated UMD keys to the buffer in umdman
     memcpy(umd_buf, big_buffer+(512*key_start), 512*count);
@@ -283,14 +273,11 @@ int replace_umd_keys(){
 
 	res = 0;
 
-	printf("keys injected (%d leafs starting at %d)\n", count, key_start);
-
     // free resources
     fake_ids_end:
     sceKernelFreePartitionMemory(memid);
     sceKernelStopModule(modid, 0, NULL, NULL, NULL);
     sceKernelUnloadModule(modid);
-	printf("finishing with %p\n", res);
     return res;
 }
 
@@ -314,8 +301,12 @@ void patch_region(void)
 
 }
 
+void patch_vsh_main_region(SceModule2* mod){
+	hookImportByNID(mod, "sceVshBridge", 0x5C2983C2, 1);
+}
+
 int patch_umd_thread(SceSize args, void *argp){
-    sceKernelDelayThread(5000000); // wait for system to load
+    sceKernelDelayThread(1000000); // wait for system to load
     replace_umd_keys(); // replace UMD keys
     sceKernelExitDeleteThread(0);
     return 0;
