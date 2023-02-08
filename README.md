@@ -27,7 +27,11 @@ as well as unique and exclusive new features not found anywhere else.
 
 - `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
+- Resistant to `soft-bricks`, removing the memory stick is enough to leave it in a `vanilla` state.
+
 - `Custom game launcher` with built-in game categories, file browser, FTP server and client, modernized look and more.
+
+- Fully configurable via the `XMB`and `Recovery`.
 
 - Compatible with `PRO Online` and `Xlink Kai`.
 
@@ -174,7 +178,7 @@ Configuration settings you can use in ARK include:
  - `oldplugin`: enables old plugins support on PSP Go (redirects `ms0` to `ef0`).
  - `skiplogos`: skips the coldboot and gameboot logos.
 
-However, you should use the `recovery menu` to handle settings easier.
+However, you should use the `XMB` or the `recovery menu` to handle settings easier.
 
 You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
 
