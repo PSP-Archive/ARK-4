@@ -177,7 +177,7 @@ int KernelCheckExecFile(unsigned char * buffer, int * check)
 
 extern void* external_rebootex;
 extern int rebootheap;
-static u8* loadExternalRebootex(){
+static void loadExternalRebootex(){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, "REBOOT.BIN");
@@ -192,6 +192,18 @@ static u8* loadExternalRebootex(){
         // read rebootex file
         sceIoRead(fd, external_rebootex, size);
         sceIoClose(fd);
+    }
+}
+
+static void loadXmbControl(){
+    int apitype = sceKernelInitApitype();
+    if (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300){
+        // load XMB Control Module
+        char path[ARK_PATH_SIZE];
+        strcpy(path, ark_config->arkpath);
+        strcat(path, XMBCTRL_PRX);
+        int modid = sceKernelLoadModule(path, 0, NULL);
+        sceKernelStartModule(modid, 0, NULL, NULL, NULL);
     }
 }
 
@@ -227,6 +239,8 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     {
         // Load external rebootex from savedata folder
         loadExternalRebootex();
+        // Load XMB Control
+        loadXmbControl();
         // Load Plugins
         LoadPlugins();
         // Remember it

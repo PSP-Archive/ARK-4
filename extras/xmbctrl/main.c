@@ -27,17 +27,26 @@
 #include <kubridge.h>
 #include <stddef.h>
 
+#include "globals.h"
+#include "macros.h"
+
 #include "include/main.h"
 #include "include/utils.h"
 #include "include/settings.h"
 
-PSP_MODULE_INFO("XmbControl", 0x0007, 1, 0);
+#include "list.h"
+#include "plugins.h"
+
+PSP_MODULE_INFO("XmbControl", 0x0007, 1, 5);
+
+ARKConfig _arkconf;
+ARKConfig* ark_config = &_arkconf;
+extern List plugins;
 
 typedef struct
 {
-    char *name;
-    char *items[1];
-    char *options[2];
+    char *items[2];
+    char *options[11];
 } StringContainer;
 
 StringContainer string;
@@ -53,16 +62,35 @@ typedef struct
 
 GetItem GetItemes[] =
 {
-    { 0, 1, "msg_test1" },
-    { 0, 1, "msg_test2" },
+    { 1, 0, "USB Charge" },
+    { 1, 0, "Overclock" },
+    { 1, 0, "PowerSave" },
+    { 1, 0, "Autoboot Launcher" },
+    { 1, 0, "Disable Pause on PSP Go" },
+    { 1, 0, "Force Extra Memory" },
+    { 1, 0, "Memory Stick Speedup" },
+    { 1, 0, "Inferno Cache" },
+    { 1, 0, "Old Plugin Support on PSP Go" },
+    { 1, 0, "Skip Sony Logos" },
+    { 1, 0, "Hide PIC0 and PIC1" },
+};
+
+char* ark_settings_options[] = {
+    (char*)"Disabled",
+    (char*)"Always",
+    (char*)"Game",
+    (char*)"UMD/ISO",
+    (char*)"Homebrew",
+    (char*)"Pops",
+    (char*)"VSH"
+};
+
+char* ark_plugins_options[] = {
+    (char*)"Off",
+    (char*)"On"
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
-
-char *items[] =
-{
-    "msgtop_sysconf_configuration",
-};
 
 int count = 0;
 
@@ -93,7 +121,7 @@ int unload = 0;
 u32 backup[4];
 int context_mode = 0;
 
-char user_buffer[128];
+char user_buffer[512];
 
 STMOD_HANDLER previous;
 CFWConfig config;
@@ -104,6 +132,7 @@ int startup = 1;
 
 SceContextItem *context;
 SceVshItem *new_item;
+SceVshItem *new_item2;
 void *xmb_arg0, *xmb_arg1;
 
 void ClearCaches()
@@ -114,7 +143,6 @@ void ClearCaches()
 
 int LoadTextLanguage(int new_id)
 {
-
     int id;
     sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &id);
 
@@ -144,15 +172,15 @@ int LoadTextLanguage(int new_id)
     {
         sce_paf_private_memset(line, 0, sizeof(line));
 
-            if(fd >= 0)
-            {
-                ReadLine(fd, line);
-            }
-            else
-            {
-                sce_paf_private_strcpy(line, settings[j]); //to use the settings.h and its text entries.
-                j++;
-            }
+        if(fd >= 0)
+        {
+            ReadLine(fd, line);
+        }
+        else
+        {
+            sce_paf_private_strcpy(line, settings[j]); //to use the settings.h and its text entries.
+            j++;
+        }
         
 
         if(((char **)&string)[i]) sce_paf_private_free(((char **)&string)[i]);
@@ -167,6 +195,18 @@ int LoadTextLanguage(int new_id)
     return 1;
 }
 
+void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
+    SceVshItem* item = (SceVshItem *)sce_paf_private_malloc(sizeof(SceVshItem));
+    sce_paf_private_memcpy(item, orig, sizeof(SceVshItem));
+
+    item->id = id; //information board id
+    item->action_arg = action_arg;
+    item->play_sound = 1;
+    sce_paf_private_strcpy(item->text, text);
+
+    return item;
+}
+
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
     if(sce_paf_private_strcmp(item->text, "msgtop_sysconf_console") == 0)
@@ -175,17 +215,13 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         
         LoadTextLanguage(-1);
 
-        new_item = (SceVshItem *)sce_paf_private_malloc(sizeof(SceVshItem));
-        sce_paf_private_memcpy(new_item, item, sizeof(SceVshItem));
-
-        new_item->id = 46; //information board id
-        new_item->action_arg = sysconf_tnconfig_action_arg;
-        new_item->play_sound = 0;
-        sce_paf_private_strcpy(new_item->text, "msgtop_sysconf_tnconfig");
-
         context = (SceContextItem *)sce_paf_private_malloc((4 * sizeof(SceContextItem)) + 1);
 
+        new_item = addCustomVshItem(46, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, item);
         AddVshItem(a0, topitem, new_item);
+
+        new_item2 = addCustomVshItem(47, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, item);
+        AddVshItem(a0, topitem, new_item2);
     }
 
     return AddVshItem(a0, topitem, item);
@@ -201,6 +237,7 @@ int OnXmbPushPatched(void *arg0, void *arg1)
 int OnXmbContextMenuPatched(void *arg0, void *arg1)
 {
     new_item->context = NULL;
+    new_item2->context = NULL;
     return OnXmbContextMenu(arg0, arg1);
 }
 
@@ -212,35 +249,18 @@ int ExecuteActionPatched(int action, int action_arg)
     {
         if(action_arg == sysconf_tnconfig_action_arg)
         {
-//            sctrlSEGetConfig(&config);
-            int n = 1;
-
-            sce_paf_private_memset(context, 0, (4 * sizeof(SceContextItem)) + 1);
-
-            int i;
-            for(i = 0; i < n; i++)
-            {
-                sce_paf_private_strcpy(context[i].text, items[i]);
-                context[i].play_sound = 1;
-                context[i].action = 0x80000;
-                context[i].action_arg = i + 1;
-            }
-
-            new_item->context = context;
-
-            OnXmbContextMenu(xmb_arg0, xmb_arg1);
-            return 0;
+            is_cfw_config = 1;
+            action = sysconf_console_action;
+            action_arg = sysconf_console_action_arg;
         }
-
-        is_cfw_config = 0;
+        else if (action_arg == sysconf_plugins_action_arg)
+        {
+            is_cfw_config = 2;
+            action = sysconf_console_action;
+            action_arg = sysconf_console_action_arg;
+        }
+        else is_cfw_config = 0;
     }
-    else if(action == 0x80000)
-    {
-        is_cfw_config = action_arg;
-        action = sysconf_console_action;
-        action_arg = sysconf_console_action_arg;
-    }
-
     if(old_is_cfw_config != is_cfw_config)
     {
         sce_paf_private_memset(backup, 0, sizeof(backup));
@@ -284,10 +304,23 @@ void OnInitMenuPspConfigPatched()
     {
         if(((u32 *)sysconf_option)[2] == 0)
         {
+            loadSettings();
             int i;
             for(i = 0; i < N_ITEMS; i++)
             {
                 AddSysconfContextItem(GetItemes[i].item, NULL, GetItemes[i].item);
+            }
+        }
+    }
+    else if (is_cfw_config == 2){
+        if(((u32 *)sysconf_option)[2] == 0)
+        {
+            loadPlugins();
+            for (int i=0; i<plugins.count; i++){
+                Plugin* plugin = (Plugin*)(plugins.table[i]);
+                if (plugin->name != NULL){
+                    AddSysconfContextItem(plugin->name, plugin->surname, plugin->name);
+                }
             }
         }
     }
@@ -312,6 +345,9 @@ SceSysconfItem *GetSysconfItemPatched(void *a0, void *a1)
             }
         }
     }
+    else if (is_cfw_config == 2){
+        context_mode = 11;
+    }
     return item;
 }
 
@@ -331,14 +367,43 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
                 }
             }
         }
-        if(sce_paf_private_strcmp(name, "msgtop_sysconf_tnconfig") == 0)
-        {
-            utf8_to_unicode((wchar_t *)user_buffer, string.name);
-            return (wchar_t *)user_buffer;
+        else if (is_cfw_config == 2){
+            if(sce_paf_private_strncmp(name, "plugin_", 7) == 0){
+                u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
+                Plugin* plugin = (Plugin*)(plugins.table[i]);
+				static char file[128];
+				sce_paf_private_strcpy(file, plugin->path);
+
+				char *p = sce_paf_private_strrchr(plugin->path, '/');
+				if(p)
+				{
+					char *p2 = sce_paf_private_strchr(p + 1, '.');
+					if(p2)
+					{
+						int len = (int)(p2 - (p + 1));
+						sce_paf_private_strncpy(file, p + 1, len);
+						file[len] = '\0';
+					}
+				}
+
+				utf8_to_unicode((wchar_t *)user_buffer, file);
+				return (wchar_t *)user_buffer;
+            }
+            else if (sce_paf_private_strncmp(name, "plugins", 7) == 0){
+                u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
+                Plugin* plugin = (Plugin*)(plugins.table[i]);
+                utf8_to_unicode((wchar_t *)user_buffer, plugin->path);
+				return (wchar_t *)user_buffer;
+            }
         }
         else if(sce_paf_private_strcmp(name, "msgtop_sysconf_configuration") == 0)
         {
             utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
+            return (wchar_t *)user_buffer;
+        }
+        else if(sce_paf_private_strcmp(name, "msgtop_sysconf_plugins") == 0)
+        {
+            utf8_to_unicode((wchar_t *)user_buffer, string.items[1]);
             return (wchar_t *)user_buffer;
         }
     }
@@ -356,8 +421,17 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         {
             int configs[] =
             {
-                config.test1,
-                config.test2,
+                config.usbcharge,
+                config.overclock,
+                config.powersave,
+                config.launcher,
+                config.disablepause,
+                config.highmem,
+                config.mscache,
+                config.infernocache,
+                config.oldplugin,
+                config.skiplogos,
+                config.hidepics,
             };
             
             int i;
@@ -372,6 +446,16 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
             }
 
         }
+        else if (is_cfw_config == 2){
+            if(sce_paf_private_strncmp(name, "plugin_", 7) == 0)
+			{
+				u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
+                Plugin* plugin = (Plugin*)(plugins.table[i]);
+				context_mode = 11;
+				*value = plugin->active;
+				return 0;
+			}
+        }
     }
 
     return vshGetRegistryValue(option, name, arg2, size, value);
@@ -385,8 +469,17 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
         {
             static int *configs[] =
             {
-                &config.test1,
-                &config.test2,
+                &config.usbcharge,
+                &config.overclock,
+                &config.powersave,
+                &config.launcher,
+                &config.disablepause,
+                &config.highmem,
+                &config.mscache,
+                &config.infernocache,
+                &config.oldplugin,
+                &config.skiplogos,
+                &config.hidepics,
             };
             
             int i;
@@ -395,12 +488,22 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 if(sce_paf_private_strcmp(name, GetItemes[i].item) == 0)
                 {
                     *configs[i] = GetItemes[i].negative ? !(*value) : *value;
-                    
-//                    sctrlSESetConfig(&config);
+                    saveSettings();
                     vctrlVSHExitVSHMenu(&config, NULL, 0);
                     return 0;
                 }
             }
+        }
+        else if (is_cfw_config == 2){
+            if(sce_paf_private_strncmp(name, "plugin_", 7) == 0)
+			{
+				u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
+                Plugin* plugin = (Plugin*)(plugins.table[i]);
+				context_mode = 11;
+				plugin->active = *value;
+                savePlugins();
+            	return 0;
+			}
         }
         if(sce_paf_private_strcmp(name, "/CONFIG/SYSTEM/XMB/language") == 0)
         {
@@ -471,7 +574,7 @@ int PAF_Resource_GetPageNodeByID_Patched(void *resource, char *name, SceRcoEntry
 
     if(name)
     {
-        if(is_cfw_config == 1)
+        if(is_cfw_config == 1 || is_cfw_config == 2)
         {
             if(sce_paf_private_strcmp(name, "page_psp_config_umd_autoboot") == 0)
             {
@@ -479,6 +582,12 @@ int PAF_Resource_GetPageNodeByID_Patched(void *resource, char *name, SceRcoEntry
                 {
                     case 0:
                         HijackContext(*child, NULL, 0);
+                        break;
+                    case 11:
+                        HijackContext(*child, ark_plugins_options, sizeof(ark_plugins_options) / sizeof(char *));
+                        break;
+                    default:
+                        HijackContext(*child, ark_settings_options, sizeof(ark_settings_options) / sizeof(char *));
                         break;
                 }
             }
@@ -516,61 +625,151 @@ int sceVshCommonGuiBottomDialogPatched(void *a0, void *a1, void *a2, int (* canc
     return sceVshCommonGuiBottomDialog(a0, a1, a2, startup ? OnRetry : (void *)cancel_handler, t0, t1, handler, t3);
 }
 
-void PatchVshMain(u32 text_addr)
+void PatchVshMain(u32 text_addr, u32 text_size)
 {
-    AddVshItem = (void *)text_addr + 0x22648;
-    ExecuteAction = (void *)text_addr + 0x16A70;
-    UnloadModule = (void *)text_addr + 0x16E64;
-    OnXmbPush = (void *)text_addr + 0x169B4;
-    OnXmbContextMenu = (void *)text_addr + 0x16468;
-    LoadStartAuth = (void *)text_addr + 0x5DA0;
-    auth_handler = (void *)text_addr + 0x1A2D0;
-
-    MAKE_CALL(text_addr + 0x20EFC, AddVshItemPatched);
-    MAKE_CALL(text_addr + 0x16A4C, ExecuteActionPatched);
-    MAKE_CALL(text_addr + 0x308B4, ExecuteActionPatched);
-    MAKE_CALL(text_addr + 0x16C44, UnloadModulePatched);
-
-    _sw(0x8C48000C, text_addr + 0x5ED4); //lw $t0, 12($v0)
-    MAKE_CALL(text_addr + 0x5ED8, OnInitAuthPatched);
-
-    REDIRECT_FUNCTION(text_addr + 0x3F1B0, scePafGetTextPatched);
-
-    _sw((u32)OnXmbPushPatched, text_addr + 0x530A8);
-    _sw((u32)OnXmbContextMenuPatched, text_addr + 0x530B4);
-
+    int patches = 14;
+    u32 scePafGetText_call = _lw(&scePafGetText);
+    for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x00A21826){
+            AddVshItem = (void*)addr-88;
+            patches--;
+        }
+        else if (data == 0x3A14000F){
+            ExecuteAction = (void*)addr-72;
+            MAKE_CALL(addr - 72 - 36, ExecuteActionPatched);
+            patches--;
+        }
+        else if (data == 0xA0C3019C){
+            UnloadModule = (void*)addr-52;
+            patches--;
+        }
+        else if (data == 0x9042001C){
+            OnXmbPush = (void*)addr-124;
+            patches--;
+        }
+        else if (data == 0x00021202 && OnXmbContextMenu==NULL){
+            OnXmbContextMenu = (void*)addr-24;
+            patches--;
+        }
+        else if (data == 0x34420080 && LoadStartAuth==NULL){
+            LoadStartAuth = (void*)addr-208;
+            patches--;
+        }
+        else if (data == 0xA040014D){
+            auth_handler = (void*)addr-32;
+            patches--;
+        }
+        else if (data == 0x8E050038){
+            MAKE_CALL(addr + 4, ExecuteActionPatched);
+            patches--;
+        }
+        else if (data == 0x00063100){
+            MAKE_CALL(addr + 12, AddVshItemPatched);
+            patches--;
+        }
+        else if (data == 0xAC520124){
+            MAKE_CALL(addr + 4, UnloadModulePatched);
+            patches--;
+        }
+        else if (data == 0x24040010 && _lw(addr+20) == 0x0040F809){
+            _sw(0x8C48000C, addr + 16); //lw $t0, 12($v0)
+            MAKE_CALL(addr + 20, OnInitAuthPatched);
+            patches--;
+        }
+        else if (data == scePafGetText_call){
+            REDIRECT_FUNCTION(addr, scePafGetTextPatched);
+            patches--;
+        }
+        else if (data == OnXmbPush && OnXmbPush != NULL && addr > text_addr+0x50000){
+            _sw((u32)OnXmbPushPatched, addr);
+            patches--;
+        }
+        else if (data == OnXmbContextMenu && OnXmbContextMenu != NULL && addr > text_addr+0x50000){
+            _sw((u32)OnXmbContextMenuPatched, addr);
+            patches--;
+        }
+    }
     ClearCaches();
 }
 
-void PatchAuthPlugin(u32 text_addr)
+void PatchAuthPlugin(u32 text_addr, u32 text_size)
 {
-    OnRetry = (void *)text_addr + 0x5C8;
-    MAKE_CALL(text_addr + 0x13A0, sceVshCommonGuiBottomDialogPatched);
+    for (u32 addr=text_addr; addr<text_addr+text_size; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x27BE0040){
+            u32 a = addr-4;
+            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
+            OnRetry = (void*)a;
+        }
+        else if (data == 0x44816000 && _lw(addr-4) == 0x3C0141F0){
+            MAKE_CALL(addr+4, sceVshCommonGuiBottomDialogPatched);
+            break;
+        }
+    }
     ClearCaches();
 }
 
-void PatchSysconfPlugin(u32 text_addr)
+void PatchSysconfPlugin(u32 text_addr, u32 text_size)
 {
-    AddSysconfItem = (void *)text_addr + 0x286AC;
-    GetSysconfItem = (void *)text_addr + 0x23C74;
-    OnInitMenuPspConfig = (void *)text_addr + 0x1D054;
+    u32 PAF_Resource_GetPageNodeByID_call = _lw(&PAF_Resource_GetPageNodeByID);
+    u32 PAF_Resource_ResolveRefWString_call = _lw(&PAF_Resource_ResolveRefWString);
+    u32 scePafGetText_call = _lw(&scePafGetText);
+    int patches = 10;
+    for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x24420008 && _lw(addr-4) == 0x00402821){
+            AddSysconfItem = (void*)addr-36;
+            patches--;
+        }
+        else if (data == 0x8C840008 && _lw(addr+4) == 0x27BDFFD0){
+            GetSysconfItem = (void*)addr;
+            patches--;
+        }
+        else if (data == 0xAFBF0060 && _lw(addr+4) == 0xAFB3005C && _lw(addr-12) == 0xAFB00050){
+            OnInitMenuPspConfig = (void*)addr-20;
+            patches--;
+        }
+        else if (data == 0x2C420012){
+            // Allows more than 18 items
+            _sh(0xFF, addr);
+            patches--;
+        }
+        else if (data == 0x01202821){
+            MAKE_CALL(addr + 8, vshGetRegistryValuePatched);
+            MAKE_CALL(addr + 44, vshSetRegistryValuePatched);
+            patches--;
+        }
+        else if (data == 0x2C620012 && _lw(addr-4) == 0x00408821){
+            MAKE_CALL(addr - 16, GetSysconfItemPatched);
+            patches--;
+        }
+        else if (data == OnInitMenuPspConfig && OnInitMenuPspConfig != NULL){
+            _sw((u32)OnInitMenuPspConfigPatched, addr);
+            patches--;
+        }
+        else if (data == PAF_Resource_GetPageNodeByID_call){
+            REDIRECT_FUNCTION(addr, PAF_Resource_GetPageNodeByID_Patched);
+            patches--;
+        }
+        else if (data == PAF_Resource_ResolveRefWString_call){
+            REDIRECT_FUNCTION(addr, PAF_Resource_ResolveRefWString_Patched);
+            patches--;
+        }
+        else if (data == scePafGetText_call){
+            REDIRECT_FUNCTION(addr, scePafGetTextPatched);
+            patches--;
+        }
+    }
 
-    sysconf_unk = text_addr + 0x33600;
-    sysconf_option = text_addr + 0x33ACC; //CHECK
-
-    /* Allows more than 18 items */
-    _sh(0xFF, text_addr + 0x29AC);
-
-    MAKE_CALL(text_addr + 0x1714, vshGetRegistryValuePatched);
-    MAKE_CALL(text_addr + 0x1738, vshSetRegistryValuePatched);
-
-    MAKE_CALL(text_addr + 0x2A28, GetSysconfItemPatched);
-
-    REDIRECT_FUNCTION(text_addr + 0x29A90, PAF_Resource_GetPageNodeByID_Patched);
-    REDIRECT_FUNCTION(text_addr + 0x29B18, PAF_Resource_ResolveRefWString_Patched);
-    REDIRECT_FUNCTION(text_addr + 0x299E0, scePafGetTextPatched);
-
-    _sw((u32)OnInitMenuPspConfigPatched, text_addr + 0x30908);
+    for (u32 addr=text_addr+0x33000; addr<text_addr+0x40000; addr++){
+        if (strcmp((char*)addr, "fiji") == 0){
+            sysconf_unk = addr+216;
+            if (_lw(sysconf_unk+4) == 0) sysconf_unk -= 4; // adjust on TT/DT firmware
+            sysconf_option = sysconf_unk + 0x4cc; //CHECK
+            break;
+        }
+    }
 
     ClearCaches();
 }
@@ -579,13 +778,14 @@ int OnModuleStart(SceModule2 *mod)
 {
     char *modname = mod->modname;
     u32 text_addr = mod->text_addr;
+    u32 text_size = mod->text_size;
 
-    if(sce_paf_private_strcmp(modname, "vsh_module") == 0)
-        PatchVshMain(text_addr);
-    else if(sce_paf_private_strcmp(modname, "sceVshAuthPlugin_Module") == 0)
-        PatchAuthPlugin(text_addr);
-    else if(sce_paf_private_strcmp(modname, "sysconf_plugin_module") == 0)
-        PatchSysconfPlugin(text_addr);
+    if(strcmp(modname, "vsh_module") == 0)
+        PatchVshMain(text_addr, text_size);
+    else if(strcmp(modname, "sceVshAuthPlugin_Module") == 0)
+        PatchAuthPlugin(text_addr, text_size);
+    else if(strcmp(modname, "sysconf_plugin_module") == 0)
+        PatchSysconfPlugin(text_addr, text_size);
 
     return previous ? previous(mod) : 0;
 }
@@ -593,9 +793,10 @@ int OnModuleStart(SceModule2 *mod)
 int module_start(SceSize args, void *argp)
 {        
     psp_model = kuKernelGetModel();
-//    sctrlSEGetConfig(&config);
     
     previous = sctrlHENSetStartModuleHandler(OnModuleStart);
-            
+    
+    sctrlHENGetArkConfig(ark_config);
+
     return 0;
 }
