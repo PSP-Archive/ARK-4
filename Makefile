@@ -68,6 +68,7 @@ copy-bin:
 	$(Q)cp extras/menus/arkMenu/themes/classic/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher and Recovery resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
 	$(Q)cp extras/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
+	$(Q)cp extras/xmbctrl/XMB_*.TXT dist/ARK_01234/ # XMB Control translation files
 	$(Q)cp extras/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package

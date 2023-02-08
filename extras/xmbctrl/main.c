@@ -143,6 +143,8 @@ void ClearCaches()
 
 int LoadTextLanguage(int new_id)
 {
+    static char *language[] = { "JA", "EN", "FR", "ES", "DE", "IT", "NL", "PT", "RU", "KO", "CH1", "CH2" };
+
     int id;
     sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &id);
 
@@ -153,7 +155,7 @@ int LoadTextLanguage(int new_id)
     }
 
     char file[64];
-
+    sce_paf_private_sprintf(file, "%sXMB_%s.TXT", ark_config->arkpath, language[id]);
     SceUID fd = sceIoOpen(file, PSP_O_RDONLY, 0);
 
     if(fd >= 0)
