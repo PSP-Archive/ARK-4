@@ -166,6 +166,7 @@ PSP_EXPORT_FUNC(sctrlHENRegisterLLEHandler)
 PSP_EXPORT_FUNC(sctrlHENTakeInitControl)
 PSP_EXPORT_FUNC(exitLauncher)
 PSP_EXPORT_FUNC(flushCache)
+PSP_EXPORT_FUNC(sctrlHENGetRebootexConfig)
 PSP_EXPORT_END
 
 
@@ -198,6 +199,7 @@ PSP_EXPORT_FUNC_NID(loadSettings, 0xD31A2704)
 PSP_EXPORT_FUNC_NID(strcasecmp, 0xBC7554DF)
 PSP_EXPORT_FUNC_NID(sctrlHENSetArkConfig, 0x6EAFC03D)
 PSP_EXPORT_FUNC(sctrlHENSetPluginHandler)
+PSP_EXPORT_FUNC(sctrlHENSetRebootexConfig)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(ARKdebug, 0, 0x4001)

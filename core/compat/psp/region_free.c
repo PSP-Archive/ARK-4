@@ -64,6 +64,10 @@ enum
 
 int region_change = 0;
 
+int count = 0;
+int key_start = 0;
+SceModule2* umdman = NULL;
+
 static int (*IdStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
 static void* umd_buf = NULL;
 
@@ -82,9 +86,13 @@ static int _sceChkregGetPsCode(u8 *pscode)
 }
 
 static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
-    if (offset == 0 && len==512 && umd_buf == NULL){ // obtain buffer where UMD keys are stored in umdman.prx
-        umd_buf = buf;
-    }
+    if (offset == 0 && len==512){ // obtain buffer where UMD keys are stored in umdman.prx
+        if (umd_buf == NULL){
+			umd_buf = buf;
+			key_start = key-0x100;
+		}
+		count++;
+	}
     return IdStorageLookup(key, offset, buf, len); // passthrough
 }
 
@@ -215,10 +223,11 @@ int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pf
 }
 
 int replace_umd_keys(){
+
     int res = -1;
 
     // allocate memory buffer
-    SceUID memid = sceKernelAllocPartitionMemory(2, "idsBuffer", PSP_SMEM_High, 256*1024, NULL);
+    SceUID memid = sceKernelAllocPartitionMemory(2, "idsBuffer", PSP_SMEM_High, 512*0x20, NULL);
     void* big_buffer = sceKernelGetBlockHeadAddr(memid);
 
     if (memid < 0 || big_buffer == NULL) goto fake_ids_end;
@@ -227,13 +236,15 @@ int replace_umd_keys(){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, "IDSREG.PRX");
+
+	printf("loading idsreg module at: %s\n", path);
     SceUID modid = sceKernelLoadModule(path, 0, NULL);
 
     if (modid < 0) goto fake_ids_end;
 
-    int r = sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
-
-    if (r < 0) goto fake_ids_end;
+	printf("starting module...");
+    res = sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
+    if (res < 0) goto fake_ids_end;
 
     // initialize idsRegeneration and calculate the new UMD keys
     int (*idsRegenerationSetup)(u32, u32, u32, u32, u64, u32, void*) = 
@@ -241,31 +252,50 @@ int replace_umd_keys(){
     int (*idsRegenerationCreateCertificatesAndUMDKeys)(void*) = 
         sctrlHENFindFunction("pspIdsRegeneration_Driver", "idsRegeneration", 0xB79A6C46);
 
-    if (idsRegenerationCreateCertificatesAndUMDKeys == NULL || idsRegenerationSetup == NULL) goto fake_ids_end;
+    if (idsRegenerationCreateCertificatesAndUMDKeys == NULL || idsRegenerationSetup == NULL){
+		res = -2;
+		goto fake_ids_end;
+	}
+	
+	printf("found exports\n");
 
     u32 tachyon, baryon, pommel, mb, region;
     u64 fuseid;
 
-    if (GetHardwareInfo(&tachyon, &baryon, &pommel, &mb, &fuseid) < 0) goto fake_ids_end;
+	res = GetHardwareInfo(&tachyon, &baryon, &pommel, &mb, &fuseid);
+    if (res < 0) goto fake_ids_end;
 
-    idsRegenerationSetup(tachyon, baryon, pommel, mb, fuseid, region_change, NULL);
+	printf("got hardware info\n");
 
-    idsRegenerationCreateCertificatesAndUMDKeys(big_buffer);
+    res = idsRegenerationSetup(tachyon, baryon, pommel, mb, fuseid, region_change, NULL);
+	if (res < 0) goto fake_ids_end;
+
+	printf("ids set up\n");
+
+    res = idsRegenerationCreateCertificatesAndUMDKeys(big_buffer);
+	if (res < 0) goto fake_ids_end;
+
+	printf("umd keys generated\n");
 
     // copy the generated UMD keys to the buffer in umdman
-    memcpy(umd_buf, big_buffer+(0x200*2), 512*5);
-    res = 0;
+    memcpy(umd_buf, big_buffer+(512*key_start), 512*count);
+    flushCache();
+
+	res = 0;
+
+	printf("keys injected (%d leafs starting at %d)\n", count, key_start);
 
     // free resources
     fake_ids_end:
     sceKernelFreePartitionMemory(memid);
     sceKernelStopModule(modid, 0, NULL, NULL, NULL);
     sceKernelUnloadModule(modid);
-
+	printf("finishing with %p\n", res);
     return res;
 }
 
 void patch_umd_idslookup(SceModule2* mod){
+	umdman = mod;
     // this patch allows us to obtain the buffer where umdman stores the UMD keys
     IdStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
     if (mod){
