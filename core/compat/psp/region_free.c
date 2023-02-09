@@ -67,33 +67,8 @@ int region_change = 0;
 int count = 0;
 int key_start = 0;
 
-static int (*IdStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
 static void* umd_buf = NULL;
-
-static int _sceChkregGetPsCode(u8 *pscode)
-{
-	pscode[0] = 1;
-	pscode[1] = 0;
-	pscode[2] = REGION_DEBUG_CODE;
-	pscode[3] = 0;
-	pscode[4] = 1;
-	pscode[5] = 0;
-	pscode[6] = 1;
-	pscode[7] = 0;
-
-	return 0;
-}
-
-static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
-    if (offset == 0 && len==512){ // obtain buffer where UMD keys are stored in umdman.prx
-        if (umd_buf == NULL){
-			umd_buf = buf;
-			key_start = key-0x100; // should be 2
-		}
-		count++; // should end up being 5
-	}
-    return IdStorageLookup(key, offset, buf, len); // passthrough
-}
+static int (*IdStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
 
 int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pfuseid)
 {
@@ -221,7 +196,7 @@ int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pf
     return 0;
 }
 
-int replace_umd_keys(){
+static int replace_umd_keys(){
 
     int res = -1;
 
@@ -283,23 +258,23 @@ int replace_umd_keys(){
     return res;
 }
 
+static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
+    if (offset == 0 && len==512){ // obtain buffer where UMD keys are stored in umdman.prx
+        if (umd_buf == NULL){
+			umd_buf = buf;
+			key_start = key-0x100; // should be 2
+		}
+		count++; // should end up being 5
+	}
+    return IdStorageLookup(key, offset, buf, len); // passthrough
+}
+
 void patch_umd_idslookup(SceModule2* mod){
     // this patch allows us to obtain the buffer where umdman stores the UMD keys
     IdStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
     if (mod){
         hookImportByNID(mod, "sceIdStorage_driver", 0x6FE062D1, &fakeIdStorageLookupForUmd);
     }
-}
-
-void patch_region(void)
-{
-	// sceChkregGetPsCode
-	u32 fp = sctrlHENFindFunction("sceChkreg", "sceChkreg_driver", 0x59F8491D); 
-	if (fp) {
-        _sw(JUMP(_sceChkregGetPsCode), fp);
-        _sw(NOP, fp+4);
-    }
-
 }
 
 void patch_vsh_main_region(SceModule2* mod){

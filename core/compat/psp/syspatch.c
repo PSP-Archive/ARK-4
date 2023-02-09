@@ -22,7 +22,6 @@ extern u32 psp_model;
 extern ARKConfig* ark_config;
 extern STMOD_HANDLER previous;
 extern void SetSpeed(int cpuspd, int busspd);
-extern void patch_region();
 
 // Return Boot Status
 int isSystemBooted(void)
@@ -221,10 +220,6 @@ void processSettings(){
         ark_config->launcher[0] = 0; // disable launcher mode
     }
     sctrlHENSetArkConfig(ark_config);
-    if (region_change){
-        patch_region();
-        flushCache();
-    }
 }
 
 void (*prevPluginHandler)(const char* path, int modid) = NULL;
