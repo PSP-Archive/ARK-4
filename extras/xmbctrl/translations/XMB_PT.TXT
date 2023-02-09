@@ -1,12 +1,12 @@
-Configurações do Custom Firmware
-Gerenciar Plugins
-Carregamento USB
+Definições de Custom Firmware
+Gerenciador de Plugins
+Recarga via USB
 Overclock
-Economia de Bateria
+Poupança de Energia
 Iniciar Custom Launcher Automaticamente
-Desativar Pausa no PSP Go
+Desactivar Pausa no PSP Go
 Forçar Memória Extra
-Acelerar o Memory Stick
+Acelerar Memory Stick
 Cache Inferno
 Suporte Para Plugins Antigos no PSP Go
 Pular Logos da Sony
