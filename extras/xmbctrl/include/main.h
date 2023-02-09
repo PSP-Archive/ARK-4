@@ -31,12 +31,22 @@
 #define sysconf_console_action_arg 2
 
 #define sysconf_tnconfig_action_arg 0x1000
+#define sysconf_plugins_action_arg 0x1002
 
 typedef struct
 {
     int magic;
-    int test1;
-    int test2;
+    int usbcharge;
+    int overclock;
+    int powersave;
+    int launcher;
+    int disablepause;
+    int highmem;
+    int mscache;
+    int infernocache;
+    int oldplugin;
+    int skiplogos;
+    int hidepics;
 } CFWConfig;
 
 typedef struct

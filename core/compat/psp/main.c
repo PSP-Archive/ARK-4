@@ -67,7 +67,7 @@ int module_start(SceSize args, void * argp)
     
     // get ark config
     processArkConfig(ark_config);
-    
+
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
     

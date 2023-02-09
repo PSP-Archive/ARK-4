@@ -77,15 +77,6 @@ static inline u32 *get_partition(int pid)
     return (*get_memory_partition)(pid);
 }
 
-void unlock_high_memory()
-{
-    
-    //unlock memory
-    unsigned int i = 0; for(; i < 0x40; i += 4) {
-        _sw(0xFFFFFFFF, 0xBC000040 + i);
-    }
-}
-
 static void modify_partition(MemPart *part)
 {
     u32 *meminfo;

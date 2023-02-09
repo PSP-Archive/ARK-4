@@ -74,6 +74,7 @@ typedef struct {
     unsigned char show_fps; // show menu FPS
     unsigned char text_glow; // enable/disable text glowing function
     unsigned char screensaver; // Screensaver time (or disabled)
+    unsigned char redirect_ms0; // redirect ms0 to ef0
 } t_conf;
 
 extern "C" {

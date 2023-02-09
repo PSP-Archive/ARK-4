@@ -42,7 +42,7 @@ ArkConf ark_config;
     "Disabled", \
     "Always", \
     "Game", \
-    "UMD", \
+    "UMD/ISO", \
     "Homebrew", \
     "Pops", \
     "VSH" \
@@ -125,7 +125,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } highmem = {
-    "Unlock Extra Memory",
+    "Force Extra Memory",
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.highmem),

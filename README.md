@@ -17,6 +17,8 @@ as well as unique and exclusive new features not found anywhere else.
 
 - `Plugin` support for `PSP` games, `PS1` games and `VSH` (XMB), including the ability to enable and disable plugins `per-game`.
 
+- `Region Free` playback of `UMD Video` on all PSP models. Change the region of your `UMD` drive on-the-fly.
+
 - Compatible with all `PSP` models on firmwares `6.60` and `6.61`.
 
 - Compatible with all `PS Vita` models on firmware `2.10` up to `3.74`, either official firmware or Henkaku/h-encore.
@@ -27,7 +29,11 @@ as well as unique and exclusive new features not found anywhere else.
 
 - `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
+- Resistant to `soft-bricks`, removing the memory stick is enough to leave it in a `vanilla` state.
+
 - `Custom game launcher` with built-in game categories, file browser, FTP server and client, modernized look and more.
+
+- Fully configurable via the `XMB`and `Recovery`.
 
 - Compatible with `PRO Online` and `Xlink Kai`.
 
@@ -108,6 +114,8 @@ Use `-h` or `--help` to show all available flags
 <p>
 You can install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
+If coming from PRO/ME you can use this tool to automate your plugins.txt: [ARK-Plugin-Converter](https://github.com/krazynez/ARK-Plugin-Converter)
+
 To install plugins use the comma-separated format (CSV).
 Where the header is: runlevel, path, switch.
 A few samples:
@@ -124,12 +132,12 @@ You can use the following keywords to enable a plugin:
 - Anything else disables the plugin
 
 You can use the following keywords to tell ARK when the plugin loads:
-- `all/always`: if either of these keywords are used, the plugin will always load.
-- `umd`: plugin should only load on retail games (UMD/ISO/PSN).
+- `all`/`always`: if either of these keywords are used, the plugin will always load.
+- `psp`/`umd`: plugin should only load on retail games (UMD/ISO/PSN).
 - `homebrew`: plugin should only load on homebrews.
 - `game`: plugin can load on both retail games and homebrews.
-- `pops`: plugin only loads in PSX games.
-- `vsh`: plugin only loads in the XMB.
+- `psx`/`ps1`/`pops`: plugin only loads in PSX games.
+- `xmb`/`vsh`: plugin only loads in the XMB.
 - `launcher`: use this if the plugin should only load in the custom launcher.
 - `game ID`: if you specify a game ID (i.e. `SLUS000000`), then the plugin will only load on that game.
 
@@ -172,7 +180,7 @@ Configuration settings you can use in ARK include:
  - `oldplugin`: enables old plugins support on PSP Go (redirects `ms0` to `ef0`).
  - `skiplogos`: skips the coldboot and gameboot logos.
 
-However, you should use the `recovery menu` to handle settings easier.
+However, you should use the `XMB` or the `recovery menu` to handle settings easier.
 
 You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
 

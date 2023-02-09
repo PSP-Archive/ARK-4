@@ -22,7 +22,6 @@ extern u32 psp_model;
 extern ARKConfig* ark_config;
 extern STMOD_HANDLER previous;
 extern void SetSpeed(int cpuspd, int busspd);
-extern void patch_region();
 
 // Return Boot Status
 int isSystemBooted(void)
@@ -49,10 +48,6 @@ static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int ni
     if (nid == 0x221400A6 && strcmp(szMod, "SystemControl") == 0)
         return 0; // Popsloader V4 looks for this function to check for ME, let's pretend ARK doesn't have it ;)
     return sctrlHENFindFunction(szMod, szLib, nid);
-}
-
-static int fakeUmdActivate(){
-    return 0;
 }
 
 static int _sceKernelBootFromForUmdMan(void)
@@ -194,10 +189,8 @@ void settingsHandler(char* path){
     }
     else if (strcasecmp(path, "infernocache") == 0){
         if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x112 && apitype <= 0x115)){
-            void (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
             int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
-            if (CacheSetPolicy && CacheInit){
-                CacheSetPolicy(CACHE_POLICY_LRU);
+            if (CacheInit){
                 if (psp_model==PSP_1000) CacheInit(4 * 1024, 8, 2); // 32K cache on 1K
                 else CacheInit(64 * 1024, 128, (use_highmem)?2:9); // 8M cache on other models
                 disable_PauseGame(); // disable pause feature to maintain stability
@@ -227,10 +220,6 @@ void processSettings(){
         ark_config->launcher[0] = 0; // disable launcher mode
     }
     sctrlHENSetArkConfig(ark_config);
-    if (region_change){
-        patch_region();
-        flushCache();
-    }
 }
 
 void (*prevPluginHandler)(const char* path, int modid) = NULL;
@@ -278,8 +267,6 @@ void PSPOnModuleStart(SceModule2 * mod){
                 disable_PauseGame();
             }
         }
-        // Allow usermode to use high memory
-        unlock_high_memory();
         goto flush;
     }
     
@@ -316,8 +303,8 @@ void PSPOnModuleStart(SceModule2 * mod){
         // fix for MacroFire (disables sceUmdActivate/Deactivate functions)
         // this is needed because ARK loads plugins when UMD is already active (MediaSync fully loaded and started)
         // while older CFW load plugins a bit earlier (MediaSync loaded but not started)
-        hookImportByNID(mod, "sceUmdUser", 0xC6183D47, &fakeUmdActivate);
-        hookImportByNID(mod, "sceUmdUser", 0xE83742BA, &fakeUmdActivate);
+        hookImportByNID(mod, "sceUmdUser", 0xC6183D47, 0);
+        hookImportByNID(mod, "sceUmdUser", 0xE83742BA, 0);
         goto flush;
     }
 
@@ -330,6 +317,13 @@ void PSPOnModuleStart(SceModule2 * mod){
             hookImportByNID(mod, "scePaf", nids[i], sctrlHENFindFunction("scePaf_Module", "scePaf", nids[i]));
         }
         goto flush;
+    }
+
+    if (strcmp(mod->modname, "vsh_module") == 0){
+        if (region_change){
+            patch_vsh_main_region(mod);
+            goto flush;
+        }
     }
 
     if (strcmp(mod->modname, "impose_plugin_module") == 0){

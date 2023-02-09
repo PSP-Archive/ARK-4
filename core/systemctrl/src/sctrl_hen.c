@@ -319,3 +319,15 @@ void* sctrlHENSetPluginHandler(void* handler){
     plugin_handler = handler;
     return ret;
 }
+
+void sctrlHENGetRebootexConfig(RebootConfigARK* config){
+    if (config){
+        memcpy(config, &rebootex_config, sizeof(RebootConfigARK));
+    }
+}
+
+void sctrlHENSetRebootexConfig(RebootConfigARK* config){
+    if (config){
+        memcpy(&rebootex_config, config, sizeof(RebootConfigARK));
+    }
+}

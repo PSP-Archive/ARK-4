@@ -356,6 +356,8 @@ static int msstorIoUnk21Cache(PspIoDrvFileArg *arg)
 int msstorCacheInit(const char* driver, int bufSize)
 {
 
+    if (g_cacheSize > 0) return 0; // cache already on
+
     // Get Application Type
     int key_config = sceKernelApplicationType();
     

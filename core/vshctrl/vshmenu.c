@@ -37,7 +37,7 @@
 #define ALL_FUNCTION (PSP_CTRL_SELECT|PSP_CTRL_START|PSP_CTRL_HOME|PSP_CTRL_HOLD|PSP_CTRL_NOTE)
 #define ALL_CTRL     (ALL_ALLOW|ALL_BUTTON|ALL_TRIGGER|ALL_FUNCTION)
 
-extern ARKConfig* ark_conf;
+extern ARKConfig* ark_config;
 
 SEConfig conf;
 
@@ -85,9 +85,9 @@ int vctrlVSHExitVSHMenu(SEConfig *config, char *videoiso, int disctype)
 static SceUID load_satelite(void)
 {
     SceUID modid;
-    char mod[ARK_PATH_SIZE];
-    strcpy(mod, ark_config->arkpath);
-    strcat(mod, VSH_MENU);
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, VSH_MENU);
     
     SceKernelLMOption opt = {
         .size = 0x14,
@@ -96,7 +96,7 @@ static SceUID load_satelite(void)
         .position = 1,
     };
 
-    modid = sceKernelLoadModule(mod, 0, &opt);
+    modid = sceKernelLoadModule(path, 0, &opt);
 
     return modid;
 }

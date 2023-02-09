@@ -37,9 +37,13 @@
 #include "loadercore.h"
 #include "imports.h"
 
+SEConfig se_config;
+
 char *GetUmdFile(void) __attribute__((alias("sctrlSEGetUmdFile")));
 
 void SetUmdFile(char *file) __attribute__((alias("sctrlSESetUmdFile")));
+
+void sctrlSEApplyConfig(SEConfig *config) __attribute__((alias("sctrlSESetConfig")));
 
 // we keep this here for compatibility
 // ARK doesn't use this and it isn't persistent
@@ -52,7 +56,9 @@ void SetUmdFile(char *file) __attribute__((alias("sctrlSESetUmdFile")));
  * @param config - pointer to a SEConfig structure that receives the SE configuration
  * @returns 0 on success
 */
-int sctrlSEGetConfig(SEConfig *config){
+int sctrlSEGetConfig(SEConfig *config)
+{
+    memcpy(config, &se_config, sizeof(SEConfig));
     return 0;
 }
 
@@ -63,7 +69,9 @@ int sctrlSEGetConfig(SEConfig *config){
  * @param size - The size of the structure
  * @returns 0 on success
 */
-int sctrlSEGetConfigEx(SEConfig *config, int size){
+int sctrlSEGetConfigEx(SEConfig *config, int size)
+{
+    memcpy(config, &se_config, size);
     return 0;
 }
 
@@ -75,12 +83,10 @@ int sctrlSEGetConfigEx(SEConfig *config, int size){
  * @param config - pointer to a SEConfig structure that has the SE configuration to set
  * @returns 0 on success
 */
-int sctrlSESetConfig(SEConfig *config){
-    return 0;
-}
-
-void sctrlSEApplyConfig(SEConfig *config)
+int sctrlSESetConfig(SEConfig *config)
 {
+    memcpy(&se_config, config, sizeof(SEConfig));
+    return 0;
 }
 
 /**
@@ -92,6 +98,7 @@ void sctrlSEApplyConfig(SEConfig *config)
 */
 int sctrlSESetConfigEx(SEConfig *config, int size)
 {
+    memcpy(&se_config, config, size);
     return 0;
 }
 

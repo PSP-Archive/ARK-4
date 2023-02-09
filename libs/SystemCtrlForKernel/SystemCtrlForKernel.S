@@ -287,3 +287,6 @@
 #ifdef F_SystemCtrlForKernel_0093
     IMPORT_FUNC "SystemCtrlForKernel",0xFF73C3A3,exitLauncher
 #endif
+#ifdef F_SystemCtrlForKernel_0094
+    IMPORT_FUNC "SystemCtrlForKernel",0x18B687A6,sctrlHENGetRebootexConfig
+#endif

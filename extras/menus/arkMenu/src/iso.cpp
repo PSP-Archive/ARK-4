@@ -191,7 +191,7 @@ void Iso::executeISO(const char* path, bool is_patched){
     else
         param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
 
-    int runlevel = (*(u32*)path == EF0_PATH)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
+    int runlevel = (*(u32*)path == EF0_PATH && common::getConf()->redirect_ms0)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
 
     param.key = "umdemu";
     param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1

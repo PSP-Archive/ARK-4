@@ -39,6 +39,7 @@ SUBDIRS = libs \
 	extras/menus/recovery \
 	extras/menus/xMenu \
 	extras/menus/vshmenu \
+	extras/xmbctrl \
 	extras/idsregeneration
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx
@@ -68,6 +69,8 @@ copy-bin:
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
 	$(Q)cp extras/menus/arkMenu/themes/classic/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher and Recovery resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
+	$(Q)cp extras/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
+	$(Q)cp extras/xmbctrl/translations/XMB_*.TXT dist/ARK_01234/ # XMB Control translation files
 	$(Q)cp extras/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
@@ -129,6 +132,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
+	$(Q)$(MAKE) $@ -C extras/xmbctrl
 	$(Q)$(MAKE) $@ -C extras/idsregeneration
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit

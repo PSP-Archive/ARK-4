@@ -80,6 +80,8 @@ int module_start(SceSize args, void * argp)
     registerExceptionHandler(NULL, NULL);
     #endif
 
+    uprotect_high_memory();
+
     // Flush Cache
     flushCache();
 

@@ -29,9 +29,16 @@
 #define REBOOTEX_TEXT (KERNEL_BASE + 0xFC0000)
 #define LOADER_TEXT (0x040EC000)
 #define MAINBIN_TEXT (0x04000000)
+#define EXTRA_RAM 0x8A000000
 #define FLASH_SONY 0x8B000000
 #define ARK_FLASH 0x8BA00000
 #define BOOT_KEY_BUFFER (KERNEL_BASE + 0xFB0000)
+
+// Memory Partition Size
+#define USER_SIZE (24 * 1024 * 1024)
+#define KERNEL_SIZE (4 * 1024 * 1024)
+#define VITA_FLASH_SIZE 0x01000000 // 16MiB
+#define VITA_EXTRA_RAM_SIZE (32 * 1024 * 1024)
 #define MAX_HIGH_MEMSIZE 55
 
 // ARK_CONFIG
@@ -41,13 +48,14 @@
 #define ARK_RECOVERY "RECOVERY.PBP" // recovery app
 #define FLASH0_ARK "FLASH0.ARK" // ARK flash0 package
 #define VSH_MENU "VSHMENU.PRX" // ARK VSH Menu for XMB
+#define XMBCTRL_PRX "XMBCTRL.PRX" // XMB Control
 #define K_FILE "K.BIN" // kernel exploit file for Live loaders
 #define ARK2_BIN "ARK.BIN" // ARK-2 payload
 #define ARK4_BIN "ARK4.BIN" // ARK-4 payload
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 19
-#define ARK_MICRO_VERSION 7
+#define ARK_MICRO_VERSION 9
 #define PRO_VERSION 0x4000 // identify as ARK
 
 /*
@@ -109,12 +117,6 @@ typedef struct ARKConfig{
 #define IS_VITA(ark_config) ((ark_config->exec_mode&DEV_MASK)==PS_VITA)
 #define IS_VITA_ADR(ark_config) (ark_config->exec_mode==PSV_ADR)
 #define IS_VITA_POPS(ark_config) (ark_config->exec_mode==PSV_POPS)
-
-// Memory Partition Size
-#define USER_SIZE (24 * 1024 * 1024)
-#define KERNEL_SIZE (4 * 1024 * 1024)
-#define VITA_EXTRA_RAM 0x8A000000
-#define VITA_FLASH_SIZE 0x01000000 // 16MiB
 
 #endif
 

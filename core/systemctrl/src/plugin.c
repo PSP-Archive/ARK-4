@@ -81,11 +81,11 @@ static int matchingRunlevel(char * runlevel)
     int apitype = sceKernelInitApitype();
     
     if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1; // always on
-    else if (stricmp(runlevel, "vsh") == 0) // VSH only
-        return (apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300);
-    else if (stricmp(runlevel, "pops") == 0) // PS1 games only
+    else if (stricmp(runlevel, "vsh") == 0 || stricmp(runlevel, "xmb") == 0) // VSH only
+        return (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300);
+    else if (stricmp(runlevel, "pops") == 0 || stricmp(runlevel, "ps1") == 0 || stricmp(runlevel, "psx") == 0) // PS1 games only
         return (apitype == 0x144 || apitype == 0x155);
-    else if (stricmp(runlevel, "umd") == 0) // Retail games only
+    else if (stricmp(runlevel, "umd") == 0 || stricmp(runlevel, "psp") == 0) // Retail games only
         return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));
     else if (stricmp(runlevel, "game") == 0) // retail+homebrew
         return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x141 || apitype == 0x152 || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));
@@ -140,8 +140,9 @@ char * strtrim(char * text)
     while(isspace(text[0])) text++;
     
     // Scan Position
-    unsigned int pos = strlen(text)-1;
-    
+    int pos = strlen(text)-1;
+    if (pos<0) return text;
+
     // Find Trailing Whitespaces
     while(isspace(text[pos])) pos--;
     
@@ -212,7 +213,7 @@ static char * readLine(int fd, char * buf, unsigned int buflen)
 static void processLine(char * line, void (*enabler)(char*), void (*disabler)(char*))
 {
     // Skip Comment Lines
-    if(!enabler || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#')
+    if(!enabler || line == NULL || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#')
         return;
     
     // String Token

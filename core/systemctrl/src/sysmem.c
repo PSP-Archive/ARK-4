@@ -23,6 +23,15 @@
 #include "sysmem.h"
 #include "functions.h"
 
+void uprotect_high_memory()
+{
+    
+    //unlock memory
+    unsigned int i = 0; for(; i < 0x40; i += 4) {
+        _sw(0xFFFFFFFF, 0xBC000040 + i);
+    }
+}
+
 // Patch System Memory Manager
 void patchSystemMemoryManager(void)
 {

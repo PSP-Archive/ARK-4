@@ -65,7 +65,7 @@ int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, 
     
     if (apitype == 0x141){ // homebrew API
         sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
-        sctrlSESetUmdFile("");
+        sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
     }
     
     // Find Target Function
@@ -109,24 +109,18 @@ int isSystemBooted(void)
 
 int use_mscache = 0;
 int use_highmem = 0;
+int use_infernocache = 0;
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "highmem") == 0){
         use_highmem = 1;
-        // apply extra memory patch
-        unlockVitaMemory();
     }
     else if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup
     }
     else if (strcasecmp(path, "infernocache") == 0){
         if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x112 && apitype <= 0x115)){
-            void (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
-            int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
-            if (CacheSetPolicy && CacheInit){
-                CacheSetPolicy(CACHE_POLICY_LRU);
-                CacheInit(32 * 1024, (use_highmem)?32:128, 11); // cache in P11, 2M or 8M (depends if highmem is used)
-            }
+            use_infernocache = 1;
         }
     }
 }
@@ -225,6 +219,16 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         {
             // Initialize Memory Stick Speedup Cache
             if (use_mscache) msstorCacheInit("ms", 8 * 1024);
+
+            // apply extra memory patch
+            if (use_highmem) unlockVitaMemory();
+
+            if (use_infernocache){
+                int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+                if (CacheInit){
+                    CacheInit(32 * 1024, 32, 11); // 2MB cache for PS Vita
+                }
+            }
             
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
