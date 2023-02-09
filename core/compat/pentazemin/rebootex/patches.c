@@ -60,6 +60,7 @@ int _pspemuLfatOpen(BootFile* file, int unk)
             case MODE_NP9660:
             case MODE_MARCH33:
             case MODE_INFERNO:
+                reboot_conf->iso_mode = MODE_INFERNO;
                 ret = findFlashFile(file, "psvbtknf.bin"); // use inferno ISO mode (psvbtknf.bin)
                 break;
             default:
