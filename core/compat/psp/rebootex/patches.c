@@ -252,6 +252,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
             case MODE_NP9660:
             case MODE_MARCH33:
             case MODE_INFERNO:
+                reboot_conf->iso_mode = MODE_INFERNO;
                 newsize = patch_bootconf_inferno(buffer, length);
                 if (newsize > 0) result = newsize;
                 break;
