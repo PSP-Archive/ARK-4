@@ -278,6 +278,7 @@ void patch_umd_idslookup(SceModule2* mod){
 }
 
 void patch_vsh_main_region(SceModule2* mod){
+	// patch to remove region check in VSH
 	hookImportByNID(mod, "sceVshBridge", 0x5C2983C2, 1);
 }
 
