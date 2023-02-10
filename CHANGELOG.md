@@ -1,5 +1,12 @@
 # ARK Changelog
 
+## Version 4.19.10 (???)
+- Added new keywords for plugin system: `psx` and `ps1` as alternative to `pops`; `psp` as alternative to `vsh` and `psp` as alternative to `umd`.
+- Added option to redirect ms0 to ef0 on custom launcher.
+- Added translations for XMB Control.
+- Fixed incompatibility between XMB Control and XMB Item Hider plugin (v1.3-fix3).
+- XMB Control will now hide useless settings depending on device.
+
 ## Version 4.19.9 (2023-02-08)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4199
 - UMD Region Change is finally working! You can now play region locked UMD movies on any PSP model from any region. To change the UMD drive region, enter recovery menu and scroll to the last option, choose your region and exit recovery menu. Wait for the XMB to finish loading (the memory stick LED stops blinking) and insert the UMD you want to play.
