@@ -1,0 +1,13 @@
+Paramètres d'ARK-4
+Gestionnaire de plugins
+Recharge par USB
+Overclock
+Économie d'énergie
+Autoboot du Launcher alternatif
+Mode Pause de la PSP Go
+Forcer le mode mémoire étendue
+Accélérateur Memory Stick
+Cache Inferno
+Support des anciens plugins sur PSP Go
+Transitions Sony dans le XMB
+Masquer PIC0 et PIC1
