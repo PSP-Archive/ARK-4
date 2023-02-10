@@ -632,12 +632,12 @@ int sceVshCommonGuiBottomDialogPatched(void *a0, void *a1, void *a2, int (* canc
 
 void PatchVshMain(u32 text_addr, u32 text_size)
 {
-    int patches = 14;
+    int patches = 13;
     u32 scePafGetText_call = _lw(&scePafGetText);
     for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x00A21826){
-            AddVshItem = (void*)addr-88;
+            HIJACK_FUNCTION(addr-88, AddVshItemPatched, AddVshItem);
             patches--;
         }
         else if (data == 0x3A14000F){
@@ -667,10 +667,6 @@ void PatchVshMain(u32 text_addr, u32 text_size)
         }
         else if (data == 0x8E050038){
             MAKE_CALL(addr + 4, ExecuteActionPatched);
-            patches--;
-        }
-        else if (data == 0x00063100){
-            MAKE_CALL(addr + 12, AddVshItemPatched);
             patches--;
         }
         else if (data == 0xAC520124){
