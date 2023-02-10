@@ -261,7 +261,7 @@ static int replace_umd_keys(){
 
 static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
 	// obtain buffer where UMD keys are stored in umdman.prx
-    if (offset == 0 && len==512 && umd_buf == NULL){
+    if (offset == 0 && key == 0x102){
 		umd_buf = buf;
 	}
     return IdStorageLookup(key, offset, buf, len); // passthrough
