@@ -1,6 +1,7 @@
 # ARK Changelog
 
 ## Version 4.19.10 (2023-02-10)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r41910
 - Added new keywords for plugin system: `psx` and `ps1` as alternative to `pops`; `psp` as alternative to `vsh` and `psp` as alternative to `umd`.
 - Added option to redirect ms0 to ef0 on custom launcher.
 - Added translations for XMB Control.
