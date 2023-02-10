@@ -11,5 +11,5 @@ all:
 	sed "/int/d" ipl_block_01g.h > $(MODULE_PATH)/ipl_block_01g.h
 
 clean:
-	@rm -f ipl_block_01g.h ipl_block_large.h 
-	@rm -f ipl_block_01g.bin ipl_block_02g.bin kbooti_ipl_block_01g.bin
+	@rm -f $(MODULE_PATH)/ipl_block_01g.h $(MODULE_PATH)/ipl_block_large.h 
+	@rm -f ipl_block_01g.bin ipl_block_02g.bin kbooti_ipl_block_01g.bin ipl_block_01g.h ipl_block_large.h 
