@@ -35,6 +35,7 @@
 #include "include/settings.h"
 
 #include "list.h"
+#include "settings.h"
 #include "plugins.h"
 
 PSP_MODULE_INFO("XmbControl", 0x0007, 1, 5);
@@ -121,7 +122,7 @@ int unload = 0;
 u32 backup[4];
 int context_mode = 0;
 
-char user_buffer[512];
+char user_buffer[2*LINE_BUFFER_SIZE];
 
 STMOD_HANDLER previous;
 CFWConfig config;
