@@ -203,9 +203,9 @@ static int replace_umd_keys(){
 
     // allocate memory buffer
     SceUID memid = sceKernelAllocPartitionMemory(2, "idsBuffer", PSP_SMEM_High, 512*0x20, NULL);
-    void* big_buffer = sceKernelGetBlockHeadAddr(memid);
+    if (memid < 0) goto fake_ids_end;
 
-    if (memid < 0 || big_buffer == NULL) goto fake_ids_end;
+	void* big_buffer = sceKernelGetBlockHeadAddr(memid);
 
     // load and start idsRegeneration module
     char path[ARK_PATH_SIZE];
