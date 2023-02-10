@@ -68,8 +68,6 @@ int region_change = 0;
 // umdman.prx key buffer
 static void* umd_buf = NULL;
 
-static int (*IdStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
-
 int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pfuseid)
 {
     // taken from Despertar del Cementerio
@@ -259,17 +257,18 @@ static int replace_umd_keys(){
     return res;
 }
 
+static int (*_idStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
 static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
 	// obtain buffer where UMD keys are stored in umdman.prx
     if (offset == 0 && key == 0x102){
 		umd_buf = buf;
 	}
-    return IdStorageLookup(key, offset, buf, len); // passthrough
+    return _idStorageLookup(key, offset, buf, len); // passthrough
 }
 
 void patch_umd_idslookup(SceModule2* mod){
     // this patch allows us to obtain the buffer where umdman stores the UMD keys
-    IdStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
+    _idStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
     hookImportByNID(mod, "sceIdStorage_driver", 0x6FE062D1, &fakeIdStorageLookupForUmd);
 }
 
