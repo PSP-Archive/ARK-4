@@ -636,8 +636,9 @@ void PatchVshMain(u32 text_addr, u32 text_size)
     u32 scePafGetText_call = _lw(&scePafGetText);
     for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
         u32 data = _lw(addr);
-        if (data == 0x00A21826){
-            HIJACK_FUNCTION(addr-88, AddVshItemPatched, AddVshItem);
+        if (data == 0x00063100){
+            AddVshItem = U_EXTRACT_CALL(addr+12);
+            MAKE_CALL(addr + 12, AddVshItemPatched);
             patches--;
         }
         else if (data == 0x3A14000F){
