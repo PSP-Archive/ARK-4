@@ -6,6 +6,7 @@
 - Added translations for XMB Control.
 - Fixed incompatibility between XMB Control and XMB Item Hider plugin (v1.3-fix3).
 - XMB Control will now hide useless settings depending on device.
+- Fixed issues when unmounting UMD Video ISO.
 
 ## Version 4.19.9 (2023-02-08)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4199
