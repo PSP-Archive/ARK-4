@@ -37,6 +37,7 @@ SUBDIRS = libs \
 	extras/menus/recovery \
 	extras/menus/xMenu \
 	extras/menus/vshmenu \
+	extras/menus/ultimatevsh \
 	extras/xmbctrl \
 	extras/idsregeneration
 
@@ -123,6 +124,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
+	$(Q)$(MAKE) $@ -C extras/menus/ultimatevsh
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
 	$(Q)$(MAKE) $@ -C extras/xmbctrl

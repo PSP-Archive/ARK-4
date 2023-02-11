@@ -1,13 +1,17 @@
 /* Ultimate VSH Menu Revised (2009) */
 /* by Total_Noob */
 
-#include <systemctrl.h>
+#include <pspinit.h>
 #include <pspctrl.h>
+#include <psptypes.h>
+#include <systemctrl.h>
+#include <systemctrl_se.h>
+#include <kubridge.h>
 #include <pspreg.h>
 #include <stdio.h>
 
-PSP_MODULE_INFO("UVMRevised", 0x1007, 1, 0);
-PSP_MAIN_THREAD_ATTR(0);
+PSP_MODULE_INFO("VshCtrlSatelite", 0, 1, 2);
+PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 
 #define WHITE colconf.fgcol
 #define RED colconf.bgcol
@@ -100,8 +104,8 @@ typedef struct
     int unk1;
     int speedupms;
     int reserved[2];
-} M33Config;
-M33Config m33conf;
+} _ARKConfig;
+_ARKConfig config;
 
 struct isovideos 
 {
@@ -276,13 +280,13 @@ int vshCtrlReadBufferPositivePatched(SceCtrlData* pad_data, int count)
 
     if(!configchanged)
     {
-        if(m33conf.vshcpuspeed != 0)
+        if(config.vshcpuspeed != 0)
         {
             sceRtcGetCurrentTick(&curtick);
             curtick -= firsttick;
             u32 t = (u32)curtick;
 
-            if(t >= 10000000) SetSpeed(m33conf.vshcpuspeed, m33conf.vshbusspeed);
+            if(t >= 10000000) SetSpeed(config.vshcpuspeed, config.vshbusspeed);
         }
         else SetSpeed(222, 111);
     }
@@ -318,11 +322,11 @@ void returnToVsh()
 
     sceKernelResumeThread(vshthread);
 
-    sctrlSEGetConfig(&m33conf);
+    sctrlSEGetConfig(&config);
 
     char string[128];
     sprintf(string, "ms0:/ISO/VIDEO/%s", getvideo[counter].video);
-    vctrlVSHExitVSHMenu(&m33conf, !counter ? NULL : string, !counter ? NULL : 0x20);
+    vctrlVSHExitVSHMenu(&config, !counter ? NULL : string, !counter ? NULL : 0x20);
 
     if(usbdevice >= 0)
     {
@@ -396,7 +400,7 @@ int umdIoOpenPatched(PspIoDrvFileArg* arg, const char* file, int flags, SceMode 
 
 int FindPower(int nid)
 {
-    return FindProc("scePower_Service", "scePower_driver", nid);
+    return sctrlHENFindFunction("scePower_Service", "scePower_driver", nid);
 }
 
 int OnModuleStart(SceModule2* mod)
@@ -417,10 +421,10 @@ int OnModuleStart(SceModule2* mod)
         umdIoOpen = umddrv->funcs->IoOpen;
         umddrv->funcs->IoOpen = umdIoOpenPatched;
 
-        SetSpeed = (void*)FindProc("SystemControl", "SystemCtrlForKernel", 0x98012538);
-        vshCtrlReadBufferPositive = (void*)FindProc("sceController_Service", "sceCtrl_driver", 0x919215D7);
-        createThread = (void*)FindProc("sceThreadManager", "ThreadManForUser", 0x446D8DE6);
-        vshKernelExitVSH = (void*)FindProc("sceVshBridge_Driver", "sceVshBridge", 0x44DBAED5);
+        SetSpeed = (void*)sctrlHENFindFunction("SystemControl", "SystemCtrlForKernel", 0x98012538);
+        vshCtrlReadBufferPositive = (void*)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x919215D7);
+        createThread = (void*)sctrlHENFindFunction("sceThreadManager", "ThreadManForUser", 0x446D8DE6);
+        vshKernelExitVSH = (void*)sctrlHENFindFunction("sceVshBridge_Driver", "sceVshBridge", 0x44DBAED5);
         Shutdown = (void*)FindPower(0x2B7C7CF4);
         Suspend = (void*)FindPower(0xAC32C9CC);
         ColdReset = (void*)FindPower(0x0442D852);
@@ -489,9 +493,10 @@ int OnModuleStart(SceModule2* mod)
         ClearCaches();
     }
     
-    if(!previous) return 0;
-
-    return previous(mod);
+    if(!previous) return NULL;
+	
+	previous(mod);
+	return;
 }
 
 u32 write_eeprom(u8 addr, u16 data)
@@ -1062,22 +1067,22 @@ void vshmenu()
         blitPrint(20, 6, "ULTIMATE VSH MENU", colconf.titlefgcol, colconf.titlebgcol);
         
         blitPrint(16, 8, "CPU CLOCK XMB   ", WHITE, sel == 0 ? BLUE : RED);
-        sprintf(string, m33conf.vshcpuspeed == 0 ? "Default" : "%d/%d", m33conf.vshcpuspeed, m33conf.vshbusspeed);
+        sprintf(string, config.vshcpuspeed == 0 ? "Default" : "%d/%d", config.vshcpuspeed, config.vshbusspeed);
         blitPrint(33, 8, string, WHITE, sel == 0 ? BLUE : RED);
         
         blitPrint(16, 9, "CPU CLOCK GAME  ", WHITE, sel == 1 ? BLUE : RED);
-        sprintf(string, m33conf.gamecpuspeed == 0 ? "Default" : "%d/%d", m33conf.gamecpuspeed, m33conf.gamebusspeed);
+        sprintf(string, config.gamecpuspeed == 0 ? "Default" : "%d/%d", config.gamecpuspeed, config.gamebusspeed);
         blitPrint(33, 9, string, WHITE, sel == 1 ? BLUE : RED);
 
         blitPrint(16, 10, "USB DEVICE      ", WHITE, sel == 2 ? BLUE : RED);
-        sprintf(string, m33conf.usbdevice == 0 ? "Memory Stick" : m33conf.usbdevice == 5 ? "UMD Disc" : "Flash %d", m33conf.usbdevice - 1);
+        sprintf(string, config.usbdevice == 0 ? "Memory Stick" : config.usbdevice == 5 ? "UMD Disc" : "Flash %d", config.usbdevice - 1);
         blitPrint(33, 10, string, WHITE, sel == 2 ? BLUE : RED);
 
         blitPrint(16, 11, "UMD ISO MODE    ", WHITE, sel == 3 ? BLUE : RED);
-        blitPrint(33, 11, umdmode[m33conf.umdmode], WHITE, sel == 3 ? BLUE : RED);
+        blitPrint(33, 11, umdmode[config.umdmode], WHITE, sel == 3 ? BLUE : RED);
 
         blitPrint(16, 12, sceKernelGetModel() == 0 ? "SLIM COLORS     " : "USB CHARGE      ", WHITE, sel == 4 ? BLUE : RED);
-        blitPrint(33, 12, sceKernelGetModel() == 0 ? disenabled[uvmconf.slimcolors] : disenabled[m33conf.usbcharge], WHITE, sel == 4 ? BLUE : RED);
+        blitPrint(33, 12, sceKernelGetModel() == 0 ? disenabled[uvmconf.slimcolors] : disenabled[config.usbcharge], WHITE, sel == 4 ? BLUE : RED);
 
         blitPrint(16, 13, "HIDE MAC ADDRESS", WHITE, sel == 5 ? BLUE : RED);
         blitPrint(33, 13, disenabled[uvmconf.hidemacaddr], WHITE, sel == 5 ? BLUE : RED);
@@ -1122,98 +1127,98 @@ void vshmenu()
         {
             if(new_pad & PSP_CTRL_RIGHT)
             {
-                if(m33conf.vshcpuspeed == 0)
+                if(config.vshcpuspeed == 0)
                 {
-                    m33conf.vshcpuspeed = 20;
-                    m33conf.vshbusspeed = 10;
+                    config.vshcpuspeed = 20;
+                    config.vshbusspeed = 10;
                 }
-                else if(m33conf.vshcpuspeed == 20)
+                else if(config.vshcpuspeed == 20)
                 {
-                    m33conf.vshcpuspeed = 75;
-                    m33conf.vshbusspeed = 37;    
+                    config.vshcpuspeed = 75;
+                    config.vshbusspeed = 37;    
                 }
-                else if(m33conf.vshcpuspeed == 75)
+                else if(config.vshcpuspeed == 75)
                 {
-                    m33conf.vshcpuspeed = 100;
-                    m33conf.vshbusspeed = 50;    
+                    config.vshcpuspeed = 100;
+                    config.vshbusspeed = 50;    
                 }
-                else if(m33conf.vshcpuspeed == 100)
+                else if(config.vshcpuspeed == 100)
                 {
-                    m33conf.vshcpuspeed = 133;
-                    m33conf.vshbusspeed = 66;    
+                    config.vshcpuspeed = 133;
+                    config.vshbusspeed = 66;    
                 }
-                else if(m33conf.vshcpuspeed == 133)
+                else if(config.vshcpuspeed == 133)
                 {
-                    m33conf.vshcpuspeed = 222;
-                    m33conf.vshbusspeed = 111;
+                    config.vshcpuspeed = 222;
+                    config.vshbusspeed = 111;
                 }
-                else if(m33conf.vshcpuspeed == 222)
+                else if(config.vshcpuspeed == 222)
                 {
-                    m33conf.vshcpuspeed = 266;
-                    m33conf.vshbusspeed = 133;    
+                    config.vshcpuspeed = 266;
+                    config.vshbusspeed = 133;    
                 }
-                else if(m33conf.vshcpuspeed == 266)
+                else if(config.vshcpuspeed == 266)
                 {
-                    m33conf.vshcpuspeed = 300;
-                    m33conf.vshbusspeed = 150;    
+                    config.vshcpuspeed = 300;
+                    config.vshbusspeed = 150;    
                 }
-                else if(m33conf.vshcpuspeed == 300)
+                else if(config.vshcpuspeed == 300)
                 {
-                    m33conf.vshcpuspeed = 333;
-                    m33conf.vshbusspeed = 166;    
+                    config.vshcpuspeed = 333;
+                    config.vshbusspeed = 166;    
                 }
-                else if(m33conf.vshcpuspeed == 333)
+                else if(config.vshcpuspeed == 333)
                 {
-                    m33conf.vshcpuspeed = 0;
-                    m33conf.vshbusspeed = 0;    
+                    config.vshcpuspeed = 0;
+                    config.vshbusspeed = 0;    
                 }                    
             }
             if(new_pad & PSP_CTRL_LEFT)
             {
-                if(m33conf.vshcpuspeed == 0)
+                if(config.vshcpuspeed == 0)
                 {
-                    m33conf.vshcpuspeed = 333;
-                    m33conf.vshbusspeed = 166;
+                    config.vshcpuspeed = 333;
+                    config.vshbusspeed = 166;
                 }
-                else if(m33conf.vshcpuspeed == 20)
+                else if(config.vshcpuspeed == 20)
                 {
-                    m33conf.vshcpuspeed = 0;
-                    m33conf.vshbusspeed = 0;
+                    config.vshcpuspeed = 0;
+                    config.vshbusspeed = 0;
                 }
-                else if(m33conf.vshcpuspeed == 75)
+                else if(config.vshcpuspeed == 75)
                 {
-                    m33conf.vshcpuspeed = 20;
-                    m33conf.vshbusspeed = 10;    
+                    config.vshcpuspeed = 20;
+                    config.vshbusspeed = 10;    
                 }
-                else if(m33conf.vshcpuspeed == 100)
+                else if(config.vshcpuspeed == 100)
                 {
-                    m33conf.vshcpuspeed = 75;
-                    m33conf.vshbusspeed = 37;    
+                    config.vshcpuspeed = 75;
+                    config.vshbusspeed = 37;    
                 }
-                else if(m33conf.vshcpuspeed == 133)
+                else if(config.vshcpuspeed == 133)
                 {
-                    m33conf.vshcpuspeed = 100;
-                    m33conf.vshbusspeed = 50;
+                    config.vshcpuspeed = 100;
+                    config.vshbusspeed = 50;
                 }
-                else if(m33conf.vshcpuspeed == 222)
+                else if(config.vshcpuspeed == 222)
                 {
-                    m33conf.vshcpuspeed = 133;
-                    m33conf.vshbusspeed = 66;    
+                    config.vshcpuspeed = 133;
+                    config.vshbusspeed = 66;    
                 }
-                else if(m33conf.vshcpuspeed == 266)
+                else if(config.vshcpuspeed == 266)
                 {
-                    m33conf.vshcpuspeed = 222;
-                    m33conf.vshbusspeed = 111;    
+                    config.vshcpuspeed = 222;
+                    config.vshbusspeed = 111;    
                 }
-                else if(m33conf.vshcpuspeed == 300)
+                else if(config.vshcpuspeed == 300)
                 {
-                    m33conf.vshcpuspeed = 266;
-                    m33conf.vshbusspeed = 133;    
+                    config.vshcpuspeed = 266;
+                    config.vshbusspeed = 133;    
                 }
-                else if(m33conf.vshcpuspeed == 333)
+                else if(config.vshcpuspeed == 333)
                 {
-                    m33conf.vshcpuspeed = 300;
-                    m33conf.vshbusspeed = 150;
+                    config.vshcpuspeed = 300;
+                    config.vshbusspeed = 150;
                 }
             }
         }
@@ -1221,98 +1226,98 @@ void vshmenu()
         {
             if(new_pad & PSP_CTRL_RIGHT)
             {
-                if(m33conf.gamecpuspeed == 0)
+                if(config.gamecpuspeed == 0)
                 {
-                    m33conf.gamecpuspeed = 20;
-                    m33conf.gamebusspeed = 10;
+                    config.gamecpuspeed = 20;
+                    config.gamebusspeed = 10;
                 }
-                else if(m33conf.gamecpuspeed == 20)
+                else if(config.gamecpuspeed == 20)
                 {
-                    m33conf.gamecpuspeed = 75;
-                    m33conf.gamebusspeed = 37;    
+                    config.gamecpuspeed = 75;
+                    config.gamebusspeed = 37;    
                 }
-                else if(m33conf.gamecpuspeed == 75)
+                else if(config.gamecpuspeed == 75)
                 {
-                    m33conf.gamecpuspeed = 100;
-                    m33conf.gamebusspeed = 50;    
+                    config.gamecpuspeed = 100;
+                    config.gamebusspeed = 50;    
                 }
-                else if(m33conf.gamecpuspeed == 100)
+                else if(config.gamecpuspeed == 100)
                 {
-                    m33conf.gamecpuspeed = 133;
-                    m33conf.gamebusspeed = 66;    
+                    config.gamecpuspeed = 133;
+                    config.gamebusspeed = 66;    
                 }
-                else if(m33conf.gamecpuspeed == 133)
+                else if(config.gamecpuspeed == 133)
                 {
-                    m33conf.gamecpuspeed = 222;
-                    m33conf.gamebusspeed = 111;
+                    config.gamecpuspeed = 222;
+                    config.gamebusspeed = 111;
                 }
-                else if(m33conf.gamecpuspeed == 222)
+                else if(config.gamecpuspeed == 222)
                 {
-                    m33conf.gamecpuspeed = 266;
-                    m33conf.gamebusspeed = 133;    
+                    config.gamecpuspeed = 266;
+                    config.gamebusspeed = 133;    
                 }
-                else if(m33conf.gamecpuspeed == 266)
+                else if(config.gamecpuspeed == 266)
                 {
-                    m33conf.gamecpuspeed = 300;
-                    m33conf.gamebusspeed = 150;    
+                    config.gamecpuspeed = 300;
+                    config.gamebusspeed = 150;    
                 }
-                else if(m33conf.gamecpuspeed == 300)
+                else if(config.gamecpuspeed == 300)
                 {
-                    m33conf.gamecpuspeed = 333;
-                    m33conf.gamebusspeed = 166;    
+                    config.gamecpuspeed = 333;
+                    config.gamebusspeed = 166;    
                 }
-                else if(m33conf.gamecpuspeed == 333)
+                else if(config.gamecpuspeed == 333)
                 {
-                    m33conf.gamecpuspeed = 0;
-                    m33conf.gamebusspeed = 0;    
+                    config.gamecpuspeed = 0;
+                    config.gamebusspeed = 0;    
                 }                    
             }
             if(new_pad & PSP_CTRL_LEFT)
             {
-                if(m33conf.gamecpuspeed == 0)
+                if(config.gamecpuspeed == 0)
                 {
-                    m33conf.gamecpuspeed = 333;
-                    m33conf.gamebusspeed = 166;
+                    config.gamecpuspeed = 333;
+                    config.gamebusspeed = 166;
                 }
-                else if(m33conf.gamecpuspeed == 20)
+                else if(config.gamecpuspeed == 20)
                 {
-                    m33conf.gamecpuspeed = 0;
-                    m33conf.gamebusspeed = 0;
+                    config.gamecpuspeed = 0;
+                    config.gamebusspeed = 0;
                 }
-                else if(m33conf.gamecpuspeed == 75)
+                else if(config.gamecpuspeed == 75)
                 {
-                    m33conf.gamecpuspeed = 20;
-                    m33conf.gamebusspeed = 10;    
+                    config.gamecpuspeed = 20;
+                    config.gamebusspeed = 10;    
                 }
-                else if(m33conf.gamecpuspeed == 100)
+                else if(config.gamecpuspeed == 100)
                 {
-                    m33conf.gamecpuspeed = 75;
-                    m33conf.gamebusspeed = 37;    
+                    config.gamecpuspeed = 75;
+                    config.gamebusspeed = 37;    
                 }
-                else if(m33conf.gamecpuspeed == 133)
+                else if(config.gamecpuspeed == 133)
                 {
-                    m33conf.gamecpuspeed = 100;
-                    m33conf.gamebusspeed = 50;
+                    config.gamecpuspeed = 100;
+                    config.gamebusspeed = 50;
                 }
-                else if(m33conf.gamecpuspeed == 222)
+                else if(config.gamecpuspeed == 222)
                 {
-                    m33conf.gamecpuspeed = 133;
-                    m33conf.gamebusspeed = 66;    
+                    config.gamecpuspeed = 133;
+                    config.gamebusspeed = 66;    
                 }
-                else if(m33conf.gamecpuspeed == 266)
+                else if(config.gamecpuspeed == 266)
                 {
-                    m33conf.gamecpuspeed = 222;
-                    m33conf.gamebusspeed = 111;    
+                    config.gamecpuspeed = 222;
+                    config.gamebusspeed = 111;    
                 }
-                else if(m33conf.gamecpuspeed == 300)
+                else if(config.gamecpuspeed == 300)
                 {
-                    m33conf.gamecpuspeed = 266;
-                    m33conf.gamebusspeed = 133;    
+                    config.gamecpuspeed = 266;
+                    config.gamebusspeed = 133;    
                 }
-                else if(m33conf.gamecpuspeed == 333)
+                else if(config.gamecpuspeed == 333)
                 {
-                    m33conf.gamecpuspeed = 300;
-                    m33conf.gamebusspeed = 150;
+                    config.gamecpuspeed = 300;
+                    config.gamebusspeed = 150;
                 }
             }
         }
@@ -1320,26 +1325,26 @@ void vshmenu()
         {
             if(new_pad & PSP_CTRL_RIGHT)
             {
-                if(m33conf.usbdevice >= 5) m33conf.usbdevice = 0;
-                else m33conf.usbdevice++;
+                if(config.usbdevice >= 5) config.usbdevice = 0;
+                else config.usbdevice++;
             }
             if(new_pad & PSP_CTRL_LEFT)
             {
-                if(m33conf.usbdevice <= 0) m33conf.usbdevice = 5;
-                else m33conf.usbdevice--;
+                if(config.usbdevice <= 0) config.usbdevice = 5;
+                else config.usbdevice--;
             }
         }
         if(sel == 3)
         {
             if(new_pad & PSP_CTRL_RIGHT)
             {
-                if(m33conf.umdmode >= 3) m33conf.umdmode = 0;
-                else m33conf.umdmode++;
+                if(config.umdmode >= 3) config.umdmode = 0;
+                else config.umdmode++;
             }
             if(new_pad & PSP_CTRL_LEFT)
             {
-                if(m33conf.umdmode <= 0) m33conf.umdmode = 3;
-                else m33conf.umdmode--;
+                if(config.umdmode <= 0) config.umdmode = 3;
+                else config.umdmode--;
             }
         }
         if((new_pad & PSP_CTRL_RIGHT || new_pad & PSP_CTRL_LEFT) && sel == 4)
@@ -1350,7 +1355,7 @@ void vshmenu()
             }
             else
             {
-                m33conf.usbcharge = !m33conf.usbcharge;   
+                config.usbcharge = !config.usbcharge;   
             }
         }
         if((new_pad & PSP_CTRL_RIGHT || new_pad & PSP_CTRL_LEFT) && sel == 5)
@@ -1466,7 +1471,7 @@ void vshmenu()
     button = 0;
 
     uvmSetConfig(&uvmconf);
-    sctrlSESetConfig(&m33conf);
+    sctrlSESetConfig(&config);
 
     if(batsel != 3 && batsel != batchanged)
     {
@@ -1514,7 +1519,7 @@ void vshmenu()
     configchanged = 0;
 
     sprintf(string, "ms0:/ISO/VIDEO/%s", getvideo[counter].video);
-    vctrlVSHExitVSHMenu(&m33conf, !counter ? NULL : string, !counter ? NULL : 0x20);
+    vctrlVSHExitVSHMenu(&config, !counter ? NULL : string, !counter ? NULL : 0x20);
 }
 
 void message(char* msg)
@@ -1613,11 +1618,11 @@ int main_thread(SceSize args, void* argp)
 
 int module_start(SceSize args, void* argp)
 {
-    if(sceKernelInitKeyConfig() != PSP_INIT_KEYCONFIG_VSH) return -1;
+    if(sceKernelInitKeyConfig() != PSP_CTRL_SELECT) return -1;
     if(sceKernelDevkitVersion() < 0x05000010 || sceKernelDevkitVersion() > 0x05050010) return -1;
 
     uvmGetConfig(&uvmconf);
-    sctrlSEGetConfig(&m33conf);
+    sctrlSEGetConfig(&config);
     ReadConf();
 
     sceRtcGetCurrentTick(&firsttick);
