@@ -31,7 +31,3 @@
 	STUB_START "sceVshCommonGui",0x00090011,0x00010005
 	STUB_FUNC  0x8D157BBD,sceVshCommonGuiBottomDialog
 	STUB_END
-
-	STUB_START "SystemCtrlForUser",0x40090000,0x00010005
-    STUB_FUNC  0x1C90BECB,sctrlHENSetStartModuleHandler
-    STUB_END

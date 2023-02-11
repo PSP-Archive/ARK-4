@@ -1,0 +1,3 @@
+[submodule "contrib/PC/PSvid"]
+	path = contrib/PC/PSvid
+	url = https://github.com/krazynez/PSvid

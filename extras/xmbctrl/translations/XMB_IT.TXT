@@ -1,0 +1,13 @@
+Configurazione di Custom Firmware
+Amministratore di Plugins
+Ricarica USB
+Overclock
+Risparmio energetico
+Caricamento automatico di menu personalizzato
+Disabilita la funzione di pausa su PSP Go
+Forza memoria aggiuntiva
+Accelerazione di Memory Stick
+Cache di Inferno
+Correggi gli plugins classici su PSP Go
+Saltare gli logos di Sony
+Nascondere PIC0 e PIC1

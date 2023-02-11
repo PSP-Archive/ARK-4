@@ -62,13 +62,11 @@ enum
 	UNKNOWN
 };
 
+// region code for idsRegeneration
 int region_change = 0;
 
-int count = 0;
-int key_start = 0;
-
+// umdman.prx key buffer
 static void* umd_buf = NULL;
-static int (*IdStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
 
 int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pfuseid)
 {
@@ -196,15 +194,16 @@ int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pf
     return 0;
 }
 
+// generate new UMD keys using idsRegeneration and inject into umdman
 static int replace_umd_keys(){
 
     int res = -1;
 
     // allocate memory buffer
     SceUID memid = sceKernelAllocPartitionMemory(2, "idsBuffer", PSP_SMEM_High, 512*0x20, NULL);
-    void* big_buffer = sceKernelGetBlockHeadAddr(memid);
+    if (memid < 0) goto fake_ids_end;
 
-    if (memid < 0 || big_buffer == NULL) goto fake_ids_end;
+	void* big_buffer = sceKernelGetBlockHeadAddr(memid);
 
     // load and start idsRegeneration module
     char path[ARK_PATH_SIZE];
@@ -245,7 +244,7 @@ static int replace_umd_keys(){
 	if (res < 0) goto fake_ids_end;
 
     // copy the generated UMD keys to the buffer in umdman
-    memcpy(umd_buf, big_buffer+(512*key_start), 512*count);
+    memcpy(umd_buf, big_buffer+(512*2), 512*5);
     flushCache();
 
 	res = 0;
@@ -258,26 +257,22 @@ static int replace_umd_keys(){
     return res;
 }
 
+static int (*_idStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
 static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
-    if (offset == 0 && len==512){ // obtain buffer where UMD keys are stored in umdman.prx
-        if (umd_buf == NULL){
-			umd_buf = buf;
-			key_start = key-0x100; // should be 2
-		}
-		count++; // should end up being 5
+	// obtain buffer where UMD keys are stored in umdman.prx
+    if (offset == 0 && key == 0x102){
+		umd_buf = buf;
 	}
-    return IdStorageLookup(key, offset, buf, len); // passthrough
+    return _idStorageLookup(key, offset, buf, len); // passthrough
 }
 
 void patch_umd_idslookup(SceModule2* mod){
     // this patch allows us to obtain the buffer where umdman stores the UMD keys
-    IdStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
-    if (mod){
-        hookImportByNID(mod, "sceIdStorage_driver", 0x6FE062D1, &fakeIdStorageLookupForUmd);
-    }
+    _idStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
+    hookImportByNID(mod, "sceIdStorage_driver", 0x6FE062D1, &fakeIdStorageLookupForUmd);
 }
 
-void patch_vsh_main_region(SceModule2* mod){
+void patch_vsh_region_check(SceModule2* mod){
 	// patch to remove region check in VSH
 	hookImportByNID(mod, "sceVshBridge", 0x5C2983C2, 1);
 }

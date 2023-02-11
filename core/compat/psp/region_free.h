@@ -9,6 +9,6 @@ extern int region_change;
 
 void patch_umd_idslookup(SceModule2* mod);
 int patch_umd_thread(SceSize args, void *argp);
-void patch_vsh_main_region(SceModule2* mod);
+void patch_vsh_region_check(SceModule2* mod);
 
 #endif

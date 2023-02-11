@@ -44,8 +44,8 @@ ArkConf ark_config;
     "Game", \
     "UMD/ISO", \
     "Homebrew", \
-    "Pops", \
-    "VSH" \
+    "PS1", \
+    "XMB" \
 }
 
 static struct {
@@ -251,16 +251,16 @@ static unsigned char runlevelConvert(string runlevel, string enable){
     else if (strcasecmp(runlevel.c_str(), "game") == 0){
         return GAME_ONLY;
     }
-    else if (strcasecmp(runlevel.c_str(), "umd") == 0){
+    else if (strcasecmp(runlevel.c_str(), "umd") == 0 || strcasecmp(runlevel.c_str(), "psp") == 0){
         return UMD_ONLY;
     }
     else if (strcasecmp(runlevel.c_str(), "homebrew") == 0){
         return HOMEBREW_ONLY;
     }
-    else if (strcasecmp(runlevel.c_str(), "pops") == 0){
+    else if (strcasecmp(runlevel.c_str(), "pops") == 0  || strcasecmp(runlevel.c_str(), "psx") == 0 || strcasecmp(runlevel.c_str(), "ps1") == 0){
         return POPS_ONLY;
     }
-    else if (strcasecmp(runlevel.c_str(), "vsh") == 0){
+    else if (strcasecmp(runlevel.c_str(), "vsh") == 0 || strcasecmp(runlevel.c_str(), "xmb") == 0){
         return VSH_ONLY;
     }
     return CUSTOM;

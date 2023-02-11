@@ -3,6 +3,7 @@
 # ArkFast updater script by Yoti for ARK-4 project
 # 2022-09-06: initial release
 # 2022-09-06: fix kexploit -1
+# 2023-10-02: update version
 
 #sudo apt update
 #sudo apt install zip unzip -y
@@ -41,6 +42,7 @@ mv -f ARK_01234.zip ../ArkFast_tmp/resources/ARK_01234.zip
 cd ..
 rm -rf ARK4_tmp/
 cd ArkFast_tmp/
+sed -i 's/ARK-2/ARK-4/g' script.lua
 zip -r ../ArkFast_new.vpk .
 cd ..
 rm -rf ArkFast_tmp/

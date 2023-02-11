@@ -35,6 +35,7 @@
 #include "include/settings.h"
 
 #include "list.h"
+#include "settings.h"
 #include "plugins.h"
 
 PSP_MODULE_INFO("XmbControl", 0x0007, 1, 5);
@@ -81,8 +82,8 @@ char* ark_settings_options[] = {
     (char*)"Game",
     (char*)"UMD/ISO",
     (char*)"Homebrew",
-    (char*)"Pops",
-    (char*)"VSH"
+    (char*)"PS1",
+    (char*)"XMB"
 };
 
 char* ark_plugins_options[] = {
@@ -121,7 +122,7 @@ int unload = 0;
 u32 backup[4];
 int context_mode = 0;
 
-char user_buffer[512];
+char user_buffer[2*LINE_BUFFER_SIZE];
 
 STMOD_HANDLER previous;
 CFWConfig config;
@@ -313,7 +314,11 @@ void OnInitMenuPspConfigPatched()
             int i;
             for(i = 0; i < N_ITEMS; i++)
             {
-                AddSysconfContextItem(GetItemes[i].item, NULL, GetItemes[i].item);
+                if (( psp_model == PSP_1000 && ( i == 0 || i == 4 || i == 5 || i == 8 )) ||
+                        (( psp_model != PSP_GO && ( i == 4 || i == 8 ) )))
+                    continue;
+                else
+                    AddSysconfContextItem(GetItemes[i].item, NULL, GetItemes[i].item);
             }
         }
     }
@@ -632,12 +637,13 @@ int sceVshCommonGuiBottomDialogPatched(void *a0, void *a1, void *a2, int (* canc
 
 void PatchVshMain(u32 text_addr, u32 text_size)
 {
-    int patches = 14;
+    int patches = 13;
     u32 scePafGetText_call = _lw(&scePafGetText);
     for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
         u32 data = _lw(addr);
-        if (data == 0x00A21826){
-            AddVshItem = (void*)addr-88;
+        if (data == 0x00063100){
+            AddVshItem = U_EXTRACT_CALL(addr+12);
+            MAKE_CALL(addr + 12, AddVshItemPatched);
             patches--;
         }
         else if (data == 0x3A14000F){
@@ -667,10 +673,6 @@ void PatchVshMain(u32 text_addr, u32 text_size)
         }
         else if (data == 0x8E050038){
             MAKE_CALL(addr + 4, ExecuteActionPatched);
-            patches--;
-        }
-        else if (data == 0x00063100){
-            MAKE_CALL(addr + 12, AddVshItemPatched);
             patches--;
         }
         else if (data == 0xAC520124){

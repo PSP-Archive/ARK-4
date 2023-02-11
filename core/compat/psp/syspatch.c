@@ -321,7 +321,7 @@ void PSPOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "vsh_module") == 0){
         if (region_change){
-            patch_vsh_main_region(mod);
+            patch_vsh_region_check(mod);
             goto flush;
         }
     }

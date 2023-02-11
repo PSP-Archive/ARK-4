@@ -33,7 +33,9 @@ as well as unique and exclusive new features not found anywhere else.
 
 - `Custom game launcher` with built-in game categories, file browser, FTP server and client, modernized look and more.
 
-- Fully configurable via the `XMB`and `Recovery`.
+- Fully configurable via the `XMB`.
+
+- Improved and powerful `Recovery` app.
 
 - Compatible with `PRO Online` and `Xlink Kai`.
 
