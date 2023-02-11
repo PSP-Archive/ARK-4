@@ -21,6 +21,7 @@ GameManager::GameManager(){
     self = this;
     
     this->use_categories = true;
+    this->scanning = true;
 
     // initialize the categories
     this->selectedCategory = -2;
@@ -118,6 +119,8 @@ Menu* GameManager::getMenu(EntryType t){
 
 void GameManager::findEntries(){
 
+    this->scanning = true;
+
     int ms_is_ef = sctrlKernelMsIsEf();
 
     // clear entries
@@ -163,6 +166,8 @@ void GameManager::findEntries(){
         if (!this->categories[i]->empty())
             this->selectedCategory = i;
     }
+
+    this->scanning = false;
 }
 
 void GameManager::findEboots(const char* path){ 

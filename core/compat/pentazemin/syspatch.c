@@ -120,9 +120,20 @@ int memcmp_patched(const void *b1, const void *b2, size_t len) {
 void PatchMemlmd() {
 	SceModule2 *mod = sceKernelFindModuleByName("sceMemlmd");
 	u32 text_addr = mod->text_addr;
+	u32 text_size = mod->text_size;
 
 	// Allow 6.61 kernel modules
+	/*
+	for (u32 addr=text_addr; addr<text_addr+text_size; addr+=4){
+		if (_lw(addr) == 0x7C8326C0){
+			MAKE_CALL(addr + 84, memcmp_patched);
+			break;
+		}
+	}
+	*/
 	MAKE_CALL(text_addr + 0x2C8, memcmp_patched);
+	
+	flushCache();
 }
 
 int ReadFile(char *file, void *buf, int size) {
@@ -299,11 +310,10 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
 	if (DisplaySetFrameBuf){
-        initScreen(DisplaySetFrameBuf);
-        PRTSTR1("Cur Mod ID: %p", modid);
-		if (mod) PRTSTR1("Cur Mod Name", mod->modname);
-		if (lastmod) PRTSTR1("Last mod: %s", lastmod->modname);
 		if (mod == NULL || modid < 0){
+			initScreen(DisplaySetFrameBuf);
+    	    PRTSTR1("Cur Mod ID: %p", modid);
+			if (lastmod) PRTSTR1("Last mod: %s", lastmod->modname);
 			while(1){};
 		}
 	}
