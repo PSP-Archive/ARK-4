@@ -93,6 +93,7 @@ Use `-h` or `--help` to show all available flags
   - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
   - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
   - Some features are not available to Vita users, mainly the official Sony `XMB` and `PS1` games.
+  - The kernel exploit is known to have stability issues, if it fails or crashes, simply restart your Vita and try again.
 
 </p>
 </details>
