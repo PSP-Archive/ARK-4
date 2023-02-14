@@ -144,6 +144,47 @@ void Browser::update(){
     else if (Entry::isRar(this->get()->getPath().c_str())){
         extractArchive(1);
     }
+    else if (Entry::isPRX(this->get()->getPath().c_str())){
+        installPlugin();
+    }
+}
+
+void Browser::installPlugin(){
+    Entry* e = this->get();
+    char* description = "Install Plugin";
+    t_options_entry options_entries[] = {
+        {OPTIONS_CANCELLED, "Cancel"},
+        {0, "Always"},
+        {1, "Game"},
+        {2, "POPS (PS1)"},
+        {3, "VSH (XMB)"},
+        {4, "UMD/ISO"},
+        {5, "Homebrew"},
+    };
+
+    optionsmenu = new OptionsMenu(description, sizeof(options_entries)/sizeof(t_options_entry), options_entries);
+    int ret = optionsmenu->control();
+    OptionsMenu* aux = optionsmenu;
+    optionsmenu = NULL;
+    delete aux;
+
+    if (ret == OPTIONS_CANCELLED) return;
+
+    char* modes[] = {"always", "game", "ps1", "xmb", "psp", "homebrew"};
+    char* plugins_txt = "ms0:/seplugins/plugins.txt";
+    string plugin = e->getPath();
+    if (plugin[0] == 'e' && plugin[1] == 'f'){
+        plugins_txt[0] = 'e';
+        plugins_txt[1] = 'f';
+    }
+
+    int fd = sceIoOpen(plugins_txt, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+    sceIoWrite(fd, "\n", 1);
+    sceIoWrite(fd, modes[ret], strlen(modes[ret]));
+    sceIoWrite(fd, ", ", 2);
+    sceIoWrite(fd, plugin.c_str(), plugin.size());
+    sceIoWrite(fd, ", on\n", 5);
+    sceIoClose(fd);
 }
 
 void Browser::extractArchive(int type){
