@@ -195,6 +195,15 @@ void Browser::installPlugin(){
         if (osk_res == OSK_CANCEL) return;
     }
 
+    progress_desc[0] = "Installing Plugin";
+    progress_desc[1] = "";
+    progress_desc[2] = "";
+    progress_desc[3] = "";
+    progress_desc[4] = "";
+    progress = 0;
+    max_progress = 1;
+    draw_progress = true;
+
     char* plugins_txt = "ms0:/seplugins/plugins.txt";
     string plugin = e->getPath();
     if (plugin[0] == 'e' && plugin[1] == 'f'){
@@ -209,6 +218,8 @@ void Browser::installPlugin(){
     sceIoWrite(fd, plugin.c_str(), plugin.size());
     sceIoWrite(fd, ", on\n", 5);
     sceIoClose(fd);
+
+    draw_progress = false;
 }
 
 void Browser::extractArchive(int type){
