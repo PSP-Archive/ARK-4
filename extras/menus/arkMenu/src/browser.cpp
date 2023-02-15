@@ -180,7 +180,6 @@ void Browser::installPlugin(){
     else{
         SystemMgr::pauseDraw();
         OSK osk;
-
         osk.init("Game ID (i.e. ULUS01234)", "", 50);
         osk.loop();
         int osk_res = osk.getResult();

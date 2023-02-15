@@ -265,6 +265,9 @@ void common::loadData(int ac, char** av){
 
     argc = ac;
     argv = av;
+
+    sceUtilityLoadModule(PSP_MODULE_AV_AVCODEC);
+    sceUtilityLoadModule(PSP_MODULE_AV_MP3);
     
     animations[0] = new PixelAnim();
     animations[1] = new Waves();
