@@ -1,5 +1,5 @@
-TARGET          = VSHMENU
-OBJS            = main.o
+TARGET          = test
+OBJS            = main2.o
 
 ARKROOT ?= $(CURDIR)/../../../
 
@@ -13,15 +13,18 @@ ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
 endif
 
+PRX_EXPORTS		= exports.exp
+
 PSP_FW_VERSION = 500
+
 BUILD_PRX       = 1
-PRX_EXPORTS     = exports.exp
 
 #USE_KERNEL_LIBC = 1
 #USE_KERNEL_LIBS = 1
 
-LIBDIR = $(ARKROOT)/libs ./lib #../../xmbctrl/lib #$(ARKROOT)/libs/KUBridge 
-LIBS            = -lpspsystemctrl_kernel -lpspsystemctrl_user -lpspdisplay -lpsprtc_driver -lpspreg_driver #-lpspvshctrl #-lpspkubridge    
+LIBDIR = . $(ARKROOT)/libs ../../xmbctrl/lib
+LIBS            = -lpspsystemctrl_kernel -lpspvshctrl -lpspdebug #-lpspvshctrl
+
 
 PSPSDK          = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build_prx.mak
