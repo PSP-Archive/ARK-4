@@ -160,6 +160,7 @@ void Browser::installPlugin(){
         {3, "VSH (XMB)"},
         {4, "UMD/ISO"},
         {5, "Homebrew"},
+        {6, "<Game ID>"}
     };
 
     optionsmenu = new OptionsMenu(description, sizeof(options_entries)/sizeof(t_options_entry), options_entries);
@@ -170,7 +171,30 @@ void Browser::installPlugin(){
 
     if (ret == OPTIONS_CANCELLED) return;
 
-    char* modes[] = {"always", "game", "ps1", "xmb", "psp", "homebrew"};
+    string mode;
+
+    if (ret < 6){
+        char* modes[] = {"always", "game", "ps1", "xmb", "psp", "homebrew"};
+        mode = modes[ret];
+    }
+    else{
+        SystemMgr::pauseDraw();
+        OSK osk;
+
+        osk.init("Game ID (i.e. ULUS01234)", "", 50);
+        osk.loop();
+        int osk_res = osk.getResult();
+        if(osk_res != OSK_CANCEL)
+        {
+            char tmpText[51];
+            osk.getText((char*)tmpText);
+            mode = tmpText;
+        }
+        osk.end();
+        SystemMgr::resumeDraw();
+        if (osk_res == OSK_CANCEL) return;
+    }
+
     char* plugins_txt = "ms0:/seplugins/plugins.txt";
     string plugin = e->getPath();
     if (plugin[0] == 'e' && plugin[1] == 'f'){
@@ -180,7 +204,7 @@ void Browser::installPlugin(){
 
     int fd = sceIoOpen(plugins_txt, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
     sceIoWrite(fd, "\n", 1);
-    sceIoWrite(fd, modes[ret], strlen(modes[ret]));
+    sceIoWrite(fd, mode.c_str(), mode.size());
     sceIoWrite(fd, ", ", 2);
     sceIoWrite(fd, plugin.c_str(), plugin.size());
     sceIoWrite(fd, ", on\n", 5);
