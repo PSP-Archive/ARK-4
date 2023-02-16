@@ -37,7 +37,7 @@ SUBDIRS = libs \
 	extras/menus/recovery \
 	extras/menus/xMenu \
 	extras/menus/vshmenu \
-	extras/menus/ultimatevsh \
+	extras/menus/advancedvsh \
 	extras/xmbctrl \
 	extras/usbdevice \
 	extras/idsregeneration
@@ -73,7 +73,7 @@ copy-bin:
 	$(Q)cp extras/xmbctrl/translations/XMB_*.TXT dist/ARK_01234/ # XMB Control translation files
 	$(Q)cp extras/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
 	$(Q)cp extras/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
-	$(Q)cp extras/menus/ultimatevsh/satelite.prx dist/UltimateVSH/VSHMENU.PRX # Ultimate VSH Menu
+	$(Q)cp extras/menus/advancedvsh/satelite.prx dist/AdvancedVSH/VSHMENU.PRX # Advanced VSH Menu
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)cp contrib/README.TXT dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
@@ -128,7 +128,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
-	$(Q)$(MAKE) $@ -C extras/menus/ultimatevsh
+	$(Q)$(MAKE) $@ -C extras/menus/advancedvsh
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
 	$(Q)$(MAKE) $@ -C extras/xmbctrl
@@ -172,7 +172,7 @@ mkdir-dist:
 	$(Q)mkdir dist/ARK_Live | true
 	$(Q)mkdir dist/Infinity | true
 	$(Q)mkdir dist/ARK_cIPL | true
-	$(Q)mkdir dist/UltimateVSH | true
+	$(Q)mkdir dist/AdvancedVSH | true
 	$(Q)mkdir dist/VitaBubble/easter | true
 
 -include $(ARKROOT)/.config
