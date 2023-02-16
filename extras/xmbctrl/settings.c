@@ -19,16 +19,16 @@ int runlevelConvert(char* runlevel, char* enable){
     else if (strcasecmp(runlevel, "game") == 0){
         return GAME_ONLY;
     }
-    else if (strcasecmp(runlevel, "umd") == 0){
+    else if (strcasecmp(runlevel, "umd") == 0 || strcasecmp(runlevel, "psp") == 0){
         return UMD_ONLY;
     }
     else if (strcasecmp(runlevel, "homebrew") == 0){
         return HOMEBREW_ONLY;
     }
-    else if (strcasecmp(runlevel, "pops") == 0){
+    else if (strcasecmp(runlevel, "pops") == 0 || strcasecmp(runlevel, "psx") == 0 || strcasecmp(runlevel, "ps1") == 0){
         return POPS_ONLY;
     }
-    else if (strcasecmp(runlevel, "vsh") == 0){
+    else if (strcasecmp(runlevel, "vsh") == 0 || strcasecmp(runlevel, "xmb") == 0){
         return VSH_ONLY;
     }
     return CUSTOM;

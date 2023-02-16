@@ -75,6 +75,7 @@ copy-bin:
 	$(Q)cp extras/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
 	$(Q)cp extras/menus/ultimatevsh/satelite.prx dist/UltimateVSH/VSHMENU.PRX # Ultimate VSH Menu
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
+	$(Q)cp contrib/README.TXT dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	
 encrypt-prx: \

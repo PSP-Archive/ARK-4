@@ -163,6 +163,7 @@ class Browser : public SystemEntry{
         string checkDestExists(string src, string destination, string name);
         
         void extractArchive(int type);
+        void installPlugin();
         
         void copy();
         void cut();
