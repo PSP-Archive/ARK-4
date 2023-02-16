@@ -254,7 +254,7 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 	return result;
 }
 
-static void hide_mac(void) {};
+static void convert_battery(void) {};
 
 static void exec_custom_launcher(void) {
 	char menupath[ARK_PATH_SIZE];
@@ -515,7 +515,7 @@ int TSRThread(SceSize args, void *argp)
 	} else if (stop_flag == 8) {
 		exec_custom_launcher();
 	} else if (stop_flag == 10) {
-		hide_mac();
+		convert_battery();
 	}
 
 	umdvideolist_clear(&g_umdlist);
