@@ -281,15 +281,14 @@ int menu_setup(void)
 	item_str[TMENU_USB_DEVICE] = bridge;
 
 	switch(cnf.umdmode) {
-		case MODE_MARCH33:
-			item_str[TMENU_UMD_MODE] = g_messages[MSG_MARCH33];
-			break;
 		case MODE_NP9660:
 			item_str[TMENU_UMD_MODE] = g_messages[MSG_NP9660];
 			break;
 		case MODE_INFERNO:
 			item_str[TMENU_UMD_MODE] = g_messages[MSG_INFERNO];
 			break;
+		default:
+			item_str[TMENU_UMD_MODE] = g_messages[MSG_INFERNO];
 	}
 
 	return 0;
@@ -363,17 +362,17 @@ none:
 			break;
 		case TMENU_CONVERT_BATTERY:
 			if(direction==0) {
-				return 10; // Hide MAC flag
+				return 9; // Convert Battery flag
 			}
 			break;
 		case TMENU_CUSTOM_LAUNCHER:
 			if(direction==0) {
-				return 8; // Custom Launcher menu flag
+				return 7; // Custom Launcher menu flag
 			}
 			break;
 		case TMENU_RECOVERY_MENU:
 			if(direction==0) {
-				return 6; // Recovery menu flag
+				return 8; // Recovery menu flag
 			}
 			break;
 		case TMENU_SHUTDOWN_DEVICE:			

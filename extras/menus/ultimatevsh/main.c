@@ -509,12 +509,12 @@ int TSRThread(SceSize args, void *argp)
 	} else if (stop_flag == 5) {
 		scePowerRequestSuspend();
 	} else if (stop_flag == 6) {
-		exec_recovery_menu();
-	} else if (stop_flag == 7) {
 		launch_umdvideo_mount();
-	} else if (stop_flag == 8) {
+	} else if (stop_flag == 7) {
 		exec_custom_launcher();
-	} else if (stop_flag == 10) {
+	} else if (stop_flag == 9) {
+		exec_recovery_menu();
+	} else if (stop_flag == 8) {
 		convert_battery();
 	}
 
