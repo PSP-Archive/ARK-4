@@ -519,8 +519,6 @@ int TSRThread(SceSize args, void *argp)
 		convert_battery();
 	}
 
-	vctrlSetUsbDevice(cnf.usbdevice);
-
 	umdvideolist_clear(&g_umdlist);
 	clear_language();
 	vpl_finish();
