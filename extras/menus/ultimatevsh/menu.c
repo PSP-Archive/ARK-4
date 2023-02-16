@@ -49,7 +49,8 @@ enum{
 //	TMENU_POPS_PLUGINS,
 	TMENU_RECOVERY_MENU,
 //	TMENU_USB_CHARGE,
-//	TMENU_HIDE_MAC,
+	TMENU_HIDE_MAC,
+	TMENU_CUSTOM_LAUNCHER,
 //	TMENU_SKIP_GAMEBOOT,
 //	TMENU_HIDE_PIC,
 //	TMENU_FLASH_PROT,
@@ -353,9 +354,19 @@ none:
 				return 7; // Mount UMDVideo ISO flag
 			}
 			break;
+		case TMENU_HIDE_MAC:
+			if(direction==0) {
+				return 10; // Recovery menu flag
+			}
+			break;
+		case TMENU_CUSTOM_LAUNCHER:
+			if(direction==0) {
+				return 9; // Recovery menu flag
+			}
+			break;
 		case TMENU_RECOVERY_MENU:
 			if(direction==0) {
-				return 6; // Recovery menu flag
+				return 8; // Recovery menu flag
 			}
 			break;
 		case TMENU_SHUTDOWN_DEVICE:			

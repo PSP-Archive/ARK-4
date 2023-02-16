@@ -254,6 +254,23 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 	return result;
 }
 
+static void hide_mac(void) {};
+
+static void launch_custom_launcher(void) {
+	char menupath[ARK_PATH_SIZE];
+    strcpy(menupath, ark_config->arkpath);
+    strcat(menupath, ARK_MENU);
+    
+    struct SceKernelLoadExecVSHParam param;
+    memset(&param, 0, sizeof(param));
+    param.size = sizeof(param);
+    param.args = strlen(menupath) + 1;
+    param.argp = menupath;
+    param.key = "game";
+    sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
+}
+
+
 static void launch_umdvideo_mount(void)
 {
 	SceIoStat stat;
@@ -495,6 +512,10 @@ int TSRThread(SceSize args, void *argp)
 		exec_recovery_menu();
 	} else if (stop_flag == 7) {
 		launch_umdvideo_mount();
+	} else if (stop_flag == 8) {
+		launch_custom_launcher();
+	} else if (stop_flag == 9) {
+		hide_mac();
 	}
 
 	umdvideolist_clear(&g_umdlist);
