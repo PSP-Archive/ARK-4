@@ -256,7 +256,7 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 
 static void hide_mac(void) {};
 
-static void launch_custom_launcher(void) {
+static void exec_custom_launcher(void) {
 	char menupath[ARK_PATH_SIZE];
     strcpy(menupath, ark_config->arkpath);
     strcat(menupath, ARK_MENU);
@@ -513,8 +513,8 @@ int TSRThread(SceSize args, void *argp)
 	} else if (stop_flag == 7) {
 		launch_umdvideo_mount();
 	} else if (stop_flag == 8) {
-		launch_custom_launcher();
-	} else if (stop_flag == 9) {
+		exec_custom_launcher();
+	} else if (stop_flag == 10) {
 		hide_mac();
 	}
 

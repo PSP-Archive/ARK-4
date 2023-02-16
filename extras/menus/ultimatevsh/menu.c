@@ -36,7 +36,7 @@ char freq2_buf[3+3+2] = "";
 char device_buf[13] = "";
 char umdvideo_path[256] = "";
 
-#define TMENU_MAX 11
+#define TMENU_MAX 13
 
 enum{
 	TMENU_XMB_CLOCK,
@@ -47,10 +47,10 @@ enum{
 //	TMENU_XMB_PLUGINS,
 //	TMENU_GAME_PLUGINS,
 //	TMENU_POPS_PLUGINS,
-	TMENU_RECOVERY_MENU,
+	TMENU_CUSTOM_LAUNCHER,
 //	TMENU_USB_CHARGE,
 	TMENU_HIDE_MAC,
-	TMENU_CUSTOM_LAUNCHER,
+	TMENU_RECOVERY_MENU,
 //	TMENU_SKIP_GAMEBOOT,
 //	TMENU_HIDE_PIC,
 //	TMENU_FLASH_PROT,
@@ -118,6 +118,12 @@ int menu_draw(void)
 						xPointer = pointer[7];
 					}
 					
+					break;
+				case TMENU_CUSTOM_LAUNCHER:
+					xPointer = 168;
+					break;
+				case TMENU_HIDE_MAC:
+					xPointer = 168;
 					break;
 				case TMENU_RECOVERY_MENU:
 					xPointer = 168;
@@ -356,17 +362,17 @@ none:
 			break;
 		case TMENU_HIDE_MAC:
 			if(direction==0) {
-				return 10; // Recovery menu flag
+				return 10; // Hide MAC flag
 			}
 			break;
 		case TMENU_CUSTOM_LAUNCHER:
 			if(direction==0) {
-				return 9; // Recovery menu flag
+				return 8; // Custom Launcher menu flag
 			}
 			break;
 		case TMENU_RECOVERY_MENU:
 			if(direction==0) {
-				return 8; // Recovery menu flag
+				return 6; // Recovery menu flag
 			}
 			break;
 		case TMENU_SHUTDOWN_DEVICE:			
