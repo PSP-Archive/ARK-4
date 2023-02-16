@@ -71,6 +71,7 @@ copy-bin:
 	$(Q)cp extras/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
 	$(Q)cp extras/xmbctrl/translations/XMB_*.TXT dist/ARK_01234/ # XMB Control translation files
 	$(Q)cp extras/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
+	$(Q)cp extras/menus/ultimatevsh/satelite.prx dist/UltimateVSH/VSHMENU.PRX # Ultimate VSH Menu
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	
@@ -167,6 +168,7 @@ mkdir-dist:
 	$(Q)mkdir dist/ARK_Live | true
 	$(Q)mkdir dist/Infinity | true
 	$(Q)mkdir dist/ARK_cIPL | true
+	$(Q)mkdir dist/UltimateVSH | true
 	$(Q)mkdir dist/VitaBubble/easter | true
 
 -include $(ARKROOT)/.config

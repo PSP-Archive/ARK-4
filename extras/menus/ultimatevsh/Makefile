@@ -1,27 +1,21 @@
-TARGET          = VSHMENU
-OBJS            = main.o
+TARGET = satelite
+OBJS = main.o blit.o ui.o menu.o clock.o umdvideo_list.o vpl.o trans.o trans_en.o stubkk.o
 
-ARKROOT ?= $(CURDIR)/../../../
-
+BUILD_PRX=1
 
 INCDIR = $(ARKROOT)/common/include
-CFLAGS = -std=c99 -Os -G0 -Wall
-#CFLAGS          = -Os -G0 -Wall -fshort-wchar
+CFLAGS = -Os -G0 -Wall
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
-ASFLAGS         = $(CFLAGS)
-ifdef DEBUG
-CFLAGS += -DDEBUG=$(DEBUG)
-endif
+ASFLAGS = $(CFLAGS)
 
-PSP_FW_VERSION = 500
-BUILD_PRX       = 1
-PRX_EXPORTS     = exports.exp
+PRX_EXPORTS = exports.exp
 
-#USE_KERNEL_LIBC = 1
-#USE_KERNEL_LIBS = 1
+LIBS = -lpspsystemctrl_user -lpspkubridge
+LIBDIR = . $(ARKROOT)/libs
+LDFLAGS =
 
-LIBDIR = $(ARKROOT)/libs ./lib #../../xmbctrl/lib #$(ARKROOT)/libs/KUBridge 
-LIBS            = -lpspsystemctrl_kernel -lpspsystemctrl_user -lpspdisplay -lpsprtc_driver -lpspreg_driver #-lpspvshctrl #-lpspkubridge    
+PSP_FW_VERSION = 660
+CFLAGS += -DCONFIG_660=1
 
-PSPSDK          = $(shell psp-config --pspsdk-path)
+PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build_prx.mak
