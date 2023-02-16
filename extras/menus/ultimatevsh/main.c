@@ -497,8 +497,9 @@ int TSRThread(SceSize args, void *argp)
 		button_func();
 	}
 
-	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig)))
+	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig))){
 		sctrlSESetConfig(&cnf);
+	}
 
 	if (stop_flag ==2) {
 		scePowerRequestColdReset(0);
@@ -517,6 +518,8 @@ int TSRThread(SceSize args, void *argp)
 	} else if (stop_flag == 8) {
 		convert_battery();
 	}
+
+	vctrlSetUsbDevice(cnf.usbdevice);
 
 	umdvideolist_clear(&g_umdlist);
 	clear_language();
