@@ -3,11 +3,11 @@ Gestione plugin
 Ricarica USB
 Overclock
 Risparmio energetico
-Avvio automatico launcher
+Avvio automatico del launcher
 Disattiva pausa su PSP Go
 Forza memoria aggiuntiva
 Velocizza memory stick
-Cache di Inferno
+Cache Inferno
 Correggi incompatibilità plugin su PSP Go
 Salta loghi di Sony
 Nascondi PIC0 e PIC1
