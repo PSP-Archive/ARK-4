@@ -49,8 +49,8 @@ enum{
 //	TMENU_POPS_PLUGINS,
 	TMENU_CUSTOM_LAUNCHER,
 //	TMENU_USB_CHARGE,
-	TMENU_CONVERT_BATTERY,
 	TMENU_RECOVERY_MENU,
+	TMENU_CONVERT_BATTERY,
 //	TMENU_SKIP_GAMEBOOT,
 //	TMENU_HIDE_PIC,
 //	TMENU_FLASH_PROT,
@@ -69,6 +69,8 @@ static int menu_sel = TMENU_USB_DEVICE;
 
 const int xyPoint[] ={0x98, 0x30, 0xC0, 0xA0, 0x70, 0x08, 0x0E, 0xA8};//data243C=
 const int xyPoint2[] ={0xB0, 0x30, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data2458=
+
+int is_pandora = 0;
 
 int menu_draw(void)
 {
@@ -123,7 +125,7 @@ int menu_draw(void)
 					xPointer = 168;
 					break;
 				case TMENU_CONVERT_BATTERY:
-					xPointer = 168;
+					xPointer = 100;
 					break;
 				case TMENU_RECOVERY_MENU:
 					xPointer = 168;
@@ -142,8 +144,17 @@ int menu_draw(void)
 			cur_menu = max_menu;
 			blit_string(xPointer, (pointer[5] + cur_menu)*8, msg);
 			msg = item_str[max_menu];
-
-			if(msg) {
+			if (max_menu == TMENU_CONVERT_BATTERY){
+				if (is_pandora){
+					if (is_pandora < 0) msg = "Unsuported";
+					else msg = "Pandora -> Normal";
+				}
+				else{
+					msg = "Normal -> Pandora";
+				}
+				blit_string(xPointer+0x90, (pointer[5] + cur_menu)*8, msg);
+			}
+			else if(msg) {
 				blit_set_color(item_fcolor[max_menu],bc);
 				blit_string( (pointer[6] * 8) + 128, (pointer[5] + cur_menu)*8, msg);
 			}
@@ -357,7 +368,7 @@ none:
 					strcpy(umdvideo_path, g_messages[MSG_NONE]);
 				}
 			} else {
-				return 7; // Mount UMDVideo ISO flag
+				return 6; // Mount UMDVideo ISO flag
 			}
 			break;
 		case TMENU_CONVERT_BATTERY:
