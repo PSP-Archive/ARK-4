@@ -30,7 +30,7 @@ const char *g_messages_en[] = {
 	"USB DEVICE     ",
 	"UMD ISO MODE   ",
 	"ISO VIDEO MOUNT",
-//	"CONVERT BATTERY",
+	"CONVERT BATTERY",
 	"CUSTOM LAUNCHER ->",
 	"RECOVERY MENU  ->",
 	"SHUTDOWN DEVICE",
