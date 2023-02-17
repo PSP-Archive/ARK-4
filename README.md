@@ -202,9 +202,6 @@ Another example, overclock only on games, use powersaving on VSH:
 <p>
 ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
 
-
-Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
-
 <details>
 <summary> <b> Custom Launcher Themes </b> </summary>
 <p>
@@ -248,6 +245,8 @@ Theme: BadgerOS
 ![BadgerOS](.github/wallpapers/badgerOS.png "BadgerOS")
 
 </details>
+
+Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
 
 - ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
 
