@@ -38,7 +38,7 @@ const char *g_messages_en[] = {
 	"RESET DEVICE",
 	"RESET VSH",
 	"EXIT",
-	"ARK Advanced VSH Menu",
+	" Advanced VSH Menu ",
 	"Flash",
 	"UMD Disc",
 	"Memory Stick",
