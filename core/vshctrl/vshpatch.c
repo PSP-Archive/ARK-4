@@ -401,6 +401,7 @@ static void hook_iso_directory_io(void)
 int vshpatch_init(void)
 {
     previous = sctrlHENSetStartModuleHandler(&vshpatch_module_chain);
+    patch_sceUSB_Driver();
     vpbp_init();
     hook_iso_file_io();
     hook_iso_directory_io();

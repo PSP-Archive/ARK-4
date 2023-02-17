@@ -38,6 +38,7 @@
 #define ALL_CTRL     (ALL_ALLOW|ALL_BUTTON|ALL_TRIGGER|ALL_FUNCTION)
 
 extern ARKConfig* ark_config;
+extern int cur_usbdevice;
 
 SEConfig conf;
 
@@ -74,7 +75,10 @@ int vctrlVSHExitVSHMenu(SEConfig *config, char *videoiso, int disctype)
     int ret = 0;
 
     k1 = pspSdkSetK1(0);
-    if (config) ret = vctrlVSHUpdateConfig(config);
+    if (config){
+        ret = vctrlVSHUpdateConfig(config);
+        cur_usbdevice = config->usbdevice;
+    }
 
     g_VshMenuCtrl = NULL;
     pspSdkSetK1(k1);
