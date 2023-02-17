@@ -253,9 +253,107 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 
 	return result;
 }
+/*
+u32 write_eeprom(u8 addr, u16 data)
+{
+    int res;
+    u8 param[0x60];
 
+    if(addr > 0x7F) return 0x80000102;
+
+    param[0x0C] = 0x73;
+    param[0x0D] = 5;
+    param[0x0E] = addr;
+    param[0x0F] = data;
+    param[0x10] = data >> 8;
+
+    res = sceSysconCmdExec(param, 0);
+
+    if(res < 0) return res;
+
+    return 0;
+}
+
+u32 read_eeprom(u8 addr)
+{
+    int res;
+    u8 param[0x60];
+
+    if(addr > 0x7F) return 0x80000102;
+
+    param[0x0C] = 0x74;
+    param[0x0D] = 3;
+    param[0x0E] = addr;
+
+    res = sceSysconCmdExec(param, 0);
+
+    if(res < 0) return res;
+
+    return((param[0x21] << 8) | param[0x20]);
+}
+
+int errCheck(u32 data)
+{
+    if((data & 0x80250000) == 0x80250000) return -1;
+    else if(data & 0xFFFF0000) return((data & 0xFFFF0000) >> 16);
+    return 0;
+}
+
+int ReadSerial(u16* pdata)
+{
+    int err = 0;
+    u32 data;
+
+    data = read_eeprom(0x07);
+    err = errCheck(data);
+    if(!(err < 0))
+    {
+        pdata[0] = (data & 0xFFFF);
+        data = read_eeprom(0x09);
+        err = errCheck(data);
+        if(!(err < 0)) pdata[1] = (data & 0xFFFF);
+        else err = data;
+    }
+    else err = data;
+
+    return err;
+}
+
+int WriteSerial(u16* pdata)
+{
+    int err = 0;
+
+    err = write_eeprom(0x07, pdata[0]);
+    if(!err) err = write_eeprom(0x09, pdata[1]);
+
+    return err;
+}
+*/
 static void convert_battery(void) {};
+/*	
+	extern is_pandora;
 
+	int sel = 0;
+    int batsel;
+
+    u32 baryon;
+    sceSyscon_driver_7EC5A957(&baryon);
+
+    if(sceSysreg_driver_E2A5D1EE() >= 0x00500000 && baryon >= 0x00234000) batsel = -1;
+    else
+    {
+        u16 serial[2];
+        ReadSerial(serial);
+    
+        if(serial[0] == 0xFFFF && serial[1] == 0xFFFF) batsel = 1;
+        else if(serial[0] == 0x1234 && serial[1] == 0x5678) batsel = 2;
+        else batsel = 2;
+    }
+
+    is_pandora = batsel;
+
+}
+*/
 static void exec_custom_launcher(void) {
 	char menupath[ARK_PATH_SIZE];
     strcpy(menupath, ark_config->arkpath);
@@ -513,9 +611,9 @@ int TSRThread(SceSize args, void *argp)
 		launch_umdvideo_mount();
 	} else if (stop_flag == 7) {
 		exec_custom_launcher();
-	} else if (stop_flag == 9) {
-		exec_recovery_menu();
 	} else if (stop_flag == 8) {
+		exec_recovery_menu();
+	} else if (stop_flag == 9) {
 		convert_battery();
 	}
 
