@@ -96,7 +96,8 @@ int menu_draw(void)
 
 	for(max_menu=0;max_menu<TMENU_MAX;max_menu++) {
 		fc = 0xffffff;
-		bc = (max_menu==menu_sel) ? 0xff8080 : 0xc00000ff;
+											// 0xc00000ff original
+		bc = (max_menu==menu_sel) ? 0xff8080 : 0x000000ff;
 		blit_set_color(fc,bc);
 
 		msg = g_messages[MSG_USB_DEVICE + max_menu];
