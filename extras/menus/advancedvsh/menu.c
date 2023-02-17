@@ -161,7 +161,7 @@ int menu_draw(void)
 			msg = item_str[max_menu];
 			if (max_menu == TMENU_CONVERT_BATTERY){
 				if (is_pandora){
-					if (is_pandora < 0) msg = "Unsuported";
+					if (is_pandora < 0) msg = "Unsupported";
 					else msg = "Pandora -> Normal";
 				}
 				else{
