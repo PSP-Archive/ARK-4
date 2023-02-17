@@ -44,13 +44,13 @@ enum{
 	TMENU_USB_DEVICE,
 	TMENU_UMD_MODE,
 	TMENU_UMD_VIDEO,
+	TMENU_CONVERT_BATTERY,
 //	TMENU_XMB_PLUGINS,
 //	TMENU_GAME_PLUGINS,
 //	TMENU_POPS_PLUGINS,
 	TMENU_CUSTOM_LAUNCHER,
 //	TMENU_USB_CHARGE,
 	TMENU_RECOVERY_MENU,
-	TMENU_CONVERT_BATTERY,
 //	TMENU_SKIP_GAMEBOOT,
 //	TMENU_HIDE_PIC,
 //	TMENU_FLASH_PROT,
@@ -124,9 +124,6 @@ int menu_draw(void)
 				case TMENU_CUSTOM_LAUNCHER:
 					xPointer = 168;
 					break;
-				case TMENU_CONVERT_BATTERY:
-					xPointer = 100;
-					break;
 				case TMENU_RECOVERY_MENU:
 					xPointer = 168;
 					break;
@@ -152,7 +149,7 @@ int menu_draw(void)
 				else{
 					msg = "Normal -> Pandora";
 				}
-				blit_string(xPointer+0x90, (pointer[5] + cur_menu)*8, msg);
+				blit_string(xPointer+0x80, (pointer[5] + cur_menu)*8, msg);
 			}
 			else if(msg) {
 				blit_set_color(item_fcolor[max_menu],bc);
