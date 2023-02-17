@@ -64,6 +64,7 @@ UmdVideoList g_umdlist;
 
 ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
+extern int is_pandora;
 
 int module_start(int argc, char *argv[])
 {
@@ -254,8 +255,6 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 	return result;
 }
 
-static void convert_battery(void) {};
-
 static void exec_custom_launcher(void) {
 	char menupath[ARK_PATH_SIZE];
     strcpy(menupath, ark_config->arkpath);
@@ -432,11 +431,146 @@ static void select_language(void)
 	}
 }
 
+void (*SysconGetBaryonVersion)(u32*);
+u32 (*SysregGetTachyonVersion)();
+int (*SysconCmdExec)(u8*, int);
+
+u32 write_eeprom(u8 addr, u16 data)
+{
+    int res;
+    u8 param[0x60];
+	struct KernelCallArg args;
+
+    if(addr > 0x7F) return 0x80000102;
+
+    param[0x0C] = 0x73;
+    param[0x0D] = 5;
+    param[0x0E] = addr;
+    param[0x0F] = data;
+    param[0x10] = data >> 8;
+
+	memset(&args, 0, sizeof(args));
+	args.arg1 = param;
+	kuKernelCall(SysconCmdExec, &args);
+	res = args.ret1;
+
+    if(res < 0) return res;
+
+    return 0;
+}
+
+u32 read_eeprom(u8 addr)
+{
+    int res;
+    u8 param[0x60];
+	struct KernelCallArg args;
+
+    if(addr > 0x7F) return 0x80000102;
+
+    param[0x0C] = 0x74;
+    param[0x0D] = 3;
+    param[0x0E] = addr;
+
+	memset(&args, 0, sizeof(args));
+	args.arg1 = param;
+	kuKernelCall(SysconCmdExec, &args);
+	res = args.ret1;
+
+    if(res < 0) return res;
+
+    return((param[0x21] << 8) | param[0x20]);
+}
+
+int errCheck(u32 data)
+{
+    if((data & 0x80250000) == 0x80250000) return -1;
+    else if(data & 0xFFFF0000) return((data & 0xFFFF0000) >> 16);
+    return 0;
+}
+
+int ReadSerial(u16* pdata)
+{
+    int err = 0;
+    u32 data;
+
+    data = read_eeprom(0x07);
+    err = errCheck(data);
+    if(!(err < 0))
+    {
+        pdata[0] = (data & 0xFFFF);
+        data = read_eeprom(0x09);
+        err = errCheck(data);
+        if(!(err < 0)) pdata[1] = (data & 0xFFFF);
+        else err = data;
+    }
+    else err = data;
+
+    return err;
+}
+
+int WriteSerial(u16* pdata)
+{
+    int err = 0;
+
+    err = write_eeprom(0x07, pdata[0]);
+    if(!err) err = write_eeprom(0x09, pdata[1]);
+
+    return err;
+}
+
+static void convert_battery(void) {
+	if (is_pandora < 0) return;
+
+	u16 buffer[2];
+
+	if (is_pandora){
+		buffer[0] = 0x1234;
+        buffer[1] = 0x5678;
+	}
+	else{
+		buffer[0] = 0xFFFF;
+        buffer[1] = 0xFFFF;
+	}
+	WriteSerial(buffer);
+};
+
+static void check_battery(void) {
+
+    int sel = 0;
+    int batsel;
+    u32 baryon, tachyon;
+	struct KernelCallArg args;
+
+	SysconGetBaryonVersion = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x7EC5A957);
+	SysregGetTachyonVersion = sctrlHENFindFunction("sceLowIO_Driver", "sceSysreg_driver", 0xE2A5D1EE);
+	SysconCmdExec = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x5B9ACC97);
+
+	memset(&args, 0, sizeof(args));
+	args.arg1 = &baryon;
+	kuKernelCall(SysconGetBaryonVersion, &args);
+
+	memset(&args, 0, sizeof(args));
+	kuKernelCall(SysregGetTachyonVersion, &args);
+	tachyon = args.ret1;
+
+    if(tachyon >= 0x00500000 && baryon >= 0x00234000) is_pandora = -1;
+    else
+    {   
+        u16 serial[2];
+        ReadSerial(serial);
+    
+        if(serial[0] == 0xFFFF && serial[1] == 0xFFFF) is_pandora = 1;
+        else is_pandora = 0;
+    }
+}
+
 int TSRThread(SceSize args, void *argp)
 {
 	sceKernelChangeThreadPriority(0, 8);
 	vctrlVSHRegisterVshMenu(EatKey);
 	sctrlSEGetConfig(&cnf);
+
+	check_battery();
 
 	load_recovery_font_select();
 	select_language();
@@ -513,9 +647,9 @@ int TSRThread(SceSize args, void *argp)
 		launch_umdvideo_mount();
 	} else if (stop_flag == 7) {
 		exec_custom_launcher();
-	} else if (stop_flag == 9) {
-		exec_recovery_menu();
 	} else if (stop_flag == 8) {
+		exec_recovery_menu();
+	} else if (stop_flag == 9) {
 		convert_battery();
 	}
 
