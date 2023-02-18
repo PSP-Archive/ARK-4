@@ -4,29 +4,34 @@ from tkinter import ttk
 from tkinter import messagebox as mb
 import os
 import usb
-import pyudev
 import hashlib
 import platform
+import psutil
 import requests
 import subprocess
 import shutil
-import time
 import sys
+import time
+import tempfile
 import zipfile
 
 root = tk.Tk()
 
 if platform.system() == 'Linux':
+    import pyudev
     tmp = '/tmp'
 else:
-    tmp = '%TEMP%'
+    tmp = tempfile.gettempdir()
 
 def psp() -> int:
     try:
-        product = usb.core.find(idVendor=0x054c, idProduct=0x01c8).product
-        manufacturer = usb.core.find(idVendor=0x054c, idProduct=0x01c8).manufacturer
-        if " ".join((manufacturer, product[:3])) == 'Sony PSP':
-            return 0 
+        if platform.system() == 'Linux':
+            product = usb.core.find(idVendor=0x054c, idProduct=0x01c8).product
+            manufacturer = usb.core.find(idVendor=0x054c, idProduct=0x01c8).manufacturer
+            if " ".join((manufacturer, product[:3])) == 'Sony PSP':
+                return 0 
+        else:
+            return 0
     except:
         return 1
 
@@ -94,40 +99,68 @@ def dropdown_update(val, advanced_vsh=None) -> None:
                 new_version(dropdown_val, advanced_vsh)
 
         else:
-            print('ERR: INCORRECT DRIVE!!!!')
+            err = tk.Label(root, text='ERR: INCORRECT DRIVE!!!!', fg='#f00', bg='#000')
+            err.grid(column=0, row=1)
 
 # For Refresh Button
 def _refresh(win) -> None:
     win.destroy()
-    os.execv(sys.argv[0], sys.argv)
+    if platform.system() == 'Linux':
+        os.execv(sys.argv[0], sys.argv)
+    else:
+        subprocess.call(["python", __file__])
 
 # List for Drives
 def options(win=None) -> str:
-    cmd = "lsblk|awk '/[/]run/ || /[/]media/ {print $7}'"
-    lst = subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    lst2 = lst.communicate()[0]
-    final = lst2.decode('utf-8').strip()
-    final = final.split()
-    _default = tk.StringVar()
-    _default.set('Select a Drive')
-    y = tk.Label(win, text=" "*4)
-    y.grid(column=2, row=0)
-    x = tk.Label(win, text='Drive:')
-    x.grid(column=3, row=0)
-    cb = tk.IntVar()
-    z = tk.Checkbutton(win, text='Advanced VSH Menu', variable=cb, onvalue=1, offvalue=0)
-    z.grid(column=4, row=1)
+    if platform.system() == 'Linux':
+        cmd = "lsblk|awk '/[/]run/ || /[/]media/ {print $7}'"
+        lst = subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        lst2 = lst.communicate()[0]
+        final = lst2.decode('utf-8').strip()
+        final = final.split()
+        _default = tk.StringVar()
+        _default.set('Select a Drive')
+        y = tk.Label(win, text=" "*4)
+        y.grid(column=2, row=0)
+        x = tk.Label(win, text='Drive:')
+        x.grid(column=3, row=0)
+        cb = tk.IntVar()
+        z = tk.Checkbutton(win, text='Advanced VSH Menu', variable=cb, onvalue=1, offvalue=0)
+        z.grid(column=4, row=1)
 
-    w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get()))
-    w.grid(column=4, row=0)
+        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get()))
+        w.grid(column=4, row=0)
+    else:
+        drives = win32api.GetLogicalDriveStrings()
+        final = drives.split('\x00')[:-1]
+        final.remove('C:\\')
+        _default = tk.StringVar()
+        _default.set('Select a Drive')
+        y = tk.Label(win, text=" "*4)
+        y.grid(column=2, row=0)
+        x = tk.Label(win, text='Drive:')
+        x.grid(column=3, row=0)
+        cb = tk.IntVar()
+        z = tk.Checkbutton(win, text='Advanced VSH Menu', variable=cb, onvalue=1, offvalue=0)
+        z.grid(column=4, row=1)
+
+        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get()))
+        w.grid(column=4, row=0)
+
 
 def main() -> None:
-    if platform.system() != 'Linux' or platform.system() != 'Windows':
+    if platform.system() != 'Linux' and platform.system() != 'Windows':
         print("Sorry this only works on Linux and Windows currently")
         sys.exit(1)
     if sys.version_info[0] < 3 and sys.version_info[1] < 8:
         print("Sorry this has to be run on Python 3.8+")
         sys.exit(1)
+    if platform.system() == 'Windows':
+        powershell_check = psutil.Process(os.getppid()).name()
+        if powershell_check == 'cmd.exe':
+            print('Please run this with powershell. It makes it easier for both you and I. Thanks.')
+            sys.exit(1)
+        print('Your only seeing this because you choose the wrong OS ;-)')
     print('Running...')
     root.title('ARK-4 Upgrader')
     root.geometry('800x100+50+50')
