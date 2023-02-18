@@ -16,6 +16,11 @@ import zipfile
 
 root = tk.Tk()
 
+if platform.system() == 'Linux':
+    tmp = '/tmp'
+else:
+    tmp = '%TEMP%'
+
 def psp() -> int:
     try:
         product = usb.core.find(idVendor=0x054c, idProduct=0x01c8).product
@@ -24,9 +29,6 @@ def psp() -> int:
             return 0 
     except:
         return 1
-
-def add_advanced_vsh():
-    pass
 
 def new_version(psp_path, advanced_vsh=None) -> None:
     wy = tk.Label(root, text="Copying files! Please Wait!")
@@ -49,8 +51,8 @@ def download_latest_ARK():
     download_latest = requests.get('https://github.com/PSP-Archive/ARK-4/releases/latest')
     ver = download_latest.url.split('/')[-1]
     download_file = requests.get(f'https://github.com/PSP-Archive/ARK-4/releases/download/{ver}/ARK4.zip')
-    open('/tmp/ARK4.zip', 'wb').write(download_file.content)
-    os.chdir('/tmp')
+    open(f'{tmp}/ARK4.zip', 'wb').write(download_file.content)
+    os.chdir(f'{tmp}')
     if os.path.isdir('ARK'):
         shutil.rmtree('ARK')
     os.mkdir('ARK')
@@ -74,7 +76,7 @@ def dropdown_update(val, advanced_vsh=None) -> None:
                     md5 = hashlib.md5(data).hexdigest()
                     local_version.close()
                     download_latest_ARK()
-                with open('/tmp/ARK/ARK_01234/FLASH0.ARK', 'rb') as remote_version:
+                with open(f'{tmp}/ARK/ARK_01234/FLASH0.ARK', 'rb') as remote_version:
                     r_data = remote_version.read()
                     r_md5 = hashlib.md5(r_data).hexdigest()
                     remote_version.close()
@@ -120,8 +122,8 @@ def options(win=None) -> str:
     w.grid(column=4, row=0)
 
 def main() -> None:
-    if platform.system() != 'Linux':
-        print("Sorry this only works on Linux currently")
+    if platform.system() != 'Linux' or platform.system() != 'Windows':
+        print("Sorry this only works on Linux and Windows currently")
         sys.exit(1)
     if sys.version_info[0] < 3 and sys.version_info[1] < 8:
         print("Sorry this has to be run on Python 3.8+")
