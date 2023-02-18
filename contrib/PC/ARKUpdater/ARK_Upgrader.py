@@ -21,6 +21,8 @@ if platform.system() == 'Linux':
     import pyudev
     tmp = '/tmp'
 else:
+    import win32api
+    import win32file
     tmp = tempfile.gettempdir()
 
 def psp() -> int:
