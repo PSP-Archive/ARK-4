@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox as mb
 import os
 import usb
 import pyudev
@@ -42,29 +43,37 @@ def new_version(psp_path, advanced_vsh=None) -> None:
     shutil.rmtree('ARK')
     os.remove('ARK4.zip')
 
-    wy.config(text="Done!")
+    wy.config(text="Installed!", bg="#0c0",fg="#fff")
+
+def download_latest_ARK():
+    download_latest = requests.get('https://github.com/PSP-Archive/ARK-4/releases/latest')
+    ver = download_latest.url.split('/')[-1]
+    download_file = requests.get(f'https://github.com/PSP-Archive/ARK-4/releases/download/{ver}/ARK4.zip')
+    open('/tmp/ARK4.zip', 'wb').write(download_file.content)
+    os.chdir('/tmp')
+    if os.path.isdir('ARK'):
+        shutil.rmtree('ARK')
+    os.mkdir('ARK')
+    with zipfile.ZipFile('ARK4.zip', 'r') as ARK:
+        ARK.extractall('./ARK/')
+
 
 def dropdown_update(val, advanced_vsh=None) -> None:
     dropdown_val = val
     if dropdown_val is not None:
         os.chdir(dropdown_val)
-        if os.path.isdir('PSP') and os.path.isdir('SEPLUGINS'):
+        if os.path.isdir('PSP') and os.path.isdir('SEPLUGINS') or os.path.isdir('psp') and os.path.isdir('seplugins'):
+            if not os.path.exists('./PSP/SAVEDATA/ARK_01234'):
+                install = mb.askquestion('ARK does not seem to be installed', 'Would you like to install it?')
+                if install == 'no':
+                    root.destroy()
             if os.path.exists('./PSP/SAVEDATA/ARK_01234'):
                 os.chdir('./PSP/SAVEDATA/ARK_01234')
                 with open('FLASH0.ARK', 'rb') as local_version:
                     data = local_version.read()
                     md5 = hashlib.md5(data).hexdigest()
                     local_version.close()
-                download_latest = requests.get('https://github.com/PSP-Archive/ARK-4/releases/latest')
-                ver = download_latest.url.split('/')[-1]
-                download_file = requests.get(f'https://github.com/PSP-Archive/ARK-4/releases/download/{ver}/ARK4.zip')
-                open('/tmp/ARK4.zip', 'wb').write(download_file.content)
-                os.chdir('/tmp')
-                if os.path.isdir('ARK'):
-                    shutil.rmtree('ARK')
-                os.mkdir('ARK')
-                with zipfile.ZipFile('ARK4.zip', 'r') as ARK:
-                    ARK.extractall('./ARK/')
+                    download_latest_ARK()
                 with open('/tmp/ARK/ARK_01234/FLASH0.ARK', 'rb') as remote_version:
                     r_data = remote_version.read()
                     r_md5 = hashlib.md5(r_data).hexdigest()
@@ -78,6 +87,10 @@ def dropdown_update(val, advanced_vsh=None) -> None:
                     wx = tk.Label(root, text="You have the latest version available.", bg='#0c0', fg='#fff')
                     wx.grid(column=0, row=1)
                     return
+            elif install == 'yes':
+                download_latest_ARK()
+                new_version(dropdown_val, advanced_vsh)
+
         else:
             print('ERR: INCORRECT DRIVE!!!!')
 
