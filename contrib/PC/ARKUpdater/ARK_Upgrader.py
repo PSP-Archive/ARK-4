@@ -70,7 +70,7 @@ def dropdown_update(val, advanced_vsh=None) -> None:
                     r_md5 = hashlib.md5(r_data).hexdigest()
                     remote_version.close()
 
-                if md5 == r_md5:
+                if md5 != r_md5:
                     wx = tk.Label(root, text="Newer version available", bg="#0c0",fg="#fff")
                     wx.grid(column=0, row=1, padx=10)
                     new_version(dropdown_val, advanced_vsh)
