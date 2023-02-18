@@ -155,6 +155,10 @@ bool Entry::isRar(const char* path){
     return (common::getMagic(path, 0) == RAR_MAGIC);
 }
 
+bool Entry::isPRX(const char* path){
+    return (common::getExtension(path) == "prx");
+}
+
 Entry::~Entry(){
 }
 

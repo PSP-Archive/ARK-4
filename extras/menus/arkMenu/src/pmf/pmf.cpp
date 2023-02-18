@@ -176,9 +176,7 @@ void pmfInit() {
     static u8 ringbuf[215200]; // use static buffer
 
     int status = 0;
-    status |= sceUtilityLoadModule(PSP_MODULE_AV_AVCODEC);
     status |= sceUtilityLoadModule(PSP_MODULE_AV_ATRAC3PLUS);
-    status |= sceUtilityLoadModule(PSP_MODULE_AV_MP3);
     status |= sceUtilityLoadModule(PSP_MODULE_AV_MPEGBASE);
     status |= sceUtilityLoadModule(PSP_MODULE_AV_VAUDIO);
     
@@ -284,9 +282,7 @@ SceVoid pmfShutdown()
     
     sceUtilityUnloadModule(PSP_MODULE_AV_VAUDIO);
     sceUtilityUnloadModule(PSP_MODULE_AV_MPEGBASE);
-    sceUtilityUnloadModule(PSP_MODULE_AV_MP3);
     sceUtilityUnloadModule(PSP_MODULE_AV_ATRAC3PLUS);
-    sceUtilityUnloadModule(PSP_MODULE_AV_AVCODEC);
     
     if (m_pEsBufferAtrac  != NULL) free(m_pEsBufferAtrac);
     //if (m_RingbufferData  != NULL) free(m_RingbufferData); // This crashes....double free or corruption?

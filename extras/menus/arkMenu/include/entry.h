@@ -86,6 +86,7 @@ class Entry{
         
         static bool isZip(const char* path);
         static bool isRar(const char* path);
+        static bool isPRX(const char* path);
         
         static bool cmpEntriesForSort (Entry* i, Entry* j);
         

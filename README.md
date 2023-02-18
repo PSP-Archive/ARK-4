@@ -93,6 +93,7 @@ Use `-h` or `--help` to show all available flags
   - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
   - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
   - Some features are not available to Vita users, mainly the official Sony `XMB` and `PS1` games.
+  - The kernel exploit is known to have stability issues, if it fails or crashes, simply restart your Vita and try again.
 
 </p>
 </details>
@@ -201,9 +202,6 @@ Another example, overclock only on games, use powersaving on VSH:
 <p>
 ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
 
-
-Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
-
 <details>
 <summary> <b> Custom Launcher Themes </b> </summary>
 <p>
@@ -247,6 +245,8 @@ Theme: BadgerOS
 ![BadgerOS](.github/wallpapers/badgerOS.png "BadgerOS")
 
 </details>
+
+Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
 
 - ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
 

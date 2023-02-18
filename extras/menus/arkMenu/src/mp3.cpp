@@ -92,9 +92,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     int status;
 
-    sceUtilityLoadModule(PSP_MODULE_AV_AVCODEC);
-    sceUtilityLoadModule(PSP_MODULE_AV_MP3);
-
     eof = 0;
     bufferCounter = 0;
 
