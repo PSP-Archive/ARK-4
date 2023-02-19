@@ -278,6 +278,12 @@ settings_entry* ark_conf_entries_go[] = {
 };
 #define MAX_ARK_CONF_GO (sizeof(ark_conf_entries_go)/sizeof(ark_conf_entries_go[0]))
 
+settings_entry* ark_conf_entries_vita[] = {
+    (settings_entry*)&mscache,
+    (settings_entry*)&infernocache,
+};
+#define MAX_ARK_CONF_VITA (sizeof(ark_conf_entries_vita)/sizeof(ark_conf_entries_vita[0]))
+
 
 std::vector<string> custom_config;
 
@@ -399,19 +405,29 @@ static void processLine(string line){
 
 void loadSettings(){
 
-    int psp_model = common::getPspModel();
-    if (psp_model == PSP_1000){
-        ark_conf_entries = ark_conf_entries_1k;
-        ark_conf_max_entries = MAX_ARK_CONF_1K;
-    }
-    else if (psp_model == PSP_GO){
-        ark_conf_entries = ark_conf_entries_go;
-        ark_conf_max_entries = MAX_ARK_CONF_GO;
+    ARKConfig* ark_config = common::getArkConfig();
+
+    if (IS_VITA(ark_config)){
+        ark_conf_entries = ark_conf_entries_vita;
+        ark_conf_max_entries = MAX_ARK_CONF_VITA;
     }
     else{
-        ark_conf_entries = ark_conf_entries_slim;
-        ark_conf_max_entries = MAX_ARK_CONF_SLIM;
+        int psp_model = common::getPspModel();
+        if (psp_model == PSP_1000){
+            ark_conf_entries = ark_conf_entries_1k;
+            ark_conf_max_entries = MAX_ARK_CONF_1K;
+        }
+        else if (psp_model == PSP_GO){
+            ark_conf_entries = ark_conf_entries_go;
+            ark_conf_max_entries = MAX_ARK_CONF_GO;
+        }
+        else{
+            ark_conf_entries = ark_conf_entries_slim;
+            ark_conf_max_entries = MAX_ARK_CONF_SLIM;
+        }
     }
+
+    
 
     std::ifstream input("SETTINGS.TXT");
     for( std::string line; getline( input, line ); ){
