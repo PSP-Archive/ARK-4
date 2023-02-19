@@ -86,6 +86,7 @@ namespace common{
     extern ARKConfig* getArkConfig();
     extern int getArgc();
     extern char** getArgv();
+    extern int getPspModel();
     extern struct tm getDateTime();
     extern bool has_suffix(const std::string &str, const std::string &suffix);
     SceOff findPkgOffset(const char* filename, unsigned* size = NULL);

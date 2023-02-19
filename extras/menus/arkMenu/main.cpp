@@ -36,10 +36,15 @@ int main(int argc, char** argv){
     // initialize FTP client driver for file browser
     Browser::ftp_driver = new FTPDriver();
 
-    // Setup System Apps
-    entries[4] = new ExitManager();
-    entries[3] = new SettingsMenu(settings_entries, MAX_SETTINGS_OPTIONS, common::saveConf);
-    entries[2] = new FTPManager();
+    int n_entries = 2;
+
+    // Setup FTP App
+    if (common::getPspModel() != PSP_11000){
+        entries[n_entries++] = new FTPManager();
+    }
+    // Setup settings and exit
+    entries[n_entries++] = new SettingsMenu(settings_entries, MAX_SETTINGS_OPTIONS, common::saveConf);
+    entries[n_entries++] = new ExitManager();
 
     // Setup main App (Game or Browser)
     if (common::getConf()->main_menu == 0){
@@ -53,7 +58,7 @@ int main(int argc, char** argv){
     }
     
     // Initialize Menu
-    SystemMgr::initMenu(entries, MAX_ENTRIES);
+    SystemMgr::initMenu(entries, n_entries);
 
     // Handle control to Menu
     SystemMgr::startMenu();

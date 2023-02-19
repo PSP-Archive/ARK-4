@@ -29,21 +29,17 @@ typedef BrowserFile File;
 typedef BrowserFolder Folder;
 
 #define MAX_OPTIONS 10
-static const struct {
-        int x;
-        int y;
-        char* name;
-} pEntries[MAX_OPTIONS] = {
-    {10, 80, "Cancel"},
-    {10, 100, "Copy"},
-    {10, 120, "Cut"},
-    {10, 140, "Paste"},
-    {10, 160, "Delete"},
-    {10, 180, "Rename"},
-    {10, 200, "New Folder"},
-    {10, 220, "Go to ms0:/"},
-    {10, 240, "Go to ef0:/"},
-    {10, 260, "Go to ftp:/"}
+static char* pEntries[MAX_OPTIONS] = {
+    (char*) "Cancel",
+    (char*) "Copy",
+    (char*) "Cut",
+    (char*) "Paste",
+    (char*) "Delete",
+    (char*) "Rename",
+    (char*) "New Folder",
+    (char*) "Go to ms0:/",
+    (char*) "Go to ef0:/",
+    (char*) "Go to ftp:/",
 };
 
 BrowserDriver* Browser::ftp_driver = NULL;
@@ -71,6 +67,15 @@ Browser::Browser(){
     this->optionsAnimY = 0;
     this->pEntryIndex = 0;
     this->animation = 0;
+
+    int psp_model = common::getPspModel();
+    if (psp_model != PSP_GO){
+        pEntries[EF0_DIR] = NULL;
+    }
+    if (psp_model == PSP_11000 || ftp_driver == NULL){
+        pEntries[FTP_DIR] = NULL;
+    }
+
     this->refreshDirs();
 }
 
@@ -1015,11 +1020,17 @@ void Browser::drawOptionsMenu(){
             optionsAnimY = 52;
             common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 132, 220);
         
+            {
+            int x = 10;
+            int y = 80;
             for (int i=0; i<MAX_OPTIONS; i++){
+                if (pEntries[i] == NULL) continue;
                 if (i == pEntryIndex)
-                    common::printText(pEntries[i].x, pEntries[i].y, pEntries[i].name, LITEGRAY, SIZE_BIG, true);
+                    common::printText(x, y, pEntries[i], LITEGRAY, SIZE_BIG, true);
                 else
-                    common::printText(pEntries[i].x, pEntries[i].y, pEntries[i].name);
+                    common::printText(x, y, pEntries[i]);
+                y += 20;
+            }
             }
             break;
         case 3: // draw closing animation
@@ -1051,21 +1062,25 @@ void Browser::optionsMenu(){
         
         if (pad->down()){
             common::playMenuSound();
-            if (pEntryIndex < MAX_OPTIONS-1){
-                pEntryIndex++;
-            }
-            else{
-                pEntryIndex = 0;
-            }
+            do {
+                if (pEntryIndex < MAX_OPTIONS-1){
+                    pEntryIndex++;
+                }
+                else{
+                    pEntryIndex = 0;
+                }
+            } while (pEntries[pEntryIndex] == NULL);
         }
         else if (pad->up()){
             common::playMenuSound();
-            if (pEntryIndex > 0){
-                pEntryIndex--;
-            }
-            else{
-                pEntryIndex = MAX_OPTIONS-1;
-            }
+            do {
+                if (pEntryIndex > 0){
+                    pEntryIndex--;
+                }
+                else{
+                    pEntryIndex = MAX_OPTIONS-1;
+                }
+            } while (pEntries[pEntryIndex] == NULL);
         }
         else if (pad->decline() || pad->LT()){
             pEntryIndex = 0;
@@ -1094,16 +1109,16 @@ void Browser::options(){
     this->optionsMenu();
 
     switch (pEntryIndex){
-    case NO_MODE:                                                     break;
-    case COPY:        this->copy();                                   break;
-    case CUT:         this->cut();                                    break;
-    case PASTE:       this->paste();                                  break;
-    case DELETE:      this->removeSelection();                        break;
-    case RENAME:      this->rename();                                 break;
-    case MKDIR:       this->makedir();                                break;
+    case NO_MODE:                                                      break;
+    case COPY:        this->copy();                                    break;
+    case CUT:         this->cut();                                     break;
+    case PASTE:       this->paste();                                   break;
+    case DELETE:      this->removeSelection();                         break;
+    case RENAME:      this->rename();                                  break;
+    case MKDIR:       this->makedir();                                 break;
     case MS0_DIR:     this->cwd = ROOT_DIR;     this->refreshDirs();   break;
-    case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;
     case FTP_DIR:     this->cwd = FTP_ROOT;     this->refreshDirs();   break;
+    case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;
     }
 }
         
