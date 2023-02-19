@@ -216,6 +216,7 @@ static struct {
     {"Default", "Japan", "America", "Europe"}
 };
 
+/*
 settings_entry* ark_conf_entries[] = {
     (settings_entry*)&usbcharge,
     (settings_entry*)&overclock,
@@ -230,8 +231,53 @@ settings_entry* ark_conf_entries[] = {
     (settings_entry*)&hidepics,
     (settings_entry*)&regionchange,
 };
-
 #define MAX_ARK_CONF (sizeof(ark_conf_entries)/sizeof(ark_conf_entries[0]))
+*/
+
+int ark_conf_max_entries = 0;
+settings_entry** ark_conf_entries = NULL;
+
+settings_entry* ark_conf_entries_1k[] = {
+    (settings_entry*)&overclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&launcher,
+    (settings_entry*)&mscache,
+    (settings_entry*)&infernocache,
+    (settings_entry*)&skiplogos,
+    (settings_entry*)&hidepics,
+    (settings_entry*)&regionchange,
+};
+#define MAX_ARK_CONF_1K (sizeof(ark_conf_entries_1k)/sizeof(ark_conf_entries_1k[0]))
+
+settings_entry* ark_conf_entries_slim[] = {
+    (settings_entry*)&usbcharge,
+    (settings_entry*)&overclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&launcher,
+    (settings_entry*)&highmem,
+    (settings_entry*)&mscache,
+    (settings_entry*)&infernocache,
+    (settings_entry*)&skiplogos,
+    (settings_entry*)&hidepics,
+    (settings_entry*)&regionchange,
+};
+#define MAX_ARK_CONF_SLIM (sizeof(ark_conf_entries_slim)/sizeof(ark_conf_entries_slim[0]))
+
+settings_entry* ark_conf_entries_go[] = {
+    (settings_entry*)&usbcharge,
+    (settings_entry*)&overclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&launcher,
+    (settings_entry*)&disablepause,
+    (settings_entry*)&highmem,
+    (settings_entry*)&mscache,
+    (settings_entry*)&infernocache,
+    (settings_entry*)&oldplugin,
+    (settings_entry*)&skiplogos,
+    (settings_entry*)&hidepics,
+};
+#define MAX_ARK_CONF_GO (sizeof(ark_conf_entries_go)/sizeof(ark_conf_entries_go[0]))
+
 
 std::vector<string> custom_config;
 
@@ -352,6 +398,21 @@ static void processLine(string line){
 }
 
 void loadSettings(){
+
+    int psp_model = common::getPspModel();
+    if (psp_model == PSP_1000){
+        ark_conf_entries = ark_conf_entries_1k;
+        ark_conf_max_entries = MAX_ARK_CONF_1K;
+    }
+    else if (psp_model == PSP_GO){
+        ark_conf_entries = ark_conf_entries_go;
+        ark_conf_max_entries = MAX_ARK_CONF_GO;
+    }
+    else{
+        ark_conf_entries = ark_conf_entries_slim;
+        ark_conf_max_entries = MAX_ARK_CONF_SLIM;
+    }
+
     std::ifstream input("SETTINGS.TXT");
     for( std::string line; getline( input, line ); ){
         if (isComment(line)){
