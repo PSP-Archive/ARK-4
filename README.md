@@ -71,6 +71,7 @@ Use `-h` or `--help` to show all available flags
 - Install `ARK_Live` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
 - To `update ARK` simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
+- Optionally install `Advanced VSH Menu` for extra features by copying `VSHMENU.PRX` into `ARK_01234` savedata folder.
 
 <details>
   <summary> <b> Live CFW </b> </summary>
