@@ -19,14 +19,22 @@
 
 #ifdef REBOOTEX
 #define END_BUF_STR "ApplyPspRelSection"
+#ifdef MS_IPL
+#include "syscon.h"
+#endif
 #else
 #define END_BUF_STR "StopBoot"
 #define SYSCON_CTRL_RTRG 0x00000400
 
 ARKConfig _arkconf = {
     .magic = ARK_CONFIG_MAGIC,
+#ifndef MS_IPL
     .arkpath = "ms0:/PSP/SAVEDATA/ARK_01234/", // default path for ARK files
     .exploit_id = "cIPL",
+#else
+    .arkpath = ARK_DC_PATH "/ARK_01234/", // default path for ARK files
+    .exploit_id = "DC",
+#endif
     .launcher = {0},
     .exec_mode = PSP_ORIG, // run ARK in PSP mode
     .recovery = 0,
@@ -215,11 +223,19 @@ u32 findRebootFunctions(u32 reboot_start){
 int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7) __attribute__((section(".text.startup")));
 int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7)
 {
-
     #ifdef DEBUG
     colorDebug(0xff00);
     #endif
     
+#if defined(REBOOTEX) && defined(MS_IPL)
+    // GPIO enable
+	REG32(0xbc10007c) |= 0xc8;
+	__asm("sync"::);
+	
+	sceSysconInit();
+	sceSysconCtrlMsPower(1);
+#endif
+
 #ifdef PAYLOADEX
     u32 ctrl = _lw(BOOT_KEY_BUFFER);
 

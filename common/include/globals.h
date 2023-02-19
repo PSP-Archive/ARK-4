@@ -112,6 +112,8 @@ typedef struct ARKConfig{
 #define ARK_CONFIG_MAGIC 0xB00B1E55
 #define LIVE_EXPLOIT_ID "Live" // default loader name
 #define DEFAULT_ARK_PATH "ms0:/PSP/SAVEDATA/ARK_01234/" // default path for ARK files
+#define ARK_DC_PATH "ms0:/TM/DCARK"
+#define TM_PATH_W L"\\TM\\DCARK\\"
 
 #define IS_PSP(ark_config) ((ark_config->exec_mode&DEV_MASK)==PSP_ORIG)
 #define IS_VITA(ark_config) ((ark_config->exec_mode&DEV_MASK)==PS_VITA)

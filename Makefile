@@ -28,6 +28,11 @@ SUBDIRS = libs \
 	loader/live/kernel/idstorage_dumper \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
+	loader/dc/msipl/payloadex \
+	loader/dc/msipl/mainbinex \
+	loader/dc/tmctrl/rebootex \
+	loader/dc/tmctrl \
+	loader/dc/installer \
 	loader/perma/cipl/payloadex \
 	loader/perma/cipl/mainbinex \
 	loader/perma/cipl/combine \
@@ -59,6 +64,9 @@ copy-bin:
 	$(Q)cp loader/live/kernel/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
 	$(Q)cp loader/live/kernel/kxploit/dummy/K.BIN dist/ARK_01234/K.BIN # Dummy Kernel exploit
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
+	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/ # ARK DC installer
+	$(Q)cp loader/dc/installer/EBOOT.PBP dist/ARK_DC/ # ARK DC installer
+	$(Q)cp dist/FLASH0.ARK dist/ARK_DC/
 	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/ARK_cIPL/EBOOT.PBP
 	$(Q)cp loader/perma/cipl/installer/kpspident/kpspident.prx dist/ARK_cIPL/kpspident.prx
 	$(Q)cp contrib/PSP/GAME/ARK_cIPL/ipl_update.prx dist/ARK_cIPL/ipl_update.prx
@@ -138,6 +146,11 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/combine
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer/kpspident
+	$(Q)$(MAKE) $@ -C loader/dc/msipl/mainbinex
+	$(Q)$(MAKE) $@ -C loader/dc/msipl/payloadex
+	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex
+	$(Q)$(MAKE) $@ -C loader/dc/tmctrl
+	$(Q)$(MAKE) $@ -C loader/dc/installer
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -rf common/utils/*.o
 	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
@@ -164,6 +177,7 @@ mkdir-dist:
 	$(Q)mkdir dist/VitaBubble | true
 	$(Q)mkdir dist/ARK_Live | true
 	$(Q)mkdir dist/Infinity | true
+	$(Q)mkdir dist/ARK_DC | true
 	$(Q)mkdir dist/ARK_cIPL | true
 	$(Q)mkdir dist/VitaBubble/easter | true
 
