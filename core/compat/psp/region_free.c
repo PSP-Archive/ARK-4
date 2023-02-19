@@ -65,6 +65,9 @@ enum
 // region code for idsRegeneration
 int region_change = 0;
 
+// fake region for VSH
+int vshregion = 0;
+
 // umdman.prx key buffer
 static void* umd_buf = NULL;
 
@@ -282,4 +285,52 @@ int patch_umd_thread(SceSize args, void *argp){
     replace_umd_keys(); // replace UMD keys
     sceKernelExitDeleteThread(0);
     return 0;
+}
+
+static u8 get_pscode_from_region(int region)
+{
+	u8 code;
+
+	code = region;
+	
+	if(code < 12) {
+		code += 2;
+	} else {
+		code -= 11;
+	}
+
+	if(code == 2) {
+		code = 3;
+	}
+
+	printk("%s: region %d code %d\n", __func__, region, code);
+
+	return code;
+}
+
+static int _sceChkregGetPsCode(u8 *pscode)
+{
+	pscode[0] = 1;
+	pscode[1] = 0;
+	pscode[2] = get_pscode_from_region(vshregion);
+	pscode[3] = 0;
+	pscode[4] = 1;
+	pscode[5] = 0;
+	pscode[6] = 1;
+	pscode[7] = 0;
+
+	return 0;
+}
+
+void patch_sceChkreg(void)
+{
+	u32 fp;
+   
+	// sceChkregGetPsCode
+	fp = sctrlHENFindFunction("sceChkreg", "sceChkreg_driver", 0x59F8491D); 
+
+	if (fp) {
+		_sw(JUMP(_sceChkregGetPsCode), fp);
+        _sw(NOP, fp+4);
+	}
 }

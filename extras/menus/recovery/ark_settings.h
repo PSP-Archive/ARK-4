@@ -32,6 +32,7 @@ typedef struct {
     unsigned char oldplugin;
     unsigned char skiplogos;
     unsigned char regionchange;
+    unsigned char vshregion;
     unsigned char hidepics;
 }ArkConf;
 
@@ -216,6 +217,20 @@ static struct {
     {"Default", "Japan", "America", "Europe"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[14];
+} vshregion = {
+    "VSH Region Change",
+    14,
+    0,
+    &(ark_config.vshregion),
+    {"Default", "Japan", "America", "Europe", "Korea", "UK", "Mexico", "Australia", "Hong Kong", "Taiwan", "Russia", "China", "Debug I", "Debug II"}
+};
+
 /*
 settings_entry* ark_conf_entries[] = {
     (settings_entry*)&usbcharge,
@@ -246,6 +261,7 @@ settings_entry* ark_conf_entries_1k[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&regionchange,
+    (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_1K (sizeof(ark_conf_entries_1k)/sizeof(ark_conf_entries_1k[0]))
 
@@ -260,6 +276,7 @@ settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&regionchange,
+    (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_SLIM (sizeof(ark_conf_entries_slim)/sizeof(ark_conf_entries_slim[0]))
 
@@ -275,6 +292,7 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&oldplugin,
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
+    (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_GO (sizeof(ark_conf_entries_go)/sizeof(ark_conf_entries_go[0]))
 
@@ -360,6 +378,10 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "region_eu") == 0){
         ark_config.regionchange = REGION_EUROPE;
+    }
+    else if (strncasecmp(conf.c_str(), "fakeregion_", 11) == 0){
+        int r = atoi(conf.c_str()+11);
+        ark_config.vshregion = r;
     }
     return NULL;
 }
@@ -477,6 +499,12 @@ void saveSettings(){
         case REGION_EUROPE:
             output << "vsh, region_eu, on" << endl;
             break;
+    }
+
+    if (ark_config.vshregion > 0){
+        char tmp[10];
+        snprintf(tmp, 10, "%d", ark_config.vshregion);
+        output << "vsh, fakeregion_" << tmp << ", on" << endl;
     }
 
     for (int i=0; i<custom_config.size(); i++){

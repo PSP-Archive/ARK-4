@@ -4,6 +4,8 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
+#include <cstdio>
+#include <cstdlib>
 #include "gfx.h"
 #include "debug.h"
 #include "common.h"
