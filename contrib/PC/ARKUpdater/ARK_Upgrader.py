@@ -40,6 +40,7 @@ def psp() -> int:
 def new_version(psp_path, advanced_vsh=None) -> None:
     wy = tk.Label(root, text="Copying files! Please Wait!")
     wy.grid(column=1, row=1)
+    root.update()
 
     os.chdir('ARK')
 
@@ -67,7 +68,7 @@ def download_latest_ARK():
         ARK.extractall('./ARK/')
 
 
-def dropdown_update(val, advanced_vsh=None) -> None:
+def dropdown_update(val, advanced_vsh=None, force_upgrade=None) -> None:
     dropdown_val = val
     if dropdown_val is not None:
         os.chdir(dropdown_val)
@@ -88,21 +89,27 @@ def dropdown_update(val, advanced_vsh=None) -> None:
                     r_md5 = hashlib.md5(r_data).hexdigest()
                     remote_version.close()
 
-                if md5 != r_md5:
+                if md5 != r_md5 or force_upgrade == 1:
                     wx = tk.Label(root, text="Newer version available", bg="#0c0",fg="#fff")
                     wx.grid(column=0, row=1, padx=10)
-                    new_version(dropdown_val, advanced_vsh)
+                    root.update()
+                    root.after(3000, new_version(dropdown_val, advanced_vsh))
                 else:
                     wx = tk.Label(root, text="You have the latest version available.", bg='#0c0', fg='#fff')
                     wx.grid(column=0, row=1)
                     return
             elif install == 'yes':
                 download_latest_ARK()
-                new_version(dropdown_val, advanced_vsh)
+                root.update()
+                root.after(3000, new_version(dropdown_val, advanced_vsh))
 
         else:
             err = tk.Label(root, text='ERR: INCORRECT DRIVE!!!!', fg='#f00', bg='#000')
             err.grid(column=0, row=1)
+
+# For Close Button
+def _close(win) -> None:
+    win.destroy()
 
 # For Refresh Button
 def _refresh(win) -> None:
@@ -127,10 +134,13 @@ def options(win=None) -> str:
         x = tk.Label(win, text='Drive:')
         x.grid(column=3, row=0)
         cb = tk.IntVar()
+        f_cb = tk.IntVar()
         z = tk.Checkbutton(win, text='Advanced VSH Menu', variable=cb, onvalue=1, offvalue=0)
-        z.grid(column=4, row=1)
+        z.grid(column=4, row=1, sticky="w")
+        force = tk.Checkbutton(win, text='Force Upgrade', variable=f_cb, onvalue=1, offvalue=0)
+        force.grid(column=4, row=2, sticky="w")
 
-        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get()))
+        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get()))
         w.grid(column=4, row=0)
     else:
         drives = win32api.GetLogicalDriveStrings()
@@ -143,10 +153,13 @@ def options(win=None) -> str:
         x = tk.Label(win, text='Drive:')
         x.grid(column=3, row=0)
         cb = tk.IntVar()
+        f_cb = tk.IntVar()
         z = tk.Checkbutton(win, text='Advanced VSH Menu', variable=cb, onvalue=1, offvalue=0)
-        z.grid(column=4, row=1)
+        z.grid(column=4, row=1, sticky="w")
+        force = tk.Checkbutton(win, text='Force Upgrade', variable=f_cb, onvalue=1, offvalue=0)
+        force.grid(column=4, row=2, sticky="w")
 
-        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get()))
+        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get()))
         w.grid(column=4, row=0)
 
 
@@ -165,15 +178,22 @@ def main() -> None:
         print('Your only seeing this because you choose the wrong OS ;-)')
     print('Running...')
     root.title('ARK-4 Upgrader')
-    root.geometry('800x100+50+50')
+    root.geometry('800x150+50+50')
     check = psp()
     frame = ttk.Frame(root)
     frame.grid(column=0, row=0)
     refresh_btn = ttk.Frame(root)
     refresh_btn.grid(column=1, row=0)
+    close_but = ttk.Frame(root)
+    close_but.grid(column=4, row=3)
+    def_text = tk.Label(root, text="Select options (if wanted)\nthen select a Drive to Start", bg="#ff1", padx=10)
+    def_text.grid(column=0, row=1)
 
     refresh = tk.Button(refresh_btn, text='Refresh Devices', command=lambda: _refresh(root))
     refresh.pack()
+
+    close = tk.Button(close_but, text='Close', command=lambda: _close(root))
+    close.pack()
 
     if check == 0:
         psp_detected = tk.Label(frame, text="PSP DETECTED!")
