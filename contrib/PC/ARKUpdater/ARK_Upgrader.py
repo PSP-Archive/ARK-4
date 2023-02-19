@@ -68,7 +68,8 @@ def download_latest_ARK():
         ARK.extractall('./ARK/')
 
 
-def dropdown_update(val, advanced_vsh=None, force_upgrade=None) -> None:
+def dropdown_update(val, advanced_vsh=None, force_upgrade=None, def_text=None) -> None:
+    def_text.destroy()
     dropdown_val = val
     if dropdown_val is not None:
         os.chdir(dropdown_val)
@@ -120,7 +121,7 @@ def _refresh(win) -> None:
         subprocess.call(["python", __file__])
 
 # List for Drives
-def options(win=None) -> str:
+def options(win=None, def_text=None) -> str:
     if platform.system() == 'Linux':
         cmd = "lsblk|awk '/[/]run/ || /[/]media/ {print $7}'"
         lst = subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -140,7 +141,7 @@ def options(win=None) -> str:
         force = tk.Checkbutton(win, text='Force Upgrade', variable=f_cb, onvalue=1, offvalue=0)
         force.grid(column=4, row=2, sticky="w")
 
-        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get()))
+        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get(), def_text))
         w.grid(column=4, row=0)
     else:
         drives = win32api.GetLogicalDriveStrings()
@@ -159,7 +160,7 @@ def options(win=None) -> str:
         force = tk.Checkbutton(win, text='Force Upgrade', variable=f_cb, onvalue=1, offvalue=0)
         force.grid(column=4, row=2, sticky="w")
 
-        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get()))
+        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get(), def_text))
         w.grid(column=4, row=0)
 
 
@@ -199,7 +200,7 @@ def main() -> None:
         psp_detected = tk.Label(frame, text="PSP DETECTED!")
         psp_detected.pack(pady=2, padx=5)
     
-        options(root)
+        options(root, def_text)
 
 
     else:
