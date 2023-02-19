@@ -947,6 +947,43 @@ static int has_prometheus_module(VirtualPBP *vpbp)
     return ret;
 }
 
+static int has_update_file(VirtualPBP* vpbp, char* update_file){
+    // game ID is always at offset 0x8373 within the ISO
+    int lba = 16;
+    int pos = 883;
+
+    char game_id[10];
+
+    isoOpen(vpbp->name);
+    isoRead(game_id, lba, pos, 10);
+    isoClose();
+
+    // remove the dash in the middle: ULUS-01234 -> ULUS01234
+    game_id[4] = game_id[5];
+    game_id[5] = game_id[6];
+    game_id[6] = game_id[7];
+    game_id[7] = game_id[8];
+    game_id[8] = game_id[9];
+    game_id[9] = 0;
+
+    // try to find the update file
+    char path[256];
+    char* devs[] = {"ms0:", "ef0:"};
+
+    for (int i=0; i<2; i++){
+        sprintf(path, "%s/PSP/GAME/%s/PBOOT.PBP", devs[i], game_id);
+        int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+        if (fd >= 0){
+            // found
+            sceIoClose(fd);
+            strcpy(update_file, path);
+            return 1;
+        }
+    }
+    // not found
+    return 0;
+}
+
 typedef struct _pspMsPrivateDirent {
     SceSize size;
     char s_name[16];
@@ -1082,8 +1119,11 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
             apitype = 0x125;
         }
     }
-
-    if (has_prometheus_module(vpbp)) {
+    static char update_file[256];
+    if (has_update_file(vpbp, update_file)){
+        param->argp = update_file;
+    }
+    else if (has_prometheus_module(vpbp)) {
         param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
     } else {
         param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
