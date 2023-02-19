@@ -70,7 +70,10 @@ Use `-h` or `--help` to show all available flags
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Install `ARK_Live` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
-- To `update ARK` simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
+
+##### Update ARK
+- Update ARK using either [ARKUpgrader](https://github.com/PSP-Archive/ARK-4/tree/main/contrib/PC/ARKUpdater) or  
+simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
 - Optionally install `Advanced VSH Menu` for extra features by copying `VSHMENU.PRX` into `ARK_01234` savedata folder.
 
 <details>
@@ -102,6 +105,7 @@ Use `-h` or `--help` to show all available flags
   - Works on all PSP models on 6.60 or 6.61 firmwares.
   - Place the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
   - Install `Infinity` using Official Firmware.
+  - Run ARK Live to make sure your using ARK to run Infinity a second time.
   - Run `Infinity` a second time to configure autoboot.
 
 </p>
