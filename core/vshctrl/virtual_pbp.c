@@ -1056,6 +1056,9 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         return -31;
     }
 
+    // get ISO path with non-latin1 support
+    get_ISO_shortname(vpbp->name, sizeof(vpbp->name), vpbp->name);
+
     //set iso file for reboot
     sctrlSESetUmdFile(vpbp->name);
 

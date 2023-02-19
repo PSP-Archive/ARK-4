@@ -180,34 +180,30 @@ int ownstrtol(const char * str, int * res)
     return result;
 }
 
-// Missing Libc Function strcasecmp (needed for stricmp to work)
-int strcasecmp(const char * a, const char * b)
+int strncasecmp(const char *s1, const char *s2, size_t n)
 {
-    // Pointer Equality
-    if(a == b) return 0;
-    
-    // NULL Pointer
-    if(a == NULL || b == NULL) return -1;
-    
-    // Comparison Position
-    unsigned int i = 0;
-    
-    // Compare Character
-    while(1)
-    {
-        // Calculate Difference
-        int diff = tolower(a[i]) - tolower(b[i]);
-        
-        // Difference Detected
-        if(diff != 0) return diff;
-        
-        // End of String Detected
-        if(a[i] == 0) break;
-        
-        // Move Position
-        i++;
-    }
-    
-    // Equal Strings
-    return 0;
+	const unsigned char *p1 = (const unsigned char *) s1;
+	const unsigned char *p2 = (const unsigned char *) s2;
+	unsigned char c1, c2;
+
+	if (p1 == p2 || n == 0)
+		return 0;
+
+	do {
+		c1 = tolower(*p1);
+		c2 = tolower(*p2);
+
+		if (--n == 0 || c1 == '\0')
+			break;
+
+		++p1;
+		++p2;
+	} while (c1 == c2);
+
+	return c1 - c2;
+}
+
+int strcasecmp(const char *s1, const char *s2)
+{
+	return strncasecmp(s1, s2, (size_t)-1);
 }
