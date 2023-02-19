@@ -22,7 +22,7 @@ OBJS = \
 
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common $(ARKROOT)
-CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
+CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic -fshort-wchar -mno-check-zero-division
 
 CFLAGS += -I $(ARKROOT)/common/include/ -I $(ARKROOT)/core/systemctrl/include/ -I $(ARKROOT)/libs/graphics/
 
