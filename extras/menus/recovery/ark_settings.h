@@ -228,7 +228,7 @@ static struct {
     14,
     0,
     &(ark_config.vshregion),
-    {"Default", "Japan", "America", "Europe", "Korea", "UK", "Mexico", "Australia", "Hong Kong", "Taiwan", "Russia", "China", "Debug I", "Debug II"}
+    {"Default", "Japan", "America", "Europe", "Korea", "United Kingdom", "Latin America", "Australia", "Hong Kong", "Taiwan", "Russia", "China", "Debug I", "Debug II"}
 };
 
 /*
