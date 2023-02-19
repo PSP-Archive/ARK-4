@@ -132,10 +132,11 @@ Use `-h` or `--help` to show all available flags
 <p>
 
 - Considering the savedata exploit loads H.BIN from the savedata path.
-- Copy the following files from ARK_01234 savedata folder into game exploit folder:
-- H.BIN, ARK.BIN, ARK4.BIN FLASH0.ARK, VBOOT.PBP, RECOVERY.PBP, THEME.ARK and other extras.
+- Copy every file from `ARK_01234` except `PARAM.SFO`, `SAVEDATA.BIN` and `K.BIN` (`ICON0.PNG` can also be ignored), into the hacked savedata folder.
 - You need to have a `K.BIN` if you are running on an ancient Vita firmware (there's plenty of kernel exploit sources in ARK-2 and ARK-3 for reference).
-
+- Run the game and trigger the exploit as normal, it should load ARK.
+- If you have issues with stability, it might be necessary to run `freemem()` algorithm in the kernel exploit file (`K.BIN`).
+  
 </p>
 </details>
 
