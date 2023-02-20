@@ -120,7 +120,7 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
 
   - Works on 3.60 up to 3.74, either with or without Henkaku/h-encore.
   - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended. `Minis` are `NOT` recommended.
-  - For Henkaku/h-encore users, install an ARK bubble using FastARK: https://github.com/theheroGAC/ArkFast/
+  - For Henkaku/h-encore users, install an ARK bubble using [ArkFast](https://disk.yandex.ru/d/XMJpxf7RD79VLw) (manually updated, create an issue if it outdated).
   - Official Firmware users (no henkaku/h-encore) can install the PBOOT bubble manually: https://github.com/TheOfficialFloW/Trinity#preparation
   - Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
   - Copy `K.BIN` from VitaBubble folder into `ARK_01234` savedata folder.
