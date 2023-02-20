@@ -156,7 +156,6 @@ void Browser::update(){
 
 void Browser::installPlugin(){
     Entry* e = this->get();
-    char* description = "Install Plugin";
     t_options_entry options_entries[] = {
         {OPTIONS_CANCELLED, "Cancel"},
         {0, "Always"},
@@ -168,7 +167,7 @@ void Browser::installPlugin(){
         {6, "<Game ID>"}
     };
 
-    optionsmenu = new OptionsMenu(description, sizeof(options_entries)/sizeof(t_options_entry), options_entries);
+    optionsmenu = new OptionsMenu("Install Plugin", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
     int ret = optionsmenu->control();
     OptionsMenu* aux = optionsmenu;
     optionsmenu = NULL;
@@ -199,6 +198,29 @@ void Browser::installPlugin(){
         if (osk_res == OSK_CANCEL) return;
     }
 
+    char ark_path[ARK_PATH_SIZE];
+    strcpy(ark_path, common::getArkConfig()->arkpath);
+    strcat(ark_path, "PLUGINS.TXT");
+    string plugin = e->getPath();
+    char* plugins_txt = "ms0:/SEPLUGINS/PLUGINS.TXT";
+    if (plugin[0] == 'e' && plugin[1] == 'f'){
+        plugins_txt[0] = 'e';
+        plugins_txt[1] = 'f';
+    }
+    t_options_entry path_entries[] = {
+        {OPTIONS_CANCELLED, "Cancel"},
+        {0, plugins_txt},
+        {1, ark_path},
+    };
+
+    optionsmenu = new OptionsMenu("Install path", sizeof(path_entries)/sizeof(t_options_entry), path_entries);
+    int pret = optionsmenu->control();
+    aux = optionsmenu;
+    optionsmenu = NULL;
+    delete aux;
+
+    if (pret == OPTIONS_CANCELLED) return;
+
     progress_desc[0] = "Installing Plugin";
     progress_desc[1] = "";
     progress_desc[2] = "";
@@ -208,14 +230,7 @@ void Browser::installPlugin(){
     max_progress = 1;
     draw_progress = true;
 
-    char* plugins_txt = "ms0:/seplugins/plugins.txt";
-    string plugin = e->getPath();
-    if (plugin[0] == 'e' && plugin[1] == 'f'){
-        plugins_txt[0] = 'e';
-        plugins_txt[1] = 'f';
-    }
-
-    int fd = sceIoOpen(plugins_txt, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+    int fd = sceIoOpen(path_entries[pret].name, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
     sceIoWrite(fd, "\n", 1);
     sceIoWrite(fd, mode.c_str(), mode.size());
     sceIoWrite(fd, ", ", 2);

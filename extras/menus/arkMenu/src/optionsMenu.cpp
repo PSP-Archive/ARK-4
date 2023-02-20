@@ -41,6 +41,7 @@ void OptionsMenu::draw(){
         
 int OptionsMenu::control(){
     Controller pad;
+    pad.flush();
     
     bool ret = true;
     
