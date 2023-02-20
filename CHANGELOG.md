@@ -1,5 +1,16 @@
 # ARK Changelog
 
+## Version 4.19.12 (2023-02-19)
+- fixed ISOs with non-latin1 characters (only on XMB though, launcher/recovery still has issues with them).
+- launcher and recovery will now hide options that aren't available depending on device and model (ftp, ef0, etc) and CFW settings.
+- added option to change VSH region.
+- added support for DLC and Updates on ISO files.
+
+## Version 4.19.11 (2023-02-17)
+- You can now install plugins using the file browser (Recovery Menu or Custom Launcher).
+- Created Advanced VSH Menu, based on PRO VSH Menu and Ultimate VSH Menu, can be optionally installed to obtain advanced features in the XMB, including: change USB device, view available ISO drivers, mount Video ISO files, convert battery from normal to pandora and viceversa.
+- Added version number to Advanced VSH Menu and fixed typo.
+
 ## Version 4.19.10 (2023-02-10)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r41910
 - Added new keywords for plugin system: `psx` and `ps1` as alternative to `pops`; `xmb` as alternative to `vsh` and `psp` as alternative to `umd`.
