@@ -69,13 +69,47 @@ Use `-h` or `--help` to show all available flags
 
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Install `ARK_Live` folder into `/PSP/GAME/` folder.
-- Launch ARK Live Loader. It will install ARK modules on PSP Flash and boot the CFW.
-- To use `Infinity` place the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`. \
-  Install `Infinity` using Official Firmware, run ARK from Live Loader, and then run `Infinity` again to configure autoboot. \
-  This will allow you to use ARK permanently and triple boot with PRO and ME.
-- You can also use the `cIPL` installer for a faster permanent CFW on 1K and early 2K models (models compatible with Pandora).
-- If you will be using the Live loader version of ARK instead of a permanent solution, it is recommended that you delete `FLASH0.ARK` from the savedata file after the first installation and bootup of ARK, otherwise the flash0 files will be installed every time you boot back to ARK and this is detrimental to the flash even if ARK installs very little and small files. Doing this will also make the Live loader boot up ARK faster.
-- To `update ARK` simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` from `OFW`.
+- Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
+
+##### Update ARK
+- Update ARK using either [ARKUpgrader](https://github.com/PSP-Archive/ARK-4/tree/main/contrib/PC/ARKUpdater) or  
+simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
+- Optionally install `Advanced VSH Menu` for extra features by copying `VSHMENU.PRX` into `ARK_01234` savedata folder.
+
+<details>
+  <summary> <b> Live CFW </b> </summary>
+<p>
+
+  - Delete `FLASH0.ARK` from `/PSP/SAVEDATA/ARK_01234` to prevent flashing files every time you reload the CFW.
+  - Run `ARK Loader` every time you power off or hard reboot the device to re-enable `ARK`.
+
+</p>
+</details>
+
+<details>
+  <summary> <b> Permanent CFW via cIPL </b> </summary>
+<p>
+
+  - Only works on 1K models and early 2K models (those compatible with Pandora).
+  - Use `pspident` homebrew to identify your model and compatibility with custom IPL.
+  - Copy `ARK cIPL` folder to `/PSP/GAME/` and run the program.
+  - Press the corresponding button in the installation page to install or remove the cIPL patch.
+
+</p>
+</details>
+
+<details>
+  <summary> <b> Permanent CFW via Infinity </b> </summary>
+<p>
+
+  - Works on all PSP models on 6.60 or 6.61 firmwares.
+  - Place the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
+  - Install `Infinity` using Official Firmware.
+  - Run ARK Live to make sure your using ARK to run Infinity a second time.
+  - Run `Infinity` a second time to configure autoboot.
+
+</p>
+</details>
 
 </p>
 </details>
@@ -93,6 +127,7 @@ Use `-h` or `--help` to show all available flags
   - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
   - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
   - Some features are not available to Vita users, mainly the official Sony `XMB` and `PS1` games.
+  - The kernel exploit is known to have stability issues, if it fails or crashes, simply restart your Vita and try again.
 
 </p>
 </details>
@@ -102,10 +137,11 @@ Use `-h` or `--help` to show all available flags
 <p>
 
 - Considering the savedata exploit loads H.BIN from the savedata path.
-- Copy the following files from ARK_01234 savedata folder into game exploit folder:
-- H.BIN, ARK.BIN, ARK4.BIN FLASH0.ARK, VBOOT.PBP, RECOVERY.PBP, THEME.ARK and other extras.
+- Copy every file from `ARK_01234` except `PARAM.SFO`, `SAVEDATA.BIN` and `K.BIN` (`ICON0.PNG` can also be ignored), into the hacked savedata folder.
 - You need to have a `K.BIN` if you are running on an ancient Vita firmware (there's plenty of kernel exploit sources in ARK-2 and ARK-3 for reference).
-
+- Run the game and trigger the exploit as normal, it should load ARK.
+- If you have issues with stability, it might be necessary to run `freemem()` algorithm in the kernel exploit file (`K.BIN`).
+  
 </p>
 </details>
 
@@ -201,9 +237,6 @@ Another example, overclock only on games, use powersaving on VSH:
 <p>
 ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
 
-
-Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
-
 <details>
 <summary> <b> Custom Launcher Themes </b> </summary>
 <p>
@@ -247,6 +280,8 @@ Theme: BadgerOS
 ![BadgerOS](.github/wallpapers/badgerOS.png "BadgerOS")
 
 </details>
+
+Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
 
 - ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
 

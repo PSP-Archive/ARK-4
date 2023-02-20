@@ -35,7 +35,7 @@ void OptionsMenu::draw(){
     
     for (int i=0; i<n_options; i++){
         yoffset+=15;
-        common::printText(xoffset, yoffset, entries[i].name, LITEGRAY, SIZE_LITTLE, i==index);
+        common::printText(xoffset, yoffset, entries[i].name, LITEGRAY, (i==index)? SIZE_MEDIUM:SIZE_LITTLE, i==index);
     }
 }
         

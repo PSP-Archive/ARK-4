@@ -4,6 +4,8 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
+#include <cstdio>
+#include <cstdlib>
 #include "gfx.h"
 #include "debug.h"
 #include "common.h"
@@ -34,7 +36,7 @@ int main(int argc, char** argv){
 
     // Add ARK settings manager
     loadSettings();
-    SettingsMenu* settings_menu = new SettingsMenu(ark_conf_entries, MAX_ARK_CONF, saveSettings);
+    SettingsMenu* settings_menu = new SettingsMenu(ark_conf_entries, ark_conf_max_entries, saveSettings);
     settings_menu->setName("Settings");
     settings_menu->setInfo("ARK Settings");
     settings_menu->readConf();

@@ -19,6 +19,8 @@
 #define HOMEBREW_RUNLEVEL_GO 0x152
 #define ISO_RUNLEVEL 0x123
 #define ISO_RUNLEVEL_GO 0x125
+#define ISO_PBOOT_RUNLEVEL 0x124
+#define ISO_PBOOT_RUNLEVEL_GO 0x126
 #define POPS_RUNLEVEL 0x144
 #define POPS_RUNLEVEL_GO 0x155
 #define RECOVERY_RUNLEVEL 0x141
@@ -86,6 +88,7 @@ class Entry{
         
         static bool isZip(const char* path);
         static bool isRar(const char* path);
+        static bool isPRX(const char* path);
         
         static bool cmpEntriesForSort (Entry* i, Entry* j);
         

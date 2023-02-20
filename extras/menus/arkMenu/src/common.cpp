@@ -13,6 +13,8 @@
 
 using namespace common;
 
+extern "C" int kuKernelGetModel();
+
 static ARKConfig ark_config = {0};
 static Image* images[MAX_IMAGES];
 static intraFont* font;
@@ -27,6 +29,8 @@ static int currentFont = 0;
 static Anim* animations[ANIM_COUNT];
 
 static bool flipControl = false;
+
+static int psp_model;
 
 char* fonts[] = {
     "FONT.PGF",
@@ -244,6 +248,10 @@ char** common::getArgv(){
     return argv;
 }
 
+int common::getPspModel(){
+    return psp_model;
+}
+
 bool common::has_suffix(const std::string &str, const std::string &suffix)
 {
     return str.size() >= suffix.size() &&
@@ -265,6 +273,11 @@ void common::loadData(int ac, char** av){
 
     argc = ac;
     argv = av;
+
+    psp_model = kuKernelGetModel();
+
+    sceUtilityLoadModule(PSP_MODULE_AV_AVCODEC);
+    sceUtilityLoadModule(PSP_MODULE_AV_MP3);
     
     animations[0] = new PixelAnim();
     animations[1] = new Waves();

@@ -129,6 +129,7 @@ static u32 g_caches_cnt;
 static u8 g_referenced[32];
 static u8 g_need_update = 0;
 
+
 static inline u32 get_isocache_magic(void)
 {
     u32 version;
@@ -581,6 +582,8 @@ static int get_sfo_section(VirtualPBP *vpbp, u32 remaining, void *data)
 
     get_sfo_u32(buf_64, "PARENTAL_LEVEL", &parental_level);
 
+    get_sfo_u32(buf_64, "HRKGMP_VER", &(vpbp->opnssmp_type));
+
     oe_free(buf);
     memcpy(virtualsfo+0x118, sfotitle, 64);
     memcpy(virtualsfo+0xf0, disc_id, 12);
@@ -947,6 +950,43 @@ static int has_prometheus_module(VirtualPBP *vpbp)
     return ret;
 }
 
+static int has_update_file(VirtualPBP* vpbp, char* update_file){
+    // game ID is always at offset 0x8373 within the ISO
+    int lba = 16;
+    int pos = 883;
+
+    char game_id[10];
+
+    isoOpen(vpbp->name);
+    isoRead(game_id, lba, pos, 10);
+    isoClose();
+
+    // remove the dash in the middle: ULUS-01234 -> ULUS01234
+    game_id[4] = game_id[5];
+    game_id[5] = game_id[6];
+    game_id[6] = game_id[7];
+    game_id[7] = game_id[8];
+    game_id[8] = game_id[9];
+    game_id[9] = 0;
+
+    // try to find the update file
+    char path[256];
+    char* devs[] = {"ms0:", "ef0:"};
+
+    for (int i=0; i<2; i++){
+        sprintf(path, "%s/PSP/GAME/%s/PBOOT.PBP", devs[i], game_id);
+        int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+        if (fd >= 0){
+            // found
+            sceIoClose(fd);
+            if (update_file) strcpy(update_file, path);
+            return 1;
+        }
+    }
+    // not found
+    return 0;
+}
+
 typedef struct _pspMsPrivateDirent {
     SceSize size;
     char s_name[16];
@@ -1056,6 +1096,9 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         return -31;
     }
 
+    // get ISO path with non-latin1 support
+    get_ISO_shortname(vpbp->name, sizeof(vpbp->name), vpbp->name);
+
     //set iso file for reboot
     sctrlSESetUmdFile(vpbp->name);
 
@@ -1063,27 +1106,49 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
     sctrlSESetBootConfFileIndex(MODE_INFERNO);
 
-    //reset and configure reboot parameter
-    memset(param, 0, sizeof(param));
-    param->size = sizeof(param);
-    
-    param->key = "umdemu";
-    param->args = 33;
-    apitype = 0x123;
-    loadexec_file = vpbp->name;
+    u32 opn_type = vpbp->opnssmp_type;
+    u32 *info = (u32 *)sceKernelGetGameInfo();
+    if( opn_type )
+        info[216/4] = opn_type;
 
-    if (psp_model == PSP_GO) {
-        char devicename[20];
-        ret = get_device_name(devicename, sizeof(devicename), vpbp->name);
-        if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
-            apitype = 0x125;
+    param->key = "umdemu";
+    apitype = 0x123;
+
+    static char pboot_path[256];
+    int has_pboot = has_update_file(vpbp, pboot_path);
+
+    if (has_pboot){
+        apitype = 0x124;
+        param->argp = pboot_path;
+        param->args = strlen(pboot_path) + 1;
+        loadexec_file = param->argp;
+
+        if (psp_model == PSP_GO) {
+            char devicename[20];
+            ret = get_device_name(devicename, sizeof(devicename), pboot_path);
+            if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
+                apitype = 0x126;
+            }
         }
     }
+    else{
+        //reset and configure reboot parameter
+        loadexec_file = vpbp->name;
 
-    if (has_prometheus_module(vpbp)) {
-        param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
-    } else {
-        param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+        if (psp_model == PSP_GO) {
+            char devicename[20];
+            ret = get_device_name(devicename, sizeof(devicename), vpbp->name);
+            if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
+                apitype = 0x125;
+            }
+        }
+
+        if (has_prometheus_module(vpbp)) {
+            param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
+        } else {
+            param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+        }
+        param->args = 33;
     }
 
     //start game image

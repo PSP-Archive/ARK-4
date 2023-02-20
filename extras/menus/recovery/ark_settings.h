@@ -32,6 +32,7 @@ typedef struct {
     unsigned char oldplugin;
     unsigned char skiplogos;
     unsigned char regionchange;
+    unsigned char vshregion;
     unsigned char hidepics;
 }ArkConf;
 
@@ -216,6 +217,21 @@ static struct {
     {"Default", "Japan", "America", "Europe"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[14];
+} vshregion = {
+    "VSH Region Change",
+    14,
+    0,
+    &(ark_config.vshregion),
+    {"Default", "Japan", "America", "Europe", "Korea", "United Kingdom", "Latin America", "Australia", "Hong Kong", "Taiwan", "Russia", "China", "Debug I", "Debug II"}
+};
+
+/*
 settings_entry* ark_conf_entries[] = {
     (settings_entry*)&usbcharge,
     (settings_entry*)&overclock,
@@ -230,8 +246,62 @@ settings_entry* ark_conf_entries[] = {
     (settings_entry*)&hidepics,
     (settings_entry*)&regionchange,
 };
-
 #define MAX_ARK_CONF (sizeof(ark_conf_entries)/sizeof(ark_conf_entries[0]))
+*/
+
+int ark_conf_max_entries = 0;
+settings_entry** ark_conf_entries = NULL;
+
+settings_entry* ark_conf_entries_1k[] = {
+    (settings_entry*)&overclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&launcher,
+    (settings_entry*)&mscache,
+    (settings_entry*)&infernocache,
+    (settings_entry*)&skiplogos,
+    (settings_entry*)&hidepics,
+    (settings_entry*)&regionchange,
+    (settings_entry*)&vshregion,
+};
+#define MAX_ARK_CONF_1K (sizeof(ark_conf_entries_1k)/sizeof(ark_conf_entries_1k[0]))
+
+settings_entry* ark_conf_entries_slim[] = {
+    (settings_entry*)&usbcharge,
+    (settings_entry*)&overclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&launcher,
+    (settings_entry*)&highmem,
+    (settings_entry*)&mscache,
+    (settings_entry*)&infernocache,
+    (settings_entry*)&skiplogos,
+    (settings_entry*)&hidepics,
+    (settings_entry*)&regionchange,
+    (settings_entry*)&vshregion,
+};
+#define MAX_ARK_CONF_SLIM (sizeof(ark_conf_entries_slim)/sizeof(ark_conf_entries_slim[0]))
+
+settings_entry* ark_conf_entries_go[] = {
+    (settings_entry*)&usbcharge,
+    (settings_entry*)&overclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&launcher,
+    (settings_entry*)&disablepause,
+    (settings_entry*)&highmem,
+    (settings_entry*)&mscache,
+    (settings_entry*)&infernocache,
+    (settings_entry*)&oldplugin,
+    (settings_entry*)&skiplogos,
+    (settings_entry*)&hidepics,
+    (settings_entry*)&vshregion,
+};
+#define MAX_ARK_CONF_GO (sizeof(ark_conf_entries_go)/sizeof(ark_conf_entries_go[0]))
+
+settings_entry* ark_conf_entries_vita[] = {
+    (settings_entry*)&mscache,
+    (settings_entry*)&infernocache,
+};
+#define MAX_ARK_CONF_VITA (sizeof(ark_conf_entries_vita)/sizeof(ark_conf_entries_vita[0]))
+
 
 std::vector<string> custom_config;
 
@@ -309,6 +379,10 @@ static unsigned char* configConvert(string conf){
     else if (strcasecmp(conf.c_str(), "region_eu") == 0){
         ark_config.regionchange = REGION_EUROPE;
     }
+    else if (strncasecmp(conf.c_str(), "fakeregion_", 11) == 0){
+        int r = atoi(conf.c_str()+11);
+        ark_config.vshregion = r;
+    }
     return NULL;
 }
 
@@ -352,6 +426,31 @@ static void processLine(string line){
 }
 
 void loadSettings(){
+
+    ARKConfig* ark_config = common::getArkConfig();
+
+    if (IS_VITA(ark_config)){
+        ark_conf_entries = ark_conf_entries_vita;
+        ark_conf_max_entries = MAX_ARK_CONF_VITA;
+    }
+    else{
+        int psp_model = common::getPspModel();
+        if (psp_model == PSP_1000){
+            ark_conf_entries = ark_conf_entries_1k;
+            ark_conf_max_entries = MAX_ARK_CONF_1K;
+        }
+        else if (psp_model == PSP_GO){
+            ark_conf_entries = ark_conf_entries_go;
+            ark_conf_max_entries = MAX_ARK_CONF_GO;
+        }
+        else{
+            ark_conf_entries = ark_conf_entries_slim;
+            ark_conf_max_entries = MAX_ARK_CONF_SLIM;
+        }
+    }
+
+    
+
     std::ifstream input("SETTINGS.TXT");
     for( std::string line; getline( input, line ); ){
         if (isComment(line)){
@@ -400,6 +499,12 @@ void saveSettings(){
         case REGION_EUROPE:
             output << "vsh, region_eu, on" << endl;
             break;
+    }
+
+    if (ark_config.vshregion > 0){
+        char tmp[10];
+        snprintf(tmp, 10, "%d", ark_config.vshregion);
+        output << "vsh, fakeregion_" << tmp << ", on" << endl;
     }
 
     for (int i=0; i<custom_config.size(); i++){

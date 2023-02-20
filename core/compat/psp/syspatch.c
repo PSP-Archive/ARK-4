@@ -209,6 +209,10 @@ void settingsHandler(char* path){
     else if (strcasecmp(path, "region_eu") == 0){
         region_change = REGION_EUROPE;
     }
+    else if (strncasecmp(path, "fakeregion_", 11) == 0){
+        int r = atoi(path+11);
+        vshregion = r;
+    }
 }
 
 void processSettings(){
@@ -220,6 +224,7 @@ void processSettings(){
         ark_config->launcher[0] = 0; // disable launcher mode
     }
     sctrlHENSetArkConfig(ark_config);
+    if (vshregion) patch_sceChkreg();
 }
 
 void (*prevPluginHandler)(const char* path, int modid) = NULL;
@@ -322,8 +327,8 @@ void PSPOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "vsh_module") == 0){
         if (region_change){
             patch_vsh_region_check(mod);
-            goto flush;
         }
+        goto flush;
     }
 
     if (strcmp(mod->modname, "impose_plugin_module") == 0){

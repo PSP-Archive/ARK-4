@@ -29,21 +29,17 @@ typedef BrowserFile File;
 typedef BrowserFolder Folder;
 
 #define MAX_OPTIONS 10
-static const struct {
-        int x;
-        int y;
-        char* name;
-} pEntries[MAX_OPTIONS] = {
-    {10, 80, "Cancel"},
-    {10, 100, "Copy"},
-    {10, 120, "Cut"},
-    {10, 140, "Paste"},
-    {10, 160, "Delete"},
-    {10, 180, "Rename"},
-    {10, 200, "New Folder"},
-    {10, 220, "Go to ms0:/"},
-    {10, 240, "Go to ef0:/"},
-    {10, 260, "Go to ftp:/"}
+static char* pEntries[MAX_OPTIONS] = {
+    (char*) "Cancel",
+    (char*) "Copy",
+    (char*) "Cut",
+    (char*) "Paste",
+    (char*) "Delete",
+    (char*) "Rename",
+    (char*) "New Folder",
+    (char*) "Go to ms0:/",
+    (char*) "Go to ef0:/",
+    (char*) "Go to ftp:/",
 };
 
 BrowserDriver* Browser::ftp_driver = NULL;
@@ -71,6 +67,15 @@ Browser::Browser(){
     this->optionsAnimY = 0;
     this->pEntryIndex = 0;
     this->animation = 0;
+
+    int psp_model = common::getPspModel();
+    if (psp_model != PSP_GO){
+        pEntries[EF0_DIR] = NULL;
+    }
+    if (psp_model == PSP_11000 || ftp_driver == NULL){
+        pEntries[FTP_DIR] = NULL;
+    }
+
     this->refreshDirs();
 }
 
@@ -144,6 +149,81 @@ void Browser::update(){
     else if (Entry::isRar(this->get()->getPath().c_str())){
         extractArchive(1);
     }
+    else if (Entry::isPRX(this->get()->getPath().c_str())){
+        installPlugin();
+    }
+}
+
+void Browser::installPlugin(){
+    Entry* e = this->get();
+    char* description = "Install Plugin";
+    t_options_entry options_entries[] = {
+        {OPTIONS_CANCELLED, "Cancel"},
+        {0, "Always"},
+        {1, "Game"},
+        {2, "POPS (PS1)"},
+        {3, "VSH (XMB)"},
+        {4, "UMD/ISO"},
+        {5, "Homebrew"},
+        {6, "<Game ID>"}
+    };
+
+    optionsmenu = new OptionsMenu(description, sizeof(options_entries)/sizeof(t_options_entry), options_entries);
+    int ret = optionsmenu->control();
+    OptionsMenu* aux = optionsmenu;
+    optionsmenu = NULL;
+    delete aux;
+
+    if (ret == OPTIONS_CANCELLED) return;
+
+    string mode;
+
+    if (ret < 6){
+        char* modes[] = {"always", "game", "ps1", "xmb", "psp", "homebrew"};
+        mode = modes[ret];
+    }
+    else{
+        SystemMgr::pauseDraw();
+        OSK osk;
+        osk.init("Game ID (i.e. ULUS01234)", "", 50);
+        osk.loop();
+        int osk_res = osk.getResult();
+        if(osk_res != OSK_CANCEL)
+        {
+            char tmpText[51];
+            osk.getText((char*)tmpText);
+            mode = tmpText;
+        }
+        osk.end();
+        SystemMgr::resumeDraw();
+        if (osk_res == OSK_CANCEL) return;
+    }
+
+    progress_desc[0] = "Installing Plugin";
+    progress_desc[1] = "";
+    progress_desc[2] = "";
+    progress_desc[3] = "";
+    progress_desc[4] = "";
+    progress = 0;
+    max_progress = 1;
+    draw_progress = true;
+
+    char* plugins_txt = "ms0:/seplugins/plugins.txt";
+    string plugin = e->getPath();
+    if (plugin[0] == 'e' && plugin[1] == 'f'){
+        plugins_txt[0] = 'e';
+        plugins_txt[1] = 'f';
+    }
+
+    int fd = sceIoOpen(plugins_txt, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+    sceIoWrite(fd, "\n", 1);
+    sceIoWrite(fd, mode.c_str(), mode.size());
+    sceIoWrite(fd, ", ", 2);
+    sceIoWrite(fd, plugin.c_str(), plugin.size());
+    sceIoWrite(fd, ", on\n", 5);
+    sceIoClose(fd);
+
+    draw_progress = false;
 }
 
 void Browser::extractArchive(int type){
@@ -940,11 +1020,17 @@ void Browser::drawOptionsMenu(){
             optionsAnimY = 52;
             common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 132, 220);
         
+            {
+            int x = 10;
+            int y = 80;
             for (int i=0; i<MAX_OPTIONS; i++){
+                if (pEntries[i] == NULL) continue;
                 if (i == pEntryIndex)
-                    common::printText(pEntries[i].x, pEntries[i].y, pEntries[i].name, LITEGRAY, SIZE_BIG, true);
+                    common::printText(x, y, pEntries[i], LITEGRAY, SIZE_BIG, true);
                 else
-                    common::printText(pEntries[i].x, pEntries[i].y, pEntries[i].name);
+                    common::printText(x, y, pEntries[i]);
+                y += 20;
+            }
             }
             break;
         case 3: // draw closing animation
@@ -976,21 +1062,25 @@ void Browser::optionsMenu(){
         
         if (pad->down()){
             common::playMenuSound();
-            if (pEntryIndex < MAX_OPTIONS-1){
-                pEntryIndex++;
-            }
-            else{
-                pEntryIndex = 0;
-            }
+            do {
+                if (pEntryIndex < MAX_OPTIONS-1){
+                    pEntryIndex++;
+                }
+                else{
+                    pEntryIndex = 0;
+                }
+            } while (pEntries[pEntryIndex] == NULL);
         }
         else if (pad->up()){
             common::playMenuSound();
-            if (pEntryIndex > 0){
-                pEntryIndex--;
-            }
-            else{
-                pEntryIndex = MAX_OPTIONS-1;
-            }
+            do {
+                if (pEntryIndex > 0){
+                    pEntryIndex--;
+                }
+                else{
+                    pEntryIndex = MAX_OPTIONS-1;
+                }
+            } while (pEntries[pEntryIndex] == NULL);
         }
         else if (pad->decline() || pad->LT()){
             pEntryIndex = 0;
@@ -1019,16 +1109,16 @@ void Browser::options(){
     this->optionsMenu();
 
     switch (pEntryIndex){
-    case NO_MODE:                                                     break;
-    case COPY:        this->copy();                                   break;
-    case CUT:         this->cut();                                    break;
-    case PASTE:       this->paste();                                  break;
-    case DELETE:      this->removeSelection();                        break;
-    case RENAME:      this->rename();                                 break;
-    case MKDIR:       this->makedir();                                break;
+    case NO_MODE:                                                      break;
+    case COPY:        this->copy();                                    break;
+    case CUT:         this->cut();                                     break;
+    case PASTE:       this->paste();                                   break;
+    case DELETE:      this->removeSelection();                         break;
+    case RENAME:      this->rename();                                  break;
+    case MKDIR:       this->makedir();                                 break;
     case MS0_DIR:     this->cwd = ROOT_DIR;     this->refreshDirs();   break;
-    case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;
     case FTP_DIR:     this->cwd = FTP_ROOT;     this->refreshDirs();   break;
+    case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;
     }
 }
         

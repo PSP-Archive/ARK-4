@@ -314,7 +314,11 @@ void OnInitMenuPspConfigPatched()
             int i;
             for(i = 0; i < N_ITEMS; i++)
             {
-                AddSysconfContextItem(GetItemes[i].item, NULL, GetItemes[i].item);
+                if (( psp_model == PSP_1000 && ( i == 0 || i == 4 || i == 5 || i == 8 )) ||
+                        (( psp_model != PSP_GO && ( i == 4 || i == 8 ) )))
+                    continue;
+                else
+                    AddSysconfContextItem(GetItemes[i].item, NULL, GetItemes[i].item);
             }
         }
     }
