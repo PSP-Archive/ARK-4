@@ -120,7 +120,7 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
 
   - Works on 3.60 up to 3.74, either with or without Henkaku/h-encore.
   - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended. `Minis` are `NOT` recommended.
-  - For Henkaku/h-encore users, install an ARK bubble using FastARK: https://github.com/theheroGAC/ArkFast/
+  - For Henkaku/h-encore users, install an ARK bubble using [ArkFast](https://disk.yandex.ru/d/XMJpxf7RD79VLw) (manually updated, create an issue if it outdated).
   - Official Firmware users (no henkaku/h-encore) can install the PBOOT bubble manually: https://github.com/TheOfficialFloW/Trinity#preparation
   - Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
   - Copy `K.BIN` from VitaBubble folder into `ARK_01234` savedata folder.
@@ -150,7 +150,10 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
 <details>
   <summary> <b> Installing Plug-Ins </b> </summary>
 <p>
-You can install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
+  
+The easiest method to install a plugin is to simply copy its `.prx` (and other files/folders the plugin needs) to its default installation folder (typically `/SEPLUGINS/` folder) and navigate to it using the `File Browser` (built into Recovery Menu and Custom Launcher). Upon opening the `.prx` file, you will be given the options to select the runlevel, or type the game ID, where the plugin loads.
+  
+Alternately, you can manually install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
 If coming from PRO/ME you can use this tool to automate your plugins.txt: [ARK-Plugin-Converter](https://github.com/krazynez/ARK-Plugin-Converter)
 
@@ -203,6 +206,8 @@ Some noteworthy plugins that are compatible with ARK include (but not limited to
   <summary> <b> Configuration and Settings </b> </summary>
 <p>
 
+You can use the XMB and/or the Recovery Menu to easily handle CFW settings. However if you prefer you can also manually handle the settings yourself.
+  
 You can create a SETTINGS.TXT file using the same format as PLUGINS.TXT to enable/disable some CFW functionality on different parts of the system.
 Configuration settings you can use in ARK include:
 
@@ -218,8 +223,6 @@ Configuration settings you can use in ARK include:
  - `oldplugin`: enables old plugins support on PSP Go (redirects `ms0` to `ef0`).
  - `skiplogos`: skips the coldboot and gameboot logos.
 
-However, you should use the `XMB` or the `recovery menu` to handle settings easier.
-
 You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
 
 For example, you can overclock to highest CPU speed like this:
@@ -229,6 +232,10 @@ Another example, overclock only on games, use powersaving on VSH:
 - game, overclock, on
 - vsh, powersave, on
 
+This also allows you to enable settings on specific games:
+  - ULUS01234, overclock, on
+  - ULES01234, powersave, on
+  
 </p>
 </details>
 

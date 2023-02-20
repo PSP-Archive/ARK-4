@@ -13,6 +13,11 @@ typedef struct {
     char* options[];
 } settings_entry;
 
+typedef struct {
+    settings_entry** settings_entries;
+    int max_options;
+} SettingsTable;
+
 class SettingsMenu : public SystemEntry{
 
     private:
@@ -26,8 +31,7 @@ class SettingsMenu : public SystemEntry{
         
         bool changed;
         
-        settings_entry** settings_entries;
-        int max_options;
+        SettingsTable* table;
         int max_height;
         
         string info;
@@ -39,7 +43,7 @@ class SettingsMenu : public SystemEntry{
         
     public:
     
-        SettingsMenu(settings_entry**, int, void (*callback)());
+        SettingsMenu(SettingsTable* table, void (*callback)());
         ~SettingsMenu();
     
         void setCustomText(string text[], int n);

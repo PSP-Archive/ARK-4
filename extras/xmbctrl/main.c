@@ -88,7 +88,8 @@ char* ark_settings_options[] = {
 
 char* ark_plugins_options[] = {
     (char*)"Off",
-    (char*)"On"
+    (char*)"On",
+    (char*)"Remove",
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
@@ -512,6 +513,9 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
 				context_mode = 11;
 				plugin->active = *value;
                 savePlugins();
+                if (*value == PLUGIN_REMOVED){
+                    sctrlKernelExitVSH(NULL);
+                }
             	return 0;
 			}
         }

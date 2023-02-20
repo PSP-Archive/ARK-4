@@ -23,6 +23,7 @@ if platform.system() == 'Linux':
 else:
     import win32api
     import win32file
+    from device_manager import USBDeviceScanner
     tmp = tempfile.gettempdir()
 
 def psp() -> int:
@@ -32,8 +33,10 @@ def psp() -> int:
             manufacturer = usb.core.find(idVendor=0x054c, idProduct=0x01c8).manufacturer
             if " ".join((manufacturer, product[:3])) == 'Sony PSP':
                 return 0 
-        else:
-            return 0
+        elif platform.system() == 'Windows':
+            usb_scan = USBDeviceScanner()
+            if len(usb_scan.find_devices(vendor_id=0x054c, product_id=0x01c8)) == 1:
+                return 0
     except:
         return 1
 

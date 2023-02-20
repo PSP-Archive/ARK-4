@@ -36,7 +36,8 @@ int main(int argc, char** argv){
 
     // Add ARK settings manager
     loadSettings();
-    SettingsMenu* settings_menu = new SettingsMenu(ark_conf_entries, ark_conf_max_entries, saveSettings);
+    SettingsTable stab = { ark_conf_entries, ark_conf_max_entries };
+    SettingsMenu* settings_menu = new SettingsMenu(&stab, saveSettings);
     settings_menu->setName("Settings");
     settings_menu->setInfo("ARK Settings");
     settings_menu->readConf();
@@ -44,7 +45,7 @@ int main(int argc, char** argv){
 
     // Add ARK plugins manager
     loadPlugins();
-    SettingsMenu* plugins_menu = new SettingsMenu(ark_plugin_entries, ark_plugins_count, savePlugins);
+    SettingsMenu* plugins_menu = new SettingsMenu(&plugins_table, savePlugins);
     plugins_menu->setName("Plugins");
     plugins_menu->setInfo("ARK Plugins");
     plugins_menu->setIcon(common::getImage(IMAGE_PLUGINS));
