@@ -70,5 +70,6 @@ int OptionsMenu::control(){
             break;
         }
     }
+    pad.flush();
     return (ret)? entries[index].value : OPTIONS_CANCELLED;
 }

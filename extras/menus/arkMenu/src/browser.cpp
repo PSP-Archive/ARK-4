@@ -974,6 +974,20 @@ void Browser::rename(){
 
 void Browser::removeSelection(){
     // Delete all paths in the paste buffer
+
+    t_options_entry opts[] = {
+        {OPTIONS_CANCELLED, "Cancel"},
+        {0, "Confirm"},
+    };
+
+    optionsmenu = new OptionsMenu("Confirm Deletion?", sizeof(opts)/sizeof(t_options_entry), opts);
+    int pret = optionsmenu->control();
+    OptionsMenu* aux = optionsmenu;
+    optionsmenu = NULL;
+    delete aux;
+
+    if (pret == OPTIONS_CANCELLED) return;
+
     draw_progress = true;
     this->fillClipboard();
     if (this->clipboard->size() == 0)
