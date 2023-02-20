@@ -5,12 +5,18 @@ enum{
     MAX_PLUGINS_PLACES
 };
 
+enum{
+    PLUGIN_OFF,
+    PLUGIN_ON,
+    PLUGIN_REMOVED,
+};
+
 typedef struct {
     char* description;
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[2];
+    char* options[3];
     unsigned char place;
 } plugin_t;
 
@@ -48,14 +54,37 @@ static void addPlugin(plugin_t* plugin){
     ark_plugin_entries[ark_plugins_count++] = (settings_entry*)plugin;
 }
 
+static void removePlugin(std::vector<plugin_line>& plugin_line, int pi){
+    plugin_t* plugin = plugin_line[pi].plugin;
+    plugin_line.erase(plugin_line.begin()+pi);
+
+    SystemMgr::pauseDraw();
+
+    for (int i=0; i<ark_plugins_count; i++){
+        if ((void*)(ark_plugin_entries[i]) == (void*)plugin){
+            for (int j=i; j<ark_plugins_count-1; j++){
+                ark_plugin_entries[j] = ark_plugin_entries[j+1];
+            }
+            ark_plugins_count--;
+            break;
+        }
+    }
+
+    free(plugin->description);
+    free(plugin);
+
+    SystemMgr::resumeDraw();
+}
+
 static plugin_t* createPlugin(const char* description, unsigned char enable, unsigned char place){
     plugin_t* plugin = (plugin_t*)malloc(sizeof(plugin_t));
     plugin->description = strdup(description);
-    plugin->max_options = 2;
+    plugin->max_options = 3;
     plugin->selection = enable;
     plugin->config_ptr = &(plugin->selection);
     plugin->options[0] = "Disable";
     plugin->options[1] = "Enable";
+    plugin->options[2] = "Remove";
     plugin->place = place;
     return plugin;
 }
@@ -101,7 +130,12 @@ void savePlugins(){
         for (int j=0; j<plugin_lines[i].size(); j++){
             plugin_line pl = plugin_lines[i][j];
             if (pl.plugin != NULL){
-                output[i] << pl.plugin->description << ", " << ((pl.plugin->selection)? "on":"off") << endl;
+                if (pl.plugin->selection != PLUGIN_REMOVED)
+                    output[i] << pl.plugin->description << ", " << ((pl.plugin->selection)? "on":"off") << endl;
+                else{
+                    removePlugin(plugin_lines[i], j);
+                    j--;
+                }
             }
             else{
                 output[i] << pl.line << endl;
