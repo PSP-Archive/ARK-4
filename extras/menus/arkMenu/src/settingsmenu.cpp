@@ -11,7 +11,7 @@
 extern string ark_version;
 extern struct tm today;
 
-SettingsMenu::SettingsMenu(settings_entry** settings_entries, int max_options, void (*save_callback)()){
+SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)()){
     this->animation = -1;
     this->index = 0;
     this->start = 0;
@@ -22,9 +22,8 @@ SettingsMenu::SettingsMenu(settings_entry** settings_entries, int max_options, v
     this->customText = NULL;
     this->ntext = 0;
     this->changed = false;
-    this->max_height = (max_options>0 && max_options<PAGE_SIZE)? 20*(max_options+2) : 20*PAGE_SIZE;
-    this->max_options = max_options;
-    this->settings_entries = settings_entries;
+    this->max_height = (table->max_options>0 && table->max_options<PAGE_SIZE)? 20*(table->max_options+2) : 20*PAGE_SIZE;
+    this->table = table;
     this->info = "Menu Settings";
     this->name = "Settings";
     this->callback = save_callback;
@@ -51,6 +50,9 @@ void SettingsMenu::unsetCustomText(){
 }
 
 void SettingsMenu::draw(){
+
+    if (this->index >= table->max_options)
+        this->index = table->max_options-1;
     
     switch (animation){
     case -1:
@@ -81,9 +83,9 @@ void SettingsMenu::draw(){
             y = (272-max_height)/2;
             common::getImage(IMAGE_DIALOG)->draw_scale(x, y, MENU_W, max_height);
         
-            if (max_options > PAGE_SIZE){
-                int height = max_height/max_options;
-                common::getImage(IMAGE_DIALOG)->draw_scale(x-8, y, 1, max_options*height);
+            if (table->max_options > PAGE_SIZE){
+                int height = max_height / table->max_options;
+                common::getImage(IMAGE_DIALOG)->draw_scale(x-8, y, 1, table->max_options*height);
                 common::getImage(IMAGE_DIALOG)->draw_scale(x-10, y + (index*height), 5, height);
             }
         
@@ -97,19 +99,19 @@ void SettingsMenu::draw(){
             int yoffset = y+40;
             int xoffset = x+10;
         
-            for (int i=start; i<min(start+PAGE_SIZE, max_options); i++){
-                unsigned char sel = settings_entries[i]->selection;
+            for (int i=start; i<min(start+PAGE_SIZE, table->max_options); i++){
+                unsigned char sel = table->settings_entries[i]->selection;
                 if (i==index){
-                    common::printText(xoffset, yoffset, settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, 1);
-                    common::printText(xoffset+215, yoffset, settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1);
+                    common::printText(xoffset, yoffset, table->settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, 1);
+                    common::printText(xoffset+215, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1);
                 }
                 else{
-                    string desc = settings_entries[i]->description;
+                    string desc = table->settings_entries[i]->description;
                     size_t lastSlash = desc.rfind('/');
                     desc = desc.substr(lastSlash+1, -1);
                     if (desc.size() > 35) desc = desc.substr(0, 30) + "...";
                     common::printText(xoffset, yoffset, desc.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
-                    common::printText(xoffset+215, yoffset, settings_entries[i]->options[sel], GRAY_COLOR, SIZE_LITTLE, 0);
+                    common::printText(xoffset+215, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_LITTLE, 0);
                 }
                 yoffset += 15;
             }
@@ -157,27 +159,27 @@ void SettingsMenu::draw(){
 void SettingsMenu::control(Controller* pad){
     
     if (pad->down()){
-        if (max_options > 0){
-            if (this->index == (max_options-1)){
+        if (table->max_options > 0){
+            if (this->index == table->max_options-1){
                 this->index = 0;
                 this->start = 0;
             }
             else if (this->index-this->start == PAGE_SIZE-1){
-                if (this->index+1 < max_options)
+                if (this->index+1 < table->max_options)
                     this->index++;
-                if (this->start+PAGE_SIZE < max_options)
+                if (this->start+PAGE_SIZE < table->max_options)
                     this->start++;
             }
-            else if (this->index+1 < max_options)
+            else if (this->index+1 < table->max_options)
                 this->index++;
             common::playMenuSound();
         }
     }
     else if (pad->up()){
-        if (max_options > 0){
+        if (table->max_options > 0){
             if (this->index == 0){
-                this->index = max_options-1;
-                this->start = max_options - PAGE_SIZE;
+                this->index = table->max_options-1;
+                this->start = table->max_options - PAGE_SIZE;
                 if (this->start < 0) this->start = 0;
             }
             else if (this->index == this->start){
@@ -195,21 +197,21 @@ void SettingsMenu::control(Controller* pad){
         applyConf();
     }
     else if (pad->right()){
-        if (max_options > 0 && index < max_options){
-            if (settings_entries[index]->selection < (unsigned char)(settings_entries[index]->max_options-1))
-                settings_entries[index]->selection++;
+        if (table->max_options > 0 && index < table->max_options){
+            if (table->settings_entries[index]->selection < (unsigned char)(table->settings_entries[index]->max_options-1))
+                table->settings_entries[index]->selection++;
             else
-                settings_entries[index]->selection = (unsigned char)0;
+                table->settings_entries[index]->selection = (unsigned char)0;
             common::playMenuSound();
             changed = true;
         }
     }
     else if (pad->left()){
-        if (max_options > 0 && index < max_options){
-            if (settings_entries[index]->selection > (unsigned char)0)
-                settings_entries[index]->selection--;
+        if (table->max_options > 0 && index < table->max_options){
+            if (table->settings_entries[index]->selection > (unsigned char)0)
+                table->settings_entries[index]->selection--;
             else
-                settings_entries[index]->selection = (unsigned char)(settings_entries[index]->max_options-1);
+                table->settings_entries[index]->selection = (unsigned char)(table->settings_entries[index]->max_options-1);
             common::playMenuSound();
             changed = true;
         }
@@ -218,16 +220,16 @@ void SettingsMenu::control(Controller* pad){
 
 void SettingsMenu::applyConf(){
     if (changed){
-        for (int i=0; i<max_options; i++)
-            *(settings_entries[i]->config_ptr) = settings_entries[i]->selection;
+        for (int i=0; i<table->max_options; i++)
+            *(table->settings_entries[i]->config_ptr) = table->settings_entries[i]->selection;
         if (this->callback != NULL) this->callback();
         changed = false;
     }
 }
 
 void SettingsMenu::readConf(){
-    for (int i=0; i<max_options; i++)
-        settings_entries[i]->selection = *(settings_entries[i]->config_ptr);
+    for (int i=0; i<table->max_options; i++)
+        table->settings_entries[i]->selection = *(table->settings_entries[i]->config_ptr);
     changed = false;
 }
 

@@ -33,25 +33,28 @@ char* plugins_path[] = {
 
 // variable length array
 std::vector<plugin_line> plugin_lines[MAX_PLUGINS_PLACES];
-settings_entry** ark_plugin_entries = NULL;
-int ark_plugins_count = 0;
+
+SettingsTable plugins_table = {NULL, 0};
+//settings_entry** ark_plugin_entries = NULL;
+//int ark_plugins_count = 0;
 int ark_plugins_max = 0;
+
 #define MAX_INITIAL_PLUGINS 8
 
 static void addPlugin(plugin_t* plugin){
-    if (ark_plugin_entries == NULL){ // create initial table
-        ark_plugin_entries = (settings_entry**)malloc(MAX_INITIAL_PLUGINS * sizeof(settings_entry*));
+    if (plugins_table.settings_entries == NULL){ // create initial table
+        plugins_table.settings_entries = (settings_entry**)malloc(MAX_INITIAL_PLUGINS * sizeof(settings_entry*));
         ark_plugins_max = MAX_INITIAL_PLUGINS;
-        ark_plugins_count = 0;
+        plugins_table.max_options = 0;
     }
-    if (ark_plugins_count >= ark_plugins_max){ // resize table
+    if (plugins_table.max_options >= ark_plugins_max){ // resize table
         settings_entry** new_table = (settings_entry**)malloc(2 * ark_plugins_max * sizeof(settings_entry*));
-        for (int i=0; i<ark_plugins_count; i++) new_table[i] = ark_plugin_entries[i];
-        free(ark_plugin_entries);
-        ark_plugin_entries = new_table;
+        for (int i=0; i<plugins_table.max_options; i++) new_table[i] = plugins_table.settings_entries[i];
+        free(plugins_table.settings_entries);
+        plugins_table.settings_entries = new_table;
         ark_plugins_max *= 2;
     }
-    ark_plugin_entries[ark_plugins_count++] = (settings_entry*)plugin;
+    plugins_table.settings_entries[plugins_table.max_options++] = (settings_entry*)plugin;
 }
 
 static void removePlugin(std::vector<plugin_line>& plugin_line, int pi){
@@ -60,12 +63,12 @@ static void removePlugin(std::vector<plugin_line>& plugin_line, int pi){
 
     SystemMgr::pauseDraw();
 
-    for (int i=0; i<ark_plugins_count; i++){
-        if ((void*)(ark_plugin_entries[i]) == (void*)plugin){
-            for (int j=i; j<ark_plugins_count-1; j++){
-                ark_plugin_entries[j] = ark_plugin_entries[j+1];
+    for (int i=0; i<plugins_table.max_options; i++){
+        if ((void*)(plugins_table.settings_entries[i]) == (void*)plugin){
+            for (int j=i; j<plugins_table.max_options-1; j++){
+                plugins_table.settings_entries[j] = plugins_table.settings_entries[j+1];
             }
-            ark_plugins_count--;
+            plugins_table.max_options--;
             break;
         }
     }

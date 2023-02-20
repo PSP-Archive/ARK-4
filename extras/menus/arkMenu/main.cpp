@@ -43,7 +43,8 @@ int main(int argc, char** argv){
         entries[n_entries++] = new FTPManager();
     }
     // Setup settings and exit
-    entries[n_entries++] = new SettingsMenu(settings_entries, MAX_SETTINGS_OPTIONS, common::saveConf);
+    SettingsTable stab = { settings_entries, MAX_SETTINGS_OPTIONS };
+    entries[n_entries++] = new SettingsMenu(&stab, common::saveConf);
     entries[n_entries++] = new ExitManager();
 
     // Setup main App (Game or Browser)
