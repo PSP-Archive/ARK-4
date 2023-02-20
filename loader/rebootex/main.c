@@ -66,6 +66,7 @@ u32 reboot_start = 0;
 u32 reboot_end = 0;
 
 //io flags
+int rebootmodule_set = 0;
 int rebootmodule_open = 0;
 char *p_rmod = NULL;
 int size_rmod = 0;
@@ -220,7 +221,6 @@ u32 findRebootFunctions(u32 reboot_start){
 }
 
 // Entry Point
-int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7) __attribute__((section(".text.startup")));
 int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7)
 {
     #ifdef DEBUG

@@ -85,9 +85,7 @@ void patchRebootBuffer(){
 #endif
     }
 
-#ifdef MS_IPL
     patchRebootIoPSP();
-#endif
 
     // Flush Cache
     flushCache();
@@ -292,9 +290,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
             newsize = AddPRX(buffer, reboot_conf->rtm_mod.before, REBOOT_MODULE, reboot_conf->rtm_mod.flags);
             if(newsize > 0){
                 result = newsize;
-#ifndef MS_IPL
-                patchRebootIoPSP();
-#endif
+                setRebootModule();
             }
         }
     }
@@ -315,6 +311,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
 // IO Patches
 
 //io flags
+extern volatile int rebootmodule_set;
 extern volatile int rebootmodule_open;
 extern volatile char *p_rmod;
 extern volatile int size_rmod;
@@ -366,7 +363,7 @@ int _sceBootLfatRead(char * buffer, int length)
 int _sceBootLfatOpen(char * filename)
 {
     //load on reboot module open
-    if(strcmp(filename, REBOOT_MODULE) == 0)
+    if(rebootmodule_set && strcmp(filename, REBOOT_MODULE) == 0)
     {
         //mark for read
         rebootmodule_open = 1;
@@ -412,9 +409,13 @@ int _sceBootLfatClose(void)
 #endif
 }
 
-void patchRebootIoPSP(){
+void setRebootModule(){
+    rebootmodule_set = 1;
     rtm_buf = reboot_conf->rtm_mod.buffer;
     rtm_size = reboot_conf->rtm_mod.size;
+}
+
+void patchRebootIoPSP(){
     int patches = 3;
     for (u32 addr = reboot_start; addr<reboot_end && patches; addr+=4){
         u32 data = _lw(addr);

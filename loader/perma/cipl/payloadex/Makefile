@@ -30,13 +30,16 @@ CFLAGS += -DDEBUG=$(DEBUG)
 LIBS += -lcolordebugger
 endif
 
+crt0.o : $(REBOOTEXDIR)/crt0.S
+	$(CC) -I$(PSPSDK)/include -c $< -o crt0.o
+
 $(REBOOT_OBJS) : %.o : $(REBOOTEXDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 patches.o: $(ARKROOT)/core/compat/psp/rebootex/patches.c
 	$(CC) $(CFLAGS) -I$(REBOOTEXDIR) -c $< -o $@
 
-main.elf: $(REBOOT_OBJS) $(C_OBJS) patches.o
+main.elf: crt0.o $(REBOOT_OBJS) $(C_OBJS) patches.o
 
 $(TARGET): main.elf
 	$(Q)$(STRIP) -s $<
