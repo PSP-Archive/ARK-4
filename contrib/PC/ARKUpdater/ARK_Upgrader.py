@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox as mb
+from tkinter import DISABLED
 import os
 import usb
 import hashlib
@@ -70,12 +71,35 @@ def download_latest_ARK():
     with zipfile.ZipFile('ARK4.zip', 'r') as ARK:
         ARK.extractall('./ARK/')
 
+def setup_ark_dc(_path=None):
+    # TODO: ARK-DC detect that ms0:/TM/DCARK/ exists
+    # and then copy ARK_01234 to that folder
+    # extract FLASH0.ARK into ms0:/TM/DCARK/kd/
+    if not os.path.exists(f'{_path}/TM/DCARK/'):
+        os.makedirs(f'{_path}/TM/DCARK/')
+    download_latest_ARK()
+    if not os.path.exists(f'{_path}/TM/DCARK/ARK_1234'):
+        os.makedirs(f'{_path}/TM/DCARK/ARK_1234')
+    shutil.copytree(f'{tmp}/ARK/ARK_01234', f'{_path}/TM/DCARK/ARK_1234', dirs_exist_ok=True)
+    if not os.path.exists(f'{_path}/TM/DCARK/kd/'):
+        os.makedirs(f'{_path}/TM/DCARK/kd/') 
+    shutil.copyfile(f'{tmp}/ARK/ARK_01234/FLASH0.ARK', f'{_path}/TM/DCARK/kd/FLASH0.ARK')
 
-def dropdown_update(val, advanced_vsh=None, force_upgrade=None, def_text=None) -> None:
+def dropdown_update(val, advanced_vsh=None, force_upgrade=None, def_text=None, ARKDC=None) -> None:
     def_text.destroy()
     dropdown_val = val
     if dropdown_val is not None:
         os.chdir(dropdown_val)
+
+        # ARK DC Setup
+        if ARKDC == 1:
+            ark_dc_text = tk.Label(root, text='Copying files for ARK-DC. Please Wait...', bg="#0c0",fg="#fff" ) 
+            ark_dc_text.grid(column=1, row=2)
+            root.update()
+            setup_ark_dc(dropdown_val)
+            ark_dc_text.config(text='Done.')
+            return
+
         if os.path.isdir('PSP') and os.path.isdir('SEPLUGINS') or os.path.isdir('psp') and os.path.isdir('seplugins'):
             if not os.path.exists('./PSP/SAVEDATA/ARK_01234'):
                 install = mb.askquestion('ARK does not seem to be installed', 'Would you like to install it?')
@@ -139,12 +163,15 @@ def options(win=None, def_text=None) -> str:
         x.grid(column=3, row=0)
         cb = tk.IntVar()
         f_cb = tk.IntVar()
+        ark_dc_cb = tk.IntVar()
         z = tk.Checkbutton(win, text='Advanced VSH Menu', variable=cb, onvalue=1, offvalue=0)
         z.grid(column=4, row=1, sticky="w")
         force = tk.Checkbutton(win, text='Force Upgrade', variable=f_cb, onvalue=1, offvalue=0)
         force.grid(column=4, row=2, sticky="w")
+        ARKDC = tk.Checkbutton(win, text='ARK DC', variable=ark_dc_cb, onvalue=1, offvalue=0, state=DISABLED)
+        ARKDC.grid(column=4, row=3, sticky="w")
 
-        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get(), def_text))
+        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get(), def_text, ark_dc_cb.get()))
         w.grid(column=4, row=0)
     else:
         drives = win32api.GetLogicalDriveStrings()
@@ -162,8 +189,10 @@ def options(win=None, def_text=None) -> str:
         z.grid(column=4, row=1, sticky="w")
         force = tk.Checkbutton(win, text='Force Upgrade', variable=f_cb, onvalue=1, offvalue=0)
         force.grid(column=4, row=2, sticky="w")
+        ARKDC = tk.Checkbutton(win, text='ARK DC', variable=ark_dc_cb, onvalue=1, offvalue=0, state=DISABLED)
+        ARKDC.grid(column=4, row=3, sticky="w")
 
-        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get(), def_text))
+        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get(), def_text, ark_dc_cb.get()))
         w.grid(column=4, row=0)
 
 
@@ -189,7 +218,7 @@ def main() -> None:
     refresh_btn = ttk.Frame(root)
     refresh_btn.grid(column=1, row=0)
     close_but = ttk.Frame(root)
-    close_but.grid(column=4, row=3)
+    close_but.grid(column=4, row=4)
     def_text = tk.Label(root, text="Select options (if wanted)\nthen select a Drive to Start", bg="#ff1", padx=10)
     def_text.grid(column=0, row=1)
 
