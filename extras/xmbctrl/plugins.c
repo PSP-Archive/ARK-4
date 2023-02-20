@@ -107,6 +107,7 @@ void savePlugins(){
 
     for (int i=0; i<plugins.count; i++){
         Plugin* plugin = (Plugin*)(plugins.table[i]);
+        if (plugin->active == PLUGIN_REMOVED) continue;
         sceIoWrite(fd[plugin->place], plugin->path, strlen(plugin->path));
         if (plugin->name != NULL){
             char* sep = ", ";
