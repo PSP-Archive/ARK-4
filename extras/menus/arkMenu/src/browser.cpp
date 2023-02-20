@@ -230,7 +230,7 @@ void Browser::installPlugin(){
     max_progress = 1;
     draw_progress = true;
 
-    int fd = sceIoOpen(path_entries[pret].name, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+    int fd = sceIoOpen(path_entries[pret+1].name, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
     sceIoWrite(fd, "\n", 1);
     sceIoWrite(fd, mode.c_str(), mode.size());
     sceIoWrite(fd, ", ", 2);
