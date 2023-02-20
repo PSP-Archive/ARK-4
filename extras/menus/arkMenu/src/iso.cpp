@@ -178,7 +178,29 @@ void Iso::getTempData2(){
 }
 
 void Iso::doExecute(){
-    Iso::executeISO(this->path.c_str(), this->isPatched());
+    static char pboot_path[256];
+    if (has_update_file(pboot_path)){
+        Iso::executeISOupdated(this->path.c_str(), pboot_path);
+    }
+    else{
+        Iso::executeISO(this->path.c_str(), this->isPatched());
+    }
+}
+
+void Iso::executeISOupdated(const char* path, const char* pboot_path){
+    struct SceKernelLoadExecVSHParam param;
+    memset(&param, 0, sizeof(param));
+
+    sctrlSESetBootConfFileIndex(ISO_DRIVER);
+    sctrlSESetUmdFile((char*)path);
+
+    param.argp = (void*)pboot_path;
+    param.args = strlen(pboot_path) + 1;
+    param.key = "umdemu";
+
+    int runlevel = (*(u32*)pboot_path == EF0_PATH && common::getConf()->redirect_ms0)? ISO_PBOOT_RUNLEVEL_GO : ISO_PBOOT_RUNLEVEL;
+
+    sctrlKernelLoadExecVSHWithApitype(runlevel, pboot_path, &param);
 }
 
 void Iso::executeISO(const char* path, bool is_patched){
@@ -232,6 +254,41 @@ void Iso::executeVideoISO(const char* path)
 	sctrlSESetBootConfFileIndex(MODE_VSHUMD);
 	sctrlSESetDiscType(type);
 	sctrlKernelExitVSH(NULL);
+}
+
+int Iso::has_update_file(char* update_file){
+    // game ID is always at offset 0x8373 within the ISO
+    int lba = 16;
+    int pos = 883;
+
+    char game_id[10];
+
+    (this->*read_iso_data)((u8*)game_id, 10, 0x8373);
+
+    // remove the dash in the middle: ULUS-01234 -> ULUS01234
+    game_id[4] = game_id[5];
+    game_id[5] = game_id[6];
+    game_id[6] = game_id[7];
+    game_id[7] = game_id[8];
+    game_id[8] = game_id[9];
+    game_id[9] = 0;
+
+    // try to find the update file
+    char path[256];
+    char* devs[] = {"ms0:", "ef0:"};
+
+    for (int i=0; i<2; i++){
+        sprintf(path, "%s/PSP/GAME/%s/PBOOT.PBP", devs[i], game_id);
+        int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+        if (fd >= 0){
+            // found
+            sceIoClose(fd);
+            if (update_file) strcpy(update_file, path);
+            return 1;
+        }
+    }
+    // not found
+    return 0;
 }
 
 char* Iso::getType(){

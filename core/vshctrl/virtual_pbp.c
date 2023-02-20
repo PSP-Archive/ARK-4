@@ -129,6 +129,7 @@ static u32 g_caches_cnt;
 static u8 g_referenced[32];
 static u8 g_need_update = 0;
 
+
 static inline u32 get_isocache_magic(void)
 {
     u32 version;
@@ -581,6 +582,8 @@ static int get_sfo_section(VirtualPBP *vpbp, u32 remaining, void *data)
 
     get_sfo_u32(buf_64, "PARENTAL_LEVEL", &parental_level);
 
+    get_sfo_u32(buf_64, "HRKGMP_VER", &(vpbp->opnssmp_type));
+
     oe_free(buf);
     memcpy(virtualsfo+0x118, sfotitle, 64);
     memcpy(virtualsfo+0xf0, disc_id, 12);
@@ -976,7 +979,7 @@ static int has_update_file(VirtualPBP* vpbp, char* update_file){
         if (fd >= 0){
             // found
             sceIoClose(fd);
-            strcpy(update_file, path);
+            if (update_file) strcpy(update_file, path);
             return 1;
         }
     }
@@ -1103,30 +1106,49 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
     sctrlSESetBootConfFileIndex(MODE_INFERNO);
 
-    //reset and configure reboot parameter
-    memset(param, 0, sizeof(param));
-    param->size = sizeof(param);
-    
-    param->key = "umdemu";
-    param->args = 33;
-    apitype = 0x123;
-    loadexec_file = vpbp->name;
+    u32 opn_type = vpbp->opnssmp_type;
+    u32 *info = (u32 *)sceKernelGetGameInfo();
+    if( opn_type )
+        info[216/4] = opn_type;
 
-    if (psp_model == PSP_GO) {
-        char devicename[20];
-        ret = get_device_name(devicename, sizeof(devicename), vpbp->name);
-        if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
-            apitype = 0x125;
+    param->key = "umdemu";
+    apitype = 0x123;
+
+    static char pboot_path[256];
+    int has_pboot = has_update_file(vpbp, pboot_path);
+
+    if (has_pboot){
+        apitype = 0x124;
+        param->argp = pboot_path;
+        param->args = strlen(pboot_path) + 1;
+        loadexec_file = param->argp;
+
+        if (psp_model == PSP_GO) {
+            char devicename[20];
+            ret = get_device_name(devicename, sizeof(devicename), pboot_path);
+            if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
+                apitype = 0x126;
+            }
         }
     }
-    static char update_file[256];
-    if (has_update_file(vpbp, update_file)){
-        param->argp = update_file;
-    }
-    else if (has_prometheus_module(vpbp)) {
-        param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
-    } else {
-        param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+    else{
+        //reset and configure reboot parameter
+        loadexec_file = vpbp->name;
+
+        if (psp_model == PSP_GO) {
+            char devicename[20];
+            ret = get_device_name(devicename, sizeof(devicename), vpbp->name);
+            if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
+                apitype = 0x125;
+            }
+        }
+
+        if (has_prometheus_module(vpbp)) {
+            param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
+        } else {
+            param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+        }
+        param->args = 33;
     }
 
     //start game image
