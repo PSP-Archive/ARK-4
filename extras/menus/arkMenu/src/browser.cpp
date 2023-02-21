@@ -308,8 +308,8 @@ void Browser::refreshDirs(){
         }    
     }
 
-    DIR* dir = opendir(this->cwd.c_str());
-    if (dir == NULL){ // can't open directory
+    int dir = sceIoDopen(this->cwd.c_str());
+    if (dir < 0){ // can't open directory
         if (this->cwd == ROOT_DIR) // ms0 failed
             this->cwd = GO_ROOT; // go to ef0
         else
@@ -318,18 +318,38 @@ void Browser::refreshDirs(){
         return;
     }
 
-    struct dirent* dit;
+    SceIoDirent* dit = (SceIoDirent*)malloc(sizeof(SceIoDirent));
 
     vector<Entry*> folders;
     vector<Entry*> files;
-        
-    while ((dit = readdir(dir))){
-        if (common::fileExists(string(this->cwd)+string(dit->d_name)))
-            files.push_back(new File(string(this->cwd)+string(dit->d_name)));
-        else
-            folders.push_back(new Folder(string(this->cwd)+string(dit->d_name)+"/"));
+
+    pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
+    pri_dirent->size = sizeof(pspMsPrivateDirent);
+    dit->d_private = (void*)pri_dirent;
+
+    while ((sceIoDread(dir, dit)) > 0){
+        if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
+            string ptmp = string(this->cwd)+string(dit->d_name)+"/";
+            if (!common::folderExists(ptmp)){
+                ptmp = string(this->cwd) + string(dit->d_name).substr(0, 4) + string(pri_dirent->s_name) + "/";
+                printf("%d: %s\n", (int)common::folderExists(ptmp), ptmp.c_str());
+            }
+            folders.push_back(new Folder(ptmp));
+        }
+        else{
+            string ptmp = string(this->cwd)+string(dit->d_name);
+            if (!common::fileExists(ptmp)){
+                ptmp = string(this->cwd) + string(dit->d_name).substr(0, 4) + string(pri_dirent->s_name);
+                printf("%d: %s\n", (int)common::fileExists(ptmp), ptmp.c_str());
+            }
+            files.push_back(new File(ptmp));
+        }
+            
     }
-    closedir(dir);
+    sceIoDclose(dir);
+
+    free(pri_dirent);
+    free(dit);
 
     if (common::getConf()->sort_entries){
 
@@ -572,9 +592,13 @@ void Browser::recursiveFolderDelete(string path){
     {
         SceIoDirent entry;
         memset(&entry, 0, sizeof(SceIoDirent));
+
+        pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
+        pri_dirent->size = sizeof(pspMsPrivateDirent);
+        entry.d_private = (void*)pri_dirent;
         
         //allocate memory to store the full file paths
-        char * new_path = new char[path.length() + 256];
+        string new_path;
 
         //start reading directory entries
         while(sceIoDread(d, &entry) > 0)
@@ -587,23 +611,29 @@ void Browser::recursiveFolderDelete(string path){
             };
             
             //build new file path
-            strcpy(new_path, path.c_str());
-            strcat(new_path, entry.d_name);
-            
-            if(common::fileExists(new_path))
+            new_path = path + string(entry.d_name);
+
+            if (FIO_SO_ISDIR(entry.d_stat.st_attr)){
+                new_path = new_path + "/";
+                if (!common::folderExists(new_path)){
+                    new_path = path + string(entry.d_name).substr(0, 4) + string(pri_dirent->s_name) + "/";
+                    printf("%d: %s\n", (int)common::folderExists(new_path), new_path.c_str());
+                }
+                recursiveFolderDelete(new_path);
+            }
+            else{
+                if (!common::fileExists(new_path)){
+                    new_path = path + string(entry.d_name).substr(0, 4) + string(pri_dirent->s_name);
+                    printf("%d: %s\n", (int)common::fileExists(new_path), new_path.c_str());
+                }
                 self->deleteFile(new_path);
-            else {
-                //not a file? must be a folder
-                strcat(new_path, "/");
-                recursiveFolderDelete(string(new_path)); //try to delete folder content
             }
             
         };
         
         sceIoDclose(d); //close directory
         sceIoRmdir(path.substr(0, path.length()-1).c_str()); //delete empty folder
-
-        delete [] new_path; //clear allocated memory
+        free(pri_dirent);
     };
 }
 
@@ -747,6 +777,10 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
         {
             SceIoDirent entry;
             memset(&entry, 0, sizeof(SceIoDirent));
+
+            pspMsPrivateDirent* pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
+            pri_dirent->size = sizeof(pspMsPrivateDirent);
+            entry.d_private = (void*)pri_dirent;
             
             //start reading directory entries
             while(sceIoDread(dir, &entry) > 0)
@@ -758,21 +792,33 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
                     continue;
                 };
                 string src = new_source + entry.d_name;
-                if (common::fileExists(src)){ //is it a file
-                    printf("Copying file from %s -> %s\n", src.c_str(), new_destination.c_str());
+
+                if (FIO_SO_ISDIR(entry.d_stat.st_attr)){
+                    string dst;
+                    if (!common::folderExists(src)){
+                        string sname = string(entry.d_name).substr(0, 4) + string(pri_dirent->s_name);
+                        src = new_source + sname;
+                        dst = new_destination + sname;
+                        printf("%d: %s\n", (int)common::folderExists(src), src.c_str());
+                    }
+                    else{
+                        dst = new_destination + entry.d_name;
+                    }
+                    copy_folder_recursive(src.c_str(), dst.c_str());
+                }
+                else{
+                    if (!common::fileExists(src)){
+                        src = new_source + string(entry.d_name).substr(0, 4) + string(pri_dirent->s_name);
+                        printf("%d: %s\n", (int)common::fileExists(src), src.c_str());
+                    }
                     if (pasteMode == COPY || (pasteMode == CUT && pspIoMove(src, new_destination) < 0))
                         copyFile(src, new_destination); //copy file
                 }
-                else
-                {
-                    //try to copy as a folder
-                    string dst = new_destination + entry.d_name;
-                    copy_folder_recursive(src.c_str(), dst.c_str());
-                };
 
             };
             //close folder
             sceIoDclose(dir);
+            free(pri_dirent);
         };
     }
     

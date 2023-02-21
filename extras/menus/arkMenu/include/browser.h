@@ -23,6 +23,12 @@ enum{
     FTP_DIR,
 };
 
+typedef struct _pspMsPrivateDirent {
+	SceSize size;
+	char s_name[16];
+	char l_name[1024];
+} pspMsPrivateDirent;
+
 class BrowserDriver{
     public:
         virtual bool connect() = 0;

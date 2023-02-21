@@ -25,10 +25,9 @@ BrowserFile::~BrowserFile(){
 }
 
 unsigned BrowserFile::getFileSize(){
-    FILE* fp = fopen(this->getPath().c_str(), "rb");
-    fseek(fp, 0, SEEK_END);
-    unsigned size = ftell(fp);
-    fclose(fp);
+    int fd = sceIoOpen(path.c_str(), PSP_O_RDONLY, 0777);
+    unsigned size = sceIoLseek(fd, 0, SEEK_END);
+    sceIoClose(fd);
     return size;
 }
 
