@@ -151,10 +151,24 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     u32 a = 0;
     char str[50];
     u32 addr;
-    for (addr=text_addr; addr<top_addr; addr+=4){
+
+    int patches = (psp_model==PSP_1000)? 2 : 1;
+    for (addr=text_addr; addr<top_addr && patches; addr+=4){
         if (_lw(addr) == 0x34C600C9 && _lw(addr+8) == NOP){
             a = addr+20;
-            break;
+            patches--;
+        }
+        else if (psp_model == PSP_1000 && _lw(addr) == 0x26530008 && _lw(addr-4) == 0x24040018){
+            // allow slim colors in PSP 1K
+            u32 patch_addr, value;
+
+            patch_addr = addr-28;
+            value = *(u32 *)(patch_addr + 4);
+
+            _sw(0x24020001, patch_addr + 4);
+            _sw(value,  patch_addr);
+
+            patches--;
         }
     }
     
