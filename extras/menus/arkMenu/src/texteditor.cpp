@@ -92,6 +92,8 @@ void TextEditor::insertLine(int i, string line, char* opt1, char* opt2){
 void TextEditor::removeLine(int i){
     if (i == 0) return;
 
+    SystemMgr::pauseDraw();
+
     text_line_t* tline = (text_line_t*)(table.settings_entries[i]);
 
     for (int j=i; j<table.max_options-1; j++){
@@ -101,6 +103,8 @@ void TextEditor::removeLine(int i){
 
     free(tline->description);
     free(tline);
+
+    SystemMgr::resumeDraw();
 }
 
 void TextEditor::editLine(int i){
