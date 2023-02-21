@@ -5,6 +5,10 @@
 #include "osk.h"
 #include "system_mgr.h"
 
+static char* EDIT = "          Edit";
+static char* REMV = "          Remove";
+static char* SAVE = "          Saving";
+static char* EXIT = "          Not Saving";
 
 TextEditor::TextEditor(string path){
     this->path = path;
@@ -33,10 +37,10 @@ TextEditor::~TextEditor(){
 void TextEditor::loadTextFile(){
     std::ifstream input(this->path.c_str());
 
-    this->addLine(string("<EXIT>"), "Saving", "Not Saving");
+    this->addLine(string("<EXIT>"), SAVE, EXIT);
 
     for( std::string line; getline( input, line ); ){
-        this->addLine(line, "Edit", "Remove");
+        this->addLine(line, EDIT, REMV);
     }
 }
 
@@ -157,7 +161,7 @@ int TextEditor::control(){
         }
         else if (pad.square()){
             int i = this->menu->getIndex();
-            this->insertLine(i+1, string("<new line>"), "Edit", "Remove");
+            this->insertLine(i+1, string("<new line>"), EDIT, REMV);
             this->editLine(i+1);
         }
         else if (pad.decline()){

@@ -3,7 +3,7 @@
 #include "system_mgr.h"
 
 
-#define MENU_W 370
+#define MENU_W 375
 #define MENU_W_SPEED 50
 #define MENU_H_SPEED 30
 #define PAGE_SIZE 10
