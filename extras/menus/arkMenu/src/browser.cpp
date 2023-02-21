@@ -156,7 +156,7 @@ void Browser::update(){
     else if (Entry::isTXT(this->get()->getPath().c_str())){
         optionsmenu = new TextEditor(this->get()->getPath());
         optionsmenu->control();
-        OptionsMenu* aux = optionsmenu;
+        TextEditor* aux = (TextEditor*)optionsmenu;
         optionsmenu = NULL;
         delete aux;
     }
