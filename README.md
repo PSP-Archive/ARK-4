@@ -148,6 +148,15 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
 ## CUSTOMIZATION
 
 <details>
+  <summary> <b> Advanced VSH Menu </b> </summary>
+<p>
+
+The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus. To have a more classic VSH menu with more advanced features you can install `Advanced VSH Menu` by copying `VSHMENU.PRX` from the `AdvancedVSH` folder into `ARK_01234`.
+
+</p>
+</details>
+
+<details>
   <summary> <b> Installing Plug-Ins </b> </summary>
 <p>
   
@@ -198,6 +207,14 @@ Some noteworthy plugins that are compatible with ARK include (but not limited to
 - GTA LCS and VCS cheadevice (including the remastered version).
 - CWCheat.
 - pspstates kai.
+- XMB Item Hider v1.3-r3
+- DayViewer.
+- Categories Lite.
+- CDDA Enabler.
+- PRO Online.
+- PSP 3D.
+- ZeroVSH Patcher.
+
 
 </p>
 </details>
