@@ -5,7 +5,7 @@
 #include "entry.h"
 #include "common.h"
 #include "gfx.h"
-#include "optionsMenu.h"
+#include "optionsmenu.h"
 #include "system_entry.h"
 
 using namespace std;

@@ -12,6 +12,7 @@
 #include "iso.h"
 #include "eboot.h"
 #include "unziprar.h"
+#include "texteditor.h"
 
 #define ROOT_DIR "ms0:/" // Initial directory
 #define GO_ROOT "ef0:/" // PSP Go initial directory
@@ -151,6 +152,13 @@ void Browser::update(){
     }
     else if (Entry::isPRX(this->get()->getPath().c_str())){
         installPlugin();
+    }
+    else if (Entry::isTXT(this->get()->getPath().c_str())){
+        optionsmenu = new TextEditor(this->get()->getPath());
+        optionsmenu->control();
+        OptionsMenu* aux = optionsmenu;
+        optionsmenu = NULL;
+        delete aux;
     }
 }
 

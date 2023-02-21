@@ -22,12 +22,13 @@ class OptionsMenu {
         int maxString();
     
     public:
+        OptionsMenu(){};
         OptionsMenu(char* description, int n_options, t_options_entry* entries);
         ~OptionsMenu();
         
-        void draw();
+        virtual void draw();
         
-        int control();
+        virtual int control();
 
 };
 

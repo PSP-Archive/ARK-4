@@ -1,4 +1,4 @@
-#include "optionsMenu.h"
+#include "optionsmenu.h"
 #include "controller.h"
 
 OptionsMenu::OptionsMenu(char* description, int n_options, t_options_entry* entries){
@@ -59,12 +59,12 @@ int OptionsMenu::control(){
                 common::playMenuSound();
             }
         }
-        else if (pad.cross()){
+        else if (pad.accept()){
             common::playMenuSound();
             ret = true;
             break;
         }
-        else if (pad.circle()){
+        else if (pad.decline()){
             common::playMenuSound();
             ret = false;
             break;
