@@ -41,3 +41,12 @@ Installation On PS Vita
     - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
     - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
     - Some features are not available to Vita users, mainly the official Sony `XMB` and `PS1` games.
+
+
+
+
+
+Advanced VSH Menu
+
+The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
+To have a more classic VSH menu with more advanced features you can install `Advanced VSH Menu` by copying `VSHMENU.PRX` from the `AdvancedVSH` folder into `ARK_01234`.
