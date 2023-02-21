@@ -259,7 +259,36 @@ This also allows you to enable settings on specific games:
 <details>
   <summary> <b> Custom Launcher </b> </summary>
 <p>
-ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
+ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. Some of its features include:
+  
+  - Playback of ISO and all CSO formats with PMF video preview.
+  
+  - Playback of UMD game discs.
+  
+  - Categorized and organized game menu by PSP Games, PSP Homebrew and PS1 Games.
+  
+  - Ability to scan savedata folders for games.
+  
+  - Compatibility with old VHBL, ARK-2 and TN-CEF file names and folder paths.
+  
+  - Ability to copy, move or delete entire folders.
+  
+  - File browser has built-in FTP client, allowing you to browse and copy files from another PSP.
+  
+  - FTP server and client can run simultaneously.
+  
+  - Ability to mount UMD Video ISOs using the file browser.
+  
+  - Ability to edit text files (.txt, .cfg or .ini).
+  
+  - Ability to install Plugins via the file browser.
+  
+  - Different background animation effects.
+  
+  - And more.
+
+  
+You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
 
 <details>
 <summary> <b> Custom Launcher Themes </b> </summary>
@@ -305,6 +334,11 @@ Theme: BadgerOS
 
 </details>
 
+
+<details>
+<summary> <b> Other Launchers </b> </summary>
+<p>
+
 Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
 
 - ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
@@ -321,6 +355,9 @@ Aside from the default launcher provided, there have been many  other custom lau
 
 
 Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
+</p>
+</details>
+
 </p>
 </details>
 
