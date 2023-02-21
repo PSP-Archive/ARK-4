@@ -1,0 +1,13 @@
+"Custom Firmware" Nustatymai
+Papildinių Tvarkyklė
+USB Krovimas
+Perkrovimas
+Energijos Tausojimas
+Automatiškai pereiti į paleidiklį
+Išjungti pauzę ant PSP Go
+Priverstinė papildoma atmintis
+"Memory Stick" pagreitinimas
+"Inferno" talpykla
+Senų papildinių palaikymas ant PSP Go
+Praleisti "Sony" logotipus
+Slėpti PIC0 ir PIC1
