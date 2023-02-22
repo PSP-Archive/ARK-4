@@ -140,6 +140,9 @@ int module_start(SceSize args, void * argp)
     
     // Initialize NPDRM
     nodrmInit();
+
+    // Patch free mem size
+    patch_ioDevCtl();
     
     // Register Start Module Handler
     previous = sctrlHENSetStartModuleHandler(stargateSyspatchModuleOnStart);
