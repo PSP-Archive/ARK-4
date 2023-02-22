@@ -1,7 +1,7 @@
 # ARK Changelog
 
-## Version 4.19.14 (???)
-- ???
+## Version 4.19.14 (2023-02-22)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r41914
 - You can now use slim colors on PSP 1K.
 - Added partial support for files with non-latin1 characters in recovery/launcher.
 - Added new CFW setting "Block hibernation deletion on PSP Go", available in XMB and recovery menu.
