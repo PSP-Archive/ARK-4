@@ -31,9 +31,6 @@
 #include "globals.h"
 #include "functions.h"
 
-#define DAX_BLOCK_SIZE 0x2000
-#define DAX_COMP_BUF 0x2400
-
 PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 0);
 
 u32 psp_model = 0;
