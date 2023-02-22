@@ -49,8 +49,18 @@ const char *g_messages_en[] = {
 	"Memory Stick",
 	"None",
 	"Red",
+	"Orange",
+	"Yellow",
 	"Green",
 	"Blue",
+	"Indigo",
+	"Violet",
+	"Pink",
+	"Purple",
+	"Teal",
+	"Aqua",
+	"Grey",
+	"Black",
 };
 
 u8 message_test_en[NELEMS(g_messages_en) == MSG_END ? 0 : -1];

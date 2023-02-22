@@ -121,17 +121,70 @@ int menu_draw(void)
 										    // 0xc00000ff original     abgr
 		msg = g_messages[MSG_USB_DEVICE + max_menu];
 		switch(cnf.vsh_colors) {
+						// Red
 						case 0: 
 							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa00000ff;
 							blit_set_color(fc,bc);
 							break;
-						case 1:
+						// Orange
+						case 1: 
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa000a5ff;
+							blit_set_color(fc,bc);
+							break;
+						// Yellow
+						case 2: 
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa000e6e6;
+							blit_set_color(fc,bc);
+							break;
+						// Green
+						case 3:
 							bc = 0xa000ff00;
 							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa000ff00;
 							blit_set_color(fc,bc);
 							break;
-						case 2:
+						// Blue
+						case 4:
 							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0ff0000;
+							blit_set_color(fc,bc);
+							break;
+						// Indigo
+						case 5:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa082004b;
+							blit_set_color(fc,bc);
+							break;
+						// Violet
+						case 6:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0ee82ee;
+							blit_set_color(fc,bc);
+							break;
+						// Pink 
+						case 7:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0cbc0ff;
+							blit_set_color(fc,bc);
+							break;
+						// Purple 
+						case 8:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0993366;
+							blit_set_color(fc,bc);
+							break;
+						// Teal 
+						case 9:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0808000;
+							blit_set_color(fc,bc);
+							break;
+						// Aqua 
+						case 10:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0cccc00;
+							blit_set_color(fc,bc);
+							break;
+						// Grey 
+						case 11:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0737373;
+							blit_set_color(fc,bc);
+							break;
+						// Black 
+						case 12:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0000000;
 							blit_set_color(fc,bc);
 							break;
 						default:	
@@ -363,15 +416,44 @@ int menu_setup(void)
 		case _RED:
 			item_str[TMENU_COLORS] = g_messages[MSG_RED];
 			break;
-		case _BLUE:
-			item_str[TMENU_COLORS] = g_messages[MSG_BLUE];
+		case _ORANGE:
+			item_str[TMENU_COLORS] = g_messages[MSG_ORANGE];
+			break;
+		case _YELLOW:
+			item_str[TMENU_COLORS] = g_messages[MSG_YELLOW];
 			break;
 		case _GREEN:
 			item_str[TMENU_COLORS] = g_messages[MSG_GREEN];
 			break;
-		default:
-			item_str[TMENU_COLORS] = g_messages[MSG_GREEN];
+		case _BLUE:
+			item_str[TMENU_COLORS] = g_messages[MSG_BLUE];
 			break;
+		case _INDIGO:
+			item_str[TMENU_COLORS] = g_messages[MSG_INDIGO];
+			break;
+		case _VIOLET:
+			item_str[TMENU_COLORS] = g_messages[MSG_VIOLET];
+			break;
+		case _PINK:
+			item_str[TMENU_COLORS] = g_messages[MSG_PINK];
+			break;
+		case _PURPLE:
+			item_str[TMENU_COLORS] = g_messages[MSG_PURPLE];
+			break;
+		case _TEAL:
+			item_str[TMENU_COLORS] = g_messages[MSG_TEAL];
+			break;
+		case _AQUA:
+			item_str[TMENU_COLORS] = g_messages[MSG_AQUA];
+			break;
+		case _GREY:
+			item_str[TMENU_COLORS] = g_messages[MSG_GREY];
+			break;
+		case _BLACK:
+			item_str[TMENU_COLORS] = g_messages[MSG_BLACK];
+			break;
+		default:
+			item_str[TMENU_COLORS] = g_messages[MSG_RED];
 	}
 
 	return 0;

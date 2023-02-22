@@ -60,7 +60,7 @@ int swap_readonly(int dir) {
 
 void change_colors(int dir) {
 	int sel = cnf.vsh_colors;
-	sel = limit(sel+dir, 0, 2);
+	sel = limit(sel+dir, 0, 12);
 	cnf.vsh_colors=sel;
 }
 
