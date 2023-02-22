@@ -564,6 +564,13 @@ static void check_battery(void) {
     }
 }
 
+void delete_hibernation(){
+	if (psp_model == PSP_GO){
+		vshCtrlDeleteHibernation();
+		sctrlKernelExitVSH(NULL);
+	}
+}
+
 int TSRThread(SceSize args, void *argp)
 {
 	sceKernelChangeThreadPriority(0, 8);
@@ -651,7 +658,10 @@ int TSRThread(SceSize args, void *argp)
 		exec_recovery_menu();
 	} else if (stop_flag == 9) {
 		convert_battery();
+	} else if (stop_flag == 10) {
+		delete_hibernation();
 	}
+
 
 	umdvideolist_clear(&g_umdlist);
 	clear_language();
