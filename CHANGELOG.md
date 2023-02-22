@@ -4,9 +4,10 @@
 - ???
 - You can now use slim colors on PSP 1K.
 - Added partial support for files with non-latin1 characters in recovery/launcher.
-- Added new CFW setting "Block hibernation on PSP Go", available in XMB and recovery menu.
+- Added new CFW setting "Block hibernation deletion on PSP Go", available in XMB and recovery menu.
 - Fixed small issue with "Skip Sony Logos".
 - Renamed launcher/recovery settings file from ARKMENU.CFG to ARKMENU.BIN to prevent confusion since it's not a text file.
+- Added new features to Advanced VSH Menu: USB Readonly mode, background color, activate flash and wma players, swap X/O buttons and delete hibernation.
 
 ## Version 4.19.13 (2023-02-21)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r41913
