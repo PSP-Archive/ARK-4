@@ -8,7 +8,6 @@
 #include "systemctrl.h"
 #include "animations.h"
 
-#define CONFIG_PATH "ARKMENU.CFG"
 #define RESOURCES_LOAD_PLACE YA2D_PLACE_VRAM
 
 using namespace common;

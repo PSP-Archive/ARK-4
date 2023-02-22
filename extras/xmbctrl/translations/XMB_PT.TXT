@@ -11,3 +11,4 @@ Cache Inferno
 Suporte Para Plugins Antigos no PSP Go
 Pular Logos da Sony
 Ocultar PIC0 e PIC1
+Impedir exclusão de hibernação no PSP Go

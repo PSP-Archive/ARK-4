@@ -211,7 +211,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } hibblock = {
-    "Block hibernation on PSP Go",
+    "Prevent hibernation deletion on PSP Go",
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.hibblock),

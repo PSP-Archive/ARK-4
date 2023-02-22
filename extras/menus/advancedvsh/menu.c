@@ -409,7 +409,6 @@ int menu_ctrl(u32 button_on)
 			break;
 		case TMENU_USB_READONLY:
 			// Other logic will go here
-			if(direction==0) return 11;
 			break;
 		case TMENU_UMD_MODE:
 			if(direction) change_umd_mode( direction );
@@ -442,6 +441,16 @@ none:
 				return 10; // Delete Hibernation flag 
 			}
 			break;
+		case TMENU_ACTIVATE_FLASH_WMA:
+			if(direction==0) {
+				return 11; // Delete Hibernation flag 
+			}
+			break;
+		case TMENU_SWAP_XO_BUTTONS:
+			if(direction==0) {
+				return 12; // Delete Hibernation flag 
+			}
+			break;
 		case TMENU_CONVERT_BATTERY:
 			if(direction==0) {
 				return 9; // Convert Battery flag
@@ -450,7 +459,6 @@ none:
 		case TMENU_COLORS:
 			// This will be where I will be adding to set the color
 			if(direction) change_colors(direction);
-			else if (direction==0) return 11;
 			break;
 		case TMENU_CUSTOM_LAUNCHER:
 			if(direction==0) {

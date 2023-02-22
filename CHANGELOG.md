@@ -1,5 +1,18 @@
 # ARK Changelog
 
+## Version 4.19.14 (???)
+- ???
+- You can now use slim colors on PSP 1K.
+- Added partial support for files with non-latin1 characters in recovery/launcher.
+- Added new CFW setting "Block hibernation on PSP Go", available in XMB and recovery menu.
+- Fixed small issue with "Skip Sony Logos".
+- Renamed launcher/recovery settings file from ARKMENU.CFG to ARKMENU.BIN to prevent confusion since it's not a text file.
+
+## Version 4.19.13 (2023-02-21)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r41913
+- You can now remove plugins using the Plugin Manager in the XMB or Recovery Menu. This doesn't delete the plugin or its files, only removes it from PLUGINS.TXT, to fully uninstall the plugin you can use the file manager to delete its files.
+- You can now edit text files (.txt, .cfg or .ini) using the file browser.
+
 ## Version 4.19.12 (2023-02-19)
 - fixed ISOs with non-latin1 characters (only on XMB though, launcher/recovery still has issues with them).
 - launcher and recovery will now hide options that aren't available depending on device and model (ftp, ef0, etc) and CFW settings.

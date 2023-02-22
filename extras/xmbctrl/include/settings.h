@@ -37,6 +37,7 @@ char *settings[] =
     "Old Plugin Support on PSP Go",
     "Skip Sony Logos",
     "Hide PIC0 and PIC1",
+    "Prevent hibernation deletion on PSP Go",
 };
 
 #endif

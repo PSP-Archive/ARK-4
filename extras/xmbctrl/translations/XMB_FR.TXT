@@ -11,3 +11,4 @@ Cache Inferno
 Support des anciens plugins sur PSP Go
 Transitions Sony dans le XMB
 Masquer PIC0 et PIC1
+Bloquer l'effacement de l'hibernation sur PSP Go
