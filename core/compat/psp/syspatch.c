@@ -88,6 +88,25 @@ void patch_scePower_Service(SceModule2* mod)
     _sw(NOP, text_addr + 0x00000E68);
 }
 
+void patch_GameBoot(SceModule2* mod){
+    u32 p1 = 0;
+    u32 p2 = 0;
+    int patches = 2;
+    for (u32 addr=mod->text_addr; addr<mod->text_addr+mod->text_size && patches; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x2C43000D){
+            p1 = addr-36;
+            patches--;
+        }
+        else if (data == 0x27BDFF20 && _lw(addr-4) == 0x27BD0040){
+            p2 = addr-24;
+            patches--;
+        }
+    }
+    _sw(JAL(p1), p2);
+    _sw(0x24040002, p2 + 4);
+}
+
 static void patch_devicename(SceUID modid)
 {
 	SceModule2 *mod;
@@ -229,7 +248,7 @@ void processSettings(){
 
 void (*prevPluginHandler)(const char* path, int modid) = NULL;
 void pluginHandler(const char* path, int modid){
-    if(oldplugin && psp_model == PSP_GO && (strncmp(path, "ef0", 2)==0 || strncmp(path, "EF0", 2)==0)) {
+    if(oldplugin && psp_model == PSP_GO && (strncasecmp(path, "ef0", 2)==0)) {
 		patch_devicename(modid);
 	}
 	if (prevPluginHandler) prevPluginHandler(path, modid);
@@ -283,15 +302,15 @@ void PSPOnModuleStart(SceModule2 * mod){
     if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
 		if (skip_logos){
             // patch GameBoot
-            MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x00005630);
+            //MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x00005630);
+            hookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
         }
         goto flush;
 	}
 
     if(0 == strcmp(mod->modname, "game_plugin_module")) {
 		if (skip_logos) {
-		    _sw(JAL(mod->text_addr + 0x000194B0), mod->text_addr + 0x00019130);
-		    _sw(0x24040002, mod->text_addr + 0x00019130 + 4);
+		    patch_GameBoot(mod);
 	    }
         goto flush;
 	}
