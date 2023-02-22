@@ -151,7 +151,18 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
   <summary> <b> Advanced VSH Menu </b> </summary>
 <p>
 
-The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus. To have a more classic VSH menu with more advanced features you can install `Advanced VSH Menu` by copying `VSHMENU.PRX` from the `AdvancedVSH` folder into `ARK_01234`.
+The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
+To have a more classic VSH menu with more advanced features you can install `Advanced VSH Menu` by copying `VSHMENU.PRX` from the `AdvancedVSH` folder into `ARK_01234`.
+Some of the features available in Advanced VSH Menu include:
+
+- Change USB Device mount (Memory Stick, Flash, UMD).
+- Protect Flash in USB Device mount.
+- View available ISO drivers.
+- Mount UMD Video ISO.
+- Convert battery from normal to pandora and viceversa.
+- Activate flash and WMA playback.
+- Swap X/O buttons.
+- Delete hibernation (PSP Go paused game).
 
 </p>
 </details>
