@@ -28,9 +28,12 @@ const char *g_messages_en[] = {
 	//"CPU CLOCK XMB  ",
 	//"CPU CLOCK GAME ",
 	"USB DEVICE     ",
+	"USB READONLY   ",
 	"UMD ISO MODE   ",
 	"ISO VIDEO MOUNT",
+	"COLORS         ",
 	"CONVERT BATTERY",
+	"DELETE HIBERNATION",
 	"CUSTOM LAUNCHER ->",
 	"RECOVERY MENU  ->",
 	"SHUTDOWN DEVICE",
@@ -43,6 +46,9 @@ const char *g_messages_en[] = {
 	"UMD Disc",
 	"Memory Stick",
 	"None",
+	"Red",
+	"Green",
+	"Blue",
 };
 
 u8 message_test_en[NELEMS(g_messages_en) == MSG_END ? 0 : -1];

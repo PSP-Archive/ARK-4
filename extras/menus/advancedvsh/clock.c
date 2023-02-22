@@ -52,6 +52,12 @@ int bus2no(int cpu)
 	return 0;
 }
 
+void change_colors(int dir) {
+	int sel = cnf.vsh_colors;
+	sel = limit(sel+dir, 0, 2);
+	cnf.vsh_colors=sel;
+}
+
 void change_clock(int dir, int flag)
 {
 	int sel;

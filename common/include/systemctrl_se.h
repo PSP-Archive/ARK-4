@@ -39,6 +39,13 @@ enum SEUmdModes
     MODE_UPDATERUMD = 5,
 };
 
+enum vsh_colors
+{
+	_RED = 0,
+	_GREEN = 1,
+	_BLUE = 2,
+};
+
 enum MsSpeedFlag
 {
     MSSPEED_NONE     = 0,
@@ -94,6 +101,7 @@ typedef struct _SEConfig
     s16 usbversion;
     s16 language; /* -1 as autodetect */
     s16 retail_high_memory;
+	s16 vsh_colors;
 } SEConfig;
 
 /**

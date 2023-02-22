@@ -190,6 +190,7 @@ int load_start_module(char *path)
 	return ret;
 }
 
+
 void exec_recovery_menu(){
     char menupath[ARK_PATH_SIZE];
     strcpy(menupath, ark_config->arkpath);
@@ -660,6 +661,9 @@ int TSRThread(SceSize args, void *argp)
 		convert_battery();
 	} else if (stop_flag == 10) {
 		delete_hibernation();
+	} else if (stop_flag == 11) {
+		printf("Probably not here.\n");
+		//delete_hibernation();
 	}
 
 

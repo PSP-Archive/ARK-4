@@ -36,15 +36,18 @@ char freq2_buf[3+3+2] = "";
 char device_buf[13] = "";
 char umdvideo_path[256] = "";
 
-#define TMENU_MAX 11
+#define TMENU_MAX 14
 
 enum{
 	//TMENU_XMB_CLOCK,
 	//TMENU_GAME_CLOCK,
 	TMENU_USB_DEVICE,
+	TMENU_USB_READONLY,
 	TMENU_UMD_MODE,
 	TMENU_UMD_VIDEO,
+	TMENU_COLORS,
 	TMENU_CONVERT_BATTERY,
+	TMENU_DELETE_HIBERNATION,
 //	TMENU_XMB_PLUGINS,
 //	TMENU_GAME_PLUGINS,
 //	TMENU_POPS_PLUGINS,
@@ -71,6 +74,7 @@ const int xyPoint[] ={0x98, 0x30, 0xC0, 0xA0, 0x70, 0x08, 0x0E, 0xA8};//data243C
 const int xyPoint2[] ={0xB0, 0x30, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data2458=
 
 int is_pandora = 0;
+int colors_dir = 0;
 
 int menu_draw(void)
 {
@@ -109,16 +113,33 @@ int menu_draw(void)
 	blit_string(pointer[0], pointer[1], g_messages[MSG_PRO_VSH_MENU]);
 	blit_string(pointer[0], 56, ark_version);
 //	blit_string(168, (pointer[1] + sizeof(ark_version))*8, ark_version);
-
+ 
 	for(max_menu=0;max_menu<TMENU_MAX;max_menu++) {
 		fc = 0xffffff;
-											// 0xc00000ff original
-		bc = (max_menu==menu_sel) ? 0xff8080 : 0x000000ff;
-		blit_set_color(fc,bc);
-
+										    // 0xc00000ff original     abgr
 		msg = g_messages[MSG_USB_DEVICE + max_menu];
+		switch(cnf.vsh_colors) {
+						case 0: 
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa00000ff;
+							blit_set_color(fc,bc);
+							break;
+						case 1:
+							bc = 0xa000ff00;
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa000ff00;
+							blit_set_color(fc,bc);
+							break;
+						case 2:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0ff0000;
+							blit_set_color(fc,bc);
+							break;
+						default:	
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa00000ff;
+							blit_set_color(fc,bc);
+					}
+
 
 		if(msg) {
+				bc = (max_menu==menu_sel) ? 0xff8080 : 0x0000ff00;
 			switch(max_menu) {
 				case TMENU_EXIT:
 					xPointer = pointer[2];
@@ -139,6 +160,9 @@ int menu_draw(void)
 					}
 					
 					break;
+				case TMENU_DELETE_HIBERNATION:
+					xPointer = 168;
+					break;
 				case TMENU_CUSTOM_LAUNCHER:
 					xPointer = 168;
 					break;
@@ -156,6 +180,8 @@ int menu_draw(void)
 					break;
 			}
 
+
+
 			cur_menu = max_menu;
 			blit_string(xPointer, (pointer[5] + cur_menu)*8, msg);
 			msg = item_str[max_menu];
@@ -170,10 +196,13 @@ int menu_draw(void)
 				blit_string(xPointer+0x80, (pointer[5] + cur_menu)*8, msg);
 			}
 			else if(msg) {
-				blit_set_color(item_fcolor[max_menu],bc);
+				//blit_set_color(item_fcolor[max_menu],bc);
+				//blit_set_color(fc,bc);
 				blit_string( (pointer[6] * 8) + 128, (pointer[5] + cur_menu)*8, msg);
 			}
+
 		}
+
 	}
 
 	blit_set_color(0x00ffffff,0x00000000);
@@ -317,6 +346,21 @@ int menu_setup(void)
 			item_str[TMENU_UMD_MODE] = g_messages[MSG_INFERNO];
 	}
 
+	switch(cnf.vsh_colors) {
+		case _RED:
+			item_str[TMENU_COLORS] = g_messages[MSG_RED];
+			break;
+		case _BLUE:
+			item_str[TMENU_COLORS] = g_messages[MSG_BLUE];
+			break;
+		case _GREEN:
+			item_str[TMENU_COLORS] = g_messages[MSG_GREEN];
+			break;
+		default:
+			item_str[TMENU_COLORS] = g_messages[MSG_GREEN];
+			break;
+	}
+
 	return 0;
 }
 
@@ -360,6 +404,10 @@ int menu_ctrl(u32 button_on)
 		case TMENU_USB_DEVICE:
 			if(direction) change_usb( direction );
 			break;
+		case TMENU_USB_READONLY:
+			// Other logic will go here
+			if(direction==0) return 11;
+			break;
 		case TMENU_UMD_MODE:
 			if(direction) change_umd_mode( direction );
 			break;
@@ -386,10 +434,20 @@ none:
 				return 6; // Mount UMDVideo ISO flag
 			}
 			break;
+		case TMENU_DELETE_HIBERNATION:
+			if(direction==0) {
+				return 10; // Delete Hibernation flag 
+			}
+			break;
 		case TMENU_CONVERT_BATTERY:
 			if(direction==0) {
 				return 9; // Convert Battery flag
 			}
+			break;
+		case TMENU_COLORS:
+			// This will be where I will be adding to set the color
+			if(direction) change_colors(direction);
+			else if (direction==0) return 11;
 			break;
 		case TMENU_CUSTOM_LAUNCHER:
 			if(direction==0) {
