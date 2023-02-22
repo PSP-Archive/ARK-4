@@ -151,14 +151,3 @@ void patch_sceUSB_Driver(u32 text_addr)
 	sceUsbStopOrig = (void*)sctrlHENFindFunction("sceUSB_Driver", "sceUsb", 0xC2464FA0);
 	sctrlHENPatchSyscall(sceUsbStopOrig, &_sceUsbStop);
 }
-
-
-int vctrlGetUsbDevice(){
-	return cur_usbdevice;
-}
-
-void vctrlSetUsbDevice(int dev){
-	if (dev >= 0 && dev <= 5){
-		cur_usbdevice = dev;
-	}
-}

@@ -34,7 +34,7 @@ const char *g_messages_en[] = {
 	"COLORS         ",
 	"CONVERT BATTERY",
 	"ACTIVATE FLASH AND WMA",
-	"SWAP X/O BUTTONS ",
+	"SWAP X/O BUTTONS  ",
 	"DELETE HIBERNATION",
 	"CUSTOM LAUNCHER ->",
 	"RECOVERY MENU  ->",
