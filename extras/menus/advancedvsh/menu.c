@@ -348,6 +348,16 @@ int menu_setup(void)
 			item_str[TMENU_UMD_MODE] = g_messages[MSG_INFERNO];
 	}
 
+	switch(cnf.usbdevice_rdonly) {
+		case 0:
+			item_str[TMENU_USB_READONLY] = g_messages[MSG_ENABLE];
+			break;
+		case 1:
+			item_str[TMENU_USB_READONLY] = g_messages[MSG_DISABLE];
+			break;
+		default:
+			item_str[TMENU_USB_READONLY] = g_messages[MSG_ENABLE];
+	}
 
 	switch(cnf.vsh_colors) {
 		case _RED:
@@ -409,7 +419,8 @@ int menu_ctrl(u32 button_on)
 			break;
 		case TMENU_USB_READONLY:
 			// Other logic will go here
-			if(direction==0) return 11;
+			if (direction) swap_readonly(direction);
+			//else if(direction==0) return 11;
 			break;
 		case TMENU_UMD_MODE:
 			if(direction) change_umd_mode( direction );

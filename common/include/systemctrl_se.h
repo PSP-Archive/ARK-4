@@ -75,6 +75,7 @@ typedef struct _SEConfig
     s16 fakeregion;
     s16 usbdevice;
     s16 usbcharge;
+	s16 usbdevice_rdonly;
     s16 machidden;
     s16 skipgameboot;
     s16 hidepic;
