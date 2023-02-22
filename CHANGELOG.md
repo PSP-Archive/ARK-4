@@ -5,7 +5,7 @@
 - You can now use slim colors on PSP 1K.
 - Added partial support for files with non-latin1 characters in recovery/launcher.
 - Added new CFW setting "Block hibernation deletion on PSP Go", available in XMB and recovery menu.
-- Fixed small issue with "Skip Sony Logos".
+- Fixed issues with "Skip Sony Logos", such as compatibility with Testing Tool and Development Tool firmwares.
 - Renamed launcher/recovery settings file from ARKMENU.CFG to ARKMENU.BIN to prevent confusion since it's not a text file.
 - Added new features to Advanced VSH Menu: USB Readonly mode, background color, activate flash and wma players, swap X/O buttons and delete hibernation.
 
