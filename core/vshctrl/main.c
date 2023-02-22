@@ -71,9 +71,17 @@ int get_device_name(char *device, int size, const char* path)
 }
 
 int hidepics = 0;
+int hibblock = 0;
+int skiplogos = 0;
 void settingsHandler(char* path){
     if (strcasecmp(path, "hidepics") == 0){ // hide PIC0 and PIC1
         hidepics = 1;
+    }
+    else if (strcasecmp(path, "hibblock") == 0){ // block hibernation
+        hibblock = 1;
+    }
+    else if (strcasecmp(path, "skiplogos") == 0){
+        skiplogos = 1;
     }
 }
 

@@ -62,6 +62,9 @@ static void patch_msvideo_main_plugin_module(u32 text_addr);
 static void patch_htmlviewer_plugin_module(u32 text_addr);
 static void patch_htmlviewer_utility_module(u32 text_addr);
 
+extern int hibblock;
+extern int skiplogos;
+
 static int vshpatch_module_chain(SceModule2 *mod)
 {
     u32 text_addr;
@@ -93,6 +96,20 @@ static int vshpatch_module_chain(SceModule2 *mod)
         goto exit;
     }
 
+    if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
+        
+        if (skiplogos){
+		    patch_Gameboot(mod);
+        }
+
+		if (psp_model == PSP_GO && hibblock) {
+			patch_hibblock(mod);
+		}
+
+		sync_cache();
+		goto exit;
+	}
+
 exit:
     if (previous) previous(mod);
 }
@@ -105,6 +122,16 @@ static void patch_sceCtrlReadBufferPositive(void)
     hookImportByNID(mod, "sceCtrl_driver", 0xBE30CED0, _sceCtrlReadBufferPositive);
     g_sceCtrlReadBufferPositive = (void *) sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
     sctrlHENPatchSyscall(g_sceCtrlReadBufferPositive, _sceCtrlReadBufferPositive);
+}
+
+static void patch_Gameboot(SceModule2 *mod)
+{
+    hookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
+}
+
+static void patch_hibblock(SceModule2 *mod)
+{
+	MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x000051C8);
 }
 
 static inline void ascii2utf16(char *dest, const char *src)

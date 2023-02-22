@@ -34,6 +34,7 @@ typedef struct {
     unsigned char regionchange;
     unsigned char vshregion;
     unsigned char hidepics;
+    unsigned char hibblock;
 }ArkConf;
 
 ArkConf ark_config;
@@ -209,6 +210,20 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
+} hibblock = {
+    "Block hibernation in PSP Go",
+    MAX_ARK_OPTIONS,
+    0,
+    &(ark_config.hibblock),
+    ARK_OPTIONS
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
 } regionchange = {
     "UMD Region Change",
     4,
@@ -230,24 +245,6 @@ static struct {
     &(ark_config.vshregion),
     {"Default", "Japan", "America", "Europe", "Korea", "United Kingdom", "Latin America", "Australia", "Hong Kong", "Taiwan", "Russia", "China", "Debug I", "Debug II"}
 };
-
-/*
-settings_entry* ark_conf_entries[] = {
-    (settings_entry*)&usbcharge,
-    (settings_entry*)&overclock,
-    (settings_entry*)&powersave,
-    (settings_entry*)&launcher,
-    (settings_entry*)&disablepause,
-    (settings_entry*)&highmem,
-    (settings_entry*)&mscache,
-    (settings_entry*)&infernocache,
-    (settings_entry*)&oldplugin,
-    (settings_entry*)&skiplogos,
-    (settings_entry*)&hidepics,
-    (settings_entry*)&regionchange,
-};
-#define MAX_ARK_CONF (sizeof(ark_conf_entries)/sizeof(ark_conf_entries[0]))
-*/
 
 int ark_conf_max_entries = 0;
 settings_entry** ark_conf_entries = NULL;
@@ -290,6 +287,7 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
     (settings_entry*)&oldplugin,
+    (settings_entry*)&hibblock,
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&vshregion,
@@ -369,6 +367,9 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "hidepics") == 0){
         return &(ark_config.hidepics);
+    }
+    else if (strcasecmp(conf.c_str(), "hibblock") == 0){
+        return &(ark_config.hibblock);
     }
     else if (strcasecmp(conf.c_str(), "region_jp") == 0){
         ark_config.regionchange = REGION_JAPAN;
@@ -488,6 +489,7 @@ void saveSettings(){
     output << processSetting("oldplugin", ark_config.oldplugin) << endl;
     output << processSetting("skiplogos", ark_config.skiplogos) << endl;
     output << processSetting("hidepics", ark_config.hidepics) << endl;
+    output << processSetting("hibblock", ark_config.hibblock) << endl;
     
     switch (ark_config.regionchange){
         case REGION_JAPAN:
