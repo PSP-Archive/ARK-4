@@ -581,6 +581,8 @@ static int activate_codecs()
 	set_registry_value("/CONFIG/BROWSER", "flash_activated", 1);
 	set_registry_value("/CONFIG/BROWSER", "flash_play", 1);
 	set_registry_value("/CONFIG/MUSIC", "wma_play", 1);
+
+	sctrlKernelExitVSH(NULL);
 	
 	return 0;
 }
@@ -591,7 +593,9 @@ static int swap_buttons()
 
 	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &value);
 	value = !value;
-	set_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", value); 
+	set_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", value);
+
+	sctrlKernelExitVSH(NULL);
 	
 	return 0;
 }

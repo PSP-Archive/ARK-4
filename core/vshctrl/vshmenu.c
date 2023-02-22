@@ -79,7 +79,7 @@ int vctrlVSHExitVSHMenu(SEConfig *config, char *videoiso, int disctype)
     if (config){
         ret = vctrlVSHUpdateConfig(config);
         cur_usbdevice = config->usbdevice;
-        usb_readonly = config->flashprot;
+        usb_readonly = config->usbdevice_rdonly;
     }
 
     g_VshMenuCtrl = NULL;

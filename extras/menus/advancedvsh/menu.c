@@ -350,10 +350,10 @@ int menu_setup(void)
 
 	switch(cnf.usbdevice_rdonly) {
 		case 0:
-			item_str[TMENU_USB_READONLY] = g_messages[MSG_ENABLE];
+			item_str[TMENU_USB_READONLY] = g_messages[MSG_DISABLE];
 			break;
 		case 1:
-			item_str[TMENU_USB_READONLY] = g_messages[MSG_DISABLE];
+			item_str[TMENU_USB_READONLY] = g_messages[MSG_ENABLE];
 			break;
 		default:
 			item_str[TMENU_USB_READONLY] = g_messages[MSG_ENABLE];
