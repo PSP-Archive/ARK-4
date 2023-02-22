@@ -42,8 +42,19 @@ enum SEUmdModes
 enum vsh_colors
 {
 	_RED = 0,
-	_GREEN = 1,
-	_BLUE = 2,
+	_ORANGE = 1,
+	_YELLOW = 2,
+	_GREEN = 3,
+	_BLUE = 4,
+	_INDIGO = 5,
+	_VIOLET = 6,
+	_PINK = 7,
+	_PURPLE = 8,
+	_TEAL = 9,
+	_AQUA = 10,
+	_GREY = 11,
+	_BLACK = 12,
+
 };
 
 enum MsSpeedFlag
