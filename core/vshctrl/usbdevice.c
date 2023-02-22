@@ -38,6 +38,7 @@ static SceUID g_usbdevice_modid = -1;
 extern ARKConfig* ark_config;
 
 int cur_usbdevice = 0;
+int usb_readonly = 0;
 
 static SceUID load_start_usbdevice(void)
 {
@@ -107,7 +108,7 @@ static int _sceUsbStart(const char *driverName, int size, void *args)
 			}
 
 			if (g_usbdevice_modid >= 0) {
-				ret = pspUsbDeviceSetDevice(cur_usbdevice - 1, 0, 0);
+				ret = pspUsbDeviceSetDevice(cur_usbdevice - 1, usb_readonly, 0);
 			}
 		}
 	}
@@ -132,7 +133,6 @@ static int _sceUsbStop(const char *driverName, int size, void *args)
 				int result;
 
 				result = pspUsbDeviceFinishDevice();
-				printk("%s: pspUsbDeviceFinishDevice -> 0x%08X\n", __func__, result);
 				stop_unload_usbdevice();
 			}
 		}

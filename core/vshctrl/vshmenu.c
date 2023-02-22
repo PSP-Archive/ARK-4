@@ -39,6 +39,7 @@
 
 extern ARKConfig* ark_config;
 extern int cur_usbdevice;
+extern int usb_readonly;
 
 SEConfig conf;
 
@@ -78,6 +79,7 @@ int vctrlVSHExitVSHMenu(SEConfig *config, char *videoiso, int disctype)
     if (config){
         ret = vctrlVSHUpdateConfig(config);
         cur_usbdevice = config->usbdevice;
+        usb_readonly = config->flashprot;
     }
 
     g_VshMenuCtrl = NULL;
