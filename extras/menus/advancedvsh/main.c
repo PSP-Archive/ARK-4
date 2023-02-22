@@ -698,7 +698,7 @@ int TSRThread(SceSize args, void *argp)
 	}
 
 	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig))){
-		sctrlSESetConfig(&cnf);
+		vctrlVSHUpdateConfig(&cnf);
 	}
 
 	if (stop_flag ==2) {
@@ -727,6 +727,8 @@ int TSRThread(SceSize args, void *argp)
 
 	config.vshcolor = cnf.vsh_colors;
 	saveConfig();
+
+	vctrlVSHUpdateConfig(&cnf);
 
 	umdvideolist_clear(&g_umdlist);
 	clear_language();

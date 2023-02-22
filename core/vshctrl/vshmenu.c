@@ -66,6 +66,8 @@ int vctrlVSHUpdateConfig(SEConfig *config)
     k1 = pspSdkSetK1(0);
     memcpy(&conf, config, sizeof(conf));
     ret = sctrlSESetConfig(&conf);
+    cur_usbdevice = config->usbdevice;
+    usb_readonly = config->usbdevice_rdonly;
     pspSdkSetK1(k1);
     return ret;
 }
