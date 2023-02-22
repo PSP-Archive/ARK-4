@@ -3,6 +3,7 @@
 ## Version 4.19.15 (2023-02-22)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r41915
 - Fixed all games reporting "not enough space" even when there is.
+- Changed default launcher/recovery theme.
 
 ## Version 4.19.14 (2023-02-22)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r41914
