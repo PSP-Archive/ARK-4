@@ -36,7 +36,7 @@ char freq2_buf[3+3+2] = "";
 char device_buf[13] = "";
 char umdvideo_path[256] = "";
 
-#define TMENU_MAX 14
+#define TMENU_MAX 16
 
 enum{
 	//TMENU_XMB_CLOCK,
@@ -47,6 +47,8 @@ enum{
 	TMENU_UMD_VIDEO,
 	TMENU_COLORS,
 	TMENU_CONVERT_BATTERY,
+	TMENU_ACTIVATE_FLASH_WMA,
+	TMENU_SWAP_XO_BUTTONS,
 	TMENU_DELETE_HIBERNATION,
 //	TMENU_XMB_PLUGINS,
 //	TMENU_GAME_PLUGINS,
@@ -161,13 +163,13 @@ int menu_draw(void)
 					
 					break;
 				case TMENU_DELETE_HIBERNATION:
-					xPointer = 168;
-					break;
 				case TMENU_CUSTOM_LAUNCHER:
+				case TMENU_RECOVERY_MENU:
+				case TMENU_SWAP_XO_BUTTONS:
 					xPointer = 168;
 					break;
-				case TMENU_RECOVERY_MENU:
-					xPointer = 168;
+				case TMENU_ACTIVATE_FLASH_WMA:
+					xPointer = 153;
 					break;
 				case TMENU_SHUTDOWN_DEVICE:
 					xPointer = 176;
@@ -345,6 +347,7 @@ int menu_setup(void)
 		default:
 			item_str[TMENU_UMD_MODE] = g_messages[MSG_INFERNO];
 	}
+
 
 	switch(cnf.vsh_colors) {
 		case _RED:

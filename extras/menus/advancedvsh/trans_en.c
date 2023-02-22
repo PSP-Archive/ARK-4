@@ -33,6 +33,8 @@ const char *g_messages_en[] = {
 	"ISO VIDEO MOUNT",
 	"COLORS         ",
 	"CONVERT BATTERY",
+	"ACTIVATE FLASH AND WMA",
+	"SWAP X/O BUTTONS ",
 	"DELETE HIBERNATION",
 	"CUSTOM LAUNCHER ->",
 	"RECOVERY MENU  ->",
