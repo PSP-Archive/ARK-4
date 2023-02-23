@@ -34,7 +34,8 @@ OBJS = \
 		src/osk.o \
 		src/network.o \
 		src/settingsmenu.o \
-		src/optionsMenu.o \
+		src/optionsmenu.o \
+		src/texteditor.o \
 		src/anim/anim.o \
 		src/anim/pixel.o \
 		src/anim/wave.o \

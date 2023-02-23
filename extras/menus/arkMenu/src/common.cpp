@@ -8,10 +8,11 @@
 #include "systemctrl.h"
 #include "animations.h"
 
-#define CONFIG_PATH "ARKMENU.CFG"
 #define RESOURCES_LOAD_PLACE YA2D_PLACE_VRAM
 
 using namespace common;
+
+extern "C" int kuKernelGetModel();
 
 static ARKConfig ark_config = {0};
 static Image* images[MAX_IMAGES];
@@ -27,6 +28,8 @@ static int currentFont = 0;
 static Anim* animations[ANIM_COUNT];
 
 static bool flipControl = false;
+
+static int psp_model;
 
 char* fonts[] = {
     "FONT.PGF",
@@ -244,6 +247,10 @@ char** common::getArgv(){
     return argv;
 }
 
+int common::getPspModel(){
+    return psp_model;
+}
+
 bool common::has_suffix(const std::string &str, const std::string &suffix)
 {
     return str.size() >= suffix.size() &&
@@ -265,6 +272,8 @@ void common::loadData(int ac, char** av){
 
     argc = ac;
     argv = av;
+
+    psp_model = kuKernelGetModel();
 
     sceUtilityLoadModule(PSP_MODULE_AV_AVCODEC);
     sceUtilityLoadModule(PSP_MODULE_AV_MP3);

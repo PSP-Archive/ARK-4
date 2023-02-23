@@ -47,6 +47,7 @@ int cpu2no(int cpu);
 int bus2no(int cpu);
 void change_clock(int dir , int flag);
 void change_usb(int dir );
+void change_colors(int dir );
 void change_umd_mode(int dir );
 void change_umd_mount_idx(int dir);
 void change_plugins(int dir , int flag);
@@ -115,11 +116,16 @@ enum {
 	//MSG_CPU_CLOCK_XMB,
 	//MSG_CPU_CLOCK_GAME,
 	MSG_USB_DEVICE,
+	MSG_USB_READONLY,
 	MSG_UMD_ISO_MODE,
 	MSG_ISO_VIDEO_MOUNT,
+	MSG_COLORS,
+	MSG_CONVERT_BATTERY,
+	MSG_ACTIVATE_FLASH_WMA,
+	MSG_SWAP_XO_BUTTONS,
+	MSG_DELETE_HIBERNATION,
 	MSG_CUSTOM_LAUNCHER,
 	MSG_RECOVERY_MENU,
-	MSG_CONVERT_BATTERY,
 	MSG_SHUTDOWN_DEVICE,
 	MSG_SUSPEND_DEVICE,
 	MSG_RESET_DEVICE,
@@ -130,6 +136,19 @@ enum {
 	MSG_UMD_DISC,
 	MSG_MEMORY_STICK,
 	MSG_NONE,
+	MSG_RED,
+	MSG_ORANGE,
+	MSG_YELLOW,
+	MSG_GREEN,
+	MSG_BLUE,
+	MSG_INDIGO,
+	MSG_VIOLET,
+	MSG_PINK,
+	MSG_PURPLE,
+	MSG_TEAL,
+	MSG_AQUA,
+	MSG_GREY,
+	MSG_BLACK,
 	MSG_END,
 };
 

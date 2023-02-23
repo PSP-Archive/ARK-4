@@ -5,7 +5,7 @@
 #include "entry.h"
 #include "common.h"
 #include "gfx.h"
-#include "optionsMenu.h"
+#include "optionsmenu.h"
 #include "system_entry.h"
 
 using namespace std;
@@ -22,6 +22,12 @@ enum{
     EF0_DIR,
     FTP_DIR,
 };
+
+typedef struct _pspMsPrivateDirent {
+	SceSize size;
+	char s_name[16];
+	char l_name[1024];
+} pspMsPrivateDirent;
 
 class BrowserDriver{
     public:

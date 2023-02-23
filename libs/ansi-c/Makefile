@@ -15,6 +15,7 @@ strhex32.o \
 strsafe.o \
 strbeginswith.o \
 strreplaceall.o \
+strcasecmp.o \
 lowerstring.o
 
 OBJS = $(C_OBJS)

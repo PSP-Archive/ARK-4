@@ -47,7 +47,7 @@ extern List plugins;
 typedef struct
 {
     char *items[2];
-    char *options[11];
+    char *options[12];
 } StringContainer;
 
 StringContainer string;
@@ -74,6 +74,7 @@ GetItem GetItemes[] =
     { 1, 0, "Old Plugin Support on PSP Go" },
     { 1, 0, "Skip Sony Logos" },
     { 1, 0, "Hide PIC0 and PIC1" },
+    { 1, 0, "Prevent hibernation deletion on PSP Go" },
 };
 
 char* ark_settings_options[] = {
@@ -88,7 +89,8 @@ char* ark_settings_options[] = {
 
 char* ark_plugins_options[] = {
     (char*)"Off",
-    (char*)"On"
+    (char*)"On",
+    (char*)"Remove",
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
@@ -315,7 +317,7 @@ void OnInitMenuPspConfigPatched()
             for(i = 0; i < N_ITEMS; i++)
             {
                 if (( psp_model == PSP_1000 && ( i == 0 || i == 4 || i == 5 || i == 8 )) ||
-                        (( psp_model != PSP_GO && ( i == 4 || i == 8 ) )))
+                        (( psp_model != PSP_GO && ( i == 4 || i == 8 || i == 11) )))
                     continue;
                 else
                     AddSysconfContextItem(GetItemes[i].item, NULL, GetItemes[i].item);
@@ -442,6 +444,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.oldplugin,
                 config.skiplogos,
                 config.hidepics,
+                config.hibblock,
             };
             
             int i;
@@ -490,6 +493,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.oldplugin,
                 &config.skiplogos,
                 &config.hidepics,
+                &config.hibblock,
             };
             
             int i;
@@ -512,6 +516,9 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
 				context_mode = 11;
 				plugin->active = *value;
                 savePlugins();
+                if (*value == PLUGIN_REMOVED){
+                    sctrlKernelExitVSH(NULL);
+                }
             	return 0;
 			}
         }

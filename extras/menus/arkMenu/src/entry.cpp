@@ -159,6 +159,11 @@ bool Entry::isPRX(const char* path){
     return (common::getExtension(path) == "prx");
 }
 
+bool Entry::isTXT(const char* path){
+    string ext = common::getExtension(path);
+    return (ext == "txt" || ext == "cfg" || ext == "ini");
+}
+
 Entry::~Entry(){
 }
 

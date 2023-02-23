@@ -32,6 +32,8 @@
 #include "blit.h"
 #include "trans.h"
 
+#include "../arkMenu/include/conf.h"
+
 int TSRThread(SceSize args, void *argp);
 
 /* Define the module info section */
@@ -53,6 +55,8 @@ int stop_flag=0;
 SceCtrlData ctrl_pad;
 int stop_stock=0;
 int thread_id=0;
+
+t_conf config;
 
 SEConfig cnf;
 static SEConfig cnf_old;
@@ -189,6 +193,7 @@ int load_start_module(char *path)
 
 	return ret;
 }
+
 
 void exec_recovery_menu(){
     char menupath[ARK_PATH_SIZE];
@@ -564,6 +569,65 @@ static void check_battery(void) {
     }
 }
 
+void delete_hibernation(){
+	if (psp_model == PSP_GO){
+		vshCtrlDeleteHibernation();
+		sctrlKernelExitVSH(NULL);
+	}
+}
+
+static int activate_codecs()
+{
+	set_registry_value("/CONFIG/BROWSER", "flash_activated", 1);
+	set_registry_value("/CONFIG/BROWSER", "flash_play", 1);
+	set_registry_value("/CONFIG/MUSIC", "wma_play", 1);
+
+	sctrlKernelExitVSH(NULL);
+	
+	return 0;
+}
+
+static int swap_buttons()
+{
+	u32 value;
+
+	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &value);
+	value = !value;
+	set_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", value);
+
+	sctrlKernelExitVSH(NULL);
+	
+	return 0;
+}
+
+void loadConfig(){
+
+	char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, CONFIG_PATH);
+
+    int fp = sceIoOpen(path, PSP_O_RDONLY, 0777);
+    if (fp < 0){
+        return;
+    }
+	sceIoRead(fp, &config, sizeof(t_conf));
+    sceIoClose(fp);
+
+	cnf.vsh_colors = config.vshcolor;
+}
+
+void saveConfig(){
+	char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, CONFIG_PATH);
+
+    int fp = sceIoOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+	if (fp < 0) return;
+
+	sceIoWrite(fp, &config, sizeof(t_conf));
+    sceIoClose(fp);
+}
+
 int TSRThread(SceSize args, void *argp)
 {
 	sceKernelChangeThreadPriority(0, 8);
@@ -571,6 +635,8 @@ int TSRThread(SceSize args, void *argp)
 	sctrlSEGetConfig(&cnf);
 
 	check_battery();
+
+	loadConfig();
 
 	load_recovery_font_select();
 	select_language();
@@ -632,7 +698,7 @@ int TSRThread(SceSize args, void *argp)
 	}
 
 	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig))){
-		sctrlSESetConfig(&cnf);
+		vctrlVSHUpdateConfig(&cnf);
 	}
 
 	if (stop_flag ==2) {
@@ -651,7 +717,18 @@ int TSRThread(SceSize args, void *argp)
 		exec_recovery_menu();
 	} else if (stop_flag == 9) {
 		convert_battery();
+	} else if (stop_flag == 10) {
+		delete_hibernation();
+	} else if (stop_flag == 11) {
+		activate_codecs();
+	} else if (stop_flag == 12) {
+		swap_buttons();
 	}
+
+	config.vshcolor = cnf.vsh_colors;
+	saveConfig();
+
+	vctrlVSHUpdateConfig(&cnf);
 
 	umdvideolist_clear(&g_umdlist);
 	clear_language();

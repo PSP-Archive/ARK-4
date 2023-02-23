@@ -15,7 +15,7 @@ endif
 
 PRX_EXPORTS = exports.exp
 
-LIBS = -lpspsystemctrl_user -lpspkubridge
+LIBS = -lpspsystemctrl_user -lpspkubridge -lpspvshctrl
 LIBDIR = . $(ARKROOT)/libs
 LDFLAGS =
 

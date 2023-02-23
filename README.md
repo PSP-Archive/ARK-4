@@ -69,13 +69,47 @@ Use `-h` or `--help` to show all available flags
 
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Install `ARK_Live` folder into `/PSP/GAME/` folder.
-- Launch ARK Live Loader. It will install ARK modules on PSP Flash and boot the CFW.
-- To use `Infinity` place the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`. \
-  Install `Infinity` using Official Firmware, run ARK from Live Loader, and then run `Infinity` again to configure autoboot. \
-  This will allow you to use ARK permanently and triple boot with PRO and ME.
-- You can also use the `cIPL` installer for a faster permanent CFW on 1K and early 2K models (models compatible with Pandora).
-- If you will be using the Live loader version of ARK instead of a permanent solution, it is recommended that you delete `FLASH0.ARK` from the savedata file after the first installation and bootup of ARK, otherwise the flash0 files will be installed every time you boot back to ARK and this is detrimental to the flash even if ARK installs very little and small files. Doing this will also make the Live loader boot up ARK faster.
-- To `update ARK` simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` from `OFW`.
+- Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
+
+##### Update ARK
+- Update ARK using either [ARKUpgrader](https://github.com/PSP-Archive/ARK-4/tree/main/contrib/PC/ARKUpdater) or  
+simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
+- Optionally install `Advanced VSH Menu` for extra features by copying `VSHMENU.PRX` into `ARK_01234` savedata folder.
+
+<details>
+  <summary> <b> Live CFW </b> </summary>
+<p>
+
+  - Delete `FLASH0.ARK` from `/PSP/SAVEDATA/ARK_01234` to prevent flashing files every time you reload the CFW.
+  - Run `ARK Loader` every time you power off or hard reboot the device to re-enable `ARK`.
+
+</p>
+</details>
+
+<details>
+  <summary> <b> Permanent CFW via cIPL </b> </summary>
+<p>
+
+  - Only works on 1K models and early 2K models (those compatible with Pandora).
+  - Use `pspident` homebrew to identify your model and compatibility with custom IPL.
+  - Copy `ARK cIPL` folder to `/PSP/GAME/` and run the program.
+  - Press the corresponding button in the installation page to install or remove the cIPL patch.
+
+</p>
+</details>
+
+<details>
+  <summary> <b> Permanent CFW via Infinity </b> </summary>
+<p>
+
+  - Works on all PSP models on 6.60 or 6.61 firmwares.
+  - Place the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
+  - Install `Infinity` using Official Firmware.
+  - Run ARK Live to make sure your using ARK to run Infinity a second time.
+  - Run `Infinity` a second time to configure autoboot.
+
+</p>
+</details>
 
 </p>
 </details>
@@ -86,7 +120,7 @@ Use `-h` or `--help` to show all available flags
 
   - Works on 3.60 up to 3.74, either with or without Henkaku/h-encore.
   - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended. `Minis` are `NOT` recommended.
-  - For Henkaku/h-encore users, install an ARK bubble using FastARK: https://github.com/theheroGAC/ArkFast/
+  - For Henkaku/h-encore users, install an ARK bubble using [ArkFast](https://disk.yandex.ru/d/XMJpxf7RD79VLw) (manually updated, create an issue if it outdated).
   - Official Firmware users (no henkaku/h-encore) can install the PBOOT bubble manually: https://github.com/TheOfficialFloW/Trinity#preparation
   - Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
   - Copy `K.BIN` from VitaBubble folder into `ARK_01234` savedata folder.
@@ -103,19 +137,43 @@ Use `-h` or `--help` to show all available flags
 <p>
 
 - Considering the savedata exploit loads H.BIN from the savedata path.
-- Copy the following files from ARK_01234 savedata folder into game exploit folder:
-- H.BIN, ARK.BIN, ARK4.BIN FLASH0.ARK, VBOOT.PBP, RECOVERY.PBP, THEME.ARK and other extras.
+- Copy every file from `ARK_01234` except `PARAM.SFO`, `SAVEDATA.BIN` and `K.BIN` (`ICON0.PNG` can also be ignored), into the hacked savedata folder.
 - You need to have a `K.BIN` if you are running on an ancient Vita firmware (there's plenty of kernel exploit sources in ARK-2 and ARK-3 for reference).
-
+- Run the game and trigger the exploit as normal, it should load ARK.
+- If you have issues with stability, it might be necessary to run `freemem()` algorithm in the kernel exploit file (`K.BIN`).
+  
 </p>
 </details>
 
 ## CUSTOMIZATION
 
 <details>
+  <summary> <b> Advanced VSH Menu </b> </summary>
+<p>
+
+The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
+To have a more classic VSH menu with more advanced features you can install `Advanced VSH Menu` by copying `VSHMENU.PRX` from the `AdvancedVSH` folder into `ARK_01234`.
+Some of the features available in Advanced VSH Menu include:
+
+- Change USB Device mount (Memory Stick, Flash, UMD).
+- Protect Flash in USB Device mount.
+- View available ISO drivers.
+- Mount UMD Video ISO.
+- Convert battery from normal to pandora and viceversa.
+- Activate flash and WMA playback.
+- Swap X/O buttons.
+- Delete hibernation (PSP Go paused game).
+
+</p>
+</details>
+
+<details>
   <summary> <b> Installing Plug-Ins </b> </summary>
 <p>
-You can install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
+  
+The easiest method to install a plugin is to simply copy its `.prx` (and other files/folders the plugin needs) to its default installation folder (typically `/SEPLUGINS/` folder) and navigate to it using the `File Browser` (built into Recovery Menu and Custom Launcher). Upon opening the `.prx` file, you will be given the options to select the runlevel, or type the game ID, where the plugin loads.
+  
+Alternately, you can manually install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
 If coming from PRO/ME you can use this tool to automate your plugins.txt: [ARK-Plugin-Converter](https://github.com/krazynez/ARK-Plugin-Converter)
 
@@ -160,6 +218,14 @@ Some noteworthy plugins that are compatible with ARK include (but not limited to
 - GTA LCS and VCS cheadevice (including the remastered version).
 - CWCheat.
 - pspstates kai.
+- XMB Item Hider v1.3-r3
+- DayViewer.
+- Categories Lite.
+- CDDA Enabler.
+- PRO Online.
+- PSP 3D.
+- ZeroVSH Patcher.
+
 
 </p>
 </details>
@@ -168,6 +234,8 @@ Some noteworthy plugins that are compatible with ARK include (but not limited to
   <summary> <b> Configuration and Settings </b> </summary>
 <p>
 
+You can use the XMB and/or the Recovery Menu to easily handle CFW settings. However if you prefer you can also manually handle the settings yourself.
+  
 You can create a SETTINGS.TXT file using the same format as PLUGINS.TXT to enable/disable some CFW functionality on different parts of the system.
 Configuration settings you can use in ARK include:
 
@@ -183,8 +251,6 @@ Configuration settings you can use in ARK include:
  - `oldplugin`: enables old plugins support on PSP Go (redirects `ms0` to `ef0`).
  - `skiplogos`: skips the coldboot and gameboot logos.
 
-However, you should use the `XMB` or the `recovery menu` to handle settings easier.
-
 You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
 
 For example, you can overclock to highest CPU speed like this:
@@ -194,13 +260,46 @@ Another example, overclock only on games, use powersaving on VSH:
 - game, overclock, on
 - vsh, powersave, on
 
+This also allows you to enable settings on specific games:
+  - ULUS01234, overclock, on
+  - ULES01234, powersave, on
+  
 </p>
 </details>
 
 <details>
   <summary> <b> Custom Launcher </b> </summary>
 <p>
-ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
+ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. Some of its features include:
+  
+  - Playback of ISO and all CSO formats with PMF video preview.
+  
+  - Playback of UMD game discs.
+  
+  - Categorized and organized game menu by PSP Games, PSP Homebrew and PS1 Games.
+  
+  - Ability to scan savedata folders for games.
+  
+  - Compatibility with old VHBL, ARK-2 and TN-CEF file names and folder paths.
+  
+  - Ability to copy, move or delete entire folders.
+  
+  - File browser has built-in FTP client, allowing you to browse and copy files from another PSP.
+  
+  - FTP server and client can run simultaneously.
+  
+  - Ability to mount UMD Video ISOs using the file browser.
+  
+  - Ability to edit text files (.txt, .cfg or .ini).
+  
+  - Ability to install Plugins via the file browser.
+  
+  - Different background animation effects.
+  
+  - And more.
+
+  
+You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
 
 <details>
 <summary> <b> Custom Launcher Themes </b> </summary>
@@ -246,6 +345,11 @@ Theme: BadgerOS
 
 </details>
 
+
+<details>
+<summary> <b> Other Launchers </b> </summary>
+<p>
+
 Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
 
 - ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
@@ -262,6 +366,9 @@ Aside from the default launcher provided, there have been many  other custom lau
 
 
 Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
+</p>
+</details>
+
 </p>
 </details>
 

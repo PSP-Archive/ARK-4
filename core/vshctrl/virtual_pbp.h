@@ -28,6 +28,7 @@ typedef struct _VirtualPBP {
     u32 pbp_total_size;
     u32 iso_total_size;
     u32 file_pointer;
+    u32 opnssmp_type;
     char name[128];
     u32 header[10];
     PBPSection sects[8];

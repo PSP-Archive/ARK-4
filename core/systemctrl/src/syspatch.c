@@ -105,15 +105,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
-    if (strcmp(mod->modname, "tekken") == 0) {
-		u32 func = sctrlHENFindImport(mod->modname, "scePower", 0x34F9C463);
-		if (func) {
-			_sw(JR_RA, func);
-            _sw(LI_V0(222), func+4);
-            goto flush;
-		}
-	}
-
     // Boot Complete Action not done yet
     if(booted == 0)
     {

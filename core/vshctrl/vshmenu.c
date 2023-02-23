@@ -39,6 +39,7 @@
 
 extern ARKConfig* ark_config;
 extern int cur_usbdevice;
+extern int usb_readonly;
 
 SEConfig conf;
 
@@ -65,6 +66,8 @@ int vctrlVSHUpdateConfig(SEConfig *config)
     k1 = pspSdkSetK1(0);
     memcpy(&conf, config, sizeof(conf));
     ret = sctrlSESetConfig(&conf);
+    cur_usbdevice = config->usbdevice;
+    usb_readonly = config->usbdevice_rdonly;
     pspSdkSetK1(k1);
     return ret;
 }
@@ -78,6 +81,7 @@ int vctrlVSHExitVSHMenu(SEConfig *config, char *videoiso, int disctype)
     if (config){
         ret = vctrlVSHUpdateConfig(config);
         cur_usbdevice = config->usbdevice;
+        usb_readonly = config->usbdevice_rdonly;
     }
 
     g_VshMenuCtrl = NULL;

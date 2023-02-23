@@ -86,6 +86,7 @@ class Iso : public Entry
 
         static void executeISO(const char* path, bool is_patched);
         static void executeVideoISO(const char* path);
+        static void executeISOupdated(const char* path, const char* pboot_path);
 
     protected:
 
@@ -109,6 +110,8 @@ class Iso : public Entry
         
         void doExecute();
         bool isPatched();
+
+        int has_update_file(char* update_file);
 };
 
 #endif

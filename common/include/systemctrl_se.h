@@ -39,6 +39,24 @@ enum SEUmdModes
     MODE_UPDATERUMD = 5,
 };
 
+enum vsh_colors
+{
+	_RED = 0,
+	_ORANGE = 1,
+	_YELLOW = 2,
+	_GREEN = 3,
+	_BLUE = 4,
+	_INDIGO = 5,
+	_VIOLET = 6,
+	_PINK = 7,
+	_PURPLE = 8,
+	_TEAL = 9,
+	_AQUA = 10,
+	_GREY = 11,
+	_BLACK = 12,
+
+};
+
 enum MsSpeedFlag
 {
     MSSPEED_NONE     = 0,
@@ -68,6 +86,7 @@ typedef struct _SEConfig
     s16 fakeregion;
     s16 usbdevice;
     s16 usbcharge;
+	s16 usbdevice_rdonly;
     s16 machidden;
     s16 skipgameboot;
     s16 hidepic;
@@ -94,6 +113,7 @@ typedef struct _SEConfig
     s16 usbversion;
     s16 language; /* -1 as autodetect */
     s16 retail_high_memory;
+	s16 vsh_colors;
 } SEConfig;
 
 /**

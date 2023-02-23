@@ -31,9 +31,6 @@
 #include "globals.h"
 #include "functions.h"
 
-#define DAX_BLOCK_SIZE 0x2000
-#define DAX_COMP_BUF 0x2400
-
 PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 0);
 
 u32 psp_model = 0;
@@ -71,9 +68,17 @@ int get_device_name(char *device, int size, const char* path)
 }
 
 int hidepics = 0;
+int hibblock = 0;
+int skiplogos = 0;
 void settingsHandler(char* path){
     if (strcasecmp(path, "hidepics") == 0){ // hide PIC0 and PIC1
         hidepics = 1;
+    }
+    else if (strcasecmp(path, "hibblock") == 0){ // block hibernation
+        hibblock = 1;
+    }
+    else if (strcasecmp(path, "skiplogos") == 0){
+        skiplogos = 1;
     }
 }
 

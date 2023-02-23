@@ -204,27 +204,39 @@ void GameManager::findEboots(const char* path){
 
 void GameManager::findISOs(const char* path){
 
-    struct dirent* dit;
-    DIR* dir = opendir(path);
+    int dir = sceIoDopen(path);
     
+    SceIoDirent entry;
+    SceIoDirent* dit = &entry;
+    memset(&entry, 0, sizeof(SceIoDirent));
+
+    pspMsPrivateDirent* pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
+    pri_dirent->size = sizeof(pspMsPrivateDirent);
+    entry.d_private = (void*)pri_dirent;
+
     if (dir == NULL)
         return;
         
-    while ((dit = readdir(dir))){
-
-        string fullpath = string(path)+string(dit->d_name);
+    while (sceIoDread(dir, dit) > 0){
 
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
+
+        string fullpath = string(path)+string(dit->d_name);
+
         if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
             if (common::getConf()->scan_cat && string(dit->d_name) != string("VIDEO")){
                 findISOs((string(path) + dit->d_name + "/").c_str());
             }
             continue;
         }
+        else if (!common::fileExists(fullpath)){
+            fullpath = string(path) + string(dit->d_name).substr(0, 4) + string(pri_dirent->s_name);
+        }
         if (Iso::isISO(fullpath.c_str())) this->categories[GAME]->addEntry(new Iso(fullpath));
     }
-    closedir(dir);
+    sceIoDclose(dir);
+    free(pri_dirent);
 }
 
 void GameManager::findSaveEntries(const char* path){

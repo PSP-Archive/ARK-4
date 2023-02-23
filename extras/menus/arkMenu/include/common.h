@@ -14,6 +14,7 @@
 #include <globals.h>
 #include "gfx.h"
 #include "mp3.h"
+#include "conf.h"
 
 #define THREAD_DELAY 1000
 
@@ -57,26 +58,6 @@ enum images {
 #define MS0_PATH 0x3A30736D // 'ms0:' as u32
 #define EF0_PATH 0x3A306665 // 'ef0:' as u32
 
-
-typedef struct {
-    unsigned char fast_gameboot; // skip pmf/at3 and gameboot animation
-    unsigned char language; // default language for the menu
-    unsigned char font; // default font (either the ones in flash0 or the custom one in THEME.ARK
-    unsigned char plugins; // enable or disable plugins in game
-    unsigned char scan_save; // enable or disable scanning savedata
-    unsigned char scan_cat; // allow scanning for categorized content in /ISO and /PSP/GAME
-    unsigned char scan_dlc; // allow scanning for DLC files (PBOOT.PBP)
-    unsigned char swap_buttons; // whether to swap Cross and Circle
-    unsigned char animation; // the background animation of the menu
-    unsigned char main_menu; // default menu opened at startup (game by default)
-    unsigned char sort_entries; // sort entries by name
-    unsigned char show_recovery; // show recovery menu entry
-    unsigned char show_fps; // show menu FPS
-    unsigned char text_glow; // enable/disable text glowing function
-    unsigned char screensaver; // Screensaver time (or disabled)
-    unsigned char redirect_ms0; // redirect ms0 to ef0
-} t_conf;
-
 extern "C" {
     void sctrlHENGetArkConfig(ARKConfig* conf);
 };
@@ -86,6 +67,7 @@ namespace common{
     extern ARKConfig* getArkConfig();
     extern int getArgc();
     extern char** getArgv();
+    extern int getPspModel();
     extern struct tm getDateTime();
     extern bool has_suffix(const std::string &str, const std::string &suffix);
     SceOff findPkgOffset(const char* filename, unsigned* size = NULL);

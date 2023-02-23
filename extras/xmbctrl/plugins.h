@@ -14,6 +14,12 @@ enum{
     PLACE_ARK_PATH
 };
 
+enum{
+    PLUGIN_OFF,
+    PLUGIN_ON,
+    PLUGIN_REMOVED,
+};
+
 typedef struct{
     char* name;
     char* path;

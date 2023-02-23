@@ -6,6 +6,7 @@
 #define REGION_EUROPE 5
 
 extern int region_change;
+extern int vshregion;
 
 void patch_umd_idslookup(SceModule2* mod);
 int patch_umd_thread(SceSize args, void *argp);

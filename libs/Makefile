@@ -1,4 +1,4 @@
-SUBDIRS = SystemCtrlForKernel SystemCtrlForUser KUBridge ansi-c graphics colordebugger prebuilt libpspmath libunziprar libpng libjpeg libpspvram libya2d libintraFont psid
+SUBDIRS = SystemCtrlForKernel SystemCtrlForUser KUBridge VshCtrl ansi-c graphics colordebugger prebuilt libpspmath libunziprar libpng libjpeg libpspvram libya2d libintraFont psid
 .PHONY: subdirs $(SUBDIRS)
 
 all: subdirs
@@ -7,6 +7,7 @@ all: subdirs
 distclean clean:
 	$(Q)make $@ -C SystemCtrlForKernel $(OPT)
 	$(Q)make $@ -C SystemCtrlForUser $(OPT)
+	$(Q)make $@ -C VshCtrl $(OPT)
 	$(Q)make $@ -C KUBridge $(OPT)
 	$(Q)make $@ -C ansi-c $(OPT)
 	$(Q)make $@ -C graphics $(OPT)

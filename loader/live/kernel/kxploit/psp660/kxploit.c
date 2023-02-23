@@ -52,6 +52,10 @@ sceNetMPulldown Kernel Exploit for PSP 6.60 and 6.61
 #define POWERLOCK_OFFSET 0x000040F8
 #endif
 
+// beta 600 DT
+//#define PATCH_OFFSET 0x0000CCA4
+//#define POWERLOCK_OFFSET 0x000041F4
+
 #define PATCH_ADDR SYSMEM_TEXT_ADDR+PATCH_OFFSET // exact address of patch
 #define PATCHED_INST 0x3C058801 // the original instruction
 

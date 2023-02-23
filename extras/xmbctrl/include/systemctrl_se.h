@@ -35,6 +35,13 @@ enum SEUmdModes
         MODE_UPDATERUMD = 5,
 };
 
+enum
+{
+	RED = 0,
+	GREEN = 1,
+	BLUE = 2,
+};
+
 enum MsSpeedFlag
 {
         MSSPEED_NONE     = 0,
@@ -83,6 +90,7 @@ typedef struct _SEConfig
         s16 chn_iso;
         s16 msspeed;
         s16 slimcolor;
+        s16 colors;
         s16 iso_cache;
         s16 iso_cache_total_size; // in MB
         s16 iso_cache_num;

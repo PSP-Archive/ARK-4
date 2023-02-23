@@ -5,12 +5,18 @@ enum{
     MAX_PLUGINS_PLACES
 };
 
+enum{
+    PLUGIN_OFF,
+    PLUGIN_ON,
+    PLUGIN_REMOVED,
+};
+
 typedef struct {
     char* description;
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[2];
+    char* options[3];
     unsigned char place;
 } plugin_t;
 
@@ -27,35 +33,61 @@ char* plugins_path[] = {
 
 // variable length array
 std::vector<plugin_line> plugin_lines[MAX_PLUGINS_PLACES];
-settings_entry** ark_plugin_entries = NULL;
-int ark_plugins_count = 0;
+
+SettingsTable plugins_table = {NULL, 0};
+//settings_entry** ark_plugin_entries = NULL;
+//int ark_plugins_count = 0;
 int ark_plugins_max = 0;
+
 #define MAX_INITIAL_PLUGINS 8
 
 static void addPlugin(plugin_t* plugin){
-    if (ark_plugin_entries == NULL){ // create initial table
-        ark_plugin_entries = (settings_entry**)malloc(MAX_INITIAL_PLUGINS * sizeof(settings_entry*));
+    if (plugins_table.settings_entries == NULL){ // create initial table
+        plugins_table.settings_entries = (settings_entry**)malloc(MAX_INITIAL_PLUGINS * sizeof(settings_entry*));
         ark_plugins_max = MAX_INITIAL_PLUGINS;
-        ark_plugins_count = 0;
+        plugins_table.max_options = 0;
     }
-    if (ark_plugins_count >= ark_plugins_max){ // resize table
+    if (plugins_table.max_options >= ark_plugins_max){ // resize table
         settings_entry** new_table = (settings_entry**)malloc(2 * ark_plugins_max * sizeof(settings_entry*));
-        for (int i=0; i<ark_plugins_count; i++) new_table[i] = ark_plugin_entries[i];
-        free(ark_plugin_entries);
-        ark_plugin_entries = new_table;
+        for (int i=0; i<plugins_table.max_options; i++) new_table[i] = plugins_table.settings_entries[i];
+        free(plugins_table.settings_entries);
+        plugins_table.settings_entries = new_table;
         ark_plugins_max *= 2;
     }
-    ark_plugin_entries[ark_plugins_count++] = (settings_entry*)plugin;
+    plugins_table.settings_entries[plugins_table.max_options++] = (settings_entry*)plugin;
+}
+
+static void removePlugin(std::vector<plugin_line>& plugin_line, int pi){
+    plugin_t* plugin = plugin_line[pi].plugin;
+    plugin_line.erase(plugin_line.begin()+pi);
+
+    SystemMgr::pauseDraw();
+
+    for (int i=0; i<plugins_table.max_options; i++){
+        if ((void*)(plugins_table.settings_entries[i]) == (void*)plugin){
+            for (int j=i; j<plugins_table.max_options-1; j++){
+                plugins_table.settings_entries[j] = plugins_table.settings_entries[j+1];
+            }
+            plugins_table.max_options--;
+            break;
+        }
+    }
+
+    free(plugin->description);
+    free(plugin);
+
+    SystemMgr::resumeDraw();
 }
 
 static plugin_t* createPlugin(const char* description, unsigned char enable, unsigned char place){
     plugin_t* plugin = (plugin_t*)malloc(sizeof(plugin_t));
     plugin->description = strdup(description);
-    plugin->max_options = 2;
+    plugin->max_options = 3;
     plugin->selection = enable;
     plugin->config_ptr = &(plugin->selection);
     plugin->options[0] = "Disable";
     plugin->options[1] = "Enable";
+    plugin->options[2] = "Remove";
     plugin->place = place;
     return plugin;
 }
@@ -101,7 +133,12 @@ void savePlugins(){
         for (int j=0; j<plugin_lines[i].size(); j++){
             plugin_line pl = plugin_lines[i][j];
             if (pl.plugin != NULL){
-                output[i] << pl.plugin->description << ", " << ((pl.plugin->selection)? "on":"off") << endl;
+                if (pl.plugin->selection != PLUGIN_REMOVED)
+                    output[i] << pl.plugin->description << ", " << ((pl.plugin->selection)? "on":"off") << endl;
+                else{
+                    removePlugin(plugin_lines[i], j);
+                    j--;
+                }
             }
             else{
                 output[i] << pl.line << endl;
