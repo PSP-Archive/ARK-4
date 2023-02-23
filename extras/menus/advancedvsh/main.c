@@ -589,14 +589,13 @@ static int activate_codecs()
 
 static int swap_buttons()
 {
-	u32 value;
-
-	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &value);
-	value = !value;
-	set_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", value);
-
-	sctrlKernelExitVSH(NULL);
+	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &cnf.swap_xo);
+	cnf.swap_xo = !cnf.swap_xo;
+	set_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", cnf.swap_xo);
+	config.swap_xo = cnf.swap_xo;
 	
+	sctrlKernelExitVSH(NULL);
+
 	return 0;
 }
 
@@ -614,6 +613,7 @@ void loadConfig(){
     sceIoClose(fp);
 
 	cnf.vsh_colors = config.vshcolor;
+	cnf.swap_xo = config.swap_xo;
 }
 
 void saveConfig(){
@@ -726,6 +726,7 @@ int TSRThread(SceSize args, void *argp)
 	}
 
 	config.vshcolor = cnf.vsh_colors;
+	config.swap_xo = cnf.swap_xo;
 	saveConfig();
 
 	vctrlVSHUpdateConfig(&cnf);
