@@ -1,32 +1,32 @@
 Installation On PSP
 
-- Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
-- Install `ARK_Live` folder into `/PSP/GAME/` folder.
+- Move or copy `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
+- Move or copy `ARK_Live` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
-- To `update ARK` simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
-- Optionally install `Advanced VSH Menu` for extra features by copying `VSHMENU.PRX` into `ARK_01234` savedata folder.
+- To update ARK, simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
+- Optional: Install `Advanced VSH Menu` for extra features by moving or copying `VSHMENU.PRX` into `ARK_01234` savedata folder.
 
 
-  Live CFW
+ Non "permanent" CFW installation:
 
   - Delete `FLASH0.ARK` from `/PSP/SAVEDATA/ARK_01234` to prevent flashing files every time you reload the CFW.
   - Run `ARK Loader` every time you power off or hard reboot the device to re-enable `ARK`.
 
 
-  Permanent CFW via cIPL
+  "Permanent" CFW via cIPL
 
   - Only works on 1K models and early 2K models (those compatible with Pandora).
   - Use `pspident` homebrew to identify your model and compatibility with custom IPL.
-  - Copy `ARK cIPL` folder to `/PSP/GAME/` and run the program.
+  - Move or copy `ARK cIPL` folder to `/PSP/GAME/` and run the program.
   - Press the corresponding button in the installation page to install or remove the cIPL patch.
 
 
-  Permanent CFW via Infinity
+  "Permanent CFW" via Infinity
 
   - Works on all PSP models on 6.60 or 6.61 firmwares.
-  - Place the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
-  - Install `Infinity` using Official Firmware.
-  - Run `Infinity` a second time to configure autoboot.
+  - Copy or move the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
+  - Run the`Infinity` app using Official Firmware to run the initial installation.
+  - Run `Infinity` a second time to configure autoboot by selecting ARK within the Infinity app. Run the ARK CFW again to activate. ARK will now be automatically activated on boot up.
 
 
 
@@ -49,4 +49,4 @@ Installation On PS Vita
 Advanced VSH Menu
 
 The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
-To have a more classic VSH menu with more advanced features you can install `Advanced VSH Menu` by copying `VSHMENU.PRX` from the `AdvancedVSH` folder into `ARK_01234`.
+To have a more classic VSH menu with more advanced features you can install `Advanced VSH Menu` by moving or copying `VSHMENU.PRX` from the `AdvancedVSH` folder into `ARK_01234`.
