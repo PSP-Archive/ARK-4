@@ -2,6 +2,28 @@
 #include <sstream>
 #include <dirent.h>
 #include "browser_entries.h"
+#include "eboot.h"
+#include "iso.h"
+
+
+int fileTypeByExtension(string path){
+    if (Entry::isTXT(path.c_str())){
+        return FILE_TXT;
+    }
+    else if (Entry::isZip(path.c_str()) || Entry::isRar(path.c_str())){
+        return FILE_ZIP;
+    }
+    else if (Entry::isPRX(path.c_str())){
+        return FILE_PRX;
+    }
+    else if (Eboot::isEboot(path.c_str())){
+        return FILE_PBP;
+    }
+    else if (Iso::isISO(path.c_str())){
+        return FILE_ISO;
+    }
+    return FILE_BIN;
+}
 
 
 BrowserFile::BrowserFile(){
@@ -13,12 +35,14 @@ BrowserFile::BrowserFile(string path){
     this->name = path.substr(lastSlash+1, string::npos);
     this->selected = false;
     this->calcSize();
+    this->filetype = fileTypeByExtension(path);
 }
 
 BrowserFile::BrowserFile(BrowserFile* orig){
     this->path = orig->path;
     this->selected = false;
     this->fileSize = orig->fileSize;
+    this->filetype = orig->filetype;
 }
 
 BrowserFile::~BrowserFile(){
@@ -94,6 +118,7 @@ BrowserFolder::BrowserFolder(string path){
     this->name = path.substr(lastSlash+1, string::npos);
     this->selected = false;
     this->fileSize = "Folder";
+    this->filetype = FOLDER;
 }
 
 BrowserFolder::BrowserFolder(BrowserFolder* orig){
@@ -101,6 +126,7 @@ BrowserFolder::BrowserFolder(BrowserFolder* orig){
     this->name = orig->name;
     this->selected = false;
     this->fileSize = "Folder";
+    this->filetype = FOLDER;
 }
 
 BrowserFolder::BrowserFolder(string parent, string name){
@@ -108,6 +134,7 @@ BrowserFolder::BrowserFolder(string parent, string name){
     this->name = name;
     this->selected = false;
     this->fileSize = "Folder";
+    this->filetype = FOLDER;
 }
 
 BrowserFolder::~BrowserFolder(){
