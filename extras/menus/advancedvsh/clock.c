@@ -52,6 +52,12 @@ int bus2no(int cpu)
 	return 0;
 }
 
+int swap_xo(int dir) {
+	int sel = cnf.swap_xo;
+	sel = limit(sel+dir, 0, 1);
+	cnf.swap_xo=sel;
+}
+
 int swap_readonly(int dir) {
 	int sel = cnf.usbdevice_rdonly;
 	sel = limit(sel+dir, 0, 1);
@@ -60,7 +66,7 @@ int swap_readonly(int dir) {
 
 void change_colors(int dir) {
 	int sel = cnf.vsh_colors;
-	sel = limit(sel+dir, 0, 12);
+	sel = limit(sel+dir, 0, 25);
 	cnf.vsh_colors=sel;
 }
 
