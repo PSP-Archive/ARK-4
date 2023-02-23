@@ -289,6 +289,8 @@ ARK comes prepacked with a very powerful launcher with a built-in file browser a
   - FTP server and client can run simultaneously.
   
   - Ability to mount UMD Video ISOs using the file browser.
+
+  - Ability to extract .zip files (up to highest compression) and .rar files (standard compression).
   
   - Ability to edit text files (.txt, .cfg or .ini).
   
