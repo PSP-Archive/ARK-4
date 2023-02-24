@@ -1,5 +1,9 @@
 # ARK Changelog
 
+## Version 4.19.16 (2023-02-24)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r41916
+- File browser now has icons for compatible file formats (iso, cso, zso, jso, dax, pbp, prx, zip, rar, txt, cfg and ini).
+
 ## Version 4.19.15 (2023-02-22)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r41915
 - Fixed all games reporting "not enough space" even when there is.
