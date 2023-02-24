@@ -476,10 +476,10 @@ int menu_setup(void)
 
 	switch(cnf.swap_xo) {
 		case 0:
-			item_str[TMENU_SWAP_XO_BUTTONS] = g_messages[MSG_TOGGLE];
+			item_str[TMENU_SWAP_XO_BUTTONS] = g_messages[MSG_DISABLE];
 			break;
 		case 1:
-			item_str[TMENU_SWAP_XO_BUTTONS] = g_messages[MSG_TOGGLE];
+			item_str[TMENU_SWAP_XO_BUTTONS] = g_messages[MSG_ENABLE];
 			break;
 	}
 
@@ -652,7 +652,7 @@ none:
 			break;
 		case TMENU_SWAP_XO_BUTTONS:
 			if(direction) { swap_xo( direction ); } // Swap X/O Buttons flag  
-			else if (direction==0) return 12;
+			else if (direction==0 && cnf.swap_xo == 1 ) return 12;
 			break;
 		case TMENU_CONVERT_BATTERY:
 			if(direction==0) {
