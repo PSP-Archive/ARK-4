@@ -289,6 +289,8 @@ ARK comes prepacked with a very powerful launcher with a built-in file browser a
   - FTP server and client can run simultaneously.
   
   - Ability to mount UMD Video ISOs using the file browser.
+
+  - Ability to extract .zip files (up to highest compression) and .rar files (standard compression).
   
   - Ability to edit text files (.txt, .cfg or .ini).
   
@@ -307,6 +309,10 @@ You can however change it to whatever you please. You can change the theme used 
 
 <i>Orbs are animations and not part of the actual Themes </i>
 
+Theme: ARK_Revamped
+
+![ARK_Revamped](.github/wallpapers/ARK_Revamped.png "ARK_Revamped")
+
 Theme: RED 
 
 ![Red](.github/wallpapers/red.png "RED")
@@ -314,6 +320,10 @@ Theme: RED
 Theme: Peace Walker 
 
 ![Peace Walker](.github/wallpapers/peacewalker.png "Peace Walker")
+
+Theme: Matrix
+
+![Matrix](.github/wallpapers/matrix.png "Matrix")
 
 Theme: Material Dark
 
@@ -334,6 +344,10 @@ Theme: Blue 2
 Theme: Blue
 
 ![Blue](.github/wallpapers/blue.png "Blue")
+
+Theme: Black
+
+![Black](.github/wallpapers/black.png "Black")
 
 Theme: BadgerOS_Sprunk
 

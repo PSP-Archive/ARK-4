@@ -60,9 +60,15 @@ Browser::Browser(){
     this->optionsmenu = NULL;
     this->checkBox = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("CHECK.PNG"));
     this->uncheckBox = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("UNCHECK.PNG"));
-    this->folderIcon = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("FOLDER.PNG"));
-    this->fileIcon = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("FILE.PNG"));
     
+    this->icons[FOLDER] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("FOLDER.PNG"));
+    this->icons[FILE_BIN] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("FILE.PNG"));
+    this->icons[FILE_TXT] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("TXT.PNG"));
+    this->icons[FILE_PBP] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("PBP.PNG"));
+    this->icons[FILE_PRX] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("PRX.PNG"));    
+    this->icons[FILE_ISO] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("ISO.PNG"));
+    this->icons[FILE_ZIP] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("ZIP.PNG"));
+
     this->optionsDrawState = 0;
     this->optionsAnimX = 0;
     this->optionsAnimY = 0;
@@ -428,10 +434,7 @@ void Browser::drawScreen(){
             common::printText(xoffset, yoffset, this->formatText(e->getName()).c_str());
         }
         common::printText(400, yoffset, e->getSize().c_str());
-        if (string(e->getType()) == "FOLDER")
-            this->folderIcon->draw(xoffset-15, yoffset-10);
-        else
-            this->fileIcon->draw(xoffset-15, yoffset-10);
+        this->icons[e->getFileType()]->draw(xoffset-15, yoffset-10);
         yoffset += 20;
     }
 }

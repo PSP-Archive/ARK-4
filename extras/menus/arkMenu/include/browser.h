@@ -23,6 +23,17 @@ enum{
     FTP_DIR,
 };
 
+enum {
+    FOLDER,
+    FILE_BIN,
+    FILE_TXT,
+    FILE_PBP,
+    FILE_PRX,
+    FILE_ISO,
+    FILE_ZIP,
+    MAX_FILE_TYPES,
+};
+
 typedef struct _pspMsPrivateDirent {
 	SceSize size;
 	char s_name[16];
@@ -124,8 +135,9 @@ class Browser : public SystemEntry{
         /* Common browser images */
         Image* checkBox;
         Image* uncheckBox;
-        Image* folderIcon;
-        Image* fileIcon;
+        //Image* folderIcon;
+        //Image* fileIcon;
+        Image* icons[MAX_FILE_TYPES];
         
         /* Highlight the currently selected item? */
         bool enableSelection;
