@@ -8,6 +8,7 @@ class BrowserFile : public Entry{
     protected:
         bool selected;
         string fileSize;
+        int filetype;
 
         virtual unsigned getFileSize();
 
@@ -44,6 +45,8 @@ class BrowserFile : public Entry{
         void getTempData2();
         
         void doExecute();
+
+        int getFileType() { return filetype; }
 };
 
 class BrowserFolder : public BrowserFile{
