@@ -5,14 +5,21 @@
 #include "osk.h"
 #include "system_mgr.h"
 
+enum{
+    OPT_EDIT,
+    OPT_COPY,
+    OPT_REMV,
+};
+
 static char* EDIT = "          Edit";
+static char* COPY = "          Copy";
 static char* REMV = "          Remove";
 static char* SAVE = "          Saving";
 static char* EXIT = "          Not Saving";
 
 TextEditor::TextEditor(string path){
     this->path = path;
-
+    this->clipboard = "<new line>";
     this->table.settings_entries = NULL;
     this->table.max_options = 0;
 
@@ -37,10 +44,10 @@ TextEditor::~TextEditor(){
 void TextEditor::loadTextFile(){
     std::ifstream input(this->path.c_str());
 
-    this->addLine(string("<EXIT>"), SAVE, EXIT);
+    this->addLine(string("<EXIT>"), SAVE, EXIT, NULL);
 
     for( std::string line; getline( input, line ); ){
-        this->addLine(line, EDIT, REMV);
+        this->addLine(line, EDIT, COPY, REMV);
     }
 }
 
@@ -54,7 +61,7 @@ void TextEditor::saveTextFile(){
     output.close();
 }
 
-void TextEditor::addLine(string line, char* opt1, char* opt2){
+void TextEditor::addLine(string line, char* opt1, char* opt2, char* opt3){
     text_line_t* tline = (text_line_t*)malloc(sizeof(text_line_t));
     tline->description = strdup(line.c_str());
     tline->max_options = 2;
@@ -62,6 +69,11 @@ void TextEditor::addLine(string line, char* opt1, char* opt2){
     tline->config_ptr = &(tline->selection);
     tline->options[0] = opt1;
     tline->options[1] = opt2;
+
+    if (opt3){
+        tline->options[2] = opt3;
+        tline->max_options++;
+    }
 
     if (table.settings_entries == NULL){ // create initial table
         table.settings_entries = (settings_entry**)malloc(8 * sizeof(settings_entry*));
@@ -78,8 +90,8 @@ void TextEditor::addLine(string line, char* opt1, char* opt2){
     table.settings_entries[table.max_options++] = (settings_entry*)tline;
 }
 
-void TextEditor::insertLine(int i, string line, char* opt1, char* opt2){
-    this->addLine(line, opt1, opt2);
+void TextEditor::insertLine(int i, string line, char* opt1, char* opt2, char* opt3){
+    this->addLine(line, opt1, opt2, opt3);
     text_line_t* tline = (text_line_t*)(table.settings_entries[table.max_options-1]);
 
     for (int j=table.max_options-1; j>i; j--){
@@ -155,18 +167,25 @@ int TextEditor::control(){
                 running = false;
             }
             else{
-                if (tline->selection == 0){
-                    this->editLine(i);
-                }
-                else{
-                    this->removeLine(i);
+                switch(tline->selection){
+                    case OPT_EDIT:
+                        this->editLine(i);
+                        break;
+                    case OPT_COPY:
+                        this->clipboard = table.settings_entries[i]->description;
+                        break;
+                    case OPT_REMV:
+                        this->removeLine(i);
+                        break;
                 }
             }
+            pad.flush();
         }
         else if (pad.square()){
             int i = this->menu->getIndex();
-            this->insertLine(i+1, string("<new line>"), EDIT, REMV);
+            this->insertLine(i+1, clipboard, EDIT, COPY, REMV);
             this->editLine(i+1);
+            pad.flush();
         }
         else if (pad.decline()){
             running = false;
