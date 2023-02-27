@@ -2,8 +2,11 @@
 
 #define PTR_ALIGN_64(p) (((u32)p & (~63)) + 64)
 
-int (*pspemuLfatOpen)(char** filename, int unk) = NULL;
+// LfatOpen on PS Vita
+int (*pspemuLfatOpen)(char** filename, u32 a1, u32 a2, u32 a3, u32 t0) = NULL;
+// sysmem
 void (*SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table) = NULL;
+// btcnf
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 extern int (* UnpackBootConfig)(char * buffer, int length);
 
@@ -33,7 +36,7 @@ int findFlashFile(BootFile* file, const char* path){
 }
 
 void relocateFlashFile(BootFile* file){
-    static u8* curbuf = (u8*)PTR_ALIGN_64(FLASH_SONY+(12*1024*1024));
+    static u8* curbuf = (u8*)PTR_ALIGN_64(USER_BASE+(2*1024*1024));
     memcpy((void *)curbuf, file->buffer, file->size);
     file->buffer = (void *)curbuf;
     curbuf += file->size;
@@ -48,7 +51,7 @@ int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize
     return start(args, argp);
 }
 
-int _pspemuLfatOpen(BootFile* file, int unk)
+int _pspemuLfatOpen(BootFile* file, u32 a1, u32 a2, u32 a3, u32 t0)
 {
     char* p = file->name;
     int is_bootfile = 0;
@@ -87,7 +90,7 @@ int _pspemuLfatOpen(BootFile* file, int unk)
         reboot_conf->rtm_mod.size = 0;
 		return 0;
     }
-    int res = pspemuLfatOpen(file, unk);
+    int res = pspemuLfatOpen(file, a1, a2, a3, t0);
     return 0;
 }
 
@@ -143,14 +146,10 @@ void patchRebootBuffer(){
 
     for (u32 addr = reboot_start; addr<reboot_end; addr+=4){
         u32 data = _lw(addr);
-        if (data == JAL(pspemuLfatOpen)){
-            _sw(JAL(_pspemuLfatOpen), addr); // Hook pspemuLfatOpen
-        }
-        else if (data == 0x3A230001){ // found pspemuLfatOpen
-            u32 a = addr;
-            do {a-=4;} while (_lw(a) != 0x27BDFFF0);
-            pspemuLfatOpen = (void*)a;
-        }
+        if (data == 0xAFBF0000 && _lw(addr + 8) == 0x00000000) {
+			pspemuLfatOpen = (void *)K_EXTRACT_CALL(addr + 4);
+			_sw(JAL(_pspemuLfatOpen), addr + 4);
+		}
         else if (data == 0x00600008){ // found loadcore jump on Vita
             // Move LoadCore module_start Address into third Argument
             _sw(0x00603021, addr); // move a2, v1

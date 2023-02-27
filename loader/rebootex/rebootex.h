@@ -50,9 +50,6 @@ extern void (* sceRebootDacheWritebackInvalidateAll)(void);
 extern int (* SonyPRXDecrypt)(void *, unsigned int, unsigned int *);
 extern int (* origCheckExecFile)(unsigned char * addr, void * arg2);
 
-// LfatOpen on PS Vita
-extern int (*pspemuLfatOpen)(char** filename, int unk);
-
 // UnpackBootConfig on PSP
 extern int (* UnpackBootConfig)(char * buffer, int length);
 extern u32 UnpackBootConfigCall;
