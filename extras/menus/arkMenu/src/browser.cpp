@@ -139,7 +139,7 @@ void Browser::update(){
         this->refreshDirs();
     }
     else if (Iso::isISO(this->get()->getPath().c_str())){
-        if (this->cwd == "ms0:/ISO/VIDEO/" || this->cwd == "ef0:/ISO/VIDEO")
+        if (this->cwd == "ms0:/ISO/VIDEO/" || this->cwd == "ef0:/ISO/VIDEO/")
             Iso::executeVideoISO(this->get()->getPath().c_str());
         else{
             Iso* iso = new Iso(this->get()->getPath());
