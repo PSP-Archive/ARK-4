@@ -10,13 +10,15 @@
 #include "macros.h"
 #include "exitgame.h"
 #include "adrenaline_compat.h"
+#include "rebootconfig.h"
 #include "libs/graphics/graphics.h"
+#include "kermit.h"
 
 extern STMOD_HANDLER previous;
 
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
-static SceModule2* lastmod = NULL;
+//static SceModule2* lastmod = NULL;
 
 // Return Boot Status
 int isSystemBooted(void)
@@ -47,6 +49,104 @@ void OnSystemStatusIdle() {
 	} else {
 		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
 	}
+}
+
+// kermit_peripheral's sub_000007CC clone, called by loadexec + 0x0000299C with a0=8 (was a0=7 for fw <210)
+// Returns 0 on success
+int (* Kermit_driver_4F75AA05)(void* kermit_packet, u32 cmd_mode, u32 cmd, u32 argc, u32 allow_callback, u64 *resp) = NULL;
+u64 kermit_flash_load(int cmd)
+{
+    u8 buf[128];
+    u64 resp;
+    void *alignedBuf = (void*)ALIGN_64((int)buf + 63);
+    sceKernelDcacheInvalidateRange(alignedBuf, 0x40);
+    KermitPacket *packet = (KermitPacket *)KERMIT_PACKET((int)alignedBuf);
+    u32 argc = 0;
+    Kermit_driver_4F75AA05(packet, KERMIT_MODE_PERIPHERAL, cmd, argc, KERMIT_CALLBACK_DISABLE, &resp);
+    return resp;
+}
+
+int flashLoadPatch(int cmd)
+{
+    int ret = kermit_flash_load(cmd);
+    // Custom handling on loadFlash mode, else nothing
+    if ( cmd == KERMIT_CMD_ERROR_EXIT || cmd == KERMIT_CMD_ERROR_EXIT_2 )
+    {
+        int linked;
+        // Wait for flash to load
+        sceKernelDelayThread(10000);
+        // Load FLASH0.ARK
+		RebootConfigARK* reboot_config = sctrlHENGetRebootexConfig(NULL);
+		char archive[ARK_PATH_SIZE];
+		strcpy(archive, ark_config->arkpath);
+		strcat(archive, FLASH0_ARK);
+		int fd = sceIoOpen(archive, PSP_O_RDONLY, 0777);
+		sceIoRead(fd, reboot_config->flashfs, MAX_FLASH0_SIZE);
+		sceIoClose(fd);
+
+        flushCache();
+    }
+    return ret;
+}
+
+u32 findKermitFlashDriver(){
+    u32 nids[] = {0x4F75AA05, 0x36666181};
+    for (int i=0; i<sizeof(nids)/sizeof(u32) && Kermit_driver_4F75AA05 == NULL; i++){
+        Kermit_driver_4F75AA05 = sctrlHENFindFunction("sceKermit_Driver", "sceKermit_driver", nids[i]);
+    }
+    return Kermit_driver_4F75AA05;
+}
+
+int patchKermitPeripheral()
+{
+    findKermitFlashDriver();
+    // Redirect KERMIT_CMD_ERROR_EXIT loadFlash function
+    u32 knownnids[2] = { 0x3943440D, 0x0648E1A3 /* 3.3X */ };
+    u32 swaddress = 0;
+    u32 i;
+    for (i = 0; i < 2; i++)
+    {
+        swaddress = findFirstJAL(sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", knownnids[i]));
+        if (swaddress != 0)
+            break;
+    }
+    _sw(JUMP(flashLoadPatch), swaddress);
+    _sw(NOP, swaddress+4);
+    
+    return 0;
+}
+
+// This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
+int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
+{
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    if (apitype == 0x141){ // homebrew API
+        sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
+        sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
+    }
+    
+    // Find Target Function
+    int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
+        = (void *)findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
+
+    // Load Execute Module
+    int result = _LoadExecVSHWithApitype(apitype, file, param, 0x10000);
+    
+    // Restore Permission Level on Failure
+    pspSdkSetK1(k1);
+    
+    // Return Error Code
+    return result;
+}
+
+void patchLoadExecUMDemu(){
+    // highjack SystemControl
+    u32 func = K_EXTRACT_IMPORT(&sctrlKernelLoadExecVSHWithApitype);
+    _sw(JUMP(sctrlKernelLoadExecVSHWithApitypeWithUMDemu), func);
+    _sw(NOP, func+4);
+    flushCache();
 }
 
 int (*_sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
@@ -162,17 +262,25 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
-
+	
+	/*
 	if (DisplaySetFrameBuf){
 		initScreen(DisplaySetFrameBuf);
     	PRTSTR1("Cur Mod: %s", mod->modname);
 	}
-
+	*/
 
     if(strcmp(mod->modname, "sceDisplay_Service") == 0)
     {
         // can use screen now
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
+        goto flush;
+    }
+
+	// Patch Kermit Peripheral Module to load flash0
+    if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
+    {
+        patchKermitPeripheral();
         goto flush;
     }
 
@@ -289,10 +397,11 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
             sctrlHENPatchSyscall((u32)_sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
             
             // fix sound bug in ePSP (make sceAudioOutput2Release behave like real PSP)
+			/*
             _sceAudioOutput2GetRestSample = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x647CEF33);
             _sceAudioOutput2Release = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x43196845);
             sctrlHENPatchSyscall((u32)_sceAudioOutput2Release, sceAudioOutput2ReleaseFixed);
-
+			*/
 			OnSystemStatusIdle();
 
             // Boot Complete Action done
@@ -314,6 +423,7 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
+	/*
 	if (DisplaySetFrameBuf){
 		if (mod == NULL || modid < 0){
 			initScreen(DisplaySetFrameBuf);
@@ -322,8 +432,8 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 			while(1){};
 		}
 	}
-
 	lastmod = mod;
+	*/
 
     // forward to previous or default StartModule
     if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
@@ -335,4 +445,6 @@ void AdrenalineSysPatch(){
     PatchIoFileMgr();
     PatchMemlmd();
     initAdrenaline();
+	// patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
+    patchLoadExecUMDemu();
 }

@@ -57,6 +57,7 @@
 #define ARK_MINOR_VERSION 19
 #define ARK_MICRO_VERSION 17
 #define PRO_VERSION 0x4000 // identify as ARK
+#define MAX_FLASH0_SIZE 0x32000
 
 /*
 First two bits identify the device (PSP or PS Vita)

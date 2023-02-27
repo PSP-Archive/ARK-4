@@ -13,8 +13,6 @@
 #define ISO_RUNLEVEL_GO 0x125
 #define ISO_DRIVER 3
 
-#define MAX_FLASH0_SIZE 0x32000
-
 extern u8 rebootbuffer_ex[REBOOTEX_MAX_SIZE];
 extern u8* rebootbuffer;
 extern u32 size_rebootbuffer;
@@ -229,7 +227,7 @@ void loadKernelArk(){
         return;
     }
 
-    if (IS_VITA(ark_config) && !IS_VITA_ADR(ark_config)){
+    if (IS_VITA(ark_config)){
         // Prepare Homebrew Reboot
         char menupath[ARK_PATH_SIZE];
         strcpy(menupath, ark_config->arkpath);
