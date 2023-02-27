@@ -83,6 +83,7 @@ void patchedmemcpy(void* a1, void* a2, u32 size){
 }
 
 void patchAdrenalineReboot(SceModule2* loadexec){
+    strcpy(ark_config->exploit_id, "Adrenaline");
     for (u32 addr = loadexec->text_addr; addr < loadexec->text_addr+loadexec->text_size; addr+=4){
         if (_lw(addr) == 0x04400020) {
             // found patch that injects rebootex
@@ -227,7 +228,7 @@ void loadKernelArk(){
         return;
     }
 
-    if (IS_VITA(ark_config)){
+    if (IS_VITA(ark_config) && !IS_VITA_ADR(ark_config)){
         // Prepare Homebrew Reboot
         char menupath[ARK_PATH_SIZE];
         strcpy(menupath, ark_config->arkpath);
