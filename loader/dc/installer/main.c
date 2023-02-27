@@ -21,6 +21,16 @@
 #include "tm_msipl.h"
 #include "tm_mloader.h"
 
+#include "pspbtcnf_dc.h"
+#include "pspbtcnf_02g_dc.h"
+#include "dcman.h"
+#include "ipl_update.h"
+#include "iop.h"
+#include "pspdecryptmod.h"
+#include "intrafont.h"
+#include "resurrection.h"
+#include "vlf.h"
+
 PSP_MODULE_INFO("VResurrection_Manager", 0x800, 2, 0);
 PSP_MAIN_THREAD_ATTR(0);
 
@@ -208,6 +218,7 @@ int is5Dnum(char *str) {
 	return 1;
 }
 
+// TODO don't duplicate this
 int isVitaFile(char* filename){
     return (strstr(filename, "psv")!=NULL // PS Vita btcnf replacement, not used on PSP
             || strstr(filename, "660")!=NULL // PSP 6.60 modules can be used on Vita, not needed for PSP
@@ -219,7 +230,7 @@ int isVitaFile(char* filename){
 void extractFlash0Archive()
 {
 	int buf_size = 16 * 1024;
-	char *archive = FLASH0_ARK;
+	char *archive = DEFAULT_ARK_FOLDER "/" FLASH0_ARK;
     char* dest_path = ARK_DC_PATH;
     unsigned char buf[buf_size];
     int path_len = strlen(dest_path)+1;
@@ -276,6 +287,77 @@ void extractFlash0Archive()
     else{
         ErrorExit(1000, "Unable to open " FLASH0_ARK "\n");
     }
+}
+
+void CopyFile(char *src, char *dest)
+{
+	SceUID fdi = sceIoOpen(src, PSP_O_RDONLY, 0);
+	if (fdi < 0)
+	{
+		ErrorExit(1000, "Error opening %s: 0x%08X", src, fdi);
+	}
+	
+	SceUID fdo = sceIoOpen(dest, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+	if (fdo < 0)
+	{
+		ErrorExit(1000, "Error opening %s: 0x%08X", dest, fdo);
+	}
+
+	int read = sceIoRead(fdi, g_dataOut, SMALL_BUFFER_SIZE);
+	if (read < 0)
+	{
+		ErrorExit(1000, "Error reading %s", src);
+	}
+	if (!read)
+		goto exit;
+
+	if (sceIoWrite(fdo, g_dataOut, read) < 0)
+	{
+		ErrorExit(1000, "Error writing %s", dest);
+	}
+
+exit:	
+	sceIoClose(fdi);
+	sceIoClose(fdo);
+}
+
+void WriteSavedataFiles()
+{
+	char src[260];
+	char dest[260];
+	int fd, ret;
+	SceIoDirent curFile;
+
+	strcpy(src, boot_path);
+	strcat(src, "/" DEFAULT_ARK_FOLDER);
+
+	sceIoMkdir(ARK_DC_PATH "/" DEFAULT_ARK_FOLDER, 0777);
+
+	fd = sceIoDopen(src);
+	if(fd >= 0)
+	{
+		do {
+			memset(&curFile, 0, sizeof(SceIoDirent));
+
+			ret = sceIoDread(fd, &curFile);
+
+			if (ret > 0) {
+				if (FIO_S_ISREG(curFile.d_stat.st_mode)) {	
+					strcpy(src, boot_path);
+					strcat(src, "/" DEFAULT_ARK_FOLDER "/");
+					strcat(src, curFile.d_name);
+
+					strcpy(dest, ARK_DC_PATH "/" DEFAULT_ARK_FOLDER "/");
+					strcat(dest, curFile.d_name);
+
+					CopyFile(src, dest);
+				}
+			}
+		} while (ret > 0);
+	}
+	else {
+		ErrorExit(1000, "Unable to copy ARK Savedata folder!.\n");
+	}
 }
 
 void ExtractPrxs(int cbFile, SceUID fd)
@@ -384,6 +466,21 @@ void ExtractPrxs(int cbFile, SceUID fd)
 
 									if (!is1g) {
 										ErrorExit(1000, "Unexpected ipl! %s\n", name);
+									}
+								}
+
+								if (is2g)
+								{
+									if (WriteFile(ARK_DC_PATH "/ipl_02g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+									{
+										ErrorExit(1000, "Error writing 02g ipl.\n");
+									}
+								}
+								else
+								{
+									if (WriteFile(ARK_DC_PATH "/ipl_01g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+									{
+										ErrorExit(1000, "Error writing 01g ipl.\n");
 									}
 								}
 
@@ -599,6 +696,36 @@ static void WriteTimeMachineFiles()
 
 	if (WriteFile(ARK_DC_PATH "/tm_mloader.bin", tm_mloader, size_tm_mloader) != size_tm_mloader)
 		ErrorExit(1000, "Error writing payload_02g.bin");
+}
+
+static void WriteDCFiles()
+{
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_dc.bin", pspbtcnf_dc, size_pspbtcnf_dc) != size_pspbtcnf_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_01g_dc.bin");
+
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_02g_dc.bin", pspbtcnf_02g_dc, size_pspbtcnf_02g_dc) != size_pspbtcnf_02g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_02g_dc.bin");
+
+	if (WriteFile(ARK_DC_PATH "/kd/dcman.prx", dcman, size_dcman) != size_dcman)
+		ErrorExit(1000, "Error writing dcman.prx");
+
+	if (WriteFile(ARK_DC_PATH "/kd/ipl_update.prx", ipl_update, size_ipl_update) != size_ipl_update)
+		ErrorExit(1000, "Error writing ipl_update.prx");
+
+	if (WriteFile(ARK_DC_PATH "/kd/iop.prx", iop, size_iop) != size_iop)
+		ErrorExit(1000, "Error writing iop.prx");
+
+	if (WriteFile(ARK_DC_PATH "/kd/pspdecrypt.prx", pspdecrypt, size_pspdecrypt) != size_pspdecrypt)
+		ErrorExit(1000, "Error writing pspdecrypt.prx");
+
+	if (WriteFile(ARK_DC_PATH "/vsh/module/intrafont.prx", intrafont, size_intrafont) != size_intrafont)
+		ErrorExit(1000, "Error writing intrafont.prx");
+
+	if (WriteFile(ARK_DC_PATH "/vsh/module/resurrection.prx", resurrection, size_resurrection) != size_resurrection)
+		ErrorExit(1000, "Error writing resurrection.prx");
+	
+	if (WriteFile(ARK_DC_PATH "/vsh/module/vlf.prx", vlf, size_vlf) != size_vlf)
+		ErrorExit(1000, "Error writing vlf.prx");
 }
 
 int ReadSector(int sector, void *buf, int count)
@@ -844,9 +971,17 @@ int install_thread(SceSize args, void *argp)
 	sceKernelDelayThread(250000);
 	SetProgress(98, 1);
 
-	SetStatus("Writing timemachine files...");
+	SetStatus("Writing Time Machine files...");
 
 	WriteTimeMachineFiles();
+
+	SetStatus("Writing DC files...");
+
+	WriteDCFiles();
+
+	SetStatus("Writing Savedata files...");
+
+	WriteSavedataFiles();
 
 	SetStatus("Copying registry...");
 

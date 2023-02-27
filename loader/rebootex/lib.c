@@ -66,6 +66,24 @@ void *memmove(void * to_, const void * from_, unsigned int length)
 
 #ifdef MS_IPL
 
+int memcmp(const void *_a, const void* _b, unsigned int size)
+{
+    const unsigned char *a, *b;
+
+    a = _a, b = _b;
+
+    while(size > 0 && *a == *b)
+    {
+        a++, b++;
+        size--;
+    }
+
+    if(size == 0)
+        return 0;
+
+    return *a - *b;
+}
+
 int tolower(int s)
 {
     if((s >= 'A') && (s <= 'Z'))

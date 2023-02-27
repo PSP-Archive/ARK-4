@@ -378,6 +378,11 @@ int _sceBootLfatOpen(char * filename)
     strcpy(path, "/TM/DCARK");
 	strcat(path, filename);
 
+#ifdef PAYLOADEX
+    if (memcmp(filename+4, "pspbtcnf", 8) == 0)
+        memcpy(&path[strlen(path) - 4], "_dc.bin", 8);
+#endif
+
 	return MsFatOpen(path);
 #else
     //forward to original function
