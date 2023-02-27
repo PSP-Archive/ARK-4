@@ -39,7 +39,7 @@ void relocateFlashFile(BootFile* file){
     static u8* curbuf = (u8*)PTR_ALIGN_64(USER_BASE+(2*1024*1024));
     memcpy((void *)curbuf, file->buffer, file->size);
     file->buffer = (void *)curbuf;
-    curbuf += file->size;
+    curbuf += file->size + 64;
     curbuf = PTR_ALIGN_64(curbuf);
 }
 
@@ -54,10 +54,10 @@ int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize
 int _pspemuLfatOpen(BootFile* file, u32 a1, u32 a2, u32 a3, u32 t0)
 {
     char* p = file->name;
-    int is_bootfile = 0;
+
+    strcpy(&(reboot_conf->bootfile[reboot_conf->nfiles++]), p);
     
     if (strcmp(p, "pspbtcnf.bin") == 0){
-        is_bootfile = 1;
         int ret = -1;
         switch(reboot_conf->iso_mode) {
             case MODE_NP9660:

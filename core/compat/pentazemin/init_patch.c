@@ -10,6 +10,7 @@
 #include "macros.h"
 #include "exitgame.h"
 #include "adrenaline_compat.h"
+#include "rebootconfig.h"
 
 typedef struct {
     char *name;
@@ -22,10 +23,20 @@ typedef struct {
     int argPartId;
 } SceLoadCoreBootModuleInfo;
 
+RebootConfigARK* reboot_config = NULL;
+
+static int cur_file = 14;
+
 SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option) {
 
 	char path[64];
-	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", info->name); //not use flash0 cause of cxmb
+
+	//sprintf(path, "ms0:/%d.bin2", cur_file);
+	//logbuffer(path, &(reboot_config->bootfile[cur_file]), 256);
+
+	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", &(reboot_config->bootfile[cur_file])); //not use flash0 cause of cxmb
+
+	cur_file++;
 
 	SceUID mod = sceKernelLoadModule661(path, 0, NULL);
 	if (mod >= 0)
@@ -37,7 +48,13 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 SceUID (* LoadModuleBufferAnchorInBtcnf)(void *buf, int a1);
 SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo *info) {
 	char path[64];
-	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", info->name);
+
+	//sprintf(path, "ms0:/%d.bin2", cur_file);
+	//logbuffer(path, &(reboot_config->bootfile[cur_file]), 256);
+
+	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", &(reboot_config->bootfile[cur_file]));
+
+	cur_file++;
 
 	SceUID mod = sceKernelLoadModule661(path, 0, NULL);
 	if (mod >= 0)
@@ -99,6 +116,15 @@ SceModule2* patchLoaderCore(void)
 {
     // Find Module
     SceModule2* mod = (SceModule2 *)sceKernelFindModuleByName("sceLoaderCore");
+	
+	reboot_config = sctrlHENGetRebootexConfig(NULL);
+
+	for (int i=0; i<reboot_config->nfiles; i++){
+		if (strcmp(&(reboot_config->bootfile[i]), "/kd/init.prx") == 0){
+			cur_file = i+1;
+			break;
+		}
+	}
 
     // Fetch Text Address
     u32 start_addr = mod->text_addr;

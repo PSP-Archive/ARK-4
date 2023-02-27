@@ -163,6 +163,11 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
 
+	if (DisplaySetFrameBuf){
+		initScreen(DisplaySetFrameBuf);
+    	PRTSTR1("Cur Mod: %s", mod->modname);
+	}
+
 
     if(strcmp(mod->modname, "sceDisplay_Service") == 0)
     {

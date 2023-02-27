@@ -59,6 +59,8 @@ typedef struct RebootConfigARK {
         u32 flags;
     } rtm_mod;
     void* flashfs; // flash0 ramfs
+    int nfiles;
+    char bootfile[100][256]; // current boot file
 } RebootConfigARK;
 
 #define IS_ARK_CONFIG(config) (*((u32*)config) == ARK_CONFIG_MAGIC)
