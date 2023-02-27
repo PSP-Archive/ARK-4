@@ -58,7 +58,7 @@ static void hook_iso_directory_io(void);
 static void patch_sceCtrlReadBufferPositive(void); 
 static void patch_Gameboot(SceModule2 *mod); 
 static void patch_hibblock(SceModule2 *mod); 
-static void patch_msvideo_main_plugin_module(u32 text_addr);
+static void patch_msvideo_main_plugin_module(SceModule2* mod);
 static void patch_htmlviewer_plugin_module(u32 text_addr);
 static void patch_htmlviewer_utility_module(u32 text_addr);
 
@@ -92,7 +92,7 @@ static int vshpatch_module_chain(SceModule2 *mod)
     }
 
     if(0 == strcmp(mod->modname, "msvideo_main_plugin_module")) {
-        patch_msvideo_main_plugin_module(text_addr);
+        patch_msvideo_main_plugin_module(mod);
         sync_cache();
         goto exit;
     }
@@ -285,29 +285,22 @@ static void patch_game_plugin_module(SceModule2* mod)
     }
 }
 
-static void patch_msvideo_main_plugin_module(u32 text_addr)
+static void patch_msvideo_main_plugin_module(SceModule2* mod)
 {
-    u32 offsets1[] = {
-        0x0003AF24,
-        0x0003AFAC,
-        0x0003D7EC,
-        0x0003DA48,
-        0x000441A0,
-        0x000745A0,
-        0x00088BF0,
-    };
-    u32 offsets2[] = {
-        0x0003D764,
-        0x0003D7AC,
-        0x00043248,
-    };
-    /* Patch resolution limit to (130560) pixels (480x272) */
-    for (int i=0; i<NELEMS(offsets1); i++){
-        _sh(0xFE00, text_addr + offsets1[i]);
-    }
-    /* Patch bitrate limit (increase to 16384+2) */
-    for (int i=0; i<NELEMS(offsets2); i++){
-        _sh(0x4003, text_addr + offsets2[i]);
+    u32 text_addr = mod->text_addr;
+    u32 top_addr = text_addr + mod->text_size;
+    int patches = 10;
+
+    for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
+        u32 data = _lw(addr);
+        if ((data && 0xFF00FFFF) == 0x34002C00){
+            _sh(0xFE00, addr);
+            patches--;
+        }
+        else if (data == 0x2C420303 || data == 0x2C420FA1){
+            _sh(0x4003, addr);
+            patches--;
+        }
     }
 }
 
@@ -380,20 +373,6 @@ static void patch_vsh_module_for_pspgo_umdvideo(SceModule2 *mod)
             patches--;
         }
     }
-    /*
-    u32 text_addr = mod->text_addr, prev;
-    u32 offsets[] = {
-        0x0000670C,
-        0x0002068C,
-        0x0002D240,
-    };
-    for(int i=0; i<NELEMS(offsets); i++) {
-        u32 offset = offsets[i];
-        prev = _lw(text_addr + offset + 4);
-        _sw(prev, text_addr + offset);
-        _sw(0x24020000 | PSP_4000, text_addr + offset + 4);
-    }
-    */
 }
 
 static void patch_vsh_module(SceModule2 * mod)
