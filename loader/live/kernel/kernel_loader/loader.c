@@ -228,7 +228,7 @@ void loadKernelArk(){
         return;
     }
 
-    if (IS_VITA(ark_config) && !IS_VITA_ADR(ark_config)){
+    if ( ark_config->recovery || ( IS_VITA(ark_config) && !IS_VITA_ADR(ark_config) ) ){
         // Prepare Homebrew Reboot
         char menupath[ARK_PATH_SIZE];
         strcpy(menupath, ark_config->arkpath);

@@ -117,6 +117,7 @@ int patchKermitPeripheral()
 }
 
 // This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
+/*
 int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
 {
     // Elevate Permission Level
@@ -139,6 +140,25 @@ int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, 
     
     // Return Error Code
     return result;
+}
+*/
+
+int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param) {
+	int k1 = pspSdkSetK1(0);
+
+	if (apitype == 0x141){ // homebrew API
+        sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
+        sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
+    }	
+
+	SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
+	u32 text_addr = mod->text_addr;
+
+	int (* LoadExecVSH)(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param, int unk2) = (void *)text_addr + 0x23D0;
+
+	int res = LoadExecVSH(apitype, file, param, 0x10000);
+	pspSdkSetK1(k1);
+	return res;
 }
 
 void patchLoadExecUMDemu(){

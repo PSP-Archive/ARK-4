@@ -20,7 +20,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs/
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsystemctrl_kernel -lpspusb -lpspusbdevice_driver -lcolordebugger
+LIBS = -lpspsystemctrl_kernel -lpspusb -lpspusbdevice_driver
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
