@@ -67,6 +67,19 @@ Use `-h` or `--help` to show all available flags
   <summary> <b> On PSP </b> </summary>
 <p>
 
+<details>
+  <summary> <b> Online PSP Installer </b> </summary>
+<p>
+  For an easy deployment of ARK on a PSP connected to the internet, you can follow this video:
+  https://www.youtube.com/watch?v=mopy1N57DlI
+
+</p>
+</details>
+
+##### Manual installation  
+  
+The instructions are as follows:
+  
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Install `ARK_Live` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
