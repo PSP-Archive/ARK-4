@@ -64,6 +64,7 @@ static void patch_htmlviewer_utility_module(u32 text_addr);
 
 extern int hibblock;
 extern int skiplogos;
+extern int has_umd_iso;
 
 static int vshpatch_module_chain(SceModule2 *mod)
 {
@@ -131,7 +132,14 @@ static void patch_Gameboot(SceModule2 *mod)
 
 static void patch_hibblock(SceModule2 *mod)
 {
-	MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x000051C8);
+    u32 text_addr = mod->text_addr;
+    u32 top_addr = text_addr + mod->text_size;
+    for (u32 addr=text_addr; addr<top_addr; addr+=4){
+        if (_lw(addr) == 0x7C022804){
+            MAKE_DUMMY_FUNCTION_RETURN_0(addr - 8);
+            break;
+        }
+    }
 }
 
 static inline void ascii2utf16(char *dest, const char *src)
@@ -179,13 +187,16 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     char str[50];
     u32 addr;
 
-    int patches = (psp_model==PSP_1000)? 2 : 1;
+    int test_fd = sceIoOpen("flash0:/vsh/resource/13-27.bmp", PSP_O_RDONLY, 0777);
+    sceIoClose(test_fd);
+
+    int patches = (psp_model==PSP_1000 && test_fd >= 0)? 2 : 1;
     for (addr=text_addr; addr<top_addr && patches; addr+=4){
         if (_lw(addr) == 0x34C600C9 && _lw(addr+8) == NOP){
             a = addr+20;
             patches--;
         }
-        else if (psp_model == PSP_1000 && _lw(addr) == 0x26530008 && _lw(addr-4) == 0x24040018){
+        else if (psp_model == PSP_1000 && test_fd >= 0 && _lw(addr) == 0x26530008 && _lw(addr-4) == 0x24040018){
             // allow slim colors in PSP 1K
             u32 patch_addr, value;
 
@@ -342,8 +353,34 @@ int umdLoadExecUpdater(char * file, struct SceKernelLoadExecVSHParam * param)
     return ret;
 }
 
+static void do_pspgo_umdvideo_patch(u32 addr){
+    u32 prev = _lw(addr + 4);
+    _sw(prev, addr);
+    _sw(0x24020000 | PSP_4000, addr + 4);
+}
+
 static void patch_vsh_module_for_pspgo_umdvideo(SceModule2 *mod)
 {
+    if (!has_umd_iso) return;
+    u32 text_addr = mod->text_addr;
+    u32 top_addr = text_addr + mod->text_size;
+    int patches = 3;
+    for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x38840001){
+            do_pspgo_umdvideo_patch(addr+40);
+            patches--;
+        }
+        else if (data == 0x3C0500FF){
+            do_pspgo_umdvideo_patch(addr-48);
+            patches--;
+        }
+        else if (data == 0x02821007){
+            do_pspgo_umdvideo_patch(addr-56);
+            patches--;
+        }
+    }
+    /*
     u32 text_addr = mod->text_addr, prev;
     u32 offsets[] = {
         0x0000670C,
@@ -356,6 +393,7 @@ static void patch_vsh_module_for_pspgo_umdvideo(SceModule2 *mod)
         _sw(prev, text_addr + offset);
         _sw(0x24020000 | PSP_4000, text_addr + offset + 4);
     }
+    */
 }
 
 static void patch_vsh_module(SceModule2 * mod)
@@ -398,7 +436,7 @@ static void patch_vsh_module(SceModule2 * mod)
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0xE533E98C, gameloadexec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x63E69956, umdLoadExec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x81682A40, umdLoadExecUpdater);
-    if(psp_model == PSP_GO && sctrlSEGetBootConfFileIndex() == MODE_VSHUMD) {
+    if(psp_model == PSP_GO) {
         patch_vsh_module_for_pspgo_umdvideo(mod);
     }
 }
