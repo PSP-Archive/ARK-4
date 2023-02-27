@@ -83,9 +83,9 @@ int _pspemuLfatOpen(BootFile* file, u32 a1, u32 a2, u32 a3, u32 t0)
         }
     }
     else if (strcmp(p, REBOOT_MODULE) == 0){
-        file->buffer = (void *)0x89000000;
+        file->buffer = reboot_conf->rtm_mod.buffer;
 		file->size = reboot_conf->rtm_mod.size;
-		memcpy(file->buffer, reboot_conf->rtm_mod.buffer, file->size);
+		relocateFlashFile(file);
 		reboot_conf->rtm_mod.buffer = NULL;
         reboot_conf->rtm_mod.size = 0;
 		return 0;

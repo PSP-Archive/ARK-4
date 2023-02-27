@@ -18,8 +18,6 @@ extern STMOD_HANDLER previous;
 
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
-//static SceModule2* lastmod = NULL;
-
 // Return Boot Status
 int isSystemBooted(void)
 {
@@ -442,18 +440,6 @@ int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceK
 int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
-
-	/*
-	if (DisplaySetFrameBuf){
-		if (mod == NULL || modid < 0){
-			initScreen(DisplaySetFrameBuf);
-    	    PRTSTR1("Cur Mod ID: %p", modid);
-			if (lastmod) PRTSTR1("Last mod: %s", lastmod->modname);
-			while(1){};
-		}
-	}
-	lastmod = mod;
-	*/
 
     // forward to previous or default StartModule
     if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
