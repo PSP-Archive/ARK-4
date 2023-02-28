@@ -13,6 +13,7 @@ C_OBJS =    \
 	impose_patch.o   \
 	utility_patch.o   \
 	$(ARKROOT)/core/compat/vita/vlf.o \
+	$(ARKROOT)/core/compat/vita/vitamem.o \
 	$(ARKROOT)/common/utils/patches.o   \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
 	$(ARKROOT)/core/systemctrl/src/gameinfo.o \

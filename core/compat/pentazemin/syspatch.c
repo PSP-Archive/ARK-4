@@ -296,9 +296,52 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	return sceKernelResumeThread(thid);
 }
 
+void patch_GameBoot(SceModule2* mod){
+    u32 p1 = 0;
+    u32 p2 = 0;
+    int patches = 2;
+    for (u32 addr=mod->text_addr; addr<mod->text_addr+mod->text_size && patches; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x2C43000D){
+            p1 = addr-36;
+            patches--;
+        }
+        else if (data == 0x27BDFF20 && _lw(addr-4) == 0x27BD0040){
+            p2 = addr-24;
+            patches--;
+        }
+    }
+    _sw(JAL(p1), p2);
+    _sw(0x24040002, p2 + 4);
+}
 
+int is_launcher_mode = 0;
+int use_mscache = 0;
+int use_highmem = 0;
+int skip_logos = 0;
+int use_infernocache = 0;
 void settingsHandler(char* path){
-    //int apitype = sceKernelInitApitype();
+    int apitype = sceKernelInitApitype();
+	if (strcasecmp(path, "highmem") == 0){ // enable high memory
+        if ( (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126)) && sceKernelFindModuleByName("sceUmdCache_driver") != NULL){
+            // don't allow high memory in UMD when cache is enabled
+            return;
+        }
+        use_highmem = 1;
+    }
+    else if (strcasecmp(path, "mscache") == 0){
+        use_mscache = 1; // enable ms cache for speedup
+    }
+    else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
+        is_launcher_mode = 1;
+    }
+    else if (strcasecmp(path, "infernocache") == 0){
+        if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x112 && apitype <= 0x115))
+            use_infernocache = 1;
+    }
+    else if (strcasecmp(path, "skiplogos") == 0){
+        skip_logos = 1;
+    }
 }
 
 void AdrenalineOnModuleStart(SceModule2 * mod){
@@ -397,6 +440,22 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 		goto flush;
 	}
 
+	if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
+		if (skip_logos){
+            // patch GameBoot
+            //MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x00005630);
+            hookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
+        }
+        goto flush;
+	}
+
+	if(0 == strcmp(mod->modname, "game_plugin_module")) {
+		if (skip_logos) {
+		    patch_GameBoot(mod);
+	    }
+        goto flush;
+	}
+
     if (strcmp(mod->modname, "sceSAScore") == 0) {
 		PatchSasCore();
         goto flush;
@@ -430,6 +489,13 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
     {
         //PatchMediaSync(mod->text_addr);
         loadSettings(&settingsHandler);
+		if (is_launcher_mode){
+			strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
+		}
+		else{
+			ark_config->launcher[0] = 0; // disable launcher mode
+		}
+		sctrlHENSetArkConfig(ark_config);
         goto flush;
     }
        
@@ -440,7 +506,17 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         if(isSystemBooted())
         {
             // Initialize Memory Stick Speedup Cache
-            //if (use_mscache) msstorCacheInit("ms", 8 * 1024);
+            if (use_mscache) msstorCacheInit("ms", 8 * 1024);
+
+			// apply extra memory patch
+            if (use_highmem) unlockVitaMemory();
+
+            if (use_infernocache){
+                int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+                if (CacheInit){
+                    CacheInit(32 * 1024, 32, (use_highmem)?2:11); // 2MB cache for PS Vita
+                }
+            }
 
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
@@ -472,6 +548,25 @@ int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceK
 int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
+
+	if (skip_logos && mod != NULL && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
+		u32* vshmain_args = oe_malloc(1024);
+
+		memset(vshmain_args, 0, 1024);
+
+		if(argp != NULL && argsize != 0 ) {
+			memcpy( vshmain_args , argp ,  argsize);
+		}
+
+		vshmain_args[0] = 1024;
+		vshmain_args[1] = 0x20;
+		vshmain_args[16] = 1;
+
+		int ret = sceKernelStartModule(modid, 1024, vshmain_args, modstatus, opt);
+		oe_free(vshmain_args);
+
+		return ret;
+	}
 
     // forward to previous or default StartModule
     if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);

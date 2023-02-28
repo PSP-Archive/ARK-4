@@ -300,6 +300,16 @@ settings_entry* ark_conf_entries_vita[] = {
 };
 #define MAX_ARK_CONF_VITA (sizeof(ark_conf_entries_vita)/sizeof(ark_conf_entries_vita[0]))
 
+settings_entry* ark_conf_entries_adr[] = {
+    (settings_entry*)&launcher,
+    (settings_entry*)&highmem,
+    (settings_entry*)&mscache,
+    (settings_entry*)&infernocache,
+    (settings_entry*)&skiplogos,
+    (settings_entry*)&hidepics,
+    (settings_entry*)&vshregion,
+};
+#define MAX_ARK_CONF_ADR (sizeof(ark_conf_entries_adr)/sizeof(ark_conf_entries_adr[0]))
 
 std::vector<string> custom_config;
 
@@ -431,8 +441,14 @@ void loadSettings(){
     ARKConfig* ark_config = common::getArkConfig();
 
     if (IS_VITA(ark_config)){
-        ark_conf_entries = ark_conf_entries_vita;
-        ark_conf_max_entries = MAX_ARK_CONF_VITA;
+        if (IS_VITA_ADR(ark_config)){
+            ark_conf_entries = ark_conf_entries_adr;
+            ark_conf_max_entries = MAX_ARK_CONF_ADR;
+        }
+        else{
+            ark_conf_entries = ark_conf_entries_vita;
+            ark_conf_max_entries = MAX_ARK_CONF_VITA;
+        }
     }
     else{
         int psp_model = common::getPspModel();
