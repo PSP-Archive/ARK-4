@@ -377,7 +377,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 		PatchUtility();
         goto flush;
 	}
-    
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
 		PatchImposeDriver(mod->text_addr);

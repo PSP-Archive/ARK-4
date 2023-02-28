@@ -41,7 +41,7 @@ void flashPatch(){
 
     if (IS_VITA_ADR(ark_config)){ // read FLASH0.ARK into RAM
         PRTSTR("Reading FLASH0.ARK into RAMFS");
-        flashfs = USER_BASE + USER_SIZE - MAX_FLASH0_SIZE;
+        flashfs = (void*)ARK_FLASH;
         int fd = k_tbl->KernelIOOpen(archive, PSP_O_RDONLY, 0777);
         k_tbl->KernelIORead(fd, flashfs, MAX_FLASH0_SIZE);
         k_tbl->KernelIOClose(fd);

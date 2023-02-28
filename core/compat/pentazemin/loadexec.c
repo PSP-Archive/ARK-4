@@ -13,7 +13,6 @@
 
 void PatchLoadExec(u32 text_addr, u32 text_size) {
 	u32 jump = 0;
-	u32 rebootcall = JAL(text_addr);
 	int i;
 	for (i = 0; i < text_size; i += 4) {
 		u32 addr = text_addr + i;
