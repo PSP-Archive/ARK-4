@@ -8,13 +8,13 @@ What works:
 - XMB (and all its patches/extras).
 - Stargate no-DRM engine.
 - Custom Launcher and Recovery.
+- Exiting via key combo.
 
 
 What DOESN'T work:
 
 - Loading ISO from XMB.
 - CSO (and other compressed formats).
-- Exiting via key combo.
 - General stability issues.
 
 
