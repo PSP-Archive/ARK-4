@@ -36,7 +36,7 @@ int findFlashFile(BootFile* file, const char* path){
 }
 
 void relocateFlashFile(BootFile* file){
-    static u8* curbuf = (u8*)PTR_ALIGN_64(USER_BASE+(2*1024*1024));
+    static u8* curbuf = (u8*)PTR_ALIGN_64(ARK_FLASH+MAX_FLASH0_SIZE);
     memcpy((void *)curbuf, file->buffer, file->size);
     file->buffer = (void *)curbuf;
     curbuf += file->size + 64;
