@@ -6,4 +6,5 @@
 	IMPORT_FUNC  "SystemCtrlPrivate",0x5D7817CF,msstorCacheInit
 	IMPORT_FUNC  "SystemCtrlPrivate",0xD31A2704,loadSettings
 	IMPORT_FUNC  "SystemCtrlPrivate",0xBC7554DF,strcasecmp
+	IMPORT_FUNC  "SystemCtrlPrivate",0xAC7554DF,strncasecmp
 	IMPORT_FUNC  "SystemCtrlPrivate",0x6EAFC03D,sctrlHENSetArkConfig

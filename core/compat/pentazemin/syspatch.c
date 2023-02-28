@@ -16,6 +16,13 @@
 
 extern STMOD_HANDLER previous;
 
+int is_launcher_mode = 0;
+int use_mscache = 0;
+int use_highmem = 0;
+int skip_logos = 0;
+int use_infernocache = 0;
+int vshregion = 0;
+
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
 // Return Boot Status
@@ -191,6 +198,27 @@ int sceAudioOutput2ReleaseFixed(){
 	return _sceAudioOutput2Release();
 }
 
+static u8 get_pscode_from_region(int region)
+{
+	u8 code;
+
+	code = region;
+	
+	if(code < 12) {
+		code += 2;
+	} else {
+		code -= 11;
+	}
+
+	if(code == 2) {
+		code = 3;
+	}
+
+	printk("%s: region %d code %d\n", __func__, region, code);
+
+	return code;
+}
+
 int (* _sceChkregGetPsCode)(u8 *pscode);
 int sceChkregGetPsCodePatched(u8 *pscode) {
 	int res = _sceChkregGetPsCode(pscode);
@@ -202,6 +230,9 @@ int sceChkregGetPsCodePatched(u8 *pscode) {
 	pscode[5] = 0x00;
 	pscode[6] = 0x01;
 	pscode[7] = 0x00;
+
+	if (vshregion)
+		pscode[2] = get_pscode_from_region(vshregion);
 
 	return res;
 }
@@ -315,11 +346,6 @@ void patch_GameBoot(SceModule2* mod){
     _sw(0x24040002, p2 + 4);
 }
 
-int is_launcher_mode = 0;
-int use_mscache = 0;
-int use_highmem = 0;
-int skip_logos = 0;
-int use_infernocache = 0;
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
 	if (strcasecmp(path, "highmem") == 0){ // enable high memory
@@ -341,6 +367,10 @@ void settingsHandler(char* path){
     }
     else if (strcasecmp(path, "skiplogos") == 0){
         skip_logos = 1;
+    }
+	else if (strncasecmp(path, "fakeregion_", 11) == 0){
+        int r = atoi(path+11);
+        vshregion = r;
     }
 }
 
