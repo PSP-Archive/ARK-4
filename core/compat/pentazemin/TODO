@@ -1,0 +1,25 @@
+What works:
+
+- Homebrew and plugins (including leda).
+- Booting recovery by holding R from live loader.
+- Plain ISO in recovery or launcher.
+- PS1 games.
+- Exiting using home button.
+- XMB (and all its patches/extras).
+- Stargate no-DRM engine.
+- Custom Launcher and Recovery (if booted directly).
+
+
+What DOESN'T work:
+
+- Loading ISO from XMB.
+- CSO (and other compressed formats).
+- Exiting via key combo.
+- Running Custom Launcher or Recovery Menu from VSH Menu.
+- General stability issues.
+
+
+What ISN'T tested:
+
+- Games in PBP format.
+- DLC and updates.

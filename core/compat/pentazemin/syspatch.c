@@ -447,10 +447,12 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 }
 
 void AdrenalineSysPatch(){
+	// Patch stuff
     SceModule2* loadcore = patchLoaderCore();
     PatchIoFileMgr();
     PatchMemlmd();
-    initAdrenaline();
 	// patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
     patchLoadExecUMDemu();
+	// initialize Adrenaline Layer
+    initAdrenaline();
 }
