@@ -121,33 +121,6 @@ int patchKermitPeripheral()
     return 0;
 }
 
-// This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
-/*
-int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
-{
-    // Elevate Permission Level
-    unsigned int k1 = pspSdkSetK1(0);
-    
-    if (apitype == 0x141){ // homebrew API
-        sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
-        sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
-    }
-    
-    // Find Target Function
-    int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
-        = (void *)findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
-
-    // Load Execute Module
-    int result = _LoadExecVSHWithApitype(apitype, file, param, 0x10000);
-    
-    // Restore Permission Level on Failure
-    pspSdkSetK1(k1);
-    
-    // Return Error Code
-    return result;
-}
-*/
-
 int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param) {
 	int k1 = pspSdkSetK1(0);
 
@@ -272,14 +245,6 @@ void PatchMemlmd() {
 	u32 text_size = mod->text_size;
 
 	// Allow 6.61 kernel modules
-	/*
-	for (u32 addr=text_addr; addr<text_addr+text_size; addr+=4){
-		if (_lw(addr) == 0x7C8326C0){
-			MAKE_CALL(addr + 84, memcmp_patched);
-			break;
-		}
-	}
-	*/
 	MAKE_CALL(text_addr + 0x2C8, memcmp_patched);
 	
 	flushCache();
@@ -553,11 +518,11 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
             sctrlHENPatchSyscall((u32)_sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
             
             // fix sound bug in ePSP (make sceAudioOutput2Release behave like real PSP)
-			/*
             _sceAudioOutput2GetRestSample = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x647CEF33);
             _sceAudioOutput2Release = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x43196845);
             sctrlHENPatchSyscall((u32)_sceAudioOutput2Release, sceAudioOutput2ReleaseFixed);
-			*/
+
+			// Adrenaline patches
 			OnSystemStatusIdle();
 
             // Boot Complete Action done
