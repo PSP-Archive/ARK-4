@@ -7,7 +7,7 @@ What works:
 - Exiting using home button.
 - XMB (and all its patches/extras).
 - Stargate no-DRM engine.
-- Custom Launcher and Recovery (if booted directly).
+- Custom Launcher and Recovery.
 
 
 What DOESN'T work:
@@ -15,7 +15,6 @@ What DOESN'T work:
 - Loading ISO from XMB.
 - CSO (and other compressed formats).
 - Exiting via key combo.
-- Running Custom Launcher or Recovery Menu from VSH Menu.
 - General stability issues.
 
 
