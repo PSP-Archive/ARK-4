@@ -105,11 +105,11 @@ int getSfoTitle(char *title, int n) {
 	}
 
 	// Allocate buffer
-	SceUID blockid = sceKernelAllocPartitionMemory661(PSP_MEMORY_PARTITION_KERNEL, "", PSP_SMEM_Low, size, NULL);
+	SceUID blockid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_KERNEL, "", PSP_SMEM_Low, size, NULL);
 	if (blockid < 0)
 		return blockid;
 
-	void *sfo = sceKernelGetBlockHeadAddr661(blockid);
+	void *sfo = sceKernelGetBlockHeadAddr(blockid);
 
 	// Read file
 	sceIoRead(fd, sfo, size);
@@ -127,7 +127,7 @@ int getSfoTitle(char *title, int n) {
 		}
 	}
 
-	sceKernelFreePartitionMemory661(blockid);
+	sceKernelFreePartitionMemory(blockid);
 
 	return 0;
 }

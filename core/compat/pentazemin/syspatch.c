@@ -272,6 +272,31 @@ int sceResmgrDecryptIndexPatched(void *buf, int size, int *retSize) {
 	return 0;
 }
 
+int sceKernelSuspendThreadPatched(SceUID thid) {
+	SceKernelThreadInfo info;
+	info.size = sizeof(SceKernelThreadInfo);
+	if (sceKernelReferThreadStatus(thid, &info) == 0) {
+		if (strcmp(info.name, "popsmain") == 0) {
+			SendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS);
+		}
+	}
+
+	return sceKernelSuspendThread(thid);
+}
+
+int sceKernelResumeThreadPatched(SceUID thid) {
+	SceKernelThreadInfo info;
+	info.size = sizeof(SceKernelThreadInfo);
+	if (sceKernelReferThreadStatus(thid, &info) == 0) {
+		if (strcmp(info.name, "popsmain") == 0) {
+			SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
+		}
+	}
+
+	return sceKernelResumeThread(thid);
+}
+
+
 void settingsHandler(char* path){
     //int apitype = sceKernelInitApitype();
 }
@@ -306,7 +331,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
 		// Protect pops memory
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-			sceKernelAllocPartitionMemory661(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
+			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
 		}
 
 		memset((void *)0x49F40000, 0, 0x80000);
@@ -383,6 +408,14 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         _sw(NOP, mod->text_addr + 0x1140);
         goto flush;
     }
+
+	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
+		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
+			MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0x9944F31F), sceKernelSuspendThreadPatched);
+			MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0x75156E8F), sceKernelResumeThreadPatched);
+			goto flush;
+		}
+	}
 
     // VLF Module Patches
     if(strcmp(mod->modname, "VLF_Module") == 0)

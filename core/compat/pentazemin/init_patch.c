@@ -38,7 +38,7 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 
 	cur_file++;
 
-	SceUID mod = sceKernelLoadModule661(path, 0, NULL);
+	SceUID mod = sceKernelLoadModule(path, 0, NULL);
 	if (mod >= 0)
 		return mod;
 
@@ -56,7 +56,7 @@ SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo
 
 	cur_file++;
 
-	SceUID mod = sceKernelLoadModule661(path, 0, NULL);
+	SceUID mod = sceKernelLoadModule(path, 0, NULL);
 	if (mod >= 0)
 		return mod;
 
