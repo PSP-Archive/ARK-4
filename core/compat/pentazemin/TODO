@@ -2,7 +2,7 @@ What works:
 
 - Homebrew and plugins (including leda).
 - Booting recovery by holding R from live loader.
-- Plain ISO in recovery or launcher.
+- ISO and CSO.
 - PS1 games.
 - Exiting using home button.
 - XMB (and all its patches/extras).
@@ -10,6 +10,7 @@ What works:
 - Custom Launcher and Recovery.
 - Exiting via key combo.
 - Extra RAM.
+- Inferno Cache.
 
 
 What DOESN'T work:
