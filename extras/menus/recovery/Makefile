@@ -26,7 +26,8 @@ OBJS = \
 		../arkMenu/src/browser.o \
 		../arkMenu/src/browser_entries.o \
 		../arkMenu/src/settingsmenu.o \
-		../arkMenu/src/optionsMenu.o \
+		../arkMenu/src/optionsmenu.o \
+		../arkMenu/src/texteditor.o \
 		../arkMenu/src/anim/anim.o \
 		../arkMenu/src/anim/pixel.o \
 		../arkMenu/src/anim/wave.o \

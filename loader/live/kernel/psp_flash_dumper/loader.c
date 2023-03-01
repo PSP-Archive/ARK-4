@@ -28,6 +28,17 @@ static inline void open_flash(){
     while (k_tbl->IoAssign("flash0:", "lflash0:0,0", "flashfat0:", 0, NULL, 0)<0){
         k_tbl->KernelDelayThread(500000);
     }
+
+    int ret;
+
+    ret = k_tbl->IoUnassign("flash3:");
+
+    while(ret < 0 && ret != SCE_KERNEL_ERROR_NODEV) {
+        ret = k_tbl->IoUnassign("flash3:");
+        k_tbl->KernelDelayThread(500000);
+    }
+
+    k_tbl->IoAssign("flash3:", "lflash0:0,3", "flashfat3:", 0, NULL, 0);
 }
 
 int fileExists(const char* path){
@@ -193,8 +204,12 @@ int kthread(SceSize args, void *argp){
 
     PRTSTR("Dumping flash0");
     copy_folder_recursive("flash0:/", "ms0:/flash0");
-
     PRTSTR("Flash0 Dumped");
+
+    PRTSTR("Dumping flash3");
+    copy_folder_recursive("flash3:/", "ms0:/flash3");
+    PRTSTR("Flash3 Dumped");
+
     k_tbl->KernelExitThread(0);
 
     return 0;

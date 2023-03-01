@@ -28,6 +28,9 @@ class SettingsMenu : public SystemEntry{
         
         string* customText;
         int ntext;
+        bool shorten_paths;
+        bool show_all_opts;
+        bool show_info;
         
         bool changed;
         
@@ -43,7 +46,7 @@ class SettingsMenu : public SystemEntry{
         
     public:
     
-        SettingsMenu(SettingsTable* table, void (*callback)());
+        SettingsMenu(SettingsTable* table, void (*callback)(), bool shorten_paths, bool show_all_opts, bool show_info);
         ~SettingsMenu();
     
         void setCustomText(string text[], int n);
@@ -85,6 +88,8 @@ class SettingsMenu : public SystemEntry{
         
         void applyConf();
         void readConf();
+
+        int getIndex();
         
 };
 

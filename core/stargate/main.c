@@ -40,6 +40,16 @@ STMOD_HANDLER previous;
 // Module Start Handler
 void stargateSyspatchModuleOnStart(SceModule2 * mod)
 {
+
+    if (strcmp(mod->modname, "tekken") == 0) {
+		u32 func = sctrlHENFindImport(mod->modname, "scePower", 0x34F9C463);
+		if (func) {
+			_sw(JR_RA, func);
+            _sw(LI_V0(222), func+4);
+            flushCache();
+		}
+	}
+
     // Call Previous Module Start Handler
     if(previous) previous(mod);
     
@@ -130,6 +140,9 @@ int module_start(SceSize args, void * argp)
     
     // Initialize NPDRM
     nodrmInit();
+
+    // Patch free mem size
+    patch_ioDevCtl();
     
     // Register Start Module Handler
     previous = sctrlHENSetStartModuleHandler(stargateSyspatchModuleOnStart);

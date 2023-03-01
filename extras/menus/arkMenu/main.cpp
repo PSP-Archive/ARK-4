@@ -44,7 +44,7 @@ int main(int argc, char** argv){
     }
     // Setup settings and exit
     SettingsTable stab = { settings_entries, MAX_SETTINGS_OPTIONS };
-    entries[n_entries++] = new SettingsMenu(&stab, common::saveConf);
+    entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
     entries[n_entries++] = new ExitManager();
 
     // Setup main App (Game or Browser)

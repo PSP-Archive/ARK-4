@@ -67,6 +67,19 @@ Use `-h` or `--help` to show all available flags
   <summary> <b> On PSP </b> </summary>
 <p>
 
+<details>
+  <summary> <b> Online PSP Installer </b> </summary>
+<p>
+  For an easy deployment of ARK on a PSP connected to the internet, you can follow this video:
+  https://www.youtube.com/watch?v=mopy1N57DlI
+
+</p>
+</details>
+
+##### Manual installation  
+  
+The instructions are as follows:
+  
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Install `ARK_Live` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
@@ -148,6 +161,26 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
 ## CUSTOMIZATION
 
 <details>
+  <summary> <b> Advanced VSH Menu </b> </summary>
+<p>
+
+The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
+To have a more classic VSH menu with more advanced features you can install `Advanced VSH Menu` by copying `VSHMENU.PRX` from the `AdvancedVSH` folder into `ARK_01234`.
+Some of the features available in Advanced VSH Menu include:
+
+- Change USB Device mount (Memory Stick, Flash, UMD).
+- Protect Flash in USB Device mount.
+- View available ISO drivers.
+- Mount UMD Video ISO.
+- Convert battery from normal to pandora and viceversa.
+- Activate flash and WMA playback.
+- Swap X/O buttons.
+- Delete hibernation (PSP Go paused game).
+
+</p>
+</details>
+
+<details>
   <summary> <b> Installing Plug-Ins </b> </summary>
 <p>
   
@@ -198,6 +231,14 @@ Some noteworthy plugins that are compatible with ARK include (but not limited to
 - GTA LCS and VCS cheadevice (including the remastered version).
 - CWCheat.
 - pspstates kai.
+- XMB Item Hider v1.3-r3
+- DayViewer.
+- Categories Lite.
+- CDDA Enabler.
+- PRO Online.
+- PSP 3D.
+- ZeroVSH Patcher.
+
 
 </p>
 </details>
@@ -242,13 +283,48 @@ This also allows you to enable settings on specific games:
 <details>
   <summary> <b> Custom Launcher </b> </summary>
 <p>
-ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
+ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. Some of its features include:
+  
+  - Playback of ISO and all CSO formats with PMF video preview.
+  
+  - Playback of UMD game discs.
+  
+  - Categorized and organized game menu by PSP Games, PSP Homebrew and PS1 Games.
+  
+  - Ability to scan savedata folders for games.
+  
+  - Compatibility with old VHBL, ARK-2 and TN-CEF file names and folder paths.
+  
+  - Ability to copy, move or delete entire folders.
+  
+  - File browser has built-in FTP client, allowing you to browse and copy files from another PSP.
+  
+  - FTP server and client can run simultaneously.
+  
+  - Ability to mount UMD Video ISOs using the file browser.
+
+  - Ability to extract .zip files (up to highest compression) and .rar files (standard compression).
+  
+  - Ability to edit text files (.txt, .cfg or .ini).
+  
+  - Ability to install Plugins via the file browser.
+  
+  - Different background animation effects.
+  
+  - And more.
+
+  
+You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
 
 <details>
 <summary> <b> Custom Launcher Themes </b> </summary>
 <p>
 
 <i>Orbs are animations and not part of the actual Themes </i>
+
+Theme: ARK_Revamped
+
+![ARK_Revamped](.github/wallpapers/ARK_Revamped.png "ARK_Revamped")
 
 Theme: RED 
 
@@ -257,6 +333,10 @@ Theme: RED
 Theme: Peace Walker 
 
 ![Peace Walker](.github/wallpapers/peacewalker.png "Peace Walker")
+
+Theme: Matrix
+
+![Matrix](.github/wallpapers/matrix.png "Matrix")
 
 Theme: Material Dark
 
@@ -278,6 +358,10 @@ Theme: Blue
 
 ![Blue](.github/wallpapers/blue.png "Blue")
 
+Theme: Black
+
+![Black](.github/wallpapers/black.png "Black")
+
 Theme: BadgerOS_Sprunk
 
 ![BadgerOS_Sprunk](.github/wallpapers/badgerOS_sprunk.png "BadgerOS_Sprunk")
@@ -287,6 +371,11 @@ Theme: BadgerOS
 ![BadgerOS](.github/wallpapers/badgerOS.png "BadgerOS")
 
 </details>
+
+
+<details>
+<summary> <b> Other Launchers </b> </summary>
+<p>
 
 Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
 
@@ -304,6 +393,9 @@ Aside from the default launcher provided, there have been many  other custom lau
 
 
 Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
+</p>
+</details>
+
 </p>
 </details>
 

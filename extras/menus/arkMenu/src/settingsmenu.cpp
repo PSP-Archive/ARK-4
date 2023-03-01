@@ -3,7 +3,7 @@
 #include "system_mgr.h"
 
 
-#define MENU_W 350
+#define MENU_W 375
 #define MENU_W_SPEED 50
 #define MENU_H_SPEED 30
 #define PAGE_SIZE 10
@@ -11,7 +11,7 @@
 extern string ark_version;
 extern struct tm today;
 
-SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)()){
+SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool shorten_paths, bool show_all_opts, bool show_info){
     this->animation = -1;
     this->index = 0;
     this->start = 0;
@@ -28,6 +28,9 @@ SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)()){
     this->name = "Settings";
     this->callback = save_callback;
     this->icon = common::getImage(IMAGE_SETTINGS);
+    this->shorten_paths = shorten_paths;
+    this->show_all_opts = show_all_opts;
+    this->show_info = show_info;
 }
 
 SettingsMenu::~SettingsMenu(){
@@ -77,7 +80,6 @@ void SettingsMenu::draw(){
         }
         break;
     case 0:
-        
         if (customText == NULL || ntext == 0){
             x = (480-MENU_W)/2;
             y = (272-max_height)/2;
@@ -89,13 +91,15 @@ void SettingsMenu::draw(){
                 common::getImage(IMAGE_DIALOG)->draw_scale(x-10, y + (index*height), 5, height);
             }
         
-            if (today.tm_mday == 3 && today.tm_mon == 6)
-                common::printText(x+10, y+15, "In Loving Memory of Gregory Pitka (qwikrazor87). R.I.P.", GRAY_COLOR, SIZE_LITTLE, 0, 0);
-            else if (today.tm_mday == 25 && today.tm_mon == 11)
-                common::printText(x+10, y+15, "Merry Christmas!", GRAY_COLOR, SIZE_LITTLE, 0, 0);
-            else
-                common::printText(x+40, y+15, ark_version.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
-        
+            if (show_info){
+                if (today.tm_mday == 3 && today.tm_mon == 6)
+                    common::printText(x+10, y+15, "In Loving Memory of Gregory Pitka (qwikrazor87). R.I.P.", GRAY_COLOR, SIZE_LITTLE, 0, 0);
+                else if (today.tm_mday == 25 && today.tm_mon == 11)
+                    common::printText(x+10, y+15, "Merry Christmas!", GRAY_COLOR, SIZE_LITTLE, 0, 0);
+                else
+                    common::printText(x+40, y+15, ark_version.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
+            }
+            
             int yoffset = y+40;
             int xoffset = x+10;
         
@@ -103,15 +107,19 @@ void SettingsMenu::draw(){
                 unsigned char sel = table->settings_entries[i]->selection;
                 if (i==index){
                     common::printText(xoffset, yoffset, table->settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, 1);
-                    common::printText(xoffset+215, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1);
+                    common::printText(xoffset+255, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1);
                 }
                 else{
                     string desc = table->settings_entries[i]->description;
-                    size_t lastSlash = desc.rfind('/');
-                    desc = desc.substr(lastSlash+1, -1);
-                    if (desc.size() > 35) desc = desc.substr(0, 30) + "...";
+                    
+                    if (shorten_paths){
+                        size_t lastSlash = desc.rfind('/');
+                        desc = desc.substr(lastSlash+1, -1);
+                    }
+                    if (desc.size() > 55) desc = desc.substr(0, 40) + "...";
                     common::printText(xoffset, yoffset, desc.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
-                    common::printText(xoffset+215, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_LITTLE, 0);
+                    if (show_all_opts)
+                        common::printText(xoffset+255, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_LITTLE, 0);
                 }
                 yoffset += 15;
             }
@@ -245,4 +253,8 @@ void SettingsMenu::resume(){
     readConf();
     while (animation != 0)
         sceKernelDelayThread(0);
+}
+
+int SettingsMenu::getIndex(){
+    return index;
 }

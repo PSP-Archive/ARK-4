@@ -36,15 +36,20 @@ char freq2_buf[3+3+2] = "";
 char device_buf[13] = "";
 char umdvideo_path[256] = "";
 
-#define TMENU_MAX 11
+#define TMENU_MAX 16
 
 enum{
 	//TMENU_XMB_CLOCK,
 	//TMENU_GAME_CLOCK,
 	TMENU_USB_DEVICE,
+	TMENU_USB_READONLY,
 	TMENU_UMD_MODE,
 	TMENU_UMD_VIDEO,
+	TMENU_COLORS,
 	TMENU_CONVERT_BATTERY,
+	TMENU_SWAP_XO_BUTTONS,
+	TMENU_ACTIVATE_FLASH_WMA,
+	TMENU_DELETE_HIBERNATION,
 //	TMENU_XMB_PLUGINS,
 //	TMENU_GAME_PLUGINS,
 //	TMENU_POPS_PLUGINS,
@@ -71,6 +76,7 @@ const int xyPoint[] ={0x98, 0x30, 0xC0, 0xA0, 0x70, 0x08, 0x0E, 0xA8};//data243C
 const int xyPoint2[] ={0xB0, 0x30, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data2458=
 
 int is_pandora = 0;
+int colors_dir = 0;
 
 int menu_draw(void)
 {
@@ -109,16 +115,149 @@ int menu_draw(void)
 	blit_string(pointer[0], pointer[1], g_messages[MSG_PRO_VSH_MENU]);
 	blit_string(pointer[0], 56, ark_version);
 //	blit_string(168, (pointer[1] + sizeof(ark_version))*8, ark_version);
-
+ 
 	for(max_menu=0;max_menu<TMENU_MAX;max_menu++) {
 		fc = 0xffffff;
-											// 0xc00000ff original
-		bc = (max_menu==menu_sel) ? 0xff8080 : 0x000000ff;
-		blit_set_color(fc,bc);
-
+										    // 0xc00000ff original     abgr
 		msg = g_messages[MSG_USB_DEVICE + max_menu];
+		switch(cnf.vsh_colors) {
+						// Red
+						case 0: 
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x000000ff;
+							blit_set_color(fc,bc);
+							break;
+						// Light Red
+						case 1: 
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa00000ff;
+							blit_set_color(fc,bc);
+							break;
+						// Orange
+						case 2: 
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x0000a5ff;
+							blit_set_color(fc,bc);
+							break;
+						// Light Orange
+						case 3: 
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa000a5ff;
+							blit_set_color(fc,bc);
+							break;
+						// Yellow
+						case 4: 
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x0000e6e6;
+							blit_set_color(fc,bc);
+							break;
+						// Light Yellow
+						case 5: 
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa000e6e6;
+							blit_set_color(fc,bc);
+							break;
+						// Green
+						case 6:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x0000b300;
+							blit_set_color(fc,bc);
+						// Light Green
+						case 7:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa000ff00;
+							blit_set_color(fc,bc);
+							break;
+						// Blue
+						case 8:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x00ff0000;
+							blit_set_color(fc,bc);
+							break;
+						// Light Blue
+						case 9:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0ff0000;
+							blit_set_color(fc,bc);
+							break;
+						// Indigo
+						case 10:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x0082004b;
+							blit_set_color(fc,bc);
+							break;
+						// Light Indigo
+						case 11:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa082004b;
+							blit_set_color(fc,bc);
+							break;
+						// Violet
+						case 12:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x00ee82ee;
+							blit_set_color(fc,bc);
+							break;
+						// Light Violet
+						case 13:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0ee82ee;
+							blit_set_color(fc,bc);
+							break;
+						// Pink 
+						case 14:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x00cbc0ff;
+							blit_set_color(fc,bc);
+							break;
+						// Light Pink 
+						case 15:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0cbc0ff;
+							blit_set_color(fc,bc);
+							break;
+						// Purple 
+						case 16:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x00993366;
+							blit_set_color(fc,bc);
+							break;
+						// Light Purple 
+						case 17:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0993366;
+							blit_set_color(fc,bc);
+							break;
+						// Teal 
+						case 18:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x00808000;
+							blit_set_color(fc,bc);
+							break;
+						// Light Teal 
+						case 19:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0808000;
+							blit_set_color(fc,bc);
+							break;
+						// Aqua 
+						case 20:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x00cccc00;
+							blit_set_color(fc,bc);
+							break;
+						// Light Aqua 
+						case 21:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0cccc00;
+							blit_set_color(fc,bc);
+							break;
+						// Grey 
+						case 22:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x00737373;
+							blit_set_color(fc,bc);
+							break;
+						// Light Grey 
+						case 23:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0737373;
+							blit_set_color(fc,bc);
+							break;
+						// Black 
+						case 24:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0x00000000;
+							blit_set_color(fc,bc);
+							break;
+						// Light Black 
+						case 25:
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa0000000;
+							blit_set_color(fc,bc);
+							break;
+						default:	
+							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa00000ff;
+							blit_set_color(fc,bc);
+					}
+
 
 		if(msg) {
+				bc = (max_menu==menu_sel) ? 0xff8080 : 0x0000ff00;
 			switch(max_menu) {
 				case TMENU_EXIT:
 					xPointer = pointer[2];
@@ -139,11 +278,13 @@ int menu_draw(void)
 					}
 					
 					break;
+				case TMENU_DELETE_HIBERNATION:
 				case TMENU_CUSTOM_LAUNCHER:
-					xPointer = 168;
-					break;
 				case TMENU_RECOVERY_MENU:
 					xPointer = 168;
+					break;
+				case TMENU_ACTIVATE_FLASH_WMA:
+					xPointer = 153;
 					break;
 				case TMENU_SHUTDOWN_DEVICE:
 					xPointer = 176;
@@ -155,6 +296,8 @@ int menu_draw(void)
 					xPointer=pointer[4];
 					break;
 			}
+
+
 
 			cur_menu = max_menu;
 			blit_string(xPointer, (pointer[5] + cur_menu)*8, msg);
@@ -170,10 +313,13 @@ int menu_draw(void)
 				blit_string(xPointer+0x80, (pointer[5] + cur_menu)*8, msg);
 			}
 			else if(msg) {
-				blit_set_color(item_fcolor[max_menu],bc);
+				//blit_set_color(item_fcolor[max_menu],bc);
+				//blit_set_color(fc,bc);
 				blit_string( (pointer[6] * 8) + 128, (pointer[5] + cur_menu)*8, msg);
 			}
+
 		}
+
 	}
 
 	blit_set_color(0x00ffffff,0x00000000);
@@ -317,6 +463,109 @@ int menu_setup(void)
 			item_str[TMENU_UMD_MODE] = g_messages[MSG_INFERNO];
 	}
 
+	switch(cnf.usbdevice_rdonly) {
+		case 0:
+			item_str[TMENU_USB_READONLY] = g_messages[MSG_DISABLE];
+			break;
+		case 1:
+			item_str[TMENU_USB_READONLY] = g_messages[MSG_ENABLE];
+			break;
+		default:
+			item_str[TMENU_USB_READONLY] = g_messages[MSG_ENABLE];
+	}
+
+	switch(cnf.swap_xo) {
+		case 0:
+			item_str[TMENU_SWAP_XO_BUTTONS] = g_messages[MSG_DISABLE];
+			break;
+		case 1:
+			item_str[TMENU_SWAP_XO_BUTTONS] = g_messages[MSG_ENABLE];
+			break;
+	}
+
+	switch(cnf.vsh_colors) {
+		case _RED:
+			item_str[TMENU_COLORS] = g_messages[MSG_RED];
+			break;
+		case _LITE_RED:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_RED];
+			break;
+		case _ORANGE:
+			item_str[TMENU_COLORS] = g_messages[MSG_ORANGE];
+			break;
+		case _LITE_ORANGE:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_ORANGE];
+			break;
+		case _YELLOW:
+			item_str[TMENU_COLORS] = g_messages[MSG_YELLOW];
+			break;
+		case _LITE_YELLOW:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_YELLOW];
+			break;
+		case _GREEN:
+			item_str[TMENU_COLORS] = g_messages[MSG_GREEN];
+			break;
+		case _LITE_GREEN:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_GREEN];
+			break;
+		case _BLUE:
+			item_str[TMENU_COLORS] = g_messages[MSG_BLUE];
+			break;
+		case _LITE_BLUE:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_BLUE];
+			break;
+		case _INDIGO:
+			item_str[TMENU_COLORS] = g_messages[MSG_INDIGO];
+			break;
+		case _LITE_INDIGO:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_INDIGO];
+			break;
+		case _VIOLET:
+			item_str[TMENU_COLORS] = g_messages[MSG_VIOLET];
+			break;
+		case _LITE_VIOLET:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_VIOLET];
+			break;
+		case _PINK:
+			item_str[TMENU_COLORS] = g_messages[MSG_PINK];
+			break;
+		case _LITE_PINK:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_PINK];
+			break;
+		case _PURPLE:
+			item_str[TMENU_COLORS] = g_messages[MSG_PURPLE];
+			break;
+		case _LITE_PURPLE:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_PURPLE];
+			break;
+		case _TEAL:
+			item_str[TMENU_COLORS] = g_messages[MSG_TEAL];
+			break;
+		case _LITE_TEAL:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_TEAL];
+			break;
+		case _AQUA:
+			item_str[TMENU_COLORS] = g_messages[MSG_AQUA];
+			break;
+		case _LITE_AQUA:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_AQUA];
+			break;
+		case _GREY:
+			item_str[TMENU_COLORS] = g_messages[MSG_GREY];
+			break;
+		case _LITE_GREY:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_GREY];
+			break;
+		case _BLACK:
+			item_str[TMENU_COLORS] = g_messages[MSG_BLACK];
+			break;
+		case _LITE_BLACK:
+			item_str[TMENU_COLORS] = g_messages[MSG_LITE_BLACK];
+			break;
+		default:
+			item_str[TMENU_COLORS] = g_messages[MSG_RED];
+	}
+
 	return 0;
 }
 
@@ -360,6 +609,11 @@ int menu_ctrl(u32 button_on)
 		case TMENU_USB_DEVICE:
 			if(direction) change_usb( direction );
 			break;
+		case TMENU_USB_READONLY:
+			// Other logic will go here
+			if (direction) swap_readonly(direction);
+			//else if(direction==0) return 11;
+			break;
 		case TMENU_UMD_MODE:
 			if(direction) change_umd_mode( direction );
 			break;
@@ -386,10 +640,28 @@ none:
 				return 6; // Mount UMDVideo ISO flag
 			}
 			break;
+		case TMENU_DELETE_HIBERNATION:
+			if(direction==0) {
+				return 10; // Delete Hibernation flag 
+			}
+			break;
+		case TMENU_ACTIVATE_FLASH_WMA:
+			if(direction==0) {
+				return 11; // Delete Hibernation flag 
+			}
+			break;
+		case TMENU_SWAP_XO_BUTTONS:
+			if(direction) { swap_xo( direction ); } // Swap X/O Buttons flag  
+			else if (direction==0 && cnf.swap_xo == 1 ) return 12;
+			break;
 		case TMENU_CONVERT_BATTERY:
 			if(direction==0) {
 				return 9; // Convert Battery flag
 			}
+			break;
+		case TMENU_COLORS:
+			// This will be where I will be adding to set the color
+			if(direction) change_colors(direction);
 			break;
 		case TMENU_CUSTOM_LAUNCHER:
 			if(direction==0) {

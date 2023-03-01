@@ -1,5 +1,39 @@
 # ARK Changelog
 
+## Version 4.19.16 (2023-02-24)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r41916
+- File browser now has icons for compatible file formats (iso, cso, zso, jso, dax, pbp, prx, zip, rar, txt, cfg and ini).
+
+## Version 4.19.15 (2023-02-22)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r41915
+- Fixed all games reporting "not enough space" even when there is.
+- Changed default launcher/recovery theme.
+
+## Version 4.19.14 (2023-02-22)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r41914
+- You can now use slim colors on PSP 1K.
+- Added partial support for files with non-latin1 characters in recovery/launcher.
+- Added new CFW setting "Block hibernation deletion on PSP Go", available in XMB and recovery menu.
+- Fixed issues with "Skip Sony Logos", such as compatibility with Testing Tool and Development Tool firmwares.
+- Renamed launcher/recovery settings file from ARKMENU.CFG to ARKMENU.BIN to prevent confusion since it's not a text file.
+- Added new features to Advanced VSH Menu: USB Readonly mode, background color, activate flash and wma players, swap X/O buttons and delete hibernation.
+
+## Version 4.19.13 (2023-02-21)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r41913
+- You can now remove plugins using the Plugin Manager in the XMB or Recovery Menu. This doesn't delete the plugin or its files, only removes it from PLUGINS.TXT, to fully uninstall the plugin you can use the file manager to delete its files.
+- You can now edit text files (.txt, .cfg or .ini) using the file browser.
+
+## Version 4.19.12 (2023-02-19)
+- fixed ISOs with non-latin1 characters (only on XMB though, launcher/recovery still has issues with them).
+- launcher and recovery will now hide options that aren't available depending on device and model (ftp, ef0, etc) and CFW settings.
+- added option to change VSH region.
+- added support for DLC and Updates on ISO files.
+
+## Version 4.19.11 (2023-02-17)
+- You can now install plugins using the file browser (Recovery Menu or Custom Launcher).
+- Created Advanced VSH Menu, based on PRO VSH Menu and Ultimate VSH Menu, can be optionally installed to obtain advanced features in the XMB, including: change USB device, view available ISO drivers, mount Video ISO files, convert battery from normal to pandora and viceversa.
+- Added version number to Advanced VSH Menu and fixed typo.
+
 ## Version 4.19.10 (2023-02-10)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r41910
 - Added new keywords for plugin system: `psx` and `ps1` as alternative to `pops`; `xmb` as alternative to `vsh` and `psp` as alternative to `umd`.

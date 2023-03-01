@@ -423,6 +423,15 @@ int gamermdir(const char * path)
     return result;
 }
 
+void KXploitString(char *str) {
+	if (str) {
+		char *perc = strchr(str, '%');
+		if (perc) {
+			strcpy(perc, perc + 1);
+		}
+	}
+}
+
 //load and execute file
 int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
@@ -435,6 +444,12 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         pspSdkSetK1(k1);
         return result;
     }
+
+    if (strstr(file, "ms0:/PSP/GAME/")) {
+		KXploitString(param->argp);
+		file = param->argp;
+	}
+
     u32 k1 = pspSdkSetK1(0);
     result = sceKernelLoadExecVSHMs2(file, param);
     pspSdkSetK1(k1);

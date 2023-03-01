@@ -102,10 +102,7 @@ void usb_charge(void)
     mod = (SceModule2*)sceKernelFindModuleByName("sceUSB_Driver");
 
     if (mod != NULL) {
-        u32 text_addr = mod->text_addr;
-        static const scePowerBatteryDisableUsbChargingStub = 0x00008FE8;
-        static const scePowerBatteryEnableUsbChargingStub = 0x00008FF0;
-        MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + scePowerBatteryDisableUsbChargingStub);
-        MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + scePowerBatteryEnableUsbChargingStub);
+        hookImportByNID(mod, "scePower_driver", 0x72D1B53A, 0);
+        hookImportByNID(mod, "scePower_driver", 0x7EAA4247, 0);
     }
 }

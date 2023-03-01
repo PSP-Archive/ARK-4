@@ -1,5 +1,5 @@
 TARGET = satelite
-OBJS = main.o blit.o ui.o menu.o clock.o umdvideo_list.o vpl.o trans.o trans_en.o stubkk.o
+OBJS = main.o blit.o ui.o menu.o clock.o registry.o umdvideo_list.o vpl.o trans.o trans_en.o stubkk.o
 
 BUILD_PRX=1
 
@@ -10,7 +10,7 @@ ASFLAGS = $(CFLAGS)
 
 PRX_EXPORTS = exports.exp
 
-LIBS = -lpspsystemctrl_user -lpspkubridge
+LIBS = -lpspsystemctrl_user -lpspkubridge -lpspvshctrl -lpspreg
 LIBDIR = . $(ARKROOT)/libs
 LDFLAGS =
 

@@ -32,8 +32,6 @@ PSP_EXPORT_FUNC(vctrlVSHUpdateConfig)
 PSP_EXPORT_FUNC(vshDetectDiscType)
 PSP_EXPORT_FUNC(fakeParamInexistance)
 PSP_EXPORT_FUNC(vshCtrlDeleteHibernation)
-PSP_EXPORT_FUNC(vctrlGetUsbDevice)
-PSP_EXPORT_FUNC(vctrlSetUsbDevice)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS

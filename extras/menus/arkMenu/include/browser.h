@@ -5,7 +5,7 @@
 #include "entry.h"
 #include "common.h"
 #include "gfx.h"
-#include "optionsMenu.h"
+#include "optionsmenu.h"
 #include "system_entry.h"
 
 using namespace std;
@@ -22,6 +22,23 @@ enum{
     EF0_DIR,
     FTP_DIR,
 };
+
+enum {
+    FOLDER,
+    FILE_BIN,
+    FILE_TXT,
+    FILE_PBP,
+    FILE_PRX,
+    FILE_ISO,
+    FILE_ZIP,
+    MAX_FILE_TYPES,
+};
+
+typedef struct _pspMsPrivateDirent {
+	SceSize size;
+	char s_name[16];
+	char l_name[1024];
+} pspMsPrivateDirent;
 
 class BrowserDriver{
     public:
@@ -118,8 +135,9 @@ class Browser : public SystemEntry{
         /* Common browser images */
         Image* checkBox;
         Image* uncheckBox;
-        Image* folderIcon;
-        Image* fileIcon;
+        //Image* folderIcon;
+        //Image* fileIcon;
+        Image* icons[MAX_FILE_TYPES];
         
         /* Highlight the currently selected item? */
         bool enableSelection;

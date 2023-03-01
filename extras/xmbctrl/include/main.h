@@ -47,6 +47,7 @@ typedef struct
     int oldplugin;
     int skiplogos;
     int hidepics;
+    int hibblock;
 } CFWConfig;
 
 typedef struct

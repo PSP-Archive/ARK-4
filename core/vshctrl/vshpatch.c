@@ -58,9 +58,13 @@ static void hook_iso_directory_io(void);
 static void patch_sceCtrlReadBufferPositive(void); 
 static void patch_Gameboot(SceModule2 *mod); 
 static void patch_hibblock(SceModule2 *mod); 
-static void patch_msvideo_main_plugin_module(u32 text_addr);
+static void patch_msvideo_main_plugin_module(SceModule2* mod);
 static void patch_htmlviewer_plugin_module(u32 text_addr);
 static void patch_htmlviewer_utility_module(u32 text_addr);
+
+extern int hibblock;
+extern int skiplogos;
+extern int has_umd_iso;
 
 static int vshpatch_module_chain(SceModule2 *mod)
 {
@@ -88,10 +92,24 @@ static int vshpatch_module_chain(SceModule2 *mod)
     }
 
     if(0 == strcmp(mod->modname, "msvideo_main_plugin_module")) {
-        patch_msvideo_main_plugin_module(text_addr);
+        patch_msvideo_main_plugin_module(mod);
         sync_cache();
         goto exit;
     }
+
+    if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
+        
+        if (skiplogos){
+		    patch_Gameboot(mod);
+        }
+
+		if (psp_model == PSP_GO && hibblock) {
+			patch_hibblock(mod);
+		}
+
+		sync_cache();
+		goto exit;
+	}
 
 exit:
     if (previous) previous(mod);
@@ -105,6 +123,23 @@ static void patch_sceCtrlReadBufferPositive(void)
     hookImportByNID(mod, "sceCtrl_driver", 0xBE30CED0, _sceCtrlReadBufferPositive);
     g_sceCtrlReadBufferPositive = (void *) sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
     sctrlHENPatchSyscall(g_sceCtrlReadBufferPositive, _sceCtrlReadBufferPositive);
+}
+
+static void patch_Gameboot(SceModule2 *mod)
+{
+    hookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
+}
+
+static void patch_hibblock(SceModule2 *mod)
+{
+    u32 text_addr = mod->text_addr;
+    u32 top_addr = text_addr + mod->text_size;
+    for (u32 addr=text_addr; addr<top_addr; addr+=4){
+        if (_lw(addr) == 0x7C022804){
+            MAKE_DUMMY_FUNCTION_RETURN_0(addr - 8);
+            break;
+        }
+    }
 }
 
 static inline void ascii2utf16(char *dest, const char *src)
@@ -151,10 +186,27 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     u32 a = 0;
     char str[50];
     u32 addr;
-    for (addr=text_addr; addr<top_addr; addr+=4){
+
+    int test_fd = sceIoOpen("flash0:/vsh/resource/13-27.bmp", PSP_O_RDONLY, 0777);
+    sceIoClose(test_fd);
+
+    int patches = (psp_model==PSP_1000 && test_fd >= 0)? 2 : 1;
+    for (addr=text_addr; addr<top_addr && patches; addr+=4){
         if (_lw(addr) == 0x34C600C9 && _lw(addr+8) == NOP){
             a = addr+20;
-            break;
+            patches--;
+        }
+        else if (psp_model == PSP_1000 && test_fd >= 0 && _lw(addr) == 0x26530008 && _lw(addr-4) == 0x24040018){
+            // allow slim colors in PSP 1K
+            u32 patch_addr, value;
+
+            patch_addr = addr-28;
+            value = *(u32 *)(patch_addr + 4);
+
+            _sw(0x24020001, patch_addr + 4);
+            _sw(value,  patch_addr);
+
+            patches--;
         }
     }
     
@@ -233,29 +285,22 @@ static void patch_game_plugin_module(SceModule2* mod)
     }
 }
 
-static void patch_msvideo_main_plugin_module(u32 text_addr)
+static void patch_msvideo_main_plugin_module(SceModule2* mod)
 {
-    u32 offsets1[] = {
-        0x0003AF24,
-        0x0003AFAC,
-        0x0003D7EC,
-        0x0003DA48,
-        0x000441A0,
-        0x000745A0,
-        0x00088BF0,
-    };
-    u32 offsets2[] = {
-        0x0003D764,
-        0x0003D7AC,
-        0x00043248,
-    };
-    /* Patch resolution limit to (130560) pixels (480x272) */
-    for (int i=0; i<NELEMS(offsets1); i++){
-        _sh(0xFE00, text_addr + offsets1[i]);
-    }
-    /* Patch bitrate limit (increase to 16384+2) */
-    for (int i=0; i<NELEMS(offsets2); i++){
-        _sh(0x4003, text_addr + offsets2[i]);
+    u32 text_addr = mod->text_addr;
+    u32 top_addr = text_addr + mod->text_size;
+    int patches = 10;
+
+    for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
+        u32 data = _lw(addr);
+        if ((data && 0xFF00FFFF) == 0x34002C00){
+            _sh(0xFE00, addr);
+            patches--;
+        }
+        else if (data == 0x2C420303 || data == 0x2C420FA1){
+            _sh(0x4003, addr);
+            patches--;
+        }
     }
 }
 
@@ -301,19 +346,32 @@ int umdLoadExecUpdater(char * file, struct SceKernelLoadExecVSHParam * param)
     return ret;
 }
 
+static void do_pspgo_umdvideo_patch(u32 addr){
+    u32 prev = _lw(addr + 4);
+    _sw(prev, addr);
+    _sw(0x24020000 | PSP_4000, addr + 4);
+}
+
 static void patch_vsh_module_for_pspgo_umdvideo(SceModule2 *mod)
 {
-    u32 text_addr = mod->text_addr, prev;
-    u32 offsets[] = {
-        0x0000670C,
-        0x0002068C,
-        0x0002D240,
-    };
-    for(int i=0; i<NELEMS(offsets); i++) {
-        u32 offset = offsets[i];
-        prev = _lw(text_addr + offset + 4);
-        _sw(prev, text_addr + offset);
-        _sw(0x24020000 | PSP_4000, text_addr + offset + 4);
+    if (!has_umd_iso) return;
+    u32 text_addr = mod->text_addr;
+    u32 top_addr = text_addr + mod->text_size;
+    int patches = 3;
+    for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x38840001){
+            do_pspgo_umdvideo_patch(addr+40);
+            patches--;
+        }
+        else if (data == 0x3C0500FF){
+            do_pspgo_umdvideo_patch(addr-48);
+            patches--;
+        }
+        else if (data == 0x02821007){
+            do_pspgo_umdvideo_patch(addr-56);
+            patches--;
+        }
     }
 }
 
@@ -357,7 +415,7 @@ static void patch_vsh_module(SceModule2 * mod)
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0xE533E98C, gameloadexec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x63E69956, umdLoadExec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x81682A40, umdLoadExecUpdater);
-    if(psp_model == PSP_GO && sctrlSEGetBootConfFileIndex() == MODE_VSHUMD) {
+    if(psp_model == PSP_GO) {
         patch_vsh_module_for_pspgo_umdvideo(mod);
     }
 }

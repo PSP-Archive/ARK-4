@@ -11,3 +11,4 @@ Cache Inferno
 Correggi incompatibilità plugin su PSP Go
 Salta loghi di Sony
 Nascondi PIC0 e PIC1
+Previeni cancellazione dell'ibernazione su PSP Go
