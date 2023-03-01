@@ -343,13 +343,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
-	
-	/*
-	if (DisplaySetFrameBuf){
-		initScreen(DisplaySetFrameBuf);
-    	PRTSTR1("Cur Mod: %s", mod->modname);
-	}
-	*/
 
     if(strcmp(mod->modname, "sceDisplay_Service") == 0)
     {
@@ -370,9 +363,9 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 		// Protect pops memory
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
 			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
+			memset((void *)0x49F40000, 0, 0x80000);
 		}
 
-		memset((void *)0x49F40000, 0, 0x80000);
 		memset((void *)0xABCD0000, 0, 0x1B0);
 
 		PatchLowIODriver2(mod->text_addr);
@@ -438,7 +431,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 	if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
 		if (skip_logos){
             // patch GameBoot
-            //MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x00005630);
             hookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
         }
         goto flush;

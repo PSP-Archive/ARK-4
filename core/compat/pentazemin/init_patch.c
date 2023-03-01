@@ -31,9 +31,6 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 
 	char path[64];
 
-	//sprintf(path, "ms0:/%d.bin2", cur_file);
-	//logbuffer(path, &(reboot_config->bootfile[cur_file]), 256);
-
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", &(reboot_config->bootfile[cur_file])); //not use flash0 cause of cxmb
 
 	cur_file++;
@@ -47,10 +44,8 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 
 SceUID (* LoadModuleBufferAnchorInBtcnf)(void *buf, int a1);
 SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo *info) {
-	char path[64];
 
-	//sprintf(path, "ms0:/%d.bin2", cur_file);
-	//logbuffer(path, &(reboot_config->bootfile[cur_file]), 256);
+	char path[64];
 
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", &(reboot_config->bootfile[cur_file]));
 

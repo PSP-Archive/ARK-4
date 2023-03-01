@@ -320,7 +320,6 @@ void PSPOnModuleStart(SceModule2 * mod){
     if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
 		if (skip_logos){
             // patch GameBoot
-            //MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x00005630);
             hookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
         }
         goto flush;

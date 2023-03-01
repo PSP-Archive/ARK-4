@@ -13,9 +13,8 @@ What works:
 
 What DOESN'T work:
 
-- Loading ISO from XMB.
-- CSO (and other compressed formats).
-- General stability issues.
+- Shortname patches.
+- Sleep mode in XMB.
 
 
 What ISN'T tested:

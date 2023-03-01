@@ -1097,7 +1097,7 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     }
 
     // get ISO path with non-latin1 support
-    get_ISO_shortname(vpbp->name, sizeof(vpbp->name), vpbp->name);
+    //get_ISO_shortname(vpbp->name, sizeof(vpbp->name), vpbp->name);
 
     //set iso file for reboot
     sctrlSESetUmdFile(vpbp->name);
@@ -1118,6 +1118,7 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     int has_pboot = has_update_file(vpbp, pboot_path);
 
     if (has_pboot){
+        // configure to use dlc/update
         apitype = 0x124;
         param->argp = pboot_path;
         param->args = strlen(pboot_path) + 1;

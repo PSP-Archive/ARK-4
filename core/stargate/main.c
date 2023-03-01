@@ -124,7 +124,7 @@ int module_start(SceSize args, void * argp)
     patchLoadExec();
 
     // Fix non-Latin1 characters in ISO name
-    patch_IsoDrivers();
+    //patch_IsoDrivers();
     
     // Fetch sceUtility Load Module Functions
     getLoadModuleFuncs();
