@@ -211,7 +211,7 @@ char* Eboot::getSubtype(){
 }
 
 bool Eboot::isEboot(const char* path){
-    return (common::getMagic(path, 0) == EBOOT_MAGIC);
+    return (common::getExtension(path) == "pbp" || common::getMagic(path, 0) == EBOOT_MAGIC);
 }
 
 void Eboot::doExecute(){
