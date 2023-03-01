@@ -482,6 +482,15 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 		else{
 			ark_config->launcher[0] = 0; // disable launcher mode
 		}
+		// apply extra memory patch
+		if (use_highmem) unlockVitaMemory();
+		// enable inferno cache
+		if (use_infernocache){
+			int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+			if (CacheInit){
+				CacheInit(32 * 1024, 32, (use_highmem)?2:9); // 2MB cache for PS Vita
+			}
+            }
 		sctrlHENSetArkConfig(ark_config);
         goto flush;
     }
@@ -495,24 +504,16 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
             // Initialize Memory Stick Speedup Cache
             if (use_mscache) msstorCacheInit("ms", 8 * 1024);
 
-			// apply extra memory patch
-            if (use_highmem) unlockVitaMemory();
-
-            if (use_infernocache){
-                int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
-                if (CacheInit){
-                    CacheInit(32 * 1024, 32, (use_highmem)?2:11); // 2MB cache for PS Vita
-                }
-            }
-
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
             sctrlHENPatchSyscall((u32)_sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
             
             // fix sound bug in ePSP (make sceAudioOutput2Release behave like real PSP)
+			/*
             _sceAudioOutput2GetRestSample = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x647CEF33);
             _sceAudioOutput2Release = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x43196845);
             sctrlHENPatchSyscall((u32)_sceAudioOutput2Release, sceAudioOutput2ReleaseFixed);
+			*/
 
 			// Adrenaline patches
 			OnSystemStatusIdle();

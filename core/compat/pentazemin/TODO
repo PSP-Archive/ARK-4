@@ -9,13 +9,12 @@ What works:
 - Stargate no-DRM engine.
 - Custom Launcher and Recovery.
 - Exiting via key combo.
+- Extra RAM.
 
 
 What DOESN'T work:
 
 - Sleep mode crashes.
-- Extra RAM.
-- Inferno Cache.
 
 
 What ISN'T tested:

@@ -3,7 +3,8 @@
 void unlockVitaMemory(){
 
     int apitype = sceKernelInitApitype(); // prevent in pops and vsh(?)
-    if (apitype == 0x144 || apitype == 0x155 || apitype ==  0x210 || apitype ==  0x220) return;
+    if (apitype == 0x144 || apitype == 0x155 || apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300)
+        return;
 
     // apply partition info
     SysMemPartition *(* GetPartition)(int partition) = NULL;
