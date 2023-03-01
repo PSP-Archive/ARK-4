@@ -100,7 +100,7 @@ static int matchingRunlevel(char * runlevel)
     }
     else if (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115)){
         char gameid[10]; memset(gameid, 0, sizeof(gameid)); // check if plugin loads on specific game
-        return (getGameId(gameid) && stricmp(runlevel, gameid) == 0);
+        return (getGameId(gameid) && strstr(runlevel, gameid) != NULL);
     }
     
     // Unsupported Runlevel (we don't touch those to keep stability up)
