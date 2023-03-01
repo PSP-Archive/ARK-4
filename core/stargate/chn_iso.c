@@ -124,10 +124,10 @@ exit:
 
 int myIoOpen_kernel_chn(char *file, int flag, int mode)
 {
-	int ret;
+	int ret = sceIoOpen(file, flag, mode);
 
 	// convert the iso name back to longname
-	if (strlen(file) > sizeof("ms0:") && 0 == strncasecmp(file + sizeof("ms0:") - 1, "/ISO/", sizeof("/ISO/")-1)) {
+	if (ret < 0 && strlen(file) > sizeof("ms0:") && 0 == strncasecmp(file + sizeof("ms0:") - 1, "/ISO/", sizeof("/ISO/")-1)) {
 		char filename[256];
 
 		ret = get_ISO_longname(filename, file, sizeof(filename));
@@ -135,12 +135,7 @@ int myIoOpen_kernel_chn(char *file, int flag, int mode)
 		if(ret == 0) {
 			ret = sceIoOpen(filename, flag, mode);
 			printk("%s: %s -> 0x%08X\n", __func__, filename, ret);
-		} else {
-			printk("%s: get_ISO_longname -> 0x%08X\n", __func__, ret);
-			ret = sceIoOpen(file, flag, mode);
 		}
-	} else {
-		ret = sceIoOpen(file, flag, mode);
 	}
 
 	return ret;
