@@ -699,8 +699,14 @@ int install_thread(SceSize args, void *argp)
 	int res;
 	int size;
 	int model = kuKernelGetModel();
+	int mb;
+
+	dcGetHardwareInfo(NULL, NULL, NULL, &mb, NULL, NULL, NULL);
 
 	dcSetCancelMode(1);
+
+	if (model > 1 || mb == TA_088v3)
+		InstallError(fw, "Unsupported model.");
 
 	switch(LoadUpdaterModules(fw))
 	{
