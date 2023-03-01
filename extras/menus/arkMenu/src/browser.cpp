@@ -396,7 +396,7 @@ void Browser::drawScreen(){
 
     const int xoffset = 115;
     int yoffset = 50;
-    
+    bool focused = (optionsmenu==NULL);
     
     if (moving && entries->size() > 0){
         int height = 230/entries->size();
@@ -424,11 +424,11 @@ void Browser::drawScreen(){
         }
         if (i == index && this->enableSelection){
             if (animating){
-                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, true, true);
+                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, focused, focused);
                 animating = false;
             }
             else
-                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, true, true);
+                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, focused);
         }
         else{
             common::printText(xoffset, yoffset, this->formatText(e->getName()).c_str());
