@@ -14,7 +14,9 @@ What works:
 What DOESN'T work:
 
 - Shortname patches.
-- Sleep mode in XMB.
+- Sleep mode crashes.
+- Extra RAM.
+- Inferno Cache.
 
 
 What ISN'T tested:
