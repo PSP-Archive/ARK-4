@@ -3,6 +3,7 @@ What works:
 - Homebrew and plugins (including leda).
 - Booting recovery by holding R from live loader.
 - ISO and CSO.
+- Games in PBP format.
 - PS1 games.
 - Exiting using home button.
 - XMB (and all its patches/extras).
@@ -21,5 +22,4 @@ What DOESN'T work:
 
 What ISN'T tested:
 
-- Games in PBP format.
 - DLC and updates.
