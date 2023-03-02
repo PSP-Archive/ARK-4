@@ -163,14 +163,6 @@ int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	return res;
 }
 
-// this patch makes sceAudioOutput2Release behave like on real PSP (audio is not released if there are still samples left)
-int (*_sceAudioOutput2Release)(void);
-int (*_sceAudioOutput2GetRestSample)();
-int sceAudioOutput2ReleaseFixed(){
-    if (_sceAudioOutput2GetRestSample() > 0) return -1;
-	return _sceAudioOutput2Release();
-}
-
 static u8 get_pscode_from_region(int region)
 {
 	u8 code;
@@ -507,13 +499,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
             sctrlHENPatchSyscall((u32)_sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
-            
-            // fix sound bug in ePSP (make sceAudioOutput2Release behave like real PSP)
-			/*
-            _sceAudioOutput2GetRestSample = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x647CEF33);
-            _sceAudioOutput2Release = (void *)sctrlHENFindFunction("sceAudio_Driver", "sceAudio", 0x43196845);
-            sctrlHENPatchSyscall((u32)_sceAudioOutput2Release, sceAudioOutput2ReleaseFixed);
-			*/
 
 			// Adrenaline patches
 			OnSystemStatusIdle();
