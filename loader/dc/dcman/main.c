@@ -683,7 +683,7 @@ u32 nandnids[NAND_NIDS] =
 
 u32 nand_offsets[NAND_NIDS] =
 {
-	0x18C0,
+	0x18C8,
 	0x0918,
 	0x0D70,
 	0xFFFFFFFF,
@@ -693,36 +693,36 @@ u32 nand_offsets[NAND_NIDS] =
 	0xFFFFFFFF,
 	0x05E8,
 	0x0BE0, // 10
-	0x16FC,
+	0x1704,
 	0xFFFFFFFF,
 	0xFFFFFFFF,
 	0x0734,
 	0x0654,
 	0x04E8,
-	0x1E4C,
+	0x1E54,
 	0x0E08,
-	0x184C,
+	0x1854,
 	0x0D80, // 20
 	0x0DC4,
-	0x1A58,
+	0x1A60,
 	0x015C,
 	0x0568,
-	0x1C08,
-	0x15C4,
-	0x1E4C,
+	0x1C10,
+	0x15CC,
+	0x1E54,
 	0xFFFFFFFF,
-	0x1C14,
-	0x194C, // 30
-	0x1678,
+	0x1C1C,
+	0x1954, // 30
+	0x1680,
 	0x0E2C,
 	0xFFFFFFFF,
 	0xCE8,
-	0x14A0,
+	0x14A8,
 	0x0DEC,
 	0x0D3C,
 	0x0ADC,
 	0xFFFFFFFF,
-	0x1C20, // 40
+	0x1C28, // 40
 	0x06DC
 };
 
@@ -744,29 +744,29 @@ void OnModuleStart(SceModule2 *mod)
 	}
 	else if (strcmp(mod->modname, "sceLFatFs_Updater_Driver") == 0)
 	{
-		MAKE_CALL(mod->text_addr+0x88F8, WriteBlockPatched);
-		WriteBlock = (void *)(mod->text_addr+0x8E40);
+		MAKE_CALL(mod->text_addr+0x89B4, WriteBlockPatched);
+		WriteBlock = (void *)(mod->text_addr+0x8EFC);
 		ClearCaches();
 	}
 	else if (strcmp(mod->modname, "sceWlan_Driver") == 0)
 	{
-		MAKE_CALL(mod->text_addr+0x4DF8, WlanFuncPatched);
-		WlanFunc = (void *)(mod->text_addr+0xD47C);
+		MAKE_CALL(mod->text_addr+0x4F00, WlanFuncPatched);
+		WlanFunc = (void *)(mod->text_addr+0xCD5C);
 		ClearCaches();
 	}
 	else if (strcmp(mod->modname, "sceNAND_Updater_Driver") == 0)
 	{
 		int i;
 
-		// for (i = 0; i < NAND_NIDS; i++)
-		// {
-		// 	if (nand_offsets[i] != 0xFFFFFFFF)
-		// 	{			
-		// 		RedirectNandFunc(nandnids[i], (void *)(mod->text_addr+nand_offsets[i]));
-		// 	}
-		// }
+		for (i = 0; i < NAND_NIDS; i++)
+		{
+			if (nand_offsets[i] != 0xFFFFFFFF)
+			{			
+				RedirectNandFunc(nandnids[i], (void *)(mod->text_addr+nand_offsets[i]));
+			}
+		}
 
-		// ClearCaches();
+		ClearCaches();
 	}
 	
 	if (previous)
