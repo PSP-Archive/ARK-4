@@ -365,10 +365,6 @@ void patch_SysconfPlugin(SceModule2* mod){
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
 	if (strcasecmp(path, "highmem") == 0){ // enable high memory
-        if ( (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126)) && sceKernelFindModuleByName("sceUmdCache_driver") != NULL){
-            // don't allow high memory in UMD when cache is enabled
-            return;
-        }
         use_highmem = 1;
     }
     else if (strcasecmp(path, "mscache") == 0){
