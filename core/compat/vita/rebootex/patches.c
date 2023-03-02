@@ -13,6 +13,14 @@ int loadcoreModuleStartVita(unsigned int args, void* argp, int (* start)(SceSize
     return start(args, argp);
 }
 
+void relocateFlashFile(BootFile* file){
+    static u8* curbuf = (u8*)PTR_ALIGN_64(ARK_FLASH+MAX_FLASH0_SIZE);
+    memcpy((void *)curbuf, file->buffer, file->size);
+    file->buffer = (void *)curbuf;
+    curbuf += file->size + 64;
+    curbuf = PTR_ALIGN_64(curbuf);
+}
+
 int _pspemuLfatOpen(BootFile* file, int unk)
 {
     char* p = file->name;
@@ -25,9 +33,9 @@ int _pspemuLfatOpen(BootFile* file, int unk)
         // else use psvbtcnf.bin for np9660
     }
     else if (strcmp(p, REBOOT_MODULE) == 0){
-        file->buffer = (void *)0x89000000;
+        file->buffer = reboot_conf->rtm_mod.buffer;
 		file->size = reboot_conf->rtm_mod.size;
-		memcpy(file->buffer, reboot_conf->rtm_mod.buffer, file->size);
+		relocateFlashFile(file);
 		reboot_conf->rtm_mod.buffer = NULL;
         reboot_conf->rtm_mod.size = 0;
 		return 0;
