@@ -76,7 +76,6 @@ void restoreRebootBuffer(void)
         memcpy((void *)REBOOTEX_TEXT, rebootex, REBOOTEX_MAX_SIZE);
         
     // Restore Reboot Buffer Configuration
-    rebootex_config.nfiles = 0;
     memcpy((void *)REBOOTEX_CONFIG, &rebootex_config, sizeof(RebootConfigARK));
 
     // Restore ARK Configuration

@@ -140,6 +140,8 @@ int PatchSysMem(void *a0, void *sysmem_config)
 
 // patch reboot on ps vita
 void patchRebootBuffer(){
+    // reset boot file count
+    reboot_conf->nfiles = 0;
     // hijack UnpackBootConfig to insert modules at runtime
     _sw(0x27A40004, UnpackBootConfigArg); // addiu $a0, $sp, 4
     _sw(JAL(UnpackBootConfigVita), UnpackBootConfigCall); // Hook UnpackBootConfig
