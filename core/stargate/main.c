@@ -42,12 +42,7 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
 {
 
     if (strcmp(mod->modname, "tekken") == 0) {
-		u32 func = sctrlHENFindImport(mod->modname, "scePower", 0x34F9C463);
-		if (func) {
-			_sw(JR_RA, func);
-            _sw(LI_V0(222), func+4);
-            flushCache();
-		}
+        hookImportByNID(mod, "scePower", 0x34F9C463, 222);
 	}
 
     // Call Previous Module Start Handler
@@ -117,6 +112,7 @@ int module_start(SceSize args, void * argp)
     // Hello Message
     printk("stargate started: compiled at %s %s\r\n", __DATE__, __TIME__);
     #endif
+
 
     patch_sceMesgLed();
 
