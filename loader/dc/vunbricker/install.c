@@ -705,7 +705,7 @@ int install_thread(SceSize args, void *argp)
 
 	dcSetCancelMode(1);
 
-	if (model > 1 || mb == TA_088v3)
+	if (model > 1 || (mb == TA_088v3 && fw != FW_OFW))
 		InstallError(fw, "Unsupported model.");
 
 	switch(LoadUpdaterModules(fw))
