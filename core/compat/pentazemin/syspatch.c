@@ -303,6 +303,65 @@ void patch_GameBoot(SceModule2* mod){
     _sw(0x24040002, p2 + 4);
 }
 
+int InitUsbPatched() {
+	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_START_USB);
+}
+
+int ShutdownUsbPatched() {
+	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_STOP_USB);
+}
+
+int GetUsbStatusPatched() {	
+	int state = SendAdrenalineCmd(ADRENALINE_VITA_CMD_GET_USB_STATE);
+
+	if (state & 0x20)
+		return 1; // Connected
+
+	return 2; // Not connected
+}
+
+u32 MakeSyscallStub(void *function) {
+	SceUID block_id = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_High, 2 * sizeof(u32), NULL);
+	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
+	_sw(0x03E00008, stub);
+	_sw(0x0000000C | (sceKernelQuerySystemCall(function) << 6), stub + 4);
+	return stub;
+}
+
+void patch_VshMain(SceModule2* mod){
+	u32 text_addr = mod->text_addr;
+
+	// Dummy usb detection functions
+	MAKE_DUMMY_FUNCTION(text_addr + 0x38C94, 0);
+	MAKE_DUMMY_FUNCTION(text_addr + 0x38D68, 0);
+}
+
+void patch_SysconfPlugin(SceModule2* mod){
+	u32 text_addr = mod->text_addr;
+	// Dummy all vshbridge usbstor functions
+	_sw(0x24020001, text_addr + 0xCD78); // sceVshBridge_ED978848 - vshUsbstorMsSetWorkBuf
+	_sw(0x00001021, text_addr + 0xCDAC); // sceVshBridge_EE59B2B7
+	_sw(0x00001021, text_addr + 0xCF0C); // sceVshBridge_6032E5EE - vshUsbstorMsSetProductInfo
+	_sw(0x00001021, text_addr + 0xD218); // sceVshBridge_360752BF - vshUsbstorMsSetVSHInfo
+
+	// Dummy LoadUsbModules, UnloadUsbModules
+	MAKE_DUMMY_FUNCTION(text_addr + 0xCC70, 0);
+	MAKE_DUMMY_FUNCTION(text_addr + 0xD2C4, 0);
+
+	// Redirect USB functions
+	REDIRECT_FUNCTION(text_addr + 0xAE9C, MakeSyscallStub(InitUsbPatched));
+	REDIRECT_FUNCTION(text_addr + 0xAFF4, MakeSyscallStub(ShutdownUsbPatched));
+	REDIRECT_FUNCTION(text_addr + 0xB4A0, MakeSyscallStub(GetUsbStatusPatched));
+	/*
+	MAKE_SYSCALL(mod->text_addr + 0xAE9C, InitUsbPatched);
+	MAKE_SYSCALL(mod->text_addr + 0xAFF4, ShutdownUsbPatched);
+	MAKE_SYSCALL(mod->text_addr + 0xB4A0, GetUsbStatusPatched);
+	*/
+
+	// Ignore wait thread end failure
+	_sw(0, text_addr + 0xB264);
+}
+
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
 	if (strcasecmp(path, "highmem") == 0){ // enable high memory
@@ -420,7 +479,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 		goto flush;
 	}
 
-	if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
+	if(strcmp(mod->modname, "sceVshBridge_Driver") == 0) {
 		if (skip_logos){
             // patch GameBoot
             hookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
@@ -428,11 +487,21 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         goto flush;
 	}
 
-	if(0 == strcmp(mod->modname, "game_plugin_module")) {
+	if(strcmp(mod->modname, "game_plugin_module") == 0) {
 		if (skip_logos) {
 		    patch_GameBoot(mod);
 	    }
         goto flush;
+	}
+
+	if (strcmp(mod->modname, "sysconf_plugin_module") == 0){
+		patch_SysconfPlugin(mod);
+		goto flush;
+	}
+
+	if (strcmp(mod->modname, "vsh_module") == 0) {
+		patch_VshMain(mod);
+		goto flush;
 	}
 
     if (strcmp(mod->modname, "sceSAScore") == 0) {
