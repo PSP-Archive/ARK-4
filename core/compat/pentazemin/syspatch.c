@@ -103,32 +103,6 @@ int patchKermitPeripheral()
     return 0;
 }
 
-int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param) {
-	int k1 = pspSdkSetK1(0);
-
-	if (apitype == 0x141){ // homebrew API
-        sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
-        sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
-    }	
-
-	SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
-	u32 text_addr = mod->text_addr;
-
-	int (* LoadExecVSH)(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param, int unk2) = (void *)text_addr + 0x23D0;
-
-	int res = LoadExecVSH(apitype, file, param, 0x10000);
-	pspSdkSetK1(k1);
-	return res;
-}
-
-void patchLoadExecUMDemu(){
-    // highjack SystemControl
-    u32 func = K_EXTRACT_IMPORT(&sctrlKernelLoadExecVSHWithApitype);
-    _sw(JUMP(sctrlKernelLoadExecVSHWithApitypeWithUMDemu), func);
-    _sw(NOP, func+4);
-    flushCache();
-}
-
 int (*_sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
 int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	int res = 0;
@@ -160,8 +134,6 @@ static u8 get_pscode_from_region(int region)
 	if(code == 2) {
 		code = 3;
 	}
-
-	printk("%s: region %d code %d\n", __func__, region, code);
 
 	return code;
 }
@@ -314,6 +286,22 @@ u32 MakeSyscallStub(void *function) {
 u32 FindPowerFunction(u32 nid) {
 	return sctrlHENFindFunction("scePower_Service", "scePower", nid);
 }
+
+void SetSpeed(int cpu, int bus) {
+	if (cpu == 20 || cpu == 75 || cpu == 100 || cpu == 133 || cpu == 333 || cpu == 300 || cpu == 266 || cpu == 222) {
+		int (*scePowerSetClockFrequency_k)(int, int, int) = (void *)FindPowerFunction(0x737486F2);
+		scePowerSetClockFrequency_k(cpu, cpu, bus);
+
+		if (sceKernelInitKeyConfig() != PSP_INIT_KEYCONFIG_VSH) {
+			MAKE_DUMMY_FUNCTION((u32)scePowerSetClockFrequency_k, 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x545A7F3C), 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xB8D7B3FB), 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x843FBF43), 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xEBD177D6), 0);
+			flushCache();
+		}
+	}
+}
 */
 
 void patch_VshMain(SceModule2* mod){
@@ -322,15 +310,6 @@ void patch_VshMain(SceModule2* mod){
 	// Dummy usb detection functions
 	MAKE_DUMMY_FUNCTION(text_addr + 0x38C94, 0);
 	MAKE_DUMMY_FUNCTION(text_addr + 0x38D68, 0);
-
-	/*
-	void* scePowerSetClockFrequency_k = (void *)FindPowerFunction(0x737486F2);
-	MAKE_DUMMY_FUNCTION((u32)scePowerSetClockFrequency_k, 0);
-	MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x545A7F3C), 0);
-	MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xB8D7B3FB), 0);
-	MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x843FBF43), 0);
-	MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xEBD177D6), 0);
-	*/
 }
 
 void patch_SysconfPlugin(SceModule2* mod){
@@ -567,7 +546,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
             // Boot Complete Action done
             booted = 1;
-            goto flush;
         }
     }
 
@@ -613,8 +591,6 @@ void AdrenalineSysPatch(){
     SceModule2* loadcore = patchLoaderCore();
     PatchIoFileMgr();
     PatchMemlmd();
-	// patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
-    patchLoadExecUMDemu();
 	// initialize Adrenaline Layer
     initAdrenaline();
 }
