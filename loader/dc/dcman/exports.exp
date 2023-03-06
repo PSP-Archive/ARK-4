@@ -1,0 +1,61 @@
+# Define the exports for the prx
+PSP_BEGIN_EXPORTS
+
+# These four lines are mandatory (although you can add other functions like module_stop)
+# syslib is a psynonym for the single mandatory export.
+PSP_EXPORT_START(syslib, 0, 0x8000)
+PSP_EXPORT_FUNC_HASH(module_start)
+PSP_EXPORT_VAR_HASH(module_info)
+PSP_EXPORT_END
+
+PSP_EXPORT_START(DcManager, 0, 0x4001)
+PSP_EXPORT_FUNC_HASH(dcGetHardwareInfo)
+PSP_EXPORT_FUNC_HASH(dcPatchModule)
+PSP_EXPORT_FUNC_HASH(dcPatchModuleString)
+PSP_EXPORT_FUNC_HASH(dcGetCancelMode)
+PSP_EXPORT_FUNC_HASH(dcSetCancelMode)
+PSP_EXPORT_FUNC_HASH(dcLflashStartFatfmt)
+PSP_EXPORT_FUNC_HASH(dcLflashStartFDisk)
+PSP_EXPORT_FUNC_HASH(dcGetNandInfo)
+PSP_EXPORT_FUNC_HASH(dcLockNand)
+PSP_EXPORT_FUNC_HASH(dcUnlockNand)
+PSP_EXPORT_FUNC_HASH(dcReadNandBlock)
+PSP_EXPORT_FUNC_HASH(dcWriteNandBlock)
+PSP_EXPORT_FUNC_HASH(dcEraseNandBlock)
+PSP_EXPORT_FUNC_HASH(dcRegisterPhysicalFormatCallback)
+PSP_EXPORT_FUNC_HASH(dcUnregisterPhysicalFormatCallback)
+PSP_EXPORT_FUNC_HASH(dcQueryRealMacAddress)
+PSP_EXPORT_FUNC_HASH(dcIdStorageUnformat)
+PSP_EXPORT_FUNC_HASH(dcIdStorageFormat)
+PSP_EXPORT_FUNC_HASH(dcIdStorageCreateLeaf)
+PSP_EXPORT_FUNC_HASH(dcIdStorageCreateAtomicLeaves)
+PSP_EXPORT_FUNC_HASH(dcIdStorageReadLeaf)
+PSP_EXPORT_FUNC_HASH(dcIdStorageWriteLeaf)
+PSP_EXPORT_FUNC_HASH(dcIdStorageFlush)
+PSP_EXPORT_FUNC_HASH(dcSysconReceiveSetParam)
+PSP_EXPORT_FUNC_HASH(dcKirkCmd)
+PSP_EXPORT_FUNC_NID(SW, 0x109A36FC)
+PSP_EXPORT_FUNC_NID(LW, 0x4914B8D1)
+PSP_EXPORT_END
+
+PSP_EXPORT_START(DcManager_driver, 0, 0x0001)
+PSP_EXPORT_FUNC_HASH(dcGetHardwareInfo)
+PSP_EXPORT_FUNC_HASH(dcPatchModule)
+PSP_EXPORT_FUNC_HASH(dcPatchModuleString)
+PSP_EXPORT_FUNC_HASH(dcGetCancelMode)
+PSP_EXPORT_FUNC_HASH(dcSetCancelMode)
+PSP_EXPORT_FUNC_HASH(dcLflashStartFatfmt)
+PSP_EXPORT_FUNC_HASH(dcLflashStartFDisk)
+PSP_EXPORT_FUNC_HASH(dcGetNandInfo)
+PSP_EXPORT_FUNC_HASH(dcLockNand)
+PSP_EXPORT_FUNC_HASH(dcUnlockNand)
+PSP_EXPORT_FUNC_HASH(dcReadNandBlock)
+PSP_EXPORT_FUNC_HASH(dcWriteNandBlock)
+PSP_EXPORT_FUNC_HASH(dcEraseNandBlock)
+PSP_EXPORT_FUNC_HASH(dcRegisterPhysicalFormatCallback)
+PSP_EXPORT_FUNC_HASH(dcUnregisterPhysicalFormatCallback)
+PSP_EXPORT_FUNC_HASH(dcQueryRealMacAddress)
+PSP_EXPORT_END
+
+
+PSP_END_EXPORTS

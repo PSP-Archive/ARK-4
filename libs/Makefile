@@ -1,4 +1,5 @@
-SUBDIRS = SystemCtrlForKernel SystemCtrlForUser KUBridge VshCtrl ansi-c graphics colordebugger prebuilt libpspmath libunziprar libpng libjpeg libpspvram libya2d libintraFont psid
+SUBDIRS = SystemCtrlForKernel SystemCtrlForUser KUBridge VshCtrl ansi-c graphics colordebugger iplsdk prebuilt libpspmath libunziprar libpng libjpeg libpspvram libya2d libintraFont libvlf psid
+PREBUILTDIRS = prebuilt libvlf
 .PHONY: subdirs $(SUBDIRS)
 
 all: subdirs
@@ -12,6 +13,7 @@ distclean clean:
 	$(Q)make $@ -C ansi-c $(OPT)
 	$(Q)make $@ -C graphics $(OPT)
 	$(Q)make $@ -C colordebugger $(OPT)
+	$(Q)make $@ -C iplsdk $(OPT)
 	$(Q)make $@ -C libpspmath $(OPT)
 	$(Q)make $@ -C libunziprar $(OPT)
 	$(Q)make $@ -C libpng $(OPT)
@@ -24,7 +26,5 @@ distclean clean:
 
 subdirs: $(SUBDIRS)
 
-$(filter-out prebuilt, $(SUBDIRS)):
+$(filter-out $(PREBUILTDIRS), $(SUBDIRS)):
 	$(MAKE) $(OPT) -C $@
-
-prebuilt: ;
