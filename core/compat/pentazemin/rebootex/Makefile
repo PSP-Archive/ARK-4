@@ -34,7 +34,10 @@ endif
 $(REBOOT_OBJS) : %.o : $(REBOOTEXDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-main.elf: $(C_OBJS) $(REBOOT_OBJS)
+crt0.o : $(REBOOTEXDIR)/crt0.S
+	$(CC) -I$(PSPSDK)/include -c $< -o crt0.o
+
+main.elf: crt0.o $(C_OBJS) $(REBOOT_OBJS)
 
 $(TARGET): main.elf
 	$(Q)$(STRIP) -s $<
