@@ -58,7 +58,6 @@ void OnSystemStatusIdle() {
 
 // kermit_peripheral's sub_000007CC clone, called by loadexec + 0x0000299C with a0=8 (was a0=7 for fw <210)
 // Returns 0 on success
-int (* Kermit_driver_4F75AA05)(void* kermit_packet, u32 cmd_mode, u32 cmd, u32 argc, u32 allow_callback, u64 *resp) = NULL;
 u64 kermit_flash_load(int cmd)
 {
     u8 buf[128];
@@ -67,7 +66,7 @@ u64 kermit_flash_load(int cmd)
     sceKernelDcacheInvalidateRange(alignedBuf, 0x40);
     KermitPacket *packet = (KermitPacket *)KERMIT_PACKET((int)alignedBuf);
     u32 argc = 0;
-    Kermit_driver_4F75AA05(packet, KERMIT_MODE_PERIPHERAL, cmd, argc, KERMIT_CALLBACK_DISABLE, &resp);
+    sceKermitSendRequest661(packet, KERMIT_MODE_PERIPHERAL, cmd, argc, KERMIT_CALLBACK_DISABLE, &resp);
     return resp;
 }
 
@@ -77,14 +76,16 @@ int flashLoadPatch(int cmd)
     // Custom handling on loadFlash mode, else nothing
     if ( cmd == KERMIT_CMD_ERROR_EXIT || cmd == KERMIT_CMD_ERROR_EXIT_2 )
     {
-        int linked;
         // Wait for flash to load
         sceKernelDelayThread(10000);
+
         // Load FLASH0.ARK
 		RebootConfigARK* reboot_config = sctrlHENGetRebootexConfig(NULL);
+		
 		char archive[ARK_PATH_SIZE];
 		strcpy(archive, ark_config->arkpath);
 		strcat(archive, FLASH0_ARK);
+		
 		int fd = sceIoOpen(archive, PSP_O_RDONLY, 0777);
 		sceIoRead(fd, reboot_config->flashfs, MAX_FLASH0_SIZE);
 		sceIoClose(fd);
@@ -94,30 +95,11 @@ int flashLoadPatch(int cmd)
     return ret;
 }
 
-u32 findKermitFlashDriver(){
-    u32 nids[] = {0x4F75AA05, 0x36666181};
-    for (int i=0; i<sizeof(nids)/sizeof(u32) && Kermit_driver_4F75AA05 == NULL; i++){
-        Kermit_driver_4F75AA05 = sctrlHENFindFunction("sceKermit_Driver", "sceKermit_driver", nids[i]);
-    }
-    return Kermit_driver_4F75AA05;
-}
-
 int patchKermitPeripheral()
 {
-    findKermitFlashDriver();
-    // Redirect KERMIT_CMD_ERROR_EXIT loadFlash function
-    u32 knownnids[2] = { 0x3943440D, 0x0648E1A3 /* 3.3X */ };
-    u32 swaddress = 0;
-    u32 i;
-    for (i = 0; i < 2; i++)
-    {
-        swaddress = findFirstJAL(sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", knownnids[i]));
-        if (swaddress != 0)
-            break;
-    }
-    _sw(JUMP(flashLoadPatch), swaddress);
-    _sw(NOP, swaddress+4);
-    
+	// Redirect KERMIT_CMD_ERROR_EXIT loadFlash function
+    u32 swaddress = findFirstJAL(sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", 0x0648E1A3));
+	REDIRECT_FUNCTION(swaddress, flashLoadPatch);
     return 0;
 }
 
@@ -328,12 +310,27 @@ u32 MakeSyscallStub(void *function) {
 	return stub;
 }
 
+/*
+u32 FindPowerFunction(u32 nid) {
+	return sctrlHENFindFunction("scePower_Service", "scePower", nid);
+}
+*/
+
 void patch_VshMain(SceModule2* mod){
 	u32 text_addr = mod->text_addr;
 
 	// Dummy usb detection functions
 	MAKE_DUMMY_FUNCTION(text_addr + 0x38C94, 0);
 	MAKE_DUMMY_FUNCTION(text_addr + 0x38D68, 0);
+
+	/*
+	void* scePowerSetClockFrequency_k = (void *)FindPowerFunction(0x737486F2);
+	MAKE_DUMMY_FUNCTION((u32)scePowerSetClockFrequency_k, 0);
+	MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x545A7F3C), 0);
+	MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xB8D7B3FB), 0);
+	MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x843FBF43), 0);
+	MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xEBD177D6), 0);
+	*/
 }
 
 void patch_SysconfPlugin(SceModule2* mod){
@@ -547,7 +544,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 			if (CacheInit){
 				CacheInit(32 * 1024, 32, (use_highmem)?2:9); // 2MB cache for PS Vita
 			}
-            }
+        }
 		sctrlHENSetArkConfig(ark_config);
         goto flush;
     }
