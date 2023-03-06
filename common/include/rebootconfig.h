@@ -51,13 +51,16 @@ typedef struct RebootConfigARK {
     unsigned int reboot_buffer_size;
     unsigned char iso_mode;
     unsigned char iso_disc_type;
-    char iso_path[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE];
-    struct {
+    char iso_path[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE]; // inferno ISO path
+    struct { // runtime module
         char *before;
         void *buffer;
         u32 size;
         u32 flags;
     } rtm_mod;
+    void* flashfs; // flash0 ramfs
+    int nfiles;
+    char bootfile[100][64]; // list of boot files
 } RebootConfigARK;
 
 #define IS_ARK_CONFIG(config) (*((u32*)config) == ARK_CONFIG_MAGIC)

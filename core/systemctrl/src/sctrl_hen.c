@@ -320,10 +320,11 @@ void* sctrlHENSetPluginHandler(void* handler){
     return ret;
 }
 
-void sctrlHENGetRebootexConfig(RebootConfigARK* config){
+RebootConfigARK* sctrlHENGetRebootexConfig(RebootConfigARK* config){
     if (config){
         memcpy(config, &rebootex_config, sizeof(RebootConfigARK));
     }
+    return &rebootex_config;
 }
 
 void sctrlHENSetRebootexConfig(RebootConfigARK* config){

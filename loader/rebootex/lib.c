@@ -23,6 +23,18 @@ int strcmp(const char *s, const char *t)
     return (*s - *t);
 }
 
+int strncmp(const char *a, const char *b, unsigned int count)
+{
+    while(count>0 && *a && *b && *a == *b)
+    {
+        a++, b++;
+        count--;
+    }
+    if (count == 0) return 0;
+    return *a - *b;
+}
+
+
 void* memset(void *dst, u8 code, int size)
 {
     u8 *p1 = (u8 *)dst;

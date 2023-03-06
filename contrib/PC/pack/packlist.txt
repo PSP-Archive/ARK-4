@@ -1,6 +1,8 @@
 psvbtinf.bin,dist/PSVBTINF.BIN
 psvbtcnf.bin,dist/PSVBTCNF.BIN
 psvbtxnf.bin,dist/PSVBTXNF.BIN
+psvbtjnf.bin,dist/PSVBTJNF.BIN
+psvbtknf.bin,dist/PSVBTKNF.BIN
 /kd/ark_systemctrl.prx,dist/SYSCTRL.BIN
 /kd/ark_vshctrl.prx,dist/VSHCTRL.BIN
 /kd/ark_inferno.prx,dist/INFERNO.BIN
@@ -9,3 +11,4 @@ psvbtxnf.bin,dist/PSVBTXNF.BIN
 /kd/ark_pspcompat.prx,dist/PSPCOMP.BIN
 /kd/ark_vitacompat.prx,dist/VITACOMP.BIN
 /kd/ark_vitapops.prx,dist/VITAPOPS.BIN
+/kd/ark_vitaplus.prx,dist/VITAPLUS.BIN

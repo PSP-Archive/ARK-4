@@ -1,0 +1,26 @@
+What works:
+
+- Homebrew and plugins (including leda).
+- Booting recovery by holding R from live loader.
+- ISO and CSO.
+- Games in PBP format.
+- PS1 games.
+- Exiting using home button.
+- XMB (and all its patches/extras).
+- Stargate no-DRM engine.
+- Custom Launcher and Recovery.
+- Exiting via key combo.
+- Extra RAM.
+- Inferno Cache.
+- Adrenaline's built-in Savestate.
+
+
+What DOESN'T work:
+
+- USB connection in XMB.
+- Sleep mode crashes.
+
+
+What ISN'T tested:
+
+- DLC and updates.

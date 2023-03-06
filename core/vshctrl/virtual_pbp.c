@@ -1052,14 +1052,16 @@ static int get_ISO_shortname(char *s_name, u32 size, const char *l_name)
 
             if (ret >= 0) {
                 if (!strcmp(dirent->d_name, p+1)) {
-                    strncpy(s_name, l_name, MIN(p + 1 - l_name, size));
-                    s_name[MIN(p + 1 - l_name, size-1)] = '\0';
-                    strcat(s_name, pri_dirent->s_name);
-                    #ifdef DEBUG
-                    printk("%s: final %s\n", __func__, s_name);
-                    #endif
-                    result = 0;
-                    break;
+                    if (pri_dirent->s_name[0] != 0){
+                        strncpy(s_name, l_name, MIN(p + 1 - l_name, size));
+                        s_name[MIN(p + 1 - l_name, size-1)] = '\0';
+                        strcat(s_name, pri_dirent->s_name);
+                        #ifdef DEBUG
+                        printk("%s: final %s\n", __func__, s_name);
+                        #endif
+                        result = 0;
+                        break;
+                    }
                 }
             }
         } while (ret > 0);
@@ -1118,6 +1120,7 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     int has_pboot = has_update_file(vpbp, pboot_path);
 
     if (has_pboot){
+        // configure to use dlc/update
         apitype = 0x124;
         param->argp = pboot_path;
         param->args = strlen(pboot_path) + 1;

@@ -38,7 +38,7 @@
 #define USER_SIZE (24 * 1024 * 1024)
 #define KERNEL_SIZE (4 * 1024 * 1024)
 #define VITA_FLASH_SIZE 0x01000000 // 16MiB
-#define VITA_EXTRA_RAM_SIZE (32 * 1024 * 1024)
+#define VITA_EXTRA_RAM_SIZE (20 * 1024 * 1024)
 #define MAX_HIGH_MEMSIZE 55
 
 // ARK_CONFIG
@@ -57,6 +57,7 @@
 #define ARK_MINOR_VERSION 19
 #define ARK_MICRO_VERSION 18
 #define PRO_VERSION 0x4000 // identify as ARK
+#define MAX_FLASH0_SIZE 0x32000
 
 /*
 First two bits identify the device (PSP or PS Vita)

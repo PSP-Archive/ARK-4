@@ -32,10 +32,6 @@ typedef unsigned char byte;
 // This marks libraries that are not yet linked
 #define SYSCALL_IMPORT_NOT_RESOLVED_YET 0x15
 
-// Macros to construct call and jump instructions
-#define MAKE_CALL(f) (0x0c000000 | (((u32)(f) >> 2)  & 0x03ffffff))
-#define MAKE_JUMP(f) (0x08000000 | (((u32)(f) >> 2)  & 0x03ffffff))
-
 // Macros to deal with $gp register
 #define GET_GP(gp) asm volatile ("move %0, $gp\n" : "=r" (gp))
 #define SET_GP(gp) asm volatile ("move $gp, %0\n" :: "r" (gp))

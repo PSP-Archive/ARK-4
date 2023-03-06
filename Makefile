@@ -20,6 +20,8 @@ SUBDIRS = libs \
 	core/compat/vita \
 	core/compat/vitapops/rebootex \
 	core/compat/vitapops \
+	core/compat/pentazemin/rebootex \
+	core/compat/pentazemin \
 	loader/live/user/linkless_payload \
 	loader/live/user/signed_eboot \
 	loader/live/kernel/kernel_loader \
@@ -58,9 +60,9 @@ copy-bin:
 #	Common installation
 	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
 	$(Q)cp loader/live/kernel/kxploit/psp660/K.BIN dist/ARK_Live/K.BIN # Kernel exploit for PSP
-	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/VitaBubble/ # Vita 3.60 PBOOT.PBP bubble
-	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/VitaBubble/K.BIN # Kernel exploit for Vita 3.60+
-	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/VitaBubble/easter/EGG.BIN # ???
+	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/Vita/bubble/ # Vita 3.60 PBOOT.PBP bubble
+	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/Vita/bubble/K.BIN # Kernel exploit for Vita 3.60+
+	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/Vita/pentazemin/K.BIN # kxploit for CFW
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/Infinity/ # Infinity with ARK support
 	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
@@ -96,10 +98,13 @@ encrypt-prx: \
 	dist/POPCORN.BIN \
 	dist/PSPCOMP.BIN \
 	dist/VITACOMP.BIN \
-	dist/VITAPOPS.BIN
+	dist/VITAPOPS.BIN \
+	dist/VITAPLUS.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtcnf.bin dist/PSVBTCNF.BIN
 	$(Q)cp contrib/PC/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
+	$(Q)cp contrib/PC/btcnf/psvbtjnf.bin dist/PSVBTJNF.BIN
+	$(Q)cp contrib/PC/btcnf/psvbtknf.bin dist/PSVBTKNF.BIN
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
 
 
@@ -127,6 +132,7 @@ clean:
 	$(Q)$(MAKE) $@ -C core/compat/psp/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/pentazemin/rebootex
 	$(Q)$(MAKE) $@ -C core/systemctrl
 	$(Q)$(MAKE) $@ -C core/vshctrl
 	$(Q)$(MAKE) $@ -C core/stargate
@@ -135,6 +141,7 @@ clean:
 	$(Q)$(MAKE) $@ -C core/compat/psp
 	$(Q)$(MAKE) $@ -C core/compat/vita
 	$(Q)$(MAKE) $@ -C core/compat/vitapops
+	$(Q)$(MAKE) $@ -C core/compat/pentazemin
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
@@ -185,13 +192,14 @@ recovery: libs
 
 mkdir-dist:
 	$(Q)mkdir dist | true
-	$(Q)mkdir dist/VitaBubble | true
+	$(Q)mkdir dist/Vita | true
 	$(Q)mkdir dist/ARK_Live | true
 	$(Q)mkdir dist/Infinity | true
 	$(Q)mkdir dist/ARK_DC | true
 	$(Q)mkdir dist/ARK_cIPL | true
+	$(Q)mkdir dist/Vita/pentazemin | true
+	$(Q)mkdir dist/Vita/bubble | true
 	$(Q)mkdir dist/AdvancedVSH | true
-	$(Q)mkdir dist/VitaBubble/easter | true
 
 -include $(ARKROOT)/.config
 include $(ARKROOT)/common/make/quiet.mak

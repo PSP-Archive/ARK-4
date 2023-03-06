@@ -97,6 +97,10 @@
     ptr = (void *)patch_buffer; \
 }
 
+#define MAKE_SYSCALL(a, f) \
+    _sw(0x03E00008, a); \
+	_sw(0x0000000C | (sceKernelQuerySystemCall(f) << 6), a + 4);
+
 #define MAKE_DUMMY_FUNCTION(a, r) \
 { \
     u32 func = a; \
