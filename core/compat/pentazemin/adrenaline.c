@@ -16,9 +16,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//#include <common.h>
-//#include "main.h"
-
 #include "common.h"
 #include "binary.h"
 
@@ -140,6 +137,7 @@ void initAdrenalineInfo() {
 		getSfoTitle(adrenaline->title, 128);
 	} else if (keyconfig == PSP_INIT_KEYCONFIG_POPS) {
 		getSfoTitle(adrenaline->title, 128);
+		adrenaline->pops_mode = 1;
 	} else if (keyconfig == PSP_INIT_KEYCONFIG_VSH) {
 		strcpy(adrenaline->title, "XMB\xE2\x84\xA2");
 	} else {
@@ -153,8 +151,6 @@ void initAdrenalineInfo() {
 	char *filename = sceKernelInitFileName();
 	if (filename)
 		strcpy(adrenaline->filename, filename);
-
-	adrenaline->pops_mode = sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS;
 }
 
 int adrenaline_interrupt() {

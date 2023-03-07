@@ -49,8 +49,8 @@ void OnSystemStatusIdle() {
 
 	// Set fake framebuffer so that cwcheat can be displayed
 	if (adrenaline->pops_mode) {
-		DisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
 		memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+		DisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
 	} else {
 		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
 	}
