@@ -40,7 +40,7 @@ void flashPatch(){
     strcat(archive, FLASH0_ARK);
 
     if (IS_VITA_ADR(ark_config)){ // read FLASH0.ARK into RAM
-        PRTSTR("Reading FLASH0.ARK into RAMFS");
+        PRTSTR("Reading FLASH0.ARK into RAM");
         flashfs = (void*)ARK_FLASH;
         int fd = k_tbl->KernelIOOpen(archive, PSP_O_RDONLY, 0777);
         k_tbl->KernelIORead(fd, flashfs, MAX_FLASH0_SIZE);
@@ -74,6 +74,9 @@ void patchedmemcpy(void* a1, void* a2, u32 size){
             k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootbuffer, NULL);
             return;
         }
+        else{ // plain rebootex
+            memcpy(REBOOTEX_TEXT, rebootbuffer, size_rebootbuffer);
+        }
     }
     else if (a1 == 0x88FB0000){ // Rebootex config
         buildRebootBufferConfig(size_rebootbuffer);
@@ -105,84 +108,24 @@ void patchAdrenalineReboot(SceModule2* loadexec){
 }
 
 void setupRebootBuffer(){
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, "REBOOT.BIN");
-    
-    int fd = k_tbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
-    if (fd >= 0){ // read external rebootex
-        size_rebootbuffer = k_tbl->KernelIORead(fd, rebootbuffer_ex, REBOOTEX_MAX_SIZE);
-        k_tbl->KernelIOClose(fd);
-    }
-    else{ // no external REBOOT.BIN, use built-in rebootex
-        if (IS_VITA(ark_config)){
-            if (IS_VITA_POPS(ark_config)){
-                rebootbuffer = rebootbuffer_vitapops;
-                size_rebootbuffer = size_rebootbuffer_vitapops;
-            }
-            else if (IS_VITA_ADR(ark_config)){
-                rebootbuffer = rebootbuffer_pentazemin;
-                size_rebootbuffer = size_rebootbuffer_pentazemin;
-            }
-            else{
-                rebootbuffer = rebootbuffer_vita;
-                size_rebootbuffer = size_rebootbuffer_vita;
-            }
+    if (IS_VITA(ark_config)){
+        if (IS_VITA_POPS(ark_config)){
+            rebootbuffer = rebootbuffer_vitapops;
+            size_rebootbuffer = size_rebootbuffer_vitapops;
+        }
+        else if (IS_VITA_ADR(ark_config)){
+            rebootbuffer = rebootbuffer_pentazemin;
+            size_rebootbuffer = size_rebootbuffer_pentazemin;
         }
         else{
-            rebootbuffer = rebootbuffer_psp;
-            size_rebootbuffer = size_rebootbuffer_psp;
+            rebootbuffer = rebootbuffer_vita;
+            size_rebootbuffer = size_rebootbuffer_vita;
         }
     }
-}
-
-int autoBootFile(){
-
-    // check that there's a boot file
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, "BOOT.TXT");
-
-    int fd = k_tbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
-
-    if (fd < 0) return 0;
-
-    // check the game path in boot file
-    char gamepath[255];
-    memset(gamepath, 0, sizeof(gamepath));
-    int r = k_tbl->KernelIORead(fd, path, sizeof(gamepath));
-
-    k_tbl->KernelIOClose(fd);
-
-    fd = k_tbl->KernelIOOpen(gamepath, PSP_O_RDONLY, 0777);
-
-    if (fd < 0) return 0;
-
-    k_tbl->KernelIOClose(fd);
-
-    // prepare loadexec
-    struct SceKernelLoadExecVSHParam param;
-    
-    memset(&param, 0, sizeof(param));
-
-    param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
-
-    int runlevel = (*(u32*)path == EF0_PATH)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
-
-    param.key = "umdemu";
-    param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
-
-    // Set Rebootex configuration to load Inferno
-    RebootConfigARK* rebootex_conf = (RebootConfigARK*)REBOOTEX_CONFIG;
-    memset(rebootex_conf, 0, sizeof(RebootConfigARK));
-    rebootex_conf->magic = ARK_CONFIG_MAGIC;
-    rebootex_conf->iso_mode = ISO_DRIVER;
-    strcpy(rebootex_conf->iso_path, gamepath);
-
-    // call loadexec
-    _KernelLoadExecVSHWithApitype(runlevel, gamepath, &param, 0x10000);
-
-    return 1;
+    else{
+        rebootbuffer = rebootbuffer_psp;
+        size_rebootbuffer = size_rebootbuffer_psp;
+    }
 }
 
 void loadKernelArk(){
@@ -223,10 +166,6 @@ void loadKernelArk(){
     // Invalidate Cache
     k_tbl->KernelDcacheWritebackInvalidateAll();
     k_tbl->KernelIcacheInvalidateAll();
-    
-    if (autoBootFile()){
-        return;
-    }
 
     if ( ark_config->recovery || ( IS_VITA(ark_config) && !IS_VITA_ADR(ark_config) ) ){
         // Prepare Homebrew Reboot
