@@ -66,25 +66,28 @@ void flashPatch(){
     }
 }
 
+// patch to inject our own rebootex intead of adrenaline's
 void patchedmemcpy(void* a1, void* a2, u32 size){
     if ((u32)a1 == 0x88FC0000){ // Rebootex payload
         a2 = rebootbuffer;
         size = size_rebootbuffer;
         if (rebootbuffer[0] == 0x1F && rebootbuffer[1] == 0x8B){ // gzip packed rebootex
             k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootbuffer, NULL);
-            return;
         }
         else{ // plain rebootex
             memcpy(REBOOTEX_TEXT, rebootbuffer, size_rebootbuffer);
         }
+        return;
     }
-    else if (a1 == 0x88FB0000){ // Rebootex config
+    else if ((u32)a1 == 0x88FB0000){ // Rebootex config
         buildRebootBufferConfig(size_rebootbuffer);
         return;
     }
     memcpy(a1, a2, size);
 }
 
+// yo dawg, I heard you like patches
+// so I made a patch that patches your patch to inject my patch to patch your patches
 void patchAdrenalineReboot(SceModule2* loadexec){
     strcpy(ark_config->exploit_id, "Adrenaline");
     for (u32 addr = loadexec->text_addr; addr < loadexec->text_addr+loadexec->text_size; addr+=4){
