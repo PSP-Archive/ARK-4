@@ -10,13 +10,9 @@
 #include "core/compat/vitapops/rebootex/payload.h"
 #include "core/compat/pentazemin/rebootex/payload.h"
 
-extern u8 rebootbuffer_ex[REBOOTEX_MAX_SIZE];
 extern u8* rebootbuffer;
 extern u32 size_rebootbuffer;
 extern void* flashfs;
-
-// Sony Reboot Buffer Loader
-int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
 
 
 static int isVitaFile(char* filename){
@@ -170,9 +166,9 @@ void loadKernelArk(){
     }
 
     PRTSTR("Preparing reboot.");
+
     // Find LoadExec Module
     SceModule2 * loadexec = k_tbl->KernelFindModuleByName("sceLoadExec");
-    
     
     // Find Reboot Loader Function
     _LoadReboot = (void *)loadexec->text_addr;    
@@ -188,7 +184,7 @@ void loadKernelArk(){
     k_tbl->KernelIcacheInvalidateAll();
 
     if ( ark_config->recovery || ( IS_VITA(ark_config) && !IS_VITA_ADR(ark_config) ) ){
-        // Prepare Homebrew Reboot
+        // launcher reboot
         char menupath[ARK_PATH_SIZE];
         strcpy(menupath, ark_config->arkpath);
         if (IS_VITA_POPS(ark_config)){
@@ -214,6 +210,7 @@ void loadKernelArk(){
         _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
     }
     else {
+        // vsh reboot
         PRTSTR("Running VSH");
         int (*_KernelExitVSH)(void*) = FindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
         _KernelExitVSH(NULL);

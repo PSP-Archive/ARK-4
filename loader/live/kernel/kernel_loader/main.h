@@ -36,12 +36,8 @@ ARKConfig* ark_config;
 
 // Function Prototypes
 void kernelContentFunction(void);
-void buildRebootBufferConfig(int rebootBufferSize);
 int LoadReboot(void *, unsigned int, void *, unsigned int);
 void setK1Kernel(void);
 void clearBSS(void);
-
-// Sony Reboot Buffer Loader
-extern int (* _LoadReboot)(void *, unsigned int, void *, unsigned int);
 
 #endif

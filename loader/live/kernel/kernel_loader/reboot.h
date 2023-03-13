@@ -21,7 +21,11 @@
 #include "main.h"
 #include <rebootconfig.h>
 
+// Sony Reboot Buffer Loader
+extern int (* _LoadReboot)(void *, unsigned int, void *, unsigned int);
+
 void buildRebootBufferConfig(int rebootBufferSize);
 int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4);
+
 
 #endif
