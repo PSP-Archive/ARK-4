@@ -66,7 +66,7 @@ Dev Sub
 00  00 -> unknown device (attempt to autodetect)
 01  00 -> psp
 01  01 -> unused
-01  11 -> unused
+01  10 -> unused
 10  00 -> ps vita
 10  01 -> vita adrenaline
 10  10 -> vita pops

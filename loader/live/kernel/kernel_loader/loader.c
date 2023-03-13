@@ -18,8 +18,6 @@ extern void* flashfs;
 // Sony Reboot Buffer Loader
 int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
 
-// LoadExecVSHWithApitype Direct Call
-int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int) = NULL;
 
 static int isVitaFile(char* filename){
     return (strstr(filename, "psv")!=NULL // PS Vita btcnf replacement, not used on PSP
@@ -184,7 +182,6 @@ void loadKernelArk(){
     // make the common loadexec patches
     if (IS_VITA_ADR(ark_config)) patchAdrenalineReboot(loadexec);
     else patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
-    _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
     
     // Invalidate Cache
     k_tbl->KernelDcacheWritebackInvalidateAll();
@@ -210,7 +207,10 @@ void loadKernelArk(){
         param.args = strlen(menupath) + 1;
         param.argp = menupath;
         param.key = "game";
+
         PRTSTR1("Running Menu at %s", menupath);
+        int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int);
+        _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
         _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
     }
     else {
