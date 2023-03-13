@@ -3,15 +3,12 @@
 #include <loadexec_patch.h>
 #include "reboot.h"
 
+#include "core/compat/pentazemin/adrenaline_compat.h"
+
 #include "core/compat/psp/rebootex/payload.h"
 #include "core/compat/vita/rebootex/payload.h"
 #include "core/compat/vitapops/rebootex/payload.h"
 #include "core/compat/pentazemin/rebootex/payload.h"
-
-#define EF0_PATH 0x3A306665
-#define ISO_RUNLEVEL 0x123
-#define ISO_RUNLEVEL_GO 0x125
-#define ISO_DRIVER 3
 
 extern u8 rebootbuffer_ex[REBOOTEX_MAX_SIZE];
 extern u8* rebootbuffer;
@@ -77,13 +74,10 @@ void patchedmemcpy(void* a1, void* a2, u32 size){
         else{ // plain rebootex
             memcpy(REBOOTEX_TEXT, rebootbuffer, size_rebootbuffer);
         }
-        return;
     }
     else if ((u32)a1 == 0x88FB0000){ // Rebootex config
         buildRebootBufferConfig(size_rebootbuffer);
-        return;
     }
-    memcpy(a1, a2, size);
 }
 
 // yo dawg, I heard you like patches
@@ -109,6 +103,32 @@ void patchAdrenalineReboot(SceModule2* loadexec){
 		}
     }
 }
+
+/*
+int sceKermitSendRequest661(void* a0, int a1, int a2, int a3, int a4, void* a5){
+    static int (*orig)(void*, int, int, int, int, void*) = NULL;
+
+    if (orig == NULL){
+        orig = FindFunction("sceKermit_Driver", "sceKermit_driver",0x36666181);
+    }
+
+    return orig(a0, a1, a2, a3, a4, a5);
+}
+
+#define ALIGN(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
+int SendAdrenalineCmd(int cmd) {
+
+	char buf[sizeof(SceKermitRequest) + 0x40];
+	SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
+	SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
+	k_tbl->KernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
+
+	u64 resp;
+	sceKermitSendRequest661(request_uncached, KERMIT_MODE_EXTRA_2, cmd, 0, 0, &resp);
+
+	return resp;
+}
+*/
 
 void setupRebootBuffer(){
     if (IS_VITA(ark_config)){
