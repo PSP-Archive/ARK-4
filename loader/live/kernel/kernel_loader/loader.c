@@ -10,10 +10,6 @@
 #include "core/compat/vitapops/rebootex/payload.h"
 #include "core/compat/pentazemin/rebootex/payload.h"
 
-extern u8* rebootbuffer;
-extern u32 size_rebootbuffer;
-extern void* flashfs;
-
 
 static int isVitaFile(char* filename){
     return (strstr(filename, "psv")!=NULL // PS Vita btcnf replacement, not used on PSP
