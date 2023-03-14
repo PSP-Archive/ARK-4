@@ -1,4 +1,14 @@
-#include "vitamem.h"
+#include <pspsdk.h>
+#include <pspsysmem_kernel.h>
+#include <pspkernel.h>
+#include <psputilsforkernel.h>
+#include <pspsysevent.h>
+#include <pspiofilemgr.h>
+#include <stdio.h>
+#include <string.h>
+#include "globals.h"
+#include "systemctrl.h"
+#include "sysmem.h"
 
 void unlockVitaMemory(){
 

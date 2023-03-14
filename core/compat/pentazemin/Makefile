@@ -1,19 +1,19 @@
 TARGET = pentazemin
 
-C_OBJS =    \
-	main.o   \
-	funcs.o   \
+C_OBJS =   \
+	main.o  \
+	funcs.o  \
+	vitamem.o \
 	syspatch.o \
 	io_patch.o  \
-	loadexec.o  \
-	adrenaline.o \
-	init_patch.o  \
-	power_patch.o  \
-	LflashFatfmt.o  \
-	impose_patch.o   \
-	utility_patch.o   \
+	loadexec.o   \
+	adrenaline.o  \
+	init_patch.o   \
+	power_patch.o   \
+	LflashFatfmt.o   \
+	impose_patch.o    \
+	utility_patch.o    \
 	$(ARKROOT)/core/compat/vita/vlf.o \
-	$(ARKROOT)/core/compat/vita/vitamem.o \
 	$(ARKROOT)/common/utils/patches.o   \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
 	$(ARKROOT)/core/systemctrl/src/gameinfo.o \
