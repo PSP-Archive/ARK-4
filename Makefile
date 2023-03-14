@@ -53,9 +53,9 @@ copy-bin:
 #	Common installation
 	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
 	$(Q)cp loader/live/kernel/kxploit/psp660/K.BIN dist/ARK_Live/K.BIN # Kernel exploit for PSP
-	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/Vita/bubble/ # Vita 3.60 PBOOT.PBP bubble
-	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/Vita/bubble/K.BIN # Kernel exploit for Vita 3.60+
-	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/Vita/pentazemin/K.BIN # kxploit for CFW
+	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/Vita/Standalone/ # Vita 3.60 PBOOT.PBP bubble
+	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/Vita/Standalone/K.BIN # Kernel exploit for Vita 3.60+
+	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/Vita/Adrenaline/K.BIN # kxploit for CFW
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/Infinity/ # Infinity with ARK support
 	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
@@ -179,8 +179,8 @@ mkdir-dist:
 	$(Q)mkdir dist/ARK_Live | true
 	$(Q)mkdir dist/Infinity | true
 	$(Q)mkdir dist/ARK_cIPL | true
-	$(Q)mkdir dist/Vita/pentazemin | true
-	$(Q)mkdir dist/Vita/bubble | true
+	$(Q)mkdir dist/Vita/Adrenaline | true
+	$(Q)mkdir dist/Vita/Standalone | true
 	$(Q)mkdir dist/AdvancedVSH | true
 
 -include $(ARKROOT)/.config
