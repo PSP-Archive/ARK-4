@@ -160,7 +160,7 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
   - Copy `K.BIN` from `Vita/Adrenaline` folder into `ARK_Live` game folder.
   - Launch `ARK Loader` from within `Adrenaline`.
   - Create a `Savestate` using `Adrenaline`'s built-in menu and load it.
-  - Use `savestates` to switch between `Adrenlaine` and `ARK`.
+  - Use `savestates` to switch between `Adrenaline` and `ARK`.
 
 </p>
 </details>
