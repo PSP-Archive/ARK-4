@@ -49,8 +49,8 @@ void OnSystemStatusIdle() {
 
 	// Set fake framebuffer so that cwcheat can be displayed
 	if (adrenaline->pops_mode) {
-		DisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
 		memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+		DisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
 	} else {
 		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
 	}
@@ -58,7 +58,6 @@ void OnSystemStatusIdle() {
 
 // kermit_peripheral's sub_000007CC clone, called by loadexec + 0x0000299C with a0=8 (was a0=7 for fw <210)
 // Returns 0 on success
-int (* Kermit_driver_4F75AA05)(void* kermit_packet, u32 cmd_mode, u32 cmd, u32 argc, u32 allow_callback, u64 *resp) = NULL;
 u64 kermit_flash_load(int cmd)
 {
     u8 buf[128];
@@ -67,7 +66,7 @@ u64 kermit_flash_load(int cmd)
     sceKernelDcacheInvalidateRange(alignedBuf, 0x40);
     KermitPacket *packet = (KermitPacket *)KERMIT_PACKET((int)alignedBuf);
     u32 argc = 0;
-    Kermit_driver_4F75AA05(packet, KERMIT_MODE_PERIPHERAL, cmd, argc, KERMIT_CALLBACK_DISABLE, &resp);
+    sceKermitSendRequest661(packet, KERMIT_MODE_PERIPHERAL, cmd, argc, KERMIT_CALLBACK_DISABLE, &resp);
     return resp;
 }
 
@@ -77,14 +76,16 @@ int flashLoadPatch(int cmd)
     // Custom handling on loadFlash mode, else nothing
     if ( cmd == KERMIT_CMD_ERROR_EXIT || cmd == KERMIT_CMD_ERROR_EXIT_2 )
     {
-        int linked;
         // Wait for flash to load
         sceKernelDelayThread(10000);
+
         // Load FLASH0.ARK
 		RebootConfigARK* reboot_config = sctrlHENGetRebootexConfig(NULL);
+		
 		char archive[ARK_PATH_SIZE];
 		strcpy(archive, ark_config->arkpath);
 		strcat(archive, FLASH0_ARK);
+		
 		int fd = sceIoOpen(archive, PSP_O_RDONLY, 0777);
 		sceIoRead(fd, reboot_config->flashfs, MAX_FLASH0_SIZE);
 		sceIoClose(fd);
@@ -94,57 +95,12 @@ int flashLoadPatch(int cmd)
     return ret;
 }
 
-u32 findKermitFlashDriver(){
-    u32 nids[] = {0x4F75AA05, 0x36666181};
-    for (int i=0; i<sizeof(nids)/sizeof(u32) && Kermit_driver_4F75AA05 == NULL; i++){
-        Kermit_driver_4F75AA05 = sctrlHENFindFunction("sceKermit_Driver", "sceKermit_driver", nids[i]);
-    }
-    return Kermit_driver_4F75AA05;
-}
-
 int patchKermitPeripheral()
 {
-    findKermitFlashDriver();
-    // Redirect KERMIT_CMD_ERROR_EXIT loadFlash function
-    u32 knownnids[2] = { 0x3943440D, 0x0648E1A3 /* 3.3X */ };
-    u32 swaddress = 0;
-    u32 i;
-    for (i = 0; i < 2; i++)
-    {
-        swaddress = findFirstJAL(sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", knownnids[i]));
-        if (swaddress != 0)
-            break;
-    }
-    _sw(JUMP(flashLoadPatch), swaddress);
-    _sw(NOP, swaddress+4);
-    
+	// Redirect KERMIT_CMD_ERROR_EXIT loadFlash function
+    u32 swaddress = findFirstJAL(sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", 0x0648E1A3));
+	REDIRECT_FUNCTION(swaddress, flashLoadPatch);
     return 0;
-}
-
-int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param) {
-	int k1 = pspSdkSetK1(0);
-
-	if (apitype == 0x141){ // homebrew API
-        sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
-        sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
-    }	
-
-	SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
-	u32 text_addr = mod->text_addr;
-
-	int (* LoadExecVSH)(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param, int unk2) = (void *)text_addr + 0x23D0;
-
-	int res = LoadExecVSH(apitype, file, param, 0x10000);
-	pspSdkSetK1(k1);
-	return res;
-}
-
-void patchLoadExecUMDemu(){
-    // highjack SystemControl
-    u32 func = K_EXTRACT_IMPORT(&sctrlKernelLoadExecVSHWithApitype);
-    _sw(JUMP(sctrlKernelLoadExecVSHWithApitypeWithUMDemu), func);
-    _sw(NOP, func+4);
-    flushCache();
 }
 
 int (*_sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
@@ -178,8 +134,6 @@ static u8 get_pscode_from_region(int region)
 	if(code == 2) {
 		code = 3;
 	}
-
-	printk("%s: region %d code %d\n", __func__, region, code);
 
 	return code;
 }
@@ -327,6 +281,28 @@ u32 MakeSyscallStub(void *function) {
 	_sw(0x0000000C | (sceKernelQuerySystemCall(function) << 6), stub + 4);
 	return stub;
 }
+
+/*
+u32 FindPowerFunction(u32 nid) {
+	return sctrlHENFindFunction("scePower_Service", "scePower", nid);
+}
+
+void SetSpeed(int cpu, int bus) {
+	if (cpu == 20 || cpu == 75 || cpu == 100 || cpu == 133 || cpu == 333 || cpu == 300 || cpu == 266 || cpu == 222) {
+		int (*scePowerSetClockFrequency_k)(int, int, int) = (void *)FindPowerFunction(0x737486F2);
+		scePowerSetClockFrequency_k(cpu, cpu, bus);
+
+		if (sceKernelInitKeyConfig() != PSP_INIT_KEYCONFIG_VSH) {
+			MAKE_DUMMY_FUNCTION((u32)scePowerSetClockFrequency_k, 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x545A7F3C), 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xB8D7B3FB), 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x843FBF43), 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xEBD177D6), 0);
+			flushCache();
+		}
+	}
+}
+*/
 
 void patch_VshMain(SceModule2* mod){
 	u32 text_addr = mod->text_addr;
@@ -547,7 +523,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 			if (CacheInit){
 				CacheInit(32 * 1024, 32, (use_highmem)?2:9); // 2MB cache for PS Vita
 			}
-            }
+        }
 		sctrlHENSetArkConfig(ark_config);
         goto flush;
     }
@@ -570,7 +546,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
             // Boot Complete Action done
             booted = 1;
-            goto flush;
         }
     }
 
@@ -616,8 +591,6 @@ void AdrenalineSysPatch(){
     SceModule2* loadcore = patchLoaderCore();
     PatchIoFileMgr();
     PatchMemlmd();
-	// patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
-    patchLoadExecUMDemu();
 	// initialize Adrenaline Layer
     initAdrenaline();
 }

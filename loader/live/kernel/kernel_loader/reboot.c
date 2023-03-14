@@ -19,10 +19,12 @@
 #include "globals.h"
 #include "main.h"
 
-u8 rebootbuffer_ex[REBOOTEX_MAX_SIZE];
-u8* rebootbuffer = rebootbuffer_ex;
+u8* rebootbuffer = NULL;
 u32 size_rebootbuffer = REBOOTEX_MAX_SIZE;
 void* flashfs = NULL;
+
+// Sony Reboot Buffer Loader
+int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
 
 // Build Reboot Configuration
 void buildRebootBufferConfig(int rebootBufferSize)

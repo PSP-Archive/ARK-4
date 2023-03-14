@@ -3,26 +3,13 @@
 #include <loadexec_patch.h>
 #include "reboot.h"
 
+#include "core/compat/pentazemin/adrenaline_compat.h"
+
 #include "core/compat/psp/rebootex/payload.h"
 #include "core/compat/vita/rebootex/payload.h"
 #include "core/compat/vitapops/rebootex/payload.h"
 #include "core/compat/pentazemin/rebootex/payload.h"
 
-#define EF0_PATH 0x3A306665
-#define ISO_RUNLEVEL 0x123
-#define ISO_RUNLEVEL_GO 0x125
-#define ISO_DRIVER 3
-
-extern u8 rebootbuffer_ex[REBOOTEX_MAX_SIZE];
-extern u8* rebootbuffer;
-extern u32 size_rebootbuffer;
-extern void* flashfs;
-
-// Sony Reboot Buffer Loader
-int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
-
-// LoadExecVSHWithApitype Direct Call
-int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int) = NULL;
 
 static int isVitaFile(char* filename){
     return (strstr(filename, "psv")!=NULL // PS Vita btcnf replacement, not used on PSP
@@ -40,7 +27,7 @@ void flashPatch(){
     strcat(archive, FLASH0_ARK);
 
     if (IS_VITA_ADR(ark_config)){ // read FLASH0.ARK into RAM
-        PRTSTR("Reading FLASH0.ARK into RAMFS");
+        PRTSTR("Reading FLASH0.ARK into RAM");
         flashfs = (void*)ARK_FLASH;
         int fd = k_tbl->KernelIOOpen(archive, PSP_O_RDONLY, 0777);
         k_tbl->KernelIORead(fd, flashfs, MAX_FLASH0_SIZE);
@@ -62,26 +49,30 @@ void flashPatch(){
     }
     else{ // Patching flash0 on Vita
         PRTSTR("Installing on PS Vita");
+        strcpy(ark_config->exploit_id, "Vita");
         patchKermitPeripheral(k_tbl);
     }
 }
 
+// patch to inject our own rebootex intead of adrenaline's
 void patchedmemcpy(void* a1, void* a2, u32 size){
     if ((u32)a1 == 0x88FC0000){ // Rebootex payload
         a2 = rebootbuffer;
         size = size_rebootbuffer;
         if (rebootbuffer[0] == 0x1F && rebootbuffer[1] == 0x8B){ // gzip packed rebootex
             k_tbl->KernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootbuffer, NULL);
-            return;
+        }
+        else{ // plain rebootex
+            memcpy(REBOOTEX_TEXT, rebootbuffer, size_rebootbuffer);
         }
     }
-    else if (a1 == 0x88FB0000){ // Rebootex config
+    else if ((u32)a1 == 0x88FB0000){ // Rebootex config
         buildRebootBufferConfig(size_rebootbuffer);
-        return;
     }
-    memcpy(a1, a2, size);
 }
 
+// yo dawg, I heard you like patches
+// so I made a patch that patches your patch to inject my patch to patch your patches
 void patchAdrenalineReboot(SceModule2* loadexec){
     strcpy(ark_config->exploit_id, "Adrenaline");
     for (u32 addr = loadexec->text_addr; addr < loadexec->text_addr+loadexec->text_size; addr+=4){
@@ -104,85 +95,51 @@ void patchAdrenalineReboot(SceModule2* loadexec){
     }
 }
 
-void setupRebootBuffer(){
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, "REBOOT.BIN");
-    
-    int fd = k_tbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
-    if (fd >= 0){ // read external rebootex
-        size_rebootbuffer = k_tbl->KernelIORead(fd, rebootbuffer_ex, REBOOTEX_MAX_SIZE);
-        k_tbl->KernelIOClose(fd);
+/*
+int sceKermitSendRequest661(void* a0, int a1, int a2, int a3, int a4, void* a5){
+    static int (*orig)(void*, int, int, int, int, void*) = NULL;
+
+    if (orig == NULL){
+        orig = FindFunction("sceKermit_Driver", "sceKermit_driver",0x36666181);
     }
-    else{ // no external REBOOT.BIN, use built-in rebootex
-        if (IS_VITA(ark_config)){
-            if (IS_VITA_POPS(ark_config)){
-                rebootbuffer = rebootbuffer_vitapops;
-                size_rebootbuffer = size_rebootbuffer_vitapops;
-            }
-            else if (IS_VITA_ADR(ark_config)){
-                rebootbuffer = rebootbuffer_pentazemin;
-                size_rebootbuffer = size_rebootbuffer_pentazemin;
-            }
-            else{
-                rebootbuffer = rebootbuffer_vita;
-                size_rebootbuffer = size_rebootbuffer_vita;
-            }
-        }
-        else{
-            rebootbuffer = rebootbuffer_psp;
-            size_rebootbuffer = size_rebootbuffer_psp;
-        }
-    }
+
+    return orig(a0, a1, a2, a3, a4, a5);
 }
 
-int autoBootFile(){
+#define ALIGN(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
+int SendAdrenalineCmd(int cmd) {
 
-    // check that there's a boot file
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, "BOOT.TXT");
+	char buf[sizeof(SceKermitRequest) + 0x40];
+	SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
+	SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
+	k_tbl->KernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
 
-    int fd = k_tbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
+	u64 resp;
+	sceKermitSendRequest661(request_uncached, KERMIT_MODE_EXTRA_2, cmd, 0, 0, &resp);
 
-    if (fd < 0) return 0;
+	return resp;
+}
+*/
 
-    // check the game path in boot file
-    char gamepath[255];
-    memset(gamepath, 0, sizeof(gamepath));
-    int r = k_tbl->KernelIORead(fd, path, sizeof(gamepath));
-
-    k_tbl->KernelIOClose(fd);
-
-    fd = k_tbl->KernelIOOpen(gamepath, PSP_O_RDONLY, 0777);
-
-    if (fd < 0) return 0;
-
-    k_tbl->KernelIOClose(fd);
-
-    // prepare loadexec
-    struct SceKernelLoadExecVSHParam param;
-    
-    memset(&param, 0, sizeof(param));
-
-    param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
-
-    int runlevel = (*(u32*)path == EF0_PATH)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
-
-    param.key = "umdemu";
-    param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
-
-    // Set Rebootex configuration to load Inferno
-    RebootConfigARK* rebootex_conf = (RebootConfigARK*)REBOOTEX_CONFIG;
-    memset(rebootex_conf, 0, sizeof(RebootConfigARK));
-    rebootex_conf->magic = ARK_CONFIG_MAGIC;
-    rebootex_conf->iso_mode = ISO_DRIVER;
-    strcpy(rebootex_conf->iso_path, gamepath);
-
-    // call loadexec
-    _KernelLoadExecVSHWithApitype(runlevel, gamepath, &param, 0x10000);
-
-    return 1;
+void setupRebootBuffer(){
+    if (IS_VITA(ark_config)){
+        if (IS_VITA_POPS(ark_config)){
+            rebootbuffer = rebootbuffer_vitapops;
+            size_rebootbuffer = size_rebootbuffer_vitapops;
+        }
+        else if (IS_VITA_ADR(ark_config)){
+            rebootbuffer = rebootbuffer_pentazemin;
+            size_rebootbuffer = size_rebootbuffer_pentazemin;
+        }
+        else{
+            rebootbuffer = rebootbuffer_vita;
+            size_rebootbuffer = size_rebootbuffer_vita;
+        }
+    }
+    else{
+        rebootbuffer = rebootbuffer_psp;
+        size_rebootbuffer = size_rebootbuffer_psp;
+    }
 }
 
 void loadKernelArk(){
@@ -206,9 +163,9 @@ void loadKernelArk(){
     }
 
     PRTSTR("Preparing reboot.");
+
     // Find LoadExec Module
     SceModule2 * loadexec = k_tbl->KernelFindModuleByName("sceLoadExec");
-    
     
     // Find Reboot Loader Function
     _LoadReboot = (void *)loadexec->text_addr;    
@@ -218,18 +175,13 @@ void loadKernelArk(){
     // make the common loadexec patches
     if (IS_VITA_ADR(ark_config)) patchAdrenalineReboot(loadexec);
     else patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
-    _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
     
     // Invalidate Cache
     k_tbl->KernelDcacheWritebackInvalidateAll();
     k_tbl->KernelIcacheInvalidateAll();
-    
-    if (autoBootFile()){
-        return;
-    }
 
     if ( ark_config->recovery || ( IS_VITA(ark_config) && !IS_VITA_ADR(ark_config) ) ){
-        // Prepare Homebrew Reboot
+        // launcher reboot
         char menupath[ARK_PATH_SIZE];
         strcpy(menupath, ark_config->arkpath);
         if (IS_VITA_POPS(ark_config)){
@@ -248,10 +200,14 @@ void loadKernelArk(){
         param.args = strlen(menupath) + 1;
         param.argp = menupath;
         param.key = "game";
+
         PRTSTR1("Running Menu at %s", menupath);
+        int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int);
+        _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
         _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
     }
     else {
+        // vsh reboot
         PRTSTR("Running VSH");
         int (*_KernelExitVSH)(void*) = FindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
         _KernelExitVSH(NULL);

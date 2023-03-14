@@ -614,4 +614,6 @@ void PatchIoFileMgr() {
 	// This fixes popsman flash2 assign
 	HIJACK_FUNCTION(IoUnassign, sceIoUnassignPatched, _sceIoUnassign);
 	HIJACK_FUNCTION(IoAssign, sceIoAssignPatched, _sceIoAssign);
+
+	flushCache();
 }
