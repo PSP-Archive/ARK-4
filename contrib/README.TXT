@@ -58,6 +58,7 @@ Installation On PS Vita
     - Launch `ARK Loader` from within `Adrenaline`.
     - Create a `Savestate` using `Adrenaline`'s built-in menu and load it.
     - Use `savestates` to switch between `Adrenaline` and `ARK`.
+    - Note: this does not permanently modify `Adrenaline` in any way.
 
 
 

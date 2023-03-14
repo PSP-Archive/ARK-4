@@ -10,7 +10,6 @@
 #include "macros.h"
 #include "exitgame.h"
 #include "popspatch.h"
-#include "vitamem.h"
 #include "libs/graphics/graphics.h"
 
 extern STMOD_HANDLER previous;
@@ -108,14 +107,10 @@ int isSystemBooted(void)
 }
 
 int use_mscache = 0;
-int use_highmem = 0;
 int use_infernocache = 0;
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
-    if (strcasecmp(path, "highmem") == 0){
-        use_highmem = 1;
-    }
-    else if (strcasecmp(path, "mscache") == 0){
+    if (strcasecmp(path, "mscache") == 0){
         use_mscache = 1; // enable ms cache for speedup
     }
     else if (strcasecmp(path, "infernocache") == 0){
@@ -219,9 +214,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         {
             // Initialize Memory Stick Speedup Cache
             if (use_mscache) msstorCacheInit("ms", 8 * 1024);
-
-            // apply extra memory patch
-            if (use_highmem) unlockVitaMemory();
 
             if (use_infernocache){
                 int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
