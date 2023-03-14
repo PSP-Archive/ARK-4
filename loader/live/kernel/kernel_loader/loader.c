@@ -49,6 +49,7 @@ void flashPatch(){
     }
     else{ // Patching flash0 on Vita
         PRTSTR("Installing on PS Vita");
+        strcpy(ark_config->exploit_id, "Vita");
         patchKermitPeripheral(k_tbl);
     }
 }
