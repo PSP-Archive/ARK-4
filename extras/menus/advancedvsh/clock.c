@@ -64,10 +64,16 @@ int swap_readonly(int dir) {
 	cnf.usbdevice_rdonly=sel;
 }
 
-void change_colors(int dir) {
-	int sel = cnf.vsh_colors;
-	sel = limit(sel+dir, 0, 25);
-	cnf.vsh_colors=sel;
+void change_bg_colors(int dir) {
+	int sel = cnf.vsh_bg_colors;
+	sel = limit(sel+dir, 0, 28);
+	cnf.vsh_bg_colors=sel;
+}
+
+void change_fg_colors(int dir) {
+	int sel = cnf.vsh_fg_colors;
+	sel = limit(sel+dir, 0, 28);
+	cnf.vsh_fg_colors=sel;
 }
 
 void change_clock(int dir, int flag)
