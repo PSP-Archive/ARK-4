@@ -789,7 +789,7 @@ none:
 			if(direction) change_bg_colors(direction);
 			break;
 		case SUBMENU_GO_BACK:
-			if(direction==0) return -1; // finish
+			if(direction==0) return 1; // finish
 			break;
 	}
 

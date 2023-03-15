@@ -939,7 +939,7 @@ int TSRThread(SceSize args, void *argp)
 	if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
 		scePaf_memcpy_660(&cnf_old, &cnf, sizeof(SEConfig));
 #endif
-
+resume:
 	while(stop_flag == 0) {
 		if( sceDisplayWaitVblankStart() < 0)
 			break; // end of VSH ?
@@ -994,6 +994,14 @@ int TSRThread(SceSize args, void *argp)
 			subbutton_func();
 		}
 	}
+
+	if(sub_stop_flag == 1 ) {
+		stop_flag = 0;
+		menu_mode = 0;
+		sub_stop_flag = 0;
+		goto resume;
+	}
+		
 
 
 	config.vsh_bg_color = cnf.vsh_bg_colors;
