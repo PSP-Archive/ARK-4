@@ -1,15 +1,20 @@
 #include "common.h"
-#define SUBMENU_MAX 13
+#include <psputility.h>
 
 extern int pwidth;
-extern int xyPoint;
-extern int xyPoint2;
+extern char umd_path[72];
 extern SEConfig cnf;
+
 extern char device_buf[13];
 extern char umdvideo_path[256];
 
+extern xyPoint[];
+extern xyPoint2[];
+
 
 int is_pandora = 0;
+
+#define SUBMENU_MAX 13
 
 enum {
 	SUBMENU_USB_DEVICE,
@@ -24,13 +29,13 @@ enum {
 	SUBMENU_IMPORT_CLASSIC_PLUGINS,
 	SUBMENU_DELETE_HIBERNATION,
 	SUBMENU_RANDOM_GAME,
-	SUBMENU_RETURN_MAIN_MENU,
+	SUBMENU_GO_BACK,
 };
 
-static int submenu_sel = SUBMENU_USB_DEVICE;
-const char *subitem_str[SUBMENU_MAX];
 int item_fcolor[SUBMENU_MAX];
+const char *subitem_str[SUBMENU_MAX];
 
+static int submenu_sel = SUBMENU_USB_DEVICE;
 
 int submenu_draw(void)
 {
@@ -365,7 +370,7 @@ int submenu_draw(void)
 		if(msg) {
 				bc = (submax_menu==submenu_sel) ? 0xff8080 : 0x0000ff00;
 			switch(submax_menu) {
-				case SUBMENU_RETURN_MAIN_MENU:
+				case SUBMENU_GO_BACK:
 					xPointer = pointer[2];
 				break;
 				case SUBMENU_RANDOM_GAME:
@@ -689,7 +694,8 @@ int submenu_ctrl(u32 button_on)
 
 	if( (button_on & PSP_CTRL_SELECT) ||
 		(button_on & PSP_CTRL_HOME)) {
-		submenu_sel = SUBMENU_RETURN_MAIN_MENU;
+		submenu_sel = SUBMENU_GO_BACK;
+		// TODO: Probably needs to just "return" return 1 will probably actually exit.
 		return 1;
 	}
 
@@ -782,7 +788,7 @@ none:
 			// This will be where I will be adding to set the color
 			if(direction) change_bg_colors(direction);
 			break;
-		case SUBMENU_RETURN_MAIN_MENU:
+		case SUBMENU_GO_BACK:
 			if(direction==0) return -1; // finish
 			break;
 	}
