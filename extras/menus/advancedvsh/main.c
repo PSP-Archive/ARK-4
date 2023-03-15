@@ -394,16 +394,16 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 
 void exec_random_game() {
 	int MAX_GAMES = 100;
-	char GAME_DIR[32];
+	char GAME_DIR[16];
 	int num_games = 0;
 	char *games[MAX_GAMES];
 	char *cat_games[MAX_GAMES];
 	int count = 0;
 
 	if(psp_model == PSP_GO) 
-		sprintf(GAME_DIR, "%s", "ef0:/PSP/GAME/");
+		snprintf(GAME_DIR, sizeof(GAME_DIR), "%s", "ef0:/PSP/GAME/");
 	else
-		sprintf(GAME_DIR, "%s", "ms0:/PSP/GAME/");
+		snprintf(GAME_DIR, sizeof(GAME_DIR),"%s", "ms0:/PSP/GAME/");
 
 	SceUID dir = sceIoDopen(GAME_DIR);
 	SceIoDirent dirent;
@@ -411,11 +411,11 @@ void exec_random_game() {
 
 	memset(&dirent, 0, sizeof(dirent));
 	while(sceIoDread(dir, &dirent) > 0 && num_games < MAX_GAMES) {
-		if(dirent.d_name != '.' && dirent.d_name != "..") {
-			games[num_games] = malloc(strlen(GAME_DIR) + strlen(dirent.d_name) + 1);
-			sprintf(games[num_games], "%s%s/", GAME_DIR, dirent.d_name);
-			num_games++;
-		}
+		if(dirent.d_name == '.' || dirent.d_name == "..") 
+			continue;
+		games[num_games] = malloc(strlen(GAME_DIR) + strlen(dirent.d_name) + 1);
+		sprintf(games[num_games], "%s%s/", GAME_DIR, dirent.d_name);
+		num_games++;
 	}
 	sceIoDclose(dir);
 
@@ -434,8 +434,8 @@ void exec_random_game() {
 	}
 
 	strcat(selected_game, "EBOOT.PBP");
-	int exists;;
-	while(!(exists = sceIoOpen(selected_game, PSP_O_RDONLY, 0777))) {
+	int exists;
+	while(exists = sceIoOpen(selected_game, PSP_O_RDONLY, 0777) < 0) {
 		sceIoClose(exists);
 		rand_idx = rand() % num_games;
 		selected_game = games[rand_idx]; 
@@ -450,11 +450,11 @@ void exec_random_game() {
 			SceIoDirent catdir;
 			num_games = 0;
 			while(sceIoDread(cat_dir, &catdir) > 0 && num_games < MAX_GAMES) {
-				if(catdir.d_name != '.' && catdir.d_name != "..") {
-					cat_games[num_games] = malloc(strlen(selected_game) + strlen(catdir.d_name) + 1);
-					sprintf(cat_games[num_games], "%s%s/", selected_game, dirent.d_name);
-					num_games++;
-				}
+				if(catdir.d_name == '.' || catdir.d_name == "..") 
+					continue;
+				cat_games[num_games] = malloc(strlen(selected_game) + strlen(catdir.d_name) + 1);
+				sprintf(cat_games[num_games], "%s%s/", catdir.d_name, selected_game);
+				num_games++;
 			}
 		}
 		if(strstr(selected_game, "/../") != NULL || strstr(selected_game, "/./") != NULL || strstr(selected_game, "/Infinity/") != NULL || 
@@ -465,20 +465,23 @@ void exec_random_game() {
 			selected_game = games[rand_idx];
 			exists = sceIoOpen(selected_game, PSP_O_RDONLY, 0777);
 		}
-
+/*
 		count++;
 
 		if (count == 8) {
 			count = 0;
 			sceIoClose(exists);
+			free(games);
+			free(cat_games);
 			exec_random_game();
 		}
-
+*/
 		free(games);
 		free(cat_games);
 
 	}
 
+	sceIoClose(exists);
 	struct SceKernelLoadExecVSHParam param;
     memset(&param, 0, sizeof(param));
     param.size = sizeof(param);
