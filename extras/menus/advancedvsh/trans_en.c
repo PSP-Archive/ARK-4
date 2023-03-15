@@ -42,7 +42,7 @@ const char *g_messages_en[] = {
 	"GO BACK",
 	"CUSTOM LAUNCHER ->",
 	"RECOVERY MENU  ->",
-	" Advanced VSH Menu ",
+	" ADVANCED VSH MENU ",
 	"SHUTDOWN DEVICE",
 	"SUSPEND DEVICE",
 	"RESET DEVICE",
