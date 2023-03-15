@@ -40,8 +40,11 @@ extern u32 psp_model;
 extern int umdvideo_idx;
 
 int menu_draw(void);
+int submenu_draw(void);
 int menu_setup(void);
+int submenu_setup(void);
 int menu_ctrl(u32 button_on);
+int submenu_ctrl(u32 button_on);
 
 int cpu2no(int cpu);
 int bus2no(int cpu);
@@ -116,19 +119,21 @@ enum {
 	MSG_O_PRIM,
 	MSG_NP9660,
 	MSG_INFERNO,
-	//MSG_CPU_CLOCK_XMB,
-	//MSG_CPU_CLOCK_GAME,
 	MSG_USB_DEVICE,
 	MSG_USB_READONLY,
 	MSG_UMD_ISO_MODE,
 	MSG_ISO_VIDEO_MOUNT,
-	MSG_COLORS,
+	MSG_FG_COLORS,
+	MSG_BG_COLORS,
 	MSG_CONVERT_BATTERY,
 	MSG_SWAP_XO_BUTTONS,
-	MSG_ACTIVATE_FLASH_WMA,
+	MSG_IMPORT_CLASSIC_PLUGINS,
 	MSG_DELETE_HIBERNATION,
+	MSG_RANDOM_GAME,
+	MSG_ACTIVATE_FLASH_WMA,
 	MSG_CUSTOM_LAUNCHER,
 	MSG_RECOVERY_MENU,
+	MSG_ADVANCED_VSH,
 	MSG_SHUTDOWN_DEVICE,
 	MSG_SUSPEND_DEVICE,
 	MSG_RESET_DEVICE,
@@ -165,6 +170,8 @@ enum {
 	MSG_LITE_GREY,
 	MSG_BLACK,
 	MSG_LITE_BLACK,
+	MSG_WHITE,
+	MSG_LITE_WHITE,
 	MSG_END,
 };
 
