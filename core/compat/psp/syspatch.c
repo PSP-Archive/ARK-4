@@ -70,7 +70,13 @@ void patch_umdcache(SceModule2* mod)
     if (apitype == 0x152 || apitype == 0x141){
         //kill module start
         u32 text_addr = mod->text_addr;
-        MAKE_DUMMY_FUNCTION_RETURN_1(text_addr+0x000009C8);
+        u32 top_addr = text_addr + mod->text_size;
+        for (u32 addr=text_addr; addr<top_addr; addr+=4){
+            if (_lw(addr) == 0x34440D40){
+                MAKE_DUMMY_FUNCTION_RETURN_1(addr+4);
+                break;
+            }
+        }
     }
 }
 
@@ -78,14 +84,26 @@ void patch_sceWlan_Driver(SceModule2* mod)
 {
     // disable frequency check
     u32 text_addr = mod->text_addr;
-    _sw(NOP, text_addr + 0x000026C0);
+    u32 top_addr = text_addr + mod->text_size;
+    for (int addr=text_addr; addr<top_addr; addr+=4){
+        if (_lw(addr) == 0x35070080){
+            _sw(NOP, addr-16);
+            break;
+        }
+    }
 }
 
 void patch_scePower_Service(SceModule2* mod)
 {
     // scePowerGetBacklightMaximum always returns 4
     u32 text_addr = mod->text_addr;
-    _sw(NOP, text_addr + 0x00000E68);
+    u32 top_addr = text_addr + mod->text_size;
+    for (u32 addr=text_addr; addr<top_addr; addr+=4){
+        if (_lw(addr) == 0x0067280B){
+            _sw(NOP, addr-16);
+            break;
+        }
+    }
 }
 
 void patch_GameBoot(SceModule2* mod){

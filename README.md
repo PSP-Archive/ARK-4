@@ -198,6 +198,9 @@ A few samples:
 - vsh, ms0:/seplugins/cxmb.prx, true
 - ULUS10041, ms0:/seplugins/lcscheatdevice.prx, on
 
+You can enable plugins on more than one game:
+- ULUS10041 ULES00502, ms0:/seplugins/cheatdevice_remastered.prx, on
+
 You can use the following keywords to enable a plugin:
 - 1
 - on
@@ -217,10 +220,9 @@ You can use the following keywords to tell ARK when the plugin loads:
 
 You can also disable a plugin on certain games where they might be problematic.
 To do so, just add a disable line for the specific game ID after the enable line.
-For example, enable cwcheat on all retail games except for GTA LCS and VCS.
-- umd, ms0:/seplugins/cwcheat/cwcheat.prx, on
-- ULUS10041, ms0:/seplugins/cwcheat/cwcheat.prx, off
-- ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
+For example, enable cwcheat on all retail games except for GTA LCS (US) and GTA VCS (EU).
+- psp, ms0:/seplugins/cwcheat/cwcheat.prx, on
+- ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 
 Some noteworthy plugins that are compatible with ARK include (but not limited to):
 - CXMB.

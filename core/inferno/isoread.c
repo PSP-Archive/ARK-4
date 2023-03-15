@@ -118,6 +118,7 @@ static u32 g_ciso_total_block;
 
 // reader functions
 static int is_compressed = 0;
+static int (*read_iso_data)(u8* addr, u32 size, u32 offset);
 static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit) = NULL;
 
 // 0x00000368
@@ -469,8 +470,10 @@ static int is_ciso(SceUID fd)
             if((u32)g_cso_idx_cache & 63) // align 64
                 g_cso_idx_cache = (void*)(((u32)g_cso_idx_cache & (~63)) + 64);
         }
+        read_iso_data = &read_compressed_data;
         return 1;
     } else {
+        read_iso_data = &read_raw_data;
         return 0;
     }
 }
@@ -514,9 +517,7 @@ int iso_open(void)
 // 0x00000C7C
 int iso_read(struct IoReadArg *args)
 {
-    if (is_compressed)
-        return read_compressed_data(args->address, args->size, args->offset);
-    return read_raw_data(args->address, args->size, args->offset);
+    return read_iso_data(args->address, args->size, args->offset);
 }
 
 // 0x000003E0

@@ -36,6 +36,7 @@ PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 0);
 u32 psp_model = 0;
 ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
+int has_umd_iso = 0;
 
 // Flush Instruction and Data Cache
 void sync_cache()
@@ -97,6 +98,7 @@ int module_start(SceSize args, void* argp)
     
     // always reset to NORMAL mode in VSH
     // to avoid ISO mode is used in homebrews in next reboot
+    has_umd_iso = (sctrlSEGetUmdFile()[0] != 0);
     sctrlSESetUmdFile("");
     sctrlSESetBootConfFileIndex(MODE_UMD);
 
