@@ -983,11 +983,6 @@ int TSRThread(SceSize args, void *argp)
 	} else if (stop_flag == 14) {
 		exec_random_game();
 	} else if(stop_flag == 15) {
-		clear_language();
-		vpl_finish();
-		vctrlVSHExitVSHMenu(NULL, NULL, 0);
-		release_font();
-
 		while(sub_stop_flag == 0) {
 			if( sceDisplayWaitVblankStart() < 0)
 				break; // end of VSH ?
