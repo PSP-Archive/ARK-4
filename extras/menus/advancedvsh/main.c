@@ -49,11 +49,14 @@ extern int scePowerRequestSuspend(void);
 extern char umdvideo_path[256];
 
 int menu_mode  = 0;
+int submenu_mode  = 0;
 u32 cur_buttons = 0xFFFFFFFF;
 u32 button_on  = 0;
 int stop_flag=0;
+int sub_stop_flag=0;
 SceCtrlData ctrl_pad;
 int stop_stock=0;
+int sub_stop_stock=0;
 int thread_id=0;
 
 t_conf config;
@@ -191,24 +194,24 @@ static void subbutton_func(void)
 	int res;
 
 	// menu controll
-	switch(menu_mode) {
+	switch(submenu_mode) {
 		case 0:	
 			if( (cur_buttons & ALL_CTRL) == 0) {
-				menu_mode = 1;
+				submenu_mode = 1;
 			}
 			break;
 		case 1:
 			res = submenu_ctrl(button_on);
 
 			if(res != 0) {
-				stop_stock = res;
-				menu_mode = 2;
+				sub_stop_stock = res;
+				submenu_mode = 2;
 			}
 			break;
 		case 2: // exit waiting 
 			// exit menu
 			if((cur_buttons & ALL_CTRL) == 0) {
-				stop_flag = stop_stock;
+				sub_stop_flag = sub_stop_stock;
 			}
 			break;
 	}
@@ -979,18 +982,23 @@ int TSRThread(SceSize args, void *argp)
 		import_classic_plugins();
 	} else if (stop_flag == 14) {
 		exec_random_game();
-	} 
-		menu_mode = 0;
-		while(stop_flag == 15) {
+	} else if(stop_flag == 15) {
+		clear_language();
+		vpl_finish();
+		vctrlVSHExitVSHMenu(NULL, NULL, 0);
+		release_font();
+
+		while(sub_stop_flag == 0) {
 			if( sceDisplayWaitVblankStart() < 0)
 				break; // end of VSH ?
-			if(menu_mode > 0) {
+			if(submenu_mode > 0) {
 				submenu_setup();
 				submenu_draw();
 			}
 
-			button_func();
+			subbutton_func();
 		}
+	}
 
 
 	config.vsh_bg_color = cnf.vsh_bg_colors;
