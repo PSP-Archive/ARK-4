@@ -970,7 +970,7 @@ resume:
 		exec_custom_launcher();
 	} else if (stop_flag == 8) {
 		exec_recovery_menu();
-	} else if (stop_flag == 9) {
+	/*} else if (stop_flag == 9) {
 		convert_battery();
 	} else if (stop_flag == 10) {
 		delete_hibernation();
@@ -981,8 +981,9 @@ resume:
 	} else if (stop_flag == 13) {
 		import_classic_plugins();
 	} else if (stop_flag == 14) {
-		exec_random_game();
+		exec_random_game(); */
 	} else if(stop_flag == 15) {
+		// AVSHMENU START
 		while(sub_stop_flag == 0) {
 			if( sceDisplayWaitVblankStart() < 0)
 				break; // end of VSH ?
@@ -995,7 +996,21 @@ resume:
 		}
 	}
 
-	if(sub_stop_flag == 1 ) {
+	if ( sub_stop_flag == 6)
+		launch_umdvideo_mount();
+	else if (sub_stop_flag == 9)
+		convert_battery();
+	else if (sub_stop_flag == 10)
+		delete_hibernation();
+	else if (sub_stop_flag == 11)
+		activate_codecs();
+	else if (sub_stop_flag == 12)
+		swap_buttons();
+	else if (sub_stop_flag == 13)
+		import_classic_plugins();
+	else if (sub_stop_flag == 14)
+		exec_random_game();
+	else if(sub_stop_flag == 1 ) {
 		stop_flag = 0;
 		menu_mode = 0;
 		sub_stop_flag = 0;
