@@ -71,7 +71,7 @@ int submenu_draw(void)
 
 	// show menu list
 	blit_set_color(0xffffff,0x8000ff00);
-	blit_string(pointer[0], pointer[1], g_messages[MSG_PRO_VSH_MENU]);
+	blit_string(pointer[0], pointer[1], g_messages[MSG_ADVANCED_VSH]);
 	blit_string(pointer[0], 56, ark_version);
 	fc = 0xffffff;
  
