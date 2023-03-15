@@ -39,6 +39,7 @@ const char *g_messages_en[] = {
 	"DELETE HIBERNATION",
 	" BOOT RANDOM GAME ",
 	"ACTIVATE FLASH AND WMA",
+	"GO BACK",
 	"CUSTOM LAUNCHER ->",
 	"RECOVERY MENU  ->",
 	" Advanced VSH Menu ",
