@@ -36,7 +36,6 @@ SUBDIRS = libs \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
 	extras/menus/xMenu \
-	extras/menus/vshmenu \
 	extras/menus/advancedvsh \
 	extras/xmbctrl \
 	extras/usbdevice \
@@ -68,12 +67,11 @@ copy-bin:
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
 	$(Q)cp extras/menus/arkMenu/themes/ARK_Revamped/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher and Recovery resources
-	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # Default vsh menu
 	$(Q)cp extras/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
 	$(Q)cp extras/xmbctrl/translations/XMB_*.TXT dist/ARK_01234/ # XMB Control translation files
 	$(Q)cp extras/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
 	$(Q)cp extras/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
-	$(Q)cp extras/menus/advancedvsh/satelite.prx dist/AdvancedVSH/VSHMENU.PRX # Advanced VSH Menu
+	$(Q)cp extras/menus/advancedvsh/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)cp contrib/README.TXT dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
@@ -127,7 +125,6 @@ clean:
 	$(Q)$(MAKE) $@ -C core/compat/vitapops
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
-	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
 	$(Q)$(MAKE) $@ -C extras/menus/advancedvsh
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
@@ -172,7 +169,6 @@ mkdir-dist:
 	$(Q)mkdir dist/ARK_Live | true
 	$(Q)mkdir dist/Infinity | true
 	$(Q)mkdir dist/ARK_cIPL | true
-	$(Q)mkdir dist/AdvancedVSH | true
 	$(Q)mkdir dist/VitaBubble/easter | true
 
 -include $(ARKROOT)/.config
