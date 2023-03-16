@@ -218,7 +218,7 @@ int submenu_draw(void)
 							blit_set_color(fc,bc);
 							break;
 						default:	
-							bc = (submax_menu==submenu_sel) ? 0xff8080 : 0xa00000ff;
+							bc = (submax_menu==submenu_sel) ? 0xff8080 : 0x000000ff;
 							blit_set_color(fc,bc);
 					}
 
@@ -363,7 +363,7 @@ int submenu_draw(void)
 							blit_set_color(fc,bc);
 							break;
 						default:	
-							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xffffffff;
+							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x0000a5ff;
 							blit_set_color(fc,bc);
 					}
 
