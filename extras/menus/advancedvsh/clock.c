@@ -66,13 +66,13 @@ int swap_readonly(int dir) {
 
 void change_bg_colors(int dir) {
 	int sel = cnf.vsh_bg_colors;
-	sel = limit(sel+dir, 0, 28);
+	sel = limit(sel+dir, 0, 27);
 	cnf.vsh_bg_colors=sel;
 }
 
 void change_fg_colors(int dir) {
 	int sel = cnf.vsh_fg_colors;
-	sel = limit(sel+dir, 0, 28);
+	sel = limit(sel+dir, 0, 27);
 	cnf.vsh_fg_colors=sel;
 }
 
