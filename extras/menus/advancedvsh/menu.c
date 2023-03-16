@@ -240,7 +240,7 @@ int menu_draw(void)
 							blit_set_color(fc,bc);
 							break;
 						default:	
-							bc = (max_menu==menu_sel) ? 0xff8080 : 0xa00000ff;
+							bc = (max_menu==menu_sel) ? 0xff8080 :0x0000a5ff;
 							blit_set_color(fc,bc);
 					}
 
@@ -393,13 +393,15 @@ int menu_draw(void)
 				bc = (max_menu==menu_sel) ? 0xff8080 : 0x0000ff00;
 			switch(max_menu) {
 				case TMENU_EXIT:
-					xPointer = pointer[2];
+					//xPointer = pointer[2];
+					xPointer = 225;
 					break;
 				case TMENU_RESET_DEVICE:
 					if (cur_language == PSP_SYSTEMPARAM_LANGUAGE_GERMAN) {
 						xPointer = pointer[3] - 2 * 8 - 1;
 					} else {
-						xPointer = pointer[3];
+						//xPointer = pointer[3];
+						xPointer = 192;
 					}
 					
 					break;
@@ -407,21 +409,28 @@ int menu_draw(void)
 					if (cur_language == PSP_SYSTEMPARAM_LANGUAGE_GERMAN) {
 						xPointer = pointer[7] - 2 * 8 - 1;
 					} else {
-						xPointer = pointer[7];
+						//xPointer = pointer[7];
+						xPointer = 205;
 					}
 					
 					break;
 				case TMENU_CUSTOM_LAUNCHER:
 				case TMENU_RECOVERY_MENU:
+					//xPointer = 168;
+					xPointer = 172;
+					break;
 				case TMENU_ADVANCED_VSH:
-					xPointer = 168;
+					xPointer = 176;
 					break;
 				case TMENU_SHUTDOWN_DEVICE:
-					xPointer = 176;
+					xPointer = 180;
 					break;
 				case TMENU_SUSPEND_DEVICE:
-					xPointer = 176;
+					xPointer = 185;
 					break;
+				//case TMENU_RESET_DEVICE:
+				//	xPointer = 190;
+				//	break;
 				default:
 					xPointer=pointer[4];
 					break;
