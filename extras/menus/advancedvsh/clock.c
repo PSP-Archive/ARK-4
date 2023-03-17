@@ -113,7 +113,7 @@ void change_umd_mode(int dir)
 	int sel = cnf.umdmode;
 
 	// select new
-	sel = limit(sel+dir, 1, 3);
+	sel = limit(sel+dir, 1, 2);
 	cnf.umdmode=sel;
 }
 
