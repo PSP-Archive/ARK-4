@@ -22,6 +22,7 @@
 #include <pspkernel.h>
 #include <psputility.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <pspumd.h>
 
 #include "common.h"
@@ -63,6 +64,7 @@ t_conf config;
 
 SEConfig cnf;
 static SEConfig cnf_old;
+int skip_game(char* game);
 
 u32 psp_fw_version;
 u32 psp_model;
@@ -72,6 +74,9 @@ UmdVideoList g_umdlist;
 ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
 extern int is_pandora;
+
+
+#define MAX_GAMES 256 
 
 int module_start(int argc, char *argv[])
 {
@@ -393,8 +398,7 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 }
 
 void exec_random_game() {
-	int MAX_GAMES = 100;
-	char GAME_DIR[16];
+	char GAME_DIR[15];
 	int num_games = 0;
 	char *games[MAX_GAMES];
 	char *cat_games[MAX_GAMES];
@@ -403,85 +407,107 @@ void exec_random_game() {
 	if(psp_model == PSP_GO) 
 		snprintf(GAME_DIR, sizeof(GAME_DIR), "%s", "ef0:/PSP/GAME/");
 	else
-		snprintf(GAME_DIR, sizeof(GAME_DIR),"%s", "ms0:/PSP/GAME/");
+		snprintf(GAME_DIR, sizeof(GAME_DIR), "%s", "ms0:/PSP/GAME/");
+
 
 	SceUID dir = sceIoDopen(GAME_DIR);
 	SceIoDirent dirent;
 
 
 	memset(&dirent, 0, sizeof(dirent));
-	while(sceIoDread(dir, &dirent) > 0 && num_games < MAX_GAMES) {
-		if(dirent.d_name == '.' || dirent.d_name == "..") 
-			continue;
+	while(sceIoDread(dir, &dirent) > 0 || num_games < MAX_GAMES) {
 		games[num_games] = malloc(strlen(GAME_DIR) + strlen(dirent.d_name) + 1);
+		if (strstr(GAME_DIR, ".") != NULL || strstr(GAME_DIR, "..") != NULL)
+			continue;
 		sprintf(games[num_games], "%s%s/", GAME_DIR, dirent.d_name);
 		num_games++;
 	}
 	sceIoDclose(dir);
-
-
-
+	
 	srand(time(NULL));
 	int rand_idx = rand() % num_games;
 	char *selected_game = games[rand_idx];
 
+int skip_game(char* game) {
+	if (strstr(game, "/../") != NULL || 
+		strstr(game, "/./") != NULL || 
+		strstr(game, "/Infinity/") != NULL || 
+		strstr(game, "TIMEMACHINE") != NULL || 
+		strstr(game, "ARK_") != NULL || 
+		strstr(game, "UCA") != NULL || 
+		strstr(game, "UCU") != NULL || 
+		strstr(game, "%") != NULL || 
+		strstr(game, "/UPDATE/") != NULL ||
+		strstr(game, "@ISOGAME@") != NULL) {
+		return 1;
+	}
+	return 0;
+}
 
-	if(strstr(selected_game, "/../") != NULL || strstr(selected_game, "/./") != NULL || strstr(selected_game, "/Infinity/") != NULL || 
-			strstr(selected_game, "/TIMEMACHINE/") != NULL || strstr(selected_game, "/ARK_cIPL/") != NULL || 
-			strstr(selected_game, "/ARK_Live/") != NULL || strstr(selected_game, "/UPDATE/") != NULL || strstr(selected_game, "%") != NULL) {
+	 while(skip_game(selected_game)) {
+		srand(time(NULL));
 		rand_idx = rand() % num_games;
 		selected_game = games[rand_idx];
-	}
+	 }
 
-	strcat(selected_game, "EBOOT.PBP");
+
+
+/*
+
+
 	int exists;
 	while(exists = sceIoOpen(selected_game, PSP_O_RDONLY, 0777) < 0) {
 		sceIoClose(exists);
 		rand_idx = rand() % num_games;
 		selected_game = games[rand_idx]; 
-		sceIoClose(selected_game);
 		exists = sceIoOpen(selected_game, PSP_O_RDONLY, 0777);
-		if(strstr(selected_game, "CAT_") != NULL) {
-			char rm_eboot[64];
-			size_t rm_eboot_len = strlen("/EBOOT.PBP");
-			rm_eboot[strlen(rm_eboot) - rm_eboot_len] = '\0';
-			strcpy(selected_game, rm_eboot);
-			SceUID cat_dir = sceIoDopen(selected_game);
-			SceIoDirent catdir;
-			num_games = 0;
-			while(sceIoDread(cat_dir, &catdir) > 0 && num_games < MAX_GAMES) {
-				if(catdir.d_name == '.' || catdir.d_name == "..") 
-					continue;
-				cat_games[num_games] = malloc(strlen(selected_game) + strlen(catdir.d_name) + 1);
-				sprintf(cat_games[num_games], "%s%s/", catdir.d_name, selected_game);
-				num_games++;
-			}
-		}
 		if(strstr(selected_game, "/../") != NULL || strstr(selected_game, "/./") != NULL || strstr(selected_game, "/Infinity/") != NULL || 
 			strstr(selected_game, "/TIMEMACHINE/") != NULL || strstr(selected_game, "/ARK_cIPL/") != NULL || 
 			strstr(selected_game, "/ARK_Live/") != NULL || strstr(selected_game, "/UPDATE/") != NULL ||
 			strstr(selected_game, '%') != NULL || strstr(selected_game, "UCA") != NULL || strstr(selected_game, "UCU") != NULL || strstr(selected_game, "@ISOGAME@") != NULL) {
+			sceIoClose(exists);
 			rand_idx = rand() % num_games;
 			selected_game = games[rand_idx];
 			exists = sceIoOpen(selected_game, PSP_O_RDONLY, 0777);
 		}
-/*
-		count++;
 
-		if (count == 8) {
-			count = 0;
-			sceIoClose(exists);
-			free(games);
-			free(cat_games);
-			exec_random_game();
-		}
-*/
-		free(games);
-		free(cat_games);
 
 	}
-
 	sceIoClose(exists);
+*/	
+	// CATEGORY LITE SUPPORT
+	if (strstr(selected_game, "/CAT_") != NULL) {
+		num_games = 0;
+
+		SceUID cat_dir = sceIoDopen(selected_game);
+		SceIoDirent catdir;
+		memset(&catdir, 0, sizeof(catdir));
+		while(sceIoDread(cat_dir, &catdir) > 0 || num_games < MAX_GAMES) {
+			//cat_games[num_games] = malloc(strlen(GAME_DIR) + strlen(selected_game) + strlen(catdir.d_name) + 1);
+			cat_games[num_games] = malloc(strlen(selected_game) + strlen(catdir.d_name) + 1);
+			if (strstr(selected_game, ".") != NULL || strstr(selected_game, "..") != NULL || strstr(catdir.d_name, ".") != NULL || strstr(catdir.d_name, "..") != NULL)
+				continue;
+			sprintf(cat_games[num_games], "%s%s/", selected_game, catdir.d_name);
+			num_games++;
+		}
+		sceIoDclose(cat_dir);
+
+
+		// Random Game from Categories
+		srand(time(NULL));
+		rand_idx = rand() % num_games;
+		selected_game = cat_games[rand_idx];
+	}
+
+
+
+
+
+	// Append EBOOT.PBP to end of gamelist
+	strcat(selected_game, "EBOOT.PBP");
+
+
+
 	struct SceKernelLoadExecVSHParam param;
     memset(&param, 0, sizeof(param));
     param.size = sizeof(param);
