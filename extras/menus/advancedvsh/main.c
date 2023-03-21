@@ -76,7 +76,7 @@ ARKConfig* ark_config = &_ark_conf;
 extern int is_pandora;
 
 
-#define MAX_GAMES 256 
+#define MAX_GAMES 10 
 
 int module_start(int argc, char *argv[])
 {
@@ -402,6 +402,7 @@ void exec_random_game() {
 	int num_games = 0;
 	char *games[MAX_GAMES];
 	char *cat_games[MAX_GAMES];
+	char *selected_game;
 	int count = 0;
 
 	if(psp_model == PSP_GO) 
@@ -417,16 +418,20 @@ void exec_random_game() {
 	memset(&dirent, 0, sizeof(dirent));
 	while(sceIoDread(dir, &dirent) > 0 || num_games < MAX_GAMES) {
 		games[num_games] = malloc(strlen(GAME_DIR) + strlen(dirent.d_name) + 1);
-		if (strstr(GAME_DIR, ".") != NULL || strstr(GAME_DIR, "..") != NULL)
+		if (strstr(GAME_DIR, ".") != NULL || strstr(GAME_DIR, "..") != NULL) {
+			num_games++;
 			continue;
-		sprintf(games[num_games], "%s%s/", GAME_DIR, dirent.d_name);
-		num_games++;
+		}
+		else {
+			sprintf(games[num_games], "%s%s/", GAME_DIR, dirent.d_name);
+			num_games++;
+		}
 	}
 	sceIoDclose(dir);
 	
 	srand(time(NULL));
 	int rand_idx = rand() % num_games;
-	char *selected_game = games[rand_idx];
+	selected_game = games[rand_idx];
 
 int skip_game(char* game) {
 	if (strstr(game, "/../") != NULL || 
@@ -482,13 +487,25 @@ int skip_game(char* game) {
 		SceUID cat_dir = sceIoDopen(selected_game);
 		SceIoDirent catdir;
 		memset(&catdir, 0, sizeof(catdir));
+		/*SceUID deleteMe = sceIoOpen("ms0:/selected_games_collection.txt", PSP_O_RDONLY, 0777);
+		if(deleteMe >= 0) {
+			sceIoRemove("ms0:/selected_games_collection.txt");
+			sceIoClose(deleteMe);
+		}
+		SceUID gamelist = sceIoOpen("ms0:/selected_games_collection.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
+		*/
 		while(sceIoDread(cat_dir, &catdir) > 0 || num_games < MAX_GAMES) {
 			//cat_games[num_games] = malloc(strlen(GAME_DIR) + strlen(selected_game) + strlen(catdir.d_name) + 1);
 			cat_games[num_games] = malloc(strlen(selected_game) + strlen(catdir.d_name) + 1);
-			if (strstr(selected_game, ".") != NULL || strstr(selected_game, "..") != NULL || strstr(catdir.d_name, ".") != NULL || strstr(catdir.d_name, "..") != NULL)
+			//if (strstr(catdir.d_name, "/./") != NULL || strstr(catdir.d_name, "/../") != NULL)
+			if(skip_game(catdir.d_name)) {
+				num_games++;
 				continue;
-			sprintf(cat_games[num_games], "%s%s/", selected_game, catdir.d_name);
-			num_games++;
+			}
+			else {
+				sprintf(cat_games[num_games], "%s%s/", selected_game, catdir.d_name);
+				num_games++;
+			}
 		}
 		sceIoDclose(cat_dir);
 
@@ -497,6 +514,17 @@ int skip_game(char* game) {
 		srand(time(NULL));
 		rand_idx = rand() % num_games;
 		selected_game = cat_games[rand_idx];
+		/*int i;
+		for (i = 0; i < num_games; i++ ) {
+			char *g = malloc(strlen(cat_games[i] + 2));
+			strcpy(g, cat_games[i]);
+			strcat(g, "\n");
+    		sceIoWrite(gamelist, g, strlen(g));	
+			free(g);
+		}
+		sceIoWrite(gamelist, selected_game, strlen(selected_game)); 
+		sceIoClose(gamelist);
+		*/
 	}
 
 
@@ -509,16 +537,25 @@ int skip_game(char* game) {
 
 
 	struct SceKernelLoadExecVSHParam param;
+	int apitype;
     memset(&param, 0, sizeof(param));
     param.size = sizeof(param);
 	param.args = strlen(selected_game) + 1;
 	param.argp = selected_game;
 	param.key = "game";
-	int apitype = 0x141;
+	if (psp_model == PSP_GO)
+		apitype = 0x152;
+	else
+		apitype = 0x141;
 	
-	if (strstr(selected_game, "SLU") != NULL || strstr(selected_game, "CAT_PRX") != NULL) {
+	if (strstr(selected_game, "SLU") != NULL || strstr(selected_game, "CAT_PRX") != NULL || strstr(selected_game, "/NPU") != NULL) {
 			param.key = "pops";
 			apitype = 0x144;
+	}
+
+	else if ((strstr(selected_game, "SLU") != NULL || strstr(selected_game, "CAT_PRX") != NULL || strstr(selected_game, "/NPU") != NULL) && psp_model == PSP_GO) {
+			param.key = "pops";
+			apitype = 0x155;
 	}
 	/*
 	char *ptr;
@@ -540,6 +577,9 @@ int skip_game(char* game) {
     sceIoWrite(test, selected_game, strlen(selected_game));	
 	sceIoClose(test);
 
+
+
+	// TODO: Added ISO support
 
 	sctrlKernelLoadExecVSHWithApitype(apitype, selected_game, &param);
 
