@@ -25,6 +25,8 @@ int vshregion = 0;
 
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
+u64 kermit_flash_load(int cmd);
+
 // Return Boot Status
 int isSystemBooted(void)
 {
