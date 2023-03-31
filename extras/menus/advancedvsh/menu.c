@@ -376,7 +376,7 @@ int menu_draw(void)
 							break;
 						// White  
 						case 26:
-							fc = (max_menu==menu_sel) ? 0xffffff : 0xffffffff;
+							fc = (max_menu==menu_sel) ? 0xffffff : 0x00ffffff;
 							blit_set_color(fc,bc);
 							break;
 						// Light White  
@@ -385,12 +385,11 @@ int menu_draw(void)
 							blit_set_color(fc,bc);
 							break;
 						default:	
-							fc = (max_menu==menu_sel) ? 0xffffff : 0xffffffff;
+							fc = (max_menu==menu_sel) ? 0xffffff : 0x00ffffff;
 							blit_set_color(fc,bc);
 					}
 
 		if(msg) {
-				bc = (max_menu==menu_sel) ? 0xff8080 : 0x0000ff00;
 			switch(max_menu) {
 				case TMENU_EXIT:
 					//xPointer = pointer[2];
