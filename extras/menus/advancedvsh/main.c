@@ -64,7 +64,6 @@ t_conf config;
 
 SEConfig cnf;
 static SEConfig cnf_old;
-int skip_game(char* game);
 
 u32 psp_fw_version;
 u32 psp_model;
@@ -76,19 +75,11 @@ ARKConfig* ark_config = &_ark_conf;
 extern int is_pandora;
 
 
-#define MAX_GAMES 10 
+#define MAX_GAMES 50 
 
 int module_start(int argc, char *argv[])
 {
 	SceUID thid;
-/*	SceKernelThreadInfo info;
-	info.size = sizeof(info);
-	SceUID def_thread = sceKernelReferThreadStatus("VshMenu_Thread", &info);
-	SceUID mod = sceUtilityLoadModule("ms0:/PSP/SAVEDATA/ARK_01234/VSHMENU.PRX");
-	sceKernelStopModule(mod, 0, NULL, NULL, NULL);
-	sceKernelUnloadModule(mod);
-*/
-
 
 	sctrlHENGetArkConfig(ark_config);
 	psp_model = kuKernelGetModel();
@@ -403,7 +394,9 @@ void exec_random_game() {
 	char *games[MAX_GAMES];
 	char *cat_games[MAX_GAMES];
 	char *selected_game;
-	int count = 0;
+	char *tmp;
+	srand(time(NULL));
+	int bad_count = 0;
 
 	if(psp_model == PSP_GO) 
 		snprintf(GAME_DIR, sizeof(GAME_DIR), "%s", "ef0:/PSP/GAME/");
@@ -414,52 +407,96 @@ void exec_random_game() {
 	SceUID dir = sceIoDopen(GAME_DIR);
 	SceIoDirent dirent;
 
+int skip_game(char* game) {
+	if(
+		strstr(game, "Infinity")      || 
+		strstr(game, "TIMEMACHINE")   || 
+		strstr(game, "/.")            || 
+		strstr(game, "..")            || 
+		strstr(game, "ARK_")          || 
+		strstr(game, "/UCA")          || 
+		strstr(game, "/UCU")          || 
+		strstr(game, "/UCJ")          || 
+		strstr(game, "/UPDATE/") != NULL) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int game_exist(char* game, char* tmp) {
+	strcpy(tmp, game);
+	strcat(tmp, "EBOOT.PBP");
+	SceUID exists = sceIoOpen(tmp, PSP_O_RDONLY, 0777);
+	if (exists >= 0) {
+		sceIoClose(exists);
+		return 0;
+	}
+	else {
+		return 1;
+	}
+} // END game_exist
 
 	memset(&dirent, 0, sizeof(dirent));
-	while(sceIoDread(dir, &dirent) > 0 || num_games < MAX_GAMES) {
-		games[num_games] = malloc(strlen(GAME_DIR) + strlen(dirent.d_name) + 1);
-		if (strstr(GAME_DIR, ".") != NULL || strstr(GAME_DIR, "..") != NULL) {
-			num_games++;
+	while(sceIoDread(dir, &dirent) > 0) {
+		if(strstr(dirent.d_name, "/.") != NULL) {
+			bad_count++;
 			continue;
 		}
-		else {
+		else { 
+			bad_count++;
+			games[num_games] = (char *)malloc(strlen(GAME_DIR) + strlen(dirent.d_name) + 1);
 			sprintf(games[num_games], "%s%s/", GAME_DIR, dirent.d_name);
 			num_games++;
 		}
 	}
 	sceIoDclose(dir);
-	
-	srand(time(NULL));
+
+	// No Games detected
+	if(bad_count==2)
+		sctrlKernelExitVSH(NULL);
+
 	int rand_idx = rand() % num_games;
 	selected_game = games[rand_idx];
 
-int skip_game(char* game) {
-	if (strstr(game, "/../") != NULL || 
-		strstr(game, "/./") != NULL || 
-		strstr(game, "/Infinity/") != NULL || 
-		strstr(game, "TIMEMACHINE") != NULL || 
-		strstr(game, "ARK_") != NULL || 
-		strstr(game, "UCA") != NULL || 
-		strstr(game, "UCU") != NULL || 
-		strstr(game, "%") != NULL || 
-		strstr(game, "/UPDATE/") != NULL ||
-		strstr(game, "@ISOGAME@") != NULL) {
-		return 1;
-	}
-	return 0;
-}
-
 	 while(skip_game(selected_game)) {
-		srand(time(NULL));
 		rand_idx = rand() % num_games;
 		selected_game = games[rand_idx];
 	 }
 
 
+	char *tmp_game_holder = (char *)malloc(strlen(selected_game)+ 11);
+	while(game_exist(selected_game, tmp_game_holder) > 0) {
+		rand_idx = rand() % num_games;
+		selected_game = games[rand_idx];
+	}
+	free(tmp_game_holder);
+
+	// TESTING
+	SceUID useless = sceIoOpen("ms0:/useless_loop.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
+	int z;
+	char *useless_loop = (char *)malloc(sizeof(char)*128);
+	for(z = 0; z < 50; z++) {
+		strcpy(useless_loop, games[z]);
+		strcat(useless_loop, "\n");
+		//sceIoWrite(fuck, fuck_it_all, strlen(fuck_it_all));
+	}
+	sceIoClose(useless);
+	free(useless_loop);
+	sceIoRemove((char *)"ms0:/useless_loop.txt");
+
+
+
+	SceUID test_norm = sceIoOpen("ms0:/selected_game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+	char *tmp_g = (char *)malloc(strlen(selected_game)); // + strlen(" Normal Game"));
+	strcpy(tmp_g, selected_game);
+	strcat(tmp_g, " Normal Game");
+    sceIoWrite(test_norm, tmp_g, strlen(tmp_g));	
+	sceIoClose(test_norm);
+
 
 /*
-
-
 	int exists;
 	while(exists = sceIoOpen(selected_game, PSP_O_RDONLY, 0777) < 0) {
 		sceIoClose(exists);
@@ -479,42 +516,72 @@ int skip_game(char* game) {
 
 	}
 	sceIoClose(exists);
-*/	
+
+*/
+
 	// CATEGORY LITE SUPPORT
 	if (strstr(selected_game, "/CAT_") != NULL) {
 		num_games = 0;
 
+
 		SceUID cat_dir = sceIoDopen(selected_game);
 		SceIoDirent catdir;
 		memset(&catdir, 0, sizeof(catdir));
-		/*SceUID deleteMe = sceIoOpen("ms0:/selected_games_collection.txt", PSP_O_RDONLY, 0777);
+		SceUID deleteMe = sceIoOpen("ms0:/selected_games_collection.txt", PSP_O_RDONLY, 0777);
 		if(deleteMe >= 0) {
 			sceIoRemove("ms0:/selected_games_collection.txt");
 			sceIoClose(deleteMe);
 		}
 		SceUID gamelist = sceIoOpen("ms0:/selected_games_collection.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
-		*/
+
+		bad_count = 0;	
 		while(sceIoDread(cat_dir, &catdir) > 0 || num_games < MAX_GAMES) {
+
 			//cat_games[num_games] = malloc(strlen(GAME_DIR) + strlen(selected_game) + strlen(catdir.d_name) + 1);
-			cat_games[num_games] = malloc(strlen(selected_game) + strlen(catdir.d_name) + 1);
-			//if (strstr(catdir.d_name, "/./") != NULL || strstr(catdir.d_name, "/../") != NULL)
-			if(skip_game(catdir.d_name)) {
-				num_games++;
+			if((strstr(catdir.d_name, "/./") || strstr(catdir.d_name, "/../")) != NULL) {
+				bad_count++;
 				continue;
 			}
 			else {
+				cat_games[num_games] = (char *)malloc(strlen(selected_game) + strlen(catdir.d_name) + 2);
 				sprintf(cat_games[num_games], "%s%s/", selected_game, catdir.d_name);
 				num_games++;
 			}
+
+
+			// Random Game from Categories
+			rand_idx = rand() % num_games;
+			selected_game = cat_games[rand_idx];
+
+		
 		}
 		sceIoDclose(cat_dir);
+		// No Games detected
+		if(bad_count==2)
+			sctrlKernelExitVSH(NULL);
 
+		while(skip_game(selected_game)) {
+				rand_idx = rand() % num_games;
+				selected_game = cat_games[rand_idx];
+			}
+		char *tmp_game_cat = (char *)malloc(strlen(selected_game) + 11);		
+		while(game_exist(selected_game, tmp_game_cat) > 0) {
+			rand_idx = rand() % num_games;
+			selected_game = cat_games[rand_idx];
+		}
+		free(tmp_game_cat);
 
-		// Random Game from Categories
-		srand(time(NULL));
-		rand_idx = rand() % num_games;
-		selected_game = cat_games[rand_idx];
-		/*int i;
+		SceUID test_cat = sceIoOpen("ms0:/selected_game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		char *tmp_cat_g = (char *)malloc(strlen(selected_game) + 10);
+		strcpy(tmp_cat_g, selected_game);
+		strcat(tmp_cat_g, " CAT GAME");
+    	sceIoWrite(test_cat, tmp_cat_g, strlen(tmp_cat_g));	
+		sceIoClose(test_cat);
+		free(tmp_cat_g);
+
+		/*
+
+		int i;
 		for (i = 0; i < num_games; i++ ) {
 			char *g = malloc(strlen(cat_games[i] + 2));
 			strcpy(g, cat_games[i]);
@@ -536,6 +603,7 @@ int skip_game(char* game) {
 
 
 
+
 	struct SceKernelLoadExecVSHParam param;
 	int apitype;
     memset(&param, 0, sizeof(param));
@@ -553,9 +621,23 @@ int skip_game(char* game) {
 			apitype = 0x144;
 	}
 
-	else if ((strstr(selected_game, "SLU") != NULL || strstr(selected_game, "CAT_PRX") != NULL || strstr(selected_game, "/NPU") != NULL) && psp_model == PSP_GO) {
+	else if ((strstr(selected_game, "SLU") || strstr(selected_game, "CAT_PRX") || strstr(selected_game, "/NPU")) != NULL && psp_model == PSP_GO) {
 			param.key = "pops";
 			apitype = 0x155;
+	}
+
+	else if (strstr(selected_game, "ISOGAME") != NULL) {
+		param.key = "umdemu";
+		param.args = 33;
+		param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN"; 
+		if(psp_model == PSP_GO)
+			apitype = 0x125;
+		else
+			apitype = 0x123;
+
+		selected_game = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN"; 
+		sctrlSESetBootConfFileIndex(3);
+		sctrlSESetUmdFile((char *)selected_game);
 	}
 	/*
 	char *ptr;
@@ -577,10 +659,9 @@ int skip_game(char* game) {
     sceIoWrite(test, selected_game, strlen(selected_game));	
 	sceIoClose(test);
 
-
-
-	// TODO: Added ISO support
-
+	// TESTING REBOOT VSH
+	//sctrlKernelExitVSH(NULL);
+	// WILL NOT GET TO (YET)
 	sctrlKernelLoadExecVSHWithApitype(apitype, selected_game, &param);
 
 }
