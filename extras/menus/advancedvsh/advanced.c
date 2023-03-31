@@ -209,7 +209,7 @@ int submenu_draw(void)
 							break;
 						// White  
 						case 26:
-							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xffffffff;
+							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x00ffffff;
 							blit_set_color(fc,bc);
 							break;
 						// Light White  
@@ -354,7 +354,7 @@ int submenu_draw(void)
 							break;
 						// White  
 						case 26:
-							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xffffffff;
+							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x00ffffff;
 							blit_set_color(fc,bc);
 							break;
 						// Light White  
@@ -368,7 +368,6 @@ int submenu_draw(void)
 					}
 
 		if(msg) {
-				bc = (submax_menu==submenu_sel) ? 0xff8080 : 0x0000ff00;
 			switch(submax_menu) {
 				case SUBMENU_GO_BACK:
 					xPointer = pointer[2];
