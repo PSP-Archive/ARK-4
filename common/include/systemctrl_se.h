@@ -80,7 +80,7 @@ enum vsh_bg_colors
 
 enum vsh_fg_colors
 {
-	FG_RED 			= 0,
+	FG_RED 			= 26,
 	FG_LITE_RED 	= 1,
 	FG_ORANGE 		= 2,
 	FG_LITE_ORANGE 	= 3,
@@ -106,7 +106,7 @@ enum vsh_fg_colors
 	FG_LITE_GREY 	= 23,
 	FG_BLACK 		= 24,
 	FG_LITE_BLACK 	= 25,
-	FG_WHITE 		= 26,
+	FG_WHITE 		= 0,
 	FG_LITE_WHITE 	= 27,
 };
 
