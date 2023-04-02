@@ -134,6 +134,7 @@ int menu_draw(void)
 						case 6:
 							bc = (max_menu==menu_sel) ? 0x0000ff : 0x0000b300;
 							blit_set_color(fc,bc);
+							break;
 						// Light Green
 						case 7:
 							bc = (max_menu==menu_sel) ? 0x0000ff : 0xa000ff00;
@@ -246,7 +247,7 @@ int menu_draw(void)
 
 					switch(cnf.vsh_fg_colors) {
 						// Red
-						case 0:
+						case 26:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x000000ff;
 							blit_set_color(fc,bc);
 							break;
@@ -279,6 +280,7 @@ int menu_draw(void)
 						case 6:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x0000b300;
 							blit_set_color(fc,bc);
+							break;
 						// Light Green
 						case 7:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa000ff00;
@@ -375,7 +377,7 @@ int menu_draw(void)
 							blit_set_color(fc,bc);
 							break;
 						// White  
-						case 26:
+						case 0:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x00ffffff;
 							blit_set_color(fc,bc);
 							break;
