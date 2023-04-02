@@ -473,17 +473,7 @@ int game_exist(char* game, char* tmp) {
 	}
 	free(tmp_game_holder);
 
-	// TESTING
-	//SceUID useless = sceIoOpen("ms0:/useless_loop.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
-	//int z;
-	//char *useless_loop = (char *)malloc(sizeof(char)*128);
-	//for(z = 0; z < 2000; z++) {}
-		//strcpy(useless_loop, games[z]);
-		//strcat(useless_loop, "\n");
-		//sceIoWrite(fuck, fuck_it_all, strlen(fuck_it_all));
-	//sceIoClose(useless);
-	//free(useless_loop);
-	//sceIoRemove((char *)"ms0:/useless_loop.txt");
+	// Added for better stability
 	sceKernelDelayThread(500000);
 
 
@@ -495,29 +485,6 @@ int game_exist(char* game, char* tmp) {
     sceIoWrite(test_norm, tmp_g, strlen(tmp_g));	
 	sceIoClose(test_norm);
 
-
-/*
-	int exists;
-	while(exists = sceIoOpen(selected_game, PSP_O_RDONLY, 0777) < 0) {
-		sceIoClose(exists);
-		rand_idx = rand() % num_games;
-		selected_game = games[rand_idx]; 
-		exists = sceIoOpen(selected_game, PSP_O_RDONLY, 0777);
-		if(strstr(selected_game, "/../") != NULL || strstr(selected_game, "/./") != NULL || strstr(selected_game, "/Infinity/") != NULL || 
-			strstr(selected_game, "/TIMEMACHINE/") != NULL || strstr(selected_game, "/ARK_cIPL/") != NULL || 
-			strstr(selected_game, "/ARK_Live/") != NULL || strstr(selected_game, "/UPDATE/") != NULL ||
-			strstr(selected_game, '%') != NULL || strstr(selected_game, "UCA") != NULL || strstr(selected_game, "UCU") != NULL || strstr(selected_game, "@ISOGAME@") != NULL) {
-			sceIoClose(exists);
-			rand_idx = rand() % num_games;
-			selected_game = games[rand_idx];
-			exists = sceIoOpen(selected_game, PSP_O_RDONLY, 0777);
-		}
-
-
-	}
-	sceIoClose(exists);
-
-*/
 
 	// CATEGORY LITE SUPPORT
 	if (strstr(selected_game, "/CAT_") != NULL) {
@@ -536,8 +503,6 @@ int game_exist(char* game, char* tmp) {
 
 		bad_count = 0;	
 		while(sceIoDread(cat_dir, &catdir) > 0 || num_games < MAX_GAMES) {
-
-			//cat_games[num_games] = malloc(strlen(GAME_DIR) + strlen(selected_game) + strlen(catdir.d_name) + 1);
 			if((strstr(catdir.d_name, "/./") || strstr(catdir.d_name, "/../")) != NULL) {
 				bad_count++;
 				continue;
@@ -578,25 +543,7 @@ int game_exist(char* game, char* tmp) {
     	sceIoWrite(test_cat, tmp_cat_g, strlen(tmp_cat_g));	
 		sceIoClose(test_cat);
 		free(tmp_cat_g);
-
-		/*
-
-		int i;
-		for (i = 0; i < num_games; i++ ) {
-			char *g = malloc(strlen(cat_games[i] + 2));
-			strcpy(g, cat_games[i]);
-			strcat(g, "\n");
-    		sceIoWrite(gamelist, g, strlen(g));	
-			free(g);
-		}
-		sceIoWrite(gamelist, selected_game, strlen(selected_game)); 
-		sceIoClose(gamelist);
-		*/
 	}
-
-
-
-
 
 	// Append EBOOT.PBP to end of gamelist
 	strcat(selected_game, "EBOOT.PBP");
@@ -639,29 +586,14 @@ int game_exist(char* game, char* tmp) {
 		sctrlSESetBootConfFileIndex(3);
 		sctrlSESetUmdFile((char *)selected_game);
 	}
-	/*
-	char *ptr;
-	char dir_eboot[64];
-	if ((ptr = strstr(selected_game, "ms0:/PSP/GAME/@ISOGAME@")) != NULL) {
-		memmove(ptr + strlen("/ISO/"), ptr + strlen("/PSP/GAME/"), strlen(ptr + strlen("/PSP/GAME/")) + 1);
-		strncpy(ptr, "@ISOGAME@", strlen("@ISOGAME@"));
-		strcpy(dir_eboot, selected_game);
-		size_t fileNameLength = strlen("/EBOOT.PBP");
-		dir_eboot[strlen(dir_eboot) - fileNameLength] = '\0';
-		//strcpy(selected_game, "ms0:/ISO/");
-		strcpy(selected_game, ptr);
-		//strcat(selected_game, strchr(dir_eboot, '/') + 1);
-	}
-	*/
-	
+
 	// Testing to see what file is being called
+#ifdef DEBUG
 	SceUID test = sceIoOpen("ms0:/selected_game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
     sceIoWrite(test, selected_game, strlen(selected_game));	
 	sceIoClose(test);
+#endif
 
-	// TESTING REBOOT VSH
-	//sctrlKernelExitVSH(NULL);
-	// WILL NOT GET TO (YET)
 	sctrlKernelLoadExecVSHWithApitype(apitype, selected_game, &param);
 
 }
