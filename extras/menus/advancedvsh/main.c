@@ -474,17 +474,17 @@ int game_exist(char* game, char* tmp) {
 	free(tmp_game_holder);
 
 	// TESTING
-	SceUID useless = sceIoOpen("ms0:/useless_loop.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
-	int z;
-	char *useless_loop = (char *)malloc(sizeof(char)*128);
-	for(z = 0; z < 50; z++) {
-		strcpy(useless_loop, games[z]);
-		strcat(useless_loop, "\n");
+	//SceUID useless = sceIoOpen("ms0:/useless_loop.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
+	//int z;
+	//char *useless_loop = (char *)malloc(sizeof(char)*128);
+	//for(z = 0; z < 2000; z++) {}
+		//strcpy(useless_loop, games[z]);
+		//strcat(useless_loop, "\n");
 		//sceIoWrite(fuck, fuck_it_all, strlen(fuck_it_all));
-	}
-	sceIoClose(useless);
-	free(useless_loop);
-	sceIoRemove((char *)"ms0:/useless_loop.txt");
+	//sceIoClose(useless);
+	//free(useless_loop);
+	//sceIoRemove((char *)"ms0:/useless_loop.txt");
+	sceKernelDelayThread(500000);
 
 
 
