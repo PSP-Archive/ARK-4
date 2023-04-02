@@ -110,11 +110,12 @@ int submenu_draw(void)
 							break;
 						// Green
 						case 6:
-							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x0000b300;
+							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x0000ff00;
 							blit_set_color(fc,bc);
+							break;
 						// Light Green
 						case 7:
-							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa000ff00;
+							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa000b300;
 							blit_set_color(fc,bc);
 							break;
 						// Blue
@@ -224,7 +225,7 @@ int submenu_draw(void)
 
 					switch(cnf.vsh_fg_colors) {
 						// Red
-						case 0:
+						case 26:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x000000ff;
 							blit_set_color(fc,bc);
 							break;
@@ -257,6 +258,7 @@ int submenu_draw(void)
 						case 6:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x0000b300;
 							blit_set_color(fc,bc);
+							break;
 						// Light Green
 						case 7:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa000ff00;
@@ -353,7 +355,7 @@ int submenu_draw(void)
 							blit_set_color(fc,bc);
 							break;
 						// White  
-						case 26:
+						case 0:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x00ffffff;
 							blit_set_color(fc,bc);
 							break;
@@ -592,7 +594,7 @@ int submenu_setup(void)
 			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_WHITE];
 			break;
 		default:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_WHITE];
+			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_WHITE];
 	}
 	switch(cnf.vsh_bg_colors) {
 		case BG_RED:
