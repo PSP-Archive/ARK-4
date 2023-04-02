@@ -75,7 +75,7 @@ ARKConfig* ark_config = &_ark_conf;
 extern int is_pandora;
 
 
-#define MAX_GAMES 50 
+#define MAX_GAMES 255 
 
 int module_start(int argc, char *argv[])
 {
