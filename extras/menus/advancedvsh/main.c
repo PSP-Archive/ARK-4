@@ -480,14 +480,7 @@ int game_exist(char* game, char* tmp) {
 
 	free(tmp_game_holder);
 
-/*
-	SceUID nah_fam = sceIoOpen("ms0:/all_games.txt", PSP_O_RDONLY, 0777);
-	if(nah_fam >= 0) {
-		sceIoRemove("ms0:/all_games.txt");
-		sceIoClose(nah_fam);
-	}
-*/
-
+#ifdef DEBUG
 	char *all_games = "ms0:/all_games.txt";
 
 	int all_games_ret = sceIoRemove(all_games);
@@ -502,20 +495,21 @@ int game_exist(char* game, char* tmp) {
 	}
 	sceIoClose(t);
 	free(tmp_list);
-
+#endif
 
 
 	// Added for better stability
 	sceKernelDelayThread(500000);
 
 
-
+#ifdef DEBUG
 	SceUID test_norm = sceIoOpen("ms0:/selected_game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 	char *tmp_g = (char *)malloc(strlen(selected_game)); // + strlen(" Normal Game"));
 	strcpy(tmp_g, selected_game);
 	strcat(tmp_g, " Normal Game");
     sceIoWrite(test_norm, tmp_g, strlen(tmp_g));	
 	sceIoClose(test_norm);
+#endif
 
 
 	// CATEGORY LITE SUPPORT
@@ -526,12 +520,13 @@ int game_exist(char* game, char* tmp) {
 		SceUID cat_dir = sceIoDopen(selected_game);
 		SceIoDirent catdir;
 		memset(&catdir, 0, sizeof(catdir));
+#ifdef DEBUG
 		SceUID deleteMe = sceIoOpen("ms0:/selected_games_collection.txt", PSP_O_RDONLY, 0777);
 		if(deleteMe >= 0) {
 			sceIoRemove("ms0:/selected_games_collection.txt");
 			sceIoClose(deleteMe);
 		}
-
+#endif
 		bad_count = 0;	
 		while(sceIoDread(cat_dir, &catdir) > 0 || num_games < MAX_GAMES) {
 			if(strstr(catdir.d_name, "/.") != NULL) {
@@ -568,7 +563,7 @@ int game_exist(char* game, char* tmp) {
 			selected_game = cat_games[rand_idx];
 		}
 		free(tmp_game_cat);
-
+#ifdef DEBUG
 		SceUID test_cat = sceIoOpen("ms0:/selected_game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 		char *tmp_cat_g = (char *)malloc(strlen(selected_game) + 10);
 		strcpy(tmp_cat_g, selected_game);
@@ -576,6 +571,7 @@ int game_exist(char* game, char* tmp) {
     	sceIoWrite(test_cat, tmp_cat_g, strlen(tmp_cat_g));	
 		sceIoClose(test_cat);
 		free(tmp_cat_g);
+#endif
 	}
 
 	// Append EBOOT.PBP to end of gamelist
@@ -662,9 +658,11 @@ int game_exist(char* game, char* tmp) {
 	}
 
 	// Testing to see what file is being called
+#ifdef DEBUG
 	SceUID test = sceIoOpen("ms0:/selected_game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
     sceIoWrite(test, selected_game, strlen(selected_game));	
 	sceIoClose(test);
+#endif
 
 	sctrlKernelLoadExecVSHWithApitype(apitype, selected_game, &param);
 
