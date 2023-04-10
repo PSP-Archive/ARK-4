@@ -74,8 +74,7 @@ ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
 extern int is_pandora;
 
-
-#define MAX_GAMES 50 
+#define MAX_GAMES 25 
 
 int module_start(int argc, char *argv[])
 {
@@ -603,8 +602,6 @@ int game_exist(char* game, char* tmp) {
 	}
 
 	else if (strstr(selected_game, "ISOGAME") != NULL) {
-		//free(games);
-		//free(cat_games);
 		param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN"; 
 		if(psp_model == PSP_GO)
 			apitype = 0x125;
