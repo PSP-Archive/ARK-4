@@ -190,7 +190,6 @@ int memcmp_patched(const void *b1, const void *b2, size_t len) {
 void PatchMemlmd() {
 	SceModule2 *mod = sceKernelFindModuleByName("sceMemlmd");
 	u32 text_addr = mod->text_addr;
-	u32 text_size = mod->text_size;
 
 	// Allow 6.61 kernel modules
 	MAKE_CALL(text_addr + 0x2C8, memcmp_patched);
