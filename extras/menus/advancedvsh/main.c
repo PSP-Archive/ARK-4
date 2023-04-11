@@ -412,22 +412,26 @@ void exec_random_game() {
 	SceUID dir = sceIoDopen(GAME_DIR);
 	SceIoDirent dirent;
 
-int skip_game(char* game) {
-	if(
-		strstr(game, "Infinity")      || 
-		strstr(game, "TIMEMACHINE")   || 
-		strstr(game, "FastRecovery")  || 
-		strstr(game, ".")             || 
-		strstr(game, "ARK_")          || 
-		strstr(game, "/UCA")          || 
-		strstr(game, "/UCU")          || 
-		strstr(game, "/UCJ")          || 
-		strstr(game, "UPDATE") != NULL) {
+int skip_game(char *game) {
+	//char *path = ISO_DIR[strlen(ISO_DIR)-4];
+	char *path = "ms0:/blacklist.txt";
+	char line[64];
+	if(strstr(game, "/.") != NULL || strstr(game, "/..") != NULL)
 		return 1;
+	//SceUID blacklist = sceIoOpen(path, PSP_O_RDONLY, 0777);
+	FILE *blacklist = fopen(path, "r");
+	if(blacklist == 0) 
+		return blacklist;
+	while(fgets(line, sizeof(line), blacklist) != NULL) {
+		if(strcasecmp(line, game) == 0) {
+			fclose(blacklist);
+			return 1;
+		}
 	}
-	else {
-		return 0;
-	}
+
+
+	fclose(blacklist);
+	return 0;
 }
 
 int game_exist(char* game, char* tmp) {
@@ -616,38 +620,22 @@ int game_exist(char* game, char* tmp) {
 		SceIoDirent isodir;
 		num_games = 0;
 
-		//SceUID j = sceIoOpen("ms0:/allgames.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
-		//char *p;
-	
 
-		//char *l = malloc(sizeof(char)*64);
 		memset(&isodir, 0, sizeof(isodir));
 		while(sceIoDread(iso_dir, &isodir) > 0) {
 			if(isodir.d_name == '.' || isodir.d_name == "..")
 				continue;
-			//p = strrchr(isodir.d_name, '.');
-			//iso_games[num_games] = (char *)malloc(strlen(ISO_DIR) + strlen(isodir.d_name) + 1);
-			//iso_games[num_games] = (char *)malloc(sizeof(char)*64);
-
-			//if(0 == (strcasecmp(p, ".iso") || strcasecmp(p, ".cso") || strcasecmp(p, ".dax"))) { 
 			else if(strrchr(isodir.d_name, '.')) { 
 				iso_games[num_games] = (char *)malloc(strlen(ISO_DIR) + strlen(isodir.d_name) + 1);
-				//strcpy(l, ISO_DIR);
-				//strcpy(l, isodir.d_name);
-				//strcat(l, "\n");
-				//sceIoWrite(j, l, strlen(l));
 				sprintf(iso_games[num_games], "%s%s", ISO_DIR, isodir.d_name);
-				//free(l);
 				num_games++;
 			}
 		}
 		sceIoDclose(iso_dir);
-		//free(l);
-		//sceIoClose(j);
-
-		//sctrlKernelExitVSH(NULL);	
-		rand_idx = rand() % num_games; 
-		selected_game = iso_games[rand_idx];
+		while(skip_game(selected_game)) {
+			rand_idx = rand() % num_games; 
+			selected_game = iso_games[rand_idx];
+		}
 
 		sctrlSESetBootConfFileIndex(3);
 		sctrlSESetUmdFile(selected_game);
