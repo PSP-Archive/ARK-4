@@ -5,6 +5,9 @@ BUILD_PRX=1
 
 INCDIR = $(ARKROOT)/common/include
 CFLAGS = -Os -G0 -Wall
+ifdef DEBUG
+CFLAGS += -DDEBUG=$(DEBUG)
+endif
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 
