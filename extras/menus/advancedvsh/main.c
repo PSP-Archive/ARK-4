@@ -423,6 +423,7 @@ int skip_game(char *game) {
 	if(blacklist == 0) 
 		return blacklist;
 	while(fgets(line, sizeof(line), blacklist) != NULL) {
+		line[strcspn(line, "\n")] = '\0';
 		if(strcasecmp(line, game) == 0) {
 			fclose(blacklist);
 			return 1;
@@ -476,7 +477,7 @@ int game_exist(char* game, char* tmp) {
 
 
 	char *tmp_game_holder = (char *)malloc(strlen(selected_game)+ 11);
-	while(game_exist(selected_game, tmp_game_holder) > 0 && strstr(selected_game, "CAT_") != NULL) {
+	while(game_exist(selected_game, tmp_game_holder) > 0 && strstr(selected_game, "CAT_") != NULL && skip_game(selected_game)) {
 		rand_idx = rand() % num_games;
 		selected_game = games[rand_idx];
 	}
@@ -561,7 +562,7 @@ int game_exist(char* game, char* tmp) {
 			}
 
 		char *tmp_game_cat = (char *)malloc(strlen(selected_game) + 11);		
-		while(game_exist(selected_game, tmp_game_cat) > 0) {
+		while(game_exist(selected_game, tmp_game_cat) > 0 && skip_game(selected_game)) {
 			rand_idx = rand() % num_games;
 			selected_game = cat_games[rand_idx];
 		}
@@ -575,7 +576,7 @@ int game_exist(char* game, char* tmp) {
 		sceIoClose(test_cat);
 		free(tmp_cat_g);
 #endif
-	}
+	} // END OF CAT LITE CHECK
 
 	// Append EBOOT.PBP to end of gamelist
 	strcat(selected_game, "EBOOT.PBP");
