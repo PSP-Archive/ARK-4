@@ -339,6 +339,10 @@ void patch_SysconfPlugin(SceModule2* mod){
 	_sw(0, text_addr + 0xB264);
 }
 
+void exit_game_patched(){
+	sctrlKernelExitVSH(NULL);
+}
+
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
 	if (strcasecmp(path, "highmem") == 0){ // enable high memory
@@ -398,6 +402,8 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "sceLoadExec") == 0) {
 		PatchLoadExec(mod->text_addr, mod->text_size);
+		sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exit_game_patched);
+        sctrlHENPatchSyscall((void*)sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exit_game_patched);
         goto flush;
 	}
 

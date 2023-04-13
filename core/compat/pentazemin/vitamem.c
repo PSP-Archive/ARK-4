@@ -12,7 +12,7 @@
 
 void unlockVitaMemory(){
 
-    int apitype = sceKernelInitApitype(); // prevent in pops and vsh(?)
+    int apitype = sceKernelInitApitype(); // prevent in pops and vsh
     if (apitype == 0x144 || apitype == 0x155 || apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300)
         return;
 
@@ -34,7 +34,7 @@ void unlockVitaMemory(){
     }
 
 
-    u32 kernel_size = (4 * 1024 * 1024); // p11 size
+    u32 kernel_size = 0; //(4 * 1024 * 1024); // p11 size
     u32 user_size = USER_SIZE + VITA_EXTRA_RAM_SIZE - kernel_size; // new p2 size
 
     // modify p2
