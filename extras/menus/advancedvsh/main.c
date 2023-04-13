@@ -19,6 +19,12 @@
  * vshMenu by neur0n
  * based booster's vshex
  */
+
+/* avshMenu by krazynez
+ * based on PRO vsh, ME vsh, and ultimate vsh, and the Original ARK-4 vshmenu.
+ * Plus myself and acid_snake's mentally insane thoughts and awesomeness ;-)
+ */
+
 #include <pspkernel.h>
 #include <psputility.h>
 #include <stdio.h>
@@ -116,26 +122,8 @@ int EatKey(SceCtrlData *pad_data, int count)
 	int i;
 
 	// copy true value
-
-#ifdef CONFIG_639
-	if(psp_fw_version == FW_639)
-		scePaf_memcpy(&ctrl_pad, pad_data, sizeof(SceCtrlData));
-#endif
-
-#ifdef CONFIG_635
-	if(psp_fw_version == FW_635)
-		scePaf_memcpy(&ctrl_pad, pad_data, sizeof(SceCtrlData));
-#endif
-
-#ifdef CONFIG_620
-	if (psp_fw_version == FW_620)
-		scePaf_memcpy_620(&ctrl_pad, pad_data, sizeof(SceCtrlData));
-#endif
-
-#if defined(CONFIG_660) || defined(CONFIG_661)
 	if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
 		scePaf_memcpy_660(&ctrl_pad, pad_data, sizeof(SceCtrlData));
-#endif
 
 	// buttons check
 	buttons     = ctrl_pad.Buttons;
