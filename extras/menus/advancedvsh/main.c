@@ -24,7 +24,6 @@
  * based on PRO vsh, ME vsh, and ultimate vsh, and the Original ARK-4 vshmenu.
  * Plus myself and acid_snake's mentally insane thoughts and awesomeness ;-)
  */
-
 #include <pspkernel.h>
 #include <psputility.h>
 #include <stdio.h>
@@ -402,23 +401,22 @@ void exec_random_game() {
 	SceIoDirent dirent;
 
 int skip_game(char *game) {
-	char *path = "ms0:/blacklist.txt";
+	char path[] = "ms0:/blacklist.txt";
 	char line[256];
-	if(strstr(game, "/.") != NULL || strstr(game, "/..") != NULL)
+	if(strstr(game, "/.") != NULL || strstr(game, "/..") != NULL || strstr(game, "/!") != NULL)
 		return 1;
 	//SceUID blacklist = sceIoOpen(path, PSP_O_RDONLY, 0777);
 	FILE *blacklist = fopen(path, "r");
-	if(blacklist == 0) 
-		return blacklist;
 	while(fgets(line, sizeof(line), blacklist) != NULL) {
 		line[strcspn(line, "\n")] = '\0';
 		if(strcasecmp(line, game) == 0) {
 			fclose(blacklist);
+			//sceIoClose(blacklist);
 			return 1;
 		}
 	}
 
-
+	//sceIoClose(blacklist);
 	fclose(blacklist);
 	return 0;
 }
