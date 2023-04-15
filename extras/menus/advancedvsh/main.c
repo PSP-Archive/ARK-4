@@ -455,16 +455,16 @@ int game_exist(char* game, char* tmp) {
 
 	int rand_idx = rand() % num_games;
 	selected_game = games[rand_idx];
-
+/*
 	 while(skip_game(selected_game)) {
 		rand_idx = rand() % num_games;
 		selected_game = games[rand_idx];
 	 }
-
+*/
 
 	char *tmp_game_holder = (char *)malloc(strlen(selected_game)+ 11);
 	//while(game_exist(selected_game, tmp_game_holder) > 0 && strstr(selected_game, "CAT_") != NULL && skip_game(selected_game)) {
-	while(game_exist(selected_game, tmp_game_holder) > 0 && skip_game(selected_game)) {
+	while(game_exist(selected_game, tmp_game_holder) > 0 || skip_game(selected_game)) {
 		rand_idx = rand() % num_games;
 		selected_game = games[rand_idx];
 	}
@@ -630,6 +630,7 @@ int game_exist(char* game, char* tmp) {
 		sceIoDclose(iso_dir);
 		rand_idx = rand() % num_games; 
 		selected_game = iso_games[rand_idx];
+
 		while(skip_game(selected_game) > 0) {
 			rand_idx = rand() % num_games; 
 			selected_game = iso_games[rand_idx];
