@@ -40,6 +40,8 @@
 
 #include "../arkMenu/include/conf.h"
 
+#define DEBUG 1
+
 int TSRThread(SceSize args, void *argp);
 
 /* Define the module info section */
@@ -401,13 +403,19 @@ void exec_random_game() {
 	SceIoDirent dirent;
 
 int skip_game(char *game) {
+	sceKernelDelayThread(500000);
+	//char path2[] = "ms0:/a_blacklist.txt";
+	//FILE *wb = fopen(path2, "a");
+	//fwrite(game, 1, strlen(game), wb);
+	//fwrite("\n", 1, sizeof(char), wb);
+	//fclose(wb);
 	char path[] = "ms0:/blacklist.txt";
 	char line[256];
 	if(strstr(game, "/.") != NULL || strstr(game, "/..") != NULL || strstr(game, "/!") != NULL)
 		return 1;
 	//SceUID blacklist = sceIoOpen(path, PSP_O_RDONLY, 0777);
 	FILE *blacklist = fopen(path, "r");
-	while(fgets(line, sizeof(line), blacklist) != NULL) {
+	while(fgets(line, sizeof(line), blacklist)) {
 		line[strcspn(line, "\n")] = '\0';
 		if(strcasecmp(line, game) == 0) {
 			fclose(blacklist);
@@ -415,7 +423,6 @@ int skip_game(char *game) {
 			return 1;
 		}
 	}
-
 	//sceIoClose(blacklist);
 	fclose(blacklist);
 	return 0;
@@ -425,18 +432,18 @@ int game_exist(char* game, char* tmp) {
 	strcpy(tmp, game);
 	strcat(tmp, "EBOOT.PBP");
 	SceUID exists = sceIoOpen(tmp, PSP_O_RDONLY, 0777);
-	if (exists >= 0) {
-		sceIoClose(exists);
-		return 0;
+	if (!exists) {
+		return 1;
 	}
 	else {
-		return 1;
+		sceIoClose(exists);
+		return 0;
 	}
 } // END game_exist
 
 	memset(&dirent, 0, sizeof(dirent));
 	while(sceIoDread(dir, &dirent) > 0) {
-		if(strstr(dirent.d_name, "/.") != NULL) {
+		if(dirent.d_name == "." || dirent.d_name == "..") {
 			bad_count++;
 			continue;
 		}
@@ -464,7 +471,7 @@ int game_exist(char* game, char* tmp) {
 
 	char *tmp_game_holder = (char *)malloc(strlen(selected_game)+ 11);
 	//while(game_exist(selected_game, tmp_game_holder) > 0 && strstr(selected_game, "CAT_") != NULL && skip_game(selected_game)) {
-	while(game_exist(selected_game, tmp_game_holder) > 0 || skip_game(selected_game)) {
+	while(game_exist(selected_game, tmp_game_holder) > 0 || skip_game(selected_game) > 0) {
 		rand_idx = rand() % num_games;
 		selected_game = games[rand_idx];
 	}
@@ -503,6 +510,10 @@ int game_exist(char* game, char* tmp) {
 #endif
 
 	while(strstr(selected_game, "CAT_") != NULL) {
+			if(strstr(selected_game, ".") != NULL || strstr(selected_game, "..") != NULL || skip_game(selected_game) > 0) {
+				rand_idx = rand() % num_games; 
+				selected_game = games[rand_idx];
+			}
 			rand_idx = rand() % num_games; 
 			selected_game = games[rand_idx];
 	}
@@ -614,7 +625,7 @@ int game_exist(char* game, char* tmp) {
 		memset(&isodir, 0, sizeof(isodir));
 		while(sceIoDread(iso_dir, &isodir) > 0) {
 
-			if(isodir.d_name == "." != NULL || isodir.d_name == "..")
+			if(isodir.d_name == "." || isodir.d_name == "..")
 				continue;
 			/*else if(strstr(isodir.d_name, "CAT_") != NULL) {
 				sprintf(cat_iso_games[iso_num_games], "%s%s", ISO_DIR, isodir.d_name);
