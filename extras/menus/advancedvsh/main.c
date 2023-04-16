@@ -40,8 +40,6 @@
 
 #include "../arkMenu/include/conf.h"
 
-#define DEBUG 1
-
 int TSRThread(SceSize args, void *argp);
 
 /* Define the module info section */
