@@ -389,7 +389,12 @@ int skip_game(char *game) {
 	//fwrite(game, 1, strlen(game), wb);
 	//fwrite("\n", 1, sizeof(char), wb);
 	//fclose(wb);
-	char path[] = "ms0:/blacklist.txt";
+	char path[20];
+	if (psp_model == PSP_GO)
+		snprintf(path, sizeof(path), "%s", "ef0:/blacklist.txt");
+	else
+		snprintf(path, sizeof(path), "%s", "ms0:/blacklist.txt");
+
 	char line[256];
 	if(strstr(game, "/.") != NULL || strstr(game, "/..") != NULL || strstr(game, "/!") != NULL)
 		return 1;
