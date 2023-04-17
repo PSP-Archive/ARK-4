@@ -345,26 +345,8 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 			p = dir.d_name;
 
 		if(0 == stricmp(p, ".iso") || 0 == stricmp(p, ".cso") || 0 == stricmp(p, ".zso")) {
-#ifdef CONFIG_639
-			if(psp_fw_version == FW_639)
-				scePaf_sprintf(fullpath, "%s/%s", path, dir.d_name);
-#endif
-
-#ifdef CONFIG_635
-			if(psp_fw_version == FW_635)
-				scePaf_sprintf(fullpath, "%s/%s", path, dir.d_name);
-#endif
-
-#ifdef CONFIG_620
-			if (psp_fw_version == FW_620)
-				scePaf_sprintf_620(fullpath, "%s/%s", path, dir.d_name);
-#endif
-
-#if defined(CONFIG_660) || defined(CONFIG_661)
 			if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
 				scePaf_sprintf_660(fullpath, "%s/%s", path, dir.d_name);
-#endif
-
 			umdvideolist_add(list, fullpath);
 		}
 	}
@@ -617,25 +599,33 @@ int game_exist(char* game, char* tmp) {
 		SceUID iso_dir = sceIoDopen(ISO_DIR);
 		SceIoDirent isodir;
 		num_games = 0;
+		bad_count = 0;
 		//int iso_num_games = 0;
 		
 
 		memset(&isodir, 0, sizeof(isodir));
 		while(sceIoDread(iso_dir, &isodir) > 0) {
 
-			if(isodir.d_name == "." || isodir.d_name == "..")
+			if(isodir.d_name == "." || isodir.d_name == "..") {
+				bad_count++;
 				continue;
+			}
 			/*else if(strstr(isodir.d_name, "CAT_") != NULL) {
 				sprintf(cat_iso_games[iso_num_games], "%s%s", ISO_DIR, isodir.d_name);
 				iso_num_games++;
 			}
 */
 			else if(strrchr(isodir.d_name, '.')) { 
+				bad_count++;
 				iso_games[num_games] = (char *)malloc(strlen(ISO_DIR) + strlen(isodir.d_name) + 1);
 				sprintf(iso_games[num_games], "%s%s", ISO_DIR, isodir.d_name);
 				num_games++;
 			}
 		}
+
+		if(bad_count == 2)
+			sctrlKernelExitVSH(NULL);
+
 		sceIoDclose(iso_dir);
 		rand_idx = rand() % num_games; 
 		selected_game = iso_games[rand_idx];
