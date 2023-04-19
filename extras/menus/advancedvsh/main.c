@@ -356,32 +356,6 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 	return result;
 }
 
-void exec_random_game() {
-	char GAME_DIR[15];
-	char ISO_DIR[10];
-	int num_games = 0;
-	char *games[MAX_GAMES];
-	//char *cat_games[MAX_GAMES];
-	//char *cat_iso_games[MAX_GAMES];
-	char *iso_games[MAX_GAMES];
-	char *selected_game;
-	char *tmp;
-	srand(time(NULL));
-	int bad_count = 0;
-
-	if(psp_model == PSP_GO) { 
-		snprintf(GAME_DIR, sizeof(GAME_DIR), "%s", "ef0:/PSP/GAME/");
-		snprintf(ISO_DIR, sizeof(ISO_DIR), "%s", "ef0:/ISO/");
-	}
-	else {
-		snprintf(GAME_DIR, sizeof(GAME_DIR), "%s", "ms0:/PSP/GAME/");
-		snprintf(ISO_DIR, sizeof(ISO_DIR), "%s", "ms0:/ISO/");
-	}
-
-
-	SceUID dir = sceIoDopen(GAME_DIR);
-	SceIoDirent dirent;
-
 int skip_game(char *game) {
 	sceKernelDelayThread(500000);
 	//char path2[] = "ms0:/a_blacklist.txt";
@@ -426,6 +400,33 @@ int game_exist(char* game, char* tmp) {
 	}
 } // END game_exist
 
+
+void exec_random_game() {
+	char GAME_DIR[] = "xx0:/PSP/GAME/";
+	char ISO_DIR[] = "xx0:/ISO/";
+	int num_games = 0;
+	char *games[MAX_GAMES];
+	//char *cat_games[MAX_GAMES];
+	//char *cat_iso_games[MAX_GAMES];
+	char *iso_games[MAX_GAMES];
+	char *selected_game;
+	char *tmp;
+	srand(time(NULL));
+	int bad_count = 0;
+
+	if(psp_model == PSP_GO) { 
+		snprintf(GAME_DIR, sizeof(GAME_DIR), "%s", "ef0:/PSP/GAME/");
+		snprintf(ISO_DIR, sizeof(ISO_DIR), "%s", "ef0:/ISO/");
+	}
+	else {
+		snprintf(GAME_DIR, sizeof(GAME_DIR), "%s", "ms0:/PSP/GAME/");
+		snprintf(ISO_DIR, sizeof(ISO_DIR), "%s", "ms0:/ISO/");
+	}
+
+
+	SceUID dir = sceIoDopen(GAME_DIR);
+	SceIoDirent dirent;
+
 	memset(&dirent, 0, sizeof(dirent));
 	while(sceIoDread(dir, &dirent) > 0) {
 		if(dirent.d_name == "." || dirent.d_name == "..") {
@@ -454,14 +455,15 @@ int game_exist(char* game, char* tmp) {
 	 }
 */
 
-	char *tmp_game_holder = (char *)malloc(strlen(selected_game)+ 11);
+	//char *tmp_game_holder = (char *)malloc(strlen(selected_game)+ 11);
 	//while(game_exist(selected_game, tmp_game_holder) > 0 && strstr(selected_game, "CAT_") != NULL && skip_game(selected_game)) {
-	while(game_exist(selected_game, tmp_game_holder) > 0 || skip_game(selected_game) > 0) {
+	//while(game_exist(selected_game, tmp_game_holder) > 0 || skip_game(selected_game) > 0) {
+	while(skip_game(selected_game) > 0) {
 		rand_idx = rand() % num_games;
 		selected_game = games[rand_idx];
 	}
 
-	free(tmp_game_holder);
+	//free(tmp_game_holder);
 
 #ifdef DEBUG
 	char *all_games = "ms0:/all_games.txt";
@@ -494,8 +496,9 @@ int game_exist(char* game, char* tmp) {
 	sceIoClose(test_norm);
 #endif
 
-	while(strstr(selected_game, "CAT_") != NULL) {
-			if(strstr(selected_game, ".") != NULL || strstr(selected_game, "..") != NULL || skip_game(selected_game) > 0) {
+	while(strstr(selected_game, "CAT_") != NULL || skip_game(selected_game) > 0) {
+			//if(strstr(selected_game, ".") != NULL || strstr(selected_game, "..") != NULL || skip_game(selected_game) > 0) {
+			if(strstr(selected_game, ".") != NULL || strstr(selected_game, "..") != NULL) {
 				rand_idx = rand() % num_games; 
 				selected_game = games[rand_idx];
 			}
@@ -685,6 +688,8 @@ int game_exist(char* game, char* tmp) {
 #endif
 
 	sctrlKernelLoadExecVSHWithApitype(apitype, selected_game, &param);
+	free(games);
+	free(iso_games);
 
 }
 
