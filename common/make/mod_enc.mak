@@ -47,3 +47,9 @@ dist/VITAPOPS.BIN: core/compat/vitapops/vitapops.prx
 	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< ARKVitaPopsCompat 0x3007
 	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
 	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)
+
+dist/VITAPLUS.BIN: core/compat/pentazemin/pentazemin.prx
+	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
+	$(Q)$(PYTHON) ./contrib/PC/pspgz/pspgz.py $(patsubst %.prx,%.gz.prx,$<) contrib/PC/pspgz/SystemControl.hdr $< ARKVitaPlusCompat 0x3007
+	$(Q)cp $(patsubst %.prx,%.gz.prx,$<) $@
+	$(Q)rm -f $(patsubst %.prx,%.gz.prx,$<) $(patsubst %.prx,%.enc.prx,$<)

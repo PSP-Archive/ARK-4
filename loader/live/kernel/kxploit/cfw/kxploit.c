@@ -33,6 +33,8 @@
 #include "functions.h"
 #include "kxploit.h"
 
+#include "common/utils/scanner.c"
+
 /*
 Kernel exploit to use when ARK.BIN is already loaded within a Custom Firmware.
 */
@@ -40,43 +42,48 @@ Kernel exploit to use when ARK.BIN is already loaded within a Custom Firmware.
 UserFunctions* g_tbl = NULL;
 
 void* (*set_start_module_handler)(void*) = NULL;
+int (* _sceKernelLibcTime)(u32 a0, u32 a1) = (void*)NULL;
 void (*prev)(void*) = NULL;
-void (*kfunc)() = NULL;
+
+u32 patch_instr = 0;
+u32 patch_addr = 0;
 
 int stubScanner(UserFunctions* tbl){
     g_tbl = tbl;
     set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB); // weak import in ARK Live
-    return (set_start_module_handler==NULL);
+    _sceKernelLibcTime = (void*)(g_tbl->KernelLibcTime);
+    return (set_start_module_handler == NULL || _sceKernelLibcTime == NULL);
 }
 
 void repairInstruction(KernelFunctions* k_tbl){
-    if (set_start_module_handler && prev){
-        // restore previous handler
-        set_start_module_handler(prev);
-        prev = NULL;
+    if (patch_addr && patch_instr){
+        // restore
+        _sw(patch_instr, patch_addr);
     }
 }
 
 void my_mod_handler(void* mod){
-    if (kfunc){
-        // execute kernel context function
-        kfunc();
-    }
+
+    // corrupt kernel
+    u32 libctime = (void*)FindFunction("sceSystemMemoryManager", "UtilsForUser", 0x27CC57F0);
+    patch_addr = libctime + 4;
+    patch_instr = _lw(patch_addr);
+    _sw(0, patch_addr);
+
+    // fallback to previous handler
     if (prev){
-        // fallback to previous handler (shouldn't be called)
         prev(mod);
     }
+    set_start_module_handler(prev);
 }
 
 int doExploit(void){
-    prev = NULL;
-    if (set_start_module_handler)
-        prev = set_start_module_handler(my_mod_handler); // register our custom handler
-    return (prev == NULL);
+    prev = set_start_module_handler(my_mod_handler); // register our custom handler
+    g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON); // trigger StartModule handler
+    g_tbl->UtilityUnloadModule(PSP_MODULE_NP_COMMON);
+    return (patch_addr == 0 || patch_instr == 0);
 }
 
 void executeKernel(u32 kfuncaddr){
-    kfunc = KERNELIFY(kfuncaddr);
-    g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON); // trigger StartModule handler
-    g_tbl->UtilityUnloadModule(PSP_MODULE_NP_COMMON);
+    _sceKernelLibcTime(0x08800000, KERNELIFY(kfuncaddr));
 }

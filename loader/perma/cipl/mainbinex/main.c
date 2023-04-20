@@ -5,8 +5,11 @@
 
 #include "cache.h"
 #include "seedkey.h"
+#ifndef MS_IPL
 #include "../payloadex/nand_payloadex.h"
-
+#else
+#include <ms_payloadex.h>
+#endif
 #define SYSCON_CTRL_HOME 0x00001000
 
 void (*iplDcache)(void) = NULL;
@@ -76,6 +79,9 @@ void patchMainBin(void)
 void _arkBoot() __attribute__ ((section (".text.startup")));
 void _arkBoot()
 {
+#ifdef MS_IPL
+	patchMainBin();
+#else
 	MAKE_JUMP(0x040EC2C8, patchMainBin); // Redirect jump to main.bin
 	
 	_sw(NOP, 0x040EC0D8); // NOP out call to memset 0x040E0000-0x040EC000
@@ -85,4 +91,5 @@ void _arkBoot()
 	void (* entry)() = (void *)0x040EC000;
 
 	return entry();
+#endif
 }

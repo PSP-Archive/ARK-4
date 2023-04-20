@@ -41,39 +41,73 @@ enum SEUmdModes
 
 enum swap_xo
 {
-	_ENABLED = 0,
-	_DISABLED = 1,
+	_ENABLED = 1,
+	_DISABLED = 0,
 };
 
-enum vsh_colors
+enum vsh_bg_colors
 {
-	_RED 			= 0,
-	_LITE_RED 		= 1,
-	_ORANGE 		= 2,
-	_LITE_ORANGE 	= 3,
-	_YELLOW 		= 4,
-	_LITE_YELLOW 	= 5,
-	_GREEN 			= 6,
-	_LITE_GREEN 	= 7,
-	_BLUE 			= 8,
-	_LITE_BLUE 		= 9,
-	_INDIGO 		= 10,
-	_LITE_INDIGO 	= 11,
-	_VIOLET 		= 12,
-	_LITE_VIOLET 	= 13,
-	_PINK 			= 14,
-	_LITE_PINK 		= 15,
-	_PURPLE 		= 16,
-	_LITE_PURPLE 	= 17,
-	_TEAL 			= 18,
-	_LITE_TEAL 		= 19,
-	_AQUA 			= 20,
-	_LITE_AQUA 		= 21,
-	_GREY 			= 22,
-	_LITE_GREY 		= 23,
-	_BLACK 			= 24,
-	_LITE_BLACK 	= 25,
+	BG_RED 			= 0,
+	BG_LITE_RED 	= 1,
+	BG_ORANGE 		= 2,
+	BG_LITE_ORANGE 	= 3,
+	BG_YELLOW 		= 4,
+	BG_LITE_YELLOW 	= 5,
+	BG_GREEN 		= 6,
+	BG_LITE_GREEN 	= 7,
+	BG_BLUE 		= 8,
+	BG_LITE_BLUE 	= 9,
+	BG_INDIGO 		= 10,
+	BG_LITE_INDIGO 	= 11,
+	BG_VIOLET 		= 12,
+	BG_LITE_VIOLET 	= 13,
+	BG_PINK 		= 14,
+	BG_LITE_PINK 	= 15,
+	BG_PURPLE 		= 16,
+	BG_LITE_PURPLE 	= 17,
+	BG_TEAL 		= 18,
+	BG_LITE_TEAL 	= 19,
+	BG_AQUA 		= 20,
+	BG_LITE_AQUA 	= 21,
+	BG_GREY 		= 22,
+	BG_LITE_GREY 	= 23,
+	BG_BLACK 		= 24,
+	BG_LITE_BLACK 	= 25,
+	BG_WHITE		= 26,
+	BG_LITE_WHITE	= 27,
 
+};
+
+enum vsh_fg_colors
+{
+	FG_WHITE 		= 0,
+	FG_ORANGE 		= 1,
+	FG_LITE_ORANGE 	= 2,
+	FG_YELLOW 		= 3,
+	FG_LITE_YELLOW 	= 4,
+	FG_GREEN 		= 5,
+	FG_LITE_GREEN 	= 6,
+	FG_BLUE 		= 7,
+	FG_LITE_BLUE 	= 8,
+	FG_INDIGO 		= 9,
+	FG_LITE_INDIGO 	= 10,
+	FG_VIOLET 		= 11,
+	FG_LITE_VIOLET 	= 12,
+	FG_PINK 		= 13,
+	FG_LITE_PINK 	= 14,
+	FG_PURPLE 		= 15,
+	FG_LITE_PURPLE 	= 16,
+	FG_TEAL 		= 17,
+	FG_LITE_TEAL 	= 18,
+	FG_AQUA 		= 19,
+	FG_LITE_AQUA 	= 20,
+	FG_GREY 		= 21,
+	FG_LITE_GREY 	= 22,
+	FG_BLACK 		= 23,
+	FG_LITE_BLACK 	= 24,
+	FG_RED 			= 25,
+	FG_LITE_RED 	= 26,
+	FG_LITE_WHITE 	= 27,
 };
 
 enum MsSpeedFlag
@@ -132,7 +166,8 @@ typedef struct _SEConfig
     s16 usbversion;
     s16 language; /* -1 as autodetect */
     s16 retail_high_memory;
-	s16 vsh_colors;
+	s16 vsh_bg_colors;
+	s16 vsh_fg_colors;
 	s16 swap_xo;
 } SEConfig;
 

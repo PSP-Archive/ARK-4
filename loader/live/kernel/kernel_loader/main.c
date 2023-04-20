@@ -152,27 +152,16 @@ void autoDetectDevice(ARKConfig* config){
 }
 
 int initKxploitFile(char* kxploit_file){
+    SceUID fd;
     char k_path[ARK_PATH_SIZE];
-    if (kxploit_file == NULL){
-        // try to find kxploit file in ARK install path 
+    if ( kxploit_file == NULL || ((fd = g_tbl->IoOpen(kxploit_file, PSP_O_RDONLY, 0)) < 0) ){
         strcpy(k_path, g_tbl->config->arkpath);
         strcat(k_path, K_FILE);
+        fd = g_tbl->IoOpen(k_path, PSP_O_RDONLY, 0);
+        if (fd<0) return -1;
+        kxploit_file = k_path;
     }
-    else{
-        // use specified kxploit file
-        strcpy(k_path, kxploit_file);
-    }
-    SceUID fd = g_tbl->IoOpen(k_path, PSP_O_RDONLY, 0);
-    if (fd < 0){
-        if (kxploit_file == NULL) return -1;
-        else{ // provided k path failed, try savedata
-            strcpy(k_path, g_tbl->config->arkpath);
-            strcat(k_path, K_FILE);
-            fd = g_tbl->IoOpen(k_path, PSP_O_RDONLY, 0);
-            if (fd<0) return -1;
-        }
-    }
-    PRTSTR1("Loading Kxploit at %s", k_path);
+    PRTSTR1("Loading Kxploit at %s", kxploit_file);
     g_tbl->IoRead(fd, (void *)KXPLOIT_LOADADDR, 0x4000);
     g_tbl->IoClose(fd);
     g_tbl->KernelDcacheWritebackAll();
@@ -236,10 +225,12 @@ void kernelContentFunction(void){
     }
     PRTSTR(running_ark);
 
+    /*
     if (IS_VITA_ADR(ark_config)){
         PRTSTR("You made it far! But ARK can't run like this...can it?...");
         while(1){};
     }
+    */
 
     loadKernelArk();
 }

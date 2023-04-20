@@ -38,7 +38,7 @@
 #define USER_SIZE (24 * 1024 * 1024)
 #define KERNEL_SIZE (4 * 1024 * 1024)
 #define VITA_FLASH_SIZE 0x01000000 // 16MiB
-#define VITA_EXTRA_RAM_SIZE (32 * 1024 * 1024)
+#define VITA_EXTRA_RAM_SIZE (20 * 1024 * 1024)
 #define MAX_HIGH_MEMSIZE 55
 
 // ARK_CONFIG
@@ -54,9 +54,10 @@
 #define ARK4_BIN "ARK4.BIN" // ARK-4 payload
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
-#define ARK_MINOR_VERSION 19
-#define ARK_MICRO_VERSION 18
+#define ARK_MINOR_VERSION 20
+#define ARK_MICRO_VERSION 0
 #define PRO_VERSION 0x4000 // identify as ARK
+#define MAX_FLASH0_SIZE 0x32000
 
 /*
 First two bits identify the device (PSP or PS Vita)
@@ -65,7 +66,7 @@ Dev Sub
 00  00 -> unknown device (attempt to autodetect)
 01  00 -> psp
 01  01 -> unused
-01  11 -> unused
+01  10 -> unused
 10  00 -> ps vita
 10  01 -> vita adrenaline
 10  10 -> vita pops
@@ -111,7 +112,10 @@ typedef struct ARKConfig{
 #define ARK_CONFIG 0x08800010
 #define ARK_CONFIG_MAGIC 0xB00B1E55
 #define LIVE_EXPLOIT_ID "Live" // default loader name
-#define DEFAULT_ARK_PATH "ms0:/PSP/SAVEDATA/ARK_01234/" // default path for ARK files
+#define DEFAULT_ARK_FOLDER "ARK_01234"
+#define DEFAULT_ARK_PATH "ms0:/PSP/SAVEDATA/" DEFAULT_ARK_FOLDER "/" // default path for ARK files
+#define ARK_DC_PATH "ms0:/TM/DCARK"
+#define TM_PATH_W L"\\TM\\DCARK\\"
 
 #define IS_PSP(ark_config) ((ark_config->exec_mode&DEV_MASK)==PSP_ORIG)
 #define IS_VITA(ark_config) ((ark_config->exec_mode&DEV_MASK)==PS_VITA)

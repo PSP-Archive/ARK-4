@@ -11,7 +11,6 @@
 #include <pspiofilemgr.h>
 #include <pspgu.h>
 #include <functions.h>
-#include "high_mem.h"
 #include "exitgame.h"
 #include "libs/graphics/graphics.h"
 

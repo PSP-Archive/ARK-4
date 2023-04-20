@@ -41,6 +41,7 @@ class GameManager : public SystemEntry{
         SceUID iconThread; // UID's of the icon thread
         SceUID iconSema; // semaphore to lock the thread when sleeping
         int dynamicIconRunning;
+        bool scanning;
         
         /* Screen drawing thread data */
         bool hasLoaded; // whether the main thread has finished loading or not, if not then only draw the background and animation
@@ -131,7 +132,7 @@ class GameManager : public SystemEntry{
         }
 
         bool isStillLoading(){
-            return (this->selectedCategory < 0);
+            return (this->scanning);
         }
 
         /* Popup Menu */

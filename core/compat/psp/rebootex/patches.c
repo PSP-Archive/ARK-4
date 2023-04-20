@@ -1,10 +1,21 @@
 #include "rebootex.h"
 #include "pspbtcnf.h"
 
+#ifdef MS_IPL
+#include <fat.h>
+#endif
+
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 
 int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(void *, void *, void *)){
     u32 text_addr = loadCoreModuleStartCommon(start);
+#ifdef MS_IPL
+    // TODO make these patches dynamic
+	// disable unsign check
+	_sw(0x1021, text_addr + 0x5994);
+	_sw(0x1021, text_addr + 0x59C4);
+	_sw(0x1021, text_addr + 0x5A5C);
+#endif
     flushCache();
     return start(arg1, arg2, arg3);
 }
@@ -15,7 +26,11 @@ void patchRebootBuffer(){
     _sw(0x27A40004, UnpackBootConfigArg); // addiu $a0, $sp, 4
     _sw(JAL(UnpackBootConfigPatched), UnpackBootConfigCall); // Hook UnpackBootConfig
     // make sure we read as little ram as possible
+#ifdef MS_IPL
+    int patches = 6;
+#else
     int patches = 5;
+#endif
     for (u32 addr = reboot_start; addr<reboot_end && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x02A0E821 || data == 0x0280E821){ // found loadcore jump on PSP
@@ -62,7 +77,16 @@ void patchRebootBuffer(){
             patches--;
         }
 #endif
+#ifdef MS_IPL
+        else if (data == 0x27BDFFE0 && _lw(addr+4) == 0x3C028861) { // nand enc
+            MAKE_DUMMY_FUNCTION_RETURN_0(addr);
+            patches--;
+        }
+#endif
     }
+
+    patchRebootIoPSP();
+
     // Flush Cache
     flushCache();
 }
@@ -266,10 +290,20 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
             newsize = AddPRX(buffer, reboot_conf->rtm_mod.before, REBOOT_MODULE, reboot_conf->rtm_mod.flags);
             if(newsize > 0){
                 result = newsize;
-                patchRebootIoPSP();
+                setRebootModule();
             }
         }
     }
+
+#ifdef MS_IPL
+    // Insert tmctrl
+    newsize = AddPRX(buffer, "/kd/lfatfs.prx", PATH_TMCTRL+sizeof(PATH_FLASH0)-2, 0x000000EF);
+    if (newsize > 0) result = newsize;
+
+    // Remove lfatfs
+    newsize = RemovePrx(buffer, "/kd/lfatfs.prx", 0x000000EF);
+    if (newsize > 0) result = newsize;
+#endif
     
     return result;
 }
@@ -277,6 +311,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
 // IO Patches
 
 //io flags
+extern volatile int rebootmodule_set;
 extern volatile int rebootmodule_open;
 extern volatile char *p_rmod;
 extern volatile int size_rmod;
@@ -287,6 +322,16 @@ extern int rtm_size;
 extern int (* sceBootLfatOpen)(char * filename);
 extern int (* sceBootLfatRead)(char * buffer, int length);
 extern int (* sceBootLfatClose)(void);
+
+#ifdef MS_IPL
+char path[128];
+
+int _sceBootLfatMount()
+{
+    return MsFatMount();
+}
+
+#endif
 
 int _sceBootLfatRead(char * buffer, int length)
 {
@@ -307,15 +352,18 @@ int _sceBootLfatRead(char * buffer, int length)
         return min;
     }
 
+#ifdef MS_IPL
+    return MsFatRead(buffer, length);
+#else
     //forward to original function
     return sceBootLfatRead(buffer, length);
+#endif
 }
 
 int _sceBootLfatOpen(char * filename)
 {
-
     //load on reboot module open
-    if(strcmp(filename, REBOOT_MODULE) == 0)
+    if(rebootmodule_set && strcmp(filename, REBOOT_MODULE) == 0)
     {
         //mark for read
         rebootmodule_open = 1;
@@ -326,8 +374,20 @@ int _sceBootLfatOpen(char * filename)
         return 0;
     }
 
+#ifdef MS_IPL
+    strcpy(path, "/TM/DCARK");
+	strcat(path, filename);
+
+#ifdef PAYLOADEX
+    if (memcmp(filename+4, "pspbtcnf", 8) == 0)
+        memcpy(&path[strlen(path) - 4], "_dc.bin", 8);
+#endif
+
+	return MsFatOpen(path);
+#else
     //forward to original function
     return sceBootLfatOpen(filename);
+#endif
 }
 
 int _sceBootLfatClose(void)
@@ -346,24 +406,43 @@ int _sceBootLfatClose(void)
         return 0;
     }
     
+#ifdef MS_IPL
+    return MsFatClose();
+#else
     //forward to original function
     return sceBootLfatClose();
+#endif
+}
+
+void setRebootModule(){
+    rebootmodule_set = 1;
+    rtm_buf = reboot_conf->rtm_mod.buffer;
+    rtm_size = reboot_conf->rtm_mod.size;
 }
 
 void patchRebootIoPSP(){
-    rtm_buf = reboot_conf->rtm_mod.buffer;
-    rtm_size = reboot_conf->rtm_mod.size;
     int patches = 3;
     for (u32 addr = reboot_start; addr<reboot_end && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x8E840000 || data == 0x8EA40000){
+#ifdef MS_IPL
+            int found = 0;
+            for (int i=8; !found; i+=4) {
+                if (IS_JAL(_lw(addr-i))) {
+                    _sw(JAL(_sceBootLfatMount), addr-i);
+                    found = 1;
+                }
+            }
+#endif
             sceBootLfatOpen = K_EXTRACT_CALL(addr-4);
             _sw(JAL(_sceBootLfatOpen), addr-4);
             patches--;
         }
         else if (data == 0xAE840004 || data == 0xAEA30004){
-            sceBootLfatRead = K_EXTRACT_CALL(addr+4);
-            _sw(JAL(_sceBootLfatRead), addr+4);
+            addr += 4;
+            while (!IS_JAL(_lw(addr))) { addr += 4; }
+            sceBootLfatRead = K_EXTRACT_CALL(addr);
+            _sw(JAL(_sceBootLfatRead), addr);
             patches--;
         }
         else if (data == 0xAE930008 || data == 0xAEB40008){

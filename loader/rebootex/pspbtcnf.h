@@ -10,6 +10,7 @@
 #define PATH_STARGATE PATH_FLASH0 "kd/ark_stargate.prx"
 #define PATH_INFERNO PATH_FLASH0 "kd/ark_inferno.prx"
 #define PATH_POPCORN PATH_FLASH0 "kd/ark_popcorn.prx"
+#define PATH_TMCTRL PATH_FLASH0 "tmctrl.prx"
 
 typedef struct _btcnf_header
 {

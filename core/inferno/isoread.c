@@ -178,7 +178,6 @@ static int read_raw_data(u8* addr, u32 size, u32 offset)
     int ret, i;
     SceOff ofs;
     i = 0;
-
     do {
         i++;
         ofs = sceIoLseek(g_iso_fd, offset, PSP_SEEK_SET);
@@ -275,7 +274,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     else ending_block = (ending_block/block_size)+1;
     
     // refresh index table if needed
-    if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || starting_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES-1){
+    if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || starting_block >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES-1){
         read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * sizeof(u32) + header_size);
         g_cso_idx_start_block = starting_block;
     }
@@ -351,7 +350,6 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     }
 
     u32 res = offset - o_offset;
-    
     return res;
 }
 

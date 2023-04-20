@@ -286,12 +286,12 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     version << "ARK Version " << major << "." << minor;
     if (micro>0) version << "." << micro << " DEBUG";
 	else version << " DEBUG";
-    ark_version = version.str();
 	#else
 	version << "ARK Version " << major << "." << minor;
     if (micro>0) version << "." << micro;
-    ark_version = version.str();
 	#endif
+    version << " " << common::getArkConfig()->exploit_id;
+    ark_version = version.str();
 }
 
 void SystemMgr::startMenu(){

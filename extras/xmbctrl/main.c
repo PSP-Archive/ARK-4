@@ -130,6 +130,7 @@ STMOD_HANDLER previous;
 CFWConfig config;
 
 int psp_model;
+ARKConfig ark_conf;
 
 int startup = 1;
 
@@ -306,6 +307,12 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
     AddSysconfItem((u32 *)sysconf_option, &item);
 }
 
+int skipSetting(int i){
+    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==1 || i==2 || i==4 || i==8 || i==11 );
+    else if (psp_model == PSP_1000) return ( i == 0 || i == 4 || i == 5 || i == 8 );
+    else if (psp_model != PSP_GO) return ( i == 4 || i == 8 || i == 11);
+}
+
 void OnInitMenuPspConfigPatched()
 {
     if(is_cfw_config == 1)
@@ -316,8 +323,7 @@ void OnInitMenuPspConfigPatched()
             int i;
             for(i = 0; i < N_ITEMS; i++)
             {
-                if (( psp_model == PSP_1000 && ( i == 0 || i == 4 || i == 5 || i == 8 )) ||
-                        (( psp_model != PSP_GO && ( i == 4 || i == 8 || i == 11) )))
+                if ( skipSetting(i) )
                     continue;
                 else
                     AddSysconfContextItem(GetItemes[i].item, NULL, GetItemes[i].item);
@@ -807,6 +813,8 @@ int OnModuleStart(SceModule2 *mod)
 int module_start(SceSize args, void *argp)
 {        
     psp_model = kuKernelGetModel();
+
+    sctrlHENGetArkConfig(&ark_conf);
     
     previous = sctrlHENSetStartModuleHandler(OnModuleStart);
     
