@@ -21,7 +21,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with all `PSP` models on firmwares `6.60` and `6.61`.
 
-- Compatible with all `PS Vita` models on firmware `2.10` up to `3.74`, either official firmware or Henkaku/h-encore.
+- Compatible with all `PS Vita` models on firmware `2.10` up to `3.74`, either official firmware or via `Adrenaline`.
 
 - Compatible with `6.60` `Testing Tool` Firmware and `Testkit` Units.
 
