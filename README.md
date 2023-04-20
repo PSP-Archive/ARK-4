@@ -27,6 +27,10 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with `6.60` `Development Tool` Firmware and `Devkit` Units.
 
+- Can be fully installed and booted on memory stick in compatible models via `Time Machine`.
+
+- Can be used to unbrick any PSP using `Despertar del Cementerio` in combination with a `Pandora` or `Baryon Sweeper`
+
 - `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
 - Resistant to `soft-bricks`, removing the memory stick is enough to leave it in a `vanilla` state.
@@ -458,7 +462,7 @@ Note: some of these menus have not been updated or supported by their developers
   
 - `TheFl0w` for his advancements and research in CFW development and overall contributions to the scene.
 
-- `meetpatty` for his excellent work in fixing bugs and adding important features like cIPL and DevKit support.
+- `meetpatty` for his excellent work in fixing bugs and adding important features like cIPL and DevKit support as well as porting `Time Machine` and `Despertar del Cementerio`.
 
 - `Codestation` for his incredible work improving CSO speeds and creating the ZSO format.
 
