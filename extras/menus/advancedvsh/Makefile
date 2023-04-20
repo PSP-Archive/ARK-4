@@ -1,10 +1,13 @@
 TARGET = satelite
-OBJS = main.o blit.o ui.o menu.o clock.o registry.o umdvideo_list.o vpl.o trans.o trans_en.o stubkk.o
+OBJS = main.o blit.o ui.o menu.o advanced.o clock.o registry.o umdvideo_list.o vpl.o trans.o trans_en.o stubkk.o
 
 BUILD_PRX=1
 
 INCDIR = $(ARKROOT)/common/include
 CFLAGS = -Os -G0 -Wall
+ifdef DEBUG
+CFLAGS += -DDEBUG=$(DEBUG)
+endif
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 

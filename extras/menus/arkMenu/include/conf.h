@@ -20,7 +20,8 @@ typedef struct {
     unsigned char text_glow; // enable/disable text glowing function
     unsigned char screensaver; // Screensaver time (or disabled)
     unsigned char redirect_ms0; // redirect ms0 to ef0
-    unsigned char vshcolor; // Advanced VSH Menu color
+    unsigned char vsh_fg_color; // Advanced VSH Menu Forground color
+    unsigned char vsh_bg_color; // Advanced VSH Menu Background color
     unsigned char swap_xo; // Advanced VSH Menu swap X/O buttons
 } t_conf;
 

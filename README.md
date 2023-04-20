@@ -124,6 +124,24 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
 </p>
 </details>
 
+<details>
+  <summary> <b> Time Machine and Despertar del Cementerio </b> </summary>
+<p>
+
+  - `Time Machine` allows to boot the `6.61` firmware and `ARK` entirely from the Memory Stick.
+  - `Despertar del Cementerio` allows to revive a bricked PSP when used in combination with a `Pandora` or `Baryon Sweeper`.
+  - To install `DC-ARK` you must first format the memory stick with at least 2048 bytes for the first (boot) sector (there are various guides on how to format a memory stick to prepare for DC).
+  - You also need to be running a `CFW` to install `DC-ARK` (ARK itself or any other).
+  - Copy the `ARK_DC` folder to the `/PSP/GAME/` folder and run the installer from the `XMB`.
+  - Follow the instructions to install DC-ARK and create a magic memory stick.
+  - When finished, copy the `ARK_01234` folder to the `/TM/DCARK/` folder of your `PSP`.
+  - Use a `Pandora` or `Baryon Sweeper` in combination with your newly created `Magic Memory Stick` to boot up `Despertar del Cementerio`.
+  - From here you can either boot ARK from memory stick, install 6.61 Firmware with ARK on the Nand or install 6.61 Official Firmware.
+  - Note that installing 6.61 firmware with ARK requires a cIPL-compatible PSP (1K and early 2K).
+
+</p>
+</details>
+
 </p>
 </details>
 
