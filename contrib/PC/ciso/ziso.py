@@ -47,11 +47,15 @@ def hexdump(data):
 
 
 def lz4_compress(plain, level=9):
-    return lz4.block.compress(plain, store_size=False)
+    mode = "high_compression" if level > 1 else "default"
+    return lz4.block.compress(plain, mode=mode, compression=level, store_size=False)
 
 
 def lz4_compress_mp(i):
-    return lz4.block.compress(i[0], store_size=False)
+    plain = i[0]
+    level = i[1]
+    mode = "high_compression" if level > 1 else "default"
+    return lz4.block.compress(plain, mode=mode, compression=level, store_size=False)
 
 
 def lz4_decompress(compressed, block_size):
@@ -68,7 +72,7 @@ def lz4_decompress(compressed, block_size):
 
 def usage():
     print("Usage: ziso [-c level] [-m] [-t percent] [-h] infile outfile")
-    print("  -c level: 1-9 compress ISO to ZSO, use any non-zero number it has no effect")
+    print("  -c level: 1-12 compress ISO to ZSO, 1 for standard compression, >1 for high compression")
     print("              0 decompress ZSO to ISO")
     print("  -m Use multiprocessing acceleration for compressing")
     print("  -t percent Compression Threshold (1-100)")
@@ -214,7 +218,7 @@ def compress_zso(fname_in, fname_out, level):
     total_bytes = fin.tell()
     fin.seek(0)
 
-    magic, header_size, block_size, ver, align = ZISO_MAGIC, 0x18, 0x800, 1, DEFAULT_ALIGN
+    magic, header_size, block_size, ver, align = ZISO_MAGIC, 0x18, 0x800, 1 if level == 1 else 2, DEFAULT_ALIGN
 
     # We have to use alignment on any ZSO files which > 2GB, for MSB bit of index as the plain indicator
     # If we don't then the index can be larger than 2GB, which its plain indicator was improperly set

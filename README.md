@@ -158,9 +158,10 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
   - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
   - Install `ARK_Live` folder into `/PSP/GAME/` folder.
   - Copy `K.BIN` from `Vita/Adrenaline` folder into `ARK_Live` game folder.
-  - Launch `ARK Loader` from within `Adrenaline`.
-  - Create a `Savestate` using `Adrenaline`'s built-in menu and load it.
-  - Use `savestates` to switch between `Adrenaline` and `ARK`.
+  - Open `Adrenaline` and (optionally) create a `savestate` to easily go back.
+  - Launch `ARK Loader` from within `Adrenaline` and wait for it to load.
+  - Create a `savestate` using `Adrenaline`'s built-in menu and load it.
+  - Use `savestates` to easily and quickly switch between `Adrenaline` and `ARK`.
   - Note: this does not permanently modify `Adrenaline` in any way.
 
 </p>
