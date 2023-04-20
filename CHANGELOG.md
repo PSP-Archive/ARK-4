@@ -1,5 +1,13 @@
 # ARK Changelog
 
+## Version 4.20 (2023-04-20)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r420
+- Ported Time Machine and Despertar del Cementerio to ARK, allowing to unbrick PSPs and install and run the 6.61 firmware (plus ARK) on a memory stick.
+- Created the Pentazemin compatibility layer that allows ARK to run inside Adrenaline, creating a Hybrid Custom Firmware that combines the features of both Custom Firmwares.
+  Note: extremely experimental feature that's still in development and there are known bugs.
+- Created a new VSH Menu that combines both the Simple VSH Menu and the Advanced VSH Menu, no longer having to install it from a separate file to access its features.
+- Re-wrote all static patches in the PSP compatibility layer to dynamic ones, fixing any issues with Testkits and Devkits.
+
 ## Version 4.19.16 (2023-02-24)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r41916
 - File browser now has icons for compatible file formats (iso, cso, zso, jso, dax, pbp, prx, zip, rar, txt, cfg and ini).
