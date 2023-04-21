@@ -213,7 +213,7 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
 <p>
 
 The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
-To have a more classic VSH menu with more advanced features you can select the `Advanced VSH Menu` from withing the simplified VSH menu.
+To have a more classic VSH menu with more advanced features you can select the `Advanced VSH Menu` from within the simplified VSH menu.
 Some of the features available in Advanced VSH Menu include:
 
 - Change USB Device mount (Memory Stick, Flash, UMD).
