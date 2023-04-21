@@ -57,7 +57,7 @@ int submenu_draw(void)
     else snprintf(ark_version, sizeof(ark_version), " ARK %d.%d DEBUG ", major, minor);
     #else
     if (micro>0) snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d.%d    ", major, minor, micro);
-    else snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d    ", major, minor); 
+    else snprintf(ark_version, sizeof(ark_version), "      ARK %d.%d     ", major, minor); 
 	#endif
 
 	// check & setup video mode
