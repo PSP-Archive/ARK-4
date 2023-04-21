@@ -236,7 +236,7 @@ The easiest method to install a plugin is to simply copy its `.prx` (and other f
   
 Alternately, you can manually install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
-If coming from PRO/ME you can use this tool to automate your plugins.txt: [ARK-Plugin-Converter](https://github.com/krazynez/ARK-Plugin-Converter)
+If coming from PRO/ME you can Import them from the `Advanced VSH Menu` section.
 
 To install plugins use the comma-separated format (CSV).
 Where the header is: runlevel, path, switch.
@@ -369,6 +369,8 @@ You can however change it to whatever you please. You can change the theme used 
 <details>
 <summary> <b> Custom Launcher Themes </b> </summary>
 <p>
+
+You can add themes by copying the `THEME.ARK` and `resources` folder from your selected theme to `??0:/PSP/SAVEDATA/ARK_01234/`
 
 <i>Orbs are animations and not part of the actual Themes </i>
 
