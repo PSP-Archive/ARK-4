@@ -1051,6 +1051,10 @@ void loadConfig(){
 
 	cnf.vsh_bg_colors = config.vsh_bg_color;
 	cnf.vsh_fg_colors = config.vsh_fg_color;
+
+	u32 tmp_swap_xo_32;
+	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &tmp_swap_xo_32);
+	cnf.swap_xo = tmp_swap_xo_32;
 }
 
 void saveConfig(){
