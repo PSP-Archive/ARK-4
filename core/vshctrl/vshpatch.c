@@ -415,7 +415,7 @@ static void patch_vsh_module(SceModule2 * mod)
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0xE533E98C, gameloadexec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x63E69956, umdLoadExec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x81682A40, umdLoadExecUpdater);
-    if(psp_model == PSP_GO && sctrlSEGetBootConfFileIndex() == MODE_VSHUMD) {
+    if(psp_model == PSP_GO && has_umd_iso) {
         patch_vsh_module_for_pspgo_umdvideo(mod);
     }
 }
