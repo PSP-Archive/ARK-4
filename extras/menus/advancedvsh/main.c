@@ -364,8 +364,13 @@ int skip_game(char *game) {
 	//fwrite("\n", 1, sizeof(char), wb);
 	//fclose(wb);
 	char path[20];
-	if (psp_model == PSP_GO)
-		snprintf(path, sizeof(path), "%s", "ef0:/blacklist.txt");
+	SceUID ms0_on_GO;
+	if (psp_model == PSP_GO) {
+		if(!(ms0_on_GO = sceIoOpen("ms0:/blacklist.txt", PSP_O_RDONLY, 0777)))
+			snprintf(path, sizeof(path), "%s", "ef0:/blacklist.txt");
+		else
+			snprintf(path, sizeof(path), "%s", "ms0:/blacklist.txt");
+	}
 	else
 		snprintf(path, sizeof(path), "%s", "ms0:/blacklist.txt");
 
@@ -1046,6 +1051,10 @@ void loadConfig(){
 
 	cnf.vsh_bg_colors = config.vsh_bg_color;
 	cnf.vsh_fg_colors = config.vsh_fg_color;
+
+	u32 tmp_swap_xo_32;
+	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &tmp_swap_xo_32);
+	cnf.swap_xo = tmp_swap_xo_32;
 }
 
 void saveConfig(){

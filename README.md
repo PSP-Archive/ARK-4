@@ -213,21 +213,22 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
 <p>
 
 The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
-It does however have an `Advanced VSH Menu` option that will allow for more features similar to classic VSH menu.
+To have a more classic VSH menu with more advanced features you can select the `Advanced VSH Menu` from within the simplified VSH menu.
 Some of the features available in Advanced VSH Menu include:
 
 - Change USB Device mount (Memory Stick, Flash, UMD).
 - Protect Flash in USB Device mount.
 - View available ISO drivers.
 - Mount UMD Video ISO.
+- Change Foreground/Background VSH Menu colors.
 - Convert battery from normal to pandora and viceversa.
 - Activate flash and WMA playback.
 - Swap X/O buttons.
 - Delete hibernation (PSP Go paused game).
 - Convert classic plugins to the new ARK format.
+- Boot Random GAME (checks `??0:/blacklist.txt` for games/homebrew you do not want to load) Example: `ms0:/PSP/GAME/dc8/` 
 
 And more.
-
 </p>
 </details>
 
@@ -239,7 +240,7 @@ The easiest method to install a plugin is to simply copy its `.prx` (and other f
   
 Alternately, you can manually install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
-If coming from PRO/ME you can use this tool to automate your plugins.txt: [ARK-Plugin-Converter](https://github.com/krazynez/ARK-Plugin-Converter)
+If coming from PRO/ME you can Import them from the `Advanced VSH Menu` section.
 
 To install plugins use the comma-separated format (CSV).
 Where the header is: runlevel, path, switch.
@@ -372,6 +373,8 @@ You can however change it to whatever you please. You can change the theme used 
 <details>
 <summary> <b> Custom Launcher Themes </b> </summary>
 <p>
+
+You can add themes by copying the `THEME.ARK` and `resources` folder from your selected theme to `??0:/PSP/SAVEDATA/ARK_01234/`
 
 <i>Orbs are animations and not part of the actual Themes </i>
 

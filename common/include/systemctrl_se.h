@@ -41,8 +41,8 @@ enum SEUmdModes
 
 enum swap_xo
 {
-	_ENABLED = 1,
-	_DISABLED = 0,
+	XO_CURRENT_O_PRIMARY = 0,
+	XO_CURRENT_X_PRIMARY = 1
 };
 
 enum vsh_bg_colors

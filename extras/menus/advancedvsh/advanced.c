@@ -57,7 +57,7 @@ int submenu_draw(void)
     else snprintf(ark_version, sizeof(ark_version), " ARK %d.%d DEBUG ", major, minor);
     #else
     if (micro>0) snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d.%d    ", major, minor, micro);
-    else snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d    ", major, minor); 
+    else snprintf(ark_version, sizeof(ark_version), "      ARK %d.%d     ", major, minor); 
 	#endif
 
 	// check & setup video mode
@@ -498,14 +498,14 @@ int submenu_setup(void)
 	}
 
 	switch(cnf.swap_xo) {
-		case 0:
-			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_DISABLE];
+		case XO_CURRENT_O_PRIMARY:
+			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_O_PRIM];
 			break;
-		case 1:
-			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_ENABLE];
+		case XO_CURRENT_X_PRIMARY:
+			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_X_PRIM];
 			break;
 		default:
-			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_DISABLE];
+			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_X_PRIM]; // should never happen?
 	}
 	
 	switch(cnf.vsh_fg_colors) {
@@ -773,8 +773,9 @@ none:
 			}
 			break;
 		case SUBMENU_SWAP_XO_BUTTONS:
-			if(direction) { swap_xo( direction ); } // Swap X/O Buttons flag  
-			else if (direction==0 && cnf.swap_xo == 1 ) return 12;
+			if (direction==0) {
+				return 12; // Swap X/O Buttons flag  
+			} 
 			break;
 		case SUBMENU_CONVERT_BATTERY:
 			if(direction==0) {
