@@ -26,15 +26,13 @@ PSP_HEAP_SIZE_KB(17*1024);
 
 using namespace std;
 
-#define MAX_ENTRIES 4
+#define MAX_ENTRIES 5
 static SystemEntry* entries[MAX_ENTRIES];
 
 int main(int argc, char** argv){
 
     intraFontInit();
     ya2d_init();
-
-	int n_entries = 2;
 
     common::loadData(argc, argv);
 
@@ -60,11 +58,11 @@ int main(int argc, char** argv){
 
 	// Settings
     SettingsTable stab_recovery = { settings_entries, MAX_SETTINGS_OPTIONS };
-    entries[n_entries++] = new SettingsMenu(&stab_recovery, common::saveConf, false, true, true);
+    entries[3] = new SettingsMenu(&stab_recovery, common::saveConf, false, true, true);
 
 
     // Add exit game
-    entries[3] = new ExitManager();
+    entries[4] = new ExitManager();
 
     SystemMgr::initMenu(entries, MAX_ENTRIES);
     
