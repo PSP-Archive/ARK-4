@@ -282,15 +282,13 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     u32 minor = (ver&0xFF00)>>8;
     u32 micro = (ver&0xFF);
     stringstream version;
-    #ifdef DEBUG 
-    version << "ARK Version " << major << "." << minor;
-    if (micro>0) version << "." << micro << " DEBUG";
-	else version << " DEBUG";
-	#else
 	version << "ARK Version " << major << "." << minor;
-    if (micro>0) version << "." << micro;
-	#endif
+    if (micro>9) version << "." << micro;
+    else if (micro>0) version << ".0" << micro;
     version << " " << common::getArkConfig()->exploit_id;
+    #ifdef DEBUG
+	version << " DEBUG";
+	#endif
     ark_version = version.str();
 }
 
