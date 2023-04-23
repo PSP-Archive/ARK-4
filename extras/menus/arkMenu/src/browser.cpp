@@ -549,12 +549,12 @@ void Browser::left() {
 	if (this->entries->size() == 0) return;
 	if (this->index == 0) return;
 	if (this->index > 0) {
-		this->index = this->index - PAGE_SIZE;
-		this->start = this->start - PAGE_SIZE;
-		if(this->index < 0) {
-			this->index = 0;
-			this->start = 0;
-		}
+		this->index = 1 * (this->index - PAGE_SIZE);
+		this->start = 1 * (this->start - PAGE_SIZE);
+	}
+	if(this->index < 0 || this->start < 0) {
+		this->index = 0;
+		this->start = 0;
 	}
     this->animating = true;
     common::playMenuSound();
@@ -564,19 +564,12 @@ void Browser::right() {
 	if (this->entries->size() == 0) return;
 	if (this->index + PAGE_SIZE >= this->entries->size()) return;
 	if (this->index == 0) {
-		//this->index = entries->size() - 1;
 		this->index = PAGE_SIZE;
 		this->start = PAGE_SIZE;
 	}
 	else if (this->index < PAGE_SIZE){
             this->index = this->index + PAGE_SIZE;
 			this->start = this->start + PAGE_SIZE;
-		/*if(this->index > this->entries->size()) {
-			this->index = PAGE_SIZE;
-			this->start = PAGE_SIZE;
-		}
-		*/
-
     }
 	else {
 		this->index = this->index + PAGE_SIZE;
