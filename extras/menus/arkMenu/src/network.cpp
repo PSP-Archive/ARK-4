@@ -11,6 +11,8 @@
 #include <pspnet_inet.h>
 #include <pspnet_resolver.h>
 #include <pspnet_apctl.h>
+#include <netdb.h>
+#include <arpa/inet.h>
 
 #include "network.h"
 #include "common.h"
@@ -75,6 +77,11 @@ int shutdownNetwork(){
     sceUtilityUnloadModule(PSP_MODULE_NET_INET);
     sceUtilityUnloadModule(PSP_MODULE_NET_COMMON);
     ap_conn = false;
+}
+
+char* resolveHostAddress(char* hostname){
+    struct hostent* host = gethostbyname(hostname);
+    return inet_ntoa(*((struct in_addr*)host->h_addr));
 }
 
 /* Connect to an access point */

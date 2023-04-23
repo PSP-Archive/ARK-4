@@ -63,10 +63,20 @@ bool FTPDriver::connect(){
     if (ret){
         ftpInit();
         printf("FTP Connecting to server\n");
-        if (!ftpConnect(tmpText, 21)){
+
+        int port = 21;
+        char* p;
+        if ((p=strstr(tmpText, ":")) != NULL){
+            port = atoi(p+1);
+            p[0] = 0;
+        }
+        char* host = resolveHostAddress(tmpText);
+
+        if (!ftpConnect(host, port)){
             shutdownNetwork();
             return false;
         }
+
         /*
         printf("FTP log in\n");
         if (ftpLogin("anonymous", "") < 0){
@@ -74,6 +84,7 @@ bool FTPDriver::connect(){
             return false;
         }
         */
+        
         connected = true;
         printf("FTP connected\n");
     }
