@@ -11,6 +11,7 @@
 
 PSP_MODULE_INFO("pspUsbDev_Driver", 0x1006, 1, 0);
 
+int psp_model;
 PspIoDrv *lflash_driver;
 PspIoDrv *umd_driver;
 PspIoDrv *msstor_driver;
@@ -367,6 +368,28 @@ SceOff UmdVfat_IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
 	return (umd_vfat_ptr*0x200);
 }
 
+static void segment_patch(SceModule2 *mod)
+{
+	int i;
+	for(i=0;i < mod->nsegment;i++)
+	{
+		u32 offset = mod->segmentaddr[i];
+		u32 end = offset + mod->segmentsize[i];
+
+		while( offset <  end )
+		{
+			char *str = (char *)offset;
+			if ( memcmp(str,"eflash0a0f0:" ,sizeof("eflash0a0f0:") ) == 0)
+			{
+				memcpy( str, "eflash0a0f1:"	, sizeof("eflash0a0f1:") );
+				break;
+			}
+
+			offset += 4;
+		}
+	}
+}
+
 int pspUsbDeviceSetDevice(u32 unit, int ronly, int unassign_mask)
 {
 	int k1 = pspSdkSetK1(0);
@@ -384,6 +407,21 @@ int pspUsbDeviceSetDevice(u32 unit, int ronly, int unassign_mask)
 
 	if (unit == PSP_USBDEVICE_UMD9660)
 	{
+
+		if( psp_model == PSP_GO )
+		{
+			SceModule2 *eflash = sceKernelFindModuleByName("sceUSBStorEFlash_Driver");
+			if( eflash != NULL )
+			{
+				segment_patch( eflash );
+				sceKernelIcacheInvalidateAll();
+				sceKernelDcacheWritebackInvalidateAll();
+			}
+
+			res = 0;
+			goto RETURN;
+		}
+
 		u8 *pvd;
 		
 		if (!sceUmdCheckMedium())
@@ -605,10 +643,19 @@ int module_start(SceSize args, void *argp)
 	char dev[11];	
 	
 	strcpy(dev, "lflash0:0,0");
+
+	psp_model = sceKernelGetModel();
 	
 	lflash_driver = sctrlHENFindDriver("lflash");
 	umd_driver = sctrlHENFindDriver("umd");
-	msstor_driver = sctrlHENFindDriver("msstor");
+	if( psp_model == PSP_GO )
+	{
+		msstor_driver = sctrlHENFindDriver("eflash0a0f");
+	}
+	else
+	{
+		msstor_driver = sctrlHENFindDriver("msstor");
+	}
 
 	if (!lflash_driver || !msstor_driver)
 	{

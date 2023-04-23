@@ -78,6 +78,16 @@ PspIoDrv * sctrlHENFindDriver(char * drvname)
     
     // Restore Permission Level
     pspSdkSetK1(k1);
+
+    if (driver == NULL){
+        if(0 == stricmp(drvname, "msstor")) {
+			return sctrlHENFindDriver("eflash0a0f");
+		}
+
+		if(0 == stricmp(drvname, "msstor0p")) {
+			return sctrlHENFindDriver("eflash0a0f1p");
+		}
+    }
     
     // Return Driver
     return driver;

@@ -219,7 +219,7 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     
 
     #if ARK_MICRO_VERSION > 0
-    sprintf(str, "ARK %d.%d.%d %s", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ARK_MICRO_VERSION, ark_config->exploit_id);
+    sprintf(str, "ARK %d.%d.%.2i %s", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ARK_MICRO_VERSION, ark_config->exploit_id);
     #else
     sprintf(str, "ARK %d.%d %s", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ark_config->exploit_id);
     #endif
@@ -415,7 +415,7 @@ static void patch_vsh_module(SceModule2 * mod)
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0xE533E98C, gameloadexec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x63E69956, umdLoadExec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x81682A40, umdLoadExecUpdater);
-    if(psp_model == PSP_GO) {
+    if(psp_model == PSP_GO && sctrlSEGetBootConfFileIndex() == MODE_VSHUMD) {
         patch_vsh_module_for_pspgo_umdvideo(mod);
     }
 }
