@@ -53,10 +53,10 @@ int submenu_draw(void)
 	int micro = (ver&0xFF);
 
 	#ifdef DEBUG
-    if (micro>0) snprintf(ark_version, sizeof(ark_version), " ARK %d.%d.%d DEBUG ", major, minor, micro);
+    if (micro>0) snprintf(ark_version, sizeof(ark_version), " ARK %d.%d.%.2i DEBUG ", major, minor, micro);
     else snprintf(ark_version, sizeof(ark_version), " ARK %d.%d DEBUG ", major, minor);
     #else
-    if (micro>0) snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d.%d    ", major, minor, micro);
+    if (micro>0) snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d.%.2i    ", major, minor, micro);
     else snprintf(ark_version, sizeof(ark_version), "      ARK %d.%d     ", major, minor); 
 	#endif
 
