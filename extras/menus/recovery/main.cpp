@@ -15,6 +15,8 @@
 #include "settingsmenu.h"
 #include "ark_settings.h"
 #include "ark_plugins.h"
+#include "settingsmenu.h"
+#include "settings_entries.h"
 #include "exit_mgr.h"
 #include "game_mgr.h"
 
@@ -31,6 +33,8 @@ int main(int argc, char** argv){
 
     intraFontInit();
     ya2d_init();
+
+	int n_entries = 2;
 
     common::loadData(argc, argv);
 
@@ -53,6 +57,11 @@ int main(int argc, char** argv){
 
     // Add browser
     entries[2] = new Browser();
+
+	// Settings
+    SettingsTable stab_recovery = { settings_entries, MAX_SETTINGS_OPTIONS };
+    entries[n_entries++] = new SettingsMenu(&stab_recovery, common::saveConf, false, true, true);
+
 
     // Add exit game
     entries[3] = new ExitManager();
