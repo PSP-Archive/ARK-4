@@ -1106,25 +1106,9 @@ int TSRThread(SceSize args, void *argp)
 		}
 	}
 
-#ifdef CONFIG_639
-	if(psp_fw_version == FW_639)
-		scePaf_memcpy(&cnf_old, &cnf, sizeof(SEConfig));
-#endif
+if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
+	scePaf_memcpy_660(&cnf_old, &cnf, sizeof(SEConfig));
 
-#ifdef CONFIG_635
-	if(psp_fw_version == FW_635)
-		scePaf_memcpy(&cnf_old, &cnf, sizeof(SEConfig));
-#endif
-
-#ifdef CONFIG_620
-	if (psp_fw_version == FW_620)
-		scePaf_memcpy_620(&cnf_old, &cnf, sizeof(SEConfig));
-#endif
-
-#if defined(CONFIG_660) || defined(CONFIG_661)
-	if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
-		scePaf_memcpy_660(&cnf_old, &cnf, sizeof(SEConfig));
-#endif
 resume:
 	while(stop_flag == 0) {
 		if( sceDisplayWaitVblankStart() < 0)
