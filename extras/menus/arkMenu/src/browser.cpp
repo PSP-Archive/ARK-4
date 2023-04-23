@@ -1215,11 +1215,17 @@ void Browser::optionsMenu(){
         }
 		else if (pad->right()) {
 			common::playMenuSound();
-			pEntryIndex = MAX_OPTIONS-1;
+			if(pEntryIndex >= MAX_OPTIONS-1)
+				pEntryIndex = MAX_OPTIONS-1;
+		    else	
+				pEntryIndex += 3;
 		}
 		else if (pad->left()) {
 			common::playMenuSound();
-			pEntryIndex = 0;
+			if(pEntryIndex <= 0)
+				pEntryIndex = 0;
+			else
+				pEntryIndex -= 3;
 		}
         else if (pad->decline() || pad->LT()){
             pEntryIndex = 0;
