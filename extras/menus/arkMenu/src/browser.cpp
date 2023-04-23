@@ -544,6 +544,51 @@ Entry* Browser::get(){
     // Obtain the currectly selected entry, this will return the instance of the entry, not it's name
     return this->entries->at(this->index);
 }
+
+void Browser::left() {
+	if (this->entries->size() == 0) return;
+	if (this->index == 0) return;
+	if (this->index > 0) {
+		this->index = this->index - PAGE_SIZE;
+		this->start = this->start - PAGE_SIZE;
+		if(this->index < 0) {
+			this->index = 0;
+			this->start = 0;
+		}
+	}
+    this->animating = true;
+    common::playMenuSound();
+}
+
+void Browser::right() {
+	if (this->entries->size() == 0) return;
+	if (this->index + PAGE_SIZE > this->entries->size()) return;
+	if (this->index == 0) {
+		//this->index = entries->size() - 1;
+		this->index = PAGE_SIZE;
+		this->start = PAGE_SIZE;
+	}
+	else if (this->index <= PAGE_SIZE){
+            this->index = this->index + PAGE_SIZE;
+			this->start = this->start + PAGE_SIZE;
+		/*if(this->index > this->entries->size()) {
+			this->index = PAGE_SIZE;
+			this->start = PAGE_SIZE;
+		}
+		*/
+
+    }
+	else {
+		this->index = this->index + PAGE_SIZE;
+		this->start = this->start + PAGE_SIZE;
+	}
+	
+    this->animating = true;
+    common::playMenuSound();
+
+
+
+}
         
 void Browser::down(){
     // Move the cursor down, this updates index and page
@@ -1168,6 +1213,14 @@ void Browser::optionsMenu(){
                 }
             } while (pEntries[pEntryIndex] == NULL);
         }
+		else if (pad->right()) {
+			common::playMenuSound();
+			pEntryIndex = MAX_OPTIONS-1;
+		}
+		else if (pad->left()) {
+			common::playMenuSound();
+			pEntryIndex = 0;
+		}
         else if (pad->decline() || pad->LT()){
             pEntryIndex = 0;
             break;
@@ -1214,6 +1267,10 @@ void Browser::control(Controller* pad){
         this->up();
     else if (pad->down())
         this->down();
+	else if (pad->right())
+		this->right();
+	else if (pad->left())
+		this->left();
     else if (pad->accept())
         this->update();
     else if (pad->decline()){
