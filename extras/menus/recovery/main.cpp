@@ -58,7 +58,10 @@ int main(int argc, char** argv){
 
 	// Settings
     SettingsTable stab_recovery = { settings_entries, MAX_SETTINGS_OPTIONS };
-    entries[3] = new SettingsMenu(&stab_recovery, common::saveConf, false, true, true);
+    SettingsMenu* recovery_settings_menu = new SettingsMenu(&stab_recovery, common::saveConf, false, true, true);
+	recovery_settings_menu->setName("Menu\nSetttings");
+	recovery_settings_menu->setInfo("Menu Setttings");
+	entries[3] = recovery_settings_menu;
 
 
     // Add exit game
