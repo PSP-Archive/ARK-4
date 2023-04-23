@@ -1,9 +1,10 @@
 # ARK-4 e/CFW for the PSP and PS Vita.
 
-New, updated, improved and modern `CFW` for `PSP` and `Vita`'s `ePSP`.
+New, updated, improved and modern `Custom Firmware` for the `PSP` and `PS Vita`'s `ePSP`.
 Simple to use and full of unique features, `ARK CFW` aims at keeping the `PSP` experience fresh. Being a successor to `PRO` and `ME`,
 `ARK` is now the most feature-complete `CFW` for the `PSP`, having all features from classic `CFW`
 as well as unique and exclusive new features not found anywhere else.
+
 
 ## FEATURES:
 
@@ -13,7 +14,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - `Popcorn` controller for custom `PS1` games. Compatible with `PopsLoader` V3 and V4i.
 
-- Built-in `No-DRM` engine `Stargate`. Compatible with `npdrm_free` by qwikrazor87.
+- Built-in `No-DRM` engine `Stargate`, fixes many anti-CFW games. Compatible with `npdrm_free` by qwikrazor87.
 
 - `Plugin` support for `PSP` games, `PS1` games and `VSH` (XMB), including the ability to enable and disable plugins `per-game`.
 
@@ -29,23 +30,22 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Can be fully installed and booted on memory stick in compatible models via `Time Machine`.
 
-- Can be used to unbrick any PSP using `Despertar del Cementerio` in combination with a `Pandora` or `Baryon Sweeper`
+- Can be used to unbrick any PSP using `Despertar del Cementerio` in combination with a `Pandora` or `Baryon Sweeper`.
 
 - `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
-- Resistant to `soft-bricks`, removing the memory stick is enough to leave it in a `vanilla` state.
+- Resistant to `soft-bricks`, easy to recover from bad configurations with a new and improved `Recovery` app.
 
-- `Custom game launcher` with built-in game categories, file browser, FTP server and client, modernized look and more.
+- `Custom game launcher` with built-in game categories, file browser, `FTP` server and client, modernized look and more.
 
 - Fully configurable via the `XMB`.
-
-- Improved and powerful `Recovery` app.
 
 - Compatible with `PRO Online` and `Xlink Kai`.
 
 - Compatible with Legacy Homebrew via `eLoader` and `Leda`.
 
 - Compatible with `cIPL` and `Infinity 2` bootloaders for permanent CFW.
+
 
 ## INSTALLATION
 
@@ -197,7 +197,7 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
   <summary> <b> Legacy Game Exploits (PSP & Vita) </b> </summary>
 <p>
 
-- Considering the savedata exploit loads H.BIN from the savedata path.
+- Considering the savedata exploit loads `H.BIN` from the savedata path.
 - Copy every file from `ARK_01234` except `PARAM.SFO`, `SAVEDATA.BIN` and `K.BIN` (`ICON0.PNG` can also be ignored), into the hacked savedata folder.
 - You need to have a `K.BIN` if you are running on an ancient Vita firmware (there's plenty of kernel exploit sources in ARK-2 and ARK-3 for reference).
 - Run the game and trigger the exploit as normal, it should load ARK.
@@ -209,11 +209,11 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
 ## CUSTOMIZATION
 
 <details>
-  <summary> <b> Advanced VSH Menu </b> </summary>
+  <summary> <b> Advanced VSH Menu Options</b> </summary>
 <p>
 
 The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
-To have a more classic VSH menu with more advanced features you can install `Advanced VSH Menu` by copying `VSHMENU.PRX` from the `AdvancedVSH` folder into `ARK_01234`.
+It does however have an `Advanced VSH Menu` option that will allow for more features similar to classic VSH menu.
 Some of the features available in Advanced VSH Menu include:
 
 - Change USB Device mount (Memory Stick, Flash, UMD).
@@ -224,6 +224,9 @@ Some of the features available in Advanced VSH Menu include:
 - Activate flash and WMA playback.
 - Swap X/O buttons.
 - Delete hibernation (PSP Go paused game).
+- Convert classic plugins to the new ARK format.
+
+And more.
 
 </p>
 </details>

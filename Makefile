@@ -169,6 +169,7 @@ clean:
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -rf common/utils/*.o
 	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
+	$(Q)find -name 'THEME.ARK' -exec rm {} \;
 
 subdirs: $(SUBDIRS)
 

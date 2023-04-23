@@ -73,8 +73,3 @@ Installation On PS Vita
     - Note: this does not permanently modify `Adrenaline` in any way.
 
 
-
-Advanced VSH Menu
-
-The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
-To have a more classic VSH menu with more advanced features you can install `Advanced VSH Menu` by moving or copying `VSHMENU.PRX` from the `AdvancedVSH` folder into `ARK_01234`.
