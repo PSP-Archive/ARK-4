@@ -6,6 +6,8 @@
 #include "browser_entries.h"
 #include "ftpclient.h"
 
+static char* ANONYMOUS = "anonymous";
+
 class FTPFile : public BrowserFile{
     protected:
         string st_size;
@@ -52,7 +54,7 @@ bool FTPDriver::connect(){
     bool ret = false;
     char tmpText[51];
     OSK osk;
-    osk.init("Enter IP address of FTP Server", "", 50);
+    osk.init("Enter address of FTP Server", "", 50);
     osk.loop();
     if(osk.getResult() != OSK_CANCEL)
     {
@@ -83,13 +85,37 @@ bool FTPDriver::connect(){
             return false;
         }
 
+        char* user = ANONYMOUS;
+        char password[51];
+        password[0] = 0;
+
+        osk.init("Enter username (cancel for anonymous)", "", 50);
+        osk.loop();
+        if(osk.getResult() != OSK_CANCEL)
+        {
+            osk.getText((char*)tmpText);
+            user = tmpText;
+        }
+        osk.end();
+
+        if (user != ANONYMOUS){
+            osk.init("Enter password", "", 50);
+            osk.loop();
+            if(osk.getResult() != OSK_CANCEL)
+            {
+                osk.getText((char*)password);
+                user = tmpText;
+            }
+            osk.end();
+        }
+
         printf("FTP log in\n");
-        if (ftpLogin("anonymous", "") < 0){
-            /*
-            ftpClean();
-            shutdownNetwork();
-            return false;
-            */
+        if (ftpLogin(user, password) < 0){
+            if (user != ANONYMOUS){
+                ftpClean();
+                shutdownNetwork();
+                return false;
+            }
         }
         
         connected = true;
