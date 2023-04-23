@@ -98,7 +98,7 @@ int module_start(SceSize args, void* argp)
     
     // always reset to NORMAL mode in VSH
     // to avoid ISO mode is used in homebrews in next reboot
-    has_umd_iso = (sctrlSEGetUmdFile()[0] != 0);
+    has_umd_iso = (sctrlSEGetUmdFile()[0] != 0 && sctrlSEGetBootConfFileIndex() == MODE_VSHUMD);
     sctrlSESetUmdFile("");
     sctrlSESetBootConfFileIndex(MODE_UMD);
 
