@@ -1,5 +1,12 @@
 # ARK Changelog
 
+## Version 4.20.01 (2023-04-23)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4201
+- Fixed crash when opening "Custom Firmware Settings" in the XMB on a PSP Go.
+- Fixed issue that would make the internal memory of a PSP Go disappear after exiting a game.
+- Fixed issue with USB Device change in PSP Go.
+- Other fixes related to PSP Go.
+
 ## Version 4.20 (2023-04-20)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r420
 - Ported Time Machine and Despertar del Cementerio to ARK, allowing to unbrick PSPs and install and run the 6.61 firmware (plus ARK) on a memory stick.
