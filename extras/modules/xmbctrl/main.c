@@ -311,6 +311,7 @@ int skipSetting(int i){
     if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==1 || i==2 || i==4 || i==8 || i==11 );
     else if (psp_model == PSP_1000) return ( i == 0 || i == 4 || i == 5 || i == 8 );
     else if (psp_model != PSP_GO) return ( i == 4 || i == 8 || i == 11);
+    return 0;
 }
 
 void OnInitMenuPspConfigPatched()
@@ -323,10 +324,12 @@ void OnInitMenuPspConfigPatched()
             int i;
             for(i = 0; i < N_ITEMS; i++)
             {
-                if ( skipSetting(i) )
+                if ( skipSetting(i) ){
                     continue;
-                else
+                }
+                else{
                     AddSysconfContextItem(GetItemes[i].item, NULL, GetItemes[i].item);
+                }
             }
         }
     }
