@@ -25,6 +25,7 @@ class FTPFile : public BrowserFile{
 
 FTPDriver::FTPDriver(){
     connected = false;
+    root = "";
 }
 
 FTPDriver::~FTPDriver(){
@@ -66,6 +67,10 @@ bool FTPDriver::connect(){
 
         int port = 21;
         char* p;
+        if ((p=strstr(tmpText, "/")) != NULL){
+            this->root = string(p);
+            p[0] = 0;
+        }
         if ((p=strstr(tmpText, ":")) != NULL){
             port = atoi(p+1);
             p[0] = 0;
@@ -73,17 +78,19 @@ bool FTPDriver::connect(){
         char* host = resolveHostAddress(tmpText);
 
         if (!ftpConnect(host, port)){
+            ftpClean();
             shutdownNetwork();
             return false;
         }
 
-        /*
         printf("FTP log in\n");
         if (ftpLogin("anonymous", "") < 0){
+            /*
+            ftpClean();
             shutdownNetwork();
             return false;
+            */
         }
-        */
         
         connected = true;
         printf("FTP connected\n");
@@ -107,6 +114,7 @@ vector<Entry*> FTPDriver::listDirectory(string path){
     string ftp_path = path.substr(getDevicePath().size(), path.size());
     if (ftp_path.size() == 0) ftp_path = "/";
     if (ftp_path[0] != '/') ftp_path = string("/") + ftp_path;
+    ftp_path = this->root + ftp_path;
     printf("FTP::CWD -> %s\n", ftp_path.c_str());
     ftpCWD((char*)ftp_path.c_str());
     printf("FTP::List\n");

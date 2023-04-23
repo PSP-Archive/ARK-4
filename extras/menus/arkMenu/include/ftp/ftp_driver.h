@@ -6,6 +6,7 @@
 class FTPDriver : public BrowserDriver{
     private:
         bool connected;
+        string root;
     public:
         FTPDriver();
         ~FTPDriver();
