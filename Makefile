@@ -46,9 +46,9 @@ SUBDIRS = libs \
 	extras/menus/recovery \
 	extras/menus/xMenu \
 	extras/menus/advancedvsh \
-	extras/xmbctrl \
-	extras/usbdevice \
-	extras/idsregeneration
+	extras/modules/xmbctrl \
+	extras/modules/usbdevice \
+	extras/modules/idsregeneration
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx
 
@@ -78,11 +78,11 @@ copy-bin:
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
 	$(Q)cp extras/menus/arkMenu/themes/ARK_Revamped/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher and Recovery resources
-	$(Q)cp extras/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
-	$(Q)cp extras/xmbctrl/translations/XMB_*.TXT dist/ARK_01234/ # XMB Control translation files
-	$(Q)cp extras/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
-	$(Q)cp extras/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
 	$(Q)cp extras/menus/advancedvsh/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
+	$(Q)cp extras/modules/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
+	$(Q)cp extras/modules/xmbctrl/translations/XMB_*.TXT dist/ARK_01234/ # XMB Control translation files
+	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
+	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)cp contrib/README.TXT dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
@@ -145,9 +145,9 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/advancedvsh
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
-	$(Q)$(MAKE) $@ -C extras/xmbctrl
-	$(Q)$(MAKE) $@ -C extras/usbdevice
-	$(Q)$(MAKE) $@ -C extras/idsregeneration
+	$(Q)$(MAKE) $@ -C extras/modules/xmbctrl
+	$(Q)$(MAKE) $@ -C extras/modules/usbdevice
+	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
