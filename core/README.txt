@@ -19,7 +19,7 @@ Only a few modules and parts of the kernel are allowed to break rules:
 
 1. VshControl can break rule 2 for PSP-Go and PSP-1K checks.
 2. CompatLayer can break all rules.
-3. Rebootex can break rule 3, except for externally loaded rebootex that can break all rules.
+3. Externally loaded rebootex can break all rules.
 
 
 These guidelines allow ARK to be as robust as possible while also working with as many different models and devices.
