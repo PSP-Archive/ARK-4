@@ -197,6 +197,9 @@ void Browser::installTheme() {
 		mode = modes[ret];
 	}
 
+	//TODO: Add ability to preview theme
+	if (ret == 0) return;
+
 
 	SystemMgr::pauseDraw();
     //int fd = sceIoOpen(path_entries[pret+1].name, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
@@ -224,8 +227,11 @@ void Browser::installTheme() {
 	sceIoClose(dst_theme);
 
 	SystemMgr::resumeDraw();
-
-	Eboot* eboot = new Eboot("ms0:/PSP/SAVEDATA/ARK_01234/VBOOT.PBP");
+	Eboot* eboot;
+	if(e->getPath().substr(0,3) == GO_ROOT)
+		eboot = new Eboot("ef0:/PSP/SAVEDATA/ARK_01234/VBOOT.PBP");
+	else
+		eboot = new Eboot("ms0:/PSP/SAVEDATA/ARK_01234/VBOOT.PBP");
 	eboot->execute();
 
 }
