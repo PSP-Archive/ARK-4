@@ -184,6 +184,7 @@ class Browser : public SystemEntry{
         
         void extractArchive(int type);
         void installPlugin();
+        void installTheme();
         
         void copy();
         void cut();

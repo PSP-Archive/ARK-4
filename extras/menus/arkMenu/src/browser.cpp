@@ -159,6 +159,9 @@ void Browser::update(){
     else if (Entry::isPRX(this->get()->getPath().c_str())){
         installPlugin();
     }
+	else if (Entry::isARK(this->get()->getPath().c_str())) {
+		installTheme();
+	}
     else if (Entry::isTXT(this->get()->getPath().c_str())){
         optionsmenu = new TextEditor(this->get()->getPath());
         optionsmenu->control();
@@ -166,6 +169,65 @@ void Browser::update(){
         optionsmenu = NULL;
         delete aux;
     }
+}
+
+void Browser::installTheme() {
+	Entry* e = this->get();
+	t_options_entry options_entries[] = {
+		{OPTIONS_CANCELLED, "Cancel"},
+		{0, "Preview"},
+		{1, "Install"},
+	};
+
+	// Sanity checks
+	if(e->getName() != "THEME.ARK" || e->getPath().substr(2) == "0:/PSP/SAVEDATA/ARK_01234/THEME.ARK") return;
+
+	optionsmenu = new OptionsMenu("Install Theme", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
+	int ret = optionsmenu->control();
+	OptionsMenu* aux = optionsmenu;
+	optionsmenu = NULL;
+	delete aux;
+
+	if (ret == OPTIONS_CANCELLED) return;
+
+	string mode;
+
+	if (ret < 2) {
+		char* modes[] = {"Preview", "Install"};
+		mode = modes[ret];
+	}
+
+
+	SystemMgr::pauseDraw();
+    //int fd = sceIoOpen(path_entries[pret+1].name, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+	char b[32];
+	int original_theme = sceIoOpen(e->getPath().c_str(), PSP_O_RDONLY, 0777);
+
+	if(original_theme < 0) {
+		SystemMgr::resumeDraw();
+		return;
+	}
+	
+	// This can cause issues, but for now it will work.
+	int dst_theme = sceIoOpen("THEME.ARK", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+
+	char buf[1024];
+	int b_read, b_write;
+	while(1) {
+		b_read = sceIoRead(original_theme, buf, sizeof(buf));
+		if(b_read <= 0)
+			break;
+		else
+			b_write = sceIoWrite(dst_theme, buf, b_read);
+	}
+	sceIoClose(original_theme);
+	sceIoClose(dst_theme);
+
+	SystemMgr::resumeDraw();
+
+	Eboot* eboot = new Eboot("ms0:/PSP/SAVEDATA/ARK_01234/VBOOT.PBP");
+	eboot->execute();
+
 }
 
 void Browser::installPlugin(){
