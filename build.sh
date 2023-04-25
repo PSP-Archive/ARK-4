@@ -15,8 +15,8 @@ export PSPDEV=/usr/local/pspdev && export PATH=$PATH:$PSPDEV/bin
 dialogCheck=$(command -v dialog 2>/dev/null)
 
 function checkDepends {
-	python2Check=$(command -v python2 2>/dev/null)
-	python2Ret=$?
+	python3Check=$(command -v python3 2>/dev/null)
+	python3Ret=$?
 
 	makeCheck=$(command -v make 2>/dev/null)
 	makeRet=$?
@@ -24,31 +24,31 @@ function checkDepends {
 	sevenzCheck=$(command -v 7z 2>/dev/null)
 	sevenzRet=$?
 
-	if [[ $python2Ret -eq 1 || $makeRet -eq 1 ]] ; then
-		if [[ $python2Ret && $makeRet -eq 1 ]] ; then
+	if [[ $python3Ret -eq 1 || $makeRet -eq 1 ]] ; then
+		if [[ $python3Ret && $makeRet -eq 1 ]] ; then
 			if [[ -f $dialogCheck ]] ; then
-				dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python2 ] and  [ make ] are required packages" 10 50 
+				dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python3 ] and  [ make ] are required packages" 10 50 
 				sleep 2;
 				dialog --clear
 				exit 1;	
 			else
-				printf "You need both \`python2\` and \`make\`\n"
+				printf "You need both \`python3\` and \`make\`\n"
 				exit 1;
 			fi
 		fi
 
-	elif [[ $python2Ret -eq 1 && $makeRet -eq 0 ]] ; then
+	elif [[ $python3Ret -eq 1 && $makeRet -eq 0 ]] ; then
 		if [[ -f $dialogCheck ]] ; then
-            dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python2 ] is a required package" 10 50
+            dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python3 ] is a required package" 10 50
             sleep 2;
             dialog --clear
             exit 1; 
         else
-            printf " \`python2\` is required\n"
+            printf " \`python3\` is required\n"
             exit 1;
 		fi
 
-	elif [[ $python2Ret -eq 0 && $makeRet -eq 1 ]] ; then
+	elif [[ $python3Ret -eq 0 && $makeRet -eq 1 ]] ; then
 		if [[ -f $dialogCheck ]] ; then
             dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ make ] is a required package" 10 50
             sleep 2;
@@ -169,7 +169,7 @@ export -f original
 
 function withDialog {
 
-	# Check for python2 and Make first before moving onwards
+	# Check for python3 and Make first before moving onwards
 	checkDepends 
 
 	if [[ $1 == '-h' || $1 == '--help' ]] ; then
