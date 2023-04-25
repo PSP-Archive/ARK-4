@@ -36,7 +36,12 @@ PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 0);
 u32 psp_model = 0;
 ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
+
 int has_umd_iso = 0;
+int hidepics = 0;
+int hibblock = 0;
+int skiplogos = 0;
+int hidemac = 0;
 
 // Flush Instruction and Data Cache
 void sync_cache()
@@ -68,9 +73,6 @@ int get_device_name(char *device, int size, const char* path)
     return 0;
 }
 
-int hidepics = 0;
-int hibblock = 0;
-int skiplogos = 0;
 void settingsHandler(char* path){
     if (strcasecmp(path, "hidepics") == 0){ // hide PIC0 and PIC1
         hidepics = 1;
@@ -78,8 +80,11 @@ void settingsHandler(char* path){
     else if (strcasecmp(path, "hibblock") == 0){ // block hibernation
         hibblock = 1;
     }
-    else if (strcasecmp(path, "skiplogos") == 0){
+    else if (strcasecmp(path, "skiplogos") == 0){ // skip sony logo and gameboot
         skiplogos = 1;
+    }
+    else if (strcasecmp(path, "hidemac") == 0){ // hide mac address
+        hidemac = 1;
     }
 }
 

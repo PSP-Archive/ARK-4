@@ -65,6 +65,7 @@ static void patch_htmlviewer_utility_module(u32 text_addr);
 extern int hibblock;
 extern int skiplogos;
 extern int has_umd_iso;
+extern int hidemac;
 
 static int vshpatch_module_chain(SceModule2 *mod)
 {
@@ -229,6 +230,12 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     _sw(0x34420000 | ((u32)(p) & 0xFFFF), a + 4); // or $v0, $v0, 
 
     hookImportByNID((SceModule*)mod, "IoFileMgrForUser", 0x06A70004, myIoMkdir);
+
+    if (hidemac) {
+		p = (void*)(text_addr + 0x0002E9A0);
+		sprintf(str, "[ Model: 0%dg ]", (int)psp_model+1);
+		ascii2utf16(p, str);
+	}
 }
 
 int fakeParamInexistance(void)
