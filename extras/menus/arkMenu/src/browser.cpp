@@ -450,7 +450,7 @@ void Browser::drawScreen(){
         int x = xoffset-65;
         int y = yoffset-13;
         ya2d_draw_rect(x+2, y, 3, height*entries->size(), DARKGRAY, 1);
-        ya2d_draw_rect(x, y + index*height, 7, height, DARKGRAY, 1);
+        ya2d_draw_rect(x+1, y + index*height, 5, height, DARKGRAY, 1);
         ya2d_draw_rect(x+3, y, 1, height*entries->size(), LITEGRAY, 1);
         ya2d_draw_rect(x+2, y + index*height, 3, height, LITEGRAY, 1);
     }
