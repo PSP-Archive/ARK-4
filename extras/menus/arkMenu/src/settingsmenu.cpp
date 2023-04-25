@@ -59,6 +59,7 @@ void SettingsMenu::draw(){
     
     switch (animation){
     case -1:
+        // openint animation
         if (w < MENU_W || h < max_height){
             
             w += MENU_W_SPEED;
@@ -80,11 +81,15 @@ void SettingsMenu::draw(){
         }
         break;
     case 0:
+        // no animation (fully open)
         if (customText == NULL || ntext == 0){
             x = (480-MENU_W)/2;
             y = (272-max_height)/2;
+
+            // draw main window
             common::getImage(IMAGE_DIALOG)->draw_scale(x, y, MENU_W, max_height);
         
+            // draw scrollbar if more than one page
             if (table->max_options > PAGE_SIZE){
                 int height = max_height / table->max_options;
                 ya2d_draw_rect(x-8, y, 3, height*table->max_options, DARKGRAY, 1);
@@ -93,6 +98,7 @@ void SettingsMenu::draw(){
                 ya2d_draw_rect(x-8, y + index*height, 3, height, LITEGRAY, 1);
             }
         
+            // show information if needed
             if (show_info){
                 if (today.tm_mday == 3 && today.tm_mon == 6)
                     common::printText(x+10, y+15, "In Loving Memory of Gregory Pitka (qwikrazor87). R.I.P.", GRAY_COLOR, SIZE_LITTLE, 0, 0);
@@ -105,21 +111,25 @@ void SettingsMenu::draw(){
             int yoffset = y+40;
             int xoffset = x+10;
         
+            // draw each entry
             for (int i=start; i<min(start+PAGE_SIZE, table->max_options); i++){
                 unsigned char sel = table->settings_entries[i]->selection;
+                // draw highlighted entry
                 if (i==index){
                     common::printText(xoffset, yoffset, table->settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, 1);
                     common::printText(xoffset+255, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1);
                 }
+                // non-highlighted entries
                 else{
                     string desc = table->settings_entries[i]->description;
-                    
+                    // shorten them when asked
                     if (shorten_paths){
                         size_t lastSlash = desc.rfind('/');
                         desc = desc.substr(lastSlash+1, -1);
                     }
                     if (desc.size() > 55) desc = desc.substr(0, 40) + "...";
                     common::printText(xoffset, yoffset, desc.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
+                    // show option for entry? only if told so
                     if (show_all_opts)
                         common::printText(xoffset+255, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_LITTLE, 0);
                 }
@@ -127,6 +137,7 @@ void SettingsMenu::draw(){
             }
         }
         else {
+            // draw custom text
             w = min(480, common::maxString(customText, ntext)*10);
             h = max_height;
             x = (480-w)/2;
@@ -143,6 +154,7 @@ void SettingsMenu::draw(){
         
         break;
     case 1:
+        // closing animation
         if (w > 0 || h > 0){
         
             w -= MENU_W_SPEED;
