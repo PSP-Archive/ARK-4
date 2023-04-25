@@ -19,3 +19,7 @@
 
 
 # Plugins Issues
+
+
+# Python3 Issues
+- None so far, hopefully never
