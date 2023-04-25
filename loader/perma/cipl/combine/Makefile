@@ -1,6 +1,6 @@
 MODULE_PATH = ..
 
-PYTHON=$(shell which python2)
+PYTHON=$(shell which python3)
 
 all:
 	$(PYTHON) ./combine.py ipl_header_01g.bin ../mainbinex/patch.bin ipl_block_01g.bin

@@ -3,7 +3,7 @@ REBOOTEXDIR = $(ARKROOT)/loader/rebootex
 INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)/kxploit/ $(REBOOTEXDIR)
 TARGET = reboot.bin.gz
 
-PYTHON=$(shell which python2)
+PYTHON=$(shell which python3)
 
 all: $(TARGET)
 

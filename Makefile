@@ -1,7 +1,7 @@
 # Number of Compilation Threads
 OPT=-j8
 
-PYTHON = $(shell which python2)
+PYTHON = $(shell which python3)
 ARKROOT ?= $(CURDIR)
 
 export DEBUG ARKROOT

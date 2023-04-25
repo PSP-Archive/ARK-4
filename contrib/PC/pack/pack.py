@@ -39,7 +39,7 @@ def pack(outputFile, fileList):
                 of.write(d)
                 ' filename '
                 of.write(struct.pack('<B', len(r[0])))
-                of.write(r[0])
+                of.write(r[0].encode())
                 ' file content '
                 of.write(fileContent)
                 fileCount += 1

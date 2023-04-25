@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import os, sys, struct
 
@@ -270,8 +270,8 @@ class pspBtCnf:
 
         for modstr in modstrings:
             self.updateModuleStrOffset(modstr, fp.tell() - modnamestart)
-            fp.write(modstr)
-            fp.write('\x00')
+            fp.write(modstr.encode())
+            fp.write('\x00'.encode())
 
     def outputBin(self, fn):
         with open(fn, "wb") as f:

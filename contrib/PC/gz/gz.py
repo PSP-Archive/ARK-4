@@ -1,15 +1,17 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
+
+import sys, os, struct, gzip, hashlib
+from io import BytesIO
 
 class FakeTime:
     def time(self):
         return 1225856967.109
 
-import sys, os, struct, gzip, hashlib, StringIO
 
 gzip.time = FakeTime()
 
 def gzipCompress(fn):
-    sio=StringIO.StringIO()
+    sio=BytesIO()
 
     with gzip.GzipFile(fileobj=sio, mode='wb') as gz:
         with open(fn, "rb") as f:

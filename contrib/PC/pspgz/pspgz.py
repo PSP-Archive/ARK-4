@@ -1,10 +1,11 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 class FakeTime:
     def time(self):
         return 1225856967.109
 
-import sys, os, struct, gzip, hashlib, StringIO
+import sys, os, struct, gzip, hashlib
+from io import BytesIO
 
 gzip.time = FakeTime()
 
@@ -27,7 +28,7 @@ def prx_compress(output, hdr, input, mod_name="", mod_attr=0xFFFFFFFF):
     uncompsize = os.stat(input).st_size
 
     f_in=open(input, 'rb')
-    temp=StringIO.StringIO()
+    temp=BytesIO()
     f=gzip.GzipFile(fileobj=temp, mode='wb')
     f.writelines(f_in)
     f.close()
