@@ -50,7 +50,7 @@ int main(int argc, char** argv){
     SettingsMenu* plugins_menu = new SettingsMenu(&plugins_table, savePlugins, true, true, true);
     plugins_menu->setName("Plugins");
     plugins_menu->setInfo("ARK Plugins");
-    plugins_menu->setIcon(common::getImage(IMAGE_PLUGINS));
+    plugins_menu->setIcon(IMAGE_PLUGINS);
     entries[1] = plugins_menu;
 
     // Add browser

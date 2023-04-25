@@ -210,7 +210,8 @@ void Browser::installTheme() {
         }
     }
 
-    copyFile(e->getPath(), THEME_NAME);
+    deleteFile(THEME_NAME);
+    copyFile(e->getPath(), common::getArkConfig()->arkpath);
 
     /*
 	char b[32];
