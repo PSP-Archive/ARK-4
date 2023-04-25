@@ -35,6 +35,7 @@ typedef struct {
     unsigned char vshregion;
     unsigned char hidepics;
     unsigned char hibblock;
+    unsigned char hidemac;
 }ArkConf;
 
 ArkConf ark_config;
@@ -224,6 +225,20 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
+} hidemac = {
+    "Hide Mac Address",
+    MAX_ARK_OPTIONS,
+    0,
+    &(ark_config.hidemac),
+    ARK_OPTIONS
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
 } regionchange = {
     "UMD Region Change",
     4,
@@ -257,6 +272,7 @@ settings_entry* ark_conf_entries_1k[] = {
     (settings_entry*)&infernocache,
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
+    (settings_entry*)&hidemac,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -272,6 +288,7 @@ settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&infernocache,
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
+    (settings_entry*)&hidemac,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -290,6 +307,7 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&hibblock,
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
+    (settings_entry*)&hidemac,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_GO (sizeof(ark_conf_entries_go)/sizeof(ark_conf_entries_go[0]))
@@ -307,6 +325,7 @@ settings_entry* ark_conf_entries_adr[] = {
     (settings_entry*)&infernocache,
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
+    (settings_entry*)&hidemac,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_ADR (sizeof(ark_conf_entries_adr)/sizeof(ark_conf_entries_adr[0]))
@@ -380,6 +399,9 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "hibblock") == 0){
         return &(ark_config.hibblock);
+    }
+    else if (strcasecmp(conf.c_str(), "hidemac") == 0){
+        return &(ark_config.hidemac);
     }
     else if (strcasecmp(conf.c_str(), "region_jp") == 0){
         ark_config.regionchange = REGION_JAPAN;
@@ -506,6 +528,7 @@ void saveSettings(){
     output << processSetting("skiplogos", ark_config.skiplogos) << endl;
     output << processSetting("hidepics", ark_config.hidepics) << endl;
     output << processSetting("hibblock", ark_config.hibblock) << endl;
+    output << processSetting("hidemac", ark_config.hidemac) << endl;
     
     switch (ark_config.regionchange){
         case REGION_JAPAN:
