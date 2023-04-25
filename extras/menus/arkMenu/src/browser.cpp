@@ -212,39 +212,6 @@ void Browser::installTheme() {
 
     deleteFile(THEME_NAME);
     copyFile(e->getPath(), common::getArkConfig()->arkpath);
-
-    /*
-	char b[32];
-	int original_theme = sceIoOpen(e->getPath().c_str(), PSP_O_RDONLY, 0777);
-
-	if(original_theme < 0) {
-		SystemMgr::resumeDraw();
-		return;
-	}
-	
-	// This can cause issues, but for now it will work.
-	int dst_theme = sceIoOpen(THEME_NAME, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-
-	char buf[1024];
-	int b_read, b_write;
-	while(1) {
-		b_read = sceIoRead(original_theme, buf, sizeof(buf));
-		if(b_read <= 0)
-			break;
-		else
-			b_write = sceIoWrite(dst_theme, buf, b_read);
-	}
-	sceIoClose(original_theme);
-	sceIoClose(dst_theme);
-
-	Eboot* eboot;
-	if(e->getPath().substr(0,3) == GO_ROOT)
-		eboot = new Eboot("ef0:/PSP/SAVEDATA/ARK_01234/VBOOT.PBP");
-	else
-		eboot = new Eboot("ms0:/PSP/SAVEDATA/ARK_01234/VBOOT.PBP");
-	eboot->execute();
-    */
-
 }
 
 void Browser::installPlugin(){
