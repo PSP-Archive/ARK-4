@@ -289,6 +289,7 @@ void PSPOnModuleStart(SceModule2 * mod){
 
     if(strcmp(mod->modname, "sceWlan_Driver") == 0) {
         patch_sceWlan_Driver(mod);
+        patch_Libertas_MAC(mod);
         goto flush;
     }
 

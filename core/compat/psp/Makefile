@@ -5,6 +5,7 @@ C_OBJS = \
 	syspatch.o \
 	high_mem.o  \
 	cpuclock.o   \
+	libertas.o   \
 	usb_charge.o  \
 	region_free.o \
 	$(ARKROOT)/core/systemctrl/src/gameinfo.o \
