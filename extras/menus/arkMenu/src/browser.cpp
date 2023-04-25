@@ -180,19 +180,39 @@ void Browser::installTheme() {
 
 	if (ret == OPTIONS_CANCELLED) return;
 
-	string mode;
-
-	if (ret < 2) {
-		char* modes[] = {"Preview", "Install"};
-		mode = modes[ret];
-	}
-
-	//TODO: Add ability to preview theme
-	if (ret == 0) return;
-
-
+    // load new theme
 	SystemMgr::pauseDraw();
-    //int fd = sceIoOpen(path_entries[pret+1].name, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+    common::deleteTheme();
+    common::setThemePath((char*)e->getPath().c_str());
+    common::loadTheme();
+    SystemMgr::resumeDraw();
+
+	// Ask before overwriting theme
+	if (ret == 0) {
+        t_options_entry options_entries[] = {
+            {OPTIONS_CANCELLED, "Cancel"},
+            {0, "Accept"},
+        };
+        optionsmenu = new OptionsMenu("Install Theme", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
+        int ret = optionsmenu->control();
+        OptionsMenu* aux = optionsmenu;
+        optionsmenu = NULL;
+        delete aux;
+
+        if (ret == OPTIONS_CANCELLED){
+            // reset back to default theme
+            SystemMgr::pauseDraw();
+            common::deleteTheme();
+            common::setThemePath();
+            common::loadTheme();
+            SystemMgr::resumeDraw();
+            return;
+        }
+    }
+
+    copyFile(e->getPath(), THEME_NAME);
+
+    /*
 	char b[32];
 	int original_theme = sceIoOpen(e->getPath().c_str(), PSP_O_RDONLY, 0777);
 
@@ -202,7 +222,7 @@ void Browser::installTheme() {
 	}
 	
 	// This can cause issues, but for now it will work.
-	int dst_theme = sceIoOpen("THEME.ARK", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+	int dst_theme = sceIoOpen(THEME_NAME, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 
 	char buf[1024];
 	int b_read, b_write;
@@ -216,13 +236,13 @@ void Browser::installTheme() {
 	sceIoClose(original_theme);
 	sceIoClose(dst_theme);
 
-	SystemMgr::resumeDraw();
 	Eboot* eboot;
 	if(e->getPath().substr(0,3) == GO_ROOT)
 		eboot = new Eboot("ef0:/PSP/SAVEDATA/ARK_01234/VBOOT.PBP");
 	else
 		eboot = new Eboot("ms0:/PSP/SAVEDATA/ARK_01234/VBOOT.PBP");
 	eboot->execute();
+    */
 
 }
 

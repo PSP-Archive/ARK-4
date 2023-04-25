@@ -88,7 +88,7 @@ namespace common{
     extern void deleteData();
     extern void loadTheme();
     extern void deleteTheme();
-    extern void setThemePath(char* path);
+    extern void setThemePath(char* path = NULL);
     extern bool fileExists(const std::string &path);
     extern bool folderExists(const std::string &path);
     extern long fileSize(const std::string &path);
