@@ -287,11 +287,9 @@ void sctrlHENSetSpeed(int cpuspd, int busspd)
 }
 
 extern void* custom_rebootex;
-extern void* external_rebootex;
-extern int rebootheap;
 void sctrlHENSetRebootexOverride(const u8 *rebootex)
 {
-    if (rebootex != NULL && external_rebootex == NULL) // external rebootex (REBOOT.BIN file in savedata) has priority
+    if (rebootex != NULL) // override rebootex
         custom_rebootex = rebootex;
 }
 

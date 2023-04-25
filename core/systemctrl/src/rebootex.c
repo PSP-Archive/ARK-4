@@ -37,8 +37,6 @@ RebootConfigARK rebootex_config = {
 
 // custom rebootex
 void* custom_rebootex = NULL;
-void* external_rebootex = NULL;
-int rebootheap = -1;
 
 // Backup Reboot Buffer
 void backupRebootBuffer(void)
@@ -53,6 +51,10 @@ void backupRebootBuffer(void)
     // Copy ARK runtime Config
     if (IS_ARK_CONFIG(ARK_CONFIG))
         memcpy(ark_config, ARK_CONFIG, sizeof(ARKConfig));
+
+    // adjust ARK config
+    int has_vsh_iso = (sctrlSEGetUmdFile()[0] != 0 && sctrlSEGetBootConfFileIndex() == MODE_VSHUMD);
+    if (has_vsh_iso) ark_config->launcher[0] = 0; // disable launcher in VSH ISO
     
     // Flush Cache
     flushCache();
@@ -62,8 +64,7 @@ void backupRebootBuffer(void)
 void restoreRebootBuffer(void)
 {
 
-    u8* rebootex = external_rebootex; // try custom rebootex from sctrlHENSetRebootexOverride
-    if (rebootex == NULL) rebootex = custom_rebootex; // try custom rebootex from REBOOT.BIN in ARK savedata
+    u8* rebootex = custom_rebootex; // try custom rebootex from sctrlHENSetRebootexOverride
     if (rebootex == NULL) return; // can't inject custom rebootex, make sure compat layer has defined one using sctrlHENSetRebootexOverride
 
     // clean rebootex memory

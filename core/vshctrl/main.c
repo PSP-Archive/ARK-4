@@ -107,5 +107,11 @@ int module_start(SceSize args, void* argp)
     sctrlSESetUmdFile("");
     sctrlSESetBootConfFileIndex(MODE_UMD);
 
+    if (has_umd_iso){
+        // disable launcher mode if using VSH ISO
+        ark_config->launcher[0] = 0;
+        sctrlHENSetArkConfig(ark_config);
+    }
+
     return 0;
 }

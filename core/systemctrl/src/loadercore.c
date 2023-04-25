@@ -175,26 +175,6 @@ int KernelCheckExecFile(unsigned char * buffer, int * check)
     return result;
 }
 
-extern void* external_rebootex;
-extern int rebootheap;
-static void loadExternalRebootex(){
-    char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, "REBOOT.BIN");
-    
-    int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
-    if (fd >= 0){ // read external rebootex
-        // allocate memory
-        int size = sceIoLseek32(fd, 0, PSP_SEEK_END);
-        sceIoLseek32(fd, 0, PSP_SEEK_SET);
-        rebootheap = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, size+64, 1, "ExternalRebootex");
-        external_rebootex = (u8*)sceKernelAllocHeapMemory(rebootheap, size);
-        // read rebootex file
-        sceIoRead(fd, external_rebootex, size);
-        sceIoClose(fd);
-    }
-}
-
 static void loadXmbControl(){
     int apitype = sceKernelInitApitype();
     if (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300){
@@ -226,8 +206,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // VSH replacement
     if (strcmp(mod->modname, "vsh_module") == 0){
         if (ark_config->recovery || ark_config->launcher[0]){ // system in recovery or launcher mode
-            if (sctrlSEGetUmdFile()[0] == 0) // don't load launcher if ISO mounted
-                exitLauncher(); // reboot VSH into custom menu
+            exitLauncher(); // reboot VSH into custom menu
         }
     }
     
@@ -237,8 +216,6 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // MediaSync not yet started... too early to load plugins.
     if(!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
     {
-        // Load external rebootex from savedata folder
-        loadExternalRebootex();
         // Load XMB Control
         loadXmbControl();
         // Load Plugins
