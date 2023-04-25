@@ -444,25 +444,33 @@ void Browser::drawScreen(){
     int yoffset = 50;
     bool focused = (optionsmenu==NULL);
     
+    // draw scrollbar (if moving)
     if (moving && entries->size() > 0){
         int height = 230/entries->size();
         int x = xoffset-65;
         int y = yoffset-13;
-        common::getImage(IMAGE_DIALOG)->draw_scale(x+2, y, 1, height*entries->size());
-        common::getImage(IMAGE_DIALOG)->draw_scale(x, y + index*height, 5, height);
+        ya2d_draw_rect(x+2, y, 3, height*entries->size(), DARKGRAY, 1);
+        ya2d_draw_rect(x, y + index*height, 7, height, DARKGRAY, 1);
+        ya2d_draw_rect(x+3, y, 1, height*entries->size(), LITEGRAY, 1);
+        ya2d_draw_rect(x+2, y + index*height, 3, height, LITEGRAY, 1);
     }
 
+    // draw main window
     common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, 410, 230);
     
+    // no items loaded? draw wait icon
     if (entries->size() == 0){
         Image* img = common::getImage(IMAGE_WAITICON);
         img->draw((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2);
         return;
     }
     
+    // draw each entry
     for (int i=this->start; i<min(this->start+PAGE_SIZE, (int)entries->size()); i++){
         File* e = (File*)this->entries->at(i);
+        // draw checkbox
         common::getCheckbox((int)e->isSelected())->draw(xoffset-30, yoffset-10);
+        // draw focused entry
         if (i == index && this->enableSelection){
             if (animating){
                 common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, focused, focused);
@@ -471,9 +479,11 @@ void Browser::drawScreen(){
             else
                 common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, focused);
         }
+        // draw non-focused entry
         else{
             common::printText(xoffset, yoffset, this->formatText(e->getName()).c_str());
         }
+        // draw entry size and icon
         common::printText(400, yoffset, e->getSize().c_str());
         common::getIcon(e->getFileType())->draw(xoffset-15, yoffset-10);
         yoffset += 20;

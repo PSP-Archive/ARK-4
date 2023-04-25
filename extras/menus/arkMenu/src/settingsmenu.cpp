@@ -87,8 +87,10 @@ void SettingsMenu::draw(){
         
             if (table->max_options > PAGE_SIZE){
                 int height = max_height / table->max_options;
-                common::getImage(IMAGE_DIALOG)->draw_scale(x-8, y, 1, table->max_options*height);
-                common::getImage(IMAGE_DIALOG)->draw_scale(x-10, y + (index*height), 5, height);
+                ya2d_draw_rect(x-8, y, 3, height*table->max_options, DARKGRAY, 1);
+                ya2d_draw_rect(x-10, y + index*height, 7, height, DARKGRAY, 1);
+                ya2d_draw_rect(x-7, y, 1, height*table->max_options, LITEGRAY, 1);
+                ya2d_draw_rect(x-8, y + index*height, 3, height, LITEGRAY, 1);
             }
         
             if (show_info){
