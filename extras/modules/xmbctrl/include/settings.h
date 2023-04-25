@@ -38,6 +38,7 @@ char *settings[] =
     "Skip Sony Logos",
     "Hide PIC0 and PIC1",
     "Prevent hibernation deletion on PSP Go",
+    "Hide MAC Address",
 };
 
 #endif

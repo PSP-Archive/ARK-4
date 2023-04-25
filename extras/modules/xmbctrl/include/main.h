@@ -48,6 +48,7 @@ typedef struct
     int skiplogos;
     int hidepics;
     int hibblock;
+    int hidemac;
 } CFWConfig;
 
 typedef struct

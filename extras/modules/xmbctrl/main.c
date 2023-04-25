@@ -47,7 +47,7 @@ extern List plugins;
 typedef struct
 {
     char *items[2];
-    char *options[12];
+    char *options[13];
 } StringContainer;
 
 StringContainer string;
@@ -75,6 +75,7 @@ GetItem GetItemes[] =
     { 1, 0, "Skip Sony Logos" },
     { 1, 0, "Hide PIC0 and PIC1" },
     { 1, 0, "Prevent hibernation deletion on PSP Go" },
+    { 1, 0, "Hide MAC Address" },
 };
 
 char* ark_settings_options[] = {
@@ -454,6 +455,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.skiplogos,
                 config.hidepics,
                 config.hibblock,
+                config.hidemac,
             };
             
             int i;
@@ -503,6 +505,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.skiplogos,
                 &config.hidepics,
                 &config.hibblock,
+                &config.hidemac,
             };
             
             int i;
