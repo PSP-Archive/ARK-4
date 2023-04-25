@@ -16,6 +16,10 @@ extern "C" int kuKernelGetModel();
 
 static ARKConfig ark_config = {0};
 static Image* images[MAX_IMAGES];
+/* Common browser images */
+static Image* checkbox[2];
+static Image* icons[MAX_FILE_TYPES];
+
 static intraFont* font;
 static MP3* sound_mp3;
 static int argc;
@@ -30,6 +34,8 @@ static Anim* animations[ANIM_COUNT];
 static bool flipControl = false;
 
 static int psp_model;
+
+static string theme_path = THEME_NAME;
 
 char* fonts[] = {
     "FONT.PGF",
@@ -168,12 +174,12 @@ static void missingFileHandler(const char* filename){
     }
 }
 
-SceOff common::findPkgOffset(const char* filename, unsigned* size){
-    
-    FILE* pkg = fopen(PKG_PATH, "rb");
-    if (pkg == NULL)
-        return 0;
+SceOff common::findPkgOffset(const char* filename, unsigned* size, FILE* pkg){
      
+    if (pkg == NULL){
+        pkg = fopen(theme_path.c_str(), "rb");
+    }
+
     fseek(pkg, 0, SEEK_END);
      
     unsigned pkgsize = ftell(pkg);
@@ -190,7 +196,6 @@ SceOff common::findPkgOffset(const char* filename, unsigned* size){
     while (offset != 0xFFFFFFFF){
         fread(&offset, 1, 4, pkg);
         if (offset == 0xFFFFFFFF){
-            fclose(pkg);
             missingFileHandler(filename);
             return 0;
         }
@@ -207,11 +212,9 @@ SceOff common::findPkgOffset(const char* filename, unsigned* size){
             if (size != NULL)
                 *size = size2 - offset;
      
-            fclose(pkg);
             return offset;
         }
     }
-    missingFileHandler(PKG_PATH);
     return 0;
 }
 
@@ -221,11 +224,15 @@ void* common::readFromPKG(const char* filename, unsigned* size){
     
     if (size == NULL)
         size = &mySize;
+    
+    FILE* fp = fopen(theme_path.c_str(), "rb");
 
-    unsigned offset = findPkgOffset(filename, size);
+    if (fp == NULL){
+        missingFileHandler(theme_path.c_str());
+    }
     
-    FILE* fp = fopen(PKG_PATH, "rb");
-    
+    unsigned offset = findPkgOffset(filename, size, fp);
+
     if (offset == 0 || fp == NULL){
         fclose(fp);
         return NULL;
@@ -268,6 +275,50 @@ u32 common::getMagic(const char* filename, unsigned int offset){
     return magic;
 }
 
+void common::loadTheme(){
+    images[IMAGE_BG] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
+    images[IMAGE_WAITICON] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
+    
+    common::clearScreen(CLEAR_COLOR);
+    images[IMAGE_BG]->draw(0, 0);
+    images[IMAGE_WAITICON]->draw(
+        (480 - images[IMAGE_WAITICON]->getTexture()->width)/2,
+        (272 - images[IMAGE_WAITICON]->getTexture()->height)/2
+    );
+    common::flipScreen();
+    
+    images[IMAGE_LOADING] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("LOADING.PNG"));
+    images[IMAGE_SPRITE] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
+    images[IMAGE_NOICON] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("NOICON.PNG"));
+    images[IMAGE_GAME] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("GAME.PNG"));
+    images[IMAGE_FTP] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("FTP.PNG"));
+    images[IMAGE_SETTINGS] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("SETTINGS.PNG"));
+    images[IMAGE_BROWSER] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("BROWSER.PNG"));
+    images[IMAGE_DIALOG] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("BOX.PNG"));
+    images[IMAGE_EXIT] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("EXIT.PNG"));
+    images[IMAGE_PLUGINS] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("PLUGINS.PNG"));
+
+    icons[FOLDER] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("FOLDER.PNG"));
+    icons[FILE_BIN] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("FILE.PNG"));
+    icons[FILE_TXT] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("TXT.PNG"));
+    icons[FILE_PBP] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("PBP.PNG"));
+    icons[FILE_PRX] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("PRX.PNG"));    
+    icons[FILE_ISO] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("ISO.PNG"));
+    icons[FILE_ZIP] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("ZIP.PNG"));
+
+    checkbox[1] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("CHECK.PNG"));
+    checkbox[0] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("UNCHECK.PNG"));
+    
+    for (int i=0; i<MAX_IMAGES; i++){
+        images[i]->swizzle();
+        images[i]->is_system_image = true;
+    }
+    
+    unsigned mp3_size;
+    void* mp3_buffer = readFromPKG("SOUND.MP3", &mp3_size);
+    sound_mp3 = new MP3(mp3_buffer, mp3_size);
+}
+
 void common::loadData(int ac, char** av){
 
     argc = ac;
@@ -290,36 +341,7 @@ void common::loadData(int ac, char** av){
     animations[9] = new GoLAnim();
     animations[10] = new NoAnim();
     
-    images[IMAGE_BG] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
-    images[IMAGE_WAITICON] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
-    
-    common::clearScreen(CLEAR_COLOR);
-    images[IMAGE_BG]->draw(0, 0);
-    images[IMAGE_WAITICON]->draw(
-        (480 - images[IMAGE_WAITICON]->getTexture()->width)/2,
-        (272 - images[IMAGE_WAITICON]->getTexture()->height)/2
-    );
-    common::flipScreen();
-    
-    images[IMAGE_LOADING] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("LOADING.PNG"));
-    images[IMAGE_SPRITE] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
-    images[IMAGE_NOICON] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("NOICON.PNG"));
-    images[IMAGE_GAME] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("GAME.PNG"));
-    images[IMAGE_FTP] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("FTP.PNG"));
-    images[IMAGE_SETTINGS] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("SETTINGS.PNG"));
-    images[IMAGE_BROWSER] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("BROWSER.PNG"));
-    images[IMAGE_DIALOG] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("BOX.PNG"));
-    images[IMAGE_EXIT] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("EXIT.PNG"));
-    images[IMAGE_PLUGINS] = new Image(PKG_PATH, RESOURCES_LOAD_PLACE, findPkgOffset("PLUGINS.PNG"));
-    
-    for (int i=0; i<MAX_IMAGES; i++){
-        images[i]->swizzle();
-        images[i]->is_system_image = true;
-    }
-    
-    unsigned mp3_size;
-    void* mp3_buffer = readFromPKG("SOUND.MP3", &mp3_size);
-    sound_mp3 = new MP3(mp3_buffer, mp3_size);
+    loadTheme();
     
     loadConfig();
     
@@ -331,11 +353,26 @@ void common::loadData(int ac, char** av){
     
 }
 
-void common::deleteData(){
-    for (int i=0; i<MAX_IMAGES; i++)
+void common::deleteTheme(){
+    for (int i=0; i<MAX_IMAGES; i++){
         delete images[i];
-    intraFontUnload(font);
+    }
+    for (int i=0; i<MAX_FILE_TYPES; i++){
+        delete icons[i];
+    }
+    delete checkbox[0];
+    delete checkbox[1];
     delete sound_mp3;
+}
+
+void common::deleteData(){
+    deleteTheme();
+    intraFontUnload(font);
+}
+
+void common::setThemePath(char* path){
+    if (path == NULL) theme_path = THEME_NAME;
+    else theme_path = path;
 }
 
 bool common::fileExists(const std::string &path){
@@ -356,6 +393,14 @@ long common::fileSize(const std::string &path){
 
 Image* common::getImage(int which){
     return (which < MAX_IMAGES)? images[which] : images[IMAGE_LOADING];
+}
+
+Image* common::getIcon(int which){
+    return (which < MAX_FILE_TYPES)? icons[which] : images[IMAGE_LOADING];
+}
+
+Image* common::getCheckbox(int which){
+    return checkbox[which&1];
 }
 
 bool common::isSharedImage(Image* img){

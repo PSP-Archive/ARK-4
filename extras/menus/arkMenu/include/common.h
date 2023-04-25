@@ -48,12 +48,23 @@ enum images {
     MAX_IMAGES
 };
 
+enum {
+    FOLDER,
+    FILE_BIN,
+    FILE_TXT,
+    FILE_PBP,
+    FILE_PRX,
+    FILE_ISO,
+    FILE_ZIP,
+    MAX_FILE_TYPES,
+};
+
 #define SIZE_LITTLE 0.51f
 #define SIZE_MEDIUM 0.6f
 #define SIZE_BIG 0.7f
 #define SIZE_HUGE 1.5f
 
-#define PKG_PATH "THEME.ARK"
+#define THEME_NAME "THEME.ARK"
 
 #define MS0_PATH 0x3A30736D // 'ms0:' as u32
 #define EF0_PATH 0x3A306665 // 'ef0:' as u32
@@ -70,15 +81,20 @@ namespace common{
     extern int getPspModel();
     extern struct tm getDateTime();
     extern bool has_suffix(const std::string &str, const std::string &suffix);
-    SceOff findPkgOffset(const char* filename, unsigned* size = NULL);
+    SceOff findPkgOffset(const char* filename, unsigned* size = NULL, FILE* pkg = NULL);
     extern void* readFromPKG(const char* filename, unsigned* size = NULL);
     extern u32 getMagic(const char* filename, unsigned int offset);
     extern void loadData(int ac, char** av);
     extern void deleteData();
+    extern void loadTheme();
+    extern void deleteTheme();
+    extern void setThemePath(char* path);
     extern bool fileExists(const std::string &path);
     extern bool folderExists(const std::string &path);
     extern long fileSize(const std::string &path);
     extern Image* getImage(int which);
+    extern Image* getIcon(int which);
+    extern Image* getCheckbox(int which);
     extern bool isSharedImage(Image* img);
     extern intraFont* getFont();
     extern MP3* getMP3Sound();

@@ -58,16 +58,6 @@ Browser::Browser(){
     this->clipboard = new vector<string>(); // list of paths to paste
     this->draw_progress = false;
     this->optionsmenu = NULL;
-    this->checkBox = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("CHECK.PNG"));
-    this->uncheckBox = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("UNCHECK.PNG"));
-    
-    this->icons[FOLDER] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("FOLDER.PNG"));
-    this->icons[FILE_BIN] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("FILE.PNG"));
-    this->icons[FILE_TXT] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("TXT.PNG"));
-    this->icons[FILE_PBP] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("PBP.PNG"));
-    this->icons[FILE_PRX] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("PRX.PNG"));    
-    this->icons[FILE_ISO] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("ISO.PNG"));
-    this->icons[FILE_ZIP] = new Image(PKG_PATH, YA2D_PLACE_VRAM, common::findPkgOffset("ZIP.PNG"));
 
     this->optionsDrawState = 0;
     this->optionsAnimX = 0;
@@ -484,12 +474,7 @@ void Browser::drawScreen(){
     
     for (int i=this->start; i<min(this->start+PAGE_SIZE, (int)entries->size()); i++){
         File* e = (File*)this->entries->at(i);
-        
-        if(e->isSelected()){
-            this->checkBox->draw(xoffset-30, yoffset-10);
-        }else{
-            this->uncheckBox->draw(xoffset-30, yoffset-10);
-        }
+        common::getCheckbox((int)e->isSelected())->draw(xoffset-30, yoffset-10);
         if (i == index && this->enableSelection){
             if (animating){
                 common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, focused, focused);
@@ -502,7 +487,7 @@ void Browser::drawScreen(){
             common::printText(xoffset, yoffset, this->formatText(e->getName()).c_str());
         }
         common::printText(400, yoffset, e->getSize().c_str());
-        this->icons[e->getFileType()]->draw(xoffset-15, yoffset-10);
+        common::getIcon(e->getFileType())->draw(xoffset-15, yoffset-10);
         yoffset += 20;
     }
 }
