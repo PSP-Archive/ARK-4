@@ -211,10 +211,25 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
         }
     }
     
-    for (; ; addr++){
+    patches = (hidemac)? 2:1;
+    for (; addr < top_addr && patches; addr++){
         if (strcmp(addr, "sysconf_plugin_module") == 0){
             p = addr;
-            break;
+            patches--;
+        }
+        else if (hidemac
+                && ((u8*)addr)[0] == 0x25
+                && ((u8*)addr)[1] == 0
+                && ((u8*)addr)[2] == 0x30
+                && ((u8*)addr)[3] == 0
+                && ((u8*)addr)[4] == 0x32
+                && ((u8*)addr)[5] == 0
+                && ((u8*)addr)[6] == 0x58
+                && ((u8*)addr)[7] == 0 )
+        {
+            sprintf(str, "[ Model: 0%dg ]", (int)psp_model+1);
+		    ascii2utf16(addr, str);
+            patches--;
         }
     }
     
@@ -230,12 +245,6 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     _sw(0x34420000 | ((u32)(p) & 0xFFFF), a + 4); // or $v0, $v0, 
 
     hookImportByNID((SceModule*)mod, "IoFileMgrForUser", 0x06A70004, myIoMkdir);
-
-    if (hidemac) {
-		p = (void*)(text_addr + 0x0002E9A0);
-		sprintf(str, "[ Model: 0%dg ]", (int)psp_model+1);
-		ascii2utf16(p, str);
-	}
 }
 
 int fakeParamInexistance(void)
