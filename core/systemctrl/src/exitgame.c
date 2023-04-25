@@ -68,6 +68,15 @@ void exitLauncher()
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 }
 
+static void startExitThread(){
+	// Exit to custom launcher
+	int k1 = pspSdkSetK1(0);
+	int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
+	sceKernelStartThread(uid, 0, NULL);
+	sceKernelWaitThreadEnd(uid, NULL);
+	pspSdkSetK1(k1);
+}
+
 // Gamepad Hook #1
 int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = NULL;
 int peek_positive(SceCtrlData * pad_data, int count)
@@ -78,12 +87,7 @@ int peek_positive(SceCtrlData * pad_data, int count)
 	// Check for Exit Mask
 	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
-		// Exit to custom launcher
-		int k1 = pspSdkSetK1(0);
-		int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
-		sceKernelStartThread(uid, 0, NULL);
-		sceKernelWaitThreadEnd(uid, NULL);
-		pspSdkSetK1(k1);
+		startExitThread();
 	}
 	
 	// Return Number of Input Frames
@@ -100,12 +104,7 @@ int peek_negative(SceCtrlData * pad_data, int count)
 	// Check for Exit Mask
 	if((pad_data[0].Buttons & EXIT_MASK) == 0)
 	{
-		// Exit to custom launcher
-		int k1 = pspSdkSetK1(0);
-		int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
-		sceKernelStartThread(uid, 0, NULL);
-		sceKernelWaitThreadEnd(uid, NULL);
-		pspSdkSetK1(k1);
+		startExitThread();
 	}
 	
 	// Return Number of Input Frames
@@ -122,12 +121,7 @@ int read_positive(SceCtrlData * pad_data, int count)
 	// Check for Exit Mask
 	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
-		// Exit to custom launcher
-		int k1 = pspSdkSetK1(0);
-		int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
-		sceKernelStartThread(uid, 0, NULL);
-		sceKernelWaitThreadEnd(uid, NULL);
-		pspSdkSetK1(k1);
+		startExitThread();
 	}
 	
 	// Return Number of Input Frames
@@ -144,12 +138,7 @@ int read_negative(SceCtrlData * pad_data, int count)
 	// Check for Exit Mask
 	if((pad_data[0].Buttons & EXIT_MASK) == 0)
 	{
-		// Exit to custom launcher
-		int k1 = pspSdkSetK1(0);
-		int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
-		sceKernelStartThread(uid, 0, NULL);
-		sceKernelWaitThreadEnd(uid, NULL);
-		pspSdkSetK1(k1);
+		startExitThread();
 	}
 	
 	// Return Number of Input Frames
@@ -164,8 +153,8 @@ void patchController(void)
     CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A);
     CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
     CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86);
-	sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550), peek_positive);
-	sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A), peek_negative);
-	sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938), read_positive);
-	sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86), read_negative);
+	sctrlHENPatchSyscall((void *)CtrlPeekBufferPositive, peek_positive);
+	sctrlHENPatchSyscall((void *)CtrlPeekBufferNegative, peek_negative);
+	sctrlHENPatchSyscall((void *)CtrlReadBufferPositive, read_positive);
+	sctrlHENPatchSyscall((void *)CtrlReadBufferNegative, read_negative);
 }
