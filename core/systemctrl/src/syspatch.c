@@ -70,12 +70,19 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     #ifdef DEBUG
     printk("syspatch: %s(0x%04X)\r\n", mod->modname, sceKernelInitApitype());
     hookImportByNID(mod, "KDebugForKernel", 0x84F370BC, printk);
+
+    if (sceKernelFindModuleByName("vsh_module") == NULL){
+        initScreen(DisplaySetFrameBuf);
+        PRTSTR1("Module: %s", mod->modname);
+    }
+
     if(strcmp(mod->modname, "sceDisplay_Service") == 0)
     {
         // can use screen now
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         goto flush;
     }
+
     #endif
 
     if(strcmp(mod->modname, "sceLoadExec") == 0)

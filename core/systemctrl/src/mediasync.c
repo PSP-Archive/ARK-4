@@ -27,11 +27,13 @@
 // Patch mediasync.prx
 void patchMediaSync(SceModule2* mod)
 {
+    colorDebug(0xff0000);
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr+mod->text_size;
     
     int disc_patches = 2;
     int patches = 3+disc_patches;
+
     for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x00600008 && _lw(addr+4) == NOP && _lw(addr-4) == 0x8D030000){
@@ -56,12 +58,10 @@ void patchMediaSync(SceModule2* mod)
             _sw(NOP, a);
             patches--;
         }
-        /*
         else if (data == 0x24040034){
             _sw(0x00001021, addr-8); // MEDIASYNC_KD_FOLDER_PATCH
             patches--;
-        }
-        */ 
+        } 
     }
 }
 
