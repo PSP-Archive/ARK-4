@@ -56,6 +56,8 @@ enum {
     FILE_PRX,
     FILE_ISO,
     FILE_ZIP,
+    FILE_MUSIC,
+    FILE_PICTURE,
     MAX_FILE_TYPES,
 };
 

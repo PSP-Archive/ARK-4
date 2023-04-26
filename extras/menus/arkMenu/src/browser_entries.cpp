@@ -22,6 +22,12 @@ int fileTypeByExtension(string path){
     else if (Iso::isISO(path.c_str())){
         return FILE_ISO;
     }
+    else if (Entry::isIMG(path.c_str())){
+        return FILE_PICTURE;
+    }
+    else if (Entry::isMusic(path.c_str())){
+        return FILE_MUSIC;
+    }
     return FILE_BIN;
 }
 
