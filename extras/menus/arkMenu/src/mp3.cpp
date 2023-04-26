@@ -275,8 +275,9 @@ void MP3::play(){
         return;
     }
     running = true;
-    mp3Thread = sceKernelCreateThread("", MP3::playThread, 0x3D, 0x10000, PSP_THREAD_ATTR_USER, NULL);
-    sceKernelStartThread(mp3Thread,  sizeof(*this), this);
+    void* self = (void*)this;
+    mp3Thread = sceKernelCreateThread("", (SceKernelThreadEntry)MP3::playThread, 0x3D, 0x10000, PSP_THREAD_ATTR_USER, NULL);
+    sceKernelStartThread(mp3Thread,  sizeof(self), &self);
 }
 
 void MP3::stop(){
@@ -297,9 +298,9 @@ int MP3::isPaused(){
     return paused;
 }
 
-int MP3::playThread(SceSize _args, void *_argp)
+int MP3::playThread(SceSize _args, void** _argp)
 {
-    MP3* self = (MP3*)_argp;
+    MP3* self = (MP3*)(*_argp);
     sceKernelWaitSema(mp3_mutex, 1, 0);
     playMP3File(self->filename, self->buffer, self->buffer_size);
     sceKernelSignalSema(mp3_mutex, 1);

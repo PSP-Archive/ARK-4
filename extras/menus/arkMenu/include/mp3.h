@@ -24,7 +24,7 @@ class MP3{
         int file_handle;
         int mp3_handle;
         
-        static int playThread(SceSize _args, void *_argp);
+        static int playThread(SceSize _args, void** _argp);
         
     public:
         MP3(void* buffer, int size);
