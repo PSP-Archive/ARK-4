@@ -4,6 +4,7 @@
 #include "common.h"
 
 ImageViewer::ImageViewer(string path){
+    zoom = 1;
     img = new Image(path);
     img->swizzle();
     int w = img->getWidth();
@@ -28,7 +29,9 @@ ImageViewer::~ImageViewer(){
         
 void ImageViewer::draw(){
     ya2d_clear_screen(WHITE_COLOR);
-    img->draw(x, y);
+    int w = img->getWidth() * zoom;
+    int h = img->getHeight() * zoom;
+    img->draw_scale(x, y, w, h);
 }
         
 int ImageViewer::control(){
@@ -39,11 +42,35 @@ int ImageViewer::control(){
 
     SystemMgr::enterFullScreen();
 
+    int w = img->getWidth();
+    int h = img->getHeight();
+
     while (running){
         pad.update();
 
         if (pad.decline()){
             running = false;
+            continue;
+        }
+        else if (pad.square()){
+            if (zoom < 8) zoom *= 2;
+            continue;
+        }
+        else if (pad.triangle()){
+            if (zoom > 1) zoom /= 2;
+            continue;
+        }
+        if (pad.up()){
+            if (y+h > 0) y--;
+        }
+        if (pad.down()){
+            if (y < 272) y++;
+        }
+        if (pad.left()){
+            if (x+w > 0) x--;
+        }
+        if (pad.right()){
+            if (x < 480) x++;
         }
     }
 
