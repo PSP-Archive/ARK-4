@@ -173,9 +173,12 @@ int Eboot::getEbootType(const char* path){
 
 string Eboot::fullEbootPath(string path, string app){
     // Return the full path of a homebrew given only the homebrew name
-    if (common::fileExists(app))
+    if (common::fileExists(app)){
         return app; // it's already a full path
-
+    }
+    else if (common::fileExists(path+app+"%/EBOOT.PBP")){
+        return path+app+"%/EBOOT.PBP"; // 1.50 homebrew
+    }
 	else if (common::getConf()->scan_dlc && common::fileExists(path+app+"/PBOOT.PBP"))
 		return path+app+"/PBOOT.PBP"; // DLC
 
