@@ -3,7 +3,18 @@
 #include "system_mgr.h"
 #include "common.h"
 
+#define MAX_COLORS 5
+
+static int colors[MAX_COLORS] = {
+    WHITE,
+    LITEGRAY,
+    GRAY,
+    DARKGRAY,
+    BLACK
+};
+
 ImageViewer::ImageViewer(string path){
+    color_index = 0;
     zoom = 1;
     img = new Image(path);
     img->swizzle();
@@ -28,7 +39,7 @@ ImageViewer::~ImageViewer(){
 }
         
 void ImageViewer::draw(){
-    ya2d_clear_screen(WHITE_COLOR);
+    ya2d_clear_screen(colors[color_index]);
     int w = img->getWidth() * zoom;
     int h = img->getHeight() * zoom;
     img->draw_scale(x, y, w, h);
@@ -74,6 +85,14 @@ int ImageViewer::control(){
                 if (x<0) x = 0;
                 else if (x>=480) x = 480;
             }
+            continue;
+        }
+        else if (pad.LT()){
+            if (color_index > 0) color_index--;
+            continue;
+        }
+        else if (pad.RT()){
+            if (color_index < MAX_COLORS-1) color_index++;
             continue;
         }
         if (pad.up()){

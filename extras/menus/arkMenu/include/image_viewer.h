@@ -8,6 +8,7 @@ class ImageViewer : public OptionsMenu{
 
     private:
         int x, y;
+        int color_index;
         int zoom;
         Image* img;
     
