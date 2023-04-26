@@ -11,6 +11,8 @@ namespace SystemMgr{
     extern void endMenu();
     extern void pauseDraw();
     extern void resumeDraw();
+    extern void enterFullScreen();
+    extern void exitFullScreen();
     extern SystemEntry* getSystemEntry(unsigned index);
 };
 

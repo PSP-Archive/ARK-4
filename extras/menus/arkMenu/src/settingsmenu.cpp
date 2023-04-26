@@ -59,7 +59,7 @@ void SettingsMenu::draw(){
     
     switch (animation){
     case -1:
-        // openint animation
+        // opening animation
         if (w < MENU_W || h < max_height){
             
             w += MENU_W_SPEED;

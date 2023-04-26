@@ -28,6 +28,7 @@ OBJS = \
 		../arkMenu/src/settingsmenu.o \
 		../arkMenu/src/optionsmenu.o \
 		../arkMenu/src/texteditor.o \
+		../arkMenu/src/image_viewer.o \
 		../arkMenu/src/anim/anim.o \
 		../arkMenu/src/anim/pixel.o \
 		../arkMenu/src/anim/wave.o \

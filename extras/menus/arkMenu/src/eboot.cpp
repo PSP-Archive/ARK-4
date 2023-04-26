@@ -31,7 +31,7 @@ void Eboot::readHeader(){
 void Eboot::loadIcon(){
     Image* icon = NULL;
     if (this->header->icon1_offset-this->header->icon0_offset)
-        icon = new Image(this->path.c_str(), YA2D_PLACE_RAM, this->header->icon0_offset);
+        icon = new Image(this->path, YA2D_PLACE_RAM, this->header->icon0_offset);
     
     if (icon == NULL)
         sceKernelDelayThread(50000);
@@ -53,12 +53,12 @@ void Eboot::getTempData1(){
     // grab pic0.png
     size = this->header->pic1_offset-this->header->pic0_offset;
     if (size)
-        this->pic0 = new Image(this->path.c_str(), YA2D_PLACE_RAM, this->header->pic0_offset);
+        this->pic0 = new Image(this->path, YA2D_PLACE_RAM, this->header->pic0_offset);
 
     // grab pic1.png
     size = this->header->snd0_offset-this->header->pic1_offset;
     if (size)
-        this->pic1 = new Image(this->path.c_str(), YA2D_PLACE_RAM, this->header->pic1_offset);
+        this->pic1 = new Image(this->path, YA2D_PLACE_RAM, this->header->pic1_offset);
 
 }
 

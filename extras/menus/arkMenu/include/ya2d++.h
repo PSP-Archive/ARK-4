@@ -1,7 +1,8 @@
 #ifndef YA2DPP_H
-#define YA2dPP_H
+#define YA2DPP_H
 
 #include "ya2d.h"
+#include <string>
 
 #define PNG_MAGIC 0x474E5089
 #define JPG_MAGIC 0xD8FF
@@ -19,13 +20,10 @@ class Image{
     
         Image();
         Image(ya2d_texture* tex);
-        Image(const char* filename); // read PNG, JPG or BMP file into RAM
-        Image(const char* filename, int place); // read PNG, JPG or BMP file into either RAM or VRAM
-        Image(void* buffer); // read from a PNG or BMP buffer into RAM
-        Image(void* buffer, int place); // read from a PNG or BMP buffer into either RAM or VRAM
-        Image(void* buffer, unsigned long buffer_size); // read from a JPG buffer into RAM
-        Image(void* buffer, unsigned long buffer_size, int place); // read from a JPG buffer into either RAM or VRAM
-        Image(const char* filename, int place, SceOff offset); // read a PNG file within another file into either RAM or VRAM
+        Image(string filename, int place=YA2D_PLACE_RAM); // read PNG, JPG or BMP file into either RAM or VRAM
+        Image(void* buffer, int place=YA2D_PLACE_RAM); // read from a PNG or BMP buffer into either RAM or VRAM
+        Image(void* buffer, unsigned long buffer_size, int place=YA2D_PLACE_RAM); // read from a JPG buffer into either RAM or VRAM
+        Image(string filename, int place, SceOff offset); // read a PNG file within another file into either RAM or VRAM
 
         ~Image();
         

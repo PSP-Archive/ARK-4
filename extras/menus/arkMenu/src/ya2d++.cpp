@@ -1,12 +1,6 @@
 #include "ya2d++.h"
-#include <algorithm>
 #include <string>
-
-string getExtension(string path){
-    string ext = path.substr(path.find_last_of(".") + 1);
-    transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-    return ext;
-}
+#include <common.h>
 
 Image::Image(){
     this->is_system_image = false;
@@ -18,26 +12,19 @@ Image::Image(ya2d_texture* tex){
     flush();
 }
 
-Image::Image(const char* filename){
-    Image(filename, YA2D_PLACE_RAM);
-    flush();
-}
-
-Image::Image(const char* filename, int place){
+Image::Image(string filename, int place){
     this->is_system_image = false;
-    string ext = getExtension(filename);
-    
-    if (ext == "png")
-        this->texture = ya2d_load_PNG_file(filename, place);
-    else if (ext == "jpg" || ext == "jpeg")
-        this->texture = ya2d_load_JPEG_file(filename, place);
-    else if (ext == "bmp")
-        this->texture = ya2d_load_BMP_file(filename, place);
+    string ext = common::getExtension(filename);
+    if (ext == "png"){
+        this->texture = ya2d_load_PNG_file_offset(filename.c_str(), place, 0);
+    }
+    else if (ext == "jpg" || ext == "jpeg"){
+        this->texture = ya2d_load_JPEG_file(filename.c_str(), place);
+    }
+    else if (ext == "bmp"){
+        this->texture = ya2d_load_BMP_file(filename.c_str(), place);
+    }
     flush();
-}
-
-Image::Image(void* buffer){
-    Image(buffer, YA2D_PLACE_RAM);
 }
 
 Image::Image(void* buffer, int place){
@@ -50,10 +37,6 @@ Image::Image(void* buffer, int place){
     flush();
 }
 
-Image::Image(void* buffer, unsigned long buffer_size){
-    Image(buffer, buffer_size, YA2D_PLACE_RAM);
-}
-
 Image::Image(void* buffer, unsigned long buffer_size, int place){
     this->is_system_image = false;
     if ( (*(u32*)buffer & 0x0000FFFF) == JPG_MAGIC)
@@ -61,9 +44,9 @@ Image::Image(void* buffer, unsigned long buffer_size, int place){
     flush();
 }
 
-Image::Image(const char* filename, int place, SceOff offset){
+Image::Image(string filename, int place, SceOff offset){
     this->is_system_image = false;
-    this->texture = ya2d_load_PNG_file_offset(filename, place, offset);
+    this->texture = ya2d_load_PNG_file_offset(filename.c_str(), place, offset);
     flush();
 }
 

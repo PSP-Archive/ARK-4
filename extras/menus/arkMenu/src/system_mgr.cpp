@@ -28,6 +28,7 @@ static int optionsDrawState = 0;
 static int optionsAnimState; // state of the animation
 static int optionsTextAnim; // -1 for no animation, other for animation
 static int screensaver = 0;
+static int fullscreen = 0;
 
 // options menu entries position of the entries
 static int pEntryIndex;
@@ -222,12 +223,14 @@ static int drawThread(SceSize _args, void *_argp){
         }
         if (!screensaver){
             entries[cur_entry]->draw();
-            systemDrawer();
-            if (common::getConf()->show_fps){
-                ostringstream fps;
-                ya2d_calc_fps();
-                fps<<ya2d_get_fps();
-                common::printText(460, 260, fps.str().c_str());
+            if (!fullscreen){
+                systemDrawer();
+                if (common::getConf()->show_fps){
+                    ostringstream fps;
+                    ya2d_calc_fps();
+                    fps<<ya2d_get_fps();
+                    common::printText(460, 260, fps.str().c_str());
+                }
             }
         }
         common::flipScreen();
@@ -316,6 +319,14 @@ void SystemMgr::pauseDraw(){
 void SystemMgr::resumeDraw(){
     sceKernelSignalSema(draw_sema, 1);
     sceKernelDelayThread(0);
+}
+
+void SystemMgr::enterFullScreen(){
+    fullscreen = 1;
+}
+
+void SystemMgr::exitFullScreen(){
+    fullscreen = 0;
 }
 
 SystemEntry* SystemMgr::getSystemEntry(unsigned index){

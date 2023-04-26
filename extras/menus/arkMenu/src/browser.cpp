@@ -13,6 +13,7 @@
 #include "eboot.h"
 #include "unziprar.h"
 #include "texteditor.h"
+#include "image_viewer.h"
 
 #define ROOT_DIR "ms0:/" // Initial directory
 #define GO_ROOT "ef0:/" // PSP Go initial directory
@@ -156,6 +157,13 @@ void Browser::update(){
         optionsmenu = new TextEditor(this->get()->getPath());
         optionsmenu->control();
         TextEditor* aux = (TextEditor*)optionsmenu;
+        optionsmenu = NULL;
+        delete aux;
+    }
+    else if (Entry::isIMG(this->get()->getPath().c_str())){
+        optionsmenu = new ImageViewer(this->get()->getPath());
+        optionsmenu->control();
+        ImageViewer* aux = (ImageViewer*)optionsmenu;
         optionsmenu = NULL;
         delete aux;
     }

@@ -275,8 +275,8 @@ u32 common::getMagic(const char* filename, unsigned int offset){
 }
 
 void common::loadTheme(){
-    images[IMAGE_BG] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
-    images[IMAGE_WAITICON] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
+    images[IMAGE_BG] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
+    images[IMAGE_WAITICON] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
     
     common::clearScreen(CLEAR_COLOR);
     images[IMAGE_BG]->draw(0, 0);
@@ -286,27 +286,27 @@ void common::loadTheme(){
     );
     common::flipScreen();
     
-    images[IMAGE_LOADING] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("LOADING.PNG"));
-    images[IMAGE_SPRITE] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
-    images[IMAGE_NOICON] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("NOICON.PNG"));
-    images[IMAGE_GAME] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("GAME.PNG"));
-    images[IMAGE_FTP] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("FTP.PNG"));
-    images[IMAGE_SETTINGS] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("SETTINGS.PNG"));
-    images[IMAGE_BROWSER] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("BROWSER.PNG"));
-    images[IMAGE_DIALOG] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("BOX.PNG"));
-    images[IMAGE_EXIT] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("EXIT.PNG"));
-    images[IMAGE_PLUGINS] = new Image(theme_path.c_str(), RESOURCES_LOAD_PLACE, findPkgOffset("PLUGINS.PNG"));
+    images[IMAGE_LOADING] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("LOADING.PNG"));
+    images[IMAGE_SPRITE] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
+    images[IMAGE_NOICON] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("NOICON.PNG"));
+    images[IMAGE_GAME] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("GAME.PNG"));
+    images[IMAGE_FTP] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("FTP.PNG"));
+    images[IMAGE_SETTINGS] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("SETTINGS.PNG"));
+    images[IMAGE_BROWSER] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("BROWSER.PNG"));
+    images[IMAGE_DIALOG] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("BOX.PNG"));
+    images[IMAGE_EXIT] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("EXIT.PNG"));
+    images[IMAGE_PLUGINS] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("PLUGINS.PNG"));
 
-    icons[FOLDER] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("FOLDER.PNG"));
-    icons[FILE_BIN] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("FILE.PNG"));
-    icons[FILE_TXT] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("TXT.PNG"));
-    icons[FILE_PBP] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("PBP.PNG"));
-    icons[FILE_PRX] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("PRX.PNG"));    
-    icons[FILE_ISO] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("ISO.PNG"));
-    icons[FILE_ZIP] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("ZIP.PNG"));
+    icons[FOLDER] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("FOLDER.PNG"));
+    icons[FILE_BIN] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("FILE.PNG"));
+    icons[FILE_TXT] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("TXT.PNG"));
+    icons[FILE_PBP] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("PBP.PNG"));
+    icons[FILE_PRX] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("PRX.PNG"));    
+    icons[FILE_ISO] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("ISO.PNG"));
+    icons[FILE_ZIP] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("ZIP.PNG"));
 
-    checkbox[1] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("CHECK.PNG"));
-    checkbox[0] = new Image(theme_path.c_str(), YA2D_PLACE_VRAM, common::findPkgOffset("UNCHECK.PNG"));
+    checkbox[1] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("CHECK.PNG"));
+    checkbox[0] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("UNCHECK.PNG"));
     
     for (int i=0; i<MAX_IMAGES; i++){
         images[i]->swizzle();

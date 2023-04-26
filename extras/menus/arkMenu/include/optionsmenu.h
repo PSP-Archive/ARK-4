@@ -12,7 +12,7 @@ typedef struct {
 
 class OptionsMenu {
 
-    private:
+    protected:
         char* description;
         int n_options;
         t_options_entry* entries;
