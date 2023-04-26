@@ -258,6 +258,12 @@ void Eboot::executeHomebrew(const char* path){
     param.args = strlen(path) + 1;
     param.argp = (char*)path;
     param.key = "game";
+
+    char *perc = strchr(path, '%');
+    if (perc) {
+        strcpy(perc, perc + 1);
+    }
+
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 

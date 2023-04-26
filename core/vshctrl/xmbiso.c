@@ -27,6 +27,7 @@
 #include "virtual_pbp.h"
 #include "strsafe.h"
 #include "dirent_track.h"
+#include "macros.h"
 //#include "ansi_c_functions.h"
 
 #define MAGIC_DFD_FOR_DELETE 0x9000
@@ -36,6 +37,58 @@ extern u32 psp_model;
 static char g_iso_dir[128];
 static char g_temp_delete_dir[128];
 static int g_delete_eboot_injected = 0;
+
+void logtext(char* path, char* text){
+    if (path == NULL) path = "ms0:/log.txt";
+    int fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+    sceIoWrite(fd, text, strlen(text));
+    //sceIoWrite(fd, "\n", 1);
+    sceIoClose(fd);
+}
+
+static const char *corruptfix_list[] = {
+	"ms0:/PSP/GAME/"		,"ef0:/PSP/GAME/"		,
+	"ms0:/PSP/GAME150/"	    ,"ef0:/PSP/GAME150/"	,
+};
+
+static int CorruptIconPatch(char *name)
+{
+	char path[256];
+	SceIoStat stat;
+
+    /*
+    logtext(NULL, "checking: ");
+    logtext(NULL, name);
+    logtext(NULL, "\n");
+    */
+
+
+    for (int i=0; i<NELEMS(corruptfix_list); i++){
+
+        const char *hidden_path = corruptfix_list[i];
+        //sprintf(path, hidden_path , name);
+        strcpy(path, hidden_path);
+        strcat(path, name);
+        strcat(path, "%/EBOOT.PBP");
+
+        /*
+        logtext(NULL, "trying: ");
+        logtext(NULL, path);
+        logtext(NULL, "\n");
+        */
+
+        memset(&stat, 0, sizeof(stat));
+        if (sceIoGetstat(path, &stat) >= 0)
+        {
+            //colorDebug(0xff);
+            //logtext(NULL, "found, hiding...\n");
+            strcpy(name, "__SCE"); // hide icon
+            return 1;
+        }
+    }
+
+	return 0;
+}
 
 static int is_iso_dir(const char *path)
 {
@@ -247,6 +300,11 @@ int gamedread(SceUID fd, SceIoDirent * dir)
             pspSdkSetK1(k1);
         }
     }
+    else {
+        int k1 = pspSdkSetK1(0);
+        CorruptIconPatch(dir->d_name);
+        pspSdkSetK1(k1);
+    }
     #ifdef DEBUG
     printk("%s: 0x%08X %s -> 0x%08X\n", __func__, fd, dir->d_name, result);
     #endif
@@ -423,15 +481,6 @@ int gamermdir(const char * path)
     return result;
 }
 
-void KXploitString(char *str) {
-	if (str) {
-		char *perc = strchr(str, '%');
-		if (perc) {
-			strcpy(perc, perc + 1);
-		}
-	}
-}
-
 //load and execute file
 int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
@@ -445,10 +494,11 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         return result;
     }
 
-    if (strstr(file, "ms0:/PSP/GAME/")) {
-		KXploitString(param->argp);
-		file = param->argp;
-	}
+    char *perc = strchr(param->argp, '%');
+    if (perc) {
+        strcpy(perc, perc + 1);
+        file = param->argp;
+    }
 
     u32 k1 = pspSdkSetK1(0);
     result = sceKernelLoadExecVSHMs2(file, param);
