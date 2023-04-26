@@ -497,7 +497,7 @@ void loadSettings(){
             ark_conf_entries = ark_conf_entries_go;
             ark_conf_max_entries = MAX_ARK_CONF_GO;
         }
-        else if (psp_model == PSP_STREET){
+        else if (psp_model == PSP_11000){
             ark_conf_entries = ark_conf_entries_street;
             ark_conf_max_entries = MAX_ARK_CONF_STREET;
         }
