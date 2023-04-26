@@ -312,6 +312,21 @@ settings_entry* ark_conf_entries_go[] = {
 };
 #define MAX_ARK_CONF_GO (sizeof(ark_conf_entries_go)/sizeof(ark_conf_entries_go[0]))
 
+settings_entry* ark_conf_entries_street[] = {
+    (settings_entry*)&usbcharge,
+    (settings_entry*)&overclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&launcher,
+    (settings_entry*)&highmem,
+    (settings_entry*)&mscache,
+    (settings_entry*)&infernocache,
+    (settings_entry*)&skiplogos,
+    (settings_entry*)&hidepics,
+    (settings_entry*)&regionchange,
+    (settings_entry*)&vshregion,
+};
+#define MAX_ARK_CONF_STREET (sizeof(ark_conf_entries_street)/sizeof(ark_conf_entries_street[0]))
+
 settings_entry* ark_conf_entries_vita[] = {
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
@@ -481,6 +496,10 @@ void loadSettings(){
         else if (psp_model == PSP_GO){
             ark_conf_entries = ark_conf_entries_go;
             ark_conf_max_entries = MAX_ARK_CONF_GO;
+        }
+        else if (psp_model == PSP_STREET){
+            ark_conf_entries = ark_conf_entries_street;
+            ark_conf_max_entries = MAX_ARK_CONF_STREET;
         }
         else{
             ark_conf_entries = ark_conf_entries_slim;
