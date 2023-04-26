@@ -14,7 +14,7 @@ MusicPlayer::~MusicPlayer(){
 void MusicPlayer::draw(){
     string info = (sound->isPaused()? string("||"):string(">"));
     common::getImage(IMAGE_DIALOG)->draw_scale(0, 0, 480, 20);
-    common::printText(5, 13, this->path.c_str(), LITEGRAY, SIZE_MEDIUM, 1, 0);
+    common::printText(5, 13, info.c_str(), LITEGRAY, SIZE_MEDIUM, 1, 0);
     common::printText(15, 13, this->path.c_str(), LITEGRAY, SIZE_MEDIUM, 1, 1);
 }
         
