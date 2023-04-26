@@ -270,12 +270,12 @@ int MP3::getBufferSize(){
 
 void MP3::play(){
     if (running){
-        //stop();
+        stop();
         sceKernelWaitThreadEnd(mp3Thread, 0);
     }
     running = true;
     mp3Thread = sceKernelCreateThread("", MP3::playThread, 0x3D, 0x10000, PSP_THREAD_ATTR_USER, NULL);
-    sceKernelStartThread(mp3Thread,  sizeof(this), this);
+    sceKernelStartThread(mp3Thread,  sizeof(*this), this);
 }
 
 void MP3::stop(){

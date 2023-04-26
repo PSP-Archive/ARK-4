@@ -12,7 +12,7 @@ MusicPlayer::~MusicPlayer(){
 }
         
 void MusicPlayer::draw(){
-    string info = (sound->isPaused()? string("||"):string(">"));
+    string info = (MP3::isPaused()? string("||"):string(">"));
     common::getImage(IMAGE_DIALOG)->draw_scale(0, 0, 480, 20);
     common::printText(5, 13, info.c_str(), LITEGRAY, SIZE_MEDIUM, 1, 0);
     common::printText(15, 13, this->path.c_str(), LITEGRAY, SIZE_MEDIUM, 1, 1);
@@ -24,12 +24,16 @@ int MusicPlayer::control(){
     
     bool running = true;
 
+    while (MP3::isPlaying()){
+        sceKernelDelayThread(1000);
+    }
+
     SystemMgr::enterFullScreen();
 
     sound = new MP3((char*)path.c_str(), false);
     sound->play();
 
-    while (running && sound->isPlaying()){
+    while (running && MP3::isPlaying()){
         pad.update();
 
         if (pad.accept()){

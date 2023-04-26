@@ -425,7 +425,8 @@ MP3* common::getMP3Sound(){
 }
 
 void common::playMenuSound(){
-    playMP3File(NULL, common::getMP3Sound()->getBuffer(), common::getMP3Sound()->getBufferSize());
+    //playMP3File(NULL, common::getMP3Sound()->getBuffer(), common::getMP3Sound()->getBufferSize());
+    sound_mp3->play();
 }
 
 void common::printText(float x, float y, const char* text, u32 color, float size, int glow, int scroll){
