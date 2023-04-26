@@ -61,6 +61,7 @@ Browser::Browser(){
     this->draw_progress = false;
     this->optionsmenu = NULL;
 
+    this->hide_main_window = false;
     this->optionsDrawState = 0;
     this->optionsAnimX = 0;
     this->optionsAnimY = 0;
@@ -169,11 +170,13 @@ void Browser::update(){
         delete aux;
     }
     else if (Entry::isMusic(this->get()->getPath().c_str())){
+        this->hide_main_window = true;
         optionsmenu = new MusicPlayer(this->get()->getPath());
         optionsmenu->control();
         MusicPlayer* aux = (MusicPlayer*)optionsmenu;
         optionsmenu = NULL;
         delete aux;
+        hide_main_window = false;
     }
 }
 
@@ -554,8 +557,10 @@ void Browser::draw(){
         }
         break;
     case 0:
-        this->drawScreen();
-        this->drawOptionsMenu();
+        if (!this->hide_main_window){
+            this->drawScreen();
+            this->drawOptionsMenu();
+        }
         this->drawProgress();
         if (this->optionsmenu != NULL)
             this->optionsmenu->draw();

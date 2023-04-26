@@ -105,6 +105,7 @@ class Browser : public SystemEntry{
         int animation;
         
         /* Screen drawing thread data */
+        bool hide_main_window;
         bool draw_progress;
         int progress;
         int max_progress;
