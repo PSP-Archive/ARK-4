@@ -115,7 +115,7 @@ int isPrxCompressed(unsigned char * prx, unsigned int size)
     if(size < 0x160) return 0;
     // GZIP Magic detected
     // Supported Compression Tag
-    if ( (*(unsigned short *)(prx + 0x150) == 0x8B1F) || isTagCompressed(*(unsigned int *)(prx + 0x130)) )
+    if ( (*(unsigned short *)(prx + 0x150) == 0x8B1F) && isTagCompressed(*(unsigned int *)(prx + 0x130)) )
     {
         // GZIP PRX
         return 1;
