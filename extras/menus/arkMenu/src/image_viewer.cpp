@@ -53,11 +53,27 @@ int ImageViewer::control(){
             continue;
         }
         else if (pad.square()){
-            if (zoom < 8) zoom *= 2;
+            if (zoom < 8){
+                zoom *= 2;
+                w = img->getWidth() * zoom;
+                h = img->getHeight() * zoom;
+                if (y<0) y = 0;
+                else if (y>=272) y = 272;
+                if (x<0) x = 0;
+                else if (x>=480) x = 480;
+            }
             continue;
         }
         else if (pad.triangle()){
-            if (zoom > 1) zoom /= 2;
+            if (zoom > 1){
+                zoom /= 2;
+                w = img->getWidth() * zoom;
+                h = img->getHeight() * zoom;
+                if (y<0) y = 0;
+                else if (y>=272) y = 272;
+                if (x<0) x = 0;
+                else if (x>=480) x = 480;
+            }
             continue;
         }
         if (pad.up()){
