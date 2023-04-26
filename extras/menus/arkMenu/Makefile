@@ -37,6 +37,7 @@ OBJS = \
 		src/optionsmenu.o \
 		src/texteditor.o \
 		src/image_viewer.o \
+		src/music_player.o \
 		src/anim/anim.o \
 		src/anim/pixel.o \
 		src/anim/wave.o \

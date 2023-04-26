@@ -36,6 +36,9 @@ class MP3{
 
         void play();
         void stop();
+        void pauseResume();
+        int isPlaying();
+        int isPaused();
 };
 
 #endif

@@ -92,6 +92,7 @@ class Entry{
         static bool isARK(const char* path);
         static bool isTXT(const char* path);
         static bool isIMG(const char* path);
+        static bool isMusic(const char* path);
         
         static bool cmpEntriesForSort (Entry* i, Entry* j);
         

@@ -173,6 +173,11 @@ bool Entry::isIMG(const char* path){
     return (ext == "png" || ext == "jpg" || ext == "jpeg" || ext == "bmp");
 }
 
+bool Entry::isMusic(const char* path){
+    string ext = common::getExtension(path);
+    return (ext == "mp3");
+}
+
 Entry::~Entry(){
 }
 

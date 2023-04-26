@@ -1,8 +1,6 @@
 #include "mp3.h"
 #include "debug.h"
 
-#define printf(x) sceIoWrite(2, x, strlen(x))
-
 #define MP3BUF_SIZE 128*1024
 #define PCMBUF_SIZE 128*(1152/2)
 
@@ -14,41 +12,14 @@ static int eof = 0;
 static int bufferCounter = 0;
 static SceUID mp3Thread = -1;
 static SceUID mp3_mutex = sceKernelCreateSema("mp3_mutex", 0, 1, 1, 0);
+static int paused = 0;
 
 
 int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
 {
 
-    // read from memory buffer
-    if (buffer != NULL){
-    
-        if (eof || bufferCounter >= buffer_size){
-            return 0;
-        }
-    
-        char* dst;
-        SceInt32 write;
-        SceInt32 pos;
-        
-        int status = sceMp3GetInfoToAddStreamData(handle, (SceUChar8**)&dst, &write, &pos);
-        if (status < 0){
-            return 0;
-        }
-            
-        if (pos + write > buffer_size){
-            write = buffer_size-pos;
-            eof = true;
-        }
-        bufferCounter += write;
-        memcpy(dst, (u8*)buffer+pos, write);
-        status = sceMp3NotifyAddStreamData(handle, write);
-        if (status < 0){
-            return 0;
-        }
-        return (pos > 0);
-    }
     // read from file
-    else{
+    if (fd >= 0){
         char* dst;
         SceInt32 write;
         SceInt32 pos;
@@ -79,6 +50,34 @@ int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
 
         return (pos > 0);
     }
+    // read from memory buffer
+    else{
+    
+        if (eof || bufferCounter >= buffer_size){
+            return 0;
+        }
+    
+        char* dst;
+        SceInt32 write;
+        SceInt32 pos;
+        
+        int status = sceMp3GetInfoToAddStreamData(handle, (SceUChar8**)&dst, &write, &pos);
+        if (status < 0){
+            return 0;
+        }
+            
+        if (pos + write > buffer_size){
+            write = buffer_size-pos;
+            eof = true;
+        }
+        bufferCounter += write;
+        memcpy(dst, (u8*)buffer+pos, write);
+        status = sceMp3NotifyAddStreamData(handle, write);
+        if (status < 0){
+            return 0;
+        }
+        return (pos > 0);
+    }
 }
 
 void playMP3File(char* filename, void* buffer, int buffer_size)
@@ -95,7 +94,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     eof = 0;
     bufferCounter = 0;
 
-    if (buffer == NULL){
+    if (filename != NULL){
         file_handle = sceIoOpen(filename, PSP_O_RDONLY, 0777 );
         if(file_handle < 0) {
             return;
@@ -115,7 +114,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     memset(mp3Buf, 0, MP3BUF_SIZE);
     memset(pcmBuf, 0, PCMBUF_SIZE);
     mp3Init.mp3StreamStart = 0;
-    mp3Init.mp3StreamEnd = (buffer == NULL)? sceIoLseek32( file_handle, 0, SEEK_END ) : buffer_size;
+    mp3Init.mp3StreamEnd = (file_handle >= 0)? sceIoLseek32( file_handle, 0, SEEK_END ) : buffer_size;
     mp3Init.unk1 = 0;
     mp3Init.unk2 = 0;
     mp3Init.mp3Buf = mp3Buf;
@@ -154,6 +153,11 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     //sceKernelDelayThread(10000);
     while (running) {
+
+        if (paused){
+            sceKernelDelayThread(10000);
+            continue;
+        }
         
          // Check if we need to fill our stream buffer
         if (sceMp3CheckStreamDataNeeded( mp3_handle ) > 0){
@@ -218,7 +222,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     status = sceMp3TermResource();
 
-    if (buffer == NULL)
+    if (file_handle >= 0)
         status = sceIoClose( file_handle );
 
     file_handle = -1;
@@ -270,12 +274,26 @@ void MP3::play(){
         sceKernelWaitThreadEnd(mp3Thread, 0);
     }
     running = true;
-    mp3Thread = sceKernelCreateThread("mp3_thread", MP3::playThread, 0x3D, 0x10000, PSP_THREAD_ATTR_USER, NULL);
+    mp3Thread = sceKernelCreateThread("", MP3::playThread, 0x3D, 0x10000, PSP_THREAD_ATTR_USER, NULL);
     sceKernelStartThread(mp3Thread,  sizeof(this), this);
 }
 
 void MP3::stop(){
     running = false;
+    sceKernelWaitThreadEnd(mp3Thread, 0);
+    mp3Thread = -1;
+}
+
+void MP3::pauseResume(){
+    paused = !paused;
+}
+
+int MP3::isPlaying(){
+    return running;
+}
+
+int MP3::isPaused(){
+    return paused;
 }
 
 int MP3::playThread(SceSize _args, void *_argp)
