@@ -501,6 +501,16 @@ void GameManager::execApp(){
     sceKernelDelayThread(0);
 }
 
+static int loading_data;
+
+int load_thread(int argc, void* argp){
+    Entry* e = (Entry*)(*(void**)argp);
+    e->getTempData2();
+    loading_data = false;
+    sceKernelExitDeleteThread(0);
+    return 0;
+}
+
 bool GameManager::pmfPrompt(){
 
 
@@ -512,14 +522,20 @@ bool GameManager::pmfPrompt(){
     
     Entry* entry = this->getEntry();
 
-    common::clearScreen(CLEAR_COLOR);
-    entry->drawBG();
-    entry->getIcon()->draw(10, 98);
+    loading_data = true;
+
+    int thd = sceKernelCreateThread("draw_thread", (SceKernelThreadEntry)&load_thread, 0x10, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
+    sceKernelStartThread(thd, sizeof(entry), &entry);
+
+    float angle = 1.0;
     Image* img = common::getImage(IMAGE_WAITICON);
-    img->draw((480-img->getWidth())/2, (272-img->getHeight())/2);
-    common::flipScreen();
-    
-    entry->getTempData2();
+    while (loading_data){
+        common::clearScreen(CLEAR_COLOR);
+        entry->drawBG();
+        entry->getIcon()->draw(10, 98);
+        img->draw_rotate((480-img->getWidth())/2, (272-img->getHeight())/2, angle++);
+        common::flipScreen();
+    }
     
     bool pmfPlayback = entry->getIcon1() != NULL || entry->getSnd() != NULL;
         
