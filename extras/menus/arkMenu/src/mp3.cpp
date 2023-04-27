@@ -276,7 +276,7 @@ void MP3::play(){
     }
     running = true;
     void* self = (void*)this;
-    mp3Thread = sceKernelCreateThread("", (SceKernelThreadEntry)MP3::playThread, 0x3D, 0x10000, PSP_THREAD_ATTR_USER, NULL);
+    mp3Thread = sceKernelCreateThread("", (SceKernelThreadEntry)MP3::playThread, 0x3D, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
     sceKernelStartThread(mp3Thread,  sizeof(self), &self);
 }
 

@@ -33,7 +33,7 @@ GameManager::GameManager(){
     this->maxDraw = MAX_CATEGORIES;
     this->dynamicIconRunning = ICONS_LOADING;
     this->iconSema = sceKernelCreateSema("icon0_sema",  0, 1, 1, NULL);
-    this->iconThread = sceKernelCreateThread("icon0_thread", GameManager::loadIcons, 0x10, 0x20000, PSP_THREAD_ATTR_USER, NULL);
+    this->iconThread = sceKernelCreateThread("icon0_thread", GameManager::loadIcons, 0x10, 0x20000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
     sceKernelStartThread(this->iconThread,  0, NULL);
     
 }
@@ -372,9 +372,14 @@ void GameManager::draw(){
         if (this->selectedCategory < this->maxDraw)
             this->categories[this->selectedCategory]->draw(true);
     }
-    if (loadingData){
+    if (loadingData || selectedCategory == -1){
+        static float angle = 1.0;
         Image* img = common::getImage(IMAGE_WAITICON);
-        img->draw((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2);
+        img->draw_rotate(
+            (480-img->getTexture()->width)/2,
+            (272-img->getTexture()->height)/2,
+            angle++
+        );
     }
 }
 

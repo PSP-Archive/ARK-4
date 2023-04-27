@@ -537,8 +537,9 @@ void Browser::drawScreen(){
     
     // no items loaded? draw wait icon
     if (entries->size() == 0){
+        static float angle = 1.0;
         Image* img = common::getImage(IMAGE_WAITICON);
-        img->draw((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2);
+        img->draw_rotate((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2, angle++);
         return;
     }
     
