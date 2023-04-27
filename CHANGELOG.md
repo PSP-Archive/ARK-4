@@ -1,5 +1,14 @@
 # ARK Changelog
 
+## Version 4.20.05 (2023-04-27)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4205
+- Fixed crash when launching a 1.50 homebrew with KXploit format on PSP.
+- Improved image viewer scrolling.
+- Improved themes preview function. You can now use themes without installing them.
+- Added disc0:/ to File Browser, lets you browse the files on a UMD (not available on Vita or PSP Go).
+- You can now choose where to extract .zip and .rar files (current folder or root folder).
+- Some other fixes and cleanup.
+
 ## Version 4.20.04 (2023-04-26)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4204
 - Fixed crashes in Custom Launcher if you have a 1.50 homebrew in kxploit format (MyHomebrew%/EBOOT.PBP).
