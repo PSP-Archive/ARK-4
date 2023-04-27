@@ -347,8 +347,26 @@ void Browser::installPlugin(){
 
 void Browser::extractArchive(int type){
 
+    string root = "Extract to "+get()->getPath().substr(0, 5);
+
+    t_options_entry options_entries[] = {
+        {OPTIONS_CANCELLED, "Cancel"},
+        {0, "Extract here"},
+        {1, (char*)root.c_str()},
+    };
+
+    optionsmenu = new OptionsMenu("Extract Archive to", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
+    int ret = optionsmenu->control();
+    OptionsMenu* aux = optionsmenu;
+    optionsmenu = NULL;
+    delete aux;
+
+    if (ret == OPTIONS_CANCELLED) return;
+
     string name = this->get()->getName();
-    string dest = this->cwd + name.substr(0, name.rfind('.')) + "/";
+    string dest;
+    if (ret == 0) dest = this->cwd + name.substr(0, name.rfind('.')) + "/";
+    else if (ret == 1) dest = root + name.substr(0, name.rfind('.')) + "/";
     sceIoMkdir(dest.c_str(), 0777);
 
     progress_desc[0] = "Extracting archive";

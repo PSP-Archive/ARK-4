@@ -56,6 +56,9 @@ int ImageViewer::control(){
     int w = img->getWidth();
     int h = img->getHeight();
 
+    bool is_moving = false;
+    int scroll_speed = 1;
+
     while (running){
         pad.update();
 
@@ -95,18 +98,31 @@ int ImageViewer::control(){
             if (color_index < MAX_COLORS-1) color_index++;
             continue;
         }
-        if (pad.up()){
-            if (y+h > 0) y--;
-        }
+
+        is_moving = false;
+
         if (pad.down()){
-            if (y < 272) y++;
+            if (y+h > 0) y-=scroll_speed;
+            if (scroll_speed<10) scroll_speed++;
+            is_moving = true;
         }
-        if (pad.left()){
-            if (x+w > 0) x--;
+        if (pad.up()){
+            if (y < 272) y+=scroll_speed;
+            if (scroll_speed<10) scroll_speed++;
+            is_moving = true;
         }
         if (pad.right()){
-            if (x < 480) x++;
+            if (x+w > 0) x-=scroll_speed;
+            if (scroll_speed<10) scroll_speed++;
+            is_moving = true;
         }
+        if (pad.left()){
+            if (x < 480) x+=scroll_speed;
+            if (scroll_speed<10) scroll_speed++;
+            is_moving = true;
+        }
+
+        if (!is_moving) scroll_speed = 1;
     }
 
     pad.flush();

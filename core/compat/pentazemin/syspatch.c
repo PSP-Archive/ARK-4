@@ -524,6 +524,15 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 		}
 		// apply extra memory patch
 		if (use_highmem) unlockVitaMemory();
+		else{
+			int apitype = sceKernelInitApitype();
+			if (apitype == 0x141 || apitype == 0x152){
+				int paramsize=4;
+				if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
+					unlockVitaMemory();
+				}
+        	}
+		}
 		// enable inferno cache
 		if (use_infernocache){
 			int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);

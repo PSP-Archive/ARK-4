@@ -438,25 +438,6 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         // Return Error Code
         return 0x80010002;
     }
-        
-    // Get File Extension
-    const char * pbpExtension = pbpPath;
-    pbpExtension += strlen(pbpExtension) - 4;
-    if (pbpExtension < pbpPath)
-        pbpExtension = ".BIN";
-    
-    // Invalid Format
-    if (pbpExtension[0] != '.' ||
-        (pbpExtension[1] != 'P' && pbpExtension[1] != 'p') ||
-        (pbpExtension[2] != 'B' && pbpExtension[2] != 'b') ||
-        (pbpExtension[3] != 'P' && pbpExtension[3] != 'p'))
-    {
-        // Restore Syscall Permissions
-        pspSdkSetK1(k1);
-        
-        // Return Error Code
-        return 0x80000108;
-    }
     
     // Open PBP File
     int fd = sceIoOpen(pbpPath, PSP_O_RDONLY, 0);
@@ -469,6 +450,19 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         
         // Return Error Code
         return 0x80010002;
+    }
+
+    int magic;
+    sceIoRead(fd, &magic, sizeof(magic));
+    if (magic != 0x50425000){ // Invalid Format
+        // close
+        sceIoClose(fd);
+        
+        // Restore Syscall Permissions
+        pspSdkSetK1(k1);
+
+        // Return Error Code
+        return 0x80000108;
     }
     
     // seek to PARAM.SFO offset variable

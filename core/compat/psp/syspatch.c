@@ -303,8 +303,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         int apitype = sceKernelInitApitype();
         if(!use_highmem && (apitype == 0x141 || apitype == 0x152) ){
             int paramsize=4;
-            sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem);
-            if (use_highmem){
+            if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
                 patch_partitions();
                 disable_PauseGame();
             }
