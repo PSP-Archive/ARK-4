@@ -98,7 +98,7 @@ void Image::draw_scale(int x, int y, int newWidth, int newHeight){
 }
 
 void Image::draw_rotate(int x, int y, float angle){
-    ya2d_draw_texture_rotate(this->texture, x, y, angle);
+    ya2d_draw_texture_rotate(this->texture, x+texture->width/2, y+texture->height/2, angle);
 }
 
 void Image::draw_rotate_hotspot(int x, int y, float angle, int center_x, int center_y){
