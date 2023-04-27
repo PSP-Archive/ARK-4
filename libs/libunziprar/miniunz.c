@@ -365,7 +365,9 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password,
                     ret = 'y';//scanf("%1s",answer);
                     if (ret != 1)
                     {
-                       exit(EXIT_FAILURE);
+                       //exit(EXIT_FAILURE);
+                        free(buf);
+                        return UNZ_INTERNALERROR;
                     }
                     rep = answer[0] ;
                     if ((rep>='a') && (rep<='z'))
@@ -393,7 +395,7 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password,
                 char c=*(filename_withoutpath-1);
                 *(filename_withoutpath-1)='\0';
                 printf("makedir %s\n",write_filename);
-                sceKernelExitGame();
+                //sceKernelExitGame();
                 makedir(write_filename);
                 *(filename_withoutpath-1)=c;
                 fot=fopen(write_filename,"wb");

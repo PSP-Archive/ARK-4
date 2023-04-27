@@ -45,7 +45,7 @@
 #define _unz_H
 
 //#include <pspdebug.h>
-#define printf    dummy_printf//dummy_printf 
+//#define printf    dummy_printf//dummy_printf 
 
 #ifdef __cplusplus
 extern "C" {
