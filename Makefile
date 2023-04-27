@@ -87,7 +87,7 @@ copy-bin:
 	$(Q)cp contrib/README.TXT dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	$(Q)cp -r dist/ARK_01234 dist/ARK_DC/
-	$(Q)find dist/themes/ -name 'resources' -exec rm -rf {} \; || true
+	$(Q)find dist/themes/ -type d -name 'resources' -exec rm -rf {} \; 2>/dev/null || true
 	
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
