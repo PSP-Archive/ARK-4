@@ -85,7 +85,7 @@ static int matchingRunlevel(char * runlevel)
         return (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300);
     else if (stricmp(runlevel, "pops") == 0 || stricmp(runlevel, "ps1") == 0 || stricmp(runlevel, "psx") == 0) // PS1 games only
         return (apitype == 0x144 || apitype == 0x155);
-    else if (stricmp(runlevel, "umd") == 0 || stricmp(runlevel, "psp") == 0) // Retail games only
+    else if (stricmp(runlevel, "umd") == 0 || stricmp(runlevel, "psp") == 0 || stricmp(runlevel, "umdemu") == 0) // Retail games only
         return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));
     else if (stricmp(runlevel, "game") == 0) // retail+homebrew
         return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x141 || apitype == 0x152 || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));

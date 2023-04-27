@@ -106,6 +106,11 @@ static SceUID load_satelite(void)
 
     modid = sceKernelLoadModule(path, 0, &opt);
 
+    if (modid < 0){
+        // try flash0
+        modid = sceKernelLoadModule("flash0:/vsh/module/ark_satelite.prx", 0, &opt);
+    }
+
     return modid;
 }
 
