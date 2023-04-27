@@ -5,6 +5,7 @@
 #include "gfx.h"
 
 #define EBOOT_MAGIC 0x50425000
+#define ELF_MAGIC 0x464C457F
 
 #define PS1_CAT 0x454D
 #define PSN_CAT 0x4745
