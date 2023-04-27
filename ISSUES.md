@@ -2,7 +2,7 @@
 - Cannot disable settings per game.
 
 # PSP Issues
-- Booting 1.50 homebrew in kxploit format causes black screen.
+- ???
 
 # Vita Standalone
 - PS1 games don't work (there are two ways to fix this and each of them is not fully explored yet).
@@ -20,3 +20,4 @@
 
 
 # Plugins Issues
+- ???
