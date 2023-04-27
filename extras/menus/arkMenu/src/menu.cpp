@@ -10,7 +10,6 @@ Menu::Menu(EntryType t){
     this->index = 0;
     this->threadIndex = 0;
     this->animating = 0;
-    this->fastScroll = 1;
     this->fastScrolling = false;
     this->animDelay = true;
     this->animState = 0.f;
@@ -254,15 +253,15 @@ vector<Entry*>* Menu::getVector(){
 void Menu::moveUp(){
     if (animating || fastScrolling){
         fastScrolling = true;
-        this->index -= fastScroll;
-        fastScroll++;
         if (this->index <= 0){
             animating = 0;
             this->index = 0;
             this->stopFastScroll();
         }
-        else
+        else{
+            this->index--;
             common::playMenuSound();
+        }
     }
     else if (this->index > 0){
         common::playMenuSound();
@@ -276,15 +275,15 @@ void Menu::moveUp(){
 void Menu::moveDown(){
     if (animating || fastScrolling){
         fastScrolling = true;
-        this->index += fastScroll;
-        fastScroll++;
         if (this->index >= this->getVectorSize()-1){
             animating = 0;
             this->index = this->getVectorSize()-1;
             this->stopFastScroll();
         }
-        else
+        else{
             common::playMenuSound();
+            this->index++;
+        }
     }
     else if (this->index < this->getVectorSize()-1){
         common::playMenuSound();
@@ -297,6 +296,5 @@ void Menu::moveDown(){
 
 void Menu::stopFastScroll(){
     fastScrolling = false;
-    fastScroll = 1;
     animDelay = false;
 }
