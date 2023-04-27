@@ -34,6 +34,9 @@ int main(int argc, char** argv){
     intraFontInit();
     ya2d_init();
 
+    // setup UMD disc
+    sceUmdReplacePermit();
+
     common::loadData(argc, argv);
 
     // Add ARK settings manager
@@ -59,8 +62,8 @@ int main(int argc, char** argv){
 	// Settings
     SettingsTable stab_recovery = { settings_entries, MAX_SETTINGS_OPTIONS };
     SettingsMenu* recovery_settings_menu = new SettingsMenu(&stab_recovery, common::saveConf, false, true, true);
-	recovery_settings_menu->setName("Menu\nSetttings");
-	recovery_settings_menu->setInfo("Menu Setttings");
+	recovery_settings_menu->setName("Menu\nSettings");
+	recovery_settings_menu->setInfo("Menu Settings");
 	entries[3] = recovery_settings_menu;
 
 

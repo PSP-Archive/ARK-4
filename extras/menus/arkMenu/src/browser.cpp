@@ -19,6 +19,7 @@
 #define ROOT_DIR "ms0:/" // Initial directory
 #define GO_ROOT "ef0:/" // PSP Go initial directory
 #define FTP_ROOT "ftp:/" // FTP directory
+#define UMD_ROOT "disc0:/" // UMD directory
 #define PAGE_SIZE 10 // maximum entries shown on screen
 #define BUF_SIZE 1024*16 // 16 kB buffer for copying files
 
@@ -31,7 +32,9 @@ static Browser* self;
 typedef BrowserFile File;
 typedef BrowserFolder Folder;
 
-#define MAX_OPTIONS 10
+extern "C" int kuKernelLoadModule(const char*, int, void*);
+
+#define MAX_OPTIONS 11
 static char* pEntries[MAX_OPTIONS] = {
     (char*) "Cancel",
     (char*) "Copy",
@@ -43,6 +46,7 @@ static char* pEntries[MAX_OPTIONS] = {
     (char*) "Go to ms0:/",
     (char*) "Go to ef0:/",
     (char*) "Go to ftp:/",
+    (char*) "Go to disc0:/",
 };
 
 BrowserDriver* Browser::ftp_driver = NULL;
@@ -72,8 +76,14 @@ Browser::Browser(){
     if (psp_model != PSP_GO){
         pEntries[EF0_DIR] = NULL;
     }
+    else{
+        pEntries[UMD_DIR] = NULL;
+    }
     if (psp_model == PSP_11000 || ftp_driver == NULL){
         pEntries[FTP_DIR] = NULL;
+    }
+    if (IS_VITA(common::getArkConfig())){
+        pEntries[UMD_DIR] = NULL;
     }
 
     this->refreshDirs();
@@ -101,9 +111,13 @@ void Browser::clearEntries(){
     entries->clear();
 }
 
+bool Browser::isRootDir(string dir){
+    return (dir == ROOT_DIR || dir == GO_ROOT || dir == FTP_ROOT || dir == UMD_ROOT);
+}
+
 void Browser::moveDirUp(){
     // Move to the parent directory of this->cwd
-    if (this->cwd == ROOT_DIR || this->cwd == GO_ROOT || this->cwd == FTP_ROOT)
+    if (isRootDir(this->cwd))
         return;
     size_t lastSlash = this->cwd.rfind("/", this->cwd.rfind("/", string::npos)-1);
     this->cwd = this->cwd.substr(0, lastSlash+1);
@@ -210,7 +224,8 @@ void Browser::installTheme() {
 	if (ret == 0) {
         t_options_entry options_entries[] = {
             {OPTIONS_CANCELLED, "Cancel"},
-            {0, "Accept"},
+            {0, "Accept Install"},
+            {1, "Use theme without installing"},
         };
         optionsmenu = new OptionsMenu("Install Theme", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
         int ret = optionsmenu->control();
@@ -218,7 +233,10 @@ void Browser::installTheme() {
         optionsmenu = NULL;
         delete aux;
 
-        if (ret == OPTIONS_CANCELLED){
+        if (ret == 1){
+            return;
+        }
+        else if (ret == OPTIONS_CANCELLED){
             // reset back to default theme
             SystemMgr::pauseDraw();
             common::deleteTheme();
@@ -243,7 +261,8 @@ void Browser::installPlugin(){
         {3, "VSH (XMB)"},
         {4, "UMD/ISO"},
         {5, "Homebrew"},
-        {6, "<Game ID>"}
+        {6, "<Game ID>"},
+        {7, "<LoadStart Module>"},
     };
 
     optionsmenu = new OptionsMenu("Install Plugin", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
@@ -260,7 +279,7 @@ void Browser::installPlugin(){
         char* modes[] = {"always", "game", "ps1", "xmb", "psp", "homebrew"};
         mode = modes[ret];
     }
-    else{
+    else if (ret == 6){
         SystemMgr::pauseDraw();
         OSK osk;
         osk.init("Game ID (i.e. ULUS01234)", "", 50);
@@ -275,6 +294,12 @@ void Browser::installPlugin(){
         osk.end();
         SystemMgr::resumeDraw();
         if (osk_res == OSK_CANCEL) return;
+    }
+    else if (ret == 7){
+        const char* path = e->getPath().c_str();
+        int uid = kuKernelLoadModule(path, 0, NULL);
+        int res = sceKernelStartModule(uid, strlen(path) + 1, (void*)path, NULL, NULL);
+        return;
     }
 
     char ark_path[ARK_PATH_SIZE];
@@ -379,14 +404,20 @@ void Browser::refreshDirs(){
         }    
     }
 
-    int dir = sceIoDopen(this->cwd.c_str());
+    printf("opening dir: %s\n", this->cwd.c_str());
+
+    int dir;
+
+    refresh_retry:
+    dir = sceIoDopen(this->cwd.c_str());
+
     if (dir < 0){ // can't open directory
+        printf("can't open\n");
         if (this->cwd == ROOT_DIR) // ms0 failed
             this->cwd = GO_ROOT; // go to ef0
         else
             this->cwd = ROOT_DIR;
-        refreshDirs();
-        return;
+        goto refresh_retry;
     }
 
     SceIoDirent* dit = (SceIoDirent*)malloc(sizeof(SceIoDirent));
@@ -399,16 +430,19 @@ void Browser::refreshDirs(){
     dit->d_private = (void*)pri_dirent;
 
     while ((sceIoDread(dir, dit)) > 0){
-        if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
-            string ptmp = string(this->cwd)+string(dit->d_name)+"/";
-            if (!common::folderExists(ptmp)){
+        printf("got entry: %s\n", dit->d_name);
+        string ptmp = string(this->cwd)+string(dit->d_name);
+        bool folder_exists = common::folderExists(ptmp+"/");
+        if (folder_exists || FIO_SO_ISDIR(dit->d_stat.st_attr)){
+            printf("is dir\n");
+            if (!folder_exists){
                 ptmp = string(this->cwd) + string(dit->d_name).substr(0, 4) + string(pri_dirent->s_name) + "/";
                 printf("%d: %s\n", (int)common::folderExists(ptmp), ptmp.c_str());
             }
-            folders.push_back(new Folder(ptmp));
+            folders.push_back(new Folder(ptmp+"/"));
         }
         else{
-            string ptmp = string(this->cwd)+string(dit->d_name);
+            printf("is file\n");
             if (!common::fileExists(ptmp)){
                 ptmp = string(this->cwd) + string(dit->d_name).substr(0, 4) + string(pri_dirent->s_name);
                 printf("%d: %s\n", (int)common::fileExists(ptmp), ptmp.c_str());
@@ -417,15 +451,15 @@ void Browser::refreshDirs(){
         }
             
     }
+    printf("closing and cleaning\n");
     sceIoDclose(dir);
 
     free(pri_dirent);
     free(dit);
 
-    if (common::getConf()->sort_entries){
-
-        Entry* dot = NULL;
-        Entry* dotdot = NULL;
+    Entry* dot = NULL;
+    Entry* dotdot = NULL;
+    if (folders.size() > 0){
         if (folders[0]->getName() == "./"){
             dot = folders[0];
             folders.erase(folders.begin());
@@ -434,26 +468,30 @@ void Browser::refreshDirs(){
             dotdot = folders[0];
             folders.erase(folders.begin());
         }
+    }
 
+    if (common::getConf()->sort_entries){
+        printf("sorting entries\n");
         std::sort(folders.begin(), folders.end(), Entry::cmpEntriesForSort);
         std::sort(files.begin(), files.end(), Entry::cmpEntriesForSort);
-
-        if (dotdot) folders.insert(folders.begin(), dotdot);
-        if (dot) folders.insert(folders.begin(), dot);
     }
+
+    if (!dotdot && !isRootDir(this->cwd)) dotdot = new Folder(this->cwd+"../");
+    if (dotdot) folders.insert(folders.begin(), dotdot);
+    if (!dot && !isRootDir(this->cwd)) dot = new Folder(this->cwd+"./");
+    if (dot) folders.insert(folders.begin(), dot);
     
+    printf("merging entries\n");
     SystemMgr::pauseDraw();
     for (int i=0; i<folders.size(); i++)
         entries->push_back(folders.at(i));
     for (int i=0; i<files.size(); i++)
         entries->push_back(files.at(i));
+    if (this->entries->size() == 0)
+        this->entries->push_back(new Folder("./"));
     SystemMgr::resumeDraw();
     
-    if (this->entries->size() == 0){
-        this->cwd = ROOT_DIR;
-        refreshDirs();
-        return;
-    }
+    printf("done\n");
 }
         
 
@@ -1329,6 +1367,7 @@ void Browser::options(){
     case MS0_DIR:     this->cwd = ROOT_DIR;     this->refreshDirs();   break;
     case FTP_DIR:     this->cwd = FTP_ROOT;     this->refreshDirs();   break;
     case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;
+    case UMD_DIR:     this->cwd = UMD_ROOT;     this->refreshDirs();   break;
     }
 }
         

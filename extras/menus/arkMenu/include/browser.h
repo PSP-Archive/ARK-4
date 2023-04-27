@@ -21,6 +21,7 @@ enum{
     MS0_DIR,
     EF0_DIR,
     FTP_DIR,
+    UMD_DIR,
 };
 
 typedef struct _pspMsPrivateDirent {
@@ -126,6 +127,8 @@ class Browser : public SystemEntry{
         bool enableSelection;
     
         void clearEntries();
+
+        bool isRootDir(string dir);
     
         void moveDirUp();
         
