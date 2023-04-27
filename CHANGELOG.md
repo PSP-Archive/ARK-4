@@ -1,5 +1,29 @@
 # ARK Changelog
 
+## Version 4.20.04 (2023-04-26)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4204
+- Fixed crashes in Custom Launcher if you have a 1.50 homebrew in kxploit format (MyHomebrew%/EBOOT.PBP).
+- The XMB will now hide corrupt icons from 1.50 homebrew in kxploit format (MyHomebrew%/EBOOT.PBP).
+- Improved scrolling in custom launcher and recovery.
+- Added missing sounds to BadgerOS and BadgerOS Sprunk themes.
+- You can now view images in PNG, JPEG or BMP format in the File Browser.
+- You can now play music in MP3 format in the File Browser.
+- Added new icons for music and photo files in File Browser.
+
+## Version 4.20.03 (2023-04-25)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4203
+- Fixed regression with Inferno driver.
+- Added option to Hide MAC Address in XMB.
+- Ported over PRO's Libertas MAC Spoofer. Lets you change the PSP mac address using /seplugins/mac.txt. Always enabled when the file is found with a valid MAC address.
+- Improved scrollbar in launcher/recovery.
+- Several cleanup and fixes.
+
+## Version 4.20.02 (2023-04-24)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4202
+- You can now preview and install themes directly from the launcher/recovery File Browser. The theme is loaded instantly.
+- FTP Client: allow connecting to FTP servers via their name instead of the IP address.
+- FTP Client: add ability to specify the port of the FTP server (21 by default if non specified) as well as username and password (anonymous connection used if none entered).
+
 ## Version 4.20.01 (2023-04-23)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4201
 - Fixed crash when opening "Custom Firmware Settings" in the XMB on a PSP Go.
