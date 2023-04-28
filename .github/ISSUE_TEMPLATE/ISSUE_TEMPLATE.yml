@@ -1,5 +1,5 @@
 name: ARK-4 Bugs/Issues
-description: File a bug/issue for any issues related to ARK-4
+description: "File a bug/issue for any issues related to ARK-4"
 labels: ["bug", "issues"]
 body:
   - type: markdown
@@ -11,7 +11,7 @@ body:
     id: type
     attributes:
       label: PSP/Vita Model
-      description: Please specify which device is affected/you have.
+      description: "Please specify which device is affected/you have."
       multiple: true
       options:
           - PSP-1000 (Fat)
@@ -27,17 +27,17 @@ body:
   - type: markdown
     attributes:
       label: ARK Version
-      description: Enter Ark Release here (press Select it shows the version at the top of vshmenu). If using beta build put commit version.
+      description: "Enter Ark Release here (press Select it shows the version at the top of vshmenu). If using beta build put commit version."
     validations:
         required: true
   - type: markdown
     attributes:
       label: Homebrew/GAME (if applicable)
-      description: If using retail game please add GAME ID i.e: UCUS-98713 
+      description: "If using retail game please add GAME ID i.e: UCUS-98713"
   - type: markdown
     attributes:
       label: Plugins ( if applicable )
-      description: Please list all plugins enabled here.
+      description: "Please list all plugins enabled here."
   - type: textarea
     id: steps-to-reproduce
     attributes:
