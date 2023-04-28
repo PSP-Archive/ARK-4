@@ -58,13 +58,13 @@ body:
     id: usb-charge
     attributes:
       label: USB Charge
-	- Disabled
-	- Always
-	- Game
-	- UMD
-	- Homebrew
-	- Pops
-	- VSH
+  - Disabled
+  - Always
+  - Game
+  - UMD
+  - Homebrew
+  - Pops
+  - VSH
     validations:
       required: true
 
@@ -72,39 +72,39 @@ body:
     id: overclock
     attributes:
       label: OverClock 
-	- Disabled
-	- Always
-	- Game
-	- UMD
-	- Homebrew
-	- Pops
-	- VSH
+  - Disabled
+  - Always
+  - Game
+  - UMD
+  - Homebrew
+  - Pops
+  - VSH
     validations:
       required: true
   - type: dropdown
     id: powersave
     attributes:
       label: Power Save
-	- Disabled
-	- Always
-	- Game
-	- UMD
-	- Homebrew
-	- Pops
-	- VSH
+  - Disabled
+  - Always
+  - Game
+  - UMD
+  - Homebrew
+  - Pops
+  - VSH
     validations:
       required: true
   - type: dropdown
     id: autoboot
     attributes:
       label: Autoboot Launcher
-	- Disabled
-	- Always
-	- Game
-	- UMD
-	- Homebrew
-	- Pops
-	- VSH
+  - Disabled
+  - Always
+  - Game
+  - UMD
+  - Homebrew
+  - Pops
+  - VSH
     validations:
       required: true
       
@@ -112,13 +112,13 @@ body:
     id: psp-go-pause
     attributes:
       label: Disable PSP Go Pause
-	- Disabled
-	- Always
-	- Game
-	- UMD
-	- Homebrew
-	- Pops
-	- VSH
+  - Disabled
+  - Always
+  - Game
+  - UMD
+  - Homebrew
+  - Pops
+  - VSH
     validations:
       required: true
 
@@ -126,13 +126,13 @@ body:
     id: unlock-extra-memory
     attributes:
       label: Unlock Extra Memory
-	- Disabled
-	- Always
-	- Game
-	- UMD
-	- Homebrew
-	- Pops
-	- VSH
+  - Disabled
+  - Always
+  - Game
+  - UMD
+  - Homebrew
+  - Pops
+  - VSH
     validations:
       required: true
 
@@ -140,13 +140,13 @@ body:
     id: mem-stick-speedup
     attributes:
       label: Memory Stick Speedup
-	- Disabled
-	- Always
-	- Game
-	- UMD
-	- Homebrew
-	- Pops
-	- VSH
+  - Disabled
+  - Always
+  - Game
+  - UMD
+  - Homebrew
+  - Pops
+  - VSH
     validations:
       required: true
 
@@ -154,12 +154,12 @@ body:
     id: inferno-cache
     attributes:
       label: Inferno Cache 
-	- Disabled
-	- Always
-	- Game
-	- UMD
-	- Homebrew
-	- Pops
-	- VSH
+  - Disabled
+  - Always
+  - Game
+  - UMD
+  - Homebrew
+  - Pops
+  - VSH
     validations:
       required: true
