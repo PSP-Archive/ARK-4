@@ -41,7 +41,7 @@ def psp() -> int:
     except:
         return 1
 
-def new_version(psp_path, advanced_vsh=None) -> None:
+def new_version(psp_path) -> None:
     wy = tk.Label(root, text="Copying files! Please Wait!")
     wy.grid(column=1, row=1)
     root.update()
@@ -50,8 +50,6 @@ def new_version(psp_path, advanced_vsh=None) -> None:
 
     shutil.copytree('./ARK_01234', f'{psp_path}/PSP/SAVEDATA/ARK_01234', dirs_exist_ok=True)
     shutil.copytree('./ARK_Live', f'{psp_path}/PSP/GAME/ARK_Live', dirs_exist_ok=True)
-    if advanced_vsh != 0:
-        shutil.copyfile('./AdvancedVSH/VSHMENU.PRX', f'{psp_path}/PSP/SAVEDATA/ARK_01234/VSHMENU.PRX')
 
     os.chdir('../')
     shutil.rmtree('ARK')
@@ -85,7 +83,7 @@ def setup_ark_dc(_path=None):
         os.makedirs(f'{_path}/TM/DCARK/kd/') 
     shutil.copyfile(f'{tmp}/ARK/ARK_01234/FLASH0.ARK', f'{_path}/TM/DCARK/kd/FLASH0.ARK')
 
-def dropdown_update(val, advanced_vsh=None, force_upgrade=None, def_text=None, ARKDC=None) -> None:
+def dropdown_update(val, force_upgrade=None, def_text=None, ARKDC=None) -> None:
     def_text.destroy()
     dropdown_val = val
     if dropdown_val is not None:
@@ -121,7 +119,7 @@ def dropdown_update(val, advanced_vsh=None, force_upgrade=None, def_text=None, A
                     wx = tk.Label(root, text="Newer version available", bg="#0c0",fg="#fff")
                     wx.grid(column=0, row=1, padx=10)
                     root.update()
-                    root.after(3000, new_version(dropdown_val, advanced_vsh))
+                    root.after(3000, new_version(dropdown_val))
                 else:
                     wx = tk.Label(root, text="You have the latest version available.", bg='#0c0', fg='#fff')
                     wx.grid(column=0, row=1)
@@ -129,7 +127,7 @@ def dropdown_update(val, advanced_vsh=None, force_upgrade=None, def_text=None, A
             elif install == 'yes':
                 download_latest_ARK()
                 root.update()
-                root.after(3000, new_version(dropdown_val, advanced_vsh))
+                root.after(3000, new_version(dropdown_val))
 
         else:
             err = tk.Label(root, text='ERR: INCORRECT DRIVE!!!!', fg='#f00', bg='#000')
@@ -161,17 +159,14 @@ def options(win=None, def_text=None) -> str:
         y.grid(column=2, row=0)
         x = tk.Label(win, text='Drive:')
         x.grid(column=3, row=0)
-        cb = tk.IntVar()
         f_cb = tk.IntVar()
         ark_dc_cb = tk.IntVar()
-        z = tk.Checkbutton(win, text='Advanced VSH Menu', variable=cb, onvalue=1, offvalue=0)
-        z.grid(column=4, row=1, sticky="w")
         force = tk.Checkbutton(win, text='Force Upgrade', variable=f_cb, onvalue=1, offvalue=0)
-        force.grid(column=4, row=2, sticky="w")
+        force.grid(column=4, row=1, sticky="w")
         ARKDC = tk.Checkbutton(win, text='ARK DC', variable=ark_dc_cb, onvalue=1, offvalue=0, state=DISABLED)
-        ARKDC.grid(column=4, row=3, sticky="w")
+        ARKDC.grid(column=4, row=2, sticky="w")
 
-        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get(), def_text, ark_dc_cb.get()))
+        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, f_cb.get(), def_text, ark_dc_cb.get()))
         w.grid(column=4, row=0)
     else:
         drives = win32api.GetLogicalDriveStrings()
@@ -183,16 +178,13 @@ def options(win=None, def_text=None) -> str:
         y.grid(column=2, row=0)
         x = tk.Label(win, text='Drive:')
         x.grid(column=3, row=0)
-        cb = tk.IntVar()
         f_cb = tk.IntVar()
-        z = tk.Checkbutton(win, text='Advanced VSH Menu', variable=cb, onvalue=1, offvalue=0)
-        z.grid(column=4, row=1, sticky="w")
         force = tk.Checkbutton(win, text='Force Upgrade', variable=f_cb, onvalue=1, offvalue=0)
-        force.grid(column=4, row=2, sticky="w")
+        force.grid(column=4, row=1, sticky="w")
         ARKDC = tk.Checkbutton(win, text='ARK DC', variable=ark_dc_cb, onvalue=1, offvalue=0, state=DISABLED)
-        ARKDC.grid(column=4, row=3, sticky="w")
+        ARKDC.grid(column=4, row=2, sticky="w")
 
-        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, cb.get(), f_cb.get(), def_text, ark_dc_cb.get()))
+        w = tk.OptionMenu(win, _default, *final, command=lambda x : dropdown_update(x, f_cb.get(), def_text, ark_dc_cb.get()))
         w.grid(column=4, row=0)
 
 
