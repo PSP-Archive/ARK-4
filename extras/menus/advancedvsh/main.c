@@ -359,7 +359,8 @@ typedef struct _pspMsPrivateDirent {
 } pspMsPrivateDirent;
 
 void exec_random_game() {
-    char* iso_dir = "ms0:/ISO/";
+    char iso_dir[128];
+	strcpy(iso_dir, "ms0:/ISO/");
     int num_games = 0;
     char game[256];
 
@@ -370,16 +371,20 @@ void exec_random_game() {
         iso_dir[1] = 'f';
     }
 
-    SceUID iso_path = sceIoDopen(iso_dir);
     SceIoDirent isos;
+	SceUID iso_path;
 	pspMsPrivateDirent* pri_dirent = malloc(sizeof(pspMsPrivateDirent));
+
+	find_random_game:
+
+	iso_path = sceIoDopen(iso_dir);
 
     memset(&isos, 0, sizeof(isos));
 	memset(pri_dirent, 0, sizeof(*pri_dirent));
 	pri_dirent->size = sizeof(*pri_dirent);
 	isos.d_private = (void*)pri_dirent;
     while(sceIoDread(iso_path, &isos) > 0) {
-        if(FIO_SO_ISREG(isos.d_stat.st_attr) && isos.d_name[0] != '.') {
+        if(isos.d_name[0] != '.') {
             num_games++;
         }
     }
@@ -397,13 +402,19 @@ void exec_random_game() {
 	pri_dirent->size = sizeof(*pri_dirent);
 	isos.d_private = (void*)pri_dirent;
     while(sceIoDread(iso_path, &isos) > 0) {
-        if(FIO_SO_ISREG(isos.d_stat.st_attr) && isos.d_name[0] != '.') {
+        if(isos.d_name[0] != '.') {
             if (num_games == rand_idx) break;
 			else num_games++;
         }
     }
 
     sceIoDclose(iso_path);
+
+	if (FIO_SO_ISDIR(isos.d_stat.st_attr)){
+		strcat(iso_dir, isos.d_name);
+		strcat(iso_dir, "/");
+		goto find_random_game;
+	}
 
     strcpy(game, iso_dir);
     strcat(game, pri_dirent->s_name);
