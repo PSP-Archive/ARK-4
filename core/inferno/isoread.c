@@ -41,7 +41,7 @@
 #define DAX_BLOCK_SIZE 0x2000
 #define DAX_COMP_BUF 0x2400
 
-#define CISO_IDX_MAX_ENTRIES 512
+#define CISO_IDX_MAX_ENTRIES 4096 // will be adjusted according to CSO block_size
 
 struct CISO_header {
     uint32_t magic;  // 0
@@ -107,6 +107,7 @@ static u8 *g_ciso_dec_buf = NULL;
 
 static u32 *g_cso_idx_cache = NULL;
 static int g_cso_idx_start_block = -1;
+static int g_cso_idx_cache_num = 0;
 
 // reader data
 static u32 header_size;
@@ -171,6 +172,10 @@ static int get_nsector(void)
     return g_total_sectors;
 }
 
+#ifdef DEBUG
+static int io_calls = 0;
+#endif
+
 // 0x00000BB4
 static int read_raw_data(u8* addr, u32 size, u32 offset)
 {
@@ -178,6 +183,10 @@ static int read_raw_data(u8* addr, u32 size, u32 offset)
     SceOff ofs;
     i = 0;
 
+    #ifdef DEBUG
+    io_calls++;
+    #endif
+    
     do {
         i++;
         ofs = sceIoLseek(g_iso_fd, offset, PSP_SEEK_SET);
@@ -257,6 +266,10 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     u8* dec_buf = g_ciso_dec_buf;
     u8* c_buf = NULL;
     u8* top_addr = addr+size;
+
+    #ifdef DEBUG
+    io_calls = 0;
+    #endif
     
     if(offset > uncompressed_size) {
         // return if the offset goes beyond the iso size
@@ -274,23 +287,32 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     else ending_block = (ending_block/block_size)+1;
     
     // refresh index table if needed
-    if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || starting_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES-1){
-        read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * sizeof(u32) + header_size);
+    if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || starting_block+1 >= g_cso_idx_start_block + g_cso_idx_cache_num-1){
+        read_raw_data(g_cso_idx_cache, g_cso_idx_cache_num*sizeof(u32), starting_block * sizeof(u32) + header_size);
         g_cso_idx_start_block = starting_block;
     }
 
     // Calculate total size of compressed data
     u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
     // last block index might be outside the block offset cache, better read it from disk
-    u32 o_end[2]; read_raw_data(&o_end[0], sizeof(u32)*2, ending_block*sizeof(u32)+header_size); // read last two offsets
+    u32 o_end[2];
+    if (ending_block-g_cso_idx_start_block < g_cso_idx_cache_num-1){ //(ending_block-starting_block+1 < g_cso_idx_cache_num-1){
+        o_end[0] = g_cso_idx_cache[ending_block-g_cso_idx_start_block-1];
+        o_end[1] = g_cso_idx_cache[ending_block-g_cso_idx_start_block];
+    }
+    else read_raw_data(&o_end[0], sizeof(u32)*2, (ending_block-1)*sizeof(u32)+header_size); // read last two offsets
     o_end[0] = (o_end[0]&0x7FFFFFFF)<<align;
     o_end[1] = (o_end[1]&0x7FFFFFFF)<<align;
     u32 compressed_size = o_end[1]-o_start;
 
+    #ifdef DEBUG
+    printf("(0)compressed size: %d, ", compressed_size);
+    #endif
+
     // try to read at once as much compressed data as possible
     if (size >= block_size*2){ // only if going to read more than two blocks
-        if (size < compressed_size) compressed_size = o_end[0]-o_start; // try reading one less compressed block if too much compressed data
-        if (size < compressed_size) compressed_size = size-block_size; // adjust chunk size if compressed data is still bigger than uncompressed
+        if (size <= compressed_size) compressed_size = o_end[0]-o_start; // try reading one less compressed block if too much compressed data
+        if (size <= compressed_size) compressed_size = size-block_size; // adjust chunk size if compressed data is still bigger than uncompressed
         c_buf = top_addr - compressed_size; // read into the end of the user buffer
         read_raw_data(c_buf, compressed_size, o_start);
     }
@@ -301,8 +323,8 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         pos = offset & (block_size - 1);
 
         // check if we need to refresh index table
-        if (cur_block >= g_cso_idx_start_block+CISO_IDX_MAX_ENTRIES-1){
-            read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), cur_block * 4 + header_size);
+        if (cur_block >= g_cso_idx_start_block+g_cso_idx_cache_num-1){
+            read_raw_data(g_cso_idx_cache, g_cso_idx_cache_num*sizeof(u32), cur_block * 4 + header_size);
             g_cso_idx_start_block = cur_block;
         }
         
@@ -319,11 +341,12 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
             b_size = DAX_COMP_BUF;
 
         // check if we need to (and can) read another chunk of data
-        if (c_buf <= addr || c_buf+b_size > top_addr){
+        if (c_buf < addr || c_buf+b_size > top_addr){
             if (size >= block_size*2){ // only if more than two blocks left, otherwise just use normal reading
                 compressed_size = o_end[1]-b_offset; // recalculate remaining compressed data
-                if (size < compressed_size) compressed_size = o_end[0]-o_offset; // try reading one less compressed block if too much compressed data
-                if (size < compressed_size) compressed_size = size-block_size; // adjust if still bigger than uncompressed
+                //printf("(3)compressed size: %d, ", compressed_size);
+                if (size <= compressed_size) compressed_size = o_end[0]-b_offset; // try reading one less compressed block if too much compressed data
+                if (size <= compressed_size) compressed_size = size-block_size; // adjust if still bigger than uncompressed
                 c_buf = top_addr - compressed_size; // read into the end of the user buffer
                 read_raw_data(c_buf, compressed_size, b_offset);
             }
@@ -350,6 +373,10 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     }
 
     u32 res = offset - o_offset;
+
+    #ifdef DEBUG
+    printf("read %d bytes at %p took %d IO calls\n", res, o_offset, io_calls);
+    #endif
     
     return res;
 }
@@ -441,9 +468,12 @@ static int is_ciso(SceUID fd)
         }
         g_total_sectors = uncompressed_size / ISO_SECTOR_SIZE; // total number of DVD sectors (2K) in the original ISO.
         g_ciso_total_block = uncompressed_size / block_size;
+        // for files with higher block sizes, we can reduce block cache size
+        int ratio = block_size/ISO_SECTOR_SIZE;
+        g_cso_idx_cache_num = CISO_IDX_MAX_ENTRIES/ratio;
         // lets use our own heap so that kram usage depends on game format (less heap needed for systemcontrol; better memory management)
         if (heapid < 0){
-            heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, (2*com_size) + (CISO_IDX_MAX_ENTRIES * 4) + 128, 1, "InfernoHeap");
+            heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, (2*com_size) + (g_cso_idx_cache_num * 4) + 128, 1, "InfernoHeap");
             if (heapid<0){
                 return -5;
             }
@@ -462,7 +492,7 @@ static int is_ciso(SceUID fd)
             if((u32)g_ciso_block_buf & 63) // align 64
                 g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
             // allocate buffer for block offset cache
-            g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4) + 64);
+            g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (g_cso_idx_cache_num * 4) + 64);
             if (g_cso_idx_cache == NULL) {
                 return -4;
             }
