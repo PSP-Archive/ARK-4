@@ -378,8 +378,9 @@ void GameManager::draw(){
         img->draw_rotate(
             (480-img->getTexture()->width)/2,
             (272-img->getTexture()->height)/2,
-            angle++
+            angle
         );
+        angle+=0.2;
     }
 }
 
@@ -533,7 +534,8 @@ bool GameManager::pmfPrompt(){
         common::clearScreen(CLEAR_COLOR);
         entry->drawBG();
         entry->getIcon()->draw(10, 98);
-        img->draw_rotate((480-img->getWidth())/2, (272-img->getHeight())/2, angle++);
+        img->draw_rotate((480-img->getWidth())/2, (272-img->getHeight())/2, angle);
+        angle+=0.2;
         common::flipScreen();
     }
     
