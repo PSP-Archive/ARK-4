@@ -432,26 +432,7 @@ int submenu_setup(void)
 
 //usb device
 	if((cnf.usbdevice>0) && (cnf.usbdevice<5)) {
-#ifdef CONFIG_639
-		if(psp_fw_version == FW_639)
-			scePaf_sprintf(device_buf, "%s %d", g_messages[MSG_FLASH], cnf.usbdevice-1);	
-#endif
-
-#ifdef CONFIG_635
-		if(psp_fw_version == FW_635)
-			scePaf_sprintf(device_buf, "%s %d", g_messages[MSG_FLASH], cnf.usbdevice-1);	
-#endif
-
-#ifdef CONFIG_620
-		if (psp_fw_version == FW_620)
-			scePaf_sprintf_620(device_buf, "%s %d", g_messages[MSG_FLASH], cnf.usbdevice-1);	
-#endif
-
-#if defined(CONFIG_660) || defined(CONFIG_661)
-		if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
-			scePaf_sprintf_660(device_buf, "%s %d", g_messages[MSG_FLASH], cnf.usbdevice-1);	
-#endif
-
+		scePaf_sprintf(device_buf, "%s %d", g_messages[MSG_FLASH], cnf.usbdevice-1);
 		bridge = device_buf;
 	} else {
 		const char *device;

@@ -121,8 +121,7 @@ int EatKey(SceCtrlData *pad_data, int count)
 	int i;
 
 	// copy true value
-	if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
-		scePaf_memcpy_660(&ctrl_pad, pad_data, sizeof(SceCtrlData));
+	scePaf_memcpy(&ctrl_pad, pad_data, sizeof(SceCtrlData));
 
 	// buttons check
 	buttons     = ctrl_pad.Buttons;
@@ -342,7 +341,7 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 
 		if(0 == stricmp(p, ".iso") || 0 == stricmp(p, ".cso") || 0 == stricmp(p, ".zso") || 0 == stricmp(p, ".dax") || 0 == stricmp(p, ".jso")) {
 			if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
-				scePaf_sprintf_660(fullpath, "%s/%s", path, dir.d_name);
+				scePaf_sprintf(fullpath, "%s/%s", path, dir.d_name);
 			umdvideolist_add(list, fullpath);
 		}
 	}
@@ -849,8 +848,7 @@ int TSRThread(SceSize args, void *argp)
 		}
 	}
 
-if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
-	scePaf_memcpy_660(&cnf_old, &cnf, sizeof(SEConfig));
+	scePaf_memcpy(&cnf_old, &cnf, sizeof(SEConfig));
 
 resume:
 	while(stop_flag == 0) {
