@@ -1,0 +1,158 @@
+name: ARK-4 Bugs/Issues
+description: "File a bug/issue for any issues related to ARK-4"
+labels: ["bug", "issues"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fil out and document any bugs
+  - type: dropdown
+    id: type
+    attributes:
+      label: PSP/Vita Model
+      description: "Please specify which device is affected/you have."
+      multiple: true
+      options:
+          - PSP-1000 (Fat)
+          - PSP-2000 (Slim)
+          - PSP-3000 (Slim & Bright)
+          - PSP-N1000 (PSP Go)
+          - PSP-E1000 (Street)
+          - PCH-1000/1100 (Vita Fat)
+          - PCH-2000 (Vita Slim)
+          - VTE-1000 (Vita TV)
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      label: ARK Version
+      description: "Enter Ark Release here (press Select it shows the version at the top of vshmenu). If using beta build put commit version."
+    validations:
+        required: true
+  - type: markdown
+    attributes:
+      label: Homebrew/GAME (if applicable)
+      description: "If using retail game please add GAME ID i.e: UCUS-98713"
+  - type: markdown
+    attributes:
+      label: Plugins ( if applicable )
+      description: "Please list all plugins enabled here."
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: "Step-by-step on how to reproduce the bug/issue:"
+      value: |
+        1.
+        2.
+        3.
+        4.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+    label: Recovery settings
+  - type: dropdown
+    id: usb-charge
+    attributes:
+      label: USB Charge
+        - Disabled
+        - Always
+        - Game
+        - UMD
+        - Homebrew
+        - Pops
+        - VSH
+    validations:
+      required: true
+  - type: dropdown
+    id: overclock
+    attributes:
+      label: OverClock 
+        - Disabled
+        - Always
+        - Game
+        - UMD
+        - Homebrew
+        - Pops
+        - VSH
+    validations:
+      required: true
+  - type: dropdown
+    id: powersave
+    attributes:
+      label: Power Save
+        - Disabled
+        - Always
+        - Game
+        - UMD
+        - Homebrew
+        - Pops
+        - VSH
+    validations:
+      required: true
+  - type: dropdown
+    id: autoboot
+    attributes:
+      label: Autoboot Launcher
+       - Disabled
+       - Always
+       - Game
+       - UMD
+       - Homebrew
+       - Pops
+       - VSH
+    validations:
+      required: true
+  - type: dropdown
+    id: psp-go-pause
+    attributes:
+      label: Disable PSP Go Pause
+       - Disabled
+       - Always
+       - Game
+       - UMD
+       - Homebrew
+       - Pops
+       - VSH
+    validations:
+      required: true
+  - type: dropdown
+    id: unlock-extra-memory
+    attributes:
+      label: Unlock Extra Memory
+       - Disabled
+       - Always
+       - Game
+       - UMD
+       - Homebrew
+       - Pops
+       - VSH
+    validations:
+      required: true
+  - type: dropdown
+    id: mem-stick-speedup
+    attributes:
+      label: Memory Stick Speedup
+       - Disabled
+       - Always
+       - Game
+       - UMD
+       - Homebrew
+       - Pops
+       - VSH
+    validations:
+      required: true
+  - type: dropdown
+    id: inferno-cache
+    attributes:
+      label: Inferno Cache 
+       - Disabled
+       - Always
+       - Game
+       - UMD
+       - Homebrew
+       - Pops
+       - VSH
+    validations:
+      required: true
