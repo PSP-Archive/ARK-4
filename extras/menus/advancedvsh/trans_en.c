@@ -38,7 +38,7 @@ const char *g_messages_en[] = {
 	" IMPORT CLASSIC PLUGINS ",
 	" ACTIVATE FLASH AND WMA ",
 	" DELETE HIBERNATION ",
-	" BOOT RANDOM GAME ",
+	" BOOT RANDOM ISO ",
 	" GO BACK ",
 	" CUSTOM LAUNCHER -> ",
 	" RECOVERY MENU   -> ",

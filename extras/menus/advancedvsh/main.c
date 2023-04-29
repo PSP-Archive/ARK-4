@@ -387,6 +387,11 @@ void exec_random_game() {
 
     sceIoDclose(iso_path);
 
+	if (num_games == 0){
+		free(pri_dirent);
+		return;
+	};
+
     srand(time(NULL));
     int rand_idx = rand() % num_games;
     num_games = 0;

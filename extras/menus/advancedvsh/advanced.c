@@ -375,6 +375,8 @@ int submenu_draw(void)
 					xPointer = pointer[2];
 				break;
 				case SUBMENU_RANDOM_GAME:
+					xPointer = 178;
+					break;
 				case SUBMENU_DELETE_HIBERNATION:
 					xPointer = 168;
 					break;
