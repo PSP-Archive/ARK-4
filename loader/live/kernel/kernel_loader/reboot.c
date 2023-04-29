@@ -22,6 +22,7 @@
 u8* rebootbuffer = NULL;
 u32 size_rebootbuffer = REBOOTEX_MAX_SIZE;
 void* flashfs = NULL;
+int iso_mode = MODE_INFERNO;
 
 // Sony Reboot Buffer Loader
 int (* _LoadReboot)(void *, unsigned int, void *, unsigned int) = NULL;
@@ -42,7 +43,7 @@ void buildRebootBufferConfig(int rebootBufferSize)
     conf->reboot_buffer_size = rebootBufferSize;
 
     // Default ISO driver for homebrew and ISO
-    conf->iso_mode = MODE_INFERNO;
+    conf->iso_mode = iso_mode;
     // Default ISO disc type
     conf->iso_disc_type = PSP_UMD_TYPE_GAME;
 

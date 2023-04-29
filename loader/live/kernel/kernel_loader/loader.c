@@ -209,6 +209,8 @@ void loadKernelArk(){
     else {
         // vsh reboot
         PRTSTR("Running VSH");
+        extern int iso_mode;
+        iso_mode = MODE_UMD;
         int (*_KernelExitVSH)(void*) = FindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
         _KernelExitVSH(NULL);
     }

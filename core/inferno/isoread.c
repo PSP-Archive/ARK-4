@@ -510,6 +510,8 @@ int iso_open(void)
 {
     int ret, retries;
 
+    if (g_iso_fn == NULL || g_iso_fn[0] == 0) return -1;
+
     wait_until_ms0_ready();
     sceIoClose(g_iso_fd);
     g_iso_opened = 0;
