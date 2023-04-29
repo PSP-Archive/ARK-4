@@ -443,7 +443,7 @@ static int is_ciso(SceUID fd)
         g_ciso_total_block = uncompressed_size / block_size;
         // lets use our own heap so that kram usage depends on game format (less heap needed for systemcontrol; better memory management)
         if (heapid < 0){
-            heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, (2*com_size) + (CISO_IDX_MAX_ENTRIES * 4) + 256, 1, "InfernoHeap");
+            heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, (2*com_size) + (CISO_IDX_MAX_ENTRIES * 4) + 128, 1, "InfernoHeap");
             if (heapid<0){
                 return -5;
             }
@@ -466,8 +466,8 @@ static int is_ciso(SceUID fd)
             if (g_cso_idx_cache == NULL) {
                 return -4;
             }
-            if((u32)g_cso_idx_cache & 63) // align 64
-                g_cso_idx_cache = (void*)(((u32)g_cso_idx_cache & (~63)) + 64);
+            //if((u32)g_cso_idx_cache & 63) // align 64
+            //    g_cso_idx_cache = (void*)(((u32)g_cso_idx_cache & (~63)) + 64);
         }
         return 1;
     } else {

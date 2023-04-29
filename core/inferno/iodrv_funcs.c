@@ -130,18 +130,22 @@ static int IoInit(PspIoDrvArg* arg)
     void *p;
     SceUID thid;
 
-    p = oe_malloc(ISO_SECTOR_SIZE);
+    if (g_sector_buf == NULL){
+        p = oe_malloc(ISO_SECTOR_SIZE);
 
-    if(p == NULL) {
-        return -1;
+        if(p == NULL) {
+            return -1;
+        }
+
+        g_sector_buf = p;
     }
 
-    g_sector_buf = p;
+    if (g_umd9660_sema_id < 0){
+        g_umd9660_sema_id = sceKernelCreateSema("EcsUmd9660DeviceFile", 0, 1, 1, 0);
 
-    g_umd9660_sema_id = sceKernelCreateSema("EcsUmd9660DeviceFile", 0, 1, 1, 0);
-
-    if(g_umd9660_sema_id < 0) {
-        return g_umd9660_sema_id;
+        if(g_umd9660_sema_id < 0) {
+            return g_umd9660_sema_id;
+        }
     }
 
     memset(g_open_slot, 0, sizeof(g_open_slot));

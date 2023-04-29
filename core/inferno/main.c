@@ -85,7 +85,7 @@ int init_inferno(void)
     g_drive_status = PSP_UMD_INITING;
     g_umd_cbid = -1;
     g_umd_error_status = 0;
-    g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
+    if (g_drive_status_evf < 0) g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
     sceKernelRegisterSysEventHandler(&g_power_event);
 
     return MIN(g_drive_status_evf, 0);
