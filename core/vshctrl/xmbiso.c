@@ -38,14 +38,6 @@ static char g_iso_dir[128];
 static char g_temp_delete_dir[128];
 static int g_delete_eboot_injected = 0;
 
-void logtext(char* path, char* text){
-    if (path == NULL) path = "ms0:/log.txt";
-    int fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
-    sceIoWrite(fd, text, strlen(text));
-    //sceIoWrite(fd, "\n", 1);
-    sceIoClose(fd);
-}
-
 static const char *corruptfix_list[] = {
 	"ms0:/PSP/GAME/"		,"ef0:/PSP/GAME/"		,
 	"ms0:/PSP/GAME150/"	    ,"ef0:/PSP/GAME150/"	,
@@ -56,32 +48,17 @@ static int CorruptIconPatch(char *name)
 	char path[256];
 	SceIoStat stat;
 
-    /*
-    logtext(NULL, "checking: ");
-    logtext(NULL, name);
-    logtext(NULL, "\n");
-    */
-
 
     for (int i=0; i<NELEMS(corruptfix_list); i++){
 
         const char *hidden_path = corruptfix_list[i];
-        //sprintf(path, hidden_path , name);
         strcpy(path, hidden_path);
         strcat(path, name);
         strcat(path, "%/EBOOT.PBP");
 
-        /*
-        logtext(NULL, "trying: ");
-        logtext(NULL, path);
-        logtext(NULL, "\n");
-        */
-
         memset(&stat, 0, sizeof(stat));
         if (sceIoGetstat(path, &stat) >= 0)
         {
-            //colorDebug(0xff);
-            //logtext(NULL, "found, hiding...\n");
             strcpy(name, "__SCE"); // hide icon
             return 1;
         }

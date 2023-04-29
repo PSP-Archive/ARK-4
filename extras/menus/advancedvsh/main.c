@@ -319,10 +319,6 @@ void import_classic_plugins() {
 	
 }
 
-
-
-
-
 static int get_umdvideo(UmdVideoList *list, char *path)
 {
 	SceIoDirent dir;
@@ -344,7 +340,7 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 		if(p == NULL)
 			p = dir.d_name;
 
-		if(0 == stricmp(p, ".iso") || 0 == stricmp(p, ".cso") || 0 == stricmp(p, ".zso")) {
+		if(0 == stricmp(p, ".iso") || 0 == stricmp(p, ".cso") || 0 == stricmp(p, ".zso") || 0 == stricmp(p, ".dax") || 0 == stricmp(p, ".jso")) {
 			if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
 				scePaf_sprintf_660(fullpath, "%s/%s", path, dir.d_name);
 			umdvideolist_add(list, fullpath);
@@ -355,76 +351,33 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 
 	return result;
 }
-/*
-int skip_game(char *game) {
-	sceKernelDelayThread(500000);
-	//char path2[] = "ms0:/a_blacklist.txt";
-	//FILE *wb = fopen(path2, "a");
-	//fwrite(game, 1, strlen(game), wb);
-	//fwrite("\n", 1, sizeof(char), wb);
-	//fclose(wb);
-	char path[20];
-	SceUID ms0_on_GO;
-	if (psp_model == PSP_GO) {
-		if(!(ms0_on_GO = sceIoOpen("ms0:/blacklist.txt", PSP_O_RDONLY, 0777)))
-			snprintf(path, sizeof(path), "%s", "ef0:/blacklist.txt");
-		else
-			snprintf(path, sizeof(path), "%s", "ms0:/blacklist.txt");
-	}
-	else
-		snprintf(path, sizeof(path), "%s", "ms0:/blacklist.txt");
 
-	char line[256];
-	if(strstr(game, "/.") != NULL || strstr(game, "/..") != NULL || strstr(game, "/!") != NULL)
-		return 1;
-	//SceUID blacklist = sceIoOpen(path, PSP_O_RDONLY, 0777);
-	FILE *blacklist = fopen(path, "r");
-	while(fgets(line, sizeof(line), blacklist)) {
-		line[strcspn(line, "\n")] = '\0';
-		if(strcasecmp(line, game) == 0) {
-			fclose(blacklist);
-			//sceIoClose(blacklist);
-			return 1;
-		}
-	}
-	//sceIoClose(blacklist);
-	fclose(blacklist);
-	return 0;
-}
+typedef struct _pspMsPrivateDirent {
+    SceSize size;
+    char s_name[16];
+    char l_name[1024];
+} pspMsPrivateDirent;
 
-int game_exist(char* game, char* tmp) {
-	strcpy(tmp, game);
-	strcat(tmp, "EBOOT.PBP");
-	SceUID exists = sceIoOpen(tmp, PSP_O_RDONLY, 0777);
-	if (!exists) {
-		return 1;
-	}
-	else {
-		sceIoClose(exists);
-		return 0;
-	}
-} // END game_exist
-*/
 void exec_random_game() {
-    char* iso_dir = "xx0:/ISO/";
+    char* iso_dir = "ms0:/ISO/";
     int num_games = 0;
     char game[256];
-    //char selected_game;
-    //chariso_games[MAX_GAMES];
+
+	char buf[128];
 
     if(psp_model == PSP_GO){
         iso_dir[0] = 'e';
         iso_dir[1] = 'f';
     }
-    else{
-        iso_dir[0] = 'm';
-        iso_dir[1] = 's';
-    }
 
     SceUID iso_path = sceIoDopen(iso_dir);
     SceIoDirent isos;
+	pspMsPrivateDirent* pri_dirent = malloc(sizeof(pspMsPrivateDirent));
 
     memset(&isos, 0, sizeof(isos));
+	memset(pri_dirent, 0, sizeof(*pri_dirent));
+	pri_dirent->size = sizeof(*pri_dirent);
+	isos.d_private = (void*)pri_dirent;
     while(sceIoDread(iso_path, &isos) > 0) {
         if(FIO_SO_ISREG(isos.d_stat.st_attr) && isos.d_name[0] != '.') {
             num_games++;
@@ -440,20 +393,22 @@ void exec_random_game() {
     iso_path = sceIoDopen(iso_dir);
 
     memset(&isos, 0, sizeof(isos));
+	memset(pri_dirent, 0, sizeof(*pri_dirent));
+	pri_dirent->size = sizeof(*pri_dirent);
+	isos.d_private = (void*)pri_dirent;
     while(sceIoDread(iso_path, &isos) > 0) {
-        if(isos.d_name[0] == '.') continue;
-        else if(rand_idx == num_games) {
-            break;
-        }
-        else if (FIO_SO_ISREG(isos.d_stat.st_attr)){
-            num_games++;
+        if(FIO_SO_ISREG(isos.d_stat.st_attr) && isos.d_name[0] != '.') {
+            if (num_games == rand_idx) break;
+			else num_games++;
         }
     }
 
     sceIoDclose(iso_path);
 
     strcpy(game, iso_dir);
-    strcat(game, isos.d_name);
+    strcat(game, pri_dirent->s_name);
+
+	free(pri_dirent);
 
     struct SceKernelLoadExecVSHParam param;
     int apitype;
@@ -474,221 +429,6 @@ void exec_random_game() {
     sctrlKernelLoadExecVSHWithApitype(apitype, game, &param);
 
 }
-/*
-	SceUID dir = sceIoDopen(GAME_DIR);
-	SceIoDirent dirent;
-
-	memset(&dirent, 0, sizeof(dirent));
-	while(sceIoDread(dir, &dirent) > 0) {
-		if(dirent.d_name == "." || dirent.d_name == "..") {
-			bad_count++;
-			continue;
-		}
-		else { 
-			bad_count++;
-			games[num_games] = (char *)malloc(strlen(GAME_DIR) + strlen(dirent.d_name) + 1);
-			sprintf(games[num_games], "%s%s/", GAME_DIR, dirent.d_name);
-			num_games++;
-		}
-	}
-	sceIoDclose(dir);
-
-	// No Games detected
-	if(bad_count==2)
-		sctrlKernelExitVSH(NULL);
-
-	int rand_idx = rand() % num_games;
-	selected_game = games[rand_idx];
-/\/\*
-	 while(skip_game(selected_game)) {
-		rand_idx = rand() % num_games;
-		selected_game = games[rand_idx];
-	 }
-
-	//char *tmp_game_holder = (char *)malloc(strlen(selected_game)+ 11);
-	//while(game_exist(selected_game, tmp_game_holder) > 0 && strstr(selected_game, "CAT_") != NULL && skip_game(selected_game)) {
-	//while(game_exist(selected_game, tmp_game_holder) > 0 || skip_game(selected_game) > 0) {
-	while(skip_game(selected_game) > 0) {
-		rand_idx = rand() % num_games;
-		selected_game = games[rand_idx];
-	}
-
-	//free(tmp_game_holder);
-
-#ifdef DEBUG
-	char *all_games = "ms0:/all_games.txt";
-
-	int all_games_ret = sceIoRemove(all_games);
-
-	int z;
-	char *tmp_list = (char *)malloc(sizeof(char)*64);
-	SceUID t = sceIoOpen("ms0:/all_games.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
-	for(z = 0; z < num_games; z++) {
-		strcpy(tmp_list, games[z]);
-		strcat(tmp_list, "\n");
-		sceIoWrite(t, tmp_list, strlen(tmp_list));
-	}
-	sceIoClose(t);
-	free(tmp_list);
-#endif
-
-
-	// Added for better stability
-	sceKernelDelayThread(500000);
-
-
-#ifdef DEBUG
-	SceUID test_norm = sceIoOpen("ms0:/selected_game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-	char *tmp_g = (char *)malloc(strlen(selected_game)); // + strlen(" Normal Game"));
-	strcpy(tmp_g, selected_game);
-	strcat(tmp_g, " Normal Game");
-    sceIoWrite(test_norm, tmp_g, strlen(tmp_g));	
-	sceIoClose(test_norm);
-#endif
-
-	while(strstr(selected_game, "CAT_") != NULL || skip_game(selected_game) > 0) {
-			//if(strstr(selected_game, ".") != NULL || strstr(selected_game, "..") != NULL || skip_game(selected_game) > 0) {
-			if(strstr(selected_game, ".") != NULL || strstr(selected_game, "..") != NULL) {
-				rand_idx = rand() % num_games; 
-				selected_game = games[rand_idx];
-			}
-			rand_idx = rand() % num_games; 
-			selected_game = games[rand_idx];
-	}
-
-*/
-/*
-	// CATEGORY LITE SUPPORT
-	if (strstr(selected_game, "CAT_") != NULL) {
-		num_games = 0;
-
-
-		SceUID cat_dir = sceIoDopen(selected_game);
-		SceIoDirent catdir;
-		memset(&catdir, 0, sizeof(catdir));
-		bad_count = 0;	
-
-		while(sceIoDread(cat_dir, &catdir) > 0) {
-			if(strstr(catdir.d_name, "/.") != NULL) {
-				bad_count++;
-				continue;
-			}
-			else {
-				cat_games[num_games] = (char *)malloc(strlen(selected_game) + strlen(catdir.d_name) + 1);
-				sprintf(cat_games[num_games], "%s%s/", selected_game, catdir.d_name);
-				num_games++;
-			}
-
-
-			// Random Game from Categories
-			rand_idx = rand() % num_games;
-			selected_game = cat_games[rand_idx];
-
-		
-		}
-		sceIoDclose(cat_dir);
-		
-		// No Games detected
-		if(bad_count==2)
-			sctrlKernelExitVSH(NULL);
-
-		while(skip_game(selected_game)) {
-				rand_idx = rand() % num_games;
-				selected_game = cat_games[rand_idx];
-			}
-
-		char *tmp_game_cat = (char *)malloc(strlen(selected_game) + 11);		
-		while(game_exist(selected_game, tmp_game_cat) > 0 && skip_game(selected_game)) {
-			rand_idx = rand() % num_games;
-			selected_game = cat_games[rand_idx];
-		}
-		free(tmp_game_cat);
-#ifdef DEBUG
-		SceUID test_cat = sceIoOpen("ms0:/selected_game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-		char *tmp_cat_g = (char *)malloc(strlen(selected_game) + 10);
-		strcpy(tmp_cat_g, selected_game);
-		strcat(tmp_cat_g, " CAT GAME");
-    	sceIoWrite(test_cat, tmp_cat_g, strlen(tmp_cat_g));	
-		sceIoClose(test_cat);
-		free(tmp_cat_g);
-#endif
-	} // END OF CAT LITE CHECK
-	// Append EBOOT.PBP to end of gamelist
-	strcat(selected_game, "EBOOT.PBP");
-
-
-*/
-
-
-/*	
-	//if (strstr(selected_game, "SLU") != NULL || strstr(selected_game, "CAT_PRX") != NULL || strstr(selected_game, "/NPU") != NULL) {
-	if (strstr(selected_game, "SLU") != NULL || strstr(selected_game, "/NPU") != NULL) {
-			param.key = "pops";
-			apitype = 0x144;
-	}
-
-	//else if ((strstr(selected_game, "SLU") || strstr(selected_game, "CAT_PRX") || strstr(selected_game, "/NPU")) != NULL && psp_model == PSP_GO) {
-	else if ((strstr(selected_game, "SLU") || strstr(selected_game, "/NPU")) != NULL && psp_model == PSP_GO) {
-			param.key = "pops";
-			apitype = 0x155;
-	}
-
-	else if (strstr(selected_game, "ISOGAME") != NULL) {
-		param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN"; 
-		if(psp_model == PSP_GO)
-			apitype = 0x125;
-		else
-			apitype = 0x123;
-
-		param.key = "umdemu";
-		param.args = 33;
-
-
-*/
-/*
-		while(skip_game(selected_game) > 0) {
-			rand_idx = rand() % num_games; 
-			selected_game = iso_games[rand_idx];
-		}
-		if(iso_num_games != 0) {
-			rand_idx = rand() % iso_num_games; 
-			selected_game = cat_iso_games[rand_idx];
-
-		}
-			SceUID cat_iso_dir = sceIoDopen(selected_game);
-			SceIoDirent catIsoDir;
-			memset(&catIsoDir, 0, sizeof(catIsoDir));
-			iso_num_games = 0;
-			//char *isos;
-
-			while(sceIoDread(cat_iso_dir, &catIsoDir) > 0) {
-				isos[iso_num_games] = (char *)malloc(sizeof(char)*64);
-				sprintf(isos[iso_num_games], "%s", catIsoDir.d_name);
-				iso_num_games++;
-			}
-
-
-			rand_idx = rand() % iso_num_games; 
-			selected_game = isos[rand_idx];
-			sceIoDclose(cat_iso_dir);
-
-
-		} // END ISO_NUM_GAMES
-
-
-		while(skip_game(selected_game)) {
-			rand_idx = rand() % num_games; 
-			selected_game = iso_games[rand_idx];
-		}
-
-		// Testing to see what file is being called
-#ifdef DEBUG
-	SceUID test = sceIoOpen("ms0:/selected_game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-    sceIoWrite(test, selected_game, strlen(selected_game));	
-	sceIoClose(test);
-#endif
-
-*/
 
 static void exec_custom_launcher(void) {
 	char menupath[ARK_PATH_SIZE];
