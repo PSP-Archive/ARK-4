@@ -384,7 +384,7 @@ void exec_random_game() {
 	pri_dirent->size = sizeof(*pri_dirent);
 	isos.d_private = (void*)pri_dirent;
     while(sceIoDread(iso_path, &isos) > 0) {
-        if(isos.d_name[0] != '.') {
+        if(isos.d_name[0] != '.' && strcmp(isos.d_name, "VIDEO") != 0) {
             num_games++;
         }
     }
@@ -402,7 +402,7 @@ void exec_random_game() {
 	pri_dirent->size = sizeof(*pri_dirent);
 	isos.d_private = (void*)pri_dirent;
     while(sceIoDread(iso_path, &isos) > 0) {
-        if(isos.d_name[0] != '.') {
+        if(isos.d_name[0] != '.' && strcmp(isos.d_name, "VIDEO") != 0) {
             if (num_games == rand_idx) break;
 			else num_games++;
         }
