@@ -108,6 +108,10 @@ void Entry::gameBoot(){
     if (common::getConf()->fast_gameboot)
         return;
 
+    while (MP3::isPlaying()){
+        sceKernelDelayThread(1000);
+    }
+
     SystemMgr::pauseDraw();
 
     unsigned mp3_size;

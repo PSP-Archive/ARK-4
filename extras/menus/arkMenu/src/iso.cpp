@@ -304,13 +304,13 @@ bool Iso::isPatched(){
 }
 
 bool Iso::isISO(const char* filename){
-    u32 magic = common::getMagic(filename, 0);
+    string ext = common::getExtension(filename);
     return (
-        magic == CSO_MAGIC ||
-        magic == ZSO_MAGIC ||
-        magic == DAX_MAGIC ||
-        magic == JSO_MAGIC ||
-        common::getMagic(filename, 0x8000) == ISO_MAGIC
+        ext == "iso" ||
+        ext == "cso" ||
+        ext == "zso" ||
+        ext == "jso" ||
+        ext == "dax"
     );
 }
 
