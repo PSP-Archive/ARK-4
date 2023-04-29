@@ -72,7 +72,6 @@ t_conf config;
 SEConfig cnf;
 static SEConfig cnf_old;
 
-u32 psp_fw_version;
 u32 psp_model;
 
 UmdVideoList g_umdlist;
@@ -87,7 +86,6 @@ int module_start(int argc, char *argv[])
 
 	sctrlHENGetArkConfig(ark_config);
 	psp_model = kuKernelGetModel();
-	psp_fw_version = sceKernelDevkitVersion();
 	vpl_init();
 	thid = sceKernelCreateThread("AVshMenu_Thread", TSRThread, 16 , 0x1000 ,0 ,0);
 
@@ -340,8 +338,7 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 			p = dir.d_name;
 
 		if(0 == stricmp(p, ".iso") || 0 == stricmp(p, ".cso") || 0 == stricmp(p, ".zso") || 0 == stricmp(p, ".dax") || 0 == stricmp(p, ".jso")) {
-			if ((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
-				scePaf_sprintf(fullpath, "%s/%s", path, dir.d_name);
+			scePaf_sprintf(fullpath, "%s/%s", path, dir.d_name);
 			umdvideolist_add(list, fullpath);
 		}
 	}
