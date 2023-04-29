@@ -355,7 +355,7 @@ static int get_umdvideo(UmdVideoList *list, char *path)
 
 	return result;
 }
-
+/*
 int skip_game(char *game) {
 	sceKernelDelayThread(500000);
 	//char path2[] = "ms0:/a_blacklist.txt";
@@ -404,31 +404,77 @@ int game_exist(char* game, char* tmp) {
 		return 0;
 	}
 } // END game_exist
-
-
+*/
 void exec_random_game() {
-	char GAME_DIR[] = "xx0:/PSP/GAME/";
-	char ISO_DIR[] = "xx0:/ISO/";
-	int num_games = 0;
-	char *games[MAX_GAMES];
-	//char *cat_games[MAX_GAMES];
-	//char *cat_iso_games[MAX_GAMES];
-	char *iso_games[MAX_GAMES];
-	char *selected_game;
-	char *tmp;
-	srand(time(NULL));
-	int bad_count = 0;
+    char* iso_dir = "xx0:/ISO/";
+    int num_games = 0;
+    char game[256];
+    //char selected_game;
+    //chariso_games[MAX_GAMES];
 
-	if(psp_model == PSP_GO) { 
-		snprintf(GAME_DIR, sizeof(GAME_DIR), "%s", "ef0:/PSP/GAME/");
-		snprintf(ISO_DIR, sizeof(ISO_DIR), "%s", "ef0:/ISO/");
-	}
-	else {
-		snprintf(GAME_DIR, sizeof(GAME_DIR), "%s", "ms0:/PSP/GAME/");
-		snprintf(ISO_DIR, sizeof(ISO_DIR), "%s", "ms0:/ISO/");
-	}
+    if(psp_model == PSP_GO){
+        iso_dir[0] = 'e';
+        iso_dir[1] = 'f';
+    }
+    else{
+        iso_dir[0] = 'm';
+        iso_dir[1] = 's';
+    }
+
+    SceUID iso_path = sceIoDopen(iso_dir);
+    SceIoDirent isos;
+
+    memset(&isos, 0, sizeof(isos));
+    while(sceIoDread(iso_path, &isos) > 0) {
+        if(FIO_SO_ISREG(isos.d_stat.st_attr) && isos.d_name[0] != '.') {
+            num_games++;
+        }
+    }
+
+    sceIoDclose(iso_path);
+
+    srand(time(NULL));
+    int rand_idx = rand() % num_games;
+    num_games = 0;
+
+    iso_path = sceIoDopen(iso_dir);
+
+    memset(&isos, 0, sizeof(isos));
+    while(sceIoDread(iso_path, &isos) > 0) {
+        if(isos.d_name[0] == '.') continue;
+        else if(rand_idx == num_games) {
+            break;
+        }
+        else if (FIO_SO_ISREG(isos.d_stat.st_attr)){
+            num_games++;
+        }
+    }
+
+    sceIoDclose(iso_path);
+
+    strcpy(game, iso_dir);
+    strcat(game, isos.d_name);
+
+    struct SceKernelLoadExecVSHParam param;
+    int apitype;
+    memset(&param, 0, sizeof(param));
+    param.size = sizeof(param);
+    param.args = 33;
+    param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+    param.key = "umdemu";
+    if (psp_model == PSP_GO)
+        apitype = 0x125;
+    else
+        apitype = 0x123;
 
 
+    sctrlSESetBootConfFileIndex(3);
+    sctrlSESetUmdFile(game);
+
+    sctrlKernelLoadExecVSHWithApitype(apitype, game, &param);
+
+}
+/*
 	SceUID dir = sceIoDopen(GAME_DIR);
 	SceIoDirent dirent;
 
@@ -453,12 +499,11 @@ void exec_random_game() {
 
 	int rand_idx = rand() % num_games;
 	selected_game = games[rand_idx];
-/*
+/\/\*
 	 while(skip_game(selected_game)) {
 		rand_idx = rand() % num_games;
 		selected_game = games[rand_idx];
 	 }
-*/
 
 	//char *tmp_game_holder = (char *)malloc(strlen(selected_game)+ 11);
 	//while(game_exist(selected_game, tmp_game_holder) > 0 && strstr(selected_game, "CAT_") != NULL && skip_game(selected_game)) {
@@ -511,6 +556,7 @@ void exec_random_game() {
 			selected_game = games[rand_idx];
 	}
 
+*/
 /*
 	// CATEGORY LITE SUPPORT
 	if (strstr(selected_game, "CAT_") != NULL) {
@@ -567,25 +613,14 @@ void exec_random_game() {
 		free(tmp_cat_g);
 #endif
 	} // END OF CAT LITE CHECK
-*/
 	// Append EBOOT.PBP to end of gamelist
 	strcat(selected_game, "EBOOT.PBP");
 
 
+*/
 
 
-	struct SceKernelLoadExecVSHParam param;
-	int apitype;
-    memset(&param, 0, sizeof(param));
-    param.size = sizeof(param);
-	param.args = strlen(selected_game) + 1;
-	param.argp = selected_game;
-	param.key = "game";
-	if (psp_model == PSP_GO)
-		apitype = 0x152;
-	else
-		apitype = 0x141;
-	
+/*	
 	//if (strstr(selected_game, "SLU") != NULL || strstr(selected_game, "CAT_PRX") != NULL || strstr(selected_game, "/NPU") != NULL) {
 	if (strstr(selected_game, "SLU") != NULL || strstr(selected_game, "/NPU") != NULL) {
 			param.key = "pops";
@@ -609,45 +644,12 @@ void exec_random_game() {
 		param.args = 33;
 
 
-		SceUID iso_dir = sceIoDopen(ISO_DIR);
-		SceIoDirent isodir;
-		num_games = 0;
-		bad_count = 0;
-		//int iso_num_games = 0;
-		
-
-		memset(&isodir, 0, sizeof(isodir));
-		while(sceIoDread(iso_dir, &isodir) > 0) {
-
-			if(isodir.d_name == "." || isodir.d_name == "..") {
-				bad_count++;
-				continue;
-			}
-			/*else if(strstr(isodir.d_name, "CAT_") != NULL) {
-				sprintf(cat_iso_games[iso_num_games], "%s%s", ISO_DIR, isodir.d_name);
-				iso_num_games++;
-			}
 */
-			else if(strrchr(isodir.d_name, '.')) { 
-				bad_count++;
-				iso_games[num_games] = (char *)malloc(strlen(ISO_DIR) + strlen(isodir.d_name) + 1);
-				sprintf(iso_games[num_games], "%s%s", ISO_DIR, isodir.d_name);
-				num_games++;
-			}
-		}
-
-		if(bad_count == 2)
-			sctrlKernelExitVSH(NULL);
-
-		sceIoDclose(iso_dir);
-		rand_idx = rand() % num_games; 
-		selected_game = iso_games[rand_idx];
-
+/*
 		while(skip_game(selected_game) > 0) {
 			rand_idx = rand() % num_games; 
 			selected_game = iso_games[rand_idx];
 		}
-/*
 		if(iso_num_games != 0) {
 			rand_idx = rand() % iso_num_games; 
 			selected_game = cat_iso_games[rand_idx];
@@ -679,24 +681,14 @@ void exec_random_game() {
 			selected_game = iso_games[rand_idx];
 		}
 
-*/
-		sctrlSESetBootConfFileIndex(3);
-		sctrlSESetUmdFile(selected_game);
-		//free(iso_games);
-	}
-
-	// Testing to see what file is being called
+		// Testing to see what file is being called
 #ifdef DEBUG
 	SceUID test = sceIoOpen("ms0:/selected_game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
     sceIoWrite(test, selected_game, strlen(selected_game));	
 	sceIoClose(test);
 #endif
 
-	sctrlKernelLoadExecVSHWithApitype(apitype, selected_game, &param);
-	free(games);
-	free(iso_games);
-
-}
+*/
 
 static void exec_custom_launcher(void) {
 	char menupath[ARK_PATH_SIZE];
