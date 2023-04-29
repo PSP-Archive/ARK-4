@@ -359,15 +359,15 @@ int Iso::read_compressed_data(u8 *addr, u32 size, u32 offset)
     // Calculate total size of compressed data
     u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
     // last block index might be outside the block offset cache, better read it from disk
-    u32 o_end[2]; read_raw_data((u8*)&o_end[0], sizeof(u32)*2, ending_block*sizeof(u32)+header_size);
+    u32 o_end[2]; read_raw_data((u8*)&o_end[0], sizeof(u32)*2, (ending_block-1)*sizeof(u32)+header_size);
     o_end[0] = (o_end[0]&0x7FFFFFFF)<<align;
     o_end[1] = (o_end[1]&0x7FFFFFFF)<<align;
     u32 compressed_size = o_end[1]-o_start;
 
     // try to read at once as much compressed data as possible
     if (size >= block_size*2){ // only if going to read more than two blocks
-        if (size < compressed_size) compressed_size = o_end[0]-o_start;
-        if (size < compressed_size) compressed_size = size-block_size; // adjust chunk size if compressed data is bigger than uncompressed
+        if (size <= compressed_size) compressed_size = o_end[0]-o_start;
+        if (size <= compressed_size) compressed_size = size-block_size; // adjust chunk size if compressed data is bigger than uncompressed
         c_buf = top_addr - compressed_size; // read into the end of the user buffer
         read_raw_data(c_buf, compressed_size, o_start);
     }
@@ -396,11 +396,11 @@ int Iso::read_compressed_data(u8 *addr, u32 size, u32 offset)
             b_size = DAX_COMP_BUF;
 
         // check if we need to (and can) read another chunk of data
-        if (c_buf <= addr || c_buf+b_size > top_addr){
+        if (c_buf < addr || c_buf+b_size > top_addr){
             if (size >= block_size*2){ // only if more than two blocks left, otherwise just use normal reading
                 compressed_size = o_end[1]-b_offset; // recalculate remaining compressed data
-                if (size < compressed_size) compressed_size = o_end[0]-o_offset;
-                if (size < compressed_size) compressed_size = size-block_size; // adjust if bigger than uncompressed
+                if (size <= compressed_size) compressed_size = o_end[0]-b_offset;
+                if (size <= compressed_size) compressed_size = size-block_size; // adjust if bigger than uncompressed
                 c_buf = top_addr - compressed_size; // read into the end of the user buffer
                 read_raw_data(c_buf, compressed_size, b_offset);
             }
