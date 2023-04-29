@@ -1,5 +1,14 @@
 # ARK Changelog
 
+## Version 4.20.06 (2023-04-29)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4206
+- Cleaned up VSH Menu, fixed scePaf imports (fixes crash on Development Tool units).
+- Fixed and improved Inferno CSO reader, specially noticeable on games like God of War Ghost of Sparta. CSO files can't go any faster though (due to slow decompression algorithm), it is recommended to use JSO or ZSO for near ISO speeds.
+- Improved (fixed?) crashing issue when sleep/resume in Crisis Core.
+- Added animation to waiting icon on custom launcher or recovery.
+- Re-wrote "Boot Random Game" option, it's faster, no longer consumes any extra RAM and works with categorized /ISO/ folder. 
+- Some other fixes and improvements.
+
 ## Version 4.20.05 (2023-04-27)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4205
 - Fixed crash when launching a 1.50 homebrew with KXploit format on PSP.

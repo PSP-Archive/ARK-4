@@ -42,7 +42,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with `PRO Online` and `Xlink Kai`.
 
-- Compatible with Legacy Homebrew via `eLoader` and `Leda`. Compatible with the KXploit format (/PSP/GAME/foldername%/).
+- Compatible with Legacy Homebrew via `eLoader` and `Leda`. Compatible with the KXploit format.
 
 - Compatible with `cIPL` and `Infinity 2` bootloaders for permanent CFW.
 
