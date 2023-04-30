@@ -141,22 +141,10 @@ int myIoOpen_kernel_chn(char *file, int flag, int mode)
 	return ret;
 }
 
-static char *g_iso_driver_module_name[] = {
-	"pspMarch33_Driver",
-	"PROGalaxyController",
-	"PRO_Inferno_Driver",
-};
-
 void patch_IsoDrivers(void)
 {
-	SceModule2 *mod;
-	int i;
-
-	for(i=0; i<NELEMS(g_iso_driver_module_name); ++i) {
-		mod = (SceModule2*) sceKernelFindModuleByName(g_iso_driver_module_name[i]);
-
-		if(mod != NULL) {
-			hookImportByNID((SceModule*)mod, "IoFileMgrForKernel", 0x109F50BC, &myIoOpen_kernel_chn);
-		}
+	SceModule2 *mod = (SceModule2*) sceKernelFindModuleByName("PRO_Inferno_Driver");
+	if(mod != NULL) {
+		hookImportByNID((SceModule*)mod, "IoFileMgrForKernel", 0x109F50BC, &myIoOpen_kernel_chn);
 	}
 }

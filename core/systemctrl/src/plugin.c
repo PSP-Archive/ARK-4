@@ -70,6 +70,8 @@ static void startPlugins()
         if (plugin_handler) plugin_handler(path, uid);
         // Start Module
         int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
+        // Unload Module on Error
+        if (res < 0) sceKernelUnloadModule(uid);
     }
 }
 

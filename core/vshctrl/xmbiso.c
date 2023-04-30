@@ -463,6 +463,7 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
     //result
     int result = -1;
+
     //virtual iso eboot detected
     if (is_iso_eboot(file)) {
         u32 k1 = pspSdkSetK1(0);
@@ -471,12 +472,14 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         return result;
     }
 
+    // fix 1.50 homebrew
     char *perc = strchr(param->argp, '%');
     if (perc) {
         strcpy(perc, perc + 1);
         file = param->argp;
     }
 
+    // homebrew boot
     u32 k1 = pspSdkSetK1(0);
     result = sceKernelLoadExecVSHMs2(file, param);
     pspSdkSetK1(k1);

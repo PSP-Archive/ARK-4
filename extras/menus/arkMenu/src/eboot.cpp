@@ -259,6 +259,7 @@ void Eboot::executeHomebrew(const char* path){
     param.argp = (char*)path;
     param.key = "game";
 
+    // fix 1.50 homebrew
     char *perc = strchr(path, '%');
     if (perc) {
         strcpy(perc, perc + 1);
@@ -296,7 +297,7 @@ void Eboot::executePOPS(const char* path){
 }
 
 void Eboot::executeEboot(const char* path){
-    if (common::getMagic(path, 0) == ELF_MAGIC){ // plain ELF homebrew
+    if (common::getMagic(path, 0) == ELF_MAGIC){ // plain ELF (1.50) homebrew
         Eboot::executeHomebrew(path);
         return;
     }
