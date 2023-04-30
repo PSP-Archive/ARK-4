@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import sys, struct, os, shutil, gzip, StringIO
 from discread import *

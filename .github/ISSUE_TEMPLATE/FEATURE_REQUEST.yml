@@ -1,0 +1,14 @@
+---
+name: ARK-4 Feature Request
+description: "Request a new feature for ARK-4"
+labels: ["Feature Request"]
+body:
+  - type: markdown
+    attributes:
+      value: Please explain in depth your Feature Request for ARK-4.
+  - type: textarea
+    attributes:
+      label: New Feature
+      description: in-depth explaination of the new feature and how to implement it (if possible)
+    validations:
+      required: true

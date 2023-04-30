@@ -3,7 +3,7 @@ INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)/kxploit/
 REBOOTEXDIR = $(ARKROOT)/loader/rebootex
 TARGET = nand_payloadex.bin
 
-PYTHON=$(shell which python2)
+PYTHON=$(shell which python3)
 
 all: $(TARGET)
 

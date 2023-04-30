@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 import os, sys, getopt
 
@@ -46,7 +46,7 @@ def main():
 	fp.close()
 
 	if len(buf) < inputsize:
-		buf += '\0' * (inputsize - len(buf))
+		buf += ('\0' * (inputsize - len(buf))).encode()
 
 	assert(len(buf) == inputsize)
 

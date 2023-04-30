@@ -3,7 +3,7 @@ INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)
 LIBS= -L$(ARKROOT)/libs -lcolordebugger -lansic
 TARGET = K.BIN
 
-PYTHON=$(shell which python2)
+PYTHON=$(shell which python3)
 
 CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 

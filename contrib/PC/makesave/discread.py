@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from hexutil import toHex, toBinary
 from struct import unpack, pack, Struct

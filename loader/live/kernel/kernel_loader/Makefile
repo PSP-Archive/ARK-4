@@ -3,7 +3,7 @@ INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)
 LIBS = -L $(ARKROOT)/libs -lgraphics -lcolordebugger -lansic
 TARGET = ARK4.BIN
 
-PYTHON=$(shell which python2)
+PYTHON=$(shell which python3)
 
 all: pre-build $(TARGET)
 

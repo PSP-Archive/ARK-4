@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import sys
 from string import Template
@@ -45,7 +45,7 @@ SECTIONS
     else:
         entry = sys.argv[2]
 
-    print Template(t).substitute(linkaddr = '0x%08X' % linkAddr, entry = entry)
+    print(Template(t).substitute(linkaddr = '0x%08X' % linkAddr, entry = entry))
 
 if __name__ == "__main__":
     main()
