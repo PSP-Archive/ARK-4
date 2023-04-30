@@ -390,10 +390,6 @@ Some of its features include:
   
   - And more.
 
-![Launcher File Browser](.github/screenshots/pic_0014.png "Launcher File Browser")
-
-![Launcher File Browser](.github/screenshots/pic_0014.png "Launcher File Browser")
-
 ![Launcher File Browser](.github/screenshots/pic_0017.png "Launcher File Browser")
 
   
