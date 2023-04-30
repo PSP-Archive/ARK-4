@@ -247,6 +247,8 @@ And more.
   
 The easiest method to install a plugin is to simply copy its `.prx` (and other files/folders the plugin needs) to its default installation folder (typically `/SEPLUGINS/` folder) and navigate to it using the `File Browser` (built into Recovery Menu and Custom Launcher). Upon opening the `.prx` file, you will be given the options to select the runlevel, or type the game ID, where the plugin loads.
 
+![File Browser Plugin Installer](.github/screenshots/pic_0015.png "File Browser Plugin Installer")
+
 From there you can use the `XMB` or `Recovery Menu` to configure or remove your installed plugins.
 
 ![XMB Plugins Menu](.github/screenshots/xmb(2).png "XMB Plugins Menu")
