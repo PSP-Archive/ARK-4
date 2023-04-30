@@ -1,4 +1,4 @@
-PYTHON=$(shell which python2)
+PYTHON=$(shell which python3)
 
 DEP_DIR = .deps
 DEP_SUFFIX = .Po

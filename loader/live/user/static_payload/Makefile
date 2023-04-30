@@ -5,7 +5,7 @@ LIBDIR = $(ARKROOT)/libs/graphics $(ARKROOT)/libs/ansic $(ARKROOT)/libs/colordeb
 LIBS = -lgraphics -lansic -lcolordebugger -L $(ARKROOT)/libs
 TARGET = H.BIN
 
-PYTHON=$(shell which python2)
+PYTHON=$(shell which python3)
 
 all: $(TARGET)
 

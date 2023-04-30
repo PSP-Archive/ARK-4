@@ -1,6 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
-import sys, subprocess, StringIO, re
+import sys, subprocess, re
+from io import StringIO
 
 ''' Script to generate dependency for c source '''
 
@@ -9,10 +10,10 @@ def runCmd(cmd):
     stdout, stderr = f.communicate()
     retcode = f.wait()
 
-    return {'stdout':StringIO.StringIO(stdout), 'stderr':StringIO.StringIO(stderr), 'retcode': retcode}
+    return {'stdout':StringIO(str(stdout)), 'stderr':StringIO(str(stderr)), 'retcode': retcode}
 
 def processDep(fp, ofn):
-    res = StringIO.StringIO()
+    res = StringIO()
 
     for line in fp:
         ' Add depend file in target'
@@ -40,7 +41,7 @@ def main():
     with open(ofn, "wb") as of:
         dep = res['stdout']
         dep = processDep(dep, ofn)
-        of.write(dep.read())
+        of.write(dep.read().encode())
     
     stderr = res['stderr'].read()
 

@@ -1,4 +1,4 @@
-PYTHON=$(shell which python2)
+PYTHON=$(shell which python3)
 
 dist/SYSCTRL.BIN: core/systemctrl/systemctrl.prx
 	$(Q)psp-fixup-imports -m ./common/nidmap.txt $<
