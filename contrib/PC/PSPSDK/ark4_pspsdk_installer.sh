@@ -13,7 +13,7 @@ if [ -d "/usr/local/pspdev" ]; then
 fi
 
 sudo apt update
-pkgs="autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make p7zip-full patch python2 subversion texinfo wget zlib1g-dev"
+pkgs="autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make p7zip-full patch python3 subversion texinfo wget zlib1g-dev"
 for pkg in $pkgs; do
     echo "Installing $pkg..."
     sudo apt install $pkg -y
