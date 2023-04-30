@@ -78,5 +78,5 @@ void patch_SceUpdateDL_Library(u32 text_addr)
 	_sw(NOP, text_addr + 0x00002080);
 	_sw(NOP, text_addr + 0x0000209C);
 
-	sprintf(p, "%s/psp-updatelist.txt?console=0x%08X", server, ark_config->exec_mode);
+	snprintf(p, 83, "%s/psp-updatelist.txt?console=0x%08X", server, ark_config->exec_mode);
 }
