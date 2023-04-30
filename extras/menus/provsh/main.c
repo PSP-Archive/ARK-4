@@ -15,6 +15,7 @@ PSP_HEAP_SIZE_KB(4096);
 
 // Default Start Path
 #define START_PATH "ms0:/"
+#define stricmp strcasecmp
 
 // Current Path
 static char cwd[1024];

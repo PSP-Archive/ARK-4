@@ -274,17 +274,33 @@ u32 common::getMagic(const char* filename, unsigned int offset){
     return magic;
 }
 
+static bool loading_theme = false;
+
+static int loading_theme_thread(SceSize argc, void* argp){
+    float angle = 1.0;
+    while (loading_theme){
+        common::clearScreen(CLEAR_COLOR);
+        images[IMAGE_BG]->draw(0, 0);
+        images[IMAGE_WAITICON]->draw_rotate(
+            (480 - images[IMAGE_WAITICON]->getTexture()->width)/2,
+            (272 - images[IMAGE_WAITICON]->getTexture()->height)/2,
+            angle
+        );
+        angle+=0.2;
+        common::flipScreen();
+    }
+    sceKernelExitDeleteThread(0);
+    return 0;
+}
+
 void common::loadTheme(){
     images[IMAGE_BG] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
     images[IMAGE_WAITICON] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
     
-    common::clearScreen(CLEAR_COLOR);
-    images[IMAGE_BG]->draw(0, 0);
-    images[IMAGE_WAITICON]->draw(
-        (480 - images[IMAGE_WAITICON]->getTexture()->width)/2,
-        (272 - images[IMAGE_WAITICON]->getTexture()->height)/2
-    );
-    common::flipScreen();
+    loading_theme = true;
+    SceUID loading_thread = sceKernelCreateThread("theme_thread", &loading_theme_thread, 0x10, 0x8000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
+    sceKernelStartThread(loading_thread, 0, NULL);
+
     
     images[IMAGE_LOADING] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("LOADING.PNG"));
     images[IMAGE_SPRITE] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
@@ -318,6 +334,9 @@ void common::loadTheme(){
     unsigned mp3_size;
     void* mp3_buffer = readFromPKG("SOUND.MP3", &mp3_size);
     sound_mp3 = new MP3(mp3_buffer, mp3_size);
+
+    loading_theme = false;
+    sceKernelWaitThreadEnd(loading_thread, NULL);
 }
 
 void common::loadData(int ac, char** av){
