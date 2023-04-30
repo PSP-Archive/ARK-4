@@ -235,7 +235,7 @@ Some of the features available in Advanced VSH Menu include:
 - Swap X/O buttons.
 - Delete hibernation (PSP Go paused game).
 - Convert classic plugins to the new ARK format.
-- Boot Random GAME (checks `??0:/blacklist.txt` for games/homebrew you do not want to load) Example: `ms0:/PSP/GAME/dc8/` 
+- Boot Random ISO.
 
 And more.
 </p>
