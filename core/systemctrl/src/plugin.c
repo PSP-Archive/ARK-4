@@ -327,13 +327,6 @@ void LoadPlugins(){
     if (isRecoveryMode())
         return; // don't load plugins in recovery mode
 
-    /*
-    int apitype = sceKernelInitApitype();
-    int fd = sceIoOpen("ms0:/apitype.bin", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
-    sceIoWrite(fd, &apitype, 4);
-    sceIoClose(fd);
-    */
-
     // Open Plugin Config from ARK's installation folder
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
