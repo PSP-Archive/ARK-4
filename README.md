@@ -46,6 +46,12 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with `cIPL` and `Infinity 2` bootloaders for permanent CFW.
 
+![ARK Custom Firmware](.github/screenshots/xmb(10).png "ARK Custom Firmware")
+
+![ARK Custom Firmware](.github/screenshots/xmb(11).png "ARK Custom Firmware")
+
+![ARK Custom Firmware](.github/screenshots/xmb(9).png "ARK Custom Firmware")
+
 
 ## INSTALLATION
 
@@ -214,6 +220,9 @@ simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
 
 The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
 To have a more classic VSH menu with more advanced features you can select the `Advanced VSH Menu` from within the simplified VSH menu.
+
+![Advanced VSH Menu](.github/screenshots/xmb(8).png "Advanced VSH Menu")
+
 Some of the features available in Advanced VSH Menu include:
 
 - Change USB Device mount (Memory Stick, Flash, UMD).
@@ -237,7 +246,13 @@ And more.
 <p>
   
 The easiest method to install a plugin is to simply copy its `.prx` (and other files/folders the plugin needs) to its default installation folder (typically `/SEPLUGINS/` folder) and navigate to it using the `File Browser` (built into Recovery Menu and Custom Launcher). Upon opening the `.prx` file, you will be given the options to select the runlevel, or type the game ID, where the plugin loads.
-  
+
+From there you can use the `XMB` or `Recovery Menu` to configure or remove your installed plugins.
+
+![XMB Plugins Menu](.github/screenshots/xmb(2).png "XMB Plugins Menu")
+
+![Recovery Plugins Menu](.github/screenshots/pic_0002.png "Recovery Plugins Menu")
+
 Alternately, you can manually install plugins by creating a file called PLUGINS.TXT in the /SEPLUGINS/ folder and/or ARK's savedata folder.
 
 If coming from PRO/ME you can Import them from the `Advanced VSH Menu` section.
@@ -302,7 +317,11 @@ Some noteworthy plugins that are compatible with ARK include (but not limited to
 <p>
 
 You can use the XMB and/or the Recovery Menu to easily handle CFW settings. However if you prefer you can also manually handle the settings yourself.
-  
+
+![XMB Custom Firmware Settings](.github/screenshots/xmb(1).png "XMB Custom Firmware Settings")
+
+![Recovery Custom Firmware Settings](.github/screenshots/pic_0001.png "Recovery Custom Firmware Settings")
+
 You can create a SETTINGS.TXT file using the same format as PLUGINS.TXT to enable/disable some CFW functionality on different parts of the system.
 Configuration settings you can use in ARK include:
 
@@ -337,7 +356,11 @@ This also allows you to enable settings on specific games:
 <details>
   <summary> <b> Custom Launcher </b> </summary>
 <p>
-ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable. Some of its features include:
+ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable.
+
+![Launcher Game Menu](.github/screenshots/pic_0000.png "Launcher Game Menu")
+
+Some of its features include:
   
   - Playback of ISO and all CSO formats with PMF video preview.
   
@@ -366,6 +389,12 @@ ARK comes prepacked with a very powerful launcher with a built-in file browser a
   - Different background animation effects.
   
   - And more.
+
+![Launcher File Browser](.github/screenshots/pic_0014.png "Launcher File Browser")
+
+![Launcher File Browser](.github/screenshots/pic_0014.png "Launcher File Browser")
+
+![Launcher File Browser](.github/screenshots/pic_0017.png "Launcher File Browser")
 
   
 You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
