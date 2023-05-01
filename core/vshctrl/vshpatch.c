@@ -98,6 +98,18 @@ static int vshpatch_module_chain(SceModule2 *mod)
         goto exit;
     }
 
+    if( 0 == strcmp(mod->modname, "update_plugin_module")) {
+		patch_update_plugin_module((SceModule*)mod);
+		sync_cache();
+		goto exit;
+	}
+
+	if(0 == strcmp(mod->modname, "SceUpdateDL_Library")) {
+		patch_SceUpdateDL_Library(text_addr);
+		sync_cache();
+		goto exit;
+	}
+
     if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
         
         if (skiplogos){
