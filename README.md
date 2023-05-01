@@ -238,6 +238,18 @@ Some of the features available in Advanced VSH Menu include:
 - Boot Random ISO.
 
 And more.
+
+Installing on PSP Flash:
+
+`WARNING`: for advanced users only, do not attempt this if you're not familiar with the PSP flash.
+
+By default, ARK's VSH Menu is installed on the Memory Stick (in `/PSP/SAVEDATA/ARK_01234/VSHMENU.PRX`).
+This has the limitation that you won't be able to access VSH menu without a memory stick.
+If you want to permanently install VSH Menu you need to copy `VSHMENU.PRX` to somewhere on your computer and rename it to `ark_satelite.prx`,
+which you can then copy to PSP's `flash0:/vsh/module/`, you can use the VSH Menu itself to enable flash0 via USB. The final path should be `flash0:/vsh/module/ark_satelite.prx`.
+
+`NOTE`: even if you install VSH Menu on flash0, the one installed on Memory Stick takes precedence in loading.
+
 </p>
 </details>
 
