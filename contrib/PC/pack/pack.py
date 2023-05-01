@@ -2,6 +2,8 @@
 
 import struct, sys, os
 
+no_delete = False
+
 def readConfig(configPath):
     res = []
     with open(configPath, "r") as f:
@@ -44,7 +46,8 @@ def pack(outputFile, fileList):
                 of.write(fileContent)
                 fileCount += 1
             try:
-                os.remove(r[1])
+                if not no_delete:
+                    os.remove(r[1])
             except:
                 pass
         of.seek(0)
@@ -101,6 +104,12 @@ def main():
         if len(sys.argv) < 4:
             usage()
             sys.exit(1)
+        
+        print(sys.argv)
+        
+        if len(sys.argv) == 5 and sys.argv[4] == "-s":
+            global no_delete
+            no_delete = True
         
         outputFile, fileListConfig = sys.argv[2], sys.argv[3]
         res = readConfig(fileListConfig)

@@ -89,6 +89,10 @@ copy-bin:
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	$(Q)cp -r dist/ARK_01234 dist/ARK_DC/
 	$(Q)find dist/themes/ -type d -name 'resources' -exec rm -rf {} \; 2>/dev/null || true
+	$(Q)$(MAKE) -C extras/updater/
+	$(Q)$(MAKE) -C extras/updater/ MODEL=GO
+	$(Q)cp extras/updater/EBOOT_*.PBP dist/updater/
+
 	
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
@@ -170,6 +174,10 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/dc/vunbricker
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -rf common/utils/*.o
+	$(Q)$(MAKE) $@ -C extras/updater/
+	$(Q)rm extras/updater/ARK_01234.PKG
+	$(Q)rm extras/updater/EBOOT_PSP.PBP
+	$(Q)rm extras/updater/EBOOT_GO.PBP
 	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
 	$(Q)find -name 'THEME.ARK' -exec rm {} \;
 
@@ -197,6 +205,7 @@ mkdir-dist:
 	$(Q)mkdir dist/Infinity | true
 	$(Q)mkdir dist/ARK_DC | true
 	$(Q)mkdir dist/ARK_cIPL | true
+	$(Q)mkdir dist/updater | true
 	$(Q)mkdir dist/Vita/Adrenaline | true
 	$(Q)mkdir dist/Vita/Standalone | true
 
