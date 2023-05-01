@@ -46,6 +46,7 @@ SUBDIRS = libs \
 	extras/menus/recovery \
 	extras/menus/xMenu \
 	extras/menus/advancedvsh \
+	extras/menus/provsh \
 	extras/modules/xmbctrl \
 	extras/modules/usbdevice \
 	extras/modules/idsregeneration
