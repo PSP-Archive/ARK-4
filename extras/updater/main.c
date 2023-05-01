@@ -10,13 +10,9 @@
 #include <systemctrl_se.h>
 #include "globals.h"
 
-PSP_MODULE_INFO("PROShell", 0x800, 1, 0);
+PSP_MODULE_INFO("ARKUpdater", 0x800, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH | PSP_THREAD_ATTR_VFPU);
 PSP_HEAP_SIZE_KB(4096);
-
-// Default Start Path
-#define START_PATH "ms0:/"
-#define stricmp strcasecmp
 
 #define BUF_SIZE 16*1024
 #define KERNELIFY(a) ((u32)a|0x80000000)
@@ -67,11 +63,7 @@ int main(int argc, char * argv[])
 
     PBPHeader header;
 
-    pspDebugScreenPrintf("Opening %s\n", eboot_path);
-
     int my_fd = sceIoOpen(eboot_path, PSP_O_RDONLY, 0777);
-
-    pspDebugScreenPrintf("Reading header\n");
 
     sceIoRead(my_fd, &header, sizeof(header));
 
