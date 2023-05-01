@@ -30,6 +30,7 @@
 #include "macros.h"
 
 extern ARKConfig* ark_config;
+extern int psp_model;
 
 void patch_update_plugin_module(SceModule *mod_)
 {
@@ -51,6 +52,7 @@ void patch_update_plugin_module(SceModule *mod_)
 	_sw( 0x10400002, text_addr + 0x000082A0);
 
 	// substitute all /UPDATE with /ARK_FW
+	/*
 	for(i = 0; i < text_size;) {
 		u32 addr = text_addr + i;
 
@@ -61,6 +63,7 @@ void patch_update_plugin_module(SceModule *mod_)
 			i++;
 		}
 	}
+	*/
 }
 
 void patch_SceUpdateDL_Library(u32 text_addr)
@@ -78,5 +81,5 @@ void patch_SceUpdateDL_Library(u32 text_addr)
 	_sw(NOP, text_addr + 0x00002080);
 	_sw(NOP, text_addr + 0x0000209C);
 
-	sprintf(p, "%s/psp-updatelist.txt?", server);
+	sprintf(p, "%s/%s?", server, (psp_model==PSP_GO)? "psp-updatelist-go.txt":"psp-updatelist.txt");
 }
