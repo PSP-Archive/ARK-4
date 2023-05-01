@@ -66,7 +66,7 @@ void patch_update_plugin_module(SceModule *mod_)
 void patch_SceUpdateDL_Library(u32 text_addr)
 {
 	char *p;
-	char* server = "http://pro.coldbird.uk.to";
+	char* server = "http://ark-4.ddns.net";
 
 	if(NULL == sceKernelFindModuleByName("update_plugin_module")) {
 		return;
