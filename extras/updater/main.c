@@ -76,13 +76,16 @@ int main(int argc, char * argv[])
 
     sceIoClose(my_fd);
 
-    // extract FLASH
-    char flash0_ark[ARK_PATH_SIZE];
-    strcpy(flash0_ark, ark_config.arkpath);
-    strcat(flash0_ark, "FLASH0.ARK");
-    pspDebugScreenPrintf("Extracting %s\n", flash0_ark);
-    extractFlash0Archive(sceIoOpen(flash0_ark, PSP_O_RDONLY, 0777), "flash0:/", &isVitaFile);
-    
+    // extract FLASH (on PSP)
+    ARKConfig* ac = &ark_config;
+    if (IS_PSP(ac)){
+        char flash0_ark[ARK_PATH_SIZE];
+        strcpy(flash0_ark, ark_config.arkpath);
+        strcat(flash0_ark, "FLASH0.ARK");
+        pspDebugScreenPrintf("Extracting %s\n", flash0_ark);
+        extractFlash0Archive(sceIoOpen(flash0_ark, PSP_O_RDONLY, 0777), "flash0:/", &isVitaFile);
+    }
+
     // Kill Main Thread
     sceKernelExitGame();
 
