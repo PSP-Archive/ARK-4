@@ -46,15 +46,6 @@ void load_server_file(){
 	sceIoClose(fd);
 }
 
-void logtext(char* text){
-	int k1 = pspSdkSetK1(0);
-    int fd = sceIoOpen("ms0:/log.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
-    sceIoWrite(fd, text, strlen(text));
-    sceIoWrite(fd, "\n", 1);
-    sceIoClose(fd);
-	pspSdkSetK1(k1);
-}
-
 void patch_update_plugin_module(SceModule2* mod)
 {
 
