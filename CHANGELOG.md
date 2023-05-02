@@ -1,6 +1,12 @@
 # ARK Changelog
 
-## Version 4.20.09 (2023-05-03)
+## Version 4.20.10 (2023-05-02)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42010
+- Fixed sleep/resume crashes in Pentazemin compatibility layer.
+- Fixed Boot Random ISO in PS Vita.
+- Compatibility with Adrenaline is now Stable!
+
+## Version 4.20.09 (2023-05-02)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4209
 - Fixed and improved System Update patches.
 - Update server URL is now stored in UPDATER.TXT inside the ARK_01234 folder. Removing this file will leave the official System Update.
