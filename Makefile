@@ -175,9 +175,9 @@ clean:
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -rf common/utils/*.o
 	$(Q)$(MAKE) $@ -C extras/updater/
-	$(Q)rm extras/updater/ARK_01234.PKG
-	$(Q)rm extras/updater/EBOOT_PSP.PBP
-	$(Q)rm extras/updater/EBOOT_GO.PBP
+	$(Q)rm extras/updater/ARK_01234.PKG | true
+	$(Q)rm extras/updater/EBOOT_PSP.PBP | true
+	$(Q)rm extras/updater/EBOOT_GO.PBP | true
 	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
 	$(Q)find -name 'THEME.ARK' -exec rm {} \;
 
