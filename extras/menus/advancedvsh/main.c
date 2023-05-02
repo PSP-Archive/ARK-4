@@ -418,7 +418,10 @@ void exec_random_game() {
 	}
 
     strcpy(game, iso_dir);
-    strcat(game, pri_dirent->s_name);
+	if (pri_dirent->s_name[0])
+	    strcat(game, pri_dirent->s_name);
+	else
+		strcat(game, isos.d_name);
 
 	free(pri_dirent);
 
