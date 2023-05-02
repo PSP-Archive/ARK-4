@@ -99,7 +99,7 @@ static int vshpatch_module_chain(SceModule2 *mod)
     }
 
     if( 0 == strcmp(mod->modname, "update_plugin_module")) {
-		patch_update_plugin_module((SceModule*)mod);
+		patch_update_plugin_module(mod);
 		sync_cache();
 		goto exit;
 	}

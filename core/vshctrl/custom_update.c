@@ -46,26 +46,41 @@ void load_server_file(){
 	sceIoClose(fd);
 }
 
-void patch_update_plugin_module(SceModule *mod)
+void logtext(char* text){
+	int k1 = pspSdkSetK1(0);
+    int fd = sceIoOpen("ms0:/log.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+    sceIoWrite(fd, text, strlen(text));
+    sceIoWrite(fd, "\n", 1);
+    sceIoClose(fd);
+	pspSdkSetK1(k1);
+}
+
+void patch_update_plugin_module(SceModule2* mod)
 {
 
 	if (server[0] == 0) return;
 
 	int version;
 	int i;
-	u32 text_addr, text_size;
+	u32 text_addr, text_size, top_addr;
 	text_addr = mod->text_addr;
 	text_size = mod->text_size;
-	
-	// ImageVersion
-	// If it's lower than the one in updatelist.txt then the FW will update
+	top_addr = text_addr+text_size;
+
 	version = sctrlHENGetMinorVersion(); // ARK's full version number
 
-	_sw((version >> 16) | 0x3C050000, text_addr + 0x000082A4);
-	_sw((version & 0xFFFF) | 0x34A40000, text_addr + 0x000082AC);
+	for (u32 addr=text_addr; addr<top_addr; addr+=4){
+		if (_lw(addr) == 0x8FA40100){
+			// ImageVersion
+			// If it's lower than the one in updatelist.txt then the FW will update
+			_sw((version >> 16) | 0x3C050000, addr - 8);
+			_sw((version & 0xFFFF) | 0x34A40000, addr);
 
-	//beql -> beq
-	_sw( 0x10400002, text_addr + 0x000082A0);
+			//beql -> beq
+			_sw( 0x10400002, addr - 12);
+			break;
+		}
+	}
 
 	// substitute all /UPDATE with /ARK_FW
 	/*
