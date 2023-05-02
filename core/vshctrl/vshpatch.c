@@ -436,6 +436,10 @@ static void patch_vsh_module(SceModule2 * mod)
             _sw(fakeparam, addr-60);
             patches--;
         }
+        else if (data == 0x2C430004 && psp_model == PSP_GO){
+            // allow PSP Go to use Type 1 Updaters
+			_sw( 0x24030002 , addr - 8 ); //addiu      $v1, $zr, 2
+        }
         
     }
     
