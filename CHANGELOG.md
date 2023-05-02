@@ -1,5 +1,24 @@
 # ARK Changelog
 
+## Version 4.20.09 (2023-05-03)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4209
+- Fixed and improved System Update patches.
+- Update server URL is now stored in UPDATER.TXT inside the ARK_01234 folder. Removing this file will leave the official System Update.
+- Updater is now ready, you can update to this release from 4.20.08 using System Update feature in the XMB.
+
+## Version 4.20.08 (2023-05-01)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4208
+- Updating ARK from the XMB is now working. There is no actual update available now, but it will run a test app if you try to update.
+
+## Version 4.20.07 (2023-04-30)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r4207
+- Fixed regression introduced to Inferno ISO driver that would increase memory consumption.
+- Replaced XMB CSO reader code with one based on Inferno's, improves speed and fixes issues.
+- Improved ISO/CSO scanning in custom launcher.
+- Improved waiting icon animations in launcher/recovery.
+- Added preliminary code for Custom Update. Does not get applied yet.
+- Updated themes: black, blue, blue2 and red.
+
 ## Version 4.20.06 (2023-04-29)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4206
 - Cleaned up VSH Menu, fixed scePaf imports (fixes crash on Development Tool units).

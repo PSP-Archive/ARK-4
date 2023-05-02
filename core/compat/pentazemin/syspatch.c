@@ -340,6 +340,7 @@ void patch_SysconfPlugin(SceModule2* mod){
 }
 
 void exit_game_patched(){
+	sctrlSESetBootConfFileIndex(MODE_UMD);
 	sctrlKernelExitVSH(NULL);
 }
 

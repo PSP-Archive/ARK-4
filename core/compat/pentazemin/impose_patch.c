@@ -25,26 +25,10 @@ int exit_callback(int arg1, int arg2, void *common) {
 	sceKernelSuspendAllUserThreads();
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 	adrenaline->pops_mode = 0;
+
 	SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
-
-	static u32 vshmain_args[0x100];
-	memset(vshmain_args, 0, sizeof(vshmain_args));
-
-	vshmain_args[0] = sizeof(vshmain_args);
-	vshmain_args[1] = 0x20;
-	vshmain_args[16] = 1;
-
-	struct SceKernelLoadExecVSHParam param;
-
-	memset(&param, 0, sizeof(param));
-	param.size = sizeof(param);
-	param.argp = NULL;
-	param.args = 0;
-	param.vshmain_args = vshmain_args;
-	param.vshmain_args_size = sizeof(vshmain_args);
-	param.key = "vsh";
-
-	sctrlKernelExitVSH(&param);
+	sctrlSESetBootConfFileIndex(MODE_UMD);
+	sctrlKernelExitVSH(NULL);
 
 	return 0;
 }
