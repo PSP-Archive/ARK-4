@@ -97,7 +97,7 @@ void patch_update_plugin_module(SceModule2* mod)
 	*/
 }
 
-void patch_SceUpdateDL_Library(u32 text_addr)
+void patch_SceUpdateDL_Library(SceModule2* mod)
 {
 	char *p;
 	if (server[0] == 0) return;
@@ -106,11 +106,18 @@ void patch_SceUpdateDL_Library(u32 text_addr)
 		return;
 	}
 
-	p = (char*)(text_addr + 0x000032BC);
-	_sw(NOP, text_addr + 0x00002044);
-	_sw(NOP, text_addr + 0x00002054);
-	_sw(NOP, text_addr + 0x00002080);
-	_sw(NOP, text_addr + 0x0000209C);
+	u32 text_addr, text_size, top_addr;
+	text_addr = mod->text_addr;
+	text_size = mod->text_size;
+	top_addr = text_addr+text_size;
 
+	for (u32 addr = text_addr; addr<top_addr; addr++){
+		if (strcmp(addr, "http://") == 0){
+			p = (char*)addr;
+			break;
+		}
+	}
+
+	memset(p, 0, 84);
 	sprintf(p, "%s/%s?", server, (psp_model==PSP_GO)? "psp-updatelist-go.txt":"psp-updatelist.txt");
 }

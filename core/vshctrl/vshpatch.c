@@ -105,7 +105,7 @@ static int vshpatch_module_chain(SceModule2 *mod)
 	}
 
 	if(0 == strcmp(mod->modname, "SceUpdateDL_Library")) {
-		patch_SceUpdateDL_Library(text_addr);
+		patch_SceUpdateDL_Library(mod);
 		sync_cache();
 		goto exit;
 	}
