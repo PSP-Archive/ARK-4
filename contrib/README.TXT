@@ -69,8 +69,8 @@ Installation On PS Vita
     - Open `Adrenaline`, (optionally) create a `savestate` to easily go back.
     - Launch `ARK Loader` from within `Adrenaline` and wait for it to load.
     - (Optionally) Create a `savestate` using `Adrenaline`'s built-in menu to easily load ARK.
-    - Use `savestates` to easily and quickly switch between `Adrenaline` and `ARK`.
-    - You can use `Adrenlaine Bubbles Manager` to create an autoboot bubble for `ARK Loader`, allowing you to easily and directly boot into `Adrenaline-ARK`.
+    - (Optionally) Use `savestates` to easily and quickly switch between `Adrenaline` and `ARK`.
+    - You can use `Adrenaline Bubbles Manager` to create an autoboot bubble for `ARK Loader`, allowing you to easily and directly boot into `Adrenaline-ARK`.
     - Note: this does not permanently modify `Adrenaline` in any way.
 
 
