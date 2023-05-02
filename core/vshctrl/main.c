@@ -99,6 +99,7 @@ int module_start(SceSize args, void* argp)
     sctrlHENGetArkConfig(ark_config);
     isoInit();
     vshpatch_init();
+    load_server_file();
     loadSettings(&settingsHandler);
     
     // always reset to NORMAL mode in VSH

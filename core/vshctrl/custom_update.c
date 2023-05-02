@@ -32,8 +32,25 @@
 extern ARKConfig* ark_config;
 extern int psp_model;
 
+char server[64];
+
+void load_server_file(){
+	char path[ARK_PATH_SIZE];
+	strcpy(path, ark_config->arkpath);
+	strcat(path, "UPDATER.TXT");
+
+	memset(server, 0, sizeof(server));
+	
+	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+	sceIoRead(fd, server, sizeof(server)-1);
+	sceIoClose(fd);
+}
+
 void patch_update_plugin_module(SceModule *mod_)
 {
+
+	if (server[0] == 0) return;
+
 	int version;
 	int i;
 	u32 text_addr, text_size;
@@ -69,7 +86,7 @@ void patch_update_plugin_module(SceModule *mod_)
 void patch_SceUpdateDL_Library(u32 text_addr)
 {
 	char *p;
-	char* server = "http://ark-4.ddns.net";
+	if (server[0] == 0) return;
 
 	if(NULL == sceKernelFindModuleByName("update_plugin_module")) {
 		return;

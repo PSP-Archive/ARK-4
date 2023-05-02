@@ -84,6 +84,7 @@ copy-bin:
 	$(Q)cp extras/modules/xmbctrl/translations/XMB_*.TXT dist/ARK_01234/ # XMB Control translation files
 	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
 	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
+	$(Q)cp contrib/UPDATER.TXT dist/ARK_01234/
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)cp contrib/README.TXT dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package

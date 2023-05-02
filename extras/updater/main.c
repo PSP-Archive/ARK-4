@@ -117,7 +117,7 @@ void extractFlash0Archive(int fdr, char* dest_path, int (*filter)(char*)){
     
     if (filter == NULL) filter = &dummyFilter;
 
-    unsigned char buf[BUF_SIZE];
+    static unsigned char buf[BUF_SIZE];
     int path_len = strlen(dest_path);
     static char filepath[ARK_PATH_SIZE];
     static char filename[ARK_PATH_SIZE];
