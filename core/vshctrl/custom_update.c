@@ -46,7 +46,7 @@ void load_server_file(){
 	sceIoClose(fd);
 }
 
-void patch_update_plugin_module(SceModule *mod_)
+void patch_update_plugin_module(SceModule *mod)
 {
 
 	if (server[0] == 0) return;
@@ -54,10 +54,9 @@ void patch_update_plugin_module(SceModule *mod_)
 	int version;
 	int i;
 	u32 text_addr, text_size;
-	SceModule2 *mod = (SceModule2*)mod_;
-
 	text_addr = mod->text_addr;
 	text_size = mod->text_size;
+	
 	// ImageVersion
 	// If it's lower than the one in updatelist.txt then the FW will update
 	version = sctrlHENGetMinorVersion(); // ARK's full version number
