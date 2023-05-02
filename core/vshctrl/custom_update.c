@@ -30,7 +30,6 @@
 #include "macros.h"
 
 extern ARKConfig* ark_config;
-extern int psp_model;
 
 char server[64];
 
@@ -110,5 +109,5 @@ void patch_SceUpdateDL_Library(SceModule2* mod)
 	}
 
 	memset(p, 0, 84);
-	sprintf(p, "%s/%s?", server, (psp_model==PSP_GO)? "psp-updatelist-go.txt":"psp-updatelist.txt");
+	sprintf(p, "%s/psp-updatelist.txt?", server);
 }
