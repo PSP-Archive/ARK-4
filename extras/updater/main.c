@@ -57,8 +57,6 @@ int main(int argc, char * argv[])
 
     pspDebugScreenPrintf("ARK Updater Started\n");
 
-    open_flash();
-
     char* eboot_path = argv[0];
 
     PBPHeader header;
@@ -83,6 +81,7 @@ int main(int argc, char * argv[])
         strcpy(flash0_ark, ark_config.arkpath);
         strcat(flash0_ark, "FLASH0.ARK");
         pspDebugScreenPrintf("Extracting %s\n", flash0_ark);
+        open_flash();
         extractFlash0Archive(sceIoOpen(flash0_ark, PSP_O_RDONLY, 0777), "flash0:/", &isVitaFile);
     }
 

@@ -89,7 +89,6 @@ void patch_update_plugin_module(SceModule2* mod)
 
 void patch_SceUpdateDL_Library(SceModule2* mod)
 {
-	char *p;
 	if (server[0] == 0) return;
 
 	if(NULL == sceKernelFindModuleByName("update_plugin_module")) {
@@ -103,11 +102,9 @@ void patch_SceUpdateDL_Library(SceModule2* mod)
 
 	for (u32 addr = text_addr; addr<top_addr; addr++){
 		if (strcmp(addr, "http://") == 0){
-			p = (char*)addr;
+			memset(addr, 0, 84);
+			sprintf(addr, "%s/psp-updatelist.txt?", server);
 			break;
 		}
 	}
-
-	memset(p, 0, 84);
-	sprintf(p, "%s/psp-updatelist.txt?", server);
 }

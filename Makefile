@@ -91,8 +91,7 @@ copy-bin:
 	$(Q)cp -r dist/ARK_01234 dist/ARK_DC/
 	$(Q)find dist/themes/ -type d -name 'resources' -exec rm -rf {} \; 2>/dev/null || true
 	$(Q)$(MAKE) -C extras/updater/
-	$(Q)$(MAKE) -C extras/updater/ MODEL=GO
-	$(Q)cp extras/updater/EBOOT_*.PBP dist/updater/
+	$(Q)cp extras/updater/EBOOT_PSP.PBP dist/updater/EBOOT.PBP
 
 	
 encrypt-prx: \

@@ -4,7 +4,7 @@ MODEL ?= PSP
 
 PYTHON ?= python3
 
-TARGET = proshell
+TARGET = updater
 C_OBJS = main.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
@@ -19,7 +19,7 @@ ASFLAGS = $(CFLAGS)
 LDFLAGS =
 BUILD_PRX = 1
 
-PSP_EBOOT_TITLE += PRO Shell
+PSP_EBOOT_TITLE += ARK Updater
 
 EXTRA_TARGETS = EBOOT.PBP
 
