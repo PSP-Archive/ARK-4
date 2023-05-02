@@ -70,11 +70,9 @@ int main(int argc, char * argv[])
     pspDebugScreenPrintf("Extracting ARK_01234\n");
 
     // extract ARK_01234
-    extractFlash0Archive(my_fd, ark_config.arkpath, NULL);
+    extractArchive(my_fd, ark_config.arkpath, NULL);
 
-    sceIoClose(my_fd);
-
-    // extract FLASH (on PSP)
+    // extract FLASH0.ARK (PSP only)
     ARKConfig* ac = &ark_config;
     if (IS_PSP(ac)){
         char flash0_ark[ARK_PATH_SIZE];
@@ -82,7 +80,7 @@ int main(int argc, char * argv[])
         strcat(flash0_ark, "FLASH0.ARK");
         pspDebugScreenPrintf("Extracting %s\n", flash0_ark);
         open_flash();
-        extractFlash0Archive(sceIoOpen(flash0_ark, PSP_O_RDONLY, 0777), "flash0:/", &isVitaFile);
+        extractArchive(sceIoOpen(flash0_ark, PSP_O_RDONLY, 0777), "flash0:/", &isVitaFile);
     }
 
     // Kill Main Thread
@@ -112,7 +110,7 @@ static int dummyFilter(char* filename){
     return 0;
 }
 
-void extractFlash0Archive(int fdr, char* dest_path, int (*filter)(char*)){
+void extractArchive(int fdr, char* dest_path, int (*filter)(char*)){
     
     if (filter == NULL) filter = &dummyFilter;
 
