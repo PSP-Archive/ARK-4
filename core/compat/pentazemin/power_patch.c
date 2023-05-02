@@ -39,6 +39,7 @@ SceDdrPllMode pll_modes[] = {
 };
 
 int scePowerRequestColdResetPatched(int a0) {
+	sctrlSESetBootConfFileIndex(MODE_UMD);
 	return sctrlKernelExitVSH(NULL);
 }
 
