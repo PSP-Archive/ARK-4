@@ -11,7 +11,6 @@
 - The Leda plugin conflicts with rebootex runtime module loading, shouldn't be much of an issue since no homebrew or plugin uses rebootex runtime module loading on Vita.
 
 # Vita Adrenaline
-- The entire system can crash when entering sleep mode or attempting to exit to live area, using savestates to load ARK solves the issue as a workaround.
 - USB doesn't work in the XMB.
 
 # Launcher Issues
