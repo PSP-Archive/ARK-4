@@ -43,6 +43,13 @@ void load_server_file(){
 	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
 	sceIoRead(fd, server, sizeof(server)-1);
 	sceIoClose(fd);
+
+	int len = strlen(server);
+	if (len){
+		if (server[len-1] == '\n') server[--len] = 0;
+		if (server[len-1] == '\r') server[--len] = 0;
+		if (server[len-1] == '/') server[--len] = 0;
+	}
 }
 
 void patch_update_plugin_module(SceModule2* mod)
