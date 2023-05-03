@@ -68,8 +68,8 @@ static void processArkConfig(ARKConfig* ark_config){
     sctrlHENGetArkConfig(ark_config);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSV_ADR; // assume running on Adrenaline
+        sctrlHENSetArkConfig(ark_config); // notify SystemControl
     }
-    sctrlHENSetArkConfig(ark_config); // notify SystemControl
 }
 
 // Boot Time Entry Point
