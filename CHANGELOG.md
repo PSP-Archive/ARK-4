@@ -1,5 +1,9 @@
 # ARK Changelog
 
+## Version 4.20.11 (2023-05-03)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42011
+- Fixed Force Extra Memory and Inferno Cache on Adrenaline.
+
 ## Version 4.20.10 (2023-05-02)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42010
 - Fixed sleep/resume crashes in Pentazemin compatibility layer.
