@@ -3,8 +3,6 @@ Installation On PSP
 - Move or copy `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Move or copy `ARK_Live` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
-- To update ARK, simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
-- Optional: Install `Advanced VSH Menu` for extra features by moving or copying `VSHMENU.PRX` into `ARK_01234` savedata folder.
 
 
   Non permanent CFW installation:
@@ -37,7 +35,7 @@ Installation On PSP
     - You also need to be running a `CFW` to install `DC-ARK` (ARK itself or any other).
     - Copy the `ARK_DC` folder to the `/PSP/GAME/` folder and run the installer from the `XMB`.
     - Follow the instructions to install DC-ARK and create a magic memory stick.
-    - When finished, copy the `ARK_01234` folder to the `/TM/DCARK/` folder of your `PSP`.
+    - On compatible models, use `Advanced VSH Menu` to create a `Pandora` battery.
     - Use a `Pandora` or `Baryon Sweeper` in combination with your newly created `Magic Memory Stick` to boot up `Despertar del Cementerio`.
     - From here you can either boot ARK from memory stick, install 6.61 Firmware with ARK on the Nand or install 6.61 Official Firmware.
     - Note that installing 6.61 firmware with ARK requires a cIPL-compatible PSP (1K and early 2K).
@@ -74,3 +72,10 @@ Installation On PS Vita
     - Note: this does not permanently modify `Adrenaline` in any way.
 
 
+Updating ARK
+
+  There are three ways to update ARK:
+
+    - Use the "System Update" feature in the XMB. Requires your PSP/Vita to be connected to the internet.
+    - Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
+    - Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
