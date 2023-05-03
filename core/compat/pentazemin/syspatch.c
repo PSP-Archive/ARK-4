@@ -534,7 +534,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 	// load and process settings file
     if(strcmp(mod->modname, "sceMediaSync") == 0)
     {
-        //PatchMediaSync(mod->text_addr);
         loadSettings(&settingsHandler);
 		if (is_launcher_mode){
 			strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
