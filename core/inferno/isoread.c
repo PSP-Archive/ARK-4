@@ -488,7 +488,7 @@ static int is_ciso(SceUID fd)
             if((u32)g_ciso_block_buf & 63) // align 64
                 g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
             // allocate buffer for block offset cache
-            g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4) + 64);
+            g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (CISO_IDX_MAX_ENTRIES * 4));
             if (g_cso_idx_cache == NULL) {
                 return -4;
             }

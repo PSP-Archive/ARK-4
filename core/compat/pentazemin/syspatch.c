@@ -546,7 +546,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 		if (use_highmem) unlockVitaMemory();
 		else{
 			int apitype = sceKernelInitApitype();
-			if (apitype == 0x141 || apitype == 0x152){
+			if (apitype == 0x141){
 				int paramsize=4;
 				if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
 					unlockVitaMemory();

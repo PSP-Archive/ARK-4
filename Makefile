@@ -91,7 +91,7 @@ copy-bin:
 	$(Q)cp -r dist/ARK_01234 dist/ARK_DC/
 	$(Q)find dist/themes/ -type d -name 'resources' -exec rm -rf {} \; 2>/dev/null || true
 	$(Q)$(MAKE) -C extras/updater/
-	$(Q)cp extras/updater/EBOOT_PSP.PBP dist/updater/EBOOT.PBP
+	$(Q)cp extras/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
 
 	
 encrypt-prx: \
@@ -205,7 +205,7 @@ mkdir-dist:
 	$(Q)mkdir dist/Infinity | true
 	$(Q)mkdir dist/ARK_DC | true
 	$(Q)mkdir dist/ARK_cIPL | true
-	$(Q)mkdir dist/updater | true
+	$(Q)mkdir dist/UPDATE | true
 	$(Q)mkdir dist/Vita/Adrenaline | true
 	$(Q)mkdir dist/Vita/Standalone | true
 
