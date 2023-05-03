@@ -94,14 +94,6 @@ The instructions are as follows:
 - Install `ARK_Live` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
 
-##### Update ARK
-
-- Use System Software Update (XMB) to update to the latest stable ARK-4 version.
-
-or
-
-- simply copy over the new `ARK_01234` savedata folder and run `ARK Loader` again.
-
 <details>
   <summary> <b> Live CFW </b> </summary>
 <p>
@@ -203,6 +195,19 @@ or
 </p>
 </details>
 
+<details>
+  <summary> <b> Update ARK </b> </summary>
+<p>
+
+There are three ways to update `ARK`:
+
+  - Use the `System Update` feature in the `XMB`. Requires your PSP/Vita to be connected to the internet.
+  - Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
+  - Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
+
+</p>
+</details>
+  
 <details>
   <summary> <b> Legacy Game Exploits (PSP & Vita) </b> </summary>
 <p>
