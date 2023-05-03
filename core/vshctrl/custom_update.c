@@ -45,11 +45,9 @@ void load_server_file(){
 	sceIoClose(fd);
 
 	int len = strlen(server);
-	if (len){
-		if (server[len-1] == '\n') server[--len] = 0;
-		if (server[len-1] == '\r') server[--len] = 0;
-		if (server[len-1] == '/') server[--len] = 0;
-	}
+	if (len && server[len-1] == '\n') server[--len] = 0;
+	if (len && server[len-1] == '\r') server[--len] = 0;
+	if (len && server[len-1] == '/') server[--len] = 0;
 }
 
 void patch_update_plugin_module(SceModule2* mod)
