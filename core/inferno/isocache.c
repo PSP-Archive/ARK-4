@@ -426,17 +426,13 @@ int infernoCacheInit(int cache_size, int cache_num, int partition)
 
     g_caches = sceKernelGetBlockHeadAddr(memid);
 
-    if(g_caches == NULL) {
-        return -3;
-    }
-
     memid = sceKernelAllocPartitionMemory(partition, "infernoCache", PSP_SMEM_High, g_caches_cap * g_caches_num + 64, NULL);
 
     if(memid < 0) {
         #ifdef DEBUG
         printk("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
         #endif
-        return -4;
+        return -3;
     }
 
     pbuf = sceKernelGetBlockHeadAddr(memid);
