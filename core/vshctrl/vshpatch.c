@@ -238,7 +238,11 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
                 && ((u8*)addr)[6] == 0x58
                 && ((u8*)addr)[7] == 0 )
         {
-            sprintf(str, "[ Model: 0%dg ]", (int)psp_model+1);
+            u32 fw = sceKernelDevkitVersion();
+            u32 major = fw>>24;
+            u32 minor = (fw>>16)&0xF;
+            u32 micro = (fw>>8)&0xF;
+            sprintf(str, "[ FW: %d.%d%d Model: 0%dg ]", major, minor, micro, (int)psp_model+1);
 		    ascii2utf16(addr, str);
             patches--;
         }

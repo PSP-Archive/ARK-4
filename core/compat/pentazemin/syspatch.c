@@ -23,6 +23,8 @@ int skip_logos = 0;
 int use_infernocache = 0;
 int vshregion = 0;
 
+int is_vsh = 0;
+
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
 u64 kermit_flash_load(int cmd);
@@ -357,7 +359,7 @@ void settingsHandler(char* path){
         vshregion = r;
     }
 }
-int is_vsh = 0;
+
 void AdrenalineOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
