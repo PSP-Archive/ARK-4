@@ -259,24 +259,16 @@ void patch_GameBoot(SceModule2* mod){
     _sw(0x24040002, p2 + 4);
 }
 
-int InitUsbPatched() {
-	int k1 = pspSdkSetK1(0);
-	int res = SendAdrenalineCmd(ADRENALINE_VITA_CMD_START_USB);
-	pspSdkSetK1(k1);
-	return res;
+int sctrlStartUsb() {
+	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_START_USB);
 }
 
-int ShutdownUsbPatched() {
-	int k1 = pspSdkSetK1(0);
-	int res = SendAdrenalineCmd(ADRENALINE_VITA_CMD_STOP_USB);
-	pspSdkSetK1(k1);
-	return res;
+int sctrlStopUsb() {
+	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_STOP_USB);
 }
 
-int GetUsbStatusPatched() {
-	int k1 = pspSdkSetK1(0);
+int sctrlGetUsbState() {
 	int state = SendAdrenalineCmd(ADRENALINE_VITA_CMD_GET_USB_STATE);
-	pspSdkSetK1(k1);
 	if (state & 0x20)
 		return 1; // Connected
 
@@ -326,9 +318,9 @@ void patch_SysconfPlugin(SceModule2* mod){
 	MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0xD2C4);
 
 	// Redirect USB functions
-	MAKE_SYSCALL(mod->text_addr + 0xAE9C, InitUsbPatched);
-	MAKE_SYSCALL(mod->text_addr + 0xAFF4, ShutdownUsbPatched);
-	MAKE_SYSCALL(mod->text_addr + 0xB4A0, GetUsbStatusPatched);
+	MAKE_SYSCALL(mod->text_addr + 0xAE9C, sctrlStartUsb);
+	MAKE_SYSCALL(mod->text_addr + 0xAFF4, sctrlStopUsb);
+	MAKE_SYSCALL(mod->text_addr + 0xB4A0, sctrlGetUsbState);
 
 	// Ignore wait thread end failure
 	_sw(0, text_addr + 0xB264);
