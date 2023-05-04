@@ -200,8 +200,7 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     char str[50];
     u32 addr;
 
-    int test_fd = sceIoOpen("flash0:/vsh/resource/13-27.bmp", PSP_O_RDONLY, 0777);
-    sceIoClose(test_fd);
+    SceIoStat stat; int test_fd = sceIoGetstat("flash0:/vsh/resource/13-27.bmp", &stat);
 
     int patches = (psp_model==PSP_1000 && test_fd >= 0)? 2 : 1;
     for (addr=text_addr; addr<top_addr && patches; addr+=4){
