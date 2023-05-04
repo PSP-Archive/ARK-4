@@ -13,6 +13,8 @@ PRX_EXPORTS = exports.exp
 USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1
 
+all:
+	psp-packer $(TARGET).prx
 
 LIBDIR = $(ARKROOT)/libs
 LIBS = -lpspsystemctrl_kernel -lpspumd_kernel

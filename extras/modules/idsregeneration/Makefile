@@ -18,6 +18,9 @@ LDFLAGS = -nostdlib -nodefaultlibs
 LIBDIR = $(ARKROOT)/libs
 LIBS = -lpspdisplay_driver -lpspnand_driver -lpspsystemctrl_kernel -lpsplflash_fatfmt
 
+all:
+	psp-packer $(TARGET).prx
+
 include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak

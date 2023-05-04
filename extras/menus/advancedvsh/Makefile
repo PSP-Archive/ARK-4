@@ -20,5 +20,8 @@ LDFLAGS =
 PSP_FW_VERSION = 660
 CFLAGS += -DCONFIG_660=1
 
+all:
+	psp-packer $(TARGET).prx
+
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build_prx.mak
