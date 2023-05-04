@@ -44,7 +44,7 @@ int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 #endif
 
 // fix for 6.60 check on 6.61
-u32 fakeDevkitVersion(){
+static u32 fakeDevkitVersion(){
     return FW_660;
 }
 
