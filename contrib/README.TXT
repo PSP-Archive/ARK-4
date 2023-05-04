@@ -48,7 +48,7 @@ Installation On PS Vita
 
     - Works on Official Firmware 3.60 up to 3.74, doesn't require Henkaku/h-encore or any native hack.
     - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended. `Minis` are `NOT` recommended.
-    - For Henkaku/h-encore users, install an ARK bubble using [ArkFast](https://disk.yandex.ru/d/XMJpxf7RD79VLw) (manually updated, create an issue if it outdated).
+    - For Henkaku/h-encore users, install an ARK bubble using [ArkFast](https://disk.yandex.ru/d/XMJpxf7RD79VLw) (manually updated, create an issue if it's outdated).
     - Official Firmware users (no henkaku/h-encore) can install the PBOOT bubble manually: https://github.com/TheOfficialFloW/Trinity#preparation
     - Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
     - Copy `K.BIN` from `Vita/Standalone` folder into `ARK_01234` savedata folder.
@@ -56,6 +56,7 @@ Installation On PS Vita
     - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
     - Some features are not available to Vita users, mainly the official Sony `XMB` and `PS1` games.
     - The kernel exploit is known to have stability issues, if it fails or crashes, simply restart your Vita and try again.
+    - If you are running an old firmware (<3.60), you will need a spcialized `K.BIN`, either build one yourself or open an `Feature Request`.
 
 
   Adrenaline
@@ -76,6 +77,6 @@ Updating ARK
 
   There are three ways to update ARK:
 
-    - Use the "System Update" feature in the XMB. Requires your PSP/Vita to be connected to the internet.
+    - Use the `System Update` feature in the XMB. Requires your PSP/Vita to be connected to the internet.
     - Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
     - Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.

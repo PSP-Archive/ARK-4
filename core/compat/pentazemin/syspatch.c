@@ -51,8 +51,9 @@ void OnSystemStatusIdle() {
 
 	// Set fake framebuffer so that cwcheat can be displayed
 	if (adrenaline->pops_mode) {
-		memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+		DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay_driver", 0xA38B3F89);
 		DisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
+		memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 	} else {
 		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
 	}
@@ -395,7 +396,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
     if(strcmp(mod->modname, "sceDisplay_Service") == 0)
     {
         // can use screen now
-        DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         goto flush;
     }
 
@@ -516,8 +516,8 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
 	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-			MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0x9944F31F), sceKernelSuspendThreadPatched);
-			MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0x75156E8F), sceKernelResumeThreadPatched);
+			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+			hookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched);
 			goto flush;
 		}
 	}
