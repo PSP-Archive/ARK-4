@@ -241,7 +241,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } noled = {
-    "Toggle LED(s)",
+    "Shutdown LED(s)",
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.noled),
@@ -361,7 +361,6 @@ settings_entry* ark_conf_entries_adr[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
-    (settings_entry*)&noled,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_ADR (sizeof(ark_conf_entries_adr)/sizeof(ark_conf_entries_adr[0]))
