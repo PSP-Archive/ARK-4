@@ -36,6 +36,7 @@ typedef struct {
     unsigned char hidepics;
     unsigned char hibblock;
     unsigned char hidemac;
+    unsigned char noled;
 }ArkConf;
 
 ArkConf ark_config;
@@ -239,6 +240,21 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
+} noled = {
+    "Toggle LED(s)",
+    MAX_ARK_OPTIONS,
+    0,
+    &(ark_config.noled),
+    ARK_OPTIONS
+};
+
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
 } regionchange = {
     "UMD Region Change",
     4,
@@ -273,6 +289,7 @@ settings_entry* ark_conf_entries_1k[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
+    (settings_entry*)&noled,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -289,6 +306,7 @@ settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
+    (settings_entry*)&noled,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -308,6 +326,7 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
+    (settings_entry*)&noled,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_GO (sizeof(ark_conf_entries_go)/sizeof(ark_conf_entries_go[0]))
@@ -322,6 +341,7 @@ settings_entry* ark_conf_entries_street[] = {
     (settings_entry*)&infernocache,
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
+    (settings_entry*)&noled,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -341,6 +361,7 @@ settings_entry* ark_conf_entries_adr[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
+    (settings_entry*)&noled,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_ADR (sizeof(ark_conf_entries_adr)/sizeof(ark_conf_entries_adr[0]))

@@ -76,6 +76,7 @@ GetItem GetItemes[] =
     { 1, 0, "Hide PIC0 and PIC1" },
     { 1, 0, "Prevent hibernation deletion on PSP Go" },
     { 1, 0, "Hide MAC Address" },
+    { 1, 0, "Toggle LED(s)" },
 };
 
 char* ark_settings_options[] = {
@@ -309,7 +310,7 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 }
 
 int skipSetting(int i){
-    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==1 || i==2 || i==4 || i==8 || i==11 );
+    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==1 || i==2 || i==4 || i==8 || i==11 || i==13);
     else if (psp_model == PSP_1000) return ( i == 0 || i == 4 || i == 5 || i == 8 || i == 11);
     else if (psp_model == PSP_11000) return ( i == 4 || i == 8 || i == 11 || i == 12 );
     else if (psp_model != PSP_GO) return ( i == 4 || i == 8 || i == 11);
@@ -457,6 +458,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.hidepics,
                 config.hibblock,
                 config.hidemac,
+                config.noled,
             };
             
             int i;
@@ -507,6 +509,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.hidepics,
                 &config.hibblock,
                 &config.hidemac,
+                &config.noled,
             };
             
             int i;

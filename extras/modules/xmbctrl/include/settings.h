@@ -39,6 +39,7 @@ char *settings[] =
     "Hide PIC0 and PIC1",
     "Prevent hibernation deletion on PSP Go",
     "Hide MAC Address",
+    "Toggle LED(s)",
 };
 
 #endif
