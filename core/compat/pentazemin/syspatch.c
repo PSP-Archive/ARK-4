@@ -480,12 +480,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 		PatchSasCore();
         goto flush;
 	}
-    
-    if (strcmp(mod->modname, "Legacy_Software_Loader") == 0){
-        // Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
-        _sw(NOP, mod->text_addr + 0x1140);
-        goto flush;
-    }
 
 	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {

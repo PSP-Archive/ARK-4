@@ -90,6 +90,9 @@ void patchLedaPlugin(void* handler){
     _sw(JUMP(sceKernelLoadModuleMs2_bridge), text_addr + 0x2E28);
     _sw(NOP, text_addr + 0x2E28 + 4);
 
+    // Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
+    _sw(NOP, text_addr + 0x1140);
+
     // patch init sceKernelLoadModuleMs2
     KernelLoadModuleMs2_orig = sctrlHENFindFunction("sceModuleManager", "ModuleMgrForKernel", 0x7BD53193);
     hookImportByNID(init, "ModuleMgrForKernel", 0x7BD53193, sceKernelLoadModuleMs2_patched);
