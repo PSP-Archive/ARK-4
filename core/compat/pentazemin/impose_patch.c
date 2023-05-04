@@ -11,6 +11,8 @@
 #include "exitgame.h"
 #include "adrenaline_compat.h"
 
+extern int is_launcher_mode;
+
 int (* SetIdleCallback)(int flags);
 int SetIdleCallbackPatched(int flags) {
 	// Only allow idle callback for music player sleep-timer
@@ -28,7 +30,11 @@ int exit_callback(int arg1, int arg2, void *common) {
 
 	SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
 	sctrlSESetBootConfFileIndex(MODE_UMD);
-	sctrlKernelExitVSH(NULL);
+
+	if (is_launcher_mode)
+		exitLauncher();
+	else
+		sctrlKernelExitVSH(NULL);
 
 	return 0;
 }

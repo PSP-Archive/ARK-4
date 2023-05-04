@@ -328,7 +328,10 @@ void patch_SysconfPlugin(SceModule2* mod){
 
 void exit_game_patched(){
 	sctrlSESetBootConfFileIndex(MODE_UMD);
-	sctrlKernelExitVSH(NULL);
+	if (is_launcher_mode)
+		exitLauncher();
+	else
+		sctrlKernelExitVSH(NULL);
 }
 
 void settingsHandler(char* path){
@@ -354,7 +357,7 @@ void settingsHandler(char* path){
         vshregion = r;
     }
 }
-
+int is_vsh = 0;
 void AdrenalineOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
@@ -466,6 +469,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 	}
 
 	if (strcmp(mod->modname, "vsh_module") == 0) {
+		is_vsh = 1;
 		patch_VshMain(mod);
 		goto flush;
 	}
@@ -502,12 +506,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
     if(strcmp(mod->modname, "sceMediaSync") == 0)
     {
         loadSettings(&settingsHandler);
-		if (is_launcher_mode){
-			strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
-		}
-		else{
-			ark_config->launcher[0] = 0; // disable launcher mode
-		}
 		// apply extra memory patch
 		if (use_highmem) unlockVitaMemory();
 		else{
@@ -529,6 +527,8 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 		sctrlHENSetArkConfig(ark_config);
         goto flush;
     }
+
+
        
     // Boot Complete Action not done yet
     if(booted == 0)
@@ -545,6 +545,12 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
 			// Adrenaline patches
 			OnSystemStatusIdle();
+
+			if (is_launcher_mode && is_vsh){
+				extern void exitLauncher();
+				int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
+				sceKernelStartThread(uid, 0, NULL);
+			}
 
             // Boot Complete Action done
             booted = 1;
@@ -564,7 +570,7 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
-	if (skip_logos && mod != NULL && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
+	if ((is_launcher_mode||skip_logos) && mod != NULL && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
 		u32* vshmain_args = oe_malloc(1024);
 
 		memset(vshmain_args, 0, 1024);
