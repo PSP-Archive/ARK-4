@@ -23,6 +23,7 @@ typedef struct {
 	int mode;
 } SceDdrPllMode;
 
+/*
 SceDdrPllMode pll_modes[] = {
 	{ 19,   8 },
 	{ 37,   0 },
@@ -37,6 +38,7 @@ SceDdrPllMode pll_modes[] = {
 	{ 266,  4 },
 	{ 333,  5 },
 };
+*/
 
 int scePowerRequestColdResetPatched(int a0) {
 	sctrlSESetBootConfFileIndex(MODE_UMD);
