@@ -260,7 +260,6 @@ void patch_GameBoot(SceModule2* mod){
 }
 
 int InitUsbPatched() {
-	logtext("InitUsbPatched called");
 	int k1 = pspSdkSetK1(0);
 	int res = SendAdrenalineCmd(ADRENALINE_VITA_CMD_START_USB);
 	pspSdkSetK1(k1);
@@ -268,20 +267,13 @@ int InitUsbPatched() {
 }
 
 int ShutdownUsbPatched() {
-	logtext("ShutdownUsbPatched called");
 	int k1 = pspSdkSetK1(0);
 	int res = SendAdrenalineCmd(ADRENALINE_VITA_CMD_STOP_USB);
 	pspSdkSetK1(k1);
 	return res;
-	//return SendAdrenalineCmd(ADRENALINE_VITA_CMD_STOP_USB);
 }
 
 int GetUsbStatusPatched() {
-	static int called = 0;
-	if (!called){
-		logtext("GetUsbStatusPatched called");
-		called = 1;
-	}
 	int k1 = pspSdkSetK1(0);
 	int state = SendAdrenalineCmd(ADRENALINE_VITA_CMD_GET_USB_STATE);
 	pspSdkSetK1(k1);
@@ -289,14 +281,6 @@ int GetUsbStatusPatched() {
 		return 1; // Connected
 
 	return 2; // Not connected
-}
-
-u32 MakeSyscallStub(void *function) {
-	SceUID block_id = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_High, 2 * sizeof(u32), NULL);
-	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
-	_sw(0x03E00008, stub);
-	_sw(0x0000000C | (sceKernelQuerySystemCall(function) << 6), stub + 4);
-	return stub;
 }
 
 /*
@@ -325,8 +309,6 @@ void patch_VshMain(SceModule2* mod){
 	u32 text_addr = mod->text_addr;
 
 	// Dummy usb detection functions
-	//MAKE_DUMMY_FUNCTION(text_addr + 0x38C94, 0);
-	//MAKE_DUMMY_FUNCTION(text_addr + 0x38D68, 0);
 	MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0x38C94);
 	MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0x38C94);
 }
@@ -340,17 +322,10 @@ void patch_SysconfPlugin(SceModule2* mod){
 	_sw(0x00001021, text_addr + 0xD218); // sceVshBridge_360752BF - vshUsbstorMsSetVSHInfo
 
 	// Dummy LoadUsbModules, UnloadUsbModules
-	//MAKE_DUMMY_FUNCTION(text_addr + 0xCC70, 0);
-	//MAKE_DUMMY_FUNCTION(text_addr + 0xD2C4, 0);
 	MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0xCC70);
 	MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0xD2C4);
 
 	// Redirect USB functions
-	/*
-	REDIRECT_FUNCTION(text_addr + 0xAE9C, MakeSyscallStub(InitUsbPatched));
-	REDIRECT_FUNCTION(text_addr + 0xAFF4, MakeSyscallStub(ShutdownUsbPatched));
-	REDIRECT_FUNCTION(text_addr + 0xB4A0, MakeSyscallStub(GetUsbStatusPatched));
-	*/
 	MAKE_SYSCALL(mod->text_addr + 0xAE9C, InitUsbPatched);
 	MAKE_SYSCALL(mod->text_addr + 0xAFF4, ShutdownUsbPatched);
 	MAKE_SYSCALL(mod->text_addr + 0xB4A0, GetUsbStatusPatched);

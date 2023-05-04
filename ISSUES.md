@@ -12,7 +12,6 @@
 
 # Vita Adrenaline
 - Autoboot Launher feature causes sleep/resume crash.
-- USB doesn't work in the XMB.
 
 # Launcher Issues
 - Some random crashes in the game menu (most likely threading issues).
