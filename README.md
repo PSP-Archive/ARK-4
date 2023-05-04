@@ -422,9 +422,7 @@ You can however change it to whatever you please. You can change the theme used 
 <summary> <b> Custom Launcher Themes </b> </summary>
 <p>
 
-You can install themes within Custom Launcher (ARKMENU). Just place the `themes` folder anywhere on your PSP and use the file browser in the Custom Launcher to select which theme (`THEME.ARK`) you would like to install. By selecting it a submenu will pop up asking to install it or to preview the theme without installing.
-
-You can add themes by copying the `THEME.ARK` and `resources` folder from your selected theme to `??0:/PSP/SAVEDATA/ARK_01234/`
+You can install themes within Custom Launcher (and Recovery Menu). Just place the `themes` folder anywhere on your PSP and use the file browser in the Custom Launcher to select which theme (`THEME.ARK`) you would like to install. By selecting it a submenu will pop up asking to install it or to preview the theme without installing.
 
 <i>Orbs are animations and not part of the actual Themes </i>
 
