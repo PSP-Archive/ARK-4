@@ -11,7 +11,7 @@
 - The Leda plugin conflicts with rebootex runtime module loading, shouldn't be much of an issue since no homebrew or plugin uses rebootex runtime module loading on Vita.
 
 # Vita Adrenaline
-- Autoboot Launher feature causes sleep/resume crash.
+- ???
 
 # Launcher Issues
 - Some random crashes in the game menu (most likely threading issues).
