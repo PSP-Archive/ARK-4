@@ -57,6 +57,21 @@ int main(int argc, char * argv[])
 
     pspDebugScreenPrintf("ARK Updater Started\n");
 
+    u32 my_ver = (ARK_MAJOR_VERSION << 16) | (ARK_MINOR_VERSION << 8) | ARK_MICRO_VERSION;
+    u32 cur_ver = sctrlHENGetMinorVersion();
+    int major = (cur_ver&0xFF0000)>>16;
+	int minor = (cur_ver&0xFF00)>>8;
+	int micro = (cur_ver&0xFF);
+
+    pspDebugScreenPrintf("Current Version %d.%d.%.2i\n", major, minor, micro);
+    pspDebugScreenPrintf("Update Version %d.%d.%.2i\n", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ARK_MICRO_VERSION);
+
+    if (my_ver < cur_ver){
+        pspDebugScreenPrintf("ERROR: no need to update\n");
+        sceKernelExitGame();
+        return 0;
+    }
+
     char* eboot_path = argv[0];
 
     PBPHeader header;
