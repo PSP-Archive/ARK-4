@@ -46,16 +46,6 @@ extern List plugins;
 
 typedef struct
 {
-    char *items[2];
-    char *options[13];
-} StringContainer;
-
-StringContainer string;
-
-#define N_STRINGS ((sizeof(string) / sizeof(char **)))
-
-typedef struct
-{
     int mode;
     int negative;
     char *item;
@@ -96,6 +86,16 @@ char* ark_plugins_options[] = {
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
+
+typedef struct
+{
+    char *items[2];
+    char *options[N_ITEMS];
+} StringContainer;
+
+StringContainer string;
+
+#define N_STRINGS ((sizeof(string) / sizeof(char **)))
 
 int count = 0;
 
