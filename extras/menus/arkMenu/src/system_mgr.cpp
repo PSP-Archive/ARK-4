@@ -1,13 +1,12 @@
 #include <sstream>
 #include <pspkernel.h>
 #include <psppower.h>
+#include <kubridge.h>
+#include <systemctrl.h>
 
 #include "system_mgr.h"
 #include "common.h"
 #include "controller.h"
-
-
-extern "C" u32 sctrlHENGetMinorVersion();
 
 string ark_version = "";
 struct tm today;
@@ -280,12 +279,25 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     entries = e;
     MAX_ENTRIES = ne;
     today = common::getDateTime();
+
+    // get ARK version    
     u32 ver = sctrlHENGetMinorVersion();
     u32 major = (ver&0xFF0000)>>16;
     u32 minor = (ver&0xFF00)>>8;
     u32 micro = (ver&0xFF);
+
+    // get OFW version (bypass patches)
+    struct KernelCallArg args;
+    u32 getDevkitVersion = sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0x3FC9AE6A);    
+    kuKernelCall((void*)getDevkitVersion, &args);
+    u32 fw = args.ret1;
+    u32 fwmajor = fw>>24;
+    u32 fwminor = (fw>>16)&0xF;
+    u32 fwmicro = (fw>>8)&0xF;
+
     stringstream version;
-	version << "ARK Version " << major << "." << minor;
+    version << "FW " << fwmajor << "." << fwminor << fwmicro;
+	version << " ARK " << major << "." << minor;
     if (micro>9) version << "." << micro;
     else if (micro>0) version << ".0" << micro;
     version << " " << common::getArkConfig()->exploit_id;
