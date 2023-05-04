@@ -345,7 +345,7 @@ void LoadPlugins(){
     // Open Plugin Config from SEPLUGINS
     ProcessConfigFile("ms0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
     // On PSP Go (only if ms0 isn't already redirected to ef0)
-    if (!sctrlKernelMsIsEf()) ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
+    ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
     // start all loaded plugins
     startPlugins();
 }
