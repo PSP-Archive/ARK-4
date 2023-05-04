@@ -233,6 +233,13 @@ void settingsHandler(char* path){
             }
         }
     }
+    else if (strcasecmp(path, "noled") == 0){
+        int (*_sceSysconCtrlLED)(int, int);
+        _sceSysconCtrlLED = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x18BFBE65);
+        for (int i=0; i<4; i++) _sceSysconCtrlLED(i, 0);
+        MAKE_DUMMY_FUNCTION_RETURN_0(_sceSysconCtrlLED);
+        flushCache();
+    }
     else if (strcasecmp(path, "skiplogos") == 0){
         skip_logos = 1;
     }
