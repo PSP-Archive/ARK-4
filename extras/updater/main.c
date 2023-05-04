@@ -67,9 +67,7 @@ int main(int argc, char * argv[])
     pspDebugScreenPrintf("Update Version %d.%d.%.2i\n", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ARK_MICRO_VERSION);
 
     if (my_ver < cur_ver){
-        pspDebugScreenPrintf("ERROR: no need to update\n");
-        sceKernelExitGame();
-        return 0;
+        pspDebugScreenPrintf("WARNING: downgrading to lower version\n");
     }
 
     char* eboot_path = argv[0];
