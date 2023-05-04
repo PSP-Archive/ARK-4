@@ -37,17 +37,7 @@ static struct{
     char paths[MAX_PLUGINS][MAX_PLUGIN_PATH];
 } plugins;
 
-// fix for 6.60 check on 6.61
-static u32 fakeDevkitVersion(){
-    return FW_660;
-}
-
-void patch_660_plugins(const char* path, int modid){
-    SceModule2* mod = sceKernelFindModuleByUID(modid);
-    hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &fakeDevkitVersion);
-}
-
-void (*plugin_handler)(const char* path, int modid) = &patch_660_plugins;
+void (*plugin_handler)(const char* path, int modid) = NULL;
 
 static addPlugin(char* path){
     for (int i=0; i<plugins.count; i++){

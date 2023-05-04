@@ -189,6 +189,7 @@ PSP_EXPORT_FUNC(kuKernelFindModuleByName)
 PSP_EXPORT_FUNC(kuKernelCall)
 PSP_EXPORT_FUNC(kuKernelCallExtendStack)
 PSP_EXPORT_FUNC(kuKernelIcacheInvalidateAll)
+PSP_EXPORT_FUNC(fakeDevkitVersion)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(SystemCtrlPrivate, 0, 0x0001)
