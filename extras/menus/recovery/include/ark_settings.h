@@ -361,6 +361,7 @@ settings_entry* ark_conf_entries_adr[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
+    (settings_entry*)&noled,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_ADR (sizeof(ark_conf_entries_adr)/sizeof(ark_conf_entries_adr[0]))
@@ -437,6 +438,9 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "hidemac") == 0){
         return &(ark_config.hidemac);
+    }
+    else if (strcasecmp(conf.c_str(), "noled") == 0){
+        return &(ark_config.noled);
     }
     else if (strcasecmp(conf.c_str(), "region_jp") == 0){
         ark_config.regionchange = REGION_JAPAN;
@@ -568,6 +572,7 @@ void saveSettings(){
     output << processSetting("hidepics", ark_config.hidepics) << endl;
     output << processSetting("hibblock", ark_config.hibblock) << endl;
     output << processSetting("hidemac", ark_config.hidemac) << endl;
+    output << processSetting("noled", ark_config.noled) << endl;
     
     switch (ark_config.regionchange){
         case REGION_JAPAN:
