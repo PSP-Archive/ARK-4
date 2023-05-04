@@ -39,21 +39,6 @@ extern void AdrenalineOnModuleStart(SceModule2 * mod);
 extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 
-void logbuffer(char* path, void* buf, u32 size){
-    int fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
-    sceIoWrite(fd, buf, size);
-    sceIoClose(fd);
-}
-
-void logtext(char* text){
-    int k1 = pspSdkSetK1(0);
-    int fd = sceIoOpen("ms0:/log.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
-    sceIoWrite(fd, text, strlen(text));
-    sceIoWrite(fd, "\n", 1);
-    sceIoClose(fd);
-    pspSdkSetK1(k1);
-}
-
 // Flush Instruction and Data Cache
 void flushCache()
 {
