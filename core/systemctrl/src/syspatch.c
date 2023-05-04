@@ -90,6 +90,11 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 
     #endif
 
+    if (strcmp(mod->modname, "sceController_Service") == 0){
+        initController(mod);
+        goto flush;
+    }
+
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
         // Find Reboot Loader Function

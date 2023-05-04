@@ -31,6 +31,8 @@
 #define EXIT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
 
 extern ARKConfig* ark_config;
+extern int disable_plugins;
+extern int disable_settings;
 
 void exitLauncher()
 {
@@ -145,14 +147,24 @@ int read_negative(SceCtrlData * pad_data, int count)
 	return count;
 }
 
+void initController(SceModule2* mod){
+	CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
+    CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A);
+    CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
+    CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86);
+}
+
+void checkControllerInput(){
+	SceCtrlData pad_data;
+	CtrlPeekBufferPositive(&pad_data, 1);
+	if ((pad_data.Buttons & PSP_CTRL_START) == PSP_CTRL_START) disable_plugins = 1;
+	if ((pad_data.Buttons & PSP_CTRL_SELECT) == PSP_CTRL_SELECT) disable_settings = 1;
+}
+
 // Hook Gamepad Input
 void patchController(void)
 {
 	// Hook Gamepad Input Syscalls (user input hooking only)
-    CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
-    CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A);
-    CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
-    CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86);
 	sctrlHENPatchSyscall((void *)CtrlPeekBufferPositive, peek_positive);
 	sctrlHENPatchSyscall((void *)CtrlPeekBufferNegative, peek_negative);
 	sctrlHENPatchSyscall((void *)CtrlReadBufferPositive, read_positive);

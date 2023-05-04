@@ -39,6 +39,9 @@ static struct{
 
 void (*plugin_handler)(const char* path, int modid) = NULL;
 
+int disable_plugins = 0;
+int disable_settings = 0;
+
 static addPlugin(char* path){
     for (int i=0; i<plugins.count; i++){
         if (stricmp(plugins.paths[i], path) == 0)
@@ -324,7 +327,8 @@ static int isRecoveryMode(){
 }
 
 void LoadPlugins(){
-    if (isRecoveryMode())
+    checkControllerInput();
+    if (disable_plugins || isRecoveryMode())
         return; // don't load plugins in recovery mode
 
     // Open Plugin Config from ARK's installation folder
@@ -341,7 +345,8 @@ void LoadPlugins(){
 }
 
 void loadSettings(void* settingsHandler){
-    if (isRecoveryMode())
+    checkControllerInput();
+    if (disable_settings || isRecoveryMode())
         return; // don't load settings in recovery mode
     // process settings file
     char path[ARK_PATH_SIZE];
