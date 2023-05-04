@@ -39,10 +39,6 @@ int isSystemBooted(void)
     return 0;
 }
 
-static u32 fakeDevkitVersion(){
-    return FW_660; // Popsloader V3 will check for 6.60, it fails on 6.61 so let's make it think it's on 6.60
-}
-
 static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int nid){
     if (nid == 0x221400A6 && strcmp(szMod, "SystemControl") == 0)
         return 0; // Popsloader V4 looks for this function to check for ME, let's pretend ARK doesn't have it ;)
@@ -332,8 +328,6 @@ void PSPOnModuleStart(SceModule2 * mod){
 	}
     
     if (strcmp(mod->modname, "popsloader") == 0 || strcmp(mod->modname, "popscore") == 0){
-        // fix for 6.60 check on 6.61
-        hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &fakeDevkitVersion);
         // fix to prevent ME detection
         hookImportByNID(mod, "SystemCtrlForKernel", 0x159AF5CC, &fakeFindFunction);
         goto flush;
