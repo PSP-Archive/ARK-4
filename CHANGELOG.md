@@ -1,5 +1,19 @@
 # ARK Changelog
 
+## Version 4.20.13 (2023-05-04)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42013
+- Fixed exit game freezing on some homebrew in PS Vita (standalone and adrenaline).
+- Fixed regression that would mess up plugin loading on PSP Go.
+- Added patch that fixes 6.60 plugins and homebrew on 6.61 firmware.
+- Added Official Firmware version to launcher and recovery. It is also shown in System Information (XMB) when the option to hide MAC address is enabled.
+- Added option to completely disable LEDs on PSP.
+
+## Version 4.20.12 (2023-05-04)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42012
+- Fixed XMB USB device mount in Adrenaline compatibility mode.
+- Fixed CWCHEAT POPS in Adrenaline compatibility mode.
+- Fixed Autoboot Launcher in Adrenaline compatibility mode.
+
 ## Version 4.20.11 (2023-05-03)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42011
 - Fixed Force Extra Memory and Inferno Cache on Adrenaline.
