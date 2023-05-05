@@ -10,6 +10,7 @@ enum{
     HOMEBREW_ONLY,
     POPS_ONLY,
     VSH_ONLY,
+    LAUNCHER_ONLY,
     CUSTOM
 };
 
@@ -41,7 +42,7 @@ typedef struct {
 
 ArkConf ark_config;
 
-#define MAX_ARK_OPTIONS 7
+#define MAX_ARK_OPTIONS 8
 #define ARK_OPTIONS { \
     "Disabled", \
     "Always", \
@@ -49,7 +50,8 @@ ArkConf ark_config;
     "UMD/ISO", \
     "Homebrew", \
     "PS1", \
-    "XMB" \
+    "XMB", \
+    "Launcher" \
 }
 
 static struct {
@@ -396,6 +398,9 @@ static unsigned char runlevelConvert(string runlevel, string enable){
     else if (strcasecmp(runlevel.c_str(), "vsh") == 0 || strcasecmp(runlevel.c_str(), "xmb") == 0){
         return VSH_ONLY;
     }
+    else if (strcasecmp(runlevel.c_str(), "launcher") == 0){
+        return LAUNCHER_ONLY;
+    }
     return CUSTOM;
 }
 
@@ -553,6 +558,7 @@ static string processSetting(string name, unsigned char setting){
     case HOMEBREW_ONLY:       return "homebrew, "+name+", on";
     case POPS_ONLY:           return "pops, "+name+", on";
     case VSH_ONLY:            return "vsh, "+name+", on";
+    case LAUNCHER_ONLY:       return "launcher, "+name+", on";
     }
     return "always, "+name+", off";
 }

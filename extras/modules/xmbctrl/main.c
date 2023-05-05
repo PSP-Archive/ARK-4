@@ -76,7 +76,8 @@ char* ark_settings_options[] = {
     (char*)"UMD/ISO",
     (char*)"Homebrew",
     (char*)"PS1",
-    (char*)"XMB"
+    (char*)"XMB",
+    (char*)"Launcher"
 };
 
 char* ark_plugins_options[] = {
