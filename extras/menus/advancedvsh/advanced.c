@@ -378,7 +378,12 @@ int submenu_draw(void)
 					xPointer = 178;
 					break;
 				case SUBMENU_DELETE_HIBERNATION:
-					xPointer = 168;
+					if (psp_model == PSP_GO)
+						xPointer = 168;
+					else{
+						msg = " NO HIBERNATION SUPPORT ";
+						xPointer = 153;
+					}
 					break;
 				case SUBMENU_IMPORT_CLASSIC_PLUGINS:
 				case SUBMENU_ACTIVATE_FLASH_WMA:
