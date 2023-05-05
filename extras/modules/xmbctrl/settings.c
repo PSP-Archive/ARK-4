@@ -31,6 +31,9 @@ int runlevelConvert(char* runlevel, char* enable){
     else if (strcasecmp(runlevel, "vsh") == 0 || strcasecmp(runlevel, "xmb") == 0){
         return VSH_ONLY;
     }
+    else if (strcasecmp(runlevel, "launcher") == 0){
+        return LAUNCHER_ONLY;
+    }
     return CUSTOM;
 }
 

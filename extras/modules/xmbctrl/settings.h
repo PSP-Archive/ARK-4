@@ -12,6 +12,7 @@ enum{
     HOMEBREW_ONLY,
     POPS_ONLY,
     VSH_ONLY,
+    LAUNCHER_ONLY,
     CUSTOM
 };
 

@@ -101,13 +101,14 @@ void loadSettings(){
 static void processSetting(int fd, char* line, char* name, int setting){
     switch (setting){
     default:
-    case DISABLED:            snprintf(line, LINE_BUFFER_SIZE, "always, %s, off\n", name);   break;
+    case DISABLED:            snprintf(line, LINE_BUFFER_SIZE, "always, %s, off\n", name);  break;
     case ALWAYS_ON:           snprintf(line, LINE_BUFFER_SIZE, "always, %s, on\n", name);   break;
     case GAME_ONLY:           snprintf(line, LINE_BUFFER_SIZE, "game, %s, on\n", name);     break;
     case UMD_ONLY:            snprintf(line, LINE_BUFFER_SIZE, "umd, %s, on\n", name);      break;
     case HOMEBREW_ONLY:       snprintf(line, LINE_BUFFER_SIZE, "homebrew, %s, on\n", name); break;
     case POPS_ONLY:           snprintf(line, LINE_BUFFER_SIZE, "pops, %s, on\n", name);     break;
     case VSH_ONLY:            snprintf(line, LINE_BUFFER_SIZE, "vsh, %s, on\n", name);      break;
+    case LAUNCHER_ONLY:       snprintf(line, LINE_BUFFER_SIZE, "launcher, %s, on\n", name); break;
     }
     sceIoWrite(fd, line, strlen(line));
 }
