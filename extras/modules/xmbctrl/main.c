@@ -66,7 +66,7 @@ GetItem GetItemes[] =
     { 1, 0, "Hide PIC0 and PIC1" },
     { 1, 0, "Prevent hibernation deletion on PSP Go" },
     { 1, 0, "Hide MAC Address" },
-    { 1, 0, "Shutdown LED(s)" },
+    { 1, 0, "Turn off LEDs" },
 };
 
 char* ark_settings_options[] = {

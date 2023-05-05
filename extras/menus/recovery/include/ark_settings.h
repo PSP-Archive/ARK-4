@@ -243,7 +243,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } noled = {
-    "Shutdown LED(s)",
+    "Turn off LEDs",
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.noled),
