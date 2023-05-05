@@ -29,7 +29,7 @@ const char *g_messages_en[] = {
 	"Inferno 2 (ISO/CSO)",
 	"USB DEVICE     ",
 	"USB READONLY   ",
-	"UMD ISO MODE   ",
+	"ISO DRIVERS    ",
 	"ISO VIDEO MOUNT",
 	"FG COLORS      ",
 	"BG COLORS      ",
