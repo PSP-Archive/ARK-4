@@ -200,7 +200,7 @@ static void systemDrawer(){
             common::getImage(IMAGE_DIALOG)->draw_scale(0, 0, 480, 20);
             drawBattery();
 			dateTime();
-            common::printText(5, 13, entries[cur_entry]->getInfo().c_str(), LITEGRAY, SIZE_MEDIUM, 0, 0);
+            entries[cur_entry]->drawInfo();
             break;
         case 1: // draw opening animation
             drawOptionsMenuCommon();

@@ -4,6 +4,7 @@
 #include <string>
 #include "controller.h"
 #include "gfx.h"
+#include "common.h"
 
 class SystemEntry{
     public:
@@ -17,6 +18,9 @@ class SystemEntry{
         virtual void setName(std::string name)=0;
         virtual std::string getName()=0;
         virtual bool isStillLoading()=0;
+        virtual void drawInfo(){
+            common::printText(5, 13, this->getInfo().c_str(), LITEGRAY, SIZE_MEDIUM, 0, 0);
+        }
 };
 
 #endif

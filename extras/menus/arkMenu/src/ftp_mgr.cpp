@@ -67,7 +67,7 @@ void FTPManager::draw(){
         else{
             snprintf(buffer, 128, "FTP Server is stopped. Press %s to start.", (common::getConf()->swap_buttons)? "()" : "X");
         }
-        common::printText(30, 50, buffer, GRAY_COLOR, SIZE_BIG);
+        common::printText(30, 50, buffer, GRAY_COLOR, SIZE_BIG, 1);
         
         y = 70;
         

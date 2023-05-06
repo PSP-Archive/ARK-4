@@ -118,6 +118,10 @@ class GameManager : public SystemEntry{
         string getName(){
             return "Game";
         }
+
+        void drawInfo(){
+            common::printText(5, 13, this->getInfo().c_str(), LITEGRAY, SIZE_MEDIUM, 0, 1);
+        }
         
         /* Control the icon threads */
         void pauseIcons();
