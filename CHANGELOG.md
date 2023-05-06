@@ -1,5 +1,24 @@
 # ARK Changelog
 
+## Version 4.20.16 (???)
+- Legacy 1.50 homebrew in `KXploit` format is now properly deleted in `XMB` an `launcher`.
+- Added `rename` option to game menu in custom launcher.
+- Cleaned up `pentazemin` compatibility layer.
+- Allow `Stargate` no-DRM engine to run in `UMD` games. Fixes some issues.
+- Other general fixes and improvements.
+
+## Version 4.20.15 (2023-05-06)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42015
+- Added date and time to launcher/recovery.
+- Improved music player in file browser, now you can use triangle button to exit the music player while the music keeps playing.
+- Added options to Game Menu in custom launcher by pressing L trigger.
+- Some visual improvements to the custom launcher.
+
+## Version 4.20.14 (2023-05-05)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42014
+- Fixed LEDA plugin crashing on DC-ARK.
+- Added hotkeys to disable plugins and/or settings. Press and hold start (disable plugins) and/or select (disable settings) when the console starts up, or a game is being boot, or exiting from a game, to temporarily disable plugins/settings.
+
 ## Version 4.20.13 (2023-05-04)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42013
 - Fixed exit game freezing on some homebrew in PS Vita (standalone and adrenaline).

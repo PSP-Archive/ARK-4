@@ -249,7 +249,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     if (newsize > 0) result = newsize;
     
     // Insert Stargate No-DRM Engine
-    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, UMDEMU_RUNLEVEL);
+    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", PATH_STARGATE+sizeof(PATH_FLASH0)-2, GAME_RUNLEVEL | UMDEMU_RUNLEVEL);
     if (newsize > 0) result = newsize;
     
     // Insert VSHControl
