@@ -46,6 +46,9 @@ class GameManager : public SystemEntry{
         /* Screen drawing thread data */
         bool hasLoaded; // whether the main thread has finished loading or not, if not then only draw the background and animation
         
+        /* Options Menu instance, will be drawn by the draw thread if it's different from null */
+        OptionsMenu* optionsmenu;
+
         void endAllThreads();
         
         // Entry animation

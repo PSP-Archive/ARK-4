@@ -23,6 +23,7 @@ GameManager::GameManager(){
     
     this->use_categories = true;
     this->scanning = true;
+    this->optionsmenu = NULL;
 
     // initialize the categories
     this->selectedCategory = -2;
@@ -372,6 +373,7 @@ void GameManager::draw(){
         }
         if (this->selectedCategory < this->maxDraw)
             this->categories[this->selectedCategory]->draw(true);
+        if (optionsmenu) optionsmenu->draw();
     }
     if (loadingData || selectedCategory == -1){
         static float angle = 1.0;
@@ -462,6 +464,29 @@ void GameManager::control(Controller* pad){
             self->waitIconsLoad();
             GameManager::updateGameList(NULL);
             self->waitIconsLoad();
+        }
+    }
+    else if (pad->LT()){
+        if (selectedCategory >= 0 && !categories[selectedCategory]->isAnimating()){
+            common::playMenuSound();
+            t_options_entry options_entries[] = {
+                {OPTIONS_CANCELLED, "Cancel"},
+                {0, "View Info"},
+                {1, "Delete"},
+            };
+            optionsmenu = new OptionsMenu("Game Options", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
+            int ret = optionsmenu->control();
+            OptionsMenu* aux = optionsmenu;
+            optionsmenu = NULL;
+            delete aux;
+
+            if (ret == 0){
+                // TODO: create a new options menu but each entry is some info about the game
+            }
+            else if (ret == 1){
+                // TODO: pause draw thread, remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
+                // make checks to prevent deleting stuff like "UMD Drive" and "Recovery" entries
+            }
         }
     }
 }
