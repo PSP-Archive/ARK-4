@@ -27,6 +27,9 @@ class MP3{
         static int playThread(SceSize _args, void** _argp);
         
     public:
+
+        void (*on_music_end)(MP3* self);
+
         MP3(void* buffer, int size);
         MP3(char* filename, bool to_buffer=false);
         ~MP3();

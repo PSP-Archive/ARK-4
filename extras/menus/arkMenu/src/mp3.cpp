@@ -239,9 +239,11 @@ MP3::MP3(void* buffer, int size){
     this->filename = NULL;
     this->buffer_size = size;
     this->buffer = buffer;
+    this->on_music_end = NULL;
 }
 
 MP3::MP3(char* filename, bool to_buffer){
+    this->on_music_end = NULL;
     if (!to_buffer){
         this->filename = filename;
         this->buffer = NULL;
@@ -305,6 +307,7 @@ int MP3::playThread(SceSize _args, void** _argp)
     sceKernelWaitSema(mp3_mutex, 1, 0);
     playMP3File(self->filename, self->buffer, self->buffer_size);
     sceKernelSignalSema(mp3_mutex, 1);
+    if (self->on_music_end) self->on_music_end(self);
     sceKernelExitDeleteThread(0);
     return 0;
 }

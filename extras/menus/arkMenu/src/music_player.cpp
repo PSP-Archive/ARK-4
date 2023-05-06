@@ -5,6 +5,13 @@
 
 static MP3* current_song = NULL;
 
+static void mp3_cleanup(MP3* music){
+    if (music == current_song){
+        delete music;
+        current_song = NULL;
+    }
+}
+
 MusicPlayer::MusicPlayer(string path){
     this->path = path;
 }
@@ -46,6 +53,7 @@ int MusicPlayer::control(){
 
     if (current_song == NULL){
         current_song = new MP3((char*)path.c_str(), false);
+        current_song->on_music_end = mp3_cleanup;
         current_song->play();
     }
 
