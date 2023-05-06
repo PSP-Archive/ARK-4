@@ -54,6 +54,7 @@ class Menu{
         void clearEntries();
         size_t getVectorSize();
         vector<Entry*>* getVector();
+        int getIndex(){ return index; };
         
         bool isAnimating();
         bool empty();

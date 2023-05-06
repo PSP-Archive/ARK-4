@@ -486,6 +486,42 @@ void GameManager::control(Controller* pad){
             else if (ret == 1){
                 // TODO: pause draw thread, remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
                 // make checks to prevent deleting stuff like "UMD Drive" and "Recovery" entries
+                Entry* e = this->getEntry();
+                string name = e->getName();
+                if (name != "UMD Driver" && name != "Recovery"){
+                    SystemMgr::pauseDraw();
+                    Menu* category = categories[selectedCategory];
+                    std::vector<Entry*>* entries = category->getVector();
+                    entries->erase(entries->begin()+category->getIndex());
+                    int retries = 0;
+                    while (categories[selectedCategory]->getVectorSize() == 0){
+                        if (selectedCategory < POPS) selectedCategory++;
+                        else selectedCategory = GAME;
+                        if (++retries >= 4){
+                            selectedCategory = -2; // no games available
+                            break;
+                        }
+                    }
+                    SystemMgr::resumeDraw();
+
+                    if (e->getType() == "ISO"){
+                        sceIoRemove(e->getPath().c_str());
+                    }
+                    else if (e->getType() == "EBOOT"){
+                        string path = e->getPath();
+                        if (strstr(path.c_str(), "/PSP/SAVEDATA/") != NULL){
+                            // remove eboot only
+                            sceIoRemove(e->getPath().c_str());
+                        }
+                        else{
+                            // remove entire folder
+                            string folder = path.substr(0, path.rfind('/')+1);
+                            Browser::recursiveFolderDelete(folder);
+                        }
+                    }
+                    // free resources
+                    delete e;
+                }
             }
         }
     }
