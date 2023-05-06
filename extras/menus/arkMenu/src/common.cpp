@@ -338,6 +338,7 @@ void common::loadTheme(){
 
     loading_theme = false;
     sceKernelWaitThreadEnd(loading_thread, NULL);
+    sceKernelDeleteThread(loading_thread);
 }
 
 void common::loadData(int ac, char** av){

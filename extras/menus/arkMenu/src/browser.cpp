@@ -215,10 +215,14 @@ void Browser::installTheme() {
 
     // load new theme
 	SystemMgr::pauseDraw();
+    printf("deleting current theme resources\n");
     common::deleteTheme();
+    printf("set new theme path to: %s\n", e->getPath().c_str());
     common::setThemePath((char*)e->getPath().c_str());
+    printf("loading new theme\n");
     common::loadTheme();
     SystemMgr::resumeDraw();
+    printf("done\n");
 
 	// Ask before overwriting theme
 	if (ret == 0) {
