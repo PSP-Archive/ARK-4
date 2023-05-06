@@ -8,6 +8,7 @@
 #include "system_mgr.h"
 #include "common.h"
 #include "controller.h"
+#include "music_player.h"
 
 string ark_version = "";
 struct tm today;
@@ -196,11 +197,17 @@ static void drawBattery(){
 static void systemDrawer(){
 
     switch (optionsDrawState){
-        case 0: // draw border and battery
+        case 0:
+            // draw border, battery and datetime
             common::getImage(IMAGE_DIALOG)->draw_scale(0, 0, 480, 20);
             drawBattery();
 			dateTime();
+            // draw entry text
             entries[cur_entry]->drawInfo();
+            // draw music icon is music player is open
+            if (MusicPlayer::isPlaying()){
+                common::getIcon(FILE_MUSIC)->draw(280, 3);
+            }
             break;
         case 1: // draw opening animation
             drawOptionsMenuCommon();

@@ -109,6 +109,7 @@ void Entry::gameBoot(){
         return;
 
     while (MP3::isPlaying()){
+        MP3::fullStop();
         sceKernelDelayThread(1000);
     }
 

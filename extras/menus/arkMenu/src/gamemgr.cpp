@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "system_mgr.h"
 #include "gamemgr.h"
+#include "music_player.h"
 #include "osk.h"
 #include "pmf.h"
 
@@ -541,7 +542,7 @@ bool GameManager::pmfPrompt(){
     
     bool pmfPlayback = entry->getIcon1() != NULL || entry->getSnd() != NULL;
         
-    if (pmfPlayback){
+    if (pmfPlayback && !MusicPlayer::isPlaying()){
         ret = pmfStart(entry, 10, 98);
     }
     else{

@@ -138,8 +138,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     }
 
     int channel = -1;
-    int samplingRate = sceMp3GetSamplingRate( mp3_handle );
-    int numChannels = sceMp3GetMp3ChannelNum( mp3_handle );
     int lastDecoded = 0;
     int volume = PSP_AUDIO_VOLUME_MAX;
     int numPlayed = 0;
@@ -195,6 +193,9 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
                 if (channel >= 0)
                     sceAudioSRCChRelease();
 
+                int samplingRate = sceMp3GetSamplingRate( mp3_handle );
+                int numChannels = sceMp3GetMp3ChannelNum( mp3_handle );
+
                 channel = sceAudioSRCChReserve( bytesDecoded/(2*numChannels),
                     samplingRate, numChannels );
             }
@@ -202,6 +203,8 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
             // Output the decoded samples and accumulate the 
             // number of played samples to get the playtime
             numPlayed += sceAudioSRCOutputBlocking( volume, buf );
+            sceAudioSRCChRelease();
+            channel = -1;
         }
         //sceKernelDelayThread(10000);
         
@@ -270,8 +273,6 @@ int MP3::getBufferSize(){
 
 void MP3::play(){
     if (running){
-        //stop();
-        //sceKernelWaitThreadEnd(mp3Thread, 0);
         return;
     }
     running = true;
@@ -306,4 +307,10 @@ int MP3::playThread(SceSize _args, void** _argp)
     sceKernelSignalSema(mp3_mutex, 1);
     sceKernelExitDeleteThread(0);
     return 0;
+}
+
+void MP3::fullStop(){
+    running = false;
+    sceKernelWaitThreadEnd(mp3Thread, NULL);
+    mp3Thread = -1;
 }

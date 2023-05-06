@@ -8,7 +8,6 @@ class MusicPlayer : public OptionsMenu{
 
     private:
         string path;
-        MP3* sound;
     
     public:
         MusicPlayer(string path);
@@ -17,6 +16,9 @@ class MusicPlayer : public OptionsMenu{
         void draw();
         
         int control();
+
+        static void pauseResume();
+        static bool isPlaying();
 
 };
 

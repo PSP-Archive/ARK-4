@@ -37,8 +37,10 @@ class MP3{
         void play();
         void stop();
         void pauseResume();
+        char* getFilename(){ return filename; };
         static int isPlaying();
         static int isPaused();
+        static void fullStop();
 };
 
 #endif
