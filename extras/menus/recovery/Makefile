@@ -56,6 +56,7 @@ LIBS = \
 		-lpsppower \
 		-lpspgum \
 		-lpspgu \
+		-lpsprtc \
 		-lz \
 		-lm \
 		-lpspvram \

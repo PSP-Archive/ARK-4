@@ -157,22 +157,12 @@ static void drawOptionsMenuCommon(){
 }
 
 static void dateTime() {
-	//sceRtcGetCurrentClockLocalTime(&date);
-	//sceRtcGetCurrentTick(&date);
-	//
-	//pspTime date;
-	time_t date;
-	struct tm * tmTime;
-	tmTime = localtime(&date);
-	sceKernelLibcTime(&date);
-	tmTime = localtime(&date);
-
-	
+	pspTime date;
+    sceRtcGetCurrentClockLocalTime(&date);
 
 	char dateStr[100];
-	//sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
-	sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", tmTime->tm_year+1900, tmTime->tm_mon, tmTime->tm_mday, tmTime->tm_hour, tmTime->tm_min, tmTime->tm_sec);
-	common::printText(300, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0);
+	sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
+    common::printText(300, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0);
 }
 
 static void drawBattery(){
