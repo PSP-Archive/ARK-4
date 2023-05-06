@@ -570,9 +570,21 @@ void GameManager::control(Controller* pad){
                             sceIoRemove(e->getPath().c_str());
                         }
                         else{
+                        	string path = e->getPath();
                             // remove entire folder
-                            string folder = path.substr(0, path.rfind('/')+1);
-                            Browser::recursiveFolderDelete(folder);
+							if(strstr(path.c_str(), "%/") != NULL) {
+                            	string folder = path.substr(0, path.rfind("/")+1);
+                            	Browser::recursiveFolderDelete(folder);
+								path.erase(path.find("%/"));
+								path += '/';
+                            	folder = path;
+                            	Browser::recursiveFolderDelete(folder);
+							}
+							else {
+								string folder = path.substr(0, path.rfind('/')+1);
+								Browser::recursiveFolderDelete(folder);
+							}
+							
                         }
                     }
                     // free resources
