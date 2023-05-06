@@ -33,14 +33,13 @@ int main(int argc, char** argv){
     // Load data (theme, config, font, etc)
     common::loadData(argc, argv);
 
-    // initialize FTP client driver for file browser
-    Browser::ftp_driver = new FTPDriver();
-
     int n_entries = 2;
 
     // Setup FTP App
     if (common::getPspModel() != PSP_11000){
         entries[n_entries++] = new FTPManager();
+        // initialize FTP client driver for file browser
+        Browser::ftp_driver = new FTPDriver();
     }
     // Setup settings and exit
     SettingsTable stab = { settings_entries, MAX_SETTINGS_OPTIONS };
