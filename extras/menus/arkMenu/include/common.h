@@ -94,6 +94,7 @@ namespace common{
     extern bool fileExists(const std::string &path);
     extern bool folderExists(const std::string &path);
     extern long fileSize(const std::string &path);
+    extern string beautifySize(long size);
     extern Image* getImage(int which);
     extern Image* getIcon(int which);
     extern Image* getCheckbox(int which);
@@ -105,6 +106,7 @@ namespace common{
     extern void resetConf();
     extern void playMenuSound();
     extern void printText(float x, float y, const char *text, u32 color=GRAY_COLOR, float size=SIZE_LITTLE, int glow=0, int scroll=0);
+    extern int calcTextWidth(const char* text, float size=SIZE_LITTLE);
     extern void clearScreen(u32 color = CLEAR_COLOR);
     extern void drawBorder();
     extern void drawScreen();

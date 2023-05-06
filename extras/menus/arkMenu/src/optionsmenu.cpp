@@ -6,7 +6,7 @@ OptionsMenu::OptionsMenu(char* description, int n_options, t_options_entry* entr
     this->n_options = n_options;
     this->entries = entries;
     this->index = 0;
-    this->w = 10*this->maxString();
+    this->w = min(this->maxString(), 480);
     this->h = 30 + 15*n_options;
     this->x = (480-w)/2;
     this->y = (272-h)/2;
@@ -17,12 +17,15 @@ OptionsMenu::~OptionsMenu(){
 
 int OptionsMenu::maxString(){
     int max = strlen(description);
+    char* cur_max = description;
     for (int i=0; i<n_options; i++){
         int len = strlen(entries[i].name);
-        if (len > max)
+        if (len > max){
             max = len;
+            cur_max = entries[i].name;
+        }
     }
-    return max;
+    return common::calcTextWidth(cur_max, SIZE_MEDIUM)+20;
 }
 
 void OptionsMenu::draw(){

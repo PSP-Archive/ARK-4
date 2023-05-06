@@ -1,5 +1,4 @@
 #include <cstdio>
-#include <sstream>
 #include <dirent.h>
 #include "browser_entries.h"
 #include "eboot.h"
@@ -61,18 +60,7 @@ unsigned BrowserFile::getFileSize(){
 void BrowserFile::calcSize(){
     // Calculate the size (in Bytes, KB, MB or GB) of a BrowserFile, if it's a BrowserFolder, simply return its type
     unsigned size = this->getFileSize();
-
-    ostringstream txt;
-
-    if (size < 1024)
-        txt<<size<<" Bytes";
-    else if (1024 < size && size < 1048576)
-        txt<<float(size)/1024.f<<" KB";
-    else if (1048576 < size && size < 1073741824)
-        txt<<float(size)/1048576.f<<" MB";
-    else
-        txt<<float(size)/1073741824.f<<" GB";
-    this->fileSize = txt.str();
+    this->fileSize = common::beautifySize(size);
 }
 
 bool BrowserFile::isSelected(){

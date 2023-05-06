@@ -1,5 +1,6 @@
 #include "common.h"
 #include <ctime>
+#include <sstream>
 #include <dirent.h>
 #include <algorithm>
 #include <unistd.h>
@@ -411,6 +412,20 @@ long common::fileSize(const std::string &path){
     return rc == 0 ? stat_buf.st_size : -1;
 }
 
+string common::beautifySize(long size){
+    ostringstream txt;
+
+    if (size < 1024)
+        txt<<size<<" Bytes";
+    else if (1024 < size && size < 1048576)
+        txt<<float(size)/1024.f<<" KB";
+    else if (1048576 < size && size < 1073741824)
+        txt<<float(size)/1048576.f<<" MB";
+    else
+        txt<<float(size)/1073741824.f<<" GB";
+    return txt.str();
+}
+
 Image* common::getImage(int which){
     return (which < MAX_IMAGES)? images[which] : images[IMAGE_LOADING];
 }
@@ -478,6 +493,12 @@ void common::printText(float x, float y, const char* text, u32 color, float size
     else
         intraFontPrint(font, x, y, text);
     
+}
+
+int common::calcTextWidth(const char* text, float size){
+    intraFontSetStyle(font, size, 0, 0, 0.f, INTRAFONT_WIDTH_VAR);
+    float w = intraFontMeasureText(font, text) + size*strlen(text);
+    return (int)ceil(w);
 }
 
 void common::clearScreen(u32 color){

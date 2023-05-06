@@ -482,6 +482,24 @@ void GameManager::control(Controller* pad){
 
             if (ret == 0){
                 // TODO: create a new options menu but each entry is some info about the game
+                Entry* e = this->getEntry();
+                string path = e->getPath();
+                if (e->getType() == "EBOOT"){
+                    path = path.substr(0, path.rfind('/')+1);
+                }
+                string fullname = "Name - " + e->getName(); // TODO: parse SFO and get real name
+                string fullpath = "Path - " + e->getPath();
+                string size = "Size - " + common::beautifySize(Browser::recursiveSize(path));
+                t_options_entry gameinfo_entries[] = {
+                    {0, (char*)fullname.c_str()},
+                    {1, (char*)size.c_str()},
+                    {2, (char*)fullpath.c_str()}
+                };
+                optionsmenu = new OptionsMenu("Game Info", sizeof(gameinfo_entries)/sizeof(t_options_entry), gameinfo_entries);
+                optionsmenu->control();
+                OptionsMenu* aux = optionsmenu;
+                optionsmenu = NULL;
+                delete aux;
             }
             else if (ret == 1){
                 // remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
