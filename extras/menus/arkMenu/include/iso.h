@@ -74,6 +74,7 @@ class Iso : public Entry
         void loadIcon();
         void getTempData1();
         void getTempData2();
+        SfoInfo getSfoInfo();
         
         static bool isISO(const char* filepath);
         

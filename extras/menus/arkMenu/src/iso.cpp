@@ -303,6 +303,22 @@ bool Iso::isPatched(){
     return (this->fastExtract("EBOOT.OLD") != NULL);
 }
 
+SfoInfo Iso::getSfoInfo(){
+    SfoInfo info = this->Entry::getSfoInfo();
+    unsigned int size = 0;
+    unsigned char* sfo_buffer = (unsigned char*)fastExtract("PARAM.SFO", &size);
+    if (sfo_buffer){
+        int title_size = sizeof(info.title);
+        Entry::getSfoParam(sfo_buffer, size, "TITLE", (unsigned char*)(info.title), &title_size);
+        
+        int id_size = sizeof(info.gameid);
+        Entry::getSfoParam(sfo_buffer, size, "DISC_ID", (unsigned char*)(info.gameid), &id_size);
+
+        free(sfo_buffer);
+    }
+    return info;
+}
+
 bool Iso::isISO(const char* filename){
     string ext = common::getExtension(filename);
     return (

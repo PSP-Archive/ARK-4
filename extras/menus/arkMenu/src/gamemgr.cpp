@@ -487,13 +487,16 @@ void GameManager::control(Controller* pad){
                 if (e->getType() == "EBOOT"){
                     path = path.substr(0, path.rfind('/')+1);
                 }
-                string fullname = "Name - " + e->getName(); // TODO: parse SFO and get real name
+                SfoInfo info = e->getSfoInfo();
+                string fullname = string("Name - ") + string(info.title);
+                string gameid = string("Game ID - ") + string(info.gameid);
                 string fullpath = "Path - " + e->getPath();
                 string size = "Size - " + common::beautifySize(Browser::recursiveSize(path));
                 t_options_entry gameinfo_entries[] = {
                     {0, (char*)fullname.c_str()},
-                    {1, (char*)size.c_str()},
-                    {2, (char*)fullpath.c_str()}
+                    {1, (char*)gameid.c_str()},
+                    {2, (char*)size.c_str()},
+                    {3, (char*)fullpath.c_str()}
                 };
                 optionsmenu = new OptionsMenu("Game Info", sizeof(gameinfo_entries)/sizeof(t_options_entry), gameinfo_entries);
                 optionsmenu->control();

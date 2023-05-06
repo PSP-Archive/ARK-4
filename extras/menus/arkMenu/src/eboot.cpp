@@ -213,6 +213,26 @@ char* Eboot::getSubtype(){
     return this->subtype;
 }
 
+SfoInfo Eboot::getSfoInfo(){
+    SfoInfo info = this->Entry::getSfoInfo();
+    // grab PARAM.SFO
+    u32 size = this->header->icon0_offset-this->header->param_offset;
+    if (size){
+
+        unsigned char* sfo_buffer = (unsigned char*)malloc(size);
+        this->readFile(sfo_buffer, this->header->param_offset, size);
+
+        int title_size = sizeof(info.title);
+        Entry::getSfoParam(sfo_buffer, size, "TITLE", (unsigned char*)(info.title), &title_size);
+        
+        int id_size = sizeof(info.gameid);
+        Entry::getSfoParam(sfo_buffer, size, "DISC_ID", (unsigned char*)(info.gameid), &id_size);
+
+        free(sfo_buffer);
+    }
+    return info;
+}
+
 bool Eboot::isEboot(const char* path){
     return (common::getExtension(path) == "pbp" || common::getMagic(path, 0) == EBOOT_MAGIC);
 }

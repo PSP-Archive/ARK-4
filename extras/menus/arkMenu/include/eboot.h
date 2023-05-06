@@ -61,6 +61,7 @@ class Eboot : public Entry{
         void loadIcon();
         void getTempData1();
         void getTempData2();
+        SfoInfo getSfoInfo();
         
         void doExecute();
         
