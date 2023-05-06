@@ -484,26 +484,32 @@ void GameManager::control(Controller* pad){
                 // TODO: create a new options menu but each entry is some info about the game
             }
             else if (ret == 1){
-                // TODO: pause draw thread, remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
+                // remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
                 // make checks to prevent deleting stuff like "UMD Drive" and "Recovery" entries
                 Entry* e = this->getEntry();
                 string name = e->getName();
                 if (name != "UMD Driver" && name != "Recovery"){
+                    // pause drawing so we don't crash due to race condition
                     SystemMgr::pauseDraw();
+                    // get current menu and it's game list
                     Menu* category = categories[selectedCategory];
                     std::vector<Entry*>* entries = category->getVector();
+                    // remove entry from list
                     entries->erase(entries->begin()+category->getIndex());
+                    // adjust selectedCategory
                     int retries = 0;
                     while (categories[selectedCategory]->getVectorSize() == 0){
                         if (selectedCategory < POPS) selectedCategory++;
                         else selectedCategory = GAME;
-                        if (++retries >= 4){
+                        if (++retries >= 4){ // can't find a valid menu
                             selectedCategory = -2; // no games available
                             break;
                         }
                     }
+                    // resume drawing
                     SystemMgr::resumeDraw();
 
+                    // delete file/folder
                     if (e->getType() == "ISO"){
                         sceIoRemove(e->getPath().c_str());
                     }
