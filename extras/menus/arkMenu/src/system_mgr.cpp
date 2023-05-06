@@ -3,6 +3,7 @@
 #include <psppower.h>
 #include <kubridge.h>
 #include <systemctrl.h>
+#include <psprtc.h>
 
 #include "system_mgr.h"
 #include "common.h"
@@ -155,6 +156,25 @@ static void drawOptionsMenuCommon(){
     }
 }
 
+static void dateTime() {
+	//sceRtcGetCurrentClockLocalTime(&date);
+	//sceRtcGetCurrentTick(&date);
+	//
+	//pspTime date;
+	time_t date;
+	struct tm * tmTime;
+	tmTime = localtime(&date);
+	sceKernelLibcTime(&date);
+	tmTime = localtime(&date);
+
+	
+
+	char dateStr[100];
+	//sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
+	sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", tmTime->tm_year+1900, tmTime->tm_mon, tmTime->tm_mday, tmTime->tm_hour, tmTime->tm_min, tmTime->tm_sec);
+	common::printText(300, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0);
+}
+
 static void drawBattery(){
 
     if (scePowerIsBatteryExist()) {
@@ -189,6 +209,7 @@ static void systemDrawer(){
         case 0: // draw border and battery
             common::getImage(IMAGE_DIALOG)->draw_scale(0, 0, 480, 20);
             drawBattery();
+			dateTime();
             common::printText(5, 13, entries[cur_entry]->getInfo().c_str(), LITEGRAY, SIZE_MEDIUM, 0, 0);
             break;
         case 1: // draw opening animation
