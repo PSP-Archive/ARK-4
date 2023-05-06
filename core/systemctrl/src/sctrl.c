@@ -386,9 +386,20 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         // Return Error Code
         return 0x80000104;
     }
-        
-    // Get Init Filename
-    const char * pbpPath = sceKernelInitFileName();
+
+    const char * pbpPath = NULL;
+    u32 real_magic = 0;
+    u32 paramOffset = 0;
+
+    int bootfrom = sceKernelBootFrom();
+	if (bootfrom == PSP_BOOT_DISC){
+        pbpPath = "disc0:/PSP_GAME/PARAM.SFO";
+        real_magic = 0x46535000; // PSF magic
+    }
+    else if (bootfrom == PSP_BOOT_MS){
+        pbpPath = sceKernelInitFileName();
+        real_magic = 0x50425000; // PBP magic
+    }
     
     // Init Filename not found
     if (pbpPath == NULL)
@@ -415,7 +426,7 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
 
     int magic;
     sceIoRead(fd, &magic, sizeof(magic));
-    if (magic != 0x50425000){ // Invalid Format
+    if (magic != real_magic){ // Invalid Format
         // close
         sceIoClose(fd);
         
@@ -426,12 +437,12 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         return 0x80000108;
     }
     
-    // seek to PARAM.SFO offset variable
-    sceIoLseek(fd, 0x08, PSP_SEEK_SET);
-    
-    // read PARAM.SFO offset
-    u32 paramOffset = 0;
-    sceIoRead(fd, &paramOffset, sizeof(u32));
+    if (bootfrom == PSP_BOOT_MS){
+        // seek to PARAM.SFO offset variable
+        sceIoLseek(fd, 0x08, PSP_SEEK_SET);
+        // read PARAM.SFO offset
+        sceIoRead(fd, &paramOffset, sizeof(u32));
+    }
     
     // seek to PARAM.SFO offset
     sceIoLseek(fd, paramOffset, PSP_SEEK_SET);

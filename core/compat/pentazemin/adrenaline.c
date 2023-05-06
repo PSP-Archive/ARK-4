@@ -67,66 +67,7 @@ int SendAdrenalineCmd(int cmd) {
 }
 
 int getSfoTitle(char *title, int n) {
-	SceUID fd = -1;
-	int size = 0;
-
-	memset(title, 0, n);
-
-	int bootfrom = sceKernelBootFrom();
-	if (bootfrom == PSP_BOOT_DISC) {
-        fd = sceIoOpen("disc0:/PSP_GAME/PARAM.SFO", PSP_O_RDONLY, 0);
-		if (fd < 0)
-			return fd;
-
-		size = sceIoLseek(fd, 0, PSP_SEEK_END);
-		sceIoLseek(fd, 0, PSP_SEEK_SET);
-	} else if (bootfrom == PSP_BOOT_MS) {
-		char *filename = sceKernelInitFileName();
-		if (!filename)
-			return -1;
-		
-		fd = sceIoOpen(filename, PSP_O_RDONLY, 0);
-		if (fd < 0)
-			return fd;
-
-		PBPHeader pbp_header;
-		sceIoRead(fd, &pbp_header, sizeof(PBPHeader));
-
-		if (pbp_header.magic == PBP_MAGIC) {
-			size = pbp_header.icon0_offset-pbp_header.param_offset;
-			sceIoLseek(fd, pbp_header.param_offset, PSP_SEEK_SET);
-		} else {
-			sceIoClose(fd);
-			return -2;
-		}
-	}
-
-	// Allocate buffer
-	SceUID blockid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_KERNEL, "", PSP_SMEM_Low, size, NULL);
-	if (blockid < 0)
-		return blockid;
-
-	void *sfo = sceKernelGetBlockHeadAddr(blockid);
-
-	// Read file
-	sceIoRead(fd, sfo, size);
-	sceIoClose(fd);
-
-	// Get SFO title
-	SFOHeader *header = (SFOHeader *)sfo;
-	SFODir *entries = (SFODir *)(sfo + sizeof(SFOHeader));
-
-	int i;
-	for (i = 0; i < header->nitems; i++) {
-		if (strcmp(sfo + header->fields_table_offs + entries[i].field_offs, "TITLE") == 0) {
-			strncpy(title, sfo + header->values_table_offs + entries[i].val_offs, n);
-			break;
-		}
-	}
-
-	sceKernelFreePartitionMemory(blockid);
-
-	return 0;
+	return sctrlGetInitPARAM("TITLE", NULL, &n, title);
 }
 
 void initAdrenalineInfo() {
