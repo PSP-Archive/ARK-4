@@ -30,6 +30,28 @@ void UMD::loadIcon(){
     this->icon0 = icon;
 }
 
+SfoInfo UMD::getSfoInfo(){
+    SfoInfo info = this->Entry::getSfoInfo();
+    unsigned int size = common::fileSize(UMD_SFO_PATH);
+    unsigned char* sfo_buffer = (unsigned char*)malloc(size);
+
+    if (sfo_buffer){
+
+        FILE* fp = fopen(UMD_SFO_PATH, "rb");
+        fread(sfo_buffer, 1, size, fp);
+        fclose(fp);
+
+        int title_size = sizeof(info.title);
+        Entry::getSfoParam(sfo_buffer, size, "TITLE", (unsigned char*)(info.title), &title_size);
+        
+        int id_size = sizeof(info.gameid);
+        Entry::getSfoParam(sfo_buffer, size, "DISC_ID", (unsigned char*)(info.gameid), &id_size);
+
+        free(sfo_buffer);
+    }
+    return info;
+}
+
 void UMD::getTempData1(){
     this->pic0 = NULL;
     this->pic1 = NULL;

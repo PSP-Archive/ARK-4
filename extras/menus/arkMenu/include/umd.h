@@ -11,6 +11,7 @@
 #define UMD_PIC1_PATH "disc0:/PSP_GAME/PIC1.PNG"
 #define UMD_SND0_PATH "disc0:/PSP_GAME/SND0.AT3"
 #define UMD_EBOOT_BIN "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN"
+#define UMD_SFO_PATH "disc0:/PSP_GAME/PARAM.SFO"
 #define UMD_APITYPE 0x120
 
 using namespace std;
@@ -30,7 +31,8 @@ class UMD : public Entry{
         void loadIcon();
         void getTempData1();
         void getTempData2();
-        
+        SfoInfo getSfoInfo();
+
         void doExecute();
         
         char* getType();

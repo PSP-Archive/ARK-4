@@ -409,7 +409,7 @@ bool common::folderExists(const std::string &path){
 long common::fileSize(const std::string &path){
     struct stat stat_buf;
     int rc = stat(path.c_str(), &stat_buf);
-    return rc == 0 ? stat_buf.st_size : -1;
+    return rc == 0 ? stat_buf.st_size : 0;
 }
 
 string common::beautifySize(long size){
