@@ -432,6 +432,50 @@ int gameremove(const char * file)
     return result;
 }
 
+char game150_delete[256];
+
+void recursiveFolderDelete(char* path){
+    //try to open directory
+    SceUID d = sceIoDopen(path);
+    
+    if(d >= 0)
+    {
+        SceIoDirent entry;
+        memset(&entry, 0, sizeof(SceIoDirent));
+        
+        //allocate memory to store the full file paths
+        char new_path[256];
+
+        //start reading directory entries
+        while(sceIoDread(d, &entry) > 0)
+        {
+            //skip . and .. entries
+            if (!strcmp(".", entry.d_name) || !strcmp("..", entry.d_name)) 
+            {
+                memset(&entry, 0, sizeof(SceIoDirent));
+                continue;
+            };
+            
+            //build new file path
+            strcpy(new_path, path);
+            strcat(new_path, entry.d_name);
+
+            if (FIO_SO_ISDIR(entry.d_stat.st_attr)){
+                strcat(new_path, "/");
+                recursiveFolderDelete(new_path);
+            }
+            else{
+                sceIoRemove(new_path);
+            }
+            
+        };
+        sceIoDclose(d); //close directory
+        int len = strlen(path);
+        if (path[len-1] == '/') path[len-1] = 0;
+        sceIoRmdir(path); //delete empty folder
+    };
+}
+
 //remove folder
 int gamermdir(const char * path)
 {
@@ -450,7 +494,12 @@ int gamermdir(const char * path)
 
         return result;
     }
-
+    if (game150_delete[0]) {
+        int k1 = pspSdkSetK1(0);
+        recursiveFolderDelete(game150_delete);
+        pspSdkSetK1(k1);
+        game150_delete[0] = 0;
+    }
     result = sceIoRmdir(path);
     #ifdef DEBUG
     printk("%s: %s 0x%08X\n", __func__, path, result);
@@ -509,6 +558,13 @@ int gamerename(const char *oldname, const char *newfile)
         printk("%s:<virtual2> %s %s -> 0x%08X\n", __func__, oldname, newfile, result);
         #endif
         return 0;
+    }
+
+    char* perc = strchr(oldname, '%');
+    if (perc && strstr(newfile, "_DEL_")){
+        memset(game150_delete, 0, sizeof(game150_delete));
+        strncpy(game150_delete, oldname, perc-oldname);
+        strcat(game150_delete, "/");
     }
 
     result = sceIoRename(oldname, newfile);
