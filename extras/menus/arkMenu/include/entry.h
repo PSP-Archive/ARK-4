@@ -85,6 +85,7 @@ class Entry{
         string getName();
         void setName(string name);
         string getPath();
+        void setPath(string path);
         
         Image* getIcon();
         void* getIcon1();

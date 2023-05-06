@@ -472,7 +472,8 @@ void GameManager::control(Controller* pad){
             t_options_entry options_entries[] = {
                 {OPTIONS_CANCELLED, "Cancel"},
                 {0, "View Info"},
-                {1, "Delete"},
+                {1, "Rename"},
+                {2, "Delete"},
             };
             optionsmenu = new OptionsMenu("Game Options", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
             int ret = optionsmenu->control();
@@ -505,6 +506,34 @@ void GameManager::control(Controller* pad){
                 delete aux;
             }
             else if (ret == 1){
+                // rename the ISO or Eboot folder name
+                SystemMgr::pauseDraw();
+                Entry* e = this->getEntry();
+                string name = e->getName();
+                OSK osk;
+
+                char parent[128];
+                strcpy(parent, e->getPath().c_str());
+                char* pname = strstr(parent, name.c_str());
+                *pname = 0;
+                
+                osk.init("New name for Game", name.c_str(), 50);
+                osk.loop();
+                if(osk.getResult() != OSK_CANCEL)
+                {
+                    char tmpText[51];
+                    osk.getText((char*)tmpText);
+                    string newpath = (string(parent)+string(tmpText));
+                    string oldpath = (string(parent)+name);
+                    
+                    sceIoRename(oldpath.c_str(), newpath.c_str());
+                    e->setName(tmpText);
+                    e->setPath(newpath);
+                }
+                osk.end();
+                SystemMgr::resumeDraw();
+            }
+            else if (ret == 2){
                 // remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
                 // make checks to prevent deleting stuff like "UMD Drive" and "Recovery" entries
                 Entry* e = this->getEntry();

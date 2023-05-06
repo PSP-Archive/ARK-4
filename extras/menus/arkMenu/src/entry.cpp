@@ -63,6 +63,10 @@ string Entry::getPath(){
     return this->path;
 }
 
+void Entry::setPath(string path){
+    this->path = path;
+}
+
 Image* Entry::getIcon(){
     return this->icon0;
 }
