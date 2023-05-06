@@ -55,10 +55,7 @@ BrowserFile::~BrowserFile(){
 }
 
 unsigned BrowserFile::getFileSize(){
-    int fd = sceIoOpen(path.c_str(), PSP_O_RDONLY, 0777);
-    unsigned size = sceIoLseek(fd, 0, SEEK_END);
-    sceIoClose(fd);
-    return size;
+    return common::fileSize(this->path);
 }
 
 void BrowserFile::calcSize(){

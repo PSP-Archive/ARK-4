@@ -83,6 +83,7 @@ class Browser : public SystemEntry{
         bool isStillLoading(){ return false; }
         
         static void recursiveFolderDelete(string path);
+        static long recursiveSize(string path);
         
         static BrowserDriver* ftp_driver;
         

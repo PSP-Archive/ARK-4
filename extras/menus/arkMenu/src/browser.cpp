@@ -810,6 +810,66 @@ void Browser::recursiveFolderDelete(string path){
     };
 }
 
+long Browser::recursiveSize(string path){
+    SceUID d = sceIoDopen(path.c_str());
+    
+    long total_size = 0;
+
+    if(d >= 0)
+    {
+        SceIoDirent entry;
+        memset(&entry, 0, sizeof(SceIoDirent));
+
+        pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
+        pri_dirent->size = sizeof(pspMsPrivateDirent);
+        entry.d_private = (void*)pri_dirent;
+        
+        //allocate memory to store the full file paths
+        string new_path;
+
+        //start reading directory entries
+        while(sceIoDread(d, &entry) > 0)
+        {
+            //skip . and .. entries
+            if (!strcmp(".", entry.d_name) || !strcmp("..", entry.d_name)) 
+            {
+                memset(&entry, 0, sizeof(SceIoDirent));
+                continue;
+            };
+            
+            //build new file path
+            new_path = path + string(entry.d_name);
+
+            if (FIO_SO_ISDIR(entry.d_stat.st_attr)){
+                new_path = new_path + "/";
+                if (!common::folderExists(new_path)){
+                    new_path = path + string(entry.d_name).substr(0, 4) + string(pri_dirent->s_name) + "/";
+                    printf("%d: %s\n", (int)common::folderExists(new_path), new_path.c_str());
+                }
+                total_size += recursiveSize(new_path);
+            }
+            else{
+                if (!common::fileExists(new_path)){
+                    new_path = path + string(entry.d_name).substr(0, 4) + string(pri_dirent->s_name);
+                    printf("%d: %s\n", (int)common::fileExists(new_path), new_path.c_str());
+                }
+                total_size += common::fileSize(new_path);
+            }
+            
+        };
+        
+        sceIoDclose(d); //close directory
+        sceIoRmdir(path.substr(0, path.length()-1).c_str()); //delete empty folder
+        free(pri_dirent);
+    }
+    else if ((d=sceIoOpen(path.c_str(), PSP_O_RDONLY, 0777)) >= 0){
+        total_size = sceIoLseek(d, 0, SEEK_END);
+        sceIoClose(d);
+    }
+
+    return total_size;
+}
+
 void Browser::deleteFolder(string path){
     // Recursively delete the path
     
