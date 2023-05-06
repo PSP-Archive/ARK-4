@@ -72,8 +72,6 @@ class Entry{
         
         int icon1_size;
         int at3_size;
-
-        //virtual void extractFile(const char * name, unsigned block, unsigned size)=0;
         
         virtual void doExecute()=0;
                 

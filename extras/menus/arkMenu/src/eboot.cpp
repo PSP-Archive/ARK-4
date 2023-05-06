@@ -97,29 +97,6 @@ void Eboot::readFile(void* dst, unsigned offset, unsigned size){
     fclose(src);
 }
 
-void Eboot :: extractFile(const char * name, unsigned block, unsigned size)
-{
-    FILE * b;
-    FILE* src;
-    b = fopen(name, "wb");
-    src = fopen(this->path.c_str(), "rb");
-    fseek(src, block, SEEK_SET);
-    
-    void* data = malloc(min(size, (unsigned)512));
-    
-    while (size){
-        int toRead = 512;
-        if (size < 512)
-            toRead = size;
-        fread(data, toRead, 1, src);
-        fwrite(data, toRead, 1, b);
-        size -= toRead;
-    }        
-    
-    fclose(src);
-    fclose(b);
-};
-
 int Eboot::getEbootType(const char* path){
 
     int ret = UNKNOWN_TYPE;

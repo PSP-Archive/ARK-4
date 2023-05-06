@@ -49,7 +49,6 @@ class Eboot : public Entry{
         void readHeader();
         
         void readFile(void* dst, unsigned offset, unsigned size);
-        void extractFile(const char * name, unsigned block, unsigned size);
         
     public:
     
