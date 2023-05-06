@@ -452,7 +452,7 @@ void Browser::refreshDirs(){
     while ((sceIoDread(dir, dit)) > 0){
         printf("got entry: %s\n", dit->d_name);
         string ptmp = string(this->cwd)+string(dit->d_name);
-        bool folder_exists = common::folderExists(ptmp+"/");
+        bool folder_exists = (strcmp(dit->d_name, ".") == 0 || strcmp(dit->d_name, "..") == 0 || common::folderExists(ptmp+"/"));
         if (folder_exists || FIO_SO_ISDIR(dit->d_stat.st_attr)){
             printf("is dir\n");
             if (!folder_exists){
