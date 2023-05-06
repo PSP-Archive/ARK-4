@@ -173,32 +173,34 @@ void Menu::draw(bool selected){
             continue;
         }
         else{
-        
+            Image* e_icon = getEntry(i)->getIcon();
             if (animating == 1 && i == this->index-1 && !fastScrolling){
-                getEntry(i)->getIcon()->draw_scale(xoffset+2, yoffset+anim*40, 0.75f, 0.75f);
+                e_icon->draw_scale(xoffset+2, yoffset+anim*40, 0.75f, 0.75f);
                 yoffset += 60;
             }
             else if (animating == -1 && i == this->index+1 && !fastScrolling){
-                getEntry(i)->getIcon()->draw_scale(xoffset+2, yoffset+anim*40, 0.75f, 0.75f);
+                e_icon->draw_scale(xoffset+2, yoffset+anim*40, 0.75f, 0.75f);
                 yoffset += 60;
             }
             else{
-                getEntry(i)->getIcon()->draw_scale(xoffset, yoffset+anim*40, 0.5f, 0.5f);
+                e_icon->draw_scale(xoffset, yoffset+anim*40, 0.5f, 0.5f);
                 yoffset += 40;
             }
         }
     }
 
     if (selected){
-        int height = getEntry(this->index)->getIcon()->getTexture()->height;
+        Image* e_icon = getEntry(this->index)->getIcon();
+        int height = e_icon->getTexture()->height;
         if (height != 80)
             curentry_yoffset = (272-height)/2;
         
         if (animating){
-            getEntry(this->index)->getIcon()->draw_scale(xoffset+2, curentry_yoffset+5+anim*40, 0.75f, 0.75f);
+            e_icon->draw_scale(xoffset+2, curentry_yoffset+5+anim*40, 0.75f, 0.75f);
         }
         else {
-            getEntry(this->index)->getIcon()->draw(xoffset+5, curentry_yoffset+5+anim*40);
+            common::printText(xoffset, curentry_yoffset+(height/2), "...", WHITE_COLOR, 10.f, 1);
+            e_icon->draw(xoffset+5, curentry_yoffset+5+anim*40);
         }   
     }
 }
