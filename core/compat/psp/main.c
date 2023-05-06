@@ -23,7 +23,6 @@ STMOD_HANDLER previous = NULL;
 
 // for some model specific patches
 u32 psp_model = 0;
-u32 psp_fw_version = 0;
 
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
@@ -57,9 +56,6 @@ int module_start(SceSize args, void * argp)
 {
     // set rebootex for PSP
     sctrlHENSetRebootexOverride(rebootbuffer_psp);
-
-    // get firmware version
-    psp_fw_version = sceKernelDevkitVersion();
     
     // get psp model
     psp_model = sceKernelGetModel();

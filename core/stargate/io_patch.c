@@ -24,7 +24,12 @@ struct DeviceSize {
 static u32 _sceIoDevctl(const char *name, int cmd, u32 argAddr, int argLen, u32 outPtr, int outLen){
     u32 res = sceIoDevctl(name, cmd, argAddr, argLen, outPtr, outLen);
 
-    if (cmd == 0x02425818){
+    if (cmd == 0x02425818 && (
+            strcmp("fatms0:", name) == 0 ||
+            strcmp("fatef0:", name) == 0 ||
+            strcmp("ms0:", name) == 0 ||
+            strcmp("ef0:", name) == 0 )
+    ){
 
         struct DeviceSize* deviceSize = *(struct DeviceSize**)argAddr;
 

@@ -119,10 +119,15 @@ char *sctrlSEGetUmdFileEx(char *input)
 // Set Reboot Configuration UMD File
 void sctrlSESetUmdFile(char * file)
 {
-    // Overwrite Reboot Configuration UMD File
-    strncpy(rebootex_config.iso_path, file, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1);
-    // Terminate String
-    rebootex_config.iso_path[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
+    if (file == NULL || file[0] == 0){
+        rebootex_config.iso_path[0] = 0;
+    }
+    else {
+        // Overwrite Reboot Configuration UMD File
+        strncpy(rebootex_config.iso_path, file, REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1);
+        // Terminate String
+        rebootex_config.iso_path[REBOOTEX_CONFIG_ISO_PATH_MAXSIZE - 1] = 0;
+    }
 }
 
 void sctrlSESetUmdFileEx(const char *umd, char *input)

@@ -16,7 +16,6 @@
 #include "region_free.h"
 #include "libs/graphics/graphics.h"
 
-extern u32 psp_fw_version;
 extern u32 psp_model;
 extern ARKConfig* ark_config;
 extern STMOD_HANDLER previous;

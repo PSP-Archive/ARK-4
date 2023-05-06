@@ -412,7 +412,7 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
     }
     
     // Open PBP File
-    int fd = sceIoOpen(pbpPath, PSP_O_RDONLY, 0);
+    int fd = sceIoOpen(pbpPath, PSP_O_RDONLY, 0777);
     
     // PBP File not found
     if (fd < 0)
@@ -557,6 +557,9 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
     
     // close pbp file
     sceIoClose(fd);
+
+    // Restore Syscall Permissions
+    pspSdkSetK1(k1);
     
     // Return Error Code (we just treat a missing parameter as file not found, it should work)
     return 0x80010002;
