@@ -396,7 +396,7 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         pbpPath = "disc0:/PSP_GAME/PARAM.SFO";
         real_magic = 0x46535000; // PSF magic
     }
-    else if (bootfrom == PSP_BOOT_MS){
+    else{
         pbpPath = sceKernelInitFileName();
         real_magic = 0x50425000; // PBP magic
     }
