@@ -295,7 +295,6 @@ void MP3::play(){
 void MP3::stop(){
     running = false;
     sceKernelWaitThreadEnd(mp3Thread, 0);
-    mp3Thread = -1;
 }
 
 void MP3::pauseResume(){
@@ -324,5 +323,4 @@ int MP3::playThread(SceSize _args, void** _argp)
 void MP3::fullStop(){
     running = false;
     sceKernelWaitThreadEnd(mp3Thread, NULL);
-    mp3Thread = -1;
 }

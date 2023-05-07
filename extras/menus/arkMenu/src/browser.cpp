@@ -185,7 +185,19 @@ void Browser::update(){
     }
     else if (Entry::isMusic(this->get()->getPath().c_str())){
         this->hide_main_window = true;
-        optionsmenu = new MusicPlayer(this->get()->getPath());
+        vector<string> selected;
+        for (int i=0; i<entries->size(); i++){
+            BrowserFile* e = (BrowserFile*)entries->at(i);
+            if (e->isSelected()) selected.push_back(e->getPath());
+        }
+        BrowserFile* e = (BrowserFile*)get();
+        if (!e->isSelected()) selected.push_back(e->getPath());
+        if (selected.size() > 1){
+            optionsmenu = new MusicPlayer(&selected);
+        }
+        else{
+            optionsmenu = new MusicPlayer(this->get()->getPath());
+        }
         optionsmenu->control();
         MusicPlayer* aux = (MusicPlayer*)optionsmenu;
         optionsmenu = NULL;

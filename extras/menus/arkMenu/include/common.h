@@ -61,6 +61,7 @@ enum {
     MAX_FILE_TYPES,
 };
 
+#define SIZE_TINY 0.4f
 #define SIZE_LITTLE 0.51f
 #define SIZE_MEDIUM 0.6f
 #define SIZE_BIG 0.7f

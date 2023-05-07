@@ -4,16 +4,43 @@
 #include "system_mgr.h"
 
 static MP3* current_song = NULL;
+static vector<string> playlist = vector<string>();
+static int cur_play = 0;
 
 static void mp3_cleanup(MP3* music){
+    printf("cleaning up mp3\n");
     if (music == current_song){
+        if (cur_play+1 < playlist.size()){
+            printf("running next song\n");
+            cur_play++;
+            current_song = new MP3((char*)playlist[cur_play].c_str());
+            current_song->on_music_end = mp3_cleanup;
+            current_song->play();
+        }
+        else{
+            printf("stopping\n");
+            current_song = NULL;
+            playlist.clear();
+            cur_play = 0;
+        }
+        printf("freeing old resources\n");
         delete music;
-        current_song = NULL;
     }
+    printf("mp3 clean done\n");
 }
 
 MusicPlayer::MusicPlayer(string path){
     this->path = path;
+}
+
+MusicPlayer::MusicPlayer(vector<string>* pl){
+    this->path = pl->at(0);
+    if (playlist.size() == 0){
+        for (int i=0; i<pl->size(); i++){
+            playlist.push_back(pl->at(i));
+        }
+        cur_play = 0;
+    }
 }
 
 MusicPlayer::~MusicPlayer(){
@@ -24,6 +51,17 @@ void MusicPlayer::draw(){
     common::getImage(IMAGE_DIALOG)->draw_scale(0, 0, 480, 20);
     common::printText(5, 13, info.c_str(), LITEGRAY, SIZE_MEDIUM, 1, 0);
     common::printText(15, 13, (current_song)? current_song->getFilename() : this->path.c_str(), LITEGRAY, SIZE_MEDIUM, 1, 1);
+
+    if (playlist.size()){
+        common::getImage(IMAGE_DIALOG)->draw_scale(20, 30, 450, 235);
+        int y = 70;
+        
+        for (int i=0; i<playlist.size(); i++){
+            if (i == cur_play) common::printText(30, y, ">");
+            common::printText(40, y, playlist[i].c_str(), LITEGRAY, SIZE_TINY);
+            y+=20;
+        }
+    }
 }
         
 int MusicPlayer::control(){
@@ -56,7 +94,7 @@ int MusicPlayer::control(){
         current_song->on_music_end = mp3_cleanup;
         current_song->play();
     }
-
+    printf("playing\n");
     while (running && MP3::isPlaying()){
         pad.update();
 
@@ -64,19 +102,20 @@ int MusicPlayer::control(){
             current_song->pauseResume();
         }
         else if (pad.decline()){
+            printf("stopping\n");
+            playlist.clear();
+            cur_play = 0;
             current_song->stop();
             running = false;
             while (MP3::isPlaying()){
                 sceKernelDelayThread(1000);
             }
-            delete current_song;
-            current_song = NULL;
         }
         else if (pad.triangle() && !MP3::isPaused()){
             running = false;
         }
     }
-
+    printf("stopped\n");
     pad.flush();
     
     SystemMgr::exitFullScreen();
