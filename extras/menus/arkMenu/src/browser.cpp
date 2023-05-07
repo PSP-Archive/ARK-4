@@ -1422,14 +1422,14 @@ void Browser::optionsMenu(){
         }
 		else if (pad->right()) {
 			common::playMenuSound();
-			if(pEntryIndex >= MAX_OPTIONS-1)
+			if(pEntryIndex+2 >= MAX_OPTIONS-1)
 				pEntryIndex = MAX_OPTIONS-1;
 		    else	
 				pEntryIndex += 3;
 		}
 		else if (pad->left()) {
 			common::playMenuSound();
-			if(pEntryIndex <= 0)
+			if(pEntryIndex-2 < 0)
 				pEntryIndex = 0;
 			else
 				pEntryIndex -= 3;
