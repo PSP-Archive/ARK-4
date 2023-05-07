@@ -188,7 +188,7 @@ void Browser::update(){
         vector<string> selected;
         for (int i=0; i<entries->size(); i++){
             BrowserFile* e = (BrowserFile*)entries->at(i);
-            if (e->isSelected()) selected.push_back(e->getPath());
+            if (e->isSelected() && e->getFileType() == FILE_MUSIC) selected.push_back(e->getPath());
         }
         BrowserFile* e = (BrowserFile*)get();
         if (!e->isSelected()) selected.push_back(e->getPath());

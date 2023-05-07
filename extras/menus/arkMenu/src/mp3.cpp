@@ -83,6 +83,19 @@ int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
     }
 }
 
+u32 findMP3StreamStart(int file_handle, void* buffer, int buffer_size, char* tmp_buf){
+    u8* buf = (u8*)buffer;
+    if (file_handle>=0){
+        buf = (u8*)tmp_buf;
+        sceIoRead(file_handle, buf, MP3BUF_SIZE);
+    }
+    if (buf[0] == 'I' && buf[1] == 'D' && buf[2] == '3'){
+        u32 header_size = (buf[9]|(buf[8] << 7)|(buf[7] << 14)|(buf[6] << 21));
+        return header_size+10;
+    }
+    return 0;
+}
+
 void playMP3File(char* filename, void* buffer, int buffer_size)
 {
 
@@ -109,6 +122,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     status = sceMp3InitResource();
     if(status < 0) {
+        running = 0;
         return;
     }
 
@@ -119,7 +133,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     short* pcmBuf = (short*)memalign(64, PCMBUF_SIZE);
     memset(mp3Buf, 0, MP3BUF_SIZE);
     memset(pcmBuf, 0, PCMBUF_SIZE);
-    mp3Init.mp3StreamStart = 0;
+    mp3Init.mp3StreamStart = findMP3StreamStart(file_handle, buffer, buffer_size, mp3Buf);
     mp3Init.mp3StreamEnd = (file_handle >= 0)? sceIoLseek32( file_handle, 0, SEEK_END ) : buffer_size;
     mp3Init.unk1 = 0;
     mp3Init.unk2 = 0;
@@ -143,8 +157,9 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     // Fill the stream buffer with some data so that sceMp3Init has something to
     // work with
     fillStreamBuffer(file_handle, mp3_handle, buffer, buffer_size);
-
+    
     status = sceMp3Init( mp3_handle );
+    
     if (status < 0){
         goto mp3_terminate;
     }
