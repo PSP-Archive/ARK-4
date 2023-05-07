@@ -114,6 +114,11 @@ int module_start(SceSize args, void * argp)
     printk("stargate started: compiled at %s %s\r\n", __DATE__, __TIME__);
     #endif
 
+    int apitype = sceKernelInitApitype();
+
+    if (apitype == 0x141 || apitype == 0x152)
+        return 0; // don't do anything in homebrew
+
     patch_sceMesgLed();
 
     // Fix Idol Master

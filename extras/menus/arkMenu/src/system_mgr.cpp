@@ -176,12 +176,17 @@ static void drawBattery(){
 
         u32 color;
 
-        if (percent == 100)
-            color = GREEN;
-        else if (percent >= 17)
-            color = LITEGRAY;
-        else
-            color = RED;
+        if (scePowerIsBatteryCharging()){
+            color = BLUE;
+        }
+        else{
+            if (percent == 100)
+                color = GREEN;
+            else if (percent >= 17)
+                color = LITEGRAY;
+            else
+                color = RED;
+        }
 
         ya2d_draw_rect(455, 6, 20, 8, color, 0);
         ya2d_draw_rect(454, 8, 1, 5, color, 1);
