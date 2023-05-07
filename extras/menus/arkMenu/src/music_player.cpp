@@ -109,6 +109,17 @@ int MusicPlayer::control(){
         else if (pad.triangle() && !MP3::isPaused()){
             running = false;
         }
+        else if (pad.LT()){
+            if (cur_play > 0 && playlist.size()){
+                cur_play-=2;
+                current_song->stop();
+            }
+        }
+        else if (pad.RT()){
+            if (cur_play+1 < playlist.size()){
+                current_song->stop();
+            }
+        }
     }
     pad.flush();
     
