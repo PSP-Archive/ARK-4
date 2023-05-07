@@ -2,7 +2,7 @@
 
 ## Version 4.20.16 (2023-05-07)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42016
-- Legacy 1.50 homebrew in `KXploit` format is now properly deleted in `XMB` an `launcher`.
+- Legacy 1.50 homebrew in `KXploit` format is now properly deleted in `XMB` and `launcher`.
 - Added `rename` option to game menu in custom launcher.
 - Cleaned up `pentazemin` compatibility layer.
 - Allow `Stargate` no-DRM engine to run in `UMD` games. Fixes crashing in some `UMD`s.
