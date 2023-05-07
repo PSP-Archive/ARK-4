@@ -1,8 +1,9 @@
 #include "mp3.h"
 #include "debug.h"
 
-#define MP3BUF_SIZE 128*1024
-#define PCMBUF_SIZE 128*(1152/2)
+#define SAMPLE_PER_FRAME 1152
+#define MP3BUF_SIZE (8*1024)
+#define PCMBUF_SIZE (SAMPLE_PER_FRAME*2*4)
 
 //static char mp3Buf[MP3BUF_SIZE]  __attribute__((aligned(64)));
 //static short pcmBuf[PCMBUF_SIZE]  __attribute__((aligned(64)));
@@ -24,9 +25,14 @@ int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
         SceInt32 write;
         SceInt32 pos;
         // Get Info on the stream (where to fill to, how much to fill, where to fill from)
-        int status = sceMp3GetInfoToAddStreamData(handle, (SceUChar8**)&dst, &write, &pos);
-        if (status < 0)
+        int status;
+        do{
+            status = sceMp3GetInfoToAddStreamData(handle, (SceUChar8**)&dst, &write, &pos);
+        } while (status < 0 && status == 0x80268002);
+        if (status < 0){
+            printf("ERROR: sceMp3GetInfoToAddStreamData(1) -> %p\n", status);
             return 0;
+        }
 
         // Seek file to position requested
         status = sceIoLseek32( fd, pos, SEEK_SET );
@@ -45,8 +51,10 @@ int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
 
         // Notify mp3 library about how much we really wrote to the stream buffer
         status = sceMp3NotifyAddStreamData( handle, read );
-        if (status < 0)
+        if (status < 0){
+            printf("ERROR: sceMp3NotifyAddStreamData -> %p\n", status);
             return 0;
+        }
 
         return (pos > 0);
     }
@@ -63,6 +71,7 @@ int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
         
         int status = sceMp3GetInfoToAddStreamData(handle, (SceUChar8**)&dst, &write, &pos);
         if (status < 0){
+            printf("ERROR: sceMp3GetInfoToAddStreamData(2) -> %p\n", status);
             return 0;
         }
             
@@ -74,6 +83,7 @@ int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
         memcpy(dst, (u8*)buffer+pos, write);
         status = sceMp3NotifyAddStreamData(handle, write);
         if (status < 0){
+            printf("ERROR: sceMp3NotifyAddStreamData -> %p\n", status);
             return 0;
         }
         return (pos > 0);
@@ -103,6 +113,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     status = sceMp3InitResource();
     if(status < 0) {
+        printf("ERROR: sceMp3InitResource -> %p\n", status);
         return;
     }
 
@@ -125,6 +136,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     mp3_handle = sceMp3ReserveMp3Handle( &mp3Init );
 
     if (mp3_handle < 0){
+        printf("ERROR: sceMp3ReserveMp3Handle -> %p\n", mp3_handle);
         return;
     }
 
@@ -134,6 +146,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     status = sceMp3Init( mp3_handle );
     if (status < 0){
+        printf("ERROR: sceMp3Init -> %p\n", status);
         return;
     }
 
@@ -198,11 +211,17 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
                 channel = sceAudioSRCChReserve( bytesDecoded/(2*numChannels),
                     samplingRate, numChannels );
+                if (channel < 0){
+                    printf("ERROR: sceAudioSRCChReserve -> %p\n", channel);
+                }
             }
 
             // Output the decoded samples and accumulate the 
             // number of played samples to get the playtime
             numPlayed += sceAudioSRCOutputBlocking( volume, buf );
+            while (sceAudioGetChannelRestLen(channel) > 0){ // wait for the audio to be outputted
+                sceKernelDelayThread(0);
+            }
             sceAudioSRCChRelease();
             channel = -1;
         }
