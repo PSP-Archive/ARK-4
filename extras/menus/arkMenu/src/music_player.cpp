@@ -25,17 +25,24 @@ static void mp3_cleanup(MP3* music){
     }
 }
 
+static void add_playlist(string path){
+    for (int i=0; i<playlist.size(); i++){
+        if (playlist[i] == path) return;
+    }
+    playlist.push_back(path);
+}
+
 MusicPlayer::MusicPlayer(string path){
     this->path = path;
     if (playlist.size()){
-        playlist.push_back(path);
+        add_playlist(path);
     }
 }
 
 MusicPlayer::MusicPlayer(vector<string>* pl){
     this->path = pl->at(0);
     for (int i=0; i<pl->size(); i++){
-        playlist.push_back(pl->at(i));
+        add_playlist(pl->at(i));
     }
 }
 
