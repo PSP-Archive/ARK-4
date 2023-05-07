@@ -2,21 +2,22 @@
 #include "common.h"
 
 #define CONTROL_DELAY 10
+#define CONTROL_IGNORE 3
 
 Controller::Controller(){
-    this->pad = new SceCtrlData;
     this->nowpad = this->newpad = this->oldpad = 0;
     this->n = 0;
 }
 
 Controller::~Controller(){
-    delete this->pad;
 }
         
 void Controller::update(){
-    sceCtrlReadBufferPositive(this->pad, 1);
+
+    for (int i=0; i<CONTROL_IGNORE; i++)
+        sceCtrlReadBufferPositive(&pad, 1);
     
-    nowpad = pad->Buttons;
+    nowpad = pad.Buttons;
     newpad = nowpad & ~oldpad;
     
     if (oldpad == nowpad){
@@ -32,8 +33,8 @@ void Controller::update(){
 }
 
 void Controller::flush(){
-    while (this->pad->Buttons)
-        sceCtrlReadBufferPositive(this->pad, 1);
+    while (pad.Buttons)
+        sceCtrlReadBufferPositive(&pad, 1);
 }
 
 bool Controller::wait(void* busy_wait){

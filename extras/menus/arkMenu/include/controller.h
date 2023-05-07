@@ -7,7 +7,7 @@
 class Controller{
 
     private:
-        SceCtrlData* pad;
+        SceCtrlData pad;
         
         u32 nowpad, newpad, oldpad;
         
