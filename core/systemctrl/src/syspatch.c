@@ -111,6 +111,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         patchMediaSync(mod);
         // Fix 6.60 plugins/apps on 6.61
         sctrlHENPatchSyscall(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0x3FC9AE6A), &fakeDevkitVersion);
+        sctrlHENPatchSyscall(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0xFC114573), &fakeDevkitVersion);
         // Exit Handler
         goto flush;
     }

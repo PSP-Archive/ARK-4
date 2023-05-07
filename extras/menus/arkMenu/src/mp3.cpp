@@ -25,12 +25,8 @@ int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
         SceInt32 write;
         SceInt32 pos;
         // Get Info on the stream (where to fill to, how much to fill, where to fill from)
-        int status;
-        do{
-            status = sceMp3GetInfoToAddStreamData(handle, (SceUChar8**)&dst, &write, &pos);
-        } while (status < 0 && status == 0x80268002);
+        int status = sceMp3GetInfoToAddStreamData(handle, (SceUChar8**)&dst, &write, &pos);
         if (status < 0){
-            printf("ERROR: sceMp3GetInfoToAddStreamData(1) -> %p\n", status);
             return 0;
         }
 
@@ -52,7 +48,6 @@ int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
         // Notify mp3 library about how much we really wrote to the stream buffer
         status = sceMp3NotifyAddStreamData( handle, read );
         if (status < 0){
-            printf("ERROR: sceMp3NotifyAddStreamData -> %p\n", status);
             return 0;
         }
 
@@ -71,7 +66,6 @@ int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
         
         int status = sceMp3GetInfoToAddStreamData(handle, (SceUChar8**)&dst, &write, &pos);
         if (status < 0){
-            printf("ERROR: sceMp3GetInfoToAddStreamData(2) -> %p\n", status);
             return 0;
         }
             
@@ -83,7 +77,6 @@ int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
         memcpy(dst, (u8*)buffer+pos, write);
         status = sceMp3NotifyAddStreamData(handle, write);
         if (status < 0){
-            printf("ERROR: sceMp3NotifyAddStreamData -> %p\n", status);
             return 0;
         }
         return (pos > 0);
@@ -113,7 +106,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     status = sceMp3InitResource();
     if(status < 0) {
-        printf("ERROR: sceMp3InitResource -> %p\n", status);
         return;
     }
 
@@ -136,7 +128,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     mp3_handle = sceMp3ReserveMp3Handle( &mp3Init );
 
     if (mp3_handle < 0){
-        printf("ERROR: sceMp3ReserveMp3Handle -> %p\n", mp3_handle);
         return;
     }
 
@@ -146,7 +137,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     status = sceMp3Init( mp3_handle );
     if (status < 0){
-        printf("ERROR: sceMp3Init -> %p\n", status);
         return;
     }
 
@@ -211,9 +201,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
                 channel = sceAudioSRCChReserve( bytesDecoded/(2*numChannels),
                     samplingRate, numChannels );
-                if (channel < 0){
-                    printf("ERROR: sceAudioSRCChReserve -> %p\n", channel);
-                }
             }
 
             // Output the decoded samples and accumulate the 
@@ -237,8 +224,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     numPlayed = 0;
 
     // Cleanup time...
-    if (channel>=0)
-      sceAudioSRCChRelease();
+    sceAudioSRCChRelease();
 
     status = sceMp3ReleaseMp3Handle( mp3_handle );
 
