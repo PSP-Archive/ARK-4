@@ -96,6 +96,7 @@ enum {
 // Different firmware versions
 #define FW_661 0x06060110
 #define FW_660 0x06060010
+#define FW_150 0x01050003
 
 // These settings should be global and constant during the entire execution of ARK.
 // It should not be possible to change these (except for recovery flag).

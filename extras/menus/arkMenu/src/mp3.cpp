@@ -86,8 +86,10 @@ int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
 void playMP3File(char* filename, void* buffer, int buffer_size)
 {
 
-    if (filename == NULL && buffer == NULL)
+    if (filename == NULL && buffer == NULL){
+        running = 0;
         return;
+    }
 
     int file_handle = -1;
     int mp3_handle;
@@ -100,6 +102,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     if (filename != NULL){
         file_handle = sceIoOpen(filename, PSP_O_RDONLY, 0777 );
         if(file_handle < 0) {
+            running = 0;
             return;
         }
     }
@@ -125,10 +128,16 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     mp3Init.pcmBuf = pcmBuf;
     mp3Init.pcmBufSize = PCMBUF_SIZE;
 
+    int channel = -1;
+    int lastDecoded = 0;
+    int volume = PSP_AUDIO_VOLUME_MAX;
+    int numPlayed = 0;
+    int loopContinue = mp3Init.mp3StreamEnd/100;
+
     mp3_handle = sceMp3ReserveMp3Handle( &mp3Init );
 
     if (mp3_handle < 0){
-        return;
+        goto mp3_terminate;
     }
 
     // Fill the stream buffer with some data so that sceMp3Init has something to
@@ -137,18 +146,11 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     status = sceMp3Init( mp3_handle );
     if (status < 0){
-        return;
+        goto mp3_terminate;
     }
-
-    int channel = -1;
-    int lastDecoded = 0;
-    int volume = PSP_AUDIO_VOLUME_MAX;
-    int numPlayed = 0;
 
     if (!running)
         running = 1;
-
-    int loopContinue = mp3Init.mp3StreamEnd/100;
     
     sceAudioSRCChRelease();
 
@@ -222,6 +224,8 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     // Reset the state of the player to the initial starting state
     sceMp3ResetPlayPosition( mp3_handle );
     numPlayed = 0;
+
+    mp3_terminate:
 
     // Cleanup time...
     sceAudioSRCChRelease();

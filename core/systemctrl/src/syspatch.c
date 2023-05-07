@@ -43,11 +43,6 @@ STMOD_HANDLER previous = NULL;
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 #endif
 
-// fix for 6.60 check on 6.61
-static u32 fakeDevkitVersion(){
-    return FW_660;
-}
-
 // Return Boot Status
 static int isSystemBooted(void)
 {
@@ -109,9 +104,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     {
         // Patch mediasync.prx
         patchMediaSync(mod);
-        // Fix 6.60 plugins/apps on 6.61
-        sctrlHENPatchSyscall(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0x3FC9AE6A), &fakeDevkitVersion);
-        sctrlHENPatchSyscall(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0xFC114573), &fakeDevkitVersion);
         // Exit Handler
         goto flush;
     }
