@@ -11,35 +11,31 @@ static void mp3_cleanup(MP3* music){
     printf("cleaning up mp3\n");
     if (music == current_song){
         if (cur_play+1 < playlist.size()){
-            printf("running next song\n");
             cur_play++;
             current_song = new MP3((char*)playlist[cur_play].c_str());
             current_song->on_music_end = mp3_cleanup;
             current_song->play();
         }
         else{
-            printf("stopping\n");
             current_song = NULL;
             playlist.clear();
             cur_play = 0;
         }
-        printf("freeing old resources\n");
         delete music;
     }
-    printf("mp3 clean done\n");
 }
 
 MusicPlayer::MusicPlayer(string path){
     this->path = path;
+    if (playlist.size()){
+        playlist.push_back(path);
+    }
 }
 
 MusicPlayer::MusicPlayer(vector<string>* pl){
     this->path = pl->at(0);
-    if (playlist.size() == 0){
-        for (int i=0; i<pl->size(); i++){
-            playlist.push_back(pl->at(i));
-        }
-        cur_play = 0;
+    for (int i=0; i<pl->size(); i++){
+        playlist.push_back(pl->at(i));
     }
 }
 
@@ -70,7 +66,7 @@ int MusicPlayer::control(){
     
     bool running = true;
 
-    while (MP3::isPlaying()){
+    while (MP3::isPlaying() && playlist.size() == 0){
         if (current_song != NULL){
             if (this->path != current_song->getFilename()){
                 current_song->stop();
@@ -84,7 +80,7 @@ int MusicPlayer::control(){
 
     SystemMgr::enterFullScreen();
 
-    if (current_song != NULL && this->path != current_song->getFilename()){
+    if (current_song != NULL && this->path != current_song->getFilename() && playlist.size() == 0){
         delete current_song;
         current_song = NULL;
     }
@@ -94,7 +90,7 @@ int MusicPlayer::control(){
         current_song->on_music_end = mp3_cleanup;
         current_song->play();
     }
-    printf("playing\n");
+    
     while (running && MP3::isPlaying()){
         pad.update();
 
@@ -102,7 +98,6 @@ int MusicPlayer::control(){
             current_song->pauseResume();
         }
         else if (pad.decline()){
-            printf("stopping\n");
             playlist.clear();
             cur_play = 0;
             current_song->stop();
@@ -115,7 +110,6 @@ int MusicPlayer::control(){
             running = false;
         }
     }
-    printf("stopped\n");
     pad.flush();
     
     SystemMgr::exitFullScreen();
