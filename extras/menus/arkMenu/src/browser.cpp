@@ -710,7 +710,11 @@ void Browser::left() {
 
 void Browser::right() {
 	if (this->entries->size() == 0) return;
-	if (this->index + PAGE_SIZE >= this->entries->size()) return;
+	if (this->index + PAGE_SIZE >= entries->size()) {
+        this->index = (entries->size()-1)-PAGE_SIZE;
+		this->start = this->start-PAGE_SIZE;
+	}
+	   	//return;
 	if (this->index == 0) {
 		this->index = PAGE_SIZE;
 		this->start = PAGE_SIZE;
