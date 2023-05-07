@@ -694,7 +694,7 @@ Entry* Browser::get(){
 }
 
 void Browser::left() {
-	if (this->entries->size() == 0) return;
+	if (this->entries->size() == 2) return;
 	if (this->index == 0) return;
 	if (this->index > 0) {
 		this->index = 1 * (this->index - PAGE_SIZE);
@@ -709,19 +709,25 @@ void Browser::left() {
 }
 
 void Browser::right() {
-	if (this->entries->size() == 0) return;
-	if (this->index + PAGE_SIZE >= this->entries->size()) return;
-	if (this->index == 0) {
-		this->index = PAGE_SIZE;
-		this->start = PAGE_SIZE;
+	if (this->entries->size() == 2) return;
+
+	if (this->index + PAGE_SIZE >= entries->size()) {
+        this->index = (entries->size()-1)-PAGE_SIZE+1;
+		this->start = this->start-PAGE_SIZE+1;
 	}
-	else if (this->index < PAGE_SIZE){
-            this->index = this->index + PAGE_SIZE;
-			this->start = this->start + PAGE_SIZE;
+
+	   	//return;
+	if (this->index == 0) {
+		this->index = PAGE_SIZE-1;
+		this->start = PAGE_SIZE-1;
+	}
+	else if (this->index < PAGE_SIZE-1){
+            this->index = this->index + PAGE_SIZE-1;
+			this->start = this->start + PAGE_SIZE-1;
     }
 	else {
-		this->index = this->index + PAGE_SIZE;
-		this->start = this->start + PAGE_SIZE;
+		this->index = this->index + PAGE_SIZE-1;
+		this->start = this->start + PAGE_SIZE-1;
 	}
 	
     this->animating = true;
