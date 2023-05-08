@@ -192,8 +192,10 @@ static u32 fakeDevkitVersion(){
 }
 
 static void patchOldHomebrew(){
+    int apitype = sceKernelInitApitype();
     sctrlHENPatchSyscall(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0x3FC9AE6A), &fakeDevkitVersion);
-    sctrlHENPatchSyscall(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0xFC114573), &fakeDevkitVersion);
+    if (apitype == 0x141 || apitype == 0x152) // allow modern CFW features on old homebrew
+        sctrlHENPatchSyscall(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0xFC114573), &fakeDevkitVersion);
 }
 
 // Init Start Module Hook
