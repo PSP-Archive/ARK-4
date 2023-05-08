@@ -180,8 +180,9 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl
 	$(Q)$(MAKE) $@ -C loader/dc/vunbricker
-	$(Q)$(MAKE) $@ -C loader/perma/newcipl/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/newcipl/
+	$(Q)$(MAKE) $@ -C loader/perma/newcipl/payloadex
+	$(Q)$(MAKE) $@ -C loader/perma/newcipl/installer
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -rf common/utils/*.o
 	$(Q)$(MAKE) $@ -C extras/updater/
