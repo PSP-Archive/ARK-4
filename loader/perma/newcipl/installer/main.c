@@ -30,15 +30,7 @@ char msg[256];
 int model;
 static u8 orig_ipl[0x24000] __attribute__((aligned(64)));
 
-unsigned char* ipl_table[] = {
-	(unsigned char*)payload_01G,
-	(unsigned char*)payload_02G,
-	(unsigned char*)payload_03G,
-};
-
-unsigned char* ipl_block_large = NULL;
-
-static int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);
+unsigned char ipl_block_large[0x24000]__attribute__((aligned(64)));
 
 int ReadFile(char *file, int seek, void *buf, int size)
 {
@@ -116,6 +108,16 @@ int main()
 	SceUID mod;
 	u16 ipl_key = 0;
 
+	struct {
+		unsigned char* buf;
+		size_t size;
+	} ipl_table[] = {
+		{(unsigned char*)payload_01G, size_payload_01G},
+		{(unsigned char*)payload_02G, size_payload_02G},
+		{(unsigned char*)payload_03G, size_payload_03G}
+	};
+	int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);
+
 	pspDebugScreenInit();
 	pspDebugScreenSetTextColor(WHITE);
 	devkit = sceKernelDevkitVersion();
@@ -132,11 +134,11 @@ int main()
 
 	model = kuKernelGetModel();
 
-	if(model > supported_models || ipl_table[model] == NULL) {
+	if(model > supported_models || ipl_table[model].buf == NULL) {
 		ErrorExit(5000,"This installer does not support this model.\n");
 	}
 
-	ipl_block_large = ipl_table[model];
+	memcpy(ipl_block_large, ipl_table[model].buf, ipl_table[model].size);
 	if (model > 2) ipl_key = 1;
 
 	//load module
