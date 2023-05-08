@@ -11,7 +11,7 @@ LIBS =
 LIBDIR = ../common/
 LDFLAGS = -nostartfiles  -T linkfile.l -fdata-sections -ffunction-sections -Wl,--gc-sections
 
-ipl_stage2_payload.h:
+ipl_stage2_payload.h: $(TARGET).bin
 	$(Q)bin2c $(TARGET).bin ipl_stage2_payload.h payload
 
 PSPSDK=$(shell psp-config --pspsdk-path)

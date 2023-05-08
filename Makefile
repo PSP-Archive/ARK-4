@@ -30,6 +30,7 @@ SUBDIRS = libs \
 	loader/live/kernel/idstorage_dumper \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
+	extras/modules/ipl_update \
 	loader/perma/cipl/payloadex \
 	loader/perma/cipl/mainbinex \
 	loader/perma/cipl/combine \
@@ -74,7 +75,7 @@ copy-bin:
 	$(Q)cp loader/dc/installer/EBOOT.PBP dist/ARK_DC/ # ARK DC installer
 	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/ARK_cIPL/EBOOT.PBP
 	$(Q)cp loader/perma/cipl/installer/kpspident/kpspident.prx dist/ARK_cIPL/kpspident.prx
-	$(Q)cp contrib/PSP/GAME/ARK_cIPL/ipl_update.prx dist/ARK_cIPL/ipl_update.prx
+	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/ARK_cIPL/ipl_update.prx
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
@@ -112,10 +113,23 @@ encrypt-prx: \
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
 
 newcipl:
-	$(Q)$(MAKE) -C loader/perma/newcipl/payloadex BFLAGS="-DIPL_02G"
+	$(Q)$(MAKE) -C loader/perma/newcipl/payloadex
 	$(Q)$(MAKE) -C loader/perma/newcipl/common
-	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage2_payload BFLAGS="-DIPL_02G"
-	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage1_payload BFLAGS="-DIPL_02G"
+	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage2_payload BFLAGS="-DIPL_01G -DPSP_MODEL=01g"
+	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage1_payload BFLAGS="-DIPL_01G -DPSP_MODEL=01g"
+	$(Q)cp loader/perma/newcipl/ipl_stage1_payload/ipl_stage1_payload.h loader/perma/newcipl/payload_01g.h
+	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage2_payload
+	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage1_payload
+	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage2_payload BFLAGS="-DIPL_02G -DPSP_MODEL=02g"
+	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage1_payload BFLAGS="-DIPL_02G -DPSP_MODEL=02g"
+	$(Q)cp loader/perma/newcipl/ipl_stage1_payload/ipl_stage1_payload.h loader/perma/newcipl/payload_02g.h
+	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage2_payload
+	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage1_payload
+	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage2_payload BFLAGS="-DIPL_03G -DPSP_MODEL=03g"
+	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage1_payload BFLAGS="-DIPL_03G -DPSP_MODEL=03g"
+	$(Q)cp loader/perma/newcipl/ipl_stage1_payload/ipl_stage1_payload.h loader/perma/newcipl/payload_03g.h
+	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage2_payload
+	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage1_payload
 
 kxploits:
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
@@ -158,6 +172,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
 	$(Q)$(MAKE) $@ -C extras/modules/xmbctrl
 	$(Q)$(MAKE) $@ -C extras/modules/usbdevice
+	$(Q)$(MAKE) $@ -C extras/modules/ipl_update
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
@@ -177,10 +192,10 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl
 	$(Q)$(MAKE) $@ -C loader/dc/vunbricker
-	$(Q)$(MAKE) $@ -C loader/perma/newcipl/payloadex BFLAGS="-DIPL_02G"
+	$(Q)$(MAKE) $@ -C loader/perma/newcipl/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/newcipl/common
-	$(Q)$(MAKE) $@ -C loader/perma/newcipl/ipl_stage2_payload BFLAGS="-DIPL_02G"
-	$(Q)$(MAKE) $@ -C loader/perma/newcipl/ipl_stage1_payload BFLAGS="-DIPL_02G"
+	$(Q)$(MAKE) $@ -C loader/perma/newcipl/ipl_stage2_payload
+	$(Q)$(MAKE) $@ -C loader/perma/newcipl/ipl_stage1_payload
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -rf common/utils/*.o
 	$(Q)$(MAKE) $@ -C extras/updater/

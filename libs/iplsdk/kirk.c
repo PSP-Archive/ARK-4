@@ -88,17 +88,17 @@ int kirkDecryptAes(u8 *out, u8 *data, u32 size, u8 key_idx)
 	header->keyseed = key_idx;
 	header->data_size = size;
 	memcpy(&header[1], data, size);
-	asm("sync"::);
+	__asm("sync"::);
 	g_KIRK->Command = 0x07;
 	g_KIRK->SourceAddr = PHYS_TO_HW(header);
 	g_KIRK->DestAddr = PHYS_TO_HW(header);
 	g_KIRK->StartProcessing = 1;
-	asm("sync"::);
+	__asm("sync"::);
 	while ((g_KIRK->StartProcessing & 1) != 0);
 	while (!g_KIRK->Pattern);
 	int res = g_KIRK->Result;
 	g_KIRK->PatternEnd = g_KIRK->Pattern & g_KIRK->ASyncPattern;
-	asm("sync"::);
+	__asm("sync"::);
 	
 	memcpy(out, header, size);
 
