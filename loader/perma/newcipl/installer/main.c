@@ -29,8 +29,7 @@ u32 sceSysregGetTachyonVersion(void);		// 0xE2A5D1EE
 char msg[256];
 int model;
 static u8 orig_ipl[0x24000] __attribute__((aligned(64)));
-
-unsigned char ipl_block_large[0x24000]__attribute__((aligned(64)));
+static u8 ipl_block_large[0x24000]__attribute__((aligned(64)));
 
 int ReadFile(char *file, int seek, void *buf, int size)
 {
@@ -167,7 +166,7 @@ int main()
 	if( size == 0x24000 ) {
 		printf("Custom ipl is installed\n");
 		size -= 0x4000;
-		memmove( ipl_block_large + 0x4000 , orig_ipl + 0x4000 , size);
+		memmove( ipl_block_large , orig_ipl + 0x4000 , size);
 		ipl_type = 1;
 	} else if( size == 0x20000 ) {
 		printf("Raw ipl \n");
@@ -205,7 +204,7 @@ int main()
 				ErrorExit(5000,"Failed to clear ipl!\n");
 			}
 
-			if (pspIplUpdateSetIpl( ipl_block_large + 0x4000 , size,  ipl_key) < 0) {
+			if (pspIplUpdateSetIpl( ipl_block_large, size,  ipl_key) < 0) {
 				ErrorExit(5000,"Failed to write ipl!\n");
 			}
 
