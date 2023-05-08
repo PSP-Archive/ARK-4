@@ -53,7 +53,7 @@ SUBDIRS = libs \
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx
 
-all: subdirs kxploits mkdir-dist encrypt-prx copy-bin
+all: subdirs newcipl kxploits mkdir-dist encrypt-prx copy-bin
 	@echo "Build Done"
 
 copy-bin:
@@ -111,6 +111,11 @@ encrypt-prx: \
 	$(Q)cp contrib/PC/btcnf/psvbtknf.bin dist/PSVBTKNF.BIN
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
 
+newcipl:
+	$(Q)$(MAKE) -C loader/perma/newcipl/payloadex BFLAGS="-DIPL_02G"
+	$(Q)$(MAKE) -C loader/perma/newcipl/common
+	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage2_payload BFLAGS="-DIPL_02G"
+	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage1_payload BFLAGS="-DIPL_02G"
 
 kxploits:
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
@@ -172,6 +177,10 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl
 	$(Q)$(MAKE) $@ -C loader/dc/vunbricker
+	$(Q)$(MAKE) $@ -C loader/perma/newcipl/payloadex BFLAGS="-DIPL_02G"
+	$(Q)$(MAKE) $@ -C loader/perma/newcipl/common
+	$(Q)$(MAKE) $@ -C loader/perma/newcipl/ipl_stage2_payload BFLAGS="-DIPL_02G"
+	$(Q)$(MAKE) $@ -C loader/perma/newcipl/ipl_stage1_payload BFLAGS="-DIPL_02G"
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -rf common/utils/*.o
 	$(Q)$(MAKE) $@ -C extras/updater/
