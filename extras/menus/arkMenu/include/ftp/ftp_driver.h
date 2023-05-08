@@ -18,6 +18,7 @@ class FTPDriver : public BrowserDriver{
         virtual void deleteFile(string path);
         virtual void deleteFolder(string path);
         virtual void createFolder(string path);
+        virtual void createFile(string path);
         virtual void copyFileTo(string orig, string dest, int* progress);
         virtual void copyFileFrom(string orig, string dest, int* progress);
 };
