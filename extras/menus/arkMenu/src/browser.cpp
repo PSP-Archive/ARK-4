@@ -1397,7 +1397,7 @@ void Browser::optionsMenu(){
     while (true){
         
         pad->update();
-        
+       // Down 
         if (pad->down()){
             common::playMenuSound();
             do {
@@ -1409,6 +1409,7 @@ void Browser::optionsMenu(){
                 }
             } while (pEntries[pEntryIndex] == NULL);
         }
+		// Up
         else if (pad->up()){
             common::playMenuSound();
             do {
@@ -1420,19 +1421,27 @@ void Browser::optionsMenu(){
                 }
             } while (pEntries[pEntryIndex] == NULL);
         }
+		// Right
 		else if (pad->right()) {
 			common::playMenuSound();
-			if(pEntryIndex+2 >= MAX_OPTIONS-1)
-				pEntryIndex = MAX_OPTIONS-1;
-		    else	
-				pEntryIndex += 3;
+			do {
+				if (pEntryIndex+3 < MAX_OPTIONS-1) {
+					pEntryIndex += 3;
+				}
+				else {
+					pEntryIndex = MAX_OPTIONS-1;
+				}
+			} while (pEntries[pEntryIndex] == NULL);
 		}
+		// Left
 		else if (pad->left()) {
 			common::playMenuSound();
-			if(pEntryIndex-2 < 0)
-				pEntryIndex = 0;
-			else
-				pEntryIndex -= 3;
+			do {
+				if (pEntryIndex-3 < 0)
+					pEntryIndex = 0;
+				else
+					pEntryIndex -= 3;
+			} while (pEntries[pEntryIndex] == NULL);
 		}
         else if (pad->decline() || pad->LT()){
             pEntryIndex = 0;
