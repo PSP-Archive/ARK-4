@@ -34,7 +34,7 @@ typedef BrowserFolder Folder;
 
 extern "C" int kuKernelLoadModule(const char*, int, void*);
 
-#define MAX_OPTIONS 11
+#define MAX_OPTIONS 12
 static char* pEntries[MAX_OPTIONS] = {
     (char*) "Cancel",
     (char*) "Copy",
@@ -43,6 +43,7 @@ static char* pEntries[MAX_OPTIONS] = {
     (char*) "Delete",
     (char*) "Rename",
     (char*) "New Folder",
+    (char*) "New File",
     (char*) "Go to ms0:/",
     (char*) "Go to ef0:/",
     (char*) "Go to ftp:/",
@@ -1339,6 +1340,27 @@ void Browser::makedir(){
     this->refreshDirs();
 }
 
+void Browser::makefile(){
+    SystemMgr::pauseDraw();
+    OSK osk;
+    osk.init("Name of new file", "new file", 50);
+    osk.loop();
+    if(osk.getResult() != OSK_CANCEL)
+    {
+        char tmpText[51];
+        osk.getText((char*)tmpText);
+        string fileName = string(tmpText);
+        if (ftp_driver != NULL && ftp_driver->isDevicePath(this->cwd)){
+            ftp_driver->createFile(fileName);
+        }
+        else sceIoOpen((this->cwd+fileName).c_str(), PSP_O_WRONLY | PSP_O_CREAT, 0777);
+    }
+    osk.end();
+    SystemMgr::resumeDraw();
+    this->refreshDirs();
+}
+
+
 void Browser::drawOptionsMenu(){
 
     switch (optionsDrawState){
@@ -1397,7 +1419,7 @@ void Browser::optionsMenu(){
     while (true){
         
         pad->update();
-        
+       // Down 
         if (pad->down()){
             common::playMenuSound();
             do {
@@ -1409,6 +1431,7 @@ void Browser::optionsMenu(){
                 }
             } while (pEntries[pEntryIndex] == NULL);
         }
+		// Up
         else if (pad->up()){
             common::playMenuSound();
             do {
@@ -1420,19 +1443,27 @@ void Browser::optionsMenu(){
                 }
             } while (pEntries[pEntryIndex] == NULL);
         }
+		// Right
 		else if (pad->right()) {
 			common::playMenuSound();
-			if(pEntryIndex >= MAX_OPTIONS-1)
-				pEntryIndex = MAX_OPTIONS-1;
-		    else	
-				pEntryIndex += 3;
+			do {
+				if (pEntryIndex+3 < MAX_OPTIONS-1) {
+					pEntryIndex += 3;
+				}
+				else {
+					pEntryIndex = MAX_OPTIONS-1;
+				}
+			} while (pEntries[pEntryIndex] == NULL);
 		}
+		// Left
 		else if (pad->left()) {
 			common::playMenuSound();
-			if(pEntryIndex <= 0)
-				pEntryIndex = 0;
-			else
-				pEntryIndex -= 3;
+			do {
+				if (pEntryIndex-3 < 0)
+					pEntryIndex = 0;
+				else
+					pEntryIndex -= 3;
+			} while (pEntries[pEntryIndex] == NULL);
 		}
         else if (pad->decline() || pad->LT()){
             pEntryIndex = 0;
@@ -1468,6 +1499,7 @@ void Browser::options(){
     case DELETE:      this->removeSelection();                         break;
     case RENAME:      this->rename();                                  break;
     case MKDIR:       this->makedir();                                 break;
+    case MKFILE:      this->makefile();                                break;
     case MS0_DIR:     this->cwd = ROOT_DIR;     this->refreshDirs();   break;
     case FTP_DIR:     this->cwd = FTP_ROOT;     this->refreshDirs();   break;
     case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;

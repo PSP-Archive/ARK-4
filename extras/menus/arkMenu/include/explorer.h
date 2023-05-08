@@ -32,8 +32,9 @@ enum E_COMMANDS
     DELETE = 3,
     RENAME = 4,    
     MKDIR = 5,
-    CANCEL = 6,
-    RETURN = 7
+    MKFILE = 6,
+    CANCEL = 7,
+    RETURN = 8
 };
 
 typedef struct s_tool_option
@@ -51,6 +52,7 @@ static t_tool_option tool_options[] =
     {NULL, 0, DELETE},
     {NULL, 0, RENAME},
     {NULL, 0, MKDIR},
+    {NULL, 0, MKFILE},
     {NULL, 0, CANCEL},
     {NULL, 0, RETURN}
 };

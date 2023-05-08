@@ -98,6 +98,7 @@ void ftpCHMOD(char* file, char* perm);        // sets file permissions of a remo
 void ftpSYST(void);                            // returns system type of remote
 void ftpRMD(char* dir);                        // removes a directory
 void ftpMKD(char* dir);                        // makes a directory
+void ftpAPPE(char* dir);                        // makes a file
 void ftpDELE(char* file);                    // deletes a file
 void ftpCWD(char* dir);                        // change directory
 char* ftpPWD(void);                            // returns current directory
