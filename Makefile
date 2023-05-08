@@ -114,22 +114,9 @@ encrypt-prx: \
 
 newcipl:
 	$(Q)$(MAKE) -C loader/perma/newcipl/payloadex
-	$(Q)$(MAKE) -C loader/perma/newcipl/common
-	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage2_payload BFLAGS="-DIPL_01G -DPSP_MODEL=01g"
-	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage1_payload BFLAGS="-DIPL_01G -DPSP_MODEL=01g"
-	$(Q)cp loader/perma/newcipl/ipl_stage1_payload/ipl_stage1_payload.h loader/perma/newcipl/payload_01g.h
-	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage2_payload
-	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage1_payload
-	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage2_payload BFLAGS="-DIPL_02G -DPSP_MODEL=02g"
-	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage1_payload BFLAGS="-DIPL_02G -DPSP_MODEL=02g"
-	$(Q)cp loader/perma/newcipl/ipl_stage1_payload/ipl_stage1_payload.h loader/perma/newcipl/payload_02g.h
-	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage2_payload
-	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage1_payload
-	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage2_payload BFLAGS="-DIPL_03G -DPSP_MODEL=03g"
-	$(Q)$(MAKE) -C loader/perma/newcipl/ipl_stage1_payload BFLAGS="-DIPL_03G -DPSP_MODEL=03g"
-	$(Q)cp loader/perma/newcipl/ipl_stage1_payload/ipl_stage1_payload.h loader/perma/newcipl/payload_03g.h
-	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage2_payload
-	$(Q)$(MAKE) clean -C loader/perma/newcipl/ipl_stage1_payload
+	$(Q)$(MAKE) PSP_MODEL=01G -C loader/perma/newcipl/
+	$(Q)$(MAKE) PSP_MODEL=02G -C loader/perma/newcipl/
+	$(Q)$(MAKE) PSP_MODEL=03G -C loader/perma/newcipl/
 
 kxploits:
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
@@ -193,9 +180,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl
 	$(Q)$(MAKE) $@ -C loader/dc/vunbricker
 	$(Q)$(MAKE) $@ -C loader/perma/newcipl/payloadex
-	$(Q)$(MAKE) $@ -C loader/perma/newcipl/common
-	$(Q)$(MAKE) $@ -C loader/perma/newcipl/ipl_stage2_payload
-	$(Q)$(MAKE) $@ -C loader/perma/newcipl/ipl_stage1_payload
+	$(Q)$(MAKE) $@ -C loader/perma/newcipl/
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -rf common/utils/*.o
 	$(Q)$(MAKE) $@ -C extras/updater/
