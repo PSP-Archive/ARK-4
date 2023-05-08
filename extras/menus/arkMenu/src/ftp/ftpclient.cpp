@@ -499,7 +499,7 @@ void ftpMKD(char* dir) {
     //todo: check for return success/fail
 }
 
-void ftpMKF(char* dir) {
+void ftpAPPE(char* dir) {
     printf("MKD %s", dir);
     sendclientResponse("MKF ");
     sendclientResponseLn(dir);

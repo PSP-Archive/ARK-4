@@ -235,7 +235,7 @@ void FTPDriver::createFile(string path){
     if (this->isDevicePath(path)){
         path = path.substr(this->getDevicePath().size()-1, path.size());
     }
-    ftpMKF((char*)path.c_str());
+    ftpAPPE((char*)path.c_str());
 }
 
 void FTPDriver::copyFileTo(string orig, string dest, int* progress){
