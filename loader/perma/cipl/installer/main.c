@@ -74,7 +74,7 @@ void flash_ipl(int size)
 	if(pspIplUpdateClearIpl() < 0)
 		ErrorExit(5000,"Failed to clear ipl!\n");
 
-	if (pspIplUpdateSetIpl( ipl_block_large , size + 0x4000 ) < 0)
+	if (pspIplUpdateSetIpl( ipl_block_large , size + 0x4000, 0 ) < 0)
 		ErrorExit(5000,"Failed to write ipl!\n");
 
 	printf("Done.\n");
@@ -191,7 +191,7 @@ int main()
 				ErrorExit(5000,"Failed to clear ipl!\n");
 			}
 
-			if (pspIplUpdateSetIpl( ipl_block_large + 0x4000 , size ) < 0) {
+			if (pspIplUpdateSetIpl( ipl_block_large + 0x4000 , size, 0 ) < 0) {
 				ErrorExit(5000,"Failed to write ipl!\n");
 			}
 

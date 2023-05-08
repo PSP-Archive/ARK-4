@@ -878,11 +878,11 @@ int install_thread(SceSize args, void *argp)
 		InstallError(fw, "Error in pspIplUpdateClearIpl");
 	
 	if (fw != FW_OFW) {
-		if (pspIplUpdateSetIpl(ipl_block_large, size_ipl_block_large) < 0)
+		if (pspIplUpdateSetIpl(ipl_block_large, size_ipl_block_large, 0) < 0)
 			InstallError(fw, "Error in pspIplUpdateSetIpl");
 	}
 	else {
-		if (pspIplUpdateSetIpl(ipl_block_large + 0x4000, size_ipl_block_large - 0x4000) < 0)
+		if (pspIplUpdateSetIpl(ipl_block_large + 0x4000, size_ipl_block_large - 0x4000, 0) < 0)
 			InstallError(fw, "Error in pspIplUpdateSetIpl");
 	}
 

@@ -25,7 +25,7 @@ int pspIplUpdateClearIpl(void);
  *
  * @returns 0 on success, < 0 on error
 */
-int pspIplUpdateSetIpl(u8 *buf, u32 size);
+int pspIplUpdateSetIpl(u8 *buf, u32 size, u16 key);
 
 #endif
 

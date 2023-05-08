@@ -31,11 +31,11 @@ SUBDIRS = libs \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
 	extras/modules/ipl_update \
+	extras/modules/kpspident \
 	loader/perma/cipl/payloadex \
 	loader/perma/cipl/mainbinex \
 	loader/perma/cipl/combine \
 	loader/perma/cipl/installer \
-	loader/perma/cipl/installer/kpspident \
 	loader/dc/dcman \
 	loader/dc/msipl/payloadex \
 	loader/dc/msipl/mainbinex \
@@ -74,7 +74,7 @@ copy-bin:
 	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/ # ARK DC installer
 	$(Q)cp loader/dc/installer/EBOOT.PBP dist/ARK_DC/ # ARK DC installer
 	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/ARK_cIPL/EBOOT.PBP
-	$(Q)cp loader/perma/cipl/installer/kpspident/kpspident.prx dist/ARK_cIPL/kpspident.prx
+	$(Q)cp extras/modules/kpspident/kpspident.prx dist/ARK_cIPL/kpspident.prx
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/ARK_cIPL/ipl_update.prx
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
@@ -117,6 +117,7 @@ newcipl:
 	$(Q)$(MAKE) PSP_MODEL=01G -C loader/perma/newcipl/
 	$(Q)$(MAKE) PSP_MODEL=02G -C loader/perma/newcipl/
 	$(Q)$(MAKE) PSP_MODEL=03G -C loader/perma/newcipl/
+	$(Q)$(MAKE) -C loader/perma/newcipl/installer
 
 kxploits:
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
@@ -160,6 +161,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/xmbctrl
 	$(Q)$(MAKE) $@ -C extras/modules/usbdevice
 	$(Q)$(MAKE) $@ -C extras/modules/ipl_update
+	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
@@ -171,7 +173,6 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/mainbinex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/combine
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer
-	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer/kpspident
 	$(Q)$(MAKE) $@ -C loader/dc/dcman
 	$(Q)$(MAKE) $@ -C loader/dc/installer
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/mainbinex

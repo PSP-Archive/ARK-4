@@ -7,5 +7,5 @@ all:
 	$(Q)$(MAKE) clean -C ipl_stage1_payload
 
 clean:
-	$(Q)rm payload_*.h
+	$(Q)rm payload_*.h | true
 	$(Q)$(MAKE) clean -C payloadex
