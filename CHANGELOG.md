@@ -1,5 +1,11 @@
 # ARK Changelog
 
+## Version 4.20.17 (2023-05-08)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42017
+- Added patch that unlocks higher firmware features on older homebrews (more noticeably audiovideo codecs).
+- Fixed and improved music player. You can now select more than one MP3 file to create a playlist.
+- Other general fixes and improvements.
+
 ## Version 4.20.16 (2023-05-07)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42016
 - Legacy 1.50 homebrew in `KXploit` format is now properly deleted in `XMB` and `launcher`.
