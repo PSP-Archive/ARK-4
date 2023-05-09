@@ -155,21 +155,25 @@ static void stopFTP(){
 }
 
 static string parsePspUpdateList(u32* update_ver){
-    // TODO
 
     std::ifstream input("psp-updatelist.txt");
 
     for( std::string line; getline( input, line ); ){
+        // scan for all the tokens
         size_t image_version = line.find("ImageVersion=");
         size_t cdn = line.find("CDN=");
         size_t eboot_pbp = line.find("EBOOT.PBP");
         if (image_version != string::npos && cdn != string::npos && eboot_pbp != string::npos){
+            // grab version string
             string ver = line.substr(image_version+13, 8);
+            // convert from hex to u32
             *update_ver = strtol(ver.c_str(), NULL, 16);
+            // grab eboot url
             string eboot_url = line.substr(cdn+4);
+            // trim URL
             char* eboot_path = (char*)eboot_url.c_str();
             char* eboot_pbp = strstr(eboot_path, "EBOOT.PBP");
-            eboot_pbp[9] = 0;
+            eboot_pbp[9] = 0; // C++ strings are inmutable? not round here they ain't
             return string(eboot_path);
         }
     }
@@ -179,11 +183,14 @@ static string parsePspUpdateList(u32* update_ver){
 }
 
 static string getServerUrl(){
+    // read first line of server file
     std::ifstream input("UPDATER.TXT");
     string line = ""; getline(input, line);
+    // trim text
     if (line.size() == 0) return "";
     if (line[line.size()-1] == '\n') line = line.substr(0, line.size()-1);
     if (line[line.size()-1] == '\r') line = line.substr(0, line.size()-1);
+    // append psp-updatelist.txt
     if (line[line.size()-1] != '/') line += "/";
     line += "psp-updatelist.txt";
     return line;
