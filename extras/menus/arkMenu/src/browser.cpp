@@ -42,8 +42,7 @@ static char* pEntries[MAX_OPTIONS] = {
     (char*) "Paste",
     (char*) "Delete",
     (char*) "Rename",
-    (char*) "New Folder",
-    (char*) "New File",
+    (char*) "Create new",
     (char*) "Go to ms0:/",
     (char*) "Go to ef0:/",
     (char*) "Go to ftp:/",
@@ -83,7 +82,7 @@ Browser::Browser(){
     if (psp_model == PSP_11000 || ftp_driver == NULL){
         pEntries[FTP_DIR] = NULL;
     }
-    if (IS_VITA(common::getArkConfig())){
+    if (IS_VITA(common::getArkConfig()) || psp_model == PSP_GO){
         pEntries[UMD_DIR] = NULL;
     }
 
@@ -1360,6 +1359,24 @@ void Browser::makefile(){
     this->refreshDirs();
 }
 
+void Browser::createNew(){
+    t_options_entry opts[] = {
+        {OPTIONS_CANCELLED, "Cancel"},
+        {0, "Folder"},
+        {1, "File"},
+    };
+
+    optionsmenu = new OptionsMenu("Create new...", sizeof(opts)/sizeof(t_options_entry), opts);
+    int ret = optionsmenu->control();
+    OptionsMenu* aux = optionsmenu;
+    optionsmenu = NULL;
+    delete aux;
+
+    switch (ret){
+        case 0: makedir(); break;
+        case 1: makefile(); break;
+    }
+}
 
 void Browser::drawOptionsMenu(){
 
@@ -1498,8 +1515,7 @@ void Browser::options(){
     case PASTE:       this->paste();                                   break;
     case DELETE:      this->removeSelection();                         break;
     case RENAME:      this->rename();                                  break;
-    case MKDIR:       this->makedir();                                 break;
-    case MKFILE:      this->makefile();                                break;
+    case CREATE:      this->createNew();                               break;
     case MS0_DIR:     this->cwd = ROOT_DIR;     this->refreshDirs();   break;
     case FTP_DIR:     this->cwd = FTP_ROOT;     this->refreshDirs();   break;
     case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;
