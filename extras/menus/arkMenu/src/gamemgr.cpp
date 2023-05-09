@@ -572,19 +572,15 @@ void GameManager::control(Controller* pad){
                         else{
                         	string path = e->getPath();
                             // remove entire folder
+                            string folder = path.substr(0, path.rfind("/")+1);
+                           	Browser::recursiveFolderDelete(folder);
 							if(strstr(path.c_str(), "%/") != NULL) {
-                            	string folder = path.substr(0, path.rfind("/")+1);
-                            	Browser::recursiveFolderDelete(folder);
+                                // remove 1.50 kxploit folder
 								path.erase(path.find("%/"));
 								path += '/';
                             	folder = path;
                             	Browser::recursiveFolderDelete(folder);
 							}
-							else {
-								string folder = path.substr(0, path.rfind('/')+1);
-								Browser::recursiveFolderDelete(folder);
-							}
-							
                         }
                     }
                     // free resources
