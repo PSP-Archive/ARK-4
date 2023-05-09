@@ -16,8 +16,6 @@
 # Launcher Issues
 - Some random crashes in the game menu (most likely threading issues).
 - FTP Client is generally unstable.
-- MP3 player doesn't work with variable bitrate files.
-
 
 # Plugins Issues
 - ???
