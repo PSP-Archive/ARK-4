@@ -20,7 +20,7 @@ OBJS = \
 		src/common.o \
 		src/system_mgr.o \
 		src/gamemgr.o \
-		src/ftp_mgr.o \
+		src/net_mgr.o \
 		src/entry.o \
 		src/iso.o \
 		src/umd.o \
@@ -92,6 +92,7 @@ LIBS = \
 		-lpspwlan \
 		-lpspnet \
 		-lpspnet_inet \
+		-lpsphttp \
 		-lpspsystemctrl_user \
 		-lpspkubridge \
 

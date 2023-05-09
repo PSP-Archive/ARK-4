@@ -1,5 +1,9 @@
 # ARK Changelog
 
+## Version 4.20.19 (2023-05-09)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42019
+- You can now update ARK using the Custom Launcher.
+
 ## Version 4.20.18 (2023-05-08)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42018
 - Fixed bug introduced in 4.20.17 that would cause retail games to show "corrupt save data" error.

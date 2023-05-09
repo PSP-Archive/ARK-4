@@ -17,8 +17,7 @@ enum{
     PASTE,
     DELETE,
     RENAME,
-    MKDIR,
-    MKFILE,
+    CREATE,
     MS0_DIR,
     EF0_DIR,
     FTP_DIR,
@@ -181,6 +180,7 @@ class Browser : public SystemEntry{
         
         void makedir();
         void makefile();
+        void createNew();
         
         void rename();
         

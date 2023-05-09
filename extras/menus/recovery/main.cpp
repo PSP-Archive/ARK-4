@@ -16,7 +16,7 @@
 #include "ark_settings.h"
 #include "ark_plugins.h"
 #include "settingsmenu.h"
-#include "settings_entries.h"
+#include "../../arkMenu/include/settings_entries.h"
 #include "exit_mgr.h"
 #include "game_mgr.h"
 

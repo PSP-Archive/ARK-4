@@ -4,7 +4,7 @@
 #include "system_entry.h"
 #include "common.h"
 
-class FTPManager : public SystemEntry{
+class NetworkManager : public SystemEntry{
     int animation;
     void draw();
     void control(Controller* pad);

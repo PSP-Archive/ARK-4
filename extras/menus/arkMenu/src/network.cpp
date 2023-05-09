@@ -13,7 +13,7 @@
 #include <pspnet_apctl.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-
+#include <psphttp.h>
 #include "network.h"
 #include "common.h"
 
@@ -150,4 +150,26 @@ int connect_to_apctl(void)
         }
     }
     return 0;
+}
+
+int wget(char* url, char* saveAs){
+	int tpl, cnx, req, ret;
+    u8 buf[16*1024];
+	if((tpl=sceHttpCreateTemplate("ARK-Launcher/1.0", 1, 1))<0)return tpl;
+	if((cnx=sceHttpCreateConnectionWithURL(tpl, url, 0))<0)return cnx;
+	if((req=sceHttpCreateRequestWithURL(cnx, PSP_HTTP_METHOD_GET, url, 0))<0)return req;
+	if((ret=sceHttpSendRequest(req, 0, 0))<0)return ret;
+	if(saveAs){
+		SceUID fd=sceIoOpen(saveAs, PSP_O_WRONLY | PSP_O_CREAT, 0777);
+		while((ret=sceHttpReadData(req,buf,sizeof(buf)))>0){
+			sceIoWrite(fd,buf,ret);
+		}
+		ret=sceIoClose(fd);
+	}else{//store in ram
+		ret=sceHttpReadData(req,buf,sizeof(buf));
+	}
+	sceHttpDeleteRequest(req);
+	sceHttpDeleteConnection(cnx);
+	sceHttpDeleteTemplate(tpl);
+	return ret;
 }
