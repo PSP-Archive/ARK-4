@@ -201,7 +201,7 @@ The instructions are as follows:
 
 There are three ways to update `ARK`:
 
-  - Use the `System Update` feature in the `XMB`. Requires your PSP/Vita to be connected to the internet.
+  - Use the `System Update` feature in the `XMB` or the `Custom Launcher`. Requires your PSP/Vita to be connected to the internet.
   - Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
   - Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
 
