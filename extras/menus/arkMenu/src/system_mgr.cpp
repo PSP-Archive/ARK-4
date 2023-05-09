@@ -272,6 +272,10 @@ static int controlThread(SceSize _args, void *_argp){
         if (pad.triangle() && !screensaver){
             changeMenuState();
         }
+        else if (pad.home() && !screensaver){
+            screensaver = 1;
+            continue;
+        }
         else if (!screensaver){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
