@@ -711,9 +711,12 @@ void Browser::left() {
 void Browser::right() {
 	if (this->entries->size() == 2) return;
 
+
 	if (this->index + PAGE_SIZE >= entries->size()) {
         this->index = (entries->size()-1)-PAGE_SIZE+1;
 		this->start = this->start-PAGE_SIZE+1;
+		if(this->index > this->start+PAGE_SIZE)
+			this->start = this->start+PAGE_SIZE;
 	}
 
 	   	//return;
