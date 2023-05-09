@@ -29,7 +29,8 @@ u32 sceSysregGetTachyonVersion(void);		// 0xE2A5D1EE
 char msg[256];
 int model;
 static u8 orig_ipl[0x24000] __attribute__((aligned(64)));
-static u8 ipl_block_large[0x24000]__attribute__((aligned(64)));
+//static u8 ipl_block_large[0x24000]__attribute__((aligned(64)));
+u8* ipl_block_large;
 
 int ReadFile(char *file, int seek, void *buf, int size)
 {
@@ -137,7 +138,8 @@ int main()
 		ErrorExit(5000,"This installer does not support this model.\n");
 	}
 
-	memcpy(ipl_block_large, ipl_table[model].buf, ipl_table[model].size);
+	//memcpy(ipl_block_large, ipl_table[model].buf, ipl_table[model].size);
+	ipl_block_large = ipl_table[model].buf;
 	if (model > 2) ipl_key = 1;
 
 	//load module
@@ -153,7 +155,7 @@ int main()
 		ErrorExit(5000,"Could not start module!\n");
 	}
 
-	size = pspIplUpdateGetIpl(orig_ipl);
+	size = ipl_table[model].size; //pspIplUpdateGetIpl(orig_ipl);
 
 	if(size < 0) {
 		ErrorExit(5000,"Failed to get ipl!\n");
@@ -163,6 +165,7 @@ int main()
 
 	int ipl_type = 0;
 
+	/*
 	if( size == 0x24000 ) {
 		printf("Custom ipl is installed\n");
 		size -= 0x4000;
@@ -175,6 +178,7 @@ int main()
 		printf("ipl size;%08X\n", size);
 		ErrorExit(5000,"Unknown ipl!\n");
 	}
+	*/
 
 	printf(" Press X to ");
 
