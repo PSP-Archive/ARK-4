@@ -9,7 +9,7 @@
 #include "browser.h"
 #include "settingsmenu.h"
 #include "settings_entries.h"
-#include "ftp_mgr.h"
+#include "net_mgr.h"
 #include "ftp_driver.h"
 #include "exit_mgr.h"
 
@@ -37,7 +37,7 @@ int main(int argc, char** argv){
 
     // Setup FTP App
     if (common::getPspModel() != PSP_11000){
-        entries[n_entries++] = new FTPManager();
+        entries[n_entries++] = new NetworkManager();
         // initialize FTP client driver for file browser
         Browser::ftp_driver = new FTPDriver();
     }

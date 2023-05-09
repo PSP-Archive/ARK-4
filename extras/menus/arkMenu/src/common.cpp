@@ -73,13 +73,6 @@ void loadConfig(){
         resetConf();
         return;
     }
-    fseek(fp, 0, SEEK_END);
-    
-    if (ftell(fp) != sizeof(t_conf)){
-        fclose(fp);
-        resetConf();
-        return;
-    }
     fseek(fp, 0, SEEK_SET);
     fread(&config, 1, sizeof(t_conf), fp);
     fclose(fp);
@@ -121,6 +114,7 @@ t_conf* common::getConf(){
 }
 
 void common::resetConf(){
+    memset(&config, 0, sizeof(config));
     config.fast_gameboot = 0;
     config.language = 0;
     config.font = 1;

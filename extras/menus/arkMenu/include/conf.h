@@ -23,6 +23,7 @@ typedef struct {
     unsigned char vsh_fg_color; // Advanced VSH Menu Forground color
     unsigned char vsh_bg_color; // Advanced VSH Menu Background color
     unsigned char swap_xo; // Advanced VSH Menu swap X/O buttons
+    unsigned char force_update; // Force update (disable update version check)
 } t_conf;
 
 #endif

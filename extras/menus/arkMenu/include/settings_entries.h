@@ -237,6 +237,20 @@ static struct {
     {"Disabled", "Enabled"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[2];
+} force_update = {
+    "Force Update",
+    2,
+    0,
+    &(common::getConf()->force_update),
+    {"Disabled", "Enabled"}
+};
+
 settings_entry* settings_entries[] = {
     (settings_entry*)&fast_gameboot,
     (settings_entry*)&language,
@@ -253,6 +267,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&text_glow,
     (settings_entry*)&screensaver,
     (settings_entry*)&redirect_ms0,
+    (settings_entry*)&force_update,
 };
 
 #define MAX_SETTINGS_OPTIONS (sizeof(settings_entries)/sizeof(settings_entries[0]))
