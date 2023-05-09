@@ -76,6 +76,9 @@ copy-bin:
 	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/ARK_cIPL/EBOOT.PBP
 	$(Q)cp extras/modules/kpspident/kpspident.prx dist/ARK_cIPL/kpspident.prx
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/ARK_cIPL/ipl_update.prx
+	$(Q)cp loader/perma/newcipl/installer/EBOOT.PBP dist/ARK_newIPL/EBOOT.PBP
+	$(Q)cp extras/modules/kpspident/kpspident.prx dist/ARK_newIPL/kpspident.prx
+	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/ARK_newIPL/ipl_update.prx
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
@@ -216,6 +219,7 @@ mkdir-dist:
 	$(Q)mkdir dist/Infinity | true
 	$(Q)mkdir dist/ARK_DC | true
 	$(Q)mkdir dist/ARK_cIPL | true
+	$(Q)mkdir dist/ARK_newIPL | true
 	$(Q)mkdir dist/UPDATE | true
 	$(Q)mkdir dist/Vita/Adrenaline | true
 	$(Q)mkdir dist/Vita/Standalone | true

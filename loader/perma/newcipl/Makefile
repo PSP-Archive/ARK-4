@@ -15,8 +15,6 @@ all:
 	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/psptools/pack_ipl.py ipl_stage1_payload/ipl_stage1_payload.bin@0x40e0000 ipl_$(PSP_MODEL).dec@0x40f0000 nandcipl_$(PSP_MODEL).bin 0x40e0000
 	$(Q)bin2c nandcipl_$(PSP_MODEL).bin payload_$(PSP_MODEL).h payload_$(PSP_MODEL)
 	$(Q)rm ipl_$(PSP_MODEL).dec | true
-#	$(Q)mv ipl_stage1_payload/ipl_stage1_payload.h payload_$(PSP_MODEL).h
-#	$(Q)rm ipl_stage2_payload/ipl_stage2_payload.h
 	$(Q)$(MAKE) clean -C ipl_stage2_payload
 	$(Q)$(MAKE) clean -C ipl_stage1_payload
 
