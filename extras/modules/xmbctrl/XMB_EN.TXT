@@ -14,3 +14,4 @@ Hide PIC0 and PIC1
 Prevent hibernation deletion on PSP Go
 Hide MAC Address
 Turn off LEDs
+Hide DLC

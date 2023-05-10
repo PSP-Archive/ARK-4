@@ -14,3 +14,4 @@ Nascondi PIC0 e PIC1
 Previeni cancellazione dell'ibernazione su PSP Go
 Nascondi l'indirizzo MAC
 Spegnere i LED
+Nascondi DLC
