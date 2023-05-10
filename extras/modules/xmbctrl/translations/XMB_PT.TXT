@@ -13,5 +13,5 @@ Pular Logos da Sony
 Ocultar PIC0 e PIC1
 Impedir exclusão de hibernação no PSP Go
 Ocultar Endereço MAC
-Desligar LEDs
 Ocultar DLC
+Desligar LEDs

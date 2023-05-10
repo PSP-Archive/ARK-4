@@ -13,5 +13,5 @@ Transitions Sony dans le XMB
 Masquer PIC0 et PIC1
 Empêcher la suppression de l`hibernation sur la PSP Go
 Masquer l'adresse MAC
-Éteindre les LED
 Masquer DLC
+Éteindre les LED
