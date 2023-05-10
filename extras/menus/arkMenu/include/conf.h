@@ -24,6 +24,7 @@ typedef struct {
     unsigned char vsh_bg_color; // Advanced VSH Menu Background color
     unsigned char swap_xo; // Advanced VSH Menu swap X/O buttons
     unsigned char force_update; // Force update (disable update version check)
+    unsigned char battery_percent; // show remaing battery percent next to battery icon
 } t_conf;
 
 #endif
