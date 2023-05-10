@@ -278,8 +278,9 @@ static int controlThread(SceSize _args, void *_argp){
         if (pad.triangle() && !screensaver){
             changeMenuState();
         }
-        else if (pad.home() && !screensaver){
-            screensaver = 1;
+        else if (pad.home()){
+            screensaver = !screensaver;
+            pad.flush();
             continue;
         }
         else if (!screensaver){
