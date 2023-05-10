@@ -49,6 +49,7 @@ typedef struct
     int hidepics;
     int hibblock;
     int hidemac;
+    int hidedlc;
     int noled;
 } CFWConfig;
 
