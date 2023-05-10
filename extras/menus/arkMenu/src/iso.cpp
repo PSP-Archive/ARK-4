@@ -375,7 +375,7 @@ int Iso::read_compressed_data(u8 *addr, u32 size, u32 offset)
     // Calculate total size of compressed data
     u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
     // last block index might be outside the block offset cache, better read it from disk
-    u32 o_end; read_raw_data((u8*)&o_end, sizeof(u32), ending_block*sizeof(u32)+header_size);
+    u32 o_end; read_raw_data((u8*)&o_end, sizeof(u32), (ending_block+1)*sizeof(u32)+header_size);
     o_end = (o_end&0x7FFFFFFF)<<align;
     u32 compressed_size = o_end-o_start;
 
