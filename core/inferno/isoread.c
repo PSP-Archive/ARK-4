@@ -281,10 +281,8 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     }
 
     // IO speedup tricks
-    u32 end_offset = o_offset+size;
     u32 starting_block = o_offset / block_size;
-    u32 ending_block = end_offset/block_size;
-    ending_block++;
+    u32 ending_block = ((o_offset+size)/block_size) + 1;
     
     // refresh index table if needed
     if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || starting_block-g_cso_idx_start_block+1 >= g_cso_idx_cache_num-1){
