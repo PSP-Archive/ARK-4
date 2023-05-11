@@ -32,7 +32,7 @@ enum {
 	SUBMENU_GO_BACK,
 };
 
-int item_fcolor[SUBMENU_MAX];
+extern int item_fcolor[SUBMENU_MAX];
 const char *subitem_str[SUBMENU_MAX];
 
 static int submenu_sel = SUBMENU_USB_DEVICE;

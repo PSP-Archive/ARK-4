@@ -21,6 +21,17 @@ extern ARKConfig* ark_config;
 extern STMOD_HANDLER previous;
 extern void SetSpeed(int cpuspd, int busspd);
 
+// fuck me..
+int atoi(const char* str)
+{
+    int ret = 0;
+
+    for (int i = 0; str[i] != '\0'; ++i)
+        ret = ret * 10 + str[i] - '0';
+ 
+    return ret;
+} 
+
 // Return Boot Status
 int isSystemBooted(void)
 {
@@ -187,15 +198,15 @@ int use_mscache = 0;
 int use_highmem = 0;
 int oldplugin = 0;
 int skip_logos = 0;
-int clock = 0;
+int oclock = 0;
 void settingsHandler(char* path){
     int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
-        clock = 1;
+        oclock = 1;
     }
     else if (strcasecmp(path, "powersave") == 0){ // underclock to save battery
         if (apitype != 0x144 && apitype != 0x155) // prevent operation in pops
-            clock = 2;
+            oclock = 2;
     }
     else if (strcasecmp(path, "usbcharge") == 0){
         usb_charge(); // enable usb charging
@@ -397,7 +408,7 @@ void PSPOnModuleStart(SceModule2 * mod){
                     msstorCacheInit("msstor0p", 16 * 1024);
             }
             // handle CPU speed
-            switch (clock){
+            switch (oclock){
                 case 1: SetSpeed(333, 166); break;
                 case 2: SetSpeed(133, 66); break;
             }

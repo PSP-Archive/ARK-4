@@ -24,7 +24,7 @@ ASFLAGS = $(CFLAGS) -c
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS = -nostartfiles -nostdlib -nodefaultlibs
-LIBS = -lpspsystemctrl_user -lpspkubridge -lpsppower -lvlfgui -lvlfgu -lvlfutils -lvlflibc 
+LIBS = -lpspsystemctrl_user -lpspkubridge -lpspmodinfo -lpsppower -lvlfgui -lvlfgu -lvlfutils -lvlflibc 
 
 PSP_FW_VERSION = 660
 

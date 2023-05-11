@@ -117,14 +117,14 @@ void kuKernelIcacheInvalidateAll(void);
  *
  * @param addr - Address to read, must have 4 bytes alignment
  */
-u32 kuKernelPeekw(void *addr);
+unsigned int kuKernelPeekw(void *addr);
 
 /**
  * Write 4 bytes to memory (with kernel memory access)
  *
  * @param addr - Address to write, must have 4 bytes alignment
  */
-void kuKernelPokew(void *addr, u32 value);
+void kuKernelPokew(void *addr, unsigned int value);
 
 /**
  * memcpy (with kernel memory access)

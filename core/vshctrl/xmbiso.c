@@ -142,11 +142,11 @@ static inline int is_game_dir(const char *dirname)
         return 0;
     }
 
-    if (0 != strnicmp(p, "/PSP/GAME", sizeof("/PSP/GAME")-1)) {
+    if (0 != strncasecmp(p, "/PSP/GAME", sizeof("/PSP/GAME")-1)) {
         return 0;
     }
 
-    if (0 == strnicmp(p, "/PSP/GAME/_DEL_", sizeof("/PSP/GAME/_DEL_")-1)) {
+    if (0 == strncasecmp(p, "/PSP/GAME/_DEL_", sizeof("/PSP/GAME/_DEL_")-1)) {
         return 0;
     }
 
