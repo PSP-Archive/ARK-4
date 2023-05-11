@@ -189,9 +189,9 @@ static void drawBattery(){
         }
 
         if (common::getConf()->battery_percent) {
-        char batteryPercent[4];
-        sprintf(batteryPercent, "%d%%", percent);
-        common::printText(415, 13, batteryPercent, color, SIZE_MEDIUM, 0, 0);
+            char batteryPercent[4];
+            sprintf(batteryPercent, "%d%%", percent);
+            common::printText(415, 13, batteryPercent, color, SIZE_MEDIUM);
         }
 
         ya2d_draw_rect(455, 6, 20, 8, color, 0);
