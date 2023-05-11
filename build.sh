@@ -3,9 +3,10 @@
 
 ####### ARK Builder Script ##########
 #                                   #
-# Author  : Krazynez                #
+# Authors : Krazynez                #
+#           MotoLegacy              #
 #                                   #
-# Date    : 2022-09-09              #
+# Date    : 2022-09-09, 2023-05-10  #
 #                                   #
 #####################################
 version=0.6.1
