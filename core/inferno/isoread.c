@@ -338,7 +338,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
 
         // check if we need to (and can) read another chunk of data
         if (c_buf < addr || c_buf+b_size > top_addr){
-            if (size > b_size){ // only if more than a block left, otherwise just use normal reading
+            if (size > b_size+block_size){ // only if more than a block left, otherwise just use normal reading
                 compressed_size = o_end-b_offset; // recalculate remaining compressed data
                 if (size < compressed_size) compressed_size = size-block_size; // adjust if still bigger than uncompressed
                 if (compressed_size >= b_size){
