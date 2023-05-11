@@ -163,7 +163,7 @@ static void dateTime() {
 
 	char dateStr[100];
 	sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
-    (common::getConf()->battery_percent) ? common::printText(270, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0) : common::printText(300, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0);
+    common::printText( common::getConf()->battery_percent ? 270:300, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0);
 }
 
 static void drawBattery(){
@@ -217,7 +217,7 @@ static void systemDrawer(){
             entries[cur_entry]->drawInfo();
             // draw music icon is music player is open
             if (MusicPlayer::isPlaying()){
-                common::getIcon(FILE_MUSIC)->draw(280, 3);
+                common::getIcon(FILE_MUSIC)->draw( common::getConf()->battery_percent ? 250:280, 3);
             }
             break;
         case 1: // draw opening animation
