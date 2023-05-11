@@ -155,7 +155,7 @@ int read_compressed_data(u8* addr, u32 size, u32 offset)
     #endif
 
     // try to read at once as much compressed data as possible
-    if (size >= block_size*2){ // only if going to read more than two blocks
+    if (size > block_size){ // only if going to read more than two blocks
         if (size <= compressed_size) compressed_size = size-block_size; // adjust chunk size if compressed data is still bigger than uncompressed
         c_buf = top_addr - compressed_size; // read into the end of the user buffer
         read_raw_data(c_buf, compressed_size, o_start);
@@ -186,7 +186,7 @@ int read_compressed_data(u8* addr, u32 size, u32 offset)
 
         // check if we need to (and can) read another chunk of data
         if (c_buf < addr || c_buf+b_size > top_addr){
-            if (size >= block_size*2){ // only if more than two blocks left, otherwise just use normal reading
+            if (size > block_size){ // only if more than two blocks left, otherwise just use normal reading
                 compressed_size = o_end-b_offset; // recalculate remaining compressed data
                 if (size <= compressed_size) compressed_size = size-block_size; // adjust if still bigger than uncompressed
                 c_buf = top_addr - compressed_size; // read into the end of the user buffer
@@ -216,6 +216,7 @@ int read_compressed_data(u8* addr, u32 size, u32 offset)
 
     u32 res = offset - o_offset;
     
+    printf("io calls: %d\n", raw_calls);
     if (raw_calls > 4){
         printf("Got high number of IO calls (%d) when reading %d bytes at %d\n", raw_calls, res, o_offset); 
     }
@@ -398,13 +399,14 @@ int main(int argc, char** argv){
     
     read_compressed_data(buf, 43008, 0x2fd23800);
     read_compressed_data(buf, 10464, 0x33c82000);
+    
 
     
     // do one big read
     FILE* fp;
     //read_compressed_data(buf, sizeof(buf), 16*2048);
     fp = fopen("output.bin", "wb");
-    fwrite(buf, 1, sizeof(buf), fp);
+    fwrite(buf, 1, 10464, fp);
     fclose(fp);
     
     fp = fopen("ICON0.PNG", "wb");
