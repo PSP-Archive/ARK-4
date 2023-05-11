@@ -248,7 +248,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
 
     // IO speedup tricks
     u32 starting_block = o_offset / block_size;
-    u32 ending_block = ((o_offset+size)/block_size) + 1;
+    u32 ending_block = ((o_offset+size)/block_size);
     
     // refresh index table if needed
     if (g_CISO_cur_idx < 0 || starting_block < g_CISO_cur_idx || starting_block-g_CISO_cur_idx+1 >= CISO_IDX_MAX_ENTRIES-1){
@@ -308,7 +308,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         }
 
         // read block, skipping header if needed
-        if (c_buf > addr && c_buf+b_size <= top_addr){
+        if (c_buf >= addr && c_buf+b_size <= top_addr){
             memcpy(com_buf, c_buf+block_header, b_size); // fast read
             c_buf += b_size;
         }
