@@ -274,11 +274,12 @@ static int controlThread(SceSize _args, void *_argp){
     Controller pad;
     clock_t last_pressed = clock();
     while (running){
+    	int screensaver_time = screensaver_times[common::getConf()->screensaver];
         pad.update();
         if (pad.triangle() && !screensaver){
             changeMenuState();
         }
-        else if (pad.home()){
+        else if (pad.home() && screensaver_time != 0){
             screensaver = !screensaver;
             pad.flush();
             continue;
@@ -287,7 +288,6 @@ static int controlThread(SceSize _args, void *_argp){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
         }
-        int screensaver_time = screensaver_times[common::getConf()->screensaver];
         if (screensaver_time > 0 && !stillLoading()){
             if (pad.any()){
                 last_pressed = clock();
