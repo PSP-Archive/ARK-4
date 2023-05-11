@@ -42,6 +42,7 @@ int hidepics = 0;
 int hibblock = 0;
 int skiplogos = 0;
 int hidemac = 0;
+int hidedlc = 0;
 
 // Flush Instruction and Data Cache
 void sync_cache()
@@ -85,6 +86,9 @@ void settingsHandler(char* path){
     }
     else if (strcasecmp(path, "hidemac") == 0){ // hide mac address
         hidemac = 1;
+    }
+    else if (strcasecmp(path, "hidedlc") == 0){ // hide mac address
+        hidedlc = 1;
     }
 }
 

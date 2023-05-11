@@ -13,4 +13,5 @@ Sony Logos überspringen
 Verstecke PIC0 und PIC1
 Verhindert das Löschen des Ruhezustands auf der PSP Go
 Verstecke MAC-Adresse
+Verstecke DLC
 LEDs Abschalten

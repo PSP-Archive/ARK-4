@@ -34,13 +34,13 @@
 #define MAGIC_DFD_FOR_DELETE_2 0x9001
 
 extern u32 psp_model;
+extern int hidedlc;
 static char g_iso_dir[128];
 static char g_temp_delete_dir[128];
 static int g_delete_eboot_injected = 0;
 
-static const char *corruptfix_list[] = {
+static const char *game_list[] = {
 	"ms0:/PSP/GAME/"		,"ef0:/PSP/GAME/"		,
-	"ms0:/PSP/GAME150/"	    ,"ef0:/PSP/GAME150/"	,
 };
 
 static int CorruptIconPatch(char *name)
@@ -49,9 +49,9 @@ static int CorruptIconPatch(char *name)
 	SceIoStat stat;
 
 
-    for (int i=0; i<NELEMS(corruptfix_list); i++){
+    for (int i=0; i<NELEMS(game_list); i++){
 
-        const char *hidden_path = corruptfix_list[i];
+        const char *hidden_path = game_list[i];
         strcpy(path, hidden_path);
         strcat(path, name);
         strcat(path, "%/EBOOT.PBP");
@@ -64,6 +64,27 @@ static int CorruptIconPatch(char *name)
         }
     }
 
+	return 0;
+}
+
+static int HideDlc(char *name) {
+	char path[256];
+    SceIoStat stat;
+
+    for (int i=0; i<NELEMS(game_list); i++){
+        const char *hidden_path = game_list[i];
+        sprintf(path, "%s%s/PARAM.PBP", hidden_path, name);
+        memset(&stat, 0, sizeof(stat));
+        if (sceIoGetstat(path, &stat) >= 0) {
+            sprintf(path, "%s%s/EBOOT.PBP", hidden_path, name);
+
+            memset(&stat, 0, sizeof(stat));
+            if (sceIoGetstat(path, &stat) < 0) {
+                strcpy(name, "__SCE"); // hide icon
+                return 1;
+            }
+        }
+    }
 	return 0;
 }
 
@@ -280,6 +301,8 @@ int gamedread(SceUID fd, SceIoDirent * dir)
     else {
         int k1 = pspSdkSetK1(0);
         CorruptIconPatch(dir->d_name);
+        if (hidedlc)
+    		HideDlc(dir->d_name);
         pspSdkSetK1(k1);
     }
     #ifdef DEBUG

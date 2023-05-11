@@ -163,7 +163,7 @@ static void dateTime() {
 
 	char dateStr[100];
 	sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
-    common::printText(300, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0);
+    common::printText( common::getConf()->battery_percent ? 270:300, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0);
 }
 
 static void drawBattery(){
@@ -186,6 +186,12 @@ static void drawBattery(){
                 color = LITEGRAY;
             else
                 color = RED;
+        }
+
+        if (common::getConf()->battery_percent) {
+            char batteryPercent[4];
+            sprintf(batteryPercent, "%d%%", percent);
+            common::printText(415, 13, batteryPercent, color, SIZE_MEDIUM);
         }
 
         ya2d_draw_rect(455, 6, 20, 8, color, 0);
@@ -211,7 +217,7 @@ static void systemDrawer(){
             entries[cur_entry]->drawInfo();
             // draw music icon is music player is open
             if (MusicPlayer::isPlaying()){
-                common::getIcon(FILE_MUSIC)->draw(280, 3);
+                common::getIcon(FILE_MUSIC)->draw( common::getConf()->battery_percent ? 250:280, 3);
             }
             break;
         case 1: // draw opening animation
@@ -268,15 +274,20 @@ static int controlThread(SceSize _args, void *_argp){
     Controller pad;
     clock_t last_pressed = clock();
     while (running){
+    	int screensaver_time = screensaver_times[common::getConf()->screensaver];
         pad.update();
         if (pad.triangle() && !screensaver){
             changeMenuState();
+        }
+        else if (pad.home() && screensaver_time != 0){
+            screensaver = !screensaver;
+            pad.flush();
+            continue;
         }
         else if (!screensaver){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
         }
-        int screensaver_time = screensaver_times[common::getConf()->screensaver];
         if (screensaver_time > 0 && !stillLoading()){
             if (pad.any()){
                 last_pressed = clock();

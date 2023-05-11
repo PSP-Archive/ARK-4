@@ -248,12 +248,10 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
 
     // IO speedup tricks
     u32 starting_block = o_offset / block_size;
-    u32 ending_block = o_offset+size;
-    if (ending_block%block_size == 0) ending_block = ending_block/block_size;
-    else ending_block = (ending_block/block_size)+1;
+    u32 ending_block = ((o_offset+size)/block_size);
     
     // refresh index table if needed
-    if (g_CISO_cur_idx < 0 || starting_block < g_CISO_cur_idx || starting_block+1 >= g_CISO_cur_idx + CISO_IDX_MAX_ENTRIES-1){
+    if (g_CISO_cur_idx < 0 || starting_block < g_CISO_cur_idx || starting_block-g_CISO_cur_idx+1 >= CISO_IDX_MAX_ENTRIES-1){
         read_raw_data(g_CISO_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * sizeof(u32) + header_size);
         g_CISO_cur_idx = starting_block;
     }
@@ -261,19 +259,16 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     // Calculate total size of compressed data
     u32 o_start = (g_CISO_idx_cache[starting_block-g_CISO_cur_idx]&0x7FFFFFFF)<<align;
     // last block index might be outside the block offset cache, better read it from disk
-    u32 o_end[2];
+    u32 o_end;
     if (ending_block-g_CISO_cur_idx < CISO_IDX_MAX_ENTRIES-1){ //(ending_block-starting_block+1 < g_cso_idx_cache_num-1){
-        o_end[0] = g_CISO_idx_cache[ending_block-g_CISO_cur_idx-1];
-        o_end[1] = g_CISO_idx_cache[ending_block-g_CISO_cur_idx];
+        o_end = g_CISO_idx_cache[ending_block-g_CISO_cur_idx];
     }
-    else read_raw_data(&o_end[0], sizeof(u32)*2, (ending_block-1)*sizeof(u32)+header_size); // read last two offsets
-    o_end[0] = (o_end[0]&0x7FFFFFFF)<<align;
-    o_end[1] = (o_end[1]&0x7FFFFFFF)<<align;
-    u32 compressed_size = o_end[1]-o_start;
+    else read_raw_data(&o_end, sizeof(u32), ending_block*sizeof(u32)+header_size); // read last two offsets
+    o_end = (o_end&0x7FFFFFFF)<<align;
+    u32 compressed_size = o_end-o_start;
 
     // try to read at once as much compressed data as possible
     if (size >= block_size*2){ // only if going to read more than two blocks
-        if (size <= compressed_size) compressed_size = o_end[0]-o_start; // try reading one less compressed block if too much compressed data
         if (size <= compressed_size) compressed_size = size-block_size; // adjust chunk size if compressed data is still bigger than uncompressed
         c_buf = top_addr - compressed_size; // read into the end of the user buffer
         read_raw_data(c_buf, compressed_size, o_start);
@@ -285,7 +280,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         pos = offset & (block_size - 1);
 
         // check if we need to refresh index table
-        if (cur_block >= g_CISO_cur_idx+CISO_IDX_MAX_ENTRIES-1){
+        if (cur_block-g_CISO_cur_idx >= CISO_IDX_MAX_ENTRIES-1){
             read_raw_data(g_CISO_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), cur_block * 4 + header_size);
             g_CISO_cur_idx = cur_block;
         }
@@ -305,9 +300,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         // check if we need to (and can) read another chunk of data
         if (c_buf < addr || c_buf+b_size > top_addr){
             if (size >= block_size*2){ // only if more than two blocks left, otherwise just use normal reading
-                compressed_size = o_end[1]-b_offset; // recalculate remaining compressed data
-                //printf("(3)compressed size: %d, ", compressed_size);
-                if (size <= compressed_size) compressed_size = o_end[0]-b_offset; // try reading one less compressed block if too much compressed data
+                compressed_size = o_end-b_offset; // recalculate remaining compressed data
                 if (size <= compressed_size) compressed_size = size-block_size; // adjust if still bigger than uncompressed
                 c_buf = top_addr - compressed_size; // read into the end of the user buffer
                 read_raw_data(c_buf, compressed_size, b_offset);
@@ -315,7 +308,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         }
 
         // read block, skipping header if needed
-        if (c_buf > addr && c_buf+b_size <= top_addr){
+        if (c_buf >= addr && c_buf+b_size <= top_addr){
             memcpy(com_buf, c_buf+block_header, b_size); // fast read
             c_buf += b_size;
         }

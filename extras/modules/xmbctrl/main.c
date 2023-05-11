@@ -66,6 +66,7 @@ GetItem GetItemes[] =
     { 1, 0, "Hide PIC0 and PIC1" },
     { 1, 0, "Prevent hibernation deletion on PSP Go" },
     { 1, 0, "Hide MAC Address" },
+    { 1, 0, "Hide DLC" },
     { 1, 0, "Turn off LEDs" },
 };
 
@@ -459,6 +460,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.hidepics,
                 config.hibblock,
                 config.hidemac,
+                config.hidedlc,
                 config.noled,
             };
             
@@ -510,6 +512,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.hidepics,
                 &config.hibblock,
                 &config.hidemac,
+                &config.hidedlc,
                 &config.noled,
             };
             
