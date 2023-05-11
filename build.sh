@@ -9,7 +9,7 @@
 # Date    : 2022-09-09, 2023-05-10  #
 #                                   #
 #####################################
-version=0.6.1
+version=0.7.0
 
 export PSPDEV=/usr/local/pspdev && export PATH=$PATH:$PSPDEV/bin 
 
@@ -217,15 +217,15 @@ function withDialog {
 
 	dialog \
 		--title "Welcome to the ARK Compiler" \
-		--backtitle "Script created by Krazynez Version: $version" \
-		--msgbox "This script will setup the correct SDK to build ARK, get sign_np and psp-packer dependencies and temporarly setup the enivorment to build ARK-4." 10 80 
+		--backtitle "Script created by Krazynez, and updated by MotoLegacy Version: $version" \
+		--msgbox "This script will setup the correct SDK to build ARK, get sign_np and psp-packer dependencies and temporarily setup the environment to build ARK-4." 10 80 
 
 $
-	dialog 	--title "Checking for existitng SDK"
+	dialog 	--title "Checking for existing SDK"
 
 	if [[ -d "/usr/local/pspdev" ]] ; then
 		response=$(dialog \
-			--title "EXISITING PSPSDK!" \
+			--title "EXISTING PSPSDK!" \
 			--no-cancel \
 			--radiolist \
 			"Choose an Option" \
