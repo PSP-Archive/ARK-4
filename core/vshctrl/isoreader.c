@@ -268,7 +268,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     u32 compressed_size = o_end-o_start;
 
     // try to read at once as much compressed data as possible
-    if (size > block_size){ // only if going to read more than two blocks
+    if (size > block_size*2){ // only if going to read more than two blocks
         if (size < compressed_size) compressed_size = size-block_size; // adjust chunk size if compressed data is still bigger than uncompressed
         c_buf = top_addr - compressed_size; // read into the end of the user buffer
         read_raw_data(c_buf, compressed_size, o_start);

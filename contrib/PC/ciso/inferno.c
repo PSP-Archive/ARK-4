@@ -106,6 +106,7 @@ int read_compressed_data(u8* addr, u32 size, u32 offset)
 {
 
     raw_calls = 0;
+    u32 o_size = size;
 
     u32 cur_block;
     u32 pos, ret, read_bytes;
@@ -186,7 +187,7 @@ int read_compressed_data(u8* addr, u32 size, u32 offset)
 
         // check if we need to (and can) read another chunk of data
         if (c_buf < addr || c_buf+b_size > top_addr){
-            if (size > block_size){ // only if more than two blocks left, otherwise just use normal reading
+            if (size > b_size){ // only if more than two blocks left, otherwise just use normal reading
                 compressed_size = o_end-b_offset; // recalculate remaining compressed data
                 if (size <= compressed_size) compressed_size = size-block_size; // adjust if still bigger than uncompressed
                 c_buf = top_addr - compressed_size; // read into the end of the user buffer
@@ -220,6 +221,8 @@ int read_compressed_data(u8* addr, u32 size, u32 offset)
     if (raw_calls > 4){
         printf("Got high number of IO calls (%d) when reading %d bytes at %d\n", raw_calls, res, o_offset); 
     }
+    
+    if (res != o_size) printf("ERROR: got %d/%d\n", res, o_size);
     
     return res;
 }
@@ -399,6 +402,7 @@ int main(int argc, char** argv){
     
     read_compressed_data(buf, 43008, 0x2fd23800);
     read_compressed_data(buf, 10464, 0x33c82000);
+    read_compressed_data(buf, 10240, 0x2a9c5000);
     
 
     
@@ -406,7 +410,7 @@ int main(int argc, char** argv){
     FILE* fp;
     //read_compressed_data(buf, sizeof(buf), 16*2048);
     fp = fopen("output.bin", "wb");
-    fwrite(buf, 1, 10464, fp);
+    fwrite(buf, 1, 10240, fp);
     fclose(fp);
     
     fp = fopen("ICON0.PNG", "wb");
