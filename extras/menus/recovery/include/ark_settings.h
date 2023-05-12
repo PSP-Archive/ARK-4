@@ -37,6 +37,7 @@ typedef struct {
     unsigned char hidepics;
     unsigned char hibblock;
     unsigned char hidemac;
+    unsigned char hidedlc;
     unsigned char noled;
 }ArkConf;
 
@@ -242,6 +243,20 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
+} hidedlc = {
+    "Hide DLC",
+    MAX_ARK_OPTIONS,
+    0,
+    &(ark_config.hidedlc),
+    ARK_OPTIONS
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
 } noled = {
     "Turn off LEDs",
     MAX_ARK_OPTIONS,
@@ -291,6 +306,7 @@ settings_entry* ark_conf_entries_1k[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
+    (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
@@ -308,6 +324,7 @@ settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
+    (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
@@ -328,6 +345,7 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
+    (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
     (settings_entry*)&vshregion,
 };
@@ -363,6 +381,7 @@ settings_entry* ark_conf_entries_adr[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
+    (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
     (settings_entry*)&vshregion,
 };
@@ -443,6 +462,9 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "hidemac") == 0){
         return &(ark_config.hidemac);
+    }
+    else if (strcasecmp(conf.c_str(), "hidedlc") == 0){
+        return &(ark_config.hidedlc);
     }
     else if (strcasecmp(conf.c_str(), "noled") == 0){
         return &(ark_config.noled);
@@ -578,6 +600,7 @@ void saveSettings(){
     output << processSetting("hidepics", ark_config.hidepics) << endl;
     output << processSetting("hibblock", ark_config.hibblock) << endl;
     output << processSetting("hidemac", ark_config.hidemac) << endl;
+    output << processSetting("hidedlc", ark_config.hidedlc) << endl;
     output << processSetting("noled", ark_config.noled) << endl;
     
     switch (ark_config.regionchange){

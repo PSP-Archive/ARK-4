@@ -64,7 +64,7 @@ int dirent_add(SceUID dfd, SceUID iso_dfd, const char *path)
     p->path = oe_strdup(path);
 
     if(p->path == NULL) {
-        oe_free(p);
+        my_free(p);
 
         return -2;
     }
@@ -98,8 +98,8 @@ int dirent_remove(struct IoDirentEntry *p)
             g_tail = prev;
         }
 
-        oe_free(fds->path);
-        oe_free(fds);
+        my_free(fds->path);
+        my_free(fds);
         ret = 0;
     } else {
         ret = -1;

@@ -13,4 +13,5 @@ Saltarse logos de Sony
 Ocultar PIC0 y PIC1
 Evitar borrar la hibernación en PSP Go
 Ocultar dirección MAC
+Ocultar DLC
 Apagar LEDs

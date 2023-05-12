@@ -116,3 +116,7 @@ bool Controller::start(){
 bool Controller::select(){
     return (newpad & PSP_CTRL_SELECT);
 }
+
+bool Controller::home(){
+    return (newpad & PSP_CTRL_HOME);
+}

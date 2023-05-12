@@ -1,0 +1,17 @@
+CFW设置
+插件管理
+USB充电
+超频
+省电
+自启动加载器
+PSP Go禁止暂停
+强制额外内存
+Memory Stick超频
+Inferno缓存
+PSP Go旧插件支持
+跳过启动动画
+隐藏PIC0和 PIC1
+阻止休眠PSP Go
+隐藏MAC地址
+隐藏DLC
+关闭LED

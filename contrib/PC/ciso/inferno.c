@@ -20,7 +20,9 @@ typedef uint32_t u32;
 #define DAX_BLOCK_SIZE 0x2000
 #define DAX_COMP_BUF 0x2400
 
-#define CISO_IDX_MAX_ENTRIES 4096
+#define CISO_IDX_MAX_ENTRIES 256
+
+int g_cso_idx_cache_num = CISO_IDX_MAX_ENTRIES;
 
 typedef struct 
 {
@@ -102,6 +104,10 @@ int read_raw_data(u8* addr, u32 size, u32 offset){
 
 int read_compressed_data(u8* addr, u32 size, u32 offset)
 {
+
+    raw_calls = 0;
+    u32 o_size = size;
+
     u32 cur_block;
     u32 pos, ret, read_bytes;
     u32 o_offset = offset;
@@ -110,8 +116,10 @@ int read_compressed_data(u8* addr, u32 size, u32 offset)
     u8* dec_buf = g_ciso_dec_buf;
     u8* c_buf = NULL;
     u8* top_addr = addr+size;
-    
-    raw_calls = 0;
+
+    #ifdef DEBUG
+    io_calls = 0;
+    #endif
     
     if(offset > uncompressed_size) {
         // return if the offset goes beyond the iso size
@@ -121,26 +129,36 @@ int read_compressed_data(u8* addr, u32 size, u32 offset)
         // adjust size if it tries to read beyond the game data
         size = uncompressed_size - offset;
     }
-    
+
     // IO speedup tricks
     u32 starting_block = o_offset / block_size;
-    u32 ending_block = o_offset+size;
-    if (ending_block%block_size == 0) ending_block = ending_block/block_size;
-    else ending_block = (ending_block/block_size)+1;
+    u32 ending_block = ((o_offset+size)/block_size);
     
     // refresh index table if needed
-    if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || ending_block+1 >= g_cso_idx_start_block + CISO_IDX_MAX_ENTRIES){
-        read_raw_data(g_cso_idx_cache, CISO_IDX_MAX_ENTRIES*sizeof(u32), starting_block * 4 + header_size);
+    if (g_cso_idx_start_block < 0 || starting_block < g_cso_idx_start_block || starting_block-g_cso_idx_start_block+1 >= g_cso_idx_cache_num-1){
+        read_raw_data(g_cso_idx_cache, g_cso_idx_cache_num*sizeof(u32), starting_block * sizeof(u32) + header_size);
         g_cso_idx_start_block = starting_block;
     }
 
-    // IO data call
+    // Calculate total size of compressed data
     u32 o_start = (g_cso_idx_cache[starting_block-g_cso_idx_start_block]&0x7FFFFFFF)<<align;
-    u32 o_end = (g_cso_idx_cache[ending_block-g_cso_idx_start_block+1]&0x7FFFFFFF)<<align;
+    // last block index might be outside the block offset cache, better read it from disk
+    u32 o_end;
+    if (ending_block-g_cso_idx_start_block < g_cso_idx_cache_num-1){
+        o_end = g_cso_idx_cache[ending_block-g_cso_idx_start_block];
+    }
+    else read_raw_data(&o_end, sizeof(u32), ending_block*sizeof(u32)+header_size); // read last two offsets
+    o_end = (o_end&0x7FFFFFFF)<<align;
     u32 compressed_size = o_end-o_start;
-    if (size >= block_size*2){ // more than one block, do fast read
-        if (size < compressed_size) compressed_size = size-block_size;
-        c_buf = top_addr - compressed_size;
+
+    #ifdef DEBUG
+    printf("(0)compressed size: %d, ", compressed_size);
+    #endif
+
+    // try to read at once as much compressed data as possible
+    if (size > block_size*2){ // only if going to read more than two blocks
+        if (size < compressed_size) compressed_size = size-block_size; // adjust chunk size if compressed data is still bigger than uncompressed
+        c_buf = top_addr - compressed_size; // read into the end of the user buffer
         read_raw_data(c_buf, compressed_size, o_start);
     }
 
@@ -148,6 +166,12 @@ int read_compressed_data(u8* addr, u32 size, u32 offset)
         // calculate block number and offset within block
         cur_block = offset / block_size;
         pos = offset & (block_size - 1);
+
+        // check if we need to refresh index table
+        if (cur_block-g_cso_idx_start_block >= g_cso_idx_cache_num-1){
+            read_raw_data(g_cso_idx_cache, g_cso_idx_cache_num*sizeof(u32), cur_block * 4 + header_size);
+            g_cso_idx_start_block = cur_block;
+        }
         
         // read compressed block offset and size
         u32 b_offset = g_cso_idx_cache[cur_block-g_cso_idx_start_block];
@@ -161,17 +185,20 @@ int read_compressed_data(u8* addr, u32 size, u32 offset)
             // fix for last DAX block (you can't trust the value of b_size since there's no offset for last_block+1)
             b_size = DAX_COMP_BUF;
 
-        if (c_buf <= addr || c_buf+b_size > top_addr){
-            if (size >= block_size*2){ // don't read last block
-                compressed_size = o_end-b_offset;
-                if (size < compressed_size) compressed_size = size-block_size;
-                c_buf = top_addr - compressed_size;
-                read_raw_data(c_buf, compressed_size, b_offset);
+        // check if we need to (and can) read another chunk of data
+        if (c_buf < addr || c_buf+b_size > top_addr){
+            if (size > b_size+block_size){ // only if more than two blocks left, otherwise just use normal reading
+                compressed_size = o_end-b_offset; // recalculate remaining compressed data
+                if (size < compressed_size) compressed_size = size-block_size; // adjust if still bigger than uncompressed
+                if (compressed_size >= b_size){
+                    c_buf = top_addr - compressed_size; // read into the end of the user buffer
+                    read_raw_data(c_buf, compressed_size, b_offset);
+                }
             }
         }
 
         // read block, skipping header if needed
-        if (c_buf > addr && c_buf+b_size <= top_addr){
+        if (c_buf >= addr && c_buf+b_size <= top_addr){
             memcpy(com_buf, c_buf+block_header, b_size); // fast read
             c_buf += b_size;
         }
@@ -192,9 +219,12 @@ int read_compressed_data(u8* addr, u32 size, u32 offset)
 
     u32 res = offset - o_offset;
     
+    printf("io calls: %d\n", raw_calls);
     if (raw_calls > 4){
         printf("Got high number of IO calls (%d) when reading %d bytes at %d\n", raw_calls, res, o_offset); 
     }
+    
+    if (res != o_size) printf("ERROR: got %d/%d\n", res, o_size);
     
     return res;
 }
@@ -371,13 +401,18 @@ int main(int argc, char** argv){
     read_compressed_data(buf, 65536, 1040527360);
     
     read_compressed_data(buf, 65536, 1075742720); // 5 calls
+    
+    read_compressed_data(buf, 43008, 0x2fd23800);
+    read_compressed_data(buf, 10464, 0x33c82000);
+    read_compressed_data(buf, 10240, 0x2a9c5000);
+    
 
     
     // do one big read
     FILE* fp;
     //read_compressed_data(buf, sizeof(buf), 16*2048);
     fp = fopen("output.bin", "wb");
-    fwrite(buf, 1, sizeof(buf), fp);
+    fwrite(buf, 1, 10240, fp);
     fclose(fp);
     
     fp = fopen("ICON0.PNG", "wb");

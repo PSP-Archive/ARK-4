@@ -44,6 +44,7 @@ class Controller{
         bool LT();
         bool start();
         bool select();
+        bool home();
 };
         
 
