@@ -151,7 +151,7 @@ void ClearCaches()
 
 int LoadTextLanguage(int new_id)
 {
-    static char *language[] = { "JA", "EN", "FR", "ES", "DE", "IT", "NL", "PT", "RU", "KO", "CH1", "CH2" };
+    static char *language[] = { "JA", "EN", "FR", "ES", "DE", "IT", "NL", "PT", "RU", "KO", "CHT", "CHS" };
 
     int id;
     sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &id);
