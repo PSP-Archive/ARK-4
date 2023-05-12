@@ -16,7 +16,11 @@
 #include "../payload_01G.h"
 #include "../payload_02G.h"
 #include "../payload_03G.h"
-//#include "../payload_04G.h"
+#include "../payload_04G.h"
+//#include "../payload_05G.h"
+#include "../payload_07G.h"
+#include "../payload_09G.h"
+#include "../payload_11G.h"
 
 PSP_MODULE_INFO("IPLFlasher", 0x0800, 1, 0); 
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
@@ -116,7 +120,15 @@ int main()
 		{(unsigned char*)payload_01G, size_payload_01G},
 		{(unsigned char*)payload_02G, size_payload_02G},
 		{(unsigned char*)payload_03G, size_payload_03G},
-		//{(unsigned char*)payload_04G, size_payload_04G}
+		{(unsigned char*)payload_04G, size_payload_04G},
+		{(unsigned char*)NULL, 0},
+		{(unsigned char*)NULL, 0}, // 6g
+		{(unsigned char*)payload_07G, size_payload_07G},
+		{(unsigned char*)NULL, 0}, // 8g
+		{(unsigned char*)payload_09G, size_payload_09G}, // 9g
+		{(unsigned char*)NULL, 0}, // 10g
+		{(unsigned char*)payload_11G, size_payload_11G}, // 11g
+
 	};
 	int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);
 
@@ -142,8 +154,9 @@ int main()
 
 	//memcpy(ipl_block_large, ipl_table[model].buf, ipl_table[model].size);
 	ipl_block_large = ipl_table[model].buf;
-	if (model > 2) ipl_key = 1;
-
+	if (model > 2){
+		ipl_key = (model==4)?2:1;
+	}
 	//load module
 	mod = sceKernelLoadModule("ipl_update.prx", 0, NULL);
 

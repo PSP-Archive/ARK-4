@@ -120,7 +120,11 @@ newcipl:
 	$(Q)$(MAKE) PSP_MODEL=01G -C loader/perma/newcipl/
 	$(Q)$(MAKE) PSP_MODEL=02G -C loader/perma/newcipl/
 	$(Q)$(MAKE) PSP_MODEL=03G -C loader/perma/newcipl/
-#	$(Q)$(MAKE) PSP_MODEL=04G -C loader/perma/newcipl/
+	$(Q)$(MAKE) PSP_MODEL=04G -C loader/perma/newcipl/
+#	$(Q)$(MAKE) PSP_MODEL=05G -C loader/perma/newcipl/
+	$(Q)$(MAKE) PSP_MODEL=07G -C loader/perma/newcipl/
+	$(Q)$(MAKE) PSP_MODEL=09G -C loader/perma/newcipl/
+	$(Q)$(MAKE) PSP_MODEL=11G -C loader/perma/newcipl/
 	$(Q)$(MAKE) -C loader/perma/newcipl/installer
 
 kxploits:
