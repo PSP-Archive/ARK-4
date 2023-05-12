@@ -105,7 +105,20 @@ The instructions are as follows:
 </details>
 
 <details>
-  <summary> <b> Permanent CFW via cIPL </b> </summary>
+  <summary> <b> Permanent CFW via new cIPL </b> </summary>
+<p>
+
+  - Works on 1K models, 2K models and early 3K models (1g, 2g and 3g).
+  - Use `pspident` homebrew to identify your model and compatibility with custom IPL.
+  - Move or copy `ARK_newIPL` folder to `/PSP/GAME/` and run the program.
+  - Press the corresponding button in the installation page to install the cIPL patch.
+  - Warning: unlike classic cIPL, the new method can't be easily uninstalled.
+
+</p>
+</details>
+
+<details>
+  <summary> <b> Permanent CFW via classic cIPL </b> </summary>
 <p>
 
   - Only works on 1K models and early 2K models (those compatible with Pandora).
