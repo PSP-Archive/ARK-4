@@ -96,8 +96,6 @@
 
 #include "ipl_stage2_payload.h"
 
-//extern u32 size_payload;
-//extern u8 payload;
 void Dcache();
 void Icache();
 

@@ -11,8 +11,6 @@
 #include "nand_payloadex.h"
 #endif
 
-//extern uint32_t size_payloadex;
-//extern uint8_t payloadex;
 void Dcache();
 void Icache();
 

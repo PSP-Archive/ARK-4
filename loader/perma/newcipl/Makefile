@@ -21,3 +21,4 @@ all:
 clean:
 	$(Q)rm payload_*.h nandcipl_*.bin | true
 	$(Q)$(MAKE) clean -C payloadex
+	$(Q)rm ipl_stage2_payload/ipl_stage2_payload.h | true

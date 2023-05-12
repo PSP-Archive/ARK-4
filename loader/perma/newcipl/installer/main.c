@@ -16,6 +16,7 @@
 #include "../payload_01G.h"
 #include "../payload_02G.h"
 #include "../payload_03G.h"
+#include "../payload_04G.h"
 
 PSP_MODULE_INFO("IPLFlasher", 0x0800, 1, 0); 
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
@@ -114,7 +115,8 @@ int main()
 	} ipl_table[] = {
 		{(unsigned char*)payload_01G, size_payload_01G},
 		{(unsigned char*)payload_02G, size_payload_02G},
-		{(unsigned char*)payload_03G, size_payload_03G}
+		{(unsigned char*)payload_03G, size_payload_03G},
+		{(unsigned char*)payload_04G, size_payload_04G}
 	};
 	int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);
 
