@@ -12,8 +12,11 @@
 #include <kubridge.h>
 
 #include "pspipl_update.h"
-#include "../ipl_block_large.h"
-#include "../ipl_block_01g.h"
+
+#include "../payload_01G.h"
+#include "../payload_02G.h"
+#include "../payload_03G.h"
+//#include "../payload_04G.h"
 
 PSP_MODULE_INFO("IPLFlasher", 0x0800, 1, 0); 
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
@@ -27,6 +30,8 @@ u32 sceSysregGetTachyonVersion(void);		// 0xE2A5D1EE
 char msg[256];
 int model;
 static u8 orig_ipl[0x24000] __attribute__((aligned(64)));
+//static u8 ipl_block_large[0x24000]__attribute__((aligned(64)));
+u8* ipl_block_large;
 
 int ReadFile(char *file, int seek, void *buf, int size)
 {
@@ -63,7 +68,7 @@ void ErrorExit(int milisecs, char *fmt, ...)
 }
 ////////////////////////////////////////
 u8 nand_buff[0x40000];
-void flash_ipl(int size)
+void flash_ipl(int size, u16 key)
 {
 
 	printf("Flashing IPL...");
@@ -74,13 +79,14 @@ void flash_ipl(int size)
 	if(pspIplUpdateClearIpl() < 0)
 		ErrorExit(5000,"Failed to clear ipl!\n");
 
-	if (pspIplUpdateSetIpl( ipl_block_large , size + 0x4000, 0 ) < 0)
+	if (pspIplUpdateSetIpl( ipl_block_large , size + 0x4000, key ) < 0)
 		ErrorExit(5000,"Failed to write ipl!\n");
 
 	printf("Done.\n");
 
 }
 
+/*
 int is_ta88v3(void)
 {
 	u32 model, tachyon;
@@ -94,14 +100,25 @@ int is_ta88v3(void)
 
 	return 0;
 }
+*/
 
 int main() 
 {
 	int devkit, size;
 	SceUID kpspident;
 	SceUID mod;
+	u16 ipl_key = 0;
 
-	(void)size_ipl_block_large;
+	struct {
+		unsigned char* buf;
+		size_t size;
+	} ipl_table[] = {
+		{(unsigned char*)payload_01G, size_payload_01G},
+		{(unsigned char*)payload_02G, size_payload_02G},
+		{(unsigned char*)payload_03G, size_payload_03G},
+		//{(unsigned char*)payload_04G, size_payload_04G}
+	};
+	int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);
 
 	pspDebugScreenInit();
 	pspDebugScreenSetTextColor(WHITE);
@@ -119,13 +136,13 @@ int main()
 
 	model = kuKernelGetModel();
 
-	if(!(model == 0 || model == 1) || is_ta88v3()) {
+	if(model > supported_models || ipl_table[model].buf == NULL) {
 		ErrorExit(5000,"This installer does not support this model.\n");
 	}
 
-	if( model == 0 ) {
-		memcpy( ipl_block_large , ipl_block_01g, 0x4000);
-	}
+	//memcpy(ipl_block_large, ipl_table[model].buf, ipl_table[model].size);
+	ipl_block_large = ipl_table[model].buf;
+	if (model > 2) ipl_key = 1;
 
 	//load module
 	mod = sceKernelLoadModule("ipl_update.prx", 0, NULL);
@@ -140,7 +157,7 @@ int main()
 		ErrorExit(5000,"Could not start module!\n");
 	}
 
-	size = pspIplUpdateGetIpl(orig_ipl);
+	size = ipl_table[model].size; //pspIplUpdateGetIpl(orig_ipl);
 
 	if(size < 0) {
 		ErrorExit(5000,"Failed to get ipl!\n");
@@ -150,10 +167,11 @@ int main()
 
 	int ipl_type = 0;
 
+	/*
 	if( size == 0x24000 ) {
 		printf("Custom ipl is installed\n");
 		size -= 0x4000;
-		memmove( ipl_block_large + 0x4000 , orig_ipl + 0x4000 , size);
+		memmove( ipl_block_large , orig_ipl + 0x4000 , size);
 		ipl_type = 1;
 	} else if( size == 0x20000 ) {
 		printf("Raw ipl \n");
@@ -162,6 +180,7 @@ int main()
 		printf("ipl size;%08X\n", size);
 		ErrorExit(5000,"Unknown ipl!\n");
 	}
+	*/
 
 	printf(" Press X to ");
 
@@ -182,7 +201,7 @@ int main()
         sceCtrlReadBufferPositive(&pad, 1);
 
 		if (pad.Buttons & PSP_CTRL_CROSS) {
-			flash_ipl( size );
+			flash_ipl( size, ipl_key );
 			break; 
 		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) && ipl_type ) {		
 			printf("Flashing IPL...");
@@ -191,7 +210,7 @@ int main()
 				ErrorExit(5000,"Failed to clear ipl!\n");
 			}
 
-			if (pspIplUpdateSetIpl( ipl_block_large + 0x4000 , size, 0 ) < 0) {
+			if (pspIplUpdateSetIpl( ipl_block_large, size,  ipl_key) < 0) {
 				ErrorExit(5000,"Failed to write ipl!\n");
 			}
 

@@ -5,7 +5,7 @@ void printMatrixFloat(int matid) {
     float m[16];
 
     #define SV(N)                    \
-        asm("usv.q    R"#N"00,  0 + %0\n"    \
+        __asm("usv.q    R"#N"00,  0 + %0\n"    \
             "usv.q    R"#N"01, 16 + %0\n"    \
             "usv.q    R"#N"02, 32 + %0\n"    \
             "usv.q    R"#N"03, 48 + %0\n"    \
