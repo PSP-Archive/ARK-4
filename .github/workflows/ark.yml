@@ -40,11 +40,11 @@ jobs:
       - name: Create Version
         id: get_version
         run: |
-          echo "VERSION=v$(date +%s)" >> $GITHUB_OUTPUT #&& echo "::set-output name=VERSION::${verson}"
+          echo "VERSION=v$(date +%s)" >> $GITHUB_OUTPUT
 
       - uses: actions/checkout@v2
       - name: Install Dependencies
-        run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget git python2
+        run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget git python3 python3-pip && sudo pip3 install pycryptodome ecdsa
       - name: Extract SDK
         run: sudo 7z -o/usr/local/ x ./contrib/PC/PSPSDK/pspdev.7z 
       - name: Change Permissions
