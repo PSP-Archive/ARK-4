@@ -3,10 +3,12 @@ XOR_VAL =
 else
 ifeq ($(PSP_MODEL), 02G)
 XOR_VAL = 
+else
 ifeq ($(PSP_MODEL), 05G)
 XOR_VAL = --xor 2
 else
 XOR_VAL = --xor 1
+endif
 endif
 endif
 
