@@ -3,7 +3,9 @@
 # ArkFast updater script by Yoti for ARK-4 project
 # 2022-09-06: initial release
 # 2022-09-06: fix kexploit -1
-# 2023-10-02: update version
+# 2022-09-23: cleanup files
+# 2023-02-10: update version
+# 2023-05-14: fix for v4.20
 
 #sudo apt update
 #sudo apt install zip unzip -y
@@ -36,7 +38,7 @@ if [ -f "ArkFast_new.vpk" ]; then
     rm -f ArkFast_new.vpk
 fi
 cd ARK4_tmp/
-mv -f VitaBubble/K.BIN ARK_01234/K.BIN
+mv -f Vita/Standalone/K.BIN ARK_01234/K.BIN
 zip -r ARK_01234.zip ARK_01234
 mv -f ARK_01234.zip ../ArkFast_tmp/resources/ARK_01234.zip
 cd ..
