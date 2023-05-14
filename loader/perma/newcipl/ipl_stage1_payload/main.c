@@ -75,7 +75,6 @@
 #define ENTRY_POINT_ADDRESS 0x4018B08
 #define SET_SEED_ADDRESS 0x400117C
 
-
 #elif IPL_11G
 
 #define ERASE_RAM_START 0x40ec0d8
@@ -119,7 +118,6 @@ void *memcpy(void *dest, const void *src, size_t size)
 
 	return dest;
 }
-
 
 u8 rand_xor[] =
 {
