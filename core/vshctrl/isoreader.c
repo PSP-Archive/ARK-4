@@ -316,6 +316,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         }
         else{ // slow read
             b_size = read_raw_data(com_buf, b_size, b_offset + block_header);
+            if (c_buf) c_buf += b_size;
         }
 
         // decompress block
