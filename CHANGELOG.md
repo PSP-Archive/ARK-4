@@ -1,5 +1,10 @@
 # ARK Changelog
 
+## Version 4.20.34 (2023-05-15)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42034
+- Fixed black screen when launching PS1 games and homebrew on PSP Go.
+- Fixed slowdowns in the custom launcher when previewing a game.
+
 ## Version 4.20.33 (2023-05-12)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42033
 - Ported over the new cIPL reset hack from DC-M33 project. Allows for permament Custom IPL installations on 3g models (early 3K).
