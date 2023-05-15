@@ -11,9 +11,9 @@ Controller::Controller(){
 Controller::~Controller(){
 }
         
-void Controller::update(int n){
+void Controller::update(int ignore){
 
-    for (int i=0; i<n; i++)
+    for (int i=0; i<ignore; i++)
         sceCtrlReadBufferPositive(&pad, 1);
     
     nowpad = pad.Buttons;
