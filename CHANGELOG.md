@@ -1,5 +1,20 @@
 # ARK Changelog
 
+## Version 4.20.33 (2023-05-12)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42033
+- Ported over the new cIPL reset hack from DC-M33 project. Allows for permament Custom IPL installations on 3g models (early 3K).
+- Fixed issues with Inferno driver.
+- Added Simplified Chinese translation in the XMB.
+- Other fixes and improvements.
+
+## Version 4.20.20 (2023-05-10)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42020
+- Improved memory management in the XMB, fixes issues such as crashes with too many games loaded.
+- Cleanup and fix Inferno driver.
+- Added option to Hide DLC in the XMB.
+- Added battery percentage to launcher and recovery.
+- Other fixes, cleanup and improvements.
+
 ## Version 4.20.19 (2023-05-09)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42019
 - You can now update ARK using the Custom Launcher.
