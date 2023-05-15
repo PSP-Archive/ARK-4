@@ -437,7 +437,7 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         return 0x80000108;
     }
     
-    if (bootfrom != PSP_BOOT_DISC){
+    if (real_magic == 0x50425000){ // PBP
         // seek to PARAM.SFO offset variable
         sceIoLseek(fd, 0x08, PSP_SEEK_SET);
         // read PARAM.SFO offset
