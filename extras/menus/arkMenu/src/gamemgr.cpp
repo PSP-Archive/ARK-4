@@ -651,7 +651,7 @@ bool GameManager::pmfPrompt(){
 
     loading_data = true;
 
-    int thd = sceKernelCreateThread("draw_thread", (SceKernelThreadEntry)&load_thread, 0x10, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
+    int thd = sceKernelCreateThread("gamedata_thread", (SceKernelThreadEntry)&load_thread, 0x10, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
     sceKernelStartThread(thd, sizeof(entry), &entry);
 
     float angle = 1.0;
@@ -678,7 +678,7 @@ bool GameManager::pmfPrompt(){
             entry->drawBG();
             entry->getIcon()->draw(10, 98);
             common::flipScreen();
-            control.update();
+            control.update(1);
             if (control.accept()){
                 ret = true;
                 break;

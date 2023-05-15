@@ -2,7 +2,6 @@
 #include "common.h"
 
 #define CONTROL_DELAY 10
-#define CONTROL_IGNORE 3
 
 Controller::Controller(){
     this->nowpad = this->newpad = this->oldpad = 0;
@@ -12,9 +11,9 @@ Controller::Controller(){
 Controller::~Controller(){
 }
         
-void Controller::update(){
+void Controller::update(int n){
 
-    for (int i=0; i<CONTROL_IGNORE; i++)
+    for (int i=0; i<n; i++)
         sceCtrlReadBufferPositive(&pad, 1);
     
     nowpad = pad.Buttons;
