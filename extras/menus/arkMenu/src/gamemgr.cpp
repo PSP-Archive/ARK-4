@@ -74,7 +74,6 @@ int GameManager::loadIcons(SceSize _args, void *_argp){
         // load icons
         if (self->selectedCategory < 0){
             if (self->selectedCategory == -1) self->findEntries();
-            sceKernelDelayThread(0);
             continue;
         }
         for (int i=0; i<MAX_CATEGORIES; i++){
