@@ -64,7 +64,8 @@ as well as unique and exclusive new features not found anywhere else.
 
     The Build script (build.sh) contains online retrieval of dependancies required to build ARK.
 
-- Required packages (based on Alpine/`pspdev` Docker): `git build-base cmake p7zip mpfr-dev python3 zlib-dev`
+- Required packages (based on Alpine/`pspdev` Docker): `git build-base cmake p7zip mpfr-dev python3 py3-pip zlib-dev`
+- Additionally, the following `python` modules need installed via `pip`: `pycryptodome ecdsa`
 - Release: `./build.sh` 
 - Debug: `./build.sh --debug`
 - Manually: install the oldest possible SDK (ideally the one used to compile M33), then run `make`

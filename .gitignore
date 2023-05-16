@@ -2,6 +2,7 @@
 *.Po
 contrib/PC/btcnf/*.bin
 contrib/PC/prxencrypter/prxencrypter
+contrib/PC/psptools/psptool/__pycache__/*
 dist/*
 THEME.ARK
 ARK.BIN
@@ -38,6 +39,10 @@ loader/dc/msipl/payloadex/ms*
 loader/dc/tmctrl/tmctrl.h
 loader/dc/tmctrl/rebootex/payload.h
 loader/dc/tmctrl/rebootex/reboot*
+loader/perma/newcipl/*.dec
+loader/perma/newcipl/*.bin
+loader/perma/newcipl/payload_*.h
+loader/perma/newcipl/ipl_stage2_payload/ipl_stage2_payload.h
 
 # Generic Objects and PSP Binaries
 *.o

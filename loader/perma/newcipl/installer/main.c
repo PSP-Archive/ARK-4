@@ -29,7 +29,7 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 #define WHITE 0xFFFFF1
 #define GREEN 0x0000FF00
 
-u32 sceSysregGetTachyonVersion(void);		// 0xE2A5D1EE
+int sceSysregGetTachyonVersion(void);		// 0xE2A5D1EE
 
 char msg[256];
 int model;
