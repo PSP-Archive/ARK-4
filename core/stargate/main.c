@@ -44,6 +44,9 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
     if (strcmp(mod->modname, "tekken") == 0) {
         hookImportByNID(mod, "scePower", 0x34F9C463, 222);
 	}
+    else if (strcasecmp(mod->modname, "DJMAX") == 0) {
+        hookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, 0);
+    }
 
     // Call Previous Module Start Handler
     if(previous) previous(mod);
