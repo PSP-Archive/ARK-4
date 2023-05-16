@@ -20,7 +20,7 @@ int T_Decoder(SceSize _args, void *_argp)
 
     if (!playPMF){
         while (true){
-            pad.update();
+            pad.update(1);
             if (pad.decline())
             {
                 run = false;
@@ -64,7 +64,7 @@ int T_Decoder(SceSize _args, void *_argp)
 
     for (;;)
     {
-        pad.update();
+        pad.update(1);
         if (pad.decline())
         {
             run = false;

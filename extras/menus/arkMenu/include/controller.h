@@ -19,7 +19,7 @@ class Controller{
         ~Controller();
         
         // update controller data
-        void update();
+        void update(int ignore=3);
         // wait until there's no input in controller
         void flush();
         

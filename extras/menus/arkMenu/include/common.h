@@ -95,6 +95,7 @@ namespace common{
     extern bool fileExists(const std::string &path);
     extern bool folderExists(const std::string &path);
     extern long fileSize(const std::string &path);
+    extern u64 deviceSize(const std::string path);
     extern string beautifySize(long size);
     extern Image* getImage(int which);
     extern Image* getIcon(int which);

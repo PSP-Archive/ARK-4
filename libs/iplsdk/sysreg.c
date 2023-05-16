@@ -1,7 +1,7 @@
 #include "sysreg.h"
 
 #define REG32(ADDR) (*(vu32*)(ADDR))
-#define SYNC() asm(" sync; nop"::)
+#define SYNC() __asm(" sync; nop"::)
 
 u32 sceSysregSpiClkSelect(int a1,int a2)
 {

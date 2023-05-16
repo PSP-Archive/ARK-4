@@ -258,6 +258,7 @@ exit:
 */
 static int read_compressed_data(u8* addr, u32 size, u32 offset)
 {
+
     u32 cur_block;
     u32 pos, ret, read_bytes;
     u32 o_offset = offset;
@@ -306,8 +307,8 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     #endif
 
     // try to read at once as much compressed data as possible
-    if (size >= block_size*2){ // only if going to read more than two blocks
-        if (size <= compressed_size) compressed_size = size-block_size; // adjust chunk size if compressed data is still bigger than uncompressed
+    if (size > block_size*2){ // only if going to read more than two blocks
+        if (size < compressed_size) compressed_size = size-block_size; // adjust chunk size if compressed data is still bigger than uncompressed
         c_buf = top_addr - compressed_size; // read into the end of the user buffer
         read_raw_data(c_buf, compressed_size, o_start);
     }
@@ -319,7 +320,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
 
         // check if we need to refresh index table
         if (cur_block-g_cso_idx_start_block >= g_cso_idx_cache_num-1){
-            read_raw_data(g_cso_idx_cache, g_cso_idx_cache_num*sizeof(u32), cur_block * 4 + header_size);
+            read_raw_data(g_cso_idx_cache, g_cso_idx_cache_num*sizeof(u32), cur_block*sizeof(u32) + header_size);
             g_cso_idx_start_block = cur_block;
         }
         
@@ -337,11 +338,13 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
 
         // check if we need to (and can) read another chunk of data
         if (c_buf < addr || c_buf+b_size > top_addr){
-            if (size >= block_size*2){ // only if more than two blocks left, otherwise just use normal reading
+            if (size > b_size+block_size){ // only if more than two blocks left, otherwise just use normal reading
                 compressed_size = o_end-b_offset; // recalculate remaining compressed data
-                if (size <= compressed_size) compressed_size = size-block_size; // adjust if still bigger than uncompressed
-                c_buf = top_addr - compressed_size; // read into the end of the user buffer
-                read_raw_data(c_buf, compressed_size, b_offset);
+                if (size < compressed_size) compressed_size = size-block_size; // adjust if still bigger than uncompressed
+                if (compressed_size >= b_size){
+                    c_buf = top_addr - compressed_size; // read into the end of the user buffer
+                    read_raw_data(c_buf, compressed_size, b_offset);
+                }
             }
         }
 
@@ -352,6 +355,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         }
         else{ // slow read
             b_size = read_raw_data(com_buf, b_size, b_offset + block_header);
+            if (c_buf) c_buf += b_size;
         }
 
         // decompress block

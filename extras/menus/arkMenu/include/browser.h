@@ -70,6 +70,8 @@ class Browser : public SystemEntry{
         void setName(string name){};
         
         string getInfo(){
+            if (devsize.size() > 0)
+                return this->cwd + " (Free size: "+devsize+")";
             return this->cwd;
         }
         
@@ -93,6 +95,8 @@ class Browser : public SystemEntry{
     private:
     
         string cwd; // Current Working Directory
+
+        string devsize; // device size (only if in root)
         
         vector<Entry*>* entries; // entries in the current directory
         

@@ -56,7 +56,7 @@ resurrection.h:
 	$(Q)bin2c ../vunbricker/resurrection.prx resurrection.h resurrection
 
 ipl_update.h:
-	$(Q)bin2c $(ARKROOT)/contrib/PSP/GAME/ARK_cIPL/ipl_update.prx ipl_update.h ipl_update
+	$(Q)bin2c $(ARKROOT)/extras/modules/ipl_update/ipl_update.prx ipl_update.h ipl_update
 
 iop.h:
 	$(Q)bin2c $(ARKROOT)/contrib/PSP/GAME/ARK_DC/iop.prx iop.h iop

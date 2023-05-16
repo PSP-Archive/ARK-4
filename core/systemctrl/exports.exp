@@ -72,6 +72,7 @@ PSP_EXPORT_FUNC(sctrlHENIsTestingTool)
 PSP_EXPORT_FUNC(sctrlHENSetTestingTool)
 PSP_EXPORT_FUNC(exitLauncher)
 PSP_EXPORT_FUNC(flushCache)
+PSP_EXPORT_FUNC(sctrlHENFakeDevkitVersion)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(SystemCtrlForKernel, 0, 0x0001)

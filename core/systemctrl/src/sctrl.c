@@ -412,7 +412,7 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
     }
     
     // Open PBP File
-    int fd = sceIoOpen(pbpPath, PSP_O_RDONLY, 0777);
+    int fd = sceIoOpen(pbpPath, PSP_O_RDONLY, 0);
     
     // PBP File not found
     if (fd < 0)
@@ -437,7 +437,7 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         return 0x80000108;
     }
     
-    if (bootfrom == PSP_BOOT_MS){
+    if (real_magic == 0x50425000){ // PBP
         // seek to PARAM.SFO offset variable
         sceIoLseek(fd, 0x08, PSP_SEEK_SET);
         // read PARAM.SFO offset

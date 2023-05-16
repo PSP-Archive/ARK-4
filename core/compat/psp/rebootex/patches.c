@@ -67,8 +67,8 @@ void patchRebootBuffer(){
             patches--;
         }
 #else
-        else if (data == 0x0440004f){ // payloadexcheck2
-            _sw(NOP, addr); // Killing Branch Check bltz ...
+        else if (data == 0x25AC003F){ // payloadexcheck2
+            _sw(NOP, addr-44); // Killing Branch Check bltz ...
             patches--;
         }
         else if (data == 0x01F7702B){ // rebootexcheck3 and rebootexcheck4

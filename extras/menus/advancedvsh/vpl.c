@@ -80,7 +80,7 @@ void vpl_free(void *p)
 
 #ifdef DEBUG
 	if(ret != 0) {
-		asm("break 0x8492");
+		__asm("break 0x8492");
 	}
 #endif
 }

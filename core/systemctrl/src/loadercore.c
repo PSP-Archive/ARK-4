@@ -187,17 +187,6 @@ static void loadXmbControl(){
     }
 }
 
-static u32 fakeDevkitVersion(){
-    return FW_660;
-}
-
-static void patchOldHomebrew(){
-    int apitype = sceKernelInitApitype();
-    sctrlHENPatchSyscall(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0x3FC9AE6A), &fakeDevkitVersion);
-    if (apitype == 0x141 || apitype == 0x152) // allow modern CFW features on old homebrew
-        sctrlHENPatchSyscall(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0xFC114573), &fakeDevkitVersion);
-}
-
 // Init Start Module Hook
 int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
@@ -227,8 +216,6 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // MediaSync not yet started... too early to load plugins.
     if(!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
     {
-        // Fix old homebrew and plugins
-        patchOldHomebrew();
         // Load XMB Control
         loadXmbControl();
         // Load Plugins
