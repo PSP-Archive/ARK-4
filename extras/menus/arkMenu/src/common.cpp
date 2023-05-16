@@ -422,7 +422,7 @@ u64 common::deviceSize(const std::string path){
     return (u64)devsize.freeClusters*(u64)devsize.sectorSize*(u64)devsize.sectorCount;
 }
 
-string common::beautifySize(long size){
+string common::beautifySize(u64 size){
     ostringstream txt;
 
     if (size < 1024)
@@ -469,7 +469,6 @@ MP3* common::getMP3Sound(){
 }
 
 void common::playMenuSound(){
-    //playMP3File(NULL, common::getMP3Sound()->getBuffer(), common::getMP3Sound()->getBufferSize());
     sound_mp3->play();
 }
 
