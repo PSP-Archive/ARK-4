@@ -35,6 +35,9 @@
 #include "rebootconfig.h"
 #include "sysmem.h"
 
+extern u32 sctrlHENFakeDevkitVersion();
+extern int is_plugins_loading;
+
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
 
@@ -66,6 +69,12 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 
     // System fully booted Status
     static int booted = 0;
+
+    // Fix 6.60 plugins on 6.61
+    if (is_plugins_loading){
+        hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
+        hookImportByNID(mod, "SysMemUserForUser", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
+    }
     
     #ifdef DEBUG
     printk("syspatch: %s(0x%04X)\r\n", mod->modname, sceKernelInitApitype());
@@ -115,6 +124,11 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         patchMesgLed(mod);
         // Exit Handler
         goto flush;
+    }
+
+    // unlocks variable bitrate on old homebrew
+    if (strcmp(mod->modname, "sceMp3_Library") == 0){
+        hookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion);
     }
 
     // Boot Complete Action not done yet

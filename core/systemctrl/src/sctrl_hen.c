@@ -340,3 +340,7 @@ void sctrlHENSetRebootexConfig(RebootConfigARK* config){
         memcpy(&rebootex_config, config, sizeof(RebootConfigARK));
     }
 }
+
+u32 sctrlHENFakeDevkitVersion(){
+    return FW_660;
+}

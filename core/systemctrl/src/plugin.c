@@ -41,6 +41,7 @@ void (*plugin_handler)(const char* path, int modid) = NULL;
 
 int disable_plugins = 0;
 int disable_settings = 0;
+int is_plugins_loading = 0;
 
 static addPlugin(char* path){
     for (int i=0; i<plugins.count; i++){
@@ -330,7 +331,7 @@ void LoadPlugins(){
     checkControllerInput();
     if (disable_plugins || isRecoveryMode())
         return; // don't load plugins in recovery mode
-
+    is_plugins_loading = 1;
     // Open Plugin Config from ARK's installation folder
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
@@ -342,6 +343,7 @@ void LoadPlugins(){
     ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
     // start all loaded plugins
     startPlugins();
+    is_plugins_loading = 0;
 }
 
 void loadSettings(void* settingsHandler){
