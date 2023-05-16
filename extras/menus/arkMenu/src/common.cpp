@@ -407,6 +407,21 @@ long common::fileSize(const std::string &path){
     return rc == 0 ? stat_buf.st_size : 0;
 }
 
+u64 common::deviceSize(const std::string path){
+    struct DeviceSize {
+        u32 maxClusters;
+        u32 freeClusters;
+        u32 maxSectors;
+        u32 sectorSize;
+        u32 sectorCount;
+    } devsize;
+    void* command = (void*)&devsize;
+    memset(&devsize, 0, sizeof(devsize));
+    string devpath = path.substr(0, path.find(":")+1);
+    sceIoDevctl(devpath.c_str(), 0x02425818, &command, sizeof(command), NULL, 0);
+    return (u64)devsize.freeClusters*(u64)devsize.sectorSize*(u64)devsize.sectorCount;
+}
+
 string common::beautifySize(long size){
     ostringstream txt;
 

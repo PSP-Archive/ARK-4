@@ -456,6 +456,11 @@ void Browser::refreshDirs(){
         goto refresh_retry;
     }
 
+    if (cwd == ROOT_DIR || cwd == GO_ROOT){
+        devsize = common::beautifySize(common::deviceSize(cwd));
+    }
+    else devsize = "";
+
     SceIoDirent* dit = (SceIoDirent*)malloc(sizeof(SceIoDirent));
 
     vector<Entry*> folders;
