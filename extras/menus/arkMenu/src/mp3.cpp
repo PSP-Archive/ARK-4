@@ -90,8 +90,12 @@ u32 findMP3StreamStart(int file_handle, void* buffer, int buffer_size, char* tmp
         sceIoRead(file_handle, buf, MP3BUF_SIZE);
     }
     if (buf[0] == 'I' && buf[1] == 'D' && buf[2] == '3'){
-        u32 header_size = (buf[9]|(buf[8] << 7)|(buf[7] << 14)|(buf[6] << 21));
+        u32 header_size = (buf[9] | (buf[8]<<7) | (buf[7]<<14) | (buf[6]<<21));
         return header_size+10;
+    }
+    else if (buf[0] == 'A' && buf[1] == 'P' && buf[2] == 'E'){
+        u32 header_size = (buf[12] | (buf[13]<<8) | (buf[14]<<16) | (buf[15]<<24));
+        return header_size+32;
     }
     return 0;
 }
