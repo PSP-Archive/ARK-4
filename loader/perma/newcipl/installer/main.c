@@ -136,7 +136,7 @@ int main()
 	pspDebugScreenSetTextColor(WHITE);
 	devkit = sceKernelDevkitVersion();
 
-	if (devkit != 0x06060110) {
+	if(devkit != 0x06060010 && devkit != 0x06060110) {
 		ErrorExit(5000,"FW ERROR!\n");
 	}
 
@@ -176,7 +176,7 @@ int main()
 		ErrorExit(5000,"Failed to get ipl!\n");
 	}
 
-	printf("\nCustom ipl Flasher for 6.61\n\n\n");
+	printf("\nCustom ipl Flasher for 6.61.\n\n\n");
 
 	int ipl_type = 0;
 
