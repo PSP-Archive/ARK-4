@@ -35,6 +35,7 @@ loader/dc/installer/tm_msipl.h
 loader/dc/installer/vlf.h
 loader/dc/msipl/mainbinex/p*
 loader/dc/msipl/payloadex/ms*
+loader/dc/tmctrl/tmctrl.h
 loader/dc/tmctrl/rebootex/payload.h
 loader/dc/tmctrl/rebootex/reboot*
 
