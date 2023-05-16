@@ -1,5 +1,12 @@
 # ARK Changelog
 
+## Version 4.20.35 (2023-05-16)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42035
+- Improved `660on661` patch. Fixes crashes and other issues in homebrew such as `chronoswitch` and others.
+- Fixed crash in `DJ Max`. Still a heavy Anti-Piracy game.
+- `Free space` available (on ms0 or ef0) is now shown in `file browser`.
+- You can now boot into `OFW` using `new cIPL` (holding `Home` button).
+
 ## Version 4.20.34 (2023-05-15)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42034
 - Fixed black screen when launching PS1 games and homebrew on PSP Go.
