@@ -50,7 +50,7 @@ int GameManager::loadIcons(SceSize _args, void *_argp){
 
     while (self->dynamicIconRunning != ICONS_STOPPED){
         // check UMD status
-        sceKernelDelayThread(100000);
+        sceKernelDelayThread(0);
         std::vector<Entry*>* game_entries = self->categories[GAME]->getVector();
         bool has_umd = UMD::isUMD();
         bool umd_loaded = game_entries->size() > 0 && string("UMD") == game_entries->at(0)->getType();
