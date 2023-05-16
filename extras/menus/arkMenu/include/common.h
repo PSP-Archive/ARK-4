@@ -118,7 +118,6 @@ namespace common{
     extern int maxString(string* strings, int n_strings);
     extern std::string getExtension(std::string path);
     extern void launchRecovery();
-    extern bool canInstallGame();
 }
 
 #endif

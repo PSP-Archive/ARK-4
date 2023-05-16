@@ -152,9 +152,7 @@ void GameManager::findEntries(){
 
     // add recovery menu
     if (common::getConf()->show_recovery){
-        char cwd[128];
-        getcwd((char*)cwd, sizeof(cwd));
-        string recovery_path = string(cwd) + "/" + "RECOVERY.PBP";
+        string recovery_path = string(common::getArkConfig()->arkpath) + "RECOVERY.PBP";
         if (common::fileExists(recovery_path)){
             Eboot* recovery_menu = new Eboot(recovery_path);
             recovery_menu->setName("Recovery Menu");
@@ -482,7 +480,7 @@ void GameManager::control(Controller* pad){
             delete aux;
 
             if (ret == 0){
-                // TODO: create a new options menu but each entry is some info about the game
+                // create a new options menu but each entry is some info about the game
                 Entry* e = this->getEntry();
                 string path = e->getPath();
                 if (e->getType() == "EBOOT"){
@@ -639,7 +637,6 @@ int load_thread(int argc, void* argp){
 }
 
 bool GameManager::pmfPrompt(){
-
 
     bool ret;
     

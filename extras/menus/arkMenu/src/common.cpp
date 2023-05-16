@@ -136,7 +136,7 @@ void common::resetConf(){
 void common::launchRecovery(){
     struct SceKernelLoadExecVSHParam param;
     char cwd[128];
-    string recovery_path = string(getcwd((char*)cwd, sizeof(cwd))) + "/" + "RECOVERY.PBP";
+    string recovery_path = string(ark_config.arkpath) + "RECOVERY.PBP";
     
     memset(&param, 0, sizeof(param));
     
@@ -565,10 +565,4 @@ std::string common::getExtension(std::string path){
     std::string ext = path.substr(path.find_last_of(".") + 1);
     std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
     return ext;
-}
-
-bool common::canInstallGame(){
-    static char* test_dir = "ms0:/PSP/GAME/ARKTEST/";
-    sceIoMkdir(test_dir, 0777);
-    return (sceIoRmdir(test_dir) >= 0);
 }
