@@ -297,7 +297,7 @@ int main()
 
 	uint32_t keys = -1;
 	pspSysconGetCtrl1(&keys);
-	if ((keys & (SYSCON_CTRL_LTRG | SYSCON_CTRL_HOME)) == 0)
+	if ((keys & SYSCON_CTRL_VOL_UP) == 0)
 	{
 		sceSysconCtrlMsPower(1);
 	

@@ -25,6 +25,7 @@
 #else
 #define END_BUF_STR "StopBoot"
 #define SYSCON_CTRL_RTRG 0x00000400
+#define SYSCON_CTRL_HOME 0x00001000
 
 ARKConfig _arkconf = {
     .magic = ARK_CONFIG_MAGIC,
@@ -238,6 +239,10 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int a
 
 #ifdef PAYLOADEX
     u32 ctrl = _lw(BOOT_KEY_BUFFER);
+
+    if ((ctrl & SYSCON_CTRL_HOME) == 0) {
+        return sceReboot(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+    }
 
     if ((ctrl & SYSCON_CTRL_RTRG) == 0) {
         _arkconf.recovery = 1;
