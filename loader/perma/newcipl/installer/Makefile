@@ -1,7 +1,7 @@
 TARGET = flasher
 OBJS = main.o pspIplUpdate.o kpspident.o
 
-LIBS = -lpspkubridge
+LIBS = -lpspkubridge -lpspsystemctrl_user
 INCDIR = $(ARKROOT)/common/include
 LIBDIR = $(ARKROOT)/libs
 
@@ -10,7 +10,7 @@ CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 
 EXTRA_TARGETS = EBOOT.PBP
-PSP_EBOOT_TITLE = ARK cIPL Flasher
+PSP_EBOOT_TITLE = 661 ARK cIPL Flasher
 PSP_EBOOT_ICON = ICON0.PNG
 PSP_FW_VERSION = 660
 BUILD_PRX = 1

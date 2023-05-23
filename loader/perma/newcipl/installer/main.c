@@ -134,10 +134,19 @@ int main()
 
 	pspDebugScreenInit();
 	pspDebugScreenSetTextColor(WHITE);
-	devkit = sceKernelDevkitVersion();
+	//devkit = sceKernelDevkitVersion();
+	struct KernelCallArg args;
+	u32 getDevkitVersion = sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0x3FC9AE6A);
+	kuKernelCall((void*)getDevkitVersion, &args);
 
+	// New cIPL should only be run via 6.61 FW
+	/*
 	if(devkit != 0x06060010 && devkit != 0x06060110) {
 		ErrorExit(5000,"FW ERROR!\n");
+	}
+	*/
+	if(args.ret1 != 0x06060110 ) {
+		ErrorExit(5000,"6.61 FW SUPPORTED ONLY!\n");
 	}
 
 	kpspident = pspSdkLoadStartModule("kpspident.prx", PSP_MEMORY_PARTITION_KERNEL);
