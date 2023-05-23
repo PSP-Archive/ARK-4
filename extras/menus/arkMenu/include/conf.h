@@ -25,6 +25,7 @@ typedef struct {
     unsigned char swap_xo; // Advanced VSH Menu swap X/O buttons
     unsigned char force_update; // Force update (disable update version check)
     unsigned char battery_percent; // show remaing battery percent next to battery icon
+    unsigned char startbtn; // Default (normal start button behaviour or boot last game)
 } t_conf;
 
 #endif

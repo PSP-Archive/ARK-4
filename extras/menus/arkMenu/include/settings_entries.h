@@ -265,6 +265,22 @@ static struct {
     {"Disabled", "Enabled"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[6];
+} startbtn = {
+    "Start Button Behavior",
+    4,
+    0,
+    &(common::getConf()->startbtn),
+    {"Disabled", "Current", "Last Game", "Random Game"}
+};
+
+
+
 settings_entry* settings_entries[] = {
     (settings_entry*)&fast_gameboot,
     (settings_entry*)&language,
@@ -283,6 +299,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&redirect_ms0,
     (settings_entry*)&force_update,
     (settings_entry*)&battery_percent,
+    (settings_entry*)&startbtn,
 };
 
 #define MAX_SETTINGS_OPTIONS (sizeof(settings_entries)/sizeof(settings_entries[0]))
