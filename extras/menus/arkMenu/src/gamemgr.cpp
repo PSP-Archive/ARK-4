@@ -454,39 +454,8 @@ void GameManager::control(Controller* pad){
         }
     }
     else if (pad->start()){
-		// Disables Start Button
-		if(common::getConf()->startbtn == 0) return;
-
         if (selectedCategory >= 0 && !categories[selectedCategory]->isAnimating()){
-			// Default Start Button (Current)
-			if(common::getConf()->startbtn == 1) {
-				this->endAllThreads();
-				this->getEntry()->execute();
-			}
-			else if (common::getConf()->startbtn == 2) {
-				// Last game
-                const char* last_game = common::getConf()->last_game;
-				if (Eboot::isEboot(last_game)){
-                    this->endAllThreads();
-                    Eboot* eboot = new Eboot(last_game);
-                    eboot->execute();
-                }
-                else if (Iso::isISO(last_game)){
-                    this->endAllThreads();
-                    Iso* iso = new Iso(last_game);
-                    iso->execute();
-                }
-			}
-			else {
-				// Random ISO
-                if (this->categories[GAME]->getVectorSize() > 0){
-                    this->endAllThreads();
-                    srand(time(NULL));
-                    int rand_idx = rand() % this->categories[GAME]->getVectorSize();
-                    Entry* e = this->categories[GAME]->getEntry(rand_idx);
-                    e->execute();
-                }
-			}
+			this->startBoot();
         }
     }
     else if (pad->select()){
@@ -730,6 +699,38 @@ void GameManager::gameOptionsMenu(){
             delete e;
         }
     }break;
+    default: break;
+    }
+}
+
+void GameManager::startBoot(){
+    switch (common::getConf()->startbtn){
+    case 1: { // Default Start Button (Current)
+        this->endAllThreads();
+        this->getEntry()->execute();
+    } break;
+    case 2: { // Last game
+        const char* last_game = common::getConf()->last_game;
+        if (Eboot::isEboot(last_game)){
+            this->endAllThreads();
+            Eboot* eboot = new Eboot(last_game);
+            eboot->execute();
+        }
+        else if (Iso::isISO(last_game)){
+            this->endAllThreads();
+            Iso* iso = new Iso(last_game);
+            iso->execute();
+        }
+    } break;
+    case 3: { // Random ISO
+        if (this->categories[GAME]->getVectorSize() > 0){
+            this->endAllThreads();
+            srand(time(NULL));
+            int rand_idx = rand() % this->categories[GAME]->getVectorSize();
+            Entry* e = this->categories[GAME]->getEntry(rand_idx);
+            e->execute();
+        }
+    } break;
     default: break;
     }
 }
