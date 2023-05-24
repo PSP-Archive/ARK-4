@@ -58,7 +58,6 @@ typedef struct RebootConfigARK {
         u32 size;
         u32 flags;
     } rtm_mod;
-    void* flashfs; // flash0 ramfs
     int nfiles;
     char bootfile[100][64]; // list of boot files
 } RebootConfigARK;

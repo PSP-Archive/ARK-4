@@ -23,7 +23,6 @@
 
 extern u8* rebootbuffer;
 extern u32 size_rebootbuffer;
-extern void* flashfs;
 
 // Sony Reboot Buffer Loader
 extern int (* _LoadReboot)(void *, unsigned int, void *, unsigned int);

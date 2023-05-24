@@ -18,10 +18,8 @@ typedef struct{
 } FlashFile;
 
 int findFlashFile(BootFile* file, const char* path){
-    void* flashfs = reboot_conf->flashfs;
-    if (flashfs == NULL) return -1;
-    u32 nfiles = *(u32*)(flashfs);
-    FlashFile* cur = (FlashFile*)((size_t)(flashfs)+4);
+    u32 nfiles = *(u32*)(ARK_FLASH);
+    FlashFile* cur = (FlashFile*)((size_t)(ARK_FLASH)+4);
 
     for (int i=0; i<nfiles; i++){
         size_t filesize = (cur->filesize[0]) + (cur->filesize[1]<<8) + (cur->filesize[2]<<16) + (cur->filesize[3]<<24);

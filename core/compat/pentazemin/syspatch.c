@@ -92,7 +92,7 @@ int flashLoadPatch(int cmd)
 		strcat(archive, FLASH0_ARK);
 		
 		int fd = sceIoOpen(archive, PSP_O_RDONLY, 0777);
-		sceIoRead(fd, reboot_config->flashfs, MAX_FLASH0_SIZE);
+		sceIoRead(fd, ARK_FLASH, MAX_FLASH0_SIZE);
 		sceIoClose(fd);
 
         flushCache();

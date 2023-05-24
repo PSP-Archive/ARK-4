@@ -28,9 +28,8 @@ void flashPatch(){
 
     if (IS_VITA_ADR(ark_config)){ // read FLASH0.ARK into RAM
         PRTSTR("Reading FLASH0.ARK into RAM");
-        flashfs = (void*)ARK_FLASH;
         int fd = k_tbl->KernelIOOpen(archive, PSP_O_RDONLY, 0777);
-        k_tbl->KernelIORead(fd, flashfs, MAX_FLASH0_SIZE);
+        k_tbl->KernelIORead(fd, ARK_FLASH, MAX_FLASH0_SIZE);
         k_tbl->KernelIOClose(fd);
     }
     else if (IS_PSP(ark_config)){ // on PSP, extract FLASH0.ARK into flash0

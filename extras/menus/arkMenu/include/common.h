@@ -72,10 +72,6 @@ enum {
 #define MS0_PATH 0x3A30736D // 'ms0:' as u32
 #define EF0_PATH 0x3A306665 // 'ef0:' as u32
 
-extern "C" {
-    void sctrlHENGetArkConfig(ARKConfig* conf);
-};
-
 namespace common{
 
     extern ARKConfig* getArkConfig();
