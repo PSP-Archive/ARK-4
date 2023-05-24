@@ -270,7 +270,7 @@ void Eboot::executePSN(const char* path){
     
     memset(&param, 0, sizeof(param));
     
-    int runlevel = (*(u32*)path == EF0_PATH && common::getConf()->redirect_ms0)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
+    int runlevel = (*(u32*)path == EF0_PATH)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL; // PSN games must always be redirected
 
     param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
     param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
