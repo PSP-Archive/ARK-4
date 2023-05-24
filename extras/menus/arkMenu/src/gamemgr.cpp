@@ -492,132 +492,15 @@ void GameManager::control(Controller* pad){
     else if (pad->select()){
         if (selectedCategory != -1){
             common::playMenuSound();
-            self->waitIconsLoad();
+            this->waitIconsLoad();
             GameManager::updateGameList(NULL);
-            self->waitIconsLoad();
+            this->waitIconsLoad();
         }
     }
     else if (pad->LT()){
         if (selectedCategory >= 0 && !categories[selectedCategory]->isAnimating()){
             common::playMenuSound();
-            t_options_entry options_entries[] = {
-                {OPTIONS_CANCELLED, "Cancel"},
-                {0, "View Info"},
-                {1, "Rename"},
-                {2, "Delete"},
-            };
-            optionsmenu = new OptionsMenu("Game Options", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
-            int ret = optionsmenu->control();
-            OptionsMenu* aux = optionsmenu;
-            optionsmenu = NULL;
-            delete aux;
-
-            if (ret == 0){
-                // create a new options menu but each entry is some info about the game
-                Entry* e = this->getEntry();
-                string path = e->getPath();
-                if (e->getType() == "EBOOT"){
-                    path = path.substr(0, path.rfind('/')+1);
-                }
-                SfoInfo info = e->getSfoInfo();
-                string fullname = string("Name - ") + string(info.title);
-                string gameid = string("Game ID - ") + string(info.gameid);
-                string fullpath = "Path - " + e->getPath();
-                string size = "Size - " + common::beautifySize(Browser::recursiveSize(path));
-                t_options_entry gameinfo_entries[] = {
-                    {0, (char*)fullname.c_str()},
-                    {1, (char*)gameid.c_str()},
-                    {2, (char*)size.c_str()},
-                    {3, (char*)fullpath.c_str()}
-                };
-                optionsmenu = new OptionsMenu("Game Info", sizeof(gameinfo_entries)/sizeof(t_options_entry), gameinfo_entries);
-                optionsmenu->control();
-                OptionsMenu* aux = optionsmenu;
-                optionsmenu = NULL;
-                delete aux;
-            }
-            else if (ret == 1){
-                // rename the ISO or Eboot folder name
-                SystemMgr::pauseDraw();
-                Entry* e = this->getEntry();
-                string name = e->getName();
-                OSK osk;
-
-                char parent[128];
-                strcpy(parent, e->getPath().c_str());
-                char* pname = strstr(parent, name.c_str());
-                *pname = 0;
-                
-                osk.init("New name for Game", name.c_str(), 50);
-                osk.loop();
-                if(osk.getResult() != OSK_CANCEL)
-                {
-                    char tmpText[51];
-                    osk.getText((char*)tmpText);
-                    string newpath = (string(parent)+string(tmpText));
-                    string oldpath = (string(parent)+name);
-                    
-                    sceIoRename(oldpath.c_str(), newpath.c_str());
-                    e->setName(tmpText);
-                    e->setPath(newpath);
-                }
-                osk.end();
-                SystemMgr::resumeDraw();
-            }
-            else if (ret == 2){
-                // remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
-                // make checks to prevent deleting stuff like "UMD Drive" and "Recovery" entries
-                Entry* e = this->getEntry();
-                string name = e->getName();
-                if (name != "UMD Drive" && name != "Recovery"){
-                    // pause drawing so we don't crash due to race condition
-                    SystemMgr::pauseDraw();
-                    // get current menu and it's game list
-                    Menu* category = categories[selectedCategory];
-                    std::vector<Entry*>* entries = category->getVector();
-                    // remove entry from list
-                    entries->erase(entries->begin()+category->getIndex());
-                    // adjust selectedCategory
-                    int retries = 0;
-                    while (categories[selectedCategory]->getVectorSize() == 0){
-                        if (selectedCategory < POPS) selectedCategory++;
-                        else selectedCategory = GAME;
-                        if (++retries >= 4){ // can't find a valid menu
-                            selectedCategory = -2; // no games available
-                            break;
-                        }
-                    }
-                    // resume drawing
-                    SystemMgr::resumeDraw();
-
-                    // delete file/folder
-                    if (e->getType() == "ISO"){
-                        sceIoRemove(e->getPath().c_str());
-                    }
-                    else if (e->getType() == "EBOOT"){
-                        string path = e->getPath();
-                        if (strstr(path.c_str(), "/PSP/SAVEDATA/") != NULL){
-                            // remove eboot only
-                            sceIoRemove(e->getPath().c_str());
-                        }
-                        else{
-                        	string path = e->getPath();
-                            // remove entire folder
-                            string folder = path.substr(0, path.rfind("/")+1);
-                           	Browser::recursiveFolderDelete(folder);
-							if(strstr(path.c_str(), "%/") != NULL) {
-                                // remove 1.50 kxploit folder
-								path.erase(path.find("%/"));
-								path += '/';
-                            	folder = path;
-                            	Browser::recursiveFolderDelete(folder);
-							}
-                        }
-                    }
-                    // free resources
-                    delete e;
-                }
-            }
+            this->gameOptionsMenu();
         }
     }
 }
@@ -725,4 +608,125 @@ bool GameManager::pmfPrompt(){
     }
     SystemMgr::resumeDraw();
     return ret;
+}
+
+void GameManager::gameOptionsMenu(){
+    t_options_entry options_entries[] = {
+        {OPTIONS_CANCELLED, "Cancel"},
+        {0, "View Info"},
+        {1, "Rename"},
+        {2, "Delete"},
+    };
+    optionsmenu = new OptionsMenu("Game Options", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
+    int ret = optionsmenu->control();
+    OptionsMenu* aux = optionsmenu;
+    optionsmenu = NULL;
+    delete aux;
+
+    if (ret == 0){
+        // create a new options menu but each entry is some info about the game
+        Entry* e = this->getEntry();
+        string path = e->getPath();
+        if (e->getType() == "EBOOT"){
+            path = path.substr(0, path.rfind('/')+1);
+        }
+        SfoInfo info = e->getSfoInfo();
+        string fullname = string("Name - ") + string(info.title);
+        string gameid = string("Game ID - ") + string(info.gameid);
+        string fullpath = "Path - " + e->getPath();
+        string size = "Size - " + common::beautifySize(Browser::recursiveSize(path));
+        t_options_entry gameinfo_entries[] = {
+            {0, (char*)fullname.c_str()},
+            {1, (char*)gameid.c_str()},
+            {2, (char*)size.c_str()},
+            {3, (char*)fullpath.c_str()}
+        };
+        optionsmenu = new OptionsMenu("Game Info", sizeof(gameinfo_entries)/sizeof(t_options_entry), gameinfo_entries);
+        optionsmenu->control();
+        OptionsMenu* aux = optionsmenu;
+        optionsmenu = NULL;
+        delete aux;
+    }
+    else if (ret == 1){
+        // rename the ISO or Eboot folder name
+        SystemMgr::pauseDraw();
+        Entry* e = this->getEntry();
+        string name = e->getName();
+        OSK osk;
+
+        char parent[128];
+        strcpy(parent, e->getPath().c_str());
+        char* pname = strstr(parent, name.c_str());
+        *pname = 0;
+        
+        osk.init("New name for Game", name.c_str(), 50);
+        osk.loop();
+        if(osk.getResult() != OSK_CANCEL)
+        {
+            char tmpText[51];
+            osk.getText((char*)tmpText);
+            string newpath = (string(parent)+string(tmpText));
+            string oldpath = (string(parent)+name);
+            
+            sceIoRename(oldpath.c_str(), newpath.c_str());
+            e->setName(tmpText);
+            e->setPath(newpath);
+        }
+        osk.end();
+        SystemMgr::resumeDraw();
+    }
+    else if (ret == 2){
+        // remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
+        // make checks to prevent deleting stuff like "UMD Drive" and "Recovery" entries
+        Entry* e = this->getEntry();
+        string name = e->getName();
+        if (name != "UMD Drive" && name != "Recovery"){
+            // pause drawing so we don't crash due to race condition
+            SystemMgr::pauseDraw();
+            // get current menu and it's game list
+            Menu* category = categories[selectedCategory];
+            std::vector<Entry*>* entries = category->getVector();
+            // remove entry from list
+            entries->erase(entries->begin()+category->getIndex());
+            // adjust selectedCategory
+            int retries = 0;
+            while (categories[selectedCategory]->getVectorSize() == 0){
+                if (selectedCategory < POPS) selectedCategory++;
+                else selectedCategory = GAME;
+                if (++retries >= 4){ // can't find a valid menu
+                    selectedCategory = -2; // no games available
+                    break;
+                }
+            }
+            // resume drawing
+            SystemMgr::resumeDraw();
+
+            // delete file/folder
+            if (e->getType() == "ISO"){
+                sceIoRemove(e->getPath().c_str());
+            }
+            else if (e->getType() == "EBOOT"){
+                string path = e->getPath();
+                if (strstr(path.c_str(), "/PSP/SAVEDATA/") != NULL){
+                    // remove eboot only
+                    sceIoRemove(e->getPath().c_str());
+                }
+                else{
+                    string path = e->getPath();
+                    // remove entire folder
+                    string folder = path.substr(0, path.rfind("/")+1);
+                    Browser::recursiveFolderDelete(folder);
+                    if(strstr(path.c_str(), "%/") != NULL) {
+                        // remove 1.50 kxploit folder
+                        path.erase(path.find("%/"));
+                        path += '/';
+                        folder = path;
+                        Browser::recursiveFolderDelete(folder);
+                    }
+                }
+            }
+            // free resources
+            delete e;
+        }
+    }
 }
