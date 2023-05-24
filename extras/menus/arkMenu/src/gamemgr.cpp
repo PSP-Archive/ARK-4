@@ -681,7 +681,7 @@ void GameManager::gameOptionsMenu(){
         // make checks to prevent deleting stuff like "UMD Drive" and "Recovery" entries
         Entry* e = this->getEntry();
         string name = e->getName();
-        if (name != "UMD Drive" && name != "Recovery"){
+        if (name != "UMD Drive" && name != "Recovery Menu"){
             // pause drawing so we don't crash due to race condition
             SystemMgr::pauseDraw();
             // get current menu and it's game list
