@@ -246,139 +246,139 @@ int menu_draw(void)
 					}
 
 					switch(cnf.vsh_fg_colors) {
-						// Red
-						case 26:
-							fc = (max_menu==menu_sel) ? 0xffffff : 0x000000ff;
-							blit_set_color(fc,bc);
-							break;
-						// Light Red
-						case 1: 
-							fc = (max_menu==menu_sel) ? 0xffffff : 0xa00000ff;
+						// White  
+						case 0:
+							fc = (max_menu==menu_sel) ? 0xffffff : 0x00ffffff;
 							blit_set_color(fc,bc);
 							break;
 						// Orange
-						case 2: 
+						case 1: 
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x0000a5ff;
 							blit_set_color(fc,bc);
 							break;
 						// Light Orange
-						case 3: 
+						case 2: 
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa000a5ff;
 							blit_set_color(fc,bc);
 							break;
 						// Yellow
-						case 4: 
+						case 3: 
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x0000e6e6;
 							blit_set_color(fc,bc);
 							break;
 						// Light Yellow
-						case 5: 
+						case 4: 
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa000e6e6;
 							blit_set_color(fc,bc);
 							break;
 						// Green
-						case 6:
+						case 5:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x0000b300;
 							blit_set_color(fc,bc);
 							break;
 						// Light Green
-						case 7:
+						case 6:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa000ff00;
 							blit_set_color(fc,bc);
 							break;
 						// Blue
-						case 8:
+						case 7:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x00ff0000;
 							blit_set_color(fc,bc);
 							break;
 						// Light Blue
-						case 9:
+						case 8:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa0ff0000;
 							blit_set_color(fc,bc);
 							break;
 						// Indigo
-						case 10:
+						case 9:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x0082004b;
 							blit_set_color(fc,bc);
 							break;
 						// Light Indigo
-						case 11:
+						case 10:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa082004b;
 							blit_set_color(fc,bc);
 							break;
 						// Violet
-						case 12:
+						case 11:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x00ee82ee;
 							blit_set_color(fc,bc);
 							break;
 						// Light Violet
-						case 13:
+						case 12:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa0ee82ee;
 							blit_set_color(fc,bc);
 							break;
 						// Pink 
-						case 14:
+						case 13:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x00cbc0ff;
 							blit_set_color(fc,bc);
 							break;
 						// Light Pink 
-						case 15:
+						case 14:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa0cbc0ff;
 							blit_set_color(fc,bc);
 							break;
 						// Purple 
-						case 16:
+						case 15:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x00993366;
 							blit_set_color(fc,bc);
 							break;
 						// Light Purple 
-						case 17:
+						case 16:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa0993366;
 							blit_set_color(fc,bc);
 							break;
 						// Teal 
-						case 18:
+						case 17:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x00808000;
 							blit_set_color(fc,bc);
 							break;
 						// Light Teal 
-						case 19:
+						case 18:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa0808000;
 							blit_set_color(fc,bc);
 							break;
 						// Aqua 
-						case 20:
+						case 19:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x00cccc00;
 							blit_set_color(fc,bc);
 							break;
 						// Light Aqua 
-						case 21:
+						case 20:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa0cccc00;
 							blit_set_color(fc,bc);
 							break;
 						// Grey 
-						case 22:
+						case 21:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x00737373;
 							blit_set_color(fc,bc);
 							break;
 						// Light Grey 
-						case 23:
+						case 22:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa0737373;
 							blit_set_color(fc,bc);
 							break;
 						// Black 
-						case 24:
+						case 23:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x00000000;
 							blit_set_color(fc,bc);
 							break;
 						// Light Black 
-						case 25:
+						case 24:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0xa0000000;
 							blit_set_color(fc,bc);
 							break;
-						// White  
-						case 0:
-							fc = (max_menu==menu_sel) ? 0xffffff : 0x00ffffff;
+						// Light Red
+						case 25: 
+							fc = (max_menu==menu_sel) ? 0xffffff : 0xa00000ff;
+							blit_set_color(fc,bc);
+							break;
+						// Red
+						case 26:
+							fc = (max_menu==menu_sel) ? 0xffffff : 0x000000ff;
 							blit_set_color(fc,bc);
 							break;
 						// Light White  

@@ -105,8 +105,8 @@ enum vsh_fg_colors
 	FG_LITE_GREY 	= 22,
 	FG_BLACK 		= 23,
 	FG_LITE_BLACK 	= 24,
-	FG_RED 			= 25,
-	FG_LITE_RED 	= 26,
+	FG_LITE_RED 	= 25,
+	FG_RED 			= 26,
 	FG_LITE_WHITE 	= 27,
 };
 
