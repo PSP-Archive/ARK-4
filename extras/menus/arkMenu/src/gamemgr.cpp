@@ -623,7 +623,8 @@ void GameManager::gameOptionsMenu(){
     optionsmenu = NULL;
     delete aux;
 
-    if (ret == 0){
+    switch (ret){
+    case 0:{
         // create a new options menu but each entry is some info about the game
         Entry* e = this->getEntry();
         string path = e->getPath();
@@ -646,8 +647,8 @@ void GameManager::gameOptionsMenu(){
         OptionsMenu* aux = optionsmenu;
         optionsmenu = NULL;
         delete aux;
-    }
-    else if (ret == 1){
+    } break;
+    case 1:{
         // rename the ISO or Eboot folder name
         SystemMgr::pauseDraw();
         Entry* e = this->getEntry();
@@ -674,8 +675,8 @@ void GameManager::gameOptionsMenu(){
         }
         osk.end();
         SystemMgr::resumeDraw();
-    }
-    else if (ret == 2){
+    } break;
+    case 2:{
         // remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
         // make checks to prevent deleting stuff like "UMD Drive" and "Recovery" entries
         Entry* e = this->getEntry();
@@ -728,5 +729,7 @@ void GameManager::gameOptionsMenu(){
             // free resources
             delete e;
         }
+    }break;
+    default: break;
     }
 }
