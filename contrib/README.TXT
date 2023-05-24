@@ -36,6 +36,15 @@ Installation On PSP
     - Run `Infinity` a second time to configure autoboot by selecting ARK within the Infinity app. Run the ARK CFW again to activate. ARK will now be automatically activated on boot up.
 
 
+  Full Flash Installation
+
+    - This allows you to install and use most of ARK's features from flash0, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
+    - Copy `ARK_Full_Installer` to `/PSP/GAME/` and run it from `ARK`.
+    - The modules installed on flash0 are: Satelite (VSH Menu), XMB Control (CFW settings and plugins in the XMB), IDS Regeneration (UMD Region Change) and USB Device.
+    - `Custom Launcher` and `Recovery Menu` are `NOT` installed on flash0. They are however redundant and not necessary for a feature-complete experience.
+    - Custom Firmware settings and other Custom Firmware files are installed in `ms0:/SEPLUGINS/`, which is used as the default ARK path when no savedata folder is available.
+
+
   Time Machine and Despertar del Cementerio
 
     - `Time Machine` allows to boot the `6.61` firmware and `ARK` entirely from the Memory Stick.

@@ -142,6 +142,19 @@ The instructions are as follows:
 </details>
 
 <details>
+  <summary> <b> Full Flash Installation </b> </summary>
+<p>
+
+  - This allows you to install and use most of ARK's features from flash0, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
+  - Copy `ARK_Full_Installer` to `/PSP/GAME/` and run it from `ARK`.
+  - The modules installed on flash0 are: Satelite (VSH Menu), XMB Control (CFW settings and plugins in the XMB), IDS Regeneration (UMD Region Change) and USB Device.
+  - `Custom Launcher` and `Recovery Menu` are `NOT` installed on flash0. They are however redundant and not necessary for a feature-complete experience.
+  - Custom Firmware settings and other Custom Firmware files are installed in `ms0:/SEPLUGINS/`, which is used as the default ARK path when no savedata folder is available.
+
+</p>
+</details>
+
+<details>
   <summary> <b> Time Machine and Despertar del Cementerio </b> </summary>
 <p>
 
