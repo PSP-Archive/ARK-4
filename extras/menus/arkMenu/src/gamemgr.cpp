@@ -465,18 +465,27 @@ void GameManager::control(Controller* pad){
 			}
 			else if (common::getConf()->startbtn == 2) {
 				// Last game
-				return;
-
+                const char* last_game = common::getConf()->last_game;
+				if (Eboot::isEboot(last_game)){
+                    this->endAllThreads();
+                    Eboot* eboot = new Eboot(last_game);
+                    eboot->execute();
+                }
+                else if (Iso::isISO(last_game)){
+                    this->endAllThreads();
+                    Iso* iso = new Iso(last_game);
+                    iso->execute();
+                }
 			}
 			else {
 				// Random ISO
-				srand(time(NULL));
-				//this->categories[GAME];
-				int i;
-				int rand_idx = rand() % this->categories[GAME]->getVectorSize();
-				Entry* e = this->getEntry();
-				e->setPath(this->categories[GAME]->getVector()->at(rand_idx)->getPath());
-				e->execute();
+                if (this->categories[GAME]->getVectorSize() > 0){
+                    this->endAllThreads();
+                    srand(time(NULL));
+                    int rand_idx = rand() % this->categories[GAME]->getVectorSize();
+                    Entry* e = this->categories[GAME]->getEntry(rand_idx);
+                    e->execute();
+                }
 			}
         }
     }

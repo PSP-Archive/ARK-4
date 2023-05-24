@@ -103,6 +103,11 @@ void Entry::freeIcon(){
 }
 
 void Entry::execute(){
+    char* last_game = common::getConf()->last_game;
+    if (strcmp(last_game, this->path.c_str()) != 0){
+        strcpy(last_game, this->path.c_str());
+        common::saveConf();
+    }
     this->gameBoot();
     this->doExecute();
 }
