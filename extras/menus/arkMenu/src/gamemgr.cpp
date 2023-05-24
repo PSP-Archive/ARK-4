@@ -4,6 +4,7 @@
 #include <fstream>
 #include <unistd.h>
 #include <algorithm>
+#include <stdlib.h>
 #include "system_mgr.h"
 #include "gamemgr.h"
 #include "music_player.h"
@@ -15,6 +16,8 @@ extern int sctrlKernelMsIsEf();
 static GameManager* self = NULL;
 
 static bool loadingData = false;
+
+ARKConfig* ark_config;
 
 GameManager::GameManager(){
 
@@ -427,6 +430,7 @@ void GameManager::endAllThreads(){
     sceKernelWaitThreadEnd(iconThread, 0);
 }
 
+
 void GameManager::control(Controller* pad){
 
     if (pad->down()){
@@ -450,9 +454,30 @@ void GameManager::control(Controller* pad){
         }
     }
     else if (pad->start()){
+		// Disables Start Button
+		if(common::getConf()->startbtn == 0) return;
+
         if (selectedCategory >= 0 && !categories[selectedCategory]->isAnimating()){
-            this->endAllThreads();
-            this->getEntry()->execute();
+			// Default Start Button (Current)
+			if(common::getConf()->startbtn == 1) {
+				this->endAllThreads();
+				this->getEntry()->execute();
+			}
+			else if (common::getConf()->startbtn == 2) {
+				// Last game
+				return;
+
+			}
+			else {
+				// Random ISO
+				srand(time(NULL));
+				//this->categories[GAME];
+				int i;
+				int rand_idx = rand() % this->categories[GAME]->getVectorSize();
+				Entry* e = this->getEntry();
+				e->setPath(this->categories[GAME]->getVector()->at(rand_idx)->getPath());
+				e->execute();
+			}
         }
     }
     else if (pad->select()){

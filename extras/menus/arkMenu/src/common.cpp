@@ -131,7 +131,7 @@ void common::resetConf(){
     config.text_glow = 1;
     config.screensaver = 2;
     config.redirect_ms0 = 0;
-    config.startbtn = 0;
+    config.startbtn = 1;
 }
 
 void common::launchRecovery(){
