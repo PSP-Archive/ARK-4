@@ -58,8 +58,6 @@ typedef struct RebootConfigARK {
         u32 size;
         u32 flags;
     } rtm_mod;
-    int nfiles;
-    char bootfile[100][64]; // list of boot files
 } RebootConfigARK;
 
 #define IS_ARK_CONFIG(config) (*((u32*)config) == ARK_CONFIG_MAGIC)

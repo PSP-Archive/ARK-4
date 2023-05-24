@@ -23,7 +23,12 @@ typedef struct {
     int argPartId;
 } SceLoadCoreBootModuleInfo;
 
-RebootConfigARK* reboot_config = NULL;
+// Sony flash0 files
+typedef struct {
+    int nfiles;
+    char bootfile[100][64]; // list of boot files
+} SonyFlashFiles;
+SonyFlashFiles* flash_files = (SonyFlashFiles*)(0x08800100);
 
 static int cur_file = 14;
 
@@ -31,7 +36,7 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 
 	char path[64];
 
-	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", &(reboot_config->bootfile[cur_file])); //not use flash0 cause of cxmb
+	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", &(flash_files->bootfile[cur_file])); //not use flash0 cause of cxmb
 
 	cur_file++;
 
@@ -47,7 +52,7 @@ SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo
 
 	char path[64];
 
-	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", &(reboot_config->bootfile[cur_file]));
+	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", &(flash_files->bootfile[cur_file]));
 
 	cur_file++;
 
@@ -111,11 +116,9 @@ SceModule2* patchLoaderCore(void)
 {
     // Find Module
     SceModule2* mod = (SceModule2 *)sceKernelFindModuleByName("sceLoaderCore");
-	
-	reboot_config = sctrlHENGetRebootexConfig(NULL);
 
-	for (int i=0; i<reboot_config->nfiles; i++){
-		if (strcmp(&(reboot_config->bootfile[i]), "/kd/init.prx") == 0){
+	for (int i=0; i<flash_files->nfiles; i++){
+		if (strcmp(&(flash_files->bootfile[i]), "/kd/init.prx") == 0){
 			cur_file = i+1;
 			break;
 		}

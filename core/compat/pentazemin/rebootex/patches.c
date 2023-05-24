@@ -10,6 +10,12 @@ void (*SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table) 
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 extern int (* UnpackBootConfig)(char * buffer, int length);
 
+// Sony flash0 files
+typedef struct {
+    int nfiles;
+    char bootfile[100][64]; // list of boot files
+} SonyFlashFiles;
+SonyFlashFiles* flash_files = (SonyFlashFiles*)(0x08800100);
 
 typedef struct{
     u8 filesize[4];
@@ -53,7 +59,7 @@ int _pspemuLfatOpen(BootFile* file, u32 a1, u32 a2, u32 a3, u32 t0)
 {
     char* p = file->name;
 
-    strcpy(&(reboot_conf->bootfile[reboot_conf->nfiles++]), p);
+    strcpy(&(flash_files->bootfile[flash_files->nfiles++]), p);
     
     if (strcmp(p, "pspbtcnf.bin") == 0){
         int ret = -1;
@@ -135,7 +141,7 @@ int PatchSysMem(void *a0, void *sysmem_config)
 // patch reboot on ps vita
 void patchRebootBuffer(){
     // reset boot file count
-    reboot_conf->nfiles = 0;
+    flash_files->nfiles = 0;
     // hijack UnpackBootConfig to insert modules at runtime
     _sw(0x27A40004, UnpackBootConfigArg); // addiu $a0, $sp, 4
     _sw(JAL(UnpackBootConfigVita), UnpackBootConfigCall); // Hook UnpackBootConfig
