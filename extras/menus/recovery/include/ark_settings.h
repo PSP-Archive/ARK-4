@@ -382,7 +382,6 @@ settings_entry* ark_conf_entries_adr[] = {
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
     (settings_entry*)&hidedlc,
-    (settings_entry*)&noled,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_ADR (sizeof(ark_conf_entries_adr)/sizeof(ark_conf_entries_adr[0]))

@@ -50,7 +50,7 @@ static SceUID load_start_usbdevice(void)
 
 	modid = sceKernelLoadModule(mod, 0, NULL);
 
-	if (modid < 0) modid = sceKernelLoadModule("flash0:/kd/ark_usbdev.prx", 0, NULL); // retry flash0
+	if (modid < 0) modid = sceKernelLoadModule("flash0:/vsh/module/ark_usbdev.prx", 0, NULL); // retry flash0
 
 	if (modid < 0) {
 		return -1;

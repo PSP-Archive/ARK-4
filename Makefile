@@ -43,6 +43,7 @@ SUBDIRS = libs \
 	loader/dc/tmctrl \
 	loader/dc/vunbricker \
 	loader/dc/installer \
+	extras/installer \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
 	extras/menus/xMenu \
@@ -64,21 +65,21 @@ copy-bin:
 	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/Vita/Standalone/ # Vita 3.60 PBOOT.PBP bubble
 	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/Vita/Standalone/K.BIN # Kernel exploit for Vita 3.60+
 	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/Vita/Adrenaline/K.BIN # kxploit for CFW
-	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/Infinity/ # Infinity with ARK support
-	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/Infinity/ # Infinity with ARK support (PSP Go)
+	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
+	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/PSP/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
 	$(Q)cp loader/live/kernel/chain_loader/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
 	$(Q)cp loader/live/kernel/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
 	$(Q)cp loader/live/kernel/kxploit/dummy/K.BIN dist/ARK_01234/K.BIN # Dummy Kernel exploit
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
-	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/ # ARK DC installer
-	$(Q)cp loader/dc/installer/EBOOT.PBP dist/ARK_DC/ # ARK DC installer
-	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/ARK_cIPL/EBOOT.PBP
-	$(Q)cp extras/modules/kpspident/kpspident.prx dist/ARK_cIPL/kpspident.prx
-	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/ARK_cIPL/ipl_update.prx
-	$(Q)cp loader/perma/newcipl/installer/EBOOT.PBP dist/ARK_newIPL/EBOOT.PBP
-	$(Q)cp extras/modules/kpspident/kpspident.prx dist/ARK_newIPL/kpspident.prx
-	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/ARK_newIPL/ipl_update.prx
+	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/PSP/ # ARK DC installer
+	$(Q)cp loader/dc/installer/EBOOT.PBP dist/PSP/ARK_DC/ # ARK DC installer
+	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/PSP/ARK_cIPL/EBOOT.PBP
+	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_cIPL/kpspident.prx
+	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_cIPL/ipl_update.prx
+	$(Q)cp loader/perma/newcipl/installer/EBOOT.PBP dist/PSP/ARK_newIPL/EBOOT.PBP
+	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_newIPL/kpspident.prx
+	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_newIPL/ipl_update.prx
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
@@ -88,11 +89,12 @@ copy-bin:
 	$(Q)cp extras/modules/xmbctrl/translations/XMB_*.TXT dist/ARK_01234/ # XMB Control translation files
 	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
 	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
+	$(Q)cp extras/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
 	$(Q)cp contrib/UPDATER.TXT dist/ARK_01234/
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)cp contrib/README.TXT dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
-	$(Q)cp -r dist/ARK_01234 dist/ARK_DC/
+	$(Q)cp -r dist/ARK_01234 dist/PSP/ARK_DC/
 	$(Q)find dist/themes/ -type d -name 'resources' -exec rm -rf {} \; 2>/dev/null || true
 	$(Q)$(MAKE) -C extras/updater/
 	$(Q)cp extras/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
@@ -219,13 +221,15 @@ recovery: libs
 
 mkdir-dist:
 	$(Q)mkdir dist | true
+	$(Q)mkdir dist/PSP | true
 	$(Q)mkdir dist/Vita | true
-	$(Q)mkdir dist/ARK_Live | true
-	$(Q)mkdir dist/Infinity | true
-	$(Q)mkdir dist/ARK_DC | true
-	$(Q)mkdir dist/ARK_cIPL | true
-	$(Q)mkdir dist/ARK_newIPL | true
 	$(Q)mkdir dist/UPDATE | true
+	$(Q)mkdir dist/ARK_Live | true
+	$(Q)mkdir dist/PSP/Infinity | true
+	$(Q)mkdir dist/PSP/ARK_DC | true
+	$(Q)mkdir dist/PSP/ARK_cIPL | true
+	$(Q)mkdir dist/PSP/ARK_newIPL | true
+	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
 	$(Q)mkdir dist/Vita/Adrenaline | true
 	$(Q)mkdir dist/Vita/Standalone | true
 
