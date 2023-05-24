@@ -265,7 +265,6 @@ void processSettings(){
     else{
         ark_config->launcher[0] = 0; // disable launcher mode
     }
-    sctrlHENSetArkConfig(ark_config);
     if (vshregion) patch_sceChkreg();
 }
 

@@ -129,7 +129,7 @@ void flushCache(void);
 u32 sceKernelQuerySystemCall(void * function);
 
 // Get ARK's execution environment configuration
-void sctrlHENGetArkConfig(ARKConfig* conf);
+void* sctrlHENGetArkConfig(ARKConfig* conf);
 
 // Register the default VRAM handler for PSX exploit, returns the previous handler
 void* sctrlHENSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram));

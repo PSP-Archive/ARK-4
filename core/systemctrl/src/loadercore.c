@@ -183,7 +183,15 @@ static void loadXmbControl(){
         strcpy(path, ark_config->arkpath);
         strcat(path, XMBCTRL_PRX);
         int modid = sceKernelLoadModule(path, 0, NULL);
-        sceKernelStartModule(modid, 0, NULL, NULL, NULL);
+        if (modid < 0) modid = sceKernelLoadModule("flash0:/kd/ark_xmbctrl.prx", 0, NULL); // retry flash0
+        if (modid >= 0) sceKernelStartModule(modid, 0, NULL, NULL, NULL);
+    }
+}
+
+static void checkArkPath(){
+    SceIoStat stat; int res = sceIoGetstat(ark_config->arkpath, &stat);
+    if (res < 0 || !FIO_SO_ISDIR(stat.st_attr)){
+        strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
     }
 }
 
@@ -216,6 +224,8 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // MediaSync not yet started... too early to load plugins.
     if(!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
     {
+        // Check ARK install path
+        checkArkPath();
         // Load XMB Control
         loadXmbControl();
         // Load Plugins

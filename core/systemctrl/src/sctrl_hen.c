@@ -261,8 +261,9 @@ u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid)
     return 0;
 }
 
-void sctrlHENGetArkConfig(ARKConfig* conf){
-    memcpy(conf, ark_config, sizeof(ARKConfig));
+void* sctrlHENGetArkConfig(ARKConfig* conf){
+    if (conf) memcpy(conf, ark_config, sizeof(ARKConfig));
+    return ark_config;
 }
 
 void sctrlHENSetArkConfig(ARKConfig* conf){

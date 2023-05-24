@@ -215,6 +215,8 @@ static int replace_umd_keys(){
 
     SceUID modid = sceKernelLoadModule(path, 0, NULL);
 
+	if (modid < 0) modid = sceKernelLoadModule("flash0:/kd/ark_idsreg.prx", 0, NULL); // retry flash0
+
     if (modid < 0) goto fake_ids_end;
 
     res = sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);

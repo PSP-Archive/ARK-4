@@ -520,7 +520,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 				CacheInit(32 * 1024, 32, (use_highmem)?2:11); // 2MB cache for PS Vita
 			}
         }
-		sctrlHENSetArkConfig(ark_config);
         goto flush;
     }
 

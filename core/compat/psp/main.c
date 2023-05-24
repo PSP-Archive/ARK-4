@@ -24,8 +24,7 @@ STMOD_HANDLER previous = NULL;
 // for some model specific patches
 u32 psp_model = 0;
 
-static ARKConfig _ark_conf;
-ARKConfig* ark_config = &_ark_conf;
+ARKConfig* ark_config = NULL;
 
 extern void (*prevPluginHandler)(const char* path, int modid);
 extern void pluginHandler(const char* path, int modid);
@@ -43,11 +42,10 @@ void flushCache()
     sceKernelDcacheWritebackInvalidateAll();
 }
 
-void processArkConfig(ARKConfig* ark_config){
-    sctrlHENGetArkConfig(ark_config);
+void processArkConfig(){
+    ark_config = sctrlHENGetArkConfig(NULL);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSP_ORIG; // assume running on PSP
-        sctrlHENSetArkConfig(ark_config); // notify SystemControl
     }
 }
 
@@ -61,7 +59,7 @@ int module_start(SceSize args, void * argp)
     psp_model = sceKernelGetModel();
     
     // get ark config
-    processArkConfig(ark_config);
+    processArkConfig();
 
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);

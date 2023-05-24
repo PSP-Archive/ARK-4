@@ -34,8 +34,7 @@
 PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 0);
 
 u32 psp_model = 0;
-ARKConfig _ark_conf;
-ARKConfig* ark_config = &_ark_conf;
+ARKConfig* ark_config = NULL;
 
 int has_umd_iso = 0;
 int hidepics = 0;
@@ -100,7 +99,7 @@ int module_start(SceSize args, void* argp)
     #endif
     
     psp_model = sceKernelGetModel();
-    sctrlHENGetArkConfig(ark_config);
+    ark_config = sctrlHENGetArkConfig(NULL);
     isoInit();
     vshpatch_init();
     load_server_file();
@@ -115,7 +114,6 @@ int module_start(SceSize args, void* argp)
     if (has_umd_iso){
         // disable launcher mode if using VSH ISO
         ark_config->launcher[0] = 0;
-        sctrlHENSetArkConfig(ark_config);
     }
 
     return 0;
