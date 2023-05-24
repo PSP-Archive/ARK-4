@@ -196,6 +196,7 @@ clean:
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -rf common/utils/*.o
 	$(Q)$(MAKE) $@ -C extras/updater/
+	$(Q)$(MAKE) $@ -C extras/installer/
 	$(Q)rm extras/updater/ARK_01234.PKG | true
 	$(Q)rm extras/updater/EBOOT_PSP.PBP | true
 	$(Q)rm extras/updater/EBOOT_GO.PBP | true

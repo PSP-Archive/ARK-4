@@ -189,9 +189,12 @@ static void loadXmbControl(){
 }
 
 static void checkArkPath(){
-    SceIoStat stat; int res = sceIoGetstat(ark_config->arkpath, &stat);
-    if (res < 0 || !FIO_SO_ISDIR(stat.st_attr)){
+    int res = sceIoDopen(ark_config->arkpath);
+    if (res < 0){
         strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
+    }
+    else{
+        sceIoDclose(res);
     }
 }
 

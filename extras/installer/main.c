@@ -10,7 +10,7 @@
 #include <systemctrl_se.h>
 #include "globals.h"
 
-PSP_MODULE_INFO("ARKUpdater", 0x800, 1, 0);
+PSP_MODULE_INFO("ARKInstaller", 0x800, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH | PSP_THREAD_ATTR_VFPU);
 PSP_HEAP_SIZE_KB(4096);
 
