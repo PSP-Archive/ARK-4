@@ -1,5 +1,15 @@
 # ARK Changelog
 
+## Version 4.20.40 (2023-05-24)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42040
+- You can now install all external modules in flash0, allowing for a full permanent installation.
+- Fixed issue when booting some ISOs in the `custom launcher`.
+- Added ability to `restart` and `shutdown` on `custom launcher` (for `PSP` only).
+- Added configuration to change behavior of Start button in `custom launcher`, options are: Disabled, Boot Current Game, Boot Last Game, Boot Random ISO.
+- Holding the `L-trigger` while loading the `custom launcher` will autoboot the last played game.
+- Cleanup of `pentazemin` compatibility layer and other parts of the `Custom Firmware`.
+
+
 ## Version 4.20.35 (2023-05-16)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42035
 - Improved `660on661` patch. Fixes crashes and other issues in homebrew such as `chronoswitch` and others.
