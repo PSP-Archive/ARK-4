@@ -30,8 +30,26 @@ int main(int argc, char** argv){
     // setup UMD disc
     sceUmdReplacePermit();
 
+    Controller pad;
+    pad.update(1);
+    bool run_last = pad.LT();
+
     // Load data (theme, config, font, etc)
     common::loadData(argc, argv);
+
+    pad.update(1);
+
+    if (run_last || pad.LT()){
+        const char* last_game = common::getConf()->last_game;
+        if (Eboot::isEboot(last_game)){
+            Eboot* eboot = new Eboot(last_game);
+            eboot->execute();
+        }
+        else if (Iso::isISO(last_game)){
+            Iso* iso = new Iso(last_game);
+            iso->execute();
+        }
+    }
 
     int n_entries = 2;
 
