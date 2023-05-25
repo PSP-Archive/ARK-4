@@ -1,5 +1,6 @@
 #include "common.h"
 #include <psputility.h>
+#include <time.h>
 
 extern int pwidth;
 extern char umd_path[72];
@@ -78,144 +79,153 @@ int submenu_draw(void)
  
 	for(submax_menu=0;submax_menu<SUBMENU_MAX;submax_menu++) {
 		msg = g_messages[MSG_USB_DEVICE + submax_menu];
+		bg_top:
+		if(cnf.vsh_bg_colors == cnf.vsh_fg_colors) cnf.vsh_bg_colors++;
 		switch(cnf.vsh_bg_colors) {
-						// Red
+						// Random
 						case 0: 
+							srand(time(NULL));
+							int rand_color = (rand() % 28) + 1;
+							cnf.vsh_bg_colors = rand_color;
+							goto bg_top;
+							break;
+						// Red
+						case 1: 
 							bc = (submax_menu==submenu_sel) ? 0xff8080 : 0x000000ff;
 							blit_set_color(fc,bc);
 							break;
 						// Light Red
-						case 1: 
+						case 2: 
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa00000ff;
 							blit_set_color(fc,bc);
 							break;
 						// Orange
-						case 2: 
+						case 3: 
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x0000a5ff;
 							blit_set_color(fc,bc);
 							break;
 						// Light Orange
-						case 3: 
+						case 4: 
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa000a5ff;
 							blit_set_color(fc,bc);
 							break;
 						// Yellow
-						case 4: 
+						case 5: 
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x0000e6e6;
 							blit_set_color(fc,bc);
 							break;
 						// Light Yellow
-						case 5: 
+						case 6: 
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa000e6e6;
 							blit_set_color(fc,bc);
 							break;
 						// Green
-						case 6:
+						case 7:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x0000ff00;
 							blit_set_color(fc,bc);
 							break;
 						// Light Green
-						case 7:
+						case 8:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa000b300;
 							blit_set_color(fc,bc);
 							break;
 						// Blue
-						case 8:
+						case 9:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x00ff0000;
 							blit_set_color(fc,bc);
 							break;
 						// Light Blue
-						case 9:
+						case 10:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa0ff0000;
 							blit_set_color(fc,bc);
 							break;
 						// Indigo
-						case 10:
+						case 11:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x0082004b;
 							blit_set_color(fc,bc);
 							break;
 						// Light Indigo
-						case 11:
+						case 12:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa082004b;
 							blit_set_color(fc,bc);
 							break;
 						// Violet
-						case 12:
+						case 13:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x00ee82ee;
 							blit_set_color(fc,bc);
 							break;
 						// Light Violet
-						case 13:
+						case 14:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa0ee82ee;
 							blit_set_color(fc,bc);
 							break;
 						// Pink 
-						case 14:
+						case 15:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x00cbc0ff;
 							blit_set_color(fc,bc);
 							break;
 						// Light Pink 
-						case 15:
+						case 16:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa0cbc0ff;
 							blit_set_color(fc,bc);
 							break;
 						// Purple 
-						case 16:
+						case 17:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x00993366;
 							blit_set_color(fc,bc);
 							break;
 						// Light Purple 
-						case 17:
+						case 18:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa0993366;
 							blit_set_color(fc,bc);
 							break;
 						// Teal 
-						case 18:
+						case 19:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x00808000;
 							blit_set_color(fc,bc);
 							break;
 						// Light Teal 
-						case 19:
+						case 20:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa0808000;
 							blit_set_color(fc,bc);
 							break;
 						// Aqua 
-						case 20:
+						case 21:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x00cccc00;
 							blit_set_color(fc,bc);
 							break;
 						// Light Aqua 
-						case 21:
+						case 22:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa0cccc00;
 							blit_set_color(fc,bc);
 							break;
 						// Grey 
-						case 22:
+						case 23:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x00737373;
 							blit_set_color(fc,bc);
 							break;
 						// Light Grey 
-						case 23:
+						case 24:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa0737373;
 							blit_set_color(fc,bc);
 							break;
 						// Black 
-						case 24:
+						case 25:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x00000000;
 							blit_set_color(fc,bc);
 							break;
 						// Light Black 
-						case 25:
+						case 26:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xa0000000;
 							blit_set_color(fc,bc);
 							break;
 						// White  
-						case 26:
+						case 27:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0x00ffffff;
 							blit_set_color(fc,bc);
 							break;
 						// Light White  
-						case 27:
+						case 28:
 							bc = (submax_menu==submenu_sel) ? 0x0000ff : 0xafffffff;
 							blit_set_color(fc,bc);
 							break;
@@ -223,145 +233,153 @@ int submenu_draw(void)
 							bc = (submax_menu==submenu_sel) ? 0xff8080 : 0x0000a5ff;
 							blit_set_color(fc,bc);
 					}
-
+					fg_top:
+					// if(cnf.vsh_fg_colors == cnf.vsh_bg_colors) cnf.vsh_fg_colors++;
 					switch(cnf.vsh_fg_colors) {
+						// Random
+						case 0: 
+							srand(time(NULL));
+							int rand_color = (rand() % 28) + 1;
+							cnf.vsh_fg_colors = rand_color;
+							goto fg_top;
+							break;
 						// White  
-						case 0:
+						case 1:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x00ffffff;
 							blit_set_color(fc,bc);
 							break;
 						// Orange
-						case 1: 
+						case 2: 
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x0000a5ff;
 							blit_set_color(fc,bc);
 							break;
 						// Light Orange
-						case 2: 
+						case 3: 
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa000a5ff;
 							blit_set_color(fc,bc);
 							break;
 						// Yellow
-						case 3: 
+						case 4: 
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x0000e6e6;
 							blit_set_color(fc,bc);
 							break;
 						// Light Yellow
-						case 4: 
+						case 5: 
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa000e6e6;
 							blit_set_color(fc,bc);
 							break;
 						// Green
-						case 5:
+						case 6:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x0000b300;
 							blit_set_color(fc,bc);
 							break;
 						// Light Green
-						case 6:
+						case 7:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa000ff00;
 							blit_set_color(fc,bc);
 							break;
 						// Blue
-						case 7:
+						case 8:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x00ff0000;
 							blit_set_color(fc,bc);
 							break;
 						// Light Blue
-						case 8:
+						case 9:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa0ff0000;
 							blit_set_color(fc,bc);
 							break;
 						// Indigo
-						case 9:
+						case 10:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x0082004b;
 							blit_set_color(fc,bc);
 							break;
 						// Light Indigo
-						case 10:
+						case 11:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa082004b;
 							blit_set_color(fc,bc);
 							break;
 						// Violet
-						case 11:
+						case 12:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x00ee82ee;
 							blit_set_color(fc,bc);
 							break;
 						// Light Violet
-						case 12:
+						case 13:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa0ee82ee;
 							blit_set_color(fc,bc);
 							break;
 						// Pink 
-						case 13:
+						case 14:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x00cbc0ff;
 							blit_set_color(fc,bc);
 							break;
 						// Light Pink 
-						case 14:
+						case 15:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa0cbc0ff;
 							blit_set_color(fc,bc);
 							break;
 						// Purple 
-						case 15:
+						case 16:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x00993366;
 							blit_set_color(fc,bc);
 							break;
 						// Light Purple 
-						case 16:
+						case 17:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa0993366;
 							blit_set_color(fc,bc);
 							break;
 						// Teal 
-						case 17:
+						case 18:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x00808000;
 							blit_set_color(fc,bc);
 							break;
 						// Light Teal 
-						case 18:
+						case 19:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa0808000;
 							blit_set_color(fc,bc);
 							break;
 						// Aqua 
-						case 19:
+						case 20:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x00cccc00;
 							blit_set_color(fc,bc);
 							break;
 						// Light Aqua 
-						case 20:
+						case 21:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa0cccc00;
 							blit_set_color(fc,bc);
 							break;
 						// Grey 
-						case 21:
+						case 22:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x00737373;
 							blit_set_color(fc,bc);
 							break;
 						// Light Grey 
-						case 22:
+						case 23:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa0737373;
 							blit_set_color(fc,bc);
 							break;
 						// Black 
-						case 23:
+						case 24:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x00000000;
 							blit_set_color(fc,bc);
 							break;
 						// Light Black 
-						case 24:
+						case 25:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa0000000;
 							blit_set_color(fc,bc);
 							break;
 						// Light Red
-						case 25: 
+						case 26: 
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xa00000ff;
 							blit_set_color(fc,bc);
 							break;
 						// Red
-						case 26:
+						case 27:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0x000000ff;
 							blit_set_color(fc,bc);
 							break;
 						// Light White  
-						case 27:
+						case 28:
 							fc = (submax_menu==submenu_sel) ? 0xffffff : 0xafffffff;
 							blit_set_color(fc,bc);
 							break;
@@ -498,23 +516,51 @@ int submenu_setup(void)
 	}
 
 	switch(cnf.fakeregion) {
-		case DEFAULT:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DEFAULT];
+		case FAKE_REGION_DISABLED:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DISABLE];
 			break;
-		case AMERICA:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_AMERICA];
-			break;
-		case EUROPE:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_EUROPE];
-			break;
-		case JAPAN:
+		case FAKE_REGION_JAPAN:
 			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_JAPAN];
 			break;
+		case FAKE_REGION_AMERICA:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_AMERICA];
+			break;
+		case FAKE_REGION_EUROPE:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_EUROPE];
+			break;
+		case FAKE_REGION_KOREA:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_KOREA];
+			break;
+		case FAKE_REGION_AUSTRALIA:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_AUSTRALIA];
+			break;
+		case FAKE_REGION_HONGKONG:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_HONG_KONG];
+			break;
+		case FAKE_REGION_TAIWAN:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_TAIWAN];
+			break;
+		case FAKE_REGION_RUSSIA:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_RUSSIA];
+			break;
+		case FAKE_REGION_CHINA:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_CHINA];
+			break;
+		case FAKE_REGION_DEBUG_TYPE_I:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DEBUG_I];
+			break;
+		case FAKE_REGION_DEBUG_TYPE_II:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DEBUG_II];
+			break;
 		default:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DEFAULT];
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DISABLE];
 	}
 	
+
 	switch(cnf.vsh_fg_colors) {
+		case FG_RANDOM:
+			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_RANDOM];
+			break;
 		case FG_RED:
 			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_RED];
 			break;
@@ -603,6 +649,9 @@ int submenu_setup(void)
 			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_WHITE];
 	}
 	switch(cnf.vsh_bg_colors) {
+		case BG_RANDOM:
+			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RANDOM];
+			break;
 		case BG_RED:
 			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RED];
 			break;
@@ -778,7 +827,7 @@ none:
 			}
 			break;
 		case SUBMENU_REGION_MODE:
-			if(direction) change_region ( direction, 4 );
+			if(direction) change_region ( direction, 13 );
 			break;
 		case SUBMENU_SWAP_XO_BUTTONS:
 			if (direction==0) {

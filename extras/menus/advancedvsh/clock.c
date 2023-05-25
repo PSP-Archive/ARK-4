@@ -60,13 +60,13 @@ int swap_readonly(int dir) {
 
 void change_bg_colors(int dir) {
 	int sel = cnf.vsh_bg_colors;
-	sel = limit(sel+dir, 0, 27);
+	sel = limit(sel+dir, 0, 28);
 	cnf.vsh_bg_colors=sel;
 }
 
 void change_fg_colors(int dir) {
 	int sel = cnf.vsh_fg_colors;
-	sel = limit(sel+dir, 0, 27);
+	sel = limit(sel+dir, 0, 28);
 	cnf.vsh_fg_colors=sel;
 }
 
@@ -121,6 +121,8 @@ void change_region(int dir, int max)
 	int sel = cnf.fakeregion;
 
 	// select new
+	if((sel+dir) == 5) sel = 6;
+	if((sel+dir) == 6) sel = 5;
 	sel = limit(sel+dir, 0, max);
 	cnf.fakeregion=sel;
 }
