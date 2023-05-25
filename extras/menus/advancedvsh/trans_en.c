@@ -19,6 +19,9 @@
 
 const char *g_messages_en[] = {
 	"Default",
+	"America",
+	"Europe",
+	"Japan",
 	"Disable",
 	"Enable",
 	"Normal",
@@ -35,6 +38,7 @@ const char *g_messages_en[] = {
 	"BG COLORS      ",
 	"CONVERT BATTERY",
 	"SWAP X/O BTNS  ",
+	"CHANGE REGION  ",
 	" IMPORT CLASSIC PLUGINS ",
 	" ACTIVATE FLASH AND WMA ",
 	" DELETE HIBERNATION ",

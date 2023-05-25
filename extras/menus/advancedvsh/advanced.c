@@ -14,7 +14,7 @@ extern xyPoint2[];
 
 int is_pandora = 0;
 
-#define SUBMENU_MAX 13
+#define SUBMENU_MAX 14
 
 enum {
 	SUBMENU_USB_DEVICE,
@@ -25,6 +25,7 @@ enum {
 	SUBMENU_BG_COLORS,
 	SUBMENU_CONVERT_BATTERY,
 	SUBMENU_SWAP_XO_BUTTONS,
+	SUBMENU_REGION_MODE,
 	SUBMENU_IMPORT_CLASSIC_PLUGINS,
 	SUBMENU_ACTIVATE_FLASH_WMA,
 	SUBMENU_DELETE_HIBERNATION,
@@ -495,6 +496,23 @@ int submenu_setup(void)
 		default:
 			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_X_PRIM]; // should never happen?
 	}
+
+	switch(cnf.fakeregion) {
+		case DEFAULT:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DEFAULT];
+			break;
+		case AMERICA:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_AMERICA];
+			break;
+		case EUROPE:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_EUROPE];
+			break;
+		case JAPAN:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_JAPAN];
+			break;
+		default:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DEFAULT];
+	}
 	
 	switch(cnf.vsh_fg_colors) {
 		case FG_RED:
@@ -684,7 +702,6 @@ int submenu_ctrl(u32 button_on)
 	if( (button_on & PSP_CTRL_SELECT) ||
 		(button_on & PSP_CTRL_HOME)) {
 		submenu_sel = SUBMENU_GO_BACK;
-		// TODO: Probably needs to just "return" return 1 will probably actually exit.
 		return 1;
 	}
 
@@ -759,6 +776,9 @@ none:
 			if(direction==0) {
 				return 11; // Activate Flash/WMA flag 
 			}
+			break;
+		case SUBMENU_REGION_MODE:
+			if(direction) change_region ( direction, 4 );
 			break;
 		case SUBMENU_SWAP_XO_BUTTONS:
 			if (direction==0) {

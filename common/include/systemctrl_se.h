@@ -128,6 +128,14 @@ enum InfernoCachePolicy
     CACHE_POLICY_RR = 1,
 };
 
+enum fakeregion
+{
+	DEFAULT = 0,
+	AMERICA = 1,
+	EUROPE  = 2,
+	JAPAN   = 3,
+};
+
 typedef struct _SEConfig
 {
     int magic;

@@ -93,7 +93,7 @@ int menu_draw(void)
 
 	// show menu list
 	blit_set_color(0xffffff,0x8000ff00);
-	blit_string(pointer[0], pointer[1], g_messages[MSG_PRO_VSH_MENU]);
+	blit_string(pointer[0], pointer[1], g_messages[MSG_ARK_VSH_MENU]);
 	blit_string(pointer[0], 56, ark_version);
 	fc = 0xffffff;
  
@@ -429,9 +429,6 @@ int menu_draw(void)
 				case TMENU_SUSPEND_DEVICE:
 					xPointer = 185;
 					break;
-				//case TMENU_RESET_DEVICE:
-				//	xPointer = 190;
-				//	break;
 				default:
 					xPointer=pointer[4];
 					break;

@@ -230,10 +230,9 @@ void exec_recovery_menu(){
 void import_classic_plugins() {
 	SceUID game, vsh, pops, plugins;
 	int i = 0;
-	int initial = 1;
-	int chunksize = 256;
+	int chunksize = 512;
 	int bytesRead;
-	char * buf = (char *)malloc(chunksize);
+	char *buf = malloc(chunksize);
 	char *gameChar = "game, ";
 	int gameCharLength = strlen(gameChar);
 	char *vshChar = "vsh, ";
@@ -260,14 +259,13 @@ void import_classic_plugins() {
 	}
 
 	// GAME.txt
-	initial = 1;
+	memset(buf, 0, chunksize);
 	while ((bytesRead = sceIoRead(game, buf, chunksize)) > 0) {
 		for(i = 0; i < bytesRead; i++) {
-			if (initial || buf[i-1] == '\n'){
+			if (i == 0 || buf[i-1] == '\n' || buf[i-1] == '\0'){
 				sceIoWrite(plugins, gameChar, gameCharLength);
-				initial = 0;
 			}
-			if (buf[i] == ' ')
+			if (buf[i] == ' ' && i != 0)
 				sceIoWrite(plugins, ",", 1);
 			sceIoWrite(plugins, &buf[i], 1);
 		}
@@ -279,16 +277,13 @@ void import_classic_plugins() {
 	memset(buf, 0, chunksize);
 
 	// VSH.txt
-	initial = 1;
 	while ((bytesRead = sceIoRead(vsh, buf, chunksize)) > 0) {
 		for(i = 0; i < bytesRead; i++) {
-			if (initial || buf[i-1] == '\n'){
+			if (i == 0 || buf[i-1] == '\n' || buf[i-1] == '\0'){
 				sceIoWrite(plugins, vshChar, vshCharLength);
-				initial = 0;
 			}
-			if (buf[i] == ' ')
+			if (buf[i] == ' ' && i != 0)
 				sceIoWrite(plugins, ",", 1);
-
 			sceIoWrite(plugins, &buf[i], 1);
 		}
 	}
@@ -299,16 +294,13 @@ void import_classic_plugins() {
 
 
 	// POP.txt
-	initial = 1;
 	while ((bytesRead = sceIoRead(pops, buf, chunksize)) > 0) {
 		for(i = 0; i < bytesRead; i++) {
-			if (initial || buf[i-1] == '\n'){
+			if (i == 0 || buf[i-1] == '\n' || buf[i-1] == '\0'){
 				sceIoWrite(plugins, popsChar, popsCharLength);
-				initial = 0;
 			}
-			if (buf[i] == ' ')
+			if (buf[i] == ' ' && i != 0)
 				sceIoWrite(plugins, ",", 1);
-
 			sceIoWrite(plugins, &buf[i], 1);
 		}
 	}
