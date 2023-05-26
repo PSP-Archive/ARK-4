@@ -884,6 +884,7 @@ int TSRThread(SceSize args, void *argp)
 	sceKernelChangeThreadPriority(0, 8);
 	vctrlVSHRegisterVshMenu(EatKey);
 	sctrlSEGetConfig(&cnf);
+	sctrlHENGetArkConfig(ark_config);
 
 	check_battery();
 
@@ -943,8 +944,6 @@ resume:
 		sctrlKernelExitVSH(NULL);
 	} else if (stop_flag == 5) {
 		scePowerRequestSuspend();
-	} else if (stop_flag == 6) {
-		launch_umdvideo_mount();
 	} else if (stop_flag == 7) {
 		exec_custom_launcher();
 	} else if (stop_flag == 8) {
@@ -987,6 +986,7 @@ resume:
 		
 
 
+	// Random Colors
 	srand(time(NULL));
 	while((cnf.vsh_fg_colors || cnf.vsh_bg_colors) == 0) {
 		if (cnf.vsh_fg_colors == 0 && cnf.vsh_bg_colors != 0) {
