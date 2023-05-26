@@ -21,6 +21,7 @@
 #include <psputilsforkernel.h>
 #include <pspsysevent.h>
 #include <pspiofilemgr.h>
+#include <systemctrl_se.h>
 #include <stdio.h>
 #include <string.h>
 #include "globals.h"
@@ -29,6 +30,7 @@
 #include "region_free.h"
 
 extern ARKConfig* ark_config;
+extern SEConfig* se_config;
 
 enum
 {
@@ -61,12 +63,6 @@ enum
 	TA_096_TA_097,
 	UNKNOWN
 };
-
-// region code for idsRegeneration
-int region_change = 0;
-
-// fake region for VSH
-int vshregion = 0;
 
 // umdman.prx key buffer
 static void* umd_buf = NULL;
@@ -241,7 +237,7 @@ static int replace_umd_keys(){
     if (res < 0) goto fake_ids_end;
 
 	// initialize idsRegeneration with hardware info and new region
-    res = idsRegenerationSetup(tachyon, baryon, pommel, mb, fuseid, region_change, NULL);
+    res = idsRegenerationSetup(tachyon, baryon, pommel, mb, fuseid, se_config->umdregion, NULL);
 	if (res < 0) goto fake_ids_end;
 
 	// calculate the new UMD keys
@@ -314,7 +310,7 @@ static int _sceChkregGetPsCode(u8 *pscode)
 {
 	pscode[0] = 1;
 	pscode[1] = 0;
-	pscode[2] = get_pscode_from_region(vshregion);
+	pscode[2] = get_pscode_from_region(se_config->vshregion);
 	pscode[3] = 0;
 	pscode[4] = 1;
 	pscode[5] = 0;

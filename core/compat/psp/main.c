@@ -25,6 +25,7 @@ STMOD_HANDLER previous = NULL;
 u32 psp_model = 0;
 
 ARKConfig* ark_config = NULL;
+SEConfig* se_config = NULL;
 
 extern void (*prevPluginHandler)(const char* path, int modid);
 extern void pluginHandler(const char* path, int modid);

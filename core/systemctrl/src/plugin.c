@@ -20,6 +20,7 @@
 #include <pspmodulemgr.h>
 #include <pspiofilemgr.h>
 #include <globals.h>
+#include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include "plugin.h"
 #include "libs/graphics/graphics.h"
@@ -28,6 +29,7 @@
 #define LINE_TOKEN_DELIMITER ','
 
 extern ARKConfig* ark_config;
+extern SEConfig se_config;
 
 #define MAX_PLUGINS 32
 #define MAX_PLUGIN_PATH 64
@@ -315,6 +317,84 @@ static void ProcessConfigFile(char* path, void (*enabler)(char*), void (*disable
         
         // Close Plugin Config
         sceIoClose(fd);
+    }
+}
+
+void settingsHandler(char* path){
+    int apitype = sceKernelInitApitype();
+    if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
+        se_config.clock = 1;
+    }
+    else if (strcasecmp(path, "powersave") == 0){ // underclock to save battery
+        if (apitype != 0x144 && apitype != 0x155) // prevent operation in pops
+            se_config.clock = 2;
+    }
+    else if (strcasecmp(path, "usbcharge") == 0){
+        //usb_charge(); // enable usb charging
+        se_config.usbcharge = 1;
+    }
+    else if (strcasecmp(path, "highmem") == 0){ // enable high memory
+        if ( (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126)) && sceKernelFindModuleByName("sceUmdCache_driver") != NULL){
+            // don't allow high memory in UMD when cache is enabled
+            return;
+        }
+        se_config.force_high_memory = 1;
+        se_config.disable_pause = 1;
+        //patch_partitions();
+        //disable_PauseGame(); // disable pause feature to maintain stability
+    }
+    else if (strcasecmp(path, "mscache") == 0){
+        se_config.msspeed = 1; // enable ms cache for speedup
+    }
+    else if (strcasecmp(path, "disablepause") == 0){ // disable pause game feature on psp go
+        if (apitype != 0x144 && apitype != 0x155 && apitype !=  0x210 && apitype !=  0x220) // prevent in pops and vsh
+            //disable_PauseGame();
+            se_config.disable_pause = 1;
+    }
+    else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
+        se_config.launcher_mode = 1;
+    }
+    else if (strcasecmp(path, "oldplugin") == 0){ // redirect ms0 to ef0 on psp go
+        se_config.oldplugin = 1;
+    }
+    else if (strcasecmp(path, "infernocache") == 0){
+        if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x112 && apitype <= 0x115)){
+            /*
+            int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+            if (CacheInit){
+                if (psp_model==PSP_1000) CacheInit(4 * 1024, 8, 2); // 32K cache on 1K
+                else CacheInit(64 * 1024, 128, (use_highmem)?2:9); // 8M cache on other models
+                disable_PauseGame(); // disable pause feature to maintain stability
+            }
+            */
+            se_config.iso_cache = 1;
+        }
+    }
+    else if (strcasecmp(path, "noled") == 0){
+        se_config.noled = 1;
+        /*
+        int (*_sceSysconCtrlLED)(int, int);
+        _sceSysconCtrlLED = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x18BFBE65);
+        for (int i=0; i<4; i++) _sceSysconCtrlLED(i, 0);
+        MAKE_DUMMY_FUNCTION_RETURN_0(_sceSysconCtrlLED);
+        flushCache();
+        */
+    }
+    else if (strcasecmp(path, "skiplogos") == 0){
+        se_config.skiplogos = 1;
+    }
+    else if (strcasecmp(path, "region_jp") == 0){
+        se_config.umdregion = REGION_JAPAN;
+    }
+    else if (strcasecmp(path, "region_us") == 0){
+        se_config.umdregion = REGION_AMERICA;
+    }
+    else if (strcasecmp(path, "region_eu") == 0){
+        se_config.umdregion = REGION_EUROPE;
+    }
+    else if (strncasecmp(path, "fakeregion_", 11) == 0){
+        int r = atoi(path+11);
+        se_config.vshregion = r;
     }
 }
 

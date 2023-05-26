@@ -56,10 +56,10 @@ void sctrlSEApplyConfig(SEConfig *config) __attribute__((alias("sctrlSESetConfig
  * @param config - pointer to a SEConfig structure that receives the SE configuration
  * @returns 0 on success
 */
-int sctrlSEGetConfig(SEConfig *config)
+SEConfig* sctrlSEGetConfig(SEConfig *config)
 {
-    memcpy(config, &se_config, sizeof(SEConfig));
-    return 0;
+    if (config) memcpy(config, &se_config, sizeof(SEConfig));
+    return &se_config;
 }
 
 /**
@@ -69,10 +69,10 @@ int sctrlSEGetConfig(SEConfig *config)
  * @param size - The size of the structure
  * @returns 0 on success
 */
-int sctrlSEGetConfigEx(SEConfig *config, int size)
+SEConfig* sctrlSEGetConfigEx(SEConfig *config, int size)
 {
-    memcpy(config, &se_config, size);
-    return 0;
+    if (config && size) memcpy(config, &se_config, size);
+    return &se_config;
 }
 
 /**
