@@ -28,6 +28,7 @@ OBJS = \
 	src/gameinfo.o \
 	src/plugin.o \
 	src/leda.o \
+	src/psnfix.o \
 	src/msstor_cache.o \
 	src/setlongjmp.o \
 	$(ARKROOT)/common/utils/patches.o \
