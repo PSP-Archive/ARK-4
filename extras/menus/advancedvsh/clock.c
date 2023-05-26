@@ -94,6 +94,17 @@ void change_umd_mount_idx(int dir)
 	umdvideo_idx = limit(umdvideo_idx+dir, 0, umdvideolist_count(&g_umdlist));
 }
 
+void change_umd_region(int dir, int max)
+{
+	int sel = cnf.umdregion;
+	
+	// select new
+	if((sel+dir) == 1) sel = 2;
+	if((sel+dir) == 2) sel = 1;
+	sel = limit(sel+dir, 0, max);
+	cnf.umdregion=sel;
+}
+
 void change_region(int dir, int max)
 {
 	int sel = cnf.vshregion;

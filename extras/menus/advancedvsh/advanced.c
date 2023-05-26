@@ -15,7 +15,7 @@ extern xyPoint2[];
 
 int is_pandora = 0;
 
-#define SUBMENU_MAX 14
+#define SUBMENU_MAX 15
 
 enum {
 	SUBMENU_USB_DEVICE,
@@ -27,6 +27,7 @@ enum {
 	SUBMENU_CONVERT_BATTERY,
 	SUBMENU_SWAP_XO_BUTTONS,
 	SUBMENU_REGION_MODE,
+	SUBMENU_UMD_REGION_MODE,
 	SUBMENU_IMPORT_CLASSIC_PLUGINS,
 	SUBMENU_ACTIVATE_FLASH_WMA,
 	SUBMENU_DELETE_HIBERNATION,
@@ -557,6 +558,24 @@ int submenu_setup(void)
 		default:
 			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DISABLE];
 	}
+
+	switch(cnf.umdregion) {
+		case FAKE_REGION_DISABLED:
+			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DISABLE];
+			break;
+		case FAKE_REGION_JAPAN:
+			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_JAPAN];
+			break;
+		case FAKE_REGION_AMERICA:
+			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_AMERICA];
+			break;
+		case FAKE_REGION_EUROPE:
+			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_EUROPE];
+			break;
+		default:
+			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DISABLE];
+			break;
+	}
 	
 
 	switch(cnf.vsh_fg_colors) {
@@ -830,6 +849,9 @@ none:
 			break;
 		case SUBMENU_REGION_MODE:
 			if(direction) change_region ( direction, 13 );
+			break;
+		case SUBMENU_UMD_REGION_MODE:
+			if(direction) change_umd_region ( direction, 5 );
 			break;
 		case SUBMENU_SWAP_XO_BUTTONS:
 			if (direction==0) {
