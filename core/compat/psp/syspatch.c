@@ -280,14 +280,6 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
-		if (se_config->skiplogos){
-            // patch GameBoot
-            hookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
-        }
-        goto flush;
-	}
-
     if(0 == strcmp(mod->modname, "game_plugin_module")) {
 		if (se_config->skiplogos) {
 		    patch_GameBoot(mod);
@@ -326,6 +318,10 @@ void PSPOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "vsh_module") == 0){
         if (se_config->umdregion){
             patch_vsh_region_check(mod);
+        }
+        if (se_config->skiplogos){
+            // patch GameBoot
+            hookImportByNID(sceKernelFindModuleByName("sceVshBridge_Driver"), "sceDisplay_driver", 0x3552AB11, 0);
         }
         goto flush;
     }

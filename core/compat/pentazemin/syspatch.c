@@ -539,7 +539,7 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
-	if ((se_config->launcher_mode||se_config->skiplogos) && mod != NULL && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
+	if ((se_config->launcher_mode||se_config->skiplogos) && mod != NULL && 0 == strcmp(mod->modname, "vsh_module") ) {
 		u32* vshmain_args = oe_malloc(1024);
 
 		memset(vshmain_args, 0, 1024);
