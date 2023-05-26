@@ -99,7 +99,7 @@ static int matchingRunlevel(char * runlevel)
         return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));
     else if (stricmp(runlevel, "game") == 0) // retail+homebrew
         return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x141 || apitype == 0x152 || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));
-    else if (stricmp(runlevel, "homebrew") == 0) // homebrews only
+    else if (stricmp(runlevel, "app") == 0 || stricmp(runlevel, "homebrew") == 0) // homebrews only
         return (apitype == 0x141 || apitype == 0x152);
     else if (stricmp(runlevel, "launcher") == 0){
         // check if running custom launcher
