@@ -157,7 +157,6 @@ typedef struct _SEConfig
     u8 msspeed;
     u8 slimcolor;
     u8 iso_cache;
-    u8 iso_cache_policy;
     u8 force_high_memory;
     u8 launcher_mode;
     u8 disable_pause;
