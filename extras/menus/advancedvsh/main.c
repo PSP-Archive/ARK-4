@@ -828,6 +828,15 @@ static void recreateVshRegionSetting(){
 	sceKernelFreePartitionMemory(memid);
 }
 
+static void recreateUmdKeys(){
+	struct KernelCallArg args;
+	memset(&args, 0, sizeof(args));
+	
+	void* generate_umd_keys = sctrlHENFindFunction("ARKCompatLayer", "PSPCompat", 0x2EE76C36);
+
+	kuKernelCall(generate_umd_keys, &args);
+}
+
 void loadConfig(){
 
 	char path[ARK_PATH_SIZE];
@@ -994,6 +1003,10 @@ resume:
 
 	if (cnf_old.vshregion != cnf.vshregion){
 		recreateVshRegionSetting();
+	}
+
+	if (cnf_old.umdregion != cnf.umdregion){
+		recreateUmdKeys();
 	}
 
 	vctrlVSHUpdateConfig(&cnf);

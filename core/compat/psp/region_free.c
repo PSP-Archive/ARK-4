@@ -67,6 +67,13 @@ enum
 // umdman.prx key buffer
 static void* umd_buf = NULL;
 
+static int regions[] = {
+	0, // default
+	3, // Japan
+    4, // America
+    5, // Europe
+};
+
 int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pfuseid)
 {
     // taken from Despertar del Cementerio
@@ -237,7 +244,7 @@ int sctrlArkReplaceUmdKeys(){
     if (res < 0) goto fake_ids_end;
 
 	// initialize idsRegeneration with hardware info and new region
-    res = idsRegenerationSetup(tachyon, baryon, pommel, mb, fuseid, se_config->umdregion, NULL);
+    res = idsRegenerationSetup(tachyon, baryon, pommel, mb, fuseid, regions[se_config->umdregion], NULL);
 	if (res < 0) goto fake_ids_end;
 
 	// calculate the new UMD keys
