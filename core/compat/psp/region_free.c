@@ -31,6 +31,7 @@
 
 extern ARKConfig* ark_config;
 extern SEConfig* se_config;
+extern int psp_model;
 
 enum
 {
@@ -202,6 +203,8 @@ int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pf
 
 // generate new UMD keys using idsRegeneration and inject into umdman
 int sctrlArkReplaceUmdKeys(){
+
+	if (psp_model == PSP_GO) return 0;
 
     int res = -1;
 
