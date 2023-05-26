@@ -34,7 +34,7 @@
 #define MAGIC_DFD_FOR_DELETE_2 0x9001
 
 extern u32 psp_model;
-extern int hidedlc;
+extern SEConfig* se_config;
 static char g_iso_dir[128];
 static char g_temp_delete_dir[128];
 static int g_delete_eboot_injected = 0;
@@ -301,7 +301,7 @@ int gamedread(SceUID fd, SceIoDirent * dir)
     else {
         int k1 = pspSdkSetK1(0);
         CorruptIconPatch(dir->d_name);
-        if (hidedlc)
+        if (se_config->hidedlc)
     		HideDlc(dir->d_name);
         pspSdkSetK1(k1);
     }

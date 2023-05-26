@@ -62,10 +62,9 @@ static void patch_msvideo_main_plugin_module(SceModule2* mod);
 static void patch_htmlviewer_plugin_module(u32 text_addr);
 static void patch_htmlviewer_utility_module(u32 text_addr);
 
-extern int hibblock;
-extern int skiplogos;
+extern SEConfig* se_config;
+
 extern int has_umd_iso;
-extern int hidemac;
 
 static int vshpatch_module_chain(SceModule2 *mod)
 {
@@ -112,11 +111,11 @@ static int vshpatch_module_chain(SceModule2 *mod)
 
     if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
         
-        if (skiplogos){
+        if (se_config->skiplogos){
 		    patch_Gameboot(mod);
         }
 
-		if (psp_model == PSP_GO && hibblock) {
+		if (psp_model == PSP_GO && se_config->hibblock) {
 			patch_hibblock(mod);
 		}
 
@@ -222,13 +221,13 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
         }
     }
     
-    patches = (hidemac)? 2:1;
+    patches = (se_config->hidemac)? 2:1;
     for (; addr < top_addr && patches; addr++){
         if (strcmp(addr, "sysconf_plugin_module") == 0){
             p = addr;
             patches--;
         }
-        else if (hidemac
+        else if (se_config->hidemac
                 && ((u8*)addr)[0] == 0x25
                 && ((u8*)addr)[1] == 0
                 && ((u8*)addr)[2] == 0x30
@@ -269,11 +268,10 @@ int fakeParamInexistance(void)
 
 static void patch_game_plugin_module(SceModule2* mod)
 {
-    extern int hidepics;
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr + mod->text_size;
     int patches = 5;
-    if (hidepics) patches++;
+    if (se_config->hidepics) patches++;
     for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x8FA400A4){
@@ -308,7 +306,7 @@ static void patch_game_plugin_module(SceModule2* mod)
             _sw(0x00001021, addr-24);
             patches--;
         }
-        else if (data == 0x0062A023 && hidepics){
+        else if (data == 0x0062A023 && se_config->hidepics){
             _sw(0x00601021, addr+36);
             _sw(0x00601021, addr+48);
             patches--;

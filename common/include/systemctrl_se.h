@@ -144,7 +144,8 @@ typedef struct _SEConfig
     s8 usbdevice;
     u8 usbcharge;
 	u8 usbdevice_rdonly;
-    u8 machidden;
+    u8 hidemac;
+	u8 hidedlc;
     u8 skiplogos;
     u8 hidepics;
     u8 useownupdate;
