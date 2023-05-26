@@ -561,7 +561,7 @@ int submenu_setup(void)
 
 	switch(cnf.umdregion) {
 		case UMD_REGION_DEFAULT:
-			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DISABLE];
+			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DEFAULT];
 			break;
 		case UMD_REGION_JAPAN:
 			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_JAPAN];
@@ -573,7 +573,7 @@ int submenu_setup(void)
 			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_EUROPE];
 			break;
 		default:
-			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DISABLE];
+			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DEFAULT];
 			break;
 	}
 	
