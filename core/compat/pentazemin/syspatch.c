@@ -409,20 +409,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         goto flush;
 	}
 
-    if (strcmp(mod->modname, "sceNpSignupPlugin_Module") == 0) {
-		// ImageVersion = 0x10000000
-		_sw(0x3C041000, mod->text_addr + 0x38CBC);
-		goto flush;
-	}
-
-    if (strcmp(mod->modname, "sceVshNpSignin_Module") == 0) {
-		// Kill connection error
-		_sw(0x10000008, mod->text_addr + 0x6CF4);
-		// ImageVersion = 0x10000000
-		_sw(0x3C041000, mod->text_addr + 0x96C4);
-		goto flush;
-	}
-
 	if(strcmp(mod->modname, "game_plugin_module") == 0) {
 		if (se_config->skiplogos) {
 		    patch_GameBoot(mod);

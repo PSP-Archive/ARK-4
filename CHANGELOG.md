@@ -16,7 +16,6 @@
 - Holding the `L-trigger` while loading the `custom launcher` will autoboot the last played game.
 - Cleanup of `pentazemin` compatibility layer and other parts of the `Custom Firmware`.
 
-
 ## Version 4.20.35 (2023-05-16)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42035
 - Improved `660on661` patch. Fixes crashes and other issues in homebrew such as `chronoswitch` and others.
