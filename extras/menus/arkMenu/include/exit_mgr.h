@@ -45,16 +45,19 @@ class ExitManager : public SystemEntry{
                 optionsmenu = NULL;
                 delete aux;
             }
+            else {
+                sctrlSESetUmdFile("");
+          	    sctrlSESetBootConfFileIndex(MODE_UMD);
+                sctrlKernelExitVSH(NULL);
+            }
         };
         void pause(){};
         void resume(){
             if (IS_PSP(common::getArkConfig())){
                 optionsmenu = new OptionsMenu("", sizeof(exit_opts)/sizeof(t_options_entry), exit_opts);
             }
-            else {
-                sctrlSESetUmdFile("");
-          	    sctrlSESetBootConfFileIndex(MODE_UMD);
-                sctrlKernelExitVSH(NULL);
+            else{
+                optionsmenu = NULL;
             }
         };
         std::string getInfo(){return "Exit";};
