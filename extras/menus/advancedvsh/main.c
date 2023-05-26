@@ -924,19 +924,22 @@ resume:
 
 
 	srand(time(NULL));
-	do {
+	while((cnf.vsh_fg_colors || cnf.vsh_bg_colors) == 0) {
 		if (cnf.vsh_fg_colors == 0 && cnf.vsh_bg_colors != 0) {
 			cnf.vsh_fg_colors = (rand() % 28) + 1;
+			break;
 		}
 		else if (cnf.vsh_fg_colors != 0 && cnf.vsh_bg_colors == 0) {
 			cnf.vsh_bg_colors = (rand() % 28) + 1;
+			break;
 		}
 		else {
 			cnf.vsh_fg_colors = (rand() % 28) + 1;
 			srand(time(NULL));
 			cnf.vsh_bg_colors = (rand() % 28) + 1;
+			break;
 		}
-	} while((cnf.vsh_fg_colors || cnf.vsh_bg_colors) == 0);
+	} 
 
 	config.vsh_bg_color = cnf.vsh_bg_colors;
 	config.vsh_fg_color = cnf.vsh_fg_colors;
