@@ -782,6 +782,52 @@ static int swap_buttons()
 	return 0;
 }
 
+static void recreateVshRegionSetting(){
+	char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, "SETTINGS.TXT");
+
+	// open file and get size
+	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+	size_t size = sceIoLseek32(fd, 0, SEEK_END);
+	sceIoLseek32(fd, 0, SEEK_SET);
+
+	// allocate buffer
+	int memid = sceKernelAllocPartitionMemory(2, "tmp", PSP_SMEM_High, size, NULL);
+	char* buf = sceKernelGetBlockHeadAddr(memid);
+	memset(buf, 0, size);
+
+	// read file and close
+	sceIoRead(fd, buf, size);
+	sceIoClose(fd);
+
+	// open file for writing
+	fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+
+	char* vshreg = strstr(buf, "fakeregion_");
+	char tmp[128];
+
+	if (vshreg){
+		u32 p1_size = (u32)vshreg - (u32)buf;
+		char* p2 = strstr(vshreg, ",");
+		sprintf(tmp, "fakeregion_%d", cnf.vshregion);
+		sceIoWrite(fd, buf, p1_size);
+		sceIoWrite(fd, tmp, strlen(tmp));
+		sceIoWrite(fd, p2, strlen(p2));
+	}
+	else{
+		sceIoWrite(fd, buf, size);
+		if (cnf.vshregion){
+			sprintf(tmp, "\nxmb, fakeregion_%d, on\n", cnf.vshregion);
+			sceIoWrite(fd, tmp, strlen(tmp));
+		}
+	}
+
+	sceIoClose(fd);
+
+	sceKernelFreePartitionMemory(memid);
+}
+
 void loadConfig(){
 
 	char path[ARK_PATH_SIZE];
@@ -945,6 +991,10 @@ resume:
 	config.vsh_fg_color = cnf.vsh_fg_colors;
 
 	saveConfig();
+
+	if (cnf_old.vshregion != cnf.vshregion){
+		recreateVshRegionSetting();
+	}
 
 	vctrlVSHUpdateConfig(&cnf);
 
