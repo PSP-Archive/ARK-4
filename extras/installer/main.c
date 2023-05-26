@@ -62,7 +62,7 @@ int main(int argc, char * argv[])
         char path[ARK_PATH_SIZE];
         strcpy(path, ark_config.arkpath);
         strcat(path, flash_files[i].orig);
-        pspDebugScreenPrintf("Copying <%s> to <%s>\n", flash_files[i].orig, flash_files[i].dest);
+        pspDebugScreenPrintf("Installing %s to %s\n", flash_files[i].orig, flash_files[i].dest);
         copy_file(path, flash_files[i].dest);
     }
 
