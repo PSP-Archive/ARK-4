@@ -68,8 +68,6 @@ int thread_id=0;
 
 t_conf config;
 
-#define MAX_GAMES 50
-
 SEConfig cnf;
 static SEConfig cnf_old;
 
