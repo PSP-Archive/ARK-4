@@ -12,6 +12,8 @@ extern char umdvideo_path[256];
 extern xyPoint[];
 extern xyPoint2[];
 
+extern ARKConfig* ark_config;
+
 
 int is_pandora = 0;
 
@@ -430,6 +432,10 @@ int submenu_draw(void)
 					msg = "Normal -> Pandora";
 				}
 				blit_string(xPointer+0x80, (pointer[5] + subcur_menu)*8, msg);
+			}
+			if (submax_menu == SUBMENU_UMD_REGION_MODE) {
+				if(psp_model == PSP_GO || IS_VITA_ADR(ark_config)) msg = "Unsupported";
+				blit_string( (pointer[6] * 8) + 128, (pointer[5] + subcur_menu)*8, msg);
 			}
 			else if(msg) {
 				blit_string( (pointer[6] * 8) + 128, (pointer[5] + subcur_menu)*8, msg);
@@ -851,6 +857,7 @@ none:
 			if(direction) change_region ( direction, 13 );
 			break;
 		case SUBMENU_UMD_REGION_MODE:
+			if(psp_model == PSP_GO || IS_VITA_ADR(ark_config)) break;
 			if(direction) change_umd_region ( direction, 3 );
 			break;
 		case SUBMENU_SWAP_XO_BUTTONS:

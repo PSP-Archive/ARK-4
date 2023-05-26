@@ -97,7 +97,7 @@ void change_umd_mount_idx(int dir)
 void change_umd_region(int dir, int max)
 {
 	int sel = cnf.umdregion;
-	
+			
 	// select new
 	sel = limit(sel+dir, 0, max);
 	cnf.umdregion=sel;
