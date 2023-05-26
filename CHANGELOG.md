@@ -1,5 +1,11 @@
 # ARK Changelog
 
+## Version 4.20.50 (2023-05-26)
+- Completely refactored all core code related to settings handling. It is now faster and consumes less resources.
+- Added ability to change `VSH` and `UMD` region in `Advanced VSH Menu`, changing `UMD` region is instant while changing `VSH` region requires a reset.
+- Added `PSN` patches and fixes from `PRO` CFW.
+- Other cleanup and improvements.
+
 ## Version 4.20.40 (2023-05-24)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42040
 - You can now install all external modules in flash0, allowing for a full permanent installation.
