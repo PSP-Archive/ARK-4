@@ -22,7 +22,7 @@
 void LoadPlugins(void);
 
 // Load Settings with callback handler
-void loadSettings(void* settingsHandler);
+void loadSettings(void);
 
 #endif
 

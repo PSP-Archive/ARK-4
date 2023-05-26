@@ -34,10 +34,12 @@ extern SEConfig se_config;
 #define MAX_PLUGINS 32
 #define MAX_PLUGIN_PATH 64
 
-static struct{
+typedef struct{
     int count;
     char paths[MAX_PLUGINS][MAX_PLUGIN_PATH];
-} plugins;
+}Plugins;
+
+Plugins* plugins = NULL;
 
 void (*plugin_handler)(const char* path, int modid) = NULL;
 
@@ -46,19 +48,19 @@ int disable_settings = 0;
 int is_plugins_loading = 0;
 
 static addPlugin(char* path){
-    for (int i=0; i<plugins.count; i++){
-        if (stricmp(plugins.paths[i], path) == 0)
+    for (int i=0; i<plugins->count; i++){
+        if (stricmp(plugins->paths[i], path) == 0)
             return; // plugin already added
     }
-    if (plugins.count < MAX_PLUGINS)
-        strcpy(plugins.paths[plugins.count++], path);
+    if (plugins->count < MAX_PLUGINS)
+        strcpy(plugins->paths[plugins->count++], path);
 }
 
 static removePlugin(char* path){
-    for (int i=0; i<plugins.count; i++){
-        if (stricmp(plugins.paths[i], path) == 0){
-            if (--plugins.count > i){
-                strcpy(plugins.paths[i], plugins.paths[plugins.count]);
+    for (int i=0; i<plugins->count; i++){
+        if (stricmp(plugins->paths[i], path) == 0){
+            if (--plugins->count > i){
+                strcpy(plugins->paths[i], plugins->paths[plugins->count]);
             }
             break;
         }
@@ -68,8 +70,8 @@ static removePlugin(char* path){
 // Load and Start Plugin Module
 static void startPlugins()
 {
-    for (int i=0; i<plugins.count; i++){
-        char* path = plugins.paths[i];
+    for (int i=0; i<plugins->count; i++){
+        char* path = plugins->paths[i];
         // Load Module
         int uid = sceKernelLoadModule(path, 0, NULL);
         // Call handler
@@ -320,7 +322,7 @@ static void ProcessConfigFile(char* path, void (*enabler)(char*), void (*disable
     }
 }
 
-void settingsHandler(char* path, u8 enabled){
+static void settingsHandler(char* path, u8 enabled){
     int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
         se_config.clock = (enabled)?1:0;
@@ -394,11 +396,11 @@ void settingsHandler(char* path, u8 enabled){
     }
 }
 
-void settingsEnabler(char* path){
+static void settingsEnabler(char* path){
     settingsHandler(path, 1);
 }
 
-void settingsDisabler(char* path){
+static void settingsDisabler(char* path){
     settingsHandler(path, 0);
 }
 
@@ -416,6 +418,8 @@ void LoadPlugins(){
     if (disable_plugins || isRecoveryMode())
         return; // don't load plugins in recovery mode
     is_plugins_loading = 1;
+    // allocate resources
+    plugins = oe_malloc(sizeof(Plugins));
     // Open Plugin Config from ARK's installation folder
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
@@ -427,10 +431,13 @@ void LoadPlugins(){
     ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
     // start all loaded plugins
     startPlugins();
+    // free resources
+    oe_free(plugins);
+    plugins = NULL;
     is_plugins_loading = 0;
 }
 
-void loadSettings(void* settingsHandler){
+void loadSettings(){
     checkControllerInput();
     if (disable_settings || isRecoveryMode())
         return; // don't load settings in recovery mode
@@ -438,5 +445,5 @@ void loadSettings(void* settingsHandler){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, "SETTINGS.TXT");
-    ProcessConfigFile(path, settingsHandler, NULL);
+    ProcessConfigFile(path, settingsEnabler, settingsDisabler);
 }
