@@ -560,16 +560,16 @@ int submenu_setup(void)
 	}
 
 	switch(cnf.umdregion) {
-		case FAKE_REGION_DISABLED:
+		case UMD_REGION_DEFAULT:
 			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DISABLE];
 			break;
-		case FAKE_REGION_JAPAN:
+		case UMD_REGION_JAPAN:
 			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_JAPAN];
 			break;
-		case FAKE_REGION_AMERICA:
+		case UMD_REGION_AMERICA:
 			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_AMERICA];
 			break;
-		case FAKE_REGION_EUROPE:
+		case UMD_REGION_EUROPE:
 			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_EUROPE];
 			break;
 		default:
@@ -851,7 +851,7 @@ none:
 			if(direction) change_region ( direction, 13 );
 			break;
 		case SUBMENU_UMD_REGION_MODE:
-			if(direction) change_umd_region ( direction, 5 );
+			if(direction) change_umd_region ( direction, 3 );
 			break;
 		case SUBMENU_SWAP_XO_BUTTONS:
 			if (direction==0) {

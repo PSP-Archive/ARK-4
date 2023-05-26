@@ -10,6 +10,7 @@ extern "C"{
 #include <pspkernel.h>
 #include <pspsysmem_kernel.h>
 #include <pspctrl.h>
+#include <module2.h>
 
 /**
  * Functions to let user mode access certain functions only available in
@@ -105,7 +106,7 @@ int kuKernelGetModel(void);
  *
  * @return < 0 on error
  */
-int kuKernelFindModuleByName(char *modname, SceModule *mod);
+int kuKernelFindModuleByName(char *modname, SceModule2 *mod);
 
 /**
  * Invalidate the entire instruction cache

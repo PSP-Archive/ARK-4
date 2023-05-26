@@ -223,7 +223,7 @@ int kuKernelInitKeyConfig(void)
     return apptype;
 }
 
-int kuKernelFindModuleByName(char *modname, SceModule *mod)
+int kuKernelFindModuleByName(char *modname, SceModule2 *mod)
 {
     SceModule2 *pmod;
 

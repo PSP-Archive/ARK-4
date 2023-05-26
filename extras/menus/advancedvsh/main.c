@@ -833,8 +833,16 @@ static void recreateUmdKeys(){
 	memset(&args, 0, sizeof(args));
 	
 	void* generate_umd_keys = sctrlHENFindFunction("ARKCompatLayer", "PSPCompat", 0x2EE76C36);
-
 	kuKernelCall(generate_umd_keys, &args);
+
+	// patch region check if not done already
+	void* hookImport = sctrlHENFindFunction("SystemControl", "SystemCtrlForKernel", 0x869F24E9);
+	SceModule2 mod; kuKernelFindModuleByName("vsh_module", &mod);
+	args.arg1 = &mod;
+	args.arg2 = "sceVshBridge";
+	args.arg3 = 0x5C2983C2;
+	args.arg4 = 1;
+	kuKernelCall(hookImport, &args);
 }
 
 void loadConfig(){
