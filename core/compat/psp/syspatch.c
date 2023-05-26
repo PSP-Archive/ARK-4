@@ -343,6 +343,13 @@ void PSPOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
+
+            {
+                int fd = sceIoOpen("ms0:/config.se", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+                sceIoWrite(fd, se_config, sizeof(SEConfig));
+                sceIoClose(fd);
+            }
+
             // handle mscache
             if (se_config->msspeed){
                 if (psp_model == PSP_GO)
