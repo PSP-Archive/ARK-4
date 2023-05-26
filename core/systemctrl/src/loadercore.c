@@ -220,15 +220,22 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
             exitLauncher(); // reboot VSH into custom menu
         }
     }
-    
-    // start module
-    if(result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
-    
-    // MediaSync not yet started... too early to load plugins.
-    if(!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
+
+    // load settings before starting mediasync
+    if (!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
     {
         // Check ARK install path
         checkArkPath();
+        // load settings
+        loadSettings();
+    }
+    
+    // start module
+    if (result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
+    
+    // MediaSync not yet started... too early to load plugins.
+    if (!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
+    {
         // Load XMB Control
         loadXmbControl();
         // Load Plugins

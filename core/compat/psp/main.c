@@ -7,6 +7,7 @@
 #include <pspdisplay_kernel.h>
 #include <pspsysmem_kernel.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include <pspiofilemgr.h>
 #include <pspgu.h>
@@ -25,6 +26,7 @@ STMOD_HANDLER previous = NULL;
 u32 psp_model = 0;
 
 ARKConfig* ark_config = NULL;
+SEConfig* se_config = NULL;
 
 extern void (*prevPluginHandler)(const char* path, int modid);
 extern void pluginHandler(const char* path, int modid);
@@ -43,6 +45,7 @@ void flushCache()
 }
 
 void processArkConfig(){
+    se_config = sctrlSEGetConfig(NULL);
     ark_config = sctrlHENGetArkConfig(NULL);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSP_ORIG; // assume running on PSP

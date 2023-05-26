@@ -130,47 +130,43 @@ enum InfernoCachePolicy
     CACHE_POLICY_RR = 1,
 };
 
+// UMD regions
+#define UMD_REGION_JAPAN 3
+#define UMD_REGION_AMERICA 4
+#define UMD_REGION_EUROPE 5
+
 typedef struct _SEConfig
 {
-    int magic;
-    s16 umdmode;
-    s16 vshcpuspeed;
-    s16 vshbusspeed;
-    s16 umdisocpuspeed;
-    s16 umdisobusspeed;
-    s16 fakeregion;
-    s16 usbdevice;
-    s16 usbcharge;
-	s16 usbdevice_rdonly;
-    s16 machidden;
-    s16 skipgameboot;
-    s16 hidepic;
-    s16 plugvsh; 
-    s16 pluggame;
-    s16 plugpop;
-    s16 flashprot;
-    s16 skiplogo;
-    s16 useversion;
-    s16 useownupdate;
-    s16 usenodrm;
-    s16 hibblock;
-    s16 noanalog;
-    s16 oldplugin;
-    s16 htmlviewer_custom_save_location;
-    s16 hide_cfw_dirs;
-    s16 chn_iso;
-    s16 msspeed;
-    s16 slimcolor;
-    s16 iso_cache;
-    s16 iso_cache_total_size; // in MB
-    s16 iso_cache_num;
-    s16 iso_cache_policy;
-    s16 usbversion;
-    s16 language; /* -1 as autodetect */
-    s16 retail_high_memory;
-	s16 vsh_bg_colors;
-	s16 vsh_fg_colors;
-	s16 swap_xo;
+    u32 magic;
+	u8 language;
+	u8 umdmode;
+    u8 clock;
+    u8 vshregion;
+    u8 umdregion;
+    s8 usbdevice;
+    u8 usbcharge;
+	u8 usbdevice_rdonly;
+    u8 hidemac;
+	u8 hidedlc;
+    u8 skiplogos;
+    u8 hidepics;
+    u8 useownupdate;
+    u8 usenodrm;
+    u8 hibblock;
+    u8 noanalog;
+    u8 oldplugin;
+    u8 hide_cfw_dirs;
+    u8 chn_iso;
+    u8 msspeed;
+    u8 slimcolor;
+    u8 iso_cache;
+    u8 force_high_memory;
+    u8 launcher_mode;
+    u8 disable_pause;
+    u8 noled;
+	u8 vsh_fg_colors;
+	u8 vsh_bg_colors;
+	u8 swap_xo;
 } SEConfig;
 
 /**
@@ -188,18 +184,18 @@ int sctrlSEGetVersion();
  * Use sctrlSEGetCongiEx function instead.
  *
  * @param config - pointer to a SEConfig structure that receives the SE configuration
- * @returns 0 on success
+ * @returns pointer to original SEConfig structure in SystemControl
 */
-int sctrlSEGetConfig(SEConfig *config);
+SEConfig* sctrlSEGetConfig(SEConfig *config);
 
 /**
  * Gets the SE configuration
  *
  * @param config - pointer to a SEConfig structure that receives the SE configuration
  * @param size - The size of the structure
- * @returns 0 on success
+ * @returns pointer to original SEConfig structure in SystemControl
 */
-int sctrlSEGetConfigEx(SEConfig *config, int size);
+SEConfig* sctrlSEGetConfigEx(SEConfig *config, int size);
 
 /**
  * Sets the SE configuration

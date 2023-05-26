@@ -16,6 +16,8 @@ extern STMOD_HANDLER previous;
 
 extern void exitLauncher();
 
+extern SEConfig* se_config;
+
 KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
     .KernelIcacheInvalidateAll = &sceKernelIcacheInvalidateAll,
@@ -106,20 +108,6 @@ int isSystemBooted(void)
     return 0;
 }
 
-int use_mscache = 0;
-int use_infernocache = 0;
-void settingsHandler(char* path){
-    int apitype = sceKernelInitApitype();
-    if (strcasecmp(path, "mscache") == 0){
-        use_mscache = 1; // enable ms cache for speedup
-    }
-    else if (strcasecmp(path, "infernocache") == 0){
-        if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x112 && apitype <= 0x115)){
-            use_infernocache = 1;
-        }
-    }
-}
-
 int (*_sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
 int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	int res = 0;
@@ -183,13 +171,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     */
-    
-    // load and process settings file
-    if(strcmp(mod->modname, "sceMediaSync") == 0)
-    {
-        loadSettings(&settingsHandler);
-        goto flush;
-    }
 
     // VLF Module Patches
     if(strcmp(mod->modname, "VLF_Module") == 0)
@@ -207,9 +188,9 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         if(isSystemBooted())
         {
             // Initialize Memory Stick Speedup Cache
-            if (use_mscache) msstorCacheInit("ms", 8 * 1024);
+            if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
 
-            if (use_infernocache){
+            if (se_config->iso_cache){
                 int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
                 if (CacheInit){
                     CacheInit(32 * 1024, 32, 11); // 2MB cache for PS Vita

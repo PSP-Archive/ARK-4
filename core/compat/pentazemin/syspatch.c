@@ -16,12 +16,9 @@
 
 extern STMOD_HANDLER previous;
 
-int is_launcher_mode = 0;
-int use_mscache = 0;
-int use_highmem = 0;
-int skip_logos = 0;
-int use_infernocache = 0;
-int vshregion = 0;
+extern void exitLauncher();
+
+extern SEConfig* se_config;
 
 int is_vsh = 0;
 
@@ -155,8 +152,8 @@ int sceChkregGetPsCodePatched(u8 *pscode) {
 	pscode[6] = 0x01;
 	pscode[7] = 0x00;
 
-	if (vshregion)
-		pscode[2] = get_pscode_from_region(vshregion);
+	if (se_config->vshregion)
+		pscode[2] = get_pscode_from_region(se_config->vshregion);
 
 	return res;
 }
@@ -330,34 +327,10 @@ void patch_SysconfPlugin(SceModule2* mod){
 
 void exit_game_patched(){
 	sctrlSESetBootConfFileIndex(MODE_UMD);
-	if (is_launcher_mode)
+	if (se_config->launcher_mode)
 		exitLauncher();
 	else
 		sctrlKernelExitVSH(NULL);
-}
-
-void settingsHandler(char* path){
-    int apitype = sceKernelInitApitype();
-	if (strcasecmp(path, "highmem") == 0){ // enable high memory
-        use_highmem = 1;
-    }
-    else if (strcasecmp(path, "mscache") == 0){
-        use_mscache = 1; // enable ms cache for speedup
-    }
-    else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
-        is_launcher_mode = 1;
-    }
-    else if (strcasecmp(path, "infernocache") == 0){
-        if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x112 && apitype <= 0x115))
-            use_infernocache = 1;
-    }
-    else if (strcasecmp(path, "skiplogos") == 0){
-        skip_logos = 1;
-    }
-	else if (strncasecmp(path, "fakeregion_", 11) == 0){
-        int r = atoi(path+11);
-        vshregion = r;
-    }
 }
 
 void AdrenalineOnModuleStart(SceModule2 * mod){
@@ -451,7 +424,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 	}
 
 	if(strcmp(mod->modname, "sceVshBridge_Driver") == 0) {
-		if (skip_logos){
+		if (se_config->skiplogos){
             // patch GameBoot
             hookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
         }
@@ -459,7 +432,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 	}
 
 	if(strcmp(mod->modname, "game_plugin_module") == 0) {
-		if (skip_logos) {
+		if (se_config->skiplogos) {
 		    patch_GameBoot(mod);
 	    }
         goto flush;
@@ -501,23 +474,25 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 	// load and process settings file
     if(strcmp(mod->modname, "sceMediaSync") == 0)
     {
-        loadSettings(&settingsHandler);
+        se_config = sctrlSEGetConfig(NULL);
 		// apply extra memory patch
-		if (use_highmem) unlockVitaMemory();
+		if (se_config->force_high_memory) unlockVitaMemory();
 		else{
 			int apitype = sceKernelInitApitype();
 			if (apitype == 0x141){
 				int paramsize=4;
+				int use_highmem = 0;
 				if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
 					unlockVitaMemory();
+					se_config->force_high_memory = 1;
 				}
         	}
 		}
 		// enable inferno cache
-		if (use_infernocache){
+		if (se_config->iso_cache){
 			int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
 			if (CacheInit){
-				CacheInit(32 * 1024, 32, (use_highmem)?2:11); // 2MB cache for PS Vita
+				CacheInit(32 * 1024, 32, (se_config->force_high_memory)?2:11); // 2MB cache for PS Vita
 			}
         }
         goto flush;
@@ -532,7 +507,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         if(isSystemBooted())
         {
             // Initialize Memory Stick Speedup Cache
-            if (use_mscache) msstorCacheInit("ms", 8 * 1024);
+            if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
 
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
@@ -541,8 +516,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 			// Adrenaline patches
 			OnSystemStatusIdle();
 
-			if (is_launcher_mode && is_vsh){
-				extern void exitLauncher();
+			if (se_config->launcher_mode && is_vsh){
 				int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
 				sceKernelStartThread(uid, 0, NULL);
 			}
@@ -565,7 +539,7 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
-	if ((is_launcher_mode||skip_logos) && mod != NULL && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
+	if ((se_config->launcher_mode||se_config->skiplogos) && mod != NULL && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
 		u32* vshmain_args = oe_malloc(1024);
 
 		memset(vshmain_args, 0, 1024);

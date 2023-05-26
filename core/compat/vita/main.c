@@ -18,6 +18,7 @@
 #include <pspsdk.h>
 #include <pspsysmem_kernel.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include <globals.h>
 #include "functions.h"
@@ -30,6 +31,7 @@
 PSP_MODULE_INFO("ARKCompatLayer", 0x3007, 1, 0);
 
 ARKConfig* ark_config = NULL;
+SEConfig* se_config = NULL;
 
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
@@ -47,6 +49,7 @@ void flushCache()
 }
 
 static void processArkConfig(){
+    se_config = sctrlSEGetConfig(NULL);
     ark_config = sctrlHENGetArkConfig(NULL);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PS_VITA; // assume running on PS Vita

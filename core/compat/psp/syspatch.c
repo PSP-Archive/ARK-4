@@ -18,6 +18,7 @@
 
 extern u32 psp_model;
 extern ARKConfig* ark_config;
+extern SEConfig* se_config;
 extern STMOD_HANDLER previous;
 extern void SetSpeed(int cpuspd, int busspd);
 
@@ -182,95 +183,61 @@ void disable_PauseGame()
     }
 }
 
-int is_launcher_mode = 0;
-int use_mscache = 0;
-int use_highmem = 0;
-int oldplugin = 0;
-int skip_logos = 0;
-int clock = 0;
-void settingsHandler(char* path){
+void processSettings(){
     int apitype = sceKernelInitApitype();
-    if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
-        clock = 1;
-    }
-    else if (strcasecmp(path, "powersave") == 0){ // underclock to save battery
-        if (apitype != 0x144 && apitype != 0x155) // prevent operation in pops
-            clock = 2;
-    }
-    else if (strcasecmp(path, "usbcharge") == 0){
+
+    // USB Charging
+    if (se_config->usbcharge){
         usb_charge(); // enable usb charging
     }
-    else if (strcasecmp(path, "highmem") == 0){ // enable high memory
-        if ( (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126)) && sceKernelFindModuleByName("sceUmdCache_driver") != NULL){
-            // don't allow high memory in UMD when cache is enabled
-            return;
-        }
-        use_highmem = 1;
-        patch_partitions();
-        disable_PauseGame(); // disable pause feature to maintain stability
+    // check launcher mode
+    if (se_config->launcher_mode){
+        strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
     }
-    else if (strcasecmp(path, "mscache") == 0){
-        use_mscache = 1; // enable ms cache for speedup
+    else{
+        ark_config->launcher[0] = 0; // disable launcher mode
     }
-    else if (strcasecmp(path, "disablepause") == 0){ // disable pause game feature on psp go
-        if (apitype != 0x144 && apitype != 0x155 && apitype !=  0x210 && apitype !=  0x220) // prevent in pops and vsh
-            disable_PauseGame();
-    }
-    else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
-        is_launcher_mode = 1;
-    }
-    else if (strcasecmp(path, "oldplugin") == 0){ // redirect ms0 to ef0 on psp go
-        oldplugin = 1;
-    }
-    else if (strcasecmp(path, "infernocache") == 0){
-        if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x112 && apitype <= 0x115)){
-            int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
-            if (CacheInit){
-                if (psp_model==PSP_1000) CacheInit(4 * 1024, 8, 2); // 32K cache on 1K
-                else CacheInit(64 * 1024, 128, (use_highmem)?2:9); // 8M cache on other models
-                disable_PauseGame(); // disable pause feature to maintain stability
-            }
-        }
-    }
-    else if (strcasecmp(path, "noled") == 0){
+    // VSH region
+    if (se_config->vshregion) patch_sceChkreg();
+    // Disable LED
+    if (se_config->noled){
         int (*_sceSysconCtrlLED)(int, int);
         _sceSysconCtrlLED = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x18BFBE65);
         for (int i=0; i<4; i++) _sceSysconCtrlLED(i, 0);
         MAKE_DUMMY_FUNCTION_RETURN_0(_sceSysconCtrlLED);
         flushCache();
     }
-    else if (strcasecmp(path, "skiplogos") == 0){
-        skip_logos = 1;
+    // Disable Pause feature on PSP Go
+    if (se_config->disable_pause){
+        disable_PauseGame();
     }
-    else if (strcasecmp(path, "region_jp") == 0){
-        region_change = REGION_JAPAN;
+    // Enforce extra RAM
+    if (se_config->force_high_memory){
+        patch_partitions();
     }
-    else if (strcasecmp(path, "region_us") == 0){
-        region_change = REGION_AMERICA;
+    if(!se_config->force_high_memory && (apitype == 0x141 || apitype == 0x152) ){
+        int paramsize=4;
+        int use_highmem = 0;
+        if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
+            patch_partitions();
+            disable_PauseGame();
+            se_config->force_high_memory = 1;
+        }
     }
-    else if (strcasecmp(path, "region_eu") == 0){
-        region_change = REGION_EUROPE;
+    // Enable Inferno cache
+    if (se_config->iso_cache){
+        int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+        if (CacheInit){
+            if (psp_model==PSP_1000) CacheInit(4 * 1024, 8, 2); // 32K cache on 1K
+            else CacheInit(64 * 1024, 128, (se_config->force_high_memory)?2:9); // 8M cache on other models
+            disable_PauseGame(); // disable pause feature to maintain stability
+        }
     }
-    else if (strncasecmp(path, "fakeregion_", 11) == 0){
-        int r = atoi(path+11);
-        vshregion = r;
-    }
-}
-
-void processSettings(){
-    loadSettings(&settingsHandler);
-    if (is_launcher_mode){
-        strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
-    }
-    else{
-        ark_config->launcher[0] = 0; // disable launcher mode
-    }
-    if (vshregion) patch_sceChkreg();
 }
 
 void (*prevPluginHandler)(const char* path, int modid) = NULL;
 void pluginHandler(const char* path, int modid){
-    if(oldplugin && psp_model == PSP_GO && (strncasecmp(path, "ef0", 2)==0)) {
+    if(se_config->oldplugin && psp_model == PSP_GO && (strncasecmp(path, "ef0", 2)==0)) {
 		patch_devicename(modid);
 	}
 	if (prevPluginHandler) prevPluginHandler(path, modid);
@@ -305,14 +272,6 @@ void PSPOnModuleStart(SceModule2 * mod){
     
     if(strcmp(mod->modname, "sceMediaSync") == 0) {
         processSettings();
-        int apitype = sceKernelInitApitype();
-        if(!use_highmem && (apitype == 0x141 || apitype == 0x152) ){
-            int paramsize=4;
-            if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-                patch_partitions();
-                disable_PauseGame();
-            }
-        }
         goto flush;
     }
     
@@ -322,7 +281,7 @@ void PSPOnModuleStart(SceModule2 * mod){
     }
 
     if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
-		if (skip_logos){
+		if (se_config->skiplogos){
             // patch GameBoot
             hookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
         }
@@ -330,7 +289,7 @@ void PSPOnModuleStart(SceModule2 * mod){
 	}
 
     if(0 == strcmp(mod->modname, "game_plugin_module")) {
-		if (skip_logos) {
+		if (se_config->skiplogos) {
 		    patch_GameBoot(mod);
 	    }
         goto flush;
@@ -365,14 +324,14 @@ void PSPOnModuleStart(SceModule2 * mod){
     }
     
     if (strcmp(mod->modname, "vsh_module") == 0){
-        if (region_change){
+        if (se_config->umdregion){
             patch_vsh_region_check(mod);
         }
         goto flush;
     }
 
     if (strcmp(mod->modname, "impose_plugin_module") == 0){
-        if (region_change)
+        if (se_config->umdregion)
         {
             SceUID kthreadID = sceKernelCreateThread( "ark_region_change", &patch_umd_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
             if (kthreadID >= 0){
@@ -389,14 +348,14 @@ void PSPOnModuleStart(SceModule2 * mod){
         if(isSystemBooted())
         {
             // handle mscache
-            if (use_mscache){
+            if (se_config->msspeed){
                 if (psp_model == PSP_GO)
                     msstorCacheInit("eflash0a0f1p", 8 * 1024);
                 else
                     msstorCacheInit("msstor0p", 16 * 1024);
             }
             // handle CPU speed
-            switch (clock){
+            switch (se_config->clock){
                 case 1: SetSpeed(333, 166); break;
                 case 2: SetSpeed(133, 66); break;
             }
@@ -418,7 +377,7 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
-    if (skip_logos && mod != NULL && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
+    if (se_config->skiplogos && mod != NULL && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
 		u32* vshmain_args = oe_malloc(1024);
 
 		memset(vshmain_args, 0, 1024);
