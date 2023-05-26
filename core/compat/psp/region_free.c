@@ -194,7 +194,7 @@ int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pf
 }
 
 // generate new UMD keys using idsRegeneration and inject into umdman
-static int replace_umd_keys(){
+int sctrlArkReplaceUmdKeys(){
 
     int res = -1;
 
@@ -280,7 +280,7 @@ void patch_vsh_region_check(SceModule2* mod){
 
 int patch_umd_thread(SceSize args, void *argp){
     sceKernelDelayThread(1000000); // wait for system to load
-    replace_umd_keys(); // replace UMD keys
+    sctrlArkReplaceUmdKeys(); // replace UMD keys
     sceKernelExitDeleteThread(0);
     return 0;
 }
