@@ -217,13 +217,9 @@ int sctrlArkReplaceUmdKeys(){
     strcat(path, "IDSREG.PRX");
 
     SceUID modid = sceKernelLoadModule(path, 0, NULL);
-
 	if (modid < 0) modid = sceKernelLoadModule("flash0:/kd/ark_idsreg.prx", 0, NULL); // retry flash0
-
-    if (modid < 0) goto fake_ids_end;
-
-    res = sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
-    if (res < 0) goto fake_ids_end;
+	if (modid >= 0)
+	    res = sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
 
     // find idsRegeneration exports
     int (*idsRegenerationSetup)(u32, u32, u32, u32, u64, u32, void*) = 
@@ -260,8 +256,6 @@ int sctrlArkReplaceUmdKeys(){
     // free resources
     fake_ids_end:
     sceKernelFreePartitionMemory(memid);
-    sceKernelStopModule(modid, 0, NULL, NULL, NULL);
-    sceKernelUnloadModule(modid);
     return res;
 }
 

@@ -30,7 +30,7 @@
 #include "mi.h"
 
 
-PSP_MODULE_INFO("pspIdsRegeneration_Driver", 0x1006, 1, 0);
+PSP_MODULE_INFO("pspIdsRegeneration_Driver", 0x1007, 1, 0);
 
 enum
 {
