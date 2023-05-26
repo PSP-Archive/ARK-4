@@ -787,11 +787,15 @@ static void recreateRegionSetting(char* oldtext, char* newtext){
 
 	// open file and get size
 	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+
+	if (fd < 0) return;
+
 	size_t size = sceIoLseek32(fd, 0, SEEK_END);
 	sceIoLseek32(fd, 0, SEEK_SET);
 
 	// allocate buffer
 	int memid = sceKernelAllocPartitionMemory(2, "tmp", PSP_SMEM_High, size+1, NULL);
+	if (memid < 0) return;
 	char* buf = sceKernelGetBlockHeadAddr(memid);
 	memset(buf, 0, size+1);
 
