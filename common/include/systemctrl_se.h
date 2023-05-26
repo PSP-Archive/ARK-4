@@ -130,10 +130,14 @@ enum InfernoCachePolicy
     CACHE_POLICY_RR = 1,
 };
 
-// UMD regions
-#define UMD_REGION_JAPAN 3
-#define UMD_REGION_AMERICA 4
-#define UMD_REGION_EUROPE 5
+enum umdregion
+{
+    // UMD regions
+    UMD_REGION_DISABLED  = 0,
+    UMD_REGION_JAPAN    = 3,
+    UMD_REGION_AMERICA  = 4,
+    UMD_REGION_EUROPE   = 5,
+};
 
 typedef struct _SEConfig
 {
