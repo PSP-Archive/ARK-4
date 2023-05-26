@@ -367,13 +367,13 @@ static void settingsHandler(char* path, u8 enabled){
         se_config.skiplogos = enabled;
     }
     else if (strcasecmp(path, "region_jp") == 0){
-        se_config.umdregion = (enabled)?1:0;
+        se_config.umdregion = (enabled)?UMD_REGION_JAPAN:0;
     }
     else if (strcasecmp(path, "region_us") == 0){
-        se_config.umdregion = (enabled)?2:0;
+        se_config.umdregion = (enabled)?UMD_REGION_AMERICA:0;
     }
     else if (strcasecmp(path, "region_eu") == 0){
-        se_config.umdregion = (enabled)?3:0;
+        se_config.umdregion = (enabled)?UMD_REGION_EUROPE:0;
     }
     else if (strncasecmp(path, "fakeregion_", 11) == 0){
         int r = atoi(path+11);
