@@ -11,7 +11,7 @@
 #include "exitgame.h"
 #include "adrenaline_compat.h"
 
-extern int is_launcher_mode;
+extern SEConfig* se_config;
 
 int (* SetIdleCallback)(int flags);
 int SetIdleCallbackPatched(int flags) {
@@ -31,7 +31,7 @@ int exit_callback(int arg1, int arg2, void *common) {
 	SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
 	sctrlSESetBootConfFileIndex(MODE_UMD);
 
-	if (is_launcher_mode)
+	if (se_config->launcher_mode)
 		exitLauncher();
 	else
 		sctrlKernelExitVSH(NULL);

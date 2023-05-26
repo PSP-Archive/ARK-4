@@ -70,28 +70,6 @@ void change_fg_colors(int dir) {
 	cnf.vsh_fg_colors=sel;
 }
 
-void change_clock(int dir, int flag)
-{
-	int sel;
-	s16 *cpu[2];
-
-	if(flag) {
-		cpu[0]=&(cnf.umdisocpuspeed);
-		cpu[1]=&(cnf.umdisobusspeed);
-	} else {
-		cpu[0]=&(cnf.vshcpuspeed);
-		cpu[1]=&(cnf.vshbusspeed);
-	}
-
-	sel = cpu2no(*cpu[0]);
-
-	// select new
-	sel = limit(sel+dir, 0, NELEMS(cpu_list)-1);
-
-	*cpu[0] = cpu_list[sel];
-	*cpu[1] = bus_list[sel];
-}
-
 void change_usb(int dir)
 {
 	int sel = cnf.usbdevice;
@@ -118,31 +96,13 @@ void change_umd_mount_idx(int dir)
 
 void change_region(int dir, int max)
 {
-	int sel = cnf.fakeregion;
+	int sel = cnf.vshregion;
 
 	// select new
 	if((sel+dir) == 5) sel = 6;
 	if((sel+dir) == 6) sel = 5;
 	sel = limit(sel+dir, 0, max);
-	cnf.fakeregion=sel;
-}
-
-void change_plugins(int dir, int flag)
-{
-	int sel;
-	s16 *plugins;
-
-	if(flag == 0) {
-		plugins=&(cnf.plugvsh);
-	} else if(flag == 1) {
-		plugins=&(cnf.pluggame);
-	} else {
-		plugins=&(cnf.plugpop);
-	}
-
-	sel = *plugins;
-	sel = !sel;
-	*plugins = sel;
+	cnf.vshregion=sel;
 }
 
 void change_bool_option(int *p, int direction)

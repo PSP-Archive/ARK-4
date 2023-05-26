@@ -131,13 +131,15 @@ enum InfernoCachePolicy
 };
 
 // UMD regions
-#define REGION_JAPAN 3
-#define REGION_AMERICA 4
-#define REGION_EUROPE 5
+#define UMD_REGION_JAPAN 3
+#define UMD_REGION_AMERICA 4
+#define UMD_REGION_EUROPE 5
 
 typedef struct _SEConfig
 {
     u32 magic;
+	u8 language;
+	u8 umdmode;
     u8 clock;
     u8 vshregion;
     u8 umdregion;
@@ -162,6 +164,9 @@ typedef struct _SEConfig
     u8 launcher_mode;
     u8 disable_pause;
     u8 noled;
+	u8 vsh_fg_colors;
+	u8 vsh_bg_colors;
+	u8 swap_xo;
 } SEConfig;
 
 /**

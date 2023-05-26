@@ -517,7 +517,7 @@ int submenu_setup(void)
 			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_X_PRIM]; // should never happen?
 	}
 
-	switch(cnf.fakeregion) {
+	switch(cnf.vshregion) {
 		case FAKE_REGION_DISABLED:
 			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DISABLE];
 			break;
