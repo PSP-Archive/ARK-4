@@ -18,7 +18,7 @@ extern STMOD_HANDLER previous;
 
 extern void exitLauncher();
 
-SEConfig* se_config = NULL;
+extern SEConfig* se_config;
 
 int is_vsh = 0;
 

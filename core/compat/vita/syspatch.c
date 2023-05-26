@@ -16,7 +16,7 @@ extern STMOD_HANDLER previous;
 
 extern void exitLauncher();
 
-SEConfig* se_config = NULL;
+extern SEConfig* se_config;
 
 KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
@@ -171,13 +171,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     */
-    
-    // load and process settings file
-    if(strcmp(mod->modname, "sceMediaSync") == 0)
-    {
-        se_config = sctrlSEGetConfig(NULL);
-        goto flush;
-    }
 
     // VLF Module Patches
     if(strcmp(mod->modname, "VLF_Module") == 0)

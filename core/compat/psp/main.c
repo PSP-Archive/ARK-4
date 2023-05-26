@@ -45,6 +45,7 @@ void flushCache()
 }
 
 void processArkConfig(){
+    se_config = sctrlSEGetConfig(NULL);
     ark_config = sctrlHENGetArkConfig(NULL);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSP_ORIG; // assume running on PSP

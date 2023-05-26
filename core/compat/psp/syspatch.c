@@ -184,8 +184,6 @@ void disable_PauseGame()
 }
 
 void processSettings(){
-    // Obtain settings and apitype
-    se_config = sctrlSEGetConfig(NULL);
     int apitype = sceKernelInitApitype();
 
     // USB Charging
