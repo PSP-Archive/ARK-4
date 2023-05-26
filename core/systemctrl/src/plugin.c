@@ -420,6 +420,7 @@ void LoadPlugins(){
     is_plugins_loading = 1;
     // allocate resources
     plugins = oe_malloc(sizeof(Plugins));
+    plugins->count = 0; // initialize plugins table
     // Open Plugin Config from ARK's installation folder
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);

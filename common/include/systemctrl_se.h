@@ -184,7 +184,7 @@ int sctrlSEGetVersion();
  * Use sctrlSEGetCongiEx function instead.
  *
  * @param config - pointer to a SEConfig structure that receives the SE configuration
- * @returns 0 on success
+ * @returns pointer to original SEConfig structure in SystemControl
 */
 SEConfig* sctrlSEGetConfig(SEConfig *config);
 
@@ -193,7 +193,7 @@ SEConfig* sctrlSEGetConfig(SEConfig *config);
  *
  * @param config - pointer to a SEConfig structure that receives the SE configuration
  * @param size - The size of the structure
- * @returns 0 on success
+ * @returns pointer to original SEConfig structure in SystemControl
 */
 SEConfig* sctrlSEGetConfigEx(SEConfig *config, int size);
 
