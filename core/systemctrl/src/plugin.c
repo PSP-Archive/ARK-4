@@ -325,7 +325,7 @@ static void ProcessConfigFile(char* path, void (*enabler)(char*), void (*disable
 static void settingsHandler(char* path, u8 enabled){
     int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
-        se_config.clock = (enabled)?1:0;
+        se_config.clock = enabled;
     }
     else if (strcasecmp(path, "powersave") == 0){ // underclock to save battery
         if (apitype != 0x144 && apitype != 0x155) // prevent operation in pops
