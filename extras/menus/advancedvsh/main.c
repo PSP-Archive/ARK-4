@@ -782,7 +782,7 @@ static int swap_buttons()
 	return 0;
 }
 
-static void recreateVshRegionSetting(){
+static void recreateRegionSetting(char* oldtext, char* newtext){
 	char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, "SETTINGS.TXT");
@@ -793,9 +793,9 @@ static void recreateVshRegionSetting(){
 	sceIoLseek32(fd, 0, SEEK_SET);
 
 	// allocate buffer
-	int memid = sceKernelAllocPartitionMemory(2, "tmp", PSP_SMEM_High, size, NULL);
+	int memid = sceKernelAllocPartitionMemory(2, "tmp", PSP_SMEM_High, size+1, NULL);
 	char* buf = sceKernelGetBlockHeadAddr(memid);
-	memset(buf, 0, size);
+	memset(buf, 0, size+1);
 
 	// read file and close
 	sceIoRead(fd, buf, size);
@@ -804,23 +804,26 @@ static void recreateVshRegionSetting(){
 	// open file for writing
 	fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
 
-	char* vshreg = strstr(buf, "fakeregion_");
-	char tmp[128];
+	char* vshreg = strstr(buf, oldtext);
+	if (vshreg != NULL){
+		while (vshreg[-1] != ',' && vshreg[-1] != ' ' && vshreg[-1] != '\t'){
+			vshreg = strstr(vshreg+1, oldtext);
+			if (vshreg == NULL) break;
+		}
+	}
 
 	if (vshreg){
 		u32 p1_size = (u32)vshreg - (u32)buf;
 		char* p2 = strstr(vshreg, ",");
-		sprintf(tmp, "fakeregion_%d", cnf.vshregion);
 		sceIoWrite(fd, buf, p1_size);
-		sceIoWrite(fd, tmp, strlen(tmp));
+		sceIoWrite(fd, newtext, strlen(newtext));
 		sceIoWrite(fd, p2, strlen(p2));
 	}
 	else{
 		sceIoWrite(fd, buf, size);
-		if (cnf.vshregion){
-			sprintf(tmp, "\nxmb, fakeregion_%d, on\n", cnf.vshregion);
-			sceIoWrite(fd, tmp, strlen(tmp));
-		}
+		sceIoWrite(fd, "\nxmb, ", 6);
+		sceIoWrite(fd, newtext, strlen(newtext));
+		sceIoWrite(fd, ", on\n", 5);
 	}
 
 	sceIoClose(fd);
@@ -1010,11 +1013,15 @@ resume:
 	saveConfig();
 
 	if (cnf_old.vshregion != cnf.vshregion){
-		recreateVshRegionSetting();
+		char tmp[128];
+		sprintf(tmp, "fakeregion_%d", cnf.vshregion);
+		recreateRegionSetting("fakeregion_", tmp);
 	}
 
 	if (cnf_old.umdregion != cnf.umdregion){
 		recreateUmdKeys();
+		static char* regions[] = {"region_none", "region_jp", "region_us", "region_eu"};
+		recreateRegionSetting("region_", regions[cnf.umdregion]);
 	}
 
 	vctrlVSHUpdateConfig(&cnf);

@@ -468,6 +468,9 @@ static unsigned char* configConvert(string conf){
     else if (strcasecmp(conf.c_str(), "noled") == 0){
         return &(ark_config.noled);
     }
+    else if (strcasecmp(conf.c_str(), "region_none") == 0){
+        ark_config.regionchange = 0;
+    }
     else if (strcasecmp(conf.c_str(), "region_jp") == 0){
         ark_config.regionchange = REGION_JAPAN;
     }
