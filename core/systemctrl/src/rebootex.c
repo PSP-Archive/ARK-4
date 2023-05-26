@@ -25,6 +25,7 @@
 #include "rebootex.h"
 
 extern ARKConfig* ark_config;
+extern SEConfig se_config;
 
 // Original Load Reboot Buffer Function
 int (* OrigLoadReboot)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4) = NULL;
@@ -52,9 +53,8 @@ void backupRebootBuffer(void)
     if (IS_ARK_CONFIG(ARK_CONFIG))
         memcpy(ark_config, ARK_CONFIG, sizeof(ARKConfig));
 
-    // adjust ARK config
-    int has_vsh_iso = (sctrlSEGetUmdFile()[0] != 0 && sctrlSEGetBootConfFileIndex() == MODE_VSHUMD);
-    if (has_vsh_iso) ark_config->launcher[0] = 0; // disable launcher in VSH ISO
+    // clearup SE Config
+    memset(&se_config, 0, sizeof(SEConfig));
     
     // Flush Cache
     flushCache();

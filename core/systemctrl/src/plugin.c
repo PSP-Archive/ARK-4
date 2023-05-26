@@ -446,4 +446,5 @@ void loadSettings(){
     strcpy(path, ark_config->arkpath);
     strcat(path, "SETTINGS.TXT");
     ProcessConfigFile(path, settingsEnabler, settingsDisabler);
+    se_config.magic = ARK_CONFIG_MAGIC;
 }
