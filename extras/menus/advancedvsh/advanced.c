@@ -79,15 +79,16 @@ int submenu_draw(void)
  
 	for(submax_menu=0;submax_menu<SUBMENU_MAX;submax_menu++) {
 		msg = g_messages[MSG_USB_DEVICE + submax_menu];
-		bg_top:
-		if(cnf.vsh_bg_colors == cnf.vsh_fg_colors) cnf.vsh_bg_colors++;
+		//bg_top:
+		//if(cnf.vsh_bg_colors == cnf.vsh_fg_colors) cnf.vsh_bg_colors++;
 		switch(cnf.vsh_bg_colors) {
 						// Random
 						case 0: 
-							srand(time(NULL));
+							/*srand(time(NULL));
 							int rand_color = (rand() % 28) + 1;
 							cnf.vsh_bg_colors = rand_color;
 							goto bg_top;
+							*/
 							break;
 						// Red
 						case 1: 
@@ -233,15 +234,16 @@ int submenu_draw(void)
 							bc = (submax_menu==submenu_sel) ? 0xff8080 : 0x0000a5ff;
 							blit_set_color(fc,bc);
 					}
-					fg_top:
+					//fg_top:
 					// if(cnf.vsh_fg_colors == cnf.vsh_bg_colors) cnf.vsh_fg_colors++;
 					switch(cnf.vsh_fg_colors) {
 						// Random
 						case 0: 
-							srand(time(NULL));
+							/*srand(time(NULL));
 							int rand_color = (rand() % 28) + 1;
 							cnf.vsh_fg_colors = rand_color;
 							goto fg_top;
+							*/
 							break;
 						// White  
 						case 1:

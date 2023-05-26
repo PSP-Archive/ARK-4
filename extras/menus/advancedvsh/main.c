@@ -27,6 +27,7 @@
 #include <pspkernel.h>
 #include <psputility.h>
 #include <stdio.h>
+#include <time.h>
 #include <stdbool.h>
 #include <pspumd.h>
 
@@ -922,8 +923,24 @@ resume:
 		
 
 
+	srand(time(NULL));
+	do {
+		if (cnf.vsh_fg_colors == 0 && cnf.vsh_bg_colors != 0) {
+			cnf.vsh_fg_colors = (rand() % 28) + 1;
+		}
+		else if (cnf.vsh_fg_colors != 0 && cnf.vsh_bg_colors == 0) {
+			cnf.vsh_bg_colors = (rand() % 28) + 1;
+		}
+		else {
+			cnf.vsh_fg_colors = (rand() % 28) + 1;
+			srand(time(NULL));
+			cnf.vsh_bg_colors = (rand() % 28) + 1;
+		}
+	} while((cnf.vsh_fg_colors || cnf.vsh_bg_colors) == 0);
+
 	config.vsh_bg_color = cnf.vsh_bg_colors;
 	config.vsh_fg_color = cnf.vsh_fg_colors;
+
 	saveConfig();
 
 	vctrlVSHUpdateConfig(&cnf);
