@@ -788,7 +788,16 @@ static void recreateRegionSetting(char* oldtext, char* newtext){
 	// open file and get size
 	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
 
-	if (fd < 0) return;
+	if (fd < 0){
+		fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+		if (fd >= 0){
+			sceIoWrite(fd, "\nxmb, ", 6);
+			sceIoWrite(fd, newtext, strlen(newtext));
+			sceIoWrite(fd, ", on\n", 5);
+			sceIoClose(fd);
+		}
+		return;
+	}
 
 	size_t size = sceIoLseek32(fd, 0, SEEK_END);
 	sceIoLseek32(fd, 0, SEEK_SET);
