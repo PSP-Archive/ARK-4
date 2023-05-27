@@ -1,5 +1,10 @@
 # ARK Changelog
 
+## Version 4.20.51 (2023-05-28)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42051
+- Fixed crash when exiting custom launcher on PS Vita.
+- Added Dutch translations to XMB Control.
+
 ## Version 4.20.50 (2023-05-26)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42050
 - Completely refactored all core code related to settings handling. It is now faster and consumes less resources.
