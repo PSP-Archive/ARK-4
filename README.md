@@ -5,6 +5,13 @@ Simple to use and full of unique features, `ARK CFW` aims at keeping the `PSP` e
 `ARK` is now the most feature-complete `CFW` for the `PSP`, having all features from classic `CFW`
 as well as unique and exclusive new features not found anywhere else.
 
+### Table of Contents (Quick Links)
+  * [FEATURES](#features)
+  * [INSTALLATION](#installation)
+    * [Manual installation  ](#manual-installation)
+  * [CUSTOMIZATION](#customization)
+    * [Custom Themes](#custom-themes)
+  * [Other](#other)
 
 ## FEATURES:
 
@@ -448,6 +455,7 @@ You can however change it to whatever you please. You can change the theme used 
 <summary> <b> Custom Launcher Themes </b> </summary>
 <p>
 
+<h4 id="custom-themes">Custom Themes</h4>
 You can install themes within Custom Launcher (and Recovery Menu). Just place the `themes` folder anywhere on your PSP and use the file browser in the Custom Launcher to select which theme (`THEME.ARK`) you would like to install. By selecting it a submenu will pop up asking to install it or to preview the theme without installing.
 
 <i>Orbs are animations and not part of the actual Themes </i>
