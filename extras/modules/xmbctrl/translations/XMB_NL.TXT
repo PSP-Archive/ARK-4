@@ -1,0 +1,17 @@
+Aangepaste firmware-instellingen
+Plug-insbeheren
+USB-opladen
+Overklokken
+Energiespaarstand
+Autostart-lanceren
+Pauze uitschakelen op de PSP Go
+Extra geheugen afdwingen
+Memory Stick-versnelling
+Inferno-cache
+Ondersteuning voor oude plug-ins op de PSP Go
+Sony-logo's overslaan
+PIC0 en PIC1 verbergen
+Voorkomen dat slaapstand wordt verwijderd op de PSP Go
+MAC-adres verbergen
+DLC verbergen
+LED's uitschakelen
