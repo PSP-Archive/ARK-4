@@ -82,8 +82,6 @@ int flashLoadPatch(int cmd)
         sceKernelDelayThread(10000);
 
         // Load FLASH0.ARK
-		RebootConfigARK* reboot_config = sctrlHENGetRebootexConfig(NULL);
-		
 		char archive[ARK_PATH_SIZE];
 		strcpy(archive, ark_config->arkpath);
 		strcat(archive, FLASH0_ARK);
@@ -456,7 +454,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 	// load and process settings file
     if(strcmp(mod->modname, "sceMediaSync") == 0)
     {
-        se_config = sctrlSEGetConfig(NULL);
 		// apply extra memory patch
 		if (se_config->force_high_memory) unlockVitaMemory();
 		else{
