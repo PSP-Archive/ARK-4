@@ -47,6 +47,8 @@ const char *g_messages_en[] = {
 	"FG COLORS      ",
 	"BG COLORS      ",
 	"CONVERT BATTERY",
+	"Normal -> Pandora",
+	"Pandora -> Normal",
 	"SWAP X/O BTNS  ",
 	"VSH REGION     ",
 	"UMD REGION     ",

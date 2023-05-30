@@ -423,7 +423,8 @@ int submenu_draw(void)
 			subcur_menu = submax_menu;
 			blit_string(xPointer, (pointer[5] + subcur_menu)*8, msg);
 			msg = subitem_str[submax_menu];
-			if (submax_menu == SUBMENU_CONVERT_BATTERY){
+			/*if (submax_menu == SUBMENU_CONVERT_BATTERY){
+				blit_set_color(fc, bc);
 				if (is_pandora){
 					if (is_pandora < 0) msg = "Unsupported";
 					else msg = "Pandora -> Normal";
@@ -432,7 +433,7 @@ int submenu_draw(void)
 					msg = "Normal -> Pandora";
 				}
 				blit_string(xPointer+0x80, (pointer[5] + subcur_menu)*8, msg);
-			}
+			}*/
 			if (submax_menu == SUBMENU_UMD_REGION_MODE) {
 				if(psp_model == PSP_GO || IS_VITA_ADR(ark_config)) msg = "Unsupported";
 				blit_string( (pointer[6] * 8) + 128, (pointer[5] + subcur_menu)*8, msg);
@@ -522,6 +523,17 @@ int submenu_setup(void)
 			break;
 		default:
 			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_X_PRIM]; // should never happen?
+	}
+
+	switch(cnf.convert_battery) {
+		case NORMAL_TO_PANDORA:
+			subitem_str[SUBMENU_CONVERT_BATTERY] = g_messages[MSG_NORMAL_TO_PANDORA];
+			break;
+		case PANDORA_TO_NORMAL:
+			subitem_str[SUBMENU_CONVERT_BATTERY] = g_messages[MSG_PANDORA_TO_NORMAL];
+			break;
+		default:
+			subitem_str[SUBMENU_CONVERT_BATTERY] = g_messages[MSG_NORMAL_TO_PANDORA];
 	}
 
 	switch(cnf.vshregion) {
