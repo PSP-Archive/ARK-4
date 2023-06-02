@@ -112,6 +112,12 @@ enum vsh_fg_colors
 	FG_LITE_WHITE 	= 28,
 };
 
+enum convert_battery
+{
+	NORMAL_TO_PANDORA	= 0,
+	PANDORA_TO_NORMAL	= 1,
+};
+
 enum MsSpeedFlag
 {
     MSSPEED_NONE     = 0,
@@ -171,6 +177,7 @@ typedef struct _SEConfig
 	u8 vsh_fg_colors;
 	u8 vsh_bg_colors;
 	u8 swap_xo;
+	u8 convert_battery;
 } SEConfig;
 
 /**

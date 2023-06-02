@@ -55,6 +55,8 @@ const char *g_messages_en[] = {
 	" DELETE HIBERNATION ",
 	" BOOT RANDOM ISO ",
 	" GO BACK ",
+	"Normal -> Pandora",
+	"Pandora -> Normal",
 	" CUSTOM LAUNCHER -> ",
 	" RECOVERY MENU   -> ",
 	" ADVANCED VSH MENU ",
