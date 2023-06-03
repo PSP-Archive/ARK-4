@@ -880,7 +880,7 @@ void loadConfig(){
 	cnf.swap_xo = tmp_swap_xo_32;
 	check_battery();
 
-	if(IS_VITA_ADR(ark_config))
+	if(IS_VITA_ADR(ark_config) || is_pandora < 0)
 		cnf.convert_battery = 2;
 	else if(is_pandora)
 		cnf.convert_battery = is_pandora;
