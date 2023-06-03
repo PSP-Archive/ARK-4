@@ -116,6 +116,7 @@ enum convert_battery
 {
 	NORMAL_TO_PANDORA	= 0,
 	PANDORA_TO_NORMAL	= 1,
+	UNSUPPORTED			= 2,
 };
 
 enum MsSpeedFlag

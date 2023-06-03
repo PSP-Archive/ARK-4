@@ -532,8 +532,9 @@ int submenu_setup(void)
 		case PANDORA_TO_NORMAL:
 			subitem_str[SUBMENU_CONVERT_BATTERY] = g_messages[MSG_PANDORA_TO_NORMAL];
 			break;
-		default:
-			subitem_str[SUBMENU_CONVERT_BATTERY] = g_messages[MSG_NORMAL_TO_PANDORA];
+		case UNSUPPORTED:
+			subitem_str[SUBMENU_CONVERT_BATTERY] = g_messages[MSG_UNSUPPORTED];
+			break;
 	}
 
 	switch(cnf.vshregion) {

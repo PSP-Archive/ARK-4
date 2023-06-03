@@ -878,6 +878,9 @@ void loadConfig(){
 	u32 tmp_swap_xo_32;
 	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &tmp_swap_xo_32);
 	cnf.swap_xo = tmp_swap_xo_32;
+
+	if(IS_VITA_ADR(ark_config))
+		cnf.convert_battery = 2;
 }
 
 void saveConfig(){
