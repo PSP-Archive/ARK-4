@@ -6,20 +6,18 @@ Simple to use and full of unique features, `ARK CFW` aims at keeping the `PSP` e
 as well as unique and exclusive new features not found anywhere else.
 
 ### Table of Contents (Quick Links)
-- [ARK-4 e/CFW for the PSP and PS Vita.](#ark-4-ecfw-for-the-psp-and-ps-vita)
-    + [Table of Contents (Quick Links)](#table-of-contents-quick-links)
   * [FEATURES:](#features)
   * [INSTALLATION](#installation)
       - [Compiling ARK ( For Developers )](#compiling-ark--for-developers-)
       - [On PSP](#on-psp)
-      - [Online PSP Installer](#online-psp-installer)
-        * [Manual installation  ](#manual-installation)
-      - [Live CFW](#live-cfw)
-      - [Permanent CFW via new cIPLE](#permanent-cfw-via-new-ciple)
-      - [Permanent CFW via classic cIPL](#permanent-cfw-via-classic-cipl)
-      - [Permanent CFW via Infinity](#permanent-cfw-via-infinity)
-      - [Full Flash Installation](#full-flash-installation)
-      - [Time Machine and Despertar del Cementerio](#time-machine-and-despertar-del-cementerio)
+          + [Online PSP Installer](#online-psp-installer)
+          + [Manual installation  ](#manual-installation)
+          + [Live CFW](#live-cfw)
+          + [Permanent CFW via new cIPL](#permanent-cfw-via-new-cipl)
+          + [Permanent CFW via classic cIPL](#permanent-cfw-via-classic-cipl)
+        * [Permanent CFW via Infinity](#permanent-cfw-via-infinity)
+        * [Full Flash Installation](#full-flash-installation)
+        * [Time Machine and Despertar del Cementerio](#time-machine-and-despertar-del-cementerio)
       - [On PS Vita](#on-ps-vita)
         * [Standalone](#standalone)
         * [Adrenaline](#adrenaline)
@@ -103,13 +101,11 @@ Use `-h` or `--help` to show all available flags
 #### On PSP
 <p>
 
-#### Online PSP Installer
-<p>
-  For an easy deployment of ARK on a PSP connected to the internet, you can follow this [video](https://www.youtube.com/watch?v=mopy1N57DlI)
+###### Online PSP Installer
+For an easy deployment of ARK on a PSP connected to the internet, you can follow this [video](https://www.youtube.com/watch?v=mopy1N57DlI)
 
-</p>
 
-##### Manual installation  
+###### Manual installation  
   
 The instructions are as follows:
   
@@ -117,7 +113,7 @@ The instructions are as follows:
 - Install `ARK_Live` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
 
-#### Live CFW
+###### Live CFW
 <p>
 
   - Delete `FLASH0.ARK` from `/PSP/SAVEDATA/ARK_01234` to prevent flashing files every time you reload the CFW.
@@ -125,7 +121,7 @@ The instructions are as follows:
 
 </p>
 
-#### Permanent CFW via new cIPLE
+###### Permanent CFW via new cIPL
 <p>
 
   - Works on 1K models, 2K models and early 3K models (1g, 2g and 3g).
@@ -136,7 +132,7 @@ The instructions are as follows:
 
 </p>
 
-#### Permanent CFW via classic cIPL
+###### Permanent CFW via classic cIPL
 <p>
 
   - Only works on 1K models and early 2K models (those compatible with Pandora).
@@ -146,7 +142,7 @@ The instructions are as follows:
 
 </p>
 
-#### Permanent CFW via Infinity
+##### Permanent CFW via Infinity
 <p>
 
   - Works on all PSP models on 6.60 or 6.61 firmwares.
@@ -156,7 +152,7 @@ The instructions are as follows:
 
 </p>
 
-#### Full Flash Installation
+##### Full Flash Installation
 <p>
 
   - This allows you to install and use most of ARK's features from flash0, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
@@ -167,7 +163,7 @@ The instructions are as follows:
 
 </p>
 
-#### Time Machine and Despertar del Cementerio
+##### Time Machine and Despertar del Cementerio
 <p>
 
   - `Time Machine` allows to boot the `6.61` firmware and `ARK` entirely from the Memory Stick.
