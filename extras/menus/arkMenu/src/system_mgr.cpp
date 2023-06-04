@@ -147,7 +147,7 @@ static void drawOptionsMenuCommon(){
         	entries[i]->getIcon()->draw(x+menu_anim_state, optionsAnimState+15); // LARGE
 		}
 		else if(common::getConf()->menusize == 2) {
-        	entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+15, 42, 85); // MEDIUM
+        	entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+15, 52, 85); // MEDIUM
 		}
 		else {
 			entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+7, 36, 75); // SMALL
