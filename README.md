@@ -142,7 +142,7 @@ The instructions are as follows:
 
 </p>
 
-##### Permanent CFW via Infinity
+###### Permanent CFW via Infinity
 <p>
 
   - Works on all PSP models on 6.60 or 6.61 firmwares.
@@ -152,7 +152,7 @@ The instructions are as follows:
 
 </p>
 
-##### Full Flash Installation
+###### Full Flash Installation
 <p>
 
   - This allows you to install and use most of ARK's features from flash0, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
@@ -163,7 +163,7 @@ The instructions are as follows:
 
 </p>
 
-##### Time Machine and Despertar del Cementerio
+###### Time Machine and Despertar del Cementerio
 <p>
 
   - `Time Machine` allows to boot the `6.61` firmware and `ARK` entirely from the Memory Stick.
@@ -184,7 +184,7 @@ The instructions are as follows:
 #### On PS Vita
 <p>
 
-##### Standalone
+###### Standalone
 <p>
 
   - Works on Official Firmware 2.10 up to 3.74, doesn't require Henkaku/h-encore or any native hack.
@@ -202,7 +202,7 @@ The instructions are as follows:
 </p>
 
 
-##### Adrenaline
+###### Adrenaline
 <p>
 
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and `Adrenaline` (https://github.com/TheOfficialFloW/Adrenaline).
