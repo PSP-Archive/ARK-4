@@ -101,7 +101,7 @@ static void systemController(Controller* pad){
         else if (pEntryIndex-page_start == 2){
             if (pEntryIndex+1 < MAX_ENTRIES)
                 pEntryIndex++;
-            if (page_start+3 < MAX_ENTRIES){
+            if (page_start+3 < MAX_ENTRIES && (common::getConf()->menusize == 0 || common::getConf()->menusize == 2 || common::getConf()->menusize == 3)){
                 page_start++;
                 menu_draw_state = -1;
             }
@@ -113,7 +113,19 @@ static void systemController(Controller* pad){
 }
 
 static void drawOptionsMenuCommon(){
-    common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 140);
+	int loop_setup = 0;
+	if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
+    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 140); // LARGE
+		loop_setup = min(page_start+4, MAX_ENTRIES);
+	}
+	else if(common::getConf()->menusize == 2) {
+    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 100); // LARGE
+		loop_setup = min(page_start+4, MAX_ENTRIES);
+	}
+	else {
+    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 80); // SMALL
+		loop_setup = MAX_ENTRIES;
+	}
 
     int offset = (480-(MAX_ENTRIES*15))/2;
     for (int i=0; i<MAX_ENTRIES; i++){
@@ -126,15 +138,37 @@ static void drawOptionsMenuCommon(){
     }    
     
     int x = -130;
-    for (int i=page_start-1; i<min(page_start+4, MAX_ENTRIES); i++){
+    for (int i=page_start-1; i<loop_setup; i++){ // SMALL
         if (i<0){
             x += 160;
             continue;
         }
-        entries[i]->getIcon()->draw(x+menu_anim_state, optionsAnimState+15);
+		if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
+        	entries[i]->getIcon()->draw(x+menu_anim_state, optionsAnimState+15); // LARGE
+		}
+		else if(common::getConf()->menusize == 2) {
+        	entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+15, 42, 85); // MEDIUM
+		}
+		else {
+			entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+7, 36, 75); // SMALL
+		} 
         if (i==pEntryIndex && optionsDrawState==2)
-            common::printText(x+25, 130, entries[i]->getName().c_str(), LITEGRAY, SIZE_BIG, 1);
-        x += 160;
+			if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
+            	common::printText(x+25, 130, entries[i]->getName().c_str(), LITEGRAY, SIZE_BIG, 1); // LARGE
+			}
+			else if(common::getConf()->menusize == 2) {
+            	common::printText(x+8, 95, entries[i]->getName().c_str(), LITEGRAY, SIZE_MEDIUM, 1); // MEDIUM
+			}
+			else {
+				common::printText(x+8, 75, entries[i]->getName().c_str(), LITEGRAY, SIZE_LITTLE, 1); // SMALL
+			}
+
+			if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3)
+        		x += 160;
+			else if(common::getConf()->menusize == 2)
+        		x += 120;
+			else
+        		x += 100;
     }
     switch (menu_draw_state){
         case -1:

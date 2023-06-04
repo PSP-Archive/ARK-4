@@ -270,15 +270,28 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[6];
+    char* options[3];
 } startbtn = {
     "Start Button Behavior",
-    4,
+    3,
     0,
     &(common::getConf()->startbtn),
-    {"Disabled", "Current", "Last Game", "Random Game"}
+    {"Current", "Last Game", "Random Game"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[4];
+} menusize = {
+    "System Menu Size",
+    4,
+    0,
+    &(common::getConf()->menusize),
+    {"Default", "Small", "Medium", "Large"}
+};
 
 
 settings_entry* settings_entries[] = {
@@ -300,6 +313,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&force_update,
     (settings_entry*)&battery_percent,
     (settings_entry*)&startbtn,
+    (settings_entry*)&menusize,
 };
 
 #define MAX_SETTINGS_OPTIONS (sizeof(settings_entries)/sizeof(settings_entries[0]))
