@@ -26,8 +26,8 @@ typedef struct {
     unsigned char force_update; // Force update (disable update version check)
     unsigned char battery_percent; // show remaing battery percent next to battery icon
     unsigned char startbtn; // Default (normal start button behaviour or boot last game)
-    unsigned char menusize; // Change size of dropdown system menu (triangle)
     char last_game[128];    // last played game
+    unsigned char menusize; // Change size of dropdown system menu (triangle)
 } t_conf;
 
 #endif
