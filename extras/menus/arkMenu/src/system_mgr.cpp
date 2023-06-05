@@ -147,20 +147,20 @@ static void drawOptionsMenuCommon(){
         	entries[i]->getIcon()->draw(x+menu_anim_state, optionsAnimState+15); // LARGE
 		}
 		else if(common::getConf()->menusize == 2) {
-        	entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+15, 52, 85); // MEDIUM
+        	entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+15, 72, 72); // MEDIUM
 		}
 		else {
-			entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+7, 36, 75); // SMALL
+			entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+7, 52, 52); // SMALL
 		} 
         if (i==pEntryIndex && optionsDrawState==2)
 			if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
             	common::printText(x+25, 130, entries[i]->getName().c_str(), LITEGRAY, SIZE_BIG, 1); // LARGE
 			}
 			else if(common::getConf()->menusize == 2) {
-            	common::printText(x+8, 95, entries[i]->getName().c_str(), LITEGRAY, SIZE_MEDIUM, 1); // MEDIUM
+            	common::printText(x+16, 95, entries[i]->getName().c_str(), LITEGRAY, SIZE_MEDIUM, 1); // MEDIUM
 			}
 			else {
-				common::printText(x+8, 75, entries[i]->getName().c_str(), LITEGRAY, SIZE_LITTLE, 1); // SMALL
+				common::printText(x+12, 75, entries[i]->getName().c_str(), LITEGRAY, SIZE_LITTLE, 1); // SMALL
 			}
 
 			if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3)
