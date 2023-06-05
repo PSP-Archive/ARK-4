@@ -922,6 +922,13 @@ void saveConfig(int saveumdregion, int savevshregion){
 	}
 }
 
+void checkConfig(){
+	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig))){
+		vctrlVSHUpdateConfig(&cnf);
+		saveConfig(cnf_old.umdregion != cnf.umdregion, cnf_old.vshregion != cnf.vshregion);	
+	}
+}
+
 int TSRThread(SceSize args, void *argp)
 {
 	sceKernelChangeThreadPriority(0, 8);
@@ -977,10 +984,7 @@ resume:
 		button_func();
 	}
 
-	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig))){
-		vctrlVSHUpdateConfig(&cnf);
-		saveConfig(cnf_old.umdregion != cnf.umdregion, cnf_old.vshregion != cnf.vshregion);	
-	}
+	checkConfig();
 
 	if (stop_flag ==2) {
 		scePowerRequestColdReset(0);
@@ -1021,8 +1025,10 @@ resume:
 		swap_buttons();
 	else if (sub_stop_flag == 13)
 		import_classic_plugins();
-	else if (sub_stop_flag == 14)
+	else if (sub_stop_flag == 14){
+		checkConfig();
 		exec_random_game();
+	}
 	else if(sub_stop_flag == 1 ) {
 		stop_flag = 0;
 		menu_mode = 0;
@@ -1030,8 +1036,6 @@ resume:
 		submenu_mode = 0;
 		goto resume;
 	}
-		
-
 
 	// Random Colors
 	srand(time(NULL));
@@ -1052,10 +1056,7 @@ resume:
 		}
 	}
 
-	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig))){
-		saveConfig(cnf_old.umdregion != cnf.umdregion, cnf_old.vshregion != cnf.vshregion);
-		vctrlVSHUpdateConfig(&cnf);
-	}
+	checkConfig();
 
 	if(!IS_VITA_ADR(ark_config))
 		umdvideolist_clear(&g_umdlist);
