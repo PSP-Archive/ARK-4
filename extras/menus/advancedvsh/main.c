@@ -1033,6 +1033,7 @@ resume:
 
 			subbutton_func();
 		}
+		checkConfig();
 	}
 
 	if ( sub_stop_flag == 6) {
