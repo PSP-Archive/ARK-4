@@ -65,6 +65,7 @@ SceCtrlData ctrl_pad;
 int stop_stock=0;
 int sub_stop_stock=0;
 int thread_id=0;
+int reset_vsh = 0;
 
 t_conf config;
 
@@ -310,7 +311,7 @@ void import_classic_plugins() {
 	sceIoClose(plugins);
 	free(buf);
 
-	sctrlKernelExitVSH(NULL);
+	reset_vsh = 1;
 	
 }
 
@@ -469,7 +470,7 @@ static void launch_umdvideo_mount(void)
 			// cancel mount
 			sctrlSESetUmdFile("");
 			sctrlSESetBootConfFileIndex(MODE_UMD);
-			sctrlKernelExitVSH(NULL);
+			reset_vsh = 1;
 		}
 
 		return;
@@ -495,7 +496,7 @@ static void launch_umdvideo_mount(void)
 	sctrlSESetUmdFile(path);
 	sctrlSESetBootConfFileIndex(MODE_VSHUMD);
 	sctrlSESetDiscType(type);
-	sctrlKernelExitVSH(NULL);
+	reset_vsh = 1;
 }
 
 static char g_cur_font_select[256] __attribute((aligned(64)));
@@ -756,7 +757,7 @@ static int check_battery(void) {
 void delete_hibernation(){
 	if (psp_model == PSP_GO){
 		vshCtrlDeleteHibernation();
-		sctrlKernelExitVSH(NULL);
+		reset_vsh = 1;
 	}
 }
 
@@ -766,7 +767,7 @@ static int activate_codecs()
 	set_registry_value("/CONFIG/BROWSER", "flash_play", 1);
 	set_registry_value("/CONFIG/MUSIC", "wma_play", 1);
 
-	sctrlKernelExitVSH(NULL);
+	reset_vsh = 1;
 	
 	return 0;
 }
@@ -778,7 +779,7 @@ static int swap_buttons()
 	value = !value;
 	set_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", value);
 	
-	sctrlKernelExitVSH(NULL);
+	reset_vsh = 1;
 
 	return 0;
 }
@@ -886,7 +887,7 @@ void loadConfig(){
 	}
 }
 
-void saveConfig(){
+void saveConfig(int saveumdregion, int savevshregion){
 	char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, CONFIG_PATH);
@@ -896,6 +897,18 @@ void saveConfig(){
 
 	sceIoWrite(fp, &config, sizeof(t_conf));
     sceIoClose(fp);
+
+	if (savevshregion){
+		char tmp[128];
+		sprintf(tmp, "fakeregion_%d", cnf.vshregion);
+		recreateRegionSetting("fakeregion_", tmp);
+	}
+
+	if (saveumdregion){
+		recreateUmdKeys();
+		static char* regions[] = {"region_none", "region_jp", "region_us", "region_eu"};
+		recreateRegionSetting("region_", regions[cnf.umdregion]);
+	}
 }
 
 int TSRThread(SceSize args, void *argp)
@@ -955,6 +968,7 @@ resume:
 
 	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig))){
 		vctrlVSHUpdateConfig(&cnf);
+		saveConfig(cnf_old.umdregion != cnf.umdregion, cnf_old.vshregion != cnf.vshregion);	
 	}
 
 	if (stop_flag ==2) {
@@ -962,7 +976,7 @@ resume:
 	} else if (stop_flag ==3) {
 		scePowerRequestStandby();
 	} else if (stop_flag ==4) {
-		sctrlKernelExitVSH(NULL);
+		reset_vsh = 1;
 	} else if (stop_flag == 5) {
 		scePowerRequestSuspend();
 	} else if (stop_flag == 7) {
@@ -1027,19 +1041,7 @@ resume:
 		}
 	}
 
-	saveConfig();
-
-	if (cnf_old.vshregion != cnf.vshregion){
-		char tmp[128];
-		sprintf(tmp, "fakeregion_%d", cnf.vshregion);
-		recreateRegionSetting("fakeregion_", tmp);
-	}
-
-	if (cnf_old.umdregion != cnf.umdregion){
-		recreateUmdKeys();
-		static char* regions[] = {"region_none", "region_jp", "region_us", "region_eu"};
-		recreateRegionSetting("region_", regions[cnf.umdregion]);
-	}
+	saveConfig(cnf_old.umdregion != cnf.umdregion, cnf_old.vshregion != cnf.vshregion);
 
 	vctrlVSHUpdateConfig(&cnf);
 
@@ -1050,6 +1052,10 @@ resume:
 
 	vctrlVSHExitVSHMenu(&cnf, NULL, 0);
 	release_font();
+
+	if (reset_vsh){
+		sctrlKernelExitVSH(NULL);
+	}
 
 	return sceKernelExitDeleteThread(0);
 }

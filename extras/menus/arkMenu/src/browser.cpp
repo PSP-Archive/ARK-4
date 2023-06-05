@@ -1440,6 +1440,8 @@ void Browser::optionsMenu(){
 
     Controller cont;
     Controller* pad = &cont;
+
+    pad->update();
     
     while (true){
         
