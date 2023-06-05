@@ -984,7 +984,7 @@ resume:
 	}
 
 	if ( sub_stop_flag == 6) {
-		if(IS_VITA_ADR(ark_config) return;
+		if(IS_VITA_ADR(ark_config)) return;
 		launch_umdvideo_mount();
 	} else if (sub_stop_flag == 9)
 		convert_battery();

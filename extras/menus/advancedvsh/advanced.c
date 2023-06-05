@@ -461,7 +461,7 @@ int submenu_setup(void)
 		scePaf_sprintf(device_buf, "%s %d", g_messages[MSG_FLASH], cnf.usbdevice-1);
 		bridge = device_buf;
 	} else if (IS_VITA_ADR(ark_config)) {
-		scePaf_sprintf(device_buf, "%s", g_messages[MSG_UNSUPPORTED]);
+		scePaf_sprintf(device_buf, "%s", g_messages[MSG_USE_ADRENALINE_SETTINGS]);
 		bridge = device_buf;
 	}else {
 		const char *device;
