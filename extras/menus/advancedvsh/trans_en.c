@@ -70,6 +70,7 @@ const char *g_messages_en[] = {
 	"Use Adrenaline Settings",
 	"Flash",
 	"UMD Disc",
+	"Internal Storage",
 	"Memory Stick",
 	"None",
 	"Random",

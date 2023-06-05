@@ -468,8 +468,10 @@ int submenu_setup(void)
 
 		if(cnf.usbdevice==5)
 			device= g_messages[MSG_UMD_DISC];
+		else if(psp_model == PSP_GO)
+			device = g_messages[MSG_INTERNAL_STORAGE];
 		else
-			device= g_messages[MSG_MEMORY_STICK];
+			device = g_messages[MSG_MEMORY_STICK];
 
 		bridge = device;
 	}
