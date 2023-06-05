@@ -74,9 +74,10 @@ void change_fg_color(int dir) {
 void change_usb(int dir)
 {
 	int sel = cnf.usbdevice;
+	int top = (psp_model==PSP_GO)?4:5;
 
 	// select new
-	sel = limit(sel+dir, 0, 5);
+	sel = limit(sel+dir, 0, top);
 	
 	cnf.usbdevice=sel;
 }
