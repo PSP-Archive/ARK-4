@@ -68,6 +68,7 @@ int thread_id=0;
 int reset_vsh = 0;
 
 t_conf config;
+t_conf old_config;
 
 SEConfig cnf;
 static SEConfig cnf_old;
@@ -80,6 +81,14 @@ ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
 int cur_battery;
 u32 swap_xo;
+
+static struct{
+	u8 fg_color;
+	u8 bg_color;
+} random_colors[] = {
+	{1, 3},
+	{5, 7}
+};
 
 int module_start(int argc, char *argv[])
 {
@@ -923,7 +932,7 @@ void saveConfig(int saveumdregion, int savevshregion){
 }
 
 void checkConfig(){
-	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig))){
+	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig)) || scePaf_memcmp(&old_config, &config, sizeof(t_conf))){
 		vctrlVSHUpdateConfig(&cnf);
 		saveConfig(cnf_old.umdregion != cnf.umdregion, cnf_old.vshregion != cnf.vshregion);	
 	}
@@ -970,6 +979,7 @@ int TSRThread(SceSize args, void *argp)
 	}
 
 	scePaf_memcpy(&cnf_old, &cnf, sizeof(SEConfig));
+	scePaf_memcpy(&old_config, &config, sizeof(t_conf));
 
 resume:
 	while(stop_flag == 0) {
@@ -1038,22 +1048,11 @@ resume:
 	}
 
 	// Random Colors
-	srand(time(NULL));
-	while((config.vsh_fg_color || config.vsh_bg_color) == 0) {
-		if (config.vsh_fg_color == 0 && config.vsh_bg_color != 0) {
-			config.vsh_fg_color = (rand() % 28) + 1;
-			break;
-		}
-		else if (config.vsh_fg_color != 0 && config.vsh_bg_color == 0) {
-			config.vsh_bg_color = (rand() % 28) + 1;
-			break;
-		}
-		else {
-			config.vsh_fg_color = (rand() % 28) + 1;
-			srand(time(NULL));
-			config.vsh_bg_color = (rand() % 28) + 1;
-			break;
-		}
+	if ((config.vsh_fg_color || config.vsh_bg_color) == 0) {
+		srand(time(NULL));
+		int picked = rand() % (sizeof(random_colors)/sizeof(random_colors[0]));
+		config.vsh_fg_color = random_colors[picked].fg_color;
+		config.vsh_bg_color = random_colors[picked].bg_color;
 	}
 
 	checkConfig();
