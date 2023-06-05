@@ -86,8 +86,8 @@ static struct{
 	u8 fg_color;
 	u8 bg_color;
 } random_colors[] = {
-	{1, 3},
-	{5, 7}
+	{1, 7},
+	{5, 18}
 };
 
 int module_start(int argc, char *argv[])
@@ -882,6 +882,16 @@ static void recreateUmdKeys(){
 	kuKernelCall(hookImport, &args);
 }
 
+void checkRandomColors(){
+	// Random Colors
+	if ((config.vsh_fg_color || config.vsh_bg_color) == 0) {
+		srand(time(NULL));
+		int picked = rand() % (sizeof(random_colors)/sizeof(random_colors[0]));
+		config.vsh_fg_color = random_colors[picked].fg_color;
+		config.vsh_bg_color = random_colors[picked].bg_color;
+	}
+}
+
 void loadConfig(){
 
 	char path[ARK_PATH_SIZE];
@@ -905,6 +915,8 @@ void loadConfig(){
 	}
 	if(IS_VITA_ADR(ark_config))
 		cnf.usbdevice_rdonly = 2;
+	
+	checkRandomColors();
 }
 
 void saveConfig(int saveumdregion, int savevshregion){
@@ -932,6 +944,7 @@ void saveConfig(int saveumdregion, int savevshregion){
 }
 
 void checkConfig(){
+	checkRandomColors();
 	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig)) || scePaf_memcmp(&old_config, &config, sizeof(t_conf))){
 		vctrlVSHUpdateConfig(&cnf);
 		saveConfig(cnf_old.umdregion != cnf.umdregion, cnf_old.vshregion != cnf.vshregion);	
@@ -1045,14 +1058,6 @@ resume:
 		sub_stop_flag = 0;
 		submenu_mode = 0;
 		goto resume;
-	}
-
-	// Random Colors
-	if ((config.vsh_fg_color || config.vsh_bg_color) == 0) {
-		srand(time(NULL));
-		int picked = rand() % (sizeof(random_colors)/sizeof(random_colors[0]));
-		config.vsh_fg_color = random_colors[picked].fg_color;
-		config.vsh_bg_color = random_colors[picked].bg_color;
 	}
 
 	checkConfig();

@@ -101,19 +101,9 @@ int menu_draw(void)
 	for(max_menu=0;max_menu<TMENU_MAX;max_menu++) {
 		msg = g_messages[MSG_CUSTOM_LAUNCHER + max_menu];
 
-		bg_top:
 		switch(config.vsh_bg_color) {
 						// Random
-						case 0: 
-							srand(time(NULL));
-							int rand_color = (rand() % 28) + 1;
-							config.vsh_bg_color = rand_color;
-							if(config.vsh_fg_color == config.vsh_bg_color) {
-								srand(time(NULL));
-								config.vsh_bg_color = (rand() % 28) + 1;
-							}
-							goto bg_top;
-							break;
+						case 0:
 						// Red
 						case 1: 
 							bc = (max_menu==menu_sel) ? 0xff8080 : 0x000000ff;
@@ -259,19 +249,9 @@ int menu_draw(void)
 							blit_set_color(fc,bc);
 					}
 
-					fg_top:
 					switch(config.vsh_fg_color) {
 						// Random  
 						case 0:
-							srand(time(NULL));
-							int rand_color = (rand() % 28) + 1;
-							config.vsh_fg_color = rand_color;
-							if (config.vsh_fg_color == config.vsh_bg_color) {
-								srand(time(NULL));
-								config.vsh_fg_color = (rand() % 28)+ 1;
-							}
-							goto fg_top;
-							break;
 						// White  
 						case 1:
 							fc = (max_menu==menu_sel) ? 0xffffff : 0x00ffffff;
