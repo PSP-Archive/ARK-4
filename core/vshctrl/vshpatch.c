@@ -241,7 +241,10 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
             u32 major = fw>>24;
             u32 minor = (fw>>16)&0xF;
             u32 micro = (fw>>8)&0xF;
-            sprintf(str, "[ FW: %d.%d%d Model: 0%dg ]", major, minor, micro, (int)psp_model+1);
+            if (IS_VITA_ADR(ark_config))
+                sprintf(str, "[ FW: %d.%d%d Model: vPSP ]", major, minor, micro);
+            else
+                sprintf(str, "[ FW: %d.%d%d Model: 0%dg ]", major, minor, micro, (int)psp_model+1);
 		    ascii2utf16(addr, str);
             patches--;
         }

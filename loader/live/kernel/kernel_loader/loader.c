@@ -27,6 +27,7 @@ void flashPatch(){
     strcat(archive, FLASH0_ARK);
 
     if (IS_VITA_ADR(ark_config)){ // read FLASH0.ARK into RAM
+        strcpy(ark_config->exploit_id, "Adrenaline");
         PRTSTR("Reading FLASH0.ARK into RAM");
         int fd = k_tbl->KernelIOOpen(archive, PSP_O_RDONLY, 0777);
         k_tbl->KernelIORead(fd, ARK_FLASH, MAX_FLASH0_SIZE);
@@ -47,6 +48,7 @@ void flashPatch(){
         }
     }
     else{ // Patching flash0 on Vita
+        strcpy(ark_config->exploit_id, "ePSP");
         PRTSTR("Installing on PS Vita");
         strcpy(ark_config->exploit_id, "Vita");
         patchKermitPeripheral(k_tbl);
@@ -73,7 +75,6 @@ void patchedmemcpy(void* a1, void* a2, u32 size){
 // yo dawg, I heard you like patches
 // so I made a patch that patches your patch to inject my patch to patch your patches
 void patchAdrenalineReboot(SceModule2* loadexec){
-    strcpy(ark_config->exploit_id, "Adrenaline");
     for (u32 addr = loadexec->text_addr; addr < loadexec->text_addr+loadexec->text_size; addr+=4){
         if (_lw(addr) == 0x04400020) {
             // found patch that injects rebootex
