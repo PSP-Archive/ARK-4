@@ -891,10 +891,11 @@ void loadConfig(){
 
 	if(IS_VITA_ADR(ark_config) || is_pandora < 0) {
 		cur_battery = 2;
-		cnf.usbdevice_rdonly = 2;
 	} else {
 		cur_battery = is_pandora;
 	}
+	if(IS_VITA_ADR(ark_config))
+		cnf.usbdevice_rdonly = 2;
 }
 
 void saveConfig(int saveumdregion, int savevshregion){
