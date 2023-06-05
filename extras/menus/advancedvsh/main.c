@@ -77,7 +77,8 @@ UmdVideoList g_umdlist;
 
 ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
-extern int is_pandora;
+int cur_battery;
+u32 swap_xo;
 
 int module_start(int argc, char *argv[])
 {
@@ -706,10 +707,10 @@ int WriteSerial(u16* pdata)
 }
 
 static void convert_battery(void) {
-	if (is_pandora < 0) return;
+	if (cur_battery < 0 || cur_battery > 1) return;
 	u16 buffer[2];
 
-	if (is_pandora){
+	if (cur_battery){
 		buffer[0] = 0x1234;
         buffer[1] = 0x5678;
 	}
@@ -720,12 +721,13 @@ static void convert_battery(void) {
 	WriteSerial(buffer);
 };
 
-static void check_battery(void) {
+static int check_battery(void) {
 
     int sel = 0;
     int batsel;
     u32 baryon, tachyon;
 	struct KernelCallArg args;
+	int is_pandora = 0;
 
 	SysconGetBaryonVersion = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x7EC5A957);
 	SysregGetTachyonVersion = sctrlHENFindFunction("sceLowIO_Driver", "sceSysreg_driver", 0xE2A5D1EE);
@@ -748,6 +750,7 @@ static void check_battery(void) {
         if(serial[0] == 0xFFFF && serial[1] == 0xFFFF) is_pandora = 1;
         else is_pandora = 0;
     }
+	return is_pandora;
 }
 
 void delete_hibernation(){
@@ -872,20 +875,13 @@ void loadConfig(){
 	sceIoRead(fp, &config, sizeof(t_conf));
     sceIoClose(fp);
 
-	cnf.vsh_bg_colors = config.vsh_bg_color;
-	cnf.vsh_fg_colors = config.vsh_fg_color;
-
-	u32 tmp_swap_xo_32;
-	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &tmp_swap_xo_32);
-	cnf.swap_xo = tmp_swap_xo_32;
-	check_battery();
+	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &swap_xo);
+	int is_pandora = check_battery();
 
 	if(IS_VITA_ADR(ark_config) || is_pandora < 0)
-		cnf.convert_battery = 2;
-	else if(is_pandora)
-		cnf.convert_battery = is_pandora;
+		cur_battery = 2;
 	else
-		cnf.convert_battery = is_pandora;
+		cur_battery = is_pandora;
 }
 
 void saveConfig(){
@@ -1009,25 +1005,22 @@ resume:
 
 	// Random Colors
 	srand(time(NULL));
-	while((cnf.vsh_fg_colors || cnf.vsh_bg_colors) == 0) {
-		if (cnf.vsh_fg_colors == 0 && cnf.vsh_bg_colors != 0) {
-			cnf.vsh_fg_colors = (rand() % 28) + 1;
+	while((config.vsh_fg_color || config.vsh_bg_color) == 0) {
+		if (config.vsh_fg_color == 0 && config.vsh_bg_color != 0) {
+			config.vsh_fg_color = (rand() % 28) + 1;
 			break;
 		}
-		else if (cnf.vsh_fg_colors != 0 && cnf.vsh_bg_colors == 0) {
-			cnf.vsh_bg_colors = (rand() % 28) + 1;
+		else if (config.vsh_fg_color != 0 && config.vsh_bg_color == 0) {
+			config.vsh_bg_color = (rand() % 28) + 1;
 			break;
 		}
 		else {
-			cnf.vsh_fg_colors = (rand() % 28) + 1;
+			config.vsh_fg_color = (rand() % 28) + 1;
 			srand(time(NULL));
-			cnf.vsh_bg_colors = (rand() % 28) + 1;
+			config.vsh_bg_color = (rand() % 28) + 1;
 			break;
 		}
-	} 
-
-	config.vsh_bg_color = cnf.vsh_bg_colors;
-	config.vsh_fg_color = cnf.vsh_fg_colors;
+	}
 
 	saveConfig();
 
