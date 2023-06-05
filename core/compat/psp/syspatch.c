@@ -207,20 +207,17 @@ void processSettings(){
         MAKE_DUMMY_FUNCTION_RETURN_0(_sceSysconCtrlLED);
         flushCache();
     }
-    // Disable Pause feature on PSP Go
-    if (se_config->disable_pause){
-        disable_PauseGame();
-    }
     // Enforce extra RAM
     if (se_config->force_high_memory){
         patch_partitions();
+        se_config->disable_pause = 1;
     }
     if(!se_config->force_high_memory && (apitype == 0x141 || apitype == 0x152) ){
         int paramsize=4;
         int use_highmem = 0;
         if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
             patch_partitions();
-            disable_PauseGame();
+            se_config->disable_pause = 1;
             se_config->force_high_memory = 1;
         }
     }
@@ -230,8 +227,12 @@ void processSettings(){
         if (CacheInit){
             if (psp_model==PSP_1000) CacheInit(4 * 1024, 8, 2); // 32K cache on 1K
             else CacheInit(64 * 1024, 128, (se_config->force_high_memory)?2:9); // 8M cache on other models
-            disable_PauseGame(); // disable pause feature to maintain stability
+            se_config->disable_pause = 1; // disable pause feature to maintain stability
         }
+    }
+    // Disable Pause feature on PSP Go
+    if (se_config->disable_pause){
+        disable_PauseGame();
     }
 }
 

@@ -344,7 +344,6 @@ static void settingsHandler(char* path, u8 enabled){
             return;
         }
         se_config.force_high_memory = enabled;
-        se_config.disable_pause = enabled; // disable pause feature to maintain stability
     }
     else if (strcasecmp(path, "mscache") == 0){
         se_config.msspeed = enabled; // enable ms cache for speedup
