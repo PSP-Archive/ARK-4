@@ -175,10 +175,6 @@ typedef struct _SEConfig
     u8 launcher_mode;
     u8 disable_pause;
     u8 noled;
-	u8 vsh_fg_colors;
-	u8 vsh_bg_colors;
-	u8 swap_xo;
-	u8 convert_battery;
 } SEConfig;
 
 /**
