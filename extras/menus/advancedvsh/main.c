@@ -763,11 +763,21 @@ void delete_hibernation(){
 
 static int activate_codecs()
 {
-	set_registry_value("/CONFIG/BROWSER", "flash_activated", 1);
-	set_registry_value("/CONFIG/BROWSER", "flash_play", 1);
-	set_registry_value("/CONFIG/MUSIC", "wma_play", 1);
 
-	reset_vsh = 1;
+	int flash_activated = 0;
+	int flash_play = 0;
+	int wma_play = 0;
+
+	get_registry_value("/CONFIG/BROWSER", "flash_activated", &flash_activated);
+	get_registry_value("/CONFIG/BROWSER", "flash_activated", &flash_play);
+	get_registry_value("/CONFIG/MUSIC", "wma_play", &wma_play);
+
+	if (!flash_activated || !flash_play || !wma_play){
+		set_registry_value("/CONFIG/BROWSER", "flash_activated", 1);
+		set_registry_value("/CONFIG/BROWSER", "flash_play", 1);
+		set_registry_value("/CONFIG/MUSIC", "wma_play", 1);
+		reset_vsh = 1;
+	}
 	
 	return 0;
 }
