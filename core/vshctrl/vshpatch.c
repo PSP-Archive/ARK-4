@@ -237,17 +237,20 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
                 && ((u8*)addr)[6] == 0x58
                 && ((u8*)addr)[7] == 0 )
         {
+            static const char* format = " [ FW: %d.%d%d Model: %s ] ";
+            u32 fw = sceKernelDevkitVersion();
+            u32 major = fw>>24;
+            u32 minor = (fw>>16)&0xF;
+            u32 micro = (fw>>8)&0xF;
             if (IS_VITA_ADR(ark_config)){
-                ascii2utf16(addr, "[ FW: 6.61 Model: vPSP ]");
+                sprintf(str, format, major, minor, micro, "vPSP");
             }
             else{
-                u32 fw = sceKernelDevkitVersion();
-                u32 major = fw>>24;
-                u32 minor = (fw>>16)&0xF;
-                u32 micro = (fw>>8)&0xF;
-                sprintf(str, "[ FW: %d.%d%d Model: 0%dg ]", major, minor, micro, (int)psp_model+1);
-                ascii2utf16(addr, str);
+                char model[10];
+                sprintf(model, "0%dg", (int)psp_model+1);
+                sprintf(str, format, major, minor, micro, model);
             }
+            ascii2utf16(addr, str);
             patches--;
         }
     }
