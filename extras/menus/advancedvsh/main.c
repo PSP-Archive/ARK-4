@@ -983,9 +983,10 @@ resume:
 		}
 	}
 
-	if ( sub_stop_flag == 6)
+	if ( sub_stop_flag == 6) {
+		if(IS_VITA_ADR(ark_config) return;
 		launch_umdvideo_mount();
-	else if (sub_stop_flag == 9)
+	} else if (sub_stop_flag == 9)
 		convert_battery();
 	else if (sub_stop_flag == 10)
 		delete_hibernation();
@@ -1042,7 +1043,8 @@ resume:
 
 	vctrlVSHUpdateConfig(&cnf);
 
-	umdvideolist_clear(&g_umdlist);
+	if(!IS_VITA_ADR(ark_config))
+		umdvideolist_clear(&g_umdlist);
 	clear_language();
 	vpl_finish();
 
