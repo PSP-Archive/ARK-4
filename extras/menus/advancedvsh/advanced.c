@@ -822,7 +822,6 @@ int submenu_ctrl(u32 button_on)
 			if (direction) swap_readonly(direction);
 			break;
 		case SUBMENU_UMD_MODE:
-			if (IS_VITA_ADR(ark_config)) break;
 			if(direction) change_umd_mode( direction );
 			break;
 		case SUBMENU_UMD_VIDEO:
