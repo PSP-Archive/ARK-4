@@ -915,12 +915,13 @@ int TSRThread(SceSize args, void *argp)
 	if(g_cur_font_select[0] != '\0') {
 		load_external_font(g_cur_font_select);
 	}
-
-	umdvideolist_init(&g_umdlist);
-	umdvideolist_clear(&g_umdlist);
-	get_umdvideo(&g_umdlist, "ms0:/ISO/VIDEO");
-	get_umdvideo(&g_umdlist, "ef0:/ISO/VIDEO");
-	kuKernelGetUmdFile(umdvideo_path, sizeof(umdvideo_path));
+	if(!IS_VITA_ADR(ark_config)) {
+		umdvideolist_init(&g_umdlist);
+		umdvideolist_clear(&g_umdlist);
+		get_umdvideo(&g_umdlist, "ms0:/ISO/VIDEO");
+		get_umdvideo(&g_umdlist, "ef0:/ISO/VIDEO");
+		kuKernelGetUmdFile(umdvideo_path, sizeof(umdvideo_path));
+	
 
 	if(umdvideo_path[0] == '\0') {
 		umdvideo_idx = 0;
@@ -934,6 +935,7 @@ int TSRThread(SceSize args, void *argp)
 			umdvideo_idx = 0;
 			strcpy(umdvideo_path, g_messages[MSG_NONE]);
 		}
+	}
 	}
 
 	scePaf_memcpy(&cnf_old, &cnf, sizeof(SEConfig));
