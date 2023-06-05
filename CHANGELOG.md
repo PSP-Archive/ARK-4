@@ -1,5 +1,13 @@
 # ARK Changelog
 
+## Version 4.20.52 (2023-06-05)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42052
+- Added patch to remove annoying "overclocked" message in ATV Offroad Fury Pro.
+- You can now change the size of the main menu in Custom Launcher or Recovery.
+- Added Korean translation to XMB Control.
+- Fixed graphical glitch in Advanced VSH Menu on the Convert Battery option.
+- Some other cleanup in the compatibility layers.
+
 ## Version 4.20.51 (2023-05-28)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42051
 - Fixed crash when exiting custom launcher on PS Vita.
