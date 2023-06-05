@@ -247,7 +247,7 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
             }
             else{
                 char model[10];
-                sprintf(model, "0%dg", (int)psp_model+1);
+                sprintf(model, "%02dg", (int)psp_model+1);
                 sprintf(str, format, major, minor, micro, model);
             }
             ascii2utf16(addr, str);
