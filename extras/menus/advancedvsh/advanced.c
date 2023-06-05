@@ -488,6 +488,7 @@ int submenu_setup(void)
 		subitem_str[SUBMENU_UMD_VIDEO] = umdvideo_disp;
 	subitem_str[SUBMENU_USB_DEVICE] = bridge;
 
+/*
 	switch(cnf.umdmode) {
 		case MODE_NP9660:
 			subitem_str[SUBMENU_UMD_MODE] = g_messages[MSG_NP9660];
@@ -495,9 +496,21 @@ int submenu_setup(void)
 		case MODE_INFERNO:
 			subitem_str[SUBMENU_UMD_MODE] = g_messages[MSG_INFERNO];
 			break;
-		default:
-			subitem_str[SUBMENU_UMD_MODE] = g_messages[MSG_INFERNO];
 	}
+*/
+	if(cnf.umdmode == 3) {
+		subitem_str[SUBMENU_UMD_MODE] = g_messages[MSG_INFERNO];
+	} else if(cnf.umdmode<2) {
+		cnf.umdmode = 3;
+	} else if(cnf.umdmode>3) {
+		cnf.umdmode = 2;
+	} else {
+		subitem_str[SUBMENU_UMD_MODE] = g_messages[MSG_NP9660];
+	}
+
+
+
+
 
 	switch(cnf.usbdevice_rdonly) {
 		case 0:
