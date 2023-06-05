@@ -1052,9 +1052,10 @@ resume:
 		}
 	}
 
-	saveConfig(cnf_old.umdregion != cnf.umdregion, cnf_old.vshregion != cnf.vshregion);
-
-	vctrlVSHUpdateConfig(&cnf);
+	if(scePaf_memcmp(&cnf_old, &cnf, sizeof(SEConfig))){
+		saveConfig(cnf_old.umdregion != cnf.umdregion, cnf_old.vshregion != cnf.vshregion);
+		vctrlVSHUpdateConfig(&cnf);
+	}
 
 	if(!IS_VITA_ADR(ark_config))
 		umdvideolist_clear(&g_umdlist);
