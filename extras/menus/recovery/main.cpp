@@ -43,8 +43,8 @@ int main(int argc, char** argv){
     loadSettings();
     SettingsTable stab = { ark_conf_entries, ark_conf_max_entries };
     SettingsMenu* settings_menu = new SettingsMenu(&stab, saveSettings, false, true, true);
-    settings_menu->setName("Settings");
-    settings_menu->setInfo("ARK Settings");
+    settings_menu->setName("CFW Settings");
+    settings_menu->setInfo("ARK Custom Firmware Settings");
     settings_menu->readConf();
     entries[0] = settings_menu;
 
@@ -52,7 +52,7 @@ int main(int argc, char** argv){
     loadPlugins();
     SettingsMenu* plugins_menu = new SettingsMenu(&plugins_table, savePlugins, true, true, true);
     plugins_menu->setName("Plugins");
-    plugins_menu->setInfo("ARK Plugins");
+    plugins_menu->setInfo("Installed Plugins");
     plugins_menu->setIcon(IMAGE_PLUGINS);
     entries[1] = plugins_menu;
 
@@ -62,8 +62,8 @@ int main(int argc, char** argv){
 	// Settings
     SettingsTable stab_recovery = { settings_entries, MAX_SETTINGS_OPTIONS };
     SettingsMenu* recovery_settings_menu = new SettingsMenu(&stab_recovery, common::saveConf, false, true, true);
-	recovery_settings_menu->setName("Menu\nSettings");
-	recovery_settings_menu->setInfo("Menu Settings");
+	recovery_settings_menu->setName("Menu Settings");
+	recovery_settings_menu->setInfo("Launcher/Recovery Settings");
 	entries[3] = recovery_settings_menu;
 
 
