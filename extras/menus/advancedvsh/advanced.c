@@ -14,6 +14,8 @@ extern xyPoint2[];
 
 extern ARKConfig* ark_config;
 extern int cur_battery;
+extern t_conf config;
+extern u32 swap_xo;
 
 #define SUBMENU_MAX 15
 
@@ -81,13 +83,13 @@ int submenu_draw(void)
 	for(submax_menu=0;submax_menu<SUBMENU_MAX;submax_menu++) {
 		msg = g_messages[MSG_USB_DEVICE + submax_menu];
 		//bg_top:
-		//if(cnf.vsh_bg_colors == cnf.vsh_fg_colors) cnf.vsh_bg_colors++;
-		switch(cnf.vsh_bg_colors) {
+		//if(config.vsh_bg_color == config.vsh_fg_color) config.vsh_bg_color++;
+		switch(config.vsh_bg_color) {
 						// Random
 						case 0: 
 							/*srand(time(NULL));
 							int rand_color = (rand() % 28) + 1;
-							cnf.vsh_bg_colors = rand_color;
+							config.vsh_bg_color = rand_color;
 							goto bg_top;
 							*/
 							break;
@@ -236,13 +238,13 @@ int submenu_draw(void)
 							blit_set_color(fc,bc);
 					}
 					//fg_top:
-					// if(cnf.vsh_fg_colors == cnf.vsh_bg_colors) cnf.vsh_fg_colors++;
-					switch(cnf.vsh_fg_colors) {
+					// if(config.vsh_fg_color == config.vsh_bg_color) config.vsh_fg_color++;
+					switch(config.vsh_fg_color) {
 						// Random
 						case 0: 
 							/*srand(time(NULL));
 							int rand_color = (rand() % 28) + 1;
-							cnf.vsh_fg_colors = rand_color;
+							config.vsh_fg_color = rand_color;
 							goto fg_top;
 							*/
 							break;
@@ -502,7 +504,7 @@ int submenu_setup(void)
 			subitem_str[SUBMENU_USB_READONLY] = g_messages[MSG_ENABLE];
 	}
 
-	switch(cnf.swap_xo) {
+	switch(swap_xo) {
 		case XO_CURRENT_O_PRIMARY:
 			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_O_PRIM];
 			break;
@@ -513,7 +515,7 @@ int submenu_setup(void)
 			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_X_PRIM]; // should never happen?
 	}
 
-	switch(cnf.convert_battery) {
+	switch(cur_battery) {
 		case NORMAL_TO_PANDORA:
 			subitem_str[SUBMENU_CONVERT_BATTERY] = g_messages[MSG_NORMAL_TO_PANDORA];
 			break;
@@ -585,7 +587,7 @@ int submenu_setup(void)
 	}
 	
 
-	switch(cnf.vsh_fg_colors) {
+	switch(config.vsh_fg_color) {
 		case FG_RANDOM:
 			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_RANDOM];
 			break;
@@ -676,7 +678,7 @@ int submenu_setup(void)
 		default:
 			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_WHITE];
 	}
-	switch(cnf.vsh_bg_colors) {
+	switch(config.vsh_bg_color) {
 		case BG_RANDOM:
 			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RANDOM];
 			break;
@@ -873,11 +875,11 @@ none:
 			break;
 		case SUBMENU_FG_COLORS:
 			// This will be where I will be adding to set the color
-			if(direction) change_fg_colors(direction);
+			if(direction) change_fg_color(direction);
 			break;
 		case SUBMENU_BG_COLORS:
 			// This will be where I will be adding to set the color
-			if(direction) change_bg_colors(direction);
+			if(direction) change_bg_color(direction);
 			break;
 		case SUBMENU_GO_BACK:
 			if(direction==0) return 1; // finish

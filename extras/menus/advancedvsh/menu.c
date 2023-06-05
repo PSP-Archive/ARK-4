@@ -30,6 +30,7 @@ void change_clock(int dir, int a);
 extern int pwidth;
 extern char umd_path[72];
 extern SEConfig cnf;
+extern t_conf config;
 
 char freq_buf[3+3+2] = "";
 char freq2_buf[3+3+2] = "";
@@ -101,15 +102,15 @@ int menu_draw(void)
 		msg = g_messages[MSG_CUSTOM_LAUNCHER + max_menu];
 
 		bg_top:
-		switch(cnf.vsh_bg_colors) {
+		switch(config.vsh_bg_color) {
 						// Random
 						case 0: 
 							srand(time(NULL));
 							int rand_color = (rand() % 28) + 1;
-							cnf.vsh_bg_colors = rand_color;
-							if(cnf.vsh_fg_colors == cnf.vsh_bg_colors) {
+							config.vsh_bg_color = rand_color;
+							if(config.vsh_fg_color == config.vsh_bg_color) {
 								srand(time(NULL));
-								cnf.vsh_bg_colors = (rand() % 28) + 1;
+								config.vsh_bg_color = (rand() % 28) + 1;
 							}
 							goto bg_top;
 							break;
@@ -259,15 +260,15 @@ int menu_draw(void)
 					}
 
 					fg_top:
-					switch(cnf.vsh_fg_colors) {
+					switch(config.vsh_fg_color) {
 						// Random  
 						case 0:
 							srand(time(NULL));
 							int rand_color = (rand() % 28) + 1;
-							cnf.vsh_fg_colors = rand_color;
-							if (cnf.vsh_fg_colors == cnf.vsh_bg_colors) {
+							config.vsh_fg_color = rand_color;
+							if (config.vsh_fg_color == config.vsh_bg_color) {
 								srand(time(NULL));
-								cnf.vsh_fg_colors = (rand() % 28)+ 1;
+								config.vsh_fg_color = (rand() % 28)+ 1;
 							}
 							goto fg_top;
 							break;

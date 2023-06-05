@@ -21,6 +21,7 @@
 #include "common.h"
 
 extern SEConfig cnf;
+extern t_conf config;
 
 const int cpu_list[]={0, 20, 75, 100, 133, 166, 222, 266, 300, 333};
 const int bus_list[]={0, 10, 37, 50, 66, 83, 111, 133, 150, 166};
@@ -52,22 +53,22 @@ int bus2no(int cpu)
 	return 0;
 }
 
-int swap_readonly(int dir) {
+void swap_readonly(int dir) {
 	int sel = cnf.usbdevice_rdonly;
 	sel = limit(sel+dir, 0, 1);
 	cnf.usbdevice_rdonly=sel;
 }
 
-void change_bg_colors(int dir) {
-	int sel = cnf.vsh_bg_colors;
+void change_bg_color(int dir) {
+	int sel = config.vsh_bg_color;
 	sel = limit(sel+dir, 0, 28);
-	cnf.vsh_bg_colors=sel;
+	config.vsh_bg_color=sel;
 }
 
-void change_fg_colors(int dir) {
-	int sel = cnf.vsh_fg_colors;
+void change_fg_color(int dir) {
+	int sel = config.vsh_fg_color;
 	sel = limit(sel+dir, 0, 28);
-	cnf.vsh_fg_colors=sel;
+	config.vsh_fg_color=sel;
 }
 
 void change_usb(int dir)
