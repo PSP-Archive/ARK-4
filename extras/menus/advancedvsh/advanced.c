@@ -460,7 +460,10 @@ int submenu_setup(void)
 	if((cnf.usbdevice>0) && (cnf.usbdevice<5)) {
 		scePaf_sprintf(device_buf, "%s %d", g_messages[MSG_FLASH], cnf.usbdevice-1);
 		bridge = device_buf;
-	} else {
+	} else if (IS_VITA_ADR(ark_config)) {
+		scePaf_sprintf(device_buf, "%s", g_messages[MSG_UNSUPPORTED]);
+		bridge = device_buf;
+	}else {
 		const char *device;
 
 		if(cnf.usbdevice==5)
@@ -479,7 +482,10 @@ int submenu_setup(void)
 		umdvideo_disp++;
 	}
 
-	subitem_str[SUBMENU_UMD_VIDEO] = umdvideo_disp;
+	if(IS_VITA_ADR(ark_config))
+		subitem_str[SUBMENU_UMD_VIDEO] = g_messages[MSG_UNSUPPORTED];
+	else
+		subitem_str[SUBMENU_UMD_VIDEO] = umdvideo_disp;
 	subitem_str[SUBMENU_USB_DEVICE] = bridge;
 
 	switch(cnf.umdmode) {
@@ -499,6 +505,9 @@ int submenu_setup(void)
 			break;
 		case 1:
 			subitem_str[SUBMENU_USB_READONLY] = g_messages[MSG_ENABLE];
+			break;
+		case 2:
+			subitem_str[SUBMENU_USB_READONLY] = g_messages[MSG_UNSUPPORTED];
 			break;
 		default:
 			subitem_str[SUBMENU_USB_READONLY] = g_messages[MSG_ENABLE];
@@ -805,15 +814,19 @@ int submenu_ctrl(u32 button_on)
 
 	switch(submenu_sel) {
 		case SUBMENU_USB_DEVICE:
+			if (IS_VITA_ADR(ark_config)) break;
 			if(direction) change_usb( direction );
 			break;
 		case SUBMENU_USB_READONLY:
+			if (IS_VITA_ADR(ark_config)) break;
 			if (direction) swap_readonly(direction);
 			break;
 		case SUBMENU_UMD_MODE:
+			if (IS_VITA_ADR(ark_config)) break;
 			if(direction) change_umd_mode( direction );
 			break;
 		case SUBMENU_UMD_VIDEO:
+			if (IS_VITA_ADR(ark_config)) break;
 			if(direction) {
 			   	change_umd_mount_idx(direction);
 
@@ -825,7 +838,7 @@ int submenu_ctrl(u32 button_on)
 					if(umdpath != NULL) {
 						strncpy(umdvideo_path, umdpath, sizeof(umdvideo_path));
 						umdvideo_path[sizeof(umdvideo_path)-1] = '\0';
-					} else {
+					}else {
 						goto none;
 					}
 				} else {

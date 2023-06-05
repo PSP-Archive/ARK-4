@@ -878,10 +878,12 @@ void loadConfig(){
 	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &swap_xo);
 	int is_pandora = check_battery();
 
-	if(IS_VITA_ADR(ark_config) || is_pandora < 0)
+	if(IS_VITA_ADR(ark_config) || is_pandora < 0) {
 		cur_battery = 2;
-	else
+		cnf.usbdevice_rdonly = 2;
+	} else {
 		cur_battery = is_pandora;
+	}
 }
 
 void saveConfig(){
