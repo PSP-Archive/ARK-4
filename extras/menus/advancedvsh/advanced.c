@@ -551,7 +551,7 @@ int submenu_setup(void)
 
 	switch(cnf.vshregion) {
 		case FAKE_REGION_DISABLED:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DISABLE];
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DEFAULT];
 			break;
 		case FAKE_REGION_JAPAN:
 			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_JAPAN];
