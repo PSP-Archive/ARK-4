@@ -3,7 +3,7 @@ OBJS = main.o blit.o ui.o menu.o advanced.o clock.o registry.o umdvideo_list.o v
 
 BUILD_PRX=1
 
-INCDIR = $(ARKROOT)/common/include
+INCDIR = $(ARKROOT)/common/include ./include
 CFLAGS = -Os -G0 -Wall
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
