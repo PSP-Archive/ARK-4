@@ -1,6 +1,6 @@
 # ARK Changelog
 
-## Version 4.20.53 (2013-06-06)
+## Version 4.20.53 (2023-06-06)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42053
 - Improved `Advanced VSH Menu` options in `Adrenaline` installations.
 - Improved `Advanced VSH Menu` options in `PSP Go` models.
