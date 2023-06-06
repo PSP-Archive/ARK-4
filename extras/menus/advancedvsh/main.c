@@ -561,9 +561,8 @@ void exec_random_game() {
 
     if (has_pboot){
         // configure to use dlc/update
-        param.argp = pboot_path;
+        loadexec_file = param.argp = pboot_path;
         param.args = strlen(pboot_path) + 1;
-        loadexec_file = param.argp;
 
         if (psp_model == PSP_GO && game[0] == 'e' && game[1] == 'f') {
             apitype = 0x126;
