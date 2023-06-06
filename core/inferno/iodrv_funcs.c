@@ -377,7 +377,7 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
 
 exit:
     #ifdef DEBUG
-    printk("%s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (unsigned int)ofs, whence, ret);
+    printk("%s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
     #endif
     return ret;
 }

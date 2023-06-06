@@ -355,7 +355,7 @@ int umdLoadExec(char * file, struct SceKernelLoadExecVSHParam * param)
         file = sctrlSEGetUmdFile();
         ret = get_device_name(devicename, sizeof(devicename), file);
 
-        if(ret == 0 && 0 == strcasecmp(devicename, "ef0:")) {
+        if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
             apitype = 0x125;
         } else {
             apitype = 0x123;

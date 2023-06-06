@@ -80,11 +80,11 @@ PspIoDrv * sctrlHENFindDriver(char * drvname)
     pspSdkSetK1(k1);
 
     if (driver == NULL){
-        if(0 == strcasecmp(drvname, "msstor")) {
+        if(0 == stricmp(drvname, "msstor")) {
 			return sctrlHENFindDriver("eflash0a0f");
 		}
 
-		if(0 == strcasecmp(drvname, "msstor0p")) {
+		if(0 == stricmp(drvname, "msstor0p")) {
 			return sctrlHENFindDriver("eflash0a0f1p");
 		}
     }

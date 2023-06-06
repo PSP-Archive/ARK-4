@@ -148,7 +148,7 @@ static int msstorReadCache(PspIoDrvFileArg * arg, char * data, int len)
         if(0 != memcmp(data, cache->buf + pos - cache->pos, len))
         {
             #ifdef DEBUG
-            printk("%s: 0x%08X <%d> cache mismatched!!!\r\n", __func__, (unsigned int)pos, (int)len);
+            printk("%s: 0x%08X <%d> cache mismatched!!!\r\n", __func__, (uint)pos, (int)len);
             #endif
             _sw(0, 0);
         }
@@ -458,7 +458,7 @@ void msstorCacheStat(int reset)
         sceIoWrite(1, buf, strlen(buf));
         sprintf(buf, "caches stat:\n");
         sceIoWrite(1, buf, strlen(buf));
-        sprintf(buf, "Cache Pos: 0x%08X bufSize: %d Buf: 0x%08X\n", (unsigned int)g_cache.pos, g_cache.bufSize, (unsigned int)g_cache.buf);
+        sprintf(buf, "Cache Pos: 0x%08X bufSize: %d Buf: 0x%08X\n", (uint)g_cache.pos, g_cache.bufSize, (uint)g_cache.buf);
         sceIoWrite(1, buf, strlen(buf));
     }
     

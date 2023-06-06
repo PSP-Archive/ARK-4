@@ -10,7 +10,7 @@ LIBS = -lgraphics -lcolordebugger -lansic -lpspvram -lpspsystemctrl_user
 CXXFLAGS = $(CFLAGS)
 ASFLAGS = $(CFLAGS)
 LDFLAGS = -L sysmem -L $(ARKROOT)/libs
-#BUILD_PRX = 1
+BUILD_PRX = 1
 PSP_EBOOT_ICON = ICON0.PNG
 PSP_EBOOT_TITLE += ARK Loader
 

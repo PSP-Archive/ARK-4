@@ -17,7 +17,7 @@
 
 #include "reboot.h"
 #include "globals.h"
-//#include "main.h"
+#include "main.h"
 
 u8* rebootbuffer = NULL;
 u32 size_rebootbuffer = REBOOTEX_MAX_SIZE;

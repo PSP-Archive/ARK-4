@@ -49,7 +49,7 @@ int is_plugins_loading = 0;
 
 static addPlugin(char* path){
     for (int i=0; i<plugins->count; i++){
-        if (strcasecmp(plugins.paths[i], path) == 0)
+        if (stricmp(plugins->paths[i], path) == 0)
             return; // plugin already added
     }
     if (plugins->count < MAX_PLUGINS)
@@ -58,7 +58,7 @@ static addPlugin(char* path){
 
 static removePlugin(char* path){
     for (int i=0; i<plugins->count; i++){
-        if (strcasecmp(plugins->paths[i], path) == 0){
+        if (stricmp(plugins->paths[i], path) == 0){
             if (--plugins->count > i){
                 strcpy(plugins->paths[i], plugins->paths[plugins->count]);
             }
@@ -90,18 +90,18 @@ static int matchingRunlevel(char * runlevel)
     // Fetch Apitype
     int apitype = sceKernelInitApitype();
     
-    if (strcasecmp(runlevel, "all") == 0 || strcasecmp(runlevel, "always") == 0) return 1; // always on
-    else if (strcasecmp(runlevel, "vsh") == 0 || strcasecmp(runlevel, "xmb") == 0) // VSH only
+    if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1; // always on
+    else if (stricmp(runlevel, "vsh") == 0 || stricmp(runlevel, "xmb") == 0) // VSH only
         return (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300);
-    else if (strcasecmp(runlevel, "pops") == 0 || strcasecmp(runlevel, "ps1") == 0 || strcasecmp(runlevel, "psx") == 0) // PS1 games only
+    else if (stricmp(runlevel, "pops") == 0 || stricmp(runlevel, "ps1") == 0 || stricmp(runlevel, "psx") == 0) // PS1 games only
         return (apitype == 0x144 || apitype == 0x155);
-    else if (strcasecmp(runlevel, "umd") == 0 || strcasecmp(runlevel, "psp") == 0 || strcasecmp(runlevel, "umdemu") == 0) // Retail games only
+    else if (stricmp(runlevel, "umd") == 0 || stricmp(runlevel, "psp") == 0 || stricmp(runlevel, "umdemu") == 0) // Retail games only
         return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));
-    else if (strcasecmp(runlevel, "game") == 0) // retail+homebrew
+    else if (stricmp(runlevel, "game") == 0) // retail+homebrew
         return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x141 || apitype == 0x152 || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));
-    else if (strcasecmp(runlevel, "app") == 0 || stricmp(runlevel, "homebrew") == 0) // homebrews only
+    else if (stricmp(runlevel, "app") == 0 || stricmp(runlevel, "homebrew") == 0) // homebrews only
         return (apitype == 0x141 || apitype == 0x152);
-    else if (strcasecmp(runlevel, "launcher") == 0){
+    else if (stricmp(runlevel, "launcher") == 0){
         // check if running custom launcher
         static char path[ARK_PATH_SIZE];
         strcpy(path, ark_config->arkpath);
@@ -121,8 +121,8 @@ static int matchingRunlevel(char * runlevel)
 static int booleanOn(char * text)
 {
     // Different Variations of "true"
-    if(strcasecmp(text, "true") == 0 || strcasecmp(text, "on") == 0 ||
-        strcmp(text, "1") == 0 || strcasecmp(text, "enabled") == 0)
+    if(stricmp(text, "true") == 0 || stricmp(text, "on") == 0 ||
+        strcmp(text, "1") == 0 || stricmp(text, "enabled") == 0)
             return 1;
     
     // Default to False

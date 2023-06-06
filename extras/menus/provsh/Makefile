@@ -11,7 +11,7 @@ LIBS = -lpspsystemctrl_user -lansic
 CXXFLAGS = $(CFLAGS)
 ASFLAGS = $(CFLAGS)
 LDFLAGS =
-#BUILD_PRX = 1
+BUILD_PRX = 1
 
 PSP_EBOOT_TITLE += PRO Shell
 

@@ -319,7 +319,7 @@ void cache_test(struct IoReadArg *arg)
             if(cur != arg->size) {
                 char buf[256];
 
-                sprintf(buf, "%s: 0x%08X <%d> unexpected EOF for %d bytes\n", __func__, (unsigned int)testarg.offset, (int)testarg.size, cur);
+                sprintf(buf, "%s: 0x%08X <%d> unexpected EOF for %d bytes\n", __func__, (uint)testarg.offset, (int)testarg.size, cur);
                 sceIoWrite(2, buf, strlen(buf));
                 __asm__ volatile("break 2");
             }
@@ -330,10 +330,10 @@ void cache_test(struct IoReadArg *arg)
         if(ret < 0 || 0 != memcmp(arg->address + cur, testarg.address, ret)) {
             char buf[256];
 
-            sprintf(buf, "%s: 0x%08X <%d> cache error at pos 0x%08X, status %d\n", __func__, (unsigned int)arg->offset, (int)arg->size, arg->offset + cur, ret);
+            sprintf(buf, "%s: 0x%08X <%d> cache error at pos 0x%08X, status %d\n", __func__, (uint)arg->offset, (int)arg->size, arg->offset + cur, ret);
             sceIoWrite(2, buf, strlen(buf));
 
-            sprintf(buf, "%s: cbuf: 0x%08X tbuf: 0x%08X\n", __func__, (unsigned int)arg->address + cur, (int)testarg.address);
+            sprintf(buf, "%s: cbuf: 0x%08X tbuf: 0x%08X\n", __func__, (uint)arg->address + cur, (int)testarg.address);
             sceIoWrite(2, buf, strlen(buf));
             __asm__ volatile("break 3");
             break;
@@ -495,7 +495,7 @@ void isocache_stat(int reset)
             used++;
         }
 
-        sprintf(buf, "%d: 0x%08X size %d age %02d address 0x%08X\n", i+1, (unsigned int)g_caches[i].pos, g_caches[i].bufsize, g_caches[i].age, (int)g_caches[i].buf);
+        sprintf(buf, "%d: 0x%08X size %d age %02d address 0x%08X\n", i+1, (uint)g_caches[i].pos, g_caches[i].bufsize, g_caches[i].age, (int)g_caches[i].buf);
         sceIoWrite(2, buf, strlen(buf));
     }
 

@@ -22,17 +22,6 @@ extern SEConfig* se_config;
 extern STMOD_HANDLER previous;
 extern void SetSpeed(int cpuspd, int busspd);
 
-// fuck me..
-int atoi(const char* str)
-{
-    int ret = 0;
-
-    for (int i = 0; str[i] != '\0'; ++i)
-        ret = ret * 10 + str[i] - '0';
- 
-    return ret;
-} 
-
 // Return Boot Status
 int isSystemBooted(void)
 {

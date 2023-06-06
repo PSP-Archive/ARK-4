@@ -92,7 +92,7 @@ SceInt32 InitAudio()
             at3_started = 1;
             at3_end = 0;
             
-            setAt3Data(AT3->at3_data, AT3->at3_size, (int*)&Audio.m_iAbort, 0);
+            setAt3Data(AT3->at3_data, AT3->at3_size, &Audio.m_iAbort, 0);
         }
         return 0;
     }
@@ -142,7 +142,7 @@ SceInt32 InitAudio()
         for (i = 0; i < Audio.m_iNumBuffers; i++)
         {
             Audio.m_pAudioBuffer[i] = memalign(64, m_MpegAtracOutSize);
-            if ((int)Audio.m_pAudioBuffer[i] < 0) fail++;
+            if (Audio.m_pAudioBuffer[i] < 0) fail++;
         }
 
         if (fail > 0)

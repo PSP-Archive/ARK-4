@@ -24,7 +24,7 @@ ASFLAGS = $(CFLAGS) -c
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS = -nostartfiles -nostdlib -nodefaultlibs
-LIBS = -lpspsystemctrl_user -lpspkubridge -lpspmodinfo -lpsppower -lvlfgui -lvlfgu -lvlfutils -lvlflibc 
+LIBS = -lpspsystemctrl_user -lpspkubridge -lpsppower -lvlfgui -lvlfgu -lvlfutils -lvlflibc 
 
 PSP_FW_VERSION = 660
 
@@ -32,7 +32,7 @@ EXTRA_TARGETS = EBOOT.PBP
 PSP_EBOOT_TITLE = ARK DC Installer
 PSP_EBOOT_ICON = despertar.png
 
-#BUILD_PRX = 1
+BUILD_PRX = 1
 PSP_LARGE_MEMORY = 1
 
 all: $(TARGET).prx

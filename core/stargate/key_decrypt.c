@@ -233,7 +233,7 @@ static int _mesgled_decrypt(u32 *tag, u8 *key, u32 code, u8 *prx, u32 size, u32 
         
         if (ret == 0) {
             #ifdef DEBUG
-            printk("%s: tag=0x%08X type=%d decrypt OK\n", __func__, (unsigned int)cipher->tag, (int)cipher->type);
+            printk("%s: tag=0x%08X type=%d decrypt OK\n", __func__, (uint)cipher->tag, (int)cipher->type);
             #endif
 
             return ret;

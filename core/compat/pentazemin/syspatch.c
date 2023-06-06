@@ -26,18 +26,6 @@ int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
 u64 kermit_flash_load(int cmd);
 
-// fuck me..
-// FIXME !!!!!
-int atoi(const char* str)
-{
-    int ret = 0;
-
-    for (int i = 0; str[i] != '\0'; ++i)
-        ret = ret * 10 + str[i] - '0';
- 
-    return ret;
-} 
-
 // Return Boot Status
 int isSystemBooted(void)
 {

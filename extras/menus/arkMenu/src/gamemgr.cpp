@@ -175,7 +175,6 @@ void GameManager::findEntries(){
 void GameManager::findEboots(const char* path){ 
 
     struct dirent* dit;
-    struct stat st;
     DIR* dir = opendir(path);
     
     if (dir == NULL)
@@ -185,12 +184,7 @@ void GameManager::findEboots(const char* path){
 		if (strstr(dit->d_name, "%") != NULL) continue;
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
-
-        if (stat(dit->d_name, &st) == 0) {
-            if (S_ISDIR(st.st_mode)) {
-                continue;
-            }
-        }
+        if (!FIO_SO_ISDIR(dit->d_stat.st_attr)) continue;
         
         string fullpath = Eboot::fullEbootPath(path, dit->d_name);
         if (fullpath == ""){
@@ -216,7 +210,6 @@ void GameManager::findISOs(const char* path){
     
     SceIoDirent entry;
     SceIoDirent* dit = &entry;
-    SceIoStat st;
     memset(&entry, 0, sizeof(SceIoDirent));
 
     pspMsPrivateDirent* pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
@@ -233,13 +226,11 @@ void GameManager::findISOs(const char* path){
 
         string fullpath = string(path)+string(dit->d_name);
 
-        if (sceIoGetstat(dit->d_name, &st) == 0) {
-            if (S_ISDIR(st.st_mode)) {
-                if (common::getConf()->scan_cat && string(dit->d_name) != string("VIDEO")){
-                    findISOs((string(path) + dit->d_name + "/").c_str());
-                    continue;
-                }
+        if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
+            if (common::getConf()->scan_cat && string(dit->d_name) != string("VIDEO")){
+                findISOs((string(path) + dit->d_name + "/").c_str());
             }
+            continue;
         }
         else if (!common::fileExists(fullpath)){
             fullpath = string(path) + string(dit->d_name).substr(0, 4) + string(pri_dirent->s_name);
@@ -252,7 +243,6 @@ void GameManager::findISOs(const char* path){
 
 void GameManager::findSaveEntries(const char* path){
     struct dirent* dit;
-    struct stat st;
     DIR* dir = opendir(path);
     
     if (dir == NULL)
@@ -262,29 +252,27 @@ void GameManager::findSaveEntries(const char* path){
 
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
-        if (stat(dit->d_name, &st) == 0) {
-            if (S_ISDIR(st.st_mode)) {
-                struct dirent* savedit;
-                string fullpath = string(path)+string(dit->d_name);
-                DIR* savedir = opendir(fullpath.c_str());
-                if (savedir == NULL)
-                    continue;
-                while ((savedit = readdir(savedir))){
-                    if (strcmp(savedit->d_name, ".") == 0) continue;
-                    if (strcmp(savedit->d_name, "..") == 0) continue;
-                    string fullentrypath = fullpath + "/" + string(savedit->d_name);
-                    if (Iso::isISO(fullentrypath.c_str())) this->categories[GAME]->addEntry(new Iso(fullentrypath));
-                    else if (Eboot::isEboot(fullentrypath.c_str())){
-                        Eboot* e = new Eboot(fullentrypath);
-                        switch (Eboot::getEbootType(fullentrypath.c_str())){
-                        case TYPE_PSN:         this->categories[GAME]->addEntry(e);        break;
-                        case TYPE_POPS:        this->categories[POPS]->addEntry(e);        break;
-                        default:               this->categories[HOMEBREW]->addEntry(e);    break;
-                        }
+        if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
+            struct dirent* savedit;
+            string fullpath = string(path)+string(dit->d_name);
+            DIR* savedir = opendir(fullpath.c_str());
+            if (savedir == NULL)
+                continue;
+            while ((savedit = readdir(savedir))){
+                if (strcmp(savedit->d_name, ".") == 0) continue;
+                if (strcmp(savedit->d_name, "..") == 0) continue;
+                string fullentrypath = fullpath + "/" + string(savedit->d_name);
+                if (Iso::isISO(fullentrypath.c_str())) this->categories[GAME]->addEntry(new Iso(fullentrypath));
+                else if (Eboot::isEboot(fullentrypath.c_str())){
+                    Eboot* e = new Eboot(fullentrypath);
+                    switch (Eboot::getEbootType(fullentrypath.c_str())){
+                    case TYPE_PSN:         this->categories[GAME]->addEntry(e);        break;
+                    case TYPE_POPS:        this->categories[POPS]->addEntry(e);        break;
+                    default:               this->categories[HOMEBREW]->addEntry(e);    break;
                     }
                 }
-                closedir(savedir);
             }
+            closedir(savedir);
         }
     }
     closedir(dir);

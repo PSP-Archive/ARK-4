@@ -262,7 +262,7 @@ static int myIoIoctl(SceUID fd, unsigned int cmd, void * indata, int inlen, void
 
     if(cmd == 0x04100002)
     {
-        printk("%s: setting PGD offset: 0x%08X\r\n", __func__, *(unsigned int*)indata);
+        printk("%s: setting PGD offset: 0x%08X\r\n", __func__, *(uint*)indata);
     }
     #endif
 
@@ -442,7 +442,7 @@ static int myIoRead(int fd, unsigned char *buf, int size)
 exit:
     pspSdkSetK1(k1);
     #ifdef DEBUG
-    printk("%s: fd=0x%08X pos=0x%08X size=%d -> 0x%08X\r\n", __func__, (unsigned int)fd, (unsigned int)pos, (int)size, ret);
+    printk("%s: fd=0x%08X pos=0x%08X size=%d -> 0x%08X\r\n", __func__, (uint)fd, (uint)pos, (int)size, ret);
     #endif
     return ret;
 }
@@ -458,7 +458,7 @@ static int myIoReadAsync(int fd, unsigned char *buf, int size)
     pos = sceIoLseek32(fd, 0, SEEK_CUR);
     pspSdkSetK1(k1);
     ret = sceIoReadAsync(fd, buf, size);
-    printk("%s: 0x%08X 0x%08X 0x%08X -> 0x%08X\r\n", __func__, (unsigned int)fd, (unsigned int)pos, size, ret);
+    printk("%s: 0x%08X 0x%08X 0x%08X -> 0x%08X\r\n", __func__, (uint)fd, (uint)pos, size, ret);
 
     return ret;
 }
@@ -497,7 +497,7 @@ static SceOff myIoLseek(SceUID fd, SceOff offset, int whence)
 
     pspSdkSetK1(k1);
     #ifdef DEBUG
-    printk("%s: 0x%08X 0x%08X 0x%08X -> 0x%08X\r\n", __func__, (unsigned int)fd, (unsigned int)offset, (unsigned int)whence, (int)ret);
+    printk("%s: 0x%08X 0x%08X 0x%08X -> 0x%08X\r\n", __func__, (uint)fd, (uint)offset, (uint)whence, (int)ret);
     #endif
     return ret;
 }
@@ -659,7 +659,7 @@ static int _scePspNpDrm_driver_9A34AC9F(unsigned char *rif)
 
     result = (*scePspNpDrm_driver_9A34AC9F)(rif);
     #ifdef DEBUG
-    printk("%s: 0x%08X -> 0x%08X\r\n", __func__, (unsigned int)rif, result);
+    printk("%s: 0x%08X -> 0x%08X\r\n", __func__, (uint)rif, result);
     #endif
     if (result != 0)
     {
@@ -1064,7 +1064,7 @@ int decompressData(unsigned int destSize, const unsigned char *src, unsigned cha
 
     ret = sceKernelDeflateDecompress(dest, destSize, src, 0);
     #ifdef DEBUG
-    printk("%s: 0x%08X 0x%08X 0x%08X -> 0x%08X\r\n", __func__, (unsigned int)destSize, (unsigned int)src, (unsigned int)dest, ret);
+    printk("%s: 0x%08X 0x%08X 0x%08X -> 0x%08X\r\n", __func__, (uint)destSize, (uint)src, (uint)dest, ret);
     #endif
     if (ret >= 0)
     {
