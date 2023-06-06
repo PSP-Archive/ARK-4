@@ -236,7 +236,7 @@ int menu_draw(void)
 							break;
 						// White  
 						case 27:
-							bc = (max_menu==menu_sel) ? 0x0000ff : 0xffffffff;
+							bc = (max_menu==menu_sel) ? 0x0000ff : 0x00ffffff;
 							blit_set_color(fc,bc);
 							break;
 						// Light White  
