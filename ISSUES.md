@@ -1,5 +1,5 @@
 # General CFW Issues
-- Cannot disable settings per game.
+- ???
 
 # PSP Issues
 - ???
