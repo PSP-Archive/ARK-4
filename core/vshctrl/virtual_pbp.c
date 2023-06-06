@@ -946,10 +946,13 @@ int has_prometheus_module(const char *isopath)
 {
     int ret;
     u32 size, lba;
+
+    int k1 = pspSdkSetK1(0);
     
     ret = isoOpen(isopath);
 
     if (ret < 0) {
+        pspSdkSetK1(k1);
         return 0;
     }
 
@@ -958,6 +961,7 @@ int has_prometheus_module(const char *isopath)
 
     isoClose();
 
+    pspSdkSetK1(k1);
     return ret;
 }
 
@@ -967,6 +971,8 @@ int has_update_file(const char* isopath, char* update_file){
     int pos = 883;
 
     char game_id[10];
+
+    int k1 = pspSdkSetK1(0);
 
     isoOpen(isopath);
     isoRead(game_id, lba, pos, 10);
@@ -991,10 +997,12 @@ int has_update_file(const char* isopath, char* update_file){
             // found
             sceIoClose(fd);
             if (update_file) strcpy(update_file, path);
+            pspSdkSetK1(k1);
             return 1;
         }
     }
     // not found
+    pspSdkSetK1(k1);
     return 0;
 }
 
@@ -1127,7 +1135,7 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     param->key = "umdemu";
     apitype = 0x123;
 
-    static char pboot_path[256];
+    char pboot_path[256];
     int has_pboot = has_update_file(vpbp->name, pboot_path);
 
     if (has_pboot){

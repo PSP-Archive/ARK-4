@@ -543,19 +543,53 @@ void exec_random_game() {
 
     struct SceKernelLoadExecVSHParam param;
     int apitype;
+	char* loadexec_file;
     memset(&param, 0, sizeof(param));
     param.size = sizeof(param);
-    param.args = 33;
-    param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
-    param.key = "umdemu";
-    if (psp_model == PSP_GO)
-        apitype = 0x125;
-    else
-        apitype = 0x123;
-
-
-    sctrlSESetBootConfFileIndex(3);
+    
+	//set iso file for reboot
     sctrlSESetUmdFile(game);
+
+    //set iso mode for reboot
+    sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
+    sctrlSESetBootConfFileIndex(MODE_INFERNO);
+
+    param.key = "umdemu";
+
+    char pboot_path[256];
+    int has_pboot = has_update_file(game, pboot_path);
+
+    if (has_pboot){
+        // configure to use dlc/update
+        param.argp = pboot_path;
+        param.args = strlen(pboot_path) + 1;
+        loadexec_file = param.argp;
+
+        if (psp_model == PSP_GO && game[0] == 'e' && game[1] == 'f') {
+            apitype = 0x126;
+        }
+		else {
+			apitype = 0x124;
+		}
+    }
+    else{
+        //reset and configure reboot parameter
+        loadexec_file = game;
+
+        if (psp_model == PSP_GO && game[0] == 'e' && game[1] == 'f') {
+            apitype = 0x125;
+        }
+		else {
+			apitype = 0x123;
+		}
+
+        if (has_prometheus_module(game)) {
+            param.argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
+        } else {
+            param.argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+        }
+        param.args = 33;
+    }
 
     sctrlKernelLoadExecVSHWithApitype(apitype, game, &param);
 

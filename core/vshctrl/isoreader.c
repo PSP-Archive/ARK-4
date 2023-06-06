@@ -499,6 +499,8 @@ int isoOpen(const char *path)
 {
     int ret;
 
+    int k1 = pspSdkSetK1(0);
+
     if (g_isofd >= 0) {
         isoClose();
     }
@@ -594,7 +596,7 @@ error:
     if (g_isofd >= 0) {
         isoClose();
     }
-
+    pspSdkSetK1(k1);
     return ret;
 }
 
@@ -605,6 +607,8 @@ int isoGetTotalSectorSize(void)
 
 void isoClose(void)
 {
+    int k1 = pspSdkSetK1(0);
+    
     sceIoClose(g_isofd);
     g_isofd = -1;
     g_filename = NULL;
@@ -612,30 +616,36 @@ void isoClose(void)
     g_total_sectors = 0;
     ciso_cur_block = -1;
     g_CISO_cur_idx = -1;
+    
+    pspSdkSetK1(k1);
 }
 
 int isoGetFileInfo(char * path, u32 *filesize, u32 *lba)
 {
-    int ret;
+    int ret = 0;
     Iso9660DirectoryRecord rec;
+    int k1 = pspSdkSetK1(0);
 
     ret = findPath(path, &rec);
 
-    if (ret < 0) {
-        return ret;
+    if (ret >= 0) {
+        if (lba){
+           *lba = rec.lsbStart;
+        }
+        if (filesize) {
+            *filesize = rec.lsbDataLength;
+        }
     }
-
-    *lba = rec.lsbStart;
-
-    if (filesize != NULL) {
-        *filesize = rec.lsbDataLength;
-    }
-
-    return 0;
+    
+    pspSdkSetK1(k1);
+    return ret;
 }
 
 int isoRead(void *buffer, u32 lba, int offset, u32 size)
 {
+    int k1 = pspSdkSetK1(0);
     u32 pos = isoLBA2Pos(lba, offset);
-    return read_data(buffer, size, pos);
+    int res = read_data(buffer, size, pos);
+    pspSdkSetK1(k1);
+    return res;
 }
