@@ -5,7 +5,7 @@
 
 #define MAX_COLORS 5
 
-static int colors[MAX_COLORS] = {
+static unsigned int colors[MAX_COLORS] = {
     WHITE,
     LITEGRAY,
     GRAY,
