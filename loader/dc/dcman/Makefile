@@ -16,7 +16,7 @@ USE_KERNEL_LIBS = 1
 
 LDFLAGS = -nostdlib -nodefaultlibs
 LIBDIR = $(ARKROOT)/libs
-LIBS = -lpspnand_driver -lpspsystemctrl_kernel -lpsplflash_fatfmt -lpspsemaphore
+LIBS = -lpspmodinfo -lpspnand_driver -lpspsystemctrl_kernel -lpsplflash_fatfmt -lpspsemaphore
 
 include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)

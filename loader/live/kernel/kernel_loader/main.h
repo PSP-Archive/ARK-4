@@ -32,7 +32,7 @@
 
 #define MAX_SAVE_SIZE 128
 
-ARKConfig* ark_config;
+extern ARKConfig* ark_config;
 
 // Function Prototypes
 void kernelContentFunction(void);

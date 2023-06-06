@@ -111,7 +111,7 @@ int umdvideolist_find(UmdVideoList *list, const char *search)
 	int i;
 
 	for(i=0, p=list->head.next; p != NULL; p=p->next, ++i) {
-		if(0 == stricmp(p->path, search)) {
+		if(0 == strcasecmp(p->path, search)) {
 			break;
 		}
 	}

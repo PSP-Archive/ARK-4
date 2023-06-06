@@ -3,12 +3,13 @@
 
 ####### ARK Builder Script ##########
 #                                   #
-# Author  : Krazynez                #
+# Authors : Krazynez                #
+#           MotoLegacy              #
 #                                   #
-# Date    : 2022-09-09              #
+# Date    : 2022-09-09, 2023-05-10  #
 #                                   #
 #####################################
-version=0.6.1
+version=0.7.0
 
 export PSPDEV=/usr/local/pspdev && export PATH=$PATH:$PSPDEV/bin 
 
@@ -94,7 +95,8 @@ function original {
 	clear
 	read -p "
 	This script will setup the correct SDK to build ARK, get sign_np
-	dependency and temporarly setup the enivorment to build ARK-4. 
+	and psp-packer dependencies and temporarly setup the enivorment 
+	to build ARK-4. 
 	
 	Press Enter to continue..."
 	
@@ -115,6 +117,8 @@ function original {
 			printf "Already Exist\n"
 		elif [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so" ]] ; then
 			elevatePrivs ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+		elif [[ -f "/usr/lib/libmpfr.so" ]] ; then
+			elevatePrivs ln -s /usr/lib/libmpfr.so /usr/lib/libmpfr.so.4
 	    elif [[ -f "/lib/libmpfr.so" ]] ; then
 	        elevatePrivs ln -s /lib/libmpfr.so /lib/libmpfr.so.4
 	    elif [[ -f "/lib/libmpfr.so*" ]] ; then 
@@ -146,6 +150,26 @@ function original {
 	        popd 
 	
 	        rm -rf sign_np
+	
+	    fi
+
+		# Packing utility by davee
+		if [[ ! -f $PSPDEV/bin/psp-packer ]] ; then
+	        git clone https://bitbucket.org/DaveeFTW/psp-packer/
+	
+	        pushd psp-packer
+
+			mkdir build
+			cd build
+	
+			cmake ../
+	        eval make
+	
+	        mv psp-packer $PSPDEV/bin
+	
+	        popd 
+	
+	        rm -rf psp-packer
 	
 	    fi
 
@@ -193,15 +217,15 @@ function withDialog {
 
 	dialog \
 		--title "Welcome to the ARK Compiler" \
-		--backtitle "Script created by Krazynez Version: $version" \
-		--msgbox "This script will setup the correct SDK to build ARK, get sign_np dependency and temporarly setup the enivorment to build ARK-4." 10 80 
+		--backtitle "Script created by Krazynez, and updated by MotoLegacy Version: $version" \
+		--msgbox "This script will setup the correct SDK to build ARK, get sign_np and psp-packer dependencies and temporarily setup the environment to build ARK-4." 10 80 
 
 $
-	dialog 	--title "Checking for existitng SDK"
+	dialog 	--title "Checking for existing SDK"
 
 	if [[ -d "/usr/local/pspdev" ]] ; then
 		response=$(dialog \
-			--title "EXISITING PSPSDK!" \
+			--title "EXISTING PSPSDK!" \
 			--no-cancel \
 			--radiolist \
 			"Choose an Option" \
@@ -226,6 +250,8 @@ $
 	if [[ ! -f "/lib/libmpfr.so.4" ]] ; then
 		if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so" ]] ; then
 			elevatePrivs ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+		elif [[ -f "/usr/lib/libmpfr.so" ]] ; then
+			elevatePrivs ln -s /usr/lib/libmpfr.so /usr/lib/libmpfr.so.4
 		elif [[ -f "/lib/libmpfr.so" ]] ; then
 	         elevatePrivs ln -s /lib/libmpfr.so /lib/libmpfr.so.4
 	    elif [[ -f "/lib/libmpfr.so*" ]] ; then 
@@ -251,6 +277,26 @@ $
 		popd
 
 		rm -rf sign_np
+	fi
+
+	# Packing utility by davee
+	if [[ ! -f $PSPDEV/bin/psp-packer ]] ; then
+	    git clone https://bitbucket.org/DaveeFTW/psp-packer/
+	
+	    pushd psp-packer
+
+		mkdir build
+		cd build
+	
+		cmake ../
+	    eval make
+	
+	    mv psp-packer $PSPDEV/bin
+	
+	    popd 
+	
+	    rm -rf psp-packer
+	
 	fi
 	
 	if [[ $1 == "--debug" ]] ; then
