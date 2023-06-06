@@ -942,12 +942,12 @@ int vpbp_getstat(const char * file, SceIoStat * stat)
     return ret;
 }
 
-static int has_prometheus_module(VirtualPBP *vpbp)
+int has_prometheus_module(const char *isopath)
 {
     int ret;
     u32 size, lba;
     
-    ret = isoOpen(vpbp->name);
+    ret = isoOpen(isopath);
 
     if (ret < 0) {
         return 0;
@@ -961,14 +961,14 @@ static int has_prometheus_module(VirtualPBP *vpbp)
     return ret;
 }
 
-static int has_update_file(VirtualPBP* vpbp, char* update_file){
+int has_update_file(const char* isopath, char* update_file){
     // game ID is always at offset 0x8373 within the ISO
     int lba = 16;
     int pos = 883;
 
     char game_id[10];
 
-    isoOpen(vpbp->name);
+    isoOpen(isopath);
     isoRead(game_id, lba, pos, 10);
     isoClose();
 
@@ -1128,7 +1128,7 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     apitype = 0x123;
 
     static char pboot_path[256];
-    int has_pboot = has_update_file(vpbp, pboot_path);
+    int has_pboot = has_update_file(vpbp->name, pboot_path);
 
     if (has_pboot){
         // configure to use dlc/update
@@ -1157,7 +1157,7 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
             }
         }
 
-        if (has_prometheus_module(vpbp)) {
+        if (has_prometheus_module(vpbp->name)) {
             param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
         } else {
             param->argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";

@@ -26,3 +26,24 @@
 #ifdef F_VshCtrl_0006
 	IMPORT_FUNC  "VshCtrlLib",0x36197FB3,vshCtrlDeleteHibernation
 #endif
+#ifdef F_VshCtrl_0007
+	IMPORT_FUNC  "VshCtrlLib",0xF1E6A46D,isoOpen
+#endif
+#ifdef F_VshCtrl_0008
+	IMPORT_FUNC  "VshCtrlLib",0xC4B3078E,isoRead
+#endif
+#ifdef F_VshCtrl_0009
+	IMPORT_FUNC  "VshCtrlLib",0x4DA81CDD,isoClose
+#endif
+#ifdef F_VshCtrl_0010
+	IMPORT_FUNC  "VshCtrlLib",0xE2498CEC,isoGetFileInfo
+#endif
+#ifdef F_VshCtrl_0011
+	IMPORT_FUNC  "VshCtrlLib",0x4BDA734F,isoGetTotalSectorSize
+#endif
+#ifdef F_VshCtrl_0012
+	IMPORT_FUNC  "VshCtrlLib",0x29154CE0,has_prometheus_module
+#endif
+#ifdef F_VshCtrl_0013
+	IMPORT_FUNC  "VshCtrlLib",0x39F5F78E,has_update_file
+#endif

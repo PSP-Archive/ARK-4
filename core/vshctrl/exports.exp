@@ -32,6 +32,13 @@ PSP_EXPORT_FUNC(vctrlVSHUpdateConfig)
 PSP_EXPORT_FUNC(vshDetectDiscType)
 PSP_EXPORT_FUNC(fakeParamInexistance)
 PSP_EXPORT_FUNC(vshCtrlDeleteHibernation)
+PSP_EXPORT_FUNC(isoOpen)
+PSP_EXPORT_FUNC(isoRead)
+PSP_EXPORT_FUNC(isoClose)
+PSP_EXPORT_FUNC(isoGetFileInfo)
+PSP_EXPORT_FUNC(isoGetTotalSectorSize)
+PSP_EXPORT_FUNC(has_prometheus_module)
+PSP_EXPORT_FUNC(has_update_file)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS
