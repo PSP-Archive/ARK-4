@@ -1,5 +1,15 @@
 # ARK Changelog
 
+## Version 4.20.53 (???)
+- Improved `Advanced VSH Menu` options in `Adrenaline` installations.
+- Improved `Advanced VSH Menu` options in `PSP Go` models.
+- Fixed several issues in `(Advanced) VSH Menu` that would prevent configuration from being updated.
+- Fixed and improved random color selection in `(Advanced) VSH Menu`.
+- Added support for `PBOOT.PBP` updates and `Prometheus`-patched games in the `Boot Random ISO` feature of `Advanced VSH Menu`
+- Improved memory management in the `XMB` when reading `ISO/CSO` files.
+- Added `Windows 7` theme for `Custom Launcher`/`Recovery`.
+- Severeal more cleanup and improvements.
+
 ## Version 4.20.52 (2023-06-05)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42052
 - Added patch to remove annoying "overclocked" message in ATV Offroad Fury Pro.
