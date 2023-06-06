@@ -79,7 +79,6 @@ int module_start(SceSize args, void* argp)
     ark_config = sctrlHENGetArkConfig(NULL);
     se_config = sctrlSEGetConfig(NULL);
 
-    isoInit();
     vshpatch_init();
     load_server_file();
     
