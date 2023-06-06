@@ -7,7 +7,7 @@
 - Fixed and improved random color selection in `(Advanced) VSH Menu`.
 - Added support for `PBOOT.PBP` updates and `Prometheus`-patched games in the `Boot Random ISO` feature of `Advanced VSH Menu`
 - Improved memory management in the `XMB` when reading `ISO/CSO` files.
-- Added `Windows 7` theme for `Custom Launcher`/`Recovery`.
+- Added `Windows 7` and `Windows XP` themes for `Custom Launcher`/`Recovery`.
 - Severeal more cleanup and improvements.
 
 ## Version 4.20.52 (2023-06-05)
