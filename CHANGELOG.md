@@ -1,6 +1,6 @@
 # ARK Changelog
 
-## Version 4.20.53 (???)
+## Version 4.20.53 (2013-06-06)
 - Improved `Advanced VSH Menu` options in `Adrenaline` installations.
 - Improved `Advanced VSH Menu` options in `PSP Go` models.
 - Fixed several issues in `(Advanced) VSH Menu` that would prevent configuration from being updated.
