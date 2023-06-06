@@ -111,6 +111,7 @@ void UMD::doExecute(){
     param.args = 33;
     param.key = "game";
     
+    sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
     sctrlSESetBootConfFileIndex(MODE_UMD);
     sctrlSESetUmdFile("");
     
