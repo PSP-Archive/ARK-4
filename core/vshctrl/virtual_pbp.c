@@ -988,7 +988,7 @@ int has_update_file(const char* isopath, char* update_file){
 
     // try to find the update file
     char path[256];
-    char* devs[] = {"ms0:", "ef0:"};
+    static char* devs[] = {"ms0:", "ef0:"};
 
     for (int i=0; i<2; i++){
         sprintf(path, "%s/PSP/GAME/%s/PBOOT.PBP", devs[i], game_id);
