@@ -1,5 +1,11 @@
 # ARK Changelog
 
+## Version 4.20.54 (2023-06-07)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42054
+- Fixed crash in `PS Vita` with `Standalone` installations.
+- Improved stability of kernel exploit (`K.BIN` file) for `PS Vita Standalone` installations.
+- Added new theme `yokai` made by a user.
+
 ## Version 4.20.53 (2023-06-06)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42053
 - Improved `Advanced VSH Menu` options in `Adrenaline` installations.
