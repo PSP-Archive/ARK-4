@@ -62,7 +62,7 @@ Installation On PSP
 Installation On PS Vita
 
 
-  Standalone
+  Standalone via FastARK (PBOOT method)
 
     - Works on Official Firmware 3.60 up to 3.74, doesn't require Henkaku/h-encore or any native hack.
     - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended. `Minis` are `NOT` recommended.
@@ -76,6 +76,19 @@ Installation On PS Vita
     - If you get a kernel exploit error, simply close the app and open it again.
     - If you are running an old firmware (<3.60), you will need a spcialized `K.BIN`, either build one yourself or open an `Feature Request`.
 
+  Standalone via ChovySign
+
+    - Works on Official Firmware 2.10 up to 3.74, doesn't require Henkaku/h-encore or any native hack.
+    - Requires `ChovySign` (NOTE: only available for `Windows`): https://silica.codes/SilicaAndPina/chovy-sign
+    - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended.
+    - Follow the instructions from the official `ChovySig` project to sign and install `ark_loader.iso` in the `Vita/ChovySign` folder.
+    - Install the ARK savedata folder into `ux0:pspemu/PSP/SAVEDATA/ARK_01234`.
+    - Copy `K.BIN` from `Vita/Standalone` folder into `ARK_01234` savedata folder.
+    - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
+    - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
+    - Some features are not available in standalone installations, mainly the official Sony `XMB` and `PS1` games.
+    - If you get a kernel exploit error, simply close the app and open it again.
+    - If you are running an old firmware (<3.60), you will need a spcialized `K.BIN`, either build one yourself or open an `Feature Request`.
 
   Adrenaline
 
