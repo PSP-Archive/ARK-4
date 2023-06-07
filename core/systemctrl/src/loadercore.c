@@ -191,6 +191,15 @@ static void loadXmbControl(){
 static void checkArkPath(){
     int res = sceIoDopen(ark_config->arkpath);
     if (res < 0){
+        // fix for PSP-Go with dead ef
+        if (ark_config->arkpath[0]=='e' && ark_config->arkpath[1]=='f'){
+            ark_config->arkpath[0] = 'm'; ark_config->arkpath[1] = 's';
+            if ((res=sceIoDopen(ark_config->arkpath))>=0){
+                sceIoDclose(res);
+                return;
+            }
+        }
+        // no ARK install folder, default to SEPLUGINS
         strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
     }
     else{
@@ -226,6 +235,8 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     {
         // Check ARK install path
         checkArkPath();
+        // Check controller input to disable settings and/or plugins
+        checkControllerInput();
         // load settings
         loadSettings();
     }

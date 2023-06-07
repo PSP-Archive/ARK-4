@@ -417,7 +417,6 @@ static int isRecoveryMode(){
 }
 
 void LoadPlugins(){
-    checkControllerInput();
     if (disable_plugins || isRecoveryMode())
         return; // don't load plugins in recovery mode
     is_plugins_loading = 1;
@@ -442,7 +441,6 @@ void LoadPlugins(){
 }
 
 void loadSettings(){
-    checkControllerInput();
     if (disable_settings || isRecoveryMode())
         return; // don't load settings in recovery mode
     // process settings file
