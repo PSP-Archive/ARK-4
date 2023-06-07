@@ -211,6 +211,9 @@ static void checkUpdates(){
         update_folder[0] = update_eboot[0] = 'e';
         update_folder[1] = update_eboot[1] = 'f';
     }
+    else if (common::getArkConfig()->exec_mode == PS_VITA){
+        update_eboot[21] = 'V';
+    }
 
     SystemMgr::pauseDraw();
     if ((ret=initializeNetwork()) >= 0){
