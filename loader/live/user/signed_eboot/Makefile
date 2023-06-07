@@ -5,9 +5,9 @@ all:
 	$(Q)cp eboot/PARAM.SFO disc0/psp_game/param.sfo
 	$(Q)$(ARKROOT)/contrib/PC/prxencrypter/prxencrypter eboot/ARK.prx
 	$(Q)pack-pbp EBOOT.PBP eboot/PARAM.SFO eboot/ICON0.PNG NULL NULL NULL NULL data.psp NULL
-	#$(Q)$(PYTHON) make_iso.py
+	$(Q)mkisofs -o ark_loader.iso disc0/
 
 clean:
 	$(Q)make $@ -C eboot/sysmem $(OPT)
 	$(Q)make $@ -C  eboot $(OPT)
-	$(Q)rm -f EBOOT.BIN EBOOT.PBP data.psp
+	$(Q)rm -f EBOOT.BIN EBOOT.PBP data.psp ark_loader.iso

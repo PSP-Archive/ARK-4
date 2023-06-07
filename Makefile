@@ -61,6 +61,7 @@ all: subdirs newcipl kxploits mkdir-dist encrypt-prx copy-bin
 copy-bin:
 #	Common installation
 	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
+	$(Q)cp loader/live/user/signed_eboot/ark_loader.iso dist/Vita/ChovySign/
 	$(Q)cp loader/live/kernel/kxploit/psp660/K.BIN dist/ARK_Live/K.BIN # Kernel exploit for PSP
 	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/Vita/Standalone/ # Vita 3.60 PBOOT.PBP bubble
 	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/Vita/Standalone/K.BIN # Kernel exploit for Vita 3.60+
@@ -233,6 +234,7 @@ mkdir-dist:
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
 	$(Q)mkdir dist/Vita/Adrenaline | true
 	$(Q)mkdir dist/Vita/Standalone | true
+	$(Q)mkdir dist/Vita/ChovySign  | true
 
 -include $(ARKROOT)/.config
 include $(ARKROOT)/common/make/quiet.mak
