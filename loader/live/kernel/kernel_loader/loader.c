@@ -48,9 +48,8 @@ void flashPatch(){
         }
     }
     else{ // Patching flash0 on Vita
-        strcpy(ark_config->exploit_id, "ePSP");
         PRTSTR("Installing on PS Vita");
-        strcpy(ark_config->exploit_id, "Vita");
+        strcpy(ark_config->exploit_id, "ePSP");
         patchKermitPeripheral(k_tbl);
     }
 }

