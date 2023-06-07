@@ -552,6 +552,12 @@ int submenu_setup(void)
 		case FAKE_REGION_KOREA:
 			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_KOREA];
 			break;
+		case FAKE_REGION_UNITED_KINGDOM:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_UNITED_KINGDOM];
+			break;
+		case FAKE_REGION_LATIN_AMERICA:
+			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_LATIN_AMERICA];
+			break;
 		case FAKE_REGION_AUSTRALIA:
 			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_AUSTRALIA];
 			break;

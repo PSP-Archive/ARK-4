@@ -110,8 +110,6 @@ void change_region(int dir, int max)
 	int sel = cnf.vshregion;
 
 	// select new
-	if((sel+dir) == 5) sel = 6;
-	if((sel+dir) == 6) sel = 5;
 	sel = limit(sel+dir, 0, max);
 	cnf.vshregion=sel;
 }
