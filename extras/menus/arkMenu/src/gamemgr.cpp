@@ -705,11 +705,11 @@ void GameManager::gameOptionsMenu(){
 
 void GameManager::startBoot(){
     switch (common::getConf()->startbtn){
-    case 1: { // Default Start Button (Current)
+    case 0: { // Default Start Button (Current)
         this->endAllThreads();
         this->getEntry()->execute();
     } break;
-    case 2: { // Last game
+    case 1: { // Last game
         const char* last_game = common::getConf()->last_game;
         if (Eboot::isEboot(last_game)){
             this->endAllThreads();
@@ -722,7 +722,7 @@ void GameManager::startBoot(){
             iso->execute();
         }
     } break;
-    case 3: { // Random ISO
+    case 2: { // Random ISO
         if (this->categories[GAME]->getVectorSize() > 0){
             this->endAllThreads();
             srand(time(NULL));
