@@ -1,6 +1,7 @@
 # ARK Changelog
 
 ## Version 4.20.54 Rev 2 (2023-06-07)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42054-r2
 - Added support for using `ChovySign` to create `Standalone` installations on `PS Vita`.
 
 ## Version 4.20.54 (2023-06-07)
