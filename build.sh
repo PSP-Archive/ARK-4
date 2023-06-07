@@ -5,71 +5,25 @@
 #                                   #
 # Author  : Krazynez                #
 #                                   #
-# Date    : 2022-09-09              #
+# Date    : 2023-06-07              #
 #                                   #
 #####################################
-version=0.6.1
+version=0.7.0
 
 export PSPDEV=/usr/local/pspdev && export PATH=$PATH:$PSPDEV/bin 
 
 dialogCheck=$(command -v dialog 2>/dev/null)
 
 function checkDepends {
-	python3Check=$(command -v python3 2>/dev/null)
-	python3Ret=$?
-
-	makeCheck=$(command -v make 2>/dev/null)
-	makeRet=$?
-
-	sevenzCheck=$(command -v 7z 2>/dev/null)
-	sevenzRet=$?
-
-	if [[ $python3Ret -eq 1 || $makeRet -eq 1 ]] ; then
-		if [[ $python3Ret && $makeRet -eq 1 ]] ; then
-			if [[ -f $dialogCheck ]] ; then
-				dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python3 ] and  [ make ] are required packages" 10 50 
-				sleep 2;
-				dialog --clear
-				exit 1;	
-			else
-				printf "You need both \`python3\` and \`make\`\n"
-				exit 1;
-			fi
-		fi
-
-	elif [[ $python3Ret -eq 1 && $makeRet -eq 0 ]] ; then
-		if [[ -f $dialogCheck ]] ; then
-            dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ python3 ] is a required package" 10 50
-            sleep 2;
-            dialog --clear
-            exit 1; 
-        else
-            printf " \`python3\` is required\n"
-            exit 1;
-		fi
-
-	elif [[ $python3Ret -eq 0 && $makeRet -eq 1 ]] ; then
-		if [[ -f $dialogCheck ]] ; then
-            dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ make ] is a required package" 10 50
-            sleep 2;
-            dialog --clear
-            exit 1;
-        else
-            printf " \`make\` is required\n"
-            exit 1;
-		fi
-	elif [[ $sevenzRet -eq 1 ]] ; then
-		if [[ -f $dialogCheck ]] ; then
-			dialog --colors --title "\Z1 ERROR! \Z0" --infobox "[ 7z ] is a required package" 10 50
-			sleep 2;
-			dialog --clear
-			exit 1;
-		else
-			printf " \`7z\` is required\n"
-			exit 1;
-		fi
+	psptoolchainCheck=$(command -v psp-gcc 2>/dev/null) 
+	psptoolchainRet=$?
+	if [[ $psptoolchainRet -eq 1 ]] ; then
+		printf "You need to first download and install the psptoolchain first!\n";
+		exit 1;
 	fi
 
+	sudo apt install -y build-essential python3-pip p7zip-full zlib1g-dev libmpfr-dev
+	pip3 install pycryptodome ecdsa
 }
 
 export -f checkDepends
