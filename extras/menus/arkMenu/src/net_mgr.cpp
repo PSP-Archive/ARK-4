@@ -212,7 +212,15 @@ static void checkUpdates(){
         update_folder[1] = update_eboot[1] = 'f';
     }
     else if (common::getArkConfig()->exec_mode == PS_VITA){
+        // redirect to ms0:/PSP/APPS/UPDATE/VBOOT.PBP
         update_eboot[21] = 'V';
+        update_folder[9] = update_eboot[9] = 'A';
+        update_folder[10] = update_eboot[10] = 'P';
+        update_folder[11] = update_eboot[11] = 'P';
+        update_folder[12] = update_eboot[12] = 'S';
+        update_folder[13] = 0;
+        sceIoMkdir(update_folder, 0777);
+        update_folder[13] = '/';
     }
 
     SystemMgr::pauseDraw();
