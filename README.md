@@ -19,7 +19,8 @@ as well as unique and exclusive new features not found anywhere else.
         * [Full Flash Installation](#full-flash-installation)
         * [Time Machine and Despertar del Cementerio](#time-machine-and-despertar-del-cementerio)
       - [On PS Vita](#on-ps-vita)
-        * [Standalone](#standalone)
+        * [Standalone (FastARK PBOOT Method)](#standalone-via-fastark-pboot-method)
+        * [Standalone (ChovySign)](#standalone-via-chovysign)
         * [Adrenaline](#adrenaline)
       - [Update ARK](#update-ark)
       - [Legacy Game Exploits (PSP & Vita)](#legacy-game-exploits-psp--vita)
@@ -206,7 +207,7 @@ The instructions are as follows:
 <p>
 
   - Works on Official Firmware 2.10 up to 3.74, doesn't require Henkaku/h-encore or any native hack.
-  - Requires `ChovySign` (NOTE: only available for `Windows`): https://silica.codes/SilicaAndPina/chovy-sign
+  - Requires `ChovySign` (NOTE: only available for `Windows`, has been tested with `wine` and works however): https://silica.codes/SilicaAndPina/chovy-sign
   - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended.
   - Follow the instructions from the official `ChovySig` project to sign and install `ark_loader.iso` in the `Vita/ChovySign` folder.
   - Use FastARK on the ChovySign-installed bubble or manually install the `PBOOT.PBP` file in `Vita/Standalone` folder.
@@ -506,6 +507,23 @@ Theme: BadgerOS_Sprunk
 Theme: BadgerOS
 
 ![BadgerOS](.github/wallpapers/badgerOS.png "BadgerOS")
+
+Theme: CyanogenPSP
+
+![CyanogenPSP](.github/wallpapers/CyanogenPSP.png "CyanogenPSP")
+
+Theme: Windows 7
+
+![Windows7](.github/wallpapers/Windows7.png "Windows7")
+
+Theme: Windows XP
+
+![WindowsXP](.github/wallpapers/WindowsXP.png "WindowsXP")
+
+Theme: Yokai
+
+![Yokai](.github/wallpapers/yokai.png "yokai")
+
 
 
 

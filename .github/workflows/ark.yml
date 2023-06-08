@@ -45,7 +45,7 @@ jobs:
 
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget git python3 python3-pip && sudo pip3 install pycryptodome ecdsa
+        run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget git python3 python3-pip mkisofs && sudo pip3 install pycryptodome ecdsa
       - name: Extract SDK
         run: sudo 7z -o/usr/local/ x ./contrib/PC/PSPSDK/pspdev.7z 
       - name: Change Permissions
