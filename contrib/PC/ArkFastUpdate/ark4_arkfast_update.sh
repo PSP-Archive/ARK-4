@@ -6,9 +6,29 @@
 # 2022-09-23: cleanup files
 # 2023-02-10: update version
 # 2023-05-14: fix for v4.20
+# 2023-06-08: zip/unzip checks
+# 2023-06-08: custom build ver
 
 #sudo apt update
 #sudo apt install zip unzip -y
+
+if [ "$1" == "" ]; then
+    ark_zip_link="https://github.com/PSP-Archive/ARK-4/releases/latest/download/ARK4.zip"
+else
+    ark_zip_link="${1//tag/download}""/ARK4.zip"
+fi
+
+if ! command -v zip &> /dev/null
+then
+    echo "Please install zip first"
+    exit
+fi
+
+if ! command -v unzip &> /dev/null
+then
+    echo "Please install unzip first"
+    exit
+fi
 
 if [ -f "ArkFast.vpk" ]; then
     rm -f ArkFast.vpk
@@ -25,7 +45,7 @@ fi
 if [ -f "ARK4.zip" ]; then
     rm -f ARK4.zip
 fi
-wget -q --show-progress "https://github.com/PSP-Archive/ARK-4/releases/latest/download/ARK4.zip"
+wget -q --show-progress $ark_zip_link
 if [ -f "ARK4.zip" ]; then
     unzip ARK4.zip -d ARK4_tmp
     rm -f ARK4.zip

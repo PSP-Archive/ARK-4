@@ -22,7 +22,7 @@ function checkDepends {
 		exit 1;
 	fi
 
-	sudo apt install -y build-essential python3-pip p7zip-full zlib1g-dev libmpfr-dev
+	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev
 	pip3 install pycryptodome ecdsa
 }
 
