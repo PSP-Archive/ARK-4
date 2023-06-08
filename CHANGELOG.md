@@ -1,6 +1,6 @@
 # ARK Changelog
 
-## Version 4.20.54 Rev 2 (2023-06-08)
+## Version 4.20.55 (2023-06-08)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42055
 - Fixed crash when launching games from `XMB` introduced in the `4.20.53` update.
 - Cleaned up of `ChovySign` dummy `ISO` for `Standalone` installations on `PS Vita`.
