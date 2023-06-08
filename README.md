@@ -507,6 +507,23 @@ Theme: BadgerOS
 
 ![BadgerOS](.github/wallpapers/badgerOS.png "BadgerOS")
 
+Theme: CyanogenPSP
+
+![CyanogenPSP](.github/wallpapers/CyanogenPSP.png "CyanogenPSP")
+
+Theme: Windows 7
+
+![Windows7](.github/wallpapers/Windows7.png "Windows7")
+
+Theme: Windows XP
+
+![WindowsXP](.github/wallpapers/WindowsXP.png "WindowsXP")
+
+Theme: Yokai
+
+![Yokai](.github/wallpapers/yokai.png "yokai")
+
+
 
 
 #### Other Launchers
