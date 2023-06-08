@@ -19,7 +19,7 @@ as well as unique and exclusive new features not found anywhere else.
         * [Full Flash Installation](#full-flash-installation)
         * [Time Machine and Despertar del Cementerio](#time-machine-and-despertar-del-cementerio)
       - [On PS Vita](#on-ps-vita)
-        * [Standalone (FastARK PBOOT Method)](#standalone-via-fastark-pboot-method)
+        * [Standalone (FastARK PBOOT Method)](#standalone-via-fastark)
         * [Standalone (ChovySign)](#standalone-via-chovysign)
         * [Adrenaline](#adrenaline)
       - [Update ARK](#update-ark)
