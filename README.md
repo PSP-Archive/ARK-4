@@ -185,20 +185,17 @@ The instructions are as follows:
 #### On PS Vita
 <p>
 
-###### Standalone via FastARK (PBOOT method)
+###### Standalone via FastARK
 <p>
 
-  - Works on Official Firmware 2.10 up to 3.74, doesn't require Henkaku/h-encore or any native hack.
-  - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended. `Minis` are `NOT` recommended.
-  - For Henkaku/h-encore users, install an ARK bubble using [ArkFast](https://disk.yandex.ru/d/XMJpxf7RD79VLw) (manually updated, create an issue if it's outdated).
-  - Official Firmware users (no henkaku/h-encore) can install the PBOOT bubble manually: https://github.com/TheOfficialFloW/Trinity#preparation
-  - Replace the ARK savedata folder (`ux0:pspemu/PSP/SAVEDATA/ARK_01234`) with the folder from latest release.
-  - Copy `K.BIN` from `Vita/Standalone` folder into `ARK_01234` savedata folder.
+  - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
+  - Download and install latest `ArkFast.vpk` from this link: (https://disk.yandex.ru/d/XMJpxf7RD79VLw).
+  - Press `start` button to install the `Sasuke Commander` minigame with `ARK` on top of it.
+  - If out of date with latest release, use the updater built into the `launcher`.
   - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
   - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
   - Some features are not available in standalone installations, mainly the official Sony `XMB` and `PS1` games.
   - If you get a kernel exploit error, simply close the app and open it again.
-  - If you are running an old firmware (<3.60), you will need a spcialized `K.BIN`, either build one yourself or open an `Feature Request`.
 
 </p>
 
@@ -207,9 +204,9 @@ The instructions are as follows:
 <p>
 
   - Works on Official Firmware 2.10 up to 3.74, doesn't require Henkaku/h-encore or any native hack.
-  - Requires `ChovySign` (NOTE: only available for `Windows`, has been tested with `wine` and works however): https://silica.codes/SilicaAndPina/chovy-sign
+  - Requires `ChovySign`: https://silica.codes/SilicaAndPina/chovy-sign
   - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended.
-  - Follow the instructions from the official `ChovySig` project to sign and install `ark_loader.iso` in the `Vita/ChovySign` folder.
+  - Follow the instructions from the official `ChovySign` project to sign and install `ark_loader.iso` in the `Vita/ChovySign` folder.
   - Use FastARK on the ChovySign-installed bubble or manually install the `PBOOT.PBP` file in `Vita/Standalone` folder.
   - Install the ARK savedata folder into `ux0:pspemu/PSP/SAVEDATA/ARK_01234`.
   - Copy `K.BIN` from `Vita/Standalone` folder into `ARK_01234` savedata folder.
