@@ -6,9 +6,22 @@
 # 2022-09-23: cleanup files
 # 2023-02-10: update version
 # 2023-05-14: fix for v4.20
+# 2023-06-08: zip/unzip check
 
 #sudo apt update
 #sudo apt install zip unzip -y
+
+if ! command -v zip &> /dev/null
+then
+    echo "Please install zip first"
+    exit
+fi
+
+if ! command -v unzip &> /dev/null
+then
+    echo "Please install unzip first"
+    exit
+fi
 
 if [ -f "ArkFast.vpk" ]; then
     rm -f ArkFast.vpk
