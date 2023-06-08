@@ -556,7 +556,7 @@ void exec_random_game() {
 
     param.key = "umdemu";
 
-    char pboot_path[256];
+    static char pboot_path[256];
     int has_pboot = has_update_file(game, pboot_path);
 
     if (has_pboot){

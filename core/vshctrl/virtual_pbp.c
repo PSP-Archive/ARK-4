@@ -987,16 +987,14 @@ int has_update_file(const char* isopath, char* update_file){
     game_id[9] = 0;
 
     // try to find the update file
-    char path[256];
     static char* devs[] = {"ms0:", "ef0:"};
 
     for (int i=0; i<2; i++){
-        sprintf(path, "%s/PSP/GAME/%s/PBOOT.PBP", devs[i], game_id);
-        int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+        sprintf(update_file, "%s/PSP/GAME/%s/PBOOT.PBP", devs[i], game_id);
+        int fd = sceIoOpen(update_file, PSP_O_RDONLY, 0777);
         if (fd >= 0){
             // found
             sceIoClose(fd);
-            if (update_file) strcpy(update_file, path);
             pspSdkSetK1(k1);
             return 1;
         }
@@ -1135,7 +1133,7 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     param->key = "umdemu";
     apitype = 0x123;
 
-    char pboot_path[256];
+    static char pboot_path[256];
     int has_pboot = has_update_file(vpbp->name, pboot_path);
 
     if (has_pboot){
