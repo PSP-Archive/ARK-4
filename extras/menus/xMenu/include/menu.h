@@ -23,6 +23,7 @@
 #define TEXT_HEIGHT 10
 #define TEXT_WIDTH 7
 
+#define PBP_MAGIC 0x50425000
 #define POPS_RUNLEVEL        0x144
 #define POPS_RUNLEVEL_GO    0x155
 

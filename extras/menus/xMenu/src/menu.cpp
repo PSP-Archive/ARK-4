@@ -55,6 +55,14 @@ int Menu::getEbootType(const char* path){
     if (fp == NULL)
         return ret;
     
+    PBPHeader header;
+    fread(&header, 1, sizeof(header), fp);
+
+    if (header.magic != PBP_MAGIC){
+        fclose(fp);
+        return ret;
+    }
+
     fseek(fp, 48, SEEK_SET);
     
     u32* labelstart = new u32;
