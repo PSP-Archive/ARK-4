@@ -1,5 +1,5 @@
 # Number of Compilation Threads
-OPT=-j8
+OPT=-j$(shell nproc)
 
 PYTHON = $(shell which python3)
 ARKROOT ?= $(CURDIR)
