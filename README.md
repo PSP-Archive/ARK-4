@@ -207,7 +207,7 @@ The instructions are as follows:
   - Requires `ChovySign`: https://silica.codes/SilicaAndPina/chovy-sign
   - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended.
   - Follow the instructions from the official `ChovySign` project to sign and install `ark_loader.iso` in the `Vita/ChovySign` folder.
-  - Use FastARK on the ChovySign-installed bubble or manually install the `PBOOT.PBP` file in `Vita/Standalone` folder.
+  - Use FastARK on the ChovySign-installed bubble or manually install the `PBOOT.PBP` file in `Vita/Standalone` folder: https://github.com/TheOfficialFloW/Trinity#preparation
   - Install the ARK savedata folder into `ux0:pspemu/PSP/SAVEDATA/ARK_01234`.
   - Copy `K.BIN` from `Vita/Standalone` folder into `ARK_01234` savedata folder.
   - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
