@@ -3,7 +3,7 @@
 Menu::Menu(){
 
     this->readEbootList("ms0:/PSP/GAME/");
-    this->readEbootList("ef0:/PSP/GAME/");
+    this->readEbootList("ms0:/PSP/APPS/");
     this->index = 0;
     this->start = 0;
     this->txt = NULL;
@@ -55,10 +55,11 @@ int Menu::getEbootType(const char* path){
     if (fp == NULL)
         return ret;
     
-    PBPHeader header;
-    fread(&header, 1, sizeof(header), fp);
+    u32 magic;
+    fseek(fp, 0, SEEK_SET);
+    fread(&magic, 1, sizeof(magic), fp);
 
-    if (header.magic != PBP_MAGIC){
+    if (magic != PBP_MAGIC){
         fclose(fp);
         return ret;
     }
