@@ -5,7 +5,7 @@ labels: ["bug"]
 body:
   - type: markdown
     attributes:
-      value: Thank you for taking the time to fil out and document any bugs.
+      value: Thank you for taking the time to fill out and document any bugs.
   - type: dropdown
     id: model
     attributes:
@@ -39,7 +39,11 @@ body:
   - type: textarea
     attributes:
       label: Plugins ( if applicable )
-      description: "Please list all plugins enabled here."
+      description: "Please list all plugins here. You can just copy & paste your PLUGINS.TXT here."
+      placeholder: |
+        "vsh, ms0:/seplugins/category_lite.prx, on" 
+        "game, ms0:/seplugins/prxshot.prx, off" 
+        "etc.."
         
   - type: textarea
     id: steps-to-reproduce

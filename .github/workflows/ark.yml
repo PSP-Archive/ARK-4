@@ -4,7 +4,9 @@ on:
     paths-ignore: 
       - 'README.md'
       - 'build.sh' 
-      - '.github/ISSUES_TEMPLATE.md'
+      - '.github/ISSUES_TEMPLATE/*'
+      - '.github/screenshots/*'
+      - '.github/wallpapers/*'
       - 'contrib/PC/ARKUpgrader'
       - '*.pptx'
       - 'CHANGELOG.md'
