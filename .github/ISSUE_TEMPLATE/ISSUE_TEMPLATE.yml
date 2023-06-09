@@ -39,7 +39,7 @@ body:
   - type: textarea
     attributes:
       label: Plugins ( if applicable )
-      description: "Please list all plugins enabled here. Can copy paste PLUGINS.TXT"
+      description: "Please list all plugins here. You can just copy & paste your PLUGINS.TXT here."
       placeholder: |
         "vsh, ms0:/seplugins/category_lite.prx, on" 
         "game, ms0:/seplugins/prxshot.prx, off" 
