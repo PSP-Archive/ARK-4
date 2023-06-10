@@ -19,8 +19,8 @@ as well as unique and exclusive new features not found anywhere else.
         * [Full Flash Installation](#full-flash-installation)
         * [Time Machine and Despertar del Cementerio](#time-machine-and-despertar-del-cementerio)
       - [On PS Vita](#on-ps-vita)
-        * [Standalone (FastARK PBOOT Method)](#standalone-via-fastark)
-        * [Standalone (ChovySign)](#standalone-via-chovysign)
+        * [Standalone via FastARK](#standalone-via-fastark)
+        * [Standalone via ChovySign](#standalone-via-chovysign)
         * [Adrenaline](#adrenaline)
       - [Update ARK](#update-ark)
       - [Legacy Game Exploits (PSP & Vita)](#legacy-game-exploits-psp--vita)
@@ -565,6 +565,8 @@ Note: some of these menus have not been updated or supported by their developers
 - `meetpatty` for his excellent work in fixing bugs and adding important features like cIPL and DevKit support as well as porting `Time Machine` and `Despertar del Cementerio`.
 
 - `Codestation` for his incredible work improving CSO speeds and creating the ZSO format.
+
+- `Krazynez` for his amazing work on `Advanced VSH Menu` and other bugfixes and features.
 
 - `TheSubPlayer` for all the wonderful themes made for the custom launcher.
 
