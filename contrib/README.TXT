@@ -76,6 +76,7 @@ Installation On PS Vita
   Standalone via ChovySign
 
     - Works on Official Firmware 2.10 up to 3.74, doesn't require Henkaku/h-encore or any native hack.
+    - NOTE: you might need henkaku/h-encore to facilitate the installation process, but it won't be needed anymore after installing.
     - Requires `ChovySign`: https://silica.codes/SilicaAndPina/chovy-sign
     - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended.
     - Follow the instructions from the official `ChovySign` project to sign and install `ark_loader.iso` in the `Vita/ChovySign` folder.
