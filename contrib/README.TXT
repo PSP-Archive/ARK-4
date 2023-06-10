@@ -85,7 +85,6 @@ Installation On PS Vita
     - Install the `ARK_01234` savedata folder into `/Documents/PS Vita/PSAVEDATA/xxxxxxxxxxxxxxxx/`.
     - Copy `K.BIN` from `Vita/Standalone` folder into `ARK_01234` savedata folder.
     - Transfer the generated `ARK Loader` and `ARK_01234` savedata folders using `QCMA`.
-    - Copy `K.BIN` from `Vita/Standalone` folder into `ARK_01234` savedata folder.
     - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
     - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
     - Some features are not available in standalone installations, mainly the official Sony `XMB` and `PS1` games.
