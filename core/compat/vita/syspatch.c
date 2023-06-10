@@ -178,7 +178,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 		if (se_config->iso_cache){
 			int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
 			if (CacheInit){
-				CacheInit(32 * 1024, 64, 11); // 4MB cache for PS Vita standalone
+				CacheInit(32 * 1024, 64, 11); // 2MB cache for PS Vita standalone
 			}
         }
         goto flush;

@@ -471,7 +471,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 		if (se_config->iso_cache){
 			int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
 			if (CacheInit){
-				CacheInit(32 * 1024, 32, (se_config->force_high_memory)?2:11); // 2MB cache for PS Vita
+				CacheInit(32 * 1024, 128, (se_config->force_high_memory)?2:11); // 4MB cache for Adrenaline
 			}
         }
         goto flush;
