@@ -3,6 +3,8 @@
 #include "common.h"
 #include <ctime>
 
+extern float flake_size[];
+
 Waves :: Waves()
 {
     this->step = 482;
@@ -20,6 +22,12 @@ Waves :: Waves()
         this->vertices2[i].z = 0;
         this->vertices2[i].color = WAVE_COLOR_OUTLINE;
         this->vertices2[i].y = 160 + WAVE_AMPLITUDE * sin(2*480 + ((float)i/(float)100) - 240);
+    }
+
+    for (int i=0; i<10; i++){
+        bubbles[i].y = 273;
+        bubbles[i].x = rand()%480;
+        bubbles[i].color = rand()%3; // use color variable for size
     }
 };
 
@@ -43,6 +51,22 @@ void Waves :: update()
         vertices2[480].y = 160 + WAVE_AMPLITUDE * sin(2*480 + ((float)(step+1)/(float)100) - 240);
         step++;
         frameskip = WAVES_FRAMESKIP;
+
+        int r = rand();
+        for (int i=0; i<10; i++){
+            if (bubbles[i].y > vertices[bubbles[i].x].y || bubbles[i].y > vertices2[bubbles[i].x].y){
+                int sway = (r%3)-1;
+                r = r>>i;
+                bubbles[i].x += sway;
+                bubbles[i].y--;
+                
+            }
+            else {
+                bubbles[i].y = 273;
+                bubbles[i].x = r%480;
+                bubbles[i].color = r%3;
+            }
+        }
     }
 };
 
@@ -52,55 +76,16 @@ void Waves :: draw()
     // we draw a slightly offcentered outline to reduce blockyness (simple antialiasing)
     sceGumDrawArray(GU_POINTS, GU_COLOR_8888|GU_VERTEX_16BIT|GU_TRANSFORM_2D, 480, 0, vertices);
     sceGumDrawArray(GU_POINTS, GU_COLOR_8888|GU_VERTEX_16BIT|GU_TRANSFORM_2D, 480, 0, vertices2);
-    for (int i=0; i<480; i+=10){
+    for (int i=0; i<480; i++){
         ya2d_draw_line(i, vertices[i].y-1, i, vertices[i].y+1, WAVE_COLOR_OUTLINE);
         ya2d_draw_line(i, vertices2[i].y-1, i, vertices2[i].y+1, WAVE_COLOR_OUTLINE);
+        
         ya2d_draw_line(i, vertices[i].y, i, 272, WAVE_COLOR);
         ya2d_draw_line(i, vertices2[i].y, i, 272, WAVE_COLOR2);
+    }
 
-        ya2d_draw_line(i+1, vertices[i+1].y-1, i+1, vertices[i+1].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+1, vertices2[i+1].y-1, i+1, vertices2[i+1].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+1, vertices[i+1].y, i+1, 272, WAVE_COLOR);
-        ya2d_draw_line(i+1, vertices2[i+1].y, i+1, 272, WAVE_COLOR2);
-
-        ya2d_draw_line(i+2, vertices[i+2].y-1, i+2, vertices[i+2].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+2, vertices2[i+2].y-1, i+2, vertices2[i+2].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+2, vertices[i+2].y, i+2, 272, WAVE_COLOR);
-        ya2d_draw_line(i+2, vertices2[i+2].y, i+2, 272, WAVE_COLOR2);
-
-        ya2d_draw_line(i+3, vertices[i+3].y-1, i+3, vertices[i+3].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+3, vertices2[i+3].y-1, i+3, vertices2[i+3].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+3, vertices[i+3].y, i+3, 272, WAVE_COLOR);
-        ya2d_draw_line(i+3, vertices2[i+3].y, i+3, 272, WAVE_COLOR2);
-
-        ya2d_draw_line(i+4, vertices[i+4].y-1, i+4, vertices[i+4].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+4, vertices2[i+4].y-1, i+4, vertices2[i+4].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+4, vertices[i+4].y, i+4, 272, WAVE_COLOR);
-        ya2d_draw_line(i+4, vertices2[i+4].y, i+4, 272, WAVE_COLOR2);
-
-        ya2d_draw_line(i+5, vertices[i+5].y-1, i+5, vertices[i+5].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+5, vertices2[i+5].y-1, i+5, vertices2[i+5].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+5, vertices[i+5].y, i+5, 272, WAVE_COLOR);
-        ya2d_draw_line(i+5, vertices2[i+5].y, i+5, 272, WAVE_COLOR2);
-
-        ya2d_draw_line(i+6, vertices[i+6].y-1, i+6, vertices[i+6].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+6, vertices2[i+6].y-1, i+6, vertices2[i+6].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+6, vertices[i+6].y, i+6, 272, WAVE_COLOR);
-        ya2d_draw_line(i+6, vertices2[i+6].y, i+6, 272, WAVE_COLOR2);
-
-        ya2d_draw_line(i+7, vertices[i+7].y-1, i+7, vertices[i+7].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+7, vertices2[i+7].y-1, i+7, vertices2[i+7].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+7, vertices[i+7].y, i+7, 272, WAVE_COLOR);
-        ya2d_draw_line(i+7, vertices2[i+7].y, i+7, 272, WAVE_COLOR2);
-
-        ya2d_draw_line(i+8, vertices[i+8].y-1, i+8, vertices[i+8].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+8, vertices2[i+8].y-1, i+8, vertices2[i+8].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+8, vertices[i+8].y, i+8, 272, WAVE_COLOR);
-        ya2d_draw_line(i+8, vertices2[i+8].y, i+8, 272, WAVE_COLOR2);
-
-        ya2d_draw_line(i+9, vertices[i+9].y-1, i+9, vertices[i+9].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+9, vertices2[i+9].y-1, i+9, vertices2[i+9].y+1, WAVE_COLOR_OUTLINE);
-        ya2d_draw_line(i+9, vertices[i+9].y, i+9, 272, WAVE_COLOR);
-        ya2d_draw_line(i+9, vertices2[i+9].y, i+9, 272, WAVE_COLOR2);
+    for (int i=0; i<10; i++){
+        intraFontSetStyle(common::getFont(), flake_size[bubbles[i].color], 0xafffffff, 0, 0.f, INTRAFONT_WIDTH_VAR);
+        intraFontPrint(common::getFont(), bubbles[i].x, bubbles[i].y, ".");
     }
 }

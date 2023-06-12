@@ -1,6 +1,8 @@
 #include "snow.h"
 #include "common.h"
 
+float flake_size[] = {0.5f, 1.0f, 2.0f};
+
 SnowAnim::SnowAnim(){
   int i;
   for (i = 0; i<100; i++) {
@@ -34,16 +36,6 @@ void SnowAnim::draw()
                snowflakes[a].y = 0;
                snowflakes[a].x = rand()%480;
           }
-          switch(snowflakes[a].flake){
-          case 0:
-                printSnowFlake((float)(snowflakes[a].x), (float)(snowflakes[a].y), 0.5f);
-                break;
-          case 1:
-                printSnowFlake((float)(snowflakes[a].x), (float)(snowflakes[a].y), 1.0f);
-                break;
-          case 2:
-                printSnowFlake((float)(snowflakes[a].x), (float)(snowflakes[a].y), 2.f);
-                break;
-          }
+          printSnowFlake((float)(snowflakes[a].x), (float)(snowflakes[a].y), flake_size[snowflakes[a].flake]);
      }
 }
