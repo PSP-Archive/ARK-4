@@ -313,23 +313,24 @@ static int controlThread(SceSize _args, void *_argp){
         if (pad.triangle() && !screensaver){
             changeMenuState();
         }
-        else if (pad.home() && screensaver_time != 0){
+        else if (pad.home()){
             screensaver = !screensaver;
             pad.flush();
+            last_pressed = clock();
             continue;
         }
         else if (!screensaver){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
         }
-        if (screensaver_time > 0 && !stillLoading()){
-            if (pad.any()){
-                last_pressed = clock();
-                if (screensaver){
-                    screensaver = 0;
-                    continue;
-                }
+        if (pad.any()){
+            last_pressed = clock();
+            if (screensaver){
+                screensaver = 0;
+                continue;
             }
+        }
+        if (screensaver_time > 0 && !stillLoading()){
             clock_t elapsed = clock() - last_pressed;
             double time_taken = ((double)elapsed)/CLOCKS_PER_SEC;
             if (time_taken > screensaver_time){
