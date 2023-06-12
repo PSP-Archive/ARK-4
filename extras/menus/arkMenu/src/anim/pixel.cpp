@@ -5,7 +5,6 @@
 
 PixelAnim::PixelAnim(){
     pixels = new t_pixel[MAX_PIXELS];
-    srand(time(NULL));
     for (int i = 0; i<MAX_PIXELS; i++){
         int xdirection = rand() % 2;
         int ydirection = rand() % 2;

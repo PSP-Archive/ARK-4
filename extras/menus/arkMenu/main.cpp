@@ -24,6 +24,8 @@ static SystemEntry* entries[MAX_ENTRIES];
 
 int main(int argc, char** argv){
 
+    srand(time(NULL));
+
     intraFontInit();
     ya2d_init();
 

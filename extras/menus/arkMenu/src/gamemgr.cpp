@@ -725,7 +725,6 @@ void GameManager::startBoot(){
     case 2: { // Random ISO
         if (this->categories[GAME]->getVectorSize() > 0){
             this->endAllThreads();
-            srand(time(NULL));
             int rand_idx = rand() % this->categories[GAME]->getVectorSize();
             Entry* e = this->categories[GAME]->getEntry(rand_idx);
             e->execute();

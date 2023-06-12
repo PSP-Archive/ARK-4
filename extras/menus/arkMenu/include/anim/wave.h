@@ -8,10 +8,8 @@
 
 #include "anim.h"
 
-#define WAVES_FRAMESKIP 7 // anything higher and the waves will not move smoothly, lower and the fps drop
-#define WAVE_STEP 0.3  // the waves speed, I find this value to be the best
-#define WAVE_AMPLITUDE 30.f // how much the wave moves on the screen
-#define WAVE_ANGLE 0.5 // a simple initial value
+#define WAVES_FRAMESKIP 0 // anything higher and the waves will not move smoothly, lower and the fps drop
+#define WAVE_AMPLITUDE 30 // how much the wave moves on the screen
 // these colors allow the background's color to standout, and they look great
 #define WAVE_COLOR 0x44E0E0E0
 #define WAVE_COLOR2 0x44C0C0C0
@@ -34,9 +32,7 @@ class Waves : public Anim
     
     private:
     
-        float amplitude;
-        float step;
-        float angle;
+        int step;
         
         int frameskip;
         

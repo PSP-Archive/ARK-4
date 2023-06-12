@@ -5,7 +5,6 @@
 #include "common.h"
 
 Sprites::Sprites(){
-    srand(time(NULL));
     for (int i=0; i<MAX_SPRITES; i++){
         sprites[i].xdir = rand() % 2;
         sprites[i].ydir = rand() % 2;

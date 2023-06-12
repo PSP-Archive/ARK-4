@@ -27,7 +27,6 @@ Tetris::Tetris(){
     pieces[15]=0x04626224;    //Bitmap for all pieces (rotated ccw)
 
     this->tetrisTex = ya2d_create_texture (tetrisMaxX, tetrisMaxY, GU_PSM_8888, YA2D_PLACE_VRAM);//3
-    //srand(time(NULL));
     for (int i=0; i<tetrisMaxSprites; i++){
         //tetrisSprites[i].x = rand() % (tetrisMaxX-4*tetrisBlockSz+1);
         tetrisSprites[i].x = (rand() % ((tetrisMaxX-tetrisBlockSz*4)/tetrisBlockSz))*tetrisBlockSz;

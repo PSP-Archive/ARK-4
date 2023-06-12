@@ -20,3 +20,6 @@ PSP_FW_VERSION = 660
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
+
+PARAM.SFO:
+	$(Q)cp PARAM_.SFO PARAM.SFO
