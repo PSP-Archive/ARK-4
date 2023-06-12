@@ -68,9 +68,15 @@ void Waves :: update()
             }
             else {
                 // reset bubble when out of the waves
-                bubbles[i].y = 273;
-                bubbles[i].x = r%480;
-                bubbles[i].color = r%3;
+                if (bubbles[i].color > 0){
+                    bubbles[i].color--; // make it gradually disappear
+                    bubbles[i].y--; // move bubble one pixel up
+                }
+                else{
+                    bubbles[i].y = 273;
+                    bubbles[i].x = r%480;
+                    bubbles[i].color = r%3;
+                }
             }
         }
     }
