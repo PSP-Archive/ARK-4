@@ -40,7 +40,7 @@ void Waves :: update()
         memcpy(vertices2, &vertices2[2], 480*sizeof(vertex));
         vertices[480].y = 160 + WAVE_AMPLITUDE * sin(480 + ((float)step/(float)100));
         vertices2[479].y = 160 + WAVE_AMPLITUDE * sin(2*480 + ((float)step/(float)100) - 240);
-        vertices2[480].y = 160 + WAVE_AMPLITUDE * sin(2*480 + ((float)(step+(rand()%3))/(float)100) - 240);
+        vertices2[480].y = 160 + WAVE_AMPLITUDE * sin(2*480 + ((float)(step+1)/(float)100) - 240);
         step++;
         frameskip = WAVES_FRAMESKIP;
     }
