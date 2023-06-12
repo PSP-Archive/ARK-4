@@ -337,6 +337,9 @@ static int controlThread(SceSize _args, void *_argp){
                 screensaver = 1;
             }
         }
+        else if (stillLoading){
+            last_pressed = clock();
+        }
         sceKernelDelayThread(0);
     }
     sceKernelExitDeleteThread(0);
