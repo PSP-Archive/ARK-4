@@ -97,11 +97,7 @@ Installation On PS Vita
     - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
     - Install `ARK_Live` folder into `/PSP/GAME/` folder.
     - Copy `K.BIN` from `Vita/Adrenaline` folder into `ARK_Live` game folder.
-    - Open `Adrenaline`, (optionally) create a `savestate` to easily go back.
-    - Launch `ARK Loader` from within `Adrenaline` and wait for it to load.
-    - (Optionally) Create a `savestate` using `Adrenaline`'s built-in menu to easily load ARK.
-    - (Optionally) Use `savestates` to easily and quickly switch between `Adrenaline` and `ARK`.
-    - You can use `Adrenaline Bubbles Manager` to create an autoboot bubble for `ARK Loader`, allowing you to easily and directly boot into `Adrenaline-ARK`.
+    - Use `Adrenaline Bubbles Manager` to create an autoboot bubble for `ARK Loader`: https://github.com/ONElua/AdrenalineBubbleManager/releases
     - Note: this does not permanently modify `Adrenaline` in any way.
 
 
