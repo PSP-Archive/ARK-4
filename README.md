@@ -22,8 +22,10 @@ as well as unique and exclusive new features not found anywhere else.
         * [Standalone via FastARK](#standalone-via-fastark)
         * [Standalone via ChovySign](#standalone-via-chovysign)
         * [Adrenaline](#adrenaline)
-      - [Update ARK](#update-ark)
       - [Legacy Game Exploits (PSP & Vita)](#legacy-game-exploits-psp--vita)
+
+  * [UPDATING ARK](#update-ark)
+
   * [CUSTOMIZATION](#customization)
       - [Advanced VSH Menu Options](#advanced-vsh-menu-options)
       - [Installing Plugins](#installing-plugins)
