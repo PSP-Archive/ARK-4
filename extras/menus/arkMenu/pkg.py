@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os
+import os, sys
 
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 THEMES_DIR = os.path.join(SCRIPT_DIR, 'themes')

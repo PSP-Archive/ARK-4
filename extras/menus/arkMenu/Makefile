@@ -101,6 +101,7 @@ LIBS = \
 
 all: $(TARGET).prx
 	$(Q)python3 ./pkg.py
+	$(Q)python3 $(ARKROOT)/contrib/PC/pack/pack.py -p LANG.ARK packlist.txt -s
 
 distclean:
 	make clean

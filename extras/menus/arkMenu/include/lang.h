@@ -7,8 +7,8 @@
 #define TR(s) Translations::translate(s)
 
 namespace Translations{
-    extern bool loadLanguage(string lang_file);
-    extern string translate(string orig);
+    extern bool loadLanguage(std::string lang_file);
+    extern std::string translate(std::string orig);
 };
 
 #endif

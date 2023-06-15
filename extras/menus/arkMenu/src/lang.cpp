@@ -1,5 +1,6 @@
 #include "lang.h"
 #include "cJSON.h"
+#include "common.h"
 
 static cJSON* cur_lang = NULL;
 
@@ -15,7 +16,7 @@ bool Translations::loadLanguage(string lang_file){
             cJSON_Delete(cur_lang);
         }
         // parse new language file
-        cur_lang = cJSON_ParseWithLength(buf, size);
+        cur_lang = cJSON_ParseWithLength((const char*)buf, size);
 
         // check if language file requires a font
         cJSON* val = cJSON_GetObjectItem(cur_lang, "__font__");
