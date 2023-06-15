@@ -27,6 +27,10 @@ int main(int argc, char** argv){
 
     srand(time(NULL));
 
+    int encoding = 5;
+    sceIoDevctl("ms0:", 0x02425856, &encoding, sizeof(void*), NULL, 0);
+    sceIoDevctl("ef0:", 0x02425856, &encoding, sizeof(void*), NULL, 0);
+
     intraFontInit();
     ya2d_init();
 

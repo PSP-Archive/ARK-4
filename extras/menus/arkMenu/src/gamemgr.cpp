@@ -649,6 +649,19 @@ void GameManager::gameOptionsMenu(){
     case 2:{
         // remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
         // make checks to prevent deleting stuff like "UMD Drive" and "Recovery" entries
+
+        t_options_entry opts[] = {
+            {OPTIONS_CANCELLED, "Cancel"},
+            {0, "Confirm"},
+        };
+        optionsmenu = new OptionsMenu("Confirm Deletion?", sizeof(opts)/sizeof(t_options_entry), opts);
+        int pret = optionsmenu->control();
+        OptionsMenu* aux = optionsmenu;
+        optionsmenu = NULL;
+        delete aux;
+
+        if (pret == OPTIONS_CANCELLED) return;
+
         Entry* e = this->getEntry();
         string name = e->getName();
         if (name != "UMD Drive" && name != "Recovery Menu"){
