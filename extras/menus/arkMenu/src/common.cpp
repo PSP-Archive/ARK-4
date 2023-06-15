@@ -15,7 +15,10 @@
 
 using namespace common;
 
-extern "C" int kuKernelGetModel();
+extern "C"{
+    int kuKernelGetModel();
+    int sctrlKernelExitVSH(void*);
+}
 
 static ARKConfig ark_config = {0};
 static Image* images[MAX_IMAGES];
@@ -86,6 +89,7 @@ void loadConfig(){
         resetConf();
         return;
     }
+    memset(&config, 0, sizeof(t_conf));
     fseek(fp, 0, SEEK_SET);
     fread(&config, 1, sizeof(t_conf), fp);
     fclose(fp);
@@ -198,7 +202,7 @@ static void missingFileHandler(const char* filename){
         if (pad.cross() || pad.circle())
             common::launchRecovery();
         else if (pad.triangle())
-            sceKernelExitGame();
+            sctrlKernelExitVSH(NULL);
     }
 }
 

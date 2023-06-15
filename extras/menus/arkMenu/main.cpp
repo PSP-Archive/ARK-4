@@ -93,7 +93,7 @@ int main(int argc, char** argv){
     intraFontShutdown();
     ya2d_shutdown();
 
-    sceKernelExitGame();
+    sctrlKernelExitVSH(NULL);
     
     return 0;
 }
