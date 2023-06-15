@@ -62,7 +62,9 @@ int main(int argc, char** argv){
     entries[2] = new Browser();
 
 	// Settings
-    SettingsTable stab_recovery = { settings_entries, MAX_SETTINGS_OPTIONS };
+    int max_settings = MAX_SETTINGS_OPTIONS;
+    if (common::getPspModel() != PSP_GO) max_settings--;
+    SettingsTable stab_recovery = { settings_entries, max_settings };
     SettingsMenu* recovery_settings_menu = new SettingsMenu(&stab_recovery, common::saveConf, false, true, true);
 	recovery_settings_menu->setName("Menu Settings");
 	recovery_settings_menu->setInfo("Launcher/Recovery Settings");

@@ -309,11 +309,11 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&show_fps,
     (settings_entry*)&text_glow,
     (settings_entry*)&screensaver,
-    (settings_entry*)&redirect_ms0,
     (settings_entry*)&force_update,
     (settings_entry*)&battery_percent,
     (settings_entry*)&startbtn,
     (settings_entry*)&menusize,
+    (settings_entry*)&redirect_ms0,
 };
 
 #define MAX_SETTINGS_OPTIONS (sizeof(settings_entries)/sizeof(settings_entries[0]))
