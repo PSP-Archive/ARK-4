@@ -3,11 +3,12 @@
 #include "common.h"
 
 static cJSON* cur_lang = NULL;
+intraFont* altFont = NULL;
 
 bool Translations::loadLanguage(string lang_file){
 
     // cleanup old language
-    if (cur_lang != NULL){
+    if (cur_lang){
         cJSON* aux = cur_lang;
         cur_lang = NULL;
         cJSON_Delete(aux);
@@ -27,6 +28,18 @@ bool Translations::loadLanguage(string lang_file){
             int font = (int)cJSON_GetNumberValue(val);
             t_conf* conf = common::getConf();
             conf->font = font;
+            if (altFont == NULL){
+                altFont = intraFontLoad("flash0:/font/ltn0.pgf", 0);
+                intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
+            }
+        }
+        else{
+            if (altFont){
+                intraFontUnload(altFont);
+                altFont = NULL;
+                t_conf* conf = common::getConf();
+                conf->font = 0;
+            }
         }
 
         // free resources

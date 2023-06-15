@@ -120,12 +120,17 @@ void common::saveConf(){
         if (!fileExists(fonts[config.font]))
             config.font = 1;
     
+        // offload current font
         intraFont* aux = font;
         font = NULL;
         if (aux) intraFontUnload(aux);
+        // load new font
         font = intraFontLoad(fonts[config.font], 0);
         intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
         currentFont = config.font;
+        // use alt font set by lang
+        extern intraFont* altFont;
+        if (altFont) intraFontSetAltFont(font, altFont);
     }
 
     SystemMgr::resumeDraw();
