@@ -12,6 +12,7 @@
 #include "net_mgr.h"
 #include "ftp_driver.h"
 #include "exit_mgr.h"
+#include "lang.h"
 
 PSP_MODULE_INFO("ARKMENU", 0, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);
@@ -38,6 +39,8 @@ int main(int argc, char** argv){
 
     // Load data (theme, config, font, etc)
     common::loadData(argc, argv);
+
+    Translations::loadLanguage("lang_es.json");
 
     pad.update(1);
 

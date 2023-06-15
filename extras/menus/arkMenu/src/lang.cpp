@@ -10,6 +10,8 @@ bool Translations::loadLanguage(string lang_file){
     unsigned size = 0;
     void* buf = common::readFromPKG(lang_file.c_str(), &size, "LANG.ARK");
 
+    printf("%s\n", buf);
+
     if (buf && size){
         if (cur_lang != NULL){
             // cleanup old language
