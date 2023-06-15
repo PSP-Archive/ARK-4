@@ -121,7 +121,7 @@ class GameManager : public SystemEntry{
         string getInfo();
         
         string getName(){
-            return "Game";
+            return "Games";
         }
 
         void drawInfo(){

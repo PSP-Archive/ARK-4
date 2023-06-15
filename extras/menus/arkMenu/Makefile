@@ -19,6 +19,8 @@ OBJS = \
 		imports.o \
 		src/debug.o \
 		src/common.o \
+		src/lang.o \
+		src/cJSON.o \
 		src/system_mgr.o \
 		src/gamemgr.o \
 		src/net_mgr.o \
@@ -99,6 +101,7 @@ LIBS = \
 
 all: $(TARGET).prx
 	$(Q)python3 ./pkg.py
+	$(Q)mv themes/translations/THEME.ARK LANG.ARK
 
 distclean:
 	make clean

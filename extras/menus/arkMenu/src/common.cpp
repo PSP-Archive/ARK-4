@@ -8,6 +8,8 @@
 #include "controller.h"
 #include "systemctrl.h"
 #include "animations.h"
+#include "system_mgr.h"
+#include "lang.h"
 
 #define RESOURCES_LOAD_PLACE YA2D_PLACE_VRAM
 
@@ -21,14 +23,15 @@ static Image* images[MAX_IMAGES];
 static Image* checkbox[2];
 static Image* icons[MAX_FILE_TYPES];
 
-static intraFont* font;
-static MP3* sound_mp3;
+static intraFont* font = NULL;
+static MP3* sound_mp3 = NULL;
 static int argc;
 static char **argv;
 static float scrollX = 0.f;
 static float scrollY = 0.f;
 static float scrollXTmp = 0.f;
 static int currentFont = 0;
+static int currentLang = 0;
 /* Instance of the animations that are drawn on the menu */
 static Anim* animations[ANIM_COUNT];
 
@@ -58,6 +61,16 @@ char* fonts[] = {
     "flash0:/font/ltn15.pgf",
     "flash0:/font/jpn0.pgf",
     "flash0:/font/kr0.pgf"
+};
+
+static char* lang_files[] = {
+    "lang_en.json",
+    "lang_es.json",
+    "lang_de.json",
+    "lang_fr.json",
+    "lang_pt.json",
+    "lang_it.json",
+    "lang_ru.json",
 };
 
 static t_conf config;
@@ -94,15 +107,28 @@ struct tm common::getDateTime(){
 
 void common::saveConf(){
 
-    if (currentFont != config.font){
+    SystemMgr::pauseDraw();
+
+    if (currentLang != config.language){
+        if (!Translations::loadLanguage(lang_files[config.language])){
+            config.language = 0;
+        }
+        currentLang = config.language;
+    }
+
+    if (currentFont != config.font || font == NULL){
         if (!fileExists(fonts[config.font]))
             config.font = 1;
     
         intraFont* aux = font;
         font = NULL;
-        intraFontUnload(aux);
+        if (aux) intraFontUnload(aux);
         font = intraFontLoad(fonts[config.font], 0);
+        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
+        currentFont = config.font;
     }
+
+    SystemMgr::resumeDraw();
     
     FILE* fp = fopen(CONFIG_PATH, "wb");
     fwrite(&config, 1, sizeof(t_conf), fp);
@@ -171,9 +197,19 @@ static void missingFileHandler(const char* filename){
     }
 }
 
-SceOff common::findPkgOffset(const char* filename, unsigned* size){
+static void dummyMissingHandler(const char* filename){
+
+}
+
+SceOff common::findPkgOffset(const char* filename, unsigned* size, const char* pkgpath, void (*missinghandler)(const char*)){
     
-    FILE* pkg = fopen(theme_path.c_str(), "rb");
+    if (pkgpath == NULL)
+        pkgpath = theme_path.c_str();
+
+    if (missinghandler == NULL)
+        missinghandler = &missingFileHandler;
+
+    FILE* pkg = fopen(pkgpath, "rb");
     if (pkg == NULL)
         return 0;
      
@@ -194,7 +230,7 @@ SceOff common::findPkgOffset(const char* filename, unsigned* size){
         fread(&offset, 1, 4, pkg);
         if (offset == 0xFFFFFFFF){
             fclose(pkg);
-            missingFileHandler(filename);
+            missinghandler(filename);
             return 0;
         }
         unsigned namelength;
@@ -214,23 +250,27 @@ SceOff common::findPkgOffset(const char* filename, unsigned* size){
             return offset;
         }
     }
-    missingFileHandler(theme_path.c_str());
+    missinghandler(pkgpath);
     return 0;
 }
 
-void* common::readFromPKG(const char* filename, unsigned* size){
+void* common::readFromPKG(const char* filename, unsigned* size, const char* pkgpath){
 
     unsigned mySize;
     
     if (size == NULL)
         size = &mySize;
 
-    unsigned offset = findPkgOffset(filename, size);
+    if (pkgpath == NULL)
+        pkgpath = theme_path.c_str();
+
+    unsigned offset = findPkgOffset(filename, size, pkgpath, &dummyMissingHandler);
     
-    FILE* fp = fopen(theme_path.c_str(), "rb");
+    FILE* fp = fopen(pkgpath, "rb");
     
     if (offset == 0 || fp == NULL){
         fclose(fp);
+        *size = 0;
         return NULL;
     }
     
@@ -362,12 +402,25 @@ void common::loadData(int ac, char** av){
     loadTheme();
     
     loadConfig();
-    
-    if (!fileExists(fonts[config.font]))
-        config.font = 1;
-    font = intraFontLoad(fonts[config.font], INTRAFONT_CACHE_ALL);
-    
+
     currentFont = config.font;
+    currentLang = config.language;
+
+    if (config.language){
+        Translations::loadLanguage(lang_files[config.language]);
+    }
+    
+    if (!font){
+        if (!fileExists(fonts[config.font]))
+            config.font = 1;
+        font = intraFontLoad(fonts[config.font], INTRAFONT_CACHE_ALL);
+        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
+    }
+
+    if (currentFont != config.font){
+        currentFont = config.font;
+        saveConf();
+    }
     
 }
 
@@ -479,6 +532,9 @@ void common::printText(float x, float y, const char* text, u32 color, float size
     if (font == NULL)
         return;
 
+    string translated = TR(text);
+
+
     u32 secondColor = BLACK_COLOR;
     u32 arg5 = INTRAFONT_WIDTH_VAR;
     
@@ -499,16 +555,17 @@ void common::printText(float x, float y, const char* text, u32 color, float size
             scrollXTmp = x;
             scrollY = y;
         }
-        scrollXTmp = intraFontPrintColumn(font, scrollXTmp, y, 200, text);
+        scrollXTmp = intraFontPrintColumn(font, scrollXTmp, y, 200, translated.c_str());
     }
     else
-        intraFontPrint(font, x, y, text);
+        intraFontPrint(font, x, y, translated.c_str());
     
 }
 
 int common::calcTextWidth(const char* text, float size){
+    string translated = TR(text);
     intraFontSetStyle(font, size, 0, 0, 0.f, INTRAFONT_WIDTH_VAR);
-    float w = intraFontMeasureText(font, text) + size*strlen(text);
+    float w = intraFontMeasureText(font, translated.c_str()) + size*translated.length();
     return (int)ceil(w);
 }
 

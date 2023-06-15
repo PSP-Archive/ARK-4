@@ -10,6 +10,7 @@
 #include "gfx.h"
 #include "common.h"
 #include "debug.h"
+#include "lang.h"
 
 SceUtilityOskParams* OSK::oskParams = NULL;
 unsigned short *OSK::intext = NULL;
@@ -148,21 +149,25 @@ void OSK::init(const char *descStr, const char *initialStr, int textLimit, int l
     if (intext || desc)   return;            //<-- STAS: Is the static OSK already initialized?
 
 //    intext = (unsigned short *) malloc((textLimit + 1)*sizeof(unsigned short));    //<-- STAS: textLimit ISN'T right!
-    intext = (unsigned short *) malloc((strlen(initialStr) + 1)*sizeof(unsigned short));
+
+    string descStr_tr = TR(descStr);
+    string initialStr_tr = TR(initialStr);
+
+    intext = (unsigned short *) malloc((initialStr_tr.length() + 1)*sizeof(unsigned short));
     if (!intext)
         return;
 
-    desc = (unsigned short *) malloc((strlen(descStr) + 1)*sizeof(unsigned short));
+    desc = (unsigned short *) malloc((descStr_tr.length() + 1)*sizeof(unsigned short));
     if (!desc) {
         end();
         return;
     }
 
-    for (i=0; i<=strlen(initialStr); i++)
-        intext[i] = (unsigned short)initialStr[i];
+    for (i=0; i<=initialStr_tr.length(); i++)
+        intext[i] = (unsigned short)(initialStr_tr[i]);
 
-    for (i=0; i<=strlen(descStr); i++){
-        desc[i] = (unsigned short)descStr[i];
+    for (i=0; i<=descStr_tr.length(); i++){
+        desc[i] = (unsigned short)(descStr_tr[i]);
     }
 
     SceUtilityOskParams* oskParams = initOskEx(1, language);

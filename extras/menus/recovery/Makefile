@@ -15,6 +15,8 @@ OBJS = \
 		main.o \
 		../arkMenu/src/debug.o \
 		../arkMenu/src/common.o \
+		../arkMenu/src/lang.o \
+		../arkMenu/src/cJSON.o \
 		../arkMenu/src/system_mgr.o \
 		../arkMenu/src/controller.o \
 		../arkMenu/src/ya2d++.o \

@@ -364,7 +364,7 @@ void Browser::installPlugin(){
 void Browser::extractArchive(int type){
 
     string root = get()->getPath().substr(0, 5);
-    string extract_to_root = string("Extract to ")+root;
+    string extract_to_root = TR("Extract to ")+root;
 
     t_options_entry options_entries[] = {
         {OPTIONS_CANCELLED, "Cancel"},
@@ -1374,7 +1374,7 @@ void Browser::createNew(){
         {1, "File"},
     };
 
-    optionsmenu = new OptionsMenu("Create new...", sizeof(opts)/sizeof(t_options_entry), opts);
+    optionsmenu = new OptionsMenu("Create New...", sizeof(opts)/sizeof(t_options_entry), opts);
     int ret = optionsmenu->control();
     OptionsMenu* aux = optionsmenu;
     optionsmenu = NULL;

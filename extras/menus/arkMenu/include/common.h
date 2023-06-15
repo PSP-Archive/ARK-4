@@ -80,8 +80,8 @@ namespace common{
     extern int getPspModel();
     extern struct tm getDateTime();
     extern bool has_suffix(const std::string &str, const std::string &suffix);
-    SceOff findPkgOffset(const char* filename, unsigned* size = NULL);
-    extern void* readFromPKG(const char* filename, unsigned* size = NULL);
+    SceOff findPkgOffset(const char* filename, unsigned* size = NULL, const char* pkgpath=NULL, void (*missinghandler)(const char*) = NULL);
+    extern void* readFromPKG(const char* filename, unsigned* size = NULL, const char* pkgpath=NULL);
     extern u32 getMagic(const char* filename, unsigned int offset);
     extern void loadData(int ac, char** av);
     extern void deleteData();
