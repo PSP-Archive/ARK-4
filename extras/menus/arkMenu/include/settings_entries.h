@@ -27,7 +27,7 @@ static struct {
     7,
     0,
     &(common::getConf()->language),
-    {"English", "Spanish", "German", "French", "Portuguese", "Italian", "Russian"}
+    {"English", "Español", "Deutsch", "Français", "Português", "Italiano", "Русский"}
 };
 
 /* Font entry */

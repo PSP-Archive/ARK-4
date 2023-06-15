@@ -1,7 +1,5 @@
 {
 
-    "Spanish": "Español",
-
     "Game": "Juego",
     "Games": "Juegos",
     "Files": "Archivos",
@@ -143,6 +141,5 @@
     "Turn off LEDs": "Apagar los LEDs",
     "VSH Region Change": "Cambio de región del VSH",
     "UMD Region Change": "Cambio de región del UMD"
-
 
 }
