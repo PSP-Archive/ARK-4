@@ -65,6 +65,11 @@ char* fonts[] = {
 static char* lang_files[] = {
     "lang_en.json",
     "lang_es.json",
+    "lang_de.json",
+    "lang_fr.json",
+    "lang_pt.json",
+    "lang_it.json",
+    "lang_ru.json",
 };
 
 static t_conf config;
