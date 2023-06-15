@@ -6,19 +6,18 @@ static cJSON* cur_lang = NULL;
 
 bool Translations::loadLanguage(string lang_file){
 
+    // cleanup old language
+    if (cur_lang != NULL){
+        cJSON* aux = cur_lang;
+        cur_lang = NULL;
+        cJSON_Delete(aux);
+    }
+
     // read language file from PKG
     unsigned size = 0;
     void* buf = common::readFromPKG(lang_file.c_str(), &size, "LANG.ARK");
 
-    printf("%s\n", buf);
-
     if (buf && size){
-        if (cur_lang != NULL){
-            // cleanup old language
-            cJSON* aux = cur_lang;
-            cur_lang = NULL;
-            cJSON_Delete(aux);
-        }
         // parse new language file
         cur_lang = cJSON_ParseWithLength((const char*)buf, size);
 
@@ -29,6 +28,9 @@ bool Translations::loadLanguage(string lang_file){
             t_conf* conf = common::getConf();
             conf->font = font;
         }
+
+        // free resources
+        free(buf);
     }
 
     return (cur_lang!=NULL);

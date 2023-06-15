@@ -8,6 +8,7 @@
 #include "controller.h"
 #include "systemctrl.h"
 #include "animations.h"
+#include "system_mgr.h"
 #include "lang.h"
 
 #define RESOURCES_LOAD_PLACE YA2D_PLACE_VRAM
@@ -106,13 +107,13 @@ struct tm common::getDateTime(){
 
 void common::saveConf(){
 
+    SystemMgr::pauseDraw();
+
     if (currentLang != config.language){
-        if (Translations::loadLanguage(lang_files[config.language])){
-            currentLang = config.language;
-        }
-        else{
+        if (!Translations::loadLanguage(lang_files[config.language])){
             config.language = 0;
         }
+        currentLang = config.language;
     }
 
     if (currentFont != config.font || font == NULL){
@@ -126,6 +127,8 @@ void common::saveConf(){
         intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
         currentFont = config.font;
     }
+
+    SystemMgr::resumeDraw();
     
     FILE* fp = fopen(CONFIG_PATH, "wb");
     fwrite(&config, 1, sizeof(t_conf), fp);
@@ -194,10 +197,17 @@ static void missingFileHandler(const char* filename){
     }
 }
 
-SceOff common::findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
+static void dummyMissingHandler(const char* filename){
+
+}
+
+SceOff common::findPkgOffset(const char* filename, unsigned* size, const char* pkgpath, void (*missinghandler)(const char*)){
     
     if (pkgpath == NULL)
         pkgpath = theme_path.c_str();
+
+    if (missinghandler == NULL)
+        missinghandler = &missingFileHandler;
 
     FILE* pkg = fopen(pkgpath, "rb");
     if (pkg == NULL)
@@ -220,7 +230,7 @@ SceOff common::findPkgOffset(const char* filename, unsigned* size, const char* p
         fread(&offset, 1, 4, pkg);
         if (offset == 0xFFFFFFFF){
             fclose(pkg);
-            missingFileHandler(filename);
+            missinghandler(filename);
             return 0;
         }
         unsigned namelength;
@@ -240,7 +250,7 @@ SceOff common::findPkgOffset(const char* filename, unsigned* size, const char* p
             return offset;
         }
     }
-    missingFileHandler(pkgpath);
+    missinghandler(pkgpath);
     return 0;
 }
 
@@ -254,12 +264,13 @@ void* common::readFromPKG(const char* filename, unsigned* size, const char* pkgp
     if (pkgpath == NULL)
         pkgpath = theme_path.c_str();
 
-    unsigned offset = findPkgOffset(filename, size, pkgpath);
+    unsigned offset = findPkgOffset(filename, size, pkgpath, &dummyMissingHandler);
     
     FILE* fp = fopen(pkgpath, "rb");
     
     if (offset == 0 || fp == NULL){
         fclose(fp);
+        *size = 0;
         return NULL;
     }
     
@@ -552,8 +563,9 @@ void common::printText(float x, float y, const char* text, u32 color, float size
 }
 
 int common::calcTextWidth(const char* text, float size){
+    string translated = TR(text);
     intraFontSetStyle(font, size, 0, 0, 0.f, INTRAFONT_WIDTH_VAR);
-    float w = intraFontMeasureText(font, text) + size*strlen(text);
+    float w = intraFontMeasureText(font, translated.c_str()) + size*translated.length();
     return (int)ceil(w);
 }
 
