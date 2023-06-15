@@ -171,9 +171,12 @@ static void missingFileHandler(const char* filename){
     }
 }
 
-SceOff common::findPkgOffset(const char* filename, unsigned* size){
+SceOff common::findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
     
-    FILE* pkg = fopen(theme_path.c_str(), "rb");
+    if (pkgpath == NULL)
+        pkgpath = theme_path.c_str();
+
+    FILE* pkg = fopen(pkgpath, "rb");
     if (pkg == NULL)
         return 0;
      
@@ -214,20 +217,23 @@ SceOff common::findPkgOffset(const char* filename, unsigned* size){
             return offset;
         }
     }
-    missingFileHandler(theme_path.c_str());
+    missingFileHandler(pkgpath);
     return 0;
 }
 
-void* common::readFromPKG(const char* filename, unsigned* size){
+void* common::readFromPKG(const char* filename, unsigned* size, const char* pkgpath){
 
     unsigned mySize;
     
     if (size == NULL)
         size = &mySize;
 
-    unsigned offset = findPkgOffset(filename, size);
+    if (pkgpath == NULL)
+        pkgpath = theme_path.c_str();
+
+    unsigned offset = findPkgOffset(filename, size, pkgpath);
     
-    FILE* fp = fopen(theme_path.c_str(), "rb");
+    FILE* fp = fopen(pkgpath, "rb");
     
     if (offset == 0 || fp == NULL){
         fclose(fp);
