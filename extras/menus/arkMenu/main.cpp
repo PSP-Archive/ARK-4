@@ -40,8 +40,6 @@ int main(int argc, char** argv){
     // Load data (theme, config, font, etc)
     common::loadData(argc, argv);
 
-    Translations::loadLanguage("lang_es.json");
-
     pad.update(1);
 
     if (run_last || pad.LT()){

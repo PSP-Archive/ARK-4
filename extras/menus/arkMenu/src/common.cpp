@@ -8,6 +8,7 @@
 #include "controller.h"
 #include "systemctrl.h"
 #include "animations.h"
+#include "lang.h"
 
 #define RESOURCES_LOAD_PLACE YA2D_PLACE_VRAM
 
@@ -21,14 +22,15 @@ static Image* images[MAX_IMAGES];
 static Image* checkbox[2];
 static Image* icons[MAX_FILE_TYPES];
 
-static intraFont* font;
-static MP3* sound_mp3;
+static intraFont* font = NULL;
+static MP3* sound_mp3 = NULL;
 static int argc;
 static char **argv;
 static float scrollX = 0.f;
 static float scrollY = 0.f;
 static float scrollXTmp = 0.f;
 static int currentFont = 0;
+static int currentLang = 0;
 /* Instance of the animations that are drawn on the menu */
 static Anim* animations[ANIM_COUNT];
 
@@ -58,6 +60,11 @@ char* fonts[] = {
     "flash0:/font/ltn15.pgf",
     "flash0:/font/jpn0.pgf",
     "flash0:/font/kr0.pgf"
+};
+
+static char* lang_files[] = {
+    "lang_en.json",
+    "lang_es.json",
 };
 
 static t_conf config;
@@ -94,14 +101,25 @@ struct tm common::getDateTime(){
 
 void common::saveConf(){
 
-    if (currentFont != config.font){
+    if (currentLang != config.language){
+        if (Translations::loadLanguage(lang_files[config.language])){
+            currentLang = config.language;
+        }
+        else{
+            config.language = 0;
+        }
+    }
+
+    if (currentFont != config.font || font == NULL){
         if (!fileExists(fonts[config.font]))
             config.font = 1;
     
         intraFont* aux = font;
         font = NULL;
-        intraFontUnload(aux);
+        if (aux) intraFontUnload(aux);
         font = intraFontLoad(fonts[config.font], 0);
+        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
+        currentFont = config.font;
     }
     
     FILE* fp = fopen(CONFIG_PATH, "wb");
@@ -368,12 +386,25 @@ void common::loadData(int ac, char** av){
     loadTheme();
     
     loadConfig();
-    
-    if (!fileExists(fonts[config.font]))
-        config.font = 1;
-    font = intraFontLoad(fonts[config.font], INTRAFONT_CACHE_ALL);
-    
+
     currentFont = config.font;
+    currentLang = config.language;
+
+    if (config.language){
+        Translations::loadLanguage(lang_files[config.language]);
+    }
+    
+    if (!font){
+        if (!fileExists(fonts[config.font]))
+            config.font = 1;
+        font = intraFontLoad(fonts[config.font], INTRAFONT_CACHE_ALL);
+        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
+    }
+
+    if (currentFont != config.font){
+        currentFont = config.font;
+        saveConf();
+    }
     
 }
 
@@ -485,6 +516,9 @@ void common::printText(float x, float y, const char* text, u32 color, float size
     if (font == NULL)
         return;
 
+    string translated = TR(text);
+
+
     u32 secondColor = BLACK_COLOR;
     u32 arg5 = INTRAFONT_WIDTH_VAR;
     
@@ -505,10 +539,10 @@ void common::printText(float x, float y, const char* text, u32 color, float size
             scrollXTmp = x;
             scrollY = y;
         }
-        scrollXTmp = intraFontPrintColumn(font, scrollXTmp, y, 200, text);
+        scrollXTmp = intraFontPrintColumn(font, scrollXTmp, y, 200, translated.c_str());
     }
     else
-        intraFontPrint(font, x, y, text);
+        intraFontPrint(font, x, y, translated.c_str());
     
 }
 
