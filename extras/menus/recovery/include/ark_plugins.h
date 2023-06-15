@@ -85,8 +85,8 @@ static plugin_t* createPlugin(const char* description, unsigned char enable, uns
     plugin->max_options = 3;
     plugin->selection = enable;
     plugin->config_ptr = &(plugin->selection);
-    plugin->options[0] = "Disable";
-    plugin->options[1] = "Enable";
+    plugin->options[0] = "Disabled";
+    plugin->options[1] = "Enabled";
     plugin->options[2] = "Remove";
     plugin->place = place;
     return plugin;
