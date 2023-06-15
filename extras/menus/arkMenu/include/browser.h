@@ -7,6 +7,7 @@
 #include "gfx.h"
 #include "optionsmenu.h"
 #include "system_entry.h"
+#include "lang.h"
 
 using namespace std;
 
@@ -71,7 +72,7 @@ class Browser : public SystemEntry{
         
         string getInfo(){
             if (devsize.size() > 0)
-                return this->cwd + " (Free size: "+devsize+")";
+                return this->cwd + " ("+TR("Free size")+": "+devsize+")";
             return this->cwd;
         }
         

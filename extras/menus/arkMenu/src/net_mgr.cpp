@@ -7,6 +7,7 @@
 #include <pspnet_apctl.h>
 #include <psphttp.h>
 #include "eboot.h"
+#include "lang.h"
 
 #define MAX_LINES 10
 
@@ -67,10 +68,10 @@ void NetworkManager::draw(){
         char buffer[128];
         
         if (ftp_thread>=0){
-            snprintf(buffer, 128, "FTP Server is running @ %s. Press %s to stop.", pspIpAddr, (common::getConf()->swap_buttons)? "X" : "()");
+            snprintf(buffer, 128, TR("FTP Server is running @ %s. Press %s to stop.").c_str(), pspIpAddr, (common::getConf()->swap_buttons)? "X" : "()");
         }
         else{
-            snprintf(buffer, 128, "FTP Server is stopped. Press %s to start.", (common::getConf()->swap_buttons)? "()" : "X");
+            snprintf(buffer, 128, TR("FTP Server is stopped. Press %s to start.").c_str(), (common::getConf()->swap_buttons)? "()" : "X");
         }
         common::printText(30, 50, buffer, GRAY_COLOR, SIZE_BIG, 1);
         common::printText(30, 70, "Press [] to check for Updates", GRAY_COLOR, SIZE_BIG);
@@ -136,7 +137,7 @@ static void startFTP(){
     
     if (err){
         char buf[128];
-        snprintf(buf, 128, "%s: 0x%X", err, ret);
+        snprintf(buf, 128, "%s: 0x%X", TR(err).c_str(), ret);
         addMessage(buf);
     }
     
@@ -248,7 +249,7 @@ static void checkUpdates(){
 
             updater_url = parsePspUpdateList(&update_ver);
 
-            snprintf(buf, 128, "Got version %p @ %s", update_ver, updater_url.c_str());
+            snprintf(buf, 128, TR("Got version %p @ %s").c_str(), update_ver, updater_url.c_str());
             addMessage(buf);
 
             sceIoRemove("psp-updatelist.txt");
@@ -288,7 +289,7 @@ static void checkUpdates(){
     }
 
     if (err){
-        snprintf(buf, 128, "%s: 0x%X", err, ret);
+        snprintf(buf, 128, "%s: 0x%X", TR(err).c_str(), ret);
         addMessage(buf);
     }
 }
