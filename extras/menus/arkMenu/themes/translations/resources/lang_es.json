@@ -87,7 +87,7 @@
     "Disconnecting FTP server": "Desconectando servidor FTP",
     "FTP Disconnected": "FTP Desconectado",
     "Checking for updates": "Buscando Actualizaciones",
-    "Could not initialize HTTP library": "No se pudo inicializar la librería FTP",
+    "Could not initialize HTTP library": "No se pudo inicializar la librería HTTP",
     "Downloading psp-updatelist.txt": "Descargando psp-updatelist.txt",
     "Got version %p @ %s": "Obtenida la versión %p en %s",
     "No need to update!": "No hace falta actualizar!",
