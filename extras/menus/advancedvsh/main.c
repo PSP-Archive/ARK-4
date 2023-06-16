@@ -82,8 +82,6 @@ ARKConfig* ark_config = &_ark_conf;
 int cur_battery;
 u32 swap_xo;
 
-static char g_cur_font_select[32] __attribute((aligned(64)));
-
 static struct{
 	u8 fg_color;
 	u8 bg_color;
@@ -651,12 +649,12 @@ static void launch_umdvideo_mount(void)
 	reset_vsh = 1;
 }
 
-int load_recovery_font_select(void)
+int load_selected_font(void)
 {
 
 	if (config.vsh_font){
 		extern char* available_fonts[];
-		strcpy(g_cur_font_select, available_fonts[config.vsh_font-1]);
+		load_external_font(available_fonts[config.vsh_font-1]);
 		return 0;
 	}
 
@@ -670,10 +668,9 @@ int load_recovery_font_select(void)
 
 	switch (value){
 		case PSP_SYSTEMPARAM_LANGUAGE_RUSSIAN:
-			strcpy(g_cur_font_select, "CYRILL1.pf");
+			load_external_font("CYRILL1.pf");
 			break;
 		default:
-			strcpy(g_cur_font_select, "CP850.pf");
 			break;
 	}
 
@@ -1098,12 +1095,9 @@ int TSRThread(SceSize args, void *argp)
 
 	loadConfig();
 
-	load_recovery_font_select();
+	load_selected_font();
 	select_language();
 
-	if(g_cur_font_select[0] != '\0') {
-		load_external_font(g_cur_font_select);
-	}
 	if(!IS_VITA_ADR(ark_config)) {
 		umdvideolist_init(&g_umdlist);
 		umdvideolist_clear(&g_umdlist);

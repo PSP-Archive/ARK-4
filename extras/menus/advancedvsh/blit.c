@@ -150,6 +150,8 @@ int load_external_font(const char *file)
 	int ret;
 	void *buf;
 
+	if (file == NULL || file[0] == 0) return -1;
+
 	static char pkgpath[ARK_PATH_SIZE];
 	strcpy(pkgpath, ark_config->arkpath);
 	strcat(pkgpath, "LANG.ARK");

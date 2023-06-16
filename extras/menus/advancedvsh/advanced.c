@@ -919,9 +919,7 @@ none:
 			if (direction){
 				change_font(direction);
 				release_font();
-				if (config.vsh_font){
-					load_external_font(available_fonts[config.vsh_font-1]);
-				}
+				load_selected_font();
 			}
 			break;
 		case SUBMENU_GO_BACK:
