@@ -149,6 +149,49 @@ void ClearCaches()
     kuKernelIcacheInvalidateAll();
 }
 
+SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
+
+    int pkg = sceIoOpen(pkgpath, PSP_O_RDONLY, 0777);
+    if (pkg < 0)
+        return 0;
+     
+    unsigned pkgsize = sceIoLseek32(pkg, 0, PSP_SEEK_END);
+    unsigned size2 = 0;
+     
+    sceIoLseek32(pkg, 0, PSP_SEEK_SET);
+
+    if (size != NULL)
+        *size = 0;
+
+    unsigned offset = 0;
+    char name[64];
+           
+    while (offset != 0xFFFFFFFF){
+        sceIoRead(pkg, &offset, 4);
+        if (offset == 0xFFFFFFFF){
+            sceIoClose(pkg);
+            return 0;
+        }
+        unsigned namelength;
+        sceIoRead(pkg, &namelength, 4);
+        sceIoRead(pkg, name, namelength+1);
+                   
+        if (!strncmp(name, filename, namelength)){
+            sceIoRead(pkg, &size2, 4);
+    
+            if (size2 == 0xFFFFFFFF)
+                size2 = pkgsize;
+
+            if (size != NULL)
+                *size = size2 - offset;
+     
+            sceIoClose(pkg);
+            return offset;
+        }
+    }
+    return 0;
+}
+
 int LoadTextLanguage(int new_id)
 {
     static char *language[] = { "JA", "EN", "FR", "ES", "DE", "IT", "NL", "PT", "RU", "KO", "CHT", "CHS" };
@@ -163,18 +206,27 @@ int LoadTextLanguage(int new_id)
     }
 
     SceUID fd = -1;
+    SceOff offset = 0;
     if (id < NELEMS(language)){
+        unsigned size = 0;
         char file[64];
-        sce_paf_private_sprintf(file, "%sXMB_%s.TXT", ark_config->arkpath, language[id]);
-        fd = sceIoOpen(file, PSP_O_RDONLY, 0);
+        char pkgpath[ARK_PATH_SIZE];
+        strcpy(pkgpath, ark_config->arkpath);
+        strcat(pkgpath, "LANG.ARK");
+        sce_paf_private_sprintf(file, "XMB_%s.TXT", language[id]);
+        offset = findPkgOffset(file, &size, pkgpath);
+
+        if (offset && size)
+            fd = sceIoOpen(pkgpath, PSP_O_RDONLY, 0);
     }
 
     if(fd >= 0)
     {
         /* Skip UTF8 magic */
         u32 magic;
+        sceIoLseek32(fd, offset, PSP_SEEK_SET);
         sceIoRead(fd, &magic, sizeof(magic));
-        sceIoLseek(fd, (magic & 0xFFFFFF) == 0xBFBBEF ? 3 : 0, PSP_SEEK_SET);
+        sceIoLseek(fd, (magic & 0xFFFFFF) == 0xBFBBEF ? offset+3 : offset, PSP_SEEK_SET);
     }
 
     char line[128];
