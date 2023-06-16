@@ -1,13 +1,13 @@
 Por Defecto
-Japon
-America
+Jap¢n
+Am‚rica
 Europa
 Corea
 Reino Unido
-Latinoamerica
+Latinoam‚rica
 Australia
 Hong Kong
-Taiwan
+Taiw n
 Rusia
 China
 Debug I
@@ -46,7 +46,7 @@ Pandora -> Normal
    REINICIAR  
    RECARGAR 
   SALIR  
-      MENU VSH ¥€á …ƒ    
+      MENU VSH     
 Sin soporte
 Usar Adrenaline
 Flash
@@ -63,16 +63,16 @@ Amarillo
 Amarillo Trasparente
 Verde
 Verde Trasparente
-Azul
-Azul Trasparente
+Az£l
+Az£l Trasparente
 Indigo
 Indigo Trasparente
 Violeta
 Violeta Trasparente
 Rosa
 Rosa Trasparente
-Purpura
-Purpura Trasparente
+P£rpura
+P£rpura Trasparente
 Verde Azulado
 Verde Azulado Trasparente
 Agua
