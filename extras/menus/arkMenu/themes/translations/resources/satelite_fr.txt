@@ -1,0 +1,84 @@
+Default
+Japon
+AmÇrique
+Europe
+CorÇe
+Royaume-Uni
+AmÇrique latine
+Australie
+Hong Kong
+Taãwan
+Russie
+Chine
+DÇbogage I
+DÇbogage II
+DÇsactivÇ(e)
+ActivÇ(e)
+Normal(e)
+Basculer
+X -> O
+O -> X
+Sony NP9660 (PBP)
+Inferno 2 (ISO/CSO)
+PêRIPHêRIQUE USB
+LECTURE SEULE USB
+PILOTES ISO
+MONTAGE VIDêO ISO
+COULEURS AVANT-PLAN
+COULEURS ARRI‘RE-PLAN
+CONVERTIR BATTERIE
+INVERSER BOUTONS X/O
+RêGION VSH
+RêGION UMD
+ IMPORTER PLUGINS CLASSIQUE
+ ACTIVER FLASH ET WMA 
+ SUPPRIMER LA MISE EN VEILLE 
+ LANCER ISO ALêATOIRE 
+ RETOUR 
+Normal -> Pandora
+Pandora -> Normal
+ LANCEUR PERSONNALISê -> 
+ MENU DE RêTABLISSEMENT   -> 
+ MENU AVANCêE VSH 
+ êTEINDRE L'APPAREIL 
+ METTRE EN VEILLE L'APPAREIL 
+ RêINITIALISER L'APPAREIL 
+ RêINITIALISER LE VSH 
+ SORTIR 
+      MENU VSH     
+Non pris en charge
+Utiliser paramätres Adrenaline
+Flash
+Disque UMD
+MÇmoire Interne
+Memory Stick
+Aucun(e)
+AlÇatoire
+Rouge
+Rouge Clair
+Orange
+Orange Clair
+Jaune
+Jaune Clair
+Vert
+Vert Clair
+Bleu
+Bleu Clair
+Indigo
+Indigo Clair
+Violet
+Violet Clair
+Rose
+Rose Clair
+Mauve
+Mauve Clair
+Sarcelle
+Sarcelle Clair
+Aqua
+Aqua Clair
+Gris
+Gris Clair
+Noir
+Noir Clair
+Blanc
+Blanc Clair
