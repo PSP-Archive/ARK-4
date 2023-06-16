@@ -37,8 +37,6 @@ char freq2_buf[3+3+2] = "";
 char device_buf[13] = "";
 char umdvideo_path[256] = "";
 
-#define TMENU_MAX 8
-
 enum {
 	TMENU_CUSTOM_LAUNCHER,
 	TMENU_RECOVERY_MENU,
@@ -48,6 +46,7 @@ enum {
 	TMENU_RESET_DEVICE,
 	TMENU_RESET_VSH,
 	TMENU_EXIT,
+	TMENU_MAX
 };
 
 int item_fcolor[TMENU_MAX];

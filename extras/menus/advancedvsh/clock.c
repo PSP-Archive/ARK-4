@@ -71,6 +71,12 @@ void change_fg_color(int dir) {
 	config.vsh_fg_color=sel;
 }
 
+void change_font(int dir) {
+	int sel = config.vsh_font;
+	sel = limit(sel+dir, 0, 55);
+	config.vsh_font=sel;
+}
+
 void change_usb(int dir)
 {
 	int sel = cnf.usbdevice;

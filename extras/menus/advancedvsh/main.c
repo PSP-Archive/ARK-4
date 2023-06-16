@@ -653,7 +653,12 @@ static void launch_umdvideo_mount(void)
 
 int load_recovery_font_select(void)
 {
-	strcpy(g_cur_font_select, ark_config->arkpath);
+
+	if (config.vsh_font){
+		extern char* available_fonts[];
+		strcpy(g_cur_font_select, available_fonts[config.vsh_font-1]);
+		return 0;
+	}
 
 	int ret, value;
 
@@ -665,10 +670,10 @@ int load_recovery_font_select(void)
 
 	switch (value){
 		case PSP_SYSTEMPARAM_LANGUAGE_RUSSIAN:
-			strcat(g_cur_font_select, "CYRILL1.pf");
+			strcpy(g_cur_font_select, "CYRILL1.pf");
 			break;
 		default:
-			strcat(g_cur_font_select, "CP850.pf");
+			strcpy(g_cur_font_select, "CP850.pf");
 			break;
 	}
 

@@ -17,8 +17,6 @@ extern int cur_battery;
 extern t_conf config;
 extern u32 swap_xo;
 
-#define SUBMENU_MAX 15
-
 enum {
 	SUBMENU_USB_DEVICE,
 	SUBMENU_USB_READONLY,
@@ -26,6 +24,7 @@ enum {
 	SUBMENU_UMD_VIDEO,
 	SUBMENU_FG_COLORS,
 	SUBMENU_BG_COLORS,
+	SUBMENU_FONT,
 	SUBMENU_CONVERT_BATTERY,
 	SUBMENU_SWAP_XO_BUTTONS,
 	SUBMENU_REGION_MODE,
@@ -35,12 +34,27 @@ enum {
 	SUBMENU_DELETE_HIBERNATION,
 	SUBMENU_RANDOM_GAME,
 	SUBMENU_GO_BACK,
+	SUBMENU_MAX
 };
 
 int item_fcolor[SUBMENU_MAX];
 const char *subitem_str[SUBMENU_MAX];
 
 static int submenu_sel = SUBMENU_USB_DEVICE;
+
+char* available_fonts[] = {
+	"8X8!FONT.pf",   "CP437.pf",   "CP866.pf",     "CYRILL3.pf",    "READABLE.pf",
+	"8X8#FONT.pf",    "CP850.pf",   "CP880.pf",     "DEF_8X8.pf",    "ROM8PIX.pf",
+	"8X8@FONT.pf",    "CP851.pf",   "CP881.pf",     "EVGA-ALT.pf",   "RUSSIAN.pf",
+	"8X8ITAL.pf",     "CP852.pf",   "CP882.pf",     "FANTASY.pf",    "SMEGA88.pf",
+	"APEAUS.pf",      "CP853.pf",   "CP883.pf",     "FE_8X8.pf",     "SMVGA88.pf",
+	"APLS.pf",        "CP860.pf",   "CP884.pf",     "GRCKSSRF.pf",   "SPACE8.pf",
+	"ARMENIAN.pf",    "CP861.pf",   "CP885.pf",     "GREEK.pf",      "Standard.pf",
+	"CP111.pf",       "CP862.pf",   "CRAZY8.pf",    "HERCITAL.pf",   "THIN8X8.pf",
+	"CP112.pf",       "CP863.pf",   "CYRIL_B.pf",   "HERCULES.pf",   "THIN_SS.pf",
+	"CP113.pf",       "CP864.pf",   "CYRILL1.pf",   "MAC.pf",        "TINYTYPE.pf",
+	"CP437old.pf",    "CP865.pf",   "CYRILL2.pf",   "MARCIO08.pf",   "VGA-ROM.pf",
+};
 
 int submenu_draw(void)
 {
@@ -495,9 +509,11 @@ int submenu_setup(void)
 		subitem_str[SUBMENU_UMD_MODE] = g_messages[MSG_NP9660];
 	}
 
-
-
-
+	if (config.vsh_font)
+		subitem_str[SUBMENU_FONT] = available_fonts[config.vsh_font-1];
+	else{
+		subitem_str[SUBMENU_FONT] = g_messages[MSG_DEFAULT];
+	}
 
 	switch(cnf.usbdevice_rdonly) {
 		case 0:
@@ -898,6 +914,15 @@ none:
 		case SUBMENU_BG_COLORS:
 			// This will be where I will be adding to set the color
 			if(direction) change_bg_color(direction);
+			break;
+		case SUBMENU_FONT:
+			if (direction){
+				change_font(direction);
+				release_font();
+				if (config.vsh_font){
+					load_external_font(available_fonts[config.vsh_font-1]);
+				}
+			}
 			break;
 		case SUBMENU_GO_BACK:
 			if(direction==0) return 1; // finish

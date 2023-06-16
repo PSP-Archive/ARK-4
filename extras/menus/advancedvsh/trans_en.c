@@ -46,6 +46,7 @@ const char *g_messages_en[] = {
 	"ISO VIDEO MOUNT",
 	"FG COLORS      ",
 	"BG COLORS      ",
+	"FONT           ",
 	"CONVERT BATTERY",
 	"SWAP X/O BTNS  ",
 	"VSH REGION     ",

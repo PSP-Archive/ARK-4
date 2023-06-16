@@ -27,6 +27,7 @@ typedef struct {
     unsigned char battery_percent; // show remaing battery percent next to battery icon
     unsigned char startbtn; // Default (normal start button behaviour or boot last game)
     char last_game[128];    // last played game
+    unsigned char vsh_font; // font used by VSH Menu
 } t_conf;
 
 #endif

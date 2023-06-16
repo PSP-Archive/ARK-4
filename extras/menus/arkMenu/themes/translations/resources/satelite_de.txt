@@ -3,8 +3,8 @@ Japan
 USA
 Europa
 Korea
-Grossbritannien
-Suedamerika
+Gro·britannien
+SÅdamerika
 Australien
 Hong Kong
 Taiwan
@@ -15,39 +15,40 @@ Debugmodus II
 Deaktiviert
 Aktiviert
 Normal
-Aendern
+éndern
 X -> O
 O -> X
 Sony NP9660 (PBP)
 Inferno 2 (ISO/CSO)
-USB-GERAET      
-USB NUR-LESEN   
+USB-VERBINDUNG  
+USB READ-ONLY   
 ISO TREIBER     
 ISO VIDEO MOUNT 
 VORDERGRUND      
 HINTERGRUND      
+SCHRIFTART       
 BATTERIE KONV.  
 X/O TAUSCHEN    
 UMD-REGION      
 VSH-REGION      
 IMPORTIERE KLASSISCHE PLUGINS
 AKTIVIERE FLASH UND WMA
-PAUSIERUNG LOESCHEN
-ZUFAELLIGE ISO STARTEN
-ZURUECK
+PAUSIERUNG LôSCHEN
+ZUFéLLIGE ISO STARTEN
+ZURöCK
 KEINE PAUSEFUNKTION
 Normal -> Pandora
 Pandora -> Normal
 CUSTOM LAUNCHER ->
-RECOVERY MENU   ->
-ERWEITERTES VSH MENU
-GERAET AUSSCHALTEN
+RECOVERY MENö   ->
+ERWEITERTES VSH MENö
+GERéT AUSSCHALTEN
 STANDBY-MODUS
-GERAET NEUSTARTEN
+GERéT NEUSTARTEN
 VSH NEUSTARTEN
 BEENDEN
-      VSH MENU     
-Nicht unterstuetzt
+      VSH MENö     
+Nicht unterstÅtzt
 Adrenaline-Einstellungen benutzen
 Flash
 UMD Disk
@@ -61,25 +62,25 @@ Orange
 Hellorange
 Gelb
 Hellgelb
-Gruen
-Hellgruen
+GrÅn
+HellgrÅn
 Blau
 Hellblau
 Indigo
 Hellindigo
 Violett
 Hellviolett
-Pink
-Hellpink
+Rosa
+Hellrosa
 Lila
 Helllila
-Tuerkis
-Helltuerkis
+TÅrkis
+HelltÅrkis
 Aqua
 Hellaqua
 Grau
 Hellgrau
 Schwarz
 Hellschwarz
-Weiss
-Hellweiss
+Wei·
+Hellwei·

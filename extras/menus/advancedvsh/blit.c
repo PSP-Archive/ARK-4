@@ -147,27 +147,24 @@ int blit_string_ctr(int sy,const char *msg)
 int load_external_font(const char *file)
 {
 	SceUID fd;
-	unsigned f_si = 2048;
 	int ret;
 	void *buf;
 
-	char pkgpath[ARK_PATH_SIZE];
+	static char pkgpath[ARK_PATH_SIZE];
 	strcpy(pkgpath, ark_config->arkpath);
 	strcat(pkgpath, "LANG.ARK");
 
-	SceOff offset = findPkgOffset(file, &f_si, pkgpath);
+	SceOff offset = findPkgOffset(file, NULL, pkgpath);
 
-	if (offset == 0 || f_si == 0) return -1;
+	if (offset == 0) return -1;
 
-	fd = sceIoOpen(file, PSP_O_RDONLY, 0777);
+	fd = sceIoOpen(pkgpath, PSP_O_RDONLY, 0777);
 
 	if(fd < 0) {
 		return fd;
 	}
 
-	sceIoLseek(fd, offset, PSP_SEEK_SET);
-
-	g_memid = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, f_si, NULL);
+	g_memid = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, 2048, NULL);
 
 	if(g_memid < 0) {
 		sceIoClose(fd);
@@ -182,9 +179,10 @@ int load_external_font(const char *file)
 		return -2;
 	}
 
-	ret = sceIoRead(fd, buf, f_si);
+	sceIoLseek(fd, offset, PSP_SEEK_SET);
+	ret = sceIoRead(fd, buf, 2048);
 
-	if(ret != f_si) {
+	if(ret != 2048) {
 		sceKernelFreePartitionMemory(g_memid);
 		sceIoClose(fd);
 		return -3;
