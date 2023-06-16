@@ -82,6 +82,8 @@ ARKConfig* ark_config = &_ark_conf;
 int cur_battery;
 u32 swap_xo;
 
+static char g_cur_font_select[32] __attribute((aligned(64)));
+
 static struct{
 	u8 fg_color;
 	u8 bg_color;
@@ -649,12 +651,27 @@ static void launch_umdvideo_mount(void)
 	reset_vsh = 1;
 }
 
-static char g_cur_font_select[256] __attribute((aligned(64)));
-
 int load_recovery_font_select(void)
 {
 	strcpy(g_cur_font_select, ark_config->arkpath);
-	strcat(g_cur_font_select, "CP850.pf");
+
+	int ret, value;
+
+	ret = sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &value);
+
+	if(ret < 0) {
+		value = PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
+	}
+
+	switch (value){
+		case PSP_SYSTEMPARAM_LANGUAGE_RUSSIAN:
+			strcat(g_cur_font_select, "CYRILL1.pf");
+			break;
+		default:
+			strcat(g_cur_font_select, "CP850.pf");
+			break;
+	}
+
 	return 0;
 }
 
