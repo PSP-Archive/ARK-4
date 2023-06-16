@@ -21,10 +21,10 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[7];
+    char* options[8];
 } language = {
     "Language",
-    7,
+    8,
     0,
     &(common::getConf()->language),
     {"English", "Español", "Deutsch", "Français", "Português", "Italiano", "Русский", "Română"}
