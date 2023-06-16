@@ -653,22 +653,8 @@ static char g_cur_font_select[256] __attribute((aligned(64)));
 
 int load_recovery_font_select(void)
 {
-	SceUID fd;
-
-	g_cur_font_select[0] = '\0';
-	fd = sceIoOpen("ef0:/seplugins/font_recovery.txt", PSP_O_RDONLY, 0777);
-
-	if(fd < 0) {
-		fd = sceIoOpen("ms0:/seplugins/font_recovery.txt", PSP_O_RDONLY, 0777);
-
-		if(fd < 0) {
-			return fd;
-		}
-	}
-
-	sceIoRead(fd, g_cur_font_select, sizeof(g_cur_font_select));
-	sceIoClose(fd);
-
+	strcpy(g_cur_font_select, ark_config->arkpath);
+	strcat(g_cur_font_select, "8X8!FONT.pf");
 	return 0;
 }
 

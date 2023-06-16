@@ -25,6 +25,10 @@
 extern unsigned char msx[];
 static unsigned char *g_cur_font = msx;
 
+extern ARKConfig* ark_config;
+
+extern SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath);
+
 static SceUID g_memid = -1;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -143,9 +147,17 @@ int blit_string_ctr(int sy,const char *msg)
 int load_external_font(const char *file)
 {
 	SceUID fd;
-	size_t f_si;
+	unsigned f_si = 2048;
 	int ret;
 	void *buf;
+
+	char pkgpath[ARK_PATH_SIZE];
+	strcpy(pkgpath, ark_config->arkpath);
+	strcat(pkgpath, "LANG.ARK");
+
+	SceOff offset = findPkgOffset(file, &f_si, pkgpath);
+
+	if (offset == 0 || f_si == 0) return -1;
 
 	fd = sceIoOpen(file, PSP_O_RDONLY, 0777);
 
@@ -153,9 +165,7 @@ int load_external_font(const char *file)
 		return fd;
 	}
 
-	sceIoLseek(fd, 0, PSP_SEEK_END);
-	f_si = sceIoLseek(fd, 0, PSP_SEEK_CUR);
-	sceIoLseek(fd, 0, PSP_SEEK_SET);
+	sceIoLseek(fd, offset, PSP_SEEK_SET);
 
 	g_memid = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, f_si, NULL);
 
