@@ -16,8 +16,8 @@ Deshabilitado
 Habilitado
 Normal
 Cambiar
-X Primario
-O Primario
+X -> O
+O -> X
 Sony NP9660 (PBP)
 Inferno 2 (ISO/CSO)
 DISPOSITIVO USB
@@ -32,7 +32,7 @@ REGION VSH
 REGION UMD     
  LEER PLUGINS CLASICOS 
  ACTIVAR FLASH Y WMA   
- BORRAR HIBERNACION  
+  BORRAR HIBERNACION 
  CARGAR ISO RANDOM 
  VOLVER 
 Normal -> Pandora
@@ -40,11 +40,11 @@ Pandora -> Normal
  MENU LANZADOR   -> 
  MENU RECOVERY   -> 
  MENU VSH AVANZADO 
- APAGAR CONSOLA 
-   SUSPENDER   
-  REINICIAR  
-  RECARGAR 
- SALIR 
+  APAGAR CONSOLA 
+   SUSPENDER    
+   REINICIAR  
+   RECARGAR 
+  SALIR  
       MENU VSH     
 Sin soporte
 Usar ajustes de Adrenaline
