@@ -390,7 +390,7 @@ int submenu_draw(void)
 					if (psp_model == PSP_GO)
 						xPointer = 168;
 					else{
-						msg = " NO HIBERNATION SUPPORT ";
+						msg = g_messages[MSG_NO_HIBERNATION];
 						xPointer = 153;
 					}
 					break;
@@ -410,7 +410,7 @@ int submenu_draw(void)
 			msg = subitem_str[submax_menu];
 
 			if (submax_menu == SUBMENU_UMD_REGION_MODE) {
-				if(psp_model == PSP_GO || IS_VITA_ADR(ark_config)) msg = "Unsupported";
+				if(psp_model == PSP_GO || IS_VITA_ADR(ark_config)) msg = g_messages[MSG_UNSUPPORTED];
 				blit_string( (pointer[6] * 8) + 128, (pointer[5] + subcur_menu)*8, msg);
 			}
 			else if(msg) {

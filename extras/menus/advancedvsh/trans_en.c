@@ -53,6 +53,7 @@ const char *g_messages_en[] = {
 	" IMPORT CLASSIC PLUGINS ",
 	" ACTIVATE FLASH AND WMA ",
 	" DELETE HIBERNATION ",
+	" NO HIBERNATION SUPPORT ",
 	" BOOT RANDOM ISO ",
 	" GO BACK ",
 	"Normal -> Pandora",
