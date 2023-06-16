@@ -74,6 +74,7 @@ static char* lang_files[] = {
     "lang_pt.json",
     "lang_it.json",
     "lang_ru.json",
+    "lang_ro.json",
 };
 
 static t_conf config;
