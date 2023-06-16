@@ -33,9 +33,9 @@ REGION UMD
  LEER PLUGINS CLASICOS 
  ACTIVAR FLASH Y WMA   
   BORRAR HIBERNACION
-   SIN HIBERNACION  
  CARGAR ISO RANDOM 
  VOLVER 
+    SIN HIBERNACION    
 Normal -> Pandora
 Pandora -> Normal
  MENU LANZADOR   -> 
@@ -48,7 +48,7 @@ Pandora -> Normal
   SALIR  
       MENU VSH     
 Sin soporte
-Usar ajustes de Adrenaline
+Usar Adrenaline
 Flash
 Disco UMD
 Memoria Interna
