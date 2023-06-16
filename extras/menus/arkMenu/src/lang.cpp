@@ -7,11 +7,17 @@ intraFont* altFont = NULL;
 
 bool Translations::loadLanguage(string lang_file){
 
-    // cleanup old language
+    // cleanup old language and font
     if (cur_lang){
         cJSON* aux = cur_lang;
         cur_lang = NULL;
         cJSON_Delete(aux);
+    }
+    if (altFont){
+        intraFontUnload(altFont);
+        altFont = NULL;
+        t_conf* conf = common::getConf();
+        conf->font = 0;
     }
 
     // read language file from PKG
@@ -31,14 +37,6 @@ bool Translations::loadLanguage(string lang_file){
             if (altFont == NULL){
                 altFont = intraFontLoad("flash0:/font/ltn0.pgf", 0);
                 intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
-            }
-        }
-        else{
-            if (altFont){
-                intraFontUnload(altFont);
-                altFont = NULL;
-                t_conf* conf = common::getConf();
-                conf->font = 0;
             }
         }
 

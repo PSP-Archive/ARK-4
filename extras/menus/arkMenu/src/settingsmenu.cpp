@@ -245,7 +245,7 @@ void SettingsMenu::applyConf(){
         for (int i=0; i<table->max_options; i++)
             *(table->settings_entries[i]->config_ptr) = table->settings_entries[i]->selection;
         if (this->callback != NULL) this->callback();
-        changed = false;
+        readConf(); // update in case callback has changed it
     }
 }
 

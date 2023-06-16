@@ -26,6 +26,7 @@ static Image* images[MAX_IMAGES];
 static Image* checkbox[2];
 static Image* icons[MAX_FILE_TYPES];
 
+extern intraFont* altFont;
 static intraFont* font = NULL;
 static MP3* sound_mp3 = NULL;
 static int argc;
@@ -75,6 +76,10 @@ static char* lang_files[] = {
     "lang_it.json",
     "lang_ru.json",
     "lang_ro.json",
+    "lang_jp.json",
+    "lang_ko.json",
+    "lang_cht.json",
+    "lang_chs.json",
 };
 
 static t_conf config;
@@ -134,7 +139,6 @@ void common::saveConf(){
         intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
         currentFont = config.font;
         // use alt font set by lang
-        extern intraFont* altFont;
         if (altFont) intraFontSetAltFont(font, altFont);
     }
 
@@ -558,6 +562,7 @@ void common::printText(float x, float y, const char* text, u32 color, float size
     }
     
     intraFontSetStyle(font, size, color, secondColor, 0.f, arg5);
+    if (altFont) intraFontSetStyle(altFont, size, color, secondColor, 0.f, arg5);
 
     if (int(scroll)){
         if (x != scrollX || y != scrollY){
