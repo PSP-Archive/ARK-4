@@ -42,19 +42,7 @@ const char *subitem_str[SUBMENU_MAX];
 
 static int submenu_sel = SUBMENU_USB_DEVICE;
 
-char* available_fonts[] = {
-	"8X8!FONT.pf",   "CP437.pf",   "CP866.pf",     "CYRILL3.pf",    "READABLE.pf",
-	"8X8#FONT.pf",    "CP850.pf",   "CP880.pf",     "DEF_8X8.pf",    "ROM8PIX.pf",
-	"8X8@FONT.pf",    "CP851.pf",   "CP881.pf",     "EVGA-ALT.pf",   "RUSSIAN.pf",
-	"8X8ITAL.pf",     "CP852.pf",   "CP882.pf",     "FANTASY.pf",    "SMEGA88.pf",
-	"APEAUS.pf",      "CP853.pf",   "CP883.pf",     "FE_8X8.pf",     "SMVGA88.pf",
-	"APLS.pf",        "CP860.pf",   "CP884.pf",     "GRCKSSRF.pf",   "SPACE8.pf",
-	"ARMENIAN.pf",    "CP861.pf",   "CP885.pf",     "GREEK.pf",      "Standard.pf",
-	"CP111.pf",       "CP862.pf",   "CRAZY8.pf",    "HERCITAL.pf",   "THIN8X8.pf",
-	"CP112.pf",       "CP863.pf",   "CYRIL_B.pf",   "HERCULES.pf",   "THIN_SS.pf",
-	"CP113.pf",       "CP864.pf",   "CYRILL1.pf",   "MAC.pf",        "TINYTYPE.pf",
-	"CP437old.pf",    "CP865.pf",   "CYRILL2.pf",   "MARCIO08.pf",   "VGA-ROM.pf",
-};
+extern char* available_fonts[];
 
 int submenu_draw(void)
 {

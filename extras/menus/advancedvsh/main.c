@@ -668,7 +668,8 @@ int load_selected_font(void)
 
 	switch (value){
 		case PSP_SYSTEMPARAM_LANGUAGE_RUSSIAN:
-			load_external_font("CYRILL1.pf");
+			load_external_font("RUSSIAN.pf");
+			config.vsh_font = 48;
 			break;
 		default:
 			break;
