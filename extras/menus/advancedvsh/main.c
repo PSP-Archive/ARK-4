@@ -683,19 +683,10 @@ void clear_language(void)
 
 static char ** apply_language(char *translate_file)
 {
-	char path[512];
 	char **message = NULL;
 	int ret;
 
-	sprintf(path, "ms0:/seplugins/%s", translate_file);
-	ret = load_translate_table(&message, path, MSG_END);
-
-	if(ret >= 0) {
-		return message;
-	}
-
-	sprintf(path, "ef0:/seplugins/%s", translate_file);
-	ret = load_translate_table(&message, path, MSG_END);
+	ret = load_translate_table(&message, translate_file, MSG_END);
 
 	if(ret >= 0) {
 		return message;
@@ -710,14 +701,10 @@ static void select_language(void)
 {
 	int ret, value;
 
-	if(cnf.language == -1) {
-		ret = sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &value);
+	ret = sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &value);
 
-		if(ret != 0) {
-			value = PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
-		}
-	} else {
-		value = cnf.language;
+	if(ret < 0) {
+		value = PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
 	}
 
 	cur_language = value;

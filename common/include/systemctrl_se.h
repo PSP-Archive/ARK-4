@@ -149,7 +149,6 @@ enum umdregion
 typedef struct _SEConfig
 {
     u32 magic;
-    u8 language;
     u8 umdmode;
     u8 clock;
     u8 vshregion;
