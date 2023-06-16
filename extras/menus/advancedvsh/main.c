@@ -654,7 +654,7 @@ static char g_cur_font_select[256] __attribute((aligned(64)));
 int load_recovery_font_select(void)
 {
 	strcpy(g_cur_font_select, ark_config->arkpath);
-	strcat(g_cur_font_select, "8X8!FONT.pf");
+	strcat(g_cur_font_select, "CP850.pf");
 	return 0;
 }
 
