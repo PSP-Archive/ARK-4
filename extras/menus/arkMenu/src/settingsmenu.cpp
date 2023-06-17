@@ -104,6 +104,8 @@ void SettingsMenu::draw(){
                     common::printText(x+10, y+15, "In Loving Memory of Gregory Pitka (qwikrazor87). R.I.P.", GRAY_COLOR, SIZE_LITTLE, 0, 0);
                 else if (today.tm_mday == 25 && today.tm_mon == 11)
                     common::printText(x+10, y+15, "Merry Christmas!", GRAY_COLOR, SIZE_LITTLE, 0, 0);
+                else if (today.tm_mday == 20 && today.tm_mon == 3)
+                    common::printText(x+10, y+15, "Amplified Robotic Ketamine", GRAY_COLOR, SIZE_LITTLE, 0, 0);
                 else
                     common::printText(x+40, y+15, ark_version.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
             }
