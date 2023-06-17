@@ -8,6 +8,8 @@ extern char* fonts[];
 
 bool Translations::loadLanguage(string lang_file){
 
+    bool needs_altfont = false;
+
     // cleanup old language and font
     fonts[0] = "FONT.PGF";
     if (cur_lang){
@@ -36,10 +38,8 @@ bool Translations::loadLanguage(string lang_file){
             int font = (int)cJSON_GetNumberValue(val);
             t_conf* conf = common::getConf();
             conf->font = font;
-            if (altFont == NULL){
-                altFont = intraFontLoad("flash0:/font/ltn0.pgf", 0);
-                intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
-            }
+            needs_altfont = true;
+            
         }
         else { // try an external font
             val = cJSON_GetObjectItem(cur_lang, "__fontfile__");
@@ -49,16 +49,18 @@ bool Translations::loadLanguage(string lang_file){
                     t_conf* conf = common::getConf();
                     conf->font = 0;
                     fonts[0] = fontfile;
-                    if (altFont == NULL){
-                        altFont = intraFontLoad("flash0:/font/ltn0.pgf", 0);
-                        intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
-                    }
+                    needs_altfont = true;
                 }
             }
         }
 
         // free resources
         free(buf);
+    }
+
+    if (needs_altfont && altFont == NULL){
+        altFont = intraFontLoad("flash0:/font/ltn0.pgf", 0);
+        intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
     }
 
     return (cur_lang!=NULL);
