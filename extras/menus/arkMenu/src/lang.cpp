@@ -9,6 +9,7 @@ extern char* fonts[];
 bool Translations::loadLanguage(string lang_file){
 
     // cleanup old language and font
+    fonts[0] = "FONT.PGF";
     if (cur_lang){
         cJSON* aux = cur_lang;
         cur_lang = NULL;
@@ -35,7 +36,6 @@ bool Translations::loadLanguage(string lang_file){
             int font = (int)cJSON_GetNumberValue(val);
             t_conf* conf = common::getConf();
             conf->font = font;
-            fonts[0] = "FONT.PGF";
             if (altFont == NULL){
                 altFont = intraFontLoad("flash0:/font/ltn0.pgf", 0);
                 intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
