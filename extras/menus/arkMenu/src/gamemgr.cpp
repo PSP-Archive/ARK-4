@@ -602,10 +602,10 @@ void GameManager::gameOptionsMenu(){
             path = path.substr(0, path.rfind('/')+1);
         }
         SfoInfo info = e->getSfoInfo();
-        string fullname = TR("Name - ") + string(info.title);
-        string gameid = TR("Game ID - ") + string(info.gameid);
-        string fullpath = TR("Path - ") + e->getPath();
-        string size = TR("Size - ") + common::beautifySize(Browser::recursiveSize(path));
+        string fullname = TR("Name") + " - " + string(info.title);
+        string gameid = TR("Game ID") + " - " + string(info.gameid);
+        string fullpath = TR("Path") + " - " + e->getPath();
+        string size = TR("Size") + " - " + common::beautifySize(Browser::recursiveSize(path));
         t_options_entry gameinfo_entries[] = {
             {0, (char*)fullname.c_str()},
             {1, (char*)gameid.c_str()},

@@ -364,7 +364,7 @@ void Browser::installPlugin(){
 void Browser::extractArchive(int type){
 
     string root = get()->getPath().substr(0, 5);
-    string extract_to_root = TR("Extract to ")+root;
+    string extract_to_root = TR("Extract to")+" "+root;
 
     t_options_entry options_entries[] = {
         {OPTIONS_CANCELLED, "Cancel"},
