@@ -6,7 +6,7 @@ Risparmio energetico
 Avvio automatico del launcher
 Disattiva pausa su PSP Go
 Forza memoria aggiuntiva
-Velocizza memory stick
+Velocizza Memory Stick
 Cache Inferno
 Correggi incompatibilità plugin su PSP Go
 Salta loghi di Sony

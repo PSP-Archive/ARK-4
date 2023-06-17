@@ -1,0 +1,86 @@
+Predefinito
+Giappone
+America
+Europa
+Corea
+Regno Unito
+America Latina
+Australia
+Hong Kong
+Taiwan
+Russia
+Cina
+Debug I
+Debug II
+Disabilitato
+Abilitato
+Normale
+Modifica
+X -> O
+O -> X
+Sony NP9660 (PBP)
+Inferno 2 (ISO/CSO)
+DISPOSITIVO USB
+PROTEGGERE USB 
+DRIVERS ISO    
+ISO VIDEO      
+COLORE FG      
+COLORE BG      
+CARATTERE      
+MOD BATTERIA   
+MODIFICA X/O   
+REGIONE VSH    
+REGIONE UMD    
+ LEGGERE PLUGINS CLASSICOS 
+ ATTIVARE FLASH E WMA   
+  ELIMINARE IBERNAZIONE  
+ CARICARE ISO CASUALE 
+ RITORNO 
+    SENZA IBERNAZIONE  
+Normal -> Pandora
+Pandora -> Normal
+ MENU PERSONALIZZATO   -> 
+ MENU RIPRISTINO   -> 
+ MENU VSH AVANZATO 
+  SPEGNERE LA CONSOLE 
+   SOSPENDERE    
+   REINIZIARE   
+   RICARICARE 
+  USCIRE  
+      MENU VSH     
+Non Supportato
+Usare Adrenaline
+Flash
+Disco UMD
+Memoria Interna
+Memory Stick
+Niente
+Casuale
+Rosso
+Rosso Trasparente
+Arancia
+Arancia Trasparente
+Giallo
+Giallo Trasparente
+Verde
+Verde Trasparente
+Blu
+Blu Trasparente
+Indigo
+Indigo Trasparente
+Viola
+Viola Trasparente
+Rossa
+Rossa Trasparente
+Viola Forte
+Viola Forte Trasparente
+Verde Acqua
+Verde Acqua Trasparente
+Acqua
+Acqua Trasparente
+Grigio
+Grigio Trasparente
+Nero
+Nero Trasparente
+Bianco
+Bianco Trasparente
