@@ -4,6 +4,7 @@
 
 static cJSON* cur_lang = NULL;
 intraFont* altFont = NULL;
+extern char* fonts[];
 
 bool Translations::loadLanguage(string lang_file){
 
@@ -30,13 +31,29 @@ bool Translations::loadLanguage(string lang_file){
 
         // check if language file requires a font
         cJSON* val = cJSON_GetObjectItem(cur_lang, "__font__");
-        if (val){
+        if (val){ // try a built-in font
             int font = (int)cJSON_GetNumberValue(val);
             t_conf* conf = common::getConf();
             conf->font = font;
+            fonts[0] = "FONT.PGF";
             if (altFont == NULL){
                 altFont = intraFontLoad("flash0:/font/ltn0.pgf", 0);
                 intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
+            }
+        }
+        else { // try an external font
+            val = cJSON_GetObjectItem(cur_lang, "__fontfile__");
+            if (val){
+                char* fontfile = cJSON_GetStringValue(val);
+                if (fontfile){
+                    t_conf* conf = common::getConf();
+                    conf->font = 0;
+                    fonts[0] = fontfile;
+                    if (altFont == NULL){
+                        altFont = intraFontLoad("flash0:/font/ltn0.pgf", 0);
+                        intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
+                    }
+                }
             }
         }
 

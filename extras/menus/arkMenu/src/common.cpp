@@ -127,8 +127,13 @@ void common::saveConf(){
     }
 
     if (currentFont != config.font || font == NULL){
-        if (!fileExists(fonts[config.font]))
+        if (!fileExists(fonts[config.font])){
             config.font = 1;
+            if (altFont){
+                intraFontUnload(altFont);
+                altFont = NULL;
+            }
+        }
     
         // offload current font
         intraFont* aux = font;
