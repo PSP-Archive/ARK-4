@@ -217,7 +217,7 @@ void GameManager::findISOs(const char* path){
     pri_dirent->size = sizeof(pspMsPrivateDirent);
     entry.d_private = (void*)pri_dirent;
 
-    if (dir == NULL)
+    if (dir < 0)
         return;
         
     while (sceIoDread(dir, dit) > 0){
@@ -598,7 +598,7 @@ void GameManager::gameOptionsMenu(){
         // create a new options menu but each entry is some info about the game
         Entry* e = this->getEntry();
         string path = e->getPath();
-        if (e->getType() == "EBOOT"){
+        if (e->getType() == string("EBOOT")){
             path = path.substr(0, path.rfind('/')+1);
         }
         SfoInfo info = e->getSfoInfo();
@@ -686,10 +686,10 @@ void GameManager::gameOptionsMenu(){
             SystemMgr::resumeDraw();
 
             // delete file/folder
-            if (e->getType() == "ISO"){
+            if (e->getType() == string("ISO")){
                 sceIoRemove(e->getPath().c_str());
             }
-            else if (e->getType() == "EBOOT"){
+            else if (e->getType() == string("EBOOT")){
                 string path = e->getPath();
                 if (strstr(path.c_str(), "/PSP/SAVEDATA/") != NULL){
                     // remove eboot only

@@ -152,7 +152,7 @@ static void drawOptionsMenuCommon(){
 		else {
 			entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+7, 52, 52); // SMALL
 		} 
-        if (i==pEntryIndex && optionsDrawState==2)
+        if (i==pEntryIndex && optionsDrawState==2){
 			if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
             	common::printText(x+25, 130, entries[i]->getName().c_str(), LITEGRAY, SIZE_BIG, 1); // LARGE
 			}
@@ -162,13 +162,14 @@ static void drawOptionsMenuCommon(){
 			else {
 				common::printText(x+12, 75, entries[i]->getName().c_str(), LITEGRAY, SIZE_LITTLE, 1); // SMALL
 			}
+        }
 
-			if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3)
-        		x += 160;
-			else if(common::getConf()->menusize == 2)
-        		x += 120;
-			else
-        		x += 100;
+        if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3)
+            x += 160;
+        else if(common::getConf()->menusize == 2)
+            x += 120;
+        else
+            x += 100;
     }
     switch (menu_draw_state){
         case -1:
@@ -337,7 +338,7 @@ static int controlThread(SceSize _args, void *_argp){
                 screensaver = 1;
             }
         }
-        else if (stillLoading){
+        else if (stillLoading()){
             last_pressed = clock();
         }
         sceKernelDelayThread(0);

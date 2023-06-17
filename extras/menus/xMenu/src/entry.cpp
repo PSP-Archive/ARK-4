@@ -30,7 +30,7 @@ Image* Entry::loadIcon(){
         if (icon != NULL)
             return icon;
     }
-    return common::getNoIcon();
+    return NULL;
 }
 
 void Entry::animAppear(){
@@ -62,7 +62,7 @@ string Entry::getEbootName(){
 }
         
 Image* Entry::getIcon(){
-    return this->icon0;
+    return (icon0)? icon0 : common::getNoIcon();
 }
 
 Image* Entry::getPic0(){

@@ -1021,7 +1021,7 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
             printf("Copying %s\n", e->getName().c_str());
             if (e->getName() != "<refresh>" && e->getName() != "<disconnect>" && e->getName() != "./" && e->getName() != "../"){
                 string src = new_source + e->getName();
-                if (e->getType() == "FOLDER"){
+                if (e->getType() == string("FOLDER")){
                     string dst = new_destination + e->getName().substr(0, e->getName().length()-1);
                     copy_folder_recursive(src.c_str(), dst.c_str());
                 }
