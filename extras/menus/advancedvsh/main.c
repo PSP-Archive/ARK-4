@@ -345,7 +345,7 @@ void exec_recovery_menu(){
     sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
 }
 
-void import_classic_plugins() {
+void import_classic_plugins(char* devpath) {
 	SceUID game, vsh, pops, plugins;
 	int i = 0;
 	int chunksize = 512;
@@ -357,24 +357,19 @@ void import_classic_plugins() {
 	int vshCharLength = strlen(vshChar);
 	char *popsChar = "pops, ";
 	int popsCharLength = strlen(popsChar);
-	char filename[27];
-
-	if (psp_model == PSP_GO)
-		snprintf(filename, sizeof(filename), "%s0:/seplugins/plugins.txt", "ef");
-	else
-		snprintf(filename, sizeof(filename), "%s0:/seplugins/plugins.txt", "ms");
 	
-	if (psp_model == PSP_GO) {
-		game = sceIoOpen("ef0:/seplugins/game.txt", PSP_O_RDONLY, 0777);
-		vsh = sceIoOpen("ef0:/seplugins/vsh.txt", PSP_O_RDONLY, 0777);
-		pops = sceIoOpen("ef0:/seplugins/pops.txt", PSP_O_RDONLY, 0777);
-		plugins = sceIoOpen(filename, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-	} else {
-		game = sceIoOpen("ms0:/seplugins/game.txt", PSP_O_RDONLY, 0777);
-		vsh = sceIoOpen("ms0:/seplugins/vsh.txt", PSP_O_RDONLY, 0777);
-		pops = sceIoOpen("ms0:/seplugins/pops.txt", PSP_O_RDONLY, 0777);
-		plugins = sceIoOpen(filename, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-	}
+	char* filename = "??0:/seplugins/plugins.txt";
+	char* gamepath = "??0:/seplugins/game.txt";
+	char* vshpath = "??0:/seplugins/vsh.txt";
+	char* popspath = "??0:/seplugins/pops.txt";
+
+	filename[0] = gamepath[0] = vshpath[0] = popspath[0] = devpath[0];
+	filename[1] = gamepath[1] = vshpath[1] = popspath[1] = devpath[1];
+	
+	game = sceIoOpen(gamepath, PSP_O_RDONLY, 0777);
+	vsh = sceIoOpen(vshpath, PSP_O_RDONLY, 0777);
+	pops = sceIoOpen(popspath, PSP_O_RDONLY, 0777);
+	plugins = sceIoOpen(filename, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 
 	// GAME.txt
 	memset(buf, 0, chunksize);
@@ -1178,8 +1173,10 @@ resume:
 		activate_codecs();
 	else if (sub_stop_flag == 12)
 		swap_buttons();
-	else if (sub_stop_flag == 13)
-		import_classic_plugins();
+	else if (sub_stop_flag == 13){
+		import_classic_plugins("ms");
+		if (psp_model == PSP_GO) import_classic_plugins("ef");
+	}
 	else if (sub_stop_flag == 14){
 		checkConfig();
 		exec_random_game();
