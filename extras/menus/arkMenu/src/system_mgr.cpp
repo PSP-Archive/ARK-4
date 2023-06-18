@@ -275,6 +275,7 @@ static void systemDrawer(){
 }
 
 static int drawThread(SceSize _args, void *_argp){
+    common::stopLoadingThread();
     while (running){
         sceKernelWaitSema(draw_sema, 1, NULL);
         common::clearScreen(CLEAR_COLOR);

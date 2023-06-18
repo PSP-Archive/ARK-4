@@ -86,7 +86,6 @@ int main(int argc, char** argv){
     SystemMgr::initMenu(entries, n_entries);
 
     // Handle control to Menu
-    common::stopLoadingThread();
     SystemMgr::startMenu();
 
     // Cleanup data and exit

@@ -93,6 +93,7 @@ copy-bin:
 	$(Q)cp extras/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
 	$(Q)cp contrib/UPDATER.TXT dist/ARK_01234/
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
+	$(Q)rm -rf dist/themes/translations
 	$(Q)cp contrib/README.TXT dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	$(Q)cp -r dist/ARK_01234 dist/PSP/ARK_DC/
