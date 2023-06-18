@@ -63,6 +63,10 @@ class Browser : public SystemEntry{
         }
         void resume(){
             animation = -1;
+            if (firstboot){
+                this->refreshDirs();
+                firstboot = false;
+            }
             while (animation != 0)
                 sceKernelDelayThread(0);
         }
@@ -111,6 +115,7 @@ class Browser : public SystemEntry{
         bool animating; // animate the menu transition?
         unsigned int moving;
         int animation;
+        bool firstboot;
         
         /* Screen drawing thread data */
         bool hide_main_window;
