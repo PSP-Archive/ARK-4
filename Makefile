@@ -60,12 +60,12 @@ all: subdirs newcipl kxploits mkdir-dist encrypt-prx copy-bin
 
 copy-bin:
 #	Common installation
-	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Live/EBOOT.PBP # Signed EBOOT
-	$(Q)cp loader/live/user/signed_eboot/ark_loader.iso dist/Vita/ChovySign/
-	$(Q)cp loader/live/kernel/kxploit/psp660/K.BIN dist/ARK_Live/K.BIN # Kernel exploit for PSP
-	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/Vita/Standalone/ # Vita 3.60 PBOOT.PBP bubble
-	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/Vita/Standalone/K.BIN # Kernel exploit for Vita 3.60+
-	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/Vita/Adrenaline/K.BIN # kxploit for CFW
+	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Loader/EBOOT.PBP # Signed EBOOT
+	$(Q)cp loader/live/user/signed_eboot/ark_loader.iso dist/PSVita/ChovySign/
+	$(Q)cp loader/live/kernel/kxploit/psp660/K.BIN dist/ARK_Loader/K.BIN # Kernel exploit for PSP
+	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/PSVita/Standalone/ # Vita 3.60 PBOOT.PBP bubble
+	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/PSVita/Standalone/K.BIN # Kernel exploit for Vita 3.60+
+	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/PSVita/Adrenaline/K.BIN # kxploit for CFW
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
 	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/PSP/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
@@ -226,17 +226,17 @@ recovery: libs
 mkdir-dist:
 	$(Q)mkdir dist | true
 	$(Q)mkdir dist/PSP | true
-	$(Q)mkdir dist/Vita | true
+	$(Q)mkdir dist/PSVita | true
 	$(Q)mkdir dist/UPDATE | true
-	$(Q)mkdir dist/ARK_Live | true
+	$(Q)mkdir dist/ARK_Loader | true
 	$(Q)mkdir dist/PSP/Infinity | true
 	$(Q)mkdir dist/PSP/ARK_DC | true
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
 	$(Q)mkdir dist/PSP/ARK_newIPL | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
-	$(Q)mkdir dist/Vita/Adrenaline | true
-	$(Q)mkdir dist/Vita/Standalone | true
-	$(Q)mkdir dist/Vita/ChovySign  | true
+	$(Q)mkdir dist/PSVita/Adrenaline | true
+	$(Q)mkdir dist/PSVita/Standalone | true
+	$(Q)mkdir dist/PSVita/ChovySign  | true
 
 -include $(ARKROOT)/.config
 include $(ARKROOT)/common/make/quiet.mak

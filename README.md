@@ -113,7 +113,7 @@ For an easy deployment of ARK on a PSP connected to the internet, you can follow
 The instructions are as follows:
   
 - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
-- Install `ARK_Live` folder into `/PSP/GAME/` folder.
+- Install `ARK_Loader` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
 
 ###### Live CFW
@@ -229,8 +229,8 @@ The instructions are as follows:
 
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and `Adrenaline` (https://github.com/TheOfficialFloW/Adrenaline).
   - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
-  - Install `ARK_Live` folder into `/PSP/GAME/` folder.
-  - Copy `K.BIN` from `Vita/Adrenaline` folder into `ARK_Live` game folder.
+  - Install `ARK_Loader` folder into `/PSP/GAME/` folder.
+  - Copy `K.BIN` from `Vita/Adrenaline` folder into `ARK_Loader` game folder.
   - Use `Adrenaline Bubbles Manager` to create an autoboot bubble for `ARK Loader`: https://github.com/ONElua/AdrenalineBubbleManager/releases
   - Note: this does not permanently modify `Adrenaline` in any way.
 
