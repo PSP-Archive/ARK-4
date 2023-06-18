@@ -731,7 +731,7 @@ static void select_language(void)
 			g_messages = (const char**)apply_language("satelite_it.txt");
 			break;
 		case PSP_SYSTEMPARAM_LANGUAGE_DUTCH:
-			g_messages = (const char**)apply_language("satelite_nu.txt");
+			g_messages = (const char**)apply_language("satelite_nl.txt");
 			break;
 		case PSP_SYSTEMPARAM_LANGUAGE_PORTUGUESE:
 			g_messages = (const char**)apply_language("satelite_pt.txt");
