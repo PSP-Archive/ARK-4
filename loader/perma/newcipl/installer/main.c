@@ -142,11 +142,6 @@ int main()
 	kuKernelCall((void*)getDevkitVersion, &args);
 
 	// New cIPL should only be run via 6.61 FW
-	/*
-	if(devkit != 0x06060010 && devkit != 0x06060110) {
-		ErrorExit(5000,"FW ERROR!\n");
-	}
-	*/
 	if(args.ret1 != 0x06060110 ) {
 		ErrorExit(5000,"6.61 FW SUPPORTED ONLY!\n");
 	}
