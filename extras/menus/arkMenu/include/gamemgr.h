@@ -83,7 +83,7 @@ class GameManager : public SystemEntry{
         
     public:
     
-        GameManager();
+        GameManager(bool autoload);
         ~GameManager();
         
         /* thread to load icon0 in the background */

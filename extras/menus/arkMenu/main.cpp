@@ -83,13 +83,12 @@ int main(int argc, char** argv){
     if (common::getConf()->main_menu == 0){
         printf("setting up games and browser");
         entries[1] = new Browser();
-        entries[0] = new GameManager();
-        GameManager::updateGameList(NULL);
+        entries[0] = new GameManager(true);
     }
     else{
         printf("setting up browser and games");
         entries[0] = new Browser();
-        entries[1] = new GameManager();
+        entries[1] = new GameManager(false);
     }
     
     // Initialize Menu
