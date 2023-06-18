@@ -22,6 +22,7 @@ class ExitManager : public SystemEntry{
     OptionsMenu* optionsmenu;
 
     public:
+        ExitManager(){ optionsmenu = NULL; };
         void draw(){
             if (optionsmenu) optionsmenu->draw();
         };

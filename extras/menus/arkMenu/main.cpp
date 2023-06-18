@@ -76,6 +76,7 @@ int main(int argc, char** argv){
     if (common::getPspModel() != PSP_GO) max_settings--;
     SettingsTable stab = { settings_entries, max_settings };
     entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
+    printf("setting up exit\n");
     entries[n_entries++] = new ExitManager();
 
     // Setup main App (Game or Browser)
