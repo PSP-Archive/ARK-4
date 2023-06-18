@@ -234,7 +234,7 @@ void GameManager::findISOs(const char* path){
             continue;
         }
         else if (!common::fileExists(fullpath)){
-            fullpath = string(path) + string(dit->d_name).substr(0, 4) + string(pri_dirent->s_name);
+            fullpath = string(path) + string((const char*)pri_dirent);
         }
         if (Iso::isISO(fullpath.c_str())) this->categories[GAME]->addEntry(new Iso(fullpath));
     }
