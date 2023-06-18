@@ -40,12 +40,15 @@ int main(int argc, char** argv){
     // Load data (theme, config, font, etc)
     common::loadData(argc, argv);
 
+    printf("data loaded\n");
+
     // check to run last game
     Controller pad;
     pad.update(1);
     if (pad.LT()){
         common::stopLoadingThread();
         const char* last_game = common::getConf()->last_game;
+        printf("running last game: %s\n", last_game);
         if (Eboot::isEboot(last_game)){
             Eboot* eboot = new Eboot(last_game);
             eboot->execute();
@@ -56,15 +59,19 @@ int main(int argc, char** argv){
         }
     }
 
+    printf("setting up main menu entries\n");
+
     int n_entries = 2;
 
     // Setup FTP App
     if (common::getPspModel() != PSP_11000){
+        printf("setting up FTP\n");
         entries[n_entries++] = new NetworkManager();
         // initialize FTP client driver for file browser
         Browser::ftp_driver = new FTPDriver();
     }
     // Setup settings and exit
+    printf("setting up settings menu\n");
     int max_settings = MAX_SETTINGS_OPTIONS;
     if (common::getPspModel() != PSP_GO) max_settings--;
     SettingsTable stab = { settings_entries, max_settings };
@@ -73,22 +80,27 @@ int main(int argc, char** argv){
 
     // Setup main App (Game or Browser)
     if (common::getConf()->main_menu == 0){
+        printf("setting up games and browser");
         entries[1] = new Browser();
         entries[0] = new GameManager();
         GameManager::updateGameList(NULL);
     }
     else{
+        printf("setting up browser and games");
         entries[0] = new Browser();
         entries[1] = new GameManager();
     }
     
     // Initialize Menu
+    printf("setting up main menu");
     SystemMgr::initMenu(entries, n_entries);
 
     // Handle control to Menu
+    printf("starting up main menu");
     SystemMgr::startMenu();
 
     // Cleanup data and exit
+    printf("exiting somehow...");
     SystemMgr::endMenu();
     common::deleteData();
     intraFontShutdown();
