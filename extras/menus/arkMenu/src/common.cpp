@@ -86,6 +86,9 @@ static char* lang_files[] = {
 
 static t_conf config;
 
+static volatile bool loading_theme = false;
+static volatile SceUID loading_thread = -1;
+
 void setArgs(int ac, char** av){
     argc = ac;
     argv = av;
@@ -196,6 +199,17 @@ void common::launchRecovery(){
 }
 
 static void missingFileHandler(const char* filename){
+
+    if (loading_thread >= 0){
+        loading_theme = false;
+        sceKernelWaitThreadEnd(loading_thread, NULL);
+        sceKernelDeleteThread(loading_thread);
+    }
+    
+    if (!font){
+        font = intraFontLoad(fonts[1], 0);
+        intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
+    }
     
     static char msg[64];
     snprintf(msg, 64, "Error, missing file %s", filename);
@@ -332,8 +346,6 @@ u32 common::getMagic(const char* filename, unsigned int offset){
     return magic;
 }
 
-static bool loading_theme = false;
-
 static int loading_theme_thread(SceSize argc, void* argp){
     float angle = 1.0;
     while (loading_theme){
@@ -346,6 +358,7 @@ static int loading_theme_thread(SceSize argc, void* argp){
         );
         angle+=0.2;
         common::flipScreen();
+        sceKernelDelayThread(0);
     }
     sceKernelExitDeleteThread(0);
     return 0;
@@ -356,10 +369,9 @@ void common::loadTheme(){
     images[IMAGE_WAITICON] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
     
     loading_theme = true;
-    SceUID loading_thread = sceKernelCreateThread("theme_thread", &loading_theme_thread, 0x10, 0x8000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
+    loading_thread = sceKernelCreateThread("theme_thread", &loading_theme_thread, 0x10, 0x8000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
     sceKernelStartThread(loading_thread, 0, NULL);
 
-    
     images[IMAGE_LOADING] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("LOADING.PNG"));
     images[IMAGE_SPRITE] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("SPRITE.PNG"));
     images[IMAGE_NOICON] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("NOICON.PNG"));
