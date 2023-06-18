@@ -120,6 +120,7 @@ int main()
 		{(unsigned char*)payload_01G, size_payload_01G},
 		{(unsigned char*)payload_02G, size_payload_02G},
 		{(unsigned char*)payload_03G, size_payload_03G},
+		/*
 		{(unsigned char*)payload_04G, size_payload_04G},
 		{(unsigned char*)payload_05G, size_payload_05G},
 		{(unsigned char*)NULL, 0}, // 6g
@@ -128,6 +129,7 @@ int main()
 		{(unsigned char*)payload_09G, size_payload_09G}, // 9g
 		{(unsigned char*)NULL, 0}, // 10g
 		{(unsigned char*)payload_11G, size_payload_11G}, // 11g
+		*/
 
 	};
 	int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);
