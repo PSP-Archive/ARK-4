@@ -71,6 +71,7 @@ Browser::Browser(){
     this->optionsAnimY = 0;
     this->pEntryIndex = 0;
     this->animation = 0;
+    this->firstboot = true;
 
     int psp_model = common::getPspModel();
     if (psp_model != PSP_GO){
@@ -85,8 +86,6 @@ Browser::Browser(){
     if (IS_VITA(common::getArkConfig()) || psp_model == PSP_GO){
         pEntries[UMD_DIR] = NULL;
     }
-
-    this->refreshDirs();
 }
 
 Browser::~Browser(){
