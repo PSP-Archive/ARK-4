@@ -204,6 +204,7 @@ static void missingFileHandler(const char* filename){
         loading_theme = false;
         sceKernelWaitThreadEnd(loading_thread, NULL);
         sceKernelDeleteThread(loading_thread);
+        loading_thread = -1;
     }
 
     if (!font){
@@ -408,6 +409,7 @@ void common::loadTheme(){
     loading_theme = false;
     sceKernelWaitThreadEnd(loading_thread, NULL);
     sceKernelDeleteThread(loading_thread);
+    loading_thread = -1;
 }
 
 void common::loadData(int ac, char** av){
