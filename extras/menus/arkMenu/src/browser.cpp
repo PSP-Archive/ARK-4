@@ -232,6 +232,7 @@ void Browser::installTheme() {
     common::setThemePath((char*)e->getPath().c_str());
     printf("loading new theme\n");
     common::loadTheme();
+    common::stopLoadingThread();
     SystemMgr::resumeDraw();
     printf("done\n");
 
@@ -257,6 +258,7 @@ void Browser::installTheme() {
             common::deleteTheme();
             common::setThemePath();
             common::loadTheme();
+            common::stopLoadingThread();
             SystemMgr::resumeDraw();
             return;
         }
