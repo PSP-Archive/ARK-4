@@ -37,26 +37,6 @@ static u8 orig_ipl[0x24000] __attribute__((aligned(64)));
 //static u8 ipl_block_large[0x24000]__attribute__((aligned(64)));
 u8* ipl_block_large;
 
-struct {
-	unsigned char* buf;
-	size_t size;
-} ipl_table[] = {
-	{(unsigned char*)payload_01G, size_payload_01G},
-	{(unsigned char*)payload_02G, size_payload_02G},
-	{(unsigned char*)payload_03G, size_payload_03G},
-	/*
-	{(unsigned char*)payload_04G, size_payload_04G},
-	{(unsigned char*)payload_05G, size_payload_05G},
-	{(unsigned char*)NULL, 0}, // 6g
-	{(unsigned char*)payload_07G, size_payload_07G},
-	{(unsigned char*)NULL, 0}, // 8g
-	{(unsigned char*)payload_09G, size_payload_09G}, // 9g
-	{(unsigned char*)NULL, 0}, // 10g
-	{(unsigned char*)payload_11G, size_payload_11G}, // 11g
-	*/
-
-};
-
 int ReadFile(char *file, int seek, void *buf, int size)
 {
 	SceUID fd = sceIoOpen(file, PSP_O_RDONLY, 0);
@@ -116,6 +96,25 @@ int main()
 	SceUID kpspident;
 	SceUID mod;
 	u16 ipl_key = 0;
+
+	struct {
+		unsigned char* buf;
+		size_t size;
+	} ipl_table[] = {
+		{(unsigned char*)payload_01G, size_payload_01G},
+		{(unsigned char*)payload_02G, size_payload_02G},
+		{(unsigned char*)payload_03G, size_payload_03G},
+		/*
+		{(unsigned char*)payload_04G, size_payload_04G},
+		{(unsigned char*)payload_05G, size_payload_05G},
+		{(unsigned char*)NULL, 0}, // 6g
+		{(unsigned char*)payload_07G, size_payload_07G},
+		{(unsigned char*)NULL, 0}, // 8g
+		{(unsigned char*)payload_09G, size_payload_09G}, // 9g
+		{(unsigned char*)NULL, 0}, // 10g
+		{(unsigned char*)payload_11G, size_payload_11G}, // 11g
+		*/
+	};
 
 	int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);
 
