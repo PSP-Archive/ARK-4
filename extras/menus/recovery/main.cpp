@@ -80,6 +80,7 @@ int main(int argc, char** argv){
 
     SystemMgr::initMenu(entries, MAX_ENTRIES);
     
+    common::stopLoadingThread();
     SystemMgr::startMenu();
     SystemMgr::endMenu();
 

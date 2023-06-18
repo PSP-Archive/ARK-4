@@ -37,6 +37,7 @@ static struct {
         "Nederlands",
         "Русский",
         "Română",
+        "Latin",
         "Japanese",
         "Korean",
         "Chinese (Trad.)",

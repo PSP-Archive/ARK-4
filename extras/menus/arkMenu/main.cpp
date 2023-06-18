@@ -44,6 +44,7 @@ int main(int argc, char** argv){
     Controller pad;
     pad.update(1);
     if (pad.LT()){
+        common::stopLoadingThread();
         const char* last_game = common::getConf()->last_game;
         if (Eboot::isEboot(last_game)){
             Eboot* eboot = new Eboot(last_game);

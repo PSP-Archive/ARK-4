@@ -105,7 +105,7 @@ all: $(TARGET).prx
 
 distclean:
 	make clean
-	$(Q)-rm -f THEME.ARK
+	$(Q)-rm -f THEME.ARK LANG.ARK
 
 arkmenu: all
 

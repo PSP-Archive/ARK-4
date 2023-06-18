@@ -203,6 +203,7 @@ clean:
 	$(Q)rm extras/updater/EBOOT_GO.PBP | true
 	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
 	$(Q)find -name 'THEME.ARK' -exec rm {} \;
+	$(Q)rm extras/arkMenu/themes/translatios/
 
 subdirs: $(SUBDIRS)
 

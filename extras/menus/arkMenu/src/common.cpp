@@ -77,6 +77,7 @@ static char* lang_files[] = {
     "lang_nl.json",
     "lang_ru.json",
     "lang_ro.json",
+    "lang_lat.json",
     "lang_jp.json",
     "lang_ko.json",
     "lang_cht.json",
