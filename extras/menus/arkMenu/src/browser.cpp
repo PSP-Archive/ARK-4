@@ -482,7 +482,7 @@ void Browser::refreshDirs(){
         string ptmp = string(this->cwd)+string(dit->d_name);
         if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
             printf("is dir\n");
-            if (!common::folderExists(ptmp+"/"))){
+            if (!common::folderExists(ptmp+"/")){
                 ptmp = string(this->cwd) + string((const char*)pri_dirent);
                 printf("%d: %s\n", (int)common::folderExists(ptmp), ptmp.c_str());
             }
