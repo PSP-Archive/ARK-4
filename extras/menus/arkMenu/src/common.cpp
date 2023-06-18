@@ -205,10 +205,10 @@ static void missingFileHandler(const char* filename){
         sceKernelWaitThreadEnd(loading_thread, NULL);
         sceKernelDeleteThread(loading_thread);
     }
-    
+
     if (!font){
         font = intraFontLoad(fonts[1], 0);
-        intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
+        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
     }
     
     static char msg[64];
