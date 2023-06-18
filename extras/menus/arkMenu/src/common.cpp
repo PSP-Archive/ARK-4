@@ -523,11 +523,11 @@ string common::beautifySize(u64 size){
     if (size < 1024)
         txt<<size<<" Bytes";
     else if (1024 < size && size < 1048576)
-        txt<<float(size)/1024.f<<" KB";
+        txt<<round(float(size*100)/1024.f)/100.f<<" KB";
     else if (1048576 < size && size < 1073741824)
-        txt<<float(size)/1048576.f<<" MB";
+        txt<<round(float(size*100)/1048576.f)/100.f<<" MB";
     else
-        txt<<float(size)/1073741824.f<<" GB";
+        txt<<round(float(size*100)/1073741824.f)/100.f<<" GB";
     return txt.str();
 }
 
