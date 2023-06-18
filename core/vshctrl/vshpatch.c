@@ -497,8 +497,50 @@ static void hook_iso_directory_io(void)
     }
 }
 
+void logbuffer(char* path, void* buffer, u32 size){
+    int fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+    sceIoWrite(fd, buffer, size);
+    sceIoClose(fd);
+}
+
+void logtext(char* text){
+    int fd = sceIoOpen("ms0:/log.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+    sceIoWrite(fd, text, strlen(text));
+    sceIoClose(fd);
+}
+
+void myIoCtrl(char* dev, u32 cmd, void* data, u32 dsize, void* odata, u32 osize){
+
+    int k1 = pspSdkSetK1(0);
+
+    char tmp[128];
+    sprintf(tmp, "IoDevCtl(%s, %p, %p, %d, %p, %d) = ", dev, cmd, data, dsize, odata, osize);
+    logtext(tmp);
+
+    if (cmd == 0x02425856){
+        logbuffer("ms0:/indata.bin", data, dsize);
+        if (odata) logbuffer("ms0:/outdata.bin", odata, osize);
+    }
+
+    pspSdkSetK1(k1);
+
+    int res = sceIoDevctl(dev, cmd, data, dsize, odata, osize);
+
+    k1 = pspSdkSetK1(0);
+    sprintf(tmp, "%p\n", res);
+    logtext(tmp);
+
+    if (cmd == 0x02425856){
+        logbuffer("ms0:/indata2.bin", data, dsize);
+        if (odata) logbuffer("ms0:/outdata2.bin", odata, osize);
+    }
+    pspSdkSetK1(k1);
+    return res;
+}
+
 int vshpatch_init(void)
 {
+    sctrlHENPatchSyscall(sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x54F5FB11), myIoCtrl);
     previous = sctrlHENSetStartModuleHandler(&vshpatch_module_chain);
     patch_sceUSB_Driver();
     vpbp_init();

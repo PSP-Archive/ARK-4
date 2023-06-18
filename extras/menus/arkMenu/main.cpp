@@ -26,10 +26,25 @@ static SystemEntry* entries[MAX_ENTRIES];
 int main(int argc, char** argv){
 
     srand(time(NULL));
+    
+    /*
+    struct KernelCallArg kuargs;
+    memset(&kuargs, 0, sizeof(kuargs));
+    void* IoDevctl = (void*)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x54F5FB11);
 
+    kuargs.arg2 = 0x02425856;
+    kuargs.arg3 = (u32)&encoding;
+    kuargs.arg4 = 4;
+
+    kuargs.arg1 = (u32)"fatms0:";
+    kuKernelCall(IoDevctl, &kuargs);
+
+    kuargs.arg1 = (u32)"fatef0:";
+    kuKernelCall(IoDevctl, &kuargs);
+    */
     int encoding = 5;
-    sceIoDevctl("ms0:", 0x02425856, &encoding, sizeof(void*), NULL, 0);
-    sceIoDevctl("ef0:", 0x02425856, &encoding, sizeof(void*), NULL, 0);
+    sceIoDevctl("fatms0:", 0x02425856, &encoding, 4, NULL, 0);
+    //sceIoDevctl("fatef0:", 0x02425856, &encoding, 4, NULL, 0);
 
     intraFontInit();
     ya2d_init();

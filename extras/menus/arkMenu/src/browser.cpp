@@ -410,6 +410,12 @@ void Browser::extractArchive(int type){
     //GameManager::updateGameList(dest.c_str()); // tell GameManager to update if needed
 }
 
+void logbuffer(char* path, void* buffer, u32 size){
+    int fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+    sceIoWrite(fd, buffer, size);
+    sceIoClose(fd);
+}
+
 void Browser::refreshDirs(){
 
     // Refresh the list of files and dirs
@@ -462,32 +468,43 @@ void Browser::refreshDirs(){
     else devsize = "";
 
     SceIoDirent* dit = (SceIoDirent*)malloc(sizeof(SceIoDirent));
+    memset(dit, 0, sizeof(SceIoDirent));
 
     vector<Entry*> folders;
     vector<Entry*> files;
 
+    /*
     pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
     pri_dirent->size = sizeof(pspMsPrivateDirent);
     dit->d_private = (void*)pri_dirent;
-
+    */
+    static int bufid = 0;
     while ((sceIoDread(dir, dit)) > 0){
         printf("got entry: %s\n", dit->d_name);
+        if (dit->d_private){
+            char tmp[32]; sprintf(tmp, "ms0:/buf%d.bin", bufid++);
+            logbuffer(tmp, dit->d_private, 1024);
+        }
         string ptmp = string(this->cwd)+string(dit->d_name);
-        bool folder_exists = (strcmp(dit->d_name, ".") == 0 || strcmp(dit->d_name, "..") == 0 || common::folderExists(ptmp+"/"));
-        if (folder_exists || FIO_SO_ISDIR(dit->d_stat.st_attr)){
+        //bool folder_exists = (strcmp(dit->d_name, ".") == 0 || strcmp(dit->d_name, "..") == 0 || common::folderExists(ptmp+"/"));
+        if (/*folder_exists ||*/ FIO_SO_ISDIR(dit->d_stat.st_attr)){
             printf("is dir\n");
+            /*
             if (!folder_exists){
                 ptmp = string(this->cwd) + string(dit->d_name).substr(0, 4) + string(pri_dirent->s_name) + "/";
                 printf("%d: %s\n", (int)common::folderExists(ptmp), ptmp.c_str());
             }
+            */
             folders.push_back(new Folder(ptmp+"/"));
         }
         else{
             printf("is file\n");
+            /*
             if (!common::fileExists(ptmp)){
                 ptmp = string(this->cwd) + string(dit->d_name).substr(0, 4) + string(pri_dirent->s_name);
                 printf("%d: %s\n", (int)common::fileExists(ptmp), ptmp.c_str());
             }
+            */
             files.push_back(new File(ptmp));
         }
             
@@ -495,7 +512,7 @@ void Browser::refreshDirs(){
     printf("closing and cleaning\n");
     sceIoDclose(dir);
 
-    free(pri_dirent);
+    //free(pri_dirent);
     free(dit);
 
     Entry* dot = NULL;
