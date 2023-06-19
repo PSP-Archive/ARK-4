@@ -5,12 +5,17 @@
 #                                   #
 # Author  : Krazynez                #
 #                                   #
-# Date    : 2023-06-07              #
+# Date    : 2023-06-19              #
 #                                   #
 #####################################
-version=0.7.0
+version=0.8.0
 
-export PSPDEV=/usr/local/pspdev && export PATH=$PATH:$PSPDEV/bin 
+if [[ -z ${PSPDEV} ]]; then
+	printf "Yo! You don't seem to have PSPDEV setup. Probably should fix that first.\n"
+	exit 1;
+fi
+
+exit
 
 dialogCheck=$(command -v dialog 2>/dev/null)
 
@@ -53,7 +58,7 @@ function original {
 	Press Enter to continue..."
 	
 	
-	if [ -d "/usr/local/pspdev" ] ; then
+	if [ -d "$PSPDEV" ] ; then
 		clear
 	    read -p "You seem to already have the SDK installed. Do you want to reinstall or continue? (y)es/(n)o/(c)ontinue 
 	
@@ -81,7 +86,7 @@ function original {
 	fi
 	
 	    if [[ ! $input =~ ^(c|C)$ ]] ; then
-	        elevatePrivs 7z x ./contrib/PC/PSPSDK/pspdev.7z -o"/usr/local"
+	        elevatePrivs 7z x ./contrib/PC/PSPSDK/pspdev.7z -o"${PSPDEV:0:-7}"
 	    fi
 	
 	    # Should be added to .bashrc or somthing to make it static, but for now I will leave it just for the session
@@ -153,7 +158,7 @@ function withDialog {
 $
 	dialog 	--title "Checking for existitng SDK"
 
-	if [[ -d "/usr/local/pspdev" ]] ; then
+	if [[ -d "$PSPDEV" ]] ; then
 		response=$(dialog \
 			--title "EXISITING PSPSDK!" \
 			--no-cancel \
@@ -167,14 +172,14 @@ $
 
 		case $response in
 			1)
-			 	elevatePrivs rm -rf /usr/local/pspdev && sudo 7z x ./contrib/PC/PSPSDK/pspdev.7z -o"/usr/local" && sudo chown -R $USER:$USER $PSPDEV ;;
+			 	elevatePrivs rm -rf $PSPDEV && sudo 7z x ./contrib/PC/PSPSDK/pspdev.7z -o"${PSPDEV:0:-7}" && sudo chown -R $USER:$USER $PSPDEV ;;
 			2)
 				elevatePrivs chown -R $USER:$USER $PSPDEV ;;
 			*)
 				dialog --infobox "Exiting...\n\nPlease Wait..." 5 20 && sleep 2 && dialog --clear && exit 0 ;;
 		esac
 	else
-		elevatePrivs 7z x ./contrib/PC/PSPSDK/pspdev.7z -o"/usr/local" && sudo chown -R $USER:$USER $PSPDEV
+		elevatePrivs 7z x ./contrib/PC/PSPSDK/pspdev.7z -o"${PSPDEV:0:-7}" && sudo chown -R $USER:$USER $PSPDEV
 	fi
 
 	if [[ ! -f "/lib/libmpfr.so.4" ]] ; then
@@ -227,41 +232,15 @@ $
 
 	
 		# ArkFast
+		FastARK="https://github.com/Yoti/ArkFast-4/releases/download/42056/ArkFast_4.20.56.vpk"
 		if [[ $curl_ret -eq 0 ]]; then
-			${check_curl} -o dist/ArkFast/ArkFast.vpk -JL "https://github.com/theheroGAC/ArkFast/releases/download/2.31/ArkFast.vpk"
+			${check_curl} -o dist/ArkFast/ArkFast.vpk -JL $FastARK
 			exit
 		elif [[ $wget_ret -eq 0 ]]; then
-			${check_wget} -O dist/ArkFast/ArkFast.vpk "https://github.com/theheroGAC/ArkFast/releases/download/2.31/ArkFast.vpk"
+			${check_wget} -O dist/ArkFast/ArkFast.vpk $FastARK
 			exit
 		fi
-		
-
-
-
-    # Trinity
-	elif [[ $1 == "--no-cfw-vita" ]]; then
-		check_curl=$(command -v curl)
-		curl_ret=$?
-		check_wget=$(command -v wget)
-		wget_ret=$?
-
-
-		if [ ! -d "dist/Trinity" ]; then
-			$(command -v mkdir) dist/Trinity
-		fi
-
-
-		if [[ $curl_ret -eq 0 ]]; then
-			${check_curl} -o dist/Trinity/PBOOT.PBP -JL "https://github.com/TheOfficialFloW/Trinity/releases/download/v1.0/PBOOT.PBP"
-			exit
-		elif [[ $wget_ret -eq 0 ]]; then
-			${check_wget} -O dist/Trinity/PBOOT.PBP "https://github.com/TheOfficialFloW/Trinity/releases/download/v1.0/PBOOT.PBP"
-			exit
-		fi
-
 	fi
-
-
 }
 
 export -f withDialog
