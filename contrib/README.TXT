@@ -8,13 +8,13 @@ Installation On PSP
   Non permanent CFW installation:
 
     - Delete `FLASH0.ARK` from `/PSP/SAVEDATA/ARK_01234` to prevent flashing files every time you reload the CFW.
-    - Run `ARK Loader` every time you power off or hard reboot the device to re-enable `ARK`.
+    - Run `ARK Loader` when you boot up the system after you've fully turned off or hard reboot the device to re-enable `ARK`.
 
 
   Permanent CFW via new cIPL
 
     - Works on 1K models, 2K models and early 3K models (1g, 2g and 3g).
-    - Use `pspident` homebrew to identify your model and compatibility with custom IPL.
+    - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use Infinity 2 (included in this download) instead.
     - Move or copy `ARK_newIPL` folder to `/PSP/GAME/` and run the program.
     - Press the corresponding button in the installation page to install the cIPL patch.
     - Warning: unlike classic cIPL, the new method can't be easily uninstalled.
@@ -23,12 +23,12 @@ Installation On PSP
   Permanent CFW via classic cIPL
 
     - Only works on 1K models and early 2K models (those compatible with Pandora).
-    - Use `pspident` homebrew to identify your model and compatibility with custom IPL.
+    - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use Infinity 2 (included in this download) instead.
     - Move or copy `ARK cIPL` folder to `/PSP/GAME/` and run the program.
     - Press the corresponding button in the installation page to install or remove the cIPL patch.
 
 
-  Permanent CFW via Infinity
+  Permanent CFW via Infinity 2
 
     - Works on all PSP models on 6.60 or 6.61 firmwares.
     - Copy or move the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
@@ -40,15 +40,15 @@ Installation On PSP
 
     - This allows you to install and use all of ARK's features from flash0, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
     - Copy `ARK_Full_Installer` to `/PSP/GAME/` and run it from `ARK`.
-    - The modules installed on flash0 are: Satelite (VSH Menu), XMB Control (CFW settings and plugins in the XMB), IDS Regeneration (UMD Region Change) and USB Device.
-    - `Custom Launcher` and `Recovery Menu` are `NOT` installed on flash0. They are however redundant and not necessary for a feature-complete experience.
+    - It will install the necessary modules into the console's flash.
+    - For recovery, you can press and hold start+select when booting up ARK or a game to temporarily disable settings and plugins.
     - Custom Firmware settings and other Custom Firmware files are installed in `ms0:/SEPLUGINS/`, which is used as the default ARK path when no savedata folder is available.
 
 
   Time Machine and Despertar del Cementerio
 
-    - `Time Machine` allows to boot the `6.61` firmware and `ARK` entirely from the Memory Stick.
-    - `Despertar del Cementerio` allows to revive a bricked PSP when used in combination with a `Pandora` or `Baryon Sweeper`.
+    - `Time Machine` allows the ability to boot the `6.61` firmware and `ARK` entirely from the Memory Stick.
+    - `Despertar del Cementerio` allows the ability to revive a bricked PSP when used in combination with a `Pandora` or `Baryon Sweeper`.
     - To install `DC-ARK` you must first format the memory stick leaving enough space for the boot sector. You can use `PSP Tool` to do this.
     - You also need to be running a `CFW` to install `DC-ARK` (ARK itself or any other).
     - Copy the `ARK_DC` folder to the `/PSP/GAME/` folder and run the installer from the `XMB`.
@@ -73,6 +73,7 @@ Installation On PS Vita
     - Some features are not available in standalone installations, mainly the official Sony `XMB` and `PS1` games.
     - If you get a kernel exploit error, simply close the app and open it again.
 
+
   Standalone via ChovySign
 
     - Works on Official Firmware 2.10 up to 3.74, doesn't require Henkaku/h-encore or any native hack.
@@ -91,6 +92,7 @@ Installation On PS Vita
     - If you get a kernel exploit error, simply close the app and open it again.
     - If you are running an old firmware (<3.60), you will need a spcialized `K.BIN`, either build one yourself or open an `Feature Request`.
 
+
   Adrenaline
 
     - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and `Adrenaline` (https://github.com/TheOfficialFloW/Adrenaline).
@@ -105,6 +107,6 @@ Updating ARK
 
   There are three ways to update ARK:
 
-    - Use the `System Update` feature in the XMB. Requires your PSP/Vita to be connected to the internet.
-    - Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
-    - Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
+    Option 1: Use the `System Update` feature in the XMB. Requires your PSP/Vita to be connected to the internet.
+    Option 2: Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
+    Option 3: Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.

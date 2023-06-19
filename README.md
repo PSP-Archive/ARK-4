@@ -112,15 +112,15 @@ For an easy deployment of ARK on a PSP connected to the internet, you can follow
   
 The instructions are as follows:
   
-- Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
-- Install `ARK_Loader` folder into `/PSP/GAME/` folder.
+- Move or copy `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
+- Move or copy `ARK_Loader` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
 
 ###### Live CFW
 <p>
 
   - Delete `FLASH0.ARK` from `/PSP/SAVEDATA/ARK_01234` to prevent flashing files every time you reload the CFW.
-  - Run `ARK Loader` every time you power off or hard reboot the device to re-enable `ARK`.
+  - Run `ARK Loader` when you boot up the system after you've fully turned off or hard reboot the device to re-enable `ARK`.
 
 </p>
 
@@ -128,7 +128,7 @@ The instructions are as follows:
 <p>
 
   - Works on 1K models, 2K models and early 3K models (1g, 2g and 3g).
-  - Use `pspident` homebrew to identify your model and compatibility with custom IPL.
+  - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use Infinity 2 (included in this download) instead.
   - Move or copy `ARK_newIPL` folder to `/PSP/GAME/` and run the program.
   - Press the corresponding button in the installation page to install the cIPL patch.
   - Warning: unlike classic cIPL, the new method can't be easily uninstalled.
@@ -139,8 +139,8 @@ The instructions are as follows:
 <p>
 
   - Only works on 1K models and early 2K models (those compatible with Pandora).
-  - Use `pspident` homebrew to identify your model and compatibility with custom IPL.
-  - Copy `ARK cIPL` folder to `/PSP/GAME/` and run the program.
+  - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use Infinity 2 (included in this download) instead.
+  - Move or copy `ARK cIPL` folder to `/PSP/GAME/` and run the program.
   - Press the corresponding button in the installation page to install or remove the cIPL patch.
 
 </p>
@@ -160,8 +160,8 @@ The instructions are as follows:
 
   - This allows you to install and use all of ARK's features from flash0, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
   - Copy `ARK_Full_Installer` to `/PSP/GAME/` and run it from `ARK`.
-  - The modules installed on flash0 are: Satelite (VSH Menu), XMB Control (CFW settings and plugins in the XMB), IDS Regeneration (UMD Region Change) and USB Device.
-  - `Custom Launcher` and `Recovery Menu` are `NOT` installed on flash0. They are however redundant and not necessary for a feature-complete experience.
+  - It will install the necessary modules into the console's flash.
+  - For recovery, you can press and hold start+select when booting up ARK or a game to temporarily disable settings and plugins.
   - Custom Firmware settings and other Custom Firmware files are installed in `ms0:/SEPLUGINS/`, which is used as the default ARK path when no savedata folder is available.
 
 </p>
@@ -242,11 +242,11 @@ The instructions are as follows:
 #### Update ARK
 <p>
 
-There are three ways to update `ARK`:
+There are three ways to update ARK:
 
-  - Use the `System Update` feature in the `XMB` or the `Custom Launcher`. Requires your PSP/Vita to be connected to the internet.
-  - Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
-  - Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
+  Option 1: Use the `System Update` feature in the XMB. Requires your PSP/Vita to be connected to the internet.
+  Option 2: Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
+  Option 3: Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
 
 </p>
   
