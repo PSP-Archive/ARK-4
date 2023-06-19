@@ -11,11 +11,16 @@
 version=0.8.0
 
 if [[ -z ${PSPDEV} ]]; then
-	printf "Yo! You don't seem to have PSPDEV setup. Probably should fix that first.\n"
-	exit 1;
+	clear
+	printf "\nYou don't seem to have PSPDEV setup. Probably should fix that first.\n\n"
+	read -p "Would you like to add one now? y/N: " userInput
+	if [[ "$userInput" =~ ^(Y|y|yes|YES)$ ]]; then
+		printf "\n"
+		read -p "PSPDEV path (ex: /usr/local/pspdev): " getPath
+		export PSPDEV="$getPath" && export PATH="$PATH:$PSPDEV/bin"
+	fi
 fi
 
-exit
 
 dialogCheck=$(command -v dialog 2>/dev/null)
 
