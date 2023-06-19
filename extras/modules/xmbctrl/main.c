@@ -194,7 +194,7 @@ SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
 
 int LoadTextLanguage(int new_id)
 {
-    static char *language[] = { "JA", "EN", "FR", "ES", "DE", "IT", "NL", "PT", "RU", "KO", "CHT", "CHS" };
+    static char *language[] = { "JP", "EN", "FR", "ES", "DE", "IT", "NL", "PT", "RU", "KO", "CHT", "CHS" };
 
     int id;
     sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &id);
