@@ -13,7 +13,7 @@ ASFLAGS = $(CFLAGS)
 
 PRX_EXPORTS = exports.exp
 
-LIBS = -lpspsystemctrl_user -lpspkubridge -lpspvshctrl -lpspreg
+LIBS = -lgraphics -lpspsystemctrl_user -lpspkubridge -lpspvshctrl -lpspreg
 LIBDIR = . $(ARKROOT)/libs
 LDFLAGS =
 
