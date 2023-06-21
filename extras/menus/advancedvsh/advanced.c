@@ -399,7 +399,15 @@ int submenu_draw(void)
 				// check if there's a subitem and print it
 				int subitem_start_x = (pointer[6] * 8) + 128;
 				if(subitem_str[submax_menu]) {
-					scePaf_snprintf(msg, 128, "%s", subitem_str[submax_menu]);
+					// check if PSP Go or PSVita because UMD Region mode is unsupported on them
+					if ((psp_model == PSP_GO || IS_VITA_ADR(ark_config)) && submax_menu == SUBMENU_UMD_REGION_MODE){
+						// write the unsupported string
+						scePaf_snprintf(msg, 128, "%s", g_messages[MSG_UNSUPPORTED]);
+					} else {
+						// otherwise write the subitem string
+						scePaf_snprintf(msg, 128, "%s", subitem_str[submax_menu]);
+					}
+					
 					blit_string(subitem_start_x, submenu_start_y, msg);
 				}
 				
@@ -411,11 +419,7 @@ int submenu_draw(void)
 				}
 				
 				// left-justify submenu options that have a subitem next to it
-				if ((psp_model == PSP_GO || IS_VITA_ADR(ark_config)) && submax_menu == SUBMENU_UMD_REGION_MODE)
-					// UMD Region mode unsupported on PSP Go or VITA
-					scePaf_snprintf(msg, 128, " %-*s ", width, g_messages[MSG_UNSUPPORTED]);
-				else
-					scePaf_snprintf(msg, 128, " %-*s ", width, g_messages[MSG_USB_DEVICE + submax_menu]);
+				scePaf_snprintf(msg, 128, " %-*s ", width, g_messages[MSG_USB_DEVICE + submax_menu]);
 				
 				// the submenu start x position is calculated from :
 				// subitem start x position - length in pixel of the submenu string - length in pixel of a whitespace
@@ -438,7 +442,7 @@ int submenu_draw(void)
 				
 				// center-justify submenu options
 				if (psp_model != PSP_GO && submax_menu == SUBMENU_DELETE_HIBERNATION) {
-					// hibernation mode unsupported if model is not PSPGo
+					// hibernation mode unsupported if model is not PSP Go
 					padding = (width - scePaf_strlen(g_messages[MSG_NO_HIBERNATION])) / 2;
 					scePaf_snprintf(msg, 128, " %*s%s%*s ", padding, "", g_messages[MSG_NO_HIBERNATION], padding, "");
 				} else {
