@@ -646,25 +646,34 @@ static void launch_umdvideo_mount(void)
 
 int load_selected_font(void)
 {
+	extern char* available_fonts[];
 
+	// if a font is needed (ie not 0)
 	if (config.vsh_font){
-		extern char* available_fonts[];
-		load_external_font(available_fonts[config.vsh_font-1]);
+		// load external font
+		load_external_font(available_fonts[config.vsh_font - 1]);
 		return 0;
 	}
-
+	
 	int ret, value;
-
+	// get device language
 	ret = sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &value);
-
-	if(ret < 0) {
+	
+	// if language not found, default to english
+	if (ret < 0){
 		value = PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
 	}
 
+	int i;
 	switch (value){
 		case PSP_SYSTEMPARAM_LANGUAGE_RUSSIAN:
 			load_external_font("RUSSIAN.pf");
 			config.vsh_font = 48;
+			break;
+		// use CP881 font for French
+		case PSP_SYSTEMPARAM_LANGUAGE_FRENCH:
+			load_external_font("CP881.pf");
+			config.vsh_font = 32;
 			break;
 		default:
 			break;
@@ -1091,7 +1100,9 @@ int TSRThread(SceSize args, void *argp)
 
 	loadConfig();
 
+	// load font
 	load_selected_font();
+	// select menu language
 	select_language();
 
 	if(!IS_VITA_ADR(ark_config)) {
@@ -1100,21 +1111,20 @@ int TSRThread(SceSize args, void *argp)
 		get_umdvideo(&g_umdlist, "ms0:/ISO/VIDEO");
 		get_umdvideo(&g_umdlist, "ef0:/ISO/VIDEO");
 		kuKernelGetUmdFile(umdvideo_path, sizeof(umdvideo_path));
-	
 
-	if(umdvideo_path[0] == '\0') {
-		umdvideo_idx = 0;
-		strcpy(umdvideo_path, g_messages[MSG_NONE]);
-	} else {
-		umdvideo_idx = umdvideolist_find(&g_umdlist, umdvideo_path);
-
-		if(umdvideo_idx >= 0) {
-			umdvideo_idx++;
-		} else {
+		if(umdvideo_path[0] == '\0') {
 			umdvideo_idx = 0;
 			strcpy(umdvideo_path, g_messages[MSG_NONE]);
+		} else {
+			umdvideo_idx = umdvideolist_find(&g_umdlist, umdvideo_path);
+
+			if(umdvideo_idx >= 0) {
+				umdvideo_idx++;
+			} else {
+				umdvideo_idx = 0;
+				strcpy(umdvideo_path, g_messages[MSG_NONE]);
+			}
 		}
-	}
 	}
 
 	scePaf_memcpy(&cnf_old, &cnf, sizeof(SEConfig));
