@@ -264,3 +264,9 @@ void release_font(void)
 
 	g_cur_font = msx;
 }
+
+// Returns size of string in pixels
+int blit_get_string_width(char *msg){
+	#define _FONT_WIDTH 8
+	return scePaf_strlen(msg) * _FONT_WIDTH;
+}

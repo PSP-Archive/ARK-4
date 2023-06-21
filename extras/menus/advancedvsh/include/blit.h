@@ -35,4 +35,8 @@ int blit_string_ctr(int sy,const char *msg);
 int load_external_font(const char *file);
 void release_font(void);
 
+
+// Returns size of string in pixels
+int blit_get_string_width(char *msg);
+
 #endif
