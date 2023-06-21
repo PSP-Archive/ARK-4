@@ -1,61 +1,61 @@
-D‚faut
+Défaut
 Japon
-Am‚rique
+Amérique
 Europe
-Cor‚e
+Corée
 Royaume-Uni
-Am‚rique latine
+Amérique latine
 Australie
 Hong Kong
-Ta‹wan
+Taïwan
 Russie
 Chine
-D‚bogage I
-D‚bogage II
-D‚sactiv‚(e)
-Activ‚(e)
+Débogage I
+Débogage II
+Désactivé(e)
+Activé(e)
 Normal(e)
 Basculer
 X -> O
 O -> X
 Sony NP9660 (PBP)
 Inferno 2 (ISO/CSO)
-APPAREIL USB   
-PROTGER USB   
-PILOTES ISO    
-VIDO ISO      
-COULEUR AVANT  
-COULEUR ARRIÔRE
-FONT           
-MOD BATTERIE   
-INVERSER X/O   
-RGION VSH     
-RGION UMD     
- IMPORTER PLUGINS CLASSIQUE
- ACTIVER FLASH ET WMA     
- SUPPRIMER HIBERNATION  
- LANCER ISO ALATOIRE 
- RETOUR 
-     SANS HIBERNATION   
+PÉRIPHÉRIQUE USB
+LECTURE SEULE USB
+PILOTES ISO
+MONTAGE VIDÉO ISO
+COULEURS AVANT-PLAN
+COULEURS ARRIÈRE-PLAN
+POLICE
+CONVERTIR BATTERIE
+INVERSER BOUTONS X/O
+RÉGION VSH
+RÉGION UMD
+IMPORTER PLUGINS CLASSIQUE
+ACTIVER FLASH ET WMA
+SUPPRIMER LA MISE EN VEILLE
+LANCER ISO ALÉATOIRE
+RETOUR
+MISE EN VEILLE NON SUPPORTÉ
 Normal -> Pandora
 Pandora -> Normal
- LANCEUR PERSONNALIS    ->
- MENU DE RTABLISSEMENT ->
- MENU AVANCE VSH      
- TEINDRE L'APPAREIL 
- METTRE EN VEILLE  
- RINITIALISER  
- REPARTIR VSH 
- SORTIR 
-      MENU VSH     
+LANCEUR PERSONNALISÉ ->
+MENU DE RÉTABLISSEMENT ->
+MENU AVANCÉ VSH
+ÉTEINDRE L'APPAREIL
+METTRE EN VEILLE L'APPAREIL
+RÉINITIALISER L'APPAREIL
+RÉINITIALISER LE VSH
+SORTIR
+MENU VSH
 Non pris en charge
-Utiliser paramŠtres Adrenaline
+Utiliser paramètres Adrenaline
 Flash
 Disque UMD
-M‚moire Interne
+Mémoire Interne
 Memory Stick
 Aucun(e)
-Al‚atoire
+Aléatoire
 Rouge
 Rouge Clair
 Orange
