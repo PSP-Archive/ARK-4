@@ -363,8 +363,14 @@ void import_classic_plugins(char* devpath) {
 	char* vshpath = "??0:/seplugins/vsh.txt";
 	char* popspath = "??0:/seplugins/pops.txt";
 
-	filename[0] = gamepath[0] = vshpath[0] = popspath[0] = devpath[0];
-	filename[1] = gamepath[1] = vshpath[1] = popspath[1] = devpath[1];
+	filename[0] = devpath[0];
+	gamepath[0] = devpath[0];
+	vshpath[0] = devpath[0];
+	popspath[0] = devpath[0];
+	filename[1] = devpath[1];
+	gamepath[1] = devpath[1];
+	vshpath[1] = devpath[1];
+	popspath[1] = devpath[1];
 	
 	game = sceIoOpen(gamepath, PSP_O_RDONLY, 0777);
 	vsh = sceIoOpen(vshpath, PSP_O_RDONLY, 0777);
