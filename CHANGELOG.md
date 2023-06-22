@@ -5,6 +5,7 @@
 - Heavily improved `Waves` animation in `launcher`/`recovery`.
 - `Custom Launcher`, `Recovery Menu` and `VSH Menu` can now be translated. Included are a few translations.
 - Improved support for files with non-latin characters in `launcher`/`recovery`.
+- Added new themes `Jurassic Park` and `Ubuntu`.
 - Some other bug fixes and improvements.
 
 ## Version 4.20.56 (2023-06-10)
