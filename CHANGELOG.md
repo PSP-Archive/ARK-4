@@ -1,5 +1,16 @@
 # ARK Changelog
 
+## Version 4.20.57 (2023-06-22)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42057
+- Heavily improved `Waves` animation in `launcher`/`recovery`.
+- `Custom Launcher`, `Recovery Menu` and `VSH Menu` can now be translated. Included are a few translations.
+- Improved support for files with non-latin characters in ´launcher`/`recovery`.
+- Some other bug fixes and improvements.
+
+## Version 4.20.56 (2023-06-10)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42056
+- Fixed bug introduced in version 4.20.40 that would crash PS1 games on Adrenaline installations.
+
 ## Version 4.20.55 (2023-06-08)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42055
 - Fixed crash when launching games from `XMB` introduced in the `4.20.53` update.
