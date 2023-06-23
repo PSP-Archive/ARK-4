@@ -397,27 +397,28 @@ bool isRunlevelEnabled(string line){
 }
 
 static unsigned char runlevelConvert(string runlevel, string enable){
-    if (!isRunlevelEnabled(enable)) return DISABLED;
-    else if (strcasecmp(runlevel.c_str(), "always") == 0 || strcasecmp(runlevel.c_str(), "all") == 0){
-        return ALWAYS_ON;
+    int enabled = isRunlevelEnabled(enable);
+    
+    if (strcasecmp(runlevel.c_str(), "always") == 0 || strcasecmp(runlevel.c_str(), "all") == 0){
+        return (enabled)?ALWAYS_ON:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "game") == 0){
-        return GAME_ONLY;
+        return (enabled)?GAME_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "umd") == 0 || strcasecmp(runlevel.c_str(), "psp") == 0){
-        return UMD_ONLY;
+        return (enabled)?UMD_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "homebrew") == 0){
-        return HOMEBREW_ONLY;
+        return (enabled)?HOMEBREW_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "pops") == 0  || strcasecmp(runlevel.c_str(), "psx") == 0 || strcasecmp(runlevel.c_str(), "ps1") == 0){
-        return POPS_ONLY;
+        return (enabled)?POPS_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "vsh") == 0 || strcasecmp(runlevel.c_str(), "xmb") == 0){
-        return VSH_ONLY;
+        return (enabled)?VSH_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "launcher") == 0){
-        return LAUNCHER_ONLY;
+        return (enabled)?LAUNCHER_ONLY:DISABLED;
     }
     return CUSTOM;
 }
