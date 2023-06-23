@@ -61,9 +61,10 @@ all: subdirs newcipl kxploits mkdir-dist encrypt-prx copy-bin
 copy-bin:
 #	Common installation
 	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Loader/EBOOT.PBP # Signed EBOOT
-	$(Q)cp loader/live/user/signed_eboot/ark_loader.iso dist/PSVita/ChovySign/
+	$(Q)cp loader/live/user/signed_eboot/ark_loader.iso dist/PSVita/Standalone/
 	$(Q)cp loader/live/kernel/kxploit/psp660/K.BIN dist/ARK_Loader/K.BIN # Kernel exploit for PSP
-	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/PSVita/Standalone/ # Vita 3.60 PBOOT.PBP bubble
+	$(Q)cp loader/live/user/vitabubble/EBOOT.PBP dist/PSVita/Standalone/NPUZ01234/ # Vita fake ChovySign bubble
+	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/PSVita/Standalone/NPUZ01234/ # Vita PBOOT.PBP bubble
 	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/PSVita/Standalone/K.BIN # Kernel exploit for Vita 3.60+
 	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/PSVita/Adrenaline/K.BIN # kxploit for CFW
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
@@ -236,7 +237,7 @@ mkdir-dist:
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
 	$(Q)mkdir dist/PSVita/Adrenaline | true
 	$(Q)mkdir dist/PSVita/Standalone | true
-	$(Q)mkdir dist/PSVita/ChovySign  | true
+	$(Q)mkdir dist/PSVita/Standalone/NPUZ01234  | true
 
 -include $(ARKROOT)/.config
 include $(ARKROOT)/common/make/quiet.mak
