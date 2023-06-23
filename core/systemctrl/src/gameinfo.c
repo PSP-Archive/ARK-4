@@ -7,6 +7,47 @@
 #include "module2.h"
 #include "graphics.h"
 
+struct LbaParams {
+    int unknown1; // 0
+    int cmd; // 4
+    int lba_top; // 8
+    int lba_size; // 12
+    int byte_size_total;  // 16
+    int byte_size_centre; // 20
+    int byte_size_start; // 24
+    int byte_size_last;  // 28
+};
+
+int readGameIdFromDisc(char* gameid){
+    static char game_id[10] = {0};
+
+    if (game_id[0] == 0){
+        struct LbaParams param;
+        memset(&param, 0, sizeof(param));
+
+        param.cmd = 0x01E380C0;
+        param.lba_top = 16;
+        param.byte_size_total = 10;
+        param.byte_size_start = 883;
+
+        int res = sceIoDevctl("umd:", 0x01E380C0, &param, sizeof(param), game_id, sizeof(game_id));
+
+        if (res < 0) return 0;
+
+        // remove the dash in the middle: ULUS-01234 -> ULUS01234
+        game_id[4] = game_id[5];
+        game_id[5] = game_id[6];
+        game_id[6] = game_id[7];
+        game_id[7] = game_id[8];
+        game_id[8] = game_id[9];
+        game_id[9] = 0;
+    }
+
+    strcpy(gameid, game_id);
+    return 1;
+}
+
+/*
 int readGameIdFromDisc(char* gameid){
     // Open Disc Identifier
     int disc = sceIoOpen("disc0:/UMD_DATA.BIN", PSP_O_RDONLY, 0777);
@@ -28,6 +69,7 @@ int readGameIdFromDisc(char* gameid){
     }
     return 0;
 }
+*/
 
 int getGameId(char* gameid){
     if (!readGameIdFromDisc(gameid)){
