@@ -233,6 +233,8 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // load settings and plugins before starting mediasync
     if (!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
     {
+        // read Game ID from disc
+        readGameIdFromDisc(NULL);
         // Check ARK install path
         checkArkPath();
         // Check controller input to disable settings and/or plugins

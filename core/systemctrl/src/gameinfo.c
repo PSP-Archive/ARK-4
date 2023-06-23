@@ -43,7 +43,7 @@ int readGameIdFromDisc(char* gameid){
         game_id[9] = 0;
     }
 
-    strcpy(gameid, game_id);
+    if (gameid) strcpy(gameid, game_id);
     return 1;
 }
 
