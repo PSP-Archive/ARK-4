@@ -20,6 +20,7 @@ as well as unique and exclusive new features not found anywhere else.
         * [Time Machine and Despertar del Cementerio](#time-machine-and-despertar-del-cementerio)
       - [On PS Vita](#on-ps-vita)
         * [Standalone via FastARK](#standalone-via-fastark)
+        * [Standalone via NoPspEmuDrm](#standalone-via-nopspemudrm)
         * [Standalone via ChovySign](#standalone-via-chovysign)
         * [Adrenaline](#adrenaline)
       - [Legacy Game Exploits (PSP & Vita)](#legacy-game-exploits-psp--vita)
