@@ -356,6 +356,7 @@ void PSPOnModuleStart(SceModule2 * mod){
             switch (se_config->clock){
                 case 1: SetSpeed(333, 166); break;
                 case 2: SetSpeed(133, 66); break;
+                case 3: SetSpeed(222, 111); break;
             }
             // Boot Complete Action done
             booted = 1;

@@ -330,10 +330,18 @@ static void settingsHandler(char* path, u8 enabled){
         else if (se_config.clock == 1) se_config.clock = 0;
     }
     else if (strcasecmp(path, "powersave") == 0){ // underclock to save battery
-        if (apitype != 0x144 && apitype != 0x155) // prevent operation in pops
+        if (apitype != 0x144 && apitype != 0x155){ // prevent operation in pops
             if (enabled)
                 se_config.clock = 2;
             else if (se_config.clock == 2) se_config.clock = 0;
+        }
+    }
+    else if (strcasecmp(path, "defaultclock") == 0){
+        if (apitype != 0x144 && apitype != 0x155){ // prevent operation in pops
+            if (enabled)
+                se_config.clock = 3;
+            else if (se_config.clock == 3) se_config.clock = 0;
+        }
     }
     else if (strcasecmp(path, "usbcharge") == 0){ // enable usb charging
         se_config.usbcharge = enabled;
