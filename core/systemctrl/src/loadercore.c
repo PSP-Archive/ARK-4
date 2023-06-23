@@ -230,7 +230,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         }
     }
 
-    // load settings before starting mediasync
+    // load settings and plugins before starting mediasync
     if (!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
     {
         // Check ARK install path
@@ -239,14 +239,6 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         checkControllerInput();
         // load settings
         loadSettings();
-    }
-    
-    // start module
-    if (result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
-    
-    // MediaSync not yet started... too early to load plugins.
-    if (!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
-    {
         // Load XMB Control
         loadXmbControl();
         // Load Plugins
@@ -254,6 +246,9 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         // Remember it
         pluginLoaded = 1;
     }
+    
+    // start module
+    if (result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
 
     return result;
 }

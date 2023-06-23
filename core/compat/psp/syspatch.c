@@ -296,15 +296,6 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    if (strcmp(mod->modname, "MacroFire") == 0){
-        // fix for MacroFire (disables sceUmdActivate/Deactivate functions)
-        // this is needed because ARK loads plugins when UMD is already active (MediaSync fully loaded and started)
-        // while older CFW load plugins a bit earlier (MediaSync loaded but not started)
-        hookImportByNID(mod, "sceUmdUser", 0xC6183D47, 0);
-        hookImportByNID(mod, "sceUmdUser", 0xE83742BA, 0);
-        goto flush;
-    }
-
     if (strcmp(mod->modname, "DayViewer_User") == 0){
         // fix scePaf imports in DayViewer
         static u32 nids[] = {
