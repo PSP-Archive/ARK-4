@@ -452,6 +452,9 @@ static unsigned char* configConvert(string conf){
     else if (strcasecmp(conf.c_str(), "powersave") == 0){
         return &(ark_config.powersave);
     }
+    else if (strcasecmp(conf.c_str(), "defaultclock") == 0){
+        return &(ark_config.defaultclock);
+    }
     else if (strcasecmp(conf.c_str(), "launcher") == 0){
         return &(ark_config.launcher);
     }
@@ -612,6 +615,7 @@ void saveSettings(){
     output << processSetting("usbcharge", ark_config.usbcharge) << endl;
     output << processSetting("overclock", ark_config.overclock) << endl;
     output << processSetting("powersave", ark_config.powersave) << endl;
+    output << processSetting("defaultclock", ark_config.defaultclock) << endl;
     output << processSetting("launcher", ark_config.launcher) << endl;
     output << processSetting("disablepause", ark_config.disablepause) << endl;
     output << processSetting("highmem", ark_config.highmem) << endl;
