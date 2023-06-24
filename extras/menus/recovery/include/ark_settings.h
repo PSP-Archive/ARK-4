@@ -25,6 +25,7 @@ typedef struct {
     unsigned char usbcharge;
     unsigned char overclock;
     unsigned char powersave;
+    unsigned char defaultclock;
     unsigned char launcher;
     unsigned char disablepause;
     unsigned char highmem;
@@ -94,6 +95,20 @@ static struct {
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.powersave),
+    ARK_OPTIONS
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} defaultclock = {
+    "Balanced Energy Mode",
+    MAX_ARK_OPTIONS,
+    0,
+    &(ark_config.defaultclock),
     ARK_OPTIONS
 };
 
@@ -300,6 +315,7 @@ settings_entry** ark_conf_entries = NULL;
 settings_entry* ark_conf_entries_1k[] = {
     (settings_entry*)&overclock,
     (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&launcher,
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
@@ -317,6 +333,7 @@ settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&usbcharge,
     (settings_entry*)&overclock,
     (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&launcher,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
@@ -335,6 +352,7 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&usbcharge,
     (settings_entry*)&overclock,
     (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&launcher,
     (settings_entry*)&disablepause,
     (settings_entry*)&highmem,
@@ -355,6 +373,7 @@ settings_entry* ark_conf_entries_street[] = {
     (settings_entry*)&usbcharge,
     (settings_entry*)&overclock,
     (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&launcher,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
