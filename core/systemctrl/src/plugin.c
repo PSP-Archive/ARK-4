@@ -108,8 +108,8 @@ static int matchingRunlevel(char * runlevel)
         strcat(path, ark_config->launcher);
         return (strcmp(path, sceKernelInitFileName())==0);
     }
-    else if (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115)){
-        char gameid[10]; memset(gameid, 0, sizeof(gameid)); // check if plugin loads on specific game
+    else { // check if plugin loads on specific game
+        char gameid[10]; memset(gameid, 0, sizeof(gameid));
         return (getGameId(gameid) && strstr(runlevel, gameid) != NULL);
     }
     
