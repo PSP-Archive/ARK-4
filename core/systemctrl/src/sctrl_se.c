@@ -158,7 +158,7 @@ int sctrlSEGetDiscType(void)
 
 int sctrlSEGetVersion()
 {
-	return 0x00040005;
+	return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | ARK_MICRO_VERSION << 8 );
 }
 
 int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs){
@@ -173,14 +173,14 @@ void sctrlSESetDiscOut(int out){
     return;
 }
 
-static int testingtool;
-
 int sctrlHENIsTestingTool()
 {
-	return testingtool == 2;
+	int k1 = pspSdkSetK1(0);
+    SceIoStat stat; int res = sceIoGetstat("flash0:/kd/vshbridge_tool.prx", &stat);
+    pspSdkSetK1(k1);
+    return (res >= 0);
 }
 
 void sctrlHENSetTestingTool(int tt)
 {
-	testingtool = tt ? 2 : 1;
 }
