@@ -4,6 +4,7 @@
 #include "texteditor.h"
 #include "osk.h"
 #include "system_mgr.h"
+#include "lang.h"
 
 enum{
     OPT_EDIT,
@@ -11,17 +12,25 @@ enum{
     OPT_REMV,
 };
 
-static char* EDIT = "          Edit";
-static char* COPY = "          Copy";
-static char* REMV = "          Remove";
-static char* SAVE = "          Saving";
-static char* EXIT = "          Not Saving";
+static char* EDIT = "Edit";
+static char* COPY = "Copy";
+static char* REMV = "Delete";
+static char* SAVE = "Saving";
+static char* EXIT = "Not Saving";
+
+static t_options_entry exit_opts[] = {
+    {0, "Cancel"},
+    {1, SAVE},
+    {2, EXIT},
+};
 
 TextEditor::TextEditor(string path){
     this->path = path;
-    this->clipboard = "<new line>";
+    this->clipboard = "<"+TR("new line")+">";
     this->table.settings_entries = NULL;
     this->table.max_options = 0;
+    this->table.changed = 0;
+    this->optionsmenu = NULL;
 
     this->loadTextFile();
 
@@ -44,7 +53,7 @@ TextEditor::~TextEditor(){
 void TextEditor::loadTextFile(){
     std::ifstream input(this->path.c_str());
 
-    this->addLine(string("<EXIT>"), SAVE, EXIT, NULL);
+    this->addLine("<"+TR("Exit")+">", SAVE, EXIT, NULL);
 
     for( std::string line; getline( input, line ); ){
         this->addLine(line, EDIT, COPY, REMV);
@@ -88,6 +97,7 @@ void TextEditor::addLine(string line, char* opt1, char* opt2, char* opt3){
         lines_max *= 2;
     }
     table.settings_entries[table.max_options++] = (settings_entry*)tline;
+    table.changed = 1;
 }
 
 void TextEditor::insertLine(int i, string line, char* opt1, char* opt2, char* opt3){
@@ -99,6 +109,8 @@ void TextEditor::insertLine(int i, string line, char* opt1, char* opt2, char* op
     }
 
     table.settings_entries[i] = (settings_entry*)tline;
+
+    file_changed = true;
 }
 
 void TextEditor::removeLine(int i){
@@ -115,6 +127,8 @@ void TextEditor::removeLine(int i){
 
     free(tline->description);
     free(tline);
+
+    file_changed = true;
 
     SystemMgr::resumeDraw();
 }
@@ -136,6 +150,7 @@ void TextEditor::editLine(int i){
         char* oldText = tline->description;
         tline->description = tmpText;
         free(oldText);
+        file_changed = true;
     }
     osk.end();
     SystemMgr::resumeDraw();
@@ -145,6 +160,7 @@ void TextEditor::editLine(int i){
         
 void TextEditor::draw(){
     this->menu->draw();
+    if (optionsmenu) optionsmenu->draw();
 }
         
 int TextEditor::control(){
@@ -154,10 +170,13 @@ int TextEditor::control(){
     
     bool running = true;
 
+    file_changed = false;
+
     while (running){
         pad.update();
 
         if (pad.accept()){
+            common::playMenuSound();
             int i = this->menu->getIndex();
             text_line_t* tline = (text_line_t*)(table.settings_entries[i]);
             if (i == 0){
@@ -182,13 +201,31 @@ int TextEditor::control(){
             pad.flush();
         }
         else if (pad.square()){
+            common::playMenuSound();
             int i = this->menu->getIndex();
             this->insertLine(i+1, clipboard, EDIT, COPY, REMV);
             this->editLine(i+1);
             pad.flush();
         }
         else if (pad.decline()){
-            running = false;
+            common::playMenuSound();
+            if (file_changed){
+                optionsmenu = new OptionsMenu("Exit", sizeof(exit_opts)/sizeof(t_options_entry), exit_opts);
+                int ret = optionsmenu->control();
+                switch (ret){
+                    case 0:
+                        break;
+                    case 1:
+                        this->saveTextFile();
+                    case 2:
+                        running = false;
+                        break;
+                }
+                OptionsMenu* aux = optionsmenu;
+                optionsmenu = NULL;
+                delete aux;
+            }
+            else running = false;
         }
         else{
             this->menu->control(&pad);

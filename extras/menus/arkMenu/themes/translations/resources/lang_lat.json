@@ -77,6 +77,11 @@
     "Name of new file": "Nomen novum archivum",
     "new file": "novus archivus",
     "Free size": "Magnitudine liber",
+    "Edit": "Modificare",
+    "Saving": "Salvare",
+    "Not Saving": "Non Salvare",
+    "new line": "nova linea",
+    "Edit Line": "Modificare Lineam",
 
     "Network Tools": "Instrumentum retes",
     "Press [] to check for Updates": "Preme [] per renovationis quaerere",

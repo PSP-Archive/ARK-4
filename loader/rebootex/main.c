@@ -79,6 +79,9 @@ int (* sceBootLfatOpen)(char * filename) = NULL;
 int (* sceBootLfatRead)(char * buffer, int length) = NULL;
 int (* sceBootLfatClose)(void) = NULL;
 
+// implementation specific patches
+extern patchRebootBuffer();
+
 // PRO GZIP Decrypt Support
 int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
 {
@@ -136,9 +139,7 @@ u32 loadCoreModuleStartCommon(u32 module_start){
     u32 check_call = JAL(origCheckExecFile);
 
     // Hook Signcheck Function Calls
-    int count = 0;
-    u32 addr;
-    for (addr = text_addr; addr<top_addr; addr+=4){
+    for (u32 addr = text_addr; addr<top_addr; addr+=4){
         u32 data = _lw(addr);
         if (data == decrypt_call){
             _sw(JAL(PROPRXDecrypt), addr);

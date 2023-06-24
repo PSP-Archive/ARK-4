@@ -79,6 +79,11 @@
     "Name of new file": "새 파일 이름",
     "new file": "새 파일",
     "Free size": "여유 공간",
+    "Edit": "편집하다",
+    "Saving": "파일을 저장",
+    "Not Saving": "파일을 저장하지 않음",
+    "new line": "새 줄",
+    "Edit Line": "텍스트 줄 편집",
 
     "Network Tools": "네트워크 도구",
     "Press [] to check for Updates": "업데이트를 확인하려면 []를 누르십시오",

@@ -54,7 +54,7 @@ static int _sceKernelBootFromForUmdMan(void)
     return 0x20;
 }
 
-void patch_sceUmdMan_driver(SceModule* mod)
+void patch_sceUmdMan_driver(SceModule2* mod)
 {
     int apitype = sceKernelInitApitype();
     if (apitype == 0x152 || apitype == 0x141) {
@@ -174,7 +174,7 @@ int pause_disabled = 0;
 void disable_PauseGame()
 {
     if(psp_model == PSP_GO && !pause_disabled) {
-        SceModule2* mod = sceKernelFindModuleByName("sceImpose_Driver");
+        SceModule2* mod = (SceModule2*)sceKernelFindModuleByName("sceImpose_Driver");
         u32 text_addr = mod->text_addr;
         for(int i=0; i<2; i++) {
             _sw(NOP, text_addr + 0x00000574 + i * 4);

@@ -18,9 +18,11 @@ class TextEditor : public OptionsMenu{
         string path;
         string clipboard;
         int lines_max;
+        bool file_changed;
 
         SettingsTable table;
         SettingsMenu* menu;
+        OptionsMenu* optionsmenu;
 
         void loadTextFile();
         void saveTextFile();

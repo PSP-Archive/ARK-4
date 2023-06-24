@@ -77,6 +77,11 @@
     "Name of new file": "Nom du nouveau fichier",
     "new file": "nom fichier",
     "Free size": "Taille libre",
+    "Edit": "Éditer",
+    "Saving": "Enregistrer",
+    "Not Saving": "Ne pas Enregistrer",
+    "new line": "nouvelle ligne",
+    "Edit Line": "Modifier la ligne",
 
     "Network Tools": "Outils Réseau",
     "Press [] to check for Updates": "Appuyez sur [] pour vérifier les Mises à Jour",
