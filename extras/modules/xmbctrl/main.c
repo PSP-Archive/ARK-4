@@ -500,22 +500,22 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         {
             int configs[] =
             {
-                config.usbcharge,
-                config.overclock,
-                config.powersave,
-                config.defaultclock,
-                config.launcher,
-                config.disablepause,
-                config.highmem,
-                config.mscache,
-                config.infernocache,
-                config.oldplugin,
-                config.skiplogos,
-                config.hidepics,
-                config.hibblock,
-                config.hidemac,
-                config.hidedlc,
-                config.noled,
+                config.usbcharge,		// 0
+                config.overclock,		// 1
+                config.powersave,		// 2
+                config.defaultclock,	// 3
+                config.launcher,		// 4
+                config.disablepause,	// 5
+                config.highmem,			// 6
+                config.mscache,			// 7
+                config.infernocache,	// 8
+                config.oldplugin,		// 9
+                config.skiplogos,		// 10
+                config.hidepics,		// 11
+                config.hibblock, 		// 12
+                config.hidemac, 		// 13
+                config.hidedlc,			// 14
+                config.noled,			// 15
             };
             
             int i;
