@@ -194,7 +194,7 @@ SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
 
 int LoadTextLanguage(int new_id)
 {
-    static char *language[] = { "JP", "EN", "FR", "ES", "DE", "IT", "NL", "PT", "RU", "KO", "CHT", "CHS" };
+    static char *languages[] = { "JP", "EN", "FR", "ES", "DE", "IT", "NL", "PT", "RU", "KO", "CHT", "CHS" };
 
     int id;
     sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &id);
@@ -207,13 +207,13 @@ int LoadTextLanguage(int new_id)
 
     SceUID fd = -1;
     SceOff offset = 0;
-    if (id < NELEMS(language)){
+    if (id < NELEMS(languages)){
         unsigned size = 0;
         char file[64];
         char pkgpath[ARK_PATH_SIZE];
         strcpy(pkgpath, ark_config->arkpath);
         strcat(pkgpath, "LANG.ARK");
-        sce_paf_private_sprintf(file, "XMB_%s.TXT", language[id]);
+        sce_paf_private_sprintf(file, "XMB_%s.TXT", languages[id]);
         offset = findPkgOffset(file, &size, pkgpath);
 
         if (offset && size)

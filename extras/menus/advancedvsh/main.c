@@ -428,6 +428,9 @@ static char ** apply_language(char *translate_file) {
 int cur_language = 0;
 
 static void select_language(void) {
+
+	static char *languages[] = { "jp", "en", "fr", "es", "de", "it", "nl", "pt", "ru", "kr", "cht", "chs" };
+
 	int ret, value;
 	ret = sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &value);
 
@@ -437,47 +440,9 @@ static void select_language(void) {
 	cur_language = value;
 	clear_language();
 
-	switch(value) {
-		case PSP_SYSTEMPARAM_LANGUAGE_JAPANESE:
-			g_messages = (const char**)apply_language("satelite_jp.txt");
-			break;
-		case PSP_SYSTEMPARAM_LANGUAGE_ENGLISH:
-			g_messages = (const char**)apply_language("satelite_en.txt");
-			break;
-		case PSP_SYSTEMPARAM_LANGUAGE_FRENCH:
-			g_messages = (const char**)apply_language("satelite_fr.txt");
-			break;
-		case PSP_SYSTEMPARAM_LANGUAGE_SPANISH:
-			g_messages = (const char**)apply_language("satelite_es.txt");
-			break;
-		case PSP_SYSTEMPARAM_LANGUAGE_GERMAN:
-			g_messages = (const char**)apply_language("satelite_de.txt");
-			break;
-		case PSP_SYSTEMPARAM_LANGUAGE_ITALIAN:
-			g_messages = (const char**)apply_language("satelite_it.txt");
-			break;
-		case PSP_SYSTEMPARAM_LANGUAGE_DUTCH:
-			g_messages = (const char**)apply_language("satelite_nl.txt");
-			break;
-		case PSP_SYSTEMPARAM_LANGUAGE_PORTUGUESE:
-			g_messages = (const char**)apply_language("satelite_pt.txt");
-			break;
-		case PSP_SYSTEMPARAM_LANGUAGE_RUSSIAN:
-			g_messages = (const char**)apply_language("satelite_ru.txt");
-			break;
-		case PSP_SYSTEMPARAM_LANGUAGE_KOREAN:
-			g_messages = (const char**)apply_language("satelite_kr.txt");
-			break;
-		case PSP_SYSTEMPARAM_LANGUAGE_CHINESE_TRADITIONAL:
-			g_messages = (const char**)apply_language("satelite_cht.txt");
-			break;
-		case PSP_SYSTEMPARAM_LANGUAGE_CHINESE_SIMPLIFIED:
-			g_messages = (const char**)apply_language("satelite_chs.txt");
-			break;
-		default:
-			g_messages = g_messages_en;
-			break;
-	}
+	char file[64];
+	scePaf_sprintf(file, "satelite_%s.txt", languages[value]);
+	g_messages = (const char**)apply_language(file);
 
 	if(g_messages == g_messages_en) {
 		cur_language = PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
