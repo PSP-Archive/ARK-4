@@ -53,9 +53,10 @@
 #include "battery.h"
 #include "vsh.h"
 #include "config.h"
-#include "font.h"
+#include "fonts.h"
 #include "menu.h"
 #include "advanced.h"
+#include "registry.h"
 
 
 /* Define the module info section */
@@ -66,8 +67,8 @@ PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 
 
 /* Global Variables */
-static vsh_Menu vsh_menu = {
-	.config.p_ark = &(vsh_menu.config.ark),
+vsh_Menu vsh_menu = {
+	.config.p_ark = &vsh_menu.config.ark,
 	.status.menu_mode = 0,
 	.status.submenu_mode = 0,
 	.status.stop_flag = 0,
@@ -75,6 +76,7 @@ static vsh_Menu vsh_menu = {
 	.status.reset_vsh = 0,
 	.buttons.pad.Buttons = 0xFFFFFFFF,
 	.buttons.new_buttons_on = 0,
+	.thread_id = -1,
 };
 vsh_Menu *g_vsh_menu = &vsh_menu;
 extern char umdvideo_path[256];
@@ -521,24 +523,14 @@ static int swap_buttons(vsh_Menu *vsh) {
 }
 
 
-
-void debug(char *str){
-	int fd = sceIoOpen("ms0:/log.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
-	sceIoWrite(fd, str, strlen(str));
-	sceIoClose(fd);
-}
-
 int TSRThread(SceSize args, void *argp) {
+	// change priority - needs to be the first thing executed when main thread started
 	sceKernelChangeThreadPriority(0, 8);
-	
-	// Init VSH_Menu
-	
-	debug("vsh struct setup\n");
+	// register eat key function
+	vctrlVSHRegisterVshMenu(ui_eat_key);
 	
 	// init VPL
 	vpl_init();
-	// register eat key function
-	vctrlVSHRegisterVshMenu(ui_eat_key);
 	
 	// get psp model
 	vsh_menu.psp_model = kuKernelGetModel();
@@ -553,8 +545,6 @@ int TSRThread(SceSize args, void *argp) {
 	// select menu language
 	select_language();
 	
-	debug("vsh config loaded\n");
-
 	if (!IS_VITA_ADR(vsh_menu.config.p_ark)) {
 		umdvideolist_init(&g_umdlist);
 		umdvideolist_clear(&g_umdlist);
@@ -581,8 +571,6 @@ int TSRThread(SceSize args, void *argp) {
 	scePaf_memcpy(&vsh_menu.config.old_ark_menu, &vsh_menu.config.ark_menu, sizeof(vsh_menu.config.ark_menu));
 
 	
-	debug("vsh main loop\n");
-
 resume:
 	while (vsh_menu.status.stop_flag == 0) {
 		if (sceDisplayWaitVblankStart() < 0)
@@ -678,17 +666,15 @@ resume:
 	release_font();
 
 	if (vsh_menu.status.reset_vsh) {
-		debug("vsh reset\n");
 		sctrlKernelExitVSH(NULL);
 	}
 
-	debug("vsh exitting\n");
 	return sceKernelExitDeleteThread(0);
 }
 
 int module_start(int argc, char *argv[]) {
 	SceUID thid;
-	thid = sceKernelCreateThread("AVshMenu_Thread", TSRThread, 16 , 0x1000 , THREAD_ATTR_VFPU,0);
+	thid = sceKernelCreateThread("AVshMenu_Thread", TSRThread, 16, 0x1000, 0, NULL);
 
 	vsh_menu.thread_id = thid;
 

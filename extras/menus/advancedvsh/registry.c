@@ -15,10 +15,8 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
+#include "registry.h"
+
 #include <pspsdk.h>
 #include <pspdebug.h>
 #include <pspkernel.h>
@@ -26,6 +24,11 @@
 #include <pspdisplay.h>
 #include <psputility.h>
 #include <pspreg.h>
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "systemctrl.h"
 #include "systemctrl_se.h"

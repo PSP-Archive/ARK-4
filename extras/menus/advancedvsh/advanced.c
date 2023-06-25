@@ -6,7 +6,7 @@
 #include "clock.h"
 
 #include "vsh.h"
-#include "font.h"
+#include "fonts.h"
 #include "advanced.h"
 
 extern int pwidth;
