@@ -20,74 +20,20 @@
 */
 #include "common.h"
 
+#include "vsh.h"
+
 //#define ALPHA_BLEND 1
 
 extern unsigned char msx[];
 static unsigned char *g_cur_font = msx;
 
-extern ARKConfig* ark_config;
+// extern ARKConfig* ark_config;
+
+extern vsh_Menu *g_vsh_menu;
 
 extern SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath);
 
 static SceUID g_memid = -1;
-
-char* available_fonts[] = {
-	"8X8!FONT.pf",
-	"8X8#FONT.pf",
-	"8X8@FONT.pf",
-	"8X8ITAL.pf",
-	"SMEGA88.pf",
-	"APEAUS.pf",
-	"SMVGA88.pf",
-	"APLS.pf",
-	"SPACE8.pf",
-	"Standard.pf",
-	"TINYTYPE.pf",
-	"FANTASY.pf",
-	"THIN8X8.pf",
-	"THIN_SS.pf",
-	"CP111.pf",
-	"CP112.pf",
-	"CP113.pf",
-	"CP437old.pf",
-	"CP437.pf",
-	"CP850.pf",
-	"CP851.pf",
-	"CP852.pf",
-	"CP853.pf",
-	"CP860.pf",
-	"CP861.pf",
-	"CP862.pf",
-	"CP863.pf",
-	"CP864.pf",
-	"CP865.pf",
-	"CP866.pf",
-	"CP880.pf",
-	"CP881.pf",
-	"CP882.pf",
-	"CP883.pf",
-	"CP884.pf",
-	"CP885.pf",
-	"CRAZY8.pf",
-	"DEF_8X8.pf",
-	"VGA-ROM.pf",
-	"EVGA-ALT.pf",
-	"FE_8X8.pf",
-	"GRCKSSRF.pf",
-	"HERCITAL.pf",
-	"HERCULES.pf",
-	"MAC.pf",
-	"MARCIO08.pf",
-	"READABLE.pf",
-	"ROM8PIX.pf",
-	"RUSSIAN.pf",
-	"CYRILL1.pf",
-	"CYRILL2.pf",
-	"CYRILL3.pf",
-	"CYRIL_B.pf",
-	"ARMENIAN.pf",
-	"GREEK.pf",	
-};
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -107,7 +53,7 @@ static u32 adjust_alpha(u32 col)
 	u8 mul;
 	u32 c1,c2;
 
-	if(alpha==0)    return col;
+	if(alpha==0)	return col;
 	if(alpha==0xff) return col;
 
 	c1 = col & 0x00ff00ff;
@@ -126,7 +72,8 @@ int blit_setup(void)
 	int unk;
 	sceDisplayGetMode(&unk, &pwidth, &pheight);
 	sceDisplayGetFrameBuf((void*)&vram32, &bufferwidth, &pixelformat, PSP_DISPLAY_SETBUF_NEXTFRAME);
-	if( (bufferwidth==0) || (pixelformat!=3)) return -1;
+	if( (bufferwidth==0) || (pixelformat!=3)) 
+		return -1;
 
 	fcolor = 0x00ffffff;
 	bcolor = 0xff000000;
@@ -212,7 +159,7 @@ int load_external_font(const char *file)
 	if (file == NULL || file[0] == 0) return -1;
 
 	static char pkgpath[ARK_PATH_SIZE];
-	strcpy(pkgpath, ark_config->arkpath);
+	scePaf_strcpy(pkgpath, g_vsh_menu->config.p_ark->arkpath);
 	strcat(pkgpath, "LANG.ARK");
 
 	SceOff offset = findPkgOffset(file, NULL, pkgpath);
@@ -266,7 +213,7 @@ void release_font(void)
 }
 
 // Returns size of string in pixels
-int blit_get_string_width(char *msg){
+int blit_get_string_width(char *msg) {
 	#define _FONT_WIDTH 8
 	return scePaf_strlen(msg) * _FONT_WIDTH;
 }
