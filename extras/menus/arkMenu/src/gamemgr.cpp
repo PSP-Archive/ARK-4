@@ -11,6 +11,7 @@
 #include "osk.h"
 #include "pmf.h"
 #include "lang.h"
+#include "texteditor.h"
 
 extern int sctrlKernelMsIsEf();
 
@@ -602,21 +603,31 @@ void GameManager::gameOptionsMenu(){
             path = path.substr(0, path.rfind('/')+1);
         }
         SfoInfo info = e->getSfoInfo();
-        string fullname = TR("Name") + " - " + string(info.title);
-        string gameid = TR("Game ID") + " - " + string(info.gameid);
-        string fullpath = TR("Path") + " - " + e->getPath();
-        string size = TR("Size") + " - " + common::beautifySize(Browser::recursiveSize(path));
+        string game_info[] = {
+            info.title,
+            info.gameid,
+            e->getPath(),
+            common::beautifySize(Browser::recursiveSize(path))
+        };
+        string fullname = TR("Name") + " - " + game_info[0];
+        string gameid = TR("Game ID") + " - " + game_info[1];
+        string fullpath = TR("Path") + " - " + game_info[2];
+        string size = TR("Size") + " - " + game_info[3];
         t_options_entry gameinfo_entries[] = {
+            {-1, "Cancel"},
             {0, (char*)fullname.c_str()},
             {1, (char*)gameid.c_str()},
             {2, (char*)size.c_str()},
             {3, (char*)fullpath.c_str()}
         };
         optionsmenu = new OptionsMenu("Game Info", sizeof(gameinfo_entries)/sizeof(t_options_entry), gameinfo_entries);
-        optionsmenu->control();
+        int res = optionsmenu->control();
         OptionsMenu* aux = optionsmenu;
         optionsmenu = NULL;
         delete aux;
+        if (res >= 0){
+            TextEditor::clipboard = game_info[res];
+        }
     } break;
     case 1:{
         // rename the ISO or Eboot folder name

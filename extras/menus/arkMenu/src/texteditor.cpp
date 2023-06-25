@@ -24,9 +24,12 @@ static t_options_entry exit_opts[] = {
     {2, EXIT},
 };
 
+string TextEditor::clipboard = "";
+
 TextEditor::TextEditor(string path){
     this->path = path;
-    this->clipboard = "<"+TR("new line")+">";
+    if (clipboard.size() == 0)
+        clipboard = "<"+TR("new line")+">";
     this->table.settings_entries = NULL;
     this->table.max_options = 0;
     this->table.changed = 0;
@@ -191,7 +194,7 @@ int TextEditor::control(){
                         this->editLine(i);
                         break;
                     case OPT_COPY:
-                        this->clipboard = table.settings_entries[i]->description;
+                        clipboard = table.settings_entries[i]->description;
                         break;
                     case OPT_REMV:
                         this->removeLine(i);
