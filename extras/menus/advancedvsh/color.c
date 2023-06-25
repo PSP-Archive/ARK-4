@@ -5,6 +5,37 @@
 
 #include "scepaf.h"
 
+u32 colors[] = {
+	0x000000ff, // Default (random)
+	0x000000ff, // Red
+	0xa00000ff, // Light Red
+	0x0000a5ff, // Orange
+	0xa000a5ff, // Light Orange
+	0x0000e6e6, // Yellow
+	0xa000e6e6, // Light Yellow
+	0x0000ff00, // Green
+	0xa000b300, // Light Green
+	0x00ff0000, // Blue
+	0xa0ff0000, // Light Blue
+	0x0082004b, // Indigo
+	0xa082004b, // Light Indigo
+	0x00ee82ee, // Violet
+	0xa0ee82ee, // Light Violet
+	0x00cbc0ff, // Pink
+	0xa0cbc0ff, // Light Pink
+	0x00993366, // Purple
+	0xa0993366, // Light Purple
+	0x00808000, // Teal
+	0xa0808000, // Light Teal
+	0x00cccc00, // Aqua
+	0xa0cccc00, // Light Aqua
+	0x00737373, // Grey
+	0xa0737373, // Light Grey
+	0x00000000, // Black
+	0xa0000000, // Light Black
+	0x00ffffff, // White
+	0xafffffff, // Light White
+};
 
 static struct{
 	u8 fg_color;
