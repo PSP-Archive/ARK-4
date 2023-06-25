@@ -234,276 +234,41 @@ int submenu_setup(void) {
 			subitem_str[SUBMENU_USB_READONLY] = g_messages[MSG_ENABLE];
 	}
 
-	switch (g_vsh_menu->status.swap_xo) {
-		case XO_CURRENT_O_PRIMARY:
-			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_O_PRIM];
-			break;
-		case XO_CURRENT_X_PRIMARY:
-			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_X_PRIM];
-			break;
-		default:
-			subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_X_PRIM]; // should never happen?
+	subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_O_PRIM-g_vsh_menu->status.swap_xo];
+
+	subitem_str[SUBMENU_CONVERT_BATTERY] = (g_vsh_menu->battery<2)? g_messages[MSG_NORMAL_TO_PANDORA+g_vsh_menu->battery] : g_messages[MSG_UNSUPPORTED];
+
+	if (g_vsh_menu->config.se.vshregion < 14){
+		subitem_str[SUBMENU_REGION_MODE] = g_messages[g_vsh_menu->config.se.vshregion];
+	}
+	else {
+		subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DISABLE];
 	}
 
-	switch (g_vsh_menu->battery) {
-		case NORMAL_TO_PANDORA:
-			subitem_str[SUBMENU_CONVERT_BATTERY] = g_messages[MSG_NORMAL_TO_PANDORA];
-			break;
-		case PANDORA_TO_NORMAL:
-			subitem_str[SUBMENU_CONVERT_BATTERY] = g_messages[MSG_PANDORA_TO_NORMAL];
-			break;
-		case UNSUPPORTED:
-			subitem_str[SUBMENU_CONVERT_BATTERY] = g_messages[MSG_UNSUPPORTED];
-			break;
+	if (g_vsh_menu->config.se.umdregion < 4){
+		subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[g_vsh_menu->config.se.umdregion];
 	}
-
-	switch(g_vsh_menu->config.se.vshregion) {
-		case FAKE_REGION_DISABLED:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DEFAULT];
-			break;
-		case FAKE_REGION_JAPAN:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_JAPAN];
-			break;
-		case FAKE_REGION_AMERICA:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_AMERICA];
-			break;
-		case FAKE_REGION_EUROPE:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_EUROPE];
-			break;
-		case FAKE_REGION_KOREA:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_KOREA];
-			break;
-		case FAKE_REGION_UNITED_KINGDOM:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_UNITED_KINGDOM];
-			break;
-		case FAKE_REGION_LATIN_AMERICA:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_LATIN_AMERICA];
-			break;
-		case FAKE_REGION_AUSTRALIA:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_AUSTRALIA];
-			break;
-		case FAKE_REGION_HONGKONG:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_HONG_KONG];
-			break;
-		case FAKE_REGION_TAIWAN:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_TAIWAN];
-			break;
-		case FAKE_REGION_RUSSIA:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_RUSSIA];
-			break;
-		case FAKE_REGION_CHINA:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_CHINA];
-			break;
-		case FAKE_REGION_DEBUG_TYPE_I:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DEBUG_I];
-			break;
-		case FAKE_REGION_DEBUG_TYPE_II:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DEBUG_II];
-			break;
-		default:
-			subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DISABLE];
-	}
-
-	switch(g_vsh_menu->config.se.umdregion) {
-		case UMD_REGION_DEFAULT:
-			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DEFAULT];
-			break;
-		case UMD_REGION_JAPAN:
-			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_JAPAN];
-			break;
-		case UMD_REGION_AMERICA:
-			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_AMERICA];
-			break;
-		case UMD_REGION_EUROPE:
-			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_EUROPE];
-			break;
-		default:
-			subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DEFAULT];
-			break;
+	else {
+		subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DEFAULT];
 	}
 	
-
-	switch(g_vsh_menu->config.ark_menu.vsh_fg_color) {
-		case FG_RANDOM:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_RANDOM];
-			break;
-		case FG_RED:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_RED];
-			break;
-		case FG_LITE_RED:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_RED];
-			break;
-		case FG_ORANGE:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_ORANGE];
-			break;
-		case FG_LITE_ORANGE:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_ORANGE];
-			break;
-		case FG_YELLOW:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_YELLOW];
-			break;
-		case FG_LITE_YELLOW:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_YELLOW];
-			break;
-		case FG_GREEN:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_GREEN];
-			break;
-		case FG_LITE_GREEN:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_GREEN];
-			break;
-		case FG_BLUE:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_BLUE];
-			break;
-		case FG_LITE_BLUE:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_BLUE];
-			break;
-		case FG_INDIGO:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_INDIGO];
-			break;
-		case FG_LITE_INDIGO:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_INDIGO];
-			break;
-		case FG_VIOLET:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_VIOLET];
-			break;
-		case FG_LITE_VIOLET:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_VIOLET];
-			break;
-		case FG_PINK:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_PINK];
-			break;
-		case FG_LITE_PINK:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_PINK];
-			break;
-		case FG_PURPLE:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_PURPLE];
-			break;
-		case FG_LITE_PURPLE:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_PURPLE];
-			break;
-		case FG_TEAL:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_TEAL];
-			break;
-		case FG_LITE_TEAL:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_TEAL];
-			break;
-		case FG_AQUA:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_AQUA];
-			break;
-		case FG_LITE_AQUA:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_AQUA];
-			break;
-		case FG_GREY:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_GREY];
-			break;
-		case FG_LITE_GREY:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_GREY];
-			break;
-		case FG_BLACK:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_BLACK];
-			break;
-		case FG_LITE_BLACK:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_BLACK];
-			break;
-		case FG_WHITE:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_WHITE];
-			break;
-		case FG_LITE_WHITE:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_LITE_WHITE];
-			break;
-		default:
-			subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_WHITE];
+	if (g_vsh_menu->config.ark_menu.vsh_fg_color < 29){
+		switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+			case 1: subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_WHITE]; break;
+			case 27: subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_RED]; break;
+			default: subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_RANDOM+g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+		}
+		
 	}
-	switch(g_vsh_menu->config.ark_menu.vsh_bg_color) {
-		case BG_RANDOM:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RANDOM];
-			break;
-		case BG_RED:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RED];
-			break;
-		case BG_LITE_RED:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_RED];
-			break;
-		case BG_ORANGE:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_ORANGE];
-			break;
-		case BG_LITE_ORANGE:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_ORANGE];
-			break;
-		case BG_YELLOW:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_YELLOW];
-			break;
-		case BG_LITE_YELLOW:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_YELLOW];
-			break;
-		case BG_GREEN:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_GREEN];
-			break;
-		case BG_LITE_GREEN:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_GREEN];
-			break;
-		case BG_BLUE:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_BLUE];
-			break;
-		case BG_LITE_BLUE:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_BLUE];
-			break;
-		case BG_INDIGO:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_INDIGO];
-			break;
-		case BG_LITE_INDIGO:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_INDIGO];
-			break;
-		case BG_VIOLET:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_VIOLET];
-			break;
-		case BG_LITE_VIOLET:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_VIOLET];
-			break;
-		case BG_PINK:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_PINK];
-			break;
-		case BG_LITE_PINK:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_PINK];
-			break;
-		case BG_PURPLE:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_PURPLE];
-			break;
-		case BG_LITE_PURPLE:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_PURPLE];
-			break;
-		case BG_TEAL:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_TEAL];
-			break;
-		case BG_LITE_TEAL:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_TEAL];
-			break;
-		case BG_AQUA:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_AQUA];
-			break;
-		case BG_LITE_AQUA:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_AQUA];
-			break;
-		case BG_GREY:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_GREY];
-			break;
-		case BG_LITE_GREY:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_GREY];
-			break;
-		case BG_BLACK:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_BLACK];
-			break;
-		case BG_LITE_BLACK:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_BLACK];
-			break;
-		case BG_WHITE:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_WHITE];
-			break;
-		case BG_LITE_WHITE:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_LITE_WHITE];
-			break;
-		default:
-			subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RED];
+	else {
+		subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RED];
+	}
+
+	if (g_vsh_menu->config.ark_menu.vsh_bg_color < 29){
+		subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RANDOM+g_vsh_menu->config.ark_menu.vsh_bg_color];
+	}
+	else {
+		subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RED];
 	}
 
 	return 0;
