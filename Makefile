@@ -218,6 +218,9 @@ libs:
 arkmenu: libs
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 
+vshmenu: libs
+	$(Q)$(MAKE) $@ -C extras/menus/advancedvsh
+
 xmenu: libs
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
 
