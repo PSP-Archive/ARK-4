@@ -20,11 +20,10 @@ void config_load(vsh_Menu *vsh) {
 	strcat(path, CONFIG_PATH);
 
 	int fp = sceIoOpen(path, PSP_O_RDONLY, 0777);
-	if (fp < 0)
-		return;
-		
-	sceIoRead(fp, &vsh->config.ark_menu, sizeof(vsh->config.ark_menu));
-	sceIoClose(fp);
+	if (fp >= 0){
+		sceIoRead(fp, &vsh->config.ark_menu, sizeof(vsh->config.ark_menu));
+		sceIoClose(fp);
+	}
 
 	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &vsh->status.swap_xo);
 	is_pandora = battery_check();
@@ -47,11 +46,10 @@ void config_save(vsh_Menu *vsh, int saveumdregion, int savevshregion){
 	strcat(path, CONFIG_PATH);
 
 	fp = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-	if (fp < 0)
-		return;
-
-	sceIoWrite(fp, &vsh->config.ark_menu, sizeof(vsh->config.ark_menu));
-	sceIoClose(fp);
+	if (fp >= 0){
+		sceIoWrite(fp, &vsh->config.ark_menu, sizeof(vsh->config.ark_menu));
+		sceIoClose(fp);
+	}
 
 	if (savevshregion){
 		char tmp[128];
@@ -100,7 +98,7 @@ void config_recreate_region_setting(vsh_Menu *vsh, char* oldtext, char* newtext)
 
 	// allocate buffer
 	int memid = sceKernelAllocPartitionMemory(2, "tmp", PSP_SMEM_High, size + 1, NULL);
-	if (memid < 0) 
+	if (memid < 0)
 		return;
 	
 	char* buf = sceKernelGetBlockHeadAddr(memid);
