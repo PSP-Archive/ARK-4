@@ -82,6 +82,11 @@ void SettingsMenu::draw(){
         break;
     case 0:
         // no animation (fully open)
+        if (table->changed){
+            // recalculate max_height
+            this->max_height = (table->max_options>0 && table->max_options<PAGE_SIZE)? 20*(table->max_options+2) : 20*PAGE_SIZE;
+            table->changed = 0;
+        }
         if (customText == NULL || ntext == 0){
             x = (480-MENU_W)/2;
             y = (272-max_height)/2;

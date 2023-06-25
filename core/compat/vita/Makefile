@@ -18,7 +18,6 @@ C_OBJS =    \
 	filesystem.o    \
 	$(ARKROOT)/common/utils/patches.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
-	$(ARKROOT)/core/systemctrl/src/gameinfo.o \
 		
 OBJS = \
 	$(C_OBJS) imports.o

@@ -74,14 +74,10 @@ void LedaModulePatch(SceModule2 *mod)
     if( leda_previous ) leda_previous( mod );
 }
 
-void patchLedaPlugin(void* handler){
-    // register handler
-    KernelLoadModuleMs2_hook = handler;
+// patch leda
+void patchLedaPlugin(u32 text_addr){
     
     SceModule2* init = sceKernelFindModuleByName("sceInit");
-
-    // patch leda
-    u32 text_addr = ((u32)handler) - 0xCE8;
 
     // Remove version check
     _sw(0, text_addr + 0xC58);

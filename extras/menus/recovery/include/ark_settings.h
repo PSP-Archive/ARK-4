@@ -25,6 +25,7 @@ typedef struct {
     unsigned char usbcharge;
     unsigned char overclock;
     unsigned char powersave;
+    unsigned char defaultclock;
     unsigned char launcher;
     unsigned char disablepause;
     unsigned char highmem;
@@ -94,6 +95,20 @@ static struct {
     MAX_ARK_OPTIONS,
     0,
     &(ark_config.powersave),
+    ARK_OPTIONS
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} defaultclock = {
+    "Balanced Energy Mode",
+    MAX_ARK_OPTIONS,
+    0,
+    &(ark_config.defaultclock),
     ARK_OPTIONS
 };
 
@@ -300,6 +315,7 @@ settings_entry** ark_conf_entries = NULL;
 settings_entry* ark_conf_entries_1k[] = {
     (settings_entry*)&overclock,
     (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&launcher,
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
@@ -317,6 +333,7 @@ settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&usbcharge,
     (settings_entry*)&overclock,
     (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&launcher,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
@@ -335,6 +352,7 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&usbcharge,
     (settings_entry*)&overclock,
     (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&launcher,
     (settings_entry*)&disablepause,
     (settings_entry*)&highmem,
@@ -355,6 +373,7 @@ settings_entry* ark_conf_entries_street[] = {
     (settings_entry*)&usbcharge,
     (settings_entry*)&overclock,
     (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&launcher,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
@@ -397,27 +416,28 @@ bool isRunlevelEnabled(string line){
 }
 
 static unsigned char runlevelConvert(string runlevel, string enable){
-    if (!isRunlevelEnabled(enable)) return DISABLED;
-    else if (strcasecmp(runlevel.c_str(), "always") == 0 || strcasecmp(runlevel.c_str(), "all") == 0){
-        return ALWAYS_ON;
+    int enabled = isRunlevelEnabled(enable);
+    
+    if (strcasecmp(runlevel.c_str(), "always") == 0 || strcasecmp(runlevel.c_str(), "all") == 0){
+        return (enabled)?ALWAYS_ON:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "game") == 0){
-        return GAME_ONLY;
+        return (enabled)?GAME_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "umd") == 0 || strcasecmp(runlevel.c_str(), "psp") == 0){
-        return UMD_ONLY;
+        return (enabled)?UMD_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "homebrew") == 0){
-        return HOMEBREW_ONLY;
+        return (enabled)?HOMEBREW_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "pops") == 0  || strcasecmp(runlevel.c_str(), "psx") == 0 || strcasecmp(runlevel.c_str(), "ps1") == 0){
-        return POPS_ONLY;
+        return (enabled)?POPS_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "vsh") == 0 || strcasecmp(runlevel.c_str(), "xmb") == 0){
-        return VSH_ONLY;
+        return (enabled)?VSH_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel.c_str(), "launcher") == 0){
-        return LAUNCHER_ONLY;
+        return (enabled)?LAUNCHER_ONLY:DISABLED;
     }
     return CUSTOM;
 }
@@ -431,6 +451,9 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "powersave") == 0){
         return &(ark_config.powersave);
+    }
+    else if (strcasecmp(conf.c_str(), "defaultclock") == 0){
+        return &(ark_config.defaultclock);
     }
     else if (strcasecmp(conf.c_str(), "launcher") == 0){
         return &(ark_config.launcher);
@@ -592,6 +615,7 @@ void saveSettings(){
     output << processSetting("usbcharge", ark_config.usbcharge) << endl;
     output << processSetting("overclock", ark_config.overclock) << endl;
     output << processSetting("powersave", ark_config.powersave) << endl;
+    output << processSetting("defaultclock", ark_config.defaultclock) << endl;
     output << processSetting("launcher", ark_config.launcher) << endl;
     output << processSetting("disablepause", ark_config.disablepause) << endl;
     output << processSetting("highmem", ark_config.highmem) << endl;

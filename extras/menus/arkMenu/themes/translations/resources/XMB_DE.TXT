@@ -3,6 +3,7 @@ Plugin Manager
 USB-Aufladung
 CPU Übertakten
 Energiesparen
+Ausgeglichener Modus
 Autoboot Startprogramm
 Deaktiviere Pausenfunktion für PSP Go
 Erzwinge zusätzlichen Speicher

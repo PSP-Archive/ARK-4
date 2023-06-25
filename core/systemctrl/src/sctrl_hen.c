@@ -21,21 +21,16 @@
 #include "imports.h"
 #include "sysmem.h"
 
-u32 g_p2_size = 24;
-u32 g_p9_size = 0; //24;
+
 int sctrlHENSetMemory(u32 p2, u32 p9)
 {
-    if(p2 != 0 && (p2 + p9) <= MAX_HIGH_MEMSIZE) {
-        g_p2_size = p2;
-        g_p9_size = p9;
-    }
     return 0;
 }
 
 // Get HEN Version
 int sctrlHENGetVersion()
 {
-    return PRO_VERSION;
+    return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | ARK_MICRO_VERSION << 8 );
 }
 
 // Get HEN Minor Version
@@ -206,6 +201,7 @@ u32 sctrlHENGetInitControl()
 
 void sctrlHENTakeInitControl(int (* ictrl)(void *))
 {
+    /*
     u32* initcontrol = (u32*)sctrlHENGetInitControl();
     u32 text_addr = initcontrol[0];
     u32* bootinfo = (u32*)(initcontrol[1]);
@@ -231,6 +227,7 @@ void sctrlHENTakeInitControl(int (* ictrl)(void *))
 	bootinfo[2]++; // nextmodule
 
 	flushCache();
+    */
 }
 
 u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid)
@@ -316,9 +313,11 @@ void sctrlHENRegisterLLEHandler(void* handler)
 	lle_handler = handler;
 }
 
+extern SceUID (* KernelLoadModuleMs2_hook)();
 int sctrlHENRegisterHomebrewLoader(void* handler)
 {
-    patchLedaPlugin(handler);
+    // register handler
+    KernelLoadModuleMs2_hook = handler;
     return 0;
 }
 

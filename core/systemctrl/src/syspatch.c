@@ -147,6 +147,11 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
+    if (strcmp(mod->modname, "Legacy_Software_Loader") == 0){
+        patchLedaPlugin(mod->text_addr);
+        goto flush;
+    }
+
     // Boot Complete Action not done yet
     if(booted == 0)
     {

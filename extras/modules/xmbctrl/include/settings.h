@@ -29,6 +29,7 @@ char *settings[] =
     "USB Charge",
     "Overclock",
     "PowerSave",
+    "Balanced Energy Mode",
     "Autoboot Launcher",
     "Disable Pause on PSP Go",
     "Force Extra Memory",

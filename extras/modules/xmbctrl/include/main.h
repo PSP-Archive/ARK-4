@@ -39,6 +39,7 @@ typedef struct
     int usbcharge;
     int overclock;
     int powersave;
+    int defaultclock;
     int launcher;
     int disablepause;
     int highmem;

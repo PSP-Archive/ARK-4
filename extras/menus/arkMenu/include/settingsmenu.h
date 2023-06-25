@@ -16,6 +16,7 @@ typedef struct {
 typedef struct {
     settings_entry** settings_entries;
     int max_options;
+    int changed;
 } SettingsTable;
 
 class SettingsMenu : public SystemEntry{

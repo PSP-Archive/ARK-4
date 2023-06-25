@@ -12,27 +12,27 @@ int isRunlevelEnabled(char* line){
 }
 
 int runlevelConvert(char* runlevel, char* enable){
-    if (!isRunlevelEnabled(enable)) return DISABLED;
-    else if (strcasecmp(runlevel, "always") == 0 || strcasecmp(runlevel, "all") == 0){
-        return ALWAYS_ON;
+    int enabled = isRunlevelEnabled(enable);
+    if (strcasecmp(runlevel, "always") == 0 || strcasecmp(runlevel, "all") == 0){
+        return (enabled)?ALWAYS_ON:DISABLED;
     }
     else if (strcasecmp(runlevel, "game") == 0){
-        return GAME_ONLY;
+        return (enabled)?GAME_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel, "umd") == 0 || strcasecmp(runlevel, "psp") == 0){
-        return UMD_ONLY;
+        return (enabled)?UMD_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel, "homebrew") == 0){
-        return HOMEBREW_ONLY;
+        return (enabled)?HOMEBREW_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel, "pops") == 0 || strcasecmp(runlevel, "psx") == 0 || strcasecmp(runlevel, "ps1") == 0){
-        return POPS_ONLY;
+        return (enabled)?POPS_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel, "vsh") == 0 || strcasecmp(runlevel, "xmb") == 0){
-        return VSH_ONLY;
+        return (enabled)?VSH_ONLY:DISABLED;
     }
     else if (strcasecmp(runlevel, "launcher") == 0){
-        return LAUNCHER_ONLY;
+        return (enabled)?LAUNCHER_ONLY:DISABLED;
     }
     return CUSTOM;
 }

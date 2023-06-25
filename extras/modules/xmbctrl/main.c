@@ -56,6 +56,7 @@ GetItem GetItemes[] =
     { 1, 0, "USB Charge" },
     { 1, 0, "Overclock" },
     { 1, 0, "PowerSave" },
+    { 1, 0, "Balanced Energy Mode" },
     { 1, 0, "Autoboot Launcher" },
     { 1, 0, "Disable Pause on PSP Go" },
     { 1, 0, "Force Extra Memory" },
@@ -364,10 +365,10 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 }
 
 int skipSetting(int i){
-    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==1 || i==2 || i==4 || i==8 || i==11 || i==13 || i == 14);
-    else if (psp_model == PSP_1000) return ( i == 0 || i == 4 || i == 5 || i == 8 || i == 11);
-    else if (psp_model == PSP_11000) return ( i == 4 || i == 8 || i == 11 || i == 12 );
-    else if (psp_model != PSP_GO) return ( i == 4 || i == 8 || i == 11);
+    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==1 || i==2 || i==3 || i==5 || i==9 || i==12 || i==14 || i == 15);
+    else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12);
+    else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13 );
+    else if (psp_model != PSP_GO) return ( i == 5 || i == 9 || i == 12);
     return 0;
 }
 
@@ -499,21 +500,22 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         {
             int configs[] =
             {
-                config.usbcharge,
-                config.overclock,
-                config.powersave,
-                config.launcher,
-                config.disablepause,
-                config.highmem,
-                config.mscache,
-                config.infernocache,
-                config.oldplugin,
-                config.skiplogos,
-                config.hidepics,
-                config.hibblock,
-                config.hidemac,
-                config.hidedlc,
-                config.noled,
+                config.usbcharge,		// 0
+                config.overclock,		// 1
+                config.powersave,		// 2
+                config.defaultclock,	// 3
+                config.launcher,		// 4
+                config.disablepause,	// 5
+                config.highmem,			// 6
+                config.mscache,			// 7
+                config.infernocache,	// 8
+                config.oldplugin,		// 9
+                config.skiplogos,		// 10
+                config.hidepics,		// 11
+                config.hibblock, 		// 12
+                config.hidemac, 		// 13
+                config.hidedlc,			// 14
+                config.noled,			// 15
             };
             
             int i;
@@ -554,6 +556,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.usbcharge,
                 &config.overclock,
                 &config.powersave,
+                &config.defaultclock,
                 &config.launcher,
                 &config.disablepause,
                 &config.highmem,

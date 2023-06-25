@@ -34,6 +34,10 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.powersave = opt;
         return 1;
     }
+    else if (strcasecmp(path, "defaultclock") == 0){
+        config.defaultclock = opt;
+        return 1;
+    }
     else if (strcasecmp(path, "launcher") == 0){
         config.launcher = opt;
         return 1;
@@ -134,6 +138,7 @@ void saveSettings(){
     processSetting(fd, line, "usbcharge", config.usbcharge);
     processSetting(fd, line, "overclock", config.overclock);
     processSetting(fd, line, "powersave", config.powersave);
+    processSetting(fd, line, "defaultclock", config.defaultclock);
     processSetting(fd, line, "launcher", config.launcher);
     processSetting(fd, line, "disablepause", config.disablepause);
     processSetting(fd, line, "highmem", config.highmem);

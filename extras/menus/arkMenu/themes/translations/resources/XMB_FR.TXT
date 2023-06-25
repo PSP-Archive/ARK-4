@@ -3,6 +3,7 @@ Gestionnaire de plugins
 Recharge par USB
 Overclock
 Économie d'énergie
+Mode énergétique équilibré
 Autoboot du Launcher alternatif
 Mode Pause de la PSP Go
 Forcer le mode mémoire étendue

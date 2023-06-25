@@ -108,8 +108,8 @@ static int matchingRunlevel(char * runlevel)
         strcat(path, ark_config->launcher);
         return (strcmp(path, sceKernelInitFileName())==0);
     }
-    else if (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115)){
-        char gameid[10]; memset(gameid, 0, sizeof(gameid)); // check if plugin loads on specific game
+    else { // check if plugin loads on specific game
+        char gameid[10]; memset(gameid, 0, sizeof(gameid));
         return (getGameId(gameid) && strstr(runlevel, gameid) != NULL);
     }
     
@@ -330,10 +330,18 @@ static void settingsHandler(char* path, u8 enabled){
         else if (se_config.clock == 1) se_config.clock = 0;
     }
     else if (strcasecmp(path, "powersave") == 0){ // underclock to save battery
-        if (apitype != 0x144 && apitype != 0x155) // prevent operation in pops
+        if (apitype != 0x144 && apitype != 0x155){ // prevent operation in pops
             if (enabled)
                 se_config.clock = 2;
             else if (se_config.clock == 2) se_config.clock = 0;
+        }
+    }
+    else if (strcasecmp(path, "defaultclock") == 0){
+        if (apitype != 0x144 && apitype != 0x155){ // prevent operation in pops
+            if (enabled)
+                se_config.clock = 3;
+            else if (se_config.clock == 3) se_config.clock = 0;
+        }
     }
     else if (strcasecmp(path, "usbcharge") == 0){ // enable usb charging
         se_config.usbcharge = enabled;

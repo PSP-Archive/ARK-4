@@ -16,11 +16,12 @@ class TextEditor : public OptionsMenu{
 
     private:
         string path;
-        string clipboard;
         int lines_max;
+        bool file_changed;
 
         SettingsTable table;
         SettingsMenu* menu;
+        OptionsMenu* optionsmenu;
 
         void loadTextFile();
         void saveTextFile();
@@ -30,6 +31,9 @@ class TextEditor : public OptionsMenu{
         void editLine(int i);
     
     public:
+
+        static string clipboard;
+
         TextEditor(string path);
         ~TextEditor();
         

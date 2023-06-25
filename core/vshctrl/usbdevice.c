@@ -37,8 +37,7 @@
 static SceUID g_usbdevice_modid = -1;
 extern ARKConfig* ark_config;
 
-int cur_usbdevice = 0;
-int usb_readonly = 0;
+extern SEConfig* se_config;
 
 static SceUID load_start_usbdevice(void)
 {
@@ -104,13 +103,13 @@ static int _sceUsbStart(const char *driverName, int size, void *args)
 	k1 = pspSdkSetK1(0);
 
 	if (0 == strcmp(driverName, "USBStor_Driver")) {
-		if(cur_usbdevice > 0 && cur_usbdevice <= 5) {
+		if(se_config->usbdevice > 0 && se_config->usbdevice <= 5) {
 			if (g_usbdevice_modid < 0) {
 				g_usbdevice_modid = load_start_usbdevice();
 			}
 
 			if (g_usbdevice_modid >= 0) {
-				ret = pspUsbDeviceSetDevice(cur_usbdevice - 1, usb_readonly, 0);
+				ret = pspUsbDeviceSetDevice(se_config->usbdevice - 1, se_config->usbdevice_rdonly, 0);
 			}
 		}
 	}
@@ -130,7 +129,7 @@ static int _sceUsbStop(const char *driverName, int size, void *args)
 	k1 = pspSdkSetK1(0);
 
 	if (0 == strcmp(driverName, "USBStor_Driver")) {
-		if(cur_usbdevice > 0 && cur_usbdevice <= 5) {
+		if(se_config->usbdevice > 0 && se_config->usbdevice <= 5) {
 			if (g_usbdevice_modid >= 0) {
 				int result;
 

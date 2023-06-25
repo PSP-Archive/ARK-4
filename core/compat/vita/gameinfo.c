@@ -27,7 +27,7 @@ void * SysMemForKernel_EF29061C_Fixed(void)
     
     if (!readGameIdFromDisc(gameinfo+0x44)){
         // Set Default Game ID
-        memcpy(gameinfo + 0x44, defaultid, strlen(defaultid));
+        memcpy(gameinfo + 0x44, defaultid, 9);
     }
     
     // Return Game Info Structure

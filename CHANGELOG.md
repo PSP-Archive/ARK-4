@@ -1,5 +1,14 @@
 # ARK Changelog
 
+## Version 4.20.58 (2023-06-24)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42058
+- Added support for `PS Vita Standalone` installations using `NoPspEmuDrm`.
+- Fixed `Inferno Cache` on `PS Vita Standalone` installations.
+- Added new setting `Balanced Energy Mode`, forces the `CPU` clock to `222MHz`.
+- You can now use `per-game` settings.
+- You can now use `per-game` settings and plugins on `PS1` games.
+- Fixed `potential` compatibility issues with `some` plugins. Confirmed with `Macrofire` plugin.
+
 ## Version 4.20.57 (2023-06-22)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42057
 - Heavily improved `Waves` animation in `launcher`/`recovery`.

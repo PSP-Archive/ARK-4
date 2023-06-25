@@ -3,6 +3,7 @@ Administrador de Plugins
 Carga mediante USB
 Overclock
 Ahorro de energía
+Modo de nergía balanceado
 Cargar launcher al inicio
 Deshabilitar pausa en PSP Go
 Forzar memoria extra

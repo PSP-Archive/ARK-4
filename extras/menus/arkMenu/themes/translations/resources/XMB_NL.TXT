@@ -3,6 +3,7 @@ Plugins Beheren
 USB Opladen
 Overklokken
 Energie Spaarstand
+Uitgebalanceerde energiemodus
 Alternatieve Opstart Launcher
 Pauze Deactiveren op de PSP Go
 Extra Geheugen Forceren

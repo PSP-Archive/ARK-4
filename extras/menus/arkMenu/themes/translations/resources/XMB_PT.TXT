@@ -3,6 +3,7 @@ Gerenciador de Plugins
 Recarga via USB
 Overclock
 Poupança de Energia
+Modo de energia balanceado
 Iniciar Custom Launcher Automaticamente
 Desactivar Pausa no PSP Go
 Forçar Memória Extra

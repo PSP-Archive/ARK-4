@@ -20,6 +20,7 @@ as well as unique and exclusive new features not found anywhere else.
         * [Time Machine and Despertar del Cementerio](#time-machine-and-despertar-del-cementerio)
       - [On PS Vita](#on-ps-vita)
         * [Standalone via FastARK](#standalone-via-fastark)
+        * [Standalone via NoPspEmuDrm](#standalone-via-nopspemudrm)
         * [Standalone via ChovySign](#standalone-via-chovysign)
         * [Adrenaline](#adrenaline)
       - [Legacy Game Exploits (PSP & Vita)](#legacy-game-exploits-psp--vita)
@@ -191,7 +192,7 @@ The instructions are as follows:
 <p>
 
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
-  - Recommended: download a `PSP` game from `PSN` (demo of `Ape Quest`, `Locoroco`, etc) to have a valid `PSP` license available during installation.
+  - `Recommended`: download a `PSP` game from `PSN` (demo of `Ape Quest`, `Locoroco`, etc) to have a valid `PSP` license available during installation.
   - Once installed, it will work on `Official Firmware` as long as the console has a valid `PSP` license obtained from `PSN`.
   - Download and install latest `ArkFast` from this link: https://github.com/Yoti/ArkFast-4/releases/latest/.
   - Press `start` button to install the `Sasuke Commander` minigame with `ARK`.

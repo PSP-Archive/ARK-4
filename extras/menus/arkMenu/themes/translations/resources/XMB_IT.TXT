@@ -3,6 +3,7 @@ Gestione plugin
 Ricarica USB
 Overclock
 Risparmio energetico
+Modalità energetica bilanciata
 Avvio automatico del launcher
 Disattiva pausa su PSP Go
 Forza memoria aggiuntiva
