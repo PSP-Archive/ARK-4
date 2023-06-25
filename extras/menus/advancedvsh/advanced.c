@@ -75,6 +75,10 @@ int submenu_draw(void) {
 		if (submax_menu==submenu_sel){
 			bc = (g_vsh_menu->config.ark_menu.vsh_bg_color < 2 || g_vsh_menu->config.ark_menu.vsh_bg_color > 28)? 0xff8080:0x0000ff;
 			fc = 0xffffff;
+			bc |= (((u32)g_vsh_menu->status.bc_alpha)<<24);
+			if (g_vsh_menu->status.bc_alpha == 0) g_vsh_menu->status.bc_delta = 5;
+			else if (g_vsh_menu->status.bc_alpha == 255) g_vsh_menu->status.bc_delta = -5;
+			g_vsh_menu->status.bc_alpha += g_vsh_menu->status.bc_delta;
 		}
 		else{
 			bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
