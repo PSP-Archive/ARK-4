@@ -18,13 +18,21 @@
 /*
 	PSP VSH
 */
+
+#include "clock.h"
 #include "common.h"
 
-extern SEConfig cnf;
-extern t_conf config;
+#include "vsh.h"
 
-const int cpu_list[]={0, 20, 75, 100, 133, 166, 222, 266, 300, 333};
-const int bus_list[]={0, 10, 37, 50, 66, 83, 111, 133, 150, 166};
+
+#define ROLL_OVER(val, min, max) ( ((val) < (min)) ? (max): ((val) > (max)) ? (min) : (val) )
+
+
+extern vsh_Menu *g_vsh_menu;
+
+
+const int cpu_list[] = {0, 20, 75, 100, 133, 166, 222, 266, 300, 333};
+const int bus_list[] = {0, 10, 37, 50, 66, 83, 111, 133, 150, 166};
 
 /** 0 - None, 1~count - umdvideo entry */
 int umdvideo_idx = 0;
@@ -54,76 +62,76 @@ int bus2no(int cpu)
 }
 
 void swap_readonly(int dir) {
-	int sel = cnf.usbdevice_rdonly;
-	sel = limit(sel+dir, 0, 1);
-	cnf.usbdevice_rdonly=sel;
+	int sel = g_vsh_menu->config.se.usbdevice_rdonly;
+	sel = ROLL_OVER(sel+dir, 0, 1);
+	g_vsh_menu->config.se.usbdevice_rdonly=sel;
 }
 
 void change_bg_color(int dir) {
-	int sel = config.vsh_bg_color;
-	sel = limit(sel+dir, 0, 28);
-	config.vsh_bg_color=sel;
+	int sel = g_vsh_menu->config.ark_menu.vsh_bg_color;
+	sel = ROLL_OVER(sel+dir, 0, 28);
+	g_vsh_menu->config.ark_menu.vsh_bg_color=sel;
 }
 
 void change_fg_color(int dir) {
-	int sel = config.vsh_fg_color;
-	sel = limit(sel+dir, 0, 28);
-	config.vsh_fg_color=sel;
+	int sel = g_vsh_menu->config.ark_menu.vsh_fg_color;
+	sel = ROLL_OVER(sel+dir, 0, 28);
+	g_vsh_menu->config.ark_menu.vsh_fg_color=sel;
 }
 
 void change_font(int dir) {
-	int sel = config.vsh_font;
-	sel = limit(sel+dir, 0, 55);
-	config.vsh_font=sel;
+	int sel = g_vsh_menu->config.ark_menu.vsh_font;
+	sel = ROLL_OVER(sel+dir, 0, 55);
+	g_vsh_menu->config.ark_menu.vsh_font=sel;
 }
 
 void change_usb(int dir)
 {
-	int sel = cnf.usbdevice;
-	int top = (psp_model==PSP_GO)?4:5;
+	int sel = g_vsh_menu->config.se.usbdevice;
+	int top = (g_vsh_menu->psp_model == PSP_GO) ? 4 : 5;
 
 	// select new
-	sel = limit(sel+dir, 0, top);
+	sel = ROLL_OVER(sel + dir, 0, top);
 	
-	cnf.usbdevice=sel;
+	g_vsh_menu->config.se.usbdevice = sel;
 }
 
 void change_umd_mode(int dir)
 {
-	int sel = cnf.umdmode;
+	int sel = g_vsh_menu->config.se.umdmode;
 
 	// select new
-	sel = limit(sel+dir, 2, 3);
-	cnf.umdmode=sel;
+	sel = ROLL_OVER(sel+dir, 2, 3);
+	g_vsh_menu->config.se.umdmode=sel;
 }
 
 void change_umd_mount_idx(int dir)
 {
-	umdvideo_idx = limit(umdvideo_idx+dir, 0, umdvideolist_count(&g_umdlist));
+	umdvideo_idx = ROLL_OVER(umdvideo_idx+dir, 0, umdvideolist_count(&g_umdlist));
 }
 
 void change_umd_region(int dir, int max)
 {
-	int sel = cnf.umdregion;
+	int sel = g_vsh_menu->config.se.umdregion;
 			
 	// select new
-	sel = limit(sel+dir, 0, max);
-	cnf.umdregion=sel;
+	sel = ROLL_OVER(sel+dir, 0, max);
+	g_vsh_menu->config.se.umdregion=sel;
 }
 
 void change_region(int dir, int max)
 {
-	int sel = cnf.vshregion;
+	int sel = g_vsh_menu->config.se.vshregion;
 
 	// select new
-	sel = limit(sel+dir, 0, max);
-	cnf.vshregion=sel;
+	sel = ROLL_OVER(sel+dir, 0, max);
+	g_vsh_menu->config.se.vshregion=sel;
 }
 
 void change_bool_option(int *p, int direction)
 {
 	int sel = *p;
 
-	sel = limit(sel+direction, 0, 1);
+	sel = ROLL_OVER(sel+direction, 0, 1);
 	*p=sel;
 }
