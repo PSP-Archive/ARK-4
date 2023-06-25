@@ -1,7 +1,7 @@
 TARGET = satelite
-OBJS = main.o blit.o ui.o menu.o advanced.o clock.o registry.o umdvideo_list.o vpl.o trans.o trans_en.o stubkk.o
+OBJS = main.o blit.o ui.o menu.o advanced.o battery.o config.o color.o font.o clock.o registry.o umdvideo_list.o vpl.o trans.o trans_en.o stubkk.o
 
-BUILD_PRX=1
+BUILD_PRX = 1
 
 INCDIR = $(ARKROOT)/common/include ./include
 CFLAGS = -Os -G0 -Wall
@@ -19,6 +19,8 @@ LDFLAGS =
 
 PSP_FW_VERSION = 660
 CFLAGS += -DCONFIG_660=1
+
+vshmenu: all
 
 all:
 	psp-packer $(TARGET).prx
