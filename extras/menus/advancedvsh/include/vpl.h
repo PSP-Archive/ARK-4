@@ -20,7 +20,10 @@
 
 #define VPL_POOL_SIZE (4 * 1024)
 
+#define VPL_DISABLED -1
+
 void vpl_init(void);
+int vpl_status(void);
 void vpl_finish(void);
 
 void *vpl_alloc(int size);
