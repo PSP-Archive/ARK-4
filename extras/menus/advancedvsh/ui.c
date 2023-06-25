@@ -1,63 +1,40 @@
-/*
- * This file is part of PRO CFW.
+#include "ui.h"
 
- * PRO CFW is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+#include <pspctrl.h>
+#include <psptypes.h>
 
- * PRO CFW is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
- */
+#include "scepaf.h"
+#include "vsh.h"
 
-/*
-	PSP VSH extender for devhook 0.50+
-*/
-#include "common.h"
+// extern u32 cur_buttons;
+// extern u32 button_on;
+// extern SceCtrlData ctrl_pad;
 
-int limit(int val,int min,int max)
-{
-	if(val<min) val = max;
-	if(val>max) val = min;
-	return val;
-}
 
-/*
-int get_max_len(char **str_list,int nums)
-{
-	int max_len = 0;
+extern vsh_Menu *g_vsh_menu;
+
+
+int ui_eat_key(SceCtrlData *pad_data, int count) {
 	int i;
-	for(i=0;i<nums;i++)
-	{
-		int len;
+	u32 old_buttons;
 
-#ifdef CONFIG_639
-		if(psp_fw_version == FW_639)
-			len = scePaf_strlen(str_list[i]);
-#endif
+	// copy old value of buttons
+	old_buttons = g_vsh_menu->buttons.pad.Buttons;
+	// copy new value
+	scePaf_memcpy(&g_vsh_menu->buttons.pad, pad_data, sizeof(SceCtrlData));
+	// get only the new buttons pressed (compared to old value)
+	g_vsh_menu->buttons.new_buttons_on = ~old_buttons & g_vsh_menu->buttons.pad.Buttons;
 
-#ifdef CONFIG_635
-		if(psp_fw_version == FW_635)
-			len = scePaf_strlen(str_list[i]);
-#endif
-
-#ifdef CONFIG_620
-		if(psp_fw_version == FW_620)
-			len = scePaf_strlen_620(str_list[i]);
-#endif
-	
-#if defined(CONFIG_660) || defined(CONFIG_661)
-		if((psp_fw_version == FW_660) || (psp_fw_version == FW_661))
-			len = scePaf_strlen_660(str_list[i]);
-#endif
-	
-		if(max_len < len) max_len = len;
+	// mask buttons for LOCK VSH controll
+	for(i = 0; i < count; i++) {
+		pad_data[i].Buttons &= ~(
+			PSP_CTRL_SELECT		|	PSP_CTRL_START		|
+			PSP_CTRL_UP			|	PSP_CTRL_RIGHT		|	PSP_CTRL_DOWN	|	PSP_CTRL_LEFT	|
+			PSP_CTRL_LTRIGGER	|	PSP_CTRL_RTRIGGER	|
+			PSP_CTRL_TRIANGLE	|	PSP_CTRL_CIRCLE		|	PSP_CTRL_CROSS	|	PSP_CTRL_SQUARE	|
+			PSP_CTRL_HOME		|	PSP_CTRL_NOTE
+		);
 	}
-	return max_len;
+
+	return 0;
 }
-*/

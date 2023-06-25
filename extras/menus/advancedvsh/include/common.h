@@ -18,6 +18,7 @@
 #ifndef __COMMON_H
 #define __COMMON_H
 
+
 #include <pspkernel.h>
 #include <pspctrl.h>
 #include <pspdisplay.h>
@@ -26,13 +27,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 #include "systemctrl_se.h"
 #include "ui.h"
 #include "blit.h"
 #include "globals.h"
 #include "macros.h"
 
+#include "scepaf.h"
+
 #include "../arkMenu/include/conf.h"
+
 
 #if !defined(CONFIG_635) && !defined(CONFIG_620) && !defined(CONFIG_639) && !defined(CONFIG_660) && !defined(CONFIG_661)
 #error You have to define CONFIG_620 or CONFIG_635 or CONFIG_639 or CONFIG_660 or CONFIG_661
@@ -59,13 +64,6 @@ void change_plugins(int dir , int flag);
 void change_bool_option(int *p, int direction);
 void change_region(int dir, int max);
 
-int scePaf_strlen(const char *path);
-int scePaf_memset(void *buff ,int c ,int size);
-int scePaf_memcmp(const void *path , const void *name , int c);
-int scePaf_sprintf(char *buffer , const char *format , ...);
-int scePaf_snprintf(char *buffer,int c , const char *format, ...);
-int scePaf_memcpy(void *path , void *name , int size);
-int scePaf_strcpy(char *path , const char *name);
 
 typedef struct _UmdVideoEntry {
 	char *path;

@@ -20,22 +20,14 @@
 	based Booster's vshex
 */
 
-#include "common.h"
 #include <psputility.h>
 
-const char **g_messages = g_messages_en;
+#include "common.h"
+#include "systemctrl.h"
 
-void change_clock(int dir, int a);
+#include "vsh.h"
 
-extern int pwidth;
-extern char umd_path[72];
-extern SEConfig cnf;
-extern t_conf config;
 
-char freq_buf[3+3+2] = "";
-char freq2_buf[3+3+2] = "";
-char device_buf[13] = "";
-char umdvideo_path[256] = "";
 
 enum {
 	TMENU_CUSTOM_LAUNCHER,
@@ -49,6 +41,28 @@ enum {
 	TMENU_MAX
 };
 
+
+
+const char **g_messages = g_messages_en;
+
+void change_clock(int dir, int a);
+
+extern int pwidth;
+extern char umd_path[72];
+extern u32 colors[];
+
+
+extern vsh_Menu *g_vsh_menu;
+
+int stop_stock = 0;
+
+
+char freq_buf[3+3+2] = "";
+char freq2_buf[3+3+2] = "";
+char device_buf[13] = "";
+char umdvideo_path[256] = "";
+
+
 int item_fcolor[TMENU_MAX];
 const char *item_str[TMENU_MAX];
 
@@ -59,30 +73,29 @@ const int xyPoint2[] ={0xB0, 0x30, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data245
 
 int colors_dir = 0;
 
-int menu_draw(void)
-{
-	const char msg[128] = {0};
+int menu_draw(void) {
+	char msg[128] = {0};
 	int max_menu, cur_menu;
 	const int *pointer;
 	u32 fc,bc;
 	
 	// ARK Version
-	const char ark_version[24];
+	char ark_version[24];
 	int ver = sctrlHENGetMinorVersion();
  	int major = (ver & 0xFF0000) >> 16;
 	int minor = (ver & 0xFF00) >> 8;
 	int micro = (ver & 0xFF);
 
 	#ifdef DEBUG
-    if (micro > 0)
-		scePaf_snprintf(ark_version, sizeof(ark_version), " ARK %d.%d.%.2i DEBUG ", major, minor, micro);
-    else
-		scePaf_snprintf(ark_version, sizeof(ark_version), " ARK %d.%d DEBUG ", major, minor);
-    #else
-    if (micro > 0) 
+	if (micro > 0) 
+		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d.%.2i DEBUG    ", major, minor, micro);
+	else 
+		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d DEBUG    ", major, minor);
+	#else
+	if (micro > 0) 
 		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d.%.2i    ", major, minor, micro);
-    else 
-		scePaf_snprintf(ark_version, sizeof(ark_version), "      ARK %d.%d     ", major, minor); 
+	else 
+		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d    ", major, minor); 
 	#endif
 
 	// check & setup video mode
@@ -102,303 +115,21 @@ int menu_draw(void)
 	fc = 0xffffff;
 	
 	for (max_menu = 0; max_menu < TMENU_MAX; max_menu++) {
-		// do bg_color stuff
-		switch(config.vsh_bg_color) {
-			// Random
-			case 0:
-			// Red
-			case 1: 
-				bc = (max_menu==menu_sel) ? 0xff8080 : 0x000000ff;
-				blit_set_color(fc,bc);
-				break;
-			// Light Red
-			case 2: 
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa00000ff;
-				blit_set_color(fc,bc);
-				break;
-			// Orange
-			case 3: 
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x0000a5ff;
-				blit_set_color(fc,bc);
-				break;
-			// Light Orange
-			case 4: 
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa000a5ff;
-				blit_set_color(fc,bc);
-				break;
-			// Yellow
-			case 5: 
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x0000e6e6;
-				blit_set_color(fc,bc);
-				break;
-			// Light Yellow
-			case 6: 
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa000e6e6;
-				blit_set_color(fc,bc);
-				break;
-			// Green
-			case 7:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x0000b300;
-				blit_set_color(fc,bc);
-				break;
-			// Light Green
-			case 8:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa000ff00;
-				blit_set_color(fc,bc);
-				break;
-			// Blue
-			case 9:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x00ff0000;
-				blit_set_color(fc,bc);
-				break;
-			// Light Blue
-			case 10:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa0ff0000;
-				blit_set_color(fc,bc);
-				break;
-			// Indigo
-			case 11:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x0082004b;
-				blit_set_color(fc,bc);
-				break;
-			// Light Indigo
-			case 12:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa082004b;
-				blit_set_color(fc,bc);
-				break;
-			// Violet
-			case 13:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x00ee82ee;
-				blit_set_color(fc,bc);
-				break;
-			// Light Violet
-			case 14:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa0ee82ee;
-				blit_set_color(fc,bc);
-				break;
-			// Pink 
-			case 15:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x00cbc0ff;
-				blit_set_color(fc,bc);
-				break;
-			// Light Pink 
-			case 16:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa0cbc0ff;
-				blit_set_color(fc,bc);
-				break;
-			// Purple 
-			case 17:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x00993366;
-				blit_set_color(fc,bc);
-				break;
-			// Light Purple 
-			case 18:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa0993366;
-				blit_set_color(fc,bc);
-				break;
-			// Teal 
-			case 19:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x00808000;
-				blit_set_color(fc,bc);
-				break;
-			// Light Teal 
-			case 20:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa0808000;
-				blit_set_color(fc,bc);
-				break;
-			// Aqua 
-			case 21:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x00cccc00;
-				blit_set_color(fc,bc);
-				break;
-			// Light Aqua 
-			case 22:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa0cccc00;
-				blit_set_color(fc,bc);
-				break;
-			// Grey 
-			case 23:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x00737373;
-				blit_set_color(fc,bc);
-				break;
-			// Light Grey 
-			case 24:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa0737373;
-				blit_set_color(fc,bc);
-				break;
-			// Black 
-			case 25:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x00000000;
-				blit_set_color(fc,bc);
-				break;
-			// Light Black 
-			case 26:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xa0000000;
-				blit_set_color(fc,bc);
-				break;
-			// White  
-			case 27:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0x00ffffff;
-				blit_set_color(fc,bc);
-				break;
-			// Light White  
-			case 28:
-				bc = (max_menu==menu_sel) ? 0x0000ff : 0xafffffff;
-				blit_set_color(fc,bc);
-				break;
-			default:	
-				bc = (max_menu==menu_sel) ? 0xff8080 :0x0000a5ff;
-				blit_set_color(fc,bc);
-		}
 		
-		// do fg_color stuff
-		switch(config.vsh_fg_color) {
-			// Random  
-			case 0:
-			// White  
-			case 1:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x00ffffff;
-				blit_set_color(fc,bc);
-				break;
-			// Orange
-			case 2: 
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x0000a5ff;
-				blit_set_color(fc,bc);
-				break;
-			// Light Orange
-			case 3: 
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa000a5ff;
-				blit_set_color(fc,bc);
-				break;
-			// Yellow
-			case 4: 
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x0000e6e6;
-				blit_set_color(fc,bc);
-				break;
-			// Light Yellow
-			case 5: 
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa000e6e6;
-				blit_set_color(fc,bc);
-				break;
-			// Green
-			case 6:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x0000b300;
-				blit_set_color(fc,bc);
-				break;
-			// Light Green
-			case 7:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa000ff00;
-				blit_set_color(fc,bc);
-				break;
-			// Blue
-			case 8:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x00ff0000;
-				blit_set_color(fc,bc);
-				break;
-			// Light Blue
-			case 9:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa0ff0000;
-				blit_set_color(fc,bc);
-				break;
-			// Indigo
-			case 10:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x0082004b;
-				blit_set_color(fc,bc);
-				break;
-			// Light Indigo
-			case 11:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa082004b;
-				blit_set_color(fc,bc);
-				break;
-			// Violet
-			case 12:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x00ee82ee;
-				blit_set_color(fc,bc);
-				break;
-			// Light Violet
-			case 13:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa0ee82ee;
-				blit_set_color(fc,bc);
-				break;
-			// Pink 
-			case 14:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x00cbc0ff;
-				blit_set_color(fc,bc);
-				break;
-			// Light Pink 
-			case 15:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa0cbc0ff;
-				blit_set_color(fc,bc);
-				break;
-			// Purple 
-			case 16:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x00993366;
-				blit_set_color(fc,bc);
-				break;
-			// Light Purple 
-			case 17:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa0993366;
-				blit_set_color(fc,bc);
-				break;
-			// Teal 
-			case 18:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x00808000;
-				blit_set_color(fc,bc);
-				break;
-			// Light Teal 
-			case 19:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa0808000;
-				blit_set_color(fc,bc);
-				break;
-			// Aqua 
-			case 20:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x00cccc00;
-				blit_set_color(fc,bc);
-				break;
-			// Light Aqua 
-			case 21:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa0cccc00;
-				blit_set_color(fc,bc);
-				break;
-			// Grey 
-			case 22:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x00737373;
-				blit_set_color(fc,bc);
-				break;
-			// Light Grey 
-			case 23:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa0737373;
-				blit_set_color(fc,bc);
-				break;
-			// Black 
-			case 24:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x00000000;
-				blit_set_color(fc,bc);
-				break;
-			// Light Black 
-			case 25:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa0000000;
-				blit_set_color(fc,bc);
-				break;
-			// Light Red
-			case 26: 
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xa00000ff;
-				blit_set_color(fc,bc);
-				break;
-			// Red
-			case 27:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x000000ff;
-				blit_set_color(fc,bc);
-				break;
-			// Light White  
-			case 28:
-				fc = (max_menu==menu_sel) ? 0xffffff : 0xafffffff;
-				blit_set_color(fc,bc);
-				break;
-			default:	
-				fc = (max_menu==menu_sel) ? 0xffffff : 0x00ffffff;
-				blit_set_color(fc,bc);
+		// do color stuff
+		if (max_menu==menu_sel){
+			bc = (g_vsh_menu->config.ark_menu.vsh_bg_color < 2 || g_vsh_menu->config.ark_menu.vsh_bg_color > 28)? 0xff8080:0x0000ff;
+			fc = 0xffffff;
 		}
+		else{
+			bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
+			switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+				case 0: case 1: fc = colors[27]; break;
+				case 27: fc = colors[1]; break;
+				default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+			}
+		}
+		blit_set_color(fc,bc);
 
 		// display menu
 		if (g_messages[MSG_CUSTOM_LAUNCHER + max_menu]) {
@@ -433,17 +164,13 @@ int menu_draw(void)
 	return 0;
 }
 
-static inline const char *get_enable_disable(int opt)
-{
-	if(opt) {
+static inline const char *get_enable_disable(int opt) {
+	if(opt)
 		return g_messages[MSG_ENABLE];
-	}
-
 	return g_messages[MSG_DISABLE];
 }
 
-int menu_setup(void)
-{
+int menu_setup(void) {
 	int i;
 
 	// preset
@@ -455,12 +182,10 @@ int menu_setup(void)
 	return 0;
 }
 
-int menu_ctrl(u32 button_on)
-{
+int menu_ctrl(u32 button_on) {
 	int direction;
 
-	if( (button_on & PSP_CTRL_SELECT) ||
-		(button_on & PSP_CTRL_HOME)) {
+	if((button_on & PSP_CTRL_SELECT) || (button_on & PSP_CTRL_HOME)) {
 		menu_sel = TMENU_EXIT;
 		return 1;
 	}
@@ -468,60 +193,87 @@ int menu_ctrl(u32 button_on)
 	// change menu select
 	direction = 0;
 
-	if(button_on & PSP_CTRL_DOWN) direction++;
-	if(button_on & PSP_CTRL_UP) direction--;
+	if (button_on & PSP_CTRL_DOWN) 
+		direction++;
+	if (button_on & PSP_CTRL_UP) 
+		direction--;
 
-	menu_sel = limit(menu_sel+direction, 0, TMENU_MAX-1);
+	#define ROLL_OVER(val, min, max) ( ((val) < (min)) ? (max): ((val) > (max)) ? (min) : (val) )
+	menu_sel = ROLL_OVER(menu_sel + direction, 0, TMENU_MAX - 1);
 
 	// LEFT & RIGHT
 	direction = -2;
 
-	if(button_on & PSP_CTRL_LEFT)   direction = -1;
-	if(button_on & PSP_CTRL_CROSS) direction = 0;
-	if(button_on & PSP_CTRL_CIRCLE) direction = 0;
-	if(button_on & PSP_CTRL_RIGHT)  direction = 1;
+	if(button_on & PSP_CTRL_LEFT)
+		direction = -1;
+	if(button_on & PSP_CTRL_CROSS)
+		direction = 0;
+	if(button_on & PSP_CTRL_CIRCLE)
+		direction = 0;
+	if(button_on & PSP_CTRL_RIGHT)
+		direction = 1;
 
 	if(direction <= -2)
 		return 0;
 
 	switch(menu_sel) {
 		case TMENU_CUSTOM_LAUNCHER:
-			if(direction==0) {
+			if(direction == 0)
 				return 7; // Custom Launcher menu flag
-			}
 			break;
 		case TMENU_RECOVERY_MENU:
-			if(direction==0) {
+			if (direction == 0)
 				return 8; // Recovery menu flag
-			}
 			break;
 		case TMENU_ADVANCED_VSH:
 			if(direction == 0) return 15;
 			break;
 		case TMENU_SHUTDOWN_DEVICE:			
-			if(direction==0) {
+			if (direction == 0)
 				return 3; // SHUTDOWN flag
-			}
 			break;
 		case TMENU_RESET_DEVICE:	
-			if(direction==0) {
+			if (direction == 0)
 				return 2; // RESET flag
-			}
 			break;
 		case TMENU_RESET_VSH:	
-			if(direction==0) {
+			if (direction == 0)
 				return 4; // RESET VSH flag
-			}
 			break;
 		case TMENU_SUSPEND_DEVICE:	
-			if(direction==0) {
+			if (direction == 0)
 				return 5; // SUSPEND flag
-			}
 			break;
 		case TMENU_EXIT:
-			if(direction==0) return 1; // finish
+			if (direction == 0) 
+				return 1; // finish
 			break;
 	}
 
 	return 0; // continue
+}
+
+
+void button_func(vsh_Menu *vsh) {
+	int res;
+	// menu control
+	switch(vsh->status.menu_mode) {
+		case 0:	
+			if ((vsh->buttons.pad.Buttons & ALL_CTRL) == 0)
+				vsh->status.menu_mode = 1;
+			break;
+		case 1:
+			res = menu_ctrl(vsh->buttons.new_buttons_on);
+
+			if(res != 0) {
+				stop_stock = res;
+				vsh->status.menu_mode = 2;
+			}
+			break;
+		case 2: // exit waiting 
+			// exit menu
+			if ((vsh->buttons.pad.Buttons & ALL_CTRL) == 0)
+				vsh->status.stop_flag = stop_stock;
+			break;
+	}
 }
