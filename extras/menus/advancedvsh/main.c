@@ -66,8 +66,17 @@ PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 
 
 /* Global Variables */
-SceUID thread_id = 0;
-vsh_Menu *g_vsh_menu = NULL;
+static vsh_Menu vsh_menu = {
+	.config.p_ark = &(vsh_menu.config.ark),
+	.status.menu_mode = 0,
+	.status.submenu_mode = 0,
+	.status.stop_flag = 0,
+	.status.sub_stop_flag = 0,
+	.status.reset_vsh = 0,
+	.buttons.pad.Buttons = 0xFFFFFFFF,
+	.buttons.new_buttons_on = 0,
+};
+vsh_Menu *g_vsh_menu = &vsh_menu;
 extern char umdvideo_path[256];
 UmdVideoList g_umdlist;
 
@@ -514,45 +523,15 @@ static int swap_buttons(vsh_Menu *vsh) {
 
 
 void debug(char *str){
-	int exit = 0;
-	SceCtrlData pad;
-
-	blit_set_color(0x00ffffff,0x00000000);
-	while (!exit) {
-		if (blit_setup() == 0) {
-			blit_string(10, 10, str);
-			
-			sceCtrlPeekBufferPositive(&pad, 1);
-			if (pad.Buttons & PSP_CTRL_SQUARE){
-				while (pad.Buttons & PSP_CTRL_SQUARE)
-					sceCtrlPeekBufferPositive(&pad, 1);
-				exit = 1;
-			}
-			if (sceDisplayWaitVblankStart() < 0)
-				exit = 1;
-		} else {
-			exit = 1;
-		}
-	}
+	int fd = sceIoOpen("ms0:/log.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+	sceIoWrite(fd, str, strlen(str));
+	sceIoClose(fd);
 }
 
 int TSRThread(SceSize args, void *argp) {
-	debug("vsh start\n");
+	sceKernelChangeThreadPriority(0, 8);
 	
 	// Init VSH_Menu
-	vsh_Menu vsh_menu;
-	vsh_menu.config.p_ark = &vsh_menu.config.ark;
-	vsh_menu.status.menu_mode = 0;
-	vsh_menu.status.submenu_mode = 0;
-	vsh_menu.status.stop_flag = 0;
-	vsh_menu.status.sub_stop_flag = 0;
-	vsh_menu.status.reset_vsh = 0;
-	vsh_menu.buttons.pad.Buttons = 0xFFFFFFFF;
-	vsh_menu.buttons.new_buttons_on = 0;
-	g_vsh_menu = &vsh_menu;
-	
-	vsh_menu.thread_id = thread_id;
-	sceKernelChangeThreadPriority(0, 8);
 	
 	debug("vsh struct setup\n");
 	
@@ -709,9 +688,9 @@ resume:
 
 int module_start(int argc, char *argv[]) {
 	SceUID thid;
-	thid = sceKernelCreateThread("AVshMenu_Thread", TSRThread, 16 , 0x1000 ,0 ,0);
+	thid = sceKernelCreateThread("AVshMenu_Thread", TSRThread, 16 , 0x1000 , THREAD_ATTR_VFPU,0);
 
-	thread_id = thid;
+	vsh_menu.thread_id = thid;
 
 	if (thid >= 0)
 		sceKernelStartThread(thid, 0, 0);
@@ -724,10 +703,10 @@ int module_stop(int argc, char *argv[]) {
 	SceUInt time = 100*1000;
 
 	g_vsh_menu->status.stop_flag = 1;
-	ret = sceKernelWaitThreadEnd(thread_id, &time);
+	ret = sceKernelWaitThreadEnd(vsh_menu.thread_id, &time);
 
 	if (ret < 0)
-		sceKernelTerminateDeleteThread(thread_id);
+		sceKernelTerminateDeleteThread(vsh_menu.thread_id);
 	
 	return 0;
 }
