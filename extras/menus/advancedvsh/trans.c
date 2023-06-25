@@ -17,17 +17,28 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include "systemctrl.h"
 #include "systemctrl_se.h"
 #include "vpl.h"
 
+#include "scepaf.h"
+#include "vsh.h"
+
+
 #define READ_BUF_SIZE 1024
+
 
 static char *read_buf = NULL;
 static char *read_ptr = NULL;
 static int read_cnt = 0;
 
-extern ARKConfig* ark_config;
+
+// extern ARKConfig* ark_config;
+
+
+extern vsh_Menu *g_vsh_menu;
+
 
 static int buf_read(SceUID fd, char *p)
 {
@@ -101,53 +112,53 @@ static void set_translate_table_item(char ***table, char *linebuf, int pos, int 
 {
 	if(*table == NULL) {
 		*table = (char**)vpl_alloc(sizeof(char*) * nr_trans);
-		memset(*table, 0, sizeof(char*) * nr_trans);
+		scePaf_memset(*table, 0, sizeof(char*) * nr_trans);
 	}
 
 	(*table)[pos] = vpl_strdup(linebuf);
 }
 
-SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
+SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath) {
 
-    int pkg = sceIoOpen(pkgpath, PSP_O_RDONLY, 0777);
-    if (pkg < 0)
-        return 0;
-     
-    unsigned pkgsize = sceIoLseek32(pkg, 0, PSP_SEEK_END);
-    unsigned size2 = 0;
-     
-    sceIoLseek32(pkg, 0, PSP_SEEK_SET);
+	int pkg = sceIoOpen(pkgpath, PSP_O_RDONLY, 0777);
+	if (pkg < 0)
+		return 0;
+	 
+	unsigned pkgsize = sceIoLseek32(pkg, 0, PSP_SEEK_END);
+	unsigned size2 = 0;
+	 
+	sceIoLseek32(pkg, 0, PSP_SEEK_SET);
 
-    if (size != NULL)
-        *size = 0;
+	if (size != NULL)
+		*size = 0;
 
-    unsigned offset = 0;
-    char name[64];
-           
-    while (offset != 0xFFFFFFFF){
-        sceIoRead(pkg, &offset, 4);
-        if (offset == 0xFFFFFFFF){
-            sceIoClose(pkg);
-            return 0;
-        }
-        unsigned namelength;
-        sceIoRead(pkg, &namelength, 4);
-        sceIoRead(pkg, name, namelength+1);
-                   
-        if (!strncmp(name, filename, namelength)){
-            sceIoRead(pkg, &size2, 4);
-    
-            if (size2 == 0xFFFFFFFF)
-                size2 = pkgsize;
+	unsigned offset = 0;
+	char name[64];
+		   
+	while (offset != 0xFFFFFFFF) {
+		sceIoRead(pkg, &offset, 4);
+		if (offset == 0xFFFFFFFF) {
+			sceIoClose(pkg);
+			return 0;
+		}
+		unsigned namelength;
+		sceIoRead(pkg, &namelength, 4);
+		sceIoRead(pkg, name, namelength+1);
+				   
+		if (!strncmp(name, filename, namelength)){
+			sceIoRead(pkg, &size2, 4);
+	
+			if (size2 == 0xFFFFFFFF)
+				size2 = pkgsize;
 
-            if (size != NULL)
-                *size = size2 - offset;
-     
-            sceIoClose(pkg);
-            return offset;
-        }
-    }
-    return 0;
+			if (size != NULL)
+				*size = size2 - offset;
+	 
+			sceIoClose(pkg);
+			return offset;
+		}
+	}
+	return 0;
 }
 
 int load_translate_table(char ***table, char *file, int nr_trans)
@@ -163,7 +174,7 @@ int load_translate_table(char ***table, char *file, int nr_trans)
 
 	*table = NULL;
 
-	strcpy(linebuf, ark_config->arkpath);
+	scePaf_strcpy(linebuf, g_vsh_menu->config.p_ark->arkpath);
 	strcat(linebuf, "LANG.ARK");
 
 	unsigned size = 0;
