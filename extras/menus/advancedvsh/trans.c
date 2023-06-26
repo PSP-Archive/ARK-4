@@ -36,9 +36,6 @@ static char *read_ptr = NULL;
 static int read_cnt = 0;
 
 
-// extern ARKConfig* ark_config;
-
-
 static int buf_read(SceUID fd, char *p)
 {
 	if(read_cnt <= 0) {

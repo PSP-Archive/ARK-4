@@ -11,6 +11,7 @@
 #include "battery.h"
 #include "color.h"
 #include "registry.h"
+#include "vpl.h"
 
 
 void config_load(vsh_Menu *vsh) {
