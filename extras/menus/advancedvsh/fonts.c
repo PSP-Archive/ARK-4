@@ -2,6 +2,12 @@
 
 #include <psputility.h>
 
+extern unsigned char msx[];
+unsigned char *g_cur_font = msx;
+
+extern SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath);
+
+static SceUID g_memid = -1;
 
 char* g_available_fonts[] = {
 	"8X8!FONT.pf",
@@ -96,4 +102,68 @@ int font_load(vsh_Menu *vsh) {
 	}
 
 	return 0;
+}
+
+
+int load_external_font(const char *file) {
+	SceUID fd;
+	int ret;
+	void *buf;
+	
+	vsh_Menu *vsh = vsh_menu_pointer();
+
+	if (file == NULL || file[0] == 0) return -1;
+
+	static char pkgpath[ARK_PATH_SIZE];
+	scePaf_strcpy(pkgpath, vsh->config.p_ark->arkpath);
+	strcat(pkgpath, "LANG.ARK");
+
+	SceOff offset = findPkgOffset(file, NULL, pkgpath);
+
+	if (offset == 0) return -1;
+
+	fd = sceIoOpen(pkgpath, PSP_O_RDONLY, 0777);
+
+	if(fd < 0) {
+		return fd;
+	}
+
+	g_memid = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, 2048, NULL);
+
+	if(g_memid < 0) {
+		sceIoClose(fd);
+		return g_memid;
+	}
+
+	buf = sceKernelGetBlockHeadAddr(g_memid);
+
+	if(buf == NULL) {
+		sceKernelFreePartitionMemory(g_memid);
+		sceIoClose(fd);
+		return -2;
+	}
+
+	sceIoLseek(fd, offset, PSP_SEEK_SET);
+	ret = sceIoRead(fd, buf, 2048);
+
+	if(ret != 2048) {
+		sceKernelFreePartitionMemory(g_memid);
+		sceIoClose(fd);
+		return -3;
+	}
+
+	sceIoClose(fd);
+	g_cur_font = buf;
+
+	return 0;
+}
+
+void release_font(void)
+{
+	if (g_memid >= 0) {
+		sceKernelFreePartitionMemory(g_memid);
+		g_memid = -1;
+	}
+
+	g_cur_font = msx;
 }
