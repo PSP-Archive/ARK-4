@@ -117,9 +117,9 @@ void delete_hibernation(vsh_Menu *vsh) {
 }
 
 int activate_codecs(vsh_Menu *vsh) {
-	int flash_activated = 0;
-	int flash_play = 0;
-	int wma_play = 0;
+	u32 flash_activated = 0;
+	u32 flash_play = 0;
+	u32 wma_play = 0;
 
 	get_registry_value("/CONFIG/BROWSER", "flash_activated", &flash_activated);
 	get_registry_value("/CONFIG/BROWSER", "flash_activated", &flash_play);
