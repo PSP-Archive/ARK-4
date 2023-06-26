@@ -54,112 +54,203 @@ int submenu_draw(void) {
 	#endif
 
 	// check & setup video mode
-	if(blit_setup() < 0) 
+	if (blit_setup() < 0) 
 		return -1;
 	
-	if(pwidth == 720)
+	if (pwidth == 720)
 		pointer = xyPoint;
 	else
 		pointer = xyPoint2;
 
 	// show menu title & ARK version
-	blit_set_color(0xffffff,0x8000ff00);
+	blit_set_color(0xFFFFFF,0x8000FF00);
 	scePaf_snprintf(msg, 128, " %s ", g_messages[MSG_ADVANCED_VSH]);
 	blit_string_ctr(pointer[1], msg);
 	blit_string_ctr(56, ark_version);
-	fc = 0xffffff;
+	fc = 0xFFFFFF;
 	
+	int submenu_start_x, submenu_start_y;
+	int window_char, window_pixel;
+	int width = 0, temp = 0, i;
+	// find widest submenu up until the UMD region option
+	for (i = SUBMENU_USB_DEVICE; i <= SUBMENU_UMD_REGION_MODE; i++){
+		temp = scePaf_strlen(g_messages[MSG_USB_DEVICE + i]);
+		if (temp > width)
+			width = temp;
+	}
+	
+	window_char = width + submenu_find_longest_string() + 3;
+	if (window_char & 0x1)
+		window_char++;
+	window_pixel = window_char * 8;
+	// submenu width + leading & trailing space + subitem space + subitem width
+	submenu_start_x = (pwidth - window_pixel) / 2;
+	submenu_start_y = pointer[5] * 8;
 
 	for (submax_menu = 0; submax_menu < SUBMENU_MAX; submax_menu++) {
-		// do color stuff
+		// set default colors
+		bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
+		switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+			case 0: break;
+			case 1: fc = colors[27]; break;
+			case 27: fc = colors[1]; break;
+			default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+		}
+		
+		// add line at the top
+		if (submax_menu == 0){
+			blit_set_color(fc, bc);
+			blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, 8);
+		}
+		
+		// if menu is selected, change color
 		if (submax_menu==submenu_sel){
 			bc = (g_vsh_menu->config.ark_menu.vsh_bg_color < 2 || g_vsh_menu->config.ark_menu.vsh_bg_color > 28)? 0xff8080:0x0000ff;
 			fc = 0xffffff;
 		}
-		else{
-			bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
-			switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
-				case 0: case 1: fc = colors[27]; break;
-				case 27: fc = colors[1]; break;
-				default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
-			}
-		}
-		blit_set_color(fc,bc);
+		
+		blit_set_color(fc, bc);
 
 		// display menu
-		if(g_messages[MSG_USB_DEVICE + submax_menu]) {		
-			int submenu_start_x, submenu_start_y;
+		if (g_messages[MSG_USB_DEVICE + submax_menu]) {
+			int len = 0, offset = 0, padding = 0;
+			int submenu_width = 0;
 			subcur_menu = submax_menu;
 			
 			// set the y position
-			submenu_start_y = (pointer[5] + subcur_menu) * 8;
+			submenu_start_y += 8;
 			
-			int width = 0, padding = 0, temp = 0, i;
+			temp = 0;
+			// find widest submenu up until the UMD region option
+			for (i = SUBMENU_USB_DEVICE; i <= SUBMENU_UMD_REGION_MODE; i++){
+				temp = scePaf_strlen(g_messages[MSG_USB_DEVICE + i]);
+				if (temp > submenu_width)
+					submenu_width = temp;
+			}
+			
 			// submenus between USB_DEVICE and UMD_REGION are the only ones with subitems
 			if (submax_menu >= SUBMENU_USB_DEVICE && submax_menu <= SUBMENU_UMD_REGION_MODE) {
-				// check if there's a subitem and print it
-				int subitem_start_x = (pointer[6] * 8) + 128;
+				int subitem_start_x;
+				
+				scePaf_snprintf(msg, 128, " %-*s  ", submenu_width, g_messages[MSG_USB_DEVICE + submax_menu]);
+				subitem_start_x = blit_string(submenu_start_x, submenu_start_y, msg);
+	
 				if(subitem_str[submax_menu]) {
 					// check if PSP Go or PSVita because UMD Region mode is unsupported on them
-					if ((g_vsh_menu->psp_model == PSP_GO || 
-						IS_VITA_ADR(g_vsh_menu->config.p_ark)) && 
-						submax_menu == SUBMENU_UMD_REGION_MODE) {
+					if ((g_vsh_menu->psp_model == PSP_GO || IS_VITA_ADR(g_vsh_menu->config.p_ark)) && submax_menu == SUBMENU_UMD_REGION_MODE) {
 						// write the unsupported string
-						scePaf_snprintf(msg, 128, "%s", g_messages[MSG_UNSUPPORTED]);
+						scePaf_snprintf(msg, 128, "%-*s", window_char - 3 - submenu_width, g_messages[MSG_UNSUPPORTED]);
 					} else {
-						// otherwise write the subitem string
-						scePaf_snprintf(msg, 128, "%s", subitem_str[submax_menu]);
+						// left-justify submenu options that have a subitem next to it
+						scePaf_snprintf(msg, 128, "%-*s", window_char - 3 - submenu_width, subitem_str[submax_menu]);
 					}
-					
-					blit_string(subitem_start_x, submenu_start_y, msg);
 				}
 				
-				// find widest submenu up until the UMD region option
-				for (i = submax_menu; i < SUBMENU_UMD_REGION_MODE; i++){
-					temp = scePaf_strlen(g_messages[MSG_USB_DEVICE + i]);
-					if (temp > width)
-						width = temp;
-				}
-				
-				// left-justify submenu options that have a subitem next to it
-				scePaf_snprintf(msg, 128, " %-*s ", width, g_messages[MSG_USB_DEVICE + submax_menu]);
-				
-				// the submenu start x position is calculated from :
-				// subitem start x position - length in pixel of the submenu string - length in pixel of a whitespace
-				submenu_start_x = subitem_start_x - blit_get_string_width(msg) - blit_get_string_width(" ");
-				blit_string(submenu_start_x, submenu_start_y, msg);
+				blit_string(subitem_start_x, submenu_start_y, msg);
 			// for all other submenus (ie those with no subitems)
 			} else {
-				// find widest submenu after the UMD region option
-				for (i = submax_menu; i < SUBMENU_MAX; i++){
-					temp = scePaf_strlen(g_messages[MSG_USB_DEVICE + i]);
-					if (temp > width)
-						width = temp;
-					// if model is not PSPGo, check the "no hibernation support" string width too
-					if (g_vsh_menu->psp_model != PSP_GO && i == SUBMENU_DELETE_HIBERNATION) {
-						temp = scePaf_strlen(g_messages[MSG_NO_HIBERNATION]);
-						if (temp > width)
-							width = temp;
-					}
-				}
-				
 				// center-justify submenu options
 				if (g_vsh_menu->psp_model != PSP_GO && submax_menu == SUBMENU_DELETE_HIBERNATION) {
 					// hibernation mode unsupported if model is not PSP Go
-					padding = (width - scePaf_strlen(g_messages[MSG_NO_HIBERNATION])) / 2;
-					scePaf_snprintf(msg, 128, " %*s%s%*s ", padding, "", g_messages[MSG_NO_HIBERNATION], padding, "");
+					len = scePaf_strlen(g_messages[MSG_NO_HIBERNATION]);
+					padding = (window_char - len) / 2;
+					scePaf_snprintf(msg, 128, "%*s%s%*s", padding, "", g_messages[MSG_NO_HIBERNATION], padding, "");
 				} else {
-					padding = (width - scePaf_strlen(g_messages[MSG_USB_DEVICE + submax_menu])) / 2;
-					scePaf_snprintf(msg, 128, " %*s%s%*s ", padding, "", g_messages[MSG_USB_DEVICE + submax_menu], padding, "");
+					len = scePaf_strlen(g_messages[MSG_USB_DEVICE + submax_menu]);
+					padding = (window_char - len) / 2;
+					scePaf_snprintf(msg, 128, "%*s%s%*s", padding, "", g_messages[MSG_USB_DEVICE + submax_menu], padding, "");
 				}
 				
+				// add a halfspace before if the lenght is an odd value
+				if (len & 0x1)
+					blit_rect_fill(submenu_start_x, submenu_start_y, 4, 8);
+				
 				blit_string_ctr(submenu_start_y, msg);
+			
+				// add a halfspace after if the length is an odd value
+				if (len & 0x1) {
+					offset = blit_get_string_width(msg);
+					blit_rect_fill(submenu_start_x + offset + 4, submenu_start_y, 4, 8);
+				}
 			}
 		}
 	}
+	
+	// set default colors
+	bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
+	switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+		case 0: break;
+		case 1: fc = colors[27]; break;
+		case 27: fc = colors[1]; break;
+		default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+	}
 
+	blit_set_color(fc, bc);
+	submenu_start_y += 8; // replace by font width
+	// add line at the end
+	blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, 8);
+	
 	blit_set_color(0x00ffffff,0x00000000);
 	return 0;
+}
+
+int submenu_find_longest_string(void){
+	int width = 0, temp = 0, i;
+	temp = scePaf_strlen(g_messages[SUBITEM_DEFAULT]);
+	if (temp > width)
+		width = temp;
+	
+	for (i = SUBITEM_REGION; i <= SUBITEM_REGION_END; i++) {
+		temp = scePaf_strlen(g_messages[i]);
+		if (temp > width)
+			width = temp;
+	}
+	
+	for (i = SUBITEM_USBREADONLY; i <= SUBITEM_USBREADONLY_END; i++) {
+		temp = scePaf_strlen(g_messages[i]);
+		if (temp > width)
+			width = temp;
+	}
+	
+	for (i = SUBITEM_SWAPXO; i <= SUBITEM_SWAPXO_END; i++) {
+		temp = scePaf_strlen(g_messages[i]);
+		if (temp > width)
+			width = temp;
+	}
+	
+	for (i = SUBITEM_ISO_DRIVER; i <= SUBITEM_ISO_DRIVER_END; i++) {
+		temp = scePaf_strlen(g_messages[i]);
+		if (temp > width)
+			width = temp;
+	}
+	
+	for (i = SUBITEM_PANDORA; i <= SUBITEM_PANDORA_END; i++) {
+		temp = scePaf_strlen(g_messages[i]);
+		if (temp > width)
+			width = temp;
+	}
+	
+	temp = scePaf_strlen(g_messages[SUBITEM_UNSUPPORTED]);
+	if (temp > width)
+		width = temp;
+	
+	for (i = SUBITEM_USBDEVICE; i <= SUBITEM_USBDEVICE_END; i++) {
+		temp = scePaf_strlen(g_messages[i]);
+		if (temp > width)
+			width = temp;
+	}
+	
+	temp = scePaf_strlen(g_messages[SUBITEM_NONE]);
+	if (temp > width)
+		width = temp;
+	
+	for (i = SUBITEM_COLOR; i <= SUBITEM_COLOR_END; i++) {
+		temp = scePaf_strlen(g_messages[i]);
+		if (temp > width)
+			width = temp;
+	}
+	
+	return width;
 }
 
 
