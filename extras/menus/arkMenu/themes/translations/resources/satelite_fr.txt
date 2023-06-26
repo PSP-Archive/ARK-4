@@ -49,7 +49,7 @@ RêINITIALISER LE VSH
 SORTIR
 MENU VSH
 Non pris en charge
-Adrenaline USB
+USB d'Adrenaline
 Flash
 Disque UMD
 MÇmoire Interne
