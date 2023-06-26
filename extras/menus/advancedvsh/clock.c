@@ -28,9 +28,6 @@
 #define ROLL_OVER(val, min, max) ( ((val) < (min)) ? (max): ((val) > (max)) ? (min) : (val) )
 
 
-extern vsh_Menu *g_vsh_menu;
-
-
 const int cpu_list[] = {0, 20, 75, 100, 133, 166, 222, 266, 300, 333};
 const int bus_list[] = {0, 10, 37, 50, 66, 83, 111, 133, 150, 166};
 
@@ -62,74 +59,84 @@ int bus2no(int cpu)
 }
 
 void swap_readonly(int dir) {
-	int sel = g_vsh_menu->config.se.usbdevice_rdonly;
+	vsh_Menu *vsh = vsh_menu_pointer();
+	
+	int sel = vsh->config.se.usbdevice_rdonly;
 	sel = ROLL_OVER(sel+dir, 0, 1);
-	g_vsh_menu->config.se.usbdevice_rdonly=sel;
+	vsh->config.se.usbdevice_rdonly=sel;
 }
 
 void change_bg_color(int dir) {
-	int sel = g_vsh_menu->config.ark_menu.vsh_bg_color;
+	vsh_Menu *vsh = vsh_menu_pointer();
+	
+	int sel = vsh->config.ark_menu.vsh_bg_color;
 	sel = ROLL_OVER(sel+dir, 0, 28);
-	g_vsh_menu->config.ark_menu.vsh_bg_color=sel;
+	vsh->config.ark_menu.vsh_bg_color=sel;
 }
 
 void change_fg_color(int dir) {
-	int sel = g_vsh_menu->config.ark_menu.vsh_fg_color;
+	vsh_Menu *vsh = vsh_menu_pointer();
+	
+	int sel = vsh->config.ark_menu.vsh_fg_color;
 	sel = ROLL_OVER(sel+dir, 0, 28);
-	g_vsh_menu->config.ark_menu.vsh_fg_color=sel;
+	vsh->config.ark_menu.vsh_fg_color=sel;
 }
 
 void change_font(int dir) {
-	int sel = g_vsh_menu->config.ark_menu.vsh_font;
+	vsh_Menu *vsh = vsh_menu_pointer();
+	
+	int sel = vsh->config.ark_menu.vsh_font;
 	sel = ROLL_OVER(sel+dir, 0, 55);
-	g_vsh_menu->config.ark_menu.vsh_font=sel;
+	vsh->config.ark_menu.vsh_font=sel;
 }
 
-void change_usb(int dir)
-{
-	int sel = g_vsh_menu->config.se.usbdevice;
-	int top = (g_vsh_menu->psp_model == PSP_GO) ? 4 : 5;
+void change_usb(int dir) {
+	vsh_Menu *vsh = vsh_menu_pointer();
+	
+	int sel = vsh->config.se.usbdevice;
+	int top = (vsh->psp_model == PSP_GO) ? 4 : 5;
 
 	// select new
 	sel = ROLL_OVER(sel + dir, 0, top);
 	
-	g_vsh_menu->config.se.usbdevice = sel;
+	vsh->config.se.usbdevice = sel;
 }
 
-void change_umd_mode(int dir)
-{
-	int sel = g_vsh_menu->config.se.umdmode;
+void change_umd_mode(int dir) {
+	vsh_Menu *vsh = vsh_menu_pointer();
+	
+	int sel = vsh->config.se.umdmode;
 
 	// select new
 	sel = ROLL_OVER(sel+dir, 2, 3);
-	g_vsh_menu->config.se.umdmode=sel;
+	vsh->config.se.umdmode=sel;
 }
 
-void change_umd_mount_idx(int dir)
-{
+void change_umd_mount_idx(int dir) {
 	umdvideo_idx = ROLL_OVER(umdvideo_idx+dir, 0, umdvideolist_count(&g_umdlist));
 }
 
-void change_umd_region(int dir, int max)
-{
-	int sel = g_vsh_menu->config.se.umdregion;
+void change_umd_region(int dir, int max) {
+	vsh_Menu *vsh = vsh_menu_pointer();
+	
+	int sel = vsh->config.se.umdregion;
 			
 	// select new
 	sel = ROLL_OVER(sel+dir, 0, max);
-	g_vsh_menu->config.se.umdregion=sel;
+	vsh->config.se.umdregion=sel;
 }
 
-void change_region(int dir, int max)
-{
-	int sel = g_vsh_menu->config.se.vshregion;
+void change_region(int dir, int max) {
+	vsh_Menu *vsh = vsh_menu_pointer();
+	
+	int sel = vsh->config.se.vshregion;
 
 	// select new
 	sel = ROLL_OVER(sel+dir, 0, max);
-	g_vsh_menu->config.se.vshregion=sel;
+	vsh->config.se.vshregion=sel;
 }
 
-void change_bool_option(int *p, int direction)
-{
+void change_bool_option(int *p, int direction) {
 	int sel = *p;
 
 	sel = ROLL_OVER(sel+direction, 0, 1);

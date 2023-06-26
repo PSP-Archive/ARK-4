@@ -39,9 +39,6 @@ static int read_cnt = 0;
 // extern ARKConfig* ark_config;
 
 
-extern vsh_Menu *g_vsh_menu;
-
-
 static int buf_read(SceUID fd, char *p)
 {
 	if(read_cnt <= 0) {
@@ -163,12 +160,14 @@ SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath) 
 	return 0;
 }
 
-int load_translate_table(char ***table, char *file, int nr_trans)
-{
+int load_translate_table(char ***table, char *file, int nr_trans) {
 	SceUID fd;
 	char linebuf[128];
 	char *read_alloc_buf;
 	int i;
+	
+	vsh_Menu *vsh = vsh_menu_pointer();
+	
 
 	if (table == NULL) {
 		return -1;
@@ -176,7 +175,7 @@ int load_translate_table(char ***table, char *file, int nr_trans)
 
 	*table = NULL;
 
-	scePaf_strcpy(linebuf, g_vsh_menu->config.p_ark->arkpath);
+	scePaf_strcpy(linebuf, vsh->config.p_ark->arkpath);
 	strcat(linebuf, "LANG.ARK");
 
 	unsigned size = 0;

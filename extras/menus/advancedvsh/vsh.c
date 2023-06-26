@@ -13,8 +13,6 @@ vsh_Menu vsh_menu = {
 	.thread_id = -1,
 };
 
-vsh_Menu *g_vsh_menu = &vsh_menu;
-
 
 vsh_Menu* vsh_menu_pointer(void) {
 	return (vsh_Menu*)&vsh_menu;

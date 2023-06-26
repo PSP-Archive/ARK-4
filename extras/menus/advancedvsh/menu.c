@@ -28,7 +28,6 @@
 #include "vsh.h"
 
 
-
 enum {
 	TMENU_CUSTOM_LAUNCHER,
 	TMENU_RECOVERY_MENU,
@@ -42,7 +41,6 @@ enum {
 };
 
 
-
 const char **g_messages = g_messages_en;
 
 void change_clock(int dir, int a);
@@ -51,8 +49,6 @@ extern int pwidth;
 extern char umd_path[72];
 extern u32 colors[];
 
-
-extern vsh_Menu *g_vsh_menu;
 
 int stop_stock = 0;
 
@@ -73,12 +69,15 @@ const int xyPoint2[] ={0xB0, 0x30, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data245
 
 int colors_dir = 0;
 
+
 int menu_draw(void) {
 	char msg[128] = {0};
 	int max_menu, cur_menu;
 	const int *pointer;
 	u32 fc,bc;
 
+	vsh_Menu *vsh = vsh_menu_pointer();
+	
 	// check & setup video mode
 	if(blit_setup() < 0) 
 		return -1;
@@ -92,7 +91,7 @@ int menu_draw(void) {
 	blit_set_color(0xffffff,0x8000ff00);
 	scePaf_snprintf(msg, 128, " %s ", g_messages[MSG_ARK_VSH_MENU]);
 	blit_string_ctr(pointer[1], msg);
-	blit_string_ctr(56, g_vsh_menu->ark_version);
+	blit_string_ctr(56, vsh->ark_version);
 	fc = 0xffffff;
 	
 	
@@ -120,12 +119,12 @@ int menu_draw(void) {
 		
 	for (max_menu = 0; max_menu < TMENU_MAX; max_menu++) {
 		// set default colors
-		bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
-		switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+		bc = colors[vsh->config.ark_menu.vsh_bg_color];
+		switch(vsh->config.ark_menu.vsh_fg_color){
 			case 0: break;
 			case 1: fc = colors[27]; break;
 			case 27: fc = colors[1]; break;
-			default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+			default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
 		}
 		// add line at the top
 		if (max_menu == 0){
@@ -135,12 +134,12 @@ int menu_draw(void) {
 		
 		// if menu is selected, change color
 		if (max_menu == menu_sel) {
-			bc = (g_vsh_menu->config.ark_menu.vsh_bg_color < 2 || g_vsh_menu->config.ark_menu.vsh_bg_color > 28)? 0xff8080:0x0000ff;
+			bc = (vsh->config.ark_menu.vsh_bg_color < 2 || vsh->config.ark_menu.vsh_bg_color > 28)? 0xff8080:0x0000ff;
 			fc = 0xffffff;
-			bc |= (((u32)g_vsh_menu->status.bc_alpha)<<24);
-			if (g_vsh_menu->status.bc_alpha == 0) g_vsh_menu->status.bc_delta = 5;
-			else if (g_vsh_menu->status.bc_alpha == 255) g_vsh_menu->status.bc_delta = -5;
-			g_vsh_menu->status.bc_alpha += g_vsh_menu->status.bc_delta;
+			bc |= (((u32)vsh->status.bc_alpha)<<24);
+			if (vsh->status.bc_alpha == 0) vsh->status.bc_delta = 5;
+			else if (vsh->status.bc_alpha == 255) vsh->status.bc_delta = -5;
+			vsh->status.bc_alpha += vsh->status.bc_delta;
 		}
 		
 		blit_set_color(fc, bc);
@@ -179,12 +178,12 @@ int menu_draw(void) {
 	}
 	
 	// reset colors to default
-	bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
-	switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+	bc = colors[vsh->config.ark_menu.vsh_bg_color];
+	switch(vsh->config.ark_menu.vsh_fg_color){
 		case 0: break;
 		case 1: fc = colors[27]; break;
 		case 27: fc = colors[1]; break;
-		default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+		default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
 	}
 
 	blit_set_color(fc, bc);
@@ -196,7 +195,7 @@ int menu_draw(void) {
 	return 0;
 }
 
-static inline const char *get_enable_disable(int opt) {
+const char *get_enable_disable(int opt) {
 	if(opt)
 		return g_messages[MSG_ENABLE];
 	return g_messages[MSG_DISABLE];
