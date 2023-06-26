@@ -1,5 +1,7 @@
 #include "launcher.h"
 
+#include "vpl.h"
+
 void exec_custom_launcher(vsh_Menu *vsh) {
 	char menupath[ARK_PATH_SIZE];
 	scePaf_strcpy(menupath, vsh->config.ark.arkpath);
@@ -41,7 +43,7 @@ void exec_random_game(vsh_Menu *vsh) {
 
 	SceIoDirent isos;
 	SceUID iso_path;
-	pspMsPrivateDirent* pri_dirent = vpl_alloc(sizeof(pspMsPrivateDirent));
+	pspMsPrivateDirent* pri_dirent = (pspMsPrivateDirent*)vpl_alloc(sizeof(pspMsPrivateDirent));
 
 find_random_game:
 
