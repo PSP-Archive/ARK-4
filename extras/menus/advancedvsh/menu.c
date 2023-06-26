@@ -131,6 +131,10 @@ int menu_draw(void) {
 		if (max_menu == 0){
 			blit_set_color(fc, bc);
 			blit_rect_fill(menu_start_x, menu_start_y, window_pixel, 8);
+			blit_set_color(0xaf000000, 0xaf000000);
+			blit_rect_fill(menu_start_x+1, menu_start_y, window_pixel-2, 1); // top horizontal line
+			blit_rect_fill(menu_start_x+window_pixel, menu_start_y+1, 1, (8*(TMENU_MAX+2)-1)); // right vertical line
+			blit_rect_fill(menu_start_x, menu_start_y+1, 1, (8*(TMENU_MAX+2)-2)); // left vertical line
 		}
 		
 		// if menu is selected, change color
@@ -191,6 +195,8 @@ int menu_draw(void) {
 	menu_start_y += 8; // replace by font width
 	// add line at the end
 	blit_rect_fill(menu_start_x, menu_start_y, window_pixel, 8);
+	blit_set_color(0xaf000000, 0xaf000000);
+	blit_rect_fill(menu_start_x+1, menu_start_y+8, window_pixel-1, 1); // bottom horizontal line
 	
 	blit_set_color(0x00ffffff,0x00000000);
 	return 0;
