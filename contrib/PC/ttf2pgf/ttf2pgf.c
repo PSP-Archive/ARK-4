@@ -414,8 +414,17 @@ void fwritez(int n,FILE *f)
 		fwrite(&x,1,1,f);
 }
 
+void dumpHeader(){
+	FILE* fp = fopen("header.bin", "w");
+	fwrite(fonthdr, 1, sizeof(fonthdr), fp);
+	fclose(fp);
+}
+
 int main(int argc, char *argv[])
 {
+
+	dumpHeader();
+
 	FILE *f;
 	struct vchar *v;
 	int n;
