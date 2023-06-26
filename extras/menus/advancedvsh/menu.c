@@ -19,6 +19,7 @@
 	PSP VSH MENU controll
 	based Booster's vshex
 */
+#include "menu.h"
 
 #include <psputility.h>
 
@@ -26,26 +27,15 @@
 #include "systemctrl.h"
 
 #include "vsh.h"
+#include "blit.h"
 
 
-enum {
-	TMENU_CUSTOM_LAUNCHER,
-	TMENU_RECOVERY_MENU,
-	TMENU_ADVANCED_VSH,
-	TMENU_SHUTDOWN_DEVICE,
-	TMENU_SUSPEND_DEVICE,
-	TMENU_RESET_DEVICE,
-	TMENU_RESET_VSH,
-	TMENU_EXIT,
-	TMENU_MAX
-};
 
 
 const char **g_messages = g_messages_en;
 
 void change_clock(int dir, int a);
 
-extern int pwidth;
 extern char umd_path[72];
 extern u32 colors[];
 
@@ -77,12 +67,13 @@ int menu_draw(void) {
 	u32 fc,bc;
 
 	vsh_Menu *vsh = vsh_menu_pointer();
+	blit_Gfx *gfx = blit_gfx_pointer();
 	
 	// check & setup video mode
 	if(blit_setup() < 0) 
 		return -1;
 
-	if(pwidth == 720)
+	if(gfx->width == 720)
 		pointer = xyPoint;
 	else
 		pointer = xyPoint2;
@@ -114,9 +105,8 @@ int menu_draw(void) {
 	
 	// set menu start position
 	int menu_start_y = pointer[5] * 8;
-	int menu_start_x = (pwidth - window_pixel) / 2;
+	int menu_start_x = (gfx->width - window_pixel) / 2;
 	
-		
 	for (max_menu = 0; max_menu < TMENU_MAX; max_menu++) {
 		// set default colors
 		bc = colors[vsh->config.ark_menu.vsh_bg_color];

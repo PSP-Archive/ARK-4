@@ -8,8 +8,9 @@
 #include "vsh.h"
 #include "fonts.h"
 #include "advanced.h"
+#include "blit.h"
 
-extern int pwidth;
+
 extern char umd_path[72];
 
 extern char device_buf[13];
@@ -35,12 +36,13 @@ int submenu_draw(void) {
 	u32 fc, bc;
 	
 	vsh_Menu *vsh = vsh_menu_pointer();
+	blit_Gfx *gfx = blit_gfx_pointer();
 
 	// check & setup video mode
 	if (blit_setup() < 0) 
 		return -1;
 	
-	if (pwidth == 720)
+	if (gfx->width == 720)
 		pointer = xyPoint;
 	else
 		pointer = xyPoint2;
@@ -67,7 +69,7 @@ int submenu_draw(void) {
 		window_char++;
 	window_pixel = window_char * 8;
 	// submenu width + leading & trailing space + subitem space + subitem width
-	submenu_start_x = (pwidth - window_pixel) / 2;
+	submenu_start_x = (gfx->width - window_pixel) / 2;
 	submenu_start_y = pointer[5] * 8;
 
 	for (submax_menu = 0; submax_menu < SUBMENU_MAX; submax_menu++) {
