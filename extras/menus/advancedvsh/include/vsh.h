@@ -60,4 +60,7 @@ typedef struct _vsh_Menu{
 }vsh_Menu;
 
 
+vsh_Menu* vsh_menu_pointer(void);
+
+
 #endif

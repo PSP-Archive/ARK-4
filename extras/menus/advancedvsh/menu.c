@@ -95,10 +95,46 @@ int menu_draw(void) {
 	blit_string_ctr(56, g_vsh_menu->ark_version);
 	fc = 0xffffff;
 	
-	for (max_menu = 0; max_menu < TMENU_MAX; max_menu++) {
+	
+	// find widest submenu
+	int window_char, window_pixel;
+	int width = 0, temp = 0, i;
+	for (i = 0; i < TMENU_MAX; i++) {
+		temp = scePaf_strlen(g_messages[MSG_CUSTOM_LAUNCHER + i]);
+		if (temp > width)
+			width = temp;
+	}
+	
+	window_char = width;
+	// make the window an even value
+	if (window_char & 0x1)
+		window_char++;
+	
+	// window pixel = [window_char + leading & trailing space] * font width
+	window_pixel = (window_char + 2) * 8;
+	
+	// set menu start position
+	int menu_start_y = pointer[5] * 8;
+	int menu_start_x = (pwidth - window_pixel) / 2;
+	
 		
-		// do color stuff
-		if (max_menu==menu_sel){
+	for (max_menu = 0; max_menu < TMENU_MAX; max_menu++) {
+		// set default colors
+		bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
+		switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+			case 0: break;
+			case 1: fc = colors[27]; break;
+			case 27: fc = colors[1]; break;
+			default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+		}
+		// add line at the top
+		if (max_menu == 0){
+			blit_set_color(fc, bc);
+			blit_rect_fill(menu_start_x, menu_start_y, window_pixel, 8);
+		}
+		
+		// if menu is selected, change color
+		if (max_menu == menu_sel) {
 			bc = (g_vsh_menu->config.ark_menu.vsh_bg_color < 2 || g_vsh_menu->config.ark_menu.vsh_bg_color > 28)? 0xff8080:0x0000ff;
 			fc = 0xffffff;
 			bc |= (((u32)g_vsh_menu->status.bc_alpha)<<24);
@@ -106,32 +142,29 @@ int menu_draw(void) {
 			else if (g_vsh_menu->status.bc_alpha == 255) g_vsh_menu->status.bc_delta = -5;
 			g_vsh_menu->status.bc_alpha += g_vsh_menu->status.bc_delta;
 		}
-		else{
-			bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
-			switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
-				case 0: case 1: fc = colors[27]; break;
-				case 27: fc = colors[1]; break;
-				default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
-			}
-		}
-		blit_set_color(fc,bc);
-
+		
+		blit_set_color(fc, bc);
+		
 		// display menu
 		if (g_messages[MSG_CUSTOM_LAUNCHER + max_menu]) {
-			// find widest submenu
-			int width = 0, temp = 0, i;
-			for (i = max_menu; i < TMENU_MAX; i++) {
-				temp = scePaf_strlen(g_messages[MSG_CUSTOM_LAUNCHER + i]);
-				if (temp > width)
-					width = temp;
-			}
-			
 			cur_menu = max_menu;
-			int menu_start_y = (pointer[5] + cur_menu) * 8;
-			// center-justify menu strings
-			int padding = (width - scePaf_strlen(g_messages[MSG_CUSTOM_LAUNCHER + max_menu])) / 2;
+			menu_start_y += 8; // replace by font width
+			
+			// center-align menu strings
+			int len = scePaf_strlen(g_messages[MSG_CUSTOM_LAUNCHER + max_menu]);
+			int padding = (window_char - len) / 2;
+			
+			// add a halfspace before if the lenght is an odd value
+			if (len & 0x1)
+				blit_rect_fill(menu_start_x, menu_start_y, 4, 8);
 			scePaf_snprintf(msg, 128, " %*s%s%*s ", padding, "", g_messages[MSG_CUSTOM_LAUNCHER + max_menu], padding, "");
 			blit_string_ctr(menu_start_y, msg);
+			
+			// add a halfspace after if the length is an odd value
+			if (len & 0x1) {
+				int offset = blit_get_string_width(msg);
+				blit_rect_fill(menu_start_x + offset + 4, menu_start_y, 4, 8);
+			}
 		
 			// item_str seems to be all NULL values (see menu_setup function)
 			// most likely this is not used and can be cleaned up
@@ -144,7 +177,21 @@ int menu_draw(void) {
 			*/
 		}
 	}
+	
+	// reset colors to default
+	bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
+	switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+		case 0: break;
+		case 1: fc = colors[27]; break;
+		case 27: fc = colors[1]; break;
+		default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+	}
 
+	blit_set_color(fc, bc);
+	menu_start_y += 8; // replace by font width
+	// add line at the end
+	blit_rect_fill(menu_start_x, menu_start_y, window_pixel, 8);
+	
 	blit_set_color(0x00ffffff,0x00000000);
 	return 0;
 }
