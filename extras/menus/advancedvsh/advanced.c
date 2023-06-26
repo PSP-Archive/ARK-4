@@ -47,7 +47,7 @@ int submenu_draw(void) {
 	blit_set_color(0xFFFFFF,0x8000FF00);
 	scePaf_snprintf(msg, 128, " %s ", g_messages[MSG_ADVANCED_VSH]);
 	blit_string_ctr(pointer[1], msg);
-	blit_string_ctr(56, g_vsh_menu->ark_version);
+	blit_string_ctr(55, g_vsh_menu->ark_version);
 	fc = 0xFFFFFF;
 	
 	int submenu_start_x, submenu_start_y;
@@ -83,9 +83,9 @@ int submenu_draw(void) {
 			blit_set_color(fc, bc);
 			blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, 8);
 			blit_set_color(0xaf000000, 0xaf000000);
-			blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, 1); // top horizontal outline
-			blit_rect_fill(submenu_start_x+window_pixel, submenu_start_y+1, 1, (8*(SUBMENU_MAX+2)-1)); // right vertical outline
-			blit_rect_fill(submenu_start_x-1, submenu_start_y+1, 1, (8*(SUBMENU_MAX+2)-1)); // left vertical outline
+			blit_rect_fill(submenu_start_x, submenu_start_y-1, window_pixel, 1); // top horizontal outline
+			blit_rect_fill(submenu_start_x+window_pixel, submenu_start_y, 1, 8*(SUBMENU_MAX+2)); // right vertical outline
+			blit_rect_fill(submenu_start_x-1, submenu_start_y, 1, 8*(SUBMENU_MAX+2)); // left vertical outline
 		}
 		
 		// if menu is selected, change color
