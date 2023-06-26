@@ -29,8 +29,6 @@ static unsigned char *g_cur_font = msx;
 
 // extern ARKConfig* ark_config;
 
-extern vsh_Menu *g_vsh_menu;
-
 extern SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath);
 
 static SceUID g_memid = -1;
@@ -173,16 +171,17 @@ void blit_rect_fill(int sx, int sy, int w, int h){
 }
 
 
-int load_external_font(const char *file)
-{
+int load_external_font(const char *file) {
 	SceUID fd;
 	int ret;
 	void *buf;
+	
+	vsh_Menu *vsh = vsh_menu_pointer();
 
 	if (file == NULL || file[0] == 0) return -1;
 
 	static char pkgpath[ARK_PATH_SIZE];
-	scePaf_strcpy(pkgpath, g_vsh_menu->config.p_ark->arkpath);
+	scePaf_strcpy(pkgpath, vsh->config.p_ark->arkpath);
 	strcat(pkgpath, "LANG.ARK");
 
 	SceOff offset = findPkgOffset(file, NULL, pkgpath);
