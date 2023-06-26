@@ -35,6 +35,7 @@
 #include "macros.h"
 
 #include "scepaf.h"
+#include "umdvideo_list.h"
 
 #include "../arkMenu/include/conf.h"
 
@@ -43,44 +44,9 @@
 #error You have to define CONFIG_620 or CONFIG_635 or CONFIG_639 or CONFIG_660 or CONFIG_661
 #endif
 
+
 extern u32 psp_model;
 extern int umdvideo_idx;
-
-int menu_draw(void);
-int submenu_draw(void);
-int menu_setup(void);
-int submenu_setup(void);
-int menu_ctrl(u32 button_on);
-int submenu_ctrl(u32 button_on);
-
-int cpu2no(int cpu);
-int bus2no(int cpu);
-void change_clock(int dir , int flag);
-void change_usb(int dir );
-void change_colors(int dir );
-void change_umd_mode(int dir );
-void change_umd_mount_idx(int dir);
-void change_plugins(int dir , int flag);
-void change_bool_option(int *p, int direction);
-void change_region(int dir, int max);
-
-
-typedef struct _UmdVideoEntry {
-	char *path;
-	struct _UmdVideoEntry *next;
-} UmdVideoEntry;
-
-typedef struct _UmdVideoList {
-	UmdVideoEntry head, *tail;
-	size_t count;
-} UmdVideoList;
-
-int umdvideolist_add(UmdVideoList *list, const char *path);
-char *umdvideolist_get(UmdVideoList *list, size_t n);
-size_t umdvideolist_count(UmdVideoList *list);
-void umdvideolist_clear(UmdVideoList *list);
-int umdvideolist_find(UmdVideoList *list, const char *search);
-void umdvideolist_init(UmdVideoList *list);
 
 extern u32 psp_fw_version;
 extern UmdVideoList g_umdlist;
