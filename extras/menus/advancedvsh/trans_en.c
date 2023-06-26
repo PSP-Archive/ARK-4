@@ -69,7 +69,7 @@ const char *g_messages_en[] = {
 	"EXIT",
 	"VSH MENU",
 	"Unsupported",
-	"Use Adrenaline Settings",
+	"Adrenaline USB",
 	"Flash",
 	"UMD Disc",
 	"Internal Storage",

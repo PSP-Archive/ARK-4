@@ -49,7 +49,7 @@ RECARGAR
 SALIR
 MENU VSH
 Sin soporte
-Usar Adrenaline
+USB de Adrenaline
 Flash
 Disco UMD
 Memoria Interna

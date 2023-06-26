@@ -49,7 +49,7 @@ VSH HERSTARTEN
 VERLATEN
 VSH-MENU
 Niet-ondersteund
-Adrenaline Beheren
+Adrenaline USB
 Flash
 UMD-schijf
 Interne opslag

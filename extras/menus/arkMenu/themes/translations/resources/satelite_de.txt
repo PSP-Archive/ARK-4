@@ -49,7 +49,7 @@ VSH NEUSTARTEN
 BEENDEN
 VSH MENö
 Nicht unterstÅtzt
-Adrenaline-Einstellungen benutzen
+Adrenaline-USB
 Flash
 UMD Disk
 Interner Speicher
