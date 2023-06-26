@@ -380,7 +380,7 @@ intraFont* intraFontLoad(const char *filename, unsigned int options) {
     FILE *file = fopen(filename, "rb"); /* read from the file in binary mode */
   if (!file) return NULL;
   fseek(file, 0, SEEK_END);
-    unsigned long filesize = ftell(file);
+  unsigned long filesize = ftell(file);
   fseek(file, 0, SEEK_SET);
   
   //read pgf header

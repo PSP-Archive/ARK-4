@@ -3,7 +3,10 @@
 #include "common.h"
 
 static cJSON* cur_lang = NULL;
+intraFont* font = NULL;
 intraFont* altFont = NULL;
+int altFontId = 0;
+float text_size = 1.0;
 extern char* fonts[];
 
 bool Translations::loadLanguage(string lang_file){
@@ -12,16 +15,18 @@ bool Translations::loadLanguage(string lang_file){
 
     // cleanup old language and font
     fonts[0] = "FONT.PGF";
+    text_size = 1.0;
     if (cur_lang){
         cJSON* aux = cur_lang;
         cur_lang = NULL;
         cJSON_Delete(aux);
     }
     if (altFont){
-        intraFontUnload(altFont);
+        intraFontUnload(font);
+        font = altFont;
         altFont = NULL;
         t_conf* conf = common::getConf();
-        conf->font = 0;
+        conf->font = altFontId;
     }
 
     // read language file from PKG
@@ -30,28 +35,25 @@ bool Translations::loadLanguage(string lang_file){
 
     if (buf && size){
         // parse new language file
+        cJSON* val;
         cur_lang = cJSON_ParseWithLength((const char*)buf, size);
 
         // check if language file requires a font
-        cJSON* val = cJSON_GetObjectItem(cur_lang, "__font__");
-        if (val){ // try a built-in font
-            int font = (int)cJSON_GetNumberValue(val);
-            t_conf* conf = common::getConf();
-            conf->font = font;
-            needs_altfont = true;
-            
-        }
-        else { // try an external font
-            val = cJSON_GetObjectItem(cur_lang, "__fontfile__");
-            if (val){
-                char* fontfile = cJSON_GetStringValue(val);
-                if (fontfile){
-                    t_conf* conf = common::getConf();
-                    conf->font = 0;
-                    fonts[0] = fontfile;
-                    needs_altfont = true;
-                }
+        val = cJSON_GetObjectItem(cur_lang, "__font__");
+        if (val){
+            char* fontfile = cJSON_GetStringValue(val);
+            if (fontfile){
+                t_conf* conf = common::getConf();
+                altFontId = conf->font;
+                conf->font = 0;
+                fonts[0] = fontfile;
+                needs_altfont = true;
             }
+        }
+
+        val = cJSON_GetObjectItem(cur_lang, "__textsize__");
+        if (val){
+            text_size = cJSON_GetNumberValue(val);
         }
 
         // free resources
@@ -59,8 +61,8 @@ bool Translations::loadLanguage(string lang_file){
     }
 
     if (needs_altfont && altFont == NULL){
-        altFont = intraFontLoad("flash0:/font/ltn0.pgf", 0);
-        intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
+        altFont = font;
+        font = NULL;
     }
 
     return (cur_lang!=NULL);

@@ -1,5 +1,23 @@
 TARGET = satelite
-OBJS = main.o blit.o ui.o menu.o advanced.o battery.o vsh.o config.o color.o fonts.o clock.o registry.o umdvideo_list.o vpl.o trans.o trans_en.o stubkk.o
+OBJS = \
+	main.o \
+	blit.o\
+  ui.o \
+	menu.o \
+	advanced.o \
+	battery.o \
+  vsh.o \
+	config.o \
+	color.o \
+	fonts.o \
+	clock.o \
+	registry.o \
+	umdvideo_list.o \
+	vpl.o \
+	trans.o \
+	trans_en.o \
+	stubkk.o \
+	launcher.o
 
 BUILD_PRX = 1
 

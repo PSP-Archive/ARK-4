@@ -154,3 +154,91 @@ void config_recreate_umd_keys(void) {
 	args.arg4 = 1;
 	kuKernelCall(hookImport, &args);
 }
+
+void import_classic_plugins(vsh_Menu *vsh, char* devpath) {
+	SceUID game, vsh_id, pops, plugins;
+	int i = 0;
+	int chunksize = 512;
+	int bytesRead;
+	char *buf = vpl_alloc(chunksize);
+	char *gameChar = "game, ";
+	int gameCharLength = scePaf_strlen(gameChar);
+	char *vshChar = "vsh, ";
+	int vshCharLength = scePaf_strlen(vshChar);
+	char *popsChar = "pops, ";
+	int popsCharLength = scePaf_strlen(popsChar);
+	
+	char* filename = "??0:/seplugins/plugins.txt";
+	char* gamepath = "??0:/seplugins/game.txt";
+	char* vshpath = "??0:/seplugins/vsh.txt";
+	char* popspath = "??0:/seplugins/pops.txt";
+
+
+	filename[0] = devpath[0];
+	gamepath[0] = devpath[0];
+	vshpath[0] = devpath[0];
+	popspath[0] = devpath[0];
+	filename[1] = devpath[1];
+	gamepath[1] = devpath[1];
+	vshpath[1] = devpath[1];
+	popspath[1] = devpath[1];
+
+	game = sceIoOpen(gamepath, PSP_O_RDONLY, 0777);
+	vsh_id = sceIoOpen(vshpath, PSP_O_RDONLY, 0777);
+	pops = sceIoOpen(popspath, PSP_O_RDONLY, 0777);
+	plugins = sceIoOpen(filename, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+
+	// GAME.txt
+	scePaf_memset(buf, 0, chunksize);
+	while ((bytesRead = sceIoRead(game, buf, chunksize)) > 0) {
+		for(i = 0; i < bytesRead; i++) {
+			if (i == 0 || buf[i-1] == '\n' || buf[i-1] == '\0'){
+				sceIoWrite(plugins, gameChar, gameCharLength);
+			}
+			if (buf[i] == ' ' && i != 0)
+				sceIoWrite(plugins, ",", 1);
+			sceIoWrite(plugins, &buf[i], 1);
+		}
+	}
+	
+	sceIoClose(game);
+
+
+	scePaf_memset(buf, 0, chunksize);
+
+	// VSH.txt
+	while ((bytesRead = sceIoRead(vsh_id, buf, chunksize)) > 0) {
+		for(i = 0; i < bytesRead; i++) {
+			if (i == 0 || buf[i-1] == '\n' || buf[i-1] == '\0'){
+				sceIoWrite(plugins, vshChar, vshCharLength);
+			}
+			if (buf[i] == ' ' && i != 0)
+				sceIoWrite(plugins, ",", 1);
+			sceIoWrite(plugins, &buf[i], 1);
+		}
+	}
+
+	sceIoClose(vsh_id);
+
+	scePaf_memset(buf, 0, chunksize);
+
+
+	// POP.txt
+	while ((bytesRead = sceIoRead(pops, buf, chunksize)) > 0) {
+		for(i = 0; i < bytesRead; i++) {
+			if (i == 0 || buf[i-1] == '\n' || buf[i-1] == '\0'){
+				sceIoWrite(plugins, popsChar, popsCharLength);
+			}
+			if (buf[i] == ' ' && i != 0)
+				sceIoWrite(plugins, ",", 1);
+			sceIoWrite(plugins, &buf[i], 1);
+		}
+	}
+
+	sceIoClose(pops);
+
+	sceIoClose(plugins);
+	vpl_free(buf);
+
+	vsh->status.reset_vsh = 1;
+}

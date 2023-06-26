@@ -25,6 +25,8 @@
 #include "scepaf.h"
 #include "vsh.h"
 
+#include "trans.h"
+
 
 #define READ_BUF_SIZE 1024
 
@@ -234,4 +236,48 @@ void free_translate_table(char **table, int nr_trans)
 	}
 
 	vpl_free(table);
+}
+
+void clear_language(void) {
+	if (g_messages != g_messages_en)
+		free_translate_table((char**)g_messages, MSG_END);
+
+	g_messages = g_messages_en;
+}
+
+char ** apply_language(char *translate_file) {
+	char **message = NULL;
+	int ret;
+
+	ret = load_translate_table(&message, translate_file, MSG_END);
+
+	if(ret >= 0) {
+		return message;
+	}
+
+	return (char**) g_messages_en;
+}
+
+int cur_language = 0;
+
+void select_language(void) {
+
+	static char *languages[] = { "jp", "en", "fr", "es", "de", "it", "nl", "pt", "ru", "kr", "cht", "chs" };
+
+	int ret, value;
+	ret = sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &value);
+
+	if(ret < 0)
+		value = PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
+
+	cur_language = value;
+	clear_language();
+
+	char file[64];
+	scePaf_sprintf(file, "satelite_%s.txt", languages[value]);
+	g_messages = (const char**)apply_language(file);
+
+	if(g_messages == g_messages_en) {
+		cur_language = PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
+	}
 }
