@@ -130,3 +130,32 @@ void umdvideolist_init(UmdVideoList *list)
 	list->tail = &list->head;
 	list->count = 0;
 }
+
+int get_umdvideo(UmdVideoList *list, char *path) {
+	SceIoDirent dir;
+	int result = 0, dfd;
+	char fullpath[256];
+
+	scePaf_memset(&dir, 0, sizeof(dir));
+	dfd = sceIoDopen(path);
+
+	if(dfd < 0) 
+		return dfd;
+
+	const char *p;
+	while (sceIoDread(dfd, &dir) > 0) {
+		p = (const char *)scePaf_strrchr(dir.d_name, '.');
+
+		if (p == NULL)
+			p = dir.d_name;
+
+		if (0 == stricmp(p, ".iso") || 0 == stricmp(p, ".cso") || 0 == stricmp(p, ".zso") || 0 == stricmp(p, ".dax") || 0 == stricmp(p, ".jso")) {
+			scePaf_sprintf(fullpath, "%s/%s", path, dir.d_name);
+			umdvideolist_add(list, fullpath);
+		}
+	}
+
+	sceIoDclose(dfd);
+	return result;
+}
+

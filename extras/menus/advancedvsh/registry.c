@@ -108,3 +108,39 @@ int set_registry_value(const char *dir, const char *name, u32 val)
 
 	return ret;
 }
+
+void delete_hibernation(vsh_Menu *vsh) {
+	if (vsh->psp_model == PSP_GO) {
+		vshCtrlDeleteHibernation();
+		vsh->status.reset_vsh = 1;
+	}
+}
+
+int activate_codecs(vsh_Menu *vsh) {
+	int flash_activated = 0;
+	int flash_play = 0;
+	int wma_play = 0;
+
+	get_registry_value("/CONFIG/BROWSER", "flash_activated", &flash_activated);
+	get_registry_value("/CONFIG/BROWSER", "flash_activated", &flash_play);
+	get_registry_value("/CONFIG/MUSIC", "wma_play", &wma_play);
+
+	if (!flash_activated || !flash_play || !wma_play){
+		set_registry_value("/CONFIG/BROWSER", "flash_activated", 1);
+		set_registry_value("/CONFIG/BROWSER", "flash_play", 1);
+		set_registry_value("/CONFIG/MUSIC", "wma_play", 1);
+		vsh->status.reset_vsh = 1;
+	}
+	
+	return 0;
+}
+
+int swap_buttons(vsh_Menu *vsh) {
+	u32 value;
+	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &value);
+	value = !value;
+	set_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", value);
+	
+	vsh->status.reset_vsh = 1;
+	return 0;
+}

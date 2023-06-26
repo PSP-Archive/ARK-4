@@ -18,7 +18,24 @@
 #ifndef TRANS_H
 #define TRANS_H
 
+#include <pspkernel.h>
+#include <psputility.h>
+#include <pspiofilemgr.h>
+#include <pspthreadman.h>
+#include <pspctrl.h>
+#include <pspumd.h>
+
+#include <stdio.h>
+#include <time.h>
+#include <stdbool.h>
+
+SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath);
+
 int load_translate_table(char ***table, char *file, int nr_trans);
 void free_translate_table(char **table, int nr_trans);
+
+void clear_language(void);
+char ** apply_language(char *translate_file);
+void select_language(void);
 
 #endif
