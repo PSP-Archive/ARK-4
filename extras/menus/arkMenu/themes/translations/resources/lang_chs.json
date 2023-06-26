@@ -1,6 +1,7 @@
 {
 
-    "__font__": 17,
+    "__font__": "flash0:/font/gb3s1518.bwfon",
+    "__textsize__": 1.5,
 
     "Game": "游戏",
     "Games": "游戏",

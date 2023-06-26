@@ -26,8 +26,10 @@ static Image* images[MAX_IMAGES];
 static Image* checkbox[2];
 static Image* icons[MAX_FILE_TYPES];
 
+extern float text_size;
+extern int altFontId;
 extern intraFont* altFont;
-static intraFont* font = NULL;
+extern intraFont* font;
 static MP3* sound_mp3 = NULL;
 static int argc;
 static char **argv;
@@ -63,8 +65,8 @@ char* fonts[] = {
     "flash0:/font/ltn13.pgf",
     "flash0:/font/ltn14.pgf",
     "flash0:/font/ltn15.pgf",
-    "flash0:/font/jpn0.pgf",
-    "flash0:/font/kr0.pgf"
+    //"flash0:/font/jpn0.pgf",
+    //"flash0:/font/kr0.pgf"
 };
 
 static char* lang_files[] = {
@@ -575,6 +577,8 @@ void common::printText(float x, float y, const char* text, u32 color, float size
 
     string translated = TR(text);
 
+    if (translated != text)
+        size *= text_size;
 
     u32 secondColor = BLACK_COLOR;
     u32 arg5 = INTRAFONT_WIDTH_VAR;
