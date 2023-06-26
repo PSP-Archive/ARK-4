@@ -117,9 +117,9 @@ int TSRThread(SceSize args, void *argp) {
 
 	#ifdef DEBUG
 	if (micro > 0) 
-		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d.%.2i DEBUG    ", major, minor, micro);
+		scePaf_snprintf(vsh_menu.ark_version, sizeof(vsh_menu.ark_version), "    ARK %d.%d.%.2i DEBUG    ", major, minor, micro);
 	else 
-		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d DEBUG    ", major, minor);
+		scePaf_snprintf(vsh_menu.ark_version, sizeof(vsh_menu.ark_version), "    ARK %d.%d DEBUG    ", major, minor);
 	#else
 	if (micro > 0) 
 		scePaf_snprintf(vsh_menu.ark_version, sizeof(vsh_menu.ark_version), "    ARK %d.%d.%.2i    ", major, minor, micro);
