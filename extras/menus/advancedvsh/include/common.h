@@ -172,7 +172,7 @@ enum {
 	MSG_LITE_BLACK,
 	MSG_WHITE,
 	MSG_LITE_WHITE,
-	MSG_END,
+	MSG_END
 };
 
 extern const char **g_messages;
