@@ -31,6 +31,7 @@ int blit_setup(void);
 void blit_set_color(int fg_col, int bg_col);
 int blit_string(int sx, int sy, const char *msg);
 int blit_string_ctr(int sy, const char *msg);
+void blit_rect_fill(int sx, int sy, int w, int h);
 
 int load_external_font(const char *file);
 void release_font(void);
