@@ -501,6 +501,24 @@ int TSRThread(SceSize args, void *argp) {
 	
 	// get psp model
 	vsh_menu.psp_model = kuKernelGetModel();
+
+	// ARK Version
+	int ver = sctrlHENGetMinorVersion();
+ 	int major = (ver & 0xFF0000) >> 16;
+	int minor = (ver & 0xFF00) >> 8;
+	int micro = (ver & 0xFF);
+
+	#ifdef DEBUG
+	if (micro > 0) 
+		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d.%.2i DEBUG    ", major, minor, micro);
+	else 
+		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d DEBUG    ", major, minor);
+	#else
+	if (micro > 0) 
+		scePaf_snprintf(vsh_menu.ark_version, sizeof(vsh_menu.ark_version), "    ARK %d.%d.%.2i    ", major, minor, micro);
+	else 
+		scePaf_snprintf(vsh_menu.ark_version, sizeof(vsh_menu.ark_version), "    ARK %d.%d    ", major, minor); 
+	#endif
 	
 	// load config stuff
 	sctrlSEGetConfig(&vsh_menu.config.se);

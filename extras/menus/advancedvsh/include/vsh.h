@@ -42,11 +42,12 @@ typedef struct _vsh_Status{
 
 	u8 bc_alpha;
 	u8 bc_delta;
-	
+
 }vsh_Status;
 
 // VSH Menu struct
 typedef struct _vsh_Menu{
+	char ark_version[24];
 	SceUID thread_id;
 	
 	vsh_Config config;

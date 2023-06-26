@@ -78,25 +78,6 @@ int menu_draw(void) {
 	int max_menu, cur_menu;
 	const int *pointer;
 	u32 fc,bc;
-	
-	// ARK Version
-	char ark_version[24];
-	int ver = sctrlHENGetMinorVersion();
- 	int major = (ver & 0xFF0000) >> 16;
-	int minor = (ver & 0xFF00) >> 8;
-	int micro = (ver & 0xFF);
-
-	#ifdef DEBUG
-	if (micro > 0) 
-		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d.%.2i DEBUG    ", major, minor, micro);
-	else 
-		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d DEBUG    ", major, minor);
-	#else
-	if (micro > 0) 
-		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d.%.2i    ", major, minor, micro);
-	else 
-		scePaf_snprintf(ark_version, sizeof(ark_version), "    ARK %d.%d    ", major, minor); 
-	#endif
 
 	// check & setup video mode
 	if(blit_setup() < 0) 
@@ -111,7 +92,7 @@ int menu_draw(void) {
 	blit_set_color(0xffffff,0x8000ff00);
 	scePaf_snprintf(msg, 128, " %s ", g_messages[MSG_ARK_VSH_MENU]);
 	blit_string_ctr(pointer[1], msg);
-	blit_string_ctr(56, ark_version);
+	blit_string_ctr(56, g_vsh_menu->ark_version);
 	fc = 0xffffff;
 	
 	for (max_menu = 0; max_menu < TMENU_MAX; max_menu++) {
