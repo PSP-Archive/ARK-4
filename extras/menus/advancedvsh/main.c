@@ -97,6 +97,26 @@ int module_start(int argc, char *argv[]);
 int module_stop(int argc, char *argv[]);
 
 
+char* findLongestString(char** list, int n){
+	if (!list || !n) return NULL;
+	char* longest = list[0];
+	int size = strlen(longest);
+	for (int i=1; i<n; i++){
+		int isize = strlen(list[i]);
+		if (isize > size){
+			size = isize;
+			longest = list[i];
+		}
+	}
+	return longest;
+}
+
+void calculateMenuSizes(){
+	int vsh_menu_size = 8*strlen(findLongest(g_messages, MSG_END));
+	int advances_vsh_menu_size = 8*strlen(findLongest(&g_messages[MSG_CUSTOM_LAUNCHER], MSG_EXIT-MSG_CUSTOM_LAUNCHER));
+}
+
+
 int TSRThread(SceSize args, void *argp) {
 	// change priority - needs to be the first thing executed when main thread started
 	sceKernelChangeThreadPriority(0, 8);
