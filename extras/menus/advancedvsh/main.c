@@ -58,12 +58,14 @@
 #include "advanced.h"
 #include "registry.h"
 #include "launcher.h"
+#include "umdvideo_list.h"
 
 
 /* Define the module info section */
 PSP_MODULE_INFO("VshCtrlSatelite", 0, 2, 2);
 /* Define the main thread's attribute value (optional) */
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
+
 
 extern char umdvideo_path[256];
 UmdVideoList g_umdlist;
