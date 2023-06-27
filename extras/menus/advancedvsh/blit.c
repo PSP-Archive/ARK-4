@@ -25,8 +25,7 @@
 #include "common.h"
 
 #include "vsh.h"
-
-//#define ALPHA_BLEND 1
+#include "fonts.h"
 
 
 blit_Gfx gfx = {
@@ -38,9 +37,6 @@ blit_Gfx gfx = {
 	.bufferwidth = 0,
 	.pixelformat = 0
 };
-
-
-extern unsigned char *g_cur_font;
 
 
 static u32 adjust_alpha(u32 col) {
@@ -66,6 +62,7 @@ blit_Gfx* blit_gfx_pointer(void) {
 	return (blit_Gfx*)&gfx;
 }
 
+
 int blit_setup(void) {
 	int unk;
 	sceDisplayGetMode(&unk, &gfx.width, &gfx.height);
@@ -88,7 +85,7 @@ void blit_set_color(int fg_col,int bg_col) {
 int blit_string(int sx,int sy,const char *msg) {
 	int x,y,p;
 	int offset;
-	u8 code, font;
+	u8 code, data;
 	u32 fg_col,bg_col;
 
 	u32 col,c1,c2;
@@ -96,20 +93,22 @@ int blit_string(int sx,int sy,const char *msg) {
 
 	fg_col = adjust_alpha(gfx.fg_color);
 	bg_col = adjust_alpha(gfx.bg_color);
+	
+	font_Data *font = (font_Data*)font_data_pointer();
 
 
 //Kprintf("MODE %d WIDTH %d\n",pixelformat,bufferwidth);
-	if ((gfx.bufferwidth==0) || (gfx.pixelformat!=3))
+	if ((gfx.bufferwidth == 0) || (gfx.pixelformat != 3))
 		return -1;
 
-	for (x = 0; msg[x] && x < (gfx.width / 8); x++) {
+	for (x = 0; msg[x] && x < (gfx.width / font->width); x++) {
 		code = (u8)msg[x]; // no truncate now
 
-		for (y = 0; y < 8; y++) {
-			offset = (sy + y) * gfx.bufferwidth + sx + x * 8;
-			font = y >= 7 ? 0x00 : g_cur_font[code * 8 + y];
-			for (p = 0; p < 8; p++) {
-				col = (font & 0x80) ? fg_col : bg_col;
+		for (y = 0; y < font->height; y++) {
+			offset = (sy + y) * gfx.bufferwidth + sx + x * font->width;
+			data = y >= 7 ? 0x00 : font->bitmap[code * font->width + y];
+			for (p = 0; p < font->height; p++) {
+				col = (data & 0x80) ? fg_col : bg_col;
 				alpha = col >> 24;
 				if (alpha == 0) 
 					gfx.vram32[offset] = col;
@@ -122,16 +121,16 @@ int blit_string(int sx,int sy,const char *msg) {
 					gfx.vram32[offset] = (col & 0xffffff) + c1 + c2;
 				}
 
-				font <<= 1;
+				data <<= 1;
 				offset++;
 			}
 		}
 	}
-	return sx + x * 8;
+	return sx + x * font->width;
 }
 
 int blit_string_ctr(int sy,const char *msg) {
-	return blit_string((gfx.width - scePaf_strlen(msg) * 8) / 2, sy, msg);
+	return blit_string((gfx.width - scePaf_strlen(msg) * font_data_pointer()->width) / 2, sy, msg);
 }
 
 
@@ -163,6 +162,5 @@ void blit_rect_fill(int sx, int sy, int w, int h) {
 
 // Returns size of string in pixels
 int blit_get_string_width(char *msg) {
-	#define _FONT_WIDTH 8
-	return scePaf_strlen(msg) * _FONT_WIDTH;
+	return scePaf_strlen(msg) * font_data_pointer()->width;
 }

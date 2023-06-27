@@ -27,9 +27,8 @@
 #include "systemctrl.h"
 
 #include "vsh.h"
+#include "fonts.h"
 #include "blit.h"
-
-
 
 
 const char **g_messages = g_messages_en;
@@ -68,6 +67,7 @@ int menu_draw(void) {
 
 	vsh_Menu *vsh = vsh_menu_pointer();
 	blit_Gfx *gfx = blit_gfx_pointer();
+	font_Data *font = font_data_pointer();
 	
 	// check & setup video mode
 	if(blit_setup() < 0) 
@@ -101,10 +101,10 @@ int menu_draw(void) {
 		window_char++;
 	
 	// window pixel = [window_char + leading & trailing space] * font width
-	window_pixel = (window_char + 2) * 8;
+	window_pixel = (window_char + 2) * font->width;
 	
 	// set menu start position
-	int menu_start_y = pointer[5] * 8;
+	int menu_start_y = pointer[5] * font->height;
 	int menu_start_x = (gfx->width - window_pixel) / 2;
 	
 	for (max_menu = 0; max_menu < TMENU_MAX; max_menu++) {
@@ -119,7 +119,7 @@ int menu_draw(void) {
 		// add line at the top
 		if (max_menu == 0){
 			blit_set_color(fc, bc);
-			blit_rect_fill(menu_start_x, menu_start_y, window_pixel, 8);
+			blit_rect_fill(menu_start_x, menu_start_y, window_pixel, font->height);
 		}
 		
 		// if menu is selected, change color
@@ -137,7 +137,7 @@ int menu_draw(void) {
 		// display menu
 		if (g_messages[MSG_CUSTOM_LAUNCHER + max_menu]) {
 			cur_menu = max_menu;
-			menu_start_y += 8; // replace by font width
+			menu_start_y += font->height;
 			
 			// center-align menu strings
 			int len = scePaf_strlen(g_messages[MSG_CUSTOM_LAUNCHER + max_menu]);
@@ -145,14 +145,14 @@ int menu_draw(void) {
 			
 			// add a halfspace before if the lenght is an odd value
 			if (len & 0x1)
-				blit_rect_fill(menu_start_x, menu_start_y, 4, 8);
+				blit_rect_fill(menu_start_x, menu_start_y, 4, font->height);
 			scePaf_snprintf(msg, 128, " %*s%s%*s ", padding, "", g_messages[MSG_CUSTOM_LAUNCHER + max_menu], padding, "");
 			blit_string_ctr(menu_start_y, msg);
 			
 			// add a halfspace after if the length is an odd value
 			if (len & 0x1) {
 				int offset = blit_get_string_width(msg);
-				blit_rect_fill(menu_start_x + offset + 4, menu_start_y, 4, 8);
+				blit_rect_fill(menu_start_x + offset + 4, menu_start_y, 4, font->height);
 			}
 		
 			// item_str seems to be all NULL values (see menu_setup function)
@@ -177,9 +177,9 @@ int menu_draw(void) {
 	}
 
 	blit_set_color(fc, bc);
-	menu_start_y += 8; // replace by font width
+	menu_start_y += font->height;
 	// add line at the end
-	blit_rect_fill(menu_start_x, menu_start_y, window_pixel, 8);
+	blit_rect_fill(menu_start_x, menu_start_y, window_pixel, font->height);
 	
 	blit_set_color(0x00ffffff,0x00000000);
 	return 0;

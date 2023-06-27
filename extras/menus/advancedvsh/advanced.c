@@ -37,6 +37,7 @@ int submenu_draw(void) {
 	
 	vsh_Menu *vsh = vsh_menu_pointer();
 	blit_Gfx *gfx = blit_gfx_pointer();
+	font_Data *font = font_data_pointer();
 
 	// check & setup video mode
 	if (blit_setup() < 0) 
@@ -67,10 +68,10 @@ int submenu_draw(void) {
 	window_char = width + submenu_find_longest_string() + 3;
 	if (window_char & 0x1)
 		window_char++;
-	window_pixel = window_char * 8;
+	window_pixel = window_char * font->width;
 	// submenu width + leading & trailing space + subitem space + subitem width
 	submenu_start_x = (gfx->width - window_pixel) / 2;
-	submenu_start_y = pointer[5] * 8;
+	submenu_start_y = pointer[5] * font->height;
 
 	for (submax_menu = 0; submax_menu < SUBMENU_MAX; submax_menu++) {
 		// set default colors
@@ -85,7 +86,7 @@ int submenu_draw(void) {
 		// add line at the top
 		if (submax_menu == 0){
 			blit_set_color(fc, bc);
-			blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, 8);
+			blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, font->height);
 		}
 		
 		// if menu is selected, change color
@@ -107,7 +108,7 @@ int submenu_draw(void) {
 			subcur_menu = submax_menu;
 			
 			// set the y position
-			submenu_start_y += 8;
+			submenu_start_y += font->height;
 			
 			temp = 0;
 			// find widest submenu up until the UMD region option
@@ -152,14 +153,14 @@ int submenu_draw(void) {
 				
 				// add a halfspace before if the lenght is an odd value
 				if (len & 0x1)
-					blit_rect_fill(submenu_start_x, submenu_start_y, 4, 8);
+					blit_rect_fill(submenu_start_x, submenu_start_y, 4, font->height);
 				
 				blit_string_ctr(submenu_start_y, msg);
 			
 				// add a halfspace after if the length is an odd value
 				if (len & 0x1) {
 					offset = blit_get_string_width(msg);
-					blit_rect_fill(submenu_start_x + offset + 4, submenu_start_y, 4, 8);
+					blit_rect_fill(submenu_start_x + offset + 4, submenu_start_y, 4, font->height);
 				}
 			}
 		}
@@ -175,7 +176,7 @@ int submenu_draw(void) {
 	}
 
 	blit_set_color(fc, bc);
-	submenu_start_y += 8; // replace by font width
+	submenu_start_y += font->height; // replace by font width
 	// add line at the end
 	blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, 8);
 	
