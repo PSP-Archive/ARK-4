@@ -1,15 +1,20 @@
 #include "fonts.h"
 
-#include <psputility.h>
 
 extern unsigned char msx[];
-unsigned char *g_cur_font = msx;
+
+font_Data font = {
+	.bitmap = msx,
+	.mem_id = -1,
+	.width = FONT_WIDTH,
+	.height = FONT_HEIGHT
+};
+
 
 extern SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath);
 
-static SceUID g_memid = -1;
 
-char* g_available_fonts[] = {
+char* available_fonts[] = {
 	"8X8!FONT.pf",
 	"8X8#FONT.pf",
 	"8X8@FONT.pf",
@@ -68,14 +73,18 @@ char* g_available_fonts[] = {
 };
 
 char** font_list(void) {
-	return (char**)g_available_fonts;
+	return (char**)available_fonts;
+}
+
+font_Data* font_data_pointer(void) {
+	return (font_Data*)&font;
 }
 
 int font_load(vsh_Menu *vsh) {
 	// if a font is needed (ie not 0)
 	if (vsh->config.ark_menu.vsh_font) {
 		// load external font
-		load_external_font(g_available_fonts[vsh->config.ark_menu.vsh_font - 1]);
+		load_external_font(available_fonts[vsh->config.ark_menu.vsh_font - 1]);
 		return 0;
 	}
 	
@@ -128,17 +137,17 @@ int load_external_font(const char *file) {
 		return fd;
 	}
 
-	g_memid = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, 2048, NULL);
+	font.mem_id = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, 2048, NULL);
 
-	if(g_memid < 0) {
+	if(font.mem_id < 0) {
 		sceIoClose(fd);
-		return g_memid;
+		return font.mem_id;
 	}
 
-	buf = sceKernelGetBlockHeadAddr(g_memid);
+	buf = sceKernelGetBlockHeadAddr(font.mem_id);
 
 	if(buf == NULL) {
-		sceKernelFreePartitionMemory(g_memid);
+		sceKernelFreePartitionMemory(font.mem_id);
 		sceIoClose(fd);
 		return -2;
 	}
@@ -147,23 +156,21 @@ int load_external_font(const char *file) {
 	ret = sceIoRead(fd, buf, 2048);
 
 	if(ret != 2048) {
-		sceKernelFreePartitionMemory(g_memid);
+		sceKernelFreePartitionMemory(font.mem_id);
 		sceIoClose(fd);
 		return -3;
 	}
 
 	sceIoClose(fd);
-	g_cur_font = buf;
-
+	font.bitmap = (u8*)buf;
 	return 0;
 }
 
-void release_font(void)
-{
-	if (g_memid >= 0) {
-		sceKernelFreePartitionMemory(g_memid);
-		g_memid = -1;
+void release_font(void) {
+	if (font.mem_id >= 0) {
+		sceKernelFreePartitionMemory(font.mem_id);
+		font.mem_id = -1;
 	}
 
-	g_cur_font = msx;
+	font.bitmap = msx;
 }
