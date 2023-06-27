@@ -43,7 +43,8 @@ static struct {
         "Korean",
         "Chinese (Trad.)",
         "Chinese (Simp.)",
-        "Greek",
+        "Polski",
+        //"Greek",
         //"Thai",
     }
 };
