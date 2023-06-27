@@ -81,7 +81,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 ![ARK Custom Firmware](.github/screenshots/xmb(11).png "ARK Custom Firmware")
 
-![ARK Custom Firmware](.github/screenshots/xmb(9).png "ARK Custom Firmware")
+![ARK Custom Firmware](.github/screenshots/pic_0016.bmp "ARK Custom Firmware")
 
 
 ## INSTALLATION
@@ -289,7 +289,7 @@ There are three ways to update ARK:
 The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
 To have a more classic VSH menu with more advanced features you can select the `Advanced VSH Menu` from within the simplified VSH menu.
 
-![Advanced VSH Menu](.github/screenshots/xmb(8).png "Advanced VSH Menu")
+![Advanced VSH Menu](.github/screenshots/pic_0014.bmp "Advanced VSH Menu")
 
 Some of the features available in Advanced VSH Menu include:
 
