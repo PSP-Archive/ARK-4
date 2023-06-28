@@ -586,6 +586,8 @@ Note: some of these menus have not been updated or supported by their developers
 
 - `Krazynez` for his amazing work on `Advanced VSH Menu` and other bugfixes and features.
 
+- `pyroesp` for his excellent work improving `VSH Menu` and refactoring code.
+
 - `TheSubPlayer` for all the wonderful themes made for the custom launcher.
 
 - `UnkownBrackets` (maxcso) for his help understanding the DAX format and Inferno speed hacks as well as creating the CSOv2 format.
