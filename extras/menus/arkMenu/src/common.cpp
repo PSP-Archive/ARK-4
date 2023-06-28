@@ -60,7 +60,7 @@ char* fonts[] = {
     "flash0:/font/ltn7.pgf",
     "flash0:/font/ltn8.pgf",
     "flash0:/font/ltn9.pgf",
-    "flash0:/font/ltn19.pgf",
+    "flash0:/font/ltn10.pgf",
     "flash0:/font/ltn11.pgf",
     "flash0:/font/ltn12.pgf",
     "flash0:/font/ltn13.pgf",
@@ -87,6 +87,7 @@ static char* lang_files[] = {
     "lang_cht.json",
     "lang_chs.json",
     "lang_pol.json",
+    "lang_latgr.json"
     //"lang_grk.json",
     //"lang_thai.json",
 };
@@ -95,6 +96,10 @@ static t_conf config;
 
 static volatile bool do_loading_thread = false;
 static volatile SceUID load_thread_id = -1;
+
+static void dummyMissingHandler(const char* filename){
+
+}
 
 void setArgs(int ac, char** av){
     argc = ac;
@@ -139,11 +144,18 @@ void common::saveConf(){
     }
 
     if (currentFont != config.font || font == NULL){
-        if (!fileExists(fonts[config.font])){
-            config.font = 1;
-            if (altFont){
-                intraFontUnload(altFont);
-                altFont = NULL;
+        unsigned offset=0, size=0;
+        if (config.font == 0){
+            offset = findPkgOffset(fonts[0], &size, "LANG.ARK", &dummyMissingHandler);
+            if (offset && size){
+                fonts[0] = "LANG.ARK";
+            }
+            else if (!fileExists(fonts[0])){
+                config.font = 1;
+                if (altFont){
+                    intraFontUnload(altFont);
+                    altFont = NULL;
+                }
             }
         }
     
@@ -152,8 +164,7 @@ void common::saveConf(){
         font = NULL;
         if (aux) intraFontUnload(aux);
         // load new font
-        font = intraFontLoad(fonts[config.font], 0);
-        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
+        font = intraFontLoadEx(fonts[config.font], INTRAFONT_CACHE_ASCII|INTRAFONT_STRING_UTF8, offset, size);
         currentFont = config.font;
         // use alt font set by lang
         if (altFont) intraFontSetAltFont(font, altFont);
@@ -216,8 +227,7 @@ static void missingFileHandler(const char* filename){
     }
 
     if (!font){
-        font = intraFontLoad(fonts[1], 0);
-        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
+        font = intraFontLoad(fonts[1], INTRAFONT_STRING_UTF8);
     }
     
     static char msg[64];
@@ -239,10 +249,6 @@ static void missingFileHandler(const char* filename){
         else if (pad.triangle())
             sctrlKernelExitVSH(NULL);
     }
-}
-
-static void dummyMissingHandler(const char* filename){
-
 }
 
 SceOff common::findPkgOffset(const char* filename, unsigned* size, const char* pkgpath, void (*missinghandler)(const char*)){
@@ -461,10 +467,17 @@ void common::loadData(int ac, char** av){
     }
     
     if (!font){
-        if (!fileExists(fonts[config.font]))
-            config.font = 1;
-        font = intraFontLoad(fonts[config.font], INTRAFONT_CACHE_ALL);
-        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
+        unsigned offset=0, size=0;
+        if (config.font == 0){
+            offset = findPkgOffset(fonts[0], &size, "LANG.ARK", &dummyMissingHandler);
+            if (offset && size){
+                fonts[0] = "LANG.ARK";
+            }
+            else if (!fileExists(fonts[0])){
+                config.font = 1;
+            }
+        }
+        font = intraFontLoadEx(fonts[config.font], INTRAFONT_CACHE_ASCII|INTRAFONT_STRING_UTF8, offset, size);
     }
 
     if (currentFont != config.font){
