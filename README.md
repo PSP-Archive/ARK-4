@@ -87,6 +87,7 @@ as well as unique and exclusive new features not found anywhere else.
 ## INSTALLATION
 
 - Download the precompiled binaries from: https://github.com/PSP-Archive/ARK-4/releases/latest
+- You can follow this video with instructions to install `ARK` on `PSP` via `Infinity` and/or on `PS Vita` via `Adrenaline`: https://youtu.be/bE8mw7RRqGo
 
 
 #### Compiling ARK ( For Developers )
