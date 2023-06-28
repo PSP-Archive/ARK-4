@@ -488,6 +488,10 @@ void Browser::refreshDirs(){
     while ((sceIoDread(dir, dit)) > 0){
         printf("got entry: %s\n", dit->d_name);
 
+        if (dit->d_name[0] == '.' && strcmp(dit->d_name, ".") != 0 && strcmp(dit->d_name, "..") != 0 && !common::getConf()->show_hidden){
+            continue;
+        }
+
         string ptmp = string(this->cwd)+string(dit->d_name);
         if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
             printf("is dir\n");
