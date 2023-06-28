@@ -51,6 +51,7 @@ class Browser : public SystemEntry{
     public:
         Browser();
         ~Browser();
+        static Browser* getInstance();
         
         void draw();
         
@@ -144,7 +145,7 @@ class Browser : public SystemEntry{
     
         void moveDirUp();
         
-        void update();
+        void update(Entry* e);
         
         void refreshDirs();
         

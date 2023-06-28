@@ -85,6 +85,8 @@ class GameManager : public SystemEntry{
     
         GameManager(bool autoload);
         ~GameManager();
+
+        static GameManager* getInstance();
         
         /* thread to load icon0 in the background */
         static int loadIcons(SceSize _args, void *_argp);

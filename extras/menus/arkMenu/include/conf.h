@@ -28,6 +28,7 @@ typedef struct {
     unsigned char startbtn; // Default (normal start button behaviour or boot last game)
     char last_game[128];    // last played game
     unsigned char vsh_font; // font used by VSH Menu
+    char browser_dir[128]; // default directory when using file browser as main app
 } t_conf;
 
 #endif

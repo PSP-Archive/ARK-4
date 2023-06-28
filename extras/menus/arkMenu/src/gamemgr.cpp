@@ -21,6 +21,10 @@ static bool loadingData = false;
 
 ARKConfig* ark_config;
 
+GameManager* GameManager::getInstance(){
+    return self;
+}
+
 GameManager::GameManager(bool autoload){
 
     // set the global self variable as this instance for the threads to use it

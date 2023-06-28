@@ -51,6 +51,10 @@ static char* pEntries[MAX_OPTIONS] = {
 
 BrowserDriver* Browser::ftp_driver = NULL;
 
+Browser* Browser::getInstance(){
+    return self;
+}
+
 Browser::Browser(){
     self = this;
     this->cwd = GO_ROOT; // current working directory (cwd)
@@ -72,6 +76,9 @@ Browser::Browser(){
     this->pEntryIndex = 0;
     this->animation = 0;
     this->firstboot = true;
+
+    t_conf* conf = common::getConf();
+    if (conf->browser_dir[0]) this->cwd = conf->browser_dir;
 
     int psp_model = common::getPspModel();
     if (psp_model != PSP_GO){
@@ -123,66 +130,66 @@ void Browser::moveDirUp(){
     this->refreshDirs();
 }
         
-void Browser::update(){
+void Browser::update(Entry* e){
     // Move to the next directory pointed by the currently selected entry or run an app if selected file is one
     if (this->entries->size() == 0)
         return;
     common::playMenuSound();
-    if (this->get()->getName() == "./")
+    if (e->getName() == "./")
         refreshDirs();
-    else if (this->get()->getName() == "../")
+    else if (e->getName() == "../")
         moveDirUp();
-    else if (this->get()->getName() == "<refresh>"){
+    else if (e->getName() == "<refresh>"){
         this->refreshDirs();
     }
-    else if (this->get()->getName() == "<disconnect>"){ // FTP disconnect entry
+    else if (e->getName() == "<disconnect>"){ // FTP disconnect entry
         if (ftp_driver != NULL) ftp_driver->disconnect();
         this->cwd = MS0_DIR;
         this->refreshDirs();
     }
-    else if (string(this->get()->getType()) == "FOLDER"){
-        this->cwd = this->get()->getPath();
+    else if (string(e->getType()) == "FOLDER"){
+        this->cwd = e->getPath();
         this->refreshDirs();
     }
-    else if (Iso::isISO(this->get()->getPath().c_str())){
+    else if (Iso::isISO(e->getPath().c_str())){
         if (this->cwd == "ms0:/ISO/VIDEO/" || this->cwd == "ef0:/ISO/VIDEO/")
-            Iso::executeVideoISO(this->get()->getPath().c_str());
+            Iso::executeVideoISO(e->getPath().c_str());
         else{
-            Iso* iso = new Iso(this->get()->getPath());
+            Iso* iso = new Iso(e->getPath());
             iso->execute();
         }
     }
-    else if (Eboot::isEboot(this->get()->getPath().c_str())){
-        Eboot* eboot = new Eboot(this->get()->getPath());
+    else if (Eboot::isEboot(e->getPath().c_str())){
+        Eboot* eboot = new Eboot(e->getPath());
         eboot->execute();
     }
-    else if (Entry::isZip(this->get()->getPath().c_str())){
+    else if (Entry::isZip(e->getPath().c_str())){
         extractArchive(0);
     }
-    else if (Entry::isRar(this->get()->getPath().c_str())){
+    else if (Entry::isRar(e->getPath().c_str())){
         extractArchive(1);
     }
-    else if (Entry::isPRX(this->get()->getPath().c_str())){
+    else if (Entry::isPRX(e->getPath().c_str())){
         installPlugin();
     }
-	else if (Entry::isARK(this->get()->getPath().c_str())) {
+	else if (Entry::isARK(e->getPath().c_str())) {
 		installTheme();
 	}
-    else if (Entry::isTXT(this->get()->getPath().c_str())){
-        optionsmenu = new TextEditor(this->get()->getPath());
+    else if (Entry::isTXT(e->getPath().c_str())){
+        optionsmenu = new TextEditor(e->getPath());
         optionsmenu->control();
         TextEditor* aux = (TextEditor*)optionsmenu;
         optionsmenu = NULL;
         delete aux;
     }
-    else if (Entry::isIMG(this->get()->getPath().c_str())){
-        optionsmenu = new ImageViewer(this->get()->getPath());
+    else if (Entry::isIMG(e->getPath().c_str())){
+        optionsmenu = new ImageViewer(e->getPath());
         optionsmenu->control();
         ImageViewer* aux = (ImageViewer*)optionsmenu;
         optionsmenu = NULL;
         delete aux;
     }
-    else if (Entry::isMusic(this->get()->getPath().c_str())){
+    else if (Entry::isMusic(e->getPath().c_str())){
         this->hide_main_window = true;
         vector<string> selected;
         for (int i=0; i<entries->size(); i++){
@@ -195,7 +202,7 @@ void Browser::update(){
             optionsmenu = new MusicPlayer(&selected);
         }
         else{
-            optionsmenu = new MusicPlayer(this->get()->getPath());
+            optionsmenu = new MusicPlayer(e->getPath());
         }
         optionsmenu->control();
         MusicPlayer* aux = (MusicPlayer*)optionsmenu;
@@ -1543,6 +1550,7 @@ void Browser::options(){
         
 void Browser::control(Controller* pad){
     // Control the menu through user input
+    t_conf* conf = common::getConf();
     if (pad->up())
         this->up();
     else if (pad->down())
@@ -1552,7 +1560,7 @@ void Browser::control(Controller* pad){
 	else if (pad->left())
 		this->left();
     else if (pad->accept())
-        this->update();
+        this->update(this->get());
     else if (pad->decline()){
         common::playMenuSound();
         this->moveDirUp();
@@ -1568,6 +1576,9 @@ void Browser::control(Controller* pad){
     else if (pad->select()){
         common::playMenuSound();
         this->refreshDirs();
+    }
+    else if (pad->start() && conf->startbtn == 1){
+        this->update(new BrowserFile(conf->last_game));
     }
     else{
         if (moving) moving--;

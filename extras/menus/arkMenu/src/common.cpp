@@ -10,6 +10,7 @@
 #include "animations.h"
 #include "system_mgr.h"
 #include "lang.h"
+#include "browser.h"
 
 #define RESOURCES_LOAD_PLACE YA2D_PLACE_VRAM
 
@@ -159,6 +160,10 @@ void common::saveConf(){
     }
 
     SystemMgr::resumeDraw();
+
+    if (config.main_menu){
+        strcpy(config.browser_dir, Browser::getInstance()->getCWD());
+    }
     
     FILE* fp = fopen(CONFIG_PATH, "wb");
     fwrite(&config, 1, sizeof(t_conf), fp);
