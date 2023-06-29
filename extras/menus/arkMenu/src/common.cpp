@@ -161,7 +161,8 @@ void common::saveConf(){
         font = NULL;
         if (aux) intraFontUnload(aux);
         // load new font
-        font = intraFontLoadEx(fonts[config.font], INTRAFONT_CACHE_ASCII|INTRAFONT_STRING_UTF8, offset, size);
+        font = intraFontLoadEx(fonts[config.font], INTRAFONT_CACHE_ASCII, offset, size);
+        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
         currentFont = config.font;
         // use alt font set by lang
         if (altFont) intraFontSetAltFont(font, altFont);
@@ -223,7 +224,8 @@ static void missingFileHandler(const char* filename){
     }
 
     if (!font){
-        font = intraFontLoad(fonts[1], INTRAFONT_STRING_UTF8);
+        font = intraFontLoad(fonts[1], INTRAFONT_CACHE_ASCII);
+        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
     }
     
     static char msg[64];
@@ -476,10 +478,12 @@ void common::loadData(int ac, char** av){
                 config.font = 1;
             }
         }
-        font = intraFontLoadEx(fonts[config.font], INTRAFONT_CACHE_ASCII|INTRAFONT_STRING_UTF8, offset, size);
+        font = intraFontLoadEx(fonts[config.font], INTRAFONT_CACHE_ASCII, offset, size);
+        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
     }
     if (config.font == 0 && altFont == NULL){
-        altFont = intraFontLoad(fonts[1], INTRAFONT_CACHE_ASCII|INTRAFONT_STRING_UTF8);
+        altFont = intraFontLoad(fonts[1], INTRAFONT_CACHE_ASCII);
+        intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
     }
     if (currentFont != config.font){
         currentFont = config.font;
