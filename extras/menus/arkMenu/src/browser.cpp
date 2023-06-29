@@ -725,8 +725,8 @@ void Browser::draw(){
 
 string Browser::formatText(string text){
     // Format the text shown, text with more than 13 characters will be truncated and ... be appended to the name
-    int tw = common::calcTextWidth(text.c_str());
-    float wmax = MENU_W*0.75;
+    int tw = common::calcTextWidth(text.c_str(), SIZE_LITTLE, 0);
+    float wmax = MENU_W*0.60;
     if (tw <= wmax)
         return text;
     else{
@@ -1494,7 +1494,7 @@ void Browser::drawOptionsMenu(){
         case 2: // draw menu
             optionsAnimX = 0;
             optionsAnimY = 52;
-            common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 135, 220);
+            common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 140, 220);
         
             {
             int x = 10;
@@ -1502,10 +1502,19 @@ void Browser::drawOptionsMenu(){
             static TextScroll scroll;
             for (int i=0; i<MAX_OPTIONS; i++){
                 if (pEntries[i] == NULL) continue;
-                if (i == pEntryIndex)
+                if (i == pEntryIndex){
                     common::printText(x, y, pEntries[i], LITEGRAY, SIZE_BIG, true, &scroll);
-                else
-                    common::printText(x, y, pEntries[i]);
+                }
+                else {
+                    int tw = common::calcTextWidth(pEntries[i], SIZE_LITTLE, 1);
+                    if (tw >= 140){
+                        string s = TR(pEntries[i]);
+                        common::printText(x, y, (s.substr(0, s.find(' '))+"...").c_str());
+                    }
+                    else{
+                        common::printText(x, y, pEntries[i], LITEGRAY);
+                    }
+                }
                 y += 20;
             }
             }

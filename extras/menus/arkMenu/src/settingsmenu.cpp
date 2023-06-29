@@ -138,7 +138,7 @@ void SettingsMenu::draw(){
                         // treat as text: translate
                         desc = TR(desc);
                     }
-                    int tw = common::calcTextWidth(desc.c_str());
+                    int tw = common::calcTextWidth(desc.c_str(), SIZE_LITTLE, !shorten_paths);
                     float wmax = MENU_W*0.55;
                     if (tw > wmax){
                         int charw = (tw/desc.size());

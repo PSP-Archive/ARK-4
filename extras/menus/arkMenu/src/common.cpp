@@ -635,11 +635,18 @@ void common::printText(float x, float y, const char* text, u32 color, float size
     
 }
 
-int common::calcTextWidth(const char* text, float size){
-    string translated = TR(text);
-    intraFontSetStyle(font, size, 0, 0, 0.f, INTRAFONT_WIDTH_VAR);
-    float w = intraFontMeasureText(font, translated.c_str()) + size*translated.length();
-    return (int)ceil(w*text_size);
+int common::calcTextWidth(const char* text, float size, int translate){
+    string translated = (translate)? TR(text) : text;
+    intraFont* textFont = font;
+    if (translated != text){
+        size *= text_size;
+    }
+    if (!translate && altFont){
+        textFont = altFont;
+    }
+    intraFontSetStyle(textFont, size, 0, 0, 0.f, INTRAFONT_WIDTH_VAR);
+    float w = intraFontMeasureText(textFont, translated.c_str());
+    return (int)ceil(w);
 }
 
 void common::clearScreen(u32 color){

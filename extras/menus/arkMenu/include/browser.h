@@ -81,7 +81,7 @@ class Browser : public SystemEntry{
 
         void drawInfo(){
             static TextScroll scroll;
-            int w = common::calcTextWidth(cwd.c_str(), SIZE_MEDIUM);
+            int w = common::calcTextWidth(cwd.c_str(), SIZE_MEDIUM, 0);
             common::printText(5, 13, cwd.c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll, 0);
             if (devsize.size() > 0)
                 common::printText(5+w, 13, string(" ("+TR("Free size")+": "+devsize+")").c_str(), LITEGRAY, SIZE_MEDIUM);

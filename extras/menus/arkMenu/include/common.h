@@ -112,7 +112,7 @@ namespace common{
     extern void resetConf();
     extern void playMenuSound();
     extern void printText(float x, float y, const char *text, u32 color=GRAY_COLOR, float size=SIZE_LITTLE, int glow=0, TextScroll* scroll=NULL, int translate=1);
-    extern int calcTextWidth(const char* text, float size=SIZE_LITTLE);
+    extern int calcTextWidth(const char* text, float size=SIZE_LITTLE, int translate=1);
     extern void clearScreen(u32 color = CLEAR_COLOR);
     extern void drawBorder();
     extern void drawScreen();
