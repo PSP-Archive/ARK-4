@@ -30,6 +30,7 @@
 #include <psputility.h>
 #include <pspiofilemgr.h>
 #include <pspthreadman.h>
+#include <pspdisplay.h>
 #include <pspctrl.h>
 #include <pspumd.h>
 
@@ -43,15 +44,15 @@
 #include "systemctrl_se.h"
 #include "kubridge.h"
 #include "vpl.h"
+#include "vsh.h"
+#include "scepaf.h"
 #include "blit.h"
 #include "trans.h"
 
-
 #include "../arkMenu/include/conf.h"
 
-
+#include "ui.h"
 #include "battery.h"
-#include "vsh.h"
 #include "config.h"
 #include "fonts.h"
 #include "menu.h"
@@ -68,7 +69,6 @@ PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 
 
 extern char umdvideo_path[256];
-UmdVideoList g_umdlist;
 
 
 /* Extern functions */
@@ -125,22 +125,22 @@ int TSRThread(SceSize args, void *argp) {
 	select_language();
 	
 	if (!IS_VITA_ADR(vsh->config.p_ark)) {
-		umdvideolist_init(&g_umdlist);
-		umdvideolist_clear(&g_umdlist);
-		get_umdvideo(&g_umdlist, "ms0:/ISO/VIDEO");
-		get_umdvideo(&g_umdlist, "ef0:/ISO/VIDEO");
+		umdvideolist_init(&vsh->umdlist);
+		umdvideolist_clear(&vsh->umdlist);
+		get_umdvideo(&vsh->umdlist, "ms0:/ISO/VIDEO");
+		get_umdvideo(&vsh->umdlist, "ef0:/ISO/VIDEO");
 		kuKernelGetUmdFile(umdvideo_path, sizeof(umdvideo_path));
 
 		if (umdvideo_path[0] == '\0') {
-			umdvideo_idx = 0;
+			vsh->status.umdvideo_idx = 0;
 			scePaf_strcpy(umdvideo_path, g_messages[MSG_NONE]);
 		} else {
-			umdvideo_idx = umdvideolist_find(&g_umdlist, umdvideo_path);
+			vsh->status.umdvideo_idx = umdvideolist_find(&vsh->umdlist, umdvideo_path);
 
-			if (umdvideo_idx >= 0) {
-				umdvideo_idx++;
+			if (vsh->status.umdvideo_idx >= 0) {
+				vsh->status.umdvideo_idx++;
 			} else {
-				umdvideo_idx = 0;
+				vsh->status.umdvideo_idx = 0;
 				scePaf_strcpy(umdvideo_path, g_messages[MSG_NONE]);
 			}
 		}
@@ -237,7 +237,7 @@ resume:
 	config_check(vsh);
 
 	if(!IS_VITA_ADR(vsh->config.p_ark))
-		umdvideolist_clear(&g_umdlist);
+		umdvideolist_clear(&vsh->umdlist);
 	clear_language();
 	vpl_finish();
 
