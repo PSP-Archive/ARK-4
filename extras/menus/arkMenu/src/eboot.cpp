@@ -108,15 +108,6 @@ int Eboot::getEbootType(const char* path){
     if (fp == NULL)
         return ret;
     
-    u32 magic;
-    fseek(fp, 0, SEEK_SET);
-    fread(fp, 1, sizeof(u32), fp);
-
-    if (magic != EBOOT_MAGIC){
-        fclose(fp);
-        return (magic==ELF_MAGIC)? TYPE_HOMEBREW : UNKNOWN_TYPE;
-    }
-    
     fseek(fp, 48, SEEK_SET);
     
     u32 labelstart;

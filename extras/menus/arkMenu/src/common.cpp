@@ -169,9 +169,7 @@ void common::saveConf(){
 
     SystemMgr::resumeDraw();
 
-    if (config.main_menu){
-        strcpy(config.browser_dir, Browser::getInstance()->getCWD());
-    }
+    strcpy(config.browser_dir, Browser::getInstance()->getCWD());
     
     FILE* fp = fopen(CONFIG_PATH, "wb");
     fwrite(&config, 1, sizeof(t_conf), fp);
