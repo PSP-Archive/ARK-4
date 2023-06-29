@@ -1,6 +1,11 @@
 #include "launcher.h"
 
+#include <stdlib.h>
+#include <string.h>
+
+#include "scepaf.h"
 #include "vpl.h"
+
 
 void exec_custom_launcher(vsh_Menu *vsh) {
 	char menupath[ARK_PATH_SIZE];
@@ -157,7 +162,7 @@ void launch_umdvideo_mount(vsh_Menu *vsh) {
 	char *path;
 	int type;
 
-	if(0 == umdvideo_idx) {
+	if(0 == vsh->status.umdvideo_idx) {
 		if(sctrlSEGetBootConfFileIndex() == MODE_VSHUMD) {
 			// cancel mount
 			sctrlSESetUmdFile("");
@@ -167,7 +172,7 @@ void launch_umdvideo_mount(vsh_Menu *vsh) {
 		return;
 	}
 
-	path = umdvideolist_get(&g_umdlist, (size_t)(umdvideo_idx-1));
+	path = umdvideolist_get(&vsh->umdlist, (size_t)(vsh->status.umdvideo_idx-1));
 
 	if (path == NULL)
 		return;
