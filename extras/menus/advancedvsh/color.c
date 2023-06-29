@@ -1,6 +1,6 @@
 #include "color.h"
 
-#include <math.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include "scepaf.h"
@@ -153,6 +153,10 @@ static struct{
 	{27, 25},
 };
 
+
+u32* color_data_pointer(void) {
+	return (u32*)colors;
+}
 
 void color_check_random(vsh_Menu *vsh) {
 	int picked;
