@@ -18,8 +18,11 @@
 #ifndef VPL_H
 #define VPL_H
 
-#define VPL_POOL_SIZE (4 * 1024)
 
+#include <stdio.h>
+
+
+#define VPL_POOL_SIZE (4 * 1024)
 #define VPL_DISABLED -1
 
 void vpl_init(void);

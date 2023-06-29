@@ -2,6 +2,8 @@
 
 #include <pspiofilemgr.h>
 
+#include <string.h>
+
 #include "common.h"
 #include "module2.h"
 #include "kubridge.h"

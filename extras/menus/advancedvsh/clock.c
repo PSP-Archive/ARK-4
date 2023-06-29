@@ -23,6 +23,7 @@
 #include "common.h"
 
 #include "vsh.h"
+#include "macros.h"
 
 
 #define ROLL_OVER(val, min, max) ( ((val) < (min)) ? (max): ((val) > (max)) ? (min) : (val) )
@@ -31,8 +32,6 @@
 const int cpu_list[] = {0, 20, 75, 100, 133, 166, 222, 266, 300, 333};
 const int bus_list[] = {0, 10, 37, 50, 66, 83, 111, 133, 150, 166};
 
-/** 0 - None, 1~count - umdvideo entry */
-int umdvideo_idx = 0;
 
 int cpu2no(int cpu)
 {
@@ -113,7 +112,8 @@ void change_umd_mode(int dir) {
 }
 
 void change_umd_mount_idx(int dir) {
-	umdvideo_idx = ROLL_OVER(umdvideo_idx+dir, 0, umdvideolist_count(&g_umdlist));
+	vsh_Menu *vsh = vsh_menu_pointer();
+	vsh->status.umdvideo_idx = ROLL_OVER(vsh->status.umdvideo_idx + dir, 0, umdvideolist_count(&vsh->umdlist));
 }
 
 void change_umd_region(int dir, int max) {
