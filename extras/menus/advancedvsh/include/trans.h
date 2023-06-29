@@ -19,15 +19,6 @@
 #define TRANS_H
 
 #include <pspkernel.h>
-#include <psputility.h>
-#include <pspiofilemgr.h>
-#include <pspthreadman.h>
-#include <pspctrl.h>
-#include <pspumd.h>
-
-#include <stdio.h>
-#include <time.h>
-#include <stdbool.h>
 
 SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath);
 

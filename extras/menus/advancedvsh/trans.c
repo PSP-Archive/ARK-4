@@ -14,9 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
+#include <pspkernel.h>
+#include <pspiofilemgr.h>
+#include <psputility.h>
 
-#include <stdio.h>
 #include <string.h>
+
+#include "common.h"
 
 #include "systemctrl.h"
 #include "systemctrl_se.h"
@@ -141,7 +145,7 @@ SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath) 
 		sceIoRead(pkg, &namelength, 4);
 		sceIoRead(pkg, name, namelength+1);
 				   
-		if (!strncmp(name, filename, namelength)){
+		if (!scePaf_strncmp(name, filename, namelength)){
 			sceIoRead(pkg, &size2, 4);
 	
 			if (size2 == 0xFFFFFFFF)
