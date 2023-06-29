@@ -14,27 +14,23 @@ Eboot::Eboot(string path){
 }
 
 Eboot::~Eboot(){
-    if (this->icon0 != common::getImage(IMAGE_NOICON) && this->icon0 != common::getImage(IMAGE_WAITICON))
-        delete this->icon0;
-    if (this->header != NULL) free(this->header);
+    if (icon0 && icon0 != common::getImage(IMAGE_NOICON) && icon0 != common::getImage(IMAGE_WAITICON))
+        delete icon0;
 }
 
 void Eboot::readHeader(){
-    this->header = NULL;
-    void* data = malloc(sizeof(PBPHeader));
     FILE* fp = fopen(this->path.c_str(), "rb");
-    fread(data, 1, sizeof(PBPHeader), fp);
+    fread(&header, 1, sizeof(PBPHeader), fp);
     fclose(fp);
-    this->header = (PBPHeader*)data;
 }
 
 void Eboot::loadIcon(){
     Image* icon = NULL;
-    if (this->header->icon1_offset-this->header->icon0_offset)
-        icon = new Image(this->path, YA2D_PLACE_RAM, this->header->icon0_offset);
+    if ( header.magic == EBOOT_MAGIC && header.icon1_offset-header.icon0_offset)
+        icon = new Image(this->path, YA2D_PLACE_RAM, this->header.icon0_offset);
     
     if (icon == NULL)
-        sceKernelDelayThread(50000);
+        sceKernelDelayThread(0);
     icon = (icon == NULL)? common::getImage(IMAGE_NOICON) : icon;
     icon->swizzle();
     this->icon0 = icon;
@@ -49,16 +45,18 @@ void Eboot::getTempData1(){
     this->pic1 = NULL;
 
     int size;
+
+    if (header.magic != EBOOT_MAGIC) return;
     
     // grab pic0.png
-    size = this->header->pic1_offset-this->header->pic0_offset;
+    size = this->header.pic1_offset-this->header.pic0_offset;
     if (size)
-        this->pic0 = new Image(this->path, YA2D_PLACE_RAM, this->header->pic0_offset);
+        this->pic0 = new Image(this->path, YA2D_PLACE_RAM, this->header.pic0_offset);
 
     // grab pic1.png
-    size = this->header->snd0_offset-this->header->pic1_offset;
+    size = this->header.snd0_offset-this->header.pic1_offset;
     if (size)
-        this->pic1 = new Image(this->path, YA2D_PLACE_RAM, this->header->pic1_offset);
+        this->pic1 = new Image(this->path, YA2D_PLACE_RAM, this->header.pic1_offset);
 
 }
 
@@ -71,22 +69,24 @@ void Eboot::getTempData2(){
 
     int size;
 
+    if (header.magic != EBOOT_MAGIC) return;
+
     // grab snd0.at3
-    size = this->header->elf_offset-this->header->snd0_offset;
+    size = this->header.elf_offset-this->header.snd0_offset;
     if (size){
         this->snd0 = malloc(size);
         memset(this->snd0, 0, size);
         this->at3_size = size;
-        this->readFile(this->snd0, this->header->snd0_offset, size);
+        this->readFile(this->snd0, this->header.snd0_offset, size);
     }
 
     // grab icon1.pmf
-    size = this->header->pic0_offset-this->header->icon1_offset;
+    size = this->header.pic0_offset-this->header.icon1_offset;
     if (size){
         this->icon1 = malloc(size);
         memset(this->icon1, 0, size);
         this->icon1_size = size;
-        this->readFile(this->icon1, this->header->icon1_offset, size);
+        this->readFile(this->icon1, this->header.icon1_offset, size);
     }
 }
 
@@ -107,6 +107,15 @@ int Eboot::getEbootType(const char* path){
     FILE* fp = fopen(path, "rb");
     if (fp == NULL)
         return ret;
+    
+    u32 magic;
+    fseek(fp, 0, SEEK_SET);
+    fread(fp, 1, sizeof(u32), fp);
+
+    if (magic != EBOOT_MAGIC){
+        fclose(fp);
+        return (magic==ELF_MAGIC)? TYPE_HOMEBREW : UNKNOWN_TYPE;
+    }
     
     fseek(fp, 48, SEEK_SET);
     
@@ -193,11 +202,11 @@ char* Eboot::getSubtype(){
 SfoInfo Eboot::getSfoInfo(){
     SfoInfo info = this->Entry::getSfoInfo();
     // grab PARAM.SFO
-    u32 size = this->header->icon0_offset-this->header->param_offset;
+    u32 size = this->header.icon0_offset-this->header.param_offset;
     if (size){
 
         unsigned char* sfo_buffer = (unsigned char*)malloc(size);
-        this->readFile(sfo_buffer, this->header->param_offset, size);
+        this->readFile(sfo_buffer, this->header.param_offset, size);
 
         int title_size = sizeof(info.title);
         Entry::getSfoParam(sfo_buffer, size, "TITLE", (unsigned char*)(info.title), &title_size);
@@ -294,10 +303,6 @@ void Eboot::executePOPS(const char* path){
 }
 
 void Eboot::executeEboot(const char* path){
-    if (common::getMagic(path, 0) == ELF_MAGIC){ // plain ELF (1.50) homebrew
-        Eboot::executeHomebrew(path);
-        return;
-    }
     switch (Eboot::getEbootType(path)){
     case TYPE_HOMEBREW:    Eboot::executeHomebrew(path);    break;
     case TYPE_PSN:         Eboot::executePSN(path);         break;

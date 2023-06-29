@@ -42,7 +42,7 @@ class Eboot : public Entry{
 
     private:
         string ebootName;
-        PBPHeader* header;
+        PBPHeader header;
         
         char* subtype;
 

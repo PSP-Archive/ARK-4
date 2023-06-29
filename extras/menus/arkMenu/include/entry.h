@@ -95,7 +95,8 @@ class Entry{
         void* getSnd();
         int getSndSize();
         
-        void freeIcon();
+        void setIcon(Image* icon){ this->icon0 = icon; };
+        virtual void freeIcon();
 
         virtual SfoInfo getSfoInfo(){
             SfoInfo info;

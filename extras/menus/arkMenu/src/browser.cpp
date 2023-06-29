@@ -611,8 +611,13 @@ void Browser::drawScreen(){
                 common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, focused, (focused)? &scroll : NULL, 0);
                 animating = false;
             }
-            else
+            else{
                 common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, (focused)? &scroll : NULL, 0);
+                Image* icon = e->getIcon();
+                if (icon){
+                    icon->draw(320, 21);
+                }
+            }
         }
         // draw non-focused entry
         else{
@@ -742,6 +747,11 @@ Entry* Browser::get(){
 void Browser::left() {
 	if (this->entries->size() == 2) return;
 	if (this->index == 0) return;
+
+    SystemMgr::pauseDraw();
+    this->get()->freeIcon();
+    SystemMgr::resumeDraw();
+
 	if (this->index > 0) {
 		this->index = 1 * (this->index - PAGE_SIZE);
 		this->start = 1 * (this->start - PAGE_SIZE);
@@ -752,11 +762,16 @@ void Browser::left() {
 	}
     this->animating = true;
     common::playMenuSound();
+
+    this->get()->loadIcon();
 }
 
 void Browser::right() {
 	if (this->entries->size() == 2) return;
 
+    SystemMgr::pauseDraw();
+    this->get()->freeIcon();
+    SystemMgr::resumeDraw();
 
 	if (this->index + PAGE_SIZE >= entries->size()) {
         this->index = (entries->size()-1)-PAGE_SIZE+1;
@@ -782,7 +797,7 @@ void Browser::right() {
     this->animating = true;
     common::playMenuSound();
 
-
+    this->get()->loadIcon();
 
 }
         
@@ -790,6 +805,11 @@ void Browser::down(){
     // Move the cursor down, this updates index and page
     if (this->entries->size() == 0)
         return;
+    
+    SystemMgr::pauseDraw();
+    this->get()->freeIcon();
+    SystemMgr::resumeDraw();
+
     this->moving = MAX_SCROLL_TIME;
     if (this->index == (entries->size()-1)){
         this->index = 0;
@@ -805,12 +825,19 @@ void Browser::down(){
         this->index++;
     this->animating = true;
     common::playMenuSound();
+
+    this->get()->loadIcon();
 }
         
 void Browser::up(){
     // Move the cursor up, this updates index and page
     if (this->entries->size() == 0)
         return;
+
+    SystemMgr::pauseDraw();
+    this->get()->freeIcon();
+    SystemMgr::resumeDraw();
+
     this->moving = MAX_SCROLL_TIME;
     if (this->index == 0){
         this->index = entries->size()-1;
@@ -826,6 +853,8 @@ void Browser::up(){
         this->index--;
     this->animating = true;
     common::playMenuSound();
+
+    this->get()->loadIcon();
 }
 
 void Browser::recursiveFolderDelete(string path){
