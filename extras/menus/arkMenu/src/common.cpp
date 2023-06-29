@@ -392,6 +392,9 @@ void common::loadTheme(){
     images[IMAGE_BG] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
     images[IMAGE_WAITICON] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
 
+    images[0]->swizzle();
+    images[1]->swizzle();
+
     startLoadingThread();
 
     images[IMAGE_LOADING] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("LOADING.PNG"));
@@ -418,7 +421,7 @@ void common::loadTheme(){
     checkbox[1] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("CHECK.PNG"));
     checkbox[0] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("UNCHECK.PNG"));
     
-    for (int i=0; i<MAX_IMAGES; i++){
+    for (int i=2; i<MAX_IMAGES; i++){
         images[i]->swizzle();
         images[i]->is_system_image = true;
     }

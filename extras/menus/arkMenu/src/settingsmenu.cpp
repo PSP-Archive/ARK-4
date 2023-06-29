@@ -3,7 +3,7 @@
 #include "system_mgr.h"
 
 
-#define MENU_W 375
+#define MENU_W 400
 #define MENU_W_SPEED 50
 #define MENU_H_SPEED 30
 #define PAGE_SIZE 10
@@ -123,8 +123,8 @@ void SettingsMenu::draw(){
                 unsigned char sel = table->settings_entries[i]->selection;
                 // draw highlighted entry
                 if (i==index){
-                    common::printText(xoffset, yoffset, table->settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, &scroll);
-                    common::printText(xoffset+255, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1);
+                    common::printText(xoffset, yoffset, table->settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, &scroll, !shorten_paths);
+                    common::printText(xoffset+255, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1, &scroll2);
                 }
                 // non-highlighted entries
                 else{
@@ -134,13 +134,18 @@ void SettingsMenu::draw(){
                         size_t lastSlash = desc.rfind('/');
                         desc = desc.substr(lastSlash+1, -1);
                     }
-                    int tw = common::calcTextWidth(desc.c_str());
-                    if (tw > MENU_W/2){
-                        int charw = (tw/desc.size());
-                        int nchars = (MENU_W/2)/charw; 
-                        desc = desc.substr(0, nchars) + "...";
+                    else {
+                        // treat as text: translate
+                        desc = TR(desc);
                     }
-                    common::printText(xoffset, yoffset, desc.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
+                    int tw = common::calcTextWidth(desc.c_str());
+                    float wmax = MENU_W*0.55;
+                    if (tw > wmax){
+                        int charw = (tw/desc.size());
+                        int nchars = wmax/charw; 
+                        desc = (nchars<desc.size())? desc.substr(0, nchars) + "..." : desc;
+                    }
+                    common::printText(xoffset, yoffset, desc.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0, !shorten_paths);
                     // show option for entry? only if told so
                     if (show_all_opts)
                         common::printText(xoffset+255, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_LITTLE, 0);

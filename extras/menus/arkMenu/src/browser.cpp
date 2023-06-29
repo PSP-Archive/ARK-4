@@ -22,7 +22,8 @@
 #define UMD_ROOT "disc0:/" // UMD directory
 #define PAGE_SIZE 10 // maximum entries shown on screen
 #define BUF_SIZE 1024*16 // 16 kB buffer for copying files
-
+#define MENU_W 410
+#define MENU_H 230
 #define MAX_SCROLL_TIME 50
 
 #include "browser_entries.h"
@@ -594,7 +595,7 @@ void Browser::drawScreen(){
     }
 
     // draw main window
-    common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, 410, 230);
+    common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, MENU_W, MENU_H);
     
     // no items loaded? draw wait icon
     if (entries->size() == 0){
@@ -724,12 +725,14 @@ void Browser::draw(){
 
 string Browser::formatText(string text){
     // Format the text shown, text with more than 13 characters will be truncated and ... be appended to the name
-    if (text.length() <= 40)
+    int tw = common::calcTextWidth(text.c_str());
+    float wmax = MENU_W*0.75;
+    if (tw <= wmax)
         return text;
     else{
-        string* ret = new string(text.substr(0, 37));
-        *ret += "...";
-        return *ret;
+        int charw = (tw/text.size());
+        int nchars = wmax/charw;
+        return (nchars<text.size())? text.substr(0, nchars) + "..." : text;
     }
 }
         
@@ -1491,15 +1494,16 @@ void Browser::drawOptionsMenu(){
         case 2: // draw menu
             optionsAnimX = 0;
             optionsAnimY = 52;
-            common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 132, 220);
+            common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 135, 220);
         
             {
             int x = 10;
             int y = 80;
+            static TextScroll scroll;
             for (int i=0; i<MAX_OPTIONS; i++){
                 if (pEntries[i] == NULL) continue;
                 if (i == pEntryIndex)
-                    common::printText(x, y, pEntries[i], LITEGRAY, SIZE_BIG, true);
+                    common::printText(x, y, pEntries[i], LITEGRAY, SIZE_BIG, true, &scroll);
                 else
                     common::printText(x, y, pEntries[i]);
                 y += 20;

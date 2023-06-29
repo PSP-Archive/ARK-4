@@ -34,8 +34,8 @@ enum colors {
 
 enum images {
     IMAGE_BG,
-    IMAGE_NOICON,
     IMAGE_WAITICON,
+    IMAGE_NOICON,
     IMAGE_GAME,
     IMAGE_SETTINGS,
     IMAGE_BROWSER,

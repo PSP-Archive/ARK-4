@@ -127,7 +127,9 @@ class GameManager : public SystemEntry{
 
         void drawInfo(){
             static TextScroll scroll;
-            common::printText(5, 13, this->getInfo().c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll, 0);
+            string info = getInfo();
+            bool translate = (info == "Recovery Menu" || info == "UMD Drive");
+            common::printText(5, 13, info.c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll, translate);
         }
         
         /* Control the icon threads */
