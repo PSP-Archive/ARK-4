@@ -44,7 +44,7 @@ static struct {
         "Chinese (Trad.)",
         "Chinese (Simp.)",
         "Polski",
-        "Ellinika",
+        "Ellhnika",
         //"Thai",
     }
 };

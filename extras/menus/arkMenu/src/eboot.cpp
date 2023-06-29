@@ -303,6 +303,10 @@ void Eboot::executePOPS(const char* path){
 }
 
 void Eboot::executeEboot(const char* path){
+    if (common::getMagic(path, 0) == ELF_MAGIC){ // plain ELF (1.50) homebrew
+        Eboot::executeHomebrew(path);
+        return;
+    }
     switch (Eboot::getEbootType(path)){
     case TYPE_HOMEBREW:    Eboot::executeHomebrew(path);    break;
     case TYPE_PSN:         Eboot::executePSN(path);         break;
