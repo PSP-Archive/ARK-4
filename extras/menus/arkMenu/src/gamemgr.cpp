@@ -190,6 +190,7 @@ void GameManager::findEboots(const char* path){
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
         if (!FIO_SO_ISDIR(dit->d_stat.st_attr)) continue;
+        if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue;
         
         string fullpath = Eboot::fullEbootPath(path, dit->d_name);
         if (fullpath == ""){
@@ -228,6 +229,7 @@ void GameManager::findISOs(const char* path){
 
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
+        if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue;
 
         string fullpath = string(path)+string(dit->d_name);
 
