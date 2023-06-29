@@ -4,8 +4,13 @@
 
 #include <psptypes.h>
 #include <pspctrl.h>
+#include <pspkernel.h>
 
-#include "common.h"
+#include "globals.h"
+#include "systemctrl_se.h"
+#include "umdvideo_list.h"
+
+#include "../arkMenu/include/conf.h"
 
 
 // Config stuff go here
@@ -43,6 +48,7 @@ typedef struct _vsh_Status{
 	u8 bc_alpha;
 	u8 bc_delta;
 
+	int umdvideo_idx;
 }vsh_Status;
 
 // VSH Menu struct
@@ -53,6 +59,8 @@ typedef struct _vsh_Menu{
 	vsh_Config config;
 	vsh_Buttons buttons;
 	vsh_Status status;
+	
+	UmdVideoList umdlist;
 	
 	u32 psp_model;
 	
