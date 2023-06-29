@@ -156,11 +156,13 @@ void Browser::update(Entry* e, bool skip_prompt){
         if (this->cwd == "ms0:/ISO/VIDEO/" || this->cwd == "ef0:/ISO/VIDEO/")
             Iso::executeVideoISO(e->getPath().c_str());
         else{
-            is_loading = true;
             Iso* iso = new Iso(e->getPath());
-            iso->loadIcon();
-            iso->getTempData1();
-            is_loading = false;
+            if (!skip_prompt){
+                is_loading = true;
+                iso->loadIcon();
+                iso->getTempData1();
+                is_loading = false;
+            }
             if (skip_prompt || iso->pmfPrompt())
                 iso->execute();
             else
@@ -168,11 +170,13 @@ void Browser::update(Entry* e, bool skip_prompt){
         }
     }
     else if (Eboot::isEboot(e->getPath().c_str())){
-        is_loading = true;
         Eboot* eboot = new Eboot(e->getPath());
-        eboot->loadIcon();
-        eboot->getTempData1();
-        is_loading = false;
+        if (!skip_prompt){
+            is_loading = true;
+            eboot->loadIcon();
+            eboot->getTempData1();
+            is_loading = false;
+        }
         if (skip_prompt || eboot->pmfPrompt())
             eboot->execute();
         else

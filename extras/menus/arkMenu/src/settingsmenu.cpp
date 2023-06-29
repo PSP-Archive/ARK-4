@@ -134,7 +134,12 @@ void SettingsMenu::draw(){
                         size_t lastSlash = desc.rfind('/');
                         desc = desc.substr(lastSlash+1, -1);
                     }
-                    if (desc.size() > 55) desc = desc.substr(0, 40) + "...";
+                    int tw = common::calcTextWidth(desc.c_str());
+                    if (tw > MENU_W/2){
+                        int charw = (tw/desc.size());
+                        int nchars = (MENU_W/2)/charw; 
+                        desc = desc.substr(0, nchars) + "...";
+                    }
                     common::printText(xoffset, yoffset, desc.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
                     // show option for entry? only if told so
                     if (show_all_opts)

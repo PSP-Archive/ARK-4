@@ -332,7 +332,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[2];
 } browser_icon0 = {
-    "System Menu Size",
+    "ICON0 in Browser",
     2,
     0,
     &(common::getConf()->browser_icon0),
