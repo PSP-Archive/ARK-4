@@ -1,10 +1,14 @@
 #include "fonts.h"
 
+#include <string.h>
+
+#include "scepaf.h"
+
 
 extern unsigned char msx[];
 
 font_Data font = {
-	.bitmap = msx,
+	.bitmap = (u8*)msx,
 	.mem_id = -1,
 	.width = FONT_WIDTH,
 	.height = FONT_HEIGHT
