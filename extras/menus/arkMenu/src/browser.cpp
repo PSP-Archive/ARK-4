@@ -131,7 +131,7 @@ void Browser::moveDirUp(){
     this->refreshDirs();
 }
         
-void Browser::update(Entry* e){
+void Browser::update(Entry* e, bool skip_prompt){
     // Move to the next directory pointed by the currently selected entry or run an app if selected file is one
     if (this->entries->size() == 0)
         return;
@@ -161,7 +161,7 @@ void Browser::update(Entry* e){
             iso->loadIcon();
             iso->getTempData1();
             is_loading = false;
-            if (iso->pmfPrompt())
+            if (skip_prompt || iso->pmfPrompt())
                 iso->execute();
             else
                 delete iso;
@@ -173,7 +173,7 @@ void Browser::update(Entry* e){
         eboot->loadIcon();
         eboot->getTempData1();
         is_loading = false;
-        if (eboot->pmfPrompt())
+        if (skip_prompt || eboot->pmfPrompt())
             eboot->execute();
         else
             delete eboot;
@@ -613,9 +613,11 @@ void Browser::drawScreen(){
             }
             else{
                 common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, (focused)? &scroll : NULL, 0);
-                Image* icon = e->getIcon();
-                if (icon){
-                    icon->draw(320, 21);
+                if (common::getConf()->browser_icon0){
+                    Image* icon = e->getIcon();
+                    if (icon){
+                        icon->draw(320, 21);
+                    }
                 }
             }
         }
@@ -748,9 +750,11 @@ void Browser::left() {
 	if (this->entries->size() == 2) return;
 	if (this->index == 0) return;
 
-    SystemMgr::pauseDraw();
-    this->get()->freeIcon();
-    SystemMgr::resumeDraw();
+    if (common::getConf()->browser_icon0){
+        SystemMgr::pauseDraw();
+        this->get()->freeIcon();
+        SystemMgr::resumeDraw();
+    }
 
 	if (this->index > 0) {
 		this->index = 1 * (this->index - PAGE_SIZE);
@@ -763,15 +767,18 @@ void Browser::left() {
     this->animating = true;
     common::playMenuSound();
 
-    this->get()->loadIcon();
+    if (common::getConf()->browser_icon0)
+        this->get()->loadIcon();
 }
 
 void Browser::right() {
 	if (this->entries->size() == 2) return;
 
-    SystemMgr::pauseDraw();
-    this->get()->freeIcon();
-    SystemMgr::resumeDraw();
+    if (common::getConf()->browser_icon0){
+        SystemMgr::pauseDraw();
+        this->get()->freeIcon();
+        SystemMgr::resumeDraw();
+    }
 
 	if (this->index + PAGE_SIZE >= entries->size()) {
         this->index = (entries->size()-1)-PAGE_SIZE+1;
@@ -797,7 +804,8 @@ void Browser::right() {
     this->animating = true;
     common::playMenuSound();
 
-    this->get()->loadIcon();
+    if (common::getConf()->browser_icon0)
+        this->get()->loadIcon();
 
 }
         
@@ -806,9 +814,11 @@ void Browser::down(){
     if (this->entries->size() == 0)
         return;
     
-    SystemMgr::pauseDraw();
-    this->get()->freeIcon();
-    SystemMgr::resumeDraw();
+    if (common::getConf()->browser_icon0){
+        SystemMgr::pauseDraw();
+        this->get()->freeIcon();
+        SystemMgr::resumeDraw();
+    }
 
     this->moving = MAX_SCROLL_TIME;
     if (this->index == (entries->size()-1)){
@@ -826,7 +836,8 @@ void Browser::down(){
     this->animating = true;
     common::playMenuSound();
 
-    this->get()->loadIcon();
+    if (common::getConf()->browser_icon0)
+        this->get()->loadIcon();
 }
         
 void Browser::up(){
@@ -834,9 +845,11 @@ void Browser::up(){
     if (this->entries->size() == 0)
         return;
 
-    SystemMgr::pauseDraw();
-    this->get()->freeIcon();
-    SystemMgr::resumeDraw();
+    if (common::getConf()->browser_icon0){
+        SystemMgr::pauseDraw();
+        this->get()->freeIcon();
+        SystemMgr::resumeDraw();
+    }
 
     this->moving = MAX_SCROLL_TIME;
     if (this->index == 0){
@@ -854,7 +867,8 @@ void Browser::up(){
     this->animating = true;
     common::playMenuSound();
 
-    this->get()->loadIcon();
+    if (common::getConf()->browser_icon0)
+        this->get()->loadIcon();
 }
 
 void Browser::recursiveFolderDelete(string path){
@@ -1615,7 +1629,7 @@ void Browser::control(Controller* pad){
 	else if (pad->left())
 		this->left();
     else if (pad->accept())
-        this->update(this->get());
+        this->update(this->get(), common::getConf()->fast_gameboot);
     else if (pad->decline()){
         common::playMenuSound();
         this->moveDirUp();
@@ -1632,8 +1646,10 @@ void Browser::control(Controller* pad){
         common::playMenuSound();
         this->refreshDirs();
     }
-    else if (pad->start() && conf->startbtn == 1){
-        this->update(new BrowserFile(conf->last_game));
+    else if (pad->start()){
+        Entry* e = this->get();
+        if (conf->startbtn == 1) e = new BrowserFile(conf->last_game);
+        this->update(e, true);
     }
     else{
         if (moving) moving--;

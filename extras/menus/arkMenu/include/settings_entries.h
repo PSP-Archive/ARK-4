@@ -325,6 +325,20 @@ static struct {
     {"Default", "Small", "Medium", "Large"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[2];
+} browser_icon0 = {
+    "System Menu Size",
+    2,
+    0,
+    &(common::getConf()->browser_icon0),
+    {"Disabled", "Enabled"}
+};
+
 
 settings_entry* settings_entries[] = {
     (settings_entry*)&language,
@@ -346,6 +360,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&battery_percent,
     (settings_entry*)&startbtn,
     (settings_entry*)&menusize,
+    (settings_entry*)&browser_icon0,
     (settings_entry*)&redirect_ms0,
 };
 

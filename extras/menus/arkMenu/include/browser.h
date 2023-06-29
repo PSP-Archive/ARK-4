@@ -152,7 +152,7 @@ class Browser : public SystemEntry{
     
         void moveDirUp();
         
-        void update(Entry* e);
+        void update(Entry* e, bool skip_prompt);
         
         void refreshDirs();
         
