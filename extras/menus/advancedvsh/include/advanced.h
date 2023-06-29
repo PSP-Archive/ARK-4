@@ -57,7 +57,7 @@ enum {
 int submenu_draw(void);
 int submenu_find_longest_string(void);
 int submenu_setup(void);
-int submenu_ctrl(u32 button_on);
+int submenu_ctrl(void);
 void subbutton_func(vsh_Menu *vsh);
 
 

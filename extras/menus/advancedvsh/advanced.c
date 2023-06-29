@@ -6,9 +6,12 @@
 #include "clock.h"
 
 #include "vsh.h"
+#include "ui.h"
+#include "scepaf.h"
 #include "fonts.h"
 #include "advanced.h"
 #include "blit.h"
+#include "color.h"
 
 
 extern char umd_path[72];
@@ -18,7 +21,6 @@ extern char umdvideo_path[256];
 
 extern int xyPoint[];
 extern int xyPoint2[];
-extern u32 colors[];
 
 
 int sub_stop_stock = 0;
@@ -38,6 +40,7 @@ int submenu_draw(void) {
 	vsh_Menu *vsh = vsh_menu_pointer();
 	blit_Gfx *gfx = blit_gfx_pointer();
 	font_Data *font = font_data_pointer();
+	u32 *colors = (u32*)color_data_pointer();
 
 	// check & setup video mode
 	if (blit_setup() < 0) 
@@ -174,11 +177,33 @@ int submenu_draw(void) {
 		case 27: fc = colors[1]; break;
 		default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
 	}
-
+	
 	blit_set_color(fc, bc);
 	submenu_start_y += font->height; // replace by font width
 	// add line at the end
 	blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, 8);
+	
+	//debug
+	char debug[64];
+	int y = 210;
+	scePaf_snprintf(debug, 64, "vsh = 0x%08X | 0x%08X | 0x%08X", vsh, vsh->buttons.pad.Buttons, vsh->buttons.new_buttons_on);
+	blit_string(10, y, debug);
+	y += 8;
+	scePaf_snprintf(debug, 64, "gfx = 0x%08X", gfx);
+	blit_string(10, y, debug);
+	y += 8;
+	extern const char msx[];
+	scePaf_snprintf(debug, 64, "font = 0x%08X | 0x%08X - 0x%08X", font, font->bitmap, msx);
+	blit_string(10, y, debug);
+	y += 8;
+	scePaf_snprintf(debug, 64, "colors = 0x%08X", colors);
+	blit_string(10, y, debug);
+	y += 8;
+	extern const char *g_messages_en[];
+	scePaf_snprintf(debug, 64, "msg = 0x%08X - 0x%08X", g_messages, g_messages_en);
+	blit_string(10, y, debug);
+	y += 8;
+	
 	
 	blit_set_color(0x00ffffff,0x00000000);
 	return 0;
@@ -358,12 +383,13 @@ int submenu_setup(void) {
 }
 
 
-int submenu_ctrl(u32 button_on) {
+int submenu_ctrl(void) {
 	int direction;
-	
+	u32 button_on;
 	vsh_Menu *vsh = vsh_menu_pointer();
+	button_on = vsh->buttons.new_buttons_on;
 
-	if ((button_on & PSP_CTRL_SELECT) || (button_on & PSP_CTRL_HOME)) {
+	if (button_on & (PSP_CTRL_SELECT | PSP_CTRL_HOME)) {
 		submenu_sel = SUBMENU_GO_BACK;
 		return 1;
 	}
@@ -417,9 +443,9 @@ int submenu_ctrl(u32 button_on) {
 			if (direction) {
 			   	change_umd_mount_idx(direction);
 
-				if(umdvideo_idx != 0) {
+				if(vsh->status.umdvideo_idx != 0) {
 					char *umdpath;
-					umdpath = umdvideolist_get(&g_umdlist, umdvideo_idx-1);
+					umdpath = umdvideolist_get(&vsh->umdlist, vsh->status.umdvideo_idx-1);
 
 					if(umdpath != NULL) {
 						scePaf_strncpy(umdvideo_path, umdpath, sizeof(umdvideo_path));
@@ -503,7 +529,7 @@ void subbutton_func(vsh_Menu *vsh) {
 				vsh->status.submenu_mode = 1;
 			break;
 		case 1:
-			res = submenu_ctrl(vsh->buttons.new_buttons_on);
+			res = submenu_ctrl();
 
 			if (res != 0) {
 				sub_stop_stock = res;
