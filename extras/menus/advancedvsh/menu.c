@@ -25,18 +25,17 @@
 
 #include "common.h"
 #include "systemctrl.h"
-
 #include "vsh.h"
+#include "ui.h"
+#include "scepaf.h"
 #include "fonts.h"
 #include "blit.h"
+#include "color.h"
 
 
 const char **g_messages = g_messages_en;
 
-void change_clock(int dir, int a);
-
 extern char umd_path[72];
-extern u32 colors[];
 
 
 int stop_stock = 0;
@@ -56,8 +55,6 @@ static int menu_sel = TMENU_CUSTOM_LAUNCHER;
 const int xyPoint[] ={0x98, 0x30, 0xC0, 0xA0, 0x70, 0x08, 0x0E, 0xA8};//data243C=
 const int xyPoint2[] ={0xB0, 0x30, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data2458=
 
-int colors_dir = 0;
-
 
 int menu_draw(void) {
 	char msg[128] = {0};
@@ -68,6 +65,7 @@ int menu_draw(void) {
 	vsh_Menu *vsh = vsh_menu_pointer();
 	blit_Gfx *gfx = blit_gfx_pointer();
 	font_Data *font = font_data_pointer();
+	u32 *colors = (u32*)color_data_pointer();
 	
 	// check & setup video mode
 	if(blit_setup() < 0) 
