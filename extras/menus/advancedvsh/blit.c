@@ -23,8 +23,8 @@
 #include <pspdisplay.h>
 
 #include "common.h"
-
 #include "vsh.h"
+#include "scepaf.h"
 #include "fonts.h"
 
 
@@ -130,7 +130,8 @@ int blit_string(int sx,int sy,const char *msg) {
 }
 
 int blit_string_ctr(int sy,const char *msg) {
-	return blit_string((gfx.width - scePaf_strlen(msg) * font_data_pointer()->width) / 2, sy, msg);
+	font_Data *font = (font_Data*)font_data_pointer();
+	return blit_string((gfx.width - scePaf_strlen(msg) * font->width) / 2, sy, msg);
 }
 
 
@@ -162,5 +163,6 @@ void blit_rect_fill(int sx, int sy, int w, int h) {
 
 // Returns size of string in pixels
 int blit_get_string_width(char *msg) {
-	return scePaf_strlen(msg) * font_data_pointer()->width;
+	font_Data *font = (font_Data*)font_data_pointer();
+	return scePaf_strlen(msg) * font->width;
 }
