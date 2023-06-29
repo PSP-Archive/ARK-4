@@ -274,29 +274,33 @@ static void systemDrawer(){
     }
 }
 
+void SystemMgr::drawScreen(){
+    if (stillLoading()){
+        common::getImage(IMAGE_BG)->draw(0, 0);
+    }
+    else{
+        common::drawScreen();
+    }
+    if (!screensaver){
+        entries[cur_entry]->draw();
+        if (!fullscreen){
+            systemDrawer();
+            if (common::getConf()->show_fps){
+                ostringstream fps;
+                ya2d_calc_fps();
+                fps<<ya2d_get_fps();
+                common::printText(460, 260, fps.str().c_str());
+            }
+        }
+    }
+}
+
 static int drawThread(SceSize _args, void *_argp){
     common::stopLoadingThread();
     while (running){
         sceKernelWaitSema(draw_sema, 1, NULL);
         common::clearScreen(CLEAR_COLOR);
-        if (stillLoading()){
-            common::getImage(IMAGE_BG)->draw(0, 0);
-        }
-        else{
-            common::drawScreen();
-        }
-        if (!screensaver){
-            entries[cur_entry]->draw();
-            if (!fullscreen){
-                systemDrawer();
-                if (common::getConf()->show_fps){
-                    ostringstream fps;
-                    ya2d_calc_fps();
-                    fps<<ya2d_get_fps();
-                    common::printText(460, 260, fps.str().c_str());
-                }
-            }
-        }
+        SystemMgr::drawScreen();
         common::flipScreen();
         sceKernelSignalSema(draw_sema, 1);
         sceKernelDelayThread(0);

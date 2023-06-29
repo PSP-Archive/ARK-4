@@ -76,6 +76,7 @@ Browser::Browser(){
     this->pEntryIndex = 0;
     this->animation = 0;
     this->firstboot = true;
+    this->is_loading = false;
 
     t_conf* conf = common::getConf();
     if (conf->browser_dir[0]) this->cwd = conf->browser_dir;
@@ -155,13 +156,27 @@ void Browser::update(Entry* e){
         if (this->cwd == "ms0:/ISO/VIDEO/" || this->cwd == "ef0:/ISO/VIDEO/")
             Iso::executeVideoISO(e->getPath().c_str());
         else{
+            is_loading = true;
             Iso* iso = new Iso(e->getPath());
-            iso->execute();
+            iso->loadIcon();
+            iso->getTempData1();
+            is_loading = false;
+            if (iso->pmfPrompt())
+                iso->execute();
+            else
+                delete iso;
         }
     }
     else if (Eboot::isEboot(e->getPath().c_str())){
+        is_loading = true;
         Eboot* eboot = new Eboot(e->getPath());
-        eboot->execute();
+        eboot->loadIcon();
+        eboot->getTempData1();
+        is_loading = false;
+        if (eboot->pmfPrompt())
+            eboot->execute();
+        else
+            delete eboot;
     }
     else if (Entry::isZip(e->getPath().c_str())){
         extractArchive(0);
@@ -561,6 +576,7 @@ void Browser::drawScreen(){
     int yoffset = 50;
     bool focused = (optionsmenu==NULL);
     static TextScroll scroll;
+    static float angle = 1.0;
     
     // draw scrollbar (if moving)
     if (moving && entries->size() > 0){
@@ -578,7 +594,6 @@ void Browser::drawScreen(){
     
     // no items loaded? draw wait icon
     if (entries->size() == 0){
-        static float angle = 1.0;
         Image* img = common::getImage(IMAGE_WAITICON);
         img->draw_rotate((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2, angle);
         angle+=0.2;
@@ -607,6 +622,12 @@ void Browser::drawScreen(){
         common::printText(400, yoffset, e->getSize().c_str());
         common::getIcon(e->getFileType())->draw(xoffset-15, yoffset-10);
         yoffset += 20;
+    }
+
+    if (is_loading){
+        Image* img = common::getImage(IMAGE_WAITICON);
+        img->draw_rotate((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2, angle);
+        angle+=0.2;
     }
 }
 

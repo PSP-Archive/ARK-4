@@ -123,6 +123,7 @@ class Browser : public SystemEntry{
         unsigned int moving;
         int animation;
         bool firstboot;
+        bool is_loading;
         
         /* Screen drawing thread data */
         bool hide_main_window;

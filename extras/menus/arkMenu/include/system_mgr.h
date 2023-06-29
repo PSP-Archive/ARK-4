@@ -9,6 +9,7 @@ namespace SystemMgr{
     extern void flushFiles();
     extern void stopMenu();
     extern void endMenu();
+    extern void drawScreen();
     extern void pauseDraw();
     extern void resumeDraw();
     extern void enterFullScreen();

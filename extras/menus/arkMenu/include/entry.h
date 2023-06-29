@@ -59,6 +59,8 @@ class Entry{
     private:
 
         void gameBoot();
+        void animAppear();
+        void animDisappear();
 
     protected:
 
@@ -110,6 +112,7 @@ class Entry{
         
         void drawBG();
         
+        bool pmfPrompt();
         void execute();
         
         virtual char* getType()=0;

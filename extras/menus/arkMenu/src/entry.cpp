@@ -4,6 +4,8 @@
 #include "iso.h"
 #include "sprites.h"
 #include "system_mgr.h"
+#include "music_player.h"
+#include "pmf/pmf.h"
 
 int gameBootThread(SceSize _args, void *_argp){
     Sprites s;
@@ -210,4 +212,109 @@ bool Entry::getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_nam
 			break;
 		}
 	}
+}
+
+void Entry::animAppear(){
+    for (int i=480; i>=0; i-=40){
+        common::clearScreen(CLEAR_COLOR);
+        SystemMgr::drawScreen();
+        Image* pic1 = this->getPic1();
+        if (pic1 != NULL){
+            if (pic1->getWidth() == 480 && pic1->getHeight() == 272)
+                pic1->draw(i, 0);
+            else
+                pic1->draw_scale(i, 0, 480, 272);
+        }
+        Image* pic0 = this->getPic0();
+        if (pic0 != NULL) pic0->draw(i+160, 85);
+        this->getIcon()->draw(i+10, 98);
+        common::flipScreen();
+    }
+}
+
+void Entry::animDisappear(){
+    for (int i=0; i<=480; i+=40){
+        common::clearScreen(CLEAR_COLOR);
+        common::drawScreen();
+        SystemMgr::drawScreen();
+        Image* pic1 = this->getPic1();
+        if (pic1 != NULL){
+            if (pic1->getWidth() == 480 && pic1->getHeight() == 272)
+                pic1->draw(i, 0);
+            else
+                pic1->draw_scale(i, 0, 480, 272);
+        }
+        Image* pic0 = this->getPic0();
+        if (pic0 != NULL) pic0->draw(i+160, 85);
+        this->getIcon()->draw(i+10, 98);
+        common::flipScreen();
+    }
+}
+
+static int loading_data;
+
+int load_thread(int argc, void* argp){
+    Entry* e = (Entry*)(*(void**)argp);
+    e->getTempData2();
+    loading_data = false;
+    sceKernelExitDeleteThread(0);
+    return 0;
+}
+
+bool Entry::pmfPrompt(){
+
+    bool ret;
+    
+    SystemMgr::pauseDraw();
+    
+    animAppear();
+
+    loading_data = true;
+
+    Entry* entry = this;
+
+    int thd = sceKernelCreateThread("gamedata_thread", (SceKernelThreadEntry)&load_thread, 0x10, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
+    sceKernelStartThread(thd, sizeof(entry), &entry);
+
+    float angle = 1.0;
+    Image* img = common::getImage(IMAGE_WAITICON);
+    while (loading_data){
+        common::clearScreen(CLEAR_COLOR);
+        entry->drawBG();
+        entry->getIcon()->draw(10, 98);
+        img->draw_rotate((480-img->getWidth())/2, (272-img->getHeight())/2, angle);
+        angle+=0.2;
+        common::flipScreen();
+    }
+    
+    bool pmfPlayback = entry->getIcon1() != NULL || entry->getSnd() != NULL;
+        
+    if (pmfPlayback && !MusicPlayer::isPlaying()){
+        ret = pmfStart(entry, 10, 98);
+    }
+    else{
+        Controller control;
+    
+        while (true){
+            common::clearScreen(CLEAR_COLOR);
+            entry->drawBG();
+            entry->getIcon()->draw(10, 98);
+            common::flipScreen();
+            control.update(1);
+            if (control.accept()){
+                ret = true;
+                break;
+            }
+            else if (control.decline()){
+                ret = false;
+                break;
+            }
+        }
+    }
+    if (!ret){
+        common::playMenuSound();
+        animDisappear();
+    }
+    SystemMgr::resumeDraw();
+    return ret;
 }

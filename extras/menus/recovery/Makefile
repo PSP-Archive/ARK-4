@@ -44,6 +44,12 @@ OBJS = \
 		../arkMenu/src/anim/snow.o \
 		../arkMenu/src/anim/gol.o \
 		../arkMenu/src/anim/noanim.o \
+		../arkMenu/src/pmf/pmf.o \
+		../arkMenu/src/pmf/pmf_video.o \
+		../arkMenu/src/pmf/pmf_decoder.o \
+		../arkMenu/src/pmf/pmf_audio.o \
+		../arkMenu/src/pmf/pmf_reader.o \
+		../arkMenu/src/pmf/at3.o \
 
 LIBS = \
 		-lunziprar \
@@ -55,6 +61,8 @@ LIBS = \
 		-lpng \
 		-lpspvfpu \
 		-lpspaudio \
+		-lpspmpeg \
+		-lpspatrac3 \
 		-lpsppower \
 		-lpspgum \
 		-lpspgu \
