@@ -53,7 +53,7 @@ void MusicPlayer::draw(){
     string info = (MP3::isPaused()? string("||"):string(">"));
     common::getImage(IMAGE_DIALOG)->draw_scale(0, 0, 480, 20);
     common::printText(5, 13, info.c_str(), LITEGRAY, SIZE_MEDIUM, 1, 0);
-    common::printText(15, 13, (current_song)? current_song->getFilename() : this->path.c_str(), LITEGRAY, SIZE_MEDIUM, 1, 1);
+    common::printText(15, 13, (current_song)? current_song->getFilename() : this->path.c_str(), LITEGRAY, SIZE_MEDIUM, 1, &scroll);
 
     if (playlist.size()){
         common::getImage(IMAGE_DIALOG)->draw_scale(20, 30, 450, 235);

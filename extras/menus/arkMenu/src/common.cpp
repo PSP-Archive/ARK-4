@@ -34,9 +34,6 @@ extern intraFont* font;
 static MP3* sound_mp3 = NULL;
 static int argc;
 static char **argv;
-static float scrollX = 0.f;
-static float scrollY = 0.f;
-static float scrollXTmp = 0.f;
 static int currentFont = 0;
 static int currentLang = 0;
 /* Instance of the animations that are drawn on the menu */
@@ -592,7 +589,7 @@ void common::playMenuSound(){
     sound_mp3->play();
 }
 
-void common::printText(float x, float y, const char* text, u32 color, float size, int glow, int scroll, int translate){
+void common::printText(float x, float y, const char* text, u32 color, float size, int glow, TextScroll* scroll, int translate){
 
     if (font == NULL)
         return;
@@ -616,20 +613,20 @@ void common::printText(float x, float y, const char* text, u32 color, float size
         int val = (t < 0.5f) ? t*511 : (1.0f-t)*511;
         secondColor = (0xFF<<24)+(val<<16)+(val<<8)+(val);
     }
-    if (int(scroll)){
+    if (scroll){
         arg5 = INTRAFONT_SCROLL_LEFT;
     }
     
     intraFontSetStyle(textFont, size, color, secondColor, 0.f, arg5);
     if (altFont) intraFontSetStyle(altFont, size, color, secondColor, 0.f, arg5);
 
-    if (int(scroll)){
-        if (x != scrollX || y != scrollY){
-            scrollX = x;
-            scrollXTmp = x;
-            scrollY = y;
+    if (scroll){
+        if (x != scroll->x || y != scroll->y){
+            scroll->x = x;
+            scroll->tmp = x;
+            scroll->y = y;
         }
-        scrollXTmp = intraFontPrintColumn(textFont, scrollXTmp, y, 200, translated.c_str());
+        scroll->tmp = intraFontPrintColumn(textFont, scroll->tmp, y, 200, translated.c_str());
     }
     else
         intraFontPrint(textFont, x, y, translated.c_str());

@@ -61,6 +61,12 @@ enum {
     MAX_FILE_TYPES,
 };
 
+typedef struct TextScroll{
+    float x;
+    float y;
+    float tmp;
+}TextScroll;
+
 #define SIZE_TINY 0.4f
 #define SIZE_LITTLE 0.51f
 #define SIZE_MEDIUM 0.6f
@@ -105,7 +111,7 @@ namespace common{
     extern t_conf* getConf();
     extern void resetConf();
     extern void playMenuSound();
-    extern void printText(float x, float y, const char *text, u32 color=GRAY_COLOR, float size=SIZE_LITTLE, int glow=0, int scroll=0, int translate=1);
+    extern void printText(float x, float y, const char *text, u32 color=GRAY_COLOR, float size=SIZE_LITTLE, int glow=0, TextScroll* scroll=NULL, int translate=1);
     extern int calcTextWidth(const char* text, float size=SIZE_LITTLE);
     extern void clearScreen(u32 color = CLEAR_COLOR);
     extern void drawBorder();

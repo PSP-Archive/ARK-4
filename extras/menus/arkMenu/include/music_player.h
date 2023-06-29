@@ -9,6 +9,7 @@ class MusicPlayer : public OptionsMenu{
 
     private:
         string path;
+        TextScroll scroll;
     
     public:
         MusicPlayer(string path);

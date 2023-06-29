@@ -560,6 +560,7 @@ void Browser::drawScreen(){
     const int xoffset = 115;
     int yoffset = 50;
     bool focused = (optionsmenu==NULL);
+    static TextScroll scroll;
     
     // draw scrollbar (if moving)
     if (moving && entries->size() > 0){
@@ -592,11 +593,11 @@ void Browser::drawScreen(){
         // draw focused entry
         if (i == index && this->enableSelection){
             if (animating){
-                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, focused, focused, 0);
+                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, focused, (focused)? &scroll : NULL, 0);
                 animating = false;
             }
             else
-                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, focused, 0);
+                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, (focused)? &scroll : NULL, 0);
         }
         // draw non-focused entry
         else{

@@ -127,7 +127,8 @@ class GameManager : public SystemEntry{
         }
 
         void drawInfo(){
-            common::printText(5, 13, this->getInfo().c_str(), LITEGRAY, SIZE_MEDIUM, 0, 1, 0);
+            static TextScroll scroll;
+            common::printText(5, 13, this->getInfo().c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll, 0);
         }
         
         /* Control the icon threads */

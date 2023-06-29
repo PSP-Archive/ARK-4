@@ -123,7 +123,7 @@ void SettingsMenu::draw(){
                 unsigned char sel = table->settings_entries[i]->selection;
                 // draw highlighted entry
                 if (i==index){
-                    common::printText(xoffset, yoffset, table->settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, 1);
+                    common::printText(xoffset, yoffset, table->settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, &scroll);
                     common::printText(xoffset+255, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1);
                 }
                 // non-highlighted entries
