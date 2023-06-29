@@ -17,6 +17,10 @@
 
 #include "common.h"
 
+#include <psptypes.h>
+
+#include "macros.h"
+
 const char *g_messages_en[] = {
 	"Default",
 	"Japan",
