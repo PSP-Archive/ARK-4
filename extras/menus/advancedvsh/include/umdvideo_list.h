@@ -2,6 +2,9 @@
 #define _UMDVIDEO_LIST_H
 
 
+#include <stdio.h>
+
+
 typedef struct _UmdVideoEntry {
 	char *path;
 	struct _UmdVideoEntry *next;

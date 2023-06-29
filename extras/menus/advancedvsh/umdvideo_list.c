@@ -16,8 +16,15 @@
  */
 
 #include <pspsdk.h>
+#include <pspiofilemgr.h>
+
+#include <string.h>
+
 #include "common.h"
 #include "vpl.h"
+#include "scepaf.h"
+#include "umdvideo_list.h"
+
 
 int umdvideolist_add(UmdVideoList *list, const char *path)
 {
