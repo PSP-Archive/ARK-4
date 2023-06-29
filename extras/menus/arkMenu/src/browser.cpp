@@ -592,15 +592,15 @@ void Browser::drawScreen(){
         // draw focused entry
         if (i == index && this->enableSelection){
             if (animating){
-                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, focused, focused);
+                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, focused, focused, 0);
                 animating = false;
             }
             else
-                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, focused);
+                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, focused, 0);
         }
         // draw non-focused entry
         else{
-            common::printText(xoffset, yoffset, this->formatText(e->getName()).c_str());
+            common::printText(xoffset, yoffset, this->formatText(e->getName()).c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0, 0);
         }
         // draw entry size and icon
         common::printText(400, yoffset, e->getSize().c_str());
@@ -1410,7 +1410,7 @@ void Browser::drawOptionsMenu(){
     switch (optionsDrawState){
         case 0:
             common::getImage(IMAGE_DIALOG)->draw_scale(0, 232, 40, 40);
-            common::printText(5, 252, "...", GRAY_COLOR, 2.f);
+            common::printText(5, 252, "...", GRAY_COLOR, 2.f, 0, 0, 0);
             break;
         case 1: // draw opening animation
             common::getImage(IMAGE_DIALOG)->draw_scale(optionsAnimX, optionsAnimY, 132, 220);

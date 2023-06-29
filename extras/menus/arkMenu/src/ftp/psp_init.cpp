@@ -3,7 +3,6 @@
  */
 
 #include "std.h"
-#include "util.h"
 #include <pspumd.h>
 # include "psp_init.h"
 //# include "nlh.h"

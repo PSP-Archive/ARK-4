@@ -62,7 +62,6 @@ OBJS = \
 		src/ftp/ftp.o \
 		src/ftp/ftpd.o \
 		src/ftp/sutils.o \
-		src/ftp/util.o \
 		src/ftp/loadutil.o \
 		src/ftp/psp_cfg.o \
 		src/ftp/psp_init.o \

@@ -479,7 +479,9 @@ void common::loadData(int ac, char** av){
         }
         font = intraFontLoadEx(fonts[config.font], INTRAFONT_CACHE_ASCII|INTRAFONT_STRING_UTF8, offset, size);
     }
-
+    if (config.font == 0 && altFont == NULL){
+        altFont = intraFontLoad(fonts[1], INTRAFONT_CACHE_ASCII|INTRAFONT_STRING_UTF8);
+    }
     if (currentFont != config.font){
         currentFont = config.font;
         saveConf();
@@ -544,7 +546,7 @@ string common::beautifySize(u64 size){
     ostringstream txt;
 
     if (size < 1024)
-        txt<<size<<" Bytes";
+        txt<<size<<" B";
     else if (1024 < size && size < 1048576)
         txt<<round(float(size*100)/1024.f)/100.f<<" KB";
     else if (1048576 < size && size < 1073741824)
@@ -590,15 +592,21 @@ void common::playMenuSound(){
     sound_mp3->play();
 }
 
-void common::printText(float x, float y, const char* text, u32 color, float size, int glow, int scroll){
+void common::printText(float x, float y, const char* text, u32 color, float size, int glow, int scroll, int translate){
 
     if (font == NULL)
         return;
 
-    string translated = TR(text);
+    string translated = (translate)? TR(text) : text;
+    intraFont* textFont = font;
 
-    if (translated != text)
+    if (translated != text){
         size *= text_size;
+    }
+    
+    if (!translate && altFont){
+        textFont = altFont;
+    }
 
     u32 secondColor = BLACK_COLOR;
     u32 arg5 = INTRAFONT_WIDTH_VAR;
@@ -612,7 +620,7 @@ void common::printText(float x, float y, const char* text, u32 color, float size
         arg5 = INTRAFONT_SCROLL_LEFT;
     }
     
-    intraFontSetStyle(font, size, color, secondColor, 0.f, arg5);
+    intraFontSetStyle(textFont, size, color, secondColor, 0.f, arg5);
     if (altFont) intraFontSetStyle(altFont, size, color, secondColor, 0.f, arg5);
 
     if (int(scroll)){
@@ -621,10 +629,10 @@ void common::printText(float x, float y, const char* text, u32 color, float size
             scrollXTmp = x;
             scrollY = y;
         }
-        scrollXTmp = intraFontPrintColumn(font, scrollXTmp, y, 200, translated.c_str());
+        scrollXTmp = intraFontPrintColumn(textFont, scrollXTmp, y, 200, translated.c_str());
     }
     else
-        intraFontPrint(font, x, y, translated.c_str());
+        intraFontPrint(textFont, x, y, translated.c_str());
     
 }
 
@@ -632,7 +640,7 @@ int common::calcTextWidth(const char* text, float size){
     string translated = TR(text);
     intraFontSetStyle(font, size, 0, 0, 0.f, INTRAFONT_WIDTH_VAR);
     float w = intraFontMeasureText(font, translated.c_str()) + size*translated.length();
-    return (int)ceil(w);
+    return (int)ceil(w*text_size);
 }
 
 void common::clearScreen(u32 color){
