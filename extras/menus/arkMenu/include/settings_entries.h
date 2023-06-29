@@ -327,8 +327,8 @@ static struct {
 
 
 settings_entry* settings_entries[] = {
-    (settings_entry*)&fast_gameboot,
     (settings_entry*)&language,
+    (settings_entry*)&fast_gameboot,
     (settings_entry*)&font,
     (settings_entry*)&scan_save,
     (settings_entry*)&scan_cat,
