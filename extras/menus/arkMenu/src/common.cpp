@@ -138,6 +138,8 @@ static void loadFont(){
         }
         else if (!fileExists(fonts[0])){
             if (altFont){
+                intraFont* aux = font;
+                if (aux) intraFontUnload(aux);
                 font = altFont;
                 config.font = altFontId;
                 return;
@@ -150,14 +152,14 @@ static void loadFont(){
 
     // offload current font
     intraFont* aux = font;
-    font = NULL;
     if (aux) intraFontUnload(aux);
     // load new font
+    if (config.font == 0 && !altFont) altFont = intraFontLoadEx(fonts[1], INTRAFONT_CACHE_ASCII, 0, 0);
     font = intraFontLoadEx(fonts[config.font], (altFont)?INTRAFONT_CACHE_ASCII:INTRAFONT_CACHE_ALL, offset, size);
     intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
-    currentFont = config.font;
-    // use alt font set by lang
+    // set alt font
     if (altFont) intraFontSetAltFont(font, altFont);
+    currentFont = config.font;
 }
 
 void common::saveConf(){
