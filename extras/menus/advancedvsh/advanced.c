@@ -89,15 +89,11 @@ int submenu_draw(void) {
 		// add line at the top
 		if (submax_menu == 0){
 			blit_set_color(fc, bc);
-<<<<<<< HEAD
 			blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, font->height);
-=======
-			blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, 8);
 			blit_set_color(0xaf000000, 0xaf000000);
 			blit_rect_fill(submenu_start_x, submenu_start_y-1, window_pixel, 1); // top horizontal outline
 			blit_rect_fill(submenu_start_x+window_pixel, submenu_start_y, 1, 8*(SUBMENU_MAX+2)); // right vertical outline
 			blit_rect_fill(submenu_start_x-1, submenu_start_y, 1, 8*(SUBMENU_MAX+2)); // left vertical outline
->>>>>>> origin/main
 		}
 		
 		// if menu is selected, change color
@@ -189,7 +185,7 @@ int submenu_draw(void) {
 	blit_set_color(fc, bc);
 	submenu_start_y += font->height; // replace by font width
 	// add line at the end
-	blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, 8);
+	blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, font->height);
 	blit_set_color(0xaf000000, 0xaf000000);
 	blit_rect_fill(submenu_start_x, submenu_start_y+8, window_pixel, 1); // bottom horizontal outline
 	
