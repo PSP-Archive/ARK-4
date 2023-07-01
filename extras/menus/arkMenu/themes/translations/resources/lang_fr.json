@@ -125,6 +125,8 @@
     "Small": "Petit(e)",
     "Medium": "Moyen(ne)",
     "Large": "Grand(e)",
+    "Show Hidden": "Afficher masqué",
+    "ICON0 in Browser": "ICON0 dans le navigateur",
 
     "ARK Custom Firmware Settings": "Paramètres du Custom Firmware ARK",
     "CFW Settings": "Paramètres du CFW",

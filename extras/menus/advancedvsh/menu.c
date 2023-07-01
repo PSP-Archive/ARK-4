@@ -52,8 +52,8 @@ const char *item_str[TMENU_MAX];
 
 static int menu_sel = TMENU_CUSTOM_LAUNCHER;
 
-const int xyPoint[] ={0x98, 0x30, 0xC0, 0xA0, 0x70, 0x08, 0x0E, 0xA8};//data243C=
-const int xyPoint2[] ={0xB0, 0x30, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data2458=
+const int xyPoint[] ={0x98, 0x2F, 0xC0, 0xA0, 0x70, 0x08, 0x0E, 0xA8};//data243C=
+const int xyPoint2[] ={0xB0, 0x2F, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data2458=
 
 
 int menu_draw(void) {
@@ -80,7 +80,7 @@ int menu_draw(void) {
 	blit_set_color(0xffffff,0x8000ff00);
 	scePaf_snprintf(msg, 128, " %s ", g_messages[MSG_ARK_VSH_MENU]);
 	blit_string_ctr(pointer[1], msg);
-	blit_string_ctr(56, vsh->ark_version);
+	blit_string_ctr(55, vsh->ark_version);
 	fc = 0xffffff;
 	
 	
@@ -117,7 +117,15 @@ int menu_draw(void) {
 		// add line at the top
 		if (max_menu == 0){
 			blit_set_color(fc, bc);
+<<<<<<< HEAD
 			blit_rect_fill(menu_start_x, menu_start_y, window_pixel, font->height);
+=======
+			blit_rect_fill(menu_start_x, menu_start_y, window_pixel, 8);
+			blit_set_color(0xaf000000, 0xaf000000);
+			blit_rect_fill(menu_start_x, menu_start_y-1, window_pixel, 1); // top horizontal outline
+			blit_rect_fill(menu_start_x+window_pixel, menu_start_y, 1, 8*(TMENU_MAX+2)); // right vertical outline
+			blit_rect_fill(menu_start_x-1, menu_start_y, 1, 8*(TMENU_MAX+2)); // left vertical outline
+>>>>>>> origin/main
 		}
 		
 		// if menu is selected, change color
@@ -177,7 +185,13 @@ int menu_draw(void) {
 	blit_set_color(fc, bc);
 	menu_start_y += font->height;
 	// add line at the end
+<<<<<<< HEAD
 	blit_rect_fill(menu_start_x, menu_start_y, window_pixel, font->height);
+=======
+	blit_rect_fill(menu_start_x, menu_start_y, window_pixel, 8);
+	blit_set_color(0xaf000000, 0xaf000000);
+	blit_rect_fill(menu_start_x, menu_start_y+8, window_pixel, 1); // bottom horizontal outline
+>>>>>>> origin/main
 	
 	blit_set_color(0x00ffffff,0x00000000);
 	return 0;

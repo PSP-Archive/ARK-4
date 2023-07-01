@@ -3,6 +3,7 @@
 
 #include "system_entry.h"
 #include "optionsmenu.h"
+#include "common.h"
 
 extern "C"{
     void sctrlKernelExitVSH(void*);
@@ -27,6 +28,7 @@ class ExitManager : public SystemEntry{
             if (optionsmenu) optionsmenu->draw();
         };
         void control(Controller* pad){
+            common::saveConf();
             if (optionsmenu){
                 int ret = optionsmenu->control();
                 switch (ret){

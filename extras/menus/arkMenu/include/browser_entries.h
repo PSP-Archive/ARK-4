@@ -39,6 +39,8 @@ class BrowserFile : public Entry{
         char* getSubtype();
         
         void loadIcon();
+
+        void freeIcon();
         
         void getTempData1();
         

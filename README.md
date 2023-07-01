@@ -81,12 +81,13 @@ as well as unique and exclusive new features not found anywhere else.
 
 ![ARK Custom Firmware](.github/screenshots/xmb(11).png "ARK Custom Firmware")
 
-![ARK Custom Firmware](.github/screenshots/xmb(9).png "ARK Custom Firmware")
+![ARK Custom Firmware](.github/screenshots/pic_0016.bmp "ARK Custom Firmware")
 
 
 ## INSTALLATION
 
 - Download the precompiled binaries from: https://github.com/PSP-Archive/ARK-4/releases/latest
+- You can follow this video with instructions to install `ARK` on `PSP` via `Infinity` and/or on `PS Vita` via `Adrenaline`: https://youtu.be/bE8mw7RRqGo
 
 
 #### Compiling ARK ( For Developers )
@@ -289,7 +290,7 @@ There are three ways to update ARK:
 The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
 To have a more classic VSH menu with more advanced features you can select the `Advanced VSH Menu` from within the simplified VSH menu.
 
-![Advanced VSH Menu](.github/screenshots/xmb(8).png "Advanced VSH Menu")
+![Advanced VSH Menu](.github/screenshots/pic_0014.bmp "Advanced VSH Menu")
 
 Some of the features available in Advanced VSH Menu include:
 
@@ -585,6 +586,8 @@ Note: some of these menus have not been updated or supported by their developers
 - `Codestation` for his incredible work improving CSO speeds and creating the ZSO format.
 
 - `Krazynez` for his amazing work on `Advanced VSH Menu` and other bugfixes and features.
+
+- `pyroesp` for his excellent work improving `VSH Menu` and refactoring code.
 
 - `TheSubPlayer` for all the wonderful themes made for the custom launcher.
 

@@ -344,6 +344,10 @@ int intraFontPreCache(intraFont *font, unsigned int options) {
 }
 
 intraFont* intraFontLoad(const char *filename, unsigned int options) {
+  return intraFontLoadEx(filename, options, 0, 0);
+}
+
+intraFont* intraFontLoadEx(const char *filename, unsigned int options, unsigned long offset, unsigned long filesize) {
     unsigned long i,j;
   static Glyph bw_glyph                         = { 0, 0, 16, 18, 0, 15, PGF_BMP_H_ROWS, 0, 64, 0 };
   static Glyph bw_shadowGlyph                   = { 0, 0,  8, 10, 0,  5, PGF_BMP_H_ROWS, 0, 64, 0 };
@@ -379,9 +383,13 @@ intraFont* intraFontLoad(const char *filename, unsigned int options) {
   //open pgf file and get file size
     FILE *file = fopen(filename, "rb"); /* read from the file in binary mode */
   if (!file) return NULL;
-  fseek(file, 0, SEEK_END);
-  unsigned long filesize = ftell(file);
-  fseek(file, 0, SEEK_SET);
+  
+  if (filesize == 0){
+    fseek(file, 0, SEEK_END);
+    filesize = ftell(file);
+  }
+  
+  fseek(file, offset, SEEK_SET);
   
   //read pgf header
   static PGF_Header header;
@@ -471,7 +479,7 @@ intraFont* intraFontLoad(const char *filename, unsigned int options) {
   if (font->fileType == FILETYPE_PGF) {
 
     //read advance table
-    fseek(file, header.header_len+(header.table1_len+header.table2_len+header.table3_len)*8, SEEK_SET);
+    fseek(file, offset+header.header_len+(header.table1_len+header.table2_len+header.table3_len)*8, SEEK_SET);
     signed long *advancemap = (signed long*)malloc(header.advance_len*sizeof(signed long)*2);
     if (!advancemap) {
       fclose(file);
@@ -652,7 +660,7 @@ intraFont* intraFontLoad(const char *filename, unsigned int options) {
   } else { //FILETYPE_BWFON
 
     //read raw fontdata
-    fseek(file, 0, SEEK_SET);
+    fseek(file, offset, SEEK_SET);
     font->fontdata = (unsigned char*)malloc((filesize+40)*sizeof(unsigned char));
     if (font->fontdata == NULL) {
       fclose(file);

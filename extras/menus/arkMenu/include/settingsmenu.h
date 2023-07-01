@@ -43,6 +43,9 @@ class SettingsMenu : public SystemEntry{
         
         int icon;
 
+        TextScroll scroll;
+        TextScroll scroll2;
+
         void (*callback)();
         
     public:

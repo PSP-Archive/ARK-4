@@ -10,6 +10,7 @@
 #include "animations.h"
 #include "system_mgr.h"
 #include "lang.h"
+#include "browser.h"
 
 #define RESOURCES_LOAD_PLACE YA2D_PLACE_VRAM
 
@@ -33,9 +34,6 @@ extern intraFont* font;
 static MP3* sound_mp3 = NULL;
 static int argc;
 static char **argv;
-static float scrollX = 0.f;
-static float scrollY = 0.f;
-static float scrollXTmp = 0.f;
 static int currentFont = 0;
 static int currentLang = 0;
 /* Instance of the animations that are drawn on the menu */
@@ -59,7 +57,7 @@ char* fonts[] = {
     "flash0:/font/ltn7.pgf",
     "flash0:/font/ltn8.pgf",
     "flash0:/font/ltn9.pgf",
-    "flash0:/font/ltn19.pgf",
+    "flash0:/font/ltn10.pgf",
     "flash0:/font/ltn11.pgf",
     "flash0:/font/ltn12.pgf",
     "flash0:/font/ltn13.pgf",
@@ -85,7 +83,9 @@ static char* lang_files[] = {
     "lang_ko.json",
     "lang_cht.json",
     "lang_chs.json",
-    "lang_grk.json",
+    "lang_pol.json",
+    "lang_latgr.json"
+    //"lang_grk.json",
     //"lang_thai.json",
 };
 
@@ -93,6 +93,10 @@ static t_conf config;
 
 static volatile bool do_loading_thread = false;
 static volatile SceUID load_thread_id = -1;
+
+static void dummyMissingHandler(const char* filename){
+
+}
 
 void setArgs(int ac, char** av){
     argc = ac;
@@ -125,6 +129,39 @@ struct tm common::getDateTime(){
     return ts;
 }
 
+static void loadFont(){
+    unsigned offset=0, size=0;
+    if (config.font == 0){
+        offset = findPkgOffset(fonts[0], &size, "LANG.ARK", &dummyMissingHandler);
+        if (offset && size){
+            fonts[0] = "LANG.ARK";
+        }
+        else if (!fileExists(fonts[0])){
+            if (altFont){
+                intraFont* aux = font;
+                if (aux) intraFontUnload(aux);
+                font = altFont;
+                config.font = altFontId;
+                return;
+            }
+            else{
+                config.font = 1;
+            }
+        }
+    }
+
+    // offload current font
+    intraFont* aux = font;
+    if (aux) intraFontUnload(aux);
+    // load new font
+    if (config.font == 0 && !altFont) altFont = intraFontLoadEx(fonts[1], INTRAFONT_CACHE_ASCII, 0, 0);
+    font = intraFontLoadEx(fonts[config.font], (altFont)?INTRAFONT_CACHE_ASCII:INTRAFONT_CACHE_ALL, offset, size);
+    intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
+    // set alt font
+    if (altFont) intraFontSetAltFont(font, altFont);
+    currentFont = config.font;
+}
+
 void common::saveConf(){
 
     SystemMgr::pauseDraw();
@@ -137,27 +174,12 @@ void common::saveConf(){
     }
 
     if (currentFont != config.font || font == NULL){
-        if (!fileExists(fonts[config.font])){
-            config.font = 1;
-            if (altFont){
-                intraFontUnload(altFont);
-                altFont = NULL;
-            }
-        }
-    
-        // offload current font
-        intraFont* aux = font;
-        font = NULL;
-        if (aux) intraFontUnload(aux);
-        // load new font
-        font = intraFontLoad(fonts[config.font], 0);
-        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
-        currentFont = config.font;
-        // use alt font set by lang
-        if (altFont) intraFontSetAltFont(font, altFont);
+        loadFont();
     }
 
     SystemMgr::resumeDraw();
+
+    strcpy(config.browser_dir, Browser::getInstance()->getCWD());
     
     FILE* fp = fopen(CONFIG_PATH, "wb");
     fwrite(&config, 1, sizeof(t_conf), fp);
@@ -188,6 +210,7 @@ void common::resetConf(){
     config.redirect_ms0 = 0;
     config.startbtn = 0;
     config.menusize = 0;
+    config.browser_icon0 = 1;
 }
 
 void common::launchRecovery(){
@@ -210,7 +233,7 @@ static void missingFileHandler(const char* filename){
     }
 
     if (!font){
-        font = intraFontLoad(fonts[1], 0);
+        font = intraFontLoad(fonts[1], INTRAFONT_CACHE_ASCII);
         intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
     }
     
@@ -233,10 +256,6 @@ static void missingFileHandler(const char* filename){
         else if (pad.triangle())
             sctrlKernelExitVSH(NULL);
     }
-}
-
-static void dummyMissingHandler(const char* filename){
-
 }
 
 SceOff common::findPkgOffset(const char* filename, unsigned* size, const char* pkgpath, void (*missinghandler)(const char*)){
@@ -384,6 +403,9 @@ void common::loadTheme(){
     images[IMAGE_BG] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
     images[IMAGE_WAITICON] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
 
+    images[0]->swizzle();
+    images[1]->swizzle();
+
     startLoadingThread();
 
     images[IMAGE_LOADING] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("LOADING.PNG"));
@@ -410,7 +432,7 @@ void common::loadTheme(){
     checkbox[1] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("CHECK.PNG"));
     checkbox[0] = new Image(theme_path, YA2D_PLACE_VRAM, common::findPkgOffset("UNCHECK.PNG"));
     
-    for (int i=0; i<MAX_IMAGES; i++){
+    for (int i=2; i<MAX_IMAGES; i++){
         images[i]->swizzle();
         images[i]->is_system_image = true;
     }
@@ -454,16 +476,10 @@ void common::loadData(int ac, char** av){
         Translations::loadLanguage(lang_files[config.language]);
     }
     
-    if (!font){
-        if (!fileExists(fonts[config.font]))
-            config.font = 1;
-        font = intraFontLoad(fonts[config.font], INTRAFONT_CACHE_ALL);
-        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
-    }
+    loadFont();
 
     if (currentFont != config.font){
         currentFont = config.font;
-        saveConf();
     }
     
 }
@@ -525,7 +541,7 @@ string common::beautifySize(u64 size){
     ostringstream txt;
 
     if (size < 1024)
-        txt<<size<<" Bytes";
+        txt<<size<<" B";
     else if (1024 < size && size < 1048576)
         txt<<round(float(size*100)/1024.f)/100.f<<" KB";
     else if (1048576 < size && size < 1073741824)
@@ -571,15 +587,21 @@ void common::playMenuSound(){
     sound_mp3->play();
 }
 
-void common::printText(float x, float y, const char* text, u32 color, float size, int glow, int scroll){
+void common::printText(float x, float y, const char* text, u32 color, float size, int glow, TextScroll* scroll, int translate){
 
     if (font == NULL)
         return;
 
-    string translated = TR(text);
+    string translated = (translate)? TR(text) : text;
+    intraFont* textFont = font;
 
-    if (translated != text)
+    if (translated != text){
         size *= text_size;
+    }
+    
+    if (!translate && altFont){
+        textFont = altFont;
+    }
 
     u32 secondColor = BLACK_COLOR;
     u32 arg5 = INTRAFONT_WIDTH_VAR;
@@ -589,30 +611,38 @@ void common::printText(float x, float y, const char* text, u32 color, float size
         int val = (t < 0.5f) ? t*511 : (1.0f-t)*511;
         secondColor = (0xFF<<24)+(val<<16)+(val<<8)+(val);
     }
-    if (int(scroll)){
+    if (scroll){
         arg5 = INTRAFONT_SCROLL_LEFT;
     }
     
-    intraFontSetStyle(font, size, color, secondColor, 0.f, arg5);
+    intraFontSetStyle(textFont, size, color, secondColor, 0.f, arg5);
     if (altFont) intraFontSetStyle(altFont, size, color, secondColor, 0.f, arg5);
 
-    if (int(scroll)){
-        if (x != scrollX || y != scrollY){
-            scrollX = x;
-            scrollXTmp = x;
-            scrollY = y;
+    if (scroll){
+        if (x != scroll->x || y != scroll->y){
+            scroll->x = x;
+            scroll->tmp = x;
+            scroll->y = y;
         }
-        scrollXTmp = intraFontPrintColumn(font, scrollXTmp, y, 200, translated.c_str());
+        if (scroll->w <= 0 || scroll->w >= 480) scroll->w = 200;
+        scroll->tmp = intraFontPrintColumn(textFont, scroll->tmp, y, scroll->w, translated.c_str());
     }
     else
-        intraFontPrint(font, x, y, translated.c_str());
+        intraFontPrint(textFont, x, y, translated.c_str());
     
 }
 
-int common::calcTextWidth(const char* text, float size){
-    string translated = TR(text);
-    intraFontSetStyle(font, size, 0, 0, 0.f, INTRAFONT_WIDTH_VAR);
-    float w = intraFontMeasureText(font, translated.c_str()) + size*translated.length();
+int common::calcTextWidth(const char* text, float size, int translate){
+    string translated = (translate)? TR(text) : text;
+    intraFont* textFont = font;
+    if (translated != text){
+        size *= text_size;
+    }
+    if (!translate && altFont){
+        textFont = altFont;
+    }
+    intraFontSetStyle(textFont, size, 0, 0, 0.f, INTRAFONT_WIDTH_VAR);
+    float w = intraFontMeasureText(textFont, translated.c_str());
     return (int)ceil(w);
 }
 

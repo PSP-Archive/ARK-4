@@ -3,7 +3,7 @@
 #include "system_mgr.h"
 
 
-#define MENU_W 375
+#define MENU_W 400
 #define MENU_W_SPEED 50
 #define MENU_H_SPEED 30
 #define PAGE_SIZE 10
@@ -31,6 +31,8 @@ SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool s
     this->shorten_paths = shorten_paths;
     this->show_all_opts = show_all_opts;
     this->show_info = show_info;
+    this->scroll.w = 200;
+    this->scroll2.w = 100;
 }
 
 SettingsMenu::~SettingsMenu(){
@@ -123,8 +125,8 @@ void SettingsMenu::draw(){
                 unsigned char sel = table->settings_entries[i]->selection;
                 // draw highlighted entry
                 if (i==index){
-                    common::printText(xoffset, yoffset, table->settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, 1);
-                    common::printText(xoffset+255, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1);
+                    common::printText(xoffset, yoffset, table->settings_entries[i]->description, GRAY_COLOR, SIZE_MEDIUM, 1, &scroll, !shorten_paths);
+                    common::printText(xoffset+255, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_MEDIUM, 1, &scroll2);
                 }
                 // non-highlighted entries
                 else{
@@ -134,8 +136,17 @@ void SettingsMenu::draw(){
                         size_t lastSlash = desc.rfind('/');
                         desc = desc.substr(lastSlash+1, -1);
                     }
-                    if (desc.size() > 55) desc = desc.substr(0, 40) + "...";
-                    common::printText(xoffset, yoffset, desc.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
+                    else {
+                        // treat as text: translate
+                        desc = TR(desc);
+                    }
+                    int tw = common::calcTextWidth(desc.c_str(), SIZE_LITTLE, !shorten_paths);
+                    if (tw > scroll.w){
+                        int charw = (tw/desc.size());
+                        int nchars = scroll.w/charw;
+                        desc = (nchars<desc.size())? desc.substr(0, nchars-3) + "..." : desc;
+                    }
+                    common::printText(xoffset, yoffset, desc.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0, !shorten_paths);
                     // show option for entry? only if told so
                     if (show_all_opts)
                         common::printText(xoffset+255, yoffset, table->settings_entries[i]->options[sel], GRAY_COLOR, SIZE_LITTLE, 0);

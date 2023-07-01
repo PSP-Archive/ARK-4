@@ -73,8 +73,9 @@ void NetworkManager::draw(){
         else{
             snprintf(buffer, 128, TR("FTP Server is stopped. Press %s to start.").c_str(), (common::getConf()->swap_buttons)? "()" : "X");
         }
-        common::printText(30, 50, buffer, GRAY_COLOR, SIZE_BIG, 1);
-        common::printText(30, 70, "Press [] to check for Updates", GRAY_COLOR, SIZE_BIG);
+        static TextScroll scroll;
+        common::printText(30, 50, buffer, GRAY_COLOR, SIZE_BIG, 1, &scroll);
+        common::printText(30, 70, "Press [] to check for Updates", GRAY_COLOR, SIZE_BIG, 1);
         
         y = 90;
         

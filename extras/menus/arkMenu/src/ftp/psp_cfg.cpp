@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include "std.h"
-#include "util.h"
 #include "ftp.h"
 #include "psp_init.h"
 //#include "nlh.h"

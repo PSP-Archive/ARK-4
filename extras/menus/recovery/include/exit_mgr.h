@@ -2,6 +2,7 @@
 #define EXIT_MGR_H
 
 #include "system_entry.h"
+#include "common.h"
 
 class ExitManager : public SystemEntry{
 
@@ -9,7 +10,7 @@ class ExitManager : public SystemEntry{
         void draw(){};
         void control(Controller* pad){};
         void pause(){};
-        void resume(){sceKernelExitGame();};
+        void resume(){ common::saveConf(); sceKernelExitGame(); };
         std::string getInfo(){return "Exit";};
         void setInfo(std::string info){};
         Image* getIcon(){return common::getImage(IMAGE_EXIT);};

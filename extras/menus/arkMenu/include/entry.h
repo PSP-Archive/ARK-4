@@ -59,6 +59,8 @@ class Entry{
     private:
 
         void gameBoot();
+        void animAppear();
+        void animDisappear();
 
     protected:
 
@@ -93,7 +95,8 @@ class Entry{
         void* getSnd();
         int getSndSize();
         
-        void freeIcon();
+        void setIcon(Image* icon){ this->icon0 = icon; };
+        virtual void freeIcon();
 
         virtual SfoInfo getSfoInfo(){
             SfoInfo info;
@@ -110,6 +113,7 @@ class Entry{
         
         void drawBG();
         
+        bool pmfPrompt();
         void execute();
         
         virtual char* getType()=0;

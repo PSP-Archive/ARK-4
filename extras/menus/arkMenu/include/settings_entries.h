@@ -21,10 +21,10 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[16];
+    char* options[17];
 } language = {
     "Language",
-    16,
+    17,
     0,
     &(common::getConf()->language),
     {
@@ -43,7 +43,8 @@ static struct {
         "Korean",
         "Chinese (Trad.)",
         "Chinese (Simp.)",
-        "Greek",
+        "Polski",
+        "Ellhnika",
         //"Thai",
     }
 };
@@ -72,7 +73,7 @@ static struct {
         "Latin 7",
         "Latin 8",
         "Latin 9",
-        "Latin 19",
+        "Latin 10",
         "Latin 11",
         "Latin 12",
         "Latin 13",
@@ -123,6 +124,21 @@ static struct {
     2,
     0,
     &(common::getConf()->scan_dlc),
+    {"Disabled", "Enabled"}
+};
+
+/* Show Hidden files/folders */
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[2];
+} show_hidden = {
+    "Show Hidden",
+    2,
+    0,
+    &(common::getConf()->show_hidden),
     {"Disabled", "Enabled"}
 };
 
@@ -309,14 +325,29 @@ static struct {
     {"Default", "Small", "Medium", "Large"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[2];
+} browser_icon0 = {
+    "ICON0 in Browser",
+    2,
+    0,
+    &(common::getConf()->browser_icon0),
+    {"Disabled", "Enabled"}
+};
+
 
 settings_entry* settings_entries[] = {
-    (settings_entry*)&fast_gameboot,
     (settings_entry*)&language,
+    (settings_entry*)&fast_gameboot,
     (settings_entry*)&font,
     (settings_entry*)&scan_save,
     (settings_entry*)&scan_cat,
     (settings_entry*)&scan_dlc,
+    (settings_entry*)&show_hidden,
     (settings_entry*)&swap_buttons,
     (settings_entry*)&animations,
     (settings_entry*)&main_menu,
@@ -329,6 +360,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&battery_percent,
     (settings_entry*)&startbtn,
     (settings_entry*)&menusize,
+    (settings_entry*)&browser_icon0,
     (settings_entry*)&redirect_ms0,
 };
 

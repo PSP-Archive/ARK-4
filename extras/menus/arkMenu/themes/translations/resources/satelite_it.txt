@@ -21,66 +21,66 @@ O -> X
 Sony NP9660 (PBP)
 Inferno 2 (ISO/CSO)
 DISPOSITIVO USB
-PROTEGGERE USB
-DRIVERS ISO
+PROTEGGI USB
+DRIVER ISO
 ISO VIDEO
-COLORE FG
-COLORE BG
+COLORE CARATTERI
+COLORE SFONDO
 CARATTERE
 MOD BATTERIA
 MODIFICA X/O
 REGIONE VSH
 REGIONE UMD
-LEGGERE PLUGINS CLASSICI
-ATTIVARE FLASH E WMA
-ELIMINARE IBERNAZIONE
-CARICARE ISO CASUALE
-RITORNO
-SENZA IBERNAZIONE
-Normal -> Pandora
-Pandora -> Normal
-MENU PERSONALIZZATO ->
-MENU RIPRISTINO ->
+IMPORTA PLUGINS CLASSICI
+ATTIVA FLASH E WMA
+ELIMINA IBERNAZIONE
+AVVIA ISO CASUALE
+INDIETRO
+IBERNAZIONE NON SUPPORTATA
+Normale -> Pandora
+Pandora -> Normale
+CUSTOM LAUNCHER ->
+RECOVERY MENU ->
 MENU VSH AVANZATO
-SPEGNERE CONSOLE
-SOSPENDERE
-REINIZIARE
-RICARICARE
-USCIRE
+SPEGNI CONSOLE
+SOSPENDI
+RIAVVIA CONSOLE
+RIAVVIA VSH
+ESCI
 MENU VSH
 Non Supportato
-Usare Adrenaline
+USB di Adrenaline
 Flash
 Disco UMD
 Memoria Interna
 Memory Stick
-Niente
+Nessuno
 Casuale
 Rosso
-Rosso Trasparente
+Rosso Chiaro
 Arancia
-Arancia Trasparente
+Arancia Chiaro
 Giallo
-Giallo Trasparente
+Giallo Chiaro
 Verde
-Verde Trasparente
+Verde Chiaro
 Blu
-Blu Trasparente
-Indigo
-Indigo Trasparente
+Blu Chiaro
+Indaco
+Indaco Chiaro
 Viola
-Viola Trasparente
+Viola Chiaro
 Rossa
-Rossa Trasparente
+Rossa Chiaro
 Viola Forte
-Viola Forte Trasparente
+Viola Forte Chiaro
 Verde Acqua
-Verde Acqua Trasparente
+Verde Acqua Chiaro
 Acqua
-Acqua Trasparente
+Acqua Chiaro
 Grigio
-Grigio Trasparente
+Grigio Chiaro
 Nero
-Nero Trasparente
+Nero Chiaro
 Bianco
-Bianco Trasparente
+Bianco Chiaro

@@ -1,7 +1,6 @@
 #include "gamemgr.h"
 
 #include "std.h"
-#include "util.h"
 #include "ftp.h"
 #include "sutils.h"
 #include "psp_cfg.h"

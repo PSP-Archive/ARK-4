@@ -1,7 +1,6 @@
 #include "common.h"
 #include "controller.h"
 #include "std.h"
-#include "util.h"
 #include "ftp.h"
 #include "ftpd.h"
 #include "psp_cfg.h"

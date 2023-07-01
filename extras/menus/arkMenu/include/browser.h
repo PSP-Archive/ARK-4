@@ -51,6 +51,7 @@ class Browser : public SystemEntry{
     public:
         Browser();
         ~Browser();
+        static Browser* getInstance();
         
         void draw();
         
@@ -75,9 +76,15 @@ class Browser : public SystemEntry{
         void setName(string name){};
         
         string getInfo(){
-            if (devsize.size() > 0)
-                return this->cwd + " ("+TR("Free size")+": "+devsize+")";
             return this->cwd;
+        }
+
+        void drawInfo(){
+            static TextScroll scroll;
+            int w = common::calcTextWidth(cwd.c_str(), SIZE_MEDIUM, 0);
+            common::printText(5, 13, cwd.c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll, 0);
+            if (devsize.size() > 0)
+                common::printText(5+w, 13, string(" ("+TR("Free size")+": "+devsize+")").c_str(), LITEGRAY, SIZE_MEDIUM);
         }
         
         string getName(){
@@ -116,6 +123,7 @@ class Browser : public SystemEntry{
         unsigned int moving;
         int animation;
         bool firstboot;
+        bool is_loading;
         
         /* Screen drawing thread data */
         bool hide_main_window;
@@ -144,7 +152,7 @@ class Browser : public SystemEntry{
     
         void moveDirUp();
         
-        void update();
+        void update(Entry* e, bool skip_prompt);
         
         void refreshDirs();
         

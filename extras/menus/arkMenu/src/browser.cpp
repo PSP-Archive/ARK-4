@@ -22,7 +22,8 @@
 #define UMD_ROOT "disc0:/" // UMD directory
 #define PAGE_SIZE 10 // maximum entries shown on screen
 #define BUF_SIZE 1024*16 // 16 kB buffer for copying files
-
+#define MENU_W 410
+#define MENU_H 230
 #define MAX_SCROLL_TIME 50
 
 #include "browser_entries.h"
@@ -51,6 +52,10 @@ static char* pEntries[MAX_OPTIONS] = {
 
 BrowserDriver* Browser::ftp_driver = NULL;
 
+Browser* Browser::getInstance(){
+    return self;
+}
+
 Browser::Browser(){
     self = this;
     this->cwd = GO_ROOT; // current working directory (cwd)
@@ -72,6 +77,10 @@ Browser::Browser(){
     this->pEntryIndex = 0;
     this->animation = 0;
     this->firstboot = true;
+    this->is_loading = false;
+
+    t_conf* conf = common::getConf();
+    if (conf->browser_dir[0]) this->cwd = conf->browser_dir;
 
     int psp_model = common::getPspModel();
     if (psp_model != PSP_GO){
@@ -123,66 +132,84 @@ void Browser::moveDirUp(){
     this->refreshDirs();
 }
         
-void Browser::update(){
+void Browser::update(Entry* e, bool skip_prompt){
     // Move to the next directory pointed by the currently selected entry or run an app if selected file is one
     if (this->entries->size() == 0)
         return;
     common::playMenuSound();
-    if (this->get()->getName() == "./")
+    if (e->getName() == "./")
         refreshDirs();
-    else if (this->get()->getName() == "../")
+    else if (e->getName() == "../")
         moveDirUp();
-    else if (this->get()->getName() == "<refresh>"){
+    else if (e->getName() == "<refresh>"){
         this->refreshDirs();
     }
-    else if (this->get()->getName() == "<disconnect>"){ // FTP disconnect entry
+    else if (e->getName() == "<disconnect>"){ // FTP disconnect entry
         if (ftp_driver != NULL) ftp_driver->disconnect();
         this->cwd = MS0_DIR;
         this->refreshDirs();
     }
-    else if (string(this->get()->getType()) == "FOLDER"){
-        this->cwd = this->get()->getPath();
+    else if (string(e->getType()) == "FOLDER"){
+        this->cwd = e->getPath();
         this->refreshDirs();
     }
-    else if (Iso::isISO(this->get()->getPath().c_str())){
+    else if (Iso::isISO(e->getPath().c_str())){
         if (this->cwd == "ms0:/ISO/VIDEO/" || this->cwd == "ef0:/ISO/VIDEO/")
-            Iso::executeVideoISO(this->get()->getPath().c_str());
+            Iso::executeVideoISO(e->getPath().c_str());
         else{
-            Iso* iso = new Iso(this->get()->getPath());
-            iso->execute();
+            Iso* iso = new Iso(e->getPath());
+            if (!skip_prompt){
+                is_loading = true;
+                iso->loadIcon();
+                iso->getTempData1();
+                is_loading = false;
+            }
+            if (skip_prompt || iso->pmfPrompt())
+                iso->execute();
+            else
+                delete iso;
         }
     }
-    else if (Eboot::isEboot(this->get()->getPath().c_str())){
-        Eboot* eboot = new Eboot(this->get()->getPath());
-        eboot->execute();
+    else if (Eboot::isEboot(e->getPath().c_str())){
+        Eboot* eboot = new Eboot(e->getPath());
+        if (!skip_prompt){
+            is_loading = true;
+            eboot->loadIcon();
+            eboot->getTempData1();
+            is_loading = false;
+        }
+        if (skip_prompt || eboot->pmfPrompt())
+            eboot->execute();
+        else
+            delete eboot;
     }
-    else if (Entry::isZip(this->get()->getPath().c_str())){
+    else if (Entry::isZip(e->getPath().c_str())){
         extractArchive(0);
     }
-    else if (Entry::isRar(this->get()->getPath().c_str())){
+    else if (Entry::isRar(e->getPath().c_str())){
         extractArchive(1);
     }
-    else if (Entry::isPRX(this->get()->getPath().c_str())){
+    else if (Entry::isPRX(e->getPath().c_str())){
         installPlugin();
     }
-	else if (Entry::isARK(this->get()->getPath().c_str())) {
+	else if (Entry::isARK(e->getPath().c_str())) {
 		installTheme();
 	}
-    else if (Entry::isTXT(this->get()->getPath().c_str())){
-        optionsmenu = new TextEditor(this->get()->getPath());
+    else if (Entry::isTXT(e->getPath().c_str())){
+        optionsmenu = new TextEditor(e->getPath());
         optionsmenu->control();
         TextEditor* aux = (TextEditor*)optionsmenu;
         optionsmenu = NULL;
         delete aux;
     }
-    else if (Entry::isIMG(this->get()->getPath().c_str())){
-        optionsmenu = new ImageViewer(this->get()->getPath());
+    else if (Entry::isIMG(e->getPath().c_str())){
+        optionsmenu = new ImageViewer(e->getPath());
         optionsmenu->control();
         ImageViewer* aux = (ImageViewer*)optionsmenu;
         optionsmenu = NULL;
         delete aux;
     }
-    else if (Entry::isMusic(this->get()->getPath().c_str())){
+    else if (Entry::isMusic(e->getPath().c_str())){
         this->hide_main_window = true;
         vector<string> selected;
         for (int i=0; i<entries->size(); i++){
@@ -195,7 +222,7 @@ void Browser::update(){
             optionsmenu = new MusicPlayer(&selected);
         }
         else{
-            optionsmenu = new MusicPlayer(this->get()->getPath());
+            optionsmenu = new MusicPlayer(e->getPath());
         }
         optionsmenu->control();
         MusicPlayer* aux = (MusicPlayer*)optionsmenu;
@@ -481,6 +508,10 @@ void Browser::refreshDirs(){
     while ((sceIoDread(dir, dit)) > 0){
         printf("got entry: %s\n", dit->d_name);
 
+        if (dit->d_name[0] == '.' && strcmp(dit->d_name, ".") != 0 && strcmp(dit->d_name, "..") != 0 && !common::getConf()->show_hidden){
+            continue;
+        }
+
         string ptmp = string(this->cwd)+string(dit->d_name);
         if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
             printf("is dir\n");
@@ -549,6 +580,8 @@ void Browser::drawScreen(){
     const int xoffset = 115;
     int yoffset = 50;
     bool focused = (optionsmenu==NULL);
+    static TextScroll scroll;
+    static float angle = 1.0;
     
     // draw scrollbar (if moving)
     if (moving && entries->size() > 0){
@@ -562,11 +595,10 @@ void Browser::drawScreen(){
     }
 
     // draw main window
-    common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, 410, 230);
+    common::getImage(IMAGE_DIALOG)->draw_scale(xoffset-50, yoffset-20, MENU_W, MENU_H);
     
     // no items loaded? draw wait icon
     if (entries->size() == 0){
-        static float angle = 1.0;
         Image* img = common::getImage(IMAGE_WAITICON);
         img->draw_rotate((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2, angle);
         angle+=0.2;
@@ -581,20 +613,33 @@ void Browser::drawScreen(){
         // draw focused entry
         if (i == index && this->enableSelection){
             if (animating){
-                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, focused, focused);
+                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_MEDIUM, focused, (focused)? &scroll : NULL, 0);
                 animating = false;
             }
-            else
-                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, focused);
+            else{
+                common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, (focused)? &scroll : NULL, 0);
+                if (common::getConf()->browser_icon0){
+                    Image* icon = e->getIcon();
+                    if (icon){
+                        icon->draw(320, 21);
+                    }
+                }
+            }
         }
         // draw non-focused entry
         else{
-            common::printText(xoffset, yoffset, this->formatText(e->getName()).c_str());
+            common::printText(xoffset, yoffset, this->formatText(e->getName()).c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0, 0);
         }
         // draw entry size and icon
         common::printText(400, yoffset, e->getSize().c_str());
         common::getIcon(e->getFileType())->draw(xoffset-15, yoffset-10);
         yoffset += 20;
+    }
+
+    if (is_loading){
+        Image* img = common::getImage(IMAGE_WAITICON);
+        img->draw_rotate((480-img->getTexture()->width)/2, (272-img->getTexture()->height)/2, angle);
+        angle+=0.2;
     }
 }
 
@@ -680,12 +725,14 @@ void Browser::draw(){
 
 string Browser::formatText(string text){
     // Format the text shown, text with more than 13 characters will be truncated and ... be appended to the name
-    if (text.length() <= 40)
+    int tw = common::calcTextWidth(text.c_str(), SIZE_LITTLE, 0);
+    float wmax = MENU_W*0.60;
+    if (tw <= wmax)
         return text;
     else{
-        string* ret = new string(text.substr(0, 37));
-        *ret += "...";
-        return *ret;
+        int charw = (tw/text.size());
+        int nchars = wmax/charw;
+        return (nchars<text.size())? text.substr(0, nchars) + "..." : text;
     }
 }
         
@@ -709,6 +756,13 @@ Entry* Browser::get(){
 void Browser::left() {
 	if (this->entries->size() == 2) return;
 	if (this->index == 0) return;
+
+    if (common::getConf()->browser_icon0){
+        SystemMgr::pauseDraw();
+        this->get()->freeIcon();
+        SystemMgr::resumeDraw();
+    }
+
 	if (this->index > 0) {
 		this->index = 1 * (this->index - PAGE_SIZE);
 		this->start = 1 * (this->start - PAGE_SIZE);
@@ -719,11 +773,19 @@ void Browser::left() {
 	}
     this->animating = true;
     common::playMenuSound();
+
+    if (common::getConf()->browser_icon0)
+        this->get()->loadIcon();
 }
 
 void Browser::right() {
 	if (this->entries->size() == 2) return;
 
+    if (common::getConf()->browser_icon0){
+        SystemMgr::pauseDraw();
+        this->get()->freeIcon();
+        SystemMgr::resumeDraw();
+    }
 
 	if (this->index + PAGE_SIZE >= entries->size()) {
         this->index = (entries->size()-1)-PAGE_SIZE+1;
@@ -749,7 +811,8 @@ void Browser::right() {
     this->animating = true;
     common::playMenuSound();
 
-
+    if (common::getConf()->browser_icon0)
+        this->get()->loadIcon();
 
 }
         
@@ -757,6 +820,13 @@ void Browser::down(){
     // Move the cursor down, this updates index and page
     if (this->entries->size() == 0)
         return;
+    
+    if (common::getConf()->browser_icon0){
+        SystemMgr::pauseDraw();
+        this->get()->freeIcon();
+        SystemMgr::resumeDraw();
+    }
+
     this->moving = MAX_SCROLL_TIME;
     if (this->index == (entries->size()-1)){
         this->index = 0;
@@ -772,12 +842,22 @@ void Browser::down(){
         this->index++;
     this->animating = true;
     common::playMenuSound();
+
+    if (common::getConf()->browser_icon0)
+        this->get()->loadIcon();
 }
         
 void Browser::up(){
     // Move the cursor up, this updates index and page
     if (this->entries->size() == 0)
         return;
+
+    if (common::getConf()->browser_icon0){
+        SystemMgr::pauseDraw();
+        this->get()->freeIcon();
+        SystemMgr::resumeDraw();
+    }
+
     this->moving = MAX_SCROLL_TIME;
     if (this->index == 0){
         this->index = entries->size()-1;
@@ -793,6 +873,9 @@ void Browser::up(){
         this->index--;
     this->animating = true;
     common::playMenuSound();
+
+    if (common::getConf()->browser_icon0)
+        this->get()->loadIcon();
 }
 
 void Browser::recursiveFolderDelete(string path){
@@ -1399,7 +1482,7 @@ void Browser::drawOptionsMenu(){
     switch (optionsDrawState){
         case 0:
             common::getImage(IMAGE_DIALOG)->draw_scale(0, 232, 40, 40);
-            common::printText(5, 252, "...", GRAY_COLOR, 2.f);
+            common::printText(5, 252, "...", GRAY_COLOR, 2.f, 0, 0, 0);
             break;
         case 1: // draw opening animation
             common::getImage(IMAGE_DIALOG)->draw_scale(optionsAnimX, optionsAnimY, 132, 220);
@@ -1411,17 +1494,29 @@ void Browser::drawOptionsMenu(){
         case 2: // draw menu
             optionsAnimX = 0;
             optionsAnimY = 52;
-            common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 132, 220);
+            common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 140, 220);
         
             {
             int x = 10;
             int y = 80;
+            static TextScroll scroll = {0, 0, 0, 125};
             for (int i=0; i<MAX_OPTIONS; i++){
                 if (pEntries[i] == NULL) continue;
-                if (i == pEntryIndex)
-                    common::printText(x, y, pEntries[i], LITEGRAY, SIZE_BIG, true);
-                else
-                    common::printText(x, y, pEntries[i]);
+                if (i == pEntryIndex){
+                    common::printText(x, y, pEntries[i], LITEGRAY, SIZE_BIG, true, &scroll);
+                }
+                else {
+                    int tw = common::calcTextWidth(pEntries[i], SIZE_LITTLE);
+                    if (tw >= scroll.w){
+                        string s = TR(pEntries[i]);
+                        float cw = float(tw)/s.size();
+                        int nchars = scroll.w / cw;
+                        common::printText(x, y, (s.substr(0, nchars-3)+"...").c_str());
+                    }
+                    else{
+                        common::printText(x, y, pEntries[i], LITEGRAY);
+                    }
+                }
                 y += 20;
             }
             }
@@ -1543,6 +1638,7 @@ void Browser::options(){
         
 void Browser::control(Controller* pad){
     // Control the menu through user input
+    t_conf* conf = common::getConf();
     if (pad->up())
         this->up();
     else if (pad->down())
@@ -1552,7 +1648,7 @@ void Browser::control(Controller* pad){
 	else if (pad->left())
 		this->left();
     else if (pad->accept())
-        this->update();
+        this->update(this->get(), common::getConf()->fast_gameboot);
     else if (pad->decline()){
         common::playMenuSound();
         this->moveDirUp();
@@ -1568,6 +1664,11 @@ void Browser::control(Controller* pad){
     else if (pad->select()){
         common::playMenuSound();
         this->refreshDirs();
+    }
+    else if (pad->start()){
+        Entry* e = this->get();
+        if (conf->startbtn == 1) e = new BrowserFile(conf->last_game);
+        this->update(e, true);
     }
     else{
         if (moving) moving--;

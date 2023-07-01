@@ -138,6 +138,7 @@ static void drawOptionsMenuCommon(){
     }    
     
     int x = -130;
+    static TextScroll scroll;
     for (int i=page_start-1; i<loop_setup; i++){ // SMALL
         if (i<0){
             x += 160;
@@ -153,14 +154,21 @@ static void drawOptionsMenuCommon(){
 			entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+7, 52, 52); // SMALL
 		} 
         if (i==pEntryIndex && optionsDrawState==2){
+            const char* entname = entries[i]->getName().c_str();
 			if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
-            	common::printText(x+25, 130, entries[i]->getName().c_str(), LITEGRAY, SIZE_BIG, 1); // LARGE
+                int tmp_x = x+25;
+                scroll.w = 475-tmp_x;
+            	common::printText(tmp_x, 130, entname, LITEGRAY, SIZE_BIG, 1, &scroll); // LARGE
 			}
 			else if(common::getConf()->menusize == 2) {
-            	common::printText(x+16, 95, entries[i]->getName().c_str(), LITEGRAY, SIZE_MEDIUM, 1); // MEDIUM
+                int tmp_x = x+16;
+                scroll.w = 475-tmp_x;
+            	common::printText(tmp_x, 95, entname, LITEGRAY, SIZE_MEDIUM, 1, &scroll); // MEDIUM
 			}
 			else {
-				common::printText(x+12, 75, entries[i]->getName().c_str(), LITEGRAY, SIZE_LITTLE, 1); // SMALL
+                int tmp_x = x+12;
+                scroll.w = 475-tmp_x;
+				common::printText(tmp_x, 75, entname, LITEGRAY, SIZE_LITTLE, 1, &scroll); // SMALL
 			}
         }
 
@@ -198,7 +206,7 @@ static void dateTime() {
 
 	char dateStr[100];
 	sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
-    common::printText( common::getConf()->battery_percent ? 270:300, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0);
+    common::printText( common::getConf()->battery_percent ? 270:300, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0, 0);
 }
 
 static void drawBattery(){
@@ -226,7 +234,7 @@ static void drawBattery(){
         if (common::getConf()->battery_percent) {
             char batteryPercent[4];
             sprintf(batteryPercent, "%d%%", percent);
-            common::printText(415, 13, batteryPercent, color, SIZE_MEDIUM);
+            common::printText(415, 13, batteryPercent, color, SIZE_MEDIUM, 0, 0, 0);
         }
 
         ya2d_draw_rect(455, 6, 20, 8, color, 0);
@@ -274,29 +282,33 @@ static void systemDrawer(){
     }
 }
 
+void SystemMgr::drawScreen(){
+    if (stillLoading()){
+        common::getImage(IMAGE_BG)->draw(0, 0);
+    }
+    else{
+        common::drawScreen();
+    }
+    if (!screensaver){
+        entries[cur_entry]->draw();
+        if (!fullscreen){
+            systemDrawer();
+            if (common::getConf()->show_fps){
+                ostringstream fps;
+                ya2d_calc_fps();
+                fps<<ya2d_get_fps();
+                common::printText(460, 260, fps.str().c_str());
+            }
+        }
+    }
+}
+
 static int drawThread(SceSize _args, void *_argp){
     common::stopLoadingThread();
     while (running){
         sceKernelWaitSema(draw_sema, 1, NULL);
         common::clearScreen(CLEAR_COLOR);
-        if (stillLoading()){
-            common::getImage(IMAGE_BG)->draw(0, 0);
-        }
-        else{
-            common::drawScreen();
-        }
-        if (!screensaver){
-            entries[cur_entry]->draw();
-            if (!fullscreen){
-                systemDrawer();
-                if (common::getConf()->show_fps){
-                    ostringstream fps;
-                    ya2d_calc_fps();
-                    fps<<ya2d_get_fps();
-                    common::printText(460, 260, fps.str().c_str());
-                }
-            }
-        }
+        SystemMgr::drawScreen();
         common::flipScreen();
         sceKernelSignalSema(draw_sema, 1);
         sceKernelDelayThread(0);

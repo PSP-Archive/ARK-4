@@ -1,31 +1,31 @@
 #include "optionsmenu.h"
 #include "controller.h"
+#include "lang.h"
 
 OptionsMenu::OptionsMenu(char* description, int n_options, t_options_entry* entries){
     this->description = description;
     this->n_options = n_options;
     this->entries = entries;
     this->index = 0;
-    this->w = min(this->maxString(), 480);
+    this->w = min(this->maxString(), 300);
     this->h = 30 + 15*n_options;
     this->x = (480-w)/2;
     this->y = (272-h)/2;
+    this->scroll.w = 280;
 }
 
 OptionsMenu::~OptionsMenu(){
 }
 
 int OptionsMenu::maxString(){
-    int max = strlen(description);
-    char* cur_max = description;
+    string cur_max = TR(description);
     for (int i=0; i<n_options; i++){
-        int len = strlen(entries[i].name);
-        if (len > max){
-            max = len;
-            cur_max = entries[i].name;
+        string tmp = TR(entries[i].name);
+        if (tmp.size() > cur_max.size()){
+            cur_max = tmp;
         }
     }
-    return common::calcTextWidth(cur_max, SIZE_MEDIUM)+20;
+    return common::calcTextWidth(cur_max.c_str(), SIZE_MEDIUM)+20;
 }
 
 void OptionsMenu::draw(){
@@ -38,7 +38,19 @@ void OptionsMenu::draw(){
     
     for (int i=0; i<n_options; i++){
         yoffset+=15;
-        common::printText(xoffset, yoffset, entries[i].name, LITEGRAY, (i==index)? SIZE_MEDIUM:SIZE_LITTLE, i==index);
+        
+        if (i == index)
+            common::printText(xoffset, yoffset, entries[i].name, LITEGRAY, SIZE_MEDIUM, 1, &scroll);
+        else {
+            string s = TR(entries[i].name);
+            int tw = common::calcTextWidth(s.c_str(), SIZE_LITTLE);
+            if (tw > scroll.w){
+                float cw = float(tw)/s.size();
+                int nchars = scroll.w / cw;
+                s = (s.substr(0, nchars-3)+"...");
+            }
+            common::printText(xoffset, yoffset, s.c_str(), LITEGRAY);
+        }
     }
 }
         

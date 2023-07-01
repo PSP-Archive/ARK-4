@@ -2,6 +2,10 @@
 #include "cJSON.h"
 #include "common.h"
 
+#define MASKBITS 0x3F
+#define MASK2BYTES 0xC0
+#define MASK3BYTES 0xE0
+
 static cJSON* cur_lang = NULL;
 intraFont* font = NULL;
 intraFont* altFont = NULL;
@@ -48,6 +52,8 @@ bool Translations::loadLanguage(string lang_file){
                 conf->font = 0;
                 fonts[0] = fontfile;
                 needs_altfont = true;
+                altFont = font;
+                font = NULL;
             }
         }
 
@@ -58,11 +64,6 @@ bool Translations::loadLanguage(string lang_file){
 
         // free resources
         free(buf);
-    }
-
-    if (needs_altfont && altFont == NULL){
-        altFont = font;
-        font = NULL;
     }
 
     return (cur_lang!=NULL);

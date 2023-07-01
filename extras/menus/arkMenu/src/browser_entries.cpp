@@ -35,6 +35,7 @@ BrowserFile::BrowserFile(){
 }
 
 BrowserFile::BrowserFile(string path){
+    this->icon0 = NULL;
     this->path = path;
     size_t lastSlash = path.rfind("/", string::npos);
     this->name = path.substr(lastSlash+1, string::npos);
@@ -92,6 +93,26 @@ char* BrowserFile::getSubtype(){
 }
 
 void BrowserFile::loadIcon(){
+    this->icon0 = NULL;
+    if (filetype == FILE_PBP){
+        Eboot* eboot = new Eboot(this->getPath());
+        eboot->loadIcon();
+        this->icon0 = eboot->getIcon();
+        eboot->setIcon(NULL);
+        delete eboot;
+    }
+    else if (filetype == FILE_ISO){
+        Iso* iso = new Iso(this->getPath());
+        iso->loadIcon();
+        this->icon0 = iso->getIcon();
+        iso->setIcon(NULL);
+        delete iso;
+    }
+}
+
+void BrowserFile::freeIcon(){
+    this->Entry::freeIcon();
+    this->icon0 = NULL;
 }
 
 void BrowserFile::getTempData1(){
@@ -104,6 +125,7 @@ void BrowserFile::doExecute(){
 }
 
 BrowserFolder::BrowserFolder(string path){
+    this->icon0 = NULL;
     this->path = path;
     size_t lastSlash = path.rfind("/", path.length()-2);
     this->name = path.substr(lastSlash+1, string::npos);

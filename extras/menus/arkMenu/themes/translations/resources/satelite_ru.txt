@@ -49,7 +49,7 @@ RECOVERY МЕНЮ ->
 ЗАКРЫТЬ
 VSH МЕНЮ
 Не поддерживается
-Использовать настройки Adrenaline
+Adrenaline USB
 Flash
 UMD диск
 Внутренняя память

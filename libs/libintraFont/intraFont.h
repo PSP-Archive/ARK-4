@@ -200,6 +200,7 @@ void intraFontShutdown(void);
  * @returns A ::intraFont struct
  */
 intraFont* intraFontLoad(const char *filename,unsigned int options);
+intraFont* intraFontLoadEx(const char *filename,unsigned int options, unsigned long offset, unsigned long filesize);
 
 /**
  * Free the specified font.

@@ -372,6 +372,7 @@ struct vchar *createchars(int *n)
 		v[i].sh=calloc(1,sizeof(struct vchar));
 		v[i].sh->idx=-1;
 		v[i].sh->ch=0;
+		printf("%lc\n", v[i].ch);
 		loadchar(v+i);
 		packchar(v+i);
 	}
@@ -423,8 +424,6 @@ void dumpHeader(){
 int main(int argc, char *argv[])
 {
 
-	dumpHeader();
-
 	FILE *f;
 	struct vchar *v;
 	int n;
@@ -474,7 +473,9 @@ int main(int argc, char *argv[])
 		FT_Set_Transform(ftshfc, &tm, NULL);
 	}
 
+	printf("create chars\n");
 	v=createchars(&n);
+	printf("create ptrs\n");
 	p=createptrs(v,n,&s,&l);
 	ts=ftface->style_name;
 	if(face_embolden) {
@@ -484,8 +485,10 @@ int main(int argc, char *argv[])
 			ts="Bold";
 	} else if(face_italicize)
 		ts="Italic";
+	printf("fix header\n");
 	fixupheader(ftface->family_name,ts,l);
 
+	printf("writing file\n");
 	f=fopen(argv[2],"wb");
 	fwrite(fonthdr,16504,1,f);
 	fwrite(p,s,1,f);

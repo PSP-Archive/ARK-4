@@ -18,6 +18,7 @@ class OptionsMenu {
         t_options_entry* entries;
         int index;
         int x, y, w, h;
+        TextScroll scroll;
         
         int maxString();
     
