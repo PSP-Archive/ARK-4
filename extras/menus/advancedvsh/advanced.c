@@ -189,28 +189,6 @@ int submenu_draw(void) {
 	blit_set_color(0xaf000000, 0xaf000000);
 	blit_rect_fill(submenu_start_x, submenu_start_y+8, window_pixel, 1); // bottom horizontal outline
 	
-	//debug
-	char debug[64];
-	int y = 210;
-	scePaf_snprintf(debug, 64, "vsh = 0x%08X | 0x%08X | 0x%08X", vsh, vsh->buttons.pad.Buttons, vsh->buttons.new_buttons_on);
-	blit_string(10, y, debug);
-	y += 8;
-	scePaf_snprintf(debug, 64, "gfx = 0x%08X", gfx);
-	blit_string(10, y, debug);
-	y += 8;
-	extern const char msx[];
-	scePaf_snprintf(debug, 64, "font = 0x%08X | 0x%08X - 0x%08X", font, font->bitmap, msx);
-	blit_string(10, y, debug);
-	y += 8;
-	scePaf_snprintf(debug, 64, "colors = 0x%08X", colors);
-	blit_string(10, y, debug);
-	y += 8;
-	extern const char *g_messages_en[];
-	scePaf_snprintf(debug, 64, "msg = 0x%08X - 0x%08X", g_messages, g_messages_en);
-	blit_string(10, y, debug);
-	y += 8;
-	
-	
 	blit_set_color(0x00ffffff,0x00000000);
 	return 0;
 }
