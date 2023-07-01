@@ -7,6 +7,8 @@
 #include "common.h"
 
 class SystemEntry{
+    protected:
+        TextScroll scroll;
     public:
         virtual void draw()=0;
         virtual void control(Controller* pad)=0;
@@ -19,7 +21,7 @@ class SystemEntry{
         virtual std::string getName()=0;
         virtual bool isStillLoading()=0;
         virtual void drawInfo(){
-            common::printText(5, 13, this->getInfo().c_str(), LITEGRAY, SIZE_MEDIUM);
+            common::printText(5, 13, this->getInfo().c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll);
         }
 };
 

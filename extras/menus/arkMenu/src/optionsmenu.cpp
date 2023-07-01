@@ -1,5 +1,6 @@
 #include "optionsmenu.h"
 #include "controller.h"
+#include "lang.h"
 
 OptionsMenu::OptionsMenu(char* description, int n_options, t_options_entry* entries){
     this->description = description;
@@ -16,16 +17,14 @@ OptionsMenu::~OptionsMenu(){
 }
 
 int OptionsMenu::maxString(){
-    int max = strlen(description);
-    char* cur_max = description;
+    string cur_max = TR(description);
     for (int i=0; i<n_options; i++){
-        int len = strlen(entries[i].name);
-        if (len > max){
-            max = len;
-            cur_max = entries[i].name;
+        string tmp = TR(entries[i].name);
+        if (tmp.size() > cur_max.size()){
+            cur_max = tmp;
         }
     }
-    return common::calcTextWidth(cur_max, SIZE_MEDIUM)+20;
+    return common::calcTextWidth(cur_max.c_str(), SIZE_MEDIUM)+20;
 }
 
 void OptionsMenu::draw(){
