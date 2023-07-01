@@ -31,6 +31,8 @@ SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool s
     this->shorten_paths = shorten_paths;
     this->show_all_opts = show_all_opts;
     this->show_info = show_info;
+    this->scroll.w = 200;
+    this->scroll2.w = 100;
 }
 
 SettingsMenu::~SettingsMenu(){
@@ -139,11 +141,10 @@ void SettingsMenu::draw(){
                         desc = TR(desc);
                     }
                     int tw = common::calcTextWidth(desc.c_str(), SIZE_LITTLE, !shorten_paths);
-                    float wmax = MENU_W*0.55;
-                    if (tw > wmax){
+                    if (tw > scroll.w){
                         int charw = (tw/desc.size());
-                        int nchars = wmax/charw; 
-                        desc = (nchars<desc.size())? desc.substr(0, nchars) + "..." : desc;
+                        int nchars = scroll.w/charw;
+                        desc = (nchars<desc.size())? desc.substr(0, nchars-3) + "..." : desc;
                     }
                     common::printText(xoffset, yoffset, desc.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0, !shorten_paths);
                     // show option for entry? only if told so

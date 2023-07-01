@@ -7,10 +7,11 @@ OptionsMenu::OptionsMenu(char* description, int n_options, t_options_entry* entr
     this->n_options = n_options;
     this->entries = entries;
     this->index = 0;
-    this->w = min(this->maxString(), 480);
+    this->w = min(this->maxString(), 300);
     this->h = 30 + 15*n_options;
     this->x = (480-w)/2;
     this->y = (272-h)/2;
+    this->scroll.w = 280;
 }
 
 OptionsMenu::~OptionsMenu(){
@@ -37,7 +38,19 @@ void OptionsMenu::draw(){
     
     for (int i=0; i<n_options; i++){
         yoffset+=15;
-        common::printText(xoffset, yoffset, entries[i].name, LITEGRAY, (i==index)? SIZE_MEDIUM:SIZE_LITTLE, i==index);
+        
+        if (i == index)
+            common::printText(xoffset, yoffset, entries[i].name, LITEGRAY, SIZE_MEDIUM, 1, &scroll);
+        else {
+            string s = TR(entries[i].name);
+            int tw = common::calcTextWidth(s.c_str(), SIZE_LITTLE);
+            if (tw > scroll.w){
+                float cw = float(tw)/s.size();
+                int nchars = scroll.w / cw;
+                s = (s.substr(0, nchars-3)+"...");
+            }
+            common::printText(xoffset, yoffset, s.c_str(), LITEGRAY);
+        }
     }
 }
         

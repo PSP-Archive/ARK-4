@@ -65,6 +65,7 @@ typedef struct TextScroll{
     float x;
     float y;
     float tmp;
+    float w;
 }TextScroll;
 
 #define SIZE_TINY 0.4f

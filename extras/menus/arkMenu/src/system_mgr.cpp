@@ -138,6 +138,7 @@ static void drawOptionsMenuCommon(){
     }    
     
     int x = -130;
+    static TextScroll scroll;
     for (int i=page_start-1; i<loop_setup; i++){ // SMALL
         if (i<0){
             x += 160;
@@ -153,14 +154,21 @@ static void drawOptionsMenuCommon(){
 			entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+7, 52, 52); // SMALL
 		} 
         if (i==pEntryIndex && optionsDrawState==2){
+            const char* entname = entries[i]->getName().c_str();
 			if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
-            	common::printText(x+25, 130, entries[i]->getName().c_str(), LITEGRAY, SIZE_BIG, 1); // LARGE
+                int tmp_x = x+25;
+                scroll.w = 475-tmp_x;
+            	common::printText(tmp_x, 130, entname, LITEGRAY, SIZE_BIG, 1, &scroll); // LARGE
 			}
 			else if(common::getConf()->menusize == 2) {
-            	common::printText(x+16, 95, entries[i]->getName().c_str(), LITEGRAY, SIZE_MEDIUM, 1); // MEDIUM
+                int tmp_x = x+16;
+                scroll.w = 475-tmp_x;
+            	common::printText(tmp_x, 95, entname, LITEGRAY, SIZE_MEDIUM, 1, &scroll); // MEDIUM
 			}
 			else {
-				common::printText(x+12, 75, entries[i]->getName().c_str(), LITEGRAY, SIZE_LITTLE, 1); // SMALL
+                int tmp_x = x+12;
+                scroll.w = 475-tmp_x;
+				common::printText(tmp_x, 75, entname, LITEGRAY, SIZE_LITTLE, 1, &scroll); // SMALL
 			}
         }
 

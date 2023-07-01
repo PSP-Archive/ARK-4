@@ -21,6 +21,7 @@ class SystemEntry{
         virtual std::string getName()=0;
         virtual bool isStillLoading()=0;
         virtual void drawInfo(){
+            scroll.w = 200;
             common::printText(5, 13, this->getInfo().c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll);
         }
 };

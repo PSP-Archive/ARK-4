@@ -129,6 +129,37 @@ struct tm common::getDateTime(){
     return ts;
 }
 
+static void loadFont(){
+    unsigned offset=0, size=0;
+    if (config.font == 0){
+        offset = findPkgOffset(fonts[0], &size, "LANG.ARK", &dummyMissingHandler);
+        if (offset && size){
+            fonts[0] = "LANG.ARK";
+        }
+        else if (!fileExists(fonts[0])){
+            if (altFont){
+                font = altFont;
+                config.font = altFontId;
+                return;
+            }
+            else{
+                config.font = 1;
+            }
+        }
+    }
+
+    // offload current font
+    intraFont* aux = font;
+    font = NULL;
+    if (aux) intraFontUnload(aux);
+    // load new font
+    font = intraFontLoadEx(fonts[config.font], (altFont)?INTRAFONT_CACHE_ASCII:INTRAFONT_CACHE_ALL, offset, size);
+    intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
+    currentFont = config.font;
+    // use alt font set by lang
+    if (altFont) intraFontSetAltFont(font, altFont);
+}
+
 void common::saveConf(){
 
     SystemMgr::pauseDraw();
@@ -141,31 +172,7 @@ void common::saveConf(){
     }
 
     if (currentFont != config.font || font == NULL){
-        unsigned offset=0, size=0;
-        if (config.font == 0){
-            offset = findPkgOffset(fonts[0], &size, "LANG.ARK", &dummyMissingHandler);
-            if (offset && size){
-                fonts[0] = "LANG.ARK";
-            }
-            else if (!fileExists(fonts[0])){
-                config.font = 1;
-                if (altFont){
-                    intraFontUnload(altFont);
-                    altFont = NULL;
-                }
-            }
-        }
-    
-        // offload current font
-        intraFont* aux = font;
-        font = NULL;
-        if (aux) intraFontUnload(aux);
-        // load new font
-        font = intraFontLoadEx(fonts[config.font], INTRAFONT_CACHE_ASCII, offset, size);
-        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
-        currentFont = config.font;
-        // use alt font set by lang
-        if (altFont) intraFontSetAltFont(font, altFont);
+        loadFont();
     }
 
     SystemMgr::resumeDraw();
@@ -467,27 +474,10 @@ void common::loadData(int ac, char** av){
         Translations::loadLanguage(lang_files[config.language]);
     }
     
-    if (!font){
-        unsigned offset=0, size=0;
-        if (config.font == 0){
-            offset = findPkgOffset(fonts[0], &size, "LANG.ARK", &dummyMissingHandler);
-            if (offset && size){
-                fonts[0] = "LANG.ARK";
-            }
-            else if (!fileExists(fonts[0])){
-                config.font = 1;
-            }
-        }
-        font = intraFontLoadEx(fonts[config.font], INTRAFONT_CACHE_ASCII, offset, size);
-        intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
-    }
-    if (config.font == 0 && altFont == NULL){
-        altFont = intraFontLoad(fonts[1], INTRAFONT_CACHE_ASCII);
-        intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
-    }
+    loadFont();
+
     if (currentFont != config.font){
         currentFont = config.font;
-        saveConf();
     }
     
 }
@@ -632,7 +622,8 @@ void common::printText(float x, float y, const char* text, u32 color, float size
             scroll->tmp = x;
             scroll->y = y;
         }
-        scroll->tmp = intraFontPrintColumn(textFont, scroll->tmp, y, 200, translated.c_str());
+        if (scroll->w <= 0 || scroll->w >= 480) scroll->w = 200;
+        scroll->tmp = intraFontPrintColumn(textFont, scroll->tmp, y, scroll->w, translated.c_str());
     }
     else
         intraFontPrint(textFont, x, y, translated.c_str());

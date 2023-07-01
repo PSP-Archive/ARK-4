@@ -1499,17 +1499,19 @@ void Browser::drawOptionsMenu(){
             {
             int x = 10;
             int y = 80;
-            static TextScroll scroll;
+            static TextScroll scroll = {0, 0, 0, 125};
             for (int i=0; i<MAX_OPTIONS; i++){
                 if (pEntries[i] == NULL) continue;
                 if (i == pEntryIndex){
                     common::printText(x, y, pEntries[i], LITEGRAY, SIZE_BIG, true, &scroll);
                 }
                 else {
-                    int tw = common::calcTextWidth(pEntries[i], SIZE_LITTLE, 1);
-                    if (tw >= 140){
+                    int tw = common::calcTextWidth(pEntries[i], SIZE_LITTLE);
+                    if (tw >= scroll.w){
                         string s = TR(pEntries[i]);
-                        common::printText(x, y, (s.substr(0, s.find(' '))+"...").c_str());
+                        float cw = float(tw)/s.size();
+                        int nchars = scroll.w / cw;
+                        common::printText(x, y, (s.substr(0, nchars-3)+"...").c_str());
                     }
                     else{
                         common::printText(x, y, pEntries[i], LITEGRAY);
