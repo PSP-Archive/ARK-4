@@ -22,22 +22,47 @@ int main(){
 
     FILE* fp = fopen("EBOOT.PBP", "rb");
     
-    FILE* out = fopen("simple.prx", "wb");
     
     PBPHeader header;
     fread(&header, 1, sizeof(header), fp);
     
-    u32 size = header.psar_offset - header.elf_offset;
-
+    u32 size;
+    
+    size = header.psar_offset - header.elf_offset;
     if (size){
+        FILE* out = fopen("simple.prx", "wb");
         void* data = malloc(size);
         fseek(fp, header.elf_offset, SEEK_SET);
         fread(data, 1, size, fp);
         fwrite(data, 1, size, out);
+        free(data);
+        fclose(out);
+    }
+    
+    size = header.icon0_offset - header.param_offset;
+    if (size){
+        FILE* out = fopen("param.sfo", "wb");
+        void* data = malloc(size);
+        fseek(fp, header.elf_offset, SEEK_SET);
+        fread(data, 1, size, fp);
+        fwrite(data, 1, size, out);
+        free(data);
+        fclose(out);
+    }
+    
+    fseek(fp, 0, SEEK_END);
+    size = ftell(fp) - header.psar_offset;
+    if (size){
+        FILE* out = fopen("data.psar", "wb");
+        void* data = malloc(size);
+        fseek(fp, header.elf_offset, SEEK_SET);
+        fread(data, 1, size, fp);
+        fwrite(data, 1, size, out);
+        free(data);
+        fclose(out);
     }
 
     fclose(fp);
-    fclose(out);
 
     return 0;
 

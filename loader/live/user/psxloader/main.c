@@ -86,13 +86,15 @@ int psxloader_thread(int argc, void* argv){
     //int modid = sceKernelLoadModuleBuffer(simple, size_simple, 0, NULL);
     //sceKernelStartModule(modid, 0, NULL, NULL, NULL);
 
-    sceKernelDelayThread(5000);
+    sceDisplaySetFrameBuf((void *)0x04000000, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
+    colorDebugSetIsVitaPops(1);
 
-    u32 addr = 0x09F40000;
+    u32 addr = 0x09000000;
     u32 size = 0x80000;
     SceCtrlData pad;
     while (1){
         sceCtrlReadBufferPositive(&pad, 1);
+        colorDebug(0xff0000);
         for (u32 i=0; i<size; i+=2){
             _sh(0x1f, addr+i);
         }
@@ -115,9 +117,6 @@ int psxloader_thread(int argc, void* argv){
         }
 
     }
-
-
-    colorDebugSetIsVitaPops(1);
 
     char loadpath[ARK_PATH_SIZE];
     strcpy(loadpath, config.arkpath);
