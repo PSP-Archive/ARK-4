@@ -86,6 +86,8 @@ int psxloader_thread(int argc, void* argv){
     //int modid = sceKernelLoadModuleBuffer(simple, size_simple, 0, NULL);
     //sceKernelStartModule(modid, 0, NULL, NULL, NULL);
 
+    sceKernelDelayThread(5000);
+
     u32 addr = 0x09F40000;
     u32 size = 0x80000;
     SceCtrlData pad;
