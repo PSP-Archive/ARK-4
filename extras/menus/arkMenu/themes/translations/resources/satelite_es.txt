@@ -57,30 +57,30 @@ Memory Stick
 Nada
 Al azar
 Rojo
-Rojo Transparente
+Rojo Claro
 Naranja
-Naranja Transparente
+Naranja Claro
 Amarillo
-Amarillo Transparente
+Amarillo Claro
 Verde
-Verde Transparente
+Verde Claro
 Az£l
-Az£l Transparente
+Az£l Claro
 Indigo
-Indigo Transparente
+Indigo Claro
 Violeta
-Violeta Transparente
+Violeta Claro
 Rosa
-Rosa Transparente
+Rosa Claro
 P£rpura
-P£rpura Transparente
+P£rpura Claro
 Verde Azulado
-Verde Azulado Transparente
+Verde Azulado Claro
 Agua
-Agua Transparente
+Agua Claro
 Gris
-Gris Transparente
+Gris Claro
 Negro
-Negro Transparente
+Negro Claro
 Blanco
-Blanco Transparente
+Blanco Claro
