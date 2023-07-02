@@ -13,11 +13,14 @@ PSP_FW_VERSION=660
 
 BUILD_PRX=1
 
-all:
-	$(Q)mkpsxiso psxloader.xml
-
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
 
+simple.h:
+	$(Q)bin2c simple.psp simple.h simple
+	$(Q)mkpsxiso psxloader.xml
+
+main.c: simple.h
+
 clean:
-	$(Q)rm *.elf *.prx *.o *.bin *.cue
+	$(Q)rm *.elf *.prx *.o *.bin *.cue simple.h

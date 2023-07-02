@@ -22,6 +22,8 @@ PSP_MODULE_INFO("ARK VitaPOPS Loader", 0, 1, 0);
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
 
+//#include "simple.h"
+
 // ARK.BIN requires these imports
 //int SysMemUserForUser_91DE343C(void* unk);
 extern int sceKernelPowerLock(unsigned int, unsigned int);
@@ -81,6 +83,8 @@ volatile UserFunctions funcs = {
 
 int psxloader_thread(int argc, void* argv){
 
+    //int modid = sceKernelLoadModuleBuffer(simple, size_simple, 0, NULL);
+    //sceKernelStartModule(modid, 0, NULL, NULL, NULL);
 
     u32 addr = 0x09F40000;
     u32 size = 0x80000;
