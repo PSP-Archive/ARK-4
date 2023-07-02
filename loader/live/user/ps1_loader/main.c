@@ -14,12 +14,10 @@
 #include <stdio.h>
 
 #include "globals.h"
-#include "rebootconfig.h"
 #include "functions.h"
-#include "graphics.h"
+#include "colordebugger.h"
 
-PSP_MODULE_INFO("ARK Loader", PSP_MODULE_USER, 1, 0);
-PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
+PSP_MODULE_INFO("ARK PS1 Loader", 0, 1, 0);
 
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
@@ -27,15 +25,13 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
 // ARK.BIN requires these imports
 //int SysMemUserForUser_91DE343C(void* unk);
 extern int sceKernelPowerLock(unsigned int, unsigned int);
-extern void* sctrlHENSetStartModuleHandler(void*);
-volatile void* set_start_module_handler = &sctrlHENSetStartModuleHandler;
 
 volatile ARKConfig config = {
     .magic = ARK_CONFIG_MAGIC,
-    .arkpath = DEFAULT_ARK_PATH, // We can use argv[0] (eboot's path)
+    .arkpath = DEFAULT_ARK_PATH, // only ms0 available anyways
     .launcher = {0}, // use default (if needed)
-    .exec_mode = DEV_UNK, // let stage 2 figure this one out
-    .exploit_id = LIVE_EXPLOIT_ID,
+    .exec_mode = PSV_POPS, // set to Vita Pops mode
+    .exploit_id = "ePSX", // ps1 loader name
     .recovery = 0,
 };
 volatile UserFunctions funcs = {
@@ -83,82 +79,73 @@ volatile UserFunctions funcs = {
     .KernelAllocPartitionMemory = &sceKernelAllocPartitionMemory,
 };
 
-int exit_callback(int arg1, int arg2, void *common) {
-    sceKernelExitGame();
-    return 0;
-}
- 
-int CallbackThread(SceSize args, void *argp) {
-    int cbid;
-
-    cbid = sceKernelCreateCallback("Exit Callback", exit_callback, NULL);
-    sceKernelRegisterExitCallback(cbid);
-
-    sceKernelSleepThreadCB();
-
-    return 0;
-}
- 
-int SetupCallbacks(void) {
-    int thid = 0;
-    thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, 0, 0);
-    if(thid >= 0) {
-        sceKernelStartThread(thid, 0, 0);
-    }
-    return thid;
+// PSP to PSX Color Conversion
+static u16 RGBA8888_to_RGBA5551(u32 color)
+{
+    int r, g, b, a;
+    a = (color >> 24) ? 0x8000 : 0;
+    b = (color >> 19) & 0x1F;
+    g = (color >> 11) & 0x1F;
+    r = (color >> 3) & 0x1F;
+    return a | r | (g << 5) | (b << 10);
 }
 
-int main(int argc, char** argv){
+static u32 GetPopsVramAddr(u32 framebuffer, int x, int y)
+{
+    return framebuffer + x * 2 + y * 640 * 4;
+}
 
-    //SetupCallbacks();
+static u32 GetPspVramAddr(u32 framebuffer, int x, int y)
+{
+    return framebuffer + x * 4 + y * 512 * 4;
+}
 
-    initScreen(&sceDisplaySetFrameBuf);
-    
-    PRTSTR("Stage 1 Starting");
-    
-    char* cwd = argv[0];
-    
-    // set kxploit path (same dir as this loader)
-    char kxploit[ARK_PATH_SIZE];
-    int len = strlen(cwd) - sizeof("EBOOT.PBP") + 1;
-    strncpy(kxploit, cwd, len);
-    strcat(kxploit, K_FILE);
-    
-    // set install path device (makes it compatible with ef0)
-    config.arkpath[0] = cwd[0];
-    config.arkpath[1] = cwd[1];
-
-    // set ARK stage 2 loader
-    char loadpath[ARK_PATH_SIZE];
-    strcpy(loadpath, config.arkpath);
-    strcat(loadpath, ARK4_BIN);
-    
-    PRTSTR1("Loading Stage 2 at: %s", loadpath);
-    
-    // load ARK binary
-    SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
-    if (fd < 0) {
-        PRTSTR1("ERROR: %s NOT FOUND!", loadpath);
-        PRTSTR("Press O to go back to XMB.");
-        while (1) {
-            SceCtrlData pad;
-            sceCtrlPeekBufferPositive(&pad, 1);
-
-            if(pad.Buttons & PSP_CTRL_CIRCLE){
-                sceKernelExitGame();
+// Copy PSP VRAM to PSX VRAM
+void SoftRelocateVram(u32* psp_vram, u16* ps1_vram)
+{
+    if(psp_vram)
+    {
+        int y;
+        for(y = 0; y < 272; y++)
+        {
+            int x;
+            for(x = 0; x < 480; x++)
+            {
+                u32 color = *(u32 *)GetPspVramAddr((u32)psp_vram, x, y);
+                *(u16 *)GetPopsVramAddr(ps1_vram, x, y) = RGBA8888_to_RGBA5551(color);
             }
         }
     }
+}
+
+int module_start(SceSize args, void* argp)
+{
+
+    char loadpath[ARK_PATH_SIZE];
+    strcpy(loadpath, config.arkpath);
+    strcat(loadpath, ARK4_BIN);
+
+    SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
+
+    if (fd < 0){
+        while (1){
+            colorDebug(0xff);
+            SoftRelocateVram((u32*)0x44000000, (u16*)0x490C0000);
+        }
+    }
+    else {
+        while (1){
+            colorDebug(0xff00);
+            SoftRelocateVram((u32*)0x44000000, (u16*)0x490C0000);
+        }
+    }
+
     sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
     sceIoClose(fd);
     sceKernelDcacheWritebackAll();
 
-    PRTSTR("Executing ARK Stage 2");
     // execute main function
     void (* hEntryPoint)(ARKConfig*, UserFunctions*, char*) = (void*)ARK_LOADADDR;
-    hEntryPoint(&config, &funcs, kxploit);
-    
-    sceKernelExitGame();
+    hEntryPoint(&config, &funcs, NULL);
 
-    return 0;
 }
