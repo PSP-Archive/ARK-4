@@ -79,11 +79,39 @@ volatile UserFunctions funcs = {
     .KernelAllocPartitionMemory = &sceKernelAllocPartitionMemory,
 };
 
-int module_start(SceSize args, void* argp)
-{
+int psxloader_thread(int argc, void* argv){
+
+
+    u32 addr = 0x09F40000;
+    u32 size = 0x80000;
+    SceCtrlData pad;
+    while (1){
+        sceCtrlReadBufferPositive(&pad, 1);
+        for (u32 i=0; i<size; i+=2){
+            _sh(0x1f, addr+i);
+        }
+
+        if (pad.Buttons & PSP_CTRL_CROSS){
+            int fd = sceIoOpen("ms0:/addr.bin", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+            sceIoWrite(fd, &addr, sizeof(u32));
+            sceIoClose(fd);
+        }
+        else if (pad.Buttons & PSP_CTRL_CIRCLE){
+            sceKernelExitGame();
+        }
+        else if (pad.Buttons & PSP_CTRL_UP){
+            addr -= 4;
+            if (addr < 0x09000000) addr = 0x09000000;
+        }
+        else if (pad.Buttons & PSP_CTRL_DOWN){
+            addr += 4;
+            if (addr+size >= 0x0A000000) addr = 0x0A000000 - size - 4;
+        }
+
+    }
+
 
     colorDebugSetIsVitaPops(1);
-    colorDebug(0xff0000);
 
     char loadpath[ARK_PATH_SIZE];
     strcpy(loadpath, config.arkpath);
@@ -91,16 +119,15 @@ int module_start(SceSize args, void* argp)
 
     SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
 
+    u32 color;
     if (fd < 0){
-        while (1){
-            colorDebug(0xff);
-        }
+        color = 0xff;
     }
     else {
-        while (1){
-            colorDebug(0xff00);
-        }
+        color = 0xff00;
     }
+
+    colorDebug(color);
 
     sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
     sceIoClose(fd);
@@ -110,4 +137,14 @@ int module_start(SceSize args, void* argp)
     void (* hEntryPoint)(ARKConfig*, UserFunctions*, char*) = (void*)ARK_LOADADDR;
     hEntryPoint(&config, &funcs, NULL);
 
+    return 0;
+}
+
+int module_start(SceSize args, void* argp)
+{
+
+    int thid = sceKernelCreateThread("psxloader", &psxloader_thread, 0x10, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
+    sceKernelStartThread(thid, 0, NULL);    
+
+    return 0;
 }

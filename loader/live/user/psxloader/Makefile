@@ -1,7 +1,7 @@
 TARGET = psxloader
 OBJS = main.o
 
-CFLAGS = -Os -G0 -Wall -I$(ARKROOT)/common/include -I$(ARKROOT)/libs/colordebugger
+CFLAGS = -std=c99 -Os -G0 -Wall -I$(ARKROOT)/common/include -I$(ARKROOT)/libs/colordebugger
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -DDEBUG=1
