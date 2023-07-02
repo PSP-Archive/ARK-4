@@ -24,7 +24,7 @@ SUBDIRS = libs \
 	core/compat/pentazemin \
 	loader/live/user/linkless_payload \
 	loader/live/user/signed_eboot \
-	loader/live/user/ps1_loader \
+	loader/live/user/psxloader \
 	loader/live/kernel/kernel_loader \
 	loader/live/kernel/chain_loader \
 	loader/live/kernel/kram_dumper \
@@ -148,7 +148,7 @@ clean:
 	$(Q)$(MAKE) $@ -C libs
 	$(Q)$(MAKE) $@ -C loader/live/user/linkless_payload
 	$(Q)$(MAKE) $@ -C loader/live/user/signed_eboot
-	$(Q)$(MAKE) $@ -C loader/live/user/ps1_loader
+	$(Q)$(MAKE) $@ -C loader/live/user/psxloader
 	$(Q)$(MAKE) $@ -C loader/live/kernel/kernel_loader
 	$(Q)$(MAKE) $@ -C loader/live/kernel/chain_loader
 	$(Q)$(MAKE) $@ -C loader/live/kernel/kram_dumper

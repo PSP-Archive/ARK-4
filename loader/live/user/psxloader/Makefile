@@ -13,5 +13,11 @@ PSP_FW_VERSION=660
 
 BUILD_PRX=1
 
+all:
+	$(Q)mkpsxiso psxloader.xml
+
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
+
+clean:
+	$(Q)rm *.elf *.prx *.o *.bin *.cue

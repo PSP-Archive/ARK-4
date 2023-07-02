@@ -17,7 +17,7 @@
 #include "functions.h"
 #include "colordebugger.h"
 
-PSP_MODULE_INFO("ARK PS1 Loader", 0, 1, 0);
+PSP_MODULE_INFO("ARK VitaPOPS Loader", 0, 1, 0);
 
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
@@ -83,6 +83,7 @@ int module_start(SceSize args, void* argp)
 {
 
     colorDebugSetIsVitaPops(1);
+    colorDebug(0xff0000);
 
     char loadpath[ARK_PATH_SIZE];
     strcpy(loadpath, config.arkpath);
