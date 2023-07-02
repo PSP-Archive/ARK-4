@@ -48,8 +48,8 @@ void patchVitaPopsDisplay(SceModule2* mod){
     u32 display_func = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay_driver", 0x3E17FE8D);
     if (display_func){
         // protect vita pops vram
-        sceKernelAllocPartitionMemory(6, "POPS VRAM CONFIG", 2, 0x1B0, (void *)0x09FE0000);
-        sceKernelAllocPartitionMemory(6, "POPS VRAM", 2, 0x3C0000, (void *)0x090C0000);
+        sceKernelAllocPartitionMemory(6, "POPS VRAM CONFIG", PSP_SMEM_Addr, 0x1B0, (void *)0x09FE0000);
+        sceKernelAllocPartitionMemory(6, "POPS VRAM", PSP_SMEM_Addr, 0x3C0000, (void *)0x090C0000);
         memset((void *)0x49FE0000, 0, 0x1B0);
         memset((void *)0x490C0000, 0, 0x3C0000);
         // register default screen handler
