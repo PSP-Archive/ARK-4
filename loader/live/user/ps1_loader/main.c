@@ -79,47 +79,10 @@ volatile UserFunctions funcs = {
     .KernelAllocPartitionMemory = &sceKernelAllocPartitionMemory,
 };
 
-// PSP to PSX Color Conversion
-static u16 RGBA8888_to_RGBA5551(u32 color)
-{
-    int r, g, b, a;
-    a = (color >> 24) ? 0x8000 : 0;
-    b = (color >> 19) & 0x1F;
-    g = (color >> 11) & 0x1F;
-    r = (color >> 3) & 0x1F;
-    return a | r | (g << 5) | (b << 10);
-}
-
-static u32 GetPopsVramAddr(u32 framebuffer, int x, int y)
-{
-    return framebuffer + x * 2 + y * 640 * 4;
-}
-
-static u32 GetPspVramAddr(u32 framebuffer, int x, int y)
-{
-    return framebuffer + x * 4 + y * 512 * 4;
-}
-
-// Copy PSP VRAM to PSX VRAM
-void SoftRelocateVram(u32* psp_vram, u16* ps1_vram)
-{
-    if(psp_vram)
-    {
-        int y;
-        for(y = 0; y < 272; y++)
-        {
-            int x;
-            for(x = 0; x < 480; x++)
-            {
-                u32 color = *(u32 *)GetPspVramAddr((u32)psp_vram, x, y);
-                *(u16 *)GetPopsVramAddr(ps1_vram, x, y) = RGBA8888_to_RGBA5551(color);
-            }
-        }
-    }
-}
-
 int module_start(SceSize args, void* argp)
 {
+
+    colorDebugSetIsVitaPops(1);
 
     char loadpath[ARK_PATH_SIZE];
     strcpy(loadpath, config.arkpath);
@@ -130,13 +93,11 @@ int module_start(SceSize args, void* argp)
     if (fd < 0){
         while (1){
             colorDebug(0xff);
-            SoftRelocateVram((u32*)0x44000000, (u16*)0x490C0000);
         }
     }
     else {
         while (1){
             colorDebug(0xff00);
-            SoftRelocateVram((u32*)0x44000000, (u16*)0x490C0000);
         }
     }
 
