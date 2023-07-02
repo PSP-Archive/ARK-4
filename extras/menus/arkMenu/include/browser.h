@@ -83,7 +83,7 @@ class Browser : public SystemEntry{
             static TextScroll scroll;
             if (devsize.size() > 0){
                 int w = common::calcTextWidth(cwd.c_str(), SIZE_MEDIUM, 0);
-                scroll.w = 200 - w - 5;
+                scroll.w = 150;
                 common::printText(5, 13, cwd.c_str(), LITEGRAY, SIZE_MEDIUM, 0, NULL, 0);
                 common::printText(5+w, 13, string(" ("+TR("Free size")+": "+devsize+")").c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll);
             }

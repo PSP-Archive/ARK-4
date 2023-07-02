@@ -206,7 +206,9 @@ static void dateTime() {
 
 	char dateStr[100];
 	sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
-    common::printText( common::getConf()->battery_percent ? 270:300, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0, 0);
+    int x = 450 - common::calcTextWidth(dateStr, SIZE_MEDIUM, 0);
+    if (common::getConf()->battery_percent) x -= common::calcTextWidth("-100%", SIZE_MEDIUM, 0)-5;
+    common::printText(x, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0, 0);
 }
 
 static void drawBattery(){
@@ -234,7 +236,7 @@ static void drawBattery(){
         if (common::getConf()->battery_percent) {
             char batteryPercent[4];
             sprintf(batteryPercent, "%d%%", percent);
-            common::printText(415, 13, batteryPercent, color, SIZE_MEDIUM, 0, 0, 0);
+            common::printText(450-common::calcTextWidth(batteryPercent, SIZE_MEDIUM, 0), 13, batteryPercent, color, SIZE_MEDIUM, 0, 0, 0);
         }
 
         ya2d_draw_rect(455, 6, 20, 8, color, 0);
