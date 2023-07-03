@@ -84,6 +84,7 @@ Browser::Browser(){
     this->is_loading = false;
 
     t_conf* conf = common::getConf();
+    ARKConfig* ark_config = common::getArkConfig();
     if (conf->browser_dir[0]) this->cwd = conf->browser_dir;
 
     int psp_model = common::getPspModel();
@@ -96,11 +97,12 @@ Browser::Browser(){
     if (psp_model == PSP_11000 || ftp_driver == NULL){
         pEntries[FTP_DIR] = NULL;
     }
-    if (IS_VITA(common::getArkConfig()) || psp_model == PSP_GO){
+    if (IS_VITA(ark_config) || psp_model == PSP_GO){
         pEntries[UMD_DIR] = NULL;
     }
 
-	pEntries[7] = "Toggle USB ON";
+    if (ark_config->exec_mode == PS_VITA)
+    	pEntries[USB_DEV] = NULL;
 
 }
 
@@ -1562,8 +1564,10 @@ void Browser::optionsMenu(){
     Controller cont;
     Controller* pad = &cont;
     
-    string usb_dev = "USB - " + TR( (USB::is_enabled)? "Enabled":"Disabled" );
-    pEntries[USB_DEV] = (char*)usb_dev.c_str();
+    if (pEntries[USB_DEV]){
+        string usb_dev = "USB - " + TR( (USB::is_enabled)? "Enabled":"Disabled" );
+        pEntries[USB_DEV] = (char*)usb_dev.c_str();
+    }
 
     pad->update();
     
