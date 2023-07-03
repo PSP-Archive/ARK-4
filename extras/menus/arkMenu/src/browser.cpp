@@ -327,7 +327,7 @@ void Browser::installPlugin(){
     else if (ret == 6){
         SystemMgr::pauseDraw();
         OSK osk;
-        osk.init("Game ID (i.e. ULUS01234)", "", 50);
+        osk.init("Game ID (i.e. ULUS01234)", (TextEditor::clipboard.size() > 0)? TextEditor::clipboard.c_str() : "", 50);
         osk.loop();
         int osk_res = osk.getResult();
         if(osk_res != OSK_CANCEL)
