@@ -8,6 +8,7 @@
 #include "gamemgr.h"
 #include "system_mgr.h"
 #include "osk.h"
+#include "usb.h"
 
 #include "iso.h"
 #include "eboot.h"
@@ -45,7 +46,7 @@ static char* pEntries[MAX_OPTIONS] = {
     (char*) "Delete",
     (char*) "Rename",
     (char*) "Create new",
-    (char*) "Toggle USB     ",
+    (char*) "Toggle USB",
     (char*) "Go to ms0:/",
     (char*) "Go to ef0:/",
     (char*) "Go to ftp:/",
@@ -1485,11 +1486,11 @@ void Browser::createNew(){
 
 
 void Browser::toggleUSB() {
-	if(strcmp(pEntries[7],"Toggle USB ON") == 0) {
-		pEntries[7] = "Toggle USB OFF";
+	if (USB::is_enabled) {
+		USB::disable();
 	}
 	else {
-		pEntries[7] = "Toggle USB ON";
+		USB::enable();
 	}
 }
 
@@ -1560,6 +1561,9 @@ void Browser::optionsMenu(){
 
     Controller cont;
     Controller* pad = &cont;
+    
+    string usb_dev = "USB - " + TR( (USB::is_enabled)? "Enabled":"Disabled" );
+    pEntries[USB_DEV] = (char*)usb_dev.c_str();
 
     pad->update();
     
@@ -1646,7 +1650,7 @@ void Browser::options(){
     case DELETE:      this->removeSelection();                         break;
     case RENAME:      this->rename();                                  break;
     case CREATE:      this->createNew();                               break;
-    case TOGGLE_USB:  this->toggleUSB();                               break;
+    case USB_DEV:  this->toggleUSB();                               break;
     case MS0_DIR:     this->cwd = ROOT_DIR;     this->refreshDirs();   break;
     case FTP_DIR:     this->cwd = FTP_ROOT;     this->refreshDirs();   break;
     case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;

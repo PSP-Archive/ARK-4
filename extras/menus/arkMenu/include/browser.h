@@ -19,7 +19,7 @@ enum{
     DELETE,
     RENAME,
     CREATE,
-    TOGGLE_USB,
+    USB_DEV,
     MS0_DIR,
     EF0_DIR,
     FTP_DIR,
