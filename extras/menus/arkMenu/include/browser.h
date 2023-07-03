@@ -49,7 +49,6 @@ class BrowserDriver{
 class Browser : public SystemEntry{
 
     public:
-        Browser();
         ~Browser();
         static Browser* getInstance();
         
@@ -111,6 +110,8 @@ class Browser : public SystemEntry{
         static const char* getCWD();
         
     private:
+
+        Browser();
     
         string cwd; // Current Working Directory
 

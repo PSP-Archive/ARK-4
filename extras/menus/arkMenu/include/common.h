@@ -81,6 +81,7 @@ typedef struct TextScroll{
 
 namespace common{
 
+    extern bool is_recovery;
     extern ARKConfig* getArkConfig();
     extern int getArgc();
     extern char** getArgv();

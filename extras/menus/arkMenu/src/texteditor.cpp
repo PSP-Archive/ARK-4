@@ -28,8 +28,6 @@ string TextEditor::clipboard = "";
 
 TextEditor::TextEditor(string path){
     this->path = path;
-    if (clipboard.size() == 0)
-        clipboard = "<"+TR("new line")+">";
     this->table.settings_entries = NULL;
     this->table.max_options = 0;
     this->table.changed = 0;
@@ -206,7 +204,7 @@ int TextEditor::control(){
         else if (pad.square()){
             common::playMenuSound();
             int i = this->menu->getIndex();
-            this->insertLine(i+1, clipboard, EDIT, COPY, REMV);
+            this->insertLine(i+1, (clipboard.size() > 0)? clipboard : "<"+TR("new line")+">", EDIT, COPY, REMV);
             this->editLine(i+1);
             pad.flush();
         }
