@@ -157,8 +157,8 @@ static void loadFont(){
     intraFont* aux = font;
     if (aux) intraFontUnload(aux);
     // load new font
-    if (config.font == 0 && !altFont) altFont = intraFontLoadEx(fonts[1], INTRAFONT_CACHE_ASCII, 0, 0);
-    font = intraFontLoadEx(fonts[config.font], (altFont)?INTRAFONT_CACHE_ASCII:INTRAFONT_CACHE_ALL, offset, size);
+    if (config.font == 0 && !altFont) altFont = intraFontLoadEx(fonts[1], INTRAFONT_CACHE_ALL, 0, 0);
+    font = intraFontLoadEx(fonts[config.font], INTRAFONT_CACHE_ALL, offset, size);
     intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
     // set alt font
     if (altFont) intraFontSetAltFont(font, altFont);
