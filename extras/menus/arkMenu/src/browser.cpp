@@ -53,6 +53,7 @@ static char* pEntries[MAX_OPTIONS] = {
 BrowserDriver* Browser::ftp_driver = NULL;
 
 Browser* Browser::getInstance(){
+    if (self == NULL) self = new Browser();
     return self;
 }
 

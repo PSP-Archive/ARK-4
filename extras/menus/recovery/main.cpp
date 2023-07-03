@@ -63,7 +63,7 @@ int main(int argc, char** argv){
     entries[1] = plugins_menu;
 
     // Add browser
-    entries[2] = new Browser();
+    entries[2] = Browser::getInstance();
 
 	// Settings
     int max_settings = MAX_SETTINGS_OPTIONS;

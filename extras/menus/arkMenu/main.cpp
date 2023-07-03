@@ -73,12 +73,12 @@ int main(int argc, char** argv){
 
     // Setup main App (Game or Browser)
     if (common::getConf()->main_menu == 0){
-        entries[1] = new Browser();
-        entries[0] = new GameManager(true);
+        entries[1] = Browser::getInstance();
+        entries[0] = GameManager::getInstance();
     }
     else{
-        entries[0] = new Browser();
-        entries[1] = new GameManager(false);
+        entries[0] = Browser::getInstance();
+        entries[1] = GameManager::getInstance();
     }
     
     // Initialize Menu

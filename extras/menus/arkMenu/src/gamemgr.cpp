@@ -21,10 +21,11 @@ static bool loadingData = false;
 ARKConfig* ark_config;
 
 GameManager* GameManager::getInstance(){
+    if (self == NULL) self = new GameManager();
     return self;
 }
 
-GameManager::GameManager(bool autoload){
+GameManager::GameManager(){
 
     // set the global self variable as this instance for the threads to use it
     self = this;
@@ -34,7 +35,7 @@ GameManager::GameManager(bool autoload){
     this->optionsmenu = NULL;
 
     // initialize the categories
-    this->selectedCategory = (autoload)?-1:-2;
+    this->selectedCategory = -2;
     for (int i=0; i<MAX_CATEGORIES; i++){
         this->categories[i] = new Menu((EntryType)i);
     }
