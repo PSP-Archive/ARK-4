@@ -19,6 +19,7 @@ enum{
     DELETE,
     RENAME,
     CREATE,
+    TOGGLE_USB,
     MS0_DIR,
     EF0_DIR,
     FTP_DIR,
@@ -206,6 +207,7 @@ class Browser : public SystemEntry{
         void makedir();
         void makefile();
         void createNew();
+        void toggleUSB();
         
         void rename();
         

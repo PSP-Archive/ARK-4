@@ -35,7 +35,8 @@ typedef BrowserFolder Folder;
 
 extern "C" int kuKernelLoadModule(const char*, int, void*);
 
-#define MAX_OPTIONS 12
+#define MAX_OPTIONS 13
+
 static char* pEntries[MAX_OPTIONS] = {
     (char*) "Cancel",
     (char*) "Copy",
@@ -44,6 +45,7 @@ static char* pEntries[MAX_OPTIONS] = {
     (char*) "Delete",
     (char*) "Rename",
     (char*) "Create new",
+    (char*) "Toggle USB     ",
     (char*) "Go to ms0:/",
     (char*) "Go to ef0:/",
     (char*) "Go to ftp:/",
@@ -96,6 +98,9 @@ Browser::Browser(){
     if (IS_VITA(common::getArkConfig()) || psp_model == PSP_GO){
         pEntries[UMD_DIR] = NULL;
     }
+
+	pEntries[7] = "Toggle USB ON";
+
 }
 
 Browser::~Browser(){
@@ -1478,6 +1483,16 @@ void Browser::createNew(){
     }
 }
 
+
+void Browser::toggleUSB() {
+	if(strcmp(pEntries[7],"Toggle USB ON") == 0) {
+		pEntries[7] = "Toggle USB OFF";
+	}
+	else {
+		pEntries[7] = "Toggle USB ON";
+	}
+}
+
 void Browser::drawOptionsMenu(){
 
     switch (optionsDrawState){
@@ -1495,11 +1510,12 @@ void Browser::drawOptionsMenu(){
         case 2: // draw menu
             optionsAnimX = 0;
             optionsAnimY = 52;
-            common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 140, 220);
+            //common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 140, 220);
+            common::getImage(IMAGE_DIALOG)->draw_scale(0, 32, 140, 220);
         
             {
             int x = 10;
-            int y = 80;
+            int y = 50;
             static TextScroll scroll = {0, 0, 0, 125};
             for (int i=0; i<MAX_OPTIONS; i++){
                 if (pEntries[i] == NULL) continue;
@@ -1630,6 +1646,7 @@ void Browser::options(){
     case DELETE:      this->removeSelection();                         break;
     case RENAME:      this->rename();                                  break;
     case CREATE:      this->createNew();                               break;
+    case TOGGLE_USB:  this->toggleUSB();                               break;
     case MS0_DIR:     this->cwd = ROOT_DIR;     this->refreshDirs();   break;
     case FTP_DIR:     this->cwd = FTP_ROOT;     this->refreshDirs();   break;
     case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;
