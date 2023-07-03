@@ -6,6 +6,8 @@
 #include <pspusb.h>
 #include <pspusbstor.h>
 
+#define PSP_USBSTOR_EF_DRIVERNAME "USBStorEFlash_Driver"
+
 bool USB::is_enabled = false;
 
 extern "C" {
@@ -21,6 +23,7 @@ static void start_psp_usb(){
         "flash0:/kd/usbstor.prx",
         "flash0:/kd/usbstormgr.prx",
         "flash0:/kd/usbstorms.prx",
+        "flash0:/kd/usbstoreflash.prx",
         "flash0:/kd/usbstorboot.prx",
         "flash0:/kd/usb.prx",
     };
@@ -32,11 +35,13 @@ static void start_psp_usb(){
 
     sceUsbStart(PSP_USBBUS_DRIVERNAME, 0, 0);
     sceUsbStart(PSP_USBSTOR_DRIVERNAME, 0, 0);
+    sceUsbStart(PSP_USBSTOR_EF_DRIVERNAME, 0, 0);
 	sceUsbActivate(0x1c8);
 }
 
 static void stop_psp_usb(){
     sceUsbDeactivate(0x1c8);
+    sceUsbStop(PSP_USBSTOR_EF_DRIVERNAME, 0, 0);
 	sceUsbStop(PSP_USBSTOR_DRIVERNAME, 0, 0);
     sceUsbStop(PSP_USBBUS_DRIVERNAME, 0, 0);
 }
