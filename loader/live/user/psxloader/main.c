@@ -89,12 +89,27 @@ int psxloader_thread(int argc, void* argv){
     sceDisplaySetFrameBuf((void *)0x04000000, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
     colorDebugSetIsVitaPops(1);
 
+    char loadpath[ARK_PATH_SIZE];
+    strcpy(loadpath, config.arkpath);
+    strcat(loadpath, ARK4_BIN);
+
+    SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
+
+    u32 color;
+    if (fd < 0){
+        color = 0xff;
+    }
+    else {
+        color = 0xff00;
+    }
+
+    colorDebug(color);
+
     u32 addr = 0x09000000;
     u32 size = 0x80000;
     SceCtrlData pad;
     while (1){
         sceCtrlReadBufferPositive(&pad, 1);
-        colorDebug(0xff0000);
         for (u32 i=0; i<size; i+=2){
             _sh(0x1f, addr+i);
         }
@@ -117,22 +132,6 @@ int psxloader_thread(int argc, void* argv){
         }
 
     }
-
-    char loadpath[ARK_PATH_SIZE];
-    strcpy(loadpath, config.arkpath);
-    strcat(loadpath, ARK4_BIN);
-
-    SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
-
-    u32 color;
-    if (fd < 0){
-        color = 0xff;
-    }
-    else {
-        color = 0xff00;
-    }
-
-    colorDebug(color);
 
     sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
     sceIoClose(fd);
