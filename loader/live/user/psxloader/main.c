@@ -149,7 +149,7 @@ int module_start(SceSize args, void* argp)
 {
 
     int thid = sceKernelCreateThread("psxloader", &psxloader_thread, 0x10, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
-    sceKernelStartThread(thid, 0, NULL);    
+    sceKernelStartThread(thid, 0, NULL);
 
     return 0;
 }
