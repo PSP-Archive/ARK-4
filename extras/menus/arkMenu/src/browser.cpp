@@ -36,7 +36,7 @@ typedef BrowserFolder Folder;
 
 extern "C" int kuKernelLoadModule(const char*, int, void*);
 
-#define MAX_OPTIONS 13
+#define MAX_OPTIONS 12
 
 static char* pEntries[MAX_OPTIONS] = {
     (char*) "Cancel",
@@ -1518,7 +1518,7 @@ void Browser::drawOptionsMenu(){
         
             {
             int x = 10;
-            int y = 50;
+            int y = 65;
             static TextScroll scroll = {0, 0, 0, 125};
             for (int i=0; i<MAX_OPTIONS; i++){
                 if (pEntries[i] == NULL) continue;
@@ -1654,7 +1654,7 @@ void Browser::options(){
     case DELETE:      this->removeSelection();                         break;
     case RENAME:      this->rename();                                  break;
     case CREATE:      this->createNew();                               break;
-    case USB_DEV:  this->toggleUSB();                               break;
+    case USB_DEV:     this->toggleUSB();                               break;
     case MS0_DIR:     this->cwd = ROOT_DIR;     this->refreshDirs();   break;
     case FTP_DIR:     this->cwd = FTP_ROOT;     this->refreshDirs();   break;
     case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;
