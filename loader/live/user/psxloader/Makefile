@@ -23,4 +23,4 @@ simple.h:
 main.c: simple.h
 
 clean:
-	$(Q)rm *.elf *.prx *.o *.bin *.cue simple.h
+	$(Q)rm -f *.elf *.prx *.o *.bin *.cue simple.h
