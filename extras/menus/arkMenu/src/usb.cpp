@@ -3,9 +3,10 @@
 
 #include <kubridge.h>
 #include <systemctrl.h>
+#include <pspusb.h>
+#include <pspusbstor.h>
 
 bool USB::is_enabled = false;
-static SceUID usbdev_id = -1;
 
 extern "C" {
     int pspUsbDeviceSetDevice(int, int, int);
@@ -14,50 +15,38 @@ extern "C" {
 
 static void load_start_usbdevice(void)
 {
-    ARKConfig* ark_config = common::getArkConfig();
-	SceUID modid = -1;
-	int ret;
-	char mod[ARK_PATH_SIZE];
-	strcpy(mod, ark_config->arkpath);
-	strcat(mod, "USBDEV.PRX");
 
-    int usbid = sceKernelLoadModule("flash0:/kd/usb.prx", 0, NULL);
-    sceKernelStartModule(usbid, 0, NULL, NULL, NULL);
+    int res;
 
-	modid = sceKernelLoadModule(mod, 0, NULL);
+    static char* mods[] = {
+        "flash0:/kd/semawm.prx",
+        "flash0:/kd/usbstor.prx",
+        "flash0:/kd/usbstormgr.prx",
+        "flash0:/kd/usbstorms.prx",
+        "flash0:/kd/usbstorboot.prx",
+        "flash0:/kd/usb.prx",
+    };
 
-	if (modid < 0) modid = sceKernelLoadModule("flash0:/vsh/module/ark_usbdev.prx", 0, NULL); // retry flash0
+    for (int i=0; i<6; i++){
+        printf("loading %s\n", mods[i]);
+        int mid = kuKernelLoadModule(mods[i], 0, NULL);
+        printf("mod id: %p\n", mid);
+        sceKernelStartModule(mid, 0, NULL, NULL, NULL);
+    }
 
-	if (modid < 0) {
-		return;
-	}
-
-	ret = sceKernelStartModule(modid, 0, NULL, NULL, NULL);
-
-	if (ret < 0) {
-		sceKernelUnloadModule(modid);
-
-		return;
-	}
-
-	usbdev_id = modid;
-
-    pspUsbDeviceSetDevice(0, 0, 0);
+    res = sceUsbStart(PSP_USBBUS_DRIVERNAME, 0, 0);
+    printf("usbStart bus: %p\n", res);
+    res = sceUsbStart(PSP_USBSTOR_DRIVERNAME, 0, 0);
+    printf("usbStart store: %p\n", res);
+	res = sceUsbActivate(0x1c8);
+    printf("usbActivate: %p\n", res);
 }
 
 static void stop_unload_usbdevice(void)
 {
-	int ret;
-
-    pspUsbDeviceFinishDevice();
-
-	ret = sceKernelStopModule(usbdev_id, 0, NULL, NULL, NULL);
-
-	ret = sceKernelUnloadModule(usbdev_id);
-
-	if (ret >= 0) {
-		usbdev_id = -1;
-	}
+	sceUsbDeactivate(0x1c8);
+	sceUsbStop(PSP_USBSTOR_DRIVERNAME, 0, 0);
+    sceUsbStop(PSP_USBBUS_DRIVERNAME, 0, 0);
 }
 
 static void start_psp_usb(){
