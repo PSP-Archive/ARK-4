@@ -35,6 +35,7 @@ OBJS = \
 		src/browser.o \
 		src/browser_entries.o \
 		src/osk.o \
+		src/usb.o \
 		src/network.o \
 		src/settingsmenu.o \
 		src/optionsmenu.o \

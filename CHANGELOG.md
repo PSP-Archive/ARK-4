@@ -9,7 +9,8 @@
 - `File Browser` can now display game icons and animations.
 - Added option to disable file size calculation in `File Browser`.
 - A progress bar is now displayed when downloading an update in the `Custom Launcher`.
-
+- Fixed graphical glitch when loading the `Custom Launcher` or `Recovery`.
+- Several other fixes and improvements.
 
 ## Version 4.20.59 (2023-06-27):
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42059
