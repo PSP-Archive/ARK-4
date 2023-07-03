@@ -1513,11 +1513,11 @@ void Browser::drawOptionsMenu(){
         case 2: // draw menu
             optionsAnimX = 0;
             optionsAnimY = 52;
-            common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 140, 220);
+            common::getImage(IMAGE_DIALOG)->draw_scale(0, 32, 140, 240);
         
             {
             int x = 10;
-            int y = 65;
+            int y = 55;
             static TextScroll scroll = {0, 0, 0, 125};
             for (int i=0; i<MAX_OPTIONS; i++){
                 if (pEntries[i] == NULL) continue;
