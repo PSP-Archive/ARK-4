@@ -432,3 +432,7 @@ void SystemMgr::exitFullScreen(){
 SystemEntry* SystemMgr::getSystemEntry(unsigned index){
     return (index < MAX_ENTRIES)? entries[index] : NULL;
 }
+
+void SystemMgr::setSystemEntry(SystemEntry* entry, unsigned index){
+    if (index < MAX_ENTRIES) entries[index] = entry;
+}

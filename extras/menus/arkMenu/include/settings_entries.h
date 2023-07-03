@@ -142,6 +142,21 @@ static struct {
     {"Disabled", "Enabled"}
 };
 
+/* Show Hidden files/folders */
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[2];
+} show_size = {
+    "Show File Size",
+    2,
+    0,
+    &(common::getConf()->show_size),
+    {"Disabled", "Enabled"}
+};
+
 /* Button swap */
 static struct {
     char* description;
@@ -348,6 +363,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&scan_cat,
     (settings_entry*)&scan_dlc,
     (settings_entry*)&show_hidden,
+    (settings_entry*)&show_size,
     (settings_entry*)&swap_buttons,
     (settings_entry*)&animations,
     (settings_entry*)&main_menu,

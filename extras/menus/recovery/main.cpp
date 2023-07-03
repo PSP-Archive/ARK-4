@@ -43,6 +43,7 @@ int main(int argc, char** argv){
     // setup UMD disc
     sceUmdReplacePermit();
 
+    common::is_recovery = true;
     common::loadData(argc, argv);
 
     // Add ARK settings manager

@@ -15,6 +15,7 @@ namespace SystemMgr{
     extern void enterFullScreen();
     extern void exitFullScreen();
     extern SystemEntry* getSystemEntry(unsigned index);
+    void setSystemEntry(SystemEntry* entry, unsigned index);
 };
 
 #endif
