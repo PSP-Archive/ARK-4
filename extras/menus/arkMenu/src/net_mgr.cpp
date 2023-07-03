@@ -25,6 +25,8 @@ static struct {
 static SceUID ftp_thread = -1;
 static char pspIpAddr[32];
 
+static SceULong64 cur_download=0, max_download=0;
+
 static void addMessage(const char* msg){
     if (msg==NULL)
         return;
@@ -83,6 +85,13 @@ void NetworkManager::draw(){
             common::printText(30, y, vla.msg[i].c_str());
             y+=20;
         }
+
+        if (max_download){
+            double percent = double(cur_download)/double(max_download);
+            ya2d_draw_rect(20, 265, 450, 5, DARKGRAY, 1);
+            ya2d_draw_rect(20, 266, 450*percent, 3, LITEGRAY, 1);
+        }
+
         break;
     case 1:
         if (w > 0 || h > 0){
@@ -246,7 +255,7 @@ static void checkUpdates(){
 
             addMessage("Downloading psp-updatelist.txt");
 
-            wget((char*)path.c_str(), "psp-updatelist.txt");
+            wget((char*)path.c_str(), "psp-updatelist.txt", &cur_download, &max_download);
 
             updater_url = parsePspUpdateList(&update_ver);
 
@@ -263,7 +272,7 @@ static void checkUpdates(){
             else{
                 addMessage("Downloading updater");
                 sceIoMkdir(update_folder, 0777);
-                wget((char*)updater_url.c_str(), update_eboot);
+                wget((char*)updater_url.c_str(), update_eboot, &cur_download, &max_download);
             }
 
             update_end:
