@@ -31,7 +31,7 @@ extern int sceKernelPowerLock(unsigned int, unsigned int);
 volatile ARKConfig config = {
     .magic = ARK_CONFIG_MAGIC,
     .arkpath = DEFAULT_ARK_PATH, // only ms0 available anyways
-    .launcher = {0}, // use default (if needed)
+    .launcher = ARK_XMENU, // use default (if needed)
     .exec_mode = PSV_POPS, // set to Vita Pops mode
     .exploit_id = "ePSX", // ps1 loader name
     .recovery = 0,
@@ -149,7 +149,7 @@ int module_start(SceSize args, void* argp)
 {
 
     int thid = sceKernelCreateThread("psxloader", &psxloader_thread, 0x10, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
-    sceKernelStartThread(thid, 0, NULL);    
+    sceKernelStartThread(thid, 0, NULL);
 
     return 0;
 }

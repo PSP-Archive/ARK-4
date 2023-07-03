@@ -336,10 +336,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
 
-	if (strcmp(mod->modname, "ARK VitaPOPS Loader") == 0){
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS);
-	}
-
     if(strcmp(mod->modname, "sceDisplay_Service") == 0)
     {
         // can use screen now

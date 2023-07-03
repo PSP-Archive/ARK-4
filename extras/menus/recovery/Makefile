@@ -25,6 +25,7 @@ OBJS = \
 		../arkMenu/src/entry.o \
 		../arkMenu/src/eboot.o \
 		../arkMenu/src/iso.o \
+		../arkMenu/src/usb.o \
 		../arkMenu/src/browser.o \
 		../arkMenu/src/browser_entries.o \
 		../arkMenu/src/settingsmenu.o \
