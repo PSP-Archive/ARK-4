@@ -549,7 +549,9 @@ Theme: Yokai
 #### Other Launchers
 <p>
 
-Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
+Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community.
+
+Here is a list of all popular menus for ARK:
 
 - ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
 
@@ -563,6 +565,7 @@ Aside from the default launcher provided, there have been many  other custom lau
 
 - pyMenu by Acid_Snake: https://wololo.net/talk/viewtopic.php?t=21942
 
+You can find a collection here: https://github.com/PSP-Archive/ARK-Launchers
 
 Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
 </p>

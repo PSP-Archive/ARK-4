@@ -105,7 +105,8 @@ static int matchingRunlevel(char * runlevel)
         // check if running custom launcher
         static char path[ARK_PATH_SIZE];
         strcpy(path, ark_config->arkpath);
-        strcat(path, ark_config->launcher);
+        if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
+        else                         strcat(path, ARK_MENU);
         return (strcmp(path, sceKernelInitFileName())==0);
     }
     else { // check if plugin loads on specific game
