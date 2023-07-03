@@ -1565,7 +1565,8 @@ void Browser::optionsMenu(){
     Controller* pad = &cont;
     
     if (pEntries[USB_DEV]){
-        string usb_dev = "USB - " + TR( (USB::is_enabled)? "Enabled":"Disabled" );
+        static string usb_dev;
+	usb_dev = "USB - " + TR( (USB::is_enabled)? "Enabled":"Disabled" );
         pEntries[USB_DEV] = (char*)usb_dev.c_str();
     }
 
