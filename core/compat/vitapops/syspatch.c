@@ -145,6 +145,10 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
+            // Set fake framebuffer so that cwcheat can be displayed
+            DisplaySetFrameBuf((void *)g_vram_base, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
+            memset((void *)g_vram_base, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+
             // Boot Complete Action done
             booted = 1;
             goto flush;

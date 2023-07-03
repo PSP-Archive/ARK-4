@@ -3,6 +3,11 @@
 
 // TN-X patches for PSX exploits on Vita
 
+#define PSP_SCREEN_WIDTH 480
+#define PSP_SCREEN_HEIGHT 272
+#define PSP_SCREEN_LINE 512
+#define SCE_PSPEMU_FRAMEBUFFER_SIZE 0x88000
+
 #define MAX_VRAM_CONFIGS 2
 typedef struct POPSVramConfig{
     short x;
