@@ -17,11 +17,10 @@ PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
 
 #ChovySign-CLI --pops psxloader.cue --pops-info "ARK-X" ICON0.PNG --pops-eboot psxloader.prx --no-psvimg --vkey-gen act.dat license.rif 000000000000000000000000 2 --rif license.rif
-simple.h:
-	$(Q)bin2c simple.psp simple.h simple
+psxloader.cue:
 	$(Q)mkpsxiso psxloader.xml
 
-main.c: simple.h
+main.c: psxloader.cue
 
 clean:
-	$(Q)rm -f *.elf *.prx *.o *.bin *.cue simple.h
+	$(Q)rm -f *.elf *.prx *.o *.bin *.cue

@@ -104,34 +104,8 @@ int psxloader_thread(int argc, void* argv){
     }
 
     colorDebug(color);
-
-    u32 addr = 0x09000000;
-    u32 size = 0x80000;
-    SceCtrlData pad;
-    while (1){
-        sceCtrlReadBufferPositive(&pad, 1);
-        for (u32 i=0; i<size; i+=2){
-            _sh(0x1f, addr+i);
-        }
-
-        if (pad.Buttons & PSP_CTRL_CROSS){
-            int fd = sceIoOpen("ms0:/addr.bin", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
-            sceIoWrite(fd, &addr, sizeof(u32));
-            sceIoClose(fd);
-        }
-        else if (pad.Buttons & PSP_CTRL_CIRCLE){
-            sceKernelExitGame();
-        }
-        else if (pad.Buttons & PSP_CTRL_UP){
-            addr -= 4;
-            if (addr < 0x09000000) addr = 0x09000000;
-        }
-        else if (pad.Buttons & PSP_CTRL_DOWN){
-            addr += 4;
-            if (addr+size >= 0x0A000000) addr = 0x0A000000 - size - 4;
-        }
-
-    }
+    sceKernelExitGame();
+    return 0;
 
     sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
     sceIoClose(fd);
