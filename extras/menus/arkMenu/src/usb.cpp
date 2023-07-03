@@ -21,6 +21,9 @@ static void load_start_usbdevice(void)
 	strcpy(mod, ark_config->arkpath);
 	strcat(mod, "USBDEV.PRX");
 
+    int usbid = sceKernelLoadModule("flash0:/kd/usb.prx", 0, NULL);
+    sceKernelStartModule(usbid, 0, NULL, NULL, NULL);
+
 	modid = sceKernelLoadModule(mod, 0, NULL);
 
 	if (modid < 0) modid = sceKernelLoadModule("flash0:/vsh/module/ark_usbdev.prx", 0, NULL); // retry flash0
@@ -57,6 +60,18 @@ static void stop_unload_usbdevice(void)
 	}
 }
 
+static void start_psp_usb(){
+    struct KernelCallArg args;
+    void* startUsb = (void*)&load_start_usbdevice;
+    kuKernelCall(startUsb, &args);
+}
+
+static void stop_psp_usb(){
+    struct KernelCallArg args;
+    void* stopUsb = (void*)&stop_unload_usbdevice;
+    kuKernelCall(stopUsb, &args);
+}
+
 static void start_adrenaline_usb(){
     struct KernelCallArg args;
     void* startUsb = (void*)sctrlHENFindFunction("ARKCompatLayer", "AdrenalineCtrl", 0x80C0ED7B);
@@ -74,7 +89,7 @@ void USB::enable(){
     ARKConfig* ark_conf = common::getArkConfig();
     if (IS_PSP(ark_conf)){
         // load/start USBDEV.PRX
-        load_start_usbdevice();
+        start_psp_usb();
         is_enabled = true;
     }
     else if (IS_VITA_ADR(ark_conf)){
@@ -89,7 +104,7 @@ void USB::disable(){
     ARKConfig* ark_conf = common::getArkConfig();
     if (IS_PSP(ark_conf)){
         // stop/unload USBDEV.PRX
-        stop_unload_usbdevice();
+        stop_psp_usb();
         is_enabled = false;
     }
     else if (IS_VITA_ADR(ark_conf)){
