@@ -70,6 +70,8 @@ LIBS = \
 		-lpsprtc \
 		-lz \
 		-lm \
+		-lpspusb \
+		-lpspusbdevice_driver \
 		-lpspvram \
 		-lpspmath \
 		-lpspmp3 \

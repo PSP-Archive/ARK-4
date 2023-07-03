@@ -1,8 +1,16 @@
 #include "usb.h"
 #include "common.h"
 
+#include <kubridge.h>
+#include <systemctrl.h>
+
 bool USB::is_enabled = false;
 static SceUID usbdev_id = -1;
+
+extern "C" {
+    int pspUsbDeviceSetDevice(int, int, int);
+    int pspUsbDeviceFinishDevice();
+}
 
 static void load_start_usbdevice(void)
 {
@@ -30,11 +38,15 @@ static void load_start_usbdevice(void)
 	}
 
 	usbdev_id = modid;
+
+    pspUsbDeviceSetDevice(0, 0, 0);
 }
 
 static void stop_unload_usbdevice(void)
 {
 	int ret;
+
+    pspUsbDeviceFinishDevice();
 
 	ret = sceKernelStopModule(usbdev_id, 0, NULL, NULL, NULL);
 
@@ -43,6 +55,18 @@ static void stop_unload_usbdevice(void)
 	if (ret >= 0) {
 		usbdev_id = -1;
 	}
+}
+
+static void start_adrenaline_usb(){
+    struct KernelCallArg args;
+    void* startUsb = (void*)sctrlHENFindFunction("ARKCompatLayer", "AdrenalineCtrl", 0x80C0ED7B);
+    kuKernelCall(startUsb, &args);
+}
+
+static void stop_adrenaline_usb(){
+    struct KernelCallArg args;
+    void* stopUsb = (void*)sctrlHENFindFunction("ARKCompatLayer", "AdrenalineCtrl", 0x5FC12767);
+    kuKernelCall(stopUsb, &args);
 }
 
 void USB::enable(){
@@ -55,7 +79,7 @@ void USB::enable(){
     }
     else if (IS_VITA_ADR(ark_conf)){
         // call sctrlStartUsb
-
+        start_adrenaline_usb();
         is_enabled = true;
     }
 }
@@ -70,7 +94,7 @@ void USB::disable(){
     }
     else if (IS_VITA_ADR(ark_conf)){
         // call sctrlStopUsb
-
+        stop_adrenaline_usb();
         is_enabled = false;
     }
 }

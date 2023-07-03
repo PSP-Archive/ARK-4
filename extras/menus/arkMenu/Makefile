@@ -96,6 +96,8 @@ LIBS = \
 		-lpspnet \
 		-lpspnet_inet \
 		-lpsphttp \
+		-lpspusb \
+		-lpspusbdevice_driver \
 		-lpspsystemctrl_user \
 		-lpspkubridge \
 
