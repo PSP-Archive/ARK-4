@@ -13,9 +13,7 @@ extern "C" {
     int pspUsbDeviceFinishDevice();
 }
 
-static void load_start_usbdevice(void)
-{
-
+static void start_psp_usb(){
     int res;
 
     static char* mods[] = {
@@ -28,37 +26,19 @@ static void load_start_usbdevice(void)
     };
 
     for (int i=0; i<6; i++){
-        printf("loading %s\n", mods[i]);
         int mid = kuKernelLoadModule(mods[i], 0, NULL);
-        printf("mod id: %p\n", mid);
         sceKernelStartModule(mid, 0, NULL, NULL, NULL);
     }
 
-    res = sceUsbStart(PSP_USBBUS_DRIVERNAME, 0, 0);
-    printf("usbStart bus: %p\n", res);
-    res = sceUsbStart(PSP_USBSTOR_DRIVERNAME, 0, 0);
-    printf("usbStart store: %p\n", res);
-	res = sceUsbActivate(0x1c8);
-    printf("usbActivate: %p\n", res);
-}
-
-static void stop_unload_usbdevice(void)
-{
-	sceUsbDeactivate(0x1c8);
-	sceUsbStop(PSP_USBSTOR_DRIVERNAME, 0, 0);
-    sceUsbStop(PSP_USBBUS_DRIVERNAME, 0, 0);
-}
-
-static void start_psp_usb(){
-    struct KernelCallArg args;
-    void* startUsb = (void*)&load_start_usbdevice;
-    kuKernelCall(startUsb, &args);
+    sceUsbStart(PSP_USBBUS_DRIVERNAME, 0, 0);
+    sceUsbStart(PSP_USBSTOR_DRIVERNAME, 0, 0);
+	sceUsbActivate(0x1c8);
 }
 
 static void stop_psp_usb(){
-    struct KernelCallArg args;
-    void* stopUsb = (void*)&stop_unload_usbdevice;
-    kuKernelCall(stopUsb, &args);
+    sceUsbDeactivate(0x1c8);
+	sceUsbStop(PSP_USBSTOR_DRIVERNAME, 0, 0);
+    sceUsbStop(PSP_USBBUS_DRIVERNAME, 0, 0);
 }
 
 static void start_adrenaline_usb(){
