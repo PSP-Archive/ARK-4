@@ -2,7 +2,8 @@
 
 ## Version 4.20.60 (2023-??-??):
 - ???
-- Implement UNIX-style hidden files/folders in `Custom Launcher` (and `Recovery`).
+- You can now toggle `USB` connection in `File Browser` (`Launcher`/`Recovery`).
+- Implemented UNIX-style hidden files/folders in `Custom Launcher` (and `Recovery`).
 - `Custom Laucher` (and `Recovery`) will now remember last folder used in `File Browser`.
 - Updated and added new translations.
 - Improved lots of text displayed in the `Custom Launcher` (and `Recovery`) when using translations.
