@@ -148,6 +148,11 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             DisplaySetFrameBuf((void *)g_vram_base, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
             memset((void *)g_vram_base, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 
+            // Start control poller thread so we can exit via combo on PS1 games
+            if (sceKernelInitApitype() == 0x144){
+                startControlPoller();
+            }
+
             // Boot Complete Action done
             booted = 1;
             goto flush;
