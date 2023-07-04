@@ -16,6 +16,7 @@
 #include "globals.h"
 #include "functions.h"
 #include "colordebugger.h"
+#include "graphics.h"
 
 PSP_MODULE_INFO("ARK VitaPOPS Loader", 0, 1, 0);
 
@@ -31,8 +32,8 @@ volatile void* KernelExitGame = &sceKernelExitGame;
 volatile ARKConfig config = {
     .magic = ARK_CONFIG_MAGIC,
     .arkpath = DEFAULT_ARK_PATH, // only ms0 available anyways
-    .launcher = ARK_XMENU, // use default (if needed)
-    .exec_mode = PSV_POPS, // set to Vita Pops mode
+    .launcher = ARK_XMENU, // use xMenu
+    .exec_mode = PSV_POPS, // set to VitaPops mode
     .exploit_id = "ePSX", // ps1 loader name
     .recovery = 0,
 };
@@ -91,6 +92,14 @@ int psxloader_thread(int argc, void* argv){
     strcat(loadpath, ARK4_BIN);
 
     SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
+
+    setScreenHandler(&copyPSPVram);
+    initScreen(NULL);
+    PRTSTR1("%p", fd);
+
+    sceKernelExitGame();
+    return 0;
+
     sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
     sceIoClose(fd);
     sceKernelDcacheWritebackAll();

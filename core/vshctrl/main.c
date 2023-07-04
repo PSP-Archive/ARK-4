@@ -31,7 +31,7 @@
 #include "globals.h"
 #include "functions.h"
 
-PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 0);
+PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 2);
 
 u32 psp_model = 0;
 ARKConfig* ark_config = NULL;

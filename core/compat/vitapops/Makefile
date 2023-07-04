@@ -3,7 +3,6 @@ TARGET = vitapops
 C_OBJS = \
 	main.o \
 	syspatch.o \
-	nullaudio.o \
 	popsdisplay.o \
 	$(ARKROOT)/common/utils/patches.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \

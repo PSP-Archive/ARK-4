@@ -29,7 +29,7 @@
 #include "exception.h"
 #include "libs/graphics/graphics.h"
 
-PSP_MODULE_INFO("SystemControl", 0x3007, 1, 0);
+PSP_MODULE_INFO("SystemControl", 0x3007, 4, 0);
 
 // default config
 static ARKConfig _ark_conf = {
