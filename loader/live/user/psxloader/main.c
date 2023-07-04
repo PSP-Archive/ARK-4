@@ -22,11 +22,11 @@ PSP_MODULE_INFO("ARK VitaPOPS Loader", 0, 1, 0);
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
 
-//#include "simple.h"
-
 // ARK.BIN requires these imports
 //int SysMemUserForUser_91DE343C(void* unk);
 extern int sceKernelPowerLock(unsigned int, unsigned int);
+
+volatile void* KernelExitGame = &sceKernelExitGame;
 
 volatile ARKConfig config = {
     .magic = ARK_CONFIG_MAGIC,
@@ -82,9 +82,6 @@ volatile UserFunctions funcs = {
 };
 
 int psxloader_thread(int argc, void* argv){
-
-    //int modid = sceKernelLoadModuleBuffer(simple, size_simple, 0, NULL);
-    //sceKernelStartModule(modid, 0, NULL, NULL, NULL);
 
     sceDisplaySetFrameBuf((void *)0x04000000, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
     colorDebugSetIsVitaPops(1);

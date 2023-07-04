@@ -127,6 +127,9 @@ void Menu::updateScreen(){
         else
             common::printText(200, offset+30, eboots[i]->getName().c_str());
     }
+
+    common::printText(10, 10, "ARK 4.20.60 ePSX");
+
     common::flip();
 }
 
