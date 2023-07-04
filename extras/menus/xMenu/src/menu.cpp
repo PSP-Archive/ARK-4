@@ -1,4 +1,10 @@
 #include "menu.h"
+#include <systemctrl.h>
+#include <sstream>
+
+static ARKConfig _ark_conf;
+ARKConfig* ark_config = &_ark_conf;
+static string ark_version;
 
 Menu::Menu(){
 
@@ -128,7 +134,7 @@ void Menu::updateScreen(){
             common::printText(200, offset+30, eboots[i]->getName().c_str());
     }
 
-    common::printText(10, 10, "ARK 4.20.60 ePSX");
+    common::printText(2, 2, ark_version.c_str());
 
     common::flip();
 }
@@ -209,6 +215,24 @@ void Menu::loadGame(){
 void Menu::run(){
     if (eboots.size() == 0)
         return;
+    
+    // get ARK config and version
+    sctrlHENGetArkConfig(ark_config);
+    u32 ver = sctrlHENGetMinorVersion();
+    u32 major = (ver&0xFF0000)>>16;
+    u32 minor = (ver&0xFF00)>>8;
+    u32 micro = (ver&0xFF);
+
+    stringstream version;
+	version << "ARK " << major << "." << minor;
+    if (micro>9) version << "." << micro;
+    else if (micro>0) version << ".0" << micro;
+    version << " " << ark_config->exploit_id;
+    #ifdef DEBUG
+	version << " DEBUG";
+	#endif
+    ark_version = version.str();
+
     updateTextAnim();
     control();
 }
