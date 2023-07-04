@@ -94,19 +94,6 @@ int psxloader_thread(int argc, void* argv){
     strcat(loadpath, ARK4_BIN);
 
     SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
-
-    u32 color;
-    if (fd < 0){
-        color = 0xff;
-    }
-    else {
-        color = 0xff00;
-    }
-
-    colorDebug(color);
-    sceKernelExitGame();
-    return 0;
-
     sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
     sceIoClose(fd);
     sceKernelDcacheWritebackAll();
