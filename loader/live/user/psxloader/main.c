@@ -89,11 +89,7 @@ int psxloader_thread(int argc, void* argv){
     sceDisplaySetFrameBuf((void *)0x04000000, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
     colorDebugSetIsVitaPops(1);
 
-    char loadpath[ARK_PATH_SIZE];
-    strcpy(loadpath, config.arkpath);
-    strcat(loadpath, ARK4_BIN);
-
-    SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
+    SceUID fd = sceIoOpen("ms0:/PSP/SAVEDATA/ARK_01234/ARK4.BIN", PSP_O_RDONLY, 0);
 
     if (fd < 0){
         setScreenHandler(&copyPSPVram);
@@ -109,7 +105,7 @@ int psxloader_thread(int argc, void* argv){
 
     // execute main function
     void (* hEntryPoint)(ARKConfig*, UserFunctions*, char*) = (void*)ARK_LOADADDR;
-    hEntryPoint(&config, &funcs, NULL);
+    hEntryPoint(&config, &funcs, "ms0:/PSP/GAME/SCPS10084/K.BIN");
 
     return 0;
 }
