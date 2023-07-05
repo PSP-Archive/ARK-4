@@ -111,8 +111,8 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
     }
     
     PRTSTR2("ERROR (%d): %s", res, err);
-    PRTSTR("Exiting in 10 seconds...");
-    g_tbl->KernelDelayThread(10000000);
+    PRTSTR("Exiting...");
+    g_tbl->KernelDelayThread(10000);
     void (*KernelExitGame)() = (void*)RelocImport("LoadExecForUser", 0x05572A5F, 0);
     if (KernelExitGame) KernelExitGame();
 

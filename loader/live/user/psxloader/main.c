@@ -93,12 +93,13 @@ int psxloader_thread(int argc, void* argv){
 
     SceUID fd = sceIoOpen(loadpath, PSP_O_RDONLY, 0);
 
-    setScreenHandler(&copyPSPVram);
-    initScreen(NULL);
-    PRTSTR1("%p", fd);
-
-    sceKernelExitGame();
-    return 0;
+    if (fd < 0){
+        setScreenHandler(&copyPSPVram);
+        initScreen(NULL);
+        PRTSTR1("%p", fd);
+        sceKernelExitGame();
+        return 0;
+    }
 
     sceIoRead(fd, (void *)(ARK_LOADADDR), ARK_SIZE);
     sceIoClose(fd);
