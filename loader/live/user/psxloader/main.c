@@ -28,6 +28,7 @@ PSP_MODULE_INFO("ARK VitaPOPS Loader", 0, 1, 0);
 extern int sceKernelPowerLock(unsigned int, unsigned int);
 
 volatile void* KernelExitGame = &sceKernelExitGame;
+volatile void* ReadController = &sceCtrlReadBufferPositive;
 
 volatile ARKConfig config = {
     .magic = ARK_CONFIG_MAGIC,
@@ -42,8 +43,8 @@ volatile UserFunctions funcs = {
     // File IO
     .IoOpen = &sceIoOpen,
     .IoRead = &sceIoRead,
-    .IoWrite = &sceIoClose,
-    .IoClose = &sceIoWrite,
+    .IoWrite = &sceIoWrite,
+    .IoClose = &sceIoClose,
     .IoRemove = &sceIoRemove,
     // System
     .KernelLibcTime = &sceKernelLibcTime,
@@ -78,11 +79,12 @@ volatile UserFunctions funcs = {
     .KernelCpuSuspendIntr = &sceKernelCpuSuspendIntr,
     .KernelCpuResumeIntr = &sceKernelCpuResumeIntr,
     .KernelVolatileMemUnlock = &sceKernelVolatileMemUnlock,
-    // Savedata
-    .KernelAllocPartitionMemory = &sceKernelAllocPartitionMemory,
 };
 
 int psxloader_thread(int argc, void* argv){
+
+    // wait for system to finish booting
+    sceKernelDelayThread(1000000);
 
     sceDisplaySetFrameBuf((void *)0x04000000, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
     colorDebugSetIsVitaPops(1);
@@ -96,7 +98,7 @@ int psxloader_thread(int argc, void* argv){
     if (fd < 0){
         setScreenHandler(&copyPSPVram);
         initScreen(NULL);
-        PRTSTR1("%p", fd);
+        PRTSTR1("ERROR: %p", fd);
         sceKernelExitGame();
         return 0;
     }
@@ -115,7 +117,10 @@ int psxloader_thread(int argc, void* argv){
 int module_start(SceSize args, void* argp)
 {
 
-    int thid = sceKernelCreateThread("psxloader", &psxloader_thread, 0x10, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
+    sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "ARK4.BIN", PSP_SMEM_Addr, ARK_SIZE, ARK_LOADADDR);
+    sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "K.BIN", PSP_SMEM_Addr, 0x4000, 0x08D20000);
+
+    int thid = sceKernelCreateThread("psxloader", &psxloader_thread, 0x10, 0x20000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
     sceKernelStartThread(thid, 0, NULL);
 
     return 0;

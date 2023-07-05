@@ -43,8 +43,8 @@ volatile UserFunctions funcs = {
     // File IO
     .IoOpen = &sceIoOpen,
     .IoRead = &sceIoRead,
-    .IoWrite = &sceIoClose,
-    .IoClose = &sceIoWrite,
+    .IoWrite = &sceIoWrite,
+    .IoClose = &sceIoClose,
     .IoRemove = &sceIoRemove,
     // System
     .KernelLibcTime = &sceKernelLibcTime,

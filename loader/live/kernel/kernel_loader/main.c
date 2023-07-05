@@ -89,10 +89,10 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
             // Corrupt Kernel
             PRTSTR("Doing kernel exploit...");
             if ((res=kxf->doExploit()) == 0){
-                // Flush Cache
-                g_tbl->KernelDcacheWritebackAll();
                 // Output Loading Screen
                 PRTSTR("Escalating privilages...");
+                // Flush Cache
+                g_tbl->KernelDcacheWritebackAll();
                 // Trigger Kernel Permission Callback
                 kxf->executeKernel(KERNELIFY(&kernelContentFunction));
                 err = "Could not execute kernel function";
