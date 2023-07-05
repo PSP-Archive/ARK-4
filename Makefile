@@ -26,6 +26,7 @@ SUBDIRS = libs \
 	loader/live/user/signed_eboot \
 	loader/live/user/psxloader \
 	loader/live/kernel/kernel_loader \
+	loader/live/kernel/psxloader \
 	loader/live/kernel/chain_loader \
 	loader/live/kernel/kram_dumper \
 	loader/live/kernel/idstorage_dumper \
@@ -67,10 +68,8 @@ copy-bin:
 	$(Q)cp loader/live/user/vitabubble/EBOOT.PBP dist/PSVita/Standalone/NPUZ01234/ # Vita fake ChovySign bubble
 	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/PSVita/Standalone/NPUZ01234/ # Vita PBOOT.PBP bubble
 	$(Q)cp loader/live/user/psxloader/EBOOT.PBP dist/PSVita/PS1CFW/SCPS10084/
-	$(Q)cp loader/live/user/psxloader/psxloader.prx dist/PSVita/PS1CFW/
-	$(Q)cp loader/live/user/psxloader/psxloader.bin dist/PSVita/PS1CFW/
-	$(Q)cp loader/live/user/psxloader/psxloader.cue dist/PSVita/PS1CFW/
 	$(Q)cp loader/live/user/psxloader/ark.suprx dist/PSVita/PS1CFW/
+	$(Q)cp loader/live/kernel/kxploit/vitapops/K.BIN dist/PSVita/PS1CFW/ # kxploit for VitaPOPS
 	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/PSVita/Standalone/K.BIN # Kernel exploit for Vita 3.60+
 	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/PSVita/Adrenaline/K.BIN # kxploit for CFW
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
@@ -78,6 +77,7 @@ copy-bin:
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
 	$(Q)cp loader/live/kernel/chain_loader/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
 	$(Q)cp loader/live/kernel/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
+	$(Q)cp loader/live/kernel/psxloader/ARKX.BIN dist/ARK_01234/ARKX.BIN # ARK-X loader
 	$(Q)cp loader/live/kernel/kxploit/dummy/K.BIN dist/ARK_01234/K.BIN # Dummy Kernel exploit
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
 	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/PSP/ # ARK DC installer
@@ -144,6 +144,7 @@ kxploits:
 	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=vitapops -C loader/live/kernel/kxploit
 
 # Only clean non-library code
 cleanobj:
@@ -155,6 +156,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/live/user/signed_eboot
 	$(Q)$(MAKE) $@ -C loader/live/user/psxloader
 	$(Q)$(MAKE) $@ -C loader/live/kernel/kernel_loader
+	$(Q)$(MAKE) $@ -C loader/live/kernel/psxloader
 	$(Q)$(MAKE) $@ -C loader/live/kernel/chain_loader
 	$(Q)$(MAKE) $@ -C loader/live/kernel/kram_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/idstorage_dumper
@@ -188,6 +190,7 @@ clean:
 	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=vitapops -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/mainbinex

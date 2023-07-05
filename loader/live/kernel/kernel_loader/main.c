@@ -192,6 +192,9 @@ void kernelContentFunction(void){
     g_tbl->prtstr = KERNELIFY(g_tbl->prtstr);
     kxf->repairInstruction = KERNELIFY(kxf->repairInstruction);
 
+    PRTSTR("Testing Priviledges");
+    u32 test = *(u32*)SYSMEM_TEXT;
+
     PRTSTR("Scanning kernel functions");
     // get kernel functions
     scanKernelFunctions(k_tbl);
