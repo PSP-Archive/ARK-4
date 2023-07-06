@@ -117,7 +117,7 @@ def decompress_cso(fname_in, fname_out, level):
     total_block = total_bytes / block_size
     index_buf = []
 
-    for i in xrange(total_block + 1):
+    for i in range(int(total_block) + 1):
         index_buf.append(unpack('I', fin.read(4))[0])
 
     show_cso_info(fname_in, fname_out, total_bytes, block_size, total_block, align)
@@ -130,7 +130,7 @@ def decompress_cso(fname_in, fname_out, level):
         percent_cnt += 1
         if percent_cnt >= percent_period and percent_period != 0:
             percent_cnt = 0
-            print >> sys.stderr, ("decompress %d%%\r" % (block / percent_period)),
+            print("decompress %d%%\r" % (block / percent_period))
 
         index  = index_buf[block]
         plain  = index & 0x80000000
@@ -199,7 +199,7 @@ def compress_cso(fname_in, fname_out, level):
     fout.write(header)
 
     total_block = total_bytes / block_size
-    index_buf = [ 0 for i in xrange(total_block + 1) ]
+    index_buf = [ 0 for i in range(int(total_block) + 1) ]
 
     fout.write(b"\x00\x00\x00\x00" * len(index_buf))
     show_comp_info(fname_in, fname_out, total_bytes, block_size, align, level)
@@ -222,19 +222,19 @@ def compress_cso(fname_in, fname_out, level):
             percent_cnt = 0
 
             if block == 0:
-                print >> sys.stderr, ("compress %3d%% avarage rate %3d%%\r" % (
+                print("compress %3d%% avarage rate %3d%%\r" % (
                     block / percent_period
-                    ,0)),
+                    ,0))
             else:
-                print >> sys.stderr, ("compress %3d%% avarage rate %3d%%\r" % (
+                print("compress %3d%% avarage rate %3d%%\r" % (
                     block / percent_period
-                    ,100*write_pos/(block*0x800))),
+                    ,100*write_pos/(block*0x800)))
 
         if MP:
-            iso_data = [ (fin.read(block_size), level) for i in xrange(min(total_block - block, MP_NR))]
+            iso_data = [ (fin.read(block_size), level) for i in range(min(int(total_block) - block, MP_NR))]
             cso_data_all = pool.map_async(zip_compress_mp, iso_data).get(9999999)
 
-            for i in xrange(len(cso_data_all)):
+            for i in range(len(cso_data_all)):
                 write_pos = set_align(fout, write_pos, align)
                 index_buf[block] = write_pos >> align
                 cso_data = cso_data_all[i]
@@ -296,7 +296,7 @@ def parse_args():
 
     try:
         optlist, args = gnu_getopt(sys.argv, "c:mt:a:p:h")
-    except GetoptError, err:
+    except GetoptError as err:
         print(str(err))
         usage()
         sys.exit(-1)
