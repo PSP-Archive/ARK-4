@@ -51,6 +51,11 @@ void repairInstruction(KernelFunctions* k_tbl){
 int doExploit(void){
     int res = g_tbl->IoOpen("ms0:/__dokxploit__", 0, 0);
     PRTSTR1("res: %d", res);
+
+    SceUID fd = g_tbl->IoOpen("ms0:/PSP/SAVEDATA/ARK_01234/ARKX.BIN", PSP_O_RDONLY, 0777);
+    g_tbl->IoRead(fd, 0x88380000, 0x80000);
+    g_tbl->IoClose(fd);
+
     return 0;
 }
 

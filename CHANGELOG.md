@@ -1,7 +1,7 @@
 # ARK Changelog
 
-## Version 4.20.60 (2023-??-??):
-- ???
+## Version 4.20.60 (2023-07-06):
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42060
 - You can now toggle `USB` connection in `File Browser` (`Launcher`/`Recovery`).
 - Implemented UNIX-style hidden files/folders in `Custom Launcher` (and `Recovery`).
 - `Custom Laucher` (and `Recovery`) will now remember last folder used in `File Browser`.

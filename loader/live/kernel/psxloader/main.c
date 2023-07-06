@@ -34,6 +34,32 @@ u32 sctrlHENFindFunction(char* mod, char* lib, u32 nid){
     return FindFunction(mod, lib, nid);
 }
 
+int reboot_thread(int argc, void* argv){
+
+    // launcher reboot
+    char menupath[ARK_PATH_SIZE];
+    strcpy(menupath, ark_config->arkpath);
+    strcat(menupath, ark_config->launcher);
+
+    struct SceKernelLoadExecVSHParam param;
+    memset(&param, 0, sizeof(param));
+    param.size = sizeof(param);
+    param.args = strlen(menupath) + 1;
+    param.argp = menupath;
+    param.key = "game";
+
+    PRTSTR1("Running Menu at %s", menupath);
+    int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int);
+    _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
+    _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
+}
+
+void dumpbuf(char* path, void* buf, int size){
+    int fd = k_tbl->KernelIOOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+    k_tbl->KernelIOWrite(fd, buf, size);
+    k_tbl->KernelIOClose(fd);
+}
+
 int exploitEntry() __attribute__((section(".text.startup")));
 int exploitEntry(){
     if (!isKernel()){
@@ -66,6 +92,9 @@ int exploitEntry(){
     // get kernel functions
     scanKernelFunctions(k_tbl);
 
+    //dumpbuf("ms0:/IoRead.bin", 0x8805769c, sizeof(void*)); // 0x001B32C0 -> 0x00003021
+    //dumpbuf("ms0:/IoWrite.bin", 0x880577b0, sizeof(void*)); // 0x001B32C0 -> 0x00003021
+
     PRTSTR("Patching FLASH0");
     patchKermitPeripheral(k_tbl);
 
@@ -89,22 +118,9 @@ int exploitEntry(){
     k_tbl->KernelDcacheWritebackInvalidateAll();
     k_tbl->KernelIcacheInvalidateAll();
 
-    // launcher reboot
-    char menupath[ARK_PATH_SIZE];
-    strcpy(menupath, ark_config->arkpath);
-    strcat(menupath, ark_config->launcher);
-
-    struct SceKernelLoadExecVSHParam param;
-    memset(&param, 0, sizeof(param));
-    param.size = sizeof(param);
-    param.args = strlen(menupath) + 1;
-    param.argp = menupath;
-    param.key = "game";
-
-    PRTSTR1("Running Menu at %s", menupath);
-    int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int);
-    _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
-    _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
+    SceUID kthreadID = k_tbl->KernelCreateThread( "ark-x-loader", &reboot_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
+    k_tbl->KernelStartThread(kthreadID, 0, NULL);
+    k_tbl->waitThreadEnd(kthreadID, NULL);
 
     return 0;
 

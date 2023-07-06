@@ -515,7 +515,7 @@ void Browser::refreshDirs(){
     dit->d_private = (void*)pri_dirent;
     static int bufid = 0;
     while ((sceIoDread(dir, dit)) > 0){
-        printf("got entry: %s\n", dit->d_name);
+        printf("got entry: %s -> %s\n", dit->d_name, pri_dirent);
 
         if (dit->d_name[0] == '.' && strcmp(dit->d_name, ".") != 0 && strcmp(dit->d_name, "..") != 0 && !common::getConf()->show_hidden){
             continue;
