@@ -36,7 +36,7 @@ int sctrlHENGetVersion()
 // Get HEN Minor Version
 int sctrlHENGetMinorVersion()
 {
-    return ( (ARK_MAJOR_VERSION << 16) | (ARK_MINOR_VERSION << 8) | ARK_MICRO_VERSION );
+    return ARK_REVISION;
 }
 
 int sctrlHENIsSE()

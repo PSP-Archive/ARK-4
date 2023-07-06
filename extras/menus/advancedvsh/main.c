@@ -95,10 +95,10 @@ int TSRThread(SceSize args, void *argp) {
 	vsh->psp_model = kuKernelGetModel();
 
 	// ARK Version
-	int ver = sctrlHENGetMinorVersion();
- 	int major = (ver & 0xFF0000) >> 16;
-	int minor = (ver & 0xFF00) >> 8;
-	int micro = (ver & 0xFF);
+	u32 ver = sctrlHENGetVersion(); // ARK's full version number
+    u32 major = (ver&0xFF000000)>>24;
+    u32 minor = (ver&0xFF0000)>>16;
+    u32 micro = (ver&0xFF00)>>8;
 
 	#ifdef DEBUG
 	if (micro > 0) 

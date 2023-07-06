@@ -264,7 +264,8 @@ static void checkUpdates(){
 
             sceIoRemove("psp-updatelist.txt");
 
-            do_update = common::getConf()->force_update || sctrlHENGetMinorVersion() < update_ver;
+            u32 version = sctrlHENGetVersion() | sctrlHENGetMinorVersion(); // ARK's full version number
+            do_update = common::getConf()->force_update || version < update_ver;
 
             if (!do_update){
                 addMessage("No need to update!");

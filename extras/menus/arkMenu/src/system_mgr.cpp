@@ -369,10 +369,11 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     today = common::getDateTime();
 
     // get ARK version    
-    u32 ver = sctrlHENGetMinorVersion();
-    u32 major = (ver&0xFF0000)>>16;
-    u32 minor = (ver&0xFF00)>>8;
-    u32 micro = (ver&0xFF);
+    u32 ver = sctrlHENGetVersion(); // ARK's full version number
+    u32 major = (ver&0xFF000000)>>24;
+    u32 minor = (ver&0xFF0000)>>16;
+    u32 micro = (ver&0xFF00)>>8;
+    u32 rev   = sctrlHENGetMinorVersion();
 
     // get OFW version (bypass patches)
     struct KernelCallArg args;
@@ -388,6 +389,7 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
 	version << " ARK " << major << "." << minor;
     if (micro>9) version << "." << micro;
     else if (micro>0) version << ".0" << micro;
+    if (rev) version << " r" << rev;
     version << " " << common::getArkConfig()->exploit_id;
     #ifdef DEBUG
 	version << " DEBUG";
