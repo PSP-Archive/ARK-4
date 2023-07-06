@@ -518,6 +518,7 @@ bool CmdExtract::ExtractCurrentFile(CommandData *Cmd,Archive &Arc,int HeaderSize
     }
 #endif
 
+    /*
     // Change EBOOT.PBP into VBOOT.PBP
     std::string lcoutputfile = DestFileName;
     std::transform(lcoutputfile.begin(), lcoutputfile.end(), lcoutputfile.begin(), ::tolower);
@@ -527,6 +528,7 @@ bool CmdExtract::ExtractCurrentFile(CommandData *Cmd,Archive &Arc,int HeaderSize
         lcoutputfile = lcoutputfile.substr(0, found) + "VBOOT.PBP" + lcoutputfile.substr(found + 9);
         strcpy(DestFileName,lcoutputfile.c_str());
     }
+    */
 
 #ifdef SFX_MODULE
     if (Arc.NewLhd.UnpVer!=UNP_VER && Arc.NewLhd.Method!=0x30)
