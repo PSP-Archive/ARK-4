@@ -141,11 +141,12 @@ void Browser::moveDirUp(){
     this->refreshDirs();
 }
         
-void Browser::update(Entry* e, bool skip_prompt){
+void Browser::update(Entry* ent, bool skip_prompt){
     // Move to the next directory pointed by the currently selected entry or run an app if selected file is one
-    if (this->entries->size() == 0)
+    if (ent == NULL || entries->size() == 0)
         return;
     common::playMenuSound();
+    BrowserFile* e = (BrowserFile*)ent;
     if (e->getName() == "./")
         refreshDirs();
     else if (e->getName() == "../")
@@ -158,11 +159,15 @@ void Browser::update(Entry* e, bool skip_prompt){
         this->cwd = MS0_DIR;
         this->refreshDirs();
     }
-    else if (string(e->getType()) == "FOLDER"){
-        this->cwd = e->getPath();
-        this->refreshDirs();
+    else if (Entry::isARK(e->getPath().c_str())) {
+		installTheme();
+	}
+    else if (e->getFileType() == FOLDER){
+        string full_path = e->getFullPath();
+        this->cwd = full_path;
+        this->refreshDirs(e->getPath().c_str());
     }
-    else if (Iso::isISO(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_ISO){
         if (this->cwd == "ms0:/ISO/VIDEO/" || this->cwd == "ef0:/ISO/VIDEO/")
             Iso::executeVideoISO(e->getPath().c_str());
         else{
@@ -179,7 +184,7 @@ void Browser::update(Entry* e, bool skip_prompt){
                 delete iso;
         }
     }
-    else if (Eboot::isEboot(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_PBP){
         Eboot* eboot = new Eboot(e->getPath());
         if (!skip_prompt){
             is_loading = true;
@@ -192,33 +197,27 @@ void Browser::update(Entry* e, bool skip_prompt){
         else
             delete eboot;
     }
-    else if (Entry::isZip(e->getPath().c_str())){
-        extractArchive(0);
+    else if (e->getFileType() == FILE_ZIP){
+        extractArchive(common::getExtension(e->getPath()) == "rar");
     }
-    else if (Entry::isRar(e->getPath().c_str())){
-        extractArchive(1);
-    }
-    else if (Entry::isPRX(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_PRX){
         installPlugin();
     }
-	else if (Entry::isARK(e->getPath().c_str())) {
-		installTheme();
-	}
-    else if (Entry::isTXT(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_TXT){
         optionsmenu = new TextEditor(e->getPath());
         optionsmenu->control();
         TextEditor* aux = (TextEditor*)optionsmenu;
         optionsmenu = NULL;
         delete aux;
     }
-    else if (Entry::isIMG(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_PICTURE){
         optionsmenu = new ImageViewer(e->getPath());
         optionsmenu->control();
         ImageViewer* aux = (ImageViewer*)optionsmenu;
         optionsmenu = NULL;
         delete aux;
     }
-    else if (Entry::isMusic(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_MUSIC){
         this->hide_main_window = true;
         vector<string> selected;
         for (int i=0; i<entries->size(); i++){
@@ -453,7 +452,7 @@ void logbuffer(char* path, void* buffer, u32 size){
     sceIoClose(fd);
 }
 
-void Browser::refreshDirs(){
+void Browser::refreshDirs(const char* retry){
 
     // Refresh the list of files and dirs
     SystemMgr::pauseDraw();
@@ -492,7 +491,11 @@ void Browser::refreshDirs(){
 
     if (dir < 0){ // can't open directory
         printf("can't open\n");
-        if (this->cwd == ROOT_DIR) // ms0 failed
+        if (retry){
+            this->cwd = retry;
+            retry = NULL;
+        }
+        else if (this->cwd == ROOT_DIR) // ms0 failed
             this->cwd = GO_ROOT; // go to ef0
         else
             this->cwd = ROOT_DIR;
@@ -521,30 +524,14 @@ void Browser::refreshDirs(){
             continue;
         }
 
-        string ptmp;
         if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
             printf("is dir\n");
-            if (strlen(dit->d_name) < strlen((char*)pri_dirent)){
-                ptmp = string(this->cwd) + string((const char*)pri_dirent);
-                printf("%d: %s\n", (int)common::folderExists(ptmp), ptmp.c_str());
-            }
-            else{
-                ptmp = string(this->cwd)+string(dit->d_name);
-            }
-            folders.push_back(new Folder(ptmp+"/"));
+            folders.push_back(new Folder(cwd, dit->d_name, string((const char*)pri_dirent)));
         }
         else{
             printf("is file\n");
-            if (strlen(dit->d_name) < strlen((char*)pri_dirent)){
-                ptmp = string(this->cwd) + string((const char*)pri_dirent);
-                printf("%d: %s\n", (int)common::fileExists(ptmp), ptmp.c_str());
-            }
-            else{
-                ptmp = string(this->cwd)+string(dit->d_name);
-            }
-            files.push_back(new File(ptmp));
+            files.push_back(new File(cwd, dit->d_name, string((const char*)pri_dirent)));
         }
-            
     }
     printf("closing and cleaning\n");
     sceIoDclose(dir);
@@ -571,9 +558,9 @@ void Browser::refreshDirs(){
         std::sort(files.begin(), files.end(), Entry::cmpEntriesForSort);
     }
 
-    if (!dotdot && !isRootDir(this->cwd)) dotdot = new Folder(this->cwd+"../");
+    if (!dotdot && !isRootDir(this->cwd)) dotdot = new Folder(cwd, "..", "");
     if (dotdot) folders.insert(folders.begin(), dotdot);
-    if (!dot && !isRootDir(this->cwd)) dot = new Folder(this->cwd+"./");
+    if (!dot && !isRootDir(this->cwd)) dot = new Folder(cwd, ".", "");
     if (dot) folders.insert(folders.begin(), dot);
     
     printf("merging entries\n");
@@ -583,7 +570,7 @@ void Browser::refreshDirs(){
     for (int i=0; i<files.size(); i++)
         entries->push_back(files.at(i));
     if (this->entries->size() == 0)
-        this->entries->push_back(new Folder("./"));
+        this->entries->push_back(new Folder(cwd, ".", ""));
     SystemMgr::resumeDraw();
     
     printf("done\n");
@@ -1239,7 +1226,7 @@ void Browser::copyFolder(string path){
     if(!strncmp(path.c_str(), this->cwd.c_str(), path.length())) //avoid inception
         return;
     
-    Folder* f = new Folder(path);
+    Folder* f = new Folder(path, "");
     
     string destination = checkDestExists(path, this->cwd, f->getName().substr(0, f->getName().length()-1));
     
@@ -1699,7 +1686,7 @@ void Browser::control(Controller* pad){
     }
     else if (pad->start()){
         Entry* e = this->get();
-        if (conf->startbtn == 1) e = new BrowserFile(conf->last_game);
+        if (conf->startbtn == 1) e = new BrowserFile(conf->last_game, "");
         this->update(e, true);
     }
     else{

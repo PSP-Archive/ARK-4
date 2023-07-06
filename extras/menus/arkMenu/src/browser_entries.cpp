@@ -6,7 +6,6 @@
 
 
 int fileTypeByExtension(string path){
-    
     if (Iso::isISO(path.c_str())){
         return FILE_ISO;
     }
@@ -35,28 +34,48 @@ int fileTypeByExtension(string path){
 BrowserFile::BrowserFile(){
 }
 
-BrowserFile::BrowserFile(string path){
-    this->icon0 = NULL;
+BrowserFile::BrowserFile(string path, string shortname){
+    size_t lastSlash = path.rfind('/', string::npos);
     this->path = path;
-    size_t lastSlash = path.rfind("/", string::npos);
     this->name = path.substr(lastSlash+1, string::npos);
+    this->parent = path.substr(0, lastSlash) + '/';
+    this->icon0 = NULL;
     this->selected = false;
+    this->filetype = FOLDER;
+    this->setShortName(shortname);
     this->calcSize();
-    this->filetype = fileTypeByExtension(path);
+    this->filetype = fileTypeByExtension(getPath());
 }
 
-BrowserFile::BrowserFile(BrowserFile* orig){
-    this->path = orig->path;
+BrowserFile::BrowserFile(string parent, string name, string shortname){
+    this->icon0 = NULL;
+    this->path = parent + name;
+    this->parent = parent;
+    this->name = name;
     this->selected = false;
-    this->fileSize = orig->fileSize;
-    this->filetype = orig->filetype;
+    this->setShortName(shortname);
+    this->calcSize();
+    this->filetype = fileTypeByExtension(getPath());
 }
 
 BrowserFile::~BrowserFile(){
 }
 
+void BrowserFile::setShortName(string shortname){
+    if (shortname.size() > 0){
+        if (this->name.size() < shortname.size()){
+            this->path = this->parent + shortname;
+            this->name = shortname;
+            this->shortname = "";
+        }
+        else {
+            this->shortname = shortname;
+        }
+    }
+}
+
 unsigned BrowserFile::getFileSize(){
-    return common::fileSize(this->path);
+    return common::fileSize(getPath());
 }
 
 void BrowserFile::calcSize(){
@@ -79,7 +98,7 @@ void BrowserFile::changeSelection(){
 }
 
 string BrowserFile::getPath(){
-    return this->path;
+    return (shortname.size() > 0)? parent+shortname : path;
 }
 
 string BrowserFile::getName(){
@@ -130,30 +149,29 @@ void BrowserFile::getTempData2(){
 void BrowserFile::doExecute(){
 }
 
-BrowserFolder::BrowserFolder(string path){
-    this->icon0 = NULL;
+BrowserFolder::BrowserFolder(string path, string shortname){
+    size_t lastSlash = path.rfind('/', path.length()-2);
     this->path = path;
-    size_t lastSlash = path.rfind("/", path.length()-2);
     this->name = path.substr(lastSlash+1, string::npos);
+    this->parent = path.substr(0, lastSlash) + '/';
+    this->icon0 = NULL;
     this->selected = false;
     this->fileSize = "Folder";
     this->filetype = FOLDER;
+    if (shortname.size() > 0) shortname += '/';
+    this->setShortName(shortname);
 }
 
-BrowserFolder::BrowserFolder(BrowserFolder* orig){
-    this->path = orig->path;
-    this->name = orig->name;
+BrowserFolder::BrowserFolder(string parent, string name, string shortname){
+    this->icon0 = NULL;
+    this->path = parent + name + '/';
+    this->name = name + '/';
+    this->parent = parent;
     this->selected = false;
     this->fileSize = "Folder";
     this->filetype = FOLDER;
-}
-
-BrowserFolder::BrowserFolder(string parent, string name){
-    this->path = parent;
-    this->name = name;
-    this->selected = false;
-    this->fileSize = "Folder";
-    this->filetype = FOLDER;
+    if (shortname.size() > 0) shortname += '/';
+    this->setShortName(shortname);
 }
 
 BrowserFolder::~BrowserFolder(){

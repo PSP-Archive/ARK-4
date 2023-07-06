@@ -160,9 +160,9 @@ class Browser : public SystemEntry{
     
         void moveDirUp();
         
-        void update(Entry* e, bool skip_prompt);
+        void update(Entry* ent, bool skip_prompt);
         
-        void refreshDirs();
+        void refreshDirs(const char* retry=NULL);
         
         void drawScreen();
         

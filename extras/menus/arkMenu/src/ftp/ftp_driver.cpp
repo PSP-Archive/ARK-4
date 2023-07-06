@@ -49,7 +49,7 @@ bool FTPDriver::connect(){
     printf("Initialize network\n");
     if (initializeNetwork() < 0) return false;
     printf("connect to access point\n");
-    if (connect_to_apctl() < 0) return false;
+    if (!connect_to_apctl()) return false;
 
     bool ret = false;
     char tmpText[51];
@@ -163,7 +163,7 @@ vector<Entry*> FTPDriver::listDirectory(string path){
                 string file_name(dir->files[i].d_name);
                 file_name = file_name.substr(file_name.find(' ')+1);
                 if (FIO_SO_ISDIR(dir->files[i].st_attr)) {
-                    BrowserFolder* folder = new BrowserFolder(path + file_name + "/");
+                    BrowserFolder* folder = new BrowserFolder(path, file_name, "");
                     printf("adding folder: %s -> %s\n", file_name.c_str(), folder->getName().c_str());
                     folders.push_back(folder);
                 } else if (FIO_SO_ISREG(dir->files[i].st_attr)) {
@@ -195,8 +195,8 @@ vector<Entry*> FTPDriver::listDirectory(string path){
         if (dot) folders.insert(folders.begin(), dot);
     }
 
-    ret.push_back(new BrowserFolder("ftp:/<refresh>"));
-    ret.push_back(new BrowserFolder("ftp:/<disconnect>"));
+    ret.push_back(new BrowserFolder("ftp:/", "<refresh>", ""));
+    ret.push_back(new BrowserFolder("ftp:/", "<disconnect>", ""));
     
     printf("FTP::Folders -> %d\n", folders.size());
     for (int i=0; i<folders.size(); i++){
