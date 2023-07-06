@@ -214,7 +214,7 @@ static void checkUpdates(){
     char* update_folder = "ms0:/PSP/GAME/UPDATE";
     char* update_eboot = "ms0:/PSP/GAME/UPDATE/EBOOT.PBP";
     string updater_url;
-    u32 update_ver;
+    u32 update_ver, version;
     bool do_update = false;
     char buf[128];
 
@@ -264,7 +264,7 @@ static void checkUpdates(){
 
             sceIoRemove("psp-updatelist.txt");
 
-            u32 version = sctrlHENGetVersion() | sctrlHENGetMinorVersion(); // ARK's full version number
+            version = sctrlHENGetVersion() | sctrlHENGetMinorVersion(); // ARK's full version number
             do_update = common::getConf()->force_update || version < update_ver;
 
             if (!do_update){
