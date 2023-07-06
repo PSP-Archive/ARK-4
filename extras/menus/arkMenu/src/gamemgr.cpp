@@ -63,7 +63,7 @@ int GameManager::loadIcons(SceSize _args, void *_argp){
         std::vector<Entry*>* game_entries = self->categories[GAME]->getVector();
         bool has_umd = UMD::isUMD();
         bool umd_loaded = game_entries->size() > 0 && string("UMD") == game_entries->at(0)->getType();
-        if (has_umd && !umd_loaded){ // UMD inserted but not loaded
+        if (has_umd && !umd_loaded && self->selectedCategory >= 0){ // UMD inserted but not loaded
             SystemMgr::pauseDraw();
             game_entries->insert(game_entries->begin(), new UMD());
             SystemMgr::resumeDraw();

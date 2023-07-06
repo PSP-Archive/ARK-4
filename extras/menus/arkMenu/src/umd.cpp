@@ -1,5 +1,6 @@
 #include "umd.h"
 
+extern "C" int sctrlKernelLoadExecVSHDisc(const char*, struct SceKernelLoadExecVSHParam*);
 
 UMD::UMD(){
     this->name = "UMD Drive";
@@ -115,7 +116,7 @@ void UMD::doExecute(){
     sctrlSESetBootConfFileIndex(MODE_UMD);
     sctrlSESetUmdFile("");
     
-    sctrlKernelLoadExecVSHWithApitype(UMD_APITYPE, UMD_EBOOT_BIN, &param);
+    sctrlKernelLoadExecVSHDisc(UMD_EBOOT_BIN, &param);
 }
 
 char* UMD::getType(){

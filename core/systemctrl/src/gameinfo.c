@@ -19,6 +19,8 @@ struct LbaParams {
     int byte_size_last;  // 28
 };
 
+static const char* HOME_ID = "HOME00000";
+
 int readGameIdFromDisc(char* gameid){
     static char game_id[10] = {0};
 
@@ -57,6 +59,13 @@ int readGameIdFromDisc(char* gameid){
 }
 
 int getGameId(char* gameid){
+
+    int apitype = sceKernelInitApitype();
+    if (apitype == 0x141 || apitype == 0x152 || apitype >= 0x200){
+        strcpy(gameid, HOME_ID);
+        return;
+    }
+
     // Find Function
     void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
     
@@ -70,7 +79,7 @@ int getGameId(char* gameid){
     if(gameinfo == NULL) return 0;
     memcpy(gameid, gameinfo+0x44, 9);
 
-    if (gameid[0] == 0 || strncmp(gameid, "HOME00000", 9) == 0){
+    if (gameid[0] == 0 || strncmp(gameid, HOME_ID, 9) == 0){
         return readGameIdFromDisc(gameid);
     }
 
