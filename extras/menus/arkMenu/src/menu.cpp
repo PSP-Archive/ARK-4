@@ -199,7 +199,9 @@ void Menu::draw(bool selected){
             e_icon->draw_scale(xoffset+2, curentry_yoffset+5+anim*40, 0.75f, 0.75f);
         }
         else {
-            common::printText(xoffset, curentry_yoffset+(height/2), "...", WHITE_COLOR, 10.f, 1);
+            int cw = common::calcTextWidth("...", 1.f, 0);
+            float factor = float(e_icon->getWidth())/float(cw);
+            common::printText(xoffset, curentry_yoffset+(height/2), "...", WHITE_COLOR, factor, 1, NULL, 0);
             e_icon->draw(xoffset+5, curentry_yoffset+5+anim*40);
         }   
     }
