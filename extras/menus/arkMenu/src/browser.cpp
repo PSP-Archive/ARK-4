@@ -521,20 +521,26 @@ void Browser::refreshDirs(){
             continue;
         }
 
-        string ptmp = string(this->cwd)+string(dit->d_name);
+        string ptmp;
         if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
             printf("is dir\n");
-            if (!common::folderExists(ptmp+"/")){
+            if (strlen(dit->d_name) < strlen((char*)pri_dirent)){
                 ptmp = string(this->cwd) + string((const char*)pri_dirent);
                 printf("%d: %s\n", (int)common::folderExists(ptmp), ptmp.c_str());
+            }
+            else{
+                ptmp = string(this->cwd)+string(dit->d_name);
             }
             folders.push_back(new Folder(ptmp+"/"));
         }
         else{
             printf("is file\n");
-            if (!common::fileExists(ptmp)){
+            if (strlen(dit->d_name) < strlen((char*)pri_dirent)){
                 ptmp = string(this->cwd) + string((const char*)pri_dirent);
                 printf("%d: %s\n", (int)common::fileExists(ptmp), ptmp.c_str());
+            }
+            else{
+                ptmp = string(this->cwd)+string(dit->d_name);
             }
             files.push_back(new File(ptmp));
         }
