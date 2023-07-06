@@ -12,6 +12,15 @@
 #include "color.h"
 #include "registry.h"
 
+int button_accept(u32 button){
+	vsh_Menu* vsh = vsh_menu_pointer();
+	return (vsh->status.swap_xo && (button & PSP_CTRL_CROSS)) || (!vsh->status.swap_xo && (button & PSP_CTRL_CIRCLE));
+}
+
+int button_decline(u32 button){
+	vsh_Menu* vsh = vsh_menu_pointer();
+	return (vsh->status.swap_xo && (button & PSP_CTRL_CIRCLE)) || (!vsh->status.swap_xo && (button & PSP_CTRL_CROSS));
+}
 
 void config_load(vsh_Menu *vsh) {
 	int is_pandora;
