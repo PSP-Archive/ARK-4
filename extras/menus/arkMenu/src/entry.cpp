@@ -164,11 +164,11 @@ void Entry::freeTempData(){
 }
 
 bool Entry::isZip(const char* path){
-    return (common::getMagic(path, 0) == ZIP_MAGIC);
+    return (common::getExtension(path) == "zip");
 }
 
 bool Entry::isRar(const char* path){
-    return (common::getMagic(path, 0) == RAR_MAGIC);
+    return (common::getExtension(path) == "rar");
 }
 
 bool Entry::isPRX(const char* path){

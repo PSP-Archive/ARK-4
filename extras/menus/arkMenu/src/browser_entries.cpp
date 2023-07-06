@@ -6,7 +6,14 @@
 
 
 int fileTypeByExtension(string path){
-    if (Entry::isTXT(path.c_str())){
+    
+    if (Iso::isISO(path.c_str())){
+        return FILE_ISO;
+    }
+    else if (Eboot::isEboot(path.c_str())){
+        return FILE_PBP;
+    }
+    else if (Entry::isTXT(path.c_str())){
         return FILE_TXT;
     }
     else if (Entry::isZip(path.c_str()) || Entry::isRar(path.c_str())){
@@ -14,12 +21,6 @@ int fileTypeByExtension(string path){
     }
     else if (Entry::isPRX(path.c_str())){
         return FILE_PRX;
-    }
-    else if (Eboot::isEboot(path.c_str())){
-        return FILE_PBP;
-    }
-    else if (Iso::isISO(path.c_str())){
-        return FILE_ISO;
     }
     else if (Entry::isIMG(path.c_str())){
         return FILE_PICTURE;

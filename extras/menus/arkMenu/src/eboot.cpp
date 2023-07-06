@@ -211,7 +211,7 @@ SfoInfo Eboot::getSfoInfo(){
 }
 
 bool Eboot::isEboot(const char* path){
-    return (common::getExtension(path) == "pbp" || common::getMagic(path, 0) == EBOOT_MAGIC);
+    return (common::getExtension(path) == "pbp" || strstr(path, "wmenu.bin"));
 }
 
 void Eboot::doExecute(){
