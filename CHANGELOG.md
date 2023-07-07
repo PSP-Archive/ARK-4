@@ -2,6 +2,8 @@
 
 ## Version 4.20.60 (2023-07-06):
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42060
+- (Rev 5) Fixed per-game settings and plugins on physical `UMD` discs. Fixed folder detection in `File Browser`.
+- (Rev 4) Fixed issues with physical `UMD` discs. In `VSH Menu`, behavior of the X/O button is now the same as the `XMB`.
 - (Rev 3) Fixed issues with non-latin files.
 - (Rev 2) Heavily improved loading times of `File Browser`.
 - You can now toggle `USB` connection in `File Browser` (`Launcher`/`Recovery`).
