@@ -205,12 +205,13 @@ static void checkArkPath(){
     else{
         sceIoDclose(res);
     }
+    extern RebootConfigARK rebootex_config;
+    if (sceKernelInitApitype() > PSP_INIT_APITYPE_DISC) rebootex_config.game_id[0] = 0;
 }
 
 // Init Start Module Hook
 int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
-    extern u8 rebootex_config[];
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
     int result = -1;

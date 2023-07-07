@@ -2,6 +2,7 @@
 #include <pspinit.h>
 #include <pspiofilemgr.h>
 #include <pspsysmem_kernel.h>
+#include <rebootconfig.h>
 
 #include "globals.h"
 #include "macros.h"
@@ -20,11 +21,9 @@ struct LbaParams {
 };
 
 static const char* HOME_ID = "HOME00000";
+extern RebootConfigARK rebootex_config;
 
-/*
-int readGameIdFromUmd(char* gameid){
-    int (*UmdActivate)(int, char*) = sctrlHENFindFunction("sceUmd_driver", "sceUmd", 0xC6183D47);
-    if (UmdActivate) UmdActivate(1, "disc0:");
+int readGameIdFromDisc(char* gameid){
     // Open Disc Identifier
     int disc = sceIoOpen("disc0:/UMD_DATA.BIN", PSP_O_RDONLY, 0777);
     // Opened Disc Identifier
@@ -45,77 +44,74 @@ int readGameIdFromUmd(char* gameid){
     }
     return 0;
 }
-*/
 
-int readGameIdFromDisc(char* gameid){
-    static char game_id[10] = {0};
-    int apitype = sceKernelInitApitype();
+int readGameIdFromPBP(char* gameid){
+    int n = 9;
+    int res = sctrlGetInitPARAM("DISC_ID", NULL, &n, rebootex_config.game_id);
+    if (res < 0) return 0;
+    return 1;
+}
 
-    if (game_id[0] == 0){
-        if (apitype == 0x144 || apitype == 0x155){ // PS1: read from PBP
-            int n = 9;
-            int res = sctrlGetInitPARAM("DISC_ID", NULL, &n, game_id);
-            if (res < 0) return 0;
-        }
-        else { //if (sceKernelFindModuleByName("PRO_Inferno_Driver")){ // Inferno Driver: use IoDevctl
-            struct LbaParams param;
-            memset(&param, 0, sizeof(param));
+int readGameIdFromUmd(char* gameid){
+    struct LbaParams param;
+    memset(&param, 0, sizeof(param));
 
-            param.cmd = 0x01E380C0;
-            param.lba_top = 16;
-            param.byte_size_total = 10;
-            param.byte_size_start = 883;
-            
-            int res = sceIoDevctl("umd:", 0x01E380C0, &param, sizeof(param), game_id, sizeof(game_id));
+    param.cmd = 0x01E380C0;
+    param.lba_top = 16;
+    param.byte_size_total = 10;
+    param.byte_size_start = 883;
+    
+    int res = sceIoDevctl("umd:", 0x01E380C0, &param, sizeof(param), rebootex_config.game_id, sizeof(rebootex_config.game_id));
 
-            if (res < 0) return 0;
+    if (res < 0) return 0;
 
-            // remove the dash in the middle: ULUS-01234 -> ULUS01234
-            game_id[4] = game_id[5];
-            game_id[5] = game_id[6];
-            game_id[6] = game_id[7];
-            game_id[7] = game_id[8];
-            game_id[8] = game_id[9];
-            game_id[9] = 0;
-        }
-        /*
-        else { // UMD: use regular IO
-            readGameIdFromUmd(game_id);
-            int fd = sceIoOpen("ms0:/gameid.bin", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
-            sceIoWrite(fd, game_id, strlen(game_id));
-            sceIoClose(fd);
-        }
-        */
-    }
+    // remove the dash in the middle: ULUS-01234 -> ULUS01234
+    rebootex_config.game_id[4] = rebootex_config.game_id[5];
+    rebootex_config.game_id[5] = rebootex_config.game_id[6];
+    rebootex_config.game_id[6] = rebootex_config.game_id[7];
+    rebootex_config.game_id[7] = rebootex_config.game_id[8];
+    rebootex_config.game_id[8] = rebootex_config.game_id[9];
+    rebootex_config.game_id[9] = 0;
 
-    if (gameid) memcpy(gameid, game_id, 9);
     return 1;
 }
 
 int getGameId(char* gameid){
 
+    int res = 1;
+
     int apitype = sceKernelInitApitype();
     if (apitype == 0x141 || apitype == 0x152 || apitype >= 0x200){
         strcpy(gameid, HOME_ID);
-        return;
+        return res;
     }
 
-    // Find Function
-    void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
-    
-    // Function unavailable (how?!)
-    if(SysMemForKernel_EF29061C == NULL) return 0;
-    
-    // Get Game Info Structure
-    void * gameinfo = SysMemForKernel_EF29061C();
-    
-    // Structure unavailable
-    if(gameinfo == NULL) return 0;
-    memcpy(gameid, gameinfo+0x44, 9);
+    if (rebootex_config.game_id[0] == 0){
 
-    if (gameid[0] == 0 || strncmp(gameid, HOME_ID, 9) == 0){
-        return readGameIdFromDisc(gameid);
+        // Find Function
+        void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
+        
+        // Function unavailable (how?!)
+        if(SysMemForKernel_EF29061C == NULL) return 0;
+        
+        // Get Game Info Structure
+        void * gameinfo = SysMemForKernel_EF29061C();
+        
+        // Structure unavailable
+        if(gameinfo == NULL) return 0;
+        memcpy(gameid, gameinfo+0x44, 9);
+
+        if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, HOME_ID, 9) == 0){
+            if (apitype == 0x144 || apitype == 0x155){ // PS1: read from PBP
+                res = readGameIdFromPBP(rebootex_config.game_id);
+            }
+            else {
+                res = readGameIdFromUmd(rebootex_config.game_id);
+            }
+        }
     }
 
-    return 1;
+    if (gameid) memcpy(gameid, rebootex_config.game_id, 9);
+
+    return res;
 }

@@ -8,7 +8,6 @@ C_OBJS = \
 	libertas.o   \
 	usb_charge.o  \
 	region_free.o \
-	$(ARKROOT)/core/systemctrl/src/gameinfo.o \
 		
 OBJS = \
 	$(C_OBJS) imports.o

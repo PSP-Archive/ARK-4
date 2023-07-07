@@ -367,7 +367,7 @@ int umdLoadExec(char * file, struct SceKernelLoadExecVSHParam * param)
     } else {
         sctrlSESetBootConfFileIndex(MODE_UMD);
         sctrlSESetUmdFile("");
-        ret = sceKernelLoadExecVSHDisc(file, param);
+        ret = sctrlKernelLoadExecVSHDisc(file, param);
     }
 
     return ret;

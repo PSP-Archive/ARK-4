@@ -207,7 +207,7 @@
 	IMPORT_FUNC "SystemCtrlForKernel",0xDCDC3891,sctrlHENSetRebootexOverride
 #endif
 #ifdef F_SystemCtrlForKernel_0067
-    IMPORT_FUNC "SystemCtrlForUser",0x577AF198,sctrlKernelLoadExecVSHDisc
+    IMPORT_FUNC "SystemCtrlForKernel",0x577AF198,sctrlKernelLoadExecVSHDisc
 #endif
 #ifdef F_SystemCtrlForKernel_0068
     IMPORT_FUNC "SystemCtrlForKernel",0x94FE5E4B,sctrlKernelLoadExecVSHDiscUpdater

@@ -111,7 +111,8 @@ static int matchingRunlevel(char * runlevel)
     }
     else { // check if plugin loads on specific game
         char gameid[10]; memset(gameid, 0, sizeof(gameid));
-        return (getGameId(gameid) && strstr(runlevel, gameid) != NULL);
+        getGameId(gameid);
+        return (gameid[0] && strstr(runlevel, gameid) != NULL);
     }
     
     // Unsupported Runlevel (we don't touch those to keep stability up)
