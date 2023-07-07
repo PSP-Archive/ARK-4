@@ -507,37 +507,36 @@ void Browser::refreshDirs(const char* retry){
     }
     else devsize = "";
 
-    SceIoDirent* dit = (SceIoDirent*)malloc(sizeof(SceIoDirent));
-    memset(dit, 0, sizeof(SceIoDirent));
+    SceIoDirent dit;
+    memset(&dit, 0, sizeof(SceIoDirent));
 
     vector<Entry*> folders;
     vector<Entry*> files;
 
     pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
     pri_dirent->size = sizeof(pspMsPrivateDirent);
-    dit->d_private = (void*)pri_dirent;
+    dit.d_private = (void*)pri_dirent;
     static int bufid = 0;
-    while ((sceIoDread(dir, dit)) > 0){
-        printf("got entry: %s -> %s\n", dit->d_name, pri_dirent);
+    while ((sceIoDread(dir, &dit)) > 0){
+        printf("got entry: %s -> %s\n", dit.d_name, pri_dirent);
 
-        if (dit->d_name[0] == '.' && strcmp(dit->d_name, ".") != 0 && strcmp(dit->d_name, "..") != 0 && !common::getConf()->show_hidden){
+        if (dit.d_name[0] == '.' && strcmp(dit.d_name, ".") != 0 && strcmp(dit.d_name, "..") != 0 && !common::getConf()->show_hidden){
             continue;
         }
 
-        if (common::isFolder(dit)){
+        if (common::isFolder(&dit)){
             printf("is dir\n");
-            folders.push_back(new Folder(cwd, dit->d_name, string((const char*)pri_dirent)));
+            folders.push_back(new Folder(cwd, dit.d_name, string((const char*)pri_dirent)));
         }
         else{
             printf("is file\n");
-            files.push_back(new File(cwd, dit->d_name, string((const char*)pri_dirent)));
+            files.push_back(new File(cwd, dit.d_name, string((const char*)pri_dirent)));
         }
     }
     printf("closing and cleaning\n");
     sceIoDclose(dir);
 
-    //free(pri_dirent);
-    free(dit);
+    free(pri_dirent);
 
     Entry* dot = NULL;
     Entry* dotdot = NULL;
@@ -909,7 +908,7 @@ void Browser::recursiveFolderDelete(string path){
             //build new file path
             new_path = path + string(entry.d_name);
 
-            if (FIO_SO_ISDIR(entry.d_stat.st_attr)){
+            if (common::isFolder(&entry)){
                 new_path = new_path + "/";
                 if (!common::folderExists(new_path)){
                     new_path = path + string((const char*)pri_dirent);
@@ -963,7 +962,7 @@ long Browser::recursiveSize(string path){
             //build new file path
             new_path = path + string(entry.d_name);
 
-            if (FIO_SO_ISDIR(entry.d_stat.st_attr)){
+            if (common::isFolder(&entry)){
                 new_path = new_path + "/";
                 if (!common::folderExists(new_path)){
                     new_path = path + string((const char*)pri_dirent);
@@ -1149,7 +1148,7 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
                 };
                 string src = new_source + entry.d_name;
 
-                if (FIO_SO_ISDIR(entry.d_stat.st_attr)){
+                if (common::isFolder(&entry)){
                     string dst;
                     if (!common::folderExists(src)){
                         string sname = string((const char*)pri_dirent);
