@@ -21,17 +21,43 @@ struct LbaParams {
 
 static const char* HOME_ID = "HOME00000";
 
+/*
+int readGameIdFromUmd(char* gameid){
+    int (*UmdActivate)(int, char*) = sctrlHENFindFunction("sceUmd_driver", "sceUmd", 0xC6183D47);
+    if (UmdActivate) UmdActivate(1, "disc0:");
+    // Open Disc Identifier
+    int disc = sceIoOpen("disc0:/UMD_DATA.BIN", PSP_O_RDONLY, 0777);
+    // Opened Disc Identifier
+    if(disc >= 0)
+    {
+        // Read Country Code
+        sceIoRead(disc, gameid, 4);
+        
+        // Skip Delimiter
+        sceIoLseek32(disc, 1, PSP_SEEK_CUR);
+        
+        // Read Game ID
+        sceIoRead(disc, gameid + 0x4, 5);
+        
+        // Close Disc Identifier
+        sceIoClose(disc);
+        return 1;
+    }
+    return 0;
+}
+*/
+
 int readGameIdFromDisc(char* gameid){
     static char game_id[10] = {0};
+    int apitype = sceKernelInitApitype();
 
     if (game_id[0] == 0){
-        int apitype = sceKernelInitApitype();
         if (apitype == 0x144 || apitype == 0x155){ // PS1: read from PBP
             int n = 9;
             int res = sctrlGetInitPARAM("DISC_ID", NULL, &n, game_id);
             if (res < 0) return 0;
         }
-        else { // PSP: read from disc
+        else { //if (sceKernelFindModuleByName("PRO_Inferno_Driver")){ // Inferno Driver: use IoDevctl
             struct LbaParams param;
             memset(&param, 0, sizeof(param));
 
@@ -52,6 +78,14 @@ int readGameIdFromDisc(char* gameid){
             game_id[8] = game_id[9];
             game_id[9] = 0;
         }
+        /*
+        else { // UMD: use regular IO
+            readGameIdFromUmd(game_id);
+            int fd = sceIoOpen("ms0:/gameid.bin", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+            sceIoWrite(fd, game_id, strlen(game_id));
+            sceIoClose(fd);
+        }
+        */
     }
 
     if (gameid) memcpy(gameid, game_id, 9);
