@@ -521,6 +521,10 @@ void common::setThemePath(char* path){
     else theme_path = path;
 }
 
+bool common::isFolder(SceIoDirent* dit){
+    return (dit->d_stat.st_attr == FIO_SO_IFDIR || dit->d_stat.st_attr == 48 || dit->d_stat.st_attr == 22);
+}
+
 bool common::fileExists(const std::string &path){
     struct stat sb;
     return (stat(path.c_str(), &sb) == 0 && S_ISREG(sb.st_mode));

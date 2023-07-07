@@ -1,5 +1,9 @@
+# TODO
+- Update DC to version 9.
+- Implement PS1CFW/VitaPops.
+
 # General CFW Issues
-- ???
+- Per-game settings and plugins aren't working with physical UMD discs.
 
 # PSP Issues
 - ???

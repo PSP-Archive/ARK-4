@@ -524,7 +524,7 @@ void Browser::refreshDirs(const char* retry){
             continue;
         }
 
-        if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
+        if (common::isFolder(dit)){
             printf("is dir\n");
             folders.push_back(new Folder(cwd, dit->d_name, string((const char*)pri_dirent)));
         }
