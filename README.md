@@ -131,7 +131,7 @@ The instructions are as follows:
 
   - Works on 1K models, 2K models and early 3K models (1g, 2g and 3g).
   - Only works on `6.61`. Does `NOT` work with `Testing Tool` or `Development Tool` firmwares.
-  - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use Infinity 2 (included in this download) instead.
+  - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
   - Move or copy `ARK_newIPL` folder to `/PSP/GAME/` and run the program.
   - Press the corresponding button in the installation page to install the cIPL patch.
   - Warning: unlike classic cIPL, the new method can't be easily uninstalled.
@@ -143,7 +143,7 @@ The instructions are as follows:
 
   - Only works on 1K models and early 2K models (those compatible with Pandora).
   - Works on `6.60` and `6.61`, including `Testing Tool` firmware. Does `NOT` work with `Development Tool` firmware.
-  - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use Infinity 2 (included in this download) instead.
+  - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
   - Move or copy `ARK cIPL` folder to `/PSP/GAME/` and run the program.
   - Press the corresponding button in the installation page to install or remove the cIPL patch.
 
