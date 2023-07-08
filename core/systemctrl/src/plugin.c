@@ -43,6 +43,15 @@ Plugins* plugins = NULL;
 
 void (*plugin_handler)(const char* path, int modid) = NULL;
 
+enum {
+    RUNLEVEL_UNKNOWN,
+    RUNLEVEL_VSH,
+    RUNLEVEL_UMD,
+    RUNLEVEL_POPS,
+    RUNLEVEL_HOMEBREW,
+};
+static int cur_runlevel = RUNLEVEL_UNKNOWN;
+
 int disable_plugins = 0;
 int disable_settings = 0;
 int is_plugins_loading = 0;
@@ -83,24 +92,58 @@ static void startPlugins()
     }
 }
 
+static int isVshRunlevel(){
+    if (!cur_runlevel){
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype >= 0x200) cur_runlevel = RUNLEVEL_VSH;
+    }
+    return cur_runlevel == RUNLEVEL_VSH;
+}
+
+static int isPopsRunlevel(){
+    if (!cur_runlevel){
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype == 0x144 || apitype == 0x155) cur_runlevel = RUNLEVEL_POPS;
+    }
+    return cur_runlevel == RUNLEVEL_POPS;
+}
+
+static int isUmdRunlevel(){
+    if (!cur_runlevel){
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115))
+            cur_runlevel = RUNLEVEL_UMD;
+    }
+    return cur_runlevel == RUNLEVEL_UMD;
+}
+
+static int isHomebrewRunlevel(){
+    if (!cur_runlevel){
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype == 0x141 || apitype == 0x152) cur_runlevel = RUNLEVEL_HOMEBREW;
+    }
+    return cur_runlevel == RUNLEVEL_HOMEBREW;
+}
+
 // Runlevel Check
 static int matchingRunlevel(char * runlevel)
 {
-
-    // Fetch Apitype
-    int apitype = sceKernelInitApitype();
     
     if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1; // always on
     else if (stricmp(runlevel, "vsh") == 0 || stricmp(runlevel, "xmb") == 0) // VSH only
-        return (apitype >= 0x200);
+        return isVshRunlevel();
     else if (stricmp(runlevel, "pops") == 0 || stricmp(runlevel, "ps1") == 0 || stricmp(runlevel, "psx") == 0) // PS1 games only
-        return (apitype == 0x144 || apitype == 0x155);
+        return isPopsRunlevel();
     else if (stricmp(runlevel, "umd") == 0 || stricmp(runlevel, "psp") == 0 || stricmp(runlevel, "umdemu") == 0) // Retail games only
-        return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));
+        return isUmdRunlevel();
     else if (stricmp(runlevel, "game") == 0) // retail+homebrew
-        return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x141 || apitype == 0x152 || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));
+        return (isUmdRunlevel() || isHomebrewRunlevel());
     else if (stricmp(runlevel, "app") == 0 || stricmp(runlevel, "homebrew") == 0) // homebrews only
-        return (apitype == 0x141 || apitype == 0x152);
+        return isHomebrewRunlevel();
     else if (stricmp(runlevel, "launcher") == 0){
         // check if running custom launcher
         static char path[ARK_PATH_SIZE];
@@ -417,17 +460,8 @@ static void settingsDisabler(char* path){
     settingsHandler(path, 0);
 }
 
-static int isRecoveryMode(){
-    if (ark_config->recovery) return 1;
-    // check if launching recovery menu
-    static char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, ARK_RECOVERY);
-    return (strcmp(path, sceKernelInitFileName())==0);
-}
-
 void LoadPlugins(){
-    if (disable_plugins || isRecoveryMode())
+    if (disable_plugins)
         return; // don't load plugins in recovery mode
     is_plugins_loading = 1;
     // allocate resources
@@ -451,7 +485,7 @@ void LoadPlugins(){
 }
 
 void loadSettings(){
-    if (disable_settings || isRecoveryMode())
+    if (disable_settings)
         return; // don't load settings in recovery mode
     // process settings file
     char path[ARK_PATH_SIZE];

@@ -205,6 +205,7 @@ static void checkArkPath(){
     else{
         sceIoDclose(res);
     }
+    // invalidate rebootex game id when not using physical UMDs
     extern RebootConfigARK rebootex_config;
     if (sceKernelInitApitype() > PSP_INIT_APITYPE_DISC) rebootex_config.game_id[0] = 0;
 }

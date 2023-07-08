@@ -154,11 +154,26 @@ void initController(SceModule2* mod){
     CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86);
 }
 
+static int isRecoveryMode(){
+    if (ark_config->recovery) return 1;
+    // check if launching recovery menu
+    static char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    strcat(path, ARK_RECOVERY);
+    return (strcmp(path, sceKernelInitFileName())==0);
+}
+
 void checkControllerInput(){
-	SceCtrlData pad_data;
-	CtrlPeekBufferPositive(&pad_data, 1);
-	if ((pad_data.Buttons & PSP_CTRL_START) == PSP_CTRL_START) disable_plugins = 1;
-	if ((pad_data.Buttons & PSP_CTRL_SELECT) == PSP_CTRL_SELECT) disable_settings = 1;
+	if (isRecoveryMode()){
+		disable_plugins = 1;
+		disable_settings = 1;
+	}
+	else {
+		SceCtrlData pad_data;
+		CtrlPeekBufferPositive(&pad_data, 1);
+		if ((pad_data.Buttons & PSP_CTRL_START) == PSP_CTRL_START) disable_plugins = 1;
+		if ((pad_data.Buttons & PSP_CTRL_SELECT) == PSP_CTRL_SELECT) disable_settings = 1;
+	}
 }
 
 // Hook Gamepad Input
