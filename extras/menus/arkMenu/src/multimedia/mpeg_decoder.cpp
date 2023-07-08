@@ -72,8 +72,13 @@ int T_Decoder(SceSize _args, void *_argp)
         }
         else if (pad.accept())
         {
-            run = true;
-            work = 0;
+            if (entry){
+                run = true;
+                work = 0;
+            }
+            else{
+                // TODO: figure out pause/resume
+            }
         }
 
         if (!work) break;

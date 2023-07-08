@@ -16,6 +16,7 @@
 #include "texteditor.h"
 #include "image_viewer.h"
 #include "music_player.h"
+#include "mpeg.h"
 
 #define ROOT_DIR "ms0:/" // Initial directory
 #define GO_ROOT "ef0:/" // PSP Go initial directory
@@ -162,6 +163,9 @@ void Browser::update(Entry* ent, bool skip_prompt){
     else if (Entry::isARK(e->getPath().c_str())) {
 		installTheme();
 	}
+    else if (Entry::isVideo(e->getPath().c_str())){
+        mpegPlayVideoFile(e->getPath().c_str());
+    }
     else if (e->getFileType() == FOLDER){
         string full_path = e->getFullPath();
         this->cwd = full_path;

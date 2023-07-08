@@ -76,8 +76,9 @@ bool playMPEGAudio = true;
 int at3_thread_started = 0;
 
 void* MPEGdata = NULL;
-int MPEGsize = 0;
-int MPEGcounter = 0;
+SceUID mpegfd = -1;
+SceOff MPEGsize = 0;
+SceOff MPEGcounter = 0;
 int MPEGstart = 0;
 
 Entry* entry = NULL;
@@ -87,7 +88,7 @@ bool run = 0;
 int dx;
 int dy;
 
-SceInt32 RingbufferCallback(ScePVoid pData, SceInt32 iNumPackets, ScePVoid pParam)
+SceInt32 RingbufferCallbackFromBuffer(ScePVoid pData, SceInt32 iNumPackets, ScePVoid pParam)
 {
 
     if (MPEGcounter >= MPEGsize)
@@ -106,6 +107,25 @@ SceInt32 RingbufferCallback(ScePVoid pData, SceInt32 iNumPackets, ScePVoid pPara
     return toRead/2048;
 }
 
+SceInt32 RingbufferCallbackFromFile(ScePVoid pData, SceInt32 iNumPackets, ScePVoid pParam)
+{
+
+    if (MPEGcounter >= MPEGsize){
+        MPEGcounter = MPEGstart;
+        sceIoLseek(mpegfd, MPEGcounter, PSP_SEEK_SET);
+    }
+
+    int toRead = iNumPackets*2048;
+    if (MPEGcounter + toRead > MPEGsize)
+        toRead = MPEGsize-MPEGcounter;
+
+    sceIoRead(mpegfd, pData, toRead);
+
+    MPEGcounter += toRead;
+
+    return toRead/2048;
+}
+
 SceInt32 ParseHeader()
 {
     int retVal;
@@ -116,7 +136,16 @@ SceInt32 ParseHeader()
         goto error;
     }
     
-    memcpy(pHeader, MPEGdata, 2048);
+    if (MPEGdata)
+        memcpy(pHeader, MPEGdata, 2048);
+    else if (mpegfd >= 0){
+        sceIoLseek32(mpegfd, 0, SEEK_SET);
+        sceIoRead(mpegfd, pHeader, 2048);
+    }
+    else {
+        retVal = -1;
+        goto error;
+    }
 
     retVal = sceMpegQueryStreamOffset(&m_Mpeg, pHeader, &m_MpegStreamOffset);
     if (retVal != 0)
@@ -136,6 +165,7 @@ SceInt32 ParseHeader()
     free(pHeader);
 
     MPEGcounter = MPEGstart = m_MpegStreamOffset;
+    if (mpegfd >= 0) sceIoLseek(mpegfd, MPEGcounter, PSP_SEEK_SET);
     return 0;
 
 error:
@@ -167,7 +197,7 @@ typedef struct {
 } _SceMpeg;
 
 
-void mpegInit() {
+void mpegInit(sceMpegRingbufferCB RingbufferCallback) {
 
     m_RingbufferPackets = 100; //0x3C0;
     // 0x3C0 -> 2065920 bytes
@@ -186,7 +216,7 @@ void mpegInit() {
     m_MpegMemSize    = sceMpegQueryMemSize(0);
     m_RingbufferData = ringbuf; //malloc(m_RingbufferSize);
     m_MpegMemData    = malloc(m_MpegMemSize);
-    sceMpegRingbufferConstruct(&m_Ringbuffer, m_RingbufferPackets, m_RingbufferData, m_RingbufferSize, &RingbufferCallback, MPEGdata);
+    sceMpegRingbufferConstruct(&m_Ringbuffer, m_RingbufferPackets, m_RingbufferData, m_RingbufferSize, RingbufferCallback, MPEGdata);
     sceMpegCreate(&m_Mpeg, m_MpegMemData, m_MpegMemSize, &m_Ringbuffer, BUFFER_WIDTH, 0, 0);
     
     m_MpegAvcMode.iUnk0 = -1;
@@ -292,17 +322,13 @@ SceVoid mpegShutdown()
 
 void T_mpeg(){
     work = 1;
-    // init and start MPEG
-    mpegInit();
-    mpegLoad();
     while (work){
         MPEGcounter = MPEGstart; // reset MPEG to play on loop
         mpegPlay(); // play MPEG
     }
-    mpegShutdown(); // shutdown MPEG
 }
 
-bool mpegStart(Entry* e, int x, int y){
+bool mpegPlayGamePMF(Entry* e, int x, int y){
     void* mpegData = e->getIcon1();
     int mpegSize = e->getIcon1Size();
     void* at3data = e->getSnd();
@@ -314,6 +340,7 @@ bool mpegStart(Entry* e, int x, int y){
     if (!playAT3 && !playMPEG)
         return false; // we need to play something
     entry = e;
+    mpegfd = -1;
     MPEGdata = mpegData;
     MPEGsize = mpegSize;
     AT3->at3_data = (char*)at3data;
@@ -322,7 +349,37 @@ bool mpegStart(Entry* e, int x, int y){
     at3_thread_started = 0;
     dx = x;
     dy = y;
-    T_mpeg();
+
+    // init and start MPEG
+    mpegInit(RingbufferCallbackFromBuffer);
+    mpegLoad();
+    T_mpeg(); // do play
+    mpegShutdown(); // shutdown MPEG
     
     return run;
+}
+
+void mpegPlayVideoFile(const char* path){
+
+    mpegfd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+    if (mpegfd < 0) return;
+    
+    playAT3 = false; // are we gonna play an at3 file? nope
+    playMPEG = true; // are we gonna play a mpeg file too? of course we are
+    playMPEGAudio = true;
+    entry = NULL;
+    MPEGdata = NULL;
+    MPEGsize = sceIoLseek(mpegfd, 0, SEEK_END);
+    AT3->at3_data = NULL;
+    AT3->at3_size = 0;
+    at3_started = 0;
+    at3_thread_started = 0;
+    dx = 0;
+    dy = 0;
+
+    // init and start MPEG
+    mpegInit(RingbufferCallbackFromFile);
+    mpegLoad();
+    T_mpeg(); // do play
+    mpegShutdown(); // shutdown MPEG
 }

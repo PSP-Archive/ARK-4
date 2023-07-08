@@ -159,8 +159,8 @@ extern bool playMPEG;
 extern bool playMPEGAudio;
 
 extern void* MPEGdataL;
-extern int MPEGsize;
-extern int MPEGcounter;
+extern SceOff MPEGsize;
+extern SceOff MPEGcounter;
 
 extern Entry* entry;
 

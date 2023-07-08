@@ -26,15 +26,17 @@ int RenderFrame(int width, int height, void* Buffer)
 {
 
     common::clearScreen(CLEAR_COLOR);
-    entry->drawBG();
+    if (entry){
+        entry->drawBG();
+    }
 
     int x, y;
     for (y = 0; y < IMAGE_H; y++)
         for (x = 0; x < IMAGE_W; x++)
             ((unsigned int*)image->data)[x+ y * TEXTURE_W] |= 0xFF000000;
-            
-    ya2d_flush_texture(image);
 
+    ya2d_flush_texture(image);
+    //ya2d_draw_rect(dx, dy, image->width, image->height, 0xFF000000, 1);
     ya2d_draw_texture(image, dx, dy);
 
     if (playAT3 || !playMPEGAudio)
@@ -55,8 +57,10 @@ int T_Video(SceSize _args, void *_argp)
     if (!playMPEG){
         while (!D->Video->m_iAbort){
             common::clearScreen(CLEAR_COLOR);
-            entry->drawBG();
-            entry->getIcon()->draw(10, 98);
+            if (entry){
+                entry->drawBG();
+                entry->getIcon()->draw(10, 98);
+            }
             common::flipScreen();
         }
         sceKernelExitThread(0);

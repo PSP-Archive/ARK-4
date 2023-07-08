@@ -194,6 +194,11 @@ bool Entry::isMusic(const char* path){
     return (ext == "mp3");
 }
 
+bool Entry::isVideo(const char* path){
+    string ext = common::getExtension(path);
+    return (ext == "mp4" || ext == "mpg" || ext == "mpeg" || ext == "pmf");
+}
+
 Entry::~Entry(){
 }
 
@@ -290,7 +295,7 @@ bool Entry::pmfPrompt(){
     bool pmfPlayback = entry->getIcon1() != NULL || entry->getSnd() != NULL;
         
     if (pmfPlayback && !MusicPlayer::isPlaying()){
-        ret = mpegStart(entry, 10, 98);
+        ret = mpegPlayGamePMF(entry, 10, 98);
     }
     else{
         Controller control;
