@@ -214,6 +214,7 @@ void mpegInit(sceMpegRingbufferCB RingbufferCallback) {
     status |= sceUtilityLoadModule(PSP_MODULE_AV_ATRAC3PLUS);
     status |= sceUtilityLoadModule(PSP_MODULE_AV_MPEGBASE);
     status |= sceUtilityLoadModule(PSP_MODULE_AV_VAUDIO);
+    status |= sceUtilityLoadModule(PSP_MODULE_AV_AAC);
     
     int res;
 
@@ -324,6 +325,7 @@ SceVoid mpegShutdown()
     sceMpegRingbufferDestruct(&m_Ringbuffer);
     sceMpegFinish();
     
+    sceUtilityUnloadModule(PSP_MODULE_AV_AAC);
     sceUtilityUnloadModule(PSP_MODULE_AV_VAUDIO);
     sceUtilityUnloadModule(PSP_MODULE_AV_MPEGBASE);
     sceUtilityUnloadModule(PSP_MODULE_AV_ATRAC3PLUS);
