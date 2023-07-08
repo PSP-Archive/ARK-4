@@ -84,13 +84,11 @@ int exploitEntry(){
     initVitaPopsVram();
     setScreenHandler(&copyPSPVram);
 
-    
-    PRTSTR("Testing Priviledges");
-    u32 test = *(u32*)SYSMEM_TEXT;
-
     PRTSTR("Scanning kernel functions");
     // get kernel functions
     scanKernelFunctions(k_tbl);
+
+    //k_tbl->KernelIOClose(500);
 
     //dumpbuf("ms0:/IoRead.bin", 0x8805769c, sizeof(void*)); // 0x001B32C0 -> 0x00003021
     //dumpbuf("ms0:/IoWrite.bin", 0x880577b0, sizeof(void*)); // 0x001B32C0 -> 0x00003021
