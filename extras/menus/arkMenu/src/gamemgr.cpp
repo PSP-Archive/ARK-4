@@ -35,7 +35,7 @@ GameManager::GameManager(){
     this->optionsmenu = NULL;
 
     // initialize the categories
-    this->selectedCategory = -2;
+    this->selectedCategory = (common::getConf()->main_menu)? -2 : -1;
     for (int i=0; i<MAX_CATEGORIES; i++){
         this->categories[i] = new Menu((EntryType)i);
     }
