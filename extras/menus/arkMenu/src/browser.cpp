@@ -164,7 +164,9 @@ void Browser::update(Entry* ent, bool skip_prompt){
 		installTheme();
 	}
     else if (Entry::isVideo(e->getPath().c_str())){
+        SystemMgr::pauseDraw();
         mpegPlayVideoFile(e->getPath().c_str());
+        SystemMgr::resumeDraw();
     }
     else if (e->getFileType() == FOLDER){
         string full_path = e->getFullPath();
