@@ -285,7 +285,7 @@ void Eboot::executePOPS(const char* path){
     
     memset(&param, 0, sizeof(param));
     
-    int runlevel = (*(u32*)path == EF0_PATH && common::getConf()->redirect_ms0)? POPS_RUNLEVEL_GO : POPS_RUNLEVEL;
+    int runlevel = (*(u32*)path == EF0_PATH)? POPS_RUNLEVEL_GO : POPS_RUNLEVEL;
     
     param.args = strlen(path) + 1;
     param.argp = (char*)path;
