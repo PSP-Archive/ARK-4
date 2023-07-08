@@ -1,4 +1,4 @@
-#include "pmf_audio.h"
+#include "mpeg_audio.h"
 #include <pspaudio.h>
 
 #include "at3.h"
@@ -37,7 +37,7 @@ int T_Audio(SceSize _args, void *_argp)
 
         sceKernelWaitSema(D->Audio->m_SemaphoreStart, 1, 0);
 
-        if (!playPMFAudio){
+        if (!playMPEGAudio){
             while (!D->Audio->m_iAbort)
                 sceKernelDelayThread(0);
             sceKernelExitThread(0);

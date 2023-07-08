@@ -21,12 +21,12 @@
 
 #include <sstream>
 
-#include "pmf.h"
-#include "pmf_common.h"
-#include "pmf_video.h"
-#include "pmf_decoder.h"
-#include "pmf_reader.h"
-#include "pmf_audio.h"
+#include "mpeg.h"
+#include "mpeg_common.h"
+#include "mpeg_video.h"
+#include "mpeg_decoder.h"
+#include "mpeg_reader.h"
+#include "mpeg_audio.h"
 
 #include "common.h"
 
@@ -70,15 +70,15 @@ SceInt32                            m_iLastTimeStamp;
 int work = 1;
 
 bool playAT3;
-bool playPMF;
-bool playPMFAudio = true;
+bool playMPEG;
+bool playMPEGAudio = true;
 
 int at3_thread_started = 0;
 
-void* PMFdata = NULL;
-int PMFsize = 0;
-int PMFcounter = 0;
-int PMFstart = 0;
+void* MPEGdata = NULL;
+int MPEGsize = 0;
+int MPEGcounter = 0;
+int MPEGstart = 0;
 
 Entry* entry = NULL;
 
@@ -90,18 +90,18 @@ int dy;
 SceInt32 RingbufferCallback(ScePVoid pData, SceInt32 iNumPackets, ScePVoid pParam)
 {
 
-    if (PMFcounter >= PMFsize)
-        PMFcounter = PMFstart;
+    if (MPEGcounter >= MPEGsize)
+        MPEGcounter = MPEGstart;
 
-    unsigned char* pmfData = (unsigned char*)pParam+PMFcounter;
+    unsigned char* mpegData = (unsigned char*)pParam+MPEGcounter;
 
     int toRead = iNumPackets*2048;
-    if (PMFcounter + toRead > PMFsize)
-        toRead = PMFsize-PMFcounter;
+    if (MPEGcounter + toRead > MPEGsize)
+        toRead = MPEGsize-MPEGcounter;
 
-    memcpy(pData, pmfData, toRead);
+    memcpy(pData, mpegData, toRead);
 
-    PMFcounter += toRead;
+    MPEGcounter += toRead;
 
     return toRead/2048;
 }
@@ -111,12 +111,12 @@ SceInt32 ParseHeader()
     int retVal;
     char * pHeader = (char *)malloc(2048);
 
-    if (PMFsize < 2048)
+    if (MPEGsize < 2048)
     {
         goto error;
     }
     
-    memcpy(pHeader, PMFdata, 2048);
+    memcpy(pHeader, MPEGdata, 2048);
 
     retVal = sceMpegQueryStreamOffset(&m_Mpeg, pHeader, &m_MpegStreamOffset);
     if (retVal != 0)
@@ -135,7 +135,7 @@ SceInt32 ParseHeader()
 
     free(pHeader);
 
-    PMFcounter = PMFstart = m_MpegStreamOffset;
+    MPEGcounter = MPEGstart = m_MpegStreamOffset;
     return 0;
 
 error:
@@ -167,7 +167,7 @@ typedef struct {
 } _SceMpeg;
 
 
-void pmfInit() {
+void mpegInit() {
 
     m_RingbufferPackets = 100; //0x3C0;
     // 0x3C0 -> 2065920 bytes
@@ -186,7 +186,7 @@ void pmfInit() {
     m_MpegMemSize    = sceMpegQueryMemSize(0);
     m_RingbufferData = ringbuf; //malloc(m_RingbufferSize);
     m_MpegMemData    = malloc(m_MpegMemSize);
-    sceMpegRingbufferConstruct(&m_Ringbuffer, m_RingbufferPackets, m_RingbufferData, m_RingbufferSize, &RingbufferCallback, PMFdata);
+    sceMpegRingbufferConstruct(&m_Ringbuffer, m_RingbufferPackets, m_RingbufferData, m_RingbufferSize, &RingbufferCallback, MPEGdata);
     sceMpegCreate(&m_Mpeg, m_MpegMemData, m_MpegMemSize, &m_Ringbuffer, BUFFER_WIDTH, 0, 0);
     
     m_MpegAvcMode.iUnk0 = -1;
@@ -194,9 +194,9 @@ void pmfInit() {
     sceMpegAvcDecodeMode(&m_Mpeg, &m_MpegAvcMode);
 }
 
-void pmfLoad() {
-    PMFcounter = 0;
-    PMFstart = 0;
+void mpegLoad() {
+    MPEGcounter = 0;
+    MPEGstart = 0;
     ParseHeader();
     m_MpegStreamAVC = sceMpegRegistStream(&m_Mpeg, 0, 0);
     m_MpegStreamAtrac = sceMpegRegistStream(&m_Mpeg, 1, 0);
@@ -207,7 +207,7 @@ void pmfLoad() {
     retVal = sceMpegInitAu(&m_Mpeg, m_pEsBufferAtrac, &m_MpegAuAtrac);
 }
 
-int pmfPlay(){
+int mpegPlay(){
 
     int retVal, fail = 0;
     ReaderThreadData * TDR = &Reader;
@@ -269,7 +269,7 @@ exit_reader:
     return 0;
 }
 
-SceVoid pmfShutdown()
+SceVoid mpegShutdown()
 {
 
     if (m_pEsBufferAVC    != NULL) sceMpegFreeAvcEsBuf(&m_Mpeg, m_pEsBufferAVC);
@@ -290,39 +290,39 @@ SceVoid pmfShutdown()
     
 }
 
-void T_pmf(){
+void T_mpeg(){
     work = 1;
-    // init and start PMF
-    pmfInit();
-    pmfLoad();
+    // init and start MPEG
+    mpegInit();
+    mpegLoad();
     while (work){
-        PMFcounter = PMFstart; // reset PMF to play on loop
-        pmfPlay(); // play PMF
+        MPEGcounter = MPEGstart; // reset MPEG to play on loop
+        mpegPlay(); // play MPEG
     }
-    pmfShutdown(); // shutdown PMF
+    mpegShutdown(); // shutdown MPEG
 }
 
-bool pmfStart(Entry* e, int x, int y){
-    void* pmfData = e->getIcon1();
-    int pmfSize = e->getIcon1Size();
+bool mpegStart(Entry* e, int x, int y){
+    void* mpegData = e->getIcon1();
+    int mpegSize = e->getIcon1Size();
     void* at3data = e->getSnd();
     int at3size = e->getSndSize();
     
     playAT3 = at3data != NULL; // are we gonna play an at3 file?
-    playPMF = pmfData != NULL; // are we gonna play a pmf file too?
-    playPMFAudio = playPMF;
-    if (!playAT3 && !playPMF)
+    playMPEG = mpegData != NULL; // are we gonna play a mpeg file too?
+    playMPEGAudio = playMPEG;
+    if (!playAT3 && !playMPEG)
         return false; // we need to play something
     entry = e;
-    PMFdata = pmfData;
-    PMFsize = pmfSize;
+    MPEGdata = mpegData;
+    MPEGsize = mpegSize;
     AT3->at3_data = (char*)at3data;
     AT3->at3_size = at3size;
     at3_started = 0;
     at3_thread_started = 0;
     dx = x;
     dy = y;
-    T_pmf();
+    T_mpeg();
     
     return run;
 }

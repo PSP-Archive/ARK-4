@@ -1,9 +1,9 @@
-#ifndef PMF_AUDIO_H
-#define PMF_AUDIO_H
+#ifndef MPEG_AUDIO_H
+#define MPEG_AUDIO_H
 
 #include <pspsdk.h>
 #include <psptypes.h>
-#include "pmf_common.h"
+#include "mpeg_common.h"
 
 
 extern "C" {

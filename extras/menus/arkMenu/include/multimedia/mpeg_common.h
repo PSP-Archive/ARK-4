@@ -1,5 +1,5 @@
-#ifndef PMF_COMMON_H
-#define PMF_COMMON_H
+#ifndef MPEG_COMMON_H
+#define MPEG_COMMON_H
 
 #include <pspkernel.h>
 #include <pspsdk.h>
@@ -155,12 +155,12 @@ extern SceInt32                            m_iLastTimeStamp;
 extern int work;
 
 extern bool playAT3;
-extern bool playPMF;
-extern bool playPMFAudio;
+extern bool playMPEG;
+extern bool playMPEGAudio;
 
-extern void* PMFdataL;
-extern int PMFsize;
-extern int PMFcounter;
+extern void* MPEGdataL;
+extern int MPEGsize;
+extern int MPEGcounter;
 
 extern Entry* entry;
 

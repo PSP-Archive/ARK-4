@@ -1,11 +1,11 @@
-#include "pmf_reader.h"
+#include "mpeg_reader.h"
 
 int T_Reader(SceSize _args, void *_argp)
 {
 
     ReaderThreadData* D   = *((ReaderThreadData**)_argp);
 
-    if (!playPMF){
+    if (!playMPEG){
         //while (D->m_Status != ReaderThreadData__READER_ABORT){}
         D->m_Status = ReaderThreadData__READER_EOF;
         sceKernelExitThread(0);

@@ -1,6 +1,6 @@
 #include "controller.h"
 
-#include "pmf_decoder.h"
+#include "mpeg_decoder.h"
 
 SceInt32 IsRingbufferFull(ReaderThreadData* D)
 {
@@ -18,7 +18,7 @@ int T_Decoder(SceSize _args, void *_argp)
     DecoderThreadData* D = *((DecoderThreadData**)_argp);
     Controller pad;
 
-    if (!playPMF){
+    if (!playMPEG){
         while (true){
             pad.update(1);
             if (pad.decline())
@@ -110,7 +110,7 @@ int T_Decoder(SceSize _args, void *_argp)
             retVal = sceMpegGetAtracAu(&D->m_Mpeg, D->m_MpegStreamAtrac, D->m_MpegAuAtrac, &unknown);
             if (retVal != 0)
             {
-                playPMFAudio = false;
+                playMPEGAudio = false;
                 if (!IsRingbufferFull(D->Reader))
                 {
                     sceKernelWaitSema(D->Reader->m_Semaphore, 1, 0);
@@ -120,7 +120,7 @@ int T_Decoder(SceSize _args, void *_argp)
             }
             else
             {
-                playPMFAudio = true;
+                playMPEGAudio = true;
                 if (m_iAudioCurrentTimeStamp >= D->m_iLastTimeStamp - D->m_iVideoFrameDuration) break;
 
                 memset(D->Audio->m_pAudioBuffer[D->Audio->m_iDecodeBuffer], 0, m_MpegAtracOutSize);

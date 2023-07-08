@@ -1,11 +1,11 @@
-#include "pmf_video.h"
-#include "pmf_common.h"
+#include "mpeg_video.h"
+#include "mpeg_common.h"
 #include "common.h"
 
 SceInt32 AVSyncStatus(DecoderThreadData* D)
 {
 
-    if(D->Audio->m_iFullBuffers == 0 || D->Video->m_iFullBuffers == 0 || !playPMFAudio) return 1;
+    if(D->Audio->m_iFullBuffers == 0 || D->Video->m_iFullBuffers == 0 || !playMPEGAudio) return 1;
 
     int iAudioTS = D->Audio->m_iBufferTimeStamp[D->Audio->m_iPlayBuffer];
     int iVideoTS = D->Video->m_iBufferTimeStamp[D->Video->m_iPlayBuffer];
@@ -37,7 +37,7 @@ int RenderFrame(int width, int height, void* Buffer)
 
     ya2d_draw_texture(image, dx, dy);
 
-    if (playAT3 || !playPMFAudio)
+    if (playAT3 || !playMPEGAudio)
         sceKernelDelayThread(10000);
     else
         sceKernelDelayThread(0);
@@ -52,7 +52,7 @@ int T_Video(SceSize _args, void *_argp)
 
     DecoderThreadData* D = *((DecoderThreadData**)_argp);
 
-    if (!playPMF){
+    if (!playMPEG){
         while (!D->Video->m_iAbort){
             common::clearScreen(CLEAR_COLOR);
             entry->drawBG();
@@ -86,7 +86,7 @@ int T_Video(SceSize _args, void *_argp)
         }
         else
         {
-            if (playAT3 || !playPMFAudio)
+            if (playAT3 || !playMPEGAudio)
                 sceKernelDelayThread(10000);
             else
                 sceKernelDelayThread(0);
@@ -94,7 +94,7 @@ int T_Video(SceSize _args, void *_argp)
 
         sceKernelSignalSema(D->Video->m_SemaphoreWait, 1);
 
-        if (playAT3 || !playPMFAudio)
+        if (playAT3 || !playMPEGAudio)
             sceKernelDelayThread(10000);
         else
             sceKernelDelayThread(0);
@@ -110,7 +110,7 @@ int T_Video(SceSize _args, void *_argp)
 
         sceKernelSignalSema(D->Video->m_SemaphoreLock, 1);
 
-        if (playAT3 || !playPMFAudio)
+        if (playAT3 || !playMPEGAudio)
             sceKernelDelayThread(10000);
         else
             sceKernelDelayThread(0);

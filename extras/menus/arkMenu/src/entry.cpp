@@ -5,7 +5,7 @@
 #include "sprites.h"
 #include "system_mgr.h"
 #include "music_player.h"
-#include "pmf/pmf.h"
+#include "mpeg.h"
 
 int gameBootThread(SceSize _args, void *_argp){
     Sprites s;
@@ -290,7 +290,7 @@ bool Entry::pmfPrompt(){
     bool pmfPlayback = entry->getIcon1() != NULL || entry->getSnd() != NULL;
         
     if (pmfPlayback && !MusicPlayer::isPlaying()){
-        ret = pmfStart(entry, 10, 98);
+        ret = mpegStart(entry, 10, 98);
     }
     else{
         Controller control;
