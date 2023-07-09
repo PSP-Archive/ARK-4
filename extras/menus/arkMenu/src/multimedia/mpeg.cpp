@@ -134,13 +134,15 @@ SceInt32 RingbufferCallbackFromFile(ScePVoid pData, SceInt32 iNumPackets, ScePVo
 {
 
     if (MPEGcounter >= MPEGsize){
-        MPEGcounter = MPEGstart;
-        sceIoLseek(mpegfd, MPEGcounter, PSP_SEEK_SET);
+        MPEGcounter = 0;
+        sceIoLseek(mpegfd, 0, PSP_SEEK_SET);
     }
 
     int toRead = iNumPackets*2048;
     if (MPEGcounter + toRead > MPEGsize)
         toRead = MPEGsize-MPEGcounter;
+
+    //printf("reading %d bytes at %d\n", toRead, MPEGcounter);
 
     sceIoRead(mpegfd, pData, toRead);
 
@@ -171,11 +173,15 @@ SceInt32 ParseHeader()
         goto error;
     }
 
+    m_iLastTimeStamp = *(int*)(pHeader + 80 + 12);
+    m_iLastTimeStamp = SWAPINT(m_iLastTimeStamp);
+
     retVal = sceMpegQueryStreamOffset(&m_Mpeg, pHeader, &m_MpegStreamOffset);
     if (retVal != 0)
     {
         m_MpegStreamOffset = 0;
         printf("sceMpegQueryStreamOffset: %p\n", retVal);
+        m_iLastTimeStamp = -1;
         //goto error;
     }
 
@@ -186,9 +192,6 @@ SceInt32 ParseHeader()
         printf("sceMpegQueryStreamSize: %p\n", retVal);
         //goto error;
     }
-
-    m_iLastTimeStamp = *(int*)(pHeader + 80 + 12);
-    m_iLastTimeStamp = SWAPINT(m_iLastTimeStamp);
 
     free(pHeader);
 
@@ -393,6 +396,8 @@ void mpegPlayVideoFile(const char* path){
     at3_thread_started = 0;
     dx = 0;
     dy = 0;
+    MPEGcounter = MPEGstart = 0;
+    sceIoLseek(mpegfd, 0, PSP_SEEK_SET);
 
     // init and start MPEG
     printf("mpeg init\n");

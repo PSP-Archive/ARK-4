@@ -31,9 +31,10 @@ int RenderFrame(int width, int height, void* Buffer)
     }
 
     int x, y;
+    int tw = (entry)? TEXTURE_W : 512;
     for (y = 0; y < IMAGE_H; y++)
         for (x = 0; x < IMAGE_W; x++)
-            ((unsigned int*)image->data)[x+ y * TEXTURE_W] |= 0xFF000000;
+            ((unsigned int*)image->data)[x+ y * tw] |= 0xFF000000;
 
     ya2d_flush_texture(image);
     //ya2d_draw_rect(dx, dy, image->width, image->height, 0xFF000000, 1);
@@ -59,7 +60,7 @@ int T_Video(SceSize _args, void *_argp)
             common::clearScreen(CLEAR_COLOR);
             if (entry){
                 entry->drawBG();
-                entry->getIcon()->draw(10, 98);
+                entry->getIcon()->draw(dx, dy);
             }
             common::flipScreen();
         }
@@ -158,11 +159,19 @@ SceInt32 InitVideo()
     Video.m_iPlayBuffer          = 0;
     Video.m_iAbort               = 0;
 
-    // not sure how to get these
-    Video.m_iWidth               = IMAGE_W;
-    Video.m_iHeight              = IMAGE_H;
+    // not sure how to get these, hardcoded for now
+    if (entry){
+        Video.m_iWidth               = IMAGE_W;
+        Video.m_iHeight              = IMAGE_H;
+        Video.m_iBufferWidth         = BUFFER_WIDTH;
+    }
+    else {
+        Video.m_iWidth               = 480;
+        Video.m_iHeight              = 272;
+        Video.m_iBufferWidth         = 512;
+    }
 
-    image = ya2d_create_texture(IMAGE_W, IMAGE_H, GU_PSM_8888, YA2D_PLACE_VRAM);
+    image = ya2d_create_texture(Video.m_iWidth, Video.m_iHeight, GU_PSM_8888, YA2D_PLACE_VRAM);
     //image->has_alpha = 0;
     Video.m_pVideoBuffer[0] = image->data;
 

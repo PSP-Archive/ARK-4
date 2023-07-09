@@ -58,6 +58,7 @@ typedef struct VideoThreadData
 
     SceInt32                        m_iWidth;
     SceInt32                        m_iHeight;
+    SceInt32                        m_iBufferWidth;
 
 } VideoThreadData;
 

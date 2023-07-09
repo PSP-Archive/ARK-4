@@ -180,7 +180,7 @@ int T_Decoder(SceSize _args, void *_argp)
         {
 
             retVal = sceMpegGetAvcAu(&D->m_Mpeg, D->m_MpegStreamAVC, D->m_MpegAuAVC, &unknown);
-            //printf("sceMpegGetAvcAu: %p\n", retVal);
+            //if (retVal >= 0) printf("sceMpegGetAvcAu: %p\n", retVal);
             if ((SceUInt32)retVal == 0x80618001)
             {
                 if (!IsRingbufferFull(D->Reader))
@@ -198,8 +198,8 @@ int T_Decoder(SceSize _args, void *_argp)
             {
                 if (m_iVideoCurrentTimeStamp >= D->m_iLastTimeStamp - D->m_iVideoFrameDuration) break;
 
-                retVal = sceMpegAvcDecode(&D->m_Mpeg, D->m_MpegAuAVC, BUFFER_WIDTH, &D->Video->m_pVideoBuffer[D->Video->m_iPlayBuffer], &iVideoStatus);
-                //printf("sceMpegAvcDecode: %p\n", retVal);
+                retVal = sceMpegAvcDecode(&D->m_Mpeg, D->m_MpegAuAVC, D->Video->m_iBufferWidth, &D->Video->m_pVideoBuffer[D->Video->m_iPlayBuffer], &iVideoStatus);
+                //if (retVal >= 0) printf("sceMpegAvcDecode: %p\n", retVal);
                 if (retVal != 0)
                 {
                     break;
