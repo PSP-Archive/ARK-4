@@ -1,6 +1,5 @@
 #include <pspsdk.h>
 #include <globals.h>
-#include <graphics.h>
 #include <macros.h>
 #include <module2.h>
 #include <pspdisplay_kernel.h>
@@ -11,7 +10,6 @@
 #include <pspgu.h>
 #include <functions.h>
 #include "popsdisplay.h"
-#include "libs/graphics/graphics.h"
 
 // Internal function
 int (* _sceDisplaySetFrameBufferInternal)(int pri, void *topaddr, int width, int format, int sync) = NULL;

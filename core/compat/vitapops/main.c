@@ -63,9 +63,12 @@ int module_start(SceSize args, void * argp)
     setScreenHandler(&pops_vram_handler);
     #endif
 
+    /*
     _sw(0x44000000, 0xBC800100);
     setScreenHandler(&copyPSPVram);
+    initVitaPopsVram();
     colorDebug(0xFF00);
+    */
     
     // copy configuration
     processArkConfig();

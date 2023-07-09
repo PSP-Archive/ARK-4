@@ -222,6 +222,8 @@ u32 findRebootFunctions(u32 reboot_start){
     return reboot_end;
 }
 
+extern void copyPSPVram(u32*);
+
 // Entry Point
 int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7)
 {

@@ -63,14 +63,13 @@ void dumpbuf(char* path, void* buf, int size){
     k_tbl->KernelIOClose(fd);
 }
 
-/*
-void breakpoint(){
+void breakpointCrash(){
     colorDebug(0xff0000); // blue screen
     *(int*)NULL = 0;
 }
 
-void setBreakpoint(u32 addr){
-    _sw(JAL(breakpoint), addr);
+void setBreakpointCrash(u32 addr){
+    _sw(JAL(breakpointCrash), addr);
     _sw(NOP, addr+4);
 }
 
@@ -83,7 +82,6 @@ void setBreakpointTest(u32 addr){
     _sw(JAL(breakpointTest), addr);
     _sw(0x00402021, addr+4); // move $a0, $v0
 }
-*/
 
 int exploitEntry() __attribute__((section(".text.startup")));
 int exploitEntry(){
@@ -141,9 +139,9 @@ int exploitEntry(){
     //dumpbuf("ms0:/loadexec.addr", &loadexec->text_addr, sizeof(void*));
 
     //setBreakpoint(loadexec->text_addr + 0x000024CC);
-    //_sw(JR_RA, loadexec->text_addr + 0x0000222C);
-    //_sw(LI_V0(0), loadexec->text_addr + 0x00002230);
-    //setBreakpointTest(loadexec->text_addr + 0x00002550);
+    _sw(JR_RA, loadexec->text_addr + 0x0000222C);
+    _sw(LI_V0(0), loadexec->text_addr + 0x00002230);
+    //setBreakpointCrash(loadexec->text_addr + 0x00002E50);
     _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
 
     // Invalidate Cache
