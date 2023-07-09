@@ -69,7 +69,6 @@ copy-bin:
 	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/PSVita/Standalone/NPUZ01234/ # Vita PBOOT.PBP bubble
 	$(Q)cp loader/live/user/psxloader/ark.suprx dist/PSVita/PS1CFW/
 	$(Q)cp loader/live/user/psxloader/EBOOT.PBP dist/PSVita/PS1CFW/SCPS10084/
-	$(Q)cp loader/live/kernel/kxploit/vitapops/K.BIN dist/PSVita/PS1CFW/SCPS10084/ # kxploit for VitaPOPS
 	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/PSVita/Standalone/K.BIN # Kernel exploit for Vita 3.60+
 	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/PSVita/Adrenaline/K.BIN # kxploit for CFW
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
@@ -144,7 +143,6 @@ kxploits:
 	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=vitapops -C loader/live/kernel/kxploit
 
 # Only clean non-library code
 cleanobj:
@@ -190,7 +188,6 @@ clean:
 	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=vitapops -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/mainbinex
