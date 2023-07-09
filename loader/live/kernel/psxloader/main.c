@@ -40,19 +40,22 @@ u32 sctrlHENFindFunction(char* mod, char* lib, u32 nid){
 int reboot_thread(int argc, void* argv){
 
     // launcher reboot
+    /*
     char menupath[ARK_PATH_SIZE];
     strcpy(menupath, ark_config->arkpath);
     strcat(menupath, ark_config->launcher);
+    */
+    char* menupath = "ms0:/PSP/GAME/GTA 2/EBOOT.PBP";
 
     struct SceKernelLoadExecVSHParam param;
     memset(&param, 0, sizeof(param));
     param.size = sizeof(param);
     param.args = strlen(menupath) + 1;
     param.argp = menupath;
-    param.key = "game";
+    param.key = "pops";
 
     PRTSTR1("Running Menu at %s", menupath);
-    int res = _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
+    int res = _KernelLoadExecVSHWithApitype(0x144, menupath, &param, 0x10000);
     cls();
     PRTSTR1("%p", res);
 }

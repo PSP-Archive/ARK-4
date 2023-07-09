@@ -141,6 +141,10 @@ int main(int argc, char * argv[])
     }
     */
 
+    int fd = sceIoOpen("ms0:/proshell.log", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+    sceIoWrite(fd, "hello\n", 6);
+    sceIoClose(fd);
+
     // Set Start Path
     strcpy(cwd, START_PATH);
     

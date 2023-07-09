@@ -143,6 +143,19 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
+    /*
+    if (strcmp(mod->modname, "scePops_Manager") == 0){
+        patchPopsMan(mod);
+        goto flush;
+    }
+
+    if (strcmp(mod->modname, "pops") == 0) {
+		// Use different pops register location
+		patchPops(mod);
+        goto flush;
+	}
+    */
+
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
 			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
