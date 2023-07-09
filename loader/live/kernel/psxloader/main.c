@@ -111,11 +111,6 @@ int exploitEntry(){
     // get kernel functions
     scanKernelFunctions(k_tbl);
 
-    //k_tbl->KernelIOClose(500);
-
-    //dumpbuf("ms0:/IoRead.bin", 0x8805769c, sizeof(void*)); // 0x001B32C0 -> 0x00003021
-    //dumpbuf("ms0:/IoWrite.bin", 0x880577b0, sizeof(void*)); // 0x001B32C0 -> 0x00003021
-
     PRTSTR("Patching FLASH0");
     patchKermitPeripheral(k_tbl);
 
@@ -135,13 +130,10 @@ int exploitEntry(){
     PRTSTR("Patching Loadexec");
     patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
 
-    //dumpbuf("ms0:/loadexec.bin", loadexec->text_addr, loadexec->text_size);
-    //dumpbuf("ms0:/loadexec.addr", &loadexec->text_addr, sizeof(void*));
-
-    //setBreakpoint(loadexec->text_addr + 0x000024CC);
+    // patch IO checks
     _sw(JR_RA, loadexec->text_addr + 0x0000222C);
     _sw(LI_V0(0), loadexec->text_addr + 0x00002230);
-    //setBreakpointCrash(loadexec->text_addr + 0x00002E50);
+
     _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
 
     // Invalidate Cache

@@ -11,6 +11,7 @@
 #include <pspgu.h>
 #include <pspinit.h>
 #include <functions.h>
+#include <graphics.h>
 #include "popsdisplay.h"
 
 extern ARKConfig* ark_config;
@@ -18,7 +19,7 @@ extern STMOD_HANDLER previous;
 
 static int draw_thread = -1;
 static int do_draw = 0;
-static u32* g_vram_base = (u32*)0x44000000;
+static u32* fake_vram = (u32*)0x44000000;
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 int (*DisplayWaitVblankStart)() = NULL;
 
@@ -72,7 +73,7 @@ void patchVitaPopsDisplay(SceModule2* mod){
 int pops_draw_thread(int argc, void* argp){
     
     while (do_draw){
-        SoftRelocateVram(g_vram_base, NULL);
+        SoftRelocateVram(fake_vram, NULL);
         DisplayWaitVblankStart();
     }
     
@@ -114,6 +115,18 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
+
+    if (DisplaySetFrameBuf){
+        static int screen_init = 0;
+        if (!screen_init){
+            setScreenHandler(&copyPSPVram);
+            initVitaPopsVram();
+            initScreen(DisplaySetFrameBuf);
+            screen_init = 1;
+        }
+        cls();
+        PRTSTR1("mod: %s", mod->modname);
+    }
     
     // Patch display in PSX exploits
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
@@ -145,8 +158,8 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         if(isSystemBooted())
         {
             // Set fake framebuffer so that cwcheat can be displayed
-            DisplaySetFrameBuf((void *)g_vram_base, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
-            memset((void *)g_vram_base, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+            DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
+            memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 
             // Start control poller thread so we can exit via combo on PS1 games
             if (sceKernelInitApitype() == 0x144){
