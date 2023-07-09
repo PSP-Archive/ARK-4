@@ -60,6 +60,16 @@ void dumpbuf(char* path, void* buf, int size){
     k_tbl->KernelIOClose(fd);
 }
 
+void breakpoint(){
+    colorDebug(0xff0000); // blue screen
+    *(int*)NULL = 0;
+}
+
+void setBreakpoint(u32 addr){
+    _sw(JAL(breakpoint), addr);
+    _sw(NOP, addr+4);
+}
+
 int exploitEntry() __attribute__((section(".text.startup")));
 int exploitEntry(){
     if (!isKernel()){
@@ -111,6 +121,8 @@ int exploitEntry(){
 
     PRTSTR("Patching Loadexec");
     patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
+
+    setBreakpoint(loadexec->text_addr + 0x000023D0);
 
     // Invalidate Cache
     k_tbl->KernelDcacheWritebackInvalidateAll();
