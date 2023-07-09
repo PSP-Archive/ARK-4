@@ -30,6 +30,8 @@ extern u8* rebootbuffer;
 extern u32 size_rebootbuffer;
 extern int iso_mode;
 
+int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int);
+
 u32 sctrlHENFindFunction(char* mod, char* lib, u32 nid){
     return FindFunction(mod, lib, nid);
 }
@@ -49,8 +51,6 @@ int reboot_thread(int argc, void* argv){
     param.key = "game";
 
     PRTSTR1("Running Menu at %s", menupath);
-    int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int);
-    _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
     _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
 }
 
@@ -93,6 +93,7 @@ int exploitEntry(){
     initScreen(NULL);
     initVitaPopsVram();
     setScreenHandler(&copyPSPVram);
+    colorDebugSetIsVitaPops(1);
 
     PRTSTR("Scanning kernel functions");
     // get kernel functions
@@ -122,7 +123,11 @@ int exploitEntry(){
     PRTSTR("Patching Loadexec");
     patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
 
+    dumpbuf("ms0:/loadexec.bin", loadexec->text_addr, loadexec->text_size);
+    dumpbuf("ms0:/loadexec.addr", &loadexec->text_addr, sizeof(void*));
+
     setBreakpoint(loadexec->text_addr + 0x000023D0);
+    _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
 
     // Invalidate Cache
     k_tbl->KernelDcacheWritebackInvalidateAll();
