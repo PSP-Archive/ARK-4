@@ -66,11 +66,6 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
 
     // init screen
     initScreen(g_tbl->DisplaySetFrameBuf);
-    if (IS_VITA_POPS(ark_config)){
-        // configure to handle POPS screen
-        initVitaPopsVram();
-        setScreenHandler(&copyPSPVram);
-    }
 
     PRTSTR("Loading ARK-4");
     
@@ -218,9 +213,6 @@ void kernelContentFunction(void){
             running_ark[17] = 'e'; // show 'ePSP'
             if (IS_VITA_POPS(ark_config)){
                 running_ark[20] = 'X'; // show 'ePSX'
-                // configure to handle POPS screen
-                initVitaPopsVram();
-                setScreenHandler(&copyPSPVram);
             }
         }
     }

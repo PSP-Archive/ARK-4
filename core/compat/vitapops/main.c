@@ -50,12 +50,6 @@ static void processArkConfig(){
     }
 }
 
-#ifdef DEBUG
-static void pops_vram_handler(u32 vram){
-    SoftRelocateVram(vram, NULL);
-}
-#endif
-
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
@@ -68,7 +62,10 @@ int module_start(SceSize args, void * argp)
     // set screen handler for color debugging
     setScreenHandler(&pops_vram_handler);
     #endif
-    
+
+    _sw(0x44000000, 0xBC800100);
+    setScreenHandler(&copyPSPVram);
+    colorDebug(0xFF00);
     
     // copy configuration
     processArkConfig();

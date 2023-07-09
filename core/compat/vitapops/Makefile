@@ -29,7 +29,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lpspsystemctrl_kernel
+LIBS = -lpspsemaphore -lpspsystemctrl_kernel -lcolordebugger
 
 PSP_FW_VERSION = 660
 

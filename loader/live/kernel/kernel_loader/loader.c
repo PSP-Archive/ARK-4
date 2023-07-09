@@ -10,6 +10,7 @@
 #include "core/compat/vitapops/rebootex/payload.h"
 #include "core/compat/pentazemin/rebootex/payload.h"
 
+extern void copyPSPVram(u32*);
 
 static int isVitaFile(char* filename){
     return (strstr(filename, "psv")!=NULL // PS Vita btcnf replacement, not used on PSP
@@ -142,6 +143,14 @@ void setupRebootBuffer(){
 }
 
 void loadKernelArk(){
+
+    
+    if (IS_VITA_POPS(ark_config)){
+        // configure to handle POPS screen
+        initVitaPopsVram();
+        setScreenHandler(&copyPSPVram);
+    }
+
      // Install flash0 files
     PRTSTR("Installing "FLASH0_ARK);
     flashPatch();

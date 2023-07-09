@@ -1,5 +1,5 @@
 TARGET = psxloader
-OBJS = main.o
+OBJS = main.o $(ARKROOT)/core/compat/vitapops/popsdisplay.o
 
 CFLAGS = -std=c99 -Os -G0 -Wall -I$(ARKROOT)/common/include -I$(ARKROOT)/libs/colordebugger -I$(ARKROOT)/libs/graphics
 

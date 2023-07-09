@@ -27,6 +27,8 @@ PSP_MODULE_INFO("ARK VitaPOPS Loader", 0, 1, 0);
 //int SysMemUserForUser_91DE343C(void* unk);
 extern int sceKernelPowerLock(unsigned int, unsigned int);
 
+extern void copyPSPVram(u32*);
+
 volatile void* KernelExitGame = &sceKernelExitGame;
 volatile void* ReadController = &sceCtrlReadBufferPositive;
 
@@ -87,12 +89,11 @@ int psxloader_thread(int argc, void* argv){
     sceKernelDelayThread(1000000);
 
     sceDisplaySetFrameBuf((void *)0x04000000, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
-    colorDebugSetIsVitaPops(1);
+    setScreenHandler(&copyPSPVram);
 
     SceUID fd = sceIoOpen("ms0:/PSP/SAVEDATA/ARK_01234/ARK4.BIN", PSP_O_RDONLY, 0);
 
     if (fd < 0){
-        setScreenHandler(&copyPSPVram);
         initScreen(NULL);
         PRTSTR1("ERROR: %p", fd);
         sceKernelExitGame();

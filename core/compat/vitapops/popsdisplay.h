@@ -29,6 +29,8 @@ extern u16* pops_vram;
 // Initialize PSX Vram
 void initVitaPopsVram();
 
+void copyPSPVram(u32* psp_vram);
+
 // Software render PSP Vram into PSX Vram
 void SoftRelocateVram(u32* psp_vram, u16* ps1_vram);
 

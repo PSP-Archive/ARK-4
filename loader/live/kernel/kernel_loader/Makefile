@@ -22,6 +22,7 @@ C_OBJS = \
 	$(ARKROOT)/common/utils/patches.o \
 	$(ARKROOT)/common/utils/scanner.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
+	$(ARKROOT)/core/compat/vitapops/popsdisplay.o \
 	$(ARKROOT)/core/systemctrl/src/loadexec.o
 
 include $(ARKROOT)/common/make/global.mak

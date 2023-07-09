@@ -25,6 +25,7 @@ ARKConfig* ark_config = &_ark_config;
 extern int (* _LoadReboot)(void *, unsigned int, void *, unsigned int);
 extern void buildRebootBufferConfig(int rebootBufferSize);
 extern int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4);
+extern void copyPSPVram(u32*);
 
 extern u8* rebootbuffer;
 extern u32 size_rebootbuffer;
@@ -51,7 +52,9 @@ int reboot_thread(int argc, void* argv){
     param.key = "game";
 
     PRTSTR1("Running Menu at %s", menupath);
-    _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
+    int res = _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
+    cls();
+    PRTSTR1("%p", res);
 }
 
 void dumpbuf(char* path, void* buf, int size){
@@ -60,6 +63,7 @@ void dumpbuf(char* path, void* buf, int size){
     k_tbl->KernelIOClose(fd);
 }
 
+/*
 void breakpoint(){
     colorDebug(0xff0000); // blue screen
     *(int*)NULL = 0;
@@ -69,6 +73,17 @@ void setBreakpoint(u32 addr){
     _sw(JAL(breakpoint), addr);
     _sw(NOP, addr+4);
 }
+
+void breakpointTest(int a0){
+    if (a0 >= 0) colorDebug(0xff00);
+    else colorDebug(0xff);
+}
+
+void setBreakpointTest(u32 addr){
+    _sw(JAL(breakpointTest), addr);
+    _sw(0x00402021, addr+4); // move $a0, $v0
+}
+*/
 
 int exploitEntry() __attribute__((section(".text.startup")));
 int exploitEntry(){
@@ -90,10 +105,9 @@ int exploitEntry(){
     // make PRTSTR available for payloads
     g_tbl->prtstr = (void *)&PRTSTR11;
 
-    initScreen(NULL);
     initVitaPopsVram();
     setScreenHandler(&copyPSPVram);
-    colorDebugSetIsVitaPops(1);
+    initScreen(NULL);
 
     PRTSTR("Scanning kernel functions");
     // get kernel functions
@@ -123,10 +137,13 @@ int exploitEntry(){
     PRTSTR("Patching Loadexec");
     patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
 
-    dumpbuf("ms0:/loadexec.bin", loadexec->text_addr, loadexec->text_size);
-    dumpbuf("ms0:/loadexec.addr", &loadexec->text_addr, sizeof(void*));
+    //dumpbuf("ms0:/loadexec.bin", loadexec->text_addr, loadexec->text_size);
+    //dumpbuf("ms0:/loadexec.addr", &loadexec->text_addr, sizeof(void*));
 
-    setBreakpoint(loadexec->text_addr + 0x000023D0);
+    //setBreakpoint(loadexec->text_addr + 0x000024CC);
+    //_sw(JR_RA, loadexec->text_addr + 0x0000222C);
+    //_sw(LI_V0(0), loadexec->text_addr + 0x00002230);
+    //setBreakpointTest(loadexec->text_addr + 0x00002550);
     _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
 
     // Invalidate Cache
