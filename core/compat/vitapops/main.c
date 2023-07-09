@@ -53,6 +53,13 @@ static void processArkConfig(){
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
+    /*
+    _sw(0x44000000, 0xBC800100);
+    setScreenHandler(&copyPSPVram);
+    initVitaPopsVram();
+    colorDebug(0xFF);
+    _sw(0,0);
+    */
 
     // set rebootex for VitaPOPS
     sctrlHENSetRebootexOverride(rebootbuffer_vitapops);

@@ -23,7 +23,6 @@ REBOOT_OBJS = \
 C_OBJS = \
 	patches.o \
 	$(ARKROOT)/common/utils/scanner.o \
-	$(ARKROOT)/core/compat/vitapops/popsdisplay.o \
 
 LIBS = -L $(ARKROOT)/libs -lcolordebugger
 
