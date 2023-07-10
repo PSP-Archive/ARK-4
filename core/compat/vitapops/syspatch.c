@@ -115,18 +115,6 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
-
-    if (DisplaySetFrameBuf){
-        static int screen_init = 0;
-        if (!screen_init){
-            setScreenHandler(&copyPSPVram);
-            initVitaPopsVram();
-            initScreen(DisplaySetFrameBuf);
-            screen_init = 1;
-        }
-        cls();
-        PRTSTR1("mod: %s", mod->modname);
-    }
     
     // Patch display in PSX exploits
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
@@ -142,11 +130,25 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         patchKermitPeripheral(&_ktbl);
         goto flush;
     }
+    /*
+    if (strcmp(mod->modname, "sceIOFileManager") == 0){
+        // remove k1 checks -> move $a2, 0
+        _sw(0x00003021, 0x8805769c); // IoRead
+        _sw(0x00003021, 0x880577b0); // IoWrite
+        goto flush;
+    }
+
+    if (strcmp(mod->modname, "sceLoadExec") == 0){
+        // patch IO checks
+        _sw(JR_RA, mod->text_addr + 0x0000222C);
+        _sw(LI_V0(0), mod->text_addr + 0x00002230);
+        goto flush;
+    }
+    */
 
     /*
     if (strcmp(mod->modname, "scePops_Manager") == 0){
         patchPopsMan(mod);
-        goto flush;
     }
 
     if (strcmp(mod->modname, "pops") == 0) {
@@ -156,6 +158,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 	}
     */
 
+    /*
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
 			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
@@ -163,6 +166,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 			goto flush;
 		}
 	}
+    */
 
     // Boot Complete Action not done yet
     if(booted == 0)
@@ -171,12 +175,12 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         if(isSystemBooted())
         {
             // Set fake framebuffer so that cwcheat can be displayed
-            DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
-            memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+            //DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
+            //memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 
             // Start control poller thread so we can exit via combo on PS1 games
             if (sceKernelInitApitype() == 0x144){
-                startControlPoller();
+                //startControlPoller();
             }
 
             // Boot Complete Action done
@@ -192,4 +196,44 @@ exit:
 
     // Forward to previous Handler
     if(previous) previous(mod);
+}
+
+int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
+int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
+
+    SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
+
+    if (DisplaySetFrameBuf){
+        static int screen_init = 0;
+        if (!screen_init){
+            setScreenHandler(&copyPSPVram);
+            initVitaPopsVram();
+            initScreen(DisplaySetFrameBuf);
+            screen_init = 1;
+        }
+        cls();
+        PRTSTR1("mod: %s", mod->modname);
+    }
+
+    /*
+    static SceModule2* popsman = NULL;
+
+    if (mod){
+
+        if (strcmp(mod->modname, "scePops_Manager") == 0){
+            //patchPopsMan(mod);
+            popsman = mod;
+        }
+
+        else if (strcmp(mod->modname, "sceKernelLibrary") == 0 && popsman){
+            int modid = sceKernelLoadModule("flash0:/kd/ark_popcorn.prx", 0, 0);
+            sceKernelStartModule(modid, 0, 0, 0, 0);
+        }
+
+    }
+    */
+
+    // forward to previous or default StartModule
+    if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
+    return -1;
 }

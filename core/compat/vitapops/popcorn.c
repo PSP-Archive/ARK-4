@@ -250,10 +250,8 @@ int patchPopsMan(SceModule2 *mod) {
 		original = 1;
 
 	int (* SetCompiledSdkVersion)() = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0x358CA1BB);
-	if (!SetCompiledSdkVersion)
-		return 1;
-
-	SetCompiledSdkVersion(0x06060110);
+	if (SetCompiledSdkVersion)
+		SetCompiledSdkVersion(0x06060110);
 
 	u32 text_addr = mod->text_addr;
 

@@ -22,6 +22,8 @@ STMOD_HANDLER previous = NULL;
 ARKConfig* ark_config = NULL;
 
 extern void ARKVitaPopsOnModuleStart(SceModule2* mod);
+extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
+extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 
 // Flush Instruction and Data Cache
 void flushCache()
@@ -53,13 +55,12 @@ static void processArkConfig(){
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
-    /*
+    #ifdef DEBUG
     _sw(0x44000000, 0xBC800100);
     setScreenHandler(&copyPSPVram);
     initVitaPopsVram();
-    colorDebug(0xFF);
-    _sw(0,0);
-    */
+    colorDebug(0xFF00);
+    #endif
 
     // set rebootex for VitaPOPS
     sctrlHENSetRebootexOverride(rebootbuffer_vitapops);
@@ -69,19 +70,15 @@ int module_start(SceSize args, void * argp)
     // set screen handler for color debugging
     setScreenHandler(&pops_vram_handler);
     #endif
-
-    /*
-    _sw(0x44000000, 0xBC800100);
-    setScreenHandler(&copyPSPVram);
-    initVitaPopsVram();
-    colorDebug(0xFF00);
-    */
     
     // copy configuration
     processArkConfig();
 
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaPopsOnModuleStart);
+
+    // Register custom start module
+    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
     
     // Return Success
     return 0;

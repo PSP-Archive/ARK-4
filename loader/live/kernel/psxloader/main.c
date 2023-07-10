@@ -97,6 +97,9 @@ int exploitEntry(){
     // Switch to Kernel Permission Level
     setK1Kernel();
 
+    int (*DisplaySetHoldMode)(int) = FindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
+    DisplaySetHoldMode(0);
+
     PRTSTR("ARK-X Loader Started");
 
     scanArkFunctions(g_tbl);

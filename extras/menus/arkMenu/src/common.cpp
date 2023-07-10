@@ -522,7 +522,7 @@ void common::setThemePath(char* path){
 }
 
 bool common::isFolder(SceIoDirent* dit){
-    return (dit->d_stat.st_attr == FIO_SO_IFDIR || dit->d_stat.st_attr == 48 || dit->d_stat.st_attr == 22);
+    return FIO_SO_ISDIR(dit->d_stat.st_attr) || FIO_S_ISDIR(dit->d_stat.st_mode);
 }
 
 bool common::fileExists(const std::string &path){

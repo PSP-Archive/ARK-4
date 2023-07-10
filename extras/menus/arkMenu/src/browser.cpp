@@ -514,9 +514,10 @@ void Browser::refreshDirs(const char* retry){
     vector<Entry*> files;
 
     pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
+    memset(pri_dirent, 0, sizeof(pspMsPrivateDirent));
     pri_dirent->size = sizeof(pspMsPrivateDirent);
     dit.d_private = (void*)pri_dirent;
-    static int bufid = 0;
+
     while ((sceIoDread(dir, &dit)) > 0){
         printf("got entry: %s -> %s\n", dit.d_name, pri_dirent);
 
@@ -889,6 +890,7 @@ void Browser::recursiveFolderDelete(string path){
         memset(&entry, 0, sizeof(SceIoDirent));
 
         pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
+        memset(pri_dirent, 0, sizeof(pspMsPrivateDirent));
         pri_dirent->size = sizeof(pspMsPrivateDirent);
         entry.d_private = (void*)pri_dirent;
         
@@ -943,6 +945,7 @@ long Browser::recursiveSize(string path){
         memset(&entry, 0, sizeof(SceIoDirent));
 
         pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
+        memset(pri_dirent, 0, sizeof(pspMsPrivateDirent));
         pri_dirent->size = sizeof(pspMsPrivateDirent);
         entry.d_private = (void*)pri_dirent;
         

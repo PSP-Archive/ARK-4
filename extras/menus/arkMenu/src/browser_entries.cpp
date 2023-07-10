@@ -62,11 +62,11 @@ BrowserFile::~BrowserFile(){
 }
 
 void BrowserFile::setShortName(string shortname){
-    if (shortname.size() > 0){
+    this->shortname = "";
+    if (shortname.size() > 0 && shortname[0] != 0x14){
         if (this->name.size() < shortname.size()){
             this->path = this->parent + shortname;
             this->name = shortname;
-            this->shortname = "";
         }
         else {
             this->shortname = shortname;

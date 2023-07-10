@@ -1139,6 +1139,7 @@ int module_start(SceSize args, void* argp)
     #ifdef DEBUG
     printk("pops disc id: %s\r\n", g_DiscID);
     #endif
+
     g_pspFwVersion = sceKernelDevkitVersion();
     
     getKeys();
