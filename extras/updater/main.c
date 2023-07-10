@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <kubridge.h>
 #include "globals.h"
 
 PSP_MODULE_INFO("ARKUpdater", 0x800, 1, 0);
@@ -50,6 +51,24 @@ static int isVitaFile(char* filename){
     );
 }
 
+void checkArkConfig(ARKConfig* ark_config){
+    if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0){
+        strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234/");
+        int res = sceIoMkdir(ark_config->arkpath, 0777);
+        if (res < 0){
+            ark_config->arkpath[0] = 'm';
+            ark_config->arkpath[0] = 's';
+            res = sceIoMkdir(ark_config->arkpath, 0777);
+        }
+        if (res >= 0){
+            struct KernelCallArg args;
+            args.arg1 = ark_config;
+            u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
+            kuKernelCall((void*)setArkConfig, &args);
+        }
+    }
+}
+
 // Entry Point
 int main(int argc, char * argv[])
 {
@@ -57,6 +76,8 @@ int main(int argc, char * argv[])
     ARKConfig ark_config;
 
     sctrlHENGetArkConfig(&ark_config);
+
+    checkArkConfig(&ark_config);
     
     // Initialize Screen Output
     pspDebugScreenInit();
