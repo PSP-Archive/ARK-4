@@ -137,8 +137,8 @@ int exploitEntry(){
     patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
 
     // patch IO checks
-    _sw(JR_RA, loadexec->text_addr + 0x0000222C);
-    _sw(LI_V0(0), loadexec->text_addr + 0x00002230);
+    //_sw(JR_RA, loadexec->text_addr + 0x0000222C);
+    //_sw(LI_V0(0), loadexec->text_addr + 0x00002230);
 
     _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
 

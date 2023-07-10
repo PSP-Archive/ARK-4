@@ -12,7 +12,7 @@ CFLAGS = -std=c99 -Os -G0 -Wall
 INCDIR = $(ARKROOT)/common/include
 LIBDIR = $(ARKROOT)/libs
 
-LIBS = -lpspsystemctrl_user -lkubridge
+LIBS = -lpspsystemctrl_user -lpspkubridge
 
 CXXFLAGS = $(CFLAGS)
 ASFLAGS = $(CFLAGS)
