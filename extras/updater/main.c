@@ -52,19 +52,32 @@ static int isVitaFile(char* filename){
 }
 
 void checkArkConfig(ARKConfig* ark_config){
+    // check if ARK is using SEPLUGINS folder due to lack of savedata folder
     if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0){
+        // create savedata folder, first attempt on ef0 for PSP Go
         strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234/");
         int res = sceIoMkdir(ark_config->arkpath, 0777);
         if (res < 0){
+            // second attempt on ms0 for every other device
             ark_config->arkpath[0] = 'm';
             ark_config->arkpath[0] = 's';
             res = sceIoMkdir(ark_config->arkpath, 0777);
         }
+        // creation worked?
         if (res >= 0){
+            // notify SystemControl of the new arkpath
             struct KernelCallArg args;
             args.arg1 = ark_config;
             u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
             kuKernelCall((void*)setArkConfig, &args);
+
+            // move settings file to arkpath
+            static char* orig = "ms0:/SEPLUGINS/SETTINGS.TXT";
+            static char* dest = "ms0:/PSP/SAVEDATA/ARK_01234/SETTINGS.TXT";
+            dest[0] = ark_config->arkpath[0];
+            dest[1] = ark_config->arkpath[1];
+            copy_file(orig, dest);
+            sceIoRemove(orig);
         }
     }
 }
