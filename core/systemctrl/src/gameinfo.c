@@ -100,7 +100,7 @@ int getGameId(char* gameid){
         // Structure unavailable
         if(gameinfo == NULL) return 0;
         memcpy(gameid, gameinfo+0x44, 9);
-
+        
         if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, HOME_ID, 9) == 0){
             if (apitype == 0x144 || apitype == 0x155){ // PS1: read from PBP
                 res = readGameIdFromPBP(rebootex_config.game_id);

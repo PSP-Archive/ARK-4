@@ -241,9 +241,6 @@ void GameManager::findISOs(const char* path){
             }
             continue;
         }
-        if (strlen(dit->d_name) < strlen((char*)pri_dirent)){
-            fullpath = shortpath;
-        }
         if (Iso::isISO(fullpath.c_str())) this->categories[GAME]->addEntry(new Iso(fullpath));
         else if (Iso::isISO(shortpath.c_str())) this->categories[GAME]->addEntry(new Iso(shortpath));
     }
