@@ -22,7 +22,7 @@ static int do_draw = 0;
 static u32* fake_vram = (u32*)0x44000000;
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 int (*DisplayWaitVblankStart)() = NULL;
-
+int (*DisplaySetHoldMode)(int) = NULL;
 
 KernelFunctions _ktbl = {
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
@@ -112,6 +112,167 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	return sceKernelResumeThread(thid);
 }
 
+/*
+int loadstart_pops(int argc, void* argv){
+
+    int (*LoadModule)() = sctrlHENFindFunction("sceModuleManager", "ModuleMgrForKernel", 0x939E4270);
+    int (*StartModule)() = sctrlHENFindFunction("sceModuleManager", "ModuleMgrForKernel", 0x3FF74DF1);
+
+    {
+    int modid = LoadModule("flash0:/kd/popsman.prx", 0, NULL);
+    if (modid < 0) return 0;
+    int res = StartModule(modid, 0, NULL, NULL, NULL);
+    }
+
+    {
+    int modid = LoadModule("flash0:/kd/pops_01g.prx", 0, NULL);
+    if (modid < 0) return 0;
+    int res = StartModule(modid, 0, NULL, NULL, NULL);
+    }
+
+    return 0;
+}
+*/
+
+void logtext(char* text){
+    int k1 = pspSdkSetK1(0);
+    int fd = sceIoOpen("ms0:/pops.log", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+    sceIoWrite(fd, text, strlen(text));
+    sceIoClose(fd);
+    pspSdkSetK1(k1);
+}
+
+int logmeaudio_10DABACD(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0x10DABACD);
+    logtext("logmeaudio_10DABACD\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_34F2548F(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0x34F2548F);
+    logtext("logmeaudio_34F2548F\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_59759606(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0x59759606);
+    logtext("logmeaudio_59759606\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_6FCDD82D(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0x6FCDD82D);
+    logtext("logmeaudio_6FCDD82D\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_83609AC9(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0x83609AC9);
+    logtext("logmeaudio_83609AC9\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_899A3BC0(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0x899A3BC0);
+    logtext("logmeaudio_899A3BC0\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_9FBE4AD3(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0x9FBE4AD3);
+    logtext("logmeaudio_9FBE4AD3\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_A651EA7B(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0xA651EA7B);
+    logtext("logmeaudio_A651EA7B\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_A8176E49(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0xA8176E49);
+    logtext("logmeaudio_A8176E49\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_C4169D0F(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0xC4169D0F);
+    logtext("logmeaudio_C4169D0F\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_C47D3670(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0xC47D3670);
+    logtext("logmeaudio_C47D3670\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_D96DC042(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0xD96DC042);
+    logtext("logmeaudio_D96DC042\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_EB52DFE0(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0xEB52DFE0);
+    logtext("logmeaudio_EB52DFE0\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_F1502A62(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0xF1502A62);
+    logtext("logmeaudio_F1502A62\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+int logmeaudio_F7CD1362(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3){
+    int (*meaudio)() = sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0xF7CD1362);
+    logtext("logmeaudio_F7CD1362\n");
+    return meaudio(a0, a1, a2, a3, t0, t1, t2, t3);
+}
+
+void* meaudio_loggers[] = {
+    &logmeaudio_10DABACD,
+    &logmeaudio_34F2548F,
+    &logmeaudio_59759606,
+    &logmeaudio_6FCDD82D,
+    &logmeaudio_83609AC9,
+    &logmeaudio_899A3BC0,
+    &logmeaudio_9FBE4AD3,
+    &logmeaudio_A651EA7B,
+    &logmeaudio_A8176E49,
+    &logmeaudio_C4169D0F,
+    &logmeaudio_C47D3670,
+    &logmeaudio_D96DC042,
+    &logmeaudio_EB52DFE0,
+    &logmeaudio_F1502A62,
+    &logmeaudio_F7CD1362
+};
+
+u32 meaudio_nids[] = {
+    0x10DABACD,
+    0x34F2548F,
+    0x59759606,
+    0x6FCDD82D,
+    0x83609AC9,
+    0x899A3BC0,
+    0x9FBE4AD3,
+    0xA651EA7B,
+    0xA8176E49,
+    0xC4169D0F,
+    0xC47D3670,
+    0xD96DC042,
+    0xEB52DFE0,
+    0xF1502A62,
+    0xF7CD1362
+};
+
+void doNastyBreakpoint(){
+    colorDebug(0xFF0000);
+    _sw(0,0);
+}
+
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
@@ -120,6 +281,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         DisplayWaitVblankStart = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x984C27E7);
+        DisplaySetHoldMode = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
         patchVitaPopsDisplay(mod);
         goto flush;
     }
@@ -158,6 +320,18 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 	}
     */
 
+    if (strcmp(mod->modname, "simple") == 0) {
+        /*
+        for (int i=0; i<14; i++){
+            hookImportByNID(mod, "sceMeAudio", meaudio_nids[i], meaudio_loggers[i]);
+        }
+        */
+        REDIRECT_SYSCALL(mod->text_addr + 0x00000124, doNastyBreakpoint);
+        //_sw(JUMP(doNastyBreakpoint), mod->text_addr + 0x00014EA0);
+        //_sw(NOP, mod->text_addr + 0x00014EA0 + 4);
+        goto flush;
+	}
+
     /*
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
@@ -181,6 +355,10 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             // Start control poller thread so we can exit via combo on PS1 games
             if (sceKernelInitApitype() == 0x144){
                 //startControlPoller();
+            }
+            else {
+                //SceUID kthreadID = sceKernelCreateThread( "ark-x-loader", &loadstart_pops, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
+                //sceKernelStartThread(kthreadID, 0, NULL);
             }
 
             // Boot Complete Action done

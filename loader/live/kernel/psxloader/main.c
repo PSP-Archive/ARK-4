@@ -39,11 +39,17 @@ u32 sctrlHENFindFunction(char* mod, char* lib, u32 nid){
 
 int reboot_thread(int argc, void* argv){
 
+    /*
+    SceModule2* kermit_peripheral = k_tbl->KernelFindModuleByName("sceKermitPeripheral_Driver");
+    int (*sceKermitPeripheral_C0EBC631)() = kermit_peripheral->text_addr + 0x00000828;
+    sceKermitPeripheral_C0EBC631();
+    */
+
     // launcher reboot
     char menupath[ARK_PATH_SIZE];
     strcpy(menupath, ark_config->arkpath);
     strcat(menupath, ark_config->launcher);
-    //char* menupath = "ms0:/PSP/SAVEDATA/ARK_01234/GAME.BIN";
+    //char* menupath = "ms0:/PSP/GAME/GTA 2/EBOOT.PBP";
 
     struct SceKernelLoadExecVSHParam param;
     memset(&param, 0, sizeof(param));
@@ -59,6 +65,10 @@ int reboot_thread(int argc, void* argv){
 
 
 void loadstart_pops(){
+
+    //int (*sceKermitPeripheral_C0EBC631)() = FindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
+    //sceKermitPeripheral_C0EBC631();
+    
     int (*LoadModule)() = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x939E4270);
     int (*StartModule)() = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x3FF74DF1);
 
@@ -68,6 +78,8 @@ void loadstart_pops(){
         PRTSTR1("modid: %p", modid);
         _sw(0, 0);
     }
+    SceModule2* mod = k_tbl->KernelFindModuleByName("pops");
+    _sw(0x24040000, mod->text_addr + 0x00014EC4);
     int res = StartModule(modid, 0, NULL, NULL, NULL);
     if (res < 0){
         cls();
@@ -77,23 +89,45 @@ void loadstart_pops(){
 
 }
 
+/*
+void sync_vita(){
+    u32 nids[] = {
+        0x10DABACD,
+        0x34F2548F,
+        0x59759606,
+        0x6FCDD82D,
+        0x83609AC9,
+        0x899A3BC0,
+        0x9FBE4AD3,
+        0xA651EA7B,
+        0xA8176E49,
+        0xC4169D0F,
+        0xC47D3670,
+        0xD96DC042,
+        0xEB52DFE0,
+        0xF1502A62,
+        0xF7CD1362
+    };
+
+    for (int i=0; i<14; i++){
+        int (*meaudio)(int a0, int a1, int a2, int a3, int t0, int t1, int t2, int t3) = FindFunction("scePops_Manager", "sceMeAudio", nids[i]);
+        meaudio(0, 0, 0, 0, 0, 0, 0, 0);
+    }
+}
+*/
+
 int exploitEntry() __attribute__((section(".text.startup")));
 int exploitEntry(){
-    if (!isKernel()){
-        return; // we don't have kernel privilages? better error out than crash
-    }
 
     clearBSS();
 
     // Switch to Kernel Permission Level
     setK1Kernel();
 
-    loadstart_pops();
+    //int (*sceKermitPeripheral_D27C5E03)() = FindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xD27C5E03);
+    //sceKermitPeripheral_D27C5E03(0);
 
-    int (*DisplaySetHoldMode)(int) = FindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
-    DisplaySetHoldMode(0);
-
-    PRTSTR("ARK-X Loader Started");
+    PRTSTR("Loading ARK-4 in ePSX mode");
 
     scanArkFunctions(g_tbl);
 
@@ -109,6 +143,8 @@ int exploitEntry(){
     PRTSTR("Scanning kernel functions");
     // get kernel functions
     scanKernelFunctions(k_tbl);
+
+    loadstart_pops();
 
     PRTSTR("Patching FLASH0");
     patchKermitPeripheral(k_tbl);
@@ -170,6 +206,8 @@ int exploitEntry(){
     //k_tbl->KernelStartThread(thid, 0, NULL);
 
     k_tbl->KernelDelayThread(1000000);
+
+    //sync_vita();
 
     SceUID kthreadID = k_tbl->KernelCreateThread( "ark-x-loader", &reboot_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
     k_tbl->KernelStartThread(kthreadID, 0, NULL);

@@ -76,6 +76,7 @@ LIBS = \
 		-lpspmath \
 		-lpspmp3 \
 		-lpspumd \
+		-lpspdisplay \
 		-lpspsystemctrl_user \
 		-lpspkubridge \
 

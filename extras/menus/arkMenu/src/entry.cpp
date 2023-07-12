@@ -1,4 +1,5 @@
 #include <cstring>
+#include <pspdisplay.h>
 #include "entry.h"
 #include "eboot.h"
 #include "iso.h"
@@ -6,6 +7,8 @@
 #include "system_mgr.h"
 #include "music_player.h"
 #include "mpeg.h"
+
+extern "C" int sceDisplaySetHoldMode(int);
 
 int gameBootThread(SceSize _args, void *_argp){
     Sprites s;
@@ -138,6 +141,8 @@ void Entry::gameBoot(){
     free(mp3_buffer);
     
     sceKernelWaitThreadEnd(boot_thread, NULL);
+
+    sceDisplaySetHoldMode(1);
     
 }
 

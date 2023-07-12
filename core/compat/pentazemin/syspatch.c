@@ -315,9 +315,9 @@ void patch_SysconfPlugin(SceModule2* mod){
 	MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0xD2C4);
 
 	// Redirect USB functions
-	MAKE_SYSCALL(mod->text_addr + 0xAE9C, sctrlStartUsb);
-	MAKE_SYSCALL(mod->text_addr + 0xAFF4, sctrlStopUsb);
-	MAKE_SYSCALL(mod->text_addr + 0xB4A0, sctrlGetUsbState);
+	REDIRECT_SYSCALL(mod->text_addr + 0xAE9C, sctrlStartUsb);
+	REDIRECT_SYSCALL(mod->text_addr + 0xAFF4, sctrlStopUsb);
+	REDIRECT_SYSCALL(mod->text_addr + 0xB4A0, sctrlGetUsbState);
 
 	// Ignore wait thread end failure
 	_sw(0, text_addr + 0xB264);
