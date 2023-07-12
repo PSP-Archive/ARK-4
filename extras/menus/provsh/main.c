@@ -138,6 +138,11 @@ void testIo(){
     sprintf(tmp, "sceIoOpen: %p\n", res);
     sceIoWrite(fd, tmp, strlen(tmp));
 
+    res = sceIoOpen("ms0:/PSP/SAVEDATA/SLUS00789/SCEVMC0.VMP", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+    sceIoClose(res);
+    sprintf(tmp, "sceIoOpen VMC: %p\n", res);
+    sceIoWrite(fd, tmp, strlen(tmp));
+
     res = sceIoRemove("ms0:/__test__.txt");
     sprintf(tmp, "sceIoRemove: %p\n", res);
     sceIoWrite(fd, tmp, strlen(tmp));
@@ -177,7 +182,8 @@ int main(int argc, char * argv[])
     }
     */
 
-    testIo();
+    //testIo();
+    //*(int*)NULL = 0;
 
     // Set Start Path
     strcpy(cwd, START_PATH);

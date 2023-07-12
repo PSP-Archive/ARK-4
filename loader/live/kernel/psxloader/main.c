@@ -40,50 +40,41 @@ u32 sctrlHENFindFunction(char* mod, char* lib, u32 nid){
 int reboot_thread(int argc, void* argv){
 
     // launcher reboot
-    /*
     char menupath[ARK_PATH_SIZE];
     strcpy(menupath, ark_config->arkpath);
     strcat(menupath, ark_config->launcher);
-    */
-    char* menupath = "ms0:/PSP/GAME/GTA 2/EBOOT.PBP";
+    //char* menupath = "ms0:/PSP/SAVEDATA/ARK_01234/GAME.BIN";
 
     struct SceKernelLoadExecVSHParam param;
     memset(&param, 0, sizeof(param));
     param.size = sizeof(param);
     param.args = strlen(menupath) + 1;
     param.argp = menupath;
-    param.key = "pops";
+    param.key = "game";
 
     PRTSTR1("Running Menu at %s", menupath);
-    int res = _KernelLoadExecVSHWithApitype(0x144, menupath, &param, 0x10000);
-    cls();
-    PRTSTR1("%p", res);
+    int res = _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
 }
 
-void dumpbuf(char* path, void* buf, int size){
-    int fd = k_tbl->KernelIOOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
-    k_tbl->KernelIOWrite(fd, buf, size);
-    k_tbl->KernelIOClose(fd);
-}
 
-void breakpointCrash(){
-    colorDebug(0xff0000); // blue screen
-    *(int*)NULL = 0;
-}
 
-void setBreakpointCrash(u32 addr){
-    _sw(JAL(breakpointCrash), addr);
-    _sw(NOP, addr+4);
-}
+void loadstart_pops(){
+    int (*LoadModule)() = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x939E4270);
+    int (*StartModule)() = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x3FF74DF1);
 
-void breakpointTest(int a0){
-    if (a0 >= 0) colorDebug(0xff00);
-    else colorDebug(0xff);
-}
+    int modid = LoadModule("flash0:/kd/pops_01g.prx", 0, NULL);
+    if (modid < 0){
+        cls();
+        PRTSTR1("modid: %p", modid);
+        _sw(0, 0);
+    }
+    int res = StartModule(modid, 0, NULL, NULL, NULL);
+    if (res < 0){
+        cls();
+        PRTSTR1("res: %p\n", res);
+        _sw(0, 0);
+    }
 
-void setBreakpointTest(u32 addr){
-    _sw(JAL(breakpointTest), addr);
-    _sw(0x00402021, addr+4); // move $a0, $v0
 }
 
 int exploitEntry() __attribute__((section(".text.startup")));
@@ -96,6 +87,8 @@ int exploitEntry(){
 
     // Switch to Kernel Permission Level
     setK1Kernel();
+
+    loadstart_pops();
 
     int (*DisplaySetHoldMode)(int) = FindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
     DisplaySetHoldMode(0);
@@ -134,7 +127,34 @@ int exploitEntry(){
     size_rebootbuffer = size_rebootbuffer_vitapops;
 
     PRTSTR("Patching Loadexec");
-    patchLoadExec(loadexec, (u32)LoadReboot, (u32)FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
+    u32 getuserlevel = FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665);
+    patchLoadExec(loadexec, (u32)LoadReboot, getuserlevel, 3);
+
+    /*
+    SceModule2* modman = k_tbl->KernelFindModuleByName("sceModuleManager");
+    for (u32 addr=modman->text_addr; addr<modman->text_addr+modman->text_size; addr+=4){
+        u32 data = _lw(addr);
+        if (data == JUMP(getuserlevel)){
+            _sw(JR_RA, addr); // patch sceKernelGetUserLevel stub to make it return 1
+            _sw(LI_V0(1), addr + 4);
+            break;
+        }
+        else if (data == 0x37258001){
+            u32 call = _lw(addr+16);
+            _sw(0x24020000, addr+16); // MODULEMGR_DEVICE_CHECK_1
+            int found = 0;
+            for (addr+=20; !found; addr+=4){
+                if (_lw(addr) == call){
+                    _sw(0x24020000, addr); // MODULEMGR_DEVICE_CHECK_2
+                    found=1;
+                }
+            }
+        }
+        else if (data == 0x34458003 || data == 0x34458006){
+            addr = patchDeviceCheck(addr);
+        }
+    }
+    */
 
     // patch IO checks
     //_sw(JR_RA, loadexec->text_addr + 0x0000222C);
@@ -145,6 +165,11 @@ int exploitEntry(){
     // Invalidate Cache
     k_tbl->KernelDcacheWritebackInvalidateAll();
     k_tbl->KernelIcacheInvalidateAll();
+
+    //int thid = k_tbl->KernelCreateThread("simpleloader", &simpleloader_thread, 0x10, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
+    //k_tbl->KernelStartThread(thid, 0, NULL);
+
+    k_tbl->KernelDelayThread(1000000);
 
     SceUID kthreadID = k_tbl->KernelCreateThread( "ark-x-loader", &reboot_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
     k_tbl->KernelStartThread(kthreadID, 0, NULL);
@@ -160,6 +185,14 @@ void setK1Kernel(void){
     __asm__ (
         "nop\n"
         "lui $k1,0x0\n"
+    );
+}
+
+void setK1User(void){
+    // Set K1 to Kernel Value
+    __asm__ (
+        "nop\n"
+        "lui $k1,0x10\n"
     );
 }
 

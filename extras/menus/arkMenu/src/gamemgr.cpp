@@ -458,6 +458,9 @@ void GameManager::updateGameList(const char* path){
         }
         SystemMgr::pauseDraw();
         self->selectedCategory = -1;
+        for (int i=0; i<MAX_CATEGORIES; i++){
+            self->categories[i]->clearEntries();
+        }
         SystemMgr::resumeDraw();
         if (icon_status == ICONS_LOADING){
             self->resumeIcons();
