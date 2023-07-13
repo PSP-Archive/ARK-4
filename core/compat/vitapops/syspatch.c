@@ -300,24 +300,6 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
         PRTSTR1("mod: %s", mod->modname);
     }
 
-    /*
-    static SceModule2* popsman = NULL;
-
-    if (mod){
-
-        if (strcmp(mod->modname, "scePops_Manager") == 0){
-            //patchPopsMan(mod);
-            popsman = mod;
-        }
-
-        else if (strcmp(mod->modname, "sceKernelLibrary") == 0 && popsman){
-            int modid = sceKernelLoadModule("flash0:/kd/ark_popcorn.prx", 0, 0);
-            sceKernelStartModule(modid, 0, 0, 0, 0);
-        }
-
-    }
-    */
-
     // forward to previous or default StartModule
     if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
     return -1;
