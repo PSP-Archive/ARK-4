@@ -116,12 +116,13 @@ def generate_zso_header(magic, header_size, total_bytes, block_size, ver, align)
     return data
 
 
-def show_zso_info(fname_in, fname_out, total_bytes, block_size, total_block, align):
+def show_zso_info(fname_in, fname_out, total_bytes, block_size, total_block, ver, align):
     print("Decompress '%s' to '%s'" % (fname_in, fname_out))
     print("Total File Size %ld bytes" % (total_bytes))
     print("block size      %d  bytes" % (block_size))
     print("total blocks    %d  blocks" % (total_block))
     print("index align     %d" % (align))
+    print("version         %d" % (ver))
 
 
 def decompress_zso(fname_in, fname_out):
@@ -140,7 +141,7 @@ def decompress_zso(fname_in, fname_out):
         index_buf.append(unpack('I', fin.read(4))[0])
 
     show_zso_info(fname_in, fname_out, total_bytes,
-                  block_size, total_block, align)
+                  block_size, total_block, ver, align)
 
     block = 0
     percent_period = total_block/100
@@ -193,12 +194,13 @@ def decompress_zso(fname_in, fname_out):
     print("ziso decompress completed")
 
 
-def show_comp_info(fname_in, fname_out, total_bytes, block_size, align, level):
+def show_comp_info(fname_in, fname_out, total_bytes, block_size, ver, align, level):
     print("Compress '%s' to '%s'" % (fname_in, fname_out))
     print("Total File Size %ld bytes" % (total_bytes))
     print("block size      %d  bytes" % (block_size))
     print("index align     %d" % (1 << align))
     print("compress level  %d" % (level))
+    print("version         %d" % (ver))
     if MP:
         print("multiprocessing %s" % (MP))
 
@@ -218,7 +220,7 @@ def compress_zso(fname_in, fname_out, level):
     total_bytes = fin.tell()
     fin.seek(0)
 
-    magic, header_size, block_size, ver, align = ZISO_MAGIC, 0x18, 0x800, 1 if level == 1 else 2, DEFAULT_ALIGN
+    magic, header_size, block_size, ver, align = ZISO_MAGIC, 0x18, 0x800, 1, DEFAULT_ALIGN
 
     # We have to use alignment on any ZSO files which > 2GB, for MSB bit of index as the plain indicator
     # If we don't then the index can be larger than 2GB, which its plain indicator was improperly set
@@ -232,7 +234,7 @@ def compress_zso(fname_in, fname_out, level):
     index_buf = [0 for i in range(total_block + 1)]
 
     fout.write(b"\x00\x00\x00\x00" * len(index_buf))
-    show_comp_info(fname_in, fname_out, total_bytes, block_size, align, level)
+    show_comp_info(fname_in, fname_out, total_bytes, block_size, ver, align, level)
 
     write_pos = fout.tell()
     percent_period = total_block/100
