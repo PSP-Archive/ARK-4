@@ -32,7 +32,7 @@ int control_poller(SceSize args, void * argp)
         }
 		
 		// Save CPU Time (30fps)
-		sceKernelDelayThread((unsigned int)(1000000.0f / 60.0f));
+		sceKernelDelayThread((unsigned int)(1000000.0f / 30.0f));
 	}
 	
 	// Exit and Delete Thread
@@ -49,7 +49,7 @@ void startControlPoller(void)
     CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
 
 	// Create Thread (with USER_PRIORITY_HIGHEST - 1)
-	int uid = sceKernelCreateThread("ExitGamePollThread", control_poller, 16 - 1, 2048, 0, NULL);
+	int uid = sceKernelCreateThread("ExitGamePollThread", control_poller, 16 - 1, 2048, PSP_THREAD_ATTR_VFPU, NULL);
 	
 	// Created Thread Handle
 	if(uid >= 0)

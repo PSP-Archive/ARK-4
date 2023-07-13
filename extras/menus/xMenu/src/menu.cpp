@@ -28,6 +28,7 @@ void Menu::readEbootList(string path){
         string fullpath = fullPath(path, dit->d_name);
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
+        if (strcmp(dit->d_name, "SCPS10084") == 0) continue;
         if (common::fileExists(path+dit->d_name)) continue;
         if (!isPOPS(fullpath)) continue;
         
@@ -192,6 +193,9 @@ void Menu::control(){
         else if (control.circle()){
             break;
         }
+        else if (control.select()){
+            rebootMenu();
+        }
     }
 }
 
@@ -208,6 +212,26 @@ void Menu::loadGame(){
     param.args = strlen(path) + 1;
     param.argp = path;
     param.key = "pops";
+    debugScreen(path);
+    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+}
+
+void Menu::rebootMenu(){
+
+    struct SceKernelLoadExecVSHParam param;
+    memset(&param, 0, sizeof(SceKernelLoadExecVSHParam));
+    
+    ARKConfig ark_config; sctrlHENGetArkConfig(&ark_config);
+
+    char path[256];
+    strcpy(path, ark_config.arkpath);
+    strcat(path, ark_config.launcher);
+
+    int runlevel = 0x141;
+    
+    param.args = strlen(path) + 1;
+    param.argp = path;
+    param.key = "game";
     debugScreen(path);
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }

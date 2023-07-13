@@ -24,6 +24,16 @@ int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 int (*DisplayWaitVblankStart)() = NULL;
 int (*DisplaySetHoldMode)(int) = NULL;
 
+typedef struct {
+	uint32_t cmd; //0x0
+	SceUID sema_id; //0x4
+	uint64_t *response; //0x8
+	uint32_t padding; //0xC
+	uint64_t args[14]; // 0x10
+} SceKermitRequest; //0x80
+
+#define ALIGN(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
+
 KernelFunctions _ktbl = {
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
     .KernelIcacheInvalidateAll = &sceKernelIcacheInvalidateAll,
@@ -192,6 +202,104 @@ int loadstart_pops(int argc, void* argv){
 }
 */
 
+// sceKermit_driver_36666181
+int sceKermitSendRequest(void* a0, int a1, int a2, int a3, int a4, void* a5){
+    static int (*orig)(void*, int, int, int, int, void*) = NULL;
+
+    if (orig == NULL){
+        orig = sctrlHENFindFunction("sceKermit_Driver", "sceKermit_driver",0x36666181);
+    }
+
+    return orig(a0, a1, a2, a3, a4, a5);
+}
+
+int SendKermitCmd(int cmd) {
+
+	char buf[sizeof(SceKermitRequest) + 0x40];
+	SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
+	SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
+	sceKernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
+
+	u8 resp[128];
+	int res = sceKermitSendRequest(request_uncached, 9, cmd, 0, 0, resp);
+    if (res < 0){
+        cls();
+        PRTSTR2("%d=%p", cmd, res);
+        _sw(0,0);
+    }
+    return res;
+}
+
+void sync_vita(){
+    /*
+    SendKermitCmd(1047);
+    int (*sceKermitMemory_driver_80E1240A)() = sctrlHENFindFunction("sceLowIO_Driver", "sceKermitMemory_driver", 0x80E1240A);
+    sceKermitMemory_driver_80E1240A(0x13F80, 128);
+    SendKermitCmd(1056);
+    */
+    //int (* sceKermitPeripheralInitPops)() = (void *)sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
+	//sceKermitPeripheralInitPops();
+
+    /*
+    // sceKermit_driver_36666181: 3844, 3846, 3842, 3843, 3845
+    //int cmds[] = { 3842, 3843, 3844, 3845 };
+    for (int i=2; i<6; i++){
+        SendKermitCmd(3840+i);
+    }
+
+    int (*sceDisplay_driver_03F16FD4)() = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay_driver", 0x03F16FD4);
+    sceDisplay_driver_03F16FD4(0, 480, 272);
+
+    //int (*powerlock)() = FindFunction("sceSystemMemoryManager", "sceSuspendForKernel", 0xEADB1BD7);
+    //powerlock(0);
+
+    int (*sceDisplay_driver_E38CA615)() = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay_driver", 0xE38CA615);
+    sceDisplay_driver_E38CA615();
+
+    //int (*sceMeAudio_EB52DFE0)() = FindFunction("scePops_Manager", "sceMeAudio", 0xEB52DFE0);
+    //sceMeAudio_EB52DFE0();
+    //_sb(0, 0x49FE00A0);
+
+    char buf[sizeof(SceKermitRequest) + 0x40];
+	SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
+	SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
+	sceKernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
+
+    memset(request_uncached, 0, sizeof(SceKermitRequest));
+    request_uncached->cmd = 1045;
+    request_uncached->args[0] = 7;
+    request_uncached->args[1] = (u64)0x00001AF0; //0x00001B3C; // 0x00001AF0
+
+	u8 resp[128];
+	int res = sceKermitSendRequest(request_uncached, 9, 1045, 2, 0, resp);
+
+    if (res < 0){
+        cls();
+        PRTSTR1("%p", res);
+        _sw(0,0);
+    }
+    */
+}
+
+int dummythread(int argc, void* argp){
+    sceKernelDelayThread(1000000);
+    sceKernelExitDeleteThread(0);
+    return 0;
+}
+
+int kermitSendRequestLog(void* a0, int a1, int a2, int a3, int a4, void* a5){
+
+    char tmp[64];
+    sprintf("mode: %d, cmd: %d\n", a1, a2);
+
+    int fd = sceIoOpen("ms0:/vitapops.log", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+    sceIoWrite(fd, tmp, strlen(tmp));
+    sceIoWrite(fd, "\n", 1);
+    sceIoClose(fd);
+
+    return sceKermitSendRequest(a0, a1, a2, a3, a4, a5);
+}
+
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
@@ -201,7 +309,9 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         DisplayWaitVblankStart = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x984C27E7);
         DisplaySetHoldMode = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
-        patchVitaPopsDisplay(mod);
+        //if (sceKernelInitApitype() != 0x144){
+            patchVitaPopsDisplay(mod);
+        //}
         goto flush;
     }
     
@@ -209,6 +319,8 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
     {
         patchKermitPeripheral(&_ktbl);
+        //int (* sceKermitPeripheralInitPops)() = (void *)sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
+        //sceKermitPeripheralInitPops();
         goto flush;
     }
     /*
@@ -229,6 +341,8 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "scePops_Manager") == 0){
         patchPopsMan(mod);
+        hookImportByNID(mod, "sceKermit_driver",0x36666181, kermitSendRequestLog);
+        goto flush;
     }
 
     if (strcmp(mod->modname, "pops") == 0) {
@@ -261,12 +375,29 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             if (sceKernelInitApitype() == 0x144){
                 //startControlPoller();
             }
-            /*
             else {
-                SceUID kthreadID = sceKernelCreateThread( "ark-x-loader", &loadstart_pops, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
+                //SceUID kthreadID = sceKernelCreateThread( "ark-x-loader", &loadstart_pops, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
+                //sceKernelStartThread(kthreadID, 0, NULL);
+                /*
+                {
+                SceUID kthreadID = sceKernelCreateThread( "popsmain", &dummythread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
                 sceKernelStartThread(kthreadID, 0, NULL);
+                }
+                {
+                SceUID kthreadID = sceKernelCreateThread( "mcworker", &dummythread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
+                sceKernelStartThread(kthreadID, 0, NULL);
+                }
+                {
+                SceUID kthreadID = sceKernelCreateThread( "cdworker", &dummythread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
+                sceKernelStartThread(kthreadID, 0, NULL);
+                }
+                */
+                //sync_vita();
+                {
+                //SceUID kthreadID = sceKernelCreateThread( "popsmain", &sync_vita, 1, 0x20000, PSP_THREAD_ATTR_VFPU|PSP_THREAD_ATTR_NO_FILLSTACK, NULL);
+                //sceKernelStartThread(kthreadID, 0, NULL);
+                }
             }
-            */
 
             // Boot Complete Action done
             booted = 1;

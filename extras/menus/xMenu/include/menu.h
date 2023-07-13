@@ -63,6 +63,8 @@ class Menu{
         void control();
         
         void loadGame();
+
+        void rebootMenu();
         
     public:
     

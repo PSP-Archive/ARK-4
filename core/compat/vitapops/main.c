@@ -9,6 +9,7 @@
 #include <systemctrl_private.h>
 #include <pspiofilemgr.h>
 #include <pspgu.h>
+#include <pspsysevent.h>
 #include <functions.h>
 #include "popsdisplay.h"
 
@@ -52,6 +53,18 @@ static void processArkConfig(){
     }
 }
 
+/*
+int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
+	// Resume completed
+	if (ev_id == 0x400000) {
+		int (* sceKermitPeripheralInitPops)() = (void *)sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
+		sceKermitPeripheralInitPops();
+	}
+
+	return 0;
+}
+*/
+
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
@@ -61,6 +74,16 @@ int module_start(SceSize args, void * argp)
     initVitaPopsVram();
     colorDebug(0xFF00);
     #endif
+
+    /*
+    static PspSysEventHandler event_handler = {
+		sizeof(PspSysEventHandler),
+		"",
+		0x00FFFF00,
+		SysEventHandler
+	};
+	sceKernelRegisterSysEventHandler(&event_handler);
+    */
 
     // set rebootex for VitaPOPS
     sctrlHENSetRebootexOverride(rebootbuffer_vitapops);
