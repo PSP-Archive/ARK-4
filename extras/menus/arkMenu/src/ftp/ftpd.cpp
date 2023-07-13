@@ -215,7 +215,7 @@ ftpdLoop(SceSize argc, void *argv)
     mftpPrint(buffer_2);
 
     con->sockCommand = sockClient;
-      int client_id = sceKernelCreateThread("ftpd_client_loop", mftpClientHandler, 0x18, 0x10000, 0, 0);
+      int client_id = sceKernelCreateThread("ftpd_client_loop", mftpClientHandler, 0x18, 0x10000, PSP_THREAD_ATTR_USBWLAN, 0);
       if(client_id >= 0) {
           sceKernelStartThread(client_id, 4, &con);
       }
