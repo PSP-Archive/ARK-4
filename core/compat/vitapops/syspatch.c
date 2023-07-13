@@ -308,7 +308,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     }
     */
 
-    /*
     if (strcmp(mod->modname, "scePops_Manager") == 0){
         patchPopsMan(mod);
     }
@@ -316,9 +315,14 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "pops") == 0) {
 		// Use different pops register location
 		patchPops(mod);
+        /*
+        u32 nids[] = {0x9FBE4AD3, 0x10DABACD, 0x7AA3E14B, 0xC47D3670, 0x13099620};
+        for (int i=0; i<5; i++){
+            hookImportByNID(mod, "sceMeAudio", nids[i], 0);
+        }
+        */
         goto flush;
 	}
-    */
 
     if (strcmp(mod->modname, "simple") == 0) {
         /*
@@ -326,7 +330,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             hookImportByNID(mod, "sceMeAudio", meaudio_nids[i], meaudio_loggers[i]);
         }
         */
-        REDIRECT_SYSCALL(mod->text_addr + 0x00000124, doNastyBreakpoint);
+        //REDIRECT_SYSCALL(mod->text_addr + 0x00000124, doNastyBreakpoint);
         //_sw(JUMP(doNastyBreakpoint), mod->text_addr + 0x00014EA0);
         //_sw(NOP, mod->text_addr + 0x00014EA0 + 4);
         goto flush;

@@ -31,10 +31,93 @@ extern u8* rebootbuffer;
 extern u32 size_rebootbuffer;
 extern int iso_mode;
 
+typedef struct {
+	uint32_t cmd; //0x0
+	SceUID sema_id; //0x4
+	uint64_t *response; //0x8
+	uint32_t padding; //0xC
+	uint64_t args[14]; // 0x10
+} SceKermitRequest; //0x80
+
+#define ALIGN(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
+
 int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int);
 
 u32 sctrlHENFindFunction(char* mod, char* lib, u32 nid){
     return FindFunction(mod, lib, nid);
+}
+
+// sceKermit_driver_36666181
+int sceKermitSendRequest(void* a0, int a1, int a2, int a3, int a4, void* a5){
+    static int (*orig)(void*, int, int, int, int, void*) = NULL;
+
+    if (orig == NULL){
+        orig = sctrlHENFindFunction("sceKermit_Driver", "sceKermit_driver",0x36666181);
+    }
+
+    return orig(a0, a1, a2, a3, a4, a5);
+}
+
+int SendKermitCmd(int cmd) {
+
+	char buf[sizeof(SceKermitRequest) + 0x40];
+	SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
+	SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
+	k_tbl->KernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
+
+	u8 resp[128];
+	int res = sceKermitSendRequest(request_uncached, 8, cmd, 0, 0, resp);
+    if (res < 0){
+        cls();
+        PRTSTR2("%d=%p", cmd, res);
+        _sw(0,0);
+    }
+    return res;
+}
+
+void sync_vita(){
+
+    // sceKermit_driver_36666181: 3844, 3846, 3842, 3843, 3845
+    //int cmds[] = { 3842, 3843, 3844, 3845 };
+    for (int i=0; i<10; i++){
+        SendKermitCmd(3840+i);
+    }
+
+    /*
+    int (*sceDisplay_driver_03F16FD4)() = FindFunction("sceDisplay_Service", "sceDisplay_driver", 0x03F16FD4);
+    sceDisplay_driver_03F16FD4(0, 0x10);
+
+    int (*powerlock)() = FindFunction("sceSystemMemoryManager", "sceSuspendForKernel", 0xEADB1BD7);
+    powerlock(0);
+
+    int (*sceDisplay_driver_E38CA615)() = FindFunction("sceDisplay_Service", "sceDisplay_driver", 0xE38CA615);
+    sceDisplay_driver_E38CA615();
+    */
+
+    //int (*sceMeAudio_EB52DFE0)() = FindFunction("scePops_Manager", "sceMeAudio", 0xEB52DFE0);
+    //sceMeAudio_EB52DFE0();
+    _sb(0, 0x49FE00A0);
+
+    /*
+    char buf[sizeof(SceKermitRequest) + 0x40];
+	SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
+	SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
+	k_tbl->KernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
+
+    memset(request_uncached, 0, sizeof(SceKermitRequest));
+    request_uncached->cmd = 1045;
+    request_uncached->args[0] = 7;
+    request_uncached->args[1] = (u64)0x00001AF0; //0x00001B3C; // 0x00001AF0
+
+	u8 resp[128];
+	int res = sceKermitSendRequest(request_uncached, 9, 1045, 2, 0, resp);
+
+    if (res < 0){
+        cls();
+        PRTSTR1("%p", res);
+        _sw(0,0);
+    }
+    */
 }
 
 int reboot_thread(int argc, void* argv){
@@ -79,13 +162,23 @@ void loadstart_pops(){
         _sw(0, 0);
     }
     SceModule2* mod = k_tbl->KernelFindModuleByName("pops");
-    _sw(0x24040000, mod->text_addr + 0x00014EC4);
+    
+    /*
+    MAKE_JUMP(mod->text_addr + 0x0001AE8C, mod->text_addr + 0x0001AE8C);
+    _sw(NOP, mod->text_addr + 0x0001AE8C + 4);
+    */
+    //
     int res = StartModule(modid, 0, NULL, NULL, NULL);
     if (res < 0){
         cls();
         PRTSTR1("res: %p\n", res);
         _sw(0, 0);
     }
+    /*
+    MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x0001AE8C);
+    k_tbl->KernelDcacheWritebackInvalidateAll();
+    k_tbl->KernelIcacheInvalidateAll();
+    */
 
 }
 
@@ -116,6 +209,80 @@ void sync_vita(){
 }
 */
 
+int sctrlGetThreadUIDByName(const char * name)
+{
+	// Invalid Arguments
+	if(name == NULL) return -1;
+	
+	// Thread UID List
+	int ids[100];
+	
+	// Clear Memory
+	memset(ids, 0, sizeof(ids));
+	
+	// Thread Counter
+	int count = 0;
+
+    int (*KernelGetThreadmanIdList)() = FindFunction("sceThreadManager", "ThreadManForUser", 0x94416130);
+    int (*KernelReferThreadStatus)() = FindFunction("sceThreadManager", "ThreadManForUser", 0x17C1684E);
+	
+	// Get Thread UIDs
+	if(KernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, NELEMS(ids), &count) >= 0)
+	{
+		// Iterate Results
+		int i = 0; for(; i < count; i++)
+		{
+			// Thread Information
+			SceKernelThreadInfo info;
+			
+			// Clear Memory
+			memset(&info, 0, sizeof(info));
+			
+			// Initialize Structure Size
+			info.size = sizeof(info);
+			
+			// Fetch Thread Status
+			if(KernelReferThreadStatus(ids[i], &info) == 0)
+			{
+				// Matching Name
+				if(strcmp(info.name, name) == 0)
+				{
+					
+					// Return Thread UID
+					return ids[i];
+				}
+			}
+		}
+	}
+	
+	// Thread not found
+	return -2;
+}
+
+void patch_popsman(){
+    /*
+    u32 nids[] = {0x9FBE4AD3, 0x10DABACD, 0x7AA3E14B, 0xC47D3670, 0x13099620};
+    for (int i=0; i<5; i++){
+        u32 addr = FindFunction("scePops_Manager", "sceMeAudio", nids[i]);
+        MAKE_DUMMY_FUNCTION_RETURN_0(addr);
+    }
+    */
+}
+
+void kill_pops(){
+    // popsmain
+    int (*KernelTerminateDeleteThread)(int) = FindFunction("sceThreadManager", "ThreadManForUser", 0x383F7BCC);
+    
+    int popsmain = sctrlGetThreadUIDByName("popsmain");
+    KernelTerminateDeleteThread(popsmain);
+
+    int mcworker = sctrlGetThreadUIDByName("mcworker");
+    KernelTerminateDeleteThread(mcworker);
+
+    int cdworker = sctrlGetThreadUIDByName("cdworker");
+    KernelTerminateDeleteThread(cdworker);
+}
+
 int exploitEntry() __attribute__((section(".text.startup")));
 int exploitEntry(){
 
@@ -127,24 +294,26 @@ int exploitEntry(){
     //int (*sceKermitPeripheral_D27C5E03)() = FindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xD27C5E03);
     //sceKermitPeripheral_D27C5E03(0);
 
-    PRTSTR("Loading ARK-4 in ePSX mode");
+    //patch_popsman();
 
+
+    scanKernelFunctions(k_tbl);
     scanArkFunctions(g_tbl);
+
+    loadstart_pops();
+    k_tbl->KernelDelayThread(1000000);
+    kill_pops();
 
     g_tbl->config = ark_config;
 
     // make PRTSTR available for payloads
     g_tbl->prtstr = (void *)&PRTSTR11;
 
-    initVitaPopsVram();
     setScreenHandler(&copyPSPVram);
     initScreen(NULL);
+    initVitaPopsVram();
 
-    PRTSTR("Scanning kernel functions");
-    // get kernel functions
-    scanKernelFunctions(k_tbl);
-
-    loadstart_pops();
+    PRTSTR("Loading ARK-4 in ePSX mode");
 
     PRTSTR("Patching FLASH0");
     patchKermitPeripheral(k_tbl);
@@ -205,10 +374,8 @@ int exploitEntry(){
     //int thid = k_tbl->KernelCreateThread("simpleloader", &simpleloader_thread, 0x10, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
     //k_tbl->KernelStartThread(thid, 0, NULL);
 
-    k_tbl->KernelDelayThread(1000000);
-
     //sync_vita();
-
+    
     SceUID kthreadID = k_tbl->KernelCreateThread( "ark-x-loader", &reboot_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
     k_tbl->KernelStartThread(kthreadID, 0, NULL);
     k_tbl->waitThreadEnd(kthreadID, NULL);

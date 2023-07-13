@@ -36,7 +36,7 @@ $/kd/iofilemgr_dnas.prx GP
 $/kd/chnnlsv.prx P
 $/kd/kermit_utility.prx GP
 $/kd/popsman.prx P
-$/kd/ark_popcorn.prx P
+# $/kd/ark_popcorn.prx P
 $/kd/impose_kermit.prx GP
 $/kd/mediasync.prx GP
 $/kd/exitgame.prx GP
