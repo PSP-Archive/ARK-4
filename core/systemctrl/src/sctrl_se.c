@@ -72,7 +72,7 @@ SEConfig* sctrlSEGetConfig(SEConfig *config)
 SEConfig* sctrlSEGetConfigEx(SEConfig *config, int size)
 {
     if (config && size){
-        if (size > sizeof(SEConfig)){
+        if (size != sizeof(SEConfig)){
             memset(config, 0, size); // can't process structure
         }
         else{
