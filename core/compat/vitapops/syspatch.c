@@ -65,9 +65,11 @@ static int isSystemBooted(void)
 void patchVitaPopsDisplay(SceModule2* mod){
     u32 display_func = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay_driver", 0x3E17FE8D);
     if (display_func){
-        // protect vita pops vram
-        sceKernelAllocPartitionMemory(6, "POPS VRAM CONFIG", PSP_SMEM_Addr, 0x1B0, (void *)0x09FE0000);
-        sceKernelAllocPartitionMemory(6, "POPS VRAM", PSP_SMEM_Addr, 0x3C0000, (void *)0x090C0000);
+        //if (sceKernelInitApitype() != 0x144){
+            // protect vita pops vram
+            sceKernelAllocPartitionMemory(6, "POPS VRAM CONFIG", PSP_SMEM_Addr, 0x1B0, (void *)0x09FE0000);
+            sceKernelAllocPartitionMemory(6, "POPS VRAM", PSP_SMEM_Addr, 0x3C0000, (void *)0x090C0000);
+        //}
         memset((void *)0x49FE0000, 0, 0x1B0);
         memset((void *)0x490C0000, 0, 0x3C0000);
         // register default screen handler
@@ -114,6 +116,7 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 			if (draw_thread >= 0){
                 do_draw = 0;
                 sceKernelWaitThreadEnd(draw_thread, NULL);
+                sceKernelDeleteThread(draw_thread);
                 draw_thread = -1;
             }
 		}
@@ -341,7 +344,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "scePops_Manager") == 0){
         patchPopsMan(mod);
-        hookImportByNID(mod, "sceKermit_driver",0x36666181, kermitSendRequestLog);
         goto flush;
     }
 
@@ -418,6 +420,13 @@ int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceK
 int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
+
+    /*
+    int fd = sceIoOpen("ms0:/vitapops.log", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+    sceIoWrite(fd, mod->modname, strlen(mod->modname));
+    sceIoWrite(fd, "\n", 1);
+    sceIoClose(fd);
+    */
 
     if (DisplaySetFrameBuf){
         static int screen_init = 0;

@@ -26,4 +26,6 @@ int main(int argc, char** argv){
     disableGraphics();
         
     sceKernelExitGame();
+
+    return 0;
 }
