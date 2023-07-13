@@ -71,7 +71,14 @@ SEConfig* sctrlSEGetConfig(SEConfig *config)
 */
 SEConfig* sctrlSEGetConfigEx(SEConfig *config, int size)
 {
-    if (config && size) memcpy(config, &se_config, size);
+    if (config && size){
+        if (size > sizeof(SEConfig)){
+            memset(config, 0, size); // can't process structure
+        }
+        else{
+            memcpy(config, &se_config, size);
+        }
+    }
     return &se_config;
 }
 
@@ -98,8 +105,11 @@ int sctrlSESetConfig(SEConfig *config)
 */
 int sctrlSESetConfigEx(SEConfig *config, int size)
 {
-    memcpy(&se_config, config, size);
-    return 0;
+    if (config && size == sizeof(SEConfig)){
+        memcpy(&se_config, config, size);
+        return 0;
+    }
+    return -1;
 }
 
 // Return Reboot Configuration UMD File

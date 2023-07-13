@@ -6,6 +6,7 @@
 #include <pspdisplay_kernel.h>
 #include <pspsysmem_kernel.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include <pspiofilemgr.h>
 #include <pspgu.h>
@@ -21,6 +22,7 @@ PSP_MODULE_INFO("ARKCompatLayer", 0x3007, 1, 0);
 STMOD_HANDLER previous = NULL;
 
 ARKConfig* ark_config = NULL;
+SEConfig* se_config = NULL;
 
 extern void ARKVitaPopsOnModuleStart(SceModule2* mod);
 extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
@@ -44,6 +46,7 @@ void* sctrlARKSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram)){
 }
 
 static void processArkConfig(){
+    se_config = sctrlSEGetConfig(NULL);
     ark_config = sctrlHENGetArkConfig(NULL);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSV_POPS; // assume running on PS Vita Pops

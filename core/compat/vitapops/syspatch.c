@@ -6,6 +6,7 @@
 #include <pspsysmem_kernel.h>
 #include <psputilsforkernel.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include <pspiofilemgr.h>
 #include <pspgu.h>
@@ -23,6 +24,8 @@ static u32* fake_vram = (u32*)0x44000000;
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 int (*DisplayWaitVblankStart)() = NULL;
 int (*DisplaySetHoldMode)(int) = NULL;
+
+extern SEConfig* se_config;
 
 typedef struct {
 	uint32_t cmd; //0x0
@@ -369,6 +372,10 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
+
+            // Initialize Memory Stick Speedup Cache
+            if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
+
             // Set fake framebuffer so that cwcheat can be displayed
             //DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
             //memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
