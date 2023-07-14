@@ -1,9 +1,12 @@
 #include "menu.h"
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <sstream>
 
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
+static SEConfig _se_conf;
+SEConfig* se_config = &_se_conf;
 static string ark_version;
 
 Menu::Menu(){
@@ -220,12 +223,10 @@ void Menu::rebootMenu(){
 
     struct SceKernelLoadExecVSHParam param;
     memset(&param, 0, sizeof(SceKernelLoadExecVSHParam));
-    
-    ARKConfig ark_config; sctrlHENGetArkConfig(&ark_config);
 
     char path[256];
-    strcpy(path, ark_config.arkpath);
-    strcat(path, ark_config.launcher);
+    strcpy(path, ark_config->arkpath);
+    strcat(path, ark_config->launcher);
 
     int runlevel = 0x141;
     
@@ -241,6 +242,7 @@ void Menu::run(){
         return;
     
     // get ARK config and version
+    sctrlSEGetConfig(se_config);
     sctrlHENGetArkConfig(ark_config);
     u32 ver = sctrlHENGetVersion(); // ARK's full version number
     u32 major = (ver&0xFF000000)>>24;
@@ -257,6 +259,9 @@ void Menu::run(){
     #ifdef DEBUG
 	version << " DEBUG";
 	#endif
+
+    version << " (Memory Stick Speedup: " << (se_config->msspeed)? "on)" : "off)";
+
     ark_version = version.str();
 
     updateTextAnim();
