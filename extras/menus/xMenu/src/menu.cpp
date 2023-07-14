@@ -3,6 +3,8 @@
 #include <systemctrl_se.h>
 #include <sstream>
 
+#define BOTTOM 260
+
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
 static SEConfig _se_conf;
@@ -147,6 +149,8 @@ void Menu::updateScreen(){
 
     common::printText(2, 2, ver.str().c_str());
 
+	common::printText(2, BOTTOM, "LT - Toggle Speedup");
+
     common::flip();
 }
 
@@ -208,7 +212,7 @@ void Menu::control(){
         }
 		else if (control.LT()){
 			se_config->msspeed = !se_config->msspeed;
-			sctrlSESetConfigEx(se_config, sizeof(SEConfig));
+			sctrlSESetConfig(se_config);
 		}
 
     }
