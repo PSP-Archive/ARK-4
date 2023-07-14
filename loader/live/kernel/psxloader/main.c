@@ -156,6 +156,7 @@ int exploitEntry(){
     scanArkFunctions(g_tbl);
 
     // Extremely nasty solution to get screen working fine
+    k_tbl->KernelDelayThread(1000000);
     loadstart_pops();
     k_tbl->KernelDelayThread(1000000);
     kill_pops();
@@ -196,29 +197,6 @@ int exploitEntry(){
     // Invalidate Cache
     k_tbl->KernelDcacheWritebackInvalidateAll();
     k_tbl->KernelIcacheInvalidateAll();
-
-    /*
-    PRTSTR("Press X to continue");
-    int (*CtrlPeekBufferPositive)(SceCtrlData *, int);
-    CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
-
-    SceCtrlData pad_data;
-	
-	// Endless Loop
-	while(1)
-	{
-		// Clear Memory
-		memset(&pad_data, 0, sizeof(pad_data));
-
-		// Poll Gamepad
-		CtrlPeekBufferPositive(&pad_data, 1);
-
-        if((pad_data.Buttons & PSP_CTRL_CROSS) == PSP_CTRL_CROSS){
-            break;
-        }
-		
-	}
-    */
     
     SceUID kthreadID = k_tbl->KernelCreateThread( "ark-x-loader", &reboot_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
     k_tbl->KernelStartThread(kthreadID, 0, NULL);
