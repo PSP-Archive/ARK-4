@@ -14,11 +14,11 @@
 
 ARKConfig _ark_config = {
     .magic = ARK_CONFIG_MAGIC,
-    .arkpath = DEFAULT_ARK_PATH, // only ms0 available anyways
+    .arkpath = DEFAULT_ARK_PATH, // only ms0 available
     .launcher = ARK_XMENU, // use xMenu
     .exec_mode = PSV_POPS, // set to VitaPops mode
     .exploit_id = "ePSX", // ps1 loader name
-    .recovery = 0,
+    .recovery = 0, // no recovery available
 };
 ARKConfig* ark_config = &_ark_config;
 
@@ -37,6 +37,7 @@ u32 sctrlHENFindFunction(char* mod, char* lib, u32 nid){
     return FindFunction(mod, lib, nid);
 }
 
+// reboot to launcher
 int reboot_thread(int argc, void* argv){
 
     // launcher reboot
@@ -56,7 +57,7 @@ int reboot_thread(int argc, void* argv){
 }
 
 
-
+// load and start pops module
 void loadstart_pops(){
     
     int (*LoadModule)() = FindFunction("sceModuleManager", "ModuleMgrForKernel", 0x939E4270);
@@ -151,25 +152,21 @@ int exploitEntry(){
     // Switch to Kernel Permission Level
     setK1Kernel();
 
-
+    // resolve some useful functions
     scanKernelFunctions(k_tbl);
-    scanArkFunctions(g_tbl);
 
     // Extremely nasty solution to get screen working fine
-    k_tbl->KernelDelayThread(10000);
-    loadstart_pops();
-    k_tbl->KernelDelayThread(1000000);
-    kill_pops();
+    k_tbl->KernelDelayThread(10000); // wait for system to finish booting up
+    loadstart_pops(); // load and start pops module
+    k_tbl->KernelDelayThread(1000000); // wait for pops to set up things
+    kill_pops(); // kill pops threads to prevent crash
 
-    g_tbl->config = ark_config;
-
-    // make PRTSTR available for payloads
-    g_tbl->prtstr = (void *)&PRTSTR11;
-
+    // initialize screen
     setScreenHandler(&copyPSPVram);
-    initScreen(NULL);
     initVitaPopsVram();
+    initScreen(NULL);
 
+    // now we can draw things!
     PRTSTR("Loading ARK-4 in ePSX mode");
 
     PRTSTR("Patching FLASH0");
@@ -179,7 +176,9 @@ int exploitEntry(){
     k_tbl->KernelDcacheWritebackInvalidateAll();
     k_tbl->KernelIcacheInvalidateAll();
 
-    PRTSTR("Preparing reboot.");
+
+    PRTSTR("Patching Loadexec");
+
     // Find LoadExec Module
     SceModule2 * loadexec = k_tbl->KernelFindModuleByName("sceLoadExec");
     // Find Reboot Loader Function
@@ -188,15 +187,16 @@ int exploitEntry(){
     rebootbuffer = rebootbuffer_vitapops;
     size_rebootbuffer = size_rebootbuffer_vitapops;
 
-    PRTSTR("Patching Loadexec");
     u32 getuserlevel = FindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665);
     patchLoadExec(loadexec, (u32)LoadReboot, getuserlevel, 3);
-
-    _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
 
     // Invalidate Cache
     k_tbl->KernelDcacheWritebackInvalidateAll();
     k_tbl->KernelIcacheInvalidateAll();
+
+    PRTSTR("Preparing reboot...");
+
+    _KernelLoadExecVSHWithApitype = (void *)findFirstJALForFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28);
     
     SceUID kthreadID = k_tbl->KernelCreateThread( "ark-x-loader", &reboot_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
     k_tbl->KernelStartThread(kthreadID, 0, NULL);
