@@ -67,7 +67,7 @@ copy-bin:
 	$(Q)cp loader/live/kernel/kxploit/psp660/K.BIN dist/ARK_Loader/K.BIN # Kernel exploit for PSP
 	$(Q)cp loader/live/user/vitabubble/EBOOT.PBP dist/PSVita/Standalone/NPUZ01234/ # Vita fake ChovySign bubble
 	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/PSVita/Standalone/NPUZ01234/ # Vita PBOOT.PBP bubble
-	$(Q)cp loader/live/user/psxloader/ark.suprx dist/PSVita/PS1CFW/
+	$(Q)cp loader/live/user/psxloader/ps1cfw_enabler.suprx dist/PSVita/PS1CFW/
 	$(Q)cp loader/live/user/psxloader/EBOOT.PBP dist/PSVita/PS1CFW/SCPS10084/
 	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/PSVita/Standalone/K.BIN # Kernel exploit for Vita 3.60+
 	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/PSVita/Adrenaline/K.BIN # kxploit for CFW
