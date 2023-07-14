@@ -156,7 +156,7 @@ int exploitEntry(){
     scanArkFunctions(g_tbl);
 
     // Extremely nasty solution to get screen working fine
-    k_tbl->KernelDelayThread(1000000);
+    k_tbl->KernelDelayThread(10000);
     loadstart_pops();
     k_tbl->KernelDelayThread(1000000);
     kill_pops();
