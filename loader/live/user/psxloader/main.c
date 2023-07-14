@@ -19,9 +19,6 @@ PSP_MODULE_INFO("ARK VitaPOPS Loader", 0, 1, 0);
 
 int psxloader_thread(int argc, void* argv){
 
-    // wait for system to finish booting
-    sceKernelDelayThread(1000000);
-
     int res = sceIoOpen("ms0:/__dokxploit__", 0, 0);
 
     if (res < 0){
