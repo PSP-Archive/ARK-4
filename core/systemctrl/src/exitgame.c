@@ -88,7 +88,7 @@ void xbootLauncher()
     strcpy(path, ark_config->arkpath);
     if (ark_config->recovery) strcat(path, ARK_RECOVERY);
     else if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
-    else strcat(path, "XBOOT.PBP");
+    else strcat(path, ARK_XMENU);
     
     // Clear Memory
     memset(&param, 0, sizeof(param));

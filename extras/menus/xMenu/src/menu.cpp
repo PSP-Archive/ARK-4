@@ -239,7 +239,7 @@ void Menu::rebootMenu(){
     char path[256];
     strcpy(path, ark_config->arkpath);
     //strcat(path, ark_config->launcher);
-	strcat(path, "XBOOT.PBP");
+	strcat(path, ARK_XMENU);
 
     int runlevel = 0x141;
     
