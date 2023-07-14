@@ -217,6 +217,7 @@ static void checkUpdates(){
     u32 update_ver, version;
     bool do_update = false;
     char buf[128];
+    cur_download = max_download = 0;
 
     if (common::getPspModel() == PSP_GO){
         update_folder[0] = update_eboot[0] = 'e';
@@ -255,7 +256,7 @@ static void checkUpdates(){
 
             addMessage("Downloading psp-updatelist.txt");
 
-            wget((char*)path.c_str(), "psp-updatelist.txt", &cur_download, &max_download);
+            wget((char*)path.c_str(), "psp-updatelist.txt");
 
             updater_url = parsePspUpdateList(&update_ver);
 
