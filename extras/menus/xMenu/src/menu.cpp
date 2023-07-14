@@ -260,7 +260,7 @@ void Menu::run(){
 	version << " DEBUG";
 	#endif
 
-    version << " (Memory Stick Speedup: " << (se_config->msspeed)? "Enabled)" : "Disabled)";
+    version << " - Memory Stick Speedup: " << (se_config->msspeed)? "Enabled" : "Disabled";
 
     ark_version = version.str();
 
