@@ -295,13 +295,19 @@ int dummythread(int argc, void* argp){
 
 int kermitSendRequestLog(void* a0, int a1, int a2, int a3, int a4, void* a5){
 
-    char tmp[64];
-    sprintf("mode: %d, cmd: %d\n", a1, a2);
+    static volatile int logging = 0;
+    static char tmp[64];
 
-    int fd = sceIoOpen("ms0:/vitapops.log", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
-    sceIoWrite(fd, tmp, strlen(tmp));
-    sceIoWrite(fd, "\n", 1);
-    sceIoClose(fd);
+    //if (a1 == 9 && a2 == 1042) return 0;
+
+    if (!logging){
+        logging = 1;
+        sprintf(tmp, "mode: %d, cmd: %d\n", a1, a2);
+        int fd = sceIoOpen("ms0:/kermit.log", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+        sceIoWrite(fd, tmp, strlen(tmp));
+        sceIoClose(fd);
+        logging = 0;
+    }
 
     return sceKermitSendRequest(a0, a1, a2, a3, a4, a5);
 }
@@ -309,6 +315,12 @@ int kermitSendRequestLog(void* a0, int a1, int a2, int a3, int a4, void* a5){
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
+
+    /*
+    if (strcmp(mod->modname, "sceIOFileManager") != 0 && strcmp(mod->modname, "sceKermitMsfs_driver") != 0){
+        hookImportByNID(mod, "sceKermit_driver", 0x36666181, kermitSendRequestLog);
+    }
+    */
     
     // Patch display in PSX exploits
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {

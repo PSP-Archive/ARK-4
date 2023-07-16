@@ -156,7 +156,7 @@ int exploitEntry(){
     scanKernelFunctions(k_tbl);
 
     // Extremely nasty solution to get screen working fine
-    k_tbl->KernelDelayThread(10000); // wait for system to finish booting up
+    k_tbl->KernelDelayThread(20000); // wait for system to finish booting up
     loadstart_pops(); // load and start pops module
     k_tbl->KernelDelayThread(1000000); // wait for pops to set up things
     kill_pops(); // kill pops threads to prevent crash
