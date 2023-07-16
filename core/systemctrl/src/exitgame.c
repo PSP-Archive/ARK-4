@@ -29,6 +29,7 @@
 
 // Exit Button Mask
 #define EXIT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
+#define XBOOT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_CROSS | PSP_CTRL_DOWN)
 
 extern ARKConfig* ark_config;
 extern int disable_plugins;
@@ -70,6 +71,42 @@ void exitLauncher()
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 }
 
+void xbootLauncher()
+{
+
+    // Refuse Operation in Save dialog
+	if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return;
+	
+	// Refuse Operation in Dialog
+	if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return;
+
+    // Load Execute Parameter
+    struct SceKernelLoadExecVSHParam param;
+    
+    // set xboot app
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    if (ark_config->recovery) strcat(path, ARK_RECOVERY);
+    else if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
+    else strcat(path, ARK_XMENU);
+    
+    // Clear Memory
+    memset(&param, 0, sizeof(param));
+
+    // Configure Parameters
+    param.size = sizeof(param);
+    param.args = strlen(path) + 1;
+    param.argp = path;
+    param.key = "game";
+
+    // set default mode
+    sctrlSESetUmdFile("");
+    sctrlSESetBootConfFileIndex(MODE_UMD);
+    
+    // Trigger Reboot
+    sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
+}
+
 static void startExitThread(){
 	// Exit to custom launcher
 	int k1 = pspSdkSetK1(0);
@@ -78,6 +115,16 @@ static void startExitThread(){
 	sceKernelWaitThreadEnd(uid, NULL);
 	pspSdkSetK1(k1);
 }
+
+static void startExitThreadXBOOT(){
+	// Exit to XBOOT launcher
+	int k1 = pspSdkSetK1(0);
+	int uid = sceKernelCreateThread("ExitGamePollThread", xbootLauncher, 16 - 1, 2048, 0, NULL);
+	sceKernelStartThread(uid, 0, NULL);
+	sceKernelWaitThreadEnd(uid, NULL);
+	pspSdkSetK1(k1);
+}
+
 
 // Gamepad Hook #1
 int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = NULL;
@@ -92,6 +139,11 @@ int peek_positive(SceCtrlData * pad_data, int count)
 		startExitThread();
 	}
 	
+	// Check for XBOOT Mask
+	if((pad_data[0].Buttons & XBOOT_MASK) == XBOOT_MASK)
+	{
+		startExitThreadXBOOT();
+	}
 	// Return Number of Input Frames
 	return count;
 }
@@ -109,6 +161,11 @@ int peek_negative(SceCtrlData * pad_data, int count)
 		startExitThread();
 	}
 	
+	// Check for XBOOT Mask
+	if((pad_data[0].Buttons & XBOOT_MASK) == 0)
+	{
+		startExitThreadXBOOT();
+	}
 	// Return Number of Input Frames
 	return count;
 }
@@ -124,6 +181,11 @@ int read_positive(SceCtrlData * pad_data, int count)
 	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
 		startExitThread();
+	}
+
+	if((pad_data[0].Buttons & XBOOT_MASK) == XBOOT_MASK)
+	{
+		startExitThreadXBOOT();
 	}
 	
 	// Return Number of Input Frames
@@ -141,6 +203,12 @@ int read_negative(SceCtrlData * pad_data, int count)
 	if((pad_data[0].Buttons & EXIT_MASK) == 0)
 	{
 		startExitThread();
+	}
+
+	// Check for XBOOT Mask
+	if((pad_data[0].Buttons & XBOOT_MASK) == 0)
+	{
+		startExitThreadXBOOT();
 	}
 	
 	// Return Number of Input Frames

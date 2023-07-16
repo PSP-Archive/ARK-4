@@ -3,6 +3,8 @@
 #include <systemctrl_se.h>
 #include <sstream>
 
+#define BOTTOM 260
+
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
 static SEConfig _se_conf;
@@ -125,7 +127,7 @@ void Menu::updateScreen(){
     for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
         int offset = 8 + (90 * (i-this->start));
         blitAlphaImageToScreen(0, 0, eboots[i]->getIcon()->imageWidth, \
-            eboots[i]->getIcon()->imageHeight, eboots[i]->getIcon(), 10, offset);
+            eboots[i]->getIcon()->imageHeight, eboots[i]->getIcon(), 10, offset+10);
         if (i == this->index)
             fillScreenRect(WHITE_COLOR, 200, offset+30+TEXT_HEIGHT, min((int)eboots[i]->getPath().size()*TEXT_WIDTH, 280), 1);
     }
@@ -138,7 +140,16 @@ void Menu::updateScreen(){
             common::printText(200, offset+30, eboots[i]->getName().c_str());
     }
 
-    common::printText(2, 2, ark_version.c_str());
+	stringstream ver;
+
+	ver << ark_version;
+
+    ver << " - Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
+
+
+    common::printText(2, 2, ver.str().c_str());
+
+	common::printText(2, BOTTOM, "LT - Toggle Speedup");
 
     common::flip();
 }
@@ -199,6 +210,11 @@ void Menu::control(){
         else if (control.select()){
             rebootMenu();
         }
+		else if (control.LT()){
+			se_config->msspeed = !se_config->msspeed;
+			sctrlSESetConfig(se_config);
+		}
+
     }
 }
 
@@ -226,7 +242,8 @@ void Menu::rebootMenu(){
 
     char path[256];
     strcpy(path, ark_config->arkpath);
-    strcat(path, ark_config->launcher);
+    //strcat(path, ark_config->launcher);
+	strcat(path, ARK_XMENU);
 
     int runlevel = 0x141;
     
@@ -260,7 +277,7 @@ void Menu::run(){
 	version << " DEBUG";
 	#endif
 
-    version << " - Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
+    //version << " - Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
 
     ark_version = version.str();
 
