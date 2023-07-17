@@ -1,7 +1,10 @@
 #include "menu.h"
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <fstream>
 #include <sstream>
+#include <string>
+
 
 #define BOTTOM 260
 
@@ -10,6 +13,8 @@ ARKConfig* ark_config = &_ark_conf;
 static SEConfig _se_conf;
 SEConfig* se_config = &_se_conf;
 static string ark_version;
+
+static string r;
 
 Menu::Menu(){
 
@@ -149,6 +154,8 @@ void Menu::updateScreen(){
 
     common::printText(2, 2, ver.str().c_str());
 
+	common::printText(2, BOTTOM-10, r.c_str());
+
 	common::printText(2, BOTTOM, "LT - Toggle Speedup");
 
     common::flip();
@@ -212,7 +219,64 @@ void Menu::control(){
         }
 		else if (control.LT()){
 			se_config->msspeed = !se_config->msspeed;
-			sctrlSESetConfig(se_config);
+			char arkSettingsPath[ARK_PATH_SIZE];
+			strcpy(arkSettingsPath, ark_config->arkpath);
+			strcat(arkSettingsPath, "SETTINGS.TXT");
+			std::stringstream final_str;
+			std::ifstream fs_in(arkSettingsPath);
+			if (!fs_in) {
+				final_str << "Cannot open: " << "SETTINGS.TXT";
+				r = final_str.str().c_str();
+				return;
+			}
+//			fs.open(arkSettingsPath);
+
+			std::string line = "";
+			std::string replace_str = "";
+			std::string search_str = "mscache";
+			std::stringstream updated_content;
+
+			while (std::getline(fs_in, line)) {
+				if (line.find(search_str) != std::string::npos) {
+					int size = line.find(search_str) + search_str.length() + 2;
+					std::string status = line.substr(line.find_last_of(" ")+1);
+
+					if (status == "on") {
+						line.replace(size, status.length(), "off");
+					}
+					else if (status == "off"){
+						line.replace(size, status.length(), "on");
+					}
+
+
+				
+					final_str << "Saved Settings!";
+
+					r = final_str.str().c_str();
+
+				}
+					updated_content << line << std::endl;
+				
+
+				
+			}
+
+			fs_in.close();
+
+			std::ofstream fs_out(arkSettingsPath);
+			if (!fs_out) {
+				final_str << "Cannot open: " << "SETTINGS.TXT";
+				r = final_str.str().c_str();
+				return;
+			}
+
+			fs_out << updated_content.str();
+
+			fs_out.close();
+			/*fs_out.close();
+			std::remove(arkSettingsPath);
+			std::rename(tempArkSettingsPath, arkSettingsPath);
+			*/
 		}
 
     }
