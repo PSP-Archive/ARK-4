@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <unistd.h>
 
 
 #define BOTTOM 260
@@ -14,7 +15,7 @@ static SEConfig _se_conf;
 SEConfig* se_config = &_se_conf;
 static string ark_version;
 
-static string r;
+static string save_status;
 
 Menu::Menu(){
 
@@ -154,11 +155,26 @@ void Menu::updateScreen(){
 
     common::printText(2, 2, ver.str().c_str());
 
-	common::printText(2, BOTTOM-10, r.c_str());
+	
+
 
 	common::printText(2, BOTTOM, "LT - Toggle Speedup");
 
+
+	
+	if(save_status.length() > 1){
+    	common::printText(2, 2, ver.str().c_str());
+		common::printText(2, BOTTOM-10, save_status.c_str());
+
+    	common::flip();
+
+		sceKernelDelayThread(3000000);
+
+		save_status = "";
+	}
+
     common::flip();
+
 }
 
 void Menu::updateTextAnim(){
@@ -226,7 +242,7 @@ void Menu::control(){
 			std::ifstream fs_in(arkSettingsPath);
 			if (!fs_in) {
 				final_str << "Cannot open: " << "SETTINGS.TXT";
-				r = final_str.str().c_str();
+				save_status = final_str.str().c_str();
 				return;
 			}
 //			fs.open(arkSettingsPath);
@@ -250,15 +266,15 @@ void Menu::control(){
 
 
 				
+					
 					final_str << "Saved Settings!";
 
-					r = final_str.str().c_str();
+					save_status = final_str.str().c_str();
 
 				}
 					updated_content << line << std::endl;
 				
 
-				
 			}
 
 			fs_in.close();
@@ -266,7 +282,7 @@ void Menu::control(){
 			std::ofstream fs_out(arkSettingsPath);
 			if (!fs_out) {
 				final_str << "Cannot open: " << "SETTINGS.TXT";
-				r = final_str.str().c_str();
+				save_status = final_str.str().c_str();
 				return;
 			}
 
