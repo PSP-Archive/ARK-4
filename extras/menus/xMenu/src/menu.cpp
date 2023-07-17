@@ -164,7 +164,7 @@ void Menu::updateScreen(){
 	
 	if(save_status.length() > 1){
     	common::printText(2, 2, ver.str().c_str());
-		common::printText(2, BOTTOM-10, save_status.c_str());
+		printTextScreen(350, BOTTOM, save_status.c_str(), GREEN_COLOR);
 
     	common::flip();
 
