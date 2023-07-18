@@ -8,6 +8,9 @@
 
 
 #define BOTTOM 260
+#define CENTER 90 // GAME Names and Path
+#define RIGHT  345
+#define TOP    2
 
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
@@ -16,6 +19,7 @@ SEConfig* se_config = &_se_conf;
 static string ark_version;
 
 static string save_status;
+static std::string toggle = "LT - Toggle Speedup";
 
 Menu::Menu(){
 
@@ -133,7 +137,7 @@ void Menu::updateScreen(){
     for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
         int offset = 8 + (90 * (i-this->start));
         blitAlphaImageToScreen(0, 0, eboots[i]->getIcon()->imageWidth, \
-            eboots[i]->getIcon()->imageHeight, eboots[i]->getIcon(), 10, offset+10);
+            eboots[i]->getIcon()->imageHeight, eboots[i]->getIcon(), 10, offset+8);
         if (i == this->index)
             fillScreenRect(WHITE_COLOR, 200, offset+30+TEXT_HEIGHT, min((int)eboots[i]->getPath().size()*TEXT_WIDTH, 280), 1);
     }
@@ -157,14 +161,13 @@ void Menu::updateScreen(){
 
 	
 
-
-	common::printText(2, BOTTOM, "LT - Toggle Speedup");
+	common::printText(RIGHT-toggle.length()-10, BOTTOM, toggle.c_str());
 
 
 	
 	if(save_status.length() > 1){
     	common::printText(2, 2, ver.str().c_str());
-		printTextScreen(350, BOTTOM, save_status.c_str(), GREEN_COLOR);
+		printTextScreen(RIGHT, TOP+15, save_status.c_str(), GREEN_COLOR);
 
     	common::flip();
 
