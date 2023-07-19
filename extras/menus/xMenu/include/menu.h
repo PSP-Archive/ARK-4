@@ -75,4 +75,19 @@ class Menu{
 
 };
 
+class SubMenu {
+	private:
+		u32 adjust_alpha(u32 col);
+		int blitSetup();
+		void getItems();
+		int blit_string(int sx, int sy, const char *msg);
+		void blit_rect_fill(int sx, int sy, int w, int h);
+
+	public:
+		SubMenu();
+		~SubMenu();
+		void run();
+};
+
 #endif
+

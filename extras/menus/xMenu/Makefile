@@ -18,6 +18,7 @@ OBJS = \
 		src/graphics.o \
 		src/debug.o \
 		src/common.o \
+		src/submenu.o \
 		src/menu.o \
 		src/entry.o \
 		src/controller.o \

@@ -14,12 +14,13 @@
 
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
-static SEConfig _se_conf;
-SEConfig* se_config = &_se_conf;
+//static SEConfig _se_conf;
+//SEConfig* se_config = &_se_conf;
+extern SEConfig* se_config;
 static string ark_version;
 
 static string save_status;
-static std::string toggle = "LT - Toggle Speedup";
+static std::string toggle = "LT - Menu";
 
 Menu::Menu(){
 
@@ -237,6 +238,9 @@ void Menu::control(){
             rebootMenu();
         }
 		else if (control.LT()){
+			SubMenu* submenu = new SubMenu();
+			submenu->run();
+
 			se_config->msspeed = !se_config->msspeed;
 			char arkSettingsPath[ARK_PATH_SIZE];
 			strcpy(arkSettingsPath, ark_config->arkpath);
