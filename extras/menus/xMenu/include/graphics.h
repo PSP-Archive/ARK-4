@@ -22,7 +22,7 @@ typedef u32 Color;
 #define BLACK_COLOR 0xFF000000
 #define GRAY_COLOR  0xFFCCCCCC
 #define RED_COLOR   0x000000FF
-#define GREEN_COLOR 0xFFFFFF00
+#define GREEN_COLOR 0xFF00FF00
 
 typedef struct
 {
