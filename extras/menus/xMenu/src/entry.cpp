@@ -36,6 +36,7 @@ Image* Entry::loadIcon(){
 void Entry::animAppear(){
     for (int i=480; i>=0; i-=10){
         clearScreen(CLEAR_COLOR);
+        blitAlphaImageToScreen(0, 0, 480, 272, common::getBG(), 0, 0);
         blitAlphaImageToScreen(0, 0, 480-i, 272, this->pic1, i, 0);
         flipScreen();
     }
@@ -44,6 +45,7 @@ void Entry::animAppear(){
 void Entry::animDisappear(){
     for (int i=0; i<=480; i+=10){
         clearScreen(CLEAR_COLOR);
+        blitAlphaImageToScreen(0, 0, 480, 272, common::getBG(), 0, 0);
         blitAlphaImageToScreen(0, 0, 480-i, 272, this->pic1, i, 0);
         flipScreen();
     }

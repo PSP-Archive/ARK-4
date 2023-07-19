@@ -20,7 +20,7 @@ extern STMOD_HANDLER previous;
 
 static int draw_thread = -1;
 static int do_draw = 0;
-static u32* fake_vram = (u32*)0x44000000;
+static u32* fake_vram = (u32*)0x44000000; // might wanna use extra ram: 0x0BC00000 or so
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 int (*DisplayWaitVblankStart)() = NULL;
 int (*DisplaySetHoldMode)(int) = NULL;
