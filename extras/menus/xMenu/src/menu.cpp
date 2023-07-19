@@ -314,7 +314,7 @@ void Menu::loadGame(){
     param.args = strlen(path) + 1;
     param.argp = path;
     param.key = "pops";
-    debugScreen(path);
+    debugScreen(path, NULL, NULL);
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 
@@ -333,7 +333,7 @@ void Menu::rebootMenu(){
     param.args = strlen(path) + 1;
     param.argp = path;
     param.key = "game";
-    debugScreen(path);
+    debugScreen(path, NULL, NULL);
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 

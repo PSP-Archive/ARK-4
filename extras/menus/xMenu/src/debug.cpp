@@ -1,8 +1,12 @@
 #include "debug.h"
 
-void debugScreen(const char* text){
+void debugScreen(const char* text, uint16_t w, uint16_t h){
     clearScreen(CLEAR_COLOR);
-    printTextScreen(0, 0, text, WHITE_COLOR);
+	if((w && h) == NULL)
+    	printTextScreen(0, 0, text, WHITE_COLOR);
+	else
+    	//printTextScreen(180, 130, text, WHITE_COLOR);
+    	printTextScreen(w, h, text, WHITE_COLOR);
     flipScreen();
 }
 

@@ -6,7 +6,7 @@
 
 #include "graphics.h"
 
-void debugScreen(const char* text);
+void debugScreen(const char* text, uint16_t w, uint16_t h);
 void debugFile(const char* text);
 
 #endif
