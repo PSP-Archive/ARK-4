@@ -260,13 +260,18 @@ static void checkUpdates(){
 
             updater_url = parsePspUpdateList(&update_ver);
 
-            snprintf(buf, 128, TR("Got version %p @ %s").c_str(), update_ver, updater_url.c_str());
-            addMessage(buf);
-
             sceIoRemove("psp-updatelist.txt");
 
-            version = sctrlHENGetVersion() | sctrlHENGetMinorVersion(); // ARK's full version number
-            do_update = common::getConf()->force_update || version < update_ver;
+            if (!update_ver || updater_url.size() == 0){
+                do_update = false;
+            }
+            else{
+                snprintf(buf, 128, TR("Got version %p @ %s").c_str(), update_ver, updater_url.c_str());
+                addMessage(buf);
+
+                version = sctrlHENGetVersion() | sctrlHENGetMinorVersion(); // ARK's full version number
+                do_update = common::getConf()->force_update || version < update_ver;
+            }
 
             if (!do_update){
                 addMessage("No need to update!");
