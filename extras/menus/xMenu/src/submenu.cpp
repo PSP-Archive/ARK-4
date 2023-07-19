@@ -157,7 +157,9 @@ int SubMenu::blitSetup() {
 
 void SubMenu::run() {
 	this->blitSetup();	
-	this->blit_rect_fill(20, 120, 4, 8);
+	//static int submenu_start_x = (pwidth - window_pixel) / 2;
+	//void blit_rect_fill(int sx, int sy, int w, int h);
+	this->blit_rect_fill(80, 80, 4, 8);
 	this->blit_string(200, 100, "TEST");
 	sceKernelDelayThread(5000000);
 }
