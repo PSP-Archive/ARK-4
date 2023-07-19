@@ -27,10 +27,7 @@
 #include <unistd.h>
 #include "../../arkMenu/include/conf.h"
 
-//static vsh_Config _vsh_Config;
-//vsh_Config* vsh_config = &_vsh_Config;
-//static t_conf _config;
-t_conf* config;
+static t_conf config;
 
 static SEConfig _se_conf;
 SEConfig* se_config = &_se_conf;
@@ -146,22 +143,30 @@ int SubMenu::blitSetup() {
 		sceDisplayGetFrameBuf(reinterpret_cast<void**>(&vram32), &bufferwidth, &pixelformat, PSP_DISPLAY_SETBUF_NEXTFRAME);
 		if( (bufferwidth==0) || (pixelformat!=3))
 			return -1;
-		fcolor = 0x00ffffff;
-		bcolor = 0x000000ff;
-		//fcolor = config->vsh_fg_color;
-		//bcolor = config->vsh_bg_color;
+		//fcolor = 0x00ffffff;
+		//bcolor = 0x000000ff;
+		fcolor = 0x0000ff00;
+		bcolor = 0x00000000;
+		//fcolor = config.vsh_fg_color;
+		//bcolor = config.vsh_bg_color;
 		//bcolor = ark_config.vsh_bg_color;
 
 		return 0;
 }
 
 void SubMenu::run() {
-	this->blitSetup();	
-	//static int submenu_start_x = (pwidth - window_pixel) / 2;
-	//void blit_rect_fill(int sx, int sy, int w, int h);
-	this->blit_rect_fill(80, 80, 4, 8);
-	this->blit_string(200, 100, "TEST");
-	sceKernelDelayThread(5000000);
+	//this->blit_rect_fill(80, 80, 4, 8);
+	
+	Controller control;
+	while(1) {
+		this->blitSetup();	
+		this->blit_string(200, 100, "TEST");
+		control.update();
+		if (control.circle())
+			break;
+
+	}
+	//sceKernelDelayThread(5000000);
 }
 
 void SubMenu::blit_rect_fill(int sx, int sy, int w, int h){
