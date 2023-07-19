@@ -1,4 +1,5 @@
 #include <pspkernel.h>
+#include <sstream>
 #include "debug.h"
 #include "common.h"
 #include "menu.h"
@@ -16,7 +17,23 @@ int main(int argc, char** argv){
 
     common::loadData();
 
-    debugScreen("starting menu");
+	std::string startup_txt = "starting menu";
+	std::string startup_txt_upper = "STARTING MENU";
+
+	std::stringstream startup_holder;
+
+	int i;
+	for(i=0;i<startup_txt.length();i++) {
+			if((i%2)==0)
+				startup_holder << startup_txt_upper[i];
+			else 
+				startup_holder << startup_txt[i];
+
+		debugScreen(startup_holder.str().c_str(), 180, 130);
+		sceKernelDelayThread(100000);
+	}
+		
+
     Menu* menu = new Menu();
     menu->run();
     delete menu;
