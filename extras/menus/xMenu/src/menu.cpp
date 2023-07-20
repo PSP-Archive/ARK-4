@@ -256,14 +256,20 @@ void Menu::control(){
 		else if (control.LT()){
 			changeMsCacheSetting();
 		}
+        else if (control.RT()){
+            openSubMenu();
+        }
 
     }
     fadeOut();
 }
 
-void Menu::changeMsCacheSetting(){
+void Menu::openSubMenu(){
     SubMenu* submenu = new SubMenu();
     submenu->run();
+}
+
+void Menu::changeMsCacheSetting(){
 
     se_config->msspeed = !se_config->msspeed;
     char arkSettingsPath[ARK_PATH_SIZE];

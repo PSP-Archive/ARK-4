@@ -65,6 +65,8 @@ class Menu{
         void loadGame();
 
         void rebootMenu();
+        
+        void openSubMenu();
 
         void changeMsCacheSetting();
 
