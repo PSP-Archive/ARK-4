@@ -20,6 +20,7 @@ extern SEConfig* se_config;
 static string ark_version;
 
 static string save_status;
+static int status_frame_count = 0; // a few seconds
 static std::string toggle = "LT - Menu";
 
 Menu::Menu(){
@@ -132,17 +133,31 @@ bool Menu::isPOPS(string path){
 }
 
 void Menu::updateScreen(){
+
+    // clear framebuffer and draw background image
     clearScreen(CLEAR_COLOR);
     blitAlphaImageToScreen(0, 0, 480, 272, common::getBG(), 0, 0);
     
+    // draw all image stuff
     for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
         int offset = 8 + (90 * (i-this->start));
         blitAlphaImageToScreen(0, 0, eboots[i]->getIcon()->imageWidth, \
             eboots[i]->getIcon()->imageHeight, eboots[i]->getIcon(), 10, offset+8);
-        if (i == this->index)
-            fillScreenRect(WHITE_COLOR, 200, offset+30+TEXT_HEIGHT, min((int)eboots[i]->getPath().size()*TEXT_WIDTH, 280), 1);
+        if (i == this->index){
+            static u32 alpha = 0;
+            static u32 delta = 5;
+            u32 color = WHITE_COLOR | (alpha<<24);
+            fillScreenRect(color, 200, offset+30+TEXT_HEIGHT, min((int)eboots[i]->getPath().size()*TEXT_WIDTH, 280), 1);
+            if (alpha == 0) delta = 5;
+            else if (alpha == 255) delta = -5;
+            alpha += delta;
+        }
     }
+
+    // why was this needed?
     guStart();
+
+    // draw all text stuff
     for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
         int offset = 8 + (90 * (i-this->start));
         if (i == this->index)
@@ -151,30 +166,29 @@ void Menu::updateScreen(){
             common::printText(200, offset+30, eboots[i]->getName().c_str());
     }
 
+    // draw ARK version and info
 	stringstream ver;
-
 	ver << ark_version;
-
     ver << " - Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
-
-
     common::printText(2, 2, ver.str().c_str());
 
-	
-
+    // draw help text
 	common::printText(RIGHT-toggle.length()-10, BOTTOM, toggle.c_str());
 
+    // oh right, it doesn't work without it for some reason
+    //guStart();
 
-	
+	// draw save status
 	if(save_status.length() > 1){
     	common::printText(2, 2, ver.str().c_str());
 		printTextScreen(RIGHT, TOP+15, save_status.c_str(), GREEN_COLOR);
 
-    	common::flip();
+    	//common::flip();
 
-		sceKernelDelayThread(3000000);
+		//sceKernelDelayThread(3000000);
 
-		save_status = "";
+        if (status_frame_count) status_frame_count--;
+        else save_status = "";
 	}
 
     common::flip();
@@ -217,8 +231,8 @@ void Menu::moveUp(){
 void Menu::control(){
 
     Controller control;
-    
-    while(true){
+    bool working = true;
+    while(working){
         updateScreen();
         control.update();
         if (control.down())
@@ -228,11 +242,11 @@ void Menu::control(){
         else if (control.cross()){
             if (eboots[this->index]->run()){
                 loadGame();
-                break;
+                working = false;
             }
         }        
         else if (control.circle()){
-            break;
+            working = false;
         }
         else if (control.select()){
             rebootMenu();
@@ -250,6 +264,7 @@ void Menu::control(){
 			if (!fs_in) {
 				final_str << "Cannot open: " << "SETTINGS.TXT";
 				save_status = final_str.str().c_str();
+                status_frame_count = 180;
 				return;
 			}
 //			fs.open(arkSettingsPath);
@@ -277,6 +292,7 @@ void Menu::control(){
 					final_str << "Saved Settings!";
 
 					save_status = final_str.str().c_str();
+                    status_frame_count = 180;
 
 				}
 					updated_content << line << std::endl;
@@ -290,6 +306,7 @@ void Menu::control(){
 			if (!fs_out) {
 				final_str << "Cannot open: " << "SETTINGS.TXT";
 				save_status = final_str.str().c_str();
+                status_frame_count = 180;
 				return;
 			}
 

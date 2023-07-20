@@ -24,7 +24,7 @@ class TextAnim{
 
     private:
 
-        int scroll;
+        int scroll, ci, skip;
         string title;
         string subtitle;
         
