@@ -59,11 +59,11 @@ string Menu::fullPath(string path, string app){
     if (common::fileExists(app))
         return app; // it's already a full path
 
-    else if (common::fileExists(path+app+"/FBOOT.PBP"))
-        return path+app+"/FBOOT.PBP";
-
     else if (common::fileExists(path+app+"/EBOOT.PBP"))
         return path+app+"/EBOOT.PBP";
+
+    else if (common::fileExists(path+app+"/FBOOT.PBP"))
+        return path+app+"/FBOOT.PBP";
     
     else if (common::fileExists(path+app+"/VBOOT.PBP"))
         return path+app+"/VBOOT.PBP";
