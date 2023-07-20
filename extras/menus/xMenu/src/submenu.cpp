@@ -16,33 +16,22 @@
  */
 
 
-
-
-#include "menu.h"
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <unistd.h>
+#include "menu.h"
+
 #include "../../arkMenu/include/conf.h"
 
 static t_conf config;
 
-static SEConfig _se_conf;
-SEConfig* se_config = &_se_conf;
+extern SEConfig* se_config;
+extern ARKConfig* ark_config;
 
-int pwidth;
-int pheight, bufferwidth, pixelformat;
-unsigned int* vram32;
-extern unsigned char msx[];
-static unsigned char *g_cur_font = msx;
-
-u32 fcolor;
-u32 bcolor;
-
-
-
+/*
 static char* OPTIONS[] = {
 	(char*)"Disabled",
 	(char*)"Always",
@@ -56,144 +45,187 @@ struct submenu_elements {
 	const char* restart;
 	const char* exit;
 };
+*/
 
+static string save_status;
+static int status_frame_count = 0; // a few seconds
 
-
-
-SubMenu::SubMenu() {
-	this->getItems();	
+SubMenu::SubMenu(Menu* menu) {
+    this->index = 0;
+    this->menu = menu;
+	this->getItems();
 }
 
-
-
 void SubMenu::getItems() {
+    stringstream ver;
+    ver << "Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
+
+    options[0] = ver.str();
+    options[1] = "Restart";
+    options[2] = "Exit";
+
+    /*
 	uint16_t memory_stick_speed = se_config->msspeed;
 	struct submenu_elements submenu_elem = {
 		OPTIONS,
 		"Restart",
 		"Exit"
 	};
+    */
 }
 
-u32 SubMenu::adjust_alpha(u32 col)
-{   
-    u32 alpha = col>>24;
-    u8 mul;
-    u32 c1,c2;
+void SubMenu::updateScreen(){
+    clearScreen(CLEAR_COLOR);
     
-    if(alpha==0)    return col;
-    if(alpha==0xff) return col;
-    
-    c1 = col & 0x00ff00ff;
-    c2 = col & 0x0000ff00;
-    mul = (u8)(255-alpha);
-    c1 = ((c1*mul)>>8)&0x00ff00ff;
-    c2 = ((c2*mul)>>8)&0x0000ff00;
-    return (alpha<<24)|c1|c2;
-}
+    // draw main menu first
+    menu->draw();
 
-int SubMenu::blit_string(int sx,int sy,const char *msg)
-{
-    int x,y,p;
-    int offset;
-    u8 code, font;
-    u32 fg_col,bg_col;
+    // now draw our stuff
+    int n = sizeof(options)/sizeof(options[0]);
+    int w = 260;
+    int h = 100;
+    int x = (480-w)/2;
+    int y = (272-h)/2;
+    u32 color = 0xa0808000;
 
-    u32 col,c1,c2;
-    u32 alpha;
+    // menu window
+    fillScreenRect(color, x, y, w, h);
 
-    fg_col = this->adjust_alpha(fcolor);
-    bg_col = this->adjust_alpha(bcolor);
-
-
-    if ((bufferwidth==0) || (pixelformat!=3))
-        return -1;
-
-    for (x = 0; msg[x] && x < (pwidth / 8); x++) {
-        code = (u8)msg[x]; // no truncate now
-
-        for (y = 0; y < 8; y++) {
-            offset = (sy + y) * bufferwidth + sx + x * 8;
-            font = y>=7 ? 0x00 : g_cur_font[code * 8 + y];
-            for (p = 0; p < 8; p++){
-                col = (font & 0x80) ? fg_col : bg_col;
-                alpha = col>>24;
-                if (alpha == 0)
-                    vram32[offset] = col;
-                else if (alpha != 0xff) {
-                    c2 = vram32[offset];
-                    c1 = c2 & 0x00ff00ff;
-                    c2 = c2 & 0x0000ff00;
-                    c1 = ((c1*alpha)>>8)&0x00ff00ff;
-                    c2 = ((c2*alpha)>>8)&0x0000ff00;
-                    vram32[offset] = (col&0xffffff) + c1 + c2;
-                }
-
-                font <<= 1;
-                offset++;
-            }
-        }
+    // menu items
+    int cur_x;
+    int cur_y = y + (h-(10*n))/2;
+    for (int i=0; i<n; i++){
+        cur_x = x + ((w-(8*options[i].size()))/2);
+        common::printText(cur_x, cur_y, options[i].c_str());
+        if (i == index)
+            fillScreenRect(0x00FFFFFF, cur_x, cur_y+7, min((int)options[i].size()*7, w), 1);
+        cur_y += 10;
     }
-    return sx + x * 8;
-}
 
-int SubMenu::blitSetup() {
-		int unk;
-		sceDisplayGetMode(&unk, &pwidth, &pheight);
-		sceDisplayGetFrameBuf(reinterpret_cast<void**>(&vram32), &bufferwidth, &pixelformat, PSP_DISPLAY_SETBUF_NEXTFRAME);
-		if( (bufferwidth==0) || (pixelformat!=3))
-			return -1;
-		//fcolor = 0x00ffffff;
-		//bcolor = 0x000000ff;
-		fcolor = 0x0000ff00;
-		bcolor = 0x00000000;
-		//fcolor = config.vsh_fg_color;
-		//bcolor = config.vsh_bg_color;
-		//bcolor = ark_config.vsh_bg_color;
+    // draw save status
+	if(save_status.length() > 1){
+		printTextScreen(RIGHT, TOP+15, save_status.c_str(), GREEN_COLOR);
 
-		return 0;
+        if (status_frame_count) status_frame_count--;
+        else save_status = "";
+	}
+
+    common::flip();
 }
 
 void SubMenu::run() {
-	//this->blit_rect_fill(80, 80, 4, 8);
 	
+    save_status = "";
+
 	Controller control;
+    control.flush();
 	while(1) {
-		this->blitSetup();	
-		this->blit_string(200, 100, "TEST");
+
+		updateScreen();
+
 		control.update();
-		if (control.circle())
+		if (control.circle() || control.triangle())
 			break;
-
-	}
-	//sceKernelDelayThread(5000000);
-}
-
-void SubMenu::blit_rect_fill(int sx, int sy, int w, int h){
-    int x, y;
-    u32 col, c1, c2;
-    u32 bg_col;
-    u32 offset, alpha;
-    bg_col = this->adjust_alpha(bcolor);
-
-    for (y = 0; y < h; y++){
-        for (x = 0; x < w; x++){
-            col = bg_col;
-            alpha = col >> 24;
-            offset = (sy + y) * bufferwidth + (sx + x);
-            if(alpha == 0)
-                vram32[offset] = col;
-            else if (alpha != 0xff) {
-                c2 = vram32[offset];
-                c1 = c2 & 0x00ff00ff;
-                c2 = c2 & 0x0000ff00;
-                c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
-                c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
-                vram32[offset] = (col & 0xffffff) + c1 + c2;
+        else if (control.cross()){
+            switch (index){
+                case 0: changeMsCacheSetting(); getItems(); break;
+                case 1: rebootMenu(); break;
+                case 2: sceKernelExitGame(); break;
             }
         }
-    }
+        else if (control.up()){
+            if (index > 0) index--;
+        }
+        else if (control.down()){
+            if (index < sizeof(options)/sizeof(options[0])) index++;
+        }
+
+	}
+    control.flush();
 }
 
-
 SubMenu::~SubMenu() {}
+
+void SubMenu::rebootMenu(){
+
+    struct SceKernelLoadExecVSHParam param;
+    memset(&param, 0, sizeof(SceKernelLoadExecVSHParam));
+
+    char path[256];
+    strcpy(path, ark_config->arkpath);
+	strcat(path, ARK_XMENU);
+
+    int runlevel = 0x141;
+    
+    param.args = strlen(path) + 1;
+    param.argp = path;
+    param.key = "game";
+    menu->fadeOut();
+    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+}
+
+void SubMenu::changeMsCacheSetting(){
+
+    se_config->msspeed = !se_config->msspeed;
+    char arkSettingsPath[ARK_PATH_SIZE];
+    strcpy(arkSettingsPath, ark_config->arkpath);
+    strcat(arkSettingsPath, "SETTINGS.TXT");
+    std::stringstream final_str;
+    std::ifstream fs_in(arkSettingsPath);
+    if (!fs_in) {
+        final_str << "Cannot open: " << "SETTINGS.TXT";
+        save_status = final_str.str().c_str();
+        status_frame_count = 100;
+        return;
+    }
+//			fs.open(arkSettingsPath);
+
+    std::string line = "";
+    std::string replace_str = "";
+    std::string search_str = "mscache";
+    std::stringstream updated_content;
+
+    while (std::getline(fs_in, line)) {
+        if (line.find(search_str) != std::string::npos) {
+            int size = line.find(search_str) + search_str.length() + 2;
+            std::string status = line.substr(line.find_last_of(" ")+1);
+
+            if (status == "on") {
+                line.replace(size, status.length(), "off");
+            }
+            else if (status == "off"){
+                line.replace(size, status.length(), "on");
+            }
+
+
+        
+            
+            final_str << "Saved Settings!";
+
+            save_status = final_str.str().c_str();
+            status_frame_count = 100;
+
+        }
+            updated_content << line << std::endl;
+        
+
+    }
+
+    fs_in.close();
+
+    std::ofstream fs_out(arkSettingsPath);
+    if (!fs_out) {
+        final_str << "Cannot open: " << "SETTINGS.TXT";
+        save_status = final_str.str().c_str();
+        status_frame_count = 100;
+        return;
+    }
+
+    fs_out << updated_content.str();
+
+    fs_out.close();
+    /*fs_out.close();
+    std::remove(arkSettingsPath);
+    std::rename(tempArkSettingsPath, arkSettingsPath);
+    */
+}

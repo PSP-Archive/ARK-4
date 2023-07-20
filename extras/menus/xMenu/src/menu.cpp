@@ -6,21 +6,14 @@
 #include <string>
 #include <unistd.h>
 
-
-#define BOTTOM 260
-#define CENTER 90 // GAME Names and Path
-#define RIGHT  345
-#define TOP    2
-
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
-//static SEConfig _se_conf;
-//SEConfig* se_config = &_se_conf;
-extern SEConfig* se_config;
+
+static SEConfig _se_conf;
+SEConfig* se_config = &_se_conf;
+
 static string ark_version;
 
-static string save_status;
-static int status_frame_count = 0; // a few seconds
 static std::string toggle = "LT - Menu";
 
 Menu::Menu(){
@@ -132,10 +125,7 @@ bool Menu::isPOPS(string path){
     return getEbootType(path.c_str()) == TYPE_POPS;
 }
 
-void Menu::updateScreen(){
-
-    // clear framebuffer and draw background image
-    clearScreen(CLEAR_COLOR);
+void Menu::draw(){
     blitAlphaImageToScreen(0, 0, 480, 272, common::getBG(), 0, 0);
     
     // draw all image stuff
@@ -167,30 +157,18 @@ void Menu::updateScreen(){
     }
 
     // draw ARK version and info
-	stringstream ver;
-	ver << ark_version;
-    ver << " - Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
-    common::printText(2, 2, ver.str().c_str());
+    common::printText(2, 2, ark_version.c_str());
 
     // draw help text
 	common::printText(RIGHT-toggle.length()-10, BOTTOM, toggle.c_str());
 
-    // oh right, it doesn't work without it for some reason
-    //guStart();
+}
 
-	// draw save status
-	if(save_status.length() > 1){
-    	common::printText(2, 2, ver.str().c_str());
-		printTextScreen(RIGHT, TOP+15, save_status.c_str(), GREEN_COLOR);
+void Menu::updateScreen(){
 
-    	//common::flip();
-
-		//sceKernelDelayThread(3000000);
-
-        if (status_frame_count) status_frame_count--;
-        else save_status = "";
-	}
-
+    // clear framebuffer and draw background image
+    clearScreen(CLEAR_COLOR);
+    draw();
     common::flip();
 
 }
@@ -233,8 +211,7 @@ void Menu::control(){
     fadeIn();
 
     Controller control;
-    bool working = true;
-    while(working){
+    while(1){
         updateScreen();
         control.update();
         if (control.down())
@@ -244,19 +221,9 @@ void Menu::control(){
         else if (control.cross()){
             if (eboots[this->index]->run()){
                 loadGame();
-                working = false;
             }
-        }        
-        else if (control.circle()){
-            working = false;
         }
-        else if (control.select()){
-            rebootMenu();
-        }
-		else if (control.LT()){
-			changeMsCacheSetting();
-		}
-        else if (control.RT()){
+        else if (control.triangle()){
             openSubMenu();
         }
 
@@ -265,74 +232,8 @@ void Menu::control(){
 }
 
 void Menu::openSubMenu(){
-    SubMenu* submenu = new SubMenu();
+    SubMenu* submenu = new SubMenu(this);
     submenu->run();
-}
-
-void Menu::changeMsCacheSetting(){
-
-    se_config->msspeed = !se_config->msspeed;
-    char arkSettingsPath[ARK_PATH_SIZE];
-    strcpy(arkSettingsPath, ark_config->arkpath);
-    strcat(arkSettingsPath, "SETTINGS.TXT");
-    std::stringstream final_str;
-    std::ifstream fs_in(arkSettingsPath);
-    if (!fs_in) {
-        final_str << "Cannot open: " << "SETTINGS.TXT";
-        save_status = final_str.str().c_str();
-        status_frame_count = 180;
-        return;
-    }
-//			fs.open(arkSettingsPath);
-
-    std::string line = "";
-    std::string replace_str = "";
-    std::string search_str = "mscache";
-    std::stringstream updated_content;
-
-    while (std::getline(fs_in, line)) {
-        if (line.find(search_str) != std::string::npos) {
-            int size = line.find(search_str) + search_str.length() + 2;
-            std::string status = line.substr(line.find_last_of(" ")+1);
-
-            if (status == "on") {
-                line.replace(size, status.length(), "off");
-            }
-            else if (status == "off"){
-                line.replace(size, status.length(), "on");
-            }
-
-
-        
-            
-            final_str << "Saved Settings!";
-
-            save_status = final_str.str().c_str();
-            status_frame_count = 180;
-
-        }
-            updated_content << line << std::endl;
-        
-
-    }
-
-    fs_in.close();
-
-    std::ofstream fs_out(arkSettingsPath);
-    if (!fs_out) {
-        final_str << "Cannot open: " << "SETTINGS.TXT";
-        save_status = final_str.str().c_str();
-        status_frame_count = 180;
-        return;
-    }
-
-    fs_out << updated_content.str();
-
-    fs_out.close();
-    /*fs_out.close();
-    std::remove(arkSettingsPath);
-    std::rename(tempArkSettingsPath, arkSettingsPath);
-    */
 }
 
 void Menu::loadGame(){
@@ -348,24 +249,6 @@ void Menu::loadGame(){
     param.args = strlen(path) + 1;
     param.argp = path;
     param.key = "pops";
-    fadeOut();
-    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
-}
-
-void Menu::rebootMenu(){
-
-    struct SceKernelLoadExecVSHParam param;
-    memset(&param, 0, sizeof(SceKernelLoadExecVSHParam));
-
-    char path[256];
-    strcpy(path, ark_config->arkpath);
-	strcat(path, ARK_XMENU);
-
-    int runlevel = 0x141;
-    
-    param.args = strlen(path) + 1;
-    param.argp = path;
-    param.key = "game";
     fadeOut();
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }

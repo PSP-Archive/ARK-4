@@ -27,6 +27,11 @@
 #define POPS_RUNLEVEL        0x144
 #define POPS_RUNLEVEL_GO    0x155
 
+#define BOTTOM 260
+#define CENTER 90 // GAME Names and Path
+#define RIGHT  345
+#define TOP    2
+
 extern "C"{
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam *param);
 }
@@ -64,14 +69,7 @@ class Menu{
         
         void loadGame();
 
-        void rebootMenu();
-        
         void openSubMenu();
-
-        void changeMsCacheSetting();
-
-        void fadeIn();
-        void fadeOut();
         
     public:
     
@@ -80,18 +78,26 @@ class Menu{
     
         void run();
 
+        void draw();
+        void fadeIn();
+        void fadeOut();
+
 };
 
 class SubMenu {
 	private:
-		u32 adjust_alpha(u32 col);
-		int blitSetup();
-		void getItems();
-		int blit_string(int sx, int sy, const char *msg);
-		void blit_rect_fill(int sx, int sy, int w, int h);
+        int index;
+        Menu* menu;
+        string options[3];
+
+        void updateScreen();
+        void getItems();
+
+        void rebootMenu();
+        void changeMsCacheSetting();
 
 	public:
-		SubMenu();
+		SubMenu(Menu* menu);
 		~SubMenu();
 		void run();
 };
