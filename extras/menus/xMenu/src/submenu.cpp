@@ -26,8 +26,6 @@
 
 #include "../../arkMenu/include/conf.h"
 
-static t_conf config;
-
 extern SEConfig* se_config;
 extern ARKConfig* ark_config;
 
@@ -59,21 +57,12 @@ SubMenu::SubMenu(Menu* menu) {
 }
 
 void SubMenu::getItems() {
-    stringstream ver;
-    ver << "Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
+    stringstream memoryStickSpeedup;
+    memoryStickSpeedup << "Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
 
-    options[0] = ver.str();
+    options[0] = memoryStickSpeedup.str();
     options[1] = "Restart";
     options[2] = "Exit";
-
-    /*
-	uint16_t memory_stick_speed = se_config->msspeed;
-	struct submenu_elements submenu_elem = {
-		OPTIONS,
-		"Restart",
-		"Exit"
-	};
-    */
 }
 
 void SubMenu::updateScreen(){
@@ -101,9 +90,34 @@ void SubMenu::updateScreen(){
     int cur_y = y + (h-(10*n))/2;
     for (int i=0; i<n; i++){
         cur_x = x + ((w-(8*options[i].size()))/2);
-        common::printText(cur_x, cur_y, options[i].c_str());
-        if (i == index)
-            fillScreenRect(0x00FFFFFF, cur_x, cur_y+7, min((int)options[i].size()*7, w), 1);
+		if(i==0)
+        	common::printText(cur_x, cur_y+4, options[i].c_str());
+		else
+        	common::printText(cur_x, cur_y+5, options[i].c_str());
+        if (i == index) {
+			static u32 alpha = 0;
+			static u32 delta = 5;
+			u32 color = RED_COLOR | (alpha<<24);
+			
+			// fillScreenRect(Color color, int x0, int y0, int width, int height)
+            fillScreenRect(color, cur_x-4, cur_y+13, min((int)(options[i].size()*8)+4, w), 2); // bottom
+
+            fillScreenRect(color, cur_x-4, cur_y+3, 2, 10); // left side
+
+            fillScreenRect(color, cur_x-4, cur_y+1, min((int)(options[i].size()*8)+4, w), 2); // top
+			
+			if(i==0)
+            	fillScreenRect(color, (options[i].size()*12)+8, cur_y+1, 2, 14); // right side
+			else if (i==1)
+            	fillScreenRect(color, w+8, cur_y+1, 2, 14); // right side
+			else
+            	fillScreenRect(color, w-4, cur_y+1, 2, 14); // right side
+            //fillScreenRect(color, min((int)(options[i].size()*8)+2, w), cur_y+3, 2, 10); // right side
+
+			if(alpha==0) delta = 5;
+			else if (alpha == 255) delta = -5;
+			alpha += delta;
+		}
         cur_y += 10;
     }
 
@@ -142,7 +156,7 @@ void SubMenu::run() {
             if (index > 0) index--;
         }
         else if (control.down()){
-            if (index < sizeof(options)/sizeof(options[0])) index++;
+            if (index < (sizeof(options)/sizeof(options[0])-1)) index++;
         }
 
 	}
@@ -183,7 +197,6 @@ void SubMenu::changeMsCacheSetting(){
         status_frame_count = 100;
         return;
     }
-//			fs.open(arkSettingsPath);
 
     std::string line = "";
     std::string replace_str = "";
@@ -201,9 +214,6 @@ void SubMenu::changeMsCacheSetting(){
             else if (status == "off"){
                 line.replace(size, status.length(), "on");
             }
-
-
-        
             
             final_str << "Saved Settings!";
 
@@ -212,8 +222,6 @@ void SubMenu::changeMsCacheSetting(){
 
         }
             updated_content << line << std::endl;
-        
-
     }
 
     fs_in.close();
@@ -229,8 +237,4 @@ void SubMenu::changeMsCacheSetting(){
     fs_out << updated_content.str();
 
     fs_out.close();
-    /*fs_out.close();
-    std::remove(arkSettingsPath);
-    std::rename(tempArkSettingsPath, arkSettingsPath);
-    */
 }
