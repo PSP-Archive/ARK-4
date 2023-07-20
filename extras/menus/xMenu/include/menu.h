@@ -65,6 +65,9 @@ class Menu{
         void loadGame();
 
         void rebootMenu();
+
+        void fadeIn();
+        void fadeOut();
         
     public:
     

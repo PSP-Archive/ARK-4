@@ -230,6 +230,8 @@ void Menu::moveUp(){
 
 void Menu::control(){
 
+    fadeIn();
+
     Controller control;
     bool working = true;
     while(working){
@@ -320,6 +322,7 @@ void Menu::control(){
 		}
 
     }
+    fadeOut();
 }
 
 void Menu::loadGame(){
@@ -335,7 +338,7 @@ void Menu::loadGame(){
     param.args = strlen(path) + 1;
     param.argp = path;
     param.key = "pops";
-    debugScreen(path, NULL, NULL);
+    fadeOut();
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 
@@ -346,7 +349,6 @@ void Menu::rebootMenu(){
 
     char path[256];
     strcpy(path, ark_config->arkpath);
-    //strcat(path, ark_config->launcher);
 	strcat(path, ARK_XMENU);
 
     int runlevel = 0x141;
@@ -354,7 +356,7 @@ void Menu::rebootMenu(){
     param.args = strlen(path) + 1;
     param.argp = path;
     param.key = "game";
-    debugScreen(path, NULL, NULL);
+    fadeOut();
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 
@@ -387,6 +389,30 @@ void Menu::run(){
 
     updateTextAnim();
     control();
+}
+
+void Menu::fadeOut(){
+    int alpha = 255;
+    while (alpha>0){
+        u32 color = alpha << 24;
+        clearScreen(CLEAR_COLOR);
+        blitAlphaImageToScreen(0, 0, 480, 272, common::getBG(), 0, 0);
+        fillScreenRect(color, 0, 0, 480, 272);
+        common::flip();
+        alpha -= 15;
+    }
+}
+
+void Menu::fadeIn(){
+    int alpha = 0;
+    while (alpha<255){
+        u32 color = alpha << 24;
+        clearScreen(CLEAR_COLOR);
+        blitAlphaImageToScreen(0, 0, 480, 272, common::getBG(), 0, 0);
+        fillScreenRect(color, 0, 0, 480, 272);
+        common::flip();
+        alpha += 15;
+    }
 }
 
 Menu::~Menu(){
