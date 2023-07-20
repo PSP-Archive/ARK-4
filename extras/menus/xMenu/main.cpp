@@ -9,21 +9,25 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
 
 using namespace std;
 
-std::string startup_txt = "starting menu";
-std::string startup_txt_upper = "STARTING MENU";
+std::string startup_txt = "Starting Menu";
+
+static volatile bool loading = true;
 
 int startup_thread(int argc, void* argp){
 	int i;
 	std::stringstream startup_holder;
 	for(i=0;i<startup_txt.length();i++) {
-		if((i%2)==0)
-			startup_holder << startup_txt_upper[i];
-		else 
-			startup_holder << startup_txt[i];
-
+		startup_holder << startup_txt[i];
 		debugScreen(startup_holder.str().c_str(), 180, 130);
-		sceKernelDelayThread(50000);
+		sceKernelDelayThread(15000);
 	}
+
+	while (loading){
+		startup_holder << ".";
+		debugScreen(startup_holder.str().c_str(), 180, 130);
+		sceKernelDelayThread(10000);
+	}
+
 	return 0;
 }
 
@@ -71,12 +75,14 @@ int main(int argc, char** argv){
 
 	//doIoTest();
 
+	loading = true;
 	int thid = sceKernelCreateThread("xmenu bootup", (SceKernelThreadEntry)startup_thread, 10, 2048, PSP_THREAD_ATTR_VFPU, NULL);
 	sceKernelStartThread(thid, 0, NULL);
 
     initGraphics();
     common::loadData();
 
+	loading = false;
 	sceKernelWaitThreadEnd(thid, NULL);
 	sceKernelDeleteThread(thid);
 
