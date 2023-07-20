@@ -83,13 +83,18 @@ void SubMenu::updateScreen(){
     fillScreenRect(color, x, y, w, h);
 
     // draw ARK version and info
-    common::printText(x + ((w-8*ark_version.size())/2), y+5, ark_version.c_str());
+    {
+    int dx = ((w-8*ark_version.size())/2);
+    fillScreenRect(color&0x00FFFFFF, x+dx, y+5, 8*ark_version.size(), 8);
+    common::printText(x + dx, y+5, ark_version.c_str());
+    }
 
     // menu items
     int cur_x;
     int cur_y = y + (h-(10*n))/2;
     for (int i=0; i<n; i++){
         cur_x = x + ((w-(8*options[i].size()))/2);
+        fillScreenRect(color&0x00FFFFFF, cur_x, cur_y+4, 8*options[i].size(), 8);
 		if(i==0)
         	common::printText(cur_x, cur_y+4, options[i].c_str());
 		else
@@ -137,7 +142,7 @@ void SubMenu::run() {
     save_status = "";
 
 	Controller control;
-    control.flush();
+    control.update();
 	while(1) {
 
 		updateScreen();
@@ -160,7 +165,7 @@ void SubMenu::run() {
         }
 
 	}
-    control.flush();
+    control.update();
 }
 
 SubMenu::~SubMenu() {}

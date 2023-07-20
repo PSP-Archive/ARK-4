@@ -39,7 +39,7 @@ void Menu::readEbootList(string path){
         string fullpath = fullPath(path, dit->d_name);
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
-        if (strcmp(dit->d_name, "SCPS10084") == 0) continue;
+        //if (strcmp(dit->d_name, "SCPS10084") == 0) continue;
         if (common::fileExists(path+dit->d_name)) continue;
         if (!isPOPS(fullpath)) continue;
         
@@ -131,9 +131,9 @@ void Menu::draw(){
     
     // draw all image stuff
     for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
-        int offset = (82 * (i-this->start));
+        int offset = 1 + (80 * (i-this->start));
         blitAlphaImageToScreen(0, 0, eboots[i]->getIcon()->imageWidth, \
-            eboots[i]->getIcon()->imageHeight, eboots[i]->getIcon(), 10, offset);
+            eboots[i]->getIcon()->imageHeight, eboots[i]->getIcon(), 25, offset);
         if (i == this->index){
             static u32 alpha = 0;
             static u32 delta = 5;
@@ -150,7 +150,7 @@ void Menu::draw(){
 
     // draw all text stuff
     for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
-        int offset = (82 * (i-this->start));
+        int offset = 1 + (80 * (i-this->start));
         if (i == this->index)
             this->txt->draw(offset);
         else
@@ -159,6 +159,17 @@ void Menu::draw(){
 
     // draw help text
 	common::printText(475-8*toggle.length(), 2, toggle.c_str());
+
+    // draw scrollbar
+    {
+        int height = 230/eboots.size();
+        int x = 5;
+        int y = 10;
+        fillScreenRect(DARKGRAY, x+2, y, 3, height*eboots.size());
+        fillScreenRect(DARKGRAY, x+1, y + index*height, 5, height);
+        fillScreenRect(LITEGRAY, x+3, y, 1, height*eboots.size());
+        fillScreenRect(LITEGRAY, x+2, y + index*height, 3, height);
+    }
 
 }
 
