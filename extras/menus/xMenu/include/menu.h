@@ -66,6 +66,8 @@ class Menu{
 
         void rebootMenu();
 
+        void changeMsCacheSetting();
+
         void fadeIn();
         void fadeOut();
         
