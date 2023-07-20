@@ -38,8 +38,8 @@ Image* common::getNoIcon(){
     return noicon;
 }
 
-void common::printText(float x, float y, const char *text){
-    printTextScreen(x, y, text, WHITE_COLOR);
+void common::printText(float x, float y, const char *text, u32 color){
+    printTextScreen(x, y, text, color);
 }
 
 void common::flip(){

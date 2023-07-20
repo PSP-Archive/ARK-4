@@ -23,7 +23,7 @@ namespace common{
     extern void deleteData();
     extern Image* getBG();
     extern Image* getNoIcon();
-    extern void printText(float x, float y, const char *text);
+    extern void printText(float x, float y, const char *text, u32 color = WHITE_COLOR);
     extern void flip();
 
 }

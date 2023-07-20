@@ -12,14 +12,15 @@ ARKConfig* ark_config = &_ark_conf;
 static SEConfig _se_conf;
 SEConfig* se_config = &_se_conf;
 
-static string ark_version;
+string ark_version;
 
-static std::string toggle = "LT - Menu";
+static std::string toggle = "Triangle -> Options Menu";
 
 Menu::Menu(){
 
     this->readEbootList("ms0:/PSP/GAME/");
     this->readEbootList("ms0:/PSP/APPS/");
+    this->readEbootList("ef0:/PSP/GAME/");
     this->index = 0;
     this->start = 0;
     this->txt = NULL;
@@ -130,9 +131,9 @@ void Menu::draw(){
     
     // draw all image stuff
     for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
-        int offset = 8 + (90 * (i-this->start));
+        int offset = (82 * (i-this->start));
         blitAlphaImageToScreen(0, 0, eboots[i]->getIcon()->imageWidth, \
-            eboots[i]->getIcon()->imageHeight, eboots[i]->getIcon(), 10, offset+8);
+            eboots[i]->getIcon()->imageHeight, eboots[i]->getIcon(), 10, offset);
         if (i == this->index){
             static u32 alpha = 0;
             static u32 delta = 5;
@@ -149,18 +150,15 @@ void Menu::draw(){
 
     // draw all text stuff
     for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
-        int offset = 8 + (90 * (i-this->start));
+        int offset = (82 * (i-this->start));
         if (i == this->index)
             this->txt->draw(offset);
         else
             common::printText(200, offset+30, eboots[i]->getName().c_str());
     }
 
-    // draw ARK version and info
-    common::printText(2, 2, ark_version.c_str());
-
     // draw help text
-	common::printText(RIGHT-toggle.length()-10, BOTTOM, toggle.c_str());
+	common::printText(475-8*toggle.length(), 2, toggle.c_str());
 
 }
 

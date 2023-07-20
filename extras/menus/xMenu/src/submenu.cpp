@@ -31,6 +31,8 @@ static t_conf config;
 extern SEConfig* se_config;
 extern ARKConfig* ark_config;
 
+extern string ark_version;
+
 /*
 static char* OPTIONS[] = {
 	(char*)"Disabled",
@@ -91,6 +93,9 @@ void SubMenu::updateScreen(){
     // menu window
     fillScreenRect(color, x, y, w, h);
 
+    // draw ARK version and info
+    common::printText(x + ((w-8*ark_version.size())/2), y+5, ark_version.c_str());
+
     // menu items
     int cur_x;
     int cur_y = y + (h-(10*n))/2;
@@ -130,7 +135,7 @@ void SubMenu::run() {
             switch (index){
                 case 0: changeMsCacheSetting(); getItems(); break;
                 case 1: rebootMenu(); break;
-                case 2: sceKernelExitGame(); break;
+                case 2: menu->fadeOut(); sceKernelExitGame(); break;
             }
         }
         else if (control.up()){
