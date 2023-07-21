@@ -36,7 +36,7 @@ int startup_thread(int argc, void* argp){
 			startup_runner.str(startup_txt + string(dots, '.'));
 		}
 		dots++;
-		sceKernelDelayThread(100000);
+		sceKernelDelayThread(200000);
 	}
 
 	return 0;
@@ -93,7 +93,7 @@ int main(int argc, char** argv){
     initGraphics();
     common::loadData();
 
-	sceKernelDelayThread(1000000);
+	sceKernelDelayThread(2500000);
 	loading = false;
 	sceKernelWaitThreadEnd(thid, NULL);
 	sceKernelDeleteThread(thid);
