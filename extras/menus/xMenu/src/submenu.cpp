@@ -24,29 +24,10 @@
 #include <unistd.h>
 #include "menu.h"
 
-#include "../../arkMenu/include/conf.h"
-
 extern SEConfig* se_config;
 extern ARKConfig* ark_config;
 
 extern string ark_version;
-
-/*
-static char* OPTIONS[] = {
-	(char*)"Disabled",
-	(char*)"Always",
-	(char*)"PS1",
-	(char*)"Launcher",
-};
-
-
-struct submenu_elements {
-	char** options;
-	const char* restart;
-	const char* exit;
-};
-*/
-
 static string save_status;
 static int status_frame_count = 0; // a few seconds
 
