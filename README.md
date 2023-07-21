@@ -296,18 +296,28 @@ There are various ways to recover from a bad installation, usually result of `ba
 
 #### Recovery Menu
 This option allows you to boot up a `Recovery App` with settings and plugins completely disabled to prevent issues. You can use this app to change settings, plugins and use a file browser for various recovery operations.
+
 <p></p>
+
 The `Recovery App` is installed on `Memory Stick` located at `/PSP/SAVEDATA/ARK_01234/RECOVERY.PBP` and can be changed to just about any homebrew in `PBP` format.
+
 <p></p>
+
 To load into the `Recovery App` you must hold the `R trigger` while turning on the `PSP` console or running `ARK Loader`. You can also do the same when running any of the `Bubbles` on `PS Vita`, either `Adrenaline` or `Standalone` (except for `ARK-X`).
 
 #### Vanilla Mode
 If the `Recovery App` is unavailable (i.e. `Full Installations`), or for a better/easier diagnostics, you can run `ARK` in `Vanilla Mode`, which temporarily disables settings and plugins when running `ARK` or booting any game.
+
 <p></p>
+
 This will load the `XMB` as original as possible but you can still use features such as the `VSH Menu` or `XMB Control` (which will let you reconfigure all your settings and plugins), it also works for games.
+
 <p></p>
+
 To enable `Vanilla Mode` simply hold `select` and/or `start` during bootup or gameboot to disable settings and plugins respectively.
+
 <p></p>
+
 The effect of `Vanilla Mode` is temporary and goes away on the next game boot or reboot unless you enable it again.
 
 #### Official Firmware (for PSP Permanent Installations)
@@ -315,9 +325,13 @@ For any `PSP` user that has a `Permanent` installation (i.e. `Infinity` or `cIPL
 
 #### Pandora or Baryon Sweeper (for PSP)
 If the console is `Bricked` and none of the above helps recovering the system, the last resort is to use a `Pandora Battery` or `Baryon Sweeper` in combination with a `Magic Memory Stick`.
+
 <p></p>
+
 You can find steps to install `Despertar del Cementerio` for `Pandora` models in this document.
+
 <p></p>
+
 For `Baryon Sweeper` users, you can use this tutorial: https://www.psx-place.com/threads/update-baryon-sweeper-unbrick-psp-1000-2000-3000-psp-slim-04g-07g-09g-psp-street-11g-model.32503/
 
 
