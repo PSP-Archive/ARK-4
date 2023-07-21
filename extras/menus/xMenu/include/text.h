@@ -14,7 +14,7 @@ enum colors {
     WHITE =    0x00FFFFFF,
     LITEGRAY = 0x00BFBFBF,
     GRAY =  0x007F7F7F,
-    DARKGRAY = 0x003F3F3F,        
+    DARKGRAY = 0x003F3F3F,
     BLACK = 0x00000000,
 };
 
