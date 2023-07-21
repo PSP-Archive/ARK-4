@@ -27,6 +27,12 @@ as well as unique and exclusive new features not found anywhere else.
 
   * [UPDATING ARK](#update-ark)
 
+  * [RECOVERY](#recovery)
+      - [Recovery Menu](#recovery-menu)
+      - [Vanilla Mode](#vanilla-mode)
+      - [Official Firmware Mode](#official-firmware-for-psp-permanent-installations)
+      - [Pandora/BaryonSweeper](#pandora-or-baryon-sweeper-for-psp)
+
   * [CUSTOMIZATION](#customization)
       - [Advanced VSH Menu Options](#advanced-vsh-menu-options)
       - [Installing Plugins](#installing-plugins)
@@ -262,17 +268,6 @@ The instructions are as follows:
 
 </p>
 
-#### Update ARK
-<p>
-
-There are three ways to update ARK:
-
-  - Option 1: Use the `System Update` feature in the XMB. Requires your PSP/Vita to be connected to the internet.
-  - Option 2: Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
-  - Option 3: Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
-
-</p>
-  
 #### Legacy Game Exploits (PSP & Vita)
 <p>
 
@@ -282,6 +277,17 @@ There are three ways to update ARK:
 - Run the game and trigger the exploit as normal, it should load ARK.
 - If you have issues with stability, it might be necessary to run `freemem()` algorithm in the kernel exploit file (`K.BIN`).
   
+</p>
+
+#### Update ARK
+<p>
+
+There are three ways to update ARK:
+
+  - Option 1: Use the `System Update` feature in the XMB. Requires your PSP/Vita to be connected to the internet.
+  - Option 2: Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
+  - Option 3: Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
+
 </p>
 
 ## RECOVERY
