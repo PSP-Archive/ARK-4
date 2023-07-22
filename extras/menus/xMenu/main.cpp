@@ -75,26 +75,32 @@ int main(int argc, char** argv){
 
 	//doIoTest();
 
+	// start loading screen thread
 	loading = true;
 	int thid = sceKernelCreateThread("xmenu bootup", (SceKernelThreadEntry)startup_thread, 10, 2048, PSP_THREAD_ATTR_VFPU, NULL);
 	sceKernelStartThread(thid, 0, NULL);
 
+	// load data
     initGraphics();
     common::loadData();
 
+	// initialize menu, scanning eboots
+    Menu* menu = new Menu();
+
+	// finish loading screen thread
 	loading = false;
 	sceKernelWaitThreadEnd(thid, NULL);
 	sceKernelDeleteThread(thid);
 
-    Menu* menu = new Menu();
+	// run menu
     menu->run();
-    delete menu;
-    
-    common::deleteData();
-    
-    disableGraphics();
-        
-    sceKernelExitGame();
 
+	// cleanup
+    delete menu;
+    common::deleteData();
+    disableGraphics();
+
+	// exit
+    sceKernelExitGame();
     return 0;
 }
