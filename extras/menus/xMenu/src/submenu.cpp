@@ -42,7 +42,7 @@ void SubMenu::getItems() {
     memoryStickSpeedup << "Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
 
     options[0] = memoryStickSpeedup.str();
-    options[1] = "Restart xMenu";
+    options[1] = "Restart";
     options[2] = "Exit";
 }
 
@@ -85,7 +85,6 @@ void SubMenu::updateScreen(){
 			static u32 delta = 5;
 			u32 color = RED_COLOR | (alpha<<24);
 			
-			// fillScreenRect(Color color, int x0, int y0, int width, int height)
             fillScreenRect(color, cur_x-4, cur_y+13, min((int)(options[i].size()*8)+4, w), 2); // bottom
 
             fillScreenRect(color, cur_x-4, cur_y+3, 2, 10); // left side
@@ -95,10 +94,9 @@ void SubMenu::updateScreen(){
 			if(i==0)
             	fillScreenRect(color, (options[i].size()*12)+8, cur_y+1, 2, 14); // right side
 			else if (i==1)
-            	fillScreenRect(color, w+32, cur_y+1, 2, 14); // right side
+            	fillScreenRect(color, w+8, cur_y+1, 2, 14); // right side
 			else
             	fillScreenRect(color, w-4, cur_y+1, 2, 14); // right side
-            //fillScreenRect(color, min((int)(options[i].size()*8)+2, w), cur_y+3, 2, 10); // right side
 
 			if(alpha==0) delta = 5;
 			else if (alpha == 255) delta = -5;
