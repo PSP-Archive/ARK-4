@@ -242,7 +242,9 @@ void Menu::control(){
 
 void Menu::openSubMenu(){
     SubMenu* submenu = new SubMenu(this);
+	toggle = "Triangle - Close Menu";
     submenu->run();
+	toggle = "Triangle - Options Menu";
 }
 
 void Menu::loadGame(){
@@ -284,8 +286,6 @@ void Menu::run(){
     #ifdef DEBUG
 	version << " DEBUG";
 	#endif
-
-    //version << " - Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
 
     ark_version = version.str();
 
