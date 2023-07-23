@@ -8,7 +8,8 @@
 extern ARKConfig* ark_config;
 
 // SPU Status
-static int running = 0;
+static int running = 0; // dummy spu
+static int spu_running = 0; // spu plugin
 
 // SPU Background Thread
 int spuThread(SceSize args, void * argp)
@@ -91,6 +92,7 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     result = sceKernelLoadModule(path, 0, NULL);
 
     if (result >= 0){
+        spu_running = 1;
         static char g_DiscID[32];
         u16 paramType = 0;
         u32 paramLength = sizeof(g_DiscID);
@@ -160,7 +162,7 @@ void patchPspPopsSpu(SceModule2 * mod)
         u32 data = _lw(addr);
 
         // Replace Media Engine SPU Background Thread Starter
-        if (data == 0x34458000){
+        if (data == 0x34458000 && !spu_running){
             u32 stub = U_EXTRACT_CALL(addr-4);
             REDIRECT_SYSCALL(stub, _sceMeAudio_DE630CD2);
             patches--;
