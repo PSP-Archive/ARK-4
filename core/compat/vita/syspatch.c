@@ -134,12 +134,6 @@ int sceAudioOutput2ReleaseFixed(){
 	return _sceAudioOutput2Release();
 }
 
-static void breakPoint(){
-    _sw(0x44000000, 0xBC800100);
-    colorDebug(0xFF00);
-    _sw(0, 0);
-}
-
 void ARKVitaOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
@@ -148,16 +142,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     patchFileManagerImports(mod);
     
     patchGameInfoGetter(mod);
-
-    if (strcmp(mod->modname, "sceThreadMan") == 0){
-        _sw(JAL(breakPoint), mod->text_addr+0x00017930);
-        goto flush;
-    }
-
-    if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
-        DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
-        goto flush;
-    }
 
     // Patch sceKernelExitGame Syscalls
     if(strcmp(mod->modname, "sceLoadExec") == 0)
@@ -186,7 +170,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     // Patch PSP POPS SPU
     if (strcmp(mod->modname, "pops") == 0)
     {
-        //breakPoint();
         patchPspPopsSpu(mod);
         goto flush;
     }
@@ -247,18 +230,6 @@ int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceK
 int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
-
-    /*
-    if (DisplaySetFrameBuf){
-        static int screen_init = 0;
-        if (!screen_init){
-            initScreen(DisplaySetFrameBuf);
-            screen_init = 1;
-        }
-        cls();
-        PRTSTR1("mod: %s", mod->modname);
-    }
-    */
 
     struct {
         char* name;
