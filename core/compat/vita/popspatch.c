@@ -154,4 +154,21 @@ void patchPspPopsSpu(SceModule2 * mod)
     unsigned int text_addr = mod->text_addr;
     // Replace Media Engine SPU Background Thread Starter
     int res = hookImportByNID(mod, "sceMeAudio", 0xDE630CD2, _sceMeAudio_DE630CD2);
+
+    // enable CDDA
+    for (u32 i = 0; i < mod->text_size; i += 4)
+    {
+        u32 addr = mod->text_addr + i;
+
+        /* Fix index length */
+        if ((_lw(addr) == 0x14C00014 && _lw(addr + 4) == 0x24E2FFFF) ||
+            (_lw(addr) == 0x14A00014 && _lw(addr + 4) == 0x24C2FFFF))
+        {
+            _sh(0x1000, addr + 2);
+            _sh(0, addr + 4);
+            break;
+        }
+    }
+    //_sh(0x1000, text_addr + 0x0001B17C + 2);
+	//_sh(0, text_addr + 0x0001B17C + 4);
 }

@@ -336,7 +336,7 @@ int pluginHandler(const char* path, int modid){
     SceModule2* mod = sceKernelFindModuleByUID(modid);
 
 	static char* forbidden_plugins[] = {
-		"CDDA Enabler", "popsloader",
+		"popsloader", "CDDA Enabler", 
 	};
 
 	for (int i=0; i<NELEMS(forbidden_plugins); i++){
