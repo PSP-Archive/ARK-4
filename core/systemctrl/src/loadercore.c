@@ -216,14 +216,6 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
     int result = -1;
-
-    // Custom Handler registered
-    if(customStartModule != NULL)
-    {
-        // Forward to Handler
-        result = customStartModule(modid, argsize, argp, modstatus, opt);
-        if (result >= 0) return result;
-    }
     
     // VSH replacement
     if (strcmp(mod->modname, "vsh_module") == 0){
@@ -248,8 +240,15 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         // Remember it
         pluginLoaded = 1;
     }
+
+    // Custom Handler registered
+    if(customStartModule != NULL)
+    {
+        // Forward to Handler
+        result = customStartModule(modid, argsize, argp, modstatus, opt);
+    }
     
-    // start module
+    // Default start module
     if (result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
 
     return result;

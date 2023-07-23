@@ -84,14 +84,14 @@ static void startPlugins()
         char* path = plugins->paths[i];
         // Load Module
         int uid = sceKernelLoadModule(path, 0, NULL);
-        if (uid >= 0){
+        if (uid > 0){
             // Call handler
             if (plugin_handler){
                 res = plugin_handler(path, uid);
                 // Unload Module on Error
                 if (res < 0){
                     sceKernelUnloadModule(uid);
-                    return;
+                    continue;
                 }
             }
             // Start Module

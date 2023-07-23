@@ -39,16 +39,6 @@ int isSystemBooted(void)
     return 0;
 }
 
-static u32 fakeDevkitVersion(){
-    return FW_660; // Popsloader V3 will check for 6.60, it fails on 6.61 so let's make it think it's on 6.60
-}
-
-static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int nid){
-    if (nid == 0x221400A6 && strcmp(szMod, "SystemControl") == 0)
-        return 0; // Popsloader V4 looks for this function to check for ME, let's pretend ARK doesn't have it ;)
-    return sctrlHENFindFunction(szMod, szLib, nid);
-}
-
 static int _sceKernelBootFromForUmdMan(void)
 {
     return 0x20;
@@ -288,25 +278,6 @@ void PSPOnModuleStart(SceModule2 * mod){
 	    }
         goto flush;
 	}
-    
-    if (strcmp(mod->modname, "popsloader") == 0 || strcmp(mod->modname, "popscore") == 0){
-        // fix for 6.60 check on 6.61
-        hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &fakeDevkitVersion);
-        // fix to prevent ME detection
-        hookImportByNID(mod, "SystemCtrlForKernel", 0x159AF5CC, &fakeFindFunction);
-        goto flush;
-    }
-
-    if (strcmp(mod->modname, "DayViewer_User") == 0){
-        // fix scePaf imports in DayViewer
-        static u32 nids[] = {
-            0x2BE8DDBB, 0xE8CCC611, 0xCDDCFFB3, 0x48BB05D5, 0x22FB4177, 0xBC8DC92B, 0xE3D530AE
-        };
-        for (int i=0; i<NELEMS(nids); i++){
-            hookImportByNID(mod, "scePaf", nids[i], sctrlHENFindFunction("scePaf_Module", "scePaf", nids[i]));
-        }
-        goto flush;
-    }
     
     if (strcmp(mod->modname, "vsh_module") == 0){
         if (se_config->umdregion){
