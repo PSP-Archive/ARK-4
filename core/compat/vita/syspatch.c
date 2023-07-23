@@ -265,7 +265,7 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
         char* path;
     } pops_files[] = {
         {"scePops_Manager", "POPSMAN.PRX"},
-        {"sceMediaSync", "MEDIASYNC.PRX"},
+        {"sceMediaSync", "MEDIASYN.PRX"},
     };
 
     for (int i=0; i < sizeof(pops_files)/sizeof(pops_files[0]); i++){
