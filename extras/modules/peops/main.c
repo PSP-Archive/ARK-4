@@ -18,6 +18,7 @@
 
 #include <common.h>
 #include <macros.h>
+#include <module2.h>
 #include "main.h"
 
 #include "spu/stdafx.h"
@@ -25,6 +26,8 @@
 PSP_MODULE_INFO("peops", 0x0007, 1, 0);
 
 PeopsConfig config;
+
+void (*previous)(void*);
 
 void (* spuWriteRegister)(int reg, int val, int type);
 void (* cdrTransferSector)(u8 *sector, int mode);
@@ -130,8 +133,11 @@ void cdrWriteRegisterPatched(int reg, int val)
 	cdrWriteRegister(reg, val);
 }
 
-void PatchPops(u32 text_addr)
+void PatchPops(SceModule2* mod)
 {
+
+	u32 text_addr = mod->text_addr;
+
 	MAKE_CALL(text_addr + 0x1A038, sceMeAudioInitPatched);
 
 	REDIRECT_FUNCTION(text_addr + 0x3D264, sceMeAudioNotifyPatched);
@@ -141,6 +147,19 @@ void PatchPops(u32 text_addr)
 	HIJACK_FUNCTION(text_addr + 0xD1B0, cdrWriteRegisterPatched, cdrWriteRegister);
 
 	sceKernelDcacheWritebackAll();
+}
+
+void PeopsOnModuleStart(SceModule2 * mod){
+
+	// Patch PSP POPS SPU
+    if (strcmp(mod->modname, "pops") == 0)
+    {
+        PatchPops(mod);
+    }
+
+	// Forward to previous Handler
+    if(previous) previous(mod);
+
 }
 
 int module_start(SceSize args, void *argp)
@@ -156,6 +175,8 @@ int module_start(SceSize args, void *argp)
 	config.spuupdatemode = 0;
 	config.sputhreadpriority = 0;
 
-	PatchPops(*(u32 *)argp);
+	// Register Module Start Handler
+    previous = sctrlHENSetStartModuleHandler(PeopsOnModuleStart);
+	
 	return 0;
 }
