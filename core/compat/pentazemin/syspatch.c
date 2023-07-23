@@ -563,6 +563,10 @@ void AdrenalineSysPatch(){
     SceModule2* loadcore = patchLoaderCore();
     PatchIoFileMgr();
     PatchMemlmd();
+
+	// Register plugin handler
+    prevPluginHandler = sctrlHENSetPluginHandler(&pluginHandler);
+
 	// initialize Adrenaline Layer
     initAdrenaline();
 }
