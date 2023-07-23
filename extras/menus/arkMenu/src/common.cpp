@@ -20,7 +20,6 @@ bool common::is_recovery = false;
 
 extern "C"{
     int kuKernelGetModel();
-    int sctrlKernelExitVSH(void*);
 }
 
 static ARKConfig ark_config = {0};

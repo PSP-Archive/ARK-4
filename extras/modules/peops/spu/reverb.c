@@ -40,8 +40,6 @@
 // will be included from spu.c
 #ifdef _IN_SPU
 
-#include "reverb.h"
-
 ////////////////////////////////////////////////////////////////////////
 // globals
 ////////////////////////////////////////////////////////////////////////
@@ -150,9 +148,9 @@ INLINE void StoreREVERB(SPUCHAN * pChannel,int ns)
 
 ////////////////////////////////////////////////////////////////////////
 
-static INLINE int g_buffer(int iOff)                          // get_buffer content helper: takes care about wraps
+INLINE int g_buffer(int iOff)                          // get_buffer content helper: takes care about wraps
 {
- short * p=(short *)spuMem;
+ short * p=(short *)spuMemC;
  iOff=(iOff*4)+rvb.CurrAddr;
  while(iOff>0x3FFFF)       iOff=rvb.StartAddr+(iOff-0x40000);
  while(iOff<rvb.StartAddr) iOff=0x3ffff-(rvb.StartAddr-iOff);
@@ -161,9 +159,9 @@ static INLINE int g_buffer(int iOff)                          // get_buffer cont
 
 ////////////////////////////////////////////////////////////////////////
 
-static INLINE void s_buffer(int iOff,int iVal)                // set_buffer content helper: takes care about wraps and clipping
+INLINE void s_buffer(int iOff,int iVal)                // set_buffer content helper: takes care about wraps and clipping
 {
- short * p=(short *)spuMem;
+ short * p=(short *)spuMemC;
  iOff=(iOff*4)+rvb.CurrAddr;
  while(iOff>0x3FFFF) iOff=rvb.StartAddr+(iOff-0x40000);
  while(iOff<rvb.StartAddr) iOff=0x3ffff-(rvb.StartAddr-iOff);
@@ -173,9 +171,9 @@ static INLINE void s_buffer(int iOff,int iVal)                // set_buffer cont
 
 ////////////////////////////////////////////////////////////////////////
 
-static INLINE void s_buffer1(int iOff,int iVal)                // set_buffer (+1 sample) content helper: takes care about wraps and clipping
+INLINE void s_buffer1(int iOff,int iVal)                // set_buffer (+1 sample) content helper: takes care about wraps and clipping
 {
- short * p=(short *)spuMem;
+ short * p=(short *)spuMemC;
  iOff=(iOff*4)+rvb.CurrAddr+1;
  while(iOff>0x3FFFF) iOff=rvb.StartAddr+(iOff-0x40000);
  while(iOff<rvb.StartAddr) iOff=0x3ffff-(rvb.StartAddr-iOff);

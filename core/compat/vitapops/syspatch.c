@@ -302,7 +302,7 @@ int kermitSendRequestLog(void* a0, int a1, int a2, int a3, int a4, void* a5){
 
     if (!logging){
         logging = 1;
-        sprintf(tmp, "mode: %d, cmd: %d\n", a1, a2);
+        sprintf(tmp, "sceKermitSendRequest - mode: %d, cmd: %d\n", a1, a2);
         int fd = sceIoOpen("ms0:/kermit.log", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
         sceIoWrite(fd, tmp, strlen(tmp));
         sceIoClose(fd);
@@ -312,13 +312,33 @@ int kermitSendRequestLog(void* a0, int a1, int a2, int a3, int a4, void* a5){
     return sceKermitSendRequest(a0, a1, a2, a3, a4, a5);
 }
 
+int (*sceKermitPeripheral_driver_8C7903E7)() = NULL;
+int sceKermitPeripheral_driver_log(void* a0, int a1, int a2, int a3, int a4, void* a5, u32 a6, u32 a7){
+
+    static volatile int logging = 0;
+    static char tmp[64];
+
+    //if (a1 == 9 && a2 == 1042) return 0;
+
+    if (!logging){
+        logging = 1;
+        sprintf(tmp, "sceKermitPeripheral_driver_8C7903E7 - mode: %d, cmd: %d\n", a1, a2);
+        int fd = sceIoOpen("ms0:/kermit.log", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+        sceIoWrite(fd, tmp, strlen(tmp));
+        sceIoClose(fd);
+        logging = 0;
+    }
+
+    return sceKermitPeripheral_driver_8C7903E7(a0, a1, a2, a3, a4, a5, a6, a7);
+}
+
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
 
     /*
     if (strcmp(mod->modname, "sceIOFileManager") != 0 && strcmp(mod->modname, "sceKermitMsfs_driver") != 0){
-        hookImportByNID(mod, "sceKermit_driver", 0x36666181, kermitSendRequestLog);
+        
     }
     */
     
@@ -358,6 +378,9 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     */
 
     if (strcmp(mod->modname, "scePops_Manager") == 0){
+        sceKermitPeripheral_driver_8C7903E7 = sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", 0x8C7903E7);
+        hookImportByNID(mod, "sceKermitPeripheral_driver", 0x36666181, sceKermitPeripheral_driver_log);
+        hookImportByNID(mod, "sceKermit_driver", 0x36666181, kermitSendRequestLog);
         patchPopsMan(mod);
         goto flush;
     }

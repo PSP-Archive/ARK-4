@@ -6,7 +6,6 @@
 #include "common.h"
 
 extern "C"{
-    void sctrlKernelExitVSH(void*);
     void scePowerRequestColdReset(int);
     void scePowerRequestStandby();
 }

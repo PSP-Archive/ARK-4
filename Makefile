@@ -51,6 +51,7 @@ SUBDIRS = libs \
 	extras/menus/xMenu \
 	extras/menus/advancedvsh \
 	extras/menus/provsh \
+	extras/modules/peops \
 	extras/modules/xmbctrl \
 	extras/modules/usbdevice \
 	extras/modules/idsregeneration
@@ -97,7 +98,10 @@ copy-bin:
 	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
 	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
 	$(Q)cp extras/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
+	$(Q)cp extras/modules/peops/peops.prx dist/ARK_01234/PS1SPU.PRX
 	$(Q)cp contrib/UPDATER.TXT dist/ARK_01234/
+	$(Q)cp contrib/PSP/popsman.prx dist/ARK_01234/POPSMAN.PRX
+	$(Q)cp contrib/PSP/pops_01g.prx dist/ARK_01234/POPS.PRX
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)rm -rf dist/themes/translations
 	$(Q)cp contrib/README.TXT dist/
@@ -178,6 +182,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/advancedvsh
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
+	$(Q)$(MAKE) $@ -C extras/modules/peops
 	$(Q)$(MAKE) $@ -C extras/modules/xmbctrl
 	$(Q)$(MAKE) $@ -C extras/modules/usbdevice
 	$(Q)$(MAKE) $@ -C extras/modules/ipl_update

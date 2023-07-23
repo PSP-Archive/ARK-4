@@ -118,7 +118,7 @@ int hookImportByNID(SceModule2 * pMod, char * library, unsigned int nid, void * 
     unsigned int func_int = (unsigned int)func;
     
     // Dummy Return
-    if(func_int >= 0 && func_int <= 0xFFFF)
+    if(func_int <= 0xFFFF)
     {
         // Create Dummy Return
         _sw(JR_RA, stub);

@@ -61,7 +61,7 @@ void patchMediaSync(SceModule2* mod)
         else if (data == 0x24040034){
             _sw(0x00001021, addr-8); // MEDIASYNC_KD_FOLDER_PATCH
             patches--;
-        } 
+        }
     }
 }
 
