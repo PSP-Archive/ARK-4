@@ -236,12 +236,13 @@ void processSettings(){
     }
 }
 
-void (*prevPluginHandler)(const char* path, int modid) = NULL;
-void pluginHandler(const char* path, int modid){
+int (*prevPluginHandler)(const char* path, int modid) = NULL;
+int pluginHandler(const char* path, int modid){
     if(se_config->oldplugin && psp_model == PSP_GO && (strncasecmp(path, "ef0", 2)==0)) {
 		patch_devicename(modid);
 	}
-	if (prevPluginHandler) prevPluginHandler(path, modid);
+	if (prevPluginHandler) return prevPluginHandler(path, modid);
+    return 0;
 }
 
 

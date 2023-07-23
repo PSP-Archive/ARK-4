@@ -41,7 +41,7 @@ typedef struct{
 
 Plugins* plugins = NULL;
 
-void (*plugin_handler)(const char* path, int modid) = NULL;
+int (*plugin_handler)(const char* path, int modid) = NULL;
 
 enum {
     RUNLEVEL_UNKNOWN,
@@ -80,15 +80,25 @@ static removePlugin(char* path){
 static void startPlugins()
 {
     for (int i=0; i<plugins->count; i++){
+        int res = 0;
         char* path = plugins->paths[i];
         // Load Module
         int uid = sceKernelLoadModule(path, 0, NULL);
-        // Call handler
-        if (plugin_handler) plugin_handler(path, uid);
-        // Start Module
-        int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
-        // Unload Module on Error
-        if (res < 0) sceKernelUnloadModule(uid);
+        if (uid >= 0){
+            // Call handler
+            if (plugin_handler){
+                res = plugin_handler(path, uid);
+                // Unload Module on Error
+                if (res < 0){
+                    sceKernelUnloadModule(uid);
+                    return;
+                }
+            }
+            // Start Module
+            res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
+            // Unload Module on Error
+            if (res < 0) sceKernelUnloadModule(uid);
+        }
     }
 }
 

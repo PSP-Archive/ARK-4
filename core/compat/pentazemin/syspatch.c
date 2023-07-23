@@ -331,6 +331,24 @@ void exit_game_patched(){
 		sctrlKernelExitVSH(NULL);
 }
 
+int (*prevPluginHandler)(const char* path, int modid) = NULL;
+int pluginHandler(const char* path, int modid){
+    SceModule2* mod = sceKernelFindModuleByUID(modid);
+
+	static char* forbidden_plugins[] = {
+		"CDDA Enabler", "popsloader",
+	};
+
+	for (int i=0; i<NELEMS(forbidden_plugins); i++){
+		if (strcmp(mod->modname, forbidden_plugins[i]) == 0){
+			return -1; // prevent plugin from loading
+		}
+	}
+
+	if (prevPluginHandler) return prevPluginHandler(path, modid);
+    return 0;
+}
+
 void AdrenalineOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
