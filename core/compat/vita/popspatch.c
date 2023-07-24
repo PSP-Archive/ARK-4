@@ -2,6 +2,7 @@
 #include <systemctrl.h>
 #include <macros.h>
 #include "popspatch.h"
+#include "functions.h"
 
 #define PSP_SPU_REGISTER 0x49F40000
 
@@ -126,28 +127,74 @@ void patchPspPopsman(SceModule2* mod){
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr + mod->text_size;
     
+    for (u32 addr=text_addr; addr<top_addr; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x7C1D2804){
+            u32 a = addr;
+            do { a-=4; } while (_lw(a) != 0x27BDFFE0); // find start of function
+            MAKE_DUMMY_FUNCTION_RETURN_0(a);
+        }
+        else if (data == 0x3C0BBC10 || data == 0x3C0CBC10){
+            MAKE_DUMMY_FUNCTION_RETURN_0(addr-40);
+        }
+        else if (data == 0x0004882B){
+            MAKE_DUMMY_FUNCTION_RETURN_0(addr-8);
+        }
+        else if (data == 0x8CC607F0){
+            u32 a = addr;
+            do { a+=4; } while (_lw(a) != 0x27BD0010);
+            MAKE_DUMMY_FUNCTION_RETURN_0(a+4);
+            do { a+=4; } while (_lw(a) != 0x03E00008);
+            MAKE_DUMMY_FUNCTION_RETURN_0(a+8);
+        }
+        else if (data == 0x70000000 && _lw(addr+8) == NOP){
+            u32 a = addr;
+            do { a+=4; } while (_lw(a)&0xFFFF0000 != 0x3C030000);
+            MAKE_DUMMY_FUNCTION_RETURN_0(a);
+        }
+        else if (data == 0x3444006C){
+            u32 a = addr;
+            do { a-=4; } while (_lw(a) != 0x27BDFFF0); // find start of function
+            MAKE_DUMMY_FUNCTION_RETURN_0(a);
+        }
+        else if (data == 0x3404AC44 && _lw(addr+20) == 0x001B1AC0){
+            MAKE_DUMMY_FUNCTION_RETURN_0(addr+20);
+        }
+        else if (data == 0x00002821 && _lw(addr+8) == 0x00003021){
+            _sw(JAL(myKernelLoadModule), addr + 4);
+        }
+    }
+
     // TN hacks
+    /*
     _sw(JR_RA, text_addr + 0x2F88);
     _sw(LI_V0(0), text_addr + 0x2F88 + 4);
+
     _sw(JR_RA, text_addr + 0x35D8);
     _sw(LI_V0(0), text_addr + 0x35D8 + 4);
+    
     _sw(JR_RA, text_addr + 0x3514);
     _sw(LI_V0(0), text_addr + 0x3514 + 4);
+    
     _sw(JR_RA, text_addr + 0x3590);
     _sw(LI_V0(0), text_addr + 0x3590 + 4);
+    
     _sw(JR_RA, text_addr + 0x35AC);
     _sw(LI_V0(0), text_addr + 0x35AC + 4);
+    
     _sw(JR_RA, text_addr + 0x31EC);
     _sw(LI_V0(0), text_addr + 0x31EC + 4);
 
     // Coldbird hacks
     _sw(JR_RA, text_addr + 0x0000342C);
     _sw(LI_V0(0), text_addr + 0x0000342C + 4);
+
     _sw(JR_RA, text_addr + 0x00003490);
     _sw(LI_V0(0), text_addr + 0x00003490 + 4);
+    */
     
     // patch loadmodule to load our own pops.prx
-    _sw(JAL(myKernelLoadModule), text_addr + 0x00001EE0);
+    //_sw(JAL(myKernelLoadModule), text_addr + 0x00001EE0);
 }
 
 void patchPspPopsSpu(SceModule2 * mod)
@@ -162,8 +209,10 @@ void patchPspPopsSpu(SceModule2 * mod)
         u32 data = _lw(addr);
 
         // Replace Media Engine SPU Background Thread Starter
-        if (data == 0x34458000 && !spu_running){
-            u32 stub = U_EXTRACT_CALL(addr-4);
+        if (data == 0x24050260 && !spu_running){
+            u32 a = addr;
+            do { a+=4; } while (_lw(a) != 0x8FBF0004); // find end of function
+            u32 stub = U_EXTRACT_CALL(a-8);
             REDIRECT_SYSCALL(stub, _sceMeAudio_DE630CD2);
             patches--;
         }
