@@ -126,7 +126,7 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
 void patchPspPopsman(SceModule2* mod){
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr + mod->text_size;
-    
+    /*
     for (u32 addr=text_addr; addr<top_addr; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x7C1D2804){
@@ -164,9 +164,9 @@ void patchPspPopsman(SceModule2* mod){
             _sw(JAL(myKernelLoadModule), addr + 4);
         }
     }
+    */
 
     // TN hacks
-    /*
     _sw(JR_RA, text_addr + 0x2F88);
     _sw(LI_V0(0), text_addr + 0x2F88 + 4);
 
@@ -191,10 +191,9 @@ void patchPspPopsman(SceModule2* mod){
 
     _sw(JR_RA, text_addr + 0x00003490);
     _sw(LI_V0(0), text_addr + 0x00003490 + 4);
-    */
     
     // patch loadmodule to load our own pops.prx
-    //_sw(JAL(myKernelLoadModule), text_addr + 0x00001EE0);
+    _sw(JAL(myKernelLoadModule), text_addr + 0x00001EE0);
 }
 
 void patchPspPopsSpu(SceModule2 * mod)

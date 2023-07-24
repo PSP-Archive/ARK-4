@@ -1,6 +1,6 @@
 TARGET = peops
 OBJS = main.o psp.o audio.o $(SPU_OBJS) exports.o
-SPU_OBJS = spu/decode_xa.o spu/spu.o spu/registers.o spu/externals.o
+SPU_OBJS = spu/decode_xa.o spu/spu.o spu/registers.o
 
 INCDIR = $(ARKROOT)/common/include
 CFLAGS = -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division

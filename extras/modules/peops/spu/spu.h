@@ -5,6 +5,7 @@
     copyright            : (C) 2002 by Pete Bernert
     email                : BlackDove@addcom.de
  ***************************************************************************/
+
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -15,7 +16,15 @@
  *                                                                         *
  ***************************************************************************/
 
+//*************************************************************************//
+// History of changes:
+//
+// 2002/05/15 - Pete
+// - generic cleanup for the Peops release
+//
+//*************************************************************************//
+
+
 void SetupTimer(void);
 void RemoveTimer(void);
 void CALLBACK SPUplayADPCMchannel(xa_decode_t *xap);
-void CALLBACK SPUplayCDDAchannel(short *pcm, int bytes);
