@@ -53,18 +53,4 @@ enum SPU_Priorities{
 	SPU_PRIORITY_VERY_HIGH = 4,
 };
 
-typedef struct
-{
-	/* PEOPS SPU configuration */
-	int volume;
-	int reverb;
-	int interpolation;
-	int changexapitch;
-	int spuirqwait;
-	int spuupdatemode;
-	int sputhreadpriority;
-} PeopsConfig;
-
-extern PeopsConfig config;
-
 #endif

@@ -25,15 +25,8 @@
 
 PSP_MODULE_INFO("peops", 0x0007, 1, 0);
 
-PeopsConfig config = {
-	.volume = 3,
-	.reverb = REVERB_OFF,
-	.interpolation = INTERPOLATION_GAUSS,
-	.changexapitch = 0,
-	.spuirqwait = 1,
-	.spuupdatemode = SPU_WAITVBLANK,
-	.sputhreadpriority = SPU_PRIORITY_VERY_LOW,
-};
+int spuupdatemode = SPU_WAITVBLANK;
+int sputhreadpriority = SPU_PRIORITY_VERY_LOW;
 
 void (*previous)(void*);
 
@@ -46,7 +39,7 @@ xa_decode_t cdr_xa;
 
 void SPUwait()
 {
-	switch(config.spuupdatemode)
+	switch(spuupdatemode)
 	{
 		case SPU_WAITVBLANK:
 			sceDisplayWaitVblankStart();
@@ -80,7 +73,7 @@ void sceMeAudioInitPatched(int (* function)(), void *stack)
 
 	static int priorities[] = { 17, 24, 32, 40, 48 };
 
-	SceUID thid = sceKernelCreateThread("spu_thread", spu_thread, priorities[config.sputhreadpriority % (sizeof(priorities) / sizeof(int))], 0x4000, 0, NULL);
+	SceUID thid = sceKernelCreateThread("spu_thread", spu_thread, priorities[sputhreadpriority % (sizeof(priorities) / sizeof(int))], 0x4000, 0, NULL);
 	if(thid >= 0) sceKernelStartThread(thid, 0, NULL);
 }
 

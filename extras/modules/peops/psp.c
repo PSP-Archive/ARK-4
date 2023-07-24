@@ -51,8 +51,4 @@ unsigned long timeGetTime()
 
 void ReadConfig(void)
 {
-	iVolume = 4 - config.volume;
-	iXAPitch = config.changexapitch;
-	iUseReverb = config.reverb;
-	iUseInterpolation = config.interpolation;
 }
