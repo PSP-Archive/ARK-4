@@ -187,11 +187,12 @@ void GameManager::findEboots(const char* path){
         return;
         
     while ((dit = readdir(dir))){
-		if (strstr(dit->d_name, "%") != NULL) continue;
-        if (strcmp(dit->d_name, ".") == 0) continue;
-        if (strcmp(dit->d_name, "..") == 0) continue;
-        if (!FIO_SO_ISDIR(dit->d_stat.st_attr)) continue;
-        if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue;
+		if (strstr(dit->d_name, "%") != NULL) continue; // ignore 1.50 kxploit format
+        if (strcmp(dit->d_name, ".") == 0) continue; // ignore "cur dir"
+        if (strcmp(dit->d_name, "..") == 0) continue; // ignore "parent dir"
+        if (!FIO_SO_ISDIR(dit->d_stat.st_attr)) continue; // ignore files
+        if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue; // ignore hidden?
+        if (strcmp(dit->d_name, "NPUZ01234") == 0 || strcmp(dit->d_name, "SCPS10084") == 0 || strncmp(dit->d_name, "ARK_", 4) == 0) continue; // ignore ARK launchers
         
         string fullpath = Eboot::fullEbootPath(path, dit->d_name);
         if (fullpath == ""){
