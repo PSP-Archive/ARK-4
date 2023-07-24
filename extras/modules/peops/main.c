@@ -25,7 +25,17 @@
 
 PSP_MODULE_INFO("peops", 0x0007, 1, 0);
 
-PeopsConfig config;
+PeopsConfig config = {
+	.enablepeopsspu = 1,
+	.volume = 3,
+	.reverb = 0,
+	.interpolation = 2,
+	.enablexaplaying = 1,
+	.changexapitch = 0,
+	.spuirqwait = 1,
+	.spuupdatemode = SPU_WAITVBLANK,
+	.sputhreadpriority = SPU_PRIORITY_VERY_LOW,
+};
 
 void (*previous)(void*);
 
@@ -164,16 +174,6 @@ void PeopsOnModuleStart(SceModule2 * mod){
 
 int module_start(SceSize args, void *argp)
 {
-
-	config.enablepeopsspu = 1;
-	config.volume = 3;
-	config.reverb = 1;
-	config.interpolation = 2;
-	config.enablexaplaying = 1;
-	config.changexapitch = 1;
-	config.spuirqwait = 1;
-	config.spuupdatemode = 0;
-	config.sputhreadpriority = 0;
 
 	// Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PeopsOnModuleStart);

@@ -213,19 +213,28 @@ static void checkArkPath(){
 // Init Start Module Hook
 int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
+    char modname[32];
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
+    strncpy(modname, mod->modname, sizeof(modname));
 
     int result = -1;
+
+    // Custom Handler registered
+    if(customStartModule != NULL)
+    {
+        // Forward to Handler
+        result = customStartModule(modid, argsize, argp, modstatus, opt);
+    }
     
     // VSH replacement
-    if (strcmp(mod->modname, "vsh_module") == 0){
+    if (strcmp(modname, "vsh_module") == 0){
         if (ark_config->recovery || ark_config->launcher[0]){ // system in recovery or launcher mode
             exitLauncher(); // reboot VSH into custom menu
         }
     }
 
     // load settings and plugins before starting mediasync
-    if (!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
+    if (!pluginLoaded && strcmp(modname, "sceMediaSync") == 0)
     {
         // Check ARK install path
         checkArkPath();
@@ -240,15 +249,8 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         // Remember it
         pluginLoaded = 1;
     }
-
-    // Custom Handler registered
-    if(customStartModule != NULL)
-    {
-        // Forward to Handler
-        result = customStartModule(modid, argsize, argp, modstatus, opt);
-    }
     
-    // Default start module
+    // start module
     if (result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
 
     return result;
