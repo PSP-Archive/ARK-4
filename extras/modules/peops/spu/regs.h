@@ -5,7 +5,6 @@
     copyright            : (C) 2002 by Pete Bernert
     email                : BlackDove@addcom.de
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -16,15 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 
-//*************************************************************************//
-// History of changes:
-//
-// 2002/05/15 - Pete
-// - generic cleanup for the Peops release
-//
-//*************************************************************************//
-
-
 void SoundOn(int start,int end,unsigned short val);
 void SoundOff(int start,int end,unsigned short val);
 void FModOn(int start,int end,unsigned short val);
@@ -34,3 +24,4 @@ void SetVolumeR(unsigned char ch,short vol);
 void SetPitch(int ch,unsigned short val);
 void ReverbOn(int start,int end,unsigned short val);
 void CALLBACK SPUwriteRegister(unsigned long reg, unsigned short val);
+

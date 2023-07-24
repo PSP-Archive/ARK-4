@@ -1,11 +1,10 @@
 /***************************************************************************
-                           StdAfx.h  -  description
+                         externals.c  -  description
                              -------------------
     begin                : Wed May 15 2002
     copyright            : (C) 2002 by Pete Bernert
     email                : BlackDove@addcom.de
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -16,34 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 
-//*************************************************************************//
-// History of changes:
-//
-// 2002/05/15 - Pete
-// - generic cleanup for the Peops release
-//
-//*************************************************************************//
+#include <stdint.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <unistd.h>
-#define RRand(range) (random()%range)  
-#include <string.h> 
-#include <sys/time.h>  
-#include <math.h>  
+// 15-bit value + 1-sign
+int CLAMP16(int x) {
+	if(x > 32767) x = 32767;
+	else if(x < -32768) x = -32768;
 
-#include "audio.h"
-#include "psp.h"
-
-#undef CALLBACK
-#define CALLBACK
-#define DWORD unsigned long
-#define LOWORD(l)           ((unsigned short)(l)) 
-#define HIWORD(l)           ((unsigned short)(((unsigned long)(l) >> 16) & 0xFFFF)) 
-
-#define INLINE inline
-
-#include "decode_xa.h"
+	return x;
+}

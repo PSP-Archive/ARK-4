@@ -5,7 +5,6 @@
     copyright            : (C) 2002 by Pete Bernert
     email                : BlackDove@addcom.de
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -16,15 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-//*************************************************************************//
-// History of changes:
-//
-// 2002/05/15 - Pete
-// - generic cleanup for the Peops release
-//
-//*************************************************************************//
-
-
 void SetREVERB(unsigned short val);
-INLINE void StartREVERB(SPUCHAN * pChannel);
-INLINE void StoreREVERB(SPUCHAN * pChannel,int ns);
+static INLINE void StartREVERB(int ch);
+static INLINE void StoreREVERB(int ch,int ns);
+

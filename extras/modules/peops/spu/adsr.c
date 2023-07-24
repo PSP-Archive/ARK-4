@@ -5,7 +5,6 @@
     copyright            : (C) 2002 by Pete Bernert
     email                : BlackDove@addcom.de
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -15,23 +14,6 @@
  *   additional informations.                                              *
  *                                                                         *
  ***************************************************************************/
-
-//*************************************************************************//
-// History of changes:
-//
-// 2004/09/18 - LDChen
-// - Speed optimized ADSR mixing
-//
-// 2003/05/14 - xodnizel
-// - removed stopping of reverb on sample end
-//
-// 2003/01/06 - Pete
-// - added Neill's ADSR timings
-//
-// 2002/05/15 - Pete
-// - generic cleanup for the Peops release
-//
-//*************************************************************************//
 
 #include "stdafx.h"
 
@@ -44,151 +26,295 @@
 // ADSR func
 ////////////////////////////////////////////////////////////////////////
 
-static unsigned long int RateTable[160];
+/*
+ADSR
+- Dr. Hell (Xebra PS1 emu)
+- Accurate (!)
+- http://drhell.web.fc2.com
+
+
+Envelope increase
+0-47: (7 - (RATE & 3)) <<(11 - (RATE>> 2))
+48+:  7 - (RATE & 3) / (1 <<((RATE>> 2) - 11))
+
+Envelope decrease
+0-47: (-8 + (RATE & 3)) <<(11 - (RATE>> 2))
+48+:  -8 + (RATE & 3) / (1 <<((RATE>> 2) - 11))
+
+
+Exponential increase
+0000-5FFF = (rate + 0)
+6000+     = (rate + 8)
+
+Exponential decrease
+(molecules (decrease) * level)>> 15
+
+-----------------------------------
+
+Fraction (release rate)
+1<<((4*32>>2)-11) = 1<<21
+
+
+Increase
+40 = (7-0)<<(11-10) = 7<<1 = 14
+41 = (7-1)<<(11-10) = 6<<1 = 12
+42 = (7-2)<<(11-10) = 5<<1 = 10
+43 = (7-3)<<(11-10) = 4<<1 = 8
+
+44 = (7-0)<<(11-11) = 7<<0 = 7
+45 = (7-1)<<(11-11) = 6<<0 = 6
+46 = (7-2)<<(11-11) = 5<<0 = 5
+47 = (7-3)<<(11-11) = 4<<0 = 4
+--
+48 = (7-0) / 1<<(12-11) = 7 / 2
+49 = (7-1) / 1<<(12-11) = 6 / 2
+50 = (7-2) / 1<<(12-11) = 5 / 2
+51 = (7-3) / 1<<(12-11) = 4 / 2
+
+52 = (7-0) / 1<<(13-11) = 7 / 4
+56 = (7-0) / 1<<(14-11) = 7 / 8
+60 = (7-0) / 1<<(15-11) = 7 / 16
+
+
+Decrease
+40 = (-8+0)<<(11-10) = -8<<1 = -16
+41 = (-8+1)<<(11-10) = -7<<1 = -14
+42 = (-8+2)<<(11-10) = -6<<1 = -12
+43 = (-8+3)<<(11-10) = -5<<1 = -10
+
+44 = (-8+0)<<(11-11) = -8<<0 = -8
+45 = (-8+1)<<(11-11) = -7<<0 = -7
+46 = (-8+2)<<(11-11) = -6<<0 = -6
+47 = (-8+3)<<(11-11) = -5<<0 = -5
+--
+48 = (-8+0) / 1<<(12-11) = -8 / 2
+49 = (-8+1) / 1<<(12-11) = -7 / 2
+50 = (-8+2) / 1<<(12-11) = -6 / 2
+51 = (-8+3) / 1<<(12-11) = -5 / 2
+*/
+
+
+static int RateTableAdd[128];
+static int RateTableAdd_f[128];
+static int RateTableSub[128];
+static int RateTableSub_f[128];
+static const int RateTable_denom = 1 << (( (4*32)>>2) - 11);
 
 void InitADSR(void)                                    // INIT ADSR
 {
- unsigned long r,rs,rd;int i;
+ int lcv;
 
- memset(RateTable,0,sizeof(unsigned long)*160);        // build the rate table according to Neill's rules (see at bottom of file)
+ memset(RateTableAdd,0,sizeof(int)*128);
+ memset(RateTableAdd_f,0,sizeof(int)*128);
+ memset(RateTableSub,0,sizeof(int)*128);
+ memset(RateTableSub_f,0,sizeof(int)*128);
 
- r=3;rs=1;rd=0;
 
- for(i=32;i<160;i++)                                   // we start at pos 32 with the real values... everything before is 0
-  {
-   if(r<0x3FFFFFFF)
-    {
-     r+=rs;
-     rd++;if(rd==5) {rd=1;rs*=2;}
-    }
-   if(r>0x3FFFFFFF) r=0x3FFFFFFF;
+ // Optimize table - Dr. Hell ADSR math
+ for( lcv=0; lcv<48; lcv++ ) {
+	 RateTableAdd[lcv] = (7 - (lcv&3)) << (11 - (lcv >> 2));
+	 RateTableSub[lcv] = (-8 + (lcv&3)) << (11 - (lcv >> 2));
 
-   RateTable[i]=r;
-  }
+	 RateTableAdd_f[lcv] = 0;
+	 RateTableSub_f[lcv] = 0;
+ }
+
+ for( lcv=48; lcv<128; lcv++ ) {
+	 int denom;
+
+	 denom = 1 << ((lcv>>2) - 11);
+
+	 // whole
+	 RateTableAdd[lcv] = (7 - (lcv&3)) / denom;
+	 RateTableSub[lcv] = (-8 + (lcv&3)) / denom;
+
+	 // fraction
+	 RateTableAdd_f[lcv] = (7 - (lcv&3)) % denom;
+	 RateTableSub_f[lcv] = (-8 + (lcv&3)) % denom;
+
+	 RateTableAdd_f[lcv] *= RateTable_denom / denom;
+	 RateTableSub_f[lcv] *= RateTable_denom / denom;
+
+	 // goofy compiler - mod
+	 if( RateTableSub_f[lcv] > 0 ) RateTableSub_f[lcv] = -RateTableSub_f[lcv];
+ }
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void StartADSR(SPUCHAN * pChannel)              // MIX ADSR
+static INLINE void StartADSR(int ch)                          // MIX ADSR
 {
- pChannel->ADSRX.lVolume=1;                            // and init some adsr vars
- pChannel->ADSRX.State=0;
- pChannel->ADSRX.EnvelopeVol=0;
+ s_chan[ch].ADSRX.lVolume=1;                           // and init some adsr vars
+ s_chan[ch].ADSRX.State=0;
+ s_chan[ch].ADSRX.EnvelopeVol=0;
+ s_chan[ch].ADSRX.EnvelopeVol_f=0;
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-static const unsigned long int TableDisp[] = {
- -0x18+0+32,-0x18+4+32,-0x18+6+32,-0x18+8+32,       // release/decay
- -0x18+9+32,-0x18+10+32,-0x18+11+32,-0x18+12+32,
-
- -0x1B+0+32,-0x1B+4+32,-0x1B+6+32,-0x1B+8+32,       // sustain
- -0x1B+9+32,-0x1B+10+32,-0x1B+11+32,-0x1B+12+32,
-};
-
-INLINE int MixADSR(SPUCHAN *ch)
+static INLINE int MixADSR(int ch)                             // MIX ADSR
 {    
- unsigned long int disp;
- signed long int EnvelopeVol = ch->ADSRX.EnvelopeVol;
+ int EnvelopeVol = s_chan[ch].ADSRX.EnvelopeVol;
+ int EnvelopeVol_f = s_chan[ch].ADSRX.EnvelopeVol_f;
 
- if(ch->bStop)                                  // should be stopped:
+
+ // dead volume - voice on
+ if( s_chan[ch].iSilent == 2 ) {
+	 if( s_chan[ch].bStop ) s_chan[ch].bOn = 0;
+	 return 0;
+ }
+
+
+ if(s_chan[ch].bStop)                                  // should be stopped:
   {                                                    // do release
-   if(ch->ADSRX.ReleaseModeExp)
-    {
-     disp = TableDisp[(EnvelopeVol>>28)&0x7];
-    }
+	 if(s_chan[ch].ADSRX.ReleaseModeExp)
+     EnvelopeVol += ( RateTableSub[ s_chan[ch].ADSRX.ReleaseRate * 4 ] * EnvelopeVol ) >> 15;
    else
-    {
-     disp=-0x0C+32;
-    }
-   EnvelopeVol-=RateTable[ch->ADSRX.ReleaseRate + disp];
+     EnvelopeVol += RateTableSub[ s_chan[ch].ADSRX.ReleaseRate * 4 ];
+
+	 EnvelopeVol_f += RateTableSub_f[ s_chan[ch].ADSRX.ReleaseRate * 4 ];
+	 if( EnvelopeVol_f < 0 ) {
+		 EnvelopeVol_f += RateTable_denom;
+		 EnvelopeVol--;
+	 }
 
    if(EnvelopeVol<0) 
     {
      EnvelopeVol=0;
-     ch->bOn=0;
-    }
+		 EnvelopeVol_f=0;
+     // don't stop if this chan can still cause irqs
+     if(!(spuCtrl&0x40) || (s_chan[ch].pCurr > pSpuIrq && s_chan[ch].pLoop > pSpuIrq))
+       s_chan[ch].bOn=0;
+		}
 
-   ch->ADSRX.EnvelopeVol=EnvelopeVol;
-   ch->ADSRX.lVolume=(EnvelopeVol>>=21);
-   return EnvelopeVol;
+   
+   s_chan[ch].ADSRX.EnvelopeVol=EnvelopeVol;
+	 s_chan[ch].ADSRX.EnvelopeVol_f=EnvelopeVol_f;
+   s_chan[ch].ADSRX.lVolume=EnvelopeVol>>5;
+   return EnvelopeVol>>5;
   }
  else                                                  // not stopped yet?
   {
-   if(ch->ADSRX.State==0)                       // -> attack
+   if(s_chan[ch].ADSRX.State==0)                       // -> attack
     {
-     disp = -0x10+32;
-     if(ch->ADSRX.AttackModeExp)
+     if(s_chan[ch].ADSRX.AttackModeExp)
       {
-       if(EnvelopeVol>=0x60000000)
-        disp = -0x18+32;
+       if(EnvelopeVol>=0x6000) {
+				EnvelopeVol+=RateTableAdd[s_chan[ch].ADSRX.AttackRate + 8];
+				EnvelopeVol_f += RateTableAdd_f[ s_chan[ch].ADSRX.AttackRate + 8];
+			 }
+			 else {
+				EnvelopeVol+=RateTableAdd[ s_chan[ch].ADSRX.AttackRate + 0];
+				EnvelopeVol_f += RateTableAdd_f[ s_chan[ch].ADSRX.AttackRate + 0];
+			 }
       }
-     EnvelopeVol+=RateTable[ch->ADSRX.AttackRate+disp];
+		 else {
+			EnvelopeVol+=RateTableAdd[ s_chan[ch].ADSRX.AttackRate + 0];
+			EnvelopeVol_f += RateTableAdd_f[ s_chan[ch].ADSRX.AttackRate + 0];
+		 }
 
-     if(EnvelopeVol<0) 
+		 if( EnvelopeVol_f >= RateTable_denom ) {
+			 EnvelopeVol_f -= RateTable_denom;
+			 EnvelopeVol++;
+		 }
+
+     if(EnvelopeVol>=0x8000) 
       {
-       EnvelopeVol=0x7FFFFFFF;
-       ch->ADSRX.State=1;
-      }
+       EnvelopeVol=0x7FFF;
+			 EnvelopeVol_f=RateTable_denom;
+       s_chan[ch].ADSRX.State=1;
+		 }
 
-     ch->ADSRX.EnvelopeVol=EnvelopeVol;
-     ch->ADSRX.lVolume=(EnvelopeVol>>=21);
-     return EnvelopeVol;
+		 s_chan[ch].ADSRX.EnvelopeVol=EnvelopeVol;
+		 s_chan[ch].ADSRX.EnvelopeVol_f=EnvelopeVol_f;
+		 s_chan[ch].ADSRX.lVolume=EnvelopeVol>>5;
+     return EnvelopeVol>>5;
     }
    //--------------------------------------------------//
-   if(ch->ADSRX.State==1)                       // -> decay
+   if(s_chan[ch].ADSRX.State==1)                       // -> decay
     {
-     disp = TableDisp[(EnvelopeVol>>28)&0x7];
-     EnvelopeVol-=RateTable[ch->ADSRX.DecayRate+disp];
+		 EnvelopeVol += ( RateTableSub[ s_chan[ch].ADSRX.DecayRate * 4 ] * EnvelopeVol ) >> 15;
+		 
+		 EnvelopeVol_f += RateTableSub_f[ s_chan[ch].ADSRX.DecayRate * 4 ];
+		 if( EnvelopeVol_f < 0 ) {
+			 EnvelopeVol_f += RateTable_denom;
+			 EnvelopeVol--;
+		 }
 
-     if(EnvelopeVol<0) EnvelopeVol=0;
-     if(EnvelopeVol <= ch->ADSRX.SustainLevel)
+     if(EnvelopeVol<0) {
+			 EnvelopeVol=0;
+			 EnvelopeVol_f=0;
+		 }
+
+		 // FF7 cursor - use Neill's 4-bit accuracy
+		 if( ((EnvelopeVol>>11)&0xf) <= s_chan[ch].ADSRX.SustainLevel)
       {
-       ch->ADSRX.State=2;
-      }
+       s_chan[ch].ADSRX.State=2;
+		 }
 
-     ch->ADSRX.EnvelopeVol=EnvelopeVol;
-     ch->ADSRX.lVolume=(EnvelopeVol>>=21);
-     return EnvelopeVol;
+
+		 s_chan[ch].ADSRX.EnvelopeVol=EnvelopeVol;
+		 s_chan[ch].ADSRX.EnvelopeVol_f=EnvelopeVol_f;
+		 s_chan[ch].ADSRX.lVolume=EnvelopeVol>>5;
+     return EnvelopeVol>>5;
     }
    //--------------------------------------------------//
-   if(ch->ADSRX.State==2)                       // -> sustain
+   if(s_chan[ch].ADSRX.State==2)                       // -> sustain
     {
-     if(ch->ADSRX.SustainIncrease)
+     if(s_chan[ch].ADSRX.SustainIncrease)
       {
-       disp = -0x10+32;
-       if(ch->ADSRX.SustainModeExp)
+       if(s_chan[ch].ADSRX.SustainModeExp)
         {
-         if(EnvelopeVol>=0x60000000) 
-          disp = -0x18+32;
-        }
-       EnvelopeVol+=RateTable[ch->ADSRX.SustainRate+disp];
+				 if(EnvelopeVol>=0x6000) {
+					EnvelopeVol+=RateTableAdd[ s_chan[ch].ADSRX.SustainRate + 8];
+					EnvelopeVol_f += RateTableAdd_f[ s_chan[ch].ADSRX.SustainRate + 8];
+				 }
+				 else {
+					EnvelopeVol+=RateTableAdd[ s_chan[ch].ADSRX.SustainRate + 0];
+					EnvelopeVol_f += RateTableAdd_f[ s_chan[ch].ADSRX.SustainRate + 0];
+				 }
+				}
+			 else {
+				EnvelopeVol+=RateTableAdd[ s_chan[ch].ADSRX.SustainRate + 0];
+				EnvelopeVol_f += RateTableAdd_f[ s_chan[ch].ADSRX.SustainRate + 0];
+			 }
 
-       if(EnvelopeVol<0) 
+			 if( EnvelopeVol_f >= RateTable_denom ) {
+				 EnvelopeVol_f -= RateTable_denom;
+				 EnvelopeVol++;
+			 }
+
+       if(EnvelopeVol >= 0x8000) 
         {
-         EnvelopeVol=0x7FFFFFFF;
+         EnvelopeVol=0x7FFF;
+				 EnvelopeVol_f=RateTable_denom;
         }
       }
      else
       {
-       if(ch->ADSRX.SustainModeExp)
-        {
-         disp = TableDisp[((EnvelopeVol>>28)&0x7)+8];
-        }
-       else
-        {
-         disp=-0x0F+32;
-        }
-       EnvelopeVol-=RateTable[ch->ADSRX.SustainRate+disp];
+       if(s_chan[ch].ADSRX.SustainModeExp)
+				EnvelopeVol += ( RateTableSub[ s_chan[ch].ADSRX.SustainRate ] * EnvelopeVol ) >> 15;
+			 else
+				EnvelopeVol += RateTableSub[ s_chan[ch].ADSRX.SustainRate ];
+			 
+			 EnvelopeVol_f += RateTableSub_f[ s_chan[ch].ADSRX.SustainRate ];
+			 if( EnvelopeVol_f < 0 ) {
+				 EnvelopeVol_f += RateTable_denom;
+				 EnvelopeVol--;
+			 }
 
-       if(EnvelopeVol<0) 
-        {
+
+       if(EnvelopeVol<0) {
          EnvelopeVol=0;
+				 EnvelopeVol_f=0;
         }
       }
-     ch->ADSRX.EnvelopeVol=EnvelopeVol;
-     ch->ADSRX.lVolume=(EnvelopeVol>>=21);
-     return EnvelopeVol;
+
+
+		 s_chan[ch].ADSRX.EnvelopeVol=EnvelopeVol;
+		 s_chan[ch].ADSRX.EnvelopeVol_f=EnvelopeVol_f;
+		 s_chan[ch].ADSRX.lVolume=EnvelopeVol>>5;
+     return EnvelopeVol>>5;
     }
   }
  return 0;
@@ -634,3 +760,4 @@ Logarithmic release mode:
 
 -----------------------------------------------------------------------------
 */
+

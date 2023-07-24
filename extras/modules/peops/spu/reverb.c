@@ -5,7 +5,6 @@
     copyright            : (C) 2002 by Pete Bernert
     email                : BlackDove@addcom.de
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -16,24 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
-//*************************************************************************//
-// History of changes:
-//
-// 2003/01/19 - Pete
-// - added Neill's reverb (see at the end of file)
-//
-// 2002/12/26 - Pete
-// - adjusted reverb handling
-//
-// 2002/08/14 - Pete
-// - added extra reverb
-//
-// 2002/05/15 - Pete
-// - generic cleanup for the Peops release
-//
-//*************************************************************************//
-
 #include "stdafx.h"
+#include "registers.h"
 
 #define _IN_REVERB
 
@@ -80,28 +63,28 @@ void SetREVERB(unsigned short val)
 // START REVERB
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void StartREVERB(SPUCHAN * pChannel)
+static INLINE void StartREVERB(int ch)
 {
- if(pChannel->bReverb && (spuCtrl&0x80))               // reverb possible?
+ if(s_chan[ch].bReverb && (spuCtrl&0x80))              // reverb possible?
   {
-   if(iUseReverb==2) pChannel->bRVBActive=1;
+   if(iUseReverb==2) s_chan[ch].bRVBActive=1;
    else
    if(iUseReverb==1 && iReverbOff>0)                   // -> fake reverb used?
     {
-     pChannel->bRVBActive=1;                           // -> activate it
-     pChannel->iRVBOffset=iReverbOff*45;
-     pChannel->iRVBRepeat=iReverbRepeat*45;
-     pChannel->iRVBNum   =iReverbNum;
+     s_chan[ch].bRVBActive=1;                            // -> activate it
+     s_chan[ch].iRVBOffset=iReverbOff*45;
+     s_chan[ch].iRVBRepeat=iReverbRepeat*45;
+     s_chan[ch].iRVBNum   =iReverbNum;
     }
   }
- else pChannel->bRVBActive=0;                          // else -> no reverb
+ else s_chan[ch].bRVBActive=0;                         // else -> no reverb
 }
 
 ////////////////////////////////////////////////////////////////////////
 // HELPER FOR NEILL'S REVERB: re-inits our reverb mixing buf
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void InitREVERB(void)
+static INLINE void InitREVERB(void)
 {
  if(iUseReverb==2)
   {memset(sRVBStart,0,NSSIZE*2*4);}
@@ -111,14 +94,32 @@ INLINE void InitREVERB(void)
 // STORE REVERB
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void StoreREVERB(SPUCHAN * pChannel,int ns)
+static INLINE void StoreREVERB_CD(int left, int right,int ns)
 {
  if(iUseReverb==0) return;
  else
  if(iUseReverb==2) // -------------------------------- // Neil's reverb
   {
-   const int iRxl=(pChannel->sval*pChannel->iLeftVolume)/0x4000;
-   const int iRxr=(pChannel->sval*pChannel->iRightVolume)/0x4000;
+   const int iRxl=left;
+   const int iRxr=right;
+
+   ns<<=1;
+
+   // -> we mix all active reverb channels into an extra buffer
+	 *(sRVBStart+ns)   += CLAMP16( *(sRVBStart+ns+0) + ( iRxl ) );
+   *(sRVBStart+ns+1) += CLAMP16( *(sRVBStart+ns+1) + ( iRxr ) );
+  }
+}
+ 
+
+static INLINE void StoreREVERB(int ch,int ns)
+{
+ if(iUseReverb==0) return;
+ else
+ if(iUseReverb==2) // -------------------------------- // Neil's reverb
+  {
+   const int iRxl=(s_chan[ch].sval*s_chan[ch].iLeftVolume)/0x4000;
+   const int iRxr=(s_chan[ch].sval*s_chan[ch].iRightVolume)/0x4000;
 
    ns<<=1;
 
@@ -131,12 +132,12 @@ INLINE void StoreREVERB(SPUCHAN * pChannel,int ns)
 
    // we use the half channel volume (/0x8000) for the first reverb effects, quarter for next and so on
 
-   int iRxl=(pChannel->sval*pChannel->iLeftVolume)/0x8000;
-   int iRxr=(pChannel->sval*pChannel->iRightVolume)/0x8000;
+   int iRxl=(s_chan[ch].sval*s_chan[ch].iLeftVolume)/0x8000;
+   int iRxr=(s_chan[ch].sval*s_chan[ch].iRightVolume)/0x8000;
  
-   for(iRn=1;iRn<=pChannel->iRVBNum;iRn++,iRr+=pChannel->iRVBRepeat,iRxl/=2,iRxr/=2)
+   for(iRn=1;iRn<=s_chan[ch].iRVBNum;iRn++,iRr+=s_chan[ch].iRVBRepeat,iRxl/=2,iRxr/=2)
     {
-     pN=sRVBPlay+((pChannel->iRVBOffset+iRr+ns)<<1);
+     pN=sRVBPlay+((s_chan[ch].iRVBOffset+iRr+ns)<<1);
      if(pN>=sRVBEnd) pN=sRVBStart+(pN-sRVBEnd);
 
      (*pN)+=iRxl;
@@ -148,9 +149,9 @@ INLINE void StoreREVERB(SPUCHAN * pChannel,int ns)
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE int g_buffer(int iOff)                          // get_buffer content helper: takes care about wraps
+static INLINE int g_buffer(int iOff)                          // get_buffer content helper: takes care about wraps
 {
- short * p=(short *)spuMemC;
+ short * p=(short *)spuMem;
  iOff=(iOff*4)+rvb.CurrAddr;
  while(iOff>0x3FFFF)       iOff=rvb.StartAddr+(iOff-0x40000);
  while(iOff<rvb.StartAddr) iOff=0x3ffff-(rvb.StartAddr-iOff);
@@ -159,9 +160,9 @@ INLINE int g_buffer(int iOff)                          // get_buffer content hel
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void s_buffer(int iOff,int iVal)                // set_buffer content helper: takes care about wraps and clipping
+static INLINE void s_buffer(int iOff,int iVal)                // set_buffer content helper: takes care about wraps and clipping
 {
- short * p=(short *)spuMemC;
+ short * p=(short *)spuMem;
  iOff=(iOff*4)+rvb.CurrAddr;
  while(iOff>0x3FFFF) iOff=rvb.StartAddr+(iOff-0x40000);
  while(iOff<rvb.StartAddr) iOff=0x3ffff-(rvb.StartAddr-iOff);
@@ -171,9 +172,9 @@ INLINE void s_buffer(int iOff,int iVal)                // set_buffer content hel
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE void s_buffer1(int iOff,int iVal)                // set_buffer (+1 sample) content helper: takes care about wraps and clipping
+static INLINE void s_buffer1(int iOff,int iVal)                // set_buffer (+1 sample) content helper: takes care about wraps and clipping
 {
- short * p=(short *)spuMemC;
+ short * p=(short *)spuMem;
  iOff=(iOff*4)+rvb.CurrAddr+1;
  while(iOff>0x3FFFF) iOff=rvb.StartAddr+(iOff-0x40000);
  while(iOff<rvb.StartAddr) iOff=0x3ffff-(rvb.StartAddr-iOff);
@@ -183,7 +184,7 @@ INLINE void s_buffer1(int iOff,int iVal)                // set_buffer (+1 sample
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE int MixREVERBLeft(int ns)
+static INLINE int MixREVERBLeft(int ns)
 {
  if(iUseReverb==0) return 0;
  else
@@ -259,8 +260,19 @@ INLINE int MixREVERBLeft(int ns)
       }
      else                                              // -> reverb off
       {
-       rvb.iLastRVBLeft=rvb.iLastRVBRight=rvb.iRVBLeft=rvb.iRVBRight=0;
+			 // Vib Ribbon - grab current reverb sample (cdda data)
+			 // - mono data
+
+			 rvb.iRVBLeft = (short) spuMem[ rvb.CurrAddr ];
+			 rvb.iRVBRight = rvb.iRVBLeft;
+			 rvb.iLastRVBLeft  = (rvb.iRVBLeft  * rvb.VolLeft)  / 0x4000;
+			 rvb.iLastRVBRight = (rvb.iRVBRight * rvb.VolRight) / 0x4000;
+
+			 //rvb.iLastRVBLeft=rvb.iLastRVBRight=rvb.iRVBLeft=rvb.iRVBRight=0;
       }
+
+
+		 Check_IRQ( rvb.CurrAddr*2, 0 );
 
      rvb.CurrAddr++;
      if(rvb.CurrAddr>0x3ffff) rvb.CurrAddr=rvb.StartAddr;
@@ -279,15 +291,22 @@ INLINE int MixREVERBLeft(int ns)
 
 ////////////////////////////////////////////////////////////////////////
 
-INLINE int MixREVERBRight(void)
+static INLINE int MixREVERBRight(void)
 {
  if(iUseReverb==0) return 0;
  else
  if(iUseReverb==2)                                     // Neill's reverb:
   {
-   int i=rvb.iLastRVBRight+(rvb.iRVBRight-rvb.iLastRVBRight)/2;
-   rvb.iLastRVBRight=rvb.iRVBRight;
-   return i;                                           // -> just return the last right reverb val (little bit scaled by the previous right val)
+	 // Vib Ribbon - reverb always on (!), reverb write flag
+   if(spuCtrl & CTRL_REVERB)                         // -> reverb on? oki
+	 {
+		 int i=rvb.iLastRVBRight+(rvb.iRVBRight-rvb.iLastRVBRight)/2;
+		 rvb.iLastRVBRight=rvb.iRVBRight;
+		 return i;                                           // -> just return the last right reverb val (little bit scaled by the previous right val)
+	 } else {
+		 // Vib Ribbon - return reverb buffer (cdda data)
+		 return CLAMP16(rvb.iLastRVBRight);
+	 }
   }
  else                                                  // easy fake reverb:
   {

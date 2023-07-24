@@ -5,7 +5,6 @@
     copyright            : (C) 2002 by Pete Bernert
     email                : BlackDove@addcom.de
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -15,14 +14,6 @@
  *   additional informations.                                              *
  *                                                                         *
  ***************************************************************************/
-
-//*************************************************************************//
-// History of changes:
-//
-// 2002/05/15 - Pete
-// - generic cleanup for the Peops release
-//
-//*************************************************************************//
 
 #define H_SPUReverbAddr  0x0da2
 #define H_SPUirqAddr     0x0da4
@@ -151,3 +142,44 @@
 #define H_SPU_ADSRLevel22  0x0d68
 #define H_SPU_ADSRLevel23  0x0d78
 
+
+
+
+#define CTRL_CD_PLAY						0x01
+#define CTRL_CD_REVERB					0x02
+#define CTRL_EXT_PLAY						0x04
+#define CTRL_EXT_REVERB					0x08
+
+#define CTRL_DMA_F							0x30
+#define CTRL_DMA_R							0x30
+#define CTRL_DMA_W							0x20
+#define CTRL_DMA_NON						0x10
+#define CTRL_DMA_OFF						0x00
+
+#define CTRL_IRQ								0x40
+#define CTRL_REVERB							0x80
+#define CTRL_NOISE							0x3f00
+#define CTRL_MUTE								0x4000
+#define CTRL_ON									0x8000
+
+
+
+
+#define STAT_CD_PLAY						0x01
+#define STAT_CD_REVERB					0x02
+#define STAT_EXT_PLAY						0x04
+#define STAT_EXT_REVERB					0x08
+
+#define STAT_DMA_F							0x10
+#define STAT_DMA_OFF						0x00
+#define STAT_DMA_NON						0x10
+#define STAT_DMA_W							(0x200 | 0x80 | 0x20)
+#define STAT_DMA_R							(0x100 | 0x80 | 0x20 | 0x10)
+
+#define STAT_IRQ								0x40
+#define STAT_DATA_BUSY					0x80
+#define STAT_DECODED						0x800
+
+
+
+extern int Check_IRQ( int addr, int force );
