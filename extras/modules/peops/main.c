@@ -26,10 +26,9 @@
 PSP_MODULE_INFO("peops", 0x0007, 1, 0);
 
 PeopsConfig config = {
-	.enablepeopsspu = 1,
 	.volume = 3,
-	.reverb = 0,
-	.interpolation = 2,
+	.reverb = REVERB_OFF,
+	.interpolation = INTERPOLATION_GAUSS,
 	.enablexaplaying = 1,
 	.changexapitch = 0,
 	.spuirqwait = 1,
@@ -50,15 +49,15 @@ void SPUwait()
 {
 	switch(config.spuupdatemode)
 	{
-		case 0:
+		case SPU_WAITVBLANK:
 			sceDisplayWaitVblankStart();
 			break;
 
-		case 1:
+		case SPU_DELAY2:
 			sceKernelDelayThread(2 * 1000);
 			break;
 
-		case 2:
+		case SPU_DELAY20:
 			sceKernelDelayThread(20 * 1000);
 			break;
 	}

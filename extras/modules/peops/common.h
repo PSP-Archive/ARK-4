@@ -33,6 +33,12 @@ enum ReverbType{
 	REVERB_HALF_ECHO = 0x0017,
 };
 
+enum InterpolationType{
+	INTERPOLATION_OFF,
+	INTERPOLATION_SIMPLE,
+	INTERPOLATION_GAUSS,
+};
+
 enum SPU_UpdateMode{
 	SPU_WAITVBLANK = 0,
 	SPU_DELAY2 = 1,
@@ -50,7 +56,6 @@ enum SPU_Priorities{
 typedef struct
 {
 	/* PEOPS SPU configuration */
-	int enablepeopsspu;
 	int volume;
 	int reverb;
 	int interpolation;
