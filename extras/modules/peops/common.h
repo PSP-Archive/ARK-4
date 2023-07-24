@@ -59,7 +59,6 @@ typedef struct
 	int volume;
 	int reverb;
 	int interpolation;
-	int enablexaplaying;
 	int changexapitch;
 	int spuirqwait;
 	int spuupdatemode;

@@ -29,7 +29,6 @@ PeopsConfig config = {
 	.volume = 3,
 	.reverb = REVERB_OFF,
 	.interpolation = INTERPOLATION_GAUSS,
-	.enablexaplaying = 1,
 	.changexapitch = 0,
 	.spuirqwait = 1,
 	.spuupdatemode = SPU_WAITVBLANK,
