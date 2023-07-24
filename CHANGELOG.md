@@ -1,5 +1,10 @@
 # ARK Changelog
 
+## Version 4.20.61 (2023-07-06):
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42061
+- You can now play `PS1` games on `PS Vita Standalone` installations. Uses the original `Pops` from `PSP` and the `Peops SPU` plugin. 
+- Several small fixes and improvements.
+
 ## Version 4.20.60 (2023-07-06):
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42060
 - (Rev 6) Fixed issue where launcher would not load. Refactor of plugins code in core CFW module.
