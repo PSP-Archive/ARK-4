@@ -1204,7 +1204,6 @@ long SPUopen(void)
 {
  if(bSPUIsOpen) return 0;                              // security for some stupid main emus
 
- iVolume=3;
  iReverbOff=-1;   
  bEndThread=0;
  memset((void *)s_chan,0,(MAXCHAN+1)*sizeof(SPUCHAN));
