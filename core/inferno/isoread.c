@@ -124,21 +124,8 @@ static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len,
 // 0x00000368
 static void wait_until_ms0_ready(void)
 {
-    int ret, status = 0, bootfrom;
-    const char *drvname;
-
-    drvname = "mscmhc0:";
-
-    bootfrom = sceKernelBootFrom();
-    #ifdef DEBUG
-    printk("%s: bootfrom: 0x%08X\n", __func__, bootfrom);
-    #endif
-    if(bootfrom == 0x50) {
-        drvname = "mscmhcemu0:";
-    } else {
-        // vsh mode?
-        return;
-    }
+    int ret, status = 0;
+    const char *drvname = (sceKernelBootFrom()==0x50)? "mscmhcemu0:" : "mscmhc0:";
 
     while( 1 ) {
         ret = sceIoDevctl(drvname, 0x02025801, 0, 0, &status, sizeof(status));

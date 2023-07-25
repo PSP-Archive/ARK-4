@@ -138,6 +138,8 @@ u32 loadCoreModuleStartCommon(u32 module_start){
     u32 decrypt_call = JAL(SonyPRXDecrypt);
     u32 check_call = JAL(origCheckExecFile);
 
+    int devkit_patched = 0;
+
     // Hook Signcheck Function Calls
     for (u32 addr = text_addr; addr<top_addr; addr+=4){
         u32 data = _lw(addr);
@@ -147,9 +149,12 @@ u32 loadCoreModuleStartCommon(u32 module_start){
         else if (data == check_call){
             _sw(JAL(CheckExecFilePatched), addr);
         }
-        else if (data == 0x26E50028){
+        else if (!devkit_patched && data == 0x24040015){
             // Don't break on unresolved syscalls
-            _sw(0x00001021, addr-20);
+            u32 a = addr;
+            do { a-=4; } while (_lw(a) != 0x27BD0030);
+            _sw(0x00001021, a+4);
+            devkit_patched = 1;
         }
     }
 
