@@ -6,6 +6,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <kubridge.h>
@@ -17,6 +18,7 @@ PSP_HEAP_SIZE_KB(4096);
 
 #define BUF_SIZE 16*1024
 #define KERNELIFY(a) ((u32)a|0x80000000)
+#define DEFAULT_THEME_SIZE 614050
 
 typedef struct
 {
@@ -217,7 +219,41 @@ void extractArchive(int fdr, char* dest_path, int (*filter)(char*)){
             if (filter(filename)){ // check if file is not needed on PSP
                 sceIoLseek32(fdr, filesize, PSP_SEEK_CUR); // skip file
             }
+
+			else if(strstr(filename, "THEME.ARK") != NULL) {
+					int size;
+					SceUID theme;
+
+					char fullpath[ARK_PATH_SIZE+10];
+
+					strcpy(fullpath, filepath);
+					strcat(fullpath, filename);
+
+					theme = sceIoOpen(fullpath, PSP_O_RDONLY, 0777);
+
+					if (theme < 0) {
+						goto _else;
+					}
+
+					else{
+
+						size = sceIoLseek32(theme, sizeof(theme), PSP_SEEK_END);
+						sceIoClose(theme);
+					}
+
+
+					if (size != DEFAULT_THEME_SIZE) { // Size of default THEME (hack for now, md5/sha was not working)
+                		sceIoLseek32(fdr, filesize, PSP_SEEK_CUR); // skip file
+					}
+					else {
+						goto _else;
+					}
+					
+					
+			}
+
             else{
+				_else:
                 strcat(filepath, (filename[0]=='/')?filename+1:filename);
                 pspDebugScreenPrintf("Extracting file %s\n", filepath);
                 int fdw = sceIoOpen(filepath, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
@@ -227,6 +263,7 @@ void extractArchive(int fdr, char* dest_path, int (*filter)(char*)){
                     while(1){};
                     return;
                 }
+				
                 while (filesize>0){
                     int read = sceIoRead(fdr, buf, (filesize>BUF_SIZE)?BUF_SIZE:filesize);
                     sceIoWrite(fdw, buf, read);
