@@ -25,9 +25,6 @@
 
 PSP_MODULE_INFO("peops", 0x0007, 1, 0);
 
-int spuupdatemode = SPU_WAITVBLANK;
-int sputhreadpriority = SPU_PRIORITY_VERY_LOW;
-
 void (*previous)(void*);
 
 void (* spuWriteRegister)(int reg, int val, int type);
@@ -39,20 +36,7 @@ xa_decode_t cdr_xa;
 
 void SPUwait()
 {
-	switch(spuupdatemode)
-	{
-		case SPU_WAITVBLANK:
-			sceDisplayWaitVblankStart();
-			break;
-
-		case SPU_DELAY2:
-			sceKernelDelayThread(2 * 1000);
-			break;
-
-		case SPU_DELAY20:
-			sceKernelDelayThread(20 * 1000);
-			break;
-	}
+	sceKernelDelayThread(SPU_DELAY);
 }
 
 int spu_thread(SceSize args, void *argp)
@@ -71,9 +55,7 @@ void sceMeAudioInitPatched(int (* function)(), void *stack)
 	SPUinit();
 	SPUopen();
 
-	static int priorities[] = { 17, 24, 32, 40, 48 };
-
-	SceUID thid = sceKernelCreateThread("spu_thread", spu_thread, priorities[sputhreadpriority % (sizeof(priorities) / sizeof(int))], 0x4000, 0, NULL);
+	SceUID thid = sceKernelCreateThread("spu_thread", spu_thread, SPU_PRIORITY_VERY_HIGH, 0x4000, 0, NULL);
 	if(thid >= 0) sceKernelStartThread(thid, 0, NULL);
 }
 
