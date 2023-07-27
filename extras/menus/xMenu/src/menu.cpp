@@ -201,7 +201,7 @@ void Menu::moveDown(){
         if (this->start+4 < eboots.size())
             this->start++;
     }
-    else if (this->index+1 <= eboots.size())
+    else if (this->index+1 < eboots.size())
         this->index++;
     updateTextAnim();
 }
