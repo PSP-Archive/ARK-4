@@ -15,6 +15,7 @@ SEConfig* se_config = &_se_conf;
 string ark_version;
 
 static std::string toggle = "Triangle -> Options Menu";
+	
 
 Menu::Menu(){
 
@@ -160,6 +161,7 @@ void Menu::draw(){
     // draw help text
 	common::printText(475-8*toggle.length(), 2, toggle.c_str());
 
+
     // draw scrollbar
     {
         int height = 230/eboots.size();
@@ -192,12 +194,14 @@ void Menu::moveDown(){
     if (this->index == eboots.size())
         return;
     else if (this->index-this->start == 2){
-        if (this->index+1 < eboots.size()-1)
+        if (this->index+1 <= eboots.size()-1) {
             this->index++;
+            this->start++;
+		}
         if (this->start+4 < eboots.size())
             this->start++;
     }
-    else if (this->index+1 < eboots.size())
+    else if (this->index+1 <= eboots.size())
         this->index++;
     updateTextAnim();
 }
