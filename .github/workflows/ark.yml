@@ -97,6 +97,8 @@ jobs:
               ARK-4-${{ steps.get_version.outputs.VERSION }}-DEBUG.zip
               ARK-4-${{ steps.get_version.outputs.VERSION }}-DEBUG.tar.gz
 
-      - name: Update Server
+      - name: Update Test Server
         # Please don't abuse this or I will have to revert back to the orginal way.
-        run:  curl http://ark-4.ddns.net/automagic/?update_test=1
+        run:  curl http://ark-4.ddns.net/automagic?update_test=1
+      # - name: Update Stable Server
+      # run: curl http://ark-4.ddns.net/automagic?update=1
