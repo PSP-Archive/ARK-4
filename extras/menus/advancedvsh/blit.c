@@ -82,13 +82,13 @@ void blit_set_color(int fg_col,int bg_col) {
 }
 
 
-int blit_string(int sx,int sy,const char *msg) {
-	int x,y,p;
-	int offset;
+int blit_string(int sx, int sy, const char *msg) {
+	int x, y, p;
+	int offset, vram_offset, bitmap_offset;
 	u8 code, data;
-	u32 fg_col,bg_col;
+	u32 fg_col, bg_col;
 
-	u32 col,c1,c2;
+	u32 col, c1, c2;
 	u32 alpha;
 
 	fg_col = adjust_alpha(gfx.fg_color);
@@ -97,33 +97,47 @@ int blit_string(int sx,int sy,const char *msg) {
 	font_Data *font = (font_Data*)font_data_pointer();
 
 
-//Kprintf("MODE %d WIDTH %d\n",pixelformat,bufferwidth);
 	if ((gfx.bufferwidth == 0) || (gfx.pixelformat != 3))
 		return -1;
+	
+	int max_string_width = (gfx.width / font->width);
+	u32 *pixel = NULL;
+	
 
-	for (x = 0; msg[x] && x < (gfx.width / font->width); x++) {
+	for (x = 0; msg[x] && x < max_string_width; x++) {
 		code = (u8)msg[x]; // no truncate now
-
+		bitmap_offset = code * font->width;
+		
+		// reset to start position
+		vram_offset = sy * gfx.bufferwidth + sx;
+		// move in the x direction
+		vram_offset += x * font->width;
+		
 		for (y = 0; y < font->height; y++) {
-			offset = (sy + y) * gfx.bufferwidth + sx + x * font->width;
-			data = y >= 7 ? 0x00 : font->bitmap[code * font->width + y];
+			data = font->bitmap[bitmap_offset + y];
+			if (y >= 7)
+				data = 0;
+			
+			pixel = &gfx.vram32[vram_offset];
 			for (p = 0; p < font->height; p++) {
 				col = (data & 0x80) ? fg_col : bg_col;
 				alpha = col >> 24;
 				if (alpha == 0) 
-					gfx.vram32[offset] = col;
+					(*pixel) = col;
 				else if (alpha != 0xff) {
-					c2 = gfx.vram32[offset];
+					c2 = (*pixel);
 					c1 = c2 & 0x00ff00ff;
 					c2 = c2 & 0x0000ff00;
 					c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
 					c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
-					gfx.vram32[offset] = (col & 0xffffff) + c1 + c2;
+					(*pixel) = (col & 0xffffff) + c1 + c2;
 				}
 
 				data <<= 1;
-				offset++;
+				pixel++;
 			}
+			// move in the y direction
+			vram_offset += gfx.bufferwidth;
 		}
 	}
 	return sx + x * font->width;
@@ -137,27 +151,33 @@ int blit_string_ctr(int sy,const char *msg) {
 
 void blit_rect_fill(int sx, int sy, int w, int h) {
 	int x, y;
-	u32 col, c1, c2;
-	u32 bg_col;
-	u32 offset, alpha;
-	bg_col = adjust_alpha(gfx.bg_color);
+	u32 col, c1, c2, alpha;
+	u32 *pixel;
 	
-	for (y = 0; y < h; y++){
-		for (x = 0; x < w; x++){
-			col = bg_col;
-			alpha = col >> 24;
-			offset = (sy + y) * gfx.bufferwidth + (sx + x);
+	col = adjust_alpha(gfx.bg_color);
+	alpha = col >> 24;
+	
+	// set start position
+	pixel = &gfx.vram32[sy * gfx.bufferwidth + sx];
+	
+	for (y = 0; y < h; y++) {
+		for (x = 0; x < w; x++) {
 			if(alpha == 0)
-				gfx.vram32[offset] = col;
+				(*pixel) = col;
 			else if (alpha != 0xff) {
-				c2 = gfx.vram32[offset];
+				c2 = (*pixel);
 				c1 = c2 & 0x00ff00ff;
 				c2 = c2 & 0x0000ff00;
 				c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
 				c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
-				gfx.vram32[offset] = (col & 0xffffff) + c1 + c2;
+				(*pixel) = (col & 0xffffff) + c1 + c2;
 			}
+			pixel++;
 		}
+		// go back to start position on the x-axis
+		pixel -= w;
+		// increase y position
+		pixel += gfx.bufferwidth;
 	}
 }
 
