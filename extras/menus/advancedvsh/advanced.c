@@ -12,6 +12,7 @@
 #include "advanced.h"
 #include "blit.h"
 #include "color.h"
+#include "config.h"
 
 
 extern char umd_path[72];

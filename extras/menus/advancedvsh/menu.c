@@ -31,6 +31,7 @@
 #include "fonts.h"
 #include "blit.h"
 #include "color.h"
+#include "config.h"
 
 
 const char **g_messages = g_messages_en;
