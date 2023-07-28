@@ -18,8 +18,8 @@ int scePaf_strchr(const char *str, int character);
 int scePaf_strrchr(char *str, int character);
 int scePaf_strpbrk(char *str1, const char *str2);
 int scePaf_strtoul(const char *str, char **endptr, int base);
-// scePaf_strstr
-// scePaf_strcat
+// scePaf_strstr?
+// scePaf_strcat?
 
 
 #endif

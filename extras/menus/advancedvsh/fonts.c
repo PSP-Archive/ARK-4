@@ -1,9 +1,24 @@
 #include "fonts.h"
 
-#include <psputility.h>
+#include <string.h>
+
+#include "scepaf.h"
 
 
-char* g_available_fonts[] = {
+extern unsigned char msx[];
+
+font_Data font = {
+	.bitmap = (u8*)msx,
+	.mem_id = -1,
+	.width = FONT_WIDTH,
+	.height = FONT_HEIGHT
+};
+
+
+extern SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath);
+
+
+char* available_fonts[] = {
 	"8X8!FONT.pf",
 	"8X8#FONT.pf",
 	"8X8@FONT.pf",
@@ -62,14 +77,18 @@ char* g_available_fonts[] = {
 };
 
 char** font_list(void) {
-	return (char**)g_available_fonts;
+	return (char**)available_fonts;
+}
+
+font_Data* font_data_pointer(void) {
+	return (font_Data*)&font;
 }
 
 int font_load(vsh_Menu *vsh) {
 	// if a font is needed (ie not 0)
 	if (vsh->config.ark_menu.vsh_font) {
 		// load external font
-		load_external_font(g_available_fonts[vsh->config.ark_menu.vsh_font - 1]);
+		load_external_font(available_fonts[vsh->config.ark_menu.vsh_font - 1]);
 		return 0;
 	}
 	
@@ -86,14 +105,78 @@ int font_load(vsh_Menu *vsh) {
 			load_external_font("RUSSIAN.pf");
 			vsh->config.ark_menu.vsh_font = 48;
 			break;
+		/*
 		// use CP881 font for French
 		case PSP_SYSTEMPARAM_LANGUAGE_FRENCH:
 			load_external_font("CP881.pf");
 			vsh->config.ark_menu.vsh_font = 32;
 			break;
+		*/
 		default:
 			break;
 	}
 
 	return 0;
+}
+
+
+int load_external_font(const char *file) {
+	SceUID fd;
+	int ret;
+	void *buf;
+	
+	vsh_Menu *vsh = vsh_menu_pointer();
+
+	if (file == NULL || file[0] == 0) return -1;
+
+	static char pkgpath[ARK_PATH_SIZE];
+	scePaf_strcpy(pkgpath, vsh->config.p_ark->arkpath);
+	strcat(pkgpath, "LANG.ARK");
+
+	SceOff offset = findPkgOffset(file, NULL, pkgpath);
+
+	if (offset == 0) return -1;
+
+	fd = sceIoOpen(pkgpath, PSP_O_RDONLY, 0777);
+
+	if(fd < 0) {
+		return fd;
+	}
+
+	font.mem_id = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, 2048, NULL);
+
+	if(font.mem_id < 0) {
+		sceIoClose(fd);
+		return font.mem_id;
+	}
+
+	buf = sceKernelGetBlockHeadAddr(font.mem_id);
+
+	if(buf == NULL) {
+		sceKernelFreePartitionMemory(font.mem_id);
+		sceIoClose(fd);
+		return -2;
+	}
+
+	sceIoLseek(fd, offset, PSP_SEEK_SET);
+	ret = sceIoRead(fd, buf, 2048);
+
+	if(ret != 2048) {
+		sceKernelFreePartitionMemory(font.mem_id);
+		sceIoClose(fd);
+		return -3;
+	}
+
+	sceIoClose(fd);
+	font.bitmap = (u8*)buf;
+	return 0;
+}
+
+void release_font(void) {
+	if (font.mem_id >= 0) {
+		sceKernelFreePartitionMemory(font.mem_id);
+		font.mem_id = -1;
+	}
+
+	font.bitmap = msx;
 }

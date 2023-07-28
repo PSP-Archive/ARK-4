@@ -6,24 +6,19 @@
 #include "scepaf.h"
 #include "vsh.h"
 
-// extern u32 cur_buttons;
-// extern u32 button_on;
-// extern SceCtrlData ctrl_pad;
-
-
-extern vsh_Menu *g_vsh_menu;
-
 
 int ui_eat_key(SceCtrlData *pad_data, int count) {
 	int i;
 	u32 old_buttons;
+	
+	vsh_Menu *vsh = vsh_menu_pointer();
 
 	// copy old value of buttons
-	old_buttons = g_vsh_menu->buttons.pad.Buttons;
+	old_buttons = vsh->buttons.pad.Buttons;
 	// copy new value
-	scePaf_memcpy(&g_vsh_menu->buttons.pad, pad_data, sizeof(SceCtrlData));
+	scePaf_memcpy(&vsh->buttons.pad, pad_data, sizeof(SceCtrlData));
 	// get only the new buttons pressed (compared to old value)
-	g_vsh_menu->buttons.new_buttons_on = ~old_buttons & g_vsh_menu->buttons.pad.Buttons;
+	vsh->buttons.new_buttons_on = ~old_buttons & vsh->buttons.pad.Buttons;
 
 	// mask buttons for LOCK VSH controll
 	for(i = 0; i < count; i++) {

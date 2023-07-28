@@ -18,225 +18,171 @@
 /*
 	PSP VSH 24bpp text bliter
 */
+#include "blit.h"
+
+#include <pspdisplay.h>
+
 #include "common.h"
-
 #include "vsh.h"
-
-//#define ALPHA_BLEND 1
-
-extern unsigned char msx[];
-static unsigned char *g_cur_font = msx;
-
-// extern ARKConfig* ark_config;
-
-extern vsh_Menu *g_vsh_menu;
-
-extern SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath);
-
-static SceUID g_memid = -1;
+#include "scepaf.h"
+#include "fonts.h"
 
 
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-int pwidth;
-int pheight, bufferwidth, pixelformat;
-unsigned int* vram32;
+blit_Gfx gfx = {
+	.vram32 = NULL,
+	.fg_color = 0x00ffffff,
+	.bg_color = 0xff000000,
+	.width = 0,
+	.height = 0,
+	.bufferwidth = 0,
+	.pixelformat = 0
+};
 
-u32 fcolor = 0x00ffffff;
-u32 bcolor = 0xff000000;
 
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-static u32 adjust_alpha(u32 col)
-{
-	u32 alpha = col>>24;
+static u32 adjust_alpha(u32 col) {
+	u32 c1, c2;
+	u32 alpha = col >> 24;
 	u8 mul;
-	u32 c1,c2;
 
-	if(alpha==0)	return col;
-	if(alpha==0xff) return col;
+	if (alpha == 0)	
+		return col;
+	if (alpha == 0xff) 
+		return col;
 
 	c1 = col & 0x00ff00ff;
 	c2 = col & 0x0000ff00;
-	mul = (u8)(255-alpha);
-	c1 = ((c1*mul)>>8)&0x00ff00ff;
-	c2 = ((c2*mul)>>8)&0x0000ff00;
-	return (alpha<<24)|c1|c2;
+	mul = (u8)(255 - alpha);
+	c1 = ((c1*mul) >> 8) & 0x00ff00ff;
+	c2 = ((c2*mul) >> 8) & 0x0000ff00;
+	return (alpha << 24) | c1 | c2;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-//int blit_setup(int sx,int sy,const char *msg,int fg_col,int bg_col)
-int blit_setup(void)
-{
+
+blit_Gfx* blit_gfx_pointer(void) {
+	return (blit_Gfx*)&gfx;
+}
+
+
+int blit_setup(void) {
 	int unk;
-	sceDisplayGetMode(&unk, &pwidth, &pheight);
-	sceDisplayGetFrameBuf((void*)&vram32, &bufferwidth, &pixelformat, PSP_DISPLAY_SETBUF_NEXTFRAME);
-	if( (bufferwidth==0) || (pixelformat!=3)) 
+	sceDisplayGetMode(&unk, &gfx.width, &gfx.height);
+	sceDisplayGetFrameBuf((void*)&gfx.vram32, &gfx.bufferwidth, &gfx.pixelformat, PSP_DISPLAY_SETBUF_NEXTFRAME);
+	if ((gfx.bufferwidth == 0) || (gfx.pixelformat != 3)) 
 		return -1;
 
-	fcolor = 0x00ffffff;
-	bcolor = 0xff000000;
-
+	gfx.fg_color = 0x00ffffff;
+	gfx.bg_color = 0xff000000;
 	return 0;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// blit text
-/////////////////////////////////////////////////////////////////////////////
-void blit_set_color(int fg_col,int bg_col)
-{
-	fcolor = fg_col;
-	bcolor = bg_col;
+
+void blit_set_color(int fg_col,int bg_col) {
+	gfx.fg_color = fg_col;
+	gfx.bg_color = bg_col;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// blit text
-/////////////////////////////////////////////////////////////////////////////
-int blit_string(int sx,int sy,const char *msg)
-{
-	int x,y,p;
-	int offset;
-	u8 code, font;
-	u32 fg_col,bg_col;
 
-	u32 col,c1,c2;
+int blit_string(int sx, int sy, const char *msg) {
+	int x, y, p;
+	int offset, vram_offset, bitmap_offset;
+	u8 code, data;
+	u32 fg_col, bg_col;
+
+	u32 col, c1, c2;
 	u32 alpha;
 
-	fg_col = adjust_alpha(fcolor);
-	bg_col = adjust_alpha(bcolor);
+	fg_col = adjust_alpha(gfx.fg_color);
+	bg_col = adjust_alpha(gfx.bg_color);
+	
+	font_Data *font = (font_Data*)font_data_pointer();
 
 
-//Kprintf("MODE %d WIDTH %d\n",pixelformat,bufferwidth);
-	if ((bufferwidth==0) || (pixelformat!=3))
+	if ((gfx.bufferwidth == 0) || (gfx.pixelformat != 3))
 		return -1;
+	
+	int max_string_width = (gfx.width / font->width);
+	u32 *pixel = NULL;
+	
 
-	for (x = 0; msg[x] && x < (pwidth / 8); x++) {
+	for (x = 0; msg[x] && x < max_string_width; x++) {
 		code = (u8)msg[x]; // no truncate now
-
-		for (y = 0; y < 8; y++) {
-			offset = (sy + y) * bufferwidth + sx + x * 8;
-			font = y>=7 ? 0x00 : g_cur_font[code * 8 + y];
-			for (p = 0; p < 8; p++){
-				col = (font & 0x80) ? fg_col : bg_col;
-				alpha = col>>24;
+		bitmap_offset = code * font->width;
+		
+		// reset to start position
+		vram_offset = sy * gfx.bufferwidth + sx;
+		// move in the x direction
+		vram_offset += x * font->width;
+		
+		for (y = 0; y < font->height; y++) {
+			data = font->bitmap[bitmap_offset + y];
+			if (y >= 7)
+				data = 0;
+			
+			pixel = &gfx.vram32[vram_offset];
+			for (p = 0; p < font->height; p++) {
+				col = (data & 0x80) ? fg_col : bg_col;
+				alpha = col >> 24;
 				if (alpha == 0) 
-					vram32[offset] = col;
+					(*pixel) = col;
 				else if (alpha != 0xff) {
-					c2 = vram32[offset];
+					c2 = (*pixel);
 					c1 = c2 & 0x00ff00ff;
 					c2 = c2 & 0x0000ff00;
-					c1 = ((c1*alpha)>>8)&0x00ff00ff;
-					c2 = ((c2*alpha)>>8)&0x0000ff00;
-					vram32[offset] = (col&0xffffff) + c1 + c2;
+					c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
+					c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
+					(*pixel) = (col & 0xffffff) + c1 + c2;
 				}
 
-				font <<= 1;
-				offset++;
+				data <<= 1;
+				pixel++;
 			}
+			// move in the y direction
+			vram_offset += gfx.bufferwidth;
 		}
 	}
-	return sx + x * 8;
+	return sx + x * font->width;
 }
 
 int blit_string_ctr(int sy,const char *msg) {
-	int sx;
-	sx = (pwidth - scePaf_strlen(msg)*8)/2;
-	return blit_string(sx, sy, msg);
+	font_Data *font = (font_Data*)font_data_pointer();
+	return blit_string((gfx.width - scePaf_strlen(msg) * font->width) / 2, sy, msg);
 }
 
 
-void blit_rect_fill(int sx, int sy, int w, int h){
+void blit_rect_fill(int sx, int sy, int w, int h) {
 	int x, y;
-	u32 col, c1, c2;
-	u32 bg_col;
-	u32 offset, alpha;
-	bg_col = adjust_alpha(bcolor);
+	u32 col, c1, c2, alpha;
+	u32 *pixel;
 	
-	for (y = 0; y < h; y++){
-		for (x = 0; x < w; x++){
-			col = bg_col;
-			alpha = col >> 24;
-			offset = (sy + y) * bufferwidth + (sx + x);
+	col = adjust_alpha(gfx.bg_color);
+	alpha = col >> 24;
+	
+	// set start position
+	pixel = &gfx.vram32[sy * gfx.bufferwidth + sx];
+	
+	for (y = 0; y < h; y++) {
+		for (x = 0; x < w; x++) {
 			if(alpha == 0)
-				vram32[offset] = col;
+				(*pixel) = col;
 			else if (alpha != 0xff) {
-				c2 = vram32[offset];
+				c2 = (*pixel);
 				c1 = c2 & 0x00ff00ff;
 				c2 = c2 & 0x0000ff00;
 				c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
 				c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
-				vram32[offset] = (col & 0xffffff) + c1 + c2;
+				(*pixel) = (col & 0xffffff) + c1 + c2;
 			}
+			pixel++;
 		}
+		// go back to start position on the x-axis
+		pixel -= w;
+		// increase y position
+		pixel += gfx.bufferwidth;
 	}
-}
-
-
-int load_external_font(const char *file)
-{
-	SceUID fd;
-	int ret;
-	void *buf;
-
-	if (file == NULL || file[0] == 0) return -1;
-
-	static char pkgpath[ARK_PATH_SIZE];
-	scePaf_strcpy(pkgpath, g_vsh_menu->config.p_ark->arkpath);
-	strcat(pkgpath, "LANG.ARK");
-
-	SceOff offset = findPkgOffset(file, NULL, pkgpath);
-
-	if (offset == 0) return -1;
-
-	fd = sceIoOpen(pkgpath, PSP_O_RDONLY, 0777);
-
-	if(fd < 0) {
-		return fd;
-	}
-
-	g_memid = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, 2048, NULL);
-
-	if(g_memid < 0) {
-		sceIoClose(fd);
-		return g_memid;
-	}
-
-	buf = sceKernelGetBlockHeadAddr(g_memid);
-
-	if(buf == NULL) {
-		sceKernelFreePartitionMemory(g_memid);
-		sceIoClose(fd);
-		return -2;
-	}
-
-	sceIoLseek(fd, offset, PSP_SEEK_SET);
-	ret = sceIoRead(fd, buf, 2048);
-
-	if(ret != 2048) {
-		sceKernelFreePartitionMemory(g_memid);
-		sceIoClose(fd);
-		return -3;
-	}
-
-	sceIoClose(fd);
-	g_cur_font = buf;
-
-	return 0;
-}
-
-void release_font(void)
-{
-	if(g_memid >= 0) {
-		sceKernelFreePartitionMemory(g_memid);
-		g_memid = -1;
-	}
-
-	g_cur_font = msx;
 }
 
 // Returns size of string in pixels
 int blit_get_string_width(char *msg) {
-	#define _FONT_WIDTH 8
-	return scePaf_strlen(msg) * _FONT_WIDTH;
+	font_Data *font = (font_Data*)font_data_pointer();
+	return scePaf_strlen(msg) * font->width;
 }

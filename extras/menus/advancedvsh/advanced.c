@@ -1,15 +1,21 @@
 #include "common.h"
 #include <psputility.h>
+#include <pspctrl.h>
 #include <time.h>
 
 #include "systemctrl.h"
 #include "clock.h"
 
 #include "vsh.h"
+#include "ui.h"
+#include "scepaf.h"
 #include "fonts.h"
 #include "advanced.h"
+#include "blit.h"
+#include "color.h"
+#include "config.h"
 
-extern int pwidth;
+
 extern char umd_path[72];
 
 extern char device_buf[13];
@@ -17,9 +23,8 @@ extern char umdvideo_path[256];
 
 extern int xyPoint[];
 extern int xyPoint2[];
-extern u32 colors[];
 
-extern vsh_Menu *g_vsh_menu;
+
 int sub_stop_stock = 0;
 
 
@@ -33,12 +38,17 @@ int submenu_draw(void) {
 	int submax_menu, subcur_menu;
 	const int *pointer;
 	u32 fc, bc;
+	
+	vsh_Menu *vsh = vsh_menu_pointer();
+	blit_Gfx *gfx = blit_gfx_pointer();
+	font_Data *font = font_data_pointer();
+	u32 *colors = (u32*)color_data_pointer();
 
 	// check & setup video mode
 	if (blit_setup() < 0) 
 		return -1;
 	
-	if (pwidth == 720)
+	if (gfx->width == 720)
 		pointer = xyPoint;
 	else
 		pointer = xyPoint2;
@@ -47,7 +57,7 @@ int submenu_draw(void) {
 	blit_set_color(0xFFFFFF,0x8000FF00);
 	scePaf_snprintf(msg, 128, " %s ", g_messages[MSG_ADVANCED_VSH]);
 	blit_string_ctr(pointer[1], msg);
-	blit_string_ctr(55, g_vsh_menu->ark_version);
+	blit_string_ctr(55, vsh->ark_version);
 	fc = 0xFFFFFF;
 	
 	int submenu_start_x, submenu_start_y;
@@ -63,25 +73,25 @@ int submenu_draw(void) {
 	window_char = width + submenu_find_longest_string() + 3;
 	if (window_char & 0x1)
 		window_char++;
-	window_pixel = window_char * 8;
+	window_pixel = window_char * font->width;
 	// submenu width + leading & trailing space + subitem space + subitem width
-	submenu_start_x = (pwidth - window_pixel) / 2;
-	submenu_start_y = pointer[5] * 8;
+	submenu_start_x = (gfx->width - window_pixel) / 2;
+	submenu_start_y = pointer[5] * font->height;
 
 	for (submax_menu = 0; submax_menu < SUBMENU_MAX; submax_menu++) {
 		// set default colors
-		bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
-		switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+		bc = colors[vsh->config.ark_menu.vsh_bg_color];
+		switch(vsh->config.ark_menu.vsh_fg_color){
 			case 0: break;
 			case 1: fc = colors[27]; break;
 			case 27: fc = colors[1]; break;
-			default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+			default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
 		}
 		
 		// add line at the top
 		if (submax_menu == 0){
 			blit_set_color(fc, bc);
-			blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, 8);
+			blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, font->height);
 			blit_set_color(0xaf000000, 0xaf000000);
 			blit_rect_fill(submenu_start_x, submenu_start_y-1, window_pixel, 1); // top horizontal outline
 			blit_rect_fill(submenu_start_x+window_pixel, submenu_start_y, 1, 8*(SUBMENU_MAX+2)); // right vertical outline
@@ -90,12 +100,12 @@ int submenu_draw(void) {
 		
 		// if menu is selected, change color
 		if (submax_menu==submenu_sel){
-			bc = (g_vsh_menu->config.ark_menu.vsh_bg_color < 2 || g_vsh_menu->config.ark_menu.vsh_bg_color > 28)? 0xff8080:0x0000ff;
+			bc = (vsh->config.ark_menu.vsh_bg_color < 2 || vsh->config.ark_menu.vsh_bg_color > 28)? 0xff8080:0x0000ff;
 			fc = 0xffffff;
-			bc |= (((u32)g_vsh_menu->status.bc_alpha)<<24);
-			if (g_vsh_menu->status.bc_alpha == 0) g_vsh_menu->status.bc_delta = 5;
-			else if (g_vsh_menu->status.bc_alpha == 255) g_vsh_menu->status.bc_delta = -5;
-			g_vsh_menu->status.bc_alpha += g_vsh_menu->status.bc_delta;
+			bc |= (((u32)vsh->status.bc_alpha)<<24);
+			if (vsh->status.bc_alpha == 0) vsh->status.bc_delta = 5;
+			else if (vsh->status.bc_alpha == 255) vsh->status.bc_delta = -5;
+			vsh->status.bc_alpha += vsh->status.bc_delta;
 		}
 		
 		blit_set_color(fc, bc);
@@ -107,7 +117,7 @@ int submenu_draw(void) {
 			subcur_menu = submax_menu;
 			
 			// set the y position
-			submenu_start_y += 8;
+			submenu_start_y += font->height;
 			
 			temp = 0;
 			// find widest submenu up until the UMD region option
@@ -126,7 +136,7 @@ int submenu_draw(void) {
 	
 				if(subitem_str[submax_menu]) {
 					// check if PSP Go or PSVita because UMD Region mode is unsupported on them
-					if ((g_vsh_menu->psp_model == PSP_GO || IS_VITA_ADR(g_vsh_menu->config.p_ark)) && submax_menu == SUBMENU_UMD_REGION_MODE) {
+					if ((vsh->psp_model == PSP_GO || IS_VITA_ADR(vsh->config.p_ark)) && submax_menu == SUBMENU_UMD_REGION_MODE) {
 						// write the unsupported string
 						scePaf_snprintf(msg, 128, "%-*s", window_char - 3 - submenu_width, g_messages[MSG_UNSUPPORTED]);
 					} else {
@@ -139,7 +149,7 @@ int submenu_draw(void) {
 			// for all other submenus (ie those with no subitems)
 			} else {
 				// center-justify submenu options
-				if (g_vsh_menu->psp_model != PSP_GO && submax_menu == SUBMENU_DELETE_HIBERNATION) {
+				if (vsh->psp_model != PSP_GO && submax_menu == SUBMENU_DELETE_HIBERNATION) {
 					// hibernation mode unsupported if model is not PSP Go
 					len = scePaf_strlen(g_messages[MSG_NO_HIBERNATION]);
 					padding = (window_char - len) / 2;
@@ -152,32 +162,32 @@ int submenu_draw(void) {
 				
 				// add a halfspace before if the lenght is an odd value
 				if (len & 0x1)
-					blit_rect_fill(submenu_start_x, submenu_start_y, 4, 8);
+					blit_rect_fill(submenu_start_x, submenu_start_y, 4, font->height);
 				
 				blit_string_ctr(submenu_start_y, msg);
 			
 				// add a halfspace after if the length is an odd value
 				if (len & 0x1) {
 					offset = blit_get_string_width(msg);
-					blit_rect_fill(submenu_start_x + offset + 4, submenu_start_y, 4, 8);
+					blit_rect_fill(submenu_start_x + offset + 4, submenu_start_y, 4, font->height);
 				}
 			}
 		}
 	}
 	
 	// set default colors
-	bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
-	switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+	bc = colors[vsh->config.ark_menu.vsh_bg_color];
+	switch(vsh->config.ark_menu.vsh_fg_color){
 		case 0: break;
 		case 1: fc = colors[27]; break;
 		case 27: fc = colors[1]; break;
-		default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+		default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
 	}
-
+	
 	blit_set_color(fc, bc);
-	submenu_start_y += 8; // replace by font width
+	submenu_start_y += font->height; // replace by font width
 	// add line at the end
-	blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, 8);
+	blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, font->height);
 	blit_set_color(0xaf000000, 0xaf000000);
 	blit_rect_fill(submenu_start_x, submenu_start_y+8, window_pixel, 1); // bottom horizontal outline
 	
@@ -249,6 +259,8 @@ int submenu_setup(void) {
 	int i;
 	const char *bridge;
 	const char *umdvideo_disp;
+	
+	vsh_Menu *vsh = vsh_menu_pointer();
 
 	// preset
 	for (i = 0; i < SUBMENU_MAX; i++) {
@@ -257,17 +269,17 @@ int submenu_setup(void) {
 	}
 	
 	//usb device
-	if ((g_vsh_menu->config.se.usbdevice > 0) && (g_vsh_menu->config.se.usbdevice < 5)) {
-		scePaf_sprintf(device_buf, "%s %d", g_messages[MSG_FLASH], g_vsh_menu->config.se.usbdevice - 1);
+	if ((vsh->config.se.usbdevice > 0) && (vsh->config.se.usbdevice < 5)) {
+		scePaf_sprintf(device_buf, "%s %d", g_messages[MSG_FLASH], vsh->config.se.usbdevice - 1);
 		bridge = device_buf;
-	} else if (IS_VITA_ADR(g_vsh_menu->config.p_ark)) {
+	} else if (IS_VITA_ADR(vsh->config.p_ark)) {
 		scePaf_sprintf(device_buf, "%s", g_messages[MSG_USE_ADRENALINE_SETTINGS]);
 		bridge = device_buf;
 	} else {
 		const char *device;
-		if(g_vsh_menu->config.se.usbdevice==5)
+		if(vsh->config.se.usbdevice==5)
 			device= g_messages[MSG_UMD_DISC];
-		else if(g_vsh_menu->psp_model == PSP_GO)
+		else if(vsh->psp_model == PSP_GO)
 			device = g_messages[MSG_INTERNAL_STORAGE];
 		else
 			device = g_messages[MSG_MEMORY_STICK];
@@ -283,26 +295,26 @@ int submenu_setup(void) {
 	else
 		umdvideo_disp++;
 
-	if (IS_VITA_ADR(g_vsh_menu->config.p_ark))
+	if (IS_VITA_ADR(vsh->config.p_ark))
 		subitem_str[SUBMENU_UMD_VIDEO] = g_messages[MSG_UNSUPPORTED];
 	else
 		subitem_str[SUBMENU_UMD_VIDEO] = umdvideo_disp;
 
-	if (g_vsh_menu->config.se.umdmode == 3)
+	if (vsh->config.se.umdmode == 3)
 		subitem_str[SUBMENU_UMD_MODE] = g_messages[MSG_INFERNO];
-	else if (g_vsh_menu->config.se.umdmode < 2)
-		g_vsh_menu->config.se.umdmode = 3;
-	else if (g_vsh_menu->config.se.umdmode > 3)
-		g_vsh_menu->config.se.umdmode = 2;
+	else if (vsh->config.se.umdmode < 2)
+		vsh->config.se.umdmode = 3;
+	else if (vsh->config.se.umdmode > 3)
+		vsh->config.se.umdmode = 2;
 	else 
 		subitem_str[SUBMENU_UMD_MODE] = g_messages[MSG_NP9660];
 
-	if (g_vsh_menu->config.ark_menu.vsh_font)
-		subitem_str[SUBMENU_FONT] = font_list()[g_vsh_menu->config.ark_menu.vsh_font - 1];
+	if (vsh->config.ark_menu.vsh_font)
+		subitem_str[SUBMENU_FONT] = font_list()[vsh->config.ark_menu.vsh_font - 1];
 	else
 		subitem_str[SUBMENU_FONT] = g_messages[MSG_DEFAULT];
 
-	switch (g_vsh_menu->config.se.usbdevice_rdonly) {
+	switch (vsh->config.se.usbdevice_rdonly) {
 		case 0:
 			subitem_str[SUBMENU_USB_READONLY] = g_messages[MSG_DISABLE];
 			break;
@@ -316,29 +328,29 @@ int submenu_setup(void) {
 			subitem_str[SUBMENU_USB_READONLY] = g_messages[MSG_ENABLE];
 	}
 
-	subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_O_PRIM-g_vsh_menu->status.swap_xo];
+	subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_O_PRIM-vsh->status.swap_xo];
 
-	subitem_str[SUBMENU_CONVERT_BATTERY] = (g_vsh_menu->battery<2)? g_messages[MSG_NORMAL_TO_PANDORA+g_vsh_menu->battery] : g_messages[MSG_UNSUPPORTED];
+	subitem_str[SUBMENU_CONVERT_BATTERY] = (vsh->battery<2)? g_messages[MSG_NORMAL_TO_PANDORA+vsh->battery] : g_messages[MSG_UNSUPPORTED];
 
-	if (g_vsh_menu->config.se.vshregion < 14){
-		subitem_str[SUBMENU_REGION_MODE] = g_messages[g_vsh_menu->config.se.vshregion];
+	if (vsh->config.se.vshregion < 14){
+		subitem_str[SUBMENU_REGION_MODE] = g_messages[vsh->config.se.vshregion];
 	}
 	else {
 		subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DISABLE];
 	}
 
-	if (g_vsh_menu->config.se.umdregion < 4){
-		subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[g_vsh_menu->config.se.umdregion];
+	if (vsh->config.se.umdregion < 4){
+		subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[vsh->config.se.umdregion];
 	}
 	else {
 		subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DEFAULT];
 	}
 	
-	if (g_vsh_menu->config.ark_menu.vsh_fg_color < 29){
-		switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+	if (vsh->config.ark_menu.vsh_fg_color < 29){
+		switch(vsh->config.ark_menu.vsh_fg_color){
 			case 1: subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_WHITE]; break;
 			case 27: subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_RED]; break;
-			default: subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_RANDOM+g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+			default: subitem_str[SUBMENU_FG_COLORS] = g_messages[MSG_RANDOM+vsh->config.ark_menu.vsh_fg_color]; break;
 		}
 		
 	}
@@ -346,8 +358,8 @@ int submenu_setup(void) {
 		subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RED];
 	}
 
-	if (g_vsh_menu->config.ark_menu.vsh_bg_color < 29){
-		subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RANDOM+g_vsh_menu->config.ark_menu.vsh_bg_color];
+	if (vsh->config.ark_menu.vsh_bg_color < 29){
+		subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RANDOM+vsh->config.ark_menu.vsh_bg_color];
 	}
 	else {
 		subitem_str[SUBMENU_BG_COLORS] = g_messages[MSG_RED];
@@ -359,6 +371,8 @@ int submenu_setup(void) {
 
 int submenu_ctrl(u32 button_on) {
 	int direction;
+	vsh_Menu *vsh = vsh_menu_pointer();
+
 
 	if ((button_on & PSP_CTRL_SELECT) || (button_on & PSP_CTRL_HOME) || button_decline(button_on)) {
 		submenu_sel = SUBMENU_GO_BACK;
@@ -391,13 +405,13 @@ int submenu_ctrl(u32 button_on) {
 
 	switch(submenu_sel) {
 		case SUBMENU_USB_DEVICE:
-			if (IS_VITA_ADR(g_vsh_menu->config.p_ark)) 
+			if (IS_VITA_ADR(vsh->config.p_ark)) 
 				break;
 			if (direction) 
 				change_usb(direction);
 			break;
 		case SUBMENU_USB_READONLY:
-			if (IS_VITA_ADR(g_vsh_menu->config.p_ark)) 
+			if (IS_VITA_ADR(vsh->config.p_ark)) 
 				break;
 			if (direction) 
 				swap_readonly(direction);
@@ -407,14 +421,14 @@ int submenu_ctrl(u32 button_on) {
 				change_umd_mode(direction);
 			break;
 		case SUBMENU_UMD_VIDEO:
-			if (IS_VITA_ADR(g_vsh_menu->config.p_ark)) 
+			if (IS_VITA_ADR(vsh->config.p_ark)) 
 				break;
 			if (direction) {
 			   	change_umd_mount_idx(direction);
 
-				if(umdvideo_idx != 0) {
+				if(vsh->status.umdvideo_idx != 0) {
 					char *umdpath;
-					umdpath = umdvideolist_get(&g_umdlist, umdvideo_idx-1);
+					umdpath = umdvideolist_get(&vsh->umdlist, vsh->status.umdvideo_idx-1);
 
 					if(umdpath != NULL) {
 						scePaf_strncpy(umdvideo_path, umdpath, sizeof(umdvideo_path));
@@ -449,7 +463,7 @@ none:
 				change_region(direction, 13);
 			break;
 		case SUBMENU_UMD_REGION_MODE:
-			if (g_vsh_menu->psp_model == PSP_GO || IS_VITA_ADR(g_vsh_menu->config.p_ark)) 
+			if (vsh->psp_model == PSP_GO || IS_VITA_ADR(vsh->config.p_ark)) 
 				break;
 			if (direction) 
 				change_umd_region(direction, 3);
@@ -476,7 +490,7 @@ none:
 			if (direction) {
 				change_font(direction);
 				release_font();
-				font_load(g_vsh_menu);
+				font_load(vsh);
 			}
 			break;
 		case SUBMENU_GO_BACK:
@@ -491,14 +505,19 @@ none:
 
 void subbutton_func(vsh_Menu *vsh) {
 	int res;
+	// copy pad from the vsh struct in case it can change during the function
+	SceCtrlData pad = vsh->buttons.pad;
+	// calculate new_buttons_on from old_pad and pad
+	u32 new_buttons_on = ~vsh->buttons.old_pad.Buttons & vsh->buttons.pad.Buttons;
+	
 	// submenu control
 	switch(vsh->status.submenu_mode) {
 		case 0:	
-			if ((vsh->buttons.pad.Buttons & ALL_CTRL) == 0)
+			if ((pad.Buttons & ALL_CTRL) == 0)
 				vsh->status.submenu_mode = 1;
 			break;
 		case 1:
-			res = submenu_ctrl(vsh->buttons.new_buttons_on);
+			res = submenu_ctrl(new_buttons_on);
 
 			if (res != 0) {
 				sub_stop_stock = res;
@@ -507,8 +526,10 @@ void subbutton_func(vsh_Menu *vsh) {
 			break;
 		case 2: // exit waiting 
 			// exit submenu
-			if ((vsh->buttons.pad.Buttons & ALL_CTRL) == 0)
+			if ((pad.Buttons & ALL_CTRL) == 0)
 				vsh->status.sub_stop_flag = sub_stop_stock;
 			break;
 	}
+	// copy pad to oldpad
+	scePaf_memcpy(&vsh->buttons.old_pad, &pad, sizeof(SceCtrlData));
 }

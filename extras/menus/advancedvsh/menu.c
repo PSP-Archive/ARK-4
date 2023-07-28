@@ -19,40 +19,25 @@
 	PSP VSH MENU controll
 	based Booster's vshex
 */
+#include "menu.h"
 
 #include <psputility.h>
 
 #include "common.h"
 #include "systemctrl.h"
-
 #include "vsh.h"
-
-
-
-enum {
-	TMENU_CUSTOM_LAUNCHER,
-	TMENU_RECOVERY_MENU,
-	TMENU_ADVANCED_VSH,
-	TMENU_SHUTDOWN_DEVICE,
-	TMENU_SUSPEND_DEVICE,
-	TMENU_RESET_DEVICE,
-	TMENU_RESET_VSH,
-	TMENU_EXIT,
-	TMENU_MAX
-};
-
+#include "ui.h"
+#include "scepaf.h"
+#include "fonts.h"
+#include "blit.h"
+#include "color.h"
+#include "config.h"
 
 
 const char **g_messages = g_messages_en;
 
-void change_clock(int dir, int a);
-
-extern int pwidth;
 extern char umd_path[72];
-extern u32 colors[];
 
-
-extern vsh_Menu *g_vsh_menu;
 
 int stop_stock = 0;
 
@@ -71,7 +56,6 @@ static int menu_sel = TMENU_CUSTOM_LAUNCHER;
 const int xyPoint[] ={0x98, 0x2F, 0xC0, 0xA0, 0x70, 0x08, 0x0E, 0xA8};//data243C=
 const int xyPoint2[] ={0xB0, 0x2F, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data2458=
 
-int colors_dir = 0;
 
 int menu_draw(void) {
 	char msg[128] = {0};
@@ -79,11 +63,16 @@ int menu_draw(void) {
 	const int *pointer;
 	u32 fc,bc;
 
+	vsh_Menu *vsh = vsh_menu_pointer();
+	blit_Gfx *gfx = blit_gfx_pointer();
+	font_Data *font = font_data_pointer();
+	u32 *colors = (u32*)color_data_pointer();
+	
 	// check & setup video mode
 	if(blit_setup() < 0) 
 		return -1;
 
-	if(pwidth == 720)
+	if(gfx->width == 720)
 		pointer = xyPoint;
 	else
 		pointer = xyPoint2;
@@ -92,7 +81,7 @@ int menu_draw(void) {
 	blit_set_color(0xffffff,0x8000ff00);
 	scePaf_snprintf(msg, 128, " %s ", g_messages[MSG_ARK_VSH_MENU]);
 	blit_string_ctr(pointer[1], msg);
-	blit_string_ctr(55, g_vsh_menu->ark_version);
+	blit_string_ctr(55, vsh->ark_version);
 	fc = 0xffffff;
 	
 	
@@ -111,26 +100,25 @@ int menu_draw(void) {
 		window_char++;
 	
 	// window pixel = [window_char + leading & trailing space] * font width
-	window_pixel = (window_char + 2) * 8;
+	window_pixel = (window_char + 2) * font->width;
 	
 	// set menu start position
-	int menu_start_y = pointer[5] * 8;
-	int menu_start_x = (pwidth - window_pixel) / 2;
+	int menu_start_y = pointer[5] * font->height;
+	int menu_start_x = (gfx->width - window_pixel) / 2;
 	
-		
 	for (max_menu = 0; max_menu < TMENU_MAX; max_menu++) {
 		// set default colors
-		bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
-		switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+		bc = colors[vsh->config.ark_menu.vsh_bg_color];
+		switch(vsh->config.ark_menu.vsh_fg_color){
 			case 0: break;
 			case 1: fc = colors[27]; break;
 			case 27: fc = colors[1]; break;
-			default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+			default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
 		}
 		// add line at the top
 		if (max_menu == 0){
 			blit_set_color(fc, bc);
-			blit_rect_fill(menu_start_x, menu_start_y, window_pixel, 8);
+			blit_rect_fill(menu_start_x, menu_start_y, window_pixel, font->height);
 			blit_set_color(0xaf000000, 0xaf000000);
 			blit_rect_fill(menu_start_x, menu_start_y-1, window_pixel, 1); // top horizontal outline
 			blit_rect_fill(menu_start_x+window_pixel, menu_start_y, 1, 8*(TMENU_MAX+2)); // right vertical outline
@@ -139,12 +127,12 @@ int menu_draw(void) {
 		
 		// if menu is selected, change color
 		if (max_menu == menu_sel) {
-			bc = (g_vsh_menu->config.ark_menu.vsh_bg_color < 2 || g_vsh_menu->config.ark_menu.vsh_bg_color > 28)? 0xff8080:0x0000ff;
+			bc = (vsh->config.ark_menu.vsh_bg_color < 2 || vsh->config.ark_menu.vsh_bg_color > 28)? 0xff8080:0x0000ff;
 			fc = 0xffffff;
-			bc |= (((u32)g_vsh_menu->status.bc_alpha)<<24);
-			if (g_vsh_menu->status.bc_alpha == 0) g_vsh_menu->status.bc_delta = 5;
-			else if (g_vsh_menu->status.bc_alpha == 255) g_vsh_menu->status.bc_delta = -5;
-			g_vsh_menu->status.bc_alpha += g_vsh_menu->status.bc_delta;
+			bc |= (((u32)vsh->status.bc_alpha)<<24);
+			if (vsh->status.bc_alpha == 0) vsh->status.bc_delta = 5;
+			else if (vsh->status.bc_alpha == 255) vsh->status.bc_delta = -5;
+			vsh->status.bc_alpha += vsh->status.bc_delta;
 		}
 		
 		blit_set_color(fc, bc);
@@ -152,7 +140,7 @@ int menu_draw(void) {
 		// display menu
 		if (g_messages[MSG_CUSTOM_LAUNCHER + max_menu]) {
 			cur_menu = max_menu;
-			menu_start_y += 8; // replace by font width
+			menu_start_y += font->height;
 			
 			// center-align menu strings
 			int len = scePaf_strlen(g_messages[MSG_CUSTOM_LAUNCHER + max_menu]);
@@ -160,14 +148,14 @@ int menu_draw(void) {
 			
 			// add a halfspace before if the lenght is an odd value
 			if (len & 0x1)
-				blit_rect_fill(menu_start_x, menu_start_y, 4, 8);
+				blit_rect_fill(menu_start_x, menu_start_y, 4, font->height);
 			scePaf_snprintf(msg, 128, " %*s%s%*s ", padding, "", g_messages[MSG_CUSTOM_LAUNCHER + max_menu], padding, "");
 			blit_string_ctr(menu_start_y, msg);
 			
 			// add a halfspace after if the length is an odd value
 			if (len & 0x1) {
 				int offset = blit_get_string_width(msg);
-				blit_rect_fill(menu_start_x + offset + 4, menu_start_y, 4, 8);
+				blit_rect_fill(menu_start_x + offset + 4, menu_start_y, 4, font->height);
 			}
 		
 			// item_str seems to be all NULL values (see menu_setup function)
@@ -183,18 +171,18 @@ int menu_draw(void) {
 	}
 	
 	// reset colors to default
-	bc = colors[g_vsh_menu->config.ark_menu.vsh_bg_color];
-	switch(g_vsh_menu->config.ark_menu.vsh_fg_color){
+	bc = colors[vsh->config.ark_menu.vsh_bg_color];
+	switch(vsh->config.ark_menu.vsh_fg_color){
 		case 0: break;
 		case 1: fc = colors[27]; break;
 		case 27: fc = colors[1]; break;
-		default: fc = colors[g_vsh_menu->config.ark_menu.vsh_fg_color]; break;
+		default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
 	}
 
 	blit_set_color(fc, bc);
-	menu_start_y += 8; // replace by font width
+	menu_start_y += font->height;
 	// add line at the end
-	blit_rect_fill(menu_start_x, menu_start_y, window_pixel, 8);
+	blit_rect_fill(menu_start_x, menu_start_y, window_pixel, font->height);
 	blit_set_color(0xaf000000, 0xaf000000);
 	blit_rect_fill(menu_start_x, menu_start_y+8, window_pixel, 1); // bottom horizontal outline
 	
@@ -202,7 +190,7 @@ int menu_draw(void) {
 	return 0;
 }
 
-static inline const char *get_enable_disable(int opt) {
+const char *get_enable_disable(int opt) {
 	if(opt)
 		return g_messages[MSG_ENABLE];
 	return g_messages[MSG_DISABLE];
@@ -292,14 +280,19 @@ int menu_ctrl(u32 button_on) {
 
 void button_func(vsh_Menu *vsh) {
 	int res;
+	// copy pad from the vsh struct in case it can change during the function
+	SceCtrlData pad = vsh->buttons.pad;
+	// calculate new_buttons_on from old_pad and pad
+	u32 new_buttons_on = ~vsh->buttons.old_pad.Buttons & vsh->buttons.pad.Buttons;
+	
 	// menu control
 	switch(vsh->status.menu_mode) {
 		case 0:	
-			if ((vsh->buttons.pad.Buttons & ALL_CTRL) == 0)
+			if ((pad.Buttons & ALL_CTRL) == 0)
 				vsh->status.menu_mode = 1;
 			break;
 		case 1:
-			res = menu_ctrl(vsh->buttons.new_buttons_on);
+			res = menu_ctrl(new_buttons_on);
 
 			if(res != 0) {
 				stop_stock = res;
@@ -308,8 +301,10 @@ void button_func(vsh_Menu *vsh) {
 			break;
 		case 2: // exit waiting 
 			// exit menu
-			if ((vsh->buttons.pad.Buttons & ALL_CTRL) == 0)
+			if ((pad.Buttons & ALL_CTRL) == 0)
 				vsh->status.stop_flag = stop_stock;
 			break;
 	}
+	// copy pad to oldpad
+	scePaf_memcpy(&vsh->buttons.old_pad, &pad, sizeof(SceCtrlData));
 }

@@ -2,6 +2,8 @@
 
 #include <pspiofilemgr.h>
 
+#include <string.h>
+
 #include "common.h"
 #include "module2.h"
 #include "kubridge.h"
@@ -11,6 +13,7 @@
 #include "battery.h"
 #include "color.h"
 #include "registry.h"
+#include "vpl.h"
 
 int button_accept(u32 button){
 	vsh_Menu* vsh = vsh_menu_pointer();

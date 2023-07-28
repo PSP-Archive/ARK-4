@@ -8,14 +8,14 @@ vsh_Menu vsh_menu = {
 	.status.stop_flag = 0,
 	.status.sub_stop_flag = 0,
 	.status.reset_vsh = 0,
+	.status.umdvideo_idx = 0,
 	.buttons.pad.Buttons = 0xFFFFFFFF,
+	.buttons.old_pad.Buttons = 0xFFFFFFFF,
 	.buttons.new_buttons_on = 0,
 	.thread_id = -1,
 };
 
-vsh_Menu *g_vsh_menu = &vsh_menu;
-
 
 vsh_Menu* vsh_menu_pointer(void) {
-	return g_vsh_menu;
+	return (vsh_Menu*)&vsh_menu;
 }
