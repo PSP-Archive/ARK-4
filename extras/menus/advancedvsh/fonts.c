@@ -105,11 +105,13 @@ int font_load(vsh_Menu *vsh) {
 			load_external_font("RUSSIAN.pf");
 			vsh->config.ark_menu.vsh_font = 48;
 			break;
+		/*
 		// use CP881 font for French
 		case PSP_SYSTEMPARAM_LANGUAGE_FRENCH:
 			load_external_font("CP881.pf");
 			vsh->config.ark_menu.vsh_font = 32;
 			break;
+		*/
 		default:
 			break;
 	}
