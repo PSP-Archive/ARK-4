@@ -16,5 +16,5 @@ vsh_Menu vsh_menu = {
 
 
 vsh_Menu* vsh_menu_pointer(void) {
-	return g_vsh_menu;
+	return (vsh_Menu*)&vsh_menu;
 }
