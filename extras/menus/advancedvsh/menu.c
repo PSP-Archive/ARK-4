@@ -210,7 +210,7 @@ int menu_setup(void) {
 int menu_ctrl(u32 button_on) {
 	int direction;
 
-	if((button_on & PSP_CTRL_SELECT) || (button_on & PSP_CTRL_HOME)) {
+	if((button_on & PSP_CTRL_SELECT) || (button_on & PSP_CTRL_HOME) || button_decline(button_on)) {
 		menu_sel = TMENU_EXIT;
 		return 1;
 	}
@@ -231,9 +231,7 @@ int menu_ctrl(u32 button_on) {
 
 	if(button_on & PSP_CTRL_LEFT)
 		direction = -1;
-	if(button_on & PSP_CTRL_CROSS)
-		direction = 0;
-	if(button_on & PSP_CTRL_CIRCLE)
+	if(button_accept(button_on))
 		direction = 0;
 	if(button_on & PSP_CTRL_RIGHT)
 		direction = 1;

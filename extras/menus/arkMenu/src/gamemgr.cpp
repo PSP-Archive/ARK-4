@@ -21,10 +21,11 @@ static bool loadingData = false;
 ARKConfig* ark_config;
 
 GameManager* GameManager::getInstance(){
+    if (self == NULL) self = new GameManager();
     return self;
 }
 
-GameManager::GameManager(bool autoload){
+GameManager::GameManager(){
 
     // set the global self variable as this instance for the threads to use it
     self = this;
@@ -34,7 +35,7 @@ GameManager::GameManager(bool autoload){
     this->optionsmenu = NULL;
 
     // initialize the categories
-    this->selectedCategory = (autoload)?-1:-2;
+    this->selectedCategory = (common::getConf()->main_menu)? -2 : -1;
     for (int i=0; i<MAX_CATEGORIES; i++){
         this->categories[i] = new Menu((EntryType)i);
     }
@@ -62,7 +63,7 @@ int GameManager::loadIcons(SceSize _args, void *_argp){
         std::vector<Entry*>* game_entries = self->categories[GAME]->getVector();
         bool has_umd = UMD::isUMD();
         bool umd_loaded = game_entries->size() > 0 && string("UMD") == game_entries->at(0)->getType();
-        if (has_umd && !umd_loaded){ // UMD inserted but not loaded
+        if (has_umd && !umd_loaded && self->selectedCategory >= 0){ // UMD inserted but not loaded
             SystemMgr::pauseDraw();
             game_entries->insert(game_entries->begin(), new UMD());
             SystemMgr::resumeDraw();
@@ -186,11 +187,12 @@ void GameManager::findEboots(const char* path){
         return;
         
     while ((dit = readdir(dir))){
-		if (strstr(dit->d_name, "%") != NULL) continue;
-        if (strcmp(dit->d_name, ".") == 0) continue;
-        if (strcmp(dit->d_name, "..") == 0) continue;
-        if (!FIO_SO_ISDIR(dit->d_stat.st_attr)) continue;
-        if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue;
+		if (strstr(dit->d_name, "%") != NULL) continue; // ignore 1.50 kxploit format
+        if (strcmp(dit->d_name, ".") == 0) continue; // ignore "cur dir"
+        if (strcmp(dit->d_name, "..") == 0) continue; // ignore "parent dir"
+        if (!FIO_SO_ISDIR(dit->d_stat.st_attr)) continue; // ignore files
+        if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue; // ignore hidden?
+        if (strcmp(dit->d_name, "NPUZ01234") == 0 || strcmp(dit->d_name, "SCPS10084") == 0 || strcmp(dit->d_name, "ARK_Loader") == 0) continue; // ignore ARK launchers
         
         string fullpath = Eboot::fullEbootPath(path, dit->d_name);
         if (fullpath == ""){
@@ -232,6 +234,7 @@ void GameManager::findISOs(const char* path){
         if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue;
 
         string fullpath = string(path)+string(dit->d_name);
+        string shortpath = string(path) + string((const char*)pri_dirent);
 
         if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
             if (common::getConf()->scan_cat && string(dit->d_name) != string("VIDEO")){
@@ -239,10 +242,8 @@ void GameManager::findISOs(const char* path){
             }
             continue;
         }
-        else if (!common::fileExists(fullpath)){
-            fullpath = string(path) + string((const char*)pri_dirent);
-        }
         if (Iso::isISO(fullpath.c_str())) this->categories[GAME]->addEntry(new Iso(fullpath));
+        else if (Iso::isISO(shortpath.c_str())) this->categories[GAME]->addEntry(new Iso(shortpath));
     }
     sceIoDclose(dir);
     free(pri_dirent);
@@ -455,6 +456,9 @@ void GameManager::updateGameList(const char* path){
         }
         SystemMgr::pauseDraw();
         self->selectedCategory = -1;
+        for (int i=0; i<MAX_CATEGORIES; i++){
+            self->categories[i]->clearEntries();
+        }
         SystemMgr::resumeDraw();
         if (icon_status == ICONS_LOADING){
             self->resumeIcons();

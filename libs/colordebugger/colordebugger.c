@@ -23,6 +23,9 @@
 // Framebuffer
 u32* g_vram_base = (u32*)0x44000000;
 
+// screen handler (for psx)
+void (*screen_handler)(u32 vram);
+
 // Framebuffer Painter (for debugging)
 void colorDebug(u32 color)
 {
@@ -32,6 +35,11 @@ void colorDebug(u32 color)
         // Set Pixel Color
         g_vram_base[i] = color;
     }
+    if (screen_handler) screen_handler(g_vram_base);
+}
+
+void setScreenHandler(void (*handler)(u32 vram)){
+    screen_handler = handler;
 }
 
 // Framebuffer Color Freeze Loop (for debugging)

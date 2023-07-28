@@ -3,6 +3,11 @@
 
 // TN-X patches for PSX exploits on Vita
 
+#define PSP_SCREEN_WIDTH 480
+#define PSP_SCREEN_HEIGHT 272
+#define PSP_SCREEN_LINE 512
+#define SCE_PSPEMU_FRAMEBUFFER_SIZE 0x88000
+
 #define MAX_VRAM_CONFIGS 2
 typedef struct POPSVramConfig{
     short x;
@@ -23,6 +28,8 @@ extern u16* pops_vram;
 
 // Initialize PSX Vram
 void initVitaPopsVram();
+
+void copyPSPVram(u32* psp_vram);
 
 // Software render PSP Vram into PSX Vram
 void SoftRelocateVram(u32* psp_vram, u16* ps1_vram);

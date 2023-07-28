@@ -36,6 +36,6 @@ extern int initializeNetwork(void);
 extern int connect_to_apctl(void);
 extern int shutdownNetwork();
 extern char* resolveHostAddress(char*);
-extern int wget(char* url, char* saveAs);
+extern int wget(char* url, char* saveAs, SceULong64* cur_download=NULL, SceULong64* max_download=NULL);
 
 #endif

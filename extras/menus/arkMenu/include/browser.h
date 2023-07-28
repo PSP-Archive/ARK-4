@@ -19,6 +19,7 @@ enum{
     DELETE,
     RENAME,
     CREATE,
+    USB_DEV,
     MS0_DIR,
     EF0_DIR,
     FTP_DIR,
@@ -49,7 +50,6 @@ class BrowserDriver{
 class Browser : public SystemEntry{
 
     public:
-        Browser();
         ~Browser();
         static Browser* getInstance();
         
@@ -81,10 +81,16 @@ class Browser : public SystemEntry{
 
         void drawInfo(){
             static TextScroll scroll;
-            int w = common::calcTextWidth(cwd.c_str(), SIZE_MEDIUM, 0);
-            common::printText(5, 13, cwd.c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll, 0);
-            if (devsize.size() > 0)
-                common::printText(5+w, 13, string(" ("+TR("Free size")+": "+devsize+")").c_str(), LITEGRAY, SIZE_MEDIUM);
+            if (devsize.size() > 0){
+                int w = common::calcTextWidth(cwd.c_str(), SIZE_MEDIUM, 0);
+                scroll.w = 150;
+                common::printText(5, 13, cwd.c_str(), LITEGRAY, SIZE_MEDIUM, 0, NULL, 0);
+                common::printText(5+w, 13, string(" ("+TR("Free size")+": "+devsize+")").c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll);
+            }
+            else{
+                scroll.w = 200;
+                common::printText(5, 13, cwd.c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll, 0);
+            }
         }
         
         string getName(){
@@ -105,6 +111,8 @@ class Browser : public SystemEntry{
         static const char* getCWD();
         
     private:
+
+        Browser();
     
         string cwd; // Current Working Directory
 
@@ -152,9 +160,9 @@ class Browser : public SystemEntry{
     
         void moveDirUp();
         
-        void update(Entry* e, bool skip_prompt);
+        void update(Entry* ent, bool skip_prompt);
         
-        void refreshDirs();
+        void refreshDirs(const char* retry=NULL);
         
         void drawScreen();
         
@@ -199,6 +207,7 @@ class Browser : public SystemEntry{
         void makedir();
         void makefile();
         void createNew();
+        void toggleUSB();
         
         void rename();
         

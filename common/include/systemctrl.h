@@ -77,6 +77,16 @@ unsigned int sctrlModuleTextAddr(char * modname);
 // Load Execute Module via Kernel Internal Function
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param);
 
+/**
+ * Restart the vsh.
+ *
+ * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL
+ *
+ * @returns < 0 on some errors.
+ *
+*/
+int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
+
 // Register Prologue Module Start Handler
 STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler);
 

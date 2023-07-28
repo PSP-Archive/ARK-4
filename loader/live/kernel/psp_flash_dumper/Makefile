@@ -14,7 +14,6 @@ CFLAGS += -I $(ARKROOT)/modules/systemctrl/include -DKXPLOIT_LOADADDR=$(KXPLOIT_
 C_OBJS = \
 	loader.o \
 	$(ARKROOT)/loader/live/kernel/kernel_loader/main.o \
-	$(ARKROOT)/core/compat/vitapops/popsdisplay.o \
 	$(ARKROOT)/common/utils/functions.o \
 	$(ARKROOT)/common/utils/scanner.o \
 	$(ARKROOT)/common/utils/patches.o \

@@ -41,10 +41,6 @@ void autoDetectDevice(ARKConfig* config);
 int initKxploitFile();
 void kernelContentFunction(void);
 
-static void pops_vram_handler(u32 vram){
-    SoftRelocateVram(vram, NULL);
-}
-
 // Entry Point
 int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file) __attribute__((section(".text.startup")));
 int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
@@ -88,10 +84,10 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
             // Corrupt Kernel
             PRTSTR("Doing kernel exploit...");
             if ((res=kxf->doExploit()) == 0){
-                // Flush Cache
-                g_tbl->KernelDcacheWritebackAll();
                 // Output Loading Screen
                 PRTSTR("Escalating privilages...");
+                // Flush Cache
+                g_tbl->KernelDcacheWritebackAll();
                 // Trigger Kernel Permission Callback
                 kxf->executeKernel(KERNELIFY(&kernelContentFunction));
                 err = "Could not execute kernel function";
@@ -110,8 +106,8 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
     }
     
     PRTSTR2("ERROR (%d): %s", res, err);
-    PRTSTR("Exiting in 10 seconds...");
-    g_tbl->KernelDelayThread(10000000);
+    PRTSTR("Exiting...");
+    g_tbl->KernelDelayThread(10000);
     void (*KernelExitGame)() = (void*)RelocImport("LoadExecForUser", 0x05572A5F, 0);
     if (KernelExitGame) KernelExitGame();
 
@@ -217,20 +213,10 @@ void kernelContentFunction(void){
             running_ark[17] = 'e'; // show 'ePSP'
             if (IS_VITA_POPS(ark_config)){
                 running_ark[20] = 'X'; // show 'ePSX'
-                // configure to handle POPS screen
-                initVitaPopsVram();
-                setScreenHandler(&pops_vram_handler);
             }
         }
     }
     PRTSTR(running_ark);
-
-    /*
-    if (IS_VITA_ADR(ark_config)){
-        PRTSTR("You made it far! But ARK can't run like this...can it?...");
-        while(1){};
-    }
-    */
 
     loadKernelArk();
 }

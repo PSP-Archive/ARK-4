@@ -41,7 +41,16 @@ typedef struct{
 
 Plugins* plugins = NULL;
 
-void (*plugin_handler)(const char* path, int modid) = NULL;
+int (*plugin_handler)(const char* path, int modid) = NULL;
+
+enum {
+    RUNLEVEL_UNKNOWN,
+    RUNLEVEL_VSH,
+    RUNLEVEL_UMD,
+    RUNLEVEL_POPS,
+    RUNLEVEL_HOMEBREW,
+};
+static int cur_runlevel = RUNLEVEL_UNKNOWN;
 
 int disable_plugins = 0;
 int disable_settings = 0;
@@ -71,46 +80,92 @@ static removePlugin(char* path){
 static void startPlugins()
 {
     for (int i=0; i<plugins->count; i++){
+        int res = 0;
         char* path = plugins->paths[i];
         // Load Module
         int uid = sceKernelLoadModule(path, 0, NULL);
-        // Call handler
-        if (plugin_handler) plugin_handler(path, uid);
-        // Start Module
-        int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
-        // Unload Module on Error
-        if (res < 0) sceKernelUnloadModule(uid);
+        if (uid > 0){
+            // Call handler
+            if (plugin_handler){
+                res = plugin_handler(path, uid);
+                // Unload Module on Error
+                if (res < 0){
+                    sceKernelUnloadModule(uid);
+                    continue;
+                }
+            }
+            // Start Module
+            res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
+            // Unload Module on Error
+            if (res < 0) sceKernelUnloadModule(uid);
+        }
     }
+}
+
+static int isVshRunlevel(){
+    if (!cur_runlevel){
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype >= 0x200) cur_runlevel = RUNLEVEL_VSH;
+    }
+    return cur_runlevel == RUNLEVEL_VSH;
+}
+
+static int isPopsRunlevel(){
+    if (!cur_runlevel){
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype == 0x144 || apitype == 0x155) cur_runlevel = RUNLEVEL_POPS;
+    }
+    return cur_runlevel == RUNLEVEL_POPS;
+}
+
+static int isUmdRunlevel(){
+    if (!cur_runlevel){
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115))
+            cur_runlevel = RUNLEVEL_UMD;
+    }
+    return cur_runlevel == RUNLEVEL_UMD;
+}
+
+static int isHomebrewRunlevel(){
+    if (!cur_runlevel){
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype == 0x141 || apitype == 0x152) cur_runlevel = RUNLEVEL_HOMEBREW;
+    }
+    return cur_runlevel == RUNLEVEL_HOMEBREW;
 }
 
 // Runlevel Check
 static int matchingRunlevel(char * runlevel)
 {
-
-    // Fetch Apitype
-    int apitype = sceKernelInitApitype();
     
     if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1; // always on
     else if (stricmp(runlevel, "vsh") == 0 || stricmp(runlevel, "xmb") == 0) // VSH only
-        return (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300);
+        return isVshRunlevel();
     else if (stricmp(runlevel, "pops") == 0 || stricmp(runlevel, "ps1") == 0 || stricmp(runlevel, "psx") == 0) // PS1 games only
-        return (apitype == 0x144 || apitype == 0x155);
+        return isPopsRunlevel();
     else if (stricmp(runlevel, "umd") == 0 || stricmp(runlevel, "psp") == 0 || stricmp(runlevel, "umdemu") == 0) // Retail games only
-        return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));
+        return isUmdRunlevel();
     else if (stricmp(runlevel, "game") == 0) // retail+homebrew
-        return (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x141 || apitype == 0x152 || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115));
+        return (isUmdRunlevel() || isHomebrewRunlevel());
     else if (stricmp(runlevel, "app") == 0 || stricmp(runlevel, "homebrew") == 0) // homebrews only
-        return (apitype == 0x141 || apitype == 0x152);
+        return isHomebrewRunlevel();
     else if (stricmp(runlevel, "launcher") == 0){
         // check if running custom launcher
         static char path[ARK_PATH_SIZE];
         strcpy(path, ark_config->arkpath);
-        strcat(path, ark_config->launcher);
+        if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
+        else                         strcat(path, ARK_MENU);
         return (strcmp(path, sceKernelInitFileName())==0);
     }
     else { // check if plugin loads on specific game
         char gameid[10]; memset(gameid, 0, sizeof(gameid));
-        return (getGameId(gameid) && strstr(runlevel, gameid) != NULL);
+        getGameId(gameid);
+        return (gameid[0] && strstr(runlevel, gameid) != NULL);
     }
     
     // Unsupported Runlevel (we don't touch those to keep stability up)
@@ -415,17 +470,8 @@ static void settingsDisabler(char* path){
     settingsHandler(path, 0);
 }
 
-static int isRecoveryMode(){
-    if (ark_config->recovery) return 1;
-    // check if launching recovery menu
-    static char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, ARK_RECOVERY);
-    return (strcmp(path, sceKernelInitFileName())==0);
-}
-
 void LoadPlugins(){
-    if (disable_plugins || isRecoveryMode())
+    if (disable_plugins)
         return; // don't load plugins in recovery mode
     is_plugins_loading = 1;
     // allocate resources
@@ -449,7 +495,7 @@ void LoadPlugins(){
 }
 
 void loadSettings(){
-    if (disable_settings || isRecoveryMode())
+    if (disable_settings)
         return; // don't load settings in recovery mode
     // process settings file
     char path[ARK_PATH_SIZE];

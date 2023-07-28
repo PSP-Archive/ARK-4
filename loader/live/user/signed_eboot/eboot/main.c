@@ -43,8 +43,8 @@ volatile UserFunctions funcs = {
     // File IO
     .IoOpen = &sceIoOpen,
     .IoRead = &sceIoRead,
-    .IoWrite = &sceIoClose,
-    .IoClose = &sceIoWrite,
+    .IoWrite = &sceIoWrite,
+    .IoClose = &sceIoClose,
     .IoRemove = &sceIoRemove,
     // System
     .KernelLibcTime = &sceKernelLibcTime,
@@ -80,10 +80,6 @@ volatile UserFunctions funcs = {
     .KernelCpuResumeIntr = &sceKernelCpuResumeIntr,
     .KernelVolatileMemUnlock = &sceKernelVolatileMemUnlock,
     // Savedata
-    .UtilitySavedataGetStatus = &sceUtilitySavedataGetStatus,
-    .UtilitySavedataInitStart = &sceUtilitySavedataInitStart,
-    .UtilitySavedataUpdate = &sceUtilitySavedataUpdate,
-    .UtilitySavedataShutdownStart = &sceUtilitySavedataShutdownStart,
     .KernelAllocPartitionMemory = &sceKernelAllocPartitionMemory,
 };
 

@@ -81,6 +81,7 @@ typedef struct TextScroll{
 
 namespace common{
 
+    extern bool is_recovery;
     extern ARKConfig* getArkConfig();
     extern int getArgc();
     extern char** getArgv();
@@ -97,6 +98,7 @@ namespace common{
     extern void startLoadingThread();
     extern void stopLoadingThread();
     extern void setThemePath(char* path = NULL);
+    extern bool isFolder(SceIoDirent* dit);
     extern bool fileExists(const std::string &path);
     extern bool folderExists(const std::string &path);
     extern long fileSize(const std::string &path);

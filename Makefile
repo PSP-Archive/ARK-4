@@ -24,7 +24,9 @@ SUBDIRS = libs \
 	core/compat/pentazemin \
 	loader/live/user/linkless_payload \
 	loader/live/user/signed_eboot \
+	loader/live/user/psxloader \
 	loader/live/kernel/kernel_loader \
+	loader/live/kernel/psxloader \
 	loader/live/kernel/chain_loader \
 	loader/live/kernel/kram_dumper \
 	loader/live/kernel/idstorage_dumper \
@@ -49,6 +51,7 @@ SUBDIRS = libs \
 	extras/menus/xMenu \
 	extras/menus/advancedvsh \
 	extras/menus/provsh \
+	extras/modules/peops \
 	extras/modules/xmbctrl \
 	extras/modules/usbdevice \
 	extras/modules/idsregeneration
@@ -65,6 +68,8 @@ copy-bin:
 	$(Q)cp loader/live/kernel/kxploit/psp660/K.BIN dist/ARK_Loader/K.BIN # Kernel exploit for PSP
 	$(Q)cp loader/live/user/vitabubble/EBOOT.PBP dist/PSVita/Standalone/NPUZ01234/ # Vita fake ChovySign bubble
 	$(Q)cp loader/live/user/vitabubble/PBOOT.PBP dist/PSVita/Standalone/NPUZ01234/ # Vita PBOOT.PBP bubble
+	$(Q)cp loader/live/user/psxloader/ps1cfw_enabler.suprx dist/PSVita/PS1CFW/
+	$(Q)cp loader/live/user/psxloader/EBOOT.PBP dist/PSVita/PS1CFW/SCPS10084/
 	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/PSVita/Standalone/K.BIN # Kernel exploit for Vita 3.60+
 	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/PSVita/Adrenaline/K.BIN # kxploit for CFW
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
@@ -72,6 +77,7 @@ copy-bin:
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
 	$(Q)cp loader/live/kernel/chain_loader/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
 	$(Q)cp loader/live/kernel/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
+	$(Q)cp loader/live/kernel/psxloader/ARKX.BIN dist/ARK_01234/ARKX.BIN # ARK-X loader
 	$(Q)cp loader/live/kernel/kxploit/dummy/K.BIN dist/ARK_01234/K.BIN # Dummy Kernel exploit
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
 	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/PSP/ # ARK DC installer
@@ -92,7 +98,11 @@ copy-bin:
 	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
 	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
 	$(Q)cp extras/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
+	$(Q)cp extras/modules/peops/peops.prx dist/ARK_01234/PS1SPU.PRX
 	$(Q)cp contrib/UPDATER.TXT dist/ARK_01234/
+	$(Q)cp contrib/PSP/mediasync.prx dist/ARK_01234/MEDIASYN.PRX
+	$(Q)cp contrib/PSP/popsman.prx dist/ARK_01234/POPSMAN.PRX
+	$(Q)cp contrib/PSP/pops_01g.prx dist/ARK_01234/POPS.PRX
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)rm -rf dist/themes/translations
 	$(Q)cp contrib/README.TXT dist/
@@ -147,7 +157,9 @@ clean:
 	$(Q)$(MAKE) $@ -C libs
 	$(Q)$(MAKE) $@ -C loader/live/user/linkless_payload
 	$(Q)$(MAKE) $@ -C loader/live/user/signed_eboot
+	$(Q)$(MAKE) $@ -C loader/live/user/psxloader
 	$(Q)$(MAKE) $@ -C loader/live/kernel/kernel_loader
+	$(Q)$(MAKE) $@ -C loader/live/kernel/psxloader
 	$(Q)$(MAKE) $@ -C loader/live/kernel/chain_loader
 	$(Q)$(MAKE) $@ -C loader/live/kernel/kram_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/idstorage_dumper
@@ -171,6 +183,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/advancedvsh
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
+	$(Q)$(MAKE) $@ -C extras/modules/peops
 	$(Q)$(MAKE) $@ -C extras/modules/xmbctrl
 	$(Q)$(MAKE) $@ -C extras/modules/usbdevice
 	$(Q)$(MAKE) $@ -C extras/modules/ipl_update
@@ -241,6 +254,8 @@ mkdir-dist:
 	$(Q)mkdir dist/PSVita/Adrenaline | true
 	$(Q)mkdir dist/PSVita/Standalone | true
 	$(Q)mkdir dist/PSVita/Standalone/NPUZ01234  | true
+	$(Q)mkdir dist/PSVita/PS1CFW | true
+	$(Q)mkdir dist/PSVita/PS1CFW/SCPS10084 | true
 
 -include $(ARKROOT)/.config
 include $(ARKROOT)/common/make/quiet.mak

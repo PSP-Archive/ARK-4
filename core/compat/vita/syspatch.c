@@ -18,6 +18,8 @@ extern void exitLauncher();
 
 extern SEConfig* se_config;
 
+int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
+
 KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
     .KernelIcacheInvalidateAll = &sceKernelIcacheInvalidateAll,
@@ -136,6 +138,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
+
+    patchFileManagerImports(mod);
     
     patchGameInfoGetter(mod);
 
@@ -155,22 +159,20 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
-    /*
-    // Patch Vita Popsman
+    // Patch PSP Popsman
     if (strcmp(mod->modname, "scePops_Manager") == 0){
-        patchVitaPopsman(mod);
+        patchPspPopsman(mod);
         // Hook scePopsManExitVSHKernel
-        sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), K_EXTRACT_IMPORT(exitLauncher));
+        //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), K_EXTRACT_IMPORT(exitLauncher));
         goto flush;
     }
     
-    // Patch POPS SPU
+    // Patch PSP POPS SPU
     if (strcmp(mod->modname, "pops") == 0)
     {
-        patchVitaPopsSpu(mod);
+        patchPspPopsSpu(mod);
         goto flush;
     }
-    */
 
     // VLF Module Patches
     if(strcmp(mod->modname, "VLF_Module") == 0)
@@ -220,8 +222,41 @@ flush:
     flushCache();
 
 exit:
-       // Forward to previous Handler
+    // Forward to previous Handler
     if(previous) previous(mod);
+}
+
+int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
+int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
+
+    SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
+
+    struct {
+        char* name;
+        char* path;
+    } pops_files[] = {
+        {"scePops_Manager", "POPSMAN.PRX"},
+        {"sceMediaSync", "MEDIASYN.PRX"},
+    };
+
+    for (int i=0; i < sizeof(pops_files)/sizeof(pops_files[0]); i++){
+        if (strcmp(mod->modname, pops_files[i].name) == 0){
+            char path[ARK_PATH_SIZE];
+            strcpy(path, ark_config->arkpath);
+            strcat(path, pops_files[i].path);
+            SceIoStat stat;
+            int res = sceIoGetstat(path, &stat);
+            if (res>=0){
+                sceKernelUnloadModule(modid);
+                modid = sceKernelLoadModule(path, 0, NULL);
+                return sceKernelStartModule(modid, argsize, argp, modstatus, opt);
+            }
+        }
+    }
+
+    // forward to previous or default StartModule
+    if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
+    return -1;
 }
 
 void PROVitaSysPatch(){
@@ -230,4 +265,7 @@ void PROVitaSysPatch(){
     initFileSystem();
     // patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
     patchLoadExecUMDemu();
+
+    // Register custom start module
+    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
 }

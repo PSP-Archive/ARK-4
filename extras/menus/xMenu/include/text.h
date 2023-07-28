@@ -8,14 +8,14 @@
 
 // Colors
 enum colors {
-    RED =    0xFF0000FF,
-    GREEN =    0xFF00FF00,
-    BLUE =    0xFFFF0000,
-    WHITE =    0xFFFFFFFF,
-    LITEGRAY = 0xFFBFBFBF,
-    GRAY =  0xFF7F7F7F,
-    DARKGRAY = 0xFF3F3F3F,        
-    BLACK = 0xFF000000,
+    RED =    0x000000FF,
+    GREEN =    0x0000FF00,
+    BLUE =    0x00FF0000,
+    WHITE =    0x00FFFFFF,
+    LITEGRAY = 0x00BFBFBF,
+    GRAY =  0x007F7F7F,
+    DARKGRAY = 0x003F3F3F,
+    BLACK = 0x00000000,
 };
 
 using namespace std;
@@ -24,7 +24,7 @@ class TextAnim{
 
     private:
 
-        float scroll;
+        int scroll, ci, skip;
         string title;
         string subtitle;
         

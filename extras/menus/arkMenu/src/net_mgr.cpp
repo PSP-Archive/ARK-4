@@ -25,6 +25,8 @@ static struct {
 static SceUID ftp_thread = -1;
 static char pspIpAddr[32];
 
+static SceULong64 cur_download=0, max_download=0;
+
 static void addMessage(const char* msg){
     if (msg==NULL)
         return;
@@ -73,7 +75,7 @@ void NetworkManager::draw(){
         else{
             snprintf(buffer, 128, TR("FTP Server is stopped. Press %s to start.").c_str(), (common::getConf()->swap_buttons)? "()" : "X");
         }
-        static TextScroll scroll;
+        static TextScroll scroll = {0, 0, 0, 430};
         common::printText(30, 50, buffer, GRAY_COLOR, SIZE_BIG, 1, &scroll);
         common::printText(30, 70, "Press [] to check for Updates", GRAY_COLOR, SIZE_BIG, 1);
         
@@ -83,6 +85,13 @@ void NetworkManager::draw(){
             common::printText(30, y, vla.msg[i].c_str());
             y+=20;
         }
+
+        if (max_download){
+            double percent = double(cur_download)/double(max_download);
+            ya2d_draw_rect(20, 265, 450, 5, DARKGRAY, 1);
+            ya2d_draw_rect(20, 266, 450*percent, 3, LITEGRAY, 1);
+        }
+
         break;
     case 1:
         if (w > 0 || h > 0){
@@ -205,9 +214,10 @@ static void checkUpdates(){
     char* update_folder = "ms0:/PSP/GAME/UPDATE";
     char* update_eboot = "ms0:/PSP/GAME/UPDATE/EBOOT.PBP";
     string updater_url;
-    u32 update_ver;
+    u32 update_ver, version;
     bool do_update = false;
     char buf[128];
+    cur_download = max_download = 0;
 
     if (common::getPspModel() == PSP_GO){
         update_folder[0] = update_eboot[0] = 'e';
@@ -250,12 +260,18 @@ static void checkUpdates(){
 
             updater_url = parsePspUpdateList(&update_ver);
 
-            snprintf(buf, 128, TR("Got version %p @ %s").c_str(), update_ver, updater_url.c_str());
-            addMessage(buf);
-
             sceIoRemove("psp-updatelist.txt");
 
-            do_update = common::getConf()->force_update || sctrlHENGetMinorVersion() < update_ver;
+            if (!update_ver || updater_url.size() == 0){
+                do_update = false;
+            }
+            else{
+                snprintf(buf, 128, TR("Got version %p @ %s").c_str(), update_ver, updater_url.c_str());
+                addMessage(buf);
+
+                version = sctrlHENGetVersion() | sctrlHENGetMinorVersion(); // ARK's full version number
+                do_update = common::getConf()->force_update || version < update_ver;
+            }
 
             if (!do_update){
                 addMessage("No need to update!");
@@ -263,7 +279,7 @@ static void checkUpdates(){
             else{
                 addMessage("Downloading updater");
                 sceIoMkdir(update_folder, 0777);
-                wget((char*)updater_url.c_str(), update_eboot);
+                wget((char*)updater_url.c_str(), update_eboot, &cur_download, &max_download);
             }
 
             update_end:

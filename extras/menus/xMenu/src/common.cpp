@@ -1,3 +1,4 @@
+#include <sys/stat.h>
 #include "common.h"
 #include "entry.h"
 
@@ -9,11 +10,8 @@ void common::setArgs(int c, char** v){
 }
 
 bool common::fileExists(const std::string &path){
-    FILE* fp = fopen(path.c_str(), "rb");
-    if (fp == NULL)
-        return false;
-    fclose(fp);
-    return true;
+    struct stat sb;
+    return (stat(path.c_str(), &sb) == 0 && S_ISREG(sb.st_mode));
 }
 
 void common::loadData(){
@@ -40,8 +38,8 @@ Image* common::getNoIcon(){
     return noicon;
 }
 
-void common::printText(float x, float y, const char *text){
-    printTextScreen(x, y, text, WHITE_COLOR);
+void common::printText(float x, float y, const char *text, u32 color){
+    printTextScreen(x, y, text, color);
 }
 
 void common::flip(){

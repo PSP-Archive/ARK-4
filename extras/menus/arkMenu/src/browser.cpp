@@ -8,6 +8,7 @@
 #include "gamemgr.h"
 #include "system_mgr.h"
 #include "osk.h"
+#include "usb.h"
 
 #include "iso.h"
 #include "eboot.h"
@@ -36,6 +37,7 @@ typedef BrowserFolder Folder;
 extern "C" int kuKernelLoadModule(const char*, int, void*);
 
 #define MAX_OPTIONS 12
+
 static char* pEntries[MAX_OPTIONS] = {
     (char*) "Cancel",
     (char*) "Copy",
@@ -44,6 +46,7 @@ static char* pEntries[MAX_OPTIONS] = {
     (char*) "Delete",
     (char*) "Rename",
     (char*) "Create new",
+    (char*) "Toggle USB",
     (char*) "Go to ms0:/",
     (char*) "Go to ef0:/",
     (char*) "Go to ftp:/",
@@ -53,6 +56,7 @@ static char* pEntries[MAX_OPTIONS] = {
 BrowserDriver* Browser::ftp_driver = NULL;
 
 Browser* Browser::getInstance(){
+    if (self == NULL) self = new Browser();
     return self;
 }
 
@@ -80,6 +84,7 @@ Browser::Browser(){
     this->is_loading = false;
 
     t_conf* conf = common::getConf();
+    ARKConfig* ark_config = common::getArkConfig();
     if (conf->browser_dir[0]) this->cwd = conf->browser_dir;
 
     int psp_model = common::getPspModel();
@@ -92,9 +97,13 @@ Browser::Browser(){
     if (psp_model == PSP_11000 || ftp_driver == NULL){
         pEntries[FTP_DIR] = NULL;
     }
-    if (IS_VITA(common::getArkConfig()) || psp_model == PSP_GO){
+    if (IS_VITA(ark_config) || psp_model == PSP_GO){
         pEntries[UMD_DIR] = NULL;
     }
+
+    if (ark_config->exec_mode == PS_VITA)
+    	pEntries[USB_DEV] = NULL;
+
 }
 
 Browser::~Browser(){
@@ -132,11 +141,12 @@ void Browser::moveDirUp(){
     this->refreshDirs();
 }
         
-void Browser::update(Entry* e, bool skip_prompt){
+void Browser::update(Entry* ent, bool skip_prompt){
     // Move to the next directory pointed by the currently selected entry or run an app if selected file is one
-    if (this->entries->size() == 0)
+    if (ent == NULL || entries->size() == 0)
         return;
     common::playMenuSound();
+    BrowserFile* e = (BrowserFile*)ent;
     if (e->getName() == "./")
         refreshDirs();
     else if (e->getName() == "../")
@@ -149,11 +159,15 @@ void Browser::update(Entry* e, bool skip_prompt){
         this->cwd = MS0_DIR;
         this->refreshDirs();
     }
-    else if (string(e->getType()) == "FOLDER"){
-        this->cwd = e->getPath();
-        this->refreshDirs();
+    else if (Entry::isARK(e->getPath().c_str())) {
+		installTheme();
+	}
+    else if (e->getFileType() == FOLDER){
+        string full_path = e->getFullPath();
+        this->cwd = full_path;
+        this->refreshDirs(e->getPath().c_str());
     }
-    else if (Iso::isISO(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_ISO){
         if (this->cwd == "ms0:/ISO/VIDEO/" || this->cwd == "ef0:/ISO/VIDEO/")
             Iso::executeVideoISO(e->getPath().c_str());
         else{
@@ -170,7 +184,7 @@ void Browser::update(Entry* e, bool skip_prompt){
                 delete iso;
         }
     }
-    else if (Eboot::isEboot(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_PBP){
         Eboot* eboot = new Eboot(e->getPath());
         if (!skip_prompt){
             is_loading = true;
@@ -183,33 +197,27 @@ void Browser::update(Entry* e, bool skip_prompt){
         else
             delete eboot;
     }
-    else if (Entry::isZip(e->getPath().c_str())){
-        extractArchive(0);
+    else if (e->getFileType() == FILE_ZIP){
+        extractArchive(common::getExtension(e->getPath()) == "rar");
     }
-    else if (Entry::isRar(e->getPath().c_str())){
-        extractArchive(1);
-    }
-    else if (Entry::isPRX(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_PRX){
         installPlugin();
     }
-	else if (Entry::isARK(e->getPath().c_str())) {
-		installTheme();
-	}
-    else if (Entry::isTXT(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_TXT){
         optionsmenu = new TextEditor(e->getPath());
         optionsmenu->control();
         TextEditor* aux = (TextEditor*)optionsmenu;
         optionsmenu = NULL;
         delete aux;
     }
-    else if (Entry::isIMG(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_PICTURE){
         optionsmenu = new ImageViewer(e->getPath());
         optionsmenu->control();
         ImageViewer* aux = (ImageViewer*)optionsmenu;
         optionsmenu = NULL;
         delete aux;
     }
-    else if (Entry::isMusic(e->getPath().c_str())){
+    else if (e->getFileType() == FILE_MUSIC){
         this->hide_main_window = true;
         vector<string> selected;
         for (int i=0; i<entries->size(); i++){
@@ -326,7 +334,7 @@ void Browser::installPlugin(){
     else if (ret == 6){
         SystemMgr::pauseDraw();
         OSK osk;
-        osk.init("Game ID (i.e. ULUS01234)", "", 50);
+        osk.init("Game ID (i.e. ULUS01234)", (TextEditor::clipboard.size() > 0)? TextEditor::clipboard.c_str() : "", 50);
         osk.loop();
         int osk_res = osk.getResult();
         if(osk_res != OSK_CANCEL)
@@ -444,7 +452,7 @@ void logbuffer(char* path, void* buffer, u32 size){
     sceIoClose(fd);
 }
 
-void Browser::refreshDirs(){
+void Browser::refreshDirs(const char* retry){
 
     // Refresh the list of files and dirs
     SystemMgr::pauseDraw();
@@ -483,7 +491,11 @@ void Browser::refreshDirs(){
 
     if (dir < 0){ // can't open directory
         printf("can't open\n");
-        if (this->cwd == ROOT_DIR) // ms0 failed
+        if (retry){
+            this->cwd = retry;
+            retry = NULL;
+        }
+        else if (this->cwd == ROOT_DIR) // ms0 failed
             this->cwd = GO_ROOT; // go to ef0
         else
             this->cwd = ROOT_DIR;
@@ -495,47 +507,37 @@ void Browser::refreshDirs(){
     }
     else devsize = "";
 
-    SceIoDirent* dit = (SceIoDirent*)malloc(sizeof(SceIoDirent));
-    memset(dit, 0, sizeof(SceIoDirent));
+    SceIoDirent dit;
+    memset(&dit, 0, sizeof(SceIoDirent));
 
     vector<Entry*> folders;
     vector<Entry*> files;
 
     pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
+    memset(pri_dirent, 0, sizeof(pspMsPrivateDirent));
     pri_dirent->size = sizeof(pspMsPrivateDirent);
-    dit->d_private = (void*)pri_dirent;
-    static int bufid = 0;
-    while ((sceIoDread(dir, dit)) > 0){
-        printf("got entry: %s\n", dit->d_name);
+    dit.d_private = (void*)pri_dirent;
 
-        if (dit->d_name[0] == '.' && strcmp(dit->d_name, ".") != 0 && strcmp(dit->d_name, "..") != 0 && !common::getConf()->show_hidden){
+    while ((sceIoDread(dir, &dit)) > 0){
+        printf("got entry: %s -> %s\n", dit.d_name, pri_dirent);
+
+        if (dit.d_name[0] == '.' && strcmp(dit.d_name, ".") != 0 && strcmp(dit.d_name, "..") != 0 && !common::getConf()->show_hidden){
             continue;
         }
 
-        string ptmp = string(this->cwd)+string(dit->d_name);
-        if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
+        if (common::isFolder(&dit)){
             printf("is dir\n");
-            if (!common::folderExists(ptmp+"/")){
-                ptmp = string(this->cwd) + string((const char*)pri_dirent);
-                printf("%d: %s\n", (int)common::folderExists(ptmp), ptmp.c_str());
-            }
-            folders.push_back(new Folder(ptmp+"/"));
+            folders.push_back(new Folder(cwd, dit.d_name, string((const char*)pri_dirent)));
         }
         else{
             printf("is file\n");
-            if (!common::fileExists(ptmp)){
-                ptmp = string(this->cwd) + string((const char*)pri_dirent);
-                printf("%d: %s\n", (int)common::fileExists(ptmp), ptmp.c_str());
-            }
-            files.push_back(new File(ptmp));
+            files.push_back(new File(cwd, dit.d_name, string((const char*)pri_dirent)));
         }
-            
     }
     printf("closing and cleaning\n");
     sceIoDclose(dir);
 
-    //free(pri_dirent);
-    free(dit);
+    free(pri_dirent);
 
     Entry* dot = NULL;
     Entry* dotdot = NULL;
@@ -556,9 +558,9 @@ void Browser::refreshDirs(){
         std::sort(files.begin(), files.end(), Entry::cmpEntriesForSort);
     }
 
-    if (!dotdot && !isRootDir(this->cwd)) dotdot = new Folder(this->cwd+"../");
+    if (!dotdot && !isRootDir(this->cwd)) dotdot = new Folder(cwd, "..", "");
     if (dotdot) folders.insert(folders.begin(), dotdot);
-    if (!dot && !isRootDir(this->cwd)) dot = new Folder(this->cwd+"./");
+    if (!dot && !isRootDir(this->cwd)) dot = new Folder(cwd, ".", "");
     if (dot) folders.insert(folders.begin(), dot);
     
     printf("merging entries\n");
@@ -568,7 +570,7 @@ void Browser::refreshDirs(){
     for (int i=0; i<files.size(); i++)
         entries->push_back(files.at(i));
     if (this->entries->size() == 0)
-        this->entries->push_back(new Folder("./"));
+        this->entries->push_back(new Folder(cwd, ".", ""));
     SystemMgr::resumeDraw();
     
     printf("done\n");
@@ -888,6 +890,7 @@ void Browser::recursiveFolderDelete(string path){
         memset(&entry, 0, sizeof(SceIoDirent));
 
         pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
+        memset(pri_dirent, 0, sizeof(pspMsPrivateDirent));
         pri_dirent->size = sizeof(pspMsPrivateDirent);
         entry.d_private = (void*)pri_dirent;
         
@@ -907,7 +910,7 @@ void Browser::recursiveFolderDelete(string path){
             //build new file path
             new_path = path + string(entry.d_name);
 
-            if (FIO_SO_ISDIR(entry.d_stat.st_attr)){
+            if (common::isFolder(&entry)){
                 new_path = new_path + "/";
                 if (!common::folderExists(new_path)){
                     new_path = path + string((const char*)pri_dirent);
@@ -942,6 +945,7 @@ long Browser::recursiveSize(string path){
         memset(&entry, 0, sizeof(SceIoDirent));
 
         pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
+        memset(pri_dirent, 0, sizeof(pspMsPrivateDirent));
         pri_dirent->size = sizeof(pspMsPrivateDirent);
         entry.d_private = (void*)pri_dirent;
         
@@ -961,7 +965,7 @@ long Browser::recursiveSize(string path){
             //build new file path
             new_path = path + string(entry.d_name);
 
-            if (FIO_SO_ISDIR(entry.d_stat.st_attr)){
+            if (common::isFolder(&entry)){
                 new_path = new_path + "/";
                 if (!common::folderExists(new_path)){
                     new_path = path + string((const char*)pri_dirent);
@@ -1147,7 +1151,7 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
                 };
                 string src = new_source + entry.d_name;
 
-                if (FIO_SO_ISDIR(entry.d_stat.st_attr)){
+                if (common::isFolder(&entry)){
                     string dst;
                     if (!common::folderExists(src)){
                         string sname = string((const char*)pri_dirent);
@@ -1224,7 +1228,7 @@ void Browser::copyFolder(string path){
     if(!strncmp(path.c_str(), this->cwd.c_str(), path.length())) //avoid inception
         return;
     
-    Folder* f = new Folder(path);
+    Folder* f = new Folder(path, "");
     
     string destination = checkDestExists(path, this->cwd, f->getName().substr(0, f->getName().length()-1));
     
@@ -1477,6 +1481,16 @@ void Browser::createNew(){
     }
 }
 
+
+void Browser::toggleUSB() {
+	if (USB::is_enabled) {
+		USB::disable();
+	}
+	else {
+		USB::enable();
+	}
+}
+
 void Browser::drawOptionsMenu(){
 
     switch (optionsDrawState){
@@ -1494,11 +1508,11 @@ void Browser::drawOptionsMenu(){
         case 2: // draw menu
             optionsAnimX = 0;
             optionsAnimY = 52;
-            common::getImage(IMAGE_DIALOG)->draw_scale(0, 52, 140, 220);
+            common::getImage(IMAGE_DIALOG)->draw_scale(0, 32, 140, 240);
         
             {
             int x = 10;
-            int y = 80;
+            int y = 55;
             static TextScroll scroll = {0, 0, 0, 125};
             for (int i=0; i<MAX_OPTIONS; i++){
                 if (pEntries[i] == NULL) continue;
@@ -1543,6 +1557,12 @@ void Browser::optionsMenu(){
 
     Controller cont;
     Controller* pad = &cont;
+    
+    if (pEntries[USB_DEV]){
+        static string usb_dev;
+	usb_dev = "USB - " + TR( (USB::is_enabled)? "Enabled":"Disabled" );
+        pEntries[USB_DEV] = (char*)usb_dev.c_str();
+    }
 
     pad->update();
     
@@ -1629,6 +1649,7 @@ void Browser::options(){
     case DELETE:      this->removeSelection();                         break;
     case RENAME:      this->rename();                                  break;
     case CREATE:      this->createNew();                               break;
+    case USB_DEV:     this->toggleUSB();                               break;
     case MS0_DIR:     this->cwd = ROOT_DIR;     this->refreshDirs();   break;
     case FTP_DIR:     this->cwd = FTP_ROOT;     this->refreshDirs();   break;
     case EF0_DIR:     this->cwd = GO_ROOT;      this->refreshDirs();   break;
@@ -1667,7 +1688,7 @@ void Browser::control(Controller* pad){
     }
     else if (pad->start()){
         Entry* e = this->get();
-        if (conf->startbtn == 1) e = new BrowserFile(conf->last_game);
+        if (conf->startbtn == 1) e = new BrowserFile(conf->last_game, "");
         this->update(e, true);
     }
     else{

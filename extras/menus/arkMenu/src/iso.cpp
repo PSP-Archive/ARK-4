@@ -12,7 +12,6 @@ static u8 g_ciso_dec_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
 static u32 g_cso_idx_cache[CISO_IDX_MAX_ENTRIES];
 
 extern "C"{
-    int sctrlKernelExitVSH(void*);
     int sctrlDeflateDecompress(void*, void*, int);
     int lzo1x_decompress(void*, unsigned int, void*, unsigned int*, void*);
     int LZ4_decompress_fast(const char*, char*, int);

@@ -127,6 +127,47 @@ __attribute__((noinline)) void PSXFlashScreen(u32 color)
     while(vram < vramend) *(u16*)(vram += 2) = color16;
 }
 
+void testIo(){
+    static char tmp[256];
+    int res;
+
+    int fd = sceIoOpen("ms0:/iolog.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+
+    res = sceIoOpen("ms0:/__test__.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+    sceIoClose(res);
+    sprintf(tmp, "sceIoOpen: %p\n", res);
+    sceIoWrite(fd, tmp, strlen(tmp));
+
+    res = sceIoOpen("ms0:/PSP/SAVEDATA/SLUS00789/SCEVMC0.VMP", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+    sceIoClose(res);
+    sprintf(tmp, "sceIoOpen VMC: %p\n", res);
+    sceIoWrite(fd, tmp, strlen(tmp));
+
+    res = sceIoRemove("ms0:/__test__.txt");
+    sprintf(tmp, "sceIoRemove: %p\n", res);
+    sceIoWrite(fd, tmp, strlen(tmp));
+
+    res = sceIoMkdir("ms0:/PSP/SAVEDATA/__testdir__", 0777);
+    sprintf(tmp, "sceIoMkdir: %p\n", res);
+    sceIoWrite(fd, tmp, strlen(tmp));
+
+    res = sceIoDopen("ms0:/PSP/SAVEDATA/__testdir__");
+    sceIoDclose(res);
+    sprintf(tmp, "sceIoDopen: %p\n", res);
+    sceIoWrite(fd, tmp, strlen(tmp));
+
+    res = sceIoRmdir("ms0:/PSP/SAVEDATA/__testdir__");
+    sprintf(tmp, "sceIoRmdir: %p\n", res);
+    sceIoWrite(fd, tmp, strlen(tmp));
+
+    SceIoStat stat;
+    res = sceIoGetstat("ms0:/PSP/SAVEDATA/ARK_01234/ARK4.BIN", &stat);
+    sprintf(tmp, "sceIoGetstat: %p\n", res);
+    sceIoWrite(fd, tmp, strlen(tmp));
+
+    sceIoClose(fd);
+}
+
 // Entry Point
 int main(int argc, char * argv[])
 {
@@ -140,6 +181,9 @@ int main(int argc, char * argv[])
         if (color >= 3) color = 0;
     }
     */
+
+    //testIo();
+    //*(int*)NULL = 0;
 
     // Set Start Path
     strcpy(cwd, START_PATH);

@@ -2,7 +2,7 @@ TARGET = XMENU
 CFLAGS = -O2 -G0 -Wall
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
-INCDIR = $(ARKROOT)/libs/libpng include
+INCDIR = $(ARKROOT)/libs/libpng $(ARKROOT)/common/include include
 LIBDIR = $(ARKROOT)/libs
 LIBS = -lstdc++ -lpng -lpspgu -lpspgum -lz -lm -lpspsystemctrl_user
 LDFLAGS = -L libs
@@ -18,6 +18,7 @@ OBJS = \
 		src/graphics.o \
 		src/debug.o \
 		src/common.o \
+		src/submenu.o \
 		src/menu.o \
 		src/entry.o \
 		src/controller.o \

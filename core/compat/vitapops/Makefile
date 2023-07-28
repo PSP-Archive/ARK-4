@@ -2,8 +2,9 @@ TARGET = vitapops
 
 C_OBJS = \
 	main.o \
+	popcorn.o \
 	syspatch.o \
-	nullaudio.o \
+	exitgame.o \
 	popsdisplay.o \
 	$(ARKROOT)/common/utils/patches.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
@@ -29,7 +30,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lpspsystemctrl_kernel
+LIBS = -lpspsemaphore -lpspsystemctrl_kernel -lcolordebugger -lgraphics
 
 PSP_FW_VERSION = 660
 

@@ -31,6 +31,7 @@ typedef struct {
     char browser_dir[128]; // default directory when using file browser as main app
     unsigned char show_hidden; // show hidden files/folders
     unsigned char browser_icon0; // display ICON0 in File Browser
+    unsigned char show_size; // show file size in browser
 } t_conf;
 
 #endif

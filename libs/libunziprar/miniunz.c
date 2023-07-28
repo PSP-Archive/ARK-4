@@ -285,6 +285,7 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password,
     cache[i] = '\0';
     
     //printf("cache : %s\n",cache);
+    /*
     char *eIdx = strstr(cache, "eboot.pbp");
     if ( eIdx != NULL )
     {
@@ -295,6 +296,7 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password,
         for ( i=0; i<strlen(nname); ++i )
             filename_inzip[idx+i] = nname[i];
     }
+    */
     
     strcat(abs_filename, filename_inzip);
     

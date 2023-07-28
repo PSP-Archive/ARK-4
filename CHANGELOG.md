@@ -1,5 +1,35 @@
 # ARK Changelog
 
+## Version 4.20.61 (2023-07-06):
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42061
+- You can now play `PS1` games on `PS Vita Standalone` installations. Uses the original `Pops` from `PSP` and the `Peops SPU` plugin. 
+- Several small fixes and improvements.
+
+## Version 4.20.60 (2023-07-06):
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42060
+- (Rev 6) Fixed issue where launcher would not load. Refactor of plugins code in core CFW module.
+- (Rev 5) Fixed per-game settings and plugins on physical `UMD` discs. Fixed folder detection in `File Browser`.
+- (Rev 4) Fixed issues with physical `UMD` discs. In `VSH Menu`, behavior of the X/O button is now the same as the `XMB`.
+- (Rev 3) Fixed issues with non-latin files.
+- (Rev 2) Heavily improved loading times of `File Browser`.
+- You can now toggle `USB` connection in `File Browser` (`Launcher`/`Recovery`).
+- Implemented UNIX-style hidden files/folders in `Custom Launcher` (and `Recovery`).
+- `Custom Laucher` (and `Recovery`) will now remember last folder used in `File Browser`.
+- Updated and added new translations.
+- Improved lots of text displayed in the `Custom Launcher` (and `Recovery`) when using translations.
+- `File Browser` can now display game icons and animations.
+- Added option to disable file size calculation in `File Browser`.
+- A progress bar is now displayed when downloading an update in the `Custom Launcher`.
+- Fixed graphical glitch when loading the `Custom Launcher` or `Recovery`.
+- Several other fixes and improvements.
+
+## Version 4.20.59 (2023-06-27):
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42059
+- Heavily improved and refactor of VSH Menu.
+- Text Editor will now ask you to save when closing a modified file.
+- You can now copy game information to use on Text Editor.
+- Several other fixes and improvements.
+
 ## Version 4.20.58 (2023-06-24)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42058
 - Added support for `PS Vita Standalone` installations using `NoPspEmuDrm`.

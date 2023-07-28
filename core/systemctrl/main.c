@@ -29,7 +29,7 @@
 #include "exception.h"
 #include "libs/graphics/graphics.h"
 
-PSP_MODULE_INFO("SystemControl", 0x3007, 1, 0);
+PSP_MODULE_INFO("SystemControl", 0x3007, 4, 0);
 
 // default config
 static ARKConfig _ark_conf = {
@@ -40,6 +40,8 @@ static ARKConfig _ark_conf = {
     .recovery = 0,
 };
 ARKConfig* ark_config = &_ark_conf;
+
+extern void copyPSPVram(u32* psp_vram);
 
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)

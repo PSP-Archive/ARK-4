@@ -5,7 +5,6 @@
     copyright            : (C) 2002 by Pete Bernert
     email                : BlackDove@addcom.de
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -16,25 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 
-//*************************************************************************//
-// History of changes:
-//
-// 2003/02/18 - kode54
-// - added gaussian interpolation
-//
-// 2002/05/15 - Pete
-// - generic cleanup for the Peops release
-//
-//*************************************************************************//
-
 #include "stdafx.h"
-
 #define _IN_XA
+#include <stdint.h>
 
 // will be included from spu.c
 #ifdef _IN_SPU
-
-#include "xa.h"
 
 ////////////////////////////////////////////////////////////////////////
 // XA GLOBALS
@@ -42,12 +28,18 @@
 
 xa_decode_t   * xapGlobal=0;
 
-unsigned long * XAFeed  = NULL;
-unsigned long * XAPlay  = NULL;
-unsigned long * XAStart = NULL;
-unsigned long * XAEnd   = NULL;
-unsigned long   XARepeat  = 0;
-unsigned long   XALastVal = 0;
+uint32_t * XAFeed  = NULL;
+uint32_t * XAPlay  = NULL;
+uint32_t * XAStart = NULL;
+uint32_t * XAEnd   = NULL;
+
+uint32_t   XARepeat  = 0;
+uint32_t   XALastVal = 0;
+
+uint32_t * CDDAFeed  = NULL;
+uint32_t * CDDAPlay  = NULL;
+uint32_t * CDDAStart = NULL;
+uint32_t * CDDAEnd   = NULL;
 
 int             iLeftXAVol  = 32767;
 int             iRightXAVol = 32767;
@@ -61,12 +53,13 @@ static int gauss_window[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 #define gvalr(x) gauss_window[4+((gauss_ptr+x)&3)]
 
 ////////////////////////////////////////////////////////////////////////
-// MIX XA 
+// MIX XA & CDDA
 ////////////////////////////////////////////////////////////////////////
 
 INLINE void MixXA(void)
 {
  int ns;
+ uint32_t l;
 
  for(ns=0;ns<NSSIZE && XAPlay!=XAFeed;ns++)
   {
@@ -84,6 +77,14 @@ INLINE void MixXA(void)
      SSumL[ns]+=(((short)(XALastVal&0xffff))       * iLeftXAVol)/32767;
      SSumR[ns]+=(((short)((XALastVal>>16)&0xffff)) * iRightXAVol)/32767;
     }
+  }
+
+ for(ns=0;ns<NSSIZE && CDDAPlay!=CDDAFeed && (CDDAPlay!=CDDAEnd-1||CDDAFeed!=CDDAStart);ns++)
+  {
+   l=*CDDAPlay++;
+   if(CDDAPlay==CDDAEnd) CDDAPlay=CDDAStart;
+   SSumL[ns]+=(((short)(l&0xffff))       * iLeftXAVol)/32767;
+   SSumR[ns]+=(((short)((l>>16)&0xffff)) * iRightXAVol)/32767;
   }
 }
 
@@ -151,13 +152,13 @@ INLINE void FeedXA(xa_decode_t *xap)
  sinc = (xap->nsamples << 16) / iSize;                 // calc freq by num / size
 
  if(xap->stereo)
-  {
-   unsigned long * pS=(unsigned long *)xap->pcm;
-   unsigned long l=0;
+{
+   uint32_t * pS=(uint32_t *)xap->pcm;
+   uint32_t l=0;
 
    if(iXAPitch)
     {
-     long l1,l2;short s;
+     int32_t l1,l2;short s;
      for(i=0;i<iSize;i++)
       {
        if(iUseInterpolation==2) 
@@ -266,11 +267,11 @@ INLINE void FeedXA(xa_decode_t *xap)
  else
   {
    unsigned short * pS=(unsigned short *)xap->pcm;
-   unsigned long l;short s=0;
+   uint32_t l;short s=0;
 
    if(iXAPitch)
     {
-     long l1;
+     int32_t l1;
      for(i=0;i<iSize;i++)
       {
        if(iUseInterpolation==2) 
@@ -357,6 +358,26 @@ INLINE void FeedXA(xa_decode_t *xap)
        spos += sinc;
       }
     }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////
+// FEED CDDA
+////////////////////////////////////////////////////////////////////////
+
+INLINE void FeedCDDA(unsigned char *pcm, int nBytes)
+{
+ while(nBytes>0)
+  {
+   if(CDDAFeed==CDDAEnd) CDDAFeed=CDDAStart;
+   while(CDDAFeed==CDDAPlay-1||
+         (CDDAFeed==CDDAEnd-1&&CDDAPlay==CDDAStart))
+   {
+    return;
+   }
+   *CDDAFeed++=(*pcm | (*(pcm+1)<<8) | (*(pcm+2)<<16) | (*(pcm+3)<<24));
+   nBytes-=4;
+   pcm+=4;
   }
 }
 

@@ -27,6 +27,8 @@ enum{
 class GameManager : public SystemEntry{
 
     private:
+
+        GameManager();
     
         /* Array of game menus */
         Menu* categories[MAX_CATEGORIES];
@@ -82,7 +84,6 @@ class GameManager : public SystemEntry{
         
     public:
     
-        GameManager(bool autoload);
         ~GameManager();
 
         static GameManager* getInstance();

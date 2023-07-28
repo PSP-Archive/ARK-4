@@ -77,6 +77,9 @@ int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam
 }
 
 int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param) {
+    int k1 = pspSdkSetK1(0);
+    readGameIdFromDisc(rebootex_config.game_id);
+    pspSdkSetK1(k1);
 	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_DISC, file, param);
 }
 

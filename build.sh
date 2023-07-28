@@ -5,10 +5,10 @@
 #                                   #
 # Author  : Krazynez                #
 #                                   #
-# Date    : 2023-06-19              #
+# Date    : 2023-07-28              #
 #                                   #
 #####################################
-version=0.8.0
+version=0.8.5
 
 if [[ -z ${PSPDEV} ]]; then
 	clear
@@ -96,6 +96,32 @@ function original {
 	
 	    # Should be added to .bashrc or somthing to make it static, but for now I will leave it just for the session
 		elevatePrivs chown -R $USER:$USER $PSPDEV 
+
+		# downloads mkpsxsio and installs
+		if [[ ! -f "/usr/bin/mkpsxiso" ]]; then
+				check_curl=$(command -v curl)
+				curl_ret=$?
+				check_wget=$(command -v wget)
+				wget_ret=$?
+			if [[ -f "/usr/bin/apt" ]]; then
+				if [[ $curl_ret == 0 ]]; then
+					$check_curl -OJL "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.deb" && elevatePrivs apt install ./mkpsxiso-2.03-Linux.deb
+				elif [[ $wget_ret == 0 ]]; then
+					$check_wget -O $(pwd)/mkpsxiso-2.03-Linux.deb "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.deb" && elevatePrivs apt install ./mkpsxiso-2.03-Linux.deb
+				fi
+			elif [[ -f "/usr/bin/dnf" ]]; then
+				if [[ $curl_ret == 0 ]]; then
+					$check_curl -OJL "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.rpm" && elevatePrivs dnf install ./mkpsxiso-2.03-Linux.deb
+				elif [[ $wget_ret == 0 ]]; then
+					$check_wget -O $(pwd)/mkpsxiso-2.03-Linux.deb "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.rpm "&& elevatePrivs dnf install ./mkpsxiso-2.03-Linux.deb
+				fi
+
+			fi
+
+		fi
+
+
+
 	
 	    # Signs eboots needed for ARK Loader
 	    if [[ ! -f $PSPDEV/bin/sign_np ]] ; then
@@ -158,7 +184,7 @@ function withDialog {
 	dialog \
 		--title "Welcome to the ARK Compiler" \
 		--backtitle "Script created by Krazynez Version: $version" \
-		--msgbox "This script will setup the correct SDK to build ARK, get sign_np dependency and temporarly setup the enivorment to build ARK-4." 10 80 
+		--msgbox "This script will setup the correct SDK to build ARK, get sign_np dependency and mkpsxiso and temporarly setup the enivorment to build ARK-4." 10 80 
 
 $
 	dialog 	--title "Checking for existitng SDK"

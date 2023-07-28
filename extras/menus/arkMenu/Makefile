@@ -5,7 +5,7 @@ ASFLAGS = $(CFLAGS)
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
 endif
-INCDIR = include include/anim include/pmf include/ftp $(ARKROOT)/libs/libya2d $(ARKROOT)/libs/libintraFont $(ARKROOT)/libs/libjpeg $(ARKROOT)/common/include
+INCDIR = include include/anim include/multimedia include/ftp $(ARKROOT)/libs/libya2d $(ARKROOT)/libs/libintraFont $(ARKROOT)/libs/libjpeg $(ARKROOT)/common/include
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =
 EXTRA_TARGETS = EBOOT.PBP
@@ -31,10 +31,10 @@ OBJS = \
 		src/menu.o \
 		src/controller.o \
 		src/ya2d++.o \
-		src/mp3.o \
 		src/browser.o \
 		src/browser_entries.o \
 		src/osk.o \
+		src/usb.o \
 		src/network.o \
 		src/settingsmenu.o \
 		src/optionsmenu.o \
@@ -53,12 +53,13 @@ OBJS = \
 		src/anim/snow.o \
 		src/anim/gol.o \
 		src/anim/noanim.o \
-		src/pmf/pmf.o \
-		src/pmf/pmf_video.o \
-		src/pmf/pmf_decoder.o \
-		src/pmf/pmf_audio.o \
-		src/pmf/pmf_reader.o \
-		src/pmf/at3.o \
+		src/multimedia/mp3.o \
+		src/multimedia/mpeg.o \
+		src/multimedia/mpeg_video.o \
+		src/multimedia/mpeg_decoder.o \
+		src/multimedia/mpeg_audio.o \
+		src/multimedia/mpeg_reader.o \
+		src/multimedia/at3.o \
 		src/ftp/ftp.o \
 		src/ftp/ftpd.o \
 		src/ftp/sutils.o \
@@ -95,6 +96,9 @@ LIBS = \
 		-lpspnet \
 		-lpspnet_inet \
 		-lpsphttp \
+		-lpspusb \
+		-lpspdisplay \
+		-lpspusbdevice_driver \
 		-lpspsystemctrl_user \
 		-lpspkubridge \
 

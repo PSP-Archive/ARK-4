@@ -152,17 +152,20 @@ int connect_to_apctl(void)
     return 0;
 }
 
-int wget(char* url, char* saveAs){
+int wget(char* url, char* saveAs, SceULong64* cur_download, SceULong64* max_download){
 	int tpl, cnx, req, ret;
     u8 buf[16*1024];
 	if((tpl=sceHttpCreateTemplate("ARK-Launcher/1.0", 1, 1))<0)return tpl;
 	if((cnx=sceHttpCreateConnectionWithURL(tpl, url, 0))<0)return cnx;
 	if((req=sceHttpCreateRequestWithURL(cnx, PSP_HTTP_METHOD_GET, url, 0))<0)return req;
 	if((ret=sceHttpSendRequest(req, 0, 0))<0)return ret;
+    if (cur_download) *cur_download = 0;
+    if (max_download) sceHttpGetContentLength(req, max_download);
 	if(saveAs){
 		SceUID fd=sceIoOpen(saveAs, PSP_O_WRONLY | PSP_O_CREAT, 0777);
 		while((ret=sceHttpReadData(req,buf,sizeof(buf)))>0){
 			sceIoWrite(fd,buf,ret);
+            if (cur_download) *cur_download += ret;
 		}
 		ret=sceIoClose(fd);
 	}else{//store in ram

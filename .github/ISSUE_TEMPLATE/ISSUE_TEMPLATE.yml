@@ -13,6 +13,8 @@ body:
       description: "Please specify which device is affected/you have."
       multiple: true
       options:
+          - DTP-H1500 (Testing Tool)
+          - DTP-T1000 (Development Unit)
           - PSP-1000 (Fat)
           - PSP-2000 (Slim)
           - PSP-3000 (Slim & Bright)

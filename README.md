@@ -27,6 +27,12 @@ as well as unique and exclusive new features not found anywhere else.
 
   * [UPDATING ARK](#update-ark)
 
+  * [RECOVERY](#recovery)
+      - [Recovery Menu](#recovery-menu)
+      - [Vanilla Mode](#vanilla-mode)
+      - [Official Firmware Mode](#official-firmware-for-psp-permanent-installations)
+      - [Pandora/BaryonSweeper](#pandora-or-baryon-sweeper-for-psp)
+
   * [CUSTOMIZATION](#customization)
       - [Advanced VSH Menu Options](#advanced-vsh-menu-options)
       - [Installing Plugins](#installing-plugins)
@@ -130,7 +136,8 @@ The instructions are as follows:
 <p>
 
   - Works on 1K models, 2K models and early 3K models (1g, 2g and 3g).
-  - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use Infinity 2 (included in this download) instead.
+  - Only works on `6.61`. Does `NOT` work with `Testing Tool` or `Development Tool` firmwares.
+  - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
   - Move or copy `ARK_newIPL` folder to `/PSP/GAME/` and run the program.
   - Press the corresponding button in the installation page to install the cIPL patch.
   - Warning: unlike classic cIPL, the new method can't be easily uninstalled.
@@ -141,7 +148,8 @@ The instructions are as follows:
 <p>
 
   - Only works on 1K models and early 2K models (those compatible with Pandora).
-  - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use Infinity 2 (included in this download) instead.
+  - Works on `6.60` and `6.61`, including `Testing Tool` firmware. Does `NOT` work with `Development Tool` firmware.
+  - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
   - Move or copy `ARK cIPL` folder to `/PSP/GAME/` and run the program.
   - Press the corresponding button in the installation page to install or remove the cIPL patch.
 
@@ -260,17 +268,6 @@ The instructions are as follows:
 
 </p>
 
-#### Update ARK
-<p>
-
-There are three ways to update ARK:
-
-  - Option 1: Use the `System Update` feature in the XMB. Requires your PSP/Vita to be connected to the internet.
-  - Option 2: Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
-  - Option 3: Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
-
-</p>
-  
 #### Legacy Game Exploits (PSP & Vita)
 <p>
 
@@ -281,6 +278,62 @@ There are three ways to update ARK:
 - If you have issues with stability, it might be necessary to run `freemem()` algorithm in the kernel exploit file (`K.BIN`).
   
 </p>
+
+#### Update ARK
+<p>
+
+There are three ways to update ARK:
+
+  - Option 1: Use the `System Update` feature in the XMB. Requires your PSP/Vita to be connected to the internet.
+  - Option 2: Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
+  - Option 3: Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
+
+</p>
+
+## RECOVERY
+
+There are various ways to recover from a bad installation, usually result of `bad configuration` or `misbehaving plugins`, which may lead to `crashes` and even `bricks`.
+
+#### Recovery Menu
+This option allows you to boot up a `Recovery App` with settings and plugins completely disabled to prevent issues. You can use this app to change settings, plugins and use a file browser for various recovery operations.
+
+<p></p>
+
+The `Recovery App` is installed on `Memory Stick` located at `/PSP/SAVEDATA/ARK_01234/RECOVERY.PBP` and can be changed to just about any homebrew in `PBP` format.
+
+<p></p>
+
+To load into the `Recovery App` you must hold the `R trigger` while turning on the `PSP` console or running `ARK Loader`. You can also do the same when running any of the `Bubbles` on `PS Vita`, either `Adrenaline` or `Standalone` (except for `ARK-X`).
+
+#### Vanilla Mode
+If the `Recovery App` is unavailable (i.e. `Full Installations`), or for a better/easier diagnostics, you can run `ARK` in `Vanilla Mode`, which temporarily disables settings and plugins when running `ARK` or booting any game.
+
+<p></p>
+
+This will load the `XMB` as original as possible but you can still use features such as the `VSH Menu` or `XMB Control` (which will let you reconfigure all your settings and plugins), it also works for games.
+
+<p></p>
+
+To enable `Vanilla Mode` simply hold `select` and/or `start` during bootup or gameboot to disable settings and plugins respectively.
+
+<p></p>
+
+The effect of `Vanilla Mode` is temporary and goes away on the next game boot or reboot unless you enable it again.
+
+#### Official Firmware (for PSP Permanent Installations)
+For any `PSP` user that has a `Permanent` installation (i.e. `Infinity` or `cIPL`), you always have the option to boot the console in `Official Firmware` mode, which completely disables all `Custom Firmware` functionality until the next full reboot.
+
+#### Pandora or Baryon Sweeper (for PSP)
+If the console is `Bricked` and none of the above helps recovering the system, the last resort is to use a `Pandora Battery` or `Baryon Sweeper` in combination with a `Magic Memory Stick`.
+
+<p></p>
+
+You can find steps to install `Despertar del Cementerio` for `Pandora` models in this document.
+
+<p></p>
+
+For `Baryon Sweeper` users, you can use this tutorial: https://www.psx-place.com/threads/update-baryon-sweeper-unbrick-psp-1000-2000-3000-psp-slim-04g-07g-09g-psp-street-11g-model.32503/
+
 
 ## CUSTOMIZATION
 
@@ -549,7 +602,9 @@ Theme: Yokai
 #### Other Launchers
 <p>
 
-Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community. Here is a list of all popular menus for ARK:
+Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community.
+
+Here is a list of all popular menus for ARK:
 
 - ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
 
@@ -563,6 +618,7 @@ Aside from the default launcher provided, there have been many  other custom lau
 
 - pyMenu by Acid_Snake: https://wololo.net/talk/viewtopic.php?t=21942
 
+You can find a collection here: https://github.com/PSP-Archive/ARK-Launchers
 
 Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
 </p>

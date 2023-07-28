@@ -5,6 +5,7 @@
     copyright            : (C) 2002 by Pete Bernert
     email                : BlackDove@addcom.de
  ***************************************************************************/
+
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -15,13 +16,14 @@
  *                                                                         *
  ***************************************************************************/
 
-// POPS Global Pointer
-#define gp 0x10000
+//*************************************************************************//
+// History of changes:
+//
+// 2002/05/15 - Pete
+// - generic cleanup for the Peops release
+//
+//*************************************************************************//
 
-// SPU Register PSP Start Address
-#define PSP_SPU_REGISTER 0x49F40000
-
-// SPU Register Names
 #define H_SPUReverbAddr  0x0da2
 #define H_SPUirqAddr     0x0da4
 #define H_SPUaddr        0x0da6
@@ -149,15 +151,3 @@
 #define H_SPU_ADSRLevel22  0x0d68
 #define H_SPU_ADSRLevel23  0x0d78
 
-#define CTRL_IRQ                0x40
-#define CTRL_REVERB             0x80
-#define CTRL_NOISE              0x3f00
-#define CTRL_MUTE               0x4000
-#define CTRL_ON                 0x8000
-
-#define STAT_IRQ                0x40
-
-///////////////////////////////////////////////////////////
-
-void SPUwriteRegister(unsigned long reg, unsigned short val);
-int SPUreadRegister(unsigned long reg, unsigned short * result);

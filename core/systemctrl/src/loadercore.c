@@ -205,13 +205,17 @@ static void checkArkPath(){
     else{
         sceIoDclose(res);
     }
+    // invalidate rebootex game id when not using physical UMDs
+    extern RebootConfigARK rebootex_config;
+    if (sceKernelInitApitype() > PSP_INIT_APITYPE_DISC) rebootex_config.game_id[0] = 0;
 }
 
 // Init Start Module Hook
 int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
-    extern u8 rebootex_config[];
+    char modname[32];
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
+    strncpy(modname, mod->modname, sizeof(modname));
 
     int result = -1;
 
@@ -220,18 +224,17 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     {
         // Forward to Handler
         result = customStartModule(modid, argsize, argp, modstatus, opt);
-        if (result >= 0) return result;
     }
     
     // VSH replacement
-    if (strcmp(mod->modname, "vsh_module") == 0){
+    if (strcmp(modname, "vsh_module") == 0){
         if (ark_config->recovery || ark_config->launcher[0]){ // system in recovery or launcher mode
             exitLauncher(); // reboot VSH into custom menu
         }
     }
 
     // load settings and plugins before starting mediasync
-    if (!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
+    if (!pluginLoaded && strcmp(modname, "sceMediaSync") == 0)
     {
         // Check ARK install path
         checkArkPath();

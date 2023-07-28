@@ -138,11 +138,9 @@ typedef struct
  int               iLeftVolume;                        // left volume
  int               iLeftVolRaw;                        // left psx volume value
  int               bIgnoreLoop;                        // ignore loop bit, if an external loop address is used
- int               iMute;                              // mute mode
  int               iRightVolume;                       // right volume
  int               iRightVolRaw;                       // right psx volume value
  int               iRawPitch;                          // raw pitch (0...3fff)
- int               iIrqDone;                           // debug irq done flag
  int               s_1;                                // last decoding infos
  int               s_2;
  int               bRVBActive;                         // reverb active flag
@@ -214,9 +212,7 @@ typedef struct
 
 // psx buffers / addresses
 
-extern unsigned short * spuMem;
 extern unsigned char * spuMemC;
-extern unsigned char * pSpuIrq;
 extern unsigned char * pSpuBuffer;
 
 // user settings
@@ -224,12 +220,8 @@ extern unsigned char * pSpuBuffer;
 extern int        iUseXA;
 extern int        iVolume;
 extern int        iXAPitch;
-extern int        iUseTimer;
-extern int        iSPUIRQWait;
 extern int        iUseReverb;
 extern int        iUseInterpolation;
-extern int        iDisStereo;
-extern int        iUseDBufIrq;
 
 // MISC
 
@@ -238,9 +230,7 @@ extern REVERBInfo rvb;
 
 extern unsigned long dwNoiseVal;
 extern unsigned short spuCtrl;
-extern unsigned short spuIrq;
 extern int      bEndThread; 
-extern int      bThreadEnded;
 extern int      bSpuInit;
 extern unsigned long dwNewChannel;
 
@@ -248,10 +238,6 @@ extern int      SSumR[];
 extern int      SSumL[];
 extern int      iCycle;
 extern short *  pS;
-
-extern int iSpuAsyncWait;
-
-extern void (CALLBACK *cddavCallback)(unsigned short,unsigned short);
 
 #endif
 
@@ -263,13 +249,18 @@ extern void (CALLBACK *cddavCallback)(unsigned short,unsigned short);
 
 extern xa_decode_t   * xapGlobal;
 
-extern unsigned long * XAFeed;
-extern unsigned long * XAPlay;
-extern unsigned long * XAStart;
-extern unsigned long * XAEnd;
+extern uint32_t * XAFeed;
+extern uint32_t * XAPlay;
+extern uint32_t * XAStart;
+extern uint32_t * XAEnd;
 
-extern unsigned long   XARepeat;
-extern unsigned long   XALastVal;
+extern uint32_t   XARepeat;
+extern uint32_t   XALastVal;
+
+extern uint32_t * CDDAFeed;
+extern uint32_t * CDDAPlay;
+extern uint32_t * CDDAStart;
+extern uint32_t * CDDAEnd;
 
 extern int           iLeftXAVol;
 extern int           iRightXAVol;

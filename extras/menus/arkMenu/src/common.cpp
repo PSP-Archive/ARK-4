@@ -16,9 +16,10 @@
 
 using namespace common;
 
+bool common::is_recovery = false;
+
 extern "C"{
     int kuKernelGetModel();
-    int sctrlKernelExitVSH(void*);
 }
 
 static ARKConfig ark_config = {0};
@@ -36,6 +37,7 @@ static int argc;
 static char **argv;
 static int currentFont = 0;
 static int currentLang = 0;
+static int currentApp = 0; // Games
 /* Instance of the animations that are drawn on the menu */
 static Anim* animations[ANIM_COUNT];
 
@@ -154,8 +156,8 @@ static void loadFont(){
     intraFont* aux = font;
     if (aux) intraFontUnload(aux);
     // load new font
-    if (config.font == 0 && !altFont) altFont = intraFontLoadEx(fonts[1], INTRAFONT_CACHE_ASCII, 0, 0);
-    font = intraFontLoadEx(fonts[config.font], (altFont)?INTRAFONT_CACHE_ASCII:INTRAFONT_CACHE_ALL, offset, size);
+    if (config.font == 0 && !altFont) altFont = intraFontLoadEx(fonts[1], INTRAFONT_CACHE_ALL, 0, 0);
+    font = intraFontLoadEx(fonts[config.font], INTRAFONT_CACHE_ALL, offset, size);
     intraFontSetEncoding(font, INTRAFONT_STRING_UTF8);
     // set alt font
     if (altFont) intraFontSetAltFont(font, altFont);
@@ -166,6 +168,7 @@ void common::saveConf(){
 
     SystemMgr::pauseDraw();
 
+    // reload language
     if (currentLang != config.language){
         if (!Translations::loadLanguage(lang_files[config.language])){
             config.language = 0;
@@ -173,8 +176,18 @@ void common::saveConf(){
         currentLang = config.language;
     }
 
+    // reload font
     if (currentFont != config.font || font == NULL){
         loadFont();
+    }
+
+    // swap apps
+    if (!is_recovery && currentApp != config.main_menu){
+        SystemEntry* ent0 = SystemMgr::getSystemEntry(0);
+        SystemEntry* ent1 = SystemMgr::getSystemEntry(1);
+        SystemMgr::setSystemEntry(ent1, 0);
+        SystemMgr::setSystemEntry(ent0, 1);
+        currentApp = config.main_menu;
     }
 
     SystemMgr::resumeDraw();
@@ -471,6 +484,7 @@ void common::loadData(int ac, char** av){
 
     currentFont = config.font;
     currentLang = config.language;
+    currentApp = config.main_menu;
 
     if (config.language){
         Translations::loadLanguage(lang_files[config.language]);
@@ -504,6 +518,10 @@ void common::deleteData(){
 void common::setThemePath(char* path){
     if (path == NULL) theme_path = THEME_NAME;
     else theme_path = path;
+}
+
+bool common::isFolder(SceIoDirent* dit){
+    return FIO_SO_ISDIR(dit->d_stat.st_attr) || FIO_S_ISDIR(dit->d_stat.st_mode);
 }
 
 bool common::fileExists(const std::string &path){

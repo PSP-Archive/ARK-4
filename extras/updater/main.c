@@ -6,8 +6,10 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <kubridge.h>
 #include "globals.h"
 
 PSP_MODULE_INFO("ARKUpdater", 0x800, 1, 0);
@@ -16,6 +18,7 @@ PSP_HEAP_SIZE_KB(4096);
 
 #define BUF_SIZE 16*1024
 #define KERNELIFY(a) ((u32)a|0x80000000)
+#define DEFAULT_THEME_SIZE 614050
 
 typedef struct
 {
@@ -50,6 +53,37 @@ static int isVitaFile(char* filename){
     );
 }
 
+void checkArkConfig(ARKConfig* ark_config){
+    // check if ARK is using SEPLUGINS folder due to lack of savedata folder
+    if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0){
+        // create savedata folder, first attempt on ef0 for PSP Go
+        strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234/");
+        int res = sceIoMkdir(ark_config->arkpath, 0777);
+        if (res < 0){
+            // second attempt on ms0 for every other device
+            ark_config->arkpath[0] = 'm';
+            ark_config->arkpath[0] = 's';
+            res = sceIoMkdir(ark_config->arkpath, 0777);
+        }
+        // creation worked?
+        if (res >= 0){
+            // notify SystemControl of the new arkpath
+            struct KernelCallArg args;
+            args.arg1 = ark_config;
+            u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
+            kuKernelCall((void*)setArkConfig, &args);
+
+            // move settings file to arkpath
+            static char* orig = "ms0:/SEPLUGINS/SETTINGS.TXT";
+            static char* dest = "ms0:/PSP/SAVEDATA/ARK_01234/SETTINGS.TXT";
+            dest[0] = ark_config->arkpath[0];
+            dest[1] = ark_config->arkpath[1];
+            copy_file(orig, dest);
+            sceIoRemove(orig);
+        }
+    }
+}
+
 // Entry Point
 int main(int argc, char * argv[])
 {
@@ -57,6 +91,8 @@ int main(int argc, char * argv[])
     ARKConfig ark_config;
 
     sctrlHENGetArkConfig(&ark_config);
+
+    checkArkConfig(&ark_config);
     
     // Initialize Screen Output
     pspDebugScreenInit();
@@ -68,14 +104,15 @@ int main(int argc, char * argv[])
 
     pspDebugScreenPrintf("ARK Updater Started\n");
 
-    u32 my_ver = (ARK_MAJOR_VERSION << 16) | (ARK_MINOR_VERSION << 8) | ARK_MICRO_VERSION;
-    u32 cur_ver = sctrlHENGetMinorVersion();
-    int major = (cur_ver&0xFF0000)>>16;
-	int minor = (cur_ver&0xFF00)>>8;
-	int micro = (cur_ver&0xFF);
+    u32 my_ver = (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | (ARK_MICRO_VERSION << 8) | ARK_REVISION;
+    u32 cur_ver = sctrlHENGetVersion(); // ARK's full version number
+    u32 major = (cur_ver&0xFF000000)>>24;
+    u32 minor = (cur_ver&0xFF0000)>>16;
+    u32 micro = (cur_ver&0xFF00)>>8;
+    u32 rev   = sctrlHENGetMinorVersion();
 
-    pspDebugScreenPrintf("Current Version %d.%d.%.2i\n", major, minor, micro);
-    pspDebugScreenPrintf("Update Version %d.%d.%.2i\n", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ARK_MICRO_VERSION);
+    pspDebugScreenPrintf("Current Version %d.%d.%.2i r%d\n", major, minor, micro, rev);
+    pspDebugScreenPrintf("Update Version %d.%d.%.2i r%d\n", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ARK_MICRO_VERSION, ARK_REVISION);
 
     if (my_ver < cur_ver){
         pspDebugScreenPrintf("WARNING: downgrading to lower version\n");
@@ -118,6 +155,13 @@ int main(int argc, char * argv[])
             }
         }
     }
+
+    // delete updater
+    sceIoClose(my_fd);
+    sceIoRemove(eboot_path);
+    char* c = strrchr(eboot_path, '/');
+    *c = 0;
+    sceIoRmdir(eboot_path);
 
     // Kill Main Thread
     sceKernelExitGame();
@@ -175,7 +219,41 @@ void extractArchive(int fdr, char* dest_path, int (*filter)(char*)){
             if (filter(filename)){ // check if file is not needed on PSP
                 sceIoLseek32(fdr, filesize, PSP_SEEK_CUR); // skip file
             }
+
+			else if(strstr(filename, "THEME.ARK") != NULL) {
+					int size;
+					SceUID theme;
+
+					char fullpath[ARK_PATH_SIZE+10];
+
+					strcpy(fullpath, filepath);
+					strcat(fullpath, filename);
+
+					theme = sceIoOpen(fullpath, PSP_O_RDONLY, 0777);
+
+					if (theme < 0) {
+						goto _else;
+					}
+
+					else{
+
+						size = sceIoLseek32(theme, sizeof(theme), PSP_SEEK_END);
+						sceIoClose(theme);
+					}
+
+
+					if (size != DEFAULT_THEME_SIZE) { // Size of default THEME (hack for now, md5/sha was not working)
+                		sceIoLseek32(fdr, filesize, PSP_SEEK_CUR); // skip file
+					}
+					else {
+						goto _else;
+					}
+					
+					
+			}
+
             else{
+				_else:
                 strcat(filepath, (filename[0]=='/')?filename+1:filename);
                 pspDebugScreenPrintf("Extracting file %s\n", filepath);
                 int fdw = sceIoOpen(filepath, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
@@ -185,6 +263,7 @@ void extractArchive(int fdr, char* dest_path, int (*filter)(char*)){
                     while(1){};
                     return;
                 }
+				
                 while (filesize>0){
                     int read = sceIoRead(fdr, buf, (filesize>BUF_SIZE)?BUF_SIZE:filesize);
                     sceIoWrite(fdw, buf, read);

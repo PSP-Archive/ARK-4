@@ -1,11 +1,14 @@
 #include <cstring>
+#include <pspdisplay.h>
 #include "entry.h"
 #include "eboot.h"
 #include "iso.h"
 #include "sprites.h"
 #include "system_mgr.h"
 #include "music_player.h"
-#include "pmf/pmf.h"
+#include "mpeg.h"
+
+extern "C" int sceDisplaySetHoldMode(int);
 
 int gameBootThread(SceSize _args, void *_argp){
     Sprites s;
@@ -138,6 +141,8 @@ void Entry::gameBoot(){
     free(mp3_buffer);
     
     sceKernelWaitThreadEnd(boot_thread, NULL);
+
+    sceDisplaySetHoldMode(1);
     
 }
 
@@ -164,11 +169,11 @@ void Entry::freeTempData(){
 }
 
 bool Entry::isZip(const char* path){
-    return (common::getMagic(path, 0) == ZIP_MAGIC);
+    return (common::getExtension(path) == "zip");
 }
 
 bool Entry::isRar(const char* path){
-    return (common::getMagic(path, 0) == RAR_MAGIC);
+    return (common::getExtension(path) == "rar");
 }
 
 bool Entry::isPRX(const char* path){
@@ -290,7 +295,7 @@ bool Entry::pmfPrompt(){
     bool pmfPlayback = entry->getIcon1() != NULL || entry->getSnd() != NULL;
         
     if (pmfPlayback && !MusicPlayer::isPlaying()){
-        ret = pmfStart(entry, 10, 98);
+        ret = mpegStart(entry, 10, 98);
     }
     else{
         Controller control;
