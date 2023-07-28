@@ -280,14 +280,19 @@ int menu_ctrl(u32 button_on) {
 
 void button_func(vsh_Menu *vsh) {
 	int res;
+	// copy pad from the vsh struct in case it can change during the function
+	SceCtrlData pad = vsh->buttons.pad;
+	// calculate new_buttons_on from old_pad and pad
+	u32 new_buttons_on = ~vsh->buttons.old_pad.Buttons & vsh->buttons.pad.Buttons;
+	
 	// menu control
 	switch(vsh->status.menu_mode) {
 		case 0:	
-			if ((vsh->buttons.pad.Buttons & ALL_CTRL) == 0)
+			if ((pad.Buttons & ALL_CTRL) == 0)
 				vsh->status.menu_mode = 1;
 			break;
 		case 1:
-			res = menu_ctrl(vsh->buttons.new_buttons_on);
+			res = menu_ctrl(new_buttons_on);
 
 			if(res != 0) {
 				stop_stock = res;
@@ -296,8 +301,10 @@ void button_func(vsh_Menu *vsh) {
 			break;
 		case 2: // exit waiting 
 			// exit menu
-			if ((vsh->buttons.pad.Buttons & ALL_CTRL) == 0)
+			if ((pad.Buttons & ALL_CTRL) == 0)
 				vsh->status.stop_flag = stop_stock;
 			break;
 	}
+	// copy pad to oldpad
+	scePaf_memcpy(&vsh->buttons.old_pad, &pad, sizeof(SceCtrlData));
 }
