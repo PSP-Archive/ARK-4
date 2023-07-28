@@ -10,6 +10,7 @@ vsh_Menu vsh_menu = {
 	.status.reset_vsh = 0,
 	.status.umdvideo_idx = 0,
 	.buttons.pad.Buttons = 0xFFFFFFFF,
+	.buttons.old_pad.Buttons = 0xFFFFFFFF,
 	.buttons.new_buttons_on = 0,
 	.thread_id = -1,
 };

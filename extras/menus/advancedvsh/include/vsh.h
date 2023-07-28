@@ -31,6 +31,7 @@ typedef struct _vsh_Config{
 // Button stuff go here
 typedef struct{
 	SceCtrlData pad;
+	SceCtrlData old_pad;
 	u32 new_buttons_on;
 }vsh_Buttons;
 
