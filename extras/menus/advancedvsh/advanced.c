@@ -1,5 +1,6 @@
 #include "common.h"
 #include <psputility.h>
+#include <pspctrl.h>
 #include <time.h>
 
 #include "systemctrl.h"
@@ -368,11 +369,9 @@ int submenu_setup(void) {
 }
 
 
-int submenu_ctrl(void) {
+int submenu_ctrl(u32 button_on) {
 	int direction;
-	u32 button_on;
 	vsh_Menu *vsh = vsh_menu_pointer();
-	button_on = vsh->buttons.new_buttons_on;
 
 
 	if ((button_on & PSP_CTRL_SELECT) || (button_on & PSP_CTRL_HOME) || button_decline(button_on)) {
@@ -506,6 +505,9 @@ none:
 
 void subbutton_func(vsh_Menu *vsh) {
 	int res;
+	SceCtrlData pad = vsh->buttons.pad;
+	u32 new_buttons_on = ~vsh->buttons.old_pad.Buttons & vsh->buttons.pad.Buttons;
+	
 	// submenu control
 	switch(vsh->status.submenu_mode) {
 		case 0:	
@@ -513,7 +515,7 @@ void subbutton_func(vsh_Menu *vsh) {
 				vsh->status.submenu_mode = 1;
 			break;
 		case 1:
-			res = submenu_ctrl();
+			res = submenu_ctrl(new_buttons_on);
 
 			if (res != 0) {
 				sub_stop_stock = res;
@@ -526,4 +528,6 @@ void subbutton_func(vsh_Menu *vsh) {
 				vsh->status.sub_stop_flag = sub_stop_stock;
 			break;
 	}
+	
+	scePaf_memcpy(&vsh->buttons.old_pad, &pad, sizeof(SceCtrlData));
 }
