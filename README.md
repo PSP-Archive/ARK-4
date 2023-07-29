@@ -160,7 +160,7 @@ The instructions are as follows:
 
   - Works on all PSP models on 6.60 or 6.61 firmwares.
   - Copy or move the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
-  - Run the`Infinity` app using Official Firmware to run the initial installation.
+  - Run the`Infinity` app using Official Firmware to run the initial installation. If you previously had and older Infinity installed when prompted to update please do, as our Infinity version includes the ARK patches to autoboot.
   - Run `Infinity` a second time to configure autoboot by selecting ARK within the Infinity app. Run the ARK CFW again to activate. ARK will now be automatically activated on boot up.
 
 </p>
