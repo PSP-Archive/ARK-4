@@ -537,9 +537,13 @@ Theme: ARK_Revamped
 
 ![ARK_Revamped](.github/wallpapers/ARK_Revamped.png "ARK_Revamped")
 
-Theme: RED 
+Theme: Red 
 
-![Red](.github/wallpapers/red.png "RED")
+![Red](.github/wallpapers/red.png "Red")
+
+Theme: Ubuntu 
+
+![Ubuntu](.github/wallpapers/Ubuntu.png "Ubuntu")
 
 Theme: Peace Walker 
 
@@ -556,6 +560,10 @@ Theme: Material Dark
 Theme: GX Classic
 
 ![GX Classic](.github/wallpapers/gxclassic.png "GX Classic")
+
+Theme: Jurassic Park
+
+![Jurassic Park](.github/wallpapers/Jurassic_Park.png "Jurassic Park")
 
 Theme: Classic
 
