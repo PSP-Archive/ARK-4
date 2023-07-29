@@ -157,7 +157,7 @@ The instructions are as follows:
 
 ###### Permanent CFW via Infinity
 <p>
-  <b>*RECOMMNEDED*</b> If already using another CFW with Infinity < 2.0.5, use chronoswitch to reinstall 6.60/6.61 to OFW (Offical Firmware). If you do not when launching Infinity it can just lock your PSP up causing Infinity to not work properly (not harmful, just not properly). Then proceed with intructions. You can still bi/tri boot your CFW afterwards. 
+  <b>*RECOMMNEDED*</b> If already using another CFW with Infinity < 2.0.5, use chronoswitch to reinstall 6.60/6.61 OFW (Offical Firmware). If you do not when launching Infinity it <em>can</em> just lock your PSP up causing Infinity to not work properly (not harmful, just not properly). Then proceed with intructions. You can still bi/tri boot your CFW afterwards. 
 
   - Works on all PSP models on 6.60 or 6.61 firmwares.
   - Copy or move the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
