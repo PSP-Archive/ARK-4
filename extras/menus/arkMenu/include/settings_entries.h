@@ -380,7 +380,6 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&scan_dlc,
     (settings_entry*)&show_hidden,
     (settings_entry*)&show_size,
-    (settings_entry*)&show_path,
     (settings_entry*)&swap_buttons,
     (settings_entry*)&animations,
     (settings_entry*)&main_menu,
@@ -395,6 +394,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&menusize,
     (settings_entry*)&browser_icon0,
     (settings_entry*)&redirect_ms0,
+    (settings_entry*)&show_path,
 };
 
 #define MAX_SETTINGS_OPTIONS (sizeof(settings_entries)/sizeof(settings_entries[0]))
