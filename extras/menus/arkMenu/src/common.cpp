@@ -223,6 +223,7 @@ void common::resetConf(){
     config.redirect_ms0 = 0;
     config.startbtn = 0;
     config.menusize = 0;
+    config.show_path = 0;
     config.browser_icon0 = 1;
 }
 
