@@ -62,7 +62,7 @@ void checkArkConfig(ARKConfig* ark_config){
         if (res < 0){
             // second attempt on ms0 for every other device
             ark_config->arkpath[0] = 'm';
-            ark_config->arkpath[0] = 's';
+            ark_config->arkpath[1] = 's';
             res = sceIoMkdir(ark_config->arkpath, 0777);
         }
         // creation worked?
