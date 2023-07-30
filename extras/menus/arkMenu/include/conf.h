@@ -32,6 +32,7 @@ typedef struct {
     unsigned char show_hidden; // show hidden files/folders
     unsigned char browser_icon0; // display ICON0 in File Browser
     unsigned char show_size; // show file size in browser
+    unsigned char show_path; // show device in game manager title for GO, whether the game is on ef0 or ms0 
 } t_conf;
 
 #endif
