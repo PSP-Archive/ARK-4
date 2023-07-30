@@ -116,7 +116,15 @@ int main(int argc, char * argv[])
 
     if (my_ver < cur_ver){
         pspDebugScreenPrintf("WARNING: downgrading to lower version\n");
-    }
+        pspDebugScreenPrintf("Press X to continue to Downgrade, or press any button to QUIT!\n");
+		SceCtrlData pad;
+		while(1){
+			sceCtrlPeekBufferPositive(&pad, 1);
+			if(pad.Buttons & PSP_CTRL_CROSS) break;
+			else if(pad.Buttons & (PSP_CTRL_UP|PSP_CTRL_RIGHT|PSP_CTRL_DOWN|PSP_CTRL_LEFT|PSP_CTRL_LTRIGGER|PSP_CTRL_RTRIGGER|PSP_CTRL_CIRCLE|PSP_CTRL_TRIANGLE|PSP_CTRL_SQUARE)) sctrlKernelExitVSH(NULL);
+
+    	}
+	}
 
     char* eboot_path = argv[0];
 
