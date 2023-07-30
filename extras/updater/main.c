@@ -267,8 +267,20 @@ void extractArchive(int fdr, char* dest_path, int (*filter)(char*)){
                 int fdw = sceIoOpen(filepath, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
                 if (fdw < 0){
                     pspDebugScreenPrintf("ERROR: could not open file for writing\n");
+					char *slash = strrchr(filepath, '/');
+					int length = slash-filepath-9;
+					char *res = (char*)malloc(length+1);
+					strncpy(res, filepath, length);
+					res[length] = '\0';
+                    pspDebugScreenPrintf("ERROR: Do you have ARK_01234 directory in %s ?\n", res);
+					free(res);
                     sceIoClose(fdr);
-                    while(1){};
+					SceCtrlData pad;
+                    pspDebugScreenPrintf("\nPress any key to exit...\n");
+                    while(1){
+						sceCtrlPeekBufferPositive(&pad, 1);
+						if(pad.Buttons) sctrlKernelExitVSH(NULL);
+					}
                     return;
                 }
 				
