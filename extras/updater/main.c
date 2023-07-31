@@ -91,16 +91,17 @@ int main(int argc, char * argv[])
     ARKConfig ark_config;
 
     sctrlHENGetArkConfig(&ark_config);
-
-    checkArkConfig(&ark_config);
     
     // Initialize Screen Output
     pspDebugScreenInit();
 
     if (ark_config.magic != ARK_CONFIG_MAGIC){
-        pspDebugScreenPrintf("ERROR: not running ARK\n");
-        while (1){};
+        pspDebugScreenPrintf("ERROR: not running ARK, exiting in 5 seconds...\n");
+        sceKernelDelayThread(5000000);
+        sceKernelExitGame();
     }
+
+    checkArkConfig(&ark_config);
 
     pspDebugScreenPrintf("ARK Updater Started\n");
 
