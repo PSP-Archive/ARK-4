@@ -68,7 +68,7 @@ int main(int argc, char** argv){
 
 	// Settings
     int max_settings = MAX_SETTINGS_OPTIONS;
-    if (common::getPspModel() != PSP_GO) max_settings--;
+    if (common::getPspModel() != PSP_GO) max_settings -= 2;
     SettingsTable stab_recovery = { settings_entries, max_settings };
     SettingsMenu* recovery_settings_menu = new SettingsMenu(&stab_recovery, common::saveConf, false, true, true);
 	recovery_settings_menu->setName("Menu Settings");
