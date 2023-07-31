@@ -55,7 +55,8 @@ static int isVitaFile(char* filename){
 
 void checkArkConfig(ARKConfig* ark_config){
     // check if ARK is using SEPLUGINS folder due to lack of savedata folder
-    if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0){
+    SceIoStat stat;
+    if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0 || sceIoGetstat(ark_config->arkpath, &stat) < 0){
         // create savedata folder, first attempt on ef0 for PSP Go
         strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234/");
         int res = sceIoMkdir(ark_config->arkpath, 0777);
