@@ -55,20 +55,21 @@ static int isVitaFile(char* filename){
 
 void checkArkConfig(ARKConfig* ark_config){
     // check if ARK is using SEPLUGINS folder due to lack of savedata folder
-    SceIoStat stat;
+    SceUID fd = -1;
     char path[ARK_PATH_SIZE]; strcpy(path, ark_config->arkpath); path[strlen(path)-1] = 0; // remove trailing '/' or else sceIoGetstat won't work
-    if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0 || sceIoGetstat(path, &stat) < 0){
+    if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0 || (fd = sceIoDopen(path)) < 0){
         // create savedata folder, first attempt on ef0 for PSP Go
         strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234");
         sceIoMkdir(ark_config->arkpath, 0777);
-        if (sceIoGetstat(ark_config->arkpath, &stat) < 0){
+        if ((fd = sceIoDopen(ark_config->arkpath)) < 0){
             // second attempt on ms0 for every other device
             ark_config->arkpath[0] = 'm';
             ark_config->arkpath[1] = 's';
             sceIoMkdir(ark_config->arkpath, 0777);
+            fd = sceIoDopen(ark_config->arkpath);
         }
         // creation worked?
-        if (sceIoGetstat(ark_config->arkpath, &stat) >= 0){
+        if (fd >= 0){
             // notify SystemControl of the new arkpath
             struct KernelCallArg args;
             args.arg1 = ark_config;
@@ -86,6 +87,7 @@ void checkArkConfig(ARKConfig* ark_config){
             strcat(ark_config->arkpath, "/");
         }
     }
+    sceIoDclose(fd);
 }
 
 // Entry Point
