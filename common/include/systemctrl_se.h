@@ -1,6 +1,8 @@
 #ifndef __SCTRLLIBRARY_SE_H__
 #define __SCTRLLIBRARY_SE_H__
 
+#include <psptypes.h>
+
 #ifdef __cplusplus
 extern "C"{
 #endif

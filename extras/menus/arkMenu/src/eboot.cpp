@@ -1,4 +1,5 @@
 #include "eboot.h"
+#include <systemctrl.h>
 
 Eboot::Eboot(string path){
     

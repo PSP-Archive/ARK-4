@@ -6,6 +6,7 @@
 #include "system_mgr.h"
 #include <pspnet_apctl.h>
 #include <psphttp.h>
+#include <systemctrl.h>
 #include "eboot.h"
 #include "lang.h"
 

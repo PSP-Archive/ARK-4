@@ -24,7 +24,7 @@
 #include <pspctrl.h>
 #include <stdio.h>
 #include <string.h>
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "systemctrl_se.h"
 #include "globals.h"
 #include "macros.h"

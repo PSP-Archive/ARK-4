@@ -26,7 +26,7 @@
 #include <pspdisplay.h>
 #include <psputility.h>
 
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "systemctrl_se.h"
 #include "vpl.h"
 #include "scepaf.h"

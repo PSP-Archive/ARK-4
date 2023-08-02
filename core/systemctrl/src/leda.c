@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "macros.h"
-#include "systemctrl.h"
+#include <systemctrl.h>
 
 int leda_running = 0;
 SceUID (* KernelLoadModuleMs2_hook)() = NULL;

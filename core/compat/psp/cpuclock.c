@@ -23,16 +23,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <pspinit.h>
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "macros.h"
 		
 int (* scePowerSetClockFrequency_k)(int cpufreq, int ramfreq, int busfreq);
 
-int	sctrlHENSetSpeed(int cpu,int bus)
+/*int	sctrlHENSetSpeed(int cpu,int bus)
 {	
 	scePowerSetClockFrequency_k = sctrlHENFindFunction("scePower_Service", "scePower", 0x545A7F3C);
 	return scePowerSetClockFrequency_k( cpu, cpu ,bus);
 }
+*/
 
 static const u32 cpu_nid_list[] = {
 	0x545A7F3C,

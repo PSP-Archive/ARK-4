@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <algorithm>
 #include <stdlib.h>
+#include <systemctrl.h>
 #include "system_mgr.h"
 #include "gamemgr.h"
 #include "music_player.h"

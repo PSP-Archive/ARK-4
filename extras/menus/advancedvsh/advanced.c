@@ -3,7 +3,7 @@
 #include <pspctrl.h>
 #include <time.h>
 
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "clock.h"
 
 #include "vsh.h"
