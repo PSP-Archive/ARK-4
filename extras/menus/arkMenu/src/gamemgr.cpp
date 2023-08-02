@@ -365,24 +365,13 @@ void GameManager::stopFastScroll(){
 }
 
 string GameManager::getInfo(){
-    if (selectedCategory >= 0 && (common::getPspModel() == PSP_GO) && common::getConf()->show_path) {
-		string path;
-		for(int i = 0; i <= 4; i++) {
-			if(i == 0) {
-				path += "<";
-				path += (getEntry()->getPath()[i]);
-			}
-			else if(i == 4) {
-				path += "> ";
-			}
-			else {
-				path += (getEntry()->getPath()[i]);
-			}
-		}
-		
-		return path+getEntry()->getName();
-	}
-	else if (selectedCategory >= 0 && !(common::getPspModel() == PSP_GO)) return getEntry()->getName();
+    if (selectedCategory >= 0){
+        Entry* e = getEntry();
+        if (common::getConf()->show_path){
+            return e->getName() + " <" + e->getPath() + ">"; 
+        }
+        return e->getName();
+    }
     else if (selectedCategory == -1) return "Loading games...";
     else if (selectedCategory == -2) return "No games available";
     return "Unknown Menu State";
