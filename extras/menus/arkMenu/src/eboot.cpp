@@ -101,7 +101,7 @@ int Eboot::getEbootType(const char* path){
 
     int ret = UNKNOWN_TYPE;
 
-    if (strcasecmp("ms0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp("ef0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 )
+    if (strcasecmp("ms0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp("ef0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp("ms0:/PSP/APPS/UPDATE/VBOOT.PBP") == 0 )
         return TYPE_UPDATER;
 
     FILE* fp = fopen(path, "rb");

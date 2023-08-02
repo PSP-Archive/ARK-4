@@ -59,15 +59,15 @@ void checkArkConfig(ARKConfig* ark_config){
     if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0 || sceIoGetstat(ark_config->arkpath, &stat) < 0){
         // create savedata folder, first attempt on ef0 for PSP Go
         strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234/");
-        int res = sceIoMkdir("ef0:/PSP/SAVEDATA/ARK_01234", 0777);
-        if (res < 0){
+        sceIoMkdir("ef0:/PSP/SAVEDATA/ARK_01234", 0777);
+        if (sceIoGetstat(ark_config->arkpath, &stat) < 0){
             // second attempt on ms0 for every other device
             ark_config->arkpath[0] = 'm';
             ark_config->arkpath[1] = 's';
-            res = sceIoMkdir("ms0:/PSP/SAVEDATA/ARK_01234", 0777);
+            sceIoMkdir("ms0:/PSP/SAVEDATA/ARK_01234", 0777);
         }
         // creation worked?
-        if (res >= 0){
+        if (sceIoGetstat(ark_config->arkpath, &stat) >= 0){
             // notify SystemControl of the new arkpath
             struct KernelCallArg args;
             args.arg1 = ark_config;
