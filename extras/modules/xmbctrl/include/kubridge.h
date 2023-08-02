@@ -7,6 +7,7 @@
 #include <pspsysmem_kernel.h>
 #include <psputilsforkernel.h>
 #include <pspctrl.h>
+#include <systemctrl.h>
 
 /**
  * Functions to let user mode access certain functions only available in

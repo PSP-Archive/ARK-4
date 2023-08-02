@@ -23,7 +23,6 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <psputility_sysparam.h>
-#include <systemctrl.h>
 #include <kubridge.h>
 #include <stddef.h>
 
