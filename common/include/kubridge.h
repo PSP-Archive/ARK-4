@@ -10,6 +10,7 @@ extern "C"{
 #include <pspkernel.h>
 #include <pspsysmem_kernel.h>
 #include <pspctrl.h>
+#include <psputilsforkernel.h>
 #include <module2.h>
 
 /**
