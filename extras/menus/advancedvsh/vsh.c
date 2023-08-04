@@ -12,6 +12,8 @@ vsh_Menu vsh_menu = {
 	.buttons.pad.Buttons = 0xFFFFFFFF,
 	.buttons.old_pad.Buttons = 0xFFFFFFFF,
 	.buttons.new_buttons_on = 0,
+	// .mode = VSH_CLASSIC,
+	.mode = VSH_WINDOW,
 	.thread_id = -1,
 };
 
