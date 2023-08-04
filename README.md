@@ -40,6 +40,8 @@ as well as unique and exclusive new features not found anywhere else.
       - [Custom Themes](#custom-themes)
       - [Other Launchers](#other-launchers)
   * [Other](#other)
+      - [History](#history)
+      - [Changelog](#changelog)
       - [Credits](#credits)
       - [Warnings](#warnings)
 
@@ -637,14 +639,39 @@ Note: some of these menus have not been updated or supported by their developers
 
 ## Other
 
+#### History
+Despite being a relatively new `Custom Firmware` for the `PSP`, `ARK` has quite a history that goes back to the early days of the `PS Vita` scene.
+
+`ARK` is a `CFW` that started as a port (more like rewrite) of `PRO CFW` to the `PS Vita` (named `PROVITA`) created by the original `Team PRO` members (`Coldbird`, `Liquid Snake` and `Neur0n`).
+After the original team left, the source code of `PROVITA` was handed over to me (`Acid_Snake`) and my long time scene friend `qwikrazor87`.
+
+We quickly began a huge process of rewriting and restructuring code, more specifically a much more robust dynamic patching algorithms that would work on any 6.6X based firmware (including all Vita's ePSP firmwares). Thus `ARK-2` was born.
+
+Soon after, qwik, thefl0w and I began working on `PSX exploits`, which resulted in `TN-X` and `ARK-3` (never publicly released).
+
+Because the original `PRO CFW` hasn't been updated or maintained in a while, and it has become a little bloated and hard to work with, I decided to start working on porting `ARK` to the `PSP` since the core elements of the `CFW` are compatible with `PSP` `6.60` and `6.61` with minor changes.
+
+After lots of work getting the same `ARK` binaries to properly work on both PSP and Vita, I am proud to announce that the release of `ARK-4` is finally here!
+
+
+#### Changelog
+
+- `ARK-1`: original port/rewrite of `PRO CFW` for the `PS Vita`. Codenamed `PROVITA`.
+- `ARK-2`: dynamic patching allows it to work with most of `PS Vita` firmwares.
+- `ARK-3`: device-specific runtime allows `ARK` to run in multiple scenarios (`ePSP` and `ePSX`).
+- `ARK-4`: ported to the original `PSP`. Huge amounts of improvements and fixes over previous versions.
+
+
 #### Credits
 <p>
 
-- `Team PRO` (the original developers of ARK): `Coldbird`, `hrimfaxi` and `Neur0n`.
+- `Team PRO` (the original developers of ARK): `Coldbird`, `hrimfaxi` (aka. `Liquid Snake`) and `Neur0n`.
+
+- `The Ancient Gods of the PSP Scene`: mathieulth, davee, Proxima, zecoxao, among other tinkerers.
 
 - `qwikrazor87` for being such a genius and all his hard work with kernel exploits and ARK-2.
   
-- `TheFl0w` for his advancements and research in CFW development and overall contributions to the scene.
+- `TheFl0w` (aka. `Total_Noob`) for his advancements and research in CFW development and overall contributions to the scene.
 
 - `meetpatty` for his excellent work in fixing bugs and adding important features like cIPL and DevKit support as well as porting `Time Machine` and `Despertar del Cementerio`.
 
