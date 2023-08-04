@@ -656,11 +656,12 @@ After lots of work getting the same `ARK` binaries to properly work on both PSP 
 
 #### Changelog
 
-- `ARK-1`: original port/rewrite of `PRO CFW` for the `PS Vita`. Codenamed `PROVITA`.
-- `ARK-2`: dynamic patching allows it to work with most of `PS Vita` firmwares.
-- `ARK-3`: device-specific runtime allows `ARK` to run in multiple scenarios (`ePSP` and `ePSX`).
+- `ARK-1`: original port/rewrite of `PRO CFW` for the `PS Vita`. Codenamed `PROVITA`. Source code can be found here: https://github.com/PSP-Archive/ARK-1-PROVita-
+- `ARK-2`: dynamic patching allows it to work with most of `PS Vita` firmwares. Source code can be found here: https://github.com/PSP-Archive/ARK-2
+- `ARK-3`: device-specific runtime allows `ARK` to run in multiple scenarios (`ePSP` and `ePSX`). Source code can be found here: https://github.com/PSP-Archive/ARK-3
 - `ARK-4`: ported to the original `PSP`. Huge amounts of improvements and fixes over previous versions.
 
+`Note`: this is a simplified `changelog`, for a full version you can visit here: https://github.com/PSP-Archive/ARK-4/blob/main/CHANGELOG.md
 
 #### Credits
 <p>
