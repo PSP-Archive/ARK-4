@@ -166,12 +166,6 @@ int sctrlKernelMsIsEf();
 
 int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param);
 
-#ifdef __cplusplus
-}
-
-#endif
-
-
 /**
  * Restart the vsh.
  *
@@ -446,32 +440,9 @@ int sctrlPatchModule(char *modname, u32 inst, u32 offset);
  */
 u32 sctrlModuleTextAddr(char *modname);
 
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // ################# SAVESTATE USER ##############
 
-#ifdef __cplusplus
-extern "C"{
-#endif
 enum BootLoadFlags
 {
     BOOTLOAD_VSH = 1,
@@ -825,5 +796,6 @@ void sctrlGetExploitID(char* dest);
 
 #ifdef __cplusplus
 }
+#endif
 
 #endif

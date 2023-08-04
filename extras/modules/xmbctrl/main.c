@@ -24,6 +24,7 @@
 #include <pspkernel.h>
 #include <psputility_sysparam.h>
 #include <kubridge.h>
+#include <systemctrl.h>
 #include <stddef.h>
 
 #include "globals.h"
@@ -130,7 +131,7 @@ int context_mode = 0;
 
 char user_buffer[2*LINE_BUFFER_SIZE];
 
-STMOD_HANDLER previous;
+STMOD_HANDLER previous = NULL;
 CFWConfig config;
 
 int psp_model;
