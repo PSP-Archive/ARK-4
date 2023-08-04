@@ -84,7 +84,7 @@ void blit_set_color(int fg_col,int bg_col) {
 
 int blit_string(int sx, int sy, const char *msg) {
 	int x, y, p;
-	int offset, vram_offset, bitmap_offset;
+	int vram_offset, bitmap_offset;
 	u8 code, data;
 	u32 fg_col, bg_col;
 
