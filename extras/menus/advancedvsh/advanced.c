@@ -353,6 +353,18 @@ int submenu_setup(void) {
 	else
 		subitem_str[SUBMENU_FONT] = g_messages[MSG_DEFAULT];
 
+	switch (vsh->mode) {
+		case 0:
+			subitem_str[SUBMENU_MENU_DESIGN] = g_messages[MSG_CLASSIC];
+			break;
+		case 1:
+			subitem_str[SUBMENU_MENU_DESIGN] = g_messages[MSG_NEW];
+			break;
+		default:
+			vsh->mode = 1;
+			subitem_str[SUBMENU_MENU_DESIGN] = g_messages[MSG_NEW];
+	}
+
 	switch (vsh->config.se.usbdevice_rdonly) {
 		case 0:
 			subitem_str[SUBMENU_USB_READONLY] = g_messages[MSG_DISABLE];
@@ -531,6 +543,10 @@ none:
 				release_font();
 				font_load(vsh);
 			}
+			break;
+		case SUBMENU_MENU_DESIGN:
+			if(direction)
+				change_design(direction);
 			break;
 		case SUBMENU_GO_BACK:
 			if(direction==0) 
