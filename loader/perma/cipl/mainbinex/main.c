@@ -43,6 +43,14 @@ void patchMainBin(void)
 	u32 mainbin_end = mainbin_start + 0xE000;
 
 	int patches = 3;
+
+	// Jump to payloadex patch for kbooti 3.50
+	if (_lw(0x04018d88) == 0x3C198860)
+	{
+		_sw(0x3C1988FC, 0x04018d88);
+		patches--;
+	}
+
 	for (u32 addr = mainbin_start; addr < mainbin_end && patches; addr+=4){
 		u32 data = _lw(addr);
 		if (data == 0x34E6C000) {

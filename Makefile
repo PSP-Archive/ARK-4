@@ -38,6 +38,7 @@ SUBDIRS = libs \
 	loader/perma/cipl/mainbinex \
 	loader/perma/cipl/combine \
 	loader/perma/cipl/installer \
+	loader/perma/cipl/installer_devtool \
 	loader/dc/dcman \
 	loader/dc/msipl/payloadex \
 	loader/dc/msipl/mainbinex \
@@ -54,7 +55,8 @@ SUBDIRS = libs \
 	extras/modules/peops \
 	extras/modules/xmbctrl \
 	extras/modules/usbdevice \
-	extras/modules/idsregeneration
+	extras/modules/idsregeneration \
+	extras/modules/kbooti_update
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx
 
@@ -85,6 +87,9 @@ copy-bin:
 	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/PSP/ARK_cIPL/EBOOT.PBP
 	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_cIPL/kpspident.prx
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_cIPL/ipl_update.prx
+	$(Q)cp loader/perma/cipl/installer_devtool/EBOOT.PBP dist/PSP/ARK_DevTool_cIPL/EBOOT.PBP
+	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_DevTool_cIPL/kpspident.prx
+	$(Q)cp extras/modules/kbooti_update/kbooti_update.prx dist/PSP/ARK_DevTool_cIPL/kbooti_update.prx
 	$(Q)cp loader/perma/newcipl/installer/EBOOT.PBP dist/PSP/ARK_newIPL/EBOOT.PBP
 	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_newIPL/kpspident.prx
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_newIPL/ipl_update.prx
@@ -187,6 +192,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/xmbctrl
 	$(Q)$(MAKE) $@ -C extras/modules/usbdevice
 	$(Q)$(MAKE) $@ -C extras/modules/ipl_update
+	$(Q)$(MAKE) $@ -C extras/modules/kbooti_update
 	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
@@ -199,6 +205,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/mainbinex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/combine
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer_devtool
 	$(Q)$(MAKE) $@ -C loader/dc/dcman
 	$(Q)$(MAKE) $@ -C loader/dc/installer
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/mainbinex
@@ -249,6 +256,7 @@ mkdir-dist:
 	$(Q)mkdir dist/PSP/Infinity | true
 	$(Q)mkdir dist/PSP/ARK_DC | true
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
+	$(Q)mkdir dist/PSP/ARK_DevTool_cIPL | true
 	$(Q)mkdir dist/PSP/ARK_newIPL | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
 	$(Q)mkdir dist/PSVita/Adrenaline | true
