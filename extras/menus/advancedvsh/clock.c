@@ -101,12 +101,19 @@ void change_usb(int dir) {
 	vsh_Menu *vsh = vsh_menu_pointer();
 	
 	int sel = vsh->config.se.usbdevice;
+	int prev_sel = sel;
 	int top = (vsh->psp_model == PSP_GO) ? 4 : 5;
 
 	// select new
 	sel = ROLL_OVER(sel + dir, 0, top);
 	
 	vsh->config.se.usbdevice = sel;
+	
+	// Enable Read Only by default for Flash files and UMD Disc (on Non GO model)
+	if(sel>0)
+		vsh->config.se.usbdevice_rdonly = 1;
+	if(sel==0)
+		vsh->config.se.usbdevice_rdonly = 0;
 }
 
 void change_umd_mode(int dir) {
