@@ -14,8 +14,8 @@
 
 
 typedef enum _vsh_Mode{
-	VSH_CLASSIC = 0,
-	VSH_WINDOW = 1
+	VSH_WINDOW = 0,
+	VSH_CLASSIC = 1
 }vsh_Mode;
 
 // Config stuff go here

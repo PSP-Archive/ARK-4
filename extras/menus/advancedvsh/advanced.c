@@ -354,14 +354,12 @@ int submenu_setup(void) {
 		subitem_str[SUBMENU_FONT] = g_messages[MSG_DEFAULT];
 
 	switch (vsh->config.ark_menu.mode) {
-		case 0:
+		case 1:
 			subitem_str[SUBMENU_MENU_DESIGN] = g_messages[MSG_CLASSIC];
 			break;
-		case 1:
+		case 0:
 			subitem_str[SUBMENU_MENU_DESIGN] = g_messages[MSG_NEW];
 			break;
-		default:
-			subitem_str[SUBMENU_MENU_DESIGN] = g_messages[MSG_NEW];
 	}
 
 	switch (vsh->config.se.usbdevice_rdonly) {
