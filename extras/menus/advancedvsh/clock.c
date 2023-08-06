@@ -101,7 +101,6 @@ void change_usb(int dir) {
 	vsh_Menu *vsh = vsh_menu_pointer();
 	
 	int sel = vsh->config.se.usbdevice;
-	int prev_sel = sel;
 	int top = (vsh->psp_model == PSP_GO) ? 4 : 5;
 
 	// select new
