@@ -92,10 +92,9 @@ void change_font(int dir) {
 void change_design(int dir) {
 	vsh_Menu *vsh = vsh_menu_pointer();
 	
-	int sel = vsh->config.ark_menu.menu_design;
+	int sel = vsh->config.ark_menu.mode;
 	sel = ROLL_OVER(sel+dir, 0, 1);
-	vsh->config.ark_menu.menu_design = sel;
-	vsh->mode = sel;
+	vsh->config.ark_menu.mode = sel;
 }
 
 void change_usb(int dir) {
