@@ -177,9 +177,9 @@ int submenu_draw(void) {
 					// hibernation mode unsupported if model is not PSP Go
 					len = scePaf_strlen(g_messages[MSG_NO_HIBERNATION]);
 			
-					if (vsh->config.ark_menu.mode) {
+					if (!vsh->config.ark_menu.mode) {
 						padding = (window_char - len) / 2;
-					} else if (!vsh->config.ark_menu.mode) {
+					} else if (vsh->config.ark_menu.mode) {
 						padding = 1;
 					}
 					
