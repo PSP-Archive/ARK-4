@@ -35,7 +35,7 @@
 #include "pspmodulemgr_kernel.h"
 #include "psputilsforkernel.h"
 #include "systemctrl.h"
-#include "systemctrl_se.h"
+#include <systemctrl_se.h>
 #include "kubridge.h"
 #include "pspcipher.h"
 #include "macros.h"

@@ -22,7 +22,7 @@
 #include <pspthreadman_kernel.h>
 #include <pspumd.h>
 #include "systemctrl.h"
-#include "systemctrl_se.h"
+#include <systemctrl_se.h>
 #include "systemctrl_private.h"
 #include "isoreader.h"
 #include "strsafe.h"

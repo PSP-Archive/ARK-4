@@ -8,7 +8,7 @@
 #include <string.h>
 #include "inferno.h"
 #include "systemctrl.h"
-#include "systemctrl_se.h"
+#include <systemctrl_se.h>
 #include "systemctrl_private.h"
 #include "globals.h"
 #include "macros.h"
