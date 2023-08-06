@@ -12,12 +12,6 @@
 
 #include "../arkMenu/include/conf.h"
 
-
-typedef enum _vsh_Mode{
-	VSH_WINDOW = 0,
-	VSH_CLASSIC = 1
-}vsh_Mode;
-
 // Config stuff go here
 typedef struct _vsh_Config{
 	// SE config
@@ -65,7 +59,6 @@ typedef struct _vsh_Menu{
 	vsh_Config config;
 	vsh_Buttons buttons;
 	vsh_Status status;
-	vsh_Mode mode;
 	
 	UmdVideoList umdlist;
 	

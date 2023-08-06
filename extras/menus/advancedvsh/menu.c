@@ -116,7 +116,7 @@ int menu_draw(void) {
 			default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
 		}
 		
-		if (vsh->config.ark_menu.mode == VSH_WINDOW) {
+		if (!vsh->config.ark_menu.mode) {
 			// add line at the top
 			if (max_menu == 0){
 				blit_set_color(fc, bc);
@@ -150,7 +150,7 @@ int menu_draw(void) {
 			// center-align menu strings
 			len = scePaf_strlen(g_messages[MSG_CUSTOM_LAUNCHER + max_menu]);
 			
-			if (vsh->config.ark_menu.mode == 0) {
+			if (!vsh->config.ark_menu.mode) {
 				padding = (window_char - len) / 2;
 			} else if (vsh->config.ark_menu.mode) {
 				padding = 0;
@@ -159,7 +159,7 @@ int menu_draw(void) {
 			scePaf_snprintf(msg, 128, " %*s%s%*s ", padding, "", g_messages[MSG_CUSTOM_LAUNCHER + max_menu], padding, "");
 			blit_string_ctr(menu_start_y, msg);
 			
-			if (vsh->config.ark_menu.mode == 0) {
+			if (!vsh->config.ark_menu.mode) {
 				// add a halfspace after if the length is an odd value
 				if (len & 0x1) {
 					blit_rect_fill(menu_start_x, menu_start_y, 4, font->height); // front
@@ -182,7 +182,7 @@ int menu_draw(void) {
 		}
 	}
 	
-	if (vsh->config.ark_menu.mode == 0) {
+	if (!vsh->config.ark_menu.mode) {
 		// reset colors to default
 		bc = colors[vsh->config.ark_menu.vsh_bg_color];
 		switch(vsh->config.ark_menu.vsh_fg_color){
