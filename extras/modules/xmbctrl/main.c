@@ -124,7 +124,7 @@ struct {
     {2, ark_settings_boolean}, // Prevent hib delete
     {2, ark_settings_boolean}, // Hide MAC
     {2, ark_settings_boolean}, // Hide DLC
-    {N_OPTS, ark_settings_options}, // Hide Options
+    {N_OPTS, ark_settings_options}, // Turn off LEDs
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
