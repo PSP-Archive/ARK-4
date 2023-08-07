@@ -421,9 +421,14 @@ static void settingsHandler(char* path, u8 enabled){
     else if (strcasecmp(path, "oldplugin") == 0){ // redirect ms0 to ef0 on psp go
         se_config.oldplugin = enabled;
     }
-    else if (strcasecmp(path, "infernocache") == 0){
+    else if (strncasecmp(path, "infernocache", 12) == 0){
         if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x112 && apitype <= 0x115)){
+            char* c = strchr(path, ':');
             se_config.iso_cache = enabled;
+            if (enabled && c){
+                if (strcasecmp(c+1, "lru") == 0) se_config.iso_cache = 1;
+                else if (strcasecmp(c+1, "rr") == 0) se_config.iso_cache = 2;
+            }
         }
     }
     else if (strcasecmp(path, "noled") == 0){

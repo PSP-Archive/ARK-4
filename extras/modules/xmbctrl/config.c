@@ -54,8 +54,14 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.mscache = opt;
         return 1;
     }
-    else if (strcasecmp(path, "infernocache") == 0){
+    else if (strncasecmp(path, "infernocache", 12) == 0){
+        char* c = strchr(path, ':');
+        FIX_BOOLEAN(opt);
         config.infernocache = opt;
+        if (opt && c){
+            if (strcasecmp(c+1, "lru") == 0) config.infernocache = 1;
+            else if (strcasecmp(c+1, "rr") == 0) config.infernocache = 2;
+        }
         return 1;
     }
     else if (strcasecmp(path, "oldplugin") == 0){
@@ -104,6 +110,14 @@ void loadSettings(){
     strcpy(path, ark_config->arkpath);
     strcat(path, "SETTINGS.TXT");
     ProcessConfigFile(path, &processConfigLine, &processCustomConfig);
+
+    FIX_BOOLEAN(config.launcher);
+    FIX_BOOLEAN(config.disablepause);
+    FIX_BOOLEAN(config.skiplogos);
+    FIX_BOOLEAN(config.hidepics);
+    FIX_BOOLEAN(config.hibblock);
+    FIX_BOOLEAN(config.hidemac);
+    FIX_BOOLEAN(config.hidedlc);
 }
 
 static void processSetting(int fd, char* line, char* name, int setting){
@@ -143,7 +157,11 @@ void saveSettings(){
     processSetting(fd, line, "disablepause", config.disablepause);
     processSetting(fd, line, "highmem", config.highmem);
     processSetting(fd, line, "mscache", config.mscache);
-    processSetting(fd, line, "infernocache", config.infernocache);
+    switch (config.infernocache){
+        case 0: processSetting(fd, line, "infernocache", 0); break;
+        case 1: processSetting(fd, line, "infernocache:lru", 1);
+        case 2: processSetting(fd, line, "infernocache:rr", 1);
+    }
     processSetting(fd, line, "oldplugin", config.oldplugin);
     processSetting(fd, line, "skiplogos", config.skiplogos);
     processSetting(fd, line, "hidepics", config.hidepics);

@@ -16,6 +16,8 @@ enum{
     CUSTOM
 };
 
+#define FIX_BOOLEAN(c) {c = (c)?1:0;}
+
 int isRunlevelEnabled(char* line);
 
 int runlevelConvert(char* runlevel, char* enable);

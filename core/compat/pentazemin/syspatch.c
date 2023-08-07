@@ -491,6 +491,10 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 			if (CacheInit){
 				CacheInit(32 * 1024, 128, (se_config->force_high_memory)?2:11); // 4MB cache for Adrenaline
 			}
+			if (se_config->iso_cache == 2){
+            	int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
+            	if (CacheSetPolicy) CacheSetPolicy(CACHE_POLICY_RR);
+        	}
         }
         goto flush;
     }
