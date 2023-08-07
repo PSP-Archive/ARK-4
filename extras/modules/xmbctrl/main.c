@@ -863,7 +863,7 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
     ClearCaches();
 }
 
-int OnModuleStart(SceModule2 *mod)
+void OnModuleStart(SceModule2 *mod)
 {
     char *modname = mod->modname;
     u32 text_addr = mod->text_addr;
@@ -876,7 +876,7 @@ int OnModuleStart(SceModule2 *mod)
     else if(strcmp(modname, "sysconf_plugin_module") == 0)
         PatchSysconfPlugin(text_addr, text_size);
 
-    return previous ? previous(mod) : 0;
+    if (previous) previous(mod);
 }
 
 int module_start(SceSize args, void *argp)
