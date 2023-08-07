@@ -29,7 +29,7 @@
 #include "globals.h"
 #include "macros.h"
 #include <systemctrl.h>
-#include "systemctrl_se.h"
+#include <systemctrl_se.h>
 #include "main.h"
 #include "virtual_pbp.h"
 #include "pspusbdevice.h"

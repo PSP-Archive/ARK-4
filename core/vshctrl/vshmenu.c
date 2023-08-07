@@ -26,7 +26,7 @@
 #include <string.h>
 #include "globals.h"
 #include <systemctrl.h>
-#include "systemctrl_se.h"
+#include <systemctrl_se.h>
 #include "systemctrl_private.h"
 
 #define SENSE_KEY (PSP_CTRL_CIRCLE|PSP_CTRL_TRIANGLE|PSP_CTRL_CROSS|PSP_CTRL_SQUARE|PSP_CTRL_START|PSP_CTRL_SELECT)

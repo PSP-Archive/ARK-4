@@ -25,7 +25,6 @@
 #include <pspthreadman_kernel.h>
 #include <pspumd.h>
 #include <psprtc.h>
-#include "systemctrl_se.h"
 #include "systemctrl_private.h"
 #include "inferno.h"
 #include "globals.h"

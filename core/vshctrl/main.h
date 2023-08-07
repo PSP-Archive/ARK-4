@@ -18,7 +18,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "systemctrl_se.h"
+#include <systemctrl_se.h>
 //#include "config.h"
 
 extern u32 psp_model;

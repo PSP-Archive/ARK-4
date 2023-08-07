@@ -7,7 +7,7 @@
 #include <vector>
 #include <malloc.h>
 #include <systemctrl.h>
-#include "systemctrl_se.h"
+#include <systemctrl_se.h>
 #include "common.h"
 #include "controller.h"
 #include "gfx.h"
