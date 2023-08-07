@@ -2,6 +2,8 @@
 
 /* structure defining a common entry layout */
 
+#define FIX_BOOLEAN(c) {c = (c)?1:0;}
+
 enum{
     DISABLED,
     ALWAYS_ON,
@@ -40,9 +42,9 @@ typedef struct {
     unsigned char hidemac;
     unsigned char hidedlc;
     unsigned char noled;
-}ArkConf;
+}CfwConf;
 
-ArkConf ark_config;
+CfwConf cfw_config;
 
 #define MAX_ARK_OPTIONS 8
 #define ARK_OPTIONS { \
@@ -66,7 +68,7 @@ static struct {
     "USB Charge",
     MAX_ARK_OPTIONS,
     0,
-    &(ark_config.usbcharge),
+    &(cfw_config.usbcharge),
     ARK_OPTIONS
 };
 
@@ -80,7 +82,7 @@ static struct {
     "OverClock",
     MAX_ARK_OPTIONS,
     0,
-    &(ark_config.overclock),
+    &(cfw_config.overclock),
     ARK_OPTIONS
 };
 
@@ -94,7 +96,7 @@ static struct {
     "PowerSave",
     MAX_ARK_OPTIONS,
     0,
-    &(ark_config.powersave),
+    &(cfw_config.powersave),
     ARK_OPTIONS
 };
 
@@ -108,7 +110,7 @@ static struct {
     "Balanced Energy Mode",
     MAX_ARK_OPTIONS,
     0,
-    &(ark_config.defaultclock),
+    &(cfw_config.defaultclock),
     ARK_OPTIONS
 };
 
@@ -120,10 +122,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } launcher = {
     "Autoboot Launcher",
-    MAX_ARK_OPTIONS,
+    2,
     0,
-    &(ark_config.launcher),
-    ARK_OPTIONS
+    &(cfw_config.launcher),
+    {"Off", "On"}
 };
 
 static struct {
@@ -134,10 +136,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } disablepause = {
     "Disable PSP Go Pause",
-    MAX_ARK_OPTIONS,
+    2,
     0,
-    &(ark_config.disablepause),
-    ARK_OPTIONS
+    &(cfw_config.disablepause),
+    {"Off", "On"}
 };
 
 static struct {
@@ -150,7 +152,7 @@ static struct {
     "Force Extra Memory",
     MAX_ARK_OPTIONS,
     0,
-    &(ark_config.highmem),
+    &(cfw_config.highmem),
     ARK_OPTIONS
 };
 
@@ -164,7 +166,7 @@ static struct {
     "Memory Stick Speedup",
     MAX_ARK_OPTIONS,
     0,
-    &(ark_config.mscache),
+    &(cfw_config.mscache),
     ARK_OPTIONS
 };
 
@@ -176,10 +178,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } infernocache = {
     "Inferno Cache",
-    MAX_ARK_OPTIONS,
+    3,
     0,
-    &(ark_config.infernocache),
-    ARK_OPTIONS
+    &(cfw_config.infernocache),
+    {"Off", "LRU", "RR"}
 };
 
 static struct {
@@ -192,7 +194,7 @@ static struct {
     "Old Plugins on PSP Go",
     MAX_ARK_OPTIONS,
     0,
-    &(ark_config.oldplugin),
+    &(cfw_config.oldplugin),
     ARK_OPTIONS
 };
 
@@ -204,10 +206,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } skiplogos = {
     "Skip Sony logos in XMB",
-    MAX_ARK_OPTIONS,
+    2,
     0,
-    &(ark_config.skiplogos),
-    ARK_OPTIONS
+    &(cfw_config.skiplogos),
+    {"Off", "On"}
 };
 
 static struct {
@@ -218,10 +220,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } hidepics = {
     "Hide PIC0 and PIC1 in XMB",
-    MAX_ARK_OPTIONS,
+    2,
     0,
-    &(ark_config.hidepics),
-    ARK_OPTIONS
+    &(cfw_config.hidepics),
+    {"Off", "On"}
 };
 
 static struct {
@@ -232,10 +234,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } hibblock = {
     "Prevent hibernation deletion on PSP Go",
-    MAX_ARK_OPTIONS,
+    2,
     0,
-    &(ark_config.hibblock),
-    ARK_OPTIONS
+    &(cfw_config.hibblock),
+    {"Off", "On"}
 };
 
 static struct {
@@ -246,10 +248,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } hidemac = {
     "Hide Mac Address",
-    MAX_ARK_OPTIONS,
+    2,
     0,
-    &(ark_config.hidemac),
-    ARK_OPTIONS
+    &(cfw_config.hidemac),
+    {"Off", "On"}
 };
 
 static struct {
@@ -260,10 +262,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } hidedlc = {
     "Hide DLC",
-    MAX_ARK_OPTIONS,
+    2,
     0,
-    &(ark_config.hidedlc),
-    ARK_OPTIONS
+    &(cfw_config.hidedlc),
+    {"Off", "On"}
 };
 
 static struct {
@@ -276,7 +278,7 @@ static struct {
     "Turn off LEDs",
     MAX_ARK_OPTIONS,
     0,
-    &(ark_config.noled),
+    &(cfw_config.noled),
     ARK_OPTIONS
 };
 
@@ -291,7 +293,7 @@ static struct {
     "UMD Region Change",
     4,
     0,
-    &(ark_config.regionchange),
+    &(cfw_config.regionchange),
     {"Default", "Japan", "America", "Europe"}
 };
 
@@ -305,7 +307,7 @@ static struct {
     "VSH Region Change",
     14,
     0,
-    &(ark_config.vshregion),
+    &(cfw_config.vshregion),
     {"Default", "Japan", "America", "Europe", "Korea", "United Kingdom", "Latin America", "Australia", "Hong Kong", "Taiwan", "Russia", "China", "Debug I", "Debug II"}
 };
 
@@ -444,68 +446,68 @@ static unsigned char runlevelConvert(string runlevel, string enable){
 
 static unsigned char* configConvert(string conf){
     if (strcasecmp(conf.c_str(), "usbcharge") == 0){
-        return &(ark_config.usbcharge);
+        return &(cfw_config.usbcharge);
     }
     else if (strcasecmp(conf.c_str(), "overclock") == 0){
-        return &(ark_config.overclock);
+        return &(cfw_config.overclock);
     }
     else if (strcasecmp(conf.c_str(), "powersave") == 0){
-        return &(ark_config.powersave);
+        return &(cfw_config.powersave);
     }
     else if (strcasecmp(conf.c_str(), "defaultclock") == 0){
-        return &(ark_config.defaultclock);
+        return &(cfw_config.defaultclock);
     }
     else if (strcasecmp(conf.c_str(), "launcher") == 0){
-        return &(ark_config.launcher);
+        return &(cfw_config.launcher);
     }
     else if (strcasecmp(conf.c_str(), "disablepause") == 0){
-        return &(ark_config.disablepause);
+        return &(cfw_config.disablepause);
     }
     else if (strcasecmp(conf.c_str(), "highmem") == 0){
-        return &(ark_config.highmem);
+        return &(cfw_config.highmem);
     }
     else if (strcasecmp(conf.c_str(), "mscache") == 0){
-        return &(ark_config.mscache);
+        return &(cfw_config.mscache);
     }
-    else if (strcasecmp(conf.c_str(), "infernocache") == 0){
-        return &(ark_config.infernocache);
+    else if (strncasecmp(conf.c_str(), "infernocache", 12) == 0){
+        return &(cfw_config.infernocache);
     }
     else if (strcasecmp(conf.c_str(), "oldplugin") == 0){
-        return &(ark_config.oldplugin);
+        return &(cfw_config.oldplugin);
     }
     else if (strcasecmp(conf.c_str(), "skiplogos") == 0){
-        return &(ark_config.skiplogos);
+        return &(cfw_config.skiplogos);
     }
     else if (strcasecmp(conf.c_str(), "hidepics") == 0){
-        return &(ark_config.hidepics);
+        return &(cfw_config.hidepics);
     }
     else if (strcasecmp(conf.c_str(), "hibblock") == 0){
-        return &(ark_config.hibblock);
+        return &(cfw_config.hibblock);
     }
     else if (strcasecmp(conf.c_str(), "hidemac") == 0){
-        return &(ark_config.hidemac);
+        return &(cfw_config.hidemac);
     }
     else if (strcasecmp(conf.c_str(), "hidedlc") == 0){
-        return &(ark_config.hidedlc);
+        return &(cfw_config.hidedlc);
     }
     else if (strcasecmp(conf.c_str(), "noled") == 0){
-        return &(ark_config.noled);
+        return &(cfw_config.noled);
     }
     else if (strcasecmp(conf.c_str(), "region_none") == 0){
-        ark_config.regionchange = 0;
+        cfw_config.regionchange = 0;
     }
     else if (strcasecmp(conf.c_str(), "region_jp") == 0){
-        ark_config.regionchange = REGION_JAPAN;
+        cfw_config.regionchange = REGION_JAPAN;
     }
     else if (strcasecmp(conf.c_str(), "region_us") == 0){
-        ark_config.regionchange = REGION_AMERICA;
+        cfw_config.regionchange = REGION_AMERICA;
     }
     else if (strcasecmp(conf.c_str(), "region_eu") == 0){
-        ark_config.regionchange = REGION_EUROPE;
+        cfw_config.regionchange = REGION_EUROPE;
     }
     else if (strncasecmp(conf.c_str(), "fakeregion_", 11) == 0){
         int r = atoi(conf.c_str()+11);
-        ark_config.vshregion = r;
+        cfw_config.vshregion = r;
     }
     return NULL;
 }
@@ -518,6 +520,15 @@ static void processConfig(string line, string runlevel, string conf, string enab
     }
     else if (config_ptr != NULL){
         *config_ptr = config;
+        if (strncasecmp(conf.c_str(), "infernocache", 12) == 0){
+            char* c = strchr(conf.c_str(), ':');
+            FIX_BOOLEAN(config);
+            cfw_config.infernocache = config;
+            if (config && c){
+                if (strcasecmp(c+1, "lru") == 0) cfw_config.infernocache = 1;
+                else if (strcasecmp(c+1, "rr") == 0) cfw_config.infernocache = 2;
+            }
+        }
     }
 }
 
@@ -594,6 +605,14 @@ void loadSettings(){
         processLine(line);
     }
     input.close();
+
+    FIX_BOOLEAN(cfw_config.launcher);
+    FIX_BOOLEAN(cfw_config.disablepause);
+    FIX_BOOLEAN(cfw_config.skiplogos);
+    FIX_BOOLEAN(cfw_config.hidepics);
+    FIX_BOOLEAN(cfw_config.hibblock);
+    FIX_BOOLEAN(cfw_config.hidemac);
+    FIX_BOOLEAN(cfw_config.hidedlc);
 }
 
 static string processSetting(string name, unsigned char setting){
@@ -612,24 +631,28 @@ static string processSetting(string name, unsigned char setting){
 
 void saveSettings(){
     std::ofstream output("SETTINGS.TXT");
-    output << processSetting("usbcharge", ark_config.usbcharge) << endl;
-    output << processSetting("overclock", ark_config.overclock) << endl;
-    output << processSetting("powersave", ark_config.powersave) << endl;
-    output << processSetting("defaultclock", ark_config.defaultclock) << endl;
-    output << processSetting("launcher", ark_config.launcher) << endl;
-    output << processSetting("disablepause", ark_config.disablepause) << endl;
-    output << processSetting("highmem", ark_config.highmem) << endl;
-    output << processSetting("mscache", ark_config.mscache) << endl;
-    output << processSetting("infernocache", ark_config.infernocache) << endl;
-    output << processSetting("oldplugin", ark_config.oldplugin) << endl;
-    output << processSetting("skiplogos", ark_config.skiplogos) << endl;
-    output << processSetting("hidepics", ark_config.hidepics) << endl;
-    output << processSetting("hibblock", ark_config.hibblock) << endl;
-    output << processSetting("hidemac", ark_config.hidemac) << endl;
-    output << processSetting("hidedlc", ark_config.hidedlc) << endl;
-    output << processSetting("noled", ark_config.noled) << endl;
+    output << processSetting("usbcharge", cfw_config.usbcharge) << endl;
+    output << processSetting("overclock", cfw_config.overclock) << endl;
+    output << processSetting("powersave", cfw_config.powersave) << endl;
+    output << processSetting("defaultclock", cfw_config.defaultclock) << endl;
+    output << processSetting("launcher", cfw_config.launcher) << endl;
+    output << processSetting("disablepause", cfw_config.disablepause) << endl;
+    output << processSetting("highmem", cfw_config.highmem) << endl;
+    output << processSetting("mscache", cfw_config.mscache) << endl;
+    switch (cfw_config.infernocache){
+        case 0: output << processSetting("infernocache", 0) << endl; break;
+        case 1: output << processSetting("infernocache:lru", 1) << endl; break;
+        case 2: output << processSetting("infernocache:rr", 1) << endl; break;
+    }
+    output << processSetting("oldplugin", cfw_config.oldplugin) << endl;
+    output << processSetting("skiplogos", cfw_config.skiplogos) << endl;
+    output << processSetting("hidepics", cfw_config.hidepics) << endl;
+    output << processSetting("hibblock", cfw_config.hibblock) << endl;
+    output << processSetting("hidemac", cfw_config.hidemac) << endl;
+    output << processSetting("hidedlc", cfw_config.hidedlc) << endl;
+    output << processSetting("noled", cfw_config.noled) << endl;
     
-    switch (ark_config.regionchange){
+    switch (cfw_config.regionchange){
         case REGION_JAPAN:
             output << "vsh, region_jp, on" << endl;
             break;
@@ -641,9 +664,9 @@ void saveSettings(){
             break;
     }
 
-    if (ark_config.vshregion > 0){
+    if (cfw_config.vshregion > 0){
         char tmp[10];
-        snprintf(tmp, 10, "%d", ark_config.vshregion);
+        snprintf(tmp, 10, "%d", cfw_config.vshregion);
         output << "vsh, fakeregion_" << tmp << ", on" << endl;
     }
 

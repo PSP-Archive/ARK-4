@@ -219,6 +219,10 @@ void processSettings(){
             else CacheInit(64 * 1024, 128, (se_config->force_high_memory)?2:9); // 8M cache on other models
             se_config->disable_pause = 1; // disable pause feature to maintain stability
         }
+        if (se_config->iso_cache == 2){
+            int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
+            if (CacheSetPolicy) CacheSetPolicy(CACHE_POLICY_RR);
+        }
     }
     // Disable Pause feature on PSP Go
     if (se_config->disable_pause){

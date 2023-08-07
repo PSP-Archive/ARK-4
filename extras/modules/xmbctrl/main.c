@@ -53,23 +53,25 @@ typedef struct
 
 GetItem GetItemes[] =
 {
-    { 1, 0, "USB Charge" },
-    { 1, 0, "Overclock" },
-    { 1, 0, "PowerSave" },
-    { 1, 0, "Balanced Energy Mode" },
-    { 1, 0, "Autoboot Launcher" },
-    { 1, 0, "Disable Pause on PSP Go" },
-    { 1, 0, "Force Extra Memory" },
-    { 1, 0, "Memory Stick Speedup" },
-    { 1, 0, "Inferno Cache" },
-    { 1, 0, "Old Plugin Support on PSP Go" },
-    { 1, 0, "Skip Sony Logos" },
-    { 1, 0, "Hide PIC0 and PIC1" },
-    { 1, 0, "Prevent hibernation deletion on PSP Go" },
-    { 1, 0, "Hide MAC Address" },
-    { 1, 0, "Hide DLC" },
-    { 1, 0, "Turn off LEDs" },
+    { 2, 0, "USB Charge" },
+    { 3, 0, "Overclock" },
+    { 4, 0, "PowerSave" },
+    { 5, 0, "Balanced Energy Mode" },
+    { 6, 0, "Autoboot Launcher" },
+    { 7, 0, "Disable Pause on PSP Go" },
+    { 8, 0, "Force Extra Memory" },
+    { 9, 0, "Memory Stick Speedup" },
+    { 10, 0, "Inferno Cache" },
+    { 11, 0, "Old Plugin Support on PSP Go" },
+    { 12, 0, "Skip Sony Logos" },
+    { 13, 0, "Hide PIC0 and PIC1" },
+    { 14, 0, "Prevent hibernation deletion on PSP Go" },
+    { 15, 0, "Hide MAC Address" },
+    { 16, 0, "Hide DLC" },
+    { 17, 0, "Turn off LEDs" },
 };
+
+#define PLUGINS_CONTEXT 1
 
 char* ark_settings_options[] = {
     (char*)"Disabled",
@@ -82,10 +84,47 @@ char* ark_settings_options[] = {
     (char*)"Launcher"
 };
 
+#define N_OPTS sizeof(ark_settings_options)/sizeof(ark_settings_options[0])
+
+char* ark_settings_boolean[] = {
+    (char*)"Off",
+    (char*)"On"
+};
+
+char* ark_settings_infernocache[] = {
+    (char*)"Off",
+    (char*)"LRU",
+    (char*)"RR"
+};
+
 char* ark_plugins_options[] = {
     (char*)"Off",
     (char*)"On",
     (char*)"Remove",
+};
+
+struct {
+    int n;
+    char** c;
+} item_opts[] = {
+    {0, NULL}, // None
+    {3, ark_plugins_options}, // Plugins
+    {N_OPTS, ark_settings_options}, // USB Charge
+    {N_OPTS, ark_settings_options}, // Overclock
+    {N_OPTS, ark_settings_options}, // PowerSave
+    {N_OPTS, ark_settings_options}, // Balanced Energy
+    {2, ark_settings_boolean}, // Autoboot Launcher
+    {2, ark_settings_boolean}, // Disable Go Pause
+    {N_OPTS, ark_settings_options}, // Extra RAM
+    {N_OPTS, ark_settings_options}, // MS Speedup
+    {3, ark_settings_infernocache}, // Inferno Cache
+    {N_OPTS, ark_settings_options}, // Go Old Plugins 
+    {2, ark_settings_boolean}, // Skip Sony logos
+    {2, ark_settings_boolean}, // Hide PIC0 and PIC1
+    {2, ark_settings_boolean}, // Prevent hib delete
+    {2, ark_settings_boolean}, // Hide MAC
+    {2, ark_settings_boolean}, // Hide DLC
+    {N_OPTS, ark_settings_options}, // Hide Options
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
@@ -425,7 +464,7 @@ SceSysconfItem *GetSysconfItemPatched(void *a0, void *a1)
         }
     }
     else if (is_cfw_config == 2){
-        context_mode = 11;
+        context_mode = PLUGINS_CONTEXT;
     }
     return item;
 }
@@ -535,7 +574,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
 			{
 				u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
-				context_mode = 11;
+				context_mode = PLUGINS_CONTEXT;
 				*value = plugin->active;
 				return 0;
 			}
@@ -588,7 +627,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
 			{
 				u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
-				context_mode = 11;
+				context_mode = PLUGINS_CONTEXT;
 				plugin->active = *value;
                 savePlugins();
                 if (*value == PLUGIN_REMOVED){
@@ -670,18 +709,7 @@ int PAF_Resource_GetPageNodeByID_Patched(void *resource, char *name, SceRcoEntry
         {
             if(sce_paf_private_strcmp(name, "page_psp_config_umd_autoboot") == 0)
             {
-                switch(context_mode)
-                {
-                    case 0:
-                        HijackContext(*child, NULL, 0);
-                        break;
-                    case 11:
-                        HijackContext(*child, ark_plugins_options, sizeof(ark_plugins_options) / sizeof(char *));
-                        break;
-                    default:
-                        HijackContext(*child, ark_settings_options, sizeof(ark_settings_options) / sizeof(char *));
-                        break;
-                }
+                HijackContext(*child, item_opts[context_mode].c, item_opts[context_mode].n);
             }
         }
     }
