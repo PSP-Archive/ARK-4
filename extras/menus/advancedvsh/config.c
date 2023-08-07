@@ -74,6 +74,7 @@ void config_save(vsh_Menu *vsh, int saveumdregion, int savevshregion){
 		static char* regions[] = {"region_none", "region_jp", "region_us", "region_eu"};
 		config_recreate_region_setting(vsh, "region_", regions[vsh->config.se.umdregion]);
 	}
+
 }
 
 void config_check(vsh_Menu *vsh) {

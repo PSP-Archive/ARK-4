@@ -88,14 +88,18 @@ int submenu_draw(void) {
 			default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
 		}
 		
-		// add line at the top
-		if (submax_menu == 0){
-			blit_set_color(fc, bc);
-			blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, font->height);
-			blit_set_color(0xaf000000, 0xaf000000);
-			blit_rect_fill(submenu_start_x, submenu_start_y-1, window_pixel, 1); // top horizontal outline
-			blit_rect_fill(submenu_start_x+window_pixel, submenu_start_y, 1, 8*(SUBMENU_MAX+2)); // right vertical outline
-			blit_rect_fill(submenu_start_x-1, submenu_start_y, 1, 8*(SUBMENU_MAX+2)); // left vertical outline
+		if (!vsh->config.ark_menu.window_mode) {
+			// add line at the top
+			if (submax_menu == 0){
+				blit_set_color(fc, bc);
+				blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, font->height);
+				blit_set_color(0xaf000000, 0xaf000000);
+				blit_rect_fill(submenu_start_x, submenu_start_y-1, window_pixel, 1); // top horizontal outline
+				blit_rect_fill(submenu_start_x+window_pixel, submenu_start_y, 1, 8*(SUBMENU_MAX+2)); // right vertical outline
+				blit_rect_fill(submenu_start_x-1, submenu_start_y, 1, 8*(SUBMENU_MAX+2)); // left vertical outline
+				// set the y position
+				submenu_start_y += font->height;
+			}
 		}
 		
 		// if menu is selected, change color
@@ -116,9 +120,6 @@ int submenu_draw(void) {
 			int submenu_width = 0;
 			subcur_menu = submax_menu;
 			
-			// set the y position
-			submenu_start_y += font->height;
-			
 			temp = 0;
 			// find widest submenu up until the UMD region option
 			for (i = SUBMENU_USB_DEVICE; i <= SUBMENU_UMD_REGION_MODE; i++){
@@ -129,20 +130,43 @@ int submenu_draw(void) {
 			
 			// submenus between USB_DEVICE and UMD_REGION are the only ones with subitems
 			if (submax_menu >= SUBMENU_USB_DEVICE && submax_menu <= SUBMENU_UMD_REGION_MODE) {
-				int subitem_start_x;
+				int subitem_start_x = 0;
+				int space = 3;
 				
-				scePaf_snprintf(msg, 128, " %-*s  ", submenu_width, g_messages[MSG_USB_DEVICE + submax_menu]);
-				subitem_start_x = blit_string(submenu_start_x, submenu_start_y, msg);
-	
+				if (!vsh->config.ark_menu.window_mode) {
+					// left justify
+					scePaf_snprintf(msg, 128, " %-*s", submenu_width, g_messages[MSG_USB_DEVICE + submax_menu]);
+					subitem_start_x = blit_string(submenu_start_x, submenu_start_y, msg);
+				} else if (vsh->config.ark_menu.window_mode) {
+					// right justify
+					scePaf_snprintf(msg, 128, " %s", g_messages[MSG_USB_DEVICE + submax_menu]);
+					subitem_start_x = blit_string(submenu_start_x + (submenu_width - scePaf_strlen(msg)) * font->width , submenu_start_y, msg);
+				}
+				
+				
 				if(subitem_str[submax_menu]) {
+					char *subitem_p = 0;
 					// check if PSP Go or PSVita because UMD Region mode is unsupported on them
 					if ((vsh->psp_model == PSP_GO || IS_VITA_ADR(vsh->config.p_ark)) && submax_menu == SUBMENU_UMD_REGION_MODE) {
-						// write the unsupported string
-						scePaf_snprintf(msg, 128, "%-*s", window_char - 3 - submenu_width, g_messages[MSG_UNSUPPORTED]);
+						subitem_p = g_messages[MSG_UNSUPPORTED];
 					} else {
-						// left-justify submenu options that have a subitem next to it
-						scePaf_snprintf(msg, 128, "%-*s", window_char - 3 - submenu_width, subitem_str[submax_menu]);
+						subitem_p = subitem_str[submax_menu];
 					}
+					
+					// write subitem or unsupported message
+					if (!vsh->config.ark_menu.window_mode) {
+						scePaf_snprintf(msg, 128, "%-*s", window_char - space - submenu_width, subitem_p);
+					} else if (vsh->config.ark_menu.window_mode) {
+						scePaf_snprintf(msg, 128, "%s ", subitem_p);
+					}
+				}
+				
+				if (!vsh->config.ark_menu.window_mode) {
+					// fill space between submenu and it's subitem
+					blit_rect_fill(subitem_start_x, submenu_start_y, font->width * (space - 1), font->height);
+					subitem_start_x += font->width * (space - 1);
+				} else if (vsh->config.ark_menu.window_mode) {
+					subitem_start_x += font->width * (space - 1);
 				}
 				
 				blit_string(subitem_start_x, submenu_start_y, msg);
@@ -152,44 +176,59 @@ int submenu_draw(void) {
 				if (vsh->psp_model != PSP_GO && submax_menu == SUBMENU_DELETE_HIBERNATION) {
 					// hibernation mode unsupported if model is not PSP Go
 					len = scePaf_strlen(g_messages[MSG_NO_HIBERNATION]);
-					padding = (window_char - len) / 2;
+			
+					if (!vsh->config.ark_menu.window_mode) {
+						padding = (window_char - len) / 2;
+					} else if (vsh->config.ark_menu.window_mode) {
+						padding = 1;
+					}
+					
 					scePaf_snprintf(msg, 128, "%*s%s%*s", padding, "", g_messages[MSG_NO_HIBERNATION], padding, "");
 				} else {
 					len = scePaf_strlen(g_messages[MSG_USB_DEVICE + submax_menu]);
-					padding = (window_char - len) / 2;
+					
+					if (!vsh->config.ark_menu.window_mode) {
+						padding = (window_char - len) / 2;
+					} else if (vsh->config.ark_menu.window_mode) {
+						padding = 1;
+					}
+					
 					scePaf_snprintf(msg, 128, "%*s%s%*s", padding, "", g_messages[MSG_USB_DEVICE + submax_menu], padding, "");
 				}
 				
-				// add a halfspace before if the lenght is an odd value
-				if (len & 0x1)
-					blit_rect_fill(submenu_start_x, submenu_start_y, 4, font->height);
-				
 				blit_string_ctr(submenu_start_y, msg);
 			
-				// add a halfspace after if the length is an odd value
-				if (len & 0x1) {
-					offset = blit_get_string_width(msg);
-					blit_rect_fill(submenu_start_x + offset + 4, submenu_start_y, 4, font->height);
+				if (!vsh->config.ark_menu.window_mode) {
+					// add a halfspace after if the length is an odd value
+					if (len & 0x1) {
+						blit_rect_fill(submenu_start_x, submenu_start_y, 4, font->height);
+						offset = blit_get_string_width(msg);
+						blit_rect_fill(submenu_start_x + offset + 4, submenu_start_y, 4, font->height);
+					}
 				}
 			}
+			
+			// set the y position
+			submenu_start_y += font->height;
 		}
 	}
 	
+	if (!vsh->config.ark_menu.window_mode) {
 	// set default colors
 	bc = colors[vsh->config.ark_menu.vsh_bg_color];
-	switch(vsh->config.ark_menu.vsh_fg_color){
-		case 0: break;
-		case 1: fc = colors[27]; break;
-		case 27: fc = colors[1]; break;
-		default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
+		switch(vsh->config.ark_menu.vsh_fg_color){
+			case 0: break;
+			case 1: fc = colors[27]; break;
+			case 27: fc = colors[1]; break;
+			default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
+		}
+		
+		blit_set_color(fc, bc);
+		// add line at the end
+		blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, font->height);
+		blit_set_color(0xaf000000, 0xaf000000);
+		blit_rect_fill(submenu_start_x, submenu_start_y+8, window_pixel, 1); // bottom horizontal outline
 	}
-	
-	blit_set_color(fc, bc);
-	submenu_start_y += font->height; // replace by font width
-	// add line at the end
-	blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, font->height);
-	blit_set_color(0xaf000000, 0xaf000000);
-	blit_rect_fill(submenu_start_x, submenu_start_y+8, window_pixel, 1); // bottom horizontal outline
 	
 	blit_set_color(0x00ffffff,0x00000000);
 	return 0;
@@ -313,6 +352,15 @@ int submenu_setup(void) {
 		subitem_str[SUBMENU_FONT] = font_list()[vsh->config.ark_menu.vsh_font - 1];
 	else
 		subitem_str[SUBMENU_FONT] = g_messages[MSG_DEFAULT];
+
+	switch (vsh->config.ark_menu.window_mode) {
+		case 1:
+			subitem_str[SUBMENU_MENU_DESIGN] = g_messages[MSG_CLASSIC];
+			break;
+		case 0:
+			subitem_str[SUBMENU_MENU_DESIGN] = g_messages[MSG_NEW];
+			break;
+	}
 
 	switch (vsh->config.se.usbdevice_rdonly) {
 		case 0:
@@ -492,6 +540,10 @@ none:
 				release_font();
 				font_load(vsh);
 			}
+			break;
+		case SUBMENU_MENU_DESIGN:
+			if(direction)
+				change_design(direction);
 			break;
 		case SUBMENU_GO_BACK:
 			if(direction==0) 

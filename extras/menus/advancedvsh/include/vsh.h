@@ -12,7 +12,6 @@
 
 #include "../arkMenu/include/conf.h"
 
-
 // Config stuff go here
 typedef struct _vsh_Config{
 	// SE config

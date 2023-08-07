@@ -27,6 +27,7 @@ MONTAR VIDEO
 CORES FG
 CORES BG
 FONTE
+DESENHO DO MENU
 CONVERT BATERIA
 INVERTER X/O
 REGIAO DO VSH
@@ -55,6 +56,8 @@ Disco UMD
 Memoria Interna
 Memory Stick
 Nenhum
+Clasico
+Novo
 Aleatorio
 Vermelho
 Vermelho Trasparente

@@ -115,14 +115,19 @@ int menu_draw(void) {
 			case 27: fc = colors[1]; break;
 			default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
 		}
-		// add line at the top
-		if (max_menu == 0){
-			blit_set_color(fc, bc);
-			blit_rect_fill(menu_start_x, menu_start_y, window_pixel, font->height);
-			blit_set_color(0xaf000000, 0xaf000000);
-			blit_rect_fill(menu_start_x, menu_start_y-1, window_pixel, 1); // top horizontal outline
-			blit_rect_fill(menu_start_x+window_pixel, menu_start_y, 1, 8*(TMENU_MAX+2)); // right vertical outline
-			blit_rect_fill(menu_start_x-1, menu_start_y, 1, 8*(TMENU_MAX+2)); // left vertical outline
+		
+		if (!vsh->config.ark_menu.window_mode) {
+			// add line at the top
+			if (max_menu == 0){
+				blit_set_color(fc, bc);
+				blit_rect_fill(menu_start_x, menu_start_y, window_pixel, font->height);
+				blit_set_color(0xaf000000, 0xaf000000);
+				blit_rect_fill(menu_start_x, menu_start_y-1, window_pixel, 1); // top horizontal outline
+				blit_rect_fill(menu_start_x+window_pixel, menu_start_y, 1, 8*(TMENU_MAX+2)); // right vertical outline
+				blit_rect_fill(menu_start_x-1, menu_start_y, 1, 8*(TMENU_MAX+2)); // left vertical outline
+			
+				menu_start_y += font->height;
+			}
 		}
 		
 		// if menu is selected, change color
@@ -139,24 +144,31 @@ int menu_draw(void) {
 		
 		// display menu
 		if (g_messages[MSG_CUSTOM_LAUNCHER + max_menu]) {
+			int padding = 0, len = 0;
 			cur_menu = max_menu;
-			menu_start_y += font->height;
 			
 			// center-align menu strings
-			int len = scePaf_strlen(g_messages[MSG_CUSTOM_LAUNCHER + max_menu]);
-			int padding = (window_char - len) / 2;
+			len = scePaf_strlen(g_messages[MSG_CUSTOM_LAUNCHER + max_menu]);
 			
-			// add a halfspace before if the lenght is an odd value
-			if (len & 0x1)
-				blit_rect_fill(menu_start_x, menu_start_y, 4, font->height);
+			if (!vsh->config.ark_menu.window_mode) {
+				padding = (window_char - len) / 2;
+			} else if (vsh->config.ark_menu.window_mode) {
+				padding = 0;
+			}
+			
 			scePaf_snprintf(msg, 128, " %*s%s%*s ", padding, "", g_messages[MSG_CUSTOM_LAUNCHER + max_menu], padding, "");
 			blit_string_ctr(menu_start_y, msg);
 			
-			// add a halfspace after if the length is an odd value
-			if (len & 0x1) {
-				int offset = blit_get_string_width(msg);
-				blit_rect_fill(menu_start_x + offset + 4, menu_start_y, 4, font->height);
+			if (!vsh->config.ark_menu.window_mode) {
+				// add a halfspace after if the length is an odd value
+				if (len & 0x1) {
+					blit_rect_fill(menu_start_x, menu_start_y, 4, font->height); // front
+					int offset = blit_get_string_width(msg);
+					blit_rect_fill(menu_start_x + offset + 4, menu_start_y, 4, font->height); // back
+				}
 			}
+			
+			menu_start_y += font->height;
 		
 			// item_str seems to be all NULL values (see menu_setup function)
 			// most likely this is not used and can be cleaned up
@@ -170,21 +182,22 @@ int menu_draw(void) {
 		}
 	}
 	
-	// reset colors to default
-	bc = colors[vsh->config.ark_menu.vsh_bg_color];
-	switch(vsh->config.ark_menu.vsh_fg_color){
-		case 0: break;
-		case 1: fc = colors[27]; break;
-		case 27: fc = colors[1]; break;
-		default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
-	}
+	if (!vsh->config.ark_menu.window_mode) {
+		// reset colors to default
+		bc = colors[vsh->config.ark_menu.vsh_bg_color];
+		switch(vsh->config.ark_menu.vsh_fg_color){
+			case 0: break;
+			case 1: fc = colors[27]; break;
+			case 27: fc = colors[1]; break;
+			default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
+		}
 
-	blit_set_color(fc, bc);
-	menu_start_y += font->height;
-	// add line at the end
-	blit_rect_fill(menu_start_x, menu_start_y, window_pixel, font->height);
-	blit_set_color(0xaf000000, 0xaf000000);
-	blit_rect_fill(menu_start_x, menu_start_y+8, window_pixel, 1); // bottom horizontal outline
+		blit_set_color(fc, bc);
+		// add line at the end
+		blit_rect_fill(menu_start_x, menu_start_y, window_pixel, font->height);
+		blit_set_color(0xaf000000, 0xaf000000);
+		blit_rect_fill(menu_start_x, menu_start_y+8, window_pixel, 1); // bottom horizontal outline
+	}
 	
 	blit_set_color(0x00ffffff,0x00000000);
 	return 0;

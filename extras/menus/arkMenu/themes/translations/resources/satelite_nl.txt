@@ -27,6 +27,7 @@ ISO VIDEO MOUNT
 FG KLEUREN
 BG KLEUREN
 LETTERTYPE
+MENU-ONTWERP
 BATTERIJ MOD
 X/O WISSELEN
 VSH-REGIO
@@ -55,6 +56,8 @@ UMD-schijf
 Interne opslag
 Memory Stick
 Geen
+Klassiek
+Nieuw
 Willekeurig
 Rood
 Lichtrood
