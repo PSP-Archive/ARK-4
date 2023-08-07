@@ -1,7 +1,16 @@
 # ARK Changelog
 
+## Version 4.20.62 (2023-08-07):
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42062
+- Added support for `cIPL` for the `DTP-T1000` DevKit.
+- You can now change between the `New` and `Classic` menu designs in `Advanced VSH Menu`.
+- Several small fixes and improvements.
+
 ## Version 4.20.61 (2023-07-06):
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42061
+- (Rev 3) Several bug fixes and improvements.
+- (Rev 2) Cleanup and fixed `VSH Menu`. Improved `Peops SPU` configuration.
+- (Rev 1) Fixed issue with `Development Tool Firmware` (devkits). 
 - You can now play `PS1` games on `PS Vita Standalone` installations. Uses the original `Pops` from `PSP` and the `Peops SPU` plugin. 
 - Several small fixes and improvements.
 
