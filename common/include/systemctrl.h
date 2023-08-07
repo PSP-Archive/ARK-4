@@ -38,7 +38,7 @@ extern "C"{
 //#define sctrlKernelQuerySystemCall sceKernelQuerySystemCall
 
 // Prologue Module Start Handler
-typedef int (* STMOD_HANDLER)(SceModule2 *);
+typedef void (* STMOD_HANDLER)(SceModule2 *);
 
 // Thread Context
 typedef struct SceThreadContext SceThreadContext;
