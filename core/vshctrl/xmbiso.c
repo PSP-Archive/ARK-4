@@ -16,7 +16,7 @@
  */
 
 #include "xmbiso.h"
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "systemctrl_se.h"
 #include "systemctrl_private.h"
 #include "isoreader.h"

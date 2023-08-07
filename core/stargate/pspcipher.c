@@ -47,7 +47,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "psputilsforkernel.h"
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "kubridge.h"
 #include "pspcipher.h"
 

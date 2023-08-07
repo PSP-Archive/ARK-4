@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include "controller.h"
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "animations.h"
 #include "system_mgr.h"
 #include "lang.h"

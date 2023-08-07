@@ -1,4 +1,5 @@
 #include "umd.h"
+#include <systemctrl.h>
 
 extern "C" int sctrlKernelLoadExecVSHDisc(const char*, struct SceKernelLoadExecVSHParam*);
 

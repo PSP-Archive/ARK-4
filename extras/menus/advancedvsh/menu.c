@@ -24,7 +24,7 @@
 #include <psputility.h>
 
 #include "common.h"
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "vsh.h"
 #include "ui.h"
 #include "scepaf.h"

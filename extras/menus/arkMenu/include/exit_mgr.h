@@ -4,6 +4,8 @@
 #include "system_entry.h"
 #include "optionsmenu.h"
 #include "common.h"
+#include <systemctrl.h>
+
 
 extern "C"{
     void scePowerRequestColdReset(int);

@@ -7,7 +7,7 @@
 #include "common.h"
 #include "module2.h"
 #include "kubridge.h"
-#include "systemctrl.h"
+#include <systemctrl.h>
 
 #include "scepaf.h"
 #include "battery.h"

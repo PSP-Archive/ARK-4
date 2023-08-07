@@ -33,6 +33,8 @@
 #include <pspdisplay.h>
 #include <pspctrl.h>
 #include <pspumd.h>
+#include <systemctrl.h>
+#include <kubridge.h>
 
 #include <stdio.h>
 #include <time.h>
@@ -40,9 +42,7 @@
 
 
 #include "common.h"
-#include "systemctrl.h"
 #include "systemctrl_se.h"
-#include "kubridge.h"
 #include "vpl.h"
 #include "vsh.h"
 #include "scepaf.h"

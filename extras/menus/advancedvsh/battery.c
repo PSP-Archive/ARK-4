@@ -2,7 +2,7 @@
 
 #include "scepaf.h"
 #include "kubridge.h"
-#include "systemctrl.h"
+#include <systemctrl.h>
 
 
 void (*SysconGetBaryonVersion)(u32*);

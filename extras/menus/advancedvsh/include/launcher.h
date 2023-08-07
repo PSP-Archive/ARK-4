@@ -12,7 +12,7 @@
 #include <time.h>
 #include <stdbool.h>
 
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "systemctrl_se.h"
 
 #include "vsh.h"
