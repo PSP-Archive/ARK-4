@@ -124,6 +124,7 @@ int load_external_font(const char *file) {
 	SceUID fd;
 	int ret;
 	void *buf;
+	unsigned int size = 0;
 	
 	vsh_Menu *vsh = vsh_menu_pointer();
 
@@ -133,7 +134,7 @@ int load_external_font(const char *file) {
 	scePaf_strcpy(pkgpath, vsh->config.p_ark->arkpath);
 	strcat(pkgpath, "LANG.ARK");
 
-	SceOff offset = findPkgOffset(file, NULL, pkgpath);
+	SceOff offset = findPkgOffset(file, &size, pkgpath);
 
 	if (offset == 0) return -1;
 
@@ -143,7 +144,7 @@ int load_external_font(const char *file) {
 		return fd;
 	}
 
-	font.mem_id = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, 2048, NULL);
+	font.mem_id = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, size, NULL);
 
 	if(font.mem_id < 0) {
 		sceIoClose(fd);
@@ -159,9 +160,9 @@ int load_external_font(const char *file) {
 	}
 
 	sceIoLseek(fd, offset, PSP_SEEK_SET);
-	ret = sceIoRead(fd, buf, 2048);
+	ret = sceIoRead(fd, buf, size);
 
-	if(ret != 2048) {
+	if(ret != size) {
 		sceKernelFreePartitionMemory(font.mem_id);
 		sceIoClose(fd);
 		return -3;
