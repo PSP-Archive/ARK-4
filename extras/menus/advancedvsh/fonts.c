@@ -85,12 +85,6 @@ font_Data* font_data_pointer(void) {
 }
 
 int font_load(vsh_Menu *vsh) {
-	// if a font is needed (ie not 0)
-	if (vsh->config.ark_menu.vsh_font) {
-		// load external font
-		load_external_font(available_fonts[vsh->config.ark_menu.vsh_font - 1]);
-		return 0;
-	}
 	
 	int ret, value;
 	// get device language
@@ -102,8 +96,11 @@ int font_load(vsh_Menu *vsh) {
 
 	switch (value) {
 		case PSP_SYSTEMPARAM_LANGUAGE_RUSSIAN:
-			load_external_font("RUSSIAN.pf");
-			vsh->config.ark_menu.vsh_font = 48;
+			// make sure we use a russian font
+			if (vsh->config.ark_menu.vsh_font < 48 || vsh->config.ark_menu.vsh_font > 52){
+				load_external_font("RUSSIAN.pf");
+				vsh->config.ark_menu.vsh_font = 48;
+			}
 			break;
 		/*
 		// use CP881 font for French
@@ -113,6 +110,11 @@ int font_load(vsh_Menu *vsh) {
 			break;
 		*/
 		default:
+			// if a font is needed (ie not 0)
+			if (vsh->config.ark_menu.vsh_font) {
+				// load external font
+				load_external_font(available_fonts[vsh->config.ark_menu.vsh_font - 1]);
+			}
 			break;
 	}
 
