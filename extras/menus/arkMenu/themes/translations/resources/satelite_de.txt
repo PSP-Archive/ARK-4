@@ -27,6 +27,7 @@ ISO VIDEO MOUNT
 VORDERGRUND
 HINTERGRUND
 SCHRIFTART
+MENšGESTALTUNG
 BATTERIE KONV.
 X/O TAUSCHEN
 UMD-REGION
@@ -55,6 +56,8 @@ UMD Disk
 Interner Speicher
 Memory Stick
 Keine
+Klassisch
+Neu
 Zufall
 Rot
 Hellrot

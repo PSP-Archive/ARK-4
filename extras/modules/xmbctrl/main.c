@@ -23,8 +23,8 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <psputility_sysparam.h>
-#include <systemctrl.h>
 #include <kubridge.h>
+#include <systemctrl.h>
 #include <stddef.h>
 
 #include "globals.h"
@@ -131,7 +131,7 @@ int context_mode = 0;
 
 char user_buffer[2*LINE_BUFFER_SIZE];
 
-STMOD_HANDLER previous;
+STMOD_HANDLER previous = NULL;
 CFWConfig config;
 
 int psp_model;
@@ -863,7 +863,7 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size)
     ClearCaches();
 }
 
-int OnModuleStart(SceModule2 *mod)
+void OnModuleStart(SceModule2 *mod)
 {
     char *modname = mod->modname;
     u32 text_addr = mod->text_addr;
@@ -876,7 +876,7 @@ int OnModuleStart(SceModule2 *mod)
     else if(strcmp(modname, "sysconf_plugin_module") == 0)
         PatchSysconfPlugin(text_addr, text_size);
 
-    return previous ? previous(mod) : 0;
+    if (previous) previous(mod);
 }
 
 int module_start(SceSize args, void *argp)

@@ -85,12 +85,6 @@ font_Data* font_data_pointer(void) {
 }
 
 int font_load(vsh_Menu *vsh) {
-	// if a font is needed (ie not 0)
-	if (vsh->config.ark_menu.vsh_font) {
-		// load external font
-		load_external_font(available_fonts[vsh->config.ark_menu.vsh_font - 1]);
-		return 0;
-	}
 	
 	int ret, value;
 	// get device language
@@ -102,8 +96,10 @@ int font_load(vsh_Menu *vsh) {
 
 	switch (value) {
 		case PSP_SYSTEMPARAM_LANGUAGE_RUSSIAN:
-			load_external_font("RUSSIAN.pf");
-			vsh->config.ark_menu.vsh_font = 48;
+			// make sure we use a russian font
+			if (vsh->config.ark_menu.vsh_font != 49){
+				vsh->config.ark_menu.vsh_font = 49;
+			}
 			break;
 		/*
 		// use CP881 font for French
@@ -116,6 +112,12 @@ int font_load(vsh_Menu *vsh) {
 			break;
 	}
 
+	// if a font is needed (ie not 0)
+	if (vsh->config.ark_menu.vsh_font) {
+		// load external font
+		load_external_font(available_fonts[vsh->config.ark_menu.vsh_font - 1]);
+	}
+
 	return 0;
 }
 
@@ -124,6 +126,7 @@ int load_external_font(const char *file) {
 	SceUID fd;
 	int ret;
 	void *buf;
+	unsigned int size = 0;
 	
 	vsh_Menu *vsh = vsh_menu_pointer();
 
@@ -133,7 +136,7 @@ int load_external_font(const char *file) {
 	scePaf_strcpy(pkgpath, vsh->config.p_ark->arkpath);
 	strcat(pkgpath, "LANG.ARK");
 
-	SceOff offset = findPkgOffset(file, NULL, pkgpath);
+	SceOff offset = findPkgOffset(file, &size, pkgpath);
 
 	if (offset == 0) return -1;
 
@@ -143,7 +146,7 @@ int load_external_font(const char *file) {
 		return fd;
 	}
 
-	font.mem_id = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, 2048, NULL);
+	font.mem_id = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, size, NULL);
 
 	if(font.mem_id < 0) {
 		sceIoClose(fd);
@@ -159,9 +162,9 @@ int load_external_font(const char *file) {
 	}
 
 	sceIoLseek(fd, offset, PSP_SEEK_SET);
-	ret = sceIoRead(fd, buf, 2048);
+	ret = sceIoRead(fd, buf, size);
 
-	if(ret != 2048) {
+	if(ret != size) {
 		sceKernelFreePartitionMemory(font.mem_id);
 		sceIoClose(fd);
 		return -3;

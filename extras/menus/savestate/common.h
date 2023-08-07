@@ -25,7 +25,7 @@
 #include <pspctrl.h>
 #include <pspgu.h>
 #include <pspgum.h>
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include <psploadcore.h>
 
 #include <stdio.h>

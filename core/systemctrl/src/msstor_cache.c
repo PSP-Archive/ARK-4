@@ -25,7 +25,7 @@
 #include <string.h>
 #include <macros.h>
 #include <globals.h>
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "systemctrl_private.h"
 #include "imports.h"
 

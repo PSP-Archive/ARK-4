@@ -1,6 +1,6 @@
 #include <pspkernel.h>
 #include <string.h>
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "main.h"
 
 int vshCtrlDeleteHibernation(void)

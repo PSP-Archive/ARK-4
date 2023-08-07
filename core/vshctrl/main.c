@@ -25,7 +25,7 @@
 #include <string.h>
 #include <pspumd.h>
 #include "main.h"
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include <systemctrl_se.h>
 #include "macros.h"
 #include "globals.h"

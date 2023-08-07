@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "globals.h"
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "sysmem.h"
 
 void unlockVitaMemory(){
