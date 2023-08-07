@@ -97,8 +97,7 @@ int font_load(vsh_Menu *vsh) {
 	switch (value) {
 		case PSP_SYSTEMPARAM_LANGUAGE_RUSSIAN:
 			// make sure we use a russian font
-			if (vsh->config.ark_menu.vsh_font < 49 || vsh->config.ark_menu.vsh_font > 53){
-				load_external_font("RUSSIAN.pf");
+			if (vsh->config.ark_menu.vsh_font != 49){
 				vsh->config.ark_menu.vsh_font = 49;
 			}
 			break;
@@ -110,12 +109,13 @@ int font_load(vsh_Menu *vsh) {
 			break;
 		*/
 		default:
-			// if a font is needed (ie not 0)
-			if (vsh->config.ark_menu.vsh_font) {
-				// load external font
-				load_external_font(available_fonts[vsh->config.ark_menu.vsh_font - 1]);
-			}
 			break;
+	}
+
+	// if a font is needed (ie not 0)
+	if (vsh->config.ark_menu.vsh_font) {
+		// load external font
+		load_external_font(available_fonts[vsh->config.ark_menu.vsh_font - 1]);
 	}
 
 	return 0;
