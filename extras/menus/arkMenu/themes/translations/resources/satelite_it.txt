@@ -27,6 +27,7 @@ ISO VIDEO
 COLORE CARATTERI
 COLORE SFONDO
 CARATTERE
+PROGETTAZIONE
 MOD BATTERIA
 MODIFICA X/O
 REGIONE VSH
@@ -55,6 +56,8 @@ Disco UMD
 Memoria Interna
 Memory Stick
 Nessuno
+Classico
+Nuovo
 Casuale
 Rosso
 Rosso Chiaro

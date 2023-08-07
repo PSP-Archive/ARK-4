@@ -27,6 +27,7 @@ MONTAGE VIDêO ISO
 COULEURS AVANT-PLAN
 COULEURS ARRI‘RE-PLAN
 POLICE
+CONCEPTION DE MENUS
 CONVERTIR BATTERIE
 INVERSER BOUTONS X/O
 RêGION VSH
@@ -55,6 +56,8 @@ Disque UMD
 MÇmoire Interne
 Memory Stick
 Aucun(e)
+Classique
+Nouveau
 AlÇatoire
 Rouge
 Rouge Clair
