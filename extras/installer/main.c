@@ -24,7 +24,8 @@ struct {
     {"IDSREG.PRX", "flash0:/kd/ark_idsreg.prx"},
     {"XMBCTRL.PRX", "flash0:/kd/ark_xmbctrl.prx"},
     {"USBDEV.PRX", "flash0:/vsh/module/ark_usbdev.prx"},
-    {"VSHMENU.PRX", "flash0:/vsh/module/ark_satelite.prx"}
+    {"VSHMENU.PRX", "flash0:/vsh/module/ark_satelite.prx"},
+    {"RECOVERY.PRX", "flash0:/vsh/module/ark_recovery.prx"},
 };
 
 static const int N_FLASH_FILES = (sizeof(flash_files)/sizeof(flash_files[0]));

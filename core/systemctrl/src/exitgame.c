@@ -53,22 +53,41 @@ void exitLauncher()
     if (ark_config->recovery) strcat(path, ARK_RECOVERY);
     else if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
     else strcat(path, ARK_MENU);
-    
-    // Clear Memory
-    memset(&param, 0, sizeof(param));
 
-    // Configure Parameters
-    param.size = sizeof(param);
-    param.args = strlen(path) + 1;
-    param.argp = path;
-    param.key = "game";
+	SceIoStat stat; int res = sceIoGetstat(path, &stat);
 
-    // set default mode
-    sctrlSESetUmdFile("");
-    sctrlSESetBootConfFileIndex(MODE_UMD);
-    
-    // Trigger Reboot
-    sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
+	if (res >= 0){
+		// Clear Memory
+		memset(&param, 0, sizeof(param));
+
+		// Configure Parameters
+		param.size = sizeof(param);
+		param.args = strlen(path) + 1;
+		param.argp = path;
+		param.key = "game";
+
+		// set default mode
+		sctrlSESetUmdFile("");
+		sctrlSESetBootConfFileIndex(MODE_UMD);
+		
+		// Trigger Reboot
+		sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
+	}
+	else if (ark_config->recovery){
+		// no recovery app? try classic module
+		strcpy(path, ark_config->arkpath);
+		strcat(path, "RECOVERY.PRX");
+		res = sceIoGetstat(path, &stat);
+		if (res < 0){
+			// try flash0
+			strcpy(path, "flash0:/vsh/module/ark_recovery.prx");
+		}
+		SceUID modid = kuKernelLoadModule(path, 0, NULL);
+		sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
+	}
+	else { // nothing to launch?
+		sctrlKernelExitVSH(NULL);
+	}
 }
 
 void xbootLauncher()
