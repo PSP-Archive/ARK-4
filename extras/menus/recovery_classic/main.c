@@ -47,8 +47,10 @@ int module_start(SceSize args, void *argp) {
 		//sceKernelDelayThread(50000);
 		sceDisplayWaitVblankStart();	
 		sceCtrlPeekBufferPositive(&pad, 1);
-		if(pad.Buttons & PSP_CTRL_CIRCLE)
-			sceKernelExitGame();
+		if(pad.Buttons & PSP_CTRL_CIRCLE) {
+			//sceKernelExitGame();
+			return 0;
+		}
 
 
 		pspDebugScreenSetTextColor(0xff00ff00);	
