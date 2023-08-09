@@ -1,0 +1,1 @@
+b'colordebugger.o .deps/colordebugger.Po: colordebugger.c colordebugger.h \\\n  /usr/local/pspdev/psp/sdk/include/psptypes.h \\\n  /home/aaron/Projects/ARK-4/common/include/ansi_c_functions.h \\\n  /usr/local/pspdev/psp/sdk/include/pspgu.h \\\n  /usr/local/pspdev/psp/sdk/include/pspge.h \\\n  /home/aaron/Projects/ARK-4/common/include/macros.h\n'

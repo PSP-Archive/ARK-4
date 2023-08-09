@@ -1,0 +1,1 @@
+b'vfpu_tanf.o .deps/vfpu_tanf.Po: vfpu_tanf.c pspmath.h \\\n  /usr/local/pspdev/psp/sdk/include/psptypes.h\n'

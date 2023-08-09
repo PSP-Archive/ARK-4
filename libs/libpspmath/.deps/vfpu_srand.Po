@@ -1,0 +1,1 @@
+b'vfpu_srand.o .deps/vfpu_srand.Po: vfpu_srand.c pspmath.h \\\n  /usr/local/pspdev/psp/sdk/include/psptypes.h\n'

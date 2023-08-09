@@ -1,0 +1,1 @@
+b'memfind.o .deps/memfind.Po: memfind.c \\\n  /home/aaron/Projects/ARK-4/common/include/ansi_c_functions.h\n'

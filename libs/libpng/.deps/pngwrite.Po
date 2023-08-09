@@ -1,0 +1,1 @@
+b'pngwrite.o .deps/pngwrite.Po: pngwrite.c png.h /usr/local/pspdev/psp/sdk/include/zlib.h \\\n  /usr/local/pspdev/psp/sdk/include/zconf.h pngconf.h pngpriv.h\n'

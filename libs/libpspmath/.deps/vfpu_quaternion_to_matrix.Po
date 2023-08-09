@@ -1,0 +1,1 @@
+b'vfpu_quaternion_to_matrix.o .deps/vfpu_quaternion_to_matrix.Po: vfpu_quaternion_to_matrix.c pspmath.h \\\n  /usr/local/pspdev/psp/sdk/include/psptypes.h\n'

@@ -1,0 +1,1 @@
+b'jdinput.o .deps/jdinput.Po: jdinput.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h \\\n  jerror.h\n'

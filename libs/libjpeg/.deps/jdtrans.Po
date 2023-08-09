@@ -1,0 +1,1 @@
+b'jdtrans.o .deps/jdtrans.Po: jdtrans.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h \\\n  jerror.h\n'

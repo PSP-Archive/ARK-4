@@ -1,0 +1,1 @@
+b'jdatasrc.o .deps/jdatasrc.Po: jdatasrc.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jerror.h\n'

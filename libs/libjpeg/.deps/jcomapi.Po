@@ -1,0 +1,1 @@
+b'jcomapi.o .deps/jcomapi.Po: jcomapi.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h \\\n  jerror.h\n'

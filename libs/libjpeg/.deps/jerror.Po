@@ -1,0 +1,1 @@
+b'jerror.o .deps/jerror.Po: jerror.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jversion.h \\\n  jerror.h\n'

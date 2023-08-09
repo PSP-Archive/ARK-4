@@ -1,0 +1,1 @@
+b'ioapi.o .deps/ioapi.Po: ioapi.c /usr/local/pspdev/psp/sdk/include/zlib.h \\\n  /usr/local/pspdev/psp/sdk/include/zconf.h ioapi.h\n'

@@ -1,0 +1,1 @@
+b'jquant1.o .deps/jquant1.Po: jquant1.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h \\\n  jerror.h\n'

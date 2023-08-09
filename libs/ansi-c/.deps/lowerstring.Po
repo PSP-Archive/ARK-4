@@ -1,0 +1,1 @@
+b'lowerstring.o .deps/lowerstring.Po: lowerstring.c\n'

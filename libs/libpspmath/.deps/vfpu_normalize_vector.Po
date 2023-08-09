@@ -1,0 +1,1 @@
+b'vfpu_normalize_vector.o .deps/vfpu_normalize_vector.Po: vfpu_normalize_vector.c pspmath.h \\\n  /usr/local/pspdev/psp/sdk/include/psptypes.h\n'

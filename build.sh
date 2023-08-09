@@ -25,12 +25,6 @@ fi
 dialogCheck=$(command -v dialog 2>/dev/null)
 
 function checkDepends {
-	psptoolchainCheck=$(command -v psp-gcc 2>/dev/null) 
-	psptoolchainRet=$?
-	if [[ $psptoolchainRet -eq 1 ]] ; then
-		printf "You need to first download and install the psptoolchain first!\n";
-		exit 1;
-	fi
 
 	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev
 	pip3 install pycryptodome ecdsa

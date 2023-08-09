@@ -1,0 +1,1 @@
+b'jmemnobs.o .deps/jmemnobs.Po: jmemnobs.c jinclude.h jconfig.h jpeglib.h jmorecfg.h \\\n  jpegint.h jerror.h jmemsys.h\n'

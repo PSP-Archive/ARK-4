@@ -1,0 +1,1 @@
+b'jdmaster.o .deps/jdmaster.Po: jdmaster.c jinclude.h jconfig.h jpeglib.h jmorecfg.h \\\n  jpegint.h jerror.h\n'
