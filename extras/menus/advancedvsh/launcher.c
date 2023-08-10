@@ -39,16 +39,14 @@ void exec_recovery_menu(vsh_Menu *vsh) {
 		sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
 	}
 	else {
-		// try classic recovery
-		scePaf_strcpy(menupath, vsh->config.ark.arkpath);
-		strcat(menupath, "RECOVERY.PRX");
-		res = sceIoGetstat(menupath, &stat);
-		if (res < 0){
-			// try flash0
-			scePaf_strcpy(menupath, "flash0:/vsh/module/ark_recovery.prx");
-		}
-		SceUID modid = kuKernelLoadModule(menupath, 0, NULL);
-		sceKernelStartModule(modid, strlen(menupath) + 1, menupath, NULL, NULL);
+		// reboot system in recovery mode
+		vsh->config.ark.recovery = 1;
+		struct KernelCallArg args;
+		args.arg1 = &(vsh->config.ark);
+		u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
+		kuKernelCall((void*)setArkConfig, &args);
+
+		vsh->status.reset_vsh = 1;
 	}
 }
 

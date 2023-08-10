@@ -80,7 +80,6 @@ void restoreRebootBuffer(void)
     memcpy((void *)REBOOTEX_CONFIG, &rebootex_config, sizeof(RebootConfigARK));
 
     // Restore ARK Configuration
-    ark_config->recovery = 0; // reset recovery mode for next reboot
     memcpy(ARK_CONFIG, ark_config, sizeof(ARKConfig));
 }
 

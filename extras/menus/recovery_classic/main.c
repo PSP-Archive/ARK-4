@@ -31,7 +31,7 @@ PSP_MODULE_INFO("ARK_Recovery", PSP_MODULE_KERNEL, 1, 0);
 }
 */
 
-int module_start(SceSize args, void *argp) {        
+int main_thread(SceSize args, void *argp) {        
     //psp_model = kuKernelGetModel();
 
     //sctrlHENGetArkConfig(&ark_conf);
@@ -163,6 +163,22 @@ int module_start(SceSize args, void *argp) {
 	free(option);
     return 0;
 }
+
+int module_start(int argc, char *argv[])
+{
+	int	thid;
+
+	thid = sceKernelCreateThread("recovery_thread", main_thread, 16, 0x8000 , 0 ,0);
+
+	if (thid>=0) {
+		sceKernelStartThread(thid, 0, 0);
+	}
+	
+	sceKernelWaitThreadEnd(thid, NULL);
+	
+	return 0;
+}
+
 int module_stop(SceSize args, void *argp) {
 	return 0;
 }

@@ -84,9 +84,8 @@ void exitLauncher()
 		SceUID modid = kuKernelLoadModule(path, 0, NULL);
 		sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
 	}
-	else { // nothing to launch?
-		sctrlKernelExitVSH(NULL);
-	}
+	ark_config->recovery = 0; // reset recovery mode for next reboot
+	sctrlKernelExitVSH(NULL);
 }
 
 static void startExitThread(){
