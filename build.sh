@@ -5,10 +5,10 @@
 #                                   #
 # Author  : Krazynez                #
 #                                   #
-# Date    : 2023-07-28              #
+# Date    : 2023-08-10              #
 #                                   #
 #####################################
-version=0.8.5
+version=0.9.0
 
 if [[ -z ${PSPDEV} ]]; then
 	clear
@@ -49,27 +49,31 @@ export -f elevatePrivs
 
 function original {
 	
-	clear
-	read -p "
-	This script will setup the correct SDK to build ARK, get sign_np
-	dependency and temporarly setup the enivorment to build ARK-4. 
-	
-	Press Enter to continue..."
-	
-	
-	if [ -d "$PSPDEV" ] ; then
+	if [[ "$1" == "--docker" ]]; then
 		clear
-	    read -p "You seem to already have the SDK installed. Do you want to reinstall or continue? (y)es/(n)o/(c)ontinue 
-	
-	if you continue ARK will try to build with already installed SDK: " input
-	
-	if [[ ! "$input" =~ ^(Y|Yes|YEs|YES|yES|yeS|yes|y|c|C)$ ]] ; then
-		printf "Exiting....\n"
-		exit 0;
+		read -p "
+		This script will setup the correct SDK to build ARK, get sign_np
+		dependency and temporarly setup the enivorment to build ARK-4. 
+		
+		Press Enter to continue..."
+		
+		
+		if [ -d "$PSPDEV" ] ; then
+			clear
+			read -p "You seem to already have the SDK installed. Do you want to reinstall or continue? (y)es/(n)o/(c)ontinue 
+		
+		if you continue ARK will try to build with already installed SDK: " input
+		
+		if [[ ! "$input" =~ ^(Y|Yes|YEs|YES|yES|yeS|yes|y|c|C)$ ]] ; then
+			printf "Exiting....\n"
+			exit 0;
+		fi
 	fi
 	
 	if [[ ! -f "/lib/libmpfr.so.4" ]] ; then
-		if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.4" ]] ; then
+		if [[ "$1" == "--docker" ]]; then
+			elevatePrivs ln -s '/usr/lib/x86_64-linux-gnu/libmpfr.so.6.1.0' /lib/libmpfr.so.4
+		else if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.4" ]] ; then
 			printf "Already Exist\n"
 		elif [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so" ]] ; then
 			elevatePrivs ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libmpfr.so.4
@@ -84,8 +88,8 @@ function original {
 	    fi
 	fi
 	
-	    if [[ ! $input =~ ^(c|C)$ ]] ; then
-	        elevatePrivs 7z x ./contrib/PC/PSPSDK/pspdev.7z -o"${PSPDEV:0:-7}"
+	    if [[ ! $input =~ ^(c|C)$ || "$1" == "--docker" ]] ; then
+	        elevatePrivs 7z -aoa x ./contrib/PC/PSPSDK/pspdev.7z -o"${PSPDEV:0:-7}"
 	    fi
 	
 	    # Should be added to .bashrc or somthing to make it static, but for now I will leave it just for the session
