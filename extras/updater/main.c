@@ -41,7 +41,8 @@ struct {
     {"IDSREG.PRX", "flash0:/kd/ark_idsreg.prx"},
     {"XMBCTRL.PRX", "flash0:/kd/ark_xmbctrl.prx"},
     {"USBDEV.PRX", "flash0:/vsh/module/ark_usbdev.prx"},
-    {"VSHMENU.PRX", "flash0:/vsh/module/ark_satelite.prx"}
+    {"VSHMENU.PRX", "flash0:/vsh/module/ark_satelite.prx"},
+    {"RECOVERY.PRX", "flash0:/vsh/module/ark_recovery.prx"},
 };
 static const int N_FLASH_FILES = (sizeof(flash_files)/sizeof(flash_files[0]));
 
@@ -158,13 +159,13 @@ int main(int argc, char * argv[])
         open_flash();
         extractArchive(sceIoOpen(flash0_ark, PSP_O_RDONLY, 0777), "flash0:/", &isVitaFile);
 
-        for (int i=0; i<N_FLASH_FILES; i++){
-            char path[ARK_PATH_SIZE];
-            strcpy(path, ark_config.arkpath);
-            strcat(path, flash_files[i].orig);
-            int test = sceIoOpen(flash_files[i].dest, PSP_O_RDONLY, 0777);
-            if (test >= 0){
-                sceIoClose(test);
+        // test for full installations
+        SceIoStat stat; int res = sceIoGetstat(flash_files[0].dest, &stat);
+        if (res >= 0){
+            for (int i=0; i<N_FLASH_FILES; i++){
+                char path[ARK_PATH_SIZE];
+                strcpy(path, ark_config.arkpath);
+                strcat(path, flash_files[i].orig);
                 pspDebugScreenPrintf("Installing %s to %s\n", flash_files[i].orig, flash_files[i].dest);
                 copy_file(path, flash_files[i].dest);
             }

@@ -49,6 +49,7 @@ SUBDIRS = libs \
 	extras/installer \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
+	extras/menus/recovery_classic \
 	extras/menus/xMenu \
 	extras/menus/advancedvsh \
 	extras/menus/provsh \
@@ -94,6 +95,7 @@ copy-bin:
 	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_newIPL/kpspident.prx
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_newIPL/ipl_update.prx
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
+	$(Q)cp extras/menus/recovery_classic/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Classic recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/arkMenu/LANG.ARK dist/ARK_01234/LANG.ARK # Translations
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
@@ -184,6 +186,7 @@ clean:
 	$(Q)$(MAKE) $@ -C core/compat/vitapops
 	$(Q)$(MAKE) $@ -C core/compat/pentazemin
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
+	$(Q)$(MAKE) $@ -C extras/menus/recovery_classic
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/advancedvsh
 	$(Q)$(MAKE) $@ -C extras/menus/provsh
@@ -246,6 +249,9 @@ xmenu: libs
 
 recovery: libs
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
+
+recovery_classic: libs
+	$(Q)$(MAKE) $@ -C extras/menus/recovery_classic
 
 mkdir-dist:
 	$(Q)mkdir dist | true
