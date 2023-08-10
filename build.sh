@@ -63,6 +63,7 @@ function original {
 			read -p "You seem to already have the SDK installed. Do you want to reinstall or continue? (y)es/(n)o/(c)ontinue 
 		
 		if you continue ARK will try to build with already installed SDK: " input
+		fi
 		
 		if [[ ! "$input" =~ ^(Y|Yes|YEs|YES|yES|yeS|yes|y|c|C)$ ]] ; then
 			printf "Exiting....\n"
@@ -87,7 +88,7 @@ function original {
 	        fi
 	    fi
 	fi
-	
+
 	    if [[ ! $input =~ ^(c|C)$ || "$1" == "--docker" ]] ; then
 	        elevatePrivs 7z -aoa x ./contrib/PC/PSPSDK/pspdev.7z -o"${PSPDEV:0:-7}"
 	    fi
