@@ -179,7 +179,8 @@ static int isRecoveryMode(){
     static char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, ARK_RECOVERY);
-    return (strcmp(path, sceKernelInitFileName())==0);
+	char* filename = sceKernelInitFileName();
+    return (strcmp(path, filename)==0  || strcmp(filename, "ms0:/PSP/GAME/RECOVERY/EBOOT.PBP") == 0);
 }
 
 void checkControllerInput(){
