@@ -103,6 +103,10 @@ as well as unique and exclusive new features not found anywhere else.
 
     Build script will allow you to use the correct SDK that ARK was built with.
 
+- Docker container: `docker pull docker.io/krazynez/ark-4:latest`
+
+<p><b>These are utlized either with cloning the repo or using the Docker container</b></p>
+
 - Release: `./build.sh` 
 - Debug: `./build.sh --debug`
 - Manually: install the oldest possible SDK (ideally the one used to compile M33), then run `make`
