@@ -31,6 +31,44 @@ PSP_MODULE_INFO("ARK_Recovery", PSP_MODULE_KERNEL, 1, 0);
 }
 */
 
+
+static int selected_choice(u32 choice) {
+    int ret;
+
+    if(choice==0) {
+        pspDebugScreenSetXY(25, 30);
+        printf("Good-bye ;-)");
+        sceKernelDelayThread(100000);
+        return 0;
+    }   
+    if(choice==1) {
+        //TODO USB Toggle
+        pspDebugScreenSetXY(25, 30);
+        printf("Not yet implmented");
+        sceKernelDelayThread(1000000);
+        return 1;
+    }   
+    if(choice==2) {
+        struct SceKernelLoadExecVSHParam param;
+        pspDebugScreenSetXY(20, 30);
+        printf("Booting RECOVERY/EBOOT.PBP");
+        sceKernelDelayThread(1000000);
+        const char *p = "ms0:/PSP/GAME/RECOVERY/EBOOT.PBP";
+        int apitype = 0x141;
+
+        memset(&param, 0, sizeof(param));
+        param.size = sizeof(param);
+        param.args = strlen(p) + 1;
+        param.argp = p;
+        param.key = "game";
+        sctrlKernelLoadExecVSHWithApitype(apitype, p, &param);
+
+		// SHOULD NOT REALLY GET HERE
+		return 2;
+    }   
+
+}
+
 int main_thread(SceSize args, void *argp) {        
     //psp_model = kuKernelGetModel();
 
@@ -57,82 +95,7 @@ int main_thread(SceSize args, void *argp) {
 		sceCtrlPeekBufferPositive(&pad, 1);
 		sceDisplayWaitVblankStart();	
 
-
-		// MENU
-
-		pspDebugScreenSetTextColor(0xff00ff00);	
-		printf("********************************************************************");
-
-		pspDebugScreenSetXY(0, 1);
-		printf("* ARK-4 Classic Recovery Menu                                      *");
-
-		pspDebugScreenSetXY(0, 2);
-		printf("*                                                                  *");
-
-
-		// DEFAULT (FIRST) OPTION
-		pspDebugScreenSetXY(0, 3);
-		if(dir==0) {
-			sprintf(selected_option, "%s%s", selected, "Back                                                           *");
-			printf(selected_option);
-		}
-		else {
-			sprintf(option, "%s%07s%60s", special, options[0], "*"); 
-			printf(option);
-		}
-
-
-		// GAP FILLER BETWEEN OPTIONS
-		pspDebugScreenSetXY(0, 4);
-		printf("*                                                                  *");
-
-
-
-		// SECOND OPTION
-		pspDebugScreenSetXY(0, 5);
-		if(dir==1) {
-			sprintf(selected_option, "%s%s", selected, "Toggle USB                                                     *");
-			printf(selected_option);
-		}
-		else {
-			sprintf(option, "%s   %s%54s", special, options[1], "*"); 
-			printf(option);
-		}
-
-
-		// GAP FILLER BETWEEN OPTIONS
-		pspDebugScreenSetXY(0, 6);
-		printf("*                                                                  *");
-
-
-		// THIRD OPTION
-		pspDebugScreenSetXY(0, 7);
-		if(dir==2) {
-			sprintf(selected_option, "%s%s", selected, "Run /PSP/GAME/RECOVERY/EBOOT.PBP                               *");
-			printf(selected_option);
-		}
-		else {
-			sprintf(option, "%s   %s%032s", special, options[2], "*"); 
-			printf(option);
-		}
-
-
-
-
-		// ADD SIDE BORDERS
-		for(i=8;i<SCREEN_HEIGHT;i++) {
-			pspDebugScreenSetXY(0, i);
-			printf("*                                                                  *");
-		}
-
-		// BOTTOM BORDER
-		pspDebugScreenSetXY(0, 33);
-		printf("********************************************************************");
-
-
-
-
-
+		
 		// CONTROLS
 		if(pad.Buttons & PSP_CTRL_DOWN) {
 			sceKernelDelayThread(100000);
@@ -144,13 +107,85 @@ int main_thread(SceSize args, void *argp) {
 			dir--;
 			if(dir<0) dir = size;
 		}
+		if((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE))) {
+            int ret = selected_choice(dir);
+            if(ret==0) return 0;
+			//else return ret;
+        }
 
-		if((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE)) && dir == 0) {
-			pspDebugScreenSetXY(25, 30);
-			printf("Good-bye ;-)");
-			sceKernelDelayThread(100000);
-			return 0;
-		}
+		  // MENU
+
+        pspDebugScreenSetXY(0, 1);
+        pspDebugScreenSetTextColor(0xff00ff00);
+        printf("********************************************************************");
+
+        pspDebugScreenSetXY(0, 2);
+        printf("* ARK-4 Classic Recovery Menu                                      *");
+
+        // GAP FILLER BETWEEN OPTIONS
+        pspDebugScreenSetXY(0, 3);
+        printf("*                                                                  *");
+
+
+        // DEFAULT (FIRST) OPTION
+        pspDebugScreenSetXY(0, 4);
+        if(dir==0) {
+            sprintf(selected_option, "%s%s%60s", selected, options[0], special);
+            printf(selected_option);
+        }
+        else {
+            sprintf(option, "%s%07s%60s", special, options[0], special);
+            printf(option);
+        }
+
+
+        // GAP FILLER BETWEEN OPTIONS
+        pspDebugScreenSetXY(0, 5);
+        printf("*                                                                  *");
+
+
+
+        // SECOND OPTION
+        pspDebugScreenSetXY(0, 6);
+        if(dir==1) {
+            sprintf(selected_option, "%s%s%54s", selected, options[1], special);
+            printf(selected_option);
+        }
+        else {
+            sprintf(option, "%s   %s%54s", special, options[1], special);
+            printf(option);
+        }
+
+
+        // GAP FILLER BETWEEN OPTIONS
+        pspDebugScreenSetXY(0, 7);
+        printf("*                                                                  *");
+
+
+        // THIRD OPTION
+        pspDebugScreenSetXY(0, 8);
+        if(dir==2) {
+            sprintf(selected_option, "%s%s%32s", selected, options[2], special);
+            printf(selected_option);
+        }
+        else {
+            sprintf(option, "%s   %s%032s", special, options[2], special);
+            printf(option);
+        }
+
+
+
+
+        // ADD SIDE BORDERS
+        for(i=9;i<SCREEN_HEIGHT;i++) {
+            pspDebugScreenSetXY(0, i);
+            printf("*                                                                  *");
+        }
+
+        // BOTTOM BORDER
+        pspDebugScreenSetXY(0, 33);
+        printf("********************************************************************");
+		
 
 		sceDisplayWaitVblankStart();	
 	}
