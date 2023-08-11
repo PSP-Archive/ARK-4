@@ -13,13 +13,29 @@ void exec_custom_launcher(vsh_Menu *vsh) {
 	scePaf_strcpy(menupath, vsh->config.ark.arkpath);
 	strcat(menupath, ARK_MENU);
 
-	struct SceKernelLoadExecVSHParam param;
-	scePaf_memset(&param, 0, sizeof(param));
-	param.size = sizeof(param);
-	param.args = scePaf_strlen(menupath) + 1;
-	param.argp = menupath;
-	param.key = "game";
-	sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
+	SceIoStat stat; int res = sceIoGetstat(menupath, &stat);
+
+	if (res < 0){
+		// no recovery app? try classic one
+		strcpy(menupath, vsh->config.ark.arkpath);
+		strcat(menupath, "RECOVERY.OLD");
+		res = sceIoGetstat(menupath, &stat);
+		if (res < 0){
+			// try flash0
+			strcpy(menupath, "flash0:/vsh/module/ark_recovery.pbp");
+		}
+		res = sceIoGetstat(menupath, &stat);
+	}
+
+	if (res >= 0){
+		struct SceKernelLoadExecVSHParam param;
+		scePaf_memset(&param, 0, sizeof(param));
+		param.size = sizeof(param);
+		param.args = scePaf_strlen(menupath) + 1;
+		param.argp = menupath;
+		param.key = "game";
+		sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
+	}
 }
 
 void exec_recovery_menu(vsh_Menu *vsh) {

@@ -55,7 +55,7 @@ void exitLauncher()
 
 	SceIoStat stat; int res = sceIoGetstat(path, &stat);
 
-	if (res < 0 && ark_config->recovery){
+	if (res < 0){
 		// no recovery app? try classic one
 		strcpy(path, ark_config->arkpath);
 		strcat(path, "RECOVERY.OLD");

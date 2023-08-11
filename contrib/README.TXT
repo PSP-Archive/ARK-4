@@ -43,7 +43,7 @@ Installation On PSP
     - This allows you to install and use all of ARK's features from flash0, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
     - Copy `ARK_Full_Installer` to `/PSP/GAME/` and run it from `ARK`.
     - It will install the necessary modules into the console's flash.
-    - For recovery, you can press and hold start+select when booting up ARK or a game to temporarily disable settings and plugins.
+    - This installation will make use of `Classic Recovery Menu` when the regular one is not available.
     - Custom Firmware settings and other Custom Firmware files are installed in `ms0:/SEPLUGINS/`, which is used as the default ARK path when no savedata folder is available.
 
 
