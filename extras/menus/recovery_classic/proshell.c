@@ -347,7 +347,7 @@ void updateList(int clearindex)
                 if(strcmp(info.d_name, ".") == 0) continue;
                 
                 // Ignore ".." in Root Directory
-                if( (strcmp(cwd, START_PATH) == 0 || strcmp(cwd, START_PATH_GO)) && strcmp(info.d_name, "..") == 0) continue;
+                if( (strcmp(cwd, START_PATH) == 0 || strcmp(cwd, START_PATH_GO) == 0) && strcmp(info.d_name, "..") == 0) continue;
                 
                 // Allocate Memory
                 File * item = (File *)malloc(sizeof(File));
