@@ -174,8 +174,10 @@ void initController(SceModule2* mod){
 }
 
 static int isRecoveryMode(){
-    if (ark_config->recovery) return 1;
+    if (ark_config->recovery) return 1; // recovery mode set
 	char* filename = sceKernelInitFileName();
+	if (filename == NULL) return 0; // not running any app
+	// check if running a recovery app
     return (strstr(filename, "RECOVERY") != NULL || strstr(filename, "recovery") != NULL);
 }
 
