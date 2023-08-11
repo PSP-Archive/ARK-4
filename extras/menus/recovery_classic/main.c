@@ -28,14 +28,8 @@ PSP_HEAP_SIZE_KB(4096);
 //ARKConfig* ark_config = &_arkconf;
 //extern List plugins;
 
-/*void OnModuleStart(SceModule2 *mod) {
-	// abgr
-}
-*/
-
 extern int proshell_main();
 
-static volatile int custom_recovery = 0;
 static int launchRecoveryApp(){
 	struct SceKernelLoadExecVSHParam param;
 	sceKernelDelayThread(2000000);
@@ -75,12 +69,14 @@ static int selected_choice(u32 choice) {
 		//pspDebugScreenSetXY(20, 30);
 		//printf("Booting RECOVERY/EBOOT.PBP");
 
-		return proshell_main();
+		proshell_main();
+        return 1;
     }
 
 }
 
-int main(SceSize args, void *argp) {        
+int main(SceSize args, void *argp) {     
+
     //psp_model = kuKernelGetModel();
 
     //sctrlHENGetArkConfig(&ark_conf);
@@ -92,7 +88,7 @@ int main(SceSize args, void *argp) {
 	char *options[] = {
 		"Back",
 		"Toggle USB",
-		"PRO Shell"
+		"PRO Shell",
 	};
 
 	int size = (sizeof(options) / sizeof(options[0]))-1;
@@ -120,7 +116,7 @@ int main(SceSize args, void *argp) {
 		}
 		if((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE))) {
             int ret = selected_choice(dir);
-            if(ret==0) return 0;
+            if(ret==0) break;
 			//else return ret;
         }
 
@@ -200,12 +196,9 @@ int main(SceSize args, void *argp) {
 
 		sceDisplayWaitVblankStart();	
 	}
-    
-    //previous = sctrlHENSetStartModuleHandler(OnModuleStart);
-    
-    //sctrlHENGetArkConfig(ark_config);
 
 	free(selected_option);
 	free(option);
+    sceKernelExitGame();
     return 0;
 }

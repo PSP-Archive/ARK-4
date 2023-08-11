@@ -176,7 +176,7 @@ void initController(SceModule2* mod){
 static int isRecoveryMode(){
     if (ark_config->recovery) return 1;
 	char* filename = sceKernelInitFileName();
-    return (strstr(filename, "RECOVERY") != NULL || strstr(filename, "recovery") != NULL));
+    return (strstr(filename, "RECOVERY") != NULL || strstr(filename, "recovery") != NULL);
 }
 
 void checkControllerInput(){
