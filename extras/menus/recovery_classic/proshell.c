@@ -425,6 +425,7 @@ void paintList(int withclear)
     printoob("TRIANGLE  Cut", 345, 130, FONT_COLOR);
     printoob("CIRCLE    Paste", 345, 140, FONT_COLOR);
     printoob("CROSS     Navigate", 345, 150, FONT_COLOR);
+    printoob("LTRIGGER  Go Back", 345, 160, FONT_COLOR);
     
     // Copy Paste in Progress
     if(copymode != NOTHING_TO_COPY)

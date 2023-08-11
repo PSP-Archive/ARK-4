@@ -24,10 +24,11 @@ PSP_MODULE_INFO("ClassicRecovery", PSP_MODULE_USER, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
 PSP_HEAP_SIZE_KB(4096);
 
-//ARKConfig _arkconf;
-//ARKConfig* ark_config = &_arkconf;
-//extern List plugins;
+int psp_model;
+ARKConfig _arkconf;
+ARKConfig* ark_config = &_arkconf;
 
+extern int usb_is_enabled;
 extern int proshell_main();
 
 static int launchRecoveryApp(){
@@ -59,7 +60,14 @@ static int selected_choice(u32 choice) {
     case 1:
         //TODO USB Toggle
         pspDebugScreenSetXY(25, 30);
-        printf("Not yet implmented");
+        if (usb_is_enabled){
+            printf("Disabling USB...");
+            USB_disable();
+        }
+        else{
+            printf("Enabling USB...");
+            USB_enable();
+        }
         sceKernelDelayThread(1000000);
         return 1;  
     case 2:
@@ -77,16 +85,16 @@ static int selected_choice(u32 choice) {
 
 int main(SceSize args, void *argp) {     
 
-    //psp_model = kuKernelGetModel();
+    psp_model = kuKernelGetModel();
 
-    //sctrlHENGetArkConfig(&ark_conf);
+    sctrlHENGetArkConfig(ark_config);
 
 	pspDebugScreenInit();
 	sceDisplayWaitVblankStart();	
 	SceCtrlData pad;
 	int i;
 	char *options[] = {
-		"Back",
+		"Exit",
 		"Toggle USB",
 		"PRO Shell",
         "Run /PSP/GAME/RECOVERY/EBOOT.PBP"

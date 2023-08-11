@@ -1,13 +1,13 @@
 
 TARGET = ark_recovery
-C_OBJS =  main.o proshell.o
+C_OBJS =  main.o proshell.o usb.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
 CFLAGS = -std=c99 -Os -G0 -Wall
 INCDIR = $(ARKROOT)/common/include
 LIBDIR = $(ARKROOT)/libs
 
-LIBS = -lpspsystemctrl_user
+LIBS = -lpspsystemctrl_user -lpspkubridge -lpspusb -lpspusbdevice_driver
 
 CXXFLAGS = $(CFLAGS)
 ASFLAGS = $(CFLAGS)
