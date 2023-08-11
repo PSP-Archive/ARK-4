@@ -27,6 +27,14 @@ extern void USB_enable();
 extern void USB_disable();
 extern int proshell_main();
 
+void* malloc(size_t size){
+    return my_malloc(size);
+}
+
+void free(void* ptr){
+    my_free(ptr);
+}
+
 static int launchRecoveryApp(){
 	struct SceKernelLoadExecVSHParam param;
 	const char *p = "ms0:/PSP/GAME/RECOVERY/EBOOT.PBP";
