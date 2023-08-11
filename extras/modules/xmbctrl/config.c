@@ -159,8 +159,8 @@ void saveSettings(){
     processSetting(fd, line, "mscache", config.mscache);
     switch (config.infernocache){
         case 0: processSetting(fd, line, "infernocache", 0); break;
-        case 1: processSetting(fd, line, "infernocache:lru", 1);
-        case 2: processSetting(fd, line, "infernocache:rr", 1);
+        case 1: processSetting(fd, line, "infernocache:lru", 1); break;
+        case 2: processSetting(fd, line, "infernocache:rr", 1); break;
     }
     processSetting(fd, line, "oldplugin", config.oldplugin);
     processSetting(fd, line, "skiplogos", config.skiplogos);

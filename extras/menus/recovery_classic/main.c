@@ -28,6 +28,13 @@ extern int proshell_main();
 static int launchRecoveryApp(){
 	struct SceKernelLoadExecVSHParam param;
 	const char *p = "ms0:/PSP/GAME/RECOVERY/EBOOT.PBP";
+
+    SceIoStat stat;
+    if (sceIoGetstat(p, &stat) < 0){
+        p = "ef0:/PSP/GAME/RECOVERY/EBOOT.PBP";
+        if (sceIoGetstat(p, &stat) < 0) return;
+    }
+
 	int apitype = 0x141;
 
 	memset(&param, 0, sizeof(param));
