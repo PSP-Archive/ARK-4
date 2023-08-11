@@ -94,7 +94,7 @@ copy-bin:
 	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_newIPL/kpspident.prx
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_newIPL/ipl_update.prx
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
-	$(Q)cp extras/menus/recovery_classic/EBOOT.PBP dist/ARK_01234/RECOVERY.OLD # Classic recovery menu
+	$(Q)cp extras/menus/recovery_classic/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Classic recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/arkMenu/LANG.ARK dist/ARK_01234/LANG.ARK # Translations
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher

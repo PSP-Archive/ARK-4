@@ -315,7 +315,6 @@ To load into the `Recovery App` you must hold the `R trigger` while turning on t
 <p></p>
 
 When using a `Full Installation` on `PSP` and no `Recovery App` is available, `ARK` will load the `Classic Recovery Menu` from `flash0`, which includes `PRO Shell`, a minimalistic `File Manager` and `Launcher`.
-You can force `ARK` to always use the `Classic Recovery Menu` by replacing `RECOVERY.PBP` with `RECOVERY.OLD` in `ARK_01234`.
 
 #### Vanilla Mode
 If the `Recovery App` is unavailable (i.e. `Full Installations`), or for a better/easier diagnostics, you can run `ARK` in `Vanilla Mode`, which temporarily disables settings and plugins when running `ARK` or booting any game.

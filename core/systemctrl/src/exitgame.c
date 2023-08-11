@@ -55,18 +55,6 @@ void exitLauncher()
 
 	SceIoStat stat; int res = sceIoGetstat(path, &stat);
 
-	if (res < 0){
-		// no recovery app? try classic one
-		strcpy(path, ark_config->arkpath);
-		strcat(path, "RECOVERY.OLD");
-		res = sceIoGetstat(path, &stat);
-		if (res < 0){
-			// try flash0
-			strcpy(path, "flash0:/vsh/module/ark_recovery.pbp");
-		}
-		res = sceIoGetstat(path, &stat);
-	}
-
 	if (res >= 0){
 		// Clear Memory
 		memset(&param, 0, sizeof(param));
@@ -82,10 +70,26 @@ void exitLauncher()
 		sctrlSESetBootConfFileIndex(MODE_UMD);
 		
 		// Trigger Reboot
+		ark_config->recovery = 0; // reset recovery mode for next reboot
 		sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 	}
-	ark_config->recovery = 0; // reset recovery mode for next reboot
-	sctrlKernelExitVSH(NULL);
+	else if (ark_config->recovery){
+		// no recovery app? try classic module
+		strcpy(path, ark_config->arkpath);
+		strcat(path, "RECOVERY.PRX");
+		res = sceIoGetstat(path, &stat);
+		if (res < 0){
+			// try flash0
+			strcpy(path, "flash0:/vsh/module/ark_recovery.prx");
+		}
+		SceUID modid = kuKernelLoadModule(path, 0, NULL);
+		sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
+		ark_config->recovery = 0; // reset recovery mode for next reboot
+	}
+	else {
+		ark_config->recovery = 0; // reset recovery mode for next reboot
+		sctrlKernelExitVSH(NULL);
+	}
 }
 
 static void startExitThread(){

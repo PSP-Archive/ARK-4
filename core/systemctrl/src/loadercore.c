@@ -230,6 +230,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     if (strcmp(modname, "vsh_module") == 0){
         if (ark_config->recovery || ark_config->launcher[0]){ // system in recovery or launcher mode
             exitLauncher(); // reboot VSH into custom menu
+            MAKE_DUMMY_FUNCTION_RETURN_0(mod->entry_addr);
         }
     }
 

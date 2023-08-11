@@ -25,7 +25,7 @@ struct {
     {"XMBCTRL.PRX", "flash0:/kd/ark_xmbctrl.prx"},
     {"USBDEV.PRX", "flash0:/vsh/module/ark_usbdev.prx"},
     {"VSHMENU.PRX", "flash0:/vsh/module/ark_satelite.prx"},
-    {"RECOVERY.OLD", "flash0:/vsh/module/ark_recovery.pbp"},
+    {"RECOVERY.PRX", "flash0:/vsh/module/ark_recovery.prx"},
     {"UPDATER.TXT", "flash1:/UPDATER.TXT"},
 };
 

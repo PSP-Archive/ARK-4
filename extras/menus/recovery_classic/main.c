@@ -23,6 +23,8 @@ ARKConfig* ark_config = &_arkconf;
 CFWConfig config;
 
 extern int usb_is_enabled;
+extern void USB_enable();
+extern void USB_disable();
 extern int proshell_main();
 
 static int launchRecoveryApp(){
@@ -63,11 +65,15 @@ static int selected_choice(u32 choice) {
         pspDebugScreenSetXY(25, 30);
         if (usb_is_enabled){
             printf("Disabling USB...");
-            USB_disable();
+            int uid = sceKernelCreateThread("ClassicRecovery", USB_disable, 16 - 1, 4*1024, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
+        	sceKernelStartThread(uid, 0, NULL);
+            //USB_disable();
         }
         else{
             printf("Enabling USB...");
-            USB_enable();
+            int uid = sceKernelCreateThread("ClassicRecovery", USB_enable, 16 - 1, 4*1024, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
+        	sceKernelStartThread(uid, 0, NULL);
+            //USB_enable();
         }
         sceKernelDelayThread(1000000);
         return 1;
@@ -88,6 +94,8 @@ static int selected_choice(u32 choice) {
 		pspDebugScreenSetXY(20, 30);
 		printf("Booting RECOVERY/EBOOT.PBP");
         sceKernelDelayThread(2000000);
+        int uid = sceKernelCreateThread("ClassicRecovery", launchRecoveryApp, 16 - 1, 4*1024, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
+        sceKernelStartThread(uid, 0, NULL);
         launchRecoveryApp();
         return 0;
     }
@@ -191,4 +199,10 @@ int main(SceSize args, void *argp) {
 
     sceKernelExitGame();
     return 0;
+}
+
+int module_start(int argc, void* argv){
+    int uid = sceKernelCreateThread("ClassicRecovery", main, 16 - 1, 32*1024, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
+	sceKernelStartThread(uid, 0, NULL);
+	//sceKernelWaitThreadEnd(uid, NULL);
 }

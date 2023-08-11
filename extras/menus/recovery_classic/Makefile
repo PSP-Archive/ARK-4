@@ -12,12 +12,8 @@ LIBS = -lpspsystemctrl_user -lpspkubridge -lpspusb -lpspusbdevice_driver
 
 CXXFLAGS = $(CFLAGS)
 ASFLAGS = $(CFLAGS)
-LDFLAGS =
+LDFLAGS = -mno-crt0 -nostartfiles
 BUILD_PRX = 1
-
-PSP_EBOOT_TITLE += Classic Recovery
-
-EXTRA_TARGETS = EBOOT.PBP
 
 include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)
