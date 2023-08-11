@@ -42,7 +42,8 @@ struct {
     {"XMBCTRL.PRX", "flash0:/kd/ark_xmbctrl.prx"},
     {"USBDEV.PRX", "flash0:/vsh/module/ark_usbdev.prx"},
     {"VSHMENU.PRX", "flash0:/vsh/module/ark_satelite.prx"},
-    {"RECOVERY.PRX", "flash0:/vsh/module/ark_recovery.prx"},
+    {"RECOVERY.OLD", "flash0:/vsh/module/ark_recovery.pbp"},
+    {"UPDATER.TXT", "flash1:/UPDATER.TXT"},
 };
 static const int N_FLASH_FILES = (sizeof(flash_files)/sizeof(flash_files[0]));
 
@@ -198,6 +199,12 @@ void open_flash(){
         sceKernelDelayThread(500000);
     }
     while (sceIoAssign("flash0:", "lflash0:0,0", "flashfat0:", 0, NULL, 0)<0){
+        sceKernelDelayThread(500000);
+    }
+    while(sceIoUnassign("flash1:") < 0) {
+        sceKernelDelayThread(500000);
+    }
+    while (sceIoAssign("flash1:", "lflash0:0,1", "flashfat1:", 0, NULL, 0)<0){
         sceKernelDelayThread(500000);
     }
 }

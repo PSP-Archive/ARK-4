@@ -29,6 +29,19 @@ void exec_recovery_menu(vsh_Menu *vsh) {
 	strcat(menupath, ARK_RECOVERY);
 
 	SceIoStat stat; int res = sceIoGetstat(menupath, &stat);
+
+	if (res < 0){
+		// no recovery app? try classic one
+		strcpy(menupath, vsh->config.ark.arkpath);
+		strcat(menupath, "RECOVERY.OLD");
+		res = sceIoGetstat(menupath, &stat);
+		if (res < 0){
+			// try flash0
+			strcpy(menupath, "flash0:/vsh/module/ark_recovery.pbp");
+		}
+		res = sceIoGetstat(menupath, &stat);
+	}
+
 	if (res >= 0){
 		struct SceKernelLoadExecVSHParam param;
 		scePaf_memset(&param, 0, sizeof(param));

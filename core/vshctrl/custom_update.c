@@ -41,13 +41,20 @@ void load_server_file(){
 	memset(server, 0, sizeof(server));
 	
 	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
-	sceIoRead(fd, server, sizeof(server)-1);
-	sceIoClose(fd);
 
-	int len = strlen(server);
-	if (len && server[len-1] == '\n') server[--len] = 0;
-	if (len && server[len-1] == '\r') server[--len] = 0;
-	if (len && server[len-1] == '/') server[--len] = 0;
+	if (fd < 0){ // retry from flash
+		fd = sceIoOpen("flash1:/UPDATER.TXT", PSP_O_RDONLY, 0777);
+	}
+
+	if (fd >= 0){
+		sceIoRead(fd, server, sizeof(server)-1);
+		sceIoClose(fd);
+
+		int len = strlen(server);
+		if (len && server[len-1] == '\n') server[--len] = 0;
+		if (len && server[len-1] == '\r') server[--len] = 0;
+		if (len && server[len-1] == '/') server[--len] = 0;
+	}
 }
 
 void patch_update_plugin_module(SceModule2* mod)

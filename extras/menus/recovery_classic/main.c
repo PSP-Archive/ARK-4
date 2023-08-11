@@ -20,7 +20,9 @@
 
 //STMOD_HANDLER previous;
 
-PSP_MODULE_INFO("ARK_Recovery", PSP_MODULE_KERNEL, 1, 0);
+PSP_MODULE_INFO("ClassicRecovery", PSP_MODULE_USER, 1, 0);
+PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
+PSP_HEAP_SIZE_KB(4096);
 
 //ARKConfig _arkconf;
 //ARKConfig* ark_config = &_arkconf;
@@ -31,6 +33,25 @@ PSP_MODULE_INFO("ARK_Recovery", PSP_MODULE_KERNEL, 1, 0);
 }
 */
 
+extern int proshell_main();
+
+static volatile int custom_recovery = 0;
+static int launchRecoveryApp(){
+	struct SceKernelLoadExecVSHParam param;
+	sceKernelDelayThread(2000000);
+	const char *p = "ms0:/PSP/GAME/RECOVERY/EBOOT.PBP";
+	int apitype = 0x141;
+
+	memset(&param, 0, sizeof(param));
+	param.size = sizeof(param);
+	param.args = strlen(p) + 1;
+	param.argp = p;
+	param.key = "game";
+	sctrlKernelLoadExecVSHWithApitype(apitype, p, &param);
+
+	// SHOULD NOT REALLY GET HERE
+	return 0;
+}
 
 static int selected_choice(u32 choice) {
     int ret;
@@ -49,27 +70,17 @@ static int selected_choice(u32 choice) {
         return 1;
     }   
     if(choice==2) {
-        struct SceKernelLoadExecVSHParam param;
-        pspDebugScreenSetXY(20, 30);
-        printf("Booting RECOVERY/EBOOT.PBP");
-        sceKernelDelayThread(1000000);
-        const char *p = "ms0:/PSP/GAME/RECOVERY/EBOOT.PBP";
-        int apitype = 0x141;
 
-        memset(&param, 0, sizeof(param));
-        param.size = sizeof(param);
-        param.args = strlen(p) + 1;
-        param.argp = p;
-        param.key = "game";
-        sctrlKernelLoadExecVSHWithApitype(apitype, p, &param);
+		//custom_recovery = 1;
+		//pspDebugScreenSetXY(20, 30);
+		//printf("Booting RECOVERY/EBOOT.PBP");
 
-		// SHOULD NOT REALLY GET HERE
-		return 2;
-    }   
+		return proshell_main();
+    }
 
 }
 
-int main_thread(SceSize args, void *argp) {        
+int main(SceSize args, void *argp) {        
     //psp_model = kuKernelGetModel();
 
     //sctrlHENGetArkConfig(&ark_conf);
@@ -81,7 +92,7 @@ int main_thread(SceSize args, void *argp) {
 	char *options[] = {
 		"Back",
 		"Toggle USB",
-		"Run /PSP/GAME/RECOVERY/EBOOT.PBP"
+		"PRO Shell"
 	};
 
 	int size = (sizeof(options) / sizeof(options[0]))-1;
@@ -197,23 +208,4 @@ int main_thread(SceSize args, void *argp) {
 	free(selected_option);
 	free(option);
     return 0;
-}
-
-int module_start(int argc, char *argv[])
-{
-	int	thid;
-
-	thid = sceKernelCreateThread("recovery_thread", main_thread, 16, 0x8000 , 0 ,0);
-
-	if (thid>=0) {
-		sceKernelStartThread(thid, 0, 0);
-	}
-	
-	sceKernelWaitThreadEnd(thid, NULL);
-	
-	return 0;
-}
-
-int module_stop(SceSize args, void *argp) {
-	return 0;
 }
