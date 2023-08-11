@@ -11,6 +11,7 @@
 
 // Default Start Path
 #define START_PATH "ms0:/"
+#define START_PATH_GO "ef0:/"
 #define stricmp strcasecmp
 
 // Current Path
@@ -25,8 +26,11 @@ enum {
 
 // Runlevel Definition
 #define HOMEBREW_RUNLEVEL 0x141
+#define HOMEBREW_RUNLEVEL_GO 0x152
 #define ISO_RUNLEVEL 0x123
 #define POPS_RUNLEVEL 0x144
+#define ISO_RUNLEVEL_GO 0x125
+#define POPS_RUNLEVEL_GO 0x155
 
 // Current Runlevel
 // 0x144 = Pops 
@@ -94,8 +98,6 @@ File * findindex(int index);
 int delete_folder_recursive(char * path);
 int copy_file(char * a, char * b);
 int copy_folder_recursive(char * a, char * b);
-int isPathISO(const char * path);
-int isPathCSO(const char * path);
 int isGameISO(const char * path);
 
 // Menu Position
@@ -111,24 +113,14 @@ File * files = NULL;
 int proshell_main()
 {
 
-    pspDebugScreenClear();
-    pspDebugScreenSetXY(25, 30);
-    pspDebugScreenPrintf("Starting PRO Shell");
-
     // Set Start Path
-    strcpy(cwd, START_PATH);
+    strcpy(cwd, START_PATH_GO);
     
     // Initialize Screen Output
     pspDebugScreenClear();
-    pspDebugScreenSetXY(25, 30);
-    pspDebugScreenPrintf("Update List");
     
     // Update List
     updateList(CLEAR);
-
-    pspDebugScreenClear();
-    pspDebugScreenSetXY(25, 30);
-    pspDebugScreenPrintf("Paint list");
     
     // Paint List
     paintList(CLEAR);
@@ -266,6 +258,20 @@ int proshell_main()
                 }
             }
 
+            // change device
+            else if(PRESSED(lastbuttons, data.Buttons, PSP_CTRL_RTRIGGER))
+            {
+                // change device
+                if (cwd[0] == 'm') strcpy(cwd, START_PATH_GO);
+                else if (cwd[0] == 'e') strcpy(cwd, START_PATH);
+
+                // Update List
+                updateList(CLEAR);
+                    
+                // Paint List
+                paintList(CLEAR);
+            }
+
             // finish
             else if(PRESSED(lastbuttons, data.Buttons, PSP_CTRL_LTRIGGER))
             {
@@ -304,7 +310,14 @@ void updateList(int clearindex)
     filecount = 0;
     
     // Open Working Directory
-    int directory = sceIoDopen((const char*)cwd);
+    int directory = sceIoDopen(cwd);
+
+    if (directory < 0) {
+        // retry other device
+        if (strcmp(cwd, START_PATH) == 0) strcpy(cwd, START_PATH_GO);
+        else if (strcmp(cwd, START_PATH_GO) == 0) strcpy(cwd, START_PATH);
+        directory = sceIoDopen(cwd);
+    }
     
     // Opened Directory
     if(directory >= 0)
@@ -334,7 +347,7 @@ void updateList(int clearindex)
                 if(strcmp(info.d_name, ".") == 0) continue;
                 
                 // Ignore ".." in Root Directory
-                if(strcmp(cwd, "ms0:/") == 0 && strcmp(info.d_name, "..") == 0) continue;
+                if( (strcmp(cwd, START_PATH) == 0 || strcmp(cwd, START_PATH_GO)) && strcmp(info.d_name, "..") == 0) continue;
                 
                 // Allocate Memory
                 File * item = (File *)malloc(sizeof(File));
@@ -425,7 +438,8 @@ void paintList(int withclear)
     printoob("TRIANGLE  Cut", 345, 130, FONT_COLOR);
     printoob("CIRCLE    Paste", 345, 140, FONT_COLOR);
     printoob("CROSS     Navigate", 345, 150, FONT_COLOR);
-    printoob("LTRIGGER  Go Back", 345, 160, FONT_COLOR);
+    printoob("RTRIGGER  Device", 345, 160, FONT_COLOR);
+    printoob("LTRIGGER  Go Back", 345, 170, FONT_COLOR);
     
     // Copy Paste in Progress
     if(copymode != NOTHING_TO_COPY)
@@ -497,75 +511,27 @@ void recursiveFree(File * node)
     }
 }
 
-// ISO File Check
-int isPathISO(const char *path)
+// Game ISO File Check
+int isGameISO(const char * path)
 {
     const char *ext;
+    const char* known[] = {
+        ".iso", ".cso", ".zso", ".jso", ".dax"
+    };
 
     ext = path + strlen(path) - 4;
 
     if (ext > path)
     {
         //check extension
-        if (stricmp(ext, ".iso") == 0)
-        {
-            return 1;
-        }
-    }
-
-    return 0;
-}
-
-// CSO File Check
-int isPathCSO(const char * path)
-{
-    // Result (Not CSO)
-    int result = 0;
-    
-    // Open File
-    SceUID fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
-    
-    // Opened File
-    if(fd >= 0)
-    {
-        // Header Buffer
-        unsigned char header[4];
-        
-        // Read Header
-        if(sizeof(header) == sceIoRead(fd, header, sizeof(header)))
-        {
-            // CSO Header Magic
-            unsigned char isoFlags[4] = {
-                0x43, 0x49, 0x53, 0x4F
-            };
-            
-            // Valid Magic
-            if(0 == memcmp(header, isoFlags, sizeof(header)))
+        for (int i=0; i<5; i++){
+            if (stricmp(ext, known[i]) == 0)
             {
-                // CSO File
-                result = 1;
+                return 1;
             }
         }
-        
-        // Close File
-        sceIoClose(fd);
     }
-    
-    // Return Result
-    return result;
-}
 
-// Game ISO File Check (this crashes for some reason...)
-int isGameISO(const char * path)
-{
-    // ISO or CSO File
-    if(isPathISO(path) || isPathCSO(path))
-    {
-        // Game ISO
-        return 1;
-    }
-    
-    // Something else...
     return 0;
 }
 
@@ -576,9 +542,9 @@ int getRunlevelMode(int mode)
         case MODE_HOMEBREW:
             return HOMEBREW_RUNLEVEL;
         case MODE_ISO:
-            return ISO_RUNLEVEL;
+            return (cwd[0] == 'e')? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
         case MODE_POPS:
-            return POPS_RUNLEVEL;
+            return (cwd[0] == 'e')? POPS_RUNLEVEL_GO : POPS_RUNLEVEL;
     }
 
     return -1;

@@ -152,21 +152,21 @@ int main(SceSize args, void *argp) {
 		
 		// CONTROLS
 		if(pad.Buttons & PSP_CTRL_DOWN) {
-            sceKernelDelayThread(100000);
+            sceKernelDelayThread(200000);
 			dir++;
 			if(dir>size) dir = 0;
 
             draw(options, size, dir);
 		}
 		if(pad.Buttons & PSP_CTRL_UP) {
-            sceKernelDelayThread(100000);
+            sceKernelDelayThread(200000);
 			dir--;
 			if(dir<0) dir = size;
             
             draw(options, size, dir);
 		}
 		if((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE))) {
-            sceKernelDelayThread(100000);
+            sceKernelDelayThread(200000);
             int ret = selected_choice(dir);
             if(ret==0) break;
             
