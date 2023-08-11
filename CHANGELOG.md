@@ -1,5 +1,14 @@
 # ARK Changelog
 
+## Version 4.20.63 (2023-08-11):
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42063
+- Created `Classic Recovery Menu` for `PSP` systems with `Full Installation`, which is used when there is no `Recovery App` available (i.e. no `Memory Stick` inserted or no `ARK_01234` savedata present).
+- Improved `Custom Firmware Settings` in both `Recovery Menu` and `XMB`.
+- Fixed and improved `Cyrillic` fonts (https://github.com/PSP-Archive/ARK-4/pull/198).
+- Several fixes related to `Full Installations`.
+- Cleanup of development libraries.
+- Several other fixes and improvements.
+
 ## Version 4.20.62 (2023-08-07):
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42062
 - Added support for `cIPL` for the `DTP-T1000` DevKit.
