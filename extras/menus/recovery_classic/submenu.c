@@ -123,7 +123,7 @@ static void draw_submenu(char* header, char** options, char** states, int size, 
         strcat(tmp, options[start+i]);
 
         int len = strlen(tmp);
-        int padding = 57 - len;
+        int padding = 55 - len;
         for (int j=0; j<padding; j++) tmp[len+j] = ' ';
         strcpy(tmp+len+padding, states[start+i]);
 
