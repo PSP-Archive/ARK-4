@@ -1,1 +1,0 @@
-b'jdpostct.o .deps/jdpostct.Po: jdpostct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h \\\n  jpegint.h jerror.h\n'

@@ -1,1 +1,0 @@
-b'pngtrans.o .deps/pngtrans.Po: pngtrans.c png.h /usr/local/pspdev/psp/sdk/include/zlib.h \\\n  /usr/local/pspdev/psp/sdk/include/zconf.h pngconf.h pngpriv.h\n'

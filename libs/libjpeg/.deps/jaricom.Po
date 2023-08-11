@@ -1,1 +1,0 @@
-b'jaricom.o .deps/jaricom.Po: jaricom.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h \\\n  jerror.h\n'

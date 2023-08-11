@@ -1,1 +1,0 @@
-b'jcparam.o .deps/jcparam.Po: jcparam.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h \\\n  jerror.h\n'

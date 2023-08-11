@@ -1,1 +1,0 @@
-b'vfpu_identity_matrix.o .deps/vfpu_identity_matrix.Po: vfpu_identity_matrix.c pspmath.h \\\n  /usr/local/pspdev/psp/sdk/include/psptypes.h\n'

@@ -1,1 +1,0 @@
-b'memcpy.o .deps/memcpy.Po: memcpy.c \\\n  /home/aaron/Projects/ARK-4/common/include/ansi_c_functions.h\n'

@@ -1,1 +1,0 @@
-b'jcsample.o .deps/jcsample.Po: jcsample.c jinclude.h jconfig.h jpeglib.h jmorecfg.h \\\n  jpegint.h jerror.h\n'

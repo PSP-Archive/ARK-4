@@ -1,1 +1,0 @@
-b'strhex32.o .deps/strhex32.Po: strhex32.c \\\n  /home/aaron/Projects/ARK-4/common/include/ansi_c_functions.h\n'

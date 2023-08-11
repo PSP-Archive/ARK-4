@@ -1,1 +1,0 @@
-b'jdmarker.o .deps/jdmarker.Po: jdmarker.c jinclude.h jconfig.h jpeglib.h jmorecfg.h \\\n  jpegint.h jerror.h\n'

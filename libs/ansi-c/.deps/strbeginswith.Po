@@ -1,1 +1,0 @@
-b'strbeginswith.o .deps/strbeginswith.Po: strbeginswith.c \\\n  /home/aaron/Projects/ARK-4/common/include/ansi_c_functions.h\n'

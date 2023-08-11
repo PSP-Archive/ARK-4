@@ -1,1 +1,0 @@
-b'jcdctmgr.o .deps/jcdctmgr.Po: jcdctmgr.c jinclude.h jconfig.h jpeglib.h jmorecfg.h \\\n  jpegint.h jerror.h jdct.h\n'

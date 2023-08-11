@@ -1,1 +1,0 @@
-b'vfpu_sincos.o .deps/vfpu_sincos.Po: vfpu_sincos.c pspmath.h \\\n  /usr/local/pspdev/psp/sdk/include/psptypes.h\n'

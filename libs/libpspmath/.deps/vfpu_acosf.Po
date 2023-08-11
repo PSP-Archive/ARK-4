@@ -1,1 +1,0 @@
-b'vfpu_acosf.o .deps/vfpu_acosf.Po: vfpu_acosf.c pspmath.h \\\n  /usr/local/pspdev/psp/sdk/include/psptypes.h\n'

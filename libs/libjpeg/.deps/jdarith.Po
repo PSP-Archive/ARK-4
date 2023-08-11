@@ -1,1 +1,0 @@
-b'jdarith.o .deps/jdarith.Po: jdarith.c jinclude.h jconfig.h jpeglib.h jmorecfg.h jpegint.h \\\n  jerror.h\n'

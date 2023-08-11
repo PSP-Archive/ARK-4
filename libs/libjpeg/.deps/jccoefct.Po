@@ -1,1 +1,0 @@
-b'jccoefct.o .deps/jccoefct.Po: jccoefct.c jinclude.h jconfig.h jpeglib.h jmorecfg.h \\\n  jpegint.h jerror.h\n'
