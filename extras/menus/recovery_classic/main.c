@@ -4,14 +4,7 @@
 #include <pspctrl.h>
 #include <systemctrl.h>
 
-/*#include "globals.h"
-#include "macros.h"
-#include "list.h"
-#include "settings.h"
-#include "plugins.h"
-#include "../arkMenu/include/conf.h"
-*/
-
+#include <main.h>
 
 #define SCREEN_WIDTH 58
 #define SCREEN_HEIGHT 33 
@@ -27,6 +20,7 @@ PSP_HEAP_SIZE_KB(4096);
 int psp_model;
 ARKConfig _arkconf;
 ARKConfig* ark_config = &_arkconf;
+CFWConfig config;
 
 extern int usb_is_enabled;
 extern int proshell_main();
@@ -69,11 +63,21 @@ static int selected_choice(u32 choice) {
             USB_enable();
         }
         sceKernelDelayThread(1000000);
-        return 1;  
+        return 1;
     case 2:
-		proshell_main();
+        loadSettings();
+        settings_submenu();
+        saveSettings();
         return 1;
     case 3:
+        loadPlugins();
+        plugins_submenu();
+        savePlugins();
+        return 1;
+    case 4:
+		proshell_main();
+        return 1;
+    case 5:
 		pspDebugScreenSetXY(20, 30);
 		printf("Booting RECOVERY/EBOOT.PBP");
         sceKernelDelayThread(2000000);
@@ -113,7 +117,7 @@ static void draw(char** options, int size, int dir){
     }
 
     // ADD SIDE BORDERS
-    for(int i=2*size+5;i<SCREEN_HEIGHT;i++) {
+    for (int i=pspDebugScreenGetY(); i<SCREEN_HEIGHT; i++) {
         pspDebugScreenSetXY(0, i);
         printf("*                                                                  *");
     }
@@ -123,7 +127,7 @@ static void draw(char** options, int size, int dir){
     printf("********************************************************************");
 }
 
-int main(SceSize args, void *argp) {     
+int main(SceSize args, void *argp) {
 
     psp_model = kuKernelGetModel();
 
@@ -135,6 +139,8 @@ int main(SceSize args, void *argp) {
     char *options[] = {
         "Exit",
         "Toggle USB",
+        "Custom Firmware Settings",
+        "Plugins Manager",
         "PRO Shell",
         "Run /PSP/GAME/RECOVERY/EBOOT.PBP"
     };
