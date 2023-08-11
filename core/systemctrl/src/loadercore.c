@@ -189,9 +189,12 @@ static void loadXmbControl(){
 }
 
 static void checkArkPath(){
+    if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0){ // attempt revert to default path 
+        strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234/");
+    }
     int res = sceIoDopen(ark_config->arkpath);
     if (res < 0){
-        // fix for PSP-Go with dead ef
+        // fix for PSP-Go with dead ef (or non-Go units)
         if (ark_config->arkpath[0]=='e' && ark_config->arkpath[1]=='f'){
             ark_config->arkpath[0] = 'm'; ark_config->arkpath[1] = 's';
             if ((res=sceIoDopen(ark_config->arkpath))>=0){

@@ -257,26 +257,26 @@ int proshell_main()
                     paintList(CLEAR);
                 }
             }
+        }
 
+        // change device
+        if(PRESSED(lastbuttons, data.Buttons, PSP_CTRL_RTRIGGER))
+        {
             // change device
-            else if(PRESSED(lastbuttons, data.Buttons, PSP_CTRL_RTRIGGER))
-            {
-                // change device
-                if (cwd[0] == 'm') strcpy(cwd, START_PATH_GO);
-                else if (cwd[0] == 'e') strcpy(cwd, START_PATH);
+            if (cwd[0] == 'm') strcpy(cwd, START_PATH_GO);
+            else if (cwd[0] == 'e') strcpy(cwd, START_PATH);
 
-                // Update List
-                updateList(CLEAR);
-                    
-                // Paint List
-                paintList(CLEAR);
-            }
+            // Update List
+            updateList(CLEAR);
+                
+            // Paint List
+            paintList(CLEAR);
+        }
 
-            // finish
-            else if(PRESSED(lastbuttons, data.Buttons, PSP_CTRL_LTRIGGER))
-            {
-                working = 0;
-            }
+        // finish
+        else if(PRESSED(lastbuttons, data.Buttons, PSP_CTRL_LTRIGGER))
+        {
+            working = 0;
         }
         
         // Copy Buttons to Memory
