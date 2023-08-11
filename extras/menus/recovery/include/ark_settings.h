@@ -596,7 +596,7 @@ void loadSettings(){
 
     
 
-    std::ifstream input(string(ark_config->arkpath)+"SETTINGS.TXT");
+    std::ifstream input((string(ark_config->arkpath)+"SETTINGS.TXT").c_str());
     for( std::string line; getline( input, line ); ){
         if (isComment(line)){
             custom_config.push_back(line);
