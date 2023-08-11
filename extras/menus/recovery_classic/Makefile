@@ -1,23 +1,25 @@
+
 TARGET = ark_recovery
-OBJS = main.o 
-
-CFLAGS = -std=c99 -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division -std=c99 -I$(ARKROOT)/common/include/
-CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
-ASFLAGS = $(CFLAGS)
-
-BUILD_PRX = 1
-PRX_EXPORTS = exports.exp
-
-INCDIR = include/
+XMBCTRL_OBJS = $(ARKROOT)/extras/modules/xmbctrl/config.o $(ARKROOT)/extras/modules/xmbctrl/list.o $(ARKROOT)/extras/modules/xmbctrl/settings.o $(ARKROOT)/extras/modules/xmbctrl/plugins.o
+C_OBJS =  main.o proshell.o usb.o submenu.o $(XMBCTRL_OBJS)
+OBJS = $(C_OBJS)
+all: $(TARGET).prx
+CFLAGS = -std=c99 -Os -G0 -Wall
+INCDIR = $(ARKROOT)/common/include $(ARKROOT)/extras/modules/xmbctrl $(ARKROOT)/extras/modules/xmbctrl/include
 LIBDIR = $(ARKROOT)/libs
 
-all:
-	psp-packer $(TARGET).prx
+LIBS = -lpspsystemctrl_user -lpspkubridge -lpspusb -lpspusbdevice_driver
 
-USE_PSPSDK_LIBS = 1
-USE_PSPSDK_LIBC = 1
+CXXFLAGS = $(CFLAGS)
+ASFLAGS = $(CFLAGS)
+LDFLAGS =
+BUILD_PRX = 1
 
-LIBS = -lpspsystemctrl_kernel #-lpspsystemctrl_user -lpspkubridge -lpspvshctrl -lpspsystemctrl_user -lpspkubridge
+PSP_EBOOT_TITLE += Classic Recovery
 
-PSPSDK = $(shell psp-config --pspsdk-path)
-include $(PSPSDK)/lib/build_prx.mak
+EXTRA_TARGETS = EBOOT.PBP
+
+include $(ARKROOT)/common/make/global.mak
+PSPSDK=$(shell psp-config --pspsdk-path)
+include $(PSPSDK)/lib/build.mak
+include $(ARKROOT)/common/make/beauty.mak

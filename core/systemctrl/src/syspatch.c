@@ -192,6 +192,8 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
             printkSync();
             #endif
 
+            ark_config->recovery = 0; // reset recovery mode for next reboot
+
             // Boot Complete Action done
             booted = 1;
             goto flush;

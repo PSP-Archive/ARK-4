@@ -36,7 +36,6 @@ LIBDIR = . $(ARKROOT)/libs
 LDFLAGS =
 
 PSP_FW_VERSION = 660
-CFLAGS += -DCONFIG_660=1
 
 vshmenu: all
 

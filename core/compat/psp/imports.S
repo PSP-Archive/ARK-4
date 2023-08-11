@@ -14,6 +14,3 @@
 	IMPORT_FUNC  "SystemCtrlPrivate",0xBC7554DF,strcasecmp
 	IMPORT_FUNC  "SystemCtrlPrivate",0xAC7554DF,strncasecmp
 	IMPORT_FUNC  "SystemCtrlPrivate",0x77E68D5F,sctrlHENSetPluginHandler
-	
-	IMPORT_START "SystemCtrlForKernel",0x00090000
-	IMPORT_FUNC  "SystemCtrlForKernel",0x745286D1,sctrlHENSetMemory

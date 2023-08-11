@@ -55,6 +55,18 @@ void exitLauncher()
 
 	SceIoStat stat; int res = sceIoGetstat(path, &stat);
 
+	if (res < 0 && ark_config->recovery){
+		// no recovery app? try classic one
+		strcpy(path, ark_config->arkpath);
+		strcat(path, "RECOVERY.OLD");
+		res = sceIoGetstat(path, &stat);
+		if (res < 0){
+			// try flash0
+			strcpy(path, "flash0:/vsh/module/ark_recovery.pbp");
+		}
+		res = sceIoGetstat(path, &stat);
+	}
+
 	if (res >= 0){
 		// Clear Memory
 		memset(&param, 0, sizeof(param));
@@ -72,21 +84,8 @@ void exitLauncher()
 		// Trigger Reboot
 		sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 	}
-	else if (ark_config->recovery){
-		// no recovery app? try classic module
-		strcpy(path, ark_config->arkpath);
-		strcat(path, "RECOVERY.PRX");
-		res = sceIoGetstat(path, &stat);
-		if (res < 0){
-			// try flash0
-			strcpy(path, "flash0:/vsh/module/ark_recovery.prx");
-		}
-		SceUID modid = kuKernelLoadModule(path, 0, NULL);
-		sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
-	}
-	else { // nothing to launch?
-		sctrlKernelExitVSH(NULL);
-	}
+	ark_config->recovery = 0; // reset recovery mode for next reboot
+	sctrlKernelExitVSH(NULL);
 }
 
 static void startExitThread(){
@@ -175,12 +174,11 @@ void initController(SceModule2* mod){
 }
 
 static int isRecoveryMode(){
-    if (ark_config->recovery) return 1;
-    // check if launching recovery menu
-    static char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, ARK_RECOVERY);
-    return (strcmp(path, sceKernelInitFileName())==0);
+    if (ark_config->recovery) return 1; // recovery mode set
+	char* filename = sceKernelInitFileName();
+	if (filename == NULL) return 0; // not running any app
+	// check if running a recovery app
+    return (strstr(filename, "RECOVERY") != NULL || strstr(filename, "recovery") != NULL);
 }
 
 void checkControllerInput(){
