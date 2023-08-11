@@ -32,7 +32,6 @@ extern int proshell_main();
 
 static int launchRecoveryApp(){
 	struct SceKernelLoadExecVSHParam param;
-	sceKernelDelayThread(2000000);
 	const char *p = "ms0:/PSP/GAME/RECOVERY/EBOOT.PBP";
 	int apitype = 0x141;
 
@@ -50,27 +49,28 @@ static int launchRecoveryApp(){
 static int selected_choice(u32 choice) {
     int ret;
 
-    if(choice==0) {
+    switch (choice){
+
+    case 0:
         pspDebugScreenSetXY(25, 30);
         printf("Good-bye ;-)");
         sceKernelDelayThread(100000);
         return 0;
-    }   
-    if(choice==1) {
+    case 1:
         //TODO USB Toggle
         pspDebugScreenSetXY(25, 30);
         printf("Not yet implmented");
         sceKernelDelayThread(1000000);
-        return 1;
-    }   
-    if(choice==2) {
-
-		//custom_recovery = 1;
-		//pspDebugScreenSetXY(20, 30);
-		//printf("Booting RECOVERY/EBOOT.PBP");
-
+        return 1;  
+    case 2:
 		proshell_main();
         return 1;
+    case 3:
+		pspDebugScreenSetXY(20, 30);
+		printf("Booting RECOVERY/EBOOT.PBP");
+        sceKernelDelayThread(2000000);
+        launchRecoveryApp();
+        return 0;
     }
 
 }
@@ -89,6 +89,7 @@ int main(SceSize args, void *argp) {
 		"Back",
 		"Toggle USB",
 		"PRO Shell",
+        "Run /PSP/GAME/RECOVERY/EBOOT.PBP"
 	};
 
 	int size = (sizeof(options) / sizeof(options[0]))-1;
