@@ -174,6 +174,7 @@ void plugins_submenu(){
 			dir++;
 			if(dir>=size) dir = 0;
 
+            size = plugins_to_text(paths, states, dir);
             draw_submenu(header, paths, states, size, dir);
 		}
 		if(pad.Buttons & PSP_CTRL_UP) {
@@ -181,6 +182,7 @@ void plugins_submenu(){
 			dir--;
 			if(dir<0) dir = size-1;
             
+            size = plugins_to_text(paths, states, dir);
             draw_submenu(header, paths, states, size, dir);
 		}
 		if((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LEFT | PSP_CTRL_RIGHT))) {
@@ -190,7 +192,6 @@ void plugins_submenu(){
             plugin->active = !plugin->active;
 
             size = plugins_to_text(paths, states, dir);
-            
             draw_submenu(header, paths, states, size, dir);
         }
         if((pad.Buttons & PSP_CTRL_TRIANGLE)) {
