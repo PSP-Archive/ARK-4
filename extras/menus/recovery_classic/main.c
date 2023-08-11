@@ -50,6 +50,26 @@ static int launchRecoveryApp(){
 	return 0;
 }
 
+static void checkArkPath(){
+    int fd;
+
+    fd = sceIoDopen("ef0:/PSP/SAVEDATA/ARK_01234");
+    if (fd >= 0){
+        strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234/");
+        sceIoDclose(fd);
+        return;
+    }
+
+    fd = sceIoDopen("ms0:/PSP/SAVEDATA/ARK_01234");
+    if (fd >= 0){
+        strcpy(ark_config->arkpath, "ms0:/PSP/SAVEDATA/ARK_01234/");
+        sceIoDclose(fd);
+        return;
+    }
+
+    strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
+}
+
 static int selected_choice(u32 choice) {
     int ret;
 
@@ -65,24 +85,22 @@ static int selected_choice(u32 choice) {
         pspDebugScreenSetXY(25, 30);
         if (usb_is_enabled){
             printf("Disabling USB...");
-            int uid = sceKernelCreateThread("ClassicRecovery", USB_disable, 16 - 1, 4*1024, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
-        	sceKernelStartThread(uid, 0, NULL);
-            //USB_disable();
+            USB_disable();
         }
         else{
             printf("Enabling USB...");
-            int uid = sceKernelCreateThread("ClassicRecovery", USB_enable, 16 - 1, 4*1024, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
-        	sceKernelStartThread(uid, 0, NULL);
-            //USB_enable();
+            USB_enable();
         }
         sceKernelDelayThread(1000000);
         return 1;
     case 2:
+        checkArkPath();
         loadSettings();
         settings_submenu();
         saveSettings();
         return 1;
     case 3:
+        checkArkPath();
         loadPlugins();
         plugins_submenu();
         savePlugins();
@@ -94,8 +112,6 @@ static int selected_choice(u32 choice) {
 		pspDebugScreenSetXY(20, 30);
 		printf("Booting RECOVERY/EBOOT.PBP");
         sceKernelDelayThread(2000000);
-        int uid = sceKernelCreateThread("ClassicRecovery", launchRecoveryApp, 16 - 1, 4*1024, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
-        sceKernelStartThread(uid, 0, NULL);
         launchRecoveryApp();
         return 0;
     }
@@ -191,9 +207,7 @@ int main(SceSize args, void *argp) {
             int ret = selected_choice(dir);
             if(ret==0) break;
             
-            
             draw(options, size, dir);
-			//else return ret;
         }
 	}
 
@@ -204,5 +218,4 @@ int main(SceSize args, void *argp) {
 int module_start(int argc, void* argv){
     int uid = sceKernelCreateThread("ClassicRecovery", main, 16 - 1, 32*1024, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
 	sceKernelStartThread(uid, 0, NULL);
-	//sceKernelWaitThreadEnd(uid, NULL);
 }
