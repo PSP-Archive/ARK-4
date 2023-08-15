@@ -170,6 +170,7 @@ static int is_iso(SceIoDirent * dir)
         //check extension
         if (
                 stricmp(ext, ".iso") == 0 ||
+                stricmp(ext, ".img") == 0 ||
                 stricmp(ext, ".cso") == 0 ||
                 stricmp(ext, ".zso") == 0 ||
                 stricmp(ext, ".dax") == 0 ||
