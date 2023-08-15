@@ -3,6 +3,7 @@
 #include <pspdebug.h>
 #include <pspctrl.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 
 #include <main.h>
 
@@ -21,6 +22,7 @@ int psp_model;
 ARKConfig _arkconf;
 ARKConfig* ark_config = &_arkconf;
 CFWConfig config;
+SEConfig se_config;
 
 extern int usb_is_enabled;
 extern void USB_enable();
@@ -171,6 +173,7 @@ int main(SceSize args, void *argp) {
     psp_model = kuKernelGetModel();
 
     sctrlHENGetArkConfig(ark_config);
+    sctrlSEGetConfig(&se_config);
 
 	pspDebugScreenInit();
 
@@ -184,6 +187,24 @@ int main(SceSize args, void *argp) {
         "Run /PSP/GAME/RECOVERY/EBOOT.PBP"
     };
 
+    char* usb_options[] = {
+        "Toggle USB - Memory Stick",
+        "Toggle USB - flash0",
+        "Toggle USB - flash1",
+        "Toggle USB - flash2",
+        "Toggle USB - flash3",
+        "Toggle USB - UMD",
+    };
+    int n_usb = sizeof(usb_options)/sizeof(usb_options[0]);
+
+    if (IS_PSP(ark_config)){
+        if (psp_model == PSP_GO){
+            usb_options[0] = "Toggle USB - Internal Memory"; // replace ms with ef
+            n_usb--; // remove UMD
+        }
+        options[1] = usb_options[0];
+    }
+
 	int size = (sizeof(options) / sizeof(options[0]))-1;
 	int dir = 0;
 
@@ -196,26 +217,46 @@ int main(SceSize args, void *argp) {
         sceCtrlPeekBufferPositive(&pad, 1);
 		
 		// CONTROLS
-		if(pad.Buttons & PSP_CTRL_DOWN) {
+		if (pad.Buttons & PSP_CTRL_DOWN) {
             sceKernelDelayThread(200000);
 			dir++;
 			if(dir>size) dir = 0;
 
             draw(options, size, dir);
 		}
-		if(pad.Buttons & PSP_CTRL_UP) {
+		if (pad.Buttons & PSP_CTRL_UP) {
             sceKernelDelayThread(200000);
 			dir--;
 			if(dir<0) dir = size;
             
             draw(options, size, dir);
 		}
-		if((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE))) {
+		if ((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE))) {
             sceKernelDelayThread(200000);
             int ret = selected_choice(dir);
             if(ret==0) break;
             
             draw(options, size, dir);
+        }
+        if (pad.Buttons & PSP_CTRL_LEFT){
+            if (dir == 1 && IS_PSP(ark_config)){
+                sceKernelDelayThread(200000);
+                if (se_config.usbdevice == 0) se_config.usbdevice = n_usb-1;
+                else se_config.usbdevice--;
+            
+                options[1] = usb_options[se_config.usbdevice];
+                draw(options, size, dir);
+            }
+        }
+        if (pad.Buttons & PSP_CTRL_RIGHT){
+            if (dir == 1 && IS_PSP(ark_config)){
+                sceKernelDelayThread(200000);
+                if (se_config.usbdevice < n_usb-1) se_config.usbdevice++;
+                else se_config.usbdevice = 0;
+
+                options[1] = usb_options[se_config.usbdevice];
+                draw(options, size, dir);
+            }
         }
 	}
 

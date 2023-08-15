@@ -130,11 +130,8 @@ int vshSetRegistryValue(u32 *, char *, int , int *);
 
 int sceVshCommonGuiBottomDialog(void *a0, void *a1, void *a2, int (* cancel_handler)(), void *t0, void *t1, int (* handler)(), void *t3);
 
-int sctrlSEGetConfig(CFWConfig *);
-int sctrlSESetConfig(CFWConfig *);
+int vctrlVSHExitVshMenu(void *conf);
 
-int vctrlVSHExitVshMenu(CFWConfig *);
-
-int vctrlVSHExitVSHMenu(CFWConfig *conf, char *videoiso, int disctype);
+int vctrlVSHExitVSHMenu(void *conf, char *videoiso, int disctype);
 
 #endif

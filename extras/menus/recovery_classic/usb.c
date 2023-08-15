@@ -1,5 +1,6 @@
 #include <kubridge.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <pspusb.h>
 #include <pspusbstor.h>
 #include "globals.h"
@@ -7,6 +8,7 @@
 #define PSP_USBSTOR_EF_DRIVERNAME "USBStorEFlash_Driver"
 
 extern ARKConfig* ark_config;
+extern SEConfig se_config;
 
 int usb_is_enabled = 0;
 
@@ -26,9 +28,27 @@ static void start_psp_usb(){
         "flash0:/kd/usb.prx",
     };
 
+    char usbdev[ARK_PATH_SIZE];
+    strcpy(usbdev, ark_config->arkpath);
+    strcat(usbdev, "USBDEV.PRX");
+
+    int modid = kuKernelLoadModule(usbdev, 0, NULL);
+    if (modid < 0) modid = kuKernelLoadModule("flash0:/vsh/module/ark_usbdev.prx", 0, NULL);
+    sceKernelStartModule(modid, 0, NULL, NULL, NULL);
+
     for (int i=0; i<6; i++){
         int mid = kuKernelLoadModule(mods[i], 0, NULL);
         sceKernelStartModule(mid, 0, NULL, NULL, NULL);
+    }
+
+    if(se_config.usbdevice != 0) {
+        int (*pspUsbDeviceSetDevice)(int, int, int) = sctrlHENFindFunction("pspUsbDev_Driver", "pspUsbDevice_driver", 0xD4D90520);
+		if (pspUsbDeviceSetDevice){
+            struct KernelCallArg args;
+            memset(&args, 0, sizeof(args));
+            args.arg1 = se_config.usbdevice-1;
+            kuKernelCall(pspUsbDeviceSetDevice, &args);
+        }
     }
 
     sceUsbStart(PSP_USBBUS_DRIVERNAME, 0, 0);
