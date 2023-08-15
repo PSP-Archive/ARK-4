@@ -325,6 +325,7 @@ bool Iso::isISO(const char* filename){
     string ext = common::getExtension(filename);
     return (
         ext == "iso" ||
+        ext == "img" ||
         ext == "cso" ||
         ext == "zso" ||
         ext == "jso" ||
