@@ -516,7 +516,7 @@ int isGameISO(const char * path)
 {
     const char *ext;
     const char* known[] = {
-        ".iso", ".cso", ".zso", ".jso", ".dax"
+        ".iso", ".img", ".cso", ".zso", ".jso", ".dax"
     };
 
     ext = path + strlen(path) - 4;
