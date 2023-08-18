@@ -156,7 +156,7 @@ int get_umdvideo(UmdVideoList *list, char *path) {
 		if (p == NULL)
 			p = dir.d_name;
 
-		if (0 == stricmp(p, ".iso") || 0 == stricmp(p, ".cso") || 0 == stricmp(p, ".zso") || 0 == stricmp(p, ".dax") || 0 == stricmp(p, ".jso")) {
+		if (0 == stricmp(p, ".iso") || 0 == stricmp(p, ".img") || 0 == stricmp(p, ".cso") || 0 == stricmp(p, ".zso") || 0 == stricmp(p, ".dax") || 0 == stricmp(p, ".jso")) {
 			scePaf_sprintf(fullpath, "%s/%s", path, dir.d_name);
 			umdvideolist_add(list, fullpath);
 		}
