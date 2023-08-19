@@ -1,71 +1,141 @@
 #include "sysreg.h"
 
-#define REG32(ADDR) (*(vu32*)(ADDR))
-#define SYNC() __asm(" sync; nop"::)
+#include <stdint.h>
 
-u32 sceSysregSpiClkSelect(int a1,int a2)
+#define REG32(addr) ((volatile unsigned int *)(addr))
+
+void sysreg_clock_enable_uart_bus(void)
 {
-	u32 shift;
-	u32 in,out;
-
-	shift = a1<<2;
-
-	in = REG32(0xbc100064);
-	out  = in & ~(7<<shift);
-	out |= a2<<shift;
-	REG32(0xbc100064) = out;
-	return (in>shift) & 7;
+    *REG32(0xbc100050) |= 0x4000;
 }
 
-u32 sceSysregSpiClkEnable(u32 bit)
+void sysreg_clock_enable_uart(int port)
 {
-	u32 in , out;
-	u32 mask = (1<<bit);
-	u32 enable = 1;
-
-	in = SYSREG_CLK2_ENABLE_REG;
-
-	out = (in & (~mask));
-	if(enable)
-		out |= mask;
-
-	SYSREG_CLK2_ENABLE_REG = out;
-
-	return in & mask;
+    *REG32(0xbc100058) |= (0x40 << port);
 }
 
-void SysregReset(u32 mask, u32 enable)
+void sysreg_io_enable_uart(int port)
 {
-	if (enable)
-		REG32(0xBC10004C) |= mask;
-	else
-		REG32(0xBC10004C) &= ~mask;
+    *REG32(0xbc100078) |= (0x00010000 << port);
 }
 
-void SysregBusclk(u32 mask, u32 enable)
+void sysreg_clock_enable_apb_bus(void)
 {
-	if (enable)
-		SYSREG_BUSCLK_ENABLE_REG |= mask;
-	else
-		SYSREG_BUSCLK_ENABLE_REG &= ~mask;
+    *REG32(0xbc100050) |= 0x4000;
 }
 
-void SysregResetKirkEnable()
+void sysreg_clock_enable_emc_sm_bus(void)
 {
-	SysregReset(0x400, 1);
+    *REG32(0xbc100050) |= 0x2000;
 }
 
-void SysregBusclkKirkEnable()
+void sysreg_io_enable_emc_sm(void)
 {
-	SysregBusclk(0x80, 1);
+    *REG32(0xbc100078) |= 2;
 }
 
-void SysregBusclkKirkDisable()
+void sysreg_clock_enable_emc_ddr_bus(void)
 {
-	SysregBusclk(0x80, 0);
+    *REG32(0xbc100050) |= 0x1000;
 }
 
-void SysregResetKirkDisable()
+void sysreg_io_enable_gpio(void)
 {
-	SysregReset(0x400, 0);
+    *REG32(0xbc100058) |= 0x800000;
+}
+
+void sysreg_io_enable_gpio_port(int port)
+{
+    *REG32(0xbc10007c) |= (1 << port);
+}
+
+void sysreg_clock_enable_i2c(void)
+{
+    *REG32(0xbc100058) |= 0x20;
+}
+
+void sysreg_io_enable_i2c(void)
+{
+    *REG32(0xbc100078) |= 0x200;
+}
+
+void sysreg_clock_enable_pwm(void)
+{
+    *REG32(0xbc100058) |= 0x8;
+}
+
+void sysreg_io_enable_pwm(void)
+{
+    *REG32(0xbc100078) |= 0x2000;
+}
+
+void sysreg_clock_enable_lcdc(void)
+{
+    *REG32(0xbc100058) |= 0x4;
+}
+
+void sysreg_io_enable_lcdc(void)
+{
+    *REG32(0xbc100078) |= 0x40;
+}
+
+void sysreg_clock_enable_usb_bus(void)
+{
+    *REG32(0xbc100050) |= 0x200;
+}
+
+void sysreg_io_enable_usb(void)
+{
+    *REG32(0xbc100078) |= 0x4;
+}
+
+void sysreg_io_enable_spi(unsigned int port)
+{
+    *REG32(0xbc100078) |= (0x01000000 << port);
+}
+
+void sysreg_clock_enable_spi(unsigned int port)
+{
+    *REG32(0xbc100058) |= (1 << port);
+}
+
+void sysreg_clock_select_spi(unsigned int port, unsigned int clk)
+{
+    unsigned int clear_mask = ~(0b111 << (port * 4));
+    unsigned int set_bits = (clk << (port * 4));
+
+    unsigned int cur_bits = *REG32(0xbc100064);
+    cur_bits &= clear_mask;
+    cur_bits |= set_bits;
+    *REG32(0xbc100064) = cur_bits;
+}
+
+enum ResetDevice
+{
+    SC = 1,
+
+    KIRK = 10
+};
+
+#define SYSREG_RESET_REG   (REG32(0xBC10004C))
+#define SYSREG_BUSCLK_REG  (REG32(0xBC100050))
+
+void sysreg_reset_enable(uint32_t devices)
+{
+    *SYSREG_RESET_REG |= devices;
+}
+
+void sysreg_reset_disable(uint32_t devices)
+{
+    *SYSREG_RESET_REG &= ~devices;
+}
+
+void sysreg_busclk_enable(uint32_t devices)
+{
+    *SYSREG_BUSCLK_REG |= devices;
+}
+
+void sysreg_busclk_disable(uint32_t devices)
+{
+    *SYSREG_BUSCLK_REG &= ~devices;
 }

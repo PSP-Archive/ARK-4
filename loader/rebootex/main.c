@@ -42,6 +42,8 @@ ARKConfig _arkconf = {
 };
 #endif
 
+#define REG32(ADDR) (*(vu32*)(ADDR))
+
 RebootConfigARK* reboot_conf = (RebootConfigARK*)REBOOTEX_CONFIG;
 ARKConfig* ark_config = (ARKConfig*)ARK_CONFIG;
 
@@ -241,7 +243,7 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int a
 	REG32(0xbc10007c) |= 0xc8;
 	__asm("sync"::);
 	
-	sceSysconInit();
+	syscon_init();
 	sceSysconCtrlMsPower(1);
 #endif
 

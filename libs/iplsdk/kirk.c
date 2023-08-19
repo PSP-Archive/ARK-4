@@ -1,111 +1,163 @@
-#include <psptypes.h>
-#include <string.h>
-#include "sysreg.h"
+#include "kirk.h"
+#include "cpu.h"
 
-#define PHYS_TO_HW(x) (((u32) x) & 0x1FFFFFFF)
-
-struct KIRK
+typedef struct
 {
-	vu32 Signature;
-	vu32 Version;
-	vu32 Error;
-	vu32 StartProcessing;
-	vu32 Command;
-	vu32 Result;
-	vu32 field_18;
-	vu32 Pattern;
-	vu32 ASyncPattern;
-	vu32 ASyncPatternEnd;
-	vu32 PatternEnd;
-	vu32 SourceAddr;
-	vu32 DestAddr;
-};
+    volatile unsigned int signature;
+    volatile unsigned int version;
+    volatile unsigned int error;
+    volatile unsigned int proc_phase;
+    volatile unsigned int command;
+    volatile unsigned int result;
+    volatile unsigned int unk_18;
+    volatile unsigned int status;
+    volatile unsigned int status_async;
+    volatile unsigned int status_async_end;
+    volatile unsigned int status_end;
+    volatile unsigned int src_addr;
+    volatile unsigned int dst_addr;
+} PspKirkRegs;
 
-#define KIRK_MODE_CMD1 1
-#define KIRK_MODE_CMD2 2
-#define KIRK_MODE_CMD3 3
-#define KIRK_MODE_ENCRYPT_CBC 4
-#define KIRK_MODE_DECRYPT_CBC 5
-struct KIRK_AES128CBC_HEADER
+#define MAKE_PHYS_ADDR(_addr)    (((unsigned int)_addr) & 0x1FFFFFFF)
+#define SYNC()                   __asm ("sync")
+#define KIRK_HW_REGISTER_ADDR    ((PspKirkRegs *)0xBDE00000)
+ 
+ void kirk_hwreset(void) 
 {
-	u32 mode;
-	u32 unk_4;
-	u32 unk_8;
-	u32 keyseed;
-	u32 data_size;
-};
-
-struct KIRK *g_KIRK = (void *) 0xBDE00000;
-
-void KirkReset()
-{
-	SysregResetKirkEnable();
-	SysregBusclkKirkEnable();
-	SysregBusclkKirkDisable();
-	SysregResetKirkDisable();
-	SysregBusclkKirkEnable();
+    sysreg_reset_enable_kirk();
+    sysreg_busclk_enable_kirk();
+    sysreg_busclk_disable_kirk();
+    sysreg_reset_disable_kirk();
+    sysreg_busclk_enable_kirk();
 }
 
-int KirkCmd1(void *dest, void *src)
+int kirk1(void *dst, const void *src)
 {
-	g_KIRK->Command = 1;
-	g_KIRK->SourceAddr = PHYS_TO_HW(src);
-	g_KIRK->DestAddr = PHYS_TO_HW(dest);
-
-	g_KIRK->StartProcessing = 1;
-	while ((g_KIRK->Pattern & 0x11) == 0);
-	g_KIRK->PatternEnd = g_KIRK->Pattern & 0x11;
-	if ((g_KIRK->Pattern & 0x10) == 0)
-		return g_KIRK->Result;
-
-	g_KIRK->StartProcessing = 2;
-	while ((g_KIRK->Pattern & 2) == 0);
-	g_KIRK->PatternEnd = g_KIRK->Pattern & 2;
-	
-	__asm("sync");
-
-	return -1;
+    cpu_dcache_wb_inv_all();
+    PspKirkRegs *const kirk = KIRK_HW_REGISTER_ADDR;
+ 
+    kirk->command = 1; // decrypt operation
+    kirk->src_addr = MAKE_PHYS_ADDR(src);
+    kirk->dst_addr = MAKE_PHYS_ADDR(dst);
+ 
+    SYNC();
+    kirk->proc_phase = 1; // start processing
+ 
+    while((kirk->status & 0x11) == 0); // wait until processing complete
+ 
+    if (kirk->status & 0x10) // error occured
+    {
+        kirk->proc_phase = 2;
+ 
+        while((kirk->status & 2) == 0);
+ 
+        kirk->status_end = kirk->status;
+        SYNC();
+        return -1;
+    }
+ 
+    kirk->status_end = kirk->status;
+    SYNC();
+    return kirk->result;
 }
 
-void KirkCmdF()
+int kirk4(void *dst, const void *src)
 {
-	g_KIRK->Command = 0x0f;
-	g_KIRK->SourceAddr = PHYS_TO_HW(0xBFC00C00);
-	g_KIRK->DestAddr = PHYS_TO_HW(0xBFC00C00);
-	g_KIRK->StartProcessing = 1;
-	__asm("sync"::);
-	while ((g_KIRK->StartProcessing & 1) != 0);
-	while (!g_KIRK->Pattern);
-	g_KIRK->PatternEnd = g_KIRK->Pattern & g_KIRK->ASyncPattern;
-	__asm("sync"::);
+    cpu_dcache_wb_inv_all();
+    PspKirkRegs *const kirk = KIRK_HW_REGISTER_ADDR;
+ 
+    kirk->command = 4; // encrypt operation
+    kirk->src_addr = MAKE_PHYS_ADDR(src);
+    kirk->dst_addr = MAKE_PHYS_ADDR(dst);
+ 
+    SYNC();
+    kirk->proc_phase = 1; // start processing
+ 
+    while((kirk->status & 0x11) == 0); // wait until processing complete
+ 
+    if (kirk->status & 0x10) // error occured
+    {
+        kirk->proc_phase = 2;
+ 
+        while((kirk->status & 2) == 0);
+ 
+        kirk->status_end = kirk->status;
+        SYNC();
+        return -1;
+    }
+ 
+    kirk->status_end = kirk->status;
+    SYNC();
+    return kirk->result;
 }
 
-int kirkDecryptAes(u8 *out, u8 *data, u32 size, u8 key_idx)
+int kirk7(void *dst, const void *src)
 {
-	struct KIRK_AES128CBC_HEADER *header = (void *) 0xBFC00C00;
-	memset(header, 0, 0x40);
-	header->mode = KIRK_MODE_DECRYPT_CBC;
-	header->keyseed = key_idx;
-	header->data_size = size;
-	memcpy(&header[1], data, size);
-	__asm("sync"::);
-	g_KIRK->Command = 0x07;
-	g_KIRK->SourceAddr = PHYS_TO_HW(header);
-	g_KIRK->DestAddr = PHYS_TO_HW(header);
-	g_KIRK->StartProcessing = 1;
-	__asm("sync"::);
-	while ((g_KIRK->StartProcessing & 1) != 0);
-	while (!g_KIRK->Pattern);
-	int res = g_KIRK->Result;
-	g_KIRK->PatternEnd = g_KIRK->Pattern & g_KIRK->ASyncPattern;
-	__asm("sync"::);
-	
-	memcpy(out, header, size);
+    cpu_dcache_wb_inv_all();
+    PspKirkRegs *const kirk = KIRK_HW_REGISTER_ADDR;
 
-	memset(header, 0, 0x400);
+    kirk->command = 7; // decryption
+    kirk->src_addr = MAKE_PHYS_ADDR(dst);
+    kirk->dst_addr = MAKE_PHYS_ADDR(dst);
 
-	if (res)
-		return -1;
+    // begin processing
+    kirk->proc_phase = 1;
+    SYNC();
 
-	return 0;
+    // wait until we advance from the initial phase
+    while ((kirk->proc_phase & 1) != 0);
+
+    // wait until status is set
+    while (kirk->status == 0);
+
+    kirk->status_end = kirk->status & kirk->status_async;
+    SYNC();
+    return kirk->result;
+}
+
+int kirkE(void *dst)
+{
+    cpu_dcache_wb_inv_all();
+    PspKirkRegs *const kirk = KIRK_HW_REGISTER_ADDR;
+
+    kirk->command = 0xE; // RNG
+    kirk->dst_addr = MAKE_PHYS_ADDR(dst);
+
+    // begin processing
+    kirk->proc_phase = 1;
+    SYNC();
+
+    // wait until we advance from the initial phase
+    while ((kirk->proc_phase & 1) != 0);
+
+    // wait until status is set
+    while (kirk->status == 0);
+
+    kirk->status_end = kirk->status & kirk->status_async;
+    SYNC();
+    return kirk->result;
+}
+
+int kirkF(void *dst)
+{
+    cpu_dcache_wb_inv_all();
+    PspKirkRegs *const kirk = KIRK_HW_REGISTER_ADDR;
+
+    kirk->command = 0xF; // initialisation?
+    kirk->src_addr = MAKE_PHYS_ADDR(dst);
+    kirk->dst_addr = MAKE_PHYS_ADDR(dst);
+
+    // begin processing
+    kirk->proc_phase = 1;
+    SYNC();
+
+    // wait until we advance from the initial phase
+    while ((kirk->proc_phase & 1) != 0);
+
+    // wait until status is set
+    while (kirk->status == 0);
+
+    kirk->status_end = kirk->status & kirk->status_async;
+    SYNC();
+    return kirk->result;
 }

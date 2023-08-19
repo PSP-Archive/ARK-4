@@ -1,8 +1,20 @@
-#ifndef __UART_H__
-#define __UART_H__
+#pragma once
 
-void uart_init();
-char _getchar();
-void _putchar(char c);
+#ifdef __cplusplus
+extern "C" {
+#endif //__cplusplus
 
-#endif
+#define UART_UART4      (3)
+#define UART_HPREMOTE   (4)
+#define UART_IRDA       (5)
+
+int uart_init(int port);
+int uart_putc(int port, char c);
+int uart_getc(int port);
+int uart_flush_tx(int port);
+int uart_flush_rx(int port);
+void uart_puts(int port, const char *s);
+
+#ifdef __cplusplus
+}
+#endif //__cplusplus

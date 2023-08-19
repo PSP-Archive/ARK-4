@@ -1,118 +1,129 @@
-#include <stdint.h>
-#include "sysreg.h"
+#include "uart.h"
 
-// PrimeCell UART (PL011)
+#define psp_uart_sts_BSY  0x80
+#define psp_uart_sts_TI   0x20
+#define psp_uart_sts_RE   0x10
+#define psp_uart_sts_BIT3 0x08
 
-#define USE_HP
-
-#define UART_IO_BASE	0xBE400000
-
-#define DBG_UART4_BASE	(UART_IO_BASE + 3 * 0x40000)
-#define HP_REMOTE_BASE	(UART_IO_BASE + 4 * 0x40000)
-#define IRDA_BASE 	(UART_IO_BASE + 5 * 0x40000)
-
-#define UART_DR_REG		0x00
-#define UART_RSR_REG		0x04 // or UART_ECR_REG
-#define UART_FR_REG		0x18
-#define 	UART_FR_CTS		(1 << 0)
-#define 	UART_FR_DSR		(1 << 1)
-#define 	UART_FR_DCD		(1 << 2)
-#define 	UART_FR_BUSY		(1 << 3)
-#define 	UART_FR_RXFE		(1 << 4)
-#define 	UART_FR_TXFF		(1 << 5)
-#define 	UART_FR_RXFF		(1 << 6)
-#define 	UART_FR_TXFE		(1 << 7)
-#define 	UART_FR_RI		(1 << 8)
-#define UART_ILPR_REG		0x20
-#define UART_IBRD_REG		0x24
-#define UART_FBRD_REG		0x28
-#define UART_LCR_H_REG		0x2C
-#define 	UART_LCR_H_BRK		(1 << 0)
-#define 	UART_LCR_H_PEN		(1 << 1)
-#define 	UART_LCR_H_EPS		(1 << 2)
-#define 	UART_LCR_H_STP2	(1 << 3)
-#define 	UART_LCR_H_FEN		(1 << 4)
-#define 	UART_LCR_H_WLEN_MASK	((1 << 5) | (1 << 6))
-#define 	UART_LCR_H_WLEN_5BIT	0
-#define 	UART_LCR_H_WLEN_6BIT	(1 << 5) // TODO: Check
-#define 	UART_LCR_H_WLEN_7BIT	(1 << 6) // TODO: Check
-#define 	UART_LCR_H_WLEN_8BIT	((1 << 5) | (1 << 6))
-#define 	UART_LCR_H_SPS		(1 << 7)
-#define UART_CR_REG		0x30
-#define 	UART_CR_UARTEN		(1 << 0)
-#define 	UART_CR_SIREN		(1 << 1)
-#define 	UART_CR_SIRLP		(1 << 2)
-#define 	UART_CR_LBE		(1 << 7)
-#define 	UART_CR_TXE		(1 << 8)
-#define 	UART_CR_RXE		(1 << 9)
-#define 	UART_CR_DTR		(1 << 10)
-#define 	UART_CR_RTS		(1 << 11)
-#define 	UART_CR_Out1		(1 << 12)
-#define 	UART_CR_Out2		(1 << 13)
-#define 	UART_CR_RTSEn		(1 << 14)
-#define 	UART_CR_CTSEn		(1 << 15)
-#define UART_IFLS_REG		0x34
-#define UART_IMSC_REG		0x38
-#define UART_RIS_REG		0x3C
-#define UART_MIS_REG		0x40
-#define UART_ICR_REG		0x44
-#define 	UART_ICR_RIMIC		(1 << 0)
-#define 	UART_ICR_CTSMIC	(1 << 1)
-#define 	UART_ICR_DCDMIC	(1 << 2)
-#define 	UART_ICR_DSRMIC	(1 << 3)
-#define 	UART_ICR_RXIC		(1 << 4)
-#define 	UART_ICR_TXIC		(1 << 5)
-#define 	UART_ICR_RTIC		(1 << 6)
-#define 	UART_ICR_FEIC		(1 << 7)
-#define 	UART_ICR_PEIC		(1 << 8)
-#define 	UART_ICR_BEIC		(1 << 9)
-#define 	UART_ICR_OEIC		(1 << 10)
-#define UART_DMACR_REG		0x48
-
-#ifdef USE_HP
-#define DEBUG_BASE HP_REMOTE_BASE
-#else
-#define DEBUG_BASE DBG_UART4_BASE
-#endif
-
-void uart_init()
+struct psp_uart_hw
 {
-	SysregBusclk((1 << 14), 1);
-#ifdef USE_HP
-	sceSysregSpiClkEnable(10);
-	SYSREG_IO_ENABLE_REG |= (1 << 20); // UART5
-#else
-	sceSysregSpiClkEnable(9);
-	SYSREG_IO_ENABLE_REG |= (1 << 19); // UART4
-#endif
+    volatile unsigned int txd;  // +00 : txd
+    volatile unsigned int r04;  // +04 
+    volatile unsigned int r08;  // +08 : 
+    volatile unsigned int r0c;  // +0c ? 0x0000
+    volatile unsigned int r10;  // +10 ? 0x0000
+    volatile unsigned int r14;  // +14 ? 0x0000
+    volatile unsigned int sts;  // +18 : status */
+    volatile unsigned int r1c;  // +1c : unk , 0x1ff */
+    volatile unsigned int r20;  // +20 ? 0x0000
+    volatile unsigned int brgh; // +24 :(96000000 / bps) >> 6
+    volatile unsigned int brgl; // +28 :(96000000 / bps) & 0x3f
+    volatile unsigned int r2c;  // +2c : unknown , 0x70 = enable , 0x60 = stop?
+    volatile unsigned int r30;  // +30 : unk , 0x0301
+    volatile unsigned int r34;  // +34 : 0x00=0x00 , 0x08=0x09,0x16=0x12,0x24=0x12,0x27=0x24 */
+    volatile unsigned int r38;  // +38 : unk , uart4=00 , uart=0x10
+    volatile unsigned int r3c;  // +3c : unk , uart4=00 , uart=0x28d
+    volatile unsigned int r40;  // +40 ? 0
+    volatile unsigned int r44;  // +44 :  unk , 0x07ff / 0x0000
+    volatile unsigned int r48;  // +48 ? 0
+    volatile unsigned int r4c;  // +4c ? 0
+    volatile unsigned int r50;  // +50 : unk , set bit14 init,resume = 0x4000
+    volatile unsigned int r54;  // +54 ? 0
+    volatile unsigned int r58;  // +58 : unk , set bit9  init,resume = 0x0020
+    volatile unsigned int r5c;  // +5c ?
+    volatile unsigned int r60;  // +60
+    volatile unsigned int r64;  // +64
+    volatile unsigned int r68;  // +68
+    volatile unsigned int r6c;  // +6c
+    volatile unsigned int r70;  // +70
+    volatile unsigned int r74;  // +74
+    volatile unsigned int r78;  // +78 : unk , set bit3 init resume , set bit19 sleep
+};
 
-	uint32_t val = 96000000 / 115200;
+#define UART_IO_BASE (0xBE400000)
+#define UART_REGS(x)    ((struct psp_uart_hw *)(UART_IO_BASE + (x)*0x40000))
 
-	*(vu32 *)(DEBUG_BASE + UART_IBRD_REG) = val >> 6;
-	*(vu32 *)(DEBUG_BASE + UART_FBRD_REG) = val & 0x3F;
-	
-	*(vu32 *)(DEBUG_BASE + UART_LCR_H_REG) = UART_LCR_H_WLEN_8BIT;
-	*(vu32 *)(DEBUG_BASE + UART_CR_REG) |= UART_CR_RXE | UART_CR_TXE | UART_CR_UARTEN;
-	
-	*(vu32 *)(DEBUG_BASE + UART_LCR_H_REG) |= UART_LCR_H_FEN;
-	*(vu32 *)(DEBUG_BASE + UART_IFLS_REG) = 0;
+int uart_init(int port)
+{
+	struct psp_uart_hw *uart = UART_REGS(port);
+	unsigned int brg = 96000000 / 921600; // 115200 baud
 
-	*(vu32 *)(DEBUG_BASE + UART_ICR_REG) |= UART_ICR_RIMIC | UART_ICR_CTSMIC | UART_ICR_DCDMIC | UART_ICR_DSRMIC | UART_ICR_RXIC | UART_ICR_TXIC | UART_ICR_RTIC | UART_ICR_FEIC | UART_ICR_PEIC | UART_ICR_BEIC | UART_ICR_OEIC;
+    if (port == UART_UART4)
+    {
+        // uart4 init
+        uart->brgh = brg>>6; // 24
+        uart->brgl = brg&0x3f; // 28
+        uart->r2c  = 0x60;
+        uart->r30  = 0x0301;
+        uart->r2c  |= 0x10;
+        uart->r44  |= 0x07ff;
+    }
+
+    else if (port == UART_HPREMOTE)
+    {
+        // hpremote
+        uart->r30 = 0x300; // transmit enable, receive enable
+        uart->brgh = brg>>6;   // 24 : 4800bps == 0x0138 : 20000
+        uart->brgl = brg&0x3f; // 28 : 4800bps == 0x0020
+        uart->r2c = 0x070;
+        uart->r34 = 0;
+        uart->r38 = 0x10;
+        uart->r04 = uart->r04;
+        uart->r30 = 0x301;
+    }
+
+    else if (port == UART_IRDA)
+    {
+        // irda
+        uart->r30 = 0x300;
+        uart->brgh = brg>>6;   // 24
+        uart->brgl = brg&0x3f; // 28
+        uart->r20 = 0x0d;
+        uart->r2c = 0x070;
+        uart->r1c = 0x280;
+        uart->r34 = 0;
+        uart->r38 = 0x50;
+        uart->r04 = 0xffff;
+        uart->r30 = 0x303;
+    }
+
+    return 0;
 }
 
-char _getchar()
+int uart_putc(int port, char c)
 {
-	while ((*(vu32 *)(DEBUG_BASE + UART_FR_REG) & UART_FR_RXFE) != 0);
-
-	return *(vu32 *)(DEBUG_BASE + UART_DR_REG);
+	struct psp_uart_hw *uart = UART_REGS(port);
+	while(uart->sts & psp_uart_sts_TI) __asm("sync"::);
+	uart->txd = c;
+    return 0;
 }
 
-void _putchar(char c)
+int uart_getc(int port)
 {
-	//if (c == '\n')
-	//	_putchar('\r');
+	struct psp_uart_hw *uart = UART_REGS(port);
+    while(uart->sts & psp_uart_sts_RE) __asm("sync"::);
+    return (uart->txd)&0xFF;
+}
 
-	while ((*(vu32 *)(DEBUG_BASE + UART_FR_REG) & UART_FR_TXFF) != 0);
+int uart_flush_tx(int port)
+{
+	struct psp_uart_hw *uart = UART_REGS(port);
+	while(uart->sts & psp_uart_sts_TI) __asm("sync"::);
+    return 0;
+}
 
-	*(vu32 *)(DEBUG_BASE + UART_DR_REG) = c;
+int uart_flush_rx(int port)
+{
+    return 0;
+}
+
+void uart_puts(int port, const char *s)
+{
+    while (*s) {
+        uart_putc(port, *s);
+        if (*s == '\n') {
+            uart_flush_tx(port);
+        }
+        s++;
+    }
 }
