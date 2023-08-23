@@ -6,6 +6,14 @@ Simple to use and full of unique features, `ARK CFW` aims at keeping the `PSP` e
 as well as unique and exclusive new features not found anywhere else.
 
 ### Table of Contents (Quick Links)
+  
+
+<a style="font-weight: bold; font-size:18px; text-decoration: underline;" href="https://github.com/PSP-Archive/ARK-4/wiki">ARK-4 WIKI (Recommended for more in-depth Instructions)</a>
+
+<p><br></p>
+
+
+
   * [FEATURES:](#features)
   * [INSTALLATION](#installation)
       - [Compiling ARK ( For Developers )](#compiling-ark--for-developers-)
