@@ -9,8 +9,10 @@ as well as unique and exclusive new features not found anywhere else.
   
 
 <br/>
-<a style="font-weight: bold; font-size:18px; text-decoration: underline; color: green;" href="https://github.com/PSP-Archive/ARK-4/wiki">→ARK-4 WIKI (Recommended for more in-depth Instructions)←</a>
+<a style="font-weight: bold; font-size:18px; text-decoration: underline; color: green;" href="https://github.com/PSP-Archive/ARK-4/wiki">→ ARK-4 WIKI (Recommended for more in-depth Instructions) ←</a>
 
+<br>
+<br>
 <br>
 
 
