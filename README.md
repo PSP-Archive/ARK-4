@@ -218,8 +218,8 @@ The instructions are as follows:
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
   - `Recommended`: download a `PSP` game from `PSN` (demo of `Ape Quest`, `Locoroco`, etc) to have a valid `PSP` license available during installation.
   - Once installed, it will work on `Official Firmware` as long as the console has a valid `PSP` license obtained from `PSN`.
-  - Download and install latest `ArkFast` from this link: https://github.com/Yoti/ArkFast-4/releases/latest/.
-  - Press `start` button to install the `Sasuke Commander` minigame with `ARK`.
+  - Download and install latest <a href="https://github.com/krazynez/FastARK-4/releases/latest/">FastARK-4</a>
+  - Press `start` or `X` button to install the `Sasuke Commander` minigame with `ARK`.
   - If out of date with latest release, use the updater built into the `launcher`.
   - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
   - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
