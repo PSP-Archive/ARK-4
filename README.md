@@ -8,10 +8,10 @@ as well as unique and exclusive new features not found anywhere else.
 ### Table of Contents (Quick Links)
   
 
-<a style="font-weight: bold; font-size:18px; text-decoration: underline;" href="https://github.com/PSP-Archive/ARK-4/wiki">ARK-4 WIKI (Recommended for more in-depth Instructions)</a>
+<br/>
+<a style="font-weight: bold; font-size:18px; text-decoration: underline; color: green;" href="https://github.com/PSP-Archive/ARK-4/wiki">→ARK-4 WIKI (Recommended for more in-depth Instructions)←</a>
 
-<p><br></p>
-
+<br>
 
 
   * [FEATURES:](#features)
@@ -154,7 +154,7 @@ The instructions are as follows:
   - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
   - Move or copy `ARK_newIPL` folder to `/PSP/GAME/` and run the program.
   - Press the corresponding button in the installation page to install the cIPL patch.
-  - Warning: unlike classic cIPL, the new method can't be easily uninstalled.
+  - Warning: unlike classic cIPL, the new method can't be easily uninstalled. To revert to offical IPL, use ChronoSwitch to reinstall OFW 6.61
 
 </p>
 
