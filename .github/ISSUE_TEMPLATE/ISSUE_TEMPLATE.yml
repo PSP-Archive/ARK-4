@@ -5,7 +5,8 @@ labels: ["bug"]
 body:
   - type: markdown
     attributes:
-      value: Thank you for taking the time to fill out and document any bugs.
+      value: |
+        Thank you for taking the time to fill out and document any bugs.
   - type: dropdown
     id: model
     attributes:
@@ -25,19 +26,16 @@ body:
           - VTE-1000 (Vita TV)
     validations:
       required: true
-
   - type: input
     attributes:
       label: ARK Version
       description: "Enter Ark Release here (press Select it shows the version at the top of vshmenu). If using beta build put commit version."
     validations:
       required: true
-
   - type: input
     attributes:
       label: Homebrew/GAME (if applicable)
       description: "If using retail game please add GAME ID i.e: UCUS-98713"
-
   - type: textarea
     attributes:
       label: Plugins ( if applicable )
@@ -191,49 +189,49 @@ body:
     validations:
       required: true
 
-   - type: dropdown
-     id: Skip-Sony-Logos 
-     attributes:
+  - type: dropdown
+    id: Skip-Sony-Logos 
+    attributes:
        label: Skip Sony Logos 
        options:
         - Off
         - On
-     validations:
+    validations:
        required: true
 
-   - type: dropdown
-     id: Hide-PIC0-and_PIC1 
-     attributes:
+  - type: dropdown
+    id: Hide-PIC0-and_PIC1 
+    attributes:
        label: Hide PIC0 and PIC1
        options:
         - Off
         - On
-     validations:
+    validations:
        required: true
 
-   - type: dropdown
-     id: Hide-MAC-Address 
-     attributes:
+  - type: dropdown
+    id: Hide-MAC-Address 
+    attributes:
        label: Hide MAC Address
        options:
         - Off
         - On
-     validations:
+    validations:
        required: true
 
-   - type: dropdown
-     id: Hide-DLC 
-     attributes:
+  - type: dropdown
+    id: Hide-DLC 
+    attributes:
        label: Hide DLC 
        options:
         - Off
         - On
-     validations:
+    validations:
        required: true
 
-   - type: dropdown
-     id: Turn-off-LEDs 
-     attributes:
+  - type: dropdown
+    id: Turn-off-LEDs 
+    attributes:
        label: Turn off LEDs 
        options:
         - Disabled
@@ -244,5 +242,6 @@ body:
         - Pops
         - VSH
         - Launcher
-     validations:
+    validations:
        required: true
+
