@@ -131,8 +131,8 @@ body:
     attributes:
       label: Autoboot Launcher
       options:
-        - Off
-        - On
+        - "Off"
+        - "On"
     validations:
       required: true
   
@@ -141,8 +141,8 @@ body:
     attributes:
       label: Disable PSP Go Pause
       options:
-       - Off
-       - On
+       - "Off"
+       - "On"
     validations:
       required: true
   
@@ -183,7 +183,7 @@ body:
     attributes:
       label: Inferno Cache 
       options:
-       - Off
+       - "Off"
        - LRU
        - RR
     validations:
@@ -194,8 +194,8 @@ body:
     attributes:
        label: Skip Sony Logos 
        options:
-        - Off
-        - On
+        - "Off"
+        - "On"
     validations:
        required: true
 
@@ -204,8 +204,8 @@ body:
     attributes:
        label: Hide PIC0 and PIC1
        options:
-        - Off
-        - On
+        - "Off"
+        - "On"
     validations:
        required: true
 
@@ -214,8 +214,8 @@ body:
     attributes:
        label: Hide MAC Address
        options:
-        - Off
-        - On
+        - "Off"
+        - "On"
     validations:
        required: true
 
@@ -224,8 +224,8 @@ body:
     attributes:
        label: Hide DLC 
        options:
-        - Off
-        - On
+        - "Off"
+        - "On"
     validations:
        required: true
 
