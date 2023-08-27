@@ -192,57 +192,57 @@ body:
       required: true
 
    - type: dropdown
-    id: Skip-Sony-Logos 
-    attributes:
-      label: Skip Sony Logos 
-      options:
-       - Off
-       - On
-    validations:
-      required: true
+     id: Skip-Sony-Logos 
+     attributes:
+       label: Skip Sony Logos 
+       options:
+        - Off
+        - On
+     validations:
+       required: true
 
    - type: dropdown
-    id: Hide-PIC0-and_PIC1 
-    attributes:
-      label: Hide PIC0 and PIC1
-      options:
-       - Off
-       - On
-    validations:
-      required: true
+     id: Hide-PIC0-and_PIC1 
+     attributes:
+       label: Hide PIC0 and PIC1
+       options:
+        - Off
+        - On
+     validations:
+       required: true
 
    - type: dropdown
-    id: Hide-MAC-Address 
-    attributes:
-      label: Hide MAC Address
-      options:
-       - Off
-       - On
-    validations:
-      required: true
+     id: Hide-MAC-Address 
+     attributes:
+       label: Hide MAC Address
+       options:
+        - Off
+        - On
+     validations:
+       required: true
 
    - type: dropdown
-    id: Hide-DLC 
-    attributes:
-      label: Hide DLC 
-      options:
-       - Off
-       - On
-    validations:
-      required: true
+     id: Hide-DLC 
+     attributes:
+       label: Hide DLC 
+       options:
+        - Off
+        - On
+     validations:
+       required: true
 
    - type: dropdown
-    id: Turn-off-LEDs 
-    attributes:
-      label: Turn off LEDs 
-      options:
-       - Disabled
-       - Always
-       - Game
-       - UMD
-       - Homebrew
-       - Pops
-       - VSH
-       - Launcher
-    validations:
-      required: true
+     id: Turn-off-LEDs 
+     attributes:
+       label: Turn off LEDs 
+       options:
+        - Disabled
+        - Always
+        - Game
+        - UMD
+        - Homebrew
+        - Pops
+        - VSH
+        - Launcher
+     validations:
+       required: true
