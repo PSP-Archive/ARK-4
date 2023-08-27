@@ -69,13 +69,14 @@ body:
     attributes:
       label: USB Charge
       options:
-        - Disabled
-        - Always
-        - Game
-        - UMD
-        - Homebrew
-        - Pops
-        - VSH
+       - Disabled
+       - Always
+       - Game
+       - UMD
+       - Homebrew
+       - Pops
+       - VSH
+       - Launcher
     validations:
       required: true
     
@@ -84,13 +85,14 @@ body:
     attributes:
       label: Overclock 
       options:
-        - Disabled
-        - Always
-        - Game
-        - UMD
-        - Homebrew
-        - Pops
-        - VSH
+       - Disabled
+       - Always
+       - Game
+       - UMD
+       - Homebrew
+       - Pops
+       - VSH
+       - Launcher
     validations:
       required: true
   
@@ -99,20 +101,21 @@ body:
     attributes:
       label: Power Save
       options:
-        - Disabled
-        - Always
-        - Game
-        - UMD
-        - Homebrew
-        - Pops
-        - VSH
+       - Disabled
+       - Always
+       - Game
+       - UMD
+       - Homebrew
+       - Pops
+       - VSH
+       - Launcher
     validations:
       required: true
-  
+
   - type: dropdown
-    id: autoboot
+    id: Balanced-Energy-Mode
     attributes:
-      label: Autoboot Launcher
+      label: Balanced Energy Mode 
       options:
        - Disabled
        - Always
@@ -121,6 +124,17 @@ body:
        - Homebrew
        - Pops
        - VSH
+       - Launcher
+    validations:
+      required: true
+
+  - type: dropdown
+    id: autoboot
+    attributes:
+      label: Autoboot Launcher
+      options:
+        - Off
+        - On
     validations:
       required: true
   
@@ -129,13 +143,8 @@ body:
     attributes:
       label: Disable PSP Go Pause
       options:
-       - Disabled
-       - Always
-       - Game
-       - UMD
-       - Homebrew
-       - Pops
-       - VSH
+       - Off
+       - On
     validations:
       required: true
   
@@ -151,6 +160,7 @@ body:
        - Homebrew
        - Pops
        - VSH
+       - Launcher
     validations:
       required: true
         
@@ -160,12 +170,13 @@ body:
       label: Memory Stick Speedup
       options:
        - Disabled
-       - Always
+       - Alway
        - Game
        - UMD
        - Homebrew
        - Pops
        - VSH
+       - Launcher
     validations:
       required: true
   
@@ -174,6 +185,57 @@ body:
     attributes:
       label: Inferno Cache 
       options:
+       - Off
+       - LRU
+       - RR
+    validations:
+      required: true
+
+   - type: dropdown
+    id: Skip-Sony-Logos 
+    attributes:
+      label: Skip Sony Logos 
+      options:
+       - Off
+       - On
+    validations:
+      required: true
+
+   - type: dropdown
+    id: Hide-PIC0-and_PIC1 
+    attributes:
+      label: Hide PIC0 and PIC1
+      options:
+       - Off
+       - On
+    validations:
+      required: true
+
+   - type: dropdown
+    id: Hide-MAC-Address 
+    attributes:
+      label: Hide MAC Address
+      options:
+       - Off
+       - On
+    validations:
+      required: true
+
+   - type: dropdown
+    id: Hide-DLC 
+    attributes:
+      label: Hide DLC 
+      options:
+       - Off
+       - On
+    validations:
+      required: true
+
+   - type: dropdown
+    id: Turn-off-LEDs 
+    attributes:
+      label: Turn off LEDs 
+      options:
        - Disabled
        - Always
        - Game
@@ -181,5 +243,6 @@ body:
        - Homebrew
        - Pops
        - VSH
+       - Launcher
     validations:
       required: true
