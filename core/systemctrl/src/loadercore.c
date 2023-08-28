@@ -290,8 +290,8 @@ SceModule2* patchLoaderCore(void)
     u32 topaddr = mod->text_addr+mod->text_size;
 
     // restore rebootex pointers to original
-    u32 rebootex_decrypt_call = 0;
-    u32 rebootex_checkexec_call = 0;
+    u32 rebootex_decrypt = 0;
+    u32 rebootex_checkexec = 0;
     SonyPRXDecrypt = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0xEF73E85B);
     origCheckExecFile = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0x6192F715);
     // find patched functions pointing to rebootex
@@ -299,8 +299,8 @@ SceModule2* patchLoaderCore(void)
     for (u32 addr = start_addr; addr<topaddr&&!found; addr+=4){
         u32 data = _lw(addr);
         switch (data){
-        case 0x35450200: rebootex_checkexec_call = _lw(addr+12); break;
-        case 0x35250200: rebootex_decrypt_call = _lw(addr-0x18); found=1; break;
+        case 0x35450200: rebootex_checkexec = K_EXTRACT_CALL(addr+12);
+        case 0x35250200: rebootex_decrypt = K_EXTRACT_CALL(addr-0x18); found=1;
         default: break;
         }
     }
@@ -312,7 +312,9 @@ SceModule2* patchLoaderCore(void)
     // Flush Cache
     flushCache();
 
-    // start the dynamic patching
+    // start the dynamic patching    
+    u32 rebootex_decrypt_call = JAL(rebootex_decrypt);
+    u32 rebootex_checkexec_call = JAL(rebootex_checkexec);
     for (u32 addr = start_addr; addr<topaddr; addr+=4){
         u32 data = _lw(addr);
         if (data == JAL(checkExec)){
