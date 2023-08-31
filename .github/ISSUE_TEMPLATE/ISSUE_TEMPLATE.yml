@@ -73,7 +73,7 @@ body:
        - UMD
        - Homebrew
        - Pops
-       - VSH
+       - XMB
        - Launcher
     validations:
       required: true
@@ -89,7 +89,7 @@ body:
        - UMD
        - Homebrew
        - Pops
-       - VSH
+       - XMB
        - Launcher
     validations:
       required: true
@@ -105,7 +105,7 @@ body:
        - UMD
        - Homebrew
        - Pops
-       - VSH
+       - XMB
        - Launcher
     validations:
       required: true
@@ -121,7 +121,7 @@ body:
        - UMD
        - Homebrew
        - Pops
-       - VSH
+       - XMB
        - Launcher
     validations:
       required: true
@@ -157,7 +157,7 @@ body:
        - UMD
        - Homebrew
        - Pops
-       - VSH
+       - XMB
        - Launcher
     validations:
       required: true
@@ -173,7 +173,7 @@ body:
        - UMD
        - Homebrew
        - Pops
-       - VSH
+       - XMB
        - Launcher
     validations:
       required: true
@@ -240,7 +240,7 @@ body:
         - UMD
         - Homebrew
         - Pops
-        - VSH
+        - XMB
         - Launcher
     validations:
        required: true
