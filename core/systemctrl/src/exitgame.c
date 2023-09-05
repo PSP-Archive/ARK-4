@@ -31,6 +31,7 @@
 #define EXIT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
 
 extern ARKConfig* ark_config;
+extern SEConfig se_config;
 extern int disable_plugins;
 extern int disable_settings;
 
@@ -102,6 +103,14 @@ static void startExitThread(){
 	pspSdkSetK1(k1);
 }
 
+static void remove_analog_input(SceCtrlData *data)
+{
+	if(data == NULL)
+		return;
+
+	data->Lx = 0xFF/2;
+	data->Ly = 0xFF/2;
+}
 
 // Gamepad Hook #1
 int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = NULL;
@@ -114,6 +123,10 @@ int peek_positive(SceCtrlData * pad_data, int count)
 	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
 		startExitThread();
+	}
+
+	if (se_config.noanalog){
+		remove_analog_input(pad_data);
 	}
 	
 	// Return Number of Input Frames
@@ -133,6 +146,10 @@ int peek_negative(SceCtrlData * pad_data, int count)
 		startExitThread();
 	}
 
+	if (se_config.noanalog){
+		remove_analog_input(pad_data);
+	}
+
 	// Return Number of Input Frames
 	return count;
 }
@@ -148,6 +165,10 @@ int read_positive(SceCtrlData * pad_data, int count)
 	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
 		startExitThread();
+	}
+
+	if (se_config.noanalog){
+		remove_analog_input(pad_data);
 	}
 	
 	// Return Number of Input Frames
@@ -165,6 +186,10 @@ int read_negative(SceCtrlData * pad_data, int count)
 	if((pad_data[0].Buttons & EXIT_MASK) == 0)
 	{
 		startExitThread();
+	}
+
+	if (se_config.noanalog){
+		remove_analog_input(pad_data);
 	}
 	
 	// Return Number of Input Frames
@@ -196,6 +221,7 @@ void checkControllerInput(){
 		CtrlPeekBufferPositive(&pad_data, 1);
 		if ((pad_data.Buttons & PSP_CTRL_START) == PSP_CTRL_START) disable_plugins = 1;
 		if ((pad_data.Buttons & PSP_CTRL_SELECT) == PSP_CTRL_SELECT) disable_settings = 1;
+		if ((pad_data.Buttons & PSP_CTRL_RTRIGGER) == PSP_CTRL_RTRIGGER) ark_config->recovery = 1;
 	}
 }
 

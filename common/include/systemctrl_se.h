@@ -165,7 +165,6 @@ typedef struct _SEConfig
     u8 useownupdate;
     u8 usenodrm;
     u8 hibblock;
-    u8 noanalog;
     u8 oldplugin;
     u8 hide_cfw_dirs;
     u8 chn_iso;
@@ -177,6 +176,7 @@ typedef struct _SEConfig
     u8 disable_pause;
     u8 noled;
 	u8 noumd;
+	u8 noanalog;
 } SEConfig;
 
 /**
