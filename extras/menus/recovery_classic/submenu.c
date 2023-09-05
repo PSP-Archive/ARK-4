@@ -67,7 +67,7 @@ struct {
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
-    { 2, &(config.noumd), "Disable Analog Stick", ark_settings_boolean },
+    { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
 };
 
 #define N_SETTINGS_1K (sizeof(settings_items_1k)/sizeof(settings_items_1k[0]))
@@ -94,7 +94,7 @@ struct {
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
-    { 2, &(config.noumd), "Disable Analog Stick", ark_settings_boolean },
+    { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
 };
 
 #define N_SETTINGS_SLIM (sizeof(settings_items_slim)/sizeof(settings_items_slim[0]))
@@ -123,7 +123,7 @@ struct {
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
-    { 2, &(config.noumd), "Disable Analog Stick", ark_settings_boolean },
+    { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
 };
 
 #define N_SETTINGS_GO (sizeof(settings_items_go)/sizeof(settings_items_go[0]))
@@ -150,13 +150,41 @@ struct {
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
-    { 2, &(config.noumd), "Disable Analog Stick", ark_settings_boolean },
+    { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
 };
 
 #define N_SETTINGS_STREET (sizeof(settings_items_street)/sizeof(settings_items_street[0]))
 
+struct {
+    int max;
+    int* value;
+    char* name;
+    char** opts;
+} settings_items_adr[] =
+{
+    { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
+    { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
+    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
+    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
+    { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
+    { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
+    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
+    { 2, &(config.noumd), "Disable Analog Stick", ark_settings_boolean },
+};
+
+#define N_SETTINGS_ADR (sizeof(settings_items_adr)/sizeof(settings_items_adr[0]))
+
 static settings_to_text(char** names, char** states){
-		if(psp_model == PSP_1000) {
+		if(IS_VITA_ADR(ark_config)) {
+			for(int i = 0; i < N_SETTINGS_1K; i++){
+				names[i] = settings_items_adr[i].name;
+				states[i] = settings_items_adr[i].opts[*(settings_items_adr[i].value)];
+			}
+		}
+		else if(psp_model == PSP_1000) {
 			for(int i = 0; i < N_SETTINGS_1K; i++){
 				names[i] = settings_items_1k[i].name;
 				states[i] = settings_items_1k[i].opts[*(settings_items_1k[i].value)];
