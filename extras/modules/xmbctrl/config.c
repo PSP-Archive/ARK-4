@@ -96,6 +96,10 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.noumd = opt;
         return 1;
     }
+    else if (strcasecmp(path, "noanalog") == 0){
+        config.noanalog = opt;
+        return 1;
+    }
     return 0;
 }
 
@@ -175,6 +179,7 @@ void saveSettings(){
     processSetting(fd, line, "hidedlc", config.hidedlc);
     processSetting(fd, line, "noled", config.noled);
     processSetting(fd, line, "noumd", config.noumd);
+    processSetting(fd, line, "noanalog", config.noumd);
 
     for (int i=0; i<custom_config.count; i++){
         sceIoWrite(fd, custom_config.table[i], strlen(custom_config.table[i]));

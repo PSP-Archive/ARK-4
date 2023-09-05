@@ -53,6 +53,7 @@ typedef struct
     int hidedlc;
     int noled;
     int noumd;
+    int noanalog;
 } CFWConfig;
 
 typedef struct

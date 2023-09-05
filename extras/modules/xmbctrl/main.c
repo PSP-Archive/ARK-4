@@ -559,6 +559,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.hidedlc,			// 14
                 config.noled,			// 15
                 config.noumd,			// 16
+                config.noanalog,		// 17
             };
             
             int i;
@@ -613,6 +614,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.hidedlc,
                 &config.noled,
                 &config.noumd,
+                &config.noanalog,
             };
             
             int i;

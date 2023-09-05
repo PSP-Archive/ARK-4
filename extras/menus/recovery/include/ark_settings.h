@@ -43,6 +43,7 @@ typedef struct {
     unsigned char hidedlc;
     unsigned char noled;
     unsigned char noumd;
+    unsigned char noanalog;
 }CfwConf;
 
 CfwConf cfw_config;
@@ -297,6 +298,20 @@ static struct {
 	{"Off", "On"}
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} noanalog = {
+    "Disable Analog Stick",
+	2,
+    0,
+    &(cfw_config.noanalog),
+	{"Off", "On"}
+};
+
 
 
 // DO NOT ADD BELOW THIS
@@ -345,6 +360,7 @@ settings_entry* ark_conf_entries_1k[] = {
     (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
     (settings_entry*)&noumd,
+    (settings_entry*)&noanalog,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -365,6 +381,7 @@ settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
     (settings_entry*)&noumd,
+    (settings_entry*)&noanalog,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -387,6 +404,7 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&hidemac,
     (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
+    (settings_entry*)&noanalog,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_GO (sizeof(ark_conf_entries_go)/sizeof(ark_conf_entries_go[0]))
@@ -404,6 +422,7 @@ settings_entry* ark_conf_entries_street[] = {
     (settings_entry*)&hidepics,
     (settings_entry*)&noled,
     (settings_entry*)&noumd,
+    (settings_entry*)&noanalog,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -424,6 +443,7 @@ settings_entry* ark_conf_entries_adr[] = {
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
     (settings_entry*)&hidedlc,
+    (settings_entry*)&noanalog,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_ADR (sizeof(ark_conf_entries_adr)/sizeof(ark_conf_entries_adr[0]))
@@ -516,6 +536,9 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "noumd") == 0){
         return &(cfw_config.noumd);
+    }
+	else if (strcasecmp(conf.c_str(), "noanalog") == 0){
+        return &(cfw_config.noanalog);
     }
     else if (strcasecmp(conf.c_str(), "region_none") == 0){
         cfw_config.regionchange = 0;
@@ -677,6 +700,7 @@ void saveSettings(){
     output << processSetting("hidedlc", cfw_config.hidedlc) << endl;
     output << processSetting("noled", cfw_config.noled) << endl;
     output << processSetting("noumd", cfw_config.noumd) << endl;
+    output << processSetting("noanalog", cfw_config.noumd) << endl;
     
     switch (cfw_config.regionchange){
         case REGION_JAPAN:
