@@ -171,13 +171,6 @@ static void draw(char** options, int size, int dir){
 
 int main(SceSize args, void *argp) {
 
-    psp_model = kuKernelGetModel();
-
-    sctrlHENGetArkConfig(ark_config);
-    sctrlSEGetConfig(&se_config);
-    
-    is_launcher_mode = (strcmp(ark_config->launcher, "PROSHELL") == 0);
-
 	pspDebugScreenInit();
 
     if (is_launcher_mode){
@@ -275,6 +268,12 @@ int main(SceSize args, void *argp) {
 }
 
 int module_start(int argc, void* argv){
+
+    psp_model = kuKernelGetModel();
+    sctrlHENGetArkConfig(ark_config);
+    sctrlSEGetConfig(&se_config);
+    is_launcher_mode = (strcmp(ark_config->launcher, "PROSHELL") == 0);
+
     int uid = sceKernelCreateThread("ClassicRecovery", main, 16 - 1, 32*1024, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
 	sceKernelStartThread(uid, 0, NULL);
 }
