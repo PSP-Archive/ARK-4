@@ -127,6 +127,7 @@ void loadSettings(){
     FIX_BOOLEAN(config.hidemac);
     FIX_BOOLEAN(config.hidedlc);
     FIX_BOOLEAN(config.noumd);
+    FIX_BOOLEAN(config.noanalog);
 }
 
 static void processSetting(int fd, char* line, char* name, int setting){
@@ -179,7 +180,7 @@ void saveSettings(){
     processSetting(fd, line, "hidedlc", config.hidedlc);
     processSetting(fd, line, "noled", config.noled);
     processSetting(fd, line, "noumd", config.noumd);
-    processSetting(fd, line, "noanalog", config.noumd);
+    processSetting(fd, line, "noanalog", config.noanalog);
 
     for (int i=0; i<custom_config.count; i++){
         sceIoWrite(fd, custom_config.table[i], strlen(custom_config.table[i]));

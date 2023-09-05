@@ -43,6 +43,7 @@ char *settings[] =
     "Hide DLC",
     "Turn off LEDs",
     "Disable UMD Drive",
+    "Disable Analog Stick",
 };
 
 #endif

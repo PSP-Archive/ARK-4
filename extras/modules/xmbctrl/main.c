@@ -70,6 +70,7 @@ GetItem GetItemes[] =
     { 16, 0, "Hide DLC" },
     { 17, 0, "Turn off LEDs" },
     { 18, 0, "Disable UMD Drive" },
+    { 19, 0, "Disable Analog Stick" },
 };
 
 #define PLUGINS_CONTEXT 1
@@ -127,6 +128,7 @@ struct {
     {2, ark_settings_boolean}, // Hide DLC
     {N_OPTS, ark_settings_options}, // Turn off LEDs
     {2, ark_settings_boolean}, // Disable UMD Drive
+    {2, ark_settings_boolean}, // Disable Analog Stick 
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
