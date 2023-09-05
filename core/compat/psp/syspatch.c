@@ -173,6 +173,13 @@ void disable_PauseGame()
     }
 }
 
+int sceUmdRegisterUMDCallBackPatched(int cbid) {
+	int k1 = pspSdkSetK1(0);
+	int res = sceKernelNotifyCallback(cbid, PSP_UMD_NOT_PRESENT);
+	pspSdkSetK1(k1);
+	return res;
+}
+
 void processSettings(){
     int apitype = sceKernelInitApitype();
 
@@ -227,6 +234,12 @@ void processSettings(){
     // Disable Pause feature on PSP Go
     if (se_config->disable_pause){
         disable_PauseGame();
+    }
+    if (se_config->noumd){
+        u32 f = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0xAEE7404D);
+        if (f){
+            REDIRECT_FUNCTION(f, sceUmdRegisterUMDCallBackPatched);
+        }
     }
 }
 

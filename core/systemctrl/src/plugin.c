@@ -434,6 +434,9 @@ static void settingsHandler(char* path, u8 enabled){
     else if (strcasecmp(path, "noled") == 0){
         se_config.noled = enabled;
     }
+    else if (strcasecmp(path, "noumd") == 0){
+        se_config.noumd = enabled;
+    }
     else if (strcasecmp(path, "skiplogos") == 0){
         se_config.skiplogos = enabled;
     }

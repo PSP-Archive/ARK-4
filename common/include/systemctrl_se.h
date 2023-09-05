@@ -176,6 +176,7 @@ typedef struct _SEConfig
     u8 launcher_mode;
     u8 disable_pause;
     u8 noled;
+	u8 noumd;
 } SEConfig;
 
 /**

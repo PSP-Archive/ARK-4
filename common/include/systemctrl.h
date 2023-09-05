@@ -70,12 +70,6 @@ PspIoDrv * sctrlHENFindDriver(char * drvname);
 // Replace Function in Syscall Table
 void sctrlHENPatchSyscall(void * addr, void * newaddr);
 
-// Dword Poker (relative to module text_addr)
-int sctrlPatchModule(char * modname, unsigned int inst, unsigned int offset);
-
-// Text Address Getter
-unsigned int sctrlModuleTextAddr(char * modname);
-
 // Load Execute Module via Kernel Internal Function
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param);
 
@@ -98,23 +92,14 @@ char * sctrlSEGetUmdFile(void);
 // Set Reboot Configuration UMD File
 void sctrlSESetUmdFile(char * file);
 
-// Find Function Address
-unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid);
-
 // Calculate Random Number via KIRK
 unsigned int sctrlKernelRand(void);
-
-// Enable or Disable NID Resolver for Library
-int sctrlKernelSetNidResolver(char * libname, unsigned int enabled);
 
 // Set Init Apitype
 int sctrlKernelSetInitApitype(int apitype);
 
 // Set Init Filename
 int sctrlKernelSetInitFileName(char * filename);
-
-// Return Text Address of init.prx
-unsigned int sctrlGetInitTextAddr(void);
 
 // Register Custom init.prx sceKernelStartModule Handler, returns previous handler (if any)
 void sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt));
@@ -348,7 +333,7 @@ PspIoDrv *sctrlHENFindDriver(char *drvname);
  * @returns - The function address or 0 if not found
  *
 */
-u32 sctrlHENFindFunction(char *modname, char *libname, u32 nid);
+unsigned int sctrlHENFindFunction(char *modname, char *libname, unsigned int nid);
 
 
 /**
@@ -419,26 +404,6 @@ void sctrlHENPatchSyscall(void *addr, void *newaddr);
 int sctrlKernelQuerySystemCall(void *func_addr);
 
 int sctrlKernelBootFrom(void);
-
-/**
- * Patch module by offset
- *
- * @param modname - module name
- * @param inst  - instruction
- * @param offset - module patch offset
- *
- * @return < 0 on error
- */
-int sctrlPatchModule(char *modname, u32 inst, u32 offset);
-
-/**
- * Get module text address
- *
- * @param modname - module name
- * 
- * @return text address, or 0 if not found
- */
-u32 sctrlModuleTextAddr(char *modname);
 
 
 // ################# SAVESTATE USER ##############
@@ -577,55 +542,6 @@ int sctrlKernelSetUserLevel(int level);
 int sctrlKernelSetDevkitVersion(int version);
 
 /**
- * Checks if we are in SE.
- *
- * @returns 1 if we are in SE-C or later, 0 if we are in HEN-D or later,
- * and < 0 (a kernel error code) in any other case
-*/
-
-/**
- * Checks if we are in Devhook.
- *
- * @returns 1 if we are in SE-C/HEN-D for devhook  or later, 0 if we are in normal SE-C/HEN-D or later,
- * and < 0 (a kernel error code) in any other case
-*/
-
-/**
- * Gets the HEN version
- *
- * @returns - The HEN version
- *
- * HEN D / SE-C :  0x00000400
- */
-
-/**
- * Gets the HEN minor version
- *
- * @returns - The HEN minor version
- */
-
-/**
- * Finds a driver
- *
- * @param drvname - The name of the driver (without ":" or numbers)
- *
- * @returns the driver if found, NULL otherwise
- *
- */
-
-/** 
- * Finds a function.
- *
- * @param modname - The module where to search the function
- * @param libname - The library name
- * @nid - The nid of the function
- *
- * @returns - The function address or 0 if not found
- *
-*/
-u32 sctrlHENFindFunction(char *modname, char *libname, u32 nid);
-
-/**
  * Sets a function to be called just before module_start of a module is gonna be called (useful for patching purposes)
  *
  * @param handler - The function, that will receive the module structure before the module is started.
@@ -761,11 +677,6 @@ void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int fla
  * @return previous value if set, < 0 on error
  */
 int sctrlKernelSetNidResolver(char *libname, u32 enabled);
-
-/**
- * Get a random u32 key from PSP Kirk PRNG
- */
-u32 sctrlKernelRand(void);
 
 /**
  * Get the real unspoofed Ethernet (MAC) Address of the systems WLAN chip
