@@ -52,6 +52,7 @@ typedef struct
     int hidemac;
     int hidedlc;
     int noled;
+    int noumd;
 } CFWConfig;
 
 typedef struct

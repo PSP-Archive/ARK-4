@@ -42,6 +42,7 @@ typedef struct {
     unsigned char hidemac;
     unsigned char hidedlc;
     unsigned char noled;
+    unsigned char noumd;
 }CfwConf;
 
 CfwConf cfw_config;
@@ -282,6 +283,23 @@ static struct {
     ARK_OPTIONS
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} noumd = {
+    "Disable UMD Drive",
+	2,
+    0,
+    &(cfw_config.noumd),
+	{"Off", "On"}
+};
+
+
+
+// DO NOT ADD BELOW THIS
 
 static struct {
     char* description;
@@ -326,6 +344,7 @@ settings_entry* ark_conf_entries_1k[] = {
     (settings_entry*)&hidemac,
     (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
+    (settings_entry*)&noumd,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -345,6 +364,7 @@ settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&hidemac,
     (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
+    (settings_entry*)&noumd,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -383,6 +403,7 @@ settings_entry* ark_conf_entries_street[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&noled,
+    (settings_entry*)&noumd,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -492,6 +513,9 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "noled") == 0){
         return &(cfw_config.noled);
+    }
+    else if (strcasecmp(conf.c_str(), "noumd") == 0){
+        return &(cfw_config.noumd);
     }
     else if (strcasecmp(conf.c_str(), "region_none") == 0){
         cfw_config.regionchange = 0;
@@ -613,6 +637,7 @@ void loadSettings(){
     FIX_BOOLEAN(cfw_config.hibblock);
     FIX_BOOLEAN(cfw_config.hidemac);
     FIX_BOOLEAN(cfw_config.hidedlc);
+    FIX_BOOLEAN(cfw_config.noumd);
 }
 
 static string processSetting(string name, unsigned char setting){
@@ -651,6 +676,7 @@ void saveSettings(){
     output << processSetting("hidemac", cfw_config.hidemac) << endl;
     output << processSetting("hidedlc", cfw_config.hidedlc) << endl;
     output << processSetting("noled", cfw_config.noled) << endl;
+    output << processSetting("noumd", cfw_config.noumd) << endl;
     
     switch (cfw_config.regionchange){
         case REGION_JAPAN:
