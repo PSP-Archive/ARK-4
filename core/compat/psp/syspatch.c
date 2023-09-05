@@ -236,10 +236,18 @@ void processSettings(){
     if (se_config->disable_pause){
         disable_PauseGame();
     }
-    if (se_config->noumd){
+    if (se_config->noumd && psp_model != PSP_GO){
         u32 f = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0xAEE7404D);
         if (f){
             REDIRECT_FUNCTION(f, sceUmdRegisterUMDCallBackPatched);
+        }
+        int (*IoDelDrv)(char*) = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
+        if (IoDelDrv){
+            IoDelDrv("umd");
+        }
+        u32 CheckMedium = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0x46EBB729);
+        if (CheckMedium){
+            MAKE_DUMMY_FUNCTION_RETURN_0(CheckMedium);
         }
     }
 }
