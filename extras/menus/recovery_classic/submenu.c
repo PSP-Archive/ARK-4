@@ -172,14 +172,14 @@ struct {
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
-    { 2, &(config.noumd), "Disable Analog Stick", ark_settings_boolean },
+    { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
 };
 
 #define N_SETTINGS_ADR (sizeof(settings_items_adr)/sizeof(settings_items_adr[0]))
 
 static settings_to_text(char** names, char** states){
 		if(IS_VITA_ADR(ark_config)) {
-			for(int i = 0; i < N_SETTINGS_1K; i++){
+			for(int i = 0; i < N_SETTINGS_ADR; i++){
 				names[i] = settings_items_adr[i].name;
 				states[i] = settings_items_adr[i].opts[*(settings_items_adr[i].value)];
 			}
@@ -349,7 +349,13 @@ void settings_submenu(){
 	int size;
 
     char* header = "* Custom Firmware Settings                                         *";
-	if(psp_model == PSP_1000) {
+	if(IS_VITA_ADR(ark_config)) {
+		paths = malloc(sizeof(char*)*N_SETTINGS_ADR);
+		states = malloc(sizeof(char*)*N_SETTINGS_ADR);
+
+    	size = N_SETTINGS_ADR;
+	}
+	else if(psp_model == PSP_1000) {
 		paths = malloc(sizeof(char*)*N_SETTINGS_1K);
 		states = malloc(sizeof(char*)*N_SETTINGS_1K);
 
@@ -405,7 +411,11 @@ void settings_submenu(){
             sceKernelDelayThread(200000);
 			int* value;
 			int max;
-			if(psp_model == PSP_1000) {
+			if(IS_VITA_ADR(ark_config)) {
+				value = settings_items_adr[dir].value;
+            	max = settings_items_adr[dir].max;
+			}
+			else if(psp_model == PSP_1000) {
 				value = settings_items_1k[dir].value;
             	max = settings_items_1k[dir].max;
 			}
@@ -431,7 +441,11 @@ void settings_submenu(){
             sceKernelDelayThread(200000);
 			int* value;
 			int max;
-			if(psp_model == PSP_1000) {
+			if(IS_VITA_ADR(ark_config)) {
+				value = settings_items_adr[dir].value;
+            	max = settings_items_adr[dir].max;
+			}
+			else if(psp_model == PSP_1000) {
 				value = settings_items_1k[dir].value;
             	max = settings_items_1k[dir].max;
 			}
