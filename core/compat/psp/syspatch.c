@@ -20,7 +20,6 @@ extern u32 psp_model;
 extern ARKConfig* ark_config;
 extern SEConfig* se_config;
 extern STMOD_HANDLER previous;
-extern void SetSpeed(int cpuspd, int busspd);
 
 // Return Boot Status
 int isSystemBooted(void)
@@ -341,12 +340,6 @@ void PSPOnModuleStart(SceModule2 * mod){
                     msstorCacheInit("eflash0a0f1p", 8 * 1024);
                 else
                     msstorCacheInit("msstor0p", 16 * 1024);
-            }
-            // handle CPU speed
-            switch (se_config->clock){
-                case 1: SetSpeed(333, 166); break;
-                case 2: SetSpeed(133, 66); break;
-                case 3: SetSpeed(222, 111); break;
             }
             // Boot Complete Action done
             booted = 1;

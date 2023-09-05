@@ -272,28 +272,6 @@ int sctrlGetUsbState() {
 	return 2; // Not connected
 }
 
-/*
-u32 FindPowerFunction(u32 nid) {
-	return sctrlHENFindFunction("scePower_Service", "scePower", nid);
-}
-
-void SetSpeed(int cpu, int bus) {
-	if (cpu == 20 || cpu == 75 || cpu == 100 || cpu == 133 || cpu == 333 || cpu == 300 || cpu == 266 || cpu == 222) {
-		int (*scePowerSetClockFrequency_k)(int, int, int) = (void *)FindPowerFunction(0x737486F2);
-		scePowerSetClockFrequency_k(cpu, cpu, bus);
-
-		if (sceKernelInitKeyConfig() != PSP_INIT_KEYCONFIG_VSH) {
-			MAKE_DUMMY_FUNCTION((u32)scePowerSetClockFrequency_k, 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x545A7F3C), 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xB8D7B3FB), 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x843FBF43), 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xEBD177D6), 0);
-			flushCache();
-		}
-	}
-}
-*/
-
 void patch_VshMain(SceModule2* mod){
 	u32 text_addr = mod->text_addr;
 

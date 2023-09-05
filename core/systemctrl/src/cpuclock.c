@@ -28,13 +28,6 @@
 		
 int (* scePowerSetClockFrequency_k)(int cpufreq, int ramfreq, int busfreq);
 
-/*int	sctrlHENSetSpeed(int cpu,int bus)
-{	
-	scePowerSetClockFrequency_k = sctrlHENFindFunction("scePower_Service", "scePower", 0x545A7F3C);
-	return scePowerSetClockFrequency_k( cpu, cpu ,bus);
-}
-*/
-
 static const u32 cpu_nid_list[] = {
 	0x545A7F3C,
 	0xB8D7B3FB,//scePowerSetBusClockFrequency

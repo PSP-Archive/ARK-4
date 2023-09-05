@@ -168,6 +168,7 @@ PSP_EXPORT_FUNC(sctrlHENTakeInitControl)
 PSP_EXPORT_FUNC(exitLauncher)
 PSP_EXPORT_FUNC(flushCache)
 PSP_EXPORT_FUNC(sctrlHENGetRebootexConfig)
+PSP_EXPORT_FUNC(sctrlHENSetSpeed)
 PSP_EXPORT_END
 
 

@@ -4,7 +4,6 @@ C_OBJS = \
 	main.o \
 	syspatch.o \
 	high_mem.o  \
-	cpuclock.o   \
 	libertas.o   \
 	usb_charge.o  \
 	region_free.o \
