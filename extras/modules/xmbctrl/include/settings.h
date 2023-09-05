@@ -42,6 +42,7 @@ char *settings[] =
     "Hide MAC Address",
     "Hide DLC",
     "Turn off LEDs",
+    "Disable UMD Drive",
 };
 
 #endif

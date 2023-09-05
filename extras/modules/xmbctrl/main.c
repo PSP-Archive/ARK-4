@@ -69,6 +69,7 @@ GetItem GetItemes[] =
     { 15, 0, "Hide MAC Address" },
     { 16, 0, "Hide DLC" },
     { 17, 0, "Turn off LEDs" },
+    { 18, 0, "Disable UMD Drive" },
 };
 
 #define PLUGINS_CONTEXT 1
@@ -125,6 +126,7 @@ struct {
     {2, ark_settings_boolean}, // Hide MAC
     {2, ark_settings_boolean}, // Hide DLC
     {N_OPTS, ark_settings_options}, // Turn off LEDs
+    {2, ark_settings_boolean}, // Disable UMD Drive
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
@@ -404,10 +406,11 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 }
 
 int skipSetting(int i){
-    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==1 || i==2 || i==3 || i==5 || i==9 || i==12 || i==14 || i == 15);
+    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==1 || i==2 || i==3 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16);
     else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12);
     else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13 );
     else if (psp_model != PSP_GO) return ( i == 5 || i == 9 || i == 12);
+	else if (psp_model == PSP_GO) return (i == 16);
     return 0;
 }
 
@@ -555,6 +558,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.hidemac, 		// 13
                 config.hidedlc,			// 14
                 config.noled,			// 15
+                config.noumd,			// 16
             };
             
             int i;
@@ -608,6 +612,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.hidemac,
                 &config.hidedlc,
                 &config.noled,
+                &config.noumd,
             };
             
             int i;
