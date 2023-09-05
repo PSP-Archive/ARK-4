@@ -299,8 +299,8 @@ SceModule2* patchLoaderCore(void)
     for (u32 addr = start_addr; addr<topaddr&&!found; addr+=4){
         u32 data = _lw(addr);
         switch (data){
-        case 0x35450200: rebootex_checkexec_call = _lw(addr+12); break;
-        case 0x35250200: rebootex_decrypt_call = _lw(addr-0x18); found=1; break;
+        case 0x35450200: rebootex_checkexec_call = _lw(addr+12);
+        case 0x35250200: rebootex_decrypt_call = _lw(addr-0x18); found=1;
         default: break;
         }
     }

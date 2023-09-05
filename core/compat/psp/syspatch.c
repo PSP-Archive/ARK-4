@@ -192,7 +192,8 @@ void processSettings(){
         strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
     }
     else{
-        ark_config->launcher[0] = 0; // disable launcher mode
+        if (strcmp(ark_config->launcher, "PROSHELL") != 0)
+            ark_config->launcher[0] = 0; // disable launcher mode
     }
     // VSH region
     if (se_config->vshregion) patch_sceChkreg();

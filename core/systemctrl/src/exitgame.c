@@ -73,7 +73,7 @@ void exitLauncher()
 		ark_config->recovery = 0; // reset recovery mode for next reboot
 		sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 	}
-	else if (ark_config->recovery){
+	else if (ark_config->recovery || (strcmp(ark_config->launcher, "PROSHELL") == 0)){
 		// no recovery app? try classic module
 		strcpy(path, ark_config->arkpath);
 		strcat(path, "RECOVERY.PRX");
@@ -85,6 +85,7 @@ void exitLauncher()
 		SceUID modid = kuKernelLoadModule(path, 0, NULL);
 		sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
 		ark_config->recovery = 0; // reset recovery mode for next reboot
+		ark_config->launcher[0] = 0; // reset launcher mode for next reboot
 	}
 	else {
 		ark_config->recovery = 0; // reset recovery mode for next reboot

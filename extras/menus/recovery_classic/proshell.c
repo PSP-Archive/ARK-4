@@ -109,6 +109,8 @@ int filecount = 0;
 // File List
 File * files = NULL;
 
+extern int is_launcher_mode;
+
 // Entry Point
 int proshell_main()
 {
@@ -439,7 +441,7 @@ void paintList(int withclear)
     printoob("CIRCLE    Paste", 345, 140, FONT_COLOR);
     printoob("CROSS     Navigate", 345, 150, FONT_COLOR);
     printoob("RTRIGGER  Device", 345, 160, FONT_COLOR);
-    printoob("LTRIGGER  Go Back", 345, 170, FONT_COLOR);
+    printoob((is_launcher_mode)? "LTRIGGER  Exit" : "LTRIGGER  Go Back", 345, 170, FONT_COLOR);
     
     // Copy Paste in Progress
     if(copymode != NOTHING_TO_COPY)
