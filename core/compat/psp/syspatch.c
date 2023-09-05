@@ -236,6 +236,7 @@ void processSettings(){
     if (se_config->disable_pause){
         disable_PauseGame();
     }
+    // Disable UMD Drive
     if (se_config->noumd && psp_model != PSP_GO && sceKernelFindModuleByName("PRO_Inferno_Driver")==NULL){
         u32 f = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0xAEE7404D);
         if (f){
