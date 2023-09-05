@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <pspdebug.h>
@@ -8,9 +9,14 @@
 #include <list.h>
 #include <plugins.h>
 
+#include "globals.h"
+
 extern ARKConfig* ark_config;
 extern CFWConfig config;
 extern List plugins;
+
+extern int psp_model;
+
 
 #define SCREEN_WIDTH 58
 #define SCREEN_HEIGHT 33 
@@ -41,12 +47,63 @@ char* ark_settings_infernocache[] = {
     (char*)"RR"
 };
 
+// PSP 1K
 struct {
     int max;
     int* value;
     char* name;
     char** opts;
-} settings_items[] =
+} settings_items_1k[] =
+{
+    { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
+    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
+    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
+    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
+    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
+    { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
+    { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
+    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
+};
+
+#define N_SETTINGS_1K (sizeof(settings_items_1k)/sizeof(settings_items_1k[0]))
+
+// PSP Slim
+struct {
+    int max;
+    int* value;
+    char* name;
+    char** opts;
+} settings_items_slim[] =
+{
+    { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
+    { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
+    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
+    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
+    { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
+    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
+    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
+    { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
+    { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
+    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
+};
+
+#define N_SETTINGS_SLIM (sizeof(settings_items_slim)/sizeof(settings_items_slim[0]))
+
+// PSP GO
+struct {
+    int max;
+    int* value;
+    char* name;
+    char** opts;
+} settings_items_go[] =
 {
     { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
     { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
@@ -64,16 +121,61 @@ struct {
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+};
+
+#define N_SETTINGS_GO (sizeof(settings_items_go)/sizeof(settings_items_go[0]))
+
+// PSP 110000 (Street)
+struct {
+    int max;
+    int* value;
+    char* name;
+    char** opts;
+} settings_items_street[] =
+{
+    { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
+    { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
+    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
+    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
+    { 2, &(config.disablepause), "Disable Pause on PSP Go", ark_settings_boolean },
+    { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
+    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
+    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
+    { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
+    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
 };
 
-#define N_SETTINGS (sizeof(settings_items)/sizeof(settings_items[0]))
+#define N_SETTINGS_STREET (sizeof(settings_items_street)/sizeof(settings_items_street[0]))
 
 static settings_to_text(char** names, char** states){
-    for (int i=0; i<N_SETTINGS; i++){
-        names[i] = settings_items[i].name;
-        states[i] = settings_items[i].opts[*(settings_items[i].value)];
-    }
+		if(psp_model == PSP_1000) {
+			for(int i = 0; i < N_SETTINGS_1K; i++){
+				names[i] = settings_items_1k[i].name;
+				states[i] = settings_items_1k[i].opts[*(settings_items_1k[i].value)];
+			}
+		}
+		else if(psp_model == PSP_GO) {
+			for(int i = 0; i < N_SETTINGS_GO; i++){
+				names[i] = settings_items_go[i].name;
+				states[i] = settings_items_go[i].opts[*(settings_items_go[i].value)];
+			}
+		}
+		else if(psp_model == PSP_11000) {
+			for(int i = 0; i < N_SETTINGS_STREET; i++){
+				names[i] = settings_items_street[i].name;
+				states[i] = settings_items_street[i].opts[*(settings_items_street[i].value)];
+			}
+		}
+		else {
+			for(int i = 0; i < N_SETTINGS_SLIM; i++){
+				names[i] = settings_items_slim[i].name;
+				states[i] = settings_items_slim[i].opts[*(settings_items_slim[i].value)];
+			}
+		}
 }
 
 static int plugins_to_text(char** paths, char** states, int dir){
@@ -210,12 +312,38 @@ void plugins_submenu(){
 void settings_submenu(){
     SceCtrlData pad;
     int dir = 0;
+	char** paths;
+	char** states;
+	int size;
 
     char* header = "* Custom Firmware Settings                                         *";
-    char** paths = malloc(sizeof(char*)*N_SETTINGS);
-    char** states = malloc(sizeof(char*)*N_SETTINGS);
+	if(psp_model == PSP_1000) {
+		paths = malloc(sizeof(char*)*N_SETTINGS_1K);
+		states = malloc(sizeof(char*)*N_SETTINGS_1K);
 
-    int size = N_SETTINGS;
+    	size = N_SETTINGS_1K;
+	}
+
+	else if(psp_model == PSP_GO) {
+		paths = malloc(sizeof(char*)*N_SETTINGS_GO);
+		states = malloc(sizeof(char*)*N_SETTINGS_GO);
+
+    	size = N_SETTINGS_GO;
+	}
+	else if(psp_model == PSP_11000) {
+		paths = malloc(sizeof(char*)*N_SETTINGS_STREET);
+		states = malloc(sizeof(char*)*N_SETTINGS_STREET);
+
+    	size = N_SETTINGS_STREET;
+	}
+	
+	else {
+		paths = malloc(sizeof(char*)*N_SETTINGS_SLIM);
+		states = malloc(sizeof(char*)*N_SETTINGS_SLIM);
+
+    	size = N_SETTINGS_SLIM;
+	}
+
     settings_to_text(paths, states);
 
     draw_submenu(header, paths, states, size, dir);
@@ -243,8 +371,24 @@ void settings_submenu(){
 		}
         if(pad.Buttons & PSP_CTRL_LEFT) {
             sceKernelDelayThread(200000);
-			int* value = settings_items[dir].value;
-            int max = settings_items[dir].max;
+			int* value;
+			int max;
+			if(psp_model == PSP_1000) {
+				value = settings_items_1k[dir].value;
+            	max = settings_items_1k[dir].max;
+			}
+			else if(psp_model == PSP_11000) {
+				value = settings_items_street[dir].value;
+            	max = settings_items_street[dir].max;
+			}
+			else if(psp_model == PSP_GO) {
+				value = settings_items_go[dir].value;
+            	max = settings_items_go[dir].max;
+			}
+			else {
+				value = settings_items_slim[dir].value;
+            	max = settings_items_slim[dir].max;
+			}
             *value = (*value) - 1;
 			if(*value<0) *value = max-1;
             
@@ -253,8 +397,24 @@ void settings_submenu(){
 		}
         if(pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_RIGHT)) {
             sceKernelDelayThread(200000);
-			int* value = settings_items[dir].value;
-            int max = settings_items[dir].max;
+			int* value;
+			int max;
+			if(psp_model == PSP_1000) {
+				value = settings_items_1k[dir].value;
+            	max = settings_items_1k[dir].max;
+			}
+			else if(psp_model == PSP_11000) {
+				value = settings_items_street[dir].value;
+            	max = settings_items_street[dir].max;
+			}
+			else if(psp_model == PSP_GO) {
+				value = settings_items_go[dir].value;
+            	max = settings_items_go[dir].max;
+			}
+			else {
+				value = settings_items_slim[dir].value;
+            	max = settings_items_slim[dir].max;
+			}
             *value = (*value) + 1;
 			if(*value>=max) *value = 0;
             
