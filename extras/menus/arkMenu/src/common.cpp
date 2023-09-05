@@ -225,8 +225,6 @@ void common::resetConf(){
     config.menusize = 0;
     config.show_path = 0;
     config.browser_icon0 = 1;
-    config.noumd = 0;
-    config.noanalog = 0;
 }
 
 void common::launchRecovery(){
