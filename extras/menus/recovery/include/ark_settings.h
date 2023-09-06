@@ -94,6 +94,20 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
+} pspclock = {
+    "PSP CPU Clock",
+    MAX_ARK_OPTIONS,
+    0,
+    &(cfw_config.overclock),
+    ARK_OPTIONS
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
 } powersave = {
     "PowerSave",
     MAX_ARK_OPTIONS,
@@ -429,12 +443,18 @@ settings_entry* ark_conf_entries_street[] = {
 #define MAX_ARK_CONF_STREET (sizeof(ark_conf_entries_street)/sizeof(ark_conf_entries_street[0]))
 
 settings_entry* ark_conf_entries_vita[] = {
+    (settings_entry*)&pspclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
 };
 #define MAX_ARK_CONF_VITA (sizeof(ark_conf_entries_vita)/sizeof(ark_conf_entries_vita[0]))
 
 settings_entry* ark_conf_entries_adr[] = {
+    (settings_entry*)&pspclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&launcher,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
