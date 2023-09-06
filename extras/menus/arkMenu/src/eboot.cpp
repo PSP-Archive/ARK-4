@@ -223,7 +223,8 @@ void Eboot::doExecute(){
 }
 
 void Eboot::executeRecovery(const char* path){
-    if (common::fileExists(path)){
+    string fakent = string(common::getArkConfig()->arkpath) + "VBOOT.PBP";
+    if (fakent != path && common::fileExists(path)){
         struct SceKernelLoadExecVSHParam param;
         
         memset(&param, 0, sizeof(param));
