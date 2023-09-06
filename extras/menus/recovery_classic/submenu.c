@@ -162,6 +162,18 @@ Setting settings_items_adr[] =
 
 #define N_SETTINGS_ADR (sizeof(settings_items_adr)/sizeof(settings_items_adr[0]))
 
+Setting settings_items_vita[] =
+{
+    { N_OPTS, &(config.overclock), "PSP CPU Clock", ark_settings_options },
+    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
+    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
+};
+
+#define N_SETTINGS_VITA (sizeof(settings_items_vita)/sizeof(settings_items_vita[0]))
+
+
 static settings_to_text(char** names, char** states, Setting* settings_items, int size){
     for(int i = 0; i < size; i++){
         names[i] = settings_items[i].name;
@@ -309,9 +321,15 @@ void settings_submenu(){
     Setting* settings_items;
     char* header = "* Custom Firmware Settings                                         *";
 
-	if(IS_VITA_ADR(ark_config)) {
-    	size = N_SETTINGS_ADR;
-        settings_items = settings_items_adr;
+	if(IS_VITA(ark_config)) {
+		if(IS_VITA_ADR(ark_config)) {
+			size = N_SETTINGS_ADR;
+			settings_items = settings_items_adr;
+		}
+		else {
+			size = N_SETTINGS_VITA;
+			settings_items = settings_items_vita;
+		}
 	}
 	else if(psp_model == PSP_1000) {
     	size = N_SETTINGS_1K;
