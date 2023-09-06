@@ -71,7 +71,6 @@ GetItem GetItemes[] =
     { 17, 0, "Turn off LEDs" },
     { 18, 0, "Disable UMD Drive" },
     { 19, 0, "Disable Analog Stick" },
-    { 20, 0, "PSP CPU Clock" },
 };
 
 #define PLUGINS_CONTEXT 1
@@ -130,7 +129,6 @@ struct {
     {N_OPTS, ark_settings_options}, // Turn off LEDs
     {2, ark_settings_boolean}, // Disable UMD Drive
     {2, ark_settings_boolean}, // Disable Analog Stick 
-    {N_OPTS, ark_settings_options}, // PSP CPU Clock 
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
@@ -568,7 +566,6 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.noled,			// 15
                 config.noumd,			// 16
                 config.noanalog,		// 17
-                config.pspclock,		// 18
             };
             
             int i;
@@ -624,7 +621,6 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.noled,
                 &config.noumd,
                 &config.noanalog,
-                &config.pspclock,
             };
             
             int i;
