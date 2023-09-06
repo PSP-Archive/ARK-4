@@ -54,7 +54,6 @@ typedef struct
     int noled;
     int noumd;
     int noanalog;
-    int pspclock;
 } CFWConfig;
 
 typedef struct
