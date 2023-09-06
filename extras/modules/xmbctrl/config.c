@@ -100,6 +100,10 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.noanalog = opt;
         return 1;
     }
+    else if (strcasecmp(path, "pspclock") == 0){
+        config.pspclock = opt;
+        return 1;
+	}
     return 0;
 }
 
@@ -181,6 +185,7 @@ void saveSettings(){
     processSetting(fd, line, "noled", config.noled);
     processSetting(fd, line, "noumd", config.noumd);
     processSetting(fd, line, "noanalog", config.noanalog);
+    processSetting(fd, line, "pspclock", config.pspclock);
 
     for (int i=0; i<custom_config.count; i++){
         sceIoWrite(fd, custom_config.table[i], strlen(custom_config.table[i]));
