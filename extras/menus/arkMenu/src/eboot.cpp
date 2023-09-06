@@ -1,5 +1,6 @@
 #include "eboot.h"
 #include <systemctrl.h>
+#include <kubridge.h>
 
 Eboot::Eboot(string path){
     
@@ -221,16 +222,26 @@ void Eboot::doExecute(){
 }
 
 void Eboot::executeRecovery(const char* path){
-    struct SceKernelLoadExecVSHParam param;
-    
-    memset(&param, 0, sizeof(param));
-    
-    int runlevel = HOMEBREW_RUNLEVEL;
-    
-    param.args = strlen(path) + 1;
-    param.argp = (char*)path;
-    param.key = "game";
-    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+    if (common::fileExists(path)){
+        struct SceKernelLoadExecVSHParam param;
+        
+        memset(&param, 0, sizeof(param));
+        
+        int runlevel = HOMEBREW_RUNLEVEL;
+        
+        param.args = strlen(path) + 1;
+        param.argp = (char*)path;
+        param.key = "game";
+        sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+    }
+    else {
+        string recovery_prx = string(common::getArkConfig()->arkpath) + "RECOVERY.PRX";
+        SceUID modid = kuKernelLoadModule(recovery_prx.c_str(), 0, NULL);
+		int res = sceKernelStartModule(modid, recovery_prx.size() + 1, (void*)recovery_prx.c_str(), NULL, NULL);
+        if (res >= 0){
+            while (1){sceKernelDelayThread(1000000);}; // wait for recovery to finish
+        }
+    }
 }
 
 void Eboot::executeUpdate(const char* path){

@@ -162,7 +162,8 @@ void GameManager::findEntries(){
     // add recovery menu
     if (common::getConf()->show_recovery){
         string recovery_path = string(common::getArkConfig()->arkpath) + "RECOVERY.PBP";
-        if (common::fileExists(recovery_path)){
+        string recovery_prx = string(common::getArkConfig()->arkpath) + "RECOVERY.PRX";
+        if (common::fileExists(recovery_path) || common::fileExists(recovery_prx)){
             Eboot* recovery_menu = new Eboot(recovery_path);
             recovery_menu->setName("Recovery Menu");
             this->categories[HOMEBREW]->getVector()->insert(this->categories[HOMEBREW]->getVector()->begin(), recovery_menu);
