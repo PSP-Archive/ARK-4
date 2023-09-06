@@ -162,6 +162,9 @@ struct {
     char** opts;
 } settings_items_adr[] =
 {
+    { N_OPTS, &(config.overclock), "PSP CPU Clock", ark_settings_options },
+    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
+    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
     { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },

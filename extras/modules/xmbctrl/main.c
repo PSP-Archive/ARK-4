@@ -136,7 +136,7 @@ struct {
 typedef struct
 {
     char *items[2];
-    char *options[N_ITEMS];
+    char *options[N_ITEMS+1];
 } StringContainer;
 
 StringContainer string;
@@ -300,6 +300,10 @@ int LoadTextLanguage(int new_id)
     }
 
     if(fd >= 0) sceIoClose(fd);
+
+    if (IS_VITA(ark_config)){
+        sce_paf_private_strcpy(string.options[3], string.options[N_ITEMS]); // replace "Overclock" with "PSP CPU Clock" on Vita
+    }
 
     return 1;
 }
