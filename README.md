@@ -47,6 +47,7 @@ as well as unique and exclusive new features not found anywhere else.
       - [Advanced VSH Menu Options](#advanced-vsh-menu-options)
       - [Installing Plugins](#installing-plugins)
       - [Configuration and Settings](#configuration-and-settings)
+      - [Custom Launcher](#custom-launcher)
       - [Custom Themes](#custom-themes)
       - [Other Launchers](#other-launchers)
   * [Other](#other)
@@ -513,6 +514,9 @@ This also allows you to enable settings on specific games:
 </p>
 
 <p>
+
+#### Custom Launcher
+  
 ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable.
 
 ![Launcher Game Menu](.github/screenshots/pic_0000.png "Launcher Game Menu")
@@ -554,7 +558,7 @@ You can however change it to whatever you please. You can change the theme used 
 
 <p>
 
-#### Custom Themes
+###### Custom Themes
 You can install themes within Custom Launcher (and Recovery Menu). Just place the `themes` folder anywhere on your PSP and use the file browser in the Custom Launcher to select which theme (`THEME.ARK`) you would like to install. By selecting it a submenu will pop up asking to install it or to preview the theme without installing.
 
 <i>Orbs are animations and not part of the actual Themes </i>
@@ -634,7 +638,7 @@ Theme: Yokai
 
 
 
-#### Other Launchers
+###### Other Launchers
 <p>
 
 Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community.
