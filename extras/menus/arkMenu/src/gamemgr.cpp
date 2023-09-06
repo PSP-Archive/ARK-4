@@ -163,8 +163,13 @@ void GameManager::findEntries(){
     if (common::getConf()->show_recovery){
         string recovery_path = string(common::getArkConfig()->arkpath) + "RECOVERY.PBP";
         string recovery_prx = string(common::getArkConfig()->arkpath) + "RECOVERY.PRX";
-        if (common::fileExists(recovery_path) || common::fileExists(recovery_prx)){
+        if (common::fileExists(recovery_path)){
             Eboot* recovery_menu = new Eboot(recovery_path);
+            recovery_menu->setName("Recovery Menu");
+            this->categories[HOMEBREW]->getVector()->insert(this->categories[HOMEBREW]->getVector()->begin(), recovery_menu);
+        }
+        else if (common::fileExists(recovery_prx)){
+            Eboot* recovery_menu = new Eboot(string(common::getArkConfig()->arkpath) + "VBOOT.PBP"); // fake entry
             recovery_menu->setName("Recovery Menu");
             this->categories[HOMEBREW]->getVector()->insert(this->categories[HOMEBREW]->getVector()->begin(), recovery_menu);
         }

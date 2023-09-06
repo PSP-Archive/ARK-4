@@ -1,4 +1,5 @@
 #include "eboot.h"
+#include "system_mgr.h"
 #include <systemctrl.h>
 #include <kubridge.h>
 
@@ -237,9 +238,11 @@ void Eboot::executeRecovery(const char* path){
     else {
         string recovery_prx = string(common::getArkConfig()->arkpath) + "RECOVERY.PRX";
         SceUID modid = kuKernelLoadModule(recovery_prx.c_str(), 0, NULL);
-		int res = sceKernelStartModule(modid, recovery_prx.size() + 1, (void*)recovery_prx.c_str(), NULL, NULL);
-        if (res >= 0){
-            while (1){sceKernelDelayThread(1000000);}; // wait for recovery to finish
+        if (modid >= 0){
+            int res = sceKernelStartModule(modid, recovery_prx.size() + 1, (void*)recovery_prx.c_str(), NULL, NULL);
+            if (res >= 0){
+                while (1){sceKernelDelayThread(1000000);}; // wait for recovery to finish
+            }
         }
     }
 }
