@@ -23,6 +23,13 @@ extern int psp_model;
 
 #define printf pspDebugScreenPrintf
 
+typedef struct {
+    int max;
+    int* value;
+    char* name;
+    char** opts;
+} Setting;
+
 char* ark_settings_options[] = {
     (char*)"Disabled",
     (char*)"Always",
@@ -48,12 +55,7 @@ char* ark_settings_infernocache[] = {
 };
 
 // PSP 1K
-struct {
-    int max;
-    int* value;
-    char* name;
-    char** opts;
-} settings_items_1k[] =
+Setting settings_items_1k[] =
 {
     { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
     { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
@@ -73,12 +75,7 @@ struct {
 #define N_SETTINGS_1K (sizeof(settings_items_1k)/sizeof(settings_items_1k[0]))
 
 // PSP Slim
-struct {
-    int max;
-    int* value;
-    char* name;
-    char** opts;
-} settings_items_slim[] =
+Setting settings_items_slim[] =
 {
     { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
     { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
@@ -100,12 +97,7 @@ struct {
 #define N_SETTINGS_SLIM (sizeof(settings_items_slim)/sizeof(settings_items_slim[0]))
 
 // PSP GO
-struct {
-    int max;
-    int* value;
-    char* name;
-    char** opts;
-} settings_items_go[] =
+Setting settings_items_go[] =
 {
     { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
     { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
@@ -129,12 +121,7 @@ struct {
 #define N_SETTINGS_GO (sizeof(settings_items_go)/sizeof(settings_items_go[0]))
 
 // PSP 110000 (Street)
-struct {
-    int max;
-    int* value;
-    char* name;
-    char** opts;
-} settings_items_street[] =
+Setting settings_items_street[] =
 {
     { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
     { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
@@ -155,12 +142,7 @@ struct {
 
 #define N_SETTINGS_STREET (sizeof(settings_items_street)/sizeof(settings_items_street[0]))
 
-struct {
-    int max;
-    int* value;
-    char* name;
-    char** opts;
-} settings_items_adr[] =
+Setting settings_items_adr[] =
 {
     { N_OPTS, &(config.overclock), "PSP CPU Clock", ark_settings_options },
     { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
@@ -180,37 +162,11 @@ struct {
 
 #define N_SETTINGS_ADR (sizeof(settings_items_adr)/sizeof(settings_items_adr[0]))
 
-static settings_to_text(char** names, char** states){
-		if(IS_VITA_ADR(ark_config)) {
-			for(int i = 0; i < N_SETTINGS_ADR; i++){
-				names[i] = settings_items_adr[i].name;
-				states[i] = settings_items_adr[i].opts[*(settings_items_adr[i].value)];
-			}
-		}
-		else if(psp_model == PSP_1000) {
-			for(int i = 0; i < N_SETTINGS_1K; i++){
-				names[i] = settings_items_1k[i].name;
-				states[i] = settings_items_1k[i].opts[*(settings_items_1k[i].value)];
-			}
-		}
-		else if(psp_model == PSP_GO) {
-			for(int i = 0; i < N_SETTINGS_GO; i++){
-				names[i] = settings_items_go[i].name;
-				states[i] = settings_items_go[i].opts[*(settings_items_go[i].value)];
-			}
-		}
-		else if(psp_model == PSP_11000) {
-			for(int i = 0; i < N_SETTINGS_STREET; i++){
-				names[i] = settings_items_street[i].name;
-				states[i] = settings_items_street[i].opts[*(settings_items_street[i].value)];
-			}
-		}
-		else {
-			for(int i = 0; i < N_SETTINGS_SLIM; i++){
-				names[i] = settings_items_slim[i].name;
-				states[i] = settings_items_slim[i].opts[*(settings_items_slim[i].value)];
-			}
-		}
+static settings_to_text(char** names, char** states, Setting* settings_items, int size){
+    for(int i = 0; i < size; i++){
+        names[i] = settings_items[i].name;
+        states[i] = settings_items[i].opts[*(settings_items[i].value)];
+    }
 }
 
 static int plugins_to_text(char** paths, char** states, int dir){
@@ -350,42 +306,35 @@ void settings_submenu(){
 	char** paths;
 	char** states;
 	int size;
-
+    Setting* settings_items;
     char* header = "* Custom Firmware Settings                                         *";
-	if(IS_VITA_ADR(ark_config)) {
-		paths = malloc(sizeof(char*)*N_SETTINGS_ADR);
-		states = malloc(sizeof(char*)*N_SETTINGS_ADR);
 
+	if(IS_VITA_ADR(ark_config)) {
     	size = N_SETTINGS_ADR;
+        settings_items = settings_items_adr;
 	}
 	else if(psp_model == PSP_1000) {
-		paths = malloc(sizeof(char*)*N_SETTINGS_1K);
-		states = malloc(sizeof(char*)*N_SETTINGS_1K);
-
     	size = N_SETTINGS_1K;
+        settings_items = settings_items_1k;
 	}
 
 	else if(psp_model == PSP_GO) {
-		paths = malloc(sizeof(char*)*N_SETTINGS_GO);
-		states = malloc(sizeof(char*)*N_SETTINGS_GO);
-
     	size = N_SETTINGS_GO;
+        settings_items = settings_items_go;
 	}
 	else if(psp_model == PSP_11000) {
-		paths = malloc(sizeof(char*)*N_SETTINGS_STREET);
-		states = malloc(sizeof(char*)*N_SETTINGS_STREET);
-
     	size = N_SETTINGS_STREET;
+        settings_items = settings_items_street;
 	}
-	
 	else {
-		paths = malloc(sizeof(char*)*N_SETTINGS_SLIM);
-		states = malloc(sizeof(char*)*N_SETTINGS_SLIM);
-
     	size = N_SETTINGS_SLIM;
-	}
+        settings_items = settings_items_slim;
+    }
 
-    settings_to_text(paths, states);
+    paths = malloc(sizeof(char*)*size);
+	states = malloc(sizeof(char*)*size);
+
+    settings_to_text(paths, states, settings_items, size);
 
     draw_submenu(header, paths, states, size, dir);
 
@@ -412,62 +361,22 @@ void settings_submenu(){
 		}
         if(pad.Buttons & PSP_CTRL_LEFT) {
             sceKernelDelayThread(200000);
-			int* value;
-			int max;
-			if(IS_VITA_ADR(ark_config)) {
-				value = settings_items_adr[dir].value;
-            	max = settings_items_adr[dir].max;
-			}
-			else if(psp_model == PSP_1000) {
-				value = settings_items_1k[dir].value;
-            	max = settings_items_1k[dir].max;
-			}
-			else if(psp_model == PSP_11000) {
-				value = settings_items_street[dir].value;
-            	max = settings_items_street[dir].max;
-			}
-			else if(psp_model == PSP_GO) {
-				value = settings_items_go[dir].value;
-            	max = settings_items_go[dir].max;
-			}
-			else {
-				value = settings_items_slim[dir].value;
-            	max = settings_items_slim[dir].max;
-			}
+			int* value = settings_items[dir].value;
+			int max = settings_items[dir].max;
             *value = (*value) - 1;
 			if(*value<0) *value = max-1;
             
-            settings_to_text(paths, states);
+            settings_to_text(paths, states, settings_items, size);
             draw_submenu(header, paths, states, size, dir);
 		}
         if(pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_RIGHT)) {
             sceKernelDelayThread(200000);
-			int* value;
-			int max;
-			if(IS_VITA_ADR(ark_config)) {
-				value = settings_items_adr[dir].value;
-            	max = settings_items_adr[dir].max;
-			}
-			else if(psp_model == PSP_1000) {
-				value = settings_items_1k[dir].value;
-            	max = settings_items_1k[dir].max;
-			}
-			else if(psp_model == PSP_11000) {
-				value = settings_items_street[dir].value;
-            	max = settings_items_street[dir].max;
-			}
-			else if(psp_model == PSP_GO) {
-				value = settings_items_go[dir].value;
-            	max = settings_items_go[dir].max;
-			}
-			else {
-				value = settings_items_slim[dir].value;
-            	max = settings_items_slim[dir].max;
-			}
+			int* value = settings_items[dir].value;
+			int max = settings_items[dir].max;
             *value = (*value) + 1;
 			if(*value>=max) *value = 0;
             
-            settings_to_text(paths, states);
+            settings_to_text(paths, states, settings_items, size);
             draw_submenu(header, paths, states, size, dir);
 		}
         if((pad.Buttons & PSP_CTRL_TRIANGLE)) {
