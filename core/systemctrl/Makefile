@@ -33,6 +33,8 @@ OBJS = \
 	src/msstor_cache.o \
 	src/setlongjmp.o \
 	$(ARKROOT)/common/utils/patches.o \
+	$(ARKROOT)/libs/ansi-c/lowerstring.o \
+	
 	
 	
 all: $(TARGET).prx
