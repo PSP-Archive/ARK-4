@@ -150,6 +150,8 @@
     "Hide DLC": "Ascunde DLC",
     "Turn off LEDs": "Stinge LED-urile",
     "VSH Region Change": "Schimbare regiune VSH",
-    "UMD Region Change": "Schimbare regiune UMD"
+    "UMD Region Change": "Schimbare regiune UMD",
+    "Disable UMD Drive": "Dezactivati unitatea UMD",
+    "Disable Analog Stick": "Dezactiveaza stick-ul analogic"
 
 }

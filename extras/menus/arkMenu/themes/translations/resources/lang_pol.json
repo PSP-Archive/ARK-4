@@ -150,5 +150,7 @@
     "Hide DLC": "Ukryj DLC",
     "Turn off LEDs": "Wylacz Ledy",
     "VSH Region Change": "Zmiana regionu VSH",
-    "UMD Region Change": "Zmiana regionu UMD"
+    "UMD Region Change": "Zmiana regionu UMD",
+    "Disable UMD Drive": "Wylacz dysk UMD",
+    "Disable Analog Stick": "Wylacz drazek analogowy"
 }
