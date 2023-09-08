@@ -149,5 +149,7 @@
     "Hide DLC": "Скрыть DLC",
     "Turn off LEDs": "Отключить светодиоды",
     "VSH Region Change": "Смена региона для VSH",
-    "UMD Region Change": "Смена региона для UMD"
+    "UMD Region Change": "Смена региона для UMD",
+	"Disable UMD Drive": "Отключить UMD-накопитель",
+	"Disable Analog Stick": "Отключить аналоговый стик"
 }

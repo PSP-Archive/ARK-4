@@ -150,6 +150,8 @@
     "Hide DLC": "Masquer DLC",
     "Turn off LEDs": "Éteindre les DELs",
     "VSH Region Change": "Changement de Région VSH",
-    "UMD Region Change": "Changement de Région UMD"
+    "UMD Region Change": "Changement de Région UMD",
+	"Disable UMD Drive": "Désactiver le lecteur UMD",
+	"Disable Analog Stick": "Désactiver le stick analogique"
 
 }

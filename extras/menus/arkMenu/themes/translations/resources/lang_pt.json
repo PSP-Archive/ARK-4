@@ -149,7 +149,9 @@
     "Hide DLC": "Ocultar DLC",
     "Turn off LEDs": "Desligar LEDs do PSP",
     "VSH Region Change": "Mudar região do VSH",
-    "UMD Region Change": "Mudar região do UMD"
+    "UMD Region Change": "Mudar região do UMD",
+	"Disable UMD Drive": "Desativar unidade UMD",
+	"Disable Analog Stick": "Desativar stick analógico"
 
 
 }
