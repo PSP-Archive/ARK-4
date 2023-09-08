@@ -16,3 +16,6 @@ Evitar borrar la hibernación en PSP Go
 Ocultar dirección MAC
 Ocultar DLC
 Apagar LEDs
+Deshabilitar unidad de UMD
+Deshabilitar stick analógico
+Overclock de PSP

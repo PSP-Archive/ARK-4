@@ -16,3 +16,6 @@ PSP Go舊挿件支持
 隱藏MAC地址
 隱藏DLC
 關閉LED
+禁用 UMD 驅動器
+禁用模擬搖桿
+PSP超頻

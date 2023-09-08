@@ -44,7 +44,7 @@ char *settings[] =
     "Turn off LEDs",
     "Disable UMD Drive",
     "Disable Analog Stick",
-    "PSP CPU Clock",
+    "PSP Overclock",
 };
 
 #endif

@@ -16,3 +16,6 @@ Voorkomen dat slaapstand wordt verwijderd van de PSP Go
 MAC-adres Verbergen
 DLC Verbergen
 LEDs Uitschakelen
+UMD-schijf uitschakelen
+Analoge stick uitschakelen
+PSP Overklokken

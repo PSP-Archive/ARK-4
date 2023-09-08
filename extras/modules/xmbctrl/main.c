@@ -287,13 +287,7 @@ int LoadTextLanguage(int new_id)
         }
         else
         {
-    		if (IS_VITA(ark_config) && j == 3){
-        		sce_paf_private_strcpy(settings[j], "PSP CPU Clock"); // replace "Overclock" with "PSP CPU Clock" on Vita
-            	sce_paf_private_strcpy(line, settings[j]); //to use the settings.h and its text entries.
-    		}
-			else {
-            	sce_paf_private_strcpy(line, settings[j]); //to use the settings.h and its text entries.
-			}
+            sce_paf_private_strcpy(line, settings[j]); //to use the settings.h and its text entries.
             j++;
         }
         
@@ -307,6 +301,10 @@ int LoadTextLanguage(int new_id)
 
     if(fd >= 0) sceIoClose(fd);
 
+    if (IS_VITA(ark_config)){
+        sce_paf_private_free(string.options[1]);
+        string.options[1] = string.options[N_ITEMS]; // replace "Overclock" with "PSP CPU Clock" on Vita
+    }
 
     return 1;
 }

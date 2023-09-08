@@ -6,7 +6,10 @@
 - `Classic Recovery Menu` can now be used on `PS Vita` when the regular recovery is not found (removed).
 - Added new setting to `Disable UMD Drive` on `PSP` (except for `Go`).
 - Added new setting to `Disable Analog Stick`.
-
+- Improved stability of `Custom Launcher` by forcing `malloc/free` to be `thread-safe`.
+- Implemented new `oe_malloc/oe_free` functions that consume less memory.
+- Replaced `msstor_cache` code (`Memory Stick Speedup` setting) from `PRO/ARK` with the one from `ME`. Fixes issues with `cwcheat` and lowers memory consumption.
+- Fixed issue that would cause `MP3 Playlists` to loop current song instead of playing the next song.
 
 ## Version 4.20.63 (2023-08-11):
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42063

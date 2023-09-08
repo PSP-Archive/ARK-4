@@ -16,3 +16,6 @@ Verhindert das Löschen des Ruhezustands auf der PSP Go
 Verstecke MAC-Adresse
 Verstecke DLC
 LEDs Abschalten
+Deaktivieren Sie das UMD-Laufwerk
+Analogstick deaktivieren
+PSP CPU Übertakten
