@@ -1,8 +1,9 @@
 # ARK Changelog
 
-## Version 4.20.64 (???)
+## Version 4.20.64 (2023-09-08)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42064
 - Added multi-runlevels support for plugins (i.e "game vsh, ms0:/seplugins/etc, on").
-- Added support for changing `CPU Clock` in `PS Vita`. Note: the `Overclock` setting (333MHz) is renamed to `PSP CPU Clock` to avoid confusion with native Vita Overclock (444MHz-555MHz).
+- Added support for changing `CPU Clock` in `PS Vita`. Note: the `Overclock` setting (333MHz) is renamed to `PSP Overclock` to avoid confusion with native Vita Overclock (444MHz-555MHz).
 - `Classic Recovery Menu` can now be used on `PS Vita` when the regular recovery is not found (removed).
 - Added new setting to `Disable UMD Drive` on `PSP` (except for `Go`).
 - Added new setting to `Disable Analog Stick`.
