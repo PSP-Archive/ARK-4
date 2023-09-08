@@ -164,7 +164,7 @@ Setting settings_items_adr[] =
 
 Setting settings_items_vita[] =
 {
-    { N_OPTS, &(config.overclock), "PSP CPU Clock", ark_settings_options },
+    { N_OPTS, &(config.overclock), "PSP Overclock", ark_settings_options },
     { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
     { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
