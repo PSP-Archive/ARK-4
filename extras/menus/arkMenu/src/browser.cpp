@@ -217,6 +217,7 @@ void Browser::update(Entry* ent, bool skip_prompt){
         delete aux;
     }
     else if (e->getFileType() == FILE_PICTURE){
+		sceKernelDelayThread(100000);
         optionsmenu = new ImageViewer(e->getPath());
         optionsmenu->control();
         ImageViewer* aux = (ImageViewer*)optionsmenu;
