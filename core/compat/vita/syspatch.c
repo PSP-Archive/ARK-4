@@ -32,34 +32,6 @@ KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDelayThread = &sceKernelDelayThread,
 };
 
-// Return Game Product ID of currently running Game
-int sctrlARKGetGameID(char gameid[GAME_ID_MINIMUM_BUFFER_SIZE])
-{
-    // Invalid Arguments
-    if(gameid == NULL) return -1;
-    
-    // Elevate Permission Level
-    unsigned int k1 = pspSdkSetK1(0);
-    
-    // Fetch Game Information Structure
-    void * gameinfo = SysMemForKernel_EF29061C_Fixed();
-    
-    // Restore Permission Level
-    pspSdkSetK1(k1);
-    
-    // Game Information unavailable
-    if(gameinfo == NULL) return -3;
-    
-    // Copy Product Code
-    memcpy(gameid, gameinfo + 0x44, GAME_ID_MINIMUM_BUFFER_SIZE - 1);
-    
-    // Terminate Product Code
-    gameid[GAME_ID_MINIMUM_BUFFER_SIZE - 1] = 0;
-    
-    // Return Success
-    return 0;
-}
-
 // This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
 int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
 {
@@ -141,7 +113,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 
     patchFileManagerImports(mod);
     
-    patchGameInfoGetter(mod);
+    //patchGameInfoGetter(mod);
 
     // Patch sceKernelExitGame Syscalls
     if(strcmp(mod->modname, "sceLoadExec") == 0)

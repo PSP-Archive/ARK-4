@@ -23,7 +23,12 @@ using namespace std;
 #define MAX_ENTRIES 5
 static SystemEntry* entries[MAX_ENTRIES];
 
+extern "C" void my_malloc_init();
+
 int main(int argc, char** argv){
+
+    // make malloc/free threadsafe
+    my_malloc_init();
 
     srand(time(NULL));
 

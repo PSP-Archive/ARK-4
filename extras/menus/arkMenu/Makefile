@@ -16,6 +16,7 @@ BUILD_PRX = 1
 
 OBJS = \
 		main.o \
+		mem.o \
 		imports.o \
 		src/debug.o \
 		src/common.o \

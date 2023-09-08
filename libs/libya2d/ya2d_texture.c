@@ -268,7 +268,8 @@ void ya2d_draw_texture_rotate_hotspot(struct ya2d_texture *texture, int x, int y
 
 void ya2d_flush_texture(struct ya2d_texture *texture)
 {
-    sceKernelDcacheWritebackRange(texture->data, texture->data_size);
+    if (texture)
+        sceKernelDcacheWritebackRange(texture->data, texture->data_size);
 }
 
 void ya2d_swizzle_texture(struct ya2d_texture *texture)
