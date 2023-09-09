@@ -336,10 +336,10 @@ void PSPOnModuleStart(SceModule2 * mod){
 
             // handle mscache
             if (se_config->msspeed){
-                if (psp_model == PSP_GO)
-                    msstorCacheInit("eflash0a0f1p", 4 * 1024);
-                else
-                    msstorCacheInit("msstor0p", 4 * 1024);
+                char* drv = "msstor0p";
+                if (psp_model == PSP_GO && sctrlKernelBootFrom()==0x50)
+                    drv = "eflash0a0f1p";
+                msstorCacheInit(drv, 4 * 1024);
             }
             // Boot Complete Action done
             booted = 1;
