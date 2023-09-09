@@ -302,9 +302,11 @@ The instructions are as follows:
 
 There are three ways to update ARK:
 
-  - Option 1: Use the `System Update` feature in the XMB. Requires your PSP/Vita to be connected to the internet.
+  - Option 1: Use the `System Update` feature in the `XMB` or the `Network` tab in `Custom Launcher` to perform an `OTA` update. Requires your PSP/Vita to be connected to the internet.
   - Option 2: Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
-  - Option 3: Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
+  - Option 3: Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files. If running a `Full Installation` you will need to run the `Full Installer` again to flash the extra modules.
+
+The `OTA` updater has the server URL stored in a file named `UPDATER.TXT` inside `ARK_01234`. This allows the user to change their update server if they wish to use a custom one. For example, by adding `/test` at the end of the URL will make it point to the `pre-release` server, allowing you to install the latest build of ARK synchronized with the last commit on the main branch (these release may be `unstable` so act with care).
 
 </p>
 
@@ -334,7 +336,7 @@ When using a `Full Installation` on `PSP` and no `Recovery App` is available, `A
 <img src=".github/screenshots/pro_shell.jpg" width="450"></a>
 
 #### Vanilla Mode
-If the `Recovery App` is unavailable (i.e. `Full Installations`), or for a better/easier diagnostics, you can run `ARK` in `Vanilla Mode`, which temporarily disables settings and plugins when running `ARK` or booting any game.
+If the `Recovery App` is unavailable, or for a better/easier diagnostics, you can run `ARK` in `Vanilla Mode`, which temporarily disables settings and plugins when running `ARK` or booting any game.
 
 <p></p>
 
