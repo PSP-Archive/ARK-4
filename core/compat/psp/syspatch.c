@@ -21,6 +21,26 @@ extern ARKConfig* ark_config;
 extern SEConfig* se_config;
 extern STMOD_HANDLER previous;
 
+int (* DisplayGetFrameBuf)(void*, int, int, int) = NULL;
+
+// CWCHEAT Patch
+int sceKernelSuspendThreadPatched(SceUID thid) {
+	SceKernelThreadInfo info;
+	info.size = sizeof(SceKernelThreadInfo);
+	if(sceKernelReferThreadStatus(thid, &info) == 0) {
+        if (strcmp(info.name, "popsmain") == 0) {
+            //void* framebuf = NULL;
+			void *framebuf;
+            int width;
+			int pixelformat;
+
+			DisplayGetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0xEEDA2E54);
+            DisplayGetFrameBuf(&framebuf, &width, &pixelformat, 0);
+            memset(framebuf, 0, 512 * 272 * 4);
+		}
+	}
+    return sceKernelSuspendThread(thid);
+}
 // Return Boot Status
 int isSystemBooted(void)
 {
@@ -327,6 +347,13 @@ void PSPOnModuleStart(SceModule2 * mod){
         }
         goto flush;
     }
+
+	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
+    	//if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
+        	hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+			goto flush;
+		//}
+	}
     
     if(booted == 0)
     {
