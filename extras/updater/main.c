@@ -39,10 +39,10 @@ struct {
     char* dest;
 } flash_files[] = {
     {"IDSREG.PRX", "flash0:/kd/ark_idsreg.prx"},
-    {"XMBCTRL.PRX", "flash0:/kd/ark_xmbctrl.prx"},
+    {XMBCTRL_PRX, "flash0:/kd/ark_xmbctrl.prx"},
     {"USBDEV.PRX", "flash0:/vsh/module/ark_usbdev.prx"},
-    {"VSHMENU.PRX", "flash0:/vsh/module/ark_satelite.prx"},
-    {"RECOVERY.PRX", "flash0:/vsh/module/ark_recovery.prx"},
+    {VSH_MENU, "flash0:/vsh/module/ark_satelite.prx"},
+    {ARK_CLASSIC_RECOVERY, "flash0:/vsh/module/ark_recovery.prx"},
     {"UPDATER.TXT", "flash1:/UPDATER.TXT"},
 };
 static const int N_FLASH_FILES = (sizeof(flash_files)/sizeof(flash_files[0]));
@@ -155,7 +155,7 @@ int main(int argc, char * argv[])
     if (IS_PSP(ac)){
         char flash0_ark[ARK_PATH_SIZE];
         strcpy(flash0_ark, ark_config.arkpath);
-        strcat(flash0_ark, "FLASH0.ARK");
+        strcat(flash0_ark, FLASH0_ARK);
         pspDebugScreenPrintf("Extracting %s\n", flash0_ark);
         open_flash();
         extractArchive(sceIoOpen(flash0_ark, PSP_O_RDONLY, 0777), "flash0:/", &isVitaFile);

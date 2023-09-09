@@ -46,6 +46,7 @@
 #define ARK_MENU "VBOOT.PBP" // default launcher
 #define ARK_XMENU "XBOOT.PBP" // PS1 launcher
 #define ARK_RECOVERY "RECOVERY.PBP" // recovery app
+#define ARK_CLASSIC_RECOVERY "RECOVERY.PRX" // classic recovery app
 #define FLASH0_ARK "FLASH0.ARK" // ARK flash0 package
 #define VSH_MENU "VSHMENU.PRX" // ARK VSH Menu for XMB
 #define XMBCTRL_PRX "XMBCTRL.PRX" // XMB Control

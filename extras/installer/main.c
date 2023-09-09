@@ -22,10 +22,10 @@ struct {
     char* dest;
 } flash_files[] = {
     {"IDSREG.PRX", "flash0:/kd/ark_idsreg.prx"},
-    {"XMBCTRL.PRX", "flash0:/kd/ark_xmbctrl.prx"},
+    {XMBCTRL_PRX, "flash0:/kd/ark_xmbctrl.prx"},
     {"USBDEV.PRX", "flash0:/vsh/module/ark_usbdev.prx"},
-    {"VSHMENU.PRX", "flash0:/vsh/module/ark_satelite.prx"},
-    {"RECOVERY.PRX", "flash0:/vsh/module/ark_recovery.prx"},
+    {VSH_MENU, "flash0:/vsh/module/ark_satelite.prx"},
+    {ARK_CLASSIC_RECOVERY, "flash0:/vsh/module/ark_recovery.prx"},
     {"UPDATER.TXT", "flash1:/UPDATER.TXT"},
 };
 
