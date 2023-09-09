@@ -2,6 +2,7 @@ TARGET = pspcompat
 
 C_OBJS = \
 	main.o \
+	cwpatch.o \
 	syspatch.o \
 	high_mem.o  \
 	libertas.o   \

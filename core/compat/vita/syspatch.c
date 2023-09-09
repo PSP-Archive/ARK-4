@@ -20,7 +20,7 @@ extern void exitLauncher();
 
 extern SEConfig* se_config;
 
-int (* DisplayGetFrameBuf)(void*, int, int, int) = NULL;
+extern int sceKernelSuspendThreadPatched(SceUID thid);
 
 KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
@@ -33,25 +33,6 @@ KernelFunctions _ktbl = { // for vita flash patcher
     .KernelIOMkdir = &sceIoMkdir,
     .KernelDelayThread = &sceKernelDelayThread,
 };
-
-// CWCHEAT Patch
-int sceKernelSuspendThreadPatched(SceUID thid) {
-	SceKernelThreadInfo info;
-	info.size = sizeof(SceKernelThreadInfo);
-	if(sceKernelReferThreadStatus(thid, &info) == 0) {
-        if (strcmp(info.name, "popsmain") == 0) {
-            //void* framebuf = NULL;
-			void *framebuf;
-            int width;
-			int pixelformat;
-
-			DisplayGetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0xEEDA2E54);
-            DisplayGetFrameBuf(&framebuf, &width, &pixelformat, 0);
-            memset(framebuf, 0, 512 * 272 * 4);
-		}
-	}
-    return sceKernelSuspendThread(thid);
-}
 
 // This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
 int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)

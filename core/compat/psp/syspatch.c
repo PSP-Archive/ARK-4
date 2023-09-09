@@ -1,11 +1,11 @@
 #include <pspsdk.h>
+#include <pspsysmem_kernel.h>
 #include <pspinit.h>
 #include <globals.h>
 #include <graphics.h>
 #include <macros.h>
 #include <module2.h>
 #include <pspdisplay_kernel.h>
-#include <pspsysmem_kernel.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
@@ -21,26 +21,8 @@ extern ARKConfig* ark_config;
 extern SEConfig* se_config;
 extern STMOD_HANDLER previous;
 
-int (* DisplayGetFrameBuf)(void*, int, int, int) = NULL;
+extern int sceKernelSuspendThreadPatched(SceUID thid);
 
-// CWCHEAT Patch
-int sceKernelSuspendThreadPatched(SceUID thid) {
-	SceKernelThreadInfo info;
-	info.size = sizeof(SceKernelThreadInfo);
-	if(sceKernelReferThreadStatus(thid, &info) == 0) {
-        if (strcmp(info.name, "popsmain") == 0) {
-            //void* framebuf = NULL;
-			void *framebuf;
-            int width;
-			int pixelformat;
-
-			DisplayGetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0xEEDA2E54);
-            DisplayGetFrameBuf(&framebuf, &width, &pixelformat, 0);
-            memset(framebuf, 0, 512 * 272 * 4);
-		}
-	}
-    return sceKernelSuspendThread(thid);
-}
 // Return Boot Status
 int isSystemBooted(void)
 {
@@ -285,6 +267,13 @@ int pluginHandler(const char* path, int modid){
 void PSPOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
+
+	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
+    	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
+			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+			goto flush;
+		}
+	}
     
     if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
         patch_sceUmdMan_driver(mod);
@@ -348,12 +337,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
-    	//if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-        	hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
-			goto flush;
-		//}
-	}
+	
     
     if(booted == 0)
     {
@@ -372,6 +356,8 @@ void PSPOnModuleStart(SceModule2 * mod){
             booted = 1;
             goto flush;
         }
+
+
     }
     
 flush:
@@ -379,6 +365,7 @@ flush:
 
     // Forward to previous Handler
     if(previous) previous(mod);
+
 }
 
 int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
