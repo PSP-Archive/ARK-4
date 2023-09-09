@@ -237,7 +237,7 @@ void Eboot::executeRecovery(const char* path){
         sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
     }
     else {
-        string recovery_prx = string(common::getArkConfig()->arkpath) + ARK_CLASSIC_RECOVERY;
+        string recovery_prx = string(common::getArkConfig()->arkpath) + RECOVERY_PRX;
         SceUID modid = kuKernelLoadModule(recovery_prx.c_str(), 0, NULL);
         if (modid >= 0){
             int res = sceKernelStartModule(modid, recovery_prx.size() + 1, (void*)recovery_prx.c_str(), NULL, NULL);

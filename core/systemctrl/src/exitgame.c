@@ -77,7 +77,7 @@ void exitLauncher()
 	else if (ark_config->recovery || (strcmp(ark_config->launcher, "PROSHELL") == 0)){
 		// no recovery app? try classic module
 		strcpy(path, ark_config->arkpath);
-		strcat(path, ARK_CLASSIC_RECOVERY);
+		strcat(path, RECOVERY_PRX);
 		res = sceIoGetstat(path, &stat);
 		if (res < 0){
 			// try flash0
