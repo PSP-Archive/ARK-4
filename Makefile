@@ -112,8 +112,8 @@ copy-bin:
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	$(Q)cp -r dist/ARK_01234 dist/PSP/ARK_DC/
 	$(Q)find dist/themes/ -type d -name 'resources' -exec rm -rf {} \; 2>/dev/null || true
-	$(Q)cp -r dist/ARK_01234 loader/vpk/save/
-	$(Q)cd loader/vpk/ && zip -r ../../dist/PSVita/Standalone/ARK.vpk * && cd $(ARKROOT)
+	$(Q)cp -r dist/ARK_01234 loader/vpk/bin/save/
+	$(Q)cd loader/vpk/bin/ && zip -r ../../../dist/PSVita/Standalone/ARK.vpk * && cd $(ARKROOT)
 	$(Q)$(MAKE) -C extras/updater/
 	$(Q)cp extras/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
 
@@ -226,7 +226,7 @@ clean:
 	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
 	$(Q)find -name 'THEME.ARK' -exec rm {} \;
 	$(Q)rm -f extras/menus/arkMenu/LANG.ARK
-	$(Q)rm -rf loader/vpk/save/ARK_01234
+	$(Q)rm -rf loader/vpk/bin/save/ARK_01234
 
 subdirs: $(SUBDIRS)
 
