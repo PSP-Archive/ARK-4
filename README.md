@@ -230,6 +230,7 @@ The instructions are as follows:
 #### Legacy Game Exploits (PSP & Vita)
 <p>
 
+- This is mainly for `developers`.
 - Considering the savedata exploit loads `H.BIN` from the savedata path.
 - Copy every file from `ARK_01234` except `PARAM.SFO`, `SAVEDATA.BIN` and `K.BIN` (`ICON0.PNG` can also be ignored), into the hacked savedata folder.
 - You need to have a `K.BIN` if you are running on an ancient Vita firmware (there's plenty of kernel exploit sources in ARK-2 and ARK-3 for reference).
