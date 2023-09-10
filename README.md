@@ -648,7 +648,7 @@ After lots of work getting the same `ARK` binaries to properly work on both PSP 
 
 - `meetpatty` for his excellent work in fixing bugs and adding important features like cIPL and DevKit support as well as porting `Time Machine` and `Despertar del Cementerio`.
 
-- `Silika` for unlocking the full potential of the PS Vita's Official PSP emulator with such great tools like `ChovySign`, `NoPspEmuDrm` and `ps1cfw_enabler`.
+- `SilicaAndPina` for unlocking the full potential of the PS Vita's Official PSP emulator with such great tools like `ChovySign`, `NoPspEmuDrm` and `ps1cfw_enabler`.
 
 - `Codestation` for his incredible work improving CSO speeds and creating the ZSO format.
 
