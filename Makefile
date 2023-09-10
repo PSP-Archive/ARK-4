@@ -226,7 +226,7 @@ clean:
 	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
 	$(Q)find -name 'THEME.ARK' -exec rm {} \;
 	$(Q)rm -f extras/menus/arkMenu/LANG.ARK
-	$(Q)rm -r loader/vpk/save/ARK_01234
+	$(Q)rm -rf loader/vpk/save/ARK_01234
 
 subdirs: $(SUBDIRS)
 
