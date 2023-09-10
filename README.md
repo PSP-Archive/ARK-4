@@ -199,7 +199,7 @@ The instructions are as follows:
 <p>
 
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
-  - Download and install latest <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
+  - If your console isn't activated with a `PSN` account, you need to install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
   - Copy `ARK.vpk` from `Vita/Standalone/` folder anywhere on your vita and install using `VitaShell`. 
   - Open `ARK Installer` and wait for the install process to finish. An `ARK` bubble will appear in `Live Area`.
   - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
