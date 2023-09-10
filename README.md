@@ -29,9 +29,7 @@ as well as unique and exclusive new features not found anywhere else.
         * [Full Flash Installation](#full-flash-installation)
         * [Time Machine and Despertar del Cementerio](#time-machine-and-despertar-del-cementerio)
       - [On PS Vita](#on-ps-vita)
-        * [Standalone via FastARK](#standalone-via-fastark)
-        * [Standalone via NoPspEmuDrm](#standalone-via-nopspemudrm)
-        * [Standalone via ChovySign](#standalone-via-chovysign)
+        * [Standalone via FastARK](#standalone)
         * [Adrenaline](#adrenaline)
       - [Legacy Game Exploits (PSP & Vita)](#legacy-game-exploits-psp--vita)
 
@@ -133,42 +131,26 @@ Use `-h` or `--help` to show all available flags
 For an easy deployment of ARK on a PSP connected to the internet, you can follow this [video](https://www.youtube.com/watch?v=mopy1N57DlI)
 
 
-###### Manual installation  
+###### Initial installation  
   
 The instructions are as follows:
   
 - Move or copy `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Move or copy `ARK_Loader` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
+- At this point `ARK` will work as a `Live CFW`, meaning that `ARK Loader` will need to be run every time the console is turned off or rebooted.
+- To convert `ARK` into a `Permanent CFW` you can use either `cIPL` or `Infinity`, along with the `Full Installer` for a complete permanent experience.
 
-###### Live CFW
+###### Permanent CFW via cIPL
 <p>
 
-  - Delete `FLASH0.ARK` from `/PSP/SAVEDATA/ARK_01234` to prevent flashing files every time you reload the CFW.
-  - Run `ARK Loader` when you boot up the system after you've fully turned off or hard reboot the device to re-enable `ARK`.
-
-</p>
-
-###### Permanent CFW via new cIPL
-<p>
-
-  - Works on 1K models, 2K models and early 3K models (1g, 2g and 3g).
-  - Only works on `6.61`. Does `NOT` work with `Testing Tool` or `Development Tool` firmwares.
+  - `New cIPL`: works on `1g`, `2g` and `3g` models on `6.61`.
+  - `Classic cIPL`: works on `Pandora` compatble models (`1g` and early `2g`) on `6.60`, `6.61` or `6.60 Testing Tool`.
+  - `DevTool cIPL`: works on `DTP-T1000` devkit units on `6.60 Development Tool` firmware.
   - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
-  - Move or copy `ARK_newIPL` folder to `/PSP/GAME/` and run the program.
-  - Press the corresponding button in the installation page to install the cIPL patch.
-  - Warning: unlike classic cIPL, the new method can't be easily uninstalled. To revert to offical IPL, use ChronoSwitch to reinstall OFW 6.61
-
-</p>
-
-###### Permanent CFW via classic cIPL
-<p>
-
-  - Only works on 1K models and early 2K models (those compatible with Pandora).
-  - Works on `6.60` and `6.61`, including `Testing Tool` firmware. Does `NOT` work with `Development Tool` firmware.
-  - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
-  - Move or copy `ARK cIPL` folder to `/PSP/GAME/` and run the program.
+  - Move or copy either `ARK_newIPL`, `ARK_classicIPL` or `ARK_Devtool_cIPL` folder to `/PSP/GAME/` and run the program.
   - Press the corresponding button in the installation page to install or remove the cIPL patch.
+  - Warning: unlike classic cIPL, the new cIPL method can't be easily uninstalled. To revert to offical IPL, use ChronoSwitch to reinstall 6.61 OFW.
 
 </p>
 
@@ -186,11 +168,10 @@ The instructions are as follows:
 ###### Full Flash Installation
 <p>
 
-  - This allows you to install and use all of ARK's features from flash0, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
-  - Copy `ARK_Full_Installer` to `/PSP/GAME/` and run it from `ARK`.
-  - It will install the necessary modules into the console's flash.
-  - This installation will make use of `Classic Recovery Menu` when the regular one is not available.
-  - Custom Firmware settings and other Custom Firmware files are installed in `ms0:/SEPLUGINS/`, which is used as the default ARK path when no savedata folder is available.
+  - This allows you to install and use all of ARK's features on the console's internal flash memory, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
+  - Copy `ARK_Full_Installer` to `/PSP/GAME/` and run it from `ARK`. It will install some extra files into the console's flash.
+  - This installation will make use of `Classic Recovery Menu` when the regular one is not available. The minimalistic `PRO Shell` is used in place of the `Custom Launcher`.
+  - When no savedata folder is available the default ARK path used to store settings and other Custom Firmware files will be `ms0:/SEPLUGINS/`.
 
 </p>
 
@@ -215,58 +196,18 @@ The instructions are as follows:
 #### On PS Vita
 <p>
 
-###### Standalone via FastARK
+###### Standalone
 <p>
 
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
-  - `Recommended`: download a `PSP` game from `PSN` (demo of `Ape Quest`, `Locoroco`, etc) to have a valid `PSP` license available during installation.
-  - Once installed, it will work on `Official Firmware` as long as the console has a valid `PSP` license obtained from `PSN`.
-  - Download and install latest <a href="https://github.com/krazynez/FastARK-4/releases/latest/">FastARK-4</a>
-  - Press `start` or `X` button to install the `Sasuke Commander` minigame with `ARK`.
-  - If out of date with latest release, use the updater built into the `launcher`.
+  - Download and install latest <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
+  - Download and install latest <a href="https://github.com/krazynez/FastARK-4/releases/latest/">FastARK-4</a>.
+  - Press `start` to install an `ARK` bubble.
   - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
   - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
-  - Some features are not available in standalone installations, mainly the official Sony `XMB` and limitations with `PS1` games.
-  - If you get a kernel exploit error, simply close the app and open it again.
-
-</p>
-
-###### Standalone via NoPspEmuDrm
-<p>
-
-  - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
-  - Download and install latest `NoPspEmuDrm` from here: https://github.com/LiEnby/NoPspEmuDrm/releases
-  - Download and install latest `VitaShell` from here: https://github.com/LiEnby/VitaShell/releases
-  - Copy `ARK_01234` folder to `ux0:pspemu/PSP/SAVEDATA/`.
-  - Copy `K.BIN` from `PSVita/Standalone/` into `ARK_01234`.
-  - Copy `NPUZ01234` from `PSVita/Standalone/` into `ux0:pspemu/PSP/GAME/`.
-  - Open `VitaShell` and use the `Refresh Live Area` function for the `ARK` bubble to appear.
-  - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
-  - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
-  - Some features are not available in standalone installations, mainly the official Sony `XMB` and limitations with `PS1` games.
-  - If you get a kernel exploit error, simply close the app and open it again.
-
-</p>
-
-
-###### Standalone via ChovySign
-<p>
-
-  - Works on Official Firmware 2.10 up to 3.74, doesn't require Henkaku/h-encore or any native hack.
-  - NOTE: you might need henkaku/h-encore to facilitate the installation process, but it won't be needed anymore after installing.
-  - Requires `ChovySign`: https://silica.codes/SilicaAndPina/chovy-sign
-  - Download a legit `PSP` game from `PSN`, the free demo of `Ape Quest` or `LocoRoco Midnight Carnival` is recommended.
-  - Follow the instructions from the official `ChovySign` project to sign `ark_loader.iso` from the `PSVita/Standalone` folder.
-  - This will generate an installable `ARK Loader` in QCMA's folder as `NPUZ01234` (i.e. `/Documents/PS Vita/PGAME/xxxxxxxxxxxxxxxx/NPUZ01234`).
-  - Follow these instructions to install `PBOOT.PBP` from `PSVita/Standalone/NPUZ01234` to the loader generated by ChovySign: https://github.com/TheOfficialFloW/Trinity#installation
-  - Install the `ARK_01234` savedata folder into `/Documents/PS Vita/PSAVEDATA/xxxxxxxxxxxxxxxx/`.
-  - Copy `K.BIN` from `PSVita/Standalone` folder into `ARK_01234` savedata folder.
-  - Transfer the generated `ARK Loader` and `ARK_01234` savedata folders using `QCMA`.
-  - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
-  - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
-  - Some features are not available in standalone installations, mainly the official Sony `XMB` and limitations with `PS1` games.
-  - If you get a kernel exploit error, simply close the app and open it again.
-  - If you are running an old firmware (<3.60), you will need a specialized `K.BIN`, either build one yourself or open an `Feature Request`.
+  - NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB` and `Force Extra RAM` setting.
+  - NOTE: There are limitations in the playback of `PS1` games, mostly related to audio.
+  - If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign`.
 
 </p>
 
@@ -277,7 +218,7 @@ The instructions are as follows:
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and `Adrenaline` (https://github.com/TheOfficialFloW/Adrenaline).
   - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
   - Install `ARK_Loader` folder into `/PSP/GAME/` folder.
-  - Copy `K.BIN` from `PSVita/Adrenaline` folder into `ARK_Loader` game folder.
+  - Delete `K.BIN` from `ARK_Loader` folder. You can optionally copy `K.BIN` from `PSVita/Adrenaline` folder into `ARK_Loader` game folder for a bit faster loading.
   - Use `Adrenaline Bubbles Manager` to create an autoboot bubble for `ARK Loader`: https://github.com/ONElua/AdrenalineBubbleManager/releases
   - Note: this does not permanently modify `Adrenaline` in any way.
 
@@ -705,6 +646,8 @@ After lots of work getting the same `ARK` binaries to properly work on both PSP 
 - `TheFl0w` (aka. `Total_Noob`) for his advancements and research in CFW development and overall contributions to the scene.
 
 - `meetpatty` for his excellent work in fixing bugs and adding important features like cIPL and DevKit support as well as porting `Time Machine` and `Despertar del Cementerio`.
+
+- `Silika` for unlocking the full potential of the PS Vita's Official PSP emulator with such great tools like `ChovySign`, `NoPspEmuDrm` and `ps1cfw_enabler`.
 
 - `Codestation` for his incredible work improving CSO speeds and creating the ZSO format.
 
