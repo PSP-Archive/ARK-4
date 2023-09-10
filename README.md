@@ -28,7 +28,7 @@ as well as unique and exclusive new features not found anywhere else.
         * [Full Flash Installation](#full-flash-installation)
         * [Time Machine and Despertar del Cementerio](#time-machine-and-despertar-del-cementerio)
       - [On PS Vita](#on-ps-vita)
-        * [Standalone via FastARK](#standalone)
+        * [Standalone](#standalone)
         * [Adrenaline](#adrenaline)
       - [Legacy Game Exploits (PSP & Vita)](#legacy-game-exploits-psp--vita)
 
