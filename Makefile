@@ -113,7 +113,7 @@ copy-bin:
 	$(Q)cp -r dist/ARK_01234 dist/PSP/ARK_DC/
 	$(Q)find dist/themes/ -type d -name 'resources' -exec rm -rf {} \; 2>/dev/null || true
 	$(Q)cp -r dist/ARK_01234 loader/vpk/bin/save/
-	$(Q)cd loader/vpk/bin/ && zip -r ../../../dist/PSVita/Standalone/ARK.vpk * && cd $(ARKROOT)
+	$(Q)cd loader/vpk/bin/ && zip -r ../../../dist/PSVita/Standalone/FasterARK.vpk * && cd $(ARKROOT)
 	$(Q)$(MAKE) -C extras/updater/
 	$(Q)cp extras/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
 
