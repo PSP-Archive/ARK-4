@@ -200,8 +200,8 @@ The instructions are as follows:
 
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
   - Download and install latest <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
-  - Download and install latest <a href="https://github.com/krazynez/FastARK-4/releases/latest/">FastARK-4</a>.
-  - Press `start` to install an `ARK` bubble.
+  - Copy `FastARK.vpk` from `Vita/Standalone/` folder anywhere on your vita and install using `VitaShell`. 
+  - Open FastARK and press `X` to install an `ARK` bubble.
   - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
   - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
   - NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB` and `Force Extra RAM` setting.
