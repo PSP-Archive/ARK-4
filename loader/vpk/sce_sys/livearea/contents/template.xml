@@ -1,49 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<livearea style="a3" format-ver="01.00">
+<?xml version="1.0" encoding="utf-8"?>
+
+<livearea style="a1" format-ver="01.00" content-rev="1">
 	<livearea-background>
-		<image>bg0.png</image>
+		<image>bg.png</image>
 	</livearea-background>
-	<gate>
-		<startup-image>startup.png</startup-image>
-	</gate>
-
-	<frame id="frame3" multi="o" autoflip="0" >
-		<liveitem>
-			<image align="left" valign="bottom" width="99" height="99" origin="frame">frame_icon.png</image>
-
-			<text origin="image" align="outside-right">
-				<str color="#ffffff" size="20"> Documentation </str>
-			</text>
-
-			<target>https://github.com/PSP-Archive/ARK-4</target>
-
-		</liveitem>
-	</frame>
-
-	<frame id="frame4" multi="o" autoflip="0" >
-		<liveitem>
-			<text origin="background" line-align="center" margin-bottom="1">
-				<str size="25" bold="on" shadow="on">　</str>
-				<str size="40" bold="on" shadow="on">ChovySign</str>
-				<str size="25" bold="on" shadow="on">　
-				</str>
-				<str size="21" bold="on" shadow="on">
-					®2023 - ARK-4 Team
-				</str>
-			</text>
-			<lang>es</lang>
-		</liveitem>
-		<liveitem>
-			<text origin="background" line-align="center" margin-bottom="1">
-				<str size="30" bold="on" shadow="on">　</str>
-				<str size="40" bold="on" shadow="on">ChovySign</str>
-				<str size="30" bold="on" shadow="on">　
-				</str>
-				<str size="21" bold="on" shadow="on">
-					®2023 - ARK-4 Team
-				</str>
-			</text>
-			<exclude-lang>es</exclude-lang>
-		</liveitem>
-	</frame>
 </livearea>
