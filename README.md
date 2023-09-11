@@ -201,8 +201,8 @@ The instructions are as follows:
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
   - If your console isn't activated with a `PSN` account, you need to install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
   - Copy `FasterARK.vpk` from `Vita/Standalone/` folder anywhere on your vita and install using `VitaShell`. 
-  - Open `ARK Installer` and wait for the install process to finish. An `ARK` bubble will appear in `Live Area`.
-  - Once `ARK` is installed, you can delete `ARK Installer`.
+  - Open `FasterARK` and wait for the install process to finish. An `ARK` bubble will appear in `Live Area`.
+  - Once `ARK` is installed, you can delete `FasterARK`.
   - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
   - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
   - NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB` and `Force Extra RAM` setting.
