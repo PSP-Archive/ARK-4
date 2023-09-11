@@ -77,8 +77,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     // System fully booted Status
     static int booted = 0;
 
-    patchGameInfoGetter(mod);
-
     // Fix 6.60 plugins on 6.61
     if (is_plugins_loading){
         hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);

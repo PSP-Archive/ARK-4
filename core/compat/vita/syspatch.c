@@ -115,7 +115,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 
     patchFileManagerImports(mod);
     
-    //patchGameInfoGetter(mod);
+    patchGameInfoGetter(mod);
 
     // Patch sceKernelExitGame Syscalls
     if(strcmp(mod->modname, "sceLoadExec") == 0)

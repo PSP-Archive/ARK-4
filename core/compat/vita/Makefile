@@ -11,12 +11,13 @@ SPU_OBJS = \
 C_OBJS =    \
 	main.o   \
 	vlf.o    \
-	$(ARKROOT)/core/compat/psp/cwpatch.o \
 	syspatch.o  \
+	gameinfo.o   \
 	vitaflash.o   \
 	popspatch.o    \
 	filesystem.o    \
 	$(ARKROOT)/common/utils/patches.o \
+	$(ARKROOT)/core/compat/psp/cwpatch.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
 		
 OBJS = \
