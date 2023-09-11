@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 
-int (* DisplayGetFrameBuf)(void*, int, int, int) = NULL;
+int (* DisplayGetFrameBuf)(void*, void*, void*, int) = NULL;
 
 // CWCHEAT Patch
 int sceKernelSuspendThreadPatched(SceUID thid) {
