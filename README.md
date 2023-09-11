@@ -199,7 +199,7 @@ The instructions are as follows:
 <p>
 
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
-  - If your console isn't activated with a `PSN` account, you need to install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
+  - It is recommended to install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
   - Copy `FasterARK.vpk` from `Vita/Standalone/` folder anywhere on your vita and install using `VitaShell`. 
   - Open `FasterARK` and wait for the install process to finish. An `ARK` bubble will appear in `Live Area`.
   - Once `ARK` is installed, you can delete `FasterARK`.
@@ -648,7 +648,7 @@ After lots of work getting the same `ARK` binaries to properly work on both PSP 
 
 - `meetpatty` for his excellent work in fixing bugs and adding important features like cIPL and DevKit support as well as porting `Time Machine` and `Despertar del Cementerio`.
 
-- `Silika` for unlocking the full potential of the PS Vita's Official PSP emulator with such great tools like `ChovySign`, `NoPspEmuDrm` and `ps1cfw_enabler`.
+- `SilicaAndPina` for unlocking the full potential of the PS Vita's Official PSP emulator with such great tools like `ChovySign`, `NoPspEmuDrm` and `ps1cfw_enabler`.
 
 - `Codestation` for his incredible work improving CSO speeds and creating the ZSO format.
 
