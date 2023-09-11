@@ -190,7 +190,7 @@ void processSettings(){
     }
     // check launcher mode
     if (se_config->launcher_mode){
-        strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
+        strcpy(ark_config->launcher, VBOOT_PBP); // set CFW in launcher mode
     }
     else{
         if (strcmp(ark_config->launcher, "PROSHELL") != 0)

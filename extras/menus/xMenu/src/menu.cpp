@@ -62,8 +62,8 @@ string Menu::fullPath(string path, string app){
     else if (common::fileExists(path+app+"/FBOOT.PBP"))
         return path+app+"/FBOOT.PBP";
     
-    else if (common::fileExists(path+app+ARK_MENU))
-        return path+app+ARK_MENU;
+    else if (common::fileExists(path+app+VBOOT_PBP))
+        return path+app+VBOOT_PBP;
 
     return "";
 }

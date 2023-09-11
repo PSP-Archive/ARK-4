@@ -43,7 +43,7 @@
 
 // ARK_CONFIG
 #define ARK_PATH_SIZE 128
-#define ARK_MENU "VBOOT.PBP" // default launcher
+#define VBOOT_PBP "VBOOT.PBP" // default launcher
 #define ARK_XMENU "XBOOT.PBP" // PS1 launcher
 #define ARK_RECOVERY "RECOVERY.PBP" // recovery app
 #define RECOVERY_PRX "RECOVERY.PRX" // Classic Recovery

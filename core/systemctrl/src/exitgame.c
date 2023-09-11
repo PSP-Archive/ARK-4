@@ -52,7 +52,7 @@ void exitLauncher()
     strcpy(path, ark_config->arkpath);
     if (ark_config->recovery) strcat(path, ARK_RECOVERY);
     else if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
-    else strcat(path, ARK_MENU);
+    else strcat(path, VBOOT_PBP);
 
 	SceIoStat stat; int res = sceIoGetstat(path, &stat);
 

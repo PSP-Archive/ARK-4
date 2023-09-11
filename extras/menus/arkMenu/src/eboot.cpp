@@ -104,7 +104,7 @@ int Eboot::getEbootType(const char* path){
 
     int ret = UNKNOWN_TYPE;
 
-    if (strcasecmp("ms0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp("ef0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp(("ms0:/PSP/APPS/UPDATE/"ARK_MENU), path) == 0 )
+    if (strcasecmp("ms0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp("ef0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp(("ms0:/PSP/APPS/UPDATE/"VBOOT_PBP), path) == 0 )
         return TYPE_UPDATER;
 
     FILE* fp = fopen(path, "rb");
@@ -165,8 +165,8 @@ string Eboot::fullEbootPath(string path, string app){
     if (common::fileExists(path+app+"/EBOOT.PBP"))
         return path+app+"/EBOOT.PBP"; // Normal EBOOT
 
-    else if (common::fileExists(path+app+ARK_MENU))
-        return path+app+ARK_MENU; // ARK EBOOT
+    else if (common::fileExists(path+app+VBOOT_PBP))
+        return path+app+VBOOT_PBP; // ARK EBOOT
 
     else if (common::fileExists(path+app+"/FBOOT.PBP"))
         return path+app+"/FBOOT.PBP"; // TN CEF EBOOT
@@ -223,7 +223,7 @@ void Eboot::doExecute(){
 }
 
 void Eboot::executeRecovery(const char* path){
-    string fakent = string(common::getArkConfig()->arkpath) + ARK_MENU;
+    string fakent = string(common::getArkConfig()->arkpath) + VBOOT_PBP;
     if (fakent != path && common::fileExists(path)){
         struct SceKernelLoadExecVSHParam param;
         

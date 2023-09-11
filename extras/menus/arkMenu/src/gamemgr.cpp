@@ -169,7 +169,7 @@ void GameManager::findEntries(){
             this->categories[HOMEBREW]->getVector()->insert(this->categories[HOMEBREW]->getVector()->begin(), recovery_menu);
         }
         else if (common::fileExists(recovery_prx)){
-            Eboot* recovery_menu = new Eboot(string(common::getArkConfig()->arkpath) + ARK_MENU); // fake entry
+            Eboot* recovery_menu = new Eboot(string(common::getArkConfig()->arkpath) + VBOOT_PBP); // fake entry
             recovery_menu->setName("Recovery Menu");
             this->categories[HOMEBREW]->getVector()->insert(this->categories[HOMEBREW]->getVector()->begin(), recovery_menu);
         }
