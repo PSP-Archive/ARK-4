@@ -81,7 +81,7 @@ void exitLauncher()
 		res = sceIoGetstat(path, &stat);
 		if (res < 0){
 			// try flash0
-			strcpy(path, "flash0:/vsh/module/ark_recovery.prx");
+			strcpy(path, RECOVERY_PRX_FLASH);
 		}
 		SceUID modid = kuKernelLoadModule(path, 0, NULL);
 		sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);

@@ -89,7 +89,7 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
 
     // load spu module
     strcpy(path, ark_config->arkpath);
-    strcat(path, "PS1SPU.PRX");
+    strcat(path, PS1SPU_PRX);
     result = sceKernelLoadModule(path, 0, NULL);
 
     if (result >= 0){

@@ -30,10 +30,10 @@ static void start_psp_usb(){
 
     char usbdev[ARK_PATH_SIZE];
     strcpy(usbdev, ark_config->arkpath);
-    strcat(usbdev, "USBDEV.PRX");
+    strcat(usbdev, USBDEV_PRX);
 
     int modid = kuKernelLoadModule(usbdev, 0, NULL);
-    if (modid < 0) modid = kuKernelLoadModule("flash0:/vsh/module/ark_usbdev.prx", 0, NULL);
+    if (modid < 0) modid = kuKernelLoadModule(USBDEV_PRX_FLASH, 0, NULL);
     sceKernelStartModule(modid, 0, NULL, NULL, NULL);
 
     for (int i=0; i<6; i++){

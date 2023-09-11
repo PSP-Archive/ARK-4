@@ -183,14 +183,14 @@ static void loadXmbControl(){
         strcpy(path, ark_config->arkpath);
         strcat(path, XMBCTRL_PRX);
         int modid = sceKernelLoadModule(path, 0, NULL);
-        if (modid < 0) modid = sceKernelLoadModule("flash0:/kd/ark_xmbctrl.prx", 0, NULL); // retry flash0
+        if (modid < 0) modid = sceKernelLoadModule(XMBCTRL_PRX_FLASH, 0, NULL); // retry flash0
         if (modid >= 0) sceKernelStartModule(modid, 0, NULL, NULL, NULL);
     }
 }
 
 static void checkArkPath(){
-    if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0){ // attempt revert to default path 
-        strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234/");
+    if (strcmp(ark_config->arkpath, SEPLUGINS_MS0) == 0){ // attempt revert to default path 
+        strcpy(ark_config->arkpath, DEFAULT_ARK_PATH_GO);
     }
     int res = sceIoDopen(ark_config->arkpath);
     if (res < 0){
@@ -203,7 +203,7 @@ static void checkArkPath(){
             }
         }
         // no ARK install folder, default to SEPLUGINS
-        strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
+        strcpy(ark_config->arkpath, SEPLUGINS_MS0);
     }
     else{
         sceIoDclose(res);
