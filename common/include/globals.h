@@ -50,14 +50,23 @@
 #define FLASH0_ARK "FLASH0.ARK" // ARK flash0 package
 #define VSH_MENU "VSHMENU.PRX" // ARK VSH Menu for XMB
 #define XMBCTRL_PRX "XMBCTRL.PRX" // XMB Control
+#define IDSREG_PRX "IDSREG.PRX" // idsRegeneration
+#define USBDEV_PRX "USBDEV.PRX" // Custom USB Device
+#define PS1SPU_PRX "PS1SPU.PRX" // PS1 SPU Plugin
+#define H_FILE "H.BIN" // user exploit binloader
 #define K_FILE "K.BIN" // kernel exploit file for Live loaders
+#define UPDATER_FILE "UPDATER.TXT" // Update Server URL file
+#define ARK_THEME_FILE "THEME.ARK" // theme file for arkMenu
+#define ARK_LANG_FILE "LANG.ARK" // language files
 #define ARK2_BIN "ARK.BIN" // ARK-2 payload
 #define ARK4_BIN "ARK4.BIN" // ARK-4 payload
+#define ARKX_BIN "ARKX.BIN" // ARK-X payload
+
 #define ARK_BIN_MAX_SIZE 0x8000
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 20
 #define ARK_MICRO_VERSION 64
-#define ARK_REVISION      2
+#define ARK_REVISION      3
 #define MAX_FLASH0_SIZE 0x32000
 
 /*

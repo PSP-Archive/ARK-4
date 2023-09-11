@@ -1,0 +1,1 @@
+int promoteCma(const char *path, const char *titleid, int type);
