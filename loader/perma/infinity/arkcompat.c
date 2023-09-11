@@ -26,8 +26,6 @@
 
 #include <compat_interface.h>
 
-#include <globals.h>
-
 #define SENSE_MASK                                                                                 \
     (SYSCON_CTRL_TRIANGLE | SYSCON_CTRL_CIRCLE | SYSCON_CTRL_CROSS | SYSCON_CTRL_RECTANGLE |       \
      SYSCON_CTRL_SELECT | SYSCON_CTRL_LTRG | SYSCON_CTRL_RTRG | SYSCON_CTRL_START |                \
@@ -72,6 +70,7 @@ typedef struct
 // ARK Runtime configuration
 #define ARK_CONFIG 0x08800010
 #define ARK_CONFIG_MAGIC 0xB00B1E55
+#define ARK_PATH_SIZE 128
 
 #define REBOOT_START 0x88600000
 #define REBOOTEX_START 0x88FC0000
