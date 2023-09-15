@@ -217,10 +217,10 @@ int sctrlArkReplaceUmdKeys(){
     // load and start idsRegeneration module
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
-    strcat(path, "IDSREG.PRX");
+    strcat(path, IDSREG_PRX);
 
     SceUID modid = sceKernelLoadModule(path, 0, NULL);
-	if (modid < 0) modid = sceKernelLoadModule("flash0:/kd/ark_idsreg.prx", 0, NULL); // retry flash0
+	if (modid < 0) modid = sceKernelLoadModule(IDSREG_PRX_FLASH, 0, NULL); // retry flash0
 	if (modid >= 0)
 	    res = sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
 

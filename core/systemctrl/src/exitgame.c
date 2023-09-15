@@ -52,7 +52,7 @@ void exitLauncher()
     strcpy(path, ark_config->arkpath);
     if (ark_config->recovery) strcat(path, ARK_RECOVERY);
     else if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
-    else strcat(path, ARK_MENU);
+    else strcat(path, VBOOT_PBP);
 
 	SceIoStat stat; int res = sceIoGetstat(path, &stat);
 
@@ -77,11 +77,11 @@ void exitLauncher()
 	else if (ark_config->recovery || (strcmp(ark_config->launcher, "PROSHELL") == 0)){
 		// no recovery app? try classic module
 		strcpy(path, ark_config->arkpath);
-		strcat(path, "RECOVERY.PRX");
+		strcat(path, RECOVERY_PRX);
 		res = sceIoGetstat(path, &stat);
 		if (res < 0){
 			// try flash0
-			strcpy(path, "flash0:/vsh/module/ark_recovery.prx");
+			strcpy(path, RECOVERY_PRX_FLASH);
 		}
 		SceUID modid = kuKernelLoadModule(path, 0, NULL);
 		sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);

@@ -158,7 +158,7 @@ static int matchingRunlevel(char * runlevel)
 			static char path[ARK_PATH_SIZE];
 			strcpy(path, ark_config->arkpath);
 			if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
-			else                         strcat(path, ARK_MENU);
+			else                         strcat(path, VBOOT_PBP);
 			if (strcmp(path, sceKernelInitFileName())==0) return 1;
 		}
     	if (strstr(runlevel, "app") != NULL || strstr(runlevel, "homebrew") != NULL || strstr(runlevel, "game") != NULL) return 1; // homebrews only

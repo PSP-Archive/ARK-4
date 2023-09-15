@@ -28,7 +28,7 @@ int psxloader_thread(int argc, void* argv){
     }
 
     // open ARKX binloader
-    SceUID fd = sceIoOpen("ms0:/PSP/SAVEDATA/ARK_01234/ARKX.BIN", PSP_O_RDONLY, 0);
+    SceUID fd = sceIoOpen(DEFAULT_ARK_PATH ARKX_BIN, PSP_O_RDONLY, 0);
 
     if (fd < 0){
         sceKernelExitGame();

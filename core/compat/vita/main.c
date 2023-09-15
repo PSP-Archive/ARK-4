@@ -55,7 +55,7 @@ static void processArkConfig(){
         ark_config->exec_mode = PS_VITA; // assume running on PS Vita
     }
     if (ark_config->launcher[0] == '\0'){
-        strcpy(ark_config->launcher, ARK_MENU);
+        strcpy(ark_config->launcher, VBOOT_PBP);
     }
 }
 

@@ -201,7 +201,7 @@ void loadKernelArk(){
             ark_config->recovery = 0;
         }
         else
-            strcat(menupath, ARK_MENU);
+            strcat(menupath, VBOOT_PBP);
         struct SceKernelLoadExecVSHParam param;
         memset(&param, 0, sizeof(param));
         param.size = sizeof(param);

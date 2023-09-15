@@ -43,7 +43,7 @@
 
 // ARK_CONFIG
 #define ARK_PATH_SIZE 128
-#define ARK_MENU "VBOOT.PBP" // default launcher
+#define VBOOT_PBP "VBOOT.PBP" // default launcher
 #define ARK_XMENU "XBOOT.PBP" // PS1 launcher
 #define ARK_RECOVERY "RECOVERY.PBP" // recovery app
 #define RECOVERY_PRX "RECOVERY.PRX" // Classic Recovery
@@ -53,12 +53,20 @@
 #define IDSREG_PRX "IDSREG.PRX" // idsRegeneration
 #define USBDEV_PRX "USBDEV.PRX" // Custom USB Device
 #define PS1SPU_PRX "PS1SPU.PRX" // PS1 SPU Plugin
+#define RECOVERY_PRX_FLASH "flash0:/vsh/module/ark_recovery.prx" // Classic Recovery flash0 path
+#define IDSREG_PRX_FLASH "flash0:/kd/ark_idsreg.prx" // idsRegeneration flash0 path
+#define XMBCTRL_PRX_FLASH "flash0:/kd/ark_xmbctrl.prx" // XMB Control flash0 path
+#define USBDEV_PRX_FLASH "flash0:/vsh/module/ark_usbdev.prx" // USBDEV flash0 path
+#define VSH_MENU_FLASH "flash0:/vsh/module/ark_satelite.prx" // VSH Menu flash0 path
 #define H_FILE "H.BIN" // user exploit binloader
 #define K_FILE "K.BIN" // kernel exploit file for Live loaders
 #define UPDATER_FILE "UPDATER.TXT" // Update Server URL file
+#define ARK_SETTINGS "SETTINGS.TXT" // CFW Settings file
+#define MENU_SETTINGS "" // Settings file for CL and VSH Menu
+#define UPDATER_FILE_FLASH "flash1:/UPDATER.TXT" // Update Server URL file flash1 path
 #define ARK_THEME_FILE "THEME.ARK" // theme file for arkMenu
 #define ARK_LANG_FILE "LANG.ARK" // language files
-#define ARK2_BIN "ARK.BIN" // ARK-2 payload
+#define ARK_BIN "ARK.BIN" // ARK-2 payload
 #define ARK4_BIN "ARK4.BIN" // ARK-4 payload
 #define ARKX_BIN "ARKX.BIN" // ARK-X payload
 
@@ -124,9 +132,13 @@ typedef struct ARKConfig{
 #define ARK_CONFIG_MAGIC 0xB00B1E55
 #define LIVE_EXPLOIT_ID "Live" // default loader name
 #define DEFAULT_ARK_FOLDER "ARK_01234"
-#define DEFAULT_ARK_PATH "ms0:/PSP/SAVEDATA/" DEFAULT_ARK_FOLDER "/" // default path for ARK files
+#define SAVEDATA_MS0 "ms0:/PSP/SAVEDATA/"
+#define SAVEDATA_EF0 "ef0:/PSP/SAVEDATA/"
+#define DEFAULT_ARK_PATH SAVEDATA_MS0 DEFAULT_ARK_FOLDER "/" // default path for ARK files
+#define DEFAULT_ARK_PATH_GO SAVEDATA_EF0 DEFAULT_ARK_FOLDER "/" // default path for ARK files
 #define ARK_DC_PATH "ms0:/TM/DCARK"
 #define TM_PATH_W L"\\TM\\DCARK\\"
+#define SEPLUGINS_MS0 "ms0:/SEPLUGINS/"
 
 #define IS_PSP(ark_config) ((ark_config->exec_mode&DEV_MASK)==PSP_ORIG)
 #define IS_VITA(ark_config) ((ark_config->exec_mode&DEV_MASK)==PS_VITA)

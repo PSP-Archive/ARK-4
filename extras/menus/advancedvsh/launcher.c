@@ -11,7 +11,7 @@
 void exec_custom_launcher(vsh_Menu *vsh) {
 	char menupath[ARK_PATH_SIZE];
 	scePaf_strcpy(menupath, vsh->config.ark.arkpath);
-	strcat(menupath, ARK_MENU);
+	strcat(menupath, VBOOT_PBP);
 
 	SceIoStat stat; int res = sceIoGetstat(menupath, &stat);
 

@@ -38,12 +38,12 @@ struct {
     char* orig;
     char* dest;
 } flash_files[] = {
-    {"IDSREG.PRX", "flash0:/kd/ark_idsreg.prx"},
-    {"XMBCTRL.PRX", "flash0:/kd/ark_xmbctrl.prx"},
-    {"USBDEV.PRX", "flash0:/vsh/module/ark_usbdev.prx"},
-    {"VSHMENU.PRX", "flash0:/vsh/module/ark_satelite.prx"},
-    {"RECOVERY.PRX", "flash0:/vsh/module/ark_recovery.prx"},
-    {"UPDATER.TXT", "flash1:/UPDATER.TXT"},
+    {IDSREG_PRX, IDSREG_PRX_FLASH},
+    {XMBCTRL_PRX, XMBCTRL_PRX_FLASH},
+    {USBDEV_PRX, USBDEV_PRX_FLASH},
+    {VSH_MENU, VSH_MENU_FLASH},
+    {RECOVERY_PRX, RECOVERY_PRX_FLASH},
+    {UPDATER_FILE, UPDATER_FILE_FLASH},
 };
 static const int N_FLASH_FILES = (sizeof(flash_files)/sizeof(flash_files[0]));
 
@@ -59,9 +59,9 @@ void checkArkConfig(ARKConfig* ark_config){
     // check if ARK is using SEPLUGINS folder due to lack of savedata folder
     SceUID fd = -1;
     char path[ARK_PATH_SIZE]; strcpy(path, ark_config->arkpath); path[strlen(path)-1] = 0; // remove trailing '/' or else sceIoGetstat won't work
-    if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0 || (fd = sceIoDopen(path)) < 0){
+    if (strcmp(ark_config->arkpath, SEPLUGINS_MS0) == 0 || (fd = sceIoDopen(path)) < 0){
         // create savedata folder, first attempt on ef0 for PSP Go
-        strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234");
+        strcpy(ark_config->arkpath, SAVEDATA_EF0 DEFAULT_ARK_FOLDER); // ef0:/PSP/SAVEDATA/ARK_01234
         sceIoMkdir(ark_config->arkpath, 0777);
         if ((fd = sceIoDopen(ark_config->arkpath)) < 0){
             // second attempt on ms0 for every other device
@@ -79,8 +79,8 @@ void checkArkConfig(ARKConfig* ark_config){
             kuKernelCall((void*)setArkConfig, &args);
 
             // move settings file to arkpath
-            static char* orig = "ms0:/SEPLUGINS/SETTINGS.TXT";
-            static char* dest = "ms0:/PSP/SAVEDATA/ARK_01234/SETTINGS.TXT";
+            static char* orig = SEPLUGINS_MS0 ARK_SETTINGS; // ms0:/SEPLUGINS/SETTINGS.TXT
+            static char* dest = DEFAULT_ARK_PATH ARK_SETTINGS; // ms0:/PSP/SAVEDATA/ARK_01234/SETTINGS.TXT
             dest[0] = ark_config->arkpath[0];
             dest[1] = ark_config->arkpath[1];
             copy_file(orig, dest);
@@ -155,7 +155,7 @@ int main(int argc, char * argv[])
     if (IS_PSP(ac)){
         char flash0_ark[ARK_PATH_SIZE];
         strcpy(flash0_ark, ark_config.arkpath);
-        strcat(flash0_ark, "FLASH0.ARK");
+        strcat(flash0_ark, FLASH0_ARK);
         pspDebugScreenPrintf("Extracting %s\n", flash0_ark);
         open_flash();
         extractArchive(sceIoOpen(flash0_ark, PSP_O_RDONLY, 0777), "flash0:/", &isVitaFile);
@@ -243,7 +243,7 @@ void extractArchive(int fdr, char* dest_path, int (*filter)(char*)){
                 sceIoLseek32(fdr, filesize, PSP_SEEK_CUR); // skip file
             }
 
-			else if(strstr(filename, "THEME.ARK") != NULL) {
+			else if(strstr(filename, ARK_THEME_FILE) != NULL) {
 					int size;
 					SceUID theme;
 
