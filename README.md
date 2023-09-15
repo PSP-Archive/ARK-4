@@ -60,7 +60,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - `Popcorn` controller for custom `PS1` games. Compatible with `PopsLoader` V3 and V4i.
 
-- Built-in `No-DRM` engine `Stargate`, fixes many anti-CFW games. Compatible with `npdrm_free` by qwikrazor87.
+- Built-in `No-DRM` engine `Stargate`, fixes many anti-CFW games. Compatible with `npdrm_free` and `nploader`.
 
 - `Plugin` support for `PSP` games, `PS1` games and `VSH` (XMB), including the ability to enable and disable plugins `per-game`.
 
@@ -76,7 +76,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Can be fully installed and booted on memory stick in compatible models via `Time Machine`.
 
-- Can be used to unbrick any PSP using `Despertar del Cementerio` in combination with a `Pandora` or `Baryon Sweeper`.
+- Can be used to unbrick compatible PSP models using `Despertar del Cementerio` in combination with a `Pandora` or `Baryon Sweeper`.
 
 - `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
@@ -91,6 +91,8 @@ as well as unique and exclusive new features not found anywhere else.
 - Compatible with Legacy Homebrew via `eLoader` and `Leda`. Compatible with the KXploit format.
 
 - Compatible with `cIPL` and `Infinity 2` bootloaders for permanent CFW.
+
+- `OTA` updates. Fully updateable via the internet.
 
 ![ARK Custom Firmware](.github/screenshots/xmb(10).png "ARK Custom Firmware")
 
