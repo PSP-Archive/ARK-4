@@ -200,7 +200,7 @@ The instructions are as follows:
 <p>
 
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
-  - Download and install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
+  - Download and install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm by SilicaAndPina</a> (you can use <a href="https://github.com/ONElua/AutoPlugin2/releases/latest">AutoPlugin II</a>).
   - Copy `FasterARK.vpk` from `Vita/Standalone/` folder anywhere on your vita and install using `VitaShell`. 
   - Open `FasterARK` and wait for the install process to finish. An `ARK` bubble will appear in `Live Area`.
   - Once `ARK` is installed, you can delete `FasterARK`.
