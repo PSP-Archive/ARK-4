@@ -29,11 +29,34 @@ struct {
     {UPDATER_FILE, UPDATER_FILE_FLASH},
 };
 
+
 static const int N_FLASH_FILES = (sizeof(flash_files)/sizeof(flash_files[0]));
+
+void uninstall() {
+	
+	open_flash();
+	for (int i=0; i<N_FLASH_FILES; i++){
+		if(!sceIoRead(flash_files[i].dest, PSP_O_RDONLY, 0777)) {
+			return;
+		}
+		else {
+			pspDebugScreenPrintf("Removing %s\n", flash_files[i].dest);
+			rm_file(flash_files[i].dest);
+		}
+    }
+
+    // Kill Main Thread
+    sceKernelExitGame();
+
+
+	return;
+}
+
 
 // Entry Point
 int main(int argc, char * argv[])
 {
+	
 
     ARKConfig ark_config;
 
@@ -42,6 +65,12 @@ int main(int argc, char * argv[])
     // Initialize Screen Output
     pspDebugScreenInit();
 
+	SceCtrlData pad;
+
+	sceCtrlReadBufferPositive(&pad, 1);
+	if(pad.Buttons & PSP_CTRL_RTRIGGER) {
+		uninstall();
+	}
     if (ark_config.magic != ARK_CONFIG_MAGIC){
         pspDebugScreenPrintf("ERROR: not running ARK\n");
         while (1){};
@@ -108,4 +137,8 @@ void copy_file(char* orig, char* dest){
     }
     sceIoClose(fdr);
     sceIoClose(fdw);
+}
+
+void rm_file(char* dest){
+    sceIoRemove(dest);
 }
