@@ -1093,7 +1093,6 @@ int install_thread(SceSize args, void *argp)
 
 		if(timeout!=0) {
 			sprintf(text, "You chose %s to boot DC-ARK on boot.", buf);
-			//strcat(text, buf);
 			SetStatus(text);
 			sceKernelDelayThread(850000);
 			strcat(buf, " = \"ms0:/TM/DCARK/tm_mloader.bin\";\r\n");
@@ -1104,6 +1103,10 @@ int install_thread(SceSize args, void *argp)
 			if (size >= 0)
 			{
 				WriteFile("ms0:/TM/config.txt", g_dataOut, size+strlen(buf));
+			}
+			else
+			{
+				WriteFile("ms0:/TM/config.txt", g_dataOut, strlen(buf));
 			}
 			
 			strcat(text, "\n");
