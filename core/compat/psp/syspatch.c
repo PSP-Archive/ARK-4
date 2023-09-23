@@ -337,7 +337,15 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-	
+	if( strcmp(mod->modname, "Legacy_Software_Loader") == 0 )
+	{
+		if( sceKernelInitApitype() == PSP_INIT_APITYPE_EF2 )
+		{
+			_sw( 0x10000005, mod->text_addr + 0x0000014C );	
+			goto flush;
+		}
+	}
+
     
     if(booted == 0)
     {

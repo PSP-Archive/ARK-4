@@ -145,5 +145,8 @@ typedef struct ARKConfig{
 #define IS_VITA_ADR(ark_config) (ark_config->exec_mode==PSV_ADR)
 #define IS_VITA_POPS(ark_config) (ark_config->exec_mode==PSV_POPS)
 
+// Missing from SDK
+#define PSP_INIT_APITYPE_EF2 0x152
+
 #endif
 
