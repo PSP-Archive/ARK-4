@@ -339,6 +339,8 @@ void PSPOnModuleStart(SceModule2 * mod){
 
 	if( strcmp(mod->modname, "Legacy_Software_Loader") == 0 )
 	{
+        // Missing from SDK
+        #define PSP_INIT_APITYPE_EF2 0x152
 		if( sceKernelInitApitype() == PSP_INIT_APITYPE_EF2 )
 		{
 			_sw( 0x10000005, mod->text_addr + 0x0000014C );	
