@@ -154,11 +154,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
-    if (strcmp(mod->modname, "Legacy_Software_Loader") == 0){
-        patchLedaPlugin(mod->text_addr);
-        goto flush;
-    }
-
     if (strcmp(mod->modname, "popsloader") == 0 || strcmp(mod->modname, "popscore") == 0){
         // fix for 6.60 check on 6.61
         hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);

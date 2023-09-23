@@ -311,11 +311,10 @@ void sctrlHENRegisterLLEHandler(void* handler)
 	lle_handler = handler;
 }
 
-extern SceUID (* KernelLoadModuleMs2_hook)();
 int sctrlHENRegisterHomebrewLoader(void* handler)
 {
-    // register handler
-    KernelLoadModuleMs2_hook = handler;
+    // register handler and patch leda
+    patchLedaPlugin(handler);
     return 0;
 }
 
