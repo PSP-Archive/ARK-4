@@ -12,6 +12,21 @@
 #include <kubridge.h>
 #include "globals.h"
 
+#include <tmctrl/tmctrl.h>
+#include <msipl/mainbinex/payload.h>
+#include <installer/tm_msipl.h>
+#include <installer/tm_mloader.h>
+
+#include <installer/pspbtcnf_dc.h>
+#include <installer/pspbtcnf_02g_dc.h>
+#include <installer/dcman.h>
+#include <installer/ipl_update.h>
+#include <installer/iop.h>
+#include <installer/pspdecryptmod.h>
+#include <installer/intrafont.h>
+#include <installer/resurrection.h>
+#include <installer/vlf.h>
+
 PSP_MODULE_INFO("ARKUpdater", 0x800, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH | PSP_THREAD_ATTR_VFPU);
 PSP_HEAP_SIZE_KB(4096);
@@ -167,8 +182,40 @@ int main(int argc, char * argv[])
                 char path[ARK_PATH_SIZE];
                 strcpy(path, ark_config.arkpath);
                 strcat(path, flash_files[i].orig);
-                pspDebugScreenPrintf("Installing %s to %s\n", flash_files[i].orig, flash_files[i].dest);
+                pspDebugScreenPrintf("Copying %s to %s\n", flash_files[i].orig, flash_files[i].dest);
                 copy_file(path, flash_files[i].dest);
+            }
+        }
+
+        struct {
+            char* path;
+            void* buf;
+            size_t size;
+        } dc_files[] = {
+            { ARK_DC_PATH "/tmctrl.prx", tmctrl, size_tmctrl },
+            { ARK_DC_PATH "/payload_01g.bin", ms_ipl_payload, size_ms_ipl_payload },
+            { ARK_DC_PATH "/payload_02g.bin", ms_ipl_payload, size_ms_ipl_payload },
+            { ARK_DC_PATH "/tm_mloader.bin", tm_mloader, size_tm_mloader },
+            { ARK_DC_PATH "/kd/pspbtcnf_dc.bin", pspbtcnf_dc, size_pspbtcnf_dc },
+            { ARK_DC_PATH "/kd/pspbtcnf_02g_dc.bin", pspbtcnf_02g_dc, size_pspbtcnf_02g_dc },
+            { ARK_DC_PATH "/kd/dcman.prx", dcman, size_dcman },
+            { ARK_DC_PATH "/kd/ipl_update.prx", ipl_update, size_ipl_update },
+            { ARK_DC_PATH "/kd/iop.prx", iop, size_iop },
+            { ARK_DC_PATH "/kd/pspdecrypt.prx", pspdecrypt, size_pspdecrypt },
+            { ARK_DC_PATH "/vsh/module/intrafont.prx", intrafont, size_intrafont },
+            { ARK_DC_PATH "/vsh/module/resurrection.prx", resurrection, size_resurrection },
+            { ARK_DC_PATH "/vsh/module/vlf.prx", vlf, size_vlf },
+        };
+
+        const int N_DC_FILES = (sizeof(dc_files)/sizeof(dc_files[0]));
+
+        // test for dc installation
+        res = sceIoGetstat(dc_files[0].path, &stat);
+        if (res >= 0){
+            for (int i=0; i<N_DC_FILES; i++){
+                pspDebugScreenPrintf("Installing %s\n", dc_files[i]);
+                int fdw = sceIoOpen(dc_files[i].path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+                sceIoWrite(fdw, dc_files[i].buf, dc_files[i].size);
             }
         }
     }
