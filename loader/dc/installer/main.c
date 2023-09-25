@@ -1062,9 +1062,21 @@ int install_thread(SceSize args, void *argp)
 					break;
 				if(timeout==0) 
 				{
-					char *default_config = "NOTHING = \"ms0:/TM/DCARK/tm_mloader.bin\";";
-					WriteFile("ms0:/TM/config.txt", default_config, strlen(default_config));
-					break;	
+					char *default_config = "NOTHING = \"ms0:/TM/DCARK/tm_mloader.bin\";\r\n";
+					memcpy(g_dataOut, default_config, strlen(default_config));
+
+					int size = ReadFile("ms0:/TM/config.txt", 0, g_dataOut+strlen(default_config), SMALL_BUFFER_SIZE);
+
+					if (size >= 0)
+					{
+						WriteFile("ms0:/TM/config.txt", g_dataOut, size+strlen(default_config));
+						break;
+					}
+					else 
+					{
+						WriteFile("ms0:/TM/config.txt", default_config, strlen(default_config));
+						break;	
+					}
 				}
 				timeout--;
 				vlfGuiAddEventHandler(0, -1, OnPaintListenKeys, NULL);	
