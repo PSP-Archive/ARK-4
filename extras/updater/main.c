@@ -216,6 +216,7 @@ int main(int argc, char * argv[])
                 pspDebugScreenPrintf("Installing %s\n", dc_files[i]);
                 int fdw = sceIoOpen(dc_files[i].path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
                 sceIoWrite(fdw, dc_files[i].buf, dc_files[i].size);
+                sceIoClose(fdw);
             }
         }
     }
