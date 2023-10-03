@@ -681,6 +681,7 @@ void loadSettings(){
     FIX_BOOLEAN(cfw_config.hidemac);
     FIX_BOOLEAN(cfw_config.hidedlc);
     FIX_BOOLEAN(cfw_config.noumd);
+    FIX_BOOLEAN(cfw_config.noanalog);
 }
 
 static string processSetting(string name, unsigned char setting){
@@ -720,7 +721,7 @@ void saveSettings(){
     output << processSetting("hidedlc", cfw_config.hidedlc) << endl;
     output << processSetting("noled", cfw_config.noled) << endl;
     output << processSetting("noumd", cfw_config.noumd) << endl;
-    output << processSetting("noanalog", cfw_config.noumd) << endl;
+    output << processSetting("noanalog", cfw_config.noanalog) << endl;
     
     switch (cfw_config.regionchange){
         case REGION_JAPAN:
