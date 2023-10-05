@@ -337,8 +337,9 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         new_item2 = addCustomVshItem(47, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, item);
         AddVshItem(a0, topitem, new_item2);
     }
-
-    return AddVshItem(a0, topitem, item);
+	else { 
+		return AddVshItem(a0, topitem, item);
+	}
 }
 
 int OnXmbPushPatched(void *arg0, void *arg1)
