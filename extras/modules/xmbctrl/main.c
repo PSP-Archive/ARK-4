@@ -170,7 +170,6 @@ int is_cfw_config = 0;
 int unload = 0;
 
 u32 backup[4];
-char holder[4];
 int context_mode = 0;
 
 char user_buffer[2*LINE_BUFFER_SIZE];
@@ -323,10 +322,10 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
     return item;
 }
 
+
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
 
-	
     if(sce_paf_private_strcmp(item->text, "msgtop_sysconf_console") == 0)
     {
         startup = 0;
@@ -340,8 +339,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 
         new_item2 = addCustomVshItem(47, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, item);
         AddVshItem(a0, topitem, new_item2);
-		
-		
+
     }
 		
 	#if 0 
@@ -357,9 +355,8 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 		}
 	#else
 
-    /*if(sce_paf_private_strcmp(item->text, "msgtop_sysconf_network") == 0)
-		sce_paf_private_strcpy(item->image, "CD");
-	*/
+		//sce_paf_private_strcpy(item->image, "BX");
+	
 
 	#endif
 	return AddVshItem(a0, topitem, item);
@@ -437,7 +434,7 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 }
 
 int skipSetting(int i){
-    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==2 || i==3 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16);
+    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16);
     else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12);
     else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13 );
     else if (psp_model != PSP_GO) return ( i == 5 || i == 9 || i == 12);

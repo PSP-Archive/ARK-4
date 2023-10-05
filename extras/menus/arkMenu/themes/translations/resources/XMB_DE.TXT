@@ -18,4 +18,4 @@ Verstecke DLC
 LEDs Abschalten
 Deaktivieren Sie das UMD-Laufwerk
 Analogstick deaktivieren
-PSP CPU Übertakten
+PSP-Übertaktung

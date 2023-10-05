@@ -144,7 +144,7 @@ Setting settings_items_street[] =
 
 Setting settings_items_adr[] =
 {
-    { N_OPTS, &(config.overclock), "PSP CPU Clock", ark_settings_options },
+    { N_OPTS, &(config.overclock), "PSP Overclock", ark_settings_options },
     { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
     { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
