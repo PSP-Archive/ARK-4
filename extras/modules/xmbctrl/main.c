@@ -170,6 +170,7 @@ int is_cfw_config = 0;
 int unload = 0;
 
 u32 backup[4];
+char holder[4];
 int context_mode = 0;
 
 char user_buffer[2*LINE_BUFFER_SIZE];
@@ -185,6 +186,7 @@ int startup = 1;
 SceContextItem *context;
 SceVshItem *new_item;
 SceVshItem *new_item2;
+SceVshItem *new_item3;
 void *xmb_arg0, *xmb_arg1;
 
 void ClearCaches()
@@ -323,6 +325,8 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
 
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
+
+	
     if(sce_paf_private_strcmp(item->text, "msgtop_sysconf_console") == 0)
     {
         startup = 0;
@@ -330,16 +334,35 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         LoadTextLanguage(-1);
 
         context = (SceContextItem *)sce_paf_private_malloc((4 * sizeof(SceContextItem)) + 1);
-
+		
         new_item = addCustomVshItem(46, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, item);
         AddVshItem(a0, topitem, new_item);
 
         new_item2 = addCustomVshItem(47, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, item);
         AddVshItem(a0, topitem, new_item2);
+		
+		
     }
-	else { 
-		return AddVshItem(a0, topitem, item);
-	}
+		
+	#if 0 
+		SceUID writeit = sceIoOpen("ms0:/dump.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
+		if(writeit) {
+			char convert[256]; 
+			sprintf(convert, "0x%d", item->action);
+			sceIoWrite(writeit, item->text, strlen(item->text));
+			sceIoWrite(writeit, ": ", 2);
+			sceIoWrite(writeit, convert, strlen(convert));
+			sceIoWrite(writeit, "\n", 1);
+			sceIoClose(writeit);
+		}
+	#else
+
+    /*if(sce_paf_private_strcmp(item->text, "msgtop_sysconf_network") == 0)
+		sce_paf_private_strcpy(item->image, "CD");
+	*/
+
+	#endif
+	return AddVshItem(a0, topitem, item);
 }
 
 int OnXmbPushPatched(void *arg0, void *arg1)
@@ -704,7 +727,7 @@ void HijackContext(SceRcoEntry *src, char **options, int n)
     }
     else
     {
-        /* Restore */
+        // Restore
         mlist->first_child = backup[0];
         mlist->child_count = backup[1];
         mlist_param[16] = backup[2];
