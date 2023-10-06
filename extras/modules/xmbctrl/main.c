@@ -316,6 +316,7 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
     item->id = id; //information board id
     item->action_arg = action_arg;
     item->play_sound = 1;
+    item->context = NULL;
     sce_paf_private_strcpy(item->text, text);
 
     return item;
@@ -329,17 +330,16 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         
         LoadTextLanguage(-1);
 
-        context = (SceContextItem *)sce_paf_private_malloc((4 * sizeof(SceContextItem)) + 1);
+        //context = (SceContextItem *)sce_paf_private_malloc((4 * sizeof(SceContextItem)) + 1);
 
-        new_item = addCustomVshItem(46, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, item);
+        new_item = addCustomVshItem(56, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, item);
         AddVshItem(a0, topitem, new_item);
 
-        new_item2 = addCustomVshItem(47, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, item);
+        new_item2 = addCustomVshItem(57, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, item);
         AddVshItem(a0, topitem, new_item2);
     }
-	else { 
-		return AddVshItem(a0, topitem, item);
-	}
+	return AddVshItem(a0, topitem, item);
+
 }
 
 int OnXmbPushPatched(void *arg0, void *arg1)
