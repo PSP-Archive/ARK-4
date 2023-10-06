@@ -95,7 +95,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } pspclock = {
-    "PSP CPU Clock",
+    "PSP Overclock",
     MAX_ARK_OPTIONS,
     0,
     &(cfw_config.overclock),
