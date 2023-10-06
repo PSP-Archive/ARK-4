@@ -92,6 +92,7 @@ Setting settings_items_slim[] =
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
+    { 2, &(config.iconfix), "Fix XMB Settings Icons", ark_settings_boolean },
 };
 
 #define N_SETTINGS_SLIM (sizeof(settings_items_slim)/sizeof(settings_items_slim[0]))
@@ -116,6 +117,7 @@ Setting settings_items_go[] =
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
+    { 2, &(config.iconfix), "Fix XMB Settings Icons", ark_settings_boolean },
 };
 
 #define N_SETTINGS_GO (sizeof(settings_items_go)/sizeof(settings_items_go[0]))

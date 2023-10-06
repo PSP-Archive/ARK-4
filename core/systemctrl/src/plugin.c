@@ -449,6 +449,9 @@ static void settingsHandler(char* path, u8 enabled){
     else if (strcasecmp(path, "noanalog") == 0){
         se_config.noanalog = enabled;
     }
+    else if (strcasecmp(path, "iconfix") == 0){
+        se_config.iconfix = enabled;
+    }
     else if (strcasecmp(path, "skiplogos") == 0){
         se_config.skiplogos = enabled;
     }

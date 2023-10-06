@@ -100,6 +100,10 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.noanalog = opt;
         return 1;
     }
+    else if (strcasecmp(path, "iconfix") == 0){
+        config.iconfix = opt;
+        return 1;
+    }
     return 0;
 }
 
@@ -128,6 +132,7 @@ void loadSettings(){
     FIX_BOOLEAN(config.hidedlc);
     FIX_BOOLEAN(config.noumd);
     FIX_BOOLEAN(config.noanalog);
+    FIX_BOOLEAN(config.iconfix);
 }
 
 static void processSetting(int fd, char* line, char* name, int setting){
@@ -181,6 +186,7 @@ void saveSettings(){
     processSetting(fd, line, "noled", config.noled);
     processSetting(fd, line, "noumd", config.noumd);
     processSetting(fd, line, "noanalog", config.noanalog);
+    processSetting(fd, line, "iconfix", config.iconfix);
 
     for (int i=0; i<custom_config.count; i++){
         sceIoWrite(fd, custom_config.table[i], strlen(custom_config.table[i]));

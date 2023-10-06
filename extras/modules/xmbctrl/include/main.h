@@ -54,6 +54,7 @@ typedef struct
     int noled;
     int noumd;
     int noanalog;
+    int iconfix;
 } CFWConfig;
 
 typedef struct
