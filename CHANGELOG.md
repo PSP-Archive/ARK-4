@@ -1,5 +1,15 @@
 # ARK Changelog
 
+## Version 4.20.65 (2023-10-08)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42065
+- Fixed regression that would prevent loading `ISO` on `PSP Go` without M2 Memory Stick.
+- Improved support for `Leda` plugin on `PSP Go`.
+- Launching homebrew on `PSP Go` via the `XMB` is now done exactly like `PRO/ME`. This means that homebrew launched on `ef0` (Internal Memory) will have `ms0 to ef0 redirection` enabled. To launch homebrew on `ef0` without redirecting `ms0` you can use `Custom Launcher` (with the `redirect` option turned `off` in `menu settings`).
+- Improved `OTA` updater for `DC-ARK` installations.
+- `Plugins Manager` in the `XMB` is now located under the `Game` section.
+- Other minor visual improvements to the `XMB`.
+- Other small fixes and improvements.
+
 ## Version 4.20.64 (2023-09-08)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42064
 - Rev 3: fixed regression that would prevent `UMD Video ISO` from working. Added patch to fix the screen in `cwcheatpops` plugin.
