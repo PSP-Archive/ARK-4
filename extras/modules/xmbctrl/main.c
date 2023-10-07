@@ -338,7 +338,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 		AddVshItem(a0, topitem, item);
         startup = 0;
         
-        LoadTextLanguage(-1);
+        //LoadTextLanguage(-1);
 
         new_item = addCustomVshItem(14, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, new_item3);
 		sce_paf_private_strcpy(new_item->image, "BT");
@@ -549,7 +549,8 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
-			LoadTextLanguage(-1);
+			// TODO: This needs to be revised as it leads to a studder when scrolling fast on the Settings column.
+            LoadTextLanguage(-1);
 			utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
 			return (wchar_t *)user_buffer;
 		}
