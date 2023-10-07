@@ -181,6 +181,7 @@ CFWConfig config;
 
 int psp_model;
 ARKConfig ark_conf;
+SEConfig se_config;
 
 int startup = 1;
 
@@ -553,8 +554,11 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
-			utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
-			return (wchar_t *)user_buffer;
+            if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
+            if (se_config.custom_update){
+			    utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
+			    return (wchar_t *)user_buffer;
+            }
 		}
 		
     }

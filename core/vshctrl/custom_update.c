@@ -30,6 +30,7 @@
 #include "macros.h"
 
 extern ARKConfig* ark_config;
+extern SEConfig* se_config;
 
 char server[64];
 
@@ -51,16 +52,20 @@ void load_server_file(){
 		sceIoClose(fd);
 
 		int len = strlen(server);
-		if (len && server[len-1] == '\n') server[--len] = 0;
-		if (len && server[len-1] == '\r') server[--len] = 0;
-		if (len && server[len-1] == '/') server[--len] = 0;
+		if (len){
+			if (len && server[len-1] == '\n') server[--len] = 0;
+			if (len && server[len-1] == '\r') server[--len] = 0;
+			if (len && server[len-1] == '/') server[--len] = 0;
+
+			se_config->custom_update = (len>0 && server[0] != 0);
+		}
 	}
 }
 
 void patch_update_plugin_module(SceModule2* mod)
 {
 
-	if (server[0] == 0) return;
+	if (!se_config->custom_update) return;
 
 	int version;
 	int i;
@@ -83,25 +88,11 @@ void patch_update_plugin_module(SceModule2* mod)
 			break;
 		}
 	}
-
-	// substitute all /UPDATE with /ARK_FW
-	/*
-	for(i = 0; i < text_size;) {
-		u32 addr = text_addr + i;
-
-		if(0 == strncmp((char *)addr, "/UPDATE", 7)) {
-			memcpy((char *)addr, "/ARK_FW", 7);
-			i += 7;
-		} else {
-			i++;
-		}
-	}
-	*/
 }
 
 void patch_SceUpdateDL_Library(SceModule2* mod)
 {
-	if (server[0] == 0) return;
+	if (!se_config->custom_update) return;
 
 	if(NULL == sceKernelFindModuleByName("update_plugin_module")) {
 		return;
