@@ -8,6 +8,7 @@
 # 2023-05-14: fix for v4.20
 # 2023-06-08: zip/unzip checks
 # 2023-06-08: custom build ver
+# 2023-09-20: fix script.lua
 
 #sudo apt update
 #sudo apt install zip unzip -y
@@ -65,6 +66,9 @@ cd ..
 rm -rf ARK4_tmp/
 cd ArkFast_tmp/
 sed -i 's/ARK-2/ARK-4/g' script.lua
+sed -i 's/ARK2/ARK-4/g' script.lua
+sed -i 's/CLON(s)/CLONE(s)/g' script.lua
+sed -i 's/PSVita /PS Vita /g' script.lua
 zip -r ../ArkFast_new.vpk .
 cd ..
 rm -rf ArkFast_tmp/

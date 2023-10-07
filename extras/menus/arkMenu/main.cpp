@@ -15,7 +15,7 @@
 #include "lang.h"
 
 PSP_MODULE_INFO("ARKMENU", 0, 1, 0);
-PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);
+PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH|PSP_THREAD_ATTR_VFPU);
 PSP_HEAP_SIZE_KB(17*1024);
 
 using namespace std;
@@ -23,7 +23,12 @@ using namespace std;
 #define MAX_ENTRIES 5
 static SystemEntry* entries[MAX_ENTRIES];
 
+extern "C" void my_malloc_init();
+
 int main(int argc, char** argv){
+
+    // make malloc/free threadsafe
+    my_malloc_init();
 
     srand(time(NULL));
 

@@ -551,10 +551,12 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         file = param->argp;
     }
 
-    // homebrew boot
-    u32 k1 = pspSdkSetK1(0);
-    result = sceKernelLoadExecVSHMs2(file, param);
-    pspSdkSetK1(k1);
+    //forward to ms0 handler
+	if(strncmp(file, "ms", 2) == 0) result = sctrlKernelLoadExecVSHMs2(file, param);
+
+	//forward to ef0 handler
+	else result = sctrlKernelLoadExecVSHEf2(file, param);
+
     return result;
 }
 

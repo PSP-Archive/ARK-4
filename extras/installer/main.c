@@ -21,19 +21,43 @@ struct {
     char* orig;
     char* dest;
 } flash_files[] = {
-    {"IDSREG.PRX", "flash0:/kd/ark_idsreg.prx"},
-    {"XMBCTRL.PRX", "flash0:/kd/ark_xmbctrl.prx"},
-    {"USBDEV.PRX", "flash0:/vsh/module/ark_usbdev.prx"},
-    {"VSHMENU.PRX", "flash0:/vsh/module/ark_satelite.prx"},
-    {"RECOVERY.PRX", "flash0:/vsh/module/ark_recovery.prx"},
-    {"UPDATER.TXT", "flash1:/UPDATER.TXT"},
+    {IDSREG_PRX, IDSREG_PRX_FLASH},
+    {XMBCTRL_PRX, XMBCTRL_PRX_FLASH},
+    {USBDEV_PRX, USBDEV_PRX_FLASH},
+    {VSH_MENU, VSH_MENU_FLASH},
+    {RECOVERY_PRX, RECOVERY_PRX_FLASH},
+    {UPDATER_FILE, UPDATER_FILE_FLASH},
 };
 
+
 static const int N_FLASH_FILES = (sizeof(flash_files)/sizeof(flash_files[0]));
+
+void uninstall() {
+	
+	pspDebugScreenClear();
+	open_flash();
+	for (int i=0; i<N_FLASH_FILES; i++){
+		if(!sceIoRead(flash_files[i].dest, PSP_O_RDONLY, 0777)) {
+			return;
+		}
+		else {
+			pspDebugScreenPrintf("Removing %s\n", flash_files[i].dest);
+			rm_file(flash_files[i].dest);
+		}
+    }
+
+    // Kill Main Thread
+    sceKernelExitGame();
+
+
+	return;
+}
+
 
 // Entry Point
 int main(int argc, char * argv[])
 {
+	
 
     ARKConfig ark_config;
 
@@ -42,6 +66,23 @@ int main(int argc, char * argv[])
     // Initialize Screen Output
     pspDebugScreenInit();
 
+	SceCtrlData pad;
+	pspDebugScreenPrintf("ARK-4 Full Installer\n");
+	pspDebugScreenPrintf("Press (X) to install\n");
+	pspDebugScreenPrintf("Press (O) to uninstall\n");
+	pspDebugScreenPrintf("Press (R Trigger) to quit\n");
+
+	while(1) {
+		sceCtrlReadBufferPositive(&pad, 1);
+		if(pad.Buttons & PSP_CTRL_CIRCLE) 
+			uninstall();
+		else if(pad.Buttons & PSP_CTRL_CROSS) 
+			break;
+		else if(pad.Buttons & PSP_CTRL_RTRIGGER)
+			sceKernelExitGame();
+
+	}
+	pspDebugScreenClear();
     if (ark_config.magic != ARK_CONFIG_MAGIC){
         pspDebugScreenPrintf("ERROR: not running ARK\n");
         while (1){};
@@ -108,4 +149,8 @@ void copy_file(char* orig, char* dest){
     }
     sceIoClose(fdr);
     sceIoClose(fdw);
+}
+
+void rm_file(char* dest){
+    sceIoRemove(dest);
 }

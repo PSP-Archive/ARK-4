@@ -23,6 +23,7 @@ ARKConfig _arkconf;
 ARKConfig* ark_config = &_arkconf;
 CFWConfig config;
 SEConfig se_config;
+int is_launcher_mode = 0;
 
 extern int usb_is_enabled;
 extern void USB_enable();
@@ -170,12 +171,14 @@ static void draw(char** options, int size, int dir){
 
 int main(SceSize args, void *argp) {
 
-    psp_model = kuKernelGetModel();
-
-    sctrlHENGetArkConfig(ark_config);
-    sctrlSEGetConfig(&se_config);
-
 	pspDebugScreenInit();
+
+    if (is_launcher_mode){
+        sceKernelDelayThread(10000);
+        proshell_main();
+        sceKernelExitGame();
+        return 0;
+    }
 
 	SceCtrlData pad;
     char *options[] = {
@@ -265,6 +268,12 @@ int main(SceSize args, void *argp) {
 }
 
 int module_start(int argc, void* argv){
+
+    psp_model = kuKernelGetModel();
+    sctrlHENGetArkConfig(ark_config);
+    sctrlSEGetConfig(&se_config);
+    is_launcher_mode = (strcmp(ark_config->launcher, "PROSHELL") == 0);
+
     int uid = sceKernelCreateThread("ClassicRecovery", main, 16 - 1, 32*1024, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
 	sceKernelStartThread(uid, 0, NULL);
 }

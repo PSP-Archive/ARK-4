@@ -21,6 +21,7 @@
 #define GO_ROOT "ef0:/" // PSP Go initial directory
 #define FTP_ROOT "ftp:/" // FTP directory
 #define UMD_ROOT "disc0:/" // UMD directory
+#define EH0_ROOT "eh0:/" // Go Hidden directory
 #define PAGE_SIZE 10 // maximum entries shown on screen
 #define BUF_SIZE 1024*16 // 16 kB buffer for copying files
 #define MENU_W 410
@@ -129,7 +130,7 @@ void Browser::clearEntries(){
 }
 
 bool Browser::isRootDir(string dir){
-    return (dir == ROOT_DIR || dir == GO_ROOT || dir == FTP_ROOT || dir == UMD_ROOT);
+    return (dir == ROOT_DIR || dir == GO_ROOT || dir == FTP_ROOT || dir == UMD_ROOT || dir == EH0_ROOT);
 }
 
 void Browser::moveDirUp(){
@@ -147,16 +148,21 @@ void Browser::update(Entry* ent, bool skip_prompt){
         return;
     common::playMenuSound();
     BrowserFile* e = (BrowserFile*)ent;
+    printf("running %s\n", e->getName().c_str());
     if (e->getName() == "./")
         refreshDirs();
     else if (e->getName() == "../")
         moveDirUp();
+    else if (e->getName() == "<Go To eh0>/"){ // why does it have a final / when it reaches this step? lol
+        this->cwd = EH0_ROOT;
+        this->refreshDirs();
+    }
     else if (e->getName() == "<refresh>"){
         this->refreshDirs();
     }
     else if (e->getName() == "<disconnect>"){ // FTP disconnect entry
         if (ftp_driver != NULL) ftp_driver->disconnect();
-        this->cwd = MS0_DIR;
+        this->cwd = ROOT_DIR;
         this->refreshDirs();
     }
     else if (Entry::isARK(e->getPath().c_str())) {
@@ -211,6 +217,7 @@ void Browser::update(Entry* ent, bool skip_prompt){
         delete aux;
     }
     else if (e->getFileType() == FILE_PICTURE){
+		sceKernelDelayThread(100000);
         optionsmenu = new ImageViewer(e->getPath());
         optionsmenu->control();
         ImageViewer* aux = (ImageViewer*)optionsmenu;
@@ -452,9 +459,9 @@ void logbuffer(char* path, void* buffer, u32 size){
     sceIoClose(fd);
 }
 
+// Refresh the list of files and dirs
 void Browser::refreshDirs(const char* retry){
 
-    // Refresh the list of files and dirs
     SystemMgr::pauseDraw();
     this->index = 0;
     this->start = 0;
@@ -464,6 +471,7 @@ void Browser::refreshDirs(const char* retry){
     this->optionsmenu = NULL;
     SystemMgr::resumeDraw();
 
+    // if it's an ftp path, use driver's own scanner
     if (ftp_driver != NULL && ftp_driver->isDevicePath(this->cwd)){
         SystemMgr::pauseDraw();
         bool ftp_con = ftp_driver->connect();
@@ -513,6 +521,7 @@ void Browser::refreshDirs(const char* retry){
     vector<Entry*> folders;
     vector<Entry*> files;
 
+    // scan directory
     pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
     memset(pri_dirent, 0, sizeof(pspMsPrivateDirent));
     pri_dirent->size = sizeof(pspMsPrivateDirent);
@@ -539,8 +548,10 @@ void Browser::refreshDirs(const char* retry){
 
     free(pri_dirent);
 
+    // handle special folders
     Entry* dot = NULL;
     Entry* dotdot = NULL;
+    Entry* eh0 = NULL;
     if (folders.size() > 0){
         if (folders[0]->getName() == "./"){
             dot = folders[0];
@@ -552,17 +563,25 @@ void Browser::refreshDirs(const char* retry){
         }
     }
 
+    if (cwd == GO_ROOT){
+        eh0 = new Folder(cwd, "<Go To eh0>", "");
+    }
+
+    // sort entries if needed
     if (common::getConf()->sort_entries){
         printf("sorting entries\n");
         std::sort(folders.begin(), folders.end(), Entry::cmpEntriesForSort);
         std::sort(files.begin(), files.end(), Entry::cmpEntriesForSort);
     }
 
+    // insert special folders
+    if (eh0) folders.insert(folders.begin(), eh0);
     if (!dotdot && !isRootDir(this->cwd)) dotdot = new Folder(cwd, "..", "");
     if (dotdot) folders.insert(folders.begin(), dotdot);
     if (!dot && !isRootDir(this->cwd)) dot = new Folder(cwd, ".", "");
     if (dot) folders.insert(folders.begin(), dot);
-    
+
+    // folders first, files last
     printf("merging entries\n");
     SystemMgr::pauseDraw();
     for (int i=0; i<folders.size(); i++)

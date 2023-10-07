@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <pspdebug.h>
@@ -8,14 +9,26 @@
 #include <list.h>
 #include <plugins.h>
 
+#include "globals.h"
+
 extern ARKConfig* ark_config;
 extern CFWConfig config;
 extern List plugins;
+
+extern int psp_model;
+
 
 #define SCREEN_WIDTH 58
 #define SCREEN_HEIGHT 33 
 
 #define printf pspDebugScreenPrintf
+
+typedef struct {
+    int max;
+    int* value;
+    char* name;
+    char** opts;
+} Setting;
 
 char* ark_settings_options[] = {
     (char*)"Disabled",
@@ -41,12 +54,50 @@ char* ark_settings_infernocache[] = {
     (char*)"RR"
 };
 
-struct {
-    int max;
-    int* value;
-    char* name;
-    char** opts;
-} settings_items[] =
+// PSP 1K
+Setting settings_items_1k[] =
+{
+    { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
+    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
+    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
+    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
+    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
+    { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
+    { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
+    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
+    { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
+};
+
+#define N_SETTINGS_1K (sizeof(settings_items_1k)/sizeof(settings_items_1k[0]))
+
+// PSP Slim
+Setting settings_items_slim[] =
+{
+    { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
+    { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
+    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
+    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
+    { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
+    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
+    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
+    { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
+    { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
+    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
+    { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
+};
+
+#define N_SETTINGS_SLIM (sizeof(settings_items_slim)/sizeof(settings_items_slim[0]))
+
+// PSP GO
+Setting settings_items_go[] =
 {
     { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
     { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
@@ -64,12 +115,67 @@ struct {
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
 };
 
-#define N_SETTINGS (sizeof(settings_items)/sizeof(settings_items[0]))
+#define N_SETTINGS_GO (sizeof(settings_items_go)/sizeof(settings_items_go[0]))
 
-static settings_to_text(char** names, char** states){
-    for (int i=0; i<N_SETTINGS; i++){
+// PSP 110000 (Street)
+Setting settings_items_street[] =
+{
+    { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
+    { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
+    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
+    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
+    { 2, &(config.disablepause), "Disable Pause on PSP Go", ark_settings_boolean },
+    { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
+    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
+    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
+    { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
+    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
+    { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
+};
+
+#define N_SETTINGS_STREET (sizeof(settings_items_street)/sizeof(settings_items_street[0]))
+
+Setting settings_items_adr[] =
+{
+    { N_OPTS, &(config.overclock), "PSP Overclock", ark_settings_options },
+    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
+    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
+    { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
+    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
+    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
+    { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
+    { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
+    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
+    { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
+};
+
+#define N_SETTINGS_ADR (sizeof(settings_items_adr)/sizeof(settings_items_adr[0]))
+
+Setting settings_items_vita[] =
+{
+    { N_OPTS, &(config.overclock), "PSP Overclock", ark_settings_options },
+    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
+    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
+};
+
+#define N_SETTINGS_VITA (sizeof(settings_items_vita)/sizeof(settings_items_vita[0]))
+
+
+static settings_to_text(char** names, char** states, Setting* settings_items, int size){
+    for(int i = 0; i < size; i++){
         names[i] = settings_items[i].name;
         states[i] = settings_items[i].opts[*(settings_items[i].value)];
     }
@@ -209,13 +315,44 @@ void plugins_submenu(){
 void settings_submenu(){
     SceCtrlData pad;
     int dir = 0;
-
+	char** paths;
+	char** states;
+	int size;
+    Setting* settings_items;
     char* header = "* Custom Firmware Settings                                         *";
-    char** paths = malloc(sizeof(char*)*N_SETTINGS);
-    char** states = malloc(sizeof(char*)*N_SETTINGS);
 
-    int size = N_SETTINGS;
-    settings_to_text(paths, states);
+	if(IS_VITA(ark_config)) {
+		if(IS_VITA_ADR(ark_config)) {
+			size = N_SETTINGS_ADR;
+			settings_items = settings_items_adr;
+		}
+		else {
+			size = N_SETTINGS_VITA;
+			settings_items = settings_items_vita;
+		}
+	}
+	else if(psp_model == PSP_1000) {
+    	size = N_SETTINGS_1K;
+        settings_items = settings_items_1k;
+	}
+
+	else if(psp_model == PSP_GO) {
+    	size = N_SETTINGS_GO;
+        settings_items = settings_items_go;
+	}
+	else if(psp_model == PSP_11000) {
+    	size = N_SETTINGS_STREET;
+        settings_items = settings_items_street;
+	}
+	else {
+    	size = N_SETTINGS_SLIM;
+        settings_items = settings_items_slim;
+    }
+
+    paths = malloc(sizeof(char*)*size);
+	states = malloc(sizeof(char*)*size);
+
+    settings_to_text(paths, states, settings_items, size);
 
     draw_submenu(header, paths, states, size, dir);
 
@@ -243,21 +380,21 @@ void settings_submenu(){
         if(pad.Buttons & PSP_CTRL_LEFT) {
             sceKernelDelayThread(200000);
 			int* value = settings_items[dir].value;
-            int max = settings_items[dir].max;
+			int max = settings_items[dir].max;
             *value = (*value) - 1;
 			if(*value<0) *value = max-1;
             
-            settings_to_text(paths, states);
+            settings_to_text(paths, states, settings_items, size);
             draw_submenu(header, paths, states, size, dir);
 		}
         if(pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_RIGHT)) {
             sceKernelDelayThread(200000);
 			int* value = settings_items[dir].value;
-            int max = settings_items[dir].max;
+			int max = settings_items[dir].max;
             *value = (*value) + 1;
 			if(*value>=max) *value = 0;
             
-            settings_to_text(paths, states);
+            settings_to_text(paths, states, settings_items, size);
             draw_submenu(header, paths, states, size, dir);
 		}
         if((pad.Buttons & PSP_CTRL_TRIANGLE)) {

@@ -9,7 +9,7 @@ C_OBJS = main.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
 CFLAGS = -std=c99 -Os -G0 -Wall
-INCDIR = $(ARKROOT)/common/include
+INCDIR = $(ARKROOT)/common/include $(ARKROOT)/loader/dc
 LIBDIR = $(ARKROOT)/libs
 
 LIBS = -lpspsystemctrl_user -lpspkubridge

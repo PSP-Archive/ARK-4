@@ -150,6 +150,8 @@
     "Hide DLC": "Nascondi DLC",
     "Turn off LEDs": "Spegni LEDs",
     "VSH Region Change": "Cambio regione VSH",
-    "UMD Region Change": "Cambio regione UMD"
+    "UMD Region Change": "Cambio regione UMD",
+	"Disable UMD Drive": "Disabilita unità UMD",
+	"Disable Analog Stick": "Disattiva la levetta analogica"
 
 }

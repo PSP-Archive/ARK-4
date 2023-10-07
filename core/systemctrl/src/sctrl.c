@@ -38,8 +38,6 @@
 #include "imports.h"
 #include "sysmem.h"
 
-#define PSP_INIT_APITYPE_EF2 0x152
-
 // Load Execute Module via Kernel Internal Function
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
 {
@@ -89,6 +87,8 @@ int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExec
 
 int sctrlKernelLoadExecVSHEf2(const char *file, struct SceKernelLoadExecVSHParam *param)
 {
+    // Missing from SDK
+    #define PSP_INIT_APITYPE_EF2 0x152
     return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_EF2, file, param);
 }
 

@@ -42,6 +42,8 @@ typedef struct {
     unsigned char hidemac;
     unsigned char hidedlc;
     unsigned char noled;
+    unsigned char noumd;
+    unsigned char noanalog;
 }CfwConf;
 
 CfwConf cfw_config;
@@ -80,6 +82,20 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } overclock = {
     "OverClock",
+    MAX_ARK_OPTIONS,
+    0,
+    &(cfw_config.overclock),
+    ARK_OPTIONS
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} pspclock = {
+    "PSP Overclock",
     MAX_ARK_OPTIONS,
     0,
     &(cfw_config.overclock),
@@ -282,6 +298,37 @@ static struct {
     ARK_OPTIONS
 };
 
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} noumd = {
+    "Disable UMD Drive",
+	2,
+    0,
+    &(cfw_config.noumd),
+	{"Off", "On"}
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} noanalog = {
+    "Disable Analog Stick",
+	2,
+    0,
+    &(cfw_config.noanalog),
+	{"Off", "On"}
+};
+
+
+
+// DO NOT ADD BELOW THIS
 
 static struct {
     char* description;
@@ -326,6 +373,8 @@ settings_entry* ark_conf_entries_1k[] = {
     (settings_entry*)&hidemac,
     (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
+    (settings_entry*)&noumd,
+    (settings_entry*)&noanalog,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -345,6 +394,8 @@ settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&hidemac,
     (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
+    (settings_entry*)&noumd,
+    (settings_entry*)&noanalog,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -367,6 +418,7 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&hidemac,
     (settings_entry*)&hidedlc,
     (settings_entry*)&noled,
+    (settings_entry*)&noanalog,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_GO (sizeof(ark_conf_entries_go)/sizeof(ark_conf_entries_go[0]))
@@ -383,18 +435,26 @@ settings_entry* ark_conf_entries_street[] = {
     (settings_entry*)&skiplogos,
     (settings_entry*)&hidepics,
     (settings_entry*)&noled,
+    (settings_entry*)&noumd,
+    (settings_entry*)&noanalog,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_STREET (sizeof(ark_conf_entries_street)/sizeof(ark_conf_entries_street[0]))
 
 settings_entry* ark_conf_entries_vita[] = {
+    (settings_entry*)&pspclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
 };
 #define MAX_ARK_CONF_VITA (sizeof(ark_conf_entries_vita)/sizeof(ark_conf_entries_vita[0]))
 
 settings_entry* ark_conf_entries_adr[] = {
+    (settings_entry*)&pspclock,
+    (settings_entry*)&powersave,
+    (settings_entry*)&defaultclock,
     (settings_entry*)&launcher,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
@@ -403,6 +463,7 @@ settings_entry* ark_conf_entries_adr[] = {
     (settings_entry*)&hidepics,
     (settings_entry*)&hidemac,
     (settings_entry*)&hidedlc,
+    (settings_entry*)&noanalog,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_ADR (sizeof(ark_conf_entries_adr)/sizeof(ark_conf_entries_adr[0]))
@@ -492,6 +553,12 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "noled") == 0){
         return &(cfw_config.noled);
+    }
+    else if (strcasecmp(conf.c_str(), "noumd") == 0){
+        return &(cfw_config.noumd);
+    }
+	else if (strcasecmp(conf.c_str(), "noanalog") == 0){
+        return &(cfw_config.noanalog);
     }
     else if (strcasecmp(conf.c_str(), "region_none") == 0){
         cfw_config.regionchange = 0;
@@ -613,6 +680,8 @@ void loadSettings(){
     FIX_BOOLEAN(cfw_config.hibblock);
     FIX_BOOLEAN(cfw_config.hidemac);
     FIX_BOOLEAN(cfw_config.hidedlc);
+    FIX_BOOLEAN(cfw_config.noumd);
+    FIX_BOOLEAN(cfw_config.noanalog);
 }
 
 static string processSetting(string name, unsigned char setting){
@@ -651,6 +720,8 @@ void saveSettings(){
     output << processSetting("hidemac", cfw_config.hidemac) << endl;
     output << processSetting("hidedlc", cfw_config.hidedlc) << endl;
     output << processSetting("noled", cfw_config.noled) << endl;
+    output << processSetting("noumd", cfw_config.noumd) << endl;
+    output << processSetting("noanalog", cfw_config.noanalog) << endl;
     
     switch (cfw_config.regionchange){
         case REGION_JAPAN:

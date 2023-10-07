@@ -150,6 +150,8 @@
     "Hide DLC": "DLC verbergen",
     "Turn off LEDs": "LED's uitschakelen",
     "VSH Region Change": "VSH-regiowijziging",
-    "UMD Region Change": "UMD-regiowijziging"
+    "UMD Region Change": "UMD-regiowijziging",
+	"Disable UMD Drive": "Schakel UMD-schijf uit",
+	"Disable Analog Stick": "Analoge stick uitschakelen"
 
 }

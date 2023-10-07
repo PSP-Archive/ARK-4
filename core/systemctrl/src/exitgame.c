@@ -31,6 +31,7 @@
 #define EXIT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
 
 extern ARKConfig* ark_config;
+extern SEConfig se_config;
 extern int disable_plugins;
 extern int disable_settings;
 
@@ -51,7 +52,7 @@ void exitLauncher()
     strcpy(path, ark_config->arkpath);
     if (ark_config->recovery) strcat(path, ARK_RECOVERY);
     else if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
-    else strcat(path, ARK_MENU);
+    else strcat(path, VBOOT_PBP);
 
 	SceIoStat stat; int res = sceIoGetstat(path, &stat);
 
@@ -73,18 +74,19 @@ void exitLauncher()
 		ark_config->recovery = 0; // reset recovery mode for next reboot
 		sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 	}
-	else if (ark_config->recovery){
+	else if (ark_config->recovery || (strcmp(ark_config->launcher, "PROSHELL") == 0)){
 		// no recovery app? try classic module
 		strcpy(path, ark_config->arkpath);
-		strcat(path, "RECOVERY.PRX");
+		strcat(path, RECOVERY_PRX);
 		res = sceIoGetstat(path, &stat);
 		if (res < 0){
 			// try flash0
-			strcpy(path, "flash0:/vsh/module/ark_recovery.prx");
+			strcpy(path, RECOVERY_PRX_FLASH);
 		}
 		SceUID modid = kuKernelLoadModule(path, 0, NULL);
 		sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
 		ark_config->recovery = 0; // reset recovery mode for next reboot
+		ark_config->launcher[0] = 0; // reset launcher mode for next reboot
 	}
 	else {
 		ark_config->recovery = 0; // reset recovery mode for next reboot
@@ -101,6 +103,14 @@ static void startExitThread(){
 	pspSdkSetK1(k1);
 }
 
+static void remove_analog_input(SceCtrlData *data)
+{
+	if(data == NULL)
+		return;
+
+	data->Lx = 0xFF/2;
+	data->Ly = 0xFF/2;
+}
 
 // Gamepad Hook #1
 int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = NULL;
@@ -113,6 +123,10 @@ int peek_positive(SceCtrlData * pad_data, int count)
 	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
 		startExitThread();
+	}
+
+	if (se_config.noanalog){
+		remove_analog_input(pad_data);
 	}
 	
 	// Return Number of Input Frames
@@ -132,6 +146,10 @@ int peek_negative(SceCtrlData * pad_data, int count)
 		startExitThread();
 	}
 
+	if (se_config.noanalog){
+		remove_analog_input(pad_data);
+	}
+
 	// Return Number of Input Frames
 	return count;
 }
@@ -147,6 +165,10 @@ int read_positive(SceCtrlData * pad_data, int count)
 	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
 		startExitThread();
+	}
+
+	if (se_config.noanalog){
+		remove_analog_input(pad_data);
 	}
 	
 	// Return Number of Input Frames
@@ -164,6 +186,10 @@ int read_negative(SceCtrlData * pad_data, int count)
 	if((pad_data[0].Buttons & EXIT_MASK) == 0)
 	{
 		startExitThread();
+	}
+
+	if (se_config.noanalog){
+		remove_analog_input(pad_data);
 	}
 	
 	// Return Number of Input Frames
@@ -195,6 +221,7 @@ void checkControllerInput(){
 		CtrlPeekBufferPositive(&pad_data, 1);
 		if ((pad_data.Buttons & PSP_CTRL_START) == PSP_CTRL_START) disable_plugins = 1;
 		if ((pad_data.Buttons & PSP_CTRL_SELECT) == PSP_CTRL_SELECT) disable_settings = 1;
+		if ((pad_data.Buttons & PSP_CTRL_RTRIGGER) == PSP_CTRL_RTRIGGER) ark_config->recovery = 1;
 	}
 }
 

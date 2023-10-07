@@ -1,5 +1,7 @@
 #include "eboot.h"
+#include "system_mgr.h"
 #include <systemctrl.h>
+#include <kubridge.h>
 
 Eboot::Eboot(string path){
     
@@ -102,7 +104,7 @@ int Eboot::getEbootType(const char* path){
 
     int ret = UNKNOWN_TYPE;
 
-    if (strcasecmp("ms0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp("ef0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp("ms0:/PSP/APPS/UPDATE/VBOOT.PBP", path) == 0 )
+    if (strcasecmp("ms0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp("ef0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp(("ms0:/PSP/APPS/UPDATE/"VBOOT_PBP), path) == 0 )
         return TYPE_UPDATER;
 
     FILE* fp = fopen(path, "rb");
@@ -163,8 +165,8 @@ string Eboot::fullEbootPath(string path, string app){
     if (common::fileExists(path+app+"/EBOOT.PBP"))
         return path+app+"/EBOOT.PBP"; // Normal EBOOT
 
-    else if (common::fileExists(path+app+"/VBOOT.PBP"))
-        return path+app+"/VBOOT.PBP"; // ARK EBOOT
+    else if (common::fileExists(path+app+VBOOT_PBP))
+        return path+app+VBOOT_PBP; // ARK EBOOT
 
     else if (common::fileExists(path+app+"/FBOOT.PBP"))
         return path+app+"/FBOOT.PBP"; // TN CEF EBOOT
@@ -221,16 +223,29 @@ void Eboot::doExecute(){
 }
 
 void Eboot::executeRecovery(const char* path){
-    struct SceKernelLoadExecVSHParam param;
-    
-    memset(&param, 0, sizeof(param));
-    
-    int runlevel = HOMEBREW_RUNLEVEL;
-    
-    param.args = strlen(path) + 1;
-    param.argp = (char*)path;
-    param.key = "game";
-    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+    string fakent = string(common::getArkConfig()->arkpath) + VBOOT_PBP;
+    if (fakent != path && common::fileExists(path)){
+        struct SceKernelLoadExecVSHParam param;
+        
+        memset(&param, 0, sizeof(param));
+        
+        int runlevel = HOMEBREW_RUNLEVEL;
+        
+        param.args = strlen(path) + 1;
+        param.argp = (char*)path;
+        param.key = "game";
+        sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+    }
+    else {
+        string recovery_prx = string(common::getArkConfig()->arkpath) + RECOVERY_PRX;
+        SceUID modid = kuKernelLoadModule(recovery_prx.c_str(), 0, NULL);
+        if (modid >= 0){
+            int res = sceKernelStartModule(modid, recovery_prx.size() + 1, (void*)recovery_prx.c_str(), NULL, NULL);
+            if (res >= 0){
+                while (1){sceKernelDelayThread(1000000);}; // wait for recovery to finish
+            }
+        }
+    }
 }
 
 void Eboot::executeUpdate(const char* path){

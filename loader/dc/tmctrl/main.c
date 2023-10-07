@@ -60,9 +60,25 @@ void OnModuleStart(SceModule2 *mod)
 	{
 		SceModule2 *mod2 = (SceModule2 *)sceKernelFindModuleByName("sceMSFAT_Driver");
 
-		MAKE_CALL(mod2->text_addr + 0x30fc, df_openPatched);
-		MAKE_CALL(mod2->text_addr + 0x3ba4, df_dopenPatched);
-		MAKE_CALL(mod2->text_addr + 0x44cc, df_devctlPatched);
+		MAKE_CALL(mod2->text_addr + 0x30fc, df_openPatched); // scan first occurrence of 0x24041000
+		MAKE_CALL(mod2->text_addr + 0x3ba4, df_dopenPatched); // scan seventh occurence
+		MAKE_CALL(mod2->text_addr + 0x44cc, df_devctlPatched); // scan 13th (last) occurrence
+		
+		//TODO test this dynamic patch
+		/*
+		int icount = 0;
+		for (u32 addr=mod2->text_addr; addr < mod2->text_addr+mod2->text_size && icount < 13; addr+=4){
+			// scan for occurrences of "li $a0, 4096", there should be exactly 13, always in the same order, and just right before where we need to patch
+			if (_lw(addr) == 0x24041000){
+				icount++;
+				switch (icount){
+					case 1:  MAKE_CALL(addr + 4, df_openPatched);   break;
+					case 7:  MAKE_CALL(addr + 4, df_dopenPatched);  break;
+					case 13: MAKE_CALL(addr + 4, df_devctlPatched); break;
+				}
+			}
+		}
+		*/
 
 		ClearCaches();
 	}
@@ -83,8 +99,16 @@ void OnModuleStart(SceModule2 *mod)
 	}
 	else if (strcmp(moduleName, "sceMediaSync") == 0)
 	{
-		//TODO make this patch dynamic
 		MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x135c);
+		//TODO test this dynamic patch
+		/*
+		for (u32 addr=mod->text_addr; addr < mod->text_addr+mod->text_size; addr+=4){
+			if (_lw(addr) == 0x3C037361){
+				MAKE_DUMMY_FUNCTION_RETURN_0(addr - 4);
+				break;
+			}
+		}
+		*/
 
 		ClearCaches();
 	}

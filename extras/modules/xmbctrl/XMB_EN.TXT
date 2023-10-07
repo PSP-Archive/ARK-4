@@ -1,3 +1,4 @@
+ARK-4 Updater
 Custom Firmware Settings
 Plugins Manager
 USB Charge

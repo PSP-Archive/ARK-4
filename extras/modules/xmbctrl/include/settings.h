@@ -24,8 +24,9 @@
 
 char *settings[] =
 {
-    "Custom Firmware Settings",
-    "Plugins Manager",
+    "ARK-4 Updater",
+    "★ Custom Firmware Settings",
+    "★ Plugins Manager",
     "USB Charge",
     "Overclock",
     "PowerSave",
@@ -42,6 +43,10 @@ char *settings[] =
     "Hide MAC Address",
     "Hide DLC",
     "Turn off LEDs",
+    "Disable UMD Drive",
+    "Disable Analog Stick",
+    "Fix XMB Settings Icons",
+    "PSP Overclock",
 };
 
 #endif

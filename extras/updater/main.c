@@ -12,6 +12,21 @@
 #include <kubridge.h>
 #include "globals.h"
 
+#include <tmctrl/tmctrl.h>
+#include <msipl/mainbinex/payload.h>
+#include <installer/tm_msipl.h>
+#include <installer/tm_mloader.h>
+
+#include <installer/pspbtcnf_dc.h>
+#include <installer/pspbtcnf_02g_dc.h>
+#include <installer/dcman.h>
+#include <installer/ipl_update.h>
+#include <installer/iop.h>
+#include <installer/pspdecryptmod.h>
+#include <installer/intrafont.h>
+#include <installer/resurrection.h>
+#include <installer/vlf.h>
+
 PSP_MODULE_INFO("ARKUpdater", 0x800, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH | PSP_THREAD_ATTR_VFPU);
 PSP_HEAP_SIZE_KB(4096);
@@ -38,12 +53,12 @@ struct {
     char* orig;
     char* dest;
 } flash_files[] = {
-    {"IDSREG.PRX", "flash0:/kd/ark_idsreg.prx"},
-    {"XMBCTRL.PRX", "flash0:/kd/ark_xmbctrl.prx"},
-    {"USBDEV.PRX", "flash0:/vsh/module/ark_usbdev.prx"},
-    {"VSHMENU.PRX", "flash0:/vsh/module/ark_satelite.prx"},
-    {"RECOVERY.PRX", "flash0:/vsh/module/ark_recovery.prx"},
-    {"UPDATER.TXT", "flash1:/UPDATER.TXT"},
+    {IDSREG_PRX, IDSREG_PRX_FLASH},
+    {XMBCTRL_PRX, XMBCTRL_PRX_FLASH},
+    {USBDEV_PRX, USBDEV_PRX_FLASH},
+    {VSH_MENU, VSH_MENU_FLASH},
+    {RECOVERY_PRX, RECOVERY_PRX_FLASH},
+    {UPDATER_FILE, UPDATER_FILE_FLASH},
 };
 static const int N_FLASH_FILES = (sizeof(flash_files)/sizeof(flash_files[0]));
 
@@ -59,9 +74,9 @@ void checkArkConfig(ARKConfig* ark_config){
     // check if ARK is using SEPLUGINS folder due to lack of savedata folder
     SceUID fd = -1;
     char path[ARK_PATH_SIZE]; strcpy(path, ark_config->arkpath); path[strlen(path)-1] = 0; // remove trailing '/' or else sceIoGetstat won't work
-    if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0 || (fd = sceIoDopen(path)) < 0){
+    if (strcmp(ark_config->arkpath, SEPLUGINS_MS0) == 0 || (fd = sceIoDopen(path)) < 0){
         // create savedata folder, first attempt on ef0 for PSP Go
-        strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234");
+        strcpy(ark_config->arkpath, SAVEDATA_EF0 DEFAULT_ARK_FOLDER); // ef0:/PSP/SAVEDATA/ARK_01234
         sceIoMkdir(ark_config->arkpath, 0777);
         if ((fd = sceIoDopen(ark_config->arkpath)) < 0){
             // second attempt on ms0 for every other device
@@ -79,8 +94,8 @@ void checkArkConfig(ARKConfig* ark_config){
             kuKernelCall((void*)setArkConfig, &args);
 
             // move settings file to arkpath
-            static char* orig = "ms0:/SEPLUGINS/SETTINGS.TXT";
-            static char* dest = "ms0:/PSP/SAVEDATA/ARK_01234/SETTINGS.TXT";
+            static char* orig = SEPLUGINS_MS0 ARK_SETTINGS; // ms0:/SEPLUGINS/SETTINGS.TXT
+            static char* dest = DEFAULT_ARK_PATH ARK_SETTINGS; // ms0:/PSP/SAVEDATA/ARK_01234/SETTINGS.TXT
             dest[0] = ark_config->arkpath[0];
             dest[1] = ark_config->arkpath[1];
             copy_file(orig, dest);
@@ -155,7 +170,7 @@ int main(int argc, char * argv[])
     if (IS_PSP(ac)){
         char flash0_ark[ARK_PATH_SIZE];
         strcpy(flash0_ark, ark_config.arkpath);
-        strcat(flash0_ark, "FLASH0.ARK");
+        strcat(flash0_ark, FLASH0_ARK);
         pspDebugScreenPrintf("Extracting %s\n", flash0_ark);
         open_flash();
         extractArchive(sceIoOpen(flash0_ark, PSP_O_RDONLY, 0777), "flash0:/", &isVitaFile);
@@ -167,8 +182,41 @@ int main(int argc, char * argv[])
                 char path[ARK_PATH_SIZE];
                 strcpy(path, ark_config.arkpath);
                 strcat(path, flash_files[i].orig);
-                pspDebugScreenPrintf("Installing %s to %s\n", flash_files[i].orig, flash_files[i].dest);
+                pspDebugScreenPrintf("Copying %s to %s\n", flash_files[i].orig, flash_files[i].dest);
                 copy_file(path, flash_files[i].dest);
+            }
+        }
+
+        struct {
+            char* path;
+            void* buf;
+            size_t size;
+        } dc_files[] = {
+            { ARK_DC_PATH "/tmctrl.prx", tmctrl, size_tmctrl },
+            { ARK_DC_PATH "/payload_01g.bin", ms_ipl_payload, size_ms_ipl_payload },
+            { ARK_DC_PATH "/payload_02g.bin", ms_ipl_payload, size_ms_ipl_payload },
+            { ARK_DC_PATH "/tm_mloader.bin", tm_mloader, size_tm_mloader },
+            { ARK_DC_PATH "/kd/pspbtcnf_dc.bin", pspbtcnf_dc, size_pspbtcnf_dc },
+            { ARK_DC_PATH "/kd/pspbtcnf_02g_dc.bin", pspbtcnf_02g_dc, size_pspbtcnf_02g_dc },
+            { ARK_DC_PATH "/kd/dcman.prx", dcman, size_dcman },
+            { ARK_DC_PATH "/kd/ipl_update.prx", ipl_update, size_ipl_update },
+            { ARK_DC_PATH "/kd/iop.prx", iop, size_iop },
+            { ARK_DC_PATH "/kd/pspdecrypt.prx", pspdecrypt, size_pspdecrypt },
+            { ARK_DC_PATH "/vsh/module/intrafont.prx", intrafont, size_intrafont },
+            { ARK_DC_PATH "/vsh/module/resurrection.prx", resurrection, size_resurrection },
+            { ARK_DC_PATH "/vsh/module/vlf.prx", vlf, size_vlf },
+        };
+
+        const int N_DC_FILES = (sizeof(dc_files)/sizeof(dc_files[0]));
+
+        // test for dc installation
+        res = sceIoGetstat(dc_files[0].path, &stat);
+        if (res >= 0){
+            for (int i=0; i<N_DC_FILES; i++){
+                pspDebugScreenPrintf("Installing %s\n", dc_files[i]);
+                int fdw = sceIoOpen(dc_files[i].path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+                sceIoWrite(fdw, dc_files[i].buf, dc_files[i].size);
+                sceIoClose(fdw);
             }
         }
     }
@@ -243,7 +291,7 @@ void extractArchive(int fdr, char* dest_path, int (*filter)(char*)){
                 sceIoLseek32(fdr, filesize, PSP_SEEK_CUR); // skip file
             }
 
-			else if(strstr(filename, "THEME.ARK") != NULL) {
+			else if(strstr(filename, ARK_THEME_FILE) != NULL) {
 					int size;
 					SceUID theme;
 

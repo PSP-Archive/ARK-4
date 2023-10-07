@@ -183,14 +183,14 @@ static void loadXmbControl(){
         strcpy(path, ark_config->arkpath);
         strcat(path, XMBCTRL_PRX);
         int modid = sceKernelLoadModule(path, 0, NULL);
-        if (modid < 0) modid = sceKernelLoadModule("flash0:/kd/ark_xmbctrl.prx", 0, NULL); // retry flash0
+        if (modid < 0) modid = sceKernelLoadModule(XMBCTRL_PRX_FLASH, 0, NULL); // retry flash0
         if (modid >= 0) sceKernelStartModule(modid, 0, NULL, NULL, NULL);
     }
 }
 
 static void checkArkPath(){
-    if (strcmp(ark_config->arkpath, "ms0:/SEPLUGINS/") == 0){ // attempt revert to default path 
-        strcpy(ark_config->arkpath, "ef0:/PSP/SAVEDATA/ARK_01234/");
+    if (strcmp(ark_config->arkpath, SEPLUGINS_MS0) == 0){ // attempt revert to default path 
+        strcpy(ark_config->arkpath, DEFAULT_ARK_PATH_GO);
     }
     int res = sceIoDopen(ark_config->arkpath);
     if (res < 0){
@@ -203,7 +203,7 @@ static void checkArkPath(){
             }
         }
         // no ARK install folder, default to SEPLUGINS
-        strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
+        strcpy(ark_config->arkpath, SEPLUGINS_MS0);
     }
     else{
         sceIoDclose(res);
@@ -290,8 +290,8 @@ SceModule2* patchLoaderCore(void)
     u32 topaddr = mod->text_addr+mod->text_size;
 
     // restore rebootex pointers to original
-    u32 rebootex_decrypt = 0;
-    u32 rebootex_checkexec = 0;
+    u32 rebootex_decrypt_call = JAL(0);
+    u32 rebootex_checkexec_call = JAL(0);
     SonyPRXDecrypt = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0xEF73E85B);
     origCheckExecFile = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0x6192F715);
     // find patched functions pointing to rebootex
@@ -299,8 +299,8 @@ SceModule2* patchLoaderCore(void)
     for (u32 addr = start_addr; addr<topaddr&&!found; addr+=4){
         u32 data = _lw(addr);
         switch (data){
-        case 0x35450200: rebootex_checkexec = K_EXTRACT_CALL(addr+12);
-        case 0x35250200: rebootex_decrypt = K_EXTRACT_CALL(addr-0x18); found=1;
+        case 0x35450200: rebootex_checkexec_call = _lw(addr+12);
+        case 0x35250200: rebootex_decrypt_call = _lw(addr-0x18); found=1;
         default: break;
         }
     }
@@ -312,9 +312,7 @@ SceModule2* patchLoaderCore(void)
     // Flush Cache
     flushCache();
 
-    // start the dynamic patching    
-    u32 rebootex_decrypt_call = JAL(rebootex_decrypt);
-    u32 rebootex_checkexec_call = JAL(rebootex_checkexec);
+    // start the dynamic patching
     for (u32 addr = start_addr; addr<topaddr; addr+=4){
         u32 data = _lw(addr);
         if (data == JAL(checkExec)){

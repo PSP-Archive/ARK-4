@@ -1,5 +1,6 @@
-Ajustes del Custom Firmware
-Administrador de Plugins
+Actualizador ARK-4
+★ Ajustes del Custom Firmware
+★ Administrador de Plugins
 Carga mediante USB
 Overclock
 Ahorro de energía
@@ -16,3 +17,6 @@ Evitar borrar la hibernación en PSP Go
 Ocultar dirección MAC
 Ocultar DLC
 Apagar LEDs
+Deshabilitar unidad de UMD
+Deshabilitar stick analógico
+Overclock de PSP

@@ -150,7 +150,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     int lastDecoded = 0;
     int volume = PSP_AUDIO_VOLUME_MAX;
     int numPlayed = 0;
-    int loopContinue = mp3Init.mp3StreamEnd/100;
 
     mp3_handle = sceMp3ReserveMp3Handle( &mp3Init );
 
@@ -173,7 +172,8 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     
     sceAudioSRCChRelease();
 
-    //sceKernelDelayThread(10000);
+    sceMp3SetLoopNum(mp3_handle, 0);
+
     while (running) {
 
         if (paused){
@@ -186,10 +186,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
             if (!fillStreamBuffer(file_handle, mp3_handle, buffer, buffer_size)){
                 break;
             }
-            loopContinue = mp3Init.mp3StreamEnd/100;
-        }
-        else {
-            loopContinue--;
         }
 
         // Decode some samples
@@ -199,13 +195,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
         bytesDecoded = sceMp3Decode(mp3_handle, &buf);
 
-        /*
-        if (bytesDecoded < 0 && bytesDecoded != 0x80671402)
-        {
-            running = 0;
-            break;
-        }
-        */
         // Nothing more to decode? Must have reached end of input buffer
         if (bytesDecoded <= 0)
         {
@@ -233,10 +222,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
             sceAudioSRCChRelease();
             channel = -1;
         }
-        //sceKernelDelayThread(10000);
-        
-        if (loopContinue<=0)
-            break;
         
     }
 

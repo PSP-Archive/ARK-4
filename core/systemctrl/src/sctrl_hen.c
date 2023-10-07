@@ -277,10 +277,8 @@ void sctrlHENLoadModuleOnReboot(char *module_before, void *buf, int size, int fl
 
 void sctrlHENSetSpeed(int cpuspd, int busspd)
 {
-    u32 k1 = pspSdkSetK1(0);
-    int (*_scePowerSetClockFrequency)(int, int, int);
-    _scePowerSetClockFrequency = sctrlHENFindFunction("scePower_Service", "scePower", 0x545A7F3C);
-    if (_scePowerSetClockFrequency) _scePowerSetClockFrequency(cpuspd, cpuspd, busspd);
+    int k1 = pspSdkSetK1(0);
+    SetSpeed(cpuspd, busspd);
     pspSdkSetK1(k1);
 }
 
@@ -313,11 +311,10 @@ void sctrlHENRegisterLLEHandler(void* handler)
 	lle_handler = handler;
 }
 
-extern SceUID (* KernelLoadModuleMs2_hook)();
 int sctrlHENRegisterHomebrewLoader(void* handler)
 {
-    // register handler
-    KernelLoadModuleMs2_hook = handler;
+    // register handler and patch leda
+    patchLedaPlugin(handler);
     return 0;
 }
 

@@ -8,14 +8,8 @@
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 
 int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(void *, void *, void *)){
-    u32 text_addr = loadCoreModuleStartCommon(start);
-#ifdef MS_IPL
-    // TODO make these patches dynamic
-	// disable unsign check
-	_sw(0x1021, text_addr + 0x5994);
-	_sw(0x1021, text_addr + 0x59C4);
-	_sw(0x1021, text_addr + 0x5A5C);
-#endif
+    loadCoreModuleStartCommon(start);
+
     flushCache();
     return start(arg1, arg2, arg3);
 }

@@ -5,6 +5,8 @@
 #include <sstream>
 #include <string>
 #include <unistd.h>
+#include <globals.h>
+
 
 static ARKConfig _ark_conf;
 ARKConfig* ark_config = &_ark_conf;
@@ -60,8 +62,8 @@ string Menu::fullPath(string path, string app){
     else if (common::fileExists(path+app+"/FBOOT.PBP"))
         return path+app+"/FBOOT.PBP";
     
-    else if (common::fileExists(path+app+"/VBOOT.PBP"))
-        return path+app+"/VBOOT.PBP";
+    else if (common::fileExists(path+app+VBOOT_PBP))
+        return path+app+VBOOT_PBP;
 
     return "";
 }

@@ -1,11 +1,11 @@
 #include <pspsdk.h>
+#include <pspsysmem_kernel.h>
 #include <pspinit.h>
 #include <globals.h>
 #include <graphics.h>
 #include <macros.h>
 #include <module2.h>
 #include <pspdisplay_kernel.h>
-#include <pspsysmem_kernel.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
@@ -20,7 +20,8 @@ extern u32 psp_model;
 extern ARKConfig* ark_config;
 extern SEConfig* se_config;
 extern STMOD_HANDLER previous;
-extern void SetSpeed(int cpuspd, int busspd);
+
+extern int sceKernelSuspendThreadPatched(SceUID thid);
 
 // Return Boot Status
 int isSystemBooted(void)
@@ -173,6 +174,13 @@ void disable_PauseGame()
     }
 }
 
+int sceUmdRegisterUMDCallBackPatched(int cbid) {
+	int k1 = pspSdkSetK1(0);
+	int res = sceKernelNotifyCallback(cbid, PSP_UMD_NOT_PRESENT);
+	pspSdkSetK1(k1);
+	return res;
+}
+
 void processSettings(){
     int apitype = sceKernelInitApitype();
 
@@ -182,10 +190,11 @@ void processSettings(){
     }
     // check launcher mode
     if (se_config->launcher_mode){
-        strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
+        strcpy(ark_config->launcher, VBOOT_PBP); // set CFW in launcher mode
     }
     else{
-        ark_config->launcher[0] = 0; // disable launcher mode
+        if (strcmp(ark_config->launcher, "PROSHELL") != 0)
+            ark_config->launcher[0] = 0; // disable launcher mode
     }
     // VSH region
     if (se_config->vshregion) patch_sceChkreg();
@@ -228,6 +237,21 @@ void processSettings(){
     if (se_config->disable_pause){
         disable_PauseGame();
     }
+    // Disable UMD Drive
+    if (se_config->noumd && psp_model != PSP_GO && sceKernelFindModuleByName("PRO_Inferno_Driver")==NULL){
+        u32 f = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0xAEE7404D);
+        if (f){
+            REDIRECT_FUNCTION(f, sceUmdRegisterUMDCallBackPatched);
+        }
+        int (*IoDelDrv)(char*) = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
+        if (IoDelDrv){
+            IoDelDrv("umd");
+        }
+        u32 CheckMedium = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0x46EBB729);
+        if (CheckMedium){
+            MAKE_DUMMY_FUNCTION_RETURN_0(CheckMedium);
+        }
+    }
 }
 
 int (*prevPluginHandler)(const char* path, int modid) = NULL;
@@ -243,6 +267,13 @@ int pluginHandler(const char* path, int modid){
 void PSPOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
+
+	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
+    	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
+			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+			goto flush;
+		}
+	}
     
     if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
         patch_sceUmdMan_driver(mod);
@@ -305,6 +336,18 @@ void PSPOnModuleStart(SceModule2 * mod){
         }
         goto flush;
     }
+
+	if( strcmp(mod->modname, "Legacy_Software_Loader") == 0 )
+	{
+        // Missing from SDK
+        #define PSP_INIT_APITYPE_EF2 0x152
+		if( sceKernelInitApitype() == PSP_INIT_APITYPE_EF2 )
+		{
+			_sw( 0x10000005, mod->text_addr + 0x0000014C );	
+			goto flush;
+		}
+	}
+
     
     if(booted == 0)
     {
@@ -314,21 +357,17 @@ void PSPOnModuleStart(SceModule2 * mod){
 
             // handle mscache
             if (se_config->msspeed){
-                if (psp_model == PSP_GO)
-                    msstorCacheInit("eflash0a0f1p", 8 * 1024);
-                else
-                    msstorCacheInit("msstor0p", 16 * 1024);
-            }
-            // handle CPU speed
-            switch (se_config->clock){
-                case 1: SetSpeed(333, 166); break;
-                case 2: SetSpeed(133, 66); break;
-                case 3: SetSpeed(222, 111); break;
+                char* drv = "msstor0p";
+                if (psp_model == PSP_GO && sctrlKernelBootFrom()==0x50)
+                    drv = "eflash0a0f1p";
+                msstorCacheInit(drv, 4 * 1024);
             }
             // Boot Complete Action done
             booted = 1;
             goto flush;
         }
+
+
     }
     
 flush:
@@ -336,6 +375,7 @@ flush:
 
     // Forward to previous Handler
     if(previous) previous(mod);
+
 }
 
 int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;

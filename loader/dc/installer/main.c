@@ -845,7 +845,7 @@ int install_iplloader()
 		ErrorExit(1000, "Error 0x%08X in WriteSector.\n", res);
 	}
 
-	char *default_config = "NOTHING = \"ms0:/TM/DCARK/tm_mloader.bin\";";
+	/*char *default_config = "NOTHING = \"ms0:/TM/DCARK/tm_mloader.bin\";";
 
 	SceIoStat stat;
 
@@ -854,6 +854,7 @@ int install_iplloader()
 		WriteFile("ms0:/TM/config.txt", default_config, strlen(default_config));
 		return 0;
 	}
+	*/
 	
 	return 1;
 }
@@ -1043,23 +1044,44 @@ int install_thread(SceSize args, void *argp)
 	{
 		SceCtrlData pad;
 		char buf[256];		
-		
-		strcpy(text, "Please keep pressed for some seconds\n"
-			         "the key/s which you want to use to\n"
-					 "boot DC-ARK... ");
-		
-		vlfGuiAddEventHandler(0, -1, OnPaintListenKeys, NULL);	
+		int timeout = 10;
 		
 		while (1)
-		{		
-			sceKernelDelayThread(3000000);
+			{
+				sprintf(text, "Please keep pressed for some seconds\n"
+						 "the key/s which you want to use to\n"
+						 "boot DC-ARK... \n\nYou have %d seconds or autoboot will be set.", timeout);
 			
-			sceCtrlPeekBufferPositive(&pad, 1);
 			
-			if (pad.Buttons != 0)
-				break;
-		}
 
+				sceKernelDelayThread(1000000);
+				
+				sceCtrlPeekBufferPositive(&pad, 1);
+				
+				if (pad.Buttons != 0)
+					break;
+				if(timeout==0) 
+				{
+					char *default_config = "NOTHING = \"ms0:/TM/DCARK/tm_mloader.bin\";\r\n";
+					memcpy(g_dataOut, default_config, strlen(default_config));
+
+					int size = ReadFile("ms0:/TM/config.txt", 0, g_dataOut+strlen(default_config), SMALL_BUFFER_SIZE);
+
+					if (size >= 0)
+					{
+						WriteFile("ms0:/TM/config.txt", g_dataOut, size+strlen(default_config));
+						break;
+					}
+					else 
+					{
+						WriteFile("ms0:/TM/config.txt", default_config, strlen(default_config));
+						break;	
+					}
+				}
+				timeout--;
+				vlfGuiAddEventHandler(0, -1, OnPaintListenKeys, NULL);	
+			}
+	
 		strcpy(buf, "");
 
 		int first = 1;
@@ -1080,22 +1102,28 @@ int install_thread(SceSize args, void *argp)
 			}
 		}
 
-		strcat(text, buf);
-		SetStatus(text);
-		sceKernelDelayThread(850000);
 
-		strcat(buf, " = \"ms0:/TM/DCARK/tm_mloader.bin\";\r\n");
-		memcpy(g_dataOut, buf, strlen(buf));
+		if(timeout!=0) {
+			sprintf(text, "You chose %s to boot DC-ARK on boot.", buf);
+			SetStatus(text);
+			sceKernelDelayThread(850000);
+			strcat(buf, " = \"ms0:/TM/DCARK/tm_mloader.bin\";\r\n");
+			memcpy(g_dataOut, buf, strlen(buf));
 
-		int size = ReadFile("ms0:/TM/config.txt", 0, g_dataOut+strlen(buf), SMALL_BUFFER_SIZE);
+			int size = ReadFile("ms0:/TM/config.txt", 0, g_dataOut+strlen(buf), SMALL_BUFFER_SIZE);
 
-		if (size >= 0)
-		{
-			WriteFile("ms0:/TM/config.txt", g_dataOut, size+strlen(buf));
+			if (size >= 0)
+			{
+				WriteFile("ms0:/TM/config.txt", g_dataOut, size+strlen(buf));
+			}
+			else
+			{
+				WriteFile("ms0:/TM/config.txt", g_dataOut, strlen(buf));
+			}
+			
+			strcat(text, "\n");
+			sceKernelDelayThread(350000);
 		}
-		
-		strcat(text, "\n");
-		sceKernelDelayThread(350000);
 	}
 	
 	strcat(text, "\n");

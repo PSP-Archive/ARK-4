@@ -1,5 +1,6 @@
-Configurazione custom firmware
-Gestione plugin
+Aggiornamento ARK-4
+★ Configurazione custom firmware
+★ Gestione plugin
 Ricarica USB
 Overclock
 Risparmio energetico
@@ -16,3 +17,6 @@ Previeni cancellazione dell'ibernazione su PSP Go
 Nascondi l'indirizzo MAC
 Nascondi DLC
 Disattiva LEDs
+Disabilitare l'unità UMD
+Disabilitare la levetta analogica
+PSP Overclock

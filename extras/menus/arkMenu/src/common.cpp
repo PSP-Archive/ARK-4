@@ -230,7 +230,7 @@ void common::resetConf(){
 void common::launchRecovery(){
     struct SceKernelLoadExecVSHParam param;
     char cwd[128];
-    string recovery_path = string(ark_config.arkpath) + "RECOVERY.PBP";
+    string recovery_path = string(ark_config.arkpath) + ARK_RECOVERY;
     
     memset(&param, 0, sizeof(param));
     

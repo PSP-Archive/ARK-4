@@ -152,6 +152,8 @@
     "Hide DLC": "DLC 숨기기",
     "Turn off LEDs": "LED 끄기",
     "VSH Region Change": "VSH 지역 변경",
-    "UMD Region Change": "UMD 지역 변경"
+    "UMD Region Change": "UMD 지역 변경",
+	"Disable UMD Drive": "UMD 드라이브 비활성화",
+	"Disable Analog Stick": "아날로그 스틱 비활성화"
 
 }

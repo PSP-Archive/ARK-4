@@ -1,5 +1,6 @@
-Paramètres d'ARK-4
-Gestionnaire de plugins
+Mise à jour ARK-4
+★ Paramètres d'ARK-4
+★ Gestionnaire de plugins
 Recharge par USB
 Overclock
 Économie d'énergie
@@ -16,3 +17,6 @@ Empêcher la suppression de l`hibernation sur la PSP Go
 Masquer l'adresse MAC
 Masquer DLC
 Éteindre les LED
+Désactiver le lecteur UMD
+Désactiver le stick analogique
+PSP Overclock

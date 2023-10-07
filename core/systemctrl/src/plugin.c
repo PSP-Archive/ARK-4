@@ -143,30 +143,39 @@ static int isHomebrewRunlevel(){
 static int matchingRunlevel(char * runlevel)
 {
     
-    if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1; // always on
-    else if (stricmp(runlevel, "vsh") == 0 || stricmp(runlevel, "xmb") == 0) // VSH only
-        return isVshRunlevel();
-    else if (stricmp(runlevel, "pops") == 0 || stricmp(runlevel, "ps1") == 0 || stricmp(runlevel, "psx") == 0) // PS1 games only
-        return isPopsRunlevel();
-    else if (stricmp(runlevel, "umd") == 0 || stricmp(runlevel, "psp") == 0 || stricmp(runlevel, "umdemu") == 0) // Retail games only
-        return isUmdRunlevel();
-    else if (stricmp(runlevel, "game") == 0) // retail+homebrew
-        return (isUmdRunlevel() || isHomebrewRunlevel());
-    else if (stricmp(runlevel, "app") == 0 || stricmp(runlevel, "homebrew") == 0) // homebrews only
-        return isHomebrewRunlevel();
-    else if (stricmp(runlevel, "launcher") == 0){
-        // check if running custom launcher
-        static char path[ARK_PATH_SIZE];
-        strcpy(path, ark_config->arkpath);
-        if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
-        else                         strcat(path, ARK_MENU);
-        return (strcmp(path, sceKernelInitFileName())==0);
-    }
-    else { // check if plugin loads on specific game
+	lowerString(runlevel, runlevel, strlen(runlevel)+1);
+
+	int ret = 0;
+
+    if (strcasecmp(runlevel, "all") == 0 || strcasecmp(runlevel, "always") == 0) return 1; // always on
+	if(isVshRunlevel())
+		return (strstr(runlevel, "vsh") != NULL || strstr(runlevel, "xmb") != NULL);
+	if(isPopsRunlevel())
+    	return (strstr(runlevel, "pops") != NULL || strstr(runlevel, "ps1") != NULL || strstr(runlevel, "psx") != NULL); // PS1 games only
+	if(isHomebrewRunlevel()) {
+		if (strstr(runlevel, "launcher") != NULL){
+			// check if running custom launcher
+			static char path[ARK_PATH_SIZE];
+			strcpy(path, ark_config->arkpath);
+			if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
+			else                         strcat(path, VBOOT_PBP);
+			if (strcmp(path, sceKernelInitFileName())==0) return 1;
+		}
+    	if (strstr(runlevel, "app") != NULL || strstr(runlevel, "homebrew") != NULL || strstr(runlevel, "game") != NULL) return 1; // homebrews only
+	}
+
+	if(isUmdRunlevel()) {
+        //check if plugin loads on specific game
         char gameid[10]; memset(gameid, 0, sizeof(gameid));
         getGameId(gameid);
-        return (gameid[0] && strstr(runlevel, gameid) != NULL);
-    }
+		lowerString(gameid, gameid, strlen(gameid)+1);
+        if(gameid[0] && strstr(runlevel, gameid) != NULL) return 1;
+    
+    	if(strstr(runlevel, "umd") != NULL || strstr(runlevel, "psp") != NULL || strstr(runlevel, "umdemu") != NULL || strstr(runlevel, "game") != NULL) return 1; // Retail games only
+	}
+    
+   
+
     
     // Unsupported Runlevel (we don't touch those to keep stability up)
     return 0;
@@ -433,6 +442,12 @@ static void settingsHandler(char* path, u8 enabled){
     }
     else if (strcasecmp(path, "noled") == 0){
         se_config.noled = enabled;
+    }
+    else if (strcasecmp(path, "noumd") == 0){
+        se_config.noumd = enabled;
+    }
+    else if (strcasecmp(path, "noanalog") == 0){
+        se_config.noanalog = enabled;
     }
     else if (strcasecmp(path, "skiplogos") == 0){
         se_config.skiplogos = enabled;

@@ -1,7 +1,24 @@
 # ARK Changelog
 
+## Version 4.20.64 (2023-09-08)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42064
+- Rev 3: fixed regression that would prevent `UMD Video ISO` from working. Added patch to fix the screen in `cwcheatpops` plugin.
+- Rev 2: improve `Memory Stick Speedup` support on `PSP Go` models.
+- Rev 1: revert back to `PRO/ARK` mscache code using `ME`'s configuration. Provides the best results between compatibility and stability.
+- Added multi-runlevels support for plugins (i.e "game vsh, ms0:/seplugins/etc, on").
+- Added support for changing `CPU Clock` in `PS Vita`. Note: the `Overclock` setting (333MHz) is renamed to `PSP Overclock` to avoid confusion with native Vita Overclock (444MHz-555MHz).
+- `Classic Recovery Menu` can now be used on `PS Vita` when the regular recovery is not found (removed).
+- Added new setting to `Disable UMD Drive` on `PSP` (except for `Go`).
+- Added new setting to `Disable Analog Stick`.
+- Improved stability of `Custom Launcher` by forcing `malloc/free` to be `thread-safe`.
+- Implemented new `oe_malloc/oe_free` functions that consume less memory.
+- Replaced `msstor_cache` code (`Memory Stick Speedup` setting) from `PRO/ARK` with the one from `ME`. Fixes issues with `cwcheat` and lowers memory consumption.
+- Fixed issue that would cause `MP3 Playlists` to loop current song instead of playing the next song.
+
 ## Version 4.20.63 (2023-08-11):
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42063
+- Rev 2: Fixed and improved support for PSP Go models.
+- Rev 1: You can now select USB Device in Classic Recovery Menu, allows to mount flash memory for recovery operations.
 - Created `Classic Recovery Menu` for `PSP` systems with `Full Installation`, which is used when there is no `Recovery App` available (i.e. no `Memory Stick` inserted or no `ARK_01234` savedata present).
 - Improved `Custom Firmware Settings` in both `Recovery Menu` and `XMB`.
 - Fixed and improved `Cyrillic` fonts (https://github.com/PSP-Archive/ARK-4/pull/198).

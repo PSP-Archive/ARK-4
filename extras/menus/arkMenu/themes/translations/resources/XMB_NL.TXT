@@ -1,5 +1,6 @@
-Custom Firmware Instellingen
-Plugins Beheren
+ARK-4-updater
+★ Custom Firmware Instellingen
+★ Plugins Beheren
 USB Opladen
 Overklokken
 Energie Spaarstand
@@ -16,3 +17,6 @@ Voorkomen dat slaapstand wordt verwijderd van de PSP Go
 MAC-adres Verbergen
 DLC Verbergen
 LEDs Uitschakelen
+UMD-schijf uitschakelen
+Analoge stick uitschakelen
+PSP Overklokken

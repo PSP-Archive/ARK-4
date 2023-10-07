@@ -10,13 +10,11 @@
 #include "eboot.h"
 #include "lang.h"
 
-#define MAX_LINES 10
+#define MAX_LINES 9
 
-//extern "C"{
 #include "ftpd.h"
 extern void setFtpMsgHandler(void*);
 extern int mftpExitHandler(SceSize argc, void *argv);
-//}
 
 static struct {
     string msg[MAX_LINES];

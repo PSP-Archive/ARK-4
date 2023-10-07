@@ -37,6 +37,7 @@
 
 extern u32 sctrlHENFakeDevkitVersion();
 extern int is_plugins_loading;
+extern SEConfig se_config;
 
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
@@ -153,11 +154,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
-    if (strcmp(mod->modname, "Legacy_Software_Loader") == 0){
-        patchLedaPlugin(mod->text_addr);
-        goto flush;
-    }
-
     if (strcmp(mod->modname, "popsloader") == 0 || strcmp(mod->modname, "popscore") == 0){
         // fix for 6.60 check on 6.61
         hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
@@ -183,6 +179,13 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         // Boot is complete
         if(isSystemBooted())
         {
+
+            // handle CPU speed
+            switch (se_config.clock){
+                case 1: sctrlHENSetSpeed(333, 166); break;
+                case 2: sctrlHENSetSpeed(133, 66); break;
+                case 3: sctrlHENSetSpeed(222, 111); break;
+            }
 
             // Allow exiting through key combo
             patchController();

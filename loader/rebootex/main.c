@@ -109,6 +109,7 @@ int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
 
 int CheckExecFilePatched(unsigned char * addr, void * arg2)
 {
+#ifndef MS_IPL
     //scan structure
     //6.31 kernel modules use type 3 PRX... 0xd4~0x10C is zero padded
     int pos = 0; for(; pos < 0x38; pos++)
@@ -120,6 +121,7 @@ int CheckExecFilePatched(unsigned char * addr, void * arg2)
             return origCheckExecFile(addr, arg2);
         }
     }
+#endif
 
     //return success
     return 0;

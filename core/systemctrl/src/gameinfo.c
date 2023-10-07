@@ -3,11 +3,11 @@
 #include <pspiofilemgr.h>
 #include <pspsysmem_kernel.h>
 #include <rebootconfig.h>
+#include <systemctrl.h>
 
 #include "globals.h"
 #include "macros.h"
 #include "module2.h"
-#include "graphics.h"
 
 struct LbaParams {
     int unknown1; // 0

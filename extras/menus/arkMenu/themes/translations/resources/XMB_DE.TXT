@@ -1,5 +1,6 @@
-Custom Firmware Einstellungen
-Plugin Manager
+ARK-4-Updater
+★ Custom Firmware Einstellungen
+★ Plugin Manager
 USB-Aufladung
 CPU Übertakten
 Energiesparen
@@ -16,3 +17,6 @@ Verhindert das Löschen des Ruhezustands auf der PSP Go
 Verstecke MAC-Adresse
 Verstecke DLC
 LEDs Abschalten
+Deaktivieren Sie das UMD-Laufwerk
+Analogstick deaktivieren
+PSP-Übertaktung

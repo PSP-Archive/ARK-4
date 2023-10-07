@@ -25,6 +25,7 @@
 #include <psputility_sysparam.h>
 #include <kubridge.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <stddef.h>
 
 #include "globals.h"
@@ -69,6 +70,8 @@ GetItem GetItemes[] =
     { 15, 0, "Hide MAC Address" },
     { 16, 0, "Hide DLC" },
     { 17, 0, "Turn off LEDs" },
+    { 18, 0, "Disable UMD Drive" },
+    { 19, 0, "Disable Analog Stick" },
 };
 
 #define PLUGINS_CONTEXT 1
@@ -125,14 +128,17 @@ struct {
     {2, ark_settings_boolean}, // Hide MAC
     {2, ark_settings_boolean}, // Hide DLC
     {N_OPTS, ark_settings_options}, // Turn off LEDs
+    {2, ark_settings_boolean}, // Disable UMD Drive
+    {2, ark_settings_boolean}, // Disable Analog Stick 
+    {2, ark_settings_boolean}, // Fix XMB Settings Icons 
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
 
 typedef struct
 {
-    char *items[2];
-    char *options[N_ITEMS];
+    char *items[3];
+    char *options[N_ITEMS+1];
 } StringContainer;
 
 StringContainer string;
@@ -181,6 +187,8 @@ int startup = 1;
 SceContextItem *context;
 SceVshItem *new_item;
 SceVshItem *new_item2;
+SceVshItem *new_item3;
+char image[4];
 void *xmb_arg0, *xmb_arg1;
 
 void ClearCaches()
@@ -297,6 +305,11 @@ int LoadTextLanguage(int new_id)
 
     if(fd >= 0) sceIoClose(fd);
 
+    if (IS_VITA(ark_config)){
+        sce_paf_private_free(string.options[1]);
+        string.options[1] = string.options[N_ITEMS]; // replace "Overclock" with "PSP CPU Clock" on Vita
+    }
+
     return 1;
 }
 
@@ -307,6 +320,7 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
     item->id = id; //information board id
     item->action_arg = action_arg;
     item->play_sound = 1;
+    item->context = NULL;
     sce_paf_private_strcpy(item->text, text);
 
     return item;
@@ -336,9 +350,12 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 
         new_item2 = addCustomVshItem(47, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, &sysconf_item);
         AddVshItem(a0, topitem, new_item2);
-    }
 
-    return AddVshItem(a0, topitem, item);
+    }
+	else {
+		return AddVshItem(a0, topitem, item);
+	}
+
 }
 
 int OnXmbPushPatched(void *arg0, void *arg1)
@@ -413,10 +430,11 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 }
 
 int skipSetting(int i){
-    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==1 || i==2 || i==3 || i==5 || i==9 || i==12 || i==14 || i == 15);
-    else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12);
-    else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13 );
+    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16 || i==18);
+    else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12 || i==18);
+    else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13 || i == 18);
     else if (psp_model != PSP_GO) return ( i == 5 || i == 9 || i == 12);
+	else if (psp_model == PSP_GO) return (i == 16);
     return 0;
 }
 
@@ -525,14 +543,20 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
         if(sce_paf_private_strcmp(name, "msgtop_sysconf_configuration") == 0)
         {
-            utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
+            utf8_to_unicode((wchar_t *)user_buffer, string.items[1]);
             return (wchar_t *)user_buffer;
         }
         else if(sce_paf_private_strcmp(name, "msgtop_sysconf_plugins") == 0)
         {
-            utf8_to_unicode((wchar_t *)user_buffer, string.items[1]);
+            utf8_to_unicode((wchar_t *)user_buffer, string.items[2]);
             return (wchar_t *)user_buffer;
         }
+		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
+		{
+			utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
+			return (wchar_t *)user_buffer;
+		}
+		
     }
 
     wchar_t *res = scePafGetText(a0, name);
@@ -564,6 +588,8 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.hidemac, 		// 13
                 config.hidedlc,			// 14
                 config.noled,			// 15
+                config.noumd,			// 16
+                config.noanalog,		// 17
             };
             
             int i;
@@ -617,6 +643,8 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.hidemac,
                 &config.hidedlc,
                 &config.noled,
+                &config.noumd,
+                &config.noanalog,
             };
             
             int i;
@@ -698,7 +726,7 @@ void HijackContext(SceRcoEntry *src, char **options, int n)
     }
     else
     {
-        /* Restore */
+        // Restore
         mlist->first_child = backup[0];
         mlist->child_count = backup[1];
         mlist_param[16] = backup[2];
@@ -712,7 +740,7 @@ int PAF_Resource_GetPageNodeByID_Patched(void *resource, char *name, SceRcoEntry
 {
     int res = PAF_Resource_GetPageNodeByID(resource, name, child);
 
-    if(name)
+	if(name)
     {
         if(is_cfw_config == 1 || is_cfw_config == 2)
         {
@@ -758,6 +786,8 @@ void PatchVshMain(u32 text_addr, u32 text_size)
 {
     int patches = 13;
     u32 scePafGetText_call = _lw(&scePafGetText);
+
+	LoadTextLanguage(-1);
     for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x00063100){
@@ -923,8 +953,9 @@ int module_start(SceSize args, void *argp)
     sctrlHENGetArkConfig(&ark_conf);
     
     previous = sctrlHENSetStartModuleHandler(OnModuleStart);
-    
+
     sctrlHENGetArkConfig(ark_config);
+    
 
     return 0;
 }

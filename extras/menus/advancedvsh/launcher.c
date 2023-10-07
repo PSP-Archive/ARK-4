@@ -11,15 +11,33 @@
 void exec_custom_launcher(vsh_Menu *vsh) {
 	char menupath[ARK_PATH_SIZE];
 	scePaf_strcpy(menupath, vsh->config.ark.arkpath);
-	strcat(menupath, ARK_MENU);
+	strcat(menupath, VBOOT_PBP);
 
-	struct SceKernelLoadExecVSHParam param;
-	scePaf_memset(&param, 0, sizeof(param));
-	param.size = sizeof(param);
-	param.args = scePaf_strlen(menupath) + 1;
-	param.argp = menupath;
-	param.key = "game";
-	sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
+	SceIoStat stat; int res = sceIoGetstat(menupath, &stat);
+
+	if (res >= 0){
+		struct SceKernelLoadExecVSHParam param;
+		scePaf_memset(&param, 0, sizeof(param));
+		param.size = sizeof(param);
+		param.args = scePaf_strlen(menupath) + 1;
+		param.argp = menupath;
+		param.key = "game";
+		sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
+	}
+	else{
+		// reboot system in proshell mode
+		vsh->config.ark.recovery = 0;
+		strcpy(vsh->config.ark.launcher, "PROSHELL"); // reboot in proshell mode
+		struct KernelCallArg args;
+		args.arg1 = &(vsh->config.ark);
+		u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
+		kuKernelCall((void*)setArkConfig, &args);
+
+		sctrlSESetUmdFile("");
+	    sctrlSESetBootConfFileIndex(MODE_UMD);
+
+		vsh->status.reset_vsh = 1;
+	}
 }
 
 void exec_recovery_menu(vsh_Menu *vsh) {
