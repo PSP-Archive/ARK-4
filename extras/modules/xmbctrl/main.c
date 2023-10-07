@@ -338,8 +338,6 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 		AddVshItem(a0, topitem, item);
         startup = 0;
         
-        //LoadTextLanguage(-1);
-
         new_item = addCustomVshItem(14, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, new_item3);
 		sce_paf_private_strcpy(new_item->image, "BT");
         AddVshItem(a0, topitem, new_item);
@@ -440,7 +438,7 @@ void OnInitMenuPspConfigPatched()
     {
         if(((u32 *)sysconf_option)[2] == 0)
         {
-            //loadSettings();
+            loadSettings();
             int i;
             for(i = 0; i < N_ITEMS; i++)
             {
@@ -549,8 +547,6 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
-			// TODO: This needs to be revised as it leads to a studder when scrolling fast on the Settings column.
-            LoadTextLanguage(-1);
 			utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
 			return (wchar_t *)user_buffer;
 		}
@@ -784,7 +780,8 @@ void PatchVshMain(u32 text_addr, u32 text_size)
 {
     int patches = 13;
     u32 scePafGetText_call = _lw(&scePafGetText);
-	loadSettings();
+
+	LoadTextLanguage(-1);
     for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x00063100){
