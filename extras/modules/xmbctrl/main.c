@@ -352,9 +352,8 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         AddVshItem(a0, topitem, new_item2);
 
     }
-	else {
-		return AddVshItem(a0, topitem, item);
-	}
+	
+	return AddVshItem(a0, topitem, item);
 
 }
 
