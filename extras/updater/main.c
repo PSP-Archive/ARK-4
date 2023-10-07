@@ -210,7 +210,7 @@ int main(int argc, char * argv[])
         const int N_DC_FILES = (sizeof(dc_files)/sizeof(dc_files[0]));
 
         // test for dc installation
-        if (strncmp(ark_config->arkpath, ARK_DC_PATH, sizeof(ARK_DC_PATH)-1) == 0){
+        if (strncmp(ark_config.arkpath, ARK_DC_PATH, sizeof(ARK_DC_PATH)-1) == 0){
             for (int i=0; i<N_DC_FILES; i++){
                 pspDebugScreenPrintf("Installing %s\n", dc_files[i].path);
                 int fdw = sceIoOpen(dc_files[i].path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
