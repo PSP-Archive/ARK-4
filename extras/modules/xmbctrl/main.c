@@ -314,18 +314,27 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
 
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
+
+    static int items_added = 0;
+    static SceVshItem sysconf_item;
+
     if(sce_paf_private_strcmp(item->text, "msgtop_sysconf_console") == 0)
     {
+
+        sce_paf_private_memcpy(&sysconf_item, item, sizeof(SceVshItem));
         startup = 0;
         
         LoadTextLanguage(-1);
 
-        context = (SceContextItem *)sce_paf_private_malloc((4 * sizeof(SceContextItem)) + 1);
-
-        new_item = addCustomVshItem(46, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, item);
+        new_item = addCustomVshItem(46, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, &sysconf_item);
         AddVshItem(a0, topitem, new_item);
+    }
 
-        new_item2 = addCustomVshItem(47, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, item);
+    if ((item->id >= 23 && item->id <= 24) && !items_added)
+    {
+        items_added = 1;
+
+        new_item2 = addCustomVshItem(47, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, &sysconf_item);
         AddVshItem(a0, topitem, new_item2);
     }
 

@@ -78,8 +78,8 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 
     // Fix 6.60 plugins on 6.61
     if (is_plugins_loading){
-        hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
-        hookImportByNID(mod, "SysMemUserForUser", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
+        //hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
+        //hookImportByNID(mod, "SysMemUserForUser", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
     }
     
     #ifdef DEBUG
