@@ -334,7 +334,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 
     if(sce_paf_private_strcmp(item->text, "msgtop_sysconf_console") == 0)
     {
-
+        // Add CFW Settings
         sce_paf_private_memcpy(&sysconf_item, item, sizeof(SceVshItem));
         startup = 0;
         
@@ -346,6 +346,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 
     if ((sce_paf_private_strcmp(item->text, "msgtop_game_gamedl")==0 || sce_paf_private_strcmp(item->text, "msgtop_game_savedata")==0) && !items_added)
     {
+        // Add Plugins Manager
         items_added = 1;
 
         new_item2 = addCustomVshItem(47, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, &sysconf_item);
