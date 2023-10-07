@@ -177,7 +177,6 @@ typedef struct _SEConfig
     u8 noled;
 	u8 noumd;
 	u8 noanalog;
-	u8 iconfix;
 } SEConfig;
 
 /**

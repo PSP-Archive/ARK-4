@@ -138,7 +138,7 @@ struct {
 
 typedef struct
 {
-    char *items[2];
+    char *items[3];
     char *options[N_ITEMS+1];
 } StringContainer;
 
@@ -189,6 +189,7 @@ SceContextItem *context;
 SceVshItem *new_item;
 SceVshItem *new_item2;
 SceVshItem *new_item3;
+char image[4];
 void *xmb_arg0, *xmb_arg1;
 
 void ClearCaches()
@@ -328,32 +329,29 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
 
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
-	if(config.iconfix) {	
-    	if(psp_model == PSP_GO && (sce_paf_private_strcmp(item->text, "msgtop_sysconf_rss") == 0 || sce_paf_private_strcmp(item->text, "msgtop_sysconf_photo") == 0)) {
-			return 0;
-		}
-		else if(psp_model != PSP_GO && (sce_paf_private_strcmp(item->text, "msgtop_sysconf_rss") == 0)) {
-			return 0;
-		}
+	
+
+    if(sce_paf_private_strcmp(item->text, "msgtop_sysconf_console") == 0) {
+		new_item3 = item;
 	}
-	
-	
-    if(sce_paf_private_strcmp(item->text, "msgtop_sysconf_console") == 0)
+    if(item->id == 13)
     {
+		AddVshItem(a0, topitem, item);
         startup = 0;
         
         LoadTextLanguage(-1);
 
-        new_item = addCustomVshItem(14, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, item);
+        new_item = addCustomVshItem(14, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, new_item3);
+		sce_paf_private_strcpy(new_item->image, "BT");
         AddVshItem(a0, topitem, new_item);
 
-        new_item2 = addCustomVshItem(15, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, item);
+        new_item2 = addCustomVshItem(15, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, new_item3);
         AddVshItem(a0, topitem, new_item2);
 
     }
-
-
-	return AddVshItem(a0, topitem, item);
+	else {
+		return AddVshItem(a0, topitem, item);
+	}
 
 }
 
@@ -542,19 +540,20 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
         if(sce_paf_private_strcmp(name, "msgtop_sysconf_configuration") == 0)
         {
-            utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
+            utf8_to_unicode((wchar_t *)user_buffer, string.items[1]);
             return (wchar_t *)user_buffer;
         }
         else if(sce_paf_private_strcmp(name, "msgtop_sysconf_plugins") == 0)
         {
-            utf8_to_unicode((wchar_t *)user_buffer, string.items[1]);
+            utf8_to_unicode((wchar_t *)user_buffer, string.items[2]);
             return (wchar_t *)user_buffer;
         }
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
-			utf8_to_unicode((wchar_t*)user_buffer, "ARK-4 Updater");
+			utf8_to_unicode((wchar_t *)user_buffer, settings[0]);
 			return (wchar_t *)user_buffer;
 		}
+		
     }
 
     wchar_t *res = scePafGetText(a0, name);
@@ -588,7 +587,6 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.noled,			// 15
                 config.noumd,			// 16
                 config.noanalog,		// 17
-                config.iconfix,			// 18
             };
             
             int i;
@@ -644,7 +642,6 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.noled,
                 &config.noumd,
                 &config.noanalog,
-                &config.iconfix,
             };
             
             int i;

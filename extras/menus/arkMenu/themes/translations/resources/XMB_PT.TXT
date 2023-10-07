@@ -1,3 +1,4 @@
+Atualizador ARK-4
 Definições de Custom Firmware
 Gerenciador de Plugins
 Recarga via USB
