@@ -72,7 +72,6 @@ GetItem GetItemes[] =
     { 17, 0, "Turn off LEDs" },
     { 18, 0, "Disable UMD Drive" },
     { 19, 0, "Disable Analog Stick" },
-    { 20, 0, "Fix XMB Settings Icons" },
 };
 
 #define PLUGINS_CONTEXT 1
@@ -550,7 +549,8 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
-			utf8_to_unicode((wchar_t *)user_buffer, settings[0]);
+			LoadTextLanguage(-1);
+			utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
 			return (wchar_t *)user_buffer;
 		}
 		
