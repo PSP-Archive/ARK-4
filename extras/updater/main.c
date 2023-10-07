@@ -213,7 +213,7 @@ int main(int argc, char * argv[])
         res = sceIoGetstat(dc_files[0].path, &stat);
         if (res >= 0){
             for (int i=0; i<N_DC_FILES; i++){
-                pspDebugScreenPrintf("Installing %s\n", dc_files[i]);
+                pspDebugScreenPrintf("Installing %s\n", dc_files[i].path);
                 int fdw = sceIoOpen(dc_files[i].path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
                 sceIoWrite(fdw, dc_files[i].buf, dc_files[i].size);
                 sceIoClose(fdw);
