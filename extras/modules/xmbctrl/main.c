@@ -344,7 +344,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         AddVshItem(a0, topitem, new_item);
     }
 
-    if ((item->id >= 23 && item->id <= 24) && !items_added)
+    if ((sce_paf_private_strcmp(item->text, "msgtop_game_gamedl")==0 || sce_paf_private_strcmp(item->text, "msgtop_game_savedata")==0) && !items_added)
     {
         items_added = 1;
 
