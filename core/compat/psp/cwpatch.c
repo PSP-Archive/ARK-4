@@ -13,7 +13,6 @@ int sceKernelSuspendThreadPatched(SceUID thid) {
 	info.size = sizeof(SceKernelThreadInfo);
 	if(sceKernelReferThreadStatus(thid, &info) == 0) {
         if (strcmp(info.name, "popsmain") == 0) {
-            //void* framebuf = NULL;
 			void *framebuf;
             int width;
 			int pixelformat;
