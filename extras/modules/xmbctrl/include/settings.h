@@ -45,7 +45,6 @@ char *settings[] =
     "Turn off LEDs",
     "Disable UMD Drive",
     "Disable Analog Stick",
-    "Fix XMB Settings Icons",
     "PSP Overclock",
 };
 

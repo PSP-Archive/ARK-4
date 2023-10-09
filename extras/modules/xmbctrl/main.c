@@ -130,7 +130,6 @@ struct {
     {N_OPTS, ark_settings_options}, // Turn off LEDs
     {2, ark_settings_boolean}, // Disable UMD Drive
     {2, ark_settings_boolean}, // Disable Analog Stick 
-    {2, ark_settings_boolean}, // Fix XMB Settings Icons 
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
