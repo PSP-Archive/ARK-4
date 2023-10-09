@@ -181,6 +181,14 @@ int sceUmdRegisterUMDCallBackPatched(int cbid) {
 	return res;
 }
 
+static int sceGpioPortReadPatched(void) {
+	int GPRValue = *((int *) 0xBE240004);
+	
+	GPRValue = GPRValue & 0xFBFFFFFF;
+
+	return GPRValue;
+}
+
 void processSettings(){
     int apitype = sceKernelInitApitype();
 
@@ -239,18 +247,24 @@ void processSettings(){
     }
     // Disable UMD Drive
     if (se_config->noumd && psp_model != PSP_GO && sceKernelFindModuleByName("PRO_Inferno_Driver")==NULL){
+        // redirect UMD callback to DISC_NOT_PRESENT
         u32 f = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0xAEE7404D);
         if (f){
             REDIRECT_FUNCTION(f, sceUmdRegisterUMDCallBackPatched);
         }
+        // remove umd driver
         int (*IoDelDrv)(char*) = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
         if (IoDelDrv){
             IoDelDrv("umd");
         }
+        // force UMD check medium to always return 0 (no medium)
         u32 CheckMedium = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0x46EBB729);
         if (CheckMedium){
             MAKE_DUMMY_FUNCTION_RETURN_0(CheckMedium);
         }
+        // patch GPIO
+        u32 sceGpioPortRead = (void*)sctrlHENFindFunction("sceLowIO_Driver", "sceGpio_driver", 0x4250D44A);
+        REDIRECT_FUNCTION(sceGpioPortRead, sceGpioPortReadPatched);
     }
 }
 
