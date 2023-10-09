@@ -209,10 +209,50 @@ static unsigned char ps_store_item[] __attribute__((aligned(16))) = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
 
+static unsigned char information_board_item[] __attribute__((aligned(16))) = {
+	0x2e, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 
+	0x08, 0xdf, 0x09, 0x0a, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00, 0x00, 0x46, 
+	0x58, 0x00, 0x00, 0x47, 0x42, 0x00, 0x00, 0x47, 0x46, 0x00, 0x00, 0x6d, 0x73, 0x67, 0x5f, 0x69, 
+	0x6e, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x62, 0x6f, 0x61, 0x72, 0x64, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+};
+
 void ClearCaches()
 {
     sceKernelDcacheWritebackAll();
     kuKernelIcacheInvalidateAll();
+}
+
+void exec_custom_launcher() {
+	char menupath[ARK_PATH_SIZE];
+	sce_paf_private_strcpy(menupath, ark_config->arkpath);
+	strcat(menupath, VBOOT_PBP);
+
+	SceIoStat stat; int res = sceIoGetstat(menupath, &stat);
+
+	if (res >= 0){
+		struct SceKernelLoadExecVSHParam param;
+		sce_paf_private_memset(&param, 0, sizeof(param));
+		param.size = sizeof(param);
+		param.args = sce_paf_private_strlen(menupath) + 1;
+		param.argp = menupath;
+		param.key = "game";
+		sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
+	}
+	else{
+		// reboot system in proshell mode
+		ark_config->recovery = 0;
+		strcpy(ark_config->launcher, "PROSHELL"); // reboot in proshell mode
+
+		struct KernelCallArg args;
+		args.arg1 = ark_config;
+		u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
+		kuKernelCall((void*)setArkConfig, &args);
+
+		sctrlSESetUmdFile("");
+	    sctrlSESetBootConfFileIndex(MODE_UMD);
+        sctrlKernelExitVSH(NULL);
+	}
 }
 
 SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
@@ -374,12 +414,16 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         LoadTextLanguage(-1);
 
         // Add CFW Settings
-        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, ps_store_item);
+        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, signup_item);
         AddVshItem(a0, topitem, new_item);
 
         // Add Plugins Manager
-        new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, signup_item);
+        new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, ps_store_item);
         AddVshItem(a0, topitem, new_item2);
+
+        // Add Custom Launcher
+        new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, information_board_item);
+        AddVshItem(a0, topitem, new_item3);
 
     }
 	
@@ -418,6 +462,9 @@ int ExecuteActionPatched(int action, int action_arg)
             is_cfw_config = 2;
             action = sysconf_console_action;
             action_arg = sysconf_console_action_arg;
+        }
+        else if (action_arg == sysconf_custom_launcher_arg){
+            exec_custom_launcher();
         }
         else is_cfw_config = 0;
     }
@@ -578,6 +625,11 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         else if(sce_paf_private_strcmp(name, "msgtop_sysconf_plugins") == 0)
         {
             utf8_to_unicode((wchar_t *)user_buffer, string.items[2]);
+            return (wchar_t *)user_buffer;
+        }
+        else if(sce_paf_private_strcmp(name, "msgtop_custom_launcher") == 0)
+        {
+            utf8_to_unicode((wchar_t *)user_buffer, "Custom Launcher");
             return (wchar_t *)user_buffer;
         }
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
