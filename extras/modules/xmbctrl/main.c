@@ -331,11 +331,14 @@ int LoadTextLanguage(int new_id)
     return 1;
 }
 
+int sysconf_action;
+
 void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
     SceVshItem* item = (SceVshItem *)sce_paf_private_malloc(sizeof(SceVshItem));
     sce_paf_private_memcpy(item, orig, sizeof(SceVshItem));
 
     item->id = id; //information board id
+    item->action = sysconf_action;
     item->action_arg = action_arg;
     item->play_sound = 1;
     item->context = NULL;
@@ -348,6 +351,10 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
 
     static int items_added = 0;
+
+    if (sce_paf_private_strcmp(item->text, "msgtop_sysconf_console")==0){
+        sysconf_action = item->action;
+    }
 
     if ( !items_added &&
         (sce_paf_private_strcmp(item->text, "msgtop_game_gamedl")==0 ||
