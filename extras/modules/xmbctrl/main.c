@@ -374,11 +374,11 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         LoadTextLanguage(-1);
 
         // Add CFW Settings
-        new_item = addCustomVshItem(55, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, signup_item);
+        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, ps_store_item);
         AddVshItem(a0, topitem, new_item);
 
         // Add Plugins Manager
-        new_item2 = addCustomVshItem(56, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, ps_store_item);
+        new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, signup_item);
         AddVshItem(a0, topitem, new_item2);
 
     }
