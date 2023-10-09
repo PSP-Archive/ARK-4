@@ -1,6 +1,7 @@
 Atualizador ARK-4
 ★ Definições de Custom Firmware
 ★ Gerenciador de Plugins
+Lançador personalizado
 Recarga via USB
 Overclock
 Poupança de Energia

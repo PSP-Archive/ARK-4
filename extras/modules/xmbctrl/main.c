@@ -136,7 +136,7 @@ struct {
 
 typedef struct
 {
-    char *items[3];
+    char *items[4];
     char *options[N_ITEMS+1];
 } StringContainer;
 
@@ -623,13 +623,15 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
         else if(sce_paf_private_strcmp(name, "msgtop_sysconf_plugins") == 0)
         {
-            utf8_to_unicode((wchar_t *)user_buffer, string.items[2]);
-            return (wchar_t *)user_buffer;
+			utf8_to_unicode((wchar_t *)user_buffer, string.items[2]);
+			return (wchar_t *)user_buffer;
         }
         else if(sce_paf_private_strcmp(name, "msgtop_custom_launcher") == 0)
         {
-            utf8_to_unicode((wchar_t *)user_buffer, "Custom Launcher");
-            return (wchar_t *)user_buffer;
+			if(string.items[3]) {
+            	utf8_to_unicode((wchar_t *)user_buffer, string.items[3]);
+            	return (wchar_t *)user_buffer;
+			}
         }
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
