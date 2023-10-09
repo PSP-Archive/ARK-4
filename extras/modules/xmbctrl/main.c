@@ -556,8 +556,10 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
 		{
             if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
             if (se_config.custom_update){
-			    utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
-			    return (wchar_t *)user_buffer;
+				if(string.items[0]) {
+			    	utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
+			    	return (wchar_t *)user_buffer;
+				}
             }
 		}
 		
@@ -791,7 +793,6 @@ void PatchVshMain(u32 text_addr, u32 text_size)
     int patches = 13;
     u32 scePafGetText_call = _lw(&scePafGetText);
 
-	LoadTextLanguage(-1);
     for (u32 addr=text_addr; addr<text_addr+text_size && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x00063100){
