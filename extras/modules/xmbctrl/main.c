@@ -325,19 +325,19 @@ int LoadTextLanguage(int new_id)
 
     if (IS_VITA(ark_config)){
         sce_paf_private_free(string.options[1]);
-        string.options[1] = string.options[N_ITEMS]; // replace "Overclock" with "PSP CPU Clock" on Vita
+        string.options[1] = string.options[N_ITEMS]; // replace "Overclock" with "PSP Overclock" on Vita
     }
 
     return 1;
 }
 
-int sysconf_action;
+int sysconf_action = 0;
 
 void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
     SceVshItem* item = (SceVshItem *)sce_paf_private_malloc(sizeof(SceVshItem));
     sce_paf_private_memcpy(item, orig, sizeof(SceVshItem));
 
-    item->id = id; //information board id
+    item->id = id; // custom id
     item->action = sysconf_action;
     item->action_arg = action_arg;
     item->play_sound = 1;
@@ -356,9 +356,11 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         sysconf_action = item->action;
     }
 
-    if ( !items_added &&
+    if ( !items_added && // prevent adding more than once
+        // Game Items
         (sce_paf_private_strcmp(item->text, "msgtop_game_gamedl")==0 ||
         sce_paf_private_strcmp(item->text, "msgtop_game_savedata")==0 ||
+        // Extras Items
         sce_paf_private_strcmp(item->text, "msg_digitalcomics")==0 ||
         sce_paf_private_strcmp(item->text, "msg_bookreader")==0 ||
         sce_paf_private_strcmp(item->text, "msg_1seg")==0 ||
