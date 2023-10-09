@@ -2,6 +2,7 @@
 
 ## Version 4.20.65 (2023-10-08)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42065
+- Rev 3: `Disable UMD Drive` will now physically disable the drive, not just software-only.
 - Rev 2: `Custom Firmware Settins` and `Plugins Manager` in the `XMB` will now be located in the `Extras` section when available. 
 - Rev 1: undo mistake that disabled the code that fixes 6.60 plugins on 6.61
 - Fixed regression that would prevent loading `ISO` on `PSP Go` without M2 Memory Stick.
