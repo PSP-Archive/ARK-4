@@ -110,6 +110,7 @@ body:
     validations:
       required: true
 
+  - addColumn:
   - type: dropdown
     id: Balanced-Energy-Mode
     attributes:
