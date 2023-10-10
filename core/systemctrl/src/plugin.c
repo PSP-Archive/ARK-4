@@ -139,6 +139,21 @@ static int isHomebrewRunlevel(){
     return cur_runlevel == RUNLEVEL_HOMEBREW;
 }
 
+static int isLauncher(){
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
+    else                         strcat(path, VBOOT_PBP);
+    return (strcmp(path, sceKernelInitFileName())==0);
+}
+
+static int isGameId(char* runlevel){
+    char gameid[10]; memset(gameid, 0, sizeof(gameid));
+    getGameId(gameid);
+    lowerString(gameid, gameid, strlen(gameid)+1);
+    return (gameid[0] && strstr(runlevel, gameid) != NULL);
+}
+
 // Runlevel Check
 static int matchingRunlevel(char * runlevel)
 {
@@ -148,29 +163,27 @@ static int matchingRunlevel(char * runlevel)
 	int ret = 0;
 
     if (strcasecmp(runlevel, "all") == 0 || strcasecmp(runlevel, "always") == 0) return 1; // always on
-	if(isVshRunlevel())
+	if(isVshRunlevel()){
 		return (strstr(runlevel, "vsh") != NULL || strstr(runlevel, "xmb") != NULL);
-	if(isPopsRunlevel())
+    }
+	if(isPopsRunlevel()){
+        // check if plugin loads on specific game
+        if (isGameId(runlevel)) return 1;
+        // check keywords
     	return (strstr(runlevel, "pops") != NULL || strstr(runlevel, "ps1") != NULL || strstr(runlevel, "psx") != NULL); // PS1 games only
+    }
 	if(isHomebrewRunlevel()) {
 		if (strstr(runlevel, "launcher") != NULL){
 			// check if running custom launcher
-			static char path[ARK_PATH_SIZE];
-			strcpy(path, ark_config->arkpath);
-			if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
-			else                         strcat(path, VBOOT_PBP);
-			if (strcmp(path, sceKernelInitFileName())==0) return 1;
+			if (isLauncher()) return 1;
 		}
     	if (strstr(runlevel, "app") != NULL || strstr(runlevel, "homebrew") != NULL || strstr(runlevel, "game") != NULL) return 1; // homebrews only
 	}
 
 	if(isUmdRunlevel()) {
-        //check if plugin loads on specific game
-        char gameid[10]; memset(gameid, 0, sizeof(gameid));
-        getGameId(gameid);
-		lowerString(gameid, gameid, strlen(gameid)+1);
-        if(gameid[0] && strstr(runlevel, gameid) != NULL) return 1;
-    
+        // check if plugin loads on specific game
+        if (isGameId(runlevel)) return 1;
+        // check keywords
     	if(strstr(runlevel, "umd") != NULL || strstr(runlevel, "psp") != NULL || strstr(runlevel, "umdemu") != NULL || strstr(runlevel, "game") != NULL) return 1; // Retail games only
 	}
     
