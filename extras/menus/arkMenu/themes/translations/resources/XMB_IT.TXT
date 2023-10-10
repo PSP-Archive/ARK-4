@@ -1,6 +1,6 @@
 Aggiornamento ARK-4
-★ Configurazione custom firmware
-★ Gestione plugin
+Configurazione custom firmware
+Gestione plugin
 Avvio personalizzato
 Ricarica USB
 Overclock

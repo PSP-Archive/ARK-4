@@ -1,6 +1,6 @@
 Actualizador ARK-4
-★ Ajustes del Custom Firmware
-★ Administrador de Plugins
+Ajustes del Custom Firmware
+Administrador de Plugins
 Lanzador personalizado
 Carga mediante USB
 Overclock

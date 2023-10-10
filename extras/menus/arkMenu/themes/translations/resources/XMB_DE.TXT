@@ -1,6 +1,6 @@
 ARK-4-Updater
-★ Custom Firmware Einstellungen
-★ Plugin Manager
+Custom Firmware Einstellungen
+Plugin Manager
 Benutzerdefinierter Launcher
 USB-Aufladung
 CPU Übertakten
