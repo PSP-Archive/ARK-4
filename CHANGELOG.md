@@ -2,6 +2,7 @@
 
 ## Version 4.20.65 (2023-10-08)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42065
+- Rev 5: brings back `per-game` plugins (and settings) on `PS1` games, feature that was previously removed by mistake. 
 - Rev 4: fixed crash with exit combo. Fixed per-game plugins on PSN eboots. Fix crash when using `No UMD` on PSN eboots.
 - Rev 3: `Disable UMD Drive` will now physically disable the drive, not just software-only.
 - Rev 2: `Custom Firmware Settins` and `Plugins Manager` in the `XMB` will now be located in the `Extras` section when available. 
