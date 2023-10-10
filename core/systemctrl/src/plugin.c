@@ -151,7 +151,7 @@ static int isGameId(char* runlevel){
     char gameid[10]; memset(gameid, 0, sizeof(gameid));
     getGameId(gameid);
     lowerString(gameid, gameid, strlen(gameid)+1);
-    return (gameid[0] && strstr(runlevel, gameid) != NULL);
+    return (strstr(runlevel, gameid) != NULL);
 }
 
 // Runlevel Check
