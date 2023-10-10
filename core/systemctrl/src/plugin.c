@@ -187,9 +187,6 @@ static int matchingRunlevel(char * runlevel)
     	if(strstr(runlevel, "umd") != NULL || strstr(runlevel, "psp") != NULL || strstr(runlevel, "umdemu") != NULL || strstr(runlevel, "game") != NULL) return 1; // Retail games only
 	}
     
-   
-
-    
     // Unsupported Runlevel (we don't touch those to keep stability up)
     return 0;
 }
