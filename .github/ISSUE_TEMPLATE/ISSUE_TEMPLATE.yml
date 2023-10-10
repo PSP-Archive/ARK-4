@@ -62,8 +62,7 @@ body:
     attributes:
       value: "<h2>Recovery settings</h2>"
 
-  - type: dropdown
-    id: usb-charge
+  - type: dropdown, id: usb-charge
     attributes:
       label: USB Charge
       options:
@@ -78,8 +77,7 @@ body:
     validations:
       required: true
     
-  - type: dropdown
-    id: overclock
+  - type: dropdown, id: overclock
     attributes:
       label: Overclock 
       options:
@@ -94,8 +92,7 @@ body:
     validations:
       required: true
   
-  - type: dropdown
-    id: power-save
+  - type: dropdown, id: power-save
     attributes:
       label: Power Save
       options:
@@ -110,8 +107,8 @@ body:
     validations:
       required: true
 
-  - type: dropdown
-    id: Balanced-Energy-Mode
+
+  - type: dropdown, id: Balanced-Energy-Mode
     attributes:
       label: Balanced Energy Mode 
       options:
@@ -126,8 +123,7 @@ body:
     validations:
       required: true
 
-  - type: dropdown
-    id: autoboot
+  - type: dropdown, id: autoboot
     attributes:
       label: Autoboot Launcher
       options:
@@ -136,8 +132,7 @@ body:
     validations:
       required: true
   
-  - type: dropdown
-    id: disable-psp-go-pause
+  - type: dropdown, id: disable-psp-go-pause
     attributes:
       label: Disable PSP Go Pause
       options:
@@ -146,8 +141,8 @@ body:
     validations:
       required: true
   
-  - type: dropdown
-    id: unlock-extra-mem
+
+  - type: dropdown, id: unlock-extra-mem
     attributes:
       label: Unlock Extra Memory
       options:
@@ -162,8 +157,7 @@ body:
     validations:
       required: true
         
-  - type: dropdown
-    id: memory-stick-speedup
+  - type: dropdown, id: memory-stick-speedup
     attributes:
       label: Memory Stick Speedup
       options:
@@ -178,8 +172,7 @@ body:
     validations:
       required: true
   
-  - type: dropdown
-    id: inferno-cache
+  - type: dropdown, id: inferno-cache
     attributes:
       label: Inferno Cache 
       options:
@@ -189,8 +182,8 @@ body:
     validations:
       required: true
 
-  - type: dropdown
-    id: Skip-Sony-Logos 
+
+  - type: dropdown, id: Skip-Sony-Logos 
     attributes:
        label: Skip Sony Logos 
        options:
@@ -199,8 +192,7 @@ body:
     validations:
        required: true
 
-  - type: dropdown
-    id: Hide-PIC0-and_PIC1 
+  - type: dropdown, id: Hide-PIC0-and_PIC1 
     attributes:
        label: Hide PIC0 and PIC1
        options:
@@ -209,8 +201,7 @@ body:
     validations:
        required: true
 
-  - type: dropdown
-    id: Hide-MAC-Address 
+  - type: dropdown, id: Hide-MAC-Address 
     attributes:
        label: Hide MAC Address
        options:
@@ -219,8 +210,8 @@ body:
     validations:
        required: true
 
-  - type: dropdown
-    id: Hide-DLC 
+
+  - type: dropdown, id: Hide-DLC 
     attributes:
        label: Hide DLC 
        options:
@@ -229,8 +220,7 @@ body:
     validations:
        required: true
 
-  - type: dropdown
-    id: Turn-off-LEDs 
+  - type: dropdown, id: Turn-off-LEDs 
     attributes:
        label: Turn off LEDs 
        options:
