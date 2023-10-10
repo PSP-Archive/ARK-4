@@ -246,23 +246,26 @@ void processSettings(){
         disable_PauseGame();
     }
     // Disable UMD Drive
-    if (se_config->noumd && psp_model != PSP_GO && sceKernelFindModuleByName("PRO_Inferno_Driver")==NULL){
-        // redirect UMD callback to DISC_NOT_PRESENT
-        u32 f = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0xAEE7404D);
-        if (f){
-            REDIRECT_FUNCTION(f, sceUmdRegisterUMDCallBackPatched);
+    if (se_config->noumd && psp_model != PSP_GO){
+        // disable UMD drive by software, only do this if not running an ISO driver
+        if (sceKernelFindModuleByName("PRO_Inferno_Driver")==NULL && sceKernelFindModuleByName("sceNp9660_driver")==NULL){
+            // redirect UMD callback to DISC_NOT_PRESENT
+            u32 f = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0xAEE7404D);
+            if (f){
+                REDIRECT_FUNCTION(f, sceUmdRegisterUMDCallBackPatched);
+            }
+            // remove umd driver
+            int (*IoDelDrv)(char*) = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
+            if (IoDelDrv){
+                IoDelDrv("umd");
+            }
+            // force UMD check medium to always return 0 (no medium)
+            u32 CheckMedium = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0x46EBB729);
+            if (CheckMedium){
+                MAKE_DUMMY_FUNCTION_RETURN_0(CheckMedium);
+            }
         }
-        // remove umd driver
-        int (*IoDelDrv)(char*) = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
-        if (IoDelDrv){
-            IoDelDrv("umd");
-        }
-        // force UMD check medium to always return 0 (no medium)
-        u32 CheckMedium = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0x46EBB729);
-        if (CheckMedium){
-            MAKE_DUMMY_FUNCTION_RETURN_0(CheckMedium);
-        }
-        // patch GPIO
+        // patch GPIO to disable UMD drive electrically
         u32 sceGpioPortRead = (void*)sctrlHENFindFunction("sceLowIO_Driver", "sceGpio_driver", 0x4250D44A);
         REDIRECT_FUNCTION(sceGpioPortRead, sceGpioPortReadPatched);
     }
