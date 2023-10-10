@@ -102,7 +102,7 @@ int getGameId(char* gameid){
         memcpy(gameid, gameinfo+0x44, 9);
         
         if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, HOME_ID, 9) == 0){
-            if (apitype == 0x144 || apitype == 0x155){ // PS1: read from PBP
+            if (apitype == 0x144 || apitype == 0x155 || sceKernelFindModuleByName("sceNp9660_driver")!=NULL){ // PS1/PSN: read from PBP
                 res = readGameIdFromPBP(rebootex_config.game_id);
             }
             else {
