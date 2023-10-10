@@ -4,6 +4,8 @@
 #define LINE_BUFFER_SIZE 1024
 #define LINE_TOKEN_DELIMITER ','
 
+#define STAR "★"
+
 enum{
     DISABLED,
     ALWAYS_ON,

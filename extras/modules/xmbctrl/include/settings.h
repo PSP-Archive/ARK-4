@@ -25,8 +25,8 @@
 char *settings[] =
 {
     "ARK-4 Updater",
-    "★ Custom Firmware Settings",
-    "★ Plugins Manager",
+    "Custom Firmware Settings",
+    "Plugins Manager",
 	"Custom Launcher",
     "USB Charge",
     "Overclock",

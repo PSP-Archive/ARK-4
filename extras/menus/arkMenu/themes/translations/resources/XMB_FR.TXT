@@ -1,6 +1,6 @@
 Mise à jour ARK-4
-★ Paramètres d'ARK-4
-★ Gestionnaire de plugins
+Paramètres d'ARK-4
+Gestionnaire de plugins
 Lanceur personnalisé
 Recharge par USB
 Overclock

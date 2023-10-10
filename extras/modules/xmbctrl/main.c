@@ -45,6 +45,8 @@ ARKConfig _arkconf;
 ARKConfig* ark_config = &_arkconf;
 extern List plugins;
 
+static char buf[64];
+
 typedef struct
 {
     int mode;
@@ -618,18 +620,21 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
         if(sce_paf_private_strcmp(name, "msgtop_sysconf_configuration") == 0)
         {
-            utf8_to_unicode((wchar_t *)user_buffer, string.items[1]);
+			sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[1]);
+            utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
         else if(sce_paf_private_strcmp(name, "msgtop_sysconf_plugins") == 0)
         {
-			utf8_to_unicode((wchar_t *)user_buffer, string.items[2]);
+			sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[2]);
+			utf8_to_unicode((wchar_t *)user_buffer, buf);
 			return (wchar_t *)user_buffer;
         }
         else if(sce_paf_private_strcmp(name, "msgtop_custom_launcher") == 0)
         {
 			if(string.items[3]) {
-            	utf8_to_unicode((wchar_t *)user_buffer, string.items[3]);
+				sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[3]);
+            	utf8_to_unicode((wchar_t *)user_buffer, buf);
             	return (wchar_t *)user_buffer;
 			}
         }
