@@ -1534,6 +1534,7 @@ void Browser::drawOptionsMenu(){
             int y = 55;
             static TextScroll scroll = {0, 0, 0, 125};
             for (int i=0; i<MAX_OPTIONS; i++){
+                if (this->clipboard->size()<1 && i == 3) continue; // Hide Paste unless clipboard has something in it.
                 if (pEntries[i] == NULL) continue;
                 if (i == pEntryIndex){
                     common::printText(x, y, pEntries[i], LITEGRAY, SIZE_BIG, true, &scroll);
