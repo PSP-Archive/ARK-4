@@ -747,3 +747,7 @@ void saveSettings(){
     
     output.close();
 }
+
+void cleanupSettings(){
+    custom_config.clear();
+}

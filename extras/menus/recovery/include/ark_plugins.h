@@ -57,9 +57,9 @@ static void addPlugin(plugin_t* plugin){
     plugins_table.settings_entries[plugins_table.max_options++] = (settings_entry*)plugin;
 }
 
-static void removePlugin(std::vector<plugin_line>& plugin_line, int pi){
-    plugin_t* plugin = plugin_line[pi].plugin;
-    plugin_line.erase(plugin_line.begin()+pi);
+static void removePlugin(std::vector<plugin_line>& pl, int pi){
+    plugin_t* plugin = pl[pi].plugin;
+    pl.erase(pl.begin()+pi);
 
     SystemMgr::pauseDraw();
 
@@ -145,5 +145,20 @@ void savePlugins(){
             }
         }
         output[i].close();
+    }
+}
+
+void cleanupPlugins(){
+    plugins_table.max_options = 0;
+    for (int i=0; i<MAX_PLUGINS_PLACES; i++){
+        for (int j=0; j<plugin_lines[i].size(); j++){
+            plugin_line pl = plugin_lines[i][j];
+            plugin_t* plugin = pl.plugin;
+            if (plugin){
+                free(plugin->description);
+                free(plugin);
+            }
+        }
+        plugin_lines[i].clear();
     }
 }

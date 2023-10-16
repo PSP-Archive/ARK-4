@@ -50,14 +50,15 @@ int main(int argc, char** argv){
     loadSettings();
     SettingsTable stab = { ark_conf_entries, ark_conf_max_entries };
     SettingsMenu* settings_menu = new SettingsMenu(&stab, saveSettings, false, true, true);
+    settings_menu->setCallbacks(NULL, loadSettings, cleanupSettings);
     settings_menu->setName("CFW Settings");
     settings_menu->setInfo("ARK Custom Firmware Settings");
     settings_menu->readConf();
     entries[0] = settings_menu;
 
     // Add ARK plugins manager
-    loadPlugins();
     SettingsMenu* plugins_menu = new SettingsMenu(&plugins_table, savePlugins, true, true, true);
+    plugins_menu->setCallbacks(NULL, loadPlugins, cleanupPlugins);
     plugins_menu->setName("Plugins");
     plugins_menu->setInfo("Installed Plugins");
     plugins_menu->setIcon(IMAGE_PLUGINS);

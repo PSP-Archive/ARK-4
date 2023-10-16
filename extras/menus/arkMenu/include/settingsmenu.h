@@ -46,12 +46,16 @@ class SettingsMenu : public SystemEntry{
         TextScroll scroll;
         TextScroll scroll2;
 
-        void (*callback)();
+        void (*save_callback)();
+        void (*open_callback)();
+        void (*close_callback)();
         
     public:
     
         SettingsMenu(SettingsTable* table, void (*callback)(), bool shorten_paths, bool show_all_opts, bool show_info);
         ~SettingsMenu();
+
+        void setCallbacks(void (*save_callback)(), void (*open_callback)(), void (*close_callback)());
     
         void setCustomText(string text[], int n);
         void unsetCustomText();

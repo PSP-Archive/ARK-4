@@ -26,7 +26,7 @@ SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool s
     this->table = table;
     this->info = "Menu Settings";
     this->name = "Settings";
-    this->callback = save_callback;
+    this->save_callback = save_callback;
     this->icon = IMAGE_SETTINGS;
     this->shorten_paths = shorten_paths;
     this->show_all_opts = show_all_opts;
@@ -36,6 +36,12 @@ SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool s
 }
 
 SettingsMenu::~SettingsMenu(){
+}
+
+void SettingsMenu::setCallbacks(void (*save_callback)(), void (*open_callback)(), void (*close_callback)()){
+    if (save_callback) this->save_callback = save_callback;
+    if (open_callback) this->open_callback = open_callback;
+    if (close_callback) this->close_callback = close_callback;
 }
 
 void SettingsMenu::setCustomText(string text[], int n){
@@ -262,7 +268,7 @@ void SettingsMenu::applyConf(){
     if (changed){
         for (int i=0; i<table->max_options; i++)
             *(table->settings_entries[i]->config_ptr) = table->settings_entries[i]->selection;
-        if (this->callback != NULL) this->callback();
+        if (this->save_callback) this->save_callback();
         readConf(); // update in case callback has changed it
     }
 }
@@ -275,6 +281,11 @@ void SettingsMenu::readConf(){
 
 void SettingsMenu::pause(){
     applyConf();
+    if (this->close_callback){
+        SystemMgr::pauseDraw();
+        this->close_callback();
+        SystemMgr::resumeDraw();
+    }
     animation = 1;
     while (animation != -2)
         sceKernelDelayThread(0);
@@ -282,6 +293,13 @@ void SettingsMenu::pause(){
 
 void SettingsMenu::resume(){
     animation = -1;
+    if (this->open_callback){
+        SystemMgr::pauseDraw();
+        this->index = 0;
+        this->start = 0;
+        this->open_callback();
+        SystemMgr::resumeDraw();
+    }
     readConf();
     while (animation != 0)
         sceKernelDelayThread(0);
