@@ -108,6 +108,41 @@ int sceAudioOutput2ReleaseFixed(){
 	return _sceAudioOutput2Release();
 }
 
+/*
+int (*UtilityNetconfInitStart)(pspUtilityNetconfData *data);
+int myUtilityNetconfInitStart(pspUtilityNetconfData *data){
+    pspUtilityNetconfData* p = data;
+    struct pspUtilityNetconfAdhoc* a = p->adhocparam;
+
+    if (p->action == 0){
+        memset(p, 0, sizeof(p));
+        p->base.size = 0x44;
+        p->base.language = 1;
+        p->base.graphicsThread = 0x11;
+        p->base.accessThread = 0x13;
+        p->base.fontThread = 0x12;
+        p->base.soundThread = 0x10;
+        p->base.result = 0;
+        p->base.reserved[0] = 0;
+        p->base.reserved[1] = 0;
+        p->base.reserved[2] = 0;
+        p->base.reserved[3] = 0;
+        p->action = 3;
+        p->adhocparam = a;
+        p->hotspot = 1;
+        p->hotspot_connected = 1;
+        p->wifisp = 0;
+
+        if (a){
+            memset(a, 0, sizeof(a));
+            a->timeout = 10;
+        }
+    }
+
+    return UtilityNetconfInitStart(data);
+}
+*/
+
 void ARKVitaOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
@@ -185,11 +220,13 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
                 }
             }
 
-			
-
+			//UtilityNetconfInitStart = sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0x4DB1E739);
+            //if (UtilityNetconfInitStart) sctrlHENPatchSyscall(UtilityNetconfInitStart, myUtilityNetconfInitStart);
             
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
+
+            //dumpFlashToMs();
 
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);

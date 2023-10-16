@@ -147,6 +147,13 @@ static int isLauncher(){
     return (strcmp(path, sceKernelInitFileName())==0);
 }
 
+static int isPath(char* runlevel){
+    char path[ARK_PATH_SIZE];
+    strcpy(path, sceKernelInitFileName());
+    lowerString(path, path, strlen(path)+1);
+    return (strcmp(path, runlevel)==0);
+}
+
 static int isGameId(char* runlevel){
     char gameid[10]; memset(gameid, 0, sizeof(gameid));
     getGameId(gameid);
@@ -163,16 +170,24 @@ static int matchingRunlevel(char * runlevel)
 	int ret = 0;
 
     if (strcasecmp(runlevel, "all") == 0 || strcasecmp(runlevel, "always") == 0) return 1; // always on
+
+    if (strchr(runlevel, '/')){
+        // it's a path
+        return isPath(runlevel);
+    }
+
 	if(isVshRunlevel()){
 		return (strstr(runlevel, "vsh") != NULL || strstr(runlevel, "xmb") != NULL);
     }
+
 	if(isPopsRunlevel()){
         // check if plugin loads on specific game
         if (isGameId(runlevel)) return 1;
         // check keywords
     	return (strstr(runlevel, "pops") != NULL || strstr(runlevel, "ps1") != NULL || strstr(runlevel, "psx") != NULL); // PS1 games only
     }
-	if(isHomebrewRunlevel()) {
+	
+    if(isHomebrewRunlevel()) {
 		if (strstr(runlevel, "launcher") != NULL){
 			// check if running custom launcher
 			if (isLauncher()) return 1;

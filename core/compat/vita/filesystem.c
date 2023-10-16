@@ -54,29 +54,7 @@ static struct{
     char* new;
     unsigned char len;
 } ioreplacements[] = {
-    // Replace flash0 pops with custom one
-    /*
-    {
-        .orig = "flash0:/vsh/module/libpspvmc.prx",
-        .new = "PSPVMC.PRX",
-        .len = 32,
-    },
-    {
-        .orig = "flash0:/kd/pops_",
-        .new = "POPS.PRX",
-        .len = 15,
-    },
-    {
-        .orig = "flash0:/kd/popsman.prx",
-        .new = "POPSMAN.PRX",
-        .len = 22,
-    },
-    {
-        .orig = "flash0:/kd/npdrm.prx",
-        .new = "NPDRM.PRX",
-        .len = 20,
-    },
-    */
+    // Replace flash0
     {.orig = NULL, .new = NULL, .len=0}
 };
 
@@ -306,12 +284,12 @@ int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mo
 {
     flash_driver = arg->drv;
     // flash0 File Access Attempt
-    if (arg->fs_num == 0) {
+    if (arg->fs_num < 4) {
         // File Path Buffer
         char msfile[256];
         
         // Create "ms" File Path (links to flash0 folder on ms0)
-        sprintf(msfile, "/flash0%s", file);
+        sprintf(msfile, "/flash/%d%s", arg->fs_num, file);
         
         // Exchange Filesystem Driver for "ms"
         arg->drv = ms_driver;
@@ -627,3 +605,173 @@ SceModule2* patchFileIO(){
     
     return mod;
 }
+
+/*
+// Copy File from A to B
+int copy_file(char * a, char * b)
+{
+    // Chunk Size
+    int chunksize = 512 * 1024;
+    
+    // Reading Buffer
+    char * buffer = (char *)oe_malloc(chunksize);
+    
+    // Accumulated Writing
+    int totalwrite = 0;
+    
+    // Accumulated Reading
+    int totalread = 0;
+    
+    // Result
+    int result = 0;
+    
+    // Open File for Reading
+    int in = sceIoOpen(a, PSP_O_RDONLY, 0777);
+    
+    // Opened File for Reading
+    if(in >= 0)
+    {
+        // Delete Output File (if existing)
+        sceIoRemove(b);
+        
+        // Open File for Writing
+        int out = sceIoOpen(b, PSP_O_WRONLY | PSP_O_CREAT, 0777);
+        
+        // Opened File for Writing
+        if(out >= 0)
+        {
+            // Read Byte Count
+            int read = 0;
+            
+            // Copy Loop (512KB at a time)
+            while((read = sceIoRead(in, buffer, chunksize)) > 0)
+            {
+                // Accumulate Read Data
+                totalread += read;
+                
+                // Write Data
+                totalwrite += sceIoWrite(out, buffer, read);
+            }
+            
+            // Close Output File
+            sceIoClose(out);
+            
+            // Insufficient Copy
+            if(totalread != totalwrite) result = -3;
+        }
+        
+        // Output Open Error
+        else result = -2;
+        
+        // Close Input File
+        sceIoClose(in);
+    }
+    
+    // Input Open Error
+    else result = -1;
+    
+    // Free Memory
+    oe_free(buffer);
+    
+    // Return Result
+    return result;
+}
+
+// Copy Folder from A to B
+int copy_folder_recursive(char * a, char * b)
+{
+    // Open Working Directory
+    int directory = sceIoDopen(a);
+    
+    // Opened Directory
+    if(directory >= 0)
+    {
+        // Create Output Directory (is allowed to fail, we can merge folders after all)
+        sceIoMkdir(b, 0777);
+        
+        // File Info Read Result
+        int dreadresult = 1;
+        
+        // Iterate Files
+        while(dreadresult > 0)
+        {
+            // File Info
+            SceIoDirent info;
+            
+            // Clear Memory
+            memset(&info, 0, sizeof(info));
+            
+            // Read File Data
+            dreadresult = sceIoDread(directory, &info);
+            
+            // Read Success
+            if(dreadresult >= 0)
+            {
+                // Valid Filename
+                if(strlen(info.d_name) > 0)
+                {
+                    // Calculate Buffer Size
+                    int insize = strlen(a) + strlen(info.d_name) + 2;
+                    int outsize = strlen(b) + strlen(info.d_name) + 2;
+                    
+                    // Allocate Buffer
+                    char * inbuffer = (char *)oe_malloc(insize);
+                    char * outbuffer = (char *)oe_malloc(outsize);
+                    
+                    // Puzzle Input Path
+                    strcpy(inbuffer, a);
+                    inbuffer[strlen(inbuffer) + 1] = 0;
+                    if (inbuffer[strlen(inbuffer-1)] != '/') inbuffer[strlen(inbuffer)] = '/';
+                    strcpy(inbuffer + strlen(inbuffer), info.d_name);
+                    
+                    // Puzzle Output Path
+                    strcpy(outbuffer, b);
+                    outbuffer[strlen(outbuffer) + 1] = 0;
+                    if (outbuffer[strlen(outbuffer-1)] != '/') outbuffer[strlen(outbuffer)] = '/';
+                    strcpy(outbuffer + strlen(outbuffer), info.d_name);
+                    
+                    // Another Folder
+                    if(FIO_S_ISDIR(info.d_stat.st_mode))
+                    {
+                        // Copy Folder (via recursion)
+                        copy_folder_recursive(inbuffer, outbuffer);
+                    }
+                    
+                    // Simple File
+                    else
+                    {
+                        // Copy File
+                        copy_file(inbuffer, outbuffer);
+                    }
+                    
+                    // Free Buffer
+                    oe_free(inbuffer);
+                    oe_free(outbuffer);
+                }
+            }
+        }
+        
+        // Close Directory
+        sceIoDclose(directory);
+        
+        // Return Success
+        return 0;
+    }
+    
+    // Open Error
+    else return -1;
+}
+
+void dumpFlashToMs(){
+    SceIoStat stat;
+    if (sceIoGetstat("ms0:/flash", &stat) < 0){
+        sceIoMkdir("ms0:/flash", 0777);
+        sceIoMkdir("ms0:/flash/0", 0777);
+        sceIoMkdir("ms0:/flash/1", 0777);
+        sceIoMkdir("ms0:/flash/2", 0777);
+        sceIoMkdir("ms0:/flash/3", 0777);
+        copy_folder_recursive("flash0:/", "ms0:/flash/0");
+        copy_folder_recursive("flash1:/", "ms0:/flash/1");
+    }
+}
+*/
