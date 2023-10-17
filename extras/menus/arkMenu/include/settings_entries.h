@@ -263,13 +263,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[2];
+    char* options[4];
 } text_glow = {
     "Text Glow",
-    2,
+    4,
     0,
     &(common::getConf()->text_glow),
-    {"Disabled", "Enabled"}
+    {"Disabled", "Low", "Medium", "High"}
 };
 
 static struct {

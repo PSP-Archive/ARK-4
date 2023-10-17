@@ -17,7 +17,7 @@ typedef struct {
     unsigned char sort_entries; // sort entries by name
     unsigned char show_recovery; // show recovery menu entry
     unsigned char show_fps; // show menu FPS
-    unsigned char text_glow; // enable/disable text glowing function
+    unsigned char text_glow; // text glowing function scale
     unsigned char screensaver; // Screensaver time (or disabled)
     unsigned char redirect_ms0; // redirect ms0 to ef0
     unsigned char vsh_fg_color; // Advanced VSH Menu Forground color
