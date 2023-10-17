@@ -27,6 +27,8 @@ SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool s
     this->info = "Menu Settings";
     this->name = "Settings";
     this->save_callback = save_callback;
+    this->open_callback = NULL;
+    this->close_callback = NULL;
     this->icon = IMAGE_SETTINGS;
     this->shorten_paths = shorten_paths;
     this->show_all_opts = show_all_opts;
