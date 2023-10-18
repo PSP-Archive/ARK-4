@@ -14,7 +14,7 @@ on:
     steps:
       - name: Default push
         id: check
-        run: echo ::set-output name=check::true
+        run: echo "::set-output name=check::true"
   pull_request:
     branches: [ main ]
 
