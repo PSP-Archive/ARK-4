@@ -11,6 +11,10 @@ on:
       - '*.pptx'
       - 'CHANGELOG.md'
     branches: [ main ]
+    steps:
+      - name: Default push
+        id: check
+        run: echo ::set-output name=check::true
   pull_request:
     branches: [ main ]
 
@@ -81,8 +85,9 @@ jobs:
           mv ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.tar.gz .. 
           sudo zip -r ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.zip * 
           mv ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.zip ..
-    
+
       - name: upload ARK Release & DEBUG artifact 
+        if: steps.check.outputs.condition == 'true'
         id: create_release
         uses: softprops/action-gh-release@v1
         env:
