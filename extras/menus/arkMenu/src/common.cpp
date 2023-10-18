@@ -218,7 +218,7 @@ void common::resetConf(){
     config.sort_entries = 1;
     config.show_recovery = 1;
     config.show_fps = 0;
-    config.text_glow = 1;
+    config.text_glow = 3;
     config.screensaver = 2;
     config.redirect_ms0 = 0;
     config.startbtn = 0;
@@ -629,10 +629,10 @@ void common::printText(float x, float y, const char* text, u32 color, float size
 		int val = 0;
         float t = (float)((float)(clock() % CLOCKS_PER_SEC)) / ((float)CLOCKS_PER_SEC);
 		if(config.text_glow == 1) {
-        	val = (t < 0.5f) ? t*122 : (1.0f-t)*122;
+        	val = (t < 0.5f) ? t*311 : (1.0f-t)*311;
 		}
 		else if(config.text_glow == 2) {
-        	val = (t < 0.5f) ? t*311 : (1.0f-t)*311;
+        	val = (t < 0.5f) ? t*411 : (1.0f-t)*411;
 		}
 		else {
         	val = (t < 0.5f) ? t*511 : (1.0f-t)*511;

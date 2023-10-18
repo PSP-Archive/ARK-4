@@ -269,7 +269,7 @@ static struct {
     4,
     0,
     &(common::getConf()->text_glow),
-    {"Disabled", "Low", "Medium", "High"}
+    {"Disabled", "1", "2", "3"}
 };
 
 static struct {
