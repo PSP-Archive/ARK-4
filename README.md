@@ -153,7 +153,7 @@ The instructions are as follows:
   - `Classic cIPL`: works on `Pandora` compatbile models (`1g` and early `2g`) on `6.60`, `6.61` or `6.60 Testing Tool`.
   - `DevTool cIPL`: works on `DTP-T1000` devkit units on `6.60 Development Tool` firmware.
   - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
-  - Move or copy either `ARK_newIPL`, `ARK_classicIPL` or `ARK_Devtool_cIPL` folder to `/PSP/GAME/` and run the program.
+  - Move or copy either `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
   - Press the corresponding button in the installation page to install or remove the cIPL patch.
   - Warning: unlike classic cIPL, the new cIPL method can't be easily uninstalled. To revert to offical IPL, use ChronoSwitch to reinstall 6.61 OFW.
 
