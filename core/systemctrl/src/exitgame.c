@@ -203,10 +203,10 @@ int read_negative(SceCtrlData * pad_data, int count)
 }
 
 void initController(SceModule2* mod){
-	CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
-    CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A);
-    CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
-    CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86);
+	CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x3A622550);
+    CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0xC152080A);
+    CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x1F803938);
+    CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x60B81F86);
 }
 
 static int isRecoveryMode(){
@@ -234,9 +234,9 @@ void checkControllerInput(){
 // Hook Gamepad Input
 void patchController(void)
 {
-	// Hook Gamepad Input Syscalls (user input hooking only)
-	sctrlHENPatchSyscall((void *)CtrlPeekBufferPositive, peek_positive);
-	sctrlHENPatchSyscall((void *)CtrlPeekBufferNegative, peek_negative);
-	sctrlHENPatchSyscall((void *)CtrlReadBufferPositive, read_positive);
-	sctrlHENPatchSyscall((void *)CtrlReadBufferNegative, read_negative);
+	// Hook Gamepad Input
+	HIJACK_FUNCTION(CtrlPeekBufferPositive, peek_positive, CtrlPeekBufferPositive);
+	HIJACK_FUNCTION(CtrlPeekBufferNegative, peek_negative, CtrlPeekBufferNegative);
+	HIJACK_FUNCTION(CtrlReadBufferPositive, read_positive, CtrlReadBufferPositive);
+	HIJACK_FUNCTION(CtrlReadBufferNegative, read_negative, CtrlReadBufferNegative);
 }
