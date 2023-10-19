@@ -15,7 +15,7 @@ Debugowanie II
 Wylaczony
 Aktywowany
 Normalna
-Zamienić
+Zamien
 X -> O
 O -> X
 Sony NP9660 (PBP)
