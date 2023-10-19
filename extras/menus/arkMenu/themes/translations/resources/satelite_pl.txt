@@ -85,5 +85,5 @@ Szary
 Przezroczysty szary
 Czarny
 Przezroczysty czarny
-Biały
-Przezroczysty biały
+Bialy
+Przezroczysty bialy
