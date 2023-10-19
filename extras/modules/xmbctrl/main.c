@@ -319,12 +319,19 @@ int LoadTextLanguage(int new_id)
         char file[64];
         char pkgpath[ARK_PATH_SIZE];
         strcpy(pkgpath, ark_config->arkpath);
-        strcat(pkgpath, "LANG.ARK");
-        sce_paf_private_sprintf(file, "XMB_%s.TXT", languages[id]);
-        offset = findPkgOffset(file, &size, pkgpath);
+        strcat(pkgpath, "XMB_LANG.TXT");
 
-        if (offset && size)
-            fd = sceIoOpen(pkgpath, PSP_O_RDONLY, 0);
+        SceIoStat stat;
+
+        if (sceIoGetstat(pkgpath, &stat) < 0){
+            strcpy(pkgpath, ark_config->arkpath);
+            strcat(pkgpath, "LANG.ARK");
+            sce_paf_private_sprintf(file, "XMB_%s.TXT", languages[id]);
+            offset = findPkgOffset(file, &size, pkgpath);
+            if (!offset || !size)
+                pkgpath[0] = 0;
+        }
+        fd = sceIoOpen(pkgpath, PSP_O_RDONLY, 0);
     }
 
     if(fd >= 0)

@@ -177,14 +177,21 @@ int load_translate_table(char ***table, char *file, int nr_trans) {
 	*table = NULL;
 
 	scePaf_strcpy(linebuf, vsh->config.p_ark->arkpath);
-	strcat(linebuf, "LANG.ARK");
+	strcat(linebuf, "VSH_LANG.TXT");
 
-	unsigned size = 0;
-	SceOff offset = findPkgOffset(file, &size, linebuf);
+	SceOff offset = 0;
 
-	if (size == 0 || offset == 0) return -1;
+	SceIoStat stat;
+	if (sceIoGetstat(linebuf, &stat) < 0){
+		scePaf_strcpy(linebuf, vsh->config.p_ark->arkpath);
+		strcat(linebuf, "LANG.ARK");
 
-	linebuf[sizeof(linebuf)-1] = '\0';
+		unsigned size = 0;
+		offset = findPkgOffset(file, &size, linebuf);
+
+		if (size == 0 || offset == 0) return -1;
+	}
+
 	fd = sceIoOpen(linebuf, PSP_O_RDONLY, 0);
 	sceIoLseek(fd, offset, PSP_SEEK_SET);
 
