@@ -191,7 +191,7 @@ void classicipl_menu(){
 		printf(" Press O to Erase CIPL and Restore Raw IPL\n");
 	}
 
-	printf(" Press L to use New cIPL.")
+	printf(" Press L to use New cIPL.");
 
 	printf(" Press R to cancel\n\n");
     
