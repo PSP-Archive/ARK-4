@@ -1,0 +1,89 @@
+Normalne
+Japonia
+Ameryka
+Europa
+Korea
+Wielka Brytania
+Ameryka Lacinska
+Australia
+Hongkong
+Tajwan
+Rosja
+Chiny
+Debugowanie I
+Debugowanie II
+Wylaczony
+Aktywowany
+Normalna
+Zamien
+X -> O
+O -> X
+Sony NP9660 (PBP)
+Piekło 2 (ISO/CSO)
+URZĄDZENIE USB
+CHRON USB
+STEROWNIKI ISO
+MONTOWANIE WIDEO ISO
+KOLOR CZCIONKI
+KOLORY TLA
+CZCIONKA
+WYGLAD MENU
+KONWERTUJ BATERIE
+ZAMIEN PRZYCISKI X/O
+REGION VSH
+REGION UMD
+IMPORTUJ KLASYCZNE WTYCZKI
+AKTYWUJ FLASH I WMA
+USUN HIBERNACJE
+WLACZ LOSOWE ISO
+WROC
+WYLACZ OBSLUGE HIBERNACJI
+Normalna -> Pandora
+Pandora -> Normalna
+LAUNCHER ARK ->
+MENU PRZYWRACANIA  ->
+ZAAWANSOWANE MENU VSH
+WYLACZ KONSOLE
+USPIJ KONSOLE
+ZRESTARTUJ KONSOLE
+ZRESTARTUJ VSH
+WYJDZ
+MENU VSH
+Nieobslugiwane
+USB Adrenaline
+Blysk
+Dysk UMD
+Pamiec wewnetrzna
+Karta pamieci
+Nic
+Klasyczny
+Nowy
+Losowy
+Czerwony
+Przezroczysty czerwony
+Pomaranczowy
+Przezroczysty pomaranczowy
+Zolty
+Przezroczysty zolty
+Zielony
+Przezroczysty zielony
+Niebieski
+Przezroczysty niebieski
+Indygo
+Przezroczysty indygo
+Fioletowy
+Przezroczysty fiolet
+rozowy
+Przezroczysty roz
+Fioletowy
+Przezroczysty fiolet
+Turkusowy
+Przezroczysty turkusowy
+wodny
+Wodny przezroczysty
+Szary
+Przezroczysty szary
+Czarny
+Przezroczysty czarny
+Bialy
+Przezroczysty bialy
