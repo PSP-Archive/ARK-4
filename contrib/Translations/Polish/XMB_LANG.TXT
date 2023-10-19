@@ -1,7 +1,7 @@
-★ Aktualizator ARK-4
-★ Ustawienia CFW
-★ Menedzer wtyczek
-★ Niestandardowy Launcher
+Aktualizator ARK-4
+Ustawienia CFW
+Menedzer wtyczek
+Niestandardowy Launcher
 Laduj przez USB
 Podkrecanie
 Oszczedzanie energii
