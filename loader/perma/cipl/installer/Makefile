@@ -1,8 +1,8 @@
 TARGET = flasher
-OBJS = main.o pspIplUpdate.o kpspident.o
+OBJS = main.o pspIplUpdate.o kbooti_update.o kpspident.o
 
 LIBS = -lpspkubridge
-INCDIR = $(ARKROOT)/common/include
+INCDIR = $(ARKROOT)/common/include $(ARKROOT)/loader/perma/cipl/classic $(ARKROOT)/loader/perma/cipl/new
 LIBDIR = $(ARKROOT)/libs
 
 CFLAGS = -O2 -G0 -Wall -fshort-wchar

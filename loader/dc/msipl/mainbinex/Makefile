@@ -1,7 +1,7 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
 INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include ../payloadex
 LIBS = -lansic -L $(ARKROOT)/libs
-MAINBINEXDIR = $(ARKROOT)/loader/perma/cipl/mainbinex
+MAINBINEXDIR = $(ARKROOT)/loader/perma/cipl/classic/mainbinex
 TARGET = patch.bin
 
 PYTHON=$(shell which python3)
