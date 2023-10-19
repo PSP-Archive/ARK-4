@@ -34,11 +34,9 @@ SUBDIRS = libs \
 	loader/live/kernel/vita_flash_dumper \
 	extras/modules/ipl_update \
 	extras/modules/kpspident \
-	loader/perma/cipl/payloadex \
-	loader/perma/cipl/mainbinex \
-	loader/perma/cipl/combine \
-	loader/perma/cipl/installer \
-	loader/perma/cipl/installer_devtool \
+	loader/perma/cipl/classic/payloadex \
+	loader/perma/cipl/classic/mainbinex \
+	loader/perma/cipl/classic/combine \
 	loader/dc/dcman \
 	loader/dc/msipl/payloadex \
 	loader/dc/msipl/mainbinex \
@@ -60,7 +58,7 @@ SUBDIRS = libs \
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx
 
-all: subdirs newcipl kxploits mkdir-dist encrypt-prx copy-bin
+all: subdirs cipl kxploits mkdir-dist encrypt-prx copy-bin
 	@echo "Build Done"
 
 copy-bin:
@@ -81,15 +79,10 @@ copy-bin:
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
 	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/PSP/ # ARK DC installer
 	$(Q)cp loader/dc/installer/EBOOT.PBP dist/PSP/ARK_DC/ # ARK DC installer
-	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/PSP/ARK_classicIPL/EBOOT.PBP
-	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_classicIPL/kpspident.prx
-	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_classicIPL/ipl_update.prx
-	$(Q)cp loader/perma/cipl/installer_devtool/EBOOT.PBP dist/PSP/ARK_DevTool_cIPL/EBOOT.PBP
-	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_DevTool_cIPL/kpspident.prx
-	$(Q)cp extras/modules/kbooti_update/kbooti_update.prx dist/PSP/ARK_DevTool_cIPL/kbooti_update.prx
-	$(Q)cp loader/perma/newcipl/installer/EBOOT.PBP dist/PSP/ARK_newIPL/EBOOT.PBP
-	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_newIPL/kpspident.prx
-	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_newIPL/ipl_update.prx
+	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/PSP/ARK_cIPL/EBOOT.PBP
+	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_cIPL/kpspident.prx
+	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_cIPL/ipl_update.prx
+	$(Q)cp extras/modules/kbooti_update/kbooti_update.prx dist/PSP/ARK_cIPL/kbooti_update.prx
 	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
 	$(Q)cp extras/menus/recovery_classic/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Classic recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
@@ -135,17 +128,17 @@ encrypt-prx: \
 	$(Q)cp contrib/PC/btcnf/psvbtknf.bin dist/PSVBTKNF.BIN
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
 
-newcipl:
-	$(Q)$(MAKE) -C loader/perma/newcipl/payloadex
-	$(Q)$(MAKE) PSP_MODEL=01G -C loader/perma/newcipl/
-	$(Q)$(MAKE) PSP_MODEL=02G -C loader/perma/newcipl/
-	$(Q)$(MAKE) PSP_MODEL=03G -C loader/perma/newcipl/
-	$(Q)$(MAKE) PSP_MODEL=04G -C loader/perma/newcipl/
-	$(Q)$(MAKE) PSP_MODEL=05G -C loader/perma/newcipl/
-	$(Q)$(MAKE) PSP_MODEL=07G -C loader/perma/newcipl/
-	$(Q)$(MAKE) PSP_MODEL=09G -C loader/perma/newcipl/
-	$(Q)$(MAKE) PSP_MODEL=11G -C loader/perma/newcipl/
-	$(Q)$(MAKE) -C loader/perma/newcipl/installer
+cipl:
+	$(Q)$(MAKE) -C loader/perma/cipl/new/payloadex
+	$(Q)$(MAKE) PSP_MODEL=01G -C loader/perma/cipl/new/
+	$(Q)$(MAKE) PSP_MODEL=02G -C loader/perma/cipl/new/
+	$(Q)$(MAKE) PSP_MODEL=03G -C loader/perma/cipl/new/
+	$(Q)$(MAKE) PSP_MODEL=04G -C loader/perma/cipl/new/
+	$(Q)$(MAKE) PSP_MODEL=05G -C loader/perma/cipl/new/
+	$(Q)$(MAKE) PSP_MODEL=07G -C loader/perma/cipl/new/
+	$(Q)$(MAKE) PSP_MODEL=09G -C loader/perma/cipl/new/
+	$(Q)$(MAKE) PSP_MODEL=11G -C loader/perma/cipl/new/
+	$(Q)$(MAKE) -C loader/perma/cipl/installer
 
 kxploits:
 	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
@@ -201,11 +194,12 @@ clean:
 	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
-	$(Q)$(MAKE) $@ -C loader/perma/cipl/payloadex
-	$(Q)$(MAKE) $@ -C loader/perma/cipl/mainbinex
-	$(Q)$(MAKE) $@ -C loader/perma/cipl/combine
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/payloadex
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/mainbinex
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/combine
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/
+	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer
-	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer_devtool
 	$(Q)$(MAKE) $@ -C loader/dc/dcman
 	$(Q)$(MAKE) $@ -C loader/dc/installer
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/mainbinex
@@ -213,9 +207,6 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl
 	$(Q)$(MAKE) $@ -C loader/dc/vunbricker
-	$(Q)$(MAKE) $@ -C loader/perma/newcipl/
-	$(Q)$(MAKE) $@ -C loader/perma/newcipl/payloadex
-	$(Q)$(MAKE) $@ -C loader/perma/newcipl/installer
 	$(Q)-rm -rf dist *~ | true
 	$(Q)-rm -rf common/utils/*.o
 	$(Q)$(MAKE) $@ -C extras/updater/
@@ -259,9 +250,7 @@ mkdir-dist:
 	$(Q)mkdir dist/ARK_Loader | true
 	$(Q)mkdir dist/PSP/Infinity | true
 	$(Q)mkdir dist/PSP/ARK_DC | true
-	$(Q)mkdir dist/PSP/ARK_classicIPL | true
-	$(Q)mkdir dist/PSP/ARK_DevTool_cIPL | true
-	$(Q)mkdir dist/PSP/ARK_newIPL | true
+	$(Q)mkdir dist/PSP/ARK_cIPL | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
 	$(Q)mkdir dist/PSVita/Adrenaline | true
 	$(Q)mkdir dist/PSVita/Standalone | true
