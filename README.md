@@ -119,7 +119,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Docker container: `docker pull docker.io/krazynez/ark-4:latest`
 
-<p><b>These are utlized either with cloning the repo or using the Docker container</b></p>
+<p><b>These are utilized either with cloning the repo or using the Docker container</b></p>
 
 - Release: `./build.sh` 
 - Debug: `./build.sh --debug`
@@ -150,7 +150,7 @@ The instructions are as follows:
 <p>
 
   - `New cIPL`: works on `1g`, `2g` and `3g` models on `6.61`.
-  - `Classic cIPL`: works on `Pandora` compatbile models (`1g` and early `2g`) on `6.60`, `6.61` or `6.60 Testing Tool`.
+  - `Classic cIPL`: works on `Pandora` compatible models (`1g` and early `2g`) on `6.60`, `6.61` or `6.60 Testing Tool`.
   - `DevTool cIPL`: works on `DTP-T1000` devkit units on `6.60 Development Tool` firmware.
   - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
   - Move or copy either `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
@@ -161,7 +161,7 @@ The instructions are as follows:
 
 ###### Permanent CFW via Infinity
 <p>
-  <b>*RECOMMNEDED*</b> If already using another CFW with Infinity < 2.0.5, use chronoswitch to reinstall 6.60/6.61 OFW (Offical Firmware). If you do not when launching Infinity it <em>can</em> just lock your PSP up causing Infinity to not work properly (not harmful, just not properly). Then proceed with intructions. You can still bi/tri boot your CFW afterwards. 
+  <b>*RECOMMENDED*</b> If already using another CFW with Infinity < 2.0.5, use chronoswitch to reinstall 6.60/6.61 OFW (Offical Firmware). If you do not when launching Infinity it <em>can</em> just lock your PSP up causing Infinity to not work properly (not harmful, just not properly). Then proceed with instructions. You can still bi/tri boot your CFW afterwards. 
 
   - Works on all PSP models on 6.60 or 6.61 firmwares.
   - Copy or move the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
@@ -670,7 +670,7 @@ After lots of work getting the same `ARK` binaries to properly work on both PSP 
 
 - `Zecoxao` for his great work creating dumpers that would allow us to archive rare firmwares.
 
-- `balika` for his research in porting M33 to modern firmware that has helped improve compatiblity in ARK.
+- `balika` for his research in porting M33 to modern firmware that has helped improve compatibility in ARK.
 
 - `hrydgard` for the PMF player as well as being an inspiration for the custom launcher.
 
