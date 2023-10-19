@@ -11,7 +11,6 @@ on:
       - '*.pptx'
       - 'CHANGELOG.md'
     branches: [ main ]
-
   pull_request:
     branches: [ main ]
 
@@ -38,6 +37,7 @@ jobs:
 
   build:
     needs: check_date
+    if: ${{ needs.check_date.outputs.should_run != 'false' }}
     runs-on: ubuntu-latest
     steps:
       - name: Create Version
@@ -81,9 +81,8 @@ jobs:
           mv ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.tar.gz .. 
           sudo zip -r ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.zip * 
           mv ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.zip ..
-
+    
       - name: upload ARK Release & DEBUG artifact 
-        if: steps.check.outputs.condition == 'true'
         id: create_release
         uses: softprops/action-gh-release@v1
         env:
