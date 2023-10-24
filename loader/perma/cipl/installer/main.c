@@ -344,7 +344,7 @@ void newipl_menu(){
 		ErrorExit(5000,"6.61 FW SUPPORTED ONLY!\n");
 	}
 
-	if(model > supported_models || ipl_table[model].buf == NULL) {
+	if(model >= supported_models || ipl_table[model].buf == NULL) {
 		ErrorExit(5000,"This installer does not support this model.\n");
 	}
 
