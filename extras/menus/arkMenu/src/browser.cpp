@@ -1594,7 +1594,8 @@ void Browser::optionsMenu(){
             common::playMenuSound();
             do {
                 if (pEntryIndex < MAX_OPTIONS-1){
-                    pEntryIndex++;
+					if(this->clipboard->size()<1 && pEntryIndex == 2) pEntryIndex += 2;
+					else pEntryIndex++;
                 }
                 else{
                     pEntryIndex = 0;
@@ -1606,7 +1607,8 @@ void Browser::optionsMenu(){
             common::playMenuSound();
             do {
                 if (pEntryIndex > 0){
-                    pEntryIndex--;
+					if(this->clipboard->size()<1 && pEntryIndex == 4) pEntryIndex -= 2;
+					else pEntryIndex--;
                 }
                 else{
                     pEntryIndex = MAX_OPTIONS-1;
