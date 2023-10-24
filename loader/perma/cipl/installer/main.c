@@ -147,7 +147,7 @@ void classicipl_menu(){
 	int size;
 	(void)size_ipl_block_large;
 
-	printf("Classic cIPL installation.");
+	printf("Classic cIPL installation.\n");
 
 	ipl_block = ipl_block_large;
 	if( model == 0 ) {
@@ -234,7 +234,7 @@ void devtoolipl_menu(){
 	int size;
 	SceUID mod;
 
-	printf("DevTool cIPL installation.");
+	printf("DevTool cIPL installation.\n");
 
 	//load module
 	mod = sceKernelLoadModule(KBOOTI_UPDATE_PRX, 0, NULL);
@@ -337,7 +337,7 @@ void newipl_menu(){
 
 	int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);
 
-	printf("New cIPL installation.");
+	printf("New cIPL installation.\n");
 
 	// New cIPL should only be run via 6.61 FW
 	if(devkit != 0x06060110 ) {
