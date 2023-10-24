@@ -2,6 +2,7 @@
 
 ## Version 4.20.66 (2023-10-24)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42066
+- Rev 1: fixed bug that would allow cIPL to be installed on 4g models (not yet compatible), causing a brick.
 - Simplified `cIPL` installer into a single app. Automatically detects device and model to install the proper version.
 - Allow custom translations for `XMB Control` and `VSH Menu`.
 - Intensity of text glow in `Custom Launcher` can now be changed.
