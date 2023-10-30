@@ -1,0 +1,60 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+release/
+**.bk
+.~lock.*
+
+.vscode/
+*.txt
+test*
+
+# Cmake files (includes CMakeLists.txt because was ignored above)
+!**/CMakeLists.txt
+!CMakeLists.txt
+**/cmake-build-debug
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/install_manifest.txt
+**/CMakeFiles/
+**/CTestTestfile.cmake
+**/Makefile
+**/*.cbp
+**/CMakeScripts/
+**/compile_commands.json
+build/
+**/DartConfiguration.tcl
+
+# Google Docs files
+**.gsheet
+
+**/ziso.py
+src/ziso
+bin/
