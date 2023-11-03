@@ -17,9 +17,8 @@
 #include "kxploit.h"
 
 /*
-SceUID kernel exploit by qwikrazor87.
-Read only kernel exploit by TheFl0w.
-Part of Trinity exploit chain.
+SceUID kernel exploit and read-only exploit by qwikrazor87.
+Part of Trinity exploit chain by thefl0w.
 Put together by Acid_Snake and meetpatty.
 */
 

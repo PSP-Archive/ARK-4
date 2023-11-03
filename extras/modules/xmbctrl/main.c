@@ -422,15 +422,15 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         LoadTextLanguage(-1);
 
         // Add CFW Settings
-        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, signup_item);
+        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, (psp_model==PSP_11000)?item:signup_item);
         AddVshItem(a0, topitem, new_item);
 
         // Add Plugins Manager
-        new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, ps_store_item);
+        new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, (psp_model==PSP_11000)?item:ps_store_item);
         AddVshItem(a0, topitem, new_item2);
 
         // Add Custom Launcher
-        new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, information_board_item);
+        new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, (psp_model==PSP_11000)?item:information_board_item);
         AddVshItem(a0, topitem, new_item3);
 
     }
