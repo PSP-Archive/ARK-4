@@ -135,6 +135,8 @@ int doExploit(void) {
       }
     }
 
+    g_tbl->KernelDcacheWritebackAll();
+
     // Allocate dummy block to improve reliability
     char dummy[32];
     memset(dummy, 'a', sizeof(dummy));
