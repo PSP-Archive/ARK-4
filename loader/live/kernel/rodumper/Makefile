@@ -1,4 +1,4 @@
-TARGET = dumper
+TARGET = kram-dumper
 OBJS = main.o imports.o
 
 INCDIR = ../include
@@ -9,10 +9,10 @@ ASFLAGS = $(CFLAGS)
 BUILD_PRX = 1
 
 EXTRA_TARGETS = EBOOT.PBP
-PSP_EBOOT_TITLE = KRAM Read-Only Dumper
+PSP_EBOOT_TITLE = PSP Kernel RAM Dumper
 
 LIBDIR = 
-LIBS =
+LIBS = -lpsprtc
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak

