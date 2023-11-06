@@ -222,9 +222,8 @@ The instructions are as follows:
 <p>
 
   - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and `Adrenaline` (https://github.com/TheOfficialFloW/Adrenaline).
-  - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
+  - (Skip this step if `Standalone` is already installed) Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
   - Install `ARK_Loader` folder into `/PSP/GAME/` folder.
-  - Delete `K.BIN` from `ARK_Loader` folder. You can optionally copy `K.BIN` from `PSVita/Adrenaline` folder into `ARK_Loader` game folder for a bit faster loading.
   - Use `Adrenaline Bubbles Manager` to create an autoboot bubble for `ARK Loader`: https://github.com/ONElua/AdrenalineBubbleManager/releases
   - Note: this does not permanently modify `Adrenaline` in any way.
 

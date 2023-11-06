@@ -70,9 +70,8 @@ Installation On PS Vita
   Adrenaline
 
     - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and `Adrenaline` (https://github.com/TheOfficialFloW/Adrenaline).
-    - Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
+    - (Skip this step if `Standalone` is already installed) Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
     - Install `ARK_Loader` folder into `/PSP/GAME/` folder.
-    - Copy `K.BIN` from `PSVita/Adrenaline` folder into `ARK_Loader` game folder.
     - Use `Adrenaline Bubbles Manager` to create an autoboot bubble for `ARK Loader`: https://github.com/ONElua/AdrenalineBubbleManager/releases
     - Note: this does not permanently modify `Adrenaline` in any way.
 
