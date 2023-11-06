@@ -65,17 +65,15 @@ copy-bin:
 #	Common installation
 	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Loader/EBOOT.PBP # Signed EBOOT
 	$(Q)cp loader/live/user/signed_eboot/ark_loader.iso dist/PSVita/Standalone/
-	$(Q)cp loader/live/kernel/kxploit/psp660/K.BIN dist/ARK_Loader/K.BIN # Kernel exploit for PSP
 	$(Q)cp loader/live/user/psxloader/ps1cfw_enabler.suprx dist/PSVita/PS1CFW/
 	$(Q)cp loader/live/user/psxloader/EBOOT.PBP dist/PSVita/PS1CFW/SCPS10084/
-	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/PSVita/Adrenaline/K.BIN # kxploit for CFW
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
 	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/PSP/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
 	$(Q)cp loader/live/kernel/chain_loader/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
 	$(Q)cp loader/live/kernel/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
 	$(Q)cp loader/live/kernel/psxloader/ARKX.BIN dist/ARK_01234/ARKX.BIN # ARK-X loader
-	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for Vita 3.60+
+	$(Q)cp loader/live/kernel/kxploit/universal/K.BIN dist/ARK_01234/K.BIN # Universal Kernel exploit for PSP 6.60+ and Vita 3.60+
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
 	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/PSP/ # ARK DC installer
 	$(Q)cp loader/dc/installer/EBOOT.PBP dist/PSP/ARK_DC/ # ARK DC installer
@@ -141,11 +139,7 @@ cipl:
 	$(Q)$(MAKE) -C loader/perma/cipl/installer
 
 kxploits:
-	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=universal -C loader/live/kernel/kxploit
 
 # Only clean non-library code
 cleanobj:
@@ -188,11 +182,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/kbooti_update
 	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
-	$(Q)$(MAKE) $@ K=dummy -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=vita320 -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=universal -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/mainbinex
@@ -252,7 +242,6 @@ mkdir-dist:
 	$(Q)mkdir dist/PSP/ARK_DC | true
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
-	$(Q)mkdir dist/PSVita/Adrenaline | true
 	$(Q)mkdir dist/PSVita/Standalone | true
 	$(Q)mkdir dist/PSVita/PS1CFW | true
 	$(Q)mkdir dist/PSVita/PS1CFW/SCPS10084 | true

