@@ -32,6 +32,7 @@ SUBDIRS = libs \
 	loader/live/kernel/idstorage_dumper \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
+	loader/live/kernel/pandorizer \
 	extras/modules/ipl_update \
 	extras/modules/kpspident \
 	loader/perma/cipl/classic/payloadex \
@@ -157,6 +158,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/live/kernel/idstorage_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/psp_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/vita_flash_dumper
+	$(Q)$(MAKE) $@ -C loader/live/kernel/pandorizer
 	$(Q)$(MAKE) $@ -C core/compat/psp/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex
