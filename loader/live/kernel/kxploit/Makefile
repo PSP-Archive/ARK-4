@@ -9,7 +9,7 @@ CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 
 CFLAGS += -I $(ARKROOT)/loader/live/kernel/kxploit/
 
-C_OBJS = main.o $(ARKROOT)/loader/live/kernel/kxploit/$(K)/kxploit.o
+C_OBJS = main.o kxploit.o kx_cfw.o kx_660.o kx_360.o
 
 include $(ARKROOT)/common/make/global.mak
 include $(ARKROOT)/common/make/beauty_bin.mak
@@ -35,7 +35,6 @@ main.elf: $(C_OBJS)
 $(TARGET): main.elf
 	$(Q)$(STRIP) -s $<
 	$(Q)$(OBJCOPY) -O binary $< $@
-	$(Q)mv $(TARGET) $(ARKROOT)/loader/live/kernel/kxploit/$(K)/
 
 kxploits: link.l $(TARGET)
 

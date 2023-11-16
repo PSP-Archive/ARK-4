@@ -20,6 +20,8 @@
 
 #include <functions.h>
 
+#define SYSMEM_OFFSET_CHECK SYSMEM_TEXT+0x00002FA8
+
 #ifndef PRTSTR
 #define PRTSTR11(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11) g_tbl->prtstr(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11)
 #define PRTSTR10(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10) PRTSTR11(text, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, 0)
@@ -35,6 +37,11 @@
 #define PRTSTR(text) PRTSTR1(text, 0)
 #endif
 
+extern UserFunctions* g_tbl;
+extern int kx_type;
+extern u32 test_val;
+
+extern u32 readKram(u32 addr);
 extern int stubScanner(UserFunctions*);
 extern int doExploit(void);
 extern void executeKernel(u32 kernelContentFunction);

