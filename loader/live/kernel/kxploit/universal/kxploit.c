@@ -149,7 +149,6 @@ int doExploit(void) {
       dummyid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, dummy, PSP_SMEM_High, 0x10, NULL);
 
     jump_ptr = g_tbl->KernelGetBlockHeadAddr(dummyid) + 4;
-    PRTSTR1("ptr: %p", jump_ptr);
 
     // we can calculate the address of dummy block via its UID and from there calculate where the next block will be
     u32 dummyaddr = 0x88000000 + ((dummyid >> 5) & ~3);
