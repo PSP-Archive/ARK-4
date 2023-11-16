@@ -113,6 +113,7 @@ int stubScanner(UserFunctions* tbl){
     int res;
     g_tbl = tbl;
 
+    g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON);
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_COMMON);
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_INET);
 	_sceNetMCopyback_1560F143 = tbl->FindImportUserRam("sceNetIfhandle_lib", 0x1560F143);
@@ -120,7 +121,8 @@ int stubScanner(UserFunctions* tbl){
     if (!_sceNetMCopyback_1560F143) return -1;
 
     u32 set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB); // weak import in ARK Live
-    if (set_start_module_handler && _lw(set_start_module_handler+4)&0xFFFF0000 != 0x24020000){
+    u16 start_module_syscall = _lh((u32)set_start_module_handler+6);
+    if (set_start_module_handler && start_module_syscall && start_module_syscall != 0x2402){
         kx_type = TYPE_CFW;
         PRTSTR("CFW found");
     }

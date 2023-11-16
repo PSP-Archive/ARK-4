@@ -74,8 +74,8 @@ static void my_mod_handler(void* mod){
 
 int doExploitCFW(void){
     prev = set_start_module_handler(my_mod_handler); // register our custom handler
-    g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON); // trigger StartModule handler
-    g_tbl->UtilityUnloadModule(PSP_MODULE_NP_COMMON);
+    g_tbl->UtilityLoadModule(PSP_MODULE_NP_DRM); // trigger StartModule handler
+    g_tbl->UtilityUnloadModule(PSP_MODULE_NP_DRM);
     g_tbl->KernelDcacheWritebackAll();
     return (patch_addr == 0 || patch_instr == 0);
 }
