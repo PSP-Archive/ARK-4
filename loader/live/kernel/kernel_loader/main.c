@@ -73,6 +73,10 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
         kernelContentFunction();
         return 0;
     }
+
+    g_tbl->freeMem(g_tbl);
+    g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "ARK.BIN", PSP_SMEM_Addr, 0x8000, 0x08D30000);
+    g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "K.BIN", PSP_SMEM_Addr, 0x4000, KXPLOIT_LOADADDR);
     
     // read kxploit file into memory and initialize it
     char* err = NULL;
@@ -105,7 +109,7 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
         err = "Could not open kxploit file!";
     }
     
-    PRTSTR2("ERROR (%d): %s", res, err);
+    PRTSTR2("ERROR (%p): %s", res, err);
     PRTSTR("Exiting...");
     g_tbl->KernelDelayThread(10000);
     void (*KernelExitGame)() = (void*)RelocImport("LoadExecForUser", 0x05572A5F, 0);
@@ -158,6 +162,7 @@ int initKxploitFile(char* kxploit_file){
         kxploit_file = k_path;
     }
     PRTSTR1("Loading Kxploit at %s", kxploit_file);
+    memset((void *)KXPLOIT_LOADADDR, 0, 0x4000);
     g_tbl->IoRead(fd, (void *)KXPLOIT_LOADADDR, 0x4000);
     g_tbl->IoClose(fd);
     g_tbl->KernelDcacheWritebackAll();
