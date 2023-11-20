@@ -40,6 +40,8 @@
 extern UserFunctions* g_tbl;
 extern int kx_type;
 extern u32 test_val;
+extern u32 patch_instr;
+extern u32 patch_addr;
 
 extern u32 readKram(u32 addr);
 extern int stubScanner(UserFunctions*);

@@ -40,14 +40,18 @@ Kernel exploit helper.
 */
 
 enum {
+    TYPE_UNK,
     TYPE_360,
     TYPE_660,
     TYPE_CFW,
 };
 
 UserFunctions* g_tbl = NULL;
-int kx_type = TYPE_360;
+int kx_type = TYPE_UNK;
 u32 test_val = 0;
+
+u32 patch_instr = 0;
+u32 patch_addr = 0;
 
 static void (*_sceNetMCopyback_1560F143)(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t a3);
 
@@ -121,12 +125,14 @@ int stubScanner(UserFunctions* tbl){
     if (!_sceNetMCopyback_1560F143) return -1;
 
     u32 set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB); // weak import in ARK Live
-    u16 start_module_syscall = _lh((u32)set_start_module_handler+6);
-    if (set_start_module_handler && start_module_syscall && start_module_syscall != 0x2402){
-        kx_type = TYPE_CFW;
-        PRTSTR("CFW found");
+    if (set_start_module_handler){
+        u16 start_module_syscall = _lh((u32)set_start_module_handler+6);
+        if (set_start_module_handler && start_module_syscall && start_module_syscall != 0x2402){
+            kx_type = TYPE_CFW;
+            PRTSTR("CFW found");
+        }
     }
-    else {
+    if (kx_type == TYPE_UNK) {
         test_val = readKram(SYSMEM_OFFSET_CHECK);
         if (test_val == 0x8FBF003C){
             kx_type = TYPE_660;
@@ -148,11 +154,10 @@ int stubScanner(UserFunctions* tbl){
 }
 
 void repairInstruction(KernelFunctions* k_tbl){
-    switch (kx_type){
-        case TYPE_360: repairInstruction360(k_tbl); break;
-        case TYPE_660: repairInstruction660(k_tbl); break;
-        case TYPE_CFW: repairInstructionCFW(k_tbl); break;
-    };
+    if (patch_addr && patch_instr){
+        // restore
+        _sw(patch_instr, patch_addr);
+    }
 }
 
 int doExploit(void){

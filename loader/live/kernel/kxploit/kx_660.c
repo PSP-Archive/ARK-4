@@ -76,14 +76,13 @@ int stubScanner660(UserFunctions* tbl){
     return (_sceNetMPulldown==NULL);
 }
 
-void repairInstruction660(KernelFunctions* k_tbl){
-    _sw(PATCHED_INST, PATCH_ADDR);
-}
-
 int doExploit660(void){
     struct MPulldownExploit *ptr;
     int ret;
     u32 interrupts;
+
+    patch_instr = PATCHED_INST;
+    patch_addr = PATCH_ADDR;
 
     ptr = (void*)0x00010000; // use scratchpad memory to bypass check at @sceNet_Service@+0x00002D80
     memset(ptr, 0, sizeof(*ptr));

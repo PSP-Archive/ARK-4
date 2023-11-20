@@ -41,20 +41,10 @@ static void* (*set_start_module_handler)(void*) = NULL;
 static int (* _sceKernelLibcTime)(u32 a0, u32 a1) = (void*)NULL;
 static void (*prev)(void*) = NULL;
 
-static u32 patch_instr = 0;
-static u32 patch_addr = 0;
-
 int stubScannerCFW(UserFunctions* tbl){
     set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB); // weak import in ARK Live
     _sceKernelLibcTime = (void*)(g_tbl->KernelLibcTime);
     return (set_start_module_handler == NULL || _sceKernelLibcTime == NULL);
-}
-
-void repairInstructionCFW(KernelFunctions* k_tbl){
-    if (patch_addr && patch_instr){
-        // restore
-        _sw(patch_instr, patch_addr);
-    }
 }
 
 static void my_mod_handler(void* mod){
