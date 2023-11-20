@@ -21,7 +21,7 @@ REBOOT_OBJS = \
 	pspbtcnf.o \
 	
 C_OBJS = \
-	$(ARKROOT)/common/utils/scanner.o \
+	$(ARKROOT)/libs/libsploit/scanner.o \
 
 LIBS = -L $(ARKROOT)/libs -liplsdk
 

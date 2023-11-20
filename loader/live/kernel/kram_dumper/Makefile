@@ -1,6 +1,6 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
 INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)
-LIBS = -L $(ARKROOT)/libs -lgraphics -lcolordebugger -lansic
+LIBS = -L $(ARKROOT)/libs -lgraphics -lcolordebugger -lsploit -lansic
 TARGET = ARK4.BIN
 
 PYTHON=$(shell which python3)
@@ -14,11 +14,6 @@ CFLAGS += -I $(ARKROOT)/modules/systemctrl/include -DKXPLOIT_LOADADDR=$(KXPLOIT_
 C_OBJS = \
 	loader.o \
 	$(ARKROOT)/loader/live/kernel/kernel_loader/main.o \
-	$(ARKROOT)/common/utils/functions.o \
-	$(ARKROOT)/common/utils/scanner.o \
-	$(ARKROOT)/common/utils/patches.o \
-	$(ARKROOT)/common/utils/imports.o \
-	$(ARKROOT)/common/utils/freemem.o \
 
 include $(ARKROOT)/common/make/global.mak
 include $(ARKROOT)/common/make/beauty_bin.mak

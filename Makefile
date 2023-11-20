@@ -200,7 +200,6 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl
 	$(Q)$(MAKE) $@ -C loader/dc/vunbricker
 	$(Q)-rm -rf dist *~ | true
-	$(Q)-rm -rf common/utils/*.o
 	$(Q)$(MAKE) $@ -C extras/updater/
 	$(Q)$(MAKE) $@ -C extras/installer/
 	$(Q)rm -f extras/updater/ARK_01234.PKG | true

@@ -1,6 +1,6 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
 INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)
-LIBS = -L $(ARKROOT)/libs -lgraphics -lcolordebugger -lansic
+LIBS = -L $(ARKROOT)/libs -lgraphics -lcolordebugger -lsploit -lansic
 TARGET = ARKX.BIN
 
 PYTHON=$(shell which python3)
@@ -14,11 +14,6 @@ CFLAGS += -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR)
 C_OBJS = \
 	main.o \
 	../kernel_loader/reboot.o \
-	$(ARKROOT)/common/utils/functions.o \
-	$(ARKROOT)/common/utils/freemem.o \
-	$(ARKROOT)/common/utils/imports.o \
-	$(ARKROOT)/common/utils/patches.o \
-	$(ARKROOT)/common/utils/scanner.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
 	$(ARKROOT)/core/compat/vitapops/popsdisplay.o \
 	$(ARKROOT)/core/systemctrl/src/loadexec.o

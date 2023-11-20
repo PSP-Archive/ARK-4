@@ -16,7 +16,7 @@ C_OBJS =    \
 	vitaflash.o   \
 	popspatch.o    \
 	filesystem.o    \
-	$(ARKROOT)/common/utils/patches.o \
+	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/core/compat/psp/cwpatch.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
 		

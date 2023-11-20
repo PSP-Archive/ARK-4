@@ -6,7 +6,7 @@ C_OBJS = \
 	syspatch.o \
 	exitgame.o \
 	popsdisplay.o \
-	$(ARKROOT)/common/utils/patches.o \
+	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o  \
 		

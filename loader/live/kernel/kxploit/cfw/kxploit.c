@@ -33,7 +33,7 @@
 #include "functions.h"
 #include "kxploit.h"
 
-#include "common/utils/scanner.c"
+#include "libs/libsploit/scanner.c"
 
 /*
 Kernel exploit to use when ARK.BIN is already loaded within a Custom Firmware.

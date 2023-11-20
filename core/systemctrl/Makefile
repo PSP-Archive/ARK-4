@@ -32,7 +32,7 @@ OBJS = \
 	src/cpuclock.o   \
 	src/msstor_cache.o \
 	src/setlongjmp.o \
-	$(ARKROOT)/common/utils/patches.o \
+	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/libs/ansi-c/lowerstring.o \
 	
 	
