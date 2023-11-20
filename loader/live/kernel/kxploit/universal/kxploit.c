@@ -25,7 +25,7 @@ Made to work on OFW and CFW.
 #include "functions.h"
 #include "kxploit.h"
 
-#include "common/utils/scanner.c"
+#include "libs/libsploit/scanner.c"
 
 #define LIBC_CLOCK_OFFSET_660  0x88014400
 #define LIBC_CLOCK_OFFSET_360  0x88014D80

@@ -22,7 +22,7 @@ REBOOT_OBJS = \
 
 C_OBJS = \
 	patches.o \
-	$(ARKROOT)/common/utils/scanner.o \
+	$(ARKROOT)/libs/libsploit/scanner.o \
 
 LIBS = -L $(ARKROOT)/libs
 

@@ -1,4 +1,24 @@
-SUBDIRS = SystemCtrlForKernel SystemCtrlForUser KUBridge VshCtrl ansi-c graphics colordebugger iplsdk prebuilt libpspmath libunziprar libpng libjpeg libpspvram libya2d libintraFont libvlf psid
+SUBDIRS = \
+	SystemCtrlForKernel \
+	SystemCtrlForUser \
+	KUBridge \
+	VshCtrl \
+	ansi-c \
+	graphics \
+	colordebugger \
+	iplsdk \
+	prebuilt \
+	libpspmath \
+	libunziprar \
+	libpng \
+	libjpeg \
+	libpspvram \
+	libya2d \
+	libintraFont \
+	libvlf \
+	libsploit \
+	psid
+
 PREBUILTDIRS = prebuilt libvlf
 .PHONY: subdirs $(SUBDIRS)
 
@@ -22,6 +42,7 @@ distclean clean:
 	$(Q)make $@ -C libya2d $(OPT)
 	$(Q)make $@ -C psid $(OPT)
 	$(Q)make $@ -C libintraFont $(OPT)
+	$(Q)make $@ -C libsploit $(OPT)
 	$(Q)rm -rf *.a *~ | true
 
 subdirs: $(SUBDIRS)
