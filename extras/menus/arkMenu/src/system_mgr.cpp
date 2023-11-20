@@ -313,7 +313,7 @@ static int drawThread(SceSize _args, void *_argp){
         SystemMgr::drawScreen();
         common::flipScreen();
         sceKernelSignalSema(draw_sema, 1);
-        sceKernelDelayThread(0);
+        sceKernelDelayThread(1000);
     }
     sceKernelExitDeleteThread(0);
     return 0;
@@ -420,7 +420,7 @@ void SystemMgr::pauseDraw(){
 
 void SystemMgr::resumeDraw(){
     sceKernelSignalSema(draw_sema, 1);
-    sceKernelDelayThread(0);
+    sceKernelDelayThread(1000);
 }
 
 void SystemMgr::enterFullScreen(){
