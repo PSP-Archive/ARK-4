@@ -2,6 +2,9 @@
 
 ## Version 4.20.66 (2023-10-24)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42066
+- Rev 6: several cleanup, refactor and small fixes.
+- Rev 5: you can now change background image of `Custom Launcher` and `Recovery` by placing a file named `BG.PNG` in `ARK_01234`.
+- Rev 4: added `alternative` kernel exploit for better stability.
 - Rev 3: unified all kernel exploits (`K.BIN`) into one, simplifying the installation process across all devices (https://github.com/PSP-Archive/ARK-4/pull/273).
 - Rev 2: fixed bug in file browser's options menu.
 - Rev 1: fixed bug that would allow cIPL to be installed on 4g models (not yet compatible), causing a brick.
