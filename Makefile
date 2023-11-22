@@ -142,13 +142,7 @@ cipl:
 
 kxploits:
 	$(Q)$(MAKE) $@ K=universal -C loader/live/kernel/kxploit
-<<<<<<< HEAD
 	$(Q)$(MAKE) $@ K=alternative -C loader/live/kernel/kxploit
-=======
-	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
->>>>>>> e2f86f158c56e16f11d7e8c39fa95ade6086231a
 
 # Only clean non-library code
 cleanobj:
@@ -193,13 +187,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
 	$(Q)$(MAKE) $@ K=universal -C loader/live/kernel/kxploit
-<<<<<<< HEAD
 	$(Q)$(MAKE) $@ K=alternative -C loader/live/kernel/kxploit
-=======
-	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=psp660 -C loader/live/kernel/kxploit
->>>>>>> e2f86f158c56e16f11d7e8c39fa95ade6086231a
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/mainbinex
