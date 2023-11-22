@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include "controller.h"
 #include <systemctrl.h>
+#include <pspiofilemgr.h>
 #include "animations.h"
 #include "system_mgr.h"
 #include "lang.h"
@@ -414,7 +415,9 @@ void common::stopLoadingThread(){
 }
 
 void common::loadTheme(){
-    images[IMAGE_BG] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
+	SceIoStat stat;
+	string path = string(ark_config.arkpath) + "BG.PNG";
+	images[IMAGE_BG] = (sceIoGetstat(path.c_str(), &stat) >= 0) ? new Image(path.c_str()) : new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
     images[IMAGE_WAITICON] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
 
     images[0]->swizzle();
