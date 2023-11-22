@@ -9,6 +9,7 @@
 #include <pspsuspend.h>
 #include <psputilsforkernel.h>
 #include <psppower.h>
+#include <psprtc.h>
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
@@ -29,6 +30,7 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
 extern int sceKernelPowerLock(unsigned int, unsigned int);
 extern void* sctrlHENSetStartModuleHandler(void*);
 volatile void* set_start_module_handler = &sctrlHENSetStartModuleHandler;
+volatile void* rtc_compare_ticks = &sceRtcCompareTick;
 
 volatile ARKConfig config = {
     .magic = ARK_CONFIG_MAGIC,

@@ -216,6 +216,8 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
             _sw(0x24020001, patch_addr + 4);
             _sw(value,  patch_addr);
 
+            se_config->slimcolor = 1;
+
             patches--;
         }
     }
