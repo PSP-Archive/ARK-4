@@ -27,7 +27,6 @@
 // Patch mediasync.prx
 void patchMediaSync(SceModule2* mod)
 {
-    colorDebug(0xff0000);
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr+mod->text_size;
     
