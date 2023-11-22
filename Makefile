@@ -75,6 +75,8 @@ copy-bin:
 	$(Q)cp loader/live/kernel/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
 	$(Q)cp loader/live/kernel/psxloader/ARKX.BIN dist/ARK_01234/ARKX.BIN # ARK-X loader
 	$(Q)cp loader/live/kernel/kxploit/universal/K.BIN dist/ARK_01234/K.BIN # Universal Kernel exploit for PSP 6.60+ and Vita 3.60+
+	$(Q)cp loader/live/kernel/kxploit/vita360/K.BIN dist/PSVita/Standalone/K.BIN # Fallback exploit for Vita 3.60+
+	$(Q)cp loader/live/kernel/kxploit/cfw/K.BIN dist/PSVita/Adrenaline/K.BIN # Fallback exploit for Adrenaline 
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
 	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/PSP/ # ARK DC installer
 	$(Q)cp loader/dc/installer/EBOOT.PBP dist/PSP/ARK_DC/ # ARK DC installer
@@ -141,6 +143,8 @@ cipl:
 
 kxploits:
 	$(Q)$(MAKE) $@ K=universal -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
 
 # Only clean non-library code
 cleanobj:
@@ -185,6 +189,8 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
 	$(Q)$(MAKE) $@ K=universal -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=vita360 -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=cfw -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/mainbinex
@@ -244,6 +250,7 @@ mkdir-dist:
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
 	$(Q)mkdir dist/PSVita/Standalone | true
+	$(Q)mkdir dist/PSVita/Adrenaline | true
 	$(Q)mkdir dist/PSVita/PS1CFW | true
 	$(Q)mkdir dist/PSVita/PS1CFW/SCPS10084 | true
 
