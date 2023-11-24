@@ -1,8 +1,8 @@
 import psptool.kirk as kirk
 
 from .common import expand_seed, prx_header, set_kirk_cmd_1, set_kirk_cmd_1_ecdsa
-from Crypto.Util.strxor import strxor as xor
-from Crypto.Hash import SHA1
+from Cryptodome.Util.strxor import strxor as xor
+from Cryptodome.Hash import SHA1
 
 
 class prx_header_2(object):

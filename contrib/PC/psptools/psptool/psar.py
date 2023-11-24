@@ -8,8 +8,8 @@ import math
 
 import hashlib
 
-from Crypto.Cipher import DES
-from Crypto.Util.strxor import strxor as xor
+from Cryptodome.Cipher import DES
+from Cryptodome.Util.strxor import strxor as xor
 
 _psar_table_keys = [
     {

@@ -1,7 +1,7 @@
 import struct
 import hashlib
-from Crypto.Util.strxor import strxor as xor
-from Crypto.Hash import SHA1
+from Cryptodome.Util.strxor import strxor as xor
+from Cryptodome.Hash import SHA1
 
 import psptool.kirk
 import psptool.prxtypes.type2 as type2
