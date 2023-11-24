@@ -313,7 +313,7 @@ static int drawThread(SceSize _args, void *_argp){
         SystemMgr::drawScreen();
         common::flipScreen();
         sceKernelSignalSema(draw_sema, 1);
-        sceKernelDelayThread(1000);
+        sceKernelDelayThread(0);
     }
     sceKernelExitDeleteThread(0);
     return 0;
