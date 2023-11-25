@@ -1,7 +1,7 @@
 import struct
 import hashlib
-from Crypto.Cipher import AES
-from Crypto.Hash import CMAC
+from Cryptodome.Cipher import AES
+from Cryptodome.Hash import CMAC
 from ecdsa.ellipticcurve import CurveFp, Point
 from ecdsa.curves import Curve
 from ecdsa import SigningKey, VerifyingKey

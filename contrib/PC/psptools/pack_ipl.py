@@ -3,7 +3,7 @@
 import argparse
 import struct
 from psptool.kirk import kirk1_encrypt_cmac, kirk4
-from Crypto.Hash import SHA1
+from Cryptodome.Hash import SHA1
 
 parser = argparse.ArgumentParser(description='IPL packer')
 

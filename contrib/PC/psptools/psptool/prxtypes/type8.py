@@ -1,8 +1,8 @@
 import psptool.kirk as kirk
 
-from Crypto.Util.strxor import strxor as xor
-from Crypto.Hash import SHA1
-from Crypto import Random
+from Cryptodome.Util.strxor import strxor as xor
+from Cryptodome.Hash import SHA1
+from Cryptodome import Random
 
 
 class prx_header_8(object):

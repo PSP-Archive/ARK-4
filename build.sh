@@ -5,7 +5,7 @@
 #                                   #
 # Author  : Krazynez                #
 #                                   #
-# Date    : 2023-08-10              #
+# Date    : 2023-11-24              #
 #                                   #
 #####################################
 version=0.9.0
@@ -26,8 +26,8 @@ dialogCheck=$(command -v dialog 2>/dev/null)
 
 function checkDepends {
 
-	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev
-	pip3 install pycryptodome ecdsa
+	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev python3-pycryptodome
+	pip3 install ecdsa
 }
 
 export -f checkDepends
