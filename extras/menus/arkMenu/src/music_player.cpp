@@ -35,6 +35,7 @@ static void add_playlist(string path){
 
 MusicPlayer::MusicPlayer(string path){
     this->path = path;
+    scroll.w = 400;
     if (playlist.size()){
         add_playlist(path);
     }
