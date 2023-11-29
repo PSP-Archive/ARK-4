@@ -150,6 +150,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     int lastDecoded = 0;
     int volume = PSP_AUDIO_VOLUME_MAX;
     int numPlayed = 0;
+    int samplingRate, numChannels, max_sample;
 
     mp3_handle = sceMp3ReserveMp3Handle( &mp3Init );
 
@@ -173,6 +174,12 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     sceAudioSRCChRelease();
 
     sceMp3SetLoopNum(mp3_handle, 0);
+
+    samplingRate = sceMp3GetSamplingRate(mp3_handle);
+    numChannels = sceMp3GetMp3ChannelNum(mp3_handle);
+    max_sample = sceMp3GetMaxOutputSample(mp3_handle);
+
+    channel = sceAudioSRCChReserve(max_sample, samplingRate, numChannels);
 
     while (running) {
 
@@ -199,30 +206,14 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
         if (bytesDecoded <= 0)
         {
             break;
-        } else {
-            // Reserve the Audio channel for our output if not yet done
-            if (channel < 0 || lastDecoded != bytesDecoded)
-            {
-                if (channel >= 0)
-                    sceAudioSRCChRelease();
-
-                int samplingRate = sceMp3GetSamplingRate( mp3_handle );
-                int numChannels = sceMp3GetMp3ChannelNum( mp3_handle );
-
-                channel = sceAudioSRCChReserve( bytesDecoded/(2*numChannels),
-                    samplingRate, numChannels );
-            }
-
-            // Output the decoded samples and accumulate the 
-            // number of played samples to get the playtime
-            numPlayed += sceAudioSRCOutputBlocking( volume, buf );
-            while (sceAudioGetChannelRestLen(channel) > 0){ // wait for the audio to be outputted
-                sceKernelDelayThread(0);
-            }
-            sceAudioSRCChRelease();
-            channel = -1;
         }
-        
+
+        // Output the decoded samples and accumulate the 
+        // number of played samples to get the playtime
+        numPlayed += sceAudioSRCOutputBlocking( volume, buf );
+        while (sceAudioGetChannelRestLen(channel) > 0){ // wait for the audio to be outputted
+            sceKernelDelayThread(0);
+        }
     }
 
     // Reset the state of the player to the initial starting state
@@ -230,6 +221,8 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     numPlayed = 0;
 
     mp3_terminate:
+
+    channel = -1;
 
     // Cleanup time...
     sceAudioSRCChRelease();
@@ -287,13 +280,14 @@ int MP3::getBufferSize(){
 }
 
 void MP3::play(){
-    if (running){
-        return;
+    sceKernelWaitSema(mp3_mutex, 1, 0);
+    if (!running){
+        running = true;
+        void* self = (void*)this;
+        mp3Thread = sceKernelCreateThread("", (SceKernelThreadEntry)MP3::playThread, 0x3D, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
+        sceKernelStartThread(mp3Thread,  sizeof(self), &self);
     }
-    running = true;
-    void* self = (void*)this;
-    mp3Thread = sceKernelCreateThread("", (SceKernelThreadEntry)MP3::playThread, 0x3D, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
-    sceKernelStartThread(mp3Thread,  sizeof(self), &self);
+    sceKernelSignalSema(mp3_mutex, 1);
 }
 
 void MP3::stop(){
@@ -316,9 +310,7 @@ int MP3::isPaused(){
 int MP3::playThread(SceSize _args, void** _argp)
 {
     MP3* self = (MP3*)(*_argp);
-    sceKernelWaitSema(mp3_mutex, 1, 0);
     playMP3File(self->filename, self->buffer, self->buffer_size);
-    sceKernelSignalSema(mp3_mutex, 1);
     if (self->on_music_end) self->on_music_end(self);
     sceKernelExitDeleteThread(0);
     return 0;
