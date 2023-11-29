@@ -10,77 +10,66 @@
 
 static int running = 0;
 static int eof = 0;
-static int bufferCounter = 0;
 static SceUID mp3Thread = -1;
 static SceUID mp3_mutex = sceKernelCreateSema("mp3_mutex", 0, 1, 1, 0);
 static int paused = 0;
 
 
-int fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
+bool fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
 {
+    bool res = 0;
+    char* dst;
+    SceInt32 write;
+    SceInt32 pos;
+
+    if (eof) return false;
+
+    // Get Info on the stream (where to fill to, how much to fill, where to fill from)
+    int status = sceMp3GetInfoToAddStreamData(handle, (SceUChar8**)&dst, &write, &pos);
+    if (status < 0){
+        return 0;
+    }
 
     // read from file
     if (fd >= 0){
-        char* dst;
-        SceInt32 write;
-        SceInt32 pos;
-        // Get Info on the stream (where to fill to, how much to fill, where to fill from)
-        int status = sceMp3GetInfoToAddStreamData(handle, (SceUChar8**)&dst, &write, &pos);
-        if (status < 0){
-            return 0;
-        }
 
         // Seek file to position requested
         status = sceIoLseek32( fd, pos, SEEK_SET );
         if (status < 0)
-            return 0;
+            return false;
 
         // Read the amount of data
         int read = sceIoRead( fd, dst, write );
-        if (read < 0)
-            return 0;
-        else if (read == 0){
+        if (read <= 0){
             // End of file?
             eof = true;
-            return 0;
+            return false;
         }
-
-        // Notify mp3 library about how much we really wrote to the stream buffer
-        status = sceMp3NotifyAddStreamData( handle, read );
-        if (status < 0){
-            return 0;
-        }
-
-        return (pos > 0);
+        write = read;
+        res = (pos > 0);
     }
     // read from memory buffer
     else{
-    
-        if (eof || bufferCounter >= buffer_size){
-            return 0;
-        }
-    
-        char* dst;
-        SceInt32 write;
-        SceInt32 pos;
         
-        int status = sceMp3GetInfoToAddStreamData(handle, (SceUChar8**)&dst, &write, &pos);
-        if (status < 0){
-            return 0;
+        if (pos >= buffer_size){
+            eof = true;
+            return false;
         }
-            
+
         if (pos + write > buffer_size){
             write = buffer_size-pos;
             eof = true;
         }
-        bufferCounter += write;
         memcpy(dst, (u8*)buffer+pos, write);
-        status = sceMp3NotifyAddStreamData(handle, write);
-        if (status < 0){
-            return 0;
-        }
-        return (pos > 0);
+        res = (pos > 0);
     }
+
+    // Notify mp3 library about how much we really wrote to the stream buffer
+    status = sceMp3NotifyAddStreamData( handle, write);
+    if (status < 0){
+        return false;
+    }
+    return res;
 }
 
 u32 findMP3StreamStart(int file_handle, void* buffer, int buffer_size, char* tmp_buf){
@@ -113,8 +102,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     int status;
 
-    eof = 0;
-    bufferCounter = 0;
+    eof = false;
 
     if (filename != NULL){
         file_handle = sceIoOpen(filename, PSP_O_RDONLY, 0777 );
