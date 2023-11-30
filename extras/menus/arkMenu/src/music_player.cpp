@@ -43,6 +43,7 @@ MusicPlayer::MusicPlayer(string path){
 
 MusicPlayer::MusicPlayer(vector<string>* pl){
     this->path = pl->at(0);
+    scroll.w = 400;
     for (int i=0; i<pl->size(); i++){
         add_playlist(pl->at(i));
     }
