@@ -123,6 +123,7 @@ void Entry::gameBoot(){
         return;
 
     while (MP3::isPlaying()){
+        MusicPlayer::stopPlayList();
         MP3::fullStop();
         sceKernelDelayThread(1000);
     }

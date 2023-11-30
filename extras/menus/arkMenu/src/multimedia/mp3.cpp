@@ -305,6 +305,7 @@ int MP3::playThread(SceSize _args, void** _argp)
 }
 
 void MP3::fullStop(){
+    self->on_music_end = NULL;
     running = false;
     sceKernelWaitThreadEnd(mp3Thread, NULL);
 }

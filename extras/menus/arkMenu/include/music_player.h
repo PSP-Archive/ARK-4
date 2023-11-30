@@ -21,6 +21,7 @@ class MusicPlayer : public OptionsMenu{
         int control();
 
         static void pauseResume();
+        static void stopPlayList();
         static bool isPlaying();
 
 };

@@ -145,6 +145,10 @@ void MusicPlayer::pauseResume(){
     if (current_song != NULL) current_song->pauseResume();
 }
 
+void MusicPlayer::stopPlayList(){
+    if (current_song) current_song->on_music_end = NULL;
+}
+
 bool MusicPlayer::isPlaying(){
     return (current_song != NULL && current_song->isPlaying() && !current_song->isPaused());
 }
