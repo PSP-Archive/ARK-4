@@ -630,7 +630,7 @@ void Browser::drawScreen(){
     for (int i=this->start; i<min(this->start+PAGE_SIZE, (int)entries->size()); i++){
         File* e = (File*)this->entries->at(i);
         // draw checkbox
-        common::getCheckbox((int)e->isSelected())->draw(xoffset-30, yoffset-10);
+        common::getCheckbox((int)e->isSelected())->draw(xoffset-40, yoffset-10);
         // draw focused entry
         if (i == index && this->enableSelection){
             if (animating){
@@ -653,7 +653,7 @@ void Browser::drawScreen(){
         }
         // draw entry size and icon
         common::printText(400, yoffset, e->getSize().c_str());
-        common::getIcon(e->getFileType())->draw(xoffset-15, yoffset-10);
+        common::getIcon(e->getFileType())->draw(xoffset-20, yoffset-10);
         yoffset += 20;
     }
 
