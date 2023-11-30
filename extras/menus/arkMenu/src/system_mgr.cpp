@@ -262,7 +262,7 @@ static void systemDrawer(){
             entries[cur_entry]->drawInfo();
             // draw music icon is music player is open
             if (MusicPlayer::isPlaying()){
-                common::getIcon(FILE_MUSIC)->draw( common::getConf()->battery_percent ? 250:280, 3);
+                common::getIcon(FILE_MUSIC)->draw( common::getConf()->battery_percent ? 240:280, 3);
             }
             break;
         case 1: // draw opening animation
