@@ -122,11 +122,7 @@ void Entry::gameBoot(){
     if (common::getConf()->fast_gameboot)
         return;
 
-    while (MP3::isPlaying()){
-        MusicPlayer::stopPlayList();
-        MP3::fullStop();
-        sceKernelDelayThread(1000);
-    }
+    MusicPlayer::fullStop();
 
     SystemMgr::pauseDraw();
 
@@ -272,6 +268,8 @@ bool Entry::pmfPrompt(){
     bool ret;
     
     SystemMgr::pauseDraw();
+
+    MusicPlayer::fullStop();
     
     animAppear();
 

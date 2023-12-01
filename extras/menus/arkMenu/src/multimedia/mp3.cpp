@@ -8,11 +8,11 @@
 //static char mp3Buf[MP3BUF_SIZE]  __attribute__((aligned(64)));
 //static short pcmBuf[PCMBUF_SIZE]  __attribute__((aligned(64)));
 
-static int running = 0;
-static int eof = 0;
+static bool running = false;
+static bool eof = false;
 static SceUID mp3Thread = -1;
 static SceUID mp3_mutex = sceKernelCreateSema("mp3_mutex", 0, 1, 1, 0);
-static int paused = 0;
+static bool paused = false;
 
 
 bool fillStreamBuffer(int fd, int handle, void* buffer, int buffer_size)
@@ -93,7 +93,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 {
 
     if (filename == NULL && buffer == NULL){
-        running = 0;
+        running = false;
         return;
     }
 
@@ -107,14 +107,14 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     if (filename != NULL){
         file_handle = sceIoOpen(filename, PSP_O_RDONLY, 0777 );
         if(file_handle < 0) {
-            running = 0;
+            running = false;
             return;
         }
     }
 
     status = sceMp3InitResource();
     if(status < 0) {
-        running = 0;
+        running = false;
         return;
     }
 
@@ -155,7 +155,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     }
 
     if (!running)
-        running = 1;
+        running = true;
 
     sceMp3SetLoopNum(mp3_handle, 0);
 
@@ -163,6 +163,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     numChannels = sceMp3GetMp3ChannelNum(mp3_handle);
     max_sample = sceMp3GetMaxOutputSample(mp3_handle);
 
+    sceAudioSRCChRelease();
     channel = sceAudioSRCChReserve(max_sample, samplingRate, numChannels);
 
     if (channel < 0) goto mp3_terminate;
@@ -184,7 +185,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
         // Decode some samples
         short* buf;
         unsigned int bytesDecoded;
-        int retries = 0;
 
         bytesDecoded = sceMp3Decode(mp3_handle, &buf);
 
@@ -202,8 +202,10 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     mp3_terminate:
 
     // Cleanup time...
-    while (sceAudioSRCChRelease() < 0){ // wait for the audio to be outputted
-        sceKernelDelayThread(100);
+    if (channel >= 0){
+        while (sceAudioSRCChRelease() < 0){ // wait for the audio to be outputted
+            sceKernelDelayThread(100);
+        }
     }
 
     status = sceMp3ReleaseMp3Handle( mp3_handle );
@@ -215,7 +217,7 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     file_handle = -1;
     mp3_handle = -1;
-    running = 0;
+    running = false;
     free(mp3Buf);
     free(pcmBuf);
 }

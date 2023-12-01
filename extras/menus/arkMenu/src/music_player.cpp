@@ -90,6 +90,8 @@ int MusicPlayer::control(){
 
     SystemMgr::enterFullScreen();
 
+    MP3::fullStop();
+
     if (current_song != NULL && this->path != current_song->getFilename() && playlist.size() == 0){
         delete current_song;
         current_song = NULL;
@@ -145,10 +147,14 @@ void MusicPlayer::pauseResume(){
     if (current_song != NULL) current_song->pauseResume();
 }
 
-void MusicPlayer::stopPlayList(){
-    if (current_song) current_song->on_music_end = NULL;
-}
-
 bool MusicPlayer::isPlaying(){
     return (current_song != NULL && current_song->isPlaying() && !current_song->isPaused());
+}
+
+void MusicPlayer::fullStop(){
+    if (current_song) current_song->on_music_end = NULL;
+    while (MP3::isPlaying()){
+        MP3::fullStop();
+        sceKernelDelayThread(1000);
+    }
 }
