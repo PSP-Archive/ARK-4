@@ -125,7 +125,7 @@ void Iso::loadIcon(){
     this->icon0 = icon;
 }
 
-void Iso::getTempData1(){
+void Iso::loadPics(){
     this->pic0 = NULL;
     this->pic1 = NULL;
 
@@ -149,7 +149,7 @@ void Iso::getTempData1(){
     }
 }
 
-void Iso::getTempData2(){
+void Iso::loadAVMedia(){
     this->icon1 = NULL;
     this->snd0 = NULL;
     this->at3_size = 0;

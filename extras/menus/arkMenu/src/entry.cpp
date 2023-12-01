@@ -257,7 +257,7 @@ static int loading_data;
 
 int load_thread(int argc, void* argp){
     Entry* e = (Entry*)(*(void**)argp);
-    e->getTempData2();
+    e->loadAVMedia();
     loading_data = false;
     sceKernelExitDeleteThread(0);
     return 0;

@@ -61,7 +61,7 @@ SfoInfo UMD::getSfoInfo(){
     return info;
 }
 
-void UMD::getTempData1(){
+void UMD::loadPics(){
     this->pic0 = NULL;
     this->pic1 = NULL;
     
@@ -73,7 +73,7 @@ void UMD::getTempData1(){
         this->pic1 = new Image(UMD_GAME_PIC1_PATH, YA2D_PLACE_RAM);
 }
 
-void UMD::getTempData2(){
+void UMD::loadAVMedia(){
 
     this->icon1 = NULL;
     this->snd0 = NULL;

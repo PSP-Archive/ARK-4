@@ -140,10 +140,10 @@ void BrowserFile::freeIcon(){
     this->icon0 = NULL;
 }
 
-void BrowserFile::getTempData1(){
+void BrowserFile::loadPics(){
 }
 
-void BrowserFile::getTempData2(){
+void BrowserFile::loadAVMedia(){
 }
 
 void BrowserFile::doExecute(){

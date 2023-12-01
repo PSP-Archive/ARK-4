@@ -487,7 +487,7 @@ void GameManager::execApp(){
 
     loadingData = true;
     this->waitIconsLoad();
-    this->getEntry()->getTempData1();
+    this->getEntry()->loadPics();
     loadingData = false;
     if (this->getEntry()->pmfPrompt()){
         this->endAllThreads();

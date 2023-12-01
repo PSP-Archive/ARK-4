@@ -181,7 +181,7 @@ void Browser::update(Entry* ent, bool skip_prompt){
             if (!skip_prompt){
                 is_loading = true;
                 iso->loadIcon();
-                iso->getTempData1();
+                iso->loadPics();
                 is_loading = false;
             }
             if (skip_prompt || iso->pmfPrompt())
@@ -195,7 +195,7 @@ void Browser::update(Entry* ent, bool skip_prompt){
         if (!skip_prompt){
             is_loading = true;
             eboot->loadIcon();
-            eboot->getTempData1();
+            eboot->loadPics();
             is_loading = false;
         }
         if (skip_prompt || eboot->pmfPrompt())

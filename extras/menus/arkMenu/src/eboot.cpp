@@ -43,7 +43,7 @@ string Eboot::getEbootName(){
     return this->ebootName;
 }
 
-void Eboot::getTempData1(){
+void Eboot::loadPics(){
     this->pic0 = NULL;
     this->pic1 = NULL;
 
@@ -64,7 +64,7 @@ void Eboot::getTempData1(){
 }
 
 
-void Eboot::getTempData2(){
+void Eboot::loadAVMedia(){
     this->icon1 = NULL;
     this->snd0 = NULL;
     this->at3_size = 0;

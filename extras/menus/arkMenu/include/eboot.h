@@ -58,8 +58,8 @@ class Eboot : public Entry{
         string getEbootName();
         
         void loadIcon();
-        void getTempData1();
-        void getTempData2();
+        void loadPics();
+        void loadAVMedia();
         SfoInfo getSfoInfo();
         
         void doExecute();

@@ -37,8 +37,8 @@ class UMD : public Entry{
         string getName();
         
         void loadIcon();
-        void getTempData1();
-        void getTempData2();
+        void loadPics();
+        void loadAVMedia();
         SfoInfo getSfoInfo();
 
         void doExecute();

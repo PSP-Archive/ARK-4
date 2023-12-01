@@ -106,8 +106,8 @@ class Entry{
         };
         
         virtual void loadIcon()=0;
-        virtual void getTempData1()=0;
-        virtual void getTempData2()=0;
+        virtual void loadPics()=0;
+        virtual void loadAVMedia()=0;
         
         void freeTempData();
         

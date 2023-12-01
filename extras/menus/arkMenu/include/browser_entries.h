@@ -45,9 +45,9 @@ class BrowserFile : public Entry{
 
         void freeIcon();
         
-        void getTempData1();
+        void loadPics();
         
-        void getTempData2();
+        void loadAVMedia();
         
         void doExecute();
 
