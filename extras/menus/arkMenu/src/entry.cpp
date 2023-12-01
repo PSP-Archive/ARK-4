@@ -268,8 +268,6 @@ bool Entry::pmfPrompt(){
     bool ret;
     
     SystemMgr::pauseDraw();
-
-    MusicPlayer::fullStop();
     
     animAppear();
 
