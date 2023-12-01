@@ -1,7 +1,6 @@
 #include "eboot.h"
 #include "system_mgr.h"
 #include <systemctrl.h>
-#include <kubridge.h>
 
 Eboot::Eboot(string path){
     
@@ -218,34 +217,8 @@ bool Eboot::isEboot(const char* path){
 }
 
 void Eboot::doExecute(){
-    if (this->name == "Recovery Menu") Eboot::executeRecovery(this->path.c_str());
+    if (this->name == "Recovery Menu") common::launchRecovery(this->path.c_str());
     else Eboot:executeEboot(this->path.c_str());
-}
-
-void Eboot::executeRecovery(const char* path){
-    string fakent = string(common::getArkConfig()->arkpath) + VBOOT_PBP;
-    if (fakent != path && common::fileExists(path)){
-        struct SceKernelLoadExecVSHParam param;
-        
-        memset(&param, 0, sizeof(param));
-        
-        int runlevel = HOMEBREW_RUNLEVEL;
-        
-        param.args = strlen(path) + 1;
-        param.argp = (char*)path;
-        param.key = "game";
-        sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
-    }
-    else {
-        string recovery_prx = string(common::getArkConfig()->arkpath) + RECOVERY_PRX;
-        SceUID modid = kuKernelLoadModule(recovery_prx.c_str(), 0, NULL);
-        if (modid >= 0){
-            int res = sceKernelStartModule(modid, recovery_prx.size() + 1, (void*)recovery_prx.c_str(), NULL, NULL);
-            if (res >= 0){
-                while (1){sceKernelDelayThread(1000000);}; // wait for recovery to finish
-            }
-        }
-    }
 }
 
 void Eboot::executeUpdate(const char* path){

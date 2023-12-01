@@ -8,6 +8,7 @@
 #include "controller.h"
 #include <systemctrl.h>
 #include <pspiofilemgr.h>
+#include <kubridge.h>
 #include "animations.h"
 #include "system_mgr.h"
 #include "lang.h"
@@ -228,17 +229,30 @@ void common::resetConf(){
     config.browser_icon0 = 1;
 }
 
-void common::launchRecovery(){
-    struct SceKernelLoadExecVSHParam param;
-    char cwd[128];
-    string recovery_path = string(ark_config.arkpath) + ARK_RECOVERY;
-    
-    memset(&param, 0, sizeof(param));
-    
-    param.args = strlen(recovery_path.c_str()) + 1;
-    param.argp = (char*)recovery_path.c_str();
-    param.key = "game";
-    sctrlKernelLoadExecVSHWithApitype(0x141, recovery_path.c_str(), &param);
+void common::launchRecovery(const char* path){
+    string fakent = string(common::getArkConfig()->arkpath) + VBOOT_PBP;
+    if (fakent != path && common::fileExists(path)){
+        struct SceKernelLoadExecVSHParam param;
+        
+        memset(&param, 0, sizeof(param));
+        
+        int runlevel = HOMEBREW_RUNLEVEL;
+        
+        param.args = strlen(path) + 1;
+        param.argp = (char*)path;
+        param.key = "game";
+        sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+    }
+    else {
+        string recovery_prx = string(common::getArkConfig()->arkpath) + RECOVERY_PRX;
+        SceUID modid = kuKernelLoadModule(recovery_prx.c_str(), 0, NULL);
+        if (modid >= 0){
+            int res = sceKernelStartModule(modid, recovery_prx.size() + 1, (void*)recovery_prx.c_str(), NULL, NULL);
+            if (res >= 0){
+                while (1){sceKernelDelayThread(1000000);}; // wait for recovery to finish
+            }
+        }
+    }
 }
 
 static void missingFileHandler(const char* filename){
@@ -266,8 +280,10 @@ static void missingFileHandler(const char* filename){
         common::flipScreen();
     
         pad.update();
-        if (pad.cross() || pad.circle())
-            common::launchRecovery();
+        if (pad.cross() || pad.circle()){
+            string recovery_path = string(ark_config.arkpath) + ARK_RECOVERY;
+            common::launchRecovery(recovery_path.c_str());
+        }
         else if (pad.triangle())
             sctrlKernelExitVSH(NULL);
     }

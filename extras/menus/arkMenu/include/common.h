@@ -124,7 +124,7 @@ namespace common{
     extern void upperString(char* text);
     extern int maxString(string* strings, int n_strings);
     extern std::string getExtension(std::string path);
-    extern void launchRecovery();
+    extern void launchRecovery(const char* path);
 }
 
 #endif

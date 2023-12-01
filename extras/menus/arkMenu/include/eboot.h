@@ -75,7 +75,6 @@ class Eboot : public Entry{
         static void executeHomebrew(const char* path);
         static void executePSN(const char* path);
         static void executePOPS(const char* path);
-        static void executeRecovery(const char* path);
         static void executeUpdate(const char* path);
 };
 
