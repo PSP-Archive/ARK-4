@@ -106,14 +106,14 @@ int Eboot::getEbootType(const char* path){
     if (strcasecmp("ms0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp("ef0:/PSP/GAME/UPDATE/EBOOT.PBP", path) == 0 || strcasecmp(("ms0:/PSP/APPS/UPDATE/"VBOOT_PBP), path) == 0 )
         return TYPE_UPDATER;
 
-    Eboot* e = new Eboot(path);
-    u32 size = e->header.icon0_offset - e->header.param_offset;
+    Eboot e(path);
+    u32 size = e.header.icon0_offset - e.header.param_offset;
     if (size){
 
         unsigned char* sfo_buffer = (unsigned char*)malloc(size);
-        e->readFile(sfo_buffer, e->header.param_offset, size);
+        e.readFile(sfo_buffer, e.header.param_offset, size);
 
-        u16 categoryType;
+        u16 categoryType = 0;
         int value_size = sizeof(categoryType);
         Entry::getSfoParam(sfo_buffer, size, "CATEGORY", (unsigned char*)(&categoryType), &value_size);
 
@@ -126,7 +126,6 @@ int Eboot::getEbootType(const char* path){
             default:                                         break;
         }        
     }
-    delete e;
     return ret;
 }
 
