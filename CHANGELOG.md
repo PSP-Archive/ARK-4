@@ -2,6 +2,7 @@
 
 ## Version 4.20.66 (2023-10-24)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42066
+- Rev 7: fixed `MP3` audio issues in `Custom Launcher`.
 - Rev 6: several cleanup, refactor and small fixes.
 - Rev 5: you can now change background image of `Custom Launcher` and `Recovery` by placing a file named `BG.PNG` in `ARK_01234`.
 - Rev 4: added `alternative` kernel exploit for better stability.
