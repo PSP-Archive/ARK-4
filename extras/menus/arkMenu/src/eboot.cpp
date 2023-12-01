@@ -218,7 +218,7 @@ bool Eboot::isEboot(const char* path){
 
 void Eboot::doExecute(){
     if (this->name == "Recovery Menu") common::launchRecovery(this->path.c_str());
-    else Eboot:executeEboot(this->path.c_str());
+    else Eboot::executeEboot(this->path.c_str());
 }
 
 void Eboot::executeUpdate(const char* path){
