@@ -267,6 +267,7 @@ void Browser::installTheme() {
 	if (ret == OPTIONS_CANCELLED) return;
 
     // load new theme
+    GameManager::updateGameList(NULL);
 	SystemMgr::pauseDraw();
     printf("deleting current theme resources\n");
     common::deleteTheme();
