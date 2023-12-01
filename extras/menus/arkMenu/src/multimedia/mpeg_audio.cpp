@@ -101,7 +101,7 @@ SceInt32 InitAudio()
 
         int i = 0, fail = 0;
 
-        Audio.m_AudioChannel = sceAudioChReserve(-1, 512, PSP_AUDIO_FORMAT_STEREO);
+        Audio.m_AudioChannel = sceAudioChReserve(PSP_AUDIO_NEXT_CHANNEL, 512, PSP_AUDIO_FORMAT_STEREO);
         if (Audio.m_AudioChannel < 0)
         {
             return -1;

@@ -136,8 +136,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     int channel = -1;
     int lastDecoded = 0;
-    int volume = PSP_AUDIO_VOLUME_MAX;
-    int numPlayed = 0;
     int samplingRate, numChannels, max_sample;
 
     mp3_handle = sceMp3ReserveMp3Handle( &mp3Init );
@@ -158,8 +156,6 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
     if (!running)
         running = 1;
-    
-    sceAudioSRCChRelease();
 
     sceMp3SetLoopNum(mp3_handle, 0);
 
@@ -168,6 +164,8 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
     max_sample = sceMp3GetMaxOutputSample(mp3_handle);
 
     channel = sceAudioSRCChReserve(max_sample, samplingRate, numChannels);
+
+    if (channel < 0) goto mp3_terminate;
 
     while (running) {
 
@@ -198,22 +196,15 @@ void playMP3File(char* filename, void* buffer, int buffer_size)
 
         // Output the decoded samples and accumulate the 
         // number of played samples to get the playtime
-        numPlayed += sceAudioSRCOutputBlocking( volume, buf );
-        while (sceAudioGetChannelRestLen(channel) > 0){ // wait for the audio to be outputted
-            sceKernelDelayThread(0);
-        }
+        sceAudioSRCOutputBlocking(PSP_AUDIO_VOLUME_MAX, buf );
     }
-
-    // Reset the state of the player to the initial starting state
-    sceMp3ResetPlayPosition( mp3_handle );
-    numPlayed = 0;
 
     mp3_terminate:
 
-    channel = -1;
-
     // Cleanup time...
-    sceAudioSRCChRelease();
+    while (sceAudioSRCChRelease() < 0){ // wait for the audio to be outputted
+        sceKernelDelayThread(100);
+    }
 
     status = sceMp3ReleaseMp3Handle( mp3_handle );
 
@@ -272,7 +263,7 @@ void MP3::play(){
     if (!running){
         running = true;
         void* self = (void*)this;
-        mp3Thread = sceKernelCreateThread("", (SceKernelThreadEntry)MP3::playThread, 0x3D, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
+        mp3Thread = sceKernelCreateThread("", (SceKernelThreadEntry)MP3::playThread, 0x10, 0x10000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
         sceKernelStartThread(mp3Thread,  sizeof(self), &self);
     }
     sceKernelSignalSema(mp3_mutex, 1);
