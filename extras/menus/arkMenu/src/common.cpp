@@ -138,7 +138,10 @@ static void loadFont(){
     if (config.font == 0){
         offset = findPkgOffset(fonts[0], &size, "LANG.ARK", &dummyMissingHandler);
         if (offset && size){
-            fonts[0] = "LANG.ARK";
+            fonts[0] = "LANG.ARK"; // found font in lang package
+        }
+        else if ((offset = findPkgOffset(fonts[0], &size, "THEME.ARK", &dummyMissingHandler)) != 0 ){
+            fonts[0] = "THEME.ARK"; // found font in theme package
         }
         else if (!fileExists(fonts[0])){
             if (altFont){
