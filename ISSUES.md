@@ -1,6 +1,9 @@
 # TODO
-- Update DC to version 9.
+- cIPL 04g+
+- Update DC for newIPL.
 - Implement PS1CFW/VitaPops.
+- ???
+- Profit
 
 # General CFW Issues
 - ???
@@ -15,7 +18,6 @@
 - ???
 
 # Launcher Issues
-- Some random crashes in the game menu (most likely threading issues).
 - FTP Client is generally unstable.
 
 # Plugins Issues
