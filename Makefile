@@ -143,6 +143,7 @@ cipl:
 kxploits:
 	$(Q)$(MAKE) $@ K=universal -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=alternative -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=psp6xx -C loader/live/kernel/kxploit
 
 # Only clean non-library code
 cleanobj:
@@ -188,6 +189,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
 	$(Q)$(MAKE) $@ K=universal -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=alternative -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=psp6xx -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/mainbinex

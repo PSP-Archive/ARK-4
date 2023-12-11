@@ -33,30 +33,26 @@
 #include "kxploit.h"
 
 /*
-sceNetMPulldown Kernel Exploit for PSP 6.60 and 6.61
+sceNetMPulldown Kernel Exploit for PSP 6.XX
 */
 
-#define SYSMEM_TEXT_ADDR 0x88000000
-
-//#define BETA_660
-
-/*
-6.00 DT: 0x0000CCA4 - 0x000041F4
-*/
-
-#ifdef BETA_660
-#define PATCH_OFFSET 0x0000D464
-#define POWERLOCK_OFFSET 0x00006640
-#else
+// 6.60-6.61 retail
 #define PATCH_OFFSET 0x0000CBB8
 #define POWERLOCK_OFFSET 0x000040F8
-#endif
 
-// beta 600 DT
+// beta 6.60
+//#define PATCH_OFFSET 0x0000D464
+//#define POWERLOCK_OFFSET 0x00006640
+
+// beta 6.00 DT
 //#define PATCH_OFFSET 0x0000CCA4
 //#define POWERLOCK_OFFSET 0x000041F4
 
-#define PATCH_ADDR SYSMEM_TEXT_ADDR+PATCH_OFFSET // exact address of patch
+// 6.50
+//#define PATCH_OFFSET 0x0000CB10
+//#define POWERLOCK_OFFSET 0x00004074
+
+#define PATCH_ADDR SYSMEM_TEXT+PATCH_OFFSET // exact address of patch
 #define PATCHED_INST 0x3C058801 // the original instruction
 
 UserFunctions* g_tbl;
