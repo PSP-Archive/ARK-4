@@ -33,6 +33,7 @@ from getopt import gnu_getopt, GetoptError
 
 ZISO_MAGIC = 0x4F53495A
 DEFAULT_ALIGN = 0
+DEFAULT_BLOCK_SIZE = 0x800
 COMPRESS_THREHOLD = 100
 DEFAULT_PADDING = br'X'
 
@@ -74,6 +75,7 @@ def usage():
     print("Usage: ziso [-c level] [-m] [-t percent] [-h] infile outfile")
     print("  -c level: 1-12 compress ISO to ZSO, 1 for standard compression, >1 for high compression")
     print("              0 decompress ZSO to ISO")
+    print("  -b size:  2048-8192, specify block size (2048 by default)")
     print("  -m Use multiprocessing acceleration for compressing")
     print("  -t percent Compression Threshold (1-100)")
     print("  -a align Padding alignment 0=small/slow 6=fast/large")
@@ -214,13 +216,13 @@ def set_align(fout, write_pos, align):
     return write_pos
 
 
-def compress_zso(fname_in, fname_out, level):
+def compress_zso(fname_in, fname_out, level, bsize):
     fin, fout = open_input_output(fname_in, fname_out)
     fin.seek(0, os.SEEK_END)
     total_bytes = fin.tell()
     fin.seek(0)
 
-    magic, header_size, block_size, ver, align = ZISO_MAGIC, 0x18, 0x800, 1, DEFAULT_ALIGN
+    magic, header_size, block_size, ver, align = ZISO_MAGIC, 0x18, bsize, 1, DEFAULT_ALIGN
 
     # We have to use alignment on any ZSO files which > 2GB, for MSB bit of index as the plain indicator
     # If we don't then the index can be larger than 2GB, which its plain indicator was improperly set
@@ -258,7 +260,7 @@ def compress_zso(fname_in, fname_out, level):
                     block / percent_period, 0), file=sys.stderr, end='\r')
             else:
                 print("compress %3d%% avarage rate %3d%%\r" % (
-                    block / percent_period, 100*write_pos/(block*0x800)), file=sys.stderr, end='\r')
+                    block / percent_period, 100*write_pos/(block*block_size)), file=sys.stderr, end='\r')
 
         if MP:
             iso_data = [(fin.read(block_size), level)
@@ -322,24 +324,27 @@ def compress_zso(fname_in, fname_out, level):
 
 
 def parse_args():
-    global MP, COMPRESS_THREHOLD, DEFAULT_PADDING, DEFAULT_ALIGN
+    global MP, COMPRESS_THREHOLD, DEFAULT_PADDING, DEFAULT_ALIGN, DEFAULT_BLOCK_SIZE
 
     if len(sys.argv) < 2:
         usage()
         sys.exit(-1)
 
     try:
-        optlist, args = gnu_getopt(sys.argv, "c:mt:a:p:h")
+        optlist, args = gnu_getopt(sys.argv, "c:b:mt:a:p:h")
     except GetoptError as err:
         print(str(err))
         usage()
         sys.exit(-1)
 
     level = None
+    bsize = DEFAULT_BLOCK_SIZE
 
     for o, a in optlist:
         if o == '-c':
             level = int(a)
+        elif o == '-b':
+            bsize = int(a)
         elif o == '-m':
             MP = True
         elif o == '-t':
@@ -358,7 +363,11 @@ def parse_args():
         print("You have to specify input/output filename: %s", err)
         sys.exit(-1)
 
-    return level, fname_in, fname_out
+    if bsize < 2048 or bsize > 8192 or bsize%2048 != 0:
+        print("Error, invalid block size.")
+        sys.exit(-1)
+
+    return level, bsize, fname_in, fname_out
 
 
 def load_sector_table(sector_table_fn, total_block, default_level=9):
@@ -397,12 +406,12 @@ def load_sector_table(sector_table_fn, total_block, default_level=9):
 
 def main():
     print("ziso-python %s by %s" % (__version__, __author__))
-    level, fname_in, fname_out = parse_args()
+    level, bsize, fname_in, fname_out = parse_args()
 
     if level == 0:
         decompress_zso(fname_in, fname_out)
     else:
-        compress_zso(fname_in, fname_out, level)
+        compress_zso(fname_in, fname_out, level, bsize)
 
 
 PROFILE = False
