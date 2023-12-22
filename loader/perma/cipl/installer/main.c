@@ -117,11 +117,15 @@ void loadIplUpdateModule(){
 	//load module
 	mod = sceKernelLoadModule("ipl_update.prx", 0, NULL);
 
+	if (mod == 0x80020139) return; // SCE_ERROR_KERNEL_EXCLUSIVE_LOAD
+
 	if (mod < 0) {
 		ErrorExit(5000,"Could not load ipl_update.prx!\n");
 	}
 
 	mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+
+	if (mod == 0x80020133) return; // SCE_ERROR_KERNEL_MODULE_ALREADY_STARTED
 
 	if (mod < 0) {
 		ErrorExit(5000,"Could not start module!\n");
