@@ -28,14 +28,14 @@ int oe_mallocinit(void)
 }
 
 void* oe_malloc(size_t size){
-    SceUID uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_KERNEL, "", PSP_SMEM_High, size+sizeof(u32), NULL);
-    int* ptr = sceKernelGetBlockHeadAddr(uid);
+    SceUID uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_KERNEL, "", PSP_SMEM_High, size+sizeof(SceUID), NULL);
+    SceUID* ptr = sceKernelGetBlockHeadAddr(uid);
     ptr[0] = uid;
     return &(ptr[1]);
 }
 
-void oe_free(int* ptr){
-    int uid = ptr[-1];
+void oe_free(void* ptr){
+    SceUID uid = ((SceUID*)ptr)[-1];
     sceKernelFreePartitionMemory(uid);
 }
 
