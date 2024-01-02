@@ -273,10 +273,10 @@
     IMPORT_FUNC "SystemCtrlForKernel",0xFFEFA034,sctrlSESetDiscOut
 #endif
 #ifdef F_SystemCtrlForKernel_0089
-    IMPORT_FUNC "SystemCtrlForKernel",0x22A45DB7,sctrlHENIsTestingTool
+    IMPORT_FUNC "SystemCtrlForKernel",0x22A45DB7,sctrlHENIsToolKit
 #endif
 #ifdef F_SystemCtrlForKernel_0090
-    IMPORT_FUNC "SystemCtrlForKernel",0xE918D837,sctrlHENSetTestingTool
+    IMPORT_FUNC "SystemCtrlForKernel",0x18B687A6,sctrlHENGetRebootexConfig
 #endif
 #ifdef F_SystemCtrlForKernel_0091
     IMPORT_FUNC "SystemCtrlForKernel",0x6A5F76B5,sctrlHENRegisterLLEHandler
@@ -286,7 +286,4 @@
 #endif
 #ifdef F_SystemCtrlForKernel_0093
     IMPORT_FUNC "SystemCtrlForKernel",0xFF73C3A3,exitLauncher
-#endif
-#ifdef F_SystemCtrlForKernel_0094
-    IMPORT_FUNC "SystemCtrlForKernel",0x18B687A6,sctrlHENGetRebootexConfig
 #endif
