@@ -30,7 +30,7 @@ int sctrlHENSetMemory(u32 p2, u32 p9)
 // Get HEN Version
 int sctrlHENGetVersion()
 {
-    return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | ARK_MICRO_VERSION << 8 );
+    return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | (ARK_MICRO_VERSION << 8) );
 }
 
 // Get HEN Minor Version

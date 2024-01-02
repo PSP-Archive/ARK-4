@@ -207,7 +207,7 @@ int sctrlSEGetDiscType(void)
 
 int sctrlSEGetVersion()
 {
-	return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | ARK_MICRO_VERSION << 8 );
+	return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | (ARK_MICRO_VERSION << 8) | ARK_REVISION );
 }
 
 int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs){
