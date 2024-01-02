@@ -85,7 +85,54 @@ void patchRebootBuffer(){
     flushCache();
 }
 
+int is_not_pops_module(char* path){
+    static char* mods[] = {"/kd/usb.prx", "/kd/wlan.prx", "/kd/np9660.prx", "/kd/isofs.prx", "/kd/me_wrapper.prx"};
+    for (int i=0; i<NELEMS(mods); i++){
+        if (strcmp(path, mods[i]) == 0) return 1;
+    }
+    return 0;
+}
+
 // pspbtcnf patches
+
+int patch_bootconf_popstool(char* buffer, int length){
+    int result = length;
+
+    _btcnf_header * header = (_btcnf_header *)buffer;
+
+    _btcnf_module * module = (_btcnf_module *)(buffer + header->modulestart);
+
+    // iterate modules
+    for (int modnum = 0; modnum < header->nmodules; modnum++)
+    {
+        //found module name
+        if(!is_not_pops_module(buffer + header->modnamestart + module[modnum].module_path))
+        {
+            // fix flags to add pops runlevel
+            module[modnum].flags |= POPS_RUNLEVEL;
+        }
+    }
+
+    // add pops modules
+    int newsize;
+
+    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", "/kd/popsman.prx", POPS_RUNLEVEL );
+    if (newsize > 0) result = newsize;
+
+    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", "/kd/popcorn.prx", POPS_RUNLEVEL );
+    if (newsize > 0) result = newsize;
+
+    newsize = AddPRX(buffer, "/vsh/module/common_util.prx", "/vsh/module/libfont_hv.prx", POPS_RUNLEVEL );
+    if (newsize > 0) result = newsize;
+
+    newsize = AddPRX(buffer, "/vsh/module/common_util.prx", "/vsh/module/pafmini.prx", POPS_RUNLEVEL );
+    if (newsize > 0) result = newsize;
+
+    newsize = AddPRX(buffer, "/kd/dummy_anchor_IhariUafaayk98.prx", "/vsh/module/libpspvmc.prx", POPS_RUNLEVEL );
+    if (newsize > 0) result = newsize;
+
+    return result;
+}
 
 int patch_bootconf_vsh(char *buffer, int length)
 {
@@ -253,8 +300,14 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     }
 
     // Insert Popcorn
-    newsize = patch_bootconf_pops(buffer, length);
-    if (newsize > 0) result = newsize;
+    if (SearchPrx(buffer, "/kd/vshbridge_tool.prx") >= 0){
+        newsize = patch_bootconf_popstool(buffer, length);
+        if (newsize > 0) result = newsize;
+    }
+    else {
+        newsize = patch_bootconf_pops(buffer, length);
+        if (newsize > 0) result = newsize;
+    }
 
     // Insert Inferno and RTM
     if (IS_ARK_CONFIG(reboot_conf)){
