@@ -55,6 +55,7 @@ void processArkConfig(){
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
+
     // set rebootex for PSP
     sctrlHENSetRebootexOverride(rebootbuffer_psp);
     

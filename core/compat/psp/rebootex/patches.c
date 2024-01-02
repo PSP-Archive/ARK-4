@@ -17,6 +17,13 @@ int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(
 // patch reboot on psp
 void patchRebootBuffer(){
 
+    #ifndef PAYLOADEX
+    #ifndef MS_IPL
+    _sw(0x44000000, 0xBC800100);
+    colorDebug(0xFF00);
+    #endif
+    #endif
+
     _sw(0x27A40004, UnpackBootConfigArg); // addiu $a0, $sp, 4
     _sw(JAL(UnpackBootConfigPatched), UnpackBootConfigCall); // Hook UnpackBootConfig
     // make sure we read as little ram as possible
@@ -134,6 +141,13 @@ int patch_bootconf_popstool(char* buffer, int length){
 
     newsize = AddPRX(buffer, "/kd/dummy_anchor_IhariUafaayk98.prx", "/vsh/module/libpspvmc.prx", POPS_RUNLEVEL );
     if (newsize > 0) result = newsize;
+
+    #ifndef PAYLOADEX
+    #ifndef MS_IPL
+    _sw(0x44000000, 0xBC800100);
+    colorDebug(0xFF0000);
+    #endif
+    #endif
 
     return result;
 }
@@ -276,7 +290,7 @@ int patch_bootconf_updaterumd(char *buffer, int length)
 
 int UnpackBootConfigPatched(char **p_buffer, int length)
 {
-    int result;
+    int result = length;
     int newsize;
     char *buffer;
 
@@ -299,17 +313,17 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     
     // Insert VSHControl
     if (SearchPrx(buffer, "/vsh/module/vshmain.prx") >= 0) {
-        newsize = patch_bootconf_vsh(buffer, length);
+        newsize = patch_bootconf_vsh(buffer, result);
         if (newsize > 0) result = newsize;
     }
 
     // Insert Popcorn
     if (SearchPrx(buffer, "/kd/vshbridge_tool.prx") >= 0){
-        newsize = patch_bootconf_popstool(buffer, length);
+        newsize = patch_bootconf_popstool(buffer, result);
         if (newsize > 0) result = newsize;
     }
     else {
-        newsize = patch_bootconf_pops(buffer, length);
+        newsize = patch_bootconf_pops(buffer, result);
         if (newsize > 0) result = newsize;
     }
 
@@ -317,18 +331,18 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     if (IS_ARK_CONFIG(reboot_conf)){
         switch(reboot_conf->iso_mode) {
             case MODE_VSHUMD:
-                newsize = patch_bootconf_vshumd(buffer, length);
+                newsize = patch_bootconf_vshumd(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
             case MODE_UPDATERUMD:
-                newsize = patch_bootconf_updaterumd(buffer, length);
+                newsize = patch_bootconf_updaterumd(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
             case MODE_NP9660:
             case MODE_MARCH33:
             case MODE_INFERNO:
                 reboot_conf->iso_mode = MODE_INFERNO;
-                newsize = patch_bootconf_inferno(buffer, length);
+                newsize = patch_bootconf_inferno(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
             default:
