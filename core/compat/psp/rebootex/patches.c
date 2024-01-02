@@ -86,7 +86,11 @@ void patchRebootBuffer(){
 }
 
 int is_not_pops_module(char* path){
-    static char* mods[] = {"/kd/usb.prx", "/kd/wlan.prx", "/kd/np9660.prx", "/kd/isofs.prx", "/kd/me_wrapper.prx"};
+    static char* mods[] = {
+        "/kd/usb.prx", "/kd/wlan.prx", "/kd/wlanfirm_01g.prx", "/kd/np9660.prx",
+        "/kd/isofs.prx", "/kd/me_wrapper.prx", "/kd/vshbridge_tool.prx",
+        "/vsh/module/paf.prx", "/vsh/module/common_gui.prx", "/vsh/module/vshmain.prx"
+    };
     for (int i=0; i<NELEMS(mods); i++){
         if (strcmp(path, mods[i]) == 0) return 1;
     }
