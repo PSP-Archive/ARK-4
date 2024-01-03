@@ -20,4 +20,5 @@ Verstecke DLC
 LEDs Abschalten
 Deaktivieren Sie das UMD-Laufwerk
 Analogstick deaktivieren
+Benutzerdefinierte App
 PSP-Übertaktung

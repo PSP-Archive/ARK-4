@@ -20,4 +20,5 @@ Ukryj DLC
 Wylacz LEDy
 Wylacz dysk UMD
 Wylacz drazek analogowy
+Aplikacja niestandardowa
 Podkrecanie PSP

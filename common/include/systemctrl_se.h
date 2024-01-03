@@ -162,6 +162,7 @@ typedef struct _SEConfig
 	s16 usbdevice;
 	s16 usbcharge;
 	s16 hidemac;
+	s16 customapp;
 	s16 launcher_mode;
 	s16 hidepics;
 
