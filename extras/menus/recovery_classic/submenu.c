@@ -181,7 +181,7 @@ static settings_to_text(char** names, char** states, Setting* settings_items, in
     }
 }
 
-static int plugins_to_text(char** paths, char** states, int dir){
+static int plugins_to_text(char** paths, char** states, int* pos, int dir){
     int ret = 0;
     for (int i=0; i<plugins.count; i++){
         Plugin* plugin = plugins.table[i];
@@ -192,6 +192,7 @@ static int plugins_to_text(char** paths, char** states, int dir){
             else{
                 paths[ret] = strrchr(plugin->path, '/') + 1;
             }
+            pos[ret] = i;
             states[ret++] = (plugin->active)? "On" : "Off";
         }
     }
@@ -263,8 +264,9 @@ void plugins_submenu(){
     char* header = "* Plugins Manager                                                  *";
     char** paths = malloc(sizeof(char*)*plugins.count);
     char** states = malloc(sizeof(char*)*plugins.count);
+    int* pos = malloc(sizeof(char*)*plugins.count);
 
-    int size = plugins_to_text(paths, states, dir);
+    int size = plugins_to_text(paths, states, pos, dir);
 
     draw_submenu(header, paths, states, size, dir);
 
@@ -280,7 +282,7 @@ void plugins_submenu(){
 			dir++;
 			if(dir>=size) dir = 0;
 
-            size = plugins_to_text(paths, states, dir);
+            size = plugins_to_text(paths, states, pos, dir);
             draw_submenu(header, paths, states, size, dir);
 		}
 		if(pad.Buttons & PSP_CTRL_UP) {
@@ -288,16 +290,16 @@ void plugins_submenu(){
 			dir--;
 			if(dir<0) dir = size-1;
             
-            size = plugins_to_text(paths, states, dir);
+            size = plugins_to_text(paths, states, pos, dir);
             draw_submenu(header, paths, states, size, dir);
 		}
 		if((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LEFT | PSP_CTRL_RIGHT))) {
             sceKernelDelayThread(200000);
             
-            Plugin* plugin = plugins.table[dir];
+            Plugin* plugin = plugins.table[pos[dir]];
             plugin->active = !plugin->active;
 
-            size = plugins_to_text(paths, states, dir);
+            size = plugins_to_text(paths, states, pos, dir);
             draw_submenu(header, paths, states, size, dir);
         }
         if((pad.Buttons & PSP_CTRL_TRIANGLE)) {
@@ -309,7 +311,7 @@ void plugins_submenu(){
 
     free(paths);
     free(states);
-
+    free(pos);
 }
 
 void settings_submenu(){
