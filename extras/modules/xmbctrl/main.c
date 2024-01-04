@@ -454,6 +454,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         // Add Custom Launcher
         new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, information_board_item);
         AddVshItem(a0, topitem, new_item3);
+		if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
 
 		if(se_config.customapp) {
         	new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
@@ -544,9 +545,9 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 }
 
 int skipSetting(int i){
-    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16 || i==18);
-    else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12 || i==18);
-    else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13 || i == 18);
+    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16);
+    else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12);
+    else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13);
     else if (psp_model != PSP_GO) return ( i == 5 || i == 9 || i == 12);
 	else if (psp_model == PSP_GO) return (i == 16);
     return 0;
