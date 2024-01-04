@@ -74,6 +74,7 @@ GetItem GetItemes[] =
     { 17, 0, "Turn off LEDs" },
     { 18, 0, "Disable UMD Drive" },
     { 19, 0, "Disable Analog Stick" },
+    { 20, 0, "Custom App" },
 };
 
 #define PLUGINS_CONTEXT 1
@@ -132,6 +133,7 @@ struct {
     {N_OPTS, ark_settings_options}, // Turn off LEDs
     {2, ark_settings_boolean}, // Disable UMD Drive
     {2, ark_settings_boolean}, // Disable Analog Stick 
+    {2, ark_settings_boolean}, // Custom App Icon 
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
@@ -190,6 +192,7 @@ SceContextItem *context;
 SceVshItem *new_item;
 SceVshItem *new_item2;
 SceVshItem *new_item3;
+SceVshItem *new_item4;
 char image[4];
 void *xmb_arg0, *xmb_arg1;
 
@@ -255,6 +258,25 @@ void exec_custom_launcher() {
         sctrlKernelExitVSH(NULL);
 	}
 }
+
+void exec_custom_app() {
+	char path[64];
+	sce_paf_private_strcpy(path, "ms0:/PSP/APP/EBOOT.PBP");
+
+	SceIoStat stat; int res = sceIoGetstat(path, &stat);
+
+	if (res >= 0){
+		struct SceKernelLoadExecVSHParam param;
+		sce_paf_private_memset(&param, 0, sizeof(param));
+		param.size = sizeof(param);
+		param.args = sce_paf_private_strlen(path) + 1;
+		param.argp = path;
+		param.key = "game";
+		sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
+	}
+	
+}
+
 
 SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
 
@@ -433,6 +455,11 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, information_board_item);
         AddVshItem(a0, topitem, new_item3);
 
+		if(se_config.customapp) {
+        	new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
+        	AddVshItem(a0, topitem, new_item4);
+		}
+
     }
 	
 	return AddVshItem(a0, topitem, item);
@@ -473,6 +500,9 @@ int ExecuteActionPatched(int action, int action_arg)
         }
         else if (action_arg == sysconf_custom_launcher_arg){
             exec_custom_launcher();
+        }
+        else if (action_arg == sysconf_custom_app_arg){
+            exec_custom_app();
         }
         else is_cfw_config = 0;
     }
@@ -645,6 +675,14 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
             	return (wchar_t *)user_buffer;
 			}
         }
+		else if(sce_paf_private_strcmp(name, "msgtop_custom_app") == 0)
+        {
+			if(string.items[22]) {
+				sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[22]);
+            	utf8_to_unicode((wchar_t *)user_buffer, buf);
+            	return (wchar_t *)user_buffer;
+			}
+        }
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
             if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
@@ -687,6 +725,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.noled,			// 15
                 config.noumd,			// 16
                 config.noanalog,		// 17
+                config.customapp,		// 18
             };
             
             int i;
@@ -742,6 +781,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.noled,
                 &config.noumd,
                 &config.noanalog,
+                &config.customapp,
             };
             
             int i;

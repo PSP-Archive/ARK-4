@@ -51,6 +51,7 @@ SEConfig se_config = {
 	.hidemac = 0,
 	.launcher_mode = 0,
 	.hidepics = 0,
+	.customapp = 0,
 
 	// unused, always true
 	.plugvsh = 1,
