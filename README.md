@@ -12,12 +12,20 @@ as well as unique and exclusive new features not found anywhere else.
 <label style="text-decoration: underline; font-size: 14px;">We are located in the <b>#ark-cfw channel</b></label>
 <br>
 <br>
+<br>
+<br>
+<br>
+<br>
 
 
 
 ### Installation Guide located in WIKI
-<a style="font-weight: bold; font-size:24px; text-decoration: underline;" href="https://github.com/PSP-Archive/ARK-4/wiki">ARK-4 WIKI</a>
+<a style="font-weight: bold; font-size:32px; text-decoration: underline;" href="https://github.com/PSP-Archive/ARK-4/wiki">ARK-4 WIKI</a>
 
+<br>
+<br>
+<br>
+<br>
 <br>
 <br>
 <br>
@@ -25,13 +33,8 @@ as well as unique and exclusive new features not found anywhere else.
 
 ### Table of Contents (Quick Links)
   * [FEATURES:](#features)
- - [Legacy Game Exploits (PSP & Vita)](#legacy-game-exploits-psp--vita)
 
   * [CUSTOMIZATION](#customization)
-      - [Advanced VSH Menu Options](#advanced-vsh-menu-options)
-      - [Installing Plugins](#installing-plugins)
-      - [Configuration and Settings](#configuration-and-settings)
-      - [Custom Launcher](#custom-launcher)
       - [Custom Themes](#custom-themes)
       - [Other Launchers](#other-launchers)
   * [Other](#other)
@@ -99,154 +102,6 @@ as well as unique and exclusive new features not found anywhere else.
 Use `-h` or `--help` to show all available flags 
 
 </p>
-
-#### On PSP
-<p>
-
-###### Online PSP Installer
-For an easy deployment of ARK on a PSP connected to the internet, you can follow this [video](https://www.youtube.com/watch?v=mopy1N57DlI)
-
-
-#### Legacy Game Exploits (PSP & Vita)
-<p>
-
-- This is mainly for `developers`.
-- Considering the savedata exploit loads `H.BIN` from the savedata path.
-- Copy every file from `ARK_01234` except `PARAM.SFO`, `SAVEDATA.BIN` and `K.BIN` (`ICON0.PNG` can also be ignored), into the hacked savedata folder.
-- You need to have a `K.BIN` if you are running on an ancient Vita firmware (there's plenty of kernel exploit sources in ARK-2 and ARK-3 for reference).
-- Run the game and trigger the exploit as normal, it should load ARK.
-- If you have issues with stability, it might be necessary to run `freemem()` algorithm in the kernel exploit file (`K.BIN`).
-  
-</p>
-
-## CUSTOMIZATION
-
-#### Advanced VSH Menu Options
-<p>
-
-The default VSH menu packaged in `ARK_01234` is a simplified, easier to use version of classic VSH menus.
-To have a more classic VSH menu with more advanced features you can select the `Advanced VSH Menu` from within the simplified VSH menu.
-
-![Advanced VSH Menu](.github/screenshots/pic_0014.bmp "Advanced VSH Menu")
-
-Some of the features available in Advanced VSH Menu include:
-
-- Change USB Device mount (Memory Stick, Flash, UMD).
-- Protect Flash in USB Device mount.
-- View available ISO drivers.
-- Mount UMD Video ISO.
-- Change Foreground/Background VSH Menu colors.
-- Convert battery from normal to pandora and viceversa.
-- Activate flash and WMA playback.
-- Swap X/O buttons.
-- Delete hibernation (PSP Go paused game).
-- Convert classic plugins to the new ARK format.
-- Boot Random ISO.
-
-And more.
-
-Installing on PSP Flash:
-
-`WARNING`: for advanced users only, do not attempt this if you're not familiar with the PSP flash.
-
-By default, ARK's VSH Menu is installed on the Memory Stick (in `/PSP/SAVEDATA/ARK_01234/VSHMENU.PRX`).
-This has the limitation that you won't be able to access VSH menu without a memory stick.
-If you want to permanently install VSH Menu you need to copy `VSHMENU.PRX` to somewhere on your computer and rename it to `ark_satelite.prx`,
-which you can then copy to PSP's `flash0:/vsh/module/`, you can use the VSH Menu itself to enable flash0 via USB. The final path should be `flash0:/vsh/module/ark_satelite.prx`.
-You can also achieve the same result by using the `Full Installer`.
-
-`NOTE`: even if you install VSH Menu on flash0, the one installed on Memory Stick takes precedence in loading.
-
-</p>
-
-#### Configuration and Settings
-<p>
-
-You can use the XMB and/or the Recovery Menu to easily handle CFW settings. Depending on your region you might have them in `Game` or `Extras` category.
-However if you prefer you can also manually handle the settings yourself.
-
-Located in Game Section
-
-![XMB Custom Firmware Settings GAME](.github/screenshots/xmb_cfw_settings_game.bmp "XMB Custom Firmware Settings GAME")
-
-Located in Extras Section
-
-![XMB Custom Firmware Settings EXTRAS](.github/screenshots/xmb_cfw_settings_extras.bmp "XMB Custom Firmware Settings EXTRAS")
-
-![Recovery Custom Firmware Settings](.github/screenshots/pic_0001.png "Recovery Custom Firmware Settings")
-
-You can create a SETTINGS.TXT file using the same format as PLUGINS.TXT to enable/disable some CFW functionality on different parts of the system.
-Configuration settings you can use in ARK include:
-
-- `overclock`: use this for better performance at the expense of battery time. Sets CPU/BUS speed to 333/166.
-- `powersave`: use this for better battery life at the expense of performance. Sets CPU/BUS speed to 133/66.
-- `usbcharge`: enables USB charging wherever you want.
-- `launcher`: replaces the XMB with a custom menu launcher.
-- `disablepause`: disables the pause game feature on PSP Go.
-- `highmem`: enables high memory on models above 1K.
- You should only use this on homebrew runlevel as retail games were not meant to use the extra memory,
- and this can cause issues with cheat devices or other plugins that expect games to have their data at specific memory addresses.
- - `infernocache`: enables cache for Inferno driver, improving performance of some games.
- - `oldplugin`: enables old plugins support on PSP Go (redirects `ms0` to `ef0`).
- - `skiplogos`: skips the coldboot and gameboot logos.
-
-You can use the same runlevels as used in plugins to tell ARK when the settings take effect (all/always, umd, homebrew, game, pops, vsh).
-
-For example, you can overclock to highest CPU speed like this:
-- always, overclock, on
-
-Another example, overclock only on games, use powersaving on VSH:
-- game, overclock, on
-- vsh, powersave, on
-
-This also allows you to enable settings on specific games:
-  - ULUS01234, overclock, on
-  - ULES01234, powersave, on
-  
-</p>
-
-<p>
-
-#### Custom Launcher
-  
-ARK comes prepacked with a very powerful launcher with a built-in file browser and highly customizable.
-
-![Launcher Game Menu](.github/screenshots/pic_0000.png "Launcher Game Menu")
-
-Some of its features include:
-  
-  - Playback of ISO and all CSO formats with PMF video preview.
-  
-  - Playback of UMD game discs.
-  
-  - Categorized and organized game menu by PSP Games, PSP Homebrew and PS1 Games.
-  
-  - Ability to scan savedata folders for games.
-  
-  - Compatibility with old VHBL, ARK-2 and TN-CEF file names and folder paths.
-  
-  - Ability to copy, move or delete entire folders.
-  
-  - File browser has built-in FTP client, allowing you to browse and copy files from another PSP.
-  
-  - FTP server and client can run simultaneously.
-  
-  - Ability to mount UMD Video ISOs using the file browser.
-
-  - Ability to extract .zip files (up to highest compression) and .rar files (standard compression).
-  
-  - Ability to edit text files (.txt, .cfg or .ini).
-  
-  - Ability to install Plugins via the file browser.
-  
-  - Different background animation effects.
-  
-  - And more.
-
-![Launcher File Browser](.github/screenshots/pic_0017.png "Launcher File Browser")
-
-  
-You can however change it to whatever you please. You can change the theme used by both the custom launcher and recovery menu by replacing THEME.ARK with your own.
 
 <p>
 
