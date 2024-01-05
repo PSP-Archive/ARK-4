@@ -81,12 +81,6 @@ as well as unique and exclusive new features not found anywhere else.
 
 - `OTA` updates. Fully updateable via the internet.
 
-![ARK Custom Firmware](.github/screenshots/xmb(10).png "ARK Custom Firmware")
-
-![ARK Custom Firmware](.github/screenshots/xmb(11).png "ARK Custom Firmware")
-
-![ARK Custom Firmware](.github/screenshots/pic_0016.bmp "ARK Custom Firmware")
-
 
 #### Compiling ARK ( For Developers )
 <p>
