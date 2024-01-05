@@ -5,12 +5,6 @@ Simple to use and full of unique features, `ARK CFW` aims at keeping the `PSP` e
 `ARK` is now the most feature-complete `CFW` for the `PSP`, having all features from classic `CFW`
 as well as unique and exclusive new features not found anywhere else.
 
-### Table of Contents (Quick Links)
-  
-
-<br/>
-<br>
-<br>
 
 
 <a style="font-size: 18px;" href="https://discord.gg/bePrj9W">Join the PSP Homebrew Community Discord</a>
@@ -20,10 +14,17 @@ as well as unique and exclusive new features not found anywhere else.
 <br>
 
 
-  * [FEATURES:](#features)
 
+### Installation Guide located in WIKI
 <a style="font-weight: bold; font-size:24px; text-decoration: underline;" href="https://github.com/PSP-Archive/ARK-4/wiki">ARK-4 WIKI</a>
 
+<br>
+<br>
+<br>
+<br>
+
+### Table of Contents (Quick Links)
+  * [FEATURES:](#features)
  - [Legacy Game Exploits (PSP & Vita)](#legacy-game-exploits-psp--vita)
 
   * [CUSTOMIZATION](#customization)
