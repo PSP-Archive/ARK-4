@@ -460,12 +460,6 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         	new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
         	AddVshItem(a0, topitem, new_item4);
 		}
-
-		if(se_config.customapp) {
-        	new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
-        	AddVshItem(a0, topitem, new_item4);
-		}
-
     }
 	
 	return AddVshItem(a0, topitem, item);
