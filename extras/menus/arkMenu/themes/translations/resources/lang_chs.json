@@ -149,5 +149,6 @@
     "VSH Region Change": "VSH 区域修改",
     "UMD Region Change": "UMD区域修改",
 	"Disable UMD Drive": "禁用 UMD 驱动器",
-	"Disable Analog Stick": "禁用模拟摇杆"
+	"Disable Analog Stick": "禁用模拟摇杆",
+	"Custom App": "定制应用程序"
 }

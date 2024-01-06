@@ -143,6 +143,9 @@
     "Hide DLC": "ซ่อน DLC",
     "Turn off LEDs": "ปิดไฟแสดงสถานะ LED",
     "VSH Region Change": "เปลี่ยนภูมิภาค VSH",
-    "UMD Region Change": "เปลี่ยนภูมิภาค UMD"
+    "UMD Region Change": "เปลี่ยนภูมิภาค UMD",
+    "Disable UMD Drive": "ปิดการใช้งานไดรฟ์ UMD",
+    "Disable Analog Stick": "ปิดการใช้งานแท่งอนาล็อก",
+	"Custom App": "แอพที่กำหนดเอง"
 
 }

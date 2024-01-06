@@ -152,6 +152,7 @@
     "VSH Region Change": "Cambio de región del VSH",
     "UMD Region Change": "Cambio de región del UMD",
 	"Disable UMD Drive": "Deshabilitar la unidad UMD",
-	"Disable Analog Stick": "Desactivar palanca analógica"
+	"Disable Analog Stick": "Desactivar palanca analógica",
+	"Custom App": "Aplicación personalizada"
 
 }
