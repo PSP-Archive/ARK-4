@@ -260,21 +260,14 @@ void exec_custom_launcher() {
 }
 
 void exec_custom_app() {
-	char path[64];
-	sce_paf_private_strcpy(path, "ms0:/PSP/APP/EBOOT.PBP");
-
-	SceIoStat stat; int res = sceIoGetstat(path, &stat);
-
-	if (res >= 0){
-		struct SceKernelLoadExecVSHParam param;
-		sce_paf_private_memset(&param, 0, sizeof(param));
-		param.size = sizeof(param);
-		param.args = sce_paf_private_strlen(path) + 1;
-		param.argp = path;
-		param.key = "game";
-		sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
-	}
-	
+	char *path = "ms0:/PSP/APP/EBOOT.PBP";
+	struct SceKernelLoadExecVSHParam param;
+	sce_paf_private_memset(&param, 0, sizeof(param));
+	param.size = sizeof(param);
+	param.args = sce_paf_private_strlen(path) + 1;
+	param.argp = path;
+	param.key = "game";
+	sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 }
 
 
