@@ -455,8 +455,13 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, information_board_item);
         AddVshItem(a0, topitem, new_item3);
 		if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
+		
+		char path[64];
+		sce_paf_private_strcpy(path, "ms0:/PSP/APP/EBOOT.PBP");
+		SceIoStat stat; 
+		int ebootFound = sceIoGetstat(path, &stat);
 
-		if(se_config.customapp) {
+		if(se_config.customapp && ebootFound >= 0) {
         	new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
         	AddVshItem(a0, topitem, new_item4);
 		}
