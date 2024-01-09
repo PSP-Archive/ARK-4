@@ -45,6 +45,8 @@ ARKConfig _arkconf;
 ARKConfig* ark_config = &_arkconf;
 extern List plugins;
 
+static char custom_app_path[] = "ms0:/PSP/APP/EBOOT.PBP";
+
 static char buf[64];
 
 typedef struct
@@ -259,8 +261,8 @@ void exec_custom_launcher() {
 	}
 }
 
-void exec_custom_app() {
-	char *path = "ms0:/PSP/APP/EBOOT.PBP";
+void exec_custom_app(char *path) {
+
 	struct SceKernelLoadExecVSHParam param;
 	sce_paf_private_memset(&param, 0, sizeof(param));
 	param.size = sizeof(param);
@@ -449,10 +451,21 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         AddVshItem(a0, topitem, new_item3);
 		if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
 		
-		char path[64];
-		sce_paf_private_strcpy(path, "ms0:/PSP/APP/EBOOT.PBP");
 		SceIoStat stat; 
-		int ebootFound = sceIoGetstat(path, &stat);
+		int ebootFound;
+		if(psp_model == PSP_GO) {
+			custom_app_path[0] = 'e';
+			custom_app_path[1] = 'f';
+			ebootFound = sceIoGetstat(custom_app_path, &stat);
+			if(ebootFound < 0) {
+				custom_app_path[0] = 'm'; 
+				custom_app_path[1] = 's';
+				ebootFound = sceIoGetstat(custom_app_path, &stat);
+			}
+		}
+		else {
+			ebootFound = sceIoGetstat(custom_app_path, &stat);
+		}
 
 		if(se_config.customapp && ebootFound >= 0) {
         	new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
@@ -500,7 +513,7 @@ int ExecuteActionPatched(int action, int action_arg)
             exec_custom_launcher();
         }
         else if (action_arg == sysconf_custom_app_arg){
-            exec_custom_app();
+            exec_custom_app(custom_app_path);
         }
         else is_cfw_config = 0;
     }
