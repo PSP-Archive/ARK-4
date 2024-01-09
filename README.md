@@ -25,7 +25,7 @@ as well as unique and exclusive new features not found anywhere else.
 ### Table of Contents (Quick Links)
   * [FEATURES:](#features)
   * [Installation on PSP](#Installation-on-PSP)
-  * [Installation on PS Vita](#nstallation-On-PS-Vita)
+  * [Installation on PS Vita](#installation-on-ps-vita)
   * [Changelog](#changelog)
   * [Warnings](#warnings)
 
