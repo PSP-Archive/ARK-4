@@ -33,15 +33,8 @@ as well as unique and exclusive new features not found anywhere else.
 
 ### Table of Contents (Quick Links)
   * [FEATURES:](#features)
-
-  * [CUSTOMIZATION](#customization)
-      - [Custom Themes](#custom-themes)
-      - [Other Launchers](#other-launchers)
-  * [Other](#other)
-      - [History](#history)
-      - [Changelog](#changelog)
-      - [Credits](#credits)
-      - [Warnings](#warnings)
+  * [Changelog](#changelog)
+  * [Warnings](#warnings)
 
 ## FEATURES:
 
@@ -103,131 +96,6 @@ Use `-h` or `--help` to show all available flags
 
 </p>
 
-<p>
-
-###### Custom Themes
-You can install themes within Custom Launcher (and Recovery Menu). Just place the `themes` folder anywhere on your PSP and use the file browser in the Custom Launcher to select which theme (`THEME.ARK`) you would like to install. By selecting it a submenu will pop up asking to install it or to preview the theme without installing.
-
-<i>Orbs are animations and not part of the actual Themes </i>
-
-Theme: ARK_Revamped
-
-![ARK_Revamped](.github/wallpapers/ARK_Revamped.png "ARK_Revamped")
-
-Theme: Red 
-
-![Red](.github/wallpapers/red.png "Red")
-
-Theme: Ubuntu 
-
-![Ubuntu](.github/wallpapers/Ubuntu.png "Ubuntu")
-
-Theme: Peace Walker 
-
-![Peace Walker](.github/wallpapers/peacewalker.png "Peace Walker")
-
-Theme: Matrix
-
-![Matrix](.github/wallpapers/matrix.png "Matrix")
-
-Theme: Material Dark
-
-![Material Dark](.github/wallpapers/materialdark.png "Material Dark")
-
-Theme: GX Classic
-
-![GX Classic](.github/wallpapers/gxclassic.png "GX Classic")
-
-Theme: Jurassic Park
-
-![Jurassic Park](.github/wallpapers/Jurassic_Park.png "Jurassic Park")
-
-Theme: Classic
-
-![Classic](.github/wallpapers/classic.png "Classic")
-
-Theme: Blue 2
-
-![Blue 2](.github/wallpapers/blue2.png "Blue 2")
-
-Theme: Blue
-
-![Blue](.github/wallpapers/blue.png "Blue")
-
-Theme: Black
-
-![Black](.github/wallpapers/black.png "Black")
-
-Theme: BadgerOS_Sprunk
-
-![BadgerOS_Sprunk](.github/wallpapers/badgerOS_sprunk.png "BadgerOS_Sprunk")
-
-Theme: BadgerOS
-
-![BadgerOS](.github/wallpapers/badgerOS.png "BadgerOS")
-
-Theme: CyanogenPSP
-
-![CyanogenPSP](.github/wallpapers/CyanogenPSP.png "CyanogenPSP")
-
-Theme: Windows 7
-
-![Windows7](.github/wallpapers/Windows7.png "Windows7")
-
-Theme: Windows XP
-
-![WindowsXP](.github/wallpapers/WindowsXP.png "WindowsXP")
-
-Theme: Yokai
-
-![Yokai](.github/wallpapers/yokai.png "yokai")
-
-
-
-
-###### Other Launchers
-<p>
-
-Aside from the default launcher provided, there have been many  other custom launchers created by scene members, some better looking, some with more features, some more simpler, but all of them with personality, dedication and love from the community.
-
-Here is a list of all popular menus for ARK:
-
-- ONEMenu by gdljjrod: https://github.com/ONElua/ONEmenu/releases
-
-- vMenu by neur0n: http://www.mediafire.com/file/7acb5mhawx4gr9t/vMenu_ARK.7z/file
-
-- yMenu by wth/yosh: https://docs.google.com/uc?export=download&id=0B0kWUCdtGmJwLUhRUlNJSWhMWVE
-
-- gMenu by gbot: http://www.mediafire.com/file/oou5490qc99vr7d/gmenuARK.rar/file
-
-- 138Menu by gbot: https://wololo.net/talk/viewtopic.php?f=53&t=33511
-
-- pyMenu by Acid_Snake: https://wololo.net/talk/viewtopic.php?t=21942
-
-You can find a collection here: https://github.com/PSP-Archive/ARK-Launchers
-
-Note: some of these menus have not been updated or supported by their developers in a while, they may not work well with modern ARK or real PSP hardware.
-</p>
-
-</p>
-
-
-## Other
-
-#### History
-Despite being a relatively new `Custom Firmware` for the `PSP`, `ARK` has quite a history that goes back to the early days of the `PS Vita` scene.
-
-`ARK` is a `CFW` that started as a port (more like rewrite) of `PRO CFW` to the `PS Vita` (named `PROVITA`) created by the original `Team PRO` members (`Coldbird`, `Liquid Snake` and `Neur0n`).
-After the original team left, the source code of `PROVITA` was handed over to me (`Acid_Snake`) and my long time scene friend `qwikrazor87`.
-
-We quickly began a huge process of rewriting and restructuring code, more specifically a much more robust dynamic patching algorithms that would work on any 6.6X based firmware (including all Vita's ePSP firmwares). Thus `ARK-2` was born.
-
-Soon after, qwik, thefl0w and I began working on `PSX exploits`, which resulted in `TN-X` and `ARK-3` (never publicly released).
-
-Because the original `PRO CFW` hasn't been updated or maintained in a while, and it has become a little bloated and hard to work with, I decided to start working on porting `ARK` to the `PSP` since the core elements of the `CFW` are compatible with `PSP` `6.60` and `6.61` with minor changes.
-
-After lots of work getting the same `ARK` binaries to properly work on both PSP and Vita, I am proud to announce that the release of `ARK-4` is finally here!
-
 
 #### Changelog
 
@@ -238,42 +106,6 @@ After lots of work getting the same `ARK` binaries to properly work on both PSP 
 
 `Note`: this is a simplified `changelog`, for a full version you can visit here: https://github.com/PSP-Archive/ARK-4/blob/main/CHANGELOG.md
 
-#### Credits
-<p>
-
-- `Team PRO` (the original developers of ARK): `Coldbird`, `hrimfaxi` (aka. `Liquid Snake`) and `Neur0n`.
-
-- `The Ancient Gods of the PSP Scene`: mathieulth, davee, Proxima, zecoxao, among other tinkerers.
-
-- `qwikrazor87` for being such a genius and all his hard work with kernel exploits and ARK-2.
-  
-- `TheFl0w` (aka. `Total_Noob`) for his advancements and research in CFW development and overall contributions to the scene.
-
-- `meetpatty` for his excellent work in fixing bugs and adding important features like cIPL and DevKit support as well as porting `Time Machine` and `Despertar del Cementerio`.
-
-- `SilicaAndPina` for unlocking the full potential of the PS Vita's Official PSP emulator with such great tools like `ChovySign`, `NoPspEmuDrm` and `ps1cfw_enabler`.
-
-- `Codestation` for his incredible work improving CSO speeds and creating the ZSO format.
-
-- `Krazynez` for his amazing work on `Advanced VSH Menu` and other bugfixes and features.
-
-- `pyroesp` for his excellent work improving `VSH Menu` and refactoring code.
-
-- `TheSubPlayer` for all the wonderful themes made for the custom launcher.
-
-- `UnkownBrackets` (maxcso) for his help understanding the DAX format and Inferno speed hacks as well as creating the CSOv2 format.
-
-- `Zer01ne`, `noname120`, `astart` and other devs that have blessed me with their knowledge and wisdom.
-
-- `Zecoxao` for his great work creating dumpers that would allow us to archive rare firmwares.
-
-- `balika` for his research in porting M33 to modern firmware that has helped improve compatibility in ARK.
-
-- `hrydgard` for the PMF player as well as being an inspiration for the custom launcher.
-
-- Every other giant shoulder I am standing on.
-
-</p>
 
 #### Warnings
 <p>
