@@ -82,14 +82,15 @@ def getModuleString(data, pos):
     s = []
 
     while pos < len(data):
-        if data[pos] != '\x00':
-            s.append(data[pos])
+        if chr(data[pos]) != '\x00':
+            s.append(chr(data[pos]))
         else:
             break
 
         pos += 1
 
-    return "".join(s)
+    
+    return "".join(s).replace('\x00', '\n')
 
 class pspBtCnf:
     def __init__(self):
@@ -103,7 +104,7 @@ class pspBtCnf:
             hdr.load(data)
 
             if hdr.magic != 0x0F803001:
-                raise RuntimeError("Not a pspbtcnf file")
+                raise RuntimeError("Not a pspbtcnf file did you decrypt it first?")
             self.fw_version = hdr.devkit
 
             i = 0
@@ -119,6 +120,7 @@ class pspBtCnf:
                 self.module_list.append(mod)
 
                 i += 1
+
 
     def parseLine(self, line):
         btmode = 0
@@ -194,9 +196,8 @@ class pspBtCnf:
     def outputText(self, fn):
         with open(fn, "w") as f:
             f.write("0x%08X\n" % (self.fw_version))
-
+            i=0
             for mod in self.module_list:
-
                 loadmode = mod.flags >> 16
 
                 if loadmode & TYPE_DOLLAR:
@@ -205,6 +206,7 @@ class pspBtCnf:
                     f.write('%')
                 if loadmode & TYPE_TWOPERCENT:
                     f.write('%%')
+                
 
                 f.write(mod.path)
                 f.write(" ")
