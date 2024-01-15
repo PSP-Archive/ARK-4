@@ -115,8 +115,13 @@ int sctrlKernelSetUserLevel(int level)
     
     u32 _sceKernelReleaseThreadEventHandler = sctrlHENFindFunction("sceThreadManager", "ThreadManForKernel", 0x72F3C145);
     
+    u32 addr = _sceKernelReleaseThreadEventHandler + 0x4;
+    do {
+        addr += 4;
+    } while ((_lw(addr)&0xFFF00000) != 0x24B00000);
+
     u32 threadman_userlevel_struct = _lh(_sceKernelReleaseThreadEventHandler + 0x4)<<16;
-    threadman_userlevel_struct += (short)_lh(_sceKernelReleaseThreadEventHandler + 0x18);
+    threadman_userlevel_struct += (short)_lh(addr);
     
     
     // Set User Level
