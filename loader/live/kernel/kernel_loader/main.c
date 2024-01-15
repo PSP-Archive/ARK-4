@@ -37,7 +37,7 @@ extern void loadKernelArk();
 // K.BIN entry point
 void (* kEntryPoint)() = (void*)KXPLOIT_LOADADDR;
 
-void autoDetectDevice(ARKConfig* config);
+int autoDetectDevice(ARKConfig* config);
 int initKxploitFile();
 void kernelContentFunction(void);
 
@@ -119,36 +119,38 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
     return res;
 }
 
-void autoDetectDevice(ARKConfig* config){
+int autoDetectDevice(ARKConfig* config){
     // determine execution mode by scanning for certain modules
-    if (k_tbl->KernelFindModuleByName == NULL) return;
+    if (k_tbl->KernelFindModuleByName == NULL) return -1;
     SceModule2* kermit_peripheral = k_tbl->KernelFindModuleByName("sceKermitPeripheral_Driver");
     if (kermit_peripheral){ // kermit is Vita-only
         SceModule2* pspvmc = k_tbl->KernelFindModuleByName("pspvmc_Library");
         if (pspvmc){ // pspvmc loaded means we're in Vita POPS
             config->exec_mode = PSV_POPS;
+            return 0;
         }
         else{
             SceModule2* sctrl = k_tbl->KernelFindModuleByName("SystemControl");
             if (sctrl){ // SystemControl loaded mean's we're running under a Custom Firmware
                 // check if running ARK-4 (CompatLayer)
                 if (k_tbl->KernelFindModuleByName("ARKCompatLayer") != NULL){
-                    // ARK-4 -> exit game
-                    void (*KernelExitGame)() = (void*)FindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F);
-                    KernelExitGame();
+                    return -1;
                 }
                 else{
                     // Adrenaline
                     config->exec_mode = PSV_ADR;
+                    return 0;
                 }
             }
             else{ // no module found, must be stock pspemu
                 config->exec_mode = PS_VITA;
+                return 0;
             }
         }
     }
     else{ // no kermit, not a vita
         config->exec_mode = PSP_ORIG;
+        return 0;
     }
 }
 
@@ -203,7 +205,10 @@ void kernelContentFunction(void){
 
     if (ark_config->exec_mode == DEV_UNK){
         PRTSTR("Autodetecting device");
-        autoDetectDevice(ark_config); // attempt to autodetect configuration
+        if (autoDetectDevice(ark_config) < 0){ // attempt to autodetect configuration
+            PRTSTR("Could not detect device, aborting...");
+            return;
+        }
     }
 
     // Output Exploit Reach Screen
