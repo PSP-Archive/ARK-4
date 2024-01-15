@@ -48,6 +48,8 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
     // Clear BSS Segment
     clearBSS();
 
+    void (*KernelExitGame)() = (void*)RelocImport("LoadExecForUser", 0x05572A5F, 0);
+
     // init function table
     if (arg1 == NULL)
         scanUserFunctions(g_tbl);
@@ -111,8 +113,7 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
     
     PRTSTR2("ERROR (%p): %s", res, err);
     PRTSTR("Exiting...");
-    g_tbl->KernelDelayThread(10000);
-    void (*KernelExitGame)() = (void*)RelocImport("LoadExecForUser", 0x05572A5F, 0);
+    g_tbl->KernelDelayThread(1000000);
     if (KernelExitGame) KernelExitGame();
 
     return res;

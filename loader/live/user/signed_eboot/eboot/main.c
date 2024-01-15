@@ -32,6 +32,11 @@ extern void* sctrlHENSetStartModuleHandler(void*);
 volatile void* set_start_module_handler = &sctrlHENSetStartModuleHandler;
 volatile void* rtc_compare_ticks = &sceRtcCompareTick;
 
+extern int sceDRMInstallInit();
+extern int sceDRMInstallGetFileInfo();
+volatile void* psheet1 = &sceDRMInstallInit;
+volatile void* psheet2 = &sceDRMInstallGetFileInfo;
+
 volatile ARKConfig config = {
     .magic = ARK_CONFIG_MAGIC,
     .arkpath = DEFAULT_ARK_PATH, // We can use argv[0] (eboot's path)
@@ -82,6 +87,10 @@ volatile UserFunctions funcs = {
     .KernelCpuResumeIntr = &sceKernelCpuResumeIntr,
     .KernelVolatileMemUnlock = &sceKernelVolatileMemUnlock,
     // Savedata
+    .UtilitySavedataGetStatus = &sceUtilitySavedataGetStatus,
+    .UtilitySavedataInitStart = &sceUtilitySavedataInitStart,
+    .UtilitySavedataUpdate = &sceUtilitySavedataUpdate,
+    .UtilitySavedataShutdownStart = &sceUtilitySavedataShutdownStart,
     .KernelAllocPartitionMemory = &sceKernelAllocPartitionMemory,
 };
 

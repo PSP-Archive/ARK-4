@@ -54,7 +54,7 @@ u32 FindImportUserRam(char *libname, u32 nid){
 void *RelocSyscall(u32 call){
     
     if (call != 0) {
-        while (_lw(curcall))
+        //while (_lw(curcall))
             curcall += 8;
 
         *(u32*)curcall = *(u32*)call;
