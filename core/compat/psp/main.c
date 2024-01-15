@@ -56,6 +56,9 @@ void processArkConfig(){
 int module_start(SceSize args, void * argp)
 {
 
+    _sw(0x44000000, 0xBC800100);
+    colorDebug(0xFF00);
+
     // set rebootex for PSP
     sctrlHENSetRebootexOverride(rebootbuffer_psp);
     
