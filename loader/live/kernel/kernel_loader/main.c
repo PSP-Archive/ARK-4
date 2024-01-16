@@ -113,7 +113,7 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
     
     PRTSTR2("ERROR (%p): %s", res, err);
     PRTSTR("Exiting...");
-    g_tbl->KernelDelayThread(1000000);
+    g_tbl->KernelDelayThread(50000000);
     if (KernelExitGame) KernelExitGame();
 
     return res;

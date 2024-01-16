@@ -75,7 +75,7 @@ copy-bin:
 	$(Q)cp loader/live/kernel/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
 	$(Q)cp loader/live/kernel/psxloader/ARKX.BIN dist/ARK_01234/ARKX.BIN # ARK-X loader
 	$(Q)cp loader/live/kernel/kxploit/sceUID/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PSP 6.60+ and Vita 3.60+
-	$(Q)cp loader/live/kernel/kxploit/alternative/K.BIN dist/ARK_Loader/K.BIN # Alternative Kernel exploit for PSP 6.60+ and Adrenaline/CFW
+	$(Q)cp loader/live/kernel/kxploit/sceSdGetLastIndex/K.BIN dist/ARK_Loader/K.BIN # Alternative Kernel exploit for PSP 6.60+ and Adrenaline/CFW
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
 	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/PSP/ # ARK DC installer
 	$(Q)cp loader/dc/installer/EBOOT.PBP dist/PSP/ARK_DC/ # ARK DC installer
@@ -142,8 +142,6 @@ cipl:
 
 kxploits:
 	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=alternative -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=sceNetMPulldown -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=sceSdGetLastIndex -C loader/live/kernel/kxploit
 
 # Only clean non-library code
@@ -189,8 +187,6 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
 	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=alternative -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=sceNetMPulldown -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=sceSdGetLastIndex -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/payloadex
@@ -251,7 +247,6 @@ mkdir-dist:
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
 	$(Q)mkdir dist/PSVita/Standalone | true
-	$(Q)mkdir dist/PSVita/Adrenaline | true
 	$(Q)mkdir dist/PSVita/PS1CFW | true
 	$(Q)mkdir dist/PSVita/PS1CFW/SCPS10084 | true
 
