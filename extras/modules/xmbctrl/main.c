@@ -76,7 +76,7 @@ GetItem GetItemes[] =
     { 17, 0, "Turn off LEDs" },
     { 18, 0, "Disable UMD Drive" },
     { 19, 0, "Disable Analog Stick" },
-    { 20, 0, "Custom App" },
+    { 20, 0, "QA Flags" },
 };
 
 #define PLUGINS_CONTEXT 1
@@ -135,7 +135,7 @@ struct {
     {N_OPTS, ark_settings_options}, // Turn off LEDs
     {2, ark_settings_boolean}, // Disable UMD Drive
     {2, ark_settings_boolean}, // Disable Analog Stick 
-    {2, ark_settings_boolean}, // Custom App Icon 
+    {2, ark_settings_boolean}, // QA Flags
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
