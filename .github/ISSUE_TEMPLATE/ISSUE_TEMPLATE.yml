@@ -14,6 +14,7 @@ body:
       description: "Please specify which device is affected/you have."
       multiple: true
       options:
+          - Any
           - DTP-H1500 (Testing Tool)
           - DTP-T1000 (Development Unit)
           - PSP-1000 (Fat)
@@ -168,7 +169,7 @@ body:
       label: Memory Stick Speedup
       options:
        - Disabled
-       - Alway
+       - Always
        - Game
        - UMD
        - Homebrew
