@@ -343,9 +343,6 @@ void PSPOnModuleStart(SceModule2 * mod){
 	}
     
     if (strcmp(mod->modname, "vsh_module") == 0){
-        if (se_config->qaflags){
-            patch_qaflags();
-        }
         if (se_config->umdregion){
             patch_vsh_region_check(mod);
         }
