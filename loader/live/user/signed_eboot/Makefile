@@ -9,4 +9,4 @@ all:
 clean:
 	$(Q)make $@ -C eboot/sysmem $(OPT)
 	$(Q)make $@ -C  eboot $(OPT)
-	$(Q)rm -f EBOOT.BIN EBOOT.PBP data.psp ark_loader.iso
+	$(Q)rm -f EBOOT.BIN EBOOT.PBP data.psp ark_loader.iso disc0/psp_game/sysdir/EBOOT.BIN
