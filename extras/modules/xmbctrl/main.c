@@ -467,7 +467,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 			ebootFound = sceIoGetstat(custom_app_path, &stat);
 		}
 
-		if(se_config.customapp && ebootFound >= 0) {
+		if(ebootFound >= 0) {
         	new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
         	AddVshItem(a0, topitem, new_item4);
 		}
@@ -736,7 +736,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.noled,			// 15
                 config.noumd,			// 16
                 config.noanalog,		// 17
-                config.customapp,		// 18
+                config.qaflags,		    // 18
             };
             
             int i;
@@ -792,7 +792,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.noled,
                 &config.noumd,
                 &config.noanalog,
-                &config.customapp,
+                &config.qaflags,
             };
             
             int i;

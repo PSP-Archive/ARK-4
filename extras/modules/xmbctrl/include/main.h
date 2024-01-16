@@ -58,7 +58,6 @@ typedef struct
     int noled;
     int noumd;
     int noanalog;
-    int customapp;
     int qaflags;
 } CFWConfig;
 

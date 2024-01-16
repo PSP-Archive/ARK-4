@@ -162,7 +162,7 @@ typedef struct _SEConfig
 	s16 usbdevice;
 	s16 usbcharge;
 	s16 hidemac;
-	s16 customapp;
+	s16 qaflags; // enable QA flags patch
 	s16 launcher_mode;
 	s16 hidepics;
 
@@ -195,7 +195,6 @@ typedef struct _SEConfig
 	s16 language; /* -1 as autodetect */
 	s16 force_high_memory;
 	s16 macspoofer; // automatic
-	s16 qaflags; // enable QA flags patch
 } SEConfig;
 
 /**

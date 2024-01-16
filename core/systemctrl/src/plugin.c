@@ -505,9 +505,6 @@ static void settingsHandler(char* path, u8 enabled){
     else if (strcasecmp(path, "hidedlc") == 0){ // hide mac address
         se_config.hidedlc = enabled;
     }
-    else if (strcasecmp(path, "customapp") == 0){ // Custom app 
-        se_config.customapp = enabled;
-    }
     else if (strcasecmp(path, "qaflags") == 0){ // QA Flags
         se_config.qaflags = enabled;
     }

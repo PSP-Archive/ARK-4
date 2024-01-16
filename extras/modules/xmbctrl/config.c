@@ -100,10 +100,6 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.noanalog = opt;
         return 1;
     }
-    else if (strcasecmp(path, "customapp") == 0){
-        config.customapp = opt;
-        return 1;
-    }
     else if (strcasecmp(path, "qaflags") == 0){
         config.qaflags = opt;
         return 1;
@@ -136,7 +132,6 @@ void loadSettings(){
     FIX_BOOLEAN(config.hidedlc);
     FIX_BOOLEAN(config.noumd);
     FIX_BOOLEAN(config.noanalog);
-    FIX_BOOLEAN(config.customapp);
     FIX_BOOLEAN(config.qaflags);
 }
 
@@ -191,7 +186,6 @@ void saveSettings(){
     processSetting(fd, line, "noled", config.noled);
     processSetting(fd, line, "noumd", config.noumd);
     processSetting(fd, line, "noanalog", config.noanalog);
-    processSetting(fd, line, "customapp", config.customapp);
     processSetting(fd, line, "qaflags", config.qaflags);
 
     for (int i=0; i<custom_config.count; i++){

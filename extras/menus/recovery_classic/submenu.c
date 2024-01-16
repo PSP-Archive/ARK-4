@@ -70,7 +70,6 @@ Setting settings_items_1k[] =
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
-    { 2, &(config.customapp), "Custom App", ark_settings_boolean },
     { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
 };
 
@@ -94,7 +93,6 @@ Setting settings_items_slim[] =
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
-    { 2, &(config.customapp), "Custom App", ark_settings_boolean },
     { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
 };
 
@@ -120,7 +118,6 @@ Setting settings_items_go[] =
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
-    { 2, &(config.customapp), "Custom App", ark_settings_boolean },
     { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
 };
 
@@ -144,7 +141,6 @@ Setting settings_items_street[] =
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
-    { 2, &(config.customapp), "Custom App", ark_settings_boolean },
     { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
 };
 
@@ -166,7 +162,6 @@ Setting settings_items_adr[] =
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
-    { 2, &(config.customapp), "Custom App", ark_settings_boolean },
     { 2, &(config.qaflags), "QA Flags", ark_settings_boolean },
 };
 
