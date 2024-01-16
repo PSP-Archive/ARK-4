@@ -96,6 +96,8 @@ u32 qwikTrick(char* lib, u32 nid, u32 version){
     while (*(u32*)ret)
         ret += 8;
 
+    memset((void *)0x08800D00, 0, 8);
+
     p5_open_savedata(PSP_UTILITY_SAVEDATA_AUTOLOAD);
 
     u32 addr;
@@ -111,7 +113,7 @@ u32 qwikTrick(char* lib, u32 nid, u32 version){
 
     int qwik_trick()
     {
-        k_tbl->KernelDelayThread(350);
+        g_tbl->KernelDelayThread(350);
         u32 timer = 0;
 
         while (!*(u32*)0x08800D00 && (timer++ < 600)) {
@@ -121,15 +123,15 @@ u32 qwikTrick(char* lib, u32 nid, u32 version){
             _sw(0x08800C00, addr + 12);
             _sw(0x08800D00, addr + 16);
 
-            k_tbl->KernelDelayThread(0);
+            g_tbl->KernelDelayThread(0);
         }
 
-        k_tbl->KernelExitThread(0);
+        g_tbl->KernelExitDeleteThread(0);
         return 0;
     }
 
-    SceUID qwiktrick = k_tbl->KernelCreateThread("qwiktrick", qwik_trick, 8, 512, THREAD_ATTR_USER, NULL);
-    k_tbl->KernelStartThread(qwiktrick, 0, NULL);
+    SceUID qwiktrick = g_tbl->KernelCreateThread("qwiktrick", qwik_trick, 8, 512, THREAD_ATTR_USER, NULL);
+    g_tbl->KernelStartThread(qwiktrick, 0, NULL);
 
     p5_open_savedata(PSP_UTILITY_SAVEDATA_AUTOLOAD);
 
@@ -138,10 +140,6 @@ u32 qwikTrick(char* lib, u32 nid, u32 version){
     _flush_cache();
 
     p5_close_savedata();
-
-    memset((void *)0x08800D00, 0, 8);
-
-    k_tbl->KernelDeleteThread(qwiktrick);
     
     return ret;
 }
