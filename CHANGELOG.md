@@ -2,6 +2,8 @@
 
 ## Version 4.20.66 (2023-10-24)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42066
+- Rev 9: added option to enable `QA Flags`, which will allow `Debug` settings to appear in the `XMB`. Added `Custom App` Launcher. If ARK detects an `EBOOT.PBP` in either `/PSP/APP/` it display a icon under Custom Launcher icon stating `Custom App`.
+- Rev 8: fixed bug that would prevent installing `new cIPL` on classic models (1K and early 2K). Fixed bug in the plugins manager of classic recovery menu.
 - Rev 7: fixed `MP3` audio issues in `Custom Launcher`.
 - Rev 6: several cleanup, refactor and small fixes.
 - Rev 5: you can now change background image of `Custom Launcher` and `Recovery` by placing a file named `BG.PNG` in `ARK_01234`.
