@@ -59,6 +59,7 @@ typedef struct
     int noumd;
     int noanalog;
     int customapp;
+    int qaflags;
 } CFWConfig;
 
 typedef struct

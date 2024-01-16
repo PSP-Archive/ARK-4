@@ -508,6 +508,9 @@ static void settingsHandler(char* path, u8 enabled){
     else if (strcasecmp(path, "customapp") == 0){ // Custom app 
         se_config.customapp = enabled;
     }
+    else if (strcasecmp(path, "qaflags") == 0){ // QA Flags
+        se_config.qaflags = enabled;
+    }
 }
 
 static void settingsEnabler(char* path){

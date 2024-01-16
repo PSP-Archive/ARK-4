@@ -71,6 +71,7 @@ Setting settings_items_1k[] =
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
     { 2, &(config.customapp), "Custom App", ark_settings_boolean },
+    { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
 };
 
 #define N_SETTINGS_1K (sizeof(settings_items_1k)/sizeof(settings_items_1k[0]))
@@ -94,6 +95,7 @@ Setting settings_items_slim[] =
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
     { 2, &(config.customapp), "Custom App", ark_settings_boolean },
+    { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
 };
 
 #define N_SETTINGS_SLIM (sizeof(settings_items_slim)/sizeof(settings_items_slim[0]))
@@ -119,6 +121,7 @@ Setting settings_items_go[] =
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
     { 2, &(config.customapp), "Custom App", ark_settings_boolean },
+    { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
 };
 
 #define N_SETTINGS_GO (sizeof(settings_items_go)/sizeof(settings_items_go[0]))
@@ -142,6 +145,7 @@ Setting settings_items_street[] =
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
     { 2, &(config.customapp), "Custom App", ark_settings_boolean },
+    { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
 };
 
 #define N_SETTINGS_STREET (sizeof(settings_items_street)/sizeof(settings_items_street[0]))
@@ -163,6 +167,7 @@ Setting settings_items_adr[] =
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
     { 2, &(config.customapp), "Custom App", ark_settings_boolean },
+    { 2, &(config.qaflags), "QA Flags", ark_settings_boolean },
 };
 
 #define N_SETTINGS_ADR (sizeof(settings_items_adr)/sizeof(settings_items_adr[0]))

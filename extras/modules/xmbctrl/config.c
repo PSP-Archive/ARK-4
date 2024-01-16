@@ -104,6 +104,10 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.customapp = opt;
         return 1;
     }
+    else if (strcasecmp(path, "qaflags") == 0){
+        config.qaflags = opt;
+        return 1;
+    }
     return 0;
 }
 
@@ -133,6 +137,7 @@ void loadSettings(){
     FIX_BOOLEAN(config.noumd);
     FIX_BOOLEAN(config.noanalog);
     FIX_BOOLEAN(config.customapp);
+    FIX_BOOLEAN(config.qaflags);
 }
 
 static void processSetting(int fd, char* line, char* name, int setting){
@@ -187,6 +192,7 @@ void saveSettings(){
     processSetting(fd, line, "noumd", config.noumd);
     processSetting(fd, line, "noanalog", config.noanalog);
     processSetting(fd, line, "customapp", config.customapp);
+    processSetting(fd, line, "qaflags", config.qaflags);
 
     for (int i=0; i<custom_config.count; i++){
         sceIoWrite(fd, custom_config.table[i], strlen(custom_config.table[i]));

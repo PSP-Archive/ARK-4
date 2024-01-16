@@ -195,7 +195,7 @@ typedef struct _SEConfig
 	s16 language; /* -1 as autodetect */
 	s16 force_high_memory;
 	s16 macspoofer; // automatic
-
+	s16 qaflags; // enable QA flags patch
 } SEConfig;
 
 /**

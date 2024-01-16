@@ -45,6 +45,7 @@ typedef struct {
     unsigned char noumd;
     unsigned char noanalog;
     unsigned char customapp;
+    unsigned char qaflags;
 }CfwConf;
 
 CfwConf cfw_config;
@@ -341,7 +342,19 @@ static struct {
 	{"Off", "On"}
 };
 
-
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} qaflags = {
+    "QA Flags",
+	2,
+    0,
+    &(cfw_config.qaflags),
+	{"Off", "On"}
+};
 
 
 // DO NOT ADD BELOW THIS
@@ -392,6 +405,7 @@ settings_entry* ark_conf_entries_1k[] = {
     (settings_entry*)&noumd,
     (settings_entry*)&noanalog,
     (settings_entry*)&customapp,
+    (settings_entry*)&qaflags,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -414,6 +428,7 @@ settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&noumd,
     (settings_entry*)&noanalog,
     (settings_entry*)&customapp,
+    (settings_entry*)&qaflags,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -438,6 +453,7 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&noled,
     (settings_entry*)&noanalog,
     (settings_entry*)&customapp,
+    (settings_entry*)&qaflags,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_GO (sizeof(ark_conf_entries_go)/sizeof(ark_conf_entries_go[0]))
@@ -457,6 +473,7 @@ settings_entry* ark_conf_entries_street[] = {
     (settings_entry*)&noumd,
     (settings_entry*)&noanalog,
     (settings_entry*)&customapp,
+    (settings_entry*)&qaflags,
     (settings_entry*)&regionchange,
     (settings_entry*)&vshregion,
 };
@@ -485,6 +502,7 @@ settings_entry* ark_conf_entries_adr[] = {
     (settings_entry*)&hidedlc,
     (settings_entry*)&noanalog,
     (settings_entry*)&customapp,
+    (settings_entry*)&qaflags,
     (settings_entry*)&vshregion,
 };
 #define MAX_ARK_CONF_ADR (sizeof(ark_conf_entries_adr)/sizeof(ark_conf_entries_adr[0]))
@@ -583,6 +601,9 @@ static unsigned char* configConvert(string conf){
     }
 	else if (strcasecmp(conf.c_str(), "customapp") == 0){
         return &(cfw_config.customapp);
+    }
+    else if (strcasecmp(conf.c_str(), "qaflags") == 0){
+        return &(cfw_config.qaflags);
     }
     else if (strcasecmp(conf.c_str(), "region_none") == 0){
         cfw_config.regionchange = 0;
@@ -707,6 +728,7 @@ void loadSettings(){
     FIX_BOOLEAN(cfw_config.noumd);
     FIX_BOOLEAN(cfw_config.noanalog);
     FIX_BOOLEAN(cfw_config.customapp);
+    FIX_BOOLEAN(cfw_config.qaflags);
 }
 
 static string processSetting(string name, unsigned char setting){
@@ -748,6 +770,7 @@ void saveSettings(){
     output << processSetting("noumd", cfw_config.noumd) << endl;
     output << processSetting("noanalog", cfw_config.noanalog) << endl;
     output << processSetting("customapp", cfw_config.customapp) << endl;
+    output << processSetting("qaflags", cfw_config.qaflags) << endl;
     
     switch (cfw_config.regionchange){
         case REGION_JAPAN:
