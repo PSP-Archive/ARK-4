@@ -47,6 +47,7 @@ char *settings[] =
     "Disable UMD Drive",
     "Disable Analog Stick",
 	"QA Flags",
+	"Custom App",
     "PSP Overclock",
 };
 

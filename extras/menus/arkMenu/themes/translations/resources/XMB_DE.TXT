@@ -21,4 +21,5 @@ LEDs Abschalten
 Deaktivieren Sie das UMD-Laufwerk
 Analogstick deaktivieren
 QA-Flags
+Benutzerdefinierte App
 PSP-Übertaktung

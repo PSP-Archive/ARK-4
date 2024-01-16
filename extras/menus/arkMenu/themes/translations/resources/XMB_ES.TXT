@@ -21,4 +21,5 @@ Apagar LEDs
 Deshabilitar unidad de UMD
 Deshabilitar stick analógico
 Banderas de control de calidad
+Aplicación personalizada
 Overclock de PSP

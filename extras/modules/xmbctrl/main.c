@@ -688,8 +688,8 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
 		else if(sce_paf_private_strcmp(name, "msgtop_custom_app") == 0)
         {
-			if(string.items[22]) {
-				sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[22]);
+			if(string.items[23]) {
+				sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[23]);
             	utf8_to_unicode((wchar_t *)user_buffer, buf);
             	return (wchar_t *)user_buffer;
 			}
