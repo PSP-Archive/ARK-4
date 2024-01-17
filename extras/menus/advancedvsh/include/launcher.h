@@ -23,7 +23,6 @@ typedef struct _pspMsPrivateDirent {
 	char l_name[1024];
 } pspMsPrivateDirent;
 
-void exec_custom_launcher(vsh_Menu *vsh);
 void exec_recovery_menu(vsh_Menu *vsh);
 void exec_random_game(vsh_Menu *vsh);
 void launch_umdvideo_mount(vsh_Menu *vsh);
