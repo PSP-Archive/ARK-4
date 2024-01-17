@@ -14,6 +14,7 @@
 #include "color.h"
 #include "registry.h"
 #include "vpl.h"
+#include "advanced.h"
 
 int button_accept(u32 button){
 	vsh_Menu* vsh = vsh_menu_pointer();
@@ -40,13 +41,16 @@ void config_load(vsh_Menu *vsh) {
 	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &vsh->status.swap_xo);
 	is_pandora = battery_check();
 
-	if (IS_VITA_ADR(vsh->config.p_ark) || is_pandora < 0)
+	if (IS_VITA_ADR(vsh->config.p_ark) || is_pandora < 0){
 		vsh->battery = 2;
-	else
+	}
+	else{
 		vsh->battery = is_pandora;
-	
-	if (IS_VITA_ADR(vsh->config.p_ark))
+	}
+
+	if (IS_VITA_ADR(vsh->config.p_ark)){
 		vsh->config.se.usbdevice_rdonly = 2;
+	}
 	
 	color_check_random(vsh);
 }
