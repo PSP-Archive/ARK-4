@@ -446,7 +446,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         AddVshItem(a0, topitem, new_item2);
 
         // Add Custom Launcher
-        new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, information_board_item);
+        new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, signup_item);
         AddVshItem(a0, topitem, new_item3);
 		if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
 		

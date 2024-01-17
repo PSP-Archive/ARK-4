@@ -36,6 +36,7 @@
 #define ALL_TRIGGER  (PSP_CTRL_LTRIGGER|PSP_CTRL_RTRIGGER)
 #define ALL_FUNCTION (PSP_CTRL_SELECT|PSP_CTRL_START|PSP_CTRL_HOME|PSP_CTRL_HOLD|PSP_CTRL_NOTE)
 #define ALL_CTRL     (ALL_ALLOW|ALL_BUTTON|ALL_TRIGGER|ALL_FUNCTION)
+#define FORCE_LOAD   (PSP_CTRL_SELECT|ALL_TRIGGER)
 
 extern ARKConfig* ark_config;
 extern SEConfig* se_config;
@@ -147,6 +148,11 @@ int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count)
             }
         }
     } else {
+        
+        if ((ctrl->Buttons & FORCE_LOAD) == FORCE_LOAD){
+            goto force_load_satelite;
+        }
+        
         /* filter out fault PSP sending dead keyscan */
         if ((ctrl->Buttons & ALL_CTRL) != PSP_CTRL_SELECT) {
             goto exit;
@@ -203,6 +209,8 @@ int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count)
         // Block Satellite Menu in Classic Recovery (which replaces vsh_main)
         if (sceKernelFindModuleByName("ClassicRecovery"))
             goto exit;
+
+        force_load_satelite:
 
         #ifdef DEBUG
         printk("%s: loading satelite\n", __func__);
