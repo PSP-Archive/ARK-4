@@ -184,9 +184,6 @@ resume:
 		case 5:
 			scePowerRequestSuspend();
 			break;
-		case 7:
-			exec_custom_launcher(vsh);
-			break;
 		case 8:
 			exec_recovery_menu(vsh);
 			break;
@@ -283,22 +280,3 @@ int module_stop(int argc, char *argv[]) {
 	
 	return 0;
 }
-
-
-
-/* not used
-int load_start_module(char *path) {
-	int ret;
-	SceUID modid;
-
-	modid = sceKernelLoadModule(path, 0, NULL);
-
-	if(modid < 0) {
-		return modid;
-	}
-
-	ret = sceKernelStartModule(modid, scePaf_strlen(path) + 1, path, NULL, NULL);
-
-	return ret;
-}
-*/

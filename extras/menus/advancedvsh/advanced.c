@@ -265,12 +265,6 @@ int submenu_find_longest_string(void){
 			width = temp;
 	}
 	
-	for (i = SUBITEM_ISO_DRIVER; i <= SUBITEM_ISO_DRIVER_END; i++) {
-		temp = scePaf_strlen(g_messages[i]);
-		if (temp > width)
-			width = temp;
-	}
-	
 	for (i = SUBITEM_PANDORA; i <= SUBITEM_PANDORA_END; i++) {
 		temp = scePaf_strlen(g_messages[i]);
 		if (temp > width)
@@ -371,15 +365,6 @@ int submenu_setup(void) {
 		subitem_str[SUBMENU_UMD_VIDEO] = g_messages[MSG_UNSUPPORTED];
 	else
 		subitem_str[SUBMENU_UMD_VIDEO] = umdvideo_disp;
-
-	if (vsh->config.se.umdmode == 3)
-		subitem_str[SUBMENU_UMD_MODE] = g_messages[MSG_INFERNO];
-	else if (vsh->config.se.umdmode < 2)
-		vsh->config.se.umdmode = 3;
-	else if (vsh->config.se.umdmode > 3)
-		vsh->config.se.umdmode = 2;
-	else 
-		subitem_str[SUBMENU_UMD_MODE] = g_messages[MSG_NP9660];
 
 	if (vsh->config.ark_menu.vsh_font)
 		subitem_str[SUBMENU_FONT] = font_list()[vsh->config.ark_menu.vsh_font - 1];
@@ -508,10 +493,6 @@ int submenu_ctrl(u32 button_on) {
 				break;
 			if (direction) 
 				swap_readonly(direction);
-			break;
-		case SUBMENU_UMD_MODE:
-			if (direction) 
-				change_umd_mode(direction);
 			break;
 		case SUBMENU_UMD_VIDEO:
 			if (IS_VITA_ADR(vsh->config.p_ark)) 
