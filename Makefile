@@ -48,7 +48,6 @@ SUBDIRS = libs \
 	extras/installer \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
-	extras/menus/recovery_classic \
 	extras/menus/xMenu \
 	extras/menus/advancedvsh \
 	extras/modules/peops \
@@ -83,12 +82,11 @@ copy-bin:
 	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_cIPL/kpspident.prx
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_cIPL/ipl_update.prx
 	$(Q)cp extras/modules/kbooti_update/kbooti_update.prx dist/PSP/ARK_cIPL/kbooti_update.prx
-	$(Q)cp extras/menus/recovery/EBOOT.PBP dist/ARK_01234/RECOVERY.PBP # Default recovery menu
-	$(Q)cp extras/menus/recovery_classic/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Classic recovery menu
+	$(Q)cp extras/menus/recovery/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/arkMenu/LANG.ARK dist/ARK_01234/LANG.ARK # Translations
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
-	$(Q)cp extras/menus/arkMenu/themes/ARK_Revamped/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher and Recovery resources
+	$(Q)cp extras/menus/arkMenu/themes/ARK_Revamped/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher resources
 	$(Q)cp extras/menus/advancedvsh/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
 	$(Q)cp extras/modules/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
 	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
@@ -175,7 +173,6 @@ clean:
 	$(Q)$(MAKE) $@ -C core/compat/vitapops
 	$(Q)$(MAKE) $@ -C core/compat/pentazemin
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
-	$(Q)$(MAKE) $@ -C extras/menus/recovery_classic
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/advancedvsh
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
@@ -232,9 +229,6 @@ xmenu: libs
 
 recovery: libs
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
-
-recovery_classic: libs
-	$(Q)$(MAKE) $@ -C extras/menus/recovery_classic
 
 mkdir-dist:
 	$(Q)mkdir dist | true

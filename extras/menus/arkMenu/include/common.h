@@ -5,6 +5,7 @@
 #include <pspgu.h>
 #include <pspdisplay.h>
 #include <pspkernel.h>
+#include <psprtc.h>
 #include <string>
 #include <cstring>
 #include <cstdio>
@@ -78,6 +79,8 @@ typedef struct TextScroll{
 
 #define MS0_PATH 0x3A30736D // 'ms0:' as u32
 #define EF0_PATH 0x3A306665 // 'ef0:' as u32
+
+extern struct tm today;
 
 namespace common{
 

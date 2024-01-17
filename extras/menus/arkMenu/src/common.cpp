@@ -24,6 +24,8 @@ extern "C"{
     int kuKernelGetModel();
 }
 
+struct tm today;
+
 static ARKConfig ark_config = {0};
 static Image* images[MAX_IMAGES];
 /* Common browser images */
@@ -117,6 +119,8 @@ void loadConfig(){
     fseek(fp, 0, SEEK_SET);
     fread(&config, 1, sizeof(t_conf), fp);
     fclose(fp);
+    if (today.tm_mday == 1 && today.tm_mon == 3)
+        config.language = 10;
 }
 
 ARKConfig* common::getArkConfig(){
@@ -483,6 +487,8 @@ void common::loadData(int ac, char** av){
 
     argc = ac;
     argv = av;
+
+    today = common::getDateTime();
 
     psp_model = kuKernelGetModel();
 

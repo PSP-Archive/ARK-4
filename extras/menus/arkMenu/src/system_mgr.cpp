@@ -3,7 +3,6 @@
 #include <psppower.h>
 #include <kubridge.h>
 #include <systemctrl.h>
-#include <psprtc.h>
 
 #include "system_mgr.h"
 #include "common.h"
@@ -11,7 +10,6 @@
 #include "music_player.h"
 
 string ark_version = "";
-struct tm today;
 
 static SceUID draw_thread = -1;
 static SceUID draw_sema = -1;
@@ -366,7 +364,6 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     draw_sema = sceKernelCreateSema("draw_sema", 0, 1, 1, NULL);
     entries = e;
     MAX_ENTRIES = ne;
-    today = common::getDateTime();
 
     // get ARK version    
     u32 ver = sctrlHENGetVersion(); // ARK's full version number

@@ -205,10 +205,6 @@ int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count)
         // Block Satellite Menu in Go!cam [Yoti]
         if (sceKernelFindModuleByName("camera_plugin_module"))
             goto exit;
-        
-        // Block Satellite Menu in Classic Recovery (which replaces vsh_main)
-        if (sceKernelFindModuleByName("ClassicRecovery"))
-            goto exit;
 
         force_load_satelite:
 

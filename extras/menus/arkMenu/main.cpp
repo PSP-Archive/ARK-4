@@ -1,5 +1,7 @@
 #include <pspkernel.h>
 #include <kubridge.h>
+#include <vector>
+#include <sstream>
 #include <fstream>
 #include "gfx.h"
 #include "debug.h"
@@ -14,13 +16,16 @@
 #include "exit_mgr.h"
 #include "lang.h"
 
+#include "ark_settings.h"
+#include "ark_plugins.h"
+
 PSP_MODULE_INFO("ARKMENU", 0, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH|PSP_THREAD_ATTR_VFPU);
 PSP_HEAP_SIZE_KB(17*1024);
 
 using namespace std;
 
-#define MAX_ENTRIES 5
+#define MAX_ENTRIES 7
 static SystemEntry* entries[MAX_ENTRIES];
 
 extern "C" void my_malloc_init();
@@ -74,6 +79,25 @@ int main(int argc, char** argv){
     if (common::getPspModel() != PSP_GO) max_settings -= 2;
     SettingsTable stab = { settings_entries, max_settings };
     entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
+
+    // Add ARK settings manager
+    loadSettings();
+    SettingsTable cfwstab = { ark_conf_entries, ark_conf_max_entries };
+    SettingsMenu* settings_menu = new SettingsMenu(&cfwstab, saveSettings, false, true, true);
+    settings_menu->setCallbacks(NULL, loadSettings, cleanupSettings);
+    settings_menu->setName("CFW Settings");
+    settings_menu->setInfo("ARK Custom Firmware Settings");
+    settings_menu->readConf();
+    entries[n_entries++] = settings_menu;
+
+    // Add ARK plugins manager
+    SettingsMenu* plugins_menu = new SettingsMenu(&plugins_table, savePlugins, true, true, true);
+    plugins_menu->setCallbacks(NULL, loadPlugins, cleanupPlugins);
+    plugins_menu->setName("Plugins");
+    plugins_menu->setInfo("Installed Plugins");
+    plugins_menu->setIcon(IMAGE_PLUGINS);
+    entries[n_entries++] = plugins_menu;
+
     entries[n_entries++] = new ExitManager();
 
     // Setup main App (Game or Browser)

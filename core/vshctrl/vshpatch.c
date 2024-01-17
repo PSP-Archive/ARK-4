@@ -255,8 +255,9 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     u32 major = fw>>24;
     u32 minor = (fw>>16)&0xF;
     u32 micro = (fw>>8)&0xF;
+    char* tool = sctrlHENIsToolKit()? "T":"";
 
-    sprintf(str, "%d.%d%d ARK-4 %s", major, minor, micro, ark_config->exploit_id);
+    sprintf(str, "%d.%d%d%s ARK-4 %s", major, minor, micro, tool, ark_config->exploit_id);
     ascii2utf16(p, str);
     
     _sw(0x3C020000 | ((u32)(p) >> 16), a); // lui $v0, 
