@@ -379,6 +379,14 @@ int submenu_setup(void) {
 			subitem_str[SUBMENU_MENU_DESIGN] = g_messages[MSG_NEW];
 			break;
 	}
+	switch (vsh->config.ark_menu.advanced_vsh) {
+		case 1:
+			subitem_str[SUBMENU_MAIN_MENU] = g_messages[MSG_ADVANCED];
+			break;
+		case 0:
+			subitem_str[SUBMENU_MAIN_MENU] = g_messages[MSG_SIMPLE];
+			break;
+	}
 
 	switch (vsh->config.se.usbdevice_rdonly) {
 		case 0:
@@ -558,6 +566,10 @@ none:
 		case SUBMENU_MENU_DESIGN:
 			if(direction)
 				change_design(direction);
+			break;
+		case SUBMENU_MAIN_MENU:
+			if(direction)
+				change_menu(direction);
 			break;
 		case SUBMENU_GO_BACK:
 			return 1; // finish
