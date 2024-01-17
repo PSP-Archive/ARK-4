@@ -332,6 +332,58 @@ int sceKermitPeripheral_driver_log(void* a0, int a1, int a2, int a3, int a4, voi
     return sceKermitPeripheral_driver_8C7903E7(a0, a1, a2, a3, a4, a5, a6, a7);
 }
 
+void exitDebug(){
+    colorDebug(0xFF);
+    _sw(0, 0);
+}
+
+int (* sceMeAudio_driver_C300D466)(int codec, int unk, void *info);
+int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
+	int res = sceMeAudio_driver_C300D466(codec, unk, info);
+
+	if (res < 0 && codec == 0x1002 && unk == 2)
+		return 0;
+
+	return res;
+}
+
+typedef struct {
+	void *sasCore;
+	int grainSamples;
+	int maxVoices;
+	int outMode;
+	int sampleRate;
+} SasInitArguments;
+
+SasInitArguments sas_args;
+int sas_inited = 0;
+
+int (* sceSasCoreInit)();
+int (* sceSasCoreExit)();
+
+int (* __sceSasInit)(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate);
+
+int __sceSasInitPatched(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate) {
+	sas_args.sasCore = sasCore;
+	sas_args.grainSamples = grainSamples;
+	sas_args.maxVoices = maxVoices;
+	sas_args.outMode = outMode;
+	sas_args.sampleRate = sampleRate;
+
+	sas_inited = 1;
+
+	return __sceSasInit(sasCore, grainSamples, maxVoices, outMode, sampleRate);
+}
+
+void PatchSasCore() {
+	sceSasCoreInit = (void *)sctrlHENFindFunction("sceSAScore", "sceSasCore_driver", 0xB0F9F98F);
+	sceSasCoreExit = (void *)sctrlHENFindFunction("sceSAScore", "sceSasCore_driver", 0xE143A1EA);
+
+	HIJACK_FUNCTION(sctrlHENFindFunction("sceSAScore", "sceSasCore", 0x42778A9F), __sceSasInitPatched, __sceSasInit);
+
+	ClearCaches();
+}
+
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
@@ -347,11 +399,46 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         DisplayWaitVblankStart = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x984C27E7);
         DisplaySetHoldMode = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
-        //if (sceKernelInitApitype() != 0x144){
+        if (sceKernelInitApitype() != 0x144){
             patchVitaPopsDisplay(mod);
-        //}
+        }
         goto flush;
     }
+
+    if(strcmp(mod->modname, "sceLoadExec") == 0)
+    {
+        PatchLoadExec(mod->text_addr, mod->text_size);
+        /*
+        void* p1 = sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F);
+        void* p2 = sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B);
+        void* p3 = sctrlHENFindFunction(mod->modname, "LoadExecForKernel", 0x08F7166C);
+        if (p1) REDIRECT_FUNCTION(p1, exitDebug);
+        if (p2) REDIRECT_FUNCTION(p2, exitDebug);
+        if (p3) REDIRECT_FUNCTION(p3, exitDebug);
+        */
+        goto flush;
+    }
+
+    if (strcmp(mod->modname, "sceLowIO_Driver") == 0) {
+
+		// Protect pops memory
+		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
+			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
+			memset((void *)0x49F40000, 0, 0x80000);
+		}
+
+        goto flush;
+    }
+
+    if(strcmp(mod->modname, "sceMeCodecWrapper") == 0) {
+		HIJACK_FUNCTION(sctrlHENFindFunction(mod->modname, "sceMeAudio_driver", 0xC300D466), sceMeAudio_driver_C300D466_Patched, sceMeAudio_driver_C300D466);
+		goto flush;
+	}
+
+    if (strcmp(mod->modname, "sceSAScore") == 0) {
+		PatchSasCore();
+        goto flush;
+	}
     
     // Patch Kermit Peripheral Module to load flash0
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
@@ -378,18 +465,27 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     */
 
     if (strcmp(mod->modname, "scePops_Manager") == 0){
-        sceKermitPeripheral_driver_8C7903E7 = sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", 0x8C7903E7);
-        hookImportByNID(mod, "sceKermitPeripheral_driver", 0x36666181, sceKermitPeripheral_driver_log);
-        hookImportByNID(mod, "sceKermit_driver", 0x36666181, kermitSendRequestLog);
+        //sceKermitPeripheral_driver_8C7903E7 = sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", 0x8C7903E7);
+        //hookImportByNID(mod, "sceKermitPeripheral_driver", 0x36666181, sceKermitPeripheral_driver_log);
+        //hookImportByNID(mod, "sceKermit_driver", 0x36666181, kermitSendRequestLog);
         patchPopsMan(mod);
         goto flush;
     }
 
     if (strcmp(mod->modname, "pops") == 0) {
 		// Use different pops register location
+        int fd = sceIoOpen("ms0:/here2.txt", PSP_O_CREAT|PSP_O_WRONLY|PSP_O_TRUNC, 0777);
+        sceIoWrite(fd, mod->modname, strlen(mod->modname));
+        sceIoClose(fd);
 		patchPops(mod);
         goto flush;
 	}
+
+    if (strcmp(mod->modname, "simple") == 0 || strcmp(mod->modname, "complex") == 0){
+        int fd = sceIoOpen("ms0:/here1.txt", PSP_O_CREAT|PSP_O_WRONLY|PSP_O_TRUNC, 0777);
+        sceIoWrite(fd, mod->modname, strlen(mod->modname));
+        sceIoClose(fd);
+    }
 
     /*
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
@@ -401,6 +497,32 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 	}
     */
 
+    if (strcmp(mod->modname, "sceKernelLibrary") == 0){
+        int keyconfig = sceKernelInitKeyConfig();
+        if (keyconfig == PSP_INIT_KEYCONFIG_POPS){
+            char* path = sceKernelInitFileName();
+            char title[20]; int n; sctrlGetInitPARAM("DISC_ID", NULL, &n, title);
+            char* config = oe_malloc(300);
+            /*
+            strcpy(config, "ms0:/__popsconfig__/");
+            strcat(config, title);
+            strcat(config, strchr(path, '/'));
+            */
+            sprintf(config, "ms0:/__popsconfig__/%s%s", title, strchr(path, '/'));
+            int res = sceIoOpen(config, 0, 0);
+            oe_free(config);
+            if (res == -401){
+                colorDebug(0xFF00);
+            }
+        }
+        else {
+            int res = sceIoOpen("ms0:/__popsclear__", 0, 0);
+            if (res == -402){
+                colorDebug(0xFF00);
+            }
+        }
+    }   
+
     // Boot Complete Action not done yet
     if(booted == 0)
     {
@@ -410,6 +532,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
+
 
             // Set fake framebuffer so that cwcheat can be displayed
             //DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
@@ -470,16 +593,38 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
     sceIoClose(fd);
     */
 
-    if (DisplaySetFrameBuf){
+    if (DisplaySetFrameBuf && sceKernelFindModuleByName("sceKernelLibrary") == NULL){
         static int screen_init = 0;
         if (!screen_init){
             setScreenHandler(&copyPSPVram);
             initVitaPopsVram();
-            initScreen(DisplaySetFrameBuf);
+            initScreen(NULL);
             screen_init = 1;
         }
         cls();
         PRTSTR1("mod: %s", mod->modname);
+    }
+
+    struct {
+        char* name;
+        char* path;
+    } pops_files[] = {
+        {"sceMediaSync", "MEDIASYN.PRX"},
+    };
+
+    for (int i=0; i < sizeof(pops_files)/sizeof(pops_files[0]); i++){
+        if (strcmp(mod->modname, pops_files[i].name) == 0){
+            char path[ARK_PATH_SIZE];
+            strcpy(path, ark_config->arkpath);
+            strcat(path, pops_files[i].path);
+            SceIoStat stat;
+            int res = sceIoGetstat(path, &stat);
+            if (res>=0){
+                sceKernelUnloadModule(modid);
+                modid = sceKernelLoadModule(path, 0, NULL);
+                return sceKernelStartModule(modid, argsize, argp, modstatus, opt);
+            }
+        }
     }
 
     // forward to previous or default StartModule

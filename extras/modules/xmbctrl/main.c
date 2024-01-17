@@ -419,6 +419,11 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 
     if (sce_paf_private_strcmp(item->text, "msgtop_sysconf_console")==0){
         sysconf_action = item->action;
+        LoadTextLanguage(-1);
+
+        // Add CFW Settings
+        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, item);
+        AddVshItem(a0, topitem, new_item);
     }
 
     if ( !items_added && // prevent adding more than once
@@ -435,12 +440,6 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
     {
         items_added = 1;
         startup = 0;
-        
-        LoadTextLanguage(-1);
-
-        // Add CFW Settings
-        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, signup_item);
-        AddVshItem(a0, topitem, new_item);
 
         // Add Plugins Manager
         new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, ps_store_item);

@@ -100,6 +100,8 @@ int module_start(SceSize args, void * argp)
     // copy configuration
     processArkConfig();
 
+    initFileSystem();
+
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaPopsOnModuleStart);
 
