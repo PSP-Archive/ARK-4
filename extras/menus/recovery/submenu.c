@@ -21,8 +21,6 @@ extern int psp_model;
 #define SCREEN_WIDTH 58
 #define SCREEN_HEIGHT 33 
 
-#define printf pspDebugScreenPrintf
-
 typedef struct {
     int max;
     int* value;
@@ -178,8 +176,13 @@ Setting settings_items_vita[] =
 
 #define N_SETTINGS_VITA (sizeof(settings_items_vita)/sizeof(settings_items_vita[0]))
 
+void logtext(char* text){
+    int fd = sceIoOpen("ms0:/log.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+    sceIoWrite(fd, text, strlen(text));
+    sceIoClose(fd);
+}
 
-static settings_to_text(char** names, char** states, Setting* settings_items, int size){
+static void settings_to_text(char** names, char** states, Setting* settings_items, int size){
     for(int i = 0; i < size; i++){
         names[i] = settings_items[i].name;
         states[i] = settings_items[i].opts[*(settings_items[i].value)];
@@ -217,17 +220,17 @@ static void draw_submenu(char* header, char** options, char** states, int size, 
 
     pspDebugScreenSetXY(0, 1);
     pspDebugScreenSetTextColor(0xFFD800);
-    printf("********************************************************************");
+    pspDebugScreenPrintf("********************************************************************");
 
     pspDebugScreenSetXY(0, 2);
-    printf(header);
+    pspDebugScreenPrintf(header);
     pspDebugScreenSetXY(0, 3);
-    printf("*                                                                  *");
+    pspDebugScreenPrintf("*                                                                  *");
 
     for (int i=0; i<size; i++){
         if (start+i >= osize) break;
         pspDebugScreenSetXY(0, 4 + 2*i);
-        char tmp[70];
+        char tmp[256];
         strcpy(tmp, "* ");
         if (dir == start+i){
             strcat(tmp, "> ");
@@ -244,21 +247,21 @@ static void draw_submenu(char* header, char** options, char** states, int size, 
         for (int j=0; j<padding; j++) tmp[len+j] = ' ';
         tmp[len+padding] = '*';
         tmp[len+padding+1] = 0;
-        printf(tmp);
+        pspDebugScreenPrintf(tmp);
 
         pspDebugScreenSetXY(0, 5 + 2*i);            
-        printf("*                                                                  *");
+        pspDebugScreenPrintf("*                                                                  *");
     }
 
     // ADD SIDE BORDERS
     for (int i=pspDebugScreenGetY(); i<SCREEN_HEIGHT; i++) {
         pspDebugScreenSetXY(0, i);
-        printf("*                                                                  *");
+        pspDebugScreenPrintf("*                                                                  *");
     }
 
     // BOTTOM BORDER
     pspDebugScreenSetXY(0, 33);
-    printf("********************************************************************");
+    pspDebugScreenPrintf("********************************************************************");
 }
 
 void plugins_submenu(){
@@ -282,15 +285,18 @@ void plugins_submenu(){
         sceCtrlPeekBufferPositive(&pad, 1);
 		
 		// CONTROLS
-		if(pad.Buttons & PSP_CTRL_DOWN) {
+		if((pad.Buttons & PSP_CTRL_DOWN) == PSP_CTRL_DOWN) {
             sceKernelDelayThread(200000);
 			dir++;
 			if(dir>=size) dir = 0;
 
+            //logtext("plugins_to_text\n");
             size = plugins_to_text(paths, states, pos, dir);
+            //logtext("draw_submenu\n");
             draw_submenu(header, paths, states, size, dir);
+            //logtext("done\n");
 		}
-		if(pad.Buttons & PSP_CTRL_UP) {
+		if((pad.Buttons & PSP_CTRL_UP) == PSP_CTRL_UP) {
             sceKernelDelayThread(200000);
 			dir--;
 			if(dir<0) dir = size-1;
@@ -298,7 +304,10 @@ void plugins_submenu(){
             size = plugins_to_text(paths, states, pos, dir);
             draw_submenu(header, paths, states, size, dir);
 		}
-		if((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LEFT | PSP_CTRL_RIGHT))) {
+		if( (pad.Buttons & PSP_CTRL_CROSS) == PSP_CTRL_CROSS
+              || (pad.Buttons & PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE
+              || (pad.Buttons & PSP_CTRL_LEFT) == PSP_CTRL_LEFT
+              || (pad.Buttons & PSP_CTRL_RIGHT) == PSP_CTRL_RIGHT) {
             sceKernelDelayThread(200000);
             
             Plugin* plugin = plugins.table[pos[dir]];
@@ -307,7 +316,7 @@ void plugins_submenu(){
             size = plugins_to_text(paths, states, pos, dir);
             draw_submenu(header, paths, states, size, dir);
         }
-        if((pad.Buttons & PSP_CTRL_TRIANGLE)) {
+        if((pad.Buttons & PSP_CTRL_TRIANGLE) == PSP_CTRL_TRIANGLE) {
             sceKernelDelayThread(200000);
             break;
         }
@@ -370,21 +379,21 @@ void settings_submenu(){
         sceCtrlPeekBufferPositive(&pad, 1);
 		
 		// CONTROLS
-		if(pad.Buttons & PSP_CTRL_DOWN) {
+		if((pad.Buttons & PSP_CTRL_DOWN) == PSP_CTRL_DOWN) {
             sceKernelDelayThread(200000);
 			dir++;
 			if(dir>=size) dir = 0;
 
             draw_submenu(header, paths, states, size, dir);
 		}
-		if(pad.Buttons & PSP_CTRL_UP) {
+		if((pad.Buttons & PSP_CTRL_UP) == PSP_CTRL_UP) {
             sceKernelDelayThread(200000);
 			dir--;
 			if(dir<0) dir = size-1;
             
             draw_submenu(header, paths, states, size, dir);
 		}
-        if(pad.Buttons & PSP_CTRL_LEFT) {
+        if((pad.Buttons & PSP_CTRL_LEFT) == PSP_CTRL_LEFT) {
             sceKernelDelayThread(200000);
 			int* value = settings_items[dir].value;
 			int max = settings_items[dir].max;
@@ -394,7 +403,9 @@ void settings_submenu(){
             settings_to_text(paths, states, settings_items, size);
             draw_submenu(header, paths, states, size, dir);
 		}
-        if(pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_RIGHT)) {
+        if((pad.Buttons & PSP_CTRL_CROSS) == PSP_CTRL_CROSS
+              || (pad.Buttons & PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE
+              || (pad.Buttons & PSP_CTRL_RIGHT) == PSP_CTRL_RIGHT) {
             sceKernelDelayThread(200000);
 			int* value = settings_items[dir].value;
 			int max = settings_items[dir].max;
@@ -404,7 +415,7 @@ void settings_submenu(){
             settings_to_text(paths, states, settings_items, size);
             draw_submenu(header, paths, states, size, dir);
 		}
-        if((pad.Buttons & PSP_CTRL_TRIANGLE)) {
+        if((pad.Buttons & PSP_CTRL_TRIANGLE) == PSP_CTRL_TRIANGLE) {
             sceKernelDelayThread(200000);
             break;
         }
