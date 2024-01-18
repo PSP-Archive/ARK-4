@@ -135,7 +135,7 @@ static void draw(char** options, int size, int dir){
     printf("********************************************************************");
 
     pspDebugScreenSetXY(0, 2);
-    printf("* ARK-4 Classic Recovery Menu                                      *");
+    printf("* ARK-4 Recovery Menu                                      *");
     pspDebugScreenSetXY(0, 3);
     printf("*                                                                  *");
 
