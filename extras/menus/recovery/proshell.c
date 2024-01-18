@@ -70,6 +70,7 @@ int copymode = NOTHING_TO_COPY;
 
 // Button Test Macro
 #define PRESSED(b, a, m) (((b & m) == 0) && ((a & m) == m))
+#define NELEMS(x) (sizeof(x)/sizeof(x[0]))
 
 // File Information Structure
 typedef struct File
@@ -156,6 +157,8 @@ int proshell_main()
             {
                 // Start File
                 start();
+                // Paint List
+                paintList(CLEAR);
             }
             
             // Delete File
@@ -570,110 +573,67 @@ struct Items {
 	{ 7, 0, "-> " }
 };
 
+char* plugin_runlevels[] = {"always", "game", "ps1", "xmb", "umd", "homebrew"};
+
+void printPluginInstall(char* plugin_name, int cur){
+    char title[64];
+
+    pspDebugScreenClear();
+	snprintf(title, sizeof(title), "Install Plugin %s?", plugin_name);
+	printoob(title, 50, 15, FONT_COLOR);
+
+    for (int i=0; i<NELEMS(items)-1; i++){
+        if(i==cur) {
+            char buf[128];
+            snprintf(buf, sizeof(buf), "%s%s", items[7].text, items[i].text);
+            printoob(buf, 175, items[i].offset, FONT_SELECT_COLOR);
+        }
+        else {
+            printoob(items[i].text, 175, items[i].offset, FONT_COLOR);
+		}
+    }
+}
+
 void pluginInstall(File *file) {
 
-	quit:
-	pspDebugScreenClear();
-	char pluginName[64];
-	char title[64];
-
-	snprintf(title, sizeof(title), "Install Plugin ");
-	strcat(title, file->name);
-	strcat(title, "?");
-	printoob(title, 125, 115, FONT_COLOR);
-	printoob("   Yes", 130, 140, FONT_COLOR);
-	printoob("-> No", 265+strlen(title), 140, FONT_SELECT_COLOR);
 	SceCtrlData pad;
-	sceCtrlReadBufferPositive(&pad, 1);
-	uint8_t userChoice = 0;
+    int cur = 0;
+
+    printPluginInstall(file->name, cur);
+    sceKernelDelayThread(500000);
+
 	while(1){
 		sceCtrlReadBufferPositive(&pad, 1);
-		if(pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE) && userChoice) {
-			pspDebugScreenClear();
-			snprintf(pluginName, sizeof(pluginName), file->name);
-			printoob(pluginName, 155, 30, FONT_SELECT_COLOR);
-			int dir = 0;
-			int i = 0;
-			char buf[64];
-
-			sceCtrlReadBufferPositive(&pad, 1);
-			for(i = 0; i < sizeof(items)/sizeof(items[0])-1; i++) {
-				if(i==dir) {
-					snprintf(buf, sizeof(buf), "%s%s", items[7].text, items[i].text);
-					printoob(buf, 175, items[i].offset, FONT_SELECT_COLOR);
-				}
-				else {
-					printoob(items[i].text, 175, items[i].offset, FONT_COLOR);
-				}
-			}
-			while(1) {
-				sceKernelDelayThread(100000);
-				sceCtrlReadBufferPositive(&pad, 1);
-				if(pad.Buttons & PSP_CTRL_DOWN ){
-					pspDebugScreenClear();
-					dir++;
-					if(dir>sizeof(items)/sizeof(items[0])-2)dir=0;
-					pspDebugScreenClear();
-					printoob(pluginName, 155, 30, FONT_SELECT_COLOR);
-					for(i = 0; i < sizeof(items)/sizeof(items[0])-1; i++) {
-						if(i==dir) {
-							snprintf(buf, sizeof(buf), "%s%s", items[7].text, items[i].text);
-							printoob(buf, 175, items[i].offset, FONT_SELECT_COLOR);
-						}
-						else {
-							printoob(items[i].text, 175, items[i].offset, FONT_COLOR);
-						}
-
-					}
-				}
-								
-				if(pad.Buttons & PSP_CTRL_UP){
-					pspDebugScreenClear();
-					dir--;
-					if(dir<0)dir=(sizeof(items)/sizeof(items[0]))-2;
-					printoob(pluginName, 155, 30, FONT_SELECT_COLOR);
-					for(i = 0; i < sizeof(items)/sizeof(items[0])-1; i++) {
-						if(i==dir) {
-							snprintf(buf, sizeof(buf), "%s%s", items[7].text, items[i].text);
-							printoob(buf, 175, items[i].offset, FONT_SELECT_COLOR);
-						}
-						else {
-							printoob(items[i].text, 175, items[i].offset, FONT_COLOR);
-						}
-					
-					}
-				}
-
-				if((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE)) && dir==0) {
-					pspDebugScreenClear();
-					goto quit;
-				}
-			}
-		}
-
-		if(pad.Buttons & PSP_CTRL_LEFT) {
-			userChoice = 1;
-			pspDebugScreenClear();
-			printoob(title, 125, 115, FONT_COLOR);
-			printoob("-> Yes", 130, 140, FONT_SELECT_COLOR);
-			printoob("   No", 265+strlen(title), 140, FONT_COLOR);
-		}
-		else if(pad.Buttons & PSP_CTRL_RIGHT) {
-			userChoice = 0;
-			pspDebugScreenClear();
-			printoob(title, 125, 115, FONT_COLOR);
-			printoob("   Yes", 130, 140, FONT_COLOR);
-			printoob("-> No", 265+strlen(title), 140, FONT_SELECT_COLOR);
-		}
-
-		if(pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE) && !userChoice) {
-			updateList(CLEAR);
-			paintList(CLEAR);
-			break;
-		}
-
-
+		if ((pad.Buttons&PSP_CTRL_DOWN) == PSP_CTRL_DOWN){
+            if (cur < NELEMS(items)-1) cur++;
+            printPluginInstall(file->name, cur);
+            sceKernelDelayThread(500000);
+        }
+        else if ((pad.Buttons&PSP_CTRL_UP) == PSP_CTRL_UP){
+            if (cur > 0) cur--;
+            printPluginInstall(file->name, cur);
+            sceKernelDelayThread(500000);
+        }
+        else if ((pad.Buttons&PSP_CTRL_CROSS) == PSP_CTRL_CROSS){
+            sceKernelDelayThread(500000);
+            break;
+        }
 	}
+
+    if (!cur) return;
+
+    char buf[256];
+    char* txt_path = (cwd[0] == 'e')? "ef0:/SEPLUGINS/PLUGINS.TXT" : "ms0:/SEPLUGINS/PLUGINS.TXT";
+    snprintf(buf, sizeof(buf), "\n%s, %s%s, on\n", plugin_runlevels[cur-1], cwd, file->name);
+
+    int fd = sceIoOpen(txt_path, PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+    sceIoWrite(fd, buf, strlen(buf));
+    sceIoClose(fd);
+
+    pspDebugScreenClear();
+    printoob("Plugin installed!", 125, 115, FONT_COLOR);
+    sceKernelDelayThread(2000000);
+    pspDebugScreenClear();
 }
 
 // Start Application
@@ -777,6 +737,44 @@ int delete(void)
 
     if(strcmp(file->name, "..") == 0) return -2;
 
+    char title[64];
+	SceCtrlData pad;
+    int choice = 1;
+    int display = 1;
+    sceKernelDelayThread(1000000);
+    while (1){
+        if (display){
+            pspDebugScreenClear();
+            snprintf(title, sizeof(title), "Delete %s?", file->name);
+            printoob(title, 125, 115, FONT_COLOR);
+            if (choice){
+                printoob("   Yes", 130, 140, FONT_COLOR);
+                printoob("-> No", 265+strlen(title), 140, FONT_SELECT_COLOR);
+            }
+            else {
+                printoob("-> Yes", 130, 140, FONT_SELECT_COLOR);
+                printoob("   No", 265+strlen(title), 140, FONT_COLOR);
+            }
+            display = 0;
+        }
+        sceCtrlReadBufferPositive(&pad, 1);
+        if ((pad.Buttons&PSP_CTRL_CROSS) == PSP_CTRL_CROSS){
+            sceKernelDelayThread(500000);
+            if (choice) return 0;
+            break;
+        }
+        else if ((pad.Buttons & PSP_CTRL_LEFT) == PSP_CTRL_LEFT){
+            if (choice) choice = 0;
+            display = 1;
+            sceKernelDelayThread(500000);
+        }
+        else if ((pad.Buttons & PSP_CTRL_RIGHT) == PSP_CTRL_RIGHT){
+            if (!choice) choice = 1;
+            display = 1;
+            sceKernelDelayThread(500000);
+        }
+    }
+
     // File Path
     char path[1024];
     
@@ -879,6 +877,44 @@ int paste(void)
     int identical = strcmp(copysource, cwd) == 0;
     lastslash[1] = backup;
     if(identical) return -2;
+
+    char title[64];
+	SceCtrlData pad;
+    int choice = 1;
+    int display = 1;
+    sceKernelDelayThread(1000000);
+    while (1){
+        if (display){
+            pspDebugScreenClear();
+            snprintf(title, sizeof(title), "Paste %s?", copysource);
+            printoob(title, 125, 115, FONT_COLOR);
+            if (choice){
+                printoob("   Yes", 130, 140, FONT_COLOR);
+                printoob("-> No", 265+strlen(title), 140, FONT_SELECT_COLOR);
+            }
+            else {
+                printoob("-> Yes", 130, 140, FONT_SELECT_COLOR);
+                printoob("   No", 265+strlen(title), 140, FONT_COLOR);
+            }
+            display = 0;
+        }
+        sceCtrlReadBufferPositive(&pad, 1);
+        if ((pad.Buttons&PSP_CTRL_CROSS) == PSP_CTRL_CROSS){
+            sceKernelDelayThread(500000);
+            if (choice) return 0;
+            break;
+        }
+        else if ((pad.Buttons & PSP_CTRL_LEFT) == PSP_CTRL_LEFT){
+            if (choice) choice = 0;
+            display = 1;
+            sceKernelDelayThread(500000);
+        }
+        else if ((pad.Buttons & PSP_CTRL_RIGHT) == PSP_CTRL_RIGHT){
+            if (!choice) choice = 1;
+            display = 1;
+            sceKernelDelayThread(500000);
+        }
+    }
     
     // Source Filename
     char * filename = lastslash + 1;
