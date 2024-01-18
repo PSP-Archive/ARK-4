@@ -59,7 +59,11 @@ int _start(char* savepath)
 
     clearBSS();
     
-    if (savepath) strcpy(conf.arkpath, savepath);
+    if (savepath){
+        // adjust ms/ef
+        conf.arkpath[0] = savepath[0];
+        conf.arkpath[1] = savepath[1];
+    }
 
     tbl.IoOpen = (void*)FindImportUserRam("IoFileMgrForUser", 0x109F50BC);
     tbl.IoRead = (void*)FindImportUserRam("IoFileMgrForUser", 0x6A638D83);

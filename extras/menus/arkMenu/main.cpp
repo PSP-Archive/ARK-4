@@ -66,19 +66,24 @@ int main(int argc, char** argv){
         }
     }
 
-    int n_entries = 2;
+    int recovery = common::getArkConfig()->recovery;
 
-    // Setup FTP App
-    if (common::getPspModel() != PSP_11000){
+    int n_entries = (recovery)?0:2;
+
+    // Setup FTP
+    if (common::getPspModel() != PSP_11000 && !recovery){
         entries[n_entries++] = new NetworkManager();
         // initialize FTP client driver for file browser
         Browser::ftp_driver = new FTPDriver();
     }
-    // Setup settings and exit
-    int max_settings = MAX_SETTINGS_OPTIONS;
-    if (common::getPspModel() != PSP_GO) max_settings -= 2;
-    SettingsTable stab = { settings_entries, max_settings };
-    entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
+
+    if (!recovery){
+        // Setup settings
+        int max_settings = MAX_SETTINGS_OPTIONS;
+        if (common::getPspModel() != PSP_GO) max_settings -= 2;
+        SettingsTable stab = { settings_entries, max_settings };
+        entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
+    }
 
     // Add ARK settings manager
     loadSettings();
@@ -98,16 +103,27 @@ int main(int argc, char** argv){
     plugins_menu->setIcon(IMAGE_PLUGINS);
     entries[n_entries++] = plugins_menu;
 
+    if (recovery){
+        // Setup settings
+        int max_settings = MAX_SETTINGS_OPTIONS;
+        if (common::getPspModel() != PSP_GO) max_settings -= 2;
+        SettingsTable stab = { settings_entries, max_settings };
+        entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
+    }
+
+    // exit
     entries[n_entries++] = new ExitManager();
 
-    // Setup main App (Game or Browser)
-    if (common::getConf()->main_menu == 0){
-        entries[1] = Browser::getInstance();
-        entries[0] = GameManager::getInstance();
-    }
-    else{
-        entries[0] = Browser::getInstance();
-        entries[1] = GameManager::getInstance();
+    if (!recovery){
+        // Setup main App (Game or Browser)
+        if (common::getConf()->main_menu == 0){
+            entries[1] = Browser::getInstance();
+            entries[0] = GameManager::getInstance();
+        }
+        else{
+            entries[0] = Browser::getInstance();
+            entries[1] = GameManager::getInstance();
+        }
     }
     
     // Initialize Menu
