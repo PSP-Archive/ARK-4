@@ -1,5 +1,17 @@
 # ARK Changelog
 
+## Version 4.20.67 (2023-18-01)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42067
+- Merged `Recovery Menu` into `Custom Launcher`, leaving `Classic Recovery` as the default recovery menu.
+- Updated kernel exploit used on `PSP` and `Adrenaline`.
+- Added ability to install plugins using `PRO Shell` (Classic Recovery Menu).
+- Cleanup and improved `VSH Menu`.
+- Added ability to hide entries in `Advanced VSH Menu` by pressing `L` trigger, use `R` trigger to unhide all hidden entries.
+- Fixed `Import Classic Plugins` feature.
+- Fixed issue in plugins manager of classic recovery.
+- Added ability to force open `VSH Menu` by pressing `L+R+Select` anywhere in the `XMB`.
+- Several more cleanup and fixes.
+
 ## Version 4.20.66 (2023-10-24)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42066
 - Rev 9: added option to enable `QA Flags`, which will allow `Debug` settings to appear in the `XMB`. Added `Custom App` Launcher. If ARK detects an `EBOOT.PBP` in either `/PSP/APP/` it display a icon under Custom Launcher icon stating `Custom App`.
