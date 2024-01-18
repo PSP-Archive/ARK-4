@@ -229,9 +229,9 @@ resume:
 			swap_buttons(vsh);
 			break;
 		case 13:
-			import_classic_plugins(vsh, "ms");
+			import_classic_plugins(vsh, DEVPATH_MS0);
 			if (vsh->psp_model == PSP_GO)
-				import_classic_plugins(vsh, "ef");
+				import_classic_plugins(vsh, DEVPATH_EF0);
 			break;
 		case 14:			
 			config_check(vsh);
