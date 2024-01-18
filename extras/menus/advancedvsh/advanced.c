@@ -78,6 +78,13 @@ int submenu_draw(void) {
 	submenu_start_x = (gfx->width - window_pixel) / 2;
 	submenu_start_y = pointer[5] * font->height;
 
+	int drawn = 0;
+	for (submax_menu = 0; submax_menu < SUBMENU_MAX; submax_menu++){
+		if (g_messages[MSG_USB_DEVICE + submax_menu] && !vsh->config.ark_menu.avm_hidden[submax_menu]) {
+			drawn++;
+		}
+	}
+
 	for (submax_menu = 0; submax_menu < SUBMENU_MAX; submax_menu++) {
 		// set default colors
 		bc = colors[vsh->config.ark_menu.vsh_bg_color];
@@ -95,8 +102,8 @@ int submenu_draw(void) {
 				blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, font->height);
 				blit_set_color(0xaf000000, 0xaf000000);
 				blit_rect_fill(submenu_start_x, submenu_start_y-1, window_pixel, 1); // top horizontal outline
-				blit_rect_fill(submenu_start_x+window_pixel, submenu_start_y, 1, 8*(SUBMENU_MAX+2)); // right vertical outline
-				blit_rect_fill(submenu_start_x-1, submenu_start_y, 1, 8*(SUBMENU_MAX+2)); // left vertical outline
+				blit_rect_fill(submenu_start_x+window_pixel, submenu_start_y, 1, 8*(drawn+2)); // right vertical outline
+				blit_rect_fill(submenu_start_x-1, submenu_start_y, 1, 8*(drawn+2)); // left vertical outline
 				// set the y position
 				submenu_start_y += font->height;
 			}
@@ -114,20 +121,20 @@ int submenu_draw(void) {
 		
 		blit_set_color(fc, bc);
 
+		temp = 0;
+		int submenu_width = 0;
+		// find widest submenu up until the UMD region option
+		for (i = SUBMENU_USB_DEVICE; i <= SUBMENU_UMD_REGION_MODE; i++){
+			temp = scePaf_strlen(g_messages[MSG_USB_DEVICE + i]);
+			if (temp > submenu_width)
+				submenu_width = temp;
+		}
+
 		// display menu
-		if (g_messages[MSG_USB_DEVICE + submax_menu]) {
+		if (g_messages[MSG_USB_DEVICE + submax_menu] && !vsh->config.ark_menu.avm_hidden[submax_menu]) {
 			int len = 0, offset = 0, padding = 0;
-			int submenu_width = 0;
 			subcur_menu = submax_menu;
-			
-			temp = 0;
-			// find widest submenu up until the UMD region option
-			for (i = SUBMENU_USB_DEVICE; i <= SUBMENU_UMD_REGION_MODE; i++){
-				temp = scePaf_strlen(g_messages[MSG_USB_DEVICE + i]);
-				if (temp > submenu_width)
-					submenu_width = temp;
-			}
-			
+			drawn++;
 			// submenus between USB_DEVICE and UMD_REGION are the only ones with subitems
 			if (submax_menu >= SUBMENU_USB_DEVICE && submax_menu <= SUBMENU_UMD_REGION_MODE) {
 				int subitem_start_x = 0;
@@ -222,12 +229,12 @@ int submenu_draw(void) {
 			case 27: fc = colors[1]; break;
 			default: fc = colors[vsh->config.ark_menu.vsh_fg_color]; break;
 		}
-		
 		blit_set_color(fc, bc);
 		// add line at the end
 		blit_rect_fill(submenu_start_x, submenu_start_y, window_pixel, font->height);
 		blit_set_color(0xaf000000, 0xaf000000);
-		blit_rect_fill(submenu_start_x, submenu_start_y+8, window_pixel, 1); // bottom horizontal outline
+		blit_rect_fill(submenu_start_x, submenu_start_y+font->height, window_pixel, 1); // bottom horizontal outline
+		
 	}
 	
 	blit_set_color(0x00ffffff,0x00000000);
@@ -300,7 +307,33 @@ int submenu_setup(void) {
 		subitem_str[i] = NULL;
 		item_fcolor[i] = RGB(255,255,255);
 	}
-	
+
+	if (vsh->battery == 2){
+		vsh->config.ark_menu.avm_hidden[SUBMENU_CONVERT_BATTERY] = 1;
+	}
+
+	if (IS_VITA_ADR(vsh->config.p_ark)){
+		vsh->config.ark_menu.avm_hidden[SUBMENU_USB_READONLY] = 1;
+		vsh->config.ark_menu.avm_hidden[SUBMENU_UMD_VIDEO] = 1;
+		vsh->config.ark_menu.avm_hidden[SUBMENU_UMD_REGION_MODE] = 1;
+	}
+
+	if (vsh->psp_model == PSP_GO){
+		vsh->config.ark_menu.avm_hidden[SUBMENU_UMD_REGION_MODE] = 1;
+	}
+	else {
+		vsh->config.ark_menu.avm_hidden[SUBMENU_DELETE_HIBERNATION] = 1;
+	}
+
+	if (vsh->config.ark_menu.avm_hidden[submenu_sel]){
+		for (i = 0; i < SUBMENU_MAX; i++){
+			if (!vsh->config.ark_menu.avm_hidden[i]){
+				submenu_sel = i;
+				break;
+			}
+		}
+	}
+
 	//usb device
 	if ((vsh->config.se.usbdevice > 0) && (vsh->config.se.usbdevice < 5)) {
 		scePaf_sprintf(device_buf, "%s %d", g_messages[MSG_FLASH], vsh->config.se.usbdevice - 1);
@@ -344,6 +377,14 @@ int submenu_setup(void) {
 			break;
 		case 0:
 			subitem_str[SUBMENU_MENU_DESIGN] = g_messages[MSG_NEW];
+			break;
+	}
+	switch (vsh->config.ark_menu.advanced_vsh) {
+		case 1:
+			subitem_str[SUBMENU_MAIN_MENU] = g_messages[MSG_ADVANCED];
+			break;
+		case 0:
+			subitem_str[SUBMENU_MAIN_MENU] = g_messages[MSG_SIMPLE];
 			break;
 	}
 
@@ -412,16 +453,28 @@ int submenu_ctrl(u32 button_on) {
 		return 1;
 	}
 
+	if (button_on & PSP_CTRL_LTRIGGER && submenu_sel != SUBMENU_GO_BACK){
+		vsh->config.ark_menu.avm_hidden[submenu_sel] = 1; // hide entry
+		button_on |= PSP_CTRL_DOWN; // go to next available entry
+	}
+
+	if (button_on & PSP_CTRL_RTRIGGER){
+		// unhide all entries
+		memset(vsh->config.ark_menu.avm_hidden, 0, sizeof(vsh->config.ark_menu.avm_hidden));
+		return 0;
+	}
+
 	// change menu select
-	direction = 0;
+	do {
+		direction = 0;
+		if (button_on & PSP_CTRL_DOWN) 
+			direction++;
+		if (button_on & PSP_CTRL_UP) 
+			direction--;
 
-	if (button_on & PSP_CTRL_DOWN) 
-		direction++;
-	if (button_on & PSP_CTRL_UP) 
-		direction--;
-
-	#define ROLL_OVER(val, min, max) ( ((val) < (min)) ? (max): ((val) > (max)) ? (min) : (val) )
-	submenu_sel = ROLL_OVER(submenu_sel + direction, 0, SUBMENU_MAX - 1);
+		#define ROLL_OVER(val, min, max) ( ((val) < (min)) ? (max): ((val) > (max)) ? (min) : (val) )
+		submenu_sel = ROLL_OVER(submenu_sel + direction, 0, SUBMENU_MAX - 1);
+	} while (vsh->config.ark_menu.avm_hidden[submenu_sel]);
 
 	// LEFT & RIGHT
 	direction = -2;
@@ -472,21 +525,13 @@ none:
 				return 6; // Mount UMDVideo ISO flag
 			break;
 		case SUBMENU_IMPORT_CLASSIC_PLUGINS:
-			if (direction == 0)
-				return 13; // Import Classic Plugins flag 
-			break;
+			return 13; // Import Classic Plugins flag 
 		case SUBMENU_DELETE_HIBERNATION:
-			if (direction == 0)
-				return 10; // Delete Hibernation flag 
-			break;
+			return 10; // Delete Hibernation flag 
 		case SUBMENU_RANDOM_GAME:
-			if (direction == 0)
-				return 14; // Random Game flag 
-			break;
+			return 14; // Random Game flag 
 		case SUBMENU_ACTIVATE_FLASH_WMA:
-			if (direction == 0)
-				return 11; // Activate Flash/WMA flag 
-			break;
+			return 11; // Activate Flash/WMA flag 
 		case SUBMENU_REGION_MODE:
 			if (direction) 
 				change_region(direction, 13);
@@ -498,13 +543,9 @@ none:
 				change_umd_region(direction, 3);
 			break;
 		case SUBMENU_SWAP_XO_BUTTONS:
-			if (direction == 0)
-				return 12; // Swap X/O Buttons flag  
-			break;
+			return 12; // Swap X/O Buttons flag  
 		case SUBMENU_CONVERT_BATTERY:
-			if(direction == 0)
-				return 9; // Convert Battery flag
-			break;
+			return 9; // Convert Battery flag
 		case SUBMENU_FG_COLORS:
 			// This will be where I will be adding to set the color
 			if (direction)
@@ -526,10 +567,12 @@ none:
 			if(direction)
 				change_design(direction);
 			break;
-		case SUBMENU_GO_BACK:
-			if(direction==0) 
-				return 1; // finish
+		case SUBMENU_MAIN_MENU:
+			if(direction)
+				change_menu(direction);
 			break;
+		case SUBMENU_GO_BACK:
+			return 1; // finish
 	}
 
 	return 0; // continue

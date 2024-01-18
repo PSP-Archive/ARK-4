@@ -223,6 +223,15 @@ static unsigned char information_board_item[] __attribute__((aligned(16))) = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
 
+static unsigned char netconf_item[] __attribute__((aligned(16))) = {
+	0x0d, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00, 0x00, 0x43, 
+	0x44, 0x00, 0x00, 0x43, 0x52, 0x00, 0x00, 0x44, 0x46, 0x00, 0x00, 0x6d, 0x73, 0x67, 0x74, 0x6f, 
+	0x70, 0x5f, 0x73, 0x79, 0x73, 0x63, 0x6f, 0x6e, 0x66, 0x5f, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 
+	0x6b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+};
+
+
 void ClearCaches()
 {
     sceKernelDcacheWritebackAll();
@@ -415,16 +424,28 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
 
+    /*
+    sceIoMkdir("ms0:/vshitems", 0777);
+    static char path[256];
+    sprintf(path, "ms0:/vshitems/%s", item->text);
+    int fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_TRUNC|PSP_O_CREAT, 0777);
+    sceIoWrite(fd, item, sizeof(SceVshItem));
+    sceIoClose(fd);
+    */
+
     static int items_added = 0;
 
     if (sce_paf_private_strcmp(item->text, "msgtop_sysconf_console")==0){
         sysconf_action = item->action;
         LoadTextLanguage(-1);
-
-        // Add CFW Settings
-        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, item);
-        AddVshItem(a0, topitem, new_item);
     }
+
+    /*
+    if (sce_paf_private_strcmp(item->text, "msgtop_sysconf_network") == 0){
+        // fix network config icon
+        sce_paf_private_memcpy(item, netconf_item, sizeof(SceVshItem));
+    }
+    */
 
     if ( !items_added && // prevent adding more than once
         // Game Items
@@ -440,6 +461,10 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
     {
         items_added = 1;
         startup = 0;
+
+        // Add CFW Settings
+        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, signup_item);
+        AddVshItem(a0, topitem, new_item);
 
         // Add Plugins Manager
         new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, ps_store_item);

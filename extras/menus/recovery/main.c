@@ -14,7 +14,7 @@
 
 //STMOD_HANDLER previous;
 
-PSP_MODULE_INFO("ClassicRecovery", PSP_MODULE_USER, 1, 0);
+PSP_MODULE_INFO("Recovery", PSP_MODULE_USER, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
 PSP_HEAP_SIZE_KB(4096);
 
@@ -135,7 +135,7 @@ static void draw(char** options, int size, int dir){
     printf("********************************************************************");
 
     pspDebugScreenSetXY(0, 2);
-    printf("* ARK-4 Classic Recovery Menu                                      *");
+    printf("* ARK-4 Recovery Menu                                              *");
     pspDebugScreenSetXY(0, 3);
     printf("*                                                                  *");
 

@@ -238,11 +238,6 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
                 && ((u8*)addr)[6] == 0x58
                 && ((u8*)addr)[7] == 0 )
         {
-            static const char* format = " [ FW: %d.%d%d Model: %s ] ";
-            u32 fw = sceKernelDevkitVersion();
-            u32 major = fw>>24;
-            u32 minor = (fw>>16)&0xF;
-            u32 micro = (fw>>8)&0xF;
             char model[10];
             if (IS_VITA_ADR(ark_config)){
                 model[0]='v'; model[1]='P'; model[2]='S'; model[3]='P'; model[4]=0;
@@ -250,18 +245,19 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
             else{
                 sprintf(model, "%02dg", (int)psp_model+1);
             }
-            sprintf(str, format, major, minor, micro, model);
+            sprintf(str, " [ Model: %s ] ", model);
             ascii2utf16(addr, str);
             patches--;
         }
     }
     
+    u32 fw = sceKernelDevkitVersion();
+    u32 major = fw>>24;
+    u32 minor = (fw>>16)&0xF;
+    u32 micro = (fw>>8)&0xF;
+    char* tool = sctrlHENIsToolKit()? "T":"";
 
-    #if ARK_MICRO_VERSION > 0
-    sprintf(str, "ARK %d.%d.%.2i %s", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ARK_MICRO_VERSION, ark_config->exploit_id);
-    #else
-    sprintf(str, "ARK %d.%d %s", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ark_config->exploit_id);
-    #endif
+    sprintf(str, "%d.%d%d%s ARK-4 %s", major, minor, micro, tool, ark_config->exploit_id);
     ascii2utf16(p, str);
     
     _sw(0x3C020000 | ((u32)(p) >> 16), a); // lui $v0, 

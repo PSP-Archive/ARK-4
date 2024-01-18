@@ -9,7 +9,6 @@
 #define PAGE_SIZE 10
 
 extern string ark_version;
-extern struct tm today;
 
 SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool shorten_paths, bool show_all_opts, bool show_info){
     this->animation = -1;

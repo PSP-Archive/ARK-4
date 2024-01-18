@@ -124,6 +124,8 @@ int TSRThread(SceSize args, void *argp) {
 	sctrlSEGetConfig(&vsh->config.se);
 	sctrlHENGetArkConfig(&vsh->config.ark);
 	config_load(vsh);
+	if(vsh->config.ark_menu.advanced_vsh)
+		vsh->status.stop_flag = 15;
 
 	// load font
 	font_load(vsh);

@@ -62,11 +62,15 @@ static void processArkConfig(){
 int module_start(SceSize args, void * argp)
 {
 
-    // set rebootex for Vita
-    sctrlHENSetRebootexOverride(rebootbuffer_pentazemin);
-
     // copy configuration
     processArkConfig();
+
+    if (ark_config->exec_mode != PSV_ADR){
+        return 1;
+    }
+
+    // set rebootex for Vita
+    sctrlHENSetRebootexOverride(rebootbuffer_pentazemin);
 
     // Vita patches
     AdrenalineSysPatch();

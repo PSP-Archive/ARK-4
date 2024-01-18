@@ -63,11 +63,15 @@ static void processArkConfig(){
 int module_start(SceSize args, void * argp)
 {
 
-    // set rebootex for Vita
-    sctrlHENSetRebootexOverride(rebootbuffer_vita);
-
     // copy configuration
     processArkConfig();
+
+    if (ark_config->exec_mode != PS_VITA){
+        return 1;
+    }
+
+    // set rebootex for Vita
+    sctrlHENSetRebootexOverride(rebootbuffer_vita);
     
     // Vita patches
     PROVitaSysPatch();

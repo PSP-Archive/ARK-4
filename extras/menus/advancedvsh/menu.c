@@ -254,32 +254,19 @@ int menu_ctrl(u32 button_on) {
 
 	switch(menu_sel) {
 		case TMENU_RECOVERY_MENU:
-			if (direction == 0)
-				return 8; // Recovery menu flag
-			break;
+			return 8; // Recovery menu flag
 		case TMENU_ADVANCED_VSH:
-			if(direction == 0) return 15;
-			break;
+			return 15;
 		case TMENU_SHUTDOWN_DEVICE:			
-			if (direction == 0)
-				return 3; // SHUTDOWN flag
-			break;
+			return 3; // SHUTDOWN flag
 		case TMENU_RESET_DEVICE:	
-			if (direction == 0)
-				return 2; // RESET flag
-			break;
+			return 2; // RESET flag
 		case TMENU_RESET_VSH:	
-			if (direction == 0)
-				return 4; // RESET VSH flag
-			break;
+			return 4; // RESET VSH flag
 		case TMENU_SUSPEND_DEVICE:	
-			if (direction == 0)
-				return 5; // SUSPEND flag
-			break;
+			return 5; // SUSPEND flag
 		case TMENU_EXIT:
-			if (direction == 0) 
-				return 1; // finish
-			break;
+			return 1; // finish
 	}
 
 	return 0; // continue
