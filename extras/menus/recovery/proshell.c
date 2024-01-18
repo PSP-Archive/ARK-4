@@ -570,7 +570,8 @@ struct Items {
 	{ 4, 80, "VSH (XMB)" },
 	{ 5, 90, "UMD/ISO" },
 	{ 6, 100, "Homebrew" },
-	{ 7, 0, "-> " }
+    { 7, 110, "<LoadStart>" },
+	{ 8, 0, "-> " }
 };
 
 char* plugin_runlevels[] = {"always", "game", "ps1", "xmb", "umd", "homebrew"};
@@ -585,7 +586,7 @@ void printPluginInstall(char* plugin_name, int cur){
     for (int i=0; i<NELEMS(items)-1; i++){
         if(i==cur) {
             char buf[128];
-            snprintf(buf, sizeof(buf), "%s%s", items[7].text, items[i].text);
+            snprintf(buf, sizeof(buf), "%s%s", items[8].text, items[i].text);
             printoob(buf, 175, items[i].offset, FONT_SELECT_COLOR);
         }
         else {
@@ -623,17 +624,26 @@ void pluginInstall(File *file) {
     if (!cur) return;
 
     char buf[256];
-    char* txt_path = (cwd[0] == 'e')? "ef0:/SEPLUGINS/PLUGINS.TXT" : "ms0:/SEPLUGINS/PLUGINS.TXT";
-    snprintf(buf, sizeof(buf), "\n%s, %s%s, on\n", plugin_runlevels[cur-1], cwd, file->name);
+    if (cur == 7){
+        snprintf(buf, sizeof(buf), "%s%s", cwd, file->name);
+        int uid = kuKernelLoadModule(buf, 0, NULL);
+        int res = sceKernelStartModule(uid, strlen(buf) + 1, (void*)buf, NULL, NULL);
+        sceKernelDelayThread(500000);
+        pspDebugScreenClear();
+    }
+    else {
+        char* txt_path = (cwd[0] == 'e')? "ef0:/SEPLUGINS/PLUGINS.TXT" : "ms0:/SEPLUGINS/PLUGINS.TXT";
+        snprintf(buf, sizeof(buf), "\n%s, %s%s, on\n", plugin_runlevels[cur-1], cwd, file->name);
 
-    int fd = sceIoOpen(txt_path, PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
-    sceIoWrite(fd, buf, strlen(buf));
-    sceIoClose(fd);
+        int fd = sceIoOpen(txt_path, PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+        sceIoWrite(fd, buf, strlen(buf));
+        sceIoClose(fd);
 
-    pspDebugScreenClear();
-    printoob("Plugin installed!", 125, 115, FONT_COLOR);
-    sceKernelDelayThread(2000000);
-    pspDebugScreenClear();
+        pspDebugScreenClear();
+        printoob("Plugin installed!", 125, 115, FONT_COLOR);
+        sceKernelDelayThread(2000000);
+        pspDebugScreenClear();
+    }
 }
 
 // Start Application
