@@ -90,6 +90,7 @@ void updateList(int clearindex);
 void paintList(int withclear);
 void recursiveFree(File * node);
 void start(void);
+void pluginInstall(File *file);
 int delete(void);
 int navigate(void);
 void copy(int flag);
@@ -145,6 +146,7 @@ int proshell_main()
         sceCtrlSetSamplingCycle(0);
         sceCtrlSetSamplingMode(1);
         sceCtrlReadBufferPositive(&data, 1);
+		File * file = findindex(position);
         
         // Other Commands
         if(filecount > 0)
@@ -552,6 +554,128 @@ int getRunlevelMode(int mode)
     return -1;
 }
 
+
+struct Items {
+	int mode;
+	int offset;
+	char text[64];
+} items[] = {
+	{ 0, 40, "Cancel" },
+	{ 1, 50, "Always" },
+	{ 2, 60, "Game" },
+	{ 3, 70, "POPS (PS1)" },
+	{ 4, 80, "VSH (XMB)" },
+	{ 5, 90, "UMD/ISO" },
+	{ 6, 100, "Homebrew" },
+	{ 7, 0, "-> " }
+};
+
+void pluginInstall(File *file) {
+
+	quit:
+	pspDebugScreenClear();
+	char pluginName[64];
+	char title[64];
+
+	snprintf(title, sizeof(title), "Install Plugin ");
+	strcat(title, file->name);
+	strcat(title, "?");
+	printoob(title, 125, 115, FONT_COLOR);
+	printoob("   Yes", 130, 140, FONT_COLOR);
+	printoob("-> No", 265+strlen(title), 140, FONT_SELECT_COLOR);
+	SceCtrlData pad;
+	sceCtrlReadBufferPositive(&pad, 1);
+	uint8_t userChoice = 0;
+	while(1){
+		sceCtrlReadBufferPositive(&pad, 1);
+		if(pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE) && userChoice) {
+			pspDebugScreenClear();
+			snprintf(pluginName, sizeof(pluginName), file->name);
+			printoob(pluginName, 155, 30, FONT_SELECT_COLOR);
+			int dir = 0;
+			int i = 0;
+			char buf[64];
+
+			sceCtrlReadBufferPositive(&pad, 1);
+			for(i = 0; i < sizeof(items)/sizeof(items[0])-1; i++) {
+				if(i==dir) {
+					snprintf(buf, sizeof(buf), "%s%s", items[7].text, items[i].text);
+					printoob(buf, 175, items[i].offset, FONT_SELECT_COLOR);
+				}
+				else {
+					printoob(items[i].text, 175, items[i].offset, FONT_COLOR);
+				}
+			}
+			while(1) {
+				sceKernelDelayThread(100000);
+				sceCtrlReadBufferPositive(&pad, 1);
+				if(pad.Buttons & PSP_CTRL_DOWN ){
+					pspDebugScreenClear();
+					dir++;
+					if(dir>sizeof(items)/sizeof(items[0])-2)dir=0;
+					pspDebugScreenClear();
+					printoob(pluginName, 155, 30, FONT_SELECT_COLOR);
+					for(i = 0; i < sizeof(items)/sizeof(items[0])-1; i++) {
+						if(i==dir) {
+							snprintf(buf, sizeof(buf), "%s%s", items[7].text, items[i].text);
+							printoob(buf, 175, items[i].offset, FONT_SELECT_COLOR);
+						}
+						else {
+							printoob(items[i].text, 175, items[i].offset, FONT_COLOR);
+						}
+
+					}
+				}
+								
+				if(pad.Buttons & PSP_CTRL_UP){
+					pspDebugScreenClear();
+					dir--;
+					if(dir<0)dir=(sizeof(items)/sizeof(items[0]))-2;
+					printoob(pluginName, 155, 30, FONT_SELECT_COLOR);
+					for(i = 0; i < sizeof(items)/sizeof(items[0])-1; i++) {
+						if(i==dir) {
+							snprintf(buf, sizeof(buf), "%s%s", items[7].text, items[i].text);
+							printoob(buf, 175, items[i].offset, FONT_SELECT_COLOR);
+						}
+						else {
+							printoob(items[i].text, 175, items[i].offset, FONT_COLOR);
+						}
+					
+					}
+				}
+
+				if((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE)) && dir==0) {
+					pspDebugScreenClear();
+					goto quit;
+				}
+			}
+		}
+
+		if(pad.Buttons & PSP_CTRL_LEFT) {
+			userChoice = 1;
+			pspDebugScreenClear();
+			printoob(title, 125, 115, FONT_COLOR);
+			printoob("-> Yes", 130, 140, FONT_SELECT_COLOR);
+			printoob("   No", 265+strlen(title), 140, FONT_COLOR);
+		}
+		else if(pad.Buttons & PSP_CTRL_RIGHT) {
+			userChoice = 0;
+			pspDebugScreenClear();
+			printoob(title, 125, 115, FONT_COLOR);
+			printoob("   Yes", 130, 140, FONT_COLOR);
+			printoob("-> No", 265+strlen(title), 140, FONT_SELECT_COLOR);
+		}
+
+		if(pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE) && !userChoice) {
+			updateList(CLEAR);
+			paintList(CLEAR);
+			break;
+		}
+
+
+	}
+}
+
 // Start Application
 void start(void)
 {
@@ -561,7 +685,12 @@ void start(void)
     
     // Not a valid file
     if(file == NULL || file->isFolder) return;
-    
+
+	if(strcasecmp(file->name, ".prx")>=0) {
+		pluginInstall(file);
+		return;
+	}
+
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
     
@@ -702,6 +831,7 @@ int navigate(void)
         // Terminate Working Directory
         slash[0] = 0;
     }
+
     
     // Normal Folder
     else
