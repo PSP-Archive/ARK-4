@@ -99,16 +99,11 @@ static void systemController(Controller* pad){
         }
         if (pEntryIndex == (MAX_ENTRIES-1))
             return;
-        else if (pEntryIndex-page_start >= n_items-1){
-            if (pEntryIndex+1 < MAX_ENTRIES)
-                pEntryIndex++;
-            if (page_start+n_items < MAX_ENTRIES){
-                page_start++;
-                menu_draw_state = -1;
-            }
+        pEntryIndex++;
+        if (pEntryIndex-page_start >= n_items-1){
+            page_start++;
+            menu_draw_state = -1;
         }
-        else if (pEntryIndex+1 < MAX_ENTRIES)
-            pEntryIndex++;
         common::playMenuSound();
     }
 }

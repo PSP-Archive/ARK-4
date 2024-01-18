@@ -341,3 +341,25 @@ void sctrlHENSetRebootexConfig(RebootConfigARK* config){
 u32 sctrlHENFakeDevkitVersion(){
     return FW_660;
 }
+
+int sctrlHENIsToolKit()
+{
+    int ret = 0; // Retail
+	int k1 = pspSdkSetK1(0);
+    int level = sctrlKernelSetUserLevel(8);
+    
+    SceIoStat stat; int res = sceIoGetstat("flash0:/kd/vshbridge_tool.prx", &stat);
+    if (res >= 0){
+        res = sceIoGetstat("flash3:/kbooti_01g.bin", &stat);
+        if (res >=0){
+            ret = 2; // DevelopmentTool
+        }
+        else {
+            ret = 1; // TestingTool
+        }
+    }
+
+    sctrlKernelSetUserLevel(level);
+    pspSdkSetK1(k1);
+    return ret;
+}
