@@ -87,7 +87,7 @@ bool Entry::run(){
     
     animAppear();
     blitAlphaImageToScreen(0, 0, 480, 272, this->pic1, 0, 0);
-    blitAlphaImageToScreen(0, 0, this->icon0->imageWidth, this->icon0->imageHeight, this->icon0, 10, 98);
+    blitAlphaImageToScreen(0, 0, this->icon0->imageWidth, this->icon0->imageHeight, this->icon0, 20, 92);
     if (this->pic0 != NULL)
         blitAlphaImageToScreen(0, 0, this->pic0->imageWidth, this->pic0->imageHeight, this->pic0, 160, 85);
     

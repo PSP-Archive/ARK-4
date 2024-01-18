@@ -56,7 +56,7 @@ int T_Video(SceSize _args, void *_argp)
         while (!D->Video->m_iAbort){
             common::clearScreen(CLEAR_COLOR);
             entry->drawBG();
-            entry->getIcon()->draw(10, 98);
+            entry->getIcon()->draw(20, 92);
             common::flipScreen();
         }
         sceKernelExitThread(0);

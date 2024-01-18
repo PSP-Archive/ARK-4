@@ -229,7 +229,7 @@ void Entry::animAppear(){
         }
         Image* pic0 = this->getPic0();
         if (pic0 != NULL) pic0->draw(i+160, 85);
-        this->getIcon()->draw(i+10, 98);
+        this->getIcon()->draw(i+20, 92);
         common::flipScreen();
     }
 }
@@ -248,7 +248,7 @@ void Entry::animDisappear(){
         }
         Image* pic0 = this->getPic0();
         if (pic0 != NULL) pic0->draw(i+160, 85);
-        this->getIcon()->draw(i+10, 98);
+        this->getIcon()->draw(i+20, 92);
         common::flipScreen();
     }
 }
@@ -283,7 +283,7 @@ bool Entry::pmfPrompt(){
     while (loading_data){
         common::clearScreen(CLEAR_COLOR);
         entry->drawBG();
-        entry->getIcon()->draw(10, 98);
+        entry->getIcon()->draw(20, 92);
         img->draw_rotate((480-img->getWidth())/2, (272-img->getHeight())/2, angle);
         angle+=0.2;
         common::flipScreen();
@@ -292,7 +292,7 @@ bool Entry::pmfPrompt(){
     bool pmfPlayback = entry->getIcon1() != NULL || entry->getSnd() != NULL;
         
     if (pmfPlayback && !MusicPlayer::isPlaying()){
-        ret = mpegStart(entry, 10, 98);
+        ret = mpegStart(entry, 20, 92);
     }
     else{
         Controller control;
@@ -300,7 +300,7 @@ bool Entry::pmfPrompt(){
         while (true){
             common::clearScreen(CLEAR_COLOR);
             entry->drawBG();
-            entry->getIcon()->draw(10, 98);
+            entry->getIcon()->draw(20, 92);
             common::flipScreen();
             control.update(1);
             if (control.accept()){
