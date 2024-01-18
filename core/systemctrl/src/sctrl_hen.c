@@ -350,8 +350,10 @@ int sctrlHENIsToolKit()
     
     SceIoStat stat; int res = sceIoGetstat("flash0:/kd/vshbridge_tool.prx", &stat);
     if (res >= 0){
-        res = sceIoGetstat("flash3:/kbooti_01g.bin", &stat);
-        if (res >=0){
+        int baryon_ver = 0;
+        int (*getBaryonVer)(void*) = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x7EC5A957);
+        if (getBaryonVer) getBaryonVer(&baryon_ver);
+        if (baryon_ver == 0x00020601){
             ret = 2; // DevelopmentTool
         }
         else {
