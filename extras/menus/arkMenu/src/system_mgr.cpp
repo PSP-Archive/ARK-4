@@ -82,24 +82,27 @@ static void systemController(Controller* pad){
     else if (pad->left()){
         if (pEntryIndex == 0)
             return;
-        else if (pEntryIndex == page_start){
-            pEntryIndex--;
-            if (page_start>0){
-                page_start--;
-                menu_draw_state = 1;
-            }
+        pEntryIndex--;
+        if (pEntryIndex == page_start && page_start>0){
+            page_start--;
+            menu_draw_state = 1;
         }
-        else
-            pEntryIndex--;
         common::playMenuSound();
     }
     else if (pad->right()){
+        int n_items = 3;
+        if(common::getConf()->menusize == 0 || common::getConf()->menusize == 1) {
+            n_items = 5;
+        }
+        else if(common::getConf()->menusize == 2) {
+            n_items = 4;
+        }
         if (pEntryIndex == (MAX_ENTRIES-1))
             return;
-        else if (pEntryIndex-page_start == 2){
+        else if (pEntryIndex-page_start >= n_items-1){
             if (pEntryIndex+1 < MAX_ENTRIES)
                 pEntryIndex++;
-            if (page_start+3 < MAX_ENTRIES && (common::getConf()->menusize == 0 || common::getConf()->menusize == 2 || common::getConf()->menusize == 3)){
+            if (page_start+n_items < MAX_ENTRIES){
                 page_start++;
                 menu_draw_state = -1;
             }
