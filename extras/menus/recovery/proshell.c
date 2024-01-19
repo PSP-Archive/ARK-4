@@ -32,12 +32,6 @@ enum {
 #define ISO_RUNLEVEL_GO 0x125
 #define POPS_RUNLEVEL_GO 0x155
 
-// Current Runlevel
-// 0x144 = Pops 
-// 0x141 = Homebrew
-// 0x123 = ISO / CSO / PSN
-int mode = MODE_HOMEBREW;
-
 // Copy Move Origin
 static char copysource[1024];
 
@@ -72,6 +66,13 @@ int copymode = NOTHING_TO_COPY;
 #define PRESSED(b, a, m) (((b & m) == 0) && ((a & m) == m))
 #define NELEMS(x) (sizeof(x)/sizeof(x[0]))
 
+#define EBOOT_MAGIC 0x50425000
+#define ELF_MAGIC 0x464C457F
+
+#define PS1_CAT 0x454D
+#define PSN_CAT 0x4745
+#define HMB_CAT 0x474D
+
 // File Information Structure
 typedef struct File
 {
@@ -84,6 +85,43 @@ typedef struct File
     // File Name
     char name[256];
 } File;
+
+typedef struct  __attribute__((packed)) {
+	u32 signature;
+	u32 version;
+	u32 fields_table_offs;
+	u32 values_table_offs;
+	int nitems;
+} SFOHeader;
+
+typedef struct __attribute__((packed)) {
+	u16 field_offs;
+	u8  unk;
+	u8  type; // 0x2 -> string, 0x4 -> number
+	u32 unk2;
+	u32 unk3;
+	u16 val_offs;
+	u16 unk4;
+} SFODir;
+
+typedef struct SfoInfo {
+    char title[128];
+    char gameid[10];
+}SfoInfo;
+
+typedef struct
+{
+    u32 magic;
+    u32 version;
+    u32 param_offset;
+    u32 icon0_offset;
+    u32 icon1_offset;
+    u32 pic0_offset;
+    u32 pic1_offset;
+    u32 snd0_offset;
+    u32 elf_offset;
+    u32 psar_offset;
+} PBPHeader;
 
 // Prototypes
 void printoob(char * text, int x, int y, unsigned int color);
@@ -199,22 +237,6 @@ int proshell_main()
                 
                 // Paint List
                 paintList(KEEP);
-            }
-            
-            // Runlevel Change
-            else if(PRESSED(lastbuttons, data.Buttons, PSP_CTRL_LEFT))
-            {
-                if(--mode < 0) mode = MODE_MAX - 1;
-                
-                // Paint List
-                paintList(CLEAR);
-            }
-            else if(PRESSED(lastbuttons, data.Buttons, PSP_CTRL_RIGHT))
-            {
-                if(++mode >= MODE_MAX) mode = 0;
-                
-                // Paint List
-                paintList(CLEAR);
             }
             
             // Navigate to Folder
@@ -404,21 +426,6 @@ void updateList(int clearindex)
     else position = 0;
 }
 
-char *getModeStr(int mode)
-{
-    switch(mode)
-    {
-        case MODE_HOMEBREW:
-            return "Application";
-        case MODE_ISO:
-            return "Game Image";
-        case MODE_POPS:
-            return "Pops";
-    }
-
-    return NULL;
-}
-
 // Paint Picker List
 void paintList(int withclear)
 {
@@ -427,10 +434,6 @@ void paintList(int withclear)
     
     // Paint Current Path
     printoob(cwd, 10, 10, FONT_COLOR);
-    
-    // Paint Current Runlevel
-    char * strrunlevel = getModeStr(mode);
-    printoob(strrunlevel, RIGHT_X(strrunlevel) - 10, 10, FONT_COLOR);
     
     // Paint Serial Number
     char serialnumber[64];
@@ -540,6 +543,87 @@ int isGameISO(const char * path)
     }
 
     return 0;
+}
+
+// Game ISO File Check
+int isEboot(const char * path)
+{
+    const char *ext;
+
+    ext = path + strlen(path) - 4;
+
+    if (ext > path)
+    {
+        //check extension
+        if (stricmp(ext, ".pbp") == 0)
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size){
+    SFOHeader *header = (SFOHeader *)sfo_buffer;
+	SFODir *entries = (SFODir *)(sfo_buffer + sizeof(SFOHeader));
+    int res = 0;
+	int i;
+	for (i = 0; i < header->nitems; i++) {
+		if (strcmp((char*)sfo_buffer + header->fields_table_offs + entries[i].field_offs, param_name) == 0) {
+			memcpy(var, sfo_buffer + header->values_table_offs + entries[i].val_offs, *var_size);
+            res = 1;
+			break;
+		}
+	}
+    return res;
+}
+
+int getEbootRunlevel(const char* path){
+    PBPHeader header;
+
+    int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+    if (fd < 0) return -1;
+
+    sceIoRead(fd, &header, sizeof(header));
+
+    if (header.magic == ELF_MAGIC){ // 1.50 homebrew
+        sceIoClose(fd);
+        return MODE_HOMEBREW;
+    }
+    else if (header.magic != EBOOT_MAGIC){
+        sceIoClose(fd);
+        return -1;
+    }
+    
+    int mode = -1;
+    
+    u32 size = header.icon0_offset - header.param_offset;
+    
+    if (size == 0){
+        sceIoClose(fd);
+        return -1;
+    }
+
+    void* buf = malloc(size);
+    sceIoLseek32(fd, header.param_offset, SEEK_SET);
+    sceIoRead(fd, buf, size);
+    sceIoClose(fd);
+
+    u16 categoryType = 0;
+    int value_size = sizeof(categoryType);
+    int success = getSfoParam(buf, size, "CATEGORY", (unsigned char*)(&categoryType), &value_size);
+
+    if (!success) return -1;
+
+    switch(categoryType){
+        case HMB_CAT:      mode = MODE_HOMEBREW;    break;
+        case PSN_CAT:      mode = MODE_ISO;         break;
+        case PS1_CAT:      mode = MODE_POPS;        break;
+        default:                                    break;
+    }
+
+    return mode;
 }
 
 int getRunlevelMode(int mode)
@@ -656,7 +740,7 @@ void start(void)
     // Not a valid file
     if(file == NULL || file->isFolder) return;
 
-	if(strcasecmp(file->name, ".prx")>=0) {
+	if(strcasecmp(file->name, ".prx")==0) {
 		pluginInstall(file);
 		return;
 	}
@@ -676,13 +760,20 @@ void start(void)
     // Create Boot Path
     strcpy(bootpath, cwd);
     strcpy(bootpath + strlen(bootpath), file->name);
-    sctrlSESetBootConfFileIndex(MODE_INFERNO);
     
+    int mode;
+
     // ISO File Check
     if(isGameISO(bootpath))
     {
         // Correct Runlevel Setting
         mode = MODE_ISO;
+    }
+    else if (isEboot(bootpath)){
+        mode = getEbootRunlevel(bootpath);
+    }
+    else {
+        return;
     }
     
     // Homebrew Runlevel
@@ -706,7 +797,7 @@ void start(void)
     else if(mode == MODE_ISO)
     {
         // EBOOT Path
-        char * ebootpath = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+        static char * ebootpath = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
         
         // Prepare ISO Reboot
         param.args = strlen(ebootpath) + 1;
@@ -714,18 +805,18 @@ void start(void)
         param.key = "umdemu";
         
         // PSN EBOOT Support
-        if(strlen(bootpath) >= strlen(START_PATH "EBOOT.PBP") && strcmp(bootpath + strlen(bootpath) - strlen("EBOOT.PBP"), "EBOOT.PBP") == 0)
+        if(isEboot(bootpath))
         {
-            // Switch to Galaxy
+            // Switch to NP9660
             sctrlSESetBootConfFileIndex(MODE_NP9660);
-            // Disable Galaxy ISO Emulator Patch
             sctrlSESetUmdFile("");
         }
         
         // Normal ISO
         else
         {
-            // Enable Galaxy ISO Emulator Patch
+            // Switch to Inferno
+            sctrlSESetBootConfFileIndex(MODE_INFERNO);
             sctrlSESetUmdFile(bootpath);
         }
     }

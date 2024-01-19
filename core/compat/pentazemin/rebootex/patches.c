@@ -64,7 +64,6 @@ int _pspemuLfatOpen(BootFile* file, u32 a1, u32 a2, u32 a3, u32 t0)
     if (strcmp(p, "pspbtcnf.bin") == 0){
         int ret = -1;
         switch(reboot_conf->iso_mode) {
-            case MODE_NP9660:
             case MODE_MARCH33:
             case MODE_INFERNO:
                 reboot_conf->iso_mode = MODE_INFERNO;
