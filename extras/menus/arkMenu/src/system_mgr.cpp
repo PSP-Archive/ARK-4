@@ -91,11 +91,11 @@ static void systemController(Controller* pad){
     }
     else if (pad->right()){
         int n_items = 3;
-        if(common::getConf()->menusize == 0 || common::getConf()->menusize == 1) {
-            n_items = 5;
+        if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
+            n_items = 3;
         }
         else if(common::getConf()->menusize == 2) {
-            n_items = 4;
+            n_items = 5;
         }
         if (pEntryIndex == (MAX_ENTRIES-1))
             return;
