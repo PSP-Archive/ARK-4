@@ -90,11 +90,8 @@ static void systemController(Controller* pad){
         common::playMenuSound();
     }
     else if (pad->right()){
-        int n_items = 3;
-        if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
-            n_items = 3;
-        }
-        else if(common::getConf()->menusize == 2) {
+        int n_items = 4;
+        if(common::getConf()->menusize == 2 || common::getConf()->menusize == 1) {
             n_items = 5;
         }
         if (pEntryIndex == (MAX_ENTRIES-1))
@@ -115,7 +112,7 @@ static void drawOptionsMenuCommon(){
 		loop_setup = min(page_start+4, MAX_ENTRIES);
 	}
 	else if(common::getConf()->menusize == 2) {
-    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 100); // LARGE
+    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 100); // MEDIUM
 		loop_setup = min(page_start+4, MAX_ENTRIES);
 	}
 	else {
@@ -154,16 +151,23 @@ static void drawOptionsMenuCommon(){
 			if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
                 int tmp_x = x+25;
                 scroll.w = 475-tmp_x;
+				if(strcasecmp(entname, "CFW Settings")==0) tmp_x-=25;
+				if(strcasecmp(entname, "Exit")==0) tmp_x+=10;
             	common::printText(tmp_x, 130, entname, LITEGRAY, SIZE_BIG, 1, &scroll); // LARGE
 			}
 			else if(common::getConf()->menusize == 2) {
                 int tmp_x = x+16;
                 scroll.w = 475-tmp_x;
+				if(strcasecmp(entname, "CFW Settings")==0) tmp_x-=20;
+				if(strcasecmp(entname, "Exit")==0) tmp_x+15;
             	common::printText(tmp_x, 95, entname, LITEGRAY, SIZE_MEDIUM, 1, &scroll); // MEDIUM
 			}
 			else {
                 int tmp_x = x+12;
                 scroll.w = 475-tmp_x;
+				if(strcasecmp(entname, "CFW Settings")==0) tmp_x-=20;
+				if(strcasecmp(entname, "Settings")==0) tmp_x-=5;
+				if(strcasecmp(entname, "Exit")==0) tmp_x+8;
 				common::printText(tmp_x, 75, entname, LITEGRAY, SIZE_LITTLE, 1, &scroll); // SMALL
 			}
         }
