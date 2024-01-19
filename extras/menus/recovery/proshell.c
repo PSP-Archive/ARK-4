@@ -441,7 +441,6 @@ void paintList(int withclear)
     
     // Paint Controls
     printoob("[ UP & DOWN ]    File Selection", 10, 252, FONT_COLOR);
-    printoob("[ LEFT & RIGHT ] Runlevel Selection", 10, 262, FONT_COLOR);
     printoob("[ START ]  Run File", 330, 252, FONT_COLOR);
     printoob("[ SELECT ] Delete", 330, 262, FONT_COLOR);
     printoob("SQUARE    Copy", 345, 120, FONT_COLOR);
