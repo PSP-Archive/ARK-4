@@ -65,6 +65,7 @@ typedef struct _vsh_Menu{
 	u32 psp_model;
 	
 	int battery;
+	int codecs;
 }vsh_Menu;
 
 

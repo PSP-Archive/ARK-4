@@ -325,6 +325,10 @@ int submenu_setup(void) {
 		vsh->config.ark_menu.avm_hidden[SUBMENU_DELETE_HIBERNATION] = 1;
 	}
 
+	if (vsh->codecs){
+		vsh->config.ark_menu.avm_hidden[SUBMENU_ACTIVATE_FLASH_WMA] = 1;
+	}
+
 	if (vsh->config.ark_menu.avm_hidden[submenu_sel]){
 		for (i = 0; i < SUBMENU_MAX; i++){
 			if (!vsh->config.ark_menu.avm_hidden[i]){

@@ -42,16 +42,25 @@ void delete_hibernation(vsh_Menu *vsh) {
 	}
 }
 
-int activate_codecs(vsh_Menu *vsh) {
+int codecs_activated() {
 	u32 flash_activated = 0;
 	u32 flash_play = 0;
 	u32 wma_play = 0;
 
 	vctrlGetRegistryValue("/CONFIG/BROWSER", "flash_activated", &flash_activated);
-	vctrlGetRegistryValue("/CONFIG/BROWSER", "flash_activated", &flash_play);
+	vctrlGetRegistryValue("/CONFIG/BROWSER", "flash_play", &flash_play);
 	vctrlGetRegistryValue("/CONFIG/MUSIC", "wma_play", &wma_play);
 
 	if (!flash_activated || !flash_play || !wma_play){
+		return 0;
+	}
+	
+	return 1;
+}
+
+int activate_codecs(vsh_Menu *vsh) {
+
+	if (!codecs_activated()){
 		vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_activated", 1);
 		vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_play", 1);
 		vctrlSetRegistryValue("/CONFIG/MUSIC", "wma_play", 1);

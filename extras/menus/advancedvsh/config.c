@@ -52,6 +52,8 @@ void config_load(vsh_Menu *vsh) {
 		vsh->config.se.usbdevice_rdonly = 2;
 	}
 	
+	vsh->codecs = codecs_activated();
+
 	color_check_random(vsh);
 }
 
