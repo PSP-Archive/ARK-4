@@ -72,6 +72,11 @@ as well as unique and exclusive new features not found anywhere else.
 - `OTA` updates. Fully updateable via the internet.
 
 
+![CFW Settings](.github/screenshots/cfw_settings.png "CFW Settings")
+![Advanced VSH Menu](.github/screenshots/advanced_vsh.png "CFW Settings")
+![Infinity](.github/screenshots/infinity.png "CFW Settings")
+
+
 #### Compiling ARK ( For Developers )
 <p>
 
