@@ -223,15 +223,6 @@ static unsigned char information_board_item[] __attribute__((aligned(16))) = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
 
-static unsigned char netconf_item[] __attribute__((aligned(16))) = {
-	0x0d, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00, 0x00, 0x43, 
-	0x44, 0x00, 0x00, 0x43, 0x52, 0x00, 0x00, 0x44, 0x46, 0x00, 0x00, 0x6d, 0x73, 0x67, 0x74, 0x6f, 
-	0x70, 0x5f, 0x73, 0x79, 0x73, 0x63, 0x6f, 0x6e, 0x66, 0x5f, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 
-	0x6b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-};
-
-
 void ClearCaches()
 {
     sceKernelDcacheWritebackAll();
@@ -424,14 +415,14 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
 
-    /*
+    #if 0
     sceIoMkdir("ms0:/vshitems", 0777);
     static char path[256];
     sprintf(path, "ms0:/vshitems/%s", item->text);
     int fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_TRUNC|PSP_O_CREAT, 0777);
     sceIoWrite(fd, item, sizeof(SceVshItem));
     sceIoClose(fd);
-    */
+    #endif
 
     static int items_added = 0;
 
@@ -439,13 +430,6 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         sysconf_action = item->action;
         LoadTextLanguage(-1);
     }
-
-    /*
-    if (sce_paf_private_strcmp(item->text, "msgtop_sysconf_network") == 0){
-        // fix network config icon
-        sce_paf_private_memcpy(item, netconf_item, sizeof(SceVshItem));
-    }
-    */
 
     if ( !items_added && // prevent adding more than once
         // Game Items
@@ -462,16 +446,24 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         items_added = 1;
         startup = 0;
 
+        int cur_icon = 0;
+
+        if (psp_model == PSP_11000){
+            u32 value = 0;
+            vctrlGetRegistryValue("/CONFIG/SYSTEM/XMB/THEME", "custom_theme_mode", &value);
+            cur_icon = !value;
+        }
+
         // Add CFW Settings
-        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, signup_item);
+        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, (cur_icon)?item:signup_item);
         AddVshItem(a0, topitem, new_item);
 
         // Add Plugins Manager
-        new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, ps_store_item);
+        new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, (cur_icon)?item:ps_store_item);
         AddVshItem(a0, topitem, new_item2);
 
         // Add Custom Launcher
-        new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, information_board_item);
+        new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, (cur_icon)?item:information_board_item);
         AddVshItem(a0, topitem, new_item3);
 		if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
 		
@@ -738,6 +730,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
 {
     if(name)
     {
+
         if(is_cfw_config == 1)
         {
             int configs[] =
@@ -787,7 +780,18 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         }
     }
 
-    return vshGetRegistryValue(option, name, arg2, size, value);
+    int res = vshGetRegistryValue(option, name, arg2, size, value);
+
+    #if 1
+    char tmp[512];
+    snprintf(tmp, 512, "%s, %p, %p, %d, %d\n", name, option, arg2, size, *value);
+    int fd = sceIoOpen("ms0:/regvals.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+    sceIoWrite(fd, tmp, strlen(tmp));
+    sceIoWrite(fd, "\n", 1);
+    sceIoClose(fd);
+    #endif
+
+    return res;
 }
 
 int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)

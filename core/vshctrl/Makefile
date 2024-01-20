@@ -1,5 +1,5 @@
 TARGET = vshctrl
-OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o usbdevice.o custom_update.o hibernation_delete.o $(ARKROOT)/libs/ansi-c/strsafe.o
+OBJS = main.o vshpatch.o xmbiso.o isoreader.o virtual_pbp.o dirent_track.o disctype.o vshmenu.o usbdevice.o custom_update.o hibernation_delete.o registry.o $(ARKROOT)/libs/ansi-c/strsafe.o
 IMPORTS = imports.o
 
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/core/systemctrl/include
@@ -20,7 +20,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs/
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsystemctrl_kernel -lpspusb -lpspusbdevice_driver -lcolordebugger
+LIBS = -lpspsystemctrl_kernel -lpspusb -lpspusbdevice_driver -lpspreg
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak

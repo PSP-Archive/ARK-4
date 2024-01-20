@@ -35,80 +35,6 @@
 #include "vpl.h"
 #include "scepaf.h"
 
-int get_registry_value(const char *dir, const char *name, u32 *val)
-{
-	int ret = 0;
-	struct RegParam reg;
-	REGHANDLE h;
-
-	scePaf_memset(&reg, 0, sizeof(reg));
-	reg.regtype = 1;
-	reg.namelen = scePaf_strlen("/system");
-	reg.unk2 = 1;
-	reg.unk3 = 1;
-	scePaf_strcpy(reg.name, "/system");
-	if(sceRegOpenRegistry(&reg, 2, &h) == 0)
-	{
-		REGHANDLE hd;
-		if(!sceRegOpenCategory(h, dir, 2, &hd))
-		{
-			REGHANDLE hk;
-			unsigned int type, size;
-
-			if(!sceRegGetKeyInfo(hd, name, &hk, &type, &size))
-			{
-				if(!sceRegGetKeyValue(hd, hk, val, 4))
-				{
-					ret = 1;
-					sceRegFlushCategory(hd);
-				}
-			}
-			sceRegCloseCategory(hd);
-		}
-		sceRegFlushRegistry(h);
-		sceRegCloseRegistry(h);
-	}
-	return ret;
-}
-
-int set_registry_value(const char *dir, const char *name, u32 val)
-{
-	int ret = 0;
-	struct RegParam reg;
-	REGHANDLE h;
-
-	scePaf_memset(&reg, 0, sizeof(reg));
-	reg.regtype = 1;
-	reg.namelen = scePaf_strlen("/system");
-	reg.unk2 = 1;
-	reg.unk3 = 1;
-	scePaf_strcpy(reg.name, "/system");
-	if(sceRegOpenRegistry(&reg, 2, &h) == 0)
-	{
-		REGHANDLE hd;
-		if(!sceRegOpenCategory(h, dir, 2, &hd))
-		{
-			if(!sceRegSetKeyValue(hd, name, &val, 4))
-			{
-				ret = 1;
-				sceRegFlushCategory(hd);
-			}
-			else
-			{
-				sceRegCreateKey(hd, name, REG_TYPE_INT, 4);
-				sceRegSetKeyValue(hd, name, &val, 4);
-				ret = 1;
-				sceRegFlushCategory(hd);
-			}
-			sceRegCloseCategory(hd);
-		}
-		sceRegFlushRegistry(h);
-		sceRegCloseRegistry(h);
-	}
-
-	return ret;
-}
-
 void delete_hibernation(vsh_Menu *vsh) {
 	if (vsh->psp_model == PSP_GO) {
 		vshCtrlDeleteHibernation();
@@ -121,14 +47,14 @@ int activate_codecs(vsh_Menu *vsh) {
 	u32 flash_play = 0;
 	u32 wma_play = 0;
 
-	get_registry_value("/CONFIG/BROWSER", "flash_activated", &flash_activated);
-	get_registry_value("/CONFIG/BROWSER", "flash_activated", &flash_play);
-	get_registry_value("/CONFIG/MUSIC", "wma_play", &wma_play);
+	vctrlGetRegistryValue("/CONFIG/BROWSER", "flash_activated", &flash_activated);
+	vctrlGetRegistryValue("/CONFIG/BROWSER", "flash_activated", &flash_play);
+	vctrlGetRegistryValue("/CONFIG/MUSIC", "wma_play", &wma_play);
 
 	if (!flash_activated || !flash_play || !wma_play){
-		set_registry_value("/CONFIG/BROWSER", "flash_activated", 1);
-		set_registry_value("/CONFIG/BROWSER", "flash_play", 1);
-		set_registry_value("/CONFIG/MUSIC", "wma_play", 1);
+		vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_activated", 1);
+		vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_play", 1);
+		vctrlSetRegistryValue("/CONFIG/MUSIC", "wma_play", 1);
 		vsh->status.reset_vsh = 1;
 	}
 	
@@ -137,9 +63,9 @@ int activate_codecs(vsh_Menu *vsh) {
 
 int swap_buttons(vsh_Menu *vsh) {
 	u32 value;
-	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &value);
+	vctrlGetRegistryValue("/CONFIG/SYSTEM/XMB", "button_assign", &value);
 	value = !value;
-	set_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", value);
+	vctrlSetRegistryValue("/CONFIG/SYSTEM/XMB", "button_assign", value);
 	
 	vsh->status.reset_vsh = 1;
 	return 0;

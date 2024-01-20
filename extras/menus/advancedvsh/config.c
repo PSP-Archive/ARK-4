@@ -38,7 +38,7 @@ void config_load(vsh_Menu *vsh) {
 		sceIoClose(fp);
 	}
 
-	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &vsh->status.swap_xo);
+	vctrlGetRegistryValue("/CONFIG/SYSTEM/XMB", "button_assign", &vsh->status.swap_xo);
 	is_pandora = battery_check();
 
 	if (IS_VITA_ADR(vsh->config.p_ark) || is_pandora < 0){
