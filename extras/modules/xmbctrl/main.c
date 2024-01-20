@@ -782,7 +782,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
 
     int res = vshGetRegistryValue(option, name, arg2, size, value);
 
-    #if 1
+    #if 0
     char tmp[512];
     snprintf(tmp, 512, "%s, %p, %p, %d, %d\n", name, option, arg2, size, *value);
     int fd = sceIoOpen("ms0:/regvals.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);

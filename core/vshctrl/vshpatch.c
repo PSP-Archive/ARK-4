@@ -460,6 +460,17 @@ static void patch_vsh_module(SceModule2 * mod)
     if(psp_model == PSP_GO && has_umd_iso) {
         patch_vsh_module_for_pspgo_umdvideo(mod);
     }
+
+    #if 0
+    _sb(0, mod->text_addr+0x1FF84); // enable xmb editing
+    _sb(7, mod->text_addr+0x54DC9); // unlock psn sign up item
+    _sb(7, mod->text_addr+0x54DD9); // unlock psn store item
+    _sb(7, mod->text_addr+0x54DE9); // unlock psn board item
+    _sb(7, mod->text_addr+0x54F65); // unlock psn sign up icon
+    _sb(7, mod->text_addr+0x54F79); // unlock psn store icon
+    _sb(7, mod->text_addr+0x54FC9); // unlock psn board icon
+    #endif
+
 }
 
 static void hook_iso_file_io(void)
