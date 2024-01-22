@@ -1,7 +1,8 @@
 # ARK Changelog
 
-## Version 4.20.67 (2023-18-01)
+## Version 4.20.67 (2023-01-18)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42067
+- Rev 3: fixed extra XMB icons not showing up on PSP Street models. Fixed Russian translation. Added new Turquoise theme for custom launcher.
 - Rev 2: cleanup of `PRO Shell`. Fix for `PSN` games on older launchers. Proper alignment of icon in `Custom Launcher`.
 - Rev 1: improved API call for detection of toolkits (can now distinguish TestKit from DevKit). Improved launcher menu navigation.
 - Merged `Recovery Menu` into `Custom Launcher`, leaving `Classic Recovery` as the default recovery menu.
