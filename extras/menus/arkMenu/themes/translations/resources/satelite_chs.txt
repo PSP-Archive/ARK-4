@@ -1,0 +1,88 @@
+Default
+Japan
+America
+Europe
+Korea
+United Kingdom
+Latin America
+Australia
+Hong Kong
+Taiwan
+Russia
+China
+Debug I
+Debug II
+Disabled
+Enabled
+Normal
+Toggle
+X -> O
+O -> X
+USB DEVICE
+USB READONLY
+ISO VIDEO MOUNT
+FG COLORS
+BG COLORS
+FONT
+MENU DESIGN
+MAIN MENU
+CONVERT BATTERY
+SWAP X/O BTNS
+VSH REGION
+UMD REGION
+IMPORT CLASSIC PLUGINS
+ACTIVATE FLASH AND WMA
+DELETE HIBERNATION
+BOOT RANDOM ISO
+GO BACK
+NO HIBERNATION SUPPORT
+Normal -> Pandora
+Pandora -> Normal
+VSH MENU
+ADVANCED VSH MENU
+RECOVERY MENU ->
+SHUTDOWN DEVICE
+SUSPEND DEVICE
+RESET DEVICE
+RESET VSH
+EXIT
+Unsupported
+Adrenaline USB
+Flash
+UMD Disc
+Internal Storage
+Memory Stick
+None
+Classic
+Simple
+Advanced
+New
+Random
+Red
+Light Red
+Orange
+Light Orange
+Yellow
+Light Yellow
+Green
+Light Green
+Blue
+Light Blue
+Indigo
+Light Indigo
+Violet
+Light Violet
+Pink
+Light Pink
+Purple
+Light Purple
+Teal
+Light Teal
+Aqua
+Light Aqua
+Grey
+Light Grey
+Black
+Light Black
+White
+Light White
