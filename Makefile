@@ -94,6 +94,7 @@ copy-bin:
 	$(Q)cp extras/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
 	$(Q)cp extras/modules/peops/peops.prx dist/ARK_01234/PS1SPU.PRX
 	$(Q)cp contrib/UPDATER.TXT dist/ARK_01234/
+	$(Q)cp contrib/SETTINGS.TXT dist/ARK_01234/
 	$(Q)cp contrib/PSP/mediasync.prx dist/ARK_01234/MEDIASYN.PRX
 	$(Q)cp contrib/PSP/popsman.prx dist/ARK_01234/POPSMAN.PRX
 	$(Q)cp contrib/PSP/pops_01g.prx dist/ARK_01234/POPS.PRX
