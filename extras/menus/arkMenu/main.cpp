@@ -52,7 +52,12 @@ int main(int argc, char** argv){
 
     // check to run last game
     Controller pad;
+    int recovery = common::getArkConfig()->recovery;
+
     pad.update(1);
+    if (pad.RT()){
+        recovery = 1;
+    }
     if (pad.LT()){
         common::stopLoadingThread();
         const char* last_game = common::getConf()->last_game;
@@ -65,8 +70,6 @@ int main(int argc, char** argv){
             iso->execute();
         }
     }
-
-    int recovery = common::getArkConfig()->recovery;
 
     int n_entries = (recovery)?0:2;
 
@@ -109,6 +112,7 @@ int main(int argc, char** argv){
         if (common::getPspModel() != PSP_GO) max_settings -= 2;
         SettingsTable stab = { settings_entries, max_settings };
         entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
+        entries[n_entries++] = Browser::getInstance();
     }
 
     // exit

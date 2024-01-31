@@ -38,15 +38,18 @@ void free(void* ptr){
     my_free(ptr);
 }
 
-static int launchRecoveryApp(){
-	struct SceKernelLoadExecVSHParam param;
-	const char *p = "ms0:/PSP/GAME/RECOVERY/EBOOT.PBP";
-
+static char* findRecoveryApp(){
+    const char *p = "ms0:/PSP/GAME/RECOVERY/EBOOT.PBP";
     SceIoStat stat;
     if (sceIoGetstat(p, &stat) < 0){
         p = "ef0:/PSP/GAME/RECOVERY/EBOOT.PBP";
-        if (sceIoGetstat(p, &stat) < 0) return;
+        if (sceIoGetstat(p, &stat) < 0) return NULL;
     }
+    return p;
+}
+
+static int launchRecoveryApp(char* p){
+	struct SceKernelLoadExecVSHParam param;
 
 	int apitype = 0x141;
 
@@ -120,11 +123,18 @@ static int selected_choice(u32 choice) {
 		proshell_main();
         return 1;
     case 5:
-		pspDebugScreenSetXY(20, 30);
-		printf("Booting RECOVERY/EBOOT.PBP");
-        sceKernelDelayThread(2000000);
-        launchRecoveryApp();
-        return 0;
+        {
+            char* p = findRecoveryApp();
+            pspDebugScreenSetXY(20, 30);
+            if (p) printf("Booting %s", p);
+            else printf("Not found :(");
+            sceKernelDelayThread(2000000);
+            if (p){
+                launchRecoveryApp(p);
+                return 0;
+            }
+            return 1;
+        }
     }
 
 }
@@ -135,26 +145,27 @@ static void draw(char** options, int size, int dir){
     printf("********************************************************************");
 
     pspDebugScreenSetXY(0, 2);
-    printf("* ARK-4 Recovery Menu                                              *");
+    printf("* ARK-4 Recovery Menu *                                            *");
     pspDebugScreenSetXY(0, 3);
+    printf("***********************                                            *");
+    pspDebugScreenSetXY(0, 4);
     printf("*                                                                  *");
 
     for (int i=0; i<=size; i++){
-        pspDebugScreenSetXY(0, 4 + 2*i);
-        char tmp[70];
-        strcpy(tmp, "* ");
-        if (dir == i){
-            strcat(tmp, "> ");
+        pspDebugScreenSetTextColor(0xFFD800);
+        pspDebugScreenSetXY(0, 5 + 2*i);
+        printf("* ");
+        if (dir != i){
+            pspDebugScreenSetTextColor(0xFFFFFF);
         }
-        strcat(tmp, options[i]);
-        int len = strlen(tmp);
+        printf(options[i]);
+        pspDebugScreenSetTextColor(0xFFD800);
+        int len = strlen(options[i])+2;
         int padding = 67 - len;
-        for (int j=0; j<padding; j++) tmp[len+j] = ' ';
-        tmp[len+padding] = '*';
-        tmp[len+padding+1] = 0;
-        printf(tmp);
+        for (int j=0; j<padding; j++) printf(" ");
+        printf("*");
 
-        pspDebugScreenSetXY(0, 5 + 2*i);            
+        pspDebugScreenSetXY(0, 6 + 2*i);            
         printf("*                                                                  *");
     }
 

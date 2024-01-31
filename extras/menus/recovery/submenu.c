@@ -223,33 +223,45 @@ static void draw_submenu(char* header, char** options, char** states, int size, 
     pspDebugScreenPrintf("********************************************************************");
 
     pspDebugScreenSetXY(0, 2);
+    pspDebugScreenPrintf("* ");
     pspDebugScreenPrintf(header);
+    pspDebugScreenPrintf(" *");
+    pspDebugScreenSetXY(66, 2);
+    pspDebugScreenPrintf(" *");
     pspDebugScreenSetXY(0, 3);
+    for (int i=0; i<strlen(header)+4; i++) pspDebugScreenPrintf("*");
+    pspDebugScreenSetXY(66, 3);
+    pspDebugScreenPrintf(" *");
+    pspDebugScreenSetXY(0, 4);
     pspDebugScreenPrintf("*                                                                  *");
 
     for (int i=0; i<size; i++){
         if (start+i >= osize) break;
-        pspDebugScreenSetXY(0, 4 + 2*i);
-        char tmp[256];
-        strcpy(tmp, "* ");
-        if (dir == start+i){
-            strcat(tmp, "> ");
+        pspDebugScreenSetTextColor(0xFFD800);
+        pspDebugScreenSetXY(0, 5 + 2*i);
+        pspDebugScreenPrintf("* ");
+        if (dir != start+i){
+            pspDebugScreenSetTextColor(0xFFFFFF);
         }
-        strcat(tmp, options[start+i]);
 
-        int len = strlen(tmp);
-        int padding = 55 - len;
-        for (int j=0; j<padding; j++) tmp[len+j] = ' ';
-        strcpy(tmp+len+padding, states[start+i]);
-
-        len = strlen(tmp);
-        padding = 67 - len;
-        for (int j=0; j<padding; j++) tmp[len+j] = ' ';
-        tmp[len+padding] = '*';
-        tmp[len+padding+1] = 0;
+        char tmp[53];
+        strncpy(tmp, options[start+i], sizeof(tmp)-1);
+        if (strlen(options[start+i]) > sizeof(tmp)-1) strcpy(tmp+sizeof(tmp)-4, "...");
+        tmp[sizeof(tmp)-1] = 0;
         pspDebugScreenPrintf(tmp);
 
-        pspDebugScreenSetXY(0, 5 + 2*i);            
+        int len = strlen(tmp)+2;
+        int padding = 55 - len;
+        for (int j=0; j<padding; j++) pspDebugScreenPrintf(" ");
+        pspDebugScreenPrintf(states[start+i]);
+
+        len += (padding + strlen(states[start+i]));
+        padding = 67 - len;
+        for (int j=0; j<padding; j++) pspDebugScreenPrintf(" ");
+        pspDebugScreenSetTextColor(0xFFD800);
+        pspDebugScreenPrintf("*");
+
+        pspDebugScreenSetXY(0, 6 + 2*i);            
         pspDebugScreenPrintf("*                                                                  *");
     }
 
@@ -269,7 +281,7 @@ void plugins_submenu(){
     SceCtrlData pad;
     int dir = 0;
 
-    char* header = "* Plugins Manager                                                  *";
+    char* header = "Plugins Manager";
     char** paths = malloc(sizeof(char*)*plugins.count);
     char** states = malloc(sizeof(char*)*plugins.count);
     int* pos = malloc(sizeof(char*)*plugins.count);
@@ -335,7 +347,7 @@ void settings_submenu(){
 	char** states;
 	int size;
     Setting* settings_items;
-    char* header = "* Custom Firmware Settings                                         *";
+    char* header = "Custom Firmware Settings";
 
 	if(IS_VITA(ark_config)) {
 		if(IS_VITA_ADR(ark_config)) {

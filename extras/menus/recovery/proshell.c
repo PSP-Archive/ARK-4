@@ -448,7 +448,7 @@ void paintList(int withclear)
     printoob("CIRCLE    Paste", 345, 140, FONT_COLOR);
     printoob("CROSS     Navigate", 345, 150, FONT_COLOR);
     printoob("RTRIGGER  Device", 345, 160, FONT_COLOR);
-    printoob((is_launcher_mode)? "LTRIGGER  Exit" : "LTRIGGER  Go Back", 345, 170, FONT_COLOR);
+    printoob("LTRIGGER  Exit", 345, 170, FONT_COLOR);
     
     // Copy Paste in Progress
     if(copymode != NOTHING_TO_COPY)
@@ -555,6 +555,25 @@ int isEboot(const char * path)
     {
         //check extension
         if (stricmp(ext, ".pbp") == 0)
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+// Game ISO File Check
+int isPlugin(const char * path)
+{
+    const char *ext;
+
+    ext = path + strlen(path) - 4;
+
+    if (ext > path)
+    {
+        //check extension
+        if (stricmp(ext, ".prx") == 0)
         {
             return 1;
         }
@@ -739,7 +758,7 @@ void start(void)
     // Not a valid file
     if(file == NULL || file->isFolder) return;
 
-	if(strcasecmp(file->name, ".prx")==0) {
+	if(isPlugin(file->name)) {
 		pluginInstall(file);
 		return;
 	}
