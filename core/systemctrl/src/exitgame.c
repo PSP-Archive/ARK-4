@@ -109,16 +109,17 @@ static void startExitThread(){
 	pspSdkSetK1(k1);
 }
 
-//int (*CtrlSetSamplingMode)(int) = NULL;
-//int (*CtrlSetSamplingCycle)(int) = NULL;
+int (*CtrlSetSamplingMode)(int) = NULL;
+int (*CtrlSetSamplingCycle)(int) = NULL;
 static void remove_analog_input(SceCtrlData *data)
 {
 	if(data == NULL)
 		return;
-	data->Lx = 0xFF/2;
-	data->Ly = 0xFF/2;
-//	CtrlSetSamplingCycle(0);	
-//	CtrlSetSamplingMode(PSP_CTRL_MODE_DIGITAL);
+	// wat???
+	if(!se_config.noanalog) {
+		CtrlSetSamplingCycle(0);	
+		CtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
+	}
 }
 
 // Gamepad Hook #1
@@ -210,8 +211,8 @@ void initController(SceModule2* mod){
     CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0xC152080A);
     CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x1F803938);
     CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x60B81F86);
-    //CtrlSetSamplingCycle = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x6A2774F3);
-    //CtrlSetSamplingMode = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F4011E6);
+    CtrlSetSamplingCycle = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x6A2774F3);
+    CtrlSetSamplingMode = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F4011E6);
 }
 
 static int isRecoveryMode(){
@@ -244,6 +245,6 @@ void patchController(void)
 	HIJACK_FUNCTION(CtrlPeekBufferNegative, peek_negative, CtrlPeekBufferNegative);
 	HIJACK_FUNCTION(CtrlReadBufferPositive, read_positive, CtrlReadBufferPositive);
 	HIJACK_FUNCTION(CtrlReadBufferNegative, read_negative, CtrlReadBufferNegative);
-	//HIJACK_FUNCTION(CtrlSetSamplingCycle, remove_analog_input, CtrlSetSamplingCycle);
-	//HIJACK_FUNCTION(CtrlSetSamplingMode, remove_analog_input, CtrlSetSamplingMode);
+	HIJACK_FUNCTION(CtrlSetSamplingCycle, remove_analog_input, CtrlSetSamplingCycle);
+	HIJACK_FUNCTION(CtrlSetSamplingMode, remove_analog_input, CtrlSetSamplingMode);
 }

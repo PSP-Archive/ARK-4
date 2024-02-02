@@ -162,6 +162,7 @@ typedef struct _SEConfig
 	s16 usbdevice;
 	s16 usbcharge;
 	s16 hidemac;
+	s16 noanalog;
 	s16 qaflags; // enable QA flags patch
 	s16 launcher_mode;
 	s16 hidepics;
@@ -180,7 +181,6 @@ typedef struct _SEConfig
 	s16 usenodrm; // always true
 
 	s16 hibblock;
-	s16 noanalog;
 	s16 oldplugin;
 	s16 htmlviewer_custom_save_location; // unused, always false
 	s16 hide_cfw_dirs; // always true
