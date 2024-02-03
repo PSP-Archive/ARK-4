@@ -7,14 +7,14 @@ USB 充电
 省电
 平衡能量模式
 自启动加载器
-PSP Go 禁止暂停
+禁止 PSP Go 暂停
 强制额外内存
 记忆棒超频
 Inferno 缓存
 PSP Go 旧插件支持
 跳过启动动画
 隐藏 PIC0 和 PIC1
-阻止休眠 PSP Go
+阻止 PSP Go 休眠 
 隐藏 MAC 地址
 隐藏 DLC
 关闭 LED
