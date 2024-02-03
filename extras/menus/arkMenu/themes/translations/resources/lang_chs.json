@@ -9,7 +9,7 @@
     "Network": "网络",
     "Settings": "设置",
 
-    "UMD Drive": "UMD驱动",
+    "UMD Drive": "UMD 驱动",
     "Recovery Menu": "恢复菜单",
 
     "Exit": "退出",
@@ -136,11 +136,11 @@
     "USB Charge": "USB 充电",
     "PowerSave": "省电",
     "Autoboot Launcher": "自启动加载器",
-    "Disable PSP Go Pause": "阻止休眠 PSP Go",
+    "Disable PSP Go Pause": "禁止 PSP Go 休眠",
     "Force Extra Memory": "强制额外内存",
     "Memory Stick Speedup": "记忆卡超频",
     "Old Plugins on PSP Go": "PSP Go 旧插件",
-    "Prevent hibernation deletion on PSP Go": "PSP Go 中阻止休眠删除",
+    "Prevent hibernation deletion on PSP Go": "阻止 PSP Go 休眠删除",
     "Skip Sony logos in XMB": "XMB 中跳过启动动画",
     "Hide PIC0 and PIC1 in XMB": "在 XMB 中隐藏 PIC0 和 PIC1",
     "Hide MAC Address": "隐藏 MAC 地址",
