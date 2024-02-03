@@ -679,7 +679,7 @@ void Browser::drawProgress(){
     for (int i=0; i<5; i++){
         if (i==4 && progress_desc[4] == ""){
             ostringstream s;
-            s<<progress<<" / "<<max_progress;  
+            s<<common::beautifySize(progress)<<" / "<<common::beautifySize(max_progress);  
             common::printText(x+20, yoffset, s.str().c_str());  
         }
         else common::printText(x+20, yoffset, progress_desc[i].c_str());
