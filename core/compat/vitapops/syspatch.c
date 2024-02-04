@@ -183,17 +183,11 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             char title[20]; int n; sctrlGetInitPARAM("DISC_ID", NULL, &n, title);
             char* config = oe_malloc(300);
             sprintf(config, "ms0:/__popsconfig__/%s%s", title, strchr(path, '/'));
-            int res = sceIoOpen(config, 0, 0);
+            sceIoOpen(config, 0, 0);
             oe_free(config);
-            if (res == -401){
-                colorDebug(0xFF00);
-            }
         }
         else {
-            int res = sceIoOpen("ms0:/__popsclear__", 0, 0);
-            if (res == -402){
-                colorDebug(0xFF00);
-            }
+            sceIoOpen("ms0:/__popsclear__", 0, 0);
         }
     }   
 

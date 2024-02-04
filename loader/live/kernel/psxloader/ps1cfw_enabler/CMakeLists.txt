@@ -27,6 +27,7 @@ endif()
 
 add_executable(ps1cfw_enabler
   ps1cfw_enabler.c
+  utils.c
 )
 
 target_link_libraries(ps1cfw_enabler
@@ -35,6 +36,10 @@ target_link_libraries(ps1cfw_enabler
   SceLibc_stub_weak
   SceCompat_stub
   SceKernelModulemgr_stub
+  SceIofilemgr_stub
+  SceRtc_stub
+  SceCtrl_stub
+  SceDisplay_stub
 )
 
 set_target_properties(ps1cfw_enabler
