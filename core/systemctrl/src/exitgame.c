@@ -50,9 +50,6 @@ int exitLauncher()
 		return 0;
 	}
 
-	int hudth = sctrlGetThreadUIDByName("hud_main_thread");
-	sceKernelTerminateDeleteThread(hudth);
-
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
     
@@ -114,7 +111,13 @@ int exitLauncher()
 static void startExitThread(){
 	// Exit to custom launcher
 	int k1 = pspSdkSetK1(0);
+	int intc = pspSdkDisableInterrupts();
+	if (sctrlGetThreadUIDByName("ExitGamePollThread") >= 0){
+		pspSdkEnableInterrupts(intc);
+		return; // already exiting
+	}
 	int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 1, 4096, 0, NULL);
+	pspSdkEnableInterrupts(intc);
 	sceKernelStartThread(uid, 0, NULL);
 	sceKernelWaitThreadEnd(uid, NULL);
 	pspSdkSetK1(k1);

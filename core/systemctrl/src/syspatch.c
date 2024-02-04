@@ -70,11 +70,6 @@ static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int ni
     return sctrlHENFindFunction(szMod, szLib, nid);
 }
 
-static int hudCreateThread(char* name, void* f, int priority, u32 stacksize, u32 attr, void* opt){
-    if (strcmp(name, "main_thread") == 0) name = "hud_main_thread";
-    return sceKernelCreateThread(name, f, priority, stacksize, attr, opt);
-}
-
 int _sceChkreg_6894A027(u8* a0, u32 a1){
 	if (a0 && a1 == 0){
 		*a0 = 1;
@@ -196,11 +191,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         for (int i=0; i<NELEMS(nids); i++){
             hookImportByNID(mod, "scePaf", nids[i], sctrlHENFindFunction("scePaf_Module", "scePaf", nids[i]));
         }
-        goto flush;
-    }
-
-    if (strcmp(mod->modname, "PSP-HUD") == 0) {
-        hookImportByNID(mod, "ThreadManForKernel", 0x446D8DE6, hudCreateThread);
         goto flush;
     }
 
