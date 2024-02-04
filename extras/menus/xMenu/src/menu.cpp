@@ -241,7 +241,9 @@ void Menu::control(){
         else if (control.triangle()){
             openSubMenu();
         }
-
+        else if (control.select()){
+            break;
+        }
     }
     fadeOut();
 }

@@ -20,7 +20,7 @@ extern STMOD_HANDLER previous;
 
 static int draw_thread = -1;
 static int do_draw = 0;
-static u32* fake_vram = (u32*)0x44000000; // might wanna use extra ram: 0x0BC00000 or so
+static u32* fake_vram = (u32*)0x0BC00000; // use extra RAM for fake framebuffer
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 int (*DisplayWaitVblankStart)() = NULL;
 int (*DisplaySetHoldMode)(int) = NULL;
@@ -102,6 +102,7 @@ int sceKernelSuspendThreadPatched(SceUID thid) {
 		if (strcmp(info.name, "popsmain") == 0) {
             if (draw_thread < 0){
                 do_draw = 1;
+                memset(fake_vram, 0, 512 * 272 * 4);
 			    draw_thread = sceKernelCreateThread("psxloader", &pops_draw_thread, 0x10, 0x10000, PSP_THREAD_ATTR_VFPU, NULL);
                 sceKernelStartThread(draw_thread, 0, NULL);
             }
@@ -128,58 +129,11 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	return sceKernelResumeThread(thid);
 }
 
-int (* sceMeAudio_driver_C300D466)(int codec, int unk, void *info);
-int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
-	int res = sceMeAudio_driver_C300D466(codec, unk, info);
-
-	if (res < 0 && codec == 0x1002 && unk == 2)
-		return 0;
-
-	return res;
-}
-
-typedef struct {
-	void *sasCore;
-	int grainSamples;
-	int maxVoices;
-	int outMode;
-	int sampleRate;
-} SasInitArguments;
-
-SasInitArguments sas_args;
-int sas_inited = 0;
-
-int (* sceSasCoreInit)();
-int (* sceSasCoreExit)();
-
-int (* __sceSasInit)(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate);
-
-int __sceSasInitPatched(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate) {
-	sas_args.sasCore = sasCore;
-	sas_args.grainSamples = grainSamples;
-	sas_args.maxVoices = maxVoices;
-	sas_args.outMode = outMode;
-	sas_args.sampleRate = sampleRate;
-
-	sas_inited = 1;
-
-	return __sceSasInit(sasCore, grainSamples, maxVoices, outMode, sampleRate);
-}
-
-void PatchSasCore() {
-	sceSasCoreInit = (void *)sctrlHENFindFunction("sceSAScore", "sceSasCore_driver", 0xB0F9F98F);
-	sceSasCoreExit = (void *)sctrlHENFindFunction("sceSAScore", "sceSasCore_driver", 0xE143A1EA);
-
-	HIJACK_FUNCTION(sctrlHENFindFunction("sceSAScore", "sceSasCore", 0x42778A9F), __sceSasInitPatched, __sceSasInit);
-
-	ClearCaches();
-}
-
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
     
-    // Patch display in PSX exploits
+    // Patch display for homebrew
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         DisplayWaitVblankStart = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x984C27E7);
@@ -206,16 +160,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
         goto flush;
     }
-
-    if(strcmp(mod->modname, "sceMeCodecWrapper") == 0) {
-		HIJACK_FUNCTION(sctrlHENFindFunction(mod->modname, "sceMeAudio_driver", 0xC300D466), sceMeAudio_driver_C300D466_Patched, sceMeAudio_driver_C300D466);
-		goto flush;
-	}
-
-    if (strcmp(mod->modname, "sceSAScore") == 0) {
-		PatchSasCore();
-        goto flush;
-	}
     
     // Patch Kermit Peripheral Module to load flash0
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
@@ -224,7 +168,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    /*
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
 			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
@@ -232,7 +175,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 			goto flush;
 		}
 	}
-    */
 
     if (strcmp(mod->modname, "sceKernelLibrary") == 0){
         int keyconfig = sceKernelInitKeyConfig();
@@ -266,8 +208,8 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
 
             // Set fake framebuffer so that cwcheat can be displayed
-            //DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
-            //memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+            DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
+            memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 
             // Start control poller thread so we can exit via combo on PS1 games
             //startControlPoller();
@@ -287,46 +229,3 @@ exit:
     if(previous) previous(mod);
 }
 
-int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
-int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
-
-    SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
-
-    if (DisplaySetFrameBuf && sceKernelFindModuleByName("sceKernelLibrary") == NULL){
-        static int screen_init = 0;
-        if (!screen_init){
-            setScreenHandler(&copyPSPVram);
-            initVitaPopsVram();
-            initScreen(NULL);
-            screen_init = 1;
-        }
-        cls();
-        PRTSTR1("mod: %s", mod->modname);
-    }
-
-    struct {
-        char* name;
-        char* path;
-    } pops_files[] = {
-        {"sceMediaSync", "MEDIASYN.PRX"},
-    };
-
-    for (int i=0; i < sizeof(pops_files)/sizeof(pops_files[0]); i++){
-        if (strcmp(mod->modname, pops_files[i].name) == 0){
-            char path[ARK_PATH_SIZE];
-            strcpy(path, ark_config->arkpath);
-            strcat(path, pops_files[i].path);
-            SceIoStat stat;
-            int res = sceIoGetstat(path, &stat);
-            if (res>=0){
-                sceKernelUnloadModule(modid);
-                modid = sceKernelLoadModule(path, 0, NULL);
-                return sceKernelStartModule(modid, argsize, argp, modstatus, opt);
-            }
-        }
-    }
-
-    // forward to previous or default StartModule
-    if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
-    return -1;
-}

@@ -2,7 +2,6 @@ TARGET = vitapops
 
 C_OBJS = \
 	main.o \
-	popcorn.o \
 	syspatch.o \
 	exitgame.o \
 	popsdisplay.o \

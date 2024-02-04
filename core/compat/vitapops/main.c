@@ -71,9 +71,6 @@ int module_start(SceSize args, void * argp)
 
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaPopsOnModuleStart);
-
-    // Register custom start module
-    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
     
     // Return Success
     return 0;
