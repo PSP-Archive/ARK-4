@@ -70,6 +70,10 @@ static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int ni
     return sctrlHENFindFunction(szMod, szLib, nid);
 }
 
+static int hudCreateThread(char* name, void* f, int priority, u32 stacksize, u32 attr, void* opt){
+    return sceKernelCreateThread("hud_main_thread", f, priority, stacksize, attr, opt);
+}
+
 int _sceChkreg_6894A027(u8* a0, u32 a1){
 	if (a0 && a1 == 0){
 		*a0 = 1;
@@ -122,7 +126,8 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     #endif
 
     if (strcmp(mod->modname, "sceController_Service") == 0){
-        initController(mod);
+        // Allow exiting through key combo
+        patchController(mod);
         goto flush;
     }
 
@@ -193,6 +198,11 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
+    if (strcmp(mod->modname, "PSP-HUD") == 0) {
+        hookImportByNID(mod, "ThreadManForKernel", 0x446D8DE6, hudCreateThread);
+        goto flush;
+    }
+
     // Boot Complete Action not done yet
     if(booted == 0)
     {
@@ -210,9 +220,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
                 case 2: sctrlHENSetSpeed(133, 66); break;
                 case 3: sctrlHENSetSpeed(222, 111); break;
             }
-
-            // Allow exiting through key combo
-            patchController();
             
             #ifdef DEBUG
             // syncronize printk

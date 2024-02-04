@@ -31,6 +31,7 @@ OBJS = \
 	src/psnfix.o \
 	src/cpuclock.o   \
 	src/msstor_cache.o \
+	src/threadman.o \
 	src/setlongjmp.o \
 	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/libs/ansi-c/lowerstring.o \
