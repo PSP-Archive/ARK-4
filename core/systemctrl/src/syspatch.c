@@ -71,7 +71,8 @@ static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int ni
 }
 
 static int hudCreateThread(char* name, void* f, int priority, u32 stacksize, u32 attr, void* opt){
-    return sceKernelCreateThread("hud_main_thread", f, priority, stacksize, attr, opt);
+    if (strcmp(name, "main_thread") == 0) name = "hud_main_thread";
+    return sceKernelCreateThread(name, f, priority, stacksize, attr, opt);
 }
 
 int _sceChkreg_6894A027(u8* a0, u32 a1){
