@@ -39,16 +39,10 @@ int exitLauncher()
 {
 
     // Refuse Operation in Save dialog
-	if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL){
-		sceKernelExitDeleteThread(0);
-		return 0;
-	}
+	if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return 0;
 	
 	// Refuse Operation in Dialog
-	if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL){
-		sceKernelExitDeleteThread(0);
-		return 0;
-	}
+	if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return 0;
 
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
@@ -104,7 +98,6 @@ int exitLauncher()
 		ark_config->recovery = 0; // reset recovery mode for next reboot
 		sctrlKernelExitVSH(NULL);
 	}
-	sceKernelExitDeleteThread(0);
 	return 0;
 }
 
@@ -120,6 +113,7 @@ static void startExitThread(){
 	pspSdkEnableInterrupts(intc);
 	sceKernelStartThread(uid, 0, NULL);
 	sceKernelWaitThreadEnd(uid, NULL);
+	sceKernelDeleteThread(uid);
 	pspSdkSetK1(k1);
 }
 
