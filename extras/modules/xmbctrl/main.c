@@ -143,7 +143,7 @@ struct {
 typedef struct
 {
     char *items[4];
-    char *options[N_ITEMS+1];
+    char *options[N_ITEMS];
 } StringContainer;
 
 StringContainer string;
@@ -390,7 +390,7 @@ int LoadTextLanguage(int new_id)
 
     if (IS_VITA(ark_config)){
         sce_paf_private_free(string.options[1]);
-        string.options[1] = string.options[N_ITEMS]; // replace "Overclock" with "PSP Overclock" on Vita
+        string.options[1] = settings[24]; // replace "Overclock" with "PSP Overclock" on Vita
     }
 
     return 1;
@@ -704,11 +704,9 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
 		else if(sce_paf_private_strcmp(name, "msgtop_custom_app") == 0)
         {
-			if(string.items[23]) {
-				sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[23]);
-            	utf8_to_unicode((wchar_t *)user_buffer, buf);
-            	return (wchar_t *)user_buffer;
-			}
+			sce_paf_private_sprintf(buf, "%s %s", STAR, settings[23]);
+            utf8_to_unicode((wchar_t *)user_buffer, buf);
+            return (wchar_t *)user_buffer;
         }
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
