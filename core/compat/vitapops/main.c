@@ -67,7 +67,7 @@ int module_start(SceSize args, void * argp)
     // set rebootex for VitaPOPS
     sctrlHENSetRebootexOverride(rebootbuffer_vitapops);
 
-    initFileSystem();
+    //initFileSystem();
 
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaPopsOnModuleStart);

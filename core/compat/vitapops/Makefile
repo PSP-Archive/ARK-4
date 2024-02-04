@@ -6,7 +6,6 @@ C_OBJS = \
 	syspatch.o \
 	exitgame.o \
 	popsdisplay.o \
-	$(ARKROOT)/core/compat/vita/filesystem.o \
 	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
 	$(ARKROOT)/core/compat/pentazemin/loadexec.o \

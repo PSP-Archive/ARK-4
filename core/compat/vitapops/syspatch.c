@@ -128,215 +128,6 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	return sceKernelResumeThread(thid);
 }
 
-/*
-int sctrlGetThreadUIDByName(const char * name)
-{
-	// Invalid Arguments
-	if(name == NULL) return -1;
-	
-	// Thread UID List
-	int ids[100];
-	
-	// Clear Memory
-	memset(ids, 0, sizeof(ids));
-	
-	// Thread Counter
-	int count = 0;
-	
-	// Get Thread UIDs
-	if(sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, NELEMS(ids), &count) >= 0)
-	{
-		// Iterate Results
-		int i = 0; for(; i < count; i++)
-		{
-			// Thread Information
-			SceKernelThreadInfo info;
-			
-			// Clear Memory
-			memset(&info, 0, sizeof(info));
-			
-			// Initialize Structure Size
-			info.size = sizeof(info);
-			
-			// Fetch Thread Status
-			if(sceKernelReferThreadStatus(ids[i], &info) == 0)
-			{
-				// Matching Name
-				if(strcmp(info.name, name) == 0)
-				{
-					
-					// Return Thread UID
-					return ids[i];
-				}
-			}
-		}
-	}
-	
-	// Thread not found
-	return -2;
-}
-
-int loadstart_pops(int argc, void* argv){
-
-    int (*LoadModule)() = sctrlHENFindFunction("sceModuleManager", "ModuleMgrForKernel", 0x939E4270);
-    int (*StartModule)() = sctrlHENFindFunction("sceModuleManager", "ModuleMgrForKernel", 0x3FF74DF1);
-
-    {
-    int modid = LoadModule("flash0:/kd/popsman.prx", 0, NULL);
-    if (modid < 0) return 0;
-    int res = StartModule(modid, 0, NULL, NULL, NULL);
-    }
-
-    {
-    int modid = LoadModule("flash0:/kd/pops_01g.prx", 0, NULL);
-    if (modid < 0) return 0;
-    int res = StartModule(modid, 0, NULL, NULL, NULL);
-    }
-
-    sceKernelDelayThread(1000000);
-    
-    int popsmain = sctrlGetThreadUIDByName("popsmain");
-    sceKernelTerminateDeleteThread(popsmain);
-
-    int mcworker = sctrlGetThreadUIDByName("mcworker");
-    sceKernelTerminateDeleteThread(mcworker);
-
-    int cdworker = sctrlGetThreadUIDByName("cdworker");
-    sceKernelTerminateDeleteThread(cdworker);
-
-    return 0;
-}
-*/
-
-// sceKermit_driver_36666181
-int sceKermitSendRequest(void* a0, int a1, int a2, int a3, int a4, void* a5){
-    static int (*orig)(void*, int, int, int, int, void*) = NULL;
-
-    if (orig == NULL){
-        orig = sctrlHENFindFunction("sceKermit_Driver", "sceKermit_driver",0x36666181);
-    }
-
-    return orig(a0, a1, a2, a3, a4, a5);
-}
-
-int SendKermitCmd(int cmd) {
-
-	char buf[sizeof(SceKermitRequest) + 0x40];
-	SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
-	SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
-	sceKernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
-
-	u8 resp[128];
-	int res = sceKermitSendRequest(request_uncached, 9, cmd, 0, 0, resp);
-    if (res < 0){
-        cls();
-        PRTSTR2("%d=%p", cmd, res);
-        _sw(0,0);
-    }
-    return res;
-}
-
-void sync_vita(){
-    /*
-    SendKermitCmd(1047);
-    int (*sceKermitMemory_driver_80E1240A)() = sctrlHENFindFunction("sceLowIO_Driver", "sceKermitMemory_driver", 0x80E1240A);
-    sceKermitMemory_driver_80E1240A(0x13F80, 128);
-    SendKermitCmd(1056);
-    */
-    //int (* sceKermitPeripheralInitPops)() = (void *)sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
-	//sceKermitPeripheralInitPops();
-
-    /*
-    // sceKermit_driver_36666181: 3844, 3846, 3842, 3843, 3845
-    //int cmds[] = { 3842, 3843, 3844, 3845 };
-    for (int i=2; i<6; i++){
-        SendKermitCmd(3840+i);
-    }
-
-    int (*sceDisplay_driver_03F16FD4)() = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay_driver", 0x03F16FD4);
-    sceDisplay_driver_03F16FD4(0, 480, 272);
-
-    //int (*powerlock)() = FindFunction("sceSystemMemoryManager", "sceSuspendForKernel", 0xEADB1BD7);
-    //powerlock(0);
-
-    int (*sceDisplay_driver_E38CA615)() = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay_driver", 0xE38CA615);
-    sceDisplay_driver_E38CA615();
-
-    //int (*sceMeAudio_EB52DFE0)() = FindFunction("scePops_Manager", "sceMeAudio", 0xEB52DFE0);
-    //sceMeAudio_EB52DFE0();
-    //_sb(0, 0x49FE00A0);
-
-    char buf[sizeof(SceKermitRequest) + 0x40];
-	SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
-	SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
-	sceKernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
-
-    memset(request_uncached, 0, sizeof(SceKermitRequest));
-    request_uncached->cmd = 1045;
-    request_uncached->args[0] = 7;
-    request_uncached->args[1] = (u64)0x00001AF0; //0x00001B3C; // 0x00001AF0
-
-	u8 resp[128];
-	int res = sceKermitSendRequest(request_uncached, 9, 1045, 2, 0, resp);
-
-    if (res < 0){
-        cls();
-        PRTSTR1("%p", res);
-        _sw(0,0);
-    }
-    */
-}
-
-int dummythread(int argc, void* argp){
-    sceKernelDelayThread(1000000);
-    sceKernelExitDeleteThread(0);
-    return 0;
-}
-
-int kermitSendRequestLog(void* a0, int a1, int a2, int a3, int a4, void* a5){
-
-    static volatile int logging = 0;
-    static char tmp[64];
-
-    //if (a1 == 9 && a2 == 1042) return 0;
-
-    if (!logging){
-        logging = 1;
-        sprintf(tmp, "sceKermitSendRequest - mode: %d, cmd: %d\n", a1, a2);
-        int fd = sceIoOpen("ms0:/kermit.log", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
-        sceIoWrite(fd, tmp, strlen(tmp));
-        sceIoClose(fd);
-        logging = 0;
-    }
-
-    return sceKermitSendRequest(a0, a1, a2, a3, a4, a5);
-}
-
-int (*sceKermitPeripheral_driver_8C7903E7)() = NULL;
-int sceKermitPeripheral_driver_log(void* a0, int a1, int a2, int a3, int a4, void* a5, u32 a6, u32 a7){
-
-    static volatile int logging = 0;
-    static char tmp[64];
-
-    //if (a1 == 9 && a2 == 1042) return 0;
-
-    if (!logging){
-        logging = 1;
-        sprintf(tmp, "sceKermitPeripheral_driver_8C7903E7 - mode: %d, cmd: %d\n", a1, a2);
-        int fd = sceIoOpen("ms0:/kermit.log", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
-        sceIoWrite(fd, tmp, strlen(tmp));
-        sceIoClose(fd);
-        logging = 0;
-    }
-
-    return sceKermitPeripheral_driver_8C7903E7(a0, a1, a2, a3, a4, a5, a6, a7);
-}
-
-void exitDebug(){
-    colorDebug(0xFF);
-    _sw(0, 0);
-}
-
 int (* sceMeAudio_driver_C300D466)(int codec, int unk, void *info);
 int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
 	int res = sceMeAudio_driver_C300D466(codec, unk, info);
@@ -387,12 +178,6 @@ void PatchSasCore() {
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
-
-    /*
-    if (strcmp(mod->modname, "sceIOFileManager") != 0 && strcmp(mod->modname, "sceKermitMsfs_driver") != 0){
-        
-    }
-    */
     
     // Patch display in PSX exploits
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
@@ -408,14 +193,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
         PatchLoadExec(mod->text_addr, mod->text_size);
-        /*
-        void* p1 = sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F);
-        void* p2 = sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B);
-        void* p3 = sctrlHENFindFunction(mod->modname, "LoadExecForKernel", 0x08F7166C);
-        if (p1) REDIRECT_FUNCTION(p1, exitDebug);
-        if (p2) REDIRECT_FUNCTION(p2, exitDebug);
-        if (p3) REDIRECT_FUNCTION(p3, exitDebug);
-        */
         goto flush;
     }
 
@@ -444,47 +221,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
     {
         patchKermitPeripheral(&_ktbl);
-        //int (* sceKermitPeripheralInitPops)() = (void *)sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
-        //sceKermitPeripheralInitPops();
         goto flush;
-    }
-    /*
-    if (strcmp(mod->modname, "sceIOFileManager") == 0){
-        // remove k1 checks -> move $a2, 0
-        _sw(0x00003021, 0x8805769c); // IoRead
-        _sw(0x00003021, 0x880577b0); // IoWrite
-        goto flush;
-    }
-
-    if (strcmp(mod->modname, "sceLoadExec") == 0){
-        // patch IO checks
-        _sw(JR_RA, mod->text_addr + 0x0000222C);
-        _sw(LI_V0(0), mod->text_addr + 0x00002230);
-        goto flush;
-    }
-    */
-
-    if (strcmp(mod->modname, "scePops_Manager") == 0){
-        //sceKermitPeripheral_driver_8C7903E7 = sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral_driver", 0x8C7903E7);
-        //hookImportByNID(mod, "sceKermitPeripheral_driver", 0x36666181, sceKermitPeripheral_driver_log);
-        //hookImportByNID(mod, "sceKermit_driver", 0x36666181, kermitSendRequestLog);
-        patchPopsMan(mod);
-        goto flush;
-    }
-
-    if (strcmp(mod->modname, "pops") == 0) {
-		// Use different pops register location
-        int fd = sceIoOpen("ms0:/here2.txt", PSP_O_CREAT|PSP_O_WRONLY|PSP_O_TRUNC, 0777);
-        sceIoWrite(fd, mod->modname, strlen(mod->modname));
-        sceIoClose(fd);
-		patchPops(mod);
-        goto flush;
-	}
-
-    if (strcmp(mod->modname, "simple") == 0 || strcmp(mod->modname, "complex") == 0){
-        int fd = sceIoOpen("ms0:/here1.txt", PSP_O_CREAT|PSP_O_WRONLY|PSP_O_TRUNC, 0777);
-        sceIoWrite(fd, mod->modname, strlen(mod->modname));
-        sceIoClose(fd);
     }
 
     /*
@@ -503,11 +240,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             char* path = sceKernelInitFileName();
             char title[20]; int n; sctrlGetInitPARAM("DISC_ID", NULL, &n, title);
             char* config = oe_malloc(300);
-            /*
-            strcpy(config, "ms0:/__popsconfig__/");
-            strcat(config, title);
-            strcat(config, strchr(path, '/'));
-            */
             sprintf(config, "ms0:/__popsconfig__/%s%s", title, strchr(path, '/'));
             int res = sceIoOpen(config, 0, 0);
             oe_free(config);
@@ -533,38 +265,12 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
 
-
             // Set fake framebuffer so that cwcheat can be displayed
             //DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
             //memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 
             // Start control poller thread so we can exit via combo on PS1 games
-            if (sceKernelInitApitype() == 0x144){
-                //startControlPoller();
-            }
-            else {
-                //SceUID kthreadID = sceKernelCreateThread( "ark-x-loader", &loadstart_pops, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
-                //sceKernelStartThread(kthreadID, 0, NULL);
-                /*
-                {
-                SceUID kthreadID = sceKernelCreateThread( "popsmain", &dummythread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
-                sceKernelStartThread(kthreadID, 0, NULL);
-                }
-                {
-                SceUID kthreadID = sceKernelCreateThread( "mcworker", &dummythread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
-                sceKernelStartThread(kthreadID, 0, NULL);
-                }
-                {
-                SceUID kthreadID = sceKernelCreateThread( "cdworker", &dummythread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
-                sceKernelStartThread(kthreadID, 0, NULL);
-                }
-                */
-                //sync_vita();
-                {
-                //SceUID kthreadID = sceKernelCreateThread( "popsmain", &sync_vita, 1, 0x20000, PSP_THREAD_ATTR_VFPU|PSP_THREAD_ATTR_NO_FILLSTACK, NULL);
-                //sceKernelStartThread(kthreadID, 0, NULL);
-                }
-            }
+            //startControlPoller();
 
             // Boot Complete Action done
             booted = 1;
@@ -585,13 +291,6 @@ int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceK
 int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
-
-    /*
-    int fd = sceIoOpen("ms0:/vitapops.log", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
-    sceIoWrite(fd, mod->modname, strlen(mod->modname));
-    sceIoWrite(fd, "\n", 1);
-    sceIoClose(fd);
-    */
 
     if (DisplaySetFrameBuf && sceKernelFindModuleByName("sceKernelLibrary") == NULL){
         static int screen_init = 0;
