@@ -20,15 +20,12 @@ int sctrlGetThreadUIDByName(const char * name)
 	
 	// Thread Counter
 	int count = 0;
-
-    int (*KernelGetThreadmanIdList)() = sctrlHENFindFunction("sceThreadManager", "ThreadManForUser", 0x94416130);
-    int (*KernelReferThreadStatus)() = sctrlHENFindFunction("sceThreadManager", "ThreadManForUser", 0x17C1684E);
 	
 	// Get Thread UIDs
-	if(KernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, NELEMS(ids), &count) >= 0)
+	if (sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, NELEMS(ids), &count) >= 0)
 	{
 		// Iterate Results
-		int i = 0; for(; i < count; i++)
+		for(int i = 0; i < count; i++)
 		{
 			// Thread Information
 			SceKernelThreadInfo info;
@@ -40,7 +37,7 @@ int sctrlGetThreadUIDByName(const char * name)
 			info.size = sizeof(info);
 			
 			// Fetch Thread Status
-			if(KernelReferThreadStatus(ids[i], &info) == 0)
+			if (sceKernelReferThreadStatus(ids[i], &info) == 0)
 			{
 				// Matching Name
 				if(strcmp(info.name, name) == 0)
