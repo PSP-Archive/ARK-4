@@ -88,7 +88,7 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
         return -102;
     }
     
-    // Exit
+    // Clean Exit
     if (strstr(file, "__popsexit__")){
         ScePspemuErrorExit(0);
         return 0;

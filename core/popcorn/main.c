@@ -1071,8 +1071,7 @@ static void patchPops(SceModule2 *mod)
             _sw(0x24020001, addr+8); // Patch Manual Name Check
         else if ((data == 0x14C00014 && _lw(addr + 4) == 0x24E2FFFF) ||
             (data == 0x14A00014 && _lw(addr + 4) == 0x24C2FFFF))
-        {
-            // Fix index length (enable CDDA)
+        {   // Fix index length (enable CDDA)
             _sh(0x1000, addr + 2);
             _sh(0, addr + 4);
         }
