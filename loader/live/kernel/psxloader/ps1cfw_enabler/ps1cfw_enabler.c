@@ -2,8 +2,6 @@
 #include <vitasdk.h>
 #include <stdint.h>
 
-#include "main.h"
-
 void _start() __attribute__ ((weak, alias ("module_start")));
 
 #define SCE_PSPEMU_CACHE_NONE 0x1
@@ -111,7 +109,7 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
               strncpy(path, filename+5, q-(filename+5));
               path[q-(filename+5)] = '\0';
 
-              snprintf(new_file, sizeof(new_file), "%s/%s/__sce_menuinfo", getPspemuMemoryStickLocation(), path);
+              snprintf(new_file, sizeof(new_file), "ms0:%s/__sce_menuinfo", path);
               file = new_file;
             }
           }
@@ -119,7 +117,7 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
                   (strcmp(p+1, "PARAM.SFO") == 0 ||
                    strcmp(p+1, "SCEVMC0.VMP") == 0 ||
                    strcmp(p+1, "SCEVMC1.VMP") == 0)) {
-          snprintf(new_file, sizeof(new_file), "%s/PSP/SAVEDATA/%s/%s", getPspemuMemoryStickLocation(), popsconfig.title_id, p+1);
+          snprintf(new_file, sizeof(new_file), "ms0:PSP/SAVEDATA/%s/%s", popsconfig.title_id, p+1);
           file = new_file;
         }
       }
@@ -137,7 +135,7 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
            (strcmp(p+1, "PARAM.SFO") == 0 ||
             strcmp(p+1, "SCEVMC0.VMP") == 0 ||
             strcmp(p+1, "SCEVMC1.VMP") == 0)) {
-          snprintf(new_file, sizeof(new_file), "%s/PSP/SAVEDATA/%s/%s", getPspemuMemoryStickLocation(), popsconfig.title_id, p+1);
+          snprintf(new_file, sizeof(new_file), "ms0:PSP/SAVEDATA/%s/%s", popsconfig.title_id, p+1);
           file = new_file;
         }
       }

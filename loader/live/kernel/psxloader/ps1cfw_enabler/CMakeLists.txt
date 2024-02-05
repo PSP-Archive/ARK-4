@@ -27,7 +27,6 @@ endif()
 
 add_executable(ps1cfw_enabler
   ps1cfw_enabler.c
-  utils.c
 )
 
 target_link_libraries(ps1cfw_enabler
