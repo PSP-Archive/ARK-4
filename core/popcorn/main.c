@@ -1069,6 +1069,13 @@ static void patchPops(SceModule2 *mod)
             _sw(0x24050000 | (sizeof(g_icon_png) & 0xFFFF), addr); // patch icon0 size
         else if (data == 0x24050080 && _lw(addr+24) == 0x24030001)
             _sw(0x24020001, addr+8); // Patch Manual Name Check
+        else if ((data == 0x14C00014 && _lw(addr + 4) == 0x24E2FFFF) ||
+            (data == 0x14A00014 && _lw(addr + 4) == 0x24C2FFFF))
+        {
+            // Fix index length (enable CDDA)
+            _sh(0x1000, addr + 2);
+            _sh(0, addr + 4);
+        }
     }
 
     if(g_isCustomPBP){

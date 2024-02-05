@@ -215,13 +215,5 @@ void patchPspPopsSpu(SceModule2 * mod)
             REDIRECT_SYSCALL(stub, _sceMeAudio_DE630CD2);
             patches--;
         }
-        // Fix index length (enable CDDA)
-        else if ((data == 0x14C00014 && _lw(addr + 4) == 0x24E2FFFF) ||
-            (data == 0x14A00014 && _lw(addr + 4) == 0x24C2FFFF))
-        {
-            _sh(0x1000, addr + 2);
-            _sh(0, addr + 4);
-            patches--;
-        }
     }
 }
