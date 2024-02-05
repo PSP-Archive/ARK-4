@@ -1,0 +1,3 @@
+Use ChovySign to generate a valid EBOOT.PBP for PS Vita.
+
+./ChovySign-CLI --pops psxloader.cue --pops-info "ARK-X" ICON0.PNG --pops-eboot psxloader.prx --no-psvimg --vkey-gen act.dat license.rif 000000000000000000000000 2 --rif license.rif 

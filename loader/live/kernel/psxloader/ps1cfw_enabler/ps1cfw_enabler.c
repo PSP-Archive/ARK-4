@@ -20,7 +20,6 @@ SceUID io_patch_size = -1;
 
 uint32_t nop_nop_opcode = 0xBF00BF00;
 uint32_t mov_r2_r4_mov_r4_r2 = 0x46224614;
-uint16_t b_send_resp = 0xEAFFFFEA;
 uint32_t mips_move_a2_0 = 0x00003021;
 uint32_t mips_nop = 0;
 
@@ -54,12 +53,12 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 	    uint32_t *m;
 	    
 	    // remove k1 checks in IoRead (lets you write into kram)
-	    m = (uint32_t *)ScePspemuConvertAddress((module_nid==0x2714F07D)?0x8805769c:0x8805769C, SCE_PSPEMU_CACHE_NONE, 4);
+	    m = (uint32_t *)ScePspemuConvertAddress(0x8805769C, SCE_PSPEMU_CACHE_NONE, 4);
 	    *m = mips_move_a2_0; // move $a2, 0
 	    ScePspemuWritebackCache(m, 4);
 
 	    // remove k1 checks in IoWrite (lets you read kram)
-	    m = (uint32_t *)ScePspemuConvertAddress((module_nid==0x2714F07D)?0x880577b0:0x880577B0, SCE_PSPEMU_CACHE_NONE, 4);
+	    m = (uint32_t *)ScePspemuConvertAddress(0x880577B0, SCE_PSPEMU_CACHE_NONE, 4);
 	    *m = mips_move_a2_0; // move $a2, 0
 	    ScePspemuWritebackCache(m, 4);
 

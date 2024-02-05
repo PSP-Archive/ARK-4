@@ -75,7 +75,8 @@ void SoftRelocateVram(u32* psp_vram, u16* ps1_vram)
 }
 
 void copyPSPVram(u32* psp_vram){
-    SoftRelocateVram(psp_vram, NULL);
+    if (_psxVramHandler)
+        _psxVramHandler(psp_vram, NULL);
 }
 
 // hooked function to copy framebuffer

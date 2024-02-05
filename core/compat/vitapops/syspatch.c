@@ -19,7 +19,7 @@ extern ARKConfig* ark_config;
 extern STMOD_HANDLER previous;
 
 static int draw_thread = -1;
-static int do_draw = 0;
+static volatile int do_draw = 0;
 static u32* fake_vram = (u32*)0x0BC00000; // use extra RAM for fake framebuffer
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 int (*DisplayWaitVblankStart)() = NULL;
@@ -87,7 +87,7 @@ void patchVitaPopsDisplay(SceModule2* mod){
 int pops_draw_thread(int argc, void* argp){
     
     while (do_draw){
-        SoftRelocateVram(fake_vram, NULL);
+        copyPSPVram(fake_vram);
         DisplayWaitVblankStart();
     }
     
