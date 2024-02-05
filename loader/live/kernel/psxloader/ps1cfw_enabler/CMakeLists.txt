@@ -40,6 +40,7 @@ target_link_libraries(ps1cfw_enabler
   SceRtc_stub
   SceCtrl_stub
   SceDisplay_stub
+  SceShellSvc_stub
 )
 
 set_target_properties(ps1cfw_enabler

@@ -23,7 +23,6 @@ static int do_draw = 0;
 static u32* fake_vram = (u32*)0x0BC00000; // use extra RAM for fake framebuffer
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 int (*DisplayWaitVblankStart)() = NULL;
-int (*DisplaySetHoldMode)(int) = NULL;
 
 extern SEConfig* se_config;
 
@@ -129,6 +128,13 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	return sceKernelResumeThread(thid);
 }
 
+int popsExit(){
+    int k1 = pspSdkSetK1(0);
+    sceIoOpen("ms0:/__popsexit__", 0, 0);
+    pspSdkSetK1(k1);
+    return sctrlKernelExitVSH(NULL);
+}
+
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
@@ -137,16 +143,18 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         DisplayWaitVblankStart = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x984C27E7);
-        DisplaySetHoldMode = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
         if (sceKernelInitApitype() != 0x144){
             patchVitaPopsDisplay(mod);
         }
         goto flush;
     }
 
+    // Patch sceKernelExitGame Syscalls
     if(strcmp(mod->modname, "sceLoadExec") == 0)
     {
-        PatchLoadExec(mod->text_addr, mod->text_size);
+        REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), popsExit);
+        REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), popsExit);
+        //REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForKernel", 0x08F7166C), K_EXTRACT_IMPORT(exitLauncher));
         goto flush;
     }
 
@@ -189,7 +197,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         else {
             sceIoOpen("ms0:/__popsclear__", 0, 0);
         }
-    }   
+    }
 
     // Boot Complete Action not done yet
     if(booted == 0)
@@ -205,8 +213,11 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
             memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 
-            // Start control poller thread so we can exit via combo on PS1 games
-            //startControlPoller();
+            // redirect exit combo
+            extern int exitLauncher();
+            REDIRECT_FUNCTION(K_EXTRACT_IMPORT(exitLauncher), popsExit);
+
+            //sceIoOpen("ms0:/__popsbooted__", 0, 0);
 
             // Boot Complete Action done
             booted = 1;
