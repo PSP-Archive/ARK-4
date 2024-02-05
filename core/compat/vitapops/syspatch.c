@@ -197,6 +197,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         else {
             sceIoOpen("ms0:/__popsclear__", 0, 0);
         }
+        goto flush;
     }
 
     // Boot Complete Action not done yet

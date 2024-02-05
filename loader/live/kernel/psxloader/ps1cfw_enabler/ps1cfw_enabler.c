@@ -74,17 +74,17 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 	    uint32_t *m;
 	    
 	    // remove k1 checks in IoRead (lets you write into kram)
-	    m = (uint32_t *)ScePspemuConvertAddress(0x8805769c, SCE_PSPEMU_CACHE_NONE, 4);
+	    m = (uint32_t *)ScePspemuConvertAddress((module_nid==0x2714F07D)?0x8805769c:0x8805769C, SCE_PSPEMU_CACHE_NONE, 4);
 	    *m = mips_move_a2_0; // move $a2, 0
 	    ScePspemuWritebackCache(m, 4);
 
 	    // remove k1 checks in IoWrite (lets you read kram)
-	    m = (uint32_t *)ScePspemuConvertAddress(0x880577b0, SCE_PSPEMU_CACHE_NONE, 4);
+	    m = (uint32_t *)ScePspemuConvertAddress((module_nid==0x2714F07D)?0x880577b0:0x880577B0, SCE_PSPEMU_CACHE_NONE, 4);
 	    *m = mips_move_a2_0; // move $a2, 0
 	    ScePspemuWritebackCache(m, 4);
 
 	    // allow running any code as kernel (lets us pass function pointer as second argument of libctime)
-	    m = (uint32_t *)ScePspemuConvertAddress(0x88010044, SCE_PSPEMU_CACHE_NONE, 4);
+	    m = (uint32_t *)ScePspemuConvertAddress((module_nid==0x2714F07D)?0x88010044:0x8800FFB4, SCE_PSPEMU_CACHE_NONE, 4);
 	    *m = mips_nop; // nop
 	    ScePspemuWritebackCache(m, 4);
 	    return 0;
@@ -140,15 +140,15 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
               file = new_file;
             }
           }
-        } else if (strcmp(p+1, "PARAM.SFO") == 0 ||
+        } else if (strstr(file, "pspemu/PSP/SAVEDATA/") &&
+                  (strcmp(p+1, "PARAM.SFO") == 0 ||
                    strcmp(p+1, "SCEVMC0.VMP") == 0 ||
-                   strcmp(p+1, "SCEVMC1.VMP") == 0) {
+                   strcmp(p+1, "SCEVMC1.VMP") == 0)) {
           snprintf(new_file, sizeof(new_file), "%s/PSP/SAVEDATA/%s/%s", getPspemuMemoryStickLocation(), popsconfig.title_id, p+1);
           file = new_file;
         }
       }
     }
-
     return TAI_CONTINUE(SceUID, sceIoOpenRef, file, flags, mode);
 }
 
@@ -158,9 +158,10 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
       if (p) {
         static char new_file[256];
 
-        if (strcmp(p+1, "PARAM.SFO") == 0 ||
+        if (strstr(file, "pspemu/PSP/SAVEDATA/") &&
+           (strcmp(p+1, "PARAM.SFO") == 0 ||
             strcmp(p+1, "SCEVMC0.VMP") == 0 ||
-            strcmp(p+1, "SCEVMC1.VMP") == 0) {
+            strcmp(p+1, "SCEVMC1.VMP") == 0)) {
           snprintf(new_file, sizeof(new_file), "%s/PSP/SAVEDATA/%s/%s", getPspemuMemoryStickLocation(), popsconfig.title_id, p+1);
           file = new_file;
         }
@@ -205,7 +206,64 @@ int module_start(SceSize argc, const void *args) {
         titleIdHook = taiHookFunctionOffset(&ScePspemuGetTitleidRef, info.modid, 0, 0x20600, 0x1, ScePspemuGetTitleidPatched);
     }
 
-  return SCE_KERNEL_START_SUCCESS;
+    #if 0
+    uint32_t movs_a4_1_nop_opcode = 0xBF002301;
+    uint32_t movs_a1_0_nop_opcode = 0xBF002000;
+    uint32_t movs_a1_1_nop_opcode = 0xBF002001;
+    uint32_t uids[64]; int n_uids = 0;
+    
+        // Resume stuff. PROBABLY SHOULD DO POPS AND PSP MODE STUFF
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x42F0, &movs_a4_1_nop_opcode, sizeof(movs_a4_1_nop_opcode));
+
+    // Unknown. Mode 4, 5
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x572E, &movs_a4_1_nop_opcode, sizeof(movs_a4_1_nop_opcode));
+
+    // Set cache address for pops stuff
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x57C0, &movs_a4_1_nop_opcode, sizeof(movs_a4_1_nop_opcode));
+
+    // Read savedata and menu info. Should be enabled, otherwise an error will occur
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x5BBA, &movs_a4_1_nop_opcode, sizeof(movs_a4_1_nop_opcode));
+
+    // Get app state for pops
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x5C52, &movs_a4_1_nop_opcode, sizeof(movs_a4_1_nop_opcode));
+
+    // Unknown
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x5E4A, &movs_a4_1_nop_opcode, sizeof(movs_a4_1_nop_opcode));
+
+    ///////////////////////////
+
+    // isPops patches
+
+    // Peripheral
+
+    // Use vibration
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x169F6, &movs_a1_1_nop_opcode, sizeof(movs_a1_1_nop_opcode));
+
+    // Unknown check for POPS mode
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x16AEC, &movs_a1_1_nop_opcode, sizeof(movs_a1_1_nop_opcode));
+
+    // Unknown check for PSP mode. If false return 0x80010089
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x16B6C, &movs_a1_1_nop_opcode, sizeof(movs_a1_1_nop_opcode));
+
+    // Unknown check for PSP mode. If false return 0
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x16B86, &movs_a1_1_nop_opcode, sizeof(movs_a1_1_nop_opcode));
+
+    // Unknown check for PSP mode. If false return 0
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x16C3E, &movs_a1_1_nop_opcode, sizeof(movs_a1_1_nop_opcode));
+
+    ////////////////////
+
+    // Init ScePspemuMenuWork
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x1825E, &movs_a1_1_nop_opcode, sizeof(movs_a1_1_nop_opcode));
+
+    // Read savedata and menu info
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x2121E, &movs_a1_1_nop_opcode, sizeof(movs_a1_1_nop_opcode));
+
+    // POPS Settings menu function
+    uids[n_uids++] = taiInjectData(info.modid, 0, 0x17B32, &movs_a1_1_nop_opcode, sizeof(movs_a1_1_nop_opcode));
+    #endif
+
+    return SCE_KERNEL_START_SUCCESS;
 }
 
 int module_stop(SceSize argc, const void *args) {
