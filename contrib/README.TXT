@@ -66,6 +66,18 @@ Installation On PS Vita
     - NOTE: There are limitations in the playback of `PS1` games, mostly related to audio.
     - If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign`.
 
+  PS1 Loader
+
+    - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
+    - Requires <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
+    - Requires latest `ARK-4` installed (`ARK_01234` savedata).
+    - Copy `ps1cfw_enabler.suprx` from `PSVita/PS1CFW/` to `ur0:tai/`.
+    - Open `ur0:tai/config.txt`, add the following line; `*SCPS10084 ur0:tai/ps1cfw_enabler.suprx` and save.
+    - Copy `SCPS10084` from `PSVita/PS1CFW/` to `ux0:pspemu/PSP/GAME/`.
+    - Download and install the latest `VitaShell` with support for refreshing `PSP/PSX` games from here: https://github.com/LiEnby/VitaShell/releases
+    - Use `VitaShell` to `Refresh Live Area`. A new `ARK-X` bubble should appear.
+    - NOTE: plugin support is limited.
+    - NOTE: use the key combo `L2+R2+Start+Down` to exit at any time.
 
   Adrenaline
 
