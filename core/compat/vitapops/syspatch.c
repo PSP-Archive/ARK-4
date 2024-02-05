@@ -218,7 +218,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             extern int exitLauncher();
             REDIRECT_FUNCTION(K_EXTRACT_IMPORT(exitLauncher), popsExit);
 
-            //sceIoOpen("ms0:/__popsbooted__", 0, 0);
+            sceIoOpen("ms0:/__popsbooted__", 0, 0);
 
             // Boot Complete Action done
             booted = 1;

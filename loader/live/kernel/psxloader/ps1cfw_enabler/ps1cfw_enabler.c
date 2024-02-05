@@ -92,6 +92,13 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
         ScePspemuErrorExit(0);
         return 0;
     }
+    
+    if (strstr(file, "__popsbooted__")){
+        sceShellUtilUnlock(SCE_SHELL_UTIL_LOCK_TYPE_PS_BTN);
+        sceShellUtilUnlock(SCE_SHELL_UTIL_LOCK_TYPE_PS_BTN_2);
+        sceKernelPowerUnlock(0);
+        return 0;
+    }
 
     // Redirect files for memory card manager
     if (popsconfig.magic == ARK_MAGIC && popsconfig.title_id[0] && popsconfig.path[0]){
