@@ -26,14 +26,6 @@ int (*DisplayWaitVblankStart)() = NULL;
 
 extern SEConfig* se_config;
 
-typedef struct {
-	uint32_t cmd; //0x0
-	SceUID sema_id; //0x4
-	uint64_t *response; //0x8
-	uint32_t padding; //0xC
-	uint64_t args[14]; // 0x10
-} SceKermitRequest; //0x80
-
 #define ALIGN(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
 
 KernelFunctions _ktbl = {
@@ -84,13 +76,12 @@ void patchVitaPopsDisplay(SceModule2* mod){
     }
 }
 
+// background thread to relocate screen
 int pops_draw_thread(int argc, void* argp){
-    
     while (do_draw){
         copyPSPVram(fake_vram);
         DisplayWaitVblankStart();
     }
-    
     return 0;
 }
 
@@ -130,8 +121,10 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 
 int popsExit(){
     int k1 = pspSdkSetK1(0);
+    // attempt to exit via ps1cfw_enabler
     sceIoOpen("ms0:/__popsexit__", 0, 0);
     pspSdkSetK1(k1);
+    // fallback to regular exit
     return sctrlKernelExitVSH(NULL);
 }
 
@@ -154,12 +147,10 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     {
         REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), popsExit);
         REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), popsExit);
-        //REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForKernel", 0x08F7166C), K_EXTRACT_IMPORT(exitLauncher));
         goto flush;
     }
 
     if (strcmp(mod->modname, "sceLowIO_Driver") == 0) {
-
 		// Protect pops memory
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
 			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
@@ -176,6 +167,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
+    // patch to display CWCHEAT
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
 			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
@@ -185,8 +177,10 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 	}
 
     if (strcmp(mod->modname, "sceKernelLibrary") == 0){
+        // Configure ps1cfw_enabler
         int keyconfig = sceKernelInitKeyConfig();
         if (keyconfig == PSP_INIT_KEYCONFIG_POPS){
+            // send current game information (ID and path)
             char* path = sceKernelInitFileName();
             char title[20]; int n; sctrlGetInitPARAM("DISC_ID", NULL, &n, title);
             char* config = oe_malloc(300);
@@ -195,6 +189,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             oe_free(config);
         }
         else {
+            // clear config
             sceIoOpen("ms0:/__popsclear__", 0, 0);
         }
         goto flush;
@@ -218,6 +213,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             extern int exitLauncher();
             REDIRECT_FUNCTION(K_EXTRACT_IMPORT(exitLauncher), popsExit);
 
+            // notify ps1cfw_enabler that boot is complete
             sceIoOpen("ms0:/__popsbooted__", 0, 0);
 
             // Boot Complete Action done
