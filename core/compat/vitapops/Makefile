@@ -3,7 +3,6 @@ TARGET = vitapops
 C_OBJS = \
 	main.o \
 	syspatch.o \
-	exitgame.o \
 	popsdisplay.o \
 	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \

@@ -201,7 +201,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
-
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
 
