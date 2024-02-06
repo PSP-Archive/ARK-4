@@ -40,16 +40,16 @@ int installPS1Plugin() {
 	int pluginCheck = sceIoOpen("ur0:tai/ps1cfw_enabler.suprx", SCE_O_RDONLY, 0777);	
 	if(pluginCheck < 0) {
 		updateUi("ARK-X PS1 Plugin not found adding to config ...");
-		CopyFileAndUpdateUi("app0:arkx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
-		CopyTree("app0:arkx/GAME", "ux0:/pspemu/PSP/GAME");
+		CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
+		CopyTree("app0:psx/GAME", "ux0:/pspemu/PSP/GAME");
 		int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
 		sceIoWrite(addPlugin, "*SCPS10084\nur0:tai/ps1cfw_enabler.suprx", 40);
 		return 1;
 	}
 	else {
 		updateUi("ARK-X PS1 Plugin found updating plugin and base game only ...");
-		CopyFileAndUpdateUi("app0:arkx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
-		CopyTree("app0:arkx/GAME", "ux0:/pspemu/PSP/GAME");
+		CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
+		CopyTree("app0:psx/GAME", "ux0:/pspemu/PSP/GAME");
 		sceIoClose(pluginCheck);
 		return 0;
 	}
@@ -112,8 +112,8 @@ void placePspGameData(char *gameID) {
 	if(gameID != NULL) {
 		snprintf(rifFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/LICENSE/%s.rif", CONTENT_ID_ARK);
 		snprintf(ebootFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/EBOOT.PBP", gameID);
-		CopyFileAndUpdateUi("app0:arkx/GAME/SCPS10084/EBOOT.PBP", ebootFile);
-		CopyFileAndUpdateUi("app0:rif/arkx.rif", rifFile);
+		CopyFileAndUpdateUi("app0:psx/GAME/SCPS10084/EBOOT.PBP", ebootFile);
+		CopyFileAndUpdateUi("app0:rif/psx.rif", rifFile);
 	} else {
 		snprintf(rifFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/LICENSE/%s.rif", CONTENT_ID);
 		snprintf(ebootFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/EBOOT.PBP", TITLE_ID);

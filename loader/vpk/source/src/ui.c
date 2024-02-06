@@ -21,7 +21,7 @@ void countProgress() {
 	totalProgress += GetTotalNeededDirectories(0); // Directories required to be created.
 	totalProgress += GetTotalNeededDirectories(1); // Directories required to be created.
 	totalProgress += CountTree("app0:save"); // Total number of files / dirs in ARK4 savedata.
-	totalProgress += CountTree("app0:arkx");
+	totalProgress += CountTree("app0:psx");
 }
 
 void uiInit() {
