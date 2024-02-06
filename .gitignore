@@ -3,3 +3,4 @@
 *.prx
 *.SFO
 *.elf
+loader/vpk/source/*
