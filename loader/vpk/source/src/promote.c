@@ -1,4 +1,5 @@
 #include <vitasdk.h>
+#include <string.h>
 
 static int loadScePaf() {
 	static uint32_t argp[] = { 0x180000, -1, -1, 1, -1, -1 };

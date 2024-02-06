@@ -1,4 +1,5 @@
 #include <vitasdk.h>
+#include <psp2/power.h>
 #include <vita2d.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,14 +19,23 @@ void waitCross(){
 
 int main(int argc, const char *argv[]) {
 	uiInit();	
-	
+
 	displayMsg("Install?", "Press X to begin installation ...");
 	waitCross();
+
 	
 	doInstall();
-	
-	displayMsg("Install Complete!", "Press X to close this application ...");
-	waitCross();
+	int flag = installPS1Plugin();
+
+	if (flag) {	
+		displayMsg("Install Complete!", "Press X to restart ...");
+		waitCross();
+		scePowerRequestColdReset();
+	}
+	else {
+		displayMsg("Install Complete!", "Press X to close this application ...");
+		waitCross();
+	}
 	
 	return 0;
 }
