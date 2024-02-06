@@ -1,6 +1,6 @@
 # ARK Changelog
 
-## Version 4.20.67 (2023-01-18)
+## Version 4.20.67 (2024-01-18)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42067
 - Rev 6: fixed crash when returning from sleep in some games (i.e. `Lego Star Wars II`) due to unchecked zero-division error. Improved `Disable Analog Stick` for some games.
 - Rev 5: improved (classic) recovery menu; better visuals and improved code.
@@ -420,18 +420,18 @@
 - Fixed and improved "Matrix" animation.
 - Added new "Hacker" and "BSoD" animations.
 
-## Version 4.19.5 (2022-01-12)
+## Version 4.19.5 (2023-01-12)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4195
 - Fixed issue where VSH plugins would not load after pausing game in PSP Go.
 - Recovery menu no longer deletes custom config lines.
 - You can now enable/disable DLC scanning in custom launcher (previously always enabled).
 
-## Version 4.19.4 (2022-01-09)
+## Version 4.19.4 (2023-01-09)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4194
 - Fixed device autodetection in ARK Live Loader.
 - Added easter egg.
 
-## Version 4.19.3 (2022-01-09)
+## Version 4.19.3 (2023-01-09)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4193
 - Improved Recovery menu plugin handling to properly restore comments.
 - Fixed bug in plugin system where blank lines would be treated as EOF.
