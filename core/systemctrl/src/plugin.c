@@ -56,6 +56,10 @@ int disable_plugins = 0;
 int disable_settings = 0;
 int is_plugins_loading = 0;
 
+int isLoadingPlugins(){
+    return is_plugins_loading;
+}
+
 static addPlugin(char* path){
     for (int i=0; i<plugins->count; i++){
         if (stricmp(plugins->paths[i], path) == 0)

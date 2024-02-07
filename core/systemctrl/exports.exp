@@ -203,6 +203,7 @@ PSP_EXPORT_FUNC(sctrlHENSetPluginHandler)
 PSP_EXPORT_FUNC(sctrlHENSetRebootexConfig)
 PSP_EXPORT_FUNC(getGameId)
 PSP_EXPORT_FUNC(isSystemBooted)
+PSP_EXPORT_FUNC(isLoadingPlugins)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(ARKdebug, 0, 0x4001)

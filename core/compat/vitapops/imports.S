@@ -6,3 +6,4 @@
 	IMPORT_FUNC  "SystemCtrlPrivate",0x5D7817CF,msstorCacheInit
 	IMPORT_FUNC  "SystemCtrlPrivate",0xBC7554DF,strcasecmp
 	IMPORT_FUNC  "SystemCtrlPrivate",0x272984FD,isSystemBooted
+	IMPORT_FUNC  "SystemCtrlPrivate",0x73C9DA17,isLoadingPlugins

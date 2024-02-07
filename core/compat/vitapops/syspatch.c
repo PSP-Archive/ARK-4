@@ -22,6 +22,7 @@ static int draw_thread = -1;
 static volatile int do_draw = 0;
 static u32* fake_vram = (u32*)0x0BC00000; // use extra RAM for fake framebuffer
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
+int (* DisplayGetFrameBuf)(void**, int*, int*, int) = NULL;
 int (*DisplayWaitVblankStart)() = NULL;
 
 extern SEConfig* se_config;
@@ -60,10 +61,23 @@ void patchVitaPopsDisplay(SceModule2* mod){
     }
 }
 
+int sceDisplayGetFrameBufPatched(void** p, int* w, int* f, int t){
+    if (p) *p = fake_vram;
+    if (w) *w = PSP_SCREEN_LINE;
+    if (f) *f = PSP_DISPLAY_PIXEL_FORMAT_8888;
+    return 0;
+}
+
 // background thread to relocate screen
 int pops_draw_thread(int argc, void* argp){
     while (do_draw){
-        copyPSPVram(fake_vram);
+        void* framebuf = NULL;
+        int pixelformat, bufferwidth;
+        DisplayGetFrameBuf(&framebuf, &bufferwidth, &pixelformat, 0);
+        if (!framebuf){
+            framebuf = fake_vram;
+        }
+        copyPSPVram(framebuf);
         DisplayWaitVblankStart();
     }
     return 0;
@@ -76,7 +90,6 @@ int sceKernelSuspendThreadPatched(SceUID thid) {
 		if (strcmp(info.name, "popsmain") == 0) {
             if (draw_thread < 0){
                 do_draw = 1;
-                memset(fake_vram, 0, 512 * 272 * 4);
 			    draw_thread = sceKernelCreateThread("psxloader", &pops_draw_thread, 0x10, 0x10000, PSP_THREAD_ATTR_VFPU, NULL);
                 sceKernelStartThread(draw_thread, 0, NULL);
             }
@@ -119,6 +132,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     // Patch display for homebrew
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
+        DisplayGetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0xEEDA2E54);
         DisplayWaitVblankStart = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x984C27E7);
         if (sceKernelInitApitype() != 0x144){
             patchVitaPopsDisplay(mod);
@@ -151,19 +165,24 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    // patch to display CWCHEAT
-    if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
-		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
-			hookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched);
-			goto flush;
-		}
-	}
+    // patch to display plugins
+    if (isLoadingPlugins() && sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
+        if (mod->text_addr&0x80000000){
+            hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+            hookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched);
+        }
+        else {
+            hookImportByNID(mod, "ThreadManForUser", 0x9944F31F, sceKernelSuspendThreadPatched);
+            hookImportByNID(mod, "ThreadManForUser", 0x75156E8F, sceKernelResumeThreadPatched);
+        }
+        hookImportByNID(mod, "sceDisplay", 0x289D82FE, 0);
+        hookImportByNID(mod, "sceDisplay", 0xEEDA2E54, sceDisplayGetFrameBufPatched);
+        goto flush;
+    }
 
     if (strcmp(mod->modname, "sceKernelLibrary") == 0){
         // Configure ps1cfw_enabler
-        int keyconfig = sceKernelInitKeyConfig();
-        if (keyconfig == PSP_INIT_KEYCONFIG_POPS){
+        if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
             // send current game information (ID and path)
             char* path = sceKernelInitFileName();
             char title[20]; int n; sctrlGetInitPARAM("DISC_ID", NULL, &n, title);
@@ -188,9 +207,11 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
 
-            // Set fake framebuffer so that cwcheat can be displayed
-            DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
-            memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+            // Set fake framebuffer so that plugins can be displayed
+            if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
+                DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
+                memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+            }
 
             // notify ps1cfw_enabler that boot is complete
             sceIoOpen("ms0:/__popsbooted__", 0, 0);
