@@ -44,10 +44,12 @@ KernelFunctions _ktbl = {
 int (* _sceDisplaySetFrameBufferInternal)(int pri, void *topaddr, int width, int format, int sync) = NULL;
 int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr,
         int width, int format, int sync){
+    int res = -1;
     copyPSPVram(topaddr);
     if (_sceDisplaySetFrameBufferInternal) // passthrough
-        return _sceDisplaySetFrameBufferInternal(pri, topaddr, width, format, sync); 
-    return -1;
+        res = _sceDisplaySetFrameBufferInternal(pri, topaddr, width, format, sync); 
+    sceIoOpen("ms0:/__popsdraw__", 0, 0);
+    return res;
 }
 
 // patch pops display to set up our own screen handler
@@ -125,10 +127,8 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 }
 
 int popsExit(){
-    int k1 = pspSdkSetK1(0);
     // attempt to exit via ps1cfw_enabler
     sceIoOpen("ms0:/__popsexit__", 0, 0);
-    pspSdkSetK1(k1);
     // fallback to regular exit
     return sctrlKernelExitVSH(NULL);
 }
@@ -186,20 +186,19 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
+    // Configure ps1cfw_enabler
     if (strcmp(mod->modname, "sceKernelLibrary") == 0){
-        // Configure ps1cfw_enabler
+        // clear config
+        sceIoOpen("ms0:/__popsclear__", 0, 0);
+        // send current game information (ID and path)
         if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
-            // send current game information (ID and path)
             char* path = sceKernelInitFileName();
             char title[20]; int n; sctrlGetInitPARAM("DISC_ID", NULL, &n, title);
-            char* config = oe_malloc(300);
-            sprintf(config, "ms0:/__popsconfig__/%s%s", title, strchr(path, '/'));
-            sceIoOpen(config, 0, 0);
-            oe_free(config);
-        }
-        else {
-            // clear config
-            sceIoOpen("ms0:/__popsclear__", 0, 0);
+            char config[300];
+            if (strcmp("SCPS10084", title) != 0) {
+                sprintf(config, "ms0:/__popsconfig__/%s%s", title, strchr(path, '/'));
+                sceIoOpen(config, 0, 0);
+            }
         }
         goto flush;
     }

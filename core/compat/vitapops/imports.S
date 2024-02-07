@@ -7,3 +7,4 @@
 	IMPORT_FUNC  "SystemCtrlPrivate",0xBC7554DF,strcasecmp
 	IMPORT_FUNC  "SystemCtrlPrivate",0x272984FD,isSystemBooted
 	IMPORT_FUNC  "SystemCtrlPrivate",0x73C9DA17,isLoadingPlugins
+	IMPORT_FUNC  "SystemCtrlPrivate",0x34D6168F,getGameId

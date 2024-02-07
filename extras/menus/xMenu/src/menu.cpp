@@ -42,7 +42,7 @@ void Menu::readEbootList(string path){
         string fullpath = fullPath(path, dit->d_name);
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
-        if (strcmp(dit->d_name, "SCPS10084") == 0) continue;
+        //if (strcmp(dit->d_name, "SCPS10084") == 0) continue;
         if (common::fileExists(path+dit->d_name)) continue;
         if (!isPOPS(fullpath)) continue;
         
@@ -62,8 +62,8 @@ string Menu::fullPath(string path, string app){
     else if (common::fileExists(path+app+"/FBOOT.PBP"))
         return path+app+"/FBOOT.PBP";
     
-    else if (common::fileExists(path+app+VBOOT_PBP))
-        return path+app+VBOOT_PBP;
+    else if (common::fileExists(path+app+"/VBOOT.PBP"))
+        return path+app+"/VBOOT.PBP";
 
     return "";
 }
