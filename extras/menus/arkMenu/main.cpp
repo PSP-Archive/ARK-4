@@ -80,14 +80,6 @@ int main(int argc, char** argv){
         Browser::ftp_driver = new FTPDriver();
     }
 
-    if (!recovery){
-        // Setup settings
-        int max_settings = MAX_SETTINGS_OPTIONS;
-        if (common::getPspModel() != PSP_GO) max_settings -= 2;
-        SettingsTable stab = { settings_entries, max_settings };
-        entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
-    }
-
     // Add ARK settings manager
     loadSettings();
     SettingsTable cfwstab = { ark_conf_entries, ark_conf_max_entries };
@@ -106,12 +98,13 @@ int main(int argc, char** argv){
     plugins_menu->setIcon(IMAGE_PLUGINS);
     entries[n_entries++] = plugins_menu;
 
+    // Setup settings
+    int max_settings = MAX_SETTINGS_OPTIONS;
+    if (common::getPspModel() != PSP_GO) max_settings -= 2;
+    SettingsTable stab = { settings_entries, max_settings };
+    entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
+
     if (recovery){
-        // Setup settings
-        int max_settings = MAX_SETTINGS_OPTIONS;
-        if (common::getPspModel() != PSP_GO) max_settings -= 2;
-        SettingsTable stab = { settings_entries, max_settings };
-        entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
         entries[n_entries++] = Browser::getInstance();
     }
 
