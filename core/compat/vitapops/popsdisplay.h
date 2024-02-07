@@ -37,13 +37,4 @@ void SoftRelocateVram(u32* psp_vram, u16* ps1_vram);
 // register custom vram handler
 void* registerPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram));
 
-// original sony function
-extern int (* _sceDisplaySetFrameBufferInternal)(int pri, void *topaddr, int width, int format, int sync);
-
-// hooked function to copy framebuffer
-int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr,
-        int width, int format, int sync);
-
-extern void* sctrlHENSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram));
-
 #endif

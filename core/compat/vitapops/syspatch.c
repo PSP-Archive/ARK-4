@@ -40,6 +40,16 @@ KernelFunctions _ktbl = {
 }; // for vita flash patcher
 
 
+// hooked function to copy framebuffer
+int (* _sceDisplaySetFrameBufferInternal)(int pri, void *topaddr, int width, int format, int sync) = NULL;
+int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr,
+        int width, int format, int sync){
+    copyPSPVram(topaddr);
+    if (_sceDisplaySetFrameBufferInternal) // passthrough
+        return _sceDisplaySetFrameBufferInternal(pri, topaddr, width, format, sync); 
+    return -1;
+}
+
 // patch pops display to set up our own screen handler
 void patchVitaPopsDisplay(SceModule2* mod){
     u32 display_func = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay_driver", 0x3E17FE8D);

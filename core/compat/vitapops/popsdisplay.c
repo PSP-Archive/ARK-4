@@ -11,8 +11,6 @@
 #include <functions.h>
 #include "popsdisplay.h"
 
-// Internal function
-int (* _sceDisplaySetFrameBufferInternal)(int pri, void *topaddr, int width, int format, int sync) = NULL;
 
 // Vram address and config
 u16* pops_vram = (u16*)0x490C0000;
@@ -77,16 +75,6 @@ void SoftRelocateVram(u32* psp_vram, u16* ps1_vram)
 void copyPSPVram(u32* psp_vram){
     if (_psxVramHandler)
         _psxVramHandler(psp_vram, NULL);
-}
-
-// hooked function to copy framebuffer
-int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr,
-        int width, int format, int sync){
-    if (_psxVramHandler)
-        _psxVramHandler(topaddr, pops_vram); // handle vram copy
-    if (_sceDisplaySetFrameBufferInternal) // passthrough
-        return _sceDisplaySetFrameBufferInternal(pri, topaddr, width, format, sync); 
-    return -1;
 }
 
 // register custom vram handler
