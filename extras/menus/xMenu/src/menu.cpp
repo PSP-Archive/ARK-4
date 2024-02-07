@@ -42,7 +42,7 @@ void Menu::readEbootList(string path){
         string fullpath = fullPath(path, dit->d_name);
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
-        //if (strcmp(dit->d_name, "SCPS10084") == 0) continue;
+        if (strcmp(dit->d_name, "SCPS10084") == 0) continue;
         if (common::fileExists(path+dit->d_name)) continue;
         if (!isPOPS(fullpath)) continue;
         

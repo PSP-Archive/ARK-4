@@ -5,7 +5,6 @@
 void _start() __attribute__ ((weak, alias ("module_start")));
 
 #define SCE_PSPEMU_CACHE_NONE 0x1
-#define THUMB_SHUFFLE(x) ((((x) & 0xFFFF0000) >> 16) | (((x) & 0xFFFF) << 16))
 
 uint32_t module_nid;
 SceUID sceIoOpenHook = -1;
@@ -33,13 +32,11 @@ typedef struct PopsConfig{
 
 PopsConfig popsconfig;
 
-int (* ScePspemuDivide)(uint64_t x, uint64_t y);
 int (* ScePspemuErrorExit)(int error);
 int (* ScePspemuConvertAddress)(uint32_t addr, int mode, uint32_t cache_size);
 int (* ScePspemuWritebackCache)(void *addr, int size);
 
 void get_functions(uint32_t text_addr) {
-  ScePspemuDivide                     = (void *)(text_addr + 0x39F0 + 0x1);
   ScePspemuErrorExit                  = (void *)(text_addr + 0x4104 + 0x1);
   ScePspemuConvertAddress             = (void *)(text_addr + 0x6364 + 0x1);
   ScePspemuWritebackCache             = (void *)(text_addr + 0x6490 + 0x1);
@@ -68,6 +65,12 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 	    ScePspemuWritebackCache(m, 4);
 	    return 0;
     }
+    
+    // Clean Exit
+    if (strstr(file, "__popsexit__")){
+        ScePspemuErrorExit(0);
+        return 0;
+    }
   
     // Configure currently loaded game
     char* popsetup = strstr(file, "__popsconfig__");
@@ -87,18 +90,20 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
         return -102;
     }
     
-    // Clean Exit
-    if (strstr(file, "__popsexit__")){
-        ScePspemuErrorExit(0);
-        return 0;
-    }
     
     if (strstr(file, "__popsbooted__")){
         sceShellUtilUnlock(SCE_SHELL_UTIL_LOCK_TYPE_PS_BTN);
         sceShellUtilUnlock(SCE_SHELL_UTIL_LOCK_TYPE_PS_BTN_2);
         sceKernelPowerUnlock(0);
-        return 0;
+        return -103;
     }
+    
+    // Clean Exit
+    if (strstr(file, "__popsdraw__")){
+        //sceCompatLCDCSync();
+        return -104;
+    }
+    
 
     // Redirect files for memory card manager
     if (popsconfig.magic == ARK_MAGIC && popsconfig.title_id[0] && popsconfig.path[0]){
