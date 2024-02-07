@@ -128,8 +128,9 @@ Use `-h` or `--help` to show all available flags
 
 - This allows you to install and use all of ARK's features on the console's internal flash memory, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
 - Copy `ARK_Full_Installer` to `/PSP/GAME/` and run it from `ARK`. It will install some extra files into the console's flash.
-- This installation will make use of `Classic Recovery Menu` when the regular one is not available. The minimalistic `PRO Shell` is used in place of the `Custom Launcher`.
-- When no savedata folder is available the default ARK path used to store settings and other Custom Firmware files will be `ms0:/SEPLUGINS/`.
+- If the `Custom Launcher` is not available (i.e. you delete the ARK savedata or remove the memory card), `PRO Shell` will take its place.
+- When no savedata folder is available the default ARK path used to store settings will be `ms0:/SEPLUGINS/`.
+- Even if files are stored in the console's flash memory, the ones in the savedata folder will still take priority in loading.
 
 
 ##### Time Machine and Despertar del Cementerio
