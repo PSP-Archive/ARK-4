@@ -57,27 +57,16 @@ Installation On PS Vita
 
     - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
     - Download and install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
-    - Copy `FasterARK.vpk` from `Vita/Standalone/` folder anywhere on your vita and install using `VitaShell`. 
-    - Open `FasterARK` and wait for the install process to finish. An `ARK` bubble will appear in `Live Area`.
-    - Once `ARK` is installed, you can delete `FasterARK`.
+    - Copy `FasterARK.vpk` from `PSVita/` folder anywhere on your vita and install using `VitaShell`. 
+    - Open `FasterARK` and wait for the install process to finish.
+    - Both `ARK` and `ARK-X` bubbles will appear in `Live Area`.
+    - Use the `ARK` bubble for `PSP` games and homebrew. It can play `PS1` but with limitations related to sound playback.
+    - Use the `ARK-X` bubble for `PS1` games without any sound issues.
+    - Once `ARK` bubbles are installed, you can delete `FasterARK`.
     - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
-    - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
+    - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start` (`L2+R2+Down+Start` on `ARK-X`).
     - NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB` and `Force Extra RAM` setting.
-    - NOTE: There are limitations in the playback of `PS1` games, mostly related to audio.
-    - If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign`.
-
-  PS1 Loader
-
-    - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
-    - Requires <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
-    - Requires latest `ARK-4` installed (`ARK_01234` savedata).
-    - Copy `ps1cfw_enabler.suprx` from `PSVita/PS1CFW/` to `ur0:tai/`.
-    - Open `ur0:tai/config.txt`, add the following line; `*SCPS10084 ur0:tai/ps1cfw_enabler.suprx` and save.
-    - Copy `SCPS10084` from `PSVita/PS1CFW/` to `ux0:pspemu/PSP/GAME/`.
-    - Download and install the latest `VitaShell` with support for refreshing `PSP/PSX` games from here: https://github.com/LiEnby/VitaShell/releases
-    - Use `VitaShell` to `Refresh Live Area`. A new `ARK-X` bubble should appear.
-    - NOTE: plugin support is limited.
-    - NOTE: use the key combo `L2+R2+Start+Down` to exit at any time.
+    - NOTE: If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign` with a valid license.
 
   Adrenaline
 
