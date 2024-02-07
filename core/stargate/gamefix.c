@@ -13,16 +13,14 @@
 #include <functions.h>
 
 
-/*
 int (*utilityGetParam)(int, int*) = NULL;
 int getParamFixed_ULJM05221(int param, int* value){
-    if (param == PSP_SYSTEMPARAM_ID_INT_LANGUAGE){
+    int res = utilityGetParam(param, value);
+    if (param == PSP_SYSTEMPARAM_ID_INT_LANGUAGE && *value > 1){
         *value = 0;
-        return 0;
     }
-    return utilityGetParam(param, value);;
+    return res;
 }
-*/
 
 void applyFixesByModule(SceModule2* mod){
 
@@ -53,10 +51,8 @@ void applyFixesByGameId(){
     getGameId(gameid);
 
     // Fix TwinBee Portable when not using English or Japanese language
-    /*
     if (strcasecmp("ULJM05221", gameid) == 0){
         utilityGetParam = sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0xA5DA2406);
         sctrlHENPatchSyscall(utilityGetParam, getParamFixed_ULJM05221);
     }
-    */
 }

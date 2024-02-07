@@ -65,6 +65,7 @@ copy-bin:
 #	Common installation
 	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Loader/EBOOT.PBP # Signed EBOOT
 	$(Q)cp loader/live/user/signed_eboot/ark_loader.iso dist/PSVita/Standalone/
+	$(Q)cp loader/vpk/bin/psp/PBOOT.PBP dist/PSVita/Standalone/
 	$(Q)cp loader/live/user/psxloader/EBOOT.PBP dist/PSVita/PS1CFW/SCPS10084/
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
 	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/PSP/Infinity/ # Infinity with ARK support (PSP Go)
@@ -105,7 +106,7 @@ copy-bin:
 	$(Q)cp -r dist/ARK_01234 dist/PSP/ARK_DC/
 	$(Q)find dist/themes/ -type d -name 'resources' -exec rm -rf {} \; 2>/dev/null || true
 	$(Q)cp -r dist/ARK_01234 loader/vpk/bin/save/
-	$(Q)cd loader/vpk/bin/ && zip -r ../../../dist/PSVita/Standalone/FasterARK.vpk * && cd $(ARKROOT)
+	$(Q)cd loader/vpk/bin/ && zip -r ../../../dist/PSVita/FasterARK.vpk * && cd $(ARKROOT)
 	$(Q)$(MAKE) -C extras/updater/
 	$(Q)cp extras/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
 

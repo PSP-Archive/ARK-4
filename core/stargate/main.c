@@ -45,6 +45,12 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
 
     applyFixesByModule(mod);
 
+    // Boot Complete Action not done yet
+    if (strcmp(mod->modname, "sceKernelLibrary") == 0)
+    {
+        applyFixesByGameId();
+    }
+
     // Call Previous Module Start Handler
     if(previous) previous(mod);
     
@@ -53,20 +59,6 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
 
     // Patch CFW dirs
     hide_cfw_folder(mod);
-
-    // Boot Complete Action not done yet
-    if(booted == 0)
-    {
-        // Boot is complete
-        if(isSystemBooted())
-        {
-
-            applyFixesByGameId();
-
-            // Boot Complete Action done
-            booted = 1;
-        }
-    }
     
 }
 
