@@ -192,10 +192,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
             memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 
-            // redirect exit combo
-            extern int exitLauncher();
-            REDIRECT_FUNCTION(K_EXTRACT_IMPORT(exitLauncher), popsExit);
-
             // notify ps1cfw_enabler that boot is complete
             sceIoOpen("ms0:/__popsbooted__", 0, 0);
 

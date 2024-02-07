@@ -43,19 +43,7 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
 {
     static int booted = 1;
 
-    if (strcmp(mod->modname, "tekken") == 0) {
-        hookImportByNID(mod, "scePower", 0x34F9C463, 222); // scePowerGetPllClockFrequencyInt
-	}
-
-    else if (strcmp(mod->modname, "ATVPRO") == 0){
-        hookImportByNID(mod, "scePower", 0x843FBF43, 0);   // scePowerSetCpuClockFrequency
-        hookImportByNID(mod, "scePower", 0xFDB5BFE9, 222); // scePowerGetCpuClockFrequencyInt
-        hookImportByNID(mod, "scePower", 0xBD681969, 111); // scePowerGetBusClockFrequencyInt
-    }
-    
-    else if (strcasecmp(mod->modname, "DJMAX") == 0) {
-        hookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, 0);
-    }
+    applyFixesByModule(mod);
 
     // Call Previous Module Start Handler
     if(previous) previous(mod);
@@ -73,7 +61,7 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
         if(isSystemBooted())
         {
 
-            
+            applyFixesByGameId();
 
             // Boot Complete Action done
             booted = 1;
