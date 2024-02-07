@@ -20,7 +20,7 @@ extern STMOD_HANDLER previous;
 
 static int draw_thread = -1;
 static volatile int do_draw = 0;
-static u32* fake_vram = (u32*)0x0BC00000; // use extra RAM for fake framebuffer
+static u32* fake_vram = (u32*)0x0A400000; // use extra RAM for fake framebuffer
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 int (* DisplayGetFrameBuf)(void**, int*, int*, int) = NULL;
 int (*DisplayWaitVblankStart)() = NULL;
@@ -54,11 +54,9 @@ int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr,
 void patchVitaPopsDisplay(SceModule2* mod){
     u32 display_func = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay_driver", 0x3E17FE8D);
     if (display_func){
-        //if (sceKernelInitApitype() != 0x144){
-            // protect vita pops vram
-            sceKernelAllocPartitionMemory(6, "POPS VRAM CONFIG", PSP_SMEM_Addr, 0x1B0, (void *)0x09FE0000);
-            sceKernelAllocPartitionMemory(6, "POPS VRAM", PSP_SMEM_Addr, 0x3C0000, (void *)0x090C0000);
-        //}
+        // protect vita pops vram
+        sceKernelAllocPartitionMemory(6, "POPS VRAM CONFIG", PSP_SMEM_Addr, 0x1B0, (void *)0x09FE0000);
+        sceKernelAllocPartitionMemory(6, "POPS VRAM", PSP_SMEM_Addr, 0x3C0000, (void *)0x090C0000);
         memset((void *)0x49FE0000, 0, 0x1B0);
         memset((void *)0x490C0000, 0, 0x3C0000);
         // register default screen handler
@@ -160,10 +158,8 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "sceLowIO_Driver") == 0) {
 		// Protect pops memory
-		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
-			memset((void *)0x49F40000, 0, 0x80000);
-		}
+        sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
+        memset((void *)0x49F40000, 0, 0x80000);
 
         goto flush;
     }

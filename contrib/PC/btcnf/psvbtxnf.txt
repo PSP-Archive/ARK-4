@@ -39,7 +39,6 @@ $/kd/popsman.prx P
 $/kd/ark_popcorn.prx P
 $/kd/impose_kermit.prx GP
 $/kd/mediasync.prx GP
-$/kd/exitgame.prx GP
 $%/kd/usersystemlib.prx GP
 $%/vsh/module/libfont_hv.prx P
 $%/vsh/module/pafmini.prx P
