@@ -48,7 +48,7 @@ int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 #endif
 
 // Return Boot Status
-static int isSystemBooted(void)
+int isSystemBooted(void)
 {
 
     // Find Function

@@ -37,9 +37,11 @@ PSP_MAIN_THREAD_ATTR(0);
 // Previous Module Start Handler
 STMOD_HANDLER previous;
 
+
 // Module Start Handler
 void stargateSyspatchModuleOnStart(SceModule2 * mod)
 {
+    static int booted = 1;
 
     if (strcmp(mod->modname, "tekken") == 0) {
         hookImportByNID(mod, "scePower", 0x34F9C463, 222); // scePowerGetPllClockFrequencyInt
@@ -63,6 +65,20 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
 
     // Patch CFW dirs
     hide_cfw_folder(mod);
+
+    // Boot Complete Action not done yet
+    if(booted == 0)
+    {
+        // Boot is complete
+        if(isSystemBooted())
+        {
+
+            
+
+            // Boot Complete Action done
+            booted = 1;
+        }
+    }
     
 }
 

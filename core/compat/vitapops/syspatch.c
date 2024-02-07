@@ -38,22 +38,6 @@ KernelFunctions _ktbl = {
     .KernelDelayThread = &sceKernelDelayThread,
 }; // for vita flash patcher
 
-// Return Boot Status
-static int isSystemBooted(void)
-{
-
-    // Find Function
-    int (* _sceKernelGetSystemStatus)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
-    
-    // Get System Status
-    int result = _sceKernelGetSystemStatus();
-        
-    // System booted
-    if(result == 0x20000) return 1;
-    
-    // Still booting
-    return 0;
-}
 
 // patch pops display to set up our own screen handler
 void patchVitaPopsDisplay(SceModule2* mod){
