@@ -61,8 +61,6 @@ void patchVitaPopsDisplay(SceModule2* mod){
         sceKernelAllocPartitionMemory(6, "POPS VRAM", PSP_SMEM_Addr, 0x3C0000, (void *)0x090C0000);
         memset((void *)0x49FE0000, 0, 0x1B0);
         memset((void *)0x490C0000, 0, 0x3C0000);
-        // register default screen handler
-        registerPSXVramHandler(&SoftRelocateVram);
         // initialize screen configuration
         initVitaPopsVram();
         // patch display function
@@ -80,6 +78,9 @@ int sceDisplayGetFrameBufPatched(void** p, int* w, int* f, int t){
 
 // background thread to relocate screen
 int pops_draw_thread(int argc, void* argp){
+    DisplayWaitVblankStart();
+    initVitaPopsVram();
+    DisplayWaitVblankStart();
     while (do_draw){
         void* framebuf = NULL;
         int pixelformat, bufferwidth;
@@ -93,19 +94,31 @@ int pops_draw_thread(int argc, void* argp){
     return 0;
 }
 
+void start_draw_thread(){
+    if (draw_thread < 0){
+        do_draw = 1;
+        draw_thread = sceKernelCreateThread("psxloader", &pops_draw_thread, 0x10, 0x10000, PSP_THREAD_ATTR_VFPU, NULL);
+        sceKernelStartThread(draw_thread, 0, NULL);
+    }
+}
+
+void end_draw_thread(){
+    if (draw_thread >= 0){
+        do_draw = 0;
+        sceKernelWaitThreadEnd(draw_thread, NULL);
+        sceKernelDeleteThread(draw_thread);
+        draw_thread = -1;
+    }
+}
+
 int sceKernelSuspendThreadPatched(SceUID thid) {
 	SceKernelThreadInfo info;
 	info.size = sizeof(SceKernelThreadInfo);
 	if (sceKernelReferThreadStatus(thid, &info) == 0) {
 		if (strcmp(info.name, "popsmain") == 0) {
-            if (draw_thread < 0){
-                do_draw = 1;
-			    draw_thread = sceKernelCreateThread("psxloader", &pops_draw_thread, 0x10, 0x10000, PSP_THREAD_ATTR_VFPU, NULL);
-                sceKernelStartThread(draw_thread, 0, NULL);
-            }
+            start_draw_thread();
 		}
 	}
-
 	return sceKernelSuspendThread(thid);
 }
 
@@ -114,15 +127,9 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	info.size = sizeof(SceKernelThreadInfo);
 	if (sceKernelReferThreadStatus(thid, &info) == 0) {
 		if (strcmp(info.name, "popsmain") == 0) {
-			if (draw_thread >= 0){
-                do_draw = 0;
-                sceKernelWaitThreadEnd(draw_thread, NULL);
-                sceKernelDeleteThread(draw_thread);
-                draw_thread = -1;
-            }
+			end_draw_thread();
 		}
 	}
-
 	return sceKernelResumeThread(thid);
 }
 
@@ -145,14 +152,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         if (sceKernelInitApitype() != 0x144){
             patchVitaPopsDisplay(mod);
         }
-        goto flush;
-    }
-
-    // Patch sceKernelExitGame Syscalls
-    if(strcmp(mod->modname, "sceLoadExec") == 0)
-    {
-        REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), popsExit);
-        REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), popsExit);
         goto flush;
     }
 
@@ -209,6 +208,11 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
+
+            // Patch sceKernelExitGame Syscalls
+            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), popsExit);
+            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x2AC9954B), popsExit);
+
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
 
