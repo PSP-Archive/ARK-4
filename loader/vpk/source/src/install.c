@@ -44,6 +44,7 @@ int installPS1Plugin() {
 		CopyTree("app0:psx/GAME", "ux0:/pspemu/PSP/GAME");
 		int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
 		sceIoWrite(addPlugin, "*SCPS10084\nur0:tai/ps1cfw_enabler.suprx", 40);
+		sceIoClose(addPlugin);
 		return 1;
 	}
 	else {
@@ -112,7 +113,7 @@ void placePspGameData(char *gameID) {
 	if(gameID != NULL) {
 		snprintf(rifFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/LICENSE/%s.rif", CONTENT_ID_ARK);
 		snprintf(ebootFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/EBOOT.PBP", gameID);
-		CopyFileAndUpdateUi("app0:psx/GAME/SCPS10084/EBOOT.PBP", ebootFile);
+		CopyFileAndUpdateUi("app0:psx/EBOOT.PBP", ebootFile);
 		CopyFileAndUpdateUi("app0:rif/psx.rif", rifFile);
 	} else {
 		snprintf(rifFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/LICENSE/%s.rif", CONTENT_ID);

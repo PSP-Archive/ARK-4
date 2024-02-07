@@ -79,7 +79,7 @@ vita_create_vpk(${PROJECT_NAME}.vpk ${VITA_TITLEID} eboot.bin
   FILE res/psp/EBOOT.PBP psp/EBOOT.PBP
   FILE res/psp/PBOOT.PBP psp/PBOOT.PBP
   FILE res/psx/ps1cfw_enabler.suprx psx/ps1cfw_enabler.suprx
-  FILE res/psx/GAME/SCPS10084/EBOOT.PBP psx/GAME/SCPS10084/EBOOT.PBP
+  FILE res/psx/EBOOT.PBP psx/EBOOT.PBP
   FILE res/save/ARK_01234/ARK.BIN save/ARK_01234/ARK.BIN
   FILE res/save/ARK_01234/ARK4.BIN save/ARK_01234/ARK4.BIN
   FILE res/save/ARK_01234/ARKX.BIN save/ARK_01234/ARKX.BIN

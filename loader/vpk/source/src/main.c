@@ -28,14 +28,12 @@ int main(int argc, const char *argv[]) {
 	int flag = installPS1Plugin();
 
 	if (flag) {	
-		displayMsg("Install Complete!", "Press X to restart ...");
-		waitCross();
-		scePowerRequestColdReset();
+		updateUi("Reload taiHEN config...");
+		taiReloadConfig();
 	}
-	else {
-		displayMsg("Install Complete!", "Press X to close this application ...");
-		waitCross();
-	}
+
+	displayMsg("Install Complete!", "Press X to close this application ...");
+	waitCross();
 	
 	return 0;
 }
