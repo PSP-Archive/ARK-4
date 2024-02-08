@@ -135,9 +135,10 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 
 int popsExit(){
     // attempt to exit via ps1cfw_enabler
-    sceIoOpen("ms0:/__popsexit__", 0, 0);
+    int res = sceIoOpen("ms0:/__popsexit__", 0, 0);
     // fallback to regular exit
-    return sctrlKernelExitVSH(NULL);
+    if (res < 0) res = sctrlKernelExitVSH(NULL);
+    return res;
 }
 
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
@@ -194,10 +195,8 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             char* path = sceKernelInitFileName();
             char title[20]; int n; sctrlGetInitPARAM("DISC_ID", NULL, &n, title);
             char config[300];
-            if (strcmp("SCPS10084", title) != 0) {
-                sprintf(config, "ms0:/__popsconfig__/%s%s", title, strchr(path, '/'));
-                sceIoOpen(config, 0, 0);
-            }
+            sprintf(config, "ms0:/__popsconfig__/%s%s", title, strchr(path, '/'));
+            sceIoOpen(config, 0, 0);
         }
         goto flush;
     }

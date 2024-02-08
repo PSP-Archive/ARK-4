@@ -34,8 +34,6 @@ static char* NeededDirectoriesARKX[] = {
 
 
 int installPS1Plugin() {
-
-	
 	updateUi("Checking for ARK-X PS1 Plugin ...");
 	int pluginCheck = sceIoOpen("ur0:tai/ps1cfw_enabler.suprx", SCE_O_RDONLY, 0777);	
 	if(pluginCheck < 0) {
@@ -43,15 +41,16 @@ int installPS1Plugin() {
 		CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
 		CopyTree("app0:psx/GAME", "ux0:/pspemu/PSP/GAME");
 		int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
-		sceIoWrite(addPlugin, "*SCPS10084\nur0:tai/ps1cfw_enabler.suprx", 40);
+		static char pluginLine[] = "\n*SCPS10084\nur0:tai/ps1cfw_enabler.suprx";
+		sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine));
 		sceIoClose(addPlugin);
 		return 1;
 	}
 	else {
+	    sceIoClose(pluginCheck);
 		updateUi("ARK-X PS1 Plugin found updating plugin and base game only ...");
 		CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
 		CopyTree("app0:psx/GAME", "ux0:/pspemu/PSP/GAME");
-		sceIoClose(pluginCheck);
 		return 0;
 	}
 
