@@ -133,13 +133,12 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 }
 
 int popsExit(){
+    int k1 = pspSdkSetK1(0);
     // attempt to exit via ps1cfw_enabler
-    int fd = sceIoOpen("ms0:/exiting.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
-    sceIoClose(fd);
-    int res = sceIoOpen("ms0:/__popsexit__", 0, 0);
+    sceIoOpen("ms0:/__popsexit__", 0, 0);
     // fallback to regular exit
-    if (res < 0) res = sctrlKernelExitVSH(NULL);
-    return res;
+    pspSdkSetK1(k1);
+    return sctrlKernelExitVSH(NULL);
 }
 
 extern int exitLauncher();
