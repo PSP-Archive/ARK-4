@@ -47,12 +47,15 @@ void SubMenu::getItems() {
     sort_entries << "Sort Games by Name: " << ((common::getConf()->sort_entries)? "Enabled" : "Disabled");
 	stringstream skip_gameboot;
     skip_gameboot << "Fast Gameboot: " << ((common::getConf()->fast_gameboot)? "Enabled" : "Disabled");
+	stringstream scan_cat;
+    scan_cat << "Scan Categories: " << ((common::getConf()->scan_cat)? "Enabled" : "Disabled");
 
     options[0] = memoryStickSpeedup.str();
     options[1] = sort_entries.str();
     options[2] = skip_gameboot.str();
-    options[3] = "Restart";
-    options[4] = "Exit";
+    options[3] = scan_cat.str();
+    options[4] = "Restart";
+    options[5] = "Exit";
 }
 
 void SubMenu::updateScreen(){
@@ -105,8 +108,10 @@ void SubMenu::updateScreen(){
 			else if (i==1)
             	fillScreenRect(color, (options[i].size()*12)+24, cur_y+1, 2, 14); // right side
 			else if (i==2) 
-            	fillScreenRect(color, (options[i].size()*12)+64, cur_y+1, 2, 14); // right side
-			else if (i==3)
+            	fillScreenRect(color, (options[i].size()*12)+60, cur_y+1, 2, 14); // right side
+			else if (i==3) 
+            	fillScreenRect(color, (options[i].size()*12)+48, cur_y+1, 2, 14); // right side
+			else if (i==4)
             	fillScreenRect(color, w+8, cur_y+1, 2, 14); // right side
 			else
             	fillScreenRect(color, w-4, cur_y+1, 2, 14); // right side
@@ -148,11 +153,12 @@ void SubMenu::run() {
 					changeMsCacheSetting(); getItems(); break;
                 case 1: 
 				case 2:
+				case 3:
 					changeSetting(index); getItems(); 
 					break;
-                case 3: 
-					rebootMenu(); break;
                 case 4: 
+					rebootMenu(); break;
+                case 5: 
 					menu->fadeOut(); sceKernelExitGame(); break;
             }
         }
@@ -195,6 +201,8 @@ void SubMenu::changeSetting(int setting){
 		common::getConf()->sort_entries = !common::getConf()->sort_entries;
 	else if(setting == 2)
 		common::getConf()->fast_gameboot = !common::getConf()->fast_gameboot;
+	else if(setting == 3)
+		common::getConf()->scan_cat = !common::getConf()->scan_cat;
 
 	
 		
