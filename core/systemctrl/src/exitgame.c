@@ -46,7 +46,9 @@ int exitLauncher()
 
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
-    
+
+	int k1 = pspSdkSetK1(0);
+
     // set exit app
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
@@ -98,6 +100,7 @@ int exitLauncher()
 		ark_config->recovery = 0; // reset recovery mode for next reboot
 		sctrlKernelExitVSH(NULL);
 	}
+	pspSdkSetK1(k1);
 	return 0;
 }
 

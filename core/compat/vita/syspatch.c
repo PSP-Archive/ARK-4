@@ -91,41 +91,6 @@ int sceAudioOutput2ReleaseFixed(){
 	return _sceAudioOutput2Release();
 }
 
-/*
-int (*UtilityNetconfInitStart)(pspUtilityNetconfData *data);
-int myUtilityNetconfInitStart(pspUtilityNetconfData *data){
-    pspUtilityNetconfData* p = data;
-    struct pspUtilityNetconfAdhoc* a = p->adhocparam;
-
-    if (p->action == 0){
-        memset(p, 0, sizeof(p));
-        p->base.size = 0x44;
-        p->base.language = 1;
-        p->base.graphicsThread = 0x11;
-        p->base.accessThread = 0x13;
-        p->base.fontThread = 0x12;
-        p->base.soundThread = 0x10;
-        p->base.result = 0;
-        p->base.reserved[0] = 0;
-        p->base.reserved[1] = 0;
-        p->base.reserved[2] = 0;
-        p->base.reserved[3] = 0;
-        p->action = 3;
-        p->adhocparam = a;
-        p->hotspot = 1;
-        p->hotspot_connected = 1;
-        p->wifisp = 0;
-
-        if (a){
-            memset(a, 0, sizeof(a));
-            a->timeout = 10;
-        }
-    }
-
-    return UtilityNetconfInitStart(data);
-}
-*/
-
 void ARKVitaOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
@@ -140,7 +105,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     {
         REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));
         REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), K_EXTRACT_IMPORT(exitLauncher));
-        //REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForKernel", 0x08F7166C), K_EXTRACT_IMPORT(exitLauncher));
         goto flush;
     }
     
@@ -154,8 +118,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     // Patch PSP Popsman
     if (strcmp(mod->modname, "scePops_Manager") == 0){
         patchPspPopsman(mod);
-        // Hook scePopsManExitVSHKernel
-        //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8), K_EXTRACT_IMPORT(exitLauncher));
         goto flush;
     }
     
@@ -207,9 +169,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
                     }
                 }
             }
-
-			//UtilityNetconfInitStart = sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0x4DB1E739);
-            //if (UtilityNetconfInitStart) sctrlHENPatchSyscall(UtilityNetconfInitStart, myUtilityNetconfInitStart);
             
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();

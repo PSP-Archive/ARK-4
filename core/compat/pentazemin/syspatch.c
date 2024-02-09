@@ -315,13 +315,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
-
-    if(strcmp(mod->modname, "sceDisplay_Service") == 0)
-    {
-        // can use screen now
-        goto flush;
-    }
-
+	
 	// Patch Kermit Peripheral Module to load flash0
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
     {
