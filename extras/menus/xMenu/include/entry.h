@@ -33,7 +33,7 @@ class Entry{
         Image* icon0;
         Image* pic0;
         Image* pic1;
-        PBPHeader* header;
+        PBPHeader header;
 
         void readHeader();
         Image* loadIcon();

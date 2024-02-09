@@ -14,19 +14,15 @@ Entry::Entry(string path){
 }
 
 void Entry::readHeader(){
-    void* data = malloc(sizeof(PBPHeader));
-    
-    FILE* fp = fopen(this->path.c_str(), "rb");
-    fread(data, 1, sizeof(PBPHeader), fp);
+    FILE* fp = fopen(path.c_str(), "rb");
+    fread(&header, 1, sizeof(PBPHeader), fp);
     fclose(fp);
-    
-    this->header = (PBPHeader*)data;
 }
 
 Image* Entry::loadIcon(){
-    int size = (this->header->icon1_offset-this->header->icon0_offset);
+    int size = (this->header.icon1_offset-this->header.icon0_offset);
     if (size){
-        Image* icon = loadImage(this->path.c_str(), this->header->icon0_offset);
+        Image* icon = loadImage(this->path.c_str(), this->header.icon0_offset);
         if (icon != NULL)
             return icon;
     }
@@ -37,7 +33,8 @@ void Entry::animAppear(){
     for (int i=480; i>=0; i-=10){
         clearScreen(CLEAR_COLOR);
         blitAlphaImageToScreen(0, 0, 480, 272, common::getBG(), 0, 0);
-        blitAlphaImageToScreen(0, 0, 480-i, 272, this->pic1, i, 0);
+        if (this->pic1) blitAlphaImageToScreen(0, 0, 480-i, 272, this->pic1, i, 0);
+        blitAlphaImageToScreen(0, 0, this->icon0->imageWidth, this->icon0->imageHeight, this->icon0, 20+i, 92);
         flipScreen();
     }
 }
@@ -46,7 +43,8 @@ void Entry::animDisappear(){
     for (int i=0; i<=480; i+=10){
         clearScreen(CLEAR_COLOR);
         blitAlphaImageToScreen(0, 0, 480, 272, common::getBG(), 0, 0);
-        blitAlphaImageToScreen(0, 0, 480-i, 272, this->pic1, i, 0);
+        if (this->pic1) blitAlphaImageToScreen(0, 0, 480-i, 272, this->pic1, i, 0);
+        blitAlphaImageToScreen(0, 0, this->icon0->imageWidth, this->icon0->imageHeight, this->icon0, 20+i, 92);
         flipScreen();
     }
 }
@@ -68,34 +66,33 @@ Image* Entry::getIcon(){
 }
 
 Image* Entry::getPic0(){
-    int size = this->header->pic1_offset-this->header->pic0_offset;
+    int size = this->header.pic1_offset-this->header.pic0_offset;
     if (size==0) return NULL;
-    return loadImage(this->path.c_str(), this->header->pic0_offset);
+    return loadImage(this->path.c_str(), this->header.pic0_offset);
 }
 
 Image* Entry::getPic1(){
-    int size = this->header->snd0_offset-this->header->pic1_offset;
+    int size = this->header.snd0_offset-this->header.pic1_offset;
     if (size == 0) return NULL;
-    return loadImage(this->path.c_str(), this->header->pic1_offset);
+    return loadImage(this->path.c_str(), this->header.pic1_offset);
 }
 
 bool Entry::run(){
     this->pic0 = getPic0();
     this->pic1 = getPic1();
-    if (this->pic1 == NULL)
-        this->pic1 = common::getBG();
     
     animAppear();
-    blitAlphaImageToScreen(0, 0, 480, 272, this->pic1, 0, 0);
+
+    clearScreen(CLEAR_COLOR);
+    blitAlphaImageToScreen(0, 0, 480, 272, common::getBG(), 0, 0);
+    if (this->pic1) blitAlphaImageToScreen(0, 0, 480, 272, this->pic1, 0, 0);
     blitAlphaImageToScreen(0, 0, this->icon0->imageWidth, this->icon0->imageHeight, this->icon0, 20, 92);
     if (this->pic0 != NULL)
-        blitAlphaImageToScreen(0, 0, this->pic0->imageWidth, this->pic0->imageHeight, this->pic0, 160, 85);
-    
+        blitAlphaImageToScreen(0, 0, this->pic0->imageWidth, this->pic0->imageHeight, this->pic0, 160, 25);
     common::flip();
     
     Controller control;
     bool ret;
-    
     while (true){
         control.update();
         if (control.cross()){
@@ -107,11 +104,16 @@ bool Entry::run(){
             break;
         }
     }
+    
     animDisappear();
+
     if (this->pic0 != NULL)
         delete this->pic0;
-    if (this->pic1 != common::getBG())
+    if (this->pic1 != NULL)
         delete this->pic1;
+    this->pic0 = NULL;
+    this->pic1 = NULL;
+
     return ret;
 }
         
