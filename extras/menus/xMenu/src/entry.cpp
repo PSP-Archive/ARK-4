@@ -9,9 +9,15 @@ Entry::Entry(string path){
     this->path = path;
     this->ebootName = path.substr(lastSlash+1, string::npos);
     this->name = path.substr(substrPos, lastSlash-substrPos);
-    readHeader();
+    this->readHeader();
+    this->findNameInParam();
     this->icon0 = loadIcon();
 }
+
+Entry::~Entry(){
+    if (this->icon0) freeImage(this->icon0);
+}
+
 
 void Entry::readHeader(){
     FILE* fp = fopen(path.c_str(), "rb");
@@ -27,6 +33,36 @@ Image* Entry::loadIcon(){
             return icon;
     }
     return NULL;
+}
+
+void Entry::findNameInParam(){
+    u32 size = this->header.icon0_offset-this->header.param_offset;
+    if (size){
+        unsigned char* sfo_buffer = (unsigned char*)malloc(size);
+
+        FILE* fp = fopen(path.c_str(), "rb");
+        fseek(fp, this->header.param_offset, SEEK_SET);
+        fread(sfo_buffer, 1, size, fp);
+        fclose(fp);
+
+        char title[128];
+        int title_size = sizeof(title);
+        bool res = Entry::getSfoParam(sfo_buffer, size, "TITLE", (unsigned char*)(title), &title_size);
+
+        if (res){
+            for (int i=0; i<title_size && title[i]; i++){
+                if (title[i] < 0 || title[i] > 128){
+                    for (int j=i+1; j<title_size; j++){
+                        title[j-1] = title[j];
+                    }
+                    title_size--;
+                    i--;
+                }
+            }
+            this->name = string(title);
+        }
+        free(sfo_buffer);
+    }
 }
 
 void Entry::animAppear(){
@@ -116,7 +152,18 @@ bool Entry::run(){
 
     return ret;
 }
-        
-Entry::~Entry(){
-    delete this->icon0;
+
+bool Entry::getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size){
+    SFOHeader *header = (SFOHeader *)sfo_buffer;
+	SFODir *entries = (SFODir *)(sfo_buffer + sizeof(SFOHeader));
+    bool res = false;
+	int i;
+	for (i = 0; i < header->nitems; i++) {
+		if (strcmp((char*)sfo_buffer + header->fields_table_offs + entries[i].field_offs, param_name) == 0) {
+			memcpy(var, sfo_buffer + header->values_table_offs + entries[i].val_offs, *var_size);
+            res = true;
+			break;
+		}
+	}
+    return res;
 }
