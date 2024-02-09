@@ -49,12 +49,13 @@ void Menu::readEbootList(string path){
         if (strcmp(dit->d_name, "..") == 0) continue;
         if (strcmp(dit->d_name, "SCPS10084") == 0) continue;
         if (common::fileExists(path+dit->d_name)) continue;
-        if (!isPOPS(fullpath)) {
+        if (fullpath == ""){
             if (common::getConf()->scan_cat){
-                readEbootList(fullpath);
+                readEbootList(path+dit->d_name+"/");
             }
             continue;
         }
+        if (!isPOPS(fullpath)) continue;
         
         this->eboots.push_back(new Entry(fullpath));
     }
