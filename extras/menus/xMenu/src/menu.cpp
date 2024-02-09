@@ -22,12 +22,16 @@ static std::string toggle = "Triangle -> Options Menu";
 
 Menu::Menu(){
 
-    this->readEbootList("ms0:/PSP/GAME/");
-    this->readEbootList("ms0:/PSP/APPS/");
-    this->readEbootList("ef0:/PSP/GAME/");
     this->index = 0;
     this->start = 0;
     this->txt = NULL;
+
+    this->readEbootList("ms0:/PSP/GAME/");
+    this->readEbootList("ms0:/PSP/APPS/");
+    this->readEbootList("ef0:/PSP/GAME/");
+    if (common::getConf()->sort_entries){
+        std::sort(eboots.begin(), eboots.end(), Entry::cmpEntriesForSort);
+    }
 }
 
 void Menu::readEbootList(string path){
@@ -45,15 +49,17 @@ void Menu::readEbootList(string path){
         if (strcmp(dit->d_name, "..") == 0) continue;
         if (strcmp(dit->d_name, "SCPS10084") == 0) continue;
         if (common::fileExists(path+dit->d_name)) continue;
+        if (fullpath == ""){
+            if (common::getConf()->scan_cat){
+                readEbootList(fullpath);
+            }
+            continue;
+        }
         if (!isPOPS(fullpath)) continue;
         
         this->eboots.push_back(new Entry(fullpath));
     }
     closedir(dir);
-
-    if (common::getConf()->sort_entries){
-        std::sort(eboots.begin(), eboots.end(), Entry::cmpEntriesForSort);
-    }
 }
 
 string Menu::fullPath(string path, string app){
