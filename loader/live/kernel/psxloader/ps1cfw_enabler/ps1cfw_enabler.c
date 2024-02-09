@@ -12,7 +12,6 @@ SceUID sceIoStatHook = -1;
 SceUID titleIdHook = -1;
 tai_hook_ref_t sceIoOpenRef;
 tai_hook_ref_t sceIoGetstatRef;
-tai_hook_ref_t ScePspemuGetTitleidRef;
 
 SceUID io_patch_path = -1;
 SceUID io_patch_size = -1;
@@ -35,11 +34,22 @@ PopsConfig popsconfig;
 int (* ScePspemuErrorExit)(int error);
 int (* ScePspemuConvertAddress)(uint32_t addr, int mode, uint32_t cache_size);
 int (* ScePspemuWritebackCache)(void *addr, int size);
+int (* ScePspemuPausePops)(int pause);
+int (* ScePspemuInitPops)();
+int (* ScePspemuInitPocs)();
+int (* ScePspemuSetDisplayConfig)();
 
 void get_functions(uint32_t text_addr) {
-  ScePspemuErrorExit                  = (void *)(text_addr + 0x4104 + 0x1);
-  ScePspemuConvertAddress             = (void *)(text_addr + 0x6364 + 0x1);
-  ScePspemuWritebackCache             = (void *)(text_addr + 0x6490 + 0x1);
+    ScePspemuErrorExit                  = (void *)(text_addr + 0x4104 + 0x1);
+    ScePspemuConvertAddress             = (void *)(text_addr + 0x6364 + 0x1);
+    ScePspemuWritebackCache             = (void *)(text_addr + 0x6490 + 0x1);
+  
+    if (module_nid == 0x2714F07D) {
+        ScePspemuPausePops                  = (void *)(text_addr + 0x300C0 + 0x1);
+    }
+    else {
+        ScePspemuPausePops                  = (void *)(text_addr + 0x300D4 + 0x1);
+    }
 }
 
 // IO Open patched
@@ -65,12 +75,6 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 	    ScePspemuWritebackCache(m, 4);
 	    return 0;
     }
-    
-    // Clean Exit
-    if (strstr(file, "__popsexit__")){
-        ScePspemuErrorExit(0);
-        return 0;
-    }
   
     // Configure currently loaded game
     char* popsetup = strstr(file, "__popsconfig__");
@@ -90,7 +94,7 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
         return -102;
     }
     
-    
+    // Handle when system has booted
     if (strstr(file, "__popsbooted__")){
         sceShellUtilUnlock(SCE_SHELL_UTIL_LOCK_TYPE_PS_BTN);
         sceShellUtilUnlock(SCE_SHELL_UTIL_LOCK_TYPE_PS_BTN_2);
@@ -98,10 +102,24 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
         return -103;
     }
     
-    // Clean Exit
-    if (strstr(file, "__popsdraw__")){
-        //sceCompatLCDCSync();
+    // Pause POPS
+    if (strstr(file, "__popspause__")){
+        ScePspemuPausePops(1);
+        sceDisplayWaitVblankStart();
         return -104;
+    }
+    
+    // Resume POPS
+    if (strstr(file, "__popsresume__")){
+        ScePspemuPausePops(0);
+        sceDisplayWaitVblankStart();
+        return -105;
+    }
+    
+    // Clean Exit
+    if (strstr(file, "__popsexit__")){
+        ScePspemuErrorExit(0);
+        return 0;
     }
     
 
@@ -154,6 +172,8 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
   return TAI_CONTINUE(int, sceIoGetstatRef, file, stat);
 }
 
+SceUID thread_hook = -1;
+
 int module_start(SceSize argc, const void *args) {
     tai_module_info_t info;
     info.size = sizeof(info);
@@ -188,7 +208,7 @@ int module_start(SceSize argc, const void *args) {
 
 int module_stop(SceSize argc, const void *args) {
 
-  if(sceIoOpenHook >= 0) taiHookRelease(sceIoOpenHook, sceIoOpenRef);
+  if (sceIoOpenHook >= 0) taiHookRelease(sceIoOpenHook, sceIoOpenRef);
   if (sceIoStatHook >= 0) taiHookRelease(sceIoStatHook, sceIoGetstatRef);
   if (io_patch_path) taiInjectRelease(io_patch_path);
   if (io_patch_size) taiInjectRelease(io_patch_size);

@@ -48,7 +48,6 @@ int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr,
     copyPSPVram(topaddr);
     if (_sceDisplaySetFrameBufferInternal) // passthrough
         res = _sceDisplaySetFrameBufferInternal(pri, topaddr, width, format, sync); 
-    sceIoOpen("ms0:/__popsdraw__", 0, 0);
     return res;
 }
 
@@ -141,6 +140,18 @@ int popsExit(){
     return res;
 }
 
+extern int exitLauncher();
+int (*arkLauncher)() = NULL;
+int popsLauncher(){
+
+    // init pops vram and pause pops, this fixes screen when going back to launcher
+    initVitaPopsVram();
+    sceIoOpen("ms0:/__popspause__", 0, 0);
+
+    // launcher reboot
+    return arkLauncher();
+}
+
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
@@ -215,14 +226,19 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
 
-            // Set fake framebuffer so that plugins can be displayed
             if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
+                // Set fake framebuffer so that plugins can be displayed
                 DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
                 memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+                // enable vitapops
+                sceIoOpen("ms0:/__popsresume__", 0, 0);
             }
 
             // notify ps1cfw_enabler that boot is complete
             sceIoOpen("ms0:/__popsbooted__", 0, 0);
+
+            // fix launcher exit
+            HIJACK_FUNCTION(K_EXTRACT_IMPORT(exitLauncher), popsLauncher, arkLauncher);
 
             // Boot Complete Action done
             booted = 1;
