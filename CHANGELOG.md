@@ -1,7 +1,25 @@
 # ARK Changelog
 
+## Version 4.20.68 (2024-02-06)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42068
+- Released `ARK-X` for `PS Vita`.
+#### Rev 6
+- Fixed exit on PS Vita.
+#### Rev 5
+- Fixed screen not rendering when exiting back to launcher in `ARK-X`.
+- Fixed crash in `ARK-X` when no `PS1` games are installed.
+#### Rev 4
+- Fixed bug in `FasterARK` that would corrupt taiHEN config.
+#### Rev 3
+- `cwcheat` now displays correctly in `ARK-X`.
+#### Rev 2
+- `ARK-X` installation is now handled by `FasterARK`, making it considerably easier to install and use.
+- Added patch to prevent crashing in TwinBee Portable when the system language is not set to Japanese or English.
+- Lots of code cleanup.
+
 ## Version 4.20.67 (2024-01-18)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42067
+- Rev 7: fixed and improved exit key combo (L+R+Start+Down). Updated SystemControl libraries.
 - Rev 6: fixed crash when returning from sleep in some games (i.e. `Lego Star Wars II`) due to unchecked zero-division error. Improved `Disable Analog Stick` for some games.
 - Rev 5: improved (classic) recovery menu; better visuals and improved code.
 - Rev 4: you can now boot `Custom Launcher` in `Recovery` mode by holding `R Trigger` when it is loading (essentially turning it into the original ARK Recovery Menu). Added default `SETTINGS.TXT` file with recommended settings for initial installations.
