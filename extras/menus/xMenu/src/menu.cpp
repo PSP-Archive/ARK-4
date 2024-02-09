@@ -132,49 +132,54 @@ bool Menu::isPOPS(string path){
 void Menu::draw(){
     blitAlphaImageToScreen(0, 0, 480, 272, common::getBG(), 0, 0);
     
-    // draw all image stuff
-    for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
-        int offset = 1 + (80 * (i-this->start));
-        blitAlphaImageToScreen(0, 0, eboots[i]->getIcon()->imageWidth, \
-            eboots[i]->getIcon()->imageHeight, eboots[i]->getIcon(), 25, offset);
-        if (i == this->index){
-            static u32 alpha = 0;
-            static u32 delta = 5;
-            u32 color = WHITE_COLOR | (alpha<<24);
-            fillScreenRect(color, 200, offset+30+TEXT_HEIGHT, min((int)eboots[i]->getPath().size()*TEXT_WIDTH, 280), 1);
-            if (alpha == 0) delta = 5;
-            else if (alpha == 255) delta = -5;
-            alpha += delta;
-        }
-    }
+	if(eboots.size()>0) {
+		// draw all image stuff
+		for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
+			int offset = 1 + (80 * (i-this->start));
+			blitAlphaImageToScreen(0, 0, eboots[i]->getIcon()->imageWidth, \
+				eboots[i]->getIcon()->imageHeight, eboots[i]->getIcon(), 25, offset);
+			if (i == this->index){
+				static u32 alpha = 0;
+				static u32 delta = 5;
+				u32 color = WHITE_COLOR | (alpha<<24);
+				fillScreenRect(color, 200, offset+30+TEXT_HEIGHT, min((int)eboots[i]->getPath().size()*TEXT_WIDTH, 280), 1);
+				if (alpha == 0) delta = 5;
+				else if (alpha == 255) delta = -5;
+				alpha += delta;
+			}
+		}
 
-    // why was this needed?
-    guStart();
+		// why was this needed?
+		guStart();
 
-    // draw all text stuff
-    for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
-        int offset = 1 + (80 * (i-this->start));
-        if (i == this->index)
-            this->txt->draw(offset);
-        else
-            common::printText(200, offset+30, eboots[i]->getName().c_str());
-    }
+		// draw all text stuff
+		for (int i=this->start; i<min(this->start+3, (int)eboots.size()); i++){
+			int offset = 1 + (80 * (i-this->start));
+			if (i == this->index)
+				this->txt->draw(offset);
+			else
+				common::printText(200, offset+30, eboots[i]->getName().c_str());
+		}
 
-    // draw help text
+
+
+		// draw scrollbar
+		{
+			int height = 230/eboots.size();
+			int x = 5;
+			int y = 10;
+			fillScreenRect(DARKGRAY, x+2, y, 3, height*eboots.size());
+			fillScreenRect(DARKGRAY, x+1, y + index*height, 5, height);
+			fillScreenRect(LITEGRAY, x+3, y, 1, height*eboots.size());
+			fillScreenRect(LITEGRAY, x+2, y + index*height, 3, height);
+		}
+	}
+	else {
+		common::printText(20, 2, "No Games Found :-(");
+	}
+
+	// draw help text
 	common::printText(475-8*toggle.length(), 2, toggle.c_str());
-
-
-    // draw scrollbar
-    {
-        int height = 230/eboots.size();
-        int x = 5;
-        int y = 10;
-        fillScreenRect(DARKGRAY, x+2, y, 3, height*eboots.size());
-        fillScreenRect(DARKGRAY, x+1, y + index*height, 5, height);
-        fillScreenRect(LITEGRAY, x+3, y, 1, height*eboots.size());
-        fillScreenRect(LITEGRAY, x+2, y + index*height, 3, height);
-    }
-
 }
 
 void Menu::updateScreen(){
@@ -187,6 +192,8 @@ void Menu::updateScreen(){
 }
 
 void Menu::updateTextAnim(){
+	if(eboots.size() == 0)
+		return;
     if (this->txt != NULL)
         delete this->txt;
     this->txt = new TextAnim(eboots[this->index]->getName(), eboots[this->index]->getPath());
@@ -225,6 +232,7 @@ void Menu::control(){
 
     fadeIn();
 
+
     Controller control;
     while(1){
         updateScreen();
@@ -234,7 +242,9 @@ void Menu::control(){
         else if (control.up())
             moveUp();
         else if (control.cross()){
-            if (eboots[this->index]->run()){
+			if(eboots.size() == 0)
+				continue;
+			else if (eboots[this->index]->run()){
                 loadGame();
             }
         }
@@ -273,9 +283,6 @@ void Menu::loadGame(){
 }
 
 void Menu::run(){
-    if (eboots.size() == 0)
-        return;
-    
     // get ARK config and version
     sctrlSEGetConfig(se_config);
     sctrlHENGetArkConfig(ark_config);
