@@ -108,9 +108,9 @@ bool Entry::run(){
     animDisappear();
 
     if (this->pic0 != NULL)
-        delete this->pic0;
+        freeImage(this->pic0);
     if (this->pic1 != NULL)
-        delete this->pic1;
+        freeImage(this->pic1);
     this->pic0 = NULL;
     this->pic1 = NULL;
 
