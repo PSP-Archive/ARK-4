@@ -115,6 +115,9 @@ Image* Entry::getPic1(){
 }
 
 bool Entry::run(){
+
+    if (common::getConf()->fast_gameboot) return true;
+
     this->pic0 = getPic0();
     this->pic1 = getPic1();
     

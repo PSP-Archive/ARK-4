@@ -44,9 +44,9 @@ void SubMenu::getItems() {
     stringstream memoryStickSpeedup;
     memoryStickSpeedup << "Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
 	stringstream sort_entries;
-    sort_entries << "Sort Games Entries: " << ((common::getConf()->sort_entries)? "Enabled" : "Disabled");
+    sort_entries << "Sort Games by Name: " << ((common::getConf()->sort_entries)? "Enabled" : "Disabled");
 	stringstream skip_gameboot;
-    skip_gameboot << "Skip Gameboot: " << ((common::getConf()->fast_gameboot)? "Enabled" : "Disabled");
+    skip_gameboot << "Fast Gameboot: " << ((common::getConf()->fast_gameboot)? "Enabled" : "Disabled");
 
     options[0] = memoryStickSpeedup.str();
     options[1] = sort_entries.str();
