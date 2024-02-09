@@ -6,7 +6,6 @@ C_OBJS = \
 	popsdisplay.o \
 	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
-	$(ARKROOT)/core/systemctrl/src/dummy.o  \
 		
 OBJS = \
 	$(C_OBJS) imports.o

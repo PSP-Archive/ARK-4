@@ -134,6 +134,8 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 
 int popsExit(){
     // attempt to exit via ps1cfw_enabler
+    int fd = sceIoOpen("ms0:/exiting.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+    sceIoClose(fd);
     int res = sceIoOpen("ms0:/__popsexit__", 0, 0);
     // fallback to regular exit
     if (res < 0) res = sctrlKernelExitVSH(NULL);
@@ -155,7 +157,14 @@ int popsLauncher(){
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
-    
+
+    // Patch sceKernelExitGame Syscalls
+    if (strcmp(mod->modname, "sceLoadExec") == 0) {
+		REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), popsExit);
+        REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), popsExit);
+        goto flush;
+	}
+
     // Patch display for homebrew
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
@@ -219,10 +228,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         if(isSystemBooted())
         {
 
-            // Patch sceKernelExitGame Syscalls
-            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), popsExit);
-            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x2AC9954B), popsExit);
-
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
 
@@ -250,7 +255,6 @@ flush:
     flushCache();
 
 exit:
-
     // Forward to previous Handler
     if(previous) previous(mod);
 }
