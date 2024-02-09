@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <unistd.h>
+#include <algorithm>
 #include <globals.h>
 
 
@@ -38,7 +39,7 @@ void Menu::readEbootList(string path){
         return;
         
     while ((dit = readdir(dir))){
-    
+
         string fullpath = fullPath(path, dit->d_name);
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
@@ -49,6 +50,10 @@ void Menu::readEbootList(string path){
         this->eboots.push_back(new Entry(fullpath));
     }
     closedir(dir);
+
+    if (1){
+        std::sort(eboots.begin(), eboots.end(), Entry::cmpEntriesForSort);
+    }
 }
 
 string Menu::fullPath(string path, string app){

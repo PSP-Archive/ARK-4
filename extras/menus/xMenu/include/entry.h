@@ -59,7 +59,7 @@ class Entry{
         void animAppear();
         void animDisappear();
         
-        bool getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size);
+        static bool getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size);
         void findNameInParam();
 
     public:
@@ -80,7 +80,8 @@ class Entry{
         Image* getPic1();
         
         bool run();
-        
+
+        static bool cmpEntriesForSort (Entry* i, Entry* j);
 };
 
 #endif

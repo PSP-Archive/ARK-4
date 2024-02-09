@@ -50,6 +50,7 @@ void Entry::findNameInParam(){
         bool res = Entry::getSfoParam(sfo_buffer, size, "TITLE", (unsigned char*)(title), &title_size);
 
         if (res){
+            // remove any non-ASCII character
             for (int i=0; i<title_size && title[i]; i++){
                 if (title[i] < 0 || title[i] > 128){
                     for (int j=i+1; j<title_size; j++){
@@ -166,4 +167,8 @@ bool Entry::getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_nam
 		}
 	}
     return res;
+}
+
+bool Entry::cmpEntriesForSort (Entry* i, Entry* j) {
+    return (strcasecmp(i->getName().c_str(), j->getName().c_str())<0);
 }
