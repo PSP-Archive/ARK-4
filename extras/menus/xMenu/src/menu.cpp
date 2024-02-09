@@ -51,7 +51,7 @@ void Menu::readEbootList(string path){
     }
     closedir(dir);
 
-    if (1){
+    if (common::getConf()->sort_entries){
         std::sort(eboots.begin(), eboots.end(), Entry::cmpEntriesForSort);
     }
 }
