@@ -357,6 +357,7 @@ int msstorCacheInit(const char* driver, int bufSize)
 {
 
     if (g_cacheSize > 0) return 0; // cache already on
+    if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) return 0; // not needed on POPS
 
     // Get Application Type
     int key_config = sceKernelApplicationType();
