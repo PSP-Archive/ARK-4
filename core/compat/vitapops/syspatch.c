@@ -145,7 +145,14 @@ extern int exitLauncher();
 int (*arkLauncher)() = NULL;
 int popsLauncher(){
 
+    // pause pops thread if needed
+    SceUID popsthread = sctrlGetThreadUIDByName("popsmain");
+    if (popsthread >= 0){
+        sceKernelSuspendThread(popsthread);
+    }
+
     // init pops vram and pause pops, this fixes screen when going back to launcher
+    DisplayWaitVblankStart();
     initVitaPopsVram();
     sceIoOpen("ms0:/__popspause__", 0, 0);
 

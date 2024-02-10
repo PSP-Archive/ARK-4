@@ -14,7 +14,7 @@
 
 // Vram address and config
 u16* pops_vram = (u16*)0x490C0000;
-POPSVramConfigList* vram_config = (POPSVramConfigList*)0x49FE0000;
+POPSVramConfig* vram_config = (POPSVramConfig*)0x49FE0000;
 
 // Registered Vram handler
 void (*_psxVramHandler)(u32* psp_vram, u16* ps1_vram) = &SoftRelocateVram; // soft render by default

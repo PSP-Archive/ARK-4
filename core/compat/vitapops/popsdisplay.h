@@ -8,22 +8,22 @@
 #define PSP_SCREEN_LINE 512
 #define SCE_PSPEMU_FRAMEBUFFER_SIZE 0x88000
 
-#define MAX_VRAM_CONFIGS 2
-typedef struct POPSVramConfig{
+#define MAX_VRAM_BUFFERS 2
+typedef struct POPSFrameBufferConfig{
     short x;
     short y;
     short width;
     short height;
     unsigned char color_width;
     unsigned char cur_buffer;
+}POPSFrameBufferConfig;
+
+typedef struct POPSVramConfig{
+    POPSFrameBufferConfig configs[MAX_VRAM_BUFFERS];
+    unsigned char counter;
 }POPSVramConfig;
 
-typedef struct POPSVramConfigList{
-    POPSVramConfig configs[MAX_VRAM_CONFIGS];
-    unsigned char counter;
-}POPSVramConfigList;
-
-extern POPSVramConfigList* vram_config;
+extern POPSVramConfig* vram_config;
 extern u16* pops_vram;
 
 // Initialize PSX Vram
