@@ -38,6 +38,8 @@ extern int disable_settings;
 int exitLauncher()
 {
 
+	int k1 = pspSdkSetK1(0);
+
     // Refuse Operation in Save dialog
 	if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return 0;
 	
@@ -46,8 +48,6 @@ int exitLauncher()
 
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
-
-	int k1 = pspSdkSetK1(0);
 
     // set exit app
     char path[ARK_PATH_SIZE];
