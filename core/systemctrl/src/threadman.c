@@ -21,6 +21,8 @@ int sctrlGetThreadUIDByName(const char * name)
 	// Thread Counter
 	int count = 0;
 	
+	int k1 = pspSdkSetK1(0);
+
 	// Get Thread UIDs
 	if (sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, NELEMS(ids), &count) >= 0)
 	{
@@ -42,14 +44,14 @@ int sctrlGetThreadUIDByName(const char * name)
 				// Matching Name
 				if(strcmp(info.name, name) == 0)
 				{
-					
+					pspSdkSetK1(k1);
 					// Return Thread UID
 					return ids[i];
 				}
 			}
 		}
 	}
-	
+	pspSdkSetK1(k1);
 	// Thread not found
 	return -2;
 }
