@@ -35,7 +35,7 @@ enum SEUmdModes
 {
     MODE_UMD = 0,
     MODE_MARCH33 = 1, // not available anymore, will default to inferno
-    MODE_NP9660 = 2, // (Galaxy) not available anymore, will default to inferno
+    MODE_NP9660 = 2, // (Galaxy) not available anymore, will default to inferno for iso/cso or np9660 for PBP
     MODE_INFERNO = 3,
     MODE_VSHUMD = 4,
     MODE_UPDATERUMD = 5,
@@ -162,6 +162,8 @@ typedef struct _SEConfig
 	s16 usbdevice;
 	s16 usbcharge;
 	s16 hidemac;
+	s16 noanalog;
+	s16 qaflags; // enable QA flags patch
 	s16 launcher_mode;
 	s16 hidepics;
 
@@ -179,7 +181,6 @@ typedef struct _SEConfig
 	s16 usenodrm; // always true
 
 	s16 hibblock;
-	s16 noanalog;
 	s16 oldplugin;
 	s16 htmlviewer_custom_save_location; // unused, always false
 	s16 hide_cfw_dirs; // always true
@@ -194,7 +195,6 @@ typedef struct _SEConfig
 	s16 language; /* -1 as autodetect */
 	s16 force_high_memory;
 	s16 macspoofer; // automatic
-
 } SEConfig;
 
 /**

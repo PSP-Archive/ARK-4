@@ -54,7 +54,7 @@ u32 FindImportUserRam(char *libname, u32 nid){
 void *RelocSyscall(u32 call){
     
     if (call != 0) {
-        while (_lw(curcall))
+        //while (_lw(curcall))
             curcall += 8;
 
         *(u32*)curcall = *(u32*)call;
@@ -70,18 +70,38 @@ void* RelocImport(char* libname, u32 nid, int ram){
     return RelocSyscall((ram)? FindImportVolatileRam(libname, nid) : FindImportUserRam(libname, nid));
 }
 
-u32 FindTextAddrByName(const char *modulename)
-{
+u32 FindSysMemStruct(){
     u32 kaddr;
     for (kaddr = 0x88000000; kaddr < 0x88400000; kaddr += 4) {
-        if (strcmp((const char *)kaddr, modulename) == 0) {
-            if ((*(u32*)(kaddr + 0x64) == *(u32*)(kaddr + 0x78)) && \
-                (*(u32*)(kaddr + 0x68) == *(u32*)(kaddr + 0x88))) {
-                if (*(u32*)(kaddr + 0x64) && *(u32*)(kaddr + 0x68))
-                    return *(u32*)(kaddr + 0x64);
+        if (strcmp((const char *)kaddr, "sceSystemMemoryManager") == 0) {
+            if (AddressInRange(_lw(kaddr-8), 0x88000000, 0x88400000)
+                && _lw(kaddr+0x64) == 0x88000000
+                && _lw(kaddr+0x68) ){
+                    return kaddr-8;
             }
         }
     }
+    return 0;
+}
+
+u32 FindModuleByName(const char *modulename){
+    u32 mod = FindSysMemStruct();
+    while (mod){
+        if (strcmp(mod+8, modulename) == 0){
+            return mod;
+        }
+        mod = _lw(mod);
+    }
+    return 0;
+}
+
+u32 FindTextAddrByName(const char *modulename)
+{
+    u32 mod = FindModuleByName(modulename);
+
+    if (mod)
+        return *(u32*)(mod + 0x6C);
+
     return 0;
 }
 

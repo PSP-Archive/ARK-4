@@ -121,18 +121,6 @@ void PatchPops(SceModule2* mod)
 
 	u32 text_addr = mod->text_addr;
 
-	/*
-	for (u32 addr=text_addr; addr<text_addr+mod->text_size; addr+=4){
-		u32 data = _lw(addr);
-		// Replace Media Engine SPU Background Thread Starter
-        if (data == 0x24050260){
-            u32 a = addr;
-            do { a+=4; } while (_lw(a) != 0x8FBF0004); // find end of function
-            MAKE_CALL(a-8, sceMeAudioInitPatched);
-        }
-	}
-	*/
-
 	MAKE_CALL(text_addr + 0x1A038, sceMeAudioInitPatched);
 
 	REDIRECT_FUNCTION(text_addr + 0x3D264, sceMeAudioNotifyPatched);

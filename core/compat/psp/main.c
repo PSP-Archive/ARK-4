@@ -55,18 +55,19 @@ void processArkConfig(){
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
-
-    _sw(0x44000000, 0xBC800100);
-    colorDebug(0xFF00);
-
-    // set rebootex for PSP
-    sctrlHENSetRebootexOverride(rebootbuffer_psp);
     
     // get psp model
     psp_model = sceKernelGetModel();
     
     // get ark config
     processArkConfig();
+
+    if (ark_config->exec_mode != PSP_ORIG){
+        return 1;
+    }
+
+    // set rebootex for PSP
+    sctrlHENSetRebootexOverride(rebootbuffer_psp);
 
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);

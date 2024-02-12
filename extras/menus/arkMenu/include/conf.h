@@ -34,6 +34,8 @@ typedef struct {
     unsigned char show_size; // show file size in browser
     unsigned char show_path; // show device in game manager title for GO, whether the game is on ef0 or ms0 
     unsigned char window_mode; // Choose whether to use the Classic VSH Menu Design or the new look
+    unsigned char advanced_vsh; // Choose to autoload into advanced vsh menu
+    unsigned char avm_hidden[256]; // Hiden items in advanced vsh menu
 } t_conf;
 
 #endif

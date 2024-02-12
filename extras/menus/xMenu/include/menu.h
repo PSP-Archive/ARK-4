@@ -88,13 +88,14 @@ class SubMenu {
 	private:
         int index;
         Menu* menu;
-        string options[3];
+        string options[6];
 
         void updateScreen();
         void getItems();
 
         void rebootMenu();
         void changeMsCacheSetting();
+        void changeSetting(int setting);
 
 	public:
 		SubMenu(Menu* menu);

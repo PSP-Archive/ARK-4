@@ -20,4 +20,6 @@ Masquer DLC
 Éteindre les LED
 Désactiver le lecteur UMD
 Désactiver le stick analogique
+Indicateurs d'assurance qualité
+Application personnalisée
 PSP Overclock

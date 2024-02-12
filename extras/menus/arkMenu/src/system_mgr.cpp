@@ -3,7 +3,6 @@
 #include <psppower.h>
 #include <kubridge.h>
 #include <systemctrl.h>
-#include <psprtc.h>
 
 #include "system_mgr.h"
 #include "common.h"
@@ -11,7 +10,6 @@
 #include "music_player.h"
 
 string ark_version = "";
-struct tm today;
 
 static SceUID draw_thread = -1;
 static SceUID draw_sema = -1;
@@ -84,30 +82,25 @@ static void systemController(Controller* pad){
     else if (pad->left()){
         if (pEntryIndex == 0)
             return;
-        else if (pEntryIndex == page_start){
-            pEntryIndex--;
-            if (page_start>0){
-                page_start--;
-                menu_draw_state = 1;
-            }
+        pEntryIndex--;
+        if (pEntryIndex == page_start && page_start>0){
+            page_start--;
+            menu_draw_state = 1;
         }
-        else
-            pEntryIndex--;
         common::playMenuSound();
     }
     else if (pad->right()){
+        int n_items = 4;
+        if(common::getConf()->menusize == 2 || common::getConf()->menusize == 1) {
+            n_items = 5;
+        }
         if (pEntryIndex == (MAX_ENTRIES-1))
             return;
-        else if (pEntryIndex-page_start == 2){
-            if (pEntryIndex+1 < MAX_ENTRIES)
-                pEntryIndex++;
-            if (page_start+3 < MAX_ENTRIES && (common::getConf()->menusize == 0 || common::getConf()->menusize == 2 || common::getConf()->menusize == 3)){
-                page_start++;
-                menu_draw_state = -1;
-            }
+        pEntryIndex++;
+        if (pEntryIndex-page_start >= n_items-1){
+            page_start++;
+            menu_draw_state = -1;
         }
-        else if (pEntryIndex+1 < MAX_ENTRIES)
-            pEntryIndex++;
         common::playMenuSound();
     }
 }
@@ -119,7 +112,7 @@ static void drawOptionsMenuCommon(){
 		loop_setup = min(page_start+4, MAX_ENTRIES);
 	}
 	else if(common::getConf()->menusize == 2) {
-    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 100); // LARGE
+    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 100); // MEDIUM
 		loop_setup = min(page_start+4, MAX_ENTRIES);
 	}
 	else {
@@ -158,16 +151,23 @@ static void drawOptionsMenuCommon(){
 			if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
                 int tmp_x = x+25;
                 scroll.w = 475-tmp_x;
+				if(strcasecmp(entname, "CFW Settings")==0) tmp_x-=25;
+				if(strcasecmp(entname, "Exit")==0) tmp_x+=10;
             	common::printText(tmp_x, 130, entname, LITEGRAY, SIZE_BIG, 1, &scroll); // LARGE
 			}
 			else if(common::getConf()->menusize == 2) {
                 int tmp_x = x+16;
                 scroll.w = 475-tmp_x;
+				if(strcasecmp(entname, "CFW Settings")==0) tmp_x-=20;
+				if(strcasecmp(entname, "Exit")==0) tmp_x+15;
             	common::printText(tmp_x, 95, entname, LITEGRAY, SIZE_MEDIUM, 1, &scroll); // MEDIUM
 			}
 			else {
                 int tmp_x = x+12;
                 scroll.w = 475-tmp_x;
+				if(strcasecmp(entname, "CFW Settings")==0) tmp_x-=20;
+				if(strcasecmp(entname, "Settings")==0) tmp_x-=5;
+				if(strcasecmp(entname, "Exit")==0) tmp_x+8;
 				common::printText(tmp_x, 75, entname, LITEGRAY, SIZE_LITTLE, 1, &scroll); // SMALL
 			}
         }
@@ -366,7 +366,6 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     draw_sema = sceKernelCreateSema("draw_sema", 0, 1, 1, NULL);
     entries = e;
     MAX_ENTRIES = ne;
-    today = common::getDateTime();
 
     // get ARK version    
     u32 ver = sctrlHENGetVersion(); // ARK's full version number

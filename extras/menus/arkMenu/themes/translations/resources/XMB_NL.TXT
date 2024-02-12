@@ -20,4 +20,6 @@ DLC Verbergen
 LEDs Uitschakelen
 UMD-schijf uitschakelen
 Analoge stick uitschakelen
+QA-vlaggen
+Aangepaste app
 PSP Overklokken

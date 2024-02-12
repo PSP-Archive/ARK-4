@@ -20,4 +20,6 @@ Ocultar DLC
 Desligar LEDs
 Desabilitar unidade UMD
 Desabilitar stick analógico
+Sinalizadores de controle de qualidade
+Aplicativo personalizado
 PSP Overclock

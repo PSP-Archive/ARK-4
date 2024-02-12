@@ -14,6 +14,7 @@
 #include "color.h"
 #include "registry.h"
 #include "vpl.h"
+#include "advanced.h"
 
 int button_accept(u32 button){
 	vsh_Menu* vsh = vsh_menu_pointer();
@@ -37,17 +38,22 @@ void config_load(vsh_Menu *vsh) {
 		sceIoClose(fp);
 	}
 
-	get_registry_value("/CONFIG/SYSTEM/XMB", "button_assign", &vsh->status.swap_xo);
+	vctrlGetRegistryValue("/CONFIG/SYSTEM/XMB", "button_assign", &vsh->status.swap_xo);
 	is_pandora = battery_check();
 
-	if (IS_VITA_ADR(vsh->config.p_ark) || is_pandora < 0)
+	if (IS_VITA_ADR(vsh->config.p_ark) || is_pandora < 0){
 		vsh->battery = 2;
-	else
+	}
+	else{
 		vsh->battery = is_pandora;
-	
-	if (IS_VITA_ADR(vsh->config.p_ark))
+	}
+
+	if (IS_VITA_ADR(vsh->config.p_ark)){
 		vsh->config.se.usbdevice_rdonly = 2;
+	}
 	
+	vsh->codecs = codecs_activated();
+
 	color_check_random(vsh);
 }
 
@@ -168,7 +174,7 @@ void config_recreate_umd_keys(void) {
 	kuKernelCall(hookImport, &args);
 }
 
-void import_classic_plugins(vsh_Menu *vsh, char* devpath) {
+void import_classic_plugins(vsh_Menu *vsh, int devpath) {
 	SceUID game, vsh_id, pops, plugins;
 	int i = 0;
 	int chunksize = 512;
@@ -181,20 +187,10 @@ void import_classic_plugins(vsh_Menu *vsh, char* devpath) {
 	char *popsChar = "pops, ";
 	int popsCharLength = scePaf_strlen(popsChar);
 	
-	char* filename = "??0:/seplugins/plugins.txt";
-	char* gamepath = "??0:/seplugins/game.txt";
-	char* vshpath = "??0:/seplugins/vsh.txt";
-	char* popspath = "??0:/seplugins/pops.txt";
-
-
-	filename[0] = devpath[0];
-	gamepath[0] = devpath[0];
-	vshpath[0] = devpath[0];
-	popspath[0] = devpath[0];
-	filename[1] = devpath[1];
-	gamepath[1] = devpath[1];
-	vshpath[1] = devpath[1];
-	popspath[1] = devpath[1];
+	char* filename = (devpath)? "ef0:/SEPLUGINS/PLUGINS.TXT" : "ms0:/SEPLUGINS/PLUGINS.TXT";
+	char* gamepath = (devpath)? "ef0:/SEPLUGINS/GAME.TXT" : "ms0:/SEPLUGINS/GAME.TXT";
+	char* vshpath = (devpath)? "ef0:/SEPLUGINS/VSH.TXT" : "ms0:/SEPLUGINS/VSH.TXT";
+	char* popspath = (devpath)? "ef0:/SEPLUGINS/POPS.TXT" : "ms0:/SEPLUGINS/POPS.TXT";
 
 	game = sceIoOpen(gamepath, PSP_O_RDONLY, 0777);
 	vsh_id = sceIoOpen(vshpath, PSP_O_RDONLY, 0777);

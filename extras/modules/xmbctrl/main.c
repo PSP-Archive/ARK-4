@@ -45,6 +45,8 @@ ARKConfig _arkconf;
 ARKConfig* ark_config = &_arkconf;
 extern List plugins;
 
+static char custom_app_path[] = "ms0:/PSP/APP/EBOOT.PBP";
+
 static char buf[64];
 
 typedef struct
@@ -74,6 +76,7 @@ GetItem GetItemes[] =
     { 17, 0, "Turn off LEDs" },
     { 18, 0, "Disable UMD Drive" },
     { 19, 0, "Disable Analog Stick" },
+    { 20, 0, "QA Flags" },
 };
 
 #define PLUGINS_CONTEXT 1
@@ -132,6 +135,7 @@ struct {
     {N_OPTS, ark_settings_options}, // Turn off LEDs
     {2, ark_settings_boolean}, // Disable UMD Drive
     {2, ark_settings_boolean}, // Disable Analog Stick 
+    {2, ark_settings_boolean}, // QA Flags
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
@@ -139,7 +143,7 @@ struct {
 typedef struct
 {
     char *items[4];
-    char *options[N_ITEMS+1];
+    char *options[N_ITEMS];
 } StringContainer;
 
 StringContainer string;
@@ -190,6 +194,7 @@ SceContextItem *context;
 SceVshItem *new_item;
 SceVshItem *new_item2;
 SceVshItem *new_item3;
+SceVshItem *new_item4;
 char image[4];
 void *xmb_arg0, *xmb_arg1;
 
@@ -255,6 +260,18 @@ void exec_custom_launcher() {
         sctrlKernelExitVSH(NULL);
 	}
 }
+
+void exec_custom_app(char *path) {
+
+	struct SceKernelLoadExecVSHParam param;
+	sce_paf_private_memset(&param, 0, sizeof(param));
+	param.size = sizeof(param);
+	param.args = sce_paf_private_strlen(path) + 1;
+	param.argp = path;
+	param.key = "game";
+	sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
+}
+
 
 SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
 
@@ -373,7 +390,7 @@ int LoadTextLanguage(int new_id)
 
     if (IS_VITA(ark_config)){
         sce_paf_private_free(string.options[1]);
-        string.options[1] = string.options[N_ITEMS]; // replace "Overclock" with "PSP Overclock" on Vita
+        string.options[1] = settings[24]; // replace "Overclock" with "PSP Overclock" on Vita
     }
 
     return 1;
@@ -398,10 +415,20 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
 
+    #if 0
+    sceIoMkdir("ms0:/vshitems", 0777);
+    static char path[256];
+    sprintf(path, "ms0:/vshitems/%s", item->text);
+    int fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_TRUNC|PSP_O_CREAT, 0777);
+    sceIoWrite(fd, item, sizeof(SceVshItem));
+    sceIoClose(fd);
+    #endif
+
     static int items_added = 0;
 
     if (sce_paf_private_strcmp(item->text, "msgtop_sysconf_console")==0){
         sysconf_action = item->action;
+        LoadTextLanguage(-1);
     }
 
     if ( !items_added && // prevent adding more than once
@@ -418,21 +445,48 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
     {
         items_added = 1;
         startup = 0;
-        
-        LoadTextLanguage(-1);
+
+        int cur_icon = 0;
+
+        if (psp_model == PSP_11000){
+            u32 value = 0;
+            vctrlGetRegistryValue("/CONFIG/SYSTEM/XMB/THEME", "custom_theme_mode", &value);
+            cur_icon = !value;
+        }
 
         // Add CFW Settings
-        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, signup_item);
+        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, (cur_icon)?item:signup_item);
         AddVshItem(a0, topitem, new_item);
 
         // Add Plugins Manager
-        new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, ps_store_item);
+        new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, (cur_icon)?item:ps_store_item);
         AddVshItem(a0, topitem, new_item2);
 
         // Add Custom Launcher
-        new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, information_board_item);
+        new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, (cur_icon)?item:information_board_item);
         AddVshItem(a0, topitem, new_item3);
+		if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
+		
+		SceIoStat stat; 
+		int ebootFound;
+		if(psp_model == PSP_GO) {
+			custom_app_path[0] = 'e';
+			custom_app_path[1] = 'f';
+			ebootFound = sceIoGetstat(custom_app_path, &stat);
+			if(ebootFound < 0) {
+				custom_app_path[0] = 'm'; 
+				custom_app_path[1] = 's';
+				ebootFound = sceIoGetstat(custom_app_path, &stat);
+			}
+		}
+		else {
+			ebootFound = sceIoGetstat(custom_app_path, &stat);
+		}
 
+		if(ebootFound >= 0) {
+        	new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
+        	AddVshItem(a0, topitem, new_item4);
+		}
     }
 	
 	return AddVshItem(a0, topitem, item);
@@ -474,6 +528,9 @@ int ExecuteActionPatched(int action, int action_arg)
         else if (action_arg == sysconf_custom_launcher_arg){
             exec_custom_launcher();
         }
+        else if (action_arg == sysconf_custom_app_arg){
+            exec_custom_app(custom_app_path);
+        }
         else is_cfw_config = 0;
     }
     if(old_is_cfw_config != is_cfw_config)
@@ -514,9 +571,9 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 }
 
 int skipSetting(int i){
-    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16 || i==18);
-    else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12 || i==18);
-    else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13 || i == 18);
+    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16);
+    else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12);
+    else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13);
     else if (psp_model != PSP_GO) return ( i == 5 || i == 9 || i == 12);
 	else if (psp_model == PSP_GO) return (i == 16);
     return 0;
@@ -645,6 +702,12 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
             	return (wchar_t *)user_buffer;
 			}
         }
+		else if(sce_paf_private_strcmp(name, "msgtop_custom_app") == 0)
+        {
+			sce_paf_private_sprintf(buf, "%s %s", STAR, settings[23]);
+            utf8_to_unicode((wchar_t *)user_buffer, buf);
+            return (wchar_t *)user_buffer;
+        }
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
             if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
@@ -665,6 +728,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
 {
     if(name)
     {
+
         if(is_cfw_config == 1)
         {
             int configs[] =
@@ -687,6 +751,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.noled,			// 15
                 config.noumd,			// 16
                 config.noanalog,		// 17
+                config.qaflags,		    // 18
             };
             
             int i;
@@ -713,7 +778,18 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         }
     }
 
-    return vshGetRegistryValue(option, name, arg2, size, value);
+    int res = vshGetRegistryValue(option, name, arg2, size, value);
+
+    #if 0
+    char tmp[512];
+    snprintf(tmp, 512, "%s, %p, %p, %d, %d\n", name, option, arg2, size, *value);
+    int fd = sceIoOpen("ms0:/regvals.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+    sceIoWrite(fd, tmp, strlen(tmp));
+    sceIoWrite(fd, "\n", 1);
+    sceIoClose(fd);
+    #endif
+
+    return res;
 }
 
 int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
@@ -742,6 +818,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.noled,
                 &config.noumd,
                 &config.noanalog,
+                &config.qaflags,
             };
             
             int i;

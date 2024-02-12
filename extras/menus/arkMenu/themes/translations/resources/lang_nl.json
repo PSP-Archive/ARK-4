@@ -152,6 +152,8 @@
     "VSH Region Change": "VSH-regiowijziging",
     "UMD Region Change": "UMD-regiowijziging",
 	"Disable UMD Drive": "Schakel UMD-schijf uit",
-	"Disable Analog Stick": "Analoge stick uitschakelen"
+	"Disable Analog Stick": "Analoge stick uitschakelen",
+	"Custom App": "Aangepaste app",
+	"QA Flags": "QA-vlaggen"
 
 }

@@ -1,7 +1,45 @@
 # ARK Changelog
 
+## Version 4.20.68 (2024-02-06)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42068
+- Released `ARK-X` for `PS Vita`.
+#### Rev 6
+- Fixed exit on PS Vita.
+#### Rev 5
+- Fixed screen not rendering when exiting back to launcher in `ARK-X`.
+- Fixed crash in `ARK-X` when no `PS1` games are installed.
+#### Rev 4
+- Fixed bug in `FasterARK` that would corrupt taiHEN config.
+#### Rev 3
+- `cwcheat` now displays correctly in `ARK-X`.
+#### Rev 2
+- `ARK-X` installation is now handled by `FasterARK`, making it considerably easier to install and use.
+- Added patch to prevent crashing in TwinBee Portable when the system language is not set to Japanese or English.
+- Lots of code cleanup.
+
+## Version 4.20.67 (2024-01-18)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42067
+- Rev 7: fixed and improved exit key combo (L+R+Start+Down). Updated SystemControl libraries.
+- Rev 6: fixed crash when returning from sleep in some games (i.e. `Lego Star Wars II`) due to unchecked zero-division error. Improved `Disable Analog Stick` for some games.
+- Rev 5: improved (classic) recovery menu; better visuals and improved code.
+- Rev 4: you can now boot `Custom Launcher` in `Recovery` mode by holding `R Trigger` when it is loading (essentially turning it into the original ARK Recovery Menu). Added default `SETTINGS.TXT` file with recommended settings for initial installations.
+- Rev 3: fixed extra XMB icons not showing up on PSP Street models. Fixed Russian translation. Added new Turquoise theme for custom launcher.
+- Rev 2: cleanup of `PRO Shell`. Fix for `PSN` games on older launchers. Proper alignment of icon in `Custom Launcher`.
+- Rev 1: improved API call for detection of toolkits (can now distinguish TestKit from DevKit). Improved launcher menu navigation.
+- Merged `Recovery Menu` into `Custom Launcher`, leaving `Classic Recovery` as the default recovery menu.
+- Updated kernel exploit used on `PSP` and `Adrenaline`.
+- Added ability to install plugins using `PRO Shell` (Classic Recovery Menu).
+- Cleanup and improved `VSH Menu`.
+- Added ability to hide entries in `Advanced VSH Menu` by pressing `L` trigger, use `R` trigger to unhide all hidden entries.
+- Fixed `Import Classic Plugins` feature.
+- Fixed issue in plugins manager of classic recovery.
+- Added ability to force open `VSH Menu` by pressing `L+R+Select` anywhere in the `XMB`.
+- Several more cleanup and fixes.
+
 ## Version 4.20.66 (2023-10-24)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42066
+- Rev 9: added option to enable `QA Flags`, which will allow `Debug` settings to appear in the `XMB`. Added `Custom App` Launcher. If ARK detects an `EBOOT.PBP` in either `/PSP/APP/` it display a icon under Custom Launcher icon stating `Custom App`.
+- Rev 8: fixed bug that would prevent installing `new cIPL` on classic models (1K and early 2K). Fixed bug in the plugins manager of classic recovery menu.
 - Rev 7: fixed `MP3` audio issues in `Custom Launcher`.
 - Rev 6: several cleanup, refactor and small fixes.
 - Rev 5: you can now change background image of `Custom Launcher` and `Recovery` by placing a file named `BG.PNG` in `ARK_01234`.
@@ -400,18 +438,18 @@
 - Fixed and improved "Matrix" animation.
 - Added new "Hacker" and "BSoD" animations.
 
-## Version 4.19.5 (2022-01-12)
+## Version 4.19.5 (2023-01-12)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4195
 - Fixed issue where VSH plugins would not load after pausing game in PSP Go.
 - Recovery menu no longer deletes custom config lines.
 - You can now enable/disable DLC scanning in custom launcher (previously always enabled).
 
-## Version 4.19.4 (2022-01-09)
+## Version 4.19.4 (2023-01-09)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4194
 - Fixed device autodetection in ARK Live Loader.
 - Added easter egg.
 
-## Version 4.19.3 (2022-01-09)
+## Version 4.19.3 (2023-01-09)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4193
 - Improved Recovery menu plugin handling to properly restore comments.
 - Fixed bug in plugin system where blank lines would be treated as EOF.

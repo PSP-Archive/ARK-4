@@ -20,4 +20,6 @@ Nascondi DLC
 Disattiva LEDs
 Disabilitare l'unità UMD
 Disabilitare la levetta analogica
+Flag del QA
+Applicazione personalizzata
 PSP Overclock

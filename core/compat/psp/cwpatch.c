@@ -19,7 +19,7 @@ int sceKernelSuspendThreadPatched(SceUID thid) {
 
 			DisplayGetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0xEEDA2E54);
             DisplayGetFrameBuf(&framebuf, &width, &pixelformat, 0);
-            memset(framebuf, 0, 512 * 272 * 4);
+            memset(framebuf, 0, width * 272 * 4);
 		}
 	}
     return sceKernelSuspendThread(thid);

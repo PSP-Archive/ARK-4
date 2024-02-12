@@ -151,5 +151,7 @@
     "VSH Region Change": "Смена региона для VSH",
     "UMD Region Change": "Смена региона для UMD",
 	"Disable UMD Drive": "Отключить UMD-накопитель",
-	"Disable Analog Stick": "Отключить аналоговый стик"
+	"Disable Analog Stick": "Отключить аналоговый стик",
+	"Custom App": "Пользовательское приложение",
+	"QA Flags": "Флаги контроля качества"
 }

@@ -188,20 +188,19 @@ void loadKernelArk(){
     k_tbl->KernelDcacheWritebackInvalidateAll();
     k_tbl->KernelIcacheInvalidateAll();
 
-    if ( ark_config->recovery || ( IS_VITA(ark_config) && !IS_VITA_ADR(ark_config) ) ){
+    if (IS_VITA(ark_config) && !IS_VITA_ADR(ark_config)){
         // launcher reboot
         char menupath[ARK_PATH_SIZE];
+
         strcpy(menupath, ark_config->arkpath);
         if (IS_VITA_POPS(ark_config)){
             strcpy(ark_config->launcher, ARK_XMENU);
-            strcat(menupath, ark_config->launcher);
         }
-        else if (ark_config->recovery){
-            strcat(menupath, ARK_RECOVERY);
-            ark_config->recovery = 0;
+        else{
+            strcpy(ark_config->launcher, VBOOT_PBP);
         }
-        else
-            strcat(menupath, VBOOT_PBP);
+        strcat(menupath, ark_config->launcher);
+
         struct SceKernelLoadExecVSHParam param;
         memset(&param, 0, sizeof(param));
         param.size = sizeof(param);

@@ -38,9 +38,8 @@ u32 sctrlHENFindFunction(char* mod, char* lib, u32 nid){
 }
 
 // reboot to launcher
-int reboot_thread(int argc, void* argv){
+void reboot_launcher(){
 
-    // launcher reboot
     char menupath[ARK_PATH_SIZE];
     strcpy(menupath, ark_config->arkpath);
     strcat(menupath, ark_config->launcher);
@@ -56,6 +55,39 @@ int reboot_thread(int argc, void* argv){
     int res = _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
 }
 
+void reboot_game(char* gamepath){
+
+    struct SceKernelLoadExecVSHParam param;
+    memset(&param, 0, sizeof(param));
+    param.size = sizeof(param);
+    param.args = strlen(gamepath) + 1;
+    param.argp = gamepath;
+    param.key = "pops";
+
+    PRTSTR1("Running Game at %s", gamepath);
+    int res = _KernelLoadExecVSHWithApitype(0x144, gamepath, &param, 0x10000);
+}
+
+// autoboot bubble support
+int reboot_thread(){
+    char game[256];
+
+    char* (*init_filename)() = FindFunction("sceInit", "InitForKernel", 0xA6E71B93);
+
+    strcpy(game, init_filename());
+    char* p = strrchr(game, '/');
+    p[1] = 'V';
+
+    int fd = k_tbl->KernelIOOpen(game, PSP_O_RDONLY, 0777);
+    if (fd >= 0){
+        k_tbl->KernelIOClose(fd);
+        reboot_game(game);
+    }
+    else {
+        reboot_launcher();
+    }
+    return 0;
+}
 
 // load and start pops module
 void loadstart_pops(){

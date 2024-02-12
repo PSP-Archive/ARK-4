@@ -34,6 +34,7 @@ enum {
     sysconf_tnconfig_action_arg = 0x1000,
     sysconf_plugins_action_arg = 0x1002,
     sysconf_custom_launcher_arg = 0x1003,
+    sysconf_custom_app_arg = 0x1004,
 };
 
 typedef struct
@@ -57,6 +58,7 @@ typedef struct
     int noled;
     int noumd;
     int noanalog;
+    int qaflags;
 } CFWConfig;
 
 typedef struct

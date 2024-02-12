@@ -1,5 +1,5 @@
 TARGET = stargate
-C_OBJS = main.o loadmodule_patch.o nodrm_patch.o io_patch.o key_decrypt.o pspcipher.o hide.o chn_iso.o imports.o
+C_OBJS = main.o loadmodule_patch.o nodrm_patch.o io_patch.o key_decrypt.o pspcipher.o gamefix.o hide.o chn_iso.o imports.o
 OBJS = $(C_OBJS)
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common/include

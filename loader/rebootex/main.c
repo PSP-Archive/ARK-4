@@ -229,6 +229,22 @@ u32 findRebootFunctions(u32 reboot_start){
     return reboot_end;
 }
 
+static void checkRebootConfig(){
+    if (IS_ARK_CONFIG(reboot_conf)){
+        // fix MODE_NP9660 (Galaxy driver no longer exists, redirect to either inferno or normal)
+        if (reboot_conf->iso_mode == MODE_NP9660){
+            if (reboot_conf->iso_path[0] == 0){
+                // no ISO -> normal mode
+                reboot_conf->iso_mode = MODE_UMD;
+            }
+            else{
+                // attempting to load an ISO with NP9660 is no longer possible, use inferno instead
+                reboot_conf->iso_mode = MODE_INFERNO;
+            }
+        }
+    }
+}
+
 extern void copyPSPVram(u32*);
 
 // Entry Point
@@ -265,6 +281,7 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int a
     reboot_end = findRebootFunctions(reboot_start); // scan for reboot functions
     
     // patch reboot buffer
+    checkRebootConfig();
     patchRebootBuffer();
     
     // Forward Call

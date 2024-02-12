@@ -153,5 +153,7 @@
     "VSH Region Change": "Allagh Periochj Menou",
     "UMD Region Change": "Allagh Periochj Diskou",
     "Disable UMD Drive": "Apenergopoihste th ponáda dískou",
-    "Disable Analog Stick": "Apenergopoihste to analogikó"
+    "Disable Analog Stick": "Apenergopoihste to analogikó",
+	"Custom App": "Προσαρμοσμένη εφαρμογή",
+    "QA Flags": "Σημαίες QA"
 }

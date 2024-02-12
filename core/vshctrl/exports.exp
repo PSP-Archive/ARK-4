@@ -39,6 +39,8 @@ PSP_EXPORT_FUNC(isoGetFileInfo)
 PSP_EXPORT_FUNC(isoGetTotalSectorSize)
 PSP_EXPORT_FUNC(has_prometheus_module)
 PSP_EXPORT_FUNC(has_update_file)
+PSP_EXPORT_FUNC(vctrlGetRegistryValue)
+PSP_EXPORT_FUNC(vctrlSetRegistryValue)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS

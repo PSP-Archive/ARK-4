@@ -8,8 +8,6 @@
 #include <globals.h> 
 #include "functions.h"
 #include "macros.h"
-#include "exitgame.h"
-#include "adrenaline_compat.h"
 
 void PatchLoadExec(u32 text_addr, u32 text_size) {
 	u32 jump = 0;

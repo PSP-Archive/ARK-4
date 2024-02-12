@@ -2,13 +2,10 @@ TARGET = vitapops
 
 C_OBJS = \
 	main.o \
-	popcorn.o \
 	syspatch.o \
-	exitgame.o \
 	popsdisplay.o \
 	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
-	$(ARKROOT)/core/systemctrl/src/dummy.o  \
 		
 OBJS = \
 	$(C_OBJS) imports.o
@@ -30,7 +27,12 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lpspsystemctrl_kernel -lcolordebugger -lgraphics
+LIBS = -lpspsemaphore -lpspsystemctrl_kernel
+
+ifdef DEBUG
+CFLAGS += -DDEBUG=$(DEBUG)
+LIBS += -lcolordebugger -lgraphics
+endif
 
 PSP_FW_VERSION = 660
 

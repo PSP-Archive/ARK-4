@@ -124,6 +124,8 @@ int TSRThread(SceSize args, void *argp) {
 	sctrlSEGetConfig(&vsh->config.se);
 	sctrlHENGetArkConfig(&vsh->config.ark);
 	config_load(vsh);
+	if(vsh->config.ark_menu.advanced_vsh)
+		vsh->status.stop_flag = 15;
 
 	// load font
 	font_load(vsh);
@@ -184,9 +186,6 @@ resume:
 		case 5:
 			scePowerRequestSuspend();
 			break;
-		case 7:
-			exec_custom_launcher(vsh);
-			break;
 		case 8:
 			exec_recovery_menu(vsh);
 			break;
@@ -230,9 +229,9 @@ resume:
 			swap_buttons(vsh);
 			break;
 		case 13:
-			import_classic_plugins(vsh, "ms");
+			import_classic_plugins(vsh, DEVPATH_MS0);
 			if (vsh->psp_model == PSP_GO)
-				import_classic_plugins(vsh, "ef");
+				import_classic_plugins(vsh, DEVPATH_EF0);
 			break;
 		case 14:			
 			config_check(vsh);
@@ -283,22 +282,3 @@ int module_stop(int argc, char *argv[]) {
 	
 	return 0;
 }
-
-
-
-/* not used
-int load_start_module(char *path) {
-	int ret;
-	SceUID modid;
-
-	modid = sceKernelLoadModule(path, 0, NULL);
-
-	if(modid < 0) {
-		return modid;
-	}
-
-	ret = sceKernelStartModule(modid, scePaf_strlen(path) + 1, path, NULL, NULL);
-
-	return ret;
-}
-*/

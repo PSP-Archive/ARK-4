@@ -823,7 +823,7 @@ static void setupPsxFwVersion(unsigned int fw_version)
 
 static int getIcon0Status(void)
 {
-    unsigned int icon0_offset = 0;
+    unsigned int icon0_offset = 0, icon0_size = 0;
     int result = ICON0_MISSING;
     SceUID fd = -1;;
     const char *filename;
@@ -834,52 +834,23 @@ static int getIcon0Status(void)
 
     if(filename == NULL)
     {
-        goto exit;
+        return ICON0_MISSING;
     }
     
     fd = sceIoOpen(filename, PSP_O_RDONLY, 0777);
 
     if(fd < 0)
     {
-        #ifdef DEBUG
-        printk("%s: sceIoOpen %s -> 0x%08X\r\n", __func__, filename, fd);
-        #endif
-        goto exit;
+        return ICON0_MISSING;
     }
     
     sceIoRead(fd, header, 40);
-    icon0_offset = *(unsigned int*)(header+0x0c);
-    sceIoLseek32(fd, icon0_offset, PSP_SEEK_SET);
-    sceIoRead(fd, header, 40);
+    sceIoClose(fd);
 
-    if(*(unsigned int*)(header+4) == 0xA1A0A0D)
-    {
-        if ( *(unsigned int*)(header+0xc) == 0x52444849 && // IHDR
-                *(unsigned int*)(header+0x10) == 0x50000000 && // 
-                *(unsigned int*)(header+0x14) == *(unsigned int*)(header+0x10)
-           )
-        {
-            result = ICON0_OK;
-        }
-        else
-        {
-            result = ICON0_CORRUPTED;
-        }
-    }
-    else
-    {
-        result = ICON0_MISSING;
-    }
-    #ifdef DEBUG
-    printk("%s: PNG file status -> %d\r\n", __func__, result);
-    #endif
-exit:
-    if(fd >= 0)
-    {
-        sceIoClose(fd);
-    }
+    icon0_offset = *(unsigned int*)(header+12);
+    icon0_size =  *(unsigned int*)(header+16) - icon0_offset;
 
-    return result;
+    return (icon0_size)? ICON0_OK : ICON0_MISSING;
 }
 
 static int getKeysBinPath(char *keypath, unsigned int size)
@@ -1069,6 +1040,12 @@ static void patchPops(SceModule2 *mod)
             _sw(0x24050000 | (sizeof(g_icon_png) & 0xFFFF), addr); // patch icon0 size
         else if (data == 0x24050080 && _lw(addr+24) == 0x24030001)
             _sw(0x24020001, addr+8); // Patch Manual Name Check
+        else if ((data == 0x14C00014 && _lw(addr + 4) == 0x24E2FFFF) ||
+            (data == 0x14A00014 && _lw(addr + 4) == 0x24C2FFFF))
+        {   // Fix index length (enable CDDA)
+            _sh(0x1000, addr + 2);
+            _sh(0, addr + 4);
+        }
     }
 
     if(g_isCustomPBP){

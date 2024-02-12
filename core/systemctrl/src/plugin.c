@@ -56,6 +56,10 @@ int disable_plugins = 0;
 int disable_settings = 0;
 int is_plugins_loading = 0;
 
+int isLoadingPlugins(){
+    return is_plugins_loading;
+}
+
 static addPlugin(char* path){
     for (int i=0; i<plugins->count; i++){
         if (stricmp(plugins->paths[i], path) == 0)
@@ -504,6 +508,9 @@ static void settingsHandler(char* path, u8 enabled){
     }
     else if (strcasecmp(path, "hidedlc") == 0){ // hide mac address
         se_config.hidedlc = enabled;
+    }
+    else if (strcasecmp(path, "qaflags") == 0){ // QA Flags
+        se_config.qaflags = enabled;
     }
 }
 

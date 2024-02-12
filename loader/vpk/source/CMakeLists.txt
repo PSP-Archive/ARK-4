@@ -53,6 +53,7 @@ target_link_libraries(${PROJECT_NAME}
 	ScePvf_stub
 	SceCtrl_stub
 	SceCommonDialog_stub 
+	ScePower_stub
 	
 	SceLibKernel_stub
 	SceIofilemgr_stub
@@ -74,8 +75,11 @@ vita_create_vpk(${PROJECT_NAME}.vpk ${VITA_TITLEID} eboot.bin
   FILE sce_sys/livearea/contents/template.xml sce_sys/livearea/contents/template.xml
   
   FILE res/rif/game.rif rif/game.rif
+  FILE res/rif/psx.rif rif/psx.rif
   FILE res/psp/EBOOT.PBP psp/EBOOT.PBP
   FILE res/psp/PBOOT.PBP psp/PBOOT.PBP
+  FILE res/psx/ps1cfw_enabler.suprx psx/ps1cfw_enabler.suprx
+  FILE res/psx/EBOOT.PBP psx/EBOOT.PBP
   FILE res/save/ARK_01234/ARK.BIN save/ARK_01234/ARK.BIN
   FILE res/save/ARK_01234/ARK4.BIN save/ARK_01234/ARK4.BIN
   FILE res/save/ARK_01234/ARKX.BIN save/ARK_01234/ARKX.BIN
@@ -90,7 +94,6 @@ vita_create_vpk(${PROJECT_NAME}.vpk ${VITA_TITLEID} eboot.bin
   FILE res/save/ARK_01234/POPS.PRX save/ARK_01234/POPS.PRX
   FILE res/save/ARK_01234/POPSMAN.PRX save/ARK_01234/POPSMAN.PRX
   FILE res/save/ARK_01234/PS1SPU.PRX save/ARK_01234/PS1SPU.PRX
-  FILE res/save/ARK_01234/RECOVERY.PBP save/ARK_01234/RECOVERY.PBP
   FILE res/save/ARK_01234/RECOVERY.PRX save/ARK_01234/RECOVERY.PRX
   FILE res/save/ARK_01234/SAVEDATA.BIN save/ARK_01234/SAVEDATA.BIN
   FILE res/save/ARK_01234/THEME.ARK save/ARK_01234/THEME.ARK

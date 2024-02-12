@@ -51,6 +51,7 @@ SEConfig se_config = {
 	.hidemac = 0,
 	.launcher_mode = 0,
 	.hidepics = 0,
+	.qaflags = 0,
 
 	// unused, always true
 	.plugvsh = 1,
@@ -220,14 +221,4 @@ int sctrlSEUmountUmd(){
 
 void sctrlSESetDiscOut(int out){
     return;
-}
-
-int sctrlHENIsToolKit()
-{
-	int k1 = pspSdkSetK1(0);
-    int level = sctrlKernelSetUserLevel(8);
-    SceIoStat stat; int res = sceIoGetstat("flash0:/kd/vshbridge_tool.prx", &stat);
-    sctrlKernelSetUserLevel(level);
-    pspSdkSetK1(k1);
-    return (res >= 0);
 }

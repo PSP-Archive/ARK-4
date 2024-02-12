@@ -23,25 +23,6 @@ extern STMOD_HANDLER previous;
 
 extern int sceKernelSuspendThreadPatched(SceUID thid);
 
-int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
-
-// Return Boot Status
-int isSystemBooted(void)
-{
-
-    // Find Function
-    int (* _sceKernelGetSystemStatus)(void) = (void*)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
-    
-    // Get System Status
-    int result = _sceKernelGetSystemStatus();
-        
-    // System booted
-    if(result == 0x20000) return 1;
-    
-    // Still booting
-    return 0;
-}
-
 static int _sceKernelBootFromForUmdMan(void)
 {
     return 0x20;
@@ -298,10 +279,12 @@ void PSPOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
 
+    /*
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         goto flush;
     }
+    */
 
 	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
     	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {

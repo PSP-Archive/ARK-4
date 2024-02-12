@@ -37,8 +37,8 @@ $/kd/semawm.prx V
 $/kd/amctrl.prx VGPAEM
 $/kd/npdrm.prx VPEM
 $/kd/iofilemgr_dnas.prx VGPAEM
-$/kd/ark_inferno.prx GEM
-$/kd/isofs.prx GEM
+$/kd/ark_inferno.prx GEMV
+$/kd/isofs.prx GEMV
 $/kd/chnnlsv.prx VP
 $/kd/kermit_utility.prx VGUPAEM
 $/kd/popsman.prx P

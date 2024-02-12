@@ -26,22 +26,6 @@ int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
 u64 kermit_flash_load(int cmd);
 
-// Return Boot Status
-int isSystemBooted(void)
-{
-
-    // Find Function
-    int (* _sceKernelGetSystemStatus)(void) = (void*)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
-    
-    // Get System Status
-    int result = _sceKernelGetSystemStatus();
-        
-    // System booted
-    if(result == 0x20000) return 1;
-    
-    // Still booting
-    return 0;
-}
 
 void OnSystemStatusIdle() {
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
@@ -331,13 +315,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
-
-    if(strcmp(mod->modname, "sceDisplay_Service") == 0)
-    {
-        // can use screen now
-        goto flush;
-    }
-
+	
 	// Patch Kermit Peripheral Module to load flash0
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
     {
@@ -489,7 +467,8 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         if(isSystemBooted())
         {
             // Initialize Memory Stick Speedup Cache
-            if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
+            if (se_config->msspeed)
+				msstorCacheInit("ms", 8 * 1024);
 
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);

@@ -32,8 +32,9 @@ The instructions are as follows:
 
     - This allows you to install and use all of ARK's features on the console's internal flash memory, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
     - Copy `ARK_Full_Installer` to `/PSP/GAME/` and run it from `ARK`. It will install some extra files into the console's flash.
-    - This installation will make use of `Classic Recovery Menu` when the regular one is not available. The minimalistic `PRO Shell` is used in place of the `Custom Launcher`.
+    - If the `Custom Launcher` is not available (i.e. you delete the ARK savedata or remove the memory card), `PRO Shell` will take its place.
     - When no savedata folder is available the default ARK path used to store settings and other Custom Firmware files will be `ms0:/SEPLUGINS/`.
+    - Even if files are stored in the console's flash memory, the ones in the savedata folder will still take priority in loading.
 
 
   Time Machine and Despertar del Cementerio
@@ -57,15 +58,16 @@ Installation On PS Vita
 
     - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
     - Download and install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
-    - Copy `FasterARK.vpk` from `Vita/Standalone/` folder anywhere on your vita and install using `VitaShell`. 
-    - Open `FasterARK` and wait for the install process to finish. An `ARK` bubble will appear in `Live Area`.
-    - Once `ARK` is installed, you can delete `FasterARK`.
+    - Copy `FasterARK.vpk` from `PSVita/` folder anywhere on your vita and install using `VitaShell`. 
+    - Open `FasterARK` and wait for the install process to finish.
+    - Both `ARK` and `ARK-X` bubbles will appear in `Live Area`.
+    - Use the `ARK` bubble for `PSP` games and homebrew. It can play `PS1` but with limitations related to sound playback.
+    - Use the `ARK-X` bubble for `PS1` games without any sound issues.
+    - Once `ARK` bubbles are installed, you can delete `FasterARK`.
     - To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
-    - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`. Works on `PSP` too.
+    - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start` (`L2+R2+Down+Start` on `ARK-X`).
     - NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB` and `Force Extra RAM` setting.
-    - NOTE: There are limitations in the playback of `PS1` games, mostly related to audio.
-    - If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign`.
-
+    - NOTE: If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign` with a valid license.
 
   Adrenaline
 

@@ -14,3 +14,4 @@
 	IMPORT_FUNC  "SystemCtrlPrivate",0xBC7554DF,strcasecmp
 	IMPORT_FUNC  "SystemCtrlPrivate",0xAC7554DF,strncasecmp
 	IMPORT_FUNC  "SystemCtrlPrivate",0x77E68D5F,sctrlHENSetPluginHandler
+	IMPORT_FUNC  "SystemCtrlPrivate",0x272984FD,isSystemBooted

@@ -21,18 +21,63 @@ static char* NeededDirectories[] = {
 	"ux0:pspemu/temp/game/PSP/LICENSE"
 };
 
-size_t GetTotalNeededDirectories() {
-	return (sizeof(NeededDirectories) / sizeof(char*));
+static char* NeededDirectoriesARKX[] = {
+	"ux0:pspemu", 
+	"ux0:pspemu/PSP",
+	"ux0:pspemu/temp",
+	"ux0:pspemu/temp/game",
+	"ux0:pspemu/temp/game/PSP",
+	"ux0:pspemu/temp/game/PSP/GAME",
+	"ux0:pspemu/temp/game/PSP/GAME/" ARK_X,
+	"ux0:pspemu/temp/game/PSP/LICENSE"
+};
+
+
+int installPS1Plugin() {
+	updateUi("Checking for ARK-X PS1 Plugin ...");
+	int pluginCheck = sceIoOpen("ur0:tai/ps1cfw_enabler.suprx", SCE_O_RDONLY, 0777);	
+	if(pluginCheck < 0) {
+		updateUi("ARK-X PS1 Plugin not found adding to config ...");
+		CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
+		CopyTree("app0:psx/GAME", "ux0:/pspemu/PSP/GAME");
+		int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
+		static char pluginLine[] = "\n*SCPS10084\nur0:tai/ps1cfw_enabler.suprx";
+		sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine));
+		sceIoClose(addPlugin);
+		return 1;
+	}
+	else {
+	    sceIoClose(pluginCheck);
+		updateUi("ARK-X PS1 Plugin found updating plugin and base game only ...");
+		CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
+		CopyTree("app0:psx/GAME", "ux0:/pspemu/PSP/GAME");
+		return 0;
+	}
+
 }
 
-void createPspEmuDirectories() {
-	for(size_t i = 0; i < GetTotalNeededDirectories(); i++){
-		CreateDirAndUpdateUi(NeededDirectories[i]);
+size_t GetTotalNeededDirectories(int _ARK_X) {
+	if(_ARK_X)
+		return (sizeof(NeededDirectoriesARKX) / sizeof(char*));
+	else
+		return (sizeof(NeededDirectories) / sizeof(char*));
+}
+
+void createPspEmuDirectories(int _ARK_X) {
+	if(_ARK_X) {
+		for(size_t i = 0; i < GetTotalNeededDirectories(_ARK_X); i++){
+			CreateDirAndUpdateUi(NeededDirectoriesARKX[i]);
+		}
+	}
+	else {
+		for(size_t i = 0; i < GetTotalNeededDirectories(0); i++){
+			CreateDirAndUpdateUi(NeededDirectories[i]);
+		}
 	}
 }
 
 
-void genEbootSignature(char* ebootPath) {
+void genEbootSignature(char* ebootPath, char *gameID) {
 	char ebootSigFilePath[MAX_PATH];
 	char ebootSig[0x200];	
 	unsigned char pbpHash[0x20];
@@ -42,7 +87,11 @@ void genEbootSignature(char* ebootPath) {
 	memset(ebootSig, 0x00, sizeof(ebootSig));
 	memset(pbpHash, 0x00, sizeof(pbpHash));
 	
-	snprintf(ebootSigFilePath, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/__sce_ebootpbp", TITLE_ID);
+	if(gameID != NULL)
+		snprintf(ebootSigFilePath, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/__sce_ebootpbp", gameID);
+	else
+		snprintf(ebootSigFilePath, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/__sce_ebootpbp", TITLE_ID);
+
 	
 	updateUi("Calculating EBOOT.PBP Sha256 ...");
 	HashPbp(ebootPath, pbpHash);
@@ -54,25 +103,34 @@ void genEbootSignature(char* ebootPath) {
 	}
 }
 
-void placePspGameData() {
-	char ebootFile[MAX_PATH];
-	char pbootFile[MAX_PATH];
-	char rifFile[MAX_PATH];
+void placePspGameData(char *gameID) {
+	char ebootFile[MAX_PATH] = {0};
+	char pbootFile[MAX_PATH] = {0};
+	char rifFile[MAX_PATH] = {0};
 	
 	// get path to EBOOT.PBP and PBOOT.PBP
-	snprintf(ebootFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/EBOOT.PBP", TITLE_ID);
-	snprintf(pbootFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/PBOOT.PBP", TITLE_ID);
-	snprintf(rifFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/LICENSE/%s.rif", CONTENT_ID);
-	
-	CopyFileAndUpdateUi("app0:psp/EBOOT.PBP", ebootFile);
-	CopyFileAndUpdateUi("app0:psp/PBOOT.PBP", pbootFile);
-	CopyFileAndUpdateUi("app0:rif/game.rif", rifFile);
-
-	genEbootSignature(ebootFile);
+	if(gameID != NULL) {
+		snprintf(rifFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/LICENSE/%s.rif", CONTENT_ID_ARK);
+		snprintf(ebootFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/EBOOT.PBP", gameID);
+		CopyFileAndUpdateUi("app0:psx/EBOOT.PBP", ebootFile);
+		CopyFileAndUpdateUi("app0:rif/psx.rif", rifFile);
+	} else {
+		snprintf(rifFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/LICENSE/%s.rif", CONTENT_ID);
+		snprintf(ebootFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/EBOOT.PBP", TITLE_ID);
+		snprintf(pbootFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/PBOOT.PBP", TITLE_ID);
+		CopyFileAndUpdateUi("app0:psp/EBOOT.PBP", ebootFile);
+		CopyFileAndUpdateUi("app0:psp/PBOOT.PBP", pbootFile);
+		CopyFileAndUpdateUi("app0:rif/game.rif", rifFile);
+	}
+	genEbootSignature(ebootFile, gameID);
 }
-void createBubble() {
+void createBubble(char *gameID) {
 	updateUi("Promoting ...");
-	promoteCma("ux0:pspemu/temp/game", TITLE_ID, SCE_PKG_TYPE_PSP);
+	if(gameID != NULL)
+		promoteCma("ux0:pspemu/temp/game", gameID, SCE_PKG_TYPE_PSP);
+	else
+		promoteCma("ux0:pspemu/temp/game", TITLE_ID, SCE_PKG_TYPE_PSP);
+
 }
 
 void copySaveFiles() {
@@ -80,8 +138,14 @@ void copySaveFiles() {
 }
 
 void doInstall() {
-	createPspEmuDirectories();
-	placePspGameData();
-	createBubble();
+	// ARK-X
+	createPspEmuDirectories(1);
+	placePspGameData("SCPS10084");
+	createBubble("SCPS10084");
+
+	// Standalone
+	createPspEmuDirectories(0);
+	placePspGameData(0);
+	createBubble(0);
 	copySaveFiles();
 }

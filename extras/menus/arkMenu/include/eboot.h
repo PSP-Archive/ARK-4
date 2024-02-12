@@ -25,15 +25,6 @@ typedef struct
     u32 psar_offset;
 } PBPHeader;
 
-typedef struct
-{
-    unsigned sign;
-    unsigned version;
-    unsigned key_table;
-    unsigned data_table;
-    unsigned entries;
-} sfoHeader;
-
 enum { UNKNOWN_TYPE, TYPE_HOMEBREW, TYPE_PSN, TYPE_POPS, TYPE_UPDATER };
 
 using namespace std;

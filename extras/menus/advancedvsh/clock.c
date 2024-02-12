@@ -96,6 +96,13 @@ void change_design(int dir) {
 	sel = ROLL_OVER(sel+dir, 0, 1);
 	vsh->config.ark_menu.window_mode = sel;
 }
+void change_menu(int dir) {
+	vsh_Menu *vsh = vsh_menu_pointer();
+	
+	int sel = vsh->config.ark_menu.advanced_vsh;
+	sel = ROLL_OVER(sel+dir, 0, 1);
+	vsh->config.ark_menu.advanced_vsh = sel;
+}
 
 void change_usb(int dir) {
 	vsh_Menu *vsh = vsh_menu_pointer();

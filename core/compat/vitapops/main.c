@@ -28,16 +28,6 @@ extern void ARKVitaPopsOnModuleStart(SceModule2* mod);
 extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 
-// Flush Instruction and Data Cache
-void flushCache()
-{
-    // Flush Instruction Cache
-    sceKernelIcacheInvalidateAll();
-    
-    // Flush Data Cache
-    sceKernelDcacheWritebackInvalidateAll();
-}
-
 void* sctrlARKSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram)){
     int k1 = pspSdkSetK1(0);
     void* prev = registerPSXVramHandler(handler);
@@ -56,21 +46,17 @@ static void processArkConfig(){
     }
 }
 
-/*
-int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
-	// Resume completed
-	if (ev_id == 0x400000) {
-		int (* sceKermitPeripheralInitPops)() = (void *)sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
-		sceKermitPeripheralInitPops();
-	}
-
-	return 0;
-}
-*/
-
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
+    
+    // copy configuration
+    processArkConfig();
+
+    if (ark_config->exec_mode != PSV_POPS){
+        return 1;
+    }
+
     #ifdef DEBUG
     _sw(0x44000000, 0xBC800100);
     setScreenHandler(&copyPSPVram);
@@ -78,33 +64,13 @@ int module_start(SceSize args, void * argp)
     colorDebug(0xFF00);
     #endif
 
-    /*
-    static PspSysEventHandler event_handler = {
-		sizeof(PspSysEventHandler),
-		"",
-		0x00FFFF00,
-		SysEventHandler
-	};
-	sceKernelRegisterSysEventHandler(&event_handler);
-    */
-
     // set rebootex for VitaPOPS
     sctrlHENSetRebootexOverride(rebootbuffer_vitapops);
 
-
-    #ifdef DEBUG
-    // set screen handler for color debugging
-    setScreenHandler(&pops_vram_handler);
-    #endif
-    
-    // copy configuration
-    processArkConfig();
+    //initFileSystem();
 
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaPopsOnModuleStart);
-
-    // Register custom start module
-    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
     
     // Return Success
     return 0;

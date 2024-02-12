@@ -203,3 +203,12 @@
 #ifdef F_SystemCtrlForUser_0065
     IMPORT_FUNC "SystemCtrlForUser",0xFF73C3A3,exitLauncher
 #endif
+#ifdef F_SystemCtrlForUser_0066
+    IMPORT_FUNC "SystemCtrlForUser",0x324DF3DD,flushCache
+#endif
+#ifdef F_SystemCtrlForUser_0067
+    IMPORT_FUNC "SystemCtrlForUser",0xDA05C1E5,sctrlHENFakeDevkitVersion
+#endif
+#ifdef F_SystemCtrlForUser_0068
+    IMPORT_FUNC "SystemCtrlForUser",0x23833651,sctrlGetThreadUIDByName
+#endif

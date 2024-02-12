@@ -51,11 +51,10 @@ char umdvideo_path[256] = "";
 int item_fcolor[TMENU_MAX];
 const char *item_str[TMENU_MAX];
 
-static int menu_sel = TMENU_CUSTOM_LAUNCHER;
-
 const int xyPoint[] ={0x98, 0x2F, 0xC0, 0xA0, 0x70, 0x08, 0x0E, 0xA8};//data243C=
 const int xyPoint2[] ={0xB0, 0x2F, 0xD8, 0xB8, 0x88, 0x08, 0x11, 0xC0};//data2458=
 
+static int menu_sel = TMENU_ADVANCED_VSH;
 
 int menu_draw(void) {
 	char msg[128] = {0};
@@ -89,7 +88,7 @@ int menu_draw(void) {
 	int window_char, window_pixel;
 	int width = 0, temp = 0, i;
 	for (i = 0; i < TMENU_MAX; i++) {
-		temp = scePaf_strlen(g_messages[MSG_CUSTOM_LAUNCHER + i]);
+		temp = scePaf_strlen(g_messages[MSG_ADVANCED_VSH + i]);
 		if (temp > width)
 			width = temp;
 	}
@@ -143,12 +142,12 @@ int menu_draw(void) {
 		blit_set_color(fc, bc);
 		
 		// display menu
-		if (g_messages[MSG_CUSTOM_LAUNCHER + max_menu]) {
+		if (g_messages[MSG_ADVANCED_VSH + max_menu]) {
 			int padding = 0, len = 0;
 			cur_menu = max_menu;
 			
 			// center-align menu strings
-			len = scePaf_strlen(g_messages[MSG_CUSTOM_LAUNCHER + max_menu]);
+			len = scePaf_strlen(g_messages[MSG_ADVANCED_VSH + max_menu]);
 			
 			if (!vsh->config.ark_menu.window_mode) {
 				padding = (window_char - len) / 2;
@@ -156,7 +155,7 @@ int menu_draw(void) {
 				padding = 0;
 			}
 			
-			scePaf_snprintf(msg, 128, " %*s%s%*s ", padding, "", g_messages[MSG_CUSTOM_LAUNCHER + max_menu], padding, "");
+			scePaf_snprintf(msg, 128, " %*s%s%*s ", padding, "", g_messages[MSG_ADVANCED_VSH + max_menu], padding, "");
 			blit_string_ctr(menu_start_y, msg);
 			
 			if (!vsh->config.ark_menu.window_mode) {
@@ -254,37 +253,20 @@ int menu_ctrl(u32 button_on) {
 		return 0;
 
 	switch(menu_sel) {
-		case TMENU_CUSTOM_LAUNCHER:
-			if(direction == 0)
-				return 7; // Custom Launcher menu flag
-			break;
 		case TMENU_RECOVERY_MENU:
-			if (direction == 0)
-				return 8; // Recovery menu flag
-			break;
+			return 8; // Recovery menu flag
 		case TMENU_ADVANCED_VSH:
-			if(direction == 0) return 15;
-			break;
+			return 15;
 		case TMENU_SHUTDOWN_DEVICE:			
-			if (direction == 0)
-				return 3; // SHUTDOWN flag
-			break;
+			return 3; // SHUTDOWN flag
 		case TMENU_RESET_DEVICE:	
-			if (direction == 0)
-				return 2; // RESET flag
-			break;
+			return 2; // RESET flag
 		case TMENU_RESET_VSH:	
-			if (direction == 0)
-				return 4; // RESET VSH flag
-			break;
+			return 4; // RESET VSH flag
 		case TMENU_SUSPEND_DEVICE:	
-			if (direction == 0)
-				return 5; // SUSPEND flag
-			break;
+			return 5; // SUSPEND flag
 		case TMENU_EXIT:
-			if (direction == 0) 
-				return 1; // finish
-			break;
+			return 1; // finish
 	}
 
 	return 0; // continue

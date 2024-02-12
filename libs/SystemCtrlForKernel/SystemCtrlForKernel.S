@@ -287,3 +287,12 @@
 #ifdef F_SystemCtrlForKernel_0093
     IMPORT_FUNC "SystemCtrlForKernel",0xFF73C3A3,exitLauncher
 #endif
+#ifdef F_SystemCtrlForKernel_0094
+    IMPORT_FUNC "SystemCtrlForKernel",0x324DF3DD,flushCache
+#endif
+#ifdef F_SystemCtrlForKernel_0095
+    IMPORT_FUNC "SystemCtrlForKernel",0x18B687A6,sctrlHENGetRebootexConfig
+#endif
+#ifdef F_SystemCtrlForKernel_0096
+    IMPORT_FUNC "SystemCtrlForKernel",0x23833651,sctrlGetThreadUIDByName
+#endif

@@ -85,6 +85,7 @@ void scanUserFunctions(UserFunctions* tbl){
     tbl->UtilitySavedataInitStart = (void*)RelocImport("sceUtility", 0x50C4CD57, 0);
     tbl->UtilitySavedataUpdate = (void*)RelocImport("sceUtility", 0xD4B95FFB, 0);
     tbl->UtilitySavedataShutdownStart = (void*)RelocImport("sceUtility", 0x9790B33C, 0);
+    
     tbl->KernelVolatileMemUnlock = (void*)RelocImport("sceSuspendForUser", 0xA569E425, 0);
     
 }

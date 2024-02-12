@@ -152,7 +152,9 @@
     "VSH Region Change": "VSH-Region ändern",
     "UMD Region Change": "UMD-Region ändern",
 	"Disable UMD Drive": "Deaktivieren Sie das UMD-Laufwerk",
-	"Disable Analog Stick": "Deaktivieren Sie den Analogstick"
+	"Disable Analog Stick": "Deaktivieren Sie den Analogstick",
+	"QA Flags": "QA-Flags",
+	"Custom App": "Benutzerdefinierte App"
 
 
 }

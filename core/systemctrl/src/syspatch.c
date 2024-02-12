@@ -48,7 +48,7 @@ int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 #endif
 
 // Return Boot Status
-static int isSystemBooted(void)
+int isSystemBooted(void)
 {
 
     // Find Function
@@ -68,6 +68,26 @@ static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int ni
     if (nid == 0x221400A6 && strcmp(szMod, "SystemControl") == 0)
         return 0; // Popsloader V4 looks for this function to check for ME, let's pretend ARK doesn't have it ;)
     return sctrlHENFindFunction(szMod, szLib, nid);
+}
+
+int _sceChkreg_6894A027(u8* a0, u32 a1){
+	if (a0 && a1 == 0){
+		*a0 = 1;
+		return 0;
+	}
+	return -1;
+}
+
+void patch_qaflags(){
+	u32 fp;
+   
+	// sceChkregGetPsCode
+	fp = sctrlHENFindFunction("sceChkreg", "sceChkreg_driver", 0x6894A027); 
+
+	if (fp) {
+		_sw(JUMP(_sceChkreg_6894A027), fp);
+        _sw(NOP, fp+4);
+	}
 }
 
 // Module Start Handler
@@ -102,7 +122,8 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     #endif
 
     if (strcmp(mod->modname, "sceController_Service") == 0){
-        initController(mod);
+        // Allow exiting through key combo
+        patchController(mod);
         goto flush;
     }
 
@@ -180,15 +201,16 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         if(isSystemBooted())
         {
 
+            if (se_config.qaflags){
+                patch_qaflags();
+            }
+
             // handle CPU speed
             switch (se_config.clock){
                 case 1: sctrlHENSetSpeed(333, 166); break;
                 case 2: sctrlHENSetSpeed(133, 66); break;
                 case 3: sctrlHENSetSpeed(222, 111); break;
             }
-
-            // Allow exiting through key combo
-            patchController();
             
             #ifdef DEBUG
             // syncronize printk
