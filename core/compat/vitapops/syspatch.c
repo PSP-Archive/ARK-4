@@ -217,9 +217,11 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         sceIoOpen("ms0:/__popsclear__", 0, 0);
         // send current game information (ID and path)
         if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
-            char* path = sceKernelInitFileName();
-            char gameid[20]; int n; getGameId();
+            char gameid[20];
             char config[300];
+            char* path = sceKernelInitFileName();
+            memset(gameid, 0, sizeof(gameid));
+            getGameId(gameid);
             sprintf(config, "ms0:/__popsconfig__/%s%s", gameid, strchr(path, '/'));
             sceIoOpen(config, 0, 0);
         }
