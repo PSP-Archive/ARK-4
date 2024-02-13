@@ -35,9 +35,7 @@ int (* ScePspemuErrorExit)(int error);
 int (* ScePspemuConvertAddress)(uint32_t addr, int mode, uint32_t cache_size);
 int (* ScePspemuWritebackCache)(void *addr, int size);
 int (* ScePspemuPausePops)(int pause);
-int (* ScePspemuInitPops)();
-int (* ScePspemuInitPocs)();
-int (* ScePspemuSetDisplayConfig)();
+
 
 void get_functions(uint32_t text_addr) {
     ScePspemuErrorExit                  = (void *)(text_addr + 0x4104 + 0x1);
