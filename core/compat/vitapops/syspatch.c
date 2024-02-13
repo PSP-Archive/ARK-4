@@ -23,7 +23,7 @@ static volatile int do_draw = 0;
 static u32* fake_vram = (u32*)0x0A400000; // use extra RAM for fake framebuffer
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 int (* DisplayGetFrameBuf)(void**, int*, int*, int) = NULL;
-int (*DisplayWaitVblankStart)() = NULL;
+int (* DisplayWaitVblankStart)() = NULL;
 
 extern SEConfig* se_config;
 
@@ -42,8 +42,7 @@ KernelFunctions _ktbl = {
 
 // hooked function to copy framebuffer
 int (* _sceDisplaySetFrameBufferInternal)(int pri, void *topaddr, int width, int format, int sync) = NULL;
-int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr,
-        int width, int format, int sync){
+int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr, int width, int format, int sync){
     int res = -1;
     copyPSPVram(topaddr);
     if (_sceDisplaySetFrameBufferInternal) // passthrough
@@ -199,7 +198,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     // patch to display plugins
     if (isLoadingPlugins() && sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-        if (mod->text_addr&0x80000000){
+        if (mod->text_addr&0x80000000){ // kernel plugin
             hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
             hookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched);
         }
@@ -219,9 +218,9 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         // send current game information (ID and path)
         if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
             char* path = sceKernelInitFileName();
-            char title[20]; int n; sctrlGetInitPARAM("DISC_ID", NULL, &n, title);
+            char gameid[20]; int n; getGameId();
             char config[300];
-            sprintf(config, "ms0:/__popsconfig__/%s%s", title, strchr(path, '/'));
+            sprintf(config, "ms0:/__popsconfig__/%s%s", gameid, strchr(path, '/'));
             sceIoOpen(config, 0, 0);
         }
         goto flush;
@@ -239,7 +238,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
                 msstorCacheInit("ms", 8 * 1024);
 
             if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
-                // Set fake framebuffer so that plugins can be displayed
+                // Set fake framebuffer so that plugins like cwcheat can be displayed
                 DisplaySetFrameBuf((void *)fake_vram, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
                 memset((void *)fake_vram, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
                 // enable vitapops
