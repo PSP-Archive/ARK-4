@@ -107,31 +107,41 @@ u32 FindTextAddrByName(const char *modulename)
 
 u32 FindFunction(const char *module, const char *library, u32 nid)
 {
-    u32 addr = FindTextAddrByName(module);
+    SceModule* mod = (SceModule*)FindModuleByName(module);
     
-    if (addr) {
-        u32 maxaddr = 0x88400000;
-        for (; addr < maxaddr; addr += 4) {
-            if (strcmp(library, (const char *)addr) == 0) {
+    if (mod) {
+        // Fetch Export Table Start Address
+        void * entTab = mod->ent_top;
+        
+        // Iterate Exports
+        for (int i = 0; i < mod->ent_size;)
+        {
+            // Cast Export Table Entry
+            struct SceLibraryEntryTable * entry = (struct SceLibraryEntryTable *)(entTab + i);
+            
+            // Found Matching Library
+            if(entry->libname != NULL && 0 == strcmp(entry->libname, library))
+            {
+                // Accumulate Function and Variable Exports
+                unsigned int total = entry->stubcount + entry->vstubcount;
                 
-                u32 libaddr = addr;
-
-                while (*(u32*)(addr -= 4) != libaddr);
-
-                u32 exports = (u32)(*(u16*)(addr + 10) + *(u8*)(addr + 9));
-                u32 jump = exports * 4;
-
-                addr = *(u32*)(addr + 12);
-
-                while (exports--) {
-                    if (*(u32*)addr == nid){
-                        return *(u32*)(addr + jump);
+                // NID + Address Table
+                unsigned int * vars = entry->entrytable;
+                
+                // Exports available
+                if(total > 0)
+                {
+                    // Iterate Exports
+                    for(int j = 0; j < total; j++)
+                    {
+                        // Found Matching NID
+                        if(vars[j] == nid) return vars[total + j];
                     }
-                    addr += 4;
                 }
-
-                return 0;
             }
+            
+            // Move Pointer
+            i += (entry->len * 4);
         }
     }
     return 0;
