@@ -95,9 +95,8 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     if (result >= 0){
         spu_running = 1;
         static char g_DiscID[32];
-        u16 paramType = 0;
-        u32 paramLength = sizeof(g_DiscID);
-        sctrlGetInitPARAM("DISC_ID", &paramType, &paramLength, g_DiscID);
+        memset(g_DiscID, 0, sizeof(g_DiscID));
+        getGameId(g_DiscID);
         startResult = sceKernelStartModule(result, strlen(g_DiscID) + 1, g_DiscID, &status, NULL);
     }
     
@@ -117,54 +116,12 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     printk("%s: fname %s flag 0x%08X -> 0x%08X\r\n", __func__, fname, flag, result);
     #endif
 
-    //PRTSTR1("Load result: %p", result);
-    //sceKernelDelayThread(3000000);
-
     return result;
 }
 
 void patchPspPopsman(SceModule2* mod){
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr + mod->text_size;
-    /*
-    for (u32 addr=text_addr; addr<top_addr; addr+=4){
-        u32 data = _lw(addr);
-        if (data == 0x7C1D2804){
-            u32 a = addr;
-            do { a-=4; } while (_lw(a) != 0x27BDFFE0); // find start of function
-            MAKE_DUMMY_FUNCTION_RETURN_0(a);
-        }
-        else if (data == 0x3C0BBC10 || data == 0x3C0CBC10){
-            MAKE_DUMMY_FUNCTION_RETURN_0(addr-40);
-        }
-        else if (data == 0x0004882B){
-            MAKE_DUMMY_FUNCTION_RETURN_0(addr-8);
-        }
-        else if (data == 0x8CC607F0){
-            u32 a = addr;
-            do { a+=4; } while (_lw(a) != 0x27BD0010);
-            MAKE_DUMMY_FUNCTION_RETURN_0(a+4);
-            do { a+=4; } while (_lw(a) != 0x03E00008);
-            MAKE_DUMMY_FUNCTION_RETURN_0(a+8);
-        }
-        else if (data == 0x70000000 && _lw(addr+8) == NOP){
-            u32 a = addr;
-            do { a+=4; } while (_lw(a)&0xFFFF0000 != 0x3C030000);
-            MAKE_DUMMY_FUNCTION_RETURN_0(a);
-        }
-        else if (data == 0x3444006C){
-            u32 a = addr;
-            do { a-=4; } while (_lw(a) != 0x27BDFFF0); // find start of function
-            MAKE_DUMMY_FUNCTION_RETURN_0(a);
-        }
-        else if (data == 0x3404AC44 && _lw(addr+20) == 0x001B1AC0){
-            MAKE_DUMMY_FUNCTION_RETURN_0(addr+20);
-        }
-        else if (data == 0x00002821 && _lw(addr+8) == 0x00003021){
-            _sw(JAL(myKernelLoadModule), addr + 4);
-        }
-    }
-    */
 
     // TN hacks
     _sw(JR_RA, text_addr + 0x2F88);
