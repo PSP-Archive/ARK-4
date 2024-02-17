@@ -106,7 +106,7 @@ copy-bin:
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	$(Q)cp -r dist/ARK_01234 dist/PSP/ARK_DC/
 	$(Q)find dist/themes/ -type d -name 'resources' -exec rm -rf {} \; 2>/dev/null || true
-	$(Q)cp -r dist/ARK_01234 loader/vpk/bin/save/
+	$(Q)cp -r dist/ARK_01234 loader/vpk/bin/save/ARK_01234
 	$(Q)cp loader/live/kernel/psxloader/ps1cfw_enabler/ps1cfw_enabler.suprx loader/vpk/bin/psx/
 	$(Q)cd loader/vpk/bin/ && zip -r ../../../dist/PSVita/FasterARK.vpk * && cd $(ARKROOT)
 	$(Q)$(MAKE) -C extras/updater/
