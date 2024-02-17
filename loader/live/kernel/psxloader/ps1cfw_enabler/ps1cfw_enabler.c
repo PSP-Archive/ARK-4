@@ -6,7 +6,9 @@ void _start() __attribute__ ((weak, alias ("module_start")));
 
 #define SCE_PSPEMU_CACHE_NONE 0x1
 
+tai_module_info_t info;
 uint32_t module_nid;
+
 SceUID sceIoOpenHook = -1;
 SceUID sceIoStatHook = -1;
 SceUID titleIdHook = -1;
@@ -15,7 +17,9 @@ tai_hook_ref_t sceIoGetstatRef;
 
 SceUID io_patch_path = -1;
 SceUID io_patch_size = -1;
+SceUID ctrl_patch = -1;
 
+uint32_t movs_a1_0_nop_opcode = 0xBF002000;
 uint32_t nop_nop_opcode = 0xBF00BF00;
 uint32_t mov_r2_r4_mov_r4_r2 = 0x46224614;
 uint32_t mips_move_a2_0 = 0x00003021;
@@ -173,7 +177,6 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
 SceUID thread_hook = -1;
 
 int module_start(SceSize argc, const void *args) {
-    tai_module_info_t info;
     info.size = sizeof(info);
 
     taiGetModuleInfo("ScePspemu", &info);
@@ -201,6 +204,16 @@ int module_start(SceSize argc, const void *args) {
     // fix memory card manager
     sceIoStatHook = taiHookFunctionImport(&sceIoGetstatRef, "ScePspemu", 0xCAE9ACE6, 0xBCA5B623, sceIoGetstatPatched);
 
+    // fix controller on Vita TV
+    if (module_nid == 0x2714F07D){
+      ctrl_patch = taiInjectData(info.modid, 0, 0x2073C, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
+      taiInjectData(info.modid, 0, 0x2084E, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
+      taiInjectData(info.modid, 0, 0x301DC, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
+    }
+    else {
+      ctrl_patch = taiInjectData(info.modid, 0, 0x20740, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
+    }
+
     return SCE_KERNEL_START_SUCCESS;
 }
 
@@ -208,8 +221,9 @@ int module_stop(SceSize argc, const void *args) {
 
   if (sceIoOpenHook >= 0) taiHookRelease(sceIoOpenHook, sceIoOpenRef);
   if (sceIoStatHook >= 0) taiHookRelease(sceIoStatHook, sceIoGetstatRef);
-  if (io_patch_path) taiInjectRelease(io_patch_path);
-  if (io_patch_size) taiInjectRelease(io_patch_size);
+  if (io_patch_path >= 0) taiInjectRelease(io_patch_path);
+  if (io_patch_size >= 0) taiInjectRelease(io_patch_size);
+  if (ctrl_patch >= 0) taiInjectRelease(ctrl_patch);
 
   return SCE_KERNEL_STOP_SUCCESS;
 }

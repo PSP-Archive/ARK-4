@@ -52,6 +52,7 @@ void reboot_launcher(){
     param.key = "game";
 
     PRTSTR1("Running Menu at %s", menupath);
+    k_tbl->KernelIOOpen("ms0:/__popspause__", 0, 0);
     int res = _KernelLoadExecVSHWithApitype(0x141, menupath, &param, 0x10000);
 }
 
