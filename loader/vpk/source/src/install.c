@@ -134,7 +134,8 @@ void createBubble(char *gameID) {
 }
 
 void copySaveFiles() {
-	CopyTree("app0:save", "ux0:/pspemu/PSP/SAVEDATA");
+	sceIoMkdir("ux0:/pspemu/PSP/SAVEDATA/ARK_01234", 0006);
+	CopyTree("app0:save/ARK_01234", "ux0:/pspemu/PSP/SAVEDATA/ARK_01234");
 }
 
 void doInstall() {
