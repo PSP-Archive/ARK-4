@@ -20,6 +20,7 @@ SceUID io_patch_size = -1;
 SceUID ctrl_patch = -1;
 
 uint32_t movs_a1_0_nop_opcode = 0xBF002000;
+uint32_t movs_a1_1_nop_opcode = 0xBF002001;
 uint32_t nop_nop_opcode = 0xBF00BF00;
 uint32_t mov_r2_r4_mov_r4_r2 = 0x46224614;
 uint32_t mips_move_a2_0 = 0x00003021;
@@ -84,8 +85,7 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
         char* title_id = strchr(popsetup, '/') + 1;
         char* path = strchr(title_id, '/');
         strncpy(popsconfig.title_id, title_id, (path-title_id));
-        strcpy(popsconfig.path, "ms0:");
-        strcat(popsconfig.path, path);
+        strcpy(popsconfig.path, path);
         popsconfig.magic = ARK_MAGIC;
         return -101;
     }
@@ -123,7 +123,6 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
         ScePspemuErrorExit(0);
         return 0;
     }
-    
 
     // Redirect files for memory card manager
     if (popsconfig.magic == ARK_MAGIC && popsconfig.title_id[0] && popsconfig.path[0]){
@@ -133,16 +132,14 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 
         if (strcmp(p+1, "__sce_menuinfo") == 0) {
           char *filename = popsconfig.path;
-          if (strncmp(filename, "ms0:/", 5) == 0) {
-            char *q = strrchr(filename, '/');
-            if (q) {
-              char path[128];
-              strncpy(path, filename+5, q-(filename+5));
-              path[q-(filename+5)] = '\0';
+          char *q = strrchr(filename, '/');
+          if (q) {
+            char path[128];
+            strncpy(path, filename, q-(filename));
+            path[q-filename] = '\0';
 
-              snprintf(new_file, sizeof(new_file), "ms0:%s/__sce_menuinfo", path);
-              file = new_file;
-            }
+            snprintf(new_file, sizeof(new_file), "ms0:%s/__sce_menuinfo", path);
+            file = new_file;
           }
         } else if (strstr(file, "/SCPS10084/") &&
                   (strcmp(p+1, "PARAM.SFO") == 0 ||
@@ -161,7 +158,6 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
       char *p = strrchr(file, '/');
       if (p) {
         static char new_file[256];
-
         if (strstr(file, "/SCPS10084/") &&
            (strcmp(p+1, "PARAM.SFO") == 0 ||
             strcmp(p+1, "SCEVMC0.VMP") == 0 ||

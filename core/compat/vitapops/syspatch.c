@@ -152,10 +152,11 @@ extern int exitLauncher();
 int (*arkLauncher)() = NULL;
 int popsLauncher(){
 
+    // init pops vram and pause pops, this fixes screen when going back to launcher
     DisplayWaitVblankStart();
     initVitaPopsVram();
 
-    // init pops vram and pause pops, this fixes screen when going back to launcher
+    // thread to constantly configure the screen (fixes race condition with pops)
     int thid = sceKernelCreateThread("psxloader", &vram_clear, 10, 0x10000, PSP_THREAD_ATTR_VFPU, NULL);
     sceKernelStartThread(thid, 0, NULL);
 
@@ -237,9 +238,10 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             char gameid[20];
             char config[300];
             char* path = sceKernelInitFileName();
-            memset(gameid, 0, sizeof(gameid));
-            getGameId(gameid);
-            sprintf(config, "ms0:/__popsconfig__/%s%s", gameid, strchr(path, '/'));
+            int n = sizeof(gameid);
+            memset(gameid, 0, n);
+            sctrlGetInitPARAM("DISC_ID", NULL, &n, gameid);
+            sprintf(config, "ms0:/__popsconfig__/%s/%s", gameid, path+5);
             sceIoOpen(config, 0, 0);
         }
         goto flush;
