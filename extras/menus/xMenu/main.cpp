@@ -18,13 +18,10 @@ static volatile bool loading = true;
 int startup_thread(int argc, void* argp){
 	int i;
 	stringstream startup_runner;
+	
 	for(i=0;i<startup_txt.length();i++) {
-	//void printText(float x, float y, const char *text, u32 color = WHITE_COLOR);
 		startup_runner << startup_txt[i];	
-	//	debugScreen(startup_runner.str().c_str(), 180, 130);
-	//	sceKernelDelayThread(15000);
 	}
-
 
 	while (loading){
 		debugScreen(startup_runner.str().c_str(), 180, 130);
