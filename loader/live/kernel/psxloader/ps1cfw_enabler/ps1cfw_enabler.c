@@ -207,8 +207,6 @@ int module_start(SceSize argc, const void *args) {
     // fix controller on Vita TV
     if (module_nid == 0x2714F07D){
       ctrl_patch = taiInjectData(info.modid, 0, 0x2073C, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
-      taiInjectData(info.modid, 0, 0x2084E, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
-      taiInjectData(info.modid, 0, 0x301DC, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
     }
     else {
       ctrl_patch = taiInjectData(info.modid, 0, 0x20740, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
