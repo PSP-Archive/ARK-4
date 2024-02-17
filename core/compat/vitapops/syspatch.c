@@ -140,9 +140,27 @@ int popsExit(){
     return sctrlKernelExitVSH(NULL);
 }
 
+static int vram_clear(){
+    while (1){
+        initVitaPopsVram();
+        sceKernelDelayThread(100);
+    }
+    return 0;
+}
+
 extern int exitLauncher();
 int (*arkLauncher)() = NULL;
 int popsLauncher(){
+
+    DisplayWaitVblankStart();
+    initVitaPopsVram();
+
+    // init pops vram and pause pops, this fixes screen when going back to launcher
+    int thid = sceKernelCreateThread("psxloader", &vram_clear, 10, 0x10000, PSP_THREAD_ATTR_VFPU, NULL);
+    sceKernelStartThread(thid, 0, NULL);
+
+    // send pausepops command
+    sceIoOpen("ms0:/__popspause__", 0, 0);
 
     // pause pops thread if needed
     SceUID popsthread = sctrlGetThreadUIDByName("popsmain");
@@ -150,10 +168,9 @@ int popsLauncher(){
         sceKernelSuspendThread(popsthread);
     }
 
-    // init pops vram and pause pops, this fixes screen when going back to launcher
     DisplayWaitVblankStart();
-    initVitaPopsVram();
-    sceIoOpen("ms0:/__popspause__", 0, 0);
+    DisplayWaitVblankStart();
+    sceKernelSuspendThread(thid);
 
     // launcher reboot
     return arkLauncher();
