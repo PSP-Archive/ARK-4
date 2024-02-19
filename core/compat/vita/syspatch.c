@@ -59,6 +59,21 @@ int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, 
     return result;
 }
 
+#define FAKE_UID_CAMERA_LITE 0x0ABCDEF1
+int ioOpenForCameraLite(const char* path, int mode, int flags){
+    if (strcmp(path, "flash1:/config.adrenaline") == 0){
+        return FAKE_UID_CAMERA_LITE;
+    }
+    return sceIoOpen(path, mode, flags);
+}
+
+int ioCloseForCameraLite(int uid){
+    if (uid == FAKE_UID_CAMERA_LITE){
+        return 0;
+    }
+    return sceIoClose(uid);
+}
+
 void patchLoadExecUMDemu(){
     // highjack SystemControl
     u32 func = K_EXTRACT_IMPORT(&sctrlKernelLoadExecVSHWithApitype);
@@ -136,6 +151,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         // Exit Handler
         goto flush;
     }
+
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
     	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
         	hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
@@ -143,6 +159,11 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 		}
 	}
 	
+    if (strcmp(mod->modname, "camera_patch_lite") == 0) {
+        hookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, ioOpenForCameraLite);
+        hookImportByNID(mod, "IoFileMgrForKernel", 0x810C4BC3, ioCloseForCameraLite);
+        goto flush;
+	}
 
     // Boot Complete Action not done yet
     if(booted == 0)
