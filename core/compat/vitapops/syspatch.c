@@ -256,7 +256,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed)
-                msstorCacheInit("ms", 8 * 1024);
+                msstorCacheInit("ms");
 
             if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
                 // Set fake framebuffer so that plugins like cwcheat can be displayed

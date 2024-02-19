@@ -372,7 +372,7 @@ void PSPOnModuleStart(SceModule2 * mod){
                 char* drv = "msstor0p";
                 if (psp_model == PSP_GO && sctrlKernelBootFrom()==0x50)
                     drv = "eflash0a0f1p";
-                msstorCacheInit(drv, 4 * 1024);
+                msstorCacheInit(drv);
             }
             // Boot Complete Action done
             booted = 1;

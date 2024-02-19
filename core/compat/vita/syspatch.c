@@ -173,7 +173,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         {
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed)
-                msstorCacheInit("ms", 8 * 1024);
+                msstorCacheInit("ms");
 
             // enable inferno cache
             if (se_config->iso_cache){

@@ -468,7 +468,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         {
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed)
-				msstorCacheInit("ms", 8 * 1024);
+				msstorCacheInit("ms");
 
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
