@@ -25,12 +25,10 @@ int main(int argc, const char *argv[]) {
 
 	
 	doInstall();
-	int flag = (installAnalogPlugin() | installPS1Plugin());
-
-	if (flag) {	
-		updateUi("Reload taiHEN config...");
-		taiReloadConfig();
-	}
+	installPS1Plugin();
+	taiReloadConfig();
+	installAnalogPlugin();
+	taiReloadConfig();
 
 	displayMsg("Install Complete!", "Press X to close this application ...");
 	waitCross();

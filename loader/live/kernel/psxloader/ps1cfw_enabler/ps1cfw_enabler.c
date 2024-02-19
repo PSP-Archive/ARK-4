@@ -20,7 +20,6 @@ SceUID io_patch_size = -1;
 SceUID ctrl_patch = -1;
 
 uint32_t movs_a1_0_nop_opcode = 0xBF002000;
-uint32_t movs_a1_1_nop_opcode = 0xBF002001;
 uint32_t nop_nop_opcode = 0xBF00BF00;
 uint32_t mov_r2_r4_mov_r4_r2 = 0x46224614;
 uint32_t mips_move_a2_0 = 0x00003021;
@@ -217,7 +216,7 @@ int module_stop(SceSize argc, const void *args) {
   if (sceIoStatHook >= 0) taiHookRelease(sceIoStatHook, sceIoGetstatRef);
   if (io_patch_path >= 0) taiInjectRelease(io_patch_path);
   if (io_patch_size >= 0) taiInjectRelease(io_patch_size);
-  if (ctrl_patch >= 0) taiInjectRelease(ctrl_patch);
+  if (ctrl_patch    >= 0) taiInjectRelease(ctrl_patch);
 
   return SCE_KERNEL_STOP_SUCCESS;
 }
