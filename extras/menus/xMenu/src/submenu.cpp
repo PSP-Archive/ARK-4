@@ -100,9 +100,11 @@ void SubMenu::updateScreen(){
 			static u32 delta = 5;
 			u32 color = RED_COLOR | (alpha<<24);
 			
-            fillScreenRect(color, cur_x-4, cur_y+13, min((int)(options[i].size()*8)+8, w), 2); // bottom
-
-            fillScreenRect(color, cur_x-4, cur_y+4, min((int)(options[i].size()*8)+8, w), 2); // top
+            int tw = min((int)(options[i].size()*8)+8, w);
+            fillScreenRect(color, cur_x-4, cur_y+13, tw, 2); // bottom
+            fillScreenRect(color, cur_x-4, cur_y+3, tw, 2); // top
+            fillScreenRect(color, cur_x-4, cur_y+5, 2, 8); // left
+            fillScreenRect(color, cur_x-6+tw, cur_y+5, 2, 8); // right
 			
 			if(alpha==0) delta = 5;
 			else if (alpha == 255) delta = -5;
