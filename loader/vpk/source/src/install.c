@@ -32,6 +32,13 @@ static char* NeededDirectoriesARKX[] = {
 	"ux0:pspemu/temp/game/PSP/LICENSE"
 };
 
+int checkTaiConfig() {
+	char c = 0;
+	int fd = sceIoOpen("ur0:tai/config.txt", SCE_O_RDONLY, 0777);
+	sceIoLseek(fd, -1, SCE_SEEK_END);
+	sceIoRead(fd, &c, 1);
+	return (c == '\n');
+}
 
 int installAnalogPlugin() {
 	updateUi("Checking for ARK Right Analog Plugin ...");
@@ -39,8 +46,10 @@ int installAnalogPlugin() {
 	if(pluginCheck < 0) {
 		updateUi("ARK Right Analog Plugin not found adding to config ...");
 		CopyFileAndUpdateUi("app0:psp/arkrightanalog.suprx", "ur0:tai/arkrightanalog.suprx");
+		int hasNewLine = checkTaiConfig();
 		int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
-		static char pluginLine[] = "\n*NPUZ01234\nur0:tai/arkrightanalog.suprx";
+		static char pluginLine[] = "*NPUZ01234\nur0:tai/arkrightanalog.suprx";
+		if (!hasNewLine) sceIoWrite(addPlugin, "\n", 1);
 		sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine));
 		sceIoClose(addPlugin);
 		return 1;
@@ -60,8 +69,10 @@ int installPS1Plugin() {
 	if(pluginCheck < 0) {
 		updateUi("ARK-X PS1 Plugin not found adding to config ...");
 		CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
+		int hasNewLine = checkTaiConfig();
 		int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
-		static char pluginLine[] = "\n*SCPS10084\nur0:tai/ps1cfw_enabler.suprx";
+		static char pluginLine[] = "*SCPS10084\nur0:tai/ps1cfw_enabler.suprx";
+		if (!hasNewLine) sceIoWrite(addPlugin, "\n", 1);
 		sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine));
 		sceIoClose(addPlugin);
 		return 1;
