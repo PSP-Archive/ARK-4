@@ -25,7 +25,7 @@ int main(int argc, const char *argv[]) {
 
 	
 	doInstall();
-	int flag = installPS1Plugin();
+	int flag = (installAnalogPlugin() | installPS1Plugin());
 
 	if (flag) {	
 		updateUi("Reload taiHEN config...");

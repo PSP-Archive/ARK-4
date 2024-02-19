@@ -150,7 +150,7 @@ Use `-h` or `--help` to show all available flags
 #### Installation On PS Vita
 
 
-##### Standalone
+##### Standalone (Official PSPEmu)
 
 - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
 - Download and install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
@@ -158,15 +158,14 @@ Use `-h` or `--help` to show all available flags
 - Open `FasterARK` and wait for the install process to finish.
 - Both `ARK` and `ARK-X` bubbles will appear in `Live Area`.
 - Use the `ARK` bubble for `PSP` games and homebrew. It can play `PS1` but with limitations related to sound playback.
-- Use the `ARK-X` bubble for `PS1` games without any sound issues.
+- Use the `ARK-X` bubble for `PS1` games without any sound limitations.
 - Once `ARK` bubbles are installed, you can delete `FasterARK`.
-- To use right analog stick (i.e. gta_remastered plugin): https://github.com/rereprep/ArkRightAnalog
-- To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start` (`L2+R2+Down+Start` on `ARK-X`).
-- NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB` and `Force Extra RAM` setting.
-- NOTE: If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign` with a valid license.
+- To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start` (on `ARK-X` use `L2+R2+Down+Start` or `L1+R1+Start+Down` for `VitaTV`).
+- NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB` and `Force Extra RAM` setting (needed for `PRO Online`).
+- NOTE: If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign` with a valid license. Instructions in Wiki.
 
 
-##### Adrenaline
+##### Adrenaline (Patched PSPEmu)
 
 - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and `Adrenaline` (https://github.com/TheOfficialFloW/Adrenaline).
 - (Skip this step if `Standalone` is already installed) Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
