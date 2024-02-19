@@ -252,7 +252,7 @@ void Menu::control(){
             moveDown();
         else if (control.up())
             moveUp();
-        else if (control.cross()){
+        else if (control.accept()){
 			if(eboots.size() == 0)
 				continue;
 			else if (eboots[this->index]->run()){

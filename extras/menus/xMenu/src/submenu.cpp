@@ -145,20 +145,20 @@ void SubMenu::run() {
 		updateScreen();
 
 		control.update();
-		if (control.circle() || control.triangle())
+		if (control.decline() || control.triangle())
 			break;
-        else if (control.cross()){
+        else if (control.accept() || control.left() || control.right()){
             switch (index){
-                case 0: 
+                case 0:
 					changeMsCacheSetting(); getItems(); break;
-                case 1: 
+                case 1:
 				case 2:
 				case 3:
 					changeSetting(index); getItems(); 
 					break;
-                case 4: 
+                case 4:
 					rebootMenu(); break;
-                case 5: 
+                case 5:
 					menu->fadeOut(); sceKernelExitGame(); break;
             }
         }

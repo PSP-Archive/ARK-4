@@ -135,11 +135,11 @@ bool Entry::run(){
     bool ret;
     while (true){
         control.update();
-        if (control.cross()){
+        if (control.accept()){
             ret = true;
             break;
         }
-        else if (control.circle()){
+        else if (control.decline()){
             ret = false;
             break;
         }

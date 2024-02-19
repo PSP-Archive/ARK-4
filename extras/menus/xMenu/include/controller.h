@@ -7,7 +7,7 @@
 class Controller{
 
     private:
-        SceCtrlData* pad;
+        SceCtrlData pad;
         
         u32 nowpad, newpad, oldpad;
         
@@ -25,6 +25,10 @@ class Controller{
         
         // generic wait for user input, returns true if cross pressed, false if circle is pressed
         bool wait(void* busy_wait=NULL);
+
+        // wrapper for x/o swap
+        bool accept();
+        bool decline();
         
         // check if the corresponding button has been pressed
         bool up();
