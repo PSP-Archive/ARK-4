@@ -81,7 +81,7 @@ void SubMenu::updateScreen(){
     // draw ARK version and info
     {
     int dx = ((w-8*ark_version.size())/2);
-    fillScreenRect(color&0x00FFFFFF, x+dx, y+5, 8*ark_version.size(), 8);
+    fillScreenRect(0x8000ff00, x+dx, y+5, 8*ark_version.size(), 8);
     common::printText(x + dx, y+5, ark_version.c_str());
     }
 
