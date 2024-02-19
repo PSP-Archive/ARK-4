@@ -48,9 +48,9 @@ int installAnalogPlugin() {
 		CopyFileAndUpdateUi("app0:psp/arkrightanalog.suprx", "ur0:tai/arkrightanalog.suprx");
 		int hasNewLine = checkTaiConfig();
 		int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
-		static char pluginLine[] = "*NPUZ01234\nur0:tai/arkrightanalog.suprx";
+		static char pluginLine[] = "# Add second analog support to ARK\n*NPUZ01234\nur0:tai/arkrightanalog.suprx";
 		if (!hasNewLine) sceIoWrite(addPlugin, "\n", 1);
-		sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine));
+		sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine)-1);
 		sceIoClose(addPlugin);
 		return 1;
 	}
@@ -71,9 +71,9 @@ int installPS1Plugin() {
 		CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
 		int hasNewLine = checkTaiConfig();
 		int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
-		static char pluginLine[] = "*SCPS10084\nur0:tai/ps1cfw_enabler.suprx";
+		static char pluginLine[] = "# ARK-X\n*SCPS10084\nur0:tai/ps1cfw_enabler.suprx";
 		if (!hasNewLine) sceIoWrite(addPlugin, "\n", 1);
-		sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine));
+		sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine)-1);
 		sceIoClose(addPlugin);
 		return 1;
 	}

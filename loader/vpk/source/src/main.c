@@ -25,9 +25,8 @@ int main(int argc, const char *argv[]) {
 
 	
 	doInstall();
-	installPS1Plugin();
-	taiReloadConfig();
 	installAnalogPlugin();
+	installPS1Plugin();
 	taiReloadConfig();
 
 	displayMsg("Install Complete!", "Press X to close this application ...");
