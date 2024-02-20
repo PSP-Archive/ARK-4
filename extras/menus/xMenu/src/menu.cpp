@@ -259,6 +259,9 @@ void Menu::control(){
                 loadGame();
             }
         }
+        else if (control.start()){
+            loadGame();
+        }
         else if (control.triangle()){
             openSubMenu();
         }
@@ -281,13 +284,12 @@ void Menu::loadGame(){
     struct SceKernelLoadExecVSHParam param;
     memset(&param, 0, sizeof(SceKernelLoadExecVSHParam));
     
-    char path[256];
-    strcpy(path, eboots[this->index]->getPath().c_str());
+    const char* path = eboots[index]->getPath().c_str();
     
-    int runlevel = (path[0]=='e' && path[1]=='f')? POPS_RUNLEVEL_GO : POPS_RUNLEVEL;
+    int runlevel = (path[0]=='e')? POPS_RUNLEVEL_GO : POPS_RUNLEVEL;
     
     param.args = strlen(path) + 1;
-    param.argp = path;
+    param.argp = (void*)path;
     param.key = "pops";
     fadeOut();
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
