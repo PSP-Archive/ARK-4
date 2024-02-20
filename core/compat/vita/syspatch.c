@@ -59,7 +59,7 @@ int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, 
     return result;
 }
 
-#define FAKE_UID_CAMERA_LITE 0x0ABCDEF1
+#define FAKE_UID_CAMERA_LITE 0x0B00B1E5
 int ioOpenForCameraLite(const char* path, int mode, int flags){
     if (strcmp(path, "flash1:/config.adrenaline") == 0){
         return FAKE_UID_CAMERA_LITE;

@@ -129,15 +129,24 @@ int autoDetectDevice(ARKConfig* config){
         }
         else{
             SceModule2* sctrl = k_tbl->KernelFindModuleByName("SystemControl");
-            if (sctrl){ // SystemControl loaded mean's we're running under a Custom Firmware
-                // check if running ARK-4 (CompatLayer)
+            if (sctrl){
+                // SystemControl loaded mean's we're running under a Custom Firmware
                 if (k_tbl->KernelFindModuleByName("ARKCompatLayer") != NULL){
+                    // ARK-4
                     return -1;
                 }
                 else{
-                    // Adrenaline
-                    config->exec_mode = PSV_ADR;
-                    return 0;
+                    int fd = k_tbl->KernelIOOpen("flash1:/config.adrenaline", PSP_O_RDONLY, 0);
+                    if (fd >= 0){
+                        // Adrenaline
+                        k_tbl->KernelIOClose(fd);
+                        config->exec_mode = PSV_ADR;
+                        return 0;
+                    }
+                    else {
+                        // early eCFW
+                        return -1;
+                    }
                 }
             }
             else{ // no module found, must be stock pspemu
