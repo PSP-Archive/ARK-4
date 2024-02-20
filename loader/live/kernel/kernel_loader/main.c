@@ -31,6 +31,7 @@ ARKConfig default_config = {
 ARKConfig* ark_config = NULL;
 
 extern void loadKernelArk();
+extern void copyPSPVram(u32*);
 
 // K.BIN entry point
 void (* kEntryPoint)() = (void*)KXPLOIT_LOADADDR;
@@ -63,11 +64,6 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
 
     // make PRTSTR available for payloads
     g_tbl->prtstr = (void *)&PRTSTR11;
-
-    // configure to handle POPS screen
-    extern void copyPSPVram(u32*);
-    initVitaPopsVram();
-    setScreenHandler(&copyPSPVram);
 
     // init screen
     initScreen(g_tbl->DisplaySetFrameBuf);
