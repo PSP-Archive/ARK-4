@@ -66,19 +66,17 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
     // make PRTSTR available for payloads
     g_tbl->prtstr = (void *)&PRTSTR11;
 
+    // configure to handle POPS screen
+    extern void copyPSPVram(u32*);
+    initVitaPopsVram();
+    setScreenHandler(&copyPSPVram);
+
     // init screen
     initScreen(g_tbl->DisplaySetFrameBuf);
 
     PRTSTR("Loading ARK-4");
     
-    if (isKernel()){ // already in kernel mode?
-        kernelContentFunction();
-        return 0;
-    }
-
     g_tbl->freeMem(g_tbl);
-    g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "ARK.BIN", PSP_SMEM_Addr, 0x8000, 0x08D30000);
-    g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "K.BIN", PSP_SMEM_Addr, 0x4000, KXPLOIT_LOADADDR);
     
     // read kxploit file into memory and initialize it
     char* err = NULL;
