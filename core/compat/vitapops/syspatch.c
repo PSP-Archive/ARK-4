@@ -27,7 +27,6 @@ int (* DisplayWaitVblankStart)() = NULL;
 
 extern SEConfig* se_config;
 
-#define ALIGN(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
 
 KernelFunctions _ktbl = {
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
@@ -43,7 +42,7 @@ KernelFunctions _ktbl = {
 // hooked function to copy framebuffer
 int (* _sceDisplaySetFrameBufferInternal)(int pri, void *topaddr, int width, int format, int sync) = NULL;
 int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr, int width, int format, int sync){
-    int res = -1;
+    int res = 0;
     copyPSPVram(topaddr);
     if (_sceDisplaySetFrameBufferInternal) // passthrough
         res = _sceDisplaySetFrameBufferInternal(pri, topaddr, width, format, sync); 
@@ -156,19 +155,20 @@ int popsLauncher(){
     DisplayWaitVblankStart();
     initVitaPopsVram();
 
-    // thread to constantly configure the screen (fixes race condition with pops)
+    // thread to constantly configure the screen (fixes race condition with pops reconfiguring vram before we pause it)
     int thid = sceKernelCreateThread("psxloader", &vram_clear, 10, 0x10000, PSP_THREAD_ATTR_VFPU, NULL);
     sceKernelStartThread(thid, 0, NULL);
 
     // send pausepops command
     sceIoOpen("ms0:/__popspause__", 0, 0);
 
-    // pause pops thread if needed
+    // pause pops thread if running
     SceUID popsthread = sctrlGetThreadUIDByName("popsmain");
     if (popsthread >= 0){
         sceKernelSuspendThread(popsthread);
     }
 
+    // wait a bit
     DisplayWaitVblankStart();
     DisplayWaitVblankStart();
     sceKernelSuspendThread(thid);
@@ -214,7 +214,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    // patch to display plugins
+    // patch to allow plugins to display (i.e. cwcheat)
     if (isLoadingPlugins() && sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
         if (mod->text_addr&0x80000000){ // kernel plugin
             hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);

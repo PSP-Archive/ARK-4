@@ -109,9 +109,6 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     strcat(path, "POPS.PRX");
     result = sceKernelLoadModule(path, flag, opt);
 
-    //if (result<0) result = sceKernelLoadModule("flash0:/kd/pops_660.prx", flag, opt); // load pops modules from injected flash0
-    //if (result<0) result = sceKernelLoadModule(fname, flag, opt); // passthrough
-
     #ifdef DEBUG
     printk("%s: fname %s flag 0x%08X -> 0x%08X\r\n", __func__, fname, flag, result);
     #endif
@@ -149,7 +146,7 @@ void patchPspPopsman(SceModule2* mod){
     _sw(JR_RA, text_addr + 0x00003490);
     _sw(LI_V0(0), text_addr + 0x00003490 + 4);
     
-    // patch loadmodule to load our own pops.prx
+    // patch loadmodule to load our own pops.prx and spu plugin
     _sw(JAL(myKernelLoadModule), text_addr + 0x00001EE0);
 }
 
