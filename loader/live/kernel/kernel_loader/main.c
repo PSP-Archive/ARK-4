@@ -18,8 +18,6 @@
 #include "main.h"
 #include <functions.h>
 
-#define TEST_EBOOT "ms0:/EBOOT.PBP"
-
 char* running_ark = "Running ARK-4 in ?PS? mode";
 
 ARKConfig default_config = {
