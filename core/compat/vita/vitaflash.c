@@ -1,48 +1,11 @@
 #include "vitaflash.h"
 #include <graphics.h>
+#include "kermit.h"
 
 extern ARKConfig* ark_config;
 static KernelFunctions* ktbl = NULL;
 
 int (* Kermit_driver_4F75AA05)(void* kermit_packet, u32 cmd_mode, u32 cmd, u32 argc, u32 allow_callback, u64 *resp) = NULL;
-
-#ifdef DEBUG
-void dumpVitaFlash0(KernelFunctions* kf){
-    ktbl = kf;
-    ktbl->KernelIOMkdir("ms0:/flash0", 0777);
-    ktbl->KernelIOMkdir("ms0:/flash0/kd", 0777);
-    ktbl->KernelIOMkdir("ms0:/flash0/kd/resource", 0777);
-    ktbl->KernelIOMkdir("ms0:/flash0/vsh", 0777);
-    ktbl->KernelIOMkdir("ms0:/flash0/vsh/etc", 0777);
-    ktbl->KernelIOMkdir("ms0:/flash0/vsh/module", 0777);
-    ktbl->KernelIOMkdir("ms0:/flash0/vsh/resource", 0777);
-    ktbl->KernelIOMkdir("ms0:/flash0/font", 0777);
-    ktbl->KernelIOMkdir("ms0:/flash0/data", 0777);
-    ktbl->KernelIOMkdir("ms0:/flash0/data/cert", 0777);
-    ktbl->KernelIOMkdir("ms0:/flash0/codepage", 0777);
-    ktbl->KernelIOMkdir("ms0:/flash0/dic", 0777);
-
-    int i = 0;
-    char path[128];
-    VitaFlashBufferFile * f0 = (VitaFlashBufferFile*)FLASH_SONY;
-    
-    while (f0[i].name != NULL){
-        char* filename = f0[i].name;
-        void* buf = f0[i].content;
-        int buf_size = f0[i].size;
-        strcpy(path, "ms0:/flash0");
-        if (filename[0] != '/') strcat(path, "/");
-        strcat(path, filename);
-        int fd = ktbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
-        if (fd < 0){
-            fd = ktbl->KernelIOOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
-            ktbl->KernelIOWrite(fd, buf, buf_size);
-        }
-        ktbl->KernelIOClose(fd);
-        i++;
-    }
-}
-#endif
 
 int installFlash0Archive(char* path)
 {
@@ -171,6 +134,7 @@ int flashLoadPatch(int cmd)
         int linked;
         // Wait for flash to load
         ktbl->KernelDelayThread(10000);
+        onVitaFlashLoaded();
         // Patch flash0 Filesystem Driver
         char path[ARK_PATH_SIZE];
         strcpy(path, ark_config->arkpath);

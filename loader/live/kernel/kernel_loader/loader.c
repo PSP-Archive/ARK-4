@@ -3,6 +3,7 @@
 #include <loadexec_patch.h>
 #include "reboot.h"
 
+#include "core/compat/vita/vitaflash.h"
 #include "core/compat/pentazemin/adrenaline_compat.h"
 
 #include "core/compat/psp/rebootex/payload.h"
@@ -108,6 +109,53 @@ void setupRebootBuffer(){
     else{
         rebootbuffer = rebootbuffer_psp;
         size_rebootbuffer = size_rebootbuffer_psp;
+    }
+}
+
+static void createFolders(char* path){
+    char* sep = path;
+    while ((sep = strchr(sep, '/')) != NULL){
+        sep[0] = '\0';
+        k_tbl->KernelIOMkdir(path, 0777);
+        sep[0] = '/';
+        sep++;
+    }
+}
+
+void dumpVitaFlash0(){
+
+    int i = 0;
+    char path[128];
+    VitaFlashBufferFile * f0 = (VitaFlashBufferFile*)FLASH_SONY;
+    
+    while (f0[i].name != NULL){
+        char* filename = f0[i].name;
+        void* buf = f0[i].content;
+        int buf_size = f0[i].size;
+        strcpy(path, "ms0:/flash/0");
+        if (filename[0] != '/') strcat(path, "/");
+        strcat(path, filename);
+        createFolders(path);
+        int fd = k_tbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
+        if (fd < 0){
+            k_tbl->KernelIOOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+            k_tbl->KernelIOWrite(fd, buf, buf_size);
+        }
+        k_tbl->KernelIOClose(fd);
+        i++;
+    }
+}
+
+void onVitaFlashLoaded(){
+    SceIoStat stat;
+    if (k_tbl->KernelIOGetStat("ms0:/flash", &stat) < 0){
+        k_tbl->KernelIOMkdir("ms0:/flash", 0777);
+        k_tbl->KernelIOMkdir("ms0:/flash/0", 0777);
+        k_tbl->KernelIOMkdir("ms0:/flash/1", 0777);
+        k_tbl->KernelIOMkdir("ms0:/flash/2", 0777);
+        k_tbl->KernelIOMkdir("ms0:/flash/3", 0777);
+        PRTSTR("Dumping flash0");
+        dumpVitaFlash0();
     }
 }
 

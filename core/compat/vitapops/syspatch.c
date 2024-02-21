@@ -37,7 +37,7 @@ KernelFunctions _ktbl = {
     .KernelIOClose = &sceIoClose,
     .KernelDelayThread = &sceKernelDelayThread,
 }; // for vita flash patcher
-
+void onVitaFlashLoaded(){}
 
 // hooked function to copy framebuffer
 int (* _sceDisplaySetFrameBufferInternal)(int pri, void *topaddr, int width, int format, int sync) = NULL;

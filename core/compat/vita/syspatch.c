@@ -191,11 +191,11 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
                     }
                 }
             }
-            
+
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
 
-            //dumpFlashToMs();
+            //redirectFlashFileSystem();
 
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
