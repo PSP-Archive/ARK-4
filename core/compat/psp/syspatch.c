@@ -167,9 +167,7 @@ int sceUmdRegisterUMDCallBackPatched(int cbid) {
 
 static int sceGpioPortReadPatched(void) {
 	int GPRValue = *((int *) 0xBE240004);
-	
 	GPRValue = GPRValue & 0xFBFFFFFF;
-
 	return GPRValue;
 }
 
@@ -250,10 +248,7 @@ void processSettings(){
                 REDIRECT_FUNCTION(f, sceUmdRegisterUMDCallBackPatched);
             }
             // remove umd driver
-            int (*IoDelDrv)(char*) = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
-            if (IoDelDrv){
-                IoDelDrv("umd");
-            }
+            sceIoDelDrv("umd");
             // force UMD check medium to always return 0 (no medium)
             u32 CheckMedium = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0x46EBB729);
             if (CheckMedium){
@@ -275,7 +270,6 @@ int pluginHandler(const char* path, int modid){
     return 0;
 }
 
-
 void PSPOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
@@ -286,7 +280,7 @@ void PSPOnModuleStart(SceModule2 * mod){
 			goto flush;
 		}
 	}
-    
+
     if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
         patch_sceUmdMan_driver(mod);
         patch_umd_idslookup(mod);
