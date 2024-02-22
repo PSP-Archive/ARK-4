@@ -58,7 +58,7 @@ static struct{
     {.orig = NULL, .new = NULL, .len=0}
 };
 
-//static int flash_redirect = 0;
+static int flash_redirect = 0;
 
 // Open Directory List
 OpenDirectory * opendirs = NULL;
@@ -290,8 +290,12 @@ int _flashIoClose(PspIoDrvFileArg *arg) {
 
 int _flashIoRead(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
-	char *data = (char *)UnprotectAddress(args[1]);
+	char *data = (char *)args[1];
 	int len = args[2];
+
+    if (!data || !len) return 0;
+
+    data = (char*)UnprotectAddress(data);
 
 	if (((u32 *)arg)[18]) {
 		arg->fs_num = 0;
@@ -303,12 +307,12 @@ int _flashIoRead(u32 *args) {
 
 int _flashIoWrite(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
-	const char *data = (const char *)UnprotectAddress(args[1]);
+	const char *data = (const char *)args[1];
 	int len = args[2];
 
-	if (!data && len == 0) {
-		return 0;
-	}
+	if (!data || !len) return 0;
+
+    data = (char*)UnprotectAddress(data);
 
 	if (((u32 *)arg)[18]) {
 		arg->fs_num = 0;
@@ -407,6 +411,8 @@ int _flashIoDclose(PspIoDrvFileArg *arg) {
 int _flashIoDread(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	SceIoDirent *dir = (SceIoDirent *)args[1];
+
+    if (dir) dir = UnprotectAddress(dir);
 
 	if (((u32 *)arg)[18]) {
 		arg->fs_num = 0;
@@ -596,9 +602,11 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 {
     // "flash" Driver
     if (strcmp(driver->name, "flash") == 0) {
+        #if 0
         // Hook IoOpen Function
-        //sceIoFlashOpen = driver->funcs->IoOpen;
-        //driver->funcs->IoOpen = sceIoFlashOpenHook;
+        sceIoFlashOpen = driver->funcs->IoOpen;
+        driver->funcs->IoOpen = sceIoFlashOpenHook;
+        #else
         memcpy(&flash_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
 
 		driver->funcs->IoOpen = flashIoOpen;
@@ -621,27 +629,24 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 		// Add flashfat driver
 		flashfat_drv->funcs = driver->funcs;
 		sceIoAddDrv(flashfat_drv);
+        #endif
         
     }
     else if (strcmp(driver->name, "flashfat") == 0){
-        /*
+        #if 0
         sceIoFlashRead_ = driver->funcs->IoRead;
         driver->funcs->IoRead = sceIoFlashReadHook;
     
         sceIoFlashWrite_ = driver->funcs->IoWrite;
         driver->funcs->IoWrite = sceIoFlashWriteHook;
-        */
+        #else
         flashfat_drv = driver;
 		return 0;
+        #endif
     }
     // "ms" Driver
     else if(strcmp(driver->name, "ms") == 0) {
         ms_drv = driver;
-		return 0;
-    }
-    else if (strcmp(driver->name, "fatms") == 0) {
-
-        memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
 
         // Hook IoOpen Function
         sceIoMsOpen = driver->funcs->IoOpen;
@@ -653,16 +658,13 @@ int sceIoAddDrvHook(PspIoDrv * driver)
         sceIoMsWrite_ = driver->funcs->IoWrite;
         driver->funcs->IoWrite = sceIoMsWriteHook;
 
-        ms_drv->funcs = driver->funcs;
-		sceIoAddDrv(ms_drv);
-
+        memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
     }
     
     // Register Driver
     return sceIoAddDrv(driver);
 }
 
-/*
 // "flash" Driver IoOpen Hook
 int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
 {
@@ -692,7 +694,6 @@ int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mo
     // Forward Call
     return sceIoFlashOpen(arg, file, flags, mode);
 }
-*/
 
 // "ms" Driver IoOpen Hook
 int sceIoMsOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
@@ -915,6 +916,13 @@ int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
 {
 
     int res;
+    if (strncmp(a0, "flash", 5) == 0){
+        char newpath[ARK_PATH_SIZE];
+        sprintf(newpath, "ms0:/flash/%c%s", a0[5], a0+7);
+        res = iojal(newpath, a1, a2, a3, t0, t1);
+        if (res>=0) return res;
+    }
+    /*
     for (int i=0; ioreplacements[i].orig; i++){
         if (strncmp(a0, ioreplacements[i].orig, ioreplacements[i].len) == 0){
             char path[ARK_PATH_SIZE];
@@ -925,6 +933,7 @@ int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
             break;
         }
     }
+    */
     res = iojal(a0, a1, a2, a3, t0, t1);
     
     return res;
