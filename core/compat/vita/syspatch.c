@@ -45,6 +45,7 @@ int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, 
     return _sctrlKernelLoadExecVSHWithApitype(apitype, file, param);
 }
 
+// patch to remove Adrenaline check in camera_patch_lite plugin
 #define FAKE_UID_CAMERA_LITE 0x0B00B1E5
 int ioOpenForCameraLite(const char* path, int mode, int flags){
     if (strcmp(path, "flash1:/config.adrenaline") == 0){
@@ -52,7 +53,6 @@ int ioOpenForCameraLite(const char* path, int mode, int flags){
     }
     return sceIoOpen(path, mode, flags);
 }
-
 int ioCloseForCameraLite(int uid){
     if (uid == FAKE_UID_CAMERA_LITE){
         return 0;
@@ -60,6 +60,7 @@ int ioCloseForCameraLite(int uid){
     return sceIoClose(uid);
 }
 
+// patch to fix volatile mem issue
 int (*_sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
 int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	int res = 0;
@@ -92,14 +93,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     patchFileManagerImports(mod);
     
     patchGameInfoGetter(mod);
-
-    // Patch sceKernelExitGame Syscalls
-    if(strcmp(mod->modname, "sceLoadExec") == 0)
-    {
-        REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));
-        REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), K_EXTRACT_IMPORT(exitLauncher));
-        goto flush;
-    }
     
     // Patch Kermit Peripheral Module to load flash0
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
@@ -114,10 +107,10 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
-    // Patch PSP POPS SPU
+    // Patch PSP POPS to replace SPU code
     if (strcmp(mod->modname, "pops") == 0)
     {
-        patchPspPopsSpu(mod);
+        patchPspPops(mod);
         goto flush;
     }
 
@@ -169,11 +162,13 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
                     }
                 }
             }
+
+            // Patch sceKernelExitGame Syscalls
+            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));
+            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x2AC9954B), K_EXTRACT_IMPORT(exitLauncher));
             
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
-
-            //dumpFlashToMs();
 
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
@@ -211,6 +206,7 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
         {"sceMediaSync", "MEDIASYN.PRX"},
     };
 
+    // replace files with 6.60 version for PSP POPS
     for (int i=0; i < sizeof(pops_files)/sizeof(pops_files[0]); i++){
         if (strcmp(mod->modname, pops_files[i].name) == 0){
             char path[ARK_PATH_SIZE];

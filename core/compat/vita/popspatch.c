@@ -9,11 +9,12 @@
 extern ARKConfig* ark_config;
 
 // SPU Status
-static int running = 0; // dummy spu
-static int spu_running = 0; // spu plugin
+static int thid = -1; // dummy thread id
+static int running = 0; // dummy spu flag
+static int spu_running = 0; // spu plugin flag
 
 // SPU Background Thread
-int spuThread(SceSize args, void * argp)
+static int spuThread(SceSize args, void * argp)
 {
     // Set SPU Status
     running = 1;
@@ -62,8 +63,10 @@ void _sceMeAudio_DE630CD2(void * loopCore, void * stack)
 
     // Elevate Permission Level
     unsigned int k1 = pspSdkSetK1(0);
-    int thid = sceKernelCreateThread("SPUThread", spuThread, 0x10, 32 * 1024, 0, NULL);
-    sceKernelStartThread(thid, 0, NULL);
+    if (thid < 0){
+        thid = sceKernelCreateThread("SPUThread", spuThread, 0x10, 32 * 1024, 0, NULL);
+        sceKernelStartThread(thid, 0, NULL);
+    }
     // Restore Permission Level
     pspSdkSetK1(k1);
 }
@@ -79,6 +82,7 @@ void spuShutdown(void)
     }
 }
 
+// redirect popsman to load 6.60 POPS and the external SPU plugin
 static int myKernelLoadModule(char * fname, int flag, void * opt)
 {
 
@@ -116,6 +120,7 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     return result;
 }
 
+// Patch for 6.60 popsman to work on Vita
 void patchPspPopsman(SceModule2* mod){
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr + mod->text_size;
@@ -150,24 +155,8 @@ void patchPspPopsman(SceModule2* mod){
     _sw(JAL(myKernelLoadModule), text_addr + 0x00001EE0);
 }
 
-void patchPspPopsSpu(SceModule2 * mod)
+// Patch for 6.60 pops to work on Vita
+void patchPspPops(SceModule2 * mod)
 {
-    // Fetch Text Address
-    unsigned int text_addr = mod->text_addr;
-
-    int patches = 2;
-    for (u32 i = 0; i < mod->text_size; i += 4)
-    {
-        u32 addr = mod->text_addr + i;
-        u32 data = _lw(addr);
-
-        // Replace Media Engine SPU Background Thread Starter
-        if (data == 0x24050260 && !spu_running){
-            u32 a = addr;
-            do { a+=4; } while (_lw(a) != 0x8FBF0004); // find end of function
-            u32 stub = U_EXTRACT_CALL(a-8);
-            REDIRECT_SYSCALL(stub, _sceMeAudio_DE630CD2);
-            patches--;
-        }
-    }
+    if (!spu_running) hookImportByNID(mod, "sceMeAudio", 0xDE630CD2, _sceMeAudio_DE630CD2);
 }
