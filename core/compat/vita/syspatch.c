@@ -35,28 +35,14 @@ KernelFunctions _ktbl = { // for vita flash patcher
 };
 
 // This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
+int (*_sctrlKernelLoadExecVSHWithApitype)(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param) = NULL;
 int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
 {
-    // Elevate Permission Level
-    unsigned int k1 = pspSdkSetK1(0);
-    
     if (apitype == 0x141){ // homebrew API
         sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
         sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
     }
-    
-    // Find Target Function
-    int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
-        = (void *)findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
-
-    // Load Execute Module
-    int result = _LoadExecVSHWithApitype(apitype, file, param, 0x10000);
-    
-    // Restore Permission Level on Failure
-    pspSdkSetK1(k1);
-    
-    // Return Error Code
-    return result;
+    return _sctrlKernelLoadExecVSHWithApitype(apitype, file, param);
 }
 
 #define FAKE_UID_CAMERA_LITE 0x0B00B1E5
@@ -72,14 +58,6 @@ int ioCloseForCameraLite(int uid){
         return 0;
     }
     return sceIoClose(uid);
-}
-
-void patchLoadExecUMDemu(){
-    // highjack SystemControl
-    u32 func = K_EXTRACT_IMPORT(&sctrlKernelLoadExecVSHWithApitype);
-    _sw(JUMP(sctrlKernelLoadExecVSHWithApitypeWithUMDemu), func);
-    _sw(NOP, func+4);
-    flushCache();
 }
 
 int (*_sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
@@ -254,11 +232,12 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 }
 
 void PROVitaSysPatch(){
-    SceModule2* mod = NULL;
+    
     // filesystem patches
     initFileSystem();
+
     // patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
-    patchLoadExecUMDemu();
+    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlKernelLoadExecVSHWithApitype), sctrlKernelLoadExecVSHWithApitypeWithUMDemu, _sctrlKernelLoadExecVSHWithApitype);
 
     // Register custom start module
     prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
