@@ -108,6 +108,11 @@ PspIoDrvArg * flash_driver = NULL;
 PspIoDrvFuncs ms_funcs;
 PspIoDrvFuncs flash_funcs;
 
+void debuglog(char* text){
+    int fd = sceIoOpen("ms0:/flash.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+    sceIoWrite(fd, text, strlen(text));
+    sceIoClose(fd);
+}
 
 void initFileSystem(){
     // Create Semaphore
@@ -140,15 +145,15 @@ int sceIoReadHookCommon(PspIoDrvFileArg* arg, void* data, SceSize size, int (*sc
     
     u32 addr = UnprotectAddress((u32)data);
 
-    if (addr) {
-        u32 k1 = pspSdkSetK1(0);
-        ret = sceIoRead_(arg, (void *)(addr), size);
-        pspSdkSetK1(k1);
+    u32 k1 = pspSdkSetK1(0);
+    ret = sceIoRead_(arg, (void *)(addr), size);
+    pspSdkSetK1(k1);
 
-        return ret;
+    if (ret < 0){
+        debuglog("** read ERROR\n");
     }
 
-    return sceIoRead_(arg, data, size);
+    return ret;
 }
 
 int sceIoMsReadHook(PspIoDrvFileArg* arg, void* data, SceSize size){
@@ -651,15 +656,23 @@ int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mo
         arg->drv = ms_driver;
         arg->fs_num = 0;
         
+        debuglog("redirect: ");
+        debuglog(file);
+        debuglog("** to: ");
+        debuglog(msfile);
+        debuglog("\n");
+
         // Open File from "ms"
         int k1 = pspSdkSetK1(0);
         int fd = sceIoMsOpen(arg, msfile, flags, mode);
         pspSdkSetK1(k1);
         
         // Open Success
-        if (fd >= 0)
+        if (fd >= 0){
+            debuglog("** redirect OK\n");
             return fd;
-        
+        }
+        debuglog("** redirect ERROR\n");
         // Restore Filesystem Driver to "flash"
         arg->drv = flash_driver;
         arg->fs_num = fs_num;
