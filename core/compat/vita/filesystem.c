@@ -34,20 +34,17 @@ typedef struct OpenDirectory
 {
     // Previous Item in List
     struct OpenDirectory * prev;
-    
     // Next Item in List
     struct OpenDirectory * next;
-    
     // Directory File Descriptor
     int fd;
-    
     // Directory IO Stage
     int stage;
-    
     // sceIoDopen Path
     char * path;
 } OpenDirectory;
 
+/*
 // define all possible file replacements here
 static struct{
     char* orig;
@@ -57,6 +54,7 @@ static struct{
     // Replace flash0
     {.orig = NULL, .new = NULL, .len=0}
 };
+*/
 
 static int flash_redirect = 0;
 
@@ -891,6 +889,7 @@ int sceIoDcloseHook(int fd)
     return sceIoDclose(fd);
 }
 
+#if 0
 int (*iojal)(const char *, u32, u32, u32, u32, u32) = NULL;
 int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
 {
@@ -979,5 +978,5 @@ SceModule2* patchFileIO(){
     
     return mod;
 }
+#endif
 
-void onVitaFlashLoaded(){}

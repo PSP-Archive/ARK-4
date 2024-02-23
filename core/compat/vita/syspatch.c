@@ -33,6 +33,7 @@ KernelFunctions _ktbl = { // for vita flash patcher
     .KernelIOMkdir = &sceIoMkdir,
     .KernelDelayThread = &sceKernelDelayThread,
 };
+void onVitaFlashLoaded(){}
 
 // This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
 int (*_sctrlKernelLoadExecVSHWithApitype)(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param) = NULL;
