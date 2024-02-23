@@ -100,7 +100,8 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
         spu_running = 1;
         static char g_DiscID[32];
         memset(g_DiscID, 0, sizeof(g_DiscID));
-        getGameId(g_DiscID);
+        int n = sizeof(g_DiscID);
+        sctrlGetInitPARAM("DISC_ID", NULL, &n, g_DiscID);
         startResult = sceKernelStartModule(result, strlen(g_DiscID) + 1, g_DiscID, &status, NULL);
     }
     

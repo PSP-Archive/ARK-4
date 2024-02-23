@@ -263,7 +263,7 @@ void processSettings(){
 
 int (*prevPluginHandler)(const char* path, int modid) = NULL;
 int pluginHandler(const char* path, int modid){
-    if(se_config->oldplugin && psp_model == PSP_GO && (strncasecmp(path, "ef0", 2)==0)) {
+    if(se_config->oldplugin && psp_model == PSP_GO && path[0] == 'e' && path[1] == 'f') {
 		patch_devicename(modid);
 	}
 	if (prevPluginHandler) return prevPluginHandler(path, modid);
@@ -275,7 +275,7 @@ void PSPOnModuleStart(SceModule2 * mod){
     static int booted = 0;
 
 	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
-    	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
+    	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
 			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
 			goto flush;
 		}
