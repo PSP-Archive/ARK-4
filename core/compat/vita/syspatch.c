@@ -35,30 +35,17 @@ KernelFunctions _ktbl = { // for vita flash patcher
 };
 
 // This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
+int (*_sctrlKernelLoadExecVSHWithApitype)(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param) = NULL;
 int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
 {
-    // Elevate Permission Level
-    unsigned int k1 = pspSdkSetK1(0);
-    
     if (apitype == 0x141){ // homebrew API
         sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
         sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
     }
-    
-    // Find Target Function
-    int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
-        = (void *)findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
-
-    // Load Execute Module
-    int result = _LoadExecVSHWithApitype(apitype, file, param, 0x10000);
-    
-    // Restore Permission Level on Failure
-    pspSdkSetK1(k1);
-    
-    // Return Error Code
-    return result;
+    return _sctrlKernelLoadExecVSHWithApitype(apitype, file, param);
 }
 
+// patch to remove Adrenaline check in camera_patch_lite plugin
 #define FAKE_UID_CAMERA_LITE 0x0B00B1E5
 int ioOpenForCameraLite(const char* path, int mode, int flags){
     if (strcmp(path, "flash1:/config.adrenaline") == 0){
@@ -66,7 +53,6 @@ int ioOpenForCameraLite(const char* path, int mode, int flags){
     }
     return sceIoOpen(path, mode, flags);
 }
-
 int ioCloseForCameraLite(int uid){
     if (uid == FAKE_UID_CAMERA_LITE){
         return 0;
@@ -74,14 +60,7 @@ int ioCloseForCameraLite(int uid){
     return sceIoClose(uid);
 }
 
-void patchLoadExecUMDemu(){
-    // highjack SystemControl
-    u32 func = K_EXTRACT_IMPORT(&sctrlKernelLoadExecVSHWithApitype);
-    _sw(JUMP(sctrlKernelLoadExecVSHWithApitypeWithUMDemu), func);
-    _sw(NOP, func+4);
-    flushCache();
-}
-
+// patch to fix volatile mem issue
 int (*_sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
 int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	int res = 0;
@@ -114,14 +93,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     patchFileManagerImports(mod);
     
     patchGameInfoGetter(mod);
-
-    // Patch sceKernelExitGame Syscalls
-    if(strcmp(mod->modname, "sceLoadExec") == 0)
-    {
-        REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));
-        REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), K_EXTRACT_IMPORT(exitLauncher));
-        goto flush;
-    }
     
     // Patch Kermit Peripheral Module to load flash0
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
@@ -136,10 +107,10 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
-    // Patch PSP POPS SPU
+    // Patch PSP POPS to replace SPU code
     if (strcmp(mod->modname, "pops") == 0)
     {
-        patchPspPopsSpu(mod);
+        patchPspPops(mod);
         goto flush;
     }
 
@@ -198,6 +169,13 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             // Patch to redirect flash to ms0
             //patchFileIO();
 
+            // Patch sceKernelExitGame Syscalls
+            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));
+            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x2AC9954B), K_EXTRACT_IMPORT(exitLauncher));
+            
+            // Apply Directory IO PSP Emulation
+            patchFileSystemDirSyscall();
+
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
             sctrlHENPatchSyscall((u32)_sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
@@ -234,6 +212,7 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
         {"sceMediaSync", "MEDIASYN.PRX"},
     };
 
+    // replace files with 6.60 version for PSP POPS
     for (int i=0; i < sizeof(pops_files)/sizeof(pops_files[0]); i++){
         if (strcmp(mod->modname, pops_files[i].name) == 0){
             char path[ARK_PATH_SIZE];
@@ -255,11 +234,12 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 }
 
 void PROVitaSysPatch(){
-    SceModule2* mod = NULL;
+    
     // filesystem patches
     initFileSystem();
+
     // patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
-    patchLoadExecUMDemu();
+    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlKernelLoadExecVSHWithApitype), sctrlKernelLoadExecVSHWithApitypeWithUMDemu, _sctrlKernelLoadExecVSHWithApitype);
 
     // Register custom start module
     prev_start = sctrlSetStartModuleExtra(StartModuleHandler);

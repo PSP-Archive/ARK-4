@@ -40,7 +40,7 @@ static char g_temp_delete_dir[128];
 static int g_delete_eboot_injected = 0;
 
 static const char *game_list[] = {
-	"ms0:/PSP/GAME/"		,"ef0:/PSP/GAME/"		,
+	"ms0:/PSP/GAME/", "ef0:/PSP/GAME/"
 };
 
 static int CorruptIconPatch(char *name)
@@ -48,6 +48,11 @@ static int CorruptIconPatch(char *name)
 	char path[256];
 	SceIoStat stat;
 
+    // Hide ARK launchers
+    if (strcasecmp(name, "SCPS10084") == 0 || strcasecmp(name, "NPUZ01234") == 0){
+        strcpy(name, "__SCE"); // hide icon
+        return 1;
+    }
 
     for (int i=0; i<NELEMS(game_list); i++){
 

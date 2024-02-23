@@ -1,8 +1,15 @@
 
 TARGET = ark_recovery
-XMBCTRL_OBJS = $(ARKROOT)/extras/modules/xmbctrl/config.o $(ARKROOT)/extras/modules/xmbctrl/list.o $(ARKROOT)/extras/modules/xmbctrl/settings.o $(ARKROOT)/extras/modules/xmbctrl/plugins.o
-C_OBJS =  main.o proshell.o usb.o submenu.o $(XMBCTRL_OBJS)
-OBJS = $(C_OBJS)
+
+XMBCTRL_OBJS = \
+	$(ARKROOT)/extras/modules/xmbctrl/config.o \
+	$(ARKROOT)/extras/modules/xmbctrl/list.o \
+	$(ARKROOT)/extras/modules/xmbctrl/settings.o \
+	$(ARKROOT)/extras/modules/xmbctrl/plugins.o
+
+C_OBJS =  main.o proshell.o usb.o submenu.o
+OBJS = $(C_OBJS) $(XMBCTRL_OBJS)
+
 CFLAGS = -std=c99 -Os -G0 -Wall
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/extras/modules/xmbctrl $(ARKROOT)/extras/modules/xmbctrl/include
 LIBDIR = $(ARKROOT)/libs

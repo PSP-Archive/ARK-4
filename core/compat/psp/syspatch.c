@@ -167,9 +167,7 @@ int sceUmdRegisterUMDCallBackPatched(int cbid) {
 
 static int sceGpioPortReadPatched(void) {
 	int GPRValue = *((int *) 0xBE240004);
-	
 	GPRValue = GPRValue & 0xFBFFFFFF;
-
 	return GPRValue;
 }
 
@@ -250,10 +248,7 @@ void processSettings(){
                 REDIRECT_FUNCTION(f, sceUmdRegisterUMDCallBackPatched);
             }
             // remove umd driver
-            int (*IoDelDrv)(char*) = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
-            if (IoDelDrv){
-                IoDelDrv("umd");
-            }
+            sceIoDelDrv("umd");
             // force UMD check medium to always return 0 (no medium)
             u32 CheckMedium = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0x46EBB729);
             if (CheckMedium){
@@ -268,25 +263,24 @@ void processSettings(){
 
 int (*prevPluginHandler)(const char* path, int modid) = NULL;
 int pluginHandler(const char* path, int modid){
-    if(se_config->oldplugin && psp_model == PSP_GO && (strncasecmp(path, "ef0", 2)==0)) {
+    if(se_config->oldplugin && psp_model == PSP_GO && path[0] == 'e' && path[1] == 'f') {
 		patch_devicename(modid);
 	}
 	if (prevPluginHandler) return prevPluginHandler(path, modid);
     return 0;
 }
 
-
 void PSPOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
 
 	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
-    	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
+    	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
 			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
 			goto flush;
 		}
 	}
-    
+
     if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
         patch_sceUmdMan_driver(mod);
         patch_umd_idslookup(mod);

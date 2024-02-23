@@ -199,37 +199,6 @@ u32 sctrlHENGetInitControl()
 	return (u32)kernel_init_apitype - 8;
 }
 
-void sctrlHENTakeInitControl(int (* ictrl)(void *))
-{
-    /*
-    u32* initcontrol = (u32*)sctrlHENGetInitControl();
-    u32 text_addr = initcontrol[0];
-    u32* bootinfo = (u32*)(initcontrol[1]);
-
-    u32 addr = text_addr + 0xCB8;
-	u16 high = addr >> 16;
-	u16 low = addr & 0xFFFF;
-
-	// lui ra, high
-	_sw(0x3c1f0000 | high, text_addr + 0xC30);
-	// ori ra, ra, low
-	_sw(0x37ff0000 | low, text_addr + 0xC34);
-
-	high = ((u32) initcontrol) >> 16;
-	low  = ((u32) initcontrol) & 0xFFFF;
-
-	// lui a0, high
-	_sw(0x3c040000 | high, text_addr + 0xC38);
-	_sw(JUMP(ictrl), text_addr + 0xC3C);
-	// ori a0, a0, low
-	_sw(0x34840000 | low, text_addr + 0xC40);
-
-	bootinfo[2]++; // nextmodule
-
-	flushCache();
-    */
-}
-
 u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid)
 {
     SceModule2 *mod = sceKernelFindModuleByName(szMod);
