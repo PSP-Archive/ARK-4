@@ -132,9 +132,9 @@ u32 UnprotectAddress(u32 addr){
     return addr;
 }
 
-int (* sceIoMsRead_)(SceUID fd, void *data, SceSize size);
-int (* sceIoFlashRead_)(SceUID fd, void *data, SceSize size);
-int sceIoReadHookCommon(SceUID fd, void *data, SceSize size, int (* sceIoRead_)(SceUID fd, void *data, SceSize size))
+int (* sceIoMsRead_)(PspIoDrvFileArg* arg, void* data, SceSize size);
+int (* sceIoFlashRead_)(PspIoDrvFileArg* arg, void* data, SceSize size);
+int sceIoReadHookCommon(PspIoDrvFileArg* arg, void* data, SceSize size, int (*sceIoRead_)(PspIoDrvFileArg*, void*, SceSize))
 {
     int ret;
     
@@ -142,28 +142,26 @@ int sceIoReadHookCommon(SceUID fd, void *data, SceSize size, int (* sceIoRead_)(
 
     if (addr) {
         u32 k1 = pspSdkSetK1(0);
-
-        ret = sceIoRead_(fd, (void *)(addr), size);
-
+        ret = sceIoRead_(arg, (void *)(addr), size);
         pspSdkSetK1(k1);
 
         return ret;
     }
 
-    return sceIoRead_(fd, data, size);
+    return sceIoRead_(arg, data, size);
 }
 
-int sceIoMsReadHook(SceUID fd, void* data, SceSize size){
-    return sceIoReadHookCommon(fd, data, size, sceIoMsRead_);
+int sceIoMsReadHook(PspIoDrvFileArg* arg, void* data, SceSize size){
+    return sceIoReadHookCommon(arg, data, size, sceIoMsRead_);
 }
 
-int sceIoFlashReadHook(SceUID fd, void* data, SceSize size){
-    return sceIoReadHookCommon(fd, data, size, sceIoFlashRead_);
+int sceIoFlashReadHook(PspIoDrvFileArg* arg, void* data, SceSize size){
+    return sceIoReadHookCommon(arg, data, size, sceIoFlashRead_);
 }
 
-int (* sceIoMsWrite_)(SceUID fd, const void *data, SceSize size);
-int (* sceIoFlashWrite_)(SceUID fd, const void *data, SceSize size);
-int sceIoWriteHookCommon(SceUID fd, const void *data, SceSize size, int (* sceIoWrite_)(SceUID fd, void *data, SceSize size))
+int (* sceIoMsWrite_)(PspIoDrvFileArg* arg, const void* data, SceSize size);
+int (* sceIoFlashWrite_)(PspIoDrvFileArg* arg, const void* data, SceSize size);
+int sceIoWriteHookCommon(PspIoDrvFileArg* arg, const void* data, SceSize size, int (*sceIoWrite_)(PspIoDrvFileArg*, void*, SceSize))
 {
     int ret;
 
@@ -171,22 +169,20 @@ int sceIoWriteHookCommon(SceUID fd, const void *data, SceSize size, int (* sceIo
 
     if (addr) {
         u32 k1 = pspSdkSetK1(0);
-
-        ret = sceIoWrite_(fd, (void *)(addr), size);
-
+        ret = sceIoWrite_(arg, (void *)(addr), size);
         pspSdkSetK1(k1);
 
         return ret;
     }
-    return sceIoWrite_(fd, data, size);
+    return sceIoWrite_(arg, data, size);
 }
 
-int sceIoMsWriteHook(SceUID fd, void* data, SceSize size){
-    return sceIoWriteHookCommon(fd, data, size, sceIoMsWrite_);
+int sceIoMsWriteHook(PspIoDrvFileArg * arg, void* data, SceSize size){
+    return sceIoWriteHookCommon(arg, data, size, sceIoMsWrite_);
 }
 
-int sceIoFlashWriteHook(SceUID fd, void* data, SceSize size){
-    return sceIoWriteHookCommon(fd, data, size, sceIoFlashWrite_);
+int sceIoFlashWriteHook(PspIoDrvFileArg * arg, void* data, SceSize size){
+    return sceIoWriteHookCommon(arg, data, size, sceIoFlashWrite_);
 }
 
 void patchFileSystemDirSyscall(void)
