@@ -608,15 +608,10 @@ int sceIoAddDrvHook(PspIoDrv * driver)
         // Add flashfat driver
 		flashfat_drv->funcs = driver->funcs;
 		sceIoAddDrv(flashfat_drv);
-        
-    }
-    else if (strcmp(driver->name, "flashfat") == 0){
-        flashfat_drv = driver;
-		return 0;
     }
     // "ms" Driver
-    else if(strcmp(driver->name, "ms") == 0) {
-        ms_drv = driver;
+    else if (strcmp(driver->name, "fatms") == 0) {
+		memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
 
         // Hook IoOpen Function
         sceIoMsOpen = driver->funcs->IoOpen;
@@ -628,7 +623,17 @@ int sceIoAddDrvHook(PspIoDrv * driver)
         sceIoMsWrite_ = driver->funcs->IoWrite;
         driver->funcs->IoWrite = sceIoMsWriteHook;
 
-        memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
+		// Add ms driver
+		ms_drv->funcs = driver->funcs;
+		sceIoAddDrv(ms_drv);
+	}
+    else if(strcmp(driver->name, "ms") == 0) {
+        ms_drv = driver;
+        return 0;
+    }
+    else if (strcmp(driver->name, "flashfat") == 0){
+        flashfat_drv = driver;
+		return 0;
     }
     
     // Register Driver
@@ -643,15 +648,19 @@ int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mo
     if (arg->fs_num < 4 && flash_redirect) {
         // File Path Buffer
         char msfile[256];
+        int fs_num = arg->fs_num;
         
         // Create "ms" File Path (links to flash0 folder on ms0)
-        sprintf(msfile, "/flash/%d%s", arg->fs_num, file);
+        sprintf(msfile, "/flash/%d%s", fs_num, file);
         
         // Exchange Filesystem Driver for "ms"
         arg->drv = ms_driver;
+        arg->fs_num = 0;
         
         // Open File from "ms"
+        int k1 = pspSdkSetK1(0);
         int fd = sceIoMsOpen(arg, msfile, flags, mode);
+        pspSdkSetK1(k1);
         
         // Open Success
         if (fd >= 0)
@@ -659,6 +668,7 @@ int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mo
         
         // Restore Filesystem Driver to "flash"
         arg->drv = flash_driver;
+        arg->fs_num = fs_num;
     }
     
     // Forward Call
