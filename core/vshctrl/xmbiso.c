@@ -40,7 +40,7 @@ static char g_temp_delete_dir[128];
 static int g_delete_eboot_injected = 0;
 
 static const char *game_list[] = {
-	"ms0:/PSP/GAME/"		,"ef0:/PSP/GAME/"		,
+	"ms0:/PSP/GAME/", "ef0:/PSP/GAME/"
 };
 
 static int CorruptIconPatch(char *name)
