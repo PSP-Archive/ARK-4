@@ -48,6 +48,11 @@ static int CorruptIconPatch(char *name)
 	char path[256];
 	SceIoStat stat;
 
+    // Hide ARK launchers
+    if (strcasecmp(name, "SCPS10084") == 0 || strcasecmp(name, "NPUZ01234") == 0){
+        strcpy(name, "__SCE"); // hide icon
+        return 1;
+    }
 
     for (int i=0; i<NELEMS(game_list); i++){
 
