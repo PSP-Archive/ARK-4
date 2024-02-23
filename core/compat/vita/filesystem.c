@@ -93,10 +93,6 @@ int sceIoDreadHook(int fd, SceIoDirent * dir);
 // sceIoDclose Hook
 int sceIoDcloseHook(int fd);
 
-// sceIoMkdir Hook
-int    (* _sceIoMkdir)(char *dir, SceMode mode) = (void*)NULL;
-int    sceIoMkdirHook(char *dir, SceMode mode);
-
 int flashLoadPatch(int cmd);
 
 // "flash" Driver IoOpen Original Call
@@ -135,7 +131,7 @@ u32 UnprotectAddress(u32 addr){
     if ((addr >= 0x4A000000 && addr < 0x4C000000)
         || (addr >= 0x40010000 && addr < 0x40014000))
         return addr | 0x60000000;
-    return 0;
+    return addr;
 }
 
 int (* sceIoMsRead_)(SceUID fd, void *data, SceSize size);
@@ -208,12 +204,6 @@ void patchFileSystemDirSyscall(void)
     
     // Hooking sceIoDclose for User Modules
     sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0xEB092469), sceIoDcloseHook);
-    
-    // Hooking sceIoMkdir for User Modules
-    sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x06A70004), sceIoMkdirHook);
-    
-    //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x6A638D83), sceIoReadHookCommon);
-    //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x42EC03AC), sceIoWriteHookCommon);
 }
 
 // Directory IO Patch for PSP-like Behaviour
@@ -230,27 +220,9 @@ void patchFileManagerImports(SceModule2 * mod)
     
     // Hooking sceIoDclose for Kernel Modules
     hookImportByNID(mod, "IoFileMgrForKernel", 0xEB092469, sceIoDcloseHook);
-    
-    // Hooking sceIoMkdir for Kernel Modules
-    hookImportByNID(mod, "IoFileMgrForKernel", 0x06A70004, sceIoMkdirHook);
-    
-    //hookImportByNID(mod, "IoFileMgrForKernel", 0x6A638D83, sceIoReadHookCommon);
-    //hookImportByNID(mod, "IoFileMgrForKernel", 0x42EC03AC, sceIoWriteHookCommon);
 }
 
-// sceIoMkdir Hook to allow creating folders in ms0:/PSP/GAME
-int sceIoMkdirHook(char *dir, SceMode mode)
-{
-
-    u32 k1 = pspSdkSetK1(0);
-    
-    int ret = sceIoMkdir(dir, mode);
-    
-    pspSdkSetK1(k1);
-    
-    return ret;
-}
-
+#if 0
 __attribute__((noinline)) int BuildMsPathChangeFsNum(PspIoDrvFileArg *arg, const char *name, char *ms_path) {
 	sprintf(ms_path, "/flash/%d%s", (int)arg->fs_num, name);
 	int fs_num = arg->fs_num;
@@ -590,25 +562,31 @@ int flashIoChdir(PspIoDrvFileArg *arg, const char *dir) {
 int flashIoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
 	return 0;
 }
+#endif
 
-/*
 void redirectFlashFileSystem(){
     flash_redirect = 1;
 }
-*/
 
 // sceIoAddDrv Hook
 int sceIoAddDrvHook(PspIoDrv * driver)
 {
     // "flash" Driver
     if (strcmp(driver->name, "flash") == 0) {
-        #if 0
+        memcpy(&flash_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
+
+        #if 1
         // Hook IoOpen Function
         sceIoFlashOpen = driver->funcs->IoOpen;
         driver->funcs->IoOpen = sceIoFlashOpenHook;
-        #else
-        memcpy(&flash_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
 
+        sceIoFlashRead_ = driver->funcs->IoRead;
+        driver->funcs->IoRead = sceIoFlashReadHook;
+    
+        sceIoFlashWrite_ = driver->funcs->IoWrite;
+        driver->funcs->IoWrite = sceIoFlashWriteHook;
+
+        #else
 		driver->funcs->IoOpen = flashIoOpen;
 		driver->funcs->IoClose = flashIoClose;
 		driver->funcs->IoRead = flashIoRead;
@@ -625,24 +603,16 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 		driver->funcs->IoChstat = flashIoChstat;
 		driver->funcs->IoChdir = flashIoChdir;
 		driver->funcs->IoDevctl = flashIoDevctl;
+        #endif
 
-		// Add flashfat driver
+        // Add flashfat driver
 		flashfat_drv->funcs = driver->funcs;
 		sceIoAddDrv(flashfat_drv);
-        #endif
         
     }
     else if (strcmp(driver->name, "flashfat") == 0){
-        #if 0
-        sceIoFlashRead_ = driver->funcs->IoRead;
-        driver->funcs->IoRead = sceIoFlashReadHook;
-    
-        sceIoFlashWrite_ = driver->funcs->IoWrite;
-        driver->funcs->IoWrite = sceIoFlashWriteHook;
-        #else
         flashfat_drv = driver;
 		return 0;
-        #endif
     }
     // "ms" Driver
     else if(strcmp(driver->name, "ms") == 0) {
