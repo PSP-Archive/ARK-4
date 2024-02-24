@@ -35,8 +35,6 @@ char* plugins_path[] = {
 std::vector<plugin_line> plugin_lines[MAX_PLUGINS_PLACES];
 
 SettingsTable plugins_table = {NULL, 0};
-//settings_entry** ark_plugin_entries = NULL;
-//int ark_plugins_count = 0;
 int ark_plugins_max = 0;
 
 #define MAX_INITIAL_PLUGINS 8
