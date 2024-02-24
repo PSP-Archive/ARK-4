@@ -33,6 +33,7 @@ CISO_MAGIC = 0x4F534943
 DEFAULT_ALIGN = 0
 COMPRESS_THREHOLD = 100
 DEFAULT_PADDING = br'X'
+DEFAULT_BLOCK_SIZE = 2048
 
 MP = False
 MP_NR = 1024 * 16
@@ -63,6 +64,7 @@ def usage():
     print("Usage: ciso [-c level] [-m] [-t percent] [-h] infile outfile")
     print("  -c level: 1-9 compress ISO to CSO (1=fast/large - 9=small/slow")
     print("         0   decompress CSO to ISO")
+    print("  -b size: block size (2048 by default)")
     print("  -m Use multiprocessing acceleration for compressing")
     print("  -t percent Compression Threshold (1-100)")
     print("  -a align Padding alignment 0=small/slow 6=fast/large")
@@ -130,7 +132,8 @@ def decompress_cso(fname_in, fname_out, level):
         percent_cnt += 1
         if percent_cnt >= percent_period and percent_period != 0:
             percent_cnt = 0
-            print("decompress %d%%\r" % (block / percent_period))
+            print("decompress %d%%\r" %
+                  (block / percent_period), file=sys.stderr, end='\r')
 
         index  = index_buf[block]
         plain  = index & 0x80000000
@@ -182,13 +185,13 @@ def set_align(fout, write_pos, align):
 
     return write_pos
     
-def compress_cso(fname_in, fname_out, level):
+def compress_cso(fname_in, fname_out, level, block_size):
     fin, fout = open_input_output(fname_in, fname_out)
     fin.seek(0, os.SEEK_END)
     total_bytes = fin.tell()
     fin.seek(0)
 
-    magic, header_size, block_size, ver, align = CISO_MAGIC, 0x18, 0x800, 1, DEFAULT_ALIGN
+    magic, header_size, ver, align = CISO_MAGIC, 0x18, 1, DEFAULT_ALIGN
 
     # We have to use alignment on any CSO files which > 2GB, for MSB bit of index as the plain indicator
     # If we don't then the index can be larger than 2GB, which its plain indicator was improperly set
@@ -223,12 +226,10 @@ def compress_cso(fname_in, fname_out, level):
 
             if block == 0:
                 print("compress %3d%% avarage rate %3d%%\r" % (
-                    block / percent_period
-                    ,0))
+                    block / percent_period, 0), file=sys.stderr, end='\r')
             else:
                 print("compress %3d%% avarage rate %3d%%\r" % (
-                    block / percent_period
-                    ,100*write_pos/(block*0x800)))
+                    block / percent_period, 100*write_pos/(block*block_size)), file=sys.stderr, end='\r')
 
         if MP:
             iso_data = [ (fin.read(block_size), level) for i in range(min(int(total_block) - block, MP_NR))]
@@ -288,24 +289,27 @@ def compress_cso(fname_in, fname_out, level):
     fout.close()
 
 def parse_args():
-    global MP, COMPRESS_THREHOLD, DEFAULT_PADDING, DEFAULT_ALIGN
+    global MP, COMPRESS_THREHOLD, DEFAULT_PADDING, DEFAULT_ALIGN, DEFAULT_BLOCK_SIZE
 
     if len(sys.argv) < 2:
         usage()
         sys.exit(-1)
 
     try:
-        optlist, args = gnu_getopt(sys.argv, "c:mt:a:p:h")
+        optlist, args = gnu_getopt(sys.argv, "c:b:mt:a:p:h")
     except GetoptError as err:
         print(str(err))
         usage()
         sys.exit(-1)
 
     level = None
+    block_size = DEFAULT_BLOCK_SIZE
 
     for o, a in optlist:
         if o == '-c':
             level = int(a)
+        elif o == '-b':
+            block_size = int(a)
         elif o == '-m':
             MP = True
         elif o == '-t':
@@ -322,13 +326,17 @@ def parse_args():
         print("You have to specify compress level")
         sys.exit(-1)
 
+    if block_size%2048:
+        print("Block size must be multiple of 2048");
+        sys.exit(-1)
+
     try:
         fname_in, fname_out = args[1:3]
     except ValueError as e:
         print("You have to specify input/output filename")
         sys.exit(-1)
 
-    return level, fname_in, fname_out
+    return level, fname_in, fname_out, block_size
 
 def load_sector_table(sector_table_fn, total_block, default_level = 9):
     """ In future we will support NC """
@@ -365,12 +373,12 @@ def load_sector_table(sector_table_fn, total_block, default_level = 9):
 
 def main():
     print ("ciso-python %s by %s" % (__version__, __author__))
-    level, fname_in, fname_out = parse_args()
+    level, fname_in, fname_out, block_size = parse_args()
 
     if level == 0:
         decompress_cso(fname_in, fname_out, level)
     else:
-        compress_cso(fname_in, fname_out, level)
+        compress_cso(fname_in, fname_out, level, block_size)
 
 PROFILE = False
 

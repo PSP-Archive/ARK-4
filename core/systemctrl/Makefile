@@ -35,7 +35,7 @@ OBJS = \
 	src/setlongjmp.o \
 	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/libs/ansi-c/lowerstring.o \
-	
+	$(ARKROOT)/libs/ansi-c/strcasecmp.o \
 	
 	
 all: $(TARGET).prx

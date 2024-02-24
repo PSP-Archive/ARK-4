@@ -152,10 +152,10 @@ static int isLauncher(){
 }
 
 static int isPath(char* runlevel){
-    char path[ARK_PATH_SIZE];
-    strcpy(path, sceKernelInitFileName());
-    lowerString(path, path, strlen(path)+1);
-    return (strcmp(path, runlevel)==0);
+    return (
+        strcasecmp(runlevel, sceKernelInitFileName())==0 ||
+        strcasecmp(runlevel, sctrlSEGetUmdFile())==0
+    );
 }
 
 static int isGameId(char* runlevel){
