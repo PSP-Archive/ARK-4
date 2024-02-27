@@ -165,7 +165,7 @@ static int io_calls = 0;
 #endif
 
 // 0x00000BB4
-static int read_raw_data(u8* addr, u32 size, u32 offset)
+static inline __attribute__((always_inline)) int read_raw_data_inline(u8* addr, u32 size, u32 offset)
 {
     int ret, i;
     SceOff ofs;
@@ -216,6 +216,10 @@ static int read_raw_data(u8* addr, u32 size, u32 offset)
 
 exit:
     return ret;
+}
+
+static int read_raw_data(u8* addr, u32 size, u32 offset){
+    return read_raw_data_inline(addr, size, offset);
 }
 
 
@@ -537,10 +541,11 @@ int iso_read(struct IoReadArg *args)
 {
     if (is_compressed)
         return read_compressed_data(args->address, args->size, args->offset);
-    return read_raw_data(args->address, args->size, args->offset);
+    return read_raw_data_inline(args->address, args->size, args->offset);
 }
 
 // 0x000003E0
+int (*iso_reader)(struct IoReadArg *args) = &iso_read;
 int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
 {
     int ret, retv;
@@ -554,7 +559,7 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
     g_read_arg.offset = offset;
     g_read_arg.address = ptr;
     g_read_arg.size = data_len;
-    retv = sceKernelExtendKernelStack(0x2000, (void*)&iso_cache_read, &g_read_arg);
+    retv = sceKernelExtendKernelStack(0x2000, (void*)iso_reader, &g_read_arg);
 
     ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
 

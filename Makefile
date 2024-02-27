@@ -7,7 +7,6 @@ ARKROOT ?= $(CURDIR)
 export DEBUG ARKROOT
 
 SUBDIRS = libs \
-	contrib/PC/btcnf \
 	contrib/PC/prxencrypter \
 	core/systemctrl \
 	core/inferno \
@@ -17,10 +16,13 @@ SUBDIRS = libs \
 	core/compat/psp/rebootex \
 	core/compat/psp \
 	core/compat/vita/rebootex \
+	core/compat/vita/btcnf \
 	core/compat/vita \
 	core/compat/vitapops/rebootex \
+	core/compat/vitapops/btcnf \
 	core/compat/vitapops \
 	core/compat/pentazemin/rebootex \
+	core/compat/pentazemin/btcnf \
 	core/compat/pentazemin \
 	loader/live/user/linkless_payload \
 	loader/live/user/signed_eboot \
@@ -124,11 +126,11 @@ encrypt-prx: \
 	dist/VITACOMP.BIN \
 	dist/VITAPOPS.BIN \
 	dist/VITAPLUS.BIN
-	$(Q)cp contrib/PC/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
-	$(Q)cp contrib/PC/btcnf/psvbtcnf.bin dist/PSVBTCNF.BIN
-	$(Q)cp contrib/PC/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
-	$(Q)cp contrib/PC/btcnf/psvbtjnf.bin dist/PSVBTJNF.BIN
-	$(Q)cp contrib/PC/btcnf/psvbtknf.bin dist/PSVBTKNF.BIN
+	$(Q)cp core/compat/vita/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
+	$(Q)cp core/compat/vita/btcnf/psvbtcnf.bin dist/PSVBTCNF.BIN
+	$(Q)cp core/compat/vitapops/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
+	$(Q)cp core/compat/pentazemin/btcnf/psvbtjnf.bin dist/PSVBTJNF.BIN
+	$(Q)cp core/compat/pentazemin/btcnf/psvbtknf.bin dist/PSVBTKNF.BIN
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
 
 cipl:
@@ -190,7 +192,9 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
 	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=sceSdGetLastIndex -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ -C contrib/PC/btcnf/
+	$(Q)$(MAKE) $@ -C core/compat/vita/btcnf/
+	$(Q)$(MAKE) $@ -C core/compat/vitapops/btcnf/
+	$(Q)$(MAKE) $@ -C core/compat/pentazemin/btcnf/
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/mainbinex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/combine
