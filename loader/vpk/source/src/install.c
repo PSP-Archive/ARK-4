@@ -32,6 +32,36 @@ static char* NeededDirectoriesARKX[] = {
 	"ux0:pspemu/temp/game/PSP/LICENSE"
 };
 
+int checkTaiConfig() {
+	char c = 0;
+	int fd = sceIoOpen("ur0:tai/config.txt", SCE_O_RDONLY, 0777);
+	sceIoLseek(fd, -1, SCE_SEEK_END);
+	sceIoRead(fd, &c, 1);
+	return (c == '\n');
+}
+
+int installAnalogPlugin() {
+	updateUi("Checking for ARK Right Analog Plugin ...");
+	int pluginCheck = sceIoOpen("ur0:tai/arkrightanalog.suprx", SCE_O_RDONLY, 0777);
+	if(pluginCheck < 0) {
+		updateUi("ARK Right Analog Plugin not found adding to config ...");
+		CopyFileAndUpdateUi("app0:psp/arkrightanalog.suprx", "ur0:tai/arkrightanalog.suprx");
+		int hasNewLine = checkTaiConfig();
+		int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
+		static char pluginLine[] = "# Add second analog support to ARK\n*NPUZ01234\nur0:tai/arkrightanalog.suprx";
+		if (!hasNewLine) sceIoWrite(addPlugin, "\n", 1);
+		sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine)-1);
+		sceIoClose(addPlugin);
+		return 1;
+	}
+	else {
+	    sceIoClose(pluginCheck);
+		updateUi("ARK Right Analog Plugin found updating plugin and base game only ...");
+		CopyFileAndUpdateUi("app0:psp/arkrightanalog.suprx", "ur0:tai/arkrightanalog.suprx");
+		return 0;
+	}
+
+}
 
 int installPS1Plugin() {
 	updateUi("Checking for ARK-X PS1 Plugin ...");
@@ -39,10 +69,11 @@ int installPS1Plugin() {
 	if(pluginCheck < 0) {
 		updateUi("ARK-X PS1 Plugin not found adding to config ...");
 		CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
-		CopyTree("app0:psx/GAME", "ux0:/pspemu/PSP/GAME");
+		int hasNewLine = checkTaiConfig();
 		int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
-		static char pluginLine[] = "\n*SCPS10084\nur0:tai/ps1cfw_enabler.suprx";
-		sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine));
+		static char pluginLine[] = "# ARK-X\n*SCPS10084\nur0:tai/ps1cfw_enabler.suprx";
+		if (!hasNewLine) sceIoWrite(addPlugin, "\n", 1);
+		sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine)-1);
 		sceIoClose(addPlugin);
 		return 1;
 	}
@@ -134,7 +165,8 @@ void createBubble(char *gameID) {
 }
 
 void copySaveFiles() {
-	CopyTree("app0:save", "ux0:/pspemu/PSP/SAVEDATA");
+	sceIoMkdir("ux0:/pspemu/PSP/SAVEDATA/ARK_01234", 0006);
+	CopyTree("app0:save/ARK_01234", "ux0:/pspemu/PSP/SAVEDATA/ARK_01234");
 }
 
 void doInstall() {

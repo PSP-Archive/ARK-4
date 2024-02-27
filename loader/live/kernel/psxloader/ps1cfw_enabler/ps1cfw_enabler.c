@@ -6,7 +6,9 @@ void _start() __attribute__ ((weak, alias ("module_start")));
 
 #define SCE_PSPEMU_CACHE_NONE 0x1
 
+tai_module_info_t info;
 uint32_t module_nid;
+
 SceUID sceIoOpenHook = -1;
 SceUID sceIoStatHook = -1;
 SceUID titleIdHook = -1;
@@ -15,7 +17,9 @@ tai_hook_ref_t sceIoGetstatRef;
 
 SceUID io_patch_path = -1;
 SceUID io_patch_size = -1;
+SceUID ctrl_patch = -1;
 
+uint32_t movs_a1_0_nop_opcode = 0xBF002000;
 uint32_t nop_nop_opcode = 0xBF00BF00;
 uint32_t mov_r2_r4_mov_r4_r2 = 0x46224614;
 uint32_t mips_move_a2_0 = 0x00003021;
@@ -35,9 +39,7 @@ int (* ScePspemuErrorExit)(int error);
 int (* ScePspemuConvertAddress)(uint32_t addr, int mode, uint32_t cache_size);
 int (* ScePspemuWritebackCache)(void *addr, int size);
 int (* ScePspemuPausePops)(int pause);
-int (* ScePspemuInitPops)();
-int (* ScePspemuInitPocs)();
-int (* ScePspemuSetDisplayConfig)();
+
 
 void get_functions(uint32_t text_addr) {
     ScePspemuErrorExit                  = (void *)(text_addr + 0x4104 + 0x1);
@@ -82,8 +84,7 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
         char* title_id = strchr(popsetup, '/') + 1;
         char* path = strchr(title_id, '/');
         strncpy(popsconfig.title_id, title_id, (path-title_id));
-        strcpy(popsconfig.path, "ms0:");
-        strcat(popsconfig.path, path);
+        strcpy(popsconfig.path, path);
         popsconfig.magic = ARK_MAGIC;
         return -101;
     }
@@ -121,7 +122,6 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
         ScePspemuErrorExit(0);
         return 0;
     }
-    
 
     // Redirect files for memory card manager
     if (popsconfig.magic == ARK_MAGIC && popsconfig.title_id[0] && popsconfig.path[0]){
@@ -131,16 +131,14 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 
         if (strcmp(p+1, "__sce_menuinfo") == 0) {
           char *filename = popsconfig.path;
-          if (strncmp(filename, "ms0:/", 5) == 0) {
-            char *q = strrchr(filename, '/');
-            if (q) {
-              char path[128];
-              strncpy(path, filename+5, q-(filename+5));
-              path[q-(filename+5)] = '\0';
+          char *q = strrchr(filename, '/');
+          if (q) {
+            char path[128];
+            strncpy(path, filename, q-(filename));
+            path[q-filename] = '\0';
 
-              snprintf(new_file, sizeof(new_file), "ms0:%s/__sce_menuinfo", path);
-              file = new_file;
-            }
+            snprintf(new_file, sizeof(new_file), "ms0:%s/__sce_menuinfo", path);
+            file = new_file;
           }
         } else if (strstr(file, "/SCPS10084/") &&
                   (strcmp(p+1, "PARAM.SFO") == 0 ||
@@ -159,7 +157,6 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
       char *p = strrchr(file, '/');
       if (p) {
         static char new_file[256];
-
         if (strstr(file, "/SCPS10084/") &&
            (strcmp(p+1, "PARAM.SFO") == 0 ||
             strcmp(p+1, "SCEVMC0.VMP") == 0 ||
@@ -175,7 +172,6 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
 SceUID thread_hook = -1;
 
 int module_start(SceSize argc, const void *args) {
-    tai_module_info_t info;
     info.size = sizeof(info);
 
     taiGetModuleInfo("ScePspemu", &info);
@@ -203,6 +199,14 @@ int module_start(SceSize argc, const void *args) {
     // fix memory card manager
     sceIoStatHook = taiHookFunctionImport(&sceIoGetstatRef, "ScePspemu", 0xCAE9ACE6, 0xBCA5B623, sceIoGetstatPatched);
 
+    // fix controller on Vita TV
+    if (module_nid == 0x2714F07D){
+      ctrl_patch = taiInjectData(info.modid, 0, 0x2073C, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
+    }
+    else {
+      ctrl_patch = taiInjectData(info.modid, 0, 0x20740, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
+    }
+
     return SCE_KERNEL_START_SUCCESS;
 }
 
@@ -210,8 +214,9 @@ int module_stop(SceSize argc, const void *args) {
 
   if (sceIoOpenHook >= 0) taiHookRelease(sceIoOpenHook, sceIoOpenRef);
   if (sceIoStatHook >= 0) taiHookRelease(sceIoStatHook, sceIoGetstatRef);
-  if (io_patch_path) taiInjectRelease(io_patch_path);
-  if (io_patch_size) taiInjectRelease(io_patch_size);
+  if (io_patch_path >= 0) taiInjectRelease(io_patch_path);
+  if (io_patch_size >= 0) taiInjectRelease(io_patch_size);
+  if (ctrl_patch    >= 0) taiInjectRelease(ctrl_patch);
 
   return SCE_KERNEL_STOP_SUCCESS;
 }

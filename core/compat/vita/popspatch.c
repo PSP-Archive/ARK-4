@@ -9,11 +9,12 @@
 extern ARKConfig* ark_config;
 
 // SPU Status
-static int running = 0; // dummy spu
-static int spu_running = 0; // spu plugin
+static int thid = -1; // dummy thread id
+static int running = 0; // dummy spu flag
+static int spu_running = 0; // spu plugin flag
 
 // SPU Background Thread
-int spuThread(SceSize args, void * argp)
+static int spuThread(SceSize args, void * argp)
 {
     // Set SPU Status
     running = 1;
@@ -62,8 +63,10 @@ void _sceMeAudio_DE630CD2(void * loopCore, void * stack)
 
     // Elevate Permission Level
     unsigned int k1 = pspSdkSetK1(0);
-    int thid = sceKernelCreateThread("SPUThread", spuThread, 0x10, 32 * 1024, 0, NULL);
-    sceKernelStartThread(thid, 0, NULL);
+    if (thid < 0){
+        thid = sceKernelCreateThread("SPUThread", spuThread, 0x10, 32 * 1024, 0, NULL);
+        sceKernelStartThread(thid, 0, NULL);
+    }
     // Restore Permission Level
     pspSdkSetK1(k1);
 }
@@ -79,6 +82,7 @@ void spuShutdown(void)
     }
 }
 
+// redirect popsman to load 6.60 POPS and the external SPU plugin
 static int myKernelLoadModule(char * fname, int flag, void * opt)
 {
 
@@ -95,9 +99,9 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     if (result >= 0){
         spu_running = 1;
         static char g_DiscID[32];
-        u16 paramType = 0;
-        u32 paramLength = sizeof(g_DiscID);
-        sctrlGetInitPARAM("DISC_ID", &paramType, &paramLength, g_DiscID);
+        memset(g_DiscID, 0, sizeof(g_DiscID));
+        int n = sizeof(g_DiscID);
+        sctrlGetInitPARAM("DISC_ID", NULL, &n, g_DiscID);
         startResult = sceKernelStartModule(result, strlen(g_DiscID) + 1, g_DiscID, &status, NULL);
     }
     
@@ -110,61 +114,17 @@ static int myKernelLoadModule(char * fname, int flag, void * opt)
     strcat(path, "POPS.PRX");
     result = sceKernelLoadModule(path, flag, opt);
 
-    //if (result<0) result = sceKernelLoadModule("flash0:/kd/pops_660.prx", flag, opt); // load pops modules from injected flash0
-    //if (result<0) result = sceKernelLoadModule(fname, flag, opt); // passthrough
-
     #ifdef DEBUG
     printk("%s: fname %s flag 0x%08X -> 0x%08X\r\n", __func__, fname, flag, result);
     #endif
 
-    //PRTSTR1("Load result: %p", result);
-    //sceKernelDelayThread(3000000);
-
     return result;
 }
 
+// Patch for 6.60 popsman to work on Vita
 void patchPspPopsman(SceModule2* mod){
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr + mod->text_size;
-    /*
-    for (u32 addr=text_addr; addr<top_addr; addr+=4){
-        u32 data = _lw(addr);
-        if (data == 0x7C1D2804){
-            u32 a = addr;
-            do { a-=4; } while (_lw(a) != 0x27BDFFE0); // find start of function
-            MAKE_DUMMY_FUNCTION_RETURN_0(a);
-        }
-        else if (data == 0x3C0BBC10 || data == 0x3C0CBC10){
-            MAKE_DUMMY_FUNCTION_RETURN_0(addr-40);
-        }
-        else if (data == 0x0004882B){
-            MAKE_DUMMY_FUNCTION_RETURN_0(addr-8);
-        }
-        else if (data == 0x8CC607F0){
-            u32 a = addr;
-            do { a+=4; } while (_lw(a) != 0x27BD0010);
-            MAKE_DUMMY_FUNCTION_RETURN_0(a+4);
-            do { a+=4; } while (_lw(a) != 0x03E00008);
-            MAKE_DUMMY_FUNCTION_RETURN_0(a+8);
-        }
-        else if (data == 0x70000000 && _lw(addr+8) == NOP){
-            u32 a = addr;
-            do { a+=4; } while (_lw(a)&0xFFFF0000 != 0x3C030000);
-            MAKE_DUMMY_FUNCTION_RETURN_0(a);
-        }
-        else if (data == 0x3444006C){
-            u32 a = addr;
-            do { a-=4; } while (_lw(a) != 0x27BDFFF0); // find start of function
-            MAKE_DUMMY_FUNCTION_RETURN_0(a);
-        }
-        else if (data == 0x3404AC44 && _lw(addr+20) == 0x001B1AC0){
-            MAKE_DUMMY_FUNCTION_RETURN_0(addr+20);
-        }
-        else if (data == 0x00002821 && _lw(addr+8) == 0x00003021){
-            _sw(JAL(myKernelLoadModule), addr + 4);
-        }
-    }
-    */
 
     // TN hacks
     _sw(JR_RA, text_addr + 0x2F88);
@@ -192,28 +152,12 @@ void patchPspPopsman(SceModule2* mod){
     _sw(JR_RA, text_addr + 0x00003490);
     _sw(LI_V0(0), text_addr + 0x00003490 + 4);
     
-    // patch loadmodule to load our own pops.prx
+    // patch loadmodule to load our own pops.prx and spu plugin
     _sw(JAL(myKernelLoadModule), text_addr + 0x00001EE0);
 }
 
-void patchPspPopsSpu(SceModule2 * mod)
+// Patch for 6.60 pops to work on Vita
+void patchPspPops(SceModule2 * mod)
 {
-    // Fetch Text Address
-    unsigned int text_addr = mod->text_addr;
-
-    int patches = 2;
-    for (u32 i = 0; i < mod->text_size; i += 4)
-    {
-        u32 addr = mod->text_addr + i;
-        u32 data = _lw(addr);
-
-        // Replace Media Engine SPU Background Thread Starter
-        if (data == 0x24050260 && !spu_running){
-            u32 a = addr;
-            do { a+=4; } while (_lw(a) != 0x8FBF0004); // find end of function
-            u32 stub = U_EXTRACT_CALL(a-8);
-            REDIRECT_SYSCALL(stub, _sceMeAudio_DE630CD2);
-            patches--;
-        }
-    }
+    if (!spu_running) hookImportByNID(mod, "sceMeAudio", 0xDE630CD2, _sceMeAudio_DE630CD2);
 }

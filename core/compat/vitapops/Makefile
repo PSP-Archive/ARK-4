@@ -27,7 +27,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lpspsystemctrl_kernel
+LIBS = -lpspsystemctrl_kernel
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)

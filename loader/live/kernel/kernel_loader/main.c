@@ -18,8 +18,6 @@
 #include "main.h"
 #include <functions.h>
 
-#define TEST_EBOOT "ms0:/EBOOT.PBP"
-
 char* running_ark = "Running ARK-4 in ?PS? mode";
 
 ARKConfig default_config = {
@@ -33,6 +31,7 @@ ARKConfig default_config = {
 ARKConfig* ark_config = NULL;
 
 extern void loadKernelArk();
+extern void copyPSPVram(u32*);
 
 // K.BIN entry point
 void (* kEntryPoint)() = (void*)KXPLOIT_LOADADDR;
@@ -71,14 +70,7 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
 
     PRTSTR("Loading ARK-4");
     
-    if (isKernel()){ // already in kernel mode?
-        kernelContentFunction();
-        return 0;
-    }
-
     g_tbl->freeMem(g_tbl);
-    g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "ARK.BIN", PSP_SMEM_Addr, 0x8000, 0x08D30000);
-    g_tbl->KernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "K.BIN", PSP_SMEM_Addr, 0x4000, KXPLOIT_LOADADDR);
     
     // read kxploit file into memory and initialize it
     char* err = NULL;
@@ -131,15 +123,24 @@ int autoDetectDevice(ARKConfig* config){
         }
         else{
             SceModule2* sctrl = k_tbl->KernelFindModuleByName("SystemControl");
-            if (sctrl){ // SystemControl loaded mean's we're running under a Custom Firmware
-                // check if running ARK-4 (CompatLayer)
+            if (sctrl){
+                // SystemControl loaded mean's we're running under a Custom Firmware
                 if (k_tbl->KernelFindModuleByName("ARKCompatLayer") != NULL){
+                    // ARK-4
                     return -1;
                 }
                 else{
-                    // Adrenaline
-                    config->exec_mode = PSV_ADR;
-                    return 0;
+                    int fd = k_tbl->KernelIOOpen("flash1:/config.adrenaline", PSP_O_RDONLY, 0);
+                    if (fd >= 0){
+                        // Adrenaline
+                        k_tbl->KernelIOClose(fd);
+                        config->exec_mode = PSV_ADR;
+                        return 0;
+                    }
+                    else {
+                        // early eCFW
+                        return -1;
+                    }
                 }
             }
             else{ // no module found, must be stock pspemu

@@ -40,7 +40,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsystemctrl_kernel -lpspdisplay
+LIBS = -lpspsystemctrl_kernel
 
 PSP_FW_VERSION = 660
 

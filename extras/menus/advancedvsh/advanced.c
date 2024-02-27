@@ -313,6 +313,7 @@ int submenu_setup(void) {
 	}
 
 	if (IS_VITA_ADR(vsh->config.p_ark)){
+		vsh->config.ark_menu.avm_hidden[SUBMENU_USB_DEVICE] = 1;
 		vsh->config.ark_menu.avm_hidden[SUBMENU_USB_READONLY] = 1;
 		vsh->config.ark_menu.avm_hidden[SUBMENU_UMD_VIDEO] = 1;
 		vsh->config.ark_menu.avm_hidden[SUBMENU_UMD_REGION_MODE] = 1;

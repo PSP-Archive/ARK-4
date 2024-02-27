@@ -1,6 +1,6 @@
 PYTHON=$(shell which python3)
 
-PSPBTCNF_TARGETS = psvbtinf psvbtcnf psvbtxnf psvbtjnf psvbtknf
+PSPBTCNF_TARGETS = psvbtxnf
 PSPBTCNF_OBJS = $(addsuffix .bin,$(PSPBTCNF_TARGETS))
 
 .PHONY: clean
@@ -11,7 +11,7 @@ clean:
 	$(Q)rm -f $(PSPBTCNF_OBJS)
 
 quiet_cmd_btcnf = BTCNF $<
-cmd_btcnf = $(PYTHON) ./btcnf.py build $<
+cmd_btcnf = $(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build $<
 
 %.bin:%.txt
 	@echo $($(quiet)cmd_btcnf)

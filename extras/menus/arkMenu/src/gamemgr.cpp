@@ -199,7 +199,10 @@ void GameManager::findEboots(const char* path){
         if (strcmp(dit->d_name, "..") == 0) continue; // ignore "parent dir"
         if (!FIO_SO_ISDIR(dit->d_stat.st_attr)) continue; // ignore files
         if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue; // ignore hidden?
-        if (strcmp(dit->d_name, "NPUZ01234") == 0 || strcmp(dit->d_name, "SCPS10084") == 0 || strcmp(dit->d_name, "ARK_Loader") == 0) continue; // ignore ARK launchers
+        if (strcmp(dit->d_name, "NPUZ01234") == 0
+            || strcmp(dit->d_name, "SCPS10084") == 0
+            || strcmp(dit->d_name, "ARK_Loader") == 0)
+            continue; // ignore ARK launchers
         
         string fullpath = Eboot::fullEbootPath(path, dit->d_name);
         if (fullpath == ""){
@@ -511,6 +514,7 @@ void GameManager::gameOptionsMenu(){
     delete aux;
 
     switch (ret){
+
     case 0:{
         // create a new options menu but each entry is some info about the game
         Entry* e = this->getEntry();
@@ -533,8 +537,8 @@ void GameManager::gameOptionsMenu(){
             {-1, "Cancel"},
             {0, (char*)fullname.c_str()},
             {1, (char*)gameid.c_str()},
-            {2, (char*)size.c_str()},
-            {3, (char*)fullpath.c_str()}
+            {3, (char*)size.c_str()},
+            {2, (char*)fullpath.c_str()},
         };
         optionsmenu = new OptionsMenu("Game Info", sizeof(gameinfo_entries)/sizeof(t_options_entry), gameinfo_entries);
         int res = optionsmenu->control();
@@ -545,6 +549,7 @@ void GameManager::gameOptionsMenu(){
             TextEditor::clipboard = game_info[res];
         }
     } break;
+
     case 1:{
         // rename the ISO or Eboot folder name
         SystemMgr::pauseDraw();
@@ -573,10 +578,10 @@ void GameManager::gameOptionsMenu(){
         osk.end();
         SystemMgr::resumeDraw();
     } break;
+
     case 2:{
         // remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
         // make checks to prevent deleting stuff like "UMD Drive" and "Recovery" entries
-
         t_options_entry opts[] = {
             {OPTIONS_CANCELLED, "Cancel"},
             {0, "Confirm"},
@@ -640,6 +645,7 @@ void GameManager::gameOptionsMenu(){
             delete e;
         }
     }break;
+
     default: break;
     }
 }

@@ -10,13 +10,10 @@
 #include "core/compat/vitapops/rebootex/payload.h"
 #include "core/compat/pentazemin/rebootex/payload.h"
 
-extern void copyPSPVram(u32*);
-
 static int isVitaFile(char* filename){
     return (strstr(filename, "psv")!=NULL // PS Vita btcnf replacement, not used on PSP
             || strstr(filename, "660")!=NULL // PSP 6.60 modules can be used on Vita, not needed for PSP
             || strstr(filename, "vita")!=NULL // Vita modules
-            || strcmp(filename, "/fake.cso")==0 // fake.cso used on Vita to simulate UMD drive when no ISO available
     );
 }
 
@@ -44,8 +41,6 @@ void flashPatch(){
             k_tbl->KernelStartThread(kthreadID, sizeof(void*)*3, &args);
             k_tbl->waitThreadEnd(kthreadID, NULL);
             k_tbl->KernelDeleteThread(kthreadID);
-            // delete archive
-            //k_tbl->KernelIORemove(archive);
         }
     }
     else{ // Patching flash0 on Vita
@@ -95,32 +90,6 @@ void patchAdrenalineReboot(SceModule2* loadexec){
     }
 }
 
-/*
-int sceKermitSendRequest661(void* a0, int a1, int a2, int a3, int a4, void* a5){
-    static int (*orig)(void*, int, int, int, int, void*) = NULL;
-
-    if (orig == NULL){
-        orig = FindFunction("sceKermit_Driver", "sceKermit_driver",0x36666181);
-    }
-
-    return orig(a0, a1, a2, a3, a4, a5);
-}
-
-#define ALIGN(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
-int SendAdrenalineCmd(int cmd) {
-
-	char buf[sizeof(SceKermitRequest) + 0x40];
-	SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
-	SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
-	k_tbl->KernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
-
-	u64 resp;
-	sceKermitSendRequest661(request_uncached, KERMIT_MODE_EXTRA_2, cmd, 0, 0, &resp);
-
-	return resp;
-}
-*/
-
 void setupRebootBuffer(){
     if (IS_VITA(ark_config)){
         if (IS_VITA_POPS(ark_config)){
@@ -143,13 +112,6 @@ void setupRebootBuffer(){
 }
 
 void loadKernelArk(){
-
-    
-    if (IS_VITA_POPS(ark_config)){
-        // configure to handle POPS screen
-        initVitaPopsVram();
-        setScreenHandler(&copyPSPVram);
-    }
 
      // Install flash0 files
     PRTSTR("Installing "FLASH0_ARK);

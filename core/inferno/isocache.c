@@ -450,6 +450,9 @@ int infernoCacheInit(int cache_size, int cache_num, int partition)
 
     cache_on = 1;
 
+    extern int (*iso_reader)(struct IoReadArg *args);
+    iso_reader = &iso_cache_read;
+
     return 0;
 }
 

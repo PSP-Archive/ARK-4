@@ -88,7 +88,7 @@ class SubMenu {
 	private:
         int index;
         Menu* menu;
-        string options[6];
+        string options[7];
 
         void updateScreen();
         void getItems();

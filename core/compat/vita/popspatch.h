@@ -29,8 +29,8 @@ void _sceMeAudio_DE630CD2(void * loopCore, void * stack);
 // Shutdown SPU
 void spuShutdown(void);
 
-void replacePSXSPU(SceModule2 * mod);
-void patchVitaPopsman(SceModule2* mod);
+void patchPspPops(SceModule2 * mod);
+void patchPspPopsman(SceModule2* mod);
 
 #endif
 

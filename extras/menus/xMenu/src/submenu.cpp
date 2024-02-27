@@ -49,13 +49,16 @@ void SubMenu::getItems() {
     skip_gameboot << "Fast Gameboot: " << ((common::getConf()->fast_gameboot)? "Enabled" : "Disabled");
 	stringstream scan_cat;
     scan_cat << "Scan Categories: " << ((common::getConf()->scan_cat)? "Enabled" : "Disabled");
+	stringstream swap_buttons;
+    swap_buttons << "Swap X/O Buttons: " << ((common::getConf()->swap_buttons)? "Enabled" : "Disabled");
 
     options[0] = memoryStickSpeedup.str();
     options[1] = sort_entries.str();
     options[2] = skip_gameboot.str();
     options[3] = scan_cat.str();
-    options[4] = "Restart";
-    options[5] = "Exit";
+    options[4] = swap_buttons.str();
+    options[5] = "Restart";
+    options[6] = "Exit";
 }
 
 void SubMenu::updateScreen(){
@@ -78,7 +81,7 @@ void SubMenu::updateScreen(){
     // draw ARK version and info
     {
     int dx = ((w-8*ark_version.size())/2);
-    fillScreenRect(color&0x00FFFFFF, x+dx, y+5, 8*ark_version.size(), 8);
+    fillScreenRect(0x8000ff00, x+dx, y+5, 8*ark_version.size(), 8);
     common::printText(x + dx, y+5, ark_version.c_str());
     }
 
@@ -97,25 +100,12 @@ void SubMenu::updateScreen(){
 			static u32 delta = 5;
 			u32 color = RED_COLOR | (alpha<<24);
 			
-            fillScreenRect(color, cur_x-4, cur_y+13, min((int)(options[i].size()*8)+4, w), 2); // bottom
-
-            fillScreenRect(color, cur_x-4, cur_y+3, 2, 10); // left side
-
-            fillScreenRect(color, cur_x-4, cur_y+1, min((int)(options[i].size()*8)+4, w), 2); // top
+            int tw = min((int)(options[i].size()*8)+8, w);
+            fillScreenRect(color, cur_x-4, cur_y+13, tw, 2); // bottom
+            fillScreenRect(color, cur_x-4, cur_y+3, tw, 2); // top
+            fillScreenRect(color, cur_x-4, cur_y+5, 2, 8); // left
+            fillScreenRect(color, cur_x-6+tw, cur_y+5, 2, 8); // right
 			
-			if(i==0)
-            	fillScreenRect(color, (options[i].size()*12)+8, cur_y+1, 2, 14); // right side
-			else if (i==1)
-            	fillScreenRect(color, (options[i].size()*12)+24, cur_y+1, 2, 14); // right side
-			else if (i==2) 
-            	fillScreenRect(color, (options[i].size()*12)+60, cur_y+1, 2, 14); // right side
-			else if (i==3) 
-            	fillScreenRect(color, (options[i].size()*12)+48, cur_y+1, 2, 14); // right side
-			else if (i==4)
-            	fillScreenRect(color, w+8, cur_y+1, 2, 14); // right side
-			else
-            	fillScreenRect(color, w-4, cur_y+1, 2, 14); // right side
-
 			if(alpha==0) delta = 5;
 			else if (alpha == 255) delta = -5;
 			alpha += delta;
@@ -145,20 +135,21 @@ void SubMenu::run() {
 		updateScreen();
 
 		control.update();
-		if (control.circle() || control.triangle())
+		if (control.decline() || control.triangle())
 			break;
-        else if (control.cross()){
+        else if (control.accept() || control.left() || control.right()){
             switch (index){
-                case 0: 
+                case 0:
 					changeMsCacheSetting(); getItems(); break;
-                case 1: 
+                case 1:
 				case 2:
 				case 3:
+				case 4:
 					changeSetting(index); getItems(); 
 					break;
-                case 4: 
-					rebootMenu(); break;
                 case 5: 
+					rebootMenu(); break;
+                case 6: 
 					menu->fadeOut(); sceKernelExitGame(); break;
             }
         }
@@ -203,6 +194,8 @@ void SubMenu::changeSetting(int setting){
 		common::getConf()->fast_gameboot = !common::getConf()->fast_gameboot;
 	else if(setting == 3)
 		common::getConf()->scan_cat = !common::getConf()->scan_cat;
+	else if(setting == 4)
+		common::getConf()->swap_buttons = !common::getConf()->swap_buttons;
 
 	
 		

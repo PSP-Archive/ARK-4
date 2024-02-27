@@ -74,6 +74,11 @@ int reboot_thread(){
 
     char* (*init_filename)() = FindFunction("sceInit", "InitForKernel", 0xA6E71B93);
 
+    if (init_filename == NULL){
+        reboot_launcher();
+        return 0;
+    }
+
     strcpy(game, init_filename());
     char* p = strrchr(game, '/');
     p[1] = 'V';
