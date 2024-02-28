@@ -49,8 +49,6 @@ class Menu{
         
         string fullPath(string path, string name);
         
-        //int getEbootType(const char* path);
-        
         bool isPOPS(string path);
         
         void updateScreen();
