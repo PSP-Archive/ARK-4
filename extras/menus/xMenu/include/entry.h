@@ -7,6 +7,9 @@
 #include "controller.h"
 #include "graphics.h"
 
+#define PBP_MAGIC 0x50425000
+#define PS1_CAT 0x454D
+
 typedef struct
 {
     u32 magic;
@@ -52,19 +55,21 @@ class Entry{
         Image* pic0;
         Image* pic1;
         PBPHeader header;
+        unsigned char* sfo_buffer;
 
         void readHeader();
         Image* loadIcon();
+        void findNameInParam();
         
         void animAppear();
         void animDisappear();
-        
-        static bool getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size);
-        void findNameInParam();
+
+        Entry(string path);
+        bool isPops();
 
     public:
     
-        Entry(string path);
+        static Entry* createIfPops(string path);
         ~Entry();
         
         string getName();
@@ -82,6 +87,7 @@ class Entry{
         bool run();
 
         static bool cmpEntriesForSort (Entry* i, Entry* j);
+        static bool getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size);
 };
 
 #endif

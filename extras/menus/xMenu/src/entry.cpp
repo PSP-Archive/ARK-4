@@ -3,30 +3,54 @@
 
 Entry::Entry(string path){
     
+    this->path = path;
+    this->sfo_buffer = NULL;
+    this->icon0 = NULL;
+
     size_t lastSlash = path.rfind("/", string::npos);
     size_t substrPos = path.rfind("/", lastSlash-1)+1;
 
-    this->path = path;
     this->ebootName = path.substr(lastSlash+1, string::npos);
     this->name = path.substr(substrPos, lastSlash-substrPos);
-    this->readHeader();
-    this->findNameInParam();
-    this->icon0 = loadIcon();
 }
 
 Entry::~Entry(){
     if (this->icon0) freeImage(this->icon0);
 }
 
+Entry* Entry::createIfPops(string path){
+    Entry* ent = new Entry(path);
+    ent->readHeader();
+    
+    if (ent->isPops()){
+        ent->findNameInParam();
+        ent->icon0 = ent->loadIcon();
+        free(ent->sfo_buffer);
+        ent->sfo_buffer = NULL;
+        return ent;
+    }
+
+    delete ent;
+    return NULL;
+}
 
 void Entry::readHeader(){
-    FILE* fp = fopen(path.c_str(), "rb");
+
+    FILE* fp = fopen(path.c_str(), "rb");    
     fread(&header, 1, sizeof(PBPHeader), fp);
+
+    u32 size = header.icon0_offset - header.param_offset;
+    if (size){
+        this->sfo_buffer = (unsigned char*)malloc(size);
+        fseek(fp, this->header.param_offset, SEEK_SET);
+        fread(sfo_buffer, 1, size, fp);
+    }
+
     fclose(fp);
 }
 
 Image* Entry::loadIcon(){
-    int size = (this->header.icon1_offset-this->header.icon0_offset);
+    int size = header.icon1_offset - header.icon0_offset;
     if (size){
         Image* icon = loadImage(this->path.c_str(), this->header.icon0_offset);
         if (icon != NULL)
@@ -35,18 +59,24 @@ Image* Entry::loadIcon(){
     return NULL;
 }
 
+bool Entry::isPops(){
+    if (this->sfo_buffer){
+        u16 category = 0; int cat_size = sizeof(category);
+        int size = (this->header.icon1_offset-this->header.icon0_offset);
+        bool res = Entry::getSfoParam(sfo_buffer, size, "CATEGORY", (unsigned char*)&category, &cat_size);
+        if (res){
+            return (category == PS1_CAT);
+        }
+    }
+    return false;
+}
+
 void Entry::findNameInParam(){
-    u32 size = this->header.icon0_offset-this->header.param_offset;
-    if (size){
-        unsigned char* sfo_buffer = (unsigned char*)malloc(size);
-
-        FILE* fp = fopen(path.c_str(), "rb");
-        fseek(fp, this->header.param_offset, SEEK_SET);
-        fread(sfo_buffer, 1, size, fp);
-        fclose(fp);
-
+    if (this->sfo_buffer){
         char title[128];
         int title_size = sizeof(title);
+
+        int size = header.icon1_offset - header.icon0_offset;
         bool res = Entry::getSfoParam(sfo_buffer, size, "TITLE", (unsigned char*)(title), &title_size);
 
         if (res){
@@ -62,7 +92,6 @@ void Entry::findNameInParam(){
             }
             this->name = string(title);
         }
-        free(sfo_buffer);
     }
 }
 

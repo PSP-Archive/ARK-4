@@ -48,6 +48,8 @@ void Menu::readEbootList(string path){
         if (strcmp(dit->d_name, ".") == 0) continue;
         if (strcmp(dit->d_name, "..") == 0) continue;
         if (strcmp(dit->d_name, "SCPS10084") == 0) continue;
+        if (strcmp(dit->d_name, "NPUZ01234") == 0) continue;
+        if (strcmp(dit->d_name, "ARK_Loader") == 0) continue;
         if (common::fileExists(path+dit->d_name)) continue;
         if (fullpath == ""){
             if (common::getConf()->scan_cat){
@@ -55,9 +57,8 @@ void Menu::readEbootList(string path){
             }
             continue;
         }
-        if (!isPOPS(fullpath)) continue;
-        
-        this->eboots.push_back(new Entry(fullpath));
+        Entry* e = Entry::createIfPops(fullpath);
+        if (e) eboots.push_back(e);
     }
     closedir(dir);
 }
@@ -77,67 +78,6 @@ string Menu::fullPath(string path, string app){
         return path+app+"/FBOOT.PBP";
 
     return "";
-}
-
-int Menu::getEbootType(const char* path){
-
-    int ret = UNKNOWN_TYPE;
-
-    FILE* fp = fopen(path, "rb");
-    if (fp == NULL)
-        return ret;
-    
-    u32 magic;
-    fseek(fp, 0, SEEK_SET);
-    fread(&magic, 1, sizeof(magic), fp);
-
-    if (magic != PBP_MAGIC){
-        fclose(fp);
-        return ret;
-    }
-
-    fseek(fp, 48, SEEK_SET);
-    
-    u32* labelstart = new u32;
-    u32* valuestart = new u32;
-    u32* valueoffset = new u32;
-    u32* entries = new u32;
-    u16* labelnameoffset = new u16;
-    char* labelname = (char*)malloc(9);
-    u16* categoryType = new u16;
-    int cur;
-
-    fread(labelstart, 4, 1, fp);
-    fread(valuestart, 4, 1, fp);
-    fread(entries, 4, 1, fp);
-    while (*entries>0 && ret == UNKNOWN_TYPE){
-    
-        (*entries)--;
-        cur = ftell(fp);
-        fread(labelnameoffset, 2, 1, fp);
-        fseek(fp, *labelnameoffset + *labelstart + 40, SEEK_SET);
-        fread(labelname, 8, 1, fp);
-
-        if (!strncmp(labelname, "CATEGORY", 8)){
-            fseek(fp, cur+12, SEEK_SET);
-            fread(valueoffset, 1, 4, fp);
-            fseek(fp, *valueoffset + *valuestart + 40, SEEK_SET);
-            fread(categoryType, 2, 1, fp);
-            switch(*categoryType){
-            case HMB_CAT:        ret = TYPE_HOMEBREW;    break;
-            case PSN_CAT:        ret = TYPE_PSN;            break;
-            case PS1_CAT:        ret = TYPE_POPS;        break;
-            default:                                    break;
-            }
-        }
-        fseek(fp, cur+16, SEEK_SET);
-    }
-    fclose(fp);
-    return ret;
-}
-
-bool Menu::isPOPS(string path){
-    return getEbootType(path.c_str()) == TYPE_POPS;
 }
 
 void Menu::draw(){
@@ -172,8 +112,6 @@ void Menu::draw(){
 				common::printText(200, offset+30, eboots[i]->getName().c_str());
 		}
 
-
-
 		// draw scrollbar
 		{
 			int height = 230/eboots.size();
@@ -194,7 +132,6 @@ void Menu::draw(){
 }
 
 void Menu::updateScreen(){
-
     // clear framebuffer and draw background image
     clearScreen(CLEAR_COLOR);
     draw();
@@ -240,11 +177,8 @@ void Menu::moveUp(){
 }
 
 void Menu::control(){
-
-    fadeIn();
-
-
     Controller control;
+    fadeIn();
     while(1){
         updateScreen();
         control.update();
