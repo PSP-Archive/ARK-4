@@ -24,6 +24,13 @@ SUBDIRS = libs \
 	core/compat/pentazemin/rebootex \
 	core/compat/pentazemin/btcnf \
 	core/compat/pentazemin \
+	extras/modules/ipl_update \
+	extras/modules/kpspident \
+	extras/modules/peops \
+	extras/modules/xmbctrl \
+	extras/modules/usbdevice \
+	extras/modules/idsregeneration \
+	extras/modules/kbooti_update \
 	loader/live/user/linkless_payload \
 	loader/live/user/signed_eboot \
 	loader/live/user/psxloader \
@@ -35,8 +42,6 @@ SUBDIRS = libs \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
 	loader/live/kernel/pandorizer \
-	extras/modules/ipl_update \
-	extras/modules/kpspident \
 	loader/perma/cipl/classic/payloadex \
 	loader/perma/cipl/classic/mainbinex \
 	loader/perma/cipl/classic/combine \
@@ -47,56 +52,51 @@ SUBDIRS = libs \
 	loader/dc/tmctrl \
 	loader/dc/vunbricker \
 	loader/dc/installer \
-	extras/installer \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
 	extras/menus/xMenu \
 	extras/menus/vshmenu \
-	extras/modules/peops \
-	extras/modules/xmbctrl \
-	extras/modules/usbdevice \
-	extras/modules/idsregeneration \
-	extras/modules/kbooti_update
+	extras/installer
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx
 
 all: subdirs cipl kxploits mkdir-dist encrypt-prx copy-bin
 	@echo "Build Done"
 
-copy-bin:
 #	Common installation
-	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Loader/EBOOT.PBP # Signed EBOOT
-	$(Q)cp loader/live/user/signed_eboot/ark_loader.iso dist/PSVita/Standalone/
+copy-bin:
+	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
+	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/PSP/ # ARK DC installer
+	$(Q)cp loader/dc/installer/EBOOT.PBP dist/PSP/ARK_DC/ # ARK DC installer
 	$(Q)cp loader/vpk/bin/psp/PBOOT.PBP dist/PSVita/Standalone/
-	$(Q)cp loader/live/user/psxloader/EBOOT.PBP dist/PSVita/PS1CFW/SCPS10084/
+	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/PSP/ARK_cIPL/EBOOT.PBP
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
 	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/PSP/Infinity/ # Infinity with ARK support (PSP Go)
-	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
+	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
+	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Loader/EBOOT.PBP # Signed EBOOT
+	$(Q)cp loader/live/user/signed_eboot/ark_loader.iso dist/PSVita/Standalone/
+	$(Q)cp loader/live/user/psxloader/EBOOT.PBP dist/PSVita/PS1CFW/SCPS10084/
+	$(Q)cp loader/live/user/psxloader/psxloader.prx dist/PSVita/PS1CFW/
 	$(Q)cp loader/live/kernel/chain_loader/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
 	$(Q)cp loader/live/kernel/kernel_loader/ARK4.BIN dist/ARK_01234/ARK4.BIN # ARK-4 loader
 	$(Q)cp loader/live/kernel/psxloader/ARKX.BIN dist/ARK_01234/ARKX.BIN # ARK-X loader
 	$(Q)cp loader/live/kernel/psxloader/ps1cfw_enabler/ps1cfw_enabler.suprx dist/PSVita/PS1CFW/
-	$(Q)cp loader/live/user/psxloader/psxloader.prx dist/PSVita/PS1CFW/
-	$(Q)cp loader/live/kernel/kxploit/sceUID/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PSP 6.60+ and Vita 3.60+
-	$(Q)cp loader/live/kernel/kxploit/sceSdGetLastIndex/K.BIN dist/ARK_Loader/K.BIN # Alternative Kernel exploit for PSP 6.60+ and Adrenaline/CFW
-	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
-	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/PSP/ # ARK DC installer
-	$(Q)cp loader/dc/installer/EBOOT.PBP dist/PSP/ARK_DC/ # ARK DC installer
-	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/PSP/ARK_cIPL/EBOOT.PBP
+	$(Q)cp loader/live/kernel/kxploit/sceUID/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PSP 6.6X and Vita 3.60+
+	$(Q)cp loader/live/kernel/kxploit/sceSdGetLastIndex/K.BIN dist/ARK_Loader/K.BIN # Alternative Kernel exploit for PSP 6.6X
 	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_cIPL/kpspident.prx
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_cIPL/ipl_update.prx
 	$(Q)cp extras/modules/kbooti_update/kbooti_update.prx dist/PSP/ARK_cIPL/kbooti_update.prx
+	$(Q)cp extras/modules/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
+	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
+	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
+	$(Q)cp extras/modules/peops/peops.prx dist/ARK_01234/PS1SPU.PRX
 	$(Q)cp extras/menus/recovery/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/arkMenu/LANG.ARK dist/ARK_01234/LANG.ARK # Translations
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
 	$(Q)cp extras/menus/arkMenu/themes/ARK_Revamped/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
-	$(Q)cp extras/modules/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
-	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
-	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
 	$(Q)cp extras/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
-	$(Q)cp extras/modules/peops/peops.prx dist/ARK_01234/PS1SPU.PRX
 	$(Q)cp contrib/UPDATER.TXT dist/ARK_01234/
 	$(Q)cp contrib/SETTINGS.TXT dist/ARK_01234/
 	$(Q)cp contrib/PSP/mediasync.prx dist/ARK_01234/MEDIASYN.PRX
@@ -155,21 +155,14 @@ cleanobj:
 
 clean:
 	$(Q)$(MAKE) $@ -C libs
-	$(Q)$(MAKE) $@ -C loader/live/user/linkless_payload
-	$(Q)$(MAKE) $@ -C loader/live/user/signed_eboot
-	$(Q)$(MAKE) $@ -C loader/live/user/psxloader
-	$(Q)$(MAKE) $@ -C loader/live/kernel/kernel_loader
-	$(Q)$(MAKE) $@ -C loader/live/kernel/psxloader
-	$(Q)$(MAKE) $@ -C loader/live/kernel/chain_loader
-	$(Q)$(MAKE) $@ -C loader/live/kernel/kram_dumper
-	$(Q)$(MAKE) $@ -C loader/live/kernel/idstorage_dumper
-	$(Q)$(MAKE) $@ -C loader/live/kernel/psp_flash_dumper
-	$(Q)$(MAKE) $@ -C loader/live/kernel/vita_flash_dumper
-	$(Q)$(MAKE) $@ -C loader/live/kernel/pandorizer
+	
 	$(Q)$(MAKE) $@ -C core/compat/psp/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/pentazemin/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/vita/btcnf/
+	$(Q)$(MAKE) $@ -C core/compat/vitapops/btcnf/
+	$(Q)$(MAKE) $@ -C core/compat/pentazemin/btcnf/
 	$(Q)$(MAKE) $@ -C core/systemctrl
 	$(Q)$(MAKE) $@ -C core/vshctrl
 	$(Q)$(MAKE) $@ -C core/stargate
@@ -190,11 +183,17 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/kbooti_update
 	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
-	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=sceSdGetLastIndex -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ -C core/compat/vita/btcnf/
-	$(Q)$(MAKE) $@ -C core/compat/vitapops/btcnf/
-	$(Q)$(MAKE) $@ -C core/compat/pentazemin/btcnf/
+	$(Q)$(MAKE) $@ -C loader/live/user/linkless_payload
+	$(Q)$(MAKE) $@ -C loader/live/user/signed_eboot
+	$(Q)$(MAKE) $@ -C loader/live/user/psxloader
+	$(Q)$(MAKE) $@ -C loader/live/kernel/kernel_loader
+	$(Q)$(MAKE) $@ -C loader/live/kernel/psxloader
+	$(Q)$(MAKE) $@ -C loader/live/kernel/chain_loader
+	$(Q)$(MAKE) $@ -C loader/live/kernel/kram_dumper
+	$(Q)$(MAKE) $@ -C loader/live/kernel/idstorage_dumper
+	$(Q)$(MAKE) $@ -C loader/live/kernel/psp_flash_dumper
+	$(Q)$(MAKE) $@ -C loader/live/kernel/vita_flash_dumper
+	$(Q)$(MAKE) $@ -C loader/live/kernel/pandorizer
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/mainbinex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/combine
@@ -208,6 +207,8 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl
 	$(Q)$(MAKE) $@ -C loader/dc/vunbricker
+	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=sceSdGetLastIndex -C loader/live/kernel/kxploit
 	$(Q)-rm -rf dist *~ | true
 	$(Q)$(MAKE) $@ -C extras/updater/
 	$(Q)$(MAKE) $@ -C extras/installer/
