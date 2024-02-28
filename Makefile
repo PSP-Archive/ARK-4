@@ -51,7 +51,7 @@ SUBDIRS = libs \
 	extras/menus/arkMenu \
 	extras/menus/recovery \
 	extras/menus/xMenu \
-	extras/menus/advancedvsh \
+	extras/menus/vshmenu \
 	extras/modules/peops \
 	extras/modules/xmbctrl \
 	extras/modules/usbdevice \
@@ -91,7 +91,7 @@ copy-bin:
 	$(Q)cp extras/menus/arkMenu/LANG.ARK dist/ARK_01234/LANG.ARK # Translations
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
 	$(Q)cp extras/menus/arkMenu/themes/ARK_Revamped/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher resources
-	$(Q)cp extras/menus/advancedvsh/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
+	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
 	$(Q)cp extras/modules/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
 	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
 	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
@@ -181,7 +181,7 @@ clean:
 	$(Q)$(MAKE) $@ -C core/compat/pentazemin
 	$(Q)$(MAKE) $@ -C extras/menus/recovery
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
-	$(Q)$(MAKE) $@ -C extras/menus/advancedvsh
+	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
 	$(Q)$(MAKE) $@ -C extras/modules/peops
 	$(Q)$(MAKE) $@ -C extras/modules/xmbctrl
@@ -233,7 +233,7 @@ arkmenu: libs
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 
 vshmenu: libs
-	$(Q)$(MAKE) $@ -C extras/menus/advancedvsh
+	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
 
 xmenu: libs
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
