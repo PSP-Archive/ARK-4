@@ -23,6 +23,8 @@ extern STMOD_HANDLER previous;
 
 extern int sceKernelSuspendThreadPatched(SceUID thid);
 
+int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
+
 static int _sceKernelBootFromForUmdMan(void)
 {
     return 0x20;
@@ -273,12 +275,10 @@ void PSPOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
 
-    /*
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
         goto flush;
     }
-    */
 
 	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
     	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
@@ -395,14 +395,12 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
-    /*
     if (DisplaySetFrameBuf) {
         initScreen(DisplaySetFrameBuf);
         cls();
         PRTSTR1("modid: %p", modid);
         if (mod) PRTSTR1("mod: %s", mod->modname);
     }
-    */
 
     if (se_config->skiplogos && mod != NULL && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
 		u32* vshmain_args = oe_malloc(1024);

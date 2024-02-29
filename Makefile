@@ -14,6 +14,7 @@ SUBDIRS = libs \
 	core/popcorn \
 	core/vshctrl \
 	core/compat/psp/rebootex \
+	core/compat/psp/btcnf \
 	core/compat/psp \
 	core/compat/vita/rebootex \
 	core/compat/vita/btcnf \
@@ -159,9 +160,10 @@ clean:
 	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/pentazemin/rebootex
-	$(Q)$(MAKE) $@ -C core/compat/vita/btcnf/
-	$(Q)$(MAKE) $@ -C core/compat/vitapops/btcnf/
-	$(Q)$(MAKE) $@ -C core/compat/pentazemin/btcnf/
+	$(Q)$(MAKE) $@ -C core/compat/psp/btcnf
+	$(Q)$(MAKE) $@ -C core/compat/vita/btcnf
+	$(Q)$(MAKE) $@ -C core/compat/vitapops/btcnf
+	$(Q)$(MAKE) $@ -C core/compat/pentazemin/btcnf
 	$(Q)$(MAKE) $@ -C core/systemctrl
 	$(Q)$(MAKE) $@ -C core/vshctrl
 	$(Q)$(MAKE) $@ -C core/stargate

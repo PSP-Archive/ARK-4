@@ -319,14 +319,16 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     }
 
     // Insert Popcorn
+    /*
     if (SearchPrx(buffer, "/kd/vshbridge_tool.prx") >= 0){
         newsize = patch_bootconf_popstool(buffer, result);
         if (newsize > 0) result = newsize;
     }
     else {
+    */
         newsize = patch_bootconf_pops(buffer, result);
         if (newsize > 0) result = newsize;
-    }
+    //}
 
     // Insert Inferno and RTM
     if (IS_ARK_CONFIG(reboot_conf)){
@@ -450,6 +452,15 @@ int _sceBootLfatOpen(char * filename)
 
 	return MsFatOpen(path);
 #else
+
+    // patch to allow custom btcnf
+    if (strncmp(filename+4, "pspbtcnf", 8) == 0){
+        filename[6] = 't'; // pstbtcnf.bin
+        int res = sceBootLfatOpen(filename);
+        if (res >= 0) return res;
+        filename[6] = 'p'; // fallback
+    }
+
     //forward to original function
     return sceBootLfatOpen(filename);
 #endif
