@@ -66,6 +66,7 @@ $/kd/mediasync.prx VGUPE
 $%/kd/usersystemlib.prx VGUPE
 %%/kd/dummy_anchor_IhariUafaayk98.prx GUE
 $%/kd/libatrac3plus.prx V
+$%/vsh/module/libfont_hv.prx P
 $%/vsh/module/pafmini.prx P
 $%/vsh/module/paf.prx V
 $%/vsh/module/common_gui.prx V
