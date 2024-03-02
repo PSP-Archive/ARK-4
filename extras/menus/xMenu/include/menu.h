@@ -87,7 +87,6 @@ class SubMenu {
         void updateScreen();
         void getItems();
 
-        void rebootMenu();
         void changeMsCacheSetting();
         void changeSetting(int setting);
 

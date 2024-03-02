@@ -1,3 +1,5 @@
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <sys/stat.h>
 #include "common.h"
 #include "entry.h"
@@ -7,6 +9,12 @@ using namespace common;
 static t_conf config;
 
 struct tm today;
+
+static ARKConfig _ark_conf;
+ARKConfig* ark_config = &_ark_conf;
+
+static SEConfig _se_conf;
+SEConfig* se_config = &_se_conf;
 
 void common::resetConf(){
     memset(&config, 0, sizeof(config));
@@ -119,3 +127,20 @@ void common::flip(){
     sceKernelDcacheWritebackInvalidateAll();
     sceKernelDelayThread(THREAD_DELAY);
 };
+
+void common::rebootMenu(){
+
+    struct SceKernelLoadExecVSHParam param;
+    memset(&param, 0, sizeof(SceKernelLoadExecVSHParam));
+
+    char path[256];
+    strcpy(path, ark_config->arkpath);
+	strcat(path, ARK_XMENU);
+
+    int runlevel = 0x141;
+    
+    param.args = strlen(path) + 1;
+    param.argp = path;
+    param.key = "game";
+    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+}

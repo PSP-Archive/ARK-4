@@ -155,18 +155,18 @@ cleanobj:
 
 clean:
 	$(Q)$(MAKE) $@ -C libs
-	$(Q)$(MAKE) $@ -C core/compat/psp/rebootex
-	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
-	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex
-	$(Q)$(MAKE) $@ -C core/compat/pentazemin/rebootex
-	$(Q)$(MAKE) $@ -C core/compat/vita/btcnf/
-	$(Q)$(MAKE) $@ -C core/compat/vitapops/btcnf/
-	$(Q)$(MAKE) $@ -C core/compat/pentazemin/btcnf/
 	$(Q)$(MAKE) $@ -C core/systemctrl
 	$(Q)$(MAKE) $@ -C core/vshctrl
 	$(Q)$(MAKE) $@ -C core/stargate
 	$(Q)$(MAKE) $@ -C core/popcorn
 	$(Q)$(MAKE) $@ -C core/inferno
+	$(Q)$(MAKE) $@ -C core/compat/psp/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/vita/btcnf/
+	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/vitapops/btcnf/
+	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex
+	$(Q)$(MAKE) $@ -C core/compat/pentazemin/btcnf/
+	$(Q)$(MAKE) $@ -C core/compat/pentazemin/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/psp
 	$(Q)$(MAKE) $@ -C core/compat/vita
 	$(Q)$(MAKE) $@ -C core/compat/vitapops
