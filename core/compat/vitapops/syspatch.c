@@ -150,6 +150,8 @@ static int vram_clear(){
 extern int exitLauncher();
 int (*arkLauncher)() = NULL;
 int popsLauncher(){
+    
+    if (draw_thread >= 0) return 0; // disallow exit when plugin screen handler is running
 
     // init pops vram and pause pops, this fixes screen when going back to launcher
     DisplayWaitVblankStart();
