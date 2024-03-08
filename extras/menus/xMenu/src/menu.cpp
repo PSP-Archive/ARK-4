@@ -1,19 +1,10 @@
 #include "menu.h"
-#include <systemctrl.h>
-#include <systemctrl_se.h>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <unistd.h>
 #include <algorithm>
 #include <globals.h>
-
-
-static ARKConfig _ark_conf;
-ARKConfig* ark_config = &_ark_conf;
-
-static SEConfig _se_conf;
-SEConfig* se_config = &_se_conf;
 
 string ark_version;
 
@@ -200,6 +191,11 @@ void Menu::control(){
             openSubMenu();
         }
         else if (control.select()){
+            this->fadeOut();
+            common::rebootMenu();
+            break;
+        }
+        else if (control.decline()){
             break;
         }
     }
