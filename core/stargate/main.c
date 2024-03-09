@@ -43,6 +43,7 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
 {
     static int booted = 1;
 
+    // Patch game-specific modules
     applyFixesByModule(mod);
 
     // Boot Complete Action not done yet
