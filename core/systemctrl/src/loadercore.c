@@ -361,7 +361,7 @@ SceModule2* patchLoaderCore(void)
             case 0x30894000:    _sw(0x3C090000, addr);               break;        // Allow Syscalls
             case 0x00E8282B:    _sh(0x1000, addr + 6);               break;        // Remove POPS Check
             case 0x01A3302B:    _sw(NOP, addr+4);                    break;        // Remove Invalid PRX Type (0x80020148) Check
-            case 0x00003BE4:
+            case 0x3452013C:
                 // dirty hack for popsloader to work in toolkits
                 HIJACK_FUNCTION(addr-44, myLinkLibEntries, aLinkLibEntries);
                 break;
