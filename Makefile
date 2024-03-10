@@ -103,6 +103,10 @@ copy-bin:
 	$(Q)cp contrib/PSP/mediasync.prx dist/ARK_01234/MEDIASYN.PRX
 	$(Q)cp contrib/PSP/popsman.prx dist/ARK_01234/POPSMAN.PRX
 	$(Q)cp contrib/PSP/pops_01g.prx dist/ARK_01234/POPS.PRX
+	$(Q)cp core/compat/psp/btcnf/pstbtcnf.bin dist/PSP/Pops4Tool/kd/
+	$(Q)cp contrib/PSP/pops_01g.prx dist/PSP/Pops4Tool/kd/
+	$(Q)cp contrib/PSP/popsman.prx dist/PSP/Pops4Tool/kd
+	$(Q)cp contrib/PSP/libpspvmc.prx dist/PSP/Pops4Tool/vsh/module/
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)rm -rf dist/themes/translations
 	$(Q)cp contrib/README.TXT dist/
@@ -260,6 +264,10 @@ mkdir-dist:
 	$(Q)mkdir dist/PSP/ARK_DC | true
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
+	$(Q)mkdir dist/PSP/Pops4Tool | true
+	$(Q)mkdir dist/PSP/Pops4Tool/kd | true
+	$(Q)mkdir dist/PSP/Pops4Tool/vsh | true
+	$(Q)mkdir dist/PSP/Pops4Tool/vsh/module | true
 	$(Q)mkdir dist/PSVita/Standalone | true
 	$(Q)mkdir dist/PSVita/PS1CFW | true
 	$(Q)mkdir dist/PSVita/PS1CFW/SCPS10084 | true
