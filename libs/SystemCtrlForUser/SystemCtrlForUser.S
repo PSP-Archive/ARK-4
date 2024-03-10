@@ -212,3 +212,6 @@
 #ifdef F_SystemCtrlForUser_0068
     IMPORT_FUNC "SystemCtrlForUser",0x23833651,sctrlGetThreadUIDByName
 #endif
+#ifdef F_SystemCtrlForUser_0069
+    IMPORT_FUNC "SystemCtrlForUser",0x22A45DB7,sctrlHENIsToolKit
+#endif

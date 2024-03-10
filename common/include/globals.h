@@ -93,6 +93,7 @@ Dev Sub
 typedef enum{
     DEV_UNK = 0b0000,
     PSP_ORIG = 0b0100,
+    PSP_TOOL = 0b0101,
     PS_VITA = 0b1000,
     PSV_ADR = 0b1001,
     PSV_POPS = 0b1010,

@@ -62,7 +62,7 @@ int module_start(SceSize args, void * argp)
     // get ark config
     processArkConfig();
 
-    if (ark_config->exec_mode != PSP_ORIG){
+    if (!IS_PSP(ark_config)){
         return 1;
     }
 

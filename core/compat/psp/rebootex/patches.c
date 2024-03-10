@@ -98,7 +98,10 @@ int patch_bootconf_vsh(char *buffer, int length)
     if (newsize > 0) result = newsize;
 
     newsize = AddPRX(buffer, "/kd/vshbridge_tool.prx", PATH_VSHCTRL+sizeof(PATH_FLASH0)-2, VSH_RUNLEVEL );
-    if (newsize > 0) result = newsize;
+    if (newsize > 0){
+        ark_config->exec_mode = PSP_TOOL;
+        result = newsize;
+    }
 
     return result;
 }

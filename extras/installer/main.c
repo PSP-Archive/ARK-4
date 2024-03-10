@@ -9,6 +9,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include "globals.h"
+#include "macros.h"
 
 PSP_MODULE_INFO("ARKInstaller", 0x800, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH | PSP_THREAD_ATTR_VFPU);
@@ -33,11 +34,11 @@ struct {
 static const int N_FLASH_FILES = (sizeof(flash_files)/sizeof(flash_files[0]));
 
 void uninstall() {
-	
+	SceIoStat stat;
 	pspDebugScreenClear();
 	open_flash();
 	for (int i=0; i<N_FLASH_FILES; i++){
-		if(!sceIoRead(flash_files[i].dest, PSP_O_RDONLY, 0777)) {
+		if(sceIoGetstat(flash_files[i].dest, &stat) < 0) {
 			return;
 		}
 		else {
@@ -47,17 +48,38 @@ void uninstall() {
     }
 
     // Kill Main Thread
+    sceKernelDelayThread(100000);
     sceKernelExitGame();
-
-
 	return;
+}
+
+void pops4tool() {
+    static char* pops_files[] = {
+        "kd/pstbtcnf.bin", "kd/popsman.prx", "kd/pops_01g.prx", "vsh/module/libpspvmc.prx"
+    };
+    SceIoStat stat;
+
+    if (!sctrlHENIsToolKit()){
+        pspDebugScreenPrintf("ERROR: not a toolkit.\nInstalling pops files could cause a brick, aborting...\n");
+        return;
+    }
+
+    open_flash();
+    for (int i=0; i<NELEMS(pops_files); i++){
+        char flash_path[256];
+        sprintf(flash_path, "flash0:/%s", pops_files[i]);
+        if (sceIoGetstat(pops_files[i], &stat) >= 0){
+            pspDebugScreenPrintf("Installing %s\n", flash_path);
+            copy_file(pops_files[i], flash_path);
+        }
+    }
+    pspDebugScreenPrintf("Done\n");
 }
 
 
 // Entry Point
 int main(int argc, char * argv[])
 {
-	
 
     ARKConfig ark_config;
 
@@ -66,11 +88,18 @@ int main(int argc, char * argv[])
     // Initialize Screen Output
     pspDebugScreenInit();
 
+    if (ark_config.magic != ARK_CONFIG_MAGIC){
+        pspDebugScreenPrintf("ERROR: not running ARK\n");
+        sceKernelDelayThread(100000);
+        sceKernelExitGame();
+    }
+
 	SceCtrlData pad;
 	pspDebugScreenPrintf("ARK-4 Full Installer\n");
-	pspDebugScreenPrintf("Press (X) to install\n");
-	pspDebugScreenPrintf("Press (O) to uninstall\n");
-	pspDebugScreenPrintf("Press (R Trigger) to quit\n");
+	pspDebugScreenPrintf("Press X to install\n");
+	pspDebugScreenPrintf("Press O to uninstall\n");
+    pspDebugScreenPrintf("Press [] to install pops files for toolkits\n");
+	pspDebugScreenPrintf("Press R Trigger to quit\n");
 
 	while(1) {
 		sceCtrlReadBufferPositive(&pad, 1);
@@ -78,15 +107,16 @@ int main(int argc, char * argv[])
 			uninstall();
 		else if(pad.Buttons & PSP_CTRL_CROSS) 
 			break;
+        else if (pad.Buttons & PSP_CTRL_SQUARE){
+            pops4tool();
+            sceKernelDelayThread(100000);
+            sceKernelExitGame();
+        }
 		else if(pad.Buttons & PSP_CTRL_RTRIGGER)
 			sceKernelExitGame();
 
 	}
 	pspDebugScreenClear();
-    if (ark_config.magic != ARK_CONFIG_MAGIC){
-        pspDebugScreenPrintf("ERROR: not running ARK\n");
-        while (1){};
-    }
 
     pspDebugScreenPrintf("ARK Full Installer Started\n");
 
