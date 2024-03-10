@@ -23,7 +23,6 @@ extern STMOD_HANDLER previous;
 
 extern int sceKernelSuspendThreadPatched(SceUID thid);
 
-
 static int _sceKernelBootFromForUmdMan(void)
 {
     return 0x20;

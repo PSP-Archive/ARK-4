@@ -225,7 +225,7 @@ int patch_bootconf_updaterumd(char *buffer, int length)
 
 int UnpackBootConfigPatched(char **p_buffer, int length)
 {
-    int result;
+    int result = length;
     int newsize;
     char *buffer;
 
@@ -248,29 +248,29 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     
     // Insert VSHControl
     if (SearchPrx(buffer, "/vsh/module/vshmain.prx") >= 0) {
-        newsize = patch_bootconf_vsh(buffer, length);
+        newsize = patch_bootconf_vsh(buffer, result);
         if (newsize > 0) result = newsize;
     }
 
     // Insert Popcorn
-    newsize = patch_bootconf_pops(buffer, length);
+    newsize = patch_bootconf_pops(buffer, result);
     if (newsize > 0) result = newsize;
 
     // Insert Inferno and RTM
     if (IS_ARK_CONFIG(reboot_conf)){
         switch(reboot_conf->iso_mode) {
             case MODE_VSHUMD:
-                newsize = patch_bootconf_vshumd(buffer, length);
+                newsize = patch_bootconf_vshumd(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
             case MODE_UPDATERUMD:
-                newsize = patch_bootconf_updaterumd(buffer, length);
+                newsize = patch_bootconf_updaterumd(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
             case MODE_MARCH33:
             case MODE_INFERNO:
                 reboot_conf->iso_mode = MODE_INFERNO;
-                newsize = patch_bootconf_inferno(buffer, length);
+                newsize = patch_bootconf_inferno(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
             default:
@@ -378,6 +378,15 @@ int _sceBootLfatOpen(char * filename)
 
 	return MsFatOpen(path);
 #else
+
+    // patch to allow custom btcnf
+    if (strncmp(filename+4, "pspbtcnf", 8) == 0){
+        filename[6] = 't'; // pstbtcnf.bin
+        int res = sceBootLfatOpen(filename);
+        if (res >= 0) return res;
+        filename[6] = 'p'; // fallback
+    }
+
     //forward to original function
     return sceBootLfatOpen(filename);
 #endif
