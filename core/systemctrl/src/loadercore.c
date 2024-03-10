@@ -289,6 +289,8 @@ static s32 myLinkLibEntries(SceStubLibrary *stubLib){
 
     int res = aLinkLibEntries(stubLib);
     if (res < 0){
+        // this should not get executed in normal circumstances
+        // we do this for toolkits to load just enough of pops to trigger popsloader
         if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
             if (strcmp(stubLib->libName, "pspvmc") == 0
               || strcmp(stubLib->libName, "scePaf") == 0
