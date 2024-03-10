@@ -367,6 +367,12 @@ void PSPOnModuleStart(SceModule2 * mod){
                     drv = "eflash0a0f1p";
                 msstorCacheInit(drv);
             }
+
+            // fix pops on toolkits
+            if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
+                patchPops4Tool();
+            }
+
             // Boot Complete Action done
             booted = 1;
             goto flush;

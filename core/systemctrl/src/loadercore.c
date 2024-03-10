@@ -278,31 +278,6 @@ int patch_sceKernelStartModule_in_bootstart(int (* bootstart)(SceSize, void *), 
     return bootstart(4, argp);
 }
 
-static int debuglog(char* text){
-    int fd = sceIoOpen("ms0:/ps1log.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
-    sceIoWrite(fd, text, strlen(text));
-    sceIoClose(fd);
-}
-
-static s32 (*aLinkLibEntries)(SceStubLibrary *stubLib);
-static s32 myLinkLibEntries(SceStubLibrary *stubLib){
-
-    int res = aLinkLibEntries(stubLib);
-    if (res < 0){
-        // this should not get executed in normal circumstances
-        // we do this for toolkits to load just enough of pops to trigger popsloader
-        if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
-            if (strcmp(stubLib->libName, "pspvmc") == 0
-              || strcmp(stubLib->libName, "scePaf") == 0
-              || strcmp(stubLib->libName, "sceImpose") == 0
-              || strcmp(stubLib->libName, "sceVshCommonUtil") == 0)
-                return 0;
-        }
-    }
-
-    return res;
-}
-
 // Patch Loader Core Module
 SceModule2* patchLoaderCore(void)
 {
@@ -363,10 +338,6 @@ SceModule2* patchLoaderCore(void)
             case 0x30894000:    _sw(0x3C090000, addr);               break;        // Allow Syscalls
             case 0x00E8282B:    _sh(0x1000, addr + 6);               break;        // Remove POPS Check
             case 0x01A3302B:    _sw(NOP, addr+4);                    break;        // Remove Invalid PRX Type (0x80020148) Check
-            case 0x3452013C:
-                // dirty hack for popsloader to work in toolkits
-                HIJACK_FUNCTION(addr-44, myLinkLibEntries, aLinkLibEntries);
-                break;
             }
         }
     }

@@ -18,26 +18,6 @@
 #ifndef _LOADERCORE_H_
 #define _LOADERCORE_H_
 
- typedef struct SceStubLibrary {
-     u32 unk0; //0
-     struct SceStubLibrary *next; //4
-     const char *libName; //8
-     u8 version[2]; //12
-     u16 attribute; //14
-     u8 stubEntryTableLen; //16
-     u8 vStubCount; //17
-     u16 stubCount; //18
-     u32 *nidTable; //20
-     void *stubTable; //24
-     void *vStubTable; //28
-     u16 unk32; //32
-     void *libStubTable; //36
-     u32 status; //40
-     u32 isUserLib; //44
-     char *libName2; //48
-     u32 libNameInHeap; //52
- } SceStubLibrary; //size = 56
-
 // init.prx Text Address
 extern unsigned int sceInitTextAddr;
 
