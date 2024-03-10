@@ -85,73 +85,7 @@ void patchRebootBuffer(){
     flushCache();
 }
 
-int is_not_pops_module(char* path){
-    static char* mods[] = {
-        "/kd/sm1.prx", "/kd/bsod.prx", "/kd/clockgen.prx", "/kd/mediaman.prx",
-        "/kd/ata.prx", "/kd/umdman.prx", "/kd/umdcache.prx", "/kd/umd9660.prx",
-        "/kd/rtcinit.prx", "/kd/audio.prx", "/kd/semawm.prx", "/kd/vaudio.prx",
-        "/kd/usb.prx", "/kd/wlan.prx", "/kd/wlanfirm_01g.prx", "/kd/np9660_tool.prx",
-        "/kd/isofs.prx", "/kd/me_wrapper.prx", "/kd/vshbridge_tool.prx", "/kd/crashdump.prx",
-        "/kd/avcodec.prx", "/kd/endora.prx", "/kd/usbser.prx", "/kd/libatrac3plus.prx",
-        "/vsh/module/paf.prx", "/vsh/module/common_gui.prx", "/vsh/module/vshmain.prx",
-    };
-    if (strncmp(path, "/kd/ark_", 8) == 0 || strncmp(path, "/vsh/module/ark_", 16) == 0) return 1;
-    for (int i=0; i<NELEMS(mods); i++){
-        if (strcmp(path, mods[i]) == 0) return 1;
-    }
-    return 0;
-}
-
 // pspbtcnf patches
-
-int patch_bootconf_popstool(char* buffer, int length){
-    int result = length;
-
-    _btcnf_header * header = (_btcnf_header *)buffer;
-
-    _btcnf_module * module = (_btcnf_module *)(buffer + header->modulestart);
-
-    // iterate modules
-    for (int modnum = 0; modnum < header->nmodules; modnum++)
-    {
-        //found module name
-        if(!is_not_pops_module(buffer + header->modnamestart + module[modnum].module_path))
-        {
-            // fix flags to add pops runlevel
-            module[modnum].flags |= POPS_RUNLEVEL;
-        }
-    }
-
-    // add pops modules
-    int newsize;
-
-    newsize = AddPRX(buffer, "/kd/codec_01g.prx", "/kd/clockgen.prx", POPS_RUNLEVEL );
-    if (newsize > 0) result = newsize;
-
-    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", "/kd/popsman.prx", POPS_RUNLEVEL );
-    if (newsize > 0) result = newsize;
-
-    newsize = AddPRX(buffer, "/kd/me_wrapper.prx", "/kd/ark_popcorn.prx", POPS_RUNLEVEL );
-    if (newsize > 0) result = newsize;
-
-    newsize = AddPRX(buffer, "/vsh/module/common_util.prx", "/vsh/module/libfont_hv.prx", POPS_RUNLEVEL );
-    if (newsize > 0) result = newsize;
-
-    newsize = AddPRX(buffer, "/vsh/module/common_util.prx", "/vsh/module/pafmini.prx", POPS_RUNLEVEL );
-    if (newsize > 0) result = newsize;
-
-    newsize = AddPRX(buffer, "/vsh/module/common_util.prx", "/vsh/module/libpspvmc.prx", POPS_RUNLEVEL );
-    if (newsize > 0) result = newsize;
-
-    #ifndef PAYLOADEX
-    #ifndef MS_IPL
-    _sw(0x44000000, 0xBC800100);
-    colorDebug(0xFF0000);
-    #endif
-    #endif
-
-    return result;
-}
 
 int patch_bootconf_vsh(char *buffer, int length)
 {
@@ -319,16 +253,8 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     }
 
     // Insert Popcorn
-    /*
-    if (SearchPrx(buffer, "/kd/vshbridge_tool.prx") >= 0){
-        newsize = patch_bootconf_popstool(buffer, result);
-        if (newsize > 0) result = newsize;
-    }
-    else {
-    */
-        newsize = patch_bootconf_pops(buffer, result);
-        if (newsize > 0) result = newsize;
-    //}
+    newsize = patch_bootconf_pops(buffer, result);
+    if (newsize > 0) result = newsize;
 
     // Insert Inferno and RTM
     if (IS_ARK_CONFIG(reboot_conf)){
