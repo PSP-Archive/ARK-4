@@ -235,7 +235,6 @@ void checkControllerInput(){
 		CtrlPeekBufferPositive(&pad_data, 1);
 		if ((pad_data.Buttons & PSP_CTRL_START) == PSP_CTRL_START) disable_plugins = 1;
 		if ((pad_data.Buttons & PSP_CTRL_SELECT) == PSP_CTRL_SELECT) disable_settings = 1;
-		if ((pad_data.Buttons & PSP_CTRL_RTRIGGER) == PSP_CTRL_RTRIGGER) ark_config->recovery = 1;
 	}
 }
 
