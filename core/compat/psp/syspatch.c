@@ -23,8 +23,6 @@ extern STMOD_HANDLER previous;
 
 extern int sceKernelSuspendThreadPatched(SceUID thid);
 
-int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
-
 static int _sceKernelBootFromForUmdMan(void)
 {
     return 0x20;
@@ -274,7 +272,7 @@ int pluginHandler(const char* path, int modid){
 void PSPOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
-    
+
 	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
     	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
 			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
