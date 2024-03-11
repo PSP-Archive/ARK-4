@@ -3,7 +3,7 @@ $/kd/sysmem.prx VGUPE
 $/kd/loadcore.prx VGUPE
 $/kd/exceptionman.prx VGUPE
 $/kd/interruptman.prx VGUPE
-$/kd/threadman.prx VGU#E
+$/kd/threadman.prx VGUPE
 $/kd/dmacman.prx VGUPE
 $/kd/systimer.prx VGUPE
 $/kd/iofilemgr.prx VGUPE
