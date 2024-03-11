@@ -383,13 +383,14 @@ int _sceBootLfatOpen(char * filename)
 #else
 
     // patch to allow custom btcnf
-    if (strncmp(filename+4, "pspbtcnf", 8) == 0){
-        filename[6] = 't'; // pstbtcnf.bin
-        int res = sceBootLfatOpen(filename);
-        if (res >= 0) return res;
-        filename[6] = 'p'; // fallback
+    if (!ark_config->recovery){
+        if (strncmp(filename+4, "pspbtcnf", 8) == 0){
+            filename[6] = 't'; // pstbtcnf.bin
+            int res = sceBootLfatOpen(filename);
+            if (res >= 0) return res;
+            filename[6] = 'p'; // fallback
+        }
     }
-
     //forward to original function
     return sceBootLfatOpen(filename);
 #endif

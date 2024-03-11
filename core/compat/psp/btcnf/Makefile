@@ -1,6 +1,6 @@
 PYTHON=$(shell which python3)
 
-PSPBTCNF_TARGETS = pstbtcnf
+PSPBTCNF_TARGETS = pstbtcnf_tt pstbtcnf_dt
 PSPBTCNF_OBJS = $(addsuffix .bin,$(PSPBTCNF_TARGETS))
 
 .PHONY: clean
