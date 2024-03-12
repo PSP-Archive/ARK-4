@@ -369,7 +369,6 @@ void PSPOnModuleStart(SceModule2 * mod){
 
             // fix pops on toolkits
             if (sctrlHENIsToolKit() && sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
-                // 0x469989AD, 
                 patchPops4Tool();
             }
 

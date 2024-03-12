@@ -205,7 +205,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 		// Protect pops memory
         sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
         memset((void *)0x49F40000, 0, 0x80000);
-
         goto flush;
     }
     
