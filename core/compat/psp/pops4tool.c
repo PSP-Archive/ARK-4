@@ -39,7 +39,7 @@ static s32 myLinkLibEntries(SceStubLibrary *stubLib){
     if (res < 0){
         // this should not get executed in normal circumstances
         // we do this for toolkits to load just enough of pops to trigger popsloader
-        if (sceKernelFindModuleByName("pops") != NULL){
+        if (sceKernelFindModuleByName("pops") != NULL && sceKernelFindModuleByName("popscore") == NULL){
             return 0;
         }
     }
