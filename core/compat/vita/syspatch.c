@@ -33,6 +33,7 @@ KernelFunctions _ktbl = { // for vita flash patcher
     .KernelIOMkdir = &sceIoMkdir,
     .KernelDelayThread = &sceKernelDelayThread,
 };
+void onVitaFlashLoaded(){}
 
 // This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
 int (*_sctrlKernelLoadExecVSHWithApitype)(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param) = NULL;
@@ -162,6 +163,13 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
                     }
                 }
             }
+
+            // Apply Directory IO PSP Emulation
+            patchFileSystemDirSyscall();
+
+            // Patch to redirect flash to ms0
+            //patchFileIO();
+            redirectFlashFileSystem();
 
             // Patch sceKernelExitGame Syscalls
             REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));

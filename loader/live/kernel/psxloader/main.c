@@ -33,6 +33,8 @@ extern int iso_mode;
 
 int (* _KernelLoadExecVSHWithApitype)(int, char *, struct SceKernelLoadExecVSHParam *, int);
 
+void onVitaFlashLoaded(){}
+
 u32 sctrlHENFindFunction(char* mod, char* lib, u32 nid){
     return FindFunction(mod, lib, nid);
 }

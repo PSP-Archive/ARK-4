@@ -1,5 +1,6 @@
 #include "vitaflash.h"
 #include <graphics.h>
+#include "kermit.h"
 
 extern ARKConfig* ark_config;
 static KernelFunctions* ktbl = NULL;
@@ -133,6 +134,7 @@ int flashLoadPatch(int cmd)
         int linked;
         // Wait for flash to load
         ktbl->KernelDelayThread(10000);
+        onVitaFlashLoaded();
         // Patch flash0 Filesystem Driver
         char path[ARK_PATH_SIZE];
         strcpy(path, ark_config->arkpath);

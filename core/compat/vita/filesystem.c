@@ -34,20 +34,17 @@ typedef struct OpenDirectory
 {
     // Previous Item in List
     struct OpenDirectory * prev;
-    
     // Next Item in List
     struct OpenDirectory * next;
-    
     // Directory File Descriptor
     int fd;
-    
     // Directory IO Stage
     int stage;
-    
     // sceIoDopen Path
     char * path;
 } OpenDirectory;
 
+/*
 // define all possible file replacements here
 static struct{
     char* orig;
@@ -57,6 +54,9 @@ static struct{
     // Replace flash0
     {.orig = NULL, .new = NULL, .len=0}
 };
+*/
+
+static int flash_redirect = 0;
 
 // Open Directory List
 OpenDirectory * opendirs = NULL;
@@ -91,10 +91,6 @@ int sceIoDreadHook(int fd, SceIoDirent * dir);
 // sceIoDclose Hook
 int sceIoDcloseHook(int fd);
 
-// sceIoMkdir Hook
-int    (* _sceIoMkdir)(char *dir, SceMode mode) = (void*)NULL;
-int    sceIoMkdirHook(char *dir, SceMode mode);
-
 int flashLoadPatch(int cmd);
 
 // "flash" Driver IoOpen Original Call
@@ -104,8 +100,19 @@ int (* sceIoFlashOpen)(PspIoDrvFileArg * arg, char * file, int flags, SceMode mo
 int (* sceIoMsOpen)(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode) = NULL;
 
 // "ms" Driver Reference
+PspIoDrv * ms_drv = NULL;
+PspIoDrv * flashfat_drv = NULL;
 PspIoDrvArg * ms_driver = NULL;
 PspIoDrvArg * flash_driver = NULL;
+
+PspIoDrvFuncs ms_funcs;
+PspIoDrvFuncs flash_funcs;
+
+void debuglog(char* text){
+    int fd = sceIoOpen("ms0:/flash.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+    sceIoWrite(fd, text, strlen(text));
+    sceIoClose(fd);
+}
 
 void initFileSystem(){
     // Create Semaphore
@@ -127,41 +134,39 @@ u32 UnprotectAddress(u32 addr){
     if ((addr >= 0x4A000000 && addr < 0x4C000000)
         || (addr >= 0x40010000 && addr < 0x40014000))
         return addr | 0x60000000;
-    return 0;
+    return addr;
 }
 
-int (* sceIoMsRead_)(SceUID fd, void *data, SceSize size);
-int (* sceIoFlashRead_)(SceUID fd, void *data, SceSize size);
-int sceIoReadHookCommon(SceUID fd, void *data, SceSize size, int (* sceIoRead_)(SceUID fd, void *data, SceSize size))
+int (* sceIoMsRead_)(PspIoDrvFileArg* arg, void* data, SceSize size);
+int (* sceIoFlashRead_)(PspIoDrvFileArg* arg, void* data, SceSize size);
+int sceIoReadHookCommon(PspIoDrvFileArg* arg, void* data, SceSize size, int (*sceIoRead_)(PspIoDrvFileArg*, void*, SceSize))
 {
     int ret;
     
     u32 addr = UnprotectAddress((u32)data);
 
-    if (addr) {
-        u32 k1 = pspSdkSetK1(0);
+    u32 k1 = pspSdkSetK1(0);
+    ret = sceIoRead_(arg, (void *)(addr), size);
+    pspSdkSetK1(k1);
 
-        ret = sceIoRead_(fd, (void *)(addr), size);
-
-        pspSdkSetK1(k1);
-
-        return ret;
+    if (ret < 0){
+        debuglog("** read ERROR\n");
     }
 
-    return sceIoRead_(fd, data, size);
+    return ret;
 }
 
-int sceIoMsReadHook(SceUID fd, void* data, SceSize size){
-    return sceIoReadHookCommon(fd, data, size, sceIoMsRead_);
+int sceIoMsReadHook(PspIoDrvFileArg* arg, void* data, SceSize size){
+    return sceIoReadHookCommon(arg, data, size, sceIoMsRead_);
 }
 
-int sceIoFlashReadHook(SceUID fd, void* data, SceSize size){
-    return sceIoReadHookCommon(fd, data, size, sceIoFlashRead_);
+int sceIoFlashReadHook(PspIoDrvFileArg* arg, void* data, SceSize size){
+    return sceIoReadHookCommon(arg, data, size, sceIoFlashRead_);
 }
 
-int (* sceIoMsWrite_)(SceUID fd, const void *data, SceSize size);
-int (* sceIoFlashWrite_)(SceUID fd, const void *data, SceSize size);
-int sceIoWriteHookCommon(SceUID fd, const void *data, SceSize size, int (* sceIoWrite_)(SceUID fd, void *data, SceSize size))
+int (* sceIoMsWrite_)(PspIoDrvFileArg* arg, const void* data, SceSize size);
+int (* sceIoFlashWrite_)(PspIoDrvFileArg* arg, const void* data, SceSize size);
+int sceIoWriteHookCommon(PspIoDrvFileArg* arg, const void* data, SceSize size, int (*sceIoWrite_)(PspIoDrvFileArg*, void*, SceSize))
 {
     int ret;
 
@@ -169,22 +174,20 @@ int sceIoWriteHookCommon(SceUID fd, const void *data, SceSize size, int (* sceIo
 
     if (addr) {
         u32 k1 = pspSdkSetK1(0);
-
-        ret = sceIoWrite_(fd, (void *)(addr), size);
-
+        ret = sceIoWrite_(arg, (void *)(addr), size);
         pspSdkSetK1(k1);
 
         return ret;
     }
-    return sceIoWrite_(fd, data, size);
+    return sceIoWrite_(arg, data, size);
 }
 
-int sceIoMsWriteHook(SceUID fd, void* data, SceSize size){
-    return sceIoWriteHookCommon(fd, data, size, sceIoMsWrite_);
+int sceIoMsWriteHook(PspIoDrvFileArg * arg, void* data, SceSize size){
+    return sceIoWriteHookCommon(arg, data, size, sceIoMsWrite_);
 }
 
-int sceIoFlashWriteHook(SceUID fd, void* data, SceSize size){
-    return sceIoWriteHookCommon(fd, data, size, sceIoFlashWrite_);
+int sceIoFlashWriteHook(PspIoDrvFileArg * arg, void* data, SceSize size){
+    return sceIoWriteHookCommon(arg, data, size, sceIoFlashWrite_);
 }
 
 void patchFileSystemDirSyscall(void)
@@ -200,12 +203,6 @@ void patchFileSystemDirSyscall(void)
     
     // Hooking sceIoDclose for User Modules
     sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0xEB092469), sceIoDcloseHook);
-    
-    // Hooking sceIoMkdir for User Modules
-    sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x06A70004), sceIoMkdirHook);
-    
-    //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x6A638D83), sceIoReadHookCommon);
-    //sctrlHENPatchSyscall((void *)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x42EC03AC), sceIoWriteHookCommon);
 }
 
 // Directory IO Patch for PSP-like Behaviour
@@ -222,25 +219,352 @@ void patchFileManagerImports(SceModule2 * mod)
     
     // Hooking sceIoDclose for Kernel Modules
     hookImportByNID(mod, "IoFileMgrForKernel", 0xEB092469, sceIoDcloseHook);
-    
-    // Hooking sceIoMkdir for Kernel Modules
-    hookImportByNID(mod, "IoFileMgrForKernel", 0x06A70004, sceIoMkdirHook);
-    
-    //hookImportByNID(mod, "IoFileMgrForKernel", 0x6A638D83, sceIoReadHookCommon);
-    //hookImportByNID(mod, "IoFileMgrForKernel", 0x42EC03AC, sceIoWriteHookCommon);
 }
 
-// sceIoMkdir Hook to allow creating folders in ms0:/PSP/GAME
-int sceIoMkdirHook(char *dir, SceMode mode)
-{
+#if 0
+__attribute__((noinline)) int BuildMsPathChangeFsNum(PspIoDrvFileArg *arg, const char *name, char *ms_path) {
+	sprintf(ms_path, "/flash/%d%s", (int)arg->fs_num, name);
+	int fs_num = arg->fs_num;
+	arg->fs_num = 0;
+	return fs_num;
+}
 
-    u32 k1 = pspSdkSetK1(0);
-    
-    int ret = sceIoMkdir(dir, mode);
-    
-    pspSdkSetK1(k1);
-    
-    return ret;
+int _flashIoOpen(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	char *file = (char *)args[1];
+	int flags = args[2];
+	SceMode mode = (SceMode)args[3];
+
+	char ms_path[128];
+	int fs_num = BuildMsPathChangeFsNum(arg, file, ms_path);
+	int res = ms_funcs.IoOpen(arg, ms_path, flags, mode);
+	if (res >= 0) {
+		((u32 *)arg)[18] = 1;
+	}
+
+	if (fs_num == 1 || res >= 0)
+		return res;
+
+	arg->fs_num = fs_num;
+
+	return flash_funcs.IoOpen(arg, file, flags, mode);	
+}
+
+int _flashIoClose(PspIoDrvFileArg *arg) {
+	if (((u32 *)arg)[18]) {
+		arg->fs_num = 0;
+		return ms_funcs.IoClose(arg);
+	}
+
+	return flash_funcs.IoClose(arg);
+}
+
+int _flashIoRead(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	char *data = (char *)args[1];
+	int len = args[2];
+
+    if (!data || !len) return 0;
+
+    data = (char*)UnprotectAddress(data);
+
+	if (((u32 *)arg)[18]) {
+		arg->fs_num = 0;
+		return ms_funcs.IoRead(arg, data, len);
+	}
+
+	return flash_funcs.IoRead(arg, data, len);
+}
+
+int _flashIoWrite(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *data = (const char *)args[1];
+	int len = args[2];
+
+	if (!data || !len) return 0;
+
+    data = (char*)UnprotectAddress(data);
+
+	if (((u32 *)arg)[18]) {
+		arg->fs_num = 0;
+		return ms_funcs.IoWrite(arg, data, len);
+	}
+
+	return flash_funcs.IoWrite(arg, data, len);
+}
+
+SceOff _flashIoLseek(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	u32 ofs = (u32)args[1];
+	int whence = args[2];
+
+	if (((u32 *)arg)[18]) {
+		arg->fs_num = 0;
+		return ms_funcs.IoLseek(arg, ofs, whence);
+	}
+
+	return flash_funcs.IoLseek(arg, ofs, whence);
+}
+
+int _flashIoRemove(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *name = (const char *)args[1];
+
+	char ms_path[128];
+	int fs_num = BuildMsPathChangeFsNum(arg, name, ms_path);
+	int res = ms_funcs.IoRemove(arg, ms_path);
+
+	if (fs_num == 1 || res >= 0)
+		return res;
+
+	arg->fs_num = fs_num;
+	return flash_funcs.IoRemove(arg, name);
+}
+
+int _flashIoMkdir(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *name = (const char *)args[1];
+	SceMode mode = (SceMode)args[2];
+
+	char ms_path[128];
+	int fs_num = BuildMsPathChangeFsNum(arg, name, ms_path);
+	int res = ms_funcs.IoMkdir(arg, ms_path, mode);
+
+	if (fs_num == 1 || res >= 0)
+		return res;
+
+	arg->fs_num = fs_num;
+	return flash_funcs.IoMkdir(arg, name, mode);
+}
+
+int _flashIoRmdir(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *name = (const char *)args[1];
+
+	char ms_path[128];
+	int fs_num = BuildMsPathChangeFsNum(arg, name, ms_path);
+	int res = ms_funcs.IoRmdir(arg, ms_path);
+
+	if (fs_num == 1 || res >= 0)
+		return res;
+
+	arg->fs_num = fs_num;
+	return flash_funcs.IoRmdir(arg, name);
+}
+
+int _flashIoDopen(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *dirname = (const char *)args[1];
+
+	char ms_path[128];
+	int fs_num = BuildMsPathChangeFsNum(arg, dirname, ms_path);
+	int res = ms_funcs.IoDopen(arg, ms_path);
+	if (res >= 0) {
+		((u32 *)arg)[18] = 1;
+	}
+
+	if (fs_num == 1 || res >= 0)
+		return res;
+
+	arg->fs_num = fs_num;
+	return flash_funcs.IoDopen(arg, dirname);
+}
+
+int _flashIoDclose(PspIoDrvFileArg *arg) {
+	if (((u32 *)arg)[18]) {
+		arg->fs_num = 0;
+		return ms_funcs.IoDclose(arg);
+	}
+
+	return flash_funcs.IoDclose(arg);
+}
+
+int _flashIoDread(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	SceIoDirent *dir = (SceIoDirent *)args[1];
+
+    if (dir) dir = UnprotectAddress(dir);
+
+	if (((u32 *)arg)[18]) {
+		arg->fs_num = 0;
+		return ms_funcs.IoDread(arg, dir);
+	}
+
+	return flash_funcs.IoDread(arg, dir);
+}
+
+int _flashIoGetstat(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *file = (const char *)args[1];
+	SceIoStat *stat = (SceIoStat *)args[2];
+
+	char ms_path[128];
+	int fs_num = BuildMsPathChangeFsNum(arg, file, ms_path);
+	int res = ms_funcs.IoGetstat(arg, ms_path, stat);
+
+	if (fs_num == 1 || res >= 0)
+		return res;
+
+	arg->fs_num = fs_num;
+	return flash_funcs.IoGetstat(arg, file, stat);
+}
+
+int _flashIoChstat(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *file = (const char *)args[1];
+	SceIoStat *stat = (SceIoStat *)args[2];
+	int bits = (int)args[3];
+
+	char ms_path[128];
+	int fs_num = BuildMsPathChangeFsNum(arg, file, ms_path);
+	int res = ms_funcs.IoChstat(arg, ms_path, stat, bits);
+
+	if (fs_num == 1 || res >= 0)
+		return res;
+
+	arg->fs_num = fs_num;
+	return flash_funcs.IoChstat(arg, file, stat, bits);
+}
+
+int _flashIoChdir(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *dir = (const char *)args[1];
+
+	char ms_path[128];
+	int fs_num = BuildMsPathChangeFsNum(arg, dir, ms_path);
+	int res = ms_funcs.IoChdir(arg, ms_path);
+
+	if (fs_num == 1 || res >= 0)
+		return res;
+
+	arg->fs_num = fs_num;
+	return flash_funcs.IoChdir(arg, dir);
+}
+
+int flashIoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
+	u32 args[4];
+	args[0] = (u32)arg;
+	args[1] = (u32)file;
+	args[2] = (u32)flags;
+	args[3] = (u32)mode;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoOpen, args);
+}
+
+int flashIoClose(PspIoDrvFileArg *arg) {
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoClose, arg);
+}
+
+int flashIoRead(PspIoDrvFileArg *arg, char *data, int len) {
+	u32 args[3];
+	args[0] = (u32)arg;
+	args[1] = (u32)data;
+	args[2] = (u32)len;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoRead, args);
+}
+
+int flashIoWrite(PspIoDrvFileArg *arg, const char *data, int len) {
+	u32 args[3];
+	args[0] = (u32)arg;
+	args[1] = (u32)data;
+	args[2] = (u32)len;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoWrite, args);
+}
+
+SceOff flashIoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
+	u32 args[3];
+	args[0] = (u32)arg;
+	args[1] = (u32)ofs;
+	args[2] = (u32)whence;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoLseek, args);
+}
+
+int flashIoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
+	return 0;
+}
+
+int flashIoRemove(PspIoDrvFileArg *arg, const char *name) {
+	u32 args[2];
+	args[0] = (u32)arg;
+	args[1] = (u32)name;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoRemove, args);
+}
+
+int flashIoMkdir(PspIoDrvFileArg *arg, const char *name, SceMode mode) {
+	u32 args[3];
+	args[0] = (u32)arg;
+	args[1] = (u32)name;
+	args[2] = (u32)mode;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoMkdir, args);
+}
+
+int flashIoRmdir(PspIoDrvFileArg *arg, const char *name) {
+	u32 args[2];
+	args[0] = (u32)arg;
+	args[1] = (u32)name;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoRmdir, args);
+}
+
+int flashIoDopen(PspIoDrvFileArg *arg, const char *dirname) {
+	u32 args[2];
+	args[0] = (u32)arg;
+	args[1] = (u32)dirname;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoDopen, args);
+}
+
+int flashIoDclose(PspIoDrvFileArg *arg) {
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoDclose, arg);
+}
+
+int flashIoDread(PspIoDrvFileArg *arg, SceIoDirent *dir) {
+	u32 args[2];
+	args[0] = (u32)arg;
+	args[1] = (u32)dir;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoDread, args);
+}
+
+int flashIoGetstat(PspIoDrvFileArg *arg, const char *file, SceIoStat *stat) {
+	u32 args[3];
+	args[0] = (u32)arg;
+	args[1] = (u32)file;
+	args[2] = (u32)stat;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoGetstat, args);
+}
+
+int flashIoChstat(PspIoDrvFileArg *arg, const char *file, SceIoStat *stat, int bits) {
+	u32 args[4];
+	args[0] = (u32)arg;
+	args[1] = (u32)file;
+	args[2] = (u32)stat;
+	args[3] = (u32)bits;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoChstat, args);
+}
+
+int flashIoChdir(PspIoDrvFileArg *arg, const char *dir) {
+	u32 args[2];
+	args[0] = (u32)arg;
+	args[1] = (u32)dir;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_flashIoChdir, args);
+}
+
+int flashIoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
+	return 0;
+}
+#endif
+
+void redirectFlashFileSystem(){
+    flash_redirect = 1;
 }
 
 // sceIoAddDrv Hook
@@ -248,22 +572,46 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 {
     // "flash" Driver
     if (strcmp(driver->name, "flash") == 0) {
+        memcpy(&flash_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
+
+        #if 1
         // Hook IoOpen Function
         sceIoFlashOpen = driver->funcs->IoOpen;
         driver->funcs->IoOpen = sceIoFlashOpenHook;
-        
-    }
-    else if (strcmp(driver->name, "flashfat") == 0){
-        
+
         sceIoFlashRead_ = driver->funcs->IoRead;
         driver->funcs->IoRead = sceIoFlashReadHook;
     
         sceIoFlashWrite_ = driver->funcs->IoWrite;
         driver->funcs->IoWrite = sceIoFlashWriteHook;
-        
+
+        #else
+		driver->funcs->IoOpen = flashIoOpen;
+		driver->funcs->IoClose = flashIoClose;
+		driver->funcs->IoRead = flashIoRead;
+		driver->funcs->IoWrite = flashIoWrite;
+		driver->funcs->IoLseek = flashIoLseek;
+		driver->funcs->IoIoctl = flashIoIoctl;
+		driver->funcs->IoRemove = flashIoRemove;
+		driver->funcs->IoMkdir = flashIoMkdir;
+		driver->funcs->IoRmdir = flashIoRmdir;
+		driver->funcs->IoDopen = flashIoDopen;
+		driver->funcs->IoDclose = flashIoDclose;
+		driver->funcs->IoDread = flashIoDread;
+		driver->funcs->IoGetstat = flashIoGetstat;
+		driver->funcs->IoChstat = flashIoChstat;
+		driver->funcs->IoChdir = flashIoChdir;
+		driver->funcs->IoDevctl = flashIoDevctl;
+        #endif
+
+        // Add flashfat driver
+		flashfat_drv->funcs = driver->funcs;
+		sceIoAddDrv(flashfat_drv);
     }
     // "ms" Driver
-    else if(strcmp(driver->name, "ms") == 0) {
+    else if (strcmp(driver->name, "fatms") == 0) {
+		memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
+
         // Hook IoOpen Function
         sceIoMsOpen = driver->funcs->IoOpen;
         driver->funcs->IoOpen = sceIoMsOpenHook;
@@ -273,6 +621,18 @@ int sceIoAddDrvHook(PspIoDrv * driver)
         
         sceIoMsWrite_ = driver->funcs->IoWrite;
         driver->funcs->IoWrite = sceIoMsWriteHook;
+
+		// Add ms driver
+		ms_drv->funcs = driver->funcs;
+		sceIoAddDrv(ms_drv);
+	}
+    else if(strcmp(driver->name, "ms") == 0) {
+        ms_drv = driver;
+        return 0;
+    }
+    else if (strcmp(driver->name, "flashfat") == 0){
+        flashfat_drv = driver;
+		return 0;
     }
     
     // Register Driver
@@ -284,25 +644,38 @@ int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mo
 {
     flash_driver = arg->drv;
     // flash0 File Access Attempt
-    if (arg->fs_num < 4) {
+    if (arg->fs_num < 4 && flash_redirect) {
         // File Path Buffer
         char msfile[256];
+        int fs_num = arg->fs_num;
         
         // Create "ms" File Path (links to flash0 folder on ms0)
-        sprintf(msfile, "/flash/%d%s", arg->fs_num, file);
+        sprintf(msfile, "/flash/%d%s", fs_num, file);
         
         // Exchange Filesystem Driver for "ms"
         arg->drv = ms_driver;
+        arg->fs_num = 0;
         
+        debuglog("redirect: ");
+        debuglog(file);
+        debuglog("** to: ");
+        debuglog(msfile);
+        debuglog("\n");
+
         // Open File from "ms"
+        int k1 = pspSdkSetK1(0);
         int fd = sceIoMsOpen(arg, msfile, flags, mode);
+        pspSdkSetK1(k1);
         
         // Open Success
-        if (fd >= 0)
+        if (fd >= 0){
+            debuglog("** redirect OK\n");
             return fd;
-        
+        }
+        debuglog("** redirect ERROR\n");
         // Restore Filesystem Driver to "flash"
         arg->drv = flash_driver;
+        arg->fs_num = fs_num;
     }
     
     // Forward Call
@@ -525,11 +898,19 @@ int sceIoDcloseHook(int fd)
     return sceIoDclose(fd);
 }
 
+#if 0
 int (*iojal)(const char *, u32, u32, u32, u32, u32) = NULL;
 int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
 {
 
     int res;
+    if (strncmp(a0, "flash", 5) == 0){
+        char newpath[ARK_PATH_SIZE];
+        sprintf(newpath, "ms0:/flash/%c%s", a0[5], a0+7);
+        res = iojal(newpath, a1, a2, a3, t0, t1);
+        if (res>=0) return res;
+    }
+    /*
     for (int i=0; ioreplacements[i].orig; i++){
         if (strncmp(a0, ioreplacements[i].orig, ioreplacements[i].len) == 0){
             char path[ARK_PATH_SIZE];
@@ -540,6 +921,7 @@ int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
             break;
         }
     }
+    */
     res = iojal(a0, a1, a2, a3, t0, t1);
     
     return res;
@@ -605,3 +987,5 @@ SceModule2* patchFileIO(){
     
     return mod;
 }
+#endif
+

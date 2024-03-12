@@ -3,7 +3,6 @@
 
 #include <macros.h>
 #include "functions.h"
-#include "kermit.h"
 
 #define FLASH_BACKUP "ms0:/flash.bak"
 
