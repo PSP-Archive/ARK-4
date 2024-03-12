@@ -361,9 +361,9 @@ void PSPOnModuleStart(SceModule2 * mod){
 
             // handle mscache
             if (se_config->msspeed){
-                char* drv = "msstor0p";
-                if (psp_model == PSP_GO && sctrlKernelBootFrom()==0x50)
-                    drv = "eflash0a0f1p";
+                char* drv = 
+                    (psp_model == PSP_GO && sctrlKernelBootFrom()==0x50)?
+                    "eflash0a0f1p" : "msstor0p";
                 msstorCacheInit(drv);
             }
 
