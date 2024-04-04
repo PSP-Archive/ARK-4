@@ -274,6 +274,7 @@ clean:
 	$(Q)rm -rf loader/vpk/bin/save/ARK_01234
 	$(Q)rm -f loader/vpk/bin/psx/ps1cfw_enabler.suprx
 	$(Q)rm -f loader/dc/tmctrl/tmctrl.h
+	$(Q)rm -f loader/dc/btcnf/*.bin
 
 subdirs: $(SUBDIRS)
 
