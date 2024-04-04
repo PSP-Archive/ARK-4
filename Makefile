@@ -59,9 +59,9 @@ SUBDIRS = libs \
 	extras/menus/vshmenu \
 	extras/installer
 
-.PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx
+.PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist copy-dcark encrypt-prx
 
-all: subdirs cipl kxploits mkdir-dist encrypt-prx copy-bin
+all: subdirs cipl kxploits mkdir-dist copy-dcark encrypt-prx copy-bin
 	@echo "Build Done"
 
 #	Common installation
@@ -121,6 +121,45 @@ copy-bin:
 	$(Q)$(MAKE) -C extras/updater/
 	$(Q)cp extras/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
 
+copy-dcark: \
+	dist/SYSCTRL.BIN \
+	dist/VSHCTRL.BIN \
+	dist/INFERNO.BIN \
+	dist/STARGATE.BIN \
+	dist/POPCORN.BIN \
+	dist/PSPCOMP.BIN \
+	dist/VITACOMP.BIN \
+	dist/VITAPOPS.BIN \
+	dist/VITAPLUS.BIN
+	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
+	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
+	$(Q)cp loader/live/kernel/chain_loader/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
+	$(Q)cp loader/live/kernel/psxloader/ARKX.BIN dist/ARK_01234/ARKX.BIN # ARK-X loader
+	$(Q)cp loader/live/kernel/kxploit/sceUID/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PSP 6.6X and Vita 3.60+
+	$(Q)cp extras/modules/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
+	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
+	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
+	$(Q)cp extras/modules/peops/peops.prx dist/ARK_01234/PS1SPU.PRX
+	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
+	$(Q)cp extras/menus/arkMenu/LANG.ARK dist/ARK_01234/LANG.ARK # Translations
+	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
+	$(Q)cp extras/menus/arkMenu/themes/ARK_Revamped/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher resources
+	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
+	$(Q)cp contrib/UPDATER.TXT dist/ARK_01234/
+	$(Q)cp contrib/SETTINGS.TXT dist/ARK_01234/
+	$(Q)cp contrib/PSP/mediasync.prx dist/ARK_01234/MEDIASYN.PRX
+	$(Q)cp contrib/PSP/popsman.prx dist/ARK_01234/POPSMAN.PRX
+	$(Q)cp contrib/PSP/pops_01g.prx dist/ARK_01234/POPS.PRX
+	$(Q)cp extras/menus/recovery/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Default recovery menu
+	$(Q)cp -r contrib/PC/MagicMemoryCreator dist/PC/
+	$(Q)cp dist/SYSCTRL.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_systemctrl.prx
+	$(Q)cp dist/VSHCTRL.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_vshctrl.prx
+	$(Q)cp dist/INFERNO.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_inferno.prx
+	$(Q)cp dist/STARGATE.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_stargate.prx
+	$(Q)cp dist/POPCORN.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_popcorn.prx
+	$(Q)cp dist/POPCORN.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_pspcompat.prx
+	$(Q)cp -r dist/ARK_01234 dist/PC/MagicMemoryCreator/TM/DCARK
+
 	
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
@@ -138,6 +177,7 @@ encrypt-prx: \
 	$(Q)cp core/compat/pentazemin/btcnf/psvbtjnf.bin dist/PSVBTJNF.BIN
 	$(Q)cp core/compat/pentazemin/btcnf/psvbtknf.bin dist/PSVBTKNF.BIN
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
+	$(Q)cp dist/FLASH0.ARK dist/PC/MagicMemoryCreator/TM/DCARK/ARK_01234
 
 cipl:
 	$(Q)$(MAKE) -C loader/perma/cipl/new/payloadex
@@ -257,6 +297,7 @@ recovery: libs
 
 mkdir-dist:
 	$(Q)mkdir dist | true
+	$(Q)mkdir dist/PC | true
 	$(Q)mkdir dist/PSP | true
 	$(Q)mkdir dist/PSVita | true
 	$(Q)mkdir dist/UPDATE | true
