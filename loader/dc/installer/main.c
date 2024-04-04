@@ -23,6 +23,7 @@
 
 #include "pspbtcnf_dc.h"
 #include "pspbtcnf_02g_dc.h"
+//#include "pspbtcnf_03g_dc.h"
 #include "dcman.h"
 #include "ipl_update.h"
 #include "iop.h"
@@ -704,6 +705,9 @@ static void WriteDCFiles()
 
 	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_02g_dc.bin", pspbtcnf_02g_dc, size_pspbtcnf_02g_dc) != size_pspbtcnf_02g_dc)
 		ErrorExit(1000, "Error writing pspbtcnf_02g_dc.bin");
+	
+	//if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_03g_dc.bin", pspbtcnf_03g_dc, size_pspbtcnf_03g_dc) != size_pspbtcnf_03g_dc)
+	//	ErrorExit(1000, "Error writing pspbtcnf_03g_dc.bin");
 
 	if (WriteFile(ARK_DC_PATH "/kd/dcman.prx", dcman, size_dcman) != size_dcman)
 		ErrorExit(1000, "Error writing dcman.prx");

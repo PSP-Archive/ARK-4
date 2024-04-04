@@ -5,6 +5,7 @@ OBJS = \
 	tm_mloader.h \
 	pspbtcnf_dc.h \
 	pspbtcnf_02g_dc.h \
+	pspbtcnf_03g_dc.h \
 	ipl_update.h \
 	dcman.h \
 	iop.h \
@@ -44,10 +45,16 @@ tm_mloader.h:
 	$(Q)bin2c $(ARKROOT)/contrib/PC/timemachine/tm_mloader.bin tm_mloader.h tm_mloader
 
 pspbtcnf_dc.h:
+	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_dc.txt
 	$(Q)bin2c ../btcnf/pspbtcnf_dc.bin pspbtcnf_dc.h pspbtcnf_dc
 
 pspbtcnf_02g_dc.h:
+	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_02g_dc.txt
 	$(Q)bin2c ../btcnf/pspbtcnf_02g_dc.bin pspbtcnf_02g_dc.h pspbtcnf_02g_dc
+
+pspbtcnf_03g_dc.h:
+	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_03g_dc.txt
+	$(Q)bin2c ../btcnf/pspbtcnf_03g_dc.bin pspbtcnf_03g_dc.h pspbtcnf_03g_dc
 
 dcman.h:
 	$(Q)bin2c ../dcman/dcman.prx dcman.h dcman

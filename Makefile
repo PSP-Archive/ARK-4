@@ -47,6 +47,7 @@ SUBDIRS = libs \
 	loader/perma/cipl/classic/mainbinex \
 	loader/perma/cipl/classic/combine \
 	loader/dc/dcman \
+	loader/dc/msipl/newipl/loader \
 	loader/dc/msipl/payloadex \
 	loader/dc/msipl/mainbinex \
 	loader/dc/tmctrl/rebootex \
@@ -59,9 +60,9 @@ SUBDIRS = libs \
 	extras/menus/vshmenu \
 	extras/installer
 
-.PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist copy-dcark encrypt-prx
+.PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx copy-dcark pack-flash0
 
-all: subdirs cipl kxploits mkdir-dist copy-dcark encrypt-prx copy-bin
+all: subdirs cipl msipl kxploits mkdir-dist encrypt-prx copy-dcark pack-flash0 copy-bin
 	@echo "Build Done"
 
 #	Common installation
@@ -106,13 +107,14 @@ copy-bin:
 	$(Q)cp core/compat/psp/btcnf/pstbtcnf_tt.bin dist/PSP/Pops4Tool/TT/pstbtcnf.bin
 	$(Q)cp core/compat/psp/btcnf/pstbtcnf_dt.bin dist/PSP/Pops4Tool/DT/pstbtcnf.bin
 	$(Q)cp contrib/PSP/pops_01g.prx dist/PSP/Pops4Tool/kd/
-	$(Q)cp contrib/PSP/popsman.prx dist/PSP/Pops4Tool/kd
+	$(Q)cp contrib/PSP/popsman.prx dist/PSP/Pops4Tool/kd/
 	$(Q)cp contrib/PSP/libpspvmc.prx dist/PSP/Pops4Tool/vsh/module/
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)rm -rf dist/themes/translations
 	$(Q)cp contrib/README.TXT dist/
 	$(Q)mv dist/FLASH0.ARK dist/ARK_01234/ # flash0 package
 	$(Q)cp -r dist/ARK_01234 dist/PSP/ARK_DC/
+	$(Q)cp -r dist/ARK_01234 dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)find dist/themes/ -type d -name 'resources' -exec rm -rf {} \; 2>/dev/null || true
 	$(q)mkdir -p loader/vpk/bin/save/ARK_01234
 	$(Q)cp -r dist/ARK_01234 loader/vpk/bin/save/
@@ -121,46 +123,6 @@ copy-bin:
 	$(Q)$(MAKE) -C extras/updater/
 	$(Q)cp extras/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
 
-copy-dcark: \
-	dist/SYSCTRL.BIN \
-	dist/VSHCTRL.BIN \
-	dist/INFERNO.BIN \
-	dist/STARGATE.BIN \
-	dist/POPCORN.BIN \
-	dist/PSPCOMP.BIN \
-	dist/VITACOMP.BIN \
-	dist/VITAPOPS.BIN \
-	dist/VITAPLUS.BIN
-	$(Q)cp -r contrib/PSP/SAVEDATA/ARK_01234/ dist/ # ARK Savedata installation
-	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
-	$(Q)cp loader/live/kernel/chain_loader/ARK.BIN dist/ARK_01234/ARK.BIN # ARK-2 chainloader
-	$(Q)cp loader/live/kernel/psxloader/ARKX.BIN dist/ARK_01234/ARKX.BIN # ARK-X loader
-	$(Q)cp loader/live/kernel/kxploit/sceUID/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PSP 6.6X and Vita 3.60+
-	$(Q)cp extras/modules/xmbctrl/xmbctrl.prx dist/ARK_01234/XMBCTRL.PRX # XMB Control Module
-	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
-	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
-	$(Q)cp extras/modules/peops/peops.prx dist/ARK_01234/PS1SPU.PRX
-	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
-	$(Q)cp extras/menus/arkMenu/LANG.ARK dist/ARK_01234/LANG.ARK # Translations
-	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
-	$(Q)cp extras/menus/arkMenu/themes/ARK_Revamped/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher resources
-	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
-	$(Q)cp contrib/UPDATER.TXT dist/ARK_01234/
-	$(Q)cp contrib/SETTINGS.TXT dist/ARK_01234/
-	$(Q)cp contrib/PSP/mediasync.prx dist/ARK_01234/MEDIASYN.PRX
-	$(Q)cp contrib/PSP/popsman.prx dist/ARK_01234/POPSMAN.PRX
-	$(Q)cp contrib/PSP/pops_01g.prx dist/ARK_01234/POPS.PRX
-	$(Q)cp extras/menus/recovery/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Default recovery menu
-	$(Q)cp -r contrib/PC/MagicMemoryCreator dist/PC/
-	$(Q)cp dist/SYSCTRL.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_systemctrl.prx
-	$(Q)cp dist/VSHCTRL.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_vshctrl.prx
-	$(Q)cp dist/INFERNO.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_inferno.prx
-	$(Q)cp dist/STARGATE.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_stargate.prx
-	$(Q)cp dist/POPCORN.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_popcorn.prx
-	$(Q)cp dist/POPCORN.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_pspcompat.prx
-	$(Q)cp -r dist/ARK_01234 dist/PC/MagicMemoryCreator/TM/DCARK
-
-	
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
 	dist/VSHCTRL.BIN \
@@ -171,13 +133,23 @@ encrypt-prx: \
 	dist/VITACOMP.BIN \
 	dist/VITAPOPS.BIN \
 	dist/VITAPLUS.BIN
+
+copy-dcark:
+	$(Q)cp -r contrib/PC/MagicMemoryCreator dist/PC/
+	$(Q)cp dist/SYSCTRL.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_systemctrl.prx
+	$(Q)cp dist/VSHCTRL.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_vshctrl.prx
+	$(Q)cp dist/INFERNO.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_inferno.prx
+	$(Q)cp dist/STARGATE.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_stargate.prx
+	$(Q)cp dist/POPCORN.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_popcorn.prx
+	$(Q)cp dist/POPCORN.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_pspcompat.prx
+
+pack-flash0:
 	$(Q)cp core/compat/vita/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
 	$(Q)cp core/compat/vita/btcnf/psvbtcnf.bin dist/PSVBTCNF.BIN
 	$(Q)cp core/compat/vitapops/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
 	$(Q)cp core/compat/pentazemin/btcnf/psvbtjnf.bin dist/PSVBTJNF.BIN
 	$(Q)cp core/compat/pentazemin/btcnf/psvbtknf.bin dist/PSVBTKNF.BIN
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
-	$(Q)cp dist/FLASH0.ARK dist/PC/MagicMemoryCreator/TM/DCARK/ARK_01234
 
 cipl:
 	$(Q)$(MAKE) -C loader/perma/cipl/new/payloadex
@@ -190,6 +162,16 @@ cipl:
 	$(Q)$(MAKE) PSP_MODEL=09G -C loader/perma/cipl/new/
 	$(Q)$(MAKE) PSP_MODEL=11G -C loader/perma/cipl/new/
 	$(Q)$(MAKE) -C loader/perma/cipl/installer
+
+msipl:
+	$(Q)cp loader/dc/msipl/payloadex/ms_payloadex.h loader/perma/cipl/new/payloadex/
+	$(Q)contrib/PC/psptools/pack_ipl.py loader/dc/msipl/newipl/loader/msipl.bin@0x40c0000 loader/dc/msipl/newipl/msipl.bin 0x40c0000
+	$(Q)$(MAKE) PSP_MODEL=01G -C loader/dc/msipl/newipl/payload/
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_01G.bin loader/dc/msipl/newipl/ipl_01g.bin
+	$(Q)$(MAKE) PSP_MODEL=02G -C loader/dc/msipl/newipl/payload/
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_02G.bin loader/dc/msipl/newipl/ipl_02g.bin
+	$(Q)$(MAKE) PSP_MODEL=03G -C loader/dc/msipl/newipl/payload/
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_03G.bin loader/dc/msipl/newipl/ipl_03g.bin
 
 kxploits:
 	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
@@ -255,6 +237,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer
 	$(Q)$(MAKE) $@ -C loader/dc/dcman
 	$(Q)$(MAKE) $@ -C loader/dc/installer
+	$(Q)$(MAKE) $@ -C loader/dc/msipl/newipl/loader
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/mainbinex
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/payloadex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex
@@ -274,6 +257,8 @@ clean:
 	$(Q)rm -rf loader/vpk/bin/save/ARK_01234
 	$(Q)rm -f loader/vpk/bin/psx/ps1cfw_enabler.suprx
 	$(Q)rm -f loader/dc/tmctrl/tmctrl.h
+	$(Q)rm -f loader/dc/btcnf/*.bin
+	$(Q)rm -f loader/dc/msipl/newipl/*.bin
 
 subdirs: $(SUBDIRS)
 

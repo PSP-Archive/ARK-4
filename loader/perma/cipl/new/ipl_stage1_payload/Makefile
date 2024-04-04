@@ -15,4 +15,4 @@ LDFLAGS = -nostartfiles  -T linkfile.l -fdata-sections -ffunction-sections -Wl,-
 #	$(Q)bin2c $(TARGET).bin ipl_stage1_payload.h payload_$(PSP_MODEL)
 
 PSPSDK=$(shell psp-config --pspsdk-path)
-include ../common/build.mak
+include $(ARKROOT)/common/make/build_ipl.mak

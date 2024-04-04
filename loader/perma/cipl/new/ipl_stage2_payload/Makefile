@@ -15,4 +15,4 @@ ipl_stage2_payload.h: $(TARGET).bin
 	$(Q)bin2c $(TARGET).bin ipl_stage2_payload.h payload
 
 PSPSDK=$(shell psp-config --pspsdk-path)
-include ../common/build.mak
+include $(ARKROOT)/common/make/build_ipl.mak
