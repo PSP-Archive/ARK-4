@@ -1,27 +1,40 @@
-# pspdecrypt
-A quick and *dirty* tool to decrypt PSP binaries, and also PSP updaters (PSAR format)
+# DC-ARK Maker
 
-Licensed under GPLv3
+##### Setup
 
-Decryption code copied from [ppsspp](https://github.com/hrydgard/ppsspp/), making use of libkirk by draan
+* ALL:
 
-KL3E & KL4E implementation and PSAR extraction by artart78
+    * python3 is required
 
-## Usage
-`pspdecrypt` is capable of decrypting `PRX` and `IPL` files as well as decrypting and extracting `PSAR` archives and its contents, including IPL stages where possible.
+* MacOS:
+    
+    * `brew install openssl@1.1`
 
-## Release Notes
-### 1.0
- * Merges `pspdecrypt` and `psardecrypt` into one binary
- * Top-level utility re-write with additional options by @artart78
- * syscon key ipl xor support by @proximav
- * Disable broken KIRK1 ECDSA signature verification that was slowing down extraction for certain OFW
- * Support for decrypting remaining IPL variants
- * Replace Table decryption with DES implementation
-### 0.8
- * Adds KL3E & KL4E decompression support for PSAR contents
- * Adds `PSAR` support
- * Extracts most public FW, older JigKick payloads, and most TT FW
- 
-### Initial release (unversioned)
- * Decrypts `PRX` files
+##### Note: Working on Linux and Windows, MacOS is experimental
+
+###### Need to run as root/admin
+
+* `pip install -r requirements.txt`
+
+* `./main.py`
+
+* choose your drive wisely....
+
+
+#### Credits:
+
+* MeetPatty (DC-ARK)
+
+* Acid_Snake (for the idea/ARK-4 itself/module version of msipl_installer)
+
+* John Kelley  (pspdecrypt)
+
+* Draan (msipl_installer)
+
+* Sony for providing 6.61 OFW files ( still ;-) ) 
+
+* CoffeeNomad for the initial MacOS command outputs to help me out.
+
+* Testers:
+
+    * Acid_Snake - MacOS (Intel/PPC) testing
