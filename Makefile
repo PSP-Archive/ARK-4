@@ -60,9 +60,9 @@ SUBDIRS = libs \
 	extras/menus/vshmenu \
 	extras/installer
 
-.PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist copy-dcark encrypt-prx
+.PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx copy-dcark pack-flash0
 
-all: subdirs cipl msipl kxploits mkdir-dist copy-dcark encrypt-prx copy-bin
+all: subdirs cipl msipl kxploits mkdir-dist encrypt-prx copy-dcark pack-flash0 copy-bin
 	@echo "Build Done"
 
 #	Common installation
@@ -123,25 +123,6 @@ copy-bin:
 	$(Q)$(MAKE) -C extras/updater/
 	$(Q)cp extras/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
 
-copy-dcark: \
-	dist/SYSCTRL.BIN \
-	dist/VSHCTRL.BIN \
-	dist/INFERNO.BIN \
-	dist/STARGATE.BIN \
-	dist/POPCORN.BIN \
-	dist/PSPCOMP.BIN \
-	dist/VITACOMP.BIN \
-	dist/VITAPOPS.BIN \
-	dist/VITAPLUS.BIN
-	$(Q)cp -r contrib/PC/MagicMemoryCreator dist/PC/
-	$(Q)cp dist/SYSCTRL.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_systemctrl.prx
-	$(Q)cp dist/VSHCTRL.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_vshctrl.prx
-	$(Q)cp dist/INFERNO.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_inferno.prx
-	$(Q)cp dist/STARGATE.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_stargate.prx
-	$(Q)cp dist/POPCORN.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_popcorn.prx
-	$(Q)cp dist/POPCORN.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_pspcompat.prx
-
-	
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
 	dist/VSHCTRL.BIN \
@@ -152,6 +133,17 @@ encrypt-prx: \
 	dist/VITACOMP.BIN \
 	dist/VITAPOPS.BIN \
 	dist/VITAPLUS.BIN
+
+copy-dcark:
+	$(Q)cp -r contrib/PC/MagicMemoryCreator dist/PC/
+	$(Q)cp dist/SYSCTRL.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_systemctrl.prx
+	$(Q)cp dist/VSHCTRL.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_vshctrl.prx
+	$(Q)cp dist/INFERNO.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_inferno.prx
+	$(Q)cp dist/STARGATE.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_stargate.prx
+	$(Q)cp dist/POPCORN.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_popcorn.prx
+	$(Q)cp dist/POPCORN.BIN dist/PC/MagicMemoryCreator/TM/DCARK/kd/ark_pspcompat.prx
+
+pack-flash0:
 	$(Q)cp core/compat/vita/btcnf/psvbtinf.bin dist/PSVBTINF.BIN
 	$(Q)cp core/compat/vita/btcnf/psvbtcnf.bin dist/PSVBTCNF.BIN
 	$(Q)cp core/compat/vitapops/btcnf/psvbtxnf.bin dist/PSVBTXNF.BIN
