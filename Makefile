@@ -47,6 +47,7 @@ SUBDIRS = libs \
 	loader/perma/cipl/classic/mainbinex \
 	loader/perma/cipl/classic/combine \
 	loader/dc/dcman \
+	loader/dc/msipl \
 	loader/dc/msipl/payloadex \
 	loader/dc/msipl/mainbinex \
 	loader/dc/tmctrl/rebootex \
@@ -255,6 +256,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer
 	$(Q)$(MAKE) $@ -C loader/dc/dcman
 	$(Q)$(MAKE) $@ -C loader/dc/installer
+	$(Q)$(MAKE) $@ -C loader/dc/msipl
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/mainbinex
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/payloadex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex

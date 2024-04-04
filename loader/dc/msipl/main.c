@@ -4,11 +4,6 @@
 #include "syscon.h"
 #include "fat.h"
 
-#include "printf.h"
-#ifdef DEBUG
-#include "uart.h"
-#endif
-
 #define JAL_OPCODE	0x0C000000
 #define J_OPCODE	0x08000000
 
@@ -44,21 +39,9 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 
 	sceSysconInit();
 	
-#ifdef DEBUG
-	sceSysconCtrlHRPower(1);
-	
-	uart_init();
-
-	printf("msipl starting...\n");
-#endif
 	uint32_t baryon_version = 0;
 	sceSysconGetBaryonVersion(&baryon_version);
 	uint32_t tachyon_version = GetTachyonVersion();
-	
-#ifdef DEBUG
-	printf("Tachyon: %x\n", tachyon_version);
-	printf("Baryon: %x\n", baryon_version);
-#endif
 	
 	if (tachyon_version >= 0x600000)
 		_sw(0x20070910, 0xbfc00ffc);
@@ -66,7 +49,7 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 		_sw(0x20050104, 0xbfc00ffc);
 	else
 		_sw(0x20040420, 0xbfc00ffc);
-	
+
 	int gen = 11;
 	if (tachyon_version <= 0x400000) {
 		gen = 1;
@@ -86,13 +69,15 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 		
 	MsFatMount();
 		
-	char path[60];
-	
-	sprintf(path, "/TM/DC10/ipl_%02dg.bin", gen);
-	
-#ifdef DEBUG
-	printf("ipl: %s\n", path);
-#endif
+	char* path = "/TM/DCARK/ipl_xxg.bin";
+	if (gen == 11){
+		path[14] = '1';
+		path[15] = '1';
+	}
+	else {
+		path[14] = '0';
+		path[15] = '0' + gen;
+	}
 
 	MsFatOpen(path);
 	

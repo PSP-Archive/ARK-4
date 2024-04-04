@@ -1,14 +1,15 @@
 TARGET = msipl
 OBJS = crt0.o main.o
 
-INCDIR = 
-CFLAGS = -Os -G0 -Wall -fno-pic $(BFLAGS) -fdata-sections -ffunction-sections -Wl,--gc-sections
+INCDIR = $(ARKROOT)/libs/iplsdk/
+CFLAGS = -Os -G0 -Wall -fno-pic -std=c99 $(BFLAGS) -fdata-sections -ffunction-sections -Wl,--gc-sections
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti 
 ASFLAGS = $(CFLAGS)
 
-LIBS =
-LIBDIR =
+LIBS = 
+LIBDIR = $(ARKROOT)/libs
 LDFLAGS = -nostartfiles  -T linkfile.l -fdata-sections -ffunction-sections -Wl,--gc-sections
 
+
 PSPSDK=$(shell psp-config --pspsdk-path)
-include ../common/build.mak
+include $(ARKROOT)/common/make/build_ipl.mak

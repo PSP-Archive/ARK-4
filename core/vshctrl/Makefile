@@ -11,7 +11,8 @@ OBJS = main.o \
 	custom_update.o \
 	hibernation_delete.o \
 	registry.o \
-	$(ARKROOT)/libs/ansi-c/strsafe.o
+	$(ARKROOT)/libs/ansi-c/strsafe.o \
+	$(ARKROOT)/libs/ansi-c/strcasecmp.o
 
 IMPORTS = imports.o
 
