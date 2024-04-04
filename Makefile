@@ -107,7 +107,7 @@ copy-bin:
 	$(Q)cp core/compat/psp/btcnf/pstbtcnf_tt.bin dist/PSP/Pops4Tool/TT/pstbtcnf.bin
 	$(Q)cp core/compat/psp/btcnf/pstbtcnf_dt.bin dist/PSP/Pops4Tool/DT/pstbtcnf.bin
 	$(Q)cp contrib/PSP/pops_01g.prx dist/PSP/Pops4Tool/kd/
-	$(Q)cp contrib/PSP/popsman.prx dist/PSP/Pops4Tool/kd
+	$(Q)cp contrib/PSP/popsman.prx dist/PSP/Pops4Tool/kd/
 	$(Q)cp contrib/PSP/libpspvmc.prx dist/PSP/Pops4Tool/vsh/module/
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)rm -rf dist/themes/translations
