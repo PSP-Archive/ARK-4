@@ -150,7 +150,6 @@ pack-flash0:
 	$(Q)cp core/compat/pentazemin/btcnf/psvbtjnf.bin dist/PSVBTJNF.BIN
 	$(Q)cp core/compat/pentazemin/btcnf/psvbtknf.bin dist/PSVBTKNF.BIN
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
-	$(Q)cp dist/FLASH0.ARK dist/PC/MagicMemoryCreator/TM/DCARK/ARK_01234
 
 cipl:
 	$(Q)$(MAKE) -C loader/perma/cipl/new/payloadex
