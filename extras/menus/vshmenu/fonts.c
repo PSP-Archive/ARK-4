@@ -73,7 +73,8 @@ char* available_fonts[] = {
 	"CYRILL3.pf",
 	"CYRIL_B.pf",
 	"ARMENIAN.pf",
-	"GREEK.pf",	
+	"GREEK.pf",
+	"CHS.pf",
 };
 
 char** font_list(void) {
@@ -99,6 +100,12 @@ int font_load(vsh_Menu *vsh) {
 			// make sure we use a russian font
 			if (vsh->config.ark_menu.vsh_font != 49){
 				vsh->config.ark_menu.vsh_font = 49;
+			}
+			break;
+		case PSP_SYSTEMPARAM_LANGUAGE_CHINESE_SIMPLIFIED:
+			// make sure we use a specific chinese font
+			if (vsh->config.ark_menu.vsh_font != 56){
+				vsh->config.ark_menu.vsh_font = 56;
 			}
 			break;
 		/*

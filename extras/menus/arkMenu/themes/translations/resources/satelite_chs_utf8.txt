@@ -1,0 +1,88 @@
+默认
+日本
+美国
+欧洲
+韩国
+英国
+拉丁美洲
+澳大利亚
+香港
+台湾
+俄罗斯
+中国
+Debug I
+Debug II
+已禁用
+已启用
+Normal
+切换
+X -> O
+O -> X
+USB 设备
+USB 只读
+ISO 视频挂载
+前景色
+背景色
+字体
+菜单设计
+主菜单
+电池转换
+交换 X/O 按键
+VSH 区域
+UMD 区域
+导入传统插件
+激活 FLASH 与 WMA
+禁用休眠
+启动 RANDOM ISO
+返回
+不支持休眠
+正常电池 -> 神电
+神电 -> 正常电池
+VSH 菜单
+高级 VSH 菜单
+恢复菜单 ->
+关机
+待机
+重置设备
+重启 VSH
+退出
+不支持
+Adrenaline USB
+Flash
+UMD 光碟
+内部存储
+记忆棒
+无
+经典
+简洁
+高级
+新建
+随机
+Red
+Light Red
+Orange
+Light Orange
+Yellow
+Light Yellow
+Green
+Light Green
+Blue
+Light Blue
+Indigo
+Light Indigo
+Violet
+Light Violet
+Pink
+Light Pink
+Purple
+Light Purple
+Teal
+Light Teal
+Aqua
+Light Aqua
+Grey
+Light Grey
+Black
+Light Black
+White
+Light White
