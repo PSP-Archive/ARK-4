@@ -165,9 +165,13 @@ cipl:
 
 msipl:
 	$(Q)cp loader/dc/msipl/payloadex/ms_payloadex.h loader/perma/cipl/new/payloadex/
+	$(Q)contrib/PC/psptools/pack_ipl.py loader/dc/msipl/newipl/loader/msipl.bin@0x40c0000 loader/dc/msipl/newipl/msipl.bin 0x40c0000
 	$(Q)$(MAKE) PSP_MODEL=01G -C loader/dc/msipl/newipl/payload/
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_01G.bin loader/dc/msipl/newipl/ipl_01g.bin
 	$(Q)$(MAKE) PSP_MODEL=02G -C loader/dc/msipl/newipl/payload/
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_02G.bin loader/dc/msipl/newipl/ipl_02g.bin
 	$(Q)$(MAKE) PSP_MODEL=03G -C loader/dc/msipl/newipl/payload/
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_03G.bin loader/dc/msipl/newipl/ipl_03g.bin
 
 kxploits:
 	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
@@ -254,7 +258,7 @@ clean:
 	$(Q)rm -f loader/vpk/bin/psx/ps1cfw_enabler.suprx
 	$(Q)rm -f loader/dc/tmctrl/tmctrl.h
 	$(Q)rm -f loader/dc/btcnf/*.bin
-	$(Q)rm -f loader/dc/msipl/newipl/payload/*.bin
+	$(Q)rm -f loader/dc/msipl/newipl/*.bin
 
 subdirs: $(SUBDIRS)
 
