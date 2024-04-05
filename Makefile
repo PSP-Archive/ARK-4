@@ -43,6 +43,7 @@ SUBDIRS = libs \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
 	loader/live/kernel/pandorizer \
+	loader/uninstaller \
 	loader/perma/cipl/classic/payloadex \
 	loader/perma/cipl/classic/mainbinex \
 	loader/perma/cipl/classic/combine \
@@ -75,6 +76,7 @@ copy-bin:
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
 	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/PSP/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
+	$(Q)cp loader/uninstaller/EBOOT.PBP dist/PSP/ARK_Uninstaller # ARK-4 Uninstaller
 	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Loader/EBOOT.PBP # Signed EBOOT
 	$(Q)cp loader/live/user/signed_eboot/ark_loader.iso dist/PSVita/Standalone/
 	$(Q)cp loader/live/user/psxloader/EBOOT.PBP dist/PSVita/PS1CFW/SCPS10084/
@@ -229,6 +231,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/live/kernel/psp_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/vita_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/pandorizer
+	$(Q)$(MAKE) $@ -C loader/uninstaller
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/mainbinex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/combine
@@ -288,6 +291,7 @@ mkdir-dist:
 	$(Q)mkdir dist/UPDATE | true
 	$(Q)mkdir dist/ARK_Loader | true
 	$(Q)mkdir dist/PSP/Infinity | true
+	$(Q)mkdir dist/PSP/ARK_Uninstaller | true
 	$(Q)mkdir dist/PSP/ARK_DC | true
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
