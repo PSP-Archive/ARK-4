@@ -33,6 +33,7 @@ SUBDIRS = libs \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
 	loader/live/kernel/pandorizer \
+	loader/uninstaller \
 	extras/modules/ipl_update \
 	extras/modules/kpspident \
 	loader/perma/cipl/classic/payloadex \
@@ -78,6 +79,7 @@ copy-bin:
 	$(Q)cp loader/live/kernel/kxploit/sceUID/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PSP 6.60+ and Vita 3.60+
 	$(Q)cp loader/live/kernel/kxploit/sceSdGetLastIndex/K.BIN dist/ARK_Loader/K.BIN # Alternative Kernel exploit for PSP 6.60+ and Adrenaline/CFW
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
+	$(Q)cp loader/uninstaller/EBOOT.PBP dist/PSP/ARK_Uninstaller # ARK-4 Uninstaller
 	$(Q)cp -r contrib/PSP/GAME/ARK_DC/ dist/PSP/ # ARK DC installer
 	$(Q)cp loader/dc/installer/EBOOT.PBP dist/PSP/ARK_DC/ # ARK DC installer
 	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/PSP/ARK_cIPL/EBOOT.PBP
@@ -164,6 +166,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/live/kernel/psp_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/vita_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/pandorizer
+	$(Q)$(MAKE) $@ -C loader/uninstaller
 	$(Q)$(MAKE) $@ -C core/compat/psp/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex
@@ -243,6 +246,7 @@ mkdir-dist:
 	$(Q)mkdir dist/PSVita | true
 	$(Q)mkdir dist/UPDATE | true
 	$(Q)mkdir dist/ARK_Loader | true
+	$(Q)mkdir dist/PSP/ARK_Uninstaller | true
 	$(Q)mkdir dist/PSP/Infinity | true
 	$(Q)mkdir dist/PSP/ARK_DC | true
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
