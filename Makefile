@@ -43,7 +43,6 @@ SUBDIRS = libs \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
 	loader/live/kernel/pandorizer \
-	loader/uninstaller \
 	loader/perma/cipl/classic/payloadex \
 	loader/perma/cipl/classic/mainbinex \
 	loader/perma/cipl/classic/combine \
@@ -59,7 +58,8 @@ SUBDIRS = libs \
 	extras/menus/recovery \
 	extras/menus/xMenu \
 	extras/menus/vshmenu \
-	extras/installer
+	extras/apps/installer \
+	extras/apps/uninstaller 
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx copy-dcark pack-flash0
 
@@ -76,7 +76,6 @@ copy-bin:
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
 	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/PSP/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
-	$(Q)cp loader/uninstaller/EBOOT.PBP dist/PSP/ARK_Uninstaller # ARK-4 Uninstaller
 	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Loader/EBOOT.PBP # Signed EBOOT
 	$(Q)cp loader/live/user/signed_eboot/ark_loader.iso dist/PSVita/Standalone/
 	$(Q)cp loader/live/user/psxloader/EBOOT.PBP dist/PSVita/PS1CFW/SCPS10084/
@@ -100,7 +99,8 @@ copy-bin:
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
 	$(Q)cp extras/menus/arkMenu/themes/ARK_Revamped/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
-	$(Q)cp extras/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
+	$(Q)cp extras/apps/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
+	$(Q)cp extras/apps/uninstaller/EBOOT.PBP dist/PSP/ARK_Uninstaller # ARK-4 Uninstaller
 	$(Q)cp contrib/UPDATER.TXT dist/ARK_01234/
 	$(Q)cp contrib/SETTINGS.TXT dist/ARK_01234/
 	$(Q)cp contrib/PSP/mediasync.prx dist/ARK_01234/MEDIASYN.PRX
@@ -122,8 +122,8 @@ copy-bin:
 	$(Q)cp -r dist/ARK_01234 loader/vpk/bin/save/
 	$(Q)cp loader/live/kernel/psxloader/ps1cfw_enabler/ps1cfw_enabler.suprx loader/vpk/bin/psx/
 	$(Q)cd loader/vpk/bin/ && zip -r ../../../dist/PSVita/FasterARK.vpk * && cd $(ARKROOT)
-	$(Q)$(MAKE) -C extras/updater/
-	$(Q)cp extras/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
+	$(Q)$(MAKE) -C extras/apps/updater/
+	$(Q)cp extras/apps/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
 
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
@@ -231,7 +231,6 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/live/kernel/psp_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/vita_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/pandorizer
-	$(Q)$(MAKE) $@ -C loader/uninstaller
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/mainbinex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/combine
@@ -249,11 +248,12 @@ clean:
 	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=sceSdGetLastIndex -C loader/live/kernel/kxploit
 	$(Q)-rm -rf dist *~ | true
-	$(Q)$(MAKE) $@ -C extras/updater/
-	$(Q)$(MAKE) $@ -C extras/installer/
-	$(Q)rm -f extras/updater/ARK_01234.PKG | true
-	$(Q)rm -f extras/updater/EBOOT_PSP.PBP | true
-	$(Q)rm -f extras/updater/EBOOT_GO.PBP | true
+	$(Q)$(MAKE) $@ -C extras/apps/updater/
+	$(Q)$(MAKE) $@ -C extras/apps/installer/
+	$(Q)$(MAKE) $@ -C extras/apps/uninstaller
+	$(Q)rm -f extras/apps/updater/ARK_01234.PKG | true
+	$(Q)rm -f extras/apps/updater/EBOOT_PSP.PBP | true
+	$(Q)rm -f extras/apps/updater/EBOOT_GO.PBP | true
 	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
 	$(Q)find -name 'THEME.ARK' -exec rm {} \;
 	$(Q)rm -f extras/menus/arkMenu/LANG.ARK
