@@ -124,6 +124,12 @@ copy-bin:
 	$(Q)cd loader/vpk/bin/ && zip -r ../../../dist/PSVita/FasterARK.vpk * && cd $(ARKROOT)
 	$(Q)$(MAKE) -C extras/apps/updater/
 	$(Q)cp extras/apps/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
+	$(Q)cp loader/dc/msipl/newipl/ipl_*.bin dist/PC/MagicMemoryCreator/TM/DCARK/
+	$(Q)cp loader/dc/btcnf/pspbtcnf_*_dc.bin dist/PC/MagicMemoryCreator/TM/DCARK/kd/
+	$(Q)cp contrib/PSP/IPL/nandipl_01G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_01g.bin 
+	$(Q)cp contrib/PSP/IPL/nandipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_02g.bin 
+	$(Q)cp contrib/PSP/IPL/nandipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_03g.bin 
+	$(Q)cp contrib/PC/timemachine/tm_mloader.bin dist/PC/MagicMemoryCreator/TM/DCARK/
 
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
