@@ -43,12 +43,12 @@ SUBDIRS = libs \
 	loader/live/kernel/psp_flash_dumper \
 	loader/live/kernel/vita_flash_dumper \
 	loader/live/kernel/pandorizer \
-	loader/perma/cipl/classic/payloadex \
+	loader/rebootex/ms_payloadex \
+	loader/rebootex/nand_payloadex \
 	loader/perma/cipl/classic/mainbinex \
 	loader/perma/cipl/classic/combine \
 	loader/dc/dcman \
 	loader/dc/msipl/newipl/loader \
-	loader/dc/msipl/payloadex \
 	loader/dc/msipl/mainbinex \
 	loader/dc/tmctrl/rebootex \
 	loader/dc/tmctrl \
@@ -160,7 +160,6 @@ pack-flash0:
 	$(Q)$(PYTHON) contrib/PC/pack/pack.py -p dist/FLASH0.ARK contrib/PC/pack/packlist.txt
 
 cipl:
-	$(Q)$(MAKE) -C loader/perma/cipl/new/payloadex
 	$(Q)$(MAKE) PSP_MODEL=01G -C loader/perma/cipl/new/
 	$(Q)$(MAKE) PSP_MODEL=02G -C loader/perma/cipl/new/
 	$(Q)$(MAKE) PSP_MODEL=03G -C loader/perma/cipl/new/
@@ -172,7 +171,6 @@ cipl:
 	$(Q)$(MAKE) -C loader/perma/cipl/installer
 
 msipl:
-	$(Q)cp loader/dc/msipl/payloadex/ms_payloadex.h loader/perma/cipl/new/payloadex/
 	$(Q)contrib/PC/psptools/pack_ipl.py loader/dc/msipl/newipl/loader/msipl.bin@0x40c0000 loader/dc/msipl/newipl/msipl.bin 0x40c0000
 	$(Q)$(MAKE) PSP_MODEL=01G -C loader/dc/msipl/newipl/payload/
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_01G.bin loader/dc/msipl/newipl/ipl_01g.bin
@@ -237,17 +235,16 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/live/kernel/psp_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/vita_flash_dumper
 	$(Q)$(MAKE) $@ -C loader/live/kernel/pandorizer
-	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/payloadex
+	$(Q)$(MAKE) $@ -C loader/rebootex/ms_payloadex
+	$(Q)$(MAKE) $@ -C loader/rebootex/nand_payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/mainbinex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/combine
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/
-	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/payloadex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer
 	$(Q)$(MAKE) $@ -C loader/dc/dcman
 	$(Q)$(MAKE) $@ -C loader/dc/installer
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/newipl/loader
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/mainbinex
-	$(Q)$(MAKE) $@ -C loader/dc/msipl/payloadex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl
 	$(Q)$(MAKE) $@ -C loader/dc/vunbricker

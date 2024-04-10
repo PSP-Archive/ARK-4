@@ -1,5 +1,5 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
-INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include
+INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)/loader/rebootex
 LIBS = -lansic -L $(ARKROOT)/libs
 TARGET = patch.bin
 

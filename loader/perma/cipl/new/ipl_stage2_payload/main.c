@@ -6,9 +6,9 @@
 #endif
 
 #ifdef MSIPL
-#include "ms_payloadex.h"
+#include "ms_payloadex/ms_payloadex.h"
 #else
-#include "nand_payloadex.h"
+#include "nand_payloadex/nand_payloadex.h"
 #endif
 
 void Dcache();
