@@ -10,6 +10,9 @@
     
     * `brew install openssl@1.1`
 
+* Ubuntu:
+    * https://packages.ubuntu.com/focal/libssl1.1
+
 ##### Note: Working on Linux and Windows, MacOS is experimental
 
 ###### Need to run as root/admin

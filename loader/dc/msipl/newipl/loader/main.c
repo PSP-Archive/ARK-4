@@ -84,6 +84,8 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 	MsFatRead((void *) 0x40e0000, 0xC000);
 	MsFatRead((void *) 0x40ec000, 0xe0000);
 
+	MsFatClose();
+
 	ClearCaches();
 	
 	return ((int (*)()) 0x40e0000)();
