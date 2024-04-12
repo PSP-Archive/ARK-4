@@ -40,6 +40,7 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 	syscon_handshake_unlock();
 
 	// turn on control for MS and WLAN leds
+	/*
 	syscon_ctrl_led(0, 1);
 	syscon_ctrl_led(1, 1);
 
@@ -48,6 +49,7 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 	sysreg_io_enable_gpio_port(GPIO_PORT_WLAN_LED);
 	gpio_set_port_mode(GPIO_PORT_MS_LED, GPIO_MODE_OUTPUT);
 	gpio_set_port_mode(GPIO_PORT_WLAN_LED, GPIO_MODE_OUTPUT);
+	*/
 
 	uint32_t baryon_version = syscon_get_baryon_version();
 	uint32_t tachyon_version = GetTachyonVersion();

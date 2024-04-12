@@ -23,7 +23,7 @@ REBOOT_OBJS = \
 C_OBJS = \
 	$(ARKROOT)/libs/libsploit/scanner.o \
 
-LIBS = -L $(ARKROOT)/libs -liplsdk -lcolordebugger
+LIBS = -L $(ARKROOT)/libs -liplsdk
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
