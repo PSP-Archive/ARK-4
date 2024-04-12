@@ -1,5 +1,5 @@
 TARGET = iplsdk
-OBJS = fat.o kirk.o ms.o printf.o syscon.o sysreg.o uart.o
+OBJS = fat.o kirk.o ms.o printf.o syscon.o sysreg.o uart.o gpio.o
 
 INCDIR = 
 CFLAGS = -Os -G0 -Wall -std=c99 -fno-pic $(BFLAGS) -fdata-sections -ffunction-sections -Wl,--gc-sections

@@ -171,7 +171,8 @@ cipl:
 	$(Q)$(MAKE) -C loader/perma/cipl/installer
 
 msipl:
-	$(Q)contrib/PC/psptools/pack_ipl.py loader/dc/msipl/newipl/loader/msipl.bin@0x40c0000 loader/dc/msipl/newipl/msipl.bin 0x40c0000
+#	$(Q)contrib/PC/psptools/pack_ipl.py loader/dc/msipl/newipl/loader/msipl.bin@0x40c0000 loader/dc/msipl/newipl/msipl.bin 0x40c0000
+	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/iplsdk/make_ipl.py loader/dc/msipl/newipl/loader/msipl.bin ipl.bin reset_block
 	$(Q)$(MAKE) PSP_MODEL=01G -C loader/dc/msipl/newipl/payload/
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_01G.bin loader/dc/msipl/newipl/ipl_01g.bin
 	$(Q)$(MAKE) PSP_MODEL=02G -C loader/dc/msipl/newipl/payload/

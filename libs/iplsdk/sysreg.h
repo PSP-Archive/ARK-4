@@ -30,4 +30,7 @@ void SysregBusclkKirkEnable();
 void SysregBusclkKirkDisable();
 void SysregResetKirkDisable();
 
+void sysreg_io_enable_gpio(void);
+void sysreg_io_enable_gpio_port(int port);
+
 #endif

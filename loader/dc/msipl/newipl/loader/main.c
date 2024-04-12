@@ -1,8 +1,9 @@
 #include <pspsdk.h>
 #include <string.h>
 #include <sysreg.h>
-#include "syscon.h"
-#include "fat.h"
+#include <syscon.h>
+#include <gpio.h>
+#include <fat.h>
 
 #define JAL_OPCODE	0x0C000000
 #define J_OPCODE	0x08000000
@@ -66,6 +67,12 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 	} else if (tachyon_version == 0x820000 && baryon_version == 0x2E4000) {
 		gen = 9;
 	}
+
+	gpio_init();
+	sceSysconCtrlLED(0, 1);
+	sceSysconCtrlLED(1, 1);
+	sysreg_io_enable_gpio_port(GPIO_PORT_WLAN_LED);
+	gpio_set_port_mode(GPIO_PORT_WLAN_LED, GPIO_MODE_OUTPUT);
 		
 	MsFatMount();
 		
@@ -79,8 +86,9 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 		path[15] = '0' + gen;
 	}
 
-	MsFatOpen(path);
-	
+	//MsFatOpen(path);
+	MsFatOpen("/TM/DCARK/ipl_01g.bin");
+
 	MsFatRead((void *) 0x40e0000, 0xC000);
 	MsFatRead((void *) 0x40ec000, 0xe0000);
 

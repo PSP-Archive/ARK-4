@@ -4,6 +4,7 @@
 #include "sysreg.h"
 #include "kirk.h"
 #include "syscon.h"
+#include "gpio.h"
 
 #ifdef DEBUG
 #include "printf.h"
@@ -281,6 +282,11 @@ u32 GetTachyonVersion()
 
 int main()
 {
+
+	#ifdef MSIPL
+	gpio_set(GPIO_PORT_WLAN_LED);
+	#endif
+
 	sceSysconInit();
 
 	u32 baryon_version = 0;

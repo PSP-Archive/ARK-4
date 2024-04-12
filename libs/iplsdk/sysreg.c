@@ -69,3 +69,13 @@ void SysregResetKirkDisable()
 {
 	SysregReset(0x400, 0);
 }
+
+void sysreg_io_enable_gpio(void)
+{
+    REG32(0xbc100058) |= 0x800000;
+}
+
+void sysreg_io_enable_gpio_port(int port)
+{
+    REG32(0xbc10007c) |= (1 << port);
+}
