@@ -7,6 +7,7 @@ SUBDIRS = \
 	graphics \
 	colordebugger \
 	iplsdk \
+	daveeipl \
 	prebuilt \
 	libpspmath \
 	libunziprar \
@@ -17,7 +18,7 @@ SUBDIRS = \
 	libintraFont \
 	libvlf \
 	libsploit \
-	psid
+	psid 
 
 PREBUILTDIRS = prebuilt libvlf
 .PHONY: subdirs $(SUBDIRS)

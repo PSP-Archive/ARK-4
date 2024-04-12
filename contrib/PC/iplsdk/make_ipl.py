@@ -401,9 +401,9 @@ def reset_ipl_block(load_address, checksum, image=None):
     return block + kirk4(block_hash, 0x6C)
 
 def print_usage():
-    print('usage: {} [binary] [ipl out] [type (normal/reset_block)] (vanity optional)'.format(sys.argv[0]))
+    print('usage: {} [binary] [ipl out] [type (normal/reset_block)] [load address] (vanity optional)'.format(sys.argv[0]))
 
-if len(sys.argv) != 4 and len(sys.argv) != 5:
+if len(sys.argv) != 5 and len(sys.argv) != 6:
     print_usage()
     sys.exit(1)
 
@@ -414,7 +414,7 @@ ipl_type = sys.argv[3]
 is_reset_block = False
 is_reset_block_app = False
 is_reset_block_build = False
-load_address = 0x40c0000
+load_address = int(sys.argv[4], 16) #0x40c0000
 
 if ipl_type == "normal":
     pass
@@ -456,8 +456,8 @@ else:
 image_size = len(image)
 
 # check if there is a vanity
-if len(sys.argv) == 5 and not is_reset_block_app:
-    vanity = sys.argv[4]
+if len(sys.argv) == 6 and not is_reset_block_app:
+    vanity = sys.argv[5]
 else:
     vanity = b''
 
@@ -549,7 +549,7 @@ if not has_final:
     # the contents that was written to 0xBFD00000 prior to reset.
     if is_reset_block:
         if is_reset_block_app:
-            reset_blk = open(sys.argv[4], 'rb').read()
+            reset_blk = open(sys.argv[5], 'rb').read()
         else:
             reset_blk = reset_ipl_block(load_address, checksum)
         ipl_img = ipl_img + reset_blk

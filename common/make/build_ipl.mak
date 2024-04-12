@@ -25,7 +25,7 @@ STRIP    = psp-strip
 
 # Add in PSPSDK includes and libraries.
 INCDIR   := $(INCDIR) . $(PSPSDK)/include ../common/
-LIBDIR   := $(LIBDIR) . $(PSPSDK)/lib ../common/
+LIBDIR   := $(LIBDIR) . $(PSPSDK)/lib $(ARKROOT)/libs
 
 CFLAGS   := $(addprefix -I,$(INCDIR)) $(CFLAGS)
 CXXFLAGS := $(CFLAGS) $(CXXFLAGS)
@@ -36,7 +36,7 @@ LDFLAGS  := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
 # Link with following default libraries.  Other libraries should be specified in the $(LIBS) variable.
 # TODO: This library list needs to be generated at configure time.
 #
-LIBS += -liplsdk -lansic
+LIBS += -lansic
 
 ifneq ($(TARGET_LIB),)
 FINAL_TARGET = $(TARGET_LIB)

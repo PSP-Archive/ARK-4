@@ -171,14 +171,15 @@ cipl:
 	$(Q)$(MAKE) -C loader/perma/cipl/installer
 
 msipl:
-#	$(Q)contrib/PC/psptools/pack_ipl.py loader/dc/msipl/newipl/loader/msipl.bin@0x40c0000 loader/dc/msipl/newipl/msipl.bin 0x40c0000
-	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/iplsdk/make_ipl.py loader/dc/msipl/newipl/loader/msipl.bin ipl.bin reset_block
+	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/iplsdk/make_ipl.py loader/dc/msipl/newipl/loader/msipl.bin ipl.bin reset_block 0x40c0000
 	$(Q)$(MAKE) PSP_MODEL=01G -C loader/dc/msipl/newipl/payload/
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_01G.bin loader/dc/msipl/newipl/ipl_01g.bin
 	$(Q)$(MAKE) PSP_MODEL=02G -C loader/dc/msipl/newipl/payload/
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_02G.bin loader/dc/msipl/newipl/ipl_02g.bin
 	$(Q)$(MAKE) PSP_MODEL=03G -C loader/dc/msipl/newipl/payload/
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_03G.bin loader/dc/msipl/newipl/ipl_03g.bin
+	$(Q)$(MAKE) PSP_MODEL=04G -C loader/dc/msipl/newipl/payload/
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_04G.bin loader/dc/msipl/newipl/ipl_04g.bin
 
 kxploits:
 	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
@@ -255,6 +256,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/apps/updater/
 	$(Q)$(MAKE) $@ -C extras/apps/installer/
 	$(Q)$(MAKE) $@ -C extras/apps/uninstaller
+	$(Q)$(MAKE) $@ -C libs/daveeipl
 	$(Q)rm -f extras/apps/updater/ARK_01234.PKG | true
 	$(Q)rm -f extras/apps/updater/EBOOT_PSP.PBP | true
 	$(Q)rm -f extras/apps/updater/EBOOT_GO.PBP | true

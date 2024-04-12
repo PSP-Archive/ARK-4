@@ -327,8 +327,8 @@ void newipl_menu(){
 		{(unsigned char*)payload_01G, size_payload_01G},
 		{(unsigned char*)payload_02G, size_payload_02G},
 		{(unsigned char*)payload_03G, size_payload_03G},
-		/*
 		{(unsigned char*)payload_04G, size_payload_04G},
+		/*
 		{(unsigned char*)payload_05G, size_payload_05G},
 		{(unsigned char*)NULL, 0}, // 6g
 		{(unsigned char*)payload_07G, size_payload_07G},

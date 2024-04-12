@@ -283,10 +283,6 @@ u32 GetTachyonVersion()
 int main()
 {
 
-	#ifdef MSIPL
-	gpio_set(GPIO_PORT_WLAN_LED);
-	#endif
-
 	sceSysconInit();
 
 	u32 baryon_version = 0;
