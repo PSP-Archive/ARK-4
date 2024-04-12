@@ -37,11 +37,12 @@ int main()
 	memcpy((u8 *) 0x8FC0000, &payloadex, size_payloadex);
 	
 #ifdef MSIPL
-	sceSysconCtrlMsPower(1);
+	//sceSysconCtrlMsPower(1);
 #endif
 	
 	*(u32 *) 0x8FB0000 = -1;
-	pspSysconGetCtrl1((u32 *) 0x8FB0000);
+	//sceSysconCommonRead((u32 *) 0x8FB0000, 0x07);
+	syscon_issue_command_read(0x07, (u32 *) 0x8FB0000);
 
 	Dcache();
 	Icache();

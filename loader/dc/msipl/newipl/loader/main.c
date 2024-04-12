@@ -30,14 +30,6 @@ uint32_t GetTachyonVersion()
 	return 0x100000;
 }
 
-int delay_us(int delay){
-	int ret = 0;
-	for (int i=0; i<delay; i++){
-		ret++;
-	}
-	return ret;
-}
-
 int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 {
 
@@ -57,22 +49,56 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 	gpio_set_port_mode(GPIO_PORT_MS_LED, GPIO_MODE_OUTPUT);
 	gpio_set_port_mode(GPIO_PORT_WLAN_LED, GPIO_MODE_OUTPUT);
 
-	// turn off both LEDs
-	gpio_set(GPIO_PORT_MS_LED);
-	gpio_set(GPIO_PORT_WLAN_LED);
-	delay_us(4*250000);
-	delay_us(4*250000);
-	gpio_set(GPIO_PORT_MS_LED);
-	gpio_set(GPIO_PORT_WLAN_LED);
+	uint32_t baryon_version = syscon_get_baryon_version();
+	uint32_t tachyon_version = GetTachyonVersion();
 
-	while (1) {
-		gpio_set(GPIO_PORT_MS_LED);
-		gpio_clear(GPIO_PORT_WLAN_LED);
-		delay_us(250000);
-		gpio_clear(GPIO_PORT_MS_LED);
-		gpio_set(GPIO_PORT_WLAN_LED);
-		delay_us(250000);
+	if (tachyon_version >= 0x600000)
+		_sw(0x20070910, 0xbfc00ffc);
+	else if (tachyon_version >= 0x400000)
+		_sw(0x20050104, 0xbfc00ffc);
+	else
+		_sw(0x20040420, 0xbfc00ffc);
+
+	int gen = 11;
+	char* path = "/TM/DCARK/ipl_11g.bin";
+	void* load_addr = 0x40e0000;
+	if (tachyon_version <= 0x400000) {
+		gen = 1;
+		load_addr = 0x04000000;
+		path = "/TM/DCARK/tm_mloader.bin";
+	} else if (tachyon_version == 0x500000 || (tachyon_version == 0x600000 && baryon_version == 0x243000)) {
+		gen = 2;
+		load_addr = 0x04000000;
+		path = "/TM/DCARK/tm_mloader.bin";
+	} else if (tachyon_version <= 0x600000) {
+		gen = 3;
+		path = "/TM/DCARK/ipl_03g.bin";
+	} else if (tachyon_version == 0x810000 && baryon_version == 0x2C4000) {
+		gen = 4;
+		path = "/TM/DCARK/ipl_04g.bin";
+	} else if (tachyon_version <= 0x800000) {
+		gen = 5;
+		path = "/TM/DCARK/ipl_05g.bin";
+	} else if (tachyon_version == 0x810000 && baryon_version == 0x2E4000) {
+		gen = 7;
+		path = "/TM/DCARK/ipl_07g.bin";
+	} else if (tachyon_version == 0x820000 && baryon_version == 0x2E4000) {
+		gen = 9;
+		path = "/TM/DCARK/ipl_09g.bin";
 	}
+
+	MsFatMount();
+
+	MsFatOpen(path);
+
+	MsFatRead(load_addr, 0xC000+0xe0000);
+
+	MsFatClose();
+
+	ClearCaches();
+	
+	return ((int (*)()) load_addr)();
+
 
 	// SYSCON SPI enable
 	/*

@@ -247,10 +247,14 @@ static void checkRebootConfig(){
 
 extern void copyPSPVram(u32*);
 
+#ifdef MS_IPL
+#include "gpio.h"
+#endif
+
 // Entry Point
 int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7)
 {
-    #ifdef DEBUG
+    #ifdef MS_IPL
     colorDebug(0xff00);
     #endif
     
@@ -261,6 +265,14 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int a
 	
 	sceSysconInit();
 	sceSysconCtrlMsPower(1);
+#endif
+
+#ifdef MS_IPL
+    // turn off both LEDs
+	gpio_set(GPIO_PORT_MS_LED);
+	gpio_set(GPIO_PORT_WLAN_LED);
+	gpio_set(GPIO_PORT_MS_LED);
+	gpio_set(GPIO_PORT_WLAN_LED);
 #endif
 
 #ifdef PAYLOADEX

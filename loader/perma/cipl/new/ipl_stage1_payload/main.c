@@ -280,15 +280,57 @@ u32 GetTachyonVersion()
 	return 0x100000;
 }
 
+int delay_us(int delay){
+	int ret = 0;
+	for (int i=0; i<delay; i++){
+		ret++;
+	}
+	return ret;
+}
+
 int main()
 {
 
 	sceSysconInit();
+	/*
+	syscon_init();
+	syscon_handshake_unlock();
+	sysreg_io_enable_gpio();
 
-	u32 baryon_version = 0;
+	// turn on control for MS and WLAN leds
+	syscon_ctrl_led(0, 1);
+	syscon_ctrl_led(1, 1);
+
+	// enable GPIO to control leds
+	sysreg_io_enable_gpio_port(GPIO_PORT_MS_LED);
+	sysreg_io_enable_gpio_port(GPIO_PORT_WLAN_LED);
+	gpio_set_port_mode(GPIO_PORT_MS_LED, GPIO_MODE_OUTPUT);
+	gpio_set_port_mode(GPIO_PORT_WLAN_LED, GPIO_MODE_OUTPUT);
+
+	// turn off both LEDs
+	gpio_set(GPIO_PORT_MS_LED);
+	gpio_set(GPIO_PORT_WLAN_LED);
+	delay_us(4*250000);
+	delay_us(4*250000);
+	gpio_set(GPIO_PORT_MS_LED);
+	gpio_set(GPIO_PORT_WLAN_LED);
+
+	while (1) {
+		gpio_set(GPIO_PORT_MS_LED);
+		gpio_clear(GPIO_PORT_WLAN_LED);
+		delay_us(250000);
+		gpio_clear(GPIO_PORT_MS_LED);
+		gpio_set(GPIO_PORT_WLAN_LED);
+		delay_us(250000);
+	}
+	*/
+
+	u32 baryon_version = 0; //syscon_get_baryon_version();
 	while (sceSysconGetBaryonVersion(&baryon_version) < 0);
 	
 	while (sceSysconGetTimeStamp(0) < 0);
+	//u64 timestamp = 0;
+	//syscon_issue_command_read(0x11, &timestamp);
 
 	u32 tachyon_version = GetTachyonVersion();
 
@@ -296,7 +338,7 @@ int main()
 #ifdef SET_SEED_ADDRESS
 	unlockSyscon();
 #endif
-
+	/*
 	uint32_t keys = -1;
 	pspSysconGetCtrl1(&keys);
 	if ((keys & SYSCON_CTRL_VOL_UP) == 0)
@@ -319,6 +361,7 @@ int main()
 
 		return ((int (*)())0x80010000)();
 	}
+	*/
 #endif
 
 #ifdef DEBUG
