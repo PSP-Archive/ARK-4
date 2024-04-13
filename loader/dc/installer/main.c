@@ -428,8 +428,8 @@ void ExtractPrxs(int cbFile, SceUID fd)
 			if (is5Dnum(name)) {
 				int num = atoi(name);
 
-				// Files from 01g-11g
-				if (num >= 1 && num <= 11) {
+				// Files from 01g-02g
+				if (num >= 1 && num <= 2) {
 					flash_table_size[num] = pspDecryptTable(g_dataOut2, g_dataOut, cbExpanded, 4);
 					if (flash_table_size[num] <= 0) {
 						ErrorExit(1000, "Cannot decrypt %02dg table.\n", num);
