@@ -49,10 +49,6 @@ tm_msipl.h:
 tm_mloader.h:
 	$(Q)bin2c $(ARKROOT)/contrib/PC/timemachine/tm_mloader.bin tm_mloader.h tm_mloader
 
-new_msipl.h:
-	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/iplsdk/make_ipl.py $(ARKROOT)/loader/dc/msipl/newipl/loader/msipl.bin $(ARKROOT)/loader/dc/msipl/newipl/loader/ipl.bin reset_block 0x40c0000
-	$(Q)bin2c $(ARKROOT)/loader/dc/msipl/newipl/loader/ipl.bin $(ARKROOT)/loader/dc/msipl/newipl/loader/new_msipl.h new_msipl
-
 pspbtcnf_dc.h:
 	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_dc.txt
 	$(Q)bin2c ../btcnf/pspbtcnf_dc.bin pspbtcnf_dc.h pspbtcnf_dc
