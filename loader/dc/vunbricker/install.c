@@ -839,7 +839,7 @@ int install_thread(SceSize args, void *argp)
 
 	dcSetCancelMode(1);
 
-	if (fw != FW_OFW && (model > 2 || mb == TA_088v3))
+	if (fw != FW_OFW && model > 2)
 		InstallError(fw, "Unsupported model.");
 
 	switch(LoadUpdaterModules(fw))
@@ -1015,6 +1015,7 @@ int install_thread(SceSize args, void *argp)
 
 	const char *ipl_name = 0;
 	u16 ipl_key = 0;
+	int offset = 0;
 	
 	if (fw == FW_OFW)
 	{
@@ -1033,14 +1034,27 @@ int install_thread(SceSize args, void *argp)
 	{
 		switch (model)
 		{
-			case 0: ipl_name = "flash0:/nandcipl_01g.bin"; break;
-			case 1: ipl_name = "flash0:/nandcipl_02g.bin"; break;
+			case 0:
+				offset = 0x4000;
+				ipl_name = "flash0:/nandipl_01g.bin";
+				memcpy(big_buffer, ipl_block_01g, 0x4000);
+				break;
+			case 1: 
+				if (mb == TA_088v3){
+					"flash0:/nandcipl_02g.bin";
+				}
+				else {
+					offset = 0x4000;
+					ipl_name = "flash0:/nandipl_02g.bin";
+					memcpy(big_buffer, ipl_block_large, 0x4000);
+				}
+				break;
 			case 2: ipl_name = "flash0:/nandcipl_03g.bin"; break;
 			default: InstallError(fw, "Unsupported model.");
 		}
 	}
 
-	size = ReadFile(ipl_name, 0, big_buffer, BIG_BUFFER_SIZE);
+	size = ReadFile(ipl_name, 0, big_buffer+offset, BIG_BUFFER_SIZE);
 	if (size <= 0)
 	{
 		InstallError(fw, "Cannot read nandipl\n");
