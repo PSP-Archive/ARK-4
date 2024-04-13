@@ -38,13 +38,11 @@ int main()
 	memcpy((u8 *) 0x8FC0000, &payloadex, size_payloadex);
 	
 #ifdef MSIPL
-	//sceSysconCtrlMsPower(1);
 	u32 ms_on = 1;
     syscon_issue_command_write(0x4c, &ms_on, 3);
 #endif
 	
 	*(u32 *) 0x8FB0000 = -1;
-	//sceSysconCommonRead((u32 *) 0x8FB0000, 0x07);
 	syscon_issue_command_read(0x07, (u32 *) 0x8FB0000);
 
 	Dcache();
