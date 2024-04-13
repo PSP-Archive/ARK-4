@@ -130,7 +130,7 @@ copy-bin:
 	$(Q)cp contrib/PSP/IPL/nandipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_02g.bin 
 	$(Q)cp contrib/PSP/IPL/nandipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_03g.bin 
 	$(Q)cp contrib/PC/timemachine/tm_mloader.bin dist/PC/MagicMemoryCreator/TM/DCARK/
-	$(Q)mv ipl.bin dist/
+	$(Q)cp $(ARKROOT)/loader/dc/msipl/newipl/loader/ipl.bin dist/PC/MagicMemoryCreator/msipl.bin
 
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
@@ -172,7 +172,7 @@ cipl:
 	$(Q)$(MAKE) -C loader/perma/cipl/installer
 
 msipl:
-	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/iplsdk/make_ipl.py loader/dc/msipl/newipl/loader/msipl.bin ipl.bin reset_block 0x40c0000
+	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/iplsdk/make_ipl.py loader/dc/msipl/newipl/loader/msipl.bin loader/dc/msipl/newipl/loader/ipl.bin reset_block 0x40c0000
 	$(Q)$(MAKE) PSP_MODEL=01G -C loader/dc/msipl/newipl/payload/
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_01G.bin loader/dc/msipl/newipl/ipl_01g.bin
 	$(Q)$(MAKE) PSP_MODEL=02G -C loader/dc/msipl/newipl/payload/
@@ -255,6 +255,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/dc/dcman
 	$(Q)$(MAKE) $@ -C loader/dc/installer
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/newipl/loader
+	$(Q)$(MAKE) $@ -C loader/dc/msipl/newipl/payload
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/mainbinex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl

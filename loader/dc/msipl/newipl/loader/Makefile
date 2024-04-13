@@ -13,3 +13,6 @@ LDFLAGS = -nostartfiles  -T linkfile.l -fdata-sections -ffunction-sections -Wl,-
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(ARKROOT)/common/make/build_ipl.mak
+
+clean:
+	$(Q)rm -f *.h *.bin *.dec *.o | true

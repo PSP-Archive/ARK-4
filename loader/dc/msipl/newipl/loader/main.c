@@ -53,31 +53,21 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 	else
 		_sw(0x20040420, 0xbfc00ffc);
 
-	int gen = 11;
 	char* path = "/TM/DCARK/ipl_11g.bin";
 	void* load_addr = 0x40e0000;
 	if (tachyon_version <= 0x400000) {
-		gen = 1;
-		load_addr = 0x04000000;
-		path = "/TM/DCARK/tm_mloader.bin";
+		path = "/TM/DCARK/ipl_01g.bin";
 	} else if (tachyon_version == 0x500000 || (tachyon_version == 0x600000 && baryon_version == 0x243000)) {
-		gen = 2;
-		load_addr = 0x04000000;
-		path = "/TM/DCARK/tm_mloader.bin";
+		path = "/TM/DCARK/ipl_02g.bin";
 	} else if (tachyon_version <= 0x600000) {
-		gen = 3;
 		path = "/TM/DCARK/ipl_03g.bin";
 	} else if (tachyon_version == 0x810000 && baryon_version == 0x2C4000) {
-		gen = 4;
 		path = "/TM/DCARK/ipl_04g.bin";
 	} else if (tachyon_version <= 0x800000) {
-		gen = 5;
 		path = "/TM/DCARK/ipl_05g.bin";
 	} else if (tachyon_version == 0x810000 && baryon_version == 0x2E4000) {
-		gen = 7;
 		path = "/TM/DCARK/ipl_07g.bin";
 	} else if (tachyon_version == 0x820000 && baryon_version == 0x2E4000) {
-		gen = 9;
 		path = "/TM/DCARK/ipl_09g.bin";
 	}
 

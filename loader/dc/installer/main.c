@@ -20,10 +20,26 @@
 #include <loader/dc/tmctrl/tmctrl.h>
 #include "tm_msipl.h"
 #include "tm_mloader.h"
+#include "loader/new_msipl.h"
 
 #include "pspbtcnf_dc.h"
 #include "pspbtcnf_02g_dc.h"
 #include "pspbtcnf_03g_dc.h"
+#include "pspbtcnf_04g_dc.h"
+#include "pspbtcnf_05g_dc.h"
+#include "pspbtcnf_07g_dc.h"
+#include "pspbtcnf_09g_dc.h"
+#include "pspbtcnf_11g_dc.h"
+
+#include "payload/msipl_01G.h"
+#include "payload/msipl_02G.h"
+#include "payload/msipl_03G.h"
+#include "payload/msipl_04G.h"
+#include "payload/msipl_05G.h"
+#include "payload/msipl_07G.h"
+#include "payload/msipl_09G.h"
+#include "payload/msipl_11G.h"
+
 #include "dcman.h"
 #include "ipl_update.h"
 #include "iop.h"
@@ -412,8 +428,8 @@ void ExtractPrxs(int cbFile, SceUID fd)
 			if (is5Dnum(name)) {
 				int num = atoi(name);
 
-				// Files from 01g-02g
-				if (num >= 1 && num <= 2) {
+				// Files from 01g-11g
+				if (num >= 1 && num <= 11) {
 					flash_table_size[num] = pspDecryptTable(g_dataOut2, g_dataOut, cbExpanded, 4);
 					if (flash_table_size[num] <= 0) {
 						ErrorExit(1000, "Cannot decrypt %02dg table.\n", num);
@@ -708,6 +724,39 @@ static void WriteDCFiles()
 	
 	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_03g_dc.bin", pspbtcnf_03g_dc, size_pspbtcnf_03g_dc) != size_pspbtcnf_03g_dc)
 		ErrorExit(1000, "Error writing pspbtcnf_03g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_04g_dc.bin", pspbtcnf_04g_dc, size_pspbtcnf_04g_dc) != size_pspbtcnf_04g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_04g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_05g_dc.bin", pspbtcnf_05g_dc, size_pspbtcnf_05g_dc) != size_pspbtcnf_05g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_05g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_07g_dc.bin", pspbtcnf_07g_dc, size_pspbtcnf_07g_dc) != size_pspbtcnf_07g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_07g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_09g_dc.bin", pspbtcnf_09g_dc, size_pspbtcnf_09g_dc) != size_pspbtcnf_09g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_09g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_11g_dc.bin", pspbtcnf_11g_dc, size_pspbtcnf_11g_dc) != size_pspbtcnf_11g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_11g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/ipl_03g.bin", msipl_03G, size_msipl_03G) != size_msipl_03G)
+		ErrorExit(1000, "Error writing ipl_03g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/ipl_04g.bin", msipl_04G, size_msipl_04G) != size_msipl_04G)
+		ErrorExit(1000, "Error writing ipl_04g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/ipl_05g.bin", msipl_05G, size_msipl_05G) != size_msipl_05G)
+		ErrorExit(1000, "Error writing ipl_05g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/ipl_07g.bin", msipl_07G, size_msipl_07G) != size_msipl_07G)
+		ErrorExit(1000, "Error writing ipl_07g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/ipl_09g.bin", msipl_09G, size_msipl_09G) != size_msipl_09G)
+		ErrorExit(1000, "Error writing ipl_09g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/ipl_11g.bin", msipl_11G, size_msipl_11G) != size_msipl_11G)
+		ErrorExit(1000, "Error writing ipl_11g.bin");
 
 	if (WriteFile(ARK_DC_PATH "/kd/dcman.prx", dcman, size_dcman) != size_dcman)
 		ErrorExit(1000, "Error writing dcman.prx");
@@ -842,13 +891,13 @@ int install_iplloader()
 	if (g_cancel)
 		CancelInstall();
 
-	res = WriteSector(0x10, tm_msipl, 32);
+	res = WriteSector(0x10, new_msipl /*tm_msipl*/, 32);
 	if (res != 32)
 	{
 		ErrorExit(1000, "Error 0x%08X in WriteSector.\n", res);
 	}
 
-	/*char *default_config = "NOTHING = \"ms0:/TM/DCARK/tm_mloader.bin\";";
+	char *default_config = "NOTHING = \"ms0:/TM/DCARK/tm_mloader.bin\";";
 
 	SceIoStat stat;
 
@@ -857,7 +906,6 @@ int install_iplloader()
 		WriteFile("ms0:/TM/config.txt", default_config, strlen(default_config));
 		return 0;
 	}
-	*/
 	
 	return 1;
 }
@@ -1043,6 +1091,7 @@ int install_thread(SceSize args, void *argp)
 
 	strcpy(text, "");	
 
+	/*
 	if (key_install)
 	{
 		SceCtrlData pad;
@@ -1128,6 +1177,7 @@ int install_thread(SceSize args, void *argp)
 			sceKernelDelayThread(350000);
 		}
 	}
+	*/
 	
 	strcat(text, "\n");
 	strcat(text, "Installation completed.");

@@ -23,8 +23,8 @@ all:
 	$(Q)$(MAKE) clean -C $(NEWIPL)/ipl_stage2_payload
 	$(Q)$(MAKE) clean -C $(NEWIPL)/ipl_stage1_payload
 	$(Q)rm ipl_$(PSP_MODEL).dec
+	$(Q)bin2c ipl_$(PSP_MODEL).bin msipl_$(PSP_MODEL).h msipl_$(PSP_MODEL)
 
 clean:
-	$(Q)rm payload_*.h ipl_*.bin ipl_*.dec | true
-	$(Q)$(MAKE) clean -C payloadex
+	$(Q)rm -f *.h *.bin *.dec | true
 	$(Q)rm ipl_stage2_payload/ipl_stage2_payload.h | true
