@@ -826,6 +826,29 @@ void CopyFileList(int fw, const char **list, int file_count, int start_file_coun
 	}
 }
 
+#ifdef INFINITY
+size_t GetFileSize(const char *file) {
+	SceIoStat stat;
+	
+	int ret = sceIoGetstat(file, &stat);
+	if(ret < 0)
+		return ret;
+	
+	return stat.st_size;
+}
+
+void CopyFile(const char *file, const char* dstfile) {
+	size_t sz = GetFileSize(file);
+	
+	char* buf = malloc(sz);
+	if(buf != NULL) {
+		ReadFile(file, 0, buf, sz);
+		WriteFile(dstfile, buf, sz);
+		free(buf);
+	}
+}
+#endif
+
 int install_thread(SceSize args, void *argp)
 {
 	int fw = *(int *)argp;	
@@ -839,8 +862,10 @@ int install_thread(SceSize args, void *argp)
 
 	dcSetCancelMode(1);
 
+	#ifndef INFINITY
 	if (fw != FW_OFW && model > 2)
 		InstallError(fw, "Unsupported model.");
+	#endif
 
 	switch(LoadUpdaterModules(fw))
 	{
@@ -1011,13 +1036,27 @@ int install_thread(SceSize args, void *argp)
 		WriteFile("flach2:/act.dat", sm_buffer1, res);		
 	}
 
+	#ifdef INFINITY
+	if (fw == FW_ARK){
+		SetStatus("Installing Infinity...");
+		CopyFile("flach0:/kd/usersystemlib.prx", "flach0:/kd/usersystemlib.inf");
+		CopyFile("flash0:/config.inf", "flach1:/config.inf");
+		CopyFile("flash0:/kd/arkcompat.bin", "flach0:/kd/arkcompat.bin");
+		CopyFile("flash0:/kd/infinityboot.prx", "flach0:/kd/infinityboot.prx");
+		CopyFile("flash0:/kd/infinityctrl.prx", "flach0:/kd/infinityctrl.prx");
+		CopyFile("flash0:/kd/usersystemlib.inf", "flach0:/kd/usersystemlib.prx");
+	}
+	#endif
+
 	SetStatus("Flashing IPL...");
 
 	const char *ipl_name = 0;
 	u16 ipl_key = 0;
 	int offset = 0;
 	
+	#ifndef INFINITY
 	if (fw == FW_OFW)
+	#endif
 	{
 		switch (model)
 		{
@@ -1030,6 +1069,7 @@ int install_thread(SceSize args, void *argp)
 			default: InstallError(fw, "Unsupported model.");
 		}
 	}
+	#ifndef INFINITY
 	else
 	{
 		switch (model)
@@ -1053,6 +1093,7 @@ int install_thread(SceSize args, void *argp)
 			default: InstallError(fw, "Unsupported model.");
 		}
 	}
+	#endif
 
 	size = ReadFile(ipl_name, 0, big_buffer+offset, BIG_BUFFER_SIZE);
 	if (size <= 0)
@@ -1067,54 +1108,6 @@ int install_thread(SceSize args, void *argp)
 	
 	if (pspIplUpdateSetIpl(big_buffer, size, ipl_key) < 0)
 		InstallError(fw, "Error in pspIplUpdateSetIpl");
-
-	/*
-	
-	switch (model)
-		{
-			case 0:
-				ipl_name = "flash0:/nandipl_01g.bin";
-				memcpy(ipl_block_large, ipl_block_01g, 0x4000);
-				break;
-			case 1:
-				ipl_name = "flash0:/nandipl_02g.bin";
-				break;
-			case 2:
-				ipl_name = "flash0:/nandipl_03g.bin";
-				break;
-			case 3:
-				ipl_name = "flash0:/nandipl_04g.bin";
-				break;
-			case 8:
-				ipl_name = "flash0:/nandipl_09g.bin";
-				break;
-			case 10:
-				ipl_name = "flash0:/nandipl_11g.bin";
-				break;
-			default:
-				InstallError(fw, "Unsupported model.");
-		}
-
-	size = ReadFile(ipl_name, 0, ipl_block_large + 0x4000, size_ipl_block_large - 0x4000);
-	if (size <= 0)
-	{
-		InstallError(fw, "Cannot read ipl\n");
-	}
-	
-	dcPatchModuleString("IoPrivileged", "IoPrivileged", "IoPrivileged");
-
-	if (pspIplUpdateClearIpl() < 0)
-		InstallError(fw, "Error in pspIplUpdateClearIpl");
-	
-	if (fw != FW_OFW) {
-		if (pspIplUpdateSetIpl(ipl_block_large, size_ipl_block_large, 0) < 0)
-			InstallError(fw, "Error in pspIplUpdateSetIpl");
-	}
-	else {
-		if (pspIplUpdateSetIpl(ipl_block_large + 0x4000, size_ipl_block_large - 0x4000, 0) < 0)
-			InstallError(fw, "Error in pspIplUpdateSetIpl");
-	}
-	*/
 
 	sceKernelDelayThread(900000);
 
