@@ -7,6 +7,7 @@ OBJS = \
 	pspbtcnf_02g_dc.h \
 	pspbtcnf_03g_dc.h \
 	pspbtcnf_04g_dc.h \
+	pspbtcnf_05g_dc.h \
 	pspbtcnf_07g_dc.h \
 	pspbtcnf_09g_dc.h \
 	pspbtcnf_11g_dc.h \
@@ -63,6 +64,10 @@ pspbtcnf_03g_dc.h:
 pspbtcnf_04g_dc.h:
 	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_04g_dc.txt
 	$(Q)bin2c ../btcnf/pspbtcnf_04g_dc.bin pspbtcnf_04g_dc.h pspbtcnf_04g_dc
+
+pspbtcnf_05g_dc.h:
+	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_05g_dc.txt
+	$(Q)bin2c ../btcnf/pspbtcnf_05g_dc.bin pspbtcnf_05g_dc.h pspbtcnf_05g_dc
 
 pspbtcnf_07g_dc.h:
 	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_07g_dc.txt
