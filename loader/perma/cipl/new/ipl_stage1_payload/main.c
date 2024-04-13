@@ -291,7 +291,26 @@ int delay_us(int delay){
 int main()
 {
 
+	/*
+	// enable GPIO to control leds
+	sysreg_io_enable_gpio_port(GPIO_PORT_MS_LED);
+	sysreg_io_enable_gpio_port(GPIO_PORT_WLAN_LED);
+	gpio_set_port_mode(GPIO_PORT_MS_LED, GPIO_MODE_OUTPUT);
+	gpio_set_port_mode(GPIO_PORT_WLAN_LED, GPIO_MODE_OUTPUT);
+
+	while (1) {
+		gpio_set(GPIO_PORT_MS_LED);
+		gpio_clear(GPIO_PORT_WLAN_LED);
+		delay_us(250000);
+		gpio_clear(GPIO_PORT_MS_LED);
+		gpio_set(GPIO_PORT_WLAN_LED);
+		delay_us(250000);
+	}
+	*/
+
+#ifndef MSIPL
 	sceSysconInit();
+#endif
 	/*
 	syscon_init();
 	syscon_handshake_unlock();

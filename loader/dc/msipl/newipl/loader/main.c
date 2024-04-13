@@ -33,23 +33,15 @@ uint32_t GetTachyonVersion()
 int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 {
 
+	SYSREG_CLK2_ENABLE_REG |= 0x02;
+	REG32(0xbc10007c) |= 0xc8;
+
 	sysreg_io_enable_gpio();
 
 	// initialise syscon
 	syscon_init();
 	syscon_handshake_unlock();
-
-	// turn on control for MS and WLAN leds
-	/*
-	syscon_ctrl_led(0, 1);
-	syscon_ctrl_led(1, 1);
-
-	// enable GPIO to control leds
-	sysreg_io_enable_gpio_port(GPIO_PORT_MS_LED);
-	sysreg_io_enable_gpio_port(GPIO_PORT_WLAN_LED);
-	gpio_set_port_mode(GPIO_PORT_MS_LED, GPIO_MODE_OUTPUT);
-	gpio_set_port_mode(GPIO_PORT_WLAN_LED, GPIO_MODE_OUTPUT);
-	*/
+	mspro_init();
 
 	uint32_t baryon_version = syscon_get_baryon_version();
 	uint32_t tachyon_version = GetTachyonVersion();
@@ -98,6 +90,16 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 	MsFatClose();
 
 	ClearCaches();
+
+	syscon_ctrl_led(0, 1);
+	syscon_ctrl_led(1, 1);
+
+	/*
+	if (gen == 3){
+		gpio_set(GPIO_PORT_MS_LED);
+		gpio_set(GPIO_PORT_WLAN_LED);
+	}
+	*/
 	
 	return ((int (*)()) load_addr)();
 

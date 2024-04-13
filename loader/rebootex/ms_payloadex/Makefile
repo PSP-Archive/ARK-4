@@ -1,5 +1,5 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
-INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)/kxploit/ $(ARKROOT)/libs/iplsdk
+INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)/kxploit/ $(ARKROOT)/libs/daveeipl
 REBOOTEXDIR = $(ARKROOT)/loader/rebootex
 TARGET = ms_payloadex.bin
 
@@ -23,7 +23,7 @@ REBOOT_OBJS = \
 C_OBJS = \
 	$(ARKROOT)/libs/libsploit/scanner.o \
 
-LIBS = -L $(ARKROOT)/libs -liplsdk
+LIBS = -L $(ARKROOT)/libs -ldaveeipl
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)

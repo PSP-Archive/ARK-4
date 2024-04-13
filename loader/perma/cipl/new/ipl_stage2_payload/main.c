@@ -1,5 +1,6 @@
 #include <pspsdk.h>
 #include <syscon.h>
+#include "gpio.h"
 #ifdef DEBUG
 #include <uart.h>
 #include <printf.h>
@@ -38,6 +39,8 @@ int main()
 	
 #ifdef MSIPL
 	//sceSysconCtrlMsPower(1);
+	u32 ms_on = 1;
+    syscon_issue_command_write(0x4c, &ms_on, 3);
 #endif
 	
 	*(u32 *) 0x8FB0000 = -1;
@@ -46,4 +49,5 @@ int main()
 
 	Dcache();
 	Icache();
+
 }
