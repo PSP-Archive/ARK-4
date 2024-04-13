@@ -181,10 +181,14 @@ msipl:
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_03G.bin loader/dc/msipl/newipl/ipl_03g.bin
 	$(Q)$(MAKE) PSP_MODEL=04G -C loader/dc/msipl/newipl/payload/
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_04G.bin loader/dc/msipl/newipl/ipl_04g.bin
+	$(Q)$(MAKE) PSP_MODEL=05G -C loader/dc/msipl/newipl/payload/
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_05G.bin loader/dc/msipl/newipl/ipl_05g.bin
 	$(Q)$(MAKE) PSP_MODEL=07G -C loader/dc/msipl/newipl/payload/
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_07G.bin loader/dc/msipl/newipl/ipl_07g.bin
 	$(Q)$(MAKE) PSP_MODEL=09G -C loader/dc/msipl/newipl/payload/
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_09G.bin loader/dc/msipl/newipl/ipl_09g.bin
+	$(Q)$(MAKE) PSP_MODEL=11G -C loader/dc/msipl/newipl/payload/
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_11G.bin loader/dc/msipl/newipl/ipl_11g.bin
 
 kxploits:
 	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
