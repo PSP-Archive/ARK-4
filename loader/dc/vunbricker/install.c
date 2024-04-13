@@ -501,7 +501,7 @@ const char *f0_11g[] =
 {
 	"font/arib.pgf",
 	"kd/codec_11g.prx",
-	"kd/display_1g.prx",
+	"kd/display_11g.prx",
 	"kd/hpremote_11g.prx",
 	"kd/impose_11g.prx",
 	"kd/loadexec_11g.prx",
