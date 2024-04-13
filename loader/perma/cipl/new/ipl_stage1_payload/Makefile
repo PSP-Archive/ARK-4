@@ -2,12 +2,12 @@ TARGET = ipl_stage1_payload
 #EXTRA_TARGETS = ipl_stage1_payload.h
 OBJS = crt0.o main.o
 
-INCDIR = ../ipl_stage2_payload $(ARKROOT)/libs/iplsdk
+INCDIR = ../ipl_stage2_payload $(ARKROOT)/libs/daveeipl
 CFLAGS = -Os -G0 -Wall -std=c99 -fno-pic $(BFLAGS) -fdata-sections -ffunction-sections -Wl,--gc-sections
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti 
 ASFLAGS = $(CFLAGS)
 
-LIBS = -liplsdk
+LIBS = -ldaveeipl
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS = -nostartfiles  -T linkfile.l -fdata-sections -ffunction-sections -Wl,--gc-sections
 

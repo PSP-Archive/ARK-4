@@ -182,13 +182,6 @@ u8 seed_xor[] =
 
 int set_seed(u8 *xor_key, u8 *random_key, u8 *random_key_dec_resp_dec)
 {
-#ifdef DEBUG
-	_putchar('s');
-	_putchar('e');
-	_putchar('e');
-	_putchar('d');
-	_putchar('\n');
-#endif
 	for (int i = 0; i < sizeof(seed_xor); i++)
 		*(u8 *) (0xBFC00210 + i) ^= seed_xor[i];
 
@@ -228,25 +221,11 @@ u8 rom_hmac[] =
 
 void sha256hmacPatched(u8 *key, u32 keylen, u8 *data, u32 datalen, u8 *out)
 {
-#ifdef DEBUG
-	_putchar('h');
-	_putchar('m');
-	_putchar('a');
-	_putchar('c');
-	_putchar('\n');
-#endif
 	memcpy(out, rom_hmac, sizeof(rom_hmac));
 }
 
 void prestage2()
 {
-#ifdef DEBUG
-	_putchar('p');
-	_putchar('r');
-	_putchar('e');
-	_putchar('2');
-	_putchar('\n');
-#endif
 	// Copy stage 2 to scratchpad
 	memcpy((u8 *) 0x10000, &payload, size_payload);
 	
@@ -280,57 +259,18 @@ u32 GetTachyonVersion()
 	return 0x100000;
 }
 
-int delay_us(int delay){
-	int ret = 0;
-	for (int i=0; i<delay; i++){
-		ret++;
-	}
-	return ret;
-}
-
 int main()
 {
 
 #ifndef MSIPL
-	sceSysconInit();
-#endif
-	/*
+	//sceSysconInit();
 	syscon_init();
-	syscon_handshake_unlock();
-	sysreg_io_enable_gpio();
+#endif
 
-	// turn on control for MS and WLAN leds
-	syscon_ctrl_led(0, 1);
-	syscon_ctrl_led(1, 1);
-
-	// enable GPIO to control leds
-	sysreg_io_enable_gpio_port(GPIO_PORT_MS_LED);
-	sysreg_io_enable_gpio_port(GPIO_PORT_WLAN_LED);
-	gpio_set_port_mode(GPIO_PORT_MS_LED, GPIO_MODE_OUTPUT);
-	gpio_set_port_mode(GPIO_PORT_WLAN_LED, GPIO_MODE_OUTPUT);
-
-	// turn off both LEDs
-	gpio_set(GPIO_PORT_MS_LED);
-	gpio_set(GPIO_PORT_WLAN_LED);
-	delay_us(4*250000);
-	delay_us(4*250000);
-	gpio_set(GPIO_PORT_MS_LED);
-	gpio_set(GPIO_PORT_WLAN_LED);
-
-	while (1) {
-		gpio_set(GPIO_PORT_MS_LED);
-		gpio_clear(GPIO_PORT_WLAN_LED);
-		delay_us(250000);
-		gpio_clear(GPIO_PORT_MS_LED);
-		gpio_set(GPIO_PORT_WLAN_LED);
-		delay_us(250000);
-	}
-	*/
-
-	u32 baryon_version = 0; //syscon_get_baryon_version();
-	while (sceSysconGetBaryonVersion(&baryon_version) < 0);
+	//u32 baryon_version = syscon_get_baryon_version();
+	//while (sceSysconGetBaryonVersion(&baryon_version) < 0);
 	
-	while (sceSysconGetTimeStamp(0) < 0);
+	//while (sceSysconGetTimeStamp(0) < 0);
 	//u64 timestamp = 0;
 	//syscon_issue_command_read(0x11, &timestamp);
 
@@ -338,7 +278,8 @@ int main()
 
 #ifndef MSIPL
 #ifdef SET_SEED_ADDRESS
-	unlockSyscon();
+	//unlockSyscon();
+	syscon_handshake_unlock();
 #endif
 	/*
 	uint32_t keys = -1;
@@ -364,20 +305,6 @@ int main()
 		return ((int (*)())0x80010000)();
 	}
 	*/
-#endif
-
-#ifdef DEBUG
-	sceSysconCtrlHRPower(1);
-	
-	uart_init();
-	
-	_putchar('i');
-	_putchar('p');
-	_putchar('l');
-	_putchar('l');
-	_putchar('d');
-	_putchar('r');
-	_putchar('\n');
 #endif
 
 	
