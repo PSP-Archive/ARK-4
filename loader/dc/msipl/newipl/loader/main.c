@@ -75,7 +75,7 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 
 	MsFatOpen(path);
 
-	MsFatRead(load_addr, 0xC000+0xe0000);
+	MsFatRead(load_addr, 0xec000);
 
 	MsFatClose();
 

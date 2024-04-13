@@ -261,10 +261,9 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int a
 	__asm("sync"::);
 	
 	syscon_init();
+    
     u32 ms_on = 1;
     syscon_issue_command_write(0x4c, &ms_on, 3);
-
-
 #endif
 
 #ifdef PAYLOADEX

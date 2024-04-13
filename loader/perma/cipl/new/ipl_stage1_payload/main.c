@@ -263,30 +263,21 @@ int main()
 {
 
 #ifndef MSIPL
-	//sceSysconInit();
 	syscon_init();
+#ifdef SET_SEED_ADDRESS
+	syscon_handshake_unlock();
 #endif
-
-	//u32 baryon_version = syscon_get_baryon_version();
-	//while (sceSysconGetBaryonVersion(&baryon_version) < 0);
-	
-	//while (sceSysconGetTimeStamp(0) < 0);
-	//u64 timestamp = 0;
-	//syscon_issue_command_read(0x11, &timestamp);
+#endif
 
 	u32 tachyon_version = GetTachyonVersion();
 
 #ifndef MSIPL
-#ifdef SET_SEED_ADDRESS
-	//unlockSyscon();
-	syscon_handshake_unlock();
-#endif
-	/*
 	uint32_t keys = -1;
-	pspSysconGetCtrl1(&keys);
+	syscon_issue_command_read(0x07, &keys);
 	if ((keys & SYSCON_CTRL_VOL_UP) == 0)
 	{
-		sceSysconCtrlMsPower(1);
+		u32 ms_on = 1;
+    	syscon_issue_command_write(0x4c, &ms_on, 3);
 	
 		_sw(0x00000000, 0x80010068);
 
@@ -304,9 +295,7 @@ int main()
 
 		return ((int (*)())0x80010000)();
 	}
-	*/
 #endif
-
 	
 	if (tachyon_version >= 0x600000)
 		_sw(0x20070910, 0xbfc00ffc);
