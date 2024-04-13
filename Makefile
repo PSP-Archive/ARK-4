@@ -125,15 +125,18 @@ copy-bin:
 	$(Q)cp extras/apps/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
 	$(Q)cp loader/dc/msipl/newipl/ipl_*.bin dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/btcnf/pspbtcnf_*_dc.bin dist/PC/MagicMemoryCreator/TM/DCARK/kd/
-	$(Q)cp contrib/PSP/IPL/nandipl_01G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_01g.bin 
-	$(Q)cp contrib/PSP/IPL/nandipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_02g.bin 
-	$(Q)cp contrib/PSP/IPL/nandipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_03g.bin 
 	$(Q)cp contrib/PC/timemachine/tm_mloader.bin dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/msipl/newipl/loader/ipl.bin dist/PC/MagicMemoryCreator/msipl.bin
 	$(Q)cp loader/dc/tmctrl/tmctrl.prx dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/dcman/dcman.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp loader/dc/vunbricker/resurrection.prx dist/PC/MagicMemoryCreator/TM/DCARK/vsh/module/
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
+	$(Q)cp contrib/PSP/IPL/nandipl_01G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_01g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_02g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_03g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_04G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_04g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_09G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_09g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_11G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_11g.bin
 
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
