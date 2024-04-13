@@ -130,6 +130,7 @@ copy-bin:
 	$(Q)cp contrib/PSP/IPL/nandipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_02g.bin 
 	$(Q)cp contrib/PSP/IPL/nandipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_03g.bin 
 	$(Q)cp contrib/PC/timemachine/tm_mloader.bin dist/PC/MagicMemoryCreator/TM/DCARK/
+	$(Q)mv ipl.bin dist/
 
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
@@ -180,6 +181,10 @@ msipl:
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_03G.bin loader/dc/msipl/newipl/ipl_03g.bin
 	$(Q)$(MAKE) PSP_MODEL=04G -C loader/dc/msipl/newipl/payload/
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_04G.bin loader/dc/msipl/newipl/ipl_04g.bin
+	$(Q)$(MAKE) PSP_MODEL=07G -C loader/dc/msipl/newipl/payload/
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_07G.bin loader/dc/msipl/newipl/ipl_07g.bin
+	$(Q)$(MAKE) PSP_MODEL=09G -C loader/dc/msipl/newipl/payload/
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_09G.bin loader/dc/msipl/newipl/ipl_09g.bin
 
 kxploits:
 	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
