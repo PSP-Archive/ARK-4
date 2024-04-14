@@ -40,7 +40,7 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 
 	// initialise syscon
 	syscon_init();
-	syscon_handshake_unlock();
+	//syscon_handshake_unlock();
 	mspro_init();
 
 	uint32_t baryon_version = syscon_get_baryon_version();
@@ -53,22 +53,26 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 	else
 		_sw(0x20040420, 0xbfc00ffc);
 
-	char* path = "/TM/DCARK/ipl_11g.bin";
+	char* path = "/TM/DCARK/msipl_11g.bin";
 	void* load_addr = 0x40e0000;
 	if (tachyon_version <= 0x400000) {
-		path = "/TM/DCARK/ipl_01g.bin";
+		//load_addr = 0x4000000;
+		//path = "/TM/DCARK/tm_mloader.bin";
+		path = "/TM/DCARK/msipl_01g.bin";
 	} else if (tachyon_version == 0x500000 || (tachyon_version == 0x600000 && baryon_version == 0x243000)) {
-		path = "/TM/DCARK/ipl_02g.bin";
+		//load_addr = 0x4000000;
+		//path = "/TM/DCARK/tm_mloader.bin";
+		path = "/TM/DCARK/msipl_02g.bin";
 	} else if (tachyon_version <= 0x600000) {
-		path = "/TM/DCARK/ipl_03g.bin";
+		path = "/TM/DCARK/msipl_03g.bin";
 	} else if (tachyon_version == 0x810000 && baryon_version == 0x2C4000) {
-		path = "/TM/DCARK/ipl_04g.bin";
+		path = "/TM/DCARK/msipl_04g.bin";
 	} else if (tachyon_version <= 0x800000) {
-		path = "/TM/DCARK/ipl_05g.bin";
+		path = "/TM/DCARK/msipl_05g.bin";
 	} else if (tachyon_version == 0x810000 && baryon_version == 0x2E4000) {
-		path = "/TM/DCARK/ipl_07g.bin";
+		path = "/TM/DCARK/msipl_07g.bin";
 	} else if (tachyon_version == 0x820000 && baryon_version == 0x2E4000) {
-		path = "/TM/DCARK/ipl_09g.bin";
+		path = "/TM/DCARK/msipl_09g.bin";
 	}
 
 	MsFatMount();

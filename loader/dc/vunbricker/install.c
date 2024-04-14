@@ -1060,12 +1060,12 @@ int install_thread(SceSize args, void *argp)
 	{
 		switch (model)
 		{
-			case 0: ipl_name = "flash0:/nandipl_01g.bin"; break;
-			case 1: ipl_name = "flash0:/nandipl_02g.bin"; break;
-			case 2: ipl_name = "flash0:/nandipl_03g.bin"; ipl_key = 1; break;
-			case 3: ipl_name = "flash0:/nandipl_04g.bin"; ipl_key = 1; break;
-			case 8: ipl_name = "flash0:/nandipl_09g.bin"; ipl_key = 1; break;
-			case 10: ipl_name = "flash0:/nandipl_11g.bin"; ipl_key = 1; break;
+			case 0: ipl_name = "flash0:/ipl_01g.bin"; break;
+			case 1: ipl_name = "flash0:/ipl_02g.bin"; break;
+			case 2: ipl_name = "flash0:/ipl_03g.bin"; ipl_key = 1; break;
+			case 3: ipl_name = "flash0:/ipl_04g.bin"; ipl_key = 1; break;
+			case 8: ipl_name = "flash0:/ipl_09g.bin"; ipl_key = 1; break;
+			case 10: ipl_name = "flash0:/ipl_11g.bin"; ipl_key = 1; break;
 			default: InstallError(fw, "Unsupported model.");
 		}
 	}
@@ -1076,20 +1076,20 @@ int install_thread(SceSize args, void *argp)
 		{
 			case 0:
 				offset = 0x4000;
-				ipl_name = "flash0:/nandipl_01g.bin";
+				ipl_name = "flash0:/ipl_01g.bin";
 				memcpy(big_buffer, ipl_block_01g, 0x4000);
 				break;
 			case 1: 
 				if (mb == TA_088v3){
-					"flash0:/nandcipl_02g.bin";
+					"flash0:/cipl_02g.bin";
 				}
 				else {
 					offset = 0x4000;
-					ipl_name = "flash0:/nandipl_02g.bin";
+					ipl_name = "flash0:/ipl_02g.bin";
 					memcpy(big_buffer, ipl_block_large, 0x4000);
 				}
 				break;
-			case 2: ipl_name = "flash0:/nandcipl_03g.bin"; break;
+			case 2: ipl_name = "flash0:/cipl_03g.bin"; break;
 			default: InstallError(fw, "Unsupported model.");
 		}
 	}

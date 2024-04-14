@@ -123,7 +123,7 @@ copy-bin:
 	$(Q)cd loader/vpk/bin/ && zip -r ../../../dist/PSVita/FasterARK.vpk * && cd $(ARKROOT)
 	$(Q)$(MAKE) -C extras/apps/updater/
 	$(Q)cp extras/apps/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
-	$(Q)cp loader/dc/msipl/newipl/ipl_*.bin dist/PC/MagicMemoryCreator/TM/DCARK/
+	$(Q)cp loader/dc/msipl/newipl/msipl_*.bin dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/btcnf/pspbtcnf_*_dc.bin dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp contrib/PC/timemachine/tm_mloader.bin dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/msipl/newipl/loader/ipl.bin dist/PC/MagicMemoryCreator/msipl.bin
@@ -131,12 +131,18 @@ copy-bin:
 	$(Q)cp loader/dc/dcman/dcman.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp loader/dc/vunbricker/resurrection.prx dist/PC/MagicMemoryCreator/TM/DCARK/vsh/module/
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
-	$(Q)cp contrib/PSP/IPL/nandipl_01G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_01g.bin
-	$(Q)cp contrib/PSP/IPL/nandipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_02g.bin
-	$(Q)cp contrib/PSP/IPL/nandipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_03g.bin
-	$(Q)cp contrib/PSP/IPL/nandipl_04G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_04g.bin
-	$(Q)cp contrib/PSP/IPL/nandipl_09G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_09g.bin
-	$(Q)cp contrib/PSP/IPL/nandipl_11G.bin dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_11g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_01G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_01g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_02g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_03g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_04G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_04g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_09G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_09g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_11G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_11g.bin
+	$(Q)cp loader/perma/cipl/new/cipl_01G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_01g.bin
+	$(Q)cp loader/perma/cipl/new/cipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_02g.bin
+	$(Q)cp loader/perma/cipl/new/cipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_03g.bin
+	$(Q)cp loader/perma/cipl/new/cipl_04G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_04g.bin
+	$(Q)cp loader/perma/cipl/new/cipl_09G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_09g.bin
+	$(Q)cp loader/perma/cipl/new/cipl_11G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_11g.bin
 
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
@@ -181,21 +187,21 @@ msipl:
 	$(Q)$(PYTHON) contrib/PC/iplsdk/make_ipl.py loader/dc/msipl/newipl/loader/msipl.bin loader/dc/msipl/newipl/loader/ipl.bin reset_block 0x40c0000
 	$(Q)bin2c loader/dc/msipl/newipl/loader/ipl.bin loader/dc/msipl/newipl/loader/new_msipl.h new_msipl
 	$(Q)$(MAKE) PSP_MODEL=01G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_01G.bin loader/dc/msipl/newipl/ipl_01g.bin
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_01G.bin loader/dc/msipl/newipl/msipl_01g.bin
 	$(Q)$(MAKE) PSP_MODEL=02G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_02G.bin loader/dc/msipl/newipl/ipl_02g.bin
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_02G.bin loader/dc/msipl/newipl/msipl_02g.bin
 	$(Q)$(MAKE) PSP_MODEL=03G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_03G.bin loader/dc/msipl/newipl/ipl_03g.bin
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_03G.bin loader/dc/msipl/newipl/msipl_03g.bin
 	$(Q)$(MAKE) PSP_MODEL=04G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_04G.bin loader/dc/msipl/newipl/ipl_04g.bin
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_04G.bin loader/dc/msipl/newipl/msipl_04g.bin
 	$(Q)$(MAKE) PSP_MODEL=05G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_05G.bin loader/dc/msipl/newipl/ipl_05g.bin
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_05G.bin loader/dc/msipl/newipl/msipl_05g.bin
 	$(Q)$(MAKE) PSP_MODEL=07G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_07G.bin loader/dc/msipl/newipl/ipl_07g.bin
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_07G.bin loader/dc/msipl/newipl/msipl_07g.bin
 	$(Q)$(MAKE) PSP_MODEL=09G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_09G.bin loader/dc/msipl/newipl/ipl_09g.bin
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_09G.bin loader/dc/msipl/newipl/msipl_09g.bin
 	$(Q)$(MAKE) PSP_MODEL=11G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_11G.bin loader/dc/msipl/newipl/ipl_11g.bin
+	$(Q)mv loader/dc/msipl/newipl/payload/ipl_11G.bin loader/dc/msipl/newipl/msipl_11g.bin
 	$(Q)$(MAKE) -C loader/dc/installer
 
 kxploits:

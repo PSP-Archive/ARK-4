@@ -740,23 +740,29 @@ static void WriteDCFiles()
 	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_11g_dc.bin", pspbtcnf_11g_dc, size_pspbtcnf_11g_dc) != size_pspbtcnf_11g_dc)
 		ErrorExit(1000, "Error writing pspbtcnf_11g_dc.bin");
 	
-	if (WriteFile(ARK_DC_PATH "/ipl_03g.bin", msipl_03G, size_msipl_03G) != size_msipl_03G)
-		ErrorExit(1000, "Error writing ipl_03g.bin");
+	if (WriteFile(ARK_DC_PATH "/msipl_01g.bin", msipl_01G, size_msipl_01G) != size_msipl_01G)
+		ErrorExit(1000, "Error writing msipl_01g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/msipl_02g.bin", msipl_02G, size_msipl_02G) != size_msipl_02G)
+		ErrorExit(1000, "Error writing msipl_02g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/msipl_03g.bin", msipl_03G, size_msipl_03G) != size_msipl_03G)
+		ErrorExit(1000, "Error writing msipl_03g.bin");
 	
-	if (WriteFile(ARK_DC_PATH "/ipl_04g.bin", msipl_04G, size_msipl_04G) != size_msipl_04G)
-		ErrorExit(1000, "Error writing ipl_04g.bin");
+	if (WriteFile(ARK_DC_PATH "/msipl_04g.bin", msipl_04G, size_msipl_04G) != size_msipl_04G)
+		ErrorExit(1000, "Error writing msipl_04g.bin");
 	
-	if (WriteFile(ARK_DC_PATH "/ipl_05g.bin", msipl_05G, size_msipl_05G) != size_msipl_05G)
-		ErrorExit(1000, "Error writing ipl_05g.bin");
+	if (WriteFile(ARK_DC_PATH "/msipl_05g.bin", msipl_05G, size_msipl_05G) != size_msipl_05G)
+		ErrorExit(1000, "Error writing msipl_05g.bin");
 	
-	if (WriteFile(ARK_DC_PATH "/ipl_07g.bin", msipl_07G, size_msipl_07G) != size_msipl_07G)
-		ErrorExit(1000, "Error writing ipl_07g.bin");
+	if (WriteFile(ARK_DC_PATH "/msipl_07g.bin", msipl_07G, size_msipl_07G) != size_msipl_07G)
+		ErrorExit(1000, "Error writing msipl_07g.bin");
 	
-	if (WriteFile(ARK_DC_PATH "/ipl_09g.bin", msipl_09G, size_msipl_09G) != size_msipl_09G)
-		ErrorExit(1000, "Error writing ipl_09g.bin");
+	if (WriteFile(ARK_DC_PATH "/msipl_09g.bin", msipl_09G, size_msipl_09G) != size_msipl_09G)
+		ErrorExit(1000, "Error writing msipl_09g.bin");
 	
-	if (WriteFile(ARK_DC_PATH "/ipl_11g.bin", msipl_11G, size_msipl_11G) != size_msipl_11G)
-		ErrorExit(1000, "Error writing ipl_11g.bin");
+	if (WriteFile(ARK_DC_PATH "/msipl_11g.bin", msipl_11G, size_msipl_11G) != size_msipl_11G)
+		ErrorExit(1000, "Error writing msipl_11g.bin");
 
 	if (WriteFile(ARK_DC_PATH "/kd/dcman.prx", dcman, size_dcman) != size_dcman)
 		ErrorExit(1000, "Error writing dcman.prx");
