@@ -1053,6 +1053,8 @@ int install_thread(SceSize args, void *argp)
 	const char *ipl_name = 0;
 	u16 ipl_key = 0;
 	int offset = 0;
+
+	memset(big_buffer, 0, BIG_BUFFER_SIZE);
 	
 	#ifndef INFINITY
 	if (fw == FW_OFW)
@@ -1095,7 +1097,7 @@ int install_thread(SceSize args, void *argp)
 	}
 	#endif
 
-	size = ReadFile(ipl_name, 0, big_buffer+offset, BIG_BUFFER_SIZE-offset);
+	size = offset+ReadFile(ipl_name, 0, big_buffer+offset, BIG_BUFFER_SIZE-offset);
 	if (size <= 0)
 	{
 		InstallError(fw, "Cannot read nandipl\n");
