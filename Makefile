@@ -143,6 +143,7 @@ copy-bin:
 	$(Q)cp loader/perma/cipl/new/cipl_04G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_04g.bin
 	$(Q)cp loader/perma/cipl/new/cipl_09G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_09g.bin
 	$(Q)cp loader/perma/cipl/new/cipl_11G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_11g.bin
+	$(Q)cp contrib/PC/timemachine/tm_msipl_legacy.bin dist/PC/MagicMemoryCreator/
 
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
