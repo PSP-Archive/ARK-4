@@ -460,6 +460,43 @@ const char *f0_04g[] =
 	"vsh/resource/skype_main_plugin.rco"
 };
 
+const char *f0_07g[] =
+{
+	"font/arib.pgf",
+	"kd/codec_07g.prx",
+	"kd/display_07g.prx",
+	"kd/hpremote_07g.prx",
+	"kd/impose_07g.prx",
+	"kd/loadexec_07g.prx",
+	"kd/memlmd_07g.prx",
+	"kd/mesg_led_07g.prx",
+	"kd/pops_07g.prx",
+	"kd/power_07g.prx",
+	"kd/pspbtcnf_07g.bin",
+	"kd/resource/me_t2img.img",
+	"kd/umdcache.prx",
+	"kd/usb1seg.prx",
+	"kd/usbdmb.prx",
+	"kd/mlnbridge_msapp.prx",
+	"kd/wlanfirm_07g.prx",
+	"vsh/etc/index_07g.dat",
+	"vsh/module/oneseg_core.prx",
+	"vsh/module/oneseg_hal_toolbox.prx",
+	"vsh/module/oneseg_launcher_plugin.prx",
+	"vsh/module/oneseg_plugin.prx",
+	"vsh/module/oneseg_sal.prx",
+	"vsh/module/oneseg_sdk.prx",
+	"vsh/module/oneseg_sdkcore.prx",
+	"vsh/module/skype_main_plugin.prx",
+	"vsh/module/skype_plugin.prx",
+	"vsh/module/skype_skyhost.prx",
+	"vsh/module/skype_ve.prx",
+	"vsh/resource/13-27.bmp",
+	"vsh/resource/custom_theme.dat",
+	"vsh/resource/oneseg_plugin.rco",
+	"vsh/resource/skype_main_plugin.rco"
+};
+
 const char *f0_09g[] =
 {
 	"font/arib.pgf",
@@ -862,11 +899,6 @@ int install_thread(SceSize args, void *argp)
 
 	dcSetCancelMode(1);
 
-	#ifndef INFINITY
-	//if (fw != FW_OFW && model > 2)
-	//	InstallError(fw, "Unsupported model.");
-	#endif
-
 	switch(LoadUpdaterModules(fw))
 	{
 		case 0: break;
@@ -972,6 +1004,9 @@ int install_thread(SceSize args, void *argp)
 		case 3:
 			file_count += sizeof(f0_04g) / sizeof(f0_04g[0]);
 			break;
+		case 6:
+			file_count += sizeof(f0_07g) / sizeof(f0_07g[0]);
+			break;
 		case 8:
 			file_count += sizeof(f0_09g) / sizeof(f0_09g[0]);
 			break;
@@ -1003,6 +1038,10 @@ int install_thread(SceSize args, void *argp)
 		case 3:
 			CopyFileList(fw, f0_04g, sizeof(f0_04g) / sizeof(f0_04g[0]), ctr, file_count);
 			ctr += sizeof(f0_04g) / sizeof(f0_04g[0]);
+			break;
+		case 6:
+			CopyFileList(fw, f0_07g, sizeof(f0_07g) / sizeof(f0_07g[0]), ctr, file_count);
+			ctr += sizeof(f0_07g) / sizeof(f0_07g[0]);
 			break;
 		case 8:
 			CopyFileList(fw, f0_09g, sizeof(f0_09g) / sizeof(f0_09g[0]), ctr, file_count);
@@ -1036,18 +1075,6 @@ int install_thread(SceSize args, void *argp)
 		WriteFile("flach2:/act.dat", sm_buffer1, res);		
 	}
 
-	#ifdef INFINITY
-	if (fw == FW_ARK){
-		SetStatus("Installing Infinity...");
-		CopyFile("flach0:/kd/usersystemlib.prx", "flach0:/kd/usersystemlib.inf");
-		CopyFile("flash0:/config.inf", "flach1:/config.inf");
-		CopyFile("flash0:/kd/arkcompat.bin", "flach0:/kd/arkcompat.bin");
-		CopyFile("flash0:/kd/infinityboot.prx", "flach0:/kd/infinityboot.prx");
-		CopyFile("flash0:/kd/infinityctrl.prx", "flach0:/kd/infinityctrl.prx");
-		CopyFile("flash0:/kd/usersystemlib.inf", "flach0:/kd/usersystemlib.prx");
-	}
-	#endif
-
 	SetStatus("Flashing IPL...");
 
 	const char *ipl_name = 0;
@@ -1056,9 +1083,7 @@ int install_thread(SceSize args, void *argp)
 
 	memset(big_buffer, 0, BIG_BUFFER_SIZE);
 	
-	#ifndef INFINITY
 	if (fw == FW_OFW)
-	#endif
 	{
 		switch (model)
 		{
@@ -1073,7 +1098,6 @@ int install_thread(SceSize args, void *argp)
 			default: InstallError(fw, "Unsupported model.");
 		}
 	}
-	#ifndef INFINITY
 	else
 	{
 		switch (model)
@@ -1102,7 +1126,6 @@ int install_thread(SceSize args, void *argp)
 			default: InstallError(fw, "Unsupported model.");
 		}
 	}
-	#endif
 
 	size = offset+ReadFile(ipl_name, 0, big_buffer+offset, BIG_BUFFER_SIZE-offset);
 	if (size-offset <= 0)
