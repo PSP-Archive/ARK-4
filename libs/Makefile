@@ -7,7 +7,6 @@ SUBDIRS = \
 	graphics \
 	colordebugger \
 	iplsdk \
-	daveeipl \
 	prebuilt \
 	libpspmath \
 	libunziprar \

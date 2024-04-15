@@ -1,5 +1,4 @@
-#ifndef GPIO_H
-#define GPIO_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,5 +41,3 @@ void gpio_set_unk18(unsigned int port);
 #ifdef __cplusplus
 }
 #endif //__cplusplus
-
-#endif

@@ -287,7 +287,6 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/apps/updater/
 	$(Q)$(MAKE) $@ -C extras/apps/installer/
 	$(Q)$(MAKE) $@ -C extras/apps/uninstaller
-	$(Q)$(MAKE) $@ -C libs/daveeipl
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/ipl_stage1_payload
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/ipl_stage2_payload
 	$(Q)rm -f extras/apps/updater/ARK_01234.PKG | true

@@ -20,7 +20,6 @@ all:
 	$(Q)dd if=ipl_stage1_payload/ipl_stage1_payload.bin of=ipl_$(PSP_MODEL).bin
 	$(Q)dd if=ipl_$(PSP_MODEL).dec of=ipl_$(PSP_MODEL).bin bs=1 seek=49152
 	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/iplsdk/make_ipl.py ipl_$(PSP_MODEL).bin cipl_$(PSP_MODEL).bin reset_block 0x40e0000
-#	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/psptools/pack_ipl.py ipl_stage1_payload/ipl_stage1_payload.bin@0x40e0000 ipl_$(PSP_MODEL).dec@0x40ec000 cipl_$(PSP_MODEL).bin 0x40e0000
 	$(Q)bin2c cipl_$(PSP_MODEL).bin cipl_$(PSP_MODEL).h cipl_$(PSP_MODEL)
 	$(Q)$(MAKE) clean -C ipl_stage2_payload
 	$(Q)$(MAKE) clean -C ipl_stage1_payload

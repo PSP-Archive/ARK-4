@@ -1,4 +1,6 @@
 #include "gpio.h"
+#include "sysreg.h"
+#include "cpu.h"
 
 #define REG32(addr) ((volatile unsigned int *)(addr))
 
@@ -22,13 +24,13 @@ void gpio_set_port_mode(int port, enum PortMode mode)
 void gpio_set(int port)
 {
     *REG32(0xbe240008) = (1 << port);
-    __asm("sync");
+    cpu_sync();
 }
 
 void gpio_clear(int port)
 {
     *REG32(0xbe24000C) = (1 << port);
-    __asm("sync");
+    cpu_sync();
 }
 
 unsigned int gpio_read(void)
