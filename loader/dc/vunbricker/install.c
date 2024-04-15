@@ -1095,7 +1095,7 @@ int install_thread(SceSize args, void *argp)
 	}
 	#endif
 
-	size = ReadFile(ipl_name, 0, big_buffer+offset, BIG_BUFFER_SIZE);
+	size = ReadFile(ipl_name, 0, big_buffer+offset, BIG_BUFFER_SIZE-offset);
 	if (size <= 0)
 	{
 		InstallError(fw, "Cannot read nandipl\n");

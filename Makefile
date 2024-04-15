@@ -135,12 +135,18 @@ copy-bin:
 	$(Q)cp contrib/PSP/IPL/nandipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_02g.bin
 	$(Q)cp contrib/PSP/IPL/nandipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_03g.bin
 	$(Q)cp contrib/PSP/IPL/nandipl_04G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_04g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_05G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_05g.bin
+	$(Q)cp contrib/PSP/IPL/nandipl_07G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_07g.bin
 	$(Q)cp contrib/PSP/IPL/nandipl_09G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_09g.bin
 	$(Q)cp contrib/PSP/IPL/nandipl_11G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_11g.bin
+	$(Q)cp loader/perma/cipl/new/ipl_01G.dec dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_01g.bin
+	$(Q)cp loader/perma/cipl/new/ipl_02G.dec dist/PC/MagicMemoryCreator/TM/DCARK/nandipl_02g.bin
 	$(Q)cp loader/perma/cipl/new/cipl_01G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_01g.bin
 	$(Q)cp loader/perma/cipl/new/cipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_02g.bin
 	$(Q)cp loader/perma/cipl/new/cipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_03g.bin
 	$(Q)cp loader/perma/cipl/new/cipl_04G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_04g.bin
+	$(Q)cp loader/perma/cipl/new/cipl_05G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_05g.bin
+	$(Q)cp loader/perma/cipl/new/cipl_07G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_07g.bin
 	$(Q)cp loader/perma/cipl/new/cipl_09G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_09g.bin
 	$(Q)cp loader/perma/cipl/new/cipl_11G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_11g.bin
 	$(Q)cp contrib/PC/timemachine/tm_msipl_legacy.bin dist/PC/MagicMemoryCreator/

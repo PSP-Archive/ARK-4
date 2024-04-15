@@ -78,8 +78,8 @@ static u8 *g_dataOut2;
 static int PSAR_BUFFER_SIZE;
 static const int SMALL_BUFFER_SIZE = 2500000;
 
-static char flash_table[4][0x4000];
-static int flash_table_size[4];
+static char flash_table[14][0x4000];
+static int flash_table_size[14];
 
 // Gui vars
 int begin_install_text;
@@ -428,8 +428,8 @@ void ExtractPrxs(int cbFile, SceUID fd)
 			if (is5Dnum(name)) {
 				int num = atoi(name);
 
-				// Files from 01g-02g
-				if (num >= 1 && num <= 2) {
+				// Files from 01g-11g
+				if (num >= 1 && num <= 11) {
 					flash_table_size[num] = pspDecryptTable(g_dataOut2, g_dataOut, cbExpanded, 4);
 					if (flash_table_size[num] <= 0) {
 						ErrorExit(1000, "Cannot decrypt %02dg table.\n", num);
@@ -463,69 +463,123 @@ void ExtractPrxs(int cbFile, SceUID fd)
 							}
 							else if (strstr(name, "ipl") == name)
 							{
+
+								int is1g = (strstr(name, "01g") != NULL);
 								int is2g = (strstr(name, "02g") != NULL);
 
-								if (is2g)
+								if (is1g || is2g)
+								{
+									if (is2g)
+									{
+										cbExpanded = pspDecryptPRX(g_dataOut2, g_dataOut, cbExpanded);
+										if (cbExpanded <= 0)
+										{
+											ErrorExit(1000, "Cannot pre-decrypt 2000 IPL\n");
+										}
+										else
+										{
+											memcpy(g_dataOut2, g_dataOut, cbExpanded);
+										}	
+									}
+
+									if (is2g)
+									{
+										if (WriteFile(ARK_DC_PATH "/ipl_02g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+										{
+											ErrorExit(1000, "Error writing 02g ipl.\n");
+										}
+									}
+									else
+									{
+										if (WriteFile(ARK_DC_PATH "/ipl_01g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+										{
+											ErrorExit(1000, "Error writing 01g ipl.\n");
+										}
+									}
+
+									int cb1 = pspDecryptIPL1(g_dataOut2, g_dataOut, cbExpanded);
+									if (cb1 < 0)
+									{
+										ErrorExit(1000, "Error in IPL decryption.\n");
+									}
+
+									int cb2 = pspLinearizeIPL2(g_dataOut, g_dataOut2, cb1);
+									if (cb2 < 0)
+									{
+										ErrorExit(1000, "Error in IPL Linearize.\n");
+									}
+
+									sceKernelDcacheWritebackAll();
+
+									if (is2g)
+									{
+										if (WriteFile(ARK_DC_PATH "/nandipl_02g.bin", g_dataOut2, cb2) != (cb2))
+										{
+											ErrorExit(1000, "Error writing 02g ipl.\n");
+										}
+									}
+									else
+									{
+										if (WriteFile(ARK_DC_PATH "/nandipl_01g.bin", g_dataOut2, cb2) != (cb2))
+										{
+											ErrorExit(1000, "Error writing 01g ipl.\n");
+										}
+									}
+								}
+								else
 								{
 									cbExpanded = pspDecryptPRX(g_dataOut2, g_dataOut, cbExpanded);
 									if (cbExpanded <= 0)
 									{
-										ErrorExit(1000, "Cannot pre-decrypt 2000 IPL\n");
+										ErrorExit(1000, "Cannot pre-decrypt 3000+ IPL\n");
 									}
 									else
 									{
 										memcpy(g_dataOut2, g_dataOut, cbExpanded);
 									}	
-								}
-								else {
-									int is1g = (strstr(name, "01g") != NULL);
-
-									if (!is1g) {
-										ErrorExit(1000, "Unexpected ipl! %s\n", name);
-									}
-								}
-
-								if (is2g)
-								{
-									if (WriteFile(ARK_DC_PATH "/ipl_02g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+									int is3g = (strstr(name, "03g") != NULL);
+									if (is3g)
 									{
-										ErrorExit(1000, "Error writing 02g ipl.\n");
+										if (WriteFile(ARK_DC_PATH "/ipl_03g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+										{
+											ErrorExit(1000, "Error writing 03g ipl.\n");
+										}
 									}
-								}
-								else
-								{
-									if (WriteFile(ARK_DC_PATH "/ipl_01g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+
+									int is4g = (strstr(name, "04g") != NULL);
+									if (is4g)
 									{
-										ErrorExit(1000, "Error writing 01g ipl.\n");
+										if (WriteFile(ARK_DC_PATH "/ipl_04g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+										{
+											ErrorExit(1000, "Error writing 04g ipl.\n");
+										}
 									}
-								}
 
-								int cb1 = pspDecryptIPL1(g_dataOut2, g_dataOut, cbExpanded);
-								if (cb1 < 0)
-								{
-									ErrorExit(1000, "Error in IPL decryption.\n");
-								}
-
-								int cb2 = pspLinearizeIPL2(g_dataOut, g_dataOut2, cb1);
-								if (cb2 < 0)
-								{
-									ErrorExit(1000, "Error in IPL Linearize.\n");
-								}
-
-								sceKernelDcacheWritebackAll();
-
-								if (is2g)
-								{
-									if (WriteFile(ARK_DC_PATH "/nandipl_02g.bin", g_dataOut2, cb2) != (cb2))
+									int is5g = (strstr(name, "05g") != NULL);
+									if (is5g)
 									{
-										ErrorExit(1000, "Error writing 02g ipl.\n");
+										if (WriteFile(ARK_DC_PATH "/ipl_05g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+										{
+											ErrorExit(1000, "Error writing 05g ipl.\n");
+										}
 									}
-								}
-								else
-								{
-									if (WriteFile(ARK_DC_PATH "/nandipl_01g.bin", g_dataOut2, cb2) != (cb2))
+
+									int is7g = (strstr(name, "07g") != NULL);
+									if (is7g)
 									{
-										ErrorExit(1000, "Error writing 01g ipl.\n");
+										if (WriteFile(ARK_DC_PATH "/ipl_07g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+										{
+											ErrorExit(1000, "Error writing 07g ipl.\n");
+										}
+									}
+
+									int is11g = (strstr(name, "11g") != NULL);
+									if (is11g)
+									{
+										if (WriteFile(ARK_DC_PATH "/ipl_11g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+										{
+											ErrorExit(1000, "Error writing 11g ipl.\n");
+										}
 									}
 								}
 							}
