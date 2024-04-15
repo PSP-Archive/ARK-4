@@ -43,7 +43,7 @@ if platform.system().lower() != 'linux' and platform.system().lower() != 'darwin
             possible_drive.append('disk'+str(drive.Index))
             deviceID[f'disk{str(drive.Index)}'] = drive.DeviceID
         for part in psutil.disk_partitions():
-            if 'removable' in psutil.disk_partitions():
+            if 'removable' in part.opts:
                 windows_disk_letter[f'disk{str(drive.Index)}'] = part.mountpoint.split(':')[0]
 
 
@@ -136,8 +136,6 @@ def run() -> None:
 
     # Download 6.61 OFW
     if go:
-        print('wft no get out of here?')
-        sys.exit(1)
         resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image2/us/2014_1212_fd0f7d0798b4f6e6d32ef95836740527/EBOOT.PBP', verify=False)
         with open('661_GO.PBP', 'wb') as f:
             f.write(resp.content)
