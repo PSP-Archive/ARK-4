@@ -93,7 +93,7 @@ void flash_ipl(int size, u16 key)
 	if(pspIplUpdateClearIpl() < 0)
 		ErrorExit(5000,"Failed to clear ipl!\n");
 
-	if (pspIplUpdateSetIpl(ipl_block , size + 0x4000, key ) < 0)
+	if (pspIplUpdateSetIpl(ipl_block , size, key ) < 0)
 		ErrorExit(5000,"Failed to write ipl!\n");
 
 	printf("Done.\n");
@@ -204,7 +204,7 @@ void classicipl_menu(){
         sceCtrlReadBufferPositive(&pad, 1);
 
 		if (pad.Buttons & PSP_CTRL_CROSS) {
-			flash_ipl( size, 0 );
+			flash_ipl( size+0x4000, 0 );
 			break; 
 		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) && ipl_type ) {		
 			printf("Flashing IPL...");
