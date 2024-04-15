@@ -312,6 +312,7 @@ int pspSysconRecvAuth(u8 key, u8 *data)
 	return 0;
 }
 
+/*
 int seed_gen1(u8 *random_key, u8 *random_key_dec_resp_dec)
 {
 	memset(random_key, 0xAA, 16);
@@ -388,3 +389,4 @@ int seed_gen2(u8 *rand_xor, u8 *key_86, u8 *random_key, u8 *random_key_dec_resp_
 	
 	return 0;
 }
+*/

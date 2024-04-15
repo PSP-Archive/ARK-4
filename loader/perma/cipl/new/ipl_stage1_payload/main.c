@@ -144,11 +144,88 @@ u8 key_86[] =
 #endif
 };
 
+void xor(u8 *dest, u8 *src_a, u8 *src_b)
+{
+	for (int i = 0; i < 16; i++)
+		dest[i] = src_a[i] ^ src_b[i];
+}
+
+int seed_gen1(u8 *random_key, u8 *random_key_dec_resp_dec)
+{
+	memset(random_key, 0xAA, 16);
+	
+	u8 random_key_dec[16];
+	int ret = kirk_decrypt_aes(random_key_dec, random_key, 16, 0x69);
+	if (ret)
+		return ret;
+	
+	ret = syscon_send_auth(0x80, random_key_dec);
+	if (ret)
+		return ret;
+	
+	u8 random_key_dec_resp[16];
+	ret = syscon_recv_auth(0, random_key_dec_resp);
+	if (ret)
+		return ret;
+	
+	ret = kirk_decrypt_aes(random_key_dec_resp_dec, random_key_dec_resp, 16, 0x14);
+	if (ret)
+		return ret;
+		
+	u8 random_key_dec_resp_dec_swapped[16];
+	memcpy(random_key_dec_resp_dec_swapped, &random_key_dec_resp_dec[8], 8);
+	memcpy(&random_key_dec_resp_dec_swapped[8], random_key_dec_resp_dec, 8);
+	
+	u8 seed_dec_resp_dec_hi_low_swapped_dec[16];
+	ret = kirk_decrypt_aes(seed_dec_resp_dec_hi_low_swapped_dec, random_key_dec_resp_dec_swapped, 16, 0x69);
+	if (ret)
+		return ret;
+
+	ret = syscon_send_auth(0x82, seed_dec_resp_dec_hi_low_swapped_dec);
+	if (ret)
+		return ret;
+
+	return 0;
+}
+
+int seed_gen2(u8 *rand_xor, u8 *key_86, u8 *random_key, u8 *random_key_dec_resp_dec)
+{
+	u8 random_key_xored[16];
+	xor(random_key_xored, random_key, rand_xor);
+	
+	int ret = kirk_decrypt_aes(random_key_xored, random_key_xored, 16, 0x15);
+	if (ret)
+		return ret;
+		
+	u8 random_key_dec_resp_dec_xored[16];
+	xor(random_key_dec_resp_dec_xored, random_key_dec_resp_dec, random_key_xored);
+	
+	ret = syscon_send_auth(0x84, random_key_dec_resp_dec_xored);
+	if (ret)
+		return ret;
+		
+	ret = syscon_send_auth(0x86, key_86);
+	if (ret)
+		return ret;
+
+	u8 resp_2[16];
+	ret = syscon_recv_auth(2, resp_2);
+	if (ret)
+		return ret;
+
+	u8 resp_4[16];
+	ret = syscon_recv_auth(4, resp_4);
+	if (ret)
+		return ret;
+	
+	return 0;
+}
+
 int unlockSyscon()
 {
-	KirkReset();
-	
-	KirkCmdF();
+	kirk_hwreset();
+
+	kirkF(0xBFC00C00);
 	
 	u8 random_key[16];
 	u8 random_key_dec_resp_dec[16];
@@ -161,8 +238,8 @@ int unlockSyscon()
 	if (ret)
 		return ret;
 	
-	KirkReset();
-	
+	kirk_hwreset();
+
 	return 0;
 }
 
