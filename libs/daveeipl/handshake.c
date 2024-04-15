@@ -146,30 +146,8 @@ static const HandshakeSecrets *get_handshake_secrets(unsigned int version)
     // (04g/07g/09g/11g) or type2 (05g) secrets
     unsigned int model_code = BARYON_VERSION_MODEL_CODE(version);
 
-    // type1 is 04g/07g/09g/11g
-    if (BARYON_MODEL_CODE_IS_HANDSHAKE_TYPE1(model_code)) {
-        static const HandshakeSecrets type1_secrets = {
-            .secret1 = {      
-                0x8D, 0x5D, 0xA6, 0x08, 0xF2, 0xBB, 0xC6, 0xCC,
-                0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23
-            },
-            .secret2 = {
-                0xD5, 0x96, 0x55, 0x56, 0xB9, 0x39, 0xD8, 0x9D,
-                0x6E, 0x79, 0xD3, 0x8C, 0x88, 0x7B, 0xF3, 0x0A
-            },
-            .expected1 = {    
-                0x34, 0xDB, 0x81, 0x24, 0x1D, 0x6F, 0x40, 0x57
-            },
-            .expected2 = {
-                0xE0, 0xDC, 0x41, 0xAF, 0xC2, 0xCD, 0x1C, 0x2D
-            }
-        };
-
-        return &type1_secrets;
-    }
-
     // type2 is 05g
-    else if (BARYON_MODEL_CODE_IS_HANDSHAKE_TYPE2(model_code)) {
+    if (BARYON_MODEL_CODE_IS_HANDSHAKE_TYPE2(model_code)) {
         static const HandshakeSecrets type2_secret = {
             .secret1 = {      
                 0x61, 0x7A, 0x56, 0x42, 0xF8, 0xED, 0xC5, 0xE4,
@@ -189,6 +167,28 @@ static const HandshakeSecrets *get_handshake_secrets(unsigned int version)
 
         return &type2_secret;
     }
+
+    // type1 is 04g/07g/09g/11g
+    //if (BARYON_MODEL_CODE_IS_HANDSHAKE_TYPE1(model_code)) {
+        static const HandshakeSecrets type1_secrets = {
+            .secret1 = {      
+                0x8D, 0x5D, 0xA6, 0x08, 0xF2, 0xBB, 0xC6, 0xCC,
+                0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23
+            },
+            .secret2 = {
+                0xD5, 0x96, 0x55, 0x56, 0xB9, 0x39, 0xD8, 0x9D,
+                0x6E, 0x79, 0xD3, 0x8C, 0x88, 0x7B, 0xF3, 0x0A
+            },
+            .expected1 = {    
+                0x34, 0xDB, 0x81, 0x24, 0x1D, 0x6F, 0x40, 0x57
+            },
+            .expected2 = {
+                0xE0, 0xDC, 0x41, 0xAF, 0xC2, 0xCD, 0x1C, 0x2D
+            }
+        };
+
+        return &type1_secrets;
+    //}
 
     return NULL;
 }

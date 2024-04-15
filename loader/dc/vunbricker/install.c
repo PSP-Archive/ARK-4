@@ -863,8 +863,8 @@ int install_thread(SceSize args, void *argp)
 	dcSetCancelMode(1);
 
 	#ifndef INFINITY
-	if (fw != FW_OFW && model > 2)
-		InstallError(fw, "Unsupported model.");
+	//if (fw != FW_OFW && model > 2)
+	//	InstallError(fw, "Unsupported model.");
 	#endif
 
 	switch(LoadUpdaterModules(fw))
@@ -1066,6 +1066,8 @@ int install_thread(SceSize args, void *argp)
 			case 1: ipl_name = "flash0:/ipl_02g.bin"; break;
 			case 2: ipl_name = "flash0:/ipl_03g.bin"; ipl_key = 1; break;
 			case 3: ipl_name = "flash0:/ipl_04g.bin"; ipl_key = 1; break;
+			case 4: ipl_name = "flash0:/ipl_05g.bin"; ipl_key = 2; break;
+			case 6: ipl_name = "flash0:/ipl_07g.bin"; ipl_key = 1; break;
 			case 8: ipl_name = "flash0:/ipl_09g.bin"; ipl_key = 1; break;
 			case 10: ipl_name = "flash0:/ipl_11g.bin"; ipl_key = 1; break;
 			default: InstallError(fw, "Unsupported model.");
@@ -1092,6 +1094,11 @@ int install_thread(SceSize args, void *argp)
 				}
 				break;
 			case 2: ipl_name = "flash0:/cipl_03g.bin"; break;
+			case 3: ipl_name = "flash0:/cipl_04g.bin"; break;
+			case 4: ipl_name = "flash0:/cipl_05g.bin"; break;
+			case 6: ipl_name = "flash0:/cipl_07g.bin"; break;
+			case 8: ipl_name = "flash0:/cipl_09g.bin"; break;
+			case 10: ipl_name = "flash0:/cipl_11g.bin"; break;
 			default: InstallError(fw, "Unsupported model.");
 		}
 	}

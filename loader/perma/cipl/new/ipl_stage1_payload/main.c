@@ -265,6 +265,7 @@ int main()
 #ifndef MSIPL
 	syscon_init();
 #ifdef SET_SEED_ADDRESS
+	unlockSyscon();
 	syscon_handshake_unlock();
 #endif
 #endif
