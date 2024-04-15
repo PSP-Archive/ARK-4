@@ -40,6 +40,15 @@
 #include "payload/msipl_09G.h"
 #include "payload/msipl_11G.h"
 
+#include <cipl_01G.h>
+#include <cipl_02G.h>
+#include <cipl_03G.h>
+#include <cipl_04G.h>
+#include <cipl_05G.h>
+#include <cipl_07G.h>
+#include <cipl_09G.h>
+#include <cipl_11G.h>
+
 #include "dcman.h"
 #include "ipl_update.h"
 #include "iop.h"
@@ -782,6 +791,30 @@ static void WriteDCFiles()
 	
 	if (WriteFile(ARK_DC_PATH "/msipl_11g.bin", msipl_11G, size_msipl_11G) != size_msipl_11G)
 		ErrorExit(1000, "Error writing msipl_11g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_01g.bin", cipl_01G, size_cipl_01G) != size_cipl_01G)
+		ErrorExit(1000, "Error writing cipl_01g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/cipl_02g.bin", cipl_02G, size_cipl_02G) != size_cipl_02G)
+		ErrorExit(1000, "Error writing cipl_02g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/cipl_03g.bin", cipl_03G, size_cipl_03G) != size_cipl_03G)
+		ErrorExit(1000, "Error writing cipl_03g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_04g.bin", cipl_04G, size_cipl_04G) != size_cipl_04G)
+		ErrorExit(1000, "Error writing cipl_04g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_05g.bin", cipl_05G, size_cipl_05G) != size_cipl_05G)
+		ErrorExit(1000, "Error writing cipl_05g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_07g.bin", cipl_07G, size_cipl_07G) != size_cipl_07G)
+		ErrorExit(1000, "Error writing cipl_07g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_09g.bin", cipl_09G, size_cipl_09G) != size_cipl_09G)
+		ErrorExit(1000, "Error writing cipl_09g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_11g.bin", cipl_11G, size_cipl_11G) != size_cipl_11G)
+		ErrorExit(1000, "Error writing cipl_11g.bin");
 
 	if (WriteFile(ARK_DC_PATH "/kd/dcman.prx", dcman, size_dcman) != size_dcman)
 		ErrorExit(1000, "Error writing dcman.prx");
