@@ -444,7 +444,7 @@ void ExtractPrxs(int cbFile, SceUID fd)
 						int found = 0;
 
 						int i;
-						for (i = 1; i <= 3; i++) {
+						for (i = 1; i <= 11; i++) {
 							if (flash_table_size[i] > 0) {
 								found = FindTablePath(flash_table[i], flash_table_size[i], name, name);
 								if (found)
