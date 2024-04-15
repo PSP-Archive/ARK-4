@@ -567,6 +567,18 @@ const char *f0_ark[] =
 	"kd/ark_vshctrl.prx",
 };
 
+struct {
+    char* orig;
+    char* dest;
+} f0_ark_extras[] = {
+    {IDSREG_PRX, IDSREG_PRX_FLASH},
+    {XMBCTRL_PRX, XMBCTRL_PRX_FLASH},
+    {USBDEV_PRX, USBDEV_PRX_FLASH},
+    {VSH_MENU, VSH_MENU_FLASH},
+    {RECOVERY_PRX, RECOVERY_PRX_FLASH},
+    {UPDATER_FILE, UPDATER_FILE_FLASH},
+};
+
 int LoadUpdaterModules()
 {
 	SceUID mod = sceKernelLoadModule("flash0:/kd/emc_sm_updater.prx", 0, NULL);
@@ -863,28 +875,19 @@ void CopyFileList(int fw, const char **list, int file_count, int start_file_coun
 	}
 }
 
-#ifdef INFINITY
-size_t GetFileSize(const char *file) {
-	SceIoStat stat;
-	
-	int ret = sceIoGetstat(file, &stat);
-	if(ret < 0)
-		return ret;
-	
-	return stat.st_size;
+void copy_file(char* orig, char* dest){
+	#define BUF_SIZE 16*1024
+    static u8 buf[BUF_SIZE];
+    int fdr = sceIoOpen(orig, PSP_O_RDONLY, 0777);
+    int fdw = sceIoOpen(dest, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+    while (1){
+        int read = sceIoRead(fdr, buf, BUF_SIZE);
+        if (read <= 0) break;
+        sceIoWrite(fdw, buf, read);
+    }
+    sceIoClose(fdr);
+    sceIoClose(fdw);
 }
-
-void CopyFile(const char *file, const char* dstfile) {
-	size_t sz = GetFileSize(file);
-	
-	char* buf = malloc(sz);
-	if(buf != NULL) {
-		ReadFile(file, 0, buf, sz);
-		WriteFile(dstfile, buf, sz);
-		free(buf);
-	}
-}
-#endif
 
 int install_thread(SceSize args, void *argp)
 {
@@ -1147,6 +1150,13 @@ int install_thread(SceSize args, void *argp)
 	{
 		int file_count = file_count += sizeof(f0_ark) / sizeof(f0_ark[0]);
 		CopyFileList(fw, f0_ark, sizeof(f0_ark) / sizeof(f0_ark[0]), 0, file_count);
+		for (int i=0; i<(sizeof(f0_ark_extras)/sizeof(f0_ark_extras[0])); i++){
+			char path[ARK_PATH_SIZE];
+			strcpy(path, "flash0:/ARK_01234/");
+			strcat(path, f0_ark_extras[i].orig);
+			f0_ark_extras[i].dest[3] = 'c';
+			copy_file(path, f0_ark_extras[i].dest);
+		}
 	}
 
 	SetProgress(100, 1);
