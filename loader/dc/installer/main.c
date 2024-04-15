@@ -536,50 +536,15 @@ void ExtractPrxs(int cbFile, SceUID fd)
 									else
 									{
 										memcpy(g_dataOut2, g_dataOut, cbExpanded);
-									}	
-									int is3g = (strstr(name, "03g") != NULL);
-									if (is3g)
-									{
-										if (WriteFile(ARK_DC_PATH "/ipl_03g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
-										{
-											ErrorExit(1000, "Error writing 03g ipl.\n");
-										}
 									}
+									char iplpath[256];
+									char* iplname = strstr(name, "ipl_");
+									sprintf(iplpath, "%s/%s", ARK_DC_PATH, iplname);
 
-									int is4g = (strstr(name, "04g") != NULL);
-									if (is4g)
+									if (WriteFile(iplpath, g_dataOut2, cbExpanded) != (cbExpanded))
 									{
-										if (WriteFile(ARK_DC_PATH "/ipl_04g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
-										{
-											ErrorExit(1000, "Error writing 04g ipl.\n");
-										}
-									}
-
-									int is5g = (strstr(name, "05g") != NULL);
-									if (is5g)
-									{
-										if (WriteFile(ARK_DC_PATH "/ipl_05g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
-										{
-											ErrorExit(1000, "Error writing 05g ipl.\n");
-										}
-									}
-
-									int is7g = (strstr(name, "07g") != NULL);
-									if (is7g)
-									{
-										if (WriteFile(ARK_DC_PATH "/ipl_07g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
-										{
-											ErrorExit(1000, "Error writing 07g ipl.\n");
-										}
-									}
-
-									int is11g = (strstr(name, "11g") != NULL);
-									if (is11g)
-									{
-										if (WriteFile(ARK_DC_PATH "/ipl_11g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
-										{
-											ErrorExit(1000, "Error writing 11g ipl.\n");
-										}
+										sprintf(iplpath, "Error writing %s/%s", ARK_DC_PATH, iplname);
+										ErrorExit(1000, iplpath);
 									}
 								}
 							}
