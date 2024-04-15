@@ -124,6 +124,7 @@ copy-bin:
 	$(Q)$(MAKE) -C extras/apps/updater/
 	$(Q)cp extras/apps/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
 	$(Q)cp loader/dc/msipl/newipl/msipl_*.bin dist/PC/MagicMemoryCreator/TM/DCARK/
+	$(Q)cp loader/dc/btcnf/pspbtcnf_dc.bin dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp loader/dc/btcnf/pspbtcnf_*_dc.bin dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp contrib/PC/timemachine/tm_mloader.bin dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/msipl/newipl/loader/ipl.bin dist/PC/MagicMemoryCreator/msipl.bin
