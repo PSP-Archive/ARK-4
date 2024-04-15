@@ -389,7 +389,7 @@ void newipl_menu(){
 				ErrorExit(5000,"Failed to clear ipl!\n");
 			}
 
-			if (pspIplUpdateSetIpl( ipl_block_large, size,  ipl_key) < 0) {
+			if (pspIplUpdateSetIpl( ipl_block, size,  ipl_key) < 0) {
 				ErrorExit(5000,"Failed to write ipl!\n");
 			}
 
