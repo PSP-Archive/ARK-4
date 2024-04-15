@@ -246,6 +246,7 @@ static void checkRebootConfig(){
 }
 
 extern void copyPSPVram(u32*);
+#define REG32(addr)                 *((volatile uint32_t *)(addr))
 
 // Entry Point
 int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7)
@@ -259,8 +260,10 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int a
 	REG32(0xbc10007c) |= 0xc8;
 	__asm("sync"::);
 	
-	sceSysconInit();
-	sceSysconCtrlMsPower(1);
+	syscon_init();
+    
+    u32 ms_on = 1;
+    syscon_issue_command_write(0x4c, &ms_on, 3);
 #endif
 
 #ifdef PAYLOADEX

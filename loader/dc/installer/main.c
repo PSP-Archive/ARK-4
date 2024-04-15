@@ -20,10 +20,35 @@
 #include <loader/dc/tmctrl/tmctrl.h>
 #include "tm_msipl.h"
 #include "tm_mloader.h"
+#include "loader/new_msipl.h"
 
 #include "pspbtcnf_dc.h"
 #include "pspbtcnf_02g_dc.h"
-//#include "pspbtcnf_03g_dc.h"
+#include "pspbtcnf_03g_dc.h"
+#include "pspbtcnf_04g_dc.h"
+#include "pspbtcnf_05g_dc.h"
+#include "pspbtcnf_07g_dc.h"
+#include "pspbtcnf_09g_dc.h"
+#include "pspbtcnf_11g_dc.h"
+
+#include "payload/msipl_01G.h"
+#include "payload/msipl_02G.h"
+#include "payload/msipl_03G.h"
+#include "payload/msipl_04G.h"
+#include "payload/msipl_05G.h"
+#include "payload/msipl_07G.h"
+#include "payload/msipl_09G.h"
+#include "payload/msipl_11G.h"
+
+#include <cipl_01G.h>
+#include <cipl_02G.h>
+#include <cipl_03G.h>
+#include <cipl_04G.h>
+#include <cipl_05G.h>
+#include <cipl_07G.h>
+#include <cipl_09G.h>
+#include <cipl_11G.h>
+
 #include "dcman.h"
 #include "ipl_update.h"
 #include "iop.h"
@@ -62,8 +87,8 @@ static u8 *g_dataOut2;
 static int PSAR_BUFFER_SIZE;
 static const int SMALL_BUFFER_SIZE = 2500000;
 
-static char flash_table[4][0x4000];
-static int flash_table_size[4];
+static char flash_table[14][0x4000];
+static int flash_table_size[14];
 
 // Gui vars
 int begin_install_text;
@@ -412,8 +437,8 @@ void ExtractPrxs(int cbFile, SceUID fd)
 			if (is5Dnum(name)) {
 				int num = atoi(name);
 
-				// Files from 01g-02g
-				if (num >= 1 && num <= 2) {
+				// Files from 01g-11g
+				if (num >= 1 && num <= 11) {
 					flash_table_size[num] = pspDecryptTable(g_dataOut2, g_dataOut, cbExpanded, 4);
 					if (flash_table_size[num] <= 0) {
 						ErrorExit(1000, "Cannot decrypt %02dg table.\n", num);
@@ -428,7 +453,7 @@ void ExtractPrxs(int cbFile, SceUID fd)
 						int found = 0;
 
 						int i;
-						for (i = 1; i <= 3; i++) {
+						for (i = 1; i <= 11; i++) {
 							if (flash_table_size[i] > 0) {
 								found = FindTablePath(flash_table[i], flash_table_size[i], name, name);
 								if (found)
@@ -447,69 +472,88 @@ void ExtractPrxs(int cbFile, SceUID fd)
 							}
 							else if (strstr(name, "ipl") == name)
 							{
+
+								int is1g = (strstr(name, "01g") != NULL);
 								int is2g = (strstr(name, "02g") != NULL);
 
-								if (is2g)
+								if (is1g || is2g)
+								{
+									if (is2g)
+									{
+										cbExpanded = pspDecryptPRX(g_dataOut2, g_dataOut, cbExpanded);
+										if (cbExpanded <= 0)
+										{
+											ErrorExit(1000, "Cannot pre-decrypt 2000 IPL\n");
+										}
+										else
+										{
+											memcpy(g_dataOut2, g_dataOut, cbExpanded);
+										}	
+									}
+
+									if (is2g)
+									{
+										if (WriteFile(ARK_DC_PATH "/ipl_02g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+										{
+											ErrorExit(1000, "Error writing 02g ipl.\n");
+										}
+									}
+									else
+									{
+										if (WriteFile(ARK_DC_PATH "/ipl_01g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+										{
+											ErrorExit(1000, "Error writing 01g ipl.\n");
+										}
+									}
+
+									int cb1 = pspDecryptIPL1(g_dataOut2, g_dataOut, cbExpanded);
+									if (cb1 < 0)
+									{
+										ErrorExit(1000, "Error in IPL decryption.\n");
+									}
+
+									int cb2 = pspLinearizeIPL2(g_dataOut, g_dataOut2, cb1);
+									if (cb2 < 0)
+									{
+										ErrorExit(1000, "Error in IPL Linearize.\n");
+									}
+
+									sceKernelDcacheWritebackAll();
+
+									if (is2g)
+									{
+										if (WriteFile(ARK_DC_PATH "/nandipl_02g.bin", g_dataOut2, cb2) != (cb2))
+										{
+											ErrorExit(1000, "Error writing 02g ipl.\n");
+										}
+									}
+									else
+									{
+										if (WriteFile(ARK_DC_PATH "/nandipl_01g.bin", g_dataOut2, cb2) != (cb2))
+										{
+											ErrorExit(1000, "Error writing 01g ipl.\n");
+										}
+									}
+								}
+								else
 								{
 									cbExpanded = pspDecryptPRX(g_dataOut2, g_dataOut, cbExpanded);
 									if (cbExpanded <= 0)
 									{
-										ErrorExit(1000, "Cannot pre-decrypt 2000 IPL\n");
+										ErrorExit(1000, "Cannot pre-decrypt 3000+ IPL\n");
 									}
 									else
 									{
 										memcpy(g_dataOut2, g_dataOut, cbExpanded);
-									}	
-								}
-								else {
-									int is1g = (strstr(name, "01g") != NULL);
-
-									if (!is1g) {
-										ErrorExit(1000, "Unexpected ipl! %s\n", name);
 									}
-								}
+									char iplpath[256];
+									char* iplname = strstr(name, "ipl_");
+									sprintf(iplpath, "%s/%s", ARK_DC_PATH, iplname);
 
-								if (is2g)
-								{
-									if (WriteFile(ARK_DC_PATH "/ipl_02g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+									if (WriteFile(iplpath, g_dataOut2, cbExpanded) != (cbExpanded))
 									{
-										ErrorExit(1000, "Error writing 02g ipl.\n");
-									}
-								}
-								else
-								{
-									if (WriteFile(ARK_DC_PATH "/ipl_01g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
-									{
-										ErrorExit(1000, "Error writing 01g ipl.\n");
-									}
-								}
-
-								int cb1 = pspDecryptIPL1(g_dataOut2, g_dataOut, cbExpanded);
-								if (cb1 < 0)
-								{
-									ErrorExit(1000, "Error in IPL decryption.\n");
-								}
-
-								int cb2 = pspLinearizeIPL2(g_dataOut, g_dataOut2, cb1);
-								if (cb2 < 0)
-								{
-									ErrorExit(1000, "Error in IPL Linearize.\n");
-								}
-
-								sceKernelDcacheWritebackAll();
-
-								if (is2g)
-								{
-									if (WriteFile(ARK_DC_PATH "/nandipl_02g.bin", g_dataOut2, cb2) != (cb2))
-									{
-										ErrorExit(1000, "Error writing 02g ipl.\n");
-									}
-								}
-								else
-								{
-									if (WriteFile(ARK_DC_PATH "/nandipl_01g.bin", g_dataOut2, cb2) != (cb2))
-									{
-										ErrorExit(1000, "Error writing 01g ipl.\n");
+										sprintf(iplpath, "Error writing %s/%s", ARK_DC_PATH, iplname);
+										ErrorExit(1000, iplpath);
 									}
 								}
 							}
@@ -706,8 +750,71 @@ static void WriteDCFiles()
 	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_02g_dc.bin", pspbtcnf_02g_dc, size_pspbtcnf_02g_dc) != size_pspbtcnf_02g_dc)
 		ErrorExit(1000, "Error writing pspbtcnf_02g_dc.bin");
 	
-	//if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_03g_dc.bin", pspbtcnf_03g_dc, size_pspbtcnf_03g_dc) != size_pspbtcnf_03g_dc)
-	//	ErrorExit(1000, "Error writing pspbtcnf_03g_dc.bin");
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_03g_dc.bin", pspbtcnf_03g_dc, size_pspbtcnf_03g_dc) != size_pspbtcnf_03g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_03g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_04g_dc.bin", pspbtcnf_04g_dc, size_pspbtcnf_04g_dc) != size_pspbtcnf_04g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_04g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_05g_dc.bin", pspbtcnf_05g_dc, size_pspbtcnf_05g_dc) != size_pspbtcnf_05g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_05g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_07g_dc.bin", pspbtcnf_07g_dc, size_pspbtcnf_07g_dc) != size_pspbtcnf_07g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_07g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_09g_dc.bin", pspbtcnf_09g_dc, size_pspbtcnf_09g_dc) != size_pspbtcnf_09g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_09g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_11g_dc.bin", pspbtcnf_11g_dc, size_pspbtcnf_11g_dc) != size_pspbtcnf_11g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_11g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl_01g.bin", msipl_01G, size_msipl_01G) != size_msipl_01G)
+		ErrorExit(1000, "Error writing msipl_01g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/msipl_02g.bin", msipl_02G, size_msipl_02G) != size_msipl_02G)
+		ErrorExit(1000, "Error writing msipl_02g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/msipl_03g.bin", msipl_03G, size_msipl_03G) != size_msipl_03G)
+		ErrorExit(1000, "Error writing msipl_03g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl_04g.bin", msipl_04G, size_msipl_04G) != size_msipl_04G)
+		ErrorExit(1000, "Error writing msipl_04g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl_05g.bin", msipl_05G, size_msipl_05G) != size_msipl_05G)
+		ErrorExit(1000, "Error writing msipl_05g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl_07g.bin", msipl_07G, size_msipl_07G) != size_msipl_07G)
+		ErrorExit(1000, "Error writing msipl_07g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl_09g.bin", msipl_09G, size_msipl_09G) != size_msipl_09G)
+		ErrorExit(1000, "Error writing msipl_09g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl_11g.bin", msipl_11G, size_msipl_11G) != size_msipl_11G)
+		ErrorExit(1000, "Error writing msipl_11g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_01g.bin", cipl_01G, size_cipl_01G) != size_cipl_01G)
+		ErrorExit(1000, "Error writing cipl_01g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/cipl_02g.bin", cipl_02G, size_cipl_02G) != size_cipl_02G)
+		ErrorExit(1000, "Error writing cipl_02g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/cipl_03g.bin", cipl_03G, size_cipl_03G) != size_cipl_03G)
+		ErrorExit(1000, "Error writing cipl_03g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_04g.bin", cipl_04G, size_cipl_04G) != size_cipl_04G)
+		ErrorExit(1000, "Error writing cipl_04g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_05g.bin", cipl_05G, size_cipl_05G) != size_cipl_05G)
+		ErrorExit(1000, "Error writing cipl_05g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_07g.bin", cipl_07G, size_cipl_07G) != size_cipl_07G)
+		ErrorExit(1000, "Error writing cipl_07g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_09g.bin", cipl_09G, size_cipl_09G) != size_cipl_09G)
+		ErrorExit(1000, "Error writing cipl_09g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_11g.bin", cipl_11G, size_cipl_11G) != size_cipl_11G)
+		ErrorExit(1000, "Error writing cipl_11g.bin");
 
 	if (WriteFile(ARK_DC_PATH "/kd/dcman.prx", dcman, size_dcman) != size_dcman)
 		ErrorExit(1000, "Error writing dcman.prx");
@@ -842,13 +949,13 @@ int install_iplloader()
 	if (g_cancel)
 		CancelInstall();
 
-	res = WriteSector(0x10, tm_msipl, 32);
+	res = WriteSector(0x10, new_msipl /*tm_msipl*/, 32);
 	if (res != 32)
 	{
 		ErrorExit(1000, "Error 0x%08X in WriteSector.\n", res);
 	}
 
-	/*char *default_config = "NOTHING = \"ms0:/TM/DCARK/tm_mloader.bin\";";
+	char *default_config = "NOTHING = \"ms0:/TM/DCARK/tm_mloader.bin\";";
 
 	SceIoStat stat;
 
@@ -857,7 +964,6 @@ int install_iplloader()
 		WriteFile("ms0:/TM/config.txt", default_config, strlen(default_config));
 		return 0;
 	}
-	*/
 	
 	return 1;
 }
@@ -1043,6 +1149,7 @@ int install_thread(SceSize args, void *argp)
 
 	strcpy(text, "");	
 
+	/*
 	if (key_install)
 	{
 		SceCtrlData pad;
@@ -1128,6 +1235,7 @@ int install_thread(SceSize args, void *argp)
 			sceKernelDelayThread(350000);
 		}
 	}
+	*/
 	
 	strcat(text, "\n");
 	strcat(text, "Installation completed.");

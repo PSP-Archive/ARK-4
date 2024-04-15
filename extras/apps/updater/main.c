@@ -19,7 +19,12 @@
 
 #include <installer/pspbtcnf_dc.h>
 #include <installer/pspbtcnf_02g_dc.h>
-//#include <installer/pspbtcnf_03g_dc.h>
+#include <installer/pspbtcnf_03g_dc.h>
+#include <installer/pspbtcnf_04g_dc.h>
+#include <installer/pspbtcnf_05g_dc.h>
+#include <installer/pspbtcnf_07g_dc.h>
+#include <installer/pspbtcnf_09g_dc.h>
+#include <installer/pspbtcnf_11g_dc.h>
 #include <installer/dcman.h>
 #include <installer/ipl_update.h>
 #include <installer/iop.h>
@@ -198,7 +203,12 @@ int main(int argc, char * argv[])
             { ARK_DC_PATH "/tm_mloader.bin", tm_mloader, size_tm_mloader },
             { ARK_DC_PATH "/kd/pspbtcnf_dc.bin", pspbtcnf_dc, size_pspbtcnf_dc },
             { ARK_DC_PATH "/kd/pspbtcnf_02g_dc.bin", pspbtcnf_02g_dc, size_pspbtcnf_02g_dc },
-            //{ ARK_DC_PATH "/kd/pspbtcnf_03g_dc.bin", pspbtcnf_03g_dc, size_pspbtcnf_03g_dc },
+            { ARK_DC_PATH "/kd/pspbtcnf_03g_dc.bin", pspbtcnf_03g_dc, size_pspbtcnf_03g_dc },
+            { ARK_DC_PATH "/kd/pspbtcnf_04g_dc.bin", pspbtcnf_04g_dc, size_pspbtcnf_04g_dc },
+            { ARK_DC_PATH "/kd/pspbtcnf_05g_dc.bin", pspbtcnf_05g_dc, size_pspbtcnf_05g_dc },
+            { ARK_DC_PATH "/kd/pspbtcnf_07g_dc.bin", pspbtcnf_07g_dc, size_pspbtcnf_07g_dc },
+            { ARK_DC_PATH "/kd/pspbtcnf_09g_dc.bin", pspbtcnf_09g_dc, size_pspbtcnf_09g_dc },
+            { ARK_DC_PATH "/kd/pspbtcnf_11g_dc.bin", pspbtcnf_11g_dc, size_pspbtcnf_11g_dc },
             { ARK_DC_PATH "/kd/dcman.prx", dcman, size_dcman },
             { ARK_DC_PATH "/kd/ipl_update.prx", ipl_update, size_ipl_update },
             { ARK_DC_PATH "/kd/iop.prx", iop, size_iop },

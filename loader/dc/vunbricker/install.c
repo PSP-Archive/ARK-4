@@ -386,6 +386,177 @@ const char *f0_02g[] =
 	"vsh/resource/skype_main_plugin.rco"
 };
 
+const char *f0_03g[] =
+{
+	"font/arib.pgf",
+	"kd/codec_03g.prx",
+	"kd/display_03g.prx",
+	"kd/hpremote_03g.prx",
+	"kd/impose_03g.prx",
+	"kd/loadexec_03g.prx",
+	"kd/memlmd_03g.prx",
+	"kd/mesg_led_03g.prx",
+	"kd/pops_03g.prx",
+	"kd/power_03g.prx",
+	"kd/pspbtcnf_03g.bin",
+	"kd/resource/me_t2img.img",
+	"kd/umdcache.prx",
+	"kd/usb1seg.prx",
+	"kd/usbdmb.prx",
+	"kd/mlnbridge_msapp.prx",
+	"kd/wlanfirm_03g.prx",
+	"vsh/etc/index_03g.dat",
+	"vsh/module/oneseg_core.prx",
+	"vsh/module/oneseg_hal_toolbox.prx",
+	"vsh/module/oneseg_launcher_plugin.prx",
+	"vsh/module/oneseg_plugin.prx",
+	"vsh/module/oneseg_sal.prx",
+	"vsh/module/oneseg_sdk.prx",
+	"vsh/module/oneseg_sdkcore.prx",
+	"vsh/module/skype_main_plugin.prx",
+	"vsh/module/skype_plugin.prx",
+	"vsh/module/skype_skyhost.prx",
+	"vsh/module/skype_ve.prx",
+	"vsh/resource/13-27.bmp",
+	"vsh/resource/custom_theme.dat",
+	"vsh/resource/oneseg_plugin.rco",
+	"vsh/resource/skype_main_plugin.rco"
+};
+
+const char *f0_04g[] =
+{
+	"font/arib.pgf",
+	"kd/codec_04g.prx",
+	"kd/display_04g.prx",
+	"kd/hpremote_04g.prx",
+	"kd/impose_04g.prx",
+	"kd/loadexec_04g.prx",
+	"kd/memlmd_04g.prx",
+	"kd/mesg_led_04g.prx",
+	"kd/pops_04g.prx",
+	"kd/power_04g.prx",
+	"kd/pspbtcnf_04g.bin",
+	"kd/resource/me_t2img.img",
+	"kd/umdcache.prx",
+	"kd/usb1seg.prx",
+	"kd/usbdmb.prx",
+	"kd/mlnbridge_msapp.prx",
+	"kd/wlanfirm_04g.prx",
+	"vsh/etc/index_04g.dat",
+	"vsh/module/oneseg_core.prx",
+	"vsh/module/oneseg_hal_toolbox.prx",
+	"vsh/module/oneseg_launcher_plugin.prx",
+	"vsh/module/oneseg_plugin.prx",
+	"vsh/module/oneseg_sal.prx",
+	"vsh/module/oneseg_sdk.prx",
+	"vsh/module/oneseg_sdkcore.prx",
+	"vsh/module/skype_main_plugin.prx",
+	"vsh/module/skype_plugin.prx",
+	"vsh/module/skype_skyhost.prx",
+	"vsh/module/skype_ve.prx",
+	"vsh/resource/13-27.bmp",
+	"vsh/resource/custom_theme.dat",
+	"vsh/resource/oneseg_plugin.rco",
+	"vsh/resource/skype_main_plugin.rco"
+};
+
+const char *f0_07g[] =
+{
+	"font/arib.pgf",
+	"kd/codec_07g.prx",
+	"kd/display_07g.prx",
+	"kd/hpremote_07g.prx",
+	"kd/impose_07g.prx",
+	"kd/loadexec_07g.prx",
+	"kd/memlmd_07g.prx",
+	"kd/mesg_led_07g.prx",
+	"kd/pops_07g.prx",
+	"kd/power_07g.prx",
+	"kd/pspbtcnf_07g.bin",
+	"kd/resource/me_t2img.img",
+	"kd/umdcache.prx",
+	"kd/usb1seg.prx",
+	"kd/usbdmb.prx",
+	"kd/mlnbridge_msapp.prx",
+	"kd/wlanfirm_07g.prx",
+	"vsh/etc/index_07g.dat",
+	"vsh/module/oneseg_core.prx",
+	"vsh/module/oneseg_hal_toolbox.prx",
+	"vsh/module/oneseg_launcher_plugin.prx",
+	"vsh/module/oneseg_plugin.prx",
+	"vsh/module/oneseg_sal.prx",
+	"vsh/module/oneseg_sdk.prx",
+	"vsh/module/oneseg_sdkcore.prx",
+	"vsh/module/skype_main_plugin.prx",
+	"vsh/module/skype_plugin.prx",
+	"vsh/module/skype_skyhost.prx",
+	"vsh/module/skype_ve.prx",
+	"vsh/resource/13-27.bmp",
+	"vsh/resource/custom_theme.dat",
+	"vsh/resource/oneseg_plugin.rco",
+	"vsh/resource/skype_main_plugin.rco"
+};
+
+const char *f0_09g[] =
+{
+	"font/arib.pgf",
+	"kd/codec_09g.prx",
+	"kd/display_09g.prx",
+	"kd/hpremote_09g.prx",
+	"kd/impose_09g.prx",
+	"kd/loadexec_09g.prx",
+	"kd/memlmd_09g.prx",
+	"kd/mesg_led_09g.prx",
+	"kd/pops_09g.prx",
+	"kd/power_09g.prx",
+	"kd/pspbtcnf_09g.bin",
+	"kd/resource/me_t2img.img",
+	"kd/umdcache.prx",
+	"kd/usb1seg.prx",
+	"kd/usbdmb.prx",
+	"kd/mlnbridge_msapp.prx",
+	"kd/wlanfirm_09g.prx",
+	"vsh/etc/index_09g.dat",
+	"vsh/module/oneseg_core.prx",
+	"vsh/module/oneseg_hal_toolbox.prx",
+	"vsh/module/oneseg_launcher_plugin.prx",
+	"vsh/module/oneseg_plugin.prx",
+	"vsh/module/oneseg_sal.prx",
+	"vsh/module/oneseg_sdk.prx",
+	"vsh/module/oneseg_sdkcore.prx",
+	"vsh/module/skype_main_plugin.prx",
+	"vsh/module/skype_plugin.prx",
+	"vsh/module/skype_skyhost.prx",
+	"vsh/module/skype_ve.prx",
+	"vsh/resource/13-27.bmp",
+	"vsh/resource/custom_theme.dat",
+	"vsh/resource/oneseg_plugin.rco",
+	"vsh/resource/skype_main_plugin.rco"
+};
+
+const char *f0_11g[] =
+{
+	"font/arib.pgf",
+	"kd/codec_11g.prx",
+	"kd/display_11g.prx",
+	"kd/hpremote_11g.prx",
+	"kd/impose_11g.prx",
+	"kd/loadexec_11g.prx",
+	"kd/memlmd_11g.prx",
+	"kd/mesg_led_11g.prx",
+	"kd/pops_11g.prx",
+	"kd/power_11g.prx",
+	"kd/pspbtcnf_11g.bin",
+	"kd/resource/me_t2img.img",
+	"kd/umdcache.prx",
+	"kd/usb1seg.prx",
+	"kd/usbdmb.prx",
+	"kd/mlnbridge_msapp.prx",
+	"vsh/etc/index_11g.dat",
+	"vsh/resource/13-27.bmp",
+	"vsh/resource/custom_theme.dat",
+};
+
 const char *f0_ark[] =
 {
 	"kd/ark_inferno.prx",
@@ -394,6 +565,18 @@ const char *f0_ark[] =
 	"kd/ark_stargate.prx",
 	"kd/ark_systemctrl.prx",
 	"kd/ark_vshctrl.prx",
+};
+
+struct {
+    char* orig;
+    char* dest;
+} f0_ark_extras[] = {
+    {IDSREG_PRX, IDSREG_PRX_FLASH},
+    {XMBCTRL_PRX, XMBCTRL_PRX_FLASH},
+    {USBDEV_PRX, USBDEV_PRX_FLASH},
+    {VSH_MENU, VSH_MENU_FLASH},
+    {RECOVERY_PRX, RECOVERY_PRX_FLASH},
+    {UPDATER_FILE, UPDATER_FILE_FLASH},
 };
 
 int LoadUpdaterModules()
@@ -692,6 +875,20 @@ void CopyFileList(int fw, const char **list, int file_count, int start_file_coun
 	}
 }
 
+void copy_file(char* orig, char* dest){
+	#define BUF_SIZE 16*1024
+    static u8 buf[BUF_SIZE];
+    int fdr = sceIoOpen(orig, PSP_O_RDONLY, 0777);
+    int fdw = sceIoOpen(dest, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+    while (1){
+        int read = sceIoRead(fdr, buf, BUF_SIZE);
+        if (read <= 0) break;
+        sceIoWrite(fdw, buf, read);
+    }
+    sceIoClose(fdr);
+    sceIoClose(fdw);
+}
+
 int install_thread(SceSize args, void *argp)
 {
 	int fw = *(int *)argp;	
@@ -704,9 +901,6 @@ int install_thread(SceSize args, void *argp)
 	dcGetHardwareInfo(NULL, NULL, NULL, &mb, NULL, NULL, NULL);
 
 	dcSetCancelMode(1);
-
-	if (model > 1 || (mb == TA_088v3 && fw != FW_OFW))
-		InstallError(fw, "Unsupported model.");
 
 	switch(LoadUpdaterModules(fw))
 	{
@@ -807,6 +1001,21 @@ int install_thread(SceSize args, void *argp)
 		case 1:
 			file_count += sizeof(f0_02g) / sizeof(f0_02g[0]);
 			break;
+		case 2:
+			file_count += sizeof(f0_03g) / sizeof(f0_03g[0]);
+			break;
+		case 3:
+			file_count += sizeof(f0_04g) / sizeof(f0_04g[0]);
+			break;
+		case 6:
+			file_count += sizeof(f0_07g) / sizeof(f0_07g[0]);
+			break;
+		case 8:
+			file_count += sizeof(f0_09g) / sizeof(f0_09g[0]);
+			break;
+		case 10:
+			file_count += sizeof(f0_11g) / sizeof(f0_11g[0]);
+			break;
 		default:
 			InstallError(fw, "Unsupported model.");
 	}
@@ -824,6 +1033,26 @@ int install_thread(SceSize args, void *argp)
 		case 1:
 			CopyFileList(fw, f0_02g, sizeof(f0_02g) / sizeof(f0_02g[0]), ctr, file_count);
 			ctr += sizeof(f0_02g) / sizeof(f0_02g[0]);
+			break;
+		case 2:
+			CopyFileList(fw, f0_03g, sizeof(f0_03g) / sizeof(f0_03g[0]), ctr, file_count);
+			ctr += sizeof(f0_03g) / sizeof(f0_03g[0]);
+			break;
+		case 3:
+			CopyFileList(fw, f0_04g, sizeof(f0_04g) / sizeof(f0_04g[0]), ctr, file_count);
+			ctr += sizeof(f0_04g) / sizeof(f0_04g[0]);
+			break;
+		case 6:
+			CopyFileList(fw, f0_07g, sizeof(f0_07g) / sizeof(f0_07g[0]), ctr, file_count);
+			ctr += sizeof(f0_07g) / sizeof(f0_07g[0]);
+			break;
+		case 8:
+			CopyFileList(fw, f0_09g, sizeof(f0_09g) / sizeof(f0_09g[0]), ctr, file_count);
+			ctr += sizeof(f0_09g) / sizeof(f0_09g[0]);
+			break;
+		case 10:
+			CopyFileList(fw, f0_11g, sizeof(f0_11g) / sizeof(f0_11g[0]), ctr, file_count);
+			ctr += sizeof(f0_11g) / sizeof(f0_11g[0]);
 			break;
 		default:
 			InstallError(fw, "Unsupported model.");
@@ -852,24 +1081,59 @@ int install_thread(SceSize args, void *argp)
 	SetStatus("Flashing IPL...");
 
 	const char *ipl_name = 0;
+	u16 ipl_key = 0;
+	int offset = 0;
+
+	memset(big_buffer, 0, BIG_BUFFER_SIZE);
 	
-	switch (model)
+	if (fw == FW_OFW)
+	{
+		switch (model)
+		{
+			case 0: ipl_name = "flash0:/ipl_01g.bin"; break;
+			case 1: ipl_name = "flash0:/ipl_02g.bin"; break;
+			case 2: ipl_name = "flash0:/ipl_03g.bin"; ipl_key = 1; break;
+			case 3: ipl_name = "flash0:/ipl_04g.bin"; ipl_key = 1; break;
+			case 4: ipl_name = "flash0:/ipl_05g.bin"; ipl_key = 2; break;
+			case 6: ipl_name = "flash0:/ipl_07g.bin"; ipl_key = 1; break;
+			case 8: ipl_name = "flash0:/ipl_09g.bin"; ipl_key = 1; break;
+			case 10: ipl_name = "flash0:/ipl_11g.bin"; ipl_key = 1; break;
+			default: InstallError(fw, "Unsupported model.");
+		}
+	}
+	else
+	{
+		switch (model)
 		{
 			case 0:
+				offset = 0x4000;
 				ipl_name = "flash0:/ipl_01g.bin";
-				memcpy(ipl_block_large, ipl_block_01g, 0x4000);
+				memcpy(big_buffer, ipl_block_01g, 0x4000);
 				break;
-			case 1:
-				ipl_name = "flash0:/ipl_02g.bin";
+			case 1: 
+				if (mb == TA_088v3){
+					"flash0:/cipl_02g.bin";
+				}
+				else {
+					offset = 0x4000;
+					ipl_name = "flash0:/ipl_02g.bin";
+					memcpy(big_buffer, ipl_block_large, 0x4000);
+				}
 				break;
-			default:
-				InstallError(fw, "Unsupported model.");
+			case 2: ipl_name = "flash0:/cipl_03g.bin"; break;
+			case 3: ipl_name = "flash0:/cipl_04g.bin"; break;
+			case 4: ipl_name = "flash0:/cipl_05g.bin"; break;
+			case 6: ipl_name = "flash0:/cipl_07g.bin"; break;
+			case 8: ipl_name = "flash0:/cipl_09g.bin"; break;
+			case 10: ipl_name = "flash0:/cipl_11g.bin"; break;
+			default: InstallError(fw, "Unsupported model.");
 		}
+	}
 
-	size = ReadFile(ipl_name, 0, ipl_block_large + 0x4000, size_ipl_block_large - 0x4000);
-	if (size <= 0)
+	size = offset+ReadFile(ipl_name, 0, big_buffer+offset, BIG_BUFFER_SIZE-offset);
+	if (size-offset <= 0)
 	{
-		InstallError(fw, "Cannot read ipl\n");
+		InstallError(fw, "Cannot read nandipl\n");
 	}
 	
 	dcPatchModuleString("IoPrivileged", "IoPrivileged", "IoPrivileged");
@@ -877,14 +1141,8 @@ int install_thread(SceSize args, void *argp)
 	if (pspIplUpdateClearIpl() < 0)
 		InstallError(fw, "Error in pspIplUpdateClearIpl");
 	
-	if (fw != FW_OFW) {
-		if (pspIplUpdateSetIpl(ipl_block_large, size_ipl_block_large, 0) < 0)
-			InstallError(fw, "Error in pspIplUpdateSetIpl");
-	}
-	else {
-		if (pspIplUpdateSetIpl(ipl_block_large + 0x4000, size_ipl_block_large - 0x4000, 0) < 0)
-			InstallError(fw, "Error in pspIplUpdateSetIpl");
-	}
+	if (pspIplUpdateSetIpl(big_buffer, size, ipl_key) < 0)
+		InstallError(fw, "Error in pspIplUpdateSetIpl");
 
 	sceKernelDelayThread(900000);
 
@@ -892,6 +1150,14 @@ int install_thread(SceSize args, void *argp)
 	{
 		int file_count = file_count += sizeof(f0_ark) / sizeof(f0_ark[0]);
 		CopyFileList(fw, f0_ark, sizeof(f0_ark) / sizeof(f0_ark[0]), 0, file_count);
+		for (int i=0; i<(sizeof(f0_ark_extras)/sizeof(f0_ark_extras[0])); i++)
+		{
+			char path[ARK_PATH_SIZE];
+			strcpy(path, "flash0:/ARK_01234/");
+			strcat(path, f0_ark_extras[i].orig);
+			f0_ark_extras[i].dest[3] = 'c';
+			copy_file(path, f0_ark_extras[i].dest);
+		}
 	}
 
 	SetProgress(100, 1);

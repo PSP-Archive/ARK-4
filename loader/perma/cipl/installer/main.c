@@ -18,14 +18,14 @@
 #include <ipl_block_01g.h>
 #include <kbooti_ipl_block_01g.h>
 
-#include <payload_01G.h>
-#include <payload_02G.h>
-#include <payload_03G.h>
-#include <payload_04G.h>
-#include <payload_05G.h>
-#include <payload_07G.h>
-#include <payload_09G.h>
-#include <payload_11G.h>
+#include <cipl_01G.h>
+#include <cipl_02G.h>
+#include <cipl_03G.h>
+#include <cipl_04G.h>
+#include <cipl_05G.h>
+#include <cipl_07G.h>
+#include <cipl_09G.h>
+#include <cipl_11G.h>
 
 
 PSP_MODULE_INFO("IPLFlasher", 0x0800, 1, 0); 
@@ -324,19 +324,17 @@ void newipl_menu(){
 		unsigned char* buf;
 		size_t size;
 	} ipl_table[] = {
-		{(unsigned char*)payload_01G, size_payload_01G},
-		{(unsigned char*)payload_02G, size_payload_02G},
-		{(unsigned char*)payload_03G, size_payload_03G},
-		/*
-		{(unsigned char*)payload_04G, size_payload_04G},
-		{(unsigned char*)payload_05G, size_payload_05G},
+		{(unsigned char*)cipl_01G, size_cipl_01G},
+		{(unsigned char*)cipl_02G, size_cipl_02G},
+		{(unsigned char*)cipl_03G, size_cipl_03G},
+		{(unsigned char*)cipl_04G, size_cipl_04G},
+		{(unsigned char*)cipl_05G, size_cipl_05G},
 		{(unsigned char*)NULL, 0}, // 6g
-		{(unsigned char*)payload_07G, size_payload_07G},
+		{(unsigned char*)cipl_07G, size_cipl_07G},
 		{(unsigned char*)NULL, 0}, // 8g
-		{(unsigned char*)payload_09G, size_payload_09G}, // 9g
+		{(unsigned char*)cipl_09G, size_cipl_09G},
 		{(unsigned char*)NULL, 0}, // 10g
-		{(unsigned char*)payload_11G, size_payload_11G}, // 11g
-		*/
+		{(unsigned char*)cipl_11G, size_cipl_11G},
 	};
 
 	int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);

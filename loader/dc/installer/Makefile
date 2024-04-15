@@ -6,6 +6,11 @@ OBJS = \
 	pspbtcnf_dc.h \
 	pspbtcnf_02g_dc.h \
 	pspbtcnf_03g_dc.h \
+	pspbtcnf_04g_dc.h \
+	pspbtcnf_05g_dc.h \
+	pspbtcnf_07g_dc.h \
+	pspbtcnf_09g_dc.h \
+	pspbtcnf_11g_dc.h \
 	ipl_update.h \
 	dcman.h \
 	iop.h \
@@ -18,7 +23,7 @@ OBJS = \
 	pspPSAR.o \
 
 
-INCDIR = $(ARKROOT)/common/include $(ARKROOT)/libs/libvlf $(ARKROOT)
+INCDIR = $(ARKROOT)/common/include $(ARKROOT)/libs/libvlf $(ARKROOT) $(ARKROOT)/loader/dc/msipl/newipl/ $(ARKROOT)/loader/perma/cipl/new/
 CFLAGS = -std=c99 -O2 -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS) -c
@@ -55,6 +60,26 @@ pspbtcnf_02g_dc.h:
 pspbtcnf_03g_dc.h:
 	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_03g_dc.txt
 	$(Q)bin2c ../btcnf/pspbtcnf_03g_dc.bin pspbtcnf_03g_dc.h pspbtcnf_03g_dc
+
+pspbtcnf_04g_dc.h:
+	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_04g_dc.txt
+	$(Q)bin2c ../btcnf/pspbtcnf_04g_dc.bin pspbtcnf_04g_dc.h pspbtcnf_04g_dc
+
+pspbtcnf_05g_dc.h:
+	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_05g_dc.txt
+	$(Q)bin2c ../btcnf/pspbtcnf_05g_dc.bin pspbtcnf_05g_dc.h pspbtcnf_05g_dc
+
+pspbtcnf_07g_dc.h:
+	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_07g_dc.txt
+	$(Q)bin2c ../btcnf/pspbtcnf_07g_dc.bin pspbtcnf_07g_dc.h pspbtcnf_07g_dc
+
+pspbtcnf_09g_dc.h:
+	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_09g_dc.txt
+	$(Q)bin2c ../btcnf/pspbtcnf_09g_dc.bin pspbtcnf_09g_dc.h pspbtcnf_09g_dc
+
+pspbtcnf_11g_dc.h:
+	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_11g_dc.txt
+	$(Q)bin2c ../btcnf/pspbtcnf_11g_dc.bin pspbtcnf_11g_dc.h pspbtcnf_11g_dc
 
 dcman.h:
 	$(Q)bin2c ../dcman/dcman.prx dcman.h dcman
