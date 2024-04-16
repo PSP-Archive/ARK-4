@@ -68,8 +68,9 @@ def disable_go_check():
 
 def refresh():
     m.destroy()
-    os.execv(sys.argv[0], sys.argv)
-
+    p = sys.executable
+    os.execl(p, p, *sys.argv)
+    
 def cleanup() -> None:
     global go
     if go:
