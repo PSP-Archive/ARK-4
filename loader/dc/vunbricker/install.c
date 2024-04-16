@@ -1133,7 +1133,9 @@ int install_thread(SceSize args, void *argp)
 	size = offset+ReadFile(ipl_name, 0, big_buffer+offset, BIG_BUFFER_SIZE-offset);
 	if (size-offset <= 0)
 	{
-		InstallError(fw, "Cannot read nandipl\n");
+		char msg[128];
+		sprintf(msg, "Cannot read %s\n", ipl_name);
+		InstallError(fw, msg);
 	}
 	
 	dcPatchModuleString("IoPrivileged", "IoPrivileged", "IoPrivileged");

@@ -546,9 +546,13 @@ void ExtractPrxs(int cbFile, SceUID fd)
 									{
 										memcpy(g_dataOut2, g_dataOut, cbExpanded);
 									}
+									
 									char iplpath[256];
 									char* iplname = strstr(name, "ipl_");
 									sprintf(iplpath, "%s/%s", ARK_DC_PATH, iplname);
+
+									char* ext = strstr(iplpath, ".ipl");
+									if (ext) strcpy(ext, ".bin");
 
 									if (WriteFile(iplpath, g_dataOut2, cbExpanded) != (cbExpanded))
 									{

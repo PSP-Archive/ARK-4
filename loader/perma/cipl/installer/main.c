@@ -81,7 +81,6 @@ void ErrorExit(int milisecs, char *fmt, ...)
 	sceKernelExitGame(); 
 }
 ////////////////////////////////////////
-u8 nand_buff[0x40000];
 void flash_ipl(int size, u16 key)
 {
 
