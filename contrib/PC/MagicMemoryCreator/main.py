@@ -27,6 +27,7 @@ m.title('DC-ARK Maker')
 var = tk.StringVar(m)
 var.set(possible_drive[0])
 check = tk.BooleanVar(m)
+format_ms_check = tk.BooleanVar(m)
 
 disk_check = tk.StringVar(m)
 disk_check.set(0)
@@ -58,6 +59,13 @@ else:
     out = out.stdout.read().decode().splitlines()
     for i in out:
         possible_drive.append(i)
+
+def fmt_ms():
+    legacy['state'] = 'disabled'
+    go_check['state'] = 'disabled'
+    status.config(text='Formatting Memory Stick\nSelected!') 
+    b.config(text='Format')
+    m.update()
 
 def disable_go_check():
     if check.get():
@@ -97,8 +105,10 @@ def go_update():
 def toggle_run(toggle) -> None:
     if toggle != '-':
         b['state'] = 'normal'
+        format_ms.grid(row=4, column=0, sticky="W")
     else:
         b['state'] = 'disabled'
+        format_ms.grid_remove()
 
 def run() -> None:
     b['state'] = "disabled"
@@ -187,9 +197,6 @@ def run() -> None:
         status.config(text="COPYING PLEASE WAIT!")
         m.update()
         shutil.copytree("TM", get_mountpoint, dirs_exist_ok=True)
-        #os.system('oschmod 755 msipl_installer.py')
-        #os.system(f'sudo python3 ./msipl_installer.py --devname {var.get()} --clear')
-        #os.system(f'sudo python3 ./msipl_installer.py --devname {var.get()} --insert msipl.bin')
         msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, None, False, True ))
         msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, 'msipl.bin', False, False ))
         status.config(fg='green', text="DONE!")
@@ -197,7 +204,6 @@ def run() -> None:
         subprocess.run(['diskutil', 'umountDisk', 'force', f'/dev/{var.get()}'])
         subprocess.run(['sync'])
         time.sleep(2)
-        #msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, None, False, True ))
         msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, 'msipl.bin', False, False ))
         subprocess.run(['diskutil', 'umountDisk', 'force', f'/dev/{var.get()}'])
         subprocess.run(['mkdir', '/Volumes/__psp__'])
@@ -254,12 +260,14 @@ legacy=tk.Checkbutton(m, text="Legacy IPL ( 1K' and early 2K's ONLY )", variable
 legacy.grid(row=3, column=0)
 
 
+
+format_ms=tk.Checkbutton(m, text='Format Memory Stick', variable=format_ms_check, command=fmt_ms)
+
+
 b=tk.Button(m, text='Run', command=run)
 b.grid(row=1,column=1)
 r=tk.Button(m, text='Refresh', command=refresh)
-r.grid(row=4, column=0)
-
-
+r.grid(row=5, column=0)
 
 
 x=tk.Button(m, text='Exit', command=m.destroy)
