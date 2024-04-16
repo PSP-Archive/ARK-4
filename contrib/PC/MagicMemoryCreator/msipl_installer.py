@@ -1,11 +1,12 @@
+#!/usr/bin/env python3
 import argparse
-import struct
-import os
-import time
-import platform
 import math
-import subprocess
+import os
+import platform
 import re
+import struct
+import subprocess
+import time
 
 is_windows = os.name == 'nt'
 is_macos = platform.system() == 'Darwin'
@@ -54,7 +55,6 @@ class MBR:
 
 
 def main(args):
-
     if is_windows:
         diskID = f'\\\\.\\PHYSICALDRIVE{args.pdisk}'
 

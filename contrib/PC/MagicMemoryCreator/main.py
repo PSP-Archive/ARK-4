@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 import tkinter as tk
-import platform
-import os
-import time
-import sys
 import ctypes
 import glob
+import os
+import platform
 import requests
-import subprocess
 import shutil
+import subprocess
+import sys
+import time
 import msipl_installer
+import urllib3; urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from zipfile import ZipFile
 
 if platform.system().lower() != 'linux' and platform.system().lower() != 'windows' and platform.system().lower() != 'darwin':
@@ -104,28 +105,30 @@ def run() -> None:
     b['text'] = "Please Wait..."
     global go
 
-    
     # Download pspdecrypt from John
     if platform.system() == 'Linux':
-        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-linux.zip', verify=False)
+        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-linux.zip', timeout=10, verify=False)
         with open('pspdecrypt-1.0-linux.zip', 'wb') as f:
             f.write(resp.content)
+            resp.close()
         with ZipFile('pspdecrypt-1.0-linux.zip', 'r') as zObject:
             zObject.extractall(path=f'{os.getcwd()}/')
         os.system('oschmod 755 pspdecrypt')
         x['state'] = "normal"
     elif platform.system() == 'Windows':
-        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-windows.zip', verify=False)
+        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-windows.zip', timeout=10, verify=False)
         with open('pspdecrypt-1.0-windows.zip', 'wb') as f:
             f.write(resp.content)
+            resp.close()
         with ZipFile('pspdecrypt-1.0-windows.zip', 'r') as zObject:
             zObject.extractall(path=f'{os.getcwd()}\\')
         os.system('oschmod 755 pspdecrypt.exe')
         x['state'] = "normal"
     elif platform.system() == 'Darwin':
-        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-macos.zip', verify=False)
+        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-macos.zip', timeout=10, verify=False)
         with open('pspdecrypt-1.0-macos.zip', 'wb') as f:
             f.write(resp.content)
+            resp.close()
         with ZipFile('pspdecrypt-1.0-macos.zip', 'r') as zObject:
             zObject.extractall(path=f'{os.getcwd()}/')
         os.system('oschmod 755 pspdecrypt')
@@ -136,13 +139,21 @@ def run() -> None:
 
     # Download 6.61 OFW
     if go:
-        resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image2/us/2014_1212_fd0f7d0798b4f6e6d32ef95836740527/EBOOT.PBP', verify=False)
-        with open('661_GO.PBP', 'wb') as f:
-            f.write(resp.content)
+        resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image2/us/2014_1212_fd0f7d0798b4f6e6d32ef95836740527/EBOOT.PBP', timeout=10, verify=False)
+        if resp:
+            with open('661_GO.PBP', 'wb') as f:
+                f.write(resp.content)
+                resp.close()
+        else:
+            print(resp.status_code)
     else:
-        resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image/us/2014_1212_6be8878f475ac5b1a499b95ab2f7d301/EBOOT.PBP', verify=False)
-        with open('661.PBP', 'wb') as f:
-            f.write(resp.content)
+        resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image/us/2014_1212_6be8878f475ac5b1a499b95ab2f7d301/EBOOT.PBP', timeout=10, verify=False)
+        if resp:
+            with open('661.PBP', 'wb') as f:
+                f.write(resp.content)
+                resp.close()
+        else:
+            print(resp.status_code)
 
     if platform.system() == 'Linux' or platform.system() == 'Darwin':
         if go:
