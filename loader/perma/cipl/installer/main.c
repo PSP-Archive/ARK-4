@@ -27,6 +27,15 @@
 #include <cipl_09G.h>
 #include <cipl_11G.h>
 
+#include <origipl_01G.h>
+#include <origipl_02G.h>
+#include <origipl_03G.h>
+#include <origipl_04G.h>
+#include <origipl_05G.h>
+#include <origipl_07G.h>
+#include <origipl_09G.h>
+#include <origipl_11G.h>
+
 
 PSP_MODULE_INFO("IPLFlasher", 0x0800, 1, 0); 
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
@@ -41,7 +50,7 @@ u32 sceSysregGetTachyonVersion(void);		// 0xE2A5D1EE
 
 char msg[256];
 int model;
-static u8 orig_ipl[0x24000] __attribute__((aligned(64)));
+static u8 big_buf[256*1024] __attribute__((aligned(64)));
 
 u8* ipl_block = ipl_block_large;
 
@@ -128,7 +137,7 @@ void classicipl_menu(){
 
 	loadIplUpdateModule();
 
-	size = pspIplUpdateGetIpl(orig_ipl);
+	size = pspIplUpdateGetIpl(big_buf);
 
 	if(size < 0) {
 		ErrorExit(5000,"Failed to get ipl!\n");
@@ -141,11 +150,11 @@ void classicipl_menu(){
 	if( size == 0x24000 ) {
 		printf("Custom ipl is installed\n");
 		size -= 0x4000;
-		memmove( ipl_block_large + 0x4000 , orig_ipl + 0x4000 , size);
+		memmove( ipl_block_large + 0x4000 , big_buf + 0x4000 , size);
 		ipl_type = 1;
 	} else if( size == 0x20000 ) {
 		printf("Raw ipl \n");
-		memmove( ipl_block_large + 0x4000, orig_ipl, size);
+		memmove( ipl_block_large + 0x4000, big_buf, size);
 	} else {
 		printf("ipl size;%08X\n", size);
 		ErrorExit(5000,"Unknown ipl!\n");
@@ -298,7 +307,6 @@ void devtoolipl_menu(){
 
 void newipl_menu(){
 	int size = 184320;
-	int ipl_type = 0;
 	u16 ipl_key = 0;
 
 	static unsigned char* ipl_table[] = {
@@ -313,6 +321,20 @@ void newipl_menu(){
 		(unsigned char*)cipl_09G,
 		(unsigned char*)NULL, // 10g
 		(unsigned char*)cipl_11G,
+	};
+
+	static unsigned char* orig_ipl_table[] = {
+		(unsigned char*)origipl_01G,
+		(unsigned char*)origipl_02G,
+		(unsigned char*)origipl_03G,
+		(unsigned char*)origipl_04G,
+		(unsigned char*)origipl_05G,
+		(unsigned char*)NULL, // 6g
+		(unsigned char*)origipl_07G,
+		(unsigned char*)NULL, // 8g
+		(unsigned char*)origipl_09G,
+		(unsigned char*)NULL, // 10g
+		(unsigned char*)origipl_11G,
 	};
 
 	int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);
@@ -337,17 +359,9 @@ void newipl_menu(){
 
 	printf("\nCustom ipl Flasher for 6.61.\n\n\n");
 
-	printf(" Press X to ");
+	printf(" Press X to install cIPL on %dg\n", (model+1));
 
-	if( ipl_type ) {
-		printf("Re");
-	}
-
-	printf("install CIPL on %dg\n", model);
-
-	if( ipl_type ) {
-		printf(" Press O to Erase CIPL and Restore Raw IPL\n");
-	}
+	printf(" Press O to restore original IPL\n");
 
 	printf(" Press R to cancel\n\n");
     
@@ -360,11 +374,14 @@ void newipl_menu(){
 			if(pspIplUpdateClearIpl() < 0)
 				ErrorExit(5000,"Failed to clear ipl!\n");
 
-			if (pspIplUpdateSetIpl(ipl_block, size, ipl_key ) < 0)
+			if (pspIplUpdateSetIpl(ipl_block, size, 0 ) < 0)
 				ErrorExit(5000,"Failed to write cipl!\n");
 			break; 
-		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) && ipl_type ) {		
+		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) ) {		
 			printf("Flashing IPL...");
+
+			ipl_block = orig_ipl_table[model];
+			size = 126976;
 
 			if(pspIplUpdateClearIpl() < 0) {
 				ErrorExit(5000,"Failed to clear ipl!\n");
