@@ -80,36 +80,6 @@ void ErrorExit(int milisecs, char *fmt, ...)
 	sceKernelDelayThread(milisecs*1000);
 	sceKernelExitGame(); 
 }
-////////////////////////////////////////
-void flash_ipl(int size, u16 key)
-{
-
-	printf("Flashing IPL...");
-
-//	if(ReadFile("ipl_block.bin", 0 , ipl_block_large , 0x4000) < 0)
-//		ErrorExit(5000,"Failed to load custom ipl!\n");
-
-	if(pspIplUpdateClearIpl() < 0)
-		ErrorExit(5000,"Failed to clear ipl!\n");
-
-	if (pspIplUpdateSetIpl(ipl_block , size, key ) < 0)
-		ErrorExit(5000,"Failed to write ipl!\n");
-
-	printf("Done.\n");
-
-}
-
-void flash_kbooti(int size)
-{
-
-	printf("Flashing KBOOTI...");
-
-	if (pspKbootiUpdateKbooti(kbooti_ipl_block_01g, (sizeof(kbooti_ipl_block_01g))) < 0)
-		ErrorExit(5000,"Failed to write kbooti!\n");
-
-	printf("Done.\n");
-
-}
 
 void loadIplUpdateModule(){
 	SceUID mod;
@@ -152,7 +122,6 @@ void classicipl_menu(){
 
 	printf("Classic cIPL installation.\n");
 
-	ipl_block = ipl_block_large;
 	if( model == 0 ) {
 		memcpy( ipl_block_large , ipl_block_01g, 0x4000);
 	}
@@ -203,7 +172,15 @@ void classicipl_menu(){
         sceCtrlReadBufferPositive(&pad, 1);
 
 		if (pad.Buttons & PSP_CTRL_CROSS) {
-			flash_ipl( size+0x4000, 0 );
+			printf("Flashing IPL...");
+
+			if(pspIplUpdateClearIpl() < 0)
+				ErrorExit(5000,"Failed to clear ipl!\n");
+
+			if (pspIplUpdateSetIpl(ipl_block_large, size+0x4000, 0 ) < 0)
+				ErrorExit(5000,"Failed to write ipl!\n");
+
+			printf("Done.\n");
 			break; 
 		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) && ipl_type ) {		
 			printf("Flashing IPL...");
@@ -293,7 +270,11 @@ void devtoolipl_menu(){
         sceCtrlReadBufferPositive(&pad, 1);
 
 		if (pad.Buttons & PSP_CTRL_CROSS) {
-			flash_kbooti( size );
+			printf("Flashing KBOOTI...");
+			if (pspKbootiUpdateKbooti(kbooti_ipl_block_01g, (sizeof(kbooti_ipl_block_01g))) < 0)
+				ErrorExit(5000,"Failed to write kbooti!\n");
+
+			printf("Done.\n");
 			break; 
 		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) && ipl_type ) {		
 			printf("Flashing KBOOTI...");
@@ -316,24 +297,22 @@ void devtoolipl_menu(){
 
 
 void newipl_menu(){
-	int size, ipl_type;
+	int size = 184320;
+	int ipl_type = 0;
 	u16 ipl_key = 0;
 
-	struct {
-		unsigned char* buf;
-		size_t size;
-	} ipl_table[] = {
-		{(unsigned char*)cipl_01G, size_cipl_01G},
-		{(unsigned char*)cipl_02G, size_cipl_02G},
-		{(unsigned char*)cipl_03G, size_cipl_03G},
-		{(unsigned char*)cipl_04G, size_cipl_04G},
-		{(unsigned char*)cipl_05G, size_cipl_05G},
-		{(unsigned char*)NULL, 0}, // 6g
-		{(unsigned char*)cipl_07G, size_cipl_07G},
-		{(unsigned char*)NULL, 0}, // 8g
-		{(unsigned char*)cipl_09G, size_cipl_09G},
-		{(unsigned char*)NULL, 0}, // 10g
-		{(unsigned char*)cipl_11G, size_cipl_11G},
+	static unsigned char* ipl_table[] = {
+		(unsigned char*)cipl_01G,
+		(unsigned char*)cipl_02G,
+		(unsigned char*)cipl_03G,
+		(unsigned char*)cipl_04G,
+		(unsigned char*)cipl_05G,
+		(unsigned char*)NULL, // 6g
+		(unsigned char*)cipl_07G,
+		(unsigned char*)NULL, // 8g
+		(unsigned char*)cipl_09G,
+		(unsigned char*)NULL, // 10g
+		(unsigned char*)cipl_11G,
 	};
 
 	int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);
@@ -345,18 +324,16 @@ void newipl_menu(){
 		ErrorExit(5000,"6.61 FW SUPPORTED ONLY!\n");
 	}
 
-	if(model >= supported_models || ipl_table[model].buf == NULL) {
+	if(model >= supported_models || ipl_table[model] == NULL) {
 		ErrorExit(5000,"This installer does not support this model.\n");
 	}
 
-	ipl_block = ipl_table[model].buf;
+	u8* ipl_block = ipl_table[model];
 	if (model > 2){
 		ipl_key = (model==4)?2:1;
 	}
 
 	loadIplUpdateModule();
-
-	size = ipl_table[model].size;
 
 	printf("\nCustom ipl Flasher for 6.61.\n\n\n");
 
@@ -366,7 +343,7 @@ void newipl_menu(){
 		printf("Re");
 	}
 
-	printf("install CIPL\n");
+	printf("install CIPL on %dg\n", model);
 
 	if( ipl_type ) {
 		printf(" Press O to Erase CIPL and Restore Raw IPL\n");
@@ -379,7 +356,12 @@ void newipl_menu(){
         sceCtrlReadBufferPositive(&pad, 1);
 
 		if (pad.Buttons & PSP_CTRL_CROSS) {
-			flash_ipl( size, ipl_key );
+			printf("Flashing cIPL...");
+			if(pspIplUpdateClearIpl() < 0)
+				ErrorExit(5000,"Failed to clear ipl!\n");
+
+			if (pspIplUpdateSetIpl(ipl_block, size, ipl_key ) < 0)
+				ErrorExit(5000,"Failed to write cipl!\n");
 			break; 
 		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) && ipl_type ) {		
 			printf("Flashing IPL...");

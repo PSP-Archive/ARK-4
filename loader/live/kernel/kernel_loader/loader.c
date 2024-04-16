@@ -10,6 +10,8 @@
 #include "core/compat/vitapops/rebootex/payload.h"
 #include "core/compat/pentazemin/rebootex/payload.h"
 
+extern char* kbin_path;
+
 static int isVitaFile(char* filename){
     return (strstr(filename, "psv")!=NULL // PS Vita btcnf replacement, not used on PSP
             || strstr(filename, "660")!=NULL // PSP 6.60 modules can be used on Vita, not needed for PSP
@@ -41,6 +43,11 @@ void flashPatch(){
             k_tbl->KernelStartThread(kthreadID, sizeof(void*)*3, &args);
             k_tbl->waitThreadEnd(kthreadID, NULL);
             k_tbl->KernelDeleteThread(kthreadID);
+            // delete archive on FinalSpeed installs
+            if (kbin_path && strstr(kbin_path, "/PSP/APP/")){
+                PRTSTR("FinalSpeed Live Install detected, deleting FLASH0.ARK");
+                k_tbl->KernelIORemove(archive);
+            }
         }
     }
     else{ // Patching flash0 on Vita
