@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 import tkinter as tk
-import platform
-import os
-import time
-import sys
 import ctypes
 import glob
+import os
+import platform
 import requests
-import subprocess
 import shutil
+import subprocess
+import sys
+import time
 import msipl_installer
+import urllib3; urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from zipfile import ZipFile
 
 if platform.system().lower() != 'linux' and platform.system().lower() != 'windows' and platform.system().lower() != 'darwin':
@@ -26,6 +27,7 @@ m.title('DC-ARK Maker')
 var = tk.StringVar(m)
 var.set(possible_drive[0])
 check = tk.BooleanVar(m)
+format_ms_check = tk.BooleanVar(m)
 
 disk_check = tk.StringVar(m)
 disk_check.set(0)
@@ -58,6 +60,13 @@ else:
     for i in out:
         possible_drive.append(i)
 
+def fmt_ms():
+    legacy['state'] = 'disabled'
+    go_check['state'] = 'disabled'
+    status.config(text='Formatting Memory Stick\nSelected!') 
+    b.config(text='Format')
+    m.update()
+
 def disable_go_check():
     if check.get():
         go_check['state'] = 'disabled'
@@ -68,8 +77,9 @@ def disable_go_check():
 
 def refresh():
     m.destroy()
-    os.execv(sys.argv[0], sys.argv)
-
+    p = sys.executable
+    os.execl(p, p, *sys.argv)
+    
 def cleanup() -> None:
     global go
     if go:
@@ -95,8 +105,10 @@ def go_update():
 def toggle_run(toggle) -> None:
     if toggle != '-':
         b['state'] = 'normal'
+        format_ms.grid(row=4, column=0, sticky="W")
     else:
         b['state'] = 'disabled'
+        format_ms.grid_remove()
 
 def run() -> None:
     b['state'] = "disabled"
@@ -104,28 +116,30 @@ def run() -> None:
     b['text'] = "Please Wait..."
     global go
 
-    
     # Download pspdecrypt from John
     if platform.system() == 'Linux':
-        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-linux.zip', verify=False)
+        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-linux.zip', timeout=10, verify=False)
         with open('pspdecrypt-1.0-linux.zip', 'wb') as f:
             f.write(resp.content)
+            resp.close()
         with ZipFile('pspdecrypt-1.0-linux.zip', 'r') as zObject:
             zObject.extractall(path=f'{os.getcwd()}/')
         os.system('oschmod 755 pspdecrypt')
         x['state'] = "normal"
     elif platform.system() == 'Windows':
-        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-windows.zip', verify=False)
+        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-windows.zip', timeout=10, verify=False)
         with open('pspdecrypt-1.0-windows.zip', 'wb') as f:
             f.write(resp.content)
+            resp.close()
         with ZipFile('pspdecrypt-1.0-windows.zip', 'r') as zObject:
             zObject.extractall(path=f'{os.getcwd()}\\')
         os.system('oschmod 755 pspdecrypt.exe')
         x['state'] = "normal"
     elif platform.system() == 'Darwin':
-        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-macos.zip', verify=False)
+        resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-macos.zip', timeout=10, verify=False)
         with open('pspdecrypt-1.0-macos.zip', 'wb') as f:
             f.write(resp.content)
+            resp.close()
         with ZipFile('pspdecrypt-1.0-macos.zip', 'r') as zObject:
             zObject.extractall(path=f'{os.getcwd()}/')
         os.system('oschmod 755 pspdecrypt')
@@ -136,13 +150,21 @@ def run() -> None:
 
     # Download 6.61 OFW
     if go:
-        resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image2/us/2014_1212_fd0f7d0798b4f6e6d32ef95836740527/EBOOT.PBP', verify=False)
-        with open('661_GO.PBP', 'wb') as f:
-            f.write(resp.content)
+        resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image2/us/2014_1212_fd0f7d0798b4f6e6d32ef95836740527/EBOOT.PBP', timeout=10, verify=False)
+        if resp:
+            with open('661_GO.PBP', 'wb') as f:
+                f.write(resp.content)
+                resp.close()
+        else:
+            print(resp.status_code)
     else:
-        resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image/us/2014_1212_6be8878f475ac5b1a499b95ab2f7d301/EBOOT.PBP', verify=False)
-        with open('661.PBP', 'wb') as f:
-            f.write(resp.content)
+        resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image/us/2014_1212_6be8878f475ac5b1a499b95ab2f7d301/EBOOT.PBP', timeout=10, verify=False)
+        if resp:
+            with open('661.PBP', 'wb') as f:
+                f.write(resp.content)
+                resp.close()
+        else:
+            print(resp.status_code)
 
     if platform.system() == 'Linux' or platform.system() == 'Darwin':
         if go:
@@ -175,9 +197,6 @@ def run() -> None:
         status.config(text="COPYING PLEASE WAIT!")
         m.update()
         shutil.copytree("TM", get_mountpoint, dirs_exist_ok=True)
-        #os.system('oschmod 755 msipl_installer.py')
-        #os.system(f'sudo python3 ./msipl_installer.py --devname {var.get()} --clear')
-        #os.system(f'sudo python3 ./msipl_installer.py --devname {var.get()} --insert msipl.bin')
         msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, None, False, True ))
         msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, 'msipl.bin', False, False ))
         status.config(fg='green', text="DONE!")
@@ -185,7 +204,6 @@ def run() -> None:
         subprocess.run(['diskutil', 'umountDisk', 'force', f'/dev/{var.get()}'])
         subprocess.run(['sync'])
         time.sleep(2)
-        #msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, None, False, True ))
         msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, 'msipl.bin', False, False ))
         subprocess.run(['diskutil', 'umountDisk', 'force', f'/dev/{var.get()}'])
         subprocess.run(['mkdir', '/Volumes/__psp__'])
@@ -242,12 +260,14 @@ legacy=tk.Checkbutton(m, text="Legacy IPL ( 1K' and early 2K's ONLY )", variable
 legacy.grid(row=3, column=0)
 
 
+
+format_ms=tk.Checkbutton(m, text='Format Memory Stick', variable=format_ms_check, command=fmt_ms)
+
+
 b=tk.Button(m, text='Run', command=run)
 b.grid(row=1,column=1)
 r=tk.Button(m, text='Refresh', command=refresh)
-r.grid(row=4, column=0)
-
-
+r.grid(row=5, column=0)
 
 
 x=tk.Button(m, text='Exit', command=m.destroy)

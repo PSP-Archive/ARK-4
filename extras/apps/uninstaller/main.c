@@ -22,7 +22,7 @@ int main(int argc, char *args[]) {
 		sceKernelDelayThread(3000000);
 		sceKernelExitGame();
 	}
-	printf("Make sure you do not have a cIPL/Infinty installed. \nIt is safest to just use ChronoSwitch to reinstall OFW without ARK-4 modules.\n\nPress X to continue\nPress O to quit...\n");
+	printf("Make sure you do not have a cIPL/Infinity installed. \nIt is safest to just use ChronoSwitch to reinstall OFW without ARK-4 modules.\n\nPress X to continue\nPress O to quit...\n");
 	while(1) {
 		sceCtrlReadBufferPositive(&pad, 1);
 		if(pad.Buttons & PSP_CTRL_CROSS)
