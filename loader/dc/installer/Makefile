@@ -44,10 +44,10 @@ PSP_LARGE_MEMORY = 1
 all: $(TARGET).prx
 
 tm_msipl.h:
-	$(Q)bin2c $(ARKROOT)/contrib/PC/timemachine/tm_msipl_legacy.bin tm_msipl.h tm_msipl
+	$(Q)bin2c $(ARKROOT)/contrib/PSP/IPL/tm_msipl_legacy.bin tm_msipl.h tm_msipl
 
 tm_mloader.h:
-	$(Q)bin2c $(ARKROOT)/contrib/PC/timemachine/tm_mloader.bin tm_mloader.h tm_mloader
+	$(Q)bin2c $(ARKROOT)/contrib/PSP/IPL/tm_mloader.bin tm_mloader.h tm_mloader
 
 pspbtcnf_dc.h:
 	$(PYTHON) $(ARKROOT)/contrib/PC/btcnf/btcnf.py build ../btcnf/pspbtcnf_dc.txt

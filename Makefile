@@ -125,7 +125,7 @@ copy-bin:
 	$(Q)cp extras/apps/updater/EBOOT_PSP.PBP dist/UPDATE/EBOOT.PBP
 	$(Q)cp loader/dc/msipl/newipl/msipl_*.bin dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/btcnf/pspbtcnf*_dc.bin dist/PC/MagicMemoryCreator/TM/DCARK/kd/
-	$(Q)cp contrib/PC/timemachine/tm_mloader.bin dist/PC/MagicMemoryCreator/TM/DCARK/
+	$(Q)cp contrib/PSP/IPL/tm_mloader.bin dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/msipl/newipl/loader/ipl.bin dist/PC/MagicMemoryCreator/msipl.bin
 	$(Q)cp loader/dc/tmctrl/tmctrl.prx dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/dcman/dcman.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
@@ -149,7 +149,7 @@ copy-bin:
 	$(Q)cp loader/perma/cipl/new/cipl_07G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_07g.bin
 	$(Q)cp loader/perma/cipl/new/cipl_09G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_09g.bin
 	$(Q)cp loader/perma/cipl/new/cipl_11G.bin dist/PC/MagicMemoryCreator/TM/DCARK/cipl_11g.bin
-	$(Q)cp contrib/PC/timemachine/tm_msipl_legacy.bin dist/PC/MagicMemoryCreator/
+	$(Q)cp contrib/PSP/IPL/tm_msipl_legacy.bin dist/PC/MagicMemoryCreator/
 
 encrypt-prx: \
 	dist/SYSCTRL.BIN \
