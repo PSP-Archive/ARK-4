@@ -25,6 +25,7 @@ SUBDIRS = libs \
 	core/compat/pentazemin/rebootex \
 	core/compat/pentazemin/btcnf \
 	core/compat/pentazemin \
+	extras/modules/iop \
 	extras/modules/ipl_update \
 	extras/modules/kpspident \
 	extras/modules/peops \
@@ -129,6 +130,7 @@ copy-bin:
 	$(Q)cp loader/dc/msipl/newipl/loader/ipl.bin dist/PC/MagicMemoryCreator/msipl.bin
 	$(Q)cp loader/dc/tmctrl/tmctrl.prx dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/dcman/dcman.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
+	$(Q)cp extras/modules/iop/iop.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp loader/dc/vunbricker/resurrection.prx dist/PC/MagicMemoryCreator/TM/DCARK/vsh/module/
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp contrib/PSP/IPL/nandipl_01G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_01g.bin
@@ -249,6 +251,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
+	$(Q)$(MAKE) $@ -C extras/modules/iop
 	$(Q)$(MAKE) $@ -C extras/modules/peops
 	$(Q)$(MAKE) $@ -C extras/modules/xmbctrl
 	$(Q)$(MAKE) $@ -C extras/modules/usbdevice
