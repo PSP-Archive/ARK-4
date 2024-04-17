@@ -51,6 +51,16 @@ unsigned int syscon_get_baryon_version(void)
     return g_baryon_version;
 }
 
+unsigned int syscon_get_tachyon_version()
+{
+	unsigned int ver = *(unsigned int*)(0xbc100040);
+	
+	if (ver & 0xFF000000)
+		return (ver >> 8);
+
+	return 0x100000;
+}
+
 int syscon_ctrl_power(unsigned int dev, unsigned int on)
 {
     uint32_t device = ((on & 1) << 23) | (dev & 0x003FFFFF);

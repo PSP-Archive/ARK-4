@@ -326,16 +326,6 @@ void prestage2()
 	((void (*)()) 0x4000000)();
 }
 
-u32 GetTachyonVersion()
-{
-	u32 ver = _lw(0xbc100040);
-	
-	if (ver & 0xFF000000)
-		return (ver >> 8);
-
-	return 0x100000;
-}
-
 int main()
 {
 
@@ -347,7 +337,7 @@ int main()
 #endif
 #endif
 
-	u32 tachyon_version = GetTachyonVersion();
+	u32 tachyon_version = syscon_get_tachyon_version();
 
 #ifndef MSIPL
 	uint32_t keys = -1;

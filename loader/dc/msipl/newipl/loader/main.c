@@ -23,23 +23,8 @@ void ClearCaches()
 	IcacheClear();
 }
 
-uint32_t GetTachyonVersion()
-{
-	uint32_t ver = _lw(0xbc100040);
-	
-	if (ver & 0xFF000000)
-		return (ver >> 8);
-
-	return 0x100000;
-}
-
 int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 {
-
-	SYSREG_CLK2_ENABLE_REG |= 0x02;
-	REG32(0xbc10007c) |= 0xc8;
-
-	sysreg_io_enable_gpio();
 
 	// initialise syscon
 	syscon_init();
@@ -47,7 +32,7 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 	mspro_init();
 
 	uint32_t baryon_version = syscon_get_baryon_version();
-	uint32_t tachyon_version = GetTachyonVersion();
+	uint32_t tachyon_version = syscon_get_tachyon_version();
 
 	if (tachyon_version >= 0x600000)
 		_sw(0x20070910, 0xbfc00ffc);
@@ -83,9 +68,6 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 	MsFatClose();
 
 	ClearCaches();
-
-	syscon_ctrl_led(0, 1);
-	syscon_ctrl_led(1, 1);
 	
 	return ((int (*)()) load_addr)();
 }
