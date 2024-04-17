@@ -198,13 +198,19 @@ def run() -> None:
         m.update()
         shutil.copytree("TM", get_mountpoint, dirs_exist_ok=True)
         msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, None, False, True ))
-        msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, 'msipl.bin', False, False ))
+        if check.get():
+            msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, 'tm_msipl_legacy.bin', False, False ))
+        else:
+            msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, 'msipl.bin', False, False ))
         status.config(fg='green', text="DONE!")
     elif platform.system() == 'Darwin':
         subprocess.run(['diskutil', 'umountDisk', 'force', f'/dev/{var.get()}'])
         subprocess.run(['sync'])
         time.sleep(2)
-        msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, 'msipl.bin', False, False ))
+        if check.get():
+            msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, 'tm_msipl_legacy.bin', False, False ))
+        else:
+            msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, 'msipl.bin', False, False ))
         subprocess.run(['diskutil', 'umountDisk', 'force', f'/dev/{var.get()}'])
         subprocess.run(['mkdir', '/Volumes/__psp__'])
         get_mountpoint = '/Volumes/__psp__'
@@ -220,9 +226,14 @@ def run() -> None:
         status.config(text="COPYING PLEASE WAIT!")
         m.update()
         shutil.copytree("TM", f"{get_mountpoint}", dirs_exist_ok=True)
-        os.system('oschmod 755 msipl_installer.py')
-        os.system(f'python .\\msipl_installer.py --pdisk {int(deviceID[var.get()][-1])} --clear')
-        os.system(f'python .\\msipl_installer.py --pdisk {int(deviceID[var.get()][-1])} --insert msipl.bin')
+        #os.system('oschmod 755 msipl_installer.py')
+        #os.system(f'python .\\msipl_installer.py --pdisk {int(deviceID[var.get()][-1])} --clear')
+        #os.system(f'python .\\msipl_installer.py --pdisk {int(deviceID[var.get()][-1])} --insert msipl.bin')
+        msipl_installer.main(msipl_installer.Args(f'{int(deviceID[var.get()][-1])}', False, None, False, True ))
+        if check.get():
+            msipl_installer.main(msipl_installer.Args(f'{int(deviceID[var.get()][-1])}', False, 'tm_msipl_legacy.bin', False, False ))
+        else:
+            msipl_installer.main(msipl_installer.Args(f'{int(deviceID[var.get()][-1])}', False, 'msipl.bin', False, False ))
         status.config(fg='green', text="DONE!")
 
 
