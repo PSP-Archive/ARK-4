@@ -133,6 +133,7 @@ copy-bin:
 	$(Q)cp extras/modules/iop/iop.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp loader/dc/vunbricker/resurrection.prx dist/PC/MagicMemoryCreator/TM/DCARK/vsh/module/
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
+	$(Q)cp loader/dc/msipl/newipl/loader/msipl.bin dist/PC/MagicMemoryCreator/TM/DCARK/msipl.raw
 	$(Q)cp contrib/PSP/IPL/nandipl_01G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_01g.bin
 	$(Q)cp contrib/PSP/IPL/nandipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_02g.bin
 	$(Q)cp contrib/PSP/IPL/nandipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_03g.bin
@@ -195,6 +196,7 @@ cipl:
 msipl:
 	$(Q)$(PYTHON) contrib/PC/ipltools/make_ipl.py loader/dc/msipl/newipl/loader/msipl.bin loader/dc/msipl/newipl/loader/ipl.bin reset_block 0x40c0000
 	$(Q)bin2c loader/dc/msipl/newipl/loader/ipl.bin loader/dc/msipl/newipl/loader/new_msipl.h new_msipl
+	$(Q)bin2c loader/dc/msipl/newipl/loader/msipl.bin loader/dc/msipl/newipl/loader/msipl_raw.h msipl_raw
 	$(Q)$(MAKE) PSP_MODEL=01G -C loader/dc/msipl/newipl/payload/
 	$(Q)mv loader/dc/msipl/newipl/payload/ipl_01G.bin loader/dc/msipl/newipl/msipl_01g.bin
 	$(Q)$(MAKE) PSP_MODEL=02G -C loader/dc/msipl/newipl/payload/

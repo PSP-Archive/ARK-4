@@ -465,13 +465,14 @@ if vanity != 'I_DEMAND_NO_ADS':
     # this is free software, so i'm taking 64 bytes to stamp some credits into
     # your final image. you can figure out what needs to be done if you really
     # don't want this
-    literally_ads = b'Ma tha thusa na d\' fhear-ealaidh, cluinneamaid annasdo laimhe.\x00\x00'
-    assert(len(literally_ads) == 64)
+    #literally_ads = b'Ma tha thusa na d\' fhear-ealaidh, cluinneamaid annasdo laimhe.\x00\x00'
+    literal_response = b'...et audistis me' + b'\x00'*47
+    assert(len(literal_response) == 64)
 
     if len(vanity) % 16 != 0:
         vanity = vanity + b'\x00'*(0x10 - (len(vanity) % 16))
     
-    vanity = vanity + literally_ads
+    vanity = vanity + literal_response
 else:
     vanity = b''
 

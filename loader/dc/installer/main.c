@@ -21,6 +21,7 @@
 #include "tm_msipl.h"
 #include "tm_mloader.h"
 #include "loader/new_msipl.h"
+#include "loader/msipl_raw.h"
 
 #include "pspbtcnf_dc.h"
 #include "pspbtcnf_02g_dc.h"
@@ -772,6 +773,9 @@ static void WriteDCFiles()
 	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_11g_dc.bin", pspbtcnf_11g_dc, size_pspbtcnf_11g_dc) != size_pspbtcnf_11g_dc)
 		ErrorExit(1000, "Error writing pspbtcnf_11g_dc.bin");
 	
+	if (WriteFile(ARK_DC_PATH "/msipl.raw", msipl_raw, size_msipl_raw) != size_msipl_raw)
+		ErrorExit(1000, "Error writing msipl.raw");
+
 	if (WriteFile(ARK_DC_PATH "/msipl_01g.bin", msipl_01G, size_msipl_01G) != size_msipl_01G)
 		ErrorExit(1000, "Error writing msipl_01g.bin");
 

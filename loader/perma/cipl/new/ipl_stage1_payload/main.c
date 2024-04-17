@@ -341,38 +341,34 @@ int main()
 
 	u32 tachyon_version = syscon_get_tachyon_version();
 
-#ifndef MSIPL
-	uint32_t keys = -1;
-	syscon_issue_command_read(0x07, &keys);
-	if ((keys & SYSCON_CTRL_VOL_UP) == 0)
-	{
-		u32 ms_on = 1;
-    	syscon_issue_command_write(0x4c, &ms_on, 3);
-	
-		_sw(0x00000000, 0x80010068);
-
-		if (tachyon_version >= 0x600000)
-		{
-			_sw(0x00000000, 0x80010A8C);
-		}
-		else
-		{
-			_sw(0x00000000, 0x8001080C);
-		}
-	
-		Dcache();
-		Icache();
-
-		return ((int (*)())0x80010000)();
-	}
-#endif
-	
 	if (tachyon_version >= 0x600000)
 		_sw(0x20070910, 0xbfc00ffc);
 	else if (tachyon_version >= 0x400000)
 		_sw(0x20050104, 0xbfc00ffc);
 	else
 		_sw(0x20040420, 0xbfc00ffc);
+
+#ifndef MSIPL
+	uint32_t keys = -1;
+	syscon_issue_command_read(0x07, &keys);
+	if ((keys & SYSCON_CTRL_LTRIGGER) == 0)
+	{
+		u32 ms_on = 1;
+    	syscon_issue_command_write(0x4c, &ms_on, 3);
+	
+		MsFatMount();
+
+		int res = MsFatOpen("/TM/DCARK/msipl.raw");
+
+		if (res == 0){
+			MsFatRead(0x40c0000, 0x4000);
+			MsFatClose();
+			Dcache();
+			Icache();
+			return ((int (*)()) 0x40c0000)();
+		}
+	}
+#endif
 
 	_sw(0, ERASE_RAM_START);
 

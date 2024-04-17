@@ -16,7 +16,6 @@ all:
 	$(Q)$(MAKE) -C ipl_stage2_payload BFLAGS="-DIPL_$(PSP_MODEL) -DPSP_MODEL=$(PSP_MODEL)"
 	$(Q)$(MAKE) -C ipl_stage1_payload BFLAGS="-DIPL_$(PSP_MODEL) -DPSP_MODEL=$(PSP_MODEL)"
 	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/ipltools/unpack_ipl.py $(ARKROOT)/contrib/PSP/IPL/nandipl_$(PSP_MODEL).bin ipl_$(PSP_MODEL).dec $(XOR_VAL)
-#	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/ipltools/decrypt_ipl.py $(ARKROOT)/contrib/PSP/IPL/nandipl_$(PSP_MODEL).bin ipl_$(PSP_MODEL).dec
 	$(Q)dd if=ipl_stage1_payload/ipl_stage1_payload.bin of=ipl_$(PSP_MODEL).bin
 	$(Q)dd if=ipl_$(PSP_MODEL).dec of=ipl_$(PSP_MODEL).bin bs=1 seek=49152
 	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/ipltools/make_ipl.py ipl_$(PSP_MODEL).bin cipl_$(PSP_MODEL).bin reset_block 0x40e0000
