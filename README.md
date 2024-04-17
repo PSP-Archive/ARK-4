@@ -141,10 +141,10 @@ Use `-h` or `--help` to show all available flags
 - You also need to be running a `CFW` to install `DC-ARK` (ARK itself or any other).
 - Copy the `ARK_DC` folder to the `/PSP/GAME/` folder and run the installer from the `XMB`.
 - Follow the instructions to install DC-ARK and create a magic memory stick.
-- On compatible models, use `Advanced VSH Menu` to create a `Pandora` battery.
+- On compatible models, you can use `Advanced VSH Menu` to create a `Pandora`.
+- Alternatively, you can use `MagicMemoryCreator` on `PC`.
 - Use a `Pandora` or `Baryon Sweeper` in combination with your newly created `Magic Memory Stick` to boot up `Despertar del Cementerio`.
-- From here you can either boot ARK from memory stick, install 6.61 Firmware with ARK on the Nand or install 6.61 Official Firmware.
-- Note that installing 6.61 firmware with ARK requires a cIPL-compatible PSP (1K and early 2K).
+- From here you can either boot ARK from memory stick, install 6.61 Firmware with ARK on the Nand or install 6.61 Official Firmware
 
 
 #### Installation On PS Vita
