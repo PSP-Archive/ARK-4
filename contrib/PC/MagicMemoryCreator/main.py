@@ -13,8 +13,14 @@ import msipl_installer
 import urllib3; urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from zipfile import ZipFile
 
-if platform.system().lower() != 'linux' and platform.system().lower() != 'windows' and platform.system().lower() != 'darwin':
-    print(f'\nERR: Sorry your platform {platform.system()} is not supported\nSupported platforms are: Linux, Windows, MacOS (Darwin)\n')
+# globals
+go = False
+ostype = platform.system()
+if ostype.lower() == 'win32':
+    ostype = 'Windows'
+
+if ostype.lower() != 'linux' and ostype.lower() != 'windows' and ostype.lower() != 'darwin':
+    print(f'\nERR: Sorry your platform {ostype} is not supported\nSupported platforms are: Linux, Windows, MacOS (Darwin)\n')
     sys.exit(1)
 
 possible_drive = ['-']
@@ -33,10 +39,8 @@ disk_check = tk.StringVar(m)
 disk_check.set(0)
 
 
-# globals
-go = False
 
-if platform.system().lower() != 'linux' and platform.system().lower() != 'darwin':
+if ostype.lower() != 'linux' and ostype.lower() != 'darwin':
     import wmi
     import psutil
     c = wmi.WMI()
@@ -49,7 +53,7 @@ if platform.system().lower() != 'linux' and platform.system().lower() != 'darwin
                 windows_disk_letter[f'disk{str(drive.Index)}'] = part.mountpoint.split(':')[0]
 
 
-elif platform.system().lower() == 'linux':
+elif ostype.lower() == 'linux':
     out = subprocess.Popen(["lsblk | awk '{if ($3 == 1 && $1 ~ /^[a-zA-Z]+$/) {print $1}}'"], shell=True, stdout=subprocess.PIPE)
     out = out.stdout.read().decode().splitlines()
     for i in out:
@@ -60,26 +64,85 @@ else:
     for i in out:
         possible_drive.append(i)
 
+def refresh():
+    m.destroy()
+    p = sys.executable
+    os.execl(p, p, *sys.argv)
+ 
 def fmt_ms():
+
+    def fmt():
+        force_ss = False
+
+        def close_force_ss():
+            newWindow.destroy()
+            newWindow.update()
+
+        def force_ss_func():
+            force_ss = True
+            newWindow.destroy()
+            newWindow.update()
+
+
+
+        # Detect Memory Stick Size
+        if ostype.lower() == 'linux':
+            size = subprocess.Popen([f"fdisk --bytes -l /dev/{var.get()} | awk '{{print $5}}' | head -n 1"], shell=True, stdout=subprocess.PIPE)
+            size = int(size.stdout.read().decode().strip())
+
+            os.system(f'sudo umount /dev/{var.get()}1')
+            time.sleep(3)
+            os.system(f'sudo dd if=/dev/zero of=/dev/{var.get()} bs=512 count=4')
+            
+            if size < 4294967296: # less than 4GB format to fat16, works best also Sony already does this as well.
+                os.system(f'echo -e "rm 1\nmklabel msdos\nmkpart primary fat16 61s 100%\ntoggle 1 lba\ntoggle 1 boot\nq" | sudo parted /dev/{var.get()}')
+            else: # 4GB or greater format to fat32, optional sector size to start at 2048 if issue occur with > 2048. This can cause the PSP (VSH) to think something is wrong
+                  # however most recovery utilities don't care as long as its a sane filesystem still.
+                newWindow = tk.Toplevel(m)
+                newWindow.title('Force Smaller sector size')
+                newWindow.geometry("220x140")
+                l = tk.Label(newWindow, text='Please only check if\nyou know what this is.\nOtherwise press Exit\n')
+                l.grid(row=1, column=1)
+
+                force_small_sectors = tk.Button(newWindow, text='Force small sectors (2048)', command=force_ss_func)
+                force_small_sectors.grid(row=2, column=1)
+                decline = tk.Button(newWindow, text='Exit', command=close_force_ss)
+                decline.grid(row=3, column=1)
+
+                newWindow.wait_window()
+
+
+                if force_ss:
+                    os.system(f'echo -e "o\nn\np\n1\n2048\n\n\nt\n0b\na\nw" | sudo fdisk /dev/{var.get()}')
+                else:
+                    os.system(f'echo -e "o\nn\np\n1\n\n\nt\n0b\na\nw" | sudo fdisk /dev/{var.get()}')
+                os.system(f'sudo mkfs.fat -F 32 /dev/{var.get()}1')
+
+            time.sleep(3)
+            os.system(f'mount /dev/{var.get()}1 /mnt')
+            os.system(f'mount -o remount,rw /mnt')
+            time.sleep(3)
+            refresh()
+
     legacy['state'] = 'disabled'
     go_check['state'] = 'disabled'
     status.config(text='Formatting Memory Stick\nSelected!') 
-    b.config(text='Format')
+    b.config(text='Format', command=fmt)
     m.update()
+    
+    
+
 
 def disable_go_check():
     if check.get():
         go_check['state'] = 'disabled'
         check.set(1)
+        format_ms['state'] = 'disabled'
     else:
         go_check['state'] = 'normal'
         check.set(0)
 
-def refresh():
-    m.destroy()
-    p = sys.executable
-    os.execl(p, p, *sys.argv)
-    
+   
 def cleanup() -> None:
     global go
     if go:
@@ -98,9 +161,11 @@ def go_update():
     if go:
         go = False
         legacy['state'] = 'normal'
+        format_ms['state'] = 'disabled'
     else:
         go = True
         legacy['state'] = 'disabled'
+        format_ms['state'] = 'disabled'
 
 def toggle_run(toggle) -> None:
     if toggle != '-':
@@ -114,10 +179,13 @@ def run() -> None:
     b['state'] = "disabled"
     x['state'] = "disabled"
     b['text'] = "Please Wait..."
+    go_check['state'] = 'disabled'
+    legacy['state'] = 'disabled'
+    format_ms['state'] = 'disabled'
     global go
 
     # Download pspdecrypt from John
-    if platform.system() == 'Linux':
+    if ostype == 'Linux':
         resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-linux.zip', timeout=10, verify=False)
         with open('pspdecrypt-1.0-linux.zip', 'wb') as f:
             f.write(resp.content)
@@ -126,7 +194,7 @@ def run() -> None:
             zObject.extractall(path=f'{os.getcwd()}/')
         os.system('oschmod 755 pspdecrypt')
         x['state'] = "normal"
-    elif platform.system() == 'Windows':
+    elif ostype == 'Windows':
         resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-windows.zip', timeout=10, verify=False)
         with open('pspdecrypt-1.0-windows.zip', 'wb') as f:
             f.write(resp.content)
@@ -135,7 +203,7 @@ def run() -> None:
             zObject.extractall(path=f'{os.getcwd()}\\')
         os.system('oschmod 755 pspdecrypt.exe')
         x['state'] = "normal"
-    elif platform.system() == 'Darwin':
+    elif ostype == 'Darwin':
         resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-macos.zip', timeout=10, verify=False)
         with open('pspdecrypt-1.0-macos.zip', 'wb') as f:
             f.write(resp.content)
@@ -166,7 +234,7 @@ def run() -> None:
         else:
             print(resp.status_code)
 
-    if platform.system() == 'Linux' or platform.system() == 'Darwin':
+    if ostype == 'Linux' or ostype == 'Darwin':
         if go:
             os.system('./pspdecrypt -e 661_GO.PBP')
             shutil.copytree("661_GO/F0", "TM/DCARK", dirs_exist_ok=True)
@@ -190,7 +258,7 @@ def run() -> None:
     #with open('msipl_installer.py', 'wb') as f:
         #f.write(resp.content)
 
-    if platform.system() == 'Linux':
+    if ostype == 'Linux':
         disk = var.get() + '1'
         get_mountpoint = subprocess.Popen(f"lsblk | awk '/{disk}/ {{print $7}}'", shell=True, stdout=subprocess.PIPE)
         get_mountpoint = str(get_mountpoint.stdout.read().decode().rstrip()) + "/TM/"
@@ -203,7 +271,7 @@ def run() -> None:
         else:
             msipl_installer.main(msipl_installer.Args(f'{var.get()}', False, 'msipl.bin', False, False ))
         status.config(fg='green', text="DONE!")
-    elif platform.system() == 'Darwin':
+    elif ostype == 'Darwin':
         subprocess.run(['diskutil', 'umountDisk', 'force', f'/dev/{var.get()}'])
         subprocess.run(['sync'])
         time.sleep(2)
@@ -242,7 +310,7 @@ def run() -> None:
 
     cleanup()
 
-if platform.system() == 'Linux' or platform.system() == 'Darwin':
+if ostype == 'Linux' or ostype == 'Darwin':
     if os.geteuid() != 0:
         print('\nSorry this needs to run as root/admin!\n')
         sys.exit(1)
