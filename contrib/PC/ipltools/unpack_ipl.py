@@ -2,7 +2,7 @@
 
 import argparse
 import struct
-from psptool.kirk import kirk1
+from kirk import kirk1
 
 parser = argparse.ArgumentParser(description='IPL packer')
 
