@@ -43,19 +43,19 @@ int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
 
 	char* path = "/TM/DCARK/msipl_11g.bin";
 	void* load_addr = 0x40e0000;
-	if (tachyon_version <= 0x400000) {
+	if (tachyon_version <= 0x00400000) {
 		path = "/TM/DCARK/msipl_01g.bin";
-	} else if (tachyon_version == 0x500000 || (tachyon_version == 0x600000 && baryon_version == 0x243000)) {
+	} else if (tachyon_version == 0x00500000 || (tachyon_version == 0x00600000 && baryon_version == 0x00243000)) {
 		path = "/TM/DCARK/msipl_02g.bin";
-	} else if (tachyon_version <= 0x600000) {
+	} else if (tachyon_version <= 0x00600000) {
 		path = "/TM/DCARK/msipl_03g.bin";
-	} else if (tachyon_version == 0x810000 && baryon_version == 0x2C4000) {
+	} else if (tachyon_version == 0x00810000 && baryon_version == 0x002C4000) {
 		path = "/TM/DCARK/msipl_04g.bin";
-	} else if (tachyon_version <= 0x800000) {
+	} else if (tachyon_version <= 0x00800000) {
 		path = "/TM/DCARK/msipl_05g.bin";
-	} else if (tachyon_version == 0x810000 && baryon_version == 0x2E4000) {
+	} else if (tachyon_version <= 0x00820000 && baryon_version == 0x012E4000) {
 		path = "/TM/DCARK/msipl_07g.bin";
-	} else if (tachyon_version == 0x820000 && baryon_version == 0x2E4000) {
+	} else if (tachyon_version == 0x00820000 && baryon_version == 0x002E4000) {
 		path = "/TM/DCARK/msipl_09g.bin";
 	}
 
