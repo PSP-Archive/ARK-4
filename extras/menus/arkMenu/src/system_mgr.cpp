@@ -138,13 +138,17 @@ static void drawOptionsMenuCommon(){
             continue;
         }
 		if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
-        	entries[i]->getIcon()->draw(x+menu_anim_state, optionsAnimState+15); // LARGE
+			//sceKernelDelayThread(8000);
+        	entries[i]->getIcon()->draw(x, optionsAnimState+15); // LARGE
+        	//entries[i]->getIcon()->draw(x+menu_anim_state, optionsAnimState+15); // LARGE
 		}
 		else if(common::getConf()->menusize == 2) {
-        	entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+15, 72, 72); // MEDIUM
+        	//entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+15, 72, 72); // MEDIUM
+        	entries[i]->getIcon()->draw_scale(x, optionsAnimState+15, 72, 72); // MEDIUM
 		}
 		else {
-			entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+7, 52, 52); // SMALL
+			//entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+7, 52, 52); // SMALL
+			entries[i]->getIcon()->draw_scale(x, optionsAnimState+7, 52, 52); // SMALL
 		} 
         if (i==pEntryIndex && optionsDrawState==2){
             const char* entname = entries[i]->getName().c_str();
