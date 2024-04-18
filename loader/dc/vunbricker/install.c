@@ -60,7 +60,6 @@ const char *f0_common[] =
 	"font/ltn14.pgf",
 	"font/ltn15.pgf",
 	"kd/amctrl.prx",
-	"kd/ata.prx",
 	"kd/audio.prx",
 	"kd/audiocodec_260.prx",
 	"kd/avcodec.prx",
@@ -72,7 +71,6 @@ const char *f0_common[] =
 	"kd/ctrl.prx",
 	"kd/dmacman.prx",
 	"kd/exceptionman.prx",
-	"kd/fatms.prx",
 	"kd/g729.prx",
 	"kd/ge.prx",
 	"kd/http_storage.prx",
@@ -147,7 +145,6 @@ const char *f0_common[] =
 	"kd/pspnet_upnp.prx",
 	"kd/pspnet_wispr.prx",
 	"kd/registry.prx",
-	"kd/resource/impose.rsc",
 	"kd/rtc.prx",
 	"kd/sc_sascore.prx",
 	"kd/semawm.prx",
@@ -156,8 +153,6 @@ const char *f0_common[] =
 	"kd/sysmem.prx",
 	"kd/systimer.prx",
 	"kd/threadman.prx",
-	"kd/umd9660.prx",
-	"kd/umdman.prx",
 	"kd/usb.prx",
 	"kd/usbacc.prx",
 	"kd/usbcam.prx",
@@ -218,7 +213,6 @@ const char *f0_common[] =
 	"vsh/module/music_main_plugin.prx",
 	"vsh/module/music_parser.prx",
 	"vsh/module/music_player.prx",
-	"vsh/module/netconf_plugin.prx",
 	"vsh/module/netconf_plugin_auto_bfl.prx",
 	"vsh/module/netconf_plugin_auto_nec.prx",
 	"vsh/module/netfront.prx",
@@ -331,6 +325,8 @@ const char *f0_common[] =
 
 const char *f0_01g[] =
 {
+	"kd/ata.prx",
+	"kd/fatms.prx",
 	"kd/codec_01g.prx",
 	"kd/display_01g.prx",
 	"kd/hpremote_01g.prx",
@@ -342,15 +338,21 @@ const char *f0_01g[] =
 	"kd/pops_01g.prx",
 	"kd/power_01g.prx",
 	"kd/pspbtcnf.bin",
+	"kd/umd9660.prx",
+	"kd/umdman.prx",
+	"kd/resource/impose.rsc",
 	"kd/resource/me_blimg.img",
 	"kd/resource/me_sdimg.img",
 	"kd/resource/meimg.img",
 	"kd/wlanfirm_01g.prx",
 	"vsh/etc/index_01g.dat",
+	"vsh/module/netconf_plugin.prx",
 };
 
 const char *f0_02g[] =
 {
+	"kd/ata.prx",
+	"kd/fatms.prx",
 	"font/arib.pgf",
 	"kd/codec_02g.prx",
 	"kd/display_02g.prx",
@@ -362,6 +364,9 @@ const char *f0_02g[] =
 	"kd/pops_02g.prx",
 	"kd/power_02g.prx",
 	"kd/pspbtcnf_02g.bin",
+	"kd/umd9660.prx",
+	"kd/umdman.prx",
+	"kd/resource/impose.rsc",
 	"kd/resource/me_t2img.img",
 	"kd/umdcache.prx",
 	"kd/usb1seg.prx",
@@ -369,6 +374,7 @@ const char *f0_02g[] =
 	"kd/mlnbridge_msapp.prx",
 	"kd/wlanfirm_02g.prx",
 	"vsh/etc/index_02g.dat",
+	"vsh/module/netconf_plugin.prx",
 	"vsh/module/oneseg_core.prx",
 	"vsh/module/oneseg_hal_toolbox.prx",
 	"vsh/module/oneseg_launcher_plugin.prx",
@@ -380,6 +386,7 @@ const char *f0_02g[] =
 	"vsh/module/skype_plugin.prx",
 	"vsh/module/skype_skyhost.prx",
 	"vsh/module/skype_ve.prx",
+	"vsh/resource/01-12_03g.bmp",
 	"vsh/resource/13-27.bmp",
 	"vsh/resource/custom_theme.dat",
 	"vsh/resource/oneseg_plugin.rco",
@@ -388,6 +395,8 @@ const char *f0_02g[] =
 
 const char *f0_03g[] =
 {
+	"kd/ata.prx",
+	"kd/fatms.prx",
 	"font/arib.pgf",
 	"kd/codec_03g.prx",
 	"kd/display_03g.prx",
@@ -399,6 +408,9 @@ const char *f0_03g[] =
 	"kd/pops_03g.prx",
 	"kd/power_03g.prx",
 	"kd/pspbtcnf_03g.bin",
+	"kd/umd9660.prx",
+	"kd/umdman.prx",
+	"kd/resource/impose.rsc",
 	"kd/resource/me_t2img.img",
 	"kd/umdcache.prx",
 	"kd/usb1seg.prx",
@@ -406,6 +418,7 @@ const char *f0_03g[] =
 	"kd/mlnbridge_msapp.prx",
 	"kd/wlanfirm_03g.prx",
 	"vsh/etc/index_03g.dat",
+	"vsh/module/netconf_plugin.prx",
 	"vsh/module/oneseg_core.prx",
 	"vsh/module/oneseg_hal_toolbox.prx",
 	"vsh/module/oneseg_launcher_plugin.prx",
@@ -417,6 +430,7 @@ const char *f0_03g[] =
 	"vsh/module/skype_plugin.prx",
 	"vsh/module/skype_skyhost.prx",
 	"vsh/module/skype_ve.prx",
+	"vsh/resource/01-12_03g.bmp",
 	"vsh/resource/13-27.bmp",
 	"vsh/resource/custom_theme.dat",
 	"vsh/resource/oneseg_plugin.rco",
@@ -425,6 +439,8 @@ const char *f0_03g[] =
 
 const char *f0_04g[] =
 {
+	"kd/ata.prx",
+	"kd/fatms.prx",
 	"font/arib.pgf",
 	"kd/codec_04g.prx",
 	"kd/display_04g.prx",
@@ -436,6 +452,9 @@ const char *f0_04g[] =
 	"kd/pops_04g.prx",
 	"kd/power_04g.prx",
 	"kd/pspbtcnf_04g.bin",
+	"kd/umd9660.prx",
+	"kd/umdman.prx",
+	"kd/resource/impose.rsc",
 	"kd/resource/me_t2img.img",
 	"kd/umdcache.prx",
 	"kd/usb1seg.prx",
@@ -443,6 +462,7 @@ const char *f0_04g[] =
 	"kd/mlnbridge_msapp.prx",
 	"kd/wlanfirm_04g.prx",
 	"vsh/etc/index_04g.dat",
+	"vsh/module/netconf_plugin.prx",
 	"vsh/module/oneseg_core.prx",
 	"vsh/module/oneseg_hal_toolbox.prx",
 	"vsh/module/oneseg_launcher_plugin.prx",
@@ -454,14 +474,69 @@ const char *f0_04g[] =
 	"vsh/module/skype_plugin.prx",
 	"vsh/module/skype_skyhost.prx",
 	"vsh/module/skype_ve.prx",
+	"vsh/resource/01-12_03g.bmp",
 	"vsh/resource/13-27.bmp",
 	"vsh/resource/custom_theme.dat",
 	"vsh/resource/oneseg_plugin.rco",
 	"vsh/resource/skype_main_plugin.rco"
 };
 
+const char *f0_05g[] =
+{
+	"kd/bsman.prx",
+	"kd/btdun.prx",
+	"kd/eflash_05g.prx",
+	"kd/fatmsef.prx",
+	"kd/msemu.prx",
+	"kd/hidsvc.prx",
+	"kd/input_05g.prx",
+	"kd/padsvc.prx",
+	"font/arib.pgf",
+	"kd/codec_05g.prx",
+	"kd/display_05g.prx",
+	"kd/hpremote_05g.prx",
+	"kd/impose_05g.prx",
+	"kd/loadexec_05g.prx",
+	"kd/memlmd_05g.prx",
+	"kd/mesg_led_05g.prx",
+	"kd/pops_05g.prx",
+	"kd/power_05g.prx",
+	"kd/pspbtcnf_05g.bin",
+	"kd/resource/impose_05g.rsc",
+	"kd/resource/me_t2img.img",
+	"kd/usb1seg.prx",
+	"kd/usbdmb.prx",
+	"kd/usbstoreflash.prx",
+	"kd/mlnbridge_msapp.prx",
+	"kd/wlanfirm_05g.prx",
+	"vsh/etc/index_05g.dat",
+	"vsh/module/bluetooth_plugin.prx",
+	"vsh/module/netconf_bt_plugin.prx",
+	"vsh/module/oneseg_core.prx",
+	"vsh/module/oneseg_hal_toolbox.prx",
+	"vsh/module/oneseg_launcher_plugin.prx",
+	"vsh/module/oneseg_plugin.prx",
+	"vsh/module/oneseg_sal.prx",
+	"vsh/module/oneseg_sdk.prx",
+	"vsh/module/oneseg_sdkcore.prx",
+	"vsh/module/skype_main_plugin.prx",
+	"vsh/module/skype_plugin.prx",
+	"vsh/module/skype_skyhost.prx",
+	"vsh/module/skype_ve_05g.prx",
+	"vsh/module/slide_plugin.prx",
+	"vsh/resource/01-12_03g.bmp",
+	"vsh/resource/13-27.bmp",
+	"vsh/resource/bluetooth_plugin.rco",
+	"vsh/resource/custom_theme.dat",
+	"vsh/resource/oneseg_plugin.rco",
+	"vsh/resource/skype_main_plugin.rco"
+	"vsh/resource/slide_plugin.rco"
+};
+
 const char *f0_07g[] =
 {
+	"kd/ata.prx",
+	"kd/fatms.prx",
 	"font/arib.pgf",
 	"kd/codec_07g.prx",
 	"kd/display_07g.prx",
@@ -473,6 +548,9 @@ const char *f0_07g[] =
 	"kd/pops_07g.prx",
 	"kd/power_07g.prx",
 	"kd/pspbtcnf_07g.bin",
+	"kd/umd9660.prx",
+	"kd/umdman.prx",
+	"kd/resource/impose.rsc",
 	"kd/resource/me_t2img.img",
 	"kd/umdcache.prx",
 	"kd/usb1seg.prx",
@@ -491,6 +569,7 @@ const char *f0_07g[] =
 	"vsh/module/skype_plugin.prx",
 	"vsh/module/skype_skyhost.prx",
 	"vsh/module/skype_ve.prx",
+	"vsh/resource/01-12_03g.bmp",
 	"vsh/resource/13-27.bmp",
 	"vsh/resource/custom_theme.dat",
 	"vsh/resource/oneseg_plugin.rco",
@@ -499,6 +578,8 @@ const char *f0_07g[] =
 
 const char *f0_09g[] =
 {
+	"kd/ata.prx",
+	"kd/fatms.prx",
 	"font/arib.pgf",
 	"kd/codec_09g.prx",
 	"kd/display_09g.prx",
@@ -510,6 +591,9 @@ const char *f0_09g[] =
 	"kd/pops_09g.prx",
 	"kd/power_09g.prx",
 	"kd/pspbtcnf_09g.bin",
+	"kd/umd9660.prx",
+	"kd/umdman.prx",
+	"kd/resource/impose.rsc",
 	"kd/resource/me_t2img.img",
 	"kd/umdcache.prx",
 	"kd/usb1seg.prx",
@@ -528,6 +612,7 @@ const char *f0_09g[] =
 	"vsh/module/skype_plugin.prx",
 	"vsh/module/skype_skyhost.prx",
 	"vsh/module/skype_ve.prx",
+	"vsh/resource/01-12_03g.bmp",
 	"vsh/resource/13-27.bmp",
 	"vsh/resource/custom_theme.dat",
 	"vsh/resource/oneseg_plugin.rco",
@@ -536,6 +621,8 @@ const char *f0_09g[] =
 
 const char *f0_11g[] =
 {
+	"kd/ata.prx",
+	"kd/fatms.prx",
 	"font/arib.pgf",
 	"kd/codec_11g.prx",
 	"kd/display_11g.prx",
@@ -547,12 +634,16 @@ const char *f0_11g[] =
 	"kd/pops_11g.prx",
 	"kd/power_11g.prx",
 	"kd/pspbtcnf_11g.bin",
+	"kd/umd9660.prx",
+	"kd/umdman.prx",
+	"kd/resource/impose.rsc",
 	"kd/resource/me_t2img.img",
 	"kd/umdcache.prx",
 	"kd/usb1seg.prx",
 	"kd/usbdmb.prx",
 	"kd/mlnbridge_msapp.prx",
 	"vsh/etc/index_11g.dat",
+	"vsh/resource/01-12_03g.bmp",
 	"vsh/resource/13-27.bmp",
 	"vsh/resource/custom_theme.dat",
 };
@@ -1007,6 +1098,9 @@ int install_thread(SceSize args, void *argp)
 		case 3:
 			file_count += sizeof(f0_04g) / sizeof(f0_04g[0]);
 			break;
+		case 4:
+			file_count += sizeof(f0_05g) / sizeof(f0_05g[0]);
+			break;
 		case 6:
 			file_count += sizeof(f0_07g) / sizeof(f0_07g[0]);
 			break;
@@ -1041,6 +1135,10 @@ int install_thread(SceSize args, void *argp)
 		case 3:
 			CopyFileList(fw, f0_04g, sizeof(f0_04g) / sizeof(f0_04g[0]), ctr, file_count);
 			ctr += sizeof(f0_04g) / sizeof(f0_04g[0]);
+			break;
+		case 4:
+			CopyFileList(fw, f0_05g, sizeof(f0_05g) / sizeof(f0_05g[0]), ctr, file_count);
+			ctr += sizeof(f0_05g) / sizeof(f0_05g[0]);
 			break;
 		case 6:
 			CopyFileList(fw, f0_07g, sizeof(f0_07g) / sizeof(f0_07g[0]), ctr, file_count);
