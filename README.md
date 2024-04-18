@@ -107,8 +107,8 @@ Use `-h` or `--help` to show all available flags
 
 ##### Permanent CFW via cIPL
 
-- `New cIPL`: works on `1g`, `2g` and `3g`, `4g`, `7g`, `9g` and `11g` models on `6.61`.
-- `Classic cIPL`: works on `Pandora` compatbile models (`1g` and early `2g`) on `6.60`, `6.61` or `6.60 Testing Tool`.
+- `New cIPL`: works on every retail model (1K, 2K, 3K, Go and Street) on `6.61`.
+- `Classic cIPL`: works on `Pandora` compatible models (`1g` and early `2g`) on `6.60`, `6.61` or `6.60 Testing Tool`.
 - `DevTool cIPL`: works on `DTP-T1000` devkit units on `6.60 Development Tool` firmware.
 - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
 - Move or copy `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
