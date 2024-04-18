@@ -197,13 +197,17 @@ static void checkArkPath(){
         // fix for PSP-Go with dead ef (or non-Go units)
         if (ark_config->arkpath[0]=='e' && ark_config->arkpath[1]=='f'){
             ark_config->arkpath[0] = 'm'; ark_config->arkpath[1] = 's';
-            if ((res=sceIoDopen(ark_config->arkpath))>=0){
-                sceIoDclose(res);
-                return;
-            }
+        }
+        else {
+            ark_config->arkpath[0] = 'e'; ark_config->arkpath[1] = 'f';
+        }
+        if ((res=sceIoDopen(ark_config->arkpath))>=0){
+            sceIoDclose(res);
+            return;
         }
         // no ARK install folder, default to SEPLUGINS
         strcpy(ark_config->arkpath, SEPLUGINS_MS0);
+        sceIoMkdir(SEPLUGINS_MS0, 0777);
     }
     else{
         sceIoDclose(res);
