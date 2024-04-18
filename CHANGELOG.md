@@ -1,8 +1,20 @@
 # ARK Changelog
 
+## Version 4.20.69 (???)
+- Updated `Despertar del Cementerio` to `Version 10`. Now compatible with all PSP models.
+- Can now install `cIPL` on all PSP models.
+- `Custom App` location has been changed to `/PSP/APP/CUSTOM/EBOOT.PBP`
+
 ## Version 4.20.68 (2024-02-06)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42068
 - Released `ARK-X` for `PS Vita`.
+#### Rev 14
+- Fixed Simplified Chinese in VSH Menu (#329).
+- Cleanup
+#### Rev 13
+- Added MagicMemoryCreator (DC-ARK-Maker), you don't need another PSP to create a MMS for DC-ARK (works for 1K and 2K only still). Located in the PC folder of the ARK4.zip, (reuploaded rev fix) Also include uninstaller.
+#### Rev 12
+- Added Pops4Tool, a set of patches and files to enable pops in toolkits (requires PopsLoader, compatibility varies).
 #### Rev 11
 - Cleanup, refactor and small fixes.
 #### Rev 10
