@@ -71,6 +71,15 @@ def refresh():
  
 def fmt_ms():
 
+    if ostype.lower() != 'linux':
+        errWin = tk.Toplevel(m)
+        errWin.title('Unsupported OS Detected')
+        errWinLabel = tk.Label(errWin, text='Sorry right now this is experimental and only Linux is supported.\n')
+        errWinLabel.grid(row=1, column=1)
+        format_ms['state'] = 'disabled'
+        format_ms_check.set(0)
+        return
+
     def fmt():
         force_ss = False
 
