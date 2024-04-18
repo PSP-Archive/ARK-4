@@ -192,7 +192,7 @@ def run() -> None:
             resp.close()
         with ZipFile('pspdecrypt-1.0-linux.zip', 'r') as zObject:
             zObject.extractall(path=f'{os.getcwd()}/')
-        os.system('oschmod 755 pspdecrypt')
+        os.system('chmod 755 pspdecrypt')
         x['state'] = "normal"
     elif ostype == 'Windows':
         resp = requests.get('https://github.com/John-K/pspdecrypt/releases/download/1.0/pspdecrypt-1.0-windows.zip', timeout=10, verify=False)
