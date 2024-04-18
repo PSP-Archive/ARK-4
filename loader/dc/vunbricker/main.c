@@ -168,7 +168,7 @@ char *mobos[] =
 	"TA-095v2",
 	"TA-095v3",
 	"TA-095v4",
-	"TA-096/097",
+	"TA-096/097 O_O'",
 	"O_O'"
 };
 
@@ -200,7 +200,7 @@ void HardwareInfo()
 	else if (model == 10)
 		model_str = "(Street)";
 	else
-		model_str = "(Brite)";
+		model_str = "(Bright)";
 
 	hi_texts[0] = vlfGuiAddTextF(40, 80, "Model: %02dg %s", model+1, model_str);
 	hi_texts[1] = vlfGuiAddTextF(245, 80, "Motherboard: %s", mobos[mb]);
