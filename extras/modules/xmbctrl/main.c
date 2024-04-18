@@ -45,7 +45,7 @@ ARKConfig _arkconf;
 ARKConfig* ark_config = &_arkconf;
 extern List plugins;
 
-static char custom_app_path[] = "ms0:/PSP/APP/EBOOT.PBP";
+static char custom_app_path[] = "ms0:/PSP/APP/CUSTOM/EBOOT.PBP";
 
 static char buf[64];
 
