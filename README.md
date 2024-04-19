@@ -51,9 +51,9 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with `6.60` `Development Tool` Firmware and `Devkit` Units.
 
-- Can be fully installed and booted on memory stick in compatible models via `Time Machine`.
+- Can be fully installed and booted on memory stick via `Time Machine`.
 
-- Can be used to unbrick compatible PSP models using `Despertar del Cementerio` in combination with a `Pandora` or `Baryon Sweeper`.
+- Can be used to unbrick any PSP model using `Despertar del Cementerio` in combination with a `Pandora Battery` or `Baryon Sweeper`.
 
 - `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
