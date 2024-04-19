@@ -53,7 +53,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Can be fully installed and booted on memory stick via `Time Machine`.
 
-- Can be used to unbrick any PSP model using `Despertar del Cementerio` in combination with a `Pandora Battery` or `Baryon Sweeper`.
+- Can be used to unbrick any PSP model using `Despertar del Cementerio Version 10` in combination with a `Pandora Battery` or `Baryon Sweeper`.
 
 - `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
 
