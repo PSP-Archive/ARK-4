@@ -280,6 +280,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/kbooti_update
 	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
+	$(Q)$(MAKE) $@ -C loader/live/FinalSpeed
 	$(Q)$(MAKE) $@ -C loader/live/user/linkless_payload
 	$(Q)$(MAKE) $@ -C loader/live/user/signed_eboot
 	$(Q)$(MAKE) $@ -C loader/live/user/psxloader
