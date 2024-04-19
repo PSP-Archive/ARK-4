@@ -63,7 +63,7 @@ SUBDIRS = libs \
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx copy-dcark pack-flash0
 
-all: subdirs cipl msipl kxploits mkdir-dist encrypt-prx copy-dcark pack-flash0 copy-bin
+all: subdirs cipl msipl kxploits finalspeed mkdir-dist encrypt-prx copy-dcark pack-flash0 copy-bin
 	@echo "Build Done"
 
 #	Common installation
@@ -219,6 +219,11 @@ kxploits:
 	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=sceSdGetLastIndex -C loader/live/kernel/kxploit
 
+finalspeed:
+	$(Q)bin2c loader/live/FinalSpeed/Launcher660/NPIA00013/EBOOT.PBP loader/live/FinalSpeed/660launcher.h 660launcher
+	$(Q)bin2c loader/live/FinalSpeed/Launcher660/NPEG00012/EBOOT.PBP loader/live/FinalSpeed/660launcherDC.h 660launcherDC
+	$(Q)bin2c loader/live/kernel/kxploit/sceSdGetLastIndex/K.BIN loader/live/FinalSpeed/kbin.h kbin
+
 # Only clean non-library code
 cleanobj:
 	$(Q)$(MAKE) clean CLEANOBJ=1
@@ -305,6 +310,7 @@ clean:
 	$(Q)rm -f loader/dc/tmctrl/tmctrl.h
 	$(Q)rm -f loader/dc/btcnf/*.bin
 	$(Q)rm -f loader/dc/msipl/newipl/*.bin
+	$(Q)rm -f loader/live/FinalSpeed/*.h
 
 subdirs: $(SUBDIRS)
 
