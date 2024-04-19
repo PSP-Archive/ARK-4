@@ -8,7 +8,8 @@
 
 #include "systemctrl.h"
 
-PSP_MODULE_INFO("ARK_Uninstaller", 0, 1, 0);
+PSP_MODULE_INFO("ARK_Uninstaller", 0x0800, 1, 0);
+PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 
 #define printf pspDebugScreenPrintf
 
@@ -80,8 +81,8 @@ int main(int argc, char *args[]) {
 	}
 
 
-	sceIoUnassign("flash0");
-	sceIoAssign("flash0", "lflash0:0,0", "flashfat0:", IOASSIGN_RDWR, NULL, 0);
+	sceIoUnassign("flash0:");
+	sceIoAssign("flash0:", "lflash0:0,0", "flashfat0:", IOASSIGN_RDWR, NULL, 0);
 	sceIoRemove("flash0:/kd/ark_systemctrl.prx");
 	sceIoRemove("flash0:/kd/ark_vshctrl.prx");
 	sceIoRemove("flash0:/kd/ark_inferno.prx");
@@ -89,8 +90,6 @@ int main(int argc, char *args[]) {
 	sceIoRemove("flash0:/kd/ark_popcorn.prx");
 	sceIoRemove("flash0:/kd/ark_pspcompat.prx");
 	asm("sync"::);
-	sceIoUnassign("flash0");
-
 	printf("Removing Flash0 6 files...\n");
 	printf("flash0:/kd/ark_systemctrl.prx\n");
 	printf("flash0:/kd/ark_vshctrl.prx\n");
