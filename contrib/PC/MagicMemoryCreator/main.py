@@ -366,7 +366,7 @@ status.grid(row=1, column=0)
 go_check=tk.Checkbutton(m, text='PSP GO Model (ONLY!)', command=go_update)
 go_check.grid(sticky="W", row=3, column=0)
 
-legacy=tk.Checkbutton(m, text="Legacy IPL ( 10XXs and early 20XXs ONLY )", variable=check, command=disable_go_check)
+legacy=tk.Checkbutton(m, text="Legacy IPL ( 1000s and early 2000s ONLY )", variable=check, command=disable_go_check)
 legacy.grid(row=4, column=0)
 
 
