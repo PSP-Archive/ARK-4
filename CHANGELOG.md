@@ -1,9 +1,9 @@
 # ARK Changelog
 
-## Version 4.20.69 (???)
-- Updated `Despertar del Cementerio` to `Version 10`. Now compatible with all PSP models.
-- Can now install `cIPL` on all PSP models.
-- `Custom App` location has been changed to `/PSP/APP/CUSTOM/EBOOT.PBP`
+## Version 4.20.69 (2024-04-20)
+- Updated `Despertar del Cementerio` to `Version 10`. Can now be used to unbrick any `PSP` model.
+- Can now install `cIPL` on all `PSP` models.
+- Several other small fixes and improvements.
 
 ## Version 4.20.68 (2024-02-06)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42068
