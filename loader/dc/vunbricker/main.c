@@ -344,13 +344,14 @@ int app_main()
 	sceKernelUtilsMd5Digest((u8 *)&tick, sizeof(u64), (u8 *)md5);
 	sceKernelUtilsMt19937Init(&ctx, md5[0] ^ md5[1] ^ md5[2] ^ md5[3]);
 	rnd = sceKernelUtilsMt19937UInt(&ctx) % 12;
-	
 
-	void *data = ReadFileAllocEx("flash0:/vsh/resource/01-12.bmp", rnd*6176, 6176, NULL);
+	void *data;
 
 	u32 model = kuKernelGetModel();
 	if ( model == 4 )
 		data = ReadFileAllocEx("flash0:/vsh/resource/01-12_03g.bmp", rnd*6176, 6176, NULL);
+	else
+		data = ReadFileAllocEx("flash0:/vsh/resource/01-12.bmp", rnd*6176, 6176, NULL);
 
 	if (!data || vlfGuiSetBackgroundFileBuffer(data, 6176) < 0)
 	{
