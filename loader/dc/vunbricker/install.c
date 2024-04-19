@@ -347,6 +347,7 @@ const char *f0_01g[] =
 	"vsh/etc/index_01g.dat",
 	"vsh/module/netconf_plugin.prx",
 	"vsh/resource/01-12.bmp",
+	"vsh/resource/13-27.bmp",
 };
 
 const char *f0_02g[] =
