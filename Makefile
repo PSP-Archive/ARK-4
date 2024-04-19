@@ -86,6 +86,7 @@ copy-bin:
 	$(Q)cp loader/live/kernel/psxloader/ps1cfw_enabler/ps1cfw_enabler.suprx dist/PSVita/PS1CFW/
 	$(Q)cp loader/live/kernel/kxploit/sceUID/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PSP 6.6X and Vita 3.60+
 	$(Q)cp loader/live/kernel/kxploit/sceSdGetLastIndex/K.BIN dist/ARK_Loader/K.BIN # Alternative Kernel exploit for PSP 6.6X
+	$(Q)cp loader/live/FinalSpeed/EBOOT.PBP dist/PSP/FinalSpeed/
 	$(Q)cp extras/modules/kpspident/kpspident.prx dist/PSP/ARK_cIPL/kpspident.prx
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PSP/ARK_cIPL/ipl_update.prx
 	$(Q)cp extras/modules/kbooti_update/kbooti_update.prx dist/PSP/ARK_cIPL/kbooti_update.prx
@@ -352,12 +353,12 @@ mkdir-dist:
 	$(Q)mkdir dist/PSVita | true
 	$(Q)mkdir dist/UPDATE | true
 	$(Q)mkdir dist/ARK_Loader | true
-	$(Q)mkdir dist/FinalSpeed | true
 	$(Q)mkdir dist/PSP/Infinity | true
 	$(Q)mkdir dist/PSP/ARK_Uninstaller | true
 	$(Q)mkdir dist/PSP/ARK_DC | true
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
+	$(Q)mkdir dist/PSP/FinalSpeed | true
 	$(Q)mkdir dist/PSP/Pops4Tool | true
 	$(Q)mkdir dist/PSP/Pops4Tool/TT | true
 	$(Q)mkdir dist/PSP/Pops4Tool/DT | true
