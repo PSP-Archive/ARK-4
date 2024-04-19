@@ -3,6 +3,7 @@
 ## Version 4.20.69 (2024-04-20)
 - Updated `Despertar del Cementerio` to `Version 10`. Can now be used to unbrick any `PSP` model.
 - Can now install `cIPL` on all `PSP` models.
+- Added `FinalSpeed` for easier access to `Live` installations.
 - Several other small fixes and improvements.
 
 ## Version 4.20.68 (2024-02-06)
