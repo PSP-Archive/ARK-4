@@ -220,9 +220,10 @@ kxploits:
 	$(Q)$(MAKE) $@ K=sceSdGetLastIndex -C loader/live/kernel/kxploit
 
 finalspeed:
-	$(Q)bin2c loader/live/FinalSpeed/Launcher660/NPIA00013/EBOOT.PBP loader/live/FinalSpeed/660launcher.h 660launcher
-	$(Q)bin2c loader/live/FinalSpeed/Launcher660/NPEG00012/EBOOT.PBP loader/live/FinalSpeed/660launcherDC.h 660launcherDC
-	$(Q)bin2c loader/live/kernel/kxploit/sceSdGetLastIndex/K.BIN loader/live/FinalSpeed/kbin.h kbin
+	$(Q)bin2c loader/live/FinalSpeed/Launcher660/NPIA00013/EBOOT.PBP loader/live/FinalSpeed/660launcher.h _660launcher
+	$(Q)bin2c loader/live/FinalSpeed/Launcher660/NPEG00012/EBOOT.PBP loader/live/FinalSpeed/660launcherDC.h _660launcherDC
+	$(Q)bin2c loader/live/kernel/kxploit/sceSdGetLastIndex/K.BIN loader/live/FinalSpeed/kbin.h _kbin
+	$(Q)make -C loader/live/FinalSpeed
 
 # Only clean non-library code
 cleanobj:
