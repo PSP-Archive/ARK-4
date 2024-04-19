@@ -223,6 +223,18 @@ finalspeed:
 	$(Q)bin2c loader/live/FinalSpeed/Launcher660/NPIA00013/EBOOT.PBP loader/live/FinalSpeed/660launcher.h _660launcher
 	$(Q)bin2c loader/live/FinalSpeed/Launcher660/NPEG00012/EBOOT.PBP loader/live/FinalSpeed/660launcherDC.h _660launcherDC
 	$(Q)bin2c loader/live/kernel/kxploit/sceSdGetLastIndex/K.BIN loader/live/FinalSpeed/kbin.h _kbin
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/DigitalComics/GO/topmenu_icon.rco loader/live/FinalSpeed/660_dc_go_icon.h _660_dc_go_icon
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/DigitalComics/GO/topmenu_plugin.rco loader/live/FinalSpeed/660_dc_go_plugin.h _660_dc_go_plugin
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/DigitalComics/X000/topmenu_icon.rco loader/live/FinalSpeed/660_dc_X_icon.h _660_dc_X_icon
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/DigitalComics/X000/topmenu_plugin.rco loader/live/FinalSpeed/660_dc_X_plugin.h _660_dc_X_plugin
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/Original/GO/topmenu_icon.rco loader/live/FinalSpeed/660_orig_go_icon.h _660_orig_go_icon
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/Original/GO/topmenu_plugin.rco loader/live/FinalSpeed/660_orig_go_plugin.h _660_orig_go_plugin
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/Original/X000/topmenu_icon.rco loader/live/FinalSpeed/660_orig_X_icon.h _660_orig_X_icon
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/Original/X000/topmenu_plugin.rco loader/live/FinalSpeed/660_orig_X_plugin.h _660_orig_X_plugin
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/SensMe/GO/topmenu_icon.rco loader/live/FinalSpeed/660_sm_go_icon.h _660_sm_go_icon
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/SensMe/GO/topmenu_plugin.rco loader/live/FinalSpeed/660_sm_go_plugin.h _660_sm_go_plugin
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/SensMe/X000/topmenu_icon.rco loader/live/FinalSpeed/660_sm_X_icon.h _660_sm_X_icon
+	$(Q)bin2c loader/live/FinalSpeed/RCOFiles660/SensMe/X000/topmenu_plugin.rco loader/live/FinalSpeed/660_sm_X_plugin.h _660_sm_X_plugin
 	$(Q)make -C loader/live/FinalSpeed
 
 # Only clean non-library code
@@ -340,6 +352,7 @@ mkdir-dist:
 	$(Q)mkdir dist/PSVita | true
 	$(Q)mkdir dist/UPDATE | true
 	$(Q)mkdir dist/ARK_Loader | true
+	$(Q)mkdir dist/FinalSpeed | true
 	$(Q)mkdir dist/PSP/Infinity | true
 	$(Q)mkdir dist/PSP/ARK_Uninstaller | true
 	$(Q)mkdir dist/PSP/ARK_DC | true
