@@ -36,7 +36,6 @@
 #include <origipl_09G.h>
 #include <origipl_11G.h>
 
-
 PSP_MODULE_INFO("IPLFlasher", 0x0800, 1, 0); 
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 
@@ -46,7 +45,8 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 
 #define KBOOTI_UPDATE_PRX "kbooti_update.prx"
 
-#define ORIG_IPL_SIZE 126976
+//#define ORIG_IPL_SIZE 126976
+#define ORIG_IPL_SIZE 127312
 #define ORIG_IPL_MAX_SIZE 131072
 #define CLASSIC_CIPL_SIZE 147456
 #define NEW_CIPL_SIZE 184320
@@ -369,7 +369,12 @@ void newipl_menu(){
 
 	printf(" Press X to install cIPL\n");
 
-	printf(" Press O to restore Original IPL\n");
+	if (model > 1 || is_ta88v3()) {
+		printf(" Use ChronoSwitch to revert to Original IPL.\n");
+	}
+	else {
+		printf(" Press O to restore Original IPL.\n");
+	}
 
 	printf(" Press R to cancel\n\n");
     
@@ -385,7 +390,7 @@ void newipl_menu(){
 			if (pspIplUpdateSetIpl(ipl_block, size, 0 ) < 0)
 				ErrorExit(5000,"Failed to write cIPL!\n");
 			break; 
-		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) ) {		
+		} else if ( ((pad.Buttons & PSP_CTRL_CIRCLE)  && model < 2) && !is_ta88v3()) {		
 			printf("Flashing IPL...");
 
 			ipl_block = orig_ipl_table[model];
