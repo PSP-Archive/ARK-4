@@ -53,7 +53,6 @@ class MBR:
 
         (self.boot_signature,) = struct.unpack('<H', data[510:])
 
-
 def main(args):
     if is_windows:
         diskID = f'\\\\.\\PHYSICALDRIVE{args.pdisk}'
@@ -85,7 +84,6 @@ def main(args):
 
         def openDisk():
             return open(diskID, 'rb+')
-
 
     else:
         diskID = f'/dev/{args.devname}'
