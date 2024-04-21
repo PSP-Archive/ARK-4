@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdbool.h>
 
 #include <globals.h>
 #include <libpsardumper.h>
@@ -53,6 +54,7 @@
 #include "dcman.h"
 #include "ipl_update.h"
 #include "iop.h"
+#include "lflash_fdisk.h"
 #include "pspdecryptmod.h"
 #include "intrafont.h"
 #include "resurrection.h"
@@ -63,19 +65,24 @@ PSP_MAIN_THREAD_ATTR(0);
 
 #define UPDATER_VER_STR "6.61"
 #define UPDATER "661.PBP"
+#define UPDATER_GO "661GO.PBP"
 
 #define PRX_SIZE_661				5718512
+#define PRX_SIZE_661_GO				6495584
 #define LFLASH_FATFMT_UPDATER_SIZE	0x28A0
 #define NAND_UPDATER_SIZE			0x39D0
 #define LFATFS_UPDATER_SIZE			0xE970
 
 #define PSAR_SIZE_661	26848656
+#define PSAR_SIZE_661_GO	21569584
 
 char boot_path[256];
 
 char error_msg[256];
 static int g_running = 0, g_cancel = 0;
 static SceUID install_thid = -1;
+static int go = 0;
+
 
 ////////////////////////////////////////////////////////////////////
 // big buffers for data. Some system calls require 64 byte alignment
@@ -421,10 +428,11 @@ void ExtractPrxs(int cbFile, SceUID fd)
 			{
 				ErrorExit(1000, "Error reading PBP.\n");
 			}
-
+			
 			pspPSARSetBufferPosition(psar_pos);
 
 			continue;
+			
 		}
 		else if (res == 0) /* no more files */
 		{
@@ -616,9 +624,15 @@ static void Extract661Modules()
 
 	SetStatus("Extracting " UPDATER_VER_STR " updater modules...");
 		
-	if (ReadFile("ms0:/" UPDATER, 0, pbp_header, sizeof(pbp_header)) != sizeof(pbp_header))
-	{
-		ErrorExit(1000, "Error reading " UPDATER " at root.\n");
+	if (ReadFile("ms0:/" UPDATER_GO, 0, pbp_header, sizeof(pbp_header)) != sizeof(pbp_header)) {
+		if (ReadFile("ms0:/" UPDATER, 0, pbp_header, sizeof(pbp_header)) != sizeof(pbp_header))
+		{
+			ErrorExit(1000, "Error reading " UPDATER " or " UPDATER_GO " at root.\n");
+		}
+	}
+
+	if (ReadFile("ms0:/" UPDATER_GO, 0, pbp_header, sizeof(pbp_header)) == sizeof(pbp_header)) {
+		go = 1;
 	}
 
 	if (g_cancel)
@@ -626,9 +640,19 @@ static void Extract661Modules()
 		CancelInstall();
 	}
 
-	if (ReadFile("ms0:/" UPDATER, *(u32 *)&pbp_header[0x20], g_dataPSAR, PRX_SIZE_661) != PRX_SIZE_661)
-	{
-		ErrorExit(1000, "Invalid " UPDATER ".\n");
+	if(go) {
+
+		if (ReadFile("ms0:/" UPDATER_GO, *(u32 *)&pbp_header[0x20], g_dataPSAR, PRX_SIZE_661_GO) != PRX_SIZE_661_GO)
+		{
+			ErrorExit(1000, "Invalid " UPDATER_GO ".\n");
+		}
+
+	}
+	else {
+		if (ReadFile("ms0:/" UPDATER, *(u32 *)&pbp_header[0x20], g_dataPSAR, PRX_SIZE_661) != PRX_SIZE_661)
+		{
+			ErrorExit(1000, "Invalid " UPDATER ".\n");
+		}
 	}
 
 	if (g_cancel)
@@ -636,7 +660,12 @@ static void Extract661Modules()
 
 	sceKernelDelayThread(10000);
 
-	size = pspDecryptPRX(g_dataPSAR, g_dataPSAR, PRX_SIZE_661);
+	if(go) {
+		size = pspDecryptPRX(g_dataPSAR, g_dataPSAR, PRX_SIZE_661_GO);
+	}
+	else {
+		size = pspDecryptPRX(g_dataPSAR, g_dataPSAR, PRX_SIZE_661);
+	}
 	if (size <= 0)
 	{
 		ErrorExit(1000, "Error decrypting " UPDATER_VER_STR " updater.\n");
@@ -647,10 +676,15 @@ static void Extract661Modules()
 
 	sceKernelDelayThread(10000);
 
-	size = pspDecryptPRX(g_dataPSAR+0x4E6380, g_dataOut, LFLASH_FATFMT_UPDATER_SIZE);
+	if(go) {
+		size = pspDecryptPRX(g_dataPSAR+0x5A43C0, g_dataOut, LFLASH_FATFMT_UPDATER_SIZE);
+	}
+	else {
+		size = pspDecryptPRX(g_dataPSAR+0x4E6380, g_dataOut, LFLASH_FATFMT_UPDATER_SIZE);
+	}
 	if (size <= 0)
 	{
-		ErrorExit(1000, "Error decoding lflash_fatfmt_updater.prx\n");
+		ErrorExit(1000, "Error decoding lflash_fatfmt_updater.prx: %p\n", g_dataPSAR);
 	}
 
 	if (WriteFile(ARK_DC_PATH "/kd/lflash_fatfmt_updater.prx", g_dataOut, size) != size)
@@ -658,7 +692,12 @@ static void Extract661Modules()
 		ErrorExit(1000, "Error writing lflash_fatfmt_updater.prx.\n");
 	}
 
-	mod_buf = (u8 *)g_dataPSAR+0x21880;
+	if(go) {
+		mod_buf = (u8 *)g_dataPSAR+0x215c0;
+	}
+	else {
+		mod_buf = (u8 *)g_dataPSAR+0x21880;
+	}
 
 	DescrambleUpdaterModule(mod_buf, mod_buf, LFATFS_UPDATER_SIZE);
 
@@ -678,7 +717,12 @@ static void Extract661Modules()
 		ErrorExit(1000, "Error writing lfatfs_updater.prx.\n");
 	}
 
-	mod_buf = (u8 *)g_dataPSAR+0x30200;
+	if (go) {
+		mod_buf = (u8 *)g_dataPSAR+0x2ff40;
+	}
+	else {
+		mod_buf = (u8 *)g_dataPSAR+0x30200;
+	}
 
 	DescrambleUpdaterModule(mod_buf, mod_buf, NAND_UPDATER_SIZE);
 
@@ -705,13 +749,23 @@ static void Extract661PSAR()
 	
 	SetStatus("Extracting " UPDATER_VER_STR " modules... ");
 	
-	fd = sceIoOpen("ms0:/" UPDATER, PSP_O_RDONLY, 0);
+	if(go) {
+		fd = sceIoOpen("ms0:/" UPDATER_GO, PSP_O_RDONLY, 0);
+	}
+	else {
+		fd = sceIoOpen("ms0:/" UPDATER, PSP_O_RDONLY, 0);
+	}
 	if (fd < 0)
 	{
-		ErrorExit(1000, "Incorrect or inexistant " UPDATER " at root.\n");
+		ErrorExit(1000, "Incorrect or inexistant " UPDATER " or " UPDATER_GO " at root.\n");
 	}
 	
-	sceIoLseek32(fd, 0x577635, PSP_SEEK_SET);
+	if(go) {
+		sceIoLseek32(fd, 0x6351a5, PSP_SEEK_SET);
+	}
+	else {
+		sceIoLseek32(fd, 0x577635, PSP_SEEK_SET);
+	}
 	sceIoRead(fd, g_dataPSAR, PSAR_BUFFER_SIZE);	
 
 	if (g_cancel)
@@ -728,7 +782,12 @@ static void Extract661PSAR()
 		CancelInstall();
 	}
 
-	ExtractPrxs(PSAR_SIZE_661, fd);
+	if(go) {
+		ExtractPrxs(PSAR_SIZE_661_GO, fd);
+	}
+	else {
+		ExtractPrxs(PSAR_SIZE_661, fd);
+	}
 	sceIoClose(fd);
 }
 
@@ -832,6 +891,9 @@ static void WriteDCFiles()
 
 	if (WriteFile(ARK_DC_PATH "/kd/iop.prx", iop, size_iop) != size_iop)
 		ErrorExit(1000, "Error writing iop.prx");
+
+	if (WriteFile(ARK_DC_PATH "/kd/lflash_fdisk.prx", lflash_fdisk, size_lflash_fdisk) != size_lflash_fdisk)
+		ErrorExit(1000, "Error writing lflash_fdisk.prx");
 
 	if (WriteFile(ARK_DC_PATH "/kd/pspdecrypt.prx", pspdecrypt, size_pspdecrypt) != size_pspdecrypt)
 		ErrorExit(1000, "Error writing pspdecrypt.prx");

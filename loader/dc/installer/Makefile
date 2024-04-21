@@ -14,6 +14,7 @@ OBJS = \
 	ipl_update.h \
 	dcman.h \
 	iop.h \
+	lflash_fdisk.h \
 	pspdecryptmod.h \
 	intrafont.h \
 	resurrection.h \
@@ -92,6 +93,9 @@ ipl_update.h:
 
 iop.h:
 	$(Q)bin2c $(ARKROOT)/extras/modules/iop/iop.prx iop.h iop
+
+lflash_fdisk.h:
+	$(Q)bin2c $(ARKROOT)/contrib/PSP/GAME/ARK_DC/lflash_fdisk.prx lflash_fdisk.h lflash_fdisk
 
 pspdecryptmod.h:
 	$(Q)bin2c $(ARKROOT)/contrib/PSP/GAME/ARK_DC/pspdecrypt.prx pspdecryptmod.h pspdecrypt

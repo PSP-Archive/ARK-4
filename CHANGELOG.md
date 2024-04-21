@@ -5,6 +5,12 @@
 - Can now install `cIPL` on all `PSP` models.
 - Added `FinalSpeed` for easier access to `Live` installations.
 - Several other small fixes and improvements.
+- Updated `Despertar del Cementerio` to `Version 10`. Now compatible with all PSP models.
+- Can now install `cIPL` on all PSP models.
+- `Custom App` location has been changed to `/PSP/APP/CUSTOM/EBOOT.PBP`
+#### Rev 1
+- Updated `DC-ARK` (PSP version) to decrypt PSP GO Firmware. Must be put on the root of memory stick as `661GO.PBP`
+- Fixed a bug in `Despertar del Cementerio` where it could not repartion lflash, was missing `lflash_fdisk.prx`
 
 ## Version 4.20.68 (2024-02-06)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42068
