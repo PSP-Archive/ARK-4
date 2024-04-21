@@ -359,7 +359,7 @@ void newipl_menu(){
 	}
 
 	u8* ipl_block = ipl_table[model];
-	if (model > 2){
+	if (model > 1 || is_ta88v3()){
 		ipl_key = (model==4)?2:1;
 	}
 
@@ -369,12 +369,7 @@ void newipl_menu(){
 
 	printf(" Press X to install cIPL\n");
 
-	if (model > 1 || is_ta88v3()) {
-		printf(" Use ChronoSwitch to revert to Original IPL.\n");
-	}
-	else {
-		printf(" Press O to restore Original IPL.\n");
-	}
+	printf(" Press O to restore Original IPL.\n");
 
 	printf(" Press R to cancel\n\n");
     
@@ -390,7 +385,7 @@ void newipl_menu(){
 			if (pspIplUpdateSetIpl(ipl_block, size, 0 ) < 0)
 				ErrorExit(5000,"Failed to write cIPL!\n");
 			break; 
-		} else if ( ((pad.Buttons & PSP_CTRL_CIRCLE)  && model < 2) && !is_ta88v3()) {		
+		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) ) {		
 			printf("Flashing IPL...");
 
 			ipl_block = orig_ipl_table[model];
