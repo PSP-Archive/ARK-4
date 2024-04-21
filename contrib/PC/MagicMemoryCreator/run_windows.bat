@@ -7,4 +7,4 @@ fltmc >nul 2>&1 || (
 	goto :eof
 )
 cd /d %~dp0
-pythonw.exe main.py
+start pythonw.exe main.py
