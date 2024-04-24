@@ -60,12 +60,17 @@ void loadPlugins(){
     strcpy(path, ark_config->arkpath);
     strcat(path, "PLUGINS.TXT");
     
-    if (cur_place = PLACE_ARK_PATH)
-    	ProcessConfigFile(path, &processPlugin, &processCustomLine);
-	else if(cur_place = PLACE_MS0)
-    	ProcessConfigFile("ms0:/SEPLUGINS/PLUGINS.TXT", &processPlugin, &processCustomLine);
-	else if(cur_place = PLACE_EF0)
-    	ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &processPlugin, &processCustomLine);
+
+    if (strncasecmp(path+5, "seplugins", 9) != 0){
+        cur_place = PLACE_ARK_PATH;
+        ProcessConfigFile(path, &processPlugin, &processCustomLine);
+    }
+
+    cur_place = PLACE_MS0;
+    ProcessConfigFile("ms0:/SEPLUGINS/PLUGINS.TXT", &processPlugin, &processCustomLine);
+	
+    cur_place = PLACE_EF0;
+    ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &processPlugin, &processCustomLine);
 
     if (plugins.count == 0){
         // Add example plugin
