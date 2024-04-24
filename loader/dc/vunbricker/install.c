@@ -1207,7 +1207,7 @@ int install_thread(SceSize args, void *argp)
 				break;
 			case 1: 
 				if (mb == TA_088v3){
-					"flash0:/cipl_02g.bin";
+					ipl_name = "flash0:/cipl_02g.bin";
 				}
 				else {
 					offset = 0x4000;
