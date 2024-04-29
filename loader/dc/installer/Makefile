@@ -24,7 +24,13 @@ OBJS = \
 	pspPSAR.o \
 
 
-INCDIR = $(ARKROOT)/common/include $(ARKROOT)/libs/libvlf $(ARKROOT) $(ARKROOT)/loader/dc/msipl/newipl/ $(ARKROOT)/loader/perma/cipl/new/
+INCDIR = $(ARKROOT) \
+	$(ARKROOT)/common/include \
+	$(ARKROOT)/libs/libvlf \
+	$(ARKROOT)/loader/dc/msipl/newipl/stage2 \
+	$(ARKROOT)/loader/dc/msipl/newipl/stage3 \
+	$(ARKROOT)/loader/perma/cipl/new/
+
 CFLAGS = -std=c99 -O2 -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS) -c

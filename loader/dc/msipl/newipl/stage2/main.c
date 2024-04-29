@@ -23,7 +23,7 @@ void ClearCaches()
 	IcacheClear();
 }
 
-int entry(void *a0, void *a1, void *a2, void *a3, void *t0, void *t1, void *t2)
+int entry()
 {
 
 	// initialise syscon

@@ -49,7 +49,7 @@ SUBDIRS = libs \
 	loader/perma/cipl/classic/mainbinex \
 	loader/perma/cipl/classic/combine \
 	loader/dc/dcman \
-	loader/dc/msipl/newipl/loader \
+	loader/dc/msipl/newipl/stage2 \
 	loader/dc/msipl/mainbinex \
 	loader/dc/tmctrl/rebootex \
 	loader/dc/tmctrl \
@@ -128,13 +128,13 @@ copy-bin:
 	$(Q)cp loader/dc/msipl/newipl/msipl_*.bin dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/btcnf/pspbtcnf*_dc.bin dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp contrib/PSP/IPL/tm_mloader.bin dist/PC/MagicMemoryCreator/TM/DCARK/
-	$(Q)cp loader/dc/msipl/newipl/loader/ipl.bin dist/PC/MagicMemoryCreator/msipl.bin
+	$(Q)cp loader/dc/msipl/newipl/stage1/ipl.bin dist/PC/MagicMemoryCreator/msipl.bin
 	$(Q)cp loader/dc/tmctrl/tmctrl.prx dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/dcman/dcman.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp extras/modules/iop/iop.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp loader/dc/vunbricker/resurrection.prx dist/PC/MagicMemoryCreator/TM/DCARK/vsh/module/
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
-	$(Q)cp loader/dc/msipl/newipl/loader/msipl.bin dist/PC/MagicMemoryCreator/TM/DCARK/msipl.raw
+	$(Q)cp loader/dc/msipl/newipl/stage2/msipl.bin dist/PC/MagicMemoryCreator/TM/DCARK/msipl.raw
 	$(Q)cp contrib/PSP/IPL/nandipl_01G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_01g.bin
 	$(Q)cp contrib/PSP/IPL/nandipl_02G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_02g.bin
 	$(Q)cp contrib/PSP/IPL/nandipl_03G.bin dist/PC/MagicMemoryCreator/TM/DCARK/ipl_03g.bin
@@ -195,25 +195,29 @@ cipl:
 	$(Q)$(MAKE) -C loader/perma/cipl/installer
 
 msipl:
-	$(Q)$(PYTHON) contrib/PC/ipltools/make_ipl.py loader/dc/msipl/newipl/loader/msipl.bin loader/dc/msipl/newipl/loader/ipl.bin reset_block 0x40c0000
-	$(Q)bin2c loader/dc/msipl/newipl/loader/ipl.bin loader/dc/msipl/newipl/loader/new_msipl.h new_msipl
-	$(Q)bin2c loader/dc/msipl/newipl/loader/msipl.bin loader/dc/msipl/newipl/loader/msipl_raw.h msipl_raw
-	$(Q)$(MAKE) PSP_MODEL=01G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_01G.bin loader/dc/msipl/newipl/msipl_01g.bin
-	$(Q)$(MAKE) PSP_MODEL=02G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_02G.bin loader/dc/msipl/newipl/msipl_02g.bin
-	$(Q)$(MAKE) PSP_MODEL=03G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_03G.bin loader/dc/msipl/newipl/msipl_03g.bin
-	$(Q)$(MAKE) PSP_MODEL=04G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_04G.bin loader/dc/msipl/newipl/msipl_04g.bin
-	$(Q)$(MAKE) PSP_MODEL=05G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_05G.bin loader/dc/msipl/newipl/msipl_05g.bin
-	$(Q)$(MAKE) PSP_MODEL=07G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_07G.bin loader/dc/msipl/newipl/msipl_07g.bin
-	$(Q)$(MAKE) PSP_MODEL=09G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_09G.bin loader/dc/msipl/newipl/msipl_09g.bin
-	$(Q)$(MAKE) PSP_MODEL=11G -C loader/dc/msipl/newipl/payload/
-	$(Q)mv loader/dc/msipl/newipl/payload/ipl_11G.bin loader/dc/msipl/newipl/msipl_11g.bin
+	$(Q)$(MAKE) gcc -C contrib/PC/minilzo
+	$(Q)contrib/PC/minilzo/testmini loader/dc/msipl/newipl/stage2/msipl.bin loader/dc/msipl/newipl/stage2/msipl.lzo
+	$(Q)bin2c loader/dc/msipl/newipl/stage2/msipl.lzo loader/dc/msipl/newipl/stage1/msipl_compressed.h msipl_compressed
+	$(Q)$(MAKE) -C loader/dc/msipl/newipl/stage1
+	$(Q)$(PYTHON) contrib/PC/ipltools/make_ipl.py loader/dc/msipl/newipl/stage1/msipl.bin loader/dc/msipl/newipl/stage1/ipl.bin reset_block 0x4000000
+	$(Q)bin2c loader/dc/msipl/newipl/stage1/ipl.bin loader/dc/msipl/newipl/stage2/new_msipl.h new_msipl
+	$(Q)bin2c loader/dc/msipl/newipl/stage2/msipl.bin loader/dc/msipl/newipl/stage2/msipl_raw.h msipl_raw
+	$(Q)$(MAKE) PSP_MODEL=01G -C loader/dc/msipl/newipl/stage3/
+	$(Q)mv loader/dc/msipl/newipl/stage3/ipl_01G.bin loader/dc/msipl/newipl/msipl_01g.bin
+	$(Q)$(MAKE) PSP_MODEL=02G -C loader/dc/msipl/newipl/stage3/
+	$(Q)mv loader/dc/msipl/newipl/stage3/ipl_02G.bin loader/dc/msipl/newipl/msipl_02g.bin
+	$(Q)$(MAKE) PSP_MODEL=03G -C loader/dc/msipl/newipl/stage3/
+	$(Q)mv loader/dc/msipl/newipl/stage3/ipl_03G.bin loader/dc/msipl/newipl/msipl_03g.bin
+	$(Q)$(MAKE) PSP_MODEL=04G -C loader/dc/msipl/newipl/stage3/
+	$(Q)mv loader/dc/msipl/newipl/stage3/ipl_04G.bin loader/dc/msipl/newipl/msipl_04g.bin
+	$(Q)$(MAKE) PSP_MODEL=05G -C loader/dc/msipl/newipl/stage3/
+	$(Q)mv loader/dc/msipl/newipl/stage3/ipl_05G.bin loader/dc/msipl/newipl/msipl_05g.bin
+	$(Q)$(MAKE) PSP_MODEL=07G -C loader/dc/msipl/newipl/stage3/
+	$(Q)mv loader/dc/msipl/newipl/stage3/ipl_07G.bin loader/dc/msipl/newipl/msipl_07g.bin
+	$(Q)$(MAKE) PSP_MODEL=09G -C loader/dc/msipl/newipl/stage3/
+	$(Q)mv loader/dc/msipl/newipl/stage3/ipl_09G.bin loader/dc/msipl/newipl/msipl_09g.bin
+	$(Q)$(MAKE) PSP_MODEL=11G -C loader/dc/msipl/newipl/stage3/
+	$(Q)mv loader/dc/msipl/newipl/stage3/ipl_11G.bin loader/dc/msipl/newipl/msipl_11g.bin
 	$(Q)$(MAKE) -C loader/dc/installer
 
 kxploits:
@@ -244,6 +248,7 @@ cleanobj:
 
 clean:
 	$(Q)$(MAKE) $@ -C libs
+	$(Q)$(MAKE) $@ -C contrib/PC/minilzo
 	$(Q)$(MAKE) $@ -C core/compat/psp/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex
@@ -300,8 +305,9 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/installer
 	$(Q)$(MAKE) $@ -C loader/dc/dcman
 	$(Q)$(MAKE) $@ -C loader/dc/installer
-	$(Q)$(MAKE) $@ -C loader/dc/msipl/newipl/loader
-	$(Q)$(MAKE) $@ -C loader/dc/msipl/newipl/payload
+	$(Q)$(MAKE) $@ -C loader/dc/msipl/newipl/stage1
+	$(Q)$(MAKE) $@ -C loader/dc/msipl/newipl/stage2
+	$(Q)$(MAKE) $@ -C loader/dc/msipl/newipl/stage3
 	$(Q)$(MAKE) $@ -C loader/dc/msipl/mainbinex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl
@@ -325,6 +331,8 @@ clean:
 	$(Q)rm -f loader/dc/tmctrl/tmctrl.h
 	$(Q)rm -f loader/dc/btcnf/*.bin
 	$(Q)rm -f loader/dc/msipl/newipl/*.bin
+	$(Q)rm -f loader/dc/msipl/newipl/stage1/*.h
+	$(Q)rm -f loader/dc/msipl/newipl/stage2/*.lzo
 	$(Q)rm -f loader/live/FinalSpeed/*.h
 
 subdirs: $(SUBDIRS)

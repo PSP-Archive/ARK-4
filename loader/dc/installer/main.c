@@ -21,8 +21,8 @@
 #include <loader/dc/tmctrl/tmctrl.h>
 #include "tm_msipl.h"
 #include "tm_mloader.h"
-#include "loader/new_msipl.h"
-#include "loader/msipl_raw.h"
+#include "new_msipl.h"
+#include "msipl_raw.h"
 
 #include "pspbtcnf_dc.h"
 #include "pspbtcnf_02g_dc.h"
@@ -33,14 +33,14 @@
 #include "pspbtcnf_09g_dc.h"
 #include "pspbtcnf_11g_dc.h"
 
-#include "payload/msipl_01G.h"
-#include "payload/msipl_02G.h"
-#include "payload/msipl_03G.h"
-#include "payload/msipl_04G.h"
-#include "payload/msipl_05G.h"
-#include "payload/msipl_07G.h"
-#include "payload/msipl_09G.h"
-#include "payload/msipl_11G.h"
+#include "msipl_01G.h"
+#include "msipl_02G.h"
+#include "msipl_03G.h"
+#include "msipl_04G.h"
+#include "msipl_05G.h"
+#include "msipl_07G.h"
+#include "msipl_09G.h"
+#include "msipl_11G.h"
 
 #include <cipl_01G.h>
 #include <cipl_02G.h>
