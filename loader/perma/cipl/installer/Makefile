@@ -1,5 +1,5 @@
 TARGET = flasher
-OBJS = main.o pspIplUpdate.o kbooti_update.o kpspident.o
+OBJS = main.o pspIplUpdate.o kbooti_update.o kpspident.o stubkk.o
 
 LIBS = -lpspkubridge
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/loader/perma/cipl/classic $(ARKROOT)/loader/perma/cipl/new

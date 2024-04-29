@@ -56,6 +56,7 @@ u32 sceSysregGetTachyonVersion(void);		// 0xE2A5D1EE
 char msg[256];
 int model;
 static u8 big_buf[256*1024] __attribute__((aligned(64)));
+static int reboot = -1;
 
 u8* ipl_block = ipl_block_large;
 
@@ -92,7 +93,10 @@ void ErrorExit(int milisecs, char *fmt, ...)
 	va_end(list);
 	printf(msg);
 	sceKernelDelayThread(milisecs*1000);
-	sceKernelExitGame(); 
+	if(reboot)
+		scePowerRequestColdReset(0);
+	else
+		sceKernelExitGame(); 
 }
 
 void loadIplUpdateModule(){
@@ -223,6 +227,7 @@ void classicipl_menu(){
 		sceKernelDelayThread(10000);
 	}
 
+	reboot = 1;
 	ErrorExit(5000,"\nInstall complete. Restarting in 5 seconds...\n");
 }
 
@@ -309,6 +314,7 @@ void devtoolipl_menu(){
 		sceKernelDelayThread(10000);
 	}
 
+	reboot = 1;
 	ErrorExit(5000,"\nInstall complete. Restarting in 5 seconds...\n");
 }
 
