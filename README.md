@@ -105,7 +105,7 @@ Use `-h` or `--help` to show all available flags
 - To convert `ARK` into a `Permanent CFW` you can use either `cIPL` or `Infinity`, along with the `Full Installer` for a complete permanent experience.
 
 
-##### Permanent CFW via cIPL
+##### Permanent CFW via cIPL (recommended)
 
 - `New cIPL`: works on every retail model (1K, 2K, 3K, Go and Street) on `6.61`.
 - `Classic cIPL`: works on `Pandora` compatible models (`1g` and early `2g`) on `6.60`, `6.61` or `6.60 Testing Tool`.
@@ -116,7 +116,7 @@ Use `-h` or `--help` to show all available flags
 - Warning: unlike classic cIPL, the new cIPL method can't be easily uninstalled. To revert to offical IPL, use ChronoSwitch to reinstall 6.61 OFW.
 
 
-##### Permanent CFW via Infinity 2
+##### Permanent CFW via Infinity 2 (deprecated)
 
 - Works on all PSP models on 6.60 or 6.61 firmwares.
 - Copy or move the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
