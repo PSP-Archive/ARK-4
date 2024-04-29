@@ -170,24 +170,7 @@ static int sceGpioPortReadPatched(void) {
 	return GPRValue;
 }
 
-void processSettings(){
-    int apitype = sceKernelInitApitype();
-
-    // USB Charging
-    if (se_config->usbcharge){
-        usb_charge(); // enable usb charging
-    }
-    // check launcher mode
-    if (se_config->launcher_mode){
-        strcpy(ark_config->launcher, VBOOT_PBP); // set CFW in launcher mode
-    }
-    else{
-        if (strcmp(ark_config->launcher, "PROSHELL") != 0)
-            ark_config->launcher[0] = 0; // disable launcher mode
-    }
-    // VSH region
-    if (se_config->vshregion) patch_sceChkreg();
-    // Disable LED
+void disableLEDs(){
     if (se_config->noled){
         int (*_sceSysconCtrlLED)(int, int);
         _sceSysconCtrlLED = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x18BFBE65);
@@ -195,21 +178,9 @@ void processSettings(){
         MAKE_DUMMY_FUNCTION_RETURN_0(_sceSysconCtrlLED);
         flushCache();
     }
-    // Enforce extra RAM
-    if (se_config->force_high_memory){
-        patch_partitions();
-        se_config->disable_pause = 1;
-    }
-    if(!se_config->force_high_memory && (apitype == 0x141 || apitype == 0x152) ){
-        int paramsize=4;
-        int use_highmem = 0;
-        if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-            patch_partitions();
-            se_config->disable_pause = 1;
-            se_config->force_high_memory = 1;
-        }
-    }
-    // Enable Inferno cache
+}
+
+void enableInfernoCache(){
     if (se_config->iso_cache){
         int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
         if (CacheInit){
@@ -233,11 +204,9 @@ void processSettings(){
             }
         }
     }
-    // Disable Pause feature on PSP Go
-    if (se_config->disable_pause){
-        disable_PauseGame();
-    }
-    // Disable UMD Drive
+}
+
+void disableUMD(){
     if (se_config->noumd && psp_model != PSP_GO){
         // disable UMD drive by software, only do this if not running an ISO driver
         if (sceKernelFindModuleByName("PRO_Inferno_Driver")==NULL && sceKernelFindModuleByName("sceNp9660_driver")==NULL){
@@ -258,6 +227,58 @@ void processSettings(){
         u32 sceGpioPortRead = (void*)sctrlHENFindFunction("sceLowIO_Driver", "sceGpio_driver", 0x4250D44A);
         REDIRECT_FUNCTION(sceGpioPortRead, sceGpioPortReadPatched);
     }
+}
+
+void processSettings(){
+    int apitype = sceKernelInitApitype();
+
+    // USB Charging
+    if (se_config->usbcharge){
+        usb_charge(); // enable usb charging
+    }
+    
+    // check launcher mode
+    if (se_config->launcher_mode){
+        strcpy(ark_config->launcher, VBOOT_PBP); // set CFW in launcher mode
+    }
+    else{
+        if (strcmp(ark_config->launcher, "PROSHELL") != 0)
+            ark_config->launcher[0] = 0; // disable launcher mode
+    }
+
+    // VSH region
+    if (se_config->vshregion) patch_sceChkreg();
+
+    // Disable LED
+    disableLEDs();
+
+    // Enforce extra RAM
+    if (se_config->force_high_memory){
+        patch_partitions();
+        se_config->disable_pause = 1;
+    }
+
+    // Check if running a homebrew that requires extra RAM
+    if(!se_config->force_high_memory && (apitype == 0x141 || apitype == 0x152) ){
+        int paramsize=4;
+        int use_highmem = 0;
+        if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
+            patch_partitions();
+            se_config->disable_pause = 1;
+            se_config->force_high_memory = 1;
+        }
+    }
+
+    // Enable Inferno cache
+    enableInfernoCache();
+
+    // Disable Pause feature on PSP Go
+    if (se_config->disable_pause){
+        disable_PauseGame();
+    }
+
+    // Disable UMD Drive
+    disableUMD();
 }
 
 int (*prevPluginHandler)(const char* path, int modid) = NULL;
