@@ -45,8 +45,6 @@ void flushCache()
 }
 
 void processArkConfig(){
-    se_config = sctrlSEGetConfig(NULL);
-    ark_config = sctrlHENGetArkConfig(NULL);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSP_ORIG; // assume running on PSP
     }
@@ -58,12 +56,21 @@ int module_start(SceSize args, void * argp)
     
     // get psp model
     psp_model = sceKernelGetModel();
+
+    se_config = sctrlSEGetConfig(NULL);
+    ark_config = sctrlHENGetArkConfig(NULL);
+
+    if (ark_config == NULL){
+        sceKernelSelfStopUnloadModule(1, 0, NULL);
+        return 1;
+    }
     
     // get ark config
     processArkConfig();
 
     if (!IS_PSP(ark_config)){
-        return 1;
+        sceKernelSelfStopUnloadModule(1, 0, NULL);
+        return 2;
     }
 
     // set rebootex for PSP
