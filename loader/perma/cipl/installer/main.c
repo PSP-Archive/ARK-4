@@ -431,6 +431,10 @@ int main()
 		ErrorExit(5000,"FW ERROR!\n");
 	}
 
+	if (sceKernelFindModuleByName("InfinityControl")!=NULL){
+		ErrorExit(5000, "ERROR: uninstall Infinity first!");
+	}
+
 	kpspident = pspSdkLoadStartModule("kpspident.prx", PSP_MEMORY_PARTITION_KERNEL);
 
 	if (kpspident < 0) {
