@@ -12,6 +12,9 @@
 #define PATH_POPCORN PATH_FLASH0 "kd/ark_popcorn.prx"
 #define PATH_TMCTRL PATH_FLASH0 "tmctrl.prx"
 
+#define PATH_SYSTEMCTRL_PRO PATH_FLASH0 "kd/_systemctrl.prx"
+#define PATH_VSHCTRL_PRO PATH_FLASH0 "kd/_vshctrl.prx"
+
 typedef struct _btcnf_header
 {
     unsigned int signature; // 0

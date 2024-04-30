@@ -5,6 +5,15 @@
 #include <fat.h>
 #endif
 
+enum {
+    CFW_ARK,
+    CFW_PRO,
+    CFW_ME
+};
+
+static int cfw_type = CFW_ARK;
+static int psp_model = PSP_1000;
+
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 
 int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(void *, void *, void *)){
@@ -237,6 +246,50 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     memcpy(buffer, *p_buffer, length);
     *p_buffer = buffer;
 
+#ifdef PAYLOADEX
+    if (cfw_type == CFW_PRO){
+
+        struct {
+            u32 magic;
+            u32 rebootex_size;
+            u32 p2_size;
+            u32 p9_size;
+            char *insert_module_before;
+            void *insert_module_binary;
+            u32 insert_module_size;
+            u32 insert_module_flags;
+            u32 psp_fw_version;
+            u8 psp_model;
+            u8 iso_mode;
+            u8 recovery_mode;
+            u8 ofw_mode;
+            u8 iso_disc_type;
+        }* conf = (void*)(REBOOTEX_CONFIG);
+        memset((void*)0x88FB0000, 0, 0x100);
+        conf->magic = 0xC01DB15D;
+        conf->psp_model = psp_model;
+        conf->rebootex_size = 0;
+        conf->psp_fw_version = FW_661;
+
+        // Insert SystemControl
+        newsize = AddPRX(buffer, "/kd/init.prx", PATH_SYSTEMCTRL_PRO+sizeof(PATH_FLASH0)-2, 0x000000EF);
+        if (newsize > 0) result = newsize;
+
+        // Insert VSHControl
+        if (SearchPrx(buffer, "/vsh/module/vshmain.prx") >= 0) {
+            newsize = AddPRX(buffer, "/kd/vshbridge.prx", PATH_VSHCTRL_PRO+sizeof(PATH_FLASH0)-2, VSH_RUNLEVEL );
+            if (newsize > 0) result = newsize;
+        }
+
+        return result;
+    }
+    else if (cfw_type == CFW_ME){
+        // clear config
+        memset((void*)0x88FB0000, 0, 0x100);
+        return result;
+    }
+#endif
+
     // Insert SystemControl
     newsize = AddPRX(buffer, "/kd/init.prx", PATH_SYSTEMCTRL+sizeof(PATH_FLASH0)-2, 0x000000EF);
     if (newsize > 0) result = newsize;
@@ -382,15 +435,37 @@ int _sceBootLfatOpen(char * filename)
 	return MsFatOpen(path);
 #else
 
-    // patch to allow custom btcnf
-    if (!ark_config->recovery){
-        if (strncmp(filename+4, "pspbtcnf", 8) == 0){
+    // patch to allow custom boot
+    if (strncmp(filename+4, "pspbtcnf", 8) == 0){
+        int res = -1;
+
+        res = sceBootLfatOpen("/arkcipl.cfg");
+        if (res == 0){
+            char cfg[12]; memset(cfg, 0, sizeof(cfg));
+            sceBootLfatRead(cfg, sizeof(cfg));
+            sceBootLfatClose();
+
+            if (strcmp(cfg, "cfw=pro") == 0){
+                cfw_type = CFW_PRO;
+            }
+            else if (strcmp(cfg, "cfw=me") == 0) {
+                cfw_type = CFW_ME;
+                filename[9] = 'j'; // pspbtjnf
+            }
+        }
+        else {
+            // check for custom btcnf
             filename[6] = 't'; // pstbtcnf.bin
-            int res = sceBootLfatOpen(filename);
+            res = sceBootLfatOpen(filename);
             if (res >= 0) return res;
             filename[6] = 'p'; // fallback
         }
+
+        if (filename[12] == '_'){
+            psp_model = ((filename[13]-'0') + (filename[14]-'0')) - 1;
+        }
     }
+
     //forward to original function
     return sceBootLfatOpen(filename);
 #endif

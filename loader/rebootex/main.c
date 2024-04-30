@@ -130,21 +130,21 @@ void xor_cipher(u8* data, u32 size, u8* key, u32 key_size)
 int ARKPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize)
 {
     // Custom Packed PRX File
-    if ( (_lb((unsigned)prx + 0x150) == 0x1F && _lb((unsigned)prx + 0x151) == 0x8B) // GZIP
+    if ( (_lb((u8*)prx + 0x150) == 0x1F && _lb((u8*)prx + 0x151) == 0x8B) // GZIP
             || prx->oe_tag == 0xC01DB15D // PRO-type PRX
             || prx->oe_tag == 0xC6BA41D3 // ME-type PRX
     ){
 
         if (prx->oe_tag == 0xC6BA41D3){ // decrypt ME firmware file
-            xor_cipher((u8*)prx + sizeof(PSP_Header), 0x10, prx->key_data1, 0x10);
-            xor_cipher((u8*)prx + sizeof(PSP_Header), prx->comp_size, &prx->scheck[0x38], 0x20);
+            xor_cipher((u8*)prx + 0x150, 0x10, prx->key_data1, 0x10);
+            xor_cipher((u8*)prx + 0x150, prx->comp_size, &prx->scheck[0x38], 0x20);
         }
 
         // Read GZIP Size
         *newsize = prx->comp_size;
         
         // Remove PRX Header
-        memcpy(prx, (unsigned)prx + 0x150, prx->comp_size);
+        memcpy(prx, (u8*)prx + 0x150, prx->comp_size);
         
         // Fake Decrypt Success
         return 0;
