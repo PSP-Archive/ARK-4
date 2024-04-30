@@ -33,7 +33,6 @@ m.title('DC-ARK Maker')
 var = tk.StringVar(m)
 var.set(possible_drive[0])
 check = tk.BooleanVar(m)
-format_ms_check = tk.BooleanVar(m)
 ipl_only = tk.BooleanVar(m)
 
 disk_check = tk.StringVar(m)
@@ -65,11 +64,9 @@ else:
 def toggle_ipl():
     if ipl_only.get():
         go_check['state'] = 'disabled'
-        format_ms['state'] = 'disabled'
         m.update()
     else:
         go_check['state'] = 'normal'
-        format_ms['state'] = 'normal'
         m.update()
 
 def refresh():
@@ -77,82 +74,10 @@ def refresh():
     p = sys.executable
     os.execl(p, p, *sys.argv)
 
-def fmt_ms():
-
-    if ostype.lower() != 'linux':
-        errWin = tk.Toplevel(m)
-        errWin.title('Unsupported OS Detected')
-        errWinLabel = tk.Label(errWin, text='Sorry right now this is experimental and only Linux is supported.\n')
-        errWinLabel.grid(row=1, column=1)
-        format_ms['state'] = 'disabled'
-        format_ms_check.set(0)
-        return
-
-    def fmt():
-        force_ss = False
-
-        def close_force_ss():
-            newWindow.destroy()
-            newWindow.update()
-
-        def force_ss_func():
-            force_ss = True
-            newWindow.destroy()
-            newWindow.update()
-
-        # Detect Memory Stick Size
-        if ostype.lower() == 'linux':
-            size = subprocess.Popen([f"fdisk --bytes -l /dev/{var.get()} | awk '{{print $5}}' | head -n 1"], shell=True, stdout=subprocess.PIPE)
-            size = int(size.stdout.read().decode().strip())
-
-            os.system(f'sudo umount /dev/{var.get()}1')
-            time.sleep(3)
-            os.system(f'sudo dd if=/dev/zero of=/dev/{var.get()} bs=512 count=4')
-
-            if size < 4294967296: # less than 4GB format to fat16, works best also Sony already does this as well.
-                os.system(f'echo -e "rm 1\nmklabel msdos\nmkpart primary fat16 61s 100%\ntoggle 1 lba\ntoggle 1 boot\nq" | sudo parted /dev/{var.get()}')
-            else: # 4GB or greater format to fat32, optional sector size to start at 2048 if issue occur with > 2048. This can cause the PSP (VSH) to think something is wrong
-                  # however most recovery utilities don't care as long as its a sane filesystem still.
-                newWindow = tk.Toplevel(m)
-                newWindow.title('Force Smaller sector size')
-                newWindow.geometry("220x140")
-                l = tk.Label(newWindow, text='Please only check if\nyou know what this is.\nOtherwise press Exit\n')
-                l.grid(row=1, column=1)
-
-                force_small_sectors = tk.Button(newWindow, text='Force small sectors (2048)', command=force_ss_func)
-                force_small_sectors.grid(row=2, column=1)
-                decline = tk.Button(newWindow, text='Exit', command=close_force_ss)
-                decline.grid(row=3, column=1)
-
-                newWindow.wait_window()
-
-                if force_ss:
-                    os.system(f'echo -e "o\nn\np\n1\n2048\n\n\nt\n0b\na\nw" | sudo fdisk /dev/{var.get()}')
-                else:
-                    os.system(f'echo -e "o\nn\np\n1\n\n\nt\n0b\na\nw" | sudo fdisk /dev/{var.get()}')
-                os.system(f'sudo mkfs.fat -F 32 /dev/{var.get()}1')
-
-            time.sleep(3)
-            users = subprocess.Popen(["users | awk '{print $1}'"], shell=True, stdout=subprocess.PIPE)
-            users = users.stdout.read().decode().strip()
-            os.system(f"su -c 'udisksctl mount -b /dev/{var.get()}1' {users}")
-            #os.system(f'mount /dev/{var.get()}1 /mnt')
-            #os.system(f'mount -o remount,rw /mnt')
-            time.sleep(3)
-            refresh()
-
-    legacy['state'] = 'disabled'
-    go_check['state'] = 'disabled'
-    ipl_inject_only['state'] = 'disabled'
-    status.config(text='Formatting Memory Stick\nSelected!')
-    b.config(text='Format', command=fmt)
-    m.update()
-
 def disable_go_check():
     if check.get():
         go_check['state'] = 'disabled'
         check.set(1)
-        format_ms['state'] = 'disabled'
     else:
         go_check['state'] = 'normal'
         check.set(0)
@@ -175,19 +100,15 @@ def go_update():
     if go:
         go = False
         legacy['state'] = 'normal'
-        format_ms['state'] = 'disabled'
     else:
         go = True
         legacy['state'] = 'disabled'
-        format_ms['state'] = 'disabled'
 
 def toggle_run(toggle) -> None:
     if toggle != '-':
         b['state'] = 'normal'
-        format_ms.grid(row=5, column=0, sticky="W")
     else:
         b['state'] = 'disabled'
-        format_ms.grid_remove()
 
 def run() -> None:
     b['state'] = 'disabled'
@@ -195,7 +116,6 @@ def run() -> None:
     b['text'] = 'Please Wait...'
     go_check['state'] = 'disabled'
     legacy['state'] = 'disabled'
-    format_ms['state'] = 'disabled'
     ipl_inject_only['state'] = 'disabled'
     global go
 
@@ -356,8 +276,6 @@ go_check.grid(sticky="W", row=3, column=0)
 
 legacy=tk.Checkbutton(m, text="Legacy IPL (1000s and early 2000s ONLY!)", variable=check, command=disable_go_check)
 legacy.grid(row=4, column=0)
-
-format_ms=tk.Checkbutton(m, text='Format Memory Stick', variable=format_ms_check, command=fmt_ms)
 
 b=tk.Button(m, text='Run', command=run)
 b.grid(row=1,column=1)
