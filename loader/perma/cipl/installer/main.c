@@ -35,6 +35,7 @@
 #include <origipl_07G.h>
 #include <origipl_09G.h>
 #include <origipl_11G.h>
+#include <globals.h>
 
 PSP_MODULE_INFO("IPLFlasher", 0x0800, 1, 0); 
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
@@ -53,6 +54,7 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 
 u32 sceSysregGetTachyonVersion(void);		// 0xE2A5D1EE
 
+ARKConfig ark_config;
 char msg[256];
 int model;
 static u8 big_buf[256*1024] __attribute__((aligned(64)));
@@ -427,11 +429,21 @@ int main()
 	pspDebugScreenSetTextColor(WHITE);
 	devkit = sceKernelDevkitVersion();
 
+	// check if running 6.60 or 6.61
 	if(devkit != 0x06060010 && devkit != 0x06060110) {
-		ErrorExit(5000,"FW ERROR!\n");
+		ErrorExit(5000,"FW ERROR! Use on 6.60 or 6.61 only.\n");
 	}
 
-	if (sceKernelFindModuleByName("InfinityControl")!=NULL){
+	// check if running ARK
+	memset(&ark_config, 0, sizeof(ARKConfig));
+	sctrlHENGetArkConfig(&ark_config);
+	if (ark_config.magic != ARK_CONFIG_MAGIC){
+		ErrorExit(5000,"FW ERROR! Use on ARK only.\n");
+	}
+
+	// check if running infinity
+	SceModule2 infinity_mod;
+	if (kuKernelFindModuleByName("InfinityControl", &infinity_mod) == 0){
 		ErrorExit(5000, "ERROR: uninstall Infinity first!");
 	}
 
