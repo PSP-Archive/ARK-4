@@ -144,7 +144,7 @@ int ARKPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize)
         *newsize = prx->comp_size;
         
         // Remove PRX Header
-        memcpy(prx, prx + 0x150, prx->comp_size);
+        memcpy(prx, (unsigned)prx + 0x150, prx->comp_size);
         
         // Fake Decrypt Success
         return 0;
