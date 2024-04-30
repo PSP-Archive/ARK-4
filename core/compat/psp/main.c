@@ -61,7 +61,6 @@ int module_start(SceSize args, void * argp)
     ark_config = sctrlHENGetArkConfig(NULL);
 
     if (ark_config == NULL){
-        sceKernelSelfStopUnloadModule(1, 0, NULL);
         return 1;
     }
     
@@ -69,7 +68,6 @@ int module_start(SceSize args, void * argp)
     processArkConfig();
 
     if (!IS_PSP(ark_config)){
-        sceKernelSelfStopUnloadModule(1, 0, NULL);
         return 2;
     }
 
