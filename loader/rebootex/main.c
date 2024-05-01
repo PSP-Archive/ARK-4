@@ -57,6 +57,7 @@ void (* sceRebootDacheWritebackInvalidateAll)(void) = NULL;
 // Sony PRX Decrypter Function Pointer
 int (* SonyPRXDecrypt)(void *, unsigned int, unsigned int *) = NULL;
 int (* origCheckExecFile)(unsigned char * addr, void * arg2) = NULL;
+int (* extraPRXDecrypt)(void *, unsigned int, unsigned int *) = NULL;
 
 // UnpackBootConfig
 int (* UnpackBootConfig)(char * buffer, int length) = NULL;
@@ -82,50 +83,6 @@ int (* sceBootLfatClose)(void) = NULL;
 // implementation specific patches
 extern patchRebootBuffer();
 
-typedef struct
-{
-    u32 signature;      // 0
-    u16 attribute;      // 4  modinfo
-    u16 comp_attribute; // 6
-    u8 module_ver_lo;   // 8
-    u8 module_ver_hi;   // 9
-    char modname[28];   // 0A
-    u8 version;         // 26
-    u8 nsegments;       // 27
-    int elf_size;       // 28
-    int psp_size;       // 2C
-    u32 entry;          // 30
-    u32 modinfo_offset; // 34
-    int bss_size;       // 38
-    u16 seg_align[4];   // 3C
-    u32 seg_address[4]; // 44
-    int seg_size[4];    // 54
-    u32 reserved[5];    // 64
-    u32 devkitversion;  // 78
-    u32 decrypt_mode;   // 7C
-    u8 key_data0[0x30]; // 80
-    int comp_size;      // B0
-    int _80;            // B4
-    int reserved2[2];   // B8
-    u8 key_data1[0x10]; // C0
-    u32 tag;            // D0
-    u8 scheck[0x58];    // D4
-    u32 key_data2;      // 12C
-    u32 oe_tag;         // 130
-    u8 key_data3[0x1C]; // 134
-    u8 main_data;       // 150
-} PSP_Header;
-
-void xor_cipher(u8* data, u32 size, u8* key, u32 key_size)
-{
-    u32 i;
-
-    for (i = 0; i < size; i++)
-    {
-        data[i] ^= key[i % key_size];
-    }
-}
-
 // Custom PRX Support
 int ARKPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize)
 {
@@ -135,9 +92,8 @@ int ARKPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize)
             || prx->oe_tag == 0xC6BA41D3 // ME-type PRX
     ){
 
-        if (prx->oe_tag == 0xC6BA41D3){ // decrypt ME firmware file
-            xor_cipher((u8*)prx + 0x150, 0x10, prx->key_data1, 0x10);
-            xor_cipher((u8*)prx + 0x150, prx->comp_size, &prx->scheck[0x38], 0x20);
+        if (prx->oe_tag == 0xC6BA41D3 && extraPRXDecrypt){ // decrypt ME firmware file
+            extraPRXDecrypt(prx, size, newsize);
         }
 
         // Read GZIP Size

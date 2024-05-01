@@ -23,6 +23,24 @@ int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(
     return start(arg1, arg2, arg3);
 }
 
+#ifndef MS_IPL
+void xor_cipher(u8* data, u32 size, u8* key, u32 key_size)
+{
+    u32 i;
+
+    for (i = 0; i < size; i++)
+    {
+        data[i] ^= key[i % key_size];
+    }
+}
+
+int MEPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize){
+    xor_cipher((u8*)prx + 0x150, 0x10, prx->key_data1, 0x10);
+    xor_cipher((u8*)prx + 0x150, prx->comp_size, &prx->scheck[0x38], 0x20);
+    return 0;
+}
+#endif
+
 // patch reboot on psp
 void patchRebootBuffer(){
 
@@ -475,6 +493,7 @@ int _sceBootLfatOpen(char * filename)
             else if (strcmp(cfg, "cfw=me") == 0) {
                 cfw_type = CFW_ME;
                 filename[9] = 'j'; // pspbtjnf
+                extraPRXDecrypt = &MEPRXDecrypt;
             }
         }
         else {
