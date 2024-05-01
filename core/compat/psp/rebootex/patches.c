@@ -23,6 +23,7 @@ int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(
     return start(arg1, arg2, arg3);
 }
 
+#ifdef PAYLOADEX
 #ifndef MS_IPL
 void xor_cipher(u8* data, u32 size, u8* key, u32 key_size)
 {
@@ -39,6 +40,7 @@ int MEPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize){
     xor_cipher((u8*)prx + 0x150, prx->comp_size, &prx->scheck[0x38], 0x20);
     return 0;
 }
+#endif
 #endif
 
 // patch reboot on psp
@@ -254,6 +256,7 @@ int patch_bootconf_updaterumd(char *buffer, int length)
 }
 
 #ifdef PAYLOADEX
+#ifndef MS_IPL
 int patch_bootconf_pro(char *buffer, int length){
 
     struct {
@@ -302,6 +305,7 @@ int patch_bootconf_pro(char *buffer, int length){
     return result;
 }
 #endif
+#endif
 
 int UnpackBootConfigPatched(char **p_buffer, int length)
 {
@@ -315,6 +319,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     *p_buffer = buffer;
 
 #ifdef PAYLOADEX
+#ifndef MS_IPL
     if (cfw_type == CFW_PRO){
         newsize = patch_bootconf_pro(buffer, result);
         if (newsize > 0) result = newsize;
@@ -330,6 +335,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
         }
         return result;
     }
+#endif
 #endif
 
     // Insert SystemControl
@@ -486,7 +492,8 @@ int _sceBootLfatOpen(char * filename)
             char cfg[12]; memset(cfg, 0, sizeof(cfg));
             sceBootLfatRead(cfg, sizeof(cfg));
             sceBootLfatClose();
-
+            
+            #ifdef PAYLOADEX
             if (strcmp(cfg, "cfw=pro") == 0){
                 cfw_type = CFW_PRO;
             }
@@ -495,6 +502,7 @@ int _sceBootLfatOpen(char * filename)
                 filename[9] = 'j'; // pspbtjnf
                 extraPRXDecrypt = &MEPRXDecrypt;
             }
+            #endif
         }
         else {
             // check for custom btcnf
