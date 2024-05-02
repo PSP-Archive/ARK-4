@@ -62,8 +62,13 @@ else:
         possible_drive.append(i)
 
 def toggle_ipl():
+
     if ipl_only.get():
         go_check['state'] = 'disabled'
+        nw = tk.Toplevel(m) 
+        nw.geometry("600x80")
+        warn = tk.Label(nw, text="IF YOU LOOKING FOR FULL TM INSTALL DO NOT SELECT THIS!").pack()
+        close = tk.Button(nw, text="Close", command=nw.destroy).pack()
         m.update()
     else:
         go_check['state'] = 'normal'
