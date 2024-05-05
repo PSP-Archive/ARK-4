@@ -38,8 +38,7 @@ int main()
 	memcpy((u8 *) 0x8FC0000, &payloadex, size_payloadex);
 	
 #ifdef MSIPL
-	u32 ms_on = 1;
-    syscon_issue_command_write(0x4c, &ms_on, 3);
+	syscon_ctrl_ms_power(1);
 #endif
 	
 	*(u32 *) 0x8FB0000 = -1;

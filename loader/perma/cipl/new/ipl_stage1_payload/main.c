@@ -350,11 +350,10 @@ int main()
 
 #ifndef MSIPL
 	uint32_t keys = -1;
-	syscon_issue_command_read(0x07, &keys);
+	syscon_get_digital_key(&keys);
 	if ((keys & SYSCON_CTRL_LTRIGGER) == 0)
 	{
-		u32 ms_on = 1;
-    	syscon_issue_command_write(0x4c, &ms_on, 3);
+    	syscon_ctrl_ms_power(1);
 	
 		MsFatMount();
 

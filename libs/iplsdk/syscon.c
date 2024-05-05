@@ -116,6 +116,14 @@ int syscon_ctrl_hr_power(unsigned int on)
     return syscon_issue_command_write(SYSCON_CTRL_HR_POWER, &on_val, 1);
 }
 
+int syscon_ctrl_ms_power(unsigned int on)
+{
+    unsigned char on_val = on;
+
+    // write message directly to syscon
+    return syscon_issue_command_write(SYSCON_CTRL_MS_POWER, &on_val, 1);
+}
+
 int syscon_get_pommel_version(unsigned int *version)
 {
     return syscon_issue_command_read(SYSCON_GET_POMMEL_VERSION, (unsigned char *)version);

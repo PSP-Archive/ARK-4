@@ -11,6 +11,7 @@ enum SysconCommand {
     SYSCON_CTRL_POWER = 0x45,
     SYSCON_GET_POWER_STATUS = 0x46,
     SYSCON_CTRL_LED = 0x47,
+    SYSCON_CTRL_MS_POWER = 0x4C,
 };
 
 int syscon_issue_command_write(enum SysconCommand cmd, const unsigned char *data, unsigned int length);
