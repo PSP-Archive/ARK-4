@@ -1,4 +1,4 @@
-![image](https://github.com/PSP-Archive/ARK-4/assets/21104159/b182e18d-56c2-477f-8c7e-cc7bea3c945f)![image](https://github.com/PSP-Archive/ARK-4/assets/21104159/18dcbb27-db36-4deb-a9a0-03fa2c8f0534)# ARK-4 e/CFW for the PSP and PS Vita.
+# ARK-4 e/CFW for the PSP and PS Vita.
 
 New, updated, improved and modern `Custom Firmware` for the `PSP` and `PS Vita`'s `ePSP`.
 Simple to use and full of unique features, `ARK CFW` aims at keeping the `PSP` experience fresh. Being a successor to `PRO` and `ME`,
