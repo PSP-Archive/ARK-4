@@ -66,6 +66,7 @@ u32 UnpackBootConfigCall = 0;
 u32 UnpackBootConfigArg = 0;
 u32 reboot_start = 0;
 u32 reboot_end = 0;
+u32 loadcore_text = 0;
 
 //io flags
 int rebootmodule_set = 0;
@@ -94,6 +95,7 @@ int ARKPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize)
 
         if (prx->oe_tag == 0xC6BA41D3 && extraPRXDecrypt){ // decrypt ME firmware file
             extraPRXDecrypt(prx, size, newsize);
+            unPatchLoadCorePRXDecrypt();
         }
 
         // Read GZIP Size
@@ -127,8 +129,38 @@ int CheckExecFilePatched(unsigned char * addr, void * arg2)
     }
 #endif
 
+    if (extraPRXDecrypt){
+        unPatchLoadCoreCheckExec();
+    }
+
     //return success
     return 0;
+}
+
+void unPatchLoadCorePRXDecrypt(){
+    u32 decrypt_call = JAL(ARKPRXDecrypt);
+    u32 text_addr = loadcore_text;
+    u32 top_addr = text_addr+0x8000;
+
+    for (u32 addr = text_addr; addr<top_addr; addr+=4) {
+        if (_lw(addr) == decrypt_call){
+            _sw(JAL(SonyPRXDecrypt), addr);
+        }
+    }
+
+}
+
+void unPatchLoadCoreCheckExec(){
+    u32 check_call = JAL(CheckExecFilePatched);
+    u32 text_addr = loadcore_text;
+    u32 top_addr = text_addr+0x8000;
+
+    for (u32 addr = text_addr; addr<top_addr; addr+=4) {
+        if (_lw(addr) == check_call){
+            _sw(JAL(origCheckExecFile), addr);
+        }
+    }
+
 }
 
 u32 loadCoreModuleStartCommon(u32 module_start){
@@ -164,6 +196,7 @@ u32 loadCoreModuleStartCommon(u32 module_start){
         }
     }
 
+    loadcore_text = text_addr;
     return text_addr;
 }
 
