@@ -49,7 +49,7 @@ SORTIR
 Non pris en charge
 USB d'Adrenaline
 Flash
-Disque UMD
+UMD
 M‚moire Interne
 Memory Stick
 Aucun(e)

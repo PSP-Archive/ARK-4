@@ -49,7 +49,7 @@ BEENDEN
 Nicht unterstÅtzt
 Adrenaline-USB
 Flash
-UMD Disk
+UMD
 Interner Speicher
 Memory Stick
 Keine

@@ -49,7 +49,7 @@ VSH 菜单
 不支持
 Adrenaline USB
 Flash
-UMD 光碟
+UMD
 内部存储
 记忆棒
 无
