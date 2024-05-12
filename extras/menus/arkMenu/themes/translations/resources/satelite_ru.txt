@@ -49,7 +49,7 @@ RECOVERY МЕНЮ ->
 Не поддерживается
 Adrenaline USB
 Flash
-UMD диск
+UMD
 Внутренняя память
 Карта памяти
 Нет

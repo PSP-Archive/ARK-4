@@ -49,7 +49,7 @@ VERLATEN
 Niet-ondersteund
 Adrenaline USB
 Flash
-UMD-schijf
+UMD
 Interne opslag
 Memory Stick
 Geen

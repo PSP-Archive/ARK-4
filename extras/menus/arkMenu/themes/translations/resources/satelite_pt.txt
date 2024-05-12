@@ -49,7 +49,7 @@ SAIR
 Nao Suportado
 USB do Adrenaline
 Flash
-Disco UMD
+UMD
 Memoria Interna
 Memory Stick
 Nenhum

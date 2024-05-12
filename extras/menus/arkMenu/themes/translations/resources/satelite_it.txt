@@ -49,7 +49,7 @@ ESCI
 Non Supportato
 USB di Adrenaline
 Flash
-Disco UMD
+UMD
 Memoria Interna
 Memory Stick
 Nessuno

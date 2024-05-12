@@ -49,7 +49,7 @@ SALIR
 Sin soporte
 USB de Adrenaline
 Flash
-Disco UMD
+UMD
 Memoria Interna
 Memory Stick
 Nada
