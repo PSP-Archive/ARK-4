@@ -73,7 +73,7 @@ const char *g_messages_en[] = {
 	"Unsupported",
 	"Adrenaline USB",
 	"Flash",
-	"UMD Disc",
+	"UMD",
 	"Internal Storage",
 	"Memory Stick",
 	"None",
