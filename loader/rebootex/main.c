@@ -129,9 +129,13 @@ int CheckExecFilePatched(unsigned char * addr, void * arg2)
     }
 #endif
 
+    #ifdef PAYLOADEX
+    #ifndef MS_IPL
     if (extraPRXDecrypt){
         unPatchLoadCoreCheckExec();
     }
+    #endif
+    #endif
 
     //return success
     return 0;
