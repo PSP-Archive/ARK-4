@@ -5,10 +5,10 @@
 #                                   #
 # Author  : Krazynez                #
 #                                   #
-# Date    : 2023-11-24              #
+# Date    : 2024-06-03              #
 #                                   #
 #####################################
-version=0.9.0
+version=0.9.1
 
 if [[ -z ${PSPDEV} ]]; then
 	clear
@@ -18,6 +18,8 @@ if [[ -z ${PSPDEV} ]]; then
 		printf "\n"
 		read -p "PSPDEV path (ex: /usr/local/pspdev): " getPath
 		export PSPDEV="$getPath" && export PATH="$PATH:$PSPDEV/bin"
+		echo "PATH=$PATH:$PSPDEV/bin" >> $HOME/.bashrc
+		echo "export PATH" >> $HOME/.bashrc
 	fi
 fi
 
@@ -26,8 +28,9 @@ dialogCheck=$(command -v dialog 2>/dev/null)
 
 function checkDepends {
 
-	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev python3-pycryptodome
-	pip3 install ecdsa
+	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev python3-pycryptodome python3-ecdsa
+	# Use package manager instead of pip
+	#pip3 install ecdsa
 }
 
 export -f checkDepends
