@@ -990,6 +990,38 @@ int install_thread(SceSize args, void *argp)
 
 	dcSetCancelMode(1);
 
+	int file_count = sizeof(f0_common) / sizeof(f0_common[0]);
+
+	switch (model)
+	{
+		case 0:
+			file_count += sizeof(f0_01g) / sizeof(f0_01g[0]);
+			break;
+		case 1:
+			file_count += sizeof(f0_02g) / sizeof(f0_02g[0]);
+			break;
+		case 2:
+			file_count += sizeof(f0_03g) / sizeof(f0_03g[0]);
+			break;
+		case 3:
+			file_count += sizeof(f0_04g) / sizeof(f0_04g[0]);
+			break;
+		case 4:
+			file_count += sizeof(f0_05g) / sizeof(f0_05g[0]);
+			break;
+		case 6:
+			file_count += sizeof(f0_07g) / sizeof(f0_07g[0]);
+			break;
+		case 8:
+			file_count += sizeof(f0_09g) / sizeof(f0_09g[0]);
+			break;
+		case 10:
+			file_count += sizeof(f0_11g) / sizeof(f0_11g[0]);
+			break;
+		default:
+			InstallError(fw, "Unsupported model.");
+	}
+
 	switch(LoadUpdaterModules(fw))
 	{
 		case 0: break;
@@ -1078,38 +1110,6 @@ int install_thread(SceSize args, void *argp)
 	SetProgress(4, 1);
 
 	SetStatus("Flashing files...");
-	
-	int file_count = sizeof(f0_common) / sizeof(f0_common[0]);
-
-	switch (model)
-	{
-		case 0:
-			file_count += sizeof(f0_01g) / sizeof(f0_01g[0]);
-			break;
-		case 1:
-			file_count += sizeof(f0_02g) / sizeof(f0_02g[0]);
-			break;
-		case 2:
-			file_count += sizeof(f0_03g) / sizeof(f0_03g[0]);
-			break;
-		case 3:
-			file_count += sizeof(f0_04g) / sizeof(f0_04g[0]);
-			break;
-		case 4:
-			file_count += sizeof(f0_05g) / sizeof(f0_05g[0]);
-			break;
-		case 6:
-			file_count += sizeof(f0_07g) / sizeof(f0_07g[0]);
-			break;
-		case 8:
-			file_count += sizeof(f0_09g) / sizeof(f0_09g[0]);
-			break;
-		case 10:
-			file_count += sizeof(f0_11g) / sizeof(f0_11g[0]);
-			break;
-		default:
-			InstallError(fw, "Unsupported model.");
-	}
 	
 	int ctr = 0;
 	CopyFileList(fw, f0_common, sizeof(f0_common) / sizeof(f0_common[0]), ctr, file_count);
