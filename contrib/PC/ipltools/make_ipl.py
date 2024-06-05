@@ -3,9 +3,9 @@
 import sys
 import struct
 
-from Crypto.Cipher import AES
-from Crypto.Hash import CMAC, SHA1
-from Crypto import Random
+from Cryptodome.Cipher import AES
+from Cryptodome.Hash import CMAC, SHA1
+from Cryptodome import Random
 from ecdsa.ellipticcurve import CurveFp, Point
 from ecdsa.curves import Curve
 from ecdsa import SigningKey
