@@ -36,6 +36,12 @@ void xor_cipher(u8* data, u32 size, u8* key, u32 key_size)
 int MEPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize){
     xor_cipher((u8*)prx + 0x150, 0x10, prx->key_data1, 0x10);
     xor_cipher((u8*)prx + 0x150, prx->comp_size, &prx->scheck[0x38], 0x20);
+    unPatchLoadCorePRXDecrypt();
+    return 0;
+}
+
+int MECheckExec(unsigned char * addr, void * arg2){
+    unPatchLoadCoreCheckExec();
     return 0;
 }
 
@@ -493,6 +499,7 @@ int _sceBootLfatOpen(char * filename)
                 cfw_type = CFW_ME;
                 filename[9] = 'j'; // pspbtjnf
                 extraPRXDecrypt = &MEPRXDecrypt;
+                extraCheckExec = &MECheckExec;
             }
             #endif
         }

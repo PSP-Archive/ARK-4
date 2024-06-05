@@ -85,6 +85,7 @@ extern void (* sceRebootDacheWritebackInvalidateAll)(void);
 extern int (* SonyPRXDecrypt)(void *, unsigned int, unsigned int *);
 extern int (* origCheckExecFile)(unsigned char * addr, void * arg2);
 extern int (* extraPRXDecrypt)(void *, unsigned int, unsigned int *);
+extern int (* extraCheckExec)(unsigned char * addr, void * arg2);
 
 // UnpackBootConfig on PSP
 extern int (* UnpackBootConfig)(char * buffer, int length);

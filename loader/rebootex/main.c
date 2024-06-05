@@ -58,6 +58,7 @@ void (* sceRebootDacheWritebackInvalidateAll)(void) = NULL;
 int (* SonyPRXDecrypt)(void *, unsigned int, unsigned int *) = NULL;
 int (* origCheckExecFile)(unsigned char * addr, void * arg2) = NULL;
 int (* extraPRXDecrypt)(void *, unsigned int, unsigned int *) = NULL;
+int (* extraCheckExec)(unsigned char * addr, void * arg2) = NULL;
 
 // UnpackBootConfig
 int (* UnpackBootConfig)(char * buffer, int length) = NULL;
@@ -97,7 +98,6 @@ int ARKPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize)
         #ifndef MS_IPL
         if (prx->oe_tag == 0xC6BA41D3 && extraPRXDecrypt){ // decrypt ME firmware file
             extraPRXDecrypt(prx, size, newsize);
-            unPatchLoadCorePRXDecrypt();
         }
         #endif
         #endif
@@ -135,8 +135,8 @@ int CheckExecFilePatched(unsigned char * addr, void * arg2)
 
     #ifdef PAYLOADEX
     #ifndef MS_IPL
-    if (extraPRXDecrypt){
-        unPatchLoadCoreCheckExec();
+    if (extraCheckExec){
+        extraCheckExec(addr, arg2);
     }
     #endif
     #endif
