@@ -95,7 +95,6 @@ int ARKPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize)
 
         if (prx->oe_tag == 0xC6BA41D3 && extraPRXDecrypt){ // decrypt ME firmware file
             extraPRXDecrypt(prx, size, newsize);
-            unPatchLoadCorePRXDecrypt();
         }
 
         // Read GZIP Size
@@ -128,14 +127,6 @@ int CheckExecFilePatched(unsigned char * addr, void * arg2)
         }
     }
 #endif
-
-    #ifdef PAYLOADEX
-    #ifndef MS_IPL
-    if (extraPRXDecrypt){
-        unPatchLoadCoreCheckExec();
-    }
-    #endif
-    #endif
 
     //return success
     return 0;

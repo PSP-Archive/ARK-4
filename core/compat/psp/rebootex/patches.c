@@ -23,8 +23,6 @@ int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(
     return start(arg1, arg2, arg3);
 }
 
-#ifdef PAYLOADEX
-#ifndef MS_IPL
 void xor_cipher(u8* data, u32 size, u8* key, u32 key_size)
 {
     u32 i;
@@ -40,8 +38,6 @@ int MEPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize){
     xor_cipher((u8*)prx + 0x150, prx->comp_size, &prx->scheck[0x38], 0x20);
     return 0;
 }
-#endif
-#endif
 
 // patch reboot on psp
 void patchRebootBuffer(){
@@ -255,8 +251,6 @@ int patch_bootconf_updaterumd(char *buffer, int length)
     return result;
 }
 
-#ifdef PAYLOADEX
-#ifndef MS_IPL
 int patch_bootconf_pro(char *buffer, int length){
 
     struct {
@@ -304,8 +298,6 @@ int patch_bootconf_pro(char *buffer, int length){
 
     return result;
 }
-#endif
-#endif
 
 int UnpackBootConfigPatched(char **p_buffer, int length)
 {
@@ -318,8 +310,6 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     memcpy(buffer, *p_buffer, length);
     *p_buffer = buffer;
 
-#ifdef PAYLOADEX
-#ifndef MS_IPL
     if (cfw_type == CFW_PRO){
         newsize = patch_bootconf_pro(buffer, result);
         if (newsize > 0) result = newsize;
@@ -335,8 +325,6 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
         }
         return result;
     }
-#endif
-#endif
 
     // Insert SystemControl
     newsize = AddPRX(buffer, "/kd/init.prx", PATH_SYSTEMCTRL+sizeof(PATH_FLASH0)-2, 0x000000EF);
@@ -469,6 +457,11 @@ int _sceBootLfatOpen(char * filename)
 
         //return success
         return 0;
+    }
+
+    if (strcmp(filename, "/kd/init.prx") == 0){
+        unPatchLoadCorePRXDecrypt();
+        unPatchLoadCoreCheckExec();
     }
 
 #ifdef MS_IPL
