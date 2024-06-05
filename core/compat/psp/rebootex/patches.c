@@ -310,6 +310,8 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     memcpy(buffer, *p_buffer, length);
     *p_buffer = buffer;
 
+    #ifdef PAYLOADEX
+    #ifndef MS_IPL
     if (cfw_type == CFW_PRO){
         newsize = patch_bootconf_pro(buffer, result);
         if (newsize > 0) result = newsize;
@@ -325,6 +327,8 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
         }
         return result;
     }
+    #endif
+    #endif
 
     // Insert SystemControl
     newsize = AddPRX(buffer, "/kd/init.prx", PATH_SYSTEMCTRL+sizeof(PATH_FLASH0)-2, 0x000000EF);
@@ -457,11 +461,6 @@ int _sceBootLfatOpen(char * filename)
 
         //return success
         return 0;
-    }
-
-    if (strcmp(filename, "/kd/init.prx") == 0){
-        unPatchLoadCorePRXDecrypt();
-        unPatchLoadCoreCheckExec();
     }
 
 #ifdef MS_IPL
