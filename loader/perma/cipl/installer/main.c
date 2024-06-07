@@ -85,6 +85,20 @@ int ReadFile(char *file, int seek, void *buf, int size)
 	return read;
 }
 
+void open_flash(){
+    while(sceIoUnassign("flash0:") < 0) {
+        sceKernelDelayThread(500000);
+    }
+    while (sceIoAssign("flash0:", "lflash0:0,0", "flashfat0:", 0, NULL, 0)<0){
+        sceKernelDelayThread(500000);
+    }
+    while(sceIoUnassign("flash1:") < 0) {
+        sceKernelDelayThread(500000);
+    }
+    while (sceIoAssign("flash1:", "lflash0:0,1", "flashfat1:", 0, NULL, 0)<0){
+        sceKernelDelayThread(500000);
+    }
+}
 
 ////////////////////////////////////////
 void ErrorExit(int milisecs, char *fmt, ...) 
@@ -167,7 +181,7 @@ void classicipl_menu(){
 			ipl_type = 1;
 		} else {
 			pspDebugScreenClear();
-			return newipl_menu();
+			return newipl_menu(NULL);
 		}
 	} else {
 		printf("Original IPL \n");
@@ -223,7 +237,7 @@ void classicipl_menu(){
 		}
 		else if (pad.Buttons & PSP_CTRL_LTRIGGER) {
 			pspDebugScreenClear();
-			return newipl_menu();
+			return newipl_menu(NULL);
 		}
 
 		sceKernelDelayThread(10000);
@@ -321,7 +335,7 @@ void devtoolipl_menu(){
 }
 
 
-void newipl_menu(){
+void newipl_menu(const char* config){
 	int size = NEW_CIPL_SIZE;
 	u16 ipl_key = 0;
 
@@ -375,6 +389,10 @@ void newipl_menu(){
 
 	printf("\nCustom IPL Flasher for 6.61 running on %dg\n\n\n", (model+1));
 
+	if (config){
+		printf("\nUsing config <%s>, if this is incorrect, DO NOT PROCEED!\n\n", config);
+	}
+
 	printf(" Press X to install cIPL\n");
 
 	printf(" Press O to restore Original IPL.\n");
@@ -416,6 +434,19 @@ void newipl_menu(){
 		sceKernelDelayThread(10000);
 	}
 
+	if (config){
+		if (size == ORIG_IPL_SIZE){
+			// OFW installed
+			sceIoRemove("flash0:/arkcipl.cfg");
+		}
+		else {
+			// CFW installed
+			int fd = sceIoOpen("flash0:/arkcipl.cfg", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+			sceIoWrite(fd, config, strlen(config));
+			sceIoClose(fd);
+		}
+	}
+
 	ErrorExit(5000,"\nInstall complete. Restarting in 5 seconds...\n");
 
 }
@@ -432,13 +463,6 @@ int main()
 	// check if running 6.60 or 6.61
 	if(devkit != 0x06060010 && devkit != 0x06060110) {
 		ErrorExit(5000,"FW ERROR! Use on 6.60 or 6.61 only.\n");
-	}
-
-	// check if running ARK
-	memset(&ark_config, 0, sizeof(ARKConfig));
-	sctrlHENGetArkConfig(&ark_config);
-	if (ark_config.magic != ARK_CONFIG_MAGIC){
-		ErrorExit(5000,"FW ERROR! Use on ARK only.\n");
 	}
 
 	// check if running infinity
@@ -459,11 +483,24 @@ int main()
 		ErrorExit(5000, "Could not determine baryon version!\n");
 	}
 
+	// check if running ARK
+	memset(&ark_config, 0, sizeof(ARKConfig));
+	sctrlHENGetArkConfig(&ark_config);
+	if (ark_config.magic != ARK_CONFIG_MAGIC){
+		if (sctrlHENFindFunction("SystemControl", "KUBridge", 0x9060F69D) != NULL){
+			newipl_menu("cfw=pro");
+		}
+		else {
+			newipl_menu("cfw=me");
+		}
+		return 0;
+	}
+
 	if (baryon_ver == 0x00020601) {
 		devtoolipl_menu();
 	}
 	else if(!(model == 0 || model == 1) || is_ta88v3()) {
-		newipl_menu();
+		newipl_menu(NULL);
 	}
 	else {
 		classicipl_menu();
