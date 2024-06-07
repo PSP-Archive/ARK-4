@@ -23,6 +23,8 @@ int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(
     return start(arg1, arg2, arg3);
 }
 
+#ifdef PAYLOADEX
+#ifndef MS_IPL
 void xor_cipher(u8* data, u32 size, u8* key, u32 key_size)
 {
     u32 i;
@@ -44,6 +46,8 @@ int MECheckExec(unsigned char * addr, void * arg2){
     unPatchLoadCoreCheckExec();
     return 0;
 }
+#endif
+#endif
 
 // patch reboot on psp
 void patchRebootBuffer(){
@@ -257,8 +261,10 @@ int patch_bootconf_updaterumd(char *buffer, int length)
     return result;
 }
 
-int patch_bootconf_pro(char *buffer, int length){
-
+#ifdef PAYLOADEX
+#ifndef MS_IPL
+int patch_bootconf_pro(char *buffer, int length)
+{
     struct {
         u32 magic;
         u32 rebootex_size;
@@ -304,6 +310,52 @@ int patch_bootconf_pro(char *buffer, int length){
 
     return result;
 }
+int patch_bootconf_me_recovery(char *buffer, int length)
+{
+    int result = length;
+    int newsize;
+
+    newsize = AddPRX(buffer, "/kd/usersystemlib.prx", "/kd/usbstorms.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/kd/usersystemlib.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/kd/libatrac3plus.prx", "/kd/usbstorboot.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/kd/libatrac3plus.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/kd/mediasync.prx", "/kd/usbstor.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/kd/mediasync.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/kd/vshctrl_02g.prx", "/kd/usbstormgr.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/kd/vshctrl_02g.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/vsh/module/paf.prx", "/kd/usbdev.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/vsh/module/paf.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/vsh/module/common_gui.prx", "/kd/lflash_fatfmt.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/vsh/module/common_gui.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/vsh/module/common_util.prx", "/kd/usersystemlib.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/vsh/module/common_util.prx", VSH_RUNLEVEL);
+    
+    newsize = AddPRX(buffer, "/vsh/module/vshmain.prx", "/vsh/module/recovery.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/vsh/module/vshmain.prx", VSH_RUNLEVEL);
+    
+    if (psp_model == PSP_GO)
+    {
+        newsize = AddPRX(buffer, "/module/mcore.prx", "/kd/usbstoreflash.prx", VSH_RUNLEVEL);
+        if (newsize > 0) result = newsize;
+        RemovePrx(buffer, "/module/mcore.prx", VSH_RUNLEVEL);
+    }
+}
+#endif
+#endif
 
 int UnpackBootConfigPatched(char **p_buffer, int length)
 {
@@ -327,8 +379,7 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
         // clear config
         memset((void*)0x88FB0000, 0, 0x100);
         if (ark_config->recovery){
-            RemovePrx(buffer, "/vsh/module/vshmain.prx", VSH_RUNLEVEL);
-            newsize = AddPRX(buffer, "/vsh/module/vshmain.prx", PATH_RECOVERY_ME+sizeof(PATH_FLASH0)-2, VSH_RUNLEVEL);
+            newsize = patch_bootconf_me_recovery(buffer, result);
             if (newsize > 0) result = newsize;
         }
         return result;
@@ -483,23 +534,22 @@ int _sceBootLfatOpen(char * filename)
 
     // patch to allow custom boot
     if (strncmp(filename+4, "pspbtcnf", 8) == 0){
-        int res = -1;
-
-        res = sceBootLfatOpen("/arkcipl.cfg");
+        int res = sceBootLfatOpen("/arkcipl.cfg");
         if (res == 0){
-            char cfg[12]; memset(cfg, 0, sizeof(cfg));
+            char cfg[64]; memset(cfg, 0, sizeof(cfg));
             sceBootLfatRead(cfg, sizeof(cfg));
             sceBootLfatClose();
-            
             #ifdef PAYLOADEX
-            if (strcmp(cfg, "cfw=pro") == 0){
-                cfw_type = CFW_PRO;
-            }
-            else if (strcmp(cfg, "cfw=me") == 0) {
-                cfw_type = CFW_ME;
-                filename[9] = 'j'; // pspbtjnf
-                extraPRXDecrypt = &MEPRXDecrypt;
-                extraCheckExec = &MECheckExec;
+            if (cfg[0]){
+                if (strcmp(cfg, "cfw=pro") == 0){
+                    cfw_type = CFW_PRO;
+                }
+                else if (strcmp(cfg, "cfw=me") == 0) {
+                    cfw_type = CFW_ME;
+                    filename[9] = 'j'; // pspbtjnf
+                    extraPRXDecrypt = &MEPRXDecrypt;
+                    extraCheckExec = &MECheckExec;
+                }
             }
             #endif
         }
