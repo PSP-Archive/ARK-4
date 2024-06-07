@@ -435,6 +435,7 @@ void newipl_menu(const char* config){
 	}
 
 	if (config){
+		open_flash();
 		if (size == ORIG_IPL_SIZE){
 			// OFW installed
 			sceIoRemove("flash0:/arkcipl.cfg");
