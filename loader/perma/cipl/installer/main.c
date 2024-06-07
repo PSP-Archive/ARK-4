@@ -434,18 +434,16 @@ void newipl_menu(const char* config){
 		sceKernelDelayThread(10000);
 	}
 
-	if (config){
-		open_flash();
-		if (size == ORIG_IPL_SIZE){
-			// OFW installed
-			sceIoRemove("flash0:/arkcipl.cfg");
-		}
-		else {
-			// CFW installed
-			int fd = sceIoOpen("flash0:/arkcipl.cfg", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
-			sceIoWrite(fd, config, strlen(config));
-			sceIoClose(fd);
-		}
+	open_flash();
+	if (config && size != ORIG_IPL_SIZE){
+		// other CFW installed
+		int fd = sceIoOpen("flash0:/arkcipl.cfg", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+		sceIoWrite(fd, config, strlen(config));
+		sceIoClose(fd);
+	}
+	else {
+		// OFW/ARK installed
+		sceIoRemove("flash0:/arkcipl.cfg");
 	}
 
 	ErrorExit(5000,"\nInstall complete. Restarting in 5 seconds...\n");
