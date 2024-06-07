@@ -285,7 +285,7 @@ int patch_bootconf_pro(char *buffer, int length)
     int result = length;
     int newsize;
 
-    memset((void*)0x88FB0000, 0, 0x100);
+    memset(conf, 0, 0x100);
     conf->magic = 0xC01DB15D;
     conf->psp_model = psp_model;
     conf->rebootex_size = 0;
@@ -349,9 +349,9 @@ int patch_bootconf_me_recovery(char *buffer, int length)
     
     if (psp_model == PSP_GO)
     {
-        newsize = AddPRX(buffer, "/module/mcore.prx", "/kd/usbstoreflash.prx", VSH_RUNLEVEL);
+        newsize = AddPRX(buffer, "/vsh/module/mcore.prx", "/kd/usbstoreflash.prx", VSH_RUNLEVEL);
         if (newsize > 0) result = newsize;
-        RemovePrx(buffer, "/module/mcore.prx", VSH_RUNLEVEL);
+        RemovePrx(buffer, "/vsh/module/mcore.prx", VSH_RUNLEVEL);
     }
 }
 #endif
@@ -562,7 +562,7 @@ int _sceBootLfatOpen(char * filename)
         }
 
         if (filename[12] == '_'){
-            psp_model = ((filename[13]-'0') + (filename[14]-'0')) - 1;
+            psp_model = (10*(filename[13]-'0') + (filename[14]-'0')) - 1;
         }
     }
 
