@@ -3,6 +3,7 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 #include "gfx.h"
 #include "debug.h"
 #include "common.h"
@@ -102,6 +103,7 @@ int main(int argc, char** argv){
     int max_settings = MAX_SETTINGS_OPTIONS;
     if (common::getPspModel() != PSP_GO) max_settings -= 2;
     SettingsTable stab = { settings_entries, max_settings };
+    settings_menu->setCallbacks(NULL, saveSettings, cleanupSettings);
     entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
 
     if (recovery){
