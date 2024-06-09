@@ -76,6 +76,8 @@ char* available_fonts[] = {
 	"GREEK.pf",
 	"CHS.pf",
 	"CHT.pf",
+	"JP.pf",
+	"KR.pf",
 };
 
 char** font_list(void) {
@@ -115,6 +117,21 @@ int font_load(vsh_Menu *vsh) {
 				vsh->config.ark_menu.vsh_font = 57;
 			}
 			break;
+		case PSP_SYSTEMPARAM_LANGUAGE_JAPANESE:
+			// make sure we use a specific chinese font
+			if (vsh->config.ark_menu.vsh_font != 58){
+				vsh->config.ark_menu.vsh_font = 58;
+			}
+			break;
+
+		case PSP_SYSTEMPARAM_LANGUAGE_KOREAN:
+			// make sure we use a specific chinese font
+			if (vsh->config.ark_menu.vsh_font != 59){
+				vsh->config.ark_menu.vsh_font = 59;
+			}
+			break;
+
+
 
 		/*
 		// use CP881 font for French
