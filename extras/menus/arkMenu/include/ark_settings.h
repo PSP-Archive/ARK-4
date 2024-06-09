@@ -4,6 +4,7 @@
 
 #define FIX_BOOLEAN(c) {c = (c)?1:0;}
 
+
 enum{
     DISABLED,
     ALWAYS_ON,
@@ -489,6 +490,10 @@ settings_entry* ark_conf_entries_adr[] = {
 
 std::vector<string> custom_config;
 
+void cleanupSettings(){
+    custom_config.clear();
+}
+
 bool isComment(string line){
     return (line[0] == '#' || line[0] == ';' || (line[0]=='/'&&line[1]=='/'));
 }
@@ -683,7 +688,7 @@ void loadSettings(){
         }
     }
 
-    
+   	cleanupSettings(); 
 
     std::ifstream input((string(ark_config->arkpath)+"SETTINGS.TXT").c_str());
     for( std::string line; getline( input, line ); ){
@@ -772,6 +777,3 @@ void saveSettings(){
     output.close();
 }
 
-void cleanupSettings(){
-    custom_config.clear();
-}
