@@ -75,6 +75,7 @@ char* available_fonts[] = {
 	"ARMENIAN.pf",
 	"GREEK.pf",
 	"CHS.pf",
+	"CHT.pf",
 };
 
 char** font_list(void) {
@@ -108,6 +109,13 @@ int font_load(vsh_Menu *vsh) {
 				vsh->config.ark_menu.vsh_font = 56;
 			}
 			break;
+		case PSP_SYSTEMPARAM_LANGUAGE_CHINESE_TRADITIONAL:
+			// make sure we use a specific chinese font
+			if (vsh->config.ark_menu.vsh_font != 57){
+				vsh->config.ark_menu.vsh_font = 57;
+			}
+			break;
+
 		/*
 		// use CP881 font for French
 		case PSP_SYSTEMPARAM_LANGUAGE_FRENCH:

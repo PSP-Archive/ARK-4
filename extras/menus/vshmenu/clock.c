@@ -85,7 +85,7 @@ void change_font(int dir) {
 	vsh_Menu *vsh = vsh_menu_pointer();
 	
 	int sel = vsh->config.ark_menu.vsh_font;
-	sel = ROLL_OVER(sel+dir, 0, 56);
+	sel = ROLL_OVER(sel+dir, 0, 57);
 	vsh->config.ark_menu.vsh_font=sel;
 }
 
