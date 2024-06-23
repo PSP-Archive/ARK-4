@@ -69,8 +69,7 @@ static void changeMenuState(){
 
 static int getNumPageItems(){
     int menuSize = common::getConf()->menusize % 3;
-    // + 1 the amount of the real # of items to predraw then next entry?
-    return 5 - (int)(menuSize == 0);
+    return 5 - (int)(menuSize == 0); // 5 for medium and small, 4 for large
 }
 
 
@@ -244,8 +243,8 @@ static void drawBattery(){
         }
 
         if (common::getConf()->battery_percent) {
-            char batteryPercent[4];
-            sprintf(batteryPercent, "%d%%", percent);
+            char batteryPercent[5];
+            snprintf(batteryPercent, 5, "%d%%", percent);
             common::printText(450-common::calcTextWidth(batteryPercent, SIZE_MEDIUM, 0), 13, batteryPercent, color, SIZE_MEDIUM, 0, 0, 0);
         }
 
