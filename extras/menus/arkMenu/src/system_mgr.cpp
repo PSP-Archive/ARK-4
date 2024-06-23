@@ -50,7 +50,9 @@ static bool stillLoading(){
 static void changeMenuState(){
     if (optionsDrawState == 1 || optionsDrawState == 3)
         return;
+
     common::playMenuSound();
+
     if (system_menu){
         optionsAnimState = 0;
         optionsDrawState = 3;
@@ -93,7 +95,7 @@ static void systemController(Controller* pad){
 
         pEntryIndex--;
 
-        if (pEntryIndex == page_start && page_start>0){
+        if (pEntryIndex == page_start && page_start > 0){
             page_start--;
             menu_draw_state = 1;
         }
@@ -101,13 +103,12 @@ static void systemController(Controller* pad){
         common::playMenuSound();
     }
     else if (pad->right()){
-        int n_items = getNumPageItems();
-
         if (pEntryIndex == (MAX_ENTRIES-1))
             return;
 
         pEntryIndex++;
-
+        
+        int n_items = getNumPageItems();
         if (pEntryIndex-page_start >= n_items-1){
             page_start++;
             menu_draw_state = -1;
@@ -119,22 +120,21 @@ static void systemController(Controller* pad){
 
 static void drawOptionsMenuCommon(){
 	int loop_setup = 0;
-	if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
-    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 140); // LARGE
-		loop_setup = min(page_start+4, MAX_ENTRIES);
-	}
-	else if(common::getConf()->menusize == 2) {
-    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 100); // MEDIUM
-		loop_setup = min(page_start+4, MAX_ENTRIES);
+    int menuSize = common::getConf()->menusize % 3;
+
+	if(menuSize != 1) {
+        // Handle MEDIUM and LARGE
+    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 100 + 40 * (menuSize == 0)); // 100 for MEDIUM, 140 for LARGE
+		loop_setup = min(page_start + 4, MAX_ENTRIES);
 	}
 	else {
     	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 80); // SMALL
 		loop_setup = MAX_ENTRIES;
 	}
 
-    int offset = (480-(MAX_ENTRIES*15))/2;
-    for (int i=0; i<MAX_ENTRIES; i++){
-        if (i==pEntryIndex){
+    int offset = (480 - (MAX_ENTRIES * 15)) / 2;
+    for (int i = 0; i < MAX_ENTRIES; i++){
+        if (i == pEntryIndex){
             common::printText(offset + (i+1)*15, 15, "*", LITEGRAY, SIZE_BIG, true);
         }
         else{
@@ -144,17 +144,17 @@ static void drawOptionsMenuCommon(){
     
     int x = -130;
     static TextScroll scroll;
-    for (int i=page_start-1; i<loop_setup; i++){ // SMALL
+    for (int i = page_start - 1; i < loop_setup; i++){ // SMALL
         if (i<0){
             x += 160;
             continue;
         }
-		if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
+		if(menuSize == 0) {
 			//sceKernelDelayThread(8000);
         	entries[i]->getIcon()->draw(x, optionsAnimState+15); // LARGE
         	//entries[i]->getIcon()->draw(x+menu_anim_state, optionsAnimState+15); // LARGE
 		}
-		else if(common::getConf()->menusize == 2) {
+		else if(menuSize == 2) {
         	//entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+15, 72, 72); // MEDIUM
         	entries[i]->getIcon()->draw_scale(x, optionsAnimState+15, 72, 72); // MEDIUM
 		}
@@ -162,35 +162,35 @@ static void drawOptionsMenuCommon(){
 			//entries[i]->getIcon()->draw_scale(x+menu_anim_state, optionsAnimState+7, 52, 52); // SMALL
 			entries[i]->getIcon()->draw_scale(x, optionsAnimState+7, 52, 52); // SMALL
 		} 
-        if (i==pEntryIndex && optionsDrawState==2){
+        if (i == pEntryIndex && optionsDrawState == 2){
             const char* entname = entries[i]->getName().c_str();
-			if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3) {
-                int tmp_x = x+25;
-                scroll.w = 475-tmp_x;
-				if(strcasecmp(entname, "CFW Settings")==0) tmp_x-=25;
-				if(strcasecmp(entname, "Exit")==0) tmp_x+=10;
+			if(menuSize == 0) {
+                int tmp_x = x + 25;
+                scroll.w = 475 - tmp_x;
+				if(strcasecmp(entname, "CFW Settings") == 0) tmp_x -= 25;
+				if(strcasecmp(entname, "Exit") == 0) tmp_x += 10;
             	common::printText(tmp_x, 130, entname, LITEGRAY, SIZE_BIG, 1, &scroll); // LARGE
 			}
-			else if(common::getConf()->menusize == 2) {
-                int tmp_x = x+16;
-                scroll.w = 475-tmp_x;
-				if(strcasecmp(entname, "CFW Settings")==0) tmp_x-=20;
-				if(strcasecmp(entname, "Exit")==0) tmp_x+15;
+			else if(menuSize == 2) {
+                int tmp_x = x + 16;
+                scroll.w = 475 - tmp_x;
+				if(strcasecmp(entname, "CFW Settings") == 0) tmp_x-=20;
+				if(strcasecmp(entname, "Exit") == 0) tmp_x + 15;
             	common::printText(tmp_x, 95, entname, LITEGRAY, SIZE_MEDIUM, 1, &scroll); // MEDIUM
 			}
 			else {
-                int tmp_x = x+12;
-                scroll.w = 475-tmp_x;
-				if(strcasecmp(entname, "CFW Settings")==0) tmp_x-=20;
-				if(strcasecmp(entname, "Settings")==0) tmp_x-=5;
-				if(strcasecmp(entname, "Exit")==0) tmp_x+8;
+                int tmp_x = x + 12;
+                scroll.w = 475 - tmp_x;
+				if(strcasecmp(entname, "CFW Settings") == 0) tmp_x -= 20;
+				if(strcasecmp(entname, "Settings") == 0) tmp_x -= 5;
+				if(strcasecmp(entname, "Exit") == 0) tmp_x + 8;
 				common::printText(tmp_x, 75, entname, LITEGRAY, SIZE_LITTLE, 1, &scroll); // SMALL
 			}
         }
 
-        if(common::getConf()->menusize == 0 || common::getConf()->menusize == 3)
+        if(menuSize == 0)
             x += 160;
-        else if(common::getConf()->menusize == 2)
+        else if(menuSize == 2)
             x += 120;
         else
             x += 100;
@@ -199,7 +199,6 @@ static void drawOptionsMenuCommon(){
         case -1:
             menu_anim_state -= 20;
             if (menu_anim_state <= -160){
-                //page_start++;
                 menu_draw_state = 0;
             }
             break;
@@ -209,7 +208,6 @@ static void drawOptionsMenuCommon(){
         case 1:
             menu_anim_state += 20;
             if (menu_anim_state >= 160){
-                //page_start--;
                 menu_draw_state = 0;
             }
             break;
@@ -228,7 +226,6 @@ static void drawDateTime() {
 }
 
 static void drawBattery(){
-
     if (scePowerIsBatteryExist()) {
         int percent = scePowerGetBatteryLifePercent();
         
@@ -236,22 +233,19 @@ static void drawBattery(){
             return;
 
         u32 color;
-
         if (scePowerIsBatteryCharging()){
             color = BLUE;
-        }
-        else{
-            if (percent == 100)
-                color = GREEN;
-            else if (percent >= 17)
-                color = LITEGRAY;
-            else
-                color = RED;
+        } else if (percent == 100){
+            color = GREEN;
+        } else if (percent >= 17){
+            color = LITEGRAY;
+        } else{
+            color = RED;
         }
 
         if (common::getConf()->battery_percent) {
             char batteryPercent[4];
-            sprintf(batteryPercent, "%d,%d", page_start, cur_entry);
+            sprintf(batteryPercent, "%d%%", percent);
             common::printText(450-common::calcTextWidth(batteryPercent, SIZE_MEDIUM, 0), 13, batteryPercent, color, SIZE_MEDIUM, 0, 0, 0);
         }
 
@@ -267,7 +261,6 @@ static void drawBattery(){
 }
 
 static void systemDrawer(){
-
     switch (optionsDrawState){
         case 0:
             // draw border, battery and datetime
@@ -314,7 +307,7 @@ void SystemMgr::drawScreen(){
             if (common::getConf()->show_fps){
                 ostringstream fps;
                 ya2d_calc_fps();
-                fps<<ya2d_get_fps();
+                fps << ya2d_get_fps();
                 common::printText(460, 260, fps.str().c_str());
             }
         }
@@ -339,6 +332,7 @@ static int controlThread(SceSize _args, void *_argp){
     static int screensaver_times[] = {0, 5, 10, 20, 30, 60};
     Controller pad;
     clock_t last_pressed = clock();
+
     while (running){
     	int screensaver_time = screensaver_times[common::getConf()->screensaver];
         pad.update();
