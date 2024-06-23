@@ -65,6 +65,13 @@ static void changeMenuState(){
     
 }
 
+static int getNumPageItems(){
+    int menuSize = common::getConf()->menusize % 3;
+    // + 1 the amount of the real # of items to predraw then next entry?
+    return 5 - (int)(menuSize == 0);
+}
+
+
 static void systemController(Controller* pad){
     if (optionsDrawState != 2)
         return;
@@ -76,31 +83,36 @@ static void systemController(Controller* pad){
         entries[cur_entry]->resume();
     }
     else if (pad->decline()){
-        pEntryIndex = cur_entry;
         changeMenuState();
+        pEntryIndex = cur_entry;
+        page_start = max(0, cur_entry - getNumPageItems() + 2);
     }
     else if (pad->left()){
         if (pEntryIndex == 0)
             return;
+
         pEntryIndex--;
+
         if (pEntryIndex == page_start && page_start>0){
             page_start--;
             menu_draw_state = 1;
         }
+
         common::playMenuSound();
     }
     else if (pad->right()){
-        int n_items = 4;
-        if(common::getConf()->menusize == 2 || common::getConf()->menusize == 1) {
-            n_items = 5;
-        }
+        int n_items = getNumPageItems();
+
         if (pEntryIndex == (MAX_ENTRIES-1))
             return;
+
         pEntryIndex++;
+
         if (pEntryIndex-page_start >= n_items-1){
             page_start++;
             menu_draw_state = -1;
         }
+
         common::playMenuSound();
     }
 }
@@ -239,7 +251,7 @@ static void drawBattery(){
 
         if (common::getConf()->battery_percent) {
             char batteryPercent[4];
-            sprintf(batteryPercent, "%d%%", percent);
+            sprintf(batteryPercent, "%d,%d", page_start, cur_entry);
             common::printText(450-common::calcTextWidth(batteryPercent, SIZE_MEDIUM, 0), 13, batteryPercent, color, SIZE_MEDIUM, 0, 0, 0);
         }
 
