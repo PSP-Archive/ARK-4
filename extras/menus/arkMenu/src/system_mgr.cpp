@@ -234,8 +234,8 @@ static void drawDateTime() {
     pspTime date;
     sceRtcGetCurrentClockLocalTime(&date);
 
-    char dateStr[100];
-    sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
+    char dateStr[20];
+    snprintf(dateStr, 20, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
     int x = 445 - common::calcTextWidth(dateStr, SIZE_MEDIUM, 0);
     if (common::getConf()->battery_percent) x -= common::calcTextWidth("-100%", SIZE_MEDIUM, 0);
     common::printText(x, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0, 0);
