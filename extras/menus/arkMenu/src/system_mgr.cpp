@@ -28,30 +28,29 @@ static int optionsAnimState; // state of the animation
 static int optionsTextAnim; // -1 for no animation, other for animation
 static int screensaver = 0;
 static int fullscreen = 0;
-static int last_size; // Used to see if the user swicthed menu sizes
+static int last_size; // Used to see if the user switched menu sizes
 
 // options menu entries position of the entries
 static int pEntryIndex;
 static int cur_entry = 0;
 static int page_start = 0;
-static int menu_anim_state = 0;
-static int menu_draw_state = 0;
+
+//static int menu_anim_state = 0; 
+//static int menu_draw_state = 0;
 
 static int MAX_ENTRIES = 0;
 static SystemEntry** entries = NULL;
 
 struct EntryScale {
     float font_size;
-    int font_y_offset;
     int icon_scale;
-    int icon_y_offset;
-    int x_step;
+    int dialog_height;
 };
 
 static struct EntryScale entry_scaling[3] = {
-    {SIZE_BIG, 130, 0, 15, 160},
-    {SIZE_LITTLE, 75, 52, 7, 100},
-    {SIZE_MEDIUM, 95, 72, 15, 120}
+    {SIZE_LITTLE, 52, 90},
+    {SIZE_MEDIUM, 72, 110},
+    {SIZE_BIG, 100, 140}
 };
 
 static bool stillLoading(){
@@ -62,18 +61,26 @@ static bool stillLoading(){
     return false;
 }
 
-static int getNumPageItems(){
+static int getSizeIndex(){
     int menuSize = common::getConf()->menusize % 3;
-    return 5 - (int)(menuSize == 0); // 5 for medium and small, 4 for large
+
+    // Maps 0 -> 2
+    //      1 -> 0
+    //      2 -> 1
+    return (menuSize + 2) % 3;
+}
+
+static int getNumPageItems(){
+    return 5 - getSizeIndex(); // 5 for small, 4 for medium, and 3 for large
 }
 
 static void changeMenuState(){
     if (optionsDrawState == 1 || optionsDrawState == 3)
         return;
 
-    int menu_size = common::getConf()->menusize % 3;
+    int menu_size = getSizeIndex();
     if (menu_size != last_size) {
-        page_start = max(0, cur_entry - getNumPageItems() + 2);
+        page_start = max(0, pEntryIndex - getNumPageItems() + 1);
         last_size = menu_size;
     }
 
@@ -107,7 +114,7 @@ static void systemController(Controller* pad){
     else if (pad->decline()){
         changeMenuState();
         pEntryIndex = cur_entry;
-        page_start = max(0, cur_entry - getNumPageItems() + 2);
+        page_start = max(0, cur_entry - getNumPageItems() + 1);
     }
     else if (pad->left()){
         if (pEntryIndex == 0)
@@ -117,7 +124,7 @@ static void systemController(Controller* pad){
 
         if (pEntryIndex == page_start && page_start > 0){
             page_start--;
-            menu_draw_state = 1;
+            //menu_draw_state = 1; Dead code
         }
 
         common::playMenuSound();
@@ -128,9 +135,9 @@ static void systemController(Controller* pad){
 
         pEntryIndex++;
         
-        if (pEntryIndex-page_start >= getNumPageItems() - 1){
+        if (pEntryIndex - page_start >= getNumPageItems()){
             page_start++;
-            menu_draw_state = -1;
+            //menu_draw_state = -1; Dead code
         }
 
         common::playMenuSound();
@@ -138,65 +145,66 @@ static void systemController(Controller* pad){
 }
 
 static void drawOptionsMenuCommon(){
-	int loop_setup = 0;
-    int menuSize = common::getConf()->menusize % 3;
-    struct EntryScale scale_info = entry_scaling[menuSize];
+    int menu_size = getSizeIndex();
+    struct EntryScale scale_info = entry_scaling[menu_size];
+    int dialog_height = scale_info.dialog_height;
 
-	if(menuSize != 1) {
-        // Handle MEDIUM and LARGE
-    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 100 + 40 * (menuSize == 0)); // 100 for MEDIUM, 140 for LARGE
-		loop_setup = min(page_start + 4, MAX_ENTRIES);
-	}
-	else {
-    	common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, 80); // SMALL
-		loop_setup = MAX_ENTRIES;
-	}
+    common::getImage(IMAGE_DIALOG)->draw_scale(0, optionsAnimState, 480, dialog_height); // Draw the background UI
 
     int offset = (480 - (MAX_ENTRIES * 15)) / 2;
     for (int i = 0; i < MAX_ENTRIES; i++){
         if (i == pEntryIndex){
             common::printText(offset + (i+1)*15, 15, "*", LITEGRAY, SIZE_BIG, true);
-        }
-        else{
+        } else{
             common::printText(offset + (i+1)*15, 15, "*", LITEGRAY, SIZE_LITTLE);
         }
     }    
     
-    int x = -130;
-    static TextScroll scroll;
-    for (int i = page_start - 1; i < loop_setup; i++){ // SMALL
-        if (i<0){
-            x += 160;
-            continue;
-        }
+    int num_items = getNumPageItems();
+    int page_end = min(page_start + num_items, MAX_ENTRIES);
 
+    int x_step = 480 / num_items;
+    int x = (x_step - scale_info.icon_scale) / 2; // Initial margin
+
+    static TextScroll scroll;
+    for (int i = page_start; i < page_end; i++){
         SystemEntry *curr_entry = entries[i];
-        int icon_width = curr_entry->getIcon()->getWidth();
+
+        // Icon vertical components
+        int icon_height = curr_entry->getIcon()->getHeight();
+        int scaled_height = (int)((float)icon_height * ((float)scale_info.icon_scale / icon_height));
+        int icon_center_y = dialog_height / 2 - scaled_height / 2;
 
         // Possibly consolidate this branch into a single statement by enforcing strict dimension scaling for LARGE icons
-		if(menuSize == 0) {
-        	curr_entry->getIcon()->draw(x, optionsAnimState + scale_info.icon_y_offset); // LARGE
-		}
-		else {
-        	curr_entry->getIcon()->draw_scale(x, optionsAnimState + scale_info.icon_y_offset, scale_info.icon_scale, scale_info.icon_scale); // MEDIUM & SMALL
-            icon_width = (int)(((float)icon_width) * (scale_info.icon_scale / (float)icon_width)); // Ugly, refractor
-		}
-
-        // TODO: Height scaling?
-        //int icon_height = entries[i]->getIcon()->getHeight();
+        if(menu_size == 2) {
+            curr_entry->getIcon()->draw(x, optionsAnimState + icon_center_y); // LARGE
+        }
+        else {
+            curr_entry->getIcon()->draw_scale(x, optionsAnimState + icon_center_y, scale_info.icon_scale, scale_info.icon_scale); // MEDIUM & SMALL
+        }
 
         if (i == pEntryIndex && optionsDrawState == 2){
             const char* entname = curr_entry->getName().c_str();
+            int icon_width = curr_entry->getIcon()->getWidth();
+            int scaled_width = (int)((float)icon_width * ((float)scale_info.icon_scale / icon_width));
 
             // Center text under icon
-            int text_x = (x + icon_width / 2) - common::calcTextWidth(entname, scale_info.font_size, 1) / 2; 
+            int font_height = (int)((float)common::getFont()->texYSize * scale_info.font_size) / 4; // Divide by 4 because font heights can be aggressive. Sacrifices perfect centering
+            int text_y = dialog_height - (dialog_height - (icon_center_y + scale_info.icon_scale)) / 2;
+            int text_x = (x + scaled_width / 2) - common::calcTextWidth(entname, scale_info.font_size, 1) / 2; 
             scroll.w = 480 - text_x;
+            
+            // Some fonts have huge glyph heights, so we clamp them
+            int max_text_dist = dialog_height - text_y;
+            int clamped_text_y = text_y + font_height > text_y + max_text_dist ? text_y + max_text_dist / 2 : text_y + font_height;
 
-            common::printText(text_x, scale_info.font_y_offset, entname, LITEGRAY, scale_info.font_size, 1, &scroll);
+            common::printText(text_x, clamped_text_y, entname, LITEGRAY, scale_info.font_size, 1, &scroll);
         }
 
-        x += scale_info.x_step;
+        x += x_step;
     }
+
+    /* Dead code
 
     switch (menu_draw_state){
         case -1:
@@ -219,14 +227,15 @@ static void drawOptionsMenuCommon(){
 
             break;
     }
+    */
 }
 
 static void drawDateTime() {
-	pspTime date;
+    pspTime date;
     sceRtcGetCurrentClockLocalTime(&date);
 
-	char dateStr[100];
-	sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
+    char dateStr[100];
+    sprintf(dateStr, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
     int x = 445 - common::calcTextWidth(dateStr, SIZE_MEDIUM, 0);
     if (common::getConf()->battery_percent) x -= common::calcTextWidth("-100%", SIZE_MEDIUM, 0);
     common::printText(x, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0, 0);
@@ -273,7 +282,7 @@ static void systemDrawer(){
             // draw border, battery and datetime
             common::getImage(IMAGE_DIALOG)->draw_scale(0, 0, 480, 20);
             drawBattery();
-			drawDateTime();
+            drawDateTime();
             // draw entry text
             entries[cur_entry]->drawInfo();
             // draw music icon is music player is open
@@ -341,7 +350,7 @@ static int controlThread(SceSize _args, void *_argp){
     clock_t last_pressed = clock();
 
     while (running){
-    	int screensaver_time = screensaver_times[common::getConf()->screensaver];
+        int screensaver_time = screensaver_times[common::getConf()->screensaver];
         pad.update();
         if (pad.triangle() && !screensaver){
             changeMenuState();
@@ -383,7 +392,7 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     draw_sema = sceKernelCreateSema("draw_sema", 0, 1, 1, NULL);
     entries = e;
     MAX_ENTRIES = ne;
-    last_size = common::getConf()->menusize % 3;
+    last_size = getSizeIndex();
 
     // get ARK version    
     u32 ver = sctrlHENGetVersion(); // ARK's full version number
@@ -403,14 +412,14 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
 
     stringstream version;
     version << "FW " << fwmajor << "." << fwminor << fwmicro;
-	version << " ARK " << major << "." << minor;
+    version << " ARK " << major << "." << minor;
     if (micro>9) version << "." << micro;
     else if (micro>0) version << ".0" << micro;
     if (rev) version << " r" << rev;
     version << " " << common::getArkConfig()->exploit_id;
     #ifdef DEBUG
-	version << " DEBUG";
-	#endif
+    version << " DEBUG";
+    #endif
     ark_version = version.str();
 }
 
@@ -455,3 +464,4 @@ SystemEntry* SystemMgr::getSystemEntry(unsigned index){
 void SystemMgr::setSystemEntry(SystemEntry* entry, unsigned index){
     if (index < MAX_ENTRIES) entries[index] = entry;
 }
+
