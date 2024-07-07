@@ -23,7 +23,14 @@ int main(int argc, char *args[]) {
 		sceKernelDelayThread(3000000);
 		sceKernelExitGame();
 	}
-	printf("Make sure you do not have a cIPL/Infinity installed. \nIt is safest to just use ChronoSwitch to reinstall OFW without ARK-4 modules.\n\nPress X to continue\nPress O to quit...\n");
+	if(strcasecmp(ark_config->exploit_id, "cIPL") == 0 || strcasecmp(ark_config->exploit_id, "Infinity") == 0) {
+		pspDebugScreenSetTextColor(0xFF0000FF);
+		printf("\nYou need to remove cIPL/Infinity before uninstalling!!!!\n");
+		printf("\nExiting back to XMB ...");
+		sceKernelDelayThread(8000000);
+		sceKernelExitGame();
+	}
+	printf("It is safest to just use ChronoSwitch to reinstall OFW without ARK-4 modules.\n\nPress X to continue\nPress O to quit...\n");
 	while(1) {
 		sceCtrlReadBufferPositive(&pad, 1);
 		if(pad.Buttons & PSP_CTRL_CROSS)
@@ -47,9 +54,9 @@ int main(int argc, char *args[]) {
 
 	char fullpath[60];
 	if(go)
-		sprintf(fullpath, "%s", "ef0:/PSP/SAVEDATA/ARK_01234/");
+		snprintf(fullpath, sizeof(fullpath), "%s", "ef0:/PSP/SAVEDATA/ARK_01234/");
 	else
-		sprintf(fullpath, "%s", "ms0:/PSP/SAVEDATA/ARK_01234/");
+		snprintf(fullpath, sizeof(fullpath), "%s", "ms0:/PSP/SAVEDATA/ARK_01234/");
 
 	printf("Removing ARK_01234");
 	SceIoDirent dirent;
@@ -60,7 +67,7 @@ int main(int argc, char *args[]) {
 			continue;
 		else {
 			char fp[60] = {0};
-			sprintf(fp, "%s%s", fullpath, dirent.d_name);
+			snprintf(fp, sizeof(fp), "%s%s", fullpath, dirent.d_name);
 			sceIoRemove(fp);
 			printf("%s\n", fp);
 		}
@@ -101,8 +108,6 @@ int main(int argc, char *args[]) {
 	sceKernelDelayThread(3000000);
 
 	scePowerRequestColdReset(0);
-
-
 
 	return 0;
 }
