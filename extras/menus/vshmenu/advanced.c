@@ -533,6 +533,8 @@ none:
 			return 13; // Import Classic Plugins flag 
 		case SUBMENU_DELETE_HIBERNATION:
 			return 10; // Delete Hibernation flag 
+		case SUBMENU_RESET_ARK_SETTINGS:
+			return 15; // Reset ARK Settings flag
 		case SUBMENU_RANDOM_GAME:
 			return 14; // Random Game flag 
 		case SUBMENU_ACTIVATE_FLASH_WMA:

@@ -174,6 +174,32 @@ void config_recreate_umd_keys(void) {
 	kuKernelCall(hookImport, &args);
 }
 
+
+void reset_ark_settings(vsh_Menu *vsh){
+	const char settings[] = "always, usbcharge, on\nalways, overclock, on\nalways, powersave, off\nalways, defaultclock, off\nalways, launcher, off\nalways, disablepause, off\nalways, highmem, off\nalways, mscache, on\nalways, infernocache:lru, on\nalways, oldplugin, on\nalways, skiplogos, off\nalways, hidepics, off\nalways, hibblock, on\nalways, hidemac, on\nalways, hidedlc, off\nalways, noled, off\nalways, noumd, off\nalways, noanalog, off\nalways, qaflags, on\n# Luxor doesn't like Inferno Cache\nULUS10201, infernocache, off";
+
+	char arkMenuPath[ARK_PATH_SIZE];
+	char arkSettingsPath[ARK_PATH_SIZE];
+	scePaf_strcpy(arkMenuPath, vsh->config.ark.arkpath);
+	scePaf_strcpy(arkSettingsPath, vsh->config.ark.arkpath);
+	strcat(arkMenuPath, "ARKMENU.BIN");
+	strcat(arkSettingsPath, "SETTINGS.TXT");
+	int fd = sceIoOpen(arkMenuPath, PSP_O_RDONLY, 0);
+	if(fd) {
+		sceIoClose(fd);
+		sceIoRemove(arkMenuPath);
+		sceIoRemove(arkSettingsPath);
+		sceKernelDelayThread(8000);
+		int settings_file = sceIoOpen(arkSettingsPath, PSP_O_CREAT | PSP_O_WRONLY, 0777);
+		sceIoWrite(settings_file, settings, sizeof(settings));
+		sceKernelDelayThread(8000);
+		sceIoClose(settings_file);
+
+	}
+	vsh->status.reset_vsh = 1; 
+
+}
+
 void import_classic_plugins(vsh_Menu *vsh, int devpath) {
 	SceUID game, vsh_id, pops, plugins;
 	int i = 0;

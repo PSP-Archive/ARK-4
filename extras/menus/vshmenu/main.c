@@ -237,6 +237,9 @@ resume:
 			config_check(vsh);
 			exec_random_game(vsh);
 			break;
+		case 15:
+			reset_ark_settings(vsh);
+			break;
 	}
 
 	config_check(vsh);
