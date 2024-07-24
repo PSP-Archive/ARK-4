@@ -20,7 +20,7 @@ jobs:
     outputs:
       should_run: ${{ steps.should_run.outputs.should_run }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: print latest_commit
         run: echo ${{ github.sha }}
 
@@ -42,7 +42,7 @@ jobs:
         run: |
           echo "VERSION=v$(date +%s)" >> $GITHUB_OUTPUT
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Dependencies
         run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget git python3 python3-pip python3-pycryptodome mkisofs && sudo pip3 install ecdsa pycryptodome
       - name: Extract SDK
