@@ -45,20 +45,6 @@ static SceUID pbp_fd = -1;
 #define RIF_MAGIC_FD 0x10000
 #define ACT_DAT_FD 0x10001
 
-typedef struct
-{
-    u32 magic;
-    u32 version;
-    u32 param_offset;
-    u32 icon0_offset;
-    u32 icon1_offset;
-    u32 pic0_offset;
-    u32 pic1_offset;
-    u32 snd0_offset;
-    u32 elf_offset;
-    u32 psar_offset;
-} PBPHeader;
-
 enum {
     ICON0_OK = 0,
     ICON0_MISSING = 1,
