@@ -38,11 +38,26 @@ static unsigned int g_pspFwVersion;
 static int g_isCustomPBP;
 static int g_keysBinFound;
 static SceUID g_plain_doc_fd = -1;
+static SceUID pbp_fd = -1;
 
 #define PGD_ID "XX0000-XXXX00000_00-XXXXXXXXXX000XXX"
 #define ACT_DAT "flash2:/act.dat"
 #define RIF_MAGIC_FD 0x10000
 #define ACT_DAT_FD 0x10001
+
+typedef struct
+{
+    u32 magic;
+    u32 version;
+    u32 param_offset;
+    u32 icon0_offset;
+    u32 icon1_offset;
+    u32 pic0_offset;
+    u32 pic1_offset;
+    u32 snd0_offset;
+    u32 elf_offset;
+    u32 psar_offset;
+} PBPHeader;
 
 enum {
     ICON0_OK = 0,
@@ -51,6 +66,12 @@ enum {
 };
 
 static int g_icon0Status;
+
+// custom emulator config
+static int has_config = 0;
+static void* custom_config = NULL;
+static int config_size = 0;
+static int config_offset = 0;
 
 static unsigned char g_keys[16];
 
@@ -121,6 +142,39 @@ static inline int isEbootPBP(const char *path)
     }
 
     return 0;
+}
+
+static void readCustomConfig(){
+    int fd;
+    PBPHeader header;
+    char configname[256];
+    char* ebootname = sceKernelInitFileName();
+    strcpy(configname, ebootname);
+
+    fd = sceIoOpen(ebootname, PSP_O_RDONLY, 0777);
+    sceIoRead(fd, &header, sizeof(PBPHeader));
+    sceIoClose(fd);
+
+    char* slash = strrchr(configname, '/');
+    if (!slash) return;
+
+    strcpy(slash+1, "CONFIG.BIN");
+
+    fd = sceIoOpen(configname, PSP_O_RDONLY, 0777);
+    if (fd < 0) return;
+
+    config_size = sceIoLseek(fd, 0, PSP_SEEK_END);
+    if (config_size <= 0) goto config_end;
+    
+    custom_config = oe_malloc(config_size);
+    if (custom_config == NULL) goto config_end;
+
+    sceIoRead(fd, custom_config, config_size);
+    has_config = 1;
+    config_offset = header.psar_offset + 0x420;
+
+    config_end:
+    sceIoClose(fd);
 }
 
 static int checkFileDecrypted(const char *filename)
@@ -245,6 +299,11 @@ static int myIoOpen(const char *file, int flag, int mode)
     #ifdef DEBUG
     printk("%s: %s 0x%08X -> 0x%08X\r\n", __func__, file, flag, ret);
     #endif
+
+    if (strcasecmp(file, sceKernelInitFileName()) == 0){
+        pbp_fd = ret;
+    }
+
     return ret;
 }
 
@@ -383,6 +442,14 @@ static int myIoRead(int fd, unsigned char *buf, int size)
             ret = size;
             goto exit;
         }
+    }
+
+    if (has_config && fd == pbp_fd && pos >= config_offset && pos+size <= config_offset+config_size){
+        // trying to read POPS config
+        int relative_offset = pos - config_offset;
+        memcpy(buf, (u8*)custom_config+relative_offset, size);
+        ret = size;
+        goto exit;
     }
     
     ret = sceIoRead(fd, buf, size);
@@ -1075,6 +1142,7 @@ int module_start(SceSize args, void* argp)
     g_pspFwVersion = sceKernelDevkitVersion();
     
     getKeys();
+    readCustomConfig();
     g_isCustomPBP = isCustomPBP();
     g_icon0Status = getIcon0Status();
 
