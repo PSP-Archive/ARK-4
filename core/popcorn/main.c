@@ -55,9 +55,9 @@ static int g_icon0Status;
 
 // custom emulator config
 static int has_config = 0;
-static void* custom_config = NULL;
+static u8 custom_config[0x400];
 static int config_size = 0;
-static int config_offset = 0;
+static int psiso_offset = 0;
 
 static unsigned char g_keys[16];
 
@@ -139,6 +139,11 @@ static void readCustomConfig(){
 
     fd = sceIoOpen(ebootname, PSP_O_RDONLY, 0777);
     sceIoRead(fd, &header, sizeof(PBPHeader));
+
+    psiso_offset = header.psar_offset;
+    sceIoLseek(fd, psiso_offset+0x400, PSP_SEEK_SET);
+    sceIoRead(fd, custom_config, 0x400);
+    
     sceIoClose(fd);
 
     char* slash = strrchr(configname, '/');
@@ -151,13 +156,14 @@ static void readCustomConfig(){
 
     config_size = sceIoLseek(fd, 0, PSP_SEEK_END);
     if (config_size <= 0) goto config_end;
-    
-    custom_config = oe_malloc(config_size);
-    if (custom_config == NULL) goto config_end;
 
-    sceIoRead(fd, custom_config, config_size);
+    if (config_size == 0x400){
+        sceIoRead(fd, custom_config, config_size);
+    }
+    else {
+        sceIoRead(fd, custom_config+0x20, config_size);
+    }
     has_config = 1;
-    config_offset = header.psar_offset + 0x420;
 
     config_end:
     sceIoClose(fd);
@@ -431,25 +437,13 @@ static int myIoRead(int fd, unsigned char *buf, int size)
     }
 
     if (has_config){
-        if (pos == config_offset){
-            // trying to read POPS config
-            ret = MIN(size, config_size);
-            memcpy(buf, custom_config, ret);
-            goto exit;
-        }
-
-        if (/*fd == pbp_fd &&*/ pos > config_offset && pos+size <= config_offset+config_size){
-            // trying to read POPS config
-            int relative_offset = pos - config_offset;
-            memcpy(buf, (u8*)custom_config+relative_offset, size);
+        int lower_limit = psiso_offset+0x400;
+        int upper_limit = psiso_offset+0x800;
+        if (pos >= lower_limit && pos+size <= upper_limit){
+            int lower_offset = pos - lower_limit;
+            memcpy(buf, custom_config+lower_offset, size);
             ret = size;
             goto exit;
-        }
-
-        if (pos < config_offset && pos+size <= config_offset+config_size){
-            int relative_offset = config_offset - pos;
-            memcpy(buf+relative_offset, custom_config, size-relative_offset);
-            size = relative_offset;
         }
     }
     
