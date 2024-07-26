@@ -430,19 +430,27 @@ static int myIoRead(int fd, unsigned char *buf, int size)
         }
     }
 
-    if (has_config && pos == config_offset){
-        // trying to read POPS config
-        ret = MIN(size, config_size);
-        memcpy(buf, custom_config, ret);
-        goto exit;
-    }
+    if (has_config){
+        if (pos == config_offset){
+            // trying to read POPS config
+            ret = MIN(size, config_size);
+            memcpy(buf, custom_config, ret);
+            goto exit;
+        }
 
-    if (has_config /*&& fd == pbp_fd*/ && pos > config_offset && pos+size < config_offset+config_size){
-        // trying to read POPS config
-        int relative_offset = pos - config_offset;
-        memcpy(buf, (u8*)custom_config+relative_offset, size);
-        ret = size;
-        goto exit;
+        if (/*fd == pbp_fd &&*/ pos > config_offset && pos+size <= config_offset+config_size){
+            // trying to read POPS config
+            int relative_offset = pos - config_offset;
+            memcpy(buf, (u8*)custom_config+relative_offset, size);
+            ret = size;
+            goto exit;
+        }
+
+        if (pos < config_offset && pos+size <= config_offset+config_size){
+            int relative_offset = config_offset - pos;
+            memcpy(buf+relative_offset, custom_config, size-relative_offset);
+            size = relative_offset;
+        }
     }
     
     ret = sceIoRead(fd, buf, size);
