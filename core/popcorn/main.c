@@ -437,7 +437,7 @@ static int myIoRead(int fd, unsigned char *buf, int size)
         goto exit;
     }
 
-    if (has_config /*&& fd == pbp_fd*/ && pos >= config_offset && pos+size <= config_offset+config_size){
+    if (has_config /*&& fd == pbp_fd*/ && pos > config_offset && pos+size < config_offset+config_size){
         // trying to read POPS config
         int relative_offset = pos - config_offset;
         memcpy(buf, (u8*)custom_config+relative_offset, size);
