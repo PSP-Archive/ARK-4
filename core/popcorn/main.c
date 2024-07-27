@@ -152,6 +152,9 @@ static void readCustomConfig(){
         // multi disc
         sceIoLseek(fd, header.psar_offset+0x0200, PSP_SEEK_SET);
         sceIoRead(fd, psiso_offsets, sizeof(psiso_offsets));
+        for (int i=0; i<NELEMS(psiso_offsets) && psiso_offsets[i]; i++){
+            psiso_offsets[i] += header.psar_offset;
+        }
     }
 
     sceIoClose(fd);
