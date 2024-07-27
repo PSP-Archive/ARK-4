@@ -38,7 +38,6 @@ static unsigned int g_pspFwVersion;
 static int g_isCustomPBP;
 static int g_keysBinFound;
 static SceUID g_plain_doc_fd = -1;
-static SceUID pbp_fd = -1;
 
 #define PGD_ID "XX0000-XXXX00000_00-XXXXXXXXXX000XXX"
 #define ACT_DAT "flash2:/act.dat"
@@ -57,7 +56,7 @@ static int g_icon0Status;
 static int has_config = 0;
 static u8 custom_config[0x400];
 static int config_size = 0;
-static int psiso_offset = 0;
+static int psiso_offsets[5] = {0, 0, 0, 0, 0};
 
 static unsigned char g_keys[16];
 
@@ -133,18 +132,31 @@ static inline int isEbootPBP(const char *path)
 static void readCustomConfig(){
     int fd;
     PBPHeader header;
+    char magic[12];
     char configname[256];
     char* ebootname = sceKernelInitFileName();
     strcpy(configname, ebootname);
+    memset(psiso_offsets, 0, sizeof(psiso_offsets));
 
     fd = sceIoOpen(ebootname, PSP_O_RDONLY, 0777);
     sceIoRead(fd, &header, sizeof(PBPHeader));
 
-    psiso_offset = header.psar_offset;
-    sceIoLseek(fd, psiso_offset+0x400, PSP_SEEK_SET);
-    sceIoRead(fd, custom_config, 0x400);
+    sceIoLseek(fd, header.psar_offset, PSP_SEEK_SET);
+    sceIoRead(fd, magic, sizeof(magic));
     
+    if (strncmp(magic, "PSISOIMG", 8) == 0){
+        // single disc
+        psiso_offsets[0] = header.psar_offset;
+    }
+    else if (strncmp(magic, "PSTITLEIMG", 10) == 0){
+        // multi disc
+        sceIoLseek(fd, header.psar_offset+0x0200, PSP_SEEK_SET);
+        sceIoRead(fd, psiso_offsets, sizeof(psiso_offsets));
+    }
+
     sceIoClose(fd);
+
+    if (psiso_offsets[0] == 0) return; // at least one disc
 
     char* slash = strrchr(configname, '/');
     if (!slash) return;
@@ -156,13 +168,9 @@ static void readCustomConfig(){
 
     config_size = sceIoLseek(fd, 0, PSP_SEEK_END);
     if (config_size <= 0) goto config_end;
-
-    if (config_size == 0x400){
-        sceIoRead(fd, custom_config, config_size);
-    }
-    else {
-        sceIoRead(fd, custom_config+0x20, config_size);
-    }
+    
+    sceIoLseek(fd, 0, PSP_SEEK_SET);
+    sceIoRead(fd, custom_config, config_size);
     has_config = 1;
 
     config_end:
@@ -291,10 +299,6 @@ static int myIoOpen(const char *file, int flag, int mode)
     #ifdef DEBUG
     printk("%s: %s 0x%08X -> 0x%08X\r\n", __func__, file, flag, ret);
     #endif
-
-    if (strcasecmp(file, sceKernelInitFileName()) == 0){
-        pbp_fd = ret;
-    }
 
     return ret;
 }
@@ -436,18 +440,18 @@ static int myIoRead(int fd, unsigned char *buf, int size)
         }
     }
 
+    ret = sceIoRead(fd, buf, size);
+
     if (has_config){
-        int lower_limit = psiso_offset+0x400;
-        int upper_limit = psiso_offset+0x800;
-        if (pos >= lower_limit && pos+size <= upper_limit){
-            int lower_offset = pos - lower_limit;
-            memcpy(buf, custom_config+lower_offset, size);
-            ret = size;
-            goto exit;
+        for (int i=0; i<NELEMS(psiso_offsets); i++){
+            int offset = psiso_offsets[i];
+            if (offset == 0) break;
+
+            if (offset+0x400 == pos && size-0x20 >= config_size){
+                memcpy(buf+0x20, custom_config, config_size);
+            }
         }
     }
-    
-    ret = sceIoRead(fd, buf, size);
 
     if(ret != size)
     {
@@ -1111,7 +1115,7 @@ static void patchPops(SceModule2 *mod)
     }
 
     if(g_isCustomPBP){
-        patchDecompressData(stub_addr, patch_addr);
+        patchDecompressData(stub_addr, patch_addr); // replace with hookImportByNID scePopsMan_0090B2C8?
     }
     
     // Prevent Permission Problems
