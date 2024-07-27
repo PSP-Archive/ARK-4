@@ -43,7 +43,7 @@ $/kd/isofs.prx EM
 $/kd/chnnlsv.prx VP
 $/kd/kermit_utility.prx VGUPAEM
 $/kd/popsman.prx P
-$/kd/popcorn.prx P
+$/kd/ark_popcorn.prx P
 $/kd/ark_stargate.prx E
 $/kd/kermit_me_wrapper.prx VGUPAEM
 $/kd/vaudio.prx VU
