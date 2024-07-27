@@ -451,7 +451,14 @@ static int myIoRead(int fd, unsigned char *buf, int size)
             if (offset == 0) break;
 
             if (offset+0x400 == pos && size-0x20 >= config_size){
-                memcpy(buf+0x20, custom_config, config_size);
+                char magic[12];
+                sceIoLseek(fd, offset, PSP_SEEK_SET);
+                sceIoRead(fd, magic, sizeof(magic));
+                sceIoLseek(fd, pos+size, PSP_SEEK_SET);
+                if (strncmp(magic, "PSISOIMG", 8) == 0){
+                    memcpy(buf+0x20, custom_config, config_size);
+                }
+                break;
             }
         }
     }
