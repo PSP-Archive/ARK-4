@@ -1039,23 +1039,6 @@ void getKeys(void)
     }
 }
 
-static int patchSyscallStub(void* func, void *addr)
-{
-    unsigned int syscall_num;
-
-    syscall_num = sceKernelQuerySystemCall(func);
-
-    if(syscall_num == (unsigned int)-1)
-    {
-        return -1;
-    }
-
-    _sw(0x03E00008, (unsigned int)addr);
-    _sw(((syscall_num<<6)|12), (unsigned int)(addr+4));
-
-    return 0;
-}
-
 int decompressData(unsigned int destSize, const unsigned char *src, unsigned char *dest)
 {
     unsigned int k1;
@@ -1080,38 +1063,19 @@ int decompressData(unsigned int destSize, const unsigned char *src, unsigned cha
     return ret;
 }
 
-static int patchDecompressData(void *stub_addr, void *patch_addr)
-{
-    int ret;
-
-    ret = patchSyscallStub(decompressData, stub_addr);
-
-    if (ret != 0) 
-    {
-        #ifdef DEBUG
-        printk("%s: patchSyscallStub -> 0x%08X\r\n", __func__, ret);
-        #endif
-        return -1;
-    }
-
-    _sw(JAL(stub_addr), (unsigned int)patch_addr);
-
-    return 0;
-}
-
 static void patchPops(SceModule2 *mod)
 {
     unsigned int text_addr = mod->text_addr;
-    void *stub_addr=NULL, *patch_addr=NULL;
+    void* scePopsMan_0090B2C8_stub = findImportByNID(mod, "scePopsMan", 0x0090B2C8);
+
     #ifdef DEBUG
     printk("%s: patching pops\r\n", __func__);
     #endif
+
     for (u32 addr = text_addr; addr<text_addr+mod->text_size; addr+=4){
         u32 data = _lw(addr);
-        if (data == 0x8E66000C)
-            patch_addr = (void*)(addr+8);
-        else if (data == 0x3C1D09BF)
-            stub_addr = (void*)(U_EXTRACT_CALL(addr-16));
+        if (data == 0x8E66000C && g_isCustomPBP)
+            _sw(JAL(scePopsMan_0090B2C8_stub), addr+8);
         else if (data == 0x00432823 && g_icon0Status != ICON0_OK)
             _sw(0x24050000 | (sizeof(g_icon_png) & 0xFFFF), addr); // patch icon0 size
         else if (data == 0x24050080 && _lw(addr+24) == 0x24030001)
@@ -1125,7 +1089,7 @@ static void patchPops(SceModule2 *mod)
     }
 
     if(g_isCustomPBP){
-        patchDecompressData(stub_addr, patch_addr); // replace with hookImportByNID scePopsMan_0090B2C8?
+        hookImportByNID(mod, "scePopsMan", 0x0090B2C8, decompressData);
     }
     
     // Prevent Permission Problems
