@@ -31,43 +31,39 @@ as well as unique and exclusive new features not found anywhere else.
 
 ## FEATURES:
 
-- `Core` system heavily updated from traditional CFW with new exclusive features.
+- `Core` system for unsigned code execution heavily updated from traditional CFW with robust patching algorithms and improved API.
 
-- `Inferno 2` Driver compatible with all formats (`ISO`, `CSO`, `ZSO`, `JSO`, `CSOv2` and `DAX`).
+- Heavily optimized `Inferno 2` Driver compatible with all known PSP formats (ISO, CSO, ZSO, JSO, CSOv2 and DAX).
 
-- `Popcorn` controller for custom `PS1` games. Compatible with `PopsLoader` V3 and V4i.
+- `Popcorn` controller for custom PS1 games with support for external configuration files and anti-libcrypt protection.
 
-- Built-in `No-DRM` engine `Stargate`, fixes many anti-CFW games. Compatible with `npdrm_free` and `nploader`.
+- Built-in No-DRM engine `Stargate`, fixes many anti-CFW games. Expandible via other NoDRM plugins.
 
-- `Plugin` support for `PSP` games, `PS1` games and `VSH` (XMB), including the ability to enable and disable plugins `per-game`.
+- `Plugin` support for PSP games and homebrew, PS1 games and VSH (XMB), including the ability to enable and disable plugins per-game.
 
-- `Region Free` playback of `UMD Video` on all PSP models. Change the region of your `UMD` drive on-the-fly.
+- `Region Free` playback of UMD Video on all PSP models. Change the region of your UMD drive on-the-fly.
 
 - Compatible with all `PSP` models on firmwares `6.60` and `6.61`.
 
-- Compatible with all `PS Vita` models on firmware `2.10` up to `3.74`, either official firmware or via `Adrenaline`.
+- Compatible with all `PS Vita` models on firmware `2.10` up to `3.74` OFW or Henkaku, including support for the `Adrenaline` pspemu mod.
 
-- Compatible with `6.60` `Testing Tool` Firmware and `Testkit` Units.
+- Compatible with `6.60 Testing Tool` and `6.60 Development Tool` firmwares for testkit and devkit units (inlcuding `CEX2DEX` converted units).
 
-- Compatible with `6.60` `Development Tool` Firmware and `Devkit` Units.
+- Updated `cIPL` compatible with all PSP models, including toolkits, for truely permanent CFW.
 
 - Can be fully installed and booted on memory stick via `Time Machine`.
 
 - Can be used to unbrick any PSP model using `Despertar del Cementerio Version 10` in combination with a `Pandora Battery` or `Baryon Sweeper`.
 
-- `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
+- Resistant to `bricks`, easy to recover from bad configurations, various recovery methods including being able to load `DC` via `cIPL` without any special device.
 
-- Resistant to `soft-bricks`, easy to recover from bad configurations with a new and improved `Recovery` app.
+- `Custom game launcher` with built-in game categories, file browser, FTP server and client, modernized look and more.
 
-- `Custom game launcher` with built-in game categories, file browser, `FTP` server and client, modernized look and more.
-
-- Fully configurable via the `XMB`.
+- Built-in extensions allow the CFW to be managed entirely via the `XMB`.
 
 - Compatible with `PRO Online` and `Xlink Kai`.
 
-- Compatible with Legacy Homebrew via `eLoader` and `Leda`. Compatible with the KXploit format.
-
-- Compatible with `cIPL` and `Infinity 2` bootloaders for permanent CFW.
+- Compatible with Legacy Homebrew via `eLoader` and `Leda`, including with the classic `KXploit` format.
 
 - `OTA` updates. Fully updateable via the internet.
 
