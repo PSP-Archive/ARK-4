@@ -53,10 +53,9 @@ enum {
 static int g_icon0Status;
 
 // custom emulator config
-static int has_config = 0;
 static u8 custom_config[0x400];
 static int config_size = 0;
-static int psiso_offsets[5] = {0, 0, 0, 0, 0};
+static int psiso_offsets[5] = {0, 0, 0, 0, 0}; // pops supports up to 5 discs, but config is the same for all of them even if it doesn't have to
 
 static unsigned char g_keys[16];
 
@@ -129,6 +128,7 @@ static inline int isEbootPBP(const char *path)
     return 0;
 }
 
+// check if we have a custom configuration that we can inject later on
 static void readCustomConfig(){
     int fd;
     PBPHeader header;
@@ -138,20 +138,23 @@ static void readCustomConfig(){
     strcpy(configname, ebootname);
     memset(psiso_offsets, 0, sizeof(psiso_offsets));
 
+    // open eboot.pbp and read header
     fd = sceIoOpen(ebootname, PSP_O_RDONLY, 0777);
     sceIoRead(fd, &header, sizeof(PBPHeader));
 
+    // seek to start of psar and read its magic
     sceIoLseek(fd, header.psar_offset, PSP_SEEK_SET);
     sceIoRead(fd, magic, sizeof(magic));
     
     if (strncmp(magic, "PSISOIMG", 8) == 0){
-        // single disc
+        // single disc, starts at psaroffset itself
         psiso_offsets[0] = header.psar_offset;
     }
     else if (strncmp(magic, "PSTITLEIMG", 10) == 0){
-        // multi disc
+        // multi disc, offsets are stored at psar+0x200
         sceIoLseek(fd, header.psar_offset+0x0200, PSP_SEEK_SET);
         sceIoRead(fd, psiso_offsets, sizeof(psiso_offsets));
+        // offsets are relative to psar, adjust to make them absolute
         for (int i=0; i<NELEMS(psiso_offsets) && psiso_offsets[i]; i++){
             psiso_offsets[i] += header.psar_offset;
         }
@@ -161,6 +164,7 @@ static void readCustomConfig(){
 
     if (psiso_offsets[0] == 0) return; // at least one disc
 
+    // check if we have a custom config file alongside the eboot
     char* slash = strrchr(configname, '/');
     if (!slash) return;
 
@@ -174,7 +178,6 @@ static void readCustomConfig(){
     
     sceIoLseek(fd, 0, PSP_SEEK_SET);
     sceIoRead(fd, custom_config, config_size);
-    has_config = 1;
 
     config_end:
     sceIoClose(fd);
@@ -445,26 +448,34 @@ static int myIoRead(int fd, unsigned char *buf, int size)
 
     ret = sceIoRead(fd, buf, size);
 
-    if (has_config){
-        for (int i=0; i<NELEMS(psiso_offsets); i++){
-            int offset = psiso_offsets[i];
-            if (offset == 0) break;
+    // patch to inject custom config and anti-libcrypt
+    for (int i=0; i<NELEMS(psiso_offsets); i++){ // check each disc
+        int offset = psiso_offsets[i];
+        if (offset == 0) break;
 
-            if (offset+0x400 == pos && size-0x20 >= config_size){
-                char magic[12];
-                sceIoLseek(fd, offset, PSP_SEEK_SET);
-                sceIoRead(fd, magic, sizeof(magic));
-                sceIoLseek(fd, pos+size, PSP_SEEK_SET);
-                if (strncmp(magic, "PSISOIMG", 8) == 0){
-                    memcpy(buf+0x20, custom_config, config_size);
-                    int mw = searchMagicWord(buf);
-                    if (mw != 0){
-                        mw ^= 0x72D0EE59;
-                        memcpy(buf+0xeb0, &mw, sizeof(mw));
-                    }
+        // emulator reads a huge chunk of data starting at PSISOIMG+0x400
+        // more information about PSISOIMG: https://www.psdevwiki.com/psp/PSISOIMG0000
+        if (offset+0x400 == pos && size-0x20 >= config_size){ // read is within expected bounds
+            // seek to where we expect PSISOIMG magic to appear and read it
+            char magic[12];
+            sceIoLseek(fd, offset, PSP_SEEK_SET);
+            sceIoRead(fd, magic, sizeof(magic));
+            sceIoLseek(fd, pos+size, PSP_SEEK_SET); // seek back into where file descriptor is supposed to be
+
+            if (strncmp(magic, "PSISOIMG", 8) == 0){ // check for PSISOIMG magic number to make sure this is it
+            
+                // copy custom config (if we have one), located at 0x420 after PSISOIMG, thus 0x20 after given buffer
+                if (config_size>0) memcpy(buf+0x20, custom_config, config_size);
+            
+                // anti-libcrypt patch, calculate libcrypt magic and inject at 0x12B0 after PSISOIMG, 0xEB0 after given buffer
+                int mw = searchMagicWord(buf); // buf points to PSISOIMG+0x0400, which conviniently starts with the discid
+                if (mw != 0){ // magic word found for this title
+                    mw ^= 0x72D0EE59; // needs to be xored with this constant
+                    memcpy(buf+0xeb0, &mw, sizeof(mw));
                 }
-                break;
+            
             }
+            break;
         }
     }
 
