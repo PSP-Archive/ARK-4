@@ -1,16 +1,8 @@
 TARGET = vitacompat
 
-SPU_OBJS = \
-	psxspu/dma.o \
-	psxspu/out.o \
-	psxspu/registers.o \
-	psxspu/spu.o \
-	psxspu/xa.o \
-	psxspu/nullsnd.o \
-
 C_OBJS =    \
 	main.o   \
-	vlf.o    \
+	vlf.o     \
 	syspatch.o  \
 	gameinfo.o   \
 	vitaflash.o   \
