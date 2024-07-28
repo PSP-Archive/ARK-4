@@ -23,6 +23,7 @@ Menu::Menu(){
     if (common::getConf()->sort_entries){
         std::sort(eboots.begin(), eboots.end(), Entry::cmpEntriesForSort);
     }
+    loadIcons();
 }
 
 void Menu::readEbootList(string path){
@@ -69,6 +70,18 @@ string Menu::fullPath(string path, string app){
         return path+app+"/FBOOT.PBP";
 
     return "";
+}
+
+void Menu::loadIcons(){
+    int start = this->start;
+    int end = min(start+3, (int)eboots.size());
+
+    if (start-1 >= 0) eboots[start-1]->unloadIcon();
+    if (end < eboots.size()) eboots[end]->unloadIcon();
+
+    for (int i=start; i<end; i++){
+        eboots[i]->loadIcon();
+    }
 }
 
 void Menu::draw(){
@@ -152,6 +165,7 @@ void Menu::moveDown(){
     else if (this->index+1 < eboots.size())
         this->index++;
     updateTextAnim();
+    loadIcons();
 }
 
 void Menu::moveUp(){
@@ -165,6 +179,7 @@ void Menu::moveUp(){
     else
         this->index--;
     updateTextAnim();
+    loadIcons();
 }
 
 void Menu::control(){

@@ -24,7 +24,6 @@ Entry* Entry::createIfPops(string path){
     
     if (ent->isPops()){
         ent->findNameInParam();
-        ent->icon0 = ent->loadIcon();
         free(ent->sfo_buffer);
         ent->sfo_buffer = NULL;
         return ent;
@@ -49,14 +48,20 @@ void Entry::readHeader(){
     fclose(fp);
 }
 
-Image* Entry::loadIcon(){
-    int size = header.icon1_offset - header.icon0_offset;
-    if (size){
-        Image* icon = loadImage(this->path.c_str(), this->header.icon0_offset);
-        if (icon != NULL)
-            return icon;
+void Entry::loadIcon(){
+    if (this->icon0 == NULL){
+        int size = header.icon1_offset - header.icon0_offset;
+        if (size){
+            this->icon0 = loadImage(this->path.c_str(), this->header.icon0_offset);
+        }
     }
-    return NULL;
+}
+
+void Entry::unloadIcon(){
+    if (this->icon0){
+        freeImage(this->icon0);
+        this->icon0 = NULL;
+    }
 }
 
 bool Entry::isPops(){
@@ -131,13 +136,13 @@ Image* Entry::getIcon(){
     return (icon0)? icon0 : common::getNoIcon();
 }
 
-Image* Entry::getPic0(){
+Image* Entry::loadPic0(){
     int size = this->header.pic1_offset-this->header.pic0_offset;
     if (size==0) return NULL;
     return loadImage(this->path.c_str(), this->header.pic0_offset);
 }
 
-Image* Entry::getPic1(){
+Image* Entry::loadPic1(){
     int size = this->header.snd0_offset-this->header.pic1_offset;
     if (size == 0) return NULL;
     return loadImage(this->path.c_str(), this->header.pic1_offset);
@@ -147,8 +152,8 @@ bool Entry::run(){
 
     if (common::getConf()->fast_gameboot) return true;
 
-    this->pic0 = getPic0();
-    this->pic1 = getPic1();
+    this->pic0 = loadPic0();
+    this->pic1 = loadPic1();
     
     animAppear();
 

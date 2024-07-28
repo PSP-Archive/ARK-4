@@ -50,6 +50,8 @@ class Menu{
         string fullPath(string path, string name);
         
         bool isPOPS(string path);
+
+        void loadIcons();
         
         void updateScreen();
         

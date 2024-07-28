@@ -58,7 +58,6 @@ class Entry{
         unsigned char* sfo_buffer;
 
         void readHeader();
-        Image* loadIcon();
         void findNameInParam();
         
         void animAppear();
@@ -66,6 +65,10 @@ class Entry{
 
         Entry(string path);
         bool isPops();
+
+                
+        Image* loadPic0();
+        Image* loadPic1();
 
     public:
     
@@ -79,10 +82,9 @@ class Entry{
         string getEbootName();
         
         Image* getIcon();
-        
-        Image* getPic0();
-        
-        Image* getPic1();
+
+        void loadIcon();
+        void unloadIcon();
         
         bool run();
 
