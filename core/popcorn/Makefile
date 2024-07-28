@@ -1,6 +1,6 @@
 TARGET = popcorn
 
-OBJS = main.o icon.o
+OBJS = main.o libcrypt.o icon.o
 
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common/include

@@ -457,6 +457,11 @@ static int myIoRead(int fd, unsigned char *buf, int size)
                 sceIoLseek(fd, pos+size, PSP_SEEK_SET);
                 if (strncmp(magic, "PSISOIMG", 8) == 0){
                     memcpy(buf+0x20, custom_config, config_size);
+                    int mw = searchMagicWord(buf);
+                    if (mw != 0){
+                        mw ^= 0x72D0EE59;
+                        memcpy(buf+0xeb0, &mw, sizeof(mw));
+                    }
                 }
                 break;
             }
