@@ -381,7 +381,7 @@ void newipl_menu(const char* config){
 	}
 
 	u8* ipl_block = ipl_table[model];
-	if (model > 1 || is_ta88v3()){
+	if (model > 1){
 		ipl_key = (model==4)?2:1;
 	}
 
