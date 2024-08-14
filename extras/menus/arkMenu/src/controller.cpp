@@ -1,20 +1,36 @@
 #include "controller.h"
 #include "common.h"
+#include <kubridge.h>
+#include <systemctrl.h>
 
 #define CONTROL_DELAY 10
 
 Controller::Controller(){
     this->nowpad = this->newpad = this->oldpad = 0;
     this->n = 0;
+    this->_ksceCtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x1F803938);
 }
 
 Controller::~Controller(){
 }
+
+void Controller::clCtrlReadBufferPositive(){
+    if (_ksceCtrlReadBufferPositive != NULL){
+        struct KernelCallArg args;
+        args.arg1 = (u32)&pad;  // Pad
+        args.arg2 = 1;          // Count
+        args.arg3 = 0;          // ??
+        args.arg4 = 0;          // Mode
+
+        kuKernelCall(_ksceCtrlReadBufferPositive, &args); // Call from kernel mode to get access to more inputs
+    }else { // Fallback to usermode
+        sceCtrlReadBufferPositive(&pad, 1);
+    }
+}
         
 void Controller::update(int ignore){
-
     for (int i=0; i<ignore; i++)
-        sceCtrlReadBufferPositive(&pad, 1);
+        clCtrlReadBufferPositive();
     
     nowpad = pad.Buttons;
     newpad = nowpad & ~oldpad;
@@ -33,7 +49,10 @@ void Controller::update(int ignore){
 
 void Controller::flush(){
     while (pad.Buttons)
-        sceCtrlReadBufferPositive(&pad, 1);
+        // Only read from usermode as a work-around for now.
+        // Kernel mode has some sort of bit mask intercept that always sets a certain button to be activated
+        // TODO: Unset kernel bit intercept to allow for kernel mode flushing : https://github.com/Valantin/sceCtrlDriver/blob/master/pspctrl_kernel.h
+        sceCtrlReadBufferPositive(&pad, 1); 
 }
 
 bool Controller::wait(void* busy_wait){
@@ -54,6 +73,10 @@ bool Controller::wait(void* busy_wait){
         }
     }
     return ret;
+}
+
+u32 Controller::get_buttons() {
+    return newpad;
 }
 
 bool Controller::any(){
@@ -119,3 +142,8 @@ bool Controller::select(){
 bool Controller::home(){
     return (newpad & PSP_CTRL_HOME);
 }
+
+bool Controller::volume(){
+    return (newpad & (PSP_CTRL_VOLUP | PSP_CTRL_VOLDOWN));
+}
+

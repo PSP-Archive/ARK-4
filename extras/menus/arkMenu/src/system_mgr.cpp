@@ -35,8 +35,8 @@ static int pEntryIndex;
 static int cur_entry = 0;
 static int page_start = 0;
 
-//static int menu_anim_state = 0; 
-//static int menu_draw_state = 0;
+static int volume = 0;
+static clock_t volume_time = 0;
 
 static int MAX_ENTRIES = 0;
 static SystemEntry** entries = NULL;
@@ -124,7 +124,6 @@ static void systemController(Controller* pad){
 
         if (pEntryIndex == page_start && page_start > 0){
             page_start--;
-            //menu_draw_state = 1; Dead code
         }
 
         common::playMenuSound();
@@ -137,7 +136,6 @@ static void systemController(Controller* pad){
         
         if (pEntryIndex - page_start >= getNumPageItems()){
             page_start++;
-            //menu_draw_state = -1; Dead code
         }
 
         common::playMenuSound();
@@ -203,31 +201,6 @@ static void drawOptionsMenuCommon(){
 
         x += x_step;
     }
-
-    /* Dead code
-
-    switch (menu_draw_state){
-        case -1:
-            menu_anim_state -= 20;
-
-            if (menu_anim_state <= -160){
-                menu_draw_state = 0;
-            }
-
-            break;
-        case 0:
-            menu_anim_state = 0;
-            break;
-        case 1:
-            menu_anim_state += 20;
-
-            if (menu_anim_state >= 160){
-                menu_draw_state = 0;
-            }
-
-            break;
-    }
-    */
 }
 
 static void drawDateTime() {
@@ -276,6 +249,24 @@ static void drawBattery(){
     }
 }
 
+static void drawVolume(){
+    const int max_slider_width = 480 / 4;
+    const int volume_y = 255;
+
+    const int outer_hndl_w = 3, outer_hndle_h = 6; // Inner handle will just be -1 these dimensions
+
+    int slider_width = max(0, (int)((float)max_slider_width * ((float)volume / 30)) - outer_hndl_w);
+    const int slider_x = (480 / 2) - (max_slider_width / 2);
+
+    ya2d_draw_rect(slider_x - 1, volume_y - 1, max_slider_width + 1, 3, BLACK, 0); // Volume background outline
+
+    ya2d_draw_rect(slider_x, volume_y, max_slider_width, 2, GRAY, 1); // Slider background
+    ya2d_draw_rect(slider_x, volume_y, slider_width, 2, WHITE, 1); // Slider
+
+    ya2d_draw_rect(slider_x + slider_width, volume_y - outer_hndle_h / 2, outer_hndl_w, outer_hndle_h, RED, 0); // Outer slider handle
+    ya2d_draw_rect(slider_x + slider_width + 1, volume_y - outer_hndle_h / 2 + 1, outer_hndl_w - 1, outer_hndle_h - 1, WHITE, 1); // Inner slider handle
+}
+
 static void systemDrawer(){
     switch (optionsDrawState){
         case 0:
@@ -307,6 +298,15 @@ static void systemDrawer(){
                 optionsDrawState = 0;
             break;
     }
+
+    clock_t volume_elapsed = clock() - volume_time;
+    double time_elapsed = ((double)volume_elapsed) / CLOCKS_PER_SEC;
+
+    // Only show volume for 3 seconds and protect against clock_t wrap-around
+    if (volume_time && time_elapsed < 3 && volume_elapsed < volume_time){
+        drawVolume();
+    }
+
 }
 
 void SystemMgr::drawScreen(){
@@ -344,6 +344,9 @@ static int drawThread(SceSize _args, void *_argp){
     return 0;
 }
 
+static void *_sceImposeGetParam; // int (*)(int)
+static void *_sceImposeSetParam; // int (*)(int, int)
+
 static int controlThread(SceSize _args, void *_argp){
     static int screensaver_times[] = {0, 5, 10, 20, 30, 60};
     Controller pad;
@@ -352,19 +355,45 @@ static int controlThread(SceSize _args, void *_argp){
     while (running){
         int screensaver_time = screensaver_times[common::getConf()->screensaver];
         pad.update();
+
         if (pad.triangle() && !screensaver){
             changeMenuState();
-        }
-        else if (pad.home()){
+        } else if (pad.home()){
             screensaver = !screensaver;
             pad.flush();
             last_pressed = clock();
             continue;
-        }
-        else if (!screensaver){
+        } else if (pad.volume() && _sceImposeGetParam != NULL && _sceImposeSetParam != NULL) {
+            struct KernelCallArg args;
+            args.arg1 = 0x1; // PSP_IMPOSE_MAIN_VOLUME
+
+            kuKernelCall(_sceImposeGetParam, &args);
+            int new_volume = args.ret1;
+
+            volume_time = clock();
+
+            // Unfortunate impose driver fix
+            // Impose will sometimes register an extra volume input press in the opposite direction
+            u32 buttons = pad.get_buttons();
+
+            if (buttons & 0x100000 && new_volume < volume){
+                args.arg2 = ++new_volume;
+                kuKernelCall(_sceImposeSetParam, &args);
+            } else if (buttons & 0x200000 && new_volume > volume){
+                args.arg2 = --new_volume;
+                kuKernelCall(_sceImposeSetParam, &args);
+            }
+            // end of unfortunate impose driver fix :)
+
+            if (new_volume != volume){
+                volume = new_volume;
+                common::playMenuSound();
+            }
+        } else if (!screensaver){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
         }
+
         if (pad.any()){
             last_pressed = clock();
             if (screensaver){
@@ -372,21 +401,24 @@ static int controlThread(SceSize _args, void *_argp){
                 continue;
             }
         }
+
         if (screensaver_time > 0 && !stillLoading()){
             clock_t elapsed = clock() - last_pressed;
             double time_taken = ((double)elapsed)/CLOCKS_PER_SEC;
             if (time_taken > screensaver_time){
                 screensaver = 1;
             }
-        }
-        else if (stillLoading()){
+        } else if (stillLoading()){
             last_pressed = clock();
         }
+
         sceKernelDelayThread(0);
     }
+
     sceKernelExitDeleteThread(0);
     return 0;
 }
+
 
 void SystemMgr::initMenu(SystemEntry** e, int ne){
     draw_sema = sceKernelCreateSema("draw_sema", 0, 1, 1, NULL);
@@ -409,6 +441,9 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     u32 fwmajor = fw>>24;
     u32 fwminor = (fw>>16)&0xF;
     u32 fwmicro = (fw>>8)&0xF;
+
+    _sceImposeGetParam = (void *)sctrlHENFindFunction("sceImpose_Driver", "sceImpose_driver", 0xDC3BECFF);
+    _sceImposeSetParam = (void *)sctrlHENFindFunction("sceImpose_Driver", "sceImpose_driver", 0x3C318569);
 
     stringstream version;
     version << "FW " << fwmajor << "." << fwminor << fwmicro;
