@@ -2,7 +2,7 @@
 
 struct mw {
        char *discid;
-       uint32_t mw;
+       u32 mw;
 };
 
 struct mw magic_words[] = {
@@ -233,7 +233,8 @@ struct mw magic_words[] = {
        {"_SLES_32969", 59587},
 };
 
-int searchMagicWord(char* discid){
+u32 searchMagicWord(char* discid){
+  return 0;
   int lower = 0;
   int upper = (sizeof(magic_words)/sizeof(magic_words[0]))-1;
   

@@ -455,7 +455,7 @@ static int myIoRead(int fd, unsigned char *buf, int size)
 
         // emulator reads a huge chunk of data starting at PSISOIMG+0x400
         // more information about PSISOIMG: https://www.psdevwiki.com/psp/PSISOIMG0000
-        if (offset+0x400 == pos && size-0x20 >= config_size){ // read is within expected bounds
+        if (offset+0x400 == pos){ // read is within expected bounds
             // seek to where we expect PSISOIMG magic to appear and read it
             char magic[12];
             sceIoLseek(fd, offset, PSP_SEEK_SET);
@@ -463,12 +463,12 @@ static int myIoRead(int fd, unsigned char *buf, int size)
             sceIoLseek(fd, pos+size, PSP_SEEK_SET); // seek back into where file descriptor is supposed to be
 
             if (strncmp(magic, "PSISOIMG", 8) == 0){ // check for PSISOIMG magic number to make sure this is it
-            
+
                 // copy custom config (if we have one), located at 0x420 after PSISOIMG, thus 0x20 after given buffer
                 if (config_size>0) memcpy(buf+0x20, custom_config, config_size);
             
                 // anti-libcrypt patch, calculate libcrypt magic and inject at 0x12B0 after PSISOIMG, 0xEB0 after given buffer
-                int mw = searchMagicWord(buf); // buf points to PSISOIMG+0x0400, which conviniently starts with the discid
+                u32 mw = searchMagicWord(buf); // buf points to PSISOIMG+0x0400, which conviniently starts with the discid
                 if (mw != 0){ // magic word found for this title
                     mw ^= 0x72D0EE59; // needs to be xored with this constant
                     memcpy(buf+0xeb0, &mw, sizeof(mw));
