@@ -110,11 +110,15 @@ PspIoDrvArg * flash_driver = NULL;
 void initFileSystem(){
     // Create Semaphore
     dreadSema = sceKernelCreateSema("sceIoDreadSema", 0, 1, 1, NULL);
+    
     // patch Driver
+    /*
     u32 IOAddDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
     u32 AddDrv = findRefInGlobals("IoFileMgrForKernel", IOAddDrv, IOAddDrv);
     // Hooking sceIoAddDrv
     _sw((unsigned int)sceIoAddDrvHook, AddDrv);
+    */
+    
     // Patch IO for file replacements
     //SceModule2* ioman = patchFileIO();
 }
