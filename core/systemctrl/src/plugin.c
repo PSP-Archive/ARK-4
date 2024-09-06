@@ -385,7 +385,7 @@ static void processLine(char * line, void (*enabler)(char*), void (*disabler)(ch
 }
 
 // Load Plugins
-static void ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler)(char*))
+static int ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler)(char*))
 {
 
     int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
@@ -412,7 +412,9 @@ static void ProcessConfigFile(char* path, void (*enabler)(char*), void (*disable
         
         // Close Plugin Config
         sceIoClose(fd);
+        return 0;
     }
+    return -1;
 }
 
 static void settingsHandler(char* path, u8 enabled){
@@ -535,9 +537,11 @@ void LoadPlugins(){
     strcat(path, "PLUGINS.TXT");
     ProcessConfigFile(path, &addPlugin, &removePlugin);
     // Open Plugin Config from SEPLUGINS
-    ProcessConfigFile("ms0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
+    ProcessConfigFile("ms0:/SEPLUGINS/PLUGINS.TXT", addPlugin, removePlugin);
     // On PSP Go (only if ms0 isn't already redirected to ef0)
-    ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
+    ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", addPlugin, removePlugin);
+    // Flash0 plugins
+    ProcessConfigFile("flash0:/PLUGINS.TXT", addPlugin, removePlugin);
     // start all loaded plugins
     startPlugins();
     // free resources
@@ -553,6 +557,7 @@ void loadSettings(){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, "SETTINGS.TXT");
-    ProcessConfigFile(path, settingsEnabler, settingsDisabler);
+    if (ProcessConfigFile(path, settingsEnabler, settingsDisabler) < 0) // try external settings
+        ProcessConfigFile("flash1:/SETTINGS.TXT", settingsEnabler, settingsDisabler); // retry flash1 settings
     se_config.magic = ARK_CONFIG_MAGIC;
 }
