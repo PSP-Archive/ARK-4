@@ -62,8 +62,13 @@
 #define K_FILE "K.BIN" // kernel exploit file for Live loaders
 #define UPDATER_FILE "UPDATER.TXT" // Update Server URL file
 #define ARK_SETTINGS "SETTINGS.TXT" // CFW Settings file
-#define MENU_SETTINGS "" // Settings file for CL and VSH Menu
-#define UPDATER_FILE_FLASH "flash1:/UPDATER.TXT" // Update Server URL file flash1 path
+#define MENU_SETTINGS "ARKMENU.BIN" // Settings file for CL and VSH Menu
+#define ARK_SETTINGS_FLASH "flash1:/"ARK_SETTINGS
+#define UPDATER_FILE_FLASH "flash1:/"UPDATER_FILE // Update Server URL file flash1 path
+#define PLUGINS_FILE "PLUGINS.TXT"
+#define PLUGINS_PATH "ms0:/SEPLUGINS/"PLUGINS_FILE
+#define PLUGINS_PATH_GO "ef0:/SEPLUGINS/"PLUGINS_FILE
+#define PLUGINS_PATH_FLASH "flash0:/"PLUGINS_FILE
 #define ARK_THEME_FILE "THEME.ARK" // theme file for arkMenu
 #define ARK_LANG_FILE "LANG.ARK" // language files
 #define ARK_BIN "ARK.BIN" // ARK-2 payload

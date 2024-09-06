@@ -690,7 +690,7 @@ void loadSettings(){
 
    	cleanupSettings(); 
 
-    std::ifstream input((string(ark_config->arkpath)+"SETTINGS.TXT").c_str());
+    std::ifstream input((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
     for( std::string line; getline( input, line ); ){
         if (isComment(line)){
             custom_config.push_back(line);
@@ -727,7 +727,8 @@ static string processSetting(string name, unsigned char setting){
 }
 
 void saveSettings(){
-    std::ofstream output("SETTINGS.TXT");
+    ARKConfig* ark_config = common::getArkConfig();
+    std::ofstream output((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
     output << processSetting("usbcharge", cfw_config.usbcharge) << endl;
     output << processSetting("overclock", cfw_config.overclock) << endl;
     output << processSetting("powersave", cfw_config.powersave) << endl;

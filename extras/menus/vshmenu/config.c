@@ -30,7 +30,7 @@ void config_load(vsh_Menu *vsh) {
 	int is_pandora;
 	char path[ARK_PATH_SIZE];
 	scePaf_strcpy(path, vsh->config.ark.arkpath);
-	strcat(path, CONFIG_PATH);
+	strcat(path, MENU_SETTINGS);
 
 	int fp = sceIoOpen(path, PSP_O_RDONLY, 0777);
 	if (fp >= 0){
@@ -61,7 +61,7 @@ void config_save(vsh_Menu *vsh, int saveumdregion, int savevshregion){
 	int fp;
 	char path[ARK_PATH_SIZE];
 	scePaf_strcpy(path, vsh->config.ark.arkpath);
-	strcat(path, CONFIG_PATH);
+	strcat(path, MENU_SETTINGS);
 
 	fp = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 	if (fp >= 0){
@@ -96,7 +96,7 @@ void config_check(vsh_Menu *vsh) {
 void config_recreate_region_setting(vsh_Menu *vsh, char* oldtext, char* newtext) {
 	char path[ARK_PATH_SIZE];
 	scePaf_strcpy(path, vsh->config.ark.arkpath);
-	strcat(path, "SETTINGS.TXT");
+	strcat(path, ARK_SETTINGS);
 
 	// open file and get size
 	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
@@ -176,14 +176,34 @@ void config_recreate_umd_keys(void) {
 
 
 void reset_ark_settings(vsh_Menu *vsh){
-	const char settings[] = "always, usbcharge, on\nalways, overclock, on\nalways, powersave, off\nalways, defaultclock, off\nalways, launcher, off\nalways, disablepause, off\nalways, highmem, off\nalways, mscache, on\nalways, infernocache:lru, on\nalways, oldplugin, on\nalways, skiplogos, off\nalways, hidepics, off\nalways, hibblock, on\nalways, hidemac, on\nalways, hidedlc, off\nalways, noled, off\nalways, noumd, off\nalways, noanalog, off\nalways, qaflags, on\n# Luxor doesn't like Inferno Cache\nULUS10201, infernocache, off";
+	const char settings[] = "always, usbcharge, on\n"
+							"always, overclock, on\n"
+							"always, powersave, off\n"
+							"always, defaultclock, off\n"
+							"always, launcher, off\n"
+							"always, disablepause, off\n"
+							"always, highmem, off\n"
+							"always, mscache, on\n"
+							"always, infernocache:lru, on\n"
+							"always, oldplugin, on\n"
+							"always, skiplogos, off\n"
+							"always, hidepics, off\n"
+							"always, hibblock, on\n"
+							"always, hidemac, on\n"
+							"always, hidedlc, off\n"
+							"always, noled, off\n"
+							"always, noumd, off\n"
+							"always, noanalog, off\n"
+							"always, qaflags, on\n"
+							"# Luxor doesn't like Inferno Cache\n"
+							"ULUS10201, infernocache, off";
 
 	char arkMenuPath[ARK_PATH_SIZE];
 	char arkSettingsPath[ARK_PATH_SIZE];
 	scePaf_strcpy(arkMenuPath, vsh->config.ark.arkpath);
 	scePaf_strcpy(arkSettingsPath, vsh->config.ark.arkpath);
-	strcat(arkMenuPath, "ARKMENU.BIN");
-	strcat(arkSettingsPath, "SETTINGS.TXT");
+	strcat(arkMenuPath, MENU_SETTINGS);
+	strcat(arkSettingsPath, ARK_SETTINGS);
 	int fd = sceIoOpen(arkMenuPath, PSP_O_RDONLY, 0);
 	if(fd) {
 		sceIoClose(fd);

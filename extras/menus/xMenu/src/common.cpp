@@ -42,7 +42,7 @@ void common::resetConf(){
 
 
 void loadConfig(){
-    FILE* fp = fopen(CONFIG_PATH, "rb");
+    FILE* fp = fopen(MENU_SETTINGS, "rb");
     if (fp == NULL){
         resetConf();
         return;
@@ -73,7 +73,7 @@ bool common::fileExists(const std::string &path){
 }
 
 void common::saveConf() {
-	FILE* fp = fopen(CONFIG_PATH, "wb");
+	FILE* fp = fopen(MENU_SETTINGS, "wb");
 	fwrite(&config, 1, sizeof(t_conf), fp);
 	fclose(fp);
 }

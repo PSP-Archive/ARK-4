@@ -188,13 +188,11 @@ void SubMenu::changeSetting(int setting){
 void SubMenu::changeMsCacheSetting(){
 
     se_config->msspeed = !se_config->msspeed;
-    char arkSettingsPath[ARK_PATH_SIZE];
-    strcpy(arkSettingsPath, ark_config->arkpath);
-    strcat(arkSettingsPath, "SETTINGS.TXT");
+    std::string arkSettingsPath = string(ark_config->arkpath)+ARK_SETTINGS;
     std::stringstream final_str;
-    std::ifstream fs_in(arkSettingsPath);
+    std::ifstream fs_in(arkSettingsPath.c_str());
     if (!fs_in) {
-        final_str << "Cannot open: " << "SETTINGS.TXT";
+        final_str << "Cannot open: " << arkSettingsPath;
         save_status = final_str.str().c_str();
         status_frame_count = 100;
         return;
@@ -228,9 +226,9 @@ void SubMenu::changeMsCacheSetting(){
 
     fs_in.close();
 
-    std::ofstream fs_out(arkSettingsPath);
+    std::ofstream fs_out(arkSettingsPath.c_str());
     if (!fs_out) {
-        final_str << "Cannot open: " << "SETTINGS.TXT";
+        final_str << "Cannot open: " << arkSettingsPath;
         save_status = final_str.str().c_str();
         status_frame_count = 100;
         return;

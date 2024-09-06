@@ -28,6 +28,7 @@ struct {
     {VSH_MENU, VSH_MENU_FLASH},
     {RECOVERY_PRX, RECOVERY_PRX_FLASH},
     {UPDATER_FILE, UPDATER_FILE_FLASH},
+    {ARK_SETTINGS, ARK_SETTINGS_FLASH}
 };
 
 
@@ -43,7 +44,7 @@ void uninstall() {
 		}
 		else {
 			pspDebugScreenPrintf("Removing %s\n", flash_files[i].dest);
-			rm_file(flash_files[i].dest);
+			sceIoRemove(flash_files[i].dest);
 		}
     }
 
@@ -131,8 +132,8 @@ int main(int argc, char * argv[])
     pspDebugScreenPrintf("Opening flash0 for writing\n");
     open_flash();
 
+    char path[ARK_PATH_SIZE];
     for (int i=0; i<N_FLASH_FILES; i++){
-        char path[ARK_PATH_SIZE];
         strcpy(path, ark_config.arkpath);
         strcat(path, flash_files[i].orig);
         pspDebugScreenPrintf("Installing %s to %s\n", flash_files[i].orig, flash_files[i].dest);
@@ -181,6 +182,3 @@ void copy_file(char* orig, char* dest){
     sceIoClose(fdw);
 }
 
-void rm_file(char* dest){
-    sceIoRemove(dest);
-}
