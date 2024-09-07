@@ -1,6 +1,5 @@
 name: ARK-4
 on:
-  push:
     paths-ignore: 
       - 'README.md'
       - 'build.sh' 
