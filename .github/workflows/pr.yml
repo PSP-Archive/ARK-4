@@ -10,7 +10,6 @@ on:
       - 'contrib/PC/ARKUpgrader'
       - '*.pptx'
       - 'CHANGELOG.md'
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 jobs:
