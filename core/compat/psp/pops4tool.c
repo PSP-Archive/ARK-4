@@ -1,7 +1,7 @@
 #include <pspsdk.h>
 #include <pspsysmem_kernel.h>
 #include <pspinit.h>
-#include <globals.h>
+#include <ark.h>
 #include <graphics.h>
 #include <macros.h>
 #include <module2.h>

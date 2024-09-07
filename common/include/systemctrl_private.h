@@ -23,7 +23,7 @@ extern "C"{
 #endif
 
 #include "module2.h"
-#include "globals.h"
+#include "ark.h"
 
 /*
  * This File contains the required headers for exported, but internally used

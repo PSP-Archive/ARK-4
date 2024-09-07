@@ -18,7 +18,7 @@
 #include <pspsdk.h>
 #include <psptypes.h>
 #include "graphics.h"
-#include "globals.h"
+#include "ark.h"
 #include "functions.h"
 
 #define ARK_LOADADDR 0x08D30000

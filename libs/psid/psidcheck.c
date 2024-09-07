@@ -26,7 +26,7 @@
 #include <systemctrl.h>
 #include <systemctrl_private.h>
 #include <macros.h>
-#include <globals.h>
+#include <ark.h>
 #include "psid.h"
 
 static unsigned char salt[20] __attribute__((aligned(64)));

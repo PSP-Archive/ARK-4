@@ -1,6 +1,6 @@
 #include <pspsdk.h>
 #include <pspinit.h>
-#include <globals.h>
+#include <ark.h>
 #include <graphics.h>
 #include <macros.h>
 #include <module2.h>

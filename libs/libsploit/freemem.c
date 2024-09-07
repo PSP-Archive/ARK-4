@@ -10,7 +10,7 @@
 #include <rebootconfig.h>
 #include <systemctrl_se.h>
 #include <string.h>
-#include "globals.h"
+#include "ark.h"
 #include "functions.h"
 
 // attempt to free as much memory as possible, some kernel/user exploits need this, others don't

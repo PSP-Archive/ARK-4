@@ -4,7 +4,7 @@
 #include <string>
 #include <unistd.h>
 #include <algorithm>
-#include <globals.h>
+#include <ark.h>
 
 string ark_version;
 

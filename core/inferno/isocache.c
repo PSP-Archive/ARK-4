@@ -10,7 +10,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include "systemctrl_private.h"
-#include "globals.h"
+#include "ark.h"
 #include "macros.h"
 
 static u32 read_call = 0;

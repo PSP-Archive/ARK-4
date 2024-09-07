@@ -16,7 +16,7 @@
  */
 
 #include <macros.h>
-#include <globals.h>
+#include <ark.h>
 #include "functions.h"
 
 #define BUF_SIZE 16*1024

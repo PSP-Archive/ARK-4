@@ -9,7 +9,7 @@
 #include <systemctrl.h>
 #include <systemctrl_private.h>
 #include <macros.h>
-#include <globals.h>
+#include <ark.h>
 #include <functions.h>
 
 struct DeviceSize {

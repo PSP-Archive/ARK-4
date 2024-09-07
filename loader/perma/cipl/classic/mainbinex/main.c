@@ -1,5 +1,5 @@
 #include <pspsdk.h>
-#include <globals.h>
+#include <ark.h>
 #include <macros.h>
 #include "ansi_c_functions.h"
 

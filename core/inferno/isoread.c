@@ -28,7 +28,7 @@
 #include "systemctrl_private.h"
 #include "inferno.h"
 #include "lz4.h"
-#include "globals.h"
+#include "ark.h"
 #include "macros.h"
 
 #define CSO_MAGIC 0x4F534943 // CISO

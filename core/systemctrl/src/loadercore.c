@@ -24,7 +24,7 @@
 #include <module2.h>
 #include <systemctrl.h>
 #include <systemctrl_private.h>
-#include <globals.h>
+#include <ark.h>
 #include <functions.h>
 #include "imports.h"
 #include "modulemanager.h"

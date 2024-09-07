@@ -23,7 +23,7 @@
 #include <systemctrl_se.h>
 #include <macros.h>
 #include <string.h>
-#include <globals.h>
+#include <ark.h>
 #include <functions.h>
 #include <graphics.h>
 

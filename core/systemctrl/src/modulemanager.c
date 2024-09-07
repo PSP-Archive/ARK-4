@@ -20,7 +20,7 @@
 #include <pspiofilemgr.h>
 #include <string.h>
 #include <macros.h>
-#include <globals.h>
+#include <ark.h>
 #include <systemctrl_private.h>
 #include "elf.h"
 #include "modulemanager.h"

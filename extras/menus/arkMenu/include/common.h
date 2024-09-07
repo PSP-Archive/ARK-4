@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <malloc.h>
 #include <time.h>
-#include <globals.h>
+#include <ark.h>
 #include "gfx.h"
 #include "mp3.h"
 #include "conf.h"

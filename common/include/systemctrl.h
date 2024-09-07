@@ -27,7 +27,7 @@ extern "C"{
 #include <pspiofilemgr_kernel.h>
 #include <pspthreadman_kernel.h>
 #include <psploadcore.h>
-#include <globals.h>
+#include <ark.h>
 #include <pspkernel.h>
 #include <pspinit.h>
 #include "module2.h"
@@ -38,7 +38,7 @@ extern "C"{
 //#define sctrlKernelQuerySystemCall sceKernelQuerySystemCall
 
 // Prologue Module Start Handler
-typedef void (* STMOD_HANDLER)(SceModule2 *);
+typedef int (* STMOD_HANDLER)(SceModule2 *);
 
 // Thread Context
 typedef struct SceThreadContext SceThreadContext;

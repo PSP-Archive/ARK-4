@@ -158,6 +158,8 @@ copy-bin:
 	$(Q)cp common/include/kubridge.h dist/PC/sdk/include/
 	$(Q)cp common/include/systemctrl.h dist/PC/sdk/include/
 	$(Q)cp common/include/systemctrl_se.h dist/PC/sdk/include/
+	$(Q)cp common/include/module2.h dist/PC/sdk/include/
+	$(Q)cp common/include/ark.h dist/PC/sdk/include/
 	$(Q)cp -r contrib/PC/ciso dist/PC/
 
 encrypt-prx: \

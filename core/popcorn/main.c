@@ -24,7 +24,7 @@
 #include <systemctrl.h>
 #include <systemctrl_private.h>
 #include <macros.h>
-#include <globals.h>
+#include <ark.h>
 #include <functions.h>
 
 extern unsigned char g_icon_png[6108];

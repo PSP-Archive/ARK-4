@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "globals.h"
+#include "ark.h"
 #include "macros.h"
 #include <systemctrl.h>
 

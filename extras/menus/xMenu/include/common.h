@@ -8,7 +8,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <string>
-#include <globals.h>
+#include <ark.h>
 #include "graphics.h"
 #include "../../arkMenu/include/conf.h"
 

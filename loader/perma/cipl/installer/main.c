@@ -35,7 +35,7 @@
 #include <origipl_07G.h>
 #include <origipl_09G.h>
 #include <origipl_11G.h>
-#include <globals.h>
+#include <ark.h>
 
 PSP_MODULE_INFO("IPLFlasher", 0x0800, 1, 0); 
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);

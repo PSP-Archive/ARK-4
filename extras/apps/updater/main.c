@@ -10,7 +10,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <kubridge.h>
-#include "globals.h"
+#include "ark.h"
 
 #include <tmctrl/tmctrl.h>
 #include <msipl/mainbinex/payload.h>

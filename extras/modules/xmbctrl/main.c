@@ -28,7 +28,7 @@
 #include <systemctrl_se.h>
 #include <stddef.h>
 
-#include "globals.h"
+#include "ark.h"
 #include "macros.h"
 
 #include "include/main.h"

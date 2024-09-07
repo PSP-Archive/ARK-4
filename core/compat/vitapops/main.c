@@ -1,5 +1,5 @@
 #include <pspsdk.h>
-#include <globals.h>
+#include <ark.h>
 #include <graphics.h>
 #include <macros.h>
 #include <module2.h>

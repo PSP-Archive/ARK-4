@@ -23,7 +23,7 @@
 #include <string.h>
 #include <macros.h>
 #include <module2.h>
-#include <globals.h>
+#include <ark.h>
 #include <functions.h>
 #include "imports.h"
 #include "elf.h"

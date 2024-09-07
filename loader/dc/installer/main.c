@@ -11,7 +11,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
-#include <globals.h>
+#include <ark.h>
 #include <libpsardumper.h>
 #include <pspdecrypt.h>
 #include <kubridge.h>

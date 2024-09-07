@@ -19,7 +19,7 @@
 #include <pspinit.h>
 #include <pspmodulemgr.h>
 #include <pspiofilemgr.h>
-#include <globals.h>
+#include <ark.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include "plugin.h"

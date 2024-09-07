@@ -3,7 +3,7 @@
 #include <pspreg.h>
 #include <pspctrl.h>
 #include <pspdebug.h>
-#include <globals.h>
+#include <ark.h>
 #include <stdio.h>
 
 #include "systemctrl.h"
