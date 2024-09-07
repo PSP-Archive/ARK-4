@@ -1,5 +1,7 @@
 name: ARK-4
 on:
+  pull_request:
+    branches: [ main ]
     paths-ignore: 
       - 'README.md'
       - 'build.sh' 
@@ -9,8 +11,6 @@ on:
       - 'contrib/PC/ARKUpgrader'
       - '*.pptx'
       - 'CHANGELOG.md'
-  pull_request:
-    branches: [ main ]
 jobs:
   check_date:
     runs-on: ubuntu-latest
