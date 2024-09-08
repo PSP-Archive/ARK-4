@@ -108,7 +108,6 @@ Use `-h` or `--help` to show all available flags
 - Installer will choose the correct version according to your model.
 - Move or copy `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
 - Press the corresponding button in the installation page to install or remove the cIPL patch.
-- Warning: unlike classic cIPL, the new cIPL method can't be easily uninstalled. To revert to offical IPL, use ChronoSwitch to reinstall 6.61 OFW.
 
 
 ##### Full Flash Installation
