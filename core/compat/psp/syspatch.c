@@ -180,6 +180,27 @@ void disableLEDs(){
     }
 }
 
+void handleExtraRam(){
+    int apitype = sceKernelInitApitype();
+
+    // Enforce extra RAM
+    if (se_config->force_high_memory){
+        patch_partitions();
+        se_config->disable_pause = 1;
+    }
+
+    // Check if running a homebrew that requires extra RAM
+    if(!se_config->force_high_memory && (apitype == 0x141 || apitype == 0x152) ){
+        int paramsize=4;
+        int use_highmem = 0;
+        if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
+            patch_partitions();
+            se_config->disable_pause = 1;
+            se_config->force_high_memory = 1;
+        }
+    }
+}
+
 void enableInfernoCache(){
     if (se_config->iso_cache){
         int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
@@ -252,26 +273,6 @@ void processSettings(){
     // Disable LED
     disableLEDs();
 
-    // Enforce extra RAM
-    if (se_config->force_high_memory){
-        patch_partitions();
-        se_config->disable_pause = 1;
-    }
-
-    // Check if running a homebrew that requires extra RAM
-    if(!se_config->force_high_memory && (apitype == 0x141 || apitype == 0x152) ){
-        int paramsize=4;
-        int use_highmem = 0;
-        if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-            patch_partitions();
-            se_config->disable_pause = 1;
-            se_config->force_high_memory = 1;
-        }
-    }
-
-    // Enable Inferno cache
-    enableInfernoCache();
-
     // Disable Pause feature on PSP Go
     if (se_config->disable_pause){
         disable_PauseGame();
@@ -301,29 +302,38 @@ void PSPOnModuleStart(SceModule2 * mod){
 		}
 	}
 
-    if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
+    if (strcmp(mod->modname, "sceUmdMan_driver") == 0) {
         patch_sceUmdMan_driver(mod);
         patch_umd_idslookup(mod);
         goto flush;
     }
 
-    if(strcmp(mod->modname, "sceUmdCache_driver") == 0) {
+    if (strcmp(mod->modname, "sceUmdCache_driver") == 0) {
         patch_umdcache(mod);
         goto flush;
     }
 
-    if(strcmp(mod->modname, "sceWlan_Driver") == 0) {
+    if (strcmp(mod->modname, "sceWlan_Driver") == 0) {
         patch_sceWlan_Driver(mod);
         patch_Libertas_MAC(mod);
         goto flush;
     }
 
-    if(strcmp(mod->modname, "scePower_Service") == 0) {
+    if (strcmp(mod->modname, "scePower_Service") == 0) {
         patch_scePower_Service(mod);
         goto flush;
     }
     
-    if(strcmp(mod->modname, "sceMediaSync") == 0) {
+    if (strcmp(mod->modname, "sceUtility_Driver") == 0){
+        // Handle extra ram setting
+        handleExtraRam();
+        // Handle Inferno cache setting
+        enableInfernoCache();
+        goto flush;
+    }
+
+    if (strcmp(mod->modname, "sceMediaSync") == 0) {
+        // Handle some settings
         processSettings();
         goto flush;
     }
@@ -333,7 +343,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    if(0 == strcmp(mod->modname, "game_plugin_module")) {
+    if (strcmp(mod->modname, "game_plugin_module") == 0) {
 		if (se_config->skiplogos) {
 		    patch_GameBoot(mod);
 	    }
@@ -363,7 +373,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-	if( strcmp(mod->modname, "Legacy_Software_Loader") == 0 )
+	if (strcmp(mod->modname, "Legacy_Software_Loader") == 0 )
 	{
         // Missing from SDK
         #define PSP_INIT_APITYPE_EF2 0x152
@@ -374,10 +384,10 @@ void PSPOnModuleStart(SceModule2 * mod){
 		}
 	}
     
-    if(booted == 0)
+    if (booted == 0)
     {
         // Boot is complete
-        if(isSystemBooted())
+        if (isSystemBooted())
         {
 
             // handle mscache

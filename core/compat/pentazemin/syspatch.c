@@ -439,10 +439,8 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-	// load and process settings file
-    if(strcmp(mod->modname, "sceMediaSync") == 0)
-    {
-		// apply extra memory patch
+	// perfect time to apply extra memory patch
+	if (strcmp(mod->modname, "sceImpose_Driver") == 0){
 		if (se_config->force_high_memory) unlockVitaMemory();
 		else{
 			int apitype = sceKernelInitApitype();
@@ -471,8 +469,8 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 				}
         	}
         }
-        goto flush;
-    }
+		goto flush;
+	}
        
     // Boot Complete Action not done yet
     if(booted == 0)

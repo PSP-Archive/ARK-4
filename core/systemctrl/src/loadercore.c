@@ -42,6 +42,7 @@ unsigned int sceInitTextAddr = 0;
 
 // Plugin Loader Status
 int pluginLoaded = 0;
+int settingsLoaded = 0;
 
 // Real Executable Check Function Pointer
 int (* ProbeExec1)(u8 *buffer, int *check) = NULL;
@@ -241,15 +242,21 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         }
     }
 
-    // load settings and plugins before starting mediasync
-    if (!pluginLoaded && strcmp(modname, "sceMediaSync") == 0)
-    {
+    // load settings before utility module
+    if (!settingsLoaded && strcmp(modname, "sceUtility_Driver") == 0){
         // Check ARK install path
         checkArkPath();
         // Check controller input to disable settings and/or plugins
         checkControllerInput();
         // load settings
         loadSettings();
+        // Remember it
+        settingsLoaded = 1;
+    }
+
+    // load plugins before starting mediasync
+    if (!pluginLoaded && strcmp(modname, "sceMediaSync") == 0)
+    {
         // Load XMB Control
         loadXmbControl();
         // Load Plugins
