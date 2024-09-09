@@ -19,7 +19,7 @@
 #include <pspkernel.h>
 #include <psputility.h>
 #include <systemctrl.h>
-#include <globals.h>
+#include <ark.h>
 #include <module2.h>
 
 extern ARKConfig config;

@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "globals.h"
+#include "ark.h"
 #include "macros.h"
 #include <systemctrl.h>
 #include <systemctrl_se.h>

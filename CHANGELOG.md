@@ -1,8 +1,48 @@
 # ARK Changelog
 
+## Version 4.20.69 (2024-04-20)
+- Updated `Despertar del Cementerio` to `Version 10`. Can now be used to unbrick any `PSP` model.
+- Can now install `cIPL` on all `PSP` models.
+- Added `FinalSpeed` for easier access to `Live` installations.
+- Several other small fixes and improvements.
+- Updated `Despertar del Cementerio` to `Version 10`. Now compatible with all PSP models.
+- Can now install `cIPL` on all PSP models.
+- `Custom App` location has been changed to `/PSP/APP/CUSTOM/EBOOT.PBP`
+#### Rev 1
+- Updated `DC-ARK` (PSP version) to decrypt PSP GO Firmware. Must be put on the root of memory stick as `661GO.PBP`
+- Fixed a bug in `Despertar del Cementerio` where it could not repartion lflash, was missing `lflash_fdisk.prx`
+
 ## Version 4.20.68 (2024-02-06)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42068
 - Released `ARK-X` for `PS Vita`.
+#### Rev 14
+- Fixed Simplified Chinese in VSH Menu (#329).
+- Cleanup
+#### Rev 13
+- Added MagicMemoryCreator (DC-ARK-Maker), you don't need another PSP to create a MMS for DC-ARK (works for 1K and 2K only still). Located in the PC folder of the ARK4.zip, (reuploaded rev fix) Also include uninstaller.
+#### Rev 12
+- Added Pops4Tool, a set of patches and files to enable pops in toolkits (requires PopsLoader, compatibility varies).
+#### Rev 11
+- Cleanup, refactor and small fixes.
+#### Rev 10
+- added fix for `camera_patch_lite` plugin on `Vita Standalone`.
+- reduced memory consumption of `Memory Stick Speedup`. Improves stability of the feature.
+- the `ARK Right Analog` plugin (https://github.com/rereprep/ArkRightAnalog) is now automatically installed and configured by `FasterARK`. This allows using the second analog stick on certain PSP games (requires `gta_remastered` and/or `camera_patch_lite` to be installed on `ARK`).
+- implemented X/O swap in `xMenu` (ARK-X custom launcher).
+- changed default icon in `xMenu` (for games without an ICON0.PNG).
+- some small fixes and cleanup.
+#### Rev 9
+- Fixed control issue in `ARK-X` on `Vita TV` or `MiniVitaTV` (requires updating `ps1cfw_enabler`).
+- Fixed exit-to-launcher combo on `Vita TV`/`MiniVitaTV`.
+- Fixed `FasterARK` when an `ARK_01234` savedata folder was already installed.
+- Some other small cleanup and fixes.
+#### Rev 8
+- Disallow `Memory Stick Speedup` in `PS1` since it doesn't actually impact these games and causes clashes with `cwcheat`.
+- Improve exit-to-launcher key combo in `ARK-X`.
+#### Rev 7
+- Fixed memory leak in `xMenu` (ARK-X).
+- Added a few more options to `xMenu`.
+- Several small fixes and cleanup.
 #### Rev 6
 - Fixed exit on PS Vita.
 #### Rev 5

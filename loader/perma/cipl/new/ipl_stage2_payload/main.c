@@ -1,14 +1,15 @@
 #include <pspsdk.h>
 #include <syscon.h>
+#include "gpio.h"
 #ifdef DEBUG
 #include <uart.h>
 #include <printf.h>
 #endif
 
 #ifdef MSIPL
-#include "ms_payloadex.h"
+#include "ms_payloadex/ms_payloadex.h"
 #else
-#include "nand_payloadex.h"
+#include "nand_payloadex/nand_payloadex.h"
 #endif
 
 void Dcache();
@@ -37,12 +38,13 @@ int main()
 	memcpy((u8 *) 0x8FC0000, &payloadex, size_payloadex);
 	
 #ifdef MSIPL
-	sceSysconCtrlMsPower(1);
+	syscon_ctrl_ms_power(1);
 #endif
 	
 	*(u32 *) 0x8FB0000 = -1;
-	pspSysconGetCtrl1((u32 *) 0x8FB0000);
+	syscon_issue_command_read(0x07, (u32 *) 0x8FB0000);
 
 	Dcache();
 	Icache();
+
 }

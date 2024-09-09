@@ -4,6 +4,7 @@
 
 #define FIX_BOOLEAN(c) {c = (c)?1:0;}
 
+
 enum{
     DISABLED,
     ALWAYS_ON,
@@ -489,6 +490,10 @@ settings_entry* ark_conf_entries_adr[] = {
 
 std::vector<string> custom_config;
 
+void cleanupSettings(){
+    custom_config.clear();
+}
+
 bool isComment(string line){
     return (line[0] == '#' || line[0] == ';' || (line[0]=='/'&&line[1]=='/'));
 }
@@ -683,9 +688,9 @@ void loadSettings(){
         }
     }
 
-    
+   	cleanupSettings(); 
 
-    std::ifstream input((string(ark_config->arkpath)+"SETTINGS.TXT").c_str());
+    std::ifstream input((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
     for( std::string line; getline( input, line ); ){
         if (isComment(line)){
             custom_config.push_back(line);
@@ -722,7 +727,8 @@ static string processSetting(string name, unsigned char setting){
 }
 
 void saveSettings(){
-    std::ofstream output("SETTINGS.TXT");
+    ARKConfig* ark_config = common::getArkConfig();
+    std::ofstream output((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
     output << processSetting("usbcharge", cfw_config.usbcharge) << endl;
     output << processSetting("overclock", cfw_config.overclock) << endl;
     output << processSetting("powersave", cfw_config.powersave) << endl;
@@ -772,6 +778,3 @@ void saveSettings(){
     output.close();
 }
 
-void cleanupSettings(){
-    custom_config.clear();
-}

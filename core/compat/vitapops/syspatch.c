@@ -1,5 +1,5 @@
 #include <pspsdk.h>
-#include <globals.h>
+#include <ark.h>
 #include <macros.h>
 #include <module2.h>
 #include <pspdisplay_kernel.h>
@@ -150,6 +150,8 @@ static int vram_clear(){
 extern int exitLauncher();
 int (*arkLauncher)() = NULL;
 int popsLauncher(){
+    
+    if (draw_thread >= 0) return 0; // disallow exit when plugin screen handler is running
 
     // init pops vram and pause pops, this fixes screen when going back to launcher
     DisplayWaitVblankStart();
@@ -203,7 +205,6 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 		// Protect pops memory
         sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
         memset((void *)0x49F40000, 0, 0x80000);
-
         goto flush;
     }
     

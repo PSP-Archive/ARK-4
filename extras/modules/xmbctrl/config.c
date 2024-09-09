@@ -5,7 +5,7 @@
 #include <kubridge.h>
 #include <stddef.h>
 
-#include "globals.h"
+#include "ark.h"
 
 #include "main.h"
 #include "list.h"
@@ -120,7 +120,7 @@ void loadSettings(){
 
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
-    strcat(path, "SETTINGS.TXT");
+    strcat(path, ARK_SETTINGS);
     ProcessConfigFile(path, &processConfigLine, &processCustomConfig);
 
     FIX_BOOLEAN(config.launcher);
@@ -154,7 +154,7 @@ void saveSettings(){
 
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
-    strcat(path, "SETTINGS.TXT");
+    strcat(path, ARK_SETTINGS);
 
     int fd = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 

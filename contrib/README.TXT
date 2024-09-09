@@ -11,22 +11,13 @@ The instructions are as follows:
 
   Permanent CFW via cIPL
 
-    - `New cIPL`: works on `1g`, `2g` and `3g` models on `6.61`.
-    - `Classic cIPL`: works on `Pandora` compatbile models (`1g` and early `2g`) on `6.60`, `6.61` or `6.60 Testing Tool`.
-    - `DevTool cIPL`: works on `DTP-T1000` devkit units on `6.60 Development Tool` firmware.
-    - cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
-    - Move or copy either `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
-    - Press the corresponding button in the installation page to install or remove the cIPL patch.
-    - Warning: unlike classic cIPL, the new cIPL method can't be easily uninstalled. To revert to offical IPL, use ChronoSwitch to reinstall 6.61 OFW.
-
-
-  Permanent CFW via Infinity 2
-
-    - Works on all PSP models on 6.60 or 6.61 firmwares.
-    - Copy or move the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
-    - Run the`Infinity` app using Official Firmware to run the initial installation.
-    - Run `Infinity` a second time to configure autoboot by selecting ARK within the Infinity app. Run the ARK CFW again to activate. ARK will now be automatically activated on boot up.
-
+  - `New cIPL`: works with every retail model (1K, 2K, 3K, Go and Street) on firmware `6.61`.
+  - `Classic cIPL`: works with `1g` and early `2g` on firmware `6.60` or `6.61` as well as `Testkits` on `6.60 Testing Tool`.
+  - `DevTool cKBOOTI`: works with `DTP-T1000` (devkits) on `6.60 Development Tool`.
+  - Installer will choose the correct version according to your model.
+  - Move or copy `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
+  - Press the corresponding button in the installation page to install or remove the cIPL patch.
+  - Warning: unlike classic cIPL, the new cIPL method can't be easily uninstalled. To revert to offical IPL, use ChronoSwitch to reinstall 6.61 OFW.
 
   Full Flash Installation
 
@@ -42,13 +33,14 @@ The instructions are as follows:
     - `Time Machine` allows the ability to boot the `6.61` firmware and `ARK` entirely from the Memory Stick.
     - `Despertar del Cementerio` allows the ability to revive a bricked PSP when used in combination with a `Pandora` or `Baryon Sweeper`.
     - To install `DC-ARK` you must first format the memory stick leaving enough space for the boot sector. You can use `PSP Tool` to do this.
-    - You also need to be running a `CFW` to install `DC-ARK` (ARK itself or any other).
+    - You can install `DC-ARK` either using a `PSP` or a `PC` (Windows, Mac and Linux).
+    - On `PSP` you need to be running a `CFW` to install `DC-ARK` (ARK itself or any other).
     - Copy the `ARK_DC` folder to the `/PSP/GAME/` folder and run the installer from the `XMB`.
     - Follow the instructions to install DC-ARK and create a magic memory stick.
-    - On compatible models, use `Advanced VSH Menu` to create a `Pandora` battery.
+    - On `PC`, you need `Python 3` and run `MagicMemoryCreator` with `admin`/`root` priviledges.
+    - On compatible models, you can use `Advanced VSH Menu` to create a `Pandora Battery`.
     - Use a `Pandora` or `Baryon Sweeper` in combination with your newly created `Magic Memory Stick` to boot up `Despertar del Cementerio`.
-    - From here you can either boot ARK from memory stick, install 6.61 Firmware with ARK on the Nand or install 6.61 Official Firmware.
-    - Note that installing 6.61 firmware with ARK requires a cIPL-compatible PSP (1K and early 2K).
+    - From here you can either boot ARK from memory stick, install 6.61 Firmware with ARK on the Nand or install 6.61 Official Firmware
 
 
 Installation On PS Vita

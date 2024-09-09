@@ -35,9 +35,10 @@ extern void copyPSPVram(u32*);
 
 // K.BIN entry point
 void (* kEntryPoint)() = (void*)KXPLOIT_LOADADDR;
+char* kbin_path = NULL;
 
 int autoDetectDevice(ARKConfig* config);
-int initKxploitFile();
+int initKxploitFile(char*);
 void kernelContentFunction(void);
 
 // Entry Point
@@ -166,6 +167,7 @@ int initKxploitFile(char* kxploit_file){
         kxploit_file = k_path;
     }
     PRTSTR1("Loading Kxploit at %s", kxploit_file);
+    kbin_path = kxploit_file;
     memset((void *)KXPLOIT_LOADADDR, 0, 0x4000);
     g_tbl->IoRead(fd, (void *)KXPLOIT_LOADADDR, 0x4000);
     g_tbl->IoClose(fd);

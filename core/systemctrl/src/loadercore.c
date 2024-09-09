@@ -24,7 +24,7 @@
 #include <module2.h>
 #include <systemctrl.h>
 #include <systemctrl_private.h>
-#include <globals.h>
+#include <ark.h>
 #include <functions.h>
 #include "imports.h"
 #include "modulemanager.h"
@@ -42,6 +42,7 @@ unsigned int sceInitTextAddr = 0;
 
 // Plugin Loader Status
 int pluginLoaded = 0;
+int settingsLoaded = 0;
 
 // Real Executable Check Function Pointer
 int (* ProbeExec1)(u8 *buffer, int *check) = NULL;
@@ -197,13 +198,17 @@ static void checkArkPath(){
         // fix for PSP-Go with dead ef (or non-Go units)
         if (ark_config->arkpath[0]=='e' && ark_config->arkpath[1]=='f'){
             ark_config->arkpath[0] = 'm'; ark_config->arkpath[1] = 's';
-            if ((res=sceIoDopen(ark_config->arkpath))>=0){
-                sceIoDclose(res);
-                return;
-            }
+        }
+        else {
+            ark_config->arkpath[0] = 'e'; ark_config->arkpath[1] = 'f';
+        }
+        if ((res=sceIoDopen(ark_config->arkpath))>=0){
+            sceIoDclose(res);
+            return;
         }
         // no ARK install folder, default to SEPLUGINS
         strcpy(ark_config->arkpath, SEPLUGINS_MS0);
+        sceIoMkdir(SEPLUGINS_MS0, 0777);
     }
     else{
         sceIoDclose(res);
@@ -237,15 +242,21 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         }
     }
 
-    // load settings and plugins before starting mediasync
-    if (!pluginLoaded && strcmp(modname, "sceMediaSync") == 0)
-    {
+    // load settings before utility module
+    if (!settingsLoaded && strcmp(modname, "sceUtility_Driver") == 0){
         // Check ARK install path
         checkArkPath();
         // Check controller input to disable settings and/or plugins
         checkControllerInput();
         // load settings
         loadSettings();
+        // Remember it
+        settingsLoaded = 1;
+    }
+
+    // load plugins before starting mediasync
+    if (!pluginLoaded && strcmp(modname, "sceMediaSync") == 0)
+    {
         // Load XMB Control
         loadXmbControl();
         // Load Plugins

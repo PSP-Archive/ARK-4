@@ -26,7 +26,7 @@
 #include <systemctrl.h>
 #include <systemctrl_private.h>
 #include <macros.h>
-#include <globals.h>
+#include <ark.h>
 #include <functions.h>
 #include "loadmodule_patch.h"
 #include "nodrm_patch.h"
@@ -43,6 +43,7 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
 {
     static int booted = 1;
 
+    // Patch game-specific modules
     applyFixesByModule(mod);
 
     // Boot Complete Action not done yet

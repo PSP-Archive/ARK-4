@@ -19,7 +19,7 @@
 #include <pspinit.h>
 #include <pspmodulemgr.h>
 #include <pspiofilemgr.h>
-#include <globals.h>
+#include <ark.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include "plugin.h"
@@ -152,10 +152,10 @@ static int isLauncher(){
 }
 
 static int isPath(char* runlevel){
-    char path[ARK_PATH_SIZE];
-    strcpy(path, sceKernelInitFileName());
-    lowerString(path, path, strlen(path)+1);
-    return (strcmp(path, runlevel)==0);
+    return (
+        strcasecmp(runlevel, sceKernelInitFileName())==0 ||
+        strcasecmp(runlevel, sctrlSEGetUmdFile())==0
+    );
 }
 
 static int isGameId(char* runlevel){
@@ -385,7 +385,7 @@ static void processLine(char * line, void (*enabler)(char*), void (*disabler)(ch
 }
 
 // Load Plugins
-static void ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler)(char*))
+static int ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler)(char*))
 {
 
     int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
@@ -412,7 +412,9 @@ static void ProcessConfigFile(char* path, void (*enabler)(char*), void (*disable
         
         // Close Plugin Config
         sceIoClose(fd);
+        return 0;
     }
+    return -1;
 }
 
 static void settingsHandler(char* path, u8 enabled){
@@ -532,12 +534,14 @@ void LoadPlugins(){
     // Open Plugin Config from ARK's installation folder
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
-    strcat(path, "PLUGINS.TXT");
+    strcat(path, PLUGINS_FILE);
     ProcessConfigFile(path, &addPlugin, &removePlugin);
     // Open Plugin Config from SEPLUGINS
-    ProcessConfigFile("ms0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
+    ProcessConfigFile(PLUGINS_PATH, addPlugin, removePlugin);
     // On PSP Go (only if ms0 isn't already redirected to ef0)
-    ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
+    ProcessConfigFile(PLUGINS_PATH_GO, addPlugin, removePlugin);
+    // Flash0 plugins
+    ProcessConfigFile(PLUGINS_PATH_FLASH, addPlugin, removePlugin);
     // start all loaded plugins
     startPlugins();
     // free resources
@@ -552,7 +556,8 @@ void loadSettings(){
     // process settings file
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
-    strcat(path, "SETTINGS.TXT");
-    ProcessConfigFile(path, settingsEnabler, settingsDisabler);
+    strcat(path, ARK_SETTINGS);
+    if (ProcessConfigFile(path, settingsEnabler, settingsDisabler) < 0) // try external settings
+        ProcessConfigFile(ARK_SETTINGS_FLASH, settingsEnabler, settingsDisabler); // retry flash1 settings
     se_config.magic = ARK_CONFIG_MAGIC;
 }

@@ -9,7 +9,7 @@
 #include <systemctrl.h>
 #include <systemctrl_private.h>
 #include <macros.h>
-#include <globals.h>
+#include <ark.h>
 #include <functions.h>
 
 struct DeviceSize {
@@ -21,8 +21,9 @@ struct DeviceSize {
 };
 
 // this fixes old games that report "not enough space" when more than 2GB are available
-static u32 _sceIoDevctl(const char *name, int cmd, u32 argAddr, int argLen, u32 outPtr, int outLen){
-    u32 res = sceIoDevctl(name, cmd, argAddr, argLen, outPtr, outLen);
+static u32 (*_sceIoDevctl)(const char *name, int cmd, u32 argAddr, int argLen, u32 outPtr, int outLen);
+static u32 myIoDevctl(const char *name, int cmd, u32 argAddr, int argLen, u32 outPtr, int outLen){
+    u32 res = _sceIoDevctl(name, cmd, argAddr, argLen, outPtr, outLen);
 
     if (cmd == 0x02425818 && res >= 0){
 
@@ -50,5 +51,6 @@ static u32 _sceIoDevctl(const char *name, int cmd, u32 argAddr, int argLen, u32 
 }
 
 void patch_ioDevCtl(){
-    sctrlHENPatchSyscall(sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x54F5FB11), _sceIoDevctl);
+    u32 io_ctrl = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x54F5FB11);
+    HIJACK_FUNCTION(io_ctrl, myIoDevctl, _sceIoDevctl);
 }

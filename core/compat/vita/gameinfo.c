@@ -5,7 +5,7 @@
 #include <rebootconfig.h>
 #include <systemctrl.h>
 
-#include "globals.h"
+#include "ark.h"
 #include "macros.h"
 #include "module2.h"
 

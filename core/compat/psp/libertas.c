@@ -18,7 +18,7 @@
 #include <string.h>
 #include <pspiofilemgr.h>
 #include "libertas.h"
-#include "globals.h"
+#include "ark.h"
 #include "macros.h"
 #include "systemctrl_se.h"
 

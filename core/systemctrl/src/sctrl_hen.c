@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <module2.h>
-#include <globals.h>
+#include <ark.h>
 #include <macros.h>
 #include <functions.h>
 #include "rebootex.h"
@@ -317,8 +317,13 @@ int sctrlHENIsToolKit()
 	int k1 = pspSdkSetK1(0);
     int level = sctrlKernelSetUserLevel(8);
     
-    SceIoStat stat; int res = sceIoGetstat("flash0:/kd/vshbridge_tool.prx", &stat);
-    if (res >= 0){
+    if (ark_config->exec_mode == PSP_ORIG){
+        SceIoStat stat;
+        if (sceIoGetstat("flash0:/kd/vshbridge_tool.prx", &stat) >= 0)
+            ark_config->exec_mode = PSP_TOOL;
+    }
+
+    if (ark_config->exec_mode == PSP_TOOL){
         int baryon_ver = 0;
         int (*getBaryonVer)(void*) = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x7EC5A957);
         if (getBaryonVer) getBaryonVer(&baryon_ver);

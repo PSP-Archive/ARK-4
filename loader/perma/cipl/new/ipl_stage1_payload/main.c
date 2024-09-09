@@ -4,6 +4,7 @@
 #include "sysreg.h"
 #include "kirk.h"
 #include "syscon.h"
+#include "gpio.h"
 
 #ifdef DEBUG
 #include "printf.h"
@@ -123,8 +124,10 @@ u8 rand_xor[] =
 {
 #if IPL_02G
 	0x61, 0x7A, 0x56, 0x42, 0xF8, 0xED, 0xC5, 0xE4, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B
-#elif IPL_03G || IPL_05G
+#elif IPL_03G
 	0x61, 0x7A, 0x56, 0x42, 0xF8, 0xED, 0xC5, 0xE4, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25
+#elif IPL_05G
+	0x61, 0x7A, 0x56, 0x42, 0xF8, 0xED, 0xC5, 0xE4, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23
 #elif IPL_04G || IPL_07G || IPL_09G || IPL_11G
 	0x8D, 0x5D, 0xA6, 0x08, 0xF2, 0xBB, 0xC6, 0xCC, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23
 #endif
@@ -143,11 +146,88 @@ u8 key_86[] =
 #endif
 };
 
+void xor(u8 *dest, u8 *src_a, u8 *src_b)
+{
+	for (int i = 0; i < 16; i++)
+		dest[i] = src_a[i] ^ src_b[i];
+}
+
+int seed_gen1(u8 *random_key, u8 *random_key_dec_resp_dec)
+{
+	memset(random_key, 0xAA, 16);
+	
+	u8 random_key_dec[16];
+	int ret = kirk_decrypt_aes(random_key_dec, random_key, 16, 0x69);
+	if (ret)
+		return ret;
+	
+	ret = syscon_send_auth(0x80, random_key_dec);
+	if (ret)
+		return ret;
+	
+	u8 random_key_dec_resp[16];
+	ret = syscon_recv_auth(0, random_key_dec_resp);
+	if (ret)
+		return ret;
+	
+	ret = kirk_decrypt_aes(random_key_dec_resp_dec, random_key_dec_resp, 16, 0x14);
+	if (ret)
+		return ret;
+		
+	u8 random_key_dec_resp_dec_swapped[16];
+	memcpy(random_key_dec_resp_dec_swapped, &random_key_dec_resp_dec[8], 8);
+	memcpy(&random_key_dec_resp_dec_swapped[8], random_key_dec_resp_dec, 8);
+	
+	u8 seed_dec_resp_dec_hi_low_swapped_dec[16];
+	ret = kirk_decrypt_aes(seed_dec_resp_dec_hi_low_swapped_dec, random_key_dec_resp_dec_swapped, 16, 0x69);
+	if (ret)
+		return ret;
+
+	ret = syscon_send_auth(0x82, seed_dec_resp_dec_hi_low_swapped_dec);
+	if (ret)
+		return ret;
+
+	return 0;
+}
+
+int seed_gen2(u8 *rand_xor, u8 *key_86, u8 *random_key, u8 *random_key_dec_resp_dec)
+{
+	u8 random_key_xored[16];
+	xor(random_key_xored, random_key, rand_xor);
+	
+	int ret = kirk_decrypt_aes(random_key_xored, random_key_xored, 16, 0x15);
+	if (ret)
+		return ret;
+		
+	u8 random_key_dec_resp_dec_xored[16];
+	xor(random_key_dec_resp_dec_xored, random_key_dec_resp_dec, random_key_xored);
+	
+	ret = syscon_send_auth(0x84, random_key_dec_resp_dec_xored);
+	if (ret)
+		return ret;
+		
+	ret = syscon_send_auth(0x86, key_86);
+	if (ret)
+		return ret;
+
+	u8 resp_2[16];
+	ret = syscon_recv_auth(2, resp_2);
+	if (ret)
+		return ret;
+
+	u8 resp_4[16];
+	ret = syscon_recv_auth(4, resp_4);
+	if (ret)
+		return ret;
+	
+	return 0;
+}
+
 int unlockSyscon()
 {
-	KirkReset();
-	
-	KirkCmdF();
+	kirk_hwreset();
+
+	kirkF(0xBFC00C00);
 	
 	u8 random_key[16];
 	u8 random_key_dec_resp_dec[16];
@@ -160,8 +240,8 @@ int unlockSyscon()
 	if (ret)
 		return ret;
 	
-	KirkReset();
-	
+	kirk_hwreset();
+
 	return 0;
 }
 
@@ -181,13 +261,6 @@ u8 seed_xor[] =
 
 int set_seed(u8 *xor_key, u8 *random_key, u8 *random_key_dec_resp_dec)
 {
-#ifdef DEBUG
-	_putchar('s');
-	_putchar('e');
-	_putchar('e');
-	_putchar('d');
-	_putchar('\n');
-#endif
 	for (int i = 0; i < sizeof(seed_xor); i++)
 		*(u8 *) (0xBFC00210 + i) ^= seed_xor[i];
 
@@ -227,25 +300,11 @@ u8 rom_hmac[] =
 
 void sha256hmacPatched(u8 *key, u32 keylen, u8 *data, u32 datalen, u8 *out)
 {
-#ifdef DEBUG
-	_putchar('h');
-	_putchar('m');
-	_putchar('a');
-	_putchar('c');
-	_putchar('\n');
-#endif
 	memcpy(out, rom_hmac, sizeof(rom_hmac));
 }
 
 void prestage2()
 {
-#ifdef DEBUG
-	_putchar('p');
-	_putchar('r');
-	_putchar('e');
-	_putchar('2');
-	_putchar('\n');
-#endif
 	// Copy stage 2 to scratchpad
 	memcpy((u8 *) 0x10000, &payload, size_payload);
 	
@@ -269,77 +328,46 @@ void prestage2()
 	((void (*)()) 0x4000000)();
 }
 
-u32 GetTachyonVersion()
-{
-	u32 ver = _lw(0xbc100040);
-	
-	if (ver & 0xFF000000)
-		return (ver >> 8);
-
-	return 0x100000;
-}
-
 int main()
 {
-	sceSysconInit();
-
-	u32 baryon_version = 0;
-	while (sceSysconGetBaryonVersion(&baryon_version) < 0);
-	
-	while (sceSysconGetTimeStamp(0) < 0);
-
-	u32 tachyon_version = GetTachyonVersion();
 
 #ifndef MSIPL
+	syscon_init();
 #ifdef SET_SEED_ADDRESS
 	unlockSyscon();
+	syscon_handshake_unlock();
+#endif
 #endif
 
-	uint32_t keys = -1;
-	pspSysconGetCtrl1(&keys);
-	if ((keys & SYSCON_CTRL_VOL_UP) == 0)
-	{
-		sceSysconCtrlMsPower(1);
-	
-		_sw(0x00000000, 0x80010068);
+	u32 tachyon_version = syscon_get_tachyon_version();
 
-		if (tachyon_version >= 0x600000)
-		{
-			_sw(0x00000000, 0x80010A8C);
-		}
-		else
-		{
-			_sw(0x00000000, 0x8001080C);
-		}
-	
-		Dcache();
-		Icache();
-
-		return ((int (*)())0x80010000)();
-	}
-#endif
-
-#ifdef DEBUG
-	sceSysconCtrlHRPower(1);
-	
-	uart_init();
-	
-	_putchar('i');
-	_putchar('p');
-	_putchar('l');
-	_putchar('l');
-	_putchar('d');
-	_putchar('r');
-	_putchar('\n');
-#endif
-
-	
 	if (tachyon_version >= 0x600000)
 		_sw(0x20070910, 0xbfc00ffc);
 	else if (tachyon_version >= 0x400000)
 		_sw(0x20050104, 0xbfc00ffc);
 	else
 		_sw(0x20040420, 0xbfc00ffc);
+
+#ifndef MSIPL
+	uint32_t keys = -1;
+	syscon_get_digital_key(&keys);
+	if ((keys & SYSCON_CTRL_LTRIGGER) == 0)
+	{
+    	syscon_ctrl_ms_power(1);
+	
+		MsFatMount();
+
+		int res = MsFatOpen("/TM/DCARK/msipl.raw");
+
+		if (res == 0){
+			MsFatRead(0x40c0000, 0x4000);
+			MsFatClose();
+			Dcache();
+			Icache();
+			return ((int (*)()) 0x40c0000)();
+		}
+	}
+#endif
 
 	_sw(0, ERASE_RAM_START);
 

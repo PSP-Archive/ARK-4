@@ -17,7 +17,7 @@ SUBDIRS = \
 	libintraFont \
 	libvlf \
 	libsploit \
-	psid
+	psid 
 
 PREBUILTDIRS = prebuilt libvlf
 .PHONY: subdirs $(SUBDIRS)

@@ -18,15 +18,24 @@
 #include <ipl_block_01g.h>
 #include <kbooti_ipl_block_01g.h>
 
-#include <payload_01G.h>
-#include <payload_02G.h>
-#include <payload_03G.h>
-#include <payload_04G.h>
-#include <payload_05G.h>
-#include <payload_07G.h>
-#include <payload_09G.h>
-#include <payload_11G.h>
+#include <cipl_01G.h>
+#include <cipl_02G.h>
+#include <cipl_03G.h>
+#include <cipl_04G.h>
+#include <cipl_05G.h>
+#include <cipl_07G.h>
+#include <cipl_09G.h>
+#include <cipl_11G.h>
 
+#include <origipl_01G.h>
+#include <origipl_02G.h>
+#include <origipl_03G.h>
+#include <origipl_04G.h>
+#include <origipl_05G.h>
+#include <origipl_07G.h>
+#include <origipl_09G.h>
+#include <origipl_11G.h>
+#include <ark.h>
 
 PSP_MODULE_INFO("IPLFlasher", 0x0800, 1, 0); 
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
@@ -37,11 +46,19 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 
 #define KBOOTI_UPDATE_PRX "kbooti_update.prx"
 
+//#define ORIG_IPL_SIZE 126976
+#define ORIG_IPL_SIZE 127312
+#define ORIG_IPL_MAX_SIZE 131072
+#define CLASSIC_CIPL_SIZE 147456
+#define NEW_CIPL_SIZE 184320
+
 u32 sceSysregGetTachyonVersion(void);		// 0xE2A5D1EE
 
+ARKConfig ark_config;
 char msg[256];
 int model;
-static u8 orig_ipl[0x24000] __attribute__((aligned(64)));
+static u8 big_buf[256*1024] __attribute__((aligned(64)));
+static int reboot = -1;
 
 u8* ipl_block = ipl_block_large;
 
@@ -68,6 +85,20 @@ int ReadFile(char *file, int seek, void *buf, int size)
 	return read;
 }
 
+void open_flash(){
+    while(sceIoUnassign("flash0:") < 0) {
+        sceKernelDelayThread(500000);
+    }
+    while (sceIoAssign("flash0:", "lflash0:0,0", "flashfat0:", 0, NULL, 0)<0){
+        sceKernelDelayThread(500000);
+    }
+    while(sceIoUnassign("flash1:") < 0) {
+        sceKernelDelayThread(500000);
+    }
+    while (sceIoAssign("flash1:", "lflash0:0,1", "flashfat1:", 0, NULL, 0)<0){
+        sceKernelDelayThread(500000);
+    }
+}
 
 ////////////////////////////////////////
 void ErrorExit(int milisecs, char *fmt, ...) 
@@ -78,38 +109,10 @@ void ErrorExit(int milisecs, char *fmt, ...)
 	va_end(list);
 	printf(msg);
 	sceKernelDelayThread(milisecs*1000);
-	sceKernelExitGame(); 
-}
-////////////////////////////////////////
-u8 nand_buff[0x40000];
-void flash_ipl(int size, u16 key)
-{
-
-	printf("Flashing IPL...");
-
-//	if(ReadFile("ipl_block.bin", 0 , ipl_block_large , 0x4000) < 0)
-//		ErrorExit(5000,"Failed to load custom ipl!\n");
-
-	if(pspIplUpdateClearIpl() < 0)
-		ErrorExit(5000,"Failed to clear ipl!\n");
-
-	if (pspIplUpdateSetIpl(ipl_block , size + 0x4000, key ) < 0)
-		ErrorExit(5000,"Failed to write ipl!\n");
-
-	printf("Done.\n");
-
-}
-
-void flash_kbooti(int size)
-{
-
-	printf("Flashing KBOOTI...");
-
-	if (pspKbootiUpdateKbooti(kbooti_ipl_block_01g, (sizeof(kbooti_ipl_block_01g))) < 0)
-		ErrorExit(5000,"Failed to write kbooti!\n");
-
-	printf("Done.\n");
-
+	if(reboot)
+		scePowerRequestColdReset(0);
+	else
+		sceKernelExitGame(); 
 }
 
 void loadIplUpdateModule(){
@@ -153,34 +156,36 @@ void classicipl_menu(){
 
 	printf("Classic cIPL installation.\n");
 
-	ipl_block = ipl_block_large;
 	if( model == 0 ) {
 		memcpy( ipl_block_large , ipl_block_01g, 0x4000);
 	}
 
 	loadIplUpdateModule();
 
-	size = pspIplUpdateGetIpl(orig_ipl);
+	size = pspIplUpdateGetIpl(big_buf);
 
 	if(size < 0) {
-		ErrorExit(5000,"Failed to get ipl!\n");
+		ErrorExit(5000,"Failed to get IPL!\n");
 	}
 
-	printf("\nCustom ipl Flasher for 6.6x.\n\n\n");
+	printf("\nCustom IPL Flasher for 6.6x.\n\n\n");
 
 	int ipl_type = 0;
 
-	if( size == 0x24000 ) {
-		printf("Custom ipl is installed\n");
-		size -= 0x4000;
-		memmove( ipl_block_large + 0x4000 , orig_ipl + 0x4000 , size);
-		ipl_type = 1;
-	} else if( size == 0x20000 ) {
-		printf("Raw ipl \n");
-		memmove( ipl_block_large + 0x4000, orig_ipl, size);
+	
+	if (size > ORIG_IPL_MAX_SIZE){
+		if( size == CLASSIC_CIPL_SIZE ) {
+			printf("Custom IPL is installed\n");
+			size -= 0x4000;
+			memmove( ipl_block_large + 0x4000 , big_buf + 0x4000 , size);
+			ipl_type = 1;
+		} else {
+			pspDebugScreenClear();
+			return newipl_menu(NULL);
+		}
 	} else {
-		printf("ipl size;%08X\n", size);
-		ErrorExit(5000,"Unknown ipl!\n");
+		printf("Original IPL \n");
+		memmove( ipl_block_large + 0x4000, big_buf, size);
 	}
 
 	printf(" Press X to ");
@@ -189,10 +194,10 @@ void classicipl_menu(){
 		printf("Re");
 	}
 
-	printf("install CIPL\n");
+	printf("install cIPL\n");
 
 	if( ipl_type ) {
-		printf(" Press O to Erase CIPL and Restore Raw IPL\n");
+		printf(" Press O to Erase cIPL and Restore Original IPL\n");
 	}
 
 	printf(" Press L to use New cIPL.");
@@ -204,17 +209,25 @@ void classicipl_menu(){
         sceCtrlReadBufferPositive(&pad, 1);
 
 		if (pad.Buttons & PSP_CTRL_CROSS) {
-			flash_ipl( size, 0 );
+			printf("Flashing cIPL...");
+
+			if(pspIplUpdateClearIpl() < 0)
+				ErrorExit(5000,"Failed to clear IPL!\n");
+
+			if (pspIplUpdateSetIpl(ipl_block_large, size+0x4000, 0 ) < 0)
+				ErrorExit(5000,"Failed to write cIPL!\n");
+
+			printf("Done.\n");
 			break; 
 		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) && ipl_type ) {		
 			printf("Flashing IPL...");
 
 			if(pspIplUpdateClearIpl() < 0) {
-				ErrorExit(5000,"Failed to clear ipl!\n");
+				ErrorExit(5000,"Failed to clear IPL!\n");
 			}
 
 			if (pspIplUpdateSetIpl( ipl_block_large + 0x4000 , size, 0 ) < 0) {
-				ErrorExit(5000,"Failed to write ipl!\n");
+				ErrorExit(5000,"Failed to write IPL!\n");
 			}
 
 			printf("Done.\n");
@@ -224,12 +237,13 @@ void classicipl_menu(){
 		}
 		else if (pad.Buttons & PSP_CTRL_LTRIGGER) {
 			pspDebugScreenClear();
-			return newipl_menu();
+			return newipl_menu(NULL);
 		}
 
 		sceKernelDelayThread(10000);
 	}
 
+	reboot = 1;
 	ErrorExit(5000,"\nInstall complete. Restarting in 5 seconds...\n");
 }
 
@@ -269,7 +283,7 @@ void devtoolipl_menu(){
 		printf("Custom kbooti is installed\n");
 		ipl_type = 1;
 	} else if( size == IPL_SIZE ) {
-		printf("Raw kbooti \n");
+		printf("Original kbooti \n");
 	} else {
 		printf("kbooti size: %08X\n", size);
 		ErrorExit(5000,"Unknown kbooti!\n");
@@ -281,10 +295,10 @@ void devtoolipl_menu(){
 		printf("Re");
 	}
 
-	printf("install CKBOOTI\n");
+	printf("install cKBOOTI\n");
 
 	if( ipl_type ) {
-		printf(" Press O to Erase CKBOOTI and Restore Raw KBOOTI\n");
+		printf(" Press O to Erase Custom KBOOTI and Restore Original KBOOTI\n");
 	}
 
 	printf(" Press R to cancel\n\n");
@@ -294,7 +308,11 @@ void devtoolipl_menu(){
         sceCtrlReadBufferPositive(&pad, 1);
 
 		if (pad.Buttons & PSP_CTRL_CROSS) {
-			flash_kbooti( size );
+			printf("Flashing cKBOOTI...");
+			if (pspKbootiUpdateKbooti(kbooti_ipl_block_01g, (sizeof(kbooti_ipl_block_01g))) < 0)
+				ErrorExit(5000,"Failed to write kbooti!\n");
+
+			printf("Done.\n");
 			break; 
 		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) && ipl_type ) {		
 			printf("Flashing KBOOTI...");
@@ -312,31 +330,41 @@ void devtoolipl_menu(){
 		sceKernelDelayThread(10000);
 	}
 
+	reboot = 1;
 	ErrorExit(5000,"\nInstall complete. Restarting in 5 seconds...\n");
 }
 
 
-void newipl_menu(){
-	int size, ipl_type;
+void newipl_menu(const char* config){
+	int size = NEW_CIPL_SIZE;
 	u16 ipl_key = 0;
 
-	struct {
-		unsigned char* buf;
-		size_t size;
-	} ipl_table[] = {
-		{(unsigned char*)payload_01G, size_payload_01G},
-		{(unsigned char*)payload_02G, size_payload_02G},
-		{(unsigned char*)payload_03G, size_payload_03G},
-		/*
-		{(unsigned char*)payload_04G, size_payload_04G},
-		{(unsigned char*)payload_05G, size_payload_05G},
-		{(unsigned char*)NULL, 0}, // 6g
-		{(unsigned char*)payload_07G, size_payload_07G},
-		{(unsigned char*)NULL, 0}, // 8g
-		{(unsigned char*)payload_09G, size_payload_09G}, // 9g
-		{(unsigned char*)NULL, 0}, // 10g
-		{(unsigned char*)payload_11G, size_payload_11G}, // 11g
-		*/
+	static unsigned char* ipl_table[] = {
+		(unsigned char*)cipl_01G,
+		(unsigned char*)cipl_02G,
+		(unsigned char*)cipl_03G,
+		(unsigned char*)cipl_04G,
+		(unsigned char*)cipl_05G,
+		(unsigned char*)NULL, // 6g
+		(unsigned char*)cipl_07G,
+		(unsigned char*)NULL, // 8g
+		(unsigned char*)cipl_09G,
+		(unsigned char*)NULL, // 10g
+		(unsigned char*)cipl_11G,
+	};
+
+	static unsigned char* orig_ipl_table[] = {
+		(unsigned char*)origipl_01G,
+		(unsigned char*)origipl_02G,
+		(unsigned char*)origipl_03G,
+		(unsigned char*)origipl_04G,
+		(unsigned char*)origipl_05G,
+		(unsigned char*)NULL, // 6g
+		(unsigned char*)origipl_07G,
+		(unsigned char*)NULL, // 8g
+		(unsigned char*)origipl_09G,
+		(unsigned char*)NULL, // 10g
+		(unsigned char*)origipl_11G,
 	};
 
 	int supported_models = sizeof(ipl_table)/sizeof(ipl_table[0]);
@@ -348,32 +376,26 @@ void newipl_menu(){
 		ErrorExit(5000,"6.61 FW SUPPORTED ONLY!\n");
 	}
 
-	if(model >= supported_models || ipl_table[model].buf == NULL) {
+	if(model >= supported_models || ipl_table[model] == NULL) {
 		ErrorExit(5000,"This installer does not support this model.\n");
 	}
 
-	ipl_block = ipl_table[model].buf;
-	if (model > 2){
+	u8* ipl_block = ipl_table[model];
+	if (model > 1){
 		ipl_key = (model==4)?2:1;
 	}
 
 	loadIplUpdateModule();
 
-	size = ipl_table[model].size;
+	printf("\nCustom IPL Flasher for 6.61 running on %dg\n\n\n", (model+1));
 
-	printf("\nCustom ipl Flasher for 6.61.\n\n\n");
-
-	printf(" Press X to ");
-
-	if( ipl_type ) {
-		printf("Re");
+	if (config){
+		printf("\nUsing config <%s>, if this is incorrect, DO NOT PROCEED!\n\n", config);
 	}
 
-	printf("install CIPL\n");
+	printf(" Press X to install cIPL\n");
 
-	if( ipl_type ) {
-		printf(" Press O to Erase CIPL and Restore Raw IPL\n");
-	}
+	printf(" Press O to restore Original IPL.\n");
 
 	printf(" Press R to cancel\n\n");
     
@@ -382,17 +404,25 @@ void newipl_menu(){
         sceCtrlReadBufferPositive(&pad, 1);
 
 		if (pad.Buttons & PSP_CTRL_CROSS) {
-			flash_ipl( size, ipl_key );
+			printf("Flashing cIPL...");
+			if(pspIplUpdateClearIpl() < 0)
+				ErrorExit(5000,"Failed to clear IPL!\n");
+
+			if (pspIplUpdateSetIpl(ipl_block, size, 0 ) < 0)
+				ErrorExit(5000,"Failed to write cIPL!\n");
 			break; 
-		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) && ipl_type ) {		
+		} else if ( (pad.Buttons & PSP_CTRL_CIRCLE) ) {		
 			printf("Flashing IPL...");
 
+			ipl_block = orig_ipl_table[model];
+			size = ORIG_IPL_SIZE;
+
 			if(pspIplUpdateClearIpl() < 0) {
-				ErrorExit(5000,"Failed to clear ipl!\n");
+				ErrorExit(5000,"Failed to clear IPL!\n");
 			}
 
-			if (pspIplUpdateSetIpl( ipl_block_large, size,  ipl_key) < 0) {
-				ErrorExit(5000,"Failed to write ipl!\n");
+			if (pspIplUpdateSetIpl( ipl_block, size,  ipl_key) < 0) {
+				ErrorExit(5000,"Failed to write IPL!\n");
 			}
 
 			printf("Done.\n");
@@ -402,6 +432,18 @@ void newipl_menu(){
 		}
 
 		sceKernelDelayThread(10000);
+	}
+
+	open_flash();
+	if (config && size != ORIG_IPL_SIZE){
+		// other CFW installed
+		int fd = sceIoOpen("flash0:/arkcipl.cfg", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+		sceIoWrite(fd, config, strlen(config));
+		sceIoClose(fd);
+	}
+	else {
+		// OFW/ARK installed
+		sceIoRemove("flash0:/arkcipl.cfg");
 	}
 
 	ErrorExit(5000,"\nInstall complete. Restarting in 5 seconds...\n");
@@ -417,8 +459,15 @@ int main()
 	pspDebugScreenSetTextColor(WHITE);
 	devkit = sceKernelDevkitVersion();
 
+	// check if running 6.60 or 6.61
 	if(devkit != 0x06060010 && devkit != 0x06060110) {
-		ErrorExit(5000,"FW ERROR!\n");
+		ErrorExit(5000,"FW ERROR! Use on 6.60 or 6.61 only.\n");
+	}
+
+	// check if running infinity
+	SceModule2 infinity_mod;
+	if (kuKernelFindModuleByName("InfinityControl", &infinity_mod) == 0){
+		ErrorExit(5000, "ERROR: uninstall Infinity first!");
 	}
 
 	kpspident = pspSdkLoadStartModule("kpspident.prx", PSP_MEMORY_PARTITION_KERNEL);
@@ -433,11 +482,24 @@ int main()
 		ErrorExit(5000, "Could not determine baryon version!\n");
 	}
 
+	// check if running ARK
+	memset(&ark_config, 0, sizeof(ARKConfig));
+	sctrlHENGetArkConfig(&ark_config);
+	if (ark_config.magic != ARK_CONFIG_MAGIC){
+		if (sctrlHENFindFunction("SystemControl", "KUBridge", 0x9060F69D) != NULL){
+			newipl_menu("cfw=pro");
+		}
+		else {
+			newipl_menu("cfw=me");
+		}
+		return 0;
+	}
+
 	if (baryon_ver == 0x00020601) {
 		devtoolipl_menu();
 	}
 	else if(!(model == 0 || model == 1) || is_ta88v3()) {
-		newipl_menu();
+		newipl_menu(NULL);
 	}
 	else {
 		classicipl_menu();

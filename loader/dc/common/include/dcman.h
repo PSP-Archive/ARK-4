@@ -29,6 +29,8 @@ enum
 	TA_093v2,
 	TA_095v1,
 	TA_095v2,
+	TA_095v3,
+	TA_095v4,
 	TA_096_TA_097,
 	UNKNOWN
 };

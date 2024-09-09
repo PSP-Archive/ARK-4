@@ -1,14 +1,14 @@
 #include <pspsdk.h>
-#include <globals.h>
+#include <ark.h>
 #include <macros.h>
 #include "ansi_c_functions.h"
 
 #include "cache.h"
 #include "seedkey.h"
 #ifndef MS_IPL
-#include "../payloadex/nand_payloadex.h"
+#include "nand_payloadex/nand_payloadex.h"
 #else
-#include <ms_payloadex.h>
+#include "ms_payloadex/ms_payloadex.h"
 #endif
 #define SYSCON_CTRL_HOME 0x00001000
 

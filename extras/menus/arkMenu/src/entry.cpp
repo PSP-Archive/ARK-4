@@ -119,8 +119,13 @@ void Entry::execute(){
 
 void Entry::gameBoot(){
 
-    if (common::getConf()->fast_gameboot)
+    //if (common::getConf()->fast_gameboot && name != "Recovery Menu")
+    if (common::getConf()->fast_gameboot) {
+    	MusicPlayer::fullStop();
+    	SystemMgr::pauseDraw();
+    	sceDisplaySetHoldMode(1);
         return;
+	}
 
     MusicPlayer::fullStop();
 

@@ -3,6 +3,7 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 #include "gfx.h"
 #include "debug.h"
 #include "common.h"

@@ -23,7 +23,7 @@ extern "C"{
 #endif
 
 #include "module2.h"
-#include "globals.h"
+#include "ark.h"
 
 /*
  * This File contains the required headers for exported, but internally used
@@ -33,18 +33,6 @@ extern "C"{
 extern ARKConfig* ark_config;
 
 extern int (* DisplaySetFrameBuf)(void*, int, int, int);
-
-// Initialize Kernel Heap
-int oe_mallocinit(void);
-
-// Allocate Memory for Kernel Heap
-void * oe_malloc(unsigned int size);
-
-// Return Memory to Kernel Heap
-void oe_free(void * p);
-
-// Terminate Kernel Heap
-int oe_mallocterminate(void);
 
 // Get PSID hash
 int sctrlKernelGetPSIDHash(unsigned char psidHash[16]);

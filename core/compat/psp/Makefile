@@ -8,6 +8,7 @@ C_OBJS = \
 	libertas.o   \
 	usb_charge.o  \
 	region_free.o \
+	pops4tool.o
 		
 OBJS = \
 	$(C_OBJS) imports.o

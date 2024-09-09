@@ -1,5 +1,5 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
-INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include ../payloadex
+INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)/loader/rebootex
 LIBS = -lansic -L $(ARKROOT)/libs
 MAINBINEXDIR = $(ARKROOT)/loader/perma/cipl/classic/mainbinex
 TARGET = patch.bin
@@ -28,7 +28,7 @@ main.elf: $(MAINBINEX_OBJS)
 $(TARGET): main.elf
 	$(Q)$(STRIP) -s $<
 	$(Q)$(OBJCOPY) -O binary $< $(TARGET)
-	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/timemachine/make_ipl_payload.py --input_payload $(TARGET) --payload_addr 0x040D6000 --ipl_addr 0x040EC000 --output payload.bin 
+	$(Q)$(PYTHON) $(ARKROOT)/contrib/PC/ipltools/make_tm_ipl.py --input_payload $(TARGET) --payload_addr 0x040D6000 --ipl_addr 0x040EC000 --output payload.bin 
 	$(Q)bin2c payload.bin payload.h ms_ipl_payload
 	@echo GET $@
 

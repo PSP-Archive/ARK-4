@@ -1,7 +1,7 @@
 #include <pspsdk.h>
 #include <pspsysmem_kernel.h>
 #include <pspinit.h>
-#include <globals.h>
+#include <ark.h>
 #include <graphics.h>
 #include <macros.h>
 #include <module2.h>
@@ -22,7 +22,6 @@ extern SEConfig* se_config;
 extern STMOD_HANDLER previous;
 
 extern int sceKernelSuspendThreadPatched(SceUID thid);
-
 
 static int _sceKernelBootFromForUmdMan(void)
 {
@@ -171,24 +170,7 @@ static int sceGpioPortReadPatched(void) {
 	return GPRValue;
 }
 
-void processSettings(){
-    int apitype = sceKernelInitApitype();
-
-    // USB Charging
-    if (se_config->usbcharge){
-        usb_charge(); // enable usb charging
-    }
-    // check launcher mode
-    if (se_config->launcher_mode){
-        strcpy(ark_config->launcher, VBOOT_PBP); // set CFW in launcher mode
-    }
-    else{
-        if (strcmp(ark_config->launcher, "PROSHELL") != 0)
-            ark_config->launcher[0] = 0; // disable launcher mode
-    }
-    // VSH region
-    if (se_config->vshregion) patch_sceChkreg();
-    // Disable LED
+void disableLEDs(){
     if (se_config->noled){
         int (*_sceSysconCtrlLED)(int, int);
         _sceSysconCtrlLED = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x18BFBE65);
@@ -196,11 +178,18 @@ void processSettings(){
         MAKE_DUMMY_FUNCTION_RETURN_0(_sceSysconCtrlLED);
         flushCache();
     }
+}
+
+void handleExtraRam(){
+    int apitype = sceKernelInitApitype();
+
     // Enforce extra RAM
     if (se_config->force_high_memory){
         patch_partitions();
         se_config->disable_pause = 1;
     }
+
+    // Check if running a homebrew that requires extra RAM
     if(!se_config->force_high_memory && (apitype == 0x141 || apitype == 0x152) ){
         int paramsize=4;
         int use_highmem = 0;
@@ -210,7 +199,9 @@ void processSettings(){
             se_config->force_high_memory = 1;
         }
     }
-    // Enable Inferno cache
+}
+
+void enableInfernoCache(){
     if (se_config->iso_cache){
         int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
         if (CacheInit){
@@ -234,11 +225,9 @@ void processSettings(){
             }
         }
     }
-    // Disable Pause feature on PSP Go
-    if (se_config->disable_pause){
-        disable_PauseGame();
-    }
-    // Disable UMD Drive
+}
+
+void disableUMD(){
     if (se_config->noumd && psp_model != PSP_GO){
         // disable UMD drive by software, only do this if not running an ISO driver
         if (sceKernelFindModuleByName("PRO_Inferno_Driver")==NULL && sceKernelFindModuleByName("sceNp9660_driver")==NULL){
@@ -261,6 +250,38 @@ void processSettings(){
     }
 }
 
+void processSettings(){
+    int apitype = sceKernelInitApitype();
+
+    // USB Charging
+    if (se_config->usbcharge){
+        usb_charge(); // enable usb charging
+    }
+    
+    // check launcher mode
+    if (se_config->launcher_mode){
+        strcpy(ark_config->launcher, VBOOT_PBP); // set CFW in launcher mode
+    }
+    else{
+        if (strcmp(ark_config->launcher, "PROSHELL") != 0)
+            ark_config->launcher[0] = 0; // disable launcher mode
+    }
+
+    // VSH region
+    if (se_config->vshregion) patch_sceChkreg();
+
+    // Disable LED
+    disableLEDs();
+
+    // Disable Pause feature on PSP Go
+    if (se_config->disable_pause){
+        disable_PauseGame();
+    }
+
+    // Disable UMD Drive
+    disableUMD();
+}
+
 int (*prevPluginHandler)(const char* path, int modid) = NULL;
 int pluginHandler(const char* path, int modid){
     if(se_config->oldplugin && psp_model == PSP_GO && path[0] == 'e' && path[1] == 'f') {
@@ -281,29 +302,38 @@ void PSPOnModuleStart(SceModule2 * mod){
 		}
 	}
 
-    if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
+    if (strcmp(mod->modname, "sceUmdMan_driver") == 0) {
         patch_sceUmdMan_driver(mod);
         patch_umd_idslookup(mod);
         goto flush;
     }
 
-    if(strcmp(mod->modname, "sceUmdCache_driver") == 0) {
+    if (strcmp(mod->modname, "sceUmdCache_driver") == 0) {
         patch_umdcache(mod);
         goto flush;
     }
 
-    if(strcmp(mod->modname, "sceWlan_Driver") == 0) {
+    if (strcmp(mod->modname, "sceWlan_Driver") == 0) {
         patch_sceWlan_Driver(mod);
         patch_Libertas_MAC(mod);
         goto flush;
     }
 
-    if(strcmp(mod->modname, "scePower_Service") == 0) {
+    if (strcmp(mod->modname, "scePower_Service") == 0) {
         patch_scePower_Service(mod);
         goto flush;
     }
     
-    if(strcmp(mod->modname, "sceMediaSync") == 0) {
+    if (strcmp(mod->modname, "sceUtility_Driver") == 0){
+        // Handle extra ram setting
+        handleExtraRam();
+        // Handle Inferno cache setting
+        enableInfernoCache();
+        goto flush;
+    }
+
+    if (strcmp(mod->modname, "sceMediaSync") == 0) {
+        // Handle some settings
         processSettings();
         goto flush;
     }
@@ -313,7 +343,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    if(0 == strcmp(mod->modname, "game_plugin_module")) {
+    if (strcmp(mod->modname, "game_plugin_module") == 0) {
 		if (se_config->skiplogos) {
 		    patch_GameBoot(mod);
 	    }
@@ -343,7 +373,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-	if( strcmp(mod->modname, "Legacy_Software_Loader") == 0 )
+	if (strcmp(mod->modname, "Legacy_Software_Loader") == 0 )
 	{
         // Missing from SDK
         #define PSP_INIT_APITYPE_EF2 0x152
@@ -353,21 +383,26 @@ void PSPOnModuleStart(SceModule2 * mod){
 			goto flush;
 		}
 	}
-
     
-    if(booted == 0)
+    if (booted == 0)
     {
         // Boot is complete
-        if(isSystemBooted())
+        if (isSystemBooted())
         {
 
             // handle mscache
             if (se_config->msspeed){
-                char* drv = "msstor0p";
-                if (psp_model == PSP_GO && sctrlKernelBootFrom()==0x50)
-                    drv = "eflash0a0f1p";
+                char* drv = 
+                    (psp_model == PSP_GO && sctrlKernelBootFrom()==0x50)?
+                    "eflash0a0f1p" : "msstor0p";
                 msstorCacheInit(drv);
             }
+
+            // fix pops on toolkits
+            if (sctrlHENIsToolKit() && sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
+                patchPops4Tool();
+            }
+
             // Boot Complete Action done
             booted = 1;
             goto flush;

@@ -20,7 +20,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
-#include <globals.h>
+#include <ark.h>
 #include "functions.h"
 #include "macros.h"
 #include "exitgame.h"
@@ -49,8 +49,6 @@ void flushCache()
 }
 
 static void processArkConfig(){
-    se_config = sctrlSEGetConfig(NULL);
-    ark_config = sctrlHENGetArkConfig(NULL);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PS_VITA; // assume running on PS Vita
     }
@@ -63,11 +61,18 @@ static void processArkConfig(){
 int module_start(SceSize args, void * argp)
 {
 
+    se_config = sctrlSEGetConfig(NULL);
+    ark_config = sctrlHENGetArkConfig(NULL);
+
+    if (ark_config == NULL){
+        return 1;
+    }
+
     // copy configuration
     processArkConfig();
 
     if (ark_config->exec_mode != PS_VITA){
-        return 1;
+        return 2;
     }
 
     // set rebootex for Vita

@@ -25,9 +25,6 @@
 #include "menu.h"
 #include "common.h"
 
-extern SEConfig* se_config;
-extern ARKConfig* ark_config;
-
 extern string ark_version;
 static string save_status;
 static int status_frame_count = 0; // a few seconds
@@ -148,7 +145,7 @@ void SubMenu::run() {
 					changeSetting(index); getItems(); 
 					break;
                 case 5: 
-					rebootMenu(); break;
+					menu->fadeOut(); common::rebootMenu(); break;
                 case 6: 
 					menu->fadeOut(); sceKernelExitGame(); break;
             }
@@ -165,24 +162,6 @@ void SubMenu::run() {
 }
 
 SubMenu::~SubMenu() {}
-
-void SubMenu::rebootMenu(){
-
-    struct SceKernelLoadExecVSHParam param;
-    memset(&param, 0, sizeof(SceKernelLoadExecVSHParam));
-
-    char path[256];
-    strcpy(path, ark_config->arkpath);
-	strcat(path, ARK_XMENU);
-
-    int runlevel = 0x141;
-    
-    param.args = strlen(path) + 1;
-    param.argp = path;
-    param.key = "game";
-    menu->fadeOut();
-    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
-}
 
 void SubMenu::changeSetting(int setting){
 
@@ -209,13 +188,11 @@ void SubMenu::changeSetting(int setting){
 void SubMenu::changeMsCacheSetting(){
 
     se_config->msspeed = !se_config->msspeed;
-    char arkSettingsPath[ARK_PATH_SIZE];
-    strcpy(arkSettingsPath, ark_config->arkpath);
-    strcat(arkSettingsPath, "SETTINGS.TXT");
+    std::string arkSettingsPath = string(ark_config->arkpath)+ARK_SETTINGS;
     std::stringstream final_str;
-    std::ifstream fs_in(arkSettingsPath);
+    std::ifstream fs_in(arkSettingsPath.c_str());
     if (!fs_in) {
-        final_str << "Cannot open: " << "SETTINGS.TXT";
+        final_str << "Cannot open: " << arkSettingsPath;
         save_status = final_str.str().c_str();
         status_frame_count = 100;
         return;
@@ -249,9 +226,9 @@ void SubMenu::changeMsCacheSetting(){
 
     fs_in.close();
 
-    std::ofstream fs_out(arkSettingsPath);
+    std::ofstream fs_out(arkSettingsPath.c_str());
     if (!fs_out) {
-        final_str << "Cannot open: " << "SETTINGS.TXT";
+        final_str << "Cannot open: " << arkSettingsPath;
         save_status = final_str.str().c_str();
         status_frame_count = 100;
         return;

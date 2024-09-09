@@ -5,7 +5,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
-#include <globals.h> 
+#include <ark.h> 
 #include "functions.h"
 #include "macros.h"
 #include "exitgame.h"
@@ -285,6 +285,28 @@ void patch_SysconfPlugin(SceModule2* mod){
 	_sw(0, text_addr + 0xB264);
 }
 
+void patchPopsMan(SceModule2* mod){
+	u32 text_addr = mod->text_addr;
+
+	// Use different mode for SceKermitPocs
+	_sw(0x2405000E, text_addr + 0x2030);
+	_sw(0x2405000E, text_addr + 0x20F0);
+	_sw(0x2405000E, text_addr + 0x21A0);
+
+	// Use different pops register location
+	_sw(0x3C014BCD, text_addr + 0x11B4);
+}
+
+void patchPops(SceModule2* mod){
+	// Use different pops register location
+	u32 i;
+	for (i = 0; i < mod->text_size; i += 4) {
+		if ((_lw(mod->text_addr+i) & 0xFFE0FFFF) == 0x3C0049FE) {
+			_sh(0x4BCD, mod->text_addr+i);
+		}
+	}
+}
+
 void exit_game_patched(){
 	sctrlSESetBootConfFileIndex(MODE_UMD);
 	if (se_config->launcher_mode)
@@ -390,6 +412,16 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         goto flush;
 	}
 
+	if (strcmp(mod->modname, "scePops_Manager") == 0){
+		patchPopsMan(mod);
+		goto flush;
+	}
+
+	if (strcmp(mod->modname, "pops") == 0){
+		patchPops(mod);
+		goto flush;
+	}
+
 	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
 			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
@@ -407,10 +439,8 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-	// load and process settings file
-    if(strcmp(mod->modname, "sceMediaSync") == 0)
-    {
-		// apply extra memory patch
+	// perfect time to apply extra memory patch
+	if (strcmp(mod->modname, "sceImpose_Driver") == 0){
 		if (se_config->force_high_memory) unlockVitaMemory();
 		else{
 			int apitype = sceKernelInitApitype();
@@ -439,8 +469,8 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 				}
         	}
         }
-        goto flush;
-    }
+		goto flush;
+	}
        
     // Boot Complete Action not done yet
     if(booted == 0)

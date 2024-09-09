@@ -16,7 +16,7 @@
  */
 
 #include "reboot.h"
-#include "globals.h"
+#include "ark.h"
 #include "main.h"
 
 u8* rebootbuffer = NULL;

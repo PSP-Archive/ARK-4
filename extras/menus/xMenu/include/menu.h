@@ -16,14 +16,10 @@
 #include "text.h"
 #include "graphics.h"
 
-#define PS1_CAT 0x454D
-#define PSN_CAT    0x4745
-#define HMB_CAT 0x474D
 
 #define TEXT_HEIGHT 10
 #define TEXT_WIDTH 7
 
-#define PBP_MAGIC 0x50425000
 #define POPS_RUNLEVEL        0x144
 #define POPS_RUNLEVEL_GO    0x155
 
@@ -53,9 +49,9 @@ class Menu{
         
         string fullPath(string path, string name);
         
-        int getEbootType(const char* path);
-        
         bool isPOPS(string path);
+
+        void loadIcons();
         
         void updateScreen();
         
@@ -93,7 +89,6 @@ class SubMenu {
         void updateScreen();
         void getItems();
 
-        void rebootMenu();
         void changeMsCacheSetting();
         void changeSetting(int setting);
 

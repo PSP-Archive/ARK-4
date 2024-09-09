@@ -166,13 +166,21 @@ static void GetHardwareInfo()
 					}
 					break;
 				case 0x002E4000: mb = TA_095v1; break;
+				case 0x012E4000: mb = TA_095v3; break;
 			}
 			break;
 
 
-		case 0x00820000: mb = TA_095v2; break;
+		case 0x00820000: 
+			switch(baryon)
+			{
+				case 0x012E4000: mb = TA_095v4; break;
+				case 0x002E4000: mb = TA_095v2; break;
+			}
+			break;
 
-		case 0x00900000: mb = TA_096_TA_097; break;
+		case 0x00900000: 
+			mb = TA_096_TA_097; break;
 	}
 
 	fuseid = SysregGetFuseId();

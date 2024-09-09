@@ -1,8 +1,6 @@
 #ifndef ARKMENU_CONF_H
 #define ARKMENU_CONF_H
 
-#define CONFIG_PATH "ARKMENU.BIN"
-
 typedef struct {
     unsigned char fast_gameboot; // skip pmf/at3 and gameboot animation
     unsigned char language; // default language for the menu

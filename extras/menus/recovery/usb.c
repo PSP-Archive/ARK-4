@@ -3,7 +3,7 @@
 #include <systemctrl_se.h>
 #include <pspusb.h>
 #include <pspusbstor.h>
-#include "globals.h"
+#include "ark.h"
 
 #define PSP_USBSTOR_EF_DRIVERNAME "USBStorEFlash_Driver"
 

@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <module2.h>
-#include <globals.h>
+#include <ark.h>
 #include <macros.h>
 #include "rebootex.h"
 #include "nidresolver.h"

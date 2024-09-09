@@ -28,7 +28,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include "macros.h"
-#include "globals.h"
+#include "ark.h"
 #include "functions.h"
 
 PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 2);

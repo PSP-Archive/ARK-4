@@ -1,5 +1,5 @@
 #include <pspsdk.h>
-#include <globals.h>
+#include <ark.h>
 #include <graphics.h>
 #include <macros.h>
 #include <module2.h>
@@ -36,8 +36,6 @@ void* sctrlARKSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram)){
 }
 
 static void processArkConfig(){
-    se_config = sctrlSEGetConfig(NULL);
-    ark_config = sctrlHENGetArkConfig(NULL);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSV_POPS; // assume running on PS Vita Pops
     }
@@ -49,12 +47,19 @@ static void processArkConfig(){
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
+
+    se_config = sctrlSEGetConfig(NULL);
+    ark_config = sctrlHENGetArkConfig(NULL);
+
+    if (ark_config == NULL){
+        return 1;
+    }
     
     // copy configuration
     processArkConfig();
 
     if (ark_config->exec_mode != PSV_POPS){
-        return 1;
+        return 2;
     }
 
     #ifdef DEBUG

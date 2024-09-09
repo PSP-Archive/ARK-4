@@ -22,7 +22,7 @@
 #include <string.h>
 #include <macros.h>
 #include <systemctrl_private.h>
-#include <globals.h>
+#include <ark.h>
 
 // Patch mediasync.prx
 void patchMediaSync(SceModule2* mod)

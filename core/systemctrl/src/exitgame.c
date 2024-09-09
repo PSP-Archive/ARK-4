@@ -23,7 +23,7 @@
 #include <systemctrl_se.h>
 #include <macros.h>
 #include <string.h>
-#include <globals.h>
+#include <ark.h>
 #include <functions.h>
 #include <graphics.h>
 
@@ -92,16 +92,17 @@ int exitLauncher()
 			strcpy(path, RECOVERY_PRX_FLASH);
 		}
 		SceUID modid = sceKernelLoadModule(path, 0, NULL);
-		sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
-		ark_config->recovery = 0; // reset recovery mode for next reboot
-		ark_config->launcher[0] = 0; // reset launcher mode for next reboot
+		if(modid >= 0) {
+			sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
+			ark_config->recovery = 0; // reset recovery mode for next reboot
+			ark_config->launcher[0] = 0; // reset launcher mode for next reboot
+			pspSdkSetK1(k1);
+			return 0;
+		}
 	}
-	else {
-		ark_config->recovery = 0; // reset recovery mode for next reboot
-		sctrlKernelExitVSH(NULL);
-	}
-	pspSdkSetK1(k1);
-	return 0;
+
+	ark_config->recovery = 0;
+	return sctrlKernelExitVSH(NULL);
 }
 
 static void startExitThread(){
@@ -234,7 +235,6 @@ void checkControllerInput(){
 		CtrlPeekBufferPositive(&pad_data, 1);
 		if ((pad_data.Buttons & PSP_CTRL_START) == PSP_CTRL_START) disable_plugins = 1;
 		if ((pad_data.Buttons & PSP_CTRL_SELECT) == PSP_CTRL_SELECT) disable_settings = 1;
-		if ((pad_data.Buttons & PSP_CTRL_RTRIGGER) == PSP_CTRL_RTRIGGER) ark_config->recovery = 1;
 	}
 }
 

@@ -110,7 +110,7 @@ void setArgs(int ac, char** av){
 }
 
 void loadConfig(){
-    FILE* fp = fopen(CONFIG_PATH, "rb");
+    FILE* fp = fopen(MENU_SETTINGS, "rb");
     if (fp == NULL){
         resetConf();
         return;
@@ -203,7 +203,7 @@ void common::saveConf(){
 
     strcpy(config.browser_dir, Browser::getInstance()->getCWD());
     
-    FILE* fp = fopen(CONFIG_PATH, "wb");
+    FILE* fp = fopen(MENU_SETTINGS, "wb");
     fwrite(&config, 1, sizeof(t_conf), fp);
     fclose(fp);
 }

@@ -166,7 +166,9 @@ char *mobos[] =
 	"TA-093v2",
 	"TA-095v1",
 	"TA-095v2",
-	"TA-096/097",
+	"TA-095v3",
+	"TA-095v4",
+	"TA-096/097 O_O'",
 	"O_O'"
 };
 
@@ -198,7 +200,7 @@ void HardwareInfo()
 	else if (model == 10)
 		model_str = "(Street)";
 	else
-		model_str = "(Brite)";
+		model_str = "(Bright)";
 
 	hi_texts[0] = vlfGuiAddTextF(40, 80, "Model: %02dg %s", model+1, model_str);
 	hi_texts[1] = vlfGuiAddTextF(245, 80, "Motherboard: %s", mobos[mb]);
@@ -343,7 +345,13 @@ int app_main()
 	sceKernelUtilsMt19937Init(&ctx, md5[0] ^ md5[1] ^ md5[2] ^ md5[3]);
 	rnd = sceKernelUtilsMt19937UInt(&ctx) % 12;
 
-	void *data = ReadFileAllocEx("flash0:/vsh/resource/01-12.bmp", rnd*6176, 6176, NULL);
+	void *data;
+
+	u32 model = kuKernelGetModel();
+	if ( model == 4 )
+		data = ReadFileAllocEx("flash0:/vsh/resource/01-12_03g.bmp", rnd*6176, 6176, NULL);
+	else
+		data = ReadFileAllocEx("flash0:/vsh/resource/01-12.bmp", rnd*6176, 6176, NULL);
 
 	if (!data || vlfGuiSetBackgroundFileBuffer(data, 6176) < 0)
 	{

@@ -3,50 +3,85 @@
 
 Entry::Entry(string path){
     
+    this->path = path;
+    this->sfo_buffer = NULL;
+    this->icon0 = NULL;
+
     size_t lastSlash = path.rfind("/", string::npos);
     size_t substrPos = path.rfind("/", lastSlash-1)+1;
 
-    this->path = path;
     this->ebootName = path.substr(lastSlash+1, string::npos);
     this->name = path.substr(substrPos, lastSlash-substrPos);
-    this->readHeader();
-    this->findNameInParam();
-    this->icon0 = loadIcon();
 }
 
 Entry::~Entry(){
     if (this->icon0) freeImage(this->icon0);
 }
 
-
-void Entry::readHeader(){
-    FILE* fp = fopen(path.c_str(), "rb");
-    fread(&header, 1, sizeof(PBPHeader), fp);
-    fclose(fp);
-}
-
-Image* Entry::loadIcon(){
-    int size = (this->header.icon1_offset-this->header.icon0_offset);
-    if (size){
-        Image* icon = loadImage(this->path.c_str(), this->header.icon0_offset);
-        if (icon != NULL)
-            return icon;
+Entry* Entry::createIfPops(string path){
+    Entry* ent = new Entry(path);
+    ent->readHeader();
+    
+    if (ent->isPops()){
+        ent->findNameInParam();
+        free(ent->sfo_buffer);
+        ent->sfo_buffer = NULL;
+        return ent;
     }
+
+    delete ent;
     return NULL;
 }
 
-void Entry::findNameInParam(){
-    u32 size = this->header.icon0_offset-this->header.param_offset;
-    if (size){
-        unsigned char* sfo_buffer = (unsigned char*)malloc(size);
+void Entry::readHeader(){
 
-        FILE* fp = fopen(path.c_str(), "rb");
+    FILE* fp = fopen(path.c_str(), "rb");    
+    fread(&header, 1, sizeof(PBPHeader), fp);
+
+    u32 size = header.icon0_offset - header.param_offset;
+    if (size){
+        this->sfo_buffer = (unsigned char*)malloc(size);
         fseek(fp, this->header.param_offset, SEEK_SET);
         fread(sfo_buffer, 1, size, fp);
-        fclose(fp);
+    }
 
+    fclose(fp);
+}
+
+void Entry::loadIcon(){
+    if (this->icon0 == NULL){
+        int size = header.icon1_offset - header.icon0_offset;
+        if (size){
+            this->icon0 = loadImage(this->path.c_str(), this->header.icon0_offset);
+        }
+    }
+}
+
+void Entry::unloadIcon(){
+    if (this->icon0){
+        freeImage(this->icon0);
+        this->icon0 = NULL;
+    }
+}
+
+bool Entry::isPops(){
+    if (this->sfo_buffer){
+        u16 category = 0; int cat_size = sizeof(category);
+        int size = (this->header.icon1_offset-this->header.icon0_offset);
+        bool res = Entry::getSfoParam(sfo_buffer, size, "CATEGORY", (unsigned char*)&category, &cat_size);
+        if (res){
+            return (category == PS1_CAT);
+        }
+    }
+    return false;
+}
+
+void Entry::findNameInParam(){
+    if (this->sfo_buffer){
         char title[128];
         int title_size = sizeof(title);
+
+        int size = header.icon1_offset - header.icon0_offset;
         bool res = Entry::getSfoParam(sfo_buffer, size, "TITLE", (unsigned char*)(title), &title_size);
 
         if (res){
@@ -62,7 +97,6 @@ void Entry::findNameInParam(){
             }
             this->name = string(title);
         }
-        free(sfo_buffer);
     }
 }
 
@@ -102,13 +136,13 @@ Image* Entry::getIcon(){
     return (icon0)? icon0 : common::getNoIcon();
 }
 
-Image* Entry::getPic0(){
+Image* Entry::loadPic0(){
     int size = this->header.pic1_offset-this->header.pic0_offset;
     if (size==0) return NULL;
     return loadImage(this->path.c_str(), this->header.pic0_offset);
 }
 
-Image* Entry::getPic1(){
+Image* Entry::loadPic1(){
     int size = this->header.snd0_offset-this->header.pic1_offset;
     if (size == 0) return NULL;
     return loadImage(this->path.c_str(), this->header.pic1_offset);
@@ -118,8 +152,8 @@ bool Entry::run(){
 
     if (common::getConf()->fast_gameboot) return true;
 
-    this->pic0 = getPic0();
-    this->pic1 = getPic1();
+    this->pic0 = loadPic0();
+    this->pic1 = loadPic1();
     
     animAppear();
 

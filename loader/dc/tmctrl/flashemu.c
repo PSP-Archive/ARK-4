@@ -6,7 +6,7 @@
 #include <pspsysmem_kernel.h>
 #include <pspinit.h>
 
-#include <globals.h>
+#include <ark.h>
 
 #define PSP_INIT_KEYCONFIG_APP 0x400
 #define PSP_BOOT_FLASH3 0x80

@@ -10,8 +10,11 @@ class Controller{
         SceCtrlData pad;
         
         u32 nowpad, newpad, oldpad;
-        
         int n;
+
+        void *_ksceCtrlReadBufferPositive;
+
+        void clCtrlReadBufferPositive();
     
     public:
     
@@ -25,6 +28,9 @@ class Controller{
         
         // generic wait for user input, returns true if cross pressed, false if circle is pressed
         bool wait(void* busy_wait=NULL);
+
+        // Return the current pad data
+        u32 get_buttons();
         
         // check for accept or decline from user (depending on the button configuration)
         bool any();
@@ -45,6 +51,7 @@ class Controller{
         bool start();
         bool select();
         bool home();
+        bool volume();
 };
         
 

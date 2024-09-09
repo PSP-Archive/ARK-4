@@ -31,51 +31,46 @@ as well as unique and exclusive new features not found anywhere else.
 
 ## FEATURES:
 
-- `Core` system heavily updated from traditional CFW with new exclusive features.
+- `Core` system for unsigned code execution heavily updated from traditional CFW with robust patching algorithms and improved API.
 
-- `Inferno 2` Driver compatible with all formats (`ISO`, `CSO`, `ZSO`, `JSO`, `CSOv2` and `DAX`).
+- Heavily optimized `Inferno 2` Driver compatible with all known PSP formats (ISO, CSO, ZSO, JSO, CSOv2 and DAX).
 
-- `Popcorn` controller for custom `PS1` games. Compatible with `PopsLoader` V3 and V4i.
+- `Popcorn` controller for custom PS1 games with support for external configuration files and anti-libcrypt protection.
 
-- Built-in `No-DRM` engine `Stargate`, fixes many anti-CFW games. Compatible with `npdrm_free` and `nploader`.
+- Built-in No-DRM engine `Stargate`, fixes many anti-CFW games. Expandible via other NoDRM plugins.
 
-- `Plugin` support for `PSP` games, `PS1` games and `VSH` (XMB), including the ability to enable and disable plugins `per-game`.
+- `Plugin` support for PSP games and homebrew, PS1 games and VSH (XMB), including the ability to enable and disable plugins per-game.
 
-- `Region Free` playback of `UMD Video` on all PSP models. Change the region of your `UMD` drive on-the-fly.
+- `Region Free` playback of UMD Video on all PSP models. Change the region of your UMD drive on-the-fly.
 
 - Compatible with all `PSP` models on firmwares `6.60` and `6.61`.
 
-- Compatible with all `PS Vita` models on firmware `2.10` up to `3.74`, either official firmware or via `Adrenaline`.
+- Compatible with all `PS Vita` models on firmware `2.10` up to `3.74` OFW or Henkaku, including support for the `Adrenaline` pspemu mod.
 
-- Compatible with `6.60` `Testing Tool` Firmware and `Testkit` Units.
+- Compatible with `6.60 Testing Tool` and `6.60 Development Tool` firmwares for testkit and devkit units (inlcuding `CEX2DEX` converted units).
 
-- Compatible with `6.60` `Development Tool` Firmware and `Devkit` Units.
+- Updated `cIPL` compatible with all PSP models, including toolkits, for truely permanent CFW.
 
-- Can be fully installed and booted on memory stick in compatible models via `Time Machine`.
+- Can be fully installed and booted on memory stick via `Time Machine`.
 
-- Can be used to unbrick compatible PSP models using `Despertar del Cementerio` in combination with a `Pandora` or `Baryon Sweeper`.
+- Can be used to unbrick any PSP model using `Despertar del Cementerio Version 10` in combination with a `Pandora Battery` or `Baryon Sweeper`.
 
-- `Minimalistic`: only 6 files installed on PSP flash, CFW extensions are installed on memory stick.
+- Resistant to `bricks`, easy to recover from bad configurations, various recovery methods including being able to load `DC` via `cIPL` without any special device.
 
-- Resistant to `soft-bricks`, easy to recover from bad configurations with a new and improved `Recovery` app.
+- `Custom game launcher` with built-in game categories, file browser, FTP server and client, modernized look and more.
 
-- `Custom game launcher` with built-in game categories, file browser, `FTP` server and client, modernized look and more.
-
-- Fully configurable via the `XMB`.
+- Built-in extensions allow the CFW to be managed entirely via the `XMB`.
 
 - Compatible with `PRO Online` and `Xlink Kai`.
 
-- Compatible with Legacy Homebrew via `eLoader` and `Leda`. Compatible with the KXploit format.
-
-- Compatible with `cIPL` and `Infinity 2` bootloaders for permanent CFW.
+- Compatible with Legacy Homebrew via `eLoader` and `Leda`, including with the classic `KXploit` format.
 
 - `OTA` updates. Fully updateable via the internet.
 
 
-![CFW Settings](.github/screenshots/cfw_settings.png "CFW Settings")
-![Advanced VSH Menu](.github/screenshots/advanced_vsh.png "CFW Settings")
-![Infinity](.github/screenshots/infinity.png "CFW Settings")
-
+![CFW Settings](.github/screenshots/cfw_settings.bmp "CFW Settings")
+![Advanced VSH Menu](.github/screenshots/advanced_vsh.bmp "VSH Menu")
+![cIPL](https://github.com/PSP-Archive/ARK-4/wiki/.res/system_settings.bmp "System Info")
 
 #### Compiling ARK ( For Developers )
 <p>
@@ -107,21 +102,12 @@ Use `-h` or `--help` to show all available flags
 
 ##### Permanent CFW via cIPL
 
-- `New cIPL`: works on `1g`, `2g` and `3g` models on `6.61`.
-- `Classic cIPL`: works on `Pandora` compatbile models (`1g` and early `2g`) on `6.60`, `6.61` or `6.60 Testing Tool`.
-- `DevTool cIPL`: works on `DTP-T1000` devkit units on `6.60 Development Tool` firmware.
-- cIPL will not install if not compatible, so no risk if running it even if you're unsure what specific model you're using - if not compatible, use `Infinity 2` instead.
-- Move or copy either `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
+- `New cIPL`: works with every retail model (1K, 2K, 3K, Go and Street) on firmware `6.61`.
+- `Classic cIPL`: works with `1g` and early `2g` on firmware `6.60` or `6.61` as well as `Testkits` on `6.60 Testing Tool`.
+- `DevTool cKBOOTI`: works with `DTP-T1000` (devkits) on `6.60 Development Tool`.
+- Installer will choose the correct version according to your model.
+- Move or copy `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
 - Press the corresponding button in the installation page to install or remove the cIPL patch.
-- Warning: unlike classic cIPL, the new cIPL method can't be easily uninstalled. To revert to offical IPL, use ChronoSwitch to reinstall 6.61 OFW.
-
-
-##### Permanent CFW via Infinity 2
-
-- Works on all PSP models on 6.60 or 6.61 firmwares.
-- Copy or move the `EBOOT.PBP` (or `EBOOT_GO.PBP` renamed to `EBOOT.PBP` if using a PSP Go) from the `Infinity` folder found in the ARK download into `/PSP/GAME/UPDATE`.
-- Run the`Infinity` app using Official Firmware to run the initial installation.
-- Run `Infinity` a second time to configure autoboot by selecting ARK within the Infinity app. Run the ARK CFW again to activate. ARK will now be automatically activated on boot up.
 
 
 ##### Full Flash Installation
@@ -138,13 +124,14 @@ Use `-h` or `--help` to show all available flags
 - `Time Machine` allows the ability to boot the `6.61` firmware and `ARK` entirely from the Memory Stick.
 - `Despertar del Cementerio` allows the ability to revive a bricked PSP when used in combination with a `Pandora` or `Baryon Sweeper`.
 - To install `DC-ARK` you must first format the memory stick leaving enough space for the boot sector. You can use `PSP Tool` to do this.
-- You also need to be running a `CFW` to install `DC-ARK` (ARK itself or any other).
+- You can install `DC-ARK` either using a `PSP` or a `PC` (Windows, Mac and Linux).
+- On `PSP` you need to be running a `CFW` to install `DC-ARK` (ARK itself or any other).
 - Copy the `ARK_DC` folder to the `/PSP/GAME/` folder and run the installer from the `XMB`.
 - Follow the instructions to install DC-ARK and create a magic memory stick.
-- On compatible models, use `Advanced VSH Menu` to create a `Pandora` battery.
+- On `PC`, you need `Python 3` and run `MagicMemoryCreator` with `admin`/`root` priviledges.
+- On compatible models, you can use `Advanced VSH Menu` to create a `Pandora Battery`.
 - Use a `Pandora` or `Baryon Sweeper` in combination with your newly created `Magic Memory Stick` to boot up `Despertar del Cementerio`.
-- From here you can either boot ARK from memory stick, install 6.61 Firmware with ARK on the Nand or install 6.61 Official Firmware.
-- Note that installing 6.61 firmware with ARK requires a cIPL-compatible PSP (1K and early 2K).
+- From here you can either boot ARK from memory stick, install 6.61 Firmware with ARK on the Nand or install 6.61 Official Firmware
 
 
 #### Installation On PS Vita

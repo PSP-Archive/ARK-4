@@ -1,6 +1,14 @@
 #include <stdlib.h>
 #include "ansi_c_functions.h"
 
+int tolower(int s)
+{
+    if((s >= 'A') && (s <= 'Z'))
+        s = 'a' + (s - 'A');
+
+    return s;
+}
+
 int strncasecmp(const char *s1, const char *s2, size_t n)
 {
 	const unsigned char *p1 = (const unsigned char *) s1;
@@ -9,6 +17,10 @@ int strncasecmp(const char *s1, const char *s2, size_t n)
 
 	if (p1 == p2 || n == 0)
 		return 0;
+	
+	if (s1 == NULL || s2 == NULL){
+        return (int)s1 - (int)s2;
+    }
 
 	do {
 		c1 = tolower(*p1);

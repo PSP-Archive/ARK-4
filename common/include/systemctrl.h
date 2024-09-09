@@ -27,7 +27,7 @@ extern "C"{
 #include <pspiofilemgr_kernel.h>
 #include <pspthreadman_kernel.h>
 #include <psploadcore.h>
-#include <globals.h>
+#include <ark.h>
 #include <pspkernel.h>
 #include <pspinit.h>
 #include "module2.h"
@@ -38,7 +38,7 @@ extern "C"{
 //#define sctrlKernelQuerySystemCall sceKernelQuerySystemCall
 
 // Prologue Module Start Handler
-typedef void (* STMOD_HANDLER)(SceModule2 *);
+typedef int (* STMOD_HANDLER)(SceModule2 *);
 
 // Thread Context
 typedef struct SceThreadContext SceThreadContext;
@@ -130,12 +130,6 @@ void* sctrlHENGetArkConfig(ARKConfig* conf);
 
 // Register the default VRAM handler for PSX exploit, returns the previous handler
 void* sctrlHENSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram));
-
-// Enable Custom PEOPS configuration
-void sctrlHENEnableCustomPeopsConfig(void* config);
-
-// Disable Custom PEOPS configuration (use database config)
-void sctrlHENDisableCustomPeopsConfig();
 
 // GZIP decompress
 int sctrlDeflateDecompress(void* dest, void* src, int size);

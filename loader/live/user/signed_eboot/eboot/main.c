@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "globals.h"
+#include "ark.h"
 #include "rebootconfig.h"
 #include "functions.h"
 #include "graphics.h"

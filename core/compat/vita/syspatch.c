@@ -7,7 +7,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
-#include <globals.h> 
+#include <ark.h> 
 #include "functions.h"
 #include "macros.h"
 #include "exitgame.h"
