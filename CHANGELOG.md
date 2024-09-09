@@ -8,6 +8,48 @@
 - Updated `Despertar del Cementerio` to `Version 10`. Now compatible with all PSP models.
 - Can now install `cIPL` on all PSP models.
 - `Custom App` location has been changed to `/PSP/APP/CUSTOM/EBOOT.PBP`
+#### Rev 13
+- Settings are now loaded (and some handled) earlier at boot. This fixes `cheatdevice_remastered` when using `Force Extra RAM`.
+- Added `VHBL` theme for Custom Launcher.
+#### Rev 12
+- Cleanup and refactor.
+- Disabled unused vita code related to flash.
+- Added support for `flash0:/PLUGINS.TXT` and `flash1:/SETTINGS.TXT` on PSP.
+#### Rev 11
+- Added anti-libcrypt protection for PS1 games.
+- Improved memory management in xMenu (ARK-X).
+- **Security release/bug fix**: This prevents the TA-088v3 from bricking when reverting back to the official IPL (oIPL) with ARK-cIPL Installer. 
+Thanks Nall for quickly testing and help get this out :+1: 
+#### Rev 10
+- Implemented patch to allow external custom config files for PS1 games (CUSTOM.BIN alongside the PBP).
+- ARK's PopCorn driver is now used in Pentazemin mode.
+- Refactor/cleanup some patch in PopCorn.
+- Added Reset Settings option in VSH Menu.
+#### Rev 9
+- Prevent using ARK Uninstaller if cIPL or Infinity is installed.
+- Some refactoring of custom launcher courtesy of @maodus (https://github.com/PSP-Archive/ARK-4/pull/380 and https://github.com/PSP-Archive/ARK-4/pull/382).
+#### Rev 8
+- Fixed duplication values in Custom Launcher SETTINGS.TXT
+- Added CHT, JP, KR VSH font support ( translations are welcome :wink: )
+#### Rev 7
+- Some small fixes in `cIPL` compat for PRO and ME.
+- You can now use the `cIPL Installer` on PRO or ME.
+#### Rev 6
+- Fixed issue with `DC-ARK`.
+- Fixed `cIPL` with `ME`'s Recovery Menu.
+#### Rev 5
+- Fixed issue with Live Loader.
+#### Rev 4
+- Fixed bug introduced in Rev 3 (https://github.com/PSP-Archive/ARK-4/issues/358).
+- - Reuploaded with full bug fix
+#### Rev 3
+- Reduced size of msipl, should fit most standard formatted memory sticks.
+- ARK's cIPL can now be used to load PRO or ME by creating a config file in `flash0:/arkcipl.cfg` with either `cfw=pro` or `cfw=me` (as is, no quotes, spaces or new lines).
+- cIPL installer will now refuse to work if it's not running within ARK or if Infinity is already installed.
+- cIPL installer will now do an actual cold reboot after un/installing instead of a software reset.
+#### Rev 2
+- Fixed TA-088v3 installing ARK via DC-ARK
+- Fixed duplicate plugins showing in XMB
 #### Rev 1
 - Updated `DC-ARK` (PSP version) to decrypt PSP GO Firmware. Must be put on the root of memory stick as `661GO.PBP`
 - Fixed a bug in `Despertar del Cementerio` where it could not repartion lflash, was missing `lflash_fdisk.prx`

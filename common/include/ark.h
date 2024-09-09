@@ -88,7 +88,7 @@ Second two bits identify special cases (PSP, Vita, Vita PSX, etc)
 Dev Sub
 00  00 -> unknown device (attempt to autodetect)
 01  00 -> psp
-01  01 -> unused
+01  01 -> psp toolkit
 01  10 -> unused
 10  00 -> ps vita
 10  01 -> vita adrenaline
