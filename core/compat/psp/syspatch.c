@@ -324,7 +324,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
     
-    if (strcmp(mod->modname, "sceUtility_Driver") == 0){
+    if (strcmp(mod->modname, "sceImpose_Driver") == 0){
         // Handle extra ram setting
         handleExtraRam();
         // Handle Inferno cache setting
