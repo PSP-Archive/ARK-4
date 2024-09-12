@@ -56,8 +56,6 @@ static struct{
 };
 */
 
-static int flash_redirect = 0;
-
 // Open Directory List
 OpenDirectory * opendirs = NULL;
 
@@ -76,9 +74,6 @@ OpenDirectory * findOpenDirectory(int fd);
 // sceIoAddDrv Hook
 int sceIoAddDrvHook(PspIoDrv * driver);
 
-// "flash" Driver IoOpen Hook
-int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode);
-
 // "ms" Driver IoOpen Hook
 int sceIoMsOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode);
 
@@ -90,11 +85,6 @@ int sceIoDreadHook(int fd, SceIoDirent * dir);
 
 // sceIoDclose Hook
 int sceIoDcloseHook(int fd);
-
-int flashLoadPatch(int cmd);
-
-// "flash" Driver IoOpen Original Call
-int (* sceIoFlashOpen)(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode) = NULL;
 
 // "ms" Driver IoOpen Original Call
 int (* sceIoMsOpen)(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode) = NULL;
@@ -108,12 +98,6 @@ PspIoDrvArg * flash_driver = NULL;
 PspIoDrvFuncs ms_funcs;
 PspIoDrvFuncs flash_funcs;
 
-void debuglog(char* text){
-    int fd = sceIoOpen("ms0:/flash.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
-    sceIoWrite(fd, text, strlen(text));
-    sceIoClose(fd);
-}
-
 void initFileSystem(){
     // Create Semaphore
     dreadSema = sceKernelCreateSema("sceIoDreadSema", 0, 1, 1, NULL);
@@ -124,8 +108,6 @@ void initFileSystem(){
     // Hooking sceIoAddDrv
     _sw((unsigned int)sceIoAddDrvHook, AddDrv);
     
-    // Patch IO for file replacements
-    //SceModule2* ioman = patchFileIO();
 }
 
 u32 UnprotectAddress(u32 addr){
@@ -140,56 +122,32 @@ u32 UnprotectAddress(u32 addr){
 }
 
 int (* sceIoMsRead_)(PspIoDrvFileArg* arg, void* data, SceSize size);
-int (* sceIoFlashRead_)(PspIoDrvFileArg* arg, void* data, SceSize size);
-int sceIoReadHookCommon(PspIoDrvFileArg* arg, void* data, SceSize size, int (*sceIoRead_)(PspIoDrvFileArg*, void*, SceSize))
-{
+int sceIoMsReadHook(PspIoDrvFileArg* arg, void* data, SceSize size){
     int ret;
     
     u32 addr = UnprotectAddress((u32)data);
 
     u32 k1 = pspSdkSetK1(0);
-    ret = sceIoRead_(arg, (void *)(addr), size);
+    ret = sceIoMsRead_(arg, (void *)(addr), size);
     pspSdkSetK1(k1);
-
-    if (ret < 0){
-        debuglog("** read ERROR\n");
-    }
 
     return ret;
 }
 
-int sceIoMsReadHook(PspIoDrvFileArg* arg, void* data, SceSize size){
-    return sceIoReadHookCommon(arg, data, size, sceIoMsRead_);
-}
-
-int sceIoFlashReadHook(PspIoDrvFileArg* arg, void* data, SceSize size){
-    return sceIoReadHookCommon(arg, data, size, sceIoFlashRead_);
-}
-
 int (* sceIoMsWrite_)(PspIoDrvFileArg* arg, const void* data, SceSize size);
-int (* sceIoFlashWrite_)(PspIoDrvFileArg* arg, const void* data, SceSize size);
-int sceIoWriteHookCommon(PspIoDrvFileArg* arg, const void* data, SceSize size, int (*sceIoWrite_)(PspIoDrvFileArg*, void*, SceSize))
-{
+int sceIoMsWriteHook(PspIoDrvFileArg * arg, void* data, SceSize size){
     int ret;
 
     u32 addr = UnprotectAddress((u32)data);
 
     if (addr) {
         u32 k1 = pspSdkSetK1(0);
-        ret = sceIoWrite_(arg, (void *)(addr), size);
+        ret = sceIoMsWrite_(arg, (void *)(addr), size);
         pspSdkSetK1(k1);
 
         return ret;
     }
-    return sceIoWrite_(arg, data, size);
-}
-
-int sceIoMsWriteHook(PspIoDrvFileArg * arg, void* data, SceSize size){
-    return sceIoWriteHookCommon(arg, data, size, sceIoMsWrite_);
-}
-
-int sceIoFlashWriteHook(PspIoDrvFileArg * arg, void* data, SceSize size){
-    return sceIoWriteHookCommon(arg, data, size, sceIoFlashWrite_);
+    return sceIoMsWrite_(arg, data, size);
 }
 
 void patchFileSystemDirSyscall(void)
@@ -223,7 +181,7 @@ void patchFileManagerImports(SceModule2 * mod)
     hookImportByNID(mod, "IoFileMgrForKernel", 0xEB092469, sceIoDcloseHook);
 }
 
-#if 0
+#if 1
 __attribute__((noinline)) int BuildMsPathChangeFsNum(PspIoDrvFileArg *arg, const char *name, char *ms_path) {
 	sprintf(ms_path, "/flash/%d%s", (int)arg->fs_num, name);
 	int fs_num = arg->fs_num;
@@ -565,10 +523,6 @@ int flashIoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, v
 }
 #endif
 
-void redirectFlashFileSystem(){
-    flash_redirect = 1;
-}
-
 // sceIoAddDrv Hook
 int sceIoAddDrvHook(PspIoDrv * driver)
 {
@@ -576,18 +530,6 @@ int sceIoAddDrvHook(PspIoDrv * driver)
     if (strcmp(driver->name, "flash") == 0) {
         memcpy(&flash_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
 
-        #if 1
-        // Hook IoOpen Function
-        sceIoFlashOpen = driver->funcs->IoOpen;
-        driver->funcs->IoOpen = sceIoFlashOpenHook;
-
-        sceIoFlashRead_ = driver->funcs->IoRead;
-        driver->funcs->IoRead = sceIoFlashReadHook;
-    
-        sceIoFlashWrite_ = driver->funcs->IoWrite;
-        driver->funcs->IoWrite = sceIoFlashWriteHook;
-
-        #else
 		driver->funcs->IoOpen = flashIoOpen;
 		driver->funcs->IoClose = flashIoClose;
 		driver->funcs->IoRead = flashIoRead;
@@ -604,7 +546,6 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 		driver->funcs->IoChstat = flashIoChstat;
 		driver->funcs->IoChdir = flashIoChdir;
 		driver->funcs->IoDevctl = flashIoDevctl;
-        #endif
 
         // Add flashfat driver
 		flashfat_drv->funcs = driver->funcs;
@@ -639,49 +580,6 @@ int sceIoAddDrvHook(PspIoDrv * driver)
     
     // Register Driver
     return sceIoAddDrv(driver);
-}
-
-// "flash" Driver IoOpen Hook
-int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
-{
-    flash_driver = arg->drv;
-    // flash0 File Access Attempt
-    if (arg->fs_num < 4 && flash_redirect) {
-        // File Path Buffer
-        char msfile[256];
-        int fs_num = arg->fs_num;
-        
-        // Create "ms" File Path (links to flash0 folder on ms0)
-        sprintf(msfile, "/flash/%d%s", fs_num, file);
-        
-        // Exchange Filesystem Driver for "ms"
-        arg->drv = ms_driver;
-        arg->fs_num = 0;
-        
-        debuglog("redirect: ");
-        debuglog(file);
-        debuglog("** to: ");
-        debuglog(msfile);
-        debuglog("\n");
-
-        // Open File from "ms"
-        int k1 = pspSdkSetK1(0);
-        int fd = sceIoMsOpen(arg, msfile, flags, mode);
-        pspSdkSetK1(k1);
-        
-        // Open Success
-        if (fd >= 0){
-            debuglog("** redirect OK\n");
-            return fd;
-        }
-        debuglog("** redirect ERROR\n");
-        // Restore Filesystem Driver to "flash"
-        arg->drv = flash_driver;
-        arg->fs_num = fs_num;
-    }
-    
-    // Forward Call
-    return sceIoFlashOpen(arg, file, flags, mode);
 }
 
 // "ms" Driver IoOpen Hook
@@ -899,95 +797,3 @@ int sceIoDcloseHook(int fd)
     // Forward Call
     return sceIoDclose(fd);
 }
-
-#if 0
-int (*iojal)(const char *, u32, u32, u32, u32, u32) = NULL;
-int patchio(const char *a0, u32 a1, u32 a2, u32 a3, u32 t0, u32 t1)
-{
-
-    int res;
-    if (strncmp(a0, "flash", 5) == 0){
-        char newpath[ARK_PATH_SIZE];
-        sprintf(newpath, "ms0:/flash/%c%s", a0[5], a0+7);
-        res = iojal(newpath, a1, a2, a3, t0, t1);
-        if (res>=0) return res;
-    }
-    /*
-    for (int i=0; ioreplacements[i].orig; i++){
-        if (strncmp(a0, ioreplacements[i].orig, ioreplacements[i].len) == 0){
-            char path[ARK_PATH_SIZE];
-            strcpy(path, ark_config->arkpath);
-            strcat(path, ioreplacements[i].new);
-            res = iojal(path, a1, a2, a3, t0, t1);
-            if (res>=0) return res;
-            break;
-        }
-    }
-    */
-    res = iojal(a0, a1, a2, a3, t0, t1);
-    
-    return res;
-}
-
-u32 backup[2], ioctl;
-int patchioctl(SceUID a0, u32 a1, void *a2, int a3, void *t0, int t1)
-{
-    _sw(backup[0], ioctl);
-    _sw(backup[1], ioctl + 4);
-
-    sceKernelDcacheWritebackInvalidateRange((void *)ioctl, 8);
-    sceKernelIcacheInvalidateRange((void *)ioctl, 8);
-
-    int ret = sceIoIoctl(a0, a1, a2, a3, t0, t1);
-
-    _sw((((u32)&patchioctl >> 2) & 0x03FFFFFF) | 0x08000000, ioctl);
-    _sw(0, ioctl + 4);
-
-    sceKernelDcacheWritebackInvalidateRange((void *)ioctl, 8);
-    sceKernelIcacheInvalidateRange((void *)ioctl, 8);
-
-    if (ret < 0 && ((a1 & 0x208000) == 0x208000))
-        return 0;
-
-    return ret;
-}
-
-SceModule2* patchFileIO(){
-    SceModule2 * mod = (SceModule2 *)sceKernelFindModuleByName("sceIOFileManager");
-    u32 topaddr = mod->text_addr+mod->text_size;
-    // find functions
-    int patches = 2;
-    for (u32 addr=mod->text_addr; addr<topaddr && patches; addr+=4){
-        u32 data = _lw(addr);
-        if (data == 0x03641824){
-            iojal = addr-4;
-            patches--;
-        }
-        else if (data == 0x00005021){
-            ioctl = addr-12;
-            patches--;
-        }
-    }
-    // redirect IO
-    patches = 2;
-    for (u32 addr=mod->text_addr; addr<topaddr && patches; addr+=4){
-        u32 data = _lw(addr);
-        if (data == JAL(iojal)){
-            _sw(JAL(patchio), addr);
-            patches--;
-        }
-    }
-    
-    // redirect ioctl to patched
-    backup[0] = _lw(ioctl);
-    backup[1] = _lw(ioctl + 4);
-    _sw(JUMP(patchioctl), ioctl);
-    _sw(0, ioctl+4);
-    
-    // Flush Cache
-    flushCache();
-    
-    return mod;
-}
-#endif
-

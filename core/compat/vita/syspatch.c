@@ -169,7 +169,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 
             // Patch to redirect flash to ms0
             //patchFileIO();
-            redirectFlashFileSystem();
+            //redirectFlashFileSystem();
 
             // Patch sceKernelExitGame Syscalls
             REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));
