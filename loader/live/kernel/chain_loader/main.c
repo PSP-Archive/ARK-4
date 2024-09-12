@@ -22,7 +22,7 @@
 #include "functions.h"
 
 #define ARK_LOADADDR 0x08D30000
-#define ARK_SIZE 0x8000
+#define ARK_SIZE 0x10000
 
 static ARKConfig conf = {
     .magic = ARK_CONFIG_MAGIC,

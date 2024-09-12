@@ -23,7 +23,7 @@ PSP_MODULE_INFO("ARK Loader", PSP_MODULE_USER, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
 
 #define ARK_LOADADDR 0x08D30000
-#define ARK_SIZE 0x8000
+#define ARK_SIZE 0x10000
 
 // Imports for Read-Only kxploits
 extern int sceKernelPowerLock(unsigned int, unsigned int);

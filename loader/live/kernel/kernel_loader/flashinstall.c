@@ -54,14 +54,14 @@ void extractFlash0Archive(SceSize args, void** argp){
     int (*filter)(char*) = NULL;
 
     int nargs = args/sizeof(void*);
-    if (nargs!=3) return;
+    if (nargs!=4) return;
     char* archive = argp[0];
-    filter = argp[1];
-    prtstr = argp[2];
+    char* dest_path = argp[1];
+    filter = argp[2];
+    prtstr = argp[3];
     
     if (filter == NULL) filter = &dummyFilter;
 
-    char* dest_path = "flash0:/";
     unsigned char buf[BUF_SIZE];
     int path_len = strlen(dest_path);
     static char filepath[ARK_PATH_SIZE];
@@ -73,7 +73,7 @@ void extractFlash0Archive(SceSize args, void** argp){
     int fdr = k_tbl->KernelIOOpen(archive, PSP_O_RDONLY, 0777);
     
     if (fdr>=0){
-        open_flash();
+        if (strncmp(dest_path, "flash", 5) == 0) open_flash();
         int filecount;
         k_tbl->KernelIORead(fdr, &filecount, sizeof(filecount));
         PRTSTR1("Processing %d files", filecount);

@@ -12,6 +12,8 @@
 #include "core/compat/pentazemin/rebootex/payload.h"
 
 extern char* kbin_path;
+extern ARKConfig* ark_config;
+extern int extractFlash0Archive();
 
 static int isVitaFile(char* filename){
     return (strstr(filename, "psv")!=NULL // PS Vita btcnf replacement, not used on PSP
@@ -21,8 +23,6 @@ static int isVitaFile(char* filename){
 }
 
 void flashPatch(){
-    extern ARKConfig* ark_config;
-    extern int extractFlash0Archive();
     char archive[ARK_PATH_SIZE];
     strcpy(archive, ark_config->arkpath);
     strcat(archive, FLASH0_ARK);
@@ -39,9 +39,9 @@ void flashPatch(){
         SceUID kthreadID = k_tbl->KernelCreateThread( "arkflasher", (void*)KERNELIFY(&extractFlash0Archive), 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
         if (kthreadID >= 0){
             // create thread parameters
-            void* args[3] = {(void*)archive, (void*)&isVitaFile, (void*)KERNELIFY(&PRTSTR11)};
+            void* args[] = {(void*)archive, "flash0:/", (void*)&isVitaFile, (void*)KERNELIFY(&PRTSTR11)};
             // start thread and wait for it to end
-            k_tbl->KernelStartThread(kthreadID, sizeof(void*)*3, &args);
+            k_tbl->KernelStartThread(kthreadID, sizeof(void*)*4, &args);
             k_tbl->waitThreadEnd(kthreadID, NULL);
             k_tbl->KernelDeleteThread(kthreadID);
             // delete archive on FinalSpeed installs
@@ -163,6 +163,16 @@ void onVitaFlashLoaded(){
         k_tbl->KernelIOMkdir("ms0:/flash/3", 0777);
         PRTSTR("Dumping flash0");
         dumpVitaFlash0();
+        PRTSTR("Extracting FLASH0.ARK");
+        char archive[ARK_PATH_SIZE];
+        strcpy(archive, ark_config->arkpath);
+        strcat(archive, FLASH0_ARK);
+        void* args[] = {(void*)archive, "ms0:/flash/0/", (void*)NULL, (void*)KERNELIFY(&PRTSTR11)};
+        // start thread and wait for it to end
+        SceUID kthreadID = k_tbl->KernelCreateThread( "arkflasher", (void*)KERNELIFY(&extractFlash0Archive), 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
+        k_tbl->KernelStartThread(kthreadID, sizeof(void*)*4, &args);
+        k_tbl->waitThreadEnd(kthreadID, NULL);
+        k_tbl->KernelDeleteThread(kthreadID);
     }
 }
 
