@@ -243,7 +243,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     }
 
     // load settings before utility module
-    if (!settingsLoaded && strcmp(modname, "sceUtility_Driver") == 0){
+    if (!settingsLoaded && strcmp(modname, "sceImpose_Driver") == 0){
         // Check ARK install path
         checkArkPath();
         // Check controller input to disable settings and/or plugins
