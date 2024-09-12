@@ -94,6 +94,6 @@ jobs:
 
       - name: Update Test Server
         # Please don't abuse this or I will have to revert back to the orginal way.
-        run:  curl -L 'http://ark-4.ddns.net/automagic?update_test=1'
-      # - name: Update Stable Server
-      # run: curl http://ark-4.ddns.net/automagic?update=1
+        run: curl -L 'http://ark-4.ddns.net/automagic?update_test=1'
+      - name: Update Stable Server (because Acid is lazy for an ssk-keygen)
+        run: curl -L 'http://ark-4.ddns.net/automagic?update_rel=1'
