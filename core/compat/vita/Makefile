@@ -10,6 +10,7 @@ C_OBJS =    \
 	filesystem.o    \
 	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/core/compat/psp/cwpatch.o \
+	$(ARKROOT)/core/compat/pentazemin/vitamem.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
 		
 OBJS = \

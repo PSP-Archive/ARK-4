@@ -465,6 +465,7 @@ settings_entry* ark_conf_entries_vita[] = {
     (settings_entry*)&pspclock,
     (settings_entry*)&powersave,
     (settings_entry*)&defaultclock,
+    (settings_entry*)&highmem,
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
 };

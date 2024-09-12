@@ -383,14 +383,14 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
 		PatchImposeDriver(mod->text_addr);
 		// perfect time to apply extra memory patch
-		if (se_config->force_high_memory) unlockVitaMemory();
+		if (se_config->force_high_memory) unlockVitaMemory(52);
 		else{
 			int apitype = sceKernelInitApitype();
 			if (apitype == 0x141){
 				int paramsize=4;
 				int use_highmem = 0;
 				if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-					unlockVitaMemory();
+					unlockVitaMemory(52);
 					se_config->force_high_memory = 1;
 				}
         	}

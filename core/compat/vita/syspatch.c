@@ -137,6 +137,39 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
 	}
 
+    if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
+		// perfect time to apply extra memory patch
+		if (se_config->force_high_memory) unlockVitaMemory(36);
+		else{
+			int apitype = sceKernelInitApitype();
+			if (apitype == 0x141){
+				int paramsize=4;
+				int use_highmem = 0;
+				if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
+					unlockVitaMemory(36);
+					se_config->force_high_memory = 1;
+				}
+        	}
+		}
+		// enable inferno cache
+		if (se_config->iso_cache){
+			int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+			if (CacheInit){
+				se_config->iso_cache_size = 32 * 1024;
+                se_config->iso_cache_num = 64;
+				CacheInit(32 * 1024, 64, (se_config->force_high_memory)?2:11); // 2MB cache for Adrenaline
+			}
+			if (se_config->iso_cache == 2){
+            	int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
+            	if (CacheSetPolicy){
+					se_config->iso_cache_policy = CACHE_POLICY_RR;
+					CacheSetPolicy(CACHE_POLICY_RR);
+				}
+        	}
+        }
+        goto flush;
+	}
+
     // Boot Complete Action not done yet
     if(booted == 0)
     {
@@ -147,29 +180,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             if (se_config->msspeed)
                 msstorCacheInit("ms");
 
-            // enable inferno cache
-            if (se_config->iso_cache){
-                int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
-                if (CacheInit){
-                    se_config->iso_cache_size = 4 * 1024;
-                    se_config->iso_cache_num = 16;
-                    CacheInit(4 * 1024, 16, 1); // 64KB cache for PS Vita standalone, in kernel
-                }
-                if (se_config->iso_cache == 2){
-                    int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
-                    if (CacheSetPolicy){
-                        se_config->iso_cache_policy = CACHE_POLICY_RR;
-                        CacheSetPolicy(CACHE_POLICY_RR);
-                    }
-                }
-            }
-
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
-
-            // Patch to redirect flash to ms0
-            //patchFileIO();
-            //redirectFlashFileSystem();
 
             // Patch sceKernelExitGame Syscalls
             REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));

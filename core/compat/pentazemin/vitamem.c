@@ -10,7 +10,7 @@
 #include <systemctrl.h>
 #include "sysmem.h"
 
-void unlockVitaMemory(){
+void unlockVitaMemory(u32 user_size_mib){
 
     int apitype = sceKernelInitApitype(); // prevent in pops and vsh
     if (apitype == 0x144 || apitype == 0x155 || apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300)
@@ -35,7 +35,7 @@ void unlockVitaMemory(){
 
 
     u32 kernel_size = 0; // EXTRA_RAM_SIZE - extra_user_ram; // p11 size
-    u32 user_size = 52 * 1024 * 1024; // new p2 size
+    u32 user_size = user_size_mib * 1024 * 1024; // new p2 size
 
     // modify p2
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
@@ -48,5 +48,5 @@ void unlockVitaMemory(){
     partition->address = 0x88800000 + user_size;
     partition->data->size = (((kernel_size >> 8) << 9) | 0xFC);
 
-    sctrlHENSetMemory(52, 0);
+    sctrlHENSetMemory(user_size_mib, 0);
 }
