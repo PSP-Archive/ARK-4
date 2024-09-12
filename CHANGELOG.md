@@ -8,6 +8,8 @@
 - Updated `Despertar del Cementerio` to `Version 10`. Now compatible with all PSP models.
 - Can now install `cIPL` on all PSP models.
 - `Custom App` location has been changed to `/PSP/APP/CUSTOM/EBOOT.PBP`
+#### Rev 15
+- Fixed `Force Extra RAM` setting being ignored on Pentazemin mode.
 #### Rev 14
 - Fixed bug introduced in r13.
 #### Rev 13

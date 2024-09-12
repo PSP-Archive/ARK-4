@@ -79,7 +79,7 @@
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 20
 #define ARK_MICRO_VERSION 69
-#define ARK_REVISION      14
+#define ARK_REVISION      15
 #define MAX_FLASH0_SIZE 0x32000
 
 /*
