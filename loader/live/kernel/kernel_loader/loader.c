@@ -145,6 +145,7 @@ void dumpVitaFlash0(){
         createFolders(path);
         int fd = k_tbl->KernelIOOpen(path, PSP_O_RDONLY, 0777);
         if (fd < 0){
+            PRTSTR1("Dumping %s", path);
             fd = k_tbl->KernelIOOpen(path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
             k_tbl->KernelIOWrite(fd, buf, buf_size);
         }
