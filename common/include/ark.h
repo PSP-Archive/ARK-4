@@ -15,8 +15,8 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
-#ifndef _OFFSETS_H_
-#define _OFFSETS_H_
+#ifndef _ARK_H_
+#define _ARK_H_
 
 #include <pspsdk.h>
 
