@@ -26,7 +26,7 @@
 #include <string.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include "ark.h"
+#include <ark.h>
 #include "macros.h"
 
 extern ARKConfig* ark_config;

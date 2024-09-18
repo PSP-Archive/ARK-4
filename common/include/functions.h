@@ -21,7 +21,7 @@
 #include <sdk.h>
 #include <psploadexec_kernel.h>
 #include "module2.h"
-#include "ark.h"
+#include <ark.h>
 
 struct minZipHeader {
     char pk[2];

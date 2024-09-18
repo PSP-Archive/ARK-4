@@ -27,12 +27,28 @@ extern "C"{
 #include <pspiofilemgr_kernel.h>
 #include <pspthreadman_kernel.h>
 #include <psploadcore.h>
-#include <ark.h>
 #include <pspkernel.h>
 #include <pspinit.h>
-#include "module2.h"
+#include <module2.h>
 
 #define GAME_ID_MINIMUM_BUFFER_SIZE 10
+
+// Different PSP models
+enum {
+    PSP_1000 = 0,   // 01g
+    PSP_2000 = 1,   // 02g
+    PSP_3000 = 2,   // 03g
+    PSP_4000 = 3,   // 04g
+    PSP_GO   = 4,   // 05g
+    PSP_7000 = 6,   // 07g
+    PSP_9000 = 8,   // 09g
+    PSP_11000 = 10, // 11g
+};
+
+// Different firmware versions
+#define FW_661 0x06060110
+#define FW_660 0x06060010
+#define FW_150 0x01050003
 
 enum BootLoadFlags
 {
@@ -107,9 +123,6 @@ void flushCache(void);
 
 // Missing PSPSDK Functions
 u32 sceKernelQuerySystemCall(void * function);
-
-// Get ARK's execution environment configuration
-void* sctrlHENGetArkConfig(ARKConfig* conf);
 
 // Register the default VRAM handler for PSX exploit, returns the previous handler
 void* sctrlHENSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram));

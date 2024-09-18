@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include "ark.h"
+#include <ark.h>
 #include "macros.h"
 
 PSP_MODULE_INFO("ARKInstaller", 0x800, 1, 0);

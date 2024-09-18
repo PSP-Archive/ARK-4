@@ -20,6 +20,10 @@
 
 #include <pspsdk.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // Generic Offsets
 #define USER_BASE 0x08800000
 #define KERNEL_BASE 0x88000000
@@ -105,23 +109,6 @@ typedef enum{
     DEV_MASK = 0b1100,
 }ExecMode;
 
-// Different PSP models
-enum {
-    PSP_1000 = 0,   // 01g
-    PSP_2000 = 1,   // 02g
-    PSP_3000 = 2,   // 03g
-    PSP_4000 = 3,   // 04g
-    PSP_GO   = 4,   // 05g
-    PSP_7000 = 6,   // 07g
-    PSP_9000 = 8,   // 09g
-    PSP_11000 = 10, // 11g
-};
-
-// Different firmware versions
-#define FW_661 0x06060110
-#define FW_660 0x06060010
-#define FW_150 0x01050003
-
 // These settings should be global and constant during the entire execution of ARK.
 // It should not be possible to change these (except for recovery flag).
 typedef struct ARKConfig{
@@ -150,6 +137,13 @@ typedef struct ARKConfig{
 #define IS_VITA(ark_config) ((ark_config->exec_mode&DEV_MASK)==PS_VITA)
 #define IS_VITA_ADR(ark_config) (ark_config->exec_mode==PSV_ADR)
 #define IS_VITA_POPS(ark_config) (ark_config->exec_mode==PSV_POPS)
+
+// Get ARK's execution environment configuration
+void* sctrlHENGetArkConfig(ARKConfig* conf);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

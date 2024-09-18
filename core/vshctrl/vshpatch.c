@@ -33,7 +33,7 @@
 #include "virtual_pbp.h"
 #include "macros.h"
 #include "strsafe.h"
-#include "ark.h"
+#include <ark.h>
 
 extern int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count);
 extern void patch_sceUSB_Driver(void);

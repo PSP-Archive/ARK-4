@@ -10,7 +10,7 @@
 #include <rebootconfig.h>
 #include <systemctrl_se.h>
 #include <string.h>
-#include "ark.h"
+#include <ark.h>
 #include "functions.h"
 
 void _flush_cache(){

@@ -9,7 +9,7 @@
 #include <list.h>
 #include <plugins.h>
 
-#include "ark.h"
+#include <ark.h>
 
 extern ARKConfig* ark_config;
 extern CFWConfig config;

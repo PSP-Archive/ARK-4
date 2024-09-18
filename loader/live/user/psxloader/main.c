@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "ark.h"
+#include <ark.h>
 
 PSP_MODULE_INFO("ARK VitaPOPS Loader", 0, 1, 0);
 

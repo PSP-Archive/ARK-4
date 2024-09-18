@@ -18,8 +18,9 @@
 #include <string.h>
 #include <pspiofilemgr.h>
 #include "libertas.h"
-#include "ark.h"
+#include <ark.h>
 #include "macros.h"
+#include <systemctrl.h>
 #include "systemctrl_se.h"
 
 extern int psp_model;
