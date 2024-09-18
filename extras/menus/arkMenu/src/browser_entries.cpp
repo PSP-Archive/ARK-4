@@ -165,7 +165,7 @@ BrowserFolder::BrowserFolder(string path, string shortname){
 BrowserFolder::BrowserFolder(string parent, string name, string shortname){
     this->icon0 = NULL;
     this->path = parent + name + '/';
-    this->name = name + '/';
+    this->name = name;
     this->parent = parent;
     this->selected = false;
     this->fileSize = "Folder";
@@ -177,10 +177,29 @@ BrowserFolder::BrowserFolder(string parent, string name, string shortname){
 BrowserFolder::~BrowserFolder(){
 }
 
+string BrowserFolder::getName(){
+    return this->name + '/';
+}
+
 char* BrowserFolder::getType(){
     return "FOLDER";
 }
 
 char* BrowserFolder::getSubtype(){
     return getType();
+}
+
+void BrowserFolder::loadIcon(){
+    string icon_path = this->path + "ICON0.PNG";
+    string eboot_path = "";
+    if (common::fileExists(icon_path)){
+        this->icon0 = new Image(icon_path);
+    }
+    else if ((eboot_path = Eboot::fullEbootPath(parent, name)).length() > 0){
+        Eboot* eboot = new Eboot(eboot_path);
+        eboot->loadIcon();
+        this->icon0 = eboot->getIcon();
+        eboot->setIcon(NULL);
+        delete eboot;
+    }
 }

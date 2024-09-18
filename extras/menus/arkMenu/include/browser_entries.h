@@ -62,10 +62,14 @@ class BrowserFolder : public BrowserFile{
         BrowserFolder(string parent, string name, string shortname);
         
         ~BrowserFolder();
+
+        string getName();
         
         char* getType();
         
         char* getSubtype();
+
+        void loadIcon();
 };
 
 #endif
