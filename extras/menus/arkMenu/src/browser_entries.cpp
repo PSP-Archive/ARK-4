@@ -190,6 +190,7 @@ char* BrowserFolder::getSubtype(){
 }
 
 void BrowserFolder::loadIcon(){
+    if (strstr(path.c_str(), "/LICENSE/") != NULL) return;
     string icon_path = this->path + "ICON0.PNG";
     string eboot_path = "";
     if (common::fileExists(icon_path)){
