@@ -6,6 +6,9 @@
 #include <fat.h>
 #endif
 
+// This replaces UMD driver with Inferno at all times, prevents crashes on consoles with broken Lepton
+//#define NO_LEPTON 1
+
 enum {
     CFW_ARK,
     CFW_PRO,
@@ -410,24 +413,30 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     newsize = patch_bootconf_pops(buffer, result);
     if (newsize > 0) result = newsize;
 
-    // Insert Inferno and RTM
+    // Insert Inferno
     if (IS_ARK_CONFIG(reboot_conf)){
         switch(reboot_conf->iso_mode) {
+            default:
+                #ifndef NO_LEPTON
+                break;
+                #endif
             case MODE_VSHUMD:
+                #ifndef NO_LEPTON
                 newsize = patch_bootconf_vshumd(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
+                #endif
             case MODE_UPDATERUMD:
+                #ifndef NO_LEPTON
                 newsize = patch_bootconf_updaterumd(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
+                #endif
             case MODE_MARCH33:
             case MODE_INFERNO:
                 reboot_conf->iso_mode = MODE_INFERNO;
                 newsize = patch_bootconf_inferno(buffer, result);
                 if (newsize > 0) result = newsize;
-                break;
-            default:
                 break;
         }
         //reboot variable set
