@@ -9,6 +9,19 @@
 // This replaces UMD driver with Inferno at all times, prevents crashes on consoles with broken Lepton
 //#define NO_LEPTON 1
 
+//io flags
+extern volatile int rebootmodule_set;
+extern volatile int rebootmodule_open;
+extern volatile char *p_rmod;
+extern volatile int size_rmod;
+extern void* rtm_buf;
+extern int rtm_size;
+
+//io functions
+extern int (* sceBootLfatOpen)(char * filename);
+extern int (* sceBootLfatRead)(char * buffer, int length);
+extern int (* sceBootLfatClose)(void);
+
 enum {
     CFW_ARK,
     CFW_PRO,
@@ -24,10 +37,18 @@ int file_exists(const char *path)
 {
 	int ret;
 
+    #ifdef MS_IPL
+    ret = MsFatOpen(path);
+    #else
 	ret = (*sceBootLfatOpen)(path);
+    #endif
 
 	if(ret >= 0) {
+        #ifdef MS_IPL
+        MsFatClose(path);
+        #else
 		(*sceBootLfatClose)();
+        #endif
 		return 1;
 	}
 
@@ -501,19 +522,6 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
 }
 
 // IO Patches
-
-//io flags
-extern volatile int rebootmodule_set;
-extern volatile int rebootmodule_open;
-extern volatile char *p_rmod;
-extern volatile int size_rmod;
-extern void* rtm_buf;
-extern int rtm_size;
-
-//io functions
-extern int (* sceBootLfatOpen)(char * filename);
-extern int (* sceBootLfatRead)(char * buffer, int length);
-extern int (* sceBootLfatClose)(void);
 
 #ifdef MS_IPL
 char path[128];
