@@ -10,6 +10,7 @@
 #include <systemctrl_se.h>
 #include <ark.h>
 #include "macros.h"
+#include "../../../loader/rebootex/pspbtcnf.h"
 
 PSP_MODULE_INFO("ARKInstaller", 0x800, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH | PSP_THREAD_ATTR_VFPU);
@@ -28,7 +29,9 @@ struct {
     {VSH_MENU, VSH_MENU_FLASH},
     {RECOVERY_PRX, RECOVERY_PRX_FLASH},
     {UPDATER_FILE, UPDATER_FILE_FLASH},
-    {ARK_SETTINGS, ARK_SETTINGS_FLASH}
+    {ARK_SETTINGS, ARK_SETTINGS_FLASH},
+    {PATH_FATMS_371, PATH_FATMS_371_FLASH},
+    {PATH_FATMS_HELPER, PATH_FATMS_HELPER_FLASH},
 };
 
 
@@ -133,11 +136,20 @@ int main(int argc, char * argv[])
     open_flash();
 
     char path[ARK_PATH_SIZE];
+	int len = strlen(argv[0])-8;
+	char fatms[len];
     for (int i=0; i<N_FLASH_FILES; i++){
-        strcpy(path, ark_config.arkpath);
-        strcat(path, flash_files[i].orig);
-        pspDebugScreenPrintf("Installing %s to %s\n", flash_files[i].orig, flash_files[i].dest);
-        copy_file(path, flash_files[i].dest);
+		if(strstr(flash_files[i].orig, "fatms")) {
+			snprintf(fatms, strlen(argv[0])-8, "%s", argv[0]);
+			strcpy(path, fatms);
+			strcat(path, flash_files[i].orig);
+		}
+		else {
+			strcpy(path, ark_config.arkpath);
+			strcat(path, flash_files[i].orig);
+		}
+			pspDebugScreenPrintf("Installing %s to %s\n", flash_files[i].orig, flash_files[i].dest);
+			copy_file(path, flash_files[i].dest);
     }
 
     // Kill Main Thread
