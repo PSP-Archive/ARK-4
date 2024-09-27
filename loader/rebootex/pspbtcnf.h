@@ -2,6 +2,8 @@
 #define PSPBTCNF_H
 
 #define PATH_FLASH0 "flash0:/"
+
+// ARK files
 #define PATH_SYSTEMCTRL PATH_FLASH0 "kd/ark_systemctrl.prx"
 #define PATH_PSPCOMPAT PATH_FLASH0 "kd/ark_pspcompat.prx"
 #define PATH_VITACOMPAT PATH_FLASH0 "kd/ark_vitacompat.prx"
@@ -12,10 +14,15 @@
 #define PATH_POPCORN PATH_FLASH0 "kd/ark_popcorn.prx"
 #define PATH_TMCTRL PATH_FLASH0 "tmctrl.prx"
 
+// PRO/ME files
 #define PATH_SYSTEMCTRL_PRO PATH_FLASH0 "kd/_systemctrl.prx"
 #define PATH_VSHCTRL_PRO PATH_FLASH0 "kd/_vshctrl.prx"
 #define PATH_RECOVERY_PRO PATH_FLASH0 "vsh/module/_recovery.prx"
 #define PATH_RECOVERY_ME PATH_FLASH0 "vsh/module/recovery.prx"
+
+// fatms371
+#define PATH_FATMS_HELPER PATH_FLASH0 "kd/_fatmshlp.prx"
+#define PATH_FATMS_371 PATH_FLASH0 "kd/_fatms371.prx"
 
 typedef struct _btcnf_header
 {

@@ -20,6 +20,20 @@ static int psp_model = PSP_1000;
 
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 
+int file_exists(const char *path)
+{
+	int ret;
+
+	ret = (*sceBootLfatOpen)(path);
+
+	if(ret >= 0) {
+		(*sceBootLfatClose)();
+		return 1;
+	}
+
+	return 0;
+}
+
 int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(void *, void *, void *)){
     loadCoreModuleStartCommon(start);
 
@@ -265,6 +279,22 @@ int patch_bootconf_updaterumd(char *buffer, int length)
     return result;
 }
 
+int is_fatms371(void)
+{
+	return file_exists(PATH_FATMS_HELPER + sizeof("flash0:") - 1) && file_exists(PATH_FATMS_371 + sizeof("flash0:") - 1);
+}
+
+int patch_bootconf_fatms371(char *buffer, int length)
+{
+	int newsize;
+
+	newsize = AddPRX(buffer, "/kd/fatms.prx", PATH_FATMS_HELPER+sizeof(PATH_FLASH0)-2, 0xEF & ~VSH_RUNLEVEL);
+	RemovePrx(buffer, "/kd/fatms.prx", 0xEF & ~VSH_RUNLEVEL);
+	newsize = AddPRX(buffer, "/kd/wlan.prx", PATH_FATMS_371+sizeof(PATH_FLASH0)-2, 0xEF & ~VSH_RUNLEVEL);
+
+	return newsize;
+}
+
 #ifdef PAYLOADEX
 #ifndef MS_IPL
 int patch_bootconf_pro(char *buffer, int length)
@@ -449,6 +479,12 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
                 setRebootModule();
             }
         }
+    }
+
+    if(!ark_config->recovery && is_fatms371())
+    {
+        newsize = patch_bootconf_fatms371(buffer, length);
+        if (newsize > 0) result = newsize;
     }
 
 #ifdef MS_IPL
