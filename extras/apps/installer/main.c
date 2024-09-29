@@ -140,7 +140,7 @@ int main(int argc, char * argv[])
 	char fatms[len];
     for (int i=0; i<N_FLASH_FILES; i++){
 		if(strstr(flash_files[i].orig, "fatms") && (kuKernelGetModel() == PSP_GO)) continue;
-		if(strstr(flash_files[i].orig, "fatms")) {
+		else if(strstr(flash_files[i].orig, "fatms")) {
 			snprintf(fatms, strlen(argv[0])-8, "%s", argv[0]);
 			strcpy(path, fatms);
 			strcat(path, flash_files[i].orig);
