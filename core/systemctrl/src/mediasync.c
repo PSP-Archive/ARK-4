@@ -23,6 +23,9 @@
 #include <macros.h>
 #include <systemctrl_private.h>
 #include <ark.h>
+#include <rebootconfig.h>
+
+extern RebootConfigARK rebootex_config;
 
 // Patch mediasync.prx
 void patchMediaSync(SceModule2* mod)
@@ -61,6 +64,11 @@ void patchMediaSync(SceModule2* mod)
             _sw(0x00001021, addr-8); // MEDIASYNC_KD_FOLDER_PATCH
             patches--;
         }
+    }
+
+    if (rebootex_config.boot_from_fw_version == FW_150) {
+        int (*sceClockgenAudioClkEnable)(void) = sctrlHENFindFunction("sceClockgen_Driver", "sceClockgen_driver", 0xA1D23B2C);
+        sceClockgenAudioClkEnable();
     }
 }
 

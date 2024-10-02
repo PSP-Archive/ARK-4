@@ -37,6 +37,18 @@ u32 psp_model = 0;
 ARKConfig* ark_config = NULL;
 SEConfig* se_config = NULL;
 int has_umd_iso = 0;
+int _150_addon_enabled = 0;
+
+void enable_150_addon()
+{
+    SceIoStat stat;
+
+    if (psp_model == PSP_1000 && sceKernelDevkitVersion() == FW_661) {
+        memset(&stat, 0, sizeof(stat));
+        if (sceIoGetstat(ARK_DC_PATH "/150", &stat) >= 0)
+            _150_addon_enabled = 1;
+    }
+}
 
 // Flush Instruction and Data Cache
 void sync_cache()
@@ -92,6 +104,8 @@ int module_start(SceSize args, void* argp)
         // disable launcher mode if using VSH ISO
         ark_config->launcher[0] = 0;
     }
+
+    enable_150_addon();
 
     return 0;
 }

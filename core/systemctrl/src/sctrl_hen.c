@@ -258,6 +258,12 @@ void sctrlHENSetRebootexOverride(const u8 *rebootex)
         custom_rebootex = rebootex;
 }
 
+extern int (* LoadRebootOverrideHandler)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4);
+void sctrlHENSetLoadRebootOverrideHandler(int (* func)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4))
+{
+    LoadRebootOverrideHandler = func;
+}
+
 extern int (*ExtendDecryption)();
 void* sctrlHENRegisterKDecryptHandler(int (* func)())
 {

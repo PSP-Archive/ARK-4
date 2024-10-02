@@ -59,7 +59,12 @@ SUBDIRS = libs \
 	extras/menus/xMenu \
 	extras/menus/vshmenu \
 	extras/apps/installer \
-	extras/apps/uninstaller 
+	extras/apps/uninstaller \
+	extras/150kernel/rebootex150 \
+	extras/150kernel/reboot150 \
+	extras/150kernel/systemctrl150 \
+	extras/150kernel/tmctrl150 \
+	extras/150kernel/installer
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx copy-dcark pack-flash0
 
@@ -101,6 +106,9 @@ copy-bin:
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
 	$(Q)cp extras/apps/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
 	$(Q)cp extras/apps/uninstaller/EBOOT.PBP dist/PSP/ARK_Uninstaller # ARK-4 Uninstaller
+	$(Q)cp extras/150kernel/installer/EBOOT.PBP dist/PSP/ARK_150Addon # ARK-4 150 Kernel Addon
+	$(Q)cp contrib/PSP/GAME/ARK_DC/libpsardumper.prx dist/PSP/ARK_150Addon
+	$(Q)cp contrib/PSP/GAME/ARK_DC/pspdecrypt.prx dist/PSP/ARK_150Addon
 	$(Q)cp contrib/UPDATER.TXT dist/ARK_01234/
 	$(Q)cp contrib/SETTINGS.TXT dist/ARK_01234/
 	$(Q)cp contrib/PSP/mediasync.prx dist/ARK_01234/MEDIASYN.PRX
@@ -325,6 +333,11 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/apps/updater/
 	$(Q)$(MAKE) $@ -C extras/apps/installer/
 	$(Q)$(MAKE) $@ -C extras/apps/uninstaller
+	$(Q)$(MAKE) $@ -C extras/150kernel/reboot150
+	$(Q)$(MAKE) $@ -C extras/150kernel/rebootex150
+	$(Q)$(MAKE) $@ -C extras/150kernel/systemctrl150
+	$(Q)$(MAKE) $@ -C extras/150kernel/tmctrl150
+	$(Q)$(MAKE) $@ -C extras/150kernel/installer
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/ipl_stage1_payload
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/ipl_stage2_payload
 	$(Q)rm -f extras/apps/updater/ARK_01234.PKG | true
@@ -375,6 +388,7 @@ mkdir-dist:
 	$(Q)mkdir dist/PSP/Infinity | true
 	$(Q)mkdir dist/PSP/ARK_Uninstaller | true
 	$(Q)mkdir dist/PSP/ARK_DC | true
+	$(Q)mkdir dist/PSP/ARK_150Addon | true
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
 	$(Q)mkdir dist/PSP/FinalSpeed | true

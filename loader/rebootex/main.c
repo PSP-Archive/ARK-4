@@ -31,10 +31,10 @@ ARKConfig _arkconf = {
     .magic = ARK_CONFIG_MAGIC,
 #ifndef MS_IPL
     .arkpath = "ms0:/PSP/SAVEDATA/ARK_01234/", // default path for ARK files
-    .exploit_id = "cIPL",
+    .exploit_id = CIPL_EXPLOIT_ID,
 #else
     .arkpath = ARK_DC_PATH "/ARK_01234/", // default path for ARK files
-    .exploit_id = "DC",
+    .exploit_id = DC_EXPLOIT_ID,
 #endif
     .launcher = {0},
     .exec_mode = PSP_ORIG, // run ARK in PSP mode

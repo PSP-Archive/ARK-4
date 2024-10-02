@@ -120,7 +120,7 @@ enum {
 // Different firmware versions
 #define FW_661 0x06060110
 #define FW_660 0x06060010
-#define FW_150 0x01050003
+#define FW_150 0x01050001
 
 // These settings should be global and constant during the entire execution of ARK.
 // It should not be possible to change these (except for recovery flag).
@@ -137,6 +137,8 @@ typedef struct ARKConfig{
 #define ARK_CONFIG 0x08800010
 #define ARK_CONFIG_MAGIC 0xB00B1E55
 #define LIVE_EXPLOIT_ID "Live" // default loader name
+#define CIPL_EXPLOIT_ID "cIPL"
+#define DC_EXPLOIT_ID "DC"
 #define DEFAULT_ARK_FOLDER "ARK_01234"
 #define SAVEDATA_MS0 "ms0:/PSP/SAVEDATA/"
 #define SAVEDATA_EF0 "ef0:/PSP/SAVEDATA/"
