@@ -127,11 +127,8 @@ static void remove_analog_input(SceCtrlData *data)
 {
 	if(data == NULL)
 		return;
-	// wat???
-	if(!se_config.noanalog) {
-		CtrlSetSamplingCycle(0);	
-		CtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
-	}
+	data->Lx = 0xFF/2;
+	data->Ly = 0xFF/2;
 }
 
 // Gamepad Hook #1
@@ -254,6 +251,4 @@ void patchController(SceModule2* mod)
 	HIJACK_FUNCTION(CtrlPeekBufferNegative, peek_negative, CtrlPeekBufferNegative);
 	HIJACK_FUNCTION(CtrlReadBufferPositive, read_positive, CtrlReadBufferPositive);
 	HIJACK_FUNCTION(CtrlReadBufferNegative, read_negative, CtrlReadBufferNegative);
-	HIJACK_FUNCTION(CtrlSetSamplingCycle, remove_analog_input, CtrlSetSamplingCycle);
-	HIJACK_FUNCTION(CtrlSetSamplingMode, remove_analog_input, CtrlSetSamplingMode);
 }
