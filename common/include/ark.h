@@ -124,6 +124,8 @@ typedef struct ARKConfig{
 #define ARK_CONFIG 0x08800010
 #define ARK_CONFIG_MAGIC 0xB00B1E55
 #define LIVE_EXPLOIT_ID "Live" // default loader name
+#define CIPL_EXPLOIT_ID "cIPL"
+#define DC_EXPLOIT_ID "DC"
 #define DEFAULT_ARK_FOLDER "ARK_01234"
 #define SAVEDATA_MS0 "ms0:/PSP/SAVEDATA/"
 #define SAVEDATA_EF0 "ef0:/PSP/SAVEDATA/"

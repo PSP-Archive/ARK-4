@@ -39,6 +39,9 @@ RebootConfigARK rebootex_config = {
 // custom rebootex
 void* custom_rebootex = NULL;
 
+// LoadReboot handler
+int (* LoadRebootOverrideHandler)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4) = NULL;
+
 // Backup Reboot Buffer
 void backupRebootBuffer(void)
 {
@@ -72,6 +75,8 @@ void restoreRebootBuffer(void)
         sceKernelGzipDecompress((unsigned char *)REBOOTEX_TEXT, REBOOTEX_MAX_SIZE, rebootex, NULL);
     else // plain payload
         memcpy((void *)REBOOTEX_TEXT, rebootex, REBOOTEX_MAX_SIZE);
+
+    rebootex_config.boot_from_fw_version = sceKernelDevkitVersion();
         
     // Restore Reboot Buffer Configuration
     memcpy((void *)REBOOTEX_CONFIG, &rebootex_config, sizeof(RebootConfigARK));
@@ -83,8 +88,13 @@ void restoreRebootBuffer(void)
 // Reboot Buffer Loader
 int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
 {
+    // If a LoadReboot override handler has been set call it instead
+    if (LoadRebootOverrideHandler)
+        return LoadRebootOverrideHandler(arg1, arg2, arg3, arg4);
+
     // Restore Reboot Buffer
     restoreRebootBuffer();
+
     // Load Sony Reboot Buffer
     return OrigLoadReboot(arg1, arg2, arg3, arg4);
 }

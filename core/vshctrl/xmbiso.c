@@ -33,15 +33,46 @@
 #define MAGIC_DFD_FOR_DELETE 0x9000
 #define MAGIC_DFD_FOR_DELETE_2 0x9001
 
+#define GAME150_PATCH "__150"
+
 extern u32 psp_model;
 extern SEConfig* se_config;
+extern int _150_addon_enabled;
 static char g_iso_dir[128];
 static char g_temp_delete_dir[128];
 static int g_delete_eboot_injected = 0;
 
+int reboot150 = 0;
+SceUID gamedfd = -1;
+SceUID game150dfd = -1;
+
 static const char *game_list[] = {
-	"ms0:/PSP/GAME/", "ef0:/PSP/GAME/"
+	"ms0:/PSP/GAME/", "ms0:/PSP/GAME150/", "ef0:/PSP/GAME/"
 };
+
+static void ApplyNamePatch(SceIoDirent *dir, char *patch)
+{
+	if (dir->d_name[0] != '.') {
+        strcat(dir->d_name, patch);
+	}
+}
+
+void Fix150Path(const char *file)
+{
+	char str[256];
+
+	if (strstr(file, "ms0:/PSP/GAME/") == file) {
+		strcpy(str, (char *)file);
+
+		char *p = strstr(str, GAME150_PATCH);
+		
+		if (p) {
+			strcpy((char *)file+13, "150/");
+			strncpy((char *)file+17, str+14, p-(str+14));
+			strcpy((char *)file+17+(p-(str+14)), p+5);		
+		}
+	}
+}
 
 static int CorruptIconPatch(char *name)
 {
@@ -199,6 +230,8 @@ SceUID gamedopen(const char * dirname)
     SceUID result;
     u32 k1;
 
+    Fix150Path(dirname);
+
     if(is_iso_dir(dirname)) {
         result = MAGIC_DFD_FOR_DELETE;
         g_delete_eboot_injected = 0;
@@ -215,6 +248,14 @@ SceUID gamedopen(const char * dirname)
     result = sceIoDopen(dirname);
     
     if(is_game_dir(dirname)) {
+
+        if (_150_addon_enabled && strcmp(dirname, "ms0:/PSP/GAME") == 0) {
+            gamedfd = result;
+            k1 = pspSdkSetK1(0);
+            game150dfd = sceIoDopen("ms0:/PSP/GAME150");
+            pspSdkSetK1(k1);
+        }
+
         char path[256];
         const char *p;
         int iso_dfd, ret;
@@ -263,6 +304,7 @@ exit:
 int gamedread(SceUID fd, SceIoDirent * dir)
 {
     int result;
+    int apply150NamePatch = 0;
     u32 k1;
 
     if(fd == MAGIC_DFD_FOR_DELETE || fd == MAGIC_DFD_FOR_DELETE_2) {
@@ -292,6 +334,21 @@ int gamedread(SceUID fd, SceIoDirent * dir)
 
     result = sceIoDread(fd, dir);
 
+    if (result <= 0 && fd == gamedfd) {
+        if (game150dfd >= 0) {
+            k1 = pspSdkSetK1(0);
+            if ((result = sceIoDread(game150dfd, dir)) <= 0)
+            {
+                sceIoDclose(game150dfd);
+                game150dfd = -1;					
+            }
+            else {
+                apply150NamePatch = 1;
+            }
+            pspSdkSetK1(k1);
+        }
+    }
+    
     if(result <= 0) {
         struct IoDirentEntry *entry;
 
@@ -305,7 +362,9 @@ int gamedread(SceUID fd, SceIoDirent * dir)
     }
     else {
         int k1 = pspSdkSetK1(0);
-        CorruptIconPatch(dir->d_name);
+        int patched = CorruptIconPatch(dir->d_name);
+        if (!patched && apply150NamePatch)
+            ApplyNamePatch(dir, GAME150_PATCH);
         if (se_config->hidedlc)
     		HideDlc(dir->d_name);
         pspSdkSetK1(k1);
@@ -362,6 +421,8 @@ SceUID gameopen(const char * file, int flags, SceMode mode)
 {
     //forward to firmware
     SceUID result;
+
+    Fix150Path(file);
    
     if (is_iso_eboot(file)) {
         u32 k1 = pspSdkSetK1(0);
@@ -426,6 +487,8 @@ SceOff gamelseek(SceUID fd, SceOff offset, int whence)
 int gamegetstat(const char * file, SceIoStat * stat)
 {
     int result;
+
+    Fix150Path(file);
    
     //virtual iso eboot detected
     if (is_iso_eboot(file)) {
@@ -443,6 +506,8 @@ int gamegetstat(const char * file, SceIoStat * stat)
 int gameremove(const char * file)
 {
     int result;
+
+    Fix150Path(file);
    
     if(g_temp_delete_dir[0] != '\0' && 
             0 == strncmp(file, g_temp_delete_dir, strlen(g_temp_delete_dir))) {
@@ -508,6 +573,8 @@ void recursiveFolderDelete(char* path){
 int gamermdir(const char * path)
 {
     int result;
+
+    Fix150Path(path);
    
     if(0 == strcmp(path, g_temp_delete_dir)) {
         strcat(g_iso_dir, "/EBOOT.PBP");
@@ -535,11 +602,30 @@ int gamermdir(const char * path)
     return result;
 }
 
+int loadReboot150()
+{
+    int k1 = pspSdkSetK1(0);
+    SceUID mod = sceKernelLoadModule(ARK_DC_PATH "/150/reboot150.prx", 0, NULL);
+    if (mod < 0) {
+        pspSdkSetK1(k1);
+        return mod;
+    }
+
+    int res = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+
+    pspSdkSetK1(k1);
+
+    return res;
+}
+
 //load and execute file
 int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
     //result
     int result = -1;
+
+    Fix150Path(file);
+    Fix150Path(param->argp);
 
     //virtual iso eboot detected
     if (is_iso_eboot(file)) {
@@ -557,7 +643,17 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     }
 
     //forward to ms0 handler
-	if(strncmp(file, "ms", 2) == 0) result = sctrlKernelLoadExecVSHMs2(file, param);
+	if(strncmp(file, "ms", 2) == 0)
+    {
+        if (strstr(file, "ms0:/PSP/GAME150/") == file) {
+            result = loadReboot150();
+
+            if (result < 0)
+                return result;
+        }
+
+        result = sctrlKernelLoadExecVSHMs2(file, param);
+    }
 
 	//forward to ef0 handler
 	else result = sctrlKernelLoadExecVSHEf2(file, param);
@@ -607,6 +703,8 @@ int gamerename(const char *oldname, const char *newfile)
 int gamechstat(const char *file, SceIoStat *stat, int bits)
 {
     int result;
+
+    Fix150Path(file);
 
     if(g_temp_delete_dir[0] != '\0' && 
             0 == strncmp(file, g_temp_delete_dir, strlen(g_temp_delete_dir))) {
