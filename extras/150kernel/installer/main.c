@@ -706,7 +706,7 @@ int main(void)
 
     sceKernelVolatileMemLock(0, (void *)&g_dataOut2, &i);
 
-    Update();	
+    Update();
 
     printf("Writing custom modules...\n");
 
@@ -723,8 +723,6 @@ int main(void)
     }
 
     CopyRegistry();
-
-    GetReboot661();
 
     ErrorExit(7000, "\n\nDone.\nAuto-exiting in 7 seconds.\n");
 
