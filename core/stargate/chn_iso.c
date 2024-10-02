@@ -29,7 +29,7 @@
 #include "systemctrl_private.h"
 #include "kubridge.h"
 #include "strsafe.h"
-#include "ark.h"
+#include <ark.h>
 #include "macros.h"
 
 typedef struct _pspMsPrivateDirent {

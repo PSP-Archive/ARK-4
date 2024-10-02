@@ -15,10 +15,14 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
-#ifndef _OFFSETS_H_
-#define _OFFSETS_H_
+#ifndef _ARK_H_
+#define _ARK_H_
 
 #include <pspsdk.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // Generic Offsets
 #define USER_BASE 0x08800000
@@ -79,7 +83,7 @@
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 20
 #define ARK_MICRO_VERSION 69
-#define ARK_REVISION      15
+#define ARK_REVISION      16
 #define MAX_FLASH0_SIZE 0x32000
 
 /*
@@ -104,23 +108,6 @@ typedef enum{
     PSV_POPS = 0b1010,
     DEV_MASK = 0b1100,
 }ExecMode;
-
-// Different PSP models
-enum {
-    PSP_1000 = 0,   // 01g
-    PSP_2000 = 1,   // 02g
-    PSP_3000 = 2,   // 03g
-    PSP_4000 = 3,   // 04g
-    PSP_GO   = 4,   // 05g
-    PSP_7000 = 6,   // 07g
-    PSP_9000 = 8,   // 09g
-    PSP_11000 = 10, // 11g
-};
-
-// Different firmware versions
-#define FW_661 0x06060110
-#define FW_660 0x06060010
-#define FW_150 0x01050003
 
 // These settings should be global and constant during the entire execution of ARK.
 // It should not be possible to change these (except for recovery flag).
@@ -150,6 +137,13 @@ typedef struct ARKConfig{
 #define IS_VITA(ark_config) ((ark_config->exec_mode&DEV_MASK)==PS_VITA)
 #define IS_VITA_ADR(ark_config) (ark_config->exec_mode==PSV_ADR)
 #define IS_VITA_POPS(ark_config) (ark_config->exec_mode==PSV_POPS)
+
+// Get ARK's execution environment configuration
+void* sctrlHENGetArkConfig(ARKConfig* conf);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

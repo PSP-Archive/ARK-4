@@ -6,10 +6,12 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include "ark.h"
+#include <ark.h>
 #include "macros.h"
+#include "../../../loader/rebootex/pspbtcnf.h"
 
 PSP_MODULE_INFO("ARKInstaller", 0x800, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH | PSP_THREAD_ATTR_VFPU);
@@ -17,6 +19,39 @@ PSP_HEAP_SIZE_KB(4096);
 
 #define BUF_SIZE 16*1024
 #define KERNELIFY(a) ((u32)a|0x80000000)
+
+#define setbcolor pspDebugScreenSetBackColor
+#define setcolor pspDebugScreenSetTextColor
+#define setc pspDebugScreenSetXY
+#define printf pspDebugScreenPrintf
+
+#define RGB(r, g, b) (0xFF000000 | ((b)<<16) | ((g)<<8) | (r))
+#define RED RGB(255, 0, 0)
+#define GREEN RGB(0, 255, 0)
+#define BLUE RGB(0, 0, 255)
+#define BLACK RGB(0, 0, 0)
+#define ORANGE RGB(255, 127, 0)
+#define WHITE RGB(255, 255, 255)
+#define YELLOW RGB(255, 255, 0)
+#define GRAY RGB(103, 120, 137)
+
+ARKConfig ark_config;
+
+void printfc(int x, int y, char *fmt, ...)
+{	
+	char msg[256];
+
+	va_list list;
+	va_start(list, fmt);
+	vsprintf(msg, fmt, list);
+	va_end(list);
+
+	setc(x, y);
+	printf(msg);
+	setcolor(WHITE);
+}
+
+
 
 struct {
     char* orig;
@@ -28,11 +63,55 @@ struct {
     {VSH_MENU, VSH_MENU_FLASH},
     {RECOVERY_PRX, RECOVERY_PRX_FLASH},
     {UPDATER_FILE, UPDATER_FILE_FLASH},
-    {ARK_SETTINGS, ARK_SETTINGS_FLASH}
+    {ARK_SETTINGS, ARK_SETTINGS_FLASH},
 };
 
 
 static const int N_FLASH_FILES = (sizeof(flash_files)/sizeof(flash_files[0]));
+
+void install(char *argv[]) {
+	pspDebugScreenClear();
+
+    printf("ARK Full Installer Started\n");
+
+
+    u32 my_ver = (ARK_MAJOR_VERSION << 16) | (ARK_MINOR_VERSION << 8) | ARK_MICRO_VERSION;
+    u32 cur_ver = sctrlHENGetMinorVersion();
+    int major = (cur_ver&0xFF0000)>>16;
+	int minor = (cur_ver&0xFF00)>>8;
+	int micro = (cur_ver&0xFF);
+
+    printf("Version %d.%d.%.2i\n", major, minor, micro);
+
+    printf("Opening flash0 for writing\n");
+    open_flash();
+
+    char path[ARK_PATH_SIZE];
+	int len = strlen(argv[0])-8;
+	char fatms[len];
+    for (int i=0; i<N_FLASH_FILES; i++){
+		if(strstr(flash_files[i].orig, "fatms") && (kuKernelGetModel() == PSP_GO)) continue;
+		else if(strstr(flash_files[i].orig, "fatms")) {
+			snprintf(fatms, strlen(argv[0])-8, "%s", argv[0]);
+			strcpy(path, fatms);
+			strcat(path, flash_files[i].orig);
+		}
+		else {
+			strcpy(path, ark_config.arkpath);
+			strcat(path, flash_files[i].orig);
+		}
+			printf("Installing %s to %s\n", flash_files[i].orig, flash_files[i].dest);
+			copy_file(path, flash_files[i].dest);
+    }
+
+    // Kill Main Thread
+	printf("Exiting...\n");
+	sceKernelDelayThread(1000000);
+    sceKernelExitGame();
+
+}
+
+
 
 void uninstall() {
 	SceIoStat stat;
@@ -43,7 +122,7 @@ void uninstall() {
 			return;
 		}
 		else {
-			pspDebugScreenPrintf("Removing %s\n", flash_files[i].dest);
+			printf("Removing %s\n", flash_files[i].dest);
 			sceIoRemove(flash_files[i].dest);
 		}
     }
@@ -60,29 +139,75 @@ void pops4tool() {
     };
     SceIoStat stat;
 
-    if (!sctrlHENIsToolKit()){
-        pspDebugScreenPrintf("ERROR: not a toolkit.\nInstalling pops files could cause a brick, aborting...\n");
-        return;
-    }
-
     open_flash();
     for (int i=0; i<NELEMS(pops_files); i++){
         char flash_path[256];
         sprintf(flash_path, "flash0:/%s", pops_files[i]);
         if (sceIoGetstat(pops_files[i], &stat) >= 0){
-            pspDebugScreenPrintf("Installing %s\n", flash_path);
+            printf("Installing %s\n", flash_path);
             copy_file(pops_files[i], flash_path);
         }
+		else {
+			printf("\n\nError files not found.\n");
+			printf("Exiting...\n");
+			sceKernelDelayThread(1000000);
+			sceKernelExitGame();
+		}
     }
-    pspDebugScreenPrintf("Done\n");
+	printf("\n\nExiting...\n");
+	sceKernelDelayThread(1000000);
+	sceKernelExitGame();
 }
 
+void fatms371_mod(void) {
+	static char* fatms371_files[] = { "kd/_fatms371.prx", "kd/_fatmshlp.prx" };
+    SceIoStat stat;
+
+    open_flash();
+	for (int i=0; i<NELEMS(fatms371_files); i++){
+        char flash_path[256];
+        sprintf(flash_path, "flash0:/%s", fatms371_files[i]);
+        if (sceIoGetstat(fatms371_files[i], &stat) >= 0){
+            printf("Installing %s\n", flash_path);
+            copy_file(fatms371_files[i], flash_path);
+        }
+    }
+	printf("\n\nExiting...\n");
+	sceKernelDelayThread(1000000);
+	sceKernelExitGame();
+}
+
+//from ospbt by cory1492
+void wait_release(unsigned int buttons)
+{
+	SceCtrlData pad;
+
+	sceCtrlReadBufferPositive(&pad, 1);
+	while(pad.Buttons & buttons)
+		sceCtrlReadBufferPositive(&pad, 1);
+}
+
+//from ospbt by cory1492
+unsigned int wait_press(unsigned int buttons)
+{
+	SceCtrlData pad;
+
+	sceCtrlReadBufferPositive(&pad, 1);
+	while(1)
+	{
+		if(pad.Buttons & buttons)
+			return pad.Buttons & buttons;
+
+		sceCtrlReadBufferPositive(&pad, 1);
+	}
+
+	return 0;
+}
 
 // Entry Point
 int main(int argc, char * argv[])
 {
 
-    ARKConfig ark_config;
 
     sctrlHENGetArkConfig(&ark_config);
     
@@ -90,59 +215,142 @@ int main(int argc, char * argv[])
     pspDebugScreenInit();
 
     if (ark_config.magic != ARK_CONFIG_MAGIC){
-        pspDebugScreenPrintf("ERROR: not running ARK\n");
+        printf("ERROR: not running ARK\n");
         sceKernelDelayThread(100000);
         sceKernelExitGame();
     }
 
-	SceCtrlData pad;
-	pspDebugScreenPrintf("ARK-4 Full Installer\n");
-	pspDebugScreenPrintf("Press X to install\n");
-	pspDebugScreenPrintf("Press O to uninstall\n");
-    pspDebugScreenPrintf("Press [] to install pops files for toolkits\n");
-	pspDebugScreenPrintf("Press R Trigger to quit\n");
+/*	printf("ARK-4 Full Installer\n");
+	printf("Press X to install\n");
+	printf("Press O to uninstall\n");
+	if(kuKernelGetModel() != PSP_GO)
+		printf("Press /\\ to install fatms371_mod\n");
+	if(sctrlHENIsToolKit())
+    	printf("Press [] to install pops files for toolkits\n");
+	printf("Press R Trigger to quit\n");
+	*/
 
+	printf("\n\n\tARK-4 Full Installer\n");
+
+	int cursor = 0;
 	while(1) {
+
+		if(kuKernelGetModel() == PSP_GO) {
+			if(cursor > 2)
+				cursor = 0;
+		}
+		if(sctrlHENIsToolKit()) {
+			if(cursor > 4)
+				cursor = 0;
+		}
+		else if(!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && cursor > 3) cursor = 0;
+		if(cursor < 0) { 
+			if(kuKernelGetModel() == PSP_GO)
+				cursor = 2;
+			if(sctrlHENIsToolKit())
+				cursor = 4;
+			if(!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO)
+				cursor = 3;
+		}
+
+
+		if(cursor == 0) setbcolor(GRAY);
+		printfc(3, 4, " Install              ");
+		setbcolor(BLACK);
+		if(cursor == 1) setbcolor(GRAY);
+		printfc(3, 5, " Uninstall            ");
+		setbcolor(BLACK);
+		if(cursor == 2) setbcolor(GRAY);
+		if (sctrlHENIsToolKit()) {
+			if(cursor == 2)
+				setbcolor(GRAY);
+			printfc(3, 6, " Install popsTool     ");
+			setbcolor(BLACK);
+			if(cursor == 3)
+				setbcolor(GRAY);
+			printfc(3, 7, " Install fatms371_mod ");
+			setbcolor(BLACK);
+		}
+		else if((kuKernelGetModel() == PSP_GO)) {
+			if(cursor == 2)
+				setbcolor(GRAY);
+			printfc(3, 6, " Exit                 ");
+			setbcolor(BLACK);
+		}
+		else if(!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO) {
+			if(cursor == 2)
+				setbcolor(GRAY);
+			printfc(3, 6, " Install fatms371_mod ");
+			setbcolor(BLACK);
+		}
+
+		if((!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO)) {
+			if(cursor == 3)
+				setbcolor(GRAY);
+			printfc(3, 7, " Exit                 ");
+			setbcolor(BLACK);
+		}
+		if((sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO)) {
+			if(cursor == 4)
+				setbcolor(GRAY);
+			printfc(3, 8, " Exit                 ");
+			setbcolor(BLACK);
+		}
+
+		int i;
+		for(i = 0; i < (sctrlHENIsToolKit() ? 5 : 4); i++)
+			printfc(1, 4 + i, " ");
+
+		setcolor(BLUE);
+		printfc(1, 4 + cursor, ">");
+
+		u32 Buttons = wait_press(PSP_CTRL_CROSS | PSP_CTRL_UP | PSP_CTRL_DOWN);
+		wait_release(PSP_CTRL_CROSS | PSP_CTRL_UP | PSP_CTRL_DOWN);
+
+		SceCtrlData pad;
 		sceCtrlReadBufferPositive(&pad, 1);
-		if(pad.Buttons & PSP_CTRL_CIRCLE) 
-			uninstall();
-		else if(pad.Buttons & PSP_CTRL_CROSS) 
-			break;
-        else if (pad.Buttons & PSP_CTRL_SQUARE){
-            pops4tool();
-            sceKernelDelayThread(100000);
-            sceKernelExitGame();
-        }
-		else if(pad.Buttons & PSP_CTRL_RTRIGGER)
-			sceKernelExitGame();
+		if (Buttons & PSP_CTRL_CROSS) {
 
+			setc(0, 9);
+			if(cursor == 0)
+				install(argv);
+			if(cursor == 1)
+				uninstall();
+			if(cursor == 2 && sctrlHENIsToolKit())
+				pops4tool();
+			if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO)
+				fatms371_mod();
+			if(cursor == 2 && (kuKernelGetModel() == PSP_GO)) {
+				printf("\n\nExiting...\n");
+				sceKernelDelayThread(1000000);
+				sceKernelExitGame();
+			}
+			if(cursor == 3 && !sctrlHENIsToolKit()) {
+				printf("\n\nExiting...\n");
+				sceKernelDelayThread(1000000);
+				sceKernelExitGame();
+			}
+			if(cursor == 3 && sctrlHENIsToolKit())
+				fatms371_mod();
+			if(cursor == 4 && sctrlHENIsToolKit()) {
+				printf("\n\nExiting...\n");
+				sceKernelDelayThread(1000000);
+				sceKernelExitGame();
+			}
+
+			/*else if(cursor == 3) {
+				printf("\n\nExiting...\n");
+				sceKernelDelayThread(1000000);
+				sceKernelExitGame();
+			}
+			*/
+
+		}
+		else if(Buttons & PSP_CTRL_UP)
+			cursor--;
+		else if(Buttons & PSP_CTRL_DOWN)
+			cursor++;
 	}
-	pspDebugScreenClear();
-
-    pspDebugScreenPrintf("ARK Full Installer Started\n");
-
-    u32 my_ver = (ARK_MAJOR_VERSION << 16) | (ARK_MINOR_VERSION << 8) | ARK_MICRO_VERSION;
-    u32 cur_ver = sctrlHENGetMinorVersion();
-    int major = (cur_ver&0xFF0000)>>16;
-	int minor = (cur_ver&0xFF00)>>8;
-	int micro = (cur_ver&0xFF);
-
-    pspDebugScreenPrintf("Version %d.%d.%.2i\n", major, minor, micro);
-
-    pspDebugScreenPrintf("Opening flash0 for writing\n");
-    open_flash();
-
-    char path[ARK_PATH_SIZE];
-    for (int i=0; i<N_FLASH_FILES; i++){
-        strcpy(path, ark_config.arkpath);
-        strcat(path, flash_files[i].orig);
-        pspDebugScreenPrintf("Installing %s to %s\n", flash_files[i].orig, flash_files[i].dest);
-        copy_file(path, flash_files[i].dest);
-    }
-
-    // Kill Main Thread
-    sceKernelExitGame();
-
     // Exit Function
     return 0;
 }

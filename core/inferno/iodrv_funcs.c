@@ -28,7 +28,7 @@
 #include <pspthreadman_kernel.h>
 #include "systemctrl_private.h"
 #include "inferno.h"
-#include "ark.h"
+#include <ark.h>
 #include "macros.h"
 
 /*

@@ -6,7 +6,8 @@
 #include <pspctrl.h>
 #include <pspkernel.h>
 
-#include "ark.h"
+#include <ark.h>
+#include <systemctrl.h>
 #include <systemctrl_se.h>
 #include "umdvideo_list.h"
 

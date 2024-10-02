@@ -21,7 +21,7 @@ Made to work on OFW and CFW.
 #include <string.h>
 
 #include "macros.h"
-#include "ark.h"
+#include <ark.h>
 #include "functions.h"
 #include "kxploit.h"
 

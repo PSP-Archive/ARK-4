@@ -23,7 +23,7 @@
 #include <systemctrl_se.h>
 #include <functions.h>
 #include "ansi_c_functions.h"
-#include "ark.h"
+#include <ark.h>
 
 #define REBOOTEX_MAX_SIZE 0x5000
 #define BTCNF_MAGIC 0x0F803001

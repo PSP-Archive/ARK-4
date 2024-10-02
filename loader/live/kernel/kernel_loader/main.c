@@ -131,15 +131,14 @@ int autoDetectDevice(ARKConfig* config){
                     return -1;
                 }
                 else{
-                    int fd = k_tbl->KernelIOOpen("flash1:/config.adrenaline", PSP_O_RDONLY, 0);
-                    if (fd >= 0){
+                    u32 kuKernelMemcpy = k_tbl->FindFunction("SystemControl", "KUBridge", 0x6B4B577F);
+                    if (kuKernelMemcpy == 0){
                         // Adrenaline
-                        k_tbl->KernelIOClose(fd);
                         config->exec_mode = PSV_ADR;
                         return 0;
                     }
                     else {
-                        // early eCFW
+                        // early ARK?
                         return -1;
                     }
                 }

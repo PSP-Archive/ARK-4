@@ -82,7 +82,7 @@ class Entry{
         Entry(string path);
         virtual ~Entry()=0;
         
-        string getName();
+        virtual string getName();
         void setName(string name);
         string getPath();
         void setPath(string path);

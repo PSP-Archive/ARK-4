@@ -28,7 +28,7 @@
 #include <pspinit.h>
 #include "systemctrl_private.h"
 #include "inferno.h"
-#include "ark.h"
+#include <ark.h>
 #include "macros.h"
 
 PSP_MODULE_INFO("PRO_Inferno_Driver", 0x1000, 2, 1);

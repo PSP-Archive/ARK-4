@@ -4,6 +4,7 @@
 #include <pspctrl.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <ark.h>
 
 #include <main.h>
 

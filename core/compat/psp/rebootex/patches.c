@@ -1,9 +1,26 @@
+#include "systemctrl.h"
 #include "rebootex.h"
 #include "pspbtcnf.h"
 
 #ifdef MS_IPL
 #include <fat.h>
 #endif
+
+// This replaces UMD driver with Inferno at all times, prevents crashes on consoles with broken Lepton
+//#define NO_LEPTON 1
+
+//io flags
+extern volatile int rebootmodule_set;
+extern volatile int rebootmodule_open;
+extern volatile char *p_rmod;
+extern volatile int size_rmod;
+extern void* rtm_buf;
+extern int rtm_size;
+
+//io functions
+extern int (* sceBootLfatOpen)(char * filename);
+extern int (* sceBootLfatRead)(char * buffer, int length);
+extern int (* sceBootLfatClose)(void);
 
 enum {
     CFW_ARK,
@@ -15,6 +32,28 @@ static int cfw_type = CFW_ARK;
 static int psp_model = PSP_1000;
 
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
+
+int file_exists(const char *path)
+{
+	int ret;
+
+    #ifdef MS_IPL
+    ret = MsFatOpen(path);
+    #else
+	ret = (*sceBootLfatOpen)(path);
+    #endif
+
+	if(ret >= 0) {
+        #ifdef MS_IPL
+        MsFatClose(path);
+        #else
+		(*sceBootLfatClose)();
+        #endif
+		return 1;
+	}
+
+	return 0;
+}
 
 int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(void *, void *, void *)){
     loadCoreModuleStartCommon(start);
@@ -261,6 +300,22 @@ int patch_bootconf_updaterumd(char *buffer, int length)
     return result;
 }
 
+int is_fatms371(void)
+{
+	return file_exists(PATH_FATMS_HELPER + sizeof("flash0:") - 1) && file_exists(PATH_FATMS_371 + sizeof("flash0:") - 1);
+}
+
+int patch_bootconf_fatms371(char *buffer, int length)
+{
+	int newsize;
+
+	newsize = AddPRX(buffer, "/kd/fatms.prx", PATH_FATMS_HELPER+sizeof(PATH_FLASH0)-2, 0xEF & ~VSH_RUNLEVEL);
+	RemovePrx(buffer, "/kd/fatms.prx", 0xEF & ~VSH_RUNLEVEL);
+	newsize = AddPRX(buffer, "/kd/wlan.prx", PATH_FATMS_371+sizeof(PATH_FLASH0)-2, 0xEF & ~VSH_RUNLEVEL);
+
+	return newsize;
+}
+
 #ifdef PAYLOADEX
 #ifndef MS_IPL
 int patch_bootconf_pro(char *buffer, int length)
@@ -409,24 +464,30 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     newsize = patch_bootconf_pops(buffer, result);
     if (newsize > 0) result = newsize;
 
-    // Insert Inferno and RTM
+    // Insert Inferno
     if (IS_ARK_CONFIG(reboot_conf)){
         switch(reboot_conf->iso_mode) {
+            default:
+                #ifndef NO_LEPTON
+                break;
+                #endif
             case MODE_VSHUMD:
+                #ifndef NO_LEPTON
                 newsize = patch_bootconf_vshumd(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
+                #endif
             case MODE_UPDATERUMD:
+                #ifndef NO_LEPTON
                 newsize = patch_bootconf_updaterumd(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
+                #endif
             case MODE_MARCH33:
             case MODE_INFERNO:
                 reboot_conf->iso_mode = MODE_INFERNO;
                 newsize = patch_bootconf_inferno(buffer, result);
                 if (newsize > 0) result = newsize;
-                break;
-            default:
                 break;
         }
         //reboot variable set
@@ -439,6 +500,12 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
                 setRebootModule();
             }
         }
+    }
+
+    if(!ark_config->recovery && is_fatms371())
+    {
+        newsize = patch_bootconf_fatms371(buffer, length);
+        if (newsize > 0) result = newsize;
     }
 
 #ifdef MS_IPL
@@ -455,19 +522,6 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
 }
 
 // IO Patches
-
-//io flags
-extern volatile int rebootmodule_set;
-extern volatile int rebootmodule_open;
-extern volatile char *p_rmod;
-extern volatile int size_rmod;
-extern void* rtm_buf;
-extern int rtm_size;
-
-//io functions
-extern int (* sceBootLfatOpen)(char * filename);
-extern int (* sceBootLfatRead)(char * buffer, int length);
-extern int (* sceBootLfatClose)(void);
 
 #ifdef MS_IPL
 char path[128];

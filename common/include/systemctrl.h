@@ -27,12 +27,37 @@ extern "C"{
 #include <pspiofilemgr_kernel.h>
 #include <pspthreadman_kernel.h>
 #include <psploadcore.h>
-#include <ark.h>
 #include <pspkernel.h>
 #include <pspinit.h>
-#include "module2.h"
+#include <module2.h>
 
 #define GAME_ID_MINIMUM_BUFFER_SIZE 10
+
+// Different PSP models
+enum {
+    PSP_1000 = 0,   // 01g
+    PSP_2000 = 1,   // 02g
+    PSP_3000 = 2,   // 03g
+    PSP_4000 = 3,   // 04g
+    PSP_GO   = 4,   // 05g
+    PSP_7000 = 6,   // 07g
+    PSP_9000 = 8,   // 09g
+    PSP_11000 = 10, // 11g
+};
+
+// Different firmware versions
+#define FW_661 0x06060110
+#define FW_660 0x06060010
+#define FW_150 0x01050003
+
+enum BootLoadFlags
+{
+    BOOTLOAD_VSH = 1,
+    BOOTLOAD_GAME = 2,
+    BOOTLOAD_UPDATER = 4,
+    BOOTLOAD_POPS = 8,
+    BOOTLOAD_UMDEMU = 64, /* for original NP9660 */
+};
 
 // Function Name Clones (of old but gold times)
 //#define sctrlKernelQuerySystemCall sceKernelQuerySystemCall
@@ -43,6 +68,10 @@ typedef int (* STMOD_HANDLER)(SceModule2 *);
 // Thread Context
 typedef struct SceThreadContext SceThreadContext;
 
+// Decrypt extension functions
+typedef int (* KDEC_HANDLER)(u32 *buf, int size, int *retSize, int m);
+typedef int (* MDEC_HANDLER)(u32 *tag, u8 *keys, u32 code, u32 *buf, int size, int *retSize, int m, void *unk0, int unk1, int unk2, int unk3, int unk4);
+
 // Find Import Library Stub Table
 SceLibraryStubTable * findImportLib(SceModule2 * pMod, char * library);
 
@@ -51,27 +80,6 @@ unsigned int findImportByNID(SceModule2 * pMod, char * library, unsigned int nid
 
 // Replace Import Function Stub
 int hookImportByNID(SceModule2 * pMod, char * library, unsigned int nid, void * func);
-
-// Set User Level
-int sctrlKernelSetUserLevel(int level);
-
-// Set System Firmware Version
-int sctrlKernelSetDevkitVersion(int version);
-
-// Get HEN Version
-int sctrlHENGetVersion();
-
-// Get HEN Minor Version
-int sctrlHENGetMinorVersion();
-
-// Find Filesystem Driver
-PspIoDrv * sctrlHENFindDriver(char * drvname);
-
-// Replace Function in Syscall Table
-void sctrlHENPatchSyscall(void * addr, void * newaddr);
-
-// Load Execute Module via Kernel Internal Function
-int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param);
 
 /**
  * Restart the vsh.
@@ -83,9 +91,6 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct Sce
 */
 int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
 
-// Register Prologue Module Start Handler
-STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler);
-
 // Return Reboot Configuration UMD File
 char * sctrlSEGetUmdFile(void);
 
@@ -94,12 +99,6 @@ void sctrlSESetUmdFile(char * file);
 
 // Calculate Random Number via KIRK
 unsigned int sctrlKernelRand(void);
-
-// Set Init Apitype
-int sctrlKernelSetInitApitype(int apitype);
-
-// Set Init Filename
-int sctrlKernelSetInitFileName(char * filename);
 
 // Register Custom init.prx sceKernelStartModule Handler, returns previous handler (if any)
 void sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt));
@@ -124,9 +123,6 @@ void flushCache(void);
 
 // Missing PSPSDK Functions
 u32 sceKernelQuerySystemCall(void * function);
-
-// Get ARK's execution environment configuration
-void* sctrlHENGetArkConfig(ARKConfig* conf);
 
 // Register the default VRAM handler for PSX exploit, returns the previous handler
 void* sctrlHENSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram));
@@ -164,6 +160,7 @@ int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
  *
  * @returns < 0 on some errors. 
 */
+int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a disc.
@@ -197,6 +194,16 @@ int sctrlKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam
  * @returns < 0 on some errors. 
 */
 int sctrlKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam *param);
+
+/**
+ * Executes a new executable from PSP Go's Internal Memory.
+ * It is the function used by the firmware to execute games (and homebrew :P) from internal memory.
+ *
+ * @param file - The file to execute.
+ * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ *
+ * @returns < 0 on some errors. 
+*/
 int sctrlKernelLoadExecVSHEf2(const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
@@ -242,6 +249,7 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, struct SceK
  * @Note - this will modify also the value of sceKernelBootFrom, since the value of
  * bootfrom is calculated from the apitype
 */
+int sctrlKernelSetInitApitype(int apitype);
 
 /**
  * Sets the filename of the launched executable.
@@ -249,6 +257,7 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, struct SceK
  * @param filename - The filename to set
  * @returns 0 on success
 */
+int sctrlKernelSetInitFileName(char * filename);
 
 /**
  * Sets the init key config
@@ -281,7 +290,7 @@ int sctrlKernelSetDevkitVersion(int version);
  * @returns 1 if we are in SE-C or later, 0 if we are in HEN-D or later,
  * and < 0 (a kernel error code) in any other case
 */
-int    sctrlHENIsSE();
+int sctrlHENIsSE();
 
 /**
  * Checks if we are in Devhook.
@@ -289,7 +298,7 @@ int    sctrlHENIsSE();
  * @returns 1 if we are in SE-C/HEN-D for devhook  or later, 0 if we are in normal SE-C/HEN-D or later,
  * and < 0 (a kernel error code) in any other case
 */
-int    sctrlHENIsDevhook();
+int sctrlHENIsDevhook();
 
 /**
  * Gets the HEN version
@@ -369,9 +378,7 @@ unsigned int sctrlHENFindFunction(char *modname, char *libname, unsigned int nid
  *            in order to avoid problems with gp register that may lead to a crash.
  *
 */
-
-typedef int (* KDEC_HANDLER)(u32 *buf, int size, int *retSize, int m);
-typedef int (* MDEC_HANDLER)(u32 *tag, u8 *keys, u32 code, u32 *buf, int size, int *retSize, int m, void *unk0, int unk1, int unk2, int unk3, int unk4);
+STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler);
 
 /**
  * Sets the speed (only for kernel usage)
@@ -393,195 +400,9 @@ void sctrlHENSetSpeed(int cpu, int bus);
 */
 int sctrlHENSetMemory(u32 p2, u32 p8);
 
-void sctrlHENPatchSyscall(void *addr, void *newaddr);
-
 int sctrlKernelQuerySystemCall(void *func_addr);
 
 int sctrlKernelBootFrom(void);
-
-
-// ################# SAVESTATE USER ##############
-
-enum BootLoadFlags
-{
-    BOOTLOAD_VSH = 1,
-    BOOTLOAD_GAME = 2,
-    BOOTLOAD_UPDATER = 4,
-    BOOTLOAD_POPS = 8,
-    BOOTLOAD_UMDEMU = 64, /* for original NP9660 */
-};
-
-/**
- * Restart the vsh.
- *
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL
- *
- * @returns < 0 on some errors.
- *
-*/
-int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
-
-/**
- * Executes a new executable from a disc.
- * It is the function used by the firmware to execute the EBOOT.BIN from a disc.
- *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
- *
- * @returns < 0 on some errors. 
-*/
-int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param);
-
-/**
- * Executes a new executable from a disc.
- * It is the function used by the firmware to execute an updater from a disc.
- *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
- *
- * @returns < 0 on some errors. 
-*/
-
-/**
- * Executes a new executable from a memory stick.
- * It is the function used by the firmware to execute an updater from a memory stick.
- *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
- *
- * @returns < 0 on some errors. 
-*/
-
-/**
- * Executes a new executable from a memory stick.
- * It is the function used by the firmware to execute games (and homebrew :P) from a memory stick.
- *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
- *
- * @returns < 0 on some errors. 
-*/
-
-/**
- * Executes a new executable from a memory stick.
- * It is the function used by the firmware to execute ... ?
- *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
- *
- * @returns < 0 on some errors. 
-*/
-
-/**
- * Executes a new executable from a memory stick.
- * It is the function used by the firmware to execute psx games
- *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
- *
- * @returns < 0 on some errors. 
-*/
-
-
-/**
- * Executes a new executable with the specified apitype
- *
- * @param apitype - The apitype
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
- *
- * @returns < 0 on some errors. 
-*/
-
-/**
- * Sets the api type 
- *
- * @param apitype - The apitype to set
- * @returns the previous apitype
- *
- * @Note - this will modify also the value of sceKernelBootFrom, since the value of
- * bootfrom is calculated from the apitype
-*/
-int sctrlKernelSetInitApitype(int apitype);
-
-/**
- * Sets the filename of the launched executable.
- *
- * @param filename - The filename to set
- * @returns 0 on success
-*/
-
-/**
- * Sets the init key config
- *
- * @param key - The key code
- * @returns the previous key config
-*/
-
-/**
- * Sets the user level of the current thread
- *
- * @param level - The user level
- * @return the previous user level on success
- */
-int sctrlKernelSetUserLevel(int level);
-
-/**
- * Sets the devkit version
- * 
- * @param version - The devkit version to set
- * @return the previous devkit version
- * 
-*/
-int sctrlKernelSetDevkitVersion(int version);
-
-/**
- * Sets a function to be called just before module_start of a module is gonna be called (useful for patching purposes)
- *
- * @param handler - The function, that will receive the module structure before the module is started.
- *
- * @returns - The previous set function (NULL if none);
- * @Note: because only one handler function is handled by HEN, you should
- * call the previous function in your code.
- *
- * @Example: 
- *
- * STMOD_HANDLER previous = NULL;
- *
- * int OnModuleStart(SceModule2 *mod);
- *
- * void somepointofmycode()
- * {
- *        previous = sctrlHENSetStartModuleHandler(OnModuleStart);
- * }
- *
- * int OnModuleStart(SceModule2 *mod)
- * {
- *        if (strcmp(mod->modname, "vsh_module") == 0)
- *        {
- *            // Do something with vsh module here
- *        }
- *
- *        if (!previous)
- *            return 0;
- *
- *        // Call previous handler
- *
- *        return previous(mod);
- * }
- *
- * @Note2: The above example should be compiled with the flag -fno-pic
- *            in order to avoid problems with gp register that may lead to a crash.
- *
-*/
-STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);
-
-/**
- * Sets the speed (only for kernel usage)
- *
- * @param cpu - The cpu speed
- * @param bus - The bus speed
-*/
 
 /**
  * Sets the partition 2 and 8  memory for next loadexec.
@@ -595,8 +416,6 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);
 */
 
 void sctrlHENPatchSyscall(void *addr, void *newaddr);
-
-
 
 /**
  * Patch module by offset
@@ -656,7 +475,6 @@ void sctrlSetCustomStartModule(int (*func)(int modid, SceSize argsize, void *arg
  * sctrlHENLoadModuleOnReboot on module_start, a prx can cause itself to be resident in the modes choosen by flags.
  * If all flags are selected, the module will stay resident until a psp shutdown, or until sctrlHENLoadModuleOnReboot is not called.
 */
-
 void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int flags);
 
 /**
