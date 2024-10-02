@@ -121,8 +121,6 @@ static void startExitThread(){
 	pspSdkSetK1(k1);
 }
 
-int (*CtrlSetSamplingMode)(int) = NULL;
-int (*CtrlSetSamplingCycle)(int) = NULL;
 static void remove_analog_input(SceCtrlData *data)
 {
 	if(data == NULL)
@@ -243,8 +241,6 @@ void patchController(SceModule2* mod)
     CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0xC152080A);
     CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x1F803938);
     CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x60B81F86);
-    CtrlSetSamplingCycle = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x6A2774F3);
-    CtrlSetSamplingMode = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F4011E6);
 
 	// Hook Gamepad Input
 	HIJACK_FUNCTION(CtrlPeekBufferPositive, peek_positive, CtrlPeekBufferPositive);
