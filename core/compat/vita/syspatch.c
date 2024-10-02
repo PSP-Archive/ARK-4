@@ -150,22 +150,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 					se_config->force_high_memory = 1;
 				}
         	}
-		}
-		// enable inferno cache
-		if (se_config->iso_cache){
-			int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
-			if (CacheInit){
-				se_config->iso_cache_size = 32 * 1024;
-                se_config->iso_cache_num = 64;
-				CacheInit(32 * 1024, 64, (se_config->force_high_memory)?2:11); // 2MB cache for Adrenaline
-			}
-			if (se_config->iso_cache == 2){
-            	int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
-            	if (CacheSetPolicy){
-					se_config->iso_cache_policy = CACHE_POLICY_RR;
-					CacheSetPolicy(CACHE_POLICY_RR);
-				}
-        	}
         }
         goto flush;
 	}
@@ -179,6 +163,23 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed)
                 msstorCacheInit("ms");
+
+            // enable inferno cache
+            if (se_config->iso_cache){
+                int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+                if (CacheInit){
+                    se_config->iso_cache_size = 4 * 1024;
+					se_config->iso_cache_num = 16;
+					CacheInit(4 * 1024, 16, 1); // 64KB cache for Vita
+                }
+                if (se_config->iso_cache == 2){
+                    int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
+                    if (CacheSetPolicy){
+                        se_config->iso_cache_policy = CACHE_POLICY_RR;
+                        CacheSetPolicy(CACHE_POLICY_RR);
+                    }
+                }
+            }
 
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();

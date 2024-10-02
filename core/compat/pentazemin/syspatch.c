@@ -468,7 +468,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 				if (CacheInit){
 					se_config->iso_cache_size = 4 * 1024;
 					se_config->iso_cache_num = 16;
-					CacheInit(4 * 1024, 16, 1); // 4MB cache for Adrenaline
+					CacheInit(4 * 1024, 16, 1); // 64KB cache for Vita
 				}
 				if (se_config->iso_cache == 2){
 					int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
