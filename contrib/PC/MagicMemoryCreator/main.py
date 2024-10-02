@@ -34,6 +34,7 @@ var = tk.StringVar(m)
 var.set(possible_drive[0])
 check = tk.BooleanVar(m)
 ipl_only = tk.BooleanVar(m)
+_150_kernel_addon = tk.BooleanVar(m)
 
 disk_check = tk.StringVar(m)
 disk_check.set(0)
@@ -120,6 +121,7 @@ def run() -> None:
     x['state'] = 'disabled'
     b['text'] = 'Please Wait...'
     go_check['state'] = 'disabled'
+    psp_1k['state'] = 'disable'
     legacy['state'] = 'disabled'
     ipl_inject_only['state'] = 'disabled'
     global go
@@ -195,10 +197,25 @@ def run() -> None:
                 shutil.copytree("661\\F0\\", "TM\\DCARK\\", dirs_exist_ok=True)
                 shutil.copytree("661\\F1\\", "TM\\DCARK\\", dirs_exist_ok=True)
 
-    # Download msipl_installer from Draan (forked for macOS support)
-    #resp = requests.get('https://raw.githubusercontent.com/krazynez/msipl_installer/main/msipl_installer.py', verify=False)
-    #with open('msipl_installer.py', 'wb') as f:
-        #f.write(resp.content)
+        # 150 Kernel Addon
+        if _150_kernel_addon.get():
+            resp = requests.get('https://archive.org/download/psp_ofw_firmwares/PSP/150.PBP', timeout=10, verify=False)
+        if resp:
+            with open('150.PBP', 'wb') as f:
+                f.write(resp.content)
+                resp.close()
+        else:
+            print(resp.status_code)
+
+        if ostype == 'Linux' or ostype == 'Darwin':
+            os.system('./pspdecrypt -e 150.PBP')
+            shutil.copytree("150/F0", "TM/DCARK/150", dirs_exist_ok=True)
+            shutil.copytree("150/F1", "TM/DCARK/150", dirs_exist_ok=True)
+        else:
+            os.system('.\\pspdecrypt.exe -e 150.PBP')
+            shutil.copytree("150\\F0\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
+            shutil.copytree("150\\F1\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
+
 
     if ostype == 'Linux':
         disk = var.get() + '1'
@@ -239,9 +256,6 @@ def run() -> None:
         m.update()
         if not ipl_only.get():
             shutil.copytree("TM", f"{get_mountpoint}", dirs_exist_ok=True)
-        #os.system('oschmod 755 msipl_installer.py')
-        #os.system(f'python .\\msipl_installer.py --pdisk {int(deviceID[var.get()][-1])} --clear')
-        #os.system(f'python .\\msipl_installer.py --pdisk {int(deviceID[var.get()][-1])} --insert msipl.bin')
         msipl_installer.main(msipl_installer.Args(f'{int(deviceID[var.get()][-1])}', False, None, False, True ))
         if check.get():
             msipl_installer.main(msipl_installer.Args(f'{int(deviceID[var.get()][-1])}', False, 'tm_msipl_legacy.bin', False, False ))
@@ -273,14 +287,14 @@ tk.Label(text="Select PSP/Memory Stick:", width=25).grid(row=0, column=0)
 status = tk.Label(fg='red', text="PLEASE VERIFY\nDISK BEFORE CONTINUING!", width=25)
 status.grid(row=1, column=0)
 
-#internal=tk.Checkbutton(m, text='Show Internal Disk', variable=disk_check, onvalue=1, offvalue=0)
-#internal.grid(row=3, column=1)
-
 go_check=tk.Checkbutton(m, text='PSP Go Model (ONLY!)', command=go_update)
 go_check.grid(sticky="W", row=3, column=0)
 
+psp_1k=tk.Checkbutton(m, text='1.50 Kernel Addon ( 1K ONLY )', variable=_150_kernel_addon)
+psp_1k.grid(sticky="W", row=4, column=0)
+
 legacy=tk.Checkbutton(m, text="Legacy IPL (1000s and early 2000s ONLY!)", variable=check, command=disable_go_check)
-legacy.grid(row=4, column=0)
+legacy.grid(row=5, column=0)
 
 b=tk.Button(m, text='Run', command=run)
 b.grid(row=1,column=1)
