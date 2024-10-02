@@ -21,10 +21,11 @@
 #include <psputilsforkernel.h>
 #include <pspsysevent.h>
 #include <pspiofilemgr.h>
+#include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <stdio.h>
 #include <string.h>
-#include "ark.h"
+#include <ark.h>
 #include "macros.h"
 #include "module2.h"
 #include "region_free.h"

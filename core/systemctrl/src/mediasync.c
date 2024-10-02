@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <macros.h>
+#include <systemctrl.h>
 #include <systemctrl_private.h>
 #include <ark.h>
 #include <rebootconfig.h>

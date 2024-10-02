@@ -27,7 +27,7 @@
 #include <rebootconfig.h>
 #include <systemctrl_se.h>
 #include <string.h>
-#include "ark.h"
+#include <ark.h>
 #include "functions.h"
 
 static UserFunctions _g_tbl;

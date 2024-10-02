@@ -18,6 +18,10 @@ UMD::~UMD(){
     sceUmdDeactivate(1, "disc0:");
 }
 
+string UMD::getName(){
+    return name;
+}
+
 void UMD::loadIcon(){
     Image* icon = NULL;
     

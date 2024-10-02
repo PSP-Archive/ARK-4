@@ -13,6 +13,7 @@
 #include <malloc.h>
 
 #include <ark.h>
+#include <systemctrl.h>
 #include <libpsardumper.h>
 #include <pspdecrypt.h>
 #include <kubridge.h>

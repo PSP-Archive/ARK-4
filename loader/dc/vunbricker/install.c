@@ -21,6 +21,7 @@
 #include <ipl_block_large.h>
 #include <ipl_block_01g.h>
 
+#include <ark.h>
 #include "dcman.h"
 #include "main.h"
 #include "install.h"

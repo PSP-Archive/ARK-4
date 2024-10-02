@@ -5,7 +5,7 @@
 #include <kubridge.h>
 #include <stddef.h>
 
-#include "ark.h"
+#include <ark.h>
 
 #include "main.h"
 #include "list.h"

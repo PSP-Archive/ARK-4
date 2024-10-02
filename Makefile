@@ -105,6 +105,7 @@ copy-bin:
 	$(Q)cp extras/menus/arkMenu/themes/ARK_Revamped/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
 	$(Q)cp extras/apps/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
+	$(Q)cp contrib/PSP/fatms371mod/*.prx dist/PSP/ARK_Full_Installer/kd/ # Full installer
 	$(Q)cp extras/apps/uninstaller/EBOOT.PBP dist/PSP/ARK_Uninstaller # ARK-4 Uninstaller
 	$(Q)cp extras/150kernel/installer/EBOOT.PBP dist/PSP/ARK_150Addon # ARK-4 150 Kernel Addon
 	$(Q)cp contrib/PSP/GAME/ARK_DC/libpsardumper.prx dist/PSP/ARK_150Addon
@@ -390,7 +391,7 @@ mkdir-dist:
 	$(Q)mkdir dist/PSP/ARK_DC | true
 	$(Q)mkdir dist/PSP/ARK_150Addon | true
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
-	$(Q)mkdir dist/PSP/ARK_Full_Installer | true
+	$(Q)mkdir -p dist/PSP/ARK_Full_Installer/kd | true
 	$(Q)mkdir dist/PSP/FinalSpeed | true
 	$(Q)mkdir dist/PSP/Pops4Tool | true
 	$(Q)mkdir dist/PSP/Pops4Tool/TT | true
