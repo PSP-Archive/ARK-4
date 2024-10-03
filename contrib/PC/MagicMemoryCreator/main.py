@@ -211,10 +211,13 @@ def run() -> None:
             os.system('./pspdecrypt -e 150.PBP')
             shutil.copytree("150/F0", "TM/DCARK/150", dirs_exist_ok=True)
             shutil.copytree("150/F1", "TM/DCARK/150", dirs_exist_ok=True)
+            os.rename("TM/DCARK/150/kd/pspbtcnf_game.txt_new", "TM/DCARK/150/kd/pspbtcnf_game.txt")
         else:
             os.system('.\\pspdecrypt.exe -e 150.PBP')
             shutil.copytree("150\\F0\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
             shutil.copytree("150\\F1\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
+            os.rename("TM\\DCARK\\150\\kd\\pspbtcnf_game.txt_new", "TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
+
 
 
     if ostype == 'Linux':
