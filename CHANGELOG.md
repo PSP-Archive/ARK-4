@@ -1,6 +1,7 @@
 # ARK Changelog
 
 ## Version 4.20.69 (2024-04-20)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42069
 - Updated `Despertar del Cementerio` to `Version 10`. Can now be used to unbrick any `PSP` model.
 - Can now install `cIPL` on all `PSP` models.
 - Added `FinalSpeed` for easier access to `Live` installations.
