@@ -10,6 +10,7 @@
 - Added support for `fatms371mod`.
 - Fixed/improved `Inferno` sleep/resume routines.
 - Fixed regression that caused screen tearing on some games.
+- Improved `Full Flash Installer`.
 - Other fixes and improvements.
 #### Rev 15
 - Fixed `Force Extra RAM` setting being ignored on Pentazemin mode.
