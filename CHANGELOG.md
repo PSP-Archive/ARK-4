@@ -5,10 +5,6 @@
 - Updated `Despertar del Cementerio` to `Version 10`. Can now be used to unbrick any `PSP` model.
 - Can now install `cIPL` on all `PSP` models.
 - Added `FinalSpeed` for easier access to `Live` installations.
-- Several other small fixes and improvements.
-- Updated `Despertar del Cementerio` to `Version 10`. Now compatible with all PSP models.
-- Can now install `cIPL` on all PSP models.
-- `Custom App` location has been changed to `/PSP/APP/CUSTOM/EBOOT.PBP`
 #### Rev 150
 - Added `150 Kernel Addon`.
 - Added support for `fatms371mod`.
