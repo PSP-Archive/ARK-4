@@ -45,7 +45,7 @@ int module_start(SceSize args, void *argp)
 		int flash_dreg = sceIoOpen("flash1:/registry/system.dreg", PSP_O_RDONLY, 0);
 		int flash_ireg = sceIoOpen("flash1:/registry/system.ireg", PSP_O_RDONLY, 0);
 
-		static u8 buf[200000]; __attribute__((aligned(0x40)));
+		static u8 buf[200000] __attribute__((aligned(0x40)));
 		memset((u8 *)buf, 0, sizeof(buf));
 
 		int size = sceIoRead(flash_dreg, buf, sizeof(buf));
