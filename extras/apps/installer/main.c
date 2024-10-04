@@ -37,6 +37,10 @@ PSP_HEAP_SIZE_KB(4096);
 
 ARKConfig ark_config;
 
+static u32 fatms371_uninstall = 0;
+
+void open_flash();
+
 void printfc(int x, int y, char *fmt, ...)
 {	
 	char msg[256];
@@ -159,7 +163,8 @@ void pops4tool() {
 	sceKernelExitGame();
 }
 
-void fatms371_mod(void) {
+void fatms371_mod(u32 _uninstall) {
+
 	static char* fatms371_files[] = { "kd/_fatms371.prx", "kd/_fatmshlp.prx" };
     SceIoStat stat;
 
@@ -167,10 +172,19 @@ void fatms371_mod(void) {
 	for (int i=0; i<NELEMS(fatms371_files); i++){
         char flash_path[256];
         sprintf(flash_path, "flash0:/%s", fatms371_files[i]);
-        if (sceIoGetstat(fatms371_files[i], &stat) >= 0){
-            printf("Installing %s\n", flash_path);
-            copy_file(fatms371_files[i], flash_path);
-        }
+		if(!_uninstall) {
+        	if (sceIoGetstat(fatms371_files[i], &stat) >= 0){
+            	printf("Installing %s\n", flash_path);
+            	copy_file(fatms371_files[i], flash_path);
+        	}
+		}
+		else {
+			if (sceIoGetstat(flash_path, &stat) >= 0){
+            	printf("Removing %s\n", flash_path);
+				sceIoRemove(flash_path);
+        	}
+		}
+
     }
 	printf("\n\nExiting...\n");
 	sceKernelDelayThread(1000000);
@@ -220,16 +234,6 @@ int main(int argc, char * argv[])
         sceKernelExitGame();
     }
 
-/*	printf("ARK-4 Full Installer\n");
-	printf("Press X to install\n");
-	printf("Press O to uninstall\n");
-	if(kuKernelGetModel() != PSP_GO)
-		printf("Press /\\ to install fatms371_mod\n");
-	if(sctrlHENIsToolKit())
-    	printf("Press [] to install pops files for toolkits\n");
-	printf("Press R Trigger to quit\n");
-	*/
-
 	printf("\n\n\tARK-4 Full Installer\n");
 
 	int cursor = 0;
@@ -268,7 +272,16 @@ int main(int argc, char * argv[])
 			setbcolor(BLACK);
 			if(cursor == 3)
 				setbcolor(GRAY);
-			printfc(3, 7, " Install fatms371_mod ");
+			int fatms371_check = sceIoOpen("flash0:/kd/_fatms371.prx", PSP_O_RDONLY, 0);
+			int fatms371_help_check = sceIoOpen("flash0:/kd/_fatmshlp.prx", PSP_O_RDONLY, 0);
+			if( fatms371_check >= 0 || fatms371_help_check >= 0) {
+				fatms371_uninstall = 1;
+				printfc(3, 7, " Uninstall fatms371_mod ");
+				sceIoClose(fatms371_check);
+				sceIoClose(fatms371_help_check);
+			}
+			else
+				printfc(3, 7, " Install fatms371_mod ");
 			setbcolor(BLACK);
 		}
 		else if((kuKernelGetModel() == PSP_GO)) {
@@ -280,7 +293,17 @@ int main(int argc, char * argv[])
 		else if(!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO) {
 			if(cursor == 2)
 				setbcolor(GRAY);
-			printfc(3, 6, " Install fatms371_mod ");
+			int fatms371_check = sceIoOpen("flash0:/kd/_fatms371.prx", PSP_O_RDONLY, 0);
+			int fatms371_help_check = sceIoOpen("flash0:/kd/_fatmshlp.prx", PSP_O_RDONLY, 0);
+			if( fatms371_check >= 0 || fatms371_help_check >= 0) {
+				fatms371_uninstall = 1;
+				printfc(3, 6, " Uninstall fatms371_mod ");
+				sceIoClose(fatms371_check);
+				sceIoClose(fatms371_help_check);
+			}
+			else {
+				printfc(3, 6, " Install fatms371_mod ");
+			}
 			setbcolor(BLACK);
 		}
 
@@ -318,8 +341,10 @@ int main(int argc, char * argv[])
 				uninstall();
 			if(cursor == 2 && sctrlHENIsToolKit())
 				pops4tool();
-			if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO)
-				fatms371_mod();
+			if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && fatms371_uninstall == 0)
+				fatms371_mod(NULL);
+			if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && fatms371_uninstall == 1)
+				fatms371_mod(1);
 			if(cursor == 2 && (kuKernelGetModel() == PSP_GO)) {
 				printf("\n\nExiting...\n");
 				sceKernelDelayThread(1000000);
@@ -330,20 +355,15 @@ int main(int argc, char * argv[])
 				sceKernelDelayThread(1000000);
 				sceKernelExitGame();
 			}
-			if(cursor == 3 && sctrlHENIsToolKit())
-				fatms371_mod();
+			if(cursor == 3 && sctrlHENIsToolKit() && fatms371_uninstall == 0)
+				fatms371_mod(NULL);
+			if(cursor == 3 && sctrlHENIsToolKit() && fatms371_uninstall == 1)
+				fatms371_mod(1);
 			if(cursor == 4 && sctrlHENIsToolKit()) {
 				printf("\n\nExiting...\n");
 				sceKernelDelayThread(1000000);
 				sceKernelExitGame();
 			}
-
-			/*else if(cursor == 3) {
-				printf("\n\nExiting...\n");
-				sceKernelDelayThread(1000000);
-				sceKernelExitGame();
-			}
-			*/
 
 		}
 		else if(Buttons & PSP_CTRL_UP)
