@@ -616,18 +616,19 @@ void sceUmd_C886430B(u32 a0)
 
 int power_event_handler(int ev_id, char *ev_name, void *param, int *result)
 {
-    //static int old_status;
 
-    if( ev_id == 0x400 )
+    if( ev_id == 0x400 ) // sleep
 	{
-		//do_umd_notify( 0x9 );
-        //old_status = g_drive_status;
+		do_umd_notify(PSP_UMD_INITING | PSP_UMD_NOT_PRESENT);
+	}
+
+    if( ev_id == 0x4000 ) // melt
+	{
         do_umd_notify(PSP_UMD_INITING);
 	}
 
     if(ev_id == 0x400000) { // resume complete
-        do_umd_notify(0x32);
-        //do_umd_notify(old_status);
+        do_umd_notify(PSP_UMD_READY | PSP_UMD_INITED | PSP_UMD_PRESENT);
     }
 
     return 0;

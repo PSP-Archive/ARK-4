@@ -23,7 +23,7 @@ int main(int argc, char *args[]) {
 		sceKernelDelayThread(3000000);
 		sceKernelExitGame();
 	}
-	if(strcasecmp(ark_config->exploit_id, "cIPL") == 0 || strcasecmp(ark_config->exploit_id, "Infinity") == 0) {
+	if(strcasecmp(ark_config->exploit_id, CIPL_EXPLOIT_ID) == 0 || strcasecmp(ark_config->exploit_id, "Infinity") == 0) {
 		pspDebugScreenSetTextColor(0xFF0000FF);
 		printf("\nYou need to remove cIPL/Infinity before uninstalling!!!!\n");
 		printf("\nExiting back to XMB ...");

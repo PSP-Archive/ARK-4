@@ -83,7 +83,7 @@ extern "C" {
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 20
 #define ARK_MICRO_VERSION 69
-#define ARK_REVISION      16
+#define ARK_REVISION      150
 #define MAX_FLASH0_SIZE 0x32000
 
 /*
@@ -124,6 +124,8 @@ typedef struct ARKConfig{
 #define ARK_CONFIG 0x08800010
 #define ARK_CONFIG_MAGIC 0xB00B1E55
 #define LIVE_EXPLOIT_ID "Live" // default loader name
+#define CIPL_EXPLOIT_ID "cIPL"
+#define DC_EXPLOIT_ID "DC"
 #define DEFAULT_ARK_FOLDER "ARK_01234"
 #define SAVEDATA_MS0 "ms0:/PSP/SAVEDATA/"
 #define SAVEDATA_EF0 "ef0:/PSP/SAVEDATA/"

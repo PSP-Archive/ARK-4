@@ -1,13 +1,17 @@
 # ARK Changelog
 
 ## Version 4.20.69 (2024-04-20)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42069
 - Updated `Despertar del Cementerio` to `Version 10`. Can now be used to unbrick any `PSP` model.
 - Can now install `cIPL` on all `PSP` models.
 - Added `FinalSpeed` for easier access to `Live` installations.
-- Several other small fixes and improvements.
-- Updated `Despertar del Cementerio` to `Version 10`. Now compatible with all PSP models.
-- Can now install `cIPL` on all PSP models.
-- `Custom App` location has been changed to `/PSP/APP/CUSTOM/EBOOT.PBP`
+#### Rev 150
+- Added `150 Kernel Addon`.
+- Added support for `fatms371mod`.
+- Fixed/improved `Inferno` sleep/resume routines.
+- Fixed regression that caused screen tearing on some games.
+- Improved `Full Flash Installer`.
+- Other fixes and improvements.
 #### Rev 15
 - Fixed `Force Extra RAM` setting being ignored on Pentazemin mode.
 #### Rev 14

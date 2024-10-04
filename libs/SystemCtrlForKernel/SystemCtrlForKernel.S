@@ -293,3 +293,6 @@
 #ifdef F_SystemCtrlForKernel_0095
     IMPORT_FUNC "SystemCtrlForKernel",0x18B687A6,sctrlHENGetRebootexConfig
 #endif
+#ifdef F_SystemCtrlForKernel_0096
+	IMPORT_FUNC "SystemCtrlForKernel",0x646FE67F,sctrlHENSetLoadRebootOverrideHandler
+#endif

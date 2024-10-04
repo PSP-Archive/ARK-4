@@ -48,7 +48,7 @@ enum {
 // Different firmware versions
 #define FW_661 0x06060110
 #define FW_660 0x06060010
-#define FW_150 0x01050003
+#define FW_150 0x01050001
 
 enum BootLoadFlags
 {
