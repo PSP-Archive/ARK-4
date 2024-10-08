@@ -63,7 +63,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with `PRO Online` and `Xlink Kai`.
 
-- Compatible with Legacy Homebrew via `eLoader` and `Leda`, including with the classic `KXploit` format.
+- Compatible with `Legacy Homebrew` via eLoader, `¡Leda Plugin or the 1.50 Kernel Addon, including the classic KXploit naming format.
 
 - `OTA` updates. Fully updateable via the internet.
 
