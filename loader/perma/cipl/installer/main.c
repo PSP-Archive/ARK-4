@@ -371,11 +371,6 @@ void newipl_menu(const char* config){
 
 	printf("New cIPL installation.\n");
 
-	// New cIPL should only be run via 6.61 FW
-	if(devkit != 0x06060110 ) {
-		ErrorExit(5000,"6.61 FW SUPPORTED ONLY!\n");
-	}
-
 	if(model >= supported_models || ipl_table[model] == NULL) {
 		ErrorExit(5000,"This installer does not support this model.\n");
 	}
