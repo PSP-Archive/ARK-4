@@ -13,13 +13,31 @@
 #include <functions.h>
 
 
-int (*utilityGetParam)(int, int*) = NULL;
-int getParamFixed_ULJM05221(int param, int* value){
+static int (*utilityGetParam)(int, int*) = NULL;
+static int getParamFixed_ULJM05221(int param, int* value){
     int res = utilityGetParam(param, value);
     if (param == PSP_SYSTEMPARAM_ID_INT_LANGUAGE && *value > 1){
         *value = 0;
     }
     return res;
+}
+
+static STMOD_HANDLER wwe_previous;
+static void wweModuleOnStart(SceModule2 * mod)
+{
+
+    // Boot Complete Action not done yet
+    if (strcmp(mod->modname, "mainPSP") == 0)
+    {
+        hookImportByNID(mod, "scePower", 0x34F9C463, 222); // scePowerGetPllClockFrequencyInt
+        hookImportByNID(mod, "scePower", 0x843FBF43, 0);   // scePowerSetCpuClockFrequency
+        hookImportByNID(mod, "scePower", 0xFDB5BFE9, 222); // scePowerGetCpuClockFrequencyInt
+        hookImportByNID(mod, "scePower", 0xBD681969, 111); // scePowerGetBusClockFrequencyInt
+    }
+
+    // Call Previous Module Start Handler
+    if(wwe_previous) wwe_previous(mod);
+    
 }
 
 void applyFixesByModule(SceModule2* mod){
@@ -54,5 +72,9 @@ void applyFixesByGameId(){
     if (strcasecmp("ULJM05221", gameid) == 0){
         utilityGetParam = sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0xA5DA2406);
         sctrlHENPatchSyscall(utilityGetParam, getParamFixed_ULJM05221);
+    }
+
+    else if (strcasecmp("ULES01472", gameid) == 0 || strcasecmp("ULUS10543", gameid) == 0){
+        wwe_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
     }
 }
