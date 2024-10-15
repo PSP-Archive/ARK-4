@@ -141,6 +141,7 @@ copy-bin:
 	$(Q)cp loader/dc/tmctrl/tmctrl.prx dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/dcman/dcman.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp extras/modules/iop/iop.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
+	$(Q)cp contrib/PSP/GAME/ARK_DC/lflash_fdisk.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp loader/dc/vunbricker/resurrection.prx dist/PC/MagicMemoryCreator/TM/DCARK/vsh/module/
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp loader/dc/msipl/newipl/stage2/msipl.bin dist/PC/MagicMemoryCreator/TM/DCARK/msipl.raw
