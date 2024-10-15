@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import tkinter as tk
+from tkinter.filedialog import askopenfilename
 import ctypes
 import glob
 import os
@@ -15,6 +16,8 @@ from zipfile import ZipFile
 
 # globals
 go = False
+local_150_filepath = ''
+local_661_filepath = ''
 ostype = platform.system()
 if ostype.lower() == 'win32':
     ostype = 'Windows'
@@ -62,6 +65,17 @@ else:
     for i in out:
         possible_drive.append(i)
 
+def get_local_OFW(fw):
+    global local_661_filepath
+    global local_150_filepath
+    if fw == 661:
+        local_661_filepath = askopenfilename(filetypes=[("Sony 6.61 PSP Update", "*.PBP")])
+        print(local_661_filepath)
+    else:
+        local_150_filepath = askopenfilename(filetypes=[("Sony 1.50 PSP Update", "*.PBP")])
+        print(local_150_filepath)
+
+
 def toggle_ipl():
 
     if ipl_only.get():
@@ -91,13 +105,19 @@ def disable_go_check():
 def cleanup() -> None:
     global go
     if go:
-        shutil.rmtree("661GO")
+        shutil.rmtree("661GO", ignore_errors=True)
         os.remove('661GO.PBP')
         os.remove('661GO.PBP.dec')
     else:
-        shutil.rmtree("661")
+        shutil.rmtree("661", ignore_errors=True)
         os.remove('661.PBP')
         os.remove('661.PBP.dec')
+
+    if _150_kernel_addon.get():
+        shutil.rmtree("150", ignore_errors=True)
+        os.remove('150.PBP')
+        os.remove('150.PBP.dec')
+
     for f in glob.glob("pspdecrypt*"):
         os.remove(f)
 
@@ -161,66 +181,107 @@ def run() -> None:
             return
 
         # Download 6.61 OFW
-        if go:
-            resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image2/us/2014_1212_fd0f7d0798b4f6e6d32ef95836740527/EBOOT.PBP', timeout=10, verify=False)
-            if resp:
-                with open('661GO.PBP', 'wb') as f:
-                    f.write(resp.content)
-                    resp.close()
+        global local_661_filepath
+        if local_661_filepath is None:
+            if go:
+                resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image2/us/2014_1212_fd0f7d0798b4f6e6d32ef95836740527/EBOOT.PBP', timeout=10, verify=False)
+                if resp:
+                    with open('661GO.PBP', 'wb') as f:
+                        f.write(resp.content)
+                        resp.close()
+                else:
+                    print(resp.status_code)
             else:
-                print(resp.status_code)
-        else:
-            resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image/us/2014_1212_6be8878f475ac5b1a499b95ab2f7d301/EBOOT.PBP', timeout=10, verify=False)
-            if resp:
-                with open('661.PBP', 'wb') as f:
-                    f.write(resp.content)
-                    resp.close()
-            else:
-                print(resp.status_code)
+                resp = requests.get('http://du01.psp.update.playstation.org/update/psp/image/us/2014_1212_6be8878f475ac5b1a499b95ab2f7d301/EBOOT.PBP', timeout=10, verify=False)
+                if resp:
+                    with open('661.PBP', 'wb') as f:
+                        f.write(resp.content)
+                        resp.close()
+                else:
+                    print(resp.status_code)
 
-        if ostype == 'Linux' or ostype == 'Darwin':
-            if go:
-                os.system('./pspdecrypt -e 661GO.PBP')
-                shutil.copytree("661GO/F0", "TM/DCARK", dirs_exist_ok=True)
-                shutil.copytree("661GO/F1", "TM/DCARK", dirs_exist_ok=True)
+            if ostype == 'Linux' or ostype == 'Darwin':
+                if go:
+                    os.system('./pspdecrypt -e 661GO.PBP')
+                    shutil.copytree("661GO/F0", "TM/DCARK", dirs_exist_ok=True)
+                    shutil.copytree("661GO/F1", "TM/DCARK", dirs_exist_ok=True)
+                else:
+                    os.system('./pspdecrypt -e 661.PBP')
+                    shutil.copytree("661/F0", "TM/DCARK", dirs_exist_ok=True)
+                    shutil.copytree("661/F1", "TM/DCARK", dirs_exist_ok=True)
             else:
-                os.system('./pspdecrypt -e 661.PBP')
-                shutil.copytree("661/F0", "TM/DCARK", dirs_exist_ok=True)
-                shutil.copytree("661/F1", "TM/DCARK", dirs_exist_ok=True)
-        else:
-            if go:
-                os.system('.\\pspdecrypt.exe -e 661GO.PBP')
-                shutil.copytree("661GO\\F0\\", "TM\\DCARK\\", dirs_exist_ok=True)
-                shutil.copytree("661GO\\F1\\", "TM\\DCARK\\", dirs_exist_ok=True)
+                if go:
+                    os.system('.\\pspdecrypt.exe -e 661GO.PBP')
+                    shutil.copytree("661GO\\F0\\", "TM\\DCARK\\", dirs_exist_ok=True)
+                    shutil.copytree("661GO\\F1\\", "TM\\DCARK\\", dirs_exist_ok=True)
+                else:
+                    os.system('.\\pspdecrypt.exe -e 661.PBP')
+                    shutil.copytree("661\\F0\\", "TM\\DCARK\\", dirs_exist_ok=True)
+                    shutil.copytree("661\\F1\\", "TM\\DCARK\\", dirs_exist_ok=True)
+
+        elif local_661_filepath is not None:
+            if ostype == 'Linux' or ostype == 'Darwin':
+                if go:
+                    if local_661_filepath[-9:] == 'EBOOT.PBP' or '661.PBP' in local_661_filepath:
+                        os.system('./pspdecrypt -O 661GO -e {}'.format(local_661_filepath))
+                    else:
+                        os.system('./pspdecrypt -e {}'.format(local_661_filepath))
+                    shutil.copytree("661GO/F0", "TM/DCARK", dirs_exist_ok=True)
+                    shutil.copytree("661GO/F1", "TM/DCARK", dirs_exist_ok=True)
+                else:
+                    if local_661_filepath[-9:] == 'EBOOT.PBP':
+                        os.system('./pspdecrypt -O ./661 -e {}'.format(local_661_filepath))
+                    else:
+                        os.system('./pspdecrypt -O ./661 -e {}'.format(local_661_filepath))
+                    shutil.copytree("661/F0", "TM/DCARK", dirs_exist_ok=True)
+                    shutil.copytree("661/F1", "TM/DCARK", dirs_exist_ok=True)
             else:
-                os.system('.\\pspdecrypt.exe -e 661.PBP')
-                shutil.copytree("661\\F0\\", "TM\\DCARK\\", dirs_exist_ok=True)
-                shutil.copytree("661\\F1\\", "TM\\DCARK\\", dirs_exist_ok=True)
+                if go:
+                    if local_661_filepath[-9:] == 'EBOOT.PBP' or '661.PBP' in local_661_filepath:
+                        os.system('.\\pspdecrypt -O 661GO -e {}'.format(local_661_filepath))
+                    else:
+                        os.system('.\\pspdecrypt.exe -O .\\661GO -e {}'.format(local_661_filepath))
+                    shutil.copytree("661GO\\F0\\", "TM\\DCARK\\", dirs_exist_ok=True)
+                    shutil.copytree("661GO\\F1\\", "TM\\DCARK\\", dirs_exist_ok=True)
+                else:
+                    os.system('.\\pspdecrypt.exe -O .\\661 -e {}'.format(local_661_filepath))
+                    shutil.copytree("661\\F0\\", "TM\\DCARK\\", dirs_exist_ok=True)
+                    shutil.copytree("661\\F1\\", "TM\\DCARK\\", dirs_exist_ok=True)
 
         # 150 Kernel Addon
-        if _150_kernel_addon.get():
+        global local_150_filepath
+        if _150_kernel_addon.get() and local_150_filepath is None:
             resp = requests.get('https://archive.org/download/psp_ofw_firmwares/PSP/150.PBP', timeout=10, verify=False)
-        if resp:
-            with open('150.PBP', 'wb') as f:
-                f.write(resp.content)
-                resp.close()
-        else:
-            print(resp.status_code)
+            if resp:
+                with open('150.PBP', 'wb') as f:
+                    f.write(resp.content)
+                    resp.close()
+            if ostype == 'Linux' or ostype == 'Darwin':
+                os.system('./pspdecrypt -e 150.PBP')
+                shutil.copytree("150/F0", "TM/DCARK/150", dirs_exist_ok=True)
+                shutil.copytree("150/F1", "TM/DCARK/150", dirs_exist_ok=True)
+                os.makedirs("TM/DCARK/150/registry", exist_ok=True)
+                os.rename("TM/DCARK/150/kd/pspbtknf_game.txt", "TM/DCARK/150/kd/pspbtcnf_game.txt")
+            else:
+                os.system('.\\pspdecrypt.exe -e 150.PBP')
+                shutil.copytree("150\\F0\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
+                shutil.copytree("150\\F1\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
+                os.makedirs("TM\\DCARK\\150\\registry", exist_ok=True)
+                os.rename("TM\\DCARK\\150\\kd\\pspbtknf_game.txt", "TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
 
-        if ostype == 'Linux' or ostype == 'Darwin':
-            os.system('./pspdecrypt -e 150.PBP')
-            shutil.copytree("150/F0", "TM/DCARK/150", dirs_exist_ok=True)
-            shutil.copytree("150/F1", "TM/DCARK/150", dirs_exist_ok=True)
-            os.makedirs("TM/DCARK/150/registry", exist_ok=True)
-            os.rename("TM/DCARK/150/kd/pspbtknf_game.txt", "TM/DCARK/150/kd/pspbtcnf_game.txt")
-        else:
-            os.system('.\\pspdecrypt.exe -e 150.PBP')
-            shutil.copytree("150\\F0\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
-            shutil.copytree("150\\F1\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
-            os.makedirs("TM\\DCARK\\150\\registry", exist_ok=True)
-            os.rename("TM\\DCARK\\150\\kd\\pspbtknf_game.txt", "TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
-
-
+        elif _150_kernel_addon.get() and local_150_filepath is not None:
+            if ostype == 'Linux' or ostype == 'Darwin':
+                os.system('./pspdecrypt -O ./150 -e {}'.format(local_150_filepath))
+                shutil.copytree("150/F0", "TM/DCARK/150", dirs_exist_ok=True)
+                shutil.copytree("150/F1", "TM/DCARK/150", dirs_exist_ok=True)
+                os.makedirs("TM/DCARK/150/registry", exist_ok=True)
+                os.rename("TM/DCARK/150/kd/pspbtknf_game.txt", "TM/DCARK/150/kd/pspbtcnf_game.txt")
+            else:
+                os.system('.\\pspdecrypt.exe -O .\\150 -e {}'.format(local_150_filepath))
+                shutil.copytree("150\\F0\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
+                shutil.copytree("150\\F1\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
+                os.makedirs("TM\\DCARK\\150\\registry", exist_ok=True)
+                os.rename("TM\\DCARK\\150\\kd\\pspbtknf_game.txt", "TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
 
     if ostype == 'Linux':
         disk = var.get() + '1'
@@ -283,6 +344,7 @@ else:
         print('\nSorry this needs to run as root/admin!\n')
         sys.exit(1)
 
+
 # Setup
 m.minsize(320, 230)
 
@@ -311,6 +373,13 @@ x.grid(row=2,column=1)
 
 if var.get() == '-':
     b['state'] = 'disabled'
+
+browse_150=tk.Button(m, text='Browse\nLocal 1.50 OFW', command=lambda: get_local_OFW(None))
+browse_150.grid(row=3, column=1)
+browse_661=tk.Button(m, text='Browse\nLocal 6.61 OFW', command=lambda: get_local_OFW(661))
+browse_661.grid(row=4, column=1)
+
+
 
 ipl_inject_only=tk.Checkbutton(m, text='Inject IPL (ONLY!)', variable=ipl_only, command=toggle_ipl)
 ipl_inject_only.grid(row=2, column=0, sticky='W')
