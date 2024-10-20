@@ -143,6 +143,7 @@ void GameManager::findEntries(){
     this->findEboots("ms0:/PSP/VHBL/");
     this->findEboots("ms0:/PSP/APPS/");
     this->findEboots("ms0:/PSP/GAME/");
+    this->findEboots("ms0:/PSP/GAME150/");
     if (!ms_is_ef) this->findEboots("ef0:/PSP/GAME/");
     // scan ISOs
     this->findISOs("ms0:/ISO/");
@@ -465,6 +466,7 @@ void GameManager::updateGameList(const char* path){
           || strncmp(path, "ms0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ms0:/ISO/", 9) == 0
           || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ef0:/ISO/", 9) == 0
           || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ms0:/PSP/APPS/", 9) == 0
+		  || strncmp(path, "ms0:/PSP/GAME150/", 17) == 0
       ){
         int icon_status = self->dynamicIconRunning;
         if (icon_status == ICONS_LOADING){
