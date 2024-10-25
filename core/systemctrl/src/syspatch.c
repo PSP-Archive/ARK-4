@@ -155,7 +155,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     }
 
     // unlocks variable bitrate on old homebrew
-    if (strcmp(mod->modname, "sceMp3_Library") == 0){
+    if (strcmp(mod->modname, "sceMp3_Library") == 0 || strcmp(mod->modname, "sceVshOSK_Module") == 0){
         hookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion);
         goto flush;
     }
