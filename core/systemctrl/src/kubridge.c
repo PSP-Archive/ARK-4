@@ -255,7 +255,20 @@ int kuKernelCall(void *func_addr, struct KernelCallArg *args)
     k1 = pspSdkSetK1(0);
     level = sctrlKernelSetUserLevel(8);
     func = func_addr;
-    ret = (*func)(args->arg1, args->arg2, args->arg3, args->arg4, args->arg5, args->arg6, args->arg7, args->arg8, args->arg9, args->arg10, args->arg11, args->arg12);
+    ret = (*func)(
+        args->arg1,
+        args->arg2,
+        args->arg3,
+        args->arg4,
+        args->arg5,
+        args->arg6,
+        args->arg7,
+        args->arg8,
+        args->arg9,
+        args->arg10,
+        args->arg11,
+        args->arg12
+    );
     args->ret1 = (u32)(ret);
     args->ret2 = (u32)(ret >> 32);
     sctrlKernelSetUserLevel(level);
@@ -277,7 +290,20 @@ static int kernel_call_stack(struct KernelCallArgExtendStack *args_stack)
 
     args = &args_stack->args;
     func = args_stack->func_addr;
-    ret = (*func)(args->arg1, args->arg2, args->arg3, args->arg4, args->arg5, args->arg6, args->arg7, args->arg8, args->arg9, args->arg10, args->arg11, args->arg12);
+    ret = (*func)(
+        args->arg1,
+        args->arg2,
+        args->arg3,
+        args->arg4,
+        args->arg5,
+        args->arg6,
+        args->arg7,
+        args->arg8,
+        args->arg9,
+        args->arg10,
+        args->arg11,
+        args->arg12
+    );
     args->ret1 = (u32)(ret);
     args->ret2 = (u32)(ret >> 32);
 
