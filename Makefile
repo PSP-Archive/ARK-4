@@ -78,6 +78,7 @@ copy-bin:
 	$(Q)cp loader/dc/installer/EBOOT.PBP dist/PSP/ARK_DC/ # ARK DC installer
 	$(Q)cp loader/vpk/bin/psp/EBOOT.PBP dist/PSVita/PSPCFW/NPUZ01234/
 	$(Q)cp loader/vpk/bin/psp/PBOOT.PBP dist/PSVita/PSPCFW/NPUZ01234/
+	$(Q)cp loader/vpk/bin/psp/arkrightanalog.suprx dist/PSVita/PSPCFW/
 	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/PSP/ARK_cIPL/EBOOT.PBP
 	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
 	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/PSP/Infinity/ # Infinity with ARK support (PSP Go)
@@ -140,6 +141,7 @@ copy-bin:
 	$(Q)cp loader/dc/tmctrl/tmctrl.prx dist/PC/MagicMemoryCreator/TM/DCARK/
 	$(Q)cp loader/dc/dcman/dcman.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp extras/modules/iop/iop.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
+	$(Q)cp contrib/PSP/GAME/ARK_DC/lflash_fdisk.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp loader/dc/vunbricker/resurrection.prx dist/PC/MagicMemoryCreator/TM/DCARK/vsh/module/
 	$(Q)cp extras/modules/ipl_update/ipl_update.prx dist/PC/MagicMemoryCreator/TM/DCARK/kd/
 	$(Q)cp loader/dc/msipl/newipl/stage2/msipl.bin dist/PC/MagicMemoryCreator/TM/DCARK/msipl.raw

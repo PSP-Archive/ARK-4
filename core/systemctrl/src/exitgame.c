@@ -121,12 +121,15 @@ static void startExitThread(){
 	pspSdkSetK1(k1);
 }
 
-static void remove_analog_input(SceCtrlData *data)
+static void remove_analog_input(SceCtrlData *data, int count)
 {
 	if(data == NULL)
 		return;
-	data->Lx = 0xFF/2;
-	data->Ly = 0xFF/2;
+	
+	for (int i=0; i<count; i++){
+		data[i].Lx = 0xFF/2;
+		data[i].Ly = 0xFF/2;
+	}
 }
 
 // Gamepad Hook #1
@@ -143,7 +146,7 @@ int peek_positive(SceCtrlData * pad_data, int count)
 	}
 
 	if (se_config.noanalog){
-		remove_analog_input(pad_data);
+		remove_analog_input(pad_data, count);
 	}
 	
 	// Return Number of Input Frames
@@ -164,7 +167,7 @@ int peek_negative(SceCtrlData * pad_data, int count)
 	}
 
 	if (se_config.noanalog){
-		remove_analog_input(pad_data);
+		remove_analog_input(pad_data, count);
 	}
 
 	// Return Number of Input Frames
@@ -185,7 +188,7 @@ int read_positive(SceCtrlData * pad_data, int count)
 	}
 
 	if (se_config.noanalog){
-		remove_analog_input(pad_data);
+		remove_analog_input(pad_data, count);
 	}
 	
 	// Return Number of Input Frames
@@ -206,7 +209,7 @@ int read_negative(SceCtrlData * pad_data, int count)
 	}
 
 	if (se_config.noanalog){
-		remove_analog_input(pad_data);
+		remove_analog_input(pad_data, count);
 	}
 	
 	// Return Number of Input Frames

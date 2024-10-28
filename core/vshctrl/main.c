@@ -91,6 +91,8 @@ int module_start(SceSize args, void* argp)
     ark_config = sctrlHENGetArkConfig(NULL);
     se_config = sctrlSEGetConfig(NULL);
 
+    if (ark_config->recovery) return 0;
+
     vshpatch_init();
     load_server_file();
     

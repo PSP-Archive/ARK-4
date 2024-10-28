@@ -213,6 +213,24 @@ void Eboot::executeUpdate(const char* path){
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 
+
+int loadReboot150()
+{
+    int k1 = pspSdkSetK1(0);
+    SceUID mod = sceKernelLoadModule(ARK_DC_PATH "/150/reboot150.prx", 0, NULL);
+    if (mod < 0) {
+        pspSdkSetK1(k1);
+        return mod;
+    }
+
+    int res = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+
+    pspSdkSetK1(k1);
+
+    return res;
+}
+
+
 void Eboot::executeHomebrew(const char* path){
     struct SceKernelLoadExecVSHParam param;
     
@@ -228,7 +246,12 @@ void Eboot::executeHomebrew(const char* path){
     char *perc = strchr(path, '%');
     if (perc) {
         strcpy(perc, perc + 1);
+		//path = param.argp;
     }
+
+	if(strstr(path, "ms0:/PSP/GAME150/") == path) {
+		loadReboot150();
+	}
 
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
