@@ -56,8 +56,10 @@ void get_functions(uint32_t text_addr) {
 // IO Open patched
 SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
   
-  // Virtual Kernel Exploit (allow easy escalation of priviledge)
-    if (file != NULL && strstr(file, "__dokxploit__") != 0){
+    if (file == NULL) return -1;
+
+    // Virtual Kernel Exploit (allow easy escalation of priviledge on ePSP)
+    if (strstr(file, "__dokxploit__") != 0){
 	    uint32_t *m;
 	    
 	    // remove k1 checks in IoRead (lets you write into kram)
