@@ -154,7 +154,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
-    // unlocks variable bitrate on old homebrew
+    // unlocks mp3 variable bitrate and qwerty osk on old games/homebrew
     if (strcmp(mod->modname, "sceMp3_Library") == 0 || strcmp(mod->modname, "sceVshOSK_Module") == 0){
         hookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion);
         goto flush;
