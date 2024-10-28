@@ -11,7 +11,6 @@ uint32_t module_nid;
 
 SceUID sceIoOpenHook = -1;
 SceUID sceIoStatHook = -1;
-SceUID titleIdHook = -1;
 tai_hook_ref_t sceIoOpenRef;
 tai_hook_ref_t sceIoGetstatRef;
 
