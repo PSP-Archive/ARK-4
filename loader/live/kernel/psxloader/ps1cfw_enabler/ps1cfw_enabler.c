@@ -169,8 +169,6 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
   return TAI_CONTINUE(int, sceIoGetstatRef, file, stat);
 }
 
-SceUID thread_hook = -1;
-
 int module_start(SceSize argc, const void *args) {
     info.size = sizeof(info);
 
@@ -200,12 +198,7 @@ int module_start(SceSize argc, const void *args) {
     sceIoStatHook = taiHookFunctionImport(&sceIoGetstatRef, "ScePspemu", 0xCAE9ACE6, 0xBCA5B623, sceIoGetstatPatched);
 
     // fix controller on Vita TV
-    if (module_nid == 0x2714F07D){
-      ctrl_patch = taiInjectData(info.modid, 0, 0x2073C, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
-    }
-    else {
-      ctrl_patch = taiInjectData(info.modid, 0, 0x20740, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
-    }
+    ctrl_patch = taiInjectData(info.modid, 0, (module_nid == 0x2714F07D)?0x2073C:0x20740, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
 
     return SCE_KERNEL_START_SUCCESS;
 }
