@@ -120,8 +120,7 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
     
     // Clean Exit
     if (strstr(file, "__popsexit__")){
-        ScePspemuErrorExit(0);
-        return 0;
+        return ScePspemuErrorExit(0);
     }
 
     // Redirect files for memory card manager
