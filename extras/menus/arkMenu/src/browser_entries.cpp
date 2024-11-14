@@ -38,7 +38,7 @@ BrowserFile::BrowserFile(string path, string shortname){
     size_t lastSlash = path.rfind('/', string::npos);
     this->path = path;
     this->name = path.substr(lastSlash+1, string::npos);
-    this->parent = path.substr(0, lastSlash) + '/';
+    this->parent = path.substr(0, lastSlash);
     this->icon0 = NULL;
     this->selected = false;
     this->filetype = FOLDER;
@@ -158,7 +158,7 @@ BrowserFolder::BrowserFolder(string path, string shortname){
     this->selected = false;
     this->fileSize = "Folder";
     this->filetype = FOLDER;
-    if (shortname.size() > 0) shortname += '/';
+    if (shortname.size() > 0) shortname;
     this->setShortName(shortname);
 }
 
@@ -170,7 +170,7 @@ BrowserFolder::BrowserFolder(string parent, string name, string shortname){
     this->selected = false;
     this->fileSize = "Folder";
     this->filetype = FOLDER;
-    if (shortname.size() > 0) shortname += '/';
+    if (shortname.size() > 0) shortname;
     this->setShortName(shortname);
 }
 
