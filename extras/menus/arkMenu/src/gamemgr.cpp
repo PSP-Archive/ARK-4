@@ -27,10 +27,9 @@ GameManager* GameManager::getInstance(){
 }
 
 GameManager::GameManager(){
-
     // set the global self variable as this instance for the threads to use it
     self = this;
-    
+
     this->use_categories = true;
     this->scanning = true;
     this->optionsmenu = NULL;
@@ -40,14 +39,13 @@ GameManager::GameManager(){
     for (int i=0; i<MAX_CATEGORIES; i++){
         this->categories[i] = new Menu((EntryType)i);
     }
-    
+
     // start the multithreaded icon loading
     this->maxDraw = MAX_CATEGORIES;
     this->dynamicIconRunning = ICONS_LOADING;
     this->iconSema = sceKernelCreateSema("icon0_sema",  0, 1, 1, NULL);
     this->iconThread = sceKernelCreateThread("icon0_thread", GameManager::loadIcons, 0x10, 0x20000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
     sceKernelStartThread(this->iconThread,  0, NULL);
-    
 }
 
 GameManager::~GameManager(){
@@ -144,7 +142,11 @@ void GameManager::findEntries(){
     this->findEboots("ms0:/PSP/APPS/");
     this->findEboots("ms0:/PSP/GAME/");
     this->findEboots("ms0:/PSP/GAME150/");
-    if (!ms_is_ef) this->findEboots("ef0:/PSP/GAME/");
+    if (!ms_is_ef) {
+        this->findEboots("ef0:/PSP/VHBL/");
+        this->findEboots("ef0:/PSP/APPS/");
+        this->findEboots("ef0:/PSP/GAME/");
+    }
     // scan ISOs
     this->findISOs("ms0:/ISO/");
     if (!ms_is_ef) this->findISOs("ef0:/ISO/");
@@ -195,7 +197,7 @@ void GameManager::findEboots(const char* path){
         return;
         
     while ((dit = readdir(dir))){
-		if (strstr(dit->d_name, "%") != NULL) continue; // ignore 1.50 kxploit format
+        if (strstr(dit->d_name, "%") != NULL) continue; // ignore 1.50 kxploit format
         if (strcmp(dit->d_name, ".") == 0) continue; // ignore "cur dir"
         if (strcmp(dit->d_name, "..") == 0) continue; // ignore "parent dir"
         if (!FIO_SO_ISDIR(dit->d_stat.st_attr)) continue; // ignore files
@@ -463,10 +465,11 @@ void GameManager::control(Controller* pad){
 
 void GameManager::updateGameList(const char* path){
     if (path == NULL 
-          || strncmp(path, "ms0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ms0:/ISO/", 9) == 0
-          || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ef0:/ISO/", 9) == 0
-          || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ms0:/PSP/APPS/", 9) == 0
-		  || strncmp(path, "ms0:/PSP/GAME150/", 17) == 0
+        || strncmp(path, "ms0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ms0:/ISO/", 9) == 0
+        || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ef0:/ISO/", 9) == 0
+        || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ms0:/PSP/APPS/", 14) == 0
+        || strncmp(path, "ef0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ef0:/PSP/APPS/", 14) == 0
+        || strncmp(path, "ms0:/PSP/GAME150/", 17) == 0
       ){
         int icon_status = self->dynamicIconRunning;
         if (icon_status == ICONS_LOADING){
