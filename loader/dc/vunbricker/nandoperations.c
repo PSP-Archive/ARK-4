@@ -518,7 +518,7 @@ void NandOperationsMenu(int sel)
 		"IDStorage tools",
 	};
 
-	vlfGuiCentralMenu(kuKernelGetModel() > 1 ? 3 : 4, items, sel, OnNandOperationsSelect, 0, -8);
+	vlfGuiCentralMenu(kuKernelGetModel() > 2 ? 3 : 4, items, sel, OnNandOperationsSelect, 0, -8);
 	vlfGuiBottomDialog(VLF_DI_BACK, VLF_DI_ENTER, 1, 0, VLF_DEFAULT, OnBackToMainMenuFromNO);
 }
 

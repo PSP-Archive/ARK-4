@@ -32,6 +32,42 @@
 
 PSP_MODULE_INFO("pspIdsRegeneration_Driver", 0x1007, 1, 0);
 
+/*enum
+{
+	TA79v1,
+	//TMU_001v1,
+	TA79v2,
+	//TMU_001v2,
+	TA79v3,
+	//TMU_002,
+	TA79v4,
+	TA79v5,
+	TA81,
+	//TA81v2,
+	TA82,
+	TA86,
+	TA85,
+	TA85v2,
+	//TA88v1_TA_088v2,
+	TA88,
+	TA90,
+	//TA88v3,
+	//TA90v2,
+	//TA90v3,
+	TA92,
+	TA91,
+	TA94,
+	TA93,
+	//TA93v2,
+	TA95,
+	//TA95v2,
+	//TA96_TA_097,
+	TA96,
+	UNKNOWN
+};
+*/
+
+
 enum
 {
 	TA79v1,
@@ -43,9 +79,11 @@ enum
 	TA85v2,
 	TA86,
 	TA88,
+	TA90,
 	TAUN,
 	DEVKIT
 };
+
 
 enum 
 {
@@ -1109,9 +1147,13 @@ int idsRegenerationGetLCDKey(u8 *buf)
 		{
 			memcpy(buf, lcd_type6C, sizeof(lcd_type6C));
 		}
+		else if(g_mb == TA86 || g_mb == TA88 || g_mb == TAUN || g_mb == DEVKIT)
+		{
+			memcpy(buf, lcd_type71, sizeof(lcd_type71));
+		}
 		else
 		{
-			memcpy(buf, lcd_type71, sizeof(lcd_type6C));
+			memcpy(buf, lcd_type60, sizeof(lcd_type60));
 		}
 	}
 
