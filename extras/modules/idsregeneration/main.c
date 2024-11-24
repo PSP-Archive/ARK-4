@@ -32,42 +32,43 @@
 
 PSP_MODULE_INFO("pspIdsRegeneration_Driver", 0x1007, 1, 0);
 
-/*enum
+enum
 {
-	TA79v1,
-	//TMU_001v1,
-	TA79v2,
-	//TMU_001v2,
-	TA79v3,
-	//TMU_002,
-	TA79v4,
-	TA79v5,
-	TA81,
-	//TA81v2,
-	TA82,
-	TA86,
-	TA85,
-	TA85v2,
-	//TA88v1_TA_088v2,
-	TA88,
-	TA90,
-	//TA88v3,
-	//TA90v2,
-	//TA90v3,
-	TA92,
-	TA91,
-	TA94,
-	TA93,
-	//TA93v2,
-	TA95,
-	//TA95v2,
-	//TA96_TA_097,
-	TA96,
+	TA_079v1,
+	TMU_001v1,
+	TA_079v2,
+	TMU_001v2,
+	TA_079v3,
+	TMU_002,
+	TA_079v4,
+	TA_079v5,
+	TA_081v1,
+	TA_081v2,
+	TA_082,
+	TA_086,
+	TA_085v1,
+	TA_085v2,
+	TA_088v1_TA_088v2,
+	TA_090v1,
+	TA_088v3,
+	TA_090v2,
+	TA_090v3,
+	TA_092,
+	TA_091,
+	TA_094,
+	TA_093v1,
+	TA_093v2,
+	TA_095v1,
+	TA_095v2,
+	TA_095v3,
+	TA_095v4,
+	TA_096_TA_097,
 	UNKNOWN
 };
-*/
 
 
+
+/*
 enum
 {
 	TA79v1,
@@ -83,6 +84,7 @@ enum
 	TAUN,
 	DEVKIT
 };
+*/
 
 
 enum 
@@ -162,11 +164,11 @@ int idsRegenerationSetup(int tachyon, int baryon, int pommel, int mb, u64 fuseid
 	g_fuseid = fuseid;
 	g_region = region;
 
-	if (mb < TA82)
+	if (mb < TA_082)
 	{
 		psptype = 1;
 	}
-	else if (mb == TA82 || mb == TA86)
+	else if (mb == TA_082 || mb == TA_086)
 	{
 		psptype = 2;
 	}
@@ -176,7 +178,7 @@ int idsRegenerationSetup(int tachyon, int baryon, int pommel, int mb, u64 fuseid
 	}
 
 	isslim = (psptype == 3);
-	is79 = (mb <= TA79v3);
+	is79 = (mb <= TA_079v3);
 
 	if (setparam)
 		memcpy(setParam, setparam, 8);
@@ -313,7 +315,7 @@ int idsRegenerationGetIndex(IdsIndex *index, int *n)
 
 	else if (psptype == 2)
 	{
-		if (g_mb == TA82)
+		if (g_mb == TA_082)
 		{
 			if (1)
 			{
@@ -363,7 +365,7 @@ int idsRegenerationGetIndex(IdsIndex *index, int *n)
 				*n = 14;
 			}
 		}
-		else if (g_mb == TA86)
+		else if (g_mb == TA_086)
 		{
 			if (g_region == EUROPE)
 			{
@@ -481,7 +483,7 @@ int idsRegenerationGetIndex(IdsIndex *index, int *n)
 
 	else if (psptype == 3)
 	{
-		if (g_mb == TA85 || g_mb == TA85v2)
+		if (g_mb == TA_085v1 || g_mb == TA_085v2)
 		{
 			if (g_region == JAPAN)
 			{
@@ -601,7 +603,7 @@ int idsRegenerationGetIndex(IdsIndex *index, int *n)
 				*n = 18;
 			}
 		}
-		else // TA88
+		else // TA_88
 		{
 			if (1)
 			{
@@ -1062,7 +1064,7 @@ int _idsRegenerationGenerateFactoryFirmwareKey(u8 *buf)
 
 	else if (psptype == 2)
 	{
-		if (g_mb == TA82)
+		if (g_mb == TA_082)
 		{
 			strcpy((char *)buf, "2.60");
 			vbuf = version260;
@@ -1078,13 +1080,13 @@ int _idsRegenerationGenerateFactoryFirmwareKey(u8 *buf)
 
 	else if (psptype == 3)
 	{
-		if (g_mb == TA85)
+		if (g_mb == TA_085v1)
 		{
 			strcpy((char *)buf, "3.60");
 			vbuf = version360;
 			size = sizeof(version360);
 		}
-		else if (g_mb == TA85v2)
+		else if (g_mb == TA_085v2)
 		{
 			strcpy((char *)buf, "3.72");
 			vbuf = version372;
@@ -1125,7 +1127,7 @@ int idsRegenerationGetLCDKey(u8 *buf)
 {
 	int k1 = pspSdkSetK1(0);
 
-	if (psptype == 1 || g_mb == TA82)
+	if (psptype == 1 || g_mb == TA_082)
 	{
 		pspSdkSetK1(k1);
 		return 0;
@@ -1139,21 +1141,24 @@ int idsRegenerationGetLCDKey(u8 *buf)
 	}
 	else
 	{
-		if (g_mb == TA85)
+		if (g_mb == TA_085v1)
 		{
 			memcpy(buf, lcd_type73, sizeof(lcd_type73));
 		}
-		else if (g_mb == TA85v2)
+		else if (g_mb == TA_085v2)
 		{
 			memcpy(buf, lcd_type6C, sizeof(lcd_type6C));
 		}
-		else if(g_mb == TA86 || g_mb == TA88 || g_mb == TAUN || g_mb == DEVKIT)
+		//else if(g_mb == TA86 || g_mb == TA88 || g_mb == TAUN || g_mb == DEVKIT)
+		else if(g_mb == TA_090v1 || g_mb == TA_090v2 || g_mb == TA_090v3)
 		{
-			memcpy(buf, lcd_type71, sizeof(lcd_type71));
+			//memcpy(buf, lcd_type71, sizeof(lcd_type71));
+			memcpy(buf, lcd_type60, sizeof(lcd_type60));
 		}
 		else
 		{
-			memcpy(buf, lcd_type60, sizeof(lcd_type60));
+			memcpy(buf, lcd_type71, sizeof(lcd_type71));
+			//memcpy(buf, lcd_type60, sizeof(lcd_type60));
 		}
 	}
 
@@ -1167,7 +1172,7 @@ int _idsRegenerationGenerateCallibrationKey(u8 *buf)
 	//u8 setParam[8];
 	//int res;
 
-	if (psptype == 1 || g_mb == TA82)
+	if (psptype == 1 || g_mb == TA_082)
 	{
 		return 0;
 	}
@@ -1223,7 +1228,7 @@ int idsRegenerationGetUnkKeys5253(u8 *buf)
 
 	memset(buf, 0, 1024);
 
-	if (g_mb == TA85)
+	if (g_mb == TA_085v1)
 	{
 		if (g_region == EUROPE)
 		{
@@ -1238,7 +1243,7 @@ int idsRegenerationGetUnkKeys5253(u8 *buf)
 			memcpy(buf, key52_85_JAP, sizeof(key52_85_JAP));
 		}
 	}
-	else if (g_mb == TA85v2)
+	else if (g_mb == TA_085v2)
 	{
 		if (g_region == EUROPE)
 		{
@@ -5881,7 +5886,7 @@ int generate_thread(SceSize args, void *argp)
 			m = mi_EU_1_8AC48706;
 		}
 	}
-	else if (g_mb == TA81)
+	else if (g_mb == TA_081v1 || g_mb == TA_081v2)
 	{
 		if (g_region == JAPAN)
 		{
@@ -5899,7 +5904,7 @@ int generate_thread(SceSize args, void *argp)
 			m = mi_EU_1_4DA9840C;
 		}
 	}
-	else if (g_mb == TA82)
+	else if (g_mb == TA_082)
 	{
 		if (g_region == JAPAN)
 		{
@@ -5917,7 +5922,7 @@ int generate_thread(SceSize args, void *argp)
 			m = mi_EU_2_27A91195;
 		}
 	}
-	else if (g_mb == TA86)
+	else if (g_mb == TA_086)
 	{
 		if (g_region == JAPAN)
 		{
@@ -5935,7 +5940,7 @@ int generate_thread(SceSize args, void *argp)
 			m = mi_EU_2_PINK;
 		}
 	}
-	else if (g_mb == TA85)
+	else if (g_mb == TA_085v1)
 	{
 		if (g_region == JAPAN)
 		{
@@ -5953,7 +5958,7 @@ int generate_thread(SceSize args, void *argp)
 			m = mi_EU_3_34D90F8D;
 		}
 	}
-	else if (g_mb == TA85v2)
+	else if (g_mb == TA_085v2)
 	{
 		if (g_region == JAPAN)
 		{
