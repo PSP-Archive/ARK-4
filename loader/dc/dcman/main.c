@@ -533,7 +533,7 @@ int dcIdStorageCreateAtomicLeaves(u16 *leaves, int n)
 	int k1 = pspSdkSetK1(0);
 	int level = sctrlKernelSetUserLevel(8);
 
-	int res = -1;//sceIdStorageCreateAtomicLeaves(leaves, n);
+	int res = sceIdStorage_driver_99ACCB71(leaves, n); //sceIdStorageCreateAtomicLeaves(leaves, n);
 
 	sctrlKernelSetUserLevel(level);	
 	pspSdkSetK1(k1);
@@ -762,6 +762,7 @@ void OnModuleStart(SceModule2 *mod)
 		WlanFunc = (void *)(mod->text_addr+0xCD5C);
 		ClearCaches();
 	}
+	
 	else if (strcmp(mod->modname, "sceNAND_Updater_Driver") == 0)
 	{
 		int i;

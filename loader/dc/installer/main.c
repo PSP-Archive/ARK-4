@@ -59,6 +59,7 @@
 #include "intrafont.h"
 #include "resurrection.h"
 #include "vlf.h"
+#include "idsregen.h"
 
 PSP_MODULE_INFO("VResurrection_Manager", 0x800, 2, 0);
 PSP_MAIN_THREAD_ATTR(0);
@@ -906,6 +907,9 @@ static void WriteDCFiles()
 	
 	if (WriteFile(ARK_DC_PATH "/vsh/module/vlf.prx", vlf, size_vlf) != size_vlf)
 		ErrorExit(1000, "Error writing vlf.prx");
+
+	if (WriteFile(ARK_DC_PATH "/kd/idsregeneration.prx", idsregen, size_idsregen) != size_idsregen)
+		ErrorExit(1000, "Error writing idsregeneration.prx");
 }
 
 int ReadSector(int sector, void *buf, int count)
