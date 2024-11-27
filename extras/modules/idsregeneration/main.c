@@ -1152,13 +1152,15 @@ int idsRegenerationGetLCDKey(u8 *buf)
 		//else if(g_mb == TA86 || g_mb == TA88 || g_mb == TAUN || g_mb == DEVKIT)
 		else if(g_mb == TA_090v1 || g_mb == TA_090v2 || g_mb == TA_090v3)
 		{
-			//memcpy(buf, lcd_type71, sizeof(lcd_type71));
 			memcpy(buf, lcd_type60, sizeof(lcd_type60));
+		}
+		else if(g_mb == TA_093v1  || g_mb == TA_093v2)
+		{
+			memcpy(buf, lcd_type60_4g, sizeof(lcd_type60_4g));
 		}
 		else
 		{
 			memcpy(buf, lcd_type71, sizeof(lcd_type71));
-			//memcpy(buf, lcd_type60, sizeof(lcd_type60));
 		}
 	}
 
