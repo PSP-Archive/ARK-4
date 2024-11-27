@@ -1149,18 +1149,34 @@ int idsRegenerationGetLCDKey(u8 *buf)
 		{
 			memcpy(buf, lcd_type6C, sizeof(lcd_type6C));
 		}
-		//else if(g_mb == TA86 || g_mb == TA88 || g_mb == TAUN || g_mb == DEVKIT)
-		else if(g_mb == TA_090v1 || g_mb == TA_090v2 || g_mb == TA_090v3)
+		// TA_090v1 missing
+		else if(g_mb == TA_090v2)
 		{
-			memcpy(buf, lcd_type60, sizeof(lcd_type60));
+			memcpy(buf, lcd_type60_3g_v2, sizeof(lcd_type60_3g_v2));
 		}
-		else if(g_mb == TA_093v1  || g_mb == TA_093v2)
+		else if(g_mb == TA_090v3)
 		{
-			memcpy(buf, lcd_type60_4g, sizeof(lcd_type60_4g));
+			memcpy(buf, lcd_type60_3g_v3, sizeof(lcd_type60_3g_v3));
 		}
 		else if(g_mb == TA_091)
 		{
 			memcpy(buf, lcd_type60_5g, sizeof(lcd_type60_5g));
+		}
+		else if(g_mb == TA_093v2)
+		{
+			memcpy(buf, lcd_type60_4g, sizeof(lcd_type60_4g));
+		}
+		else if(g_mb == TA_095v1)
+		{
+			memcpy(buf, lcd_type60_9g_v1, sizeof(lcd_type60_9g_v1));
+		}
+		else if(g_mb == TA_095v4)
+		{
+			memcpy(buf, lcd_type60_7g_v4, sizeof(lcd_type60_7g_v4));
+		}
+		else if(g_mb == TA_096_TA_097)
+		{
+			memcpy(buf, lcd_type60_11g, sizeof(lcd_type60_11g));
 		}
 		else
 		{
