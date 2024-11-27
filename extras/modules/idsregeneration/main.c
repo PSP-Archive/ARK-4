@@ -1164,7 +1164,7 @@ int idsRegenerationGetLCDKey(u8 *buf)
 		}
 		else if(g_mb == TA_093v2)
 		{
-			memcpy(buf, lcd_type60_4g, sizeof(lcd_type60_4g));
+			memcpy(buf, lcd_type60_4g_v2, sizeof(lcd_type60_4g_v2));
 		}
 		else if(g_mb == TA_095v1)
 		{
