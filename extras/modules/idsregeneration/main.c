@@ -1158,6 +1158,10 @@ int idsRegenerationGetLCDKey(u8 *buf)
 		{
 			memcpy(buf, lcd_type60_4g, sizeof(lcd_type60_4g));
 		}
+		else if(g_mb == TA_091)
+		{
+			memcpy(buf, lcd_type60_5g, sizeof(lcd_type60_5g));
+		}
 		else
 		{
 			memcpy(buf, lcd_type71, sizeof(lcd_type71));
