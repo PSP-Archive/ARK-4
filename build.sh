@@ -28,7 +28,7 @@ dialogCheck=$(command -v dialog 2>/dev/null)
 
 function checkDepends {
 
-	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev python3-pycryptodome python3-ecdsa
+	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev python3-pycryptodome python3-ecdsa zip
 	# Use package manager instead of pip
 	#pip3 install ecdsa
 }
