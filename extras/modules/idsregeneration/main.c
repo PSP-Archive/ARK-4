@@ -51,7 +51,7 @@ enum
 	TA_088v1_TA_088v2,
 	TA_090v1,
 	TA_088v3,
-	TA_090v2,
+	TA_090v2, // 17
 	TA_090v3,
 	TA_092,
 	TA_091,
@@ -1080,7 +1080,7 @@ int _idsRegenerationGenerateFactoryFirmwareKey(u8 *buf)
 
 	else if (psptype == 3)
 	{
-		if (g_mb == TA_085v1)
+		if (g_mb == TA_085v1 || g_mb == TA_090v1)
 		{
 			strcpy((char *)buf, "3.60");
 			vbuf = version360;
@@ -1092,11 +1092,103 @@ int _idsRegenerationGenerateFactoryFirmwareKey(u8 *buf)
 			vbuf = version372;
 			size = sizeof(version372);
 		}
-		else
+		else if (g_mb == TA_088v1_TA_088v2) 
 		{
-			strcpy((char *)buf, "3.90");
-			vbuf = version390;
-			size = sizeof(version390);
+			char shippedfw[5];
+			memset(shippedfw, 0, sizeof(shippedfw));
+			sceIdStorageLookup(0x51, 0, shippedfw, 4);
+			if(shippedfw[3] == '7') {
+				strcpy((char *)buf, "3.71");
+				vbuf = version371;
+				size = sizeof(version371);
+			}
+			else
+			{
+				strcpy((char *)buf, "3.95");
+				vbuf = version395;
+				size = sizeof(version395);
+			}
+		}
+		else if (g_mb == TA_088v3)
+		{
+			strcpy((char *)buf, "4.01");
+			vbuf = version401;
+			size = sizeof(version401);
+		}
+		else if (g_mb == TA_090v2 || g_mb == TA_090v3)
+		{
+			strcpy((char *)buf, "4.20");
+			vbuf = version420;
+			size = sizeof(version420);
+		}
+		else if (g_mb == TA_091) // GO
+		{
+			strcpy((char *)buf, "5.70");
+			vbuf = version570GO;
+			size = sizeof(version570GO);
+		}
+		else if (g_mb == TA_092)
+		{
+			strcpy((char *)buf, "5.03");
+			vbuf = version503;
+			size = sizeof(version503);
+		}
+		else if (g_mb == TA_093v1)
+		{
+			strcpy((char *)buf, "5.70");
+			vbuf = version570;
+			size = sizeof(version570);
+		}
+		else if (g_mb == TA_093v2)
+		{
+			strcpy((char *)buf, "6.20");
+			vbuf = version620;
+			size = sizeof(version620);
+		}
+		else if (g_mb == TA_094)
+		{
+			char shippedfw[5];
+			memset(shippedfw, 0, sizeof(shippedfw));
+			sceIdStorageLookup(0x51, 0, shippedfw, 4);
+			if(shippedfw[3] == '0') {
+				strcpy((char *)buf, "6.00"); // GO Strider2
+				vbuf = version600GO;
+				size = sizeof(version600GO);
+			}
+			else // GO Strider2
+			{
+				strcpy((char *)buf, "6.20");
+				vbuf = version620GO;
+				size = sizeof(version620GO);
+			}
+		}
+		else if (g_mb == TA_095v1)
+		{
+			strcpy((char *)buf, "6.30");
+			vbuf = version630;
+			size = sizeof(version630);
+		}
+		else if (g_mb == TA_095v2 || g_mb == TA_095v3 || g_mb == TA_095v4)
+		{
+			strcpy((char *)buf, "6.35");
+			vbuf = version635;
+			size = sizeof(version635);
+		}
+		else if (g_mb == TA_096_TA_097)
+		{
+			char shippedfw[5];
+			memset(shippedfw, 0, sizeof(shippedfw));
+			sceIdStorageLookup(0x51, 0, shippedfw, 4);
+			if(shippedfw[3] == '5') {
+				strcpy((char *)buf, "6.50");
+				vbuf = version650;
+				size = sizeof(version650);
+			}
+			else {
+				strcpy((char *)buf, "6.60");
+				vbuf = version660;
+				size = sizeof(version660);
+			}
 		}
 	}
 	else
@@ -1180,7 +1272,7 @@ int idsRegenerationGetLCDKey(u8 *buf)
 		}
 		else if(g_mb == TA_095v3)
 		{
-			memcpy(buf, lcd_type60_9g_v3, sizeof(lcd_type60_9g_v3));
+			memcpy(buf, lcd_type60_7g_v3, sizeof(lcd_type60_7g_v3));
 		}
 		else if(g_mb == TA_095v4)
 		{
@@ -1195,6 +1287,13 @@ int idsRegenerationGetLCDKey(u8 *buf)
 			memcpy(buf, lcd_type71, sizeof(lcd_type71));
 		}
 	}
+
+	/*u32 fp = sceIoOpen("ms0:/mb.bin", PSP_O_CREAT | PSP_O_WRONLY | PSP_O_TRUNC, 0777);
+	char m[2];
+	sprintf(m, "%d", g_mb);
+	sceIoWrite(fp, m, sizeof(m));
+	sceIoClose(fp);
+	*/
 
 	pspSdkSetK1(k1);
 	return 1;
