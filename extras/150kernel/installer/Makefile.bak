@@ -24,10 +24,18 @@ EXTRA_TARGETS = EBOOT.PBP
 
 PSP_FW_VERSION = 660
 
-all:
+all: $(TARGET).prx
+
+pspbtcnf_game.h:
 	$(Q)bin2c ../btcnf/pspbtcnf_game.txt pspbtcnf_game.h pspbtcnf_game
+
+reboot150.h:
 	$(Q)bin2c $(ARKROOT)/extras/150kernel/reboot150/reboot150.prx reboot150.h reboot150
+
+systemctrl150.h:
 	$(Q)bin2c $(ARKROOT)/extras/150kernel/systemctrl150/systemctrl150.prx systemctrl150.h systemctrl150
+
+tmctrl150.h:
 	$(Q)bin2c $(ARKROOT)/extras/150kernel/tmctrl150/tmctrl150.prx tmctrl150.h tmctrl150
 
 PSPSDK=$(shell psp-config --pspsdk-path)
