@@ -20,14 +20,8 @@ extern PspIoDrvFuncs g_drv_funcs;
 extern int power_event_handler(int ev_id, char *ev_name, void *param, int *result);
 
 // 0x00002444
-PspIoDrv ms_drv = { "ms", 0x4, 0x200, 0, &g_drv_funcs };
-PspIoDrv fatms_drv = {
-    .name = "fatms",
-    .dev_type = 0x1E0010,
-    .unk2 = 1,
-    .name2 = "fatfs",
-    .funcs = &g_drv_funcs,
-};
+PspIoDrv ms_drv = { "ms", 0x4, 0x200, "msfs", &g_drv_funcs };
+PspIoDrv fatms_drv = { "fatms", 0x1E0010, 1, "fatfs", &g_drv_funcs };
 
 PspSysEventHandler g_power_event = {
     .size = sizeof(g_power_event),
@@ -45,7 +39,6 @@ unsigned int cpu_suspend_interrupts(void){
 void cpu_resume_interrupts(unsigned int mask){
     sceKernelCpuResumeIntr(mask);
 }
-
 
 void _fs_lock(){
     sceKernelWaitSema(sema_lock, 1, NULL);
@@ -93,6 +86,7 @@ int module_stop(SceSize args, void *argp)
     sceIoDelDrv("ms");
     sceIoDelDrv("fatms");
     sceKernelUnregisterSysEventHandler(&g_power_event);
+    sceKernelDeleteSema(sema_lock);
 
     return 0;
 }
