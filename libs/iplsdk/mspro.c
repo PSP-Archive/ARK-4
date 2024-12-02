@@ -79,7 +79,7 @@
 #define INT_REG_BREQ            (0x20)
 #define INT_REG_CMDNK           (0x01)
 
-static int is_ready(void)
+int is_ready(void)
 {
     return (*MSPRO_STATUS_REG & STAT_RDY) != 0;
 }
