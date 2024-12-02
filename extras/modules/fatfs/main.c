@@ -56,6 +56,14 @@ void get_fattime(){
     return sceKernelLibcTime(&t);
 }
 
+void* malloc(size_t size){
+    return oe_malloc(size);
+}
+
+void free(void* ptr){
+    oe_free(ptr);
+}
+
 int module_start(SceSize args, void* argp)
 {
     int ret;

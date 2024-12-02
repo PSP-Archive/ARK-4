@@ -351,7 +351,7 @@ static int IoChdir(PspIoDrvFileArg *arg, const char *dir){
 
     _fs_lock();
 
-    //ret = f_chdir(dir);
+    ret = f_chdir(dir);
 
     _fs_unlock();
 
