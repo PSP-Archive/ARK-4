@@ -1,6 +1,7 @@
 TARGET = fatfs
-C_OBJS = main.o iodrv.o diskio.o ff.o ffsystem.o ffunicode.o $(ARKROOT)/libs/iplsdk/mspro.o
-OBJS = $(C_OBJS) imports.o
+C_OBJS = main.o iodrv.o diskio.o ff.o ffsystem.o ffunicode.o
+IPL_OBJS = $(ARKROOT)/libs/iplsdk/mspro.o $(ARKROOT)/libs/iplsdk/sysreg.o
+OBJS = $(C_OBJS) $(IPL_OBJS)
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/core/systemctrl/include $(ARKROOT)/libs/iplsdk/
 CFLAGS = -std=c99 -Os -G0 -Wall

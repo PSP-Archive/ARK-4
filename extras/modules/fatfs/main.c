@@ -10,7 +10,6 @@
 #include <psprtc.h>
 #include <pspinit.h>
 #include "systemctrl_private.h"
-#include "inferno.h"
 #include <ark.h>
 #include "macros.h"
 
@@ -36,6 +35,27 @@ PspSysEventHandler g_power_event = {
     .handler = &power_event_handler,
 };
 
+unsigned int cpu_suspend_interrupts(void){
+    return sceKernelCpuSuspendIntr();
+}
+
+void cpu_resume_interrupts(unsigned int mask){
+    sceKernelCpuResumeIntr(mask);
+}
+
+void _fs_lock(){
+
+}
+
+void _fs_unlock(){
+
+}
+
+void get_fattime(){
+    time_t t;
+    return sceKernelLibcTime(&t);
+}
+
 int module_start(SceSize args, void* argp)
 {
     int ret;
@@ -48,9 +68,6 @@ int module_start(SceSize args, void* argp)
 
     ret = sceIoAddDrv(&fatms_drv);
     if (ret < 0) return ret;
-
-    ret = InitFS();
-    if (ret != 0) return -ret;
 
     return 0;
 }

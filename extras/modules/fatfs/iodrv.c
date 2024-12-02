@@ -10,7 +10,6 @@
 #include <psprtc.h>
 #include <pspinit.h>
 #include "systemctrl_private.h"
-#include "inferno.h"
 #include <ark.h>
 #include "macros.h"
 #include "ff.h"
@@ -24,18 +23,17 @@ static void fileInfoToStat(FILINFO *fno, SceIoStat *stat)
     unsigned char stime[8];
     u16 year;
 
-    stat->attr           = 0777;
-    stat->size           = (unsigned int)(fno->fsize);
-    stat->hisize         = (unsigned int)(fno->fsize>>32);
+    stat->st_attr           = 0777;
+    stat->st_size           = fno->fsize;
 
-    stat->mode = FIO_S_IROTH | FIO_S_IXOTH;
+    stat->st_mode = FIO_S_IROTH | FIO_S_IXOTH;
     if (fno->fattrib & AM_DIR) {
-        stat->mode |= FIO_S_IFDIR;
+        stat->st_mode |= FIO_S_IFDIR;
     } else {
-        stat->mode |= FIO_S_IFREG;
+        stat->st_mode |= FIO_S_IFREG;
     }
     if (!(fno->fattrib & AM_RDO)) {
-        stat->mode |= FIO_S_IWOTH;
+        stat->st_mode |= FIO_S_IWOTH;
     }
 
     // Since the VFAT file system does not support timezones, the timezone offset will not be applied.
@@ -56,9 +54,9 @@ static void fileInfoToStat(FILINFO *fno, SceIoStat *stat)
     stime[2] = (ftime >> 5) & 63; // Minutes
     stime[1] = (ftime << 1) & 31; // Seconds (multiplied by 2)
 
-    memcpy(stat->ctime, stime, sizeof(stime));
-    memcpy(stat->atime, stime, sizeof(stime));
-    memcpy(stat->mtime, stime, sizeof(stime));
+    memcpy(&(stat->st_ctime), stime, sizeof(stime));
+    memcpy(&(stat->st_atime), stime, sizeof(stime));
+    memcpy(&(stat->st_mtime), stime, sizeof(stime));
 }
 
 static int IoInit(PspIoDrvArg* arg){
@@ -74,7 +72,7 @@ static int IoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode){
     (void)mode;
 
     // check if the slot is free
-    arg->arg = fs_find_free_fil_structure();
+    arg->arg = oe_malloc(sizeof(FIL));
     if (arg->arg == NULL) {
         _fs_unlock();
         return 0x80010018; // SCE_ERROR_ERRNO_TOO_MANY_OPEN_SYSTEM_FILES
@@ -92,9 +90,10 @@ static int IoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode){
     if (flags & PSP_O_APPEND)
         f_mode |= FA_OPEN_APPEND;
 
-    int ret = f_open(fd->privdata, file, f_mode);
+    int ret = f_open(arg->arg, file, f_mode);
 
     if (ret != FR_OK){
+        oe_free(arg->arg);
         arg->arg = NULL;
     }
 
@@ -115,6 +114,7 @@ static int IoClose(PspIoDrvFileArg *arg){
 
     if (arg->arg) {
         ret = f_close(arg->arg);
+        oe_free(arg->arg);
         arg->arg = NULL;
     }
 
@@ -165,14 +165,14 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence){
 
     FIL *file = (FIL *)(arg->arg);
 
-    FSIZE_t off = offset;
+    FSIZE_t off = ofs;
 
     switch (whence) {
         case SEEK_CUR:
             off += file->fptr;
             break;
         case SEEK_END:
-            off = file->obj.objsize - offset;
+            off = file->obj.objsize - ofs;
             break;
     }
 
@@ -231,7 +231,7 @@ static int IoDopen(PspIoDrvFileArg *arg, const char *dirname){
     _fs_lock();
 
     // check if the slot is free
-    arg->arg = fs_find_free_dir_structure();
+    arg->arg = oe_malloc(sizeof(DIR));
     if (arg->arg == NULL) {
         _fs_unlock();
         return 0x80010018; // SCE_ERROR_ERRNO_TOO_MANY_OPEN_SYSTEM_FILES
@@ -240,6 +240,7 @@ static int IoDopen(PspIoDrvFileArg *arg, const char *dirname){
     ret = f_opendir(arg->arg, dirname);
 
     if (ret != FR_OK){
+        oe_free(arg->arg);
         arg->arg = NULL;
     }
 
@@ -260,6 +261,7 @@ static int IoDclose(PspIoDrvFileArg *arg){
 
     if (arg->arg) {
         ret = f_closedir(arg->arg);
+        oe_free(arg->arg);
         arg->arg = NULL;
     }
 
@@ -296,14 +298,14 @@ static int IoGetstat(PspIoDrvFileArg *arg, const char *file, SceIoStat *stat){
 
     // FatFs f_stat doesn't handle the root directory, so we'll handle this case ourselves.
     {
-        const char *name_no_leading_slash = name;
+        const char *name_no_leading_slash = file;
         while (*name_no_leading_slash == '/') {
             name_no_leading_slash += 1;
         }
         if ((strcmp(name_no_leading_slash, "") == 0) || (strcmp(name_no_leading_slash, ".") == 0)) {
             // Return data indicating that it is a directory.
             memset(stat, 0, sizeof(*stat));
-            stat->mode = FIO_S_IROTH | FIO_S_IWOTH | FIO_S_IXOTH | FIO_S_IFDIR;
+            stat->st_mode = FIO_S_IROTH | FIO_S_IWOTH | FIO_S_IXOTH | FIO_S_IFDIR;
             return 0;
         }
     }
@@ -349,7 +351,7 @@ static int IoChdir(PspIoDrvFileArg *arg, const char *dir){
 
     _fs_lock();
 
-    ret = f_chdir(dir);
+    //ret = f_chdir(dir);
 
     _fs_unlock();
 

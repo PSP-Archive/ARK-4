@@ -33,6 +33,7 @@ SUBDIRS = libs \
 	extras/modules/usbdevice \
 	extras/modules/idsregeneration \
 	extras/modules/kbooti_update \
+	extras/modules/fatfs \
 	loader/live/user/linkless_payload \
 	loader/live/user/signed_eboot \
 	loader/live/user/psxloader \
