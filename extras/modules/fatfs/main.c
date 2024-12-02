@@ -20,11 +20,12 @@ extern PspIoDrvFuncs g_drv_funcs;
 extern int power_event_handler(int ev_id, char *ev_name, void *param, int *result);
 
 // 0x00002444
-PspIoDrv g_iodrv = {
-    .name = "ms",
-    .dev_type = 4, // block device
-    .unk2 = 0x800,
-    .name2 = "fatms",
+PspIoDrv ms_drv = { "ms", 0x4, 0x200, 0, &g_drv_funcs };
+PspIoDrv fatms_drv = {
+    .name = "fatms",
+    .dev_type = 0x1E0010,
+    .unk2 = 1,
+    .name2 = "fatfs",
     .funcs = &g_drv_funcs,
 };
 
@@ -42,7 +43,10 @@ int module_start(SceSize args, void* argp)
     ret = sceKernelRegisterSysEventHandler(&g_power_event);
     if (ret < 0) return ret;
 
-    ret = sceIoAddDrv(&g_iodrv);
+    ret = sceIoAddDrv(&ms_drv);
+    if (ret < 0) return ret;
+
+    ret = sceIoAddDrv(&fatms_drv);
     if (ret < 0) return ret;
 
     ret = InitFS();
@@ -55,7 +59,7 @@ int module_start(SceSize args, void* argp)
 int module_stop(SceSize args, void *argp)
 {
     sceIoDelDrv("ms");
-    sceKernelDeleteEventFlag(g_drive_status_evf);
+    sceIoDelDrv("fatms");
     sceKernelUnregisterSysEventHandler(&g_power_event);
 
     return 0;
