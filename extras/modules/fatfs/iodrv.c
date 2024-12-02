@@ -364,7 +364,13 @@ static int IoMount(PspIoDrvFileArg *arg){
 }
 
 static int IoUmount(PspIoDrvFileArg *arg){
-    f_unmount("");
+    int ret = f_unmount("");
+    return -ret;
+}
+
+static int IoUnk21(PspIoDrvFileArg *arg){
+    // ???
+    return 0;
 }
 
 PspIoDrvFuncs g_drv_funcs = {
@@ -389,7 +395,7 @@ PspIoDrvFuncs g_drv_funcs = {
     .IoMount   = &IoMount,
     .IoUmount  = &IoUmount,
     .IoDevctl  = &IoDevctl,
-    .IoUnk21   = NULL,
+    .IoUnk21   = &IoUnk21,
 };
 
 int power_event_handler(int ev_id, char *ev_name, void *param, int *result){
@@ -399,5 +405,4 @@ int power_event_handler(int ev_id, char *ev_name, void *param, int *result){
     if(ev_id == 0x400000) { // resume complete
         // TODO
     }
-
 }
