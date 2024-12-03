@@ -44,18 +44,6 @@ typedef struct OpenDirectory
     char * path;
 } OpenDirectory;
 
-/*
-// define all possible file replacements here
-static struct{
-    char* orig;
-    char* new;
-    unsigned char len;
-} ioreplacements[] = {
-    // Replace flash0
-    {.orig = NULL, .new = NULL, .len=0}
-};
-*/
-
 // Open Directory List
 OpenDirectory * opendirs = NULL;
 
@@ -73,6 +61,10 @@ OpenDirectory * findOpenDirectory(int fd);
 
 // sceIoAddDrv Hook
 int sceIoAddDrvHook(PspIoDrv * driver);
+int sceIoDelDrvHook(const char *drv_name);
+
+int sceIoAssignHook(const char *dev1, const char *dev2, const char *dev3, int mode, void* unk1, long unk2);
+int sceIoUnassignHook(const char *dev);
 
 // "ms" Driver IoOpen Hook
 int sceIoMsOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode);
@@ -86,9 +78,6 @@ int sceIoDreadHook(int fd, SceIoDirent * dir);
 // sceIoDclose Hook
 int sceIoDcloseHook(int fd);
 
-// "ms" Driver IoOpen Original Call
-int (* sceIoMsOpen)(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode) = NULL;
-
 // "ms" Driver Reference
 PspIoDrv * ms_drv = NULL;
 PspIoDrv * flashfat_drv = NULL;
@@ -98,16 +87,32 @@ PspIoDrvArg * flash_driver = NULL;
 PspIoDrvFuncs ms_funcs;
 PspIoDrvFuncs flash_funcs;
 
+int (* _sceIoAddDrv)(PspIoDrv *drv);
+int (* _sceIoDelDrv)(const char *drv_name);
+
+int (* _sceIoUnassign)(const char *dev);
+int (* _sceIoAssign)(const char *dev1, const char *dev2, const char *dev3, int mode, void* unk1, long unk2);
+
 void initFileSystem(){
     // Create Semaphore
     dreadSema = sceKernelCreateSema("sceIoDreadSema", 0, 1, 1, NULL);
     
     // patch Driver
-    u32 IOAddDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
-    u32 AddDrv = findRefInGlobals("IoFileMgrForKernel", IOAddDrv, IOAddDrv);
+    //u32 IOAddDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
+    //u32 AddDrv = findRefInGlobals("IoFileMgrForKernel", IOAddDrv, IOAddDrv);
     // Hooking sceIoAddDrv
-    _sw((unsigned int)sceIoAddDrvHook, AddDrv);
-    
+    //_sw((unsigned int)sceIoAddDrvHook, AddDrv);
+
+    u32 IoAddDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
+	u32 IoDelDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
+	u32 IoAssign = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xB2A628C1);
+	u32 IoUnassign = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x6D08A871);
+
+	HIJACK_FUNCTION(IoAddDrv, sceIoAddDrvHook, _sceIoAddDrv);
+	HIJACK_FUNCTION(IoDelDrv, sceIoDelDrvHook, _sceIoDelDrv);
+
+	HIJACK_FUNCTION(IoUnassign, sceIoUnassignHook, _sceIoUnassign);
+	HIJACK_FUNCTION(IoAssign, sceIoAssignHook, _sceIoAssign);
 }
 
 u32 UnprotectAddress(u32 addr){
@@ -119,6 +124,27 @@ u32 UnprotectAddress(u32 addr){
         || (addr >= 0x40010000 && addr < 0x40014000))
         return addr | 0x60000000;
     return addr;
+}
+
+// "ms" Driver IoOpen Hook
+int (* sceIoMsOpen)(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode) = NULL;
+int sceIoMsOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
+{
+    // Update Internal "ms" Driver Reference
+    ms_driver = arg->drv;
+    
+    // File Write Open Request
+    if ((flags & PSP_O_WRONLY) != 0) {
+        // Search for EBOOT.PBP Filename
+        char * occurence = strstr(file, "/EBOOT.PBP");
+        // Trying to write an EBOOT.PBP file in PS Vita fails, redirect to VBOOT.PBP
+        if (occurence != NULL) {
+            occurence[1] = 'V';
+        }
+    }
+    
+    // Forward Call
+    return sceIoMsOpen(arg, file, flags, mode);
 }
 
 int (* sceIoMsRead_)(PspIoDrvFileArg* arg, void* data, SceSize size);
@@ -549,7 +575,7 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 
         // Add flashfat driver
 		flashfat_drv->funcs = driver->funcs;
-		sceIoAddDrv(flashfat_drv);
+		_sceIoAddDrv(flashfat_drv);
     }
     // "ms" Driver
     else if (strcmp(driver->name, "fatms") == 0) {
@@ -567,7 +593,7 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 
 		// Add ms driver
 		ms_drv->funcs = driver->funcs;
-		sceIoAddDrv(ms_drv);
+		_sceIoAddDrv(ms_drv);
 	}
     else if(strcmp(driver->name, "ms") == 0) {
         ms_drv = driver;
@@ -579,27 +605,43 @@ int sceIoAddDrvHook(PspIoDrv * driver)
     }
     
     // Register Driver
-    return sceIoAddDrv(driver);
+    return _sceIoAddDrv(driver);
 }
 
-// "ms" Driver IoOpen Hook
-int sceIoMsOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
-{
-    // Update Internal "ms" Driver Reference
-    ms_driver = arg->drv;
-    
-    // File Write Open Request
-    if ((flags & PSP_O_WRONLY) != 0) {
-        // Search for EBOOT.PBP Filename
-        char * occurence = strstr(file, "/EBOOT.PBP");
-        // Trying to write an EBOOT.PBP file in PS Vita fails, redirect to VBOOT.PBP
-        if (occurence != NULL) {
-            occurence[1] = 'V';
-        }
-    }
-    
-    // Forward Call
-    return sceIoMsOpen(arg, file, flags, mode);
+int sceIoDelDrvHook(const char *drv_name) {
+	if (strcmp(drv_name, "ms") == 0 || strcmp(drv_name, "flashfat") == 0) {
+		return 0;
+	} else if (strcmp(drv_name, "fatms") == 0) {
+		_sceIoDelDrv("ms");
+	} else if (strcmp(drv_name, "flash") == 0) {
+		_sceIoDelDrv("flashfat");
+	}
+
+	return _sceIoDelDrv(drv_name);
+}
+
+int sceIoUnassignHook(const char *dev) {
+	int k1 = pspSdkSetK1(0);
+
+	if (strncmp(dev, "ms", 2) == 0 || strncmp(dev, "flash", 5) == 0) {
+		pspSdkSetK1(k1);
+		return 0;
+	}
+
+	pspSdkSetK1(k1);
+	return _sceIoUnassign(dev);
+}
+
+int sceIoAssignHook(const char *dev1, const char *dev2, const char *dev3, int mode, void* unk1, long unk2) {
+	int k1 = pspSdkSetK1(0);
+
+	if (strncmp(dev1, "ms", 2) == 0 || strncmp(dev1, "flash", 5) == 0) {
+		pspSdkSetK1(k1);
+		return 0;
+	}
+
+	pspSdkSetK1(k1);
+	return _sceIoAssign(dev1, dev2, dev3, mode, unk1, unk2);
 }
 
 // Directory IO Semaphore Lock
