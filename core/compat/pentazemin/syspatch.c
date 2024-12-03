@@ -256,14 +256,6 @@ int sctrlGetUsbState() {
 	return 2; // Not connected
 }
 
-void patch_VshMain(SceModule2* mod){
-	u32 text_addr = mod->text_addr;
-
-	// Dummy usb detection functions
-	MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0x38C94);
-	MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0x38C94);
-}
-
 void patch_SysconfPlugin(SceModule2* mod){
 	u32 text_addr = mod->text_addr;
 	// Dummy all vshbridge usbstor functions
@@ -417,7 +409,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
 	if (strcmp(mod->modname, "vsh_module") == 0) {
 		is_vsh = 1;
-		patch_VshMain(mod);
 		if (se_config->skiplogos){
             // patch GameBoot
             hookImportByNID(sceKernelFindModuleByName("sceVshBridge_Driver"), "sceDisplay_driver", 0x3552AB11, 0);
