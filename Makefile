@@ -303,6 +303,14 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/kbooti_update
 	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
+	$(Q)$(MAKE) $@ -C extras/apps/updater/
+	$(Q)$(MAKE) $@ -C extras/apps/installer/
+	$(Q)$(MAKE) $@ -C extras/apps/uninstaller
+	$(Q)$(MAKE) $@ -C extras/150kernel/reboot150
+	$(Q)$(MAKE) $@ -C extras/150kernel/rebootex150
+	$(Q)$(MAKE) $@ -C extras/150kernel/systemctrl150
+	$(Q)$(MAKE) $@ -C extras/150kernel/tmctrl150
+	$(Q)$(MAKE) $@ -C extras/150kernel/installer
 	$(Q)$(MAKE) $@ -C loader/live/FinalSpeed
 	$(Q)$(MAKE) $@ -C loader/live/user/linkless_payload
 	$(Q)$(MAKE) $@ -C loader/live/user/signed_eboot
@@ -330,19 +338,10 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl/rebootex
 	$(Q)$(MAKE) $@ -C loader/dc/tmctrl
 	$(Q)$(MAKE) $@ -C loader/dc/vunbricker
-	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
-	$(Q)$(MAKE) $@ K=sceSdGetLastIndex -C loader/live/kernel/kxploit
-	$(Q)-rm -rf dist *~ | true
-	$(Q)$(MAKE) $@ -C extras/apps/updater/
-	$(Q)$(MAKE) $@ -C extras/apps/installer/
-	$(Q)$(MAKE) $@ -C extras/apps/uninstaller
-	$(Q)$(MAKE) $@ -C extras/150kernel/reboot150
-	$(Q)$(MAKE) $@ -C extras/150kernel/rebootex150
-	$(Q)$(MAKE) $@ -C extras/150kernel/systemctrl150
-	$(Q)$(MAKE) $@ -C extras/150kernel/tmctrl150
-	$(Q)$(MAKE) $@ -C extras/150kernel/installer
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/ipl_stage1_payload
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/ipl_stage2_payload
+	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
+	$(Q)$(MAKE) $@ K=sceSdGetLastIndex -C loader/live/kernel/kxploit
 	$(Q)rm -f extras/apps/updater/ARK_01234.PKG | true
 	$(Q)rm -f extras/apps/updater/EBOOT_PSP.PBP | true
 	$(Q)rm -f extras/apps/updater/EBOOT_GO.PBP | true
@@ -357,6 +356,7 @@ clean:
 	$(Q)rm -f loader/dc/msipl/newipl/stage1/*.h
 	$(Q)rm -f loader/dc/msipl/newipl/stage2/*.lzo
 	$(Q)rm -f loader/live/FinalSpeed/*.h
+	$(Q)-rm -rf dist *~ | true
 
 subdirs: $(SUBDIRS)
 
