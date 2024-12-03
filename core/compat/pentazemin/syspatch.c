@@ -380,6 +380,11 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         goto flush;
 	}
 
+	if (strcmp(mod->modname, "sceUSBCam_Driver") == 0) {
+		patchUsbCam(mod);
+		goto flush;
+	}
+
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
 		PatchImposeDriver(mod->text_addr);
 		// perfect time to apply extra memory patch

@@ -342,11 +342,11 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/ipl_stage2_payload
 	$(Q)$(MAKE) $@ K=sceUID -C loader/live/kernel/kxploit
 	$(Q)$(MAKE) $@ K=sceSdGetLastIndex -C loader/live/kernel/kxploit
+	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
+	$(Q)find -name 'THEME.ARK' -exec rm {} \;
 	$(Q)rm -f extras/apps/updater/ARK_01234.PKG | true
 	$(Q)rm -f extras/apps/updater/EBOOT_PSP.PBP | true
 	$(Q)rm -f extras/apps/updater/EBOOT_GO.PBP | true
-	$(Q)$(PYTHON) contrib/PC/scripts/cleandeps.py
-	$(Q)find -name 'THEME.ARK' -exec rm {} \;
 	$(Q)rm -f extras/menus/arkMenu/LANG.ARK
 	$(Q)rm -rf loader/vpk/bin/save/ARK_01234
 	$(Q)rm -f loader/vpk/bin/psx/ps1cfw_enabler.suprx
