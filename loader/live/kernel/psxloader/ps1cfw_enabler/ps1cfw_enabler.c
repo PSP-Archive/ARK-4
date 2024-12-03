@@ -11,7 +11,6 @@ uint32_t module_nid;
 
 SceUID sceIoOpenHook = -1;
 SceUID sceIoStatHook = -1;
-SceUID titleIdHook = -1;
 tai_hook_ref_t sceIoOpenRef;
 tai_hook_ref_t sceIoGetstatRef;
 
@@ -57,8 +56,10 @@ void get_functions(uint32_t text_addr) {
 // IO Open patched
 SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
   
-  // Virtual Kernel Exploit (allow easy escalation of priviledge)
-    if (file != NULL && strstr(file, "__dokxploit__") != 0){
+    if (file == NULL) return -1;
+
+    // Virtual Kernel Exploit (allow easy escalation of priviledge on ePSP)
+    if (strstr(file, "__dokxploit__") != 0){
 	    uint32_t *m;
 	    
 	    // remove k1 checks in IoRead (lets you write into kram)
@@ -119,8 +120,7 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
     
     // Clean Exit
     if (strstr(file, "__popsexit__")){
-        ScePspemuErrorExit(0);
-        return 0;
+        return ScePspemuErrorExit(0);
     }
 
     // Redirect files for memory card manager
@@ -169,8 +169,6 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
   return TAI_CONTINUE(int, sceIoGetstatRef, file, stat);
 }
 
-SceUID thread_hook = -1;
-
 int module_start(SceSize argc, const void *args) {
     info.size = sizeof(info);
 
@@ -200,12 +198,7 @@ int module_start(SceSize argc, const void *args) {
     sceIoStatHook = taiHookFunctionImport(&sceIoGetstatRef, "ScePspemu", 0xCAE9ACE6, 0xBCA5B623, sceIoGetstatPatched);
 
     // fix controller on Vita TV
-    if (module_nid == 0x2714F07D){
-      ctrl_patch = taiInjectData(info.modid, 0, 0x2073C, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
-    }
-    else {
-      ctrl_patch = taiInjectData(info.modid, 0, 0x20740, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
-    }
+    ctrl_patch = taiInjectData(info.modid, 0, (module_nid == 0x2714F07D)?0x2073C:0x20740, &movs_a1_0_nop_opcode, sizeof(movs_a1_0_nop_opcode));
 
     return SCE_KERNEL_START_SUCCESS;
 }

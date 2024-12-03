@@ -24,29 +24,37 @@
 extern "C" {
 #endif
 
-// Generic Offsets
-#define USER_BASE 0x08800000
-#define KERNEL_BASE 0x88000000
-#define GAME_TEXT (USER_BASE + 0x4000)
-#define SYSMEM_TEXT KERNEL_BASE
-#define REBOOT_TEXT (KERNEL_BASE + 0x600000)
-#define REBOOTEX_TEXT (KERNEL_BASE + 0xFC0000)
-#define LOADER_TEXT (0x040EC000)
-#define MAINBIN_TEXT (0x04000000)
-#define EXTRA_RAM 0x8A000000
-#define FLASH_SONY 0x8B000000
-#define ARK_FLASH 0x8BA00000
-#define BOOT_KEY_BUFFER (KERNEL_BASE + 0xFB0000)
+// ARK Version
+#define ARK_MAJOR_VERSION 4
+#define ARK_MINOR_VERSION 20
+#define ARK_MICRO_VERSION 69
+#define ARK_REVISION      150
 
-// Memory Partition Size
-#define USER_SIZE (24 * 1024 * 1024)
-#define KERNEL_SIZE (4 * 1024 * 1024)
-#define VITA_FLASH_SIZE 0x01000000 // 16MiB
-#define EXTRA_RAM_SIZE (32 * 1024 * 1024)
-#define MAX_HIGH_MEMSIZE 55
-
-// ARK_CONFIG
+// Pointers and sizes
 #define ARK_PATH_SIZE 128
+#define ARK_CONFIG 0x08800010 // ARK Runtime configuration backup address
+#define ARK_CONFIG_MAGIC 0xB00B1E55 // generic magic number
+#define USER_BASE 0x08800000 // user partition (p2)
+#define KERNEL_BASE 0x88000000 // kernel partition (p1)
+#define GAME_TEXT (USER_BASE + 0x4000) // game's main elf load address
+#define SYSMEM_TEXT KERNEL_BASE // sysmem.prx load address (start of kernel ram)
+#define REBOOT_TEXT (KERNEL_BASE + 0x600000) // reboot.bin load address
+#define REBOOTEX_TEXT (KERNEL_BASE + 0xFC0000) // rebootex load address
+#define LOADER_TEXT (0x040EC000) // cIPL load address
+#define MAINBIN_TEXT (0x04000000) // IPL load address
+#define EXTRA_RAM 0x8A000000 // extra RAM (on 2k+ or vita)
+#define FLASH_SONY 0x8B000000 // flash ramfs on vita
+#define ARK_FLASH 0x8BA00000 // ark's flash ramfs on vita
+#define BOOT_KEY_BUFFER (KERNEL_BASE + 0xFB0000) // controller input in payloadex (cIPL)
+#define ARK_BIN_MAX_SIZE 0x8000 // max size of ARK4.BIN
+#define MAX_FLASH0_SIZE 0x32000 // max size of FLASH0.ARK
+#define USER_SIZE (24 * 1024 * 1024) // user partition size
+#define KERNEL_SIZE (4 * 1024 * 1024) // kernel partition size
+#define VITA_FLASH_SIZE 0x01000000 // vita flash ramfs size
+#define EXTRA_RAM_SIZE (32 * 1024 * 1024) // size of extra ram (2k+)
+#define MAX_HIGH_MEMSIZE 55 // max ram that can be given to user
+
+// Paths and other global strings
 #define VBOOT_PBP "VBOOT.PBP" // default launcher
 #define ARK_XMENU "XBOOT.PBP" // PS1 launcher
 #define ARK_RECOVERY "RECOVERY.PBP" // recovery app
@@ -69,24 +77,30 @@ extern "C" {
 #define MENU_SETTINGS "ARKMENU.BIN" // Settings file for CL and VSH Menu
 #define ARK_SETTINGS_FLASH "flash1:/"ARK_SETTINGS
 #define UPDATER_FILE_FLASH "flash1:/"UPDATER_FILE // Update Server URL file flash1 path
-#define PLUGINS_FILE "PLUGINS.TXT"
-#define PLUGINS_PATH "ms0:/SEPLUGINS/"PLUGINS_FILE
-#define PLUGINS_PATH_GO "ef0:/SEPLUGINS/"PLUGINS_FILE
+#define PLUGINS_FILE "PLUGINS.TXT" // plugins config file
+#define SEPLUGINS_MS0 "ms0:/SEPLUGINS/" // plugins folder
+#define SEPLUGINS_EF0 "ef0:/SEPLUGINS/" // plugins folder (pspgo internal)
+#define PLUGINS_PATH SEPLUGINS_MS0 PLUGINS_FILE
+#define PLUGINS_PATH_GO SEPLUGINS_EF0 PLUGINS_FILE
 #define PLUGINS_PATH_FLASH "flash0:/"PLUGINS_FILE
 #define ARK_THEME_FILE "THEME.ARK" // theme file for arkMenu
 #define ARK_LANG_FILE "LANG.ARK" // language files
 #define ARK_BIN "ARK.BIN" // ARK-2 payload
 #define ARK4_BIN "ARK4.BIN" // ARK-4 payload
 #define ARKX_BIN "ARKX.BIN" // ARK-X payload
-
-#define ARK_BIN_MAX_SIZE 0x8000
-#define ARK_MAJOR_VERSION 4
-#define ARK_MINOR_VERSION 20
-#define ARK_MICRO_VERSION 69
-#define ARK_REVISION      150
-#define MAX_FLASH0_SIZE 0x32000
+#define LIVE_EXPLOIT_ID "Live" // default loader name
+#define CIPL_EXPLOIT_ID "cIPL" // loader name for Custom IPL
+#define DC_EXPLOIT_ID "DC" // loader name for Despertar del Cementerio
+#define DEFAULT_ARK_FOLDER "ARK_01234"
+#define SAVEDATA_MS0 "ms0:/PSP/SAVEDATA/"
+#define SAVEDATA_EF0 "ef0:/PSP/SAVEDATA/"
+#define DEFAULT_ARK_PATH SAVEDATA_MS0 DEFAULT_ARK_FOLDER "/" // default path for ARK files
+#define DEFAULT_ARK_PATH_GO SAVEDATA_EF0 DEFAULT_ARK_FOLDER "/" // default path for ARK files
+#define ARK_DC_PATH "ms0:/TM/DCARK"
+#define TM_PATH_W L"\\TM\\DCARK\\"
 
 /*
+Device identifier. Used as extension of psp_model.
 First two bits identify the device (PSP or PS Vita)
 Second two bits identify special cases (PSP, Vita, Vita PSX, etc)
 Dev Sub
@@ -120,27 +134,13 @@ typedef struct ARKConfig{
     unsigned char recovery; // run ARK in recovery mode (disables settings, plugins and autoboots RECOVERY.PBP)
 } ARKConfig;
 
-// ARK Runtime configuration backup address
-#define ARK_CONFIG 0x08800010
-#define ARK_CONFIG_MAGIC 0xB00B1E55
-#define LIVE_EXPLOIT_ID "Live" // default loader name
-#define CIPL_EXPLOIT_ID "cIPL"
-#define DC_EXPLOIT_ID "DC"
-#define DEFAULT_ARK_FOLDER "ARK_01234"
-#define SAVEDATA_MS0 "ms0:/PSP/SAVEDATA/"
-#define SAVEDATA_EF0 "ef0:/PSP/SAVEDATA/"
-#define DEFAULT_ARK_PATH SAVEDATA_MS0 DEFAULT_ARK_FOLDER "/" // default path for ARK files
-#define DEFAULT_ARK_PATH_GO SAVEDATA_EF0 DEFAULT_ARK_FOLDER "/" // default path for ARK files
-#define ARK_DC_PATH "ms0:/TM/DCARK"
-#define TM_PATH_W L"\\TM\\DCARK\\"
-#define SEPLUGINS_MS0 "ms0:/SEPLUGINS/"
-
+// macros for device checking
 #define IS_PSP(ark_config) ((ark_config->exec_mode&DEV_MASK)==PSP_ORIG)
 #define IS_VITA(ark_config) ((ark_config->exec_mode&DEV_MASK)==PS_VITA)
 #define IS_VITA_ADR(ark_config) (ark_config->exec_mode==PSV_ADR)
 #define IS_VITA_POPS(ark_config) (ark_config->exec_mode==PSV_POPS)
 
-// Get ARK's execution environment configuration
+// Function to obtain ARK's execution environment configuration
 void* sctrlHENGetArkConfig(ARKConfig* conf);
 
 #ifdef __cplusplus

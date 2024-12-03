@@ -642,8 +642,8 @@ void Browser::drawScreen(){
                 common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, (focused)? &scroll : NULL, 0);
                 if (common::getConf()->browser_icon0){
                     Image* icon = e->getIcon();
-                    if (icon){
-                        icon->draw(320, 21);
+                    if (icon && e->getName().c_str()[0] != '.'){ // Prevent ../ from displaying ICON0
+                    	icon->draw(320, 21);
                     }
                 }
             }

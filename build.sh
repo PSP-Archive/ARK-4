@@ -28,7 +28,7 @@ dialogCheck=$(command -v dialog 2>/dev/null)
 
 function checkDepends {
 
-	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev python3-pycryptodome python3-ecdsa
+	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev python3-pycryptodome python3-ecdsa zip
 	# Use package manager instead of pip
 	#pip3 install ecdsa
 }
@@ -126,8 +126,11 @@ function original {
 
 	
 	    # Signs eboots needed for ARK Loader
-	    if [[ ! -f $PSPDEV/bin/sign_np ]] ; then
+	    if [[ ! -f "$PSPDEV/bin/sign_np" ]] ; then
+			echo cloning sign_np
 	        git clone https://github.com/swarzesherz/sign_np.git
+
+			sed -i 's/o64/o/' sign_np/sign_np.c
 	
 	        pushd sign_np
 	
@@ -233,6 +236,9 @@ $
 	if [[ ! -f $PSPDEV/bin/sign_np ]] ; then
 		git clone https://github.com/swarzesherz/sign_np.git #| dialog --progressbox "Cloning sign_np" 10 20 
 		dialog --clear
+
+
+		sed -i 's/o64/o/' sign_np/sign_np.c
 		
 		pushd sign_np
 

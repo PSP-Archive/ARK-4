@@ -19,6 +19,7 @@ OBJS = \
 	intrafont.h \
 	resurrection.h \
 	vlf.h \
+	idsregen.h \
 	main.o \
 	pspDecrypt.o \
 	pspPSAR.o \
@@ -112,6 +113,9 @@ intrafont.h:
 
 vlf.h:
 	$(Q)bin2c $(ARKROOT)/contrib/PSP/GAME/ARK_DC/vlf.prx vlf.h vlf
+
+idsregen.h:
+	$(Q)bin2c $(ARKROOT)/extras/modules/idsregeneration/idsregeneration.prx idsregen.h idsregen
 
 distclean:
 	make clean
