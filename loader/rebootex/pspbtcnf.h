@@ -21,10 +21,8 @@
 #define PATH_RECOVERY_ME PATH_FLASH0 "vsh/module/recovery.prx"
 
 // fatms371
-#define PATH_FATMS_HELPER_FLASH PATH_FLASH0 "kd/_fatmshlp.prx"
-#define PATH_FATMS_371_FLASH PATH_FLASH0 "kd/_fatms371.prx"
-#define PATH_FATMS_HELPER "fatmshlp.prx"
-#define PATH_FATMS_371 "fatms371.prx"
+#define PATH_FATMS_HELPER PATH_FLASH0 "kd/_fatmshlp.prx"
+#define PATH_FATMS_371 PATH_FLASH0 "kd/_fatms371.prx"
 
 typedef struct _btcnf_header
 {
