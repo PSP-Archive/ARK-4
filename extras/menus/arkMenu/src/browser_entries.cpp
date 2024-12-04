@@ -98,7 +98,8 @@ void BrowserFile::changeSelection(){
 }
 
 string BrowserFile::getPath(){
-    return (shortname.size() > 0)? parent+shortname : path;
+	return path;
+    //return (shortname.size() > 0) ? parent+shortname : path + '/';
 }
 
 string BrowserFile::getName(){

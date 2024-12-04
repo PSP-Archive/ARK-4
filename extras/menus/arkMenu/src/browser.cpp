@@ -1253,6 +1253,9 @@ void Browser::copyFolder(string path){
     string destination = checkDestExists(path, this->cwd, f->getName().substr(0, f->getName().length()-1));
     
     if (destination.size() == 0) return; // copy cancelled
+	
+	if (destination[destination.size() - 1] == '/')
+		destination.resize(destination.length() - 1);
     
     copy_folder_recursive(path.substr(0, path.length()-1).c_str(), destination.c_str());
 }
@@ -1320,8 +1323,9 @@ void Browser::fillClipboard(){
     this->clipboard->clear();
     for (int i=0; i<entries->size(); i++){
         BrowserFile* e = (File*)entries->at(i);
-        if (e->isSelected())
+        if (e->isSelected()) {
             this->clipboard->push_back(e->getPath());
+		}
     }
 }
 
