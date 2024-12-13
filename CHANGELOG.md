@@ -5,6 +5,22 @@
 - Updated `Despertar del Cementerio` to `Version 10`. Can now be used to unbrick any `PSP` model.
 - Can now install `cIPL` on all `PSP` models.
 - Added `FinalSpeed` for easier access to `Live` installations.
+#### Rev 151
+- Added Uninstall method for fastms371_mod to Full Flash Installer
+- MagicMemoryCreator (DCARK Maker) Added Local OFW 1.50/6.61 selection
+- Fixed lflash formatting with DCARK.
+- Added idstorage regeneration to all models. You can convert any PSP to an American, Japanese, or Europe region
+- Custom Launcher can run 1.50 Homebrew via 1.50 kernel add-on ( 1K's only )
+- Added qwerty osk 
+- Fixed ICON0 in Custom Launcher from crashing when in File Browser.
+- Added more directories to search for GO
+- Fixed IdStorage and Fix MAC Address not able to find real MAC.
+- Fix for fatms372_mod
+- USBCam patches by isage
+- Fixed Copying and Pasting with File Browser in Custom Launcher.
+- Fixed UMD Video sleep/resume.
+- Added 20th Anniversary Theme.
+- System stability improved.
 #### Rev 150
 - Added `150 Kernel Addon`.
 - Added support for `fatms371mod`.
