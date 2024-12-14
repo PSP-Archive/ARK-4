@@ -73,8 +73,10 @@ class Browser : public SystemEntry{
         }
         
         void setInfo(string info){};
+        void setFooter(string footer){};
         void setName(string name){};
         
+        string getFooter(){}
         string getInfo(){
             return this->cwd;
         }

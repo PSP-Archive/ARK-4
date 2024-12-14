@@ -39,6 +39,7 @@ class SettingsMenu : public SystemEntry{
         int max_height;
         
         string info;
+        string footer;
         string name;
         
         int icon;
@@ -75,6 +76,10 @@ class SettingsMenu : public SystemEntry{
         void setInfo(string info){
             this->info = info;
         }
+
+		void setFooter(string footer) {
+			this->footer = footer;
+		}
         
         void setName(string name){
             this->name = name;
@@ -83,6 +88,10 @@ class SettingsMenu : public SystemEntry{
         string getInfo(){
             return this->info;
         }
+
+		string getFooter() {
+			return this->footer;
+		}
         
         Image* getIcon(){
             return common::getImage(icon);

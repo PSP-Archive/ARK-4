@@ -121,6 +121,7 @@ class GameManager : public SystemEntry{
         }
         
         string getInfo();
+        string getFooter();
         
         string getName(){
             return "Games";
@@ -140,6 +141,7 @@ class GameManager : public SystemEntry{
         bool waitIconsLoad(bool forceQuit=false);
         
         void setInfo(string info){};
+        void setFooter(string info){};
         void setName(string name){};
         
         Image* getIcon(){

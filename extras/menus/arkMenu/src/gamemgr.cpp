@@ -377,6 +377,10 @@ void GameManager::stopFastScroll(){
     this->categories[this->selectedCategory]->stopFastScroll();
 }
 
+string GameManager::getFooter(){
+	return "";
+}
+
 string GameManager::getInfo(){
     if (selectedCategory >= 0){
         Entry* e = getEntry();
