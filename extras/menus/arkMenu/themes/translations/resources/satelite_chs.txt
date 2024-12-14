@@ -20,8 +20,8 @@ X -> O
 O -> X
 USB €
 USB ‚ƒ
-„…†‡€…
-ISO ˆ‰Š‹
+ISO „…†‡
+ˆ‰Š‹€‰
 Œ
 
 ‘
@@ -30,13 +30,13 @@ ISO ˆ‰Š‹
 –—˜
 ™ X/O š›
 VSH œ
-UMD œ
 Ÿ ¡¢£
+UMD œ
 ¤¥ FLASH ¦ WMA
-§¨
-© RANDOM ISO
-ª«
-¬­®§¨
+ˆ‰ARK€‰
+§ RANDOM ISO
+¨©
+ª«¬­®
 ¯°–— -> ±–
 ±– -> ¯°–—
 VSH ’“
@@ -44,10 +44,10 @@ VSH ’“
 ´µ’“ ->
 ¶·
 ¸·
-„…€
-„ VSH
+ˆ‰€
+ˆ VSH
 ¹º
-¬­®
+ª«¬
 Adrenaline USB
 Flash
 UMD
