@@ -14,76 +14,76 @@ Debug I
 Debug II
 
 
-Normal
 
-X -> O
-O -> X
-USB €
-USB ‚ƒ
-ISO „…†‡
-ˆ‰Š‹€‰
-Œ
-
-‘
-’“€”
-•’“
-–—˜
-™ X/O š›
-VSH œ
-Ÿ ¡¢£
-UMD œ
-¤¥ FLASH ¦ WMA
-ˆ‰ARK€‰
-§ RANDOM ISO
-¨©
-ª«¬­®
-¯°–— -> ±–
-±– -> ¯°–—
-VSH ’“
-²³ VSH ’“
-´µ’“ ->
-¶·
-¸·
-ˆ‰€
-ˆ VSH
-¹º
-ª«¬
-Adrenaline USB
+€
+X‚/Oƒ„
+O‚/Xƒ„
+USB …†
+USB ‡ˆ
+‰Š ISO ‹Œ
+
+‘’
+
+“”•–
+—“”
+˜™š
+› X/O œ
+VSH Ÿ
+UMD Ÿ
+ ¡¢£¤¥
+¦§ FLASH ¨ WMA
+©ª
+«¬ ARK …­
+®¯° ISO
+ƒ„
+±²³©ª
+˜™ -> ´µ˜™
+´µ˜™ -> ˜™
+VSH “”
+¶· VSH “”
+«¬“” ->
+¸°
+¹ªº–
+»—°
+» VSH
+¼½
+±²³
+¾¿ÀÁ USB
 Flash
 UMD
-»¼½¾
-¿ÀÁ
-Â
-ÃÄ
-ÅÆ
-²³
-ÇÈ
-É·
-Red
-Light Red
-Orange
-Light Orange
-Yellow
-Light Yellow
-Green
-Light Green
-Blue
-Light Blue
-Indigo
-Light Indigo
-Violet
-Light Violet
-Pink
-Light Pink
-Purple
-Light Purple
-Teal
-Light Teal
-Aqua
-Light Aqua
-Grey
-Light Grey
-Black
-Light Black
-White
-Light White
+ÂÃÄÅ
+ÆÇÈ
+É
+ÊË
+ÌÍ
+¶·
+Î£
+¯°
+Ï
+ĞÏ
+Ñ
+ĞÑ
+Ò
+ĞÒ
+Ó
+ĞÓ
+Ô
+ĞÔ
+ÕÔ
+ĞÕÔ
+Ö×
+ĞÖÔ
+Ø
+ĞØ
+Ö
+ĞÖ
+ÔÓ
+ĞÔÓ
+ÙÓ
+ĞÙÓ
+Ú
+ĞÚ
+Û
+ĞÛ
+Ü
+ĞÜ
