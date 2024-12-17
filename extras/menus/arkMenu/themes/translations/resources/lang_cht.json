@@ -83,6 +83,7 @@
 
     "Network Tools": "網路工具",
     "Press [] to check for Updates": "按[]檢查更新",
+    "[] to Reset Settings": "[] 重置設定",
     "FTP Server is stopped. Press %s to start.": "FTP服務已停止. 按%s啟動.",
     "FTP Server is running @ %s. Press %s to stop.": "FTP服務正在運作 @ %s. 按%s停止.",
     "Could not get IP address": "無法取得IP位址",

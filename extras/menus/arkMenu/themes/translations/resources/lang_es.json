@@ -85,6 +85,7 @@
 
     "Network Tools": "Herramientas de Red",
     "Press [] to check for Updates": "Presione [] para buscar actualizaciones",
+    "[] to Reset Settings": "[] Para restablecer la configuración",
     "FTP Server is stopped. Press %s to start.": "Servidor FTP apagado. Presione %s para iniciar.",
     "FTP Server is running @ %s. Press %s to stop.": "Servidor FTP iniciado en %s. Presione %s para apagar",
     "Could not get IP address": "No se pudo obtener la dirección IP",
