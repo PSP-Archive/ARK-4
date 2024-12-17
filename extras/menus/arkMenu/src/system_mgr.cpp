@@ -480,8 +480,10 @@ void SystemMgr::pauseDraw(){
 }
 
 void SystemMgr::resumeDraw(){
-    sceKernelSignalSema(draw_sema, 1);
-    sceKernelDelayThread(1000);
+	int ret;
+	do {
+    	ret = sceKernelSignalSema(draw_sema, 1);
+	}while(ret != 0);
 }
 
 void SystemMgr::enterFullScreen(){
