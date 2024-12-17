@@ -102,7 +102,7 @@ Use `-h` or `--help` to show all available flags
 
 ##### Permanent CFW via cIPL
 
-- `New cIPL`: works with every retail model (1K, 2K, 3K, Go and Street) on firmware `6.61`.
+- `New cIPL`: works with every retail model (1K, 2K, 3K, Go and Street) on firmware `6.61` or `6.60`.
 - `Classic cIPL`: works with `1g` and early `2g` on firmware `6.60` or `6.61` as well as `Testkits` on `6.60 Testing Tool`.
 - `DevTool cKBOOTI`: works with `DTP-T1000` (devkits) on `6.60 Development Tool`.
 - Installer will choose the correct version according to your model.
@@ -128,10 +128,10 @@ Use `-h` or `--help` to show all available flags
 - On `PSP` you need to be running a `CFW` to install `DC-ARK` (ARK itself or any other).
 - Copy the `ARK_DC` folder to the `/PSP/GAME/` folder and run the installer from the `XMB`.
 - Follow the instructions to install DC-ARK and create a magic memory stick.
-- On `PC`, you need `Python 3` and run `MagicMemoryCreator` with `admin`/`root` priviledges.
+- On `PC`, you need `Python 3` and run `MagicMemoryCreator` with `admin`/`root` privileges.
 - On compatible models, you can use `Advanced VSH Menu` to create a `Pandora Battery`.
 - Use a `Pandora` or `Baryon Sweeper` in combination with your newly created `Magic Memory Stick` to boot up `Despertar del Cementerio`.
-- From here you can either boot ARK from memory stick, install 6.61 Firmware with ARK on the Nand or install 6.61 Official Firmware
+- From here you can either boot ARK from memory stick, install 6.61 Firmware with ARK on the NAND or install 6.61 Official Firmware
 
 
 #### Installation On PS Vita
@@ -165,7 +165,7 @@ Use `-h` or `--help` to show all available flags
 
 ##### There are three ways to update ARK:
 
-- Option 1: Use the `System Update` feature in the XMB. Requires your PSP/Vita to be connected to the internet.
+- Option 1: Use the `System Update` ( `ARK-4 Updater` ) feature in the XMB. Requires your PSP/Vita to be connected to the internet.
 - Option 2: Copy the `UPDATE` folder to `/PSP/GAME/` and run it.
 - Option 3: Copy `ARK_01234` folder and (on PSP) run `ARK Loader` again to install new flash0 files.
 
@@ -187,4 +187,6 @@ Use `-h` or `--help` to show all available flags
 - ARK may cause ejectile malfunction if your hard drive is not hard enough.
 
 - If this software malfunctions, you can turn it off and on again.
+
+- You may be shunned for not reading the Wiki. 
 </p>
