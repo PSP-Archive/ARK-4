@@ -233,10 +233,6 @@ void GameManager::findISOs(const char* path){
     SceIoDirent* dit = &entry;
     memset(&entry, 0, sizeof(SceIoDirent));
 
-    pspMsPrivateDirent* pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
-    pri_dirent->size = sizeof(pspMsPrivateDirent);
-    entry.d_private = (void*)pri_dirent;
-
     if (dir < 0)
         return;
         
@@ -247,7 +243,6 @@ void GameManager::findISOs(const char* path){
         if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue;
 
         string fullpath = string(path)+string(dit->d_name);
-        string shortpath = string(path) + string((const char*)pri_dirent);
 
         if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
             if (common::getConf()->scan_cat && string(dit->d_name) != string("VIDEO")){
@@ -256,10 +251,8 @@ void GameManager::findISOs(const char* path){
             continue;
         }
         if (Iso::isISO(fullpath.c_str())) this->categories[GAME]->addEntry(new Iso(fullpath));
-        else if (Iso::isISO(shortpath.c_str())) this->categories[GAME]->addEntry(new Iso(shortpath));
     }
     sceIoDclose(dir);
-    free(pri_dirent);
 }
 
 void GameManager::findSaveEntries(const char* path){

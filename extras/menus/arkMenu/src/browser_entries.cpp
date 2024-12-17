@@ -34,7 +34,7 @@ int fileTypeByExtension(string path){
 BrowserFile::BrowserFile(){
 }
 
-BrowserFile::BrowserFile(string path, string shortname){
+BrowserFile::BrowserFile(string path){
     size_t lastSlash = path.rfind('/', string::npos);
     this->path = path;
     this->name = path.substr(lastSlash+1, string::npos);
@@ -42,36 +42,21 @@ BrowserFile::BrowserFile(string path, string shortname){
     this->icon0 = NULL;
     this->selected = false;
     this->filetype = FOLDER;
-    this->setShortName(shortname);
     this->calcSize();
     this->filetype = fileTypeByExtension(getPath());
 }
 
-BrowserFile::BrowserFile(string parent, string name, string shortname){
+BrowserFile::BrowserFile(string parent, string name){
     this->icon0 = NULL;
     this->path = parent + name;
     this->parent = parent;
     this->name = name;
     this->selected = false;
-    this->setShortName(shortname);
     this->calcSize();
     this->filetype = fileTypeByExtension(getPath());
 }
 
 BrowserFile::~BrowserFile(){
-}
-
-void BrowserFile::setShortName(string shortname){
-    this->shortname = "";
-    if (shortname.size() > 0 && shortname[0] != 0x14){
-        if (this->name.size() < shortname.size()){
-            this->path = this->parent + shortname;
-            this->name = shortname;
-        }
-        else {
-            this->shortname = shortname;
-        }
-    }
 }
 
 unsigned BrowserFile::getFileSize(){
@@ -150,7 +135,7 @@ void BrowserFile::loadAVMedia(){
 void BrowserFile::doExecute(){
 }
 
-BrowserFolder::BrowserFolder(string path, string shortname){
+BrowserFolder::BrowserFolder(string path){
     size_t lastSlash = path.rfind('/', path.length()-2);
     this->path = path;
     this->name = path.substr(lastSlash+1, string::npos);
@@ -159,11 +144,9 @@ BrowserFolder::BrowserFolder(string path, string shortname){
     this->selected = false;
     this->fileSize = "Folder";
     this->filetype = FOLDER;
-    if (shortname.size() > 0) shortname;
-    this->setShortName(shortname);
 }
 
-BrowserFolder::BrowserFolder(string parent, string name, string shortname){
+BrowserFolder::BrowserFolder(string parent, string name){
     this->icon0 = NULL;
     this->path = parent + name + '/';
     this->name = name;
@@ -171,8 +154,6 @@ BrowserFolder::BrowserFolder(string parent, string name, string shortname){
     this->selected = false;
     this->fileSize = "Folder";
     this->filetype = FOLDER;
-    if (shortname.size() > 0) shortname;
-    this->setShortName(shortname);
 }
 
 BrowserFolder::~BrowserFolder(){

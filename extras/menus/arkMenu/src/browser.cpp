@@ -523,13 +523,8 @@ void Browser::refreshDirs(const char* retry){
     vector<Entry*> files;
 
     // scan directory
-    pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
-    memset(pri_dirent, 0, sizeof(pspMsPrivateDirent));
-    pri_dirent->size = sizeof(pspMsPrivateDirent);
-    dit.d_private = (void*)pri_dirent;
-
     while ((sceIoDread(dir, &dit)) > 0){
-        printf("got entry: %s -> %s\n", dit.d_name, pri_dirent);
+        printf("got entry: %s\n", dit.d_name);
 
         if (dit.d_name[0] == '.' && strcmp(dit.d_name, ".") != 0 && strcmp(dit.d_name, "..") != 0 && !common::getConf()->show_hidden){
             continue;
@@ -537,17 +532,15 @@ void Browser::refreshDirs(const char* retry){
 
         if (common::isFolder(&dit)){
             printf("is dir\n");
-            folders.push_back(new Folder(cwd, dit.d_name, string((const char*)pri_dirent)));
+            folders.push_back(new Folder(cwd, dit.d_name));
         }
         else{
             printf("is file\n");
-            files.push_back(new File(cwd, dit.d_name, string((const char*)pri_dirent)));
+            files.push_back(new File(cwd, dit.d_name));
         }
     }
     printf("closing and cleaning\n");
     sceIoDclose(dir);
-
-    free(pri_dirent);
 
     // handle special folders
     Entry* dot = NULL;
@@ -565,7 +558,7 @@ void Browser::refreshDirs(const char* retry){
     }
 
     if (cwd == GO_ROOT){
-        eh0 = new Folder(cwd, "<Go To eh0>", "");
+        eh0 = new Folder(cwd, "<Go To eh0>");
     }
 
     // sort entries if needed
@@ -577,9 +570,9 @@ void Browser::refreshDirs(const char* retry){
 
     // insert special folders
     if (eh0) folders.insert(folders.begin(), eh0);
-    if (!dotdot && !isRootDir(this->cwd)) dotdot = new Folder(cwd, "..", "");
+    if (!dotdot && !isRootDir(this->cwd)) dotdot = new Folder(cwd, "..");
     if (dotdot) folders.insert(folders.begin(), dotdot);
-    if (!dot && !isRootDir(this->cwd)) dot = new Folder(cwd, ".", "");
+    if (!dot && !isRootDir(this->cwd)) dot = new Folder(cwd, ".");
     if (dot) folders.insert(folders.begin(), dot);
 
     // folders first, files last
@@ -590,7 +583,7 @@ void Browser::refreshDirs(const char* retry){
     for (int i=0; i<files.size(); i++)
         entries->push_back(files.at(i));
     if (this->entries->size() == 0)
-        this->entries->push_back(new Folder(cwd, ".", ""));
+        this->entries->push_back(new Folder(cwd, "."));
     SystemMgr::resumeDraw();
     
     printf("done\n");
@@ -908,11 +901,6 @@ void Browser::recursiveFolderDelete(string path){
     {
         SceIoDirent entry;
         memset(&entry, 0, sizeof(SceIoDirent));
-
-        pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
-        memset(pri_dirent, 0, sizeof(pspMsPrivateDirent));
-        pri_dirent->size = sizeof(pspMsPrivateDirent);
-        entry.d_private = (void*)pri_dirent;
         
         //allocate memory to store the full file paths
         string new_path;
@@ -932,17 +920,9 @@ void Browser::recursiveFolderDelete(string path){
 
             if (common::isFolder(&entry)){
                 new_path = new_path + "/";
-                if (!common::folderExists(new_path)){
-                    new_path = path + string((const char*)pri_dirent);
-                    printf("%d: %s\n", (int)common::folderExists(new_path), new_path.c_str());
-                }
                 recursiveFolderDelete(new_path);
             }
             else{
-                if (!common::fileExists(new_path)){
-                    new_path = path + string((const char*)pri_dirent);
-                    printf("%d: %s\n", (int)common::fileExists(new_path), new_path.c_str());
-                }
                 self->deleteFile(new_path);
             }
             
@@ -950,7 +930,6 @@ void Browser::recursiveFolderDelete(string path){
         
         sceIoDclose(d); //close directory
         sceIoRmdir(path.substr(0, path.length()-1).c_str()); //delete empty folder
-        free(pri_dirent);
     };
 }
 
@@ -963,11 +942,6 @@ long Browser::recursiveSize(string path){
     {
         SceIoDirent entry;
         memset(&entry, 0, sizeof(SceIoDirent));
-
-        pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
-        memset(pri_dirent, 0, sizeof(pspMsPrivateDirent));
-        pri_dirent->size = sizeof(pspMsPrivateDirent);
-        entry.d_private = (void*)pri_dirent;
         
         //allocate memory to store the full file paths
         string new_path;
@@ -987,17 +961,9 @@ long Browser::recursiveSize(string path){
 
             if (common::isFolder(&entry)){
                 new_path = new_path + "/";
-                if (!common::folderExists(new_path)){
-                    new_path = path + string((const char*)pri_dirent);
-                    printf("%d: %s\n", (int)common::folderExists(new_path), new_path.c_str());
-                }
                 total_size += recursiveSize(new_path);
             }
             else{
-                if (!common::fileExists(new_path)){
-                    new_path = path + string((const char*)pri_dirent);
-                    printf("%d: %s\n", (int)common::fileExists(new_path), new_path.c_str());
-                }
                 total_size += common::fileSize(new_path);
             }
             
@@ -1005,7 +971,6 @@ long Browser::recursiveSize(string path){
         
         sceIoDclose(d); //close directory
         sceIoRmdir(path.substr(0, path.length()-1).c_str()); //delete empty folder
-        free(pri_dirent);
     }
     else if ((d=sceIoOpen(path.c_str(), PSP_O_RDONLY, 0777)) >= 0){
         total_size = sceIoLseek(d, 0, SEEK_END);
@@ -1155,10 +1120,6 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
         {
             SceIoDirent entry;
             memset(&entry, 0, sizeof(SceIoDirent));
-
-            pspMsPrivateDirent* pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
-            pri_dirent->size = sizeof(pspMsPrivateDirent);
-            entry.d_private = (void*)pri_dirent;
             
             //start reading directory entries
             while(sceIoDread(dir, &entry) > 0)
@@ -1172,23 +1133,10 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
                 string src = new_source + entry.d_name;
 
                 if (common::isFolder(&entry)){
-                    string dst;
-                    if (!common::folderExists(src)){
-                        string sname = string((const char*)pri_dirent);
-                        src = new_source + sname;
-                        dst = new_destination + sname;
-                        printf("%d: %s\n", (int)common::folderExists(src), src.c_str());
-                    }
-                    else{
-                        dst = new_destination + entry.d_name;
-                    }
+                    string dst = new_destination + entry.d_name;
                     copy_folder_recursive(src.c_str(), dst.c_str());
                 }
                 else{
-                    if (!common::fileExists(src)){
-                        src = new_source + string((const char*)pri_dirent);
-                        printf("%d: %s\n", (int)common::fileExists(src), src.c_str());
-                    }
                     if (pasteMode == COPY || (pasteMode == CUT && pspIoMove(src, new_destination) < 0))
                         copyFile(src, new_destination); //copy file
                 }
@@ -1196,7 +1144,6 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
             };
             //close folder
             sceIoDclose(dir);
-            free(pri_dirent);
         };
     }
     
