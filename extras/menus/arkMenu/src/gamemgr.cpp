@@ -30,6 +30,7 @@ GameManager::GameManager(){
     // set the global self variable as this instance for the threads to use it
     self = this;
 
+    scroll.w = 0;
     this->use_categories = true;
     this->scanning = true;
     this->optionsmenu = NULL;
@@ -356,12 +357,14 @@ void GameManager::moveUp(){
     if (selectedCategory < 0)
         return;
     this->categories[this->selectedCategory]->moveUp();
+    scroll.tmp = scroll.x; // reset text scroll
 }
 
 void GameManager::moveDown(){
     if (selectedCategory < 0)
         return;
     this->categories[this->selectedCategory]->moveDown();
+    scroll.tmp = scroll.x; // reset text scroll
 }
 
 void GameManager::stopFastScroll(){

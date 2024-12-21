@@ -29,6 +29,8 @@ class GameManager : public SystemEntry{
     private:
 
         GameManager();
+
+        TextScroll scroll;
     
         /* Array of game menus */
         Menu* categories[MAX_CATEGORIES];
@@ -128,7 +130,6 @@ class GameManager : public SystemEntry{
         }
 
         void drawInfo(){
-            static TextScroll scroll;
             string info = getInfo();
             bool is_entry_info = (getEntry() != NULL && info == getEntry()->getName());
             bool translate = ( !is_entry_info || info == "Recovery Menu" || info == "UMD Drive" );
