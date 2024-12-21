@@ -465,10 +465,10 @@ void GameManager::control(Controller* pad){
 
 void GameManager::updateGameList(const char* path){
     if (path == NULL 
-        || strncmp(path, "ms0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ms0:/ISO/", 9) == 0
-        || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ef0:/ISO/", 9) == 0
-        || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ms0:/PSP/APPS/", 14) == 0
-        || strncmp(path, "ef0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ef0:/PSP/APPS/", 14) == 0
+        || strncmp(path, "ms0:/PSP/GAME/", 14) == 0 || strncmp(path, "ms0:/ISO/", 9) == 0
+        || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || strncmp(path, "ef0:/ISO/", 9) == 0
+        || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || strncmp(path, "ms0:/PSP/APPS/", 14) == 0
+        || strncmp(path, "ef0:/PSP/VHBL/", 14) == 0 || strncmp(path, "ef0:/PSP/APPS/", 14) == 0
         || strncmp(path, "ms0:/PSP/GAME150/", 17) == 0
       ){
         int icon_status = self->dynamicIconRunning;
