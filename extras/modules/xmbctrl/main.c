@@ -465,7 +465,6 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         // Add Custom Launcher
         new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, (cur_icon)?item:information_board_item);
         AddVshItem(a0, topitem, new_item3);
-		if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
 		
 		SceIoStat stat; 
 		int ebootFound;
@@ -710,7 +709,6 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
-            if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
             if (se_config.custom_update && string.items[0]) {
                 utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
                 return (wchar_t *)user_buffer;
@@ -779,15 +777,6 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
     }
 
     int res = vshGetRegistryValue(option, name, arg2, size, value);
-
-    #if 0
-    char tmp[512];
-    snprintf(tmp, 512, "%s, %p, %p, %d, %d\n", name, option, arg2, size, *value);
-    int fd = sceIoOpen("ms0:/regvals.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
-    sceIoWrite(fd, tmp, strlen(tmp));
-    sceIoWrite(fd, "\n", 1);
-    sceIoClose(fd);
-    #endif
 
     return res;
 }
@@ -1123,12 +1112,11 @@ int module_start(SceSize args, void *argp)
 {        
     psp_model = kuKernelGetModel();
 
+    sctrlSEGetConfig(&se_config);
+
     sctrlHENGetArkConfig(&ark_conf);
     
     previous = sctrlHENSetStartModuleHandler(OnModuleStart);
-
-    sctrlHENGetArkConfig(ark_config);
-    
 
     return 0;
 }
