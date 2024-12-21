@@ -52,6 +52,7 @@ class Controller{
         bool select();
         bool home();
         bool volume();
+        bool mute();
 };
         
 
