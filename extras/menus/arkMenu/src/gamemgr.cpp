@@ -13,8 +13,6 @@
 #include "lang.h"
 #include "texteditor.h"
 
-extern int sctrlKernelMsIsEf();
-
 static GameManager* self = NULL;
 
 static bool loadingData = false;
@@ -356,15 +354,15 @@ void GameManager::moveRight(){
 void GameManager::moveUp(){
     if (selectedCategory < 0)
         return;
-    this->categories[this->selectedCategory]->moveUp();
     scroll.tmp = scroll.x; // reset text scroll
+    this->categories[this->selectedCategory]->moveUp();
 }
 
 void GameManager::moveDown(){
     if (selectedCategory < 0)
         return;
-    this->categories[this->selectedCategory]->moveDown();
     scroll.tmp = scroll.x; // reset text scroll
+    this->categories[this->selectedCategory]->moveDown();
 }
 
 void GameManager::stopFastScroll(){
