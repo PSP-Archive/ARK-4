@@ -1571,22 +1571,20 @@ void Browser::optionsMenu(){
 		else if (pad->right()) {
 			common::playMenuSound();
 			do {
-				if (pEntryIndex+3 < MAX_OPTIONS-1) {
-					pEntryIndex += 3;
-				}
-				else {
+				if(pEntryIndex >= (int)((MAX_OPTIONS-1)/2))
 					pEntryIndex = MAX_OPTIONS-1;
-				}
+				else if(pEntryIndex <= 0)
+					pEntryIndex = (int)((MAX_OPTIONS-1)/2);
 			} while (pEntries[pEntryIndex] == NULL);
 		}
 		// Left
 		else if (pad->left()) {
 			common::playMenuSound();
 			do {
-				if (pEntryIndex-3 < 0)
+				if(pEntryIndex <= (int)((MAX_OPTIONS-1)/2))
 					pEntryIndex = 0;
-				else
-					pEntryIndex -= 3;
+				else if(pEntryIndex <= MAX_OPTIONS-1)
+					pEntryIndex = (int)((MAX_OPTIONS-1)/2);
 			} while (pEntries[pEntryIndex] == NULL);
 		}
         else if (pad->decline() || pad->LT()){
