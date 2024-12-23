@@ -32,7 +32,7 @@ int LoadExecActionPatched(int apitype, void *a1, void *a2, void *a3, void *t0)
 {
     if ((apitype & 0x200) == 0x200) /* vsh */
     {
-        reboot66x = 1;
+        reboot66x = 0;
     }
 
     return OrigLoadExecAction(apitype, a1, a2, a3, t0);

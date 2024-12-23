@@ -26,7 +26,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs lib
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lpspdisplay_driver_weak -lpspreg_driver_weak -lcolordebugger
+LIBS = -lpspsemaphore -lpspdisplay_driver_weak -lpspreg_driver_weak
 
 PSP_FW_VERSION = 150
 
