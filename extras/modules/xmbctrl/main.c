@@ -195,6 +195,7 @@ SceVshItem *new_item;
 SceVshItem *new_item2;
 SceVshItem *new_item3;
 SceVshItem *new_item4;
+SceVshItem *new_item5;
 char image[4];
 void *xmb_arg0, *xmb_arg1;
 
@@ -259,6 +260,18 @@ void exec_custom_launcher() {
 	    sctrlSESetBootConfFileIndex(MODE_UMD);
         sctrlKernelExitVSH(NULL);
 	}
+}
+
+void exec_150_reboot(void) {
+	int k1 = pspSdkSetK1(0);
+	SceUID mod = sceKernelLoadModule(ARK_DC_PATH "/150/reboot150.prx", 0, NULL);
+	if(mod < 0) {
+		pspSdkSetK1(k1);
+		return;
+	}
+	int res = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+	pspSdkSetK1(k1);
+	sctrlKernelExitVSH(NULL);
 }
 
 void exec_custom_app(char *path) {
@@ -486,6 +499,10 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         	new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
         	AddVshItem(a0, topitem, new_item4);
 		}
+
+        new_item5 = addCustomVshItem(84, "msgtop_150_reboot", sysconf_150_reboot_arg, item);
+        AddVshItem(a0, topitem, new_item5);
+
     }
 	
 	return AddVshItem(a0, topitem, item);
@@ -530,6 +547,9 @@ int ExecuteActionPatched(int action, int action_arg)
         else if (action_arg == sysconf_custom_app_arg){
             exec_custom_app(custom_app_path);
         }
+		else if (action_arg == sysconf_150_reboot_arg){
+			exec_150_reboot();
+		}
         else is_cfw_config = 0;
     }
     if(old_is_cfw_config != is_cfw_config)
@@ -707,6 +727,13 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
+		else if(sce_paf_private_strcmp(name, "msgtop_150_reboot") == 0)
+        {
+			sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[4]);
+            utf8_to_unicode((wchar_t *)user_buffer, buf);
+            return (wchar_t *)user_buffer;
+        }
+
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
             if (se_config.custom_update && string.items[0]) {

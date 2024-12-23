@@ -39,6 +39,7 @@ ARKConfig* ark_config = &_ark_conf;
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
+	colorDebug(0x00FF00);
     pspSdkInstallNoDeviceCheckPatch();
 	pspSdkInstallNoPlainModuleCheckPatch(); 
 
@@ -58,6 +59,7 @@ int module_start(SceSize args, void * argp)
 
     // Flush Cache
     flushCache();
+
 
     // Return Success
     return 0;

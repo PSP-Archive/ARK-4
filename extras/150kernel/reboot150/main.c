@@ -64,6 +64,7 @@ int module_start(SceSize args, void *argp)
 	sceIoClose(ireg);
 
 
+	//colorDebug(0xFF0000);
 	sctrlHENSetLoadRebootOverrideHandler(LoadReboot);
 
 	return 0;

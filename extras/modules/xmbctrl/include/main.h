@@ -35,6 +35,7 @@ enum {
     sysconf_plugins_action_arg = 0x1002,
     sysconf_custom_launcher_arg = 0x1003,
     sysconf_custom_app_arg = 0x1004,
+    sysconf_150_reboot_arg = 0x1005,
 };
 
 typedef struct
