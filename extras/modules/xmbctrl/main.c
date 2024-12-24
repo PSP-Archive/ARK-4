@@ -185,7 +185,7 @@ STMOD_HANDLER previous = NULL;
 CFWConfig config;
 
 int psp_model;
-ARKConfig ark_conf;
+//ARKConfig ark_conf;
 SEConfig se_config;
 
 int startup = 1;
@@ -500,8 +500,12 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         	AddVshItem(a0, topitem, new_item4);
 		}
 
-        new_item5 = addCustomVshItem(84, "msgtop_150_reboot", sysconf_150_reboot_arg, item);
-        AddVshItem(a0, topitem, new_item5);
+		SceIoStat _150_file;
+		int _1k_file = sceIoGetstat("ms0:/TM/DCARK/150/reboot150.prx", &_150_file); // Should fine a better way to handle this perhaps?
+		if((psp_model == PSP_1000) && _1k_file >= 0) {
+        	new_item5 = addCustomVshItem(84, "msgtop_150_reboot", sysconf_150_reboot_arg, item);
+        	AddVshItem(a0, topitem, new_item5);
+		}
 
     }
 	
@@ -590,7 +594,7 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 }
 
 int skipSetting(int i){
-    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16);
+    if (IS_VITA_ADR((ark_config))) return  ( i==0 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16);
     else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12);
     else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13);
     else if (psp_model != PSP_GO) return ( i == 5 || i == 9 || i == 12);
@@ -1141,7 +1145,7 @@ int module_start(SceSize args, void *argp)
 
     sctrlSEGetConfig(&se_config);
 
-    sctrlHENGetArkConfig(&ark_conf);
+    sctrlHENGetArkConfig(&_arkconf);
     
     previous = sctrlHENSetStartModuleHandler(OnModuleStart);
 
