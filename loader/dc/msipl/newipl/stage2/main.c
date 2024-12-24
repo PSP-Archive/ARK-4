@@ -55,7 +55,7 @@ int entry()
 		path = "/TM/DCARK/msipl_05g.bin";
 	} else if (tachyon_version <= 0x00820000 && baryon_version == 0x012E4000) {
 		path = "/TM/DCARK/msipl_07g.bin";
-	} else if (tachyon_version == 0x00820000 && baryon_version == 0x002E4000) {
+	} else if ((tachyon_version == 0x00820000 || tachyon_version == 0x00810000) && baryon_version == 0x002E4000) {
 		path = "/TM/DCARK/msipl_09g.bin";
 	}
 
