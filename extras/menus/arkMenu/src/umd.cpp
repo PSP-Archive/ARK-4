@@ -1,4 +1,6 @@
 #include "umd.h"
+#include "iso.h"
+#include <systemctrl.h>
 
 extern "C" int sctrlKernelLoadExecVSHDisc(const char*, struct SceKernelLoadExecVSHParam*);
 
@@ -16,16 +18,20 @@ UMD::~UMD(){
     sceUmdDeactivate(1, "disc0:");
 }
 
+string UMD::getName(){
+    return name;
+}
+
 void UMD::loadIcon(){
     Image* icon = NULL;
     
-    sceUmdWaitDriveStat(UMD_WAITFORINIT);
-    
-    if (common::fileExists(UMD_ICON0_PATH))
-        icon = new Image(UMD_ICON0_PATH, YA2D_PLACE_RAM);
-    
-    if (icon == NULL)
-        sceKernelDelayThread(50000);
+	// el hefy UMD's are slooooowwww, but if it is initialized it does not wait the full 20 secs which is nice.
+	sceUmdWaitDriveStatWithTimer(UMD_WAITFORINIT, 20000000);
+
+    if (common::fileExists(UMD_GAME_ICON0_PATH)) {
+        icon = new Image(UMD_GAME_ICON0_PATH, YA2D_PLACE_RAM);
+	}
+
     icon = (icon == NULL)? common::getImage(IMAGE_NOICON) : icon;
     icon->swizzle();
     this->icon0 = icon;
@@ -33,12 +39,18 @@ void UMD::loadIcon(){
 
 SfoInfo UMD::getSfoInfo(){
     SfoInfo info = this->Entry::getSfoInfo();
-    unsigned int size = common::fileSize(UMD_SFO_PATH);
+    unsigned int size = 0;
+	string UMD_SFO_PATH;
+	if(common::fileExists(UMD_GAME_SFO_PATH)) {
+		size = common::fileSize(UMD_GAME_SFO_PATH);
+		UMD_SFO_PATH = UMD_GAME_SFO_PATH;
+	}
+	
     unsigned char* sfo_buffer = (unsigned char*)malloc(size);
 
     if (sfo_buffer){
 
-        FILE* fp = fopen(UMD_SFO_PATH, "rb");
+        FILE* fp = fopen(UMD_SFO_PATH.c_str(), "rb");
         fread(sfo_buffer, 1, size, fp);
         fclose(fp);
 
@@ -53,22 +65,19 @@ SfoInfo UMD::getSfoInfo(){
     return info;
 }
 
-void UMD::getTempData1(){
+void UMD::loadPics(){
     this->pic0 = NULL;
     this->pic1 = NULL;
     
-    int size;
-    
     // grab pic0.png
-    if (common::fileExists(UMD_PIC0_PATH))
-        this->pic0 = new Image(UMD_PIC0_PATH, YA2D_PLACE_RAM);
-
+	if (common::fileExists(UMD_GAME_PIC0_PATH))
+        this->pic0 = new Image(UMD_GAME_PIC0_PATH, YA2D_PLACE_RAM);
     // grab pic1.png
-    if (common::fileExists(UMD_PIC1_PATH))
-        this->pic1 = new Image(UMD_PIC1_PATH, YA2D_PLACE_RAM);
+	if (common::fileExists(UMD_GAME_PIC1_PATH))
+        this->pic1 = new Image(UMD_GAME_PIC1_PATH, YA2D_PLACE_RAM);
 }
 
-void UMD::getTempData2(){
+void UMD::loadAVMedia(){
 
     this->icon1 = NULL;
     this->snd0 = NULL;
@@ -78,29 +87,28 @@ void UMD::getTempData2(){
     int size;
 
     // grab snd0.at3
-    if (common::fileExists(UMD_SND0_PATH)){
-        size = common::fileSize(UMD_SND0_PATH);
+	if (common::fileExists(UMD_GAME_SND0_PATH)){
+        size = common::fileSize(UMD_GAME_SND0_PATH);
         this->snd0 = malloc(size);
         memset(this->snd0, 0, size);
         this->at3_size = size;
         // read file
-        FILE* src = fopen(UMD_SND0_PATH, "rb");
+        FILE* src = fopen(UMD_GAME_SND0_PATH, "rb");
         fread(this->snd0, size, 1, src);
         fclose(src);
     }
-
-    // grab icon1.pmf
-    if (common::fileExists(UMD_ICON1_PATH)){
-        size = common::fileSize(UMD_ICON1_PATH);
+   
+	// grab icon1.pmf
+	if (common::fileExists(UMD_GAME_ICON1_PATH)){
+        size = common::fileSize(UMD_GAME_ICON1_PATH);
         this->icon1 = malloc(size);
         memset(this->icon1, 0, size);
         this->icon1_size = size;
         // read file
-        FILE* src = fopen(UMD_ICON1_PATH, "rb");
+        FILE* src = fopen(UMD_GAME_ICON1_PATH, "rb");
         fread(this->icon1, size, 1, src);
         fclose(src);
     }
-
 }
 
 void UMD::doExecute(){
@@ -111,9 +119,10 @@ void UMD::doExecute(){
     param.argp = (char*)UMD_EBOOT_BIN;
     param.args = 33;
     param.key = "game";
-    
+   
     sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
     sctrlSESetBootConfFileIndex(MODE_UMD);
+
     sctrlSESetUmdFile("");
     
     sctrlKernelLoadExecVSHDisc(UMD_EBOOT_BIN, &param);

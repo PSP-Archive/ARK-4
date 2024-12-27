@@ -9,11 +9,12 @@
 #include <pspsuspend.h>
 #include <psputilsforkernel.h>
 #include <psppower.h>
+#include <psprtc.h>
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
 
-#include "globals.h"
+#include <ark.h>
 #include "rebootconfig.h"
 #include "functions.h"
 #include "graphics.h"
@@ -24,11 +25,13 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU);
 #define ARK_LOADADDR 0x08D30000
 #define ARK_SIZE 0x8000
 
-// ARK.BIN requires these imports
-//int SysMemUserForUser_91DE343C(void* unk);
+// Imports for Read-Only kxploits
 extern int sceKernelPowerLock(unsigned int, unsigned int);
-extern void* sctrlHENSetStartModuleHandler(void*);
-volatile void* set_start_module_handler = &sctrlHENSetStartModuleHandler;
+volatile void* rtc_compare_ticks = &sceRtcCompareTick;
+
+// Imports for kxploit
+extern int sceSdGetLastIndex();
+void* kxploit1 = &sceSdGetLastIndex;
 
 volatile ARKConfig config = {
     .magic = ARK_CONFIG_MAGIC,
@@ -80,6 +83,10 @@ volatile UserFunctions funcs = {
     .KernelCpuResumeIntr = &sceKernelCpuResumeIntr,
     .KernelVolatileMemUnlock = &sceKernelVolatileMemUnlock,
     // Savedata
+    .UtilitySavedataGetStatus = &sceUtilitySavedataGetStatus,
+    .UtilitySavedataInitStart = &sceUtilitySavedataInitStart,
+    .UtilitySavedataUpdate = &sceUtilitySavedataUpdate,
+    .UtilitySavedataShutdownStart = &sceUtilitySavedataShutdownStart,
     .KernelAllocPartitionMemory = &sceKernelAllocPartitionMemory,
 };
 

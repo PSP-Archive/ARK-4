@@ -21,7 +21,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <module2.h>
-#include <globals.h>
+#include <ark.h>
 #include <systemctrl.h>
 #include <systemctrl_private.h>
 #include <macros.h>
@@ -54,29 +54,7 @@ static struct{
     char* new;
     unsigned char len;
 } ioreplacements[] = {
-    // Replace flash0 pops with custom one
-    /*
-    {
-        .orig = "flash0:/vsh/module/libpspvmc.prx",
-        .new = "PSPVMC.PRX",
-        .len = 32,
-    },
-    {
-        .orig = "flash0:/kd/pops_",
-        .new = "POPS.PRX",
-        .len = 15,
-    },
-    {
-        .orig = "flash0:/kd/popsman.prx",
-        .new = "POPSMAN.PRX",
-        .len = 22,
-    },
-    {
-        .orig = "flash0:/kd/npdrm.prx",
-        .new = "NPDRM.PRX",
-        .len = 20,
-    },
-    */
+    // Replace flash0
     {.orig = NULL, .new = NULL, .len=0}
 };
 
@@ -132,11 +110,15 @@ PspIoDrvArg * flash_driver = NULL;
 void initFileSystem(){
     // Create Semaphore
     dreadSema = sceKernelCreateSema("sceIoDreadSema", 0, 1, 1, NULL);
+    
     // patch Driver
+    /*
     u32 IOAddDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
     u32 AddDrv = findRefInGlobals("IoFileMgrForKernel", IOAddDrv, IOAddDrv);
     // Hooking sceIoAddDrv
     _sw((unsigned int)sceIoAddDrvHook, AddDrv);
+    */
+    
     // Patch IO for file replacements
     //SceModule2* ioman = patchFileIO();
 }
@@ -306,12 +288,12 @@ int sceIoFlashOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mo
 {
     flash_driver = arg->drv;
     // flash0 File Access Attempt
-    if (arg->fs_num == 0) {
+    if (arg->fs_num < 4) {
         // File Path Buffer
         char msfile[256];
         
         // Create "ms" File Path (links to flash0 folder on ms0)
-        sprintf(msfile, "/flash0%s", file);
+        sprintf(msfile, "/flash/%d%s", arg->fs_num, file);
         
         // Exchange Filesystem Driver for "ms"
         arg->drv = ms_driver;

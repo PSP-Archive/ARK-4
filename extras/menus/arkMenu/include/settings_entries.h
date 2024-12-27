@@ -157,6 +157,22 @@ static struct {
     {"Disabled", "Enabled"}
 };
 
+/* Show game device path on GO (whether on ef0: or ms0:) */
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[2];
+} show_path = {
+    "Show Game Path",
+    2,
+    0,
+    &(common::getConf()->show_path),
+    {"Disabled", "Enabled"}
+};
+
+
 /* Button swap */
 static struct {
     char* description;
@@ -247,13 +263,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[2];
+    char* options[4];
 } text_glow = {
     "Text Glow",
-    2,
+    4,
     0,
     &(common::getConf()->text_glow),
-    {"Disabled", "Enabled"}
+    {"Disabled", "1", "2", "3"}
 };
 
 static struct {
@@ -378,6 +394,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&menusize,
     (settings_entry*)&browser_icon0,
     (settings_entry*)&redirect_ms0,
+    (settings_entry*)&show_path,
 };
 
 #define MAX_SETTINGS_OPTIONS (sizeof(settings_entries)/sizeof(settings_entries[0]))

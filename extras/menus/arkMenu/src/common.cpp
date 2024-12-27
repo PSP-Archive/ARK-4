@@ -6,7 +6,9 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include "controller.h"
-#include "systemctrl.h"
+#include <systemctrl.h>
+#include <pspiofilemgr.h>
+#include <kubridge.h>
 #include "animations.h"
 #include "system_mgr.h"
 #include "lang.h"
@@ -20,8 +22,9 @@ bool common::is_recovery = false;
 
 extern "C"{
     int kuKernelGetModel();
-    int sctrlKernelExitVSH(void*);
 }
+
+struct tm today;
 
 static ARKConfig ark_config = {0};
 static Image* images[MAX_IMAGES];
@@ -107,7 +110,7 @@ void setArgs(int ac, char** av){
 }
 
 void loadConfig(){
-    FILE* fp = fopen(CONFIG_PATH, "rb");
+    FILE* fp = fopen(MENU_SETTINGS, "rb");
     if (fp == NULL){
         resetConf();
         return;
@@ -116,6 +119,8 @@ void loadConfig(){
     fseek(fp, 0, SEEK_SET);
     fread(&config, 1, sizeof(t_conf), fp);
     fclose(fp);
+    if (today.tm_mday == 1 && today.tm_mon == 3)
+        config.language = 10;
 }
 
 ARKConfig* common::getArkConfig(){
@@ -137,7 +142,10 @@ static void loadFont(){
     if (config.font == 0){
         offset = findPkgOffset(fonts[0], &size, "LANG.ARK", &dummyMissingHandler);
         if (offset && size){
-            fonts[0] = "LANG.ARK";
+            fonts[0] = "LANG.ARK"; // found font in lang package
+        }
+        else if ((offset = findPkgOffset(fonts[0], &size, "THEME.ARK", &dummyMissingHandler)) != 0 ){
+            fonts[0] = "THEME.ARK"; // found font in theme package
         }
         else if (!fileExists(fonts[0])){
             if (altFont){
@@ -195,7 +203,7 @@ void common::saveConf(){
 
     strcpy(config.browser_dir, Browser::getInstance()->getCWD());
     
-    FILE* fp = fopen(CONFIG_PATH, "wb");
+    FILE* fp = fopen(MENU_SETTINGS, "wb");
     fwrite(&config, 1, sizeof(t_conf), fp);
     fclose(fp);
 }
@@ -219,25 +227,39 @@ void common::resetConf(){
     config.sort_entries = 1;
     config.show_recovery = 1;
     config.show_fps = 0;
-    config.text_glow = 1;
+    config.text_glow = 3;
     config.screensaver = 2;
     config.redirect_ms0 = 0;
     config.startbtn = 0;
     config.menusize = 0;
+    config.show_path = 0;
     config.browser_icon0 = 1;
 }
 
-void common::launchRecovery(){
-    struct SceKernelLoadExecVSHParam param;
-    char cwd[128];
-    string recovery_path = string(ark_config.arkpath) + "RECOVERY.PBP";
-    
-    memset(&param, 0, sizeof(param));
-    
-    param.args = strlen(recovery_path.c_str()) + 1;
-    param.argp = (char*)recovery_path.c_str();
-    param.key = "game";
-    sctrlKernelLoadExecVSHWithApitype(0x141, recovery_path.c_str(), &param);
+void common::launchRecovery(const char* path){
+    string fakent = string(common::getArkConfig()->arkpath) + VBOOT_PBP;
+    if (fakent != path && common::fileExists(path)){
+        struct SceKernelLoadExecVSHParam param;
+        
+        memset(&param, 0, sizeof(param));
+        
+        int runlevel = HOMEBREW_RUNLEVEL;
+        
+        param.args = strlen(path) + 1;
+        param.argp = (char*)path;
+        param.key = "game";
+        sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+    }
+    else {
+        string recovery_prx = string(common::getArkConfig()->arkpath) + RECOVERY_PRX;
+        SceUID modid = kuKernelLoadModule(recovery_prx.c_str(), 0, NULL);
+        if (modid >= 0){
+            int res = sceKernelStartModule(modid, recovery_prx.size() + 1, (void*)recovery_prx.c_str(), NULL, NULL);
+            if (res >= 0){
+                while (1){sceKernelDelayThread(1000000);}; // wait for recovery to finish
+            }
+        }
+    }
 }
 
 static void missingFileHandler(const char* filename){
@@ -265,8 +287,10 @@ static void missingFileHandler(const char* filename){
         common::flipScreen();
     
         pad.update();
-        if (pad.cross() || pad.circle())
-            common::launchRecovery();
+        if (pad.cross() || pad.circle()){
+            string recovery_path = string(ark_config.arkpath) + ARK_RECOVERY;
+            common::launchRecovery(recovery_path.c_str());
+        }
         else if (pad.triangle())
             sctrlKernelExitVSH(NULL);
     }
@@ -414,7 +438,9 @@ void common::stopLoadingThread(){
 }
 
 void common::loadTheme(){
-    images[IMAGE_BG] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
+	SceIoStat stat;
+	string path = string(ark_config.arkpath) + "BG.PNG";
+	images[IMAGE_BG] = (sceIoGetstat(path.c_str(), &stat) >= 0) ? new Image(path.c_str()) : new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
     images[IMAGE_WAITICON] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
 
     images[0]->swizzle();
@@ -461,6 +487,8 @@ void common::loadData(int ac, char** av){
 
     argc = ac;
     argv = av;
+
+    today = common::getDateTime();
 
     psp_model = kuKernelGetModel();
 
@@ -522,7 +550,7 @@ void common::setThemePath(char* path){
 }
 
 bool common::isFolder(SceIoDirent* dit){
-    return (dit->d_stat.st_attr == FIO_SO_IFDIR || dit->d_stat.st_attr == 48 || dit->d_stat.st_attr == 22);
+    return FIO_SO_ISDIR(dit->d_stat.st_attr) || FIO_S_ISDIR(dit->d_stat.st_mode);
 }
 
 bool common::fileExists(const std::string &path){
@@ -626,8 +654,17 @@ void common::printText(float x, float y, const char* text, u32 color, float size
     u32 arg5 = INTRAFONT_WIDTH_VAR;
     
     if (glow && config.text_glow){
+		int val = 0;
         float t = (float)((float)(clock() % CLOCKS_PER_SEC)) / ((float)CLOCKS_PER_SEC);
-        int val = (t < 0.5f) ? t*511 : (1.0f-t)*511;
+		if(config.text_glow == 1) {
+        	val = (t < 0.5f) ? t*311 : (1.0f-t)*311;
+		}
+		else if(config.text_glow == 2) {
+        	val = (t < 0.5f) ? t*411 : (1.0f-t)*411;
+		}
+		else {
+        	val = (t < 0.5f) ? t*511 : (1.0f-t)*511;
+		}
         secondColor = (0xFF<<24)+(val<<16)+(val<<8)+(val);
     }
     if (scroll){

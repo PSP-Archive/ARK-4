@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <module2.h>
-#include <globals.h>
+#include <ark.h>
 #include <macros.h>
 #include "rebootex.h"
 #include "nidresolver.h"
@@ -37,7 +37,52 @@
 #include "loadercore.h"
 #include "imports.h"
 
-SEConfig se_config;
+SEConfig se_config = {
+    .magic = ARK_CONFIG_MAGIC,
+
+	.umdmode = 0,
+	.clock = 0,
+	.disable_pause = 0,
+	.hidedlc = 0,
+	.umdregion = 0,
+	.vshregion = 0,
+	.usbdevice = 0,
+	.usbcharge = 0,
+	.hidemac = 0,
+	.launcher_mode = 0,
+	.hidepics = 0,
+	.qaflags = 0,
+
+	// unused, always true
+	.plugvsh = 1,
+	.pluggame = 1,
+	.plugpop = 1,
+	
+	.usbdevice_rdonly = 0,
+	
+	.skiplogos = 0,
+	
+	.noumd = 0,
+	.custom_update = 0, // automatic
+	.usenodrm = 1, // always true
+
+	.hibblock = 0,
+	.noanalog = 0,
+	.oldplugin = 0,
+	.htmlviewer_custom_save_location = 0, // unused, always false
+	.hide_cfw_dirs = 1, // always true
+	.chn_iso = 1, // always true
+	.msspeed = 0,
+	.slimcolor = 0, // automatic
+	.iso_cache = 0,
+	.iso_cache_size = 0, // automatic
+	.iso_cache_num = 0,
+	.iso_cache_policy = CACHE_POLICY_LRU,
+	.noled = 0, // always false
+	.language = -1, /* -1 as autodetect */
+	.force_high_memory = 0,
+	.macspoofer = 0, // automatic
+};
 
 char *GetUmdFile(void) __attribute__((alias("sctrlSEGetUmdFile")));
 
@@ -71,7 +116,9 @@ SEConfig* sctrlSEGetConfig(SEConfig *config)
 */
 SEConfig* sctrlSEGetConfigEx(SEConfig *config, int size)
 {
-    if (config && size) memcpy(config, &se_config, size);
+    if (config && size == sizeof(SEConfig)){
+        memcpy(config, &se_config, size);
+    }
     return &se_config;
 }
 
@@ -98,8 +145,11 @@ int sctrlSESetConfig(SEConfig *config)
 */
 int sctrlSESetConfigEx(SEConfig *config, int size)
 {
-    memcpy(&se_config, config, size);
-    return 0;
+    if (config && size == sizeof(SEConfig)){
+        memcpy(&se_config, config, size);
+        return 0;
+    }
+    return -1;
 }
 
 // Return Reboot Configuration UMD File
@@ -158,7 +208,7 @@ int sctrlSEGetDiscType(void)
 
 int sctrlSEGetVersion()
 {
-	return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | ARK_MICRO_VERSION << 8 );
+	return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | (ARK_MICRO_VERSION << 8) | ARK_REVISION );
 }
 
 int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs){
@@ -171,16 +221,4 @@ int sctrlSEUmountUmd(){
 
 void sctrlSESetDiscOut(int out){
     return;
-}
-
-int sctrlHENIsTestingTool()
-{
-	int k1 = pspSdkSetK1(0);
-    SceIoStat stat; int res = sceIoGetstat("flash0:/kd/vshbridge_tool.prx", &stat);
-    pspSdkSetK1(k1);
-    return (res >= 0);
-}
-
-void sctrlHENSetTestingTool(int tt)
-{
 }

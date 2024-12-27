@@ -24,8 +24,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <macros.h>
-#include <globals.h>
-#include "systemctrl.h"
+#include <ark.h>
+#include <systemctrl.h>
 #include "systemctrl_private.h"
 #include "imports.h"
 
@@ -45,6 +45,8 @@ unsigned int cacheHit = 0;
 unsigned int cacheMissed = 0;
 unsigned int cacheUncacheable = 0;
 #endif
+
+#define MSCACHE_SIZE (4*1024)
 
 // Cache Structure
 struct MsCache
@@ -353,10 +355,11 @@ static int msstorIoUnk21Cache(PspIoDrvFileArg *arg)
 }
 
 // Initialize "ms" Driver Cache
-int msstorCacheInit(const char* driver, int bufSize)
+int msstorCacheInit(const char* driver)
 {
 
     if (g_cacheSize > 0) return 0; // cache already on
+    if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) return 0; // not needed on POPS
 
     // Get Application Type
     int key_config = sceKernelApplicationType();
@@ -367,11 +370,8 @@ int msstorCacheInit(const char* driver, int bufSize)
     // Driver unavailable
     if(pdrv == NULL) return -1;
     
-    // Invalid Buffer Size (must be a multiple of 512)
-    if((bufSize % 0x200) != 0) return -2;
-    
     // Allocate Memory
-    SceUID memid = sceKernelAllocPartitionMemory(1, "MsStorCache", PSP_SMEM_High, bufSize + 64, NULL);
+    SceUID memid = sceKernelAllocPartitionMemory(1, "MsStorCache", PSP_SMEM_High, MSCACHE_SIZE + 64, NULL);
     
     // Allocation failed
     if(memid < 0) return -3;
@@ -386,7 +386,7 @@ int msstorCacheInit(const char* driver, int bufSize)
     g_cache.buf = (void *)(((unsigned int)g_cache.buf & (~(64-1))) + 64);
     
     // Set Cache Size
-    g_cacheSize = bufSize;
+    g_cacheSize = MSCACHE_SIZE;
     
     // Disable Cache
     disableCache(&g_cache);

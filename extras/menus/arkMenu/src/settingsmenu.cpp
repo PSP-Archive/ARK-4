@@ -9,7 +9,7 @@
 #define PAGE_SIZE 10
 
 extern string ark_version;
-extern struct tm today;
+extern void resetSettings();
 
 SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool shorten_paths, bool show_all_opts, bool show_info){
     this->animation = -1;
@@ -26,7 +26,9 @@ SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool s
     this->table = table;
     this->info = "Menu Settings";
     this->name = "Settings";
-    this->callback = save_callback;
+    this->save_callback = save_callback;
+    this->open_callback = NULL;
+    this->close_callback = NULL;
     this->icon = IMAGE_SETTINGS;
     this->shorten_paths = shorten_paths;
     this->show_all_opts = show_all_opts;
@@ -36,6 +38,12 @@ SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool s
 }
 
 SettingsMenu::~SettingsMenu(){
+}
+
+void SettingsMenu::setCallbacks(void (*save_callback)(), void (*open_callback)(), void (*close_callback)()){
+    if (save_callback) this->save_callback = save_callback;
+    if (open_callback) this->open_callback = open_callback;
+    if (close_callback) this->close_callback = close_callback;
 }
 
 void SettingsMenu::setCustomText(string text[], int n){
@@ -108,13 +116,13 @@ void SettingsMenu::draw(){
             // show information if needed
             if (show_info){
                 if (today.tm_mday == 3 && today.tm_mon == 6)
-                    common::printText(x+10, y+15, "In Loving Memory of Gregory Pitka (qwikrazor87). R.I.P.", GRAY_COLOR, SIZE_LITTLE, 0, 0);
+                    common::printText(x+10, y+15, "In Loving Memory of Gregory Pitka (qwikrazor87). R.I.P.", GRAY_COLOR, SIZE_LITTLE, 0, 0, 0);
                 else if (today.tm_mday == 25 && today.tm_mon == 11)
-                    common::printText(x+10, y+15, "Merry Christmas!", GRAY_COLOR, SIZE_LITTLE, 0, 0);
+                    common::printText(x+10, y+15, "Merry Christmas!", GRAY_COLOR, SIZE_LITTLE, 0, 0, 0);
                 else if (today.tm_mday == 20 && today.tm_mon == 3)
-                    common::printText(x+10, y+15, "Amplified Robotic Ketamine", GRAY_COLOR, SIZE_LITTLE, 0, 0);
+                    common::printText(x+10, y+15, "Amplified Robotic Ketamine", GRAY_COLOR, SIZE_LITTLE, 0, 0, 0);
                 else
-                    common::printText(x+40, y+15, ark_version.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0);
+                    common::printText(x+40, y+15, ark_version.c_str(), GRAY_COLOR, SIZE_LITTLE, 0, 0, 0);
             }
             
             int yoffset = y+40;
@@ -256,13 +264,18 @@ void SettingsMenu::control(Controller* pad){
             changed = true;
         }
     }
+	else if (pad->square() && this->name == "CFW Settings") {
+		pause();
+		resetSettings();
+		resume();
+	}
 }
 
 void SettingsMenu::applyConf(){
     if (changed){
         for (int i=0; i<table->max_options; i++)
             *(table->settings_entries[i]->config_ptr) = table->settings_entries[i]->selection;
-        if (this->callback != NULL) this->callback();
+        if (this->save_callback) this->save_callback();
         readConf(); // update in case callback has changed it
     }
 }
@@ -275,6 +288,11 @@ void SettingsMenu::readConf(){
 
 void SettingsMenu::pause(){
     applyConf();
+    if (this->close_callback){
+        SystemMgr::pauseDraw();
+        this->close_callback();
+        SystemMgr::resumeDraw();
+    }
     animation = 1;
     while (animation != -2)
         sceKernelDelayThread(0);
@@ -282,6 +300,13 @@ void SettingsMenu::pause(){
 
 void SettingsMenu::resume(){
     animation = -1;
+    if (this->open_callback){
+        SystemMgr::pauseDraw();
+        this->index = 0;
+        this->start = 0;
+        this->open_callback();
+        SystemMgr::resumeDraw();
+    }
     readConf();
     while (animation != 0)
         sceKernelDelayThread(0);

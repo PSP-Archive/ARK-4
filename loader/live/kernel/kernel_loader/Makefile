@@ -1,6 +1,6 @@
 PSPSDK=$(shell psp-config --pspsdk-path)
 INCDIR = $(PSPSDK)/include $(ARKROOT)/common/include $(ARKROOT)
-LIBS = -L $(ARKROOT)/libs -lgraphics -lcolordebugger -lansic
+LIBS = -L $(ARKROOT)/libs -lgraphics -lcolordebugger -lsploit -lansic
 TARGET = ARK4.BIN
 
 PYTHON=$(shell which python3)
@@ -9,19 +9,15 @@ all: pre-build $(TARGET)
 
 CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 CFLAGS += -I $(ARKROOT)/loader/live/kernel/kxploit/ -I $(ARKROOT)/core/systemctrl/include
-CFLAGS += -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR)
+CFLAGS += -DKXPLOIT_LOADADDR=$(KXPLOIT_LOADADDR) -DUSE_POPS_SCREEN=1
 
 C_OBJS = \
 	main.o \
 	loader.o \
 	reboot.o \
 	flashinstall.o \
-	$(ARKROOT)/common/utils/functions.o \
-	$(ARKROOT)/common/utils/freemem.o \
-	$(ARKROOT)/common/utils/imports.o \
-	$(ARKROOT)/common/utils/patches.o \
-	$(ARKROOT)/common/utils/scanner.o \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
+	$(ARKROOT)/core/compat/vitapops/popsdisplay.o \
 	$(ARKROOT)/core/systemctrl/src/loadexec.o
 
 include $(ARKROOT)/common/make/global.mak

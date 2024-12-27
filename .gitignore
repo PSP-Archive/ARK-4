@@ -1,5 +1,7 @@
+*.deb
+*.elf
 *.o
 *.PBP
 *.prx
+*.rpm
 *.SFO
-*.elf

@@ -110,7 +110,7 @@ typedef struct ARKConfig{
     char exploit_id[12]; // ID of the game exploit, or name of the bootloader
     char launcher[20]; // run ARK in launcher mode if launcher specified
     unsigned char exec_mode; // ARK execution mode (PSP, PS Vita, Vita POPS, etc)
-    unsigned char recovery; // run ARK in recovery mode (disables settings, plugins and autoboots RECOVERY.PBP)
+    unsigned char recovery; // run ARK in recovery mode (disables settings, plugins and autoboots recovery)
 } ARKConfig;
 
 ARKConfig _arkconf = {

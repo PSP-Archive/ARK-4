@@ -7,9 +7,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "globals.h"
-#include "macros.h"
-#include "systemctrl.h"
+#include <ark.h>
+#include <macros.h>
+#include <systemctrl.h>
+
 
 int leda_running = 0;
 SceUID (* KernelLoadModuleMs2_hook)() = NULL;
@@ -75,9 +76,15 @@ void LedaModulePatch(SceModule2 *mod)
 }
 
 // patch leda
-void patchLedaPlugin(u32 text_addr){
+void patchLedaPlugin(void* handler){
     
     SceModule2* init = sceKernelFindModuleByName("sceInit");
+
+    // register handler
+    KernelLoadModuleMs2_hook = handler;
+
+    // patch leda
+    u32 text_addr = ((u32)handler) - 0xCE8;
 
     // Remove version check
     _sw(0, text_addr + 0xC58);

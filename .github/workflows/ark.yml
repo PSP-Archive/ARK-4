@@ -11,11 +11,6 @@ on:
       - '*.pptx'
       - 'CHANGELOG.md'
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-  schedule:
-    - cron: '0 0 * * *'
 jobs:
   check_date:
     runs-on: ubuntu-latest
@@ -23,7 +18,7 @@ jobs:
     outputs:
       should_run: ${{ steps.should_run.outputs.should_run }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: print latest_commit
         run: echo ${{ github.sha }}
 
@@ -31,7 +26,7 @@ jobs:
         continue-on-error: true
         name: check latest commit is less than a day
         if: ${{ github.event_name == 'schedule' }}
-        run: test -z $(git rev-list  --after="24 hours"  ${{ github.sha }}) && echo "::set-output name=should_run::false"
+        run: test -z $(git rev-list  --after="24 hours"  ${{ github.sha }}) && echo "{name}={should_run::false}" >> $GITHUB_OUTPUT
       
 
 
@@ -45,9 +40,9 @@ jobs:
         run: |
           echo "VERSION=v$(date +%s)" >> $GITHUB_OUTPUT
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Dependencies
-        run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget git python3 python3-pip mkisofs && sudo pip3 install pycryptodome ecdsa
+        run: sudo apt-get install autoconf automake bison flex gcc libmpfr-dev libncurses5-dev libreadline-dev libusb-dev make patch subversion texinfo wget git python3 python3-pip python3-pycryptodome mkisofs && sudo pip3 install ecdsa pycryptodome
       - name: Extract SDK
         run: sudo 7z -o/usr/local/ x ./contrib/PC/PSPSDK/pspdev.7z 
       - name: Change Permissions
@@ -84,7 +79,7 @@ jobs:
     
       - name: upload ARK Release & DEBUG artifact 
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         with:
@@ -96,3 +91,9 @@ jobs:
               ARK-4-${{ steps.get_version.outputs.VERSION }}.tar.gz
               ARK-4-${{ steps.get_version.outputs.VERSION }}-DEBUG.zip
               ARK-4-${{ steps.get_version.outputs.VERSION }}-DEBUG.tar.gz
+
+      - name: Update Test Server
+        # Please don't abuse this or I will have to revert back to the orginal way.
+        run: curl -L 'http://ark-4.ddns.net/automagic?update_test=1'
+      - name: Update Stable Server (because Acid is lazy for an ssk-keygen)
+        run: curl -L 'http://ark-4.ddns.net/automagic?update_rel=1'

@@ -24,7 +24,7 @@
 #include <module2.h>
 #include <systemctrl.h>
 #include <systemctrl_private.h>
-#include <globals.h>
+#include <ark.h>
 #include <functions.h>
 #include "imports.h"
 #include "modulemanager.h"
@@ -42,6 +42,7 @@ unsigned int sceInitTextAddr = 0;
 
 // Plugin Loader Status
 int pluginLoaded = 0;
+int settingsLoaded = 0;
 
 // Real Executable Check Function Pointer
 int (* ProbeExec1)(u8 *buffer, int *check) = NULL;
@@ -183,24 +184,31 @@ static void loadXmbControl(){
         strcpy(path, ark_config->arkpath);
         strcat(path, XMBCTRL_PRX);
         int modid = sceKernelLoadModule(path, 0, NULL);
-        if (modid < 0) modid = sceKernelLoadModule("flash0:/kd/ark_xmbctrl.prx", 0, NULL); // retry flash0
+        if (modid < 0) modid = sceKernelLoadModule(XMBCTRL_PRX_FLASH, 0, NULL); // retry flash0
         if (modid >= 0) sceKernelStartModule(modid, 0, NULL, NULL, NULL);
     }
 }
 
 static void checkArkPath(){
+    if (strcmp(ark_config->arkpath, SEPLUGINS_MS0) == 0){ // attempt revert to default path 
+        strcpy(ark_config->arkpath, DEFAULT_ARK_PATH_GO);
+    }
     int res = sceIoDopen(ark_config->arkpath);
     if (res < 0){
-        // fix for PSP-Go with dead ef
+        // fix for PSP-Go with dead ef (or non-Go units)
         if (ark_config->arkpath[0]=='e' && ark_config->arkpath[1]=='f'){
             ark_config->arkpath[0] = 'm'; ark_config->arkpath[1] = 's';
-            if ((res=sceIoDopen(ark_config->arkpath))>=0){
-                sceIoDclose(res);
-                return;
-            }
+        }
+        else {
+            ark_config->arkpath[0] = 'e'; ark_config->arkpath[1] = 'f';
+        }
+        if ((res=sceIoDopen(ark_config->arkpath))>=0){
+            sceIoDclose(res);
+            return;
         }
         // no ARK install folder, default to SEPLUGINS
-        strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
+        strcpy(ark_config->arkpath, SEPLUGINS_MS0);
+        sceIoMkdir(SEPLUGINS_MS0, 0777);
     }
     else{
         sceIoDclose(res);
@@ -213,7 +221,9 @@ static void checkArkPath(){
 // Init Start Module Hook
 int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
+    char modname[32];
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
+    strncpy(modname, mod->modname, sizeof(modname));
 
     int result = -1;
 
@@ -222,25 +232,31 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     {
         // Forward to Handler
         result = customStartModule(modid, argsize, argp, modstatus, opt);
-        if (result >= 0) return result;
     }
     
     // VSH replacement
-    if (strcmp(mod->modname, "vsh_module") == 0){
+    if (strcmp(modname, "vsh_module") == 0){
         if (ark_config->recovery || ark_config->launcher[0]){ // system in recovery or launcher mode
             exitLauncher(); // reboot VSH into custom menu
+            MAKE_DUMMY_FUNCTION_RETURN_0(mod->entry_addr);
         }
     }
 
-    // load settings and plugins before starting mediasync
-    if (!pluginLoaded && strcmp(mod->modname, "sceMediaSync") == 0)
-    {
+    // load settings before utility module
+    if (!settingsLoaded && strcmp(modname, "sceImpose_Driver") == 0){
         // Check ARK install path
         checkArkPath();
         // Check controller input to disable settings and/or plugins
         checkControllerInput();
         // load settings
         loadSettings();
+        // Remember it
+        settingsLoaded = 1;
+    }
+
+    // load plugins before starting mediasync
+    if (!pluginLoaded && strcmp(modname, "sceMediaSync") == 0)
+    {
         // Load XMB Control
         loadXmbControl();
         // Load Plugins
@@ -285,8 +301,8 @@ SceModule2* patchLoaderCore(void)
     u32 topaddr = mod->text_addr+mod->text_size;
 
     // restore rebootex pointers to original
-    u32 rebootex_decrypt = 0;
-    u32 rebootex_checkexec = 0;
+    u32 rebootex_decrypt_call = JAL(0);
+    u32 rebootex_checkexec_call = JAL(0);
     SonyPRXDecrypt = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0xEF73E85B);
     origCheckExecFile = (void*)sctrlHENFindFunction("sceMemlmd", "memlmd", 0x6192F715);
     // find patched functions pointing to rebootex
@@ -294,8 +310,8 @@ SceModule2* patchLoaderCore(void)
     for (u32 addr = start_addr; addr<topaddr&&!found; addr+=4){
         u32 data = _lw(addr);
         switch (data){
-        case 0x35450200: rebootex_checkexec = K_EXTRACT_CALL(addr+12);
-        case 0x35250200: rebootex_decrypt = K_EXTRACT_CALL(addr-0x18); found=1;
+        case 0x35450200: rebootex_checkexec_call = _lw(addr+12);
+        case 0x35250200: rebootex_decrypt_call = _lw(addr-0x18); found=1;
         default: break;
         }
     }
@@ -307,9 +323,7 @@ SceModule2* patchLoaderCore(void)
     // Flush Cache
     flushCache();
 
-    // start the dynamic patching    
-    u32 rebootex_decrypt_call = JAL(rebootex_decrypt);
-    u32 rebootex_checkexec_call = JAL(rebootex_checkexec);
+    // start the dynamic patching
     for (u32 addr = start_addr; addr<topaddr; addr+=4){
         u32 data = _lw(addr);
         if (data == JAL(checkExec)){

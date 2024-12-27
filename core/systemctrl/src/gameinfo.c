@@ -3,11 +3,11 @@
 #include <pspiofilemgr.h>
 #include <pspsysmem_kernel.h>
 #include <rebootconfig.h>
+#include <systemctrl.h>
 
-#include "globals.h"
+#include <ark.h>
 #include "macros.h"
 #include "module2.h"
-#include "graphics.h"
 
 struct LbaParams {
     int unknown1; // 0
@@ -79,6 +79,7 @@ int readGameIdFromUmd(char* gameid){
 int getGameId(char* gameid){
 
     int res = 1;
+    char tmp[128];
 
     int apitype = sceKernelInitApitype();
     if (apitype == 0x141 || apitype == 0x152 || apitype >= 0x200){
@@ -86,7 +87,7 @@ int getGameId(char* gameid){
         return res;
     }
 
-    if (rebootex_config.game_id[0] == 0){
+    if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, HOME_ID, 9) == 0){
 
         // Find Function
         void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
@@ -99,10 +100,10 @@ int getGameId(char* gameid){
         
         // Structure unavailable
         if(gameinfo == NULL) return 0;
-        memcpy(gameid, gameinfo+0x44, 9);
-
+        memcpy(rebootex_config.game_id, gameinfo+0x44, 9);
+        
         if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, HOME_ID, 9) == 0){
-            if (apitype == 0x144 || apitype == 0x155){ // PS1: read from PBP
+            if (apitype == 0x144 || apitype == 0x155 || sceKernelFindModuleByName("sceNp9660_driver")!=NULL){ // PS1/PSN: read from PBP
                 res = readGameIdFromPBP(rebootex_config.game_id);
             }
             else {

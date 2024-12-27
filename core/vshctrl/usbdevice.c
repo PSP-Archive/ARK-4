@@ -26,10 +26,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "globals.h"
+#include <ark.h>
 #include "macros.h"
-#include "systemctrl.h"
-#include "systemctrl_se.h"
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 #include "main.h"
 #include "virtual_pbp.h"
 #include "pspusbdevice.h"
@@ -45,11 +45,11 @@ static SceUID load_start_usbdevice(void)
 	int ret;
 	char mod[ARK_PATH_SIZE];
 	strcpy(mod, ark_config->arkpath);
-	strcat(mod, "USBDEV.PRX");
+	strcat(mod, USBDEV_PRX);
 
 	modid = sceKernelLoadModule(mod, 0, NULL);
 
-	if (modid < 0) modid = sceKernelLoadModule("flash0:/vsh/module/ark_usbdev.prx", 0, NULL); // retry flash0
+	if (modid < 0) modid = sceKernelLoadModule(USBDEV_PRX_FLASH, 0, NULL); // retry flash0
 
 	if (modid < 0) {
 		return -1;

@@ -85,6 +85,7 @@
 
     "Network Tools": "Мережеві інструменти",
     "Press [] to check for Updates": "Натисніть [], щоб перевірити наявність оновлень",
+    "[] to Reset Settings": "[] Параметртæ сног кæнынæн",
     "FTP Server is stopped. Press %s to start.": "FTP сервер зупинено. Натисніть %s для запуску.",
     "FTP Server is running @ %s. Press %s to stop.": "FTP сервер відкрито на %s. Натисніть %s, щоб зупинити.",
     "Could not get IP address": "Неможливо отримати IP адресу",
@@ -153,6 +154,10 @@
     "Turn off LEDs": "Вимкнути LED індикатори",
     "VSH Region Change": "Змінити країну VSH",
     "UMD Region Change": "Змінити країну UMD",
+    "Disable UMD Drive": "Вимкніть диск UMD",
+    "Disable Analog Stick": "Вимкніть аналоговий джойстик",
+	"Custom App": "Спеціальна програма",
+    "QA Flags": "Прапори QA",
     
     "Waves": "Хвилі",
     "Sprites": "Мавки",

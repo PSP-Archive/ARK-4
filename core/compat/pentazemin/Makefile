@@ -1,8 +1,9 @@
 TARGET = pentazemin
 
-C_OBJS =   \
-	main.o  \
-	funcs.o  \
+C_OBJS =  \
+	main.o \
+	funcs.o \
+	usbcam.o \
 	vitamem.o \
 	syspatch.o \
 	io_patch.o  \
@@ -14,7 +15,7 @@ C_OBJS =   \
 	impose_patch.o    \
 	utility_patch.o    \
 	$(ARKROOT)/core/compat/vita/vlf.o \
-	$(ARKROOT)/common/utils/patches.o   \
+	$(ARKROOT)/libs/libsploit/patches.o   \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
 		
 OBJS = \
@@ -37,7 +38,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsystemctrl_kernel
+LIBS = -lpspsystemctrl_kernel -lcolordebugger
 
 PSP_FW_VERSION = 660
 

@@ -47,3 +47,9 @@
 #ifdef F_VshCtrl_0013
 	IMPORT_FUNC  "VshCtrlLib",0x39F5F78E,has_update_file
 #endif
+#ifdef F_VshCtrl_0014
+	IMPORT_FUNC  "VshCtrlLib",0x0B8D8F45,vctrlGetRegistryValue
+#endif
+#ifdef F_VshCtrl_0015
+	IMPORT_FUNC  "VshCtrlLib",0x3A65060D,vctrlSetRegistryValue
+#endif

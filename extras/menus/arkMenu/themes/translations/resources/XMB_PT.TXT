@@ -1,5 +1,7 @@
+Atualizador ARK-4
 Definições de Custom Firmware
 Gerenciador de Plugins
+Lançador personalizado
 Recarga via USB
 Overclock
 Poupança de Energia
@@ -16,3 +18,8 @@ Impedir exclusão de hibernação no PSP Go
 Ocultar Endereço MAC
 Ocultar DLC
 Desligar LEDs
+Desabilitar unidade UMD
+Desabilitar stick analógico
+Sinalizadores de controle de qualidade
+Aplicativo personalizado
+PSP Overclock

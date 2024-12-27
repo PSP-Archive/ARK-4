@@ -37,6 +37,7 @@
 
 extern u32 sctrlHENFakeDevkitVersion();
 extern int is_plugins_loading;
+extern SEConfig se_config;
 
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
@@ -47,7 +48,7 @@ int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 #endif
 
 // Return Boot Status
-static int isSystemBooted(void)
+int isSystemBooted(void)
 {
 
     // Find Function
@@ -61,6 +62,32 @@ static int isSystemBooted(void)
     
     // Still booting
     return 0;
+}
+
+static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int nid){
+    if (nid == 0x221400A6 && strcmp(szMod, "SystemControl") == 0)
+        return 0; // Popsloader V4 looks for this function to check for ME, let's pretend ARK doesn't have it ;)
+    return sctrlHENFindFunction(szMod, szLib, nid);
+}
+
+int _sceChkreg_6894A027(u8* a0, u32 a1){
+	if (a0 && a1 == 0){
+		*a0 = 1;
+		return 0;
+	}
+	return -1;
+}
+
+void patch_qaflags(){
+	u32 fp;
+   
+	// sceChkregGetPsCode
+	fp = sctrlHENFindFunction("sceChkreg", "sceChkreg_driver", 0x6894A027); 
+
+	if (fp) {
+		_sw(JUMP(_sceChkreg_6894A027), fp);
+        _sw(NOP, fp+4);
+	}
 }
 
 // Module Start Handler
@@ -95,7 +122,8 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     #endif
 
     if (strcmp(mod->modname, "sceController_Service") == 0){
-        initController(mod);
+        // Allow exiting through key combo
+        patchController(mod);
         goto flush;
     }
 
@@ -126,8 +154,8 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
-    // unlocks variable bitrate on old homebrew
-    if (strcmp(mod->modname, "sceMp3_Library") == 0){
+    // unlocks mp3 variable bitrate and qwerty osk on old games/homebrew
+    if (strcmp(mod->modname, "sceMp3_Library") == 0 || strcmp(mod->modname, "sceVshOSK_Module") == 0){
         hookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion);
         goto flush;
     }
@@ -147,8 +175,22 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
-    if (strcmp(mod->modname, "Legacy_Software_Loader") == 0){
-        patchLedaPlugin(mod->text_addr);
+    if (strcmp(mod->modname, "popsloader") == 0 || strcmp(mod->modname, "popscore") == 0){
+        // fix for 6.60 check on 6.61
+        hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
+        // fix to prevent ME detection
+        hookImportByNID(mod, "SystemCtrlForKernel", 0x159AF5CC, &fakeFindFunction);
+        goto flush;
+    }
+
+    if (strcmp(mod->modname, "DayViewer_User") == 0){
+        // fix scePaf imports in DayViewer
+        static u32 nids[] = {
+            0x2BE8DDBB, 0xE8CCC611, 0xCDDCFFB3, 0x48BB05D5, 0x22FB4177, 0xBC8DC92B, 0xE3D530AE
+        };
+        for (int i=0; i<NELEMS(nids); i++){
+            hookImportByNID(mod, "scePaf", nids[i], sctrlHENFindFunction("scePaf_Module", "scePaf", nids[i]));
+        }
         goto flush;
     }
 
@@ -159,13 +201,23 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         if(isSystemBooted())
         {
 
-            // Allow exiting through key combo
-            patchController();
+            if (se_config.qaflags){
+                patch_qaflags();
+            }
+
+            // handle CPU speed
+            switch (se_config.clock){
+                case 1: sctrlHENSetSpeed(333, 166); break;
+                case 2: sctrlHENSetSpeed(133, 66); break;
+                case 3: sctrlHENSetSpeed(222, 111); break;
+            }
             
             #ifdef DEBUG
             // syncronize printk
             printkSync();
             #endif
+
+            ark_config->recovery = 0; // reset recovery mode for next reboot
 
             // Boot Complete Action done
             booted = 1;

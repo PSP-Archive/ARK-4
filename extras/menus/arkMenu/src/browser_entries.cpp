@@ -34,44 +34,29 @@ int fileTypeByExtension(string path){
 BrowserFile::BrowserFile(){
 }
 
-BrowserFile::BrowserFile(string path, string shortname){
+BrowserFile::BrowserFile(string path){
     size_t lastSlash = path.rfind('/', string::npos);
     this->path = path;
     this->name = path.substr(lastSlash+1, string::npos);
-    this->parent = path.substr(0, lastSlash) + '/';
+    this->parent = path.substr(0, lastSlash);
     this->icon0 = NULL;
     this->selected = false;
     this->filetype = FOLDER;
-    this->setShortName(shortname);
     this->calcSize();
     this->filetype = fileTypeByExtension(getPath());
 }
 
-BrowserFile::BrowserFile(string parent, string name, string shortname){
+BrowserFile::BrowserFile(string parent, string name){
     this->icon0 = NULL;
     this->path = parent + name;
     this->parent = parent;
     this->name = name;
     this->selected = false;
-    this->setShortName(shortname);
     this->calcSize();
     this->filetype = fileTypeByExtension(getPath());
 }
 
 BrowserFile::~BrowserFile(){
-}
-
-void BrowserFile::setShortName(string shortname){
-    if (shortname.size() > 0){
-        if (this->name.size() < shortname.size()){
-            this->path = this->parent + shortname;
-            this->name = shortname;
-            this->shortname = "";
-        }
-        else {
-            this->shortname = shortname;
-        }
-    }
 }
 
 unsigned BrowserFile::getFileSize(){
@@ -98,7 +83,8 @@ void BrowserFile::changeSelection(){
 }
 
 string BrowserFile::getPath(){
-    return (shortname.size() > 0)? parent+shortname : path;
+	return path;
+    //return (shortname.size() > 0) ? parent+shortname : path + '/';
 }
 
 string BrowserFile::getName(){
@@ -140,16 +126,16 @@ void BrowserFile::freeIcon(){
     this->icon0 = NULL;
 }
 
-void BrowserFile::getTempData1(){
+void BrowserFile::loadPics(){
 }
 
-void BrowserFile::getTempData2(){
+void BrowserFile::loadAVMedia(){
 }
 
 void BrowserFile::doExecute(){
 }
 
-BrowserFolder::BrowserFolder(string path, string shortname){
+BrowserFolder::BrowserFolder(string path){
     size_t lastSlash = path.rfind('/', path.length()-2);
     this->path = path;
     this->name = path.substr(lastSlash+1, string::npos);
@@ -158,23 +144,23 @@ BrowserFolder::BrowserFolder(string path, string shortname){
     this->selected = false;
     this->fileSize = "Folder";
     this->filetype = FOLDER;
-    if (shortname.size() > 0) shortname += '/';
-    this->setShortName(shortname);
 }
 
-BrowserFolder::BrowserFolder(string parent, string name, string shortname){
+BrowserFolder::BrowserFolder(string parent, string name){
     this->icon0 = NULL;
     this->path = parent + name + '/';
-    this->name = name + '/';
+    this->name = name;
     this->parent = parent;
     this->selected = false;
     this->fileSize = "Folder";
     this->filetype = FOLDER;
-    if (shortname.size() > 0) shortname += '/';
-    this->setShortName(shortname);
 }
 
 BrowserFolder::~BrowserFolder(){
+}
+
+string BrowserFolder::getName(){
+    return this->name + '/';
 }
 
 char* BrowserFolder::getType(){
@@ -183,4 +169,20 @@ char* BrowserFolder::getType(){
 
 char* BrowserFolder::getSubtype(){
     return getType();
+}
+
+void BrowserFolder::loadIcon(){
+    if (strstr(path.c_str(), "/LICENSE/") != NULL) return;
+    string icon_path = this->path + "ICON0.PNG";
+    string eboot_path = "";
+    if (common::fileExists(icon_path)){
+        this->icon0 = new Image(icon_path);
+    }
+    else if ((eboot_path = Eboot::fullEbootPath(parent, name)).length() > 0){
+        Eboot* eboot = new Eboot(eboot_path);
+        eboot->loadIcon();
+        this->icon0 = eboot->getIcon();
+        eboot->setIcon(NULL);
+        delete eboot;
+    }
 }

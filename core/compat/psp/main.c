@@ -1,6 +1,6 @@
 #include <pspsdk.h>
 #include <pspinit.h>
-#include <globals.h>
+#include <ark.h>
 #include <graphics.h>
 #include <macros.h>
 #include <module2.h>
@@ -45,8 +45,6 @@ void flushCache()
 }
 
 void processArkConfig(){
-    se_config = sctrlSEGetConfig(NULL);
-    ark_config = sctrlHENGetArkConfig(NULL);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSP_ORIG; // assume running on PSP
     }
@@ -55,14 +53,26 @@ void processArkConfig(){
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
-    // set rebootex for PSP
-    sctrlHENSetRebootexOverride(rebootbuffer_psp);
     
     // get psp model
     psp_model = sceKernelGetModel();
+
+    se_config = sctrlSEGetConfig(NULL);
+    ark_config = sctrlHENGetArkConfig(NULL);
+
+    if (ark_config == NULL){
+        return 1;
+    }
     
     // get ark config
     processArkConfig();
+
+    if (!IS_PSP(ark_config)){
+        return 2;
+    }
+
+    // set rebootex for PSP
+    sctrlHENSetRebootexOverride(rebootbuffer_psp);
 
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);

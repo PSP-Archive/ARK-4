@@ -86,6 +86,7 @@
 
     "Network Tools": "Ergaleia Diktuou",
     "Press [] to check for Updates": "Pathste to [] gia elegco Enhmerwsewn",
+    "[] to Reset Settings": "[] keu Reset Pengaturan",
     "FTP Server is stopped. Press %s to start.": "O Diakomisthj Metaforaj Arceiwn ecei stamathsei. Pathste to %s gia ekkinhsh.",
     "FTP Server is running @ %s. Press %s to stop.": "O Diakomisthj Metaforaj Arceiwn ekteleitai sto %s. Pathste to %s gia diakoph",
     "Could not get IP address": "Den htan dunath h lhyh Dieuqunshj Diktuou",
@@ -151,5 +152,9 @@
     "Hide DLC": "Apokruyh Epiprosqetou Periecomenou",
     "Turn off LEDs": "Apenergopoihsh endeixewn suskeuhj",
     "VSH Region Change": "Allagh Periochj Menou",
-    "UMD Region Change": "Allagh Periochj Diskou"
+    "UMD Region Change": "Allagh Periochj Diskou",
+    "Disable UMD Drive": "Apenergopoihste th ponáda dískou",
+    "Disable Analog Stick": "Apenergopoihste to analogikó",
+	"Custom App": "Προσαρμοσμένη εφαρμογή",
+    "QA Flags": "Σημαίες QA"
 }

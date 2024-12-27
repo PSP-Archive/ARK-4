@@ -166,13 +166,21 @@ static void GetHardwareInfo()
 					}
 					break;
 				case 0x002E4000: mb = TA_095v1; break;
+				case 0x012E4000: mb = TA_095v3; break;
 			}
 			break;
 
 
-		case 0x00820000: mb = TA_095v2; break;
+		case 0x00820000: 
+			switch(baryon)
+			{
+				case 0x012E4000: mb = TA_095v4; break;
+				case 0x002E4000: mb = TA_095v2; break;
+			}
+			break;
 
-		case 0x00900000: mb = TA_096_TA_097; break;
+		case 0x00900000: 
+			mb = TA_096_TA_097; break;
 	}
 
 	fuseid = SysregGetFuseId();
@@ -525,7 +533,7 @@ int dcIdStorageCreateAtomicLeaves(u16 *leaves, int n)
 	int k1 = pspSdkSetK1(0);
 	int level = sctrlKernelSetUserLevel(8);
 
-	int res = -1;//sceIdStorageCreateAtomicLeaves(leaves, n);
+	int res = sceIdStorage_driver_99ACCB71(leaves, n); //sceIdStorageCreateAtomicLeaves(leaves, n);
 
 	sctrlKernelSetUserLevel(level);	
 	pspSdkSetK1(k1);
@@ -754,6 +762,7 @@ void OnModuleStart(SceModule2 *mod)
 		WlanFunc = (void *)(mod->text_addr+0xCD5C);
 		ClearCaches();
 	}
+	
 	else if (strcmp(mod->modname, "sceNAND_Updater_Driver") == 0)
 	{
 		int i;

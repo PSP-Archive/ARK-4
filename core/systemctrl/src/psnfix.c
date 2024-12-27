@@ -55,14 +55,14 @@ void patch_npsignin(SceModule2* mod)
 }
 
 //fake hardcoded np version for npmatching library (psp2, fat princess, etc.)
-void patch_np(SceModule2* mod, u8 mayor, u8 minor)
+void patch_np(SceModule2* mod, u8 major, u8 minor)
 {
 	//np firmware version spoof
 	//_sb(mayor, mod->text_addr + 0x00004604);
 	//_sb(minor, mod->text_addr + 0x0000460C);
 	for (u32 addr=mod->text_addr; addr<mod->text_addr+mod->text_size; addr+=4){
 		if (_lw(addr) == 0x34620003){
-			_sb(mayor, addr + 24);
+			_sb(major, addr + 24);
 			_sb(minor, addr + 32);
 			break;
 		}

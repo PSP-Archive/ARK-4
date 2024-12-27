@@ -17,6 +17,8 @@
 
 PSP_MODULE_INFO("TimeMachine_Control", PSP_MODULE_KERNEL | PSP_MODULE_SINGLE_START | PSP_MODULE_SINGLE_LOAD | PSP_MODULE_NO_STOP, 1, 0);
 
+int psp_model = 0;
+
 int SysEventHandler(int eventId, char *eventName, void *param, int *result);
 
 PspSysEventHandler sysEventHandler =
@@ -58,12 +60,20 @@ void OnModuleStart(SceModule2 *mod)
 
 	if (strcmp(moduleName, "sceUtility_Driver") == 0)
 	{
-		SceModule2 *mod2 = (SceModule2 *)sceKernelFindModuleByName("sceMSFAT_Driver");
+		if (psp_model == PSP_GO){
+			SceModule2 *mod2 = (SceModule2 *)sceKernelFindModuleByName("sceFATFS_Driver");
 
-		MAKE_CALL(mod2->text_addr + 0x30fc, df_openPatched);
-		MAKE_CALL(mod2->text_addr + 0x3ba4, df_dopenPatched);
-		MAKE_CALL(mod2->text_addr + 0x44cc, df_devctlPatched);
+			MAKE_CALL(mod2->text_addr + 0x3144, df_openPatched);
+			MAKE_CALL(mod2->text_addr + 0x3BEC, df_dopenPatched);
+			MAKE_CALL(mod2->text_addr + 0x4514, df_devctlPatched);
+		}
+		else {
+			SceModule2 *mod2 = (SceModule2 *)sceKernelFindModuleByName("sceMSFAT_Driver");
 
+			MAKE_CALL(mod2->text_addr + 0x30fc, df_openPatched);
+			MAKE_CALL(mod2->text_addr + 0x3ba4, df_dopenPatched);
+			MAKE_CALL(mod2->text_addr + 0x44cc, df_devctlPatched);
+		}
 		ClearCaches();
 	}
 	else if (strcmp(moduleName, "sceLflashFatfmt") == 0)
@@ -83,9 +93,7 @@ void OnModuleStart(SceModule2 *mod)
 	}
 	else if (strcmp(moduleName, "sceMediaSync") == 0)
 	{
-		//TODO make this patch dynamic
 		MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x135c);
-
 		ClearCaches();
 	}
 
@@ -94,6 +102,7 @@ void OnModuleStart(SceModule2 *mod)
 
 int module_start(SceSize args, void *argp)
 {
+	psp_model = sceKernelGetModel();
 	InstallFlashEmu();
 	previous = sctrlHENSetStartModuleHandler(OnModuleStart);
 	sctrlHENSetRebootexOverride(rebootbuffer_ms_psp);

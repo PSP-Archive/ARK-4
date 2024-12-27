@@ -1,3 +1,4 @@
+#include "systemctrl.h"
 #include "rebootex.h"
 #include "pspbtcnf.h"
 
@@ -5,20 +6,87 @@
 #include <fat.h>
 #endif
 
+// This replaces UMD driver with Inferno at all times, prevents crashes on consoles with broken Lepton
+//#define NO_LEPTON 1
+
+//io flags
+extern volatile int rebootmodule_set;
+extern volatile int rebootmodule_open;
+extern volatile char *p_rmod;
+extern volatile int size_rmod;
+extern void* rtm_buf;
+extern int rtm_size;
+
+//io functions
+extern int (* sceBootLfatOpen)(char * filename);
+extern int (* sceBootLfatRead)(char * buffer, int length);
+extern int (* sceBootLfatClose)(void);
+
+enum {
+    CFW_ARK,
+    CFW_PRO,
+    CFW_ME
+};
+
+static int cfw_type = CFW_ARK;
+static int psp_model = PSP_1000;
+
 extern int UnpackBootConfigPatched(char **p_buffer, int length);
 
+int file_exists(const char *path)
+{
+	int ret;
+
+    #ifdef MS_IPL
+    ret = MsFatOpen(path);
+    #else
+	ret = (*sceBootLfatOpen)(path);
+    #endif
+
+	if(ret >= 0) {
+        #ifdef MS_IPL
+        MsFatClose(path);
+        #else
+		(*sceBootLfatClose)();
+        #endif
+		return 1;
+	}
+
+	return 0;
+}
+
 int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(void *, void *, void *)){
-    u32 text_addr = loadCoreModuleStartCommon(start);
-#ifdef MS_IPL
-    // TODO make these patches dynamic
-	// disable unsign check
-	_sw(0x1021, text_addr + 0x5994);
-	_sw(0x1021, text_addr + 0x59C4);
-	_sw(0x1021, text_addr + 0x5A5C);
-#endif
+    loadCoreModuleStartCommon(start);
+
     flushCache();
     return start(arg1, arg2, arg3);
 }
+
+#ifdef PAYLOADEX
+#ifndef MS_IPL
+void xor_cipher(u8* data, u32 size, u8* key, u32 key_size)
+{
+    u32 i;
+
+    for (i = 0; i < size; i++)
+    {
+        data[i] ^= key[i % key_size];
+    }
+}
+
+int MEPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize){
+    xor_cipher((u8*)prx + 0x150, 0x10, prx->key_data1, 0x10);
+    xor_cipher((u8*)prx + 0x150, prx->comp_size, &prx->scheck[0x38], 0x20);
+    unPatchLoadCorePRXDecrypt();
+    return 0;
+}
+
+int MECheckExec(unsigned char * addr, void * arg2){
+    unPatchLoadCoreCheckExec();
+    return 0;
+}
+#endif
+#endif
 
 // patch reboot on psp
 void patchRebootBuffer(){
@@ -104,7 +172,10 @@ int patch_bootconf_vsh(char *buffer, int length)
     if (newsize > 0) result = newsize;
 
     newsize = AddPRX(buffer, "/kd/vshbridge_tool.prx", PATH_VSHCTRL+sizeof(PATH_FLASH0)-2, VSH_RUNLEVEL );
-    if (newsize > 0) result = newsize;
+    if (newsize > 0){
+        ark_config->exec_mode = PSP_TOOL;
+        result = newsize;
+    }
 
     return result;
 }
@@ -229,9 +300,121 @@ int patch_bootconf_updaterumd(char *buffer, int length)
     return result;
 }
 
+int is_fatms371(void)
+{
+	return file_exists(PATH_FATMS_HELPER + sizeof("flash0:") - 1) && file_exists(PATH_FATMS_371 + sizeof("flash0:") - 1);
+}
+
+int patch_bootconf_fatms371(char *buffer, int length)
+{
+	int newsize;
+
+	newsize = AddPRX(buffer, "/kd/fatms.prx", PATH_FATMS_HELPER+sizeof(PATH_FLASH0)-2, 0xEF & ~VSH_RUNLEVEL);
+	RemovePrx(buffer, "/kd/fatms.prx", 0xEF & ~VSH_RUNLEVEL);
+	newsize = AddPRX(buffer, "/kd/wlan.prx", PATH_FATMS_371+sizeof(PATH_FLASH0)-2, 0xEF & ~VSH_RUNLEVEL);
+
+	return newsize;
+}
+
+#ifdef PAYLOADEX
+#ifndef MS_IPL
+int patch_bootconf_pro(char *buffer, int length)
+{
+    struct {
+        u32 magic;
+        u32 rebootex_size;
+        u32 p2_size;
+        u32 p9_size;
+        char *insert_module_before;
+        void *insert_module_binary;
+        u32 insert_module_size;
+        u32 insert_module_flags;
+        u32 psp_fw_version;
+        u8 psp_model;
+        u8 iso_mode;
+        u8 recovery_mode;
+        u8 ofw_mode;
+        u8 iso_disc_type;
+    }* conf = (void*)(REBOOTEX_CONFIG);
+
+    int result = length;
+    int newsize;
+
+    memset(conf, 0, 0x100);
+    conf->magic = 0xC01DB15D;
+    conf->psp_model = psp_model;
+    conf->rebootex_size = 0;
+    conf->psp_fw_version = FW_661;
+
+    // Insert SystemControl
+    newsize = AddPRX(buffer, "/kd/init.prx", PATH_SYSTEMCTRL_PRO+sizeof(PATH_FLASH0)-2, 0x000000EF);
+    if (newsize > 0) result = newsize;
+
+    // Insert VSHControl
+    if (SearchPrx(buffer, "/vsh/module/vshmain.prx") >= 0) {
+        newsize = AddPRX(buffer, "/kd/vshbridge.prx", PATH_VSHCTRL_PRO+sizeof(PATH_FLASH0)-2, VSH_RUNLEVEL );
+        if (newsize > 0) result = newsize;
+    }
+
+    // insert recovery
+    if (ark_config->recovery){
+        RemovePrx(buffer, "/vsh/module/vshmain.prx", VSH_RUNLEVEL);
+        newsize = AddPRX(buffer, "/vsh/module/vshmain.prx", PATH_RECOVERY_PRO+sizeof(PATH_FLASH0)-2, VSH_RUNLEVEL);
+        if (newsize > 0) result = newsize;
+    }
+
+    return result;
+}
+int patch_bootconf_me_recovery(char *buffer, int length)
+{
+    int result = length;
+    int newsize;
+
+    newsize = AddPRX(buffer, "/kd/usersystemlib.prx", "/kd/usbstorms.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/kd/usersystemlib.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/kd/libatrac3plus.prx", "/kd/usbstorboot.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/kd/libatrac3plus.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/kd/mediasync.prx", "/kd/usbstor.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/kd/mediasync.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/kd/vshctrl_02g.prx", "/kd/usbstormgr.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/kd/vshctrl_02g.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/vsh/module/paf.prx", "/kd/usbdev.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/vsh/module/paf.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/vsh/module/common_gui.prx", "/kd/lflash_fatfmt.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/vsh/module/common_gui.prx", VSH_RUNLEVEL);
+
+    newsize = AddPRX(buffer, "/vsh/module/common_util.prx", "/kd/usersystemlib.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/vsh/module/common_util.prx", VSH_RUNLEVEL);
+    
+    newsize = AddPRX(buffer, "/vsh/module/vshmain.prx", "/vsh/module/recovery.prx", VSH_RUNLEVEL);
+    if (newsize > 0) result = newsize;
+    RemovePrx(buffer, "/vsh/module/vshmain.prx", VSH_RUNLEVEL);
+    
+    if (psp_model == PSP_GO)
+    {
+        newsize = AddPRX(buffer, "/vsh/module/mcore.prx", "/kd/usbstoreflash.prx", VSH_RUNLEVEL);
+        if (newsize > 0) result = newsize;
+        RemovePrx(buffer, "/vsh/module/mcore.prx", VSH_RUNLEVEL);
+    }
+}
+#endif
+#endif
+
 int UnpackBootConfigPatched(char **p_buffer, int length)
 {
-    int result;
+    int result = length;
     int newsize;
     char *buffer;
 
@@ -239,6 +422,25 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     buffer = (void*)BOOTCONFIG_TEMP_BUFFER;
     memcpy(buffer, *p_buffer, length);
     *p_buffer = buffer;
+
+    #ifdef PAYLOADEX
+    #ifndef MS_IPL
+    if (cfw_type == CFW_PRO){
+        newsize = patch_bootconf_pro(buffer, result);
+        if (newsize > 0) result = newsize;
+        return result;
+    }
+    else if (cfw_type == CFW_ME){
+        // clear config
+        memset((void*)0x88FB0000, 0, 0x100);
+        if (ark_config->recovery){
+            newsize = patch_bootconf_me_recovery(buffer, result);
+            if (newsize > 0) result = newsize;
+        }
+        return result;
+    }
+    #endif
+    #endif
 
     // Insert SystemControl
     newsize = AddPRX(buffer, "/kd/init.prx", PATH_SYSTEMCTRL+sizeof(PATH_FLASH0)-2, 0x000000EF);
@@ -254,33 +456,38 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
     
     // Insert VSHControl
     if (SearchPrx(buffer, "/vsh/module/vshmain.prx") >= 0) {
-        newsize = patch_bootconf_vsh(buffer, length);
+        newsize = patch_bootconf_vsh(buffer, result);
         if (newsize > 0) result = newsize;
     }
 
     // Insert Popcorn
-    newsize = patch_bootconf_pops(buffer, length);
+    newsize = patch_bootconf_pops(buffer, result);
     if (newsize > 0) result = newsize;
 
-    // Insert Inferno and RTM
+    // Insert Inferno
     if (IS_ARK_CONFIG(reboot_conf)){
         switch(reboot_conf->iso_mode) {
+            default:
+                #ifndef NO_LEPTON
+                break;
+                #endif
             case MODE_VSHUMD:
-                newsize = patch_bootconf_vshumd(buffer, length);
+                #ifndef NO_LEPTON
+                newsize = patch_bootconf_vshumd(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
+                #endif
             case MODE_UPDATERUMD:
-                newsize = patch_bootconf_updaterumd(buffer, length);
+                #ifndef NO_LEPTON
+                newsize = patch_bootconf_updaterumd(buffer, result);
                 if (newsize > 0) result = newsize;
                 break;
-            case MODE_NP9660:
+                #endif
             case MODE_MARCH33:
             case MODE_INFERNO:
                 reboot_conf->iso_mode = MODE_INFERNO;
-                newsize = patch_bootconf_inferno(buffer, length);
+                newsize = patch_bootconf_inferno(buffer, result);
                 if (newsize > 0) result = newsize;
-                break;
-            default:
                 break;
         }
         //reboot variable set
@@ -293,6 +500,12 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
                 setRebootModule();
             }
         }
+    }
+
+    if(!ark_config->recovery && is_fatms371())
+    {
+        newsize = patch_bootconf_fatms371(buffer, length);
+        if (newsize > 0) result = newsize;
     }
 
 #ifdef MS_IPL
@@ -309,19 +522,6 @@ int UnpackBootConfigPatched(char **p_buffer, int length)
 }
 
 // IO Patches
-
-//io flags
-extern volatile int rebootmodule_set;
-extern volatile int rebootmodule_open;
-extern volatile char *p_rmod;
-extern volatile int size_rmod;
-extern void* rtm_buf;
-extern int rtm_size;
-
-//io functions
-extern int (* sceBootLfatOpen)(char * filename);
-extern int (* sceBootLfatRead)(char * buffer, int length);
-extern int (* sceBootLfatClose)(void);
 
 #ifdef MS_IPL
 char path[128];
@@ -385,6 +585,41 @@ int _sceBootLfatOpen(char * filename)
 
 	return MsFatOpen(path);
 #else
+
+    // patch to allow custom boot
+    if (strncmp(filename+4, "pspbtcnf", 8) == 0){
+        int res = sceBootLfatOpen("/arkcipl.cfg");
+        if (res == 0){
+            char cfg[64]; memset(cfg, 0, sizeof(cfg));
+            sceBootLfatRead(cfg, sizeof(cfg));
+            sceBootLfatClose();
+            #ifdef PAYLOADEX
+            if (cfg[0]){
+                if (strcmp(cfg, "cfw=pro") == 0){
+                    cfw_type = CFW_PRO;
+                }
+                else if (strcmp(cfg, "cfw=me") == 0) {
+                    cfw_type = CFW_ME;
+                    filename[9] = 'j'; // pspbtjnf
+                    extraPRXDecrypt = &MEPRXDecrypt;
+                    extraCheckExec = &MECheckExec;
+                }
+            }
+            #endif
+        }
+        else {
+            // check for custom btcnf
+            filename[6] = 't'; // pstbtcnf.bin
+            res = sceBootLfatOpen(filename);
+            if (res >= 0) return res;
+            filename[6] = 'p'; // fallback
+        }
+
+        if (filename[12] == '_'){
+            psp_model = (10*(filename[13]-'0') + (filename[14]-'0')) - 1;
+        }
+    }
+
     //forward to original function
     return sceBootLfatOpen(filename);
 #endif

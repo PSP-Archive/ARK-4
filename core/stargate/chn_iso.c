@@ -25,11 +25,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include "systemctrl.h"
+#include <systemctrl.h>
 #include "systemctrl_private.h"
 #include "kubridge.h"
 #include "strsafe.h"
-#include "globals.h"
+#include <ark.h>
 #include "macros.h"
 
 typedef struct _pspMsPrivateDirent {

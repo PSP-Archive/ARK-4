@@ -7,6 +7,9 @@
 #include "controller.h"
 #include "graphics.h"
 
+#define PBP_MAGIC 0x50425000
+#define PS1_CAT 0x454D
+
 typedef struct
 {
     u32 magic;
@@ -21,6 +24,24 @@ typedef struct
     u32 psar_offset;
 } PBPHeader;
 
+typedef struct  __attribute__((packed)) {
+	u32 signature;
+	u32 version;
+	u32 fields_table_offs;
+	u32 values_table_offs;
+	int nitems;
+} SFOHeader;
+
+typedef struct __attribute__((packed)) {
+	u16 field_offs;
+	u8  unk;
+	u8  type; // 0x2 -> string, 0x4 -> number
+	u32 unk2;
+	u32 unk3;
+	u16 val_offs;
+	u16 unk4;
+} SFODir;
+
 using namespace std;
 
 class Entry{
@@ -33,17 +54,25 @@ class Entry{
         Image* icon0;
         Image* pic0;
         Image* pic1;
-        PBPHeader* header;
+        PBPHeader header;
+        unsigned char* sfo_buffer;
 
         void readHeader();
-        Image* loadIcon();
+        void findNameInParam();
         
         void animAppear();
         void animDisappear();
-        
+
+        Entry(string path);
+        bool isPops();
+
+                
+        Image* loadPic0();
+        Image* loadPic1();
+
     public:
     
-        Entry(string path);
+        static Entry* createIfPops(string path);
         ~Entry();
         
         string getName();
@@ -53,13 +82,14 @@ class Entry{
         string getEbootName();
         
         Image* getIcon();
-        
-        Image* getPic0();
-        
-        Image* getPic1();
+
+        void loadIcon();
+        void unloadIcon();
         
         bool run();
-        
+
+        static bool cmpEntriesForSort (Entry* i, Entry* j);
+        static bool getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size);
 };
 
 #endif

@@ -5,14 +5,13 @@
 #include <unistd.h>
 #include <algorithm>
 #include <stdlib.h>
+#include <systemctrl.h>
 #include "system_mgr.h"
 #include "gamemgr.h"
 #include "music_player.h"
 #include "osk.h"
 #include "lang.h"
 #include "texteditor.h"
-
-extern int sctrlKernelMsIsEf();
 
 static GameManager* self = NULL;
 
@@ -26,10 +25,10 @@ GameManager* GameManager::getInstance(){
 }
 
 GameManager::GameManager(){
-
     // set the global self variable as this instance for the threads to use it
     self = this;
-    
+
+    scroll.w = 0;
     this->use_categories = true;
     this->scanning = true;
     this->optionsmenu = NULL;
@@ -39,14 +38,13 @@ GameManager::GameManager(){
     for (int i=0; i<MAX_CATEGORIES; i++){
         this->categories[i] = new Menu((EntryType)i);
     }
-    
+
     // start the multithreaded icon loading
     this->maxDraw = MAX_CATEGORIES;
     this->dynamicIconRunning = ICONS_LOADING;
     this->iconSema = sceKernelCreateSema("icon0_sema",  0, 1, 1, NULL);
     this->iconThread = sceKernelCreateThread("icon0_thread", GameManager::loadIcons, 0x10, 0x20000, PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU, NULL);
     sceKernelStartThread(this->iconThread,  0, NULL);
-    
 }
 
 GameManager::~GameManager(){
@@ -142,7 +140,12 @@ void GameManager::findEntries(){
     this->findEboots("ms0:/PSP/VHBL/");
     this->findEboots("ms0:/PSP/APPS/");
     this->findEboots("ms0:/PSP/GAME/");
-    if (!ms_is_ef) this->findEboots("ef0:/PSP/GAME/");
+    this->findEboots("ms0:/PSP/GAME150/");
+    if (!ms_is_ef) {
+        this->findEboots("ef0:/PSP/VHBL/");
+        this->findEboots("ef0:/PSP/APPS/");
+        this->findEboots("ef0:/PSP/GAME/");
+    }
     // scan ISOs
     this->findISOs("ms0:/ISO/");
     if (!ms_is_ef) this->findISOs("ef0:/ISO/");
@@ -160,9 +163,15 @@ void GameManager::findEntries(){
 
     // add recovery menu
     if (common::getConf()->show_recovery){
-        string recovery_path = string(common::getArkConfig()->arkpath) + "RECOVERY.PBP";
+        string recovery_path = string(common::getArkConfig()->arkpath) + ARK_RECOVERY;
+        string recovery_prx = string(common::getArkConfig()->arkpath) + RECOVERY_PRX;
         if (common::fileExists(recovery_path)){
             Eboot* recovery_menu = new Eboot(recovery_path);
+            recovery_menu->setName("Recovery Menu");
+            this->categories[HOMEBREW]->getVector()->insert(this->categories[HOMEBREW]->getVector()->begin(), recovery_menu);
+        }
+        else if (common::fileExists(recovery_prx)){
+            Eboot* recovery_menu = new Eboot(string(common::getArkConfig()->arkpath) + VBOOT_PBP); // fake entry
             recovery_menu->setName("Recovery Menu");
             this->categories[HOMEBREW]->getVector()->insert(this->categories[HOMEBREW]->getVector()->begin(), recovery_menu);
         }
@@ -187,11 +196,15 @@ void GameManager::findEboots(const char* path){
         return;
         
     while ((dit = readdir(dir))){
-		if (strstr(dit->d_name, "%") != NULL) continue;
-        if (strcmp(dit->d_name, ".") == 0) continue;
-        if (strcmp(dit->d_name, "..") == 0) continue;
-        if (!FIO_SO_ISDIR(dit->d_stat.st_attr)) continue;
-        if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue;
+        if (strstr(dit->d_name, "%") != NULL) continue; // ignore 1.50 kxploit format
+        if (strcmp(dit->d_name, ".") == 0) continue; // ignore "cur dir"
+        if (strcmp(dit->d_name, "..") == 0) continue; // ignore "parent dir"
+        if (!FIO_SO_ISDIR(dit->d_stat.st_attr)) continue; // ignore files
+        if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue; // ignore hidden?
+        if (strcmp(dit->d_name, "NPUZ01234") == 0
+            || strcmp(dit->d_name, "SCPS10084") == 0
+            || strcmp(dit->d_name, "ARK_Loader") == 0)
+            continue; // ignore ARK launchers
         
         string fullpath = Eboot::fullEbootPath(path, dit->d_name);
         if (fullpath == ""){
@@ -219,10 +232,6 @@ void GameManager::findISOs(const char* path){
     SceIoDirent* dit = &entry;
     memset(&entry, 0, sizeof(SceIoDirent));
 
-    pspMsPrivateDirent* pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
-    pri_dirent->size = sizeof(pspMsPrivateDirent);
-    entry.d_private = (void*)pri_dirent;
-
     if (dir < 0)
         return;
         
@@ -233,7 +242,6 @@ void GameManager::findISOs(const char* path){
         if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue;
 
         string fullpath = string(path)+string(dit->d_name);
-        string shortpath = string(path) + string((const char*)pri_dirent);
 
         if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
             if (common::getConf()->scan_cat && string(dit->d_name) != string("VIDEO")){
@@ -241,14 +249,9 @@ void GameManager::findISOs(const char* path){
             }
             continue;
         }
-        if (strlen(dit->d_name) < strlen((char*)pri_dirent)){
-            fullpath = shortpath;
-        }
         if (Iso::isISO(fullpath.c_str())) this->categories[GAME]->addEntry(new Iso(fullpath));
-        else if (Iso::isISO(shortpath.c_str())) this->categories[GAME]->addEntry(new Iso(shortpath));
     }
     sceIoDclose(dir);
-    free(pri_dirent);
 }
 
 void GameManager::findSaveEntries(const char* path){
@@ -351,12 +354,14 @@ void GameManager::moveRight(){
 void GameManager::moveUp(){
     if (selectedCategory < 0)
         return;
+    scroll.tmp = scroll.x; // reset text scroll
     this->categories[this->selectedCategory]->moveUp();
 }
 
 void GameManager::moveDown(){
     if (selectedCategory < 0)
         return;
+    scroll.tmp = scroll.x; // reset text scroll
     this->categories[this->selectedCategory]->moveDown();
 }
 
@@ -366,8 +371,18 @@ void GameManager::stopFastScroll(){
     this->categories[this->selectedCategory]->stopFastScroll();
 }
 
+string GameManager::getFooter(){
+	return "";
+}
+
 string GameManager::getInfo(){
-    if (selectedCategory >= 0) return getEntry()->getName();
+    if (selectedCategory >= 0){
+        Entry* e = getEntry();
+        if (common::getConf()->show_path){
+            return e->getName() + " <" + e->getPath() + ">"; 
+        }
+        return e->getName();
+    }
     else if (selectedCategory == -1) return "Loading games...";
     else if (selectedCategory == -2) return "No games available";
     return "Unknown Menu State";
@@ -448,9 +463,11 @@ void GameManager::control(Controller* pad){
 
 void GameManager::updateGameList(const char* path){
     if (path == NULL 
-          || strncmp(path, "ms0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ms0:/ISO/", 9) == 0
-          || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ef0:/ISO/", 9) == 0
-          || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ms0:/PSP/APPS/", 9) == 0
+        || strncmp(path, "ms0:/PSP/GAME/", 14) == 0 || strncmp(path, "ms0:/ISO/", 9) == 0
+        || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || strncmp(path, "ef0:/ISO/", 9) == 0
+        || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || strncmp(path, "ms0:/PSP/APPS/", 14) == 0
+        || strncmp(path, "ef0:/PSP/VHBL/", 14) == 0 || strncmp(path, "ef0:/PSP/APPS/", 14) == 0
+        || strncmp(path, "ms0:/PSP/GAME150/", 17) == 0
       ){
         int icon_status = self->dynamicIconRunning;
         if (icon_status == ICONS_LOADING){
@@ -458,6 +475,9 @@ void GameManager::updateGameList(const char* path){
         }
         SystemMgr::pauseDraw();
         self->selectedCategory = -1;
+        for (int i=0; i<MAX_CATEGORIES; i++){
+            self->categories[i]->clearEntries();
+        }
         SystemMgr::resumeDraw();
         if (icon_status == ICONS_LOADING){
             self->resumeIcons();
@@ -473,7 +493,7 @@ void GameManager::execApp(){
 
     loadingData = true;
     this->waitIconsLoad();
-    this->getEntry()->getTempData1();
+    this->getEntry()->loadPics();
     loadingData = false;
     if (this->getEntry()->pmfPrompt()){
         this->endAllThreads();
@@ -497,6 +517,7 @@ void GameManager::gameOptionsMenu(){
     delete aux;
 
     switch (ret){
+
     case 0:{
         // create a new options menu but each entry is some info about the game
         Entry* e = this->getEntry();
@@ -519,8 +540,8 @@ void GameManager::gameOptionsMenu(){
             {-1, "Cancel"},
             {0, (char*)fullname.c_str()},
             {1, (char*)gameid.c_str()},
-            {2, (char*)size.c_str()},
-            {3, (char*)fullpath.c_str()}
+            {3, (char*)size.c_str()},
+            {2, (char*)fullpath.c_str()},
         };
         optionsmenu = new OptionsMenu("Game Info", sizeof(gameinfo_entries)/sizeof(t_options_entry), gameinfo_entries);
         int res = optionsmenu->control();
@@ -531,6 +552,7 @@ void GameManager::gameOptionsMenu(){
             TextEditor::clipboard = game_info[res];
         }
     } break;
+
     case 1:{
         // rename the ISO or Eboot folder name
         SystemMgr::pauseDraw();
@@ -559,10 +581,10 @@ void GameManager::gameOptionsMenu(){
         osk.end();
         SystemMgr::resumeDraw();
     } break;
+
     case 2:{
         // remove current entry from list (adjusting index and selectedCategory accordingly), delete file or folder depending on ISO/EBOOT
         // make checks to prevent deleting stuff like "UMD Drive" and "Recovery" entries
-
         t_options_entry opts[] = {
             {OPTIONS_CANCELLED, "Cancel"},
             {0, "Confirm"},
@@ -626,6 +648,7 @@ void GameManager::gameOptionsMenu(){
             delete e;
         }
     }break;
+
     default: break;
     }
 }

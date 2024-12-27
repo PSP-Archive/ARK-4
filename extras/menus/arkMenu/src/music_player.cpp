@@ -10,7 +10,7 @@ static int cur_play = 0;
 static void mp3_cleanup(MP3* music){
     printf("cleaning up mp3\n");
     if (music == current_song){
-        if (cur_play+1 < playlist.size()){
+       if (cur_play+1 < playlist.size()){
             cur_play++;
             current_song = new MP3((char*)playlist[cur_play].c_str());
             current_song->on_music_end = mp3_cleanup;
@@ -21,6 +21,7 @@ static void mp3_cleanup(MP3* music){
             playlist.clear();
             cur_play = 0;
         }
+		
         delete music;
     }
 }
@@ -34,6 +35,7 @@ static void add_playlist(string path){
 
 MusicPlayer::MusicPlayer(string path){
     this->path = path;
+    scroll.w = 400;
     if (playlist.size()){
         add_playlist(path);
     }
@@ -41,6 +43,7 @@ MusicPlayer::MusicPlayer(string path){
 
 MusicPlayer::MusicPlayer(vector<string>* pl){
     this->path = pl->at(0);
+    scroll.w = 400;
     for (int i=0; i<pl->size(); i++){
         add_playlist(pl->at(i));
     }
@@ -87,17 +90,19 @@ int MusicPlayer::control(){
 
     SystemMgr::enterFullScreen();
 
+    MP3::fullStop();
+
     if (current_song != NULL && this->path != current_song->getFilename() && playlist.size() == 0){
         delete current_song;
         current_song = NULL;
     }
 
-    if (current_song == NULL){
-        current_song = new MP3((char*)path.c_str(), false);
+	if(current_song == NULL) {
+		current_song = new MP3((char*)path.c_str(), false);
         current_song->on_music_end = mp3_cleanup;
-        current_song->play();
-    }
-    
+		current_song->play();
+	}
+
     while (running && MP3::isPlaying()){
         pad.update();
 
@@ -127,6 +132,9 @@ int MusicPlayer::control(){
                 current_song->stop();
             }
         }
+		if(current_song == NULL && playlist.size() != 0) {
+			current_song->stop();
+		}
     }
     pad.flush();
     
@@ -141,4 +149,12 @@ void MusicPlayer::pauseResume(){
 
 bool MusicPlayer::isPlaying(){
     return (current_song != NULL && current_song->isPlaying() && !current_song->isPaused());
+}
+
+void MusicPlayer::fullStop(){
+    if (current_song) current_song->on_music_end = NULL;
+    while (MP3::isPlaying()){
+        MP3::fullStop();
+        sceKernelDelayThread(1000);
+    }
 }

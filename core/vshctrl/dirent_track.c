@@ -20,8 +20,8 @@
 #include <stdlib.h>
 #include <pspsdk.h>
 #include <pspthreadman_kernel.h>
-#include "systemctrl.h"
-#include "systemctrl_se.h"
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 #include "systemctrl_private.h"
 #include "strsafe.h"
 #include "dirent_track.h"

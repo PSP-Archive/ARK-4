@@ -18,8 +18,6 @@
 #include "main.h"
 #include <functions.h>
 
-#define TEST_EBOOT "ms0:/EBOOT.PBP"
-
 char* running_ark = "Running ARK-4 in ?PS? mode";
 
 ARKConfig default_config = {
@@ -33,12 +31,14 @@ ARKConfig default_config = {
 ARKConfig* ark_config = NULL;
 
 extern void loadKernelArk();
+extern void copyPSPVram(u32*);
 
 // K.BIN entry point
 void (* kEntryPoint)() = (void*)KXPLOIT_LOADADDR;
+char* kbin_path = NULL;
 
-void autoDetectDevice(ARKConfig* config);
-int initKxploitFile();
+int autoDetectDevice(ARKConfig* config);
+int initKxploitFile(char*);
 void kernelContentFunction(void);
 
 // Entry Point
@@ -47,6 +47,8 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
 
     // Clear BSS Segment
     clearBSS();
+
+    void (*KernelExitGame)() = (void*)RelocImport("LoadExecForUser", 0x05572A5F, 0);
 
     // init function table
     if (arg1 == NULL)
@@ -66,18 +68,10 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
 
     // init screen
     initScreen(g_tbl->DisplaySetFrameBuf);
-    if (IS_VITA_POPS(ark_config)){
-        // configure to handle POPS screen
-        initVitaPopsVram();
-        setScreenHandler(&copyPSPVram);
-    }
 
     PRTSTR("Loading ARK-4");
     
-    if (isKernel()){ // already in kernel mode?
-        kernelContentFunction();
-        return 0;
-    }
+    g_tbl->freeMem(g_tbl);
     
     // read kxploit file into memory and initialize it
     char* err = NULL;
@@ -110,45 +104,54 @@ int exploitEntry(ARKConfig* arg0, UserFunctions* arg1, char* kxploit_file){
         err = "Could not open kxploit file!";
     }
     
-    PRTSTR2("ERROR (%d): %s", res, err);
+    PRTSTR2("ERROR (%p): %s", res, err);
     PRTSTR("Exiting...");
-    g_tbl->KernelDelayThread(10000);
-    void (*KernelExitGame)() = (void*)RelocImport("LoadExecForUser", 0x05572A5F, 0);
+    g_tbl->KernelDelayThread(50000000);
     if (KernelExitGame) KernelExitGame();
 
     return res;
 }
 
-void autoDetectDevice(ARKConfig* config){
+int autoDetectDevice(ARKConfig* config){
     // determine execution mode by scanning for certain modules
-    if (k_tbl->KernelFindModuleByName == NULL) return;
+    if (k_tbl->KernelFindModuleByName == NULL) return -1;
     SceModule2* kermit_peripheral = k_tbl->KernelFindModuleByName("sceKermitPeripheral_Driver");
     if (kermit_peripheral){ // kermit is Vita-only
         SceModule2* pspvmc = k_tbl->KernelFindModuleByName("pspvmc_Library");
         if (pspvmc){ // pspvmc loaded means we're in Vita POPS
             config->exec_mode = PSV_POPS;
+            return 0;
         }
         else{
             SceModule2* sctrl = k_tbl->KernelFindModuleByName("SystemControl");
-            if (sctrl){ // SystemControl loaded mean's we're running under a Custom Firmware
-                // check if running ARK-4 (CompatLayer)
+            if (sctrl){
+                // SystemControl loaded mean's we're running under a Custom Firmware
                 if (k_tbl->KernelFindModuleByName("ARKCompatLayer") != NULL){
-                    // ARK-4 -> exit game
-                    void (*KernelExitGame)() = (void*)FindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F);
-                    KernelExitGame();
+                    // ARK-4
+                    return -1;
                 }
                 else{
-                    // Adrenaline
-                    config->exec_mode = PSV_ADR;
+                    u32 kuKernelMemcpy = k_tbl->FindFunction("SystemControl", "KUBridge", 0x6B4B577F);
+                    if (kuKernelMemcpy == 0){
+                        // Adrenaline
+                        config->exec_mode = PSV_ADR;
+                        return 0;
+                    }
+                    else {
+                        // early ARK?
+                        return -1;
+                    }
                 }
             }
             else{ // no module found, must be stock pspemu
                 config->exec_mode = PS_VITA;
+                return 0;
             }
         }
     }
     else{ // no kermit, not a vita
         config->exec_mode = PSP_ORIG;
+        return 0;
     }
 }
 
@@ -163,6 +166,8 @@ int initKxploitFile(char* kxploit_file){
         kxploit_file = k_path;
     }
     PRTSTR1("Loading Kxploit at %s", kxploit_file);
+    kbin_path = kxploit_file;
+    memset((void *)KXPLOIT_LOADADDR, 0, 0x4000);
     g_tbl->IoRead(fd, (void *)KXPLOIT_LOADADDR, 0x4000);
     g_tbl->IoClose(fd);
     g_tbl->KernelDcacheWritebackAll();
@@ -202,7 +207,10 @@ void kernelContentFunction(void){
 
     if (ark_config->exec_mode == DEV_UNK){
         PRTSTR("Autodetecting device");
-        autoDetectDevice(ark_config); // attempt to autodetect configuration
+        if (autoDetectDevice(ark_config) < 0){ // attempt to autodetect configuration
+            PRTSTR("Could not detect device, aborting...");
+            return;
+        }
     }
 
     // Output Exploit Reach Screen
@@ -218,9 +226,6 @@ void kernelContentFunction(void){
             running_ark[17] = 'e'; // show 'ePSP'
             if (IS_VITA_POPS(ark_config)){
                 running_ark[20] = 'X'; // show 'ePSX'
-                // configure to handle POPS screen
-                initVitaPopsVram();
-                setScreenHandler(&copyPSPVram);
             }
         }
     }

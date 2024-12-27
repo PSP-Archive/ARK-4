@@ -1,199 +1,155 @@
 /*
-    Custom Emulator Firmware
-    Copyright (C) 2012-2014, Total_Noob
+	Custom Emulator Firmware
+	Copyright (C) 2012-2014, ColdBird/Total_Noob/Acid_Snake
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    (at your option) any later version.
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	(at your option) any later version.
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <common.h>
+#include <macros.h>
+#include <module2.h>
 #include "main.h"
-#include "systemctrl.h"
-#include "systemctrl_private.h"
-#include "module2.h"
-#include "macros.h"
 
 #include "spu/stdafx.h"
 
-PSP_MODULE_INFO("peops", 0, 1, 0);
+PSP_MODULE_INFO("peops", 0x0007, 1, 0);
 
-STMOD_HANDLER previous;
+void (*previous)(void*);
 
-PeopsConfig config;
-
-void (* libspuWrite)(int reg, int val, int type);
-void (* libspuCdrWrite)(int reg, int val);
-void (* libspuXaFunction)(char *sector, int mode);
+void (* spuWriteRegister)(int reg, int val, int type);
+void (* cdrTransferSector)(u8 *sector, int mode);
+void (* cdrWriteRegister)(int reg, int val);
 
 int cdr_is_first_sector = 1;
 xa_decode_t cdr_xa;
 
-SceUID spu_thid = -1;
-
 void SPUwait()
 {
-    switch(config.spuupdatemode)
-    {
-        case 0:
-            sceDisplayWaitVblankStart();
-            break;
-
-        case 1:
-            sceKernelDelayThread(2 * 1000);
-            break;
-
-        case 2:
-            sceKernelDelayThread(20 * 1000);
-            break;
-    }
+	sceKernelDelayThread(SPU_DELAY);
 }
 
 int spu_thread(SceSize args, void *argp)
 {
-    while(1)
-    {
-        SPUupdate();
-        SPUwait();
-    }
+	while(1)
+	{
+		SPUupdate();
+		SPUwait();
+	}
 
-    return 0;
+	return 0;
 }
-
-int priorities[] = { 17, 24, 32, 40, 48 };
-#define N_PRIORITIES (sizeof(priorities) / sizeof(int))
 
 void sceMeAudioInitPatched(int (* function)(), void *stack)
 {
-    SPUinit();
-    SPUopen();
+	SPUinit();
+	SPUopen();
 
-    int priority = priorities[config.sputhreadpriority % N_PRIORITIES];
-
-    spu_thid = sceKernelCreateThread("spu_thread", spu_thread, priority, 0x4000, 0, NULL);
-    if(spu_thid >= 0) sceKernelStartThread(spu_thid, 0, NULL);
+	SceUID thid = sceKernelCreateThread("spu_thread", spu_thread, SPU_PRIORITY_VERY_HIGH, 0x4000, 0, NULL);
+	if(thid >= 0) sceKernelStartThread(thid, 0, NULL);
 }
 
-void libspuWritePatched(int reg, int val, int type)
+void sceMeAudioNotifyPatched(int a0)
 {
-    SPUwriteRegister(reg, val);
-    libspuWrite(reg, val, type);
+	*(u8 *)0x49F40290 = 0;
+	(*(u8 *)0x49F40291)++;
+	*(u8 *)0x49F40293 = -2;
 }
 
-void libspuCdrWritePatched(int reg, int val)
+void spuWriteRegisterPatched(int reg, int val, int type)
 {
-    if(reg == 0x1F801801)
+	SPUwriteRegister(reg, val);
+	spuWriteRegister(reg, val, type);
+}
+
+void cdrTransferSectorPatched(u8 *sector, int mode)
+{
+	if(mode == 1)
+	{
+		SPUplayCDDAchannel(sector, 0x930);
+	}
+	else if(mode == 2)
+	{
+		if(cdr_is_first_sector != -1)
+		{
+			u8 *buf = sector + 0xC;
+
+			if(buf[4 + 2] & 0x4)
+			{
+				int ret = xa_decode_sector(&cdr_xa, buf + 4, cdr_is_first_sector);
+				if(ret == 0)
+				{
+					SPUplayADPCMchannel(&cdr_xa);
+					cdr_is_first_sector = 0;
+				}
+				else
+				{
+					cdr_is_first_sector = -1;
+				}
+			}
+		}
+	}
+
+	cdrTransferSector(sector, mode);
+}
+
+void cdrWriteRegisterPatched(int reg, int val)
+{
+	if(reg == 0x1F801801)
+	{
+		if(val == 6 || val == 27)
+		{
+			cdr_is_first_sector = 1;
+		}
+	}
+
+	cdrWriteRegister(reg, val);
+}
+
+void PatchPops(SceModule2* mod)
+{
+
+	u32 text_addr = mod->text_addr;
+
+	MAKE_CALL(text_addr + 0x1A038, sceMeAudioInitPatched);
+
+	REDIRECT_FUNCTION(text_addr + 0x3D264, sceMeAudioNotifyPatched);
+
+	HIJACK_FUNCTION(text_addr + 0x7F00, spuWriteRegisterPatched, spuWriteRegister);
+	HIJACK_FUNCTION(text_addr + 0x83E8, cdrTransferSectorPatched, cdrTransferSector);
+	HIJACK_FUNCTION(text_addr + 0xD1B0, cdrWriteRegisterPatched, cdrWriteRegister);
+
+	sceKernelDcacheWritebackAll();
+}
+
+void PeopsOnModuleStart(SceModule2 * mod){
+
+	// Patch PSP POPS SPU
+    if (strcmp(mod->modname, "pops") == 0)
     {
-        if(val == 6 || val == 27)
-        {
-            cdr_is_first_sector = 1;
-        }
+        PatchPops(mod);
     }
 
-    libspuCdrWrite(reg, val);
-}
+	// Forward to previous Handler
+    if(previous) previous(mod);
 
-void libspuXaFunctionPatched(char *sector, int mode)
-{
-    u8 *buf = (u8 *)sector + 0xC;
-
-    if(mode == 2)
-    {
-        if(cdr_is_first_sector != -1)
-        {
-            if(buf[4 + 2] & 0x4)
-            {
-                int ret = xa_decode_sector(&cdr_xa, buf + 4, cdr_is_first_sector);
-                if(ret == 0)
-                {
-                    SPUplayADPCMchannel(&cdr_xa);
-                    cdr_is_first_sector = 0;
-                }
-                else
-                {
-                    cdr_is_first_sector = -1;
-                }
-            }
-        }
-    }
-
-    libspuXaFunction(sector, mode);
-}
-
-void OnModuleStart(SceModule2 *mod)
-{
-    char *modname = mod->modname;
-    u32 text_addr = mod->text_addr;
-
-    if(strcmp(modname, "pops") == 0)
-    {
-        MAKE_JUMP_PATCH(text_addr + 0x1A038, sceMeAudioInitPatched);
-
-        HIJACK_FUNCTION(text_addr + 0x7F00, libspuWritePatched, libspuWrite);
-
-        if(config.enablexaplaying)
-        {
-            HIJACK_FUNCTION(text_addr + 0xD1B0, libspuCdrWritePatched, libspuCdrWrite);
-            HIJACK_FUNCTION(text_addr + 0x83E8, libspuXaFunctionPatched, libspuXaFunction);
-        }
-
-        sceKernelDcacheWritebackAll();
-    }
-
-    if(previous)
-        previous(mod);
-}
-
-void load_game_profile(char * gameid)
-{
-    
-    #ifdef DEBUG
-    // Output Pointer (just in case)
-    printk("gameid pointer: %08X\n", (u32)gameid);
-    
-    // Output Debug Message
-    printk("Loading PEOPS audio profile for %s\n", gameid);
-    #endif
-    
-    loadGameSettings(gameid, &config);
 }
 
 int module_start(SceSize args, void *argp)
 {
-    load_game_profile((char *)argp);
-    
-    /*
-    SceUID fd = sceIoOpen("ms0:/peopsconf.bin", PSP_O_RDONLY, 0777);
-    
-    if (fd>=0){
-        sceIoRead(fd, &config, sizeof(config));
-        sceIoClose(fd);
-    }
-    */
-    
-    previous = sctrlHENSetStartModuleHandler(OnModuleStart);
-    return 0;
-}
 
-int module_stop(SceSize args, void *argp)
-{
-    if(spu_thid >= 0)
-    {
-        sceKernelTerminateDeleteThread(spu_thid);
-        sceKernelWaitThreadEnd(spu_thid, NULL);
-    }
-
-    SPUclose();
-    SPUshutdown();
-
-    return 0;
+	// Register Module Start Handler
+    previous = sctrlHENSetStartModuleHandler(PeopsOnModuleStart);
+	
+	return 0;
 }

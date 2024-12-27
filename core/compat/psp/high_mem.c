@@ -23,8 +23,8 @@
 #include <pspiofilemgr.h>
 #include <stdio.h>
 #include <string.h>
-#include "globals.h"
-#include "systemctrl.h"
+#include <ark.h>
+#include <systemctrl.h>
 #include "sysmem.h"
 
 typedef struct  __attribute__((packed))

@@ -45,10 +45,6 @@ int UnpackBootConfigVita(char **p_buffer, int length){
 // patch reboot on ps vita
 void patchRebootBuffer(){
 
-    _sw(0x44000000, 0xBC800100);
-    colorDebugSetIsVitaPops(1);
-    colorDebug(0xff00);
-
     // hijack UnpackBootConfig to insert modules at runtime
     _sw(0x27A40004, UnpackBootConfigArg); // addiu $a0, $sp, 4
     _sw(JAL(UnpackBootConfigVita), UnpackBootConfigCall); // Hook UnpackBootConfig

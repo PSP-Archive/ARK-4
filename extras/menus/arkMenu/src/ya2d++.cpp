@@ -9,7 +9,6 @@ Image::Image(){
 Image::Image(ya2d_texture* tex){
     this->texture = tex;
     this->is_system_image = false;
-    flush();
 }
 
 Image::Image(string filename, int place){
@@ -24,7 +23,6 @@ Image::Image(string filename, int place){
     else if (ext == "bmp"){
         this->texture = ya2d_load_BMP_file(filename.c_str(), place);
     }
-    flush();
 }
 
 Image::Image(void* buffer, int place){
@@ -34,20 +32,17 @@ Image::Image(void* buffer, int place){
         this->texture = ya2d_load_PNG_buffer(buffer, place);
     else if (magic == BMP_MAGIC)
         this->texture = ya2d_load_BMP_buffer(buffer, place);
-    flush();
 }
 
 Image::Image(void* buffer, unsigned long buffer_size, int place){
     this->is_system_image = false;
     if ( (*(u32*)buffer & 0x0000FFFF) == JPG_MAGIC)
         this->texture = ya2d_load_JPEG_buffer(buffer, buffer_size, place);
-    flush();
 }
 
 Image::Image(string filename, int place, SceOff offset){
     this->is_system_image = false;
     this->texture = ya2d_load_PNG_file_offset(filename.c_str(), place, offset);
-    flush();
 }
 
 Image::~Image(){

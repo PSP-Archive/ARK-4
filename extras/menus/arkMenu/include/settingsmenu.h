@@ -39,6 +39,7 @@ class SettingsMenu : public SystemEntry{
         int max_height;
         
         string info;
+        string footer;
         string name;
         
         int icon;
@@ -46,12 +47,16 @@ class SettingsMenu : public SystemEntry{
         TextScroll scroll;
         TextScroll scroll2;
 
-        void (*callback)();
+        void (*save_callback)();
+        void (*open_callback)();
+        void (*close_callback)();
         
     public:
     
         SettingsMenu(SettingsTable* table, void (*callback)(), bool shorten_paths, bool show_all_opts, bool show_info);
         ~SettingsMenu();
+
+        void setCallbacks(void (*save_callback)(), void (*open_callback)(), void (*close_callback)());
     
         void setCustomText(string text[], int n);
         void unsetCustomText();
@@ -71,6 +76,10 @@ class SettingsMenu : public SystemEntry{
         void setInfo(string info){
             this->info = info;
         }
+
+		void setFooter(string footer) {
+			this->footer = footer;
+		}
         
         void setName(string name){
             this->name = name;
@@ -79,6 +88,10 @@ class SettingsMenu : public SystemEntry{
         string getInfo(){
             return this->info;
         }
+
+		string getFooter() {
+			return this->footer;
+		}
         
         Image* getIcon(){
             return common::getImage(icon);

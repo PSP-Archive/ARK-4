@@ -1,7 +1,66 @@
+#include <systemctrl.h>
+#include <systemctrl_se.h>
+#include <sys/stat.h>
 #include "common.h"
 #include "entry.h"
 
 using namespace common;
+
+static t_conf config;
+
+struct tm today;
+
+static ARKConfig _ark_conf;
+ARKConfig* ark_config = &_ark_conf;
+
+static SEConfig _se_conf;
+SEConfig* se_config = &_se_conf;
+
+void common::resetConf(){
+    memset(&config, 0, sizeof(config));
+    config.fast_gameboot = 0;
+    config.language = 0;
+    config.font = 1;
+    config.plugins = 1;
+    config.scan_save = 0;
+    config.scan_cat = 0;
+    config.scan_dlc = 0;
+    config.swap_buttons = 0;
+    config.animation = 0;
+    config.main_menu = 0;
+    config.sort_entries = 1;
+    config.show_recovery = 1;
+    config.show_fps = 0;
+    config.text_glow = 3;
+    config.screensaver = 2;
+    config.redirect_ms0 = 0;
+    config.startbtn = 0;
+    config.menusize = 0;
+    config.show_path = 0;
+    config.browser_icon0 = 1;
+}
+
+
+void loadConfig(){
+    FILE* fp = fopen(MENU_SETTINGS, "rb");
+    if (fp == NULL){
+        resetConf();
+        return;
+    }   
+    memset(&config, 0, sizeof(t_conf));
+    fseek(fp, 0, SEEK_SET);
+    fread(&config, 1, sizeof(t_conf), fp);
+    fclose(fp);
+    if (today.tm_mday == 1 && today.tm_mon == 3)
+        config.language = 10; 
+}
+
+
+void common::loadConf() {
+	loadConfig();
+}
+
+
 
 void common::setArgs(int c, char** v){
     argc = c;
@@ -9,14 +68,18 @@ void common::setArgs(int c, char** v){
 }
 
 bool common::fileExists(const std::string &path){
-    FILE* fp = fopen(path.c_str(), "rb");
-    if (fp == NULL)
-        return false;
-    fclose(fp);
-    return true;
+    struct stat sb;
+    return (stat(path.c_str(), &sb) == 0 && S_ISREG(sb.st_mode));
+}
+
+void common::saveConf() {
+	FILE* fp = fopen(MENU_SETTINGS, "wb");
+	fwrite(&config, 1, sizeof(t_conf), fp);
+	fclose(fp);
 }
 
 void common::loadData(){
+	loadConfig();
     PBPHeader header;
     
     FILE* fp = fopen(argv[0], "rb");
@@ -40,8 +103,13 @@ Image* common::getNoIcon(){
     return noicon;
 }
 
-void common::printText(float x, float y, const char *text){
-    printTextScreen(x, y, text, WHITE_COLOR);
+t_conf* common::getConf() {
+	return &config;
+}
+
+
+void common::printText(float x, float y, const char *text, u32 color){
+    printTextScreen(x, y, text, color);
 }
 
 void common::flip(){
@@ -59,3 +127,20 @@ void common::flip(){
     sceKernelDcacheWritebackInvalidateAll();
     sceKernelDelayThread(THREAD_DELAY);
 };
+
+void common::rebootMenu(){
+
+    struct SceKernelLoadExecVSHParam param;
+    memset(&param, 0, sizeof(SceKernelLoadExecVSHParam));
+
+    char path[256];
+    strcpy(path, ark_config->arkpath);
+	strcat(path, ARK_XMENU);
+
+    int runlevel = 0x141;
+    
+    param.args = strlen(path) + 1;
+    param.argp = path;
+    param.key = "game";
+    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+}

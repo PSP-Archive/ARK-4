@@ -26,24 +26,19 @@
 #include <pspumd.h>
 #include <psprtc.h>
 #include <pspinit.h>
-#include "systemctrl.h"
-#include "systemctrl_se.h"
 #include "systemctrl_private.h"
 #include "inferno.h"
-#include "globals.h"
+#include <ark.h>
 #include "macros.h"
 
 PSP_MODULE_INFO("PRO_Inferno_Driver", 0x1000, 2, 1);
 
-//u32 psp_model;
-//u32 psp_fw_version;
 
-extern int sceKernelApplicationType(void);
 extern int sceKernelSetQTGP3(void *unk0);
 extern char *GetUmdFile();
 
 // 00002790
-const char *g_iso_fn = NULL;
+char g_iso_fn[255];
 
 // 0x00002248
 u8 g_umddata[16] = {
@@ -65,7 +60,8 @@ int setup_umd_device(void)
 {
     int ret;
 
-    g_iso_fn = GetUmdFile();
+    memset(g_iso_fn, 0, sizeof(g_iso_fn));
+    strncpy(g_iso_fn, GetUmdFile(), sizeof(g_iso_fn));
     infernoSetDiscType(sctrlSEGetDiscType());
     ret = sceIoAddDrv(&g_iodrv);
 

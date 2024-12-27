@@ -23,9 +23,9 @@
 #include <systemctrl_se.h>
 #include <functions.h>
 #include "ansi_c_functions.h"
-#include "globals.h"
+#include <ark.h>
 
-#define REBOOTEX_MAX_SIZE 0x4000
+#define REBOOTEX_MAX_SIZE 0x5000
 #define BTCNF_MAGIC 0x0F803001
 #define BOOTCONFIG_TEMP_BUFFER 0x88FB0200
 
@@ -59,6 +59,7 @@ typedef struct RebootConfigARK {
         u32 flags;
     } rtm_mod;
     char game_id[10];
+    unsigned int boot_from_fw_version;
 } RebootConfigARK;
 
 #define IS_ARK_CONFIG(config) (*((u32*)config) == ARK_CONFIG_MAGIC)

@@ -6,8 +6,8 @@
 #include <cstdlib>
 #include <vector>
 #include <malloc.h>
-#include "systemctrl.h"
-#include "systemctrl_se.h"
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 #include "common.h"
 #include "controller.h"
 #include "gfx.h"
@@ -82,7 +82,7 @@ class Entry{
         Entry(string path);
         virtual ~Entry()=0;
         
-        string getName();
+        virtual string getName();
         void setName(string name);
         string getPath();
         void setPath(string path);
@@ -106,8 +106,8 @@ class Entry{
         };
         
         virtual void loadIcon()=0;
-        virtual void getTempData1()=0;
-        virtual void getTempData2()=0;
+        virtual void loadPics()=0;
+        virtual void loadAVMedia()=0;
         
         void freeTempData();
         

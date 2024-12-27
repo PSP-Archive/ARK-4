@@ -1,3 +1,6 @@
 [submodule "contrib/PC/PSvid"]
 	path = contrib/PC/PSvid
 	url = https://github.com/krazynez/PSvid
+[submodule "contrib/PC/ciso/ziso_compressor"]
+	path = contrib/PC/ciso/ziso_compressor
+	url = https://github.com/Danixu/ziso_compressor

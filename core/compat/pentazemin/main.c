@@ -20,7 +20,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
-#include <globals.h>
+#include <ark.h>
 #include "functions.h"
 #include "macros.h"
 #include "exitgame.h"
@@ -51,8 +51,6 @@ void flushCache()
 }
 
 static void processArkConfig(){
-    se_config = sctrlSEGetConfig(NULL);
-    ark_config = sctrlHENGetArkConfig(NULL);
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSV_ADR; // assume running on Adrenaline
     }
@@ -62,11 +60,22 @@ static void processArkConfig(){
 int module_start(SceSize args, void * argp)
 {
 
-    // set rebootex for Vita
-    sctrlHENSetRebootexOverride(rebootbuffer_pentazemin);
+    se_config = sctrlSEGetConfig(NULL);
+    ark_config = sctrlHENGetArkConfig(NULL);
+
+    if (ark_config == NULL){
+        return 1;
+    }
 
     // copy configuration
     processArkConfig();
+
+    if (ark_config->exec_mode != PSV_ADR){
+        return 2;
+    }
+
+    // set rebootex for Vita
+    sctrlHENSetRebootexOverride(rebootbuffer_pentazemin);
 
     // Vita patches
     AdrenalineSysPatch();

@@ -29,9 +29,13 @@ OBJS = \
 	src/plugin.o \
 	src/leda.o \
 	src/psnfix.o \
+	src/cpuclock.o   \
 	src/msstor_cache.o \
+	src/threadman.o \
 	src/setlongjmp.o \
-	$(ARKROOT)/common/utils/patches.o \
+	$(ARKROOT)/libs/libsploit/patches.o \
+	$(ARKROOT)/libs/ansi-c/lowerstring.o \
+	$(ARKROOT)/libs/ansi-c/strcasecmp.o \
 	
 	
 all: $(TARGET).prx

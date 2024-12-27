@@ -6,16 +6,15 @@
 #include "system_mgr.h"
 #include <pspnet_apctl.h>
 #include <psphttp.h>
+#include <systemctrl.h>
 #include "eboot.h"
 #include "lang.h"
 
-#define MAX_LINES 10
+#define MAX_LINES 9
 
-//extern "C"{
 #include "ftpd.h"
 extern void setFtpMsgHandler(void*);
 extern int mftpExitHandler(SceSize argc, void *argv);
-//}
 
 static struct {
     string msg[MAX_LINES];
@@ -217,6 +216,7 @@ static void checkUpdates(){
     u32 update_ver, version;
     bool do_update = false;
     char buf[128];
+    cur_download = max_download = 0;
 
     if (common::getPspModel() == PSP_GO){
         update_folder[0] = update_eboot[0] = 'e';
@@ -255,17 +255,22 @@ static void checkUpdates(){
 
             addMessage("Downloading psp-updatelist.txt");
 
-            wget((char*)path.c_str(), "psp-updatelist.txt", &cur_download, &max_download);
+            wget((char*)path.c_str(), "psp-updatelist.txt");
 
             updater_url = parsePspUpdateList(&update_ver);
 
-            snprintf(buf, 128, TR("Got version %p @ %s").c_str(), update_ver, updater_url.c_str());
-            addMessage(buf);
-
             sceIoRemove("psp-updatelist.txt");
 
-            version = sctrlHENGetVersion() | sctrlHENGetMinorVersion(); // ARK's full version number
-            do_update = common::getConf()->force_update || version < update_ver;
+            if (!update_ver || updater_url.size() == 0){
+                do_update = false;
+            }
+            else{
+                snprintf(buf, 128, TR("Got version %p @ %s").c_str(), update_ver, updater_url.c_str());
+                addMessage(buf);
+
+                version = sctrlHENGetVersion() | sctrlHENGetMinorVersion(); // ARK's full version number
+                do_update = common::getConf()->force_update || version < update_ver;
+            }
 
             if (!do_update){
                 addMessage("No need to update!");
@@ -330,6 +335,9 @@ void NetworkManager::resume(){
     while (animation != 0)
         sceKernelDelayThread(0);
 }
+std::string NetworkManager::getFooter(){
+	return "";
+}
 
 std::string NetworkManager::getInfo(){
     return "Network Tools";
@@ -337,6 +345,10 @@ std::string NetworkManager::getInfo(){
 
 std::string NetworkManager::getName(){
     return "Network";
+}
+
+void NetworkManager::setFooter(std::string footer){
+
 }
 
 void NetworkManager::setInfo(std::string info){

@@ -64,9 +64,9 @@ int _pspemuLfatOpen(BootFile* file, u32 a1, u32 a2, u32 a3, u32 t0)
     if (strcmp(p, "pspbtcnf.bin") == 0){
         int ret = -1;
         switch(reboot_conf->iso_mode) {
-            case MODE_NP9660:
             case MODE_MARCH33:
             case MODE_INFERNO:
+            case MODE_VSHUMD:
                 reboot_conf->iso_mode = MODE_INFERNO;
                 ret = findFlashFile(file, "psvbtknf.bin"); // use inferno ISO mode (psvbtknf.bin)
                 break;
@@ -114,7 +114,7 @@ void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *tab
     // Add flash0 ramfs as partition 11
     SetMemoryPartitionTable(sysmem_config, table);
     table->extVshell.addr = EXTRA_RAM;
-    table->extVshell.size = VITA_EXTRA_RAM_SIZE;
+    table->extVshell.size = 20 * 1024 * 1024;
 }
 
 int PatchSysMem(void *a0, void *sysmem_config)

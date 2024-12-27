@@ -85,6 +85,7 @@
 
     "Network Tools": "Herramientas de Red",
     "Press [] to check for Updates": "Presione [] para buscar actualizaciones",
+    "[] to Reset Settings": "[] Para restablecer la configuración",
     "FTP Server is stopped. Press %s to start.": "Servidor FTP apagado. Presione %s para iniciar.",
     "FTP Server is running @ %s. Press %s to stop.": "Servidor FTP iniciado en %s. Presione %s para apagar",
     "Could not get IP address": "No se pudo obtener la dirección IP",
@@ -150,6 +151,10 @@
     "Hide DLC": "Ocultar DLC",
     "Turn off LEDs": "Apagar los LEDs",
     "VSH Region Change": "Cambio de región del VSH",
-    "UMD Region Change": "Cambio de región del UMD"
+    "UMD Region Change": "Cambio de región del UMD",
+	"Disable UMD Drive": "Deshabilitar la unidad UMD",
+	"Disable Analog Stick": "Desactivar palanca analógica",
+	"Custom App": "Aplicación personalizada",
+	"QA Flags": "Banderas de control de calidad"
 
 }

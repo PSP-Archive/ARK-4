@@ -22,6 +22,7 @@
 #define GO_ROOT "ef0:/" // PSP Go initial directory
 #define FTP_ROOT "ftp:/" // FTP directory
 #define UMD_ROOT "disc0:/" // UMD directory
+#define EH0_ROOT "eh0:/" // Go Hidden directory
 #define PAGE_SIZE 10 // maximum entries shown on screen
 #define BUF_SIZE 1024*16 // 16 kB buffer for copying files
 #define MENU_W 410
@@ -130,7 +131,7 @@ void Browser::clearEntries(){
 }
 
 bool Browser::isRootDir(string dir){
-    return (dir == ROOT_DIR || dir == GO_ROOT || dir == FTP_ROOT || dir == UMD_ROOT);
+    return (dir == ROOT_DIR || dir == GO_ROOT || dir == FTP_ROOT || dir == UMD_ROOT || dir == EH0_ROOT);
 }
 
 void Browser::moveDirUp(){
@@ -148,16 +149,21 @@ void Browser::update(Entry* ent, bool skip_prompt){
         return;
     common::playMenuSound();
     BrowserFile* e = (BrowserFile*)ent;
+    printf("running %s\n", e->getName().c_str());
     if (e->getName() == "./")
         refreshDirs();
     else if (e->getName() == "../")
         moveDirUp();
+    else if (e->getName() == "<Go To eh0>/"){ // why does it have a final / when it reaches this step? lol
+        this->cwd = EH0_ROOT;
+        this->refreshDirs();
+    }
     else if (e->getName() == "<refresh>"){
         this->refreshDirs();
     }
     else if (e->getName() == "<disconnect>"){ // FTP disconnect entry
         if (ftp_driver != NULL) ftp_driver->disconnect();
-        this->cwd = MS0_DIR;
+        this->cwd = ROOT_DIR;
         this->refreshDirs();
     }
     else if (Entry::isARK(e->getPath().c_str())) {
@@ -181,7 +187,7 @@ void Browser::update(Entry* ent, bool skip_prompt){
             if (!skip_prompt){
                 is_loading = true;
                 iso->loadIcon();
-                iso->getTempData1();
+                iso->loadPics();
                 is_loading = false;
             }
             if (skip_prompt || iso->pmfPrompt())
@@ -195,7 +201,7 @@ void Browser::update(Entry* ent, bool skip_prompt){
         if (!skip_prompt){
             is_loading = true;
             eboot->loadIcon();
-            eboot->getTempData1();
+            eboot->loadPics();
             is_loading = false;
         }
         if (skip_prompt || eboot->pmfPrompt())
@@ -217,6 +223,7 @@ void Browser::update(Entry* ent, bool skip_prompt){
         delete aux;
     }
     else if (e->getFileType() == FILE_PICTURE){
+		sceKernelDelayThread(100000);
         optionsmenu = new ImageViewer(e->getPath());
         optionsmenu->control();
         ImageViewer* aux = (ImageViewer*)optionsmenu;
@@ -266,6 +273,7 @@ void Browser::installTheme() {
 	if (ret == OPTIONS_CANCELLED) return;
 
     // load new theme
+    GameManager::updateGameList(NULL);
 	SystemMgr::pauseDraw();
     printf("deleting current theme resources\n");
     common::deleteTheme();
@@ -393,11 +401,11 @@ void Browser::installPlugin(){
     draw_progress = true;
 
     int fd = sceIoOpen(path_entries[pret+1].name, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
-    sceIoWrite(fd, "\n", 1);
     sceIoWrite(fd, mode.c_str(), mode.size());
     sceIoWrite(fd, ", ", 2);
     sceIoWrite(fd, plugin.c_str(), plugin.size());
     sceIoWrite(fd, ", on\n", 5);
+    sceIoWrite(fd, "\n", 1);
     sceIoClose(fd);
 
     draw_progress = false;
@@ -458,9 +466,9 @@ void logbuffer(char* path, void* buffer, u32 size){
     sceIoClose(fd);
 }
 
+// Refresh the list of files and dirs
 void Browser::refreshDirs(const char* retry){
 
-    // Refresh the list of files and dirs
     SystemMgr::pauseDraw();
     this->index = 0;
     this->start = 0;
@@ -470,6 +478,7 @@ void Browser::refreshDirs(const char* retry){
     this->optionsmenu = NULL;
     SystemMgr::resumeDraw();
 
+    // if it's an ftp path, use driver's own scanner
     if (ftp_driver != NULL && ftp_driver->isDevicePath(this->cwd)){
         SystemMgr::pauseDraw();
         bool ftp_con = ftp_driver->connect();
@@ -519,12 +528,9 @@ void Browser::refreshDirs(const char* retry){
     vector<Entry*> folders;
     vector<Entry*> files;
 
-    pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
-    pri_dirent->size = sizeof(pspMsPrivateDirent);
-    dit.d_private = (void*)pri_dirent;
-    static int bufid = 0;
+    // scan directory
     while ((sceIoDread(dir, &dit)) > 0){
-        printf("got entry: %s -> %s\n", dit.d_name, pri_dirent);
+        printf("got entry: %s\n", dit.d_name);
 
         if (dit.d_name[0] == '.' && strcmp(dit.d_name, ".") != 0 && strcmp(dit.d_name, "..") != 0 && !common::getConf()->show_hidden){
             continue;
@@ -532,20 +538,20 @@ void Browser::refreshDirs(const char* retry){
 
         if (common::isFolder(&dit)){
             printf("is dir\n");
-            folders.push_back(new Folder(cwd, dit.d_name, string((const char*)pri_dirent)));
+            folders.push_back(new Folder(cwd, dit.d_name));
         }
         else{
             printf("is file\n");
-            files.push_back(new File(cwd, dit.d_name, string((const char*)pri_dirent)));
+            files.push_back(new File(cwd, dit.d_name));
         }
     }
     printf("closing and cleaning\n");
     sceIoDclose(dir);
 
-    free(pri_dirent);
-
+    // handle special folders
     Entry* dot = NULL;
     Entry* dotdot = NULL;
+    Entry* eh0 = NULL;
     if (folders.size() > 0){
         if (folders[0]->getName() == "./"){
             dot = folders[0];
@@ -557,17 +563,25 @@ void Browser::refreshDirs(const char* retry){
         }
     }
 
+    if (cwd == GO_ROOT){
+        eh0 = new Folder(cwd, "<Go To eh0>");
+    }
+
+    // sort entries if needed
     if (common::getConf()->sort_entries){
         printf("sorting entries\n");
         std::sort(folders.begin(), folders.end(), Entry::cmpEntriesForSort);
         std::sort(files.begin(), files.end(), Entry::cmpEntriesForSort);
     }
 
-    if (!dotdot && !isRootDir(this->cwd)) dotdot = new Folder(cwd, "..", "");
+    // insert special folders
+    if (eh0) folders.insert(folders.begin(), eh0);
+    if (!dotdot && !isRootDir(this->cwd)) dotdot = new Folder(cwd, "..");
     if (dotdot) folders.insert(folders.begin(), dotdot);
-    if (!dot && !isRootDir(this->cwd)) dot = new Folder(cwd, ".", "");
+    if (!dot && !isRootDir(this->cwd)) dot = new Folder(cwd, ".");
     if (dot) folders.insert(folders.begin(), dot);
-    
+
+    // folders first, files last
     printf("merging entries\n");
     SystemMgr::pauseDraw();
     for (int i=0; i<folders.size(); i++)
@@ -575,7 +589,7 @@ void Browser::refreshDirs(const char* retry){
     for (int i=0; i<files.size(); i++)
         entries->push_back(files.at(i));
     if (this->entries->size() == 0)
-        this->entries->push_back(new Folder(cwd, ".", ""));
+        this->entries->push_back(new Folder(cwd, "."));
     SystemMgr::resumeDraw();
     
     printf("done\n");
@@ -616,7 +630,7 @@ void Browser::drawScreen(){
     for (int i=this->start; i<min(this->start+PAGE_SIZE, (int)entries->size()); i++){
         File* e = (File*)this->entries->at(i);
         // draw checkbox
-        common::getCheckbox((int)e->isSelected())->draw(xoffset-30, yoffset-10);
+        common::getCheckbox((int)e->isSelected())->draw(xoffset-40, yoffset-10);
         // draw focused entry
         if (i == index && this->enableSelection){
             if (animating){
@@ -627,8 +641,8 @@ void Browser::drawScreen(){
                 common::printText(xoffset, yoffset, e->getName().c_str(), LITEGRAY, SIZE_BIG, focused, (focused)? &scroll : NULL, 0);
                 if (common::getConf()->browser_icon0){
                     Image* icon = e->getIcon();
-                    if (icon){
-                        icon->draw(320, 21);
+                    if (icon && e->getName().c_str()[0] != '.'){ // Prevent ../ from displaying ICON0
+                    	icon->draw(320, 21);
                     }
                 }
             }
@@ -639,7 +653,7 @@ void Browser::drawScreen(){
         }
         // draw entry size and icon
         common::printText(400, yoffset, e->getSize().c_str());
-        common::getIcon(e->getFileType())->draw(xoffset-15, yoffset-10);
+        common::getIcon(e->getFileType())->draw(xoffset-20, yoffset-10);
         yoffset += 20;
     }
 
@@ -664,7 +678,7 @@ void Browser::drawProgress(){
     for (int i=0; i<5; i++){
         if (i==4 && progress_desc[4] == ""){
             ostringstream s;
-            s<<progress<<" / "<<max_progress;  
+            s<<common::beautifySize(progress)<<" / "<<common::beautifySize(max_progress);  
             common::printText(x+20, yoffset, s.str().c_str());  
         }
         else common::printText(x+20, yoffset, progress_desc[i].c_str());
@@ -893,10 +907,6 @@ void Browser::recursiveFolderDelete(string path){
     {
         SceIoDirent entry;
         memset(&entry, 0, sizeof(SceIoDirent));
-
-        pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
-        pri_dirent->size = sizeof(pspMsPrivateDirent);
-        entry.d_private = (void*)pri_dirent;
         
         //allocate memory to store the full file paths
         string new_path;
@@ -916,17 +926,9 @@ void Browser::recursiveFolderDelete(string path){
 
             if (common::isFolder(&entry)){
                 new_path = new_path + "/";
-                if (!common::folderExists(new_path)){
-                    new_path = path + string((const char*)pri_dirent);
-                    printf("%d: %s\n", (int)common::folderExists(new_path), new_path.c_str());
-                }
                 recursiveFolderDelete(new_path);
             }
             else{
-                if (!common::fileExists(new_path)){
-                    new_path = path + string((const char*)pri_dirent);
-                    printf("%d: %s\n", (int)common::fileExists(new_path), new_path.c_str());
-                }
                 self->deleteFile(new_path);
             }
             
@@ -934,7 +936,6 @@ void Browser::recursiveFolderDelete(string path){
         
         sceIoDclose(d); //close directory
         sceIoRmdir(path.substr(0, path.length()-1).c_str()); //delete empty folder
-        free(pri_dirent);
     };
 }
 
@@ -947,10 +948,6 @@ long Browser::recursiveSize(string path){
     {
         SceIoDirent entry;
         memset(&entry, 0, sizeof(SceIoDirent));
-
-        pspMsPrivateDirent *pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
-        pri_dirent->size = sizeof(pspMsPrivateDirent);
-        entry.d_private = (void*)pri_dirent;
         
         //allocate memory to store the full file paths
         string new_path;
@@ -970,17 +967,9 @@ long Browser::recursiveSize(string path){
 
             if (common::isFolder(&entry)){
                 new_path = new_path + "/";
-                if (!common::folderExists(new_path)){
-                    new_path = path + string((const char*)pri_dirent);
-                    printf("%d: %s\n", (int)common::folderExists(new_path), new_path.c_str());
-                }
                 total_size += recursiveSize(new_path);
             }
             else{
-                if (!common::fileExists(new_path)){
-                    new_path = path + string((const char*)pri_dirent);
-                    printf("%d: %s\n", (int)common::fileExists(new_path), new_path.c_str());
-                }
                 total_size += common::fileSize(new_path);
             }
             
@@ -988,7 +977,6 @@ long Browser::recursiveSize(string path){
         
         sceIoDclose(d); //close directory
         sceIoRmdir(path.substr(0, path.length()-1).c_str()); //delete empty folder
-        free(pri_dirent);
     }
     else if ((d=sceIoOpen(path.c_str(), PSP_O_RDONLY, 0777)) >= 0){
         total_size = sceIoLseek(d, 0, SEEK_END);
@@ -1138,10 +1126,6 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
         {
             SceIoDirent entry;
             memset(&entry, 0, sizeof(SceIoDirent));
-
-            pspMsPrivateDirent* pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
-            pri_dirent->size = sizeof(pspMsPrivateDirent);
-            entry.d_private = (void*)pri_dirent;
             
             //start reading directory entries
             while(sceIoDread(dir, &entry) > 0)
@@ -1155,23 +1139,10 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
                 string src = new_source + entry.d_name;
 
                 if (common::isFolder(&entry)){
-                    string dst;
-                    if (!common::folderExists(src)){
-                        string sname = string((const char*)pri_dirent);
-                        src = new_source + sname;
-                        dst = new_destination + sname;
-                        printf("%d: %s\n", (int)common::folderExists(src), src.c_str());
-                    }
-                    else{
-                        dst = new_destination + entry.d_name;
-                    }
+                    string dst = new_destination + entry.d_name;
                     copy_folder_recursive(src.c_str(), dst.c_str());
                 }
                 else{
-                    if (!common::fileExists(src)){
-                        src = new_source + string((const char*)pri_dirent);
-                        printf("%d: %s\n", (int)common::fileExists(src), src.c_str());
-                    }
                     if (pasteMode == COPY || (pasteMode == CUT && pspIoMove(src, new_destination) < 0))
                         copyFile(src, new_destination); //copy file
                 }
@@ -1179,7 +1150,6 @@ int Browser::copy_folder_recursive(const char * source, const char * destination
             };
             //close folder
             sceIoDclose(dir);
-            free(pri_dirent);
         };
     }
     
@@ -1236,6 +1206,9 @@ void Browser::copyFolder(string path){
     string destination = checkDestExists(path, this->cwd, f->getName().substr(0, f->getName().length()-1));
     
     if (destination.size() == 0) return; // copy cancelled
+	
+	if (destination[destination.size() - 1] == '/')
+		destination.resize(destination.length() - 1);
     
     copy_folder_recursive(path.substr(0, path.length()-1).c_str(), destination.c_str());
 }
@@ -1303,8 +1276,9 @@ void Browser::fillClipboard(){
     this->clipboard->clear();
     for (int i=0; i<entries->size(); i++){
         BrowserFile* e = (File*)entries->at(i);
-        if (e->isSelected())
+        if (e->isSelected()) {
             this->clipboard->push_back(e->getPath());
+		}
     }
 }
 
@@ -1518,6 +1492,7 @@ void Browser::drawOptionsMenu(){
             int y = 55;
             static TextScroll scroll = {0, 0, 0, 125};
             for (int i=0; i<MAX_OPTIONS; i++){
+                if (this->clipboard->size()<1 && i == 3) continue; // Hide Paste unless clipboard has something in it.
                 if (pEntries[i] == NULL) continue;
                 if (i == pEntryIndex){
                     common::printText(x, y, pEntries[i], LITEGRAY, SIZE_BIG, true, &scroll);
@@ -1577,7 +1552,8 @@ void Browser::optionsMenu(){
             common::playMenuSound();
             do {
                 if (pEntryIndex < MAX_OPTIONS-1){
-                    pEntryIndex++;
+					if(this->clipboard->size()<1 && pEntryIndex == 2) pEntryIndex += 2;
+					else pEntryIndex++;
                 }
                 else{
                     pEntryIndex = 0;
@@ -1589,7 +1565,8 @@ void Browser::optionsMenu(){
             common::playMenuSound();
             do {
                 if (pEntryIndex > 0){
-                    pEntryIndex--;
+					if(this->clipboard->size()<1 && pEntryIndex == 4) pEntryIndex -= 2;
+					else pEntryIndex--;
                 }
                 else{
                     pEntryIndex = MAX_OPTIONS-1;
@@ -1600,22 +1577,20 @@ void Browser::optionsMenu(){
 		else if (pad->right()) {
 			common::playMenuSound();
 			do {
-				if (pEntryIndex+3 < MAX_OPTIONS-1) {
-					pEntryIndex += 3;
-				}
-				else {
+				if(pEntryIndex >= (int)((MAX_OPTIONS-1)/2))
 					pEntryIndex = MAX_OPTIONS-1;
-				}
+				else if(pEntryIndex <= 0)
+					pEntryIndex = (int)((MAX_OPTIONS-1)/2);
 			} while (pEntries[pEntryIndex] == NULL);
 		}
 		// Left
 		else if (pad->left()) {
 			common::playMenuSound();
 			do {
-				if (pEntryIndex-3 < 0)
+				if(pEntryIndex <= (int)((MAX_OPTIONS-1)/2))
 					pEntryIndex = 0;
-				else
-					pEntryIndex -= 3;
+				else if(pEntryIndex <= MAX_OPTIONS-1)
+					pEntryIndex = (int)((MAX_OPTIONS-1)/2);
 			} while (pEntries[pEntryIndex] == NULL);
 		}
         else if (pad->decline() || pad->LT()){

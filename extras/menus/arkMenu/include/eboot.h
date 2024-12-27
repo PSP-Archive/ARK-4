@@ -25,15 +25,6 @@ typedef struct
     u32 psar_offset;
 } PBPHeader;
 
-typedef struct
-{
-    unsigned sign;
-    unsigned version;
-    unsigned key_table;
-    unsigned data_table;
-    unsigned entries;
-} sfoHeader;
-
 enum { UNKNOWN_TYPE, TYPE_HOMEBREW, TYPE_PSN, TYPE_POPS, TYPE_UPDATER };
 
 using namespace std;
@@ -58,8 +49,8 @@ class Eboot : public Entry{
         string getEbootName();
         
         void loadIcon();
-        void getTempData1();
-        void getTempData2();
+        void loadPics();
+        void loadAVMedia();
         SfoInfo getSfoInfo();
         
         void doExecute();
@@ -75,7 +66,6 @@ class Eboot : public Entry{
         static void executeHomebrew(const char* path);
         static void executePSN(const char* path);
         static void executePOPS(const char* path);
-        static void executeRecovery(const char* path);
         static void executeUpdate(const char* path);
 };
 

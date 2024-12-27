@@ -159,13 +159,13 @@ int wget(char* url, char* saveAs, SceULong64* cur_download, SceULong64* max_down
 	if((cnx=sceHttpCreateConnectionWithURL(tpl, url, 0))<0)return cnx;
 	if((req=sceHttpCreateRequestWithURL(cnx, PSP_HTTP_METHOD_GET, url, 0))<0)return req;
 	if((ret=sceHttpSendRequest(req, 0, 0))<0)return ret;
-    *cur_download = 0;
-    sceHttpGetContentLength(req, max_download);
+    if (cur_download) *cur_download = 0;
+    if (max_download) sceHttpGetContentLength(req, max_download);
 	if(saveAs){
 		SceUID fd=sceIoOpen(saveAs, PSP_O_WRONLY | PSP_O_CREAT, 0777);
 		while((ret=sceHttpReadData(req,buf,sizeof(buf)))>0){
 			sceIoWrite(fd,buf,ret);
-            *cur_download += ret;
+            if (cur_download) *cur_download += ret;
 		}
 		ret=sceIoClose(fd);
 	}else{//store in ram

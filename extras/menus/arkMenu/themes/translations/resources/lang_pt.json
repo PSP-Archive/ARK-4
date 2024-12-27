@@ -84,6 +84,7 @@
 
     "Network Tools": "Ferramentas de Rede",
     "Press [] to check for Updates": "Pressione [] para checar novas atualizações",
+    "[] to Reset Settings": "[] para repor as configurações",
     "FTP Server is stopped. Press %s to start.": "Servidor FTP parou. Pressione %s para iniciar.",
     "FTP Server is running @ %s. Press %s to stop.": "Servidor FTP iniciado em %s. Pressione %s para parar",
     "Could not get IP address": "Não foi possível obter o endereço IP",
@@ -149,7 +150,12 @@
     "Hide DLC": "Ocultar DLC",
     "Turn off LEDs": "Desligar LEDs do PSP",
     "VSH Region Change": "Mudar região do VSH",
-    "UMD Region Change": "Mudar região do UMD"
+    "UMD Region Change": "Mudar região do UMD",
+	"Disable UMD Drive": "Desativar unidade UMD",
+	"Disable Analog Stick": "Desativar stick analógico",
+	"Custom App": "Aplicativo personalizado",
+	"QA Flags": "Sinalizadores de controle de qualidade"
+	
 
 
 }

@@ -1,8 +1,11 @@
 #include <pspsdk.h>
+#include <pspinit.h>
 #include <pspiofilemgr.h>
 #include <pspsysmem_kernel.h>
+#include <rebootconfig.h>
+#include <systemctrl.h>
 
-#include "globals.h"
+#include <ark.h>
 #include "macros.h"
 #include "module2.h"
 
@@ -43,4 +46,32 @@ void patchGameInfoGetter(SceModule2 * mod)
         // Hook Import
         hookImportByNID(mod, "SysMemForKernel", 0xEF29061C, SysMemForKernel_EF29061C_Fixed);
     }
+}
+
+// Return Game Product ID of currently running Game
+int sctrlARKGetGameID(char gameid[GAME_ID_MINIMUM_BUFFER_SIZE])
+{
+    // Invalid Arguments
+    if(gameid == NULL) return -1;
+    
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Fetch Game Information Structure
+    void * gameinfo = SysMemForKernel_EF29061C_Fixed();
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Game Information unavailable
+    if(gameinfo == NULL) return -3;
+    
+    // Copy Product Code
+    memcpy(gameid, gameinfo + 0x44, GAME_ID_MINIMUM_BUFFER_SIZE - 1);
+    
+    // Terminate Product Code
+    gameid[GAME_ID_MINIMUM_BUFFER_SIZE - 1] = 0;
+    
+    // Return Success
+    return 0;
 }

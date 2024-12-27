@@ -25,12 +25,10 @@
 #include <psprtc.h>
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
-#include "systemctrl.h"
-#include "systemctrl_se.h"
 #include "systemctrl_private.h"
 #include "inferno.h"
 #include "lz4.h"
-#include "globals.h"
+#include <ark.h>
 #include "macros.h"
 
 #define CSO_MAGIC 0x4F534943 // CISO
@@ -43,7 +41,7 @@
 
 #define CISO_IDX_MAX_ENTRIES 2048 // will be adjusted according to CSO block_size
 
-struct CISO_header {
+typedef struct _CISOHeader {
     uint32_t magic;  // 0
     u32 header_size;  // 4
     u64 total_bytes; // 8
@@ -51,9 +49,9 @@ struct CISO_header {
     u8 ver; // 20
     u8 align;  // 21
     u8 rsv_06[2];  // 22
-};
+} CISOHeader;
 
-typedef struct{ 
+typedef struct _DAXHeader{ 
     uint32_t magic;
     uint32_t uncompressed_size;
     uint32_t version; 
@@ -61,7 +59,7 @@ typedef struct{
     uint32_t unused[4]; 
 } DAXHeader;
 
-typedef struct _JisoHeader {
+typedef struct _JISOHeader {
     uint32_t magic; // [0x000] 'JISO'
     uint8_t unk_x001; // [0x004] 0x03?
     uint8_t unk_x002; // [0x005] 0x01?
@@ -75,7 +73,7 @@ typedef struct _JisoHeader {
     uint8_t md5sum[16]; // [0x010] MD5 hash of the original image.
     uint32_t header_size; // [0x020] Header size? (0x30)
     uint8_t unknown[12]; // [0x024]
-} JisoHeader;
+} JISOHeader;
 
 typedef enum {
 	JISO_METHOD_LZO		= 0,
@@ -124,21 +122,11 @@ static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len,
 // 0x00000368
 static void wait_until_ms0_ready(void)
 {
-    int ret, status = 0, bootfrom;
-    const char *drvname;
+    int ret, status = 0;
 
-    drvname = "mscmhc0:";
+    if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_VSH) return; // no wait on VSH
 
-    bootfrom = sceKernelBootFrom();
-    #ifdef DEBUG
-    printk("%s: bootfrom: 0x%08X\n", __func__, bootfrom);
-    #endif
-    if(bootfrom == 0x50) {
-        drvname = "mscmhcemu0:";
-    } else {
-        // vsh mode?
-        return;
-    }
+    const char *drvname = (sctrlKernelMsIsEf())? "mscmhcemu0:" : "mscmhc0:";
 
     while( 1 ) {
         ret = sceIoDevctl(drvname, 0x02025801, 0, 0, &status, sizeof(status));
@@ -177,7 +165,7 @@ static int io_calls = 0;
 #endif
 
 // 0x00000BB4
-static int read_raw_data(u8* addr, u32 size, u32 offset)
+static inline __attribute__((always_inline)) int read_raw_data_inline(u8* addr, u32 size, u32 offset)
 {
     int ret, i;
     SceOff ofs;
@@ -228,6 +216,10 @@ static int read_raw_data(u8* addr, u32 size, u32 offset)
 
 exit:
     return ret;
+}
+
+static int read_raw_data(u8* addr, u32 size, u32 offset){
+    return read_raw_data_inline(addr, size, offset);
 }
 
 
@@ -378,33 +370,39 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     return res;
 }
 
-static void decompress_dax(void* src, int src_len, void* dst, int dst_len, u32 topbit){
-    // use raw inflate with no NCarea check (DAX V0)
+// Decompress DAX v0
+static void decompress_dax0(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+    // use raw inflate with no NCarea check
     sceKernelDeflateDecompress(dst, DAX_COMP_BUF, src, 0);
 }
 
+// Decompress DAX v1 or JISO method 1
 static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // for DAX Version 1 we can skip parsing NC-Areas and just use the block_size trick as in JSO and CSOv2
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
     else sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
 }
 
+// Decompress JISO method 0
 static void decompress_jiso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // while JISO allows for DAX-like NCarea, it by default uses compressed size check
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
     else lzo1x_decompress(src, src_len, dst, &dst_len, 0); // use lzo
 }
 
+// Decompress CISO v1
 static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     if (topbit) memcpy(dst, src, dst_len); // check for NC area
     else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 
+// Decompress ZISO
 static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     if (topbit) memcpy(dst, src, dst_len); // check for NC area
     else LZ4_decompress_fast(src, dst, dst_len);
 }
 
+// Decompress CISO v2
 static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // in CSOv2, top bit represents compression method instead of NCarea
     if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area (JSO-like, but considering padding, thus >=)
@@ -417,7 +415,7 @@ static int is_ciso(SceUID fd)
 {
     int ret;
     
-    struct CISO_header g_CISO_hdr;
+    CISOHeader g_CISO_hdr;
 
     g_CISO_hdr.magic = 0;
 
@@ -441,11 +439,11 @@ static int is_ciso(SceUID fd)
             block_header = 2; // skip over the zlib header (2 bytes)
             align = 0; // no alignment for DAX
             com_size = DAX_COMP_BUF;
-            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_dax;
+            ciso_decompressor = (dax_header->version >= 1)? &decompress_dax1 : &decompress_dax0;
         }
         else if (magic == JSO_MAGIC){
-            JisoHeader* jiso_header = (JisoHeader*)&g_CISO_hdr;
-            header_size = sizeof(JisoHeader);
+            JISOHeader* jiso_header = (JISOHeader*)&g_CISO_hdr;
+            header_size = sizeof(JISOHeader);
             block_size = jiso_header->block_size;
             uncompressed_size = jiso_header->uncompressed_size;
             block_header = 4*jiso_header->block_headers; // if set to 1, each block has a 4 byte header, 0 otherwise
@@ -454,7 +452,7 @@ static int is_ciso(SceUID fd)
             ciso_decompressor = (jiso_header->method)? &decompress_dax1 : &decompress_jiso; //  zlib or lzo, depends on method
         }
         else{ // CSO/ZSO/v2
-            header_size = sizeof(struct CISO_header);
+            header_size = sizeof(CISOHeader);
             block_size = g_CISO_hdr.block_size;
             uncompressed_size = g_CISO_hdr.total_bytes;
             block_header = 0; // CSO/ZSO uses raw blocks
@@ -493,8 +491,6 @@ static int is_ciso(SceUID fd)
             if (g_cso_idx_cache == NULL) {
                 return -4;
             }
-            //if((u32)g_cso_idx_cache & 63) // align 64
-            //    g_cso_idx_cache = (void*)(((u32)g_cso_idx_cache & (~63)) + 64);
         }
         return 1;
     } else {
@@ -545,10 +541,11 @@ int iso_read(struct IoReadArg *args)
 {
     if (is_compressed)
         return read_compressed_data(args->address, args->size, args->offset);
-    return read_raw_data(args->address, args->size, args->offset);
+    return read_raw_data_inline(args->address, args->size, args->offset);
 }
 
 // 0x000003E0
+int (*iso_reader)(struct IoReadArg *args) = &iso_read;
 int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
 {
     int ret, retv;
@@ -562,7 +559,7 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
     g_read_arg.offset = offset;
     g_read_arg.address = ptr;
     g_read_arg.size = data_len;
-    retv = sceKernelExtendKernelStack(0x2000, (void*)&iso_cache_read, &g_read_arg);
+    retv = sceKernelExtendKernelStack(0x2000, (void*)iso_reader, &g_read_arg);
 
     ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
 

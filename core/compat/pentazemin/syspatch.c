@@ -5,7 +5,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
-#include <globals.h> 
+#include <ark.h> 
 #include "functions.h"
 #include "macros.h"
 #include "exitgame.h"
@@ -26,22 +26,6 @@ int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
 u64 kermit_flash_load(int cmd);
 
-// Return Boot Status
-int isSystemBooted(void)
-{
-
-    // Find Function
-    int (* _sceKernelGetSystemStatus)(void) = (void*)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
-    
-    // Get System Status
-    int result = _sceKernelGetSystemStatus();
-        
-    // System booted
-    if(result == 0x20000) return 1;
-    
-    // Still booting
-    return 0;
-}
 
 void OnSystemStatusIdle() {
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
@@ -272,36 +256,6 @@ int sctrlGetUsbState() {
 	return 2; // Not connected
 }
 
-/*
-u32 FindPowerFunction(u32 nid) {
-	return sctrlHENFindFunction("scePower_Service", "scePower", nid);
-}
-
-void SetSpeed(int cpu, int bus) {
-	if (cpu == 20 || cpu == 75 || cpu == 100 || cpu == 133 || cpu == 333 || cpu == 300 || cpu == 266 || cpu == 222) {
-		int (*scePowerSetClockFrequency_k)(int, int, int) = (void *)FindPowerFunction(0x737486F2);
-		scePowerSetClockFrequency_k(cpu, cpu, bus);
-
-		if (sceKernelInitKeyConfig() != PSP_INIT_KEYCONFIG_VSH) {
-			MAKE_DUMMY_FUNCTION((u32)scePowerSetClockFrequency_k, 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x545A7F3C), 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xB8D7B3FB), 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x843FBF43), 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xEBD177D6), 0);
-			flushCache();
-		}
-	}
-}
-*/
-
-void patch_VshMain(SceModule2* mod){
-	u32 text_addr = mod->text_addr;
-
-	// Dummy usb detection functions
-	MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0x38C94);
-	MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0x38C94);
-}
-
 void patch_SysconfPlugin(SceModule2* mod){
 	u32 text_addr = mod->text_addr;
 	// Dummy all vshbridge usbstor functions
@@ -315,12 +269,34 @@ void patch_SysconfPlugin(SceModule2* mod){
 	MAKE_DUMMY_FUNCTION_RETURN_0(text_addr + 0xD2C4);
 
 	// Redirect USB functions
-	MAKE_SYSCALL(mod->text_addr + 0xAE9C, sctrlStartUsb);
-	MAKE_SYSCALL(mod->text_addr + 0xAFF4, sctrlStopUsb);
-	MAKE_SYSCALL(mod->text_addr + 0xB4A0, sctrlGetUsbState);
+	REDIRECT_SYSCALL(mod->text_addr + 0xAE9C, sctrlStartUsb);
+	REDIRECT_SYSCALL(mod->text_addr + 0xAFF4, sctrlStopUsb);
+	REDIRECT_SYSCALL(mod->text_addr + 0xB4A0, sctrlGetUsbState);
 
 	// Ignore wait thread end failure
 	_sw(0, text_addr + 0xB264);
+}
+
+void patchPopsMan(SceModule2* mod){
+	u32 text_addr = mod->text_addr;
+
+	// Use different mode for SceKermitPocs
+	_sw(0x2405000E, text_addr + 0x2030);
+	_sw(0x2405000E, text_addr + 0x20F0);
+	_sw(0x2405000E, text_addr + 0x21A0);
+
+	// Use different pops register location
+	_sw(0x3C014BCD, text_addr + 0x11B4);
+}
+
+void patchPops(SceModule2* mod){
+	// Use different pops register location
+	u32 i;
+	for (i = 0; i < mod->text_size; i += 4) {
+		if ((_lw(mod->text_addr+i) & 0xFFE0FFFF) == 0x3C0049FE) {
+			_sh(0x4BCD, mod->text_addr+i);
+		}
+	}
 }
 
 void exit_game_patched(){
@@ -335,13 +311,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
-
-    if(strcmp(mod->modname, "sceDisplay_Service") == 0)
-    {
-        // can use screen now
-        goto flush;
-    }
-
+	
 	// Patch Kermit Peripheral Module to load flash0
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
     {
@@ -402,8 +372,26 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         goto flush;
 	}
 
+	if (strcmp(mod->modname, "sceUSBCam_Driver") == 0) {
+		patchUsbCam(mod);
+		goto flush;
+	}
+
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
 		PatchImposeDriver(mod->text_addr);
+		// perfect time to apply extra memory patch
+		if (se_config->force_high_memory) unlockVitaMemory();
+		else{
+			int apitype = sceKernelInitApitype();
+			if (apitype == 0x141){
+				int paramsize=4;
+				int use_highmem = 0;
+				if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
+					unlockVitaMemory();
+					se_config->force_high_memory = 1;
+				}
+        	}
+		}
         goto flush;
 	}
 
@@ -421,7 +409,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
 	if (strcmp(mod->modname, "vsh_module") == 0) {
 		is_vsh = 1;
-		patch_VshMain(mod);
 		if (se_config->skiplogos){
             // patch GameBoot
             hookImportByNID(sceKernelFindModuleByName("sceVshBridge_Driver"), "sceDisplay_driver", 0x3552AB11, 0);
@@ -432,6 +419,16 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceSAScore") == 0) {
 		PatchSasCore();
         goto flush;
+	}
+
+	if (strcmp(mod->modname, "scePops_Manager") == 0){
+		patchPopsMan(mod);
+		goto flush;
+	}
+
+	if (strcmp(mod->modname, "pops") == 0){
+		patchPops(mod);
+		goto flush;
 	}
 
 	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
@@ -450,32 +447,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         // Exit Handler
         goto flush;
     }
-
-	// load and process settings file
-    if(strcmp(mod->modname, "sceMediaSync") == 0)
-    {
-		// apply extra memory patch
-		if (se_config->force_high_memory) unlockVitaMemory();
-		else{
-			int apitype = sceKernelInitApitype();
-			if (apitype == 0x141){
-				int paramsize=4;
-				int use_highmem = 0;
-				if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-					unlockVitaMemory();
-					se_config->force_high_memory = 1;
-				}
-        	}
-		}
-		// enable inferno cache
-		if (se_config->iso_cache){
-			int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
-			if (CacheInit){
-				CacheInit(32 * 1024, 128, (se_config->force_high_memory)?2:11); // 4MB cache for Adrenaline
-			}
-        }
-        goto flush;
-    }
        
     // Boot Complete Action not done yet
     if(booted == 0)
@@ -484,7 +455,25 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         if(isSystemBooted())
         {
             // Initialize Memory Stick Speedup Cache
-            if (se_config->msspeed) msstorCacheInit("ms", 8 * 1024);
+            if (se_config->msspeed)
+				msstorCacheInit("ms");
+
+			// enable inferno cache
+			if (se_config->iso_cache){
+				int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+				if (CacheInit){
+					se_config->iso_cache_size = 4 * 1024;
+					se_config->iso_cache_num = 16;
+					CacheInit(4 * 1024, 16, 1); // 4MB cache for Adrenaline
+				}
+				if (se_config->iso_cache == 2){
+					int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
+					if (CacheSetPolicy){
+						se_config->iso_cache_policy = CACHE_POLICY_RR;
+						CacheSetPolicy(CACHE_POLICY_RR);
+					}
+				}
+			}
 
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
@@ -545,6 +534,7 @@ void AdrenalineSysPatch(){
     SceModule2* loadcore = patchLoaderCore();
     PatchIoFileMgr();
     PatchMemlmd();
+
 	// initialize Adrenaline Layer
     initAdrenaline();
 }

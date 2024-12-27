@@ -85,6 +85,7 @@
 
     "Network Tools": "Netwerktools",
     "Press [] to check for Updates": "Druk op [] om te controleren op updates",
+    "[] to Reset Settings": "[] Instellingen resetten",
     "FTP Server is stopped. Press %s to start.": "FTP-server is gestopt. Druk op %s om te starten.",
     "FTP Server is running @ %s. Press %s to stop.": "FTP-server draait op %s. Druk op %s om te stoppen.",
     "Could not get IP address": "Kon IP-adres niet ophalen",
@@ -150,6 +151,10 @@
     "Hide DLC": "DLC verbergen",
     "Turn off LEDs": "LED's uitschakelen",
     "VSH Region Change": "VSH-regiowijziging",
-    "UMD Region Change": "UMD-regiowijziging"
+    "UMD Region Change": "UMD-regiowijziging",
+	"Disable UMD Drive": "Schakel UMD-schijf uit",
+	"Disable Analog Stick": "Analoge stick uitschakelen",
+	"Custom App": "Aangepaste app",
+	"QA Flags": "QA-vlaggen"
 
 }

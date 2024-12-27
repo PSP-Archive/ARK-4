@@ -1,11 +1,11 @@
 #include <pspsdk.h>
+#include <pspsysmem_kernel.h>
 #include <pspinit.h>
-#include <globals.h>
+#include <ark.h>
 #include <graphics.h>
 #include <macros.h>
 #include <module2.h>
 #include <pspdisplay_kernel.h>
-#include <pspsysmem_kernel.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
@@ -20,34 +20,8 @@ extern u32 psp_model;
 extern ARKConfig* ark_config;
 extern SEConfig* se_config;
 extern STMOD_HANDLER previous;
-extern void SetSpeed(int cpuspd, int busspd);
 
-// Return Boot Status
-int isSystemBooted(void)
-{
-
-    // Find Function
-    int (* _sceKernelGetSystemStatus)(void) = (void*)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0x452E3696);
-    
-    // Get System Status
-    int result = _sceKernelGetSystemStatus();
-        
-    // System booted
-    if(result == 0x20000) return 1;
-    
-    // Still booting
-    return 0;
-}
-
-static u32 fakeDevkitVersion(){
-    return FW_660; // Popsloader V3 will check for 6.60, it fails on 6.61 so let's make it think it's on 6.60
-}
-
-static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int nid){
-    if (nid == 0x221400A6 && strcmp(szMod, "SystemControl") == 0)
-        return 0; // Popsloader V4 looks for this function to check for ME, let's pretend ARK doesn't have it ;)
-    return sctrlHENFindFunction(szMod, szLib, nid);
-}
+extern int sceKernelSuspendThreadPatched(SceUID thid);
 
 static int _sceKernelBootFromForUmdMan(void)
 {
@@ -183,23 +157,20 @@ void disable_PauseGame()
     }
 }
 
-void processSettings(){
-    int apitype = sceKernelInitApitype();
+int sceUmdRegisterUMDCallBackPatched(int cbid) {
+	int k1 = pspSdkSetK1(0);
+	int res = sceKernelNotifyCallback(cbid, PSP_UMD_NOT_PRESENT);
+	pspSdkSetK1(k1);
+	return res;
+}
 
-    // USB Charging
-    if (se_config->usbcharge){
-        usb_charge(); // enable usb charging
-    }
-    // check launcher mode
-    if (se_config->launcher_mode){
-        strcpy(ark_config->launcher, ARK_MENU); // set CFW in launcher mode
-    }
-    else{
-        ark_config->launcher[0] = 0; // disable launcher mode
-    }
-    // VSH region
-    if (se_config->vshregion) patch_sceChkreg();
-    // Disable LED
+static int sceGpioPortReadPatched(void) {
+	int GPRValue = *((int *) 0xBE240004);
+	GPRValue = GPRValue & 0xFBFFFFFF;
+	return GPRValue;
+}
+
+void disableLEDs(){
     if (se_config->noled){
         int (*_sceSysconCtrlLED)(int, int);
         _sceSysconCtrlLED = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x18BFBE65);
@@ -207,11 +178,18 @@ void processSettings(){
         MAKE_DUMMY_FUNCTION_RETURN_0(_sceSysconCtrlLED);
         flushCache();
     }
+}
+
+void handleExtraRam(){
+    int apitype = sceKernelInitApitype();
+
     // Enforce extra RAM
     if (se_config->force_high_memory){
         patch_partitions();
         se_config->disable_pause = 1;
     }
+
+    // Check if running a homebrew that requires extra RAM
     if(!se_config->force_high_memory && (apitype == 0x141 || apitype == 0x152) ){
         int paramsize=4;
         int use_highmem = 0;
@@ -221,57 +199,141 @@ void processSettings(){
             se_config->force_high_memory = 1;
         }
     }
-    // Enable Inferno cache
+}
+
+void enableInfernoCache(){
     if (se_config->iso_cache){
         int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
         if (CacheInit){
-            if (psp_model==PSP_1000) CacheInit(4 * 1024, 8, 2); // 32K cache on 1K
-            else CacheInit(64 * 1024, 128, (se_config->force_high_memory)?2:9); // 8M cache on other models
+            if (psp_model==PSP_1000){
+                se_config->iso_cache_size = 4 * 1024;
+                se_config->iso_cache_num = 8;
+                CacheInit(4 * 1024, 8, 1); // 32K cache on 1K, allocated in kernel
+            }
+            else {
+                se_config->iso_cache_size = 64 * 1024;
+                se_config->iso_cache_num = 128;
+                CacheInit(64 * 1024, 128, (se_config->force_high_memory)?2:9); // 8M cache on other models
+            }
             se_config->disable_pause = 1; // disable pause feature to maintain stability
         }
+        if (se_config->iso_cache == 2){
+            int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
+            if (CacheSetPolicy){
+                se_config->iso_cache_policy = CACHE_POLICY_RR;
+                CacheSetPolicy(CACHE_POLICY_RR);
+            }
+        }
     }
+}
+
+void disableUMD(){
+    if (se_config->noumd && psp_model != PSP_GO){
+        // disable UMD drive by software, only do this if not running an ISO driver
+        if (sceKernelFindModuleByName("PRO_Inferno_Driver")==NULL && sceKernelFindModuleByName("sceNp9660_driver")==NULL){
+            // redirect UMD callback to DISC_NOT_PRESENT
+            u32 f = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0xAEE7404D);
+            if (f){
+                REDIRECT_FUNCTION(f, sceUmdRegisterUMDCallBackPatched);
+            }
+            // remove umd driver
+            sceIoDelDrv("umd");
+            // force UMD check medium to always return 0 (no medium)
+            u32 CheckMedium = sctrlHENFindFunction("sceUmd_driver", "sceUmdUser", 0x46EBB729);
+            if (CheckMedium){
+                MAKE_DUMMY_FUNCTION_RETURN_0(CheckMedium);
+            }
+        }
+        // patch GPIO to disable UMD drive electrically
+        u32 sceGpioPortRead = (void*)sctrlHENFindFunction("sceLowIO_Driver", "sceGpio_driver", 0x4250D44A);
+        REDIRECT_FUNCTION(sceGpioPortRead, sceGpioPortReadPatched);
+    }
+}
+
+void processSettings(){
+    int apitype = sceKernelInitApitype();
+
+    // USB Charging
+    if (se_config->usbcharge){
+        usb_charge(); // enable usb charging
+    }
+    
+    // check launcher mode
+    if (se_config->launcher_mode){
+        strcpy(ark_config->launcher, VBOOT_PBP); // set CFW in launcher mode
+    }
+    else{
+        if (strcmp(ark_config->launcher, "PROSHELL") != 0)
+            ark_config->launcher[0] = 0; // disable launcher mode
+    }
+
+    // VSH region
+    if (se_config->vshregion) patch_sceChkreg();
+
+    // Disable LED
+    disableLEDs();
+
     // Disable Pause feature on PSP Go
     if (se_config->disable_pause){
         disable_PauseGame();
     }
+
+    // Disable UMD Drive
+    disableUMD();
 }
 
-void (*prevPluginHandler)(const char* path, int modid) = NULL;
-void pluginHandler(const char* path, int modid){
-    if(se_config->oldplugin && psp_model == PSP_GO && (strncasecmp(path, "ef0", 2)==0)) {
+int (*prevPluginHandler)(const char* path, int modid) = NULL;
+int pluginHandler(const char* path, int modid){
+    if(se_config->oldplugin && psp_model == PSP_GO && path[0] == 'e' && path[1] == 'f') {
 		patch_devicename(modid);
 	}
-	if (prevPluginHandler) prevPluginHandler(path, modid);
+	if (prevPluginHandler) return prevPluginHandler(path, modid);
+    return 0;
 }
-
 
 void PSPOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
-    
-    if(strcmp(mod->modname, "sceUmdMan_driver") == 0) {
+
+	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
+    	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
+			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+			goto flush;
+		}
+	}
+
+    if (strcmp(mod->modname, "sceUmdMan_driver") == 0) {
         patch_sceUmdMan_driver(mod);
         patch_umd_idslookup(mod);
         goto flush;
     }
 
-    if(strcmp(mod->modname, "sceUmdCache_driver") == 0) {
+    if (strcmp(mod->modname, "sceUmdCache_driver") == 0) {
         patch_umdcache(mod);
         goto flush;
     }
 
-    if(strcmp(mod->modname, "sceWlan_Driver") == 0) {
+    if (strcmp(mod->modname, "sceWlan_Driver") == 0) {
         patch_sceWlan_Driver(mod);
         patch_Libertas_MAC(mod);
         goto flush;
     }
 
-    if(strcmp(mod->modname, "scePower_Service") == 0) {
+    if (strcmp(mod->modname, "scePower_Service") == 0) {
         patch_scePower_Service(mod);
         goto flush;
     }
     
-    if(strcmp(mod->modname, "sceMediaSync") == 0) {
+    if (strcmp(mod->modname, "sceImpose_Driver") == 0){
+        // Handle extra ram setting
+        handleExtraRam();
+        // Handle Inferno cache setting
+        enableInfernoCache();
+        goto flush;
+    }
+
+    if (strcmp(mod->modname, "sceMediaSync") == 0) {
+        // Handle some settings
         processSettings();
         goto flush;
     }
@@ -281,31 +343,12 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    if(0 == strcmp(mod->modname, "game_plugin_module")) {
+    if (strcmp(mod->modname, "game_plugin_module") == 0) {
 		if (se_config->skiplogos) {
 		    patch_GameBoot(mod);
 	    }
         goto flush;
 	}
-    
-    if (strcmp(mod->modname, "popsloader") == 0 || strcmp(mod->modname, "popscore") == 0){
-        // fix for 6.60 check on 6.61
-        hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &fakeDevkitVersion);
-        // fix to prevent ME detection
-        hookImportByNID(mod, "SystemCtrlForKernel", 0x159AF5CC, &fakeFindFunction);
-        goto flush;
-    }
-
-    if (strcmp(mod->modname, "DayViewer_User") == 0){
-        // fix scePaf imports in DayViewer
-        static u32 nids[] = {
-            0x2BE8DDBB, 0xE8CCC611, 0xCDDCFFB3, 0x48BB05D5, 0x22FB4177, 0xBC8DC92B, 0xE3D530AE
-        };
-        for (int i=0; i<NELEMS(nids); i++){
-            hookImportByNID(mod, "scePaf", nids[i], sctrlHENFindFunction("scePaf_Module", "scePaf", nids[i]));
-        }
-        goto flush;
-    }
     
     if (strcmp(mod->modname, "vsh_module") == 0){
         if (se_config->umdregion){
@@ -329,30 +372,43 @@ void PSPOnModuleStart(SceModule2 * mod){
         }
         goto flush;
     }
+
+	if (strcmp(mod->modname, "Legacy_Software_Loader") == 0 )
+	{
+        // Missing from SDK
+        #define PSP_INIT_APITYPE_EF2 0x152
+		if( sceKernelInitApitype() == PSP_INIT_APITYPE_EF2 )
+		{
+			_sw( 0x10000005, mod->text_addr + 0x0000014C );	
+			goto flush;
+		}
+	}
     
-    if(booted == 0)
+    if (booted == 0)
     {
         // Boot is complete
-        if(isSystemBooted())
+        if (isSystemBooted())
         {
 
             // handle mscache
             if (se_config->msspeed){
-                if (psp_model == PSP_GO)
-                    msstorCacheInit("eflash0a0f1p", 8 * 1024);
-                else
-                    msstorCacheInit("msstor0p", 16 * 1024);
+                char* drv = 
+                    (psp_model == PSP_GO && sctrlKernelBootFrom()==0x50)?
+                    "eflash0a0f1p" : "msstor0p";
+                msstorCacheInit(drv);
             }
-            // handle CPU speed
-            switch (se_config->clock){
-                case 1: SetSpeed(333, 166); break;
-                case 2: SetSpeed(133, 66); break;
-                case 3: SetSpeed(222, 111); break;
+
+            // fix pops on toolkits
+            if (sctrlHENIsToolKit() && sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
+                patchPops4Tool();
             }
+
             // Boot Complete Action done
             booted = 1;
             goto flush;
         }
+
+
     }
     
 flush:
@@ -360,6 +416,7 @@ flush:
 
     // Forward to previous Handler
     if(previous) previous(mod);
+
 }
 
 int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;

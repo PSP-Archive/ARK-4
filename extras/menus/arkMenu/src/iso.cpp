@@ -1,5 +1,6 @@
 #include "iso.h"
 #include <umd.h>
+#include <systemctrl.h>
 
 using namespace std;
 
@@ -12,7 +13,6 @@ static u8 g_ciso_dec_buf[DAX_COMP_BUF] __attribute__((aligned(64)));
 static u32 g_cso_idx_cache[CISO_IDX_MAX_ENTRIES];
 
 extern "C"{
-    int sctrlKernelExitVSH(void*);
     int sctrlDeflateDecompress(void*, void*, int);
     int lzo1x_decompress(void*, unsigned int, void*, unsigned int*, void*);
     int LZ4_decompress_fast(const char*, char*, int);
@@ -125,7 +125,7 @@ void Iso::loadIcon(){
     this->icon0 = icon;
 }
 
-void Iso::getTempData1(){
+void Iso::loadPics(){
     this->pic0 = NULL;
     this->pic1 = NULL;
 
@@ -149,7 +149,7 @@ void Iso::getTempData1(){
     }
 }
 
-void Iso::getTempData2(){
+void Iso::loadAVMedia(){
     this->icon1 = NULL;
     this->snd0 = NULL;
     this->at3_size = 0;
@@ -325,6 +325,7 @@ bool Iso::isISO(const char* filename){
     string ext = common::getExtension(filename);
     return (
         ext == "iso" ||
+        ext == "img" ||
         ext == "cso" ||
         ext == "zso" ||
         ext == "jso" ||

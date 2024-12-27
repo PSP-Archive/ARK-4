@@ -4,9 +4,10 @@
 #include "system_entry.h"
 #include "optionsmenu.h"
 #include "common.h"
+#include <systemctrl.h>
+
 
 extern "C"{
-    void sctrlKernelExitVSH(void*);
     void scePowerRequestColdReset(int);
     void scePowerRequestStandby();
 }
@@ -65,6 +66,8 @@ class ExitManager : public SystemEntry{
         };
         std::string getInfo(){return "Exit";};
         void setInfo(std::string info){};
+        void setFooter(std::string footer){};
+		std::string getFooter(){return "";};
         Image* getIcon(){return common::getImage(IMAGE_EXIT);};
         void setName(std::string name){};
         std::string getName(){return "Exit";};

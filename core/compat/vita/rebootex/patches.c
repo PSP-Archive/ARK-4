@@ -26,7 +26,7 @@ int _pspemuLfatOpen(BootFile* file, int unk)
     char* p = file->name;
     if (strcmp(p, "pspbtcnf.bin") == 0){
         p[2] = 'v'; // custom btcnf for PS Vita
-        if (reboot_conf->iso_mode == MODE_INFERNO || reboot_conf->iso_mode == MODE_MARCH33 || reboot_conf->iso_mode == MODE_NP9660){
+        if (reboot_conf->iso_mode == MODE_INFERNO || reboot_conf->iso_mode == MODE_MARCH33){
             reboot_conf->iso_mode = MODE_INFERNO;
             p[5] = 'i'; // use inferno ISO mode (psvbtinf.bin)
         }
@@ -58,8 +58,8 @@ void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *tab
 {
     // Add flash0 ramfs as partition 11
     SetMemoryPartitionTable(sysmem_config, table);
-    table->extVshell.addr = 0x0B000000;
-    table->extVshell.size = (12*1024*1024);
+    table->extVshell.addr = EXTRA_RAM;
+    table->extVshell.size = EXTRA_RAM_SIZE;
 }
 
 int PatchSysMem(void *a0, void *sysmem_config)
@@ -113,10 +113,12 @@ void patchRebootBuffer(){
         else if ((data & 0x0000FFFF) == 0x8B00){
             _sb(0xA0, addr); // Link Filesystem Buffer to 0x8BA00000
         }
+        /*
         else if (data == 0x24040004) {
             _sw(0x02402021, addr); //move $a0, $s2
             _sw(JAL(PatchSysMem), addr + 0x64); // Patch call to SysMem module_bootstart
         }
+        */
     }
     // Flush Cache
     flushCache();

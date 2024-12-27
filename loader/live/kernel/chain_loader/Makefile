@@ -12,7 +12,7 @@ CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 
 C_OBJS = \
 	main.o \
-	$(ARKROOT)/common/utils/scanner.o \
+	$(ARKROOT)/libs/libsploit/scanner.o \
 
 LINKFILE = link.l
 CC = psp-gcc

@@ -85,6 +85,7 @@
 
     "Network Tools": "Instrumente rețea",
     "Press [] to check for Updates": "Apasă [] pentru a căuta actualizări noi",
+    "[] to Reset Settings": "[] pentru a reseta setările",
     "FTP Server is stopped. Press %s to start.": "Server-ul FTP a fost oprit. Apăsați %s pentru a porni.",
     "FTP Server is running @ %s. Press %s to stop.": "Server-ul FTP a rulează pe %s. Apăsați %s pentru a opri.",
     "Could not get IP address": "Nu s-a putut obține adresa IP",
@@ -150,6 +151,10 @@
     "Hide DLC": "Ascunde DLC",
     "Turn off LEDs": "Stinge LED-urile",
     "VSH Region Change": "Schimbare regiune VSH",
-    "UMD Region Change": "Schimbare regiune UMD"
+    "UMD Region Change": "Schimbare regiune UMD",
+    "Disable UMD Drive": "Dezactivati unitatea UMD",
+    "Disable Analog Stick": "Dezactiveaza stick-ul analogic",
+	"Custom App": "Aplicație personalizată",
+    "QA Flags": "Steaguri QA"
 
 }

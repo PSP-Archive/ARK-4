@@ -21,45 +21,27 @@
 #include <malloc.h>
 #include "imports.h"
 
-#define SYSCTRL_HEAP_SIZE 14*1024 // 14KB is enough
-
-static SceUID heapid = -1;
-
 // Initialize Heap
 int oe_mallocinit(void)
 {
-    // Prevent Double Tapping
-    if(heapid >= 0) return 0;
-
-    // Get Application Type
-    int key_config = sceKernelApplicationType();
-    
-    if(key_config == PSP_INIT_KEYCONFIG_POPS) return 0; // PS1 Emulator = No Heap
-    
-    // Create Heap
-    heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, SYSCTRL_HEAP_SIZE, 1, "SystemCtrlHeap");
-    
-    // Return Error Code on Error
-    return (heapid < 0) ? heapid : 0;
+   return 0;
 }
 
-// Allocate Memory from Heap
-void * oe_malloc(unsigned int size)
-{
-    // Forward Call
-    return sceKernelAllocHeapMemory(heapid, size);
+void* oe_malloc(size_t size){
+    SceUID uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_KERNEL, "", PSP_SMEM_High, size+sizeof(SceUID), NULL);
+    SceUID* ptr = sceKernelGetBlockHeadAddr(uid);
+    ptr[0] = uid;
+    return &(ptr[1]);
 }
 
-// Return Memory to Heap
-int oe_free(void * p)
-{
-    // Forward Call
-    return sceKernelFreeHeapMemory(heapid, p);
+void oe_free(void* ptr){
+    SceUID uid = ((SceUID*)ptr)[-1];
+    sceKernelFreePartitionMemory(uid);
 }
 
 // Terminate Heap
 int oe_mallocterminate(void)
 {
     // Forward Call
-    return sceKernelDeleteHeap(heapid);
+    return 0;
 }

@@ -31,10 +31,10 @@ ARKConfig _arkconf = {
     .magic = ARK_CONFIG_MAGIC,
 #ifndef MS_IPL
     .arkpath = "ms0:/PSP/SAVEDATA/ARK_01234/", // default path for ARK files
-    .exploit_id = "cIPL",
+    .exploit_id = CIPL_EXPLOIT_ID,
 #else
     .arkpath = ARK_DC_PATH "/ARK_01234/", // default path for ARK files
-    .exploit_id = "DC",
+    .exploit_id = DC_EXPLOIT_ID,
 #endif
     .launcher = {0},
     .exec_mode = PSP_ORIG, // run ARK in PSP mode
@@ -57,6 +57,8 @@ void (* sceRebootDacheWritebackInvalidateAll)(void) = NULL;
 // Sony PRX Decrypter Function Pointer
 int (* SonyPRXDecrypt)(void *, unsigned int, unsigned int *) = NULL;
 int (* origCheckExecFile)(unsigned char * addr, void * arg2) = NULL;
+int (* extraPRXDecrypt)(void *, unsigned int, unsigned int *) = NULL;
+int (* extraCheckExec)(unsigned char * addr, void * arg2) = NULL;
 
 // UnpackBootConfig
 int (* UnpackBootConfig)(char * buffer, int length) = NULL;
@@ -65,6 +67,7 @@ u32 UnpackBootConfigCall = 0;
 u32 UnpackBootConfigArg = 0;
 u32 reboot_start = 0;
 u32 reboot_end = 0;
+u32 loadcore_text = 0;
 
 //io flags
 int rebootmodule_set = 0;
@@ -82,21 +85,28 @@ int (* sceBootLfatClose)(void) = NULL;
 // implementation specific patches
 extern patchRebootBuffer();
 
-// PRO GZIP Decrypt Support
-int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
+// Custom PRX Support
+int ARKPRXDecrypt(PSP_Header* prx, unsigned int size, unsigned int * newsize)
 {
-    // GZIP Packed PRX File
-    if ( (_lb((unsigned)prx + 0x150) == 0x1F && _lb((unsigned)prx + 0x151) == 0x8B)
-            || (*(unsigned int *)(prx + 0x130) == 0xC01DB15D) )
-    {
+    // Custom Packed PRX File
+    if ( (_lb((u8*)prx + 0x150) == 0x1F && _lb((u8*)prx + 0x151) == 0x8B) // GZIP
+            || prx->oe_tag == 0xC01DB15D // PRO-type PRX
+            || prx->oe_tag == 0xC6BA41D3 // ME-type PRX
+    ){
+
+        #ifdef PAYLOADEX
+        #ifndef MS_IPL
+        if (prx->oe_tag == 0xC6BA41D3 && extraPRXDecrypt){ // decrypt ME firmware file
+            extraPRXDecrypt(prx, size, newsize);
+        }
+        #endif
+        #endif
+
         // Read GZIP Size
-        unsigned int compsize = *(unsigned int *)(prx + 0xB0);
-        
-        // Return GZIP Size
-        *newsize = compsize;
+        *newsize = prx->comp_size;
         
         // Remove PRX Header
-        memcpy(prx, prx + 0x150, compsize);
+        memcpy(prx, (u8*)prx + 0x150, prx->comp_size);
         
         // Fake Decrypt Success
         return 0;
@@ -109,6 +119,7 @@ int PROPRXDecrypt(void * prx, unsigned int size, unsigned int * newsize)
 
 int CheckExecFilePatched(unsigned char * addr, void * arg2)
 {
+#ifndef MS_IPL
     //scan structure
     //6.31 kernel modules use type 3 PRX... 0xd4~0x10C is zero padded
     int pos = 0; for(; pos < 0x38; pos++)
@@ -120,9 +131,44 @@ int CheckExecFilePatched(unsigned char * addr, void * arg2)
             return origCheckExecFile(addr, arg2);
         }
     }
+#endif
+
+    #ifdef PAYLOADEX
+    #ifndef MS_IPL
+    if (extraCheckExec){
+        extraCheckExec(addr, arg2);
+    }
+    #endif
+    #endif
 
     //return success
     return 0;
+}
+
+void unPatchLoadCorePRXDecrypt(){
+    u32 decrypt_call = JAL(ARKPRXDecrypt);
+    u32 text_addr = loadcore_text;
+    u32 top_addr = text_addr+0x8000;
+
+    for (u32 addr = text_addr; addr<top_addr; addr+=4) {
+        if (_lw(addr) == decrypt_call){
+            _sw(JAL(SonyPRXDecrypt), addr);
+        }
+    }
+
+}
+
+void unPatchLoadCoreCheckExec(){
+    u32 check_call = JAL(CheckExecFilePatched);
+    u32 text_addr = loadcore_text;
+    u32 top_addr = text_addr+0x8000;
+
+    for (u32 addr = text_addr; addr<top_addr; addr+=4) {
+        if (_lw(addr) == check_call){
+            _sw(JAL(origCheckExecFile), addr);
+        }
+    }
+
 }
 
 u32 loadCoreModuleStartCommon(u32 module_start){
@@ -138,21 +184,27 @@ u32 loadCoreModuleStartCommon(u32 module_start){
     u32 decrypt_call = JAL(SonyPRXDecrypt);
     u32 check_call = JAL(origCheckExecFile);
 
+    int devkit_patched = 0;
+
     // Hook Signcheck Function Calls
     for (u32 addr = text_addr; addr<top_addr; addr+=4){
         u32 data = _lw(addr);
         if (data == decrypt_call){
-            _sw(JAL(PROPRXDecrypt), addr);
+            _sw(JAL(ARKPRXDecrypt), addr);
         }
         else if (data == check_call){
             _sw(JAL(CheckExecFilePatched), addr);
         }
-        else if (data == 0x26E50028){
+        else if (!devkit_patched && data == 0x24040015){
             // Don't break on unresolved syscalls
-            _sw(0x00001021, addr-20);
+            u32 a = addr;
+            do { a-=4; } while (_lw(a) != 0x27BD0030);
+            _sw(0x00001021, a+4);
+            devkit_patched = 1;
         }
     }
 
+    loadcore_text = text_addr;
     return text_addr;
 }
 
@@ -222,6 +274,25 @@ u32 findRebootFunctions(u32 reboot_start){
     return reboot_end;
 }
 
+static void checkRebootConfig(){
+    if (IS_ARK_CONFIG(reboot_conf)){
+        // fix MODE_NP9660 (Galaxy driver no longer exists, redirect to either inferno or normal)
+        if (reboot_conf->iso_mode == MODE_NP9660){
+            if (reboot_conf->iso_path[0] == 0){
+                // no ISO -> normal mode
+                reboot_conf->iso_mode = MODE_UMD;
+            }
+            else{
+                // attempting to load an ISO with NP9660 is no longer possible, use inferno instead
+                reboot_conf->iso_mode = MODE_INFERNO;
+            }
+        }
+    }
+}
+
+extern void copyPSPVram(u32*);
+#define REG32(addr)                 *((volatile uint32_t *)(addr))
+
 // Entry Point
 int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7)
 {
@@ -234,8 +305,9 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int a
 	REG32(0xbc10007c) |= 0xc8;
 	__asm("sync"::);
 	
-	sceSysconInit();
-	sceSysconCtrlMsPower(1);
+	syscon_init();
+    
+    syscon_ctrl_ms_power(1);
 #endif
 
 #ifdef PAYLOADEX
@@ -256,6 +328,7 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int a
     reboot_end = findRebootFunctions(reboot_start); // scan for reboot functions
     
     // patch reboot buffer
+    checkRebootConfig();
     patchRebootBuffer();
     
     // Forward Call

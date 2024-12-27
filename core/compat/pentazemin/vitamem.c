@@ -6,8 +6,8 @@
 #include <pspiofilemgr.h>
 #include <stdio.h>
 #include <string.h>
-#include "globals.h"
-#include "systemctrl.h"
+#include <ark.h>
+#include <systemctrl.h>
 #include "sysmem.h"
 
 void unlockVitaMemory(){
@@ -34,8 +34,8 @@ void unlockVitaMemory(){
     }
 
 
-    u32 kernel_size = 0; //VITA_EXTRA_RAM_SIZE - extra_user_ram; // p11 size
-    u32 user_size = USER_SIZE + VITA_EXTRA_RAM_SIZE; // new p2 size
+    u32 kernel_size = 0; // EXTRA_RAM_SIZE - extra_user_ram; // p11 size
+    u32 user_size = 52 * 1024 * 1024; // new p2 size
 
     // modify p2
     partition = GetPartition(PSP_MEMORY_PARTITION_USER);
@@ -48,5 +48,5 @@ void unlockVitaMemory(){
     partition->address = 0x88800000 + user_size;
     partition->data->size = (((kernel_size >> 8) << 9) | 0xFC);
 
-    sctrlHENSetMemory(40, 0);
+    sctrlHENSetMemory(52, 0);
 }

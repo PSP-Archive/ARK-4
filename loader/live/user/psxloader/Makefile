@@ -1,14 +1,14 @@
 TARGET = psxloader
 OBJS = main.o
 
-CFLAGS = -std=c99 -Os -G0 -Wall -I$(ARKROOT)/common/include -I$(ARKROOT)/libs/colordebugger -I$(ARKROOT)/libs/graphics
+CFLAGS = -std=c99 -Os -G0 -Wall -I$(ARKROOT)/common/include 
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -DDEBUG=1
 endif
 
 LDFLAGS = -mno-crt0 -nostartfiles -L. -L $(ARKROOT)/libs
-LIBS = -lcolordebugger -lgraphics
+LIBS = 
 PSP_FW_VERSION=660
 
 BUILD_PRX=1

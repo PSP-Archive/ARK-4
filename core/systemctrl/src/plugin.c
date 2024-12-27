@@ -19,7 +19,7 @@
 #include <pspinit.h>
 #include <pspmodulemgr.h>
 #include <pspiofilemgr.h>
-#include <globals.h>
+#include <ark.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include "plugin.h"
@@ -41,7 +41,7 @@ typedef struct{
 
 Plugins* plugins = NULL;
 
-void (*plugin_handler)(const char* path, int modid) = NULL;
+int (*plugin_handler)(const char* path, int modid) = NULL;
 
 enum {
     RUNLEVEL_UNKNOWN,
@@ -55,6 +55,10 @@ static int cur_runlevel = RUNLEVEL_UNKNOWN;
 int disable_plugins = 0;
 int disable_settings = 0;
 int is_plugins_loading = 0;
+
+int isLoadingPlugins(){
+    return is_plugins_loading;
+}
 
 static addPlugin(char* path){
     for (int i=0; i<plugins->count; i++){
@@ -80,15 +84,25 @@ static removePlugin(char* path){
 static void startPlugins()
 {
     for (int i=0; i<plugins->count; i++){
+        int res = 0;
         char* path = plugins->paths[i];
         // Load Module
         int uid = sceKernelLoadModule(path, 0, NULL);
-        // Call handler
-        if (plugin_handler) plugin_handler(path, uid);
-        // Start Module
-        int res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
-        // Unload Module on Error
-        if (res < 0) sceKernelUnloadModule(uid);
+        if (uid > 0){
+            // Call handler
+            if (plugin_handler){
+                res = plugin_handler(path, uid);
+                // Unload Module on Error
+                if (res < 0){
+                    sceKernelUnloadModule(uid);
+                    continue;
+                }
+            }
+            // Start Module
+            res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
+            // Unload Module on Error
+            if (res < 0) sceKernelUnloadModule(uid);
+        }
     }
 }
 
@@ -129,34 +143,68 @@ static int isHomebrewRunlevel(){
     return cur_runlevel == RUNLEVEL_HOMEBREW;
 }
 
+static int isLauncher(){
+    char path[ARK_PATH_SIZE];
+    strcpy(path, ark_config->arkpath);
+    if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
+    else                         strcat(path, VBOOT_PBP);
+    return (strcmp(path, sceKernelInitFileName())==0);
+}
+
+static int isPath(char* runlevel){
+    return (
+        strcasecmp(runlevel, sceKernelInitFileName())==0 ||
+        strcasecmp(runlevel, sctrlSEGetUmdFile())==0
+    );
+}
+
+static int isGameId(char* runlevel){
+    char gameid[10]; memset(gameid, 0, sizeof(gameid));
+    getGameId(gameid);
+    lowerString(gameid, gameid, strlen(gameid)+1);
+    return (strstr(runlevel, gameid) != NULL);
+}
+
 // Runlevel Check
 static int matchingRunlevel(char * runlevel)
 {
     
-    if (stricmp(runlevel, "all") == 0 || stricmp(runlevel, "always") == 0) return 1; // always on
-    else if (stricmp(runlevel, "vsh") == 0 || stricmp(runlevel, "xmb") == 0) // VSH only
-        return isVshRunlevel();
-    else if (stricmp(runlevel, "pops") == 0 || stricmp(runlevel, "ps1") == 0 || stricmp(runlevel, "psx") == 0) // PS1 games only
-        return isPopsRunlevel();
-    else if (stricmp(runlevel, "umd") == 0 || stricmp(runlevel, "psp") == 0 || stricmp(runlevel, "umdemu") == 0) // Retail games only
-        return isUmdRunlevel();
-    else if (stricmp(runlevel, "game") == 0) // retail+homebrew
-        return (isUmdRunlevel() || isHomebrewRunlevel());
-    else if (stricmp(runlevel, "app") == 0 || stricmp(runlevel, "homebrew") == 0) // homebrews only
-        return isHomebrewRunlevel();
-    else if (stricmp(runlevel, "launcher") == 0){
-        // check if running custom launcher
-        static char path[ARK_PATH_SIZE];
-        strcpy(path, ark_config->arkpath);
-        if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
-        else                         strcat(path, ARK_MENU);
-        return (strcmp(path, sceKernelInitFileName())==0);
+	lowerString(runlevel, runlevel, strlen(runlevel)+1);
+
+	int ret = 0;
+
+    if (strcasecmp(runlevel, "all") == 0 || strcasecmp(runlevel, "always") == 0) return 1; // always on
+
+    if (strchr(runlevel, '/')){
+        // it's a path
+        return isPath(runlevel);
     }
-    else { // check if plugin loads on specific game
-        char gameid[10]; memset(gameid, 0, sizeof(gameid));
-        getGameId(gameid);
-        return (gameid[0] && strstr(runlevel, gameid) != NULL);
+
+	if(isVshRunlevel()){
+		return (strstr(runlevel, "vsh") != NULL || strstr(runlevel, "xmb") != NULL);
     }
+
+	if(isPopsRunlevel()){
+        // check if plugin loads on specific game
+        if (isGameId(runlevel)) return 1;
+        // check keywords
+    	return (strstr(runlevel, "pops") != NULL || strstr(runlevel, "ps1") != NULL || strstr(runlevel, "psx") != NULL); // PS1 games only
+    }
+	
+    if(isHomebrewRunlevel()) {
+		if (strstr(runlevel, "launcher") != NULL){
+			// check if running custom launcher
+			if (isLauncher()) return 1;
+		}
+    	if (strstr(runlevel, "app") != NULL || strstr(runlevel, "homebrew") != NULL || strstr(runlevel, "game") != NULL) return 1; // homebrews only
+	}
+
+	if(isUmdRunlevel()) {
+        // check if plugin loads on specific game
+        if (isGameId(runlevel)) return 1;
+        // check keywords
+    	if(strstr(runlevel, "umd") != NULL || strstr(runlevel, "psp") != NULL || strstr(runlevel, "umdemu") != NULL || strstr(runlevel, "game") != NULL) return 1; // Retail games only
+	}
     
     // Unsupported Runlevel (we don't touch those to keep stability up)
     return 0;
@@ -337,7 +385,7 @@ static void processLine(char * line, void (*enabler)(char*), void (*disabler)(ch
 }
 
 // Load Plugins
-static void ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler)(char*))
+static int ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler)(char*))
 {
 
     int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
@@ -364,7 +412,9 @@ static void ProcessConfigFile(char* path, void (*enabler)(char*), void (*disable
         
         // Close Plugin Config
         sceIoClose(fd);
+        return 0;
     }
+    return -1;
 }
 
 static void settingsHandler(char* path, u8 enabled){
@@ -411,13 +461,24 @@ static void settingsHandler(char* path, u8 enabled){
     else if (strcasecmp(path, "oldplugin") == 0){ // redirect ms0 to ef0 on psp go
         se_config.oldplugin = enabled;
     }
-    else if (strcasecmp(path, "infernocache") == 0){
+    else if (strncasecmp(path, "infernocache", 12) == 0){
         if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x112 && apitype <= 0x115)){
+            char* c = strchr(path, ':');
             se_config.iso_cache = enabled;
+            if (enabled && c){
+                if (strcasecmp(c+1, "lru") == 0) se_config.iso_cache = 1;
+                else if (strcasecmp(c+1, "rr") == 0) se_config.iso_cache = 2;
+            }
         }
     }
     else if (strcasecmp(path, "noled") == 0){
         se_config.noled = enabled;
+    }
+    else if (strcasecmp(path, "noumd") == 0){
+        se_config.noumd = enabled;
+    }
+    else if (strcasecmp(path, "noanalog") == 0){
+        se_config.noanalog = enabled;
     }
     else if (strcasecmp(path, "skiplogos") == 0){
         se_config.skiplogos = enabled;
@@ -450,6 +511,9 @@ static void settingsHandler(char* path, u8 enabled){
     else if (strcasecmp(path, "hidedlc") == 0){ // hide mac address
         se_config.hidedlc = enabled;
     }
+    else if (strcasecmp(path, "qaflags") == 0){ // QA Flags
+        se_config.qaflags = enabled;
+    }
 }
 
 static void settingsEnabler(char* path){
@@ -470,12 +534,14 @@ void LoadPlugins(){
     // Open Plugin Config from ARK's installation folder
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
-    strcat(path, "PLUGINS.TXT");
+    strcat(path, PLUGINS_FILE);
     ProcessConfigFile(path, &addPlugin, &removePlugin);
     // Open Plugin Config from SEPLUGINS
-    ProcessConfigFile("ms0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
+    ProcessConfigFile(PLUGINS_PATH, addPlugin, removePlugin);
     // On PSP Go (only if ms0 isn't already redirected to ef0)
-    ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &addPlugin, &removePlugin);
+    ProcessConfigFile(PLUGINS_PATH_GO, addPlugin, removePlugin);
+    // Flash0 plugins
+    ProcessConfigFile(PLUGINS_PATH_FLASH, addPlugin, removePlugin);
     // start all loaded plugins
     startPlugins();
     // free resources
@@ -490,7 +556,8 @@ void loadSettings(){
     // process settings file
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
-    strcat(path, "SETTINGS.TXT");
-    ProcessConfigFile(path, settingsEnabler, settingsDisabler);
+    strcat(path, ARK_SETTINGS);
+    if (ProcessConfigFile(path, settingsEnabler, settingsDisabler) < 0) // try external settings
+        ProcessConfigFile(ARK_SETTINGS_FLASH, settingsEnabler, settingsDisabler); // retry flash1 settings
     se_config.magic = ARK_CONFIG_MAGIC;
 }

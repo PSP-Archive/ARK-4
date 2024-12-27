@@ -1,14 +1,22 @@
-# enable usb_charge everywhere
 always, usbcharge, on
-# enable cpu overclock in games
-game, overclock, on
-# enable powersave (cpu underclock) in xmb
-vsh, powersave, on
-# enable custom menu launcher
+always, overclock, on
+always, powersave, off
+always, defaultclock, off
 always, launcher, off
-# disable pause game (only for PSP Go)
 always, disablepause, off
-# enable high memory for homebrews
-homebrew, highmem, on
-# enable mscache speedup
+always, highmem, off
 always, mscache, on
+always, infernocache:lru, on
+always, oldplugin, on
+always, skiplogos, off
+always, hidepics, off
+always, hibblock, on
+always, hidemac, on
+always, hidedlc, off
+always, noled, off
+always, noumd, off
+always, noanalog, off
+always, qaflags, on
+
+# Luxor doesn't like Inferno Cache
+ULUS10201, infernocache, off

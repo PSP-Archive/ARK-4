@@ -5,13 +5,14 @@
 #include <pspgu.h>
 #include <pspdisplay.h>
 #include <pspkernel.h>
+#include <psprtc.h>
 #include <string>
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
 #include <malloc.h>
 #include <time.h>
-#include <globals.h>
+#include <ark.h>
 #include "gfx.h"
 #include "mp3.h"
 #include "conf.h"
@@ -79,6 +80,8 @@ typedef struct TextScroll{
 #define MS0_PATH 0x3A30736D // 'ms0:' as u32
 #define EF0_PATH 0x3A306665 // 'ef0:' as u32
 
+extern struct tm today;
+
 namespace common{
 
     extern bool is_recovery;
@@ -124,7 +127,7 @@ namespace common{
     extern void upperString(char* text);
     extern int maxString(string* strings, int n_strings);
     extern std::string getExtension(std::string path);
-    extern void launchRecovery();
+    extern void launchRecovery(const char* path);
 }
 
 #endif

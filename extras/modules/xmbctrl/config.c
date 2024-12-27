@@ -5,7 +5,7 @@
 #include <kubridge.h>
 #include <stddef.h>
 
-#include "globals.h"
+#include <ark.h>
 
 #include "main.h"
 #include "list.h"
@@ -54,8 +54,14 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.mscache = opt;
         return 1;
     }
-    else if (strcasecmp(path, "infernocache") == 0){
+    else if (strncasecmp(path, "infernocache", 12) == 0){
+        char* c = strchr(path, ':');
+        FIX_BOOLEAN(opt);
         config.infernocache = opt;
+        if (opt && c){
+            if (strcasecmp(c+1, "lru") == 0) config.infernocache = 1;
+            else if (strcasecmp(c+1, "rr") == 0) config.infernocache = 2;
+        }
         return 1;
     }
     else if (strcasecmp(path, "oldplugin") == 0){
@@ -86,6 +92,18 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.noled = opt;
         return 1;
     }
+    else if (strcasecmp(path, "noumd") == 0){
+        config.noumd = opt;
+        return 1;
+    }
+    else if (strcasecmp(path, "noanalog") == 0){
+        config.noanalog = opt;
+        return 1;
+    }
+    else if (strcasecmp(path, "qaflags") == 0){
+        config.qaflags = opt;
+        return 1;
+    }
     return 0;
 }
 
@@ -102,8 +120,19 @@ void loadSettings(){
 
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
-    strcat(path, "SETTINGS.TXT");
+    strcat(path, ARK_SETTINGS);
     ProcessConfigFile(path, &processConfigLine, &processCustomConfig);
+
+    FIX_BOOLEAN(config.launcher);
+    FIX_BOOLEAN(config.disablepause);
+    FIX_BOOLEAN(config.skiplogos);
+    FIX_BOOLEAN(config.hidepics);
+    FIX_BOOLEAN(config.hibblock);
+    FIX_BOOLEAN(config.hidemac);
+    FIX_BOOLEAN(config.hidedlc);
+    FIX_BOOLEAN(config.noumd);
+    FIX_BOOLEAN(config.noanalog);
+    FIX_BOOLEAN(config.qaflags);
 }
 
 static void processSetting(int fd, char* line, char* name, int setting){
@@ -125,7 +154,7 @@ void saveSettings(){
 
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
-    strcat(path, "SETTINGS.TXT");
+    strcat(path, ARK_SETTINGS);
 
     int fd = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 
@@ -143,7 +172,11 @@ void saveSettings(){
     processSetting(fd, line, "disablepause", config.disablepause);
     processSetting(fd, line, "highmem", config.highmem);
     processSetting(fd, line, "mscache", config.mscache);
-    processSetting(fd, line, "infernocache", config.infernocache);
+    switch (config.infernocache){
+        case 0: processSetting(fd, line, "infernocache", 0); break;
+        case 1: processSetting(fd, line, "infernocache:lru", 1); break;
+        case 2: processSetting(fd, line, "infernocache:rr", 1); break;
+    }
     processSetting(fd, line, "oldplugin", config.oldplugin);
     processSetting(fd, line, "skiplogos", config.skiplogos);
     processSetting(fd, line, "hidepics", config.hidepics);
@@ -151,6 +184,9 @@ void saveSettings(){
     processSetting(fd, line, "hidemac", config.hidemac);
     processSetting(fd, line, "hidedlc", config.hidedlc);
     processSetting(fd, line, "noled", config.noled);
+    processSetting(fd, line, "noumd", config.noumd);
+    processSetting(fd, line, "noanalog", config.noanalog);
+    processSetting(fd, line, "qaflags", config.qaflags);
 
     for (int i=0; i<custom_config.count; i++){
         sceIoWrite(fd, custom_config.table[i], strlen(custom_config.table[i]));

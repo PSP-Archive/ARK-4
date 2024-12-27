@@ -1,4 +1,5 @@
 #include <cstring>
+#include <pspdisplay.h>
 #include "entry.h"
 #include "eboot.h"
 #include "iso.h"
@@ -6,6 +7,8 @@
 #include "system_mgr.h"
 #include "music_player.h"
 #include "mpeg.h"
+
+extern "C" int sceDisplaySetHoldMode(int);
 
 int gameBootThread(SceSize _args, void *_argp){
     Sprites s;
@@ -116,13 +119,15 @@ void Entry::execute(){
 
 void Entry::gameBoot(){
 
-    if (common::getConf()->fast_gameboot)
+    //if (common::getConf()->fast_gameboot && name != "Recovery Menu")
+    if (common::getConf()->fast_gameboot) {
+    	MusicPlayer::fullStop();
+    	SystemMgr::pauseDraw();
+    	sceDisplaySetHoldMode(1);
         return;
+	}
 
-    while (MP3::isPlaying()){
-        MP3::fullStop();
-        sceKernelDelayThread(1000);
-    }
+    MusicPlayer::fullStop();
 
     SystemMgr::pauseDraw();
 
@@ -138,6 +143,8 @@ void Entry::gameBoot(){
     free(mp3_buffer);
     
     sceKernelWaitThreadEnd(boot_thread, NULL);
+
+    sceDisplaySetHoldMode(1);
     
 }
 
@@ -209,14 +216,16 @@ bool Entry::cmpEntriesForSort (Entry* i, Entry* j) {
 bool Entry::getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size){
     SFOHeader *header = (SFOHeader *)sfo_buffer;
 	SFODir *entries = (SFODir *)(sfo_buffer + sizeof(SFOHeader));
-
+    bool res = false;
 	int i;
 	for (i = 0; i < header->nitems; i++) {
 		if (strcmp((char*)sfo_buffer + header->fields_table_offs + entries[i].field_offs, param_name) == 0) {
 			memcpy(var, sfo_buffer + header->values_table_offs + entries[i].val_offs, *var_size);
+            res = true;
 			break;
 		}
 	}
+    return res;
 }
 
 void Entry::animAppear(){
@@ -232,7 +241,7 @@ void Entry::animAppear(){
         }
         Image* pic0 = this->getPic0();
         if (pic0 != NULL) pic0->draw(i+160, 85);
-        this->getIcon()->draw(i+10, 98);
+        this->getIcon()->draw(i+20, 92);
         common::flipScreen();
     }
 }
@@ -251,7 +260,7 @@ void Entry::animDisappear(){
         }
         Image* pic0 = this->getPic0();
         if (pic0 != NULL) pic0->draw(i+160, 85);
-        this->getIcon()->draw(i+10, 98);
+        this->getIcon()->draw(i+20, 92);
         common::flipScreen();
     }
 }
@@ -260,7 +269,7 @@ static int loading_data;
 
 int load_thread(int argc, void* argp){
     Entry* e = (Entry*)(*(void**)argp);
-    e->getTempData2();
+    e->loadAVMedia();
     loading_data = false;
     sceKernelExitDeleteThread(0);
     return 0;
@@ -286,7 +295,7 @@ bool Entry::pmfPrompt(){
     while (loading_data){
         common::clearScreen(CLEAR_COLOR);
         entry->drawBG();
-        entry->getIcon()->draw(10, 98);
+        entry->getIcon()->draw(20, 92);
         img->draw_rotate((480-img->getWidth())/2, (272-img->getHeight())/2, angle);
         angle+=0.2;
         common::flipScreen();
@@ -295,7 +304,7 @@ bool Entry::pmfPrompt(){
     bool pmfPlayback = entry->getIcon1() != NULL || entry->getSnd() != NULL;
         
     if (pmfPlayback && !MusicPlayer::isPlaying()){
-        ret = mpegPlayGamePMF(entry, 10, 98);
+        ret = mpegPlayGamePMF(entry, 20, 92);
     }
     else{
         Controller control;
@@ -303,7 +312,7 @@ bool Entry::pmfPrompt(){
         while (true){
             common::clearScreen(CLEAR_COLOR);
             entry->drawBG();
-            entry->getIcon()->draw(10, 98);
+            entry->getIcon()->draw(20, 92);
             common::flipScreen();
             control.update(1);
             if (control.accept()){

@@ -85,6 +85,7 @@
 
     "Network Tools": "Instrumentum retes",
     "Press [] to check for Updates": "Preme [] per renovationis quaerere",
+    "[] to Reset Settings": "[] ut Reset Occasus",
     "FTP Server is stopped. Press %s to start.": "Servator FTP ec. Preme %s per initiare.",
     "FTP Server is running @ %s. Press %s to stop.": "Servator FTP commissum ad %s. Preme %s per extinguere",
     "Could not get IP address": "nulla directio IP",
@@ -150,6 +151,10 @@
     "Hide DLC": "Abscondere DLC",
     "Turn off LEDs": "Extinguere LED",
     "VSH Region Change": "Cambiare regio VSH",
-    "UMD Region Change": "Cambiare regio UMD"
+    "UMD Region Change": "Cambiare regio UMD",
+    "Disable UMD Drive": "Extinguere UMD",
+    "Disable Analog Stick": "Extinguere Analogi",
+    "QA Flags": "QA Flags"
+
 
 }

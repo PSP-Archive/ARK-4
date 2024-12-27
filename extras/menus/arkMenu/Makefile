@@ -16,6 +16,7 @@ BUILD_PRX = 1
 
 OBJS = \
 		main.o \
+		mem.o \
 		imports.o \
 		src/debug.o \
 		src/common.o \
@@ -97,6 +98,7 @@ LIBS = \
 		-lpspnet_inet \
 		-lpsphttp \
 		-lpspusb \
+		-lpspdisplay \
 		-lpspusbdevice_driver \
 		-lpspsystemctrl_user \
 		-lpspkubridge \

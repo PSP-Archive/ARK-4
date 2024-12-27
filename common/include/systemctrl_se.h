@@ -1,6 +1,8 @@
 #ifndef __SCTRLLIBRARY_SE_H__
 #define __SCTRLLIBRARY_SE_H__
 
+#include <psptypes.h>
+
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -33,7 +35,7 @@ enum SEUmdModes
 {
     MODE_UMD = 0,
     MODE_MARCH33 = 1, // not available anymore, will default to inferno
-    MODE_NP9660 = 2, // (Galaxy) not available anymore, will default to inferno
+    MODE_NP9660 = 2, // (Galaxy) not available anymore, will default to inferno for iso/cso or np9660 for PBP
     MODE_INFERNO = 3,
     MODE_VSHUMD = 4,
     MODE_UPDATERUMD = 5,
@@ -146,34 +148,53 @@ enum umdregion
     UMD_REGION_EUROPE   = 3,
 };
 
+// keep ARK's SEConfig binary compatible with PRO's
 typedef struct _SEConfig
 {
-    u32 magic;
-    u8 umdmode;
-    u8 clock;
-    u8 vshregion;
-    u8 umdregion;
-    s8 usbdevice;
-    u8 usbcharge;
-    u8 usbdevice_rdonly;
-    u8 hidemac;
-    u8 hidedlc;
-    u8 skiplogos;
-    u8 hidepics;
-    u8 useownupdate;
-    u8 usenodrm;
-    u8 hibblock;
-    u8 noanalog;
-    u8 oldplugin;
-    u8 hide_cfw_dirs;
-    u8 chn_iso;
-    u8 msspeed;
-    u8 slimcolor;
-    u8 iso_cache;
-    u8 force_high_memory;
-    u8 launcher_mode;
-    u8 disable_pause;
-    u8 noled;
+	u32 magic;
+
+	s16 umdmode;
+	s16 clock;
+	s16 disable_pause;
+	s16 hidedlc;
+	s16 umdregion;
+	s16 vshregion;
+	s16 usbdevice;
+	s16 usbcharge;
+	s16 hidemac;
+	s16 noanalog;
+	s16 qaflags; // enable QA flags patch
+	s16 launcher_mode;
+	s16 hidepics;
+
+	// unused, always true
+	s16 plugvsh; 
+	s16 pluggame;
+	s16 plugpop;
+	
+	s16 usbdevice_rdonly;
+	
+	s16 skiplogos;
+	
+	s16 noumd;
+	s16 custom_update; // automatic
+	s16 usenodrm; // always true
+
+	s16 hibblock;
+	s16 oldplugin;
+	s16 htmlviewer_custom_save_location; // unused, always false
+	s16 hide_cfw_dirs; // always true
+	s16 chn_iso; // always true
+	s16 msspeed;
+	s16 slimcolor; // always true
+	s16 iso_cache;
+	s16 iso_cache_size; // in MB, automatic
+	s16 iso_cache_num;
+	s16 iso_cache_policy;
+	s16 noled; // always false
+	s16 language; /* -1 as autodetect */
+	s16 force_high_memory;
+	s16 macspoofer; // automatic
 } SEConfig;
 
 /**
@@ -314,6 +335,18 @@ void sctrlSESetBootConfFileIndex(int index);
  * Get the boot config index
  */
 unsigned int sctrlSEGetBootConfFileIndex(void);
+
+// Initialize Kernel Heap
+int oe_mallocinit(void);
+
+// Allocate Memory for Kernel Heap
+void * oe_malloc(unsigned int size);
+
+// Return Memory to Kernel Heap
+void oe_free(void * p);
+
+// Terminate Kernel Heap
+int oe_mallocterminate(void);
 
 #ifdef __cplusplus
 }

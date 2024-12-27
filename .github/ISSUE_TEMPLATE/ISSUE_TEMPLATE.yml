@@ -5,7 +5,8 @@ labels: ["bug"]
 body:
   - type: markdown
     attributes:
-      value: Thank you for taking the time to fill out and document any bugs.
+      value: |
+        Thank you for taking the time to fill out and document any bugs.
   - type: dropdown
     id: model
     attributes:
@@ -13,6 +14,9 @@ body:
       description: "Please specify which device is affected/you have."
       multiple: true
       options:
+          - Any
+          - DTP-H1500 (Testing Tool)
+          - DTP-T1000 (Development Unit)
           - PSP-1000 (Fat)
           - PSP-2000 (Slim)
           - PSP-3000 (Slim & Bright)
@@ -23,19 +27,16 @@ body:
           - VTE-1000 (Vita TV)
     validations:
       required: true
-
   - type: input
     attributes:
       label: ARK Version
       description: "Enter Ark Release here (press Select it shows the version at the top of vshmenu). If using beta build put commit version."
     validations:
       required: true
-
   - type: input
     attributes:
       label: Homebrew/GAME (if applicable)
       description: "If using retail game please add GAME ID i.e: UCUS-98713"
-
   - type: textarea
     attributes:
       label: Plugins ( if applicable )
@@ -67,13 +68,14 @@ body:
     attributes:
       label: USB Charge
       options:
-        - Disabled
-        - Always
-        - Game
-        - UMD
-        - Homebrew
-        - Pops
-        - VSH
+       - Disabled
+       - Always
+       - Game
+       - UMD
+       - Homebrew
+       - Pops
+       - XMB
+       - Launcher
     validations:
       required: true
     
@@ -82,13 +84,14 @@ body:
     attributes:
       label: Overclock 
       options:
-        - Disabled
-        - Always
-        - Game
-        - UMD
-        - Homebrew
-        - Pops
-        - VSH
+       - Disabled
+       - Always
+       - Game
+       - UMD
+       - Homebrew
+       - Pops
+       - XMB
+       - Launcher
     validations:
       required: true
   
@@ -97,20 +100,21 @@ body:
     attributes:
       label: Power Save
       options:
-        - Disabled
-        - Always
-        - Game
-        - UMD
-        - Homebrew
-        - Pops
-        - VSH
+       - Disabled
+       - Always
+       - Game
+       - UMD
+       - Homebrew
+       - Pops
+       - XMB
+       - Launcher
     validations:
       required: true
-  
+
   - type: dropdown
-    id: autoboot
+    id: Balanced-Energy-Mode
     attributes:
-      label: Autoboot Launcher
+      label: Balanced Energy Mode 
       options:
        - Disabled
        - Always
@@ -118,7 +122,18 @@ body:
        - UMD
        - Homebrew
        - Pops
-       - VSH
+       - XMB
+       - Launcher
+    validations:
+      required: true
+
+  - type: dropdown
+    id: autoboot
+    attributes:
+      label: Autoboot Launcher
+      options:
+        - "Off"
+        - "On"
     validations:
       required: true
   
@@ -127,13 +142,8 @@ body:
     attributes:
       label: Disable PSP Go Pause
       options:
-       - Disabled
-       - Always
-       - Game
-       - UMD
-       - Homebrew
-       - Pops
-       - VSH
+       - "Off"
+       - "On"
     validations:
       required: true
   
@@ -148,7 +158,8 @@ body:
        - UMD
        - Homebrew
        - Pops
-       - VSH
+       - XMB
+       - Launcher
     validations:
       required: true
         
@@ -163,7 +174,8 @@ body:
        - UMD
        - Homebrew
        - Pops
-       - VSH
+       - XMB
+       - Launcher
     validations:
       required: true
   
@@ -172,12 +184,74 @@ body:
     attributes:
       label: Inferno Cache 
       options:
-       - Disabled
-       - Always
-       - Game
-       - UMD
-       - Homebrew
-       - Pops
-       - VSH
+       - "Off"
+       - LRU
+       - RR
     validations:
       required: true
+
+  - type: dropdown
+    id: Skip-Sony-Logos 
+    attributes:
+       label: Skip Sony Logos 
+       options:
+        - "Off"
+        - "On"
+    validations:
+       required: true
+
+  - type: dropdown
+    id: Hide-PIC0-and_PIC1 
+    attributes:
+       label: Hide PIC0 and PIC1
+       options:
+        - "Off"
+        - "On"
+    validations:
+       required: true
+
+  - type: dropdown
+    id: Hide-MAC-Address 
+    attributes:
+       label: Hide MAC Address
+       options:
+        - "Off"
+        - "On"
+    validations:
+       required: true
+
+  - type: dropdown
+    id: Hide-DLC 
+    attributes:
+       label: Hide DLC 
+       options:
+        - "Off"
+        - "On"
+    validations:
+       required: true
+
+  - type: dropdown
+    id: Turn-off-LEDs 
+    attributes:
+       label: Turn off LEDs 
+       options:
+        - Disabled
+        - Always
+        - Game
+        - UMD
+        - Homebrew
+        - Pops
+        - XMB
+        - Launcher
+    validations:
+       required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Verification of form.
+      description: Verify that you have indeed selected options above and filled out request properly and in full. 
+      options:
+        - label: I agree that I properly filled out the items listed above.
+          required: true
+

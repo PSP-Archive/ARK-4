@@ -50,9 +50,6 @@ void PRTSTR11(const char* A, unsigned long B, unsigned long C, unsigned long D, 
 //init screen
 void initScreen(int (*DisplaySetFrameBuf)(void*, int, int, int));
 
-// set screen handler
-void setScreenHandler(void (*handler)(u32 vram));
-
 //clear screen
 void cls();
 

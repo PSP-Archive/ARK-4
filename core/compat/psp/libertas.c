@@ -18,10 +18,13 @@
 #include <string.h>
 #include <pspiofilemgr.h>
 #include "libertas.h"
-#include "globals.h"
+#include <ark.h>
 #include "macros.h"
+#include <systemctrl.h>
+#include "systemctrl_se.h"
 
 extern int psp_model;
+extern SEConfig* se_config;
 
 // MAC Backup Flag
 int isRealMACSafe = 0;
@@ -190,6 +193,8 @@ void patch_Libertas_MAC(SceModule2 * mod)
 			}
 		}
 	}
+
+	se_config->macspoofer = 1;
 	
 	// Cast Text Segment
 	uint32_t * text = (uint32_t *)mod->text_addr;

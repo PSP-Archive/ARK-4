@@ -1,5 +1,221 @@
 # ARK Changelog
 
+## Version 4.20.69 (2024-04-20)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42069
+- Updated `Despertar del Cementerio` to `Version 10`. Can now be used to unbrick any `PSP` model.
+- Can now install `cIPL` on all `PSP` models.
+- Added `FinalSpeed` for easier access to `Live` installations.
+#### Rev 151
+- Added Uninstall method for fastms371_mod to Full Flash Installer
+- MagicMemoryCreator (DCARK Maker) Added Local OFW 1.50/6.61 selection
+- Fixed lflash formatting with DCARK.
+- Added idstorage regeneration to all models. You can convert any PSP to an American, Japanese, or Europe region
+- Custom Launcher can run 1.50 Homebrew via 1.50 kernel add-on ( 1K's only )
+- Added qwerty osk 
+- Fixed ICON0 in Custom Launcher from crashing when in File Browser.
+- Added more directories to search for GO
+- Fixed IdStorage and Fix MAC Address not able to find real MAC.
+- Fix for fatms372_mod
+- USBCam patches by isage
+- Fixed Copying and Pasting with File Browser in Custom Launcher.
+- Fixed UMD Video sleep/resume.
+- Added 20th Anniversary Theme.
+- System stability improved.
+#### Rev 150
+- Added `150 Kernel Addon`.
+- Added support for `fatms371mod`.
+- Fixed/improved `Inferno` sleep/resume routines.
+- Fixed regression that caused screen tearing on some games.
+- Improved `Full Flash Installer`.
+- Other fixes and improvements.
+#### Rev 15
+- Fixed `Force Extra RAM` setting being ignored on Pentazemin mode.
+#### Rev 14
+- Fixed bug introduced in r13.
+#### Rev 13
+- Settings are now loaded (and some handled) earlier at boot. This fixes `cheatdevice_remastered` when using `Force Extra RAM`.
+- Added `VHBL` theme for Custom Launcher.
+#### Rev 12
+- Cleanup and refactor.
+- Disabled unused vita code related to flash.
+- Added support for `flash0:/PLUGINS.TXT` and `flash1:/SETTINGS.TXT` on PSP.
+#### Rev 11
+- Added anti-libcrypt protection for PS1 games.
+- Improved memory management in xMenu (ARK-X).
+- **Security release/bug fix**: This prevents the TA-088v3 from bricking when reverting back to the official IPL (oIPL) with ARK-cIPL Installer. 
+Thanks Nall for quickly testing and help get this out :+1: 
+#### Rev 10
+- Implemented patch to allow external custom config files for PS1 games (CUSTOM.BIN alongside the PBP).
+- ARK's PopCorn driver is now used in Pentazemin mode.
+- Refactor/cleanup some patch in PopCorn.
+- Added Reset Settings option in VSH Menu.
+#### Rev 9
+- Prevent using ARK Uninstaller if cIPL or Infinity is installed.
+- Some refactoring of custom launcher courtesy of @maodus (https://github.com/PSP-Archive/ARK-4/pull/380 and https://github.com/PSP-Archive/ARK-4/pull/382).
+#### Rev 8
+- Fixed duplication values in Custom Launcher SETTINGS.TXT
+- Added CHT, JP, KR VSH font support ( translations are welcome :wink: )
+#### Rev 7
+- Some small fixes in `cIPL` compat for PRO and ME.
+- You can now use the `cIPL Installer` on PRO or ME.
+#### Rev 6
+- Fixed issue with `DC-ARK`.
+- Fixed `cIPL` with `ME`'s Recovery Menu.
+#### Rev 5
+- Fixed issue with Live Loader.
+#### Rev 4
+- Fixed bug introduced in Rev 3 (https://github.com/PSP-Archive/ARK-4/issues/358).
+- - Reuploaded with full bug fix
+#### Rev 3
+- Reduced size of msipl, should fit most standard formatted memory sticks.
+- ARK's cIPL can now be used to load PRO or ME by creating a config file in `flash0:/arkcipl.cfg` with either `cfw=pro` or `cfw=me` (as is, no quotes, spaces or new lines).
+- cIPL installer will now refuse to work if it's not running within ARK or if Infinity is already installed.
+- cIPL installer will now do an actual cold reboot after un/installing instead of a software reset.
+#### Rev 2
+- Fixed TA-088v3 installing ARK via DC-ARK
+- Fixed duplicate plugins showing in XMB
+#### Rev 1
+- Updated `DC-ARK` (PSP version) to decrypt PSP GO Firmware. Must be put on the root of memory stick as `661GO.PBP`
+- Fixed a bug in `Despertar del Cementerio` where it could not repartion lflash, was missing `lflash_fdisk.prx`
+
+## Version 4.20.68 (2024-02-06)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42068
+- Released `ARK-X` for `PS Vita`.
+#### Rev 14
+- Fixed Simplified Chinese in VSH Menu (#329).
+- Cleanup
+#### Rev 13
+- Added MagicMemoryCreator (DC-ARK-Maker), you don't need another PSP to create a MMS for DC-ARK (works for 1K and 2K only still). Located in the PC folder of the ARK4.zip, (reuploaded rev fix) Also include uninstaller.
+#### Rev 12
+- Added Pops4Tool, a set of patches and files to enable pops in toolkits (requires PopsLoader, compatibility varies).
+#### Rev 11
+- Cleanup, refactor and small fixes.
+#### Rev 10
+- added fix for `camera_patch_lite` plugin on `Vita Standalone`.
+- reduced memory consumption of `Memory Stick Speedup`. Improves stability of the feature.
+- the `ARK Right Analog` plugin (https://github.com/rereprep/ArkRightAnalog) is now automatically installed and configured by `FasterARK`. This allows using the second analog stick on certain PSP games (requires `gta_remastered` and/or `camera_patch_lite` to be installed on `ARK`).
+- implemented X/O swap in `xMenu` (ARK-X custom launcher).
+- changed default icon in `xMenu` (for games without an ICON0.PNG).
+- some small fixes and cleanup.
+#### Rev 9
+- Fixed control issue in `ARK-X` on `Vita TV` or `MiniVitaTV` (requires updating `ps1cfw_enabler`).
+- Fixed exit-to-launcher combo on `Vita TV`/`MiniVitaTV`.
+- Fixed `FasterARK` when an `ARK_01234` savedata folder was already installed.
+- Some other small cleanup and fixes.
+#### Rev 8
+- Disallow `Memory Stick Speedup` in `PS1` since it doesn't actually impact these games and causes clashes with `cwcheat`.
+- Improve exit-to-launcher key combo in `ARK-X`.
+#### Rev 7
+- Fixed memory leak in `xMenu` (ARK-X).
+- Added a few more options to `xMenu`.
+- Several small fixes and cleanup.
+#### Rev 6
+- Fixed exit on PS Vita.
+#### Rev 5
+- Fixed screen not rendering when exiting back to launcher in `ARK-X`.
+- Fixed crash in `ARK-X` when no `PS1` games are installed.
+#### Rev 4
+- Fixed bug in `FasterARK` that would corrupt taiHEN config.
+#### Rev 3
+- `cwcheat` now displays correctly in `ARK-X`.
+#### Rev 2
+- `ARK-X` installation is now handled by `FasterARK`, making it considerably easier to install and use.
+- Added patch to prevent crashing in TwinBee Portable when the system language is not set to Japanese or English.
+- Lots of code cleanup.
+
+## Version 4.20.67 (2024-01-18)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42067
+- Rev 7: fixed and improved exit key combo (L+R+Start+Down). Updated SystemControl libraries.
+- Rev 6: fixed crash when returning from sleep in some games (i.e. `Lego Star Wars II`) due to unchecked zero-division error. Improved `Disable Analog Stick` for some games.
+- Rev 5: improved (classic) recovery menu; better visuals and improved code.
+- Rev 4: you can now boot `Custom Launcher` in `Recovery` mode by holding `R Trigger` when it is loading (essentially turning it into the original ARK Recovery Menu). Added default `SETTINGS.TXT` file with recommended settings for initial installations.
+- Rev 3: fixed extra XMB icons not showing up on PSP Street models. Fixed Russian translation. Added new Turquoise theme for custom launcher.
+- Rev 2: cleanup of `PRO Shell`. Fix for `PSN` games on older launchers. Proper alignment of icon in `Custom Launcher`.
+- Rev 1: improved API call for detection of toolkits (can now distinguish TestKit from DevKit). Improved launcher menu navigation.
+- Merged `Recovery Menu` into `Custom Launcher`, leaving `Classic Recovery` as the default recovery menu.
+- Updated kernel exploit used on `PSP` and `Adrenaline`.
+- Added ability to install plugins using `PRO Shell` (Classic Recovery Menu).
+- Cleanup and improved `VSH Menu`.
+- Added ability to hide entries in `Advanced VSH Menu` by pressing `L` trigger, use `R` trigger to unhide all hidden entries.
+- Fixed `Import Classic Plugins` feature.
+- Fixed issue in plugins manager of classic recovery.
+- Added ability to force open `VSH Menu` by pressing `L+R+Select` anywhere in the `XMB`.
+- Several more cleanup and fixes.
+
+## Version 4.20.66 (2023-10-24)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42066
+- Rev 9: added option to enable `QA Flags`, which will allow `Debug` settings to appear in the `XMB`. Added `Custom App` Launcher. If ARK detects an `EBOOT.PBP` in either `/PSP/APP/` it display a icon under Custom Launcher icon stating `Custom App`.
+- Rev 8: fixed bug that would prevent installing `new cIPL` on classic models (1K and early 2K). Fixed bug in the plugins manager of classic recovery menu.
+- Rev 7: fixed `MP3` audio issues in `Custom Launcher`.
+- Rev 6: several cleanup, refactor and small fixes.
+- Rev 5: you can now change background image of `Custom Launcher` and `Recovery` by placing a file named `BG.PNG` in `ARK_01234`.
+- Rev 4: added `alternative` kernel exploit for better stability.
+- Rev 3: unified all kernel exploits (`K.BIN`) into one, simplifying the installation process across all devices (https://github.com/PSP-Archive/ARK-4/pull/273).
+- Rev 2: fixed bug in file browser's options menu.
+- Rev 1: fixed bug that would allow cIPL to be installed on 4g models (not yet compatible), causing a brick.
+- Simplified `cIPL` installer into a single app. Automatically detects device and model to install the proper version.
+- Allow custom translations for `XMB Control` and `VSH Menu`.
+- Intensity of text glow in `Custom Launcher` can now be changed.
+- `Recovery Menu` will properly refresh list of plugins and settings.
+- Fixed `per-game` settings on `PSN` eboots.
+- Improved translations.
+- Other small fixes.
+
+## Version 4.20.65 (2023-10-08)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42065
+- Rev 5: brings back `per-game` plugins (and settings) on `PS1` games, feature that was previously removed by mistake. 
+- Rev 4: fixed crash with exit combo. Fixed per-game plugins on PSN eboots. Fix crash when using `No UMD` on PSN eboots.
+- Rev 3: `Disable UMD Drive` will now physically disable the drive, not just software-only.
+- Rev 2: `Custom Firmware Settins` and `Plugins Manager` in the `XMB` will now be located in the `Extras` section when available. 
+- Rev 1: undo mistake that disabled the code that fixes 6.60 plugins on 6.61
+- Fixed regression that would prevent loading `ISO` on `PSP Go` without M2 Memory Stick.
+- Improved support for `Leda` plugin on `PSP Go`.
+- Launching homebrew on `PSP Go` via the `XMB` is now done exactly like `PRO/ME`. This means that homebrew launched on `ef0` (Internal Memory) will have `ms0 to ef0 redirection` enabled. To launch homebrew on `ef0` without redirecting `ms0` you can use `Custom Launcher` (with the `redirect` option turned `off` in `menu settings`).
+- Improved `OTA` updater for `DC-ARK` installations.
+- `Custom Firmware Settings` and `Plugins Manager` in the `XMB` is now located under the `Game` section.
+- Other minor visual improvements to the `XMB`.
+- Other small fixes and improvements.
+
+## Version 4.20.64 (2023-09-08)
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42064
+- Rev 3: fixed regression that would prevent `UMD Video ISO` from working. Added patch to fix the screen in `cwcheatpops` plugin.
+- Rev 2: improve `Memory Stick Speedup` support on `PSP Go` models.
+- Rev 1: revert back to `PRO/ARK` mscache code using `ME`'s configuration. Provides the best results between compatibility and stability.
+- Added multi-runlevels support for plugins (i.e "game vsh, ms0:/seplugins/etc, on").
+- Added support for changing `CPU Clock` in `PS Vita`. Note: the `Overclock` setting (333MHz) is renamed to `PSP Overclock` to avoid confusion with native Vita Overclock (444MHz-555MHz).
+- `Classic Recovery Menu` can now be used on `PS Vita` when the regular recovery is not found (removed).
+- Added new setting to `Disable UMD Drive` on `PSP` (except for `Go`).
+- Added new setting to `Disable Analog Stick`.
+- Improved stability of `Custom Launcher` by forcing `malloc/free` to be `thread-safe`.
+- Implemented new `oe_malloc/oe_free` functions that consume less memory.
+- Replaced `msstor_cache` code (`Memory Stick Speedup` setting) from `PRO/ARK` with the one from `ME`. Fixes issues with `cwcheat` and lowers memory consumption.
+- Fixed issue that would cause `MP3 Playlists` to loop current song instead of playing the next song.
+
+## Version 4.20.63 (2023-08-11):
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42063
+- Rev 2: Fixed and improved support for PSP Go models.
+- Rev 1: You can now select USB Device in Classic Recovery Menu, allows to mount flash memory for recovery operations.
+- Created `Classic Recovery Menu` for `PSP` systems with `Full Installation`, which is used when there is no `Recovery App` available (i.e. no `Memory Stick` inserted or no `ARK_01234` savedata present).
+- Improved `Custom Firmware Settings` in both `Recovery Menu` and `XMB`.
+- Fixed and improved `Cyrillic` fonts (https://github.com/PSP-Archive/ARK-4/pull/198).
+- Several fixes related to `Full Installations`.
+- Cleanup of development libraries.
+- Several other fixes and improvements.
+
+## Version 4.20.62 (2023-08-07):
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42062
+- Added support for `cIPL` for the `DTP-T1000` DevKit.
+- You can now change between the `New` and `Classic` menu designs in `Advanced VSH Menu`.
+- Several small fixes and improvements.
+
+## Version 4.20.61 (2023-07-06):
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r42061
+- (Rev 3) Several bug fixes and improvements.
+- (Rev 2) Cleanup and fixed `VSH Menu`. Improved `Peops SPU` configuration.
+- (Rev 1) Fixed issue with `Development Tool Firmware` (devkits). 
+- You can now play `PS1` games on `PS Vita Standalone` installations. Uses the original `Pops` from `PSP` and the `Peops SPU` plugin. 
+- Several small fixes and improvements.
+
 ## Version 4.20.60 (2023-07-06):
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r42060
 - (Rev 6) Fixed issue where launcher would not load. Refactor of plugins code in core CFW module.
@@ -328,18 +544,18 @@
 - Fixed and improved "Matrix" animation.
 - Added new "Hacker" and "BSoD" animations.
 
-## Version 4.19.5 (2022-01-12)
+## Version 4.19.5 (2023-01-12)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4195
 - Fixed issue where VSH plugins would not load after pausing game in PSP Go.
 - Recovery menu no longer deletes custom config lines.
 - You can now enable/disable DLC scanning in custom launcher (previously always enabled).
 
-## Version 4.19.4 (2022-01-09)
+## Version 4.19.4 (2023-01-09)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4194
 - Fixed device autodetection in ARK Live Loader.
 - Added easter egg.
 
-## Version 4.19.3 (2022-01-09)
+## Version 4.19.3 (2023-01-09)
 - https://github.com/PSP-Archive/ARK-4/releases/tag/r4193
 - Improved Recovery menu plugin handling to properly restore comments.
 - Fixed bug in plugin system where blank lines would be treated as EOF.

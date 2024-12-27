@@ -4,6 +4,8 @@
 #define LINE_BUFFER_SIZE 1024
 #define LINE_TOKEN_DELIMITER ','
 
+#define STAR "★"
+
 enum{
     DISABLED,
     ALWAYS_ON,
@@ -15,6 +17,8 @@ enum{
     LAUNCHER_ONLY,
     CUSTOM
 };
+
+#define FIX_BOOLEAN(c) {c = (c)?1:0;}
 
 int isRunlevelEnabled(char* line);
 

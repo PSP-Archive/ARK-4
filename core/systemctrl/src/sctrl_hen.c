@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <module2.h>
-#include <globals.h>
+#include <ark.h>
 #include <macros.h>
 #include <functions.h>
 #include "rebootex.h"
@@ -30,7 +30,7 @@ int sctrlHENSetMemory(u32 p2, u32 p9)
 // Get HEN Version
 int sctrlHENGetVersion()
 {
-    return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | ARK_MICRO_VERSION << 8 );
+    return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | (ARK_MICRO_VERSION << 8) );
 }
 
 // Get HEN Minor Version
@@ -199,37 +199,6 @@ u32 sctrlHENGetInitControl()
 	return (u32)kernel_init_apitype - 8;
 }
 
-void sctrlHENTakeInitControl(int (* ictrl)(void *))
-{
-    /*
-    u32* initcontrol = (u32*)sctrlHENGetInitControl();
-    u32 text_addr = initcontrol[0];
-    u32* bootinfo = (u32*)(initcontrol[1]);
-
-    u32 addr = text_addr + 0xCB8;
-	u16 high = addr >> 16;
-	u16 low = addr & 0xFFFF;
-
-	// lui ra, high
-	_sw(0x3c1f0000 | high, text_addr + 0xC30);
-	// ori ra, ra, low
-	_sw(0x37ff0000 | low, text_addr + 0xC34);
-
-	high = ((u32) initcontrol) >> 16;
-	low  = ((u32) initcontrol) & 0xFFFF;
-
-	// lui a0, high
-	_sw(0x3c040000 | high, text_addr + 0xC38);
-	_sw(JUMP(ictrl), text_addr + 0xC3C);
-	// ori a0, a0, low
-	_sw(0x34840000 | low, text_addr + 0xC40);
-
-	bootinfo[2]++; // nextmodule
-
-	flushCache();
-    */
-}
-
 u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid)
 {
     SceModule2 *mod = sceKernelFindModuleByName(szMod);
@@ -277,10 +246,8 @@ void sctrlHENLoadModuleOnReboot(char *module_before, void *buf, int size, int fl
 
 void sctrlHENSetSpeed(int cpuspd, int busspd)
 {
-    u32 k1 = pspSdkSetK1(0);
-    int (*_scePowerSetClockFrequency)(int, int, int);
-    _scePowerSetClockFrequency = sctrlHENFindFunction("scePower_Service", "scePower", 0x545A7F3C);
-    if (_scePowerSetClockFrequency) _scePowerSetClockFrequency(cpuspd, cpuspd, busspd);
+    int k1 = pspSdkSetK1(0);
+    SetSpeed(cpuspd, busspd);
     pspSdkSetK1(k1);
 }
 
@@ -289,6 +256,12 @@ void sctrlHENSetRebootexOverride(const u8 *rebootex)
 {
     if (rebootex != NULL) // override rebootex
         custom_rebootex = rebootex;
+}
+
+extern int (* LoadRebootOverrideHandler)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4);
+void sctrlHENSetLoadRebootOverrideHandler(int (* func)(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4))
+{
+    LoadRebootOverrideHandler = func;
 }
 
 extern int (*ExtendDecryption)();
@@ -313,11 +286,10 @@ void sctrlHENRegisterLLEHandler(void* handler)
 	lle_handler = handler;
 }
 
-extern SceUID (* KernelLoadModuleMs2_hook)();
 int sctrlHENRegisterHomebrewLoader(void* handler)
 {
-    // register handler
-    KernelLoadModuleMs2_hook = handler;
+    // register handler and patch leda
+    patchLedaPlugin(handler);
     return 0;
 }
 
@@ -343,4 +315,33 @@ void sctrlHENSetRebootexConfig(RebootConfigARK* config){
 
 u32 sctrlHENFakeDevkitVersion(){
     return FW_660;
+}
+
+int sctrlHENIsToolKit()
+{
+    int ret = 0; // Retail
+	int k1 = pspSdkSetK1(0);
+    int level = sctrlKernelSetUserLevel(8);
+    
+    if (ark_config->exec_mode == PSP_ORIG){
+        SceIoStat stat;
+        if (sceIoGetstat("flash0:/kd/vshbridge_tool.prx", &stat) >= 0)
+            ark_config->exec_mode = PSP_TOOL;
+    }
+
+    if (ark_config->exec_mode == PSP_TOOL){
+        int baryon_ver = 0;
+        int (*getBaryonVer)(void*) = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x7EC5A957);
+        if (getBaryonVer) getBaryonVer(&baryon_ver);
+        if (baryon_ver == 0x00020601){
+            ret = 2; // DevelopmentTool
+        }
+        else {
+            ret = 1; // TestingTool
+        }
+    }
+
+    sctrlKernelSetUserLevel(level);
+    pspSdkSetK1(k1);
+    return ret;
 }

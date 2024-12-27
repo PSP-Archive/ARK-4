@@ -1,6 +1,5 @@
 #include <pspsdk.h>
-#include <globals.h>
-#include <graphics.h>
+#include <ark.h>
 #include <macros.h>
 #include <module2.h>
 #include <pspdisplay_kernel.h>
@@ -11,14 +10,11 @@
 #include <pspgu.h>
 #include <functions.h>
 #include "popsdisplay.h"
-#include "libs/graphics/graphics.h"
 
-// Internal function
-int (* _sceDisplaySetFrameBufferInternal)(int pri, void *topaddr, int width, int format, int sync) = NULL;
 
 // Vram address and config
 u16* pops_vram = (u16*)0x490C0000;
-POPSVramConfigList* vram_config = (POPSVramConfigList*)0x49FE0000;
+POPSVramConfig* vram_config = (POPSVramConfig*)0x49FE0000;
 
 // Registered Vram handler
 void (*_psxVramHandler)(u32* psp_vram, u16* ps1_vram) = &SoftRelocateVram; // soft render by default
@@ -76,14 +72,9 @@ void SoftRelocateVram(u32* psp_vram, u16* ps1_vram)
     }
 }
 
-// hooked function to copy framebuffer
-int sceDisplaySetFrameBufferInternalHook(int pri, void *topaddr,
-        int width, int format, int sync){
+void copyPSPVram(u32* psp_vram){
     if (_psxVramHandler)
-        _psxVramHandler(topaddr, pops_vram); // handle vram copy
-    if (_sceDisplaySetFrameBufferInternal) // passthrough
-        return _sceDisplaySetFrameBufferInternal(pri, topaddr, width, format, sync); 
-    return -1;
+        _psxVramHandler(psp_vram, NULL);
 }
 
 // register custom vram handler

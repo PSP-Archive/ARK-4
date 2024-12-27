@@ -5,11 +5,9 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
-#include <globals.h> 
+#include <ark.h> 
 #include "functions.h"
 #include "macros.h"
-#include "exitgame.h"
-#include "adrenaline_compat.h"
 
 void PatchLoadExec(u32 text_addr, u32 text_size) {
 	u32 jump = 0;

@@ -9,8 +9,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdbool.h>
 
-#include <globals.h>
+#include <ark.h>
 #include <libpsardumper.h>
 #include <pspdecrypt.h>
 #include <kubridge.h>
@@ -20,35 +21,69 @@
 #include <loader/dc/tmctrl/tmctrl.h>
 #include "tm_msipl.h"
 #include "tm_mloader.h"
+#include "new_msipl.h"
+#include "msipl_raw.h"
 
 #include "pspbtcnf_dc.h"
 #include "pspbtcnf_02g_dc.h"
+#include "pspbtcnf_03g_dc.h"
+#include "pspbtcnf_04g_dc.h"
+#include "pspbtcnf_05g_dc.h"
+#include "pspbtcnf_07g_dc.h"
+#include "pspbtcnf_09g_dc.h"
+#include "pspbtcnf_11g_dc.h"
+
+#include "msipl_01G.h"
+#include "msipl_02G.h"
+#include "msipl_03G.h"
+#include "msipl_04G.h"
+#include "msipl_05G.h"
+#include "msipl_07G.h"
+#include "msipl_09G.h"
+#include "msipl_11G.h"
+
+#include <cipl_01G.h>
+#include <cipl_02G.h>
+#include <cipl_03G.h>
+#include <cipl_04G.h>
+#include <cipl_05G.h>
+#include <cipl_07G.h>
+#include <cipl_09G.h>
+#include <cipl_11G.h>
+
 #include "dcman.h"
 #include "ipl_update.h"
 #include "iop.h"
+#include "lflash_fdisk.h"
 #include "pspdecryptmod.h"
 #include "intrafont.h"
 #include "resurrection.h"
 #include "vlf.h"
+#include "idsregen.h"
 
 PSP_MODULE_INFO("VResurrection_Manager", 0x800, 2, 0);
 PSP_MAIN_THREAD_ATTR(0);
 
 #define UPDATER_VER_STR "6.61"
 #define UPDATER "661.PBP"
+#define UPDATER_GO "661GO.PBP"
 
 #define PRX_SIZE_661				5718512
+#define PRX_SIZE_661_GO				6495584
 #define LFLASH_FATFMT_UPDATER_SIZE	0x28A0
 #define NAND_UPDATER_SIZE			0x39D0
 #define LFATFS_UPDATER_SIZE			0xE970
 
 #define PSAR_SIZE_661	26848656
+#define PSAR_SIZE_661_GO	21569584
 
 char boot_path[256];
 
 char error_msg[256];
 static int g_running = 0, g_cancel = 0;
 static SceUID install_thid = -1;
+static int go = 0;
+
 
 ////////////////////////////////////////////////////////////////////
 // big buffers for data. Some system calls require 64 byte alignment
@@ -61,8 +96,8 @@ static u8 *g_dataOut2;
 static int PSAR_BUFFER_SIZE;
 static const int SMALL_BUFFER_SIZE = 2500000;
 
-static char flash_table[4][0x4000];
-static int flash_table_size[4];
+static char flash_table[14][0x4000];
+static int flash_table_size[14];
 
 // Gui vars
 int begin_install_text;
@@ -223,7 +258,6 @@ int isVitaFile(char* filename){
     return (strstr(filename, "psv")!=NULL // PS Vita btcnf replacement, not used on PSP
             || strstr(filename, "660")!=NULL // PSP 6.60 modules can be used on Vita, not needed for PSP
             || strstr(filename, "vita")!=NULL // Vita modules
-            || strcmp(filename, "/fake.cso")==0 // fake.cso used on Vita to simulate UMD drive when no ISO available
     );
 }
 
@@ -395,10 +429,11 @@ void ExtractPrxs(int cbFile, SceUID fd)
 			{
 				ErrorExit(1000, "Error reading PBP.\n");
 			}
-
+			
 			pspPSARSetBufferPosition(psar_pos);
 
 			continue;
+			
 		}
 		else if (res == 0) /* no more files */
 		{
@@ -412,8 +447,8 @@ void ExtractPrxs(int cbFile, SceUID fd)
 			if (is5Dnum(name)) {
 				int num = atoi(name);
 
-				// Files from 01g-02g
-				if (num >= 1 && num <= 2) {
+				// Files from 01g-11g
+				if (num >= 1 && num <= 11) {
 					flash_table_size[num] = pspDecryptTable(g_dataOut2, g_dataOut, cbExpanded, 4);
 					if (flash_table_size[num] <= 0) {
 						ErrorExit(1000, "Cannot decrypt %02dg table.\n", num);
@@ -428,7 +463,7 @@ void ExtractPrxs(int cbFile, SceUID fd)
 						int found = 0;
 
 						int i;
-						for (i = 1; i <= 3; i++) {
+						for (i = 1; i <= 11; i++) {
 							if (flash_table_size[i] > 0) {
 								found = FindTablePath(flash_table[i], flash_table_size[i], name, name);
 								if (found)
@@ -447,69 +482,92 @@ void ExtractPrxs(int cbFile, SceUID fd)
 							}
 							else if (strstr(name, "ipl") == name)
 							{
+
+								int is1g = (strstr(name, "01g") != NULL);
 								int is2g = (strstr(name, "02g") != NULL);
 
-								if (is2g)
+								if (is1g || is2g)
+								{
+									if (is2g)
+									{
+										cbExpanded = pspDecryptPRX(g_dataOut2, g_dataOut, cbExpanded);
+										if (cbExpanded <= 0)
+										{
+											ErrorExit(1000, "Cannot pre-decrypt 2000 IPL\n");
+										}
+										else
+										{
+											memcpy(g_dataOut2, g_dataOut, cbExpanded);
+										}	
+									}
+
+									if (is2g)
+									{
+										if (WriteFile(ARK_DC_PATH "/ipl_02g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+										{
+											ErrorExit(1000, "Error writing 02g ipl.\n");
+										}
+									}
+									else
+									{
+										if (WriteFile(ARK_DC_PATH "/ipl_01g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+										{
+											ErrorExit(1000, "Error writing 01g ipl.\n");
+										}
+									}
+
+									int cb1 = pspDecryptIPL1(g_dataOut2, g_dataOut, cbExpanded);
+									if (cb1 < 0)
+									{
+										ErrorExit(1000, "Error in IPL decryption.\n");
+									}
+
+									int cb2 = pspLinearizeIPL2(g_dataOut, g_dataOut2, cb1);
+									if (cb2 < 0)
+									{
+										ErrorExit(1000, "Error in IPL Linearize.\n");
+									}
+
+									sceKernelDcacheWritebackAll();
+
+									if (is2g)
+									{
+										if (WriteFile(ARK_DC_PATH "/nandipl_02g.bin", g_dataOut2, cb2) != (cb2))
+										{
+											ErrorExit(1000, "Error writing 02g ipl.\n");
+										}
+									}
+									else
+									{
+										if (WriteFile(ARK_DC_PATH "/nandipl_01g.bin", g_dataOut2, cb2) != (cb2))
+										{
+											ErrorExit(1000, "Error writing 01g ipl.\n");
+										}
+									}
+								}
+								else
 								{
 									cbExpanded = pspDecryptPRX(g_dataOut2, g_dataOut, cbExpanded);
 									if (cbExpanded <= 0)
 									{
-										ErrorExit(1000, "Cannot pre-decrypt 2000 IPL\n");
+										ErrorExit(1000, "Cannot pre-decrypt 3000+ IPL\n");
 									}
 									else
 									{
 										memcpy(g_dataOut2, g_dataOut, cbExpanded);
-									}	
-								}
-								else {
-									int is1g = (strstr(name, "01g") != NULL);
-
-									if (!is1g) {
-										ErrorExit(1000, "Unexpected ipl! %s\n", name);
 									}
-								}
+									
+									char iplpath[256];
+									char* iplname = strstr(name, "ipl_");
+									sprintf(iplpath, "%s/%s", ARK_DC_PATH, iplname);
 
-								if (is2g)
-								{
-									if (WriteFile(ARK_DC_PATH "/ipl_02g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
+									char* ext = strstr(iplpath, ".ipl");
+									if (ext) strcpy(ext, ".bin");
+
+									if (WriteFile(iplpath, g_dataOut2, cbExpanded) != (cbExpanded))
 									{
-										ErrorExit(1000, "Error writing 02g ipl.\n");
-									}
-								}
-								else
-								{
-									if (WriteFile(ARK_DC_PATH "/ipl_01g.bin", g_dataOut2, cbExpanded) != (cbExpanded))
-									{
-										ErrorExit(1000, "Error writing 01g ipl.\n");
-									}
-								}
-
-								int cb1 = pspDecryptIPL1(g_dataOut2, g_dataOut, cbExpanded);
-								if (cb1 < 0)
-								{
-									ErrorExit(1000, "Error in IPL decryption.\n");
-								}
-
-								int cb2 = pspLinearizeIPL2(g_dataOut, g_dataOut2, cb1);
-								if (cb2 < 0)
-								{
-									ErrorExit(1000, "Error in IPL Linearize.\n");
-								}
-
-								sceKernelDcacheWritebackAll();
-
-								if (is2g)
-								{
-									if (WriteFile(ARK_DC_PATH "/nandipl_02g.bin", g_dataOut2, cb2) != (cb2))
-									{
-										ErrorExit(1000, "Error writing 02g ipl.\n");
-									}
-								}
-								else
-								{
-									if (WriteFile(ARK_DC_PATH "/nandipl_01g.bin", g_dataOut2, cb2) != (cb2))
-									{
-										ErrorExit(1000, "Error writing 01g ipl.\n");
+										sprintf(iplpath, "Error writing %s/%s", ARK_DC_PATH, iplname);
+										ErrorExit(1000, iplpath);
 									}
 								}
 							}
@@ -567,9 +625,24 @@ static void Extract661Modules()
 
 	SetStatus("Extracting " UPDATER_VER_STR " updater modules...");
 		
-	if (ReadFile("ms0:/" UPDATER, 0, pbp_header, sizeof(pbp_header)) != sizeof(pbp_header))
-	{
-		ErrorExit(1000, "Error reading " UPDATER " at root.\n");
+	if (ReadFile("ms0:/" UPDATER_GO, 0, pbp_header, sizeof(pbp_header)) != sizeof(pbp_header)) {
+		if (ReadFile("ms0:/" UPDATER, 0, pbp_header, sizeof(pbp_header)) != sizeof(pbp_header))
+		{
+			ErrorExit(1000, "Error reading " UPDATER " or " UPDATER_GO " at root.\n");
+		}
+	}
+
+	if (ReadFile("ms0:/" UPDATER_GO, 0, pbp_header, sizeof(pbp_header)) == sizeof(pbp_header)) {
+		go = 1;
+		vlfGuiRemoveProgressBar(progress_bar);
+		vlfGuiRemoveText(progress_text);
+		SetStatus("GO Firmware Found. If you do not want\nto create DCARK for the GO\ndelete/rename 661GO.PBP first!");
+		sceKernelDelayThread(5000000);
+		SetStatus("Please wait...");
+		progress_bar = vlfGuiAddProgressBar(136);	
+		progress_text = vlfGuiAddText(240, 148, "0%");
+		vlfGuiSetTextAlignment(progress_text, VLF_ALIGNMENT_CENTER);
+
 	}
 
 	if (g_cancel)
@@ -577,9 +650,19 @@ static void Extract661Modules()
 		CancelInstall();
 	}
 
-	if (ReadFile("ms0:/" UPDATER, *(u32 *)&pbp_header[0x20], g_dataPSAR, PRX_SIZE_661) != PRX_SIZE_661)
-	{
-		ErrorExit(1000, "Invalid " UPDATER ".\n");
+	if(go) {
+
+		if (ReadFile("ms0:/" UPDATER_GO, *(u32 *)&pbp_header[0x20], g_dataPSAR, PRX_SIZE_661_GO) != PRX_SIZE_661_GO)
+		{
+			ErrorExit(1000, "Invalid " UPDATER_GO ".\n");
+		}
+
+	}
+	else {
+		if (ReadFile("ms0:/" UPDATER, *(u32 *)&pbp_header[0x20], g_dataPSAR, PRX_SIZE_661) != PRX_SIZE_661)
+		{
+			ErrorExit(1000, "Invalid " UPDATER ".\n");
+		}
 	}
 
 	if (g_cancel)
@@ -587,7 +670,12 @@ static void Extract661Modules()
 
 	sceKernelDelayThread(10000);
 
-	size = pspDecryptPRX(g_dataPSAR, g_dataPSAR, PRX_SIZE_661);
+	if(go) {
+		size = pspDecryptPRX(g_dataPSAR, g_dataPSAR, PRX_SIZE_661_GO);
+	}
+	else {
+		size = pspDecryptPRX(g_dataPSAR, g_dataPSAR, PRX_SIZE_661);
+	}
 	if (size <= 0)
 	{
 		ErrorExit(1000, "Error decrypting " UPDATER_VER_STR " updater.\n");
@@ -598,10 +686,15 @@ static void Extract661Modules()
 
 	sceKernelDelayThread(10000);
 
-	size = pspDecryptPRX(g_dataPSAR+0x4E6380, g_dataOut, LFLASH_FATFMT_UPDATER_SIZE);
+	if(go) {
+		size = pspDecryptPRX(g_dataPSAR+0x5A43C0, g_dataOut, LFLASH_FATFMT_UPDATER_SIZE);
+	}
+	else {
+		size = pspDecryptPRX(g_dataPSAR+0x4E6380, g_dataOut, LFLASH_FATFMT_UPDATER_SIZE);
+	}
 	if (size <= 0)
 	{
-		ErrorExit(1000, "Error decoding lflash_fatfmt_updater.prx\n");
+		ErrorExit(1000, "Error decoding lflash_fatfmt_updater.prx: %p\n", g_dataPSAR);
 	}
 
 	if (WriteFile(ARK_DC_PATH "/kd/lflash_fatfmt_updater.prx", g_dataOut, size) != size)
@@ -609,7 +702,12 @@ static void Extract661Modules()
 		ErrorExit(1000, "Error writing lflash_fatfmt_updater.prx.\n");
 	}
 
-	mod_buf = (u8 *)g_dataPSAR+0x21880;
+	if(go) {
+		mod_buf = (u8 *)g_dataPSAR+0x215c0;
+	}
+	else {
+		mod_buf = (u8 *)g_dataPSAR+0x21880;
+	}
 
 	DescrambleUpdaterModule(mod_buf, mod_buf, LFATFS_UPDATER_SIZE);
 
@@ -629,7 +727,12 @@ static void Extract661Modules()
 		ErrorExit(1000, "Error writing lfatfs_updater.prx.\n");
 	}
 
-	mod_buf = (u8 *)g_dataPSAR+0x30200;
+	if (go) {
+		mod_buf = (u8 *)g_dataPSAR+0x2ff40;
+	}
+	else {
+		mod_buf = (u8 *)g_dataPSAR+0x30200;
+	}
 
 	DescrambleUpdaterModule(mod_buf, mod_buf, NAND_UPDATER_SIZE);
 
@@ -656,13 +759,23 @@ static void Extract661PSAR()
 	
 	SetStatus("Extracting " UPDATER_VER_STR " modules... ");
 	
-	fd = sceIoOpen("ms0:/" UPDATER, PSP_O_RDONLY, 0);
+	if(go) {
+		fd = sceIoOpen("ms0:/" UPDATER_GO, PSP_O_RDONLY, 0);
+	}
+	else {
+		fd = sceIoOpen("ms0:/" UPDATER, PSP_O_RDONLY, 0);
+	}
 	if (fd < 0)
 	{
-		ErrorExit(1000, "Incorrect or inexistant " UPDATER " at root.\n");
+		ErrorExit(1000, "Incorrect or inexistant " UPDATER " or " UPDATER_GO " at root.\n");
 	}
 	
-	sceIoLseek32(fd, 0x577635, PSP_SEEK_SET);
+	if(go) {
+		sceIoLseek32(fd, 0x6351a5, PSP_SEEK_SET);
+	}
+	else {
+		sceIoLseek32(fd, 0x577635, PSP_SEEK_SET);
+	}
 	sceIoRead(fd, g_dataPSAR, PSAR_BUFFER_SIZE);	
 
 	if (g_cancel)
@@ -679,7 +792,12 @@ static void Extract661PSAR()
 		CancelInstall();
 	}
 
-	ExtractPrxs(PSAR_SIZE_661, fd);
+	if(go) {
+		ExtractPrxs(PSAR_SIZE_661_GO, fd);
+	}
+	else {
+		ExtractPrxs(PSAR_SIZE_661, fd);
+	}
 	sceIoClose(fd);
 }
 
@@ -705,6 +823,75 @@ static void WriteDCFiles()
 
 	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_02g_dc.bin", pspbtcnf_02g_dc, size_pspbtcnf_02g_dc) != size_pspbtcnf_02g_dc)
 		ErrorExit(1000, "Error writing pspbtcnf_02g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_03g_dc.bin", pspbtcnf_03g_dc, size_pspbtcnf_03g_dc) != size_pspbtcnf_03g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_03g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_04g_dc.bin", pspbtcnf_04g_dc, size_pspbtcnf_04g_dc) != size_pspbtcnf_04g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_04g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_05g_dc.bin", pspbtcnf_05g_dc, size_pspbtcnf_05g_dc) != size_pspbtcnf_05g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_05g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_07g_dc.bin", pspbtcnf_07g_dc, size_pspbtcnf_07g_dc) != size_pspbtcnf_07g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_07g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_09g_dc.bin", pspbtcnf_09g_dc, size_pspbtcnf_09g_dc) != size_pspbtcnf_09g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_09g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/kd/pspbtcnf_11g_dc.bin", pspbtcnf_11g_dc, size_pspbtcnf_11g_dc) != size_pspbtcnf_11g_dc)
+		ErrorExit(1000, "Error writing pspbtcnf_11g_dc.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl.raw", msipl_raw, size_msipl_raw) != size_msipl_raw)
+		ErrorExit(1000, "Error writing msipl.raw");
+
+	if (WriteFile(ARK_DC_PATH "/msipl_01g.bin", msipl_01G, size_msipl_01G) != size_msipl_01G)
+		ErrorExit(1000, "Error writing msipl_01g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/msipl_02g.bin", msipl_02G, size_msipl_02G) != size_msipl_02G)
+		ErrorExit(1000, "Error writing msipl_02g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/msipl_03g.bin", msipl_03G, size_msipl_03G) != size_msipl_03G)
+		ErrorExit(1000, "Error writing msipl_03g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl_04g.bin", msipl_04G, size_msipl_04G) != size_msipl_04G)
+		ErrorExit(1000, "Error writing msipl_04g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl_05g.bin", msipl_05G, size_msipl_05G) != size_msipl_05G)
+		ErrorExit(1000, "Error writing msipl_05g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl_07g.bin", msipl_07G, size_msipl_07G) != size_msipl_07G)
+		ErrorExit(1000, "Error writing msipl_07g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl_09g.bin", msipl_09G, size_msipl_09G) != size_msipl_09G)
+		ErrorExit(1000, "Error writing msipl_09g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/msipl_11g.bin", msipl_11G, size_msipl_11G) != size_msipl_11G)
+		ErrorExit(1000, "Error writing msipl_11g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_01g.bin", cipl_01G, size_cipl_01G) != size_cipl_01G)
+		ErrorExit(1000, "Error writing cipl_01g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/cipl_02g.bin", cipl_02G, size_cipl_02G) != size_cipl_02G)
+		ErrorExit(1000, "Error writing cipl_02g.bin");
+
+	if (WriteFile(ARK_DC_PATH "/cipl_03g.bin", cipl_03G, size_cipl_03G) != size_cipl_03G)
+		ErrorExit(1000, "Error writing cipl_03g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_04g.bin", cipl_04G, size_cipl_04G) != size_cipl_04G)
+		ErrorExit(1000, "Error writing cipl_04g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_05g.bin", cipl_05G, size_cipl_05G) != size_cipl_05G)
+		ErrorExit(1000, "Error writing cipl_05g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_07g.bin", cipl_07G, size_cipl_07G) != size_cipl_07G)
+		ErrorExit(1000, "Error writing cipl_07g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_09g.bin", cipl_09G, size_cipl_09G) != size_cipl_09G)
+		ErrorExit(1000, "Error writing cipl_09g.bin");
+	
+	if (WriteFile(ARK_DC_PATH "/cipl_11g.bin", cipl_11G, size_cipl_11G) != size_cipl_11G)
+		ErrorExit(1000, "Error writing cipl_11g.bin");
 
 	if (WriteFile(ARK_DC_PATH "/kd/dcman.prx", dcman, size_dcman) != size_dcman)
 		ErrorExit(1000, "Error writing dcman.prx");
@@ -714,6 +901,9 @@ static void WriteDCFiles()
 
 	if (WriteFile(ARK_DC_PATH "/kd/iop.prx", iop, size_iop) != size_iop)
 		ErrorExit(1000, "Error writing iop.prx");
+
+	if (WriteFile(ARK_DC_PATH "/kd/lflash_fdisk.prx", lflash_fdisk, size_lflash_fdisk) != size_lflash_fdisk)
+		ErrorExit(1000, "Error writing lflash_fdisk.prx");
 
 	if (WriteFile(ARK_DC_PATH "/kd/pspdecrypt.prx", pspdecrypt, size_pspdecrypt) != size_pspdecrypt)
 		ErrorExit(1000, "Error writing pspdecrypt.prx");
@@ -726,6 +916,9 @@ static void WriteDCFiles()
 	
 	if (WriteFile(ARK_DC_PATH "/vsh/module/vlf.prx", vlf, size_vlf) != size_vlf)
 		ErrorExit(1000, "Error writing vlf.prx");
+
+	if (WriteFile(ARK_DC_PATH "/kd/idsregeneration.prx", idsregen, size_idsregen) != size_idsregen)
+		ErrorExit(1000, "Error writing idsregeneration.prx");
 }
 
 int ReadSector(int sector, void *buf, int count)
@@ -839,7 +1032,7 @@ int install_iplloader()
 	if (g_cancel)
 		CancelInstall();
 
-	res = WriteSector(0x10, tm_msipl, 32);
+	res = WriteSector(0x10, new_msipl /*tm_msipl*/, 32);
 	if (res != 32)
 	{
 		ErrorExit(1000, "Error 0x%08X in WriteSector.\n", res);
@@ -1039,27 +1232,49 @@ int install_thread(SceSize args, void *argp)
 
 	strcpy(text, "");	
 
+	/*
 	if (key_install)
 	{
 		SceCtrlData pad;
 		char buf[256];		
-		
-		strcpy(text, "Please keep pressed for some seconds\n"
-			         "the key/s which you want to use to\n"
-					 "boot DC-ARK... ");
-		
-		vlfGuiAddEventHandler(0, -1, OnPaintListenKeys, NULL);	
+		int timeout = 10;
 		
 		while (1)
-		{		
-			sceKernelDelayThread(3000000);
+			{
+				sprintf(text, "Please keep pressed for some seconds\n"
+						 "the key/s which you want to use to\n"
+						 "boot DC-ARK... \n\nYou have %d seconds or autoboot will be set.", timeout);
 			
-			sceCtrlPeekBufferPositive(&pad, 1);
 			
-			if (pad.Buttons != 0)
-				break;
-		}
 
+				sceKernelDelayThread(1000000);
+				
+				sceCtrlPeekBufferPositive(&pad, 1);
+				
+				if (pad.Buttons != 0)
+					break;
+				if(timeout==0) 
+				{
+					char *default_config = "NOTHING = \"ms0:/TM/DCARK/tm_mloader.bin\";\r\n";
+					memcpy(g_dataOut, default_config, strlen(default_config));
+
+					int size = ReadFile("ms0:/TM/config.txt", 0, g_dataOut+strlen(default_config), SMALL_BUFFER_SIZE);
+
+					if (size >= 0)
+					{
+						WriteFile("ms0:/TM/config.txt", g_dataOut, size+strlen(default_config));
+						break;
+					}
+					else 
+					{
+						WriteFile("ms0:/TM/config.txt", default_config, strlen(default_config));
+						break;	
+					}
+				}
+				timeout--;
+				vlfGuiAddEventHandler(0, -1, OnPaintListenKeys, NULL);	
+			}
+	
 		strcpy(buf, "");
 
 		int first = 1;
@@ -1080,23 +1295,30 @@ int install_thread(SceSize args, void *argp)
 			}
 		}
 
-		strcat(text, buf);
-		SetStatus(text);
-		sceKernelDelayThread(850000);
 
-		strcat(buf, " = \"ms0:/TM/DCARK/tm_mloader.bin\";\r\n");
-		memcpy(g_dataOut, buf, strlen(buf));
+		if(timeout!=0) {
+			sprintf(text, "You chose %s to boot DC-ARK on boot.", buf);
+			SetStatus(text);
+			sceKernelDelayThread(850000);
+			strcat(buf, " = \"ms0:/TM/DCARK/tm_mloader.bin\";\r\n");
+			memcpy(g_dataOut, buf, strlen(buf));
 
-		int size = ReadFile("ms0:/TM/config.txt", 0, g_dataOut+strlen(buf), SMALL_BUFFER_SIZE);
+			int size = ReadFile("ms0:/TM/config.txt", 0, g_dataOut+strlen(buf), SMALL_BUFFER_SIZE);
 
-		if (size >= 0)
-		{
-			WriteFile("ms0:/TM/config.txt", g_dataOut, size+strlen(buf));
+			if (size >= 0)
+			{
+				WriteFile("ms0:/TM/config.txt", g_dataOut, size+strlen(buf));
+			}
+			else
+			{
+				WriteFile("ms0:/TM/config.txt", g_dataOut, strlen(buf));
+			}
+			
+			strcat(text, "\n");
+			sceKernelDelayThread(350000);
 		}
-		
-		strcat(text, "\n");
-		sceKernelDelayThread(350000);
 	}
+	*/
 	
 	strcat(text, "\n");
 	strcat(text, "Installation completed.");

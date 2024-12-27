@@ -23,7 +23,7 @@
 #include <systemctrl_se.h>
 #include <macros.h>
 #include <string.h>
-#include <globals.h>
+#include <ark.h>
 #include <functions.h>
 #include <graphics.h>
 
@@ -31,52 +31,105 @@
 #define EXIT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
 
 extern ARKConfig* ark_config;
+extern SEConfig se_config;
 extern int disable_plugins;
 extern int disable_settings;
 
-void exitLauncher()
+int exitLauncher()
 {
 
+	int k1 = pspSdkSetK1(0);
+
     // Refuse Operation in Save dialog
-	if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return;
+	if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return 0;
 	
 	// Refuse Operation in Dialog
-	if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return;
+	if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return 0;
 
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
-    
+
     // set exit app
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     if (ark_config->recovery) strcat(path, ARK_RECOVERY);
     else if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
-    else strcat(path, ARK_MENU);
-    
-    // Clear Memory
-    memset(&param, 0, sizeof(param));
+    else strcat(path, VBOOT_PBP);
 
-    // Configure Parameters
-    param.size = sizeof(param);
-    param.args = strlen(path) + 1;
-    param.argp = path;
-    param.key = "game";
+	// clear screen on PS1 games
+	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
+		memset(0x44000000, 0, 512 * 272 * 4);
+		_sw(0x44000000, 0xBC800100);
+	}
 
-    // set default mode
-    sctrlSESetUmdFile("");
-    sctrlSESetBootConfFileIndex(MODE_UMD);
-    
-    // Trigger Reboot
-    sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
+	SceIoStat stat; int res = sceIoGetstat(path, &stat);
+
+	if (res >= 0){
+		// Clear Memory
+		memset(&param, 0, sizeof(param));
+
+		// Configure Parameters
+		param.size = sizeof(param);
+		param.args = strlen(path) + 1;
+		param.argp = path;
+		param.key = "game";
+
+		// set default mode
+		sctrlSESetUmdFile("");
+		sctrlSESetBootConfFileIndex(MODE_UMD);
+		
+		// Trigger Reboot
+		ark_config->recovery = 0; // reset recovery mode for next reboot
+		sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
+	}
+	else if (ark_config->recovery || (strcmp(ark_config->launcher, "PROSHELL") == 0)){
+		// no recovery app? try classic module
+		strcpy(path, ark_config->arkpath);
+		strcat(path, RECOVERY_PRX);
+		res = sceIoGetstat(path, &stat);
+		if (res < 0){
+			// try flash0
+			strcpy(path, RECOVERY_PRX_FLASH);
+		}
+		SceUID modid = sceKernelLoadModule(path, 0, NULL);
+		if(modid >= 0) {
+			sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
+			ark_config->recovery = 0; // reset recovery mode for next reboot
+			ark_config->launcher[0] = 0; // reset launcher mode for next reboot
+			pspSdkSetK1(k1);
+			return 0;
+		}
+	}
+
+	ark_config->recovery = 0;
+	return sctrlKernelExitVSH(NULL);
 }
 
 static void startExitThread(){
 	// Exit to custom launcher
 	int k1 = pspSdkSetK1(0);
-	int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
+	int intc = pspSdkDisableInterrupts();
+	if (sctrlGetThreadUIDByName("ExitGamePollThread") >= 0){
+		pspSdkEnableInterrupts(intc);
+		return; // already exiting
+	}
+	int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 1, 4096, 0, NULL);
+	pspSdkEnableInterrupts(intc);
 	sceKernelStartThread(uid, 0, NULL);
 	sceKernelWaitThreadEnd(uid, NULL);
+	sceKernelDeleteThread(uid);
 	pspSdkSetK1(k1);
+}
+
+static void remove_analog_input(SceCtrlData *data, int count)
+{
+	if(data == NULL)
+		return;
+	
+	for (int i=0; i<count; i++){
+		data[i].Lx = 0xFF/2;
+		data[i].Ly = 0xFF/2;
+	}
 }
 
 // Gamepad Hook #1
@@ -90,6 +143,10 @@ int peek_positive(SceCtrlData * pad_data, int count)
 	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
 		startExitThread();
+	}
+
+	if (se_config.noanalog){
+		remove_analog_input(pad_data, count);
 	}
 	
 	// Return Number of Input Frames
@@ -108,7 +165,11 @@ int peek_negative(SceCtrlData * pad_data, int count)
 	{
 		startExitThread();
 	}
-	
+
+	if (se_config.noanalog){
+		remove_analog_input(pad_data, count);
+	}
+
 	// Return Number of Input Frames
 	return count;
 }
@@ -124,6 +185,10 @@ int read_positive(SceCtrlData * pad_data, int count)
 	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
 	{
 		startExitThread();
+	}
+
+	if (se_config.noanalog){
+		remove_analog_input(pad_data, count);
 	}
 	
 	// Return Number of Input Frames
@@ -142,25 +207,20 @@ int read_negative(SceCtrlData * pad_data, int count)
 	{
 		startExitThread();
 	}
+
+	if (se_config.noanalog){
+		remove_analog_input(pad_data, count);
+	}
 	
 	// Return Number of Input Frames
 	return count;
 }
-
-void initController(SceModule2* mod){
-	CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
-    CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0xC152080A);
-    CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
-    CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x60B81F86);
-}
-
 static int isRecoveryMode(){
-    if (ark_config->recovery) return 1;
-    // check if launching recovery menu
-    static char path[ARK_PATH_SIZE];
-    strcpy(path, ark_config->arkpath);
-    strcat(path, ARK_RECOVERY);
-    return (strcmp(path, sceKernelInitFileName())==0);
+    if (ark_config->recovery) return 1; // recovery mode set
+	char* filename = sceKernelInitFileName();
+	if (filename == NULL) return 0; // not running any app
+	// check if running a recovery app
+    return (strstr(filename, "RECOVERY") != NULL || strstr(filename, "recovery") != NULL);
 }
 
 void checkControllerInput(){
@@ -177,11 +237,17 @@ void checkControllerInput(){
 }
 
 // Hook Gamepad Input
-void patchController(void)
+void patchController(SceModule2* mod)
 {
-	// Hook Gamepad Input Syscalls (user input hooking only)
-	sctrlHENPatchSyscall((void *)CtrlPeekBufferPositive, peek_positive);
-	sctrlHENPatchSyscall((void *)CtrlPeekBufferNegative, peek_negative);
-	sctrlHENPatchSyscall((void *)CtrlReadBufferPositive, read_positive);
-	sctrlHENPatchSyscall((void *)CtrlReadBufferNegative, read_negative);
+
+	CtrlPeekBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x3A622550);
+    CtrlPeekBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0xC152080A);
+    CtrlReadBufferPositive = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x1F803938);
+    CtrlReadBufferNegative = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl_driver", 0x60B81F86);
+
+	// Hook Gamepad Input
+	HIJACK_FUNCTION(CtrlPeekBufferPositive, peek_positive, CtrlPeekBufferPositive);
+	HIJACK_FUNCTION(CtrlPeekBufferNegative, peek_negative, CtrlPeekBufferNegative);
+	HIJACK_FUNCTION(CtrlReadBufferPositive, read_positive, CtrlReadBufferPositive);
+	HIJACK_FUNCTION(CtrlReadBufferNegative, read_negative, CtrlReadBufferNegative);
 }

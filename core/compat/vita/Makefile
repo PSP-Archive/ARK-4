@@ -1,22 +1,15 @@
 TARGET = vitacompat
 
-SPU_OBJS = \
-	psxspu/dma.o \
-	psxspu/out.o \
-	psxspu/registers.o \
-	psxspu/spu.o \
-	psxspu/xa.o \
-	psxspu/nullsnd.o \
-
 C_OBJS =    \
 	main.o   \
-	vlf.o    \
+	vlf.o     \
 	syspatch.o  \
 	gameinfo.o   \
 	vitaflash.o   \
 	popspatch.o    \
 	filesystem.o    \
-	$(ARKROOT)/common/utils/patches.o \
+	$(ARKROOT)/libs/libsploit/patches.o \
+	$(ARKROOT)/core/compat/psp/cwpatch.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
 		
 OBJS = \
@@ -39,7 +32,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore -lpspsystemctrl_kernel
+LIBS = -lpspsystemctrl_kernel
 
 PSP_FW_VERSION = 660
 

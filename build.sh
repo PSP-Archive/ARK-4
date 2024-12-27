@@ -5,10 +5,10 @@
 #                                   #
 # Author  : Krazynez                #
 #                                   #
-# Date    : 2023-06-19              #
+# Date    : 2024-06-03              #
 #                                   #
 #####################################
-version=0.8.0
+version=0.9.1
 
 if [[ -z ${PSPDEV} ]]; then
 	clear
@@ -18,6 +18,8 @@ if [[ -z ${PSPDEV} ]]; then
 		printf "\n"
 		read -p "PSPDEV path (ex: /usr/local/pspdev): " getPath
 		export PSPDEV="$getPath" && export PATH="$PATH:$PSPDEV/bin"
+		echo "PATH=$PATH:$PSPDEV/bin" >> $HOME/.bashrc
+		echo "export PATH" >> $HOME/.bashrc
 	fi
 fi
 
@@ -25,15 +27,10 @@ fi
 dialogCheck=$(command -v dialog 2>/dev/null)
 
 function checkDepends {
-	psptoolchainCheck=$(command -v psp-gcc 2>/dev/null) 
-	psptoolchainRet=$?
-	if [[ $psptoolchainRet -eq 1 ]] ; then
-		printf "You need to first download and install the psptoolchain first!\n";
-		exit 1;
-	fi
 
-	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev
-	pip3 install pycryptodome ecdsa
+	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev python3-pycryptodome python3-ecdsa zip
+	# Use package manager instead of pip
+	#pip3 install ecdsa
 }
 
 export -f checkDepends
@@ -55,27 +52,32 @@ export -f elevatePrivs
 
 function original {
 	
-	clear
-	read -p "
-	This script will setup the correct SDK to build ARK, get sign_np
-	dependency and temporarly setup the enivorment to build ARK-4. 
-	
-	Press Enter to continue..."
-	
-	
-	if [ -d "$PSPDEV" ] ; then
+	if [[ "$1" == "--docker" ]]; then
 		clear
-	    read -p "You seem to already have the SDK installed. Do you want to reinstall or continue? (y)es/(n)o/(c)ontinue 
-	
-	if you continue ARK will try to build with already installed SDK: " input
-	
-	if [[ ! "$input" =~ ^(Y|Yes|YEs|YES|yES|yeS|yes|y|c|C)$ ]] ; then
-		printf "Exiting....\n"
-		exit 0;
+		read -p "
+		This script will setup the correct SDK to build ARK, get sign_np
+		dependency and temporarly setup the enivorment to build ARK-4. 
+		
+		Press Enter to continue..."
+		
+		
+		if [ -d "$PSPDEV" ] ; then
+			clear
+			read -p "You seem to already have the SDK installed. Do you want to reinstall or continue? (y)es/(n)o/(c)ontinue 
+		
+		if you continue ARK will try to build with already installed SDK: " input
+		fi
+		
+		if [[ ! "$input" =~ ^(Y|Yes|YEs|YES|yES|yeS|yes|y|c|C)$ ]] ; then
+			printf "Exiting....\n"
+			exit 0;
+		fi
 	fi
 	
 	if [[ ! -f "/lib/libmpfr.so.4" ]] ; then
-		if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.4" ]] ; then
+		if [[ "$1" == "--docker" ]]; then
+			elevatePrivs ln -s '/usr/lib/x86_64-linux-gnu/libmpfr.so.6.1.0' /lib/libmpfr.so.4
+		else if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.4" ]] ; then
 			printf "Already Exist\n"
 		elif [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so" ]] ; then
 			elevatePrivs ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libmpfr.so.4
@@ -89,17 +91,46 @@ function original {
 	        fi
 	    fi
 	fi
-	
-	    if [[ ! $input =~ ^(c|C)$ ]] ; then
-	        elevatePrivs 7z x ./contrib/PC/PSPSDK/pspdev.7z -o"${PSPDEV:0:-7}"
+
+	    if [[ ! $input =~ ^(c|C)$ || "$1" == "--docker" ]] ; then
+	        elevatePrivs 7z -aoa x ./contrib/PC/PSPSDK/pspdev.7z -o"${PSPDEV:0:-7}"
 	    fi
 	
 	    # Should be added to .bashrc or somthing to make it static, but for now I will leave it just for the session
 		elevatePrivs chown -R $USER:$USER $PSPDEV 
+
+		# downloads mkpsxsio and installs
+		if [[ ! -f "/usr/bin/mkpsxiso" ]]; then
+				check_curl=$(command -v curl)
+				curl_ret=$?
+				check_wget=$(command -v wget)
+				wget_ret=$?
+			if [[ -f "/usr/bin/apt" ]]; then
+				if [[ $curl_ret == 0 ]]; then
+					$check_curl -OJL "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.deb" && elevatePrivs apt install ./mkpsxiso-2.03-Linux.deb
+				elif [[ $wget_ret == 0 ]]; then
+					$check_wget -O $(pwd)/mkpsxiso-2.03-Linux.deb "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.deb" && elevatePrivs apt install ./mkpsxiso-2.03-Linux.deb
+				fi
+			elif [[ -f "/usr/bin/dnf" ]]; then
+				if [[ $curl_ret == 0 ]]; then
+					$check_curl -OJL "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.rpm" && elevatePrivs dnf install ./mkpsxiso-2.03-Linux.deb
+				elif [[ $wget_ret == 0 ]]; then
+					$check_wget -O $(pwd)/mkpsxiso-2.03-Linux.deb "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.rpm "&& elevatePrivs dnf install ./mkpsxiso-2.03-Linux.deb
+				fi
+
+			fi
+
+		fi
+
+
+
 	
 	    # Signs eboots needed for ARK Loader
-	    if [[ ! -f $PSPDEV/bin/sign_np ]] ; then
+	    if [[ ! -f "$PSPDEV/bin/sign_np" ]] ; then
+			echo cloning sign_np
 	        git clone https://github.com/swarzesherz/sign_np.git
+
+			sed -i 's/o64/o/' sign_np/sign_np.c
 	
 	        pushd sign_np
 	
@@ -158,7 +189,7 @@ function withDialog {
 	dialog \
 		--title "Welcome to the ARK Compiler" \
 		--backtitle "Script created by Krazynez Version: $version" \
-		--msgbox "This script will setup the correct SDK to build ARK, get sign_np dependency and temporarly setup the enivorment to build ARK-4." 10 80 
+		--msgbox "This script will setup the correct SDK to build ARK, get sign_np dependency and mkpsxiso and temporarly setup the enivorment to build ARK-4." 10 80 
 
 $
 	dialog 	--title "Checking for existitng SDK"
@@ -205,6 +236,9 @@ $
 	if [[ ! -f $PSPDEV/bin/sign_np ]] ; then
 		git clone https://github.com/swarzesherz/sign_np.git #| dialog --progressbox "Cloning sign_np" 10 20 
 		dialog --clear
+
+
+		sed -i 's/o64/o/' sign_np/sign_np.c
 		
 		pushd sign_np
 
