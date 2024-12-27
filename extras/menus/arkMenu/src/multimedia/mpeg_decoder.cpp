@@ -59,6 +59,7 @@ int T_Decoder(SceSize _args, void *_argp)
 
     SceUInt32 m_iLastPacketsWritten = D->Reader->m_Ringbuffer->iUnk1;
     SceInt32  m_iLastPacketsAvailable = sceMpegRingbufferAvailableSize(D->Reader->m_Ringbuffer);
+    printf("m_iLastPacketsAvailable: %p\n", m_iLastPacketsAvailable);
 
     //D->Connector->initConnector();
 
@@ -72,8 +73,13 @@ int T_Decoder(SceSize _args, void *_argp)
         }
         else if (pad.accept())
         {
-            run = true;
-            work = 0;
+            if (entry){
+                run = true;
+                work = 0;
+            }
+            else{
+                // TODO: figure out pause/resume
+            }
         }
 
         if (!work) break;
@@ -95,7 +101,7 @@ int T_Decoder(SceSize _args, void *_argp)
         else if (D->Reader->m_Status == ReaderThreadData__READER_EOF)
         {
             retVal = sceMpegRingbufferAvailableSize(D->Reader->m_Ringbuffer);
-
+            //printf("sceMpegRingbufferAvailableSize: %p\n", retVal);
             if(retVal == D->Reader->m_RingbufferPackets) break;
         }
 
@@ -108,6 +114,7 @@ int T_Decoder(SceSize _args, void *_argp)
         if (D->Audio->m_iFullBuffers < D->Audio->m_iNumBuffers)
         {
             retVal = sceMpegGetAtracAu(&D->m_Mpeg, D->m_MpegStreamAtrac, D->m_MpegAuAtrac, &unknown);
+            //printf("sceMpegGetAtracAu: %p\n", retVal);
             if (retVal != 0)
             {
                 playMPEGAudio = false;
@@ -126,6 +133,7 @@ int T_Decoder(SceSize _args, void *_argp)
                 memset(D->Audio->m_pAudioBuffer[D->Audio->m_iDecodeBuffer], 0, m_MpegAtracOutSize);
 
                 retVal = sceMpegAtracDecode(&D->m_Mpeg, D->m_MpegAuAtrac, D->Audio->m_pAudioBuffer[D->Audio->m_iDecodeBuffer], iInitAudio);
+                //printf("sceMpegAtracDecode: %p\n", retVal);
                 if (retVal != 0)
                 {
                     break;
@@ -172,7 +180,7 @@ int T_Decoder(SceSize _args, void *_argp)
         {
 
             retVal = sceMpegGetAvcAu(&D->m_Mpeg, D->m_MpegStreamAVC, D->m_MpegAuAVC, &unknown);
-
+            //if (retVal >= 0) printf("sceMpegGetAvcAu: %p\n", retVal);
             if ((SceUInt32)retVal == 0x80618001)
             {
                 if (!IsRingbufferFull(D->Reader))
@@ -190,7 +198,8 @@ int T_Decoder(SceSize _args, void *_argp)
             {
                 if (m_iVideoCurrentTimeStamp >= D->m_iLastTimeStamp - D->m_iVideoFrameDuration) break;
 
-                retVal = sceMpegAvcDecode(&D->m_Mpeg, D->m_MpegAuAVC, BUFFER_WIDTH, &D->Video->m_pVideoBuffer[D->Video->m_iPlayBuffer], &iVideoStatus);
+                retVal = sceMpegAvcDecode(&D->m_Mpeg, D->m_MpegAuAVC, D->Video->m_iBufferWidth, &D->Video->m_pVideoBuffer[D->Video->m_iPlayBuffer], &iVideoStatus);
+                //if (retVal >= 0) printf("sceMpegAvcDecode: %p\n", retVal);
                 if (retVal != 0)
                 {
                     break;

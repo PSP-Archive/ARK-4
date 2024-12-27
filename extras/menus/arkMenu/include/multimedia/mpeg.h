@@ -3,6 +3,7 @@
 
 #include "entry.h"
 
-bool mpegStart(Entry* e, int x, int y);
+bool mpegPlayGamePMF(Entry* e, int x, int y);
+void mpegPlayVideoFile(const char* path);
 
 #endif
