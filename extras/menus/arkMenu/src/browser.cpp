@@ -99,7 +99,8 @@ Browser::Browser(){
         pEntries[FTP_DIR] = NULL;
     }
     if (IS_VITA(ark_config) || psp_model == PSP_GO){
-        pEntries[UMD_DIR] = NULL;
+        if (!sceUmdCheckMedium())
+            pEntries[UMD_DIR] = NULL;
     }
 
     if (ark_config->exec_mode == PS_VITA)
