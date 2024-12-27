@@ -99,10 +99,13 @@ Browser::Browser(){
     if (psp_model == PSP_11000 || ftp_driver == NULL){
         pEntries[FTP_DIR] = NULL;
     }
+
+    /*
     if (IS_VITA(ark_config) || psp_model == PSP_GO){
         if (!sceUmdCheckMedium())
             pEntries[UMD_DIR] = NULL;
     }
+    */
 
     if (ark_config->exec_mode == PS_VITA)
     	pEntries[USB_DEV] = NULL;

@@ -38,7 +38,7 @@ KernelFunctions _ktbl = { // for vita flash patcher
 int (*_sctrlKernelLoadExecVSHWithApitype)(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param) = NULL;
 int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
 {
-    if (apitype == 0x141){ // homebrew API
+    if (apitype == 0x141 && sctrlSEGetBootConfFileIndex() != MODE_INFERNO){ // homebrew API not using Inferno
         sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
         sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
     }
