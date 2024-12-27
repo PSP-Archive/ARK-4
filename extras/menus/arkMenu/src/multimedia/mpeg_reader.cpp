@@ -88,7 +88,7 @@ SceInt32 InitReader()
 
     Reader.m_StreamSize                     = m_MpegStreamSize;
     Reader.m_Ringbuffer                     = &m_Ringbuffer;
-    Reader.m_RingbufferPackets      = m_RingbufferPackets;
+    Reader.m_RingbufferPackets              = m_RingbufferPackets;
     Reader.m_Status                         = 0;
     Reader.m_TotalBytes                     = 0;
 

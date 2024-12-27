@@ -114,7 +114,7 @@ int T_Decoder(SceSize _args, void *_argp)
         if (D->Audio->m_iFullBuffers < D->Audio->m_iNumBuffers)
         {
             retVal = sceMpegGetAtracAu(&D->m_Mpeg, D->m_MpegStreamAtrac, D->m_MpegAuAtrac, &unknown);
-            //printf("sceMpegGetAtracAu: %p\n", retVal);
+            printf("sceMpegGetAtracAu: %p\n", retVal);
             if (retVal != 0)
             {
                 playMPEGAudio = false;
@@ -133,13 +133,13 @@ int T_Decoder(SceSize _args, void *_argp)
                 memset(D->Audio->m_pAudioBuffer[D->Audio->m_iDecodeBuffer], 0, m_MpegAtracOutSize);
 
                 retVal = sceMpegAtracDecode(&D->m_Mpeg, D->m_MpegAuAtrac, D->Audio->m_pAudioBuffer[D->Audio->m_iDecodeBuffer], iInitAudio);
-                //printf("sceMpegAtracDecode: %p\n", retVal);
+                printf("sceMpegAtracDecode: %p\n", retVal);
                 if (retVal != 0)
                 {
                     break;
                 }
 
-                if (D->m_MpegAuAtrac->iPts == 0xFFFFFFFF) {
+                if (D->m_MpegAuAtrac->iPts < 0) {
                     m_iAudioCurrentTimeStamp += D->m_iAudioFrameDuration;
                 } else {
                     m_iAudioCurrentTimeStamp = D->m_MpegAuAtrac->iPts;
@@ -180,7 +180,7 @@ int T_Decoder(SceSize _args, void *_argp)
         {
 
             retVal = sceMpegGetAvcAu(&D->m_Mpeg, D->m_MpegStreamAVC, D->m_MpegAuAVC, &unknown);
-            //if (retVal >= 0) printf("sceMpegGetAvcAu: %p\n", retVal);
+            printf("sceMpegGetAvcAu: %p\n", retVal);
             if ((SceUInt32)retVal == 0x80618001)
             {
                 if (!IsRingbufferFull(D->Reader))
@@ -199,13 +199,13 @@ int T_Decoder(SceSize _args, void *_argp)
                 if (m_iVideoCurrentTimeStamp >= D->m_iLastTimeStamp - D->m_iVideoFrameDuration) break;
 
                 retVal = sceMpegAvcDecode(&D->m_Mpeg, D->m_MpegAuAVC, D->Video->m_iBufferWidth, &D->Video->m_pVideoBuffer[D->Video->m_iPlayBuffer], &iVideoStatus);
-                //if (retVal >= 0) printf("sceMpegAvcDecode: %p\n", retVal);
+                printf("sceMpegAvcDecode: %p\n", retVal);
                 if (retVal != 0)
                 {
                     break;
                 }
 
-                if (D->m_MpegAuAVC->iPts == 0xFFFFFFFF) {
+                if (D->m_MpegAuAVC->iPts < 0) {
                     m_iVideoCurrentTimeStamp += 0x0BBC;
                 } else {
                     m_iVideoCurrentTimeStamp = D->m_MpegAuAVC->iPts;

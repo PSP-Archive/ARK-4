@@ -95,6 +95,7 @@ int work = 1;
 bool playAT3;
 bool playMPEG;
 bool playMPEGAudio = true;
+bool is_mps = false;
 
 int at3_thread_started = 0;
 
@@ -105,11 +106,35 @@ SceOff MPEGcounter = 0;
 int MPEGstart = 0;
 
 Entry* entry = NULL;
+u8* ringbuf = NULL;
 
 bool run = 0;
 
 int dx;
 int dy;
+
+bool mps_header_injected = false;
+u8 mps_header[] = {
+    0x50, 0x53, 0x4D, 0x46, 0x30, 0x30, 0x30, 0x34, 0x00, 0x00, 0x08, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x4E, 0x00, 0x00, 0x00, 0x01, 0x5F, 0x90, 0x00, 0x00, 0x00, 0x69, 0x6F, 0x75,
+    0x00, 0x00, 0x61, 0xA8, 0x00, 0x01, 0x5F, 0x90, 0x02, 0x01, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00,
+    0x00, 0x01, 0x5F, 0x90, 0x00, 0x00, 0x00, 0x69, 0x6F, 0x75, 0x00, 0x01, 0x00, 0x00, 0x00, 0x22,
+    0x00, 0x02, 0xE0, 0x00, 0x21, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1E, 0x11,
+    0x00, 0x00, 0xBD, 0x00, 0x20, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x02, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
+static void copyHeader(void* pData){
+    memset(pData, 0, 2048);
+    memcpy(pData, mps_header, sizeof(mps_header));
+    memcpy((u8*)pData+12, &MPEGsize, sizeof(MPEGsize));
+    memcpy((u8*)pData+92, &m_iLastTimeStamp, sizeof(m_iLastTimeStamp));
+    memcpy((u8*)pData+118, &m_iLastTimeStamp, sizeof(m_iLastTimeStamp));
+}
 
 SceInt32 RingbufferCallbackFromBuffer(ScePVoid pData, SceInt32 iNumPackets, ScePVoid pParam)
 {
@@ -133,7 +158,20 @@ SceInt32 RingbufferCallbackFromBuffer(ScePVoid pData, SceInt32 iNumPackets, SceP
 SceInt32 RingbufferCallbackFromFile(ScePVoid pData, SceInt32 iNumPackets, ScePVoid pParam)
 {
 
+    int res = 0;
+
+    if (is_mps && MPEGcounter == 0 && !mps_header_injected){
+        printf("faking header for mps\n");
+        copyHeader(pData);
+        mps_header_injected = true;
+        if (iNumPackets == 1) return 1;
+        res = 1;
+        iNumPackets--;
+        pData = (u8*)pData+2048;
+    }
+
     if (MPEGcounter >= MPEGsize){
+        printf("reset MPEGcounter (%d, %d)\n", MPEGcounter, MPEGsize);
         MPEGcounter = 0;
         sceIoLseek(mpegfd, 0, PSP_SEEK_SET);
     }
@@ -142,27 +180,39 @@ SceInt32 RingbufferCallbackFromFile(ScePVoid pData, SceInt32 iNumPackets, ScePVo
     if (MPEGcounter + toRead > MPEGsize)
         toRead = MPEGsize-MPEGcounter;
 
-    //printf("reading %d bytes at %d\n", toRead, MPEGcounter);
+    printf("reading %d bytes at %d\n", toRead, MPEGcounter);
 
     sceIoRead(mpegfd, pData, toRead);
 
     MPEGcounter += toRead;
 
-    return toRead/2048;
+    printf("MPEGcounter: %d\n");
+
+    return res+iNumPackets;
 }
 
 SceInt32 ParseHeader()
 {
     int retVal;
+
     char * pHeader = (char *)malloc(2048);
 
     if (MPEGsize < 2048)
     {
         goto error;
     }
-    
-    if (MPEGdata)
+
+    if (is_mps){
+        m_MpegStreamOffset = 0;
+        m_iLastTimeStamp = -1;
+        m_MpegStreamSize = MPEGsize;
+        MPEGcounter = 0;
+        MPEGstart = 0;
+        copyHeader(pHeader);
+    }
+    else if (MPEGdata){
         memcpy(pHeader, MPEGdata, 2048);
+    }
     else if (mpegfd >= 0){
         printf("reading header from file\n");
         sceIoLseek32(mpegfd, 0, SEEK_SET);
@@ -207,11 +257,7 @@ error:
 
 void mpegInit(sceMpegRingbufferCB RingbufferCallback) {
 
-    m_RingbufferPackets = 100; //0x3C0;
-    // 0x3C0 -> 2065920 bytes
-    // 100 -> 215200 bytes
-    
-    static u8 ringbuf[215200]; // use static buffer
+    m_RingbufferPackets = 0x3C0;
 
     int status = 0;
     status |= sceUtilityLoadModule(PSP_MODULE_AV_ATRAC3PLUS);
@@ -226,7 +272,7 @@ void mpegInit(sceMpegRingbufferCB RingbufferCallback) {
     m_RingbufferSize = sceMpegRingbufferQueryMemSize(m_RingbufferPackets);
     
     m_MpegMemSize    = sceMpegQueryMemSize(0);
-    m_RingbufferData = ringbuf; //malloc(m_RingbufferSize);
+    m_RingbufferData = malloc(m_RingbufferSize);
     m_MpegMemData    = malloc(m_MpegMemSize);
     res = sceMpegRingbufferConstruct(&m_Ringbuffer, m_RingbufferPackets, m_RingbufferData, m_RingbufferSize, RingbufferCallback, MPEGdata);
     printf("sceMpegRingbufferConstruct: %p\n", res);
@@ -334,7 +380,7 @@ SceVoid mpegShutdown()
     sceUtilityUnloadModule(PSP_MODULE_AV_ATRAC3PLUS);
     
     if (m_pEsBufferAtrac  != NULL) free(m_pEsBufferAtrac);
-    //if (m_RingbufferData  != NULL) free(m_RingbufferData); // This crashes....double free or corruption?
+    if (m_RingbufferData  != NULL) free(m_RingbufferData); // This crashes....double free or corruption?
     if (m_MpegMemData     != NULL) free(m_MpegMemData);
     
 }
@@ -382,7 +428,16 @@ void mpegPlayVideoFile(const char* path){
 
     mpegfd = sceIoOpen(path, PSP_O_RDONLY, 0777);
     if (mpegfd < 0) return;
-    
+
+    string ext = common::getExtension(path);
+    if (ext == "mps"){
+        printf("mps detected\n");
+        is_mps = true;
+    }
+    else {
+        is_mps = false;
+    }
+
     printf("play video file %s\n", path);
     playAT3 = false; // are we gonna play an at3 file? nope
     playMPEG = true; // are we gonna play a mpeg file too? of course we are
@@ -397,6 +452,7 @@ void mpegPlayVideoFile(const char* path){
     dx = 0;
     dy = 0;
     MPEGcounter = MPEGstart = 0;
+    mps_header_injected = false;
     sceIoLseek(mpegfd, 0, PSP_SEEK_SET);
 
     // init and start MPEG
