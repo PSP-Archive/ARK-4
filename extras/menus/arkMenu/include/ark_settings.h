@@ -774,8 +774,27 @@ void saveSettings(){
     for (int i=0; i<custom_config.size(); i++){
         output << custom_config[i] << endl;
     }
-    
+
     output.close();
+
+    std::ifstream input((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
+	std::string line;
+	bool exist = false;
+	while(std::getline(input, line)) {
+		if(line == "ULUS10201, infernocache, off") {
+			exist = true;
+			break;
+		}
+	}
+	input.close();
+	if(exist == false) {
+    	std::ofstream output((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
+		output << "# Luxor doesn't like Inferno Cache" << endl;
+		output << "ULUS10201, infernocache, off" << endl;
+		output.close();
+	}
+
+    
 }
 
 void resetSettings() {
@@ -800,31 +819,9 @@ void resetSettings() {
     cfw_config.qaflags = 1;
 	cfw_config.vshregion = 0;
 	cfw_config.regionchange = 0;
+
     
-    /*switch (cfw_config.regionchange){
-        case REGION_JAPAN:
-            output << "vsh, region_jp, on" << endl;
-            break;
-        case REGION_AMERICA:
-            output << "vsh, region_us, on" << endl;
-            break;
-        case REGION_EUROPE:
-            output << "vsh, region_eu, on" << endl;
-            break;
-    }
-
-    if (cfw_config.vshregion > 0){
-        char tmp[10];
-        snprintf(tmp, 10, "%d", cfw_config.vshregion);
-        output << "vsh, fakeregion_" << tmp << ", on" << endl;
-    }
-
-    for (int i=0; i<custom_config.size(); i++){
-        output << custom_config[i] << endl;
-    }
-	*/
-
-	saveSettings();
+    saveSettings();
     
 
 }
