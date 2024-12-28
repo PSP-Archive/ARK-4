@@ -16,6 +16,7 @@
 #include "texteditor.h"
 #include "image_viewer.h"
 #include "music_player.h"
+#include "mpeg.h"
 
 #define ROOT_DIR "ms0:/" // Initial directory
 #define GO_ROOT "ef0:/" // PSP Go initial directory
@@ -98,8 +99,10 @@ Browser::Browser(){
     if (psp_model == PSP_11000 || ftp_driver == NULL){
         pEntries[FTP_DIR] = NULL;
     }
+    
     if (IS_VITA(ark_config) || psp_model == PSP_GO){
-        pEntries[UMD_DIR] = NULL;
+        if (!sceUmdCheckMedium())
+            pEntries[UMD_DIR] = NULL;
     }
 
     if (ark_config->exec_mode == PS_VITA)
@@ -168,6 +171,11 @@ void Browser::update(Entry* ent, bool skip_prompt){
     else if (Entry::isARK(e->getPath().c_str())) {
 		installTheme();
 	}
+    else if (Entry::isVideo(e->getPath().c_str())){
+        SystemMgr::pauseDraw();
+        mpegPlayVideoFile(e->getPath().c_str());
+        SystemMgr::resumeDraw();
+    }
     else if (e->getFileType() == FOLDER){
         string full_path = e->getFullPath();
         this->cwd = full_path;

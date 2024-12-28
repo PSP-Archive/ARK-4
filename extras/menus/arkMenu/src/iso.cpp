@@ -1,4 +1,5 @@
 #include "iso.h"
+#include "eboot.h"
 #include <umd.h>
 #include <systemctrl.h>
 
@@ -253,9 +254,18 @@ void Iso::executeVideoISO(const char* path)
     }
 
 	sctrlSESetUmdFile((char*)path);
-	sctrlSESetBootConfFileIndex(MODE_VSHUMD);
 	sctrlSESetDiscType(type);
-	sctrlKernelExitVSH(NULL);
+	
+    ARKConfig* ark_config = common::getArkConfig();
+    if (IS_VITA(ark_config) && !IS_VITA_ADR(ark_config)){
+        sctrlSESetBootConfFileIndex(MODE_INFERNO);
+        sctrlSESetDiscType(type|PSP_UMD_TYPE_GAME);
+        Eboot::executeEboot(common::getArgv()[0]);
+    }
+    else{
+        sctrlSESetBootConfFileIndex(MODE_VSHUMD);
+        sctrlKernelExitVSH(NULL);
+    }
 }
 
 int Iso::has_update_file(char* update_file){
