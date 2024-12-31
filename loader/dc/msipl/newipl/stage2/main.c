@@ -45,7 +45,7 @@ int entry()
 	void* load_addr = 0x40e0000;
 	if (tachyon_version <= 0x00400000) {
 		path = "/TM/DCARK/msipl_01g.bin";
-	} else if (tachyon_version == 0x00500000 || (tachyon_version == 0x00600000 && baryon_version == 0x00243000)) {
+	} else if (tachyon_version == 0x00500000 || (tachyon_version == 0x00600000 && baryon_version == 0x00243000) || (tachyon_version == 0x00500000 && baryon_version == 0x00243000)) {
 		path = "/TM/DCARK/msipl_02g.bin";
 	} else if (tachyon_version <= 0x00600000) {
 		path = "/TM/DCARK/msipl_03g.bin";
