@@ -584,7 +584,7 @@ ENDX:   ;
 
 void CALLBACK SPUupdate(void)
 {
-	MAINThread(0);                                      // -> linux high-compat mode
+    MAINThread(0);                                      // -> linux high-compat mode
 }
 
 ////////////////////////////////////////////////////////////////////////

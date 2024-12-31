@@ -8,7 +8,7 @@ int entry(){
     lzo1x_decompress(msipl_compressed, size_msipl_compressed, load_addr, &len, (void*)0);
 
     DcacheClear();
-	IcacheClear();
+    IcacheClear();
 
     return ((int (*)()) load_addr)();
 }

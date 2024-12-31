@@ -302,10 +302,10 @@ int _arkReboot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int a
     
 #if defined(REBOOTEX) && defined(MS_IPL)
     // GPIO enable
-	REG32(0xbc10007c) |= 0xc8;
-	__asm("sync"::);
-	
-	syscon_init();
+    REG32(0xbc10007c) |= 0xc8;
+    __asm("sync"::);
+    
+    syscon_init();
     
     syscon_ctrl_ms_power(1);
 #endif

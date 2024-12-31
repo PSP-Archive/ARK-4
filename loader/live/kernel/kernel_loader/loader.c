@@ -92,8 +92,8 @@ void patchAdrenalineReboot(SceModule2* loadexec){
                 }
                 a+=4;
             }
-			break;
-		}
+            break;
+        }
     }
 }
 

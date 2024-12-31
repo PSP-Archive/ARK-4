@@ -115,8 +115,8 @@ static void init_ms_led(LogicLevel logic_level)
     g_ms_led.logic_level = logic_level;
     g_ms_led.initialised = 1;
     syscon_ctrl_led(SYSCON_LED_MS, 1);
-	sysreg_io_enable_gpio_port(GPIO_PORT_MS_LED);
-	gpio_set_port_mode(GPIO_PORT_MS_LED, GPIO_MODE_OUTPUT);
+    sysreg_io_enable_gpio_port(GPIO_PORT_MS_LED);
+    gpio_set_port_mode(GPIO_PORT_MS_LED, GPIO_MODE_OUTPUT);
     turn_off_led(g_ms_led.gpio_port, g_ms_led.logic_level);
     g_ms_led.mode = LED_MODE_OFF;
     g_ms_led.req_action = 1;
@@ -128,8 +128,8 @@ static void init_wlan_led(LogicLevel logic_level)
     g_wlan_led.logic_level = logic_level;
     g_wlan_led.initialised = 1;
     syscon_ctrl_led(SYSCON_LED_WLAN, 1);
-	sysreg_io_enable_gpio_port(GPIO_PORT_WLAN_LED);
-	gpio_set_port_mode(GPIO_PORT_WLAN_LED, GPIO_MODE_OUTPUT);
+    sysreg_io_enable_gpio_port(GPIO_PORT_WLAN_LED);
+    gpio_set_port_mode(GPIO_PORT_WLAN_LED, GPIO_MODE_OUTPUT);
     turn_off_led(g_wlan_led.gpio_port, g_wlan_led.logic_level);
     g_wlan_led.mode = LED_MODE_OFF;
     g_wlan_led.req_action = 1;
@@ -147,8 +147,8 @@ static void init_bt_led(LogicLevel logic_level)
     g_bt_led.logic_level = logic_level;
     g_bt_led.initialised = 1;
     syscon_ctrl_led(SYSCON_LED_BT, 1);
-	sysreg_io_enable_gpio_port(GPIO_PORT_BT_LED);
-	gpio_set_port_mode(GPIO_PORT_BT_LED, GPIO_MODE_OUTPUT);
+    sysreg_io_enable_gpio_port(GPIO_PORT_BT_LED);
+    gpio_set_port_mode(GPIO_PORT_BT_LED, GPIO_MODE_OUTPUT);
     turn_off_led(g_bt_led.gpio_port, g_bt_led.logic_level);
     g_bt_led.mode = LED_MODE_OFF;
     g_bt_led.req_action = 1;
@@ -184,7 +184,7 @@ static enum IrqHandleStatus on_vsync(void)
         on_vsync_led(g_led_states[i]);
     }
 
-	return IRQ_HANDLE_NO_RESCHEDULE;
+    return IRQ_HANDLE_NO_RESCHEDULE;
 }
 
 void led_set_mode(enum Led led, enum LedMode mode, const LedConfig *config)
@@ -244,5 +244,5 @@ void led_init(void)
             break;
     }
 
-	interrupt_set_handler(IRQ_VSYNC, on_vsync);
+    interrupt_set_handler(IRQ_VSYNC, on_vsync);
 }

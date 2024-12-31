@@ -9,13 +9,13 @@ int UninstallFlashEmu();
 
 typedef struct
 {
-	int opened;
-	SceUID fd;
-	int unk_8;
-	char path[0xC0];
-	SceMode mode;
-	int flags;
-	SceOff offset;
+    int opened;
+    SceUID fd;
+    int unk_8;
+    char path[0xC0];
+    SceMode mode;
+    int flags;
+    SceOff offset;
 } FileHandler;
 
 #endif

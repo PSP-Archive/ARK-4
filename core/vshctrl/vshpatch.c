@@ -97,30 +97,30 @@ static int vshpatch_module_chain(SceModule2 *mod)
     }
 
     if( 0 == strcmp(mod->modname, "update_plugin_module")) {
-		patch_update_plugin_module(mod);
-		sync_cache();
-		goto exit;
-	}
+        patch_update_plugin_module(mod);
+        sync_cache();
+        goto exit;
+    }
 
-	if(0 == strcmp(mod->modname, "SceUpdateDL_Library")) {
-		patch_SceUpdateDL_Library(mod);
-		sync_cache();
-		goto exit;
-	}
+    if(0 == strcmp(mod->modname, "SceUpdateDL_Library")) {
+        patch_SceUpdateDL_Library(mod);
+        sync_cache();
+        goto exit;
+    }
 
     if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
         
         if (se_config->skiplogos){
-		    patch_Gameboot(mod);
+            patch_Gameboot(mod);
         }
 
-		if (psp_model == PSP_GO && se_config->hibblock) {
-			patch_hibblock(mod);
-		}
+        if (psp_model == PSP_GO && se_config->hibblock) {
+            patch_hibblock(mod);
+        }
 
-		sync_cache();
-		goto exit;
-	}
+        sync_cache();
+        goto exit;
+    }
 
 exit:
     if (previous) previous(mod);
@@ -448,7 +448,7 @@ static void patch_vsh_module(SceModule2 * mod)
         }
         else if (data == 0x2C430004 && psp_model == PSP_GO){
             // allow PSP Go to use Type 1 Updaters
-			_sw( 0x24030002 , addr - 8 ); //addiu      $v1, $zr, 2
+            _sw( 0x24030002 , addr - 8 ); //addiu      $v1, $zr, 2
         }
         
     }

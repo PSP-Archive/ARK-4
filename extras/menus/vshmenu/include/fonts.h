@@ -12,9 +12,9 @@
 
 
 typedef struct _font_Data{
-	u8 *bitmap;
-	SceUID mem_id;
-	int width, height;
+    u8 *bitmap;
+    SceUID mem_id;
+    int width, height;
 }font_Data;
 
 

@@ -68,7 +68,7 @@ void loadPlugins(){
 
     cur_place = PLACE_MS0;
     ProcessConfigFile("ms0:/SEPLUGINS/PLUGINS.TXT", &processPlugin, &processCustomLine);
-	
+    
     cur_place = PLACE_EF0;
     ProcessConfigFile("ef0:/SEPLUGINS/PLUGINS.TXT", &processPlugin, &processCustomLine);
 

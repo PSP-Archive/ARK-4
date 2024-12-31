@@ -416,7 +416,7 @@ SceModule2* patchModuleManager()
     }
     
     // Dummy patch for LEDA
-	MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0x446D8DE6), &sceKernelCreateThread);
+    MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0x446D8DE6), &sceKernelCreateThread);
     MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0xF475845D), &sceKernelStartThread);
     
     // Flush Cache

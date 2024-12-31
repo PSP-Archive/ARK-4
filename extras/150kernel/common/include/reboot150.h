@@ -6,7 +6,7 @@
 
 u8 reboot150[0xC60B] = 
 {
-	REBOOT150_HEADER
+    REBOOT150_HEADER
 };
 
 #endif

@@ -165,7 +165,7 @@ static enum IrqHandleStatus on_ext_irq(struct AllegrexIframe *iframe)
 void on_irq(struct AllegrexIframe *iframe)
 {
     // disable interrupts, clear EXL
-	cpu_set_status(cpu_get_status() & 0xFFFFFE0);
+    cpu_set_status(cpu_get_status() & 0xFFFFFE0);
 
     unsigned int irq_num = (iframe->cause >> 8) & 0xFF;
     // dprintf(INFO, "received IRQ %u\n", irq_num);
@@ -193,7 +193,7 @@ void on_irq(struct AllegrexIframe *iframe)
 void interrupt_init(void)
 {
     uint32_t mask = cpu_suspend_interrupts();
-	cpu_set_status((cpu_get_status() & 0xFFFF00FF) | 0x400);
+    cpu_set_status((cpu_get_status() & 0xFFFF00FF) | 0x400);
     uint32_t *interrupts = enabled_interrupts();
     interrupts[0] = interrupts[1] = 0;
     set_interrupt_masks(interrupts);

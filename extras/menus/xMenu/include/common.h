@@ -32,10 +32,10 @@ namespace common{
     extern Image* getNoIcon();
     extern void printText(float x, float y, const char *text, u32 color = WHITE_COLOR);
     extern void flip();
-	extern void saveConf();
+    extern void saveConf();
     extern t_conf* getConf();
-	extern void resetConf();
-	extern void loadConf();
+    extern void resetConf();
+    extern void loadConf();
     extern void rebootMenu();
 }
 

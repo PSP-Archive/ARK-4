@@ -109,25 +109,25 @@ void end_draw_thread(){
 }
 
 int sceKernelSuspendThreadPatched(SceUID thid) {
-	SceKernelThreadInfo info;
-	info.size = sizeof(SceKernelThreadInfo);
-	if (sceKernelReferThreadStatus(thid, &info) == 0) {
-		if (strcmp(info.name, "popsmain") == 0) {
+    SceKernelThreadInfo info;
+    info.size = sizeof(SceKernelThreadInfo);
+    if (sceKernelReferThreadStatus(thid, &info) == 0) {
+        if (strcmp(info.name, "popsmain") == 0) {
             start_draw_thread();
-		}
-	}
-	return sceKernelSuspendThread(thid);
+        }
+    }
+    return sceKernelSuspendThread(thid);
 }
 
 int sceKernelResumeThreadPatched(SceUID thid) {
-	SceKernelThreadInfo info;
-	info.size = sizeof(SceKernelThreadInfo);
-	if (sceKernelReferThreadStatus(thid, &info) == 0) {
-		if (strcmp(info.name, "popsmain") == 0) {
-			end_draw_thread();
-		}
-	}
-	return sceKernelResumeThread(thid);
+    SceKernelThreadInfo info;
+    info.size = sizeof(SceKernelThreadInfo);
+    if (sceKernelReferThreadStatus(thid, &info) == 0) {
+        if (strcmp(info.name, "popsmain") == 0) {
+            end_draw_thread();
+        }
+    }
+    return sceKernelResumeThread(thid);
 }
 
 int popsExit(){
@@ -185,10 +185,10 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     // Patch sceKernelExitGame Syscalls
     if (strcmp(mod->modname, "sceLoadExec") == 0) {
-		REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), popsExit);
+        REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), popsExit);
         REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), popsExit);
         goto flush;
-	}
+    }
 
     // Patch display for homebrew
     if(strcmp(mod->modname, "sceDisplay_Service") == 0) {
@@ -202,7 +202,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "sceLowIO_Driver") == 0) {
-		// Protect pops memory
+        // Protect pops memory
         sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
         memset((void *)0x49F40000, 0, 0x80000);
         goto flush;

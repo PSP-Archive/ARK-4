@@ -87,7 +87,7 @@ int main(int argc, char** argv){
     settings_menu->setCallbacks(NULL, loadSettings, cleanupSettings);
     settings_menu->setName("CFW Settings");
     settings_menu->setInfo("ARK Custom Firmware Settings");
-	settings_menu->setFooter("[] to Reset Settings");
+    settings_menu->setFooter("[] to Reset Settings");
     settings_menu->readConf();
     entries[n_entries++] = settings_menu;
 

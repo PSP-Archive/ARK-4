@@ -336,7 +336,7 @@ void NetworkManager::resume(){
         sceKernelDelayThread(0);
 }
 std::string NetworkManager::getFooter(){
-	return "";
+    return "";
 }
 
 std::string NetworkManager::getInfo(){

@@ -120,9 +120,9 @@ int kuKernelInitMode()
     unsigned int k1 = pspSdkSetK1(0);
 
     // Forward Call
-	int result = sceKernelInitKeyConfig();
-	
-	// Restore Permission Level
+    int result = sceKernelInitKeyConfig();
+    
+    // Restore Permission Level
     pspSdkSetK1(k1);
     
     // Return Result

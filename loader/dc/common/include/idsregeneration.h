@@ -3,8 +3,8 @@
 
 typedef struct IdsIndex
 {
-	int keyfirst;
-	int keyend;
+    int keyfirst;
+    int keyend;
 } IdsIndex;
 
 int idsRegenerationSetup(int tachyon, int baryon, int pommel, int mb, u64 fuseid, int region, u8 *setparam);

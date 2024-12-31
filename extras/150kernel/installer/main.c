@@ -30,9 +30,9 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 
 #define printf    pspDebugScreenPrintf
 
-#define PSAR_SIZE_150		10149440
+#define PSAR_SIZE_150        10149440
 
-#define N_FILES	4
+#define N_FILES    4
 
 #define LOADEXEC_661_SIZE 0xBA00
 
@@ -110,7 +110,7 @@ char *todelete[N_DELETE] =
 };
 
 char *subset150[N_150] =
-{	
+{    
     "flash0:/kd/ata.prx",
     "flash0:/kd/audio.prx",
     "flash0:/kd/audiocodec.prx",
@@ -224,13 +224,13 @@ char *subset150[N_150] =
     "flash0:/vsh/module/savedata_auto_dialog.prx",
     "flash0:/vsh/module/savedata_plugin.prx",
     "flash0:/vsh/module/savedata_utility.prx",
-    //"flash0:/vsh/module/vshmain.prx"	
+    //"flash0:/vsh/module/vshmain.prx"    
 };
 
 void ErrorExit(int milisecs, char *fmt, ...)
 {
     va_list list;
-    char msg[256];	
+    char msg[256];    
 
     va_start(list, fmt);
     vsprintf(msg, fmt, list);
@@ -312,7 +312,7 @@ static int FindTablePath(char *table, int table_size, char *number, char *szOut)
                     k++;
                 }
                 else
-                {				
+                {                
                     szOut[k] = table[i+j+6];
                 }
             }
@@ -414,7 +414,7 @@ int GetReboot(u8 *dataOut, u8 *dataOut2, int cbExpanded, int decompress)
         if (cbExpanded <= 0)
         {
             ErrorExit(5000, "Cannot decompress reboot.bin (0x%08X)\n", cbExpanded);
-        }	
+        }    
     }
     
     return cbExpanded;
@@ -515,7 +515,7 @@ void ExtractPrxs(int cbFile)
         if (cbExpanded > 0)
         {
             if (WritePrx(name))
-            {				
+            {                
                 CorrectPath(name);
 
                 printf("Writing %s (%d)... ", name, cbExpanded);
@@ -559,7 +559,7 @@ void ExtractPrxs(int cbFile)
                     ErrorExit(5000, "Com table buffer too small. Recompile with bigger buffer.\n");
                 }
 
-                memcpy(com_table, g_dataOut2, comtable_size);						
+                memcpy(com_table, g_dataOut2, comtable_size);                        
             }
                     
             else if (!strcmp(name, "01g:00000"))
@@ -576,7 +576,7 @@ void ExtractPrxs(int cbFile)
                     ErrorExit(5000, "1g table buffer too small. Recompile with bigger buffer.\n");
                 }
 
-                memcpy(_1g_table, g_dataOut2, _1gtable_size);						
+                memcpy(_1g_table, g_dataOut2, _1gtable_size);                        
             }
                     
             else if (!strcmp(name, "02g:00000"))
@@ -593,8 +593,8 @@ void ExtractPrxs(int cbFile)
                     ErrorExit(5000, "2g table buffer too small. Recompile with bigger buffer.\n");
                 }
 
-                memcpy(_2g_table, g_dataOut2, _2gtable_size);						
-            }			
+                memcpy(_2g_table, g_dataOut2, _2gtable_size);                        
+            }            
         }
 
         scePowerTick(0);

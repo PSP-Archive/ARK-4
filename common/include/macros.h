@@ -99,7 +99,7 @@
 
 #define REDIRECT_SYSCALL(a, f) \
     _sw(JR_RA, a); \
-	_sw(SYSCALL(sceKernelQuerySystemCall(f)), a + 4);
+    _sw(SYSCALL(sceKernelQuerySystemCall(f)), a + 4);
 
 #define MAKE_DUMMY_FUNCTION(a, r) \
 { \
