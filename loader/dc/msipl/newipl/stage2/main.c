@@ -49,13 +49,13 @@ int entry()
 		path = "/TM/DCARK/msipl_02g.bin";
 	} else if (tachyon_version == 0x00600000) {
 		path = "/TM/DCARK/msipl_03g.bin";
-	} else if (tachyon_version == 0x00810000 && baryon_version == 0x002C4000) {
+	} else if (baryon_version == 0x002C4000) {
 		path = "/TM/DCARK/msipl_04g.bin";
-	} else if (tachyon_version <= 0x008100000 && baryon_version <= 0x00324000) {
+	} else if (baryon_version == 0x00304000) {
 		path = "/TM/DCARK/msipl_05g.bin";
-	} else if (tachyon_version <= 0x00820000 && baryon_version == 0x012E4000) {
+	} else if (baryon_version == 0x012E4000) {
 		path = "/TM/DCARK/msipl_07g.bin";
-	} else if ((tachyon_version == 0x00820000 || tachyon_version == 0x00810000) && baryon_version == 0x002E4000) {
+	} else if (baryon_version == 0x002E4000) {
 		path = "/TM/DCARK/msipl_09g.bin";
 	}
 
