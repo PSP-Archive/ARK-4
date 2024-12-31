@@ -185,7 +185,6 @@ STMOD_HANDLER previous = NULL;
 CFWConfig config;
 
 int psp_model;
-//ARKConfig ark_conf;
 SEConfig se_config;
 
 int startup = 1;
