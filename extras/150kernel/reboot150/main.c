@@ -37,7 +37,7 @@ int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
 
 int module_start(SceSize args, void *argp)
 {
-	int dreg = sceIoOpen("ms0:/TM/DCARK/150/registry/system.dreg", PSP_O_RDONLY, 0);
+	/*int dreg = sceIoOpen("ms0:/TM/DCARK/150/registry/system.dreg", PSP_O_RDONLY, 0);
 	int ireg = sceIoOpen("ms0:/TM/DCARK/150/registry/system.ireg", PSP_O_RDONLY, 0);
 	if(dreg < 0 || ireg < 0) {
 		dreg = sceIoOpen("ms0:/TM/DCARK/150/registry/system.dreg", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
@@ -64,6 +64,7 @@ int module_start(SceSize args, void *argp)
 	sceIoClose(ireg);
 
 
+	*/
 	sctrlHENSetLoadRebootOverrideHandler(LoadReboot);
 
 	return 0;
