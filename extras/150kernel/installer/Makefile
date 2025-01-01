@@ -1,6 +1,7 @@
 TARGET = ark150addoninstaller
 OBJS = \
 	pspbtcnf_game.h \
+	pspbtcnf.h \
 	reboot150.h \
 	systemctrl150.h \
 	tmctrl150.h \
@@ -28,6 +29,9 @@ all: $(TARGET).prx
 
 pspbtcnf_game.h:
 	$(Q)bin2c ../btcnf/pspbtcnf_game.txt pspbtcnf_game.h pspbtcnf_game
+
+pspbtcnf.h:
+	$(Q)bin2c ../btcnf/pspbtcnf.txt pspbtcnf.h pspbtcnf
 
 reboot150.h:
 	$(Q)bin2c $(ARKROOT)/extras/150kernel/reboot150/reboot150.prx reboot150.h reboot150
