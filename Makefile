@@ -310,6 +310,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/150kernel/reboot150
 	$(Q)$(MAKE) $@ -C extras/150kernel/rebootex150
 	$(Q)$(MAKE) $@ -C extras/150kernel/systemctrl150
+	$(Q)$(MAKE) $@ -C extras/150kernel/vshctrl150
 	$(Q)$(MAKE) $@ -C extras/150kernel/tmctrl150
 	$(Q)$(MAKE) $@ -C extras/150kernel/installer
 	$(Q)$(MAKE) $@ -C loader/live/FinalSpeed
