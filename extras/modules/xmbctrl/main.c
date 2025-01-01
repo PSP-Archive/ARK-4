@@ -501,7 +501,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 
 		SceIoStat _150_file;
 		int _1k_file = sceIoGetstat("ms0:/TM/DCARK/150/reboot150.prx", &_150_file); // Should fine a better way to handle this perhaps?
-		if((psp_model == PSP_1000) && _1k_file >= 0) {
+		if((psp_model == PSP_1000) && _1k_file >= 0 && IS_VITA_ADR(ark_config)) {
         	new_item5 = addCustomVshItem(84, "msgtop_150_reboot", sysconf_150_reboot_arg, item);
         	AddVshItem(a0, topitem, new_item5);
 		}
