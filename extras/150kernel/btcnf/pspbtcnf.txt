@@ -61,7 +61,7 @@
 /kd/chkreg.prx
 /kd/impose.prx
 /kd/vshbridge.prx
-/kd/ark_vshctrl.prx
+/kd/ark_vshctrl150.prx
 
 #for savedata
 /vsh/module/chnnlsv.prx

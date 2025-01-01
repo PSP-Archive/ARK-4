@@ -82,3 +82,30 @@ unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid)
     // Function not found
     return 0;
 }
+
+// Replace Function in Syscall Table
+void sctrlHENPatchSyscall(void * addr, void * newaddr)
+{
+    // Syscall Table
+    unsigned int * syscalls = NULL;
+    
+    // Get Syscall Table Pointer from Coprocessor
+    __asm__ volatile("cfc0 %0, $12\n" : "=r"(syscalls));
+    
+    // Invalid Syscall Table
+    if(syscalls == NULL) return;
+    
+    // Skip Table Header
+    syscalls += 4; // 4 * 4 = 16
+    
+    // Iterate Syscalls
+    for(int i = 0; i < 0xFF4; ++i)
+    {
+        // Found Matching Function
+        if((syscalls[i] & 0x0FFFFFFF) == (((unsigned int)addr) & 0x0FFFFFFF))
+        {
+            // Replace Syscall Function
+            syscalls[i] = (unsigned int)newaddr;
+        }
+    }
+}

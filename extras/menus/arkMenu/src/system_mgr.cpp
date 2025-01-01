@@ -486,7 +486,7 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     _sceImposeSetParam = (void *)sctrlHENFindFunction("sceImpose_Driver", "sceImpose_driver", 0x3C318569);
 
     stringstream version;
-    version << "FW " << fwmajor << "." << fwminor << fwmicro;
+    version << "" << fwmajor << "." << fwminor << fwmicro;
     version << " ARK " << major << "." << minor;
     if (micro>9) version << "." << micro;
     else if (micro>0) version << ".0" << micro;

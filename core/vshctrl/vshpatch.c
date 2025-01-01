@@ -46,7 +46,6 @@ typedef struct _HookUserFunctions {
 } HookUserFunctions;
 
 static STMOD_HANDLER previous;
-//SEConfig conf;
 
 static void patch_sysconf_plugin_module(SceModule2 *mod);
 static void patch_game_plugin_module(SceModule2 *mod);
@@ -73,38 +72,32 @@ static int vshpatch_module_chain(SceModule2 *mod)
 
     if(0 == strcmp(mod->modname, "sysconf_plugin_module")) {
         patch_sysconf_plugin_module(mod);
-        sync_cache();
         goto exit;
     }
 
     if(0 == strcmp(mod->modname, "game_plugin_module")) {
         patch_game_plugin_module(mod);
-        sync_cache();
         goto exit;
     }
 
     if(0 == strcmp(mod->modname, "vsh_module")) {
         patch_vsh_module(mod);
         patch_sceCtrlReadBufferPositive();
-        sync_cache();
         goto exit;
     }
 
     if(0 == strcmp(mod->modname, "msvideo_main_plugin_module")) {
         patch_msvideo_main_plugin_module(mod);
-        sync_cache();
         goto exit;
     }
 
     if( 0 == strcmp(mod->modname, "update_plugin_module")) {
 		patch_update_plugin_module(mod);
-		sync_cache();
 		goto exit;
 	}
 
 	if(0 == strcmp(mod->modname, "SceUpdateDL_Library")) {
 		patch_SceUpdateDL_Library(mod);
-		sync_cache();
 		goto exit;
 	}
 
@@ -118,11 +111,11 @@ static int vshpatch_module_chain(SceModule2 *mod)
 			patch_hibblock(mod);
 		}
 
-		sync_cache();
 		goto exit;
 	}
 
 exit:
+    sync_cache();
     if (previous) previous(mod);
 }
 

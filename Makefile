@@ -63,6 +63,7 @@ SUBDIRS = libs \
 	extras/150kernel/rebootex150 \
 	extras/150kernel/reboot150 \
 	extras/150kernel/systemctrl150 \
+	extras/150kernel/vshctrl150 \
 	extras/150kernel/tmctrl150 \
 	extras/150kernel/installer
 

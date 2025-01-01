@@ -11,6 +11,7 @@ PSP_EXPORT_FUNC(sctrlHENFindFunction)
 PSP_EXPORT_FUNC(sctrlHENSetLoadRebootOverrideHandler)
 PSP_EXPORT_FUNC(sctrlHENSetRebootexOverride)
 PSP_EXPORT_FUNC(sctrlHENSetStartModuleHandler)
+PSP_EXPORT_FUNC(sctrlHENPatchSyscall)
 PSP_EXPORT_END
 
 
