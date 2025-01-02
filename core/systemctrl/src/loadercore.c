@@ -253,6 +253,9 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         // Remember it
         settingsLoaded = 1;
     }
+    
+    // start module
+    if (result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
 
     // load plugins before starting mediasync
     if (!pluginLoaded && strcmp(modname, "sceMediaSync") == 0)
@@ -264,9 +267,6 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         // Remember it
         pluginLoaded = 1;
     }
-    
-    // start module
-    if (result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
 
     return result;
 }

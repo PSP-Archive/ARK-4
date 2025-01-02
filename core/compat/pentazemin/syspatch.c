@@ -379,6 +379,10 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
 		PatchImposeDriver(mod->text_addr);
+        goto flush;
+	}
+
+	if (strcmp(mod->modname, "sceMediaSync") == 0){
 		// perfect time to apply extra memory patch
 		if (se_config->force_high_memory) unlockVitaMemory();
 		else{
@@ -392,7 +396,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 				}
         	}
 		}
-        goto flush;
+		goto flush;
 	}
 
 	if(strcmp(mod->modname, "game_plugin_module") == 0) {
