@@ -1,8 +1,8 @@
 TARGET = vshctrl150
 
 OBJS = \
-	main.o \
 	vshmenu.o \
+	main.o \
 	$(ARKROOT)/libs/ansi-c/strcasecmp.o
 
 all: $(TARGET).prx
@@ -22,7 +22,7 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs lib
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsystemctrl_kernel
+LIBS = -lpspsystemctrl_kernel -lcolordebugger
 
 PSP_FW_VERSION = 150
 

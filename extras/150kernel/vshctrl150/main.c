@@ -16,11 +16,10 @@
 PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 2);
 
 #define GAME150_PATCH "__150"
-
 static STMOD_HANDLER previous;
 
 extern int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count);
-extern int (*g_sceCtrlReadBufferPositive) (SceCtrlData *, int);
+extern int (*g_sceCtrlReadBufferPositive) (SceCtrlData *, int count);
 
 // Flush Instruction and Data Cache
 void sync_cache()
@@ -32,13 +31,13 @@ void sync_cache()
     sceKernelDcacheWritebackInvalidateAll();
 }
 
-static void patch_vsh_module(SceModule2* vshmain)
+static void patch_sceCtrlReadBufferPositive(void)
 {
     SceModule* mod;
 
-    mod = sceKernelFindModuleByName("sceVshBridge_Driver");
+	mod = sceKernelFindModuleByName("sceVshBridge_Driver");
     hookImportByNID(mod, "sceCtrl_driver", 0x1F803938, _sceCtrlReadBufferPositive);
-    g_sceCtrlReadBufferPositive = (void *) sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
+    g_sceCtrlReadBufferPositive = (void*)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
     sctrlHENPatchSyscall(g_sceCtrlReadBufferPositive, _sceCtrlReadBufferPositive);
 }
 
@@ -134,11 +133,10 @@ static int vshpatch_module_chain(SceModule2 *mod)
     u32 text_addr = mod->text_addr;
 
     if(0 == strcmp(mod->modname, "vsh_module")) {
-        patch_vsh_module(mod);
+        patch_sceCtrlReadBufferPositive();
         goto exit;
     }
-
-exit:
+  exit:
     sync_cache();
     if (previous) previous(mod);
 }
@@ -147,7 +145,7 @@ exit:
 int module_start(SceSize args, void* argp)
 {
 
-    previous = sctrlHENSetStartModuleHandler(&vshpatch_module_chain);
+    previous = sctrlHENSetStartModuleHandler(vshpatch_module_chain);
     hook_directory_io();
 
     return 0;

@@ -23,6 +23,8 @@
 #include "reboot150.h"
 #include "systemctrl150.h"
 #include "tmctrl150.h"
+#include "ark_vshctrl150.h"
+#include "ark_satelite150.h"
 
 #include "../common/include/rebootbin.h"
 
@@ -49,6 +51,8 @@ ARKFile arkfiles[N_FILES] =
     { ARK_DC_PATH "/150/reboot150.prx", reboot150, sizeof(reboot150) },
     { ARK_DC_PATH "/150/kd/ark_systemctrl150.prx", systemctrl150, sizeof(systemctrl150) },
     { ARK_DC_PATH "/150/tmctrl150.prx", tmctrl150, sizeof(tmctrl150) },
+    { ARK_DC_PATH "/150/kd/ark_vshctrl150.prx", ark_vshctrl150, sizeof(ark_vshctrl150) },
+    { ARK_DC_PATH "/150/vsh/module/ark_satelite150.prx", ark_satelite150, sizeof(ark_satelite150) },
     { ARK_DC_PATH "/150/kd/pspbtcnf_game.txt", pspbtcnf_game, sizeof(pspbtcnf_game) },
     { ARK_DC_PATH "/150/kd/pspbtcnf.txt", pspbtcnf, sizeof(pspbtcnf) },
 };

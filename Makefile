@@ -65,7 +65,8 @@ SUBDIRS = libs \
 	extras/150kernel/systemctrl150 \
 	extras/150kernel/vshctrl150 \
 	extras/150kernel/tmctrl150 \
-	extras/150kernel/installer
+	extras/150kernel/vshmenu150 \
+	extras/150kernel/installer 
 
 .PHONY: subdirs $(SUBDIRS) cleanobj clean cleanobj copy-bin mkdir-dist encrypt-prx copy-dcark pack-flash0
 
@@ -312,6 +313,8 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/150kernel/systemctrl150
 	$(Q)$(MAKE) $@ -C extras/150kernel/vshctrl150
 	$(Q)$(MAKE) $@ -C extras/150kernel/tmctrl150
+	$(Q)$(MAKE) $@ -C extras/150kernel/vshmenu150
+	$(Q)$(MAKE) $@ -C extras/150kernel/vshctrl150
 	$(Q)$(MAKE) $@ -C extras/150kernel/installer
 	$(Q)$(MAKE) $@ -C loader/live/FinalSpeed
 	$(Q)$(MAKE) $@ -C loader/live/user/linkless_payload

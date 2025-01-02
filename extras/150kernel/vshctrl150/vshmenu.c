@@ -62,7 +62,7 @@ int vctrlVSHExitVSHMenu(SEConfig *config, char *videoiso, int disctype)
     return 0;
 }
 
-static SceUID load_satelite(void)
+int load_satelite(void)
 {
     SceUID modid;
     
@@ -107,6 +107,7 @@ SceUID get_thread_id(const char *name)
     return -2;
 }
 
+
 int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count)
 {
     int ret;
@@ -136,7 +137,6 @@ int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count)
         if ((ctrl->Buttons & ALL_CTRL) != PSP_CTRL_SELECT) {
             goto exit;
         }
-        
         // Block Satellite Menu in OSK
         if (sceKernelFindModuleByName("sceVshOSK_Module"))
             goto exit;
