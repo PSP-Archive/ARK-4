@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Usage: python3 make_satelite_and_pf.py <normal_satelite_path> <bdf_font_path> <encoded_satelite_path> <encoded_pf_font_path>
 import sys
 

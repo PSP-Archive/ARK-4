@@ -19,9 +19,12 @@
 #include <kubridge.h>
 
 #include "pspbtcnf_game.h"
+#include "pspbtcnf.h"
 #include "reboot150.h"
 #include "systemctrl150.h"
 #include "tmctrl150.h"
+#include "ark_vshctrl150.h"
+#include "ark_satelite150.h"
 
 #include "../common/include/rebootbin.h"
 
@@ -32,7 +35,7 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 
 #define PSAR_SIZE_150		10149440
 
-#define N_FILES	4
+#define N_FILES	5
 
 #define LOADEXEC_661_SIZE 0xBA00
 
@@ -48,7 +51,10 @@ ARKFile arkfiles[N_FILES] =
     { ARK_DC_PATH "/150/reboot150.prx", reboot150, sizeof(reboot150) },
     { ARK_DC_PATH "/150/kd/ark_systemctrl150.prx", systemctrl150, sizeof(systemctrl150) },
     { ARK_DC_PATH "/150/tmctrl150.prx", tmctrl150, sizeof(tmctrl150) },
+    { ARK_DC_PATH "/150/kd/ark_vshctrl150.prx", ark_vshctrl150, sizeof(ark_vshctrl150) },
+    { ARK_DC_PATH "/150/vsh/module/ark_satelite150.prx", ark_satelite150, sizeof(ark_satelite150) },
     { ARK_DC_PATH "/150/kd/pspbtcnf_game.txt", pspbtcnf_game, sizeof(pspbtcnf_game) },
+    { ARK_DC_PATH "/150/kd/pspbtcnf.txt", pspbtcnf, sizeof(pspbtcnf) },
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -90,7 +96,6 @@ u8 reboot661_header[REBOOT_HEADER_SIZE] =
 };
 
 #define N_DELETE 13
-#define N_150 109
 
 char *todelete[N_DELETE] =
 {
@@ -109,11 +114,11 @@ char *todelete[N_DELETE] =
     "flash0:/font/kr0.pgf"
 };
 
-char *subset150[N_150] =
+char *subset150[] =
 {	
-    "flash0:/kd/ata.prx",
-    "flash0:/kd/audio.prx",
+	"flash0:/kd/ata.prx",
     "flash0:/kd/audiocodec.prx",
+    "flash0:/kd/audio.prx",
     "flash0:/kd/blkdev.prx",
     "flash0:/kd/chkreg.prx",
     "flash0:/kd/clockgen.prx",
@@ -148,41 +153,43 @@ char *subset150[N_150] =
     "flash0:/kd/libupdown.prx",
     "flash0:/kd/loadcore.prx",
     "flash0:/kd/loadexec.prx",
-    "flash0:/kd/me_for_vsh.prx",
-    "flash0:/kd/me_wrapper.prx",
     "flash0:/kd/mebooter.prx",
+    "flash0:/kd/mebooter_umdvideo.prx",
     "flash0:/kd/mediaman.prx",
     "flash0:/kd/mediasync.prx",
+    "flash0:/kd/me_for_vsh.prx",
     "flash0:/kd/memab.prx",
     "flash0:/kd/memlmd.prx",
     "flash0:/kd/mesg_led.prx",
+    "flash0:/kd/me_wrapper.prx",
     "flash0:/kd/mgr.prx",
     "flash0:/kd/modulemgr.prx",
-    "flash0:/kd/mpeg_vsh.prx",
     "flash0:/kd/mpegbase.prx",
+    "flash0:/kd/mpeg_vsh.prx",
     "flash0:/kd/msaudio.prx",
     "flash0:/kd/mscm.prx",
     "flash0:/kd/msstor.prx",
     "flash0:/kd/openpsid.prx",
     "flash0:/kd/peq.prx",
     "flash0:/kd/power.prx",
-    //"flash0:/kd/pspbtcnf.txt",
     //"flash0:/kd/pspbtcnf_game.txt",
+    //"flash0:/kd/pspbtcnf.txt",
     //"flash0:/kd/pspbtcnf_updater.txt",
     "flash0:/kd/pspcnf_tbl.txt",
-    "flash0:/kd/pspnet.prx",
-    "flash0:/kd/pspnet_adhoc.prx",
     "flash0:/kd/pspnet_adhoc_auth.prx",
+    "flash0:/kd/pspnet_adhocctl.prx",
     "flash0:/kd/pspnet_adhoc_download.prx",
     "flash0:/kd/pspnet_adhoc_matching.prx",
-    "flash0:/kd/pspnet_adhocctl.prx",
-    "flash0:/kd/pspnet_ap_dialog_dummy.prx",
+    "flash0:/kd/pspnet_adhoc.prx",
     "flash0:/kd/pspnet_apctl.prx",
+    "flash0:/kd/pspnet_ap_dialog_dummy.prx",
     "flash0:/kd/pspnet_inet.prx",
+    "flash0:/kd/pspnet.prx",
     "flash0:/kd/pspnet_resolver.prx",
     "flash0:/kd/pwm.prx",
+    "flash0:/kd/reboot.prx",
     "flash0:/kd/registry.prx",
-    "flash0:/kd/resource/impose.rsc",
+    "flash0:/kd/resource",
     "flash0:/kd/rtc.prx",
     "flash0:/kd/semawm.prx",
     "flash0:/kd/sircs.prx",
@@ -197,35 +204,132 @@ char *subset150[N_150] =
     "flash0:/kd/umd9660.prx",
     "flash0:/kd/umdman.prx",
     "flash0:/kd/usb.prx",
-    "flash0:/kd/usbstor.prx",
     "flash0:/kd/usbstorboot.prx",
     "flash0:/kd/usbstormgr.prx",
     "flash0:/kd/usbstorms.prx",
+    "flash0:/kd/usbstor.prx",
     "flash0:/kd/usersystemlib.prx",
     "flash0:/kd/utility.prx",
     "flash0:/kd/utils.prx",
-    "flash0:/kd/vaudio.prx",
     "flash0:/kd/vaudio_game.prx",
+    "flash0:/kd/vaudio.prx",
     "flash0:/kd/videocodec.prx",
     "flash0:/kd/vshbridge.prx",
     "flash0:/kd/wlan.prx",
-    "flash0:/vsh/module/chnnlsv.prx",
-    "flash0:/vsh/module/common_gui.prx",
-    "flash0:/vsh/module/common_util.prx",
-    "flash0:/vsh/module/dialogmain.prx",
-    "flash0:/vsh/module/heaparea1.prx",
-    "flash0:/vsh/module/heaparea2.prx",
-    "flash0:/vsh/module/netconf_plugin.prx",
-    "flash0:/vsh/module/netplay_client_plugin.prx",
-    "flash0:/vsh/module/netplay_server_utility.prx",
-    "flash0:/vsh/module/osk_plugin.prx",
-    //"flash0:/vsh/module/paf.prx",
-    "flash0:/vsh/module/pafmini.prx",
-    "flash0:/vsh/module/savedata_auto_dialog.prx",
-    "flash0:/vsh/module/savedata_plugin.prx",
-    "flash0:/vsh/module/savedata_utility.prx",
-    //"flash0:/vsh/module/vshmain.prx"	
+	"flash0:/vsh/module/auth_plugin.prx",
+	"flash0:/vsh/module/chnnlsv.prx",
+	"flash0:/vsh/module/common_gui.prx",
+	"flash0:/vsh/module/common_util.prx",
+	"flash0:/vsh/module/dialogmain.prx",
+	"flash0:/vsh/module/game_plugin.prx",
+	"flash0:/vsh/module/heaparea1.prx",
+	"flash0:/vsh/module/heaparea2.prx",
+	"flash0:/vsh/module/impose_plugin.prx",
+	"flash0:/vsh/module/msgdialog_plugin.prx",
+	"flash0:/vsh/module/msvideo_plugin.prx",
+	"flash0:/vsh/module/music_plugin.prx",
+	"flash0:/vsh/module/netconf_plugin.prx",
+	"flash0:/vsh/module/netplay_client_plugin.prx",
+	"flash0:/vsh/module/netplay_server_utility.prx",
+	"flash0:/vsh/module/opening_plugin.prx",
+	"flash0:/vsh/module/osk_plugin.prx",
+	"flash0:/vsh/module/pafmini.prx",
+	"flash0:/vsh/module/paf.prx",
+	"flash0:/vsh/module/photo_plugin.prx",
+	"flash0:/vsh/module/savedata_auto_dialog.prx",
+	"flash0:/vsh/module/savedata_plugin.prx",
+	"flash0:/vsh/module/savedata_utility.prx",
+	"flash0:/vsh/module/sysconf_plugin.prx",
+	"flash0:/vsh/module/update_plugin.prx",
+	"flash0:/vsh/module/video_plugin.prx",
+	"flash0:/vsh/module/vshmain.prx",
+	"flash0:/vsh/etc/index.dat",
+	"flash0:/vsh/etc/jis2ucs.bin",
+	"flash0:/vsh/etc/jis2ucs.cbin",
+	"flash0:/vsh/etc/ucs2jis.bin",
+	"flash0:/vsh/etc/ucs2jis.cbin",
+	"flash0:/vsh/etc/version.txt",
+	"flash0:/vsh/resource/01.bmp",
+	"flash0:/vsh/resource/02.bmp",
+	"flash0:/vsh/resource/03.bmp",
+	"flash0:/vsh/resource/04.bmp",
+	"flash0:/vsh/resource/05.bmp",
+	"flash0:/vsh/resource/06.bmp",
+	"flash0:/vsh/resource/07.bmp",
+	"flash0:/vsh/resource/08.bmp",
+	"flash0:/vsh/resource/09.bmp",
+	"flash0:/vsh/resource/10.bmp",
+	"flash0:/vsh/resource/11.bmp",
+	"flash0:/vsh/resource/12.bmp",
+	"flash0:/vsh/resource/auth_plugin.rco",
+	"flash0:/vsh/resource/gameboot.pmf",
+	"flash0:/vsh/resource/game_plugin.rco",
+	"flash0:/vsh/resource/impose_plugin.rco",
+	"flash0:/vsh/resource/msgdialog_plugin.rco",
+	"flash0:/vsh/resource/msvideo_plugin.rco",
+	"flash0:/vsh/resource/music_plugin.rco",
+	"flash0:/vsh/resource/netconf_dialog.rco",
+	"flash0:/vsh/resource/netplay_plugin.rco",
+	"flash0:/vsh/resource/opening_plugin.rco",
+	"flash0:/vsh/resource/osk_plugin.rco",
+	"flash0:/vsh/resource/osk_utility.rco",
+	"flash0:/vsh/resource/photo_plugin.rco",
+	"flash0:/vsh/resource/savedata_plugin.rco",
+	"flash0:/vsh/resource/savedata_utility.rco",
+	"flash0:/vsh/resource/sysconf_plugin.rco",
+	"flash0:/vsh/resource/system_plugin_bg.rco",
+	"flash0:/vsh/resource/system_plugin_fg.rco",
+	"flash0:/vsh/resource/system_plugin.rco",
+	"flash0:/vsh/resource/topmenu_plugin.rco",
+	"flash0:/vsh/resource/update_plugin.rco",
+	"flash0:/vsh/resource/video_plugin.rco",
+	"flash0:/vsh/resource/video_plugin_videotoolbar.rco",
+	"flash0:/data/cert/Class1_PCA_G2_v2.cer",
+	"flash0:/data/cert/Class1_PCA_G3v2.cer",
+	"flash0:/data/cert/Class1_PCA_ss_v4.cer",
+	"flash0:/data/cert/Class2_PCA_G2_v2.cer",
+	"flash0:/data/cert/Class2_PCA_G3v2.cer",
+	"flash0:/data/cert/Class2_PCA_ss_v4.cer",
+	"flash0:/data/cert/Class3_PCA_G2_v2.cer",
+	"flash0:/data/cert/Class3_PCA_G3v2.cer",
+	"flash0:/data/cert/Class3_PCA_ss_v4.cer",
+	"flash0:/data/cert/Class4_PCA_G2_v2.cer",
+	"flash0:/data/cert/Class4_PCA_G3v2.cer",
+	"flash0:/data/cert/RSA1024_v1.cer",
+	"flash0:/data/cert/RSA2048_v3.cer",
+	"flash0:/data/cert/RSA_SecureServer.cer",
+	"flash0:/data/cert/SCE_CA01.cer",
+	"flash0:/data/cert/SCE_CA02.cer",
+	"flash0:/data/cert/SCE_CA03.cer",
+	"flash0:/data/cert/SCE_CA04.cer",
+	"flash0:/data/cert/SCE_CA05.cer",
+	"flash0:/data/cert/VeriSign_TSA_CA.cer",
+	"flash0:/font/jpn0.pgf",
+	"flash0:/font/ltn0.pgf",
+	"flash0:/font/ltn10.pgf",
+	"flash0:/font/ltn11.pgf",
+	"flash0:/font/ltn12.pgf",
+	"flash0:/font/ltn13.pgf",
+	"flash0:/font/ltn14.pgf",
+	"flash0:/font/ltn15.pgf",
+	"flash0:/font/ltn1.pgf",
+	"flash0:/font/ltn2.pgf",
+	"flash0:/font/ltn3.pgf",
+	"flash0:/font/ltn4.pgf",
+	"flash0:/font/ltn5.pgf",
+	"flash0:/font/ltn6.pgf",
+	"flash0:/font/ltn7.pgf",
+	"flash0:/font/ltn8.pgf",
+	"flash0:/font/ltn9.pgf",
+	"flash0:/dic/apotp.dic",
+	"flash0:/dic/atokp.dic",
+	"flash0:/dic/aux0.dic",
+	"flash0:/dic/aux1.dic",
+	"flash0:/dic/aux2.dic",
+	"flash0:/dic/aux3.dic"
 };
+
+static int N_150 = sizeof(subset150)/sizeof(subset150[0]);
 
 void ErrorExit(int milisecs, char *fmt, ...)
 {
@@ -607,11 +711,17 @@ static void CreateDirs()
     sceIoMkdir("ms0:/TM", 0777);
     sceIoMkdir(ARK_DC_PATH, 0777);
     sceIoMkdir(ARK_DC_PATH "/150", 0777);
+    sceIoMkdir(ARK_DC_PATH "/150/data", 0777);
+    sceIoMkdir(ARK_DC_PATH "/150/data/cert", 0777);
+    sceIoMkdir(ARK_DC_PATH "/150/dic", 0777);
+    sceIoMkdir(ARK_DC_PATH "/150/font", 0777);
     sceIoMkdir(ARK_DC_PATH "/150/kd", 0777);
     sceIoMkdir(ARK_DC_PATH "/150/kd/resource", 0777);
     sceIoMkdir(ARK_DC_PATH "/150/registry", 0777);
     sceIoMkdir(ARK_DC_PATH "/150/vsh", 0777);
     sceIoMkdir(ARK_DC_PATH "/150/vsh/module", 0777);
+    sceIoMkdir(ARK_DC_PATH "/150/vsh/etc", 0777);
+    sceIoMkdir(ARK_DC_PATH "/150/vsh/resource", 0777);
     printf("OK\n");
 }
 
@@ -722,7 +832,7 @@ int main(void)
         printf("OK\n");
     }
 
-    CopyRegistry();
+    //CopyRegistry();
 
     ErrorExit(7000, "\n\nDone.\nAuto-exiting in 7 seconds.\n");
 

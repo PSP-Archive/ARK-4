@@ -9,6 +9,7 @@
 #define PAGE_SIZE 10
 
 extern string ark_version;
+extern void resetSettings();
 
 SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool shorten_paths, bool show_all_opts, bool show_info){
     this->animation = -1;
@@ -263,6 +264,11 @@ void SettingsMenu::control(Controller* pad){
             changed = true;
         }
     }
+	else if (pad->square() && this->name == "CFW Settings") {
+		pause();
+		resetSettings();
+		resume();
+	}
 }
 
 void SettingsMenu::applyConf(){

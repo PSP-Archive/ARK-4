@@ -29,6 +29,8 @@ class GameManager : public SystemEntry{
     private:
 
         GameManager();
+
+        TextScroll scroll;
     
         /* Array of game menus */
         Menu* categories[MAX_CATEGORIES];
@@ -121,13 +123,13 @@ class GameManager : public SystemEntry{
         }
         
         string getInfo();
+        string getFooter();
         
         string getName(){
             return "Games";
         }
 
         void drawInfo(){
-            static TextScroll scroll;
             string info = getInfo();
             bool is_entry_info = (getEntry() != NULL && info == getEntry()->getName());
             bool translate = ( !is_entry_info || info == "Recovery Menu" || info == "UMD Drive" );
@@ -140,6 +142,7 @@ class GameManager : public SystemEntry{
         bool waitIconsLoad(bool forceQuit=false);
         
         void setInfo(string info){};
+        void setFooter(string info){};
         void setName(string name){};
         
         Image* getIcon(){

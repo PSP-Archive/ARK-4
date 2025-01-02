@@ -126,6 +126,7 @@ class Entry{
         static bool isTXT(const char* path);
         static bool isIMG(const char* path);
         static bool isMusic(const char* path);
+        static bool isVideo(const char* path);
 
         static bool getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size);
         

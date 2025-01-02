@@ -28,6 +28,7 @@ char *settings[] =
     "Custom Firmware Settings",
     "Plugins Manager",
 	"Custom Launcher",
+	"Reboot 1.50 OFW",
     "USB Charge",
     "Overclock",
     "PowerSave",

@@ -99,6 +99,13 @@ void patchRebootBuffer(){
 #else
     int patches = 5;
 #endif
+
+#ifdef MS_IPL
+#ifdef PAYLOADEX
+    ark_config->recovery = 1; // enable recovery mode in vunbricker
+#endif
+#endif
+	
     for (u32 addr = reboot_start; addr<reboot_end && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x02A0E821 || data == 0x0280E821){ // found loadcore jump on PSP

@@ -147,3 +147,7 @@ bool Controller::volume(){
     return (newpad & (PSP_CTRL_VOLUP | PSP_CTRL_VOLDOWN));
 }
 
+bool Controller::mute(){
+	return (newpad & PSP_CTRL_NOTE);
+}
+

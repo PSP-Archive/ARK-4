@@ -59,6 +59,7 @@ int module_start(SceSize args, void * argp)
     // Flush Cache
     flushCache();
 
+
     // Return Success
     return 0;
 }

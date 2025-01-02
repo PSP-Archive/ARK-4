@@ -82,7 +82,14 @@ static void checkArkPath(){
         return;
     }
 
-    strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
+	fd = sceIoDopen("ms0:/SEPLUGINS");
+	if (fd >= 0) {
+    	strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
+		sceIoDclose(fd);
+		return;
+	}
+    strcpy(ark_config->arkpath, "flash1:/");
+
 }
 
 static int selected_choice(u32 choice) {

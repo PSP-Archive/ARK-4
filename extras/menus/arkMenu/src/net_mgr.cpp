@@ -335,6 +335,9 @@ void NetworkManager::resume(){
     while (animation != 0)
         sceKernelDelayThread(0);
 }
+std::string NetworkManager::getFooter(){
+	return "";
+}
 
 std::string NetworkManager::getInfo(){
     return "Network Tools";
@@ -342,6 +345,10 @@ std::string NetworkManager::getInfo(){
 
 std::string NetworkManager::getName(){
     return "Network";
+}
+
+void NetworkManager::setFooter(std::string footer){
+
 }
 
 void NetworkManager::setInfo(std::string info){

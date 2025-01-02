@@ -323,18 +323,12 @@ void PSPOnModuleStart(SceModule2 * mod){
         patch_scePower_Service(mod);
         goto flush;
     }
-    
-    if (strcmp(mod->modname, "sceImpose_Driver") == 0){
-        // Handle extra ram setting
-        handleExtraRam();
-        // Handle Inferno cache setting
-        enableInfernoCache();
-        goto flush;
-    }
 
     if (strcmp(mod->modname, "sceMediaSync") == 0) {
         // Handle some settings
         processSettings();
+        // Handle extra ram setting
+        handleExtraRam();
         goto flush;
     }
     
@@ -397,6 +391,9 @@ void PSPOnModuleStart(SceModule2 * mod){
                     "eflash0a0f1p" : "msstor0p";
                 msstorCacheInit(drv);
             }
+
+            // Handle Inferno cache setting
+            enableInfernoCache();
 
             // fix pops on toolkits
             if (sctrlHENIsToolKit() && sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){

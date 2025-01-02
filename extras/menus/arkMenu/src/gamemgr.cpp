@@ -13,8 +13,6 @@
 #include "lang.h"
 #include "texteditor.h"
 
-extern int sctrlKernelMsIsEf();
-
 static GameManager* self = NULL;
 
 static bool loadingData = false;
@@ -30,6 +28,7 @@ GameManager::GameManager(){
     // set the global self variable as this instance for the threads to use it
     self = this;
 
+    scroll.w = 0;
     this->use_categories = true;
     this->scanning = true;
     this->optionsmenu = NULL;
@@ -233,10 +232,6 @@ void GameManager::findISOs(const char* path){
     SceIoDirent* dit = &entry;
     memset(&entry, 0, sizeof(SceIoDirent));
 
-    pspMsPrivateDirent* pri_dirent = (pspMsPrivateDirent*)malloc(sizeof(pspMsPrivateDirent));
-    pri_dirent->size = sizeof(pspMsPrivateDirent);
-    entry.d_private = (void*)pri_dirent;
-
     if (dir < 0)
         return;
         
@@ -247,7 +242,6 @@ void GameManager::findISOs(const char* path){
         if (dit->d_name[0] == '.' && !common::getConf()->show_hidden) continue;
 
         string fullpath = string(path)+string(dit->d_name);
-        string shortpath = string(path) + string((const char*)pri_dirent);
 
         if (FIO_SO_ISDIR(dit->d_stat.st_attr)){
             if (common::getConf()->scan_cat && string(dit->d_name) != string("VIDEO")){
@@ -256,10 +250,8 @@ void GameManager::findISOs(const char* path){
             continue;
         }
         if (Iso::isISO(fullpath.c_str())) this->categories[GAME]->addEntry(new Iso(fullpath));
-        else if (Iso::isISO(shortpath.c_str())) this->categories[GAME]->addEntry(new Iso(shortpath));
     }
     sceIoDclose(dir);
-    free(pri_dirent);
 }
 
 void GameManager::findSaveEntries(const char* path){
@@ -362,12 +354,14 @@ void GameManager::moveRight(){
 void GameManager::moveUp(){
     if (selectedCategory < 0)
         return;
+    scroll.tmp = scroll.x; // reset text scroll
     this->categories[this->selectedCategory]->moveUp();
 }
 
 void GameManager::moveDown(){
     if (selectedCategory < 0)
         return;
+    scroll.tmp = scroll.x; // reset text scroll
     this->categories[this->selectedCategory]->moveDown();
 }
 
@@ -375,6 +369,10 @@ void GameManager::stopFastScroll(){
     if (selectedCategory < 0)
         return;
     this->categories[this->selectedCategory]->stopFastScroll();
+}
+
+string GameManager::getFooter(){
+	return "";
 }
 
 string GameManager::getInfo(){
@@ -465,10 +463,10 @@ void GameManager::control(Controller* pad){
 
 void GameManager::updateGameList(const char* path){
     if (path == NULL 
-        || strncmp(path, "ms0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ms0:/ISO/", 9) == 0
-        || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || !strncmp(path, "ef0:/ISO/", 9) == 0
-        || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ms0:/PSP/APPS/", 14) == 0
-        || strncmp(path, "ef0:/PSP/VHBL/", 14) == 0 || !strncmp(path, "ef0:/PSP/APPS/", 14) == 0
+        || strncmp(path, "ms0:/PSP/GAME/", 14) == 0 || strncmp(path, "ms0:/ISO/", 9) == 0
+        || strncmp(path, "ef0:/PSP/GAME/", 14) == 0 || strncmp(path, "ef0:/ISO/", 9) == 0
+        || strncmp(path, "ms0:/PSP/VHBL/", 14) == 0 || strncmp(path, "ms0:/PSP/APPS/", 14) == 0
+        || strncmp(path, "ef0:/PSP/VHBL/", 14) == 0 || strncmp(path, "ef0:/PSP/APPS/", 14) == 0
         || strncmp(path, "ms0:/PSP/GAME150/", 17) == 0
       ){
         int icon_status = self->dynamicIconRunning;

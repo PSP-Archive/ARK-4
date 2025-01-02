@@ -3,6 +3,7 @@ TARGET = systemctrl150
 OBJS = \
 	main.o \
 	src/flushcache.o \
+	src/hooknids.o \
 	src/loadexec.o \
 	src/modulemanager.o \
 	src/rebootex.o \

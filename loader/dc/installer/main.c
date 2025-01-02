@@ -634,6 +634,15 @@ static void Extract661Modules()
 
 	if (ReadFile("ms0:/" UPDATER_GO, 0, pbp_header, sizeof(pbp_header)) == sizeof(pbp_header)) {
 		go = 1;
+		vlfGuiRemoveProgressBar(progress_bar);
+		vlfGuiRemoveText(progress_text);
+		SetStatus("GO Firmware Found. If you do not want\nto create DCARK for the GO\ndelete/rename 661GO.PBP first!");
+		sceKernelDelayThread(5000000);
+		SetStatus("Please wait...");
+		progress_bar = vlfGuiAddProgressBar(136);	
+		progress_text = vlfGuiAddText(240, 148, "0%");
+		vlfGuiSetTextAlignment(progress_text, VLF_ALIGNMENT_CENTER);
+
 	}
 
 	if (g_cancel)

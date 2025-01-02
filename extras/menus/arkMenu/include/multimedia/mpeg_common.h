@@ -58,6 +58,7 @@ typedef struct VideoThreadData
 
     SceInt32                        m_iWidth;
     SceInt32                        m_iHeight;
+    SceInt32                        m_iBufferWidth;
 
 } VideoThreadData;
 
@@ -159,8 +160,8 @@ extern bool playMPEG;
 extern bool playMPEGAudio;
 
 extern void* MPEGdataL;
-extern int MPEGsize;
-extern int MPEGcounter;
+extern SceOff MPEGsize;
+extern SceOff MPEGcounter;
 
 extern Entry* entry;
 

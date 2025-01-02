@@ -38,7 +38,7 @@ extern int sceKernelSetQTGP3(void *unk0);
 extern char *GetUmdFile();
 
 // 00002790
-const char *g_iso_fn = NULL;
+char g_iso_fn[255];
 
 // 0x00002248
 u8 g_umddata[16] = {
@@ -60,7 +60,8 @@ int setup_umd_device(void)
 {
     int ret;
 
-    g_iso_fn = GetUmdFile();
+    memset(g_iso_fn, 0, sizeof(g_iso_fn));
+    strncpy(g_iso_fn, GetUmdFile(), sizeof(g_iso_fn));
     infernoSetDiscType(sctrlSEGetDiscType());
     ret = sceIoAddDrv(&g_iodrv);
 

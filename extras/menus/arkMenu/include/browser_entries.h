@@ -9,19 +9,16 @@ class BrowserFile : public Entry{
         bool selected;
         string fileSize;
         int filetype;
-        string shortname;
         string parent;
 
         virtual unsigned getFileSize();
-
-        void setShortName(string shortname);
 
     public:
     
         BrowserFile();
     
-        BrowserFile(string path, string shortname);
-        BrowserFile(string parent, string name, string shortname);
+        BrowserFile(string path);
+        BrowserFile(string parent, string name);
         
         ~BrowserFile();
         
@@ -58,8 +55,8 @@ class BrowserFile : public Entry{
 
 class BrowserFolder : public BrowserFile{
     public:
-        BrowserFolder(string path, string shortname);
-        BrowserFolder(string parent, string name, string shortname);
+        BrowserFolder(string path);
+        BrowserFolder(string parent, string name);
         
         ~BrowserFolder();
 

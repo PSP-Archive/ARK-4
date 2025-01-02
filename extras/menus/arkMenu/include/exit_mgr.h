@@ -2,6 +2,7 @@
 #define EXIT_MGR_H
 
 #include "system_entry.h"
+#include "system_mgr.h"
 #include "optionsmenu.h"
 #include "common.h"
 #include <systemctrl.h>
@@ -24,7 +25,7 @@ class ExitManager : public SystemEntry{
     OptionsMenu* optionsmenu;
 
     public:
-        ExitManager(){ optionsmenu = NULL; };
+        //ExitManager(){ optionsmenu = NULL; };
         void draw(){
             if (optionsmenu) optionsmenu->draw();
         };
@@ -66,6 +67,8 @@ class ExitManager : public SystemEntry{
         };
         std::string getInfo(){return "Exit";};
         void setInfo(std::string info){};
+        void setFooter(std::string footer){};
+		std::string getFooter(){return "";};
         Image* getIcon(){return common::getImage(IMAGE_EXIT);};
         void setName(std::string name){};
         std::string getName(){return "Exit";};

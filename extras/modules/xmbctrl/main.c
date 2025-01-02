@@ -185,7 +185,6 @@ STMOD_HANDLER previous = NULL;
 CFWConfig config;
 
 int psp_model;
-ARKConfig ark_conf;
 SEConfig se_config;
 
 int startup = 1;
@@ -195,6 +194,7 @@ SceVshItem *new_item;
 SceVshItem *new_item2;
 SceVshItem *new_item3;
 SceVshItem *new_item4;
+SceVshItem *new_item5;
 char image[4];
 void *xmb_arg0, *xmb_arg1;
 
@@ -259,6 +259,18 @@ void exec_custom_launcher() {
 	    sctrlSESetBootConfFileIndex(MODE_UMD);
         sctrlKernelExitVSH(NULL);
 	}
+}
+
+void exec_150_reboot(void) {
+	int k1 = pspSdkSetK1(0);
+	SceUID mod = sceKernelLoadModule(ARK_DC_PATH "/150/reboot150.prx", 0, NULL);
+	if(mod < 0) {
+		pspSdkSetK1(k1);
+		return;
+	}
+	int res = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+	pspSdkSetK1(k1);
+	sctrlKernelExitVSH(NULL);
 }
 
 void exec_custom_app(char *path) {
@@ -465,7 +477,6 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         // Add Custom Launcher
         new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, (cur_icon)?item:information_board_item);
         AddVshItem(a0, topitem, new_item3);
-		if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
 		
 		SceIoStat stat; 
 		int ebootFound;
@@ -487,6 +498,14 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         	new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
         	AddVshItem(a0, topitem, new_item4);
 		}
+
+		SceIoStat _150_file;
+		int _1k_file = sceIoGetstat("ms0:/TM/DCARK/150/reboot150.prx", &_150_file); // Should fine a better way to handle this perhaps?
+		if((psp_model == PSP_1000) && _1k_file >= 0 && !IS_VITA_ADR(ark_config)) {
+        	new_item5 = addCustomVshItem(84, "msgtop_150_reboot", sysconf_150_reboot_arg, item);
+        	AddVshItem(a0, topitem, new_item5);
+		}
+
     }
 	
 	return AddVshItem(a0, topitem, item);
@@ -531,6 +550,9 @@ int ExecuteActionPatched(int action, int action_arg)
         else if (action_arg == sysconf_custom_app_arg){
             exec_custom_app(custom_app_path);
         }
+		else if (action_arg == sysconf_150_reboot_arg){
+			exec_150_reboot();
+		}
         else is_cfw_config = 0;
     }
     if(old_is_cfw_config != is_cfw_config)
@@ -571,7 +593,7 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 }
 
 int skipSetting(int i){
-    if (IS_VITA_ADR((&ark_conf))) return  ( i==0 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16);
+    if (IS_VITA_ADR((ark_config))) return  ( i==0 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16);
     else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12);
     else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13);
     else if (psp_model != PSP_GO) return ( i == 5 || i == 9 || i == 12);
@@ -708,9 +730,15 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
+		else if(sce_paf_private_strcmp(name, "msgtop_150_reboot") == 0)
+        {
+			sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[4]);
+            utf8_to_unicode((wchar_t *)user_buffer, buf);
+            return (wchar_t *)user_buffer;
+        }
+
 		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
 		{
-            if (se_config.magic != ARK_CONFIG_MAGIC) sctrlSEGetConfig(&se_config);
             if (se_config.custom_update && string.items[0]) {
                 utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
                 return (wchar_t *)user_buffer;
@@ -779,15 +807,6 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
     }
 
     int res = vshGetRegistryValue(option, name, arg2, size, value);
-
-    #if 0
-    char tmp[512];
-    snprintf(tmp, 512, "%s, %p, %p, %d, %d\n", name, option, arg2, size, *value);
-    int fd = sceIoOpen("ms0:/regvals.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
-    sceIoWrite(fd, tmp, strlen(tmp));
-    sceIoWrite(fd, "\n", 1);
-    sceIoClose(fd);
-    #endif
 
     return res;
 }
@@ -1123,12 +1142,11 @@ int module_start(SceSize args, void *argp)
 {        
     psp_model = kuKernelGetModel();
 
-    sctrlHENGetArkConfig(&ark_conf);
+    sctrlSEGetConfig(&se_config);
+
+    sctrlHENGetArkConfig(&_arkconf);
     
     previous = sctrlHENSetStartModuleHandler(OnModuleStart);
-
-    sctrlHENGetArkConfig(ark_config);
-    
 
     return 0;
 }

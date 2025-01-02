@@ -141,6 +141,11 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 
 		flushCache();
 	}
+	else if (strcmp(moduleName, "sceLoadExec") == 0)
+	{
+		patchLoadExec();
+		flushCache();
+	}
 }
 
 // Add Module Start Patcher

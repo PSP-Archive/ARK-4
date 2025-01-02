@@ -35,6 +35,7 @@ $/kd/hpremote_05g.prx VGUADM
 $/kd/openpsid.prx VGUPADM
 $/kd/hpremote_05g.prx P
 $/kd/usb.prx VGADM
+$/kd/dcman.prx VU
 $/kd/wlan.prx VGUADM
 $/kd/wlanfirm_05g.prx VGUADM
 $/kd/registry.prx VGUPADM
@@ -63,7 +64,6 @@ $/kd/vaudio.prx VU
 $/kd/impose_05g.prx VGUPADM
 $/kd/vshbridge_msapp.prx A
 $/kd/avcodec.prx V
-$/kd/dcman.prx VU
 $/kd/iop.prx V
 $/kd/mediasync.prx VGUPADM
 $/kd/mlnbridge.prx M

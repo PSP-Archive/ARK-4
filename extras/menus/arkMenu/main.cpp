@@ -30,17 +30,16 @@ using namespace std;
 static SystemEntry* entries[MAX_ENTRIES];
 
 extern "C" void my_malloc_init();
+extern "C" int sceKernelSetCompiledSdkVersion(int version);
 
 int main(int argc, char** argv){
+
+    sceKernelSetCompiledSdkVersion(FW_660);
 
     // make malloc/free threadsafe
     my_malloc_init();
 
     srand(time(NULL));
-
-    int encoding = 5;
-    sceIoDevctl("fatms0:", 0x02425856, &encoding, 4, NULL, 0);
-    //sceIoDevctl("fatef0:", 0x02425856, &encoding, 4, NULL, 0);
 
     intraFontInit();
     ya2d_init();
@@ -88,6 +87,7 @@ int main(int argc, char** argv){
     settings_menu->setCallbacks(NULL, loadSettings, cleanupSettings);
     settings_menu->setName("CFW Settings");
     settings_menu->setInfo("ARK Custom Firmware Settings");
+	settings_menu->setFooter("[] to Reset Settings");
     settings_menu->readConf();
     entries[n_entries++] = settings_menu;
 

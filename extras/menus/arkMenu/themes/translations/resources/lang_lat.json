@@ -85,6 +85,7 @@
 
     "Network Tools": "Instrumentum retes",
     "Press [] to check for Updates": "Preme [] per renovationis quaerere",
+    "[] to Reset Settings": "[] ut Reset Occasus",
     "FTP Server is stopped. Press %s to start.": "Servator FTP ec. Preme %s per initiare.",
     "FTP Server is running @ %s. Press %s to stop.": "Servator FTP commissum ad %s. Preme %s per extinguere",
     "Could not get IP address": "nulla directio IP",

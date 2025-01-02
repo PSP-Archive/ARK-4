@@ -36,7 +36,9 @@ static int cur_entry = 0;
 static int page_start = 0;
 
 static int volume = 0;
+static int mute = 0;
 static clock_t volume_time = 0;
+//static clock_t mute_time = 0;
 
 static int MAX_ENTRIES = 0;
 static SystemEntry** entries = NULL;
@@ -249,6 +251,15 @@ static void drawBattery(){
     }
 }
 
+static void drawMute() {
+    common::getIcon(FILE_MUSIC)->draw( common::getConf()->battery_percent ? 240:280, 3);
+	int i = 2;
+	for(;i<18;i++) {
+    	ya2d_draw_rect(common::getConf()->battery_percent ? 235+i:275+i, i, 1, 1, RED, 1); // Volume background outline
+    	ya2d_draw_rect(common::getConf()->battery_percent ? 255-i:295-i, i, 1, 1, RED, 1); // Volume background outline
+	}
+}
+
 static void drawVolume(){
     const int max_slider_width = 480 / 4;
     const int volume_y = 255;
@@ -280,6 +291,8 @@ static void systemDrawer(){
             if (MusicPlayer::isPlaying()){
                 common::getIcon(FILE_MUSIC)->draw( common::getConf()->battery_percent ? 240:280, 3);
             }
+			if(mute)
+				drawMute();
             break;
         case 1: // draw opening animation
             drawOptionsMenuCommon();
@@ -307,6 +320,7 @@ static void systemDrawer(){
         drawVolume();
     }
 
+
 }
 
 void SystemMgr::drawScreen(){
@@ -330,8 +344,15 @@ void SystemMgr::drawScreen(){
     }
 }
 
+static void *_sceImposeGetParam; // int (*)(int)
+static void *_sceImposeSetParam; // int (*)(int, int)
+
 static int drawThread(SceSize _args, void *_argp){
     common::stopLoadingThread();
+	struct KernelCallArg args;
+	args.arg1 = 0x8;
+    kuKernelCall(_sceImposeGetParam, &args);
+	mute = args.ret1;
     while (running){
         sceKernelWaitSema(draw_sema, 1, NULL);
         common::clearScreen(CLEAR_COLOR);
@@ -344,8 +365,6 @@ static int drawThread(SceSize _args, void *_argp){
     return 0;
 }
 
-static void *_sceImposeGetParam; // int (*)(int)
-static void *_sceImposeSetParam; // int (*)(int, int)
 
 static int controlThread(SceSize _args, void *_argp){
     static int screensaver_times[] = {0, 5, 10, 20, 30, 60};
@@ -383,13 +402,34 @@ static int controlThread(SceSize _args, void *_argp){
                 args.arg2 = --new_volume;
                 kuKernelCall(_sceImposeSetParam, &args);
             }
-            // end of unfortunate impose driver fix :)
-
             if (new_volume != volume){
                 volume = new_volume;
                 common::playMenuSound();
             }
-        } else if (!screensaver){
+		} else if (pad.mute() && _sceImposeGetParam != NULL && _sceImposeSetParam != NULL) {
+            struct KernelCallArg args;
+            args.arg1 = 0x8; // PSP_IMPOSE_MUTE
+
+            kuKernelCall(_sceImposeGetParam, &args);
+			mute = args.ret1;
+
+//            mute_time = clock();
+
+            // Unfortunate impose driver fix
+            // Impose will sometimes register an extra volume input press in the opposite direction
+            u32 buttons = pad.get_buttons();
+
+			if(buttons & 0x800000) {
+            	args.arg1 = 0x8; // PSP_IMPOSE_MUTE
+				args.arg2 = mute;
+                kuKernelCall(_sceImposeSetParam, &args);
+				//pad.update();
+				if(mute) {
+					drawMute();
+				}
+			}
+
+		} else if (!screensaver){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
         }
@@ -446,7 +486,7 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
     _sceImposeSetParam = (void *)sctrlHENFindFunction("sceImpose_Driver", "sceImpose_driver", 0x3C318569);
 
     stringstream version;
-    version << "FW " << fwmajor << "." << fwminor << fwmicro;
+    version << "" << fwmajor << "." << fwminor << fwmicro;
     version << " ARK " << major << "." << minor;
     if (micro>9) version << "." << micro;
     else if (micro>0) version << ".0" << micro;
@@ -480,8 +520,10 @@ void SystemMgr::pauseDraw(){
 }
 
 void SystemMgr::resumeDraw(){
-    sceKernelSignalSema(draw_sema, 1);
-    sceKernelDelayThread(1000);
+	int ret;
+	do {
+    	ret = sceKernelSignalSema(draw_sema, 1);
+	}while(ret != 0);
 }
 
 void SystemMgr::enterFullScreen(){

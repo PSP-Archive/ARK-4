@@ -25,6 +25,7 @@ int T_Reader(SceSize _args, void *_argp)
         if (D->m_Status == ReaderThreadData__READER_ABORT) break;
 
         iFreePackets = sceMpegRingbufferAvailableSize(D->m_Ringbuffer);
+        //printf("iFreePackets: %p\n", iFreePackets);
         if (iFreeLast != iFreePackets)
         {
             iFreeLast = iFreePackets;
@@ -43,7 +44,7 @@ int T_Reader(SceSize _args, void *_argp)
                 if (iPacketsLeft < iReadPackets) iReadPackets = iPacketsLeft;
 
                 iPackets = sceMpegRingbufferPut(D->m_Ringbuffer, iReadPackets, iFreePackets);
-
+                //printf("iPackets: %p\n", iPackets);
                 if (iPackets < 0)
                 {
                     D->m_Status = ReaderThreadData__READER_ABORT;
@@ -87,7 +88,7 @@ SceInt32 InitReader()
 
     Reader.m_StreamSize                     = m_MpegStreamSize;
     Reader.m_Ringbuffer                     = &m_Ringbuffer;
-    Reader.m_RingbufferPackets      = m_RingbufferPackets;
+    Reader.m_RingbufferPackets              = m_RingbufferPackets;
     Reader.m_Status                         = 0;
     Reader.m_TotalBytes                     = 0;
 

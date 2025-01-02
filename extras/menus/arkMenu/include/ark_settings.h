@@ -775,7 +775,56 @@ void saveSettings(){
     for (int i=0; i<custom_config.size(); i++){
         output << custom_config[i] << endl;
     }
-    
+
     output.close();
+
+    std::ifstream input((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
+	std::string line;
+	bool exist = false;
+	while(std::getline(input, line)) {
+		if(line == "ULUS10201, infernocache, off") {
+			exist = true;
+			break;
+		}
+	}
+	input.close();
+	if(exist == false) {
+    	std::ofstream output((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
+		output << "# Luxor doesn't like Inferno Cache" << endl;
+		output << "ULUS10201, infernocache, off" << endl;
+		output.close();
+	}
+
+    
 }
+
+void resetSettings() {
+	cfw_config.usbcharge = 1;
+    cfw_config.overclock = 1;
+    cfw_config.powersave = 0;
+    cfw_config.defaultclock = 0;
+    cfw_config.launcher = 0;
+    cfw_config.disablepause = 0;
+    cfw_config.highmem = 0;
+    cfw_config.mscache = 1;
+    cfw_config.infernocache = 1;
+    cfw_config.oldplugin = 1;
+    cfw_config.skiplogos = 0;
+    cfw_config.hidepics = 0;
+    cfw_config.hibblock = 1;
+    cfw_config.hidemac = 1;
+    cfw_config.hidedlc = 0;
+    cfw_config.noled = 0;
+    cfw_config.noumd = 0;
+    cfw_config.noanalog = 0;
+    cfw_config.qaflags = 1;
+	cfw_config.vshregion = 0;
+	cfw_config.regionchange = 0;
+
+    
+    saveSettings();
+    
+
+}
+
 

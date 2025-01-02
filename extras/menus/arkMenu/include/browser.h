@@ -26,12 +26,6 @@ enum{
     UMD_DIR,
 };
 
-typedef struct _pspMsPrivateDirent {
-	SceSize size;
-	char s_name[16];
-	char l_name[1024];
-} pspMsPrivateDirent;
-
 class BrowserDriver{
     public:
         virtual bool connect() = 0;
@@ -73,8 +67,10 @@ class Browser : public SystemEntry{
         }
         
         void setInfo(string info){};
+        void setFooter(string footer){};
         void setName(string name){};
         
+        string getFooter(){}
         string getInfo(){
             return this->cwd;
         }

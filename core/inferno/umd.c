@@ -617,17 +617,12 @@ void sceUmd_C886430B(u32 a0)
 int power_event_handler(int ev_id, char *ev_name, void *param, int *result)
 {
 
-    if( ev_id == 0x400 ) // sleep
+    if (ev_id == 0x400 || ev_id == 0x4000) // sleep
 	{
 		do_umd_notify(PSP_UMD_INITING | PSP_UMD_NOT_PRESENT);
 	}
 
-    if( ev_id == 0x4000 ) // melt
-	{
-        do_umd_notify(PSP_UMD_INITING);
-	}
-
-    if(ev_id == 0x400000) { // resume complete
+    if( ev_id == 0x400000) { // resume complete
         do_umd_notify(PSP_UMD_READY | PSP_UMD_INITED | PSP_UMD_PRESENT);
     }
 

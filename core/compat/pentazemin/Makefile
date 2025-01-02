@@ -1,8 +1,9 @@
 TARGET = pentazemin
 
-C_OBJS =   \
-	main.o  \
-	funcs.o  \
+C_OBJS =  \
+	main.o \
+	funcs.o \
+	usbcam.o \
 	vitamem.o \
 	syspatch.o \
 	io_patch.o  \

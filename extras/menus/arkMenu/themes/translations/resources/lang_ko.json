@@ -87,6 +87,7 @@
 
     "Network Tools": "네트워크 도구",
     "Press [] to check for Updates": "업데이트를 확인하려면 []를 누르십시오",
+    "[] to Reset Settings": "[] 설정 재설정",
     "FTP Server is stopped. Press %s to start.": "FTP 서버가 중지되었습니다. 시작하려면 %s를 누르십시오.",
     "FTP Server is running @ %s. Press %s to stop.": "%s에서 FTP 서버가 실행중입니다. 중지하려면 %s를 누르십시오.",
     "Could not get IP address": "IP 주소를 찾을 수 없습니다",
