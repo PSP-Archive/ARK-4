@@ -137,7 +137,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
 	}
 
-    if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
+    if (strcmp(mod->modname, "sceMediaSync") == 0) {
 		// perfect time to apply extra memory patch
 		if (se_config->force_high_memory) unlockVitaMemory(36);
 		else{
