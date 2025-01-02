@@ -139,7 +139,7 @@ int T_Decoder(SceSize _args, void *_argp)
                     break;
                 }
 
-                if (D->m_MpegAuAtrac->iPts < 0) {
+                if (D->m_MpegAuAtrac->iPts == 0xFFFFFFFF) {
                     m_iAudioCurrentTimeStamp += D->m_iAudioFrameDuration;
                 } else {
                     m_iAudioCurrentTimeStamp = D->m_MpegAuAtrac->iPts;
@@ -205,7 +205,7 @@ int T_Decoder(SceSize _args, void *_argp)
                     break;
                 }
 
-                if (D->m_MpegAuAVC->iPts < 0) {
+                if (D->m_MpegAuAVC->iPts == 0xFFFFFFFF) {
                     m_iVideoCurrentTimeStamp += 0x0BBC;
                 } else {
                     m_iVideoCurrentTimeStamp = D->m_MpegAuAVC->iPts;
