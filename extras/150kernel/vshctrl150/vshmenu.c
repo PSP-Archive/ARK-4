@@ -138,8 +138,8 @@ int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count)
             goto exit;
         }
         // Block Satellite Menu in OSK
-        if (sceKernelFindModuleByName("sceVshOSK_Module"))
-            goto exit;
+        // if (sceKernelFindModuleByName("sceVshOSK_Module"))
+        //     goto exit;
 
         // Block Satellite while using Skype
         if (sceKernelFindModuleByName("Skyhost"))
@@ -150,8 +150,8 @@ int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count)
             goto exit;
 
         // Block Satellite while mounting USB
-        if (sceKernelFindModuleByName("sceUSB_Stor_Driver"))
-            goto exit;
+        // if (sceKernelFindModuleByName("sceUSB_Stor_Driver"))
+        //     goto exit;
 
         // Block Recovery menu
         if (sceKernelFindModuleByName("Recovery"))

@@ -62,7 +62,6 @@ const char * g_messages_en[];
 
 int module_start(int argc, char *argv[])
 {
-	colorDebug(0xFF);
     int thid;
 
     //sctrlHENGetArkConfig(ark_config);
@@ -168,8 +167,6 @@ int TSRThread(SceSize args, void *argp)
 {
     sceKernelChangeThreadPriority(0, 8);
     vctrlVSHRegisterVshMenu(EatKey);
-
-	colorDebug(0x00FF00);
 
     while(stop_flag == 0) {
         if( sceDisplayWaitVblankStart() < 0)
