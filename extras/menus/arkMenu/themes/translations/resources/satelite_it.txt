@@ -23,8 +23,8 @@ PROTEGGI USB
 ISO VIDEO
 COLORE CARATTERI
 COLORE SFONDO
-CARATTERE
-PROGETTAZIONE
+FONT
+STILE MENù
 MENU PRINCIPALE
 MOD BATTERIA
 MODIFICA X/O
@@ -33,8 +33,8 @@ REGIONE UMD
 IMPORTA PLUGINS CLASSICI
 ATTIVA FLASH E WMA
 ELIMINA IBERNAZIONE
-RESETTARE LE IMPOSTAZIONI DELL'ARCA
-AVVIA ISO CASUALE
+RESETTA IMPOSTAZIONI ARK
+AVVIA ISO CASUALMENTE
 INDIETRO
 IBERNAZIONE NON SUPPORTATA
 Normale -> Pandora
@@ -55,35 +55,35 @@ Memoria Interna
 Memory Stick
 Nessuno
 Classico
-Simple
+Semplice
 Avanzato
 Nuovo
 Casuale
 Rosso
-Rosso Chiaro
-Arancia
-Arancia Chiaro
+Rosso trasparente
+Arancio
+Arancio trasparente
 Giallo
-Giallo Chiaro
+Giallo trasparente
 Verde
-Verde Chiaro
+Verde trasparente
 Blu
-Blu Chiaro
+Blu trasparente
 Indaco
-Indaco Chiaro
+Indaco trasparente
 Viola
-Viola Chiaro
-Rossa
-Rossa Chiaro
-Viola Forte
-Viola Forte Chiaro
+Viola trasparente
+Rosa
+Rosa trasparente
+Viola 
+Viola trasparente
 Verde Acqua
-Verde Acqua Chiaro
+Verde Acqua trasparente
 Acqua
-Acqua Chiaro
+Acqua trasparente
 Grigio
-Grigio Chiaro
+Grigio trasparente
 Nero
-Nero Chiaro
+Nero trasparente
 Bianco
-Bianco Chiaro
+Bianco trasparente
