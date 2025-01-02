@@ -14,7 +14,7 @@ PSP_FW_VERSION = 150
 
 PRX_EXPORTS = exports.exp
 
-LIBS = -lpspsystemctrl_user -lcolordebugger
+LIBS = -lpspsystemctrl_user
 LIBDIR = . $(ARKROOT)/libs
 LDFLAGS = 
 
