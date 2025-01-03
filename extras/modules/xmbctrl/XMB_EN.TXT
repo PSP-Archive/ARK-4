@@ -2,7 +2,6 @@ ARK-4 Updater
 Custom Firmware Settings
 Plugins Manager
 Custom Launcher
-Reboot 1.50 OFW
 USB Charge
 Overclock
 PowerSave
@@ -24,3 +23,4 @@ Disable Analog Stick
 QA Flags
 Custom App
 PSP Overclock
+Reboot 1.50 OFW

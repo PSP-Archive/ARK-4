@@ -28,7 +28,6 @@ char *settings[] =
     "Custom Firmware Settings",
     "Plugins Manager",
 	"Custom Launcher",
-	"Reboot 1.50 OFW",
     "USB Charge",
     "Overclock",
     "PowerSave",
@@ -50,6 +49,7 @@ char *settings[] =
 	"QA Flags",
 	"Custom App",
     "PSP Overclock",
+	"Reboot 1.50 OFW",
 };
 
 #endif
