@@ -80,7 +80,7 @@ u32 Controller::get_buttons() {
 }
 
 bool Controller::any(){
-    return (newpad!=0);
+    return ((newpad&0xFFFF)!=0);
 }
 
 bool Controller::accept(){

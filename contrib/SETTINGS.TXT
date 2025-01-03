@@ -20,3 +20,6 @@ always, qaflags, on
 
 # Luxor doesn't like Inferno Cache
 ULUS10201, infernocache, off
+
+# Enable Extra RAM on GTA LCS and VCS
+ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on
