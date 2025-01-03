@@ -26,7 +26,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "systemctrl_se.h"
 #include "ui.h"
 #include "blit.h"
 
@@ -39,11 +38,8 @@ int menu_ctrl(u32 button_on);
 
 enum {
     MSG_SHUTDOWN_DEVICE,
-    MSG_SUSPEND_DEVICE,
-    MSG_RESET_DEVICE,
     MSG_RESET_VSH,
     MSG_EXIT,
-    MSG_ARK_VSH_MENU,
     MSG_END,
 };
 

@@ -20,11 +20,8 @@
 
 const char *g_messages_en[] = {
     "SHUTDOWN DEVICE",
-    "SUSPEND DEVICE",
-    "RESET DEVICE",
     "RESET VSH",
     "EXIT",
-    "ARK 1.50 VSH MENU",
 };
 
 u8 message_test_en[NELEMS(g_messages_en) == MSG_END ? 0 : -1];

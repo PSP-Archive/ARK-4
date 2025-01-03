@@ -27,21 +27,15 @@ const char **g_messages = g_messages_en;
 
 extern int pwidth;
 
-#define TMENU_MAX 5
+#define TMENU_MAX 3
 
 enum{
     TMENU_SHUTDOWN_DEVICE,
-    TMENU_SUSPEND_DEVICE,
-    TMENU_RESET_DEVICE,
     TMENU_RESET_VSH,
     TMENU_EXIT
 };
 
 
-
-//version = strncpy(version[0], "%d.%d" major, minor);
-//if (micro>0) version = sprintf(version, "%d.%d.%d", major, minor, micro);
-//ark_version = version.str();
 
 int item_fcolor[TMENU_MAX];
 const char *item_str[TMENU_MAX];
@@ -58,16 +52,10 @@ int menu_draw(void)
     const char *msg;
     int max_menu, cur_menu;
     const int *pointer;
-	const char ark_version[16];
+	const char ark_version[20];
     int xPointer;
-	//int ver = sctrlHENGetMinorVersion();
- 	//int major = (ver&0xFF0000)>>16;
-	//int minor = (ver&0xFF00)>>8;
-	//int micro = (ver&0xFF);
 
-	// Get ARK Version
   	snprintf(ark_version, sizeof(ark_version), "   ARK-4 1.50 CFW   "); 
-	//if (micro>0) version = snprintf(ark_version, sizeof(ark_version), "   ARK %d.%d.%d   ", major, minor, micro);
 
     // check & setup video mode
     if( blit_setup() < 0) return -1;
@@ -80,7 +68,6 @@ int menu_draw(void)
 
     // show menu list
     blit_set_color(0xffffff,0x8000ff00);
-    //blit_string(pointer[0], pointer[1], g_messages[MSG_ARK_VSH_MENU]);
     blit_string(pointer[0], pointer[1], ark_version);
 
     for(max_menu=0;max_menu<TMENU_MAX;max_menu++) {
@@ -95,16 +82,10 @@ int menu_draw(void)
                 case TMENU_EXIT:
                     xPointer = 0xD8; //pointer[2];
                     break;
-                case TMENU_RESET_DEVICE:
-                    xPointer = 0xC0; //pointer[3];
-                    break;
                 case TMENU_RESET_VSH:
                     xPointer = 0xC0; //pointer[7];
                     break;
                 case TMENU_SHUTDOWN_DEVICE:
-                    xPointer = 176;
-                    break;
-                case TMENU_SUSPEND_DEVICE:
                     xPointer = 176;
                     break;
                 default:
@@ -175,19 +156,9 @@ int menu_ctrl(u32 button_on)
                 return 3; // SHUTDOWN flag
             }
             break;
-        case TMENU_RESET_DEVICE:    
-            if(direction==0) {
-                return 2; // RESET flag
-            }
-            break;
         case TMENU_RESET_VSH:    
             if(direction==0) {
                 return 4; // RESET VSH flag
-            }
-            break;
-        case TMENU_SUSPEND_DEVICE:    
-            if(direction==0) {
-                return 5; // SUSPEND flag
             }
             break;
         case TMENU_EXIT:

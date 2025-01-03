@@ -19,118 +19,10 @@
 #define MAIN_H
 
 #include <psputility.h>
-
-enum {
-    PRO_RECOVERY_MENU = 0,
-    MAIN_MENU,
-    ENTERING,
-    EXITING,
-    BACK,
-    DEFAULT,
-    ENABLED,
-    DISABLED,
-    TOGGLE_USB,
-    USB_ENABLED,
-    USB_DISABLED,
-    CONFIGURATION,
-    FAKE_REGION,
-    RECOVERY_FONT,
-    ISO_MODE,
-    NORMAL,
-    MARCH33,
-    NP9660,
-    INFERNO,
-    XMB_USBDEVICE,
-    FLASH0,
-    FLASH1,
-    FLASH2,
-    FLASH3,
-    UMD9660,
-    USB_CHARGE,
-    SLIM_COLOR,
-    HTMLVIEWER_CUSTOM_SAVE_LOCATION,
-    HIDE_MAC,
-    SKIP_SONY_LOGO,
-    SKIP_GAME_BOOT,
-    HIDE_PIC,
-    FLASH_PROTECT,
-    USE_VERSION_TXT,
-    USE_USBVERSION_TXT,
-    USE_CUSTOM_UPDATE_SERVER,
-    PREVENT_HIB_DEL,
-    ADVANCED,
-    XMB_PLUGIN,
-    GAME_PLUGIN,
-    POPS_PLUGIN,
-    USE_NODRM_ENGINE,
-    HIDE_CFW_DIRS,
-    BLOCK_ANALOG_INPUT,
-    OLD_PLUGINS_SUPPORT,
-    ISO_CACHE,
-    ISO_CACHE_TOTAL_SIZE,
-    ISO_CACHE_NUMBER,
-    ISO_CACHE_POLICY,
-    ALLOW_NON_LATIN1_ISO_FILENAME,
-    MSSPEED_UP,
-    NONE,
-    POP,
-    GAME,
-    VSH,
-    POP_GAME,
-    GAME_VSH,
-    VSH_POP,
-    ALWAYS,
-    CPU_SPEED,
-    XMB_CPU_BUS,
-    GAME_CPU_BUS,
-    PLUGINS,
-    SYSTEM_STORAGE,
-    MEMORY_STICK,
-    PLUGINS_ON_SYSTEM_STORAGE,
-    PLUGINS_ON_MEMORY_STICK,
-    REGISTERY_HACKS,
-    WMA_ACTIVATED,
-    FLASH_ACTIVATED,
-    BUTTONS_SWAPPED,
-    CONFIRM_BUTTON_IS_X,
-    CONFIRM_BUTTON_IS_O,
-    ACTIVATE_WMA,
-    ACTIVATE_FLASH,
-    SWAP_BUTTONS,
-    SWAP_BUTTONS_FULL,
-    DELETE_HIBERNATION,
-    HIBERNATION_DELETED,
-    RUN_RECOVERY_EBOOT,
-    SHUTDOWN_DEVICE,
-    SUSPEND_DEVICE,
-    RESET_DEVICE,
-    RESET_VSH,
-    PAGE,
-    JAPAN,
-    AMERICA,
-    EUROPE,
-    KOREA,
-    UNITED_KINGDOM,
-    MEXIQUE,
-    AUSTRALIA,
-    HONGKONG,
-    TAIWAN,
-    RUSSIA,
-    CHINA,
-    DEBUG_TYPE_I,
-    DEBUG_TYPE_II,
-    RETAIL_HIGH_MEMORY,
-    MAC_SPOOFER,
-    MSG_END,
-};
+#include <systemctrl.h>
 
 extern const char ** g_messages;
 extern const char * g_messages_en[];
-
-enum {
-    TYPE_NORMAL = 0,
-    TYPE_SUBMENU = 1,
-};
 
 enum {
     TYPE_VSH = 0,
@@ -184,9 +76,6 @@ struct Menu {
 
 #define printf proDebugScreenPrintf
 
-#define RECOVERY_EBOOT_PATH "ms0:/PSP/GAME/RECOVERY/EBOOT.PBP"
-#define RECOVERY_EBOOT_PATH_EF0 "ef0:/PSP/GAME/RECOVERY/EBOOT.PBP"
-
 extern int g_ctrl_OK;
 extern int g_ctrl_CANCEL;
 extern int g_display_flip;
@@ -207,15 +96,6 @@ void menu_loop(struct Menu *menu);
 
 void main_menu(void);
 
-const char *get_bool_name(int boolean);
-const char* get_fake_region_name(int fakeregion);
-const char *get_iso_name(int iso_mode);
-const char* get_usbdevice_name(int usbdevice);
-int get_cpu_number(int cpu);
-int get_bus_number(int cpu);
-int get_cpu_freq(int number);
-int get_bus_freq(int number);
-const char *get_plugin_name(int type);
 const char* get_cache_policy_name(int policy);
 const char* get_language_name(s16 lang);
 
@@ -226,11 +106,6 @@ void recovery_exit(void);
 
 int get_registry_value(const char *dir, const char *name, u32 *val);
 int set_registry_value(const char *dir, const char *name, u32 val);
-
-int plugins_menu(struct MenuEntry *entry);
-
-int toggle_usb(struct MenuEntry *entry);
-void exit_usb(void);
 
 void clear_language(void);
 

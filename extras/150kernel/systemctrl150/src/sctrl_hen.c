@@ -17,6 +17,18 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler)
     return on_module_start;
 }
 
+int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param)
+{
+    u32 k1;
+    int ret = -1;
+    k1 = pspSdkSetK1(0);
+    int (*_KernelExitVSH)(void*) = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xA3D5E142);
+    ret = _KernelExitVSH(param);
+    pspSdkSetK1(k1);
+    return ret;
+}
+
+
 extern void* custom_rebootex;
 void sctrlHENSetRebootexOverride(const u8 *rebootex)
 {

@@ -22,14 +22,10 @@
 #include <pspkernel.h>
 #include <psputility.h>
 #include <stdio.h>
-//#include "systemctrl.h"
-//#include "systemctrl_se.h"
-//#include "kubridge.h"
 #include "vpl.h"
 #include "blit.h"
 #include "trans.h"
 #include "common.h"
-//#include "ark.h"
 
 int TSRThread(SceSize args, void *argp);
 
@@ -39,9 +35,7 @@ PSP_MODULE_INFO("VshCtrlSatelite", 0, 1, 2);
 /* Define the main thread's attribute value (optional) */
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 
-extern int scePowerRequestColdReset(int unk);
 extern int scePowerRequestStandby(void);
-extern int scePowerRequestSuspend(void);
 
 int menu_mode  = 0;
 u32 cur_buttons = 0xFFFFFFFF;
@@ -51,20 +45,13 @@ SceCtrlData ctrl_pad;
 int stop_stock=0;
 int thread_id=0;
 
-//SEConfig cnf;
-//static SEConfig cnf_old;
-
 const char ** g_messages;
 const char * g_messages_en[];
-
-//ARKConfig _ark_conf;
-//ARKConfig* ark_config = &_ark_conf;
 
 int module_start(int argc, char *argv[])
 {
     int thid;
 
-    //sctrlHENGetArkConfig(ark_config);
     vpl_init();
     thid = sceKernelCreateThread("VshMenu_Thread", TSRThread, 16 , 0x1000 ,0 ,0);
 
@@ -180,14 +167,15 @@ int TSRThread(SceSize args, void *argp)
         button_func();
     }
 
-    if (stop_flag == 2) {
-        scePowerRequestColdReset(0);
+    /*if (stop_flag == 2) {
+		//sctrlPowerRebootStart(); // NOTHING WORKS RIGHT NOW
+		vshKernelExitVSH(1);
+    } 
+	*/
+	if (stop_flag == 4) {
+		sctrlKernelExitVSH(NULL);
     } else if (stop_flag == 3) {
-        scePowerRequestStandby();
-    } else if (stop_flag == 4) {
-        sctrlKernelExitVSH(NULL);
-    } else if (stop_flag == 5) {
-        scePowerRequestSuspend();
+		scePowerRequestStandby();
     }
 
     vpl_finish();

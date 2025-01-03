@@ -128,6 +128,47 @@ static void hook_directory_io(){
     }
 }
 
+static inline void ascii2utf16(char *dest, const char *src)
+{
+    while(*src != '\0') {
+        *dest++ = *src;
+        *dest++ = '\0';
+        src++;
+    }
+    *dest++ = '\0';
+    *dest++ = '\0';
+}
+
+
+/*static void patch_sysconf_plugin_module(SceModule2 *mod) {
+	u32 p = 0;
+	u32 a = 0;
+	u32 addr;
+	u32 text_addr = mod->text_addr;
+	u32 top_addr = text_addr+mod->text_size;
+	char str[] = "1.50 ARK-4 CFW";
+	for(addr=text_addr; addr<top_addr; addr += 4) {
+		if(_lw(addr) == 0x34C600C9 && _lw(addr+8) == 0) {
+			a = addr+20;
+		}
+	}
+	for(; addr < top_addr; addr++) {
+		if (strcmp(addr, "sysconf_plugin_module") == 0){ 
+            p = addr;
+        }
+	}
+
+	sprintf(str, "1.50 ARK-4 CFW");
+    ascii2utf16(p, str);
+
+    _sw(0x3C020000 | ((u32)(p) >> 16), a); // lui $v0,
+    _sw(0x34420000 | ((u32)(p) & 0xFFFF), a + 4); // or $v0, $v0,
+}
+*/
+
+
+
+
 static int vshpatch_module_chain(SceModule2 *mod)
 {
     u32 text_addr = mod->text_addr;
@@ -136,6 +177,13 @@ static int vshpatch_module_chain(SceModule2 *mod)
         patch_sceCtrlReadBufferPositive();
         goto exit;
     }
+	/*
+	if(0 == strcmp(mod->modname, "sysconf_plugin_module")) {
+        patch_sysconf_plugin_module(mod);
+        goto exit;
+    }
+	*/
+
   exit:
     sync_cache();
     if (previous) previous(mod);

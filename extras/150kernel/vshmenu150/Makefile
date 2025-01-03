@@ -1,5 +1,5 @@
 TARGET = satelite
-OBJS = main.o blit.o ui.o menu.o vpl.o trans.o trans_en.o stubkk.o
+OBJS = blit.o ui.o menu.o vpl.o trans.o trans_en.o stubkk.o main.o
 
 ARKROOT ?= $(CURDIR)/../../../
 
@@ -14,7 +14,7 @@ PSP_FW_VERSION = 150
 
 PRX_EXPORTS = exports.exp
 
-LIBS = -lpspsystemctrl_user
+LIBS = -lpspsystemctrl_user #-lpspvshbridge
 LIBDIR = . $(ARKROOT)/libs
 LDFLAGS = 
 
