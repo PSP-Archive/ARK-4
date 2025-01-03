@@ -732,7 +732,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
 		else if(sce_paf_private_strcmp(name, "msgtop_150_reboot") == 0)
         {
-			sce_paf_private_sprintf(buf, "%s %s", STAR, settings[26]);
+			sce_paf_private_sprintf(buf, "%s %s", STAR, settings[25]);
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
