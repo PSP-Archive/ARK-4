@@ -122,7 +122,7 @@ int exitLauncher()
 	}
 
 	ark_config->recovery = 0;
-	int res = sctrlKernelExitVSH(NULL);
+	return sctrlKernelExitVSH(NULL);
 }
 
 static void startExitThread(){
