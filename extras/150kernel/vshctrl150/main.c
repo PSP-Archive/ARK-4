@@ -141,23 +141,23 @@ static inline void ascii2utf16(char *dest, const char *src)
 
 
 static void patch_sysconf_plugin_module(SceModule2 *mod) {
-	u32 p = 0;
-	u32 addrhigh, addrlow;
-	u32 text_addr = mod->text_addr;
-	u32 top_addr = text_addr+mod->text_size;
+    u32 p = 0;
+    u32 addrhigh, addrlow;
+    u32 text_addr = mod->text_addr;
+    u32 top_addr = text_addr+mod->text_size;
 
 
-	char verinfo[24] = "1.50 ARK-4 CFW";
+    static char verinfo[12] = "1.50 ARK-4";
 
     ascii2utf16((char *)text_addr+0x107D4, verinfo);
 
-	addrhigh = (text_addr+0x107D4) >> 16;
-	addrlow = (text_addr+0x107D4) & 0xFFFF;
+    addrhigh = (text_addr+0x107D4) >> 16;
+    addrlow = (text_addr+0x107D4) & 0xFFFF;
 
-	// lui v0, addrhigh
-	_sw(0x3C020000 | addrhigh, text_addr+0x872C);
-	// ori v0, v0, addrlow
-	_sw(0x34420000 | addrlow, text_addr+0x8730);
+    // lui v0, addrhigh
+    _sw(0x3C020000 | addrhigh, text_addr+0x872C);
+    // ori v0, v0, addrlow
+    _sw(0x34420000 | addrlow, text_addr+0x8730);
 }
 
 
