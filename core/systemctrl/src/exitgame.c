@@ -39,8 +39,20 @@ extern int disable_settings;
 static int exit_type = 0; // 0 = CL, 1 = VSH
 
 static int exitVsh(){
+
+	int k1 = pspSdkSetK1(0);
+
+    // Refuse Operation in Save dialog
+	if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return 0;
+	
+	// Refuse Operation in Dialog
+	if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return 0;
+
 	ark_config->recovery = 0;
-	return sctrlKernelExitVSH(NULL);
+	int res = sctrlKernelExitVSH(NULL);
+
+	pspSdkSetK1(0);
+	return res;
 }
 
 int exitLauncher()
@@ -109,7 +121,8 @@ int exitLauncher()
 		}
 	}
 
-	return exitVsh();
+	ark_config->recovery = 0;
+	int res = sctrlKernelExitVSH(NULL);
 }
 
 static void startExitThread(){
