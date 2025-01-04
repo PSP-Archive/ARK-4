@@ -140,31 +140,29 @@ static inline void ascii2utf16(char *dest, const char *src)
 }
 
 
-/*static void patch_sysconf_plugin_module(SceModule2 *mod) {
+static void patch_sysconf_plugin_module(SceModule2 *mod) {
 	u32 p = 0;
-	u32 a = 0;
-	u32 addr;
+	//u32 a = 0;
+	u32 addrhigh, addrlow;
 	u32 text_addr = mod->text_addr;
 	u32 top_addr = text_addr+mod->text_size;
-	char str[] = "1.50 ARK-4 CFW";
-	for(addr=text_addr; addr<top_addr; addr += 4) {
-		if(_lw(addr) == 0x34C600C9 && _lw(addr+8) == 0) {
-			a = addr+20;
-		}
-	}
-	for(; addr < top_addr; addr++) {
-		if (strcmp(addr, "sysconf_plugin_module") == 0){ 
-            p = addr;
-        }
-	}
 
-	sprintf(str, "1.50 ARK-4 CFW");
-    ascii2utf16(p, str);
 
-    _sw(0x3C020000 | ((u32)(p) >> 16), a); // lui $v0,
-    _sw(0x34420000 | ((u32)(p) & 0xFFFF), a + 4); // or $v0, $v0,
+	//char *verinfo = sce_paf_private_malloc(sizeof(char*));
+	char verinfo[14] = {};
+	sprintf(verinfo, sizeof(verinfo), "1.50 ARK-4 CFW");
+
+
+    ascii2utf16((char *)text_addr+0x107d4, verinfo);
+
+	addrhigh = (text_addr+0x107d4) >> 16;
+	addrlow = (text_addr+0x107d4) & 0xFFFF;
+
+	// lui v0, addrhigh
+	_sw(0x3c020000 | addrhigh, text_addr+0x872C);
+	// ori v0, v0, addrlow
+	_sw(0x34420000 | addrlow, text_addr+0x8730);
 }
-*/
 
 
 
@@ -177,12 +175,10 @@ static int vshpatch_module_chain(SceModule2 *mod)
         patch_sceCtrlReadBufferPositive();
         goto exit;
     }
-	/*
 	if(0 == strcmp(mod->modname, "sysconf_plugin_module")) {
         patch_sysconf_plugin_module(mod);
         goto exit;
     }
-	*/
 
   exit:
     sync_cache();

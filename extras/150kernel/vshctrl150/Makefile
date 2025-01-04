@@ -1,6 +1,7 @@
 TARGET = vshctrl150
 
 OBJS = \
+	stubkk.o \
 	vshmenu.o \
 	main.o \
 	$(ARKROOT)/libs/ansi-c/strcasecmp.o
@@ -9,7 +10,7 @@ all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common/include/ $(ARKROOT)/libs/graphics/ $(ARKROOT)
 CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic $(addprefix -I, $(INCDIR))
 
-CFLAGS += -I include 
+CFLAGS += -I include -fshort-wchar
 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
