@@ -82,8 +82,6 @@ copy-bin:
 	$(Q)cp loader/vpk/bin/psp/PBOOT.PBP dist/PSVita/PSPCFW/NPUZ01234/
 	$(Q)cp loader/vpk/bin/psp/arkrightanalog.suprx dist/PSVita/PSPCFW/
 	$(Q)cp loader/perma/cipl/installer/EBOOT.PBP dist/PSP/ARK_cIPL/EBOOT.PBP
-	$(Q)cp loader/perma/infinity/EBOOT.PBP dist/PSP/Infinity/ # Infinity with ARK support
-	$(Q)cp loader/perma/infinity/EBOOT_GO.PBP dist/PSP/Infinity/ # Infinity with ARK support (PSP Go)
 	$(Q)cp loader/live/user/linkless_payload/H.BIN dist/ARK_01234/H.BIN # game exploit loader
 	$(Q)cp loader/live/user/signed_eboot/EBOOT.PBP dist/ARK_Loader/EBOOT.PBP # Signed EBOOT
 	$(Q)cp loader/live/user/psxloader/EBOOT.PBP dist/PSVita/PS1CFW/SCPS10084/
@@ -109,6 +107,11 @@ copy-bin:
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
 	$(Q)cp extras/apps/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
 	$(Q)cp contrib/PSP/fatms371mod/*.prx dist/PSP/ARK_Full_Installer/kd/ # Full installer
+	$(Q)cp core/compat/psp/btcnf/pstbtcnf_tt.bin dist/PSP/ARK_Full_Installer/TT/pstbtcnf.bin
+	$(Q)cp core/compat/psp/btcnf/pstbtcnf_dt.bin dist/PSP/ARK_Full_Installer/DT/pstbtcnf.bin
+	$(Q)cp contrib/PSP/pops_01g.prx dist/PSP/ARK_Full_Installer/kd/
+	$(Q)cp contrib/PSP/popsman.prx dist/PSP/ARK_Full_Installer/kd/
+	$(Q)cp contrib/PSP/libpspvmc.prx dist/PSP/ARK_Full_Installer/vsh/module/
 	$(Q)cp extras/apps/uninstaller/EBOOT.PBP dist/PSP/ARK_Uninstaller # ARK-4 Uninstaller
 	$(Q)cp extras/150kernel/installer/EBOOT.PBP dist/PSP/ARK_150Addon # ARK-4 150 Kernel Addon
 	$(Q)cp contrib/PSP/GAME/ARK_DC/libpsardumper.prx dist/PSP/ARK_150Addon
@@ -118,11 +121,6 @@ copy-bin:
 	$(Q)cp contrib/PSP/mediasync.prx dist/ARK_01234/MEDIASYN.PRX
 	$(Q)cp contrib/PSP/popsman.prx dist/ARK_01234/POPSMAN.PRX
 	$(Q)cp contrib/PSP/pops_01g.prx dist/ARK_01234/POPS.PRX
-	$(Q)cp core/compat/psp/btcnf/pstbtcnf_tt.bin dist/PSP/Pops4Tool/TT/pstbtcnf.bin
-	$(Q)cp core/compat/psp/btcnf/pstbtcnf_dt.bin dist/PSP/Pops4Tool/DT/pstbtcnf.bin
-	$(Q)cp contrib/PSP/pops_01g.prx dist/PSP/Pops4Tool/kd/
-	$(Q)cp contrib/PSP/popsman.prx dist/PSP/Pops4Tool/kd/
-	$(Q)cp contrib/PSP/libpspvmc.prx dist/PSP/Pops4Tool/vsh/module/
 	$(Q)cp -r extras/menus/arkMenu/themes dist/
 	$(Q)rm -rf dist/themes/translations
 	$(Q)cp contrib/README.TXT dist/
@@ -393,19 +391,16 @@ mkdir-dist:
 	$(Q)mkdir dist/PC/sdk | true
 	$(Q)mkdir dist/PC/sdk/lib | true
 	$(Q)mkdir dist/PC/sdk/include | true
-	$(Q)mkdir dist/PSP/Infinity | true
 	$(Q)mkdir dist/PSP/ARK_Uninstaller | true
 	$(Q)mkdir dist/PSP/ARK_DC | true
 	$(Q)mkdir dist/PSP/ARK_150Addon | true
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
-	$(Q)mkdir -p dist/PSP/ARK_Full_Installer/kd | true
 	$(Q)mkdir dist/PSP/FinalSpeed | true
-	$(Q)mkdir dist/PSP/Pops4Tool | true
-	$(Q)mkdir dist/PSP/Pops4Tool/TT | true
-	$(Q)mkdir dist/PSP/Pops4Tool/DT | true
-	$(Q)mkdir dist/PSP/Pops4Tool/kd | true
-	$(Q)mkdir dist/PSP/Pops4Tool/vsh | true
-	$(Q)mkdir dist/PSP/Pops4Tool/vsh/module | true
+	$(Q)mkdir -p dist/PSP/ARK_Full_Installer/kd | true
+	$(Q)mkdir dist/PSP/ARK_Full_Installer/TT | true
+	$(Q)mkdir dist/PSP/ARK_Full_Installer/DT | true
+	$(Q)mkdir dist/PSP/ARK_Full_Installer/vsh | true
+	$(Q)mkdir dist/PSP/ARK_Full_Installer/vsh/module | true
 	$(Q)mkdir dist/PSVita/PSPCFW | true
 	$(Q)mkdir dist/PSVita/PSPCFW/NPUZ01234 | true
 	$(Q)mkdir dist/PSVita/PS1CFW | true
