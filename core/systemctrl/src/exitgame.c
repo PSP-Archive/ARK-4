@@ -28,12 +28,20 @@
 #include <graphics.h>
 
 // Exit Button Mask
-#define EXIT_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
+#define EXIT_MASK_CL (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
+#define EXIT_MASK_VSH (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_SELECT | PSP_CTRL_DOWN)
 
 extern ARKConfig* ark_config;
 extern SEConfig se_config;
 extern int disable_plugins;
 extern int disable_settings;
+
+static int exit_type = 0; // 0 = CL, 1 = VSH
+
+static int exitVsh(){
+	ark_config->recovery = 0;
+	return sctrlKernelExitVSH(NULL);
+}
 
 int exitLauncher()
 {
@@ -101,8 +109,7 @@ int exitLauncher()
 		}
 	}
 
-	ark_config->recovery = 0;
-	return sctrlKernelExitVSH(NULL);
+	return exitVsh();
 }
 
 static void startExitThread(){
@@ -113,7 +120,7 @@ static void startExitThread(){
 		pspSdkEnableInterrupts(intc);
 		return; // already exiting
 	}
-	int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 1, 4096, 0, NULL);
+	int uid = sceKernelCreateThread("ExitGamePollThread", (exit_type)?exitVsh:exitLauncher, 1, 4096, 0, NULL);
 	pspSdkEnableInterrupts(intc);
 	sceKernelStartThread(uid, 0, NULL);
 	sceKernelWaitThreadEnd(uid, NULL);
@@ -140,8 +147,16 @@ int peek_positive(SceCtrlData * pad_data, int count)
 	count = CtrlPeekBufferPositive(pad_data, count);
 	
 	// Check for Exit Mask
-	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
+	if((pad_data[0].Buttons & EXIT_MASK_CL) == EXIT_MASK_CL)
 	{
+		exit_type = 0;
+		startExitThread();
+	}
+
+	// Check for Exit Mask
+	if((pad_data[0].Buttons & EXIT_MASK_VSH) == EXIT_MASK_VSH)
+	{
+		exit_type = 1;
 		startExitThread();
 	}
 
@@ -161,8 +176,16 @@ int peek_negative(SceCtrlData * pad_data, int count)
 	count = CtrlPeekBufferNegative(pad_data, count);
 	
 	// Check for Exit Mask
-	if((pad_data[0].Buttons & EXIT_MASK) == 0)
+	if((pad_data[0].Buttons & EXIT_MASK_CL) == 0)
 	{
+		exit_type = 0;
+		startExitThread();
+	}
+	
+	// Check for Exit Mask
+	if((pad_data[0].Buttons & EXIT_MASK_VSH) == 0)
+	{
+		exit_type = 1;
 		startExitThread();
 	}
 
@@ -182,8 +205,16 @@ int read_positive(SceCtrlData * pad_data, int count)
 	count = CtrlReadBufferPositive(pad_data, count);
 	
 	// Check for Exit Mask
-	if((pad_data[0].Buttons & EXIT_MASK) == EXIT_MASK)
+	if((pad_data[0].Buttons & EXIT_MASK_CL) == EXIT_MASK_CL)
 	{
+		exit_type = 0;
+		startExitThread();
+	}
+
+	// Check for Exit Mask
+	if((pad_data[0].Buttons & EXIT_MASK_VSH) == EXIT_MASK_VSH)
+	{
+		exit_type = 1;
 		startExitThread();
 	}
 
@@ -203,8 +234,16 @@ int read_negative(SceCtrlData * pad_data, int count)
 	count = CtrlReadBufferNegative(pad_data, count);
 	
 	// Check for Exit Mask
-	if((pad_data[0].Buttons & EXIT_MASK) == 0)
+	if((pad_data[0].Buttons & EXIT_MASK_CL) == 0)
 	{
+		exit_type = 0;
+		startExitThread();
+	}
+
+	// Check for Exit Mask
+	if((pad_data[0].Buttons & EXIT_MASK_VSH) == 0)
+	{
+		exit_type = 1;
 		startExitThread();
 	}
 
