@@ -68,7 +68,7 @@ int menu_draw(void)
 
     // show menu list
     blit_set_color(0xffffff,0x8000ff00);
-    blit_string(pointer[0], pointer[1], ark_version);
+    blit_string(pointer[0]-10, pointer[1], ark_version);
 
     for(max_menu=0;max_menu<TMENU_MAX;max_menu++) {
         fc = 0xffffff;
