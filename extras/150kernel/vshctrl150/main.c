@@ -230,9 +230,6 @@ int module_start(SceSize args, void* argp)
 
     previous = sctrlHENSetStartModuleHandler(vshpatch_module_chain);
     hook_directory_io();
-	if(sceKernelFindModuleByName("sysconf_plugin_module") == NULL)
-
-
     return 0;
 }
 
