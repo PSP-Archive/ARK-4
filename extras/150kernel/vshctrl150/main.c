@@ -180,25 +180,30 @@ static inline void ascii2utf16(char *dest, const char *src)
     *dest++ = '\0';
 }
 
-
+static SceUID uid;
 static void patch_sysconf_plugin_module(SceModule2 *mod) {
-	u32 addrhigh, addrlow;
-	u32 text_addr = mod->text_addr;
+    u32 addrhigh, addrlow;
+    u32 text_addr = mod->text_addr;
 
-	// Version info patch
-	static char verinfo[24] = "1.50 ARK-4 CFW";
-    ascii2utf16((char *)text_addr+0x107D4, verinfo);
+    //alloc memory for version string
+    uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_Low, 64, NULL);
+    if(uid >= 0)
+    {
+        char *p = (char *)sceKernelGetBlockHeadAddr(uid);
+        // Version info patch
 
-    addrhigh = (text_addr+0x107D4) >> 16;
-    addrlow = (text_addr+0x107D4) & 0xFFFF;
+        char verinfo[] = "1.50 ARK-4 CFW";
+        ascii2utf16((char *)p, verinfo);
 
-    // lui v0, addrhigh
-    _sw(0x3C020000 | addrhigh, text_addr+0x872C);
-    // ori v0, v0, addrlow
-    _sw(0x34420000 | addrlow, text_addr+0x8730);
+        addrhigh = (u32)p >> 16;
+        addrlow = (u32)p & 0xFFFF;
+
+        // lui v0, addrhigh
+        _sw(0x3C020000 | addrhigh, text_addr+0x872C);
+        // ori v0, v0, addrlow
+        _sw(0x34420000 | addrlow, text_addr+0x8730);
+    }
 }
-
-
 
 
 static int vshpatch_module_chain(SceModule2 *mod)
@@ -225,6 +230,16 @@ int module_start(SceSize args, void* argp)
 
     previous = sctrlHENSetStartModuleHandler(vshpatch_module_chain);
     hook_directory_io();
+	if(sceKernelFindModuleByName("sysconf_plugin_module") == NULL)
+
 
     return 0;
+}
+
+int module_stop(SceSize args, void* argp)
+{
+	if(sceKernelFindModuleByName("sysconf_plugin_module") == NULL)
+		sceKernelFreePartitionMemory(uid);
+	return 0;
+
 }
