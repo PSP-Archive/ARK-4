@@ -9,6 +9,7 @@
 #include <pspumd.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <psptypes.h>
 #include "macros.h"
 #include <ark.h>
 #include "functions.h"
@@ -20,6 +21,12 @@ static STMOD_HANDLER previous;
 
 extern int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count);
 extern int (*g_sceCtrlReadBufferPositive) (SceCtrlData *, int count);
+
+typedef struct _HookUserFunctions {
+    u32 nid;
+    void *func;
+} HookUserFunctions;
+
 
 // Flush Instruction and Data Cache
 void sync_cache()
@@ -96,6 +103,32 @@ static inline int is_game_dir(const char *dirname)
     return 1;
 }
 
+SceUID gamedread(SceUID fd, SceIoDirent * dir) {
+
+	int result = sceIoDread(fd, dir);
+	int k1;
+
+	if(strstr(dir->d_name, "%") == NULL) { // hide corrupt icons
+		char path[256] = {0};
+		sprintf(path, "ms0:/PSP/GAME150/%s%s", dir->d_name, "%"); 
+		k1 = pspSdkSetK1(0);
+		int op = sceIoDopen(path);
+		if(op>=0) {
+			sceIoDclose(op);
+			memset(path, 0, sizeof(path));
+			sprintf(path, "__SCE%s", dir->d_name); 
+			k1 = pspSdkSetK1(0);
+			sceIoDclose(result);
+			pspSdkSetK1(k1);
+			strcpy(dir->d_name, path);
+		}
+		pspSdkSetK1(k1);
+	}
+
+	return result;
+
+}
+
 SceUID gamedopen(const char * dirname)
 {
     SceUID result;
@@ -121,11 +154,19 @@ SceUID gamedopen(const char * dirname)
     return result;
 }
 
+
 static void hook_directory_io(){
-    void *fp = (void*)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0xB29DDF9C);
-    if(fp != NULL) {
-        sctrlHENPatchSyscall(fp, gamedopen);
-    }
+	HookUserFunctions hook_list[] = {
+		{ 0xB29DDF9C, gamedopen  },
+        { 0xE3EB004C, gamedread  },
+        //{ 0xEB092469, gamedclose },
+    };
+	for(int i = 0; i<sizeof(hook_list)/sizeof(hook_list[0]);i++) {
+    	void *fp = (void*)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", hook_list[i].nid);
+    	if(fp != NULL) {
+        	sctrlHENPatchSyscall(fp, hook_list[i].func);
+    	}
+	}
 }
 
 static inline void ascii2utf16(char *dest, const char *src)
