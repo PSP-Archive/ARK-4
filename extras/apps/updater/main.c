@@ -33,6 +33,15 @@
 #include <installer/resurrection.h>
 #include <installer/vlf.h>
 
+// 1.50
+#include <pspbtcnf_game.h>
+#include <pspbtcnf.h>
+#include <reboot150.h>
+#include <systemctrl150.h>
+#include <tmctrl150.h>
+#include <ark_vshctrl150.h>
+#include <ark_satelite150.h>
+
 PSP_MODULE_INFO("ARKUpdater", 0x800, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH | PSP_THREAD_ATTR_VFPU);
 PSP_HEAP_SIZE_KB(4096);
@@ -175,6 +184,7 @@ int main(int argc, char * argv[])
     // extract FLASH0.ARK (PSP only)
     ARKConfig* ac = &ark_config;
     if (IS_PSP(ac)){
+
         char flash0_ark[ARK_PATH_SIZE];
         strcpy(flash0_ark, ark_config.arkpath);
         strcat(flash0_ark, FLASH0_ARK);
@@ -183,8 +193,8 @@ int main(int argc, char * argv[])
         extractArchive(sceIoOpen(flash0_ark, PSP_O_RDONLY, 0777), "flash0:/", &isVitaFile);
 
         // test for full installations
-        SceIoStat stat; int res = sceIoGetstat(flash_files[0].dest, &stat);
-        if (res >= 0){
+        SceIoStat stat;
+        if (sceIoGetstat(flash_files[0].dest, &stat) >= 0){
             for (int i=0; i<N_FLASH_FILES; i++){
                 char path[ARK_PATH_SIZE];
                 strcpy(path, ark_config.arkpath);
@@ -194,6 +204,7 @@ int main(int argc, char * argv[])
             }
         }
 
+        // test for dc installation
         struct {
             char* path;
             void* buf;
@@ -219,15 +230,36 @@ int main(int argc, char * argv[])
             { ARK_DC_PATH "/vsh/module/resurrection.prx", resurrection, size_resurrection },
             { ARK_DC_PATH "/vsh/module/vlf.prx", vlf, size_vlf },
         };
-
         const int N_DC_FILES = (sizeof(dc_files)/sizeof(dc_files[0]));
-
-        // test for dc installation
         if (strncmp(ark_config.arkpath, ARK_DC_PATH, sizeof(ARK_DC_PATH)-1) == 0){
             for (int i=0; i<N_DC_FILES; i++){
                 pspDebugScreenPrintf("Installing %s\n", dc_files[i].path);
                 int fdw = sceIoOpen(dc_files[i].path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
                 sceIoWrite(fdw, dc_files[i].buf, dc_files[i].size);
+                sceIoClose(fdw);
+            }
+        }
+
+        // test for 1.50 installation
+        struct {
+            char *path;
+            u8 *buf;
+            int size;
+        } ark150files[] = {
+            { ARK_DC_PATH "/150/reboot150.prx", reboot150, sizeof(reboot150) },
+            { ARK_DC_PATH "/150/kd/ark_systemctrl150.prx", systemctrl150, sizeof(systemctrl150) },
+            { ARK_DC_PATH "/150/tmctrl150.prx", tmctrl150, sizeof(tmctrl150) },
+            { ARK_DC_PATH "/150/kd/ark_vshctrl150.prx", ark_vshctrl150, sizeof(ark_vshctrl150) },
+            { ARK_DC_PATH "/150/vsh/module/ark_satelite150.prx", ark_satelite150, sizeof(ark_satelite150) },
+            { ARK_DC_PATH "/150/kd/pspbtcnf_game.txt", pspbtcnf_game, sizeof(pspbtcnf_game) },
+            { ARK_DC_PATH "/150/kd/pspbtcnf.txt", pspbtcnf, sizeof(pspbtcnf) },
+        };
+        const int N_150_FILES = (sizeof(ark150files)/sizeof(ark150files[0]));
+        if (sceIoGetstat(ARK_DC_PATH "/150", &stat) >= 0){
+            for (int i=0; i<N_150_FILES; i++){
+                pspDebugScreenPrintf("Installing %s\n", ark150files[i].path);
+                int fdw = sceIoOpen(ark150files[i].path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+                sceIoWrite(fdw, ark150files[i].buf, ark150files[i].size);
                 sceIoClose(fdw);
             }
         }
