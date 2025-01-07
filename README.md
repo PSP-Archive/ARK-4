@@ -148,7 +148,7 @@ Use `-h` or `--help` to show all available flags
 - Use the `ARK-X` bubble for `PS1` games without any sound limitations.
 - Once `ARK` bubbles are installed, you can delete `FasterARK`.
 - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start` (on `ARK-X` use `L2+R2+Down+Start` or `L1+R1+Start+Down` for `VitaTV`).
-- NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB` and `Force Extra RAM` setting (needed for `PRO Online`).
+- NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB`, and `Force Extra RAM` setting is known to be unstable.
 - NOTE: If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign` with a valid license. Instructions in Wiki.
 
 
