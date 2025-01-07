@@ -69,11 +69,11 @@ void extractFlash0Archive(SceSize args, void** argp){
     strcpy(filepath, dest_path);
 
     PRTSTR1("Extracting %s", archive);
+    if (strncmp(dest_path, "flash", 4) == 0) open_flash();
     
     int fdr = k_tbl->KernelIOOpen(archive, PSP_O_RDONLY, 0777);
     
     if (fdr>=0){
-        if (strncmp(dest_path, "flash", 5) == 0) open_flash();
         int filecount;
         k_tbl->KernelIORead(fdr, &filecount, sizeof(filecount));
         PRTSTR1("Processing %d files", filecount);
