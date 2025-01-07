@@ -11,13 +11,12 @@ The instructions are as follows:
 
   Permanent CFW via cIPL
 
-  - `New cIPL`: works with every retail model (1K, 2K, 3K, Go and Street) on firmware `6.61`.
+  - `New cIPL`: works with every retail model (1K, 2K, 3K, Go and Street) on firmware `6.61` and `6.60`.
   - `Classic cIPL`: works with `1g` and early `2g` on firmware `6.60` or `6.61` as well as `Testkits` on `6.60 Testing Tool`.
   - `DevTool cKBOOTI`: works with `DTP-T1000` (devkits) on `6.60 Development Tool`.
   - Installer will choose the correct version according to your model.
   - Move or copy `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
   - Press the corresponding button in the installation page to install or remove the cIPL patch.
-  - Warning: unlike classic cIPL, the new cIPL method can't be easily uninstalled. To revert to offical IPL, use ChronoSwitch to reinstall 6.61 OFW.
 
   Full Flash Installation
 
@@ -57,7 +56,7 @@ Installation On PS Vita
     - Use the `ARK-X` bubble for `PS1` games without any sound limitations.
     - Once `ARK` bubbles are installed, you can delete `FasterARK`.
     - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start` (on `ARK-X` use `L2+R2+Down+Start` or `L1+R1+Start+Down` for `VitaTV`).
-    - NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB` and `Force Extra RAM` setting (needed for `PRO Online`).
+    - NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB`, and the `Force Extra RAM` setting is known to be unstable.
     - NOTE: If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign` with a valid license.
 
   Adrenaline (Patched PSPEmu)
