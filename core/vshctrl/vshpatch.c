@@ -66,9 +66,6 @@ extern int has_umd_iso;
 
 static int vshpatch_module_chain(SceModule2 *mod)
 {
-    u32 text_addr;
-
-    text_addr = mod->text_addr;
 
     if(0 == strcmp(mod->modname, "sysconf_plugin_module")) {
         patch_sysconf_plugin_module(mod);
