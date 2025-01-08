@@ -18,6 +18,8 @@ PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 2);
 
 #define GAME150_PATCH "__150"
 #define ELF_MAGIC 0x464C457F
+#define PBP_MAGIC 0x50425000
+
 static STMOD_HANDLER previous;
 
 extern int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count);
@@ -39,17 +41,6 @@ void sync_cache()
     sceKernelDcacheWritebackInvalidateAll();
 }
 
-static void patch_sceCtrlReadBufferPositive(void)
-{
-    SceModule* mod;
-
-	mod = sceKernelFindModuleByName("sceVshBridge_Driver");
-    hookImportByNID(mod, "sceCtrl_driver", 0x1F803938, _sceCtrlReadBufferPositive);
-    g_sceCtrlReadBufferPositive = (void*)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
-    sctrlHENPatchSyscall(g_sceCtrlReadBufferPositive, _sceCtrlReadBufferPositive);
-}
-
-
 static void Fix150Path(const char *file)
 {
 	char str[256];
@@ -70,59 +61,24 @@ static void Fix150Path(const char *file)
 static void CorruptIconPatch(SceIoDirent * dir){
     int k1 = pspSdkSetK1(0);
 
-    char path[256];
-	strcpy(path, "ms0:/PSP/GAME150/");
-	strcat(path, dir->d_name);
-	strcat(path, "/EBOOT.PBP");
+    if (strchr(dir->d_name, '%') == NULL){
+        char path[256];
+        strcpy(path, "ms0:/PSP/GAME150/");
+        strcat(path, dir->d_name);
+        strcat(path, "/EBOOT.PBP");
 
-	int test_fd = sceIoOpen(path, PSP_O_RDONLY, 0);
-	
-    if (test_fd >=0 ) {
-		u32 magic = 0;
-		sceIoRead(test_fd, &magic, sizeof(magic));
-		if(magic == ELF_MAGIC)
-			strcpy(dir->d_name, "__SCE"); // hide icon
-		sceIoClose(test_fd);
-	}
+        int test_fd = sceIoOpen(path, PSP_O_RDONLY, 0);
+        
+        if (test_fd >=0 ) {
+            u32 magic = 0;
+            sceIoRead(test_fd, &magic, sizeof(magic));
+            if(magic == ELF_MAGIC   )
+                strcpy(dir->d_name, "__SCE"); // hide icon
+            sceIoClose(test_fd);
+        }
+    }
 
 	pspSdkSetK1(k1);
-}
-
-static inline int is_game_dir(const char *dirname)
-{
-    const char *p;
-    char path[256];
-    SceIoStat stat;
-
-    p = strchr(dirname, '/');
-
-    if (p == NULL) {
-        return 0;
-    }
-
-    if (0 != strnicmp(p, "/PSP/GAME", sizeof("/PSP/GAME")-1)) {
-        return 0;
-    }
-
-    if (0 == strnicmp(p, "/PSP/GAME/_DEL_", sizeof("/PSP/GAME/_DEL_")-1)) {
-        return 0;
-    }
-
-    strcpy(path, dirname);
-    strcat(path, "/EBOOT.PBP");
-
-    if(0 == sceIoGetstat(path, &stat)) {
-        return 0;
-    }
-
-    strcpy(path, dirname);
-    strcat(path, "/PARAM.PBP");
-
-    if(0 == sceIoGetstat(path, &stat)) {
-        return 0;
-    }
-
-    return 1;
 }
 
 SceUID gamedread(SceUID fd, SceIoDirent * dir) {
@@ -137,26 +93,20 @@ SceUID gamedread(SceUID fd, SceIoDirent * dir) {
 
 SceUID gamedopen(const char * dirname)
 {
-    SceUID result;
-    u32 k1;
+    u32 k1 = pspSdkSetK1(0);
 
     Fix150Path(dirname);
 
-    result = sceIoDopen(dirname);
+    SceUID result = sceIoDopen(dirname);
 
     if (result >= 0){
-        if(is_game_dir(dirname)) {
-
-            if (strcmp(dirname, "ms0:/PSP/GAME") == 0) {
-                k1 = pspSdkSetK1(0);
-                sceIoDclose(result);
-                result = sceIoDopen("ms0:/PSP/GAME150");
-                pspSdkSetK1(k1);
-            }
-
+        if (strcmp(dirname, "ms0:/PSP/GAME") == 0) {
+            sceIoDclose(result);
+            result = sceIoDopen("ms0:/PSP/GAME150");
         }
     }
 
+    pspSdkSetK1(k1);
     return result;
 }
 
@@ -186,31 +136,34 @@ static inline void ascii2utf16(char *dest, const char *src)
     *dest++ = '\0';
 }
 
-static SceUID uid;
+// Version info patch
 static void patch_sysconf_plugin_module(SceModule2 *mod) {
     u32 addrhigh, addrlow;
     u32 text_addr = mod->text_addr;
 
-    //alloc memory for version string
-    uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_Low, 64, NULL);
-    if(uid >= 0)
-    {
-        char *p = (char *)sceKernelGetBlockHeadAddr(uid);
-        // Version info patch
+    static char p[64];
 
-        char verinfo[] = "1.50 ARK-4 CFW";
-        ascii2utf16((char *)p, verinfo);
+    char verinfo[] = "1.50 ARK-4";
+    ascii2utf16((char *)p, verinfo);
 
-        addrhigh = (u32)p >> 16;
-        addrlow = (u32)p & 0xFFFF;
+    addrhigh = (u32)p >> 16;
+    addrlow = (u32)p & 0xFFFF;
 
-        // lui v0, addrhigh
-        _sw(0x3C020000 | addrhigh, text_addr+0x872C);
-        // ori v0, v0, addrlow
-        _sw(0x34420000 | addrlow, text_addr+0x8730);
-    }
+    // lui v0, addrhigh
+    _sw(0x3C020000 | addrhigh, text_addr+0x872C);
+    // ori v0, v0, addrlow
+    _sw(0x34420000 | addrlow, text_addr+0x8730);
 }
 
+static void patch_sceCtrlReadBufferPositive(void)
+{
+    SceModule* mod;
+
+	mod = sceKernelFindModuleByName("sceVshBridge_Driver");
+    hookImportByNID(mod, "sceCtrl_driver", 0x1F803938, _sceCtrlReadBufferPositive);
+    g_sceCtrlReadBufferPositive = (void*)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
+    sctrlHENPatchSyscall(g_sceCtrlReadBufferPositive, _sceCtrlReadBufferPositive);
+}
 
 static int vshpatch_module_chain(SceModule2 *mod)
 {
@@ -233,16 +186,7 @@ static int vshpatch_module_chain(SceModule2 *mod)
 
 int module_start(SceSize args, void* argp)
 {
-
     previous = sctrlHENSetStartModuleHandler(vshpatch_module_chain);
     hook_directory_io();
     return 0;
-}
-
-int module_stop(SceSize args, void* argp)
-{
-	if(sceKernelFindModuleByName("sysconf_plugin_module") == NULL)
-		sceKernelFreePartitionMemory(uid);
-	return 0;
-
 }

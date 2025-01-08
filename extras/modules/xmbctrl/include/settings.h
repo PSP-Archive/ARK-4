@@ -49,7 +49,7 @@ char *settings[] =
 	"QA Flags",
 	"Custom App",
     "PSP Overclock",
-	"Reboot 1.50 OFW",
+	"Reboot 1.50 CFW",
 };
 
 #endif
