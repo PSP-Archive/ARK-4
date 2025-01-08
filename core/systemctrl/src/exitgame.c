@@ -48,6 +48,9 @@ static int exitVsh(){
 	// Refuse Operation in Dialog
 	if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return 0;
 
+	int (*setHoldMode)(int) = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
+	if (setHoldMode) setHoldMode(0);
+
 	ark_config->recovery = 0;
 	int res = sctrlKernelExitVSH(NULL);
 
@@ -76,11 +79,8 @@ int exitLauncher()
     else if (ark_config->launcher[0]) strcat(path, ark_config->launcher);
     else strcat(path, VBOOT_PBP);
 
-	// clear screen on PS1 games
-	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){
-		memset(0x44000000, 0, 512 * 272 * 4);
-		_sw(0x44000000, 0xBC800100);
-	}
+	int (*setHoldMode)(int) = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
+	if (setHoldMode) setHoldMode(0);
 
 	SceIoStat stat; int res = sceIoGetstat(path, &stat);
 
