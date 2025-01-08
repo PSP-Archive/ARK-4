@@ -17,6 +17,7 @@
 PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 2);
 
 #define GAME150_PATCH "__150"
+#define ELF_MAGIC 0x464C457F
 static STMOD_HANDLER previous;
 
 extern int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count);
@@ -107,23 +108,33 @@ SceUID gamedread(SceUID fd, SceIoDirent * dir) {
 
 	int result = sceIoDread(fd, dir);
 	int k1;
+	char path[256] = {0};
 
-	if(strstr(dir->d_name, "%") == NULL) { // hide corrupt icons
-		char path[256] = {0};
-		sprintf(path, "ms0:/PSP/GAME150/%s%s", dir->d_name, "%"); 
-		k1 = pspSdkSetK1(0);
+	k1 = pspSdkSetK1(0);
+	/*
+	if(strstr(dir->d_name, "%") == NULL && dir->d_name[0] != '.') { // hide corrupt icons
+		sprintf(path, "ms0:/PSP/GAME150/%s%c", dir->d_name, '%'); 
 		int op = sceIoDopen(path);
 		if(op>=0) {
 			sceIoDclose(op);
 			memset(path, 0, sizeof(path));
 			sprintf(path, "__SCE%s", dir->d_name); 
-			k1 = pspSdkSetK1(0);
-			sceIoDclose(result);
-			pspSdkSetK1(k1);
 			strcpy(dir->d_name, path);
 		}
-		pspSdkSetK1(k1);
 	}
+	*/
+	strcpy(path, "ms0:/PSP/GAME150/");
+	strcat(path, dir->d_name);
+	strcat(path, "/EBOOT.PBP");
+	int check = sceIoOpen(path, PSP_O_RDONLY, 0);
+	if(check>=0) {
+		u32 magic = 0;
+		sceIoRead(check, &magic, sizeof(magic));
+		if(magic == ELF_MAGIC)
+			strcpy(dir->d_name, "__SCE"); // hide icon
+		sceIoClose(check);
+	}
+	pspSdkSetK1(k1);
 
 	return result;
 
