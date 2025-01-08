@@ -35,8 +35,6 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 
 #define PSAR_SIZE_150		10149440
 
-#define N_FILES	5
-
 #define LOADEXEC_661_SIZE 0xBA00
 
 typedef struct
@@ -46,7 +44,7 @@ typedef struct
     int size;
 } ARKFile;
 
-ARKFile arkfiles[N_FILES] =
+ARKFile arkfiles[] =
 {
     { ARK_DC_PATH "/150/reboot150.prx", reboot150, sizeof(reboot150) },
     { ARK_DC_PATH "/150/kd/ark_systemctrl150.prx", systemctrl150, sizeof(systemctrl150) },
@@ -56,6 +54,8 @@ ARKFile arkfiles[N_FILES] =
     { ARK_DC_PATH "/150/kd/pspbtcnf_game.txt", pspbtcnf_game, sizeof(pspbtcnf_game) },
     { ARK_DC_PATH "/150/kd/pspbtcnf.txt", pspbtcnf, sizeof(pspbtcnf) },
 };
+
+static const int N_FILES = (sizeof(arkfiles)/sizeof(arkfiles[0]));
 
 ////////////////////////////////////////////////////////////////////
 // big buffers for data. Some system calls require 64 byte alignment
