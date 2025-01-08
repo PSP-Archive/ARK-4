@@ -130,13 +130,14 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	return sceKernelResumeThread(thid);
 }
 
+int (*_sctrlKernelExitVSH)(void*) = NULL;
 int popsExit(){
     int k1 = pspSdkSetK1(0);
     // attempt to exit via ps1cfw_enabler
     sceIoOpen("ms0:/__popsexit__", 0, 0);
     // fallback to regular exit
     pspSdkSetK1(k1);
-    return sctrlKernelExitVSH(NULL);
+    return _sctrlKernelExitVSH(NULL);
 }
 
 static int vram_clear(){
@@ -185,6 +186,8 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     // Patch sceKernelExitGame Syscalls
     if (strcmp(mod->modname, "sceLoadExec") == 0) {
+        // fix vsh exit
+        HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlKernelExitVSH), popsExit, _sctrlKernelExitVSH);
 		REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), popsExit);
         REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), popsExit);
         goto flush;
