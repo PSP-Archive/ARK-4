@@ -139,14 +139,14 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "sceMediaSync") == 0) {
 		// perfect time to apply extra memory patch
-		if (se_config->force_high_memory) unlockVitaMemory(MAX_HIGH_MEMSIZE);
+		if (se_config->force_high_memory) unlockVitaMemory(50);
 		else{
 			int apitype = sceKernelInitApitype();
 			if (apitype == 0x141){
 				int paramsize=4;
 				int use_highmem = 0;
 				if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-					unlockVitaMemory(MAX_HIGH_MEMSIZE);
+					unlockVitaMemory(50);
 					se_config->force_high_memory = 1;
 				}
         	}
