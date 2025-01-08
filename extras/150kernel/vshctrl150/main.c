@@ -50,7 +50,7 @@ static void patch_sceCtrlReadBufferPositive(void)
 }
 
 
-void Fix150Path(const char *file)
+static void Fix150Path(const char *file)
 {
 	char str[256];
 
@@ -65,6 +65,27 @@ void Fix150Path(const char *file)
 			strcpy((char *)file+17+(p-(str+14)), p+5);		
 		}
 	}
+}
+
+static void CorruptIconPatch(SceIoDirent * dir){
+    int k1 = pspSdkSetK1(0);
+
+    char path[256];
+	strcpy(path, "ms0:/PSP/GAME150/");
+	strcat(path, dir->d_name);
+	strcat(path, "/EBOOT.PBP");
+
+	int test_fd = sceIoOpen(path, PSP_O_RDONLY, 0);
+	
+    if (test_fd >=0 ) {
+		u32 magic = 0;
+		sceIoRead(test_fd, &magic, sizeof(magic));
+		if(magic == ELF_MAGIC)
+			strcpy(dir->d_name, "__SCE"); // hide icon
+		sceIoClose(test_fd);
+	}
+
+	pspSdkSetK1(k1);
 }
 
 static inline int is_game_dir(const char *dirname)
@@ -107,34 +128,8 @@ static inline int is_game_dir(const char *dirname)
 SceUID gamedread(SceUID fd, SceIoDirent * dir) {
 
 	int result = sceIoDread(fd, dir);
-	int k1;
-	char path[256] = {0};
-
-	k1 = pspSdkSetK1(0);
-	/*
-	if(strstr(dir->d_name, "%") == NULL && dir->d_name[0] != '.') { // hide corrupt icons
-		sprintf(path, "ms0:/PSP/GAME150/%s%c", dir->d_name, '%'); 
-		int op = sceIoDopen(path);
-		if(op>=0) {
-			sceIoDclose(op);
-			memset(path, 0, sizeof(path));
-			sprintf(path, "__SCE%s", dir->d_name); 
-			strcpy(dir->d_name, path);
-		}
-	}
-	*/
-	strcpy(path, "ms0:/PSP/GAME150/");
-	strcat(path, dir->d_name);
-	strcat(path, "/EBOOT.PBP");
-	int check = sceIoOpen(path, PSP_O_RDONLY, 0);
-	if(check>=0) {
-		u32 magic = 0;
-		sceIoRead(check, &magic, sizeof(magic));
-		if(magic == ELF_MAGIC)
-			strcpy(dir->d_name, "__SCE"); // hide icon
-		sceIoClose(check);
-	}
-	pspSdkSetK1(k1);
+	
+    CorruptIconPatch(dir);
 
 	return result;
 
