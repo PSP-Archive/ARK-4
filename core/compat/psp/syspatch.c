@@ -327,6 +327,10 @@ void PSPOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceMediaSync") == 0) {
         // Handle some settings
         processSettings();
+        goto flush;
+    }
+
+    if (strcmp(mod->modname, "sceImpose_Driver") == 0){
         // Handle extra ram setting
         handleExtraRam();
         goto flush;
