@@ -169,7 +169,7 @@ static void patch_sysconf_plugin_module(SceModule2 *mod) {
     u32 text_addr = mod->text_addr;
 
     //alloc memory for version string
-    uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_Low, 64, NULL);
+    SceUID uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_Low, 64, NULL);
     if(uid >= 0)
     {
         char *p = (char *)sceKernelGetBlockHeadAddr(uid);
