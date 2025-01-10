@@ -27,14 +27,6 @@ typedef struct _HookUserFunctions {
     void *func;
 } HookUserFunctions;
 
-
-static const char *game_list[] = {
-    "ms0:/PSP/GAME/", "ms0:/PSP/GAME150/"
-};
-
-
-
-
 // Flush Instruction and Data Cache
 void sync_cache()
 {
@@ -47,46 +39,46 @@ void sync_cache()
 
 static void Fix150Path(const char *file)
 {
-	char str[256];
+    char str[256];
 
-	if (strstr(file, "ms0:/PSP/GAME/") == file) {
-		strcpy(str, (char *)file);
+    if (strstr(file, "ms0:/PSP/GAME/") == file) {
+        strcpy(str, (char *)file);
 
-		char *p = strstr(str, GAME150_PATCH);
-		
-		if (p) {
-			strcpy((char *)file+13, "150/");
-			strncpy((char *)file+17, str+14, p-(str+14));
-			strcpy((char *)file+17+(p-(str+14)), p+5);		
-		}
-	}
+        char *p = strstr(str, GAME150_PATCH);
+        
+        if (p) {
+            strcpy((char *)file+13, "150/");
+            strncpy((char *)file+17, str+14, p-(str+14));
+            strcpy((char *)file+17+(p-(str+14)), p+5);        
+        }
+    }
 }
 
 static void CorruptIconPatch(SceIoDirent * dir){
-	int k1 = pspSdkSetK1(0);
+    int k1 = pspSdkSetK1(0);
 
-	SceIoStat stat;
+    SceIoStat stat;
 
     char path[256] = {0};
 
-	if(strchr(dir->d_name, '%') == NULL) {
-		sprintf(path, "ms0:/PSP/GAME/%s%%/EBOOT.PBP", dir->d_name);
-		memset(&stat, 0, sizeof(stat));
-		if(sceIoGetstat(path, &stat) >= 0) {
-			strcpy(dir->d_name, "__SCE"); // hide icon
-		}
-	}
-	pspSdkSetK1(k1);
+    if(strchr(dir->d_name, '%') == NULL) {
+        sprintf(path, "ms0:/PSP/GAME/%s%%/EBOOT.PBP", dir->d_name);
+        memset(&stat, 0, sizeof(stat));
+        if(sceIoGetstat(path, &stat) >= 0) {
+            strcpy(dir->d_name, "__SCE"); // hide icon
+        }
+    }
+    pspSdkSetK1(k1);
 
 }
 
 SceUID gamedread(SceUID fd, SceIoDirent * dir) {
 
-	int result = sceIoDread(fd, dir);
+    int result = sceIoDread(fd, dir);
 
     CorruptIconPatch(dir);
 
-		return result;
+        return result;
 
 }
 
@@ -98,14 +90,14 @@ SceUID gamedread(SceUID fd, SceIoDirent * dir) {
 
     Fix150Path(dirname);
 
-	SceUID result = sceIoDopen(dirname);
+    SceUID result = sceIoDopen(dirname);
 
-	if(result >= 0) {
-		if (stricmp(dirname, "ms0:/PSP/GAME") == 0) {
-			sceIoDclose(result);
-			result = sceIoDopen("ms0:/PSP/GAME150");
-		}
-	}
+    if(result >= 0) {
+        if (stricmp(dirname, "ms0:/PSP/GAME") == 0) {
+            sceIoDclose(result);
+            result = sceIoDopen("ms0:/PSP/GAME150");
+        }
+    }
 
     pspSdkSetK1(k1);
     return result;
@@ -114,17 +106,17 @@ SceUID gamedread(SceUID fd, SceIoDirent * dir) {
 
 
 static void hook_directory_io(){
-	HookUserFunctions hook_list[] = {
+    HookUserFunctions hook_list[] = {
         //{ 0xB29DDF9C, gamedopen  }, // NEEDS SOME HELP
         { 0xE3EB004C, gamedread  },
         //{ 0xEB092469, gamedclose },
     };
-	for(int i = 0; i<sizeof(hook_list)/sizeof(hook_list[0]);i++) {
-		void *fp = (void*)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", hook_list[i].nid);
-		if(fp != NULL) {
-			sctrlHENPatchSyscall(fp, hook_list[i].func);
-		}
-	}
+    for(int i = 0; i<sizeof(hook_list)/sizeof(hook_list[0]);i++) {
+        void *fp = (void*)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", hook_list[i].nid);
+        if(fp != NULL) {
+            sctrlHENPatchSyscall(fp, hook_list[i].func);
+        }
+    }
 }
 
 static inline void ascii2utf16(char *dest, const char *src)
@@ -176,13 +168,13 @@ static void patch_sceCtrlReadBufferPositive(void)
 static int vshpatch_module_chain(SceModule2 *mod)
 {
     u32 text_addr = mod->text_addr;
-	
+    
     if(0 == strcmp(mod->modname, "vsh_module")) {
         patch_sceCtrlReadBufferPositive();
-		hook_directory_io();
+        hook_directory_io();
         goto exit;
     }
-	if(0 == strcmp(mod->modname, "sysconf_plugin_module")) {
+    if(0 == strcmp(mod->modname, "sysconf_plugin_module")) {
         patch_sysconf_plugin_module(mod);
         goto exit;
     }
