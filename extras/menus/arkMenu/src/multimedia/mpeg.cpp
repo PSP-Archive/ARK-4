@@ -119,11 +119,9 @@ bool mps_header_injected = false;
 static void copyHeader(void* pData){
     memset(pData, 0, 2048);
     memcpy(pData, mps_header, sizeof(mps_header));
-    /*
     memcpy((u8*)pData+12, &MPEGsize, sizeof(MPEGsize));
     memcpy((u8*)pData+92, &m_iLastTimeStamp, sizeof(m_iLastTimeStamp));
     memcpy((u8*)pData+118, &m_iLastTimeStamp, sizeof(m_iLastTimeStamp));
-    */
 }
 
 SceInt32 RingbufferCallbackFromBuffer(ScePVoid pData, SceInt32 iNumPackets, ScePVoid pParam)
@@ -192,7 +190,7 @@ SceInt32 ParseHeader()
 
     if (is_mps){
         m_MpegStreamOffset = 0;
-        m_iLastTimeStamp = -1;
+        m_iLastTimeStamp = (MPEGsize-2048);
         m_MpegStreamSize = MPEGsize;
         MPEGcounter = 0;
         MPEGstart = 0;

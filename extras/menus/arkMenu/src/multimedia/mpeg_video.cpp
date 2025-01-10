@@ -31,9 +31,9 @@ int RenderFrame(int width, int height, void* Buffer)
     }
 
     int x, y;
-    int tw = (entry)? TEXTURE_W : 512;
-    for (y = 0; y < IMAGE_H; y++)
-        for (x = 0; x < IMAGE_W; x++)
+    int tw = Video.m_iBufferWidth;
+    for (y = 0; y < Video.m_iHeight; y++)
+        for (x = 0; x < Video.m_iWidth; x++)
             ((unsigned int*)image->data)[x+ y * tw] |= 0xFF000000;
 
     ya2d_flush_texture(image);
