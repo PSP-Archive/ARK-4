@@ -30,15 +30,8 @@ int RenderFrame(int width, int height, void* Buffer)
         entry->drawBG();
     }
 
-    int x, y;
-    int tw = Video.m_iBufferWidth;
-    for (y = 0; y < Video.m_iHeight; y++)
-        for (x = 0; x < Video.m_iWidth; x++)
-            ((unsigned int*)image->data)[x+ y * tw] |= 0xFF000000;
-
     ya2d_flush_texture(image);
-    //ya2d_draw_rect(dx, dy, image->width, image->height, 0xFF000000, 1);
-    ya2d_draw_texture(image, dx, dy);
+    ya2d_draw_texture_blend(image, dx, dy, 0xFF000000);
 
     if (playAT3 || !playMPEGAudio)
         sceKernelDelayThread(10000);
@@ -172,7 +165,7 @@ SceInt32 InitVideo()
     }
 
     image = ya2d_create_texture(Video.m_iWidth, Video.m_iHeight, GU_PSM_8888, YA2D_PLACE_VRAM);
-    //image->has_alpha = 0;
+    image->has_alpha = 0;
     Video.m_pVideoBuffer[0] = image->data;
 
     return 0;
