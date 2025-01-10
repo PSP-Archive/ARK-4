@@ -17,9 +17,6 @@
 PSP_MODULE_INFO("VshCtrl", 0x1007, 1, 2);
 
 #define GAME150_PATCH "__150"
-#define ELF_MAGIC 0x464C457F
-#define PBP_MAGIC 0x50425000
-
 static STMOD_HANDLER previous;
 
 extern int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count);
@@ -65,44 +62,20 @@ static void Fix150Path(const char *file)
 	}
 }
 
+static void CorruptIconPatch(SceIoDirent * dir){
+	int k1 = pspSdkSetK1(0);
 
-
-static void CorruptIconPatch(char *name){
-    int k1 = pspSdkSetK1(0);
-
-    /*if (strchr(name, '%') == NULL){
-        char path[256] = {0};
-		for(int i = 0; i<NELEMS(game_list); i++) {
-			const char *hidden_path = game_list[i];
-        	strcpy(path, hidden_path);
-        	strcat(path, name);
-        	strcat(path, "/EBOOT.PBP");
-
-        	int test_fd = sceIoOpen(path, PSP_O_RDONLY, 0);
-        
-        	if (test_fd >=0) {
-            	u32 magic = 0;
-            	sceIoRead(test_fd, &magic, sizeof(magic));
-            	if(magic == ELF_MAGIC)
-                	strcpy(name, "__SCE"); // hide icon
-            	sceIoClose(test_fd);
-        	}
-		}
-    }
-	*/
-	char path[256];
 	SceIoStat stat;
 
-	sprintf(path, "ms0:/PSP/GAME150/%s%%/EBOOT.PBP", name);
+    char path[256] = {0};
 
-	memset(&stat, 0, sizeof(stat));
-
-	if (sceIoGetstat(path, &stat) >= 0)
-	{
-		strcpy(name, "__SCE"); // hide icon
-
+	if(strchr(dir->d_name, '%') == NULL) {
+		sprintf(path, "ms0:/PSP/GAME/%s%%/EBOOT.PBP", dir->d_name);
+		memset(&stat, 0, sizeof(stat));
+		if(sceIoGetstat(path, &stat) >= 0) {
+			strcpy(dir->d_name, "__SCE"); // hide icon
+		}
 	}
-
 	pspSdkSetK1(k1);
 
 }
@@ -111,44 +84,46 @@ SceUID gamedread(SceUID fd, SceIoDirent * dir) {
 
 	int result = sceIoDread(fd, dir);
 
-    CorruptIconPatch(dir->d_name);
+    CorruptIconPatch(dir);
 
-	return result;
+		return result;
 
 }
 
-SceUID gamedopen(const char * dirname)
+// NEED WORK
+/*SceUID gamedopen(const char * dirname)
 {
 
     u32 k1 = pspSdkSetK1(0);
 
     Fix150Path(dirname);
 
-    SceUID result = sceIoDopen(dirname);
+	SceUID result = sceIoDopen(dirname);
 
-    if (result >= 0){
-        if (strcmp(dirname, "ms0:/PSP/GAME") == 0) {
-            sceIoDclose(result);
-            result = sceIoDopen("ms0:/PSP/GAME150");
-        }
-    }
+	if(result >= 0) {
+		if (stricmp(dirname, "ms0:/PSP/GAME") == 0) {
+			sceIoDclose(result);
+			result = sceIoDopen("ms0:/PSP/GAME150");
+		}
+	}
+
     pspSdkSetK1(k1);
-
     return result;
 }
+*/
 
 
 static void hook_directory_io(){
 	HookUserFunctions hook_list[] = {
-		{ 0xB29DDF9C, gamedopen  },
+        //{ 0xB29DDF9C, gamedopen  }, // NEEDS SOME HELP
         { 0xE3EB004C, gamedread  },
         //{ 0xEB092469, gamedclose },
     };
 	for(int i = 0; i<sizeof(hook_list)/sizeof(hook_list[0]);i++) {
-    	void *fp = (void*)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", hook_list[i].nid);
-    	if(fp != NULL) {
-        	sctrlHENPatchSyscall(fp, hook_list[i].func);
-    	}
+		void *fp = (void*)sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", hook_list[i].nid);
+		if(fp != NULL) {
+			sctrlHENPatchSyscall(fp, hook_list[i].func);
+		}
 	}
 }
 
@@ -190,9 +165,9 @@ static void patch_sysconf_plugin_module(SceModule2 *mod) {
 
 static void patch_sceCtrlReadBufferPositive(void)
 {
-    SceModule* mod;
 
-	mod = sceKernelFindModuleByName("sceVshBridge_Driver");
+
+    SceModule *mod = sceKernelFindModuleByName("sceVshBridge_Driver");
     hookImportByNID(mod, "sceCtrl_driver", 0x1F803938, _sceCtrlReadBufferPositive);
     g_sceCtrlReadBufferPositive = (void*)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
     sctrlHENPatchSyscall(g_sceCtrlReadBufferPositive, _sceCtrlReadBufferPositive);
@@ -201,9 +176,10 @@ static void patch_sceCtrlReadBufferPositive(void)
 static int vshpatch_module_chain(SceModule2 *mod)
 {
     u32 text_addr = mod->text_addr;
-
+	
     if(0 == strcmp(mod->modname, "vsh_module")) {
         patch_sceCtrlReadBufferPositive();
+		hook_directory_io();
         goto exit;
     }
 	if(0 == strcmp(mod->modname, "sysconf_plugin_module")) {
@@ -220,6 +196,5 @@ static int vshpatch_module_chain(SceModule2 *mod)
 int module_start(SceSize args, void* argp)
 {
     previous = sctrlHENSetStartModuleHandler(vshpatch_module_chain);
-    hook_directory_io();
     return 0;
 }
