@@ -164,7 +164,8 @@ SceInt32 InitVideo()
         Video.m_iBufferWidth         = 512;
     }
 
-    image = ya2d_create_texture(Video.m_iWidth, Video.m_iHeight, GU_PSM_8888, YA2D_PLACE_VRAM);
+    //image = ya2d_create_texture(Video.m_iWidth, Video.m_iHeight, GU_PSM_8888, YA2D_PLACE_VRAM);
+    image = ya2d_create_texture((entry)?Video.m_iWidth:768, (entry)?Video.m_iHeight:480, GU_PSM_8888, YA2D_PLACE_VRAM);
     image->has_alpha = 0;
     Video.m_pVideoBuffer[0] = image->data;
 
