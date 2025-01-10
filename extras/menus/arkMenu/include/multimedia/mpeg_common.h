@@ -40,6 +40,8 @@ enum
 
 #define BUFFER_WIDTH            256
 
+#define N_VIDEO_BUFFERS 1
+
 typedef struct VideoThreadData
 {
     SceUID                          m_SemaphoreStart;
@@ -47,8 +49,8 @@ typedef struct VideoThreadData
     SceUID                          m_SemaphoreLock;
     SceUID                          m_ThreadID;
 
-    ScePVoid                        m_pVideoBuffer[2];
-    SceInt32                        m_iBufferTimeStamp[2];
+    ScePVoid                        m_pVideoBuffer[N_VIDEO_BUFFERS];
+    SceInt32                        m_iBufferTimeStamp[N_VIDEO_BUFFERS];
 
     SceInt32                        m_iNumBuffers;
     SceInt32                        m_iFullBuffers;

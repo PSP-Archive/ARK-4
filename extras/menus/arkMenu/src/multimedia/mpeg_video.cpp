@@ -19,10 +19,9 @@ SceInt32 AVSyncStatus(DecoderThreadData* D)
     return 1;
 }
 
-static ya2d_texture* image = NULL;
-static int debug = 0;
+static ya2d_texture* image[N_VIDEO_BUFFERS] = {NULL};
 
-int RenderFrame(int width, int height, void* Buffer)
+int RenderFrame(DecoderThreadData* D)
 {
 
     common::clearScreen(CLEAR_COLOR);
@@ -30,13 +29,15 @@ int RenderFrame(int width, int height, void* Buffer)
         entry->drawBG();
     }
 
-    ya2d_flush_texture(image);
-    ya2d_draw_texture_blend(image, dx, dy, 0xFF000000);
+    ya2d_texture* tex = image[D->Video->m_iPlayBuffer];
+
+    ya2d_flush_texture(tex);
+    ya2d_draw_texture_blend(tex, dx, dy, 0xFF000000);
 
     if (playAT3 || !playMPEGAudio)
         sceKernelDelayThread(10000);
     else
-        sceKernelDelayThread(0);
+        sceKernelDelayThread(1);
 
     common::flipScreen();
     
@@ -75,7 +76,7 @@ int T_Video(SceSize _args, void *_argp)
 
             if (iSyncStatus > 0)
             {
-                if(iSyncStatus == 1) RenderFrame(D->Video->m_iWidth, D->Video->m_iHeight, D->Video->m_pVideoBuffer[D->Video->m_iPlayBuffer]);
+                if(iSyncStatus == 1) RenderFrame(D);
                 sceKernelWaitSema(D->Video->m_SemaphoreLock, 1, 0);
 
                 D->Video->m_iFullBuffers--;
@@ -100,7 +101,7 @@ int T_Video(SceSize _args, void *_argp)
 
     while (D->Video->m_iFullBuffers > 0)
     {
-        RenderFrame(D->Video->m_iWidth, D->Video->m_iHeight, D->Video->m_pVideoBuffer[D->Video->m_iPlayBuffer]);
+        RenderFrame(D);
 
         sceKernelWaitSema(D->Video->m_SemaphoreLock, 1, 0);
 
@@ -147,7 +148,8 @@ SceInt32 InitVideo()
     }
 
     Video.m_iBufferTimeStamp[0]  = 0;
-    Video.m_iNumBuffers = 1;
+    Video.m_iBufferTimeStamp[1]  = 0;
+    Video.m_iNumBuffers = N_VIDEO_BUFFERS;
     Video.m_iFullBuffers         = 0;
     Video.m_iPlayBuffer          = 0;
     Video.m_iAbort               = 0;
@@ -164,10 +166,12 @@ SceInt32 InitVideo()
         Video.m_iBufferWidth         = 512;
     }
 
-    //image = ya2d_create_texture(Video.m_iWidth, Video.m_iHeight, GU_PSM_8888, YA2D_PLACE_VRAM);
-    image = ya2d_create_texture((entry)?Video.m_iWidth:768, (entry)?Video.m_iHeight:480, GU_PSM_8888, YA2D_PLACE_VRAM);
-    image->has_alpha = 0;
-    Video.m_pVideoBuffer[0] = image->data;
+    //image = ya2d_create_texture(Video.m_iWidth, Video.m_iHeight, GU_PSM_8888, YA2D_PLACE_RAM);
+    for (int i=0; i<N_VIDEO_BUFFERS; i++){
+        image[i] = ya2d_create_texture((entry)?Video.m_iWidth:768, (entry)?Video.m_iHeight:480, GU_PSM_8888, YA2D_PLACE_RAM);
+        image[i]->has_alpha = 0;
+        Video.m_pVideoBuffer[i] = image[i]->data;
+    }
 
     return 0;
 
@@ -188,9 +192,11 @@ SceInt32 ShutdownVideo()
     sceKernelDeleteSema(Video.m_SemaphoreWait);
     sceKernelDeleteSema(Video.m_SemaphoreLock);
     
-    ya2d_free_texture(image);
-    image = NULL;
-    Video.m_pVideoBuffer[0] = NULL;
+    for (int i=0; i<N_VIDEO_BUFFERS; i++){
+        ya2d_free_texture(image[i]);
+        image[i] = NULL;
+        Video.m_pVideoBuffer[i] = NULL;
+    }
     
     return 0;
 }
