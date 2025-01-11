@@ -195,8 +195,6 @@ int main(SceSize args, void *argp) {
     if (is_launcher_mode){
         sceKernelDelayThread(10000);
         proshell_main();
-        sceKernelExitGame();
-        return 0;
     }
 
 	SceCtrlData pad;
