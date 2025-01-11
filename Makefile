@@ -58,7 +58,8 @@ SUBDIRS = libs \
 	extras/menus/recovery \
 	extras/menus/xMenu \
 	extras/menus/vshmenu \
-	extras/apps/installer \
+	extras/apps/full_installer \
+	extras/apps/light_installer \
 	extras/apps/uninstaller \
 	extras/150kernel/rebootex150 \
 	extras/150kernel/reboot150 \
@@ -105,7 +106,8 @@ copy-bin:
 	$(Q)cp extras/menus/xMenu/EBOOT.PBP dist/ARK_01234/XBOOT.PBP # PS1 launcher
 	$(Q)cp extras/menus/arkMenu/themes/ARK_Revamped/THEME.ARK dist/ARK_01234/THEME.ARK # Launcher resources
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
-	$(Q)cp extras/apps/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
+	$(Q)cp extras/apps/light_installer/EBOOT.PBP dist/PSP/ARK_Light_Installer # Light installer
+	$(Q)cp extras/apps/full_installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
 	$(Q)cp contrib/PSP/fatms371mod/*.prx dist/PSP/ARK_Full_Installer/kd/ # Full installer
 	$(Q)cp core/compat/psp/btcnf/pstbtcnf_tt.bin dist/PSP/ARK_Full_Installer/TT/pstbtcnf.bin
 	$(Q)cp core/compat/psp/btcnf/pstbtcnf_dt.bin dist/PSP/ARK_Full_Installer/DT/pstbtcnf.bin
@@ -304,7 +306,8 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
 	$(Q)$(MAKE) $@ -C extras/apps/updater/
-	$(Q)$(MAKE) $@ -C extras/apps/installer/
+	$(Q)$(MAKE) $@ -C extras/apps/full_installer/
+	$(Q)$(MAKE) $@ -C extras/apps/light_installer/
 	$(Q)$(MAKE) $@ -C extras/apps/uninstaller
 	$(Q)$(MAKE) $@ -C extras/150kernel/reboot150
 	$(Q)$(MAKE) $@ -C extras/150kernel/rebootex150
@@ -396,6 +399,7 @@ mkdir-dist:
 	$(Q)mkdir dist/PSP/ARK_150Addon | true
 	$(Q)mkdir dist/PSP/ARK_cIPL | true
 	$(Q)mkdir dist/PSP/FinalSpeed | true
+	$(Q)mkdir dist/PSP/ARK_Light_Installer | true
 	$(Q)mkdir -p dist/PSP/ARK_Full_Installer/kd | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer/TT | true
 	$(Q)mkdir dist/PSP/ARK_Full_Installer/DT | true

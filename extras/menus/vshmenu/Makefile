@@ -2,11 +2,11 @@ TARGET = satelite
 OBJS = \
 	main.o \
 	blit.o\
-  ui.o \
+	ui.o \
 	menu.o \
 	advanced.o \
 	battery.o \
-  vsh.o \
+	vsh.o \
 	config.o \
 	color.o \
 	fonts.o \
