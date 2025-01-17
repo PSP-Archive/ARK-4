@@ -234,6 +234,7 @@ int mspro_init(void)
 
     // reset the controller
     mspro_reset();
+    mspro_wait_for_ready();
     return 0;
 }
 
