@@ -36,7 +36,6 @@ OBJS = \
 	uart.o \
 	delay.o \
 	fat.o \
-	ms.o \
 	utils.o
 
 

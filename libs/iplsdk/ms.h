@@ -1,8 +1,10 @@
 #ifndef __MS_H__
 #define __MS_H__
 
-void pspMsInit(void);
-int  pspMsReadSector(int sector, void *addr);
+#include "mspro.h"
+
+#define pspMsInit mspro_init
+#define pspMsReadSector mspro_read_sector
 
 
 #endif
