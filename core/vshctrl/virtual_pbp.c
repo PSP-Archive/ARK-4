@@ -1117,7 +1117,7 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     }
 
     // get ISO path with non-latin1 support
-    char sname[128];
+    char sname[128]; sname[0] = 0;
     get_ISO_shortname(sname, sizeof(sname), vpbp->name);
 
     SceIoStat stat;
