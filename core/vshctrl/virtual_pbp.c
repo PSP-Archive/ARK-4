@@ -1117,7 +1117,13 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     }
 
     // get ISO path with non-latin1 support
-    get_ISO_shortname(vpbp->name, sizeof(vpbp->name), vpbp->name);
+    char sname[128];
+    get_ISO_shortname(sname, sizeof(sname), vpbp->name);
+
+    SceIoStat stat;
+    if (sceIoGetstat(sname, &stat) >= 0){
+        strcpy(vpbp->name, sname);
+    }
 
     //set iso file for reboot
     sctrlSESetUmdFile(vpbp->name);
