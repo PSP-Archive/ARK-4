@@ -27,6 +27,7 @@ OBJS = \
 	lflash.o \
 	model.o \
 	mspro.o \
+	ms.o \
 	pwm.o \
 	spi.o \
 	comms.o \
