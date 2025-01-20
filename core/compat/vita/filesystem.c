@@ -81,11 +81,14 @@ int sceIoDcloseHook(int fd);
 // "ms" Driver Reference
 PspIoDrv * ms_drv = NULL;
 PspIoDrv * flashfat_drv = NULL;
-PspIoDrvArg * ms_driver = NULL;
-PspIoDrvArg * flash_driver = NULL;
 
 PspIoDrvFuncs ms_funcs;
 PspIoDrvFuncs flash_funcs;
+
+// "ef" driver
+PspIoDrv ef_drv;
+PspIoDrv fatef_drv;
+PspIoDrvFuncs ef_funcs;
 
 int (* _sceIoAddDrv)(PspIoDrv *drv);
 int (* _sceIoDelDrv)(const char *drv_name);
@@ -130,8 +133,6 @@ u32 UnprotectAddress(u32 addr){
 int (* sceIoMsOpen)(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode) = NULL;
 int sceIoMsOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
 {
-    // Update Internal "ms" Driver Reference
-    ms_driver = arg->drv;
     
     // File Write Open Request
     if ((flags & PSP_O_WRONLY) != 0) {
@@ -145,6 +146,98 @@ int sceIoMsOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
     
     // Forward Call
     return sceIoMsOpen(arg, file, flags, mode);
+}
+
+int sceIoEfOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
+{
+	char path[256];
+	strcpy(path, "/__ef0__");
+	strcat(path, file);
+    
+    // Forward Call
+    return sceIoMsOpenHook(arg, path, flags, mode);
+}
+
+int sceIoEfRemoveHook(PspIoDrvFileArg * arg, char * file)
+{
+	char path[256];
+	strcpy(path, "/__ef0__");
+	strcat(path, file);
+    
+    // Forward Call
+    return ms_funcs.IoRemove(arg, path);
+}
+
+int sceIoEfMkdirHook(PspIoDrvFileArg * arg, char * file, SceMode mode)
+{
+	char path[256];
+	strcpy(path, "/__ef0__");
+	strcat(path, file);
+    
+    // Forward Call
+    return ms_funcs.IoMkdir(arg, path, mode);
+}
+
+int sceIoEfRmdirHook(PspIoDrvFileArg * arg, char * file)
+{
+	char path[256];
+	strcpy(path, "/__ef0__");
+	strcat(path, file);
+    
+    // Forward Call
+    return ms_funcs.IoRmdir(arg, path);
+}
+
+int sceIoEfDopenHook(PspIoDrvFileArg * arg, char * file)
+{
+	char path[256];
+	strcpy(path, "/__ef0__");
+	strcat(path, file);
+    
+    // Forward Call
+    return ms_funcs.IoDopen(arg, path);
+}
+
+int sceIoEfGetStatHook(PspIoDrvFileArg * arg, char * file, SceIoStat* stat)
+{
+	char path[256];
+	strcpy(path, "/__ef0__");
+	strcat(path, file);
+    
+    // Forward Call
+    return ms_funcs.IoGetstat(arg, path, stat);
+}
+
+int sceIoEfChStatHook(PspIoDrvFileArg * arg, char * file, SceIoStat* stat, int bits)
+{
+	char path[256];
+	strcpy(path, "/__ef0__");
+	strcat(path, file);
+    
+    // Forward Call
+    return ms_funcs.IoChstat(arg, path, stat, bits);
+}
+
+int sceIoEfRenameHook(PspIoDrvFileArg *arg, const char *oldname, const char *newname){
+	char oldpath[256];
+	strcpy(oldpath, "/__ef0__");
+	strcat(oldpath, oldname);
+
+	char newpath[256];
+	strcpy(newpath, "/__ef0__");
+	strcat(newpath, newname);
+
+	// Forward Call
+    return ms_funcs.IoRename(arg, oldname, newname);
+}
+
+int sceIoEfChdirHook(PspIoDrvFileArg *arg, const char *dir){
+	char path[256];
+	strcpy(path, "/__ef0__");
+	strcat(path, dir);
+
+	// Forward Call
+    return ms_funcs.IoChdir(arg, dir);
 }
 
 int (* sceIoMsRead_)(PspIoDrvFileArg* arg, void* data, SceSize size);
@@ -594,6 +687,30 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 		// Add ms driver
 		ms_drv->funcs = driver->funcs;
 		_sceIoAddDrv(ms_drv);
+
+		// Add ef driver
+		memcpy(&ef_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
+		ef_funcs.IoOpen = sceIoEfOpenHook;
+		ef_funcs.IoRemove = sceIoEfRemoveHook;
+		ef_funcs.IoMkdir = sceIoEfMkdirHook;
+		ef_funcs.IoRmdir = sceIoEfRmdirHook;
+		ef_funcs.IoDopen = sceIoEfDopenHook;
+		ef_funcs.IoGetstat = sceIoEfGetStatHook;
+		ef_funcs.IoChstat = sceIoEfChStatHook;
+		ef_funcs.IoRename = sceIoEfRenameHook;
+		ef_funcs.IoChdir = sceIoEfChdirHook;
+
+		memcpy(&ef_drv, ms_drv, sizeof(PspIoDrv));
+		ef_drv.name = "ef";
+		ef_drv.name2 = "EF";
+		ef_drv.funcs = &ef_funcs;
+		_sceIoAddDrv(&ef_drv);
+
+		memcpy(&fatef_drv, driver, sizeof(PspIoDrv));
+		fatef_drv.name = "fatef";
+		fatef_drv.name2 = "FATEF";
+		fatef_drv.funcs = &ef_funcs;
+		_sceIoAddDrv(&fatef_drv);
 	}
     else if(strcmp(driver->name, "ms") == 0) {
         ms_drv = driver;

@@ -90,12 +90,6 @@ Browser::Browser(){
     if (conf->browser_dir[0]) this->cwd = conf->browser_dir;
 
     int psp_model = common::getPspModel();
-    if (psp_model != PSP_GO){
-        pEntries[EF0_DIR] = NULL;
-    }
-    else{
-        pEntries[UMD_DIR] = NULL;
-    }
     if (psp_model == PSP_11000 || ftp_driver == NULL){
         pEntries[FTP_DIR] = NULL;
     }
@@ -103,6 +97,11 @@ Browser::Browser(){
     if (IS_VITA(ark_config) || psp_model == PSP_GO){
         if (!sceUmdCheckMedium())
             pEntries[UMD_DIR] = NULL;
+    }
+
+    SceIoStat ef0stat;
+    if (sceIoGetstat("ef0:", &ef0stat) < 0){
+        pEntries[EF0_DIR] = NULL;
     }
 
     if (ark_config->exec_mode == PS_VITA)
