@@ -539,7 +539,7 @@ void LoadPlugins(){
     // Open Plugin Config from SEPLUGINS
     ProcessConfigFile(PLUGINS_PATH, addPlugin, removePlugin);
     // On PSP Go (only if ms0 isn't already redirected to ef0)
-    ProcessConfigFile(PLUGINS_PATH_GO, addPlugin, removePlugin);
+    if (!sctrlKernelMsIsEf()) ProcessConfigFile(PLUGINS_PATH_GO, addPlugin, removePlugin);
     // Flash0 plugins
     ProcessConfigFile(PLUGINS_PATH_FLASH, addPlugin, removePlugin);
     // start all loaded plugins

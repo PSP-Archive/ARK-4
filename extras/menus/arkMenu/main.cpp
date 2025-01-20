@@ -101,7 +101,11 @@ int main(int argc, char** argv){
 
     // Setup settings
     int max_settings = MAX_SETTINGS_OPTIONS;
-    if (common::getPspModel() != PSP_GO) max_settings -= 2;
+    SceIoStat ef0stat;
+    if (sceIoGetstat("ef0:", &ef0stat) < 0){
+        max_settings -= 2;
+    }
+
     SettingsTable stab = { settings_entries, max_settings };
     entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
 

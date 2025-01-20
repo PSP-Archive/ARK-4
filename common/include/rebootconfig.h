@@ -60,6 +60,7 @@ typedef struct RebootConfigARK {
     } rtm_mod;
     char game_id[10];
     unsigned int boot_from_fw_version;
+    int fake_apitype;
 } RebootConfigARK;
 
 #define IS_ARK_CONFIG(config) (*((u32*)config) == ARK_CONFIG_MAGIC)

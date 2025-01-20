@@ -21,6 +21,7 @@
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include <ark.h>
+#include "rebootconfig.h"
 #include "functions.h"
 #include "macros.h"
 #include "exitgame.h"
@@ -32,6 +33,7 @@ PSP_MODULE_INFO("ARKCompatLayer", 0x3007, 1, 0);
 
 ARKConfig* ark_config = NULL;
 SEConfig* se_config = NULL;
+RebootConfigARK* reboot_config = NULL;
 
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
@@ -63,6 +65,7 @@ int module_start(SceSize args, void * argp)
 
     se_config = sctrlSEGetConfig(NULL);
     ark_config = sctrlHENGetArkConfig(NULL);
+    reboot_config = sctrlHENGetRebootexConfig(NULL);
 
     if (ark_config == NULL){
         return 1;

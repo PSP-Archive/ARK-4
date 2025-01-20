@@ -7,7 +7,8 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
-#include <ark.h> 
+#include <ark.h>
+#include "rebootconfig.h"
 #include "functions.h"
 #include "macros.h"
 #include "exitgame.h"
@@ -19,6 +20,7 @@ extern STMOD_HANDLER previous;
 extern void exitLauncher();
 
 extern SEConfig* se_config;
+extern RebootConfigARK* reboot_config;
 
 extern int sceKernelSuspendThreadPatched(SceUID thid);
 
@@ -39,6 +41,15 @@ void onVitaFlashLoaded(){}
 int (*_sctrlKernelLoadExecVSHWithApitype)(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param) = NULL;
 int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
 {
+    // This allows homebrew to launch using PSP Go style apitypes
+    reboot_config->fake_apitype = apitype; // reuse space of this variable
+    switch (apitype){
+        case 0x152: apitype = 0x141; break;
+        case 0x125: apitype = 0x123; break;
+        case 0x126: apitype = 0x124; break;
+        case 0x155: apitype = 0x144; break;
+    }
+
     if (apitype == 0x141 && sctrlSEGetBootConfFileIndex() != MODE_INFERNO){ // homebrew API not using Inferno
         sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
         sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
@@ -94,7 +105,12 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     patchFileManagerImports(mod);
     
     patchGameInfoGetter(mod);
-    
+
+    if (strcmp(mod->modname, "PRO_Inferno_Driver") == 0){
+        hookImportByNID(mod, "SystemCtrlForKernel", 0xAD9849FE, 0);
+        goto flush;
+    }
+
     // Patch Kermit Peripheral Module to load flash0
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
     {
@@ -251,6 +267,12 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
     return -1;
 }
 
+int vitaMsIsEf(){
+    int apitype = reboot_config->fake_apitype;
+    int res = (apitype == 0x155 || apitype == 0x125 || apitype == 0x152 || apitype ==  0x220);
+    return res;
+}
+
 void PROVitaSysPatch(){
     
     // filesystem patches
@@ -258,6 +280,9 @@ void PROVitaSysPatch(){
 
     // patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
     HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlKernelLoadExecVSHWithApitype), sctrlKernelLoadExecVSHWithApitypeWithUMDemu, _sctrlKernelLoadExecVSHWithApitype);
+
+    // patch EfIsMs
+    REDIRECT_FUNCTION(K_EXTRACT_IMPORT(sctrlKernelMsIsEf), vitaMsIsEf);
 
     // Register custom start module
     prev_start = sctrlSetStartModuleExtra(StartModuleHandler);

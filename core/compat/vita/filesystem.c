@@ -28,6 +28,9 @@
 #include <functions.h>
 #include "filesystem.h"
 #include "vitaflash.h"
+#include "rebootconfig.h"
+
+extern RebootConfigARK* reboot_config;
 
 // sceIoDread Open List Item
 typedef struct OpenDirectory
@@ -674,7 +677,7 @@ int sceIoAddDrvHook(PspIoDrv * driver)
     else if (strcmp(driver->name, "fatms") == 0) {
 		memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
 
-        // Hook IoOpen Function
+        // Configure ms driver
         sceIoMsOpen = driver->funcs->IoOpen;
         driver->funcs->IoOpen = sceIoMsOpenHook;
         
@@ -684,11 +687,9 @@ int sceIoAddDrvHook(PspIoDrv * driver)
         sceIoMsWrite_ = driver->funcs->IoWrite;
         driver->funcs->IoWrite = sceIoMsWriteHook;
 
-		// Add ms driver
 		ms_drv->funcs = driver->funcs;
-		_sceIoAddDrv(ms_drv);
 
-		// Add ef driver
+		// Configure ef driver
 		memcpy(&ef_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
 		ef_funcs.IoOpen = sceIoEfOpenHook;
 		ef_funcs.IoRemove = sceIoEfRemoveHook;
@@ -704,12 +705,21 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 		ef_drv.name = "ef";
 		ef_drv.name2 = "EF";
 		ef_drv.funcs = &ef_funcs;
-		_sceIoAddDrv(&ef_drv);
 
 		memcpy(&fatef_drv, driver, sizeof(PspIoDrv));
 		fatef_drv.name = "fatef";
 		fatef_drv.name2 = "FATEF";
 		fatef_drv.funcs = &ef_funcs;
+
+		// redirect ms to ef
+		int apitype = reboot_config->fake_apitype;
+		if (apitype == 0x152 || apitype == 0x125 || apitype == 0x126 || apitype == 0x155){
+			memcpy(ms_drv->funcs, &ef_funcs, sizeof(PspIoDrvFuncs));
+		}
+
+		// Add drivers
+		_sceIoAddDrv(ms_drv);
+		_sceIoAddDrv(&ef_drv);
 		_sceIoAddDrv(&fatef_drv);
 	}
     else if(strcmp(driver->name, "ms") == 0) {
