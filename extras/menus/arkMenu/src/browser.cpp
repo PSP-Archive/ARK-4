@@ -568,7 +568,7 @@ void Browser::refreshDirs(const char* retry){
         }
     }
 
-    if (cwd == GO_ROOT){
+    if (cwd == GO_ROOT && common::folderExists("eh0:")){
         eh0 = new Folder(cwd, "<Go To eh0>");
     }
 
