@@ -2,102 +2,19 @@
 
 extern PspIoDrvFuncs ms_funcs;
 
-static int _sceIoEfOpen(u32* args)
+static int _sceIoEfHandler(u32* args)
 {
 
-    PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
-	char *file = (char *)args[1];
-	int flags = args[2];
-	SceMode mode = (SceMode)args[3];
+	int (*IoFunc)(u32, u32, u32, u32) = args[0];
+    PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[1];
+	char *file = (char *)args[2];
 
 	char path[256];
 	strcpy(path, "/__ef0__");
 	strcat(path, file);
     
     // Forward Call
-    return sceIoMsOpenHook(arg, path, flags, mode);
-}
-
-static int _sceIoEfRemove(u32 *args)
-{
-    PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
-	const char *file = (const char *)args[1];
-
-	char path[256];
-	strcpy(path, "/__ef0__");
-	strcat(path, file);
-    
-    // Forward Call
-    return ms_funcs.IoRemove(arg, path);
-}
-
-static int _sceIoEfMkdir(u32* args)
-{
-    PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
-	const char *file = (const char *)args[1];
-	SceMode mode = (SceMode)args[2];
-
-	char path[256];
-	strcpy(path, "/__ef0__");
-	strcat(path, file);
-    
-    // Forward Call
-    return ms_funcs.IoMkdir(arg, path, mode);
-}
-
-static int _sceIoEfRmdir(u32* args)
-{
-    PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
-	const char *file = (const char *)args[1];
-
-	char path[256];
-	strcpy(path, "/__ef0__");
-	strcat(path, file);
-    
-    // Forward Call
-    return ms_funcs.IoRmdir(arg, path);
-}
-
-static int _sceIoEfDopen(u32* args)
-{
-    PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
-	const char *file = (const char *)args[1];
-
-	char path[256];
-	strcpy(path, "/__ef0__");
-	strcat(path, file);
-    
-    // Forward Call
-    return ms_funcs.IoDopen(arg, path);
-}
-
-static _sceIoEfGetStat(u32* args)
-{
-    PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
-	const char *file = (const char *)args[1];
-	SceIoStat *stat = (SceIoStat *)args[2];
-
-	char path[256];
-	strcpy(path, "/__ef0__");
-	strcat(path, file);
-    
-    // Forward Call
-    return ms_funcs.IoGetstat(arg, path, stat);
-}
-
-static int _sceIoEfChStat(u32* args)
-{
-    PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
-	const char *file = (const char *)args[1];
-	SceIoStat *stat = (SceIoStat *)args[2];
-	int bits = (int)args[3];
-
-	char path[256];
-	strcpy(path, "/__ef0__");
-	strcat(path, file);
-    
-    // Forward Call
-    return ms_funcs.IoChstat(arg, path, stat, bits);
+    return IoFunc(arg, path, args[3], args[4]);
 }
 
 static int _sceIoEfRename(u32* args){
@@ -117,85 +34,90 @@ static int _sceIoEfRename(u32* args){
     return ms_funcs.IoRename(arg, oldpath, newpath);
 }
 
-static int _sceIoEfChdir(u32* args)
-{
-    PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
-	const char *dir = (const char *)args[1];
-
-	char path[256];
-	strcpy(path, "/__ef0__");
-	strcat(path, dir);
-
-	// Forward Call
-    return ms_funcs.IoChdir(arg, path);
-}
-
 int sceIoEfOpenHook(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
-	u32 args[4];
-	args[0] = (u32)arg;
-	args[1] = (u32)file;
-	args[2] = (u32)flags;
-	args[3] = (u32)mode;
+	extern u32 sceIoMsOpenHook(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode);
+	u32 args[5];
+	args[0] = sceIoMsOpenHook;
+	args[1] = (u32)arg;
+	args[2] = (u32)file;
+	args[3] = (u32)flags;
+	args[4] = (u32)mode;
 
-	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfOpen, args);
+	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfHandler, args);
 }
 
 int sceIoEfRemoveHook(PspIoDrvFileArg * arg, char * file)
 {
-	u32 args[2];
-	args[0] = (u32)arg;
-	args[1] = (u32)file;
+	u32 args[3];
+	args[0] = ms_funcs.IoRemove;
+	args[1] = (u32)arg;
+	args[2] = (u32)file;
 
-	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfRemove, args);
+	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfHandler, args);
 }
 
 int sceIoEfMkdirHook(PspIoDrvFileArg * arg, char * file, SceMode mode)
 {
-	u32 args[3];
-	args[0] = (u32)arg;
-	args[1] = (u32)file;
-	args[2] = (u32)mode;
+	u32 args[4];
+	args[0] = ms_funcs.IoMkdir;
+	args[1] = (u32)arg;
+	args[2] = (u32)file;
+	args[3] = (u32)mode;
 
-	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfMkdir, args);
+	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfHandler, args);
 }
 
 int sceIoEfRmdirHook(PspIoDrvFileArg * arg, char * file)
 {
-	u32 args[2];
-	args[0] = (u32)arg;
-	args[1] = (u32)file;
+	u32 args[3];
+	args[0] = ms_funcs.IoRmdir;
+	args[1] = (u32)arg;
+	args[2] = (u32)file;
 
-	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfRmdir, args);
+	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfHandler, args);
 }
 
 int sceIoEfDopenHook(PspIoDrvFileArg * arg, char * file)
 {
-	u32 args[2];
-	args[0] = (u32)arg;
-	args[1] = (u32)file;
+	u32 args[3];
+	args[0] = ms_funcs.IoDopen;
+	args[1] = (u32)arg;
+	args[2] = (u32)file;
 
-	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfDopen, args);
+	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfHandler, args);
 }
 
 int sceIoEfGetStatHook(PspIoDrvFileArg * arg, char * file, SceIoStat* stat)
 {
-	u32 args[3];
-	args[0] = (u32)arg;
-	args[1] = (u32)file;
-	args[2] = (u32)stat;
+	u32 args[4];
+	args[0] = ms_funcs.IoGetstat;
+	args[1] = (u32)arg;
+	args[2] = (u32)file;
+	args[3] = (u32)stat;
 
-	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfGetStat, args);
+	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfHandler, args);
 }
 
 int sceIoEfChStatHook(PspIoDrvFileArg * arg, char * file, SceIoStat* stat, int bits)
 {
-	u32 args[4];
-	args[0] = (u32)arg;
-	args[1] = (u32)file;
-	args[2] = (u32)stat;
-	args[3] = (u32)bits;
+	u32 args[5];
+	args[0] = ms_funcs.IoChstat;
+	args[1] = (u32)arg;
+	args[2] = (u32)file;
+	args[3] = (u32)stat;
+	args[4] = (u32)bits;
 
-	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfChStat, args);
+	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfHandler, args);
+}
+
+int sceIoEfChdirHook(PspIoDrvFileArg *arg, const char *dir)
+{
+	u32 args[3];
+	args[0] = ms_funcs.IoChdir;
+	args[1] = (u32)arg;
+	args[2] = (u32)dir;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfHandler, args);
 }
 
 int sceIoEfRenameHook(PspIoDrvFileArg *arg, const char *oldname, const char *newname)
@@ -206,13 +128,4 @@ int sceIoEfRenameHook(PspIoDrvFileArg *arg, const char *oldname, const char *new
 	args[2] = (u32)newname;
 
     return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfRename, args);
-}
-
-int sceIoEfChdirHook(PspIoDrvFileArg *arg, const char *dir)
-{
-	u32 args[2];
-	args[0] = (u32)arg;
-	args[1] = (u32)dir;
-
-	return sceKernelExtendKernelStack(0x4000, (void *)_sceIoEfChdir, args);
 }
