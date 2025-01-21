@@ -212,7 +212,7 @@ int sceIoRenamePatched(const char* oldfile, const char* newfile){
     char oldpath[256]; int ofstart = 0;
     char newpath[256]; int nfstart = 0;
 
-    if (checkEfPath(oldpath, &ofstart)){
+    if (checkEfPath(oldfile, &ofstart)){
       strcpy(oldpath, "uma0:pspemu");
       strcat(oldpath, oldfile+ofstart);
     }
