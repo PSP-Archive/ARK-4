@@ -252,51 +252,51 @@ int sceIoAddDrvHook(PspIoDrv * driver)
     else if (strcmp(driver->name, "fatms") == 0) {
 
         // Configure ms driver
-		memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
-        
+        memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
+
         sceIoMsOpen = driver->funcs->IoOpen;
         driver->funcs->IoOpen = sceIoMsOpenHook;
-        
+
         sceIoMsRead_ = driver->funcs->IoRead;
         driver->funcs->IoRead = sceIoMsReadHook;
-        
+
         sceIoMsWrite_ = driver->funcs->IoWrite;
         driver->funcs->IoWrite = sceIoMsWriteHook;
 
-		ms_drv->funcs = driver->funcs;
+        ms_drv->funcs = driver->funcs;
 
-		// Configure ef driver
-		memcpy(&ef_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
-		ef_funcs.IoOpen = sceIoEfOpenHook;
-		ef_funcs.IoRemove = sceIoEfRemoveHook;
-		ef_funcs.IoMkdir = sceIoEfMkdirHook;
-		ef_funcs.IoRmdir = sceIoEfRmdirHook;
-		ef_funcs.IoDopen = sceIoEfDopenHook;
-		ef_funcs.IoGetstat = sceIoEfGetStatHook;
-		ef_funcs.IoChstat = sceIoEfChStatHook;
-		ef_funcs.IoRename = sceIoEfRenameHook;
-		ef_funcs.IoChdir = sceIoEfChdirHook;
+        // Configure ef driver
+        memcpy(&ef_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
+        ef_funcs.IoOpen = sceIoEfOpenHook;
+        ef_funcs.IoRemove = sceIoEfRemoveHook;
+        ef_funcs.IoMkdir = sceIoEfMkdirHook;
+        ef_funcs.IoRmdir = sceIoEfRmdirHook;
+        ef_funcs.IoDopen = sceIoEfDopenHook;
+        ef_funcs.IoGetstat = sceIoEfGetStatHook;
+        ef_funcs.IoChstat = sceIoEfChStatHook;
+        ef_funcs.IoRename = sceIoEfRenameHook;
+        ef_funcs.IoChdir = sceIoEfChdirHook;
 
-		memcpy(&ef_drv, ms_drv, sizeof(PspIoDrv));
-		ef_drv.name = "ef";
-		ef_drv.name2 = "EF";
-		ef_drv.funcs = &ef_funcs;
+        memcpy(&ef_drv, ms_drv, sizeof(PspIoDrv));
+        ef_drv.name = "ef";
+        ef_drv.name2 = "EF";
+        ef_drv.funcs = &ef_funcs;
 
-		memcpy(&fatef_drv, driver, sizeof(PspIoDrv));
-		fatef_drv.name = "fatef";
-		fatef_drv.name2 = "FATEF";
-		fatef_drv.funcs = &ef_funcs;
+        memcpy(&fatef_drv, driver, sizeof(PspIoDrv));
+        fatef_drv.name = "fatef";
+        fatef_drv.name2 = "FATEF";
+        fatef_drv.funcs = &ef_funcs;
 
-		// redirect ms to ef
-		int apitype = reboot_config->fake_apitype;
-		if (apitype == 0x152 || apitype == 0x125 || apitype == 0x126 || apitype == 0x155){
-			memcpy(ms_drv->funcs, &ef_funcs, sizeof(PspIoDrvFuncs));
-		}
+        // redirect ms to ef
+        int apitype = reboot_config->fake_apitype;
+        if (apitype == 0x152 || apitype == 0x125 || apitype == 0x126 || apitype == 0x155){
+            memcpy(ms_drv->funcs, &ef_funcs, sizeof(PspIoDrvFuncs));
+        }
 
-		// Add drivers
-		_sceIoAddDrv(ms_drv);
-		_sceIoAddDrv(&ef_drv);
-		_sceIoAddDrv(&fatef_drv);
+        // Add drivers
+        _sceIoAddDrv(ms_drv);
+        _sceIoAddDrv(&ef_drv);
+        _sceIoAddDrv(&fatef_drv);
 	}
     else if(strcmp(driver->name, "ms") == 0) {
         ms_drv = driver;
