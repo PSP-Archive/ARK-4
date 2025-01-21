@@ -8,9 +8,11 @@ C_OBJS =    \
 	vitaflash.o   \
 	popspatch.o    \
 	filesystem.o    \
+	fatef.o          \
 	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/core/compat/psp/cwpatch.o \
 	$(ARKROOT)/core/compat/pentazemin/vitamem.o \
+	$(ARKROOT)/core/compat/pentazemin/flashfs.o \
 	$(ARKROOT)/core/systemctrl/src/dummy.o \
 		
 OBJS = \

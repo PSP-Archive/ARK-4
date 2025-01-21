@@ -25,7 +25,6 @@
 #include <systemctrl_private.h>
 #include <macros.h>
 #include <ark.h>
-#include <functions.h>
 
 extern unsigned char g_icon_png[6108];
 
@@ -49,6 +48,21 @@ enum {
     ICON0_MISSING = 1,
     ICON0_CORRUPTED = 2,
 };
+
+// PBP Header
+typedef struct
+{
+    u32 magic;
+    u32 version;
+    u32 param_offset;
+    u32 icon0_offset;
+    u32 icon1_offset;
+    u32 pic0_offset;
+    u32 pic1_offset;
+    u32 snd0_offset;
+    u32 elf_offset;
+    u32 psar_offset;
+} PBPHeader;
 
 static int g_icon0Status;
 

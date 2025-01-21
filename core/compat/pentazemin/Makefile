@@ -6,6 +6,7 @@ C_OBJS =  \
 	usbcam.o \
 	vitamem.o \
 	syspatch.o \
+	flashfs.o  \
 	io_patch.o  \
 	loadexec.o   \
 	adrenaline.o  \
