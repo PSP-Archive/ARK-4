@@ -127,7 +127,7 @@ static int _sceIoEfChdir(u32* args)
 	strcat(path, dir);
 
 	// Forward Call
-    return ms_funcs.IoChdir(arg, dir);
+    return ms_funcs.IoChdir(arg, path);
 }
 
 int sceIoEfOpenHook(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
