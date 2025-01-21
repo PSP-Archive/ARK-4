@@ -5,12 +5,7 @@
 
 void _start() __attribute__ ((weak, alias ("module_start")));
 
-#define SCE_PSPEMU_CACHE_NONE 0x1
-
-#define DEBUG 0
-
-tai_module_info_t info;
-uint32_t module_nid;
+#define DEBUG 1
 
 SceUID sceIoOpenHook = -1;
 tai_hook_ref_t sceIoOpenRef;
@@ -38,17 +33,6 @@ tai_hook_ref_t sceIoRenameRef;
 
 SceUID sceIoChdirHook = -1;
 tai_hook_ref_t sceIoChdirRef;
-
-int (* ScePspemuErrorExit)(int error);
-int (* ScePspemuConvertAddress)(uint32_t addr, int mode, uint32_t cache_size);
-int (* ScePspemuWritebackCache)(void *addr, int size);
-
-
-void get_functions(uint32_t text_addr) {
-    ScePspemuErrorExit                  = (void *)(text_addr + 0x4104 + 0x1);
-    ScePspemuConvertAddress             = (void *)(text_addr + 0x6364 + 0x1);
-    ScePspemuWritebackCache             = (void *)(text_addr + 0x6490 + 0x1);
-}
 
 #if DEBUG
 void logtext(char* text){
@@ -255,43 +239,7 @@ int sceIoRenamePatched(const char* oldfile, const char* newfile){
     return TAI_CONTINUE(int, sceIoRenameRef, oldpath, newpath);
 }
 
-/*
-int sceIoChdirPatched(char * file)
-{
-	  char path[256]; int fstart = 0;
-
-    if (checkEfPath(file, &fstart)){
-      strcpy(path, "uma0:pspemu");
-      strcat(path, file+fstart);
-      
-      #if DEBUG
-      logtext("chdir ");
-      logtext(path);
-      logtext("\n");
-      #endif
-    }
-    else {
-      strcpy(path, file);
-    }
-    
-    // Forward Call
-    return TAI_CONTINUE(int, sceIoChdirRef, path);
-}
-*/
-
 int module_start(SceSize argc, const void *args) {
-    info.size = sizeof(info);
-
-    taiGetModuleInfo("ScePspemu", &info);
-
-    SceKernelModuleInfo mod_info;
-    mod_info.size = sizeof(SceKernelModuleInfo);
-    int ret = sceKernelGetModuleInfo(info.modid, &mod_info);
-    
-    module_nid = info.module_nid;
-
-    // Get PspEmu functions
-    get_functions((uint32_t)mod_info.segments[0].vaddr);
 
     // patch IO
     sceIoOpenHook = taiHookFunctionImport(&sceIoOpenRef, "ScePspemu", 0xCAE9ACE6, 0x6C60AC61, sceIoOpenPatched);
@@ -302,7 +250,6 @@ int module_start(SceSize argc, const void *args) {
     sceIoGetstatHook = taiHookFunctionImport(&sceIoGetstatRef, "ScePspemu", 0xCAE9ACE6, 0xBCA5B623, sceIoGetstatPatched);
     sceIoChstatHook = taiHookFunctionImport(&sceIoChstatRef, "ScePspemu", 0xCAE9ACE6, 0x29482F7F, sceIoChstatPatched);
     sceIoRenameHook = taiHookFunctionImport(&sceIoRenameRef, "ScePspemu", 0xCAE9ACE6, 0xF737E369, sceIoRenamePatched);
-    //sceIoChdirHook = taiHookFunctionImport(&sceIoChdirRef, "ScePspemu", 0xCAE9ACE6, 0x6C60AC61, sceIoChdirPatched);
 
     return SCE_KERNEL_START_SUCCESS;
 }

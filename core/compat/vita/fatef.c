@@ -114,7 +114,7 @@ static int _sceIoEfRename(u32* args){
 	strcat(newpath, newname);
 
 	// Forward Call
-    return ms_funcs.IoRename(arg, oldname, newname);
+    return ms_funcs.IoRename(arg, oldpath, newpath);
 }
 
 static int _sceIoEfChdir(u32* args)
