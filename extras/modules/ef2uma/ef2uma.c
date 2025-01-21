@@ -5,7 +5,7 @@
 
 void _start() __attribute__ ((weak, alias ("module_start")));
 
-#define DEBUG 1
+#define DEBUG 0
 
 SceUID sceIoOpenHook = -1;
 tai_hook_ref_t sceIoOpenRef;
