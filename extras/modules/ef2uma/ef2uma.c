@@ -58,19 +58,7 @@ void logtext(char* text){
 }
 #endif
 
-bool checkEfFile(const char* path, int* fstart){
-  if (strncmp("ms0:__ef0__/", path, 12) == 0){
-    *fstart = 12;
-    return true;
-  }
-  else if (strncmp("ms0:/__ef0__/", path, 13) == 0){
-    *fstart = 13;
-    return true;
-  }
-  return false;
-}
-
-bool checkEfFolder(const char* path, int* fstart){
+bool checkEfPath(const char* path, int* fstart){
   if (strncmp("ms0:__ef0__", path, 11) == 0){
     *fstart = 11;
     return true;
@@ -87,8 +75,8 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
     
     char path[256]; int fstart = 0;
 
-    if (checkEfFile(file, &fstart)){
-      strcpy(path, "uma0:pspemu/");
+    if (checkEfPath(file, &fstart)){
+      strcpy(path, "uma0:pspemu");
       strcat(path, file+fstart);
       
       #if DEBUG
@@ -109,8 +97,8 @@ int sceIoRemovePatched(const char * file)
 
     char path[256]; int fstart = 0;
 
-    if (checkEfFile(file, &fstart)){
-      strcpy(path, "uma0:pspemu/");
+    if (checkEfPath(file, &fstart)){
+      strcpy(path, "uma0:pspemu");
       strcat(path, file+fstart);
       
       #if DEBUG
@@ -131,8 +119,8 @@ int sceIoMkdirPatched(char * file, SceMode mode)
 {
 	  char path[256]; int fstart = 0;
 
-    if (checkEfFile(file, &fstart)){
-      strcpy(path, "uma0:pspemu/");
+    if (checkEfPath(file, &fstart)){
+      strcpy(path, "uma0:pspemu");
       strcat(path, file+fstart);
       
       #if DEBUG
@@ -153,8 +141,8 @@ int sceIoRmdirPatched(char * file)
 {
 	  char path[256]; int fstart = 0;
 
-    if (checkEfFile(file, &fstart)){
-      strcpy(path, "uma0:pspemu/");
+    if (checkEfPath(file, &fstart)){
+      strcpy(path, "uma0:pspemu");
       strcat(path, file+fstart);
       
       #if DEBUG
@@ -175,7 +163,7 @@ int sceIoDopenPatched(char * file)
 {
 	  char path[256]; int fstart = 0;
 
-    if (checkEfFolder(file, &fstart)){
+    if (checkEfPath(file, &fstart)){
       strcpy(path, "uma0:pspemu");
       strcat(path, file+fstart);
 
@@ -197,7 +185,7 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
 
     char path[256]; int fstart = 0;
 
-    if (checkEfFolder(file, &fstart)){
+    if (checkEfPath(file, &fstart)){
       strcpy(path, "uma0:pspemu");
       strcat(path, file+fstart);
       
@@ -218,8 +206,8 @@ int sceIoChstatPatched(const char *file, SceIoStat *stat, int bits) {
 
     char path[256]; int fstart = 0;
 
-    if (checkEfFile(file, &fstart)){
-      strcpy(path, "uma0:pspemu/");
+    if (checkEfPath(file, &fstart)){
+      strcpy(path, "uma0:pspemu");
       strcat(path, file+fstart);
       
       #if DEBUG
@@ -240,16 +228,16 @@ int sceIoRenamePatched(const char* oldfile, const char* newfile){
     char oldpath[256]; int ofstart = 0;
     char newpath[256]; int nfstart = 0;
 
-    if (checkEfFile(oldpath, &ofstart)){
-      strcpy(oldpath, "uma0:pspemu/");
+    if (checkEfPath(oldpath, &ofstart)){
+      strcpy(oldpath, "uma0:pspemu");
       strcat(oldpath, oldfile+ofstart);
     }
     else {
       strcpy(oldpath, oldfile);
     }
 
-    if (checkEfFile(newfile, &nfstart)){
-      strcpy(newpath, "uma0:pspemu/");
+    if (checkEfPath(newfile, &nfstart)){
+      strcpy(newpath, "uma0:pspemu");
       strcat(newpath, newfile+nfstart);
     }
     else{
@@ -272,8 +260,8 @@ int sceIoChdirPatched(char * file)
 {
 	  char path[256]; int fstart = 0;
 
-    if (checkEfFile(file, &fstart)){
-      strcpy(path, "uma0:pspemu/");
+    if (checkEfPath(file, &fstart)){
+      strcpy(path, "uma0:pspemu");
       strcat(path, file+fstart);
       
       #if DEBUG
