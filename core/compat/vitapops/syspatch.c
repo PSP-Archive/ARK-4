@@ -13,10 +13,15 @@
 #include <pspinit.h>
 #include <functions.h>
 #include <graphics.h>
+#include "rebootconfig.h"
 #include "popsdisplay.h"
+#include "core/compat/vita/fatef.h"
 
 extern ARKConfig* ark_config;
-extern STMOD_HANDLER previous;
+extern RebootConfigARK* reboot_config;
+
+// Previous Module Start Handler
+STMOD_HANDLER previous = NULL;
 
 static int draw_thread = -1;
 static volatile int do_draw = 0;
@@ -27,6 +32,13 @@ int (* DisplayWaitVblankStart)() = NULL;
 
 extern SEConfig* se_config;
 
+// for ef0 support
+PspIoDrv * ms_drv = NULL;
+PspIoDrvFuncs ms_funcs;
+PspIoDrv ef_drv;
+PspIoDrv fatef_drv;
+PspIoDrvFuncs ef_funcs;
+int (* _sceIoAddDrv)(PspIoDrv *drv);
 
 KernelFunctions _ktbl = {
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
@@ -180,6 +192,82 @@ int popsLauncher(){
     return arkLauncher();
 }
 
+// This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
+int (*_sctrlKernelLoadExecVSHWithApitype)(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param) = NULL;
+int sctrlKernelLoadExecVSHWithApitypeFixed(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
+{
+    // This allows homebrew to launch using PSP Go style apitypes
+    reboot_config->fake_apitype = apitype; // reuse space of this variable
+    switch (apitype){
+        case 0x152: apitype = 0x141; break;
+        case 0x125: apitype = 0x123; break;
+        case 0x126: apitype = 0x124; break;
+        case 0x155: apitype = 0x144; break;
+    }
+
+    if (apitype == 0x141 && sctrlSEGetBootConfFileIndex() != MODE_INFERNO){ // homebrew API not using Inferno
+        sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
+        sctrlSESetUmdFile(""); // empty UMD drive (makes sceUmdCheckMedium return false)
+    }
+    return _sctrlKernelLoadExecVSHWithApitype(apitype, file, param);
+}
+
+int sceIoMsOpenHook(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode){
+    return ms_funcs.IoOpen(arg, file, flags, mode);
+}
+
+// sceIoAddDrv Hook
+int sceIoAddDrvHook(PspIoDrv * driver)
+{
+    // "ms" Driver
+    if (strcmp(driver->name, "fatms") == 0) {
+
+        // Configure ms driver
+        memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
+		ms_drv->funcs = driver->funcs;
+
+		// Configure ef driver
+		memcpy(&ef_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
+		ef_funcs.IoOpen = sceIoEfOpenHook;
+		ef_funcs.IoRemove = sceIoEfRemoveHook;
+		ef_funcs.IoMkdir = sceIoEfMkdirHook;
+		ef_funcs.IoRmdir = sceIoEfRmdirHook;
+		ef_funcs.IoDopen = sceIoEfDopenHook;
+		ef_funcs.IoGetstat = sceIoEfGetStatHook;
+		ef_funcs.IoChstat = sceIoEfChStatHook;
+		ef_funcs.IoRename = sceIoEfRenameHook;
+		ef_funcs.IoChdir = sceIoEfChdirHook;
+
+		memcpy(&ef_drv, ms_drv, sizeof(PspIoDrv));
+		ef_drv.name = "ef";
+		ef_drv.name2 = "EF";
+		ef_drv.funcs = &ef_funcs;
+
+		memcpy(&fatef_drv, driver, sizeof(PspIoDrv));
+		fatef_drv.name = "fatef";
+		fatef_drv.name2 = "FATEF";
+		fatef_drv.funcs = &ef_funcs;
+
+		// redirect ms to ef
+		int apitype = reboot_config->fake_apitype;
+		if (apitype == 0x152 || apitype == 0x125 || apitype == 0x126 || apitype == 0x155){
+			memcpy(ms_drv->funcs, &ef_funcs, sizeof(PspIoDrvFuncs));
+		}
+
+		// Add drivers
+		_sceIoAddDrv(ms_drv);
+		_sceIoAddDrv(&ef_drv);
+		_sceIoAddDrv(&fatef_drv);
+	}
+    else if(strcmp(driver->name, "ms") == 0) {
+        ms_drv = driver;
+        return 0;
+    }
+    
+    // Register Driver
+    return _sceIoAddDrv(driver);
+}
+
 void ARKVitaPopsOnModuleStart(SceModule2 * mod){
 
     static int booted = 0;
@@ -290,3 +378,15 @@ exit:
     if(previous) previous(mod);
 }
 
+void VitaPopsSysPatch(){
+
+    // Register Module Start Handler
+    previous = sctrlHENSetStartModuleHandler(ARKVitaPopsOnModuleStart);
+
+    // patch to add ef0 support
+    u32 IoAddDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
+    HIJACK_FUNCTION(IoAddDrv, sceIoAddDrvHook, _sceIoAddDrv);
+
+    // patch to fix go-style apitypes
+    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlKernelLoadExecVSHWithApitype), sctrlKernelLoadExecVSHWithApitypeFixed, _sctrlKernelLoadExecVSHWithApitype);
+}

@@ -12,19 +12,17 @@
 #include <pspgu.h>
 #include <pspsysevent.h>
 #include <functions.h>
+#include "rebootconfig.h"
 #include "popsdisplay.h"
 
 #include "core/compat/vitapops/rebootex/payload.h"
 
 PSP_MODULE_INFO("ARKCompatLayer", 0x3007, 1, 0);
 
-// Previous Module Start Handler
-STMOD_HANDLER previous = NULL;
-
 ARKConfig* ark_config = NULL;
 SEConfig* se_config = NULL;
+RebootConfigARK* reboot_config = NULL;
 
-extern void ARKVitaPopsOnModuleStart(SceModule2* mod);
 extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 
@@ -50,6 +48,7 @@ int module_start(SceSize args, void * argp)
 
     se_config = sctrlSEGetConfig(NULL);
     ark_config = sctrlHENGetArkConfig(NULL);
+    reboot_config = sctrlHENGetRebootexConfig(NULL);
 
     if (ark_config == NULL){
         return 1;
@@ -72,10 +71,7 @@ int module_start(SceSize args, void * argp)
     // set rebootex for VitaPOPS
     sctrlHENSetRebootexOverride(rebootbuffer_vitapops);
 
-    //initFileSystem();
-
-    // Register Module Start Handler
-    previous = sctrlHENSetStartModuleHandler(ARKVitaPopsOnModuleStart);
+    VitaPopsSysPatch();
     
     // Return Success
     return 0;

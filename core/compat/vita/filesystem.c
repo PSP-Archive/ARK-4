@@ -250,9 +250,10 @@ int sceIoAddDrvHook(PspIoDrv * driver)
     }
     // "ms" Driver
     else if (strcmp(driver->name, "fatms") == 0) {
-		memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
 
         // Configure ms driver
+		memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
+        
         sceIoMsOpen = driver->funcs->IoOpen;
         driver->funcs->IoOpen = sceIoMsOpenHook;
         

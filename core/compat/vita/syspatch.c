@@ -39,7 +39,7 @@ void onVitaFlashLoaded(){}
 
 // This patch injects Inferno with no ISO to simulate an empty UMD drive on homebrew
 int (*_sctrlKernelLoadExecVSHWithApitype)(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param) = NULL;
-int sctrlKernelLoadExecVSHWithApitypeWithUMDemu(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
+int sctrlKernelLoadExecVSHWithApitypeFixed(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
 {
     // This allows homebrew to launch using PSP Go style apitypes
     reboot_config->fake_apitype = apitype; // reuse space of this variable
@@ -279,7 +279,7 @@ void PROVitaSysPatch(){
     initFileSystem();
 
     // patch loadexec to use inferno for UMD drive emulation (needed for some homebrews to load)
-    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlKernelLoadExecVSHWithApitype), sctrlKernelLoadExecVSHWithApitypeWithUMDemu, _sctrlKernelLoadExecVSHWithApitype);
+    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlKernelLoadExecVSHWithApitype), sctrlKernelLoadExecVSHWithApitypeFixed, _sctrlKernelLoadExecVSHWithApitype);
 
     // patch EfIsMs
     REDIRECT_FUNCTION(K_EXTRACT_IMPORT(sctrlKernelMsIsEf), vitaMsIsEf);

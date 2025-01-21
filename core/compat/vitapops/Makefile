@@ -5,6 +5,7 @@ C_OBJS = \
 	syspatch.o \
 	popsdisplay.o \
 	$(ARKROOT)/libs/libsploit/patches.o \
+	$(ARKROOT)/core/compat/vita/fatef.o  \
 	$(ARKROOT)/core/compat/vita/vitaflash.o \
 		
 OBJS = \
