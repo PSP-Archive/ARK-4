@@ -104,7 +104,7 @@ int (* _sceIoAssign)(const char *dev1, const char *dev2, const char *dev3, int m
 void initFileSystem(){
     // Create Semaphore
     dreadSema = sceKernelCreateSema("sceIoDreadSema", 0, 1, 1, NULL);
-    
+
     // patch Driver
     //u32 IOAddDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
     //u32 AddDrv = findRefInGlobals("IoFileMgrForKernel", IOAddDrv, IOAddDrv);
@@ -112,15 +112,15 @@ void initFileSystem(){
     //_sw((unsigned int)sceIoAddDrvHook, AddDrv);
 
     u32 IoAddDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
-	u32 IoDelDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
-	u32 IoAssign = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xB2A628C1);
-	u32 IoUnassign = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x6D08A871);
+    u32 IoDelDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
+    u32 IoAssign = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xB2A628C1);
+    u32 IoUnassign = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x6D08A871);
 
-	HIJACK_FUNCTION(IoAddDrv, sceIoAddDrvHook, _sceIoAddDrv);
-	HIJACK_FUNCTION(IoDelDrv, sceIoDelDrvHook, _sceIoDelDrv);
+    HIJACK_FUNCTION(IoAddDrv, sceIoAddDrvHook, _sceIoAddDrv);
+    HIJACK_FUNCTION(IoDelDrv, sceIoDelDrvHook, _sceIoDelDrv);
 
-	HIJACK_FUNCTION(IoUnassign, sceIoUnassignHook, _sceIoUnassign);
-	HIJACK_FUNCTION(IoAssign, sceIoAssignHook, _sceIoAssign);
+    HIJACK_FUNCTION(IoUnassign, sceIoUnassignHook, _sceIoUnassign);
+    HIJACK_FUNCTION(IoAssign, sceIoAssignHook, _sceIoAssign);
 }
 
 u32 UnprotectAddress(u32 addr){
