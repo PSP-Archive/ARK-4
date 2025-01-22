@@ -48,9 +48,6 @@ static int exitVsh(){
 	// Refuse Operation in Dialog
 	if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return 0;
 
-	u32 vram = _lw(0xBC800100);
-	memset(0x40000000|vram, 0, 512 * 272 * 4);
-
 	int (*setHoldMode)(int) = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
 	if (setHoldMode) setHoldMode(0);
 
