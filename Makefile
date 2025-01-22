@@ -91,6 +91,7 @@ copy-bin:
 	$(Q)cp loader/live/kernel/psxloader/ARKX.BIN dist/ARK_01234/ARKX.BIN # ARK-X loader
 	$(Q)cp loader/live/kernel/psxloader/ps1cfw_enabler/ps1cfw_enabler.suprx dist/PSVita/PS1CFW/
 	$(Q)cp extras/modules/ef2uma/ef2uma.suprx dist/PSVita/
+	$(Q)cp extras/modules/ef2uma/ef2xmc.suprx dist/PSVita/
 	$(Q)cp loader/live/kernel/kxploit/sceUID/K.BIN dist/ARK_01234/K.BIN # Kernel exploit for PSP 6.6X and Vita 3.60+
 	$(Q)cp loader/live/kernel/kxploit/sceSdGetLastIndex/K.BIN dist/ARK_Loader/K.BIN # Alternative Kernel exploit for PSP 6.6X
 	$(Q)cp loader/live/FinalSpeed/EBOOT.PBP dist/PSP/FinalSpeed/

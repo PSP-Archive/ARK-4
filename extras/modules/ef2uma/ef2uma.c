@@ -6,6 +6,7 @@
 void _start() __attribute__ ((weak, alias ("module_start")));
 
 #define DEBUG 0
+#define USE_XMC0 0
 
 #define MAX_HOOKS 8
 struct{
@@ -38,7 +39,11 @@ void fixEfPath(newpath, oldpath)
 {
   int fstart = 0;
   if (checkEfPath(oldpath, &fstart)){
+      #if USE_XMC0
+      strcpy(newpath, "xmc0:pspemu");
+      #else
       strcpy(newpath, "uma0:pspemu");
+      #endif
       strcat(newpath, oldpath+fstart);
       
       #if DEBUG
