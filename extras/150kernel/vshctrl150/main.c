@@ -105,6 +105,19 @@ SceUID gamedread(SceUID fd, SceIoDirent * dir) {
 */
 
 
+// GAME150 redirect patch
+static void patch_game_plugin_module(SceModule2 *mod) {
+    u32 text_addr = mod->text_addr;
+    u32 offsets[] = { 0x90dc, 0x9230, 0x92c8, 0x9304, 0x99b8, 0x9de8 };
+
+    strcpy((char *)(text_addr + 0x126ec), "ms0:/PSP/GAME150");
+
+    for (int i = 0; i < sizeof(offsets)/sizeof(u32); i++) {
+        u32 addr = text_addr+offsets[i];
+        _sw(_lw(addr)-0x10, addr);
+    }
+}
+
 static void hook_directory_io(){
     HookUserFunctions hook_list[] = {
         //{ 0xB29DDF9C, gamedopen  }, // NEEDS SOME HELP
@@ -176,6 +189,10 @@ static int vshpatch_module_chain(SceModule2 *mod)
     }
     if(0 == strcmp(mod->modname, "sysconf_plugin_module")) {
         patch_sysconf_plugin_module(mod);
+        goto exit;
+    }
+	if(0 == strcmp(mod->modname, "game_plugin_module")) {
+        patch_game_plugin_module(mod);
         goto exit;
     }
 
