@@ -198,12 +198,7 @@ int sctrlKernelLoadExecVSHWithApitypeFixed(int apitype, const char * file, struc
 {
     // This allows homebrew to launch using PSP Go style apitypes
     reboot_config->fake_apitype = apitype; // reuse space of this variable
-    switch (apitype){
-        case 0x152: apitype = 0x141; break;
-        case 0x125: apitype = 0x123; break;
-        case 0x126: apitype = 0x124; break;
-        case 0x155: apitype = 0x144; break;
-    }
+    if (apitype == 0x155) apitype = 0x144;
 
     if (apitype == 0x141 && sctrlSEGetBootConfFileIndex() != MODE_INFERNO){ // homebrew API not using Inferno
         sctrlSESetBootConfFileIndex(MODE_INFERNO); // force inferno to simulate UMD drive
@@ -250,7 +245,7 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 
 		// redirect ms to ef
 		int apitype = reboot_config->fake_apitype;
-		if (apitype == 0x152 || apitype == 0x125 || apitype == 0x126 || apitype == 0x155){
+		if (apitype == 0x155){
 			memcpy(ms_drv->funcs, &ef_funcs, sizeof(PspIoDrvFuncs));
 		}
 
