@@ -62,15 +62,11 @@ static void CorruptIconPatch(SceIoDirent * dir){
     char path[256] = {0};
 
     if(strchr(dir->d_name, '%') == NULL) {
-        sprintf(path, "ms0:/PSP/GAME/%s%%/EBOOT.PBP", dir->d_name);
+        sprintf(path, "ms0:/PSP/GAME150/%s%%/EBOOT.PBP", dir->d_name);
         memset(&stat, 0, sizeof(stat));
         if(sceIoGetstat(path, &stat) >= 0) {
             strcpy(dir->d_name, "__SCE"); // hide icon
         }
-        if(dir->d_name[0] != '%') {
-            strcpy(dir->d_name, "__SCE"); // SCE prefix hide icon
-        }
-
     }
     pspSdkSetK1(k1);
 
