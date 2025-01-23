@@ -26,6 +26,12 @@ enum{
     UMD_DIR,
 };
 
+#define ROOT_DIR "ms0:/" // Initial directory
+#define GO_ROOT "ef0:/" // PSP Go initial directory
+#define FTP_ROOT "ftp:/" // FTP directory
+#define UMD_ROOT "disc0:/" // UMD directory
+#define EH0_ROOT "eh0:/" // Go Hidden directory
+
 class BrowserDriver{
     public:
         virtual bool connect() = 0;

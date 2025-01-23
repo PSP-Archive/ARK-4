@@ -101,10 +101,11 @@ int main(int argc, char** argv){
 
     // Setup settings
     int max_settings = MAX_SETTINGS_OPTIONS;
-    SceIoStat ef0stat;
-    if (sceIoGetstat("ef0:", &ef0stat) < 0){
+    SceUID ef0;
+    if ((ef0=sceIoDopen(GO_ROOT)) < 0){
         max_settings -= 2;
     }
+    else sceIoDclose(ef0);
 
     SettingsTable stab = { settings_entries, max_settings };
     entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);

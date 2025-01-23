@@ -18,11 +18,6 @@
 #include "music_player.h"
 #include "mpeg.h"
 
-#define ROOT_DIR "ms0:/" // Initial directory
-#define GO_ROOT "ef0:/" // PSP Go initial directory
-#define FTP_ROOT "ftp:/" // FTP directory
-#define UMD_ROOT "disc0:/" // UMD directory
-#define EH0_ROOT "eh0:/" // Go Hidden directory
 #define PAGE_SIZE 10 // maximum entries shown on screen
 #define BUF_SIZE 1024*16 // 16 kB buffer for copying files
 #define MENU_W 410
@@ -99,10 +94,11 @@ Browser::Browser(){
             pEntries[UMD_DIR] = NULL;
     }
 
-    SceIoStat ef0stat;
-    if (sceIoGetstat("ef0:", &ef0stat) < 0){
+    SceUID ef0;
+    if ((ef0=sceIoDopen(GO_ROOT)) < 0){
         pEntries[EF0_DIR] = NULL;
     }
+    else sceIoDclose(ef0);
 
     if (ark_config->exec_mode == PS_VITA)
     	pEntries[USB_DEV] = NULL;
