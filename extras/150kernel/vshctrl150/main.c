@@ -67,6 +67,10 @@ static void CorruptIconPatch(SceIoDirent * dir){
         if(sceIoGetstat(path, &stat) >= 0) {
             strcpy(dir->d_name, "__SCE"); // hide icon
         }
+        if(dir->d_name[0] != '%') {
+            strcpy(dir->d_name, "__SCE"); // SCE prefix hide icon
+        }
+
     }
     pspSdkSetK1(k1);
 
@@ -78,7 +82,7 @@ SceUID gamedread(SceUID fd, SceIoDirent * dir) {
 
     CorruptIconPatch(dir);
 
-        return result;
+    return result;
 
 }
 
