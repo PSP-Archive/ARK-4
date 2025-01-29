@@ -255,7 +255,7 @@ void processSettings(){
 
     // USB Charging
     if (se_config->usbcharge){
-        usb_charge(); // enable usb charging
+        usb_charge(5000000); // enable usb charging
     }
     
     // check launcher mode
@@ -347,6 +347,17 @@ void PSPOnModuleStart(SceModule2 * mod){
 	    }
         goto flush;
 	}
+
+    if (strcmp(mod->modname, "sceUSBCam_Driver") == 0){
+        extern int is_usb_charging;
+        extern int usb_charge_break;
+        if (is_usb_charging){
+            usb_charge_break = 1;
+            usb_charge(100);
+            sceKernelDelayThread(200);
+        }
+        goto flush;
+    }
     
     if (strcmp(mod->modname, "vsh_module") == 0){
         if (se_config->umdregion){

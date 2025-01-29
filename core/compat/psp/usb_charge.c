@@ -28,6 +28,8 @@
 
 extern int psp_model;
 
+int is_usb_charging = 0, usb_charge_break = 0;
+
 static inline void *get_usb_driver_function(u32 nid)
 {
     return (void*)sctrlHENFindFunction("sceUSB_Driver", "sceUsb_driver", nid);
@@ -43,7 +45,6 @@ static SceUInt usb_charge_timer_handler(SceUID uid, SceInt64 unk0, SceInt64 unk1
     int (*_scePowerBatteryEnableUsbCharging)(int) = NULL;
     int (*_scePowerBatteryDisableUsbCharging)(int) = NULL;
     int (*_scePowerIsBatteryCharging) (void);
-    static int is_charging = 0, charge_break = 0;
 
     _scePowerBatteryDisableUsbCharging = get_power_driver_function(0x90285886);
     _scePowerBatteryEnableUsbCharging = get_power_driver_function(0x733F973B);
@@ -60,24 +61,24 @@ static SceUInt usb_charge_timer_handler(SceUID uid, SceInt64 unk0, SceInt64 unk1
         return 2000000;
     }
 
-    if(is_charging == 1) {
-        if(charge_break != 0) {
+    if(is_usb_charging == 1) {
+        if(usb_charge_break != 0) {
             _scePowerBatteryDisableUsbCharging(0);
         }
 
-        charge_break = !charge_break;
-        is_charging = 0;
+        usb_charge_break = !usb_charge_break;
+        is_usb_charging = 0;
 
         return 5000000;
     }
 
     _scePowerBatteryEnableUsbCharging(1);
-    is_charging = 1;
+    is_usb_charging = 1;
 
     return 15000000;
 }
 
-void usb_charge(void)
+void usb_charge(SceInt64 time)
 {
     SceUID vtimer;
     SceModule2 *mod;
@@ -97,7 +98,7 @@ void usb_charge(void)
     }
 
     sceKernelStartVTimer(vtimer);
-    sceKernelSetVTimerHandlerWide(vtimer, 5000000, usb_charge_timer_handler, NULL);
+    sceKernelSetVTimerHandlerWide(vtimer, time, usb_charge_timer_handler, NULL);
 
     mod = (SceModule2*)sceKernelFindModuleByName("sceUSB_Driver");
 
