@@ -98,7 +98,7 @@ static int get_ISO_longname(char *l_name, const char *s_name, u32 size)
 				if (!strcmp(pri_dirent->s_name, p+1)) {
 					strncpy(l_name, s_name, MIN(p + 1 - s_name, size));
 					l_name[MIN(p + 1 - s_name, size-1)] = '\0';
-					strncat(l_name, size, dirent->d_name);
+					strncat(l_name, dirent->d_name, size);
 					printk("%s: final %s\n", __func__, l_name);
 					result = 0;
 
