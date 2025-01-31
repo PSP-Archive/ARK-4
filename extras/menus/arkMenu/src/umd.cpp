@@ -25,12 +25,12 @@ string UMD::getName(){
 void UMD::loadIcon(){
     Image* icon = NULL;
     
-	// el hefy UMD's are slooooowwww, but if it is initialized it does not wait the full 20 secs which is nice.
-	sceUmdWaitDriveStatWithTimer(UMD_WAITFORINIT, 20000000);
+    // el hefy UMD's are slooooowwww, but if it is initialized it does not wait the full 20 secs which is nice.
+    sceUmdWaitDriveStatWithTimer(UMD_WAITFORINIT, 20000000);
 
     if (common::fileExists(UMD_GAME_ICON0_PATH)) {
         icon = new Image(UMD_GAME_ICON0_PATH, YA2D_PLACE_RAM);
-	}
+    }
 
     icon = (icon == NULL)? common::getImage(IMAGE_NOICON) : icon;
     icon->swizzle();
@@ -40,12 +40,12 @@ void UMD::loadIcon(){
 SfoInfo UMD::getSfoInfo(){
     SfoInfo info = this->Entry::getSfoInfo();
     unsigned int size = 0;
-	string UMD_SFO_PATH;
-	if(common::fileExists(UMD_GAME_SFO_PATH)) {
-		size = common::fileSize(UMD_GAME_SFO_PATH);
-		UMD_SFO_PATH = UMD_GAME_SFO_PATH;
-	}
-	
+    string UMD_SFO_PATH;
+    if(common::fileExists(UMD_GAME_SFO_PATH)) {
+    	size = common::fileSize(UMD_GAME_SFO_PATH);
+    	UMD_SFO_PATH = UMD_GAME_SFO_PATH;
+    }
+    
     unsigned char* sfo_buffer = (unsigned char*)malloc(size);
 
     if (sfo_buffer){
@@ -70,10 +70,10 @@ void UMD::loadPics(){
     this->pic1 = NULL;
     
     // grab pic0.png
-	if (common::fileExists(UMD_GAME_PIC0_PATH))
+    if (common::fileExists(UMD_GAME_PIC0_PATH))
         this->pic0 = new Image(UMD_GAME_PIC0_PATH, YA2D_PLACE_RAM);
     // grab pic1.png
-	if (common::fileExists(UMD_GAME_PIC1_PATH))
+    if (common::fileExists(UMD_GAME_PIC1_PATH))
         this->pic1 = new Image(UMD_GAME_PIC1_PATH, YA2D_PLACE_RAM);
 }
 
@@ -87,7 +87,7 @@ void UMD::loadAVMedia(){
     int size;
 
     // grab snd0.at3
-	if (common::fileExists(UMD_GAME_SND0_PATH)){
+    if (common::fileExists(UMD_GAME_SND0_PATH)){
         size = common::fileSize(UMD_GAME_SND0_PATH);
         this->snd0 = malloc(size);
         memset(this->snd0, 0, size);
@@ -98,8 +98,8 @@ void UMD::loadAVMedia(){
         fclose(src);
     }
    
-	// grab icon1.pmf
-	if (common::fileExists(UMD_GAME_ICON1_PATH)){
+    // grab icon1.pmf
+    if (common::fileExists(UMD_GAME_ICON1_PATH)){
         size = common::fileSize(UMD_GAME_ICON1_PATH);
         this->icon1 = malloc(size);
         memset(this->icon1, 0, size);

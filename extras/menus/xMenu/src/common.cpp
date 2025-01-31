@@ -57,7 +57,7 @@ void loadConfig(){
 
 
 void common::loadConf() {
-	loadConfig();
+    loadConfig();
 }
 
 
@@ -73,13 +73,13 @@ bool common::fileExists(const std::string &path){
 }
 
 void common::saveConf() {
-	FILE* fp = fopen(MENU_SETTINGS, "wb");
-	fwrite(&config, 1, sizeof(t_conf), fp);
-	fclose(fp);
+    FILE* fp = fopen(MENU_SETTINGS, "wb");
+    fwrite(&config, 1, sizeof(t_conf), fp);
+    fclose(fp);
 }
 
 void common::loadData(){
-	loadConfig();
+    loadConfig();
     PBPHeader header;
     
     FILE* fp = fopen(argv[0], "rb");
@@ -104,7 +104,7 @@ Image* common::getNoIcon(){
 }
 
 t_conf* common::getConf() {
-	return &config;
+    return &config;
 }
 
 
@@ -135,7 +135,7 @@ void common::rebootMenu(){
 
     char path[256];
     strcpy(path, ark_config->arkpath);
-	strcat(path, ARK_XMENU);
+    strcat(path, ARK_XMENU);
 
     int runlevel = 0x141;
     

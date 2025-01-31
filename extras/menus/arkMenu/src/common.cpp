@@ -438,9 +438,9 @@ void common::stopLoadingThread(){
 }
 
 void common::loadTheme(){
-	SceIoStat stat;
-	string path = string(ark_config.arkpath) + "BG.PNG";
-	images[IMAGE_BG] = (sceIoGetstat(path.c_str(), &stat) >= 0) ? new Image(path.c_str()) : new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
+    SceIoStat stat;
+    string path = string(ark_config.arkpath) + "BG.PNG";
+    images[IMAGE_BG] = (sceIoGetstat(path.c_str(), &stat) >= 0) ? new Image(path.c_str()) : new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("DEFBG.PNG"));
     images[IMAGE_WAITICON] = new Image(theme_path, RESOURCES_LOAD_PLACE, findPkgOffset("WAIT.PNG"));
 
     images[0]->swizzle();
@@ -654,17 +654,17 @@ void common::printText(float x, float y, const char* text, u32 color, float size
     u32 arg5 = INTRAFONT_WIDTH_VAR;
     
     if (glow && config.text_glow){
-		int val = 0;
+    	int val = 0;
         float t = (float)((float)(clock() % CLOCKS_PER_SEC)) / ((float)CLOCKS_PER_SEC);
-		if(config.text_glow == 1) {
-        	val = (t < 0.5f) ? t*311 : (1.0f-t)*311;
-		}
-		else if(config.text_glow == 2) {
-        	val = (t < 0.5f) ? t*411 : (1.0f-t)*411;
-		}
-		else {
-        	val = (t < 0.5f) ? t*511 : (1.0f-t)*511;
-		}
+    	if(config.text_glow == 1) {
+            val = (t < 0.5f) ? t*311 : (1.0f-t)*311;
+    	}
+    	else if(config.text_glow == 2) {
+            val = (t < 0.5f) ? t*411 : (1.0f-t)*411;
+    	}
+    	else {
+            val = (t < 0.5f) ? t*511 : (1.0f-t)*511;
+    	}
         secondColor = (0xFF<<24)+(val<<16)+(val<<8)+(val);
     }
     if (scroll){

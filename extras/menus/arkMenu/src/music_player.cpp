@@ -21,7 +21,7 @@ static void mp3_cleanup(MP3* music){
             playlist.clear();
             cur_play = 0;
         }
-		
+    	
         delete music;
     }
 }
@@ -97,11 +97,11 @@ int MusicPlayer::control(){
         current_song = NULL;
     }
 
-	if(current_song == NULL) {
-		current_song = new MP3((char*)path.c_str(), false);
+    if(current_song == NULL) {
+    	current_song = new MP3((char*)path.c_str(), false);
         current_song->on_music_end = mp3_cleanup;
-		current_song->play();
-	}
+    	current_song->play();
+    }
 
     while (running && MP3::isPlaying()){
         pad.update();
@@ -132,9 +132,9 @@ int MusicPlayer::control(){
                 current_song->stop();
             }
         }
-		if(current_song == NULL && playlist.size() != 0) {
-			current_song->stop();
-		}
+    	if(current_song == NULL && playlist.size() != 0) {
+    		current_song->stop();
+    	}
     }
     pad.flush();
     

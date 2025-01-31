@@ -28,25 +28,25 @@
 extern string ark_version;
 static string save_status;
 static int status_frame_count = 0; // a few seconds
-								   //
+    							   //
 
 SubMenu::SubMenu(Menu* menu) {
     this->index = 0;
     this->menu = menu;
-	this->getItems();
+    this->getItems();
 }
 
 void SubMenu::getItems() {
-	common::loadConf();
+    common::loadConf();
     stringstream memoryStickSpeedup;
     memoryStickSpeedup << "Memory Stick Speedup: " << ((se_config->msspeed)? "Enabled" : "Disabled");
-	stringstream sort_entries;
+    stringstream sort_entries;
     sort_entries << "Sort Games by Name: " << ((common::getConf()->sort_entries)? "Enabled" : "Disabled");
-	stringstream skip_gameboot;
+    stringstream skip_gameboot;
     skip_gameboot << "Fast Gameboot: " << ((common::getConf()->fast_gameboot)? "Enabled" : "Disabled");
-	stringstream scan_cat;
+    stringstream scan_cat;
     scan_cat << "Scan Categories: " << ((common::getConf()->scan_cat)? "Enabled" : "Disabled");
-	stringstream swap_buttons;
+    stringstream swap_buttons;
     swap_buttons << "Swap X/O Buttons: " << ((common::getConf()->swap_buttons)? "Enabled" : "Disabled");
 
     options[0] = memoryStickSpeedup.str();
@@ -88,66 +88,66 @@ void SubMenu::updateScreen(){
     for (int i=0; i<n; i++){
         cur_x = x + ((w-(8*options[i].size()))/2);
         fillScreenRect(color&0x00FFFFFF, cur_x, cur_y+4, 8*options[i].size(), 8);
-		if(i==0)
-        	common::printText(cur_x, cur_y+4, options[i].c_str());
-		else
-        	common::printText(cur_x, cur_y+5, options[i].c_str());
+    	if(i==0)
+            common::printText(cur_x, cur_y+4, options[i].c_str());
+    	else
+            common::printText(cur_x, cur_y+5, options[i].c_str());
         if (i == index) {
-			static u32 alpha = 0;
-			static u32 delta = 5;
-			u32 color = RED_COLOR | (alpha<<24);
-			
+    		static u32 alpha = 0;
+    		static u32 delta = 5;
+    		u32 color = RED_COLOR | (alpha<<24);
+    		
             int tw = min((int)(options[i].size()*8)+8, w);
             fillScreenRect(color, cur_x-4, cur_y+13, tw, 2); // bottom
             fillScreenRect(color, cur_x-4, cur_y+3, tw, 2); // top
             fillScreenRect(color, cur_x-4, cur_y+5, 2, 8); // left
             fillScreenRect(color, cur_x-6+tw, cur_y+5, 2, 8); // right
-			
-			if(alpha==0) delta = 5;
-			else if (alpha == 255) delta = -5;
-			alpha += delta;
-		}
+    		
+    		if(alpha==0) delta = 5;
+    		else if (alpha == 255) delta = -5;
+    		alpha += delta;
+    	}
         cur_y += 10;
     }
 
     // draw save status
-	if(save_status.length() > 1){
-		printTextScreen(RIGHT, TOP+15, save_status.c_str(), GREEN_COLOR);
+    if(save_status.length() > 1){
+    	printTextScreen(RIGHT, TOP+15, save_status.c_str(), GREEN_COLOR);
 
         if (status_frame_count) status_frame_count--;
         else save_status = "";
-	}
+    }
 
     common::flip();
 }
 
 void SubMenu::run() {
-	
+    
     save_status = "";
 
-	Controller control;
+    Controller control;
     control.update();
-	while(1) {
+    while(1) {
 
-		updateScreen();
+    	updateScreen();
 
-		control.update();
-		if (control.decline() || control.triangle())
-			break;
+    	control.update();
+    	if (control.decline() || control.triangle())
+    		break;
         else if (control.accept() || control.left() || control.right()){
             switch (index){
                 case 0:
-					changeMsCacheSetting(); getItems(); break;
+    				changeMsCacheSetting(); getItems(); break;
                 case 1:
-				case 2:
-				case 3:
-				case 4:
-					changeSetting(index); getItems(); 
-					break;
+    			case 2:
+    			case 3:
+    			case 4:
+    				changeSetting(index); getItems(); 
+    				break;
                 case 5: 
-					menu->fadeOut(); common::rebootMenu(); break;
+    				menu->fadeOut(); common::rebootMenu(); break;
                 case 6: 
-					menu->fadeOut(); sceKernelExitGame(); break;
+    				menu->fadeOut(); sceKernelExitGame(); break;
             }
         }
         else if (control.up()){
@@ -157,7 +157,7 @@ void SubMenu::run() {
             if (index < (sizeof(options)/sizeof(options[0])-1)) index++;
         }
 
-	}
+    }
     control.update();
 }
 
@@ -165,23 +165,23 @@ SubMenu::~SubMenu() {}
 
 void SubMenu::changeSetting(int setting){
 
-	std::stringstream final_str;
-	
-	if(setting == 1)
-		common::getConf()->sort_entries = !common::getConf()->sort_entries;
-	else if(setting == 2)
-		common::getConf()->fast_gameboot = !common::getConf()->fast_gameboot;
-	else if(setting == 3)
-		common::getConf()->scan_cat = !common::getConf()->scan_cat;
-	else if(setting == 4)
-		common::getConf()->swap_buttons = !common::getConf()->swap_buttons;
+    std::stringstream final_str;
+    
+    if(setting == 1)
+    	common::getConf()->sort_entries = !common::getConf()->sort_entries;
+    else if(setting == 2)
+    	common::getConf()->fast_gameboot = !common::getConf()->fast_gameboot;
+    else if(setting == 3)
+    	common::getConf()->scan_cat = !common::getConf()->scan_cat;
+    else if(setting == 4)
+    	common::getConf()->swap_buttons = !common::getConf()->swap_buttons;
 
-	
-		
-	common::saveConf();
-	final_str << "Saved Settings!";
-	save_status = final_str.str().c_str();
-	status_frame_count = 100;
+    
+    	
+    common::saveConf();
+    final_str << "Saved Settings!";
+    save_status = final_str.str().c_str();
+    status_frame_count = 100;
 
 }
 

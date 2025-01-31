@@ -264,11 +264,11 @@ void SettingsMenu::control(Controller* pad){
             changed = true;
         }
     }
-	else if (pad->square() && this->name == "CFW Settings") {
-		pause();
-		resetSettings();
-		resume();
-	}
+    else if (pad->square() && this->name == "CFW Settings") {
+    	pause();
+    	resetSettings();
+    	resume();
+    }
 }
 
 void SettingsMenu::applyConf(){

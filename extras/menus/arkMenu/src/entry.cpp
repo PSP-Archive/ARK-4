@@ -121,11 +121,11 @@ void Entry::gameBoot(){
 
     //if (common::getConf()->fast_gameboot && name != "Recovery Menu")
     if (common::getConf()->fast_gameboot) {
-    	MusicPlayer::fullStop();
-    	SystemMgr::pauseDraw();
-    	sceDisplaySetHoldMode(1);
+        MusicPlayer::fullStop();
+        SystemMgr::pauseDraw();
+        sceDisplaySetHoldMode(1);
         return;
-	}
+    }
 
     MusicPlayer::fullStop();
 
@@ -183,7 +183,7 @@ bool Entry::isPRX(const char* path){
 }
 
 bool Entry::isARK(const char* path){
-	return (common::getExtension(path) == "ark");
+    return (common::getExtension(path) == "ark");
 }
 
 bool Entry::isTXT(const char* path){
@@ -215,16 +215,16 @@ bool Entry::cmpEntriesForSort (Entry* i, Entry* j) {
 
 bool Entry::getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size){
     SFOHeader *header = (SFOHeader *)sfo_buffer;
-	SFODir *entries = (SFODir *)(sfo_buffer + sizeof(SFOHeader));
+    SFODir *entries = (SFODir *)(sfo_buffer + sizeof(SFOHeader));
     bool res = false;
-	int i;
-	for (i = 0; i < header->nitems; i++) {
-		if (strcmp((char*)sfo_buffer + header->fields_table_offs + entries[i].field_offs, param_name) == 0) {
-			memcpy(var, sfo_buffer + header->values_table_offs + entries[i].val_offs, *var_size);
+    int i;
+    for (i = 0; i < header->nitems; i++) {
+    	if (strcmp((char*)sfo_buffer + header->fields_table_offs + entries[i].field_offs, param_name) == 0) {
+    		memcpy(var, sfo_buffer + header->values_table_offs + entries[i].val_offs, *var_size);
             res = true;
-			break;
-		}
-	}
+    		break;
+    	}
+    }
     return res;
 }
 
