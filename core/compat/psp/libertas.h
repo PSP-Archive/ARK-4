@@ -27,38 +27,38 @@
 
 typedef struct LIBERTAS_GET_HW_SPEC_COMMAND
 {
-	u16 HwIfVersion;
-	u16 HwVersion;
-	u16 NumOfWCB;
-	u16 NumOfMCastAddr;
-	u8  MacAddr[6];
-	u16 RegionCode;
-	u16 NumberOfAntenna;
-	u32 FWReleaseNumber;
-	u32 WcbBase;
-	u32 RxPdRdPtr;
-	u32 RxPdWrPtr;
-	u32 FwCapInfo;
+    u16 HwIfVersion;
+    u16 HwVersion;
+    u16 NumOfWCB;
+    u16 NumOfMCastAddr;
+    u8  MacAddr[6];
+    u16 RegionCode;
+    u16 NumberOfAntenna;
+    u32 FWReleaseNumber;
+    u32 WcbBase;
+    u32 RxPdRdPtr;
+    u32 RxPdWrPtr;
+    u32 FwCapInfo;
 } __attribute__((packed)) LIBERTAS_GET_HW_SPEC_COMMAND;
 
 typedef struct LIBERTAS_MAC_CONTROL_COMMAND
 {
-	u16 Action; // Get or Set
-	u16 Reserved;
+    u16 Action; // Get or Set
+    u16 Reserved;
 } __attribute__((packed)) LIBERTAS_MAC_CONTROL_COMMAND;
 
 typedef struct LIBERTAS_COMMAND
 {
-	u16 CmdCode;
-	u16 Size;
-	u16 SeqNum;
-	u16 Result;
+    u16 CmdCode;
+    u16 Size;
+    u16 SeqNum;
+    u16 Result;
 
-	union
-	{
-		LIBERTAS_GET_HW_SPEC_COMMAND	hwspec;
-		LIBERTAS_MAC_CONTROL_COMMAND	maccontrol;
-	} data;
+    union
+    {
+    	LIBERTAS_GET_HW_SPEC_COMMAND	hwspec;
+    	LIBERTAS_MAC_CONTROL_COMMAND	maccontrol;
+    } data;
 } __attribute__((packed)) LIBERTAS_COMMAND;
 
 // Read Fake MAC Config

@@ -308,10 +308,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } noumd = {
     "Disable UMD Drive",
-	2,
+    2,
     0,
     &(cfw_config.noumd),
-	{"Off", "On"}
+    {"Off", "On"}
 };
 
 static struct {
@@ -322,10 +322,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } noanalog = {
     "Disable Analog Stick",
-	2,
+    2,
     0,
     &(cfw_config.noanalog),
-	{"Off", "On"}
+    {"Off", "On"}
 };
 
 static struct {
@@ -336,10 +336,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } qaflags = {
     "QA Flags",
-	2,
+    2,
     0,
     &(cfw_config.qaflags),
-	{"Off", "On"}
+    {"Off", "On"}
 };
 
 
@@ -582,7 +582,7 @@ static unsigned char* configConvert(string conf){
     else if (strcasecmp(conf.c_str(), "noumd") == 0){
         return &(cfw_config.noumd);
     }
-	else if (strcasecmp(conf.c_str(), "noanalog") == 0){
+    else if (strcasecmp(conf.c_str(), "noanalog") == 0){
         return &(cfw_config.noanalog);
     }
     else if (strcasecmp(conf.c_str(), "qaflags") == 0){
@@ -689,7 +689,7 @@ void loadSettings(){
         }
     }
 
-   	cleanupSettings(); 
+       cleanupSettings(); 
 
     std::ifstream input((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
     for( std::string line; getline( input, line ); ){
@@ -779,27 +779,27 @@ void saveSettings(){
     output.close();
 
     std::ifstream input((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
-	std::string line;
-	bool exist = false;
-	while(std::getline(input, line)) {
-		if(line == "ULUS10201, infernocache, off") {
-			exist = true;
-			break;
-		}
-	}
-	input.close();
-	if(exist == false) {
-    	std::ofstream output((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
-		output << "# Luxor doesn't like Inferno Cache" << endl;
-		output << "ULUS10201, infernocache, off" << endl;
-		output.close();
-	}
+    std::string line;
+    bool exist = false;
+    while(std::getline(input, line)) {
+    	if(line == "ULUS10201, infernocache, off") {
+    		exist = true;
+    		break;
+    	}
+    }
+    input.close();
+    if(exist == false) {
+        std::ofstream output((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
+    	output << "# Luxor doesn't like Inferno Cache" << endl;
+    	output << "ULUS10201, infernocache, off" << endl;
+    	output.close();
+    }
 
     
 }
 
 void resetSettings() {
-	cfw_config.usbcharge = 1;
+    cfw_config.usbcharge = 1;
     cfw_config.overclock = 1;
     cfw_config.powersave = 0;
     cfw_config.defaultclock = 0;
@@ -818,8 +818,8 @@ void resetSettings() {
     cfw_config.noumd = 0;
     cfw_config.noanalog = 0;
     cfw_config.qaflags = 1;
-	cfw_config.vshregion = 0;
-	cfw_config.regionchange = 0;
+    cfw_config.vshregion = 0;
+    cfw_config.regionchange = 0;
 
     
     saveSettings();

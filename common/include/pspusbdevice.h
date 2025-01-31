@@ -7,16 +7,16 @@
  * Link with pspusbdevice for user mode access or with pspusbdevice_driver for kernel access
 */
 
-#define PSP_USBDEVICE_FLASH0	0
-#define	PSP_USBDEVICE_FLASH1	1
-#define PSP_USBDEVICE_FLASH2	2
-#define PSP_USBDEVICE_FLASH3	3
-#define PSP_USBDEVICE_UMD9660	4
+#define PSP_USBDEVICE_FLASH0    0
+#define    PSP_USBDEVICE_FLASH1	1
+#define PSP_USBDEVICE_FLASH2    2
+#define PSP_USBDEVICE_FLASH3    3
+#define PSP_USBDEVICE_UMD9660    4
 
-#define UNASSIGN_MASK_FLASH0	1
-#define UNASSIGN_MASK_FLASH1	2
-#define UNASSIGN_MASK_FLASH2	3
-#define UNASSIGN_MASK_FLASH3	4
+#define UNASSIGN_MASK_FLASH0    1
+#define UNASSIGN_MASK_FLASH1    2
+#define UNASSIGN_MASK_FLASH2    3
+#define UNASSIGN_MASK_FLASH3    4
 
 /**
  * Sets the usb device. Call this function when you are about to do the sceUsbStart and sceUsbActivate stuff

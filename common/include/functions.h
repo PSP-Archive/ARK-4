@@ -154,8 +154,8 @@ typedef struct KernelFunctions{
     int (* IoUnassign)(const char *dev);
     
     // sysmem.prx Functions
-    SceUID 	(*KernelAllocPartitionMemory)(SceUID partitionid, const char *name, int type, SceSize size, void *addr);
-    void * 	(*KernelGetBlockHeadAddr)(SceUID blockid);
+    SceUID     (*KernelAllocPartitionMemory)(SceUID partitionid, const char *name, int type, SceSize size, void *addr);
+    void *     (*KernelGetBlockHeadAddr)(SceUID blockid);
     int (* KernelFreePartitionMemory)(int);
     void (* KernelIcacheInvalidateAll)(void);
     void (* KernelDcacheWritebackInvalidateAll)(void);

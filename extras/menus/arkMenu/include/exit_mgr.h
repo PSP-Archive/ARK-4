@@ -36,7 +36,7 @@ class ExitManager : public SystemEntry{
                 switch (ret){
                     case 0:
                         sctrlSESetUmdFile("");
-          	            sctrlSESetBootConfFileIndex(MODE_UMD);
+                          sctrlSESetBootConfFileIndex(MODE_UMD);
                         sctrlKernelExitVSH(NULL);
                         break;
                     case 1:
@@ -52,7 +52,7 @@ class ExitManager : public SystemEntry{
             }
             else {
                 sctrlSESetUmdFile("");
-          	    sctrlSESetBootConfFileIndex(MODE_UMD);
+                  sctrlSESetBootConfFileIndex(MODE_UMD);
                 sctrlKernelExitVSH(NULL);
             }
         };
@@ -68,7 +68,7 @@ class ExitManager : public SystemEntry{
         std::string getInfo(){return "Exit";};
         void setInfo(std::string info){};
         void setFooter(std::string footer){};
-		std::string getFooter(){return "";};
+    	std::string getFooter(){return "";};
         Image* getIcon(){return common::getImage(IMAGE_EXIT);};
         void setName(std::string name){};
         std::string getName(){return "Exit";};

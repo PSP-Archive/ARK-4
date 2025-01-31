@@ -6,13 +6,13 @@
 
 
 typedef struct _UmdVideoEntry {
-	char *path;
-	struct _UmdVideoEntry *next;
+    char *path;
+    struct _UmdVideoEntry *next;
 } UmdVideoEntry;
 
 typedef struct _UmdVideoList {
-	UmdVideoEntry head, *tail;
-	size_t count;
+    UmdVideoEntry head, *tail;
+    size_t count;
 } UmdVideoList;
 
 

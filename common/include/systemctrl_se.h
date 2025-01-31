@@ -43,82 +43,82 @@ enum SEUmdModes
 
 enum swap_xo
 {
-	XO_CURRENT_O_PRIMARY = 0,
-	XO_CURRENT_X_PRIMARY = 1
+    XO_CURRENT_O_PRIMARY = 0,
+    XO_CURRENT_X_PRIMARY = 1
 };
 
 enum vsh_bg_colors
 {
-	BG_RANDOM		= 0,
-	BG_RED 			= 1,
-	BG_LITE_RED 	= 2,
-	BG_ORANGE 		= 3,
-	BG_LITE_ORANGE 	= 4,
-	BG_YELLOW 		= 5,
-	BG_LITE_YELLOW 	= 6,
-	BG_GREEN 		= 7,
-	BG_LITE_GREEN 	= 8,
-	BG_BLUE 		= 9,
-	BG_LITE_BLUE 	= 10,
-	BG_INDIGO 		= 11,
-	BG_LITE_INDIGO 	= 12,
-	BG_VIOLET 		= 13,
-	BG_LITE_VIOLET 	= 14,
-	BG_PINK 		= 15,
-	BG_LITE_PINK 	= 16,
-	BG_PURPLE 		= 17,
-	BG_LITE_PURPLE 	= 18,
-	BG_TEAL 		= 19,
-	BG_LITE_TEAL 	= 20,
-	BG_AQUA 		= 21,
-	BG_LITE_AQUA 	= 22,
-	BG_GREY 		= 23,
-	BG_LITE_GREY 	= 24,
-	BG_BLACK 		= 25,
-	BG_LITE_BLACK 	= 26,
-	BG_WHITE		= 27,
-	BG_LITE_WHITE	= 28,
+    BG_RANDOM		= 0,
+    BG_RED 			= 1,
+    BG_LITE_RED 	= 2,
+    BG_ORANGE 		= 3,
+    BG_LITE_ORANGE 	= 4,
+    BG_YELLOW 		= 5,
+    BG_LITE_YELLOW 	= 6,
+    BG_GREEN 		= 7,
+    BG_LITE_GREEN 	= 8,
+    BG_BLUE 		= 9,
+    BG_LITE_BLUE 	= 10,
+    BG_INDIGO 		= 11,
+    BG_LITE_INDIGO 	= 12,
+    BG_VIOLET 		= 13,
+    BG_LITE_VIOLET 	= 14,
+    BG_PINK 		= 15,
+    BG_LITE_PINK 	= 16,
+    BG_PURPLE 		= 17,
+    BG_LITE_PURPLE 	= 18,
+    BG_TEAL 		= 19,
+    BG_LITE_TEAL 	= 20,
+    BG_AQUA 		= 21,
+    BG_LITE_AQUA 	= 22,
+    BG_GREY 		= 23,
+    BG_LITE_GREY 	= 24,
+    BG_BLACK 		= 25,
+    BG_LITE_BLACK 	= 26,
+    BG_WHITE		= 27,
+    BG_LITE_WHITE	= 28,
 
 };
 
 enum vsh_fg_colors
 {
-	FG_RANDOM		= 0,
-	FG_WHITE 		= 1,
-	FG_ORANGE 		= 2,
-	FG_LITE_ORANGE 	= 3,
-	FG_YELLOW 		= 4,
-	FG_LITE_YELLOW 	= 5,
-	FG_GREEN 		= 6,
-	FG_LITE_GREEN 	= 7,
-	FG_BLUE 		= 8,
-	FG_LITE_BLUE 	= 9,
-	FG_INDIGO 		= 10,
-	FG_LITE_INDIGO 	= 11,
-	FG_VIOLET 		= 12,
-	FG_LITE_VIOLET 	= 13,
-	FG_PINK 		= 14,
-	FG_LITE_PINK 	= 15,
-	FG_PURPLE 		= 16,
-	FG_LITE_PURPLE 	= 17,
-	FG_TEAL 		= 18,
-	FG_LITE_TEAL 	= 19,
-	FG_AQUA 		= 20,
-	FG_LITE_AQUA 	= 21,
-	FG_GREY 		= 22,
-	FG_LITE_GREY 	= 23,
-	FG_BLACK 		= 24,
-	FG_LITE_BLACK 	= 25,
-	FG_LITE_RED 	= 26,
-	FG_RED 			= 27,
-	FG_LITE_WHITE 	= 28,
+    FG_RANDOM		= 0,
+    FG_WHITE 		= 1,
+    FG_ORANGE 		= 2,
+    FG_LITE_ORANGE 	= 3,
+    FG_YELLOW 		= 4,
+    FG_LITE_YELLOW 	= 5,
+    FG_GREEN 		= 6,
+    FG_LITE_GREEN 	= 7,
+    FG_BLUE 		= 8,
+    FG_LITE_BLUE 	= 9,
+    FG_INDIGO 		= 10,
+    FG_LITE_INDIGO 	= 11,
+    FG_VIOLET 		= 12,
+    FG_LITE_VIOLET 	= 13,
+    FG_PINK 		= 14,
+    FG_LITE_PINK 	= 15,
+    FG_PURPLE 		= 16,
+    FG_LITE_PURPLE 	= 17,
+    FG_TEAL 		= 18,
+    FG_LITE_TEAL 	= 19,
+    FG_AQUA 		= 20,
+    FG_LITE_AQUA 	= 21,
+    FG_GREY 		= 22,
+    FG_LITE_GREY 	= 23,
+    FG_BLACK 		= 24,
+    FG_LITE_BLACK 	= 25,
+    FG_LITE_RED 	= 26,
+    FG_RED 			= 27,
+    FG_LITE_WHITE 	= 28,
 };
 
 enum convert_battery
 {
-	NORMAL_TO_PANDORA	= 0,
-	PANDORA_TO_NORMAL	= 1,
-	UNSUPPORTED			= 2,
+    NORMAL_TO_PANDORA	= 0,
+    PANDORA_TO_NORMAL	= 1,
+    UNSUPPORTED			= 2,
 };
 
 enum MsSpeedFlag
@@ -151,50 +151,50 @@ enum umdregion
 // keep ARK's SEConfig binary compatible with PRO's
 typedef struct _SEConfig
 {
-	u32 magic;
+    u32 magic;
 
-	s16 umdmode;
-	s16 clock;
-	s16 disable_pause;
-	s16 hidedlc;
-	s16 umdregion;
-	s16 vshregion;
-	s16 usbdevice;
-	s16 usbcharge;
-	s16 hidemac;
-	s16 noanalog;
-	s16 qaflags; // enable QA flags patch
-	s16 launcher_mode;
-	s16 hidepics;
+    s16 umdmode;
+    s16 clock;
+    s16 disable_pause;
+    s16 hidedlc;
+    s16 umdregion;
+    s16 vshregion;
+    s16 usbdevice;
+    s16 usbcharge;
+    s16 hidemac;
+    s16 noanalog;
+    s16 qaflags; // enable QA flags patch
+    s16 launcher_mode;
+    s16 hidepics;
 
-	// unused, always true
-	s16 plugvsh; 
-	s16 pluggame;
-	s16 plugpop;
-	
-	s16 usbdevice_rdonly;
-	
-	s16 skiplogos;
-	
-	s16 noumd;
-	s16 custom_update; // automatic
-	s16 usenodrm; // always true
+    // unused, always true
+    s16 plugvsh; 
+    s16 pluggame;
+    s16 plugpop;
+    
+    s16 usbdevice_rdonly;
+    
+    s16 skiplogos;
+    
+    s16 noumd;
+    s16 custom_update; // automatic
+    s16 usenodrm; // always true
 
-	s16 hibblock;
-	s16 oldplugin;
-	s16 htmlviewer_custom_save_location; // unused, always false
-	s16 hide_cfw_dirs; // always true
-	s16 chn_iso; // always true
-	s16 msspeed;
-	s16 slimcolor; // always true
-	s16 iso_cache;
-	s16 iso_cache_size; // in MB, automatic
-	s16 iso_cache_num;
-	s16 iso_cache_policy;
-	s16 noled; // always false
-	s16 language; /* -1 as autodetect */
-	s16 force_high_memory;
-	s16 macspoofer; // automatic
+    s16 hibblock;
+    s16 oldplugin;
+    s16 htmlviewer_custom_save_location; // unused, always false
+    s16 hide_cfw_dirs; // always true
+    s16 chn_iso; // always true
+    s16 msspeed;
+    s16 slimcolor; // always true
+    s16 iso_cache;
+    s16 iso_cache_size; // in MB, automatic
+    s16 iso_cache_num;
+    s16 iso_cache_policy;
+    s16 noled; // always false
+    s16 language; /* -1 as autodetect */
+    s16 force_high_memory;
+    s16 macspoofer; // automatic
 } SEConfig;
 
 /**

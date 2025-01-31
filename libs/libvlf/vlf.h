@@ -1,122 +1,122 @@
 #ifndef __VLF_H__
 #define __VLF_H__
 
-#define VLF_DEFAULT	-1
+#define VLF_DEFAULT    -1
 
-#define VLF_BATTERY_ICON_HIGH		0
-#define VLF_BATTERY_ICON_MEDIUM		1
-#define VLF_BATTERY_ICON_LOW		2
-#define VLF_BATTERY_ICON_LOWEST		3
+#define VLF_BATTERY_ICON_HIGH    	0
+#define VLF_BATTERY_ICON_MEDIUM    	1
+#define VLF_BATTERY_ICON_LOW    	2
+#define VLF_BATTERY_ICON_LOWEST    	3
 
-#define VLF_ERROR_INVALID_INPUT			(-1)
-#define VLF_ERROR_INVALID_INPUT_DATA	(-2)
-#define VLF_ERROR_UNSUPPORTED_FORMAT	(-3)
-#define VLF_ERROR_OBJECT_OVERFLOW		(-4)
-#define VLF_ERROR_OBJECT_NOT_FOUND		(-5)
-#define VLF_ERROR_NO_MEMORY				(-6)
-#define VLF_ERROR_SYSTEM				(-7)
-#define VLF_ERROR_DUPLICATED			(-8)
+#define VLF_ERROR_INVALID_INPUT    		(-1)
+#define VLF_ERROR_INVALID_INPUT_DATA    (-2)
+#define VLF_ERROR_UNSUPPORTED_FORMAT    (-3)
+#define VLF_ERROR_OBJECT_OVERFLOW    	(-4)
+#define VLF_ERROR_OBJECT_NOT_FOUND    	(-5)
+#define VLF_ERROR_NO_MEMORY    			(-6)
+#define VLF_ERROR_SYSTEM    			(-7)
+#define VLF_ERROR_DUPLICATED    		(-8)
 
 /** Fade modes */
-#define VLF_FADE_MODE_IN		1
-#define VLF_FADE_MODE_OUT		2
-#define VLF_FADE_MODE_REPEAT	4
+#define VLF_FADE_MODE_IN    	1
+#define VLF_FADE_MODE_OUT    	2
+#define VLF_FADE_MODE_REPEAT    4
 
 /** Fade effect */
-#define VLF_FADE_EFFECT_STANDARD	0
-#define VLF_FADE_EFFECT_FAST		1
-#define VLF_FADE_EFFECT_VERY_FAST	2
-#define VLF_FADE_EFFECT_SLOW		3
-#define VLF_FADE_EFFECT_SUPERFAST	4
+#define VLF_FADE_EFFECT_STANDARD    0
+#define VLF_FADE_EFFECT_FAST    	1
+#define VLF_FADE_EFFECT_VERY_FAST    2
+#define VLF_FADE_EFFECT_SLOW    	3
+#define VLF_FADE_EFFECT_SUPERFAST    4
 
 /* Alignment */
-#define VLF_ALIGNMENT_LEFT			0
-#define VLF_ALIGNMENT_CENTER	0x200
-#define VLF_ALIGNMENT_RIGHT		0x400
+#define VLF_ALIGNMENT_LEFT    		0
+#define VLF_ALIGNMENT_CENTER    0x200
+#define VLF_ALIGNMENT_RIGHT    	0x400
 
 enum VlfObjects
 {
-	VLF_TEXT = 0,
-	VLF_PIC = 1,
-	VLF_SHADOWED_PIC = 2,
-	VLF_PROGRESS_BAR = 3
+    VLF_TEXT = 0,
+    VLF_PIC = 1,
+    VLF_SHADOWED_PIC = 2,
+    VLF_PROGRESS_BAR = 3
 };
 
 enum VlfButtonIcon
 {
-	VLF_ENTER = 0,
-	VLF_CANCEL = 1,
-	VLF_CROSS = 2,
-	VLF_CIRCLE = 3,
-	VLF_TRIANGLE = 4,
-	VLF_SQUARE = 5
+    VLF_ENTER = 0,
+    VLF_CANCEL = 1,
+    VLF_CROSS = 2,
+    VLF_CIRCLE = 3,
+    VLF_TRIANGLE = 4,
+    VLF_SQUARE = 5
 };
 
 enum RCOType
 {
-	RCO_GRAPHIC,
-	RCO_OBJECT,
-	RCO_SOUND,
-	RCO_LABEL,
-	RCO_FILEPARAM,
-	RCO_ANIMPARAM
+    RCO_GRAPHIC,
+    RCO_OBJECT,
+    RCO_SOUND,
+    RCO_LABEL,
+    RCO_FILEPARAM,
+    RCO_ANIMPARAM
 };
 
 enum VLF_MDType
 {
-	VLF_MD_TYPE_ERROR,
-	VLF_MD_TYPE_NORMAL,
+    VLF_MD_TYPE_ERROR,
+    VLF_MD_TYPE_NORMAL,
 };
 
 enum VLF_MD_Buttons
 {
-	VLF_MD_BUTTONS_NONE = 0,
-	VLF_MD_BUTTONS_YESNO = 0x10,
+    VLF_MD_BUTTONS_NONE = 0,
+    VLF_MD_BUTTONS_YESNO = 0x10,
 };
 
 enum VLF_MD_InitalCursor
 {
-	VLF_MD_INITIAL_CURSOR_YES = 0,
-	VLF_MD_INITIAL_CURSOR_NO = 0x100,
+    VLF_MD_INITIAL_CURSOR_YES = 0,
+    VLF_MD_INITIAL_CURSOR_NO = 0x100,
 };
 
 enum VLF_MD_ButtonRes
 {
-	VLF_MD_NONE,
-	VLF_MD_YES,
-	VLF_MD_NO,
-	VLF_MD_BACK
+    VLF_MD_NONE,
+    VLF_MD_YES,
+    VLF_MD_NO,
+    VLF_MD_BACK
 };
 
 enum VLF_DialogItem
 {
-	VLF_DI_ENTER,
-	VLF_DI_CANCEL,
-	VLF_DI_BACK,
-	VLF_DI_YES,
-	VLF_DI_NO,
-	VLF_DI_EDIT,
+    VLF_DI_ENTER,
+    VLF_DI_CANCEL,
+    VLF_DI_BACK,
+    VLF_DI_YES,
+    VLF_DI_NO,
+    VLF_DI_EDIT,
 };
 
 enum
 {
-	VLF_SPIN_STATE_NOT_FOCUS, // Spin control has not focus
-	VLF_SPIN_STATE_FOCUS, // Spin control text has focus but arrow is not shown
-	VLF_SPIN_STATE_ACTIVE, // Spin control has focus, and it is active 
+    VLF_SPIN_STATE_NOT_FOCUS, // Spin control has not focus
+    VLF_SPIN_STATE_FOCUS, // Spin control text has focus but arrow is not shown
+    VLF_SPIN_STATE_ACTIVE, // Spin control has focus, and it is active 
 };
 
-#define VLF_EV_RET_NOTHING				0
-#define VLF_EV_RET_REMOVE_EVENT			1 
-#define VLF_EV_RET_REMOVE_OBJECTS		2
-#define VLF_EV_RET_REMOVE_HANDLERS		4
-#define VLF_EV_RET_REFRESH_ON_DELAY		8
-#define VLF_EV_RET_DELAY				0x80000000 /* Delay VLF_EV_RET_DELAY | (X << 16), 0 <= X <= 32767 milisecs */
+#define VLF_EV_RET_NOTHING    			0
+#define VLF_EV_RET_REMOVE_EVENT    		1 
+#define VLF_EV_RET_REMOVE_OBJECTS    	2
+#define VLF_EV_RET_REMOVE_HANDLERS    	4
+#define VLF_EV_RET_REFRESH_ON_DELAY    	8
+#define VLF_EV_RET_DELAY    			0x80000000 /* Delay VLF_EV_RET_DELAY | (X << 16), 0 <= X <= 32767 milisecs */
 
 
 enum PspCtrlExtension
 {
-	PSP_CTRL_ENTER = 0x40000000,
-	PSP_CTRL_CANCEL = 0x80000000
+    PSP_CTRL_ENTER = 0x40000000,
+    PSP_CTRL_CANCEL = 0x80000000
 };
 
 /**

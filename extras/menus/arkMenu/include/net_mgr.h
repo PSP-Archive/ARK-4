@@ -13,7 +13,7 @@ class NetworkManager : public SystemEntry{
     std::string getInfo();
     void setInfo(std::string info);
     void setFooter(std::string footer);
-	std::string getFooter();
+    std::string getFooter();
     std::string getName();
     void setName(std::string name);
     Image* getIcon();
