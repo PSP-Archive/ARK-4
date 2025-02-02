@@ -33,9 +33,8 @@ typedef BrowserFolder Folder;
 
 extern "C" int kuKernelLoadModule(const char*, int, void*);
 
-#define MAX_OPTIONS 12
 
-static char* pEntries[MAX_OPTIONS] = {
+static char* pEntries[] = {
     (char*) "Cancel",
     (char*) "Copy",
     (char*) "Cut",
@@ -49,6 +48,8 @@ static char* pEntries[MAX_OPTIONS] = {
     (char*) "Go to ftp:/",
     (char*) "Go to disc0:/",
 };
+
+SceUID MAX_OPTIONS = sizeof(pEntries)/sizeof(pEntries[0]);
 
 BrowserDriver* Browser::ftp_driver = NULL;
 
@@ -102,6 +103,16 @@ Browser::Browser(){
 
     if (ark_config->exec_mode == PS_VITA)
         pEntries[USB_DEV] = NULL;
+
+	int i = 0;
+	int new_size = 0;
+	for(;i<MAX_OPTIONS;i++) {
+		if(pEntries[i])
+			new_size++;
+	}
+
+	MAX_OPTIONS = new_size;
+			
 
 }
 
