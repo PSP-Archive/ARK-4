@@ -950,12 +950,33 @@ static int getIcon0Status(void)
     }
     
     sceIoRead(fd, header, 40);
+    icon0_offset = *(unsigned int*)(header+12);
+
+    sceIoLseek32(fd, icon0_offset, PSP_SEEK_SET);
+    sceIoRead(fd, header, 40);
+
     sceIoClose(fd);
 
-    icon0_offset = *(unsigned int*)(header+12);
-    icon0_size =  *(unsigned int*)(header+16) - icon0_offset;
+    if(*(unsigned int*)(header+4) == 0xA1A0A0D)
+    {
+        if ( *(unsigned int*)(header+0xc) == 0x52444849 && // IHDR
+                *(unsigned int*)(header+0x10) == 0x50000000 && // 
+                *(unsigned int*)(header+0x14) == *(unsigned int*)(header+0x10)
+           )
+        {
+            result = ICON0_OK;
+        }
+        else
+        {
+            result = ICON0_CORRUPTED;
+        }
+    }
+    else
+    {
+        result = ICON0_MISSING;
+    }
 
-    return (icon0_size)? ICON0_OK : ICON0_MISSING;
+    return result;
 }
 
 static int getKeysBinPath(char *keypath, unsigned int size)
