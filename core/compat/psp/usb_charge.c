@@ -78,7 +78,7 @@ static SceUInt usb_charge_timer_handler(SceUID uid, SceInt64 unk0, SceInt64 unk1
     return 15000000;
 }
 
-void usb_charge(SceInt64 time)
+void usb_charge(u32 milis)
 {
     SceUID vtimer;
     SceModule2 *mod;
@@ -98,7 +98,7 @@ void usb_charge(SceInt64 time)
     }
 
     sceKernelStartVTimer(vtimer);
-    sceKernelSetVTimerHandlerWide(vtimer, time, usb_charge_timer_handler, NULL);
+    sceKernelSetVTimerHandlerWide(vtimer, milis, usb_charge_timer_handler, NULL);
 
     mod = (SceModule2*)sceKernelFindModuleByName("sceUSB_Driver");
 
