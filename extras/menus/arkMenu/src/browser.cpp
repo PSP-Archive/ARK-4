@@ -49,7 +49,7 @@ static char* pEntries[] = {
     (char*) "Go to disc0:/",
 };
 
-SceUID MAX_OPTIONS = sizeof(pEntries)/sizeof(pEntries[0]);
+SceUID max_options = sizeof(pEntries)/sizeof(pEntries[0]);
 
 BrowserDriver* Browser::ftp_driver = NULL;
 
@@ -104,14 +104,14 @@ Browser::Browser(){
     if (ark_config->exec_mode == PS_VITA)
         pEntries[USB_DEV] = NULL;
 
-	int i = 0;
-	int new_size = 0;
-	for(;i<MAX_OPTIONS;i++) {
+	static int i = 0;
+	static int new_size = 0;
+	for(;i<max_options;i++) {
 		if(pEntries[i])
 			new_size++;
 	}
 
-	MAX_OPTIONS = new_size;
+	max_options = new_size;
 			
 
 }
@@ -1503,7 +1503,7 @@ void Browser::drawOptionsMenu(){
             int x = 10;
             int y = 55;
             static TextScroll scroll = {0, 0, 0, 125};
-            for (int i=0; i<MAX_OPTIONS; i++){
+            for (int i=0; i<max_options; i++){
                 if (this->clipboard->size()<1 && i == 3) continue; // Hide Paste unless clipboard has something in it.
                 if (pEntries[i] == NULL) continue;
                 if (i == pEntryIndex){
@@ -1563,7 +1563,7 @@ void Browser::optionsMenu(){
         if (pad->down()){
             common::playMenuSound();
             do {
-                if (pEntryIndex < MAX_OPTIONS-1){
+                if (pEntryIndex < max_options-1){
     				if(this->clipboard->size()<1 && pEntryIndex == 2) pEntryIndex += 2;
     				else pEntryIndex++;
                 }
@@ -1581,7 +1581,7 @@ void Browser::optionsMenu(){
     				else pEntryIndex--;
                 }
                 else{
-                    pEntryIndex = MAX_OPTIONS-1;
+                    pEntryIndex = max_options-1;
                 }
             } while (pEntries[pEntryIndex] == NULL);
         }
@@ -1589,20 +1589,20 @@ void Browser::optionsMenu(){
     	else if (pad->right()) {
     		common::playMenuSound();
     		do {
-    			if(pEntryIndex >= (int)((MAX_OPTIONS-1)/2))
-    				pEntryIndex = MAX_OPTIONS-1;
-    			else if(pEntryIndex <= 0)
-    				pEntryIndex = (int)((MAX_OPTIONS-1)/2);
+    			if(pEntryIndex >= (int)((max_options-1)/2))
+    				pEntryIndex = max_options-1;
+    			else if(pEntryIndex <= (int)((max_options-1)/2))
+    				pEntryIndex = (int)((max_options-1)/2);
     		} while (pEntries[pEntryIndex] == NULL);
     	}
     	// Left
     	else if (pad->left()) {
     		common::playMenuSound();
     		do {
-    			if(pEntryIndex <= (int)((MAX_OPTIONS-1)/2))
+    			if(pEntryIndex <= (int)((max_options-1)/2))
     				pEntryIndex = 0;
-    			else if(pEntryIndex <= MAX_OPTIONS-1)
-    				pEntryIndex = (int)((MAX_OPTIONS-1)/2);
+    			else if(pEntryIndex <= max_options-1)
+    				pEntryIndex = (int)((max_options-1)/2);
     		} while (pEntries[pEntryIndex] == NULL);
     	}
         else if (pad->decline() || pad->LT()){
