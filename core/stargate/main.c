@@ -26,8 +26,6 @@
 #include <systemctrl.h>
 #include <systemctrl_private.h>
 #include <macros.h>
-#include <ark.h>
-#include <functions.h>
 #include "loadmodule_patch.h"
 #include "nodrm_patch.h"
 
