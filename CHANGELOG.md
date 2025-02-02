@@ -5,6 +5,23 @@
 - Updated `Despertar del Cementerio` to `Version 10`. Can now be used to unbrick any `PSP` model.
 - Can now install `cIPL` on all `PSP` models.
 - Added `FinalSpeed` for easier access to `Live` installations.
+
+#### Rev 155
+- Stability Fix for POPS with not normal icons
+- Stargate bug fix ( Thanks again @meetpatty )
+- Fix usb cam with usb charge
+- Fix ef0 on CL with psp go
+
+#### Rev 154
+- Fixed 1.50 CFW GAME150 redirect and corrupt icons not being displayed ( Thanks again @meetpatty )
+- Added ef2xmc
+- Added ef0 to vitapops
+#### Rev 153
+- Added ef0 to vita
+- Added Light Installer ( removed for redundancy )
+- Something something something d_ark_side
+#### Rev 152
+- Something something...
 #### Rev 151
 - Added Uninstall method for fastms371_mod to Full Flash Installer
 - MagicMemoryCreator (DCARK Maker) Added Local OFW 1.50/6.61 selection
