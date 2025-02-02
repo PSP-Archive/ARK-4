@@ -27,7 +27,7 @@ char *settings[] =
     "ARK-4 Updater",
     "Custom Firmware Settings",
     "Plugins Manager",
-	"Custom Launcher",
+    "Custom Launcher",
     "USB Charge",
     "Overclock",
     "PowerSave",
@@ -46,10 +46,10 @@ char *settings[] =
     "Turn off LEDs",
     "Disable UMD Drive",
     "Disable Analog Stick",
-	"QA Flags",
-	"Custom App",
+    "QA Flags",
+    "Custom App",
     "PSP Overclock",
-	"Reboot 1.50 CFW",
+    "Reboot 1.50 CFW",
 };
 
 #endif

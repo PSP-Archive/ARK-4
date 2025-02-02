@@ -22,22 +22,22 @@
 #include <psptypes.h>
 
 
-#define COLOR_CYAN	0x00ffff00
+#define COLOR_CYAN    0x00ffff00
 #define COLOR_MAGENDA 0x00ff00ff
 #define COLOR_YELLOW  0x0000ffff
 
-#define RGB(R,G,B)	(((B)<<16)|((G)<<8)|(R))
+#define RGB(R,G,B)    (((B)<<16)|((G)<<8)|(R))
 #define RGBT(R,G,B,T) (((T)<<24)|((B)<<16)|((G)<<8)|(R))
 
 
 typedef struct _blit_Gfx{
-	u32 *vram32;
-	u32 fg_color, bg_color;
-	
-	int width, height;
-	
-	int bufferwidth;
-	int pixelformat;
+    u32 *vram32;
+    u32 fg_color, bg_color;
+    
+    int width, height;
+    
+    int bufferwidth;
+    int pixelformat;
 }blit_Gfx;
 
 

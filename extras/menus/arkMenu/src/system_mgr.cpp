@@ -253,11 +253,11 @@ static void drawBattery(){
 
 static void drawMute() {
     common::getIcon(FILE_MUSIC)->draw( common::getConf()->battery_percent ? 240:280, 3);
-	int i = 2;
-	for(;i<18;i++) {
-    	ya2d_draw_rect(common::getConf()->battery_percent ? 235+i:275+i, i, 1, 1, RED, 1); // Volume background outline
-    	ya2d_draw_rect(common::getConf()->battery_percent ? 255-i:295-i, i, 1, 1, RED, 1); // Volume background outline
-	}
+    int i = 2;
+    for(;i<18;i++) {
+        ya2d_draw_rect(common::getConf()->battery_percent ? 235+i:275+i, i, 1, 1, RED, 1); // Volume background outline
+        ya2d_draw_rect(common::getConf()->battery_percent ? 255-i:295-i, i, 1, 1, RED, 1); // Volume background outline
+    }
 }
 
 static void drawVolume(){
@@ -291,8 +291,8 @@ static void systemDrawer(){
             if (MusicPlayer::isPlaying()){
                 common::getIcon(FILE_MUSIC)->draw( common::getConf()->battery_percent ? 240:280, 3);
             }
-			if(mute)
-				drawMute();
+    		if(mute)
+    			drawMute();
             break;
         case 1: // draw opening animation
             drawOptionsMenuCommon();
@@ -349,10 +349,10 @@ static void *_sceImposeSetParam; // int (*)(int, int)
 
 static int drawThread(SceSize _args, void *_argp){
     common::stopLoadingThread();
-	struct KernelCallArg args;
-	args.arg1 = 0x8;
+    struct KernelCallArg args;
+    args.arg1 = 0x8;
     kuKernelCall(_sceImposeGetParam, &args);
-	mute = args.ret1;
+    mute = args.ret1;
     while (running){
         sceKernelWaitSema(draw_sema, 1, NULL);
         common::clearScreen(CLEAR_COLOR);
@@ -406,12 +406,12 @@ static int controlThread(SceSize _args, void *_argp){
                 volume = new_volume;
                 common::playMenuSound();
             }
-		} else if (pad.mute() && _sceImposeGetParam != NULL && _sceImposeSetParam != NULL) {
+    	} else if (pad.mute() && _sceImposeGetParam != NULL && _sceImposeSetParam != NULL) {
             struct KernelCallArg args;
             args.arg1 = 0x8; // PSP_IMPOSE_MUTE
 
             kuKernelCall(_sceImposeGetParam, &args);
-			mute = args.ret1;
+    		mute = args.ret1;
 
 //            mute_time = clock();
 
@@ -419,17 +419,17 @@ static int controlThread(SceSize _args, void *_argp){
             // Impose will sometimes register an extra volume input press in the opposite direction
             u32 buttons = pad.get_buttons();
 
-			if(buttons & 0x800000) {
-            	args.arg1 = 0x8; // PSP_IMPOSE_MUTE
-				args.arg2 = mute;
+    		if(buttons & 0x800000) {
+                args.arg1 = 0x8; // PSP_IMPOSE_MUTE
+    			args.arg2 = mute;
                 kuKernelCall(_sceImposeSetParam, &args);
-				//pad.update();
-				if(mute) {
-					drawMute();
-				}
-			}
+    			//pad.update();
+    			if(mute) {
+    				drawMute();
+    			}
+    		}
 
-		} else if (!screensaver){
+    	} else if (!screensaver){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
         }
@@ -520,10 +520,10 @@ void SystemMgr::pauseDraw(){
 }
 
 void SystemMgr::resumeDraw(){
-	int ret;
-	do {
-    	ret = sceKernelSignalSema(draw_sema, 1);
-	}while(ret != 0);
+    int ret;
+    do {
+        ret = sceKernelSignalSema(draw_sema, 1);
+    }while(ret != 0);
 }
 
 void SystemMgr::enterFullScreen(){

@@ -36,13 +36,13 @@ static void start_psp_usb(){
     sceUsbStart(PSP_USBBUS_DRIVERNAME, 0, 0);
     sceUsbStart(PSP_USBSTOR_DRIVERNAME, 0, 0);
     sceUsbStart(PSP_USBSTOR_EF_DRIVERNAME, 0, 0);
-	sceUsbActivate(0x1c8);
+    sceUsbActivate(0x1c8);
 }
 
 static void stop_psp_usb(){
     sceUsbDeactivate(0x1c8);
     sceUsbStop(PSP_USBSTOR_EF_DRIVERNAME, 0, 0);
-	sceUsbStop(PSP_USBSTOR_DRIVERNAME, 0, 0);
+    sceUsbStop(PSP_USBSTOR_DRIVERNAME, 0, 0);
     sceUsbStop(PSP_USBBUS_DRIVERNAME, 0, 0);
 }
 

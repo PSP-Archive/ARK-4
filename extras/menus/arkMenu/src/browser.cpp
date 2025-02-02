@@ -101,7 +101,7 @@ Browser::Browser(){
     else sceIoDclose(ef0);
 
     if (ark_config->exec_mode == PS_VITA)
-    	pEntries[USB_DEV] = NULL;
+        pEntries[USB_DEV] = NULL;
 
 }
 
@@ -164,8 +164,8 @@ void Browser::update(Entry* ent, bool skip_prompt){
         this->refreshDirs();
     }
     else if (Entry::isARK(e->getPath().c_str())) {
-		installTheme();
-	}
+    	installTheme();
+    }
     else if (Entry::isVideo(e->getPath().c_str())){
         GameManager::updateGameList(NULL);
         SystemMgr::pauseDraw();
@@ -224,7 +224,7 @@ void Browser::update(Entry* ent, bool skip_prompt){
         delete aux;
     }
     else if (e->getFileType() == FILE_PICTURE){
-		sceKernelDelayThread(100000);
+    	sceKernelDelayThread(100000);
         optionsmenu = new ImageViewer(e->getPath());
         optionsmenu->control();
         ImageViewer* aux = (ImageViewer*)optionsmenu;
@@ -255,27 +255,27 @@ void Browser::update(Entry* ent, bool skip_prompt){
 }
 
 void Browser::installTheme() {
-	Entry* e = this->get();
-	t_options_entry options_entries[] = {
-		{OPTIONS_CANCELLED, "Cancel"},
-		{0, "Preview"},
-		{1, "Install"},
-	};
+    Entry* e = this->get();
+    t_options_entry options_entries[] = {
+    	{OPTIONS_CANCELLED, "Cancel"},
+    	{0, "Preview"},
+    	{1, "Install"},
+    };
 
-	// Sanity checks
-	if(e->getName() != "THEME.ARK" || e->getPath().substr(2) == "0:/PSP/SAVEDATA/ARK_01234/THEME.ARK") return;
+    // Sanity checks
+    if(e->getName() != "THEME.ARK" || e->getPath().substr(2) == "0:/PSP/SAVEDATA/ARK_01234/THEME.ARK") return;
 
-	optionsmenu = new OptionsMenu("Install Theme", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
-	int ret = optionsmenu->control();
-	OptionsMenu* aux = optionsmenu;
-	optionsmenu = NULL;
-	delete aux;
+    optionsmenu = new OptionsMenu("Install Theme", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
+    int ret = optionsmenu->control();
+    OptionsMenu* aux = optionsmenu;
+    optionsmenu = NULL;
+    delete aux;
 
-	if (ret == OPTIONS_CANCELLED) return;
+    if (ret == OPTIONS_CANCELLED) return;
 
     // load new theme
     GameManager::updateGameList(NULL);
-	SystemMgr::pauseDraw();
+    SystemMgr::pauseDraw();
     printf("deleting current theme resources\n");
     common::deleteTheme();
     printf("set new theme path to: %s\n", e->getPath().c_str());
@@ -286,8 +286,8 @@ void Browser::installTheme() {
     SystemMgr::resumeDraw();
     printf("done\n");
 
-	// Ask before overwriting theme
-	if (ret == 0) {
+    // Ask before overwriting theme
+    if (ret == 0) {
         t_options_entry options_entries[] = {
             {OPTIONS_CANCELLED, "Cancel"},
             {0, "Accept Install"},
@@ -643,7 +643,7 @@ void Browser::drawScreen(){
                 if (common::getConf()->browser_icon0){
                     Image* icon = e->getIcon();
                     if (icon && e->getName().c_str()[0] != '.'){ // Prevent ../ from displaying ICON0
-                    	icon->draw(320, 21);
+                        icon->draw(320, 21);
                     }
                 }
             }
@@ -776,8 +776,8 @@ Entry* Browser::get(){
 }
 
 void Browser::left() {
-	if (this->entries->size() == 2) return;
-	if (this->index == 0) return;
+    if (this->entries->size() == 2) return;
+    if (this->index == 0) return;
 
     if (common::getConf()->browser_icon0){
         SystemMgr::pauseDraw();
@@ -785,14 +785,14 @@ void Browser::left() {
         SystemMgr::resumeDraw();
     }
 
-	if (this->index > 0) {
-		this->index = 1 * (this->index - PAGE_SIZE);
-		this->start = 1 * (this->start - PAGE_SIZE);
-	}
-	if(this->index < 0 || this->start < 0) {
-		this->index = 0;
-		this->start = 0;
-	}
+    if (this->index > 0) {
+    	this->index = 1 * (this->index - PAGE_SIZE);
+    	this->start = 1 * (this->start - PAGE_SIZE);
+    }
+    if(this->index < 0 || this->start < 0) {
+    	this->index = 0;
+    	this->start = 0;
+    }
     this->animating = true;
     common::playMenuSound();
 
@@ -801,7 +801,7 @@ void Browser::left() {
 }
 
 void Browser::right() {
-	if (this->entries->size() == 2) return;
+    if (this->entries->size() == 2) return;
 
     if (common::getConf()->browser_icon0){
         SystemMgr::pauseDraw();
@@ -809,27 +809,27 @@ void Browser::right() {
         SystemMgr::resumeDraw();
     }
 
-	if (this->index + PAGE_SIZE >= entries->size()) {
+    if (this->index + PAGE_SIZE >= entries->size()) {
         this->index = (entries->size()-1)-PAGE_SIZE+1;
-		this->start = this->start-PAGE_SIZE+1;
-		if(this->index > this->start+PAGE_SIZE)
-			this->start = this->start+PAGE_SIZE;
-	}
-
-	   	//return;
-	if (this->index == 0) {
-		this->index = PAGE_SIZE-1;
-		this->start = PAGE_SIZE-1;
-	}
-	else if (this->index < PAGE_SIZE-1){
-            this->index = this->index + PAGE_SIZE-1;
-			this->start = this->start + PAGE_SIZE-1;
+    	this->start = this->start-PAGE_SIZE+1;
+    	if(this->index > this->start+PAGE_SIZE)
+    		this->start = this->start+PAGE_SIZE;
     }
-	else {
-		this->index = this->index + PAGE_SIZE-1;
-		this->start = this->start + PAGE_SIZE-1;
-	}
-	
+
+       	//return;
+    if (this->index == 0) {
+    	this->index = PAGE_SIZE-1;
+    	this->start = PAGE_SIZE-1;
+    }
+    else if (this->index < PAGE_SIZE-1){
+            this->index = this->index + PAGE_SIZE-1;
+    		this->start = this->start + PAGE_SIZE-1;
+    }
+    else {
+    	this->index = this->index + PAGE_SIZE-1;
+    	this->start = this->start + PAGE_SIZE-1;
+    }
+    
     this->animating = true;
     common::playMenuSound();
 
@@ -1207,9 +1207,9 @@ void Browser::copyFolder(string path){
     string destination = checkDestExists(path, this->cwd, f->getName().substr(0, f->getName().length()-1));
     
     if (destination.size() == 0) return; // copy cancelled
-	
-	if (destination[destination.size() - 1] == '/')
-		destination.resize(destination.length() - 1);
+    
+    if (destination[destination.size() - 1] == '/')
+    	destination.resize(destination.length() - 1);
     
     copy_folder_recursive(path.substr(0, path.length()-1).c_str(), destination.c_str());
 }
@@ -1279,7 +1279,7 @@ void Browser::fillClipboard(){
         BrowserFile* e = (File*)entries->at(i);
         if (e->isSelected()) {
             this->clipboard->push_back(e->getPath());
-		}
+    	}
     }
 }
 
@@ -1461,12 +1461,12 @@ void Browser::createNew(){
 
 
 void Browser::toggleUSB() {
-	if (USB::is_enabled) {
-		USB::disable();
-	}
-	else {
-		USB::enable();
-	}
+    if (USB::is_enabled) {
+    	USB::disable();
+    }
+    else {
+    	USB::enable();
+    }
 }
 
 void Browser::drawOptionsMenu(){
@@ -1539,7 +1539,7 @@ void Browser::optionsMenu(){
     
     if (pEntries[USB_DEV]){
         static string usb_dev;
-	usb_dev = "USB - " + TR( (USB::is_enabled)? "Enabled":"Disabled" );
+    usb_dev = "USB - " + TR( (USB::is_enabled)? "Enabled":"Disabled" );
         pEntries[USB_DEV] = (char*)usb_dev.c_str();
     }
 
@@ -1553,47 +1553,47 @@ void Browser::optionsMenu(){
             common::playMenuSound();
             do {
                 if (pEntryIndex < MAX_OPTIONS-1){
-					if(this->clipboard->size()<1 && pEntryIndex == 2) pEntryIndex += 2;
-					else pEntryIndex++;
+    				if(this->clipboard->size()<1 && pEntryIndex == 2) pEntryIndex += 2;
+    				else pEntryIndex++;
                 }
                 else{
                     pEntryIndex = 0;
                 }
             } while (pEntries[pEntryIndex] == NULL);
         }
-		// Up
+    	// Up
         else if (pad->up()){
             common::playMenuSound();
             do {
                 if (pEntryIndex > 0){
-					if(this->clipboard->size()<1 && pEntryIndex == 4) pEntryIndex -= 2;
-					else pEntryIndex--;
+    				if(this->clipboard->size()<1 && pEntryIndex == 4) pEntryIndex -= 2;
+    				else pEntryIndex--;
                 }
                 else{
                     pEntryIndex = MAX_OPTIONS-1;
                 }
             } while (pEntries[pEntryIndex] == NULL);
         }
-		// Right
-		else if (pad->right()) {
-			common::playMenuSound();
-			do {
-				if(pEntryIndex >= (int)((MAX_OPTIONS-1)/2))
-					pEntryIndex = MAX_OPTIONS-1;
-				else if(pEntryIndex <= 0)
-					pEntryIndex = (int)((MAX_OPTIONS-1)/2);
-			} while (pEntries[pEntryIndex] == NULL);
-		}
-		// Left
-		else if (pad->left()) {
-			common::playMenuSound();
-			do {
-				if(pEntryIndex <= (int)((MAX_OPTIONS-1)/2))
-					pEntryIndex = 0;
-				else if(pEntryIndex <= MAX_OPTIONS-1)
-					pEntryIndex = (int)((MAX_OPTIONS-1)/2);
-			} while (pEntries[pEntryIndex] == NULL);
-		}
+    	// Right
+    	else if (pad->right()) {
+    		common::playMenuSound();
+    		do {
+    			if(pEntryIndex >= (int)((MAX_OPTIONS-1)/2))
+    				pEntryIndex = MAX_OPTIONS-1;
+    			else if(pEntryIndex <= 0)
+    				pEntryIndex = (int)((MAX_OPTIONS-1)/2);
+    		} while (pEntries[pEntryIndex] == NULL);
+    	}
+    	// Left
+    	else if (pad->left()) {
+    		common::playMenuSound();
+    		do {
+    			if(pEntryIndex <= (int)((MAX_OPTIONS-1)/2))
+    				pEntryIndex = 0;
+    			else if(pEntryIndex <= MAX_OPTIONS-1)
+    				pEntryIndex = (int)((MAX_OPTIONS-1)/2);
+    		} while (pEntries[pEntryIndex] == NULL);
+    	}
         else if (pad->decline() || pad->LT()){
             pEntryIndex = 0;
             break;
@@ -1643,10 +1643,10 @@ void Browser::control(Controller* pad){
         this->up();
     else if (pad->down())
         this->down();
-	else if (pad->right())
-		this->right();
-	else if (pad->left())
-		this->left();
+    else if (pad->right())
+    	this->right();
+    else if (pad->left())
+    	this->left();
     else if (pad->accept())
         this->update(this->get(), common::getConf()->fast_gameboot);
     else if (pad->decline()){

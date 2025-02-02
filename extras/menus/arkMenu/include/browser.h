@@ -185,8 +185,8 @@ class Browser : public SystemEntry{
         
         void down();
         void up();
-		void left();
-		void right();
+    	void left();
+    	void right();
         
         void deleteFolder(string path);
         void deleteFile(string path);

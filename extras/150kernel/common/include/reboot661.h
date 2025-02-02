@@ -6,7 +6,7 @@
 
 u8 reboot661[0x12E18] __attribute__((aligned(16))) = 
 {
-	REBOOT661_HEADER
+    REBOOT661_HEADER
 };
  
 #endif

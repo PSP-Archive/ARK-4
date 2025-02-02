@@ -1,7 +1,7 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#define SMALL_BUFFER_SIZE	2000000
+#define SMALL_BUFFER_SIZE    2000000
 extern int BIG_BUFFER_SIZE;
 
 void *ReadFileAllocEx(const char *file, int seek, int size, int *retSize);

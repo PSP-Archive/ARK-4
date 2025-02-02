@@ -6,9 +6,9 @@
 #define REBOOT_MODULE "/rtm.prx"
 
 typedef struct {
-	char *name;
-	void *buffer;
-	u32 size;
+    char *name;
+    void *buffer;
+    u32 size;
 } BootFile;
 
 typedef struct {

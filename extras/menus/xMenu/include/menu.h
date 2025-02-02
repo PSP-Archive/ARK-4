@@ -81,7 +81,7 @@ class Menu{
 };
 
 class SubMenu {
-	private:
+    private:
         int index;
         Menu* menu;
         string options[7];
@@ -92,10 +92,10 @@ class SubMenu {
         void changeMsCacheSetting();
         void changeSetting(int setting);
 
-	public:
-		SubMenu(Menu* menu);
-		~SubMenu();
-		void run();
+    public:
+    	SubMenu(Menu* menu);
+    	~SubMenu();
+    	void run();
 };
 
 #endif
