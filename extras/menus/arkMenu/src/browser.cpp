@@ -339,8 +339,9 @@ void Browser::installPlugin(){
         {3, "VSH (XMB)"},
         {4, "UMD/ISO"},
         {5, "Homebrew"},
-        {6, "<Game ID>"},
-        {7, "<LoadStart Module>"},
+        {6, "Launcher"},
+        {7, "<Game ID>"},
+        {8, "<LoadStart Module>"},
     };
 
     optionsmenu = new OptionsMenu("Install Plugin", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
@@ -353,11 +354,11 @@ void Browser::installPlugin(){
 
     string mode;
 
-    if (ret < 6){
-        char* modes[] = {"always", "game", "ps1", "xmb", "psp", "homebrew"};
+    if (ret < 7){
+        char* modes[] = {"always", "game", "ps1", "xmb", "psp", "homebrew", "launcher"};
         mode = modes[ret];
     }
-    else if (ret == 6){
+    else if (ret == 7){
         SystemMgr::pauseDraw();
         OSK osk;
         osk.init("Game ID (i.e. ULUS01234)", (TextEditor::clipboard.size() > 0)? TextEditor::clipboard.c_str() : "", 50);
@@ -373,7 +374,7 @@ void Browser::installPlugin(){
         SystemMgr::resumeDraw();
         if (osk_res == OSK_CANCEL) return;
     }
-    else if (ret == 7){
+    else if (ret == 8){
         const char* path = e->getPath().c_str();
         int uid = kuKernelLoadModule(path, 0, NULL);
         int res = sceKernelStartModule(uid, strlen(path) + 1, (void*)path, NULL, NULL);
