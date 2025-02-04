@@ -93,9 +93,9 @@ class SubMenu {
         void changeSetting(int setting);
 
     public:
-    	SubMenu(Menu* menu);
-    	~SubMenu();
-    	void run();
+        SubMenu(Menu* menu);
+        ~SubMenu();
+        void run();
 };
 
 #endif

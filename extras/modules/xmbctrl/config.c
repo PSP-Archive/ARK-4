@@ -121,14 +121,14 @@ void loadSettings(){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, ARK_SETTINGS);
-	SceUID check = sceIoOpen(path, PSP_O_RDONLY, 0);
-	if(check < 0) {
-		memset(path, 0, sizeof(path));
-    	strcpy(path, ARK_SETTINGS_FLASH);
-	}
-	else {
-		sceIoClose(check);
-	}
+    SceUID check = sceIoOpen(path, PSP_O_RDONLY, 0);
+    if(check < 0) {
+    	memset(path, 0, sizeof(path));
+        strcpy(path, ARK_SETTINGS_FLASH);
+    }
+    else {
+    	sceIoClose(check);
+    }
 
 
     ProcessConfigFile(path, &processConfigLine, &processCustomConfig);
@@ -169,9 +169,9 @@ void saveSettings(){
     int fd = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 
     if (fd < 0){
-		memset(path, 0, sizeof(path));
-    	strcpy(path, ARK_SETTINGS_FLASH);
-    	fd = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+    	memset(path, 0, sizeof(path));
+        strcpy(path, ARK_SETTINGS_FLASH);
+        fd = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
     }
 
     char* line = my_malloc(LINE_BUFFER_SIZE);

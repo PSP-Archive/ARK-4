@@ -60,23 +60,23 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 
     // Virtual Kernel Exploit (allow easy escalation of priviledge on ePSP)
     if (strstr(file, "__dokxploit__") != 0){
-	    uint32_t *m;
-	    
-	    // remove k1 checks in IoRead (lets you write into kram)
-	    m = (uint32_t *)ScePspemuConvertAddress(0x8805769C, SCE_PSPEMU_CACHE_NONE, 4);
-	    *m = mips_move_a2_0; // move $a2, 0
-	    ScePspemuWritebackCache(m, 4);
+        uint32_t *m;
+        
+        // remove k1 checks in IoRead (lets you write into kram)
+        m = (uint32_t *)ScePspemuConvertAddress(0x8805769C, SCE_PSPEMU_CACHE_NONE, 4);
+        *m = mips_move_a2_0; // move $a2, 0
+        ScePspemuWritebackCache(m, 4);
 
-	    // remove k1 checks in IoWrite (lets you read kram)
-	    m = (uint32_t *)ScePspemuConvertAddress(0x880577B0, SCE_PSPEMU_CACHE_NONE, 4);
-	    *m = mips_move_a2_0; // move $a2, 0
-	    ScePspemuWritebackCache(m, 4);
+        // remove k1 checks in IoWrite (lets you read kram)
+        m = (uint32_t *)ScePspemuConvertAddress(0x880577B0, SCE_PSPEMU_CACHE_NONE, 4);
+        *m = mips_move_a2_0; // move $a2, 0
+        ScePspemuWritebackCache(m, 4);
 
-	    // allow running any code as kernel (lets us pass function pointer as second argument of libctime)
-	    m = (uint32_t *)ScePspemuConvertAddress((module_nid==0x2714F07D)?0x88010044:0x8800FFB4, SCE_PSPEMU_CACHE_NONE, 4);
-	    *m = mips_nop; // nop
-	    ScePspemuWritebackCache(m, 4);
-	    return 0;
+        // allow running any code as kernel (lets us pass function pointer as second argument of libctime)
+        m = (uint32_t *)ScePspemuConvertAddress((module_nid==0x2714F07D)?0x88010044:0x8800FFB4, SCE_PSPEMU_CACHE_NONE, 4);
+        *m = mips_nop; // nop
+        ScePspemuWritebackCache(m, 4);
+        return 0;
     }
   
     // Configure currently loaded game

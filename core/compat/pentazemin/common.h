@@ -68,11 +68,11 @@
 { \
     u32 _func_ = a; \
     if (r == 0) { \
-    	_sw(0x03E00008, _func_); \
-    	_sw(0x00001021, _func_ + 4); \
+        _sw(0x03E00008, _func_); \
+        _sw(0x00001021, _func_ + 4); \
     } else { \
-    	_sw(0x03E00008, _func_); \
-    	_sw(0x24020000 | r, _func_ + 4); \
+        _sw(0x03E00008, _func_); \
+        _sw(0x24020000 | r, _func_ + 4); \
     } \
 }
 
@@ -136,7 +136,7 @@ typedef struct __attribute__((packed)) {
 
 typedef struct BtcnfHeader {
     u32 signature; // 0
-    u32 devkit;		// 4
+    u32 devkit;    	// 4
     u32 unknown[2];  // 8
     u32 modestart;  // 0x10
     int nmodes;  // 0x14

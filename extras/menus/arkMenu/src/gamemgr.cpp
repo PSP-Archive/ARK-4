@@ -442,7 +442,7 @@ void GameManager::control(Controller* pad){
     }
     else if (pad->start()){
         if (selectedCategory >= 0 && !categories[selectedCategory]->isAnimating()){
-    		this->startBoot();
+            this->startBoot();
         }
     }
     else if (pad->select()){

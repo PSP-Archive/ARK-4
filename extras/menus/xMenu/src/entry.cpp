@@ -197,11 +197,11 @@ bool Entry::getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_nam
     bool res = false;
     int i;
     for (i = 0; i < header->nitems; i++) {
-    	if (strcmp((char*)sfo_buffer + header->fields_table_offs + entries[i].field_offs, param_name) == 0) {
-    		memcpy(var, sfo_buffer + header->values_table_offs + entries[i].val_offs, *var_size);
+        if (strcmp((char*)sfo_buffer + header->fields_table_offs + entries[i].field_offs, param_name) == 0) {
+            memcpy(var, sfo_buffer + header->values_table_offs + entries[i].val_offs, *var_size);
             res = true;
-    		break;
-    	}
+            break;
+        }
     }
     return res;
 }

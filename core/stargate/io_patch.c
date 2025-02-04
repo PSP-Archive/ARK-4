@@ -13,11 +13,11 @@
 #include <functions.h>
 
 struct DeviceSize {
-	u32 maxClusters;
-	u32 freeClusters;
-	u32 maxSectors;
-	u32 sectorSize;
-	u32 sectorCount;
+    u32 maxClusters;
+    u32 freeClusters;
+    u32 maxSectors;
+    u32 sectorSize;
+    u32 sectorCount;
 };
 
 // this fixes old games that report "not enough space" when more than 2GB are available

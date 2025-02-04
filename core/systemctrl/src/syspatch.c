@@ -71,23 +71,23 @@ static unsigned int fakeFindFunction(char * szMod, char * szLib, unsigned int ni
 }
 
 int _sceChkreg_6894A027(u8* a0, u32 a1){
-	if (a0 && a1 == 0){
-		*a0 = 1;
-		return 0;
-	}
-	return -1;
+    if (a0 && a1 == 0){
+    	*a0 = 1;
+    	return 0;
+    }
+    return -1;
 }
 
 void patch_qaflags(){
-	u32 fp;
+    u32 fp;
    
-	// sceChkregGetPsCode
-	fp = sctrlHENFindFunction("sceChkreg", "sceChkreg_driver", 0x6894A027); 
+    // sceChkregGetPsCode
+    fp = sctrlHENFindFunction("sceChkreg", "sceChkreg_driver", 0x6894A027); 
 
-	if (fp) {
-		_sw(JUMP(_sceChkreg_6894A027), fp);
+    if (fp) {
+    	_sw(JUMP(_sceChkreg_6894A027), fp);
         _sw(NOP, fp+4);
-	}
+    }
 }
 
 // Module Start Handler

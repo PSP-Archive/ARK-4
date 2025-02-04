@@ -265,9 +265,9 @@ void SettingsMenu::control(Controller* pad){
         }
     }
     else if (pad->square() && this->name == "CFW Settings") {
-    	pause();
-    	resetSettings();
-    	resume();
+        pause();
+        resetSettings();
+        resume();
     }
 }
 

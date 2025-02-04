@@ -100,48 +100,48 @@ void patch_GameBoot(SceModule2* mod){
 
 static void patch_devicename(SceUID modid)
 {
-	SceModule2 *mod;
-	int i;
+    SceModule2 *mod;
+    int i;
 
-	mod = (SceModule2*)sceKernelFindModuleByUID(modid);
+    mod = (SceModule2*)sceKernelFindModuleByUID(modid);
 
-	if(mod == NULL) {
-		return;
-	}
+    if(mod == NULL) {
+    	return;
+    }
 
-	for(i=0; i<mod->nsegment; ++i) {
-		u32 addr;
-		u32 end;
+    for(i=0; i<mod->nsegment; ++i) {
+    	u32 addr;
+    	u32 end;
 
-		end = mod->segmentaddr[i] + mod->segmentsize[i];
+    	end = mod->segmentaddr[i] + mod->segmentsize[i];
 
-		for(addr = mod->segmentaddr[i]; addr < end; addr ++) {
-			char *str = (char*)addr;
+    	for(addr = mod->segmentaddr[i]; addr < end; addr ++) {
+    		char *str = (char*)addr;
 
-			if (0 == strncmp(str, "ms0", 3)) {
-				str[0] = 'e';
-				str[1] = 'f';
-			} else if (0 == strncmp(str, "fatms", 5)) {
-				str[3] = 'e';
-				str[4] = 'f';
-			}
-		}
-	}
-	
-	u32 start = mod->text_addr+mod->text_size;
-	u32 end = start + mod->data_size;
-	for (u32 addr=start; addr<end; addr++){
-	    char *str = (char*)addr;
-		if (0 == strncmp(str, "ms0", 3)) {
-			str[0] = 'e';
-			str[1] = 'f';
-		} else if (0 == strncmp(str, "fatms", 5)) {
-			str[3] = 'e';
-			str[4] = 'f';
-		}
-	}
+    		if (0 == strncmp(str, "ms0", 3)) {
+    			str[0] = 'e';
+    			str[1] = 'f';
+    		} else if (0 == strncmp(str, "fatms", 5)) {
+    			str[3] = 'e';
+    			str[4] = 'f';
+    		}
+    	}
+    }
+    
+    u32 start = mod->text_addr+mod->text_size;
+    u32 end = start + mod->data_size;
+    for (u32 addr=start; addr<end; addr++){
+        char *str = (char*)addr;
+    	if (0 == strncmp(str, "ms0", 3)) {
+    		str[0] = 'e';
+    		str[1] = 'f';
+    	} else if (0 == strncmp(str, "fatms", 5)) {
+    		str[3] = 'e';
+    		str[4] = 'f';
+    	}
+    }
 
-	flushCache();
+    flushCache();
 }
 
 int pause_disabled = 0;
@@ -158,16 +158,16 @@ void disable_PauseGame()
 }
 
 int sceUmdRegisterUMDCallBackPatched(int cbid) {
-	int k1 = pspSdkSetK1(0);
-	int res = sceKernelNotifyCallback(cbid, PSP_UMD_NOT_PRESENT);
-	pspSdkSetK1(k1);
-	return res;
+    int k1 = pspSdkSetK1(0);
+    int res = sceKernelNotifyCallback(cbid, PSP_UMD_NOT_PRESENT);
+    pspSdkSetK1(k1);
+    return res;
 }
 
 static int sceGpioPortReadPatched(void) {
-	int GPRValue = *((int *) 0xBE240004);
-	GPRValue = GPRValue & 0xFBFFFFFF;
-	return GPRValue;
+    int GPRValue = *((int *) 0xBE240004);
+    GPRValue = GPRValue & 0xFBFFFFFF;
+    return GPRValue;
 }
 
 void disableLEDs(){
@@ -285,9 +285,9 @@ void processSettings(){
 int (*prevPluginHandler)(const char* path, int modid) = NULL;
 int pluginHandler(const char* path, int modid){
     if(se_config->oldplugin && psp_model == PSP_GO && path[0] == 'e' && path[1] == 'f') {
-		patch_devicename(modid);
-	}
-	if (prevPluginHandler) return prevPluginHandler(path, modid);
+    	patch_devicename(modid);
+    }
+    if (prevPluginHandler) return prevPluginHandler(path, modid);
     return 0;
 }
 
@@ -295,12 +295,12 @@ void PSPOnModuleStart(SceModule2 * mod){
     // System fully booted Status
     static int booted = 0;
 
-	if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
-    	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-			hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
-			goto flush;
-		}
-	}
+    if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
+        if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
+    		hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+    		goto flush;
+    	}
+    }
 
     if (strcmp(mod->modname, "sceUmdMan_driver") == 0) {
         patch_sceUmdMan_driver(mod);
@@ -342,11 +342,11 @@ void PSPOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "game_plugin_module") == 0) {
-		if (se_config->skiplogos) {
-		    patch_GameBoot(mod);
-	    }
+    	if (se_config->skiplogos) {
+    	    patch_GameBoot(mod);
+        }
         goto flush;
-	}
+    }
 
     if (strcmp(mod->modname, "sceUSBCam_Driver") == 0){
         extern int is_usb_charging;
@@ -382,16 +382,16 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-	if (strcmp(mod->modname, "Legacy_Software_Loader") == 0 )
-	{
+    if (strcmp(mod->modname, "Legacy_Software_Loader") == 0 )
+    {
         // Missing from SDK
         #define PSP_INIT_APITYPE_EF2 0x152
-		if( sceKernelInitApitype() == PSP_INIT_APITYPE_EF2 )
-		{
-			_sw( 0x10000005, mod->text_addr + 0x0000014C );	
-			goto flush;
-		}
-	}
+    	if( sceKernelInitApitype() == PSP_INIT_APITYPE_EF2 )
+    	{
+    		_sw( 0x10000005, mod->text_addr + 0x0000014C );	
+    		goto flush;
+    	}
+    }
     
     if (booted == 0)
     {
@@ -437,23 +437,23 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
     if (se_config->skiplogos && mod != NULL && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
-		u32* vshmain_args = oe_malloc(1024);
+    	u32* vshmain_args = oe_malloc(1024);
 
-		memset(vshmain_args, 0, 1024);
+    	memset(vshmain_args, 0, 1024);
 
-		if(argp != NULL && argsize != 0 ) {
-			memcpy( vshmain_args , argp ,  argsize);
-		}
+    	if(argp != NULL && argsize != 0 ) {
+    		memcpy( vshmain_args , argp ,  argsize);
+    	}
 
-		vshmain_args[0] = 1024;
-		vshmain_args[1] = 0x20;
-		vshmain_args[16] = 1;
+    	vshmain_args[0] = 1024;
+    	vshmain_args[1] = 0x20;
+    	vshmain_args[16] = 1;
 
-		int ret = sceKernelStartModule(modid, 1024, vshmain_args, modstatus, opt);
-		oe_free(vshmain_args);
+    	int ret = sceKernelStartModule(modid, 1024, vshmain_args, modstatus, opt);
+    	oe_free(vshmain_args);
 
-		return ret;
-	}
+    	return ret;
+    }
 
     // forward to previous or default StartModule
     if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);

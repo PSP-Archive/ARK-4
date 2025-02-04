@@ -45,124 +45,124 @@ static void* mic_buf = NULL;
 static SceSize mic_size = 0;
 
 int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
-	int k1 = pspSdkSetK1(0);
-	int ret = _sceUsbCamStillInput(buf, size);
-	sceUsb_driver_0xED8C8695(); // force camera stop 
+    int k1 = pspSdkSetK1(0);
+    int ret = _sceUsbCamStillInput(buf, size);
+    sceUsb_driver_0xED8C8695(); // force camera stop 
 
-	pspSdkSetK1(k1);
+    pspSdkSetK1(k1);
 
-	return ret;
+    return ret;
 }
 
 int sceUsbCamSetupStillEx_Patched(PspUsbCamSetupStillExParam *exparam) {
-	int res = 0;
+    int res = 0;
 
-	int k1 = pspSdkSetK1(0);
+    int k1 = pspSdkSetK1(0);
 
-	PspUsbCamSetupStillParam param = {0};
-	param.size = sizeof(PspUsbCamSetupStillParam);
-	switch(exparam->resolution)
-	{
-		case 0:
-			param.resolution = 0;
-		break;
-		case 1:
-			param.resolution = 1;
-		break;
-		case 2:
-			param.resolution = 2;
-		break;
-		case 3:
-			param.resolution = 3;
-		break;
-		case 4:
-			param.resolution = 8;
-		break;
-		case 5:
-			param.resolution = 7;
-		break;
-		case 6:
-			param.resolution = 4;
-		break;
-		case 7:
-			param.resolution = 5;
-		break;
-		case 8:
-			// Vita camera doesn't support 1280x960
-			param.resolution = 7;
-			//param.resolution = 6;
-		break;
-	}
+    PspUsbCamSetupStillParam param = {0};
+    param.size = sizeof(PspUsbCamSetupStillParam);
+    switch(exparam->resolution)
+    {
+    	case 0:
+    		param.resolution = 0;
+    	break;
+    	case 1:
+    		param.resolution = 1;
+    	break;
+    	case 2:
+    		param.resolution = 2;
+    	break;
+    	case 3:
+    		param.resolution = 3;
+    	break;
+    	case 4:
+    		param.resolution = 8;
+    	break;
+    	case 5:
+    		param.resolution = 7;
+    	break;
+    	case 6:
+    		param.resolution = 4;
+    	break;
+    	case 7:
+    		param.resolution = 5;
+    	break;
+    	case 8:
+    		// Vita camera doesn't support 1280x960
+    		param.resolution = 7;
+    		//param.resolution = 6;
+    	break;
+    }
 
-	param.jpegsize = exparam->jpegsize;
-	param.complevel = exparam->complevel;
-	param.delay = exparam->delay;
-	param.reverseflags = 0x101;
+    param.jpegsize = exparam->jpegsize;
+    param.complevel = exparam->complevel;
+    param.delay = exparam->delay;
+    param.reverseflags = 0x101;
 
-	res = sceUsbCamSetupStill(&param);
+    res = sceUsbCamSetupStill(&param);
 
-	sceUsb_driver_0x63E55EBE(); // force camera start
+    sceUsb_driver_0x63E55EBE(); // force camera start
 
-	pspSdkSetK1(k1);
+    pspSdkSetK1(k1);
 
-	return res;
+    return res;
 }
 
 int sceUsbCamSetupVideoEx_Patched(PspUsbCamSetupVideoExParam *exparam, void *workarea, int wasize) {
-	int res = 0;
+    int res = 0;
 
-	int k1 = pspSdkSetK1(0);
+    int k1 = pspSdkSetK1(0);
 
-	PspUsbCamSetupVideoParam param = {0};
-	param.size = sizeof(PspUsbCamSetupVideoParam);
-	switch(exparam->resolution)
-	{
-		case 0:
-			param.resolution = 0;
-		break;
-		case 1:
-			param.resolution = 1;
-		break;
-		case 2:
-			param.resolution = 2;
-		break;
-		case 3:
-			param.resolution = 3;
-		break;
-		case 4:
-			param.resolution = 8;
-		break;
-		case 5:
-			param.resolution = 7;
-		break;
-		case 6:
-			param.resolution = 4;
-		break;
-		case 7:
-			param.resolution = 5;
-		break;
-		case 8:
-			// Vita camera doesn't support 1280x960
-			param.resolution = 7;
-//			param.resolution = 6;
-		break;
-	}
+    PspUsbCamSetupVideoParam param = {0};
+    param.size = sizeof(PspUsbCamSetupVideoParam);
+    switch(exparam->resolution)
+    {
+    	case 0:
+    		param.resolution = 0;
+    	break;
+    	case 1:
+    		param.resolution = 1;
+    	break;
+    	case 2:
+    		param.resolution = 2;
+    	break;
+    	case 3:
+    		param.resolution = 3;
+    	break;
+    	case 4:
+    		param.resolution = 8;
+    	break;
+    	case 5:
+    		param.resolution = 7;
+    	break;
+    	case 6:
+    		param.resolution = 4;
+    	break;
+    	case 7:
+    		param.resolution = 5;
+    	break;
+    	case 8:
+    		// Vita camera doesn't support 1280x960
+    		param.resolution = 7;
+//    		param.resolution = 6;
+    	break;
+    }
 
-	param.framerate = exparam->framerate;
-	param.wb = exparam->wb;
-	param.saturation = exparam->saturation;
-	param.brightness = exparam->brightness;
-	param.contrast = exparam->contrast;
-	param.sharpness = exparam->sharpness;
-	param.effectmode = exparam->effectmode;
-	param.framesize = exparam->framesize;
-	param.evlevel = exparam->evlevel;
+    param.framerate = exparam->framerate;
+    param.wb = exparam->wb;
+    param.saturation = exparam->saturation;
+    param.brightness = exparam->brightness;
+    param.contrast = exparam->contrast;
+    param.sharpness = exparam->sharpness;
+    param.effectmode = exparam->effectmode;
+    param.framesize = exparam->framesize;
+    param.evlevel = exparam->evlevel;
 
-	res = sceUsbCamSetupVideo(&param, workarea, wasize);
+    res = sceUsbCamSetupVideo(&param, workarea, wasize);
 
-	pspSdkSetK1(k1);
+    pspSdkSetK1(k1);
 
-	return res;
+    return res;
 }
 
 int sceUsbCamReadMic_Patched(void *buf, SceSize size) {
@@ -187,48 +187,48 @@ int sceUsbCamWaitReadMicEnd_Patched() {
 
 int sceUsbCamSetupMic_Patched(void *param, void *workarea, int wasize)
 {
-	int res = 0;
-	int k1 = pspSdkSetK1(0);
-	res = _sceUsbCamSetupMic(param, workarea, wasize);
-	pspSdkSetK1(k1);
-	mute_mic = 0;
-	return res;
+    int res = 0;
+    int k1 = pspSdkSetK1(0);
+    res = _sceUsbCamSetupMic(param, workarea, wasize);
+    pspSdkSetK1(k1);
+    mute_mic = 0;
+    return res;
 
 }
 
 int sceUsbCamSetupMicEx_Patched(PspUsbCamSetupMicExParam *exparam, void *workarea, int wasize) {
-	int res = 0;
+    int res = 0;
 
-	// TODO: xmb wants 22050, but it causes crash for some reason
-	// TODO: pspemu resampler looks broken (see invizimals voice chat, for example)
-	int k1 = pspSdkSetK1(0);
-	PspUsbCamSetupMicParam param = {0};
-	param.size = sizeof(PspUsbCamSetupMicParam);
-	param.alc = exparam->alc;
-	param.gain = exparam->gain;
-	param.freq = 11025;//exparam->freq;
+    // TODO: xmb wants 22050, but it causes crash for some reason
+    // TODO: pspemu resampler looks broken (see invizimals voice chat, for example)
+    int k1 = pspSdkSetK1(0);
+    PspUsbCamSetupMicParam param = {0};
+    param.size = sizeof(PspUsbCamSetupMicParam);
+    param.alc = exparam->alc;
+    param.gain = exparam->gain;
+    param.freq = 11025;//exparam->freq;
 
-	res = _sceUsbCamSetupMic(&param, workarea, wasize);
+    res = _sceUsbCamSetupMic(&param, workarea, wasize);
 
-	pspSdkSetK1(k1);
+    pspSdkSetK1(k1);
 
-	mute_mic = 1;
+    mute_mic = 1;
 
-	return res;
+    return res;
 }
 
 int sceUsbCamSetEvLevel_Patched(int level)
 {
-	int res = 0;
-	int k1 = pspSdkSetK1(0);
-	dummy_read_cam = 1;
-	sceKernelDelayThread(100000);
-	res = _sceUsbCamSetEvLevel(level);
-	sceKernelDelayThread(100000);
-	dummy_read_cam = 0;
-	sceKernelDelayThread(100000);
-	pspSdkSetK1(k1);
-	return res;
+    int res = 0;
+    int k1 = pspSdkSetK1(0);
+    dummy_read_cam = 1;
+    sceKernelDelayThread(100000);
+    res = _sceUsbCamSetEvLevel(level);
+    sceKernelDelayThread(100000);
+    dummy_read_cam = 0;
+    sceKernelDelayThread(100000);
+    pspSdkSetK1(k1);
+    return res;
 }
 
 int sceUsbCamReadVideoFrame_Patched(u8 *buf, SceSize size)

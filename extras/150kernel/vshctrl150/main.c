@@ -191,7 +191,7 @@ static int vshpatch_module_chain(SceModule2 *mod)
         patch_sysconf_plugin_module(mod);
         goto exit;
     }
-	if(0 == strcmp(mod->modname, "game_plugin_module")) {
+    if(0 == strcmp(mod->modname, "game_plugin_module")) {
         patch_game_plugin_module(mod);
         goto exit;
     }

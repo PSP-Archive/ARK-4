@@ -65,6 +65,6 @@ void gpio_set_unk18(unsigned int port)
 
 void gpio_init(void)
 {
-	sysreg_io_enable_gpio();
-	*REG32(0xBE24001C) = 0;
+    sysreg_io_enable_gpio();
+    *REG32(0xBE24001C) = 0;
 }

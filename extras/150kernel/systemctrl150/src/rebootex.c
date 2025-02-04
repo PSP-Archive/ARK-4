@@ -92,7 +92,7 @@ int sceKernelGzipDecompressPatched(u8 *dest, u32 destSize, const u8 *src, void *
     u8 *output = (u8 *)0xbfc00200;
     for (int i = 0; i < 0x10; i++)
     {
-        output[i] = keyseed[i];	
+        output[i] = keyseed[i];    
     }
     
     restoreRebootBuffer();
@@ -110,7 +110,7 @@ int sceKernelGzipDecompressPatched(u8 *dest, u32 destSize, const u8 *src, void *
 
         // Do the following additional patches when going from 1.50 to 6.61
         _sw(0, 0x886000f0);
-        _sw(0, 0x88600108);	
+        _sw(0, 0x88600108);    
 
         return 0;
     }

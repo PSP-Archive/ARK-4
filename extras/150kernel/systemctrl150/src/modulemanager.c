@@ -40,7 +40,7 @@ void patchModuleManager()
     /* bne t4, zero, +43 -> beq zero, zero, +43 : 
         Force always to take the size of the data.psp instead of
         the size of the PBP to avoid the error 0x80020001 */
-    _sw(0x1000002A, mod->text_addr + 0x3f28);	
+    _sw(0x1000002A, mod->text_addr + 0x3f28);    
 
     prologue_module = (int (*)(void *, SceModule2 *))(mod->text_addr + 0x3b34);
 

@@ -169,9 +169,9 @@ static int isGameId(char* runlevel){
 static int matchingRunlevel(char * runlevel)
 {
     
-	lowerString(runlevel, runlevel, strlen(runlevel)+1);
+    lowerString(runlevel, runlevel, strlen(runlevel)+1);
 
-	int ret = 0;
+    int ret = 0;
 
     if (strcasecmp(runlevel, "all") == 0 || strcasecmp(runlevel, "always") == 0) return 1; // always on
 
@@ -180,31 +180,31 @@ static int matchingRunlevel(char * runlevel)
         return isPath(runlevel);
     }
 
-	if(isVshRunlevel()){
-		return (strstr(runlevel, "vsh") != NULL || strstr(runlevel, "xmb") != NULL);
+    if(isVshRunlevel()){
+    	return (strstr(runlevel, "vsh") != NULL || strstr(runlevel, "xmb") != NULL);
     }
 
-	if(isPopsRunlevel()){
+    if(isPopsRunlevel()){
         // check if plugin loads on specific game
         if (isGameId(runlevel)) return 1;
         // check keywords
-    	return (strstr(runlevel, "pops") != NULL || strstr(runlevel, "ps1") != NULL || strstr(runlevel, "psx") != NULL); // PS1 games only
+        return (strstr(runlevel, "pops") != NULL || strstr(runlevel, "ps1") != NULL || strstr(runlevel, "psx") != NULL); // PS1 games only
     }
-	
+    
     if(isHomebrewRunlevel()) {
-		if (strstr(runlevel, "launcher") != NULL){
-			// check if running custom launcher
-			if (isLauncher()) return 1;
-		}
-    	if (strstr(runlevel, "app") != NULL || strstr(runlevel, "homebrew") != NULL || strstr(runlevel, "game") != NULL) return 1; // homebrews only
-	}
+    	if (strstr(runlevel, "launcher") != NULL){
+    		// check if running custom launcher
+    		if (isLauncher()) return 1;
+    	}
+        if (strstr(runlevel, "app") != NULL || strstr(runlevel, "homebrew") != NULL || strstr(runlevel, "game") != NULL) return 1; // homebrews only
+    }
 
-	if(isUmdRunlevel()) {
+    if(isUmdRunlevel()) {
         // check if plugin loads on specific game
         if (isGameId(runlevel)) return 1;
         // check keywords
-    	if(strstr(runlevel, "umd") != NULL || strstr(runlevel, "psp") != NULL || strstr(runlevel, "umdemu") != NULL || strstr(runlevel, "game") != NULL) return 1; // Retail games only
-	}
+        if(strstr(runlevel, "umd") != NULL || strstr(runlevel, "psp") != NULL || strstr(runlevel, "umdemu") != NULL || strstr(runlevel, "game") != NULL) return 1; // Retail games only
+    }
     
     // Unsupported Runlevel (we don't touch those to keep stability up)
     return 0;

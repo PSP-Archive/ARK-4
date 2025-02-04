@@ -62,11 +62,11 @@ void exception_init(void)
 
     exception_set_table(s_exception_table);
     exception_set_nmi_handler(default_nmi_handler);
-	exception_set_ebase_handler(default_ebase_handler);
+    exception_set_ebase_handler(default_ebase_handler);
 
-	memcpy((void *)0xBFC00000, &nmi_entry, nmi_entry_size);
-	cpu_dcache_wb_inv_all();
-	cpu_icache_inv_all();
+    memcpy((void *)0xBFC00000, &nmi_entry, nmi_entry_size);
+    cpu_dcache_wb_inv_all();
+    cpu_icache_inv_all();
 
     cpu_resume_interrupts(intr);
 }

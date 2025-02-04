@@ -50,19 +50,19 @@ static char* findRecoveryApp(){
 }
 
 static int launchRecoveryApp(char* p){
-	struct SceKernelLoadExecVSHParam param;
+    struct SceKernelLoadExecVSHParam param;
 
-	int apitype = 0x141;
+    int apitype = 0x141;
 
-	memset(&param, 0, sizeof(param));
-	param.size = sizeof(param);
-	param.args = strlen(p) + 1;
-	param.argp = p;
-	param.key = "game";
-	sctrlKernelLoadExecVSHWithApitype(apitype, p, &param);
+    memset(&param, 0, sizeof(param));
+    param.size = sizeof(param);
+    param.args = strlen(p) + 1;
+    param.argp = p;
+    param.key = "game";
+    sctrlKernelLoadExecVSHWithApitype(apitype, p, &param);
 
-	// SHOULD NOT REALLY GET HERE
-	return 0;
+    // SHOULD NOT REALLY GET HERE
+    return 0;
 }
 
 static void checkArkPath(){
@@ -82,12 +82,12 @@ static void checkArkPath(){
         return;
     }
 
-	fd = sceIoDopen("ms0:/SEPLUGINS");
-	if (fd >= 0) {
-    	strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
-		sceIoDclose(fd);
-		return;
-	}
+    fd = sceIoDopen("ms0:/SEPLUGINS");
+    if (fd >= 0) {
+        strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
+    	sceIoDclose(fd);
+    	return;
+    }
     strcpy(ark_config->arkpath, "flash1:/");
 
 }
@@ -128,7 +128,7 @@ static int selected_choice(u32 choice) {
         savePlugins();
         return 1;
     case 4:
-		proshell_main();
+    	proshell_main();
         return 1;
     case 5:
         {
@@ -190,14 +190,14 @@ static void draw(char** options, int size, int dir){
 
 int main(SceSize args, void *argp) {
 
-	pspDebugScreenInit();
+    pspDebugScreenInit();
 
     if (is_launcher_mode){
         sceKernelDelayThread(10000);
         proshell_main();
     }
 
-	SceCtrlData pad;
+    SceCtrlData pad;
     char *options[] = {
         "Exit",
         "Toggle USB",
@@ -225,33 +225,33 @@ int main(SceSize args, void *argp) {
         options[1] = usb_options[0];
     }
 
-	int size = (sizeof(options) / sizeof(options[0]))-1;
-	int dir = 0;
+    int size = (sizeof(options) / sizeof(options[0]))-1;
+    int dir = 0;
 
     draw(options, size, dir);
 
-	while(1) {
+    while(1) {
 
         sceDisplayWaitVblankStart();
 
         sceCtrlPeekBufferPositive(&pad, 1);
-		
-		// CONTROLS
-		if (pad.Buttons & PSP_CTRL_DOWN) {
+    	
+    	// CONTROLS
+    	if (pad.Buttons & PSP_CTRL_DOWN) {
             sceKernelDelayThread(200000);
-			dir++;
-			if(dir>size) dir = 0;
+    		dir++;
+    		if(dir>size) dir = 0;
 
             draw(options, size, dir);
-		}
-		if (pad.Buttons & PSP_CTRL_UP) {
+    	}
+    	if (pad.Buttons & PSP_CTRL_UP) {
             sceKernelDelayThread(200000);
-			dir--;
-			if(dir<0) dir = size;
+    		dir--;
+    		if(dir<0) dir = size;
             
             draw(options, size, dir);
-		}
-		if ((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE))) {
+    	}
+    	if ((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE))) {
             sceKernelDelayThread(200000);
             int ret = selected_choice(dir);
             if(ret==0) break;
@@ -278,7 +278,7 @@ int main(SceSize args, void *argp) {
                 draw(options, size, dir);
             }
         }
-	}
+    }
 
     sceKernelExitGame();
     return 0;
@@ -292,5 +292,5 @@ int module_start(int argc, void* argv){
     is_launcher_mode = (strcmp(ark_config->launcher, "PROSHELL") == 0);
 
     int uid = sceKernelCreateThread("ClassicRecovery", main, 16 - 1, 32*1024, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_VFPU, NULL);
-	sceKernelStartThread(uid, 0, NULL);
+    sceKernelStartThread(uid, 0, NULL);
 }

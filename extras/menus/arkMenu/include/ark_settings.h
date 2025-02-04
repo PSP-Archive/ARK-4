@@ -782,17 +782,17 @@ void saveSettings(){
     std::string line;
     bool exist = false;
     while(std::getline(input, line)) {
-    	if(line == "ULUS10201, infernocache, off") {
-    		exist = true;
-    		break;
-    	}
+        if(line == "ULUS10201, infernocache, off") {
+        	exist = true;
+        	break;
+        }
     }
     input.close();
     if(exist == false) {
         std::ofstream output((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
-    	output << "# Luxor doesn't like Inferno Cache" << endl;
-    	output << "ULUS10201, infernocache, off" << endl;
-    	output.close();
+        output << "# Luxor doesn't like Inferno Cache" << endl;
+        output << "ULUS10201, infernocache, off" << endl;
+        output.close();
     }
 
     

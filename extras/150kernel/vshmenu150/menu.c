@@ -52,10 +52,10 @@ int menu_draw(void)
     const char *msg;
     int max_menu, cur_menu;
     const int *pointer;
-	const char ark_version[20];
+    const char ark_version[20];
     int xPointer;
 
-  	snprintf(ark_version, sizeof(ark_version), "   ARK-4 1.50 CFW   "); 
+      snprintf(ark_version, sizeof(ark_version), "   ARK-4 1.50 CFW   "); 
 
     // check & setup video mode
     if( blit_setup() < 0) return -1;

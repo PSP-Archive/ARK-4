@@ -25,16 +25,16 @@
 #include <pspinit.h>
 #include <systemctrl.h>
 #include "macros.h"
-		
+    	
 int (* scePowerSetClockFrequency_k)(int cpufreq, int ramfreq, int busfreq);
 
 static const u32 cpu_nid_list[] = {
-	0x545A7F3C,
-	0xB8D7B3FB,//scePowerSetBusClockFrequency
-	0x843FBF43,//scePowerSetCpuClockFrequency
-	0xEBD177D6,
-	0xA4E93389,
-	0x469989AD,
+    0x545A7F3C,
+    0xB8D7B3FB,//scePowerSetBusClockFrequency
+    0x843FBF43,//scePowerSetCpuClockFrequency
+    0xEBD177D6,
+    0xA4E93389,
+    0x469989AD,
 };
 
 void SetSpeed(int cpu, int bus)

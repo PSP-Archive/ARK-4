@@ -76,21 +76,21 @@ int sceIoRemovePatched(const char * file)
 
 int sceIoMkdirPatched(char * file, SceMode mode)
 {
-	  char path[256];
+      char path[256];
     fixEfPath(path, file);
     return TAI_CONTINUE(int, hooks[2].ref, path, mode);
 }
 
 int sceIoRmdirPatched(char * file)
 {
-	  char path[256];
+      char path[256];
     fixEfPath(path, file);
     return TAI_CONTINUE(int, hooks[3].ref, path);
 }
 
 int sceIoDopenPatched(char * file)
 {
-	  char path[256];
+      char path[256];
     fixEfPath(path, file);
     return TAI_CONTINUE(int, hooks[4].ref, path);
 }

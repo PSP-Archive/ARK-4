@@ -61,55 +61,55 @@ void (*_sceNetMCopyback_1560F143)(uint32_t * a0, uint32_t a1, uint32_t a2, uint3
 */
 
 int sceNetMCopyback_exploit_helper(uint32_t addr, uint32_t value, uint32_t seed) {
-	uint32_t a0[7];
-	a0[0] = addr - 12;
-	a0[3] = seed + 1; // (int)a0[3] must be < (int)a1
-	a0[4] = 0x20000; // a0[4] must be = 0x20000
-	a0[6] = seed; // (int)a0[6] must be < (int)a0[3]
-	uint32_t a1 = value + seed + 1;
-	uint32_t a2 = 0; // a2 must be <= 0
-	uint32_t a3 = 1; // a3 must be > 0
-	_sceNetMCopyback_1560F143(a0, a1, a2, a3);
-	return a0[6] != seed;
+    uint32_t a0[7];
+    a0[0] = addr - 12;
+    a0[3] = seed + 1; // (int)a0[3] must be < (int)a1
+    a0[4] = 0x20000; // a0[4] must be = 0x20000
+    a0[6] = seed; // (int)a0[6] must be < (int)a0[3]
+    uint32_t a1 = value + seed + 1;
+    uint32_t a2 = 0; // a2 must be <= 0
+    uint32_t a3 = 1; // a3 must be > 0
+    _sceNetMCopyback_1560F143(a0, a1, a2, a3);
+    return a0[6] != seed;
 }
 
 // input: 4-byte-aligned kernel address to a non-null positive 32-bit integer
 // return *addr >= value;
 int is_ge_pos(uint32_t addr, uint32_t value) {
-	return sceNetMCopyback_exploit_helper(addr, value, 0xFFFFFFFF);
+    return sceNetMCopyback_exploit_helper(addr, value, 0xFFFFFFFF);
 }
 
 // input: 4-byte-aligned kernel address to a non-null negative 32-bit integer
 // return *addr <= value;
 int is_le_neg(uint32_t addr, uint32_t value) {
-	return sceNetMCopyback_exploit_helper(addr, value, 0x80000000);
+    return sceNetMCopyback_exploit_helper(addr, value, 0x80000000);
 }
 
 // input: 4-byte-aligned kernel address to a non-null 32-bit integer
 // return (int)*addr > 0
 int is_positive(uint32_t addr) {
-	return is_ge_pos(addr, 1);
+    return is_ge_pos(addr, 1);
 }
 u32 readKram(u32 addr) {
-	unsigned int res = 0;
-	int bit_idx = 1;
-	if (is_positive(addr)) {
-		for (; bit_idx < 32; bit_idx++) {
-			unsigned int value = res | (1 << (31 - bit_idx));
-			if (is_ge_pos(addr, value))
-				res = value;
-		}
-		return res;
-	}
-	res = 0x80000000;
-	for (; bit_idx < 32; bit_idx++) {
-		unsigned int value = res | (1 << (31 - bit_idx));
-		if (is_le_neg(addr, value))
-			res = value;
-	}
-	if (res == 0xFFFFFFFF)
-		res = 0;
-	return res;
+    unsigned int res = 0;
+    int bit_idx = 1;
+    if (is_positive(addr)) {
+    	for (; bit_idx < 32; bit_idx++) {
+    		unsigned int value = res | (1 << (31 - bit_idx));
+    		if (is_ge_pos(addr, value))
+    			res = value;
+    	}
+    	return res;
+    }
+    res = 0x80000000;
+    for (; bit_idx < 32; bit_idx++) {
+    	unsigned int value = res | (1 << (31 - bit_idx));
+    	if (is_le_neg(addr, value))
+    		res = value;
+    }
+    if (res == 0xFFFFFFFF)
+    	res = 0;
+    return res;
 }
 
 void dump_kram(u32* dst, u32* src, u32 size) {
@@ -184,7 +184,7 @@ int stubScanner(UserFunctions* tbl){
     g_tbl->UtilityLoadModule(PSP_MODULE_NP_COMMON);
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_COMMON);
     g_tbl->UtilityLoadModule(PSP_MODULE_NET_INET);
-	_sceNetMCopyback_1560F143 = tbl->FindImportUserRam("sceNetIfhandle_lib", 0x1560F143);
+    _sceNetMCopyback_1560F143 = tbl->FindImportUserRam("sceNetIfhandle_lib", 0x1560F143);
 
     g_tbl->p5_open_savedata(PSP_UTILITY_SAVEDATA_AUTOLOAD);
     _sceSdGetLastIndex = (void*)g_tbl->FindImportUserRam("sceChnnlsv", 0xC4C494F8);

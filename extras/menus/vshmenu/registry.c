@@ -36,46 +36,46 @@
 #include "scepaf.h"
 
 void delete_hibernation(vsh_Menu *vsh) {
-	if (vsh->psp_model == PSP_GO) {
-		vshCtrlDeleteHibernation();
-		vsh->status.reset_vsh = 1;
-	}
+    if (vsh->psp_model == PSP_GO) {
+    	vshCtrlDeleteHibernation();
+    	vsh->status.reset_vsh = 1;
+    }
 }
 
 int codecs_activated() {
-	u32 flash_activated = 0;
-	u32 flash_play = 0;
-	u32 wma_play = 0;
+    u32 flash_activated = 0;
+    u32 flash_play = 0;
+    u32 wma_play = 0;
 
-	vctrlGetRegistryValue("/CONFIG/BROWSER", "flash_activated", &flash_activated);
-	vctrlGetRegistryValue("/CONFIG/BROWSER", "flash_play", &flash_play);
-	vctrlGetRegistryValue("/CONFIG/MUSIC", "wma_play", &wma_play);
+    vctrlGetRegistryValue("/CONFIG/BROWSER", "flash_activated", &flash_activated);
+    vctrlGetRegistryValue("/CONFIG/BROWSER", "flash_play", &flash_play);
+    vctrlGetRegistryValue("/CONFIG/MUSIC", "wma_play", &wma_play);
 
-	if (!flash_activated || !flash_play || !wma_play){
-		return 0;
-	}
-	
-	return 1;
+    if (!flash_activated || !flash_play || !wma_play){
+    	return 0;
+    }
+    
+    return 1;
 }
 
 int activate_codecs(vsh_Menu *vsh) {
 
-	if (!codecs_activated()){
-		vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_activated", 1);
-		vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_play", 1);
-		vctrlSetRegistryValue("/CONFIG/MUSIC", "wma_play", 1);
-		vsh->status.reset_vsh = 1;
-	}
-	
-	return 0;
+    if (!codecs_activated()){
+    	vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_activated", 1);
+    	vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_play", 1);
+    	vctrlSetRegistryValue("/CONFIG/MUSIC", "wma_play", 1);
+    	vsh->status.reset_vsh = 1;
+    }
+    
+    return 0;
 }
 
 int swap_buttons(vsh_Menu *vsh) {
-	u32 value;
-	vctrlGetRegistryValue("/CONFIG/SYSTEM/XMB", "button_assign", &value);
-	value = !value;
-	vctrlSetRegistryValue("/CONFIG/SYSTEM/XMB", "button_assign", value);
-	
-	vsh->status.reset_vsh = 1;
-	return 0;
+    u32 value;
+    vctrlGetRegistryValue("/CONFIG/SYSTEM/XMB", "button_assign", &value);
+    value = !value;
+    vctrlSetRegistryValue("/CONFIG/SYSTEM/XMB", "button_assign", value);
+    
+    vsh->status.reset_vsh = 1;
+    return 0;
 }

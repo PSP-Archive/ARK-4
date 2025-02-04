@@ -47,37 +47,37 @@ SceUID gamedfd = -1;
 SceUID game150dfd = -1;
 
 static const char *game_list[] = {
-	"ms0:/PSP/GAME/", "ms0:/PSP/GAME150/", "ef0:/PSP/GAME/"
+    "ms0:/PSP/GAME/", "ms0:/PSP/GAME150/", "ef0:/PSP/GAME/"
 };
 
 static void ApplyNamePatch(SceIoDirent *dir, char *patch)
 {
-	if (dir->d_name[0] != '.') {
+    if (dir->d_name[0] != '.') {
         strcat(dir->d_name, patch);
-	}
+    }
 }
 
 void Fix150Path(const char *file)
 {
-	char str[256];
+    char str[256];
 
-	if (strstr(file, "ms0:/PSP/GAME/") == file) {
-		strcpy(str, (char *)file);
+    if (strstr(file, "ms0:/PSP/GAME/") == file) {
+    	strcpy(str, (char *)file);
 
-		char *p = strstr(str, GAME150_PATCH);
-		
-		if (p) {
-			strcpy((char *)file+13, "150/");
-			strncpy((char *)file+17, str+14, p-(str+14));
-			strcpy((char *)file+17+(p-(str+14)), p+5);		
-		}
-	}
+    	char *p = strstr(str, GAME150_PATCH);
+    	
+    	if (p) {
+    		strcpy((char *)file+13, "150/");
+    		strncpy((char *)file+17, str+14, p-(str+14));
+    		strcpy((char *)file+17+(p-(str+14)), p+5);		
+    	}
+    }
 }
 
 static int CorruptIconPatch(char *name)
 {
-	char path[256];
-	SceIoStat stat;
+    char path[256];
+    SceIoStat stat;
 
     // Hide ARK launchers
     if (strcasecmp(name, "SCPS10084") == 0 || strcasecmp(name, "NPUZ01234") == 0){
@@ -100,11 +100,11 @@ static int CorruptIconPatch(char *name)
         }
     }
 
-	return 0;
+    return 0;
 }
 
 static int HideDlc(char *name) {
-	char path[256];
+    char path[256];
     SceIoStat stat;
 
     for (int i=0; i<NELEMS(game_list); i++){
@@ -121,7 +121,7 @@ static int HideDlc(char *name) {
             }
         }
     }
-	return 0;
+    return 0;
 }
 
 static int is_iso_dir(const char *path)
@@ -340,7 +340,7 @@ int gamedread(SceUID fd, SceIoDirent * dir)
             if ((result = sceIoDread(game150dfd, dir)) <= 0)
             {
                 sceIoDclose(game150dfd);
-                game150dfd = -1;					
+                game150dfd = -1;    				
             }
             else {
                 apply150NamePatch = 1;
@@ -366,7 +366,7 @@ int gamedread(SceUID fd, SceIoDirent * dir)
         if (!patched && apply150NamePatch)
             ApplyNamePatch(dir, GAME150_PATCH);
         if (se_config->hidedlc)
-    		HideDlc(dir->d_name);
+        	HideDlc(dir->d_name);
         pspSdkSetK1(k1);
     }
     #ifdef DEBUG
@@ -643,7 +643,7 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     }
 
     //forward to ms0 handler
-	if(strncmp(file, "ms", 2) == 0)
+    if(strncmp(file, "ms", 2) == 0)
     {
         if (strstr(file, "ms0:/PSP/GAME150/") == file) {
             result = loadReboot150();
@@ -655,8 +655,8 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         result = sctrlKernelLoadExecVSHMs2(file, param);
     }
 
-	//forward to ef0 handler
-	else result = sctrlKernelLoadExecVSHEf2(file, param);
+    //forward to ef0 handler
+    else result = sctrlKernelLoadExecVSHEf2(file, param);
 
     return result;
 }

@@ -22,38 +22,38 @@
 #include "macros.h"
 
 static char *g_blacklist[] = {
-	"iso",
-	"seplugins",
-	"isocache.bin",
-	"irshell",
+    "iso",
+    "seplugins",
+    "isocache.bin",
+    "irshell",
 };
 
 static inline int is_in_blacklist(const char *dname)
 {
-	int i;
+    int i;
 
-	for(i=0; i<NELEMS(g_blacklist); ++i) {
-		if(0 == strcasecmp(dname, g_blacklist[i])) {
-			return 1;
-		}
-	}
+    for(i=0; i<NELEMS(g_blacklist); ++i) {
+    	if(0 == strcasecmp(dname, g_blacklist[i])) {
+    		return 1;
+    	}
+    }
 
-	return 0;
+    return 0;
 }
 
 int hideIoDread(SceUID fd, SceIoDirent * dir)
 {
-	int result = sceIoDread(fd, dir);
+    int result = sceIoDread(fd, dir);
 
-	if(result > 0 && is_in_blacklist(dir->d_name)) {
-		result = sceIoDread(fd, dir);
-	}
+    if(result > 0 && is_in_blacklist(dir->d_name)) {
+    	result = sceIoDread(fd, dir);
+    }
 
-	return result;
+    return result;
 }
 
 // hide cfw folders, this avoids crashing the weird dj max portable 3 savegame algorithm
 void hide_cfw_folder(SceModule * mod)
 {
-	hookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, &hideIoDread);
+    hookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, &hideIoDread);
 }
