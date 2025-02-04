@@ -108,8 +108,12 @@ void config_recreate_region_setting(vsh_Menu *vsh, char* oldtext, char* newtext)
 			sceIoWrite(fd, newtext, scePaf_strlen(newtext));
 			sceIoWrite(fd, ", on\n", 5);
 			sceIoClose(fd);
+			return;
 		}
-		return;
+		else {
+		    fd = sceIoOpen(ARK_SETTINGS_FLASH, PSP_O_RDONLY, 0777);
+		    if (fd < 0) return;
+		}
 	}
 
 	size_t size = sceIoLseek32(fd, 0, SEEK_END);
@@ -177,26 +181,26 @@ void config_recreate_umd_keys(void) {
 
 void reset_ark_settings(vsh_Menu *vsh){
 	const char settings[] = "always, usbcharge, on\n"
-							"always, overclock, on\n"
-							"always, powersave, off\n"
-							"always, defaultclock, off\n"
-							"always, launcher, off\n"
-							"always, disablepause, off\n"
-							"always, highmem, off\n"
-							"always, mscache, on\n"
-							"always, infernocache:lru, on\n"
-							"always, oldplugin, on\n"
-							"always, skiplogos, off\n"
-							"always, hidepics, off\n"
-							"always, hibblock, on\n"
-							"always, hidemac, on\n"
-							"always, hidedlc, off\n"
-							"always, noled, off\n"
-							"always, noumd, off\n"
-							"always, noanalog, off\n"
-							"always, qaflags, on\n"
-							"# Luxor doesn't like Inferno Cache\n"
-							"ULUS10201, infernocache, off";
+		"always, overclock, on\n"
+		"always, powersave, off\n"
+		"always, defaultclock, off\n"
+		"always, launcher, off\n"
+		"always, disablepause, off\n"
+		"always, highmem, off\n"
+		"always, mscache, on\n"
+		"always, infernocache:lru, on\n"
+		"always, oldplugin, on\n"
+		"always, skiplogos, off\n"
+		"always, hidepics, off\n"
+		"always, hibblock, on\n"
+		"always, hidemac, on\n"
+		"always, hidedlc, off\n"
+		"always, noled, off\n"
+		"always, noumd, off\n"
+		"always, noanalog, off\n"
+		"always, qaflags, on\n"
+		"# Luxor doesn't like Inferno Cache\n"
+		"ULUS10201, infernocache, off";
 
 	char arkMenuPath[ARK_PATH_SIZE];
 	char arkSettingsPath[ARK_PATH_SIZE];
