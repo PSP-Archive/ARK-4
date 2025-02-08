@@ -363,6 +363,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         if (se_config->wpa2){
             patchSceNetWpa2(mod);
         }
+        goto flush;
     }
     
     if (strcmp(mod->modname, "vsh_module") == 0){
