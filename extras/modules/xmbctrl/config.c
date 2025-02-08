@@ -38,6 +38,10 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.defaultclock = opt;
         return 1;
     }
+    else if (strcasecmp(path, "wpa2") == 0){
+        config.wpa2 = opt;
+        return 1;
+    }
     else if (strcasecmp(path, "launcher") == 0){
         config.launcher = opt;
         return 1;
@@ -143,6 +147,7 @@ void loadSettings(){
     FIX_BOOLEAN(config.noumd);
     FIX_BOOLEAN(config.noanalog);
     FIX_BOOLEAN(config.qaflags);
+    FIX_BOOLEAN(config.wpa2);
 }
 
 static void processSetting(int fd, char* line, char* name, int setting){
@@ -199,6 +204,7 @@ void saveSettings(){
     processSetting(fd, line, "noumd", config.noumd);
     processSetting(fd, line, "noanalog", config.noanalog);
     processSetting(fd, line, "qaflags", config.qaflags);
+    processSetting(fd, line, "wpa2", config.wpa2);
 
     for (int i=0; i<custom_config.count; i++){
         sceIoWrite(fd, custom_config.table[i], strlen(custom_config.table[i]));

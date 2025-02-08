@@ -60,6 +60,7 @@ typedef struct
     int noumd;
     int noanalog;
     int qaflags;
+    int wpa2;
 } CFWConfig;
 
 typedef struct

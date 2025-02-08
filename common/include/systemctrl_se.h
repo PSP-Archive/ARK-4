@@ -192,7 +192,7 @@ typedef struct _SEConfig
     s16 iso_cache_num;
     s16 iso_cache_policy;
     s16 noled; // always false
-    s16 language; /* -1 as autodetect */
+    s16 wpa2; // patch to use wpa2
     s16 force_high_memory;
     s16 macspoofer; // automatic
 } SEConfig;

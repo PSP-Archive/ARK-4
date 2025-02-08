@@ -358,6 +358,12 @@ void PSPOnModuleStart(SceModule2 * mod){
         }
         goto flush;
     }
+
+    if (strcmp(mod->modname, "sceNetApctl_Library") == 0) {
+        if (se_config->wpa2){
+            patchSceNetWpa2(mod);
+        }
+    }
     
     if (strcmp(mod->modname, "vsh_module") == 0){
         if (se_config->umdregion){

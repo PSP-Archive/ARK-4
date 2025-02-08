@@ -79,7 +79,7 @@ SEConfig se_config = {
 	.iso_cache_num = 0,
 	.iso_cache_policy = CACHE_POLICY_LRU,
 	.noled = 0, // always false
-	.language = -1, /* -1 as autodetect */
+	.wpa2 = 0, /* not used by default */
 	.force_high_memory = 0,
 	.macspoofer = 0, // automatic
 };

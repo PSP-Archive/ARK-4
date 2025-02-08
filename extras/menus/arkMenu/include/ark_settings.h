@@ -46,6 +46,7 @@ typedef struct {
     unsigned char noumd;
     unsigned char noanalog;
     unsigned char qaflags;
+    unsigned char wpa2;
 }CfwConf;
 
 CfwConf cfw_config;
@@ -342,8 +343,19 @@ static struct {
     {"Off", "On"}
 };
 
-
-// DO NOT ADD BELOW THIS
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} wpa2 = {
+    "WPA2",
+    2,
+    0,
+    &(cfw_config.wpa2),
+    {"Off", "On"}
+};
 
 static struct {
     char* description;
@@ -380,6 +392,7 @@ settings_entry* ark_conf_entries_1k[] = {
     (settings_entry*)&overclock,
     (settings_entry*)&powersave,
     (settings_entry*)&defaultclock,
+    (settings_entry*)&wpa2,
     (settings_entry*)&launcher,
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
@@ -401,6 +414,7 @@ settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&overclock,
     (settings_entry*)&powersave,
     (settings_entry*)&defaultclock,
+    (settings_entry*)&wpa2,
     (settings_entry*)&launcher,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
@@ -423,6 +437,7 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&overclock,
     (settings_entry*)&powersave,
     (settings_entry*)&defaultclock,
+    (settings_entry*)&wpa2,
     (settings_entry*)&launcher,
     (settings_entry*)&disablepause,
     (settings_entry*)&highmem,
@@ -542,6 +557,9 @@ static unsigned char* configConvert(string conf){
     }
     else if (strcasecmp(conf.c_str(), "defaultclock") == 0){
         return &(cfw_config.defaultclock);
+    }
+    else if (strcasecmp(conf.c_str(), "wpa2") == 0){
+        return &(cfw_config.wpa2);
     }
     else if (strcasecmp(conf.c_str(), "launcher") == 0){
         return &(cfw_config.launcher);
@@ -711,6 +729,7 @@ void loadSettings(){
     FIX_BOOLEAN(cfw_config.noumd);
     FIX_BOOLEAN(cfw_config.noanalog);
     FIX_BOOLEAN(cfw_config.qaflags);
+    FIX_BOOLEAN(cfw_config.wpa2);
 }
 
 static string processSetting(string name, unsigned char setting){
@@ -753,6 +772,7 @@ void saveSettings(){
     output << processSetting("noumd", cfw_config.noumd) << endl;
     output << processSetting("noanalog", cfw_config.noanalog) << endl;
     output << processSetting("qaflags", cfw_config.qaflags) << endl;
+    output << processSetting("wpa2", cfw_config.wpa2) << endl;
     
     switch (cfw_config.regionchange){
         case REGION_JAPAN:
