@@ -29,8 +29,11 @@ int syscon_ctrl_hr_power(unsigned int on);
 int syscon_handshake_unlock(void);
 int syscon_get_pommel_version(unsigned int *version);
 int syscon_get_power_status(unsigned int *status);
+int syscon_get_wakeup_factor(unsigned int *factor);
 int syscon_ctrl_voltage(unsigned int a0, unsigned int a1);
 int syscon_reset_device(unsigned int a0, unsigned int a1);
+int syscon_read_scratchpad(unsigned int src, unsigned int *dest);
+int syscon_write_scratchpad(unsigned int dest, unsigned int *src);
 
 #define SYSCON_CTRL_UP          (0x00000001)
 #define SYSCON_CTRL_RIGHT       (0x00000002)

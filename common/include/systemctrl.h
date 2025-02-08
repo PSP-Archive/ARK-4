@@ -45,11 +45,6 @@ enum {
     PSP_11000 = 10, // 11g
 };
 
-// Different firmware versions
-#define FW_661 0x06060110
-#define FW_660 0x06060010
-#define FW_150 0x01050001
-
 enum BootLoadFlags
 {
     BOOTLOAD_VSH = 1,

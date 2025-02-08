@@ -25,6 +25,8 @@
 #include "tmctrl150.h"
 #include "ark_vshctrl150.h"
 #include "ark_satelite150.h"
+#include "mainbinex.h"
+#include "msipl_raw.h"
 
 #include "../common/include/rebootbin.h"
 
@@ -34,6 +36,7 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 #define printf    pspDebugScreenPrintf
 
 #define PSAR_SIZE_150    	10149440
+#define UPDATER_SIZE_150   	3737904
 
 #define LOADEXEC_661_SIZE 0xBA00
 
@@ -53,6 +56,7 @@ ARKFile arkfiles[] =
     { ARK_DC_PATH "/150/vsh/module/ark_satelite150.prx", ark_satelite150, sizeof(ark_satelite150) },
     { ARK_DC_PATH "/150/kd/pspbtcnf_game.txt", pspbtcnf_game, sizeof(pspbtcnf_game) },
     { ARK_DC_PATH "/150/kd/pspbtcnf.txt", pspbtcnf, sizeof(pspbtcnf) },
+    { ARK_DC_PATH "/150/msipl.raw", msipl_raw, sizeof(msipl_raw) },
 };
 
 static const int N_FILES = (sizeof(arkfiles)/sizeof(arkfiles[0]));
@@ -524,6 +528,46 @@ int GetReboot(u8 *dataOut, u8 *dataOut2, int cbExpanded, int decompress)
     return cbExpanded;
 }
 
+int WriteMsIpl()
+{
+    int cbExpanded;
+
+    if (ReadFile("ms0:/150.PBP", 0x3251, g_dataPSAR, UPDATER_SIZE_150) != UPDATER_SIZE_150)
+    {
+        ErrorExit(5000, "Incorrect or inexistant 150.PBP at root.\n");
+    }
+
+    cbExpanded = pspDecryptPRX(g_dataPSAR, g_dataOut2, UPDATER_SIZE_150);
+    if (cbExpanded <= 0)
+    {
+        ErrorExit(5000, "Cannot decrypt updater prx: 0x%x.\n", cbExpanded);
+    }
+
+    cbExpanded = pspDecryptPRX(&g_dataOut2[0x303100], g_dataOut, 0x38480);
+    if (cbExpanded <= 0)
+    {
+        ErrorExit(5000, "Cannot decrypt ipl updater prx.\n");
+    }
+
+    cbExpanded = pspDecryptIPL1(&g_dataOut[0x980], g_dataOut2, 0x37000);
+    if (cbExpanded <= 0)
+    {
+        ErrorExit(5000, "Cannot decrypt IPL.\n");
+    }
+
+    cbExpanded = pspLinearizeIPL2(g_dataOut2, &g_dataOut[0x10000], cbExpanded);
+    if (cbExpanded <= 0)
+    {
+        ErrorExit(5000, "Cannot linearize IPL.\n");
+    }
+
+    memset(g_dataOut, 0, 0x10000);
+
+    memcpy(g_dataOut, mainbinex, size_mainbinex);
+
+    WriteFile(ARK_DC_PATH "/150/msipl_01g.bin", g_dataOut, cbExpanded + 0x10000);
+}
+
 static int GetReboot661()
 {
     int size;
@@ -770,6 +814,8 @@ static void Update()
     ExtractPrxs(PSAR_SIZE_150);
 
     GetReboot661();
+
+    WriteMsIpl();
 }
 
 int main(void)

@@ -145,6 +145,27 @@ int syscon_get_digital_key(unsigned int *keys)
     return syscon_issue_command_read(SYSCON_GET_DIGITAL_KEY_KERNEL, (unsigned char *)keys);
 }
 
+int syscon_get_wakeup_factor(unsigned int *factor)
+{
+    return syscon_issue_command_read(SYSCON_GET_WAKEUP_FACTOR, (unsigned char *)factor);
+}
+
+int syscon_read_scratchpad(unsigned int src, unsigned int *dest)
+{
+    unsigned char data = (unsigned char)(src << 2) | (unsigned char)(sizeof(unsigned int) >> 1);
+
+    return syscon_issue_command_read_write(SYSCON_READ_SCRATCHPAD, &data, sizeof(data), dest);
+}
+
+int syscon_write_scratchpad(unsigned int dest, unsigned int *src)
+{
+    unsigned char data[5];
+    data[0] = (unsigned char)(dest << 2) | (unsigned char)(sizeof(unsigned int) >> 1);
+    memcpy(&data[1], src, sizeof(unsigned int));
+
+    return syscon_issue_command_write(SYSCON_WRITE_SCRATCHPAD, data, sizeof(data));
+}
+
 int syscon_reset_device(unsigned int a0, unsigned int a1)
 {
     // valid options:

@@ -3,6 +3,7 @@
 #include <pspsysevent.h>
 #include <systemctrl.h>
 #include <macros.h>
+#include <ark.h>
 
 int sceDisplaySetBrightnessPatched(int level, int unk1);
 int SysEventHandler(int eventId, char *eventName, void *param, int *result);
@@ -106,6 +107,19 @@ int sceDisplaySetBrightnessPatched(int level, int unk1)
     return sceDisplaySetBrightness(level, unk1);
 }
 
+int (*_sceSysconWriteScratchPad)(int dest, void *src, int size);
+
+int sceSysconWriteScratchPadPatched(int dest, void *src, int size)
+{
+    int fw_150 = FW_150;
+
+    // Write firmware version to (hopefully) unused area of syscon scratchpad mem
+    // This is read by cIPL to determine which IPL to load when coming out of suspend
+    _sceSysconWriteScratchPad(SYSCON_SCRATCHPAD_RESUME_FW_ADDR, &fw_150, sizeof(fw_150));
+
+    return _sceSysconWriteScratchPad(dest, src, size);
+}
+
 // Module Start Handler
 static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 {
@@ -122,6 +136,10 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     else if (strcmp(moduleName, "scePower_Service") == 0)
     {
     	_sw(0x00e02021, text_addr+0x558); //ADDU $a0 $a3 $zero
+
+    	MAKE_CALL(text_addr + 0x115c, sceSysconWriteScratchPadPatched);
+    	_sceSysconWriteScratchPad = text_addr + 0x4360;
+
     	flushCache();
     }
     else if (strcmp(moduleName, "sceDisplay_Service") == 0)

@@ -99,6 +99,14 @@ extern "C" {
 #define ARK_DC_PATH "ms0:/TM/DCARK"
 #define TM_PATH_W L"\\TM\\DCARK\\"
 
+// Different firmware versions
+#define FW_661 0x06060110
+#define FW_660 0x06060010
+#define FW_150 0x01050001
+
+// Syscon mem address used for 1.50 resume support
+#define SYSCON_SCRATCHPAD_RESUME_FW_ADDR 0x4
+
 /*
 Device identifier. Used as extension of psp_model.
 First two bits identify the device (PSP or PS Vita)

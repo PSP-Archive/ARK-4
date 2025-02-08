@@ -7,6 +7,8 @@ OBJS = \
 	tmctrl150.h \
 	ark_vshctrl150.h \
 	ark_satelite150.h \
+	mainbinex.h \
+	msipl_raw.h \
 	main.o \
 	pspDecrypt.o \
 	pspPSAR.o \
@@ -49,6 +51,12 @@ systemctrl150.h:
 
 tmctrl150.h:
 	$(Q)bin2c $(ARKROOT)/extras/150kernel/tmctrl150/tmctrl150.prx tmctrl150.h tmctrl150
+
+mainbinex.h:
+	$(Q)bin2c $(ARKROOT)/extras/150kernel/msipl/mainbinex/mainbinex mainbinex.h mainbinex
+
+msipl_raw.h:
+	$(Q)bin2c $(ARKROOT)/extras/150kernel/msipl/stage1/msipl msipl_raw.h msipl_raw
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
