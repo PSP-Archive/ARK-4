@@ -76,7 +76,8 @@ GetItem GetItemes[] =
     { 17, 0, "Turn off LEDs" },
     { 18, 0, "Disable UMD Drive" },
     { 19, 0, "Disable Analog Stick" },
-    { 20, 0, "QA Flags" },
+    { 20, 0, "WPA2" },
+    { 21, 0, "QA Flags" },
 };
 
 #define PLUGINS_CONTEXT 1
@@ -135,6 +136,7 @@ struct {
     {N_OPTS, ark_settings_options}, // Turn off LEDs
     {2, ark_settings_boolean}, // Disable UMD Drive
     {2, ark_settings_boolean}, // Disable Analog Stick 
+    {2, ark_settings_boolean}, // WPA2 ( Thanks again Moment )
     {2, ark_settings_boolean}, // QA Flags
 };
 
@@ -726,13 +728,13 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
     	else if(sce_paf_private_strcmp(name, "msgtop_custom_app") == 0)
         {
-    		sce_paf_private_sprintf(buf, "%s %s", STAR, settings[23]);
+    		sce_paf_private_sprintf(buf, "%s %s", STAR, settings[25]);
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
     	else if(sce_paf_private_strcmp(name, "msgtop_150_reboot") == 0)
         {
-    		sce_paf_private_sprintf(buf, "%s %s", STAR, settings[25]);
+    		sce_paf_private_sprintf(buf, "%s %s", STAR, settings[26]);
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
@@ -779,7 +781,8 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.noled,    		// 15
                 config.noumd,    		// 16
                 config.noanalog,    	// 17
-                config.qaflags,    	    // 18
+                config.wpa2,    	    // 18
+                config.qaflags,    	    // 19
             };
             
             int i;
@@ -837,6 +840,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.noled,
                 &config.noumd,
                 &config.noanalog,
+                &config.wpa2,
                 &config.qaflags,
             };
             

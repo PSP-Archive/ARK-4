@@ -46,6 +46,7 @@ char *settings[] =
     "Turn off LEDs",
     "Disable UMD Drive",
     "Disable Analog Stick",
+    "WPA2",
     "QA Flags",
     "Custom App",
     "PSP Overclock",
