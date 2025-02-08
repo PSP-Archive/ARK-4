@@ -1,5 +1,6 @@
 #include <pspsdk.h>
 #include <string.h>
+#include <ark.h>
 
 #include "sysreg.h"
 #include "kirk.h"
@@ -328,6 +329,27 @@ void prestage2()
     ((void (*)()) 0x4000000)();
 }
 
+#if IPL_01G
+void boot150()
+{
+#ifndef MSIPL
+    syscon_ctrl_ms_power(1);
+#endif
+
+    MsFatMount();
+
+    int res = MsFatOpen("/TM/DCARK/150/msipl.raw");
+
+    if (res == 0){
+        MsFatRead(0x40c0000, 0x4000);
+        MsFatClose();
+        Dcache();
+        Icache();
+        return ((int (*)()) 0x40c0000)();
+    }
+}
+#endif
+
 int main()
 {
 
@@ -366,6 +388,25 @@ int main()
     		Icache();
     		return ((int (*)()) 0x40c0000)();
     	}
+    }
+#endif
+
+#if IPL_01G
+    int wakeup_factor;
+    syscon_get_wakeup_factor(&wakeup_factor);
+
+    if ((wakeup_factor & 0x80) == 0) {
+
+        // If we are not resuming from suspend wipe suspend FW version
+        unsigned int data = 0;
+        syscon_write_scratchpad(SYSCON_SCRATCHPAD_RESUME_FW_ADDR, &data);
+    }
+    else {
+        unsigned int fw_ver;
+        syscon_read_scratchpad(SYSCON_SCRATCHPAD_RESUME_FW_ADDR, &fw_ver);
+
+        if (fw_ver == FW_150)
+            boot150();
     }
 #endif
 
