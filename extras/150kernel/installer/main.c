@@ -33,7 +33,7 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 
 #define printf    pspDebugScreenPrintf
 
-#define PSAR_SIZE_150		10149440
+#define PSAR_SIZE_150    	10149440
 
 #define LOADEXEC_661_SIZE 0xBA00
 
@@ -115,8 +115,8 @@ char *todelete[N_DELETE] =
 };
 
 char *subset150[] =
-{	
-	"flash0:/kd/ata.prx",
+{    
+    "flash0:/kd/ata.prx",
     "flash0:/kd/audiocodec.prx",
     "flash0:/kd/audio.prx",
     "flash0:/kd/blkdev.prx",
@@ -216,117 +216,117 @@ char *subset150[] =
     "flash0:/kd/videocodec.prx",
     "flash0:/kd/vshbridge.prx",
     "flash0:/kd/wlan.prx",
-	"flash0:/vsh/module/auth_plugin.prx",
-	"flash0:/vsh/module/chnnlsv.prx",
-	"flash0:/vsh/module/common_gui.prx",
-	"flash0:/vsh/module/common_util.prx",
-	"flash0:/vsh/module/dialogmain.prx",
-	"flash0:/vsh/module/game_plugin.prx",
-	"flash0:/vsh/module/heaparea1.prx",
-	"flash0:/vsh/module/heaparea2.prx",
-	"flash0:/vsh/module/impose_plugin.prx",
-	"flash0:/vsh/module/msgdialog_plugin.prx",
-	"flash0:/vsh/module/msvideo_plugin.prx",
-	"flash0:/vsh/module/music_plugin.prx",
-	"flash0:/vsh/module/netconf_plugin.prx",
-	"flash0:/vsh/module/netplay_client_plugin.prx",
-	"flash0:/vsh/module/netplay_server_utility.prx",
-	"flash0:/vsh/module/opening_plugin.prx",
-	"flash0:/vsh/module/osk_plugin.prx",
-	"flash0:/vsh/module/pafmini.prx",
-	"flash0:/vsh/module/paf.prx",
-	"flash0:/vsh/module/photo_plugin.prx",
-	"flash0:/vsh/module/savedata_auto_dialog.prx",
-	"flash0:/vsh/module/savedata_plugin.prx",
-	"flash0:/vsh/module/savedata_utility.prx",
-	"flash0:/vsh/module/sysconf_plugin.prx",
-	"flash0:/vsh/module/update_plugin.prx",
-	"flash0:/vsh/module/video_plugin.prx",
-	"flash0:/vsh/module/vshmain.prx",
-	"flash0:/vsh/etc/index.dat",
-	"flash0:/vsh/etc/jis2ucs.bin",
-	"flash0:/vsh/etc/jis2ucs.cbin",
-	"flash0:/vsh/etc/ucs2jis.bin",
-	"flash0:/vsh/etc/ucs2jis.cbin",
-	"flash0:/vsh/etc/version.txt",
-	"flash0:/vsh/resource/01.bmp",
-	"flash0:/vsh/resource/02.bmp",
-	"flash0:/vsh/resource/03.bmp",
-	"flash0:/vsh/resource/04.bmp",
-	"flash0:/vsh/resource/05.bmp",
-	"flash0:/vsh/resource/06.bmp",
-	"flash0:/vsh/resource/07.bmp",
-	"flash0:/vsh/resource/08.bmp",
-	"flash0:/vsh/resource/09.bmp",
-	"flash0:/vsh/resource/10.bmp",
-	"flash0:/vsh/resource/11.bmp",
-	"flash0:/vsh/resource/12.bmp",
-	"flash0:/vsh/resource/auth_plugin.rco",
-	"flash0:/vsh/resource/gameboot.pmf",
-	"flash0:/vsh/resource/game_plugin.rco",
-	"flash0:/vsh/resource/impose_plugin.rco",
-	"flash0:/vsh/resource/msgdialog_plugin.rco",
-	"flash0:/vsh/resource/msvideo_plugin.rco",
-	"flash0:/vsh/resource/music_plugin.rco",
-	"flash0:/vsh/resource/netconf_dialog.rco",
-	"flash0:/vsh/resource/netplay_plugin.rco",
-	"flash0:/vsh/resource/opening_plugin.rco",
-	"flash0:/vsh/resource/osk_plugin.rco",
-	"flash0:/vsh/resource/osk_utility.rco",
-	"flash0:/vsh/resource/photo_plugin.rco",
-	"flash0:/vsh/resource/savedata_plugin.rco",
-	"flash0:/vsh/resource/savedata_utility.rco",
-	"flash0:/vsh/resource/sysconf_plugin.rco",
-	"flash0:/vsh/resource/system_plugin_bg.rco",
-	"flash0:/vsh/resource/system_plugin_fg.rco",
-	"flash0:/vsh/resource/system_plugin.rco",
-	"flash0:/vsh/resource/topmenu_plugin.rco",
-	"flash0:/vsh/resource/update_plugin.rco",
-	"flash0:/vsh/resource/video_plugin.rco",
-	"flash0:/vsh/resource/video_plugin_videotoolbar.rco",
-	"flash0:/data/cert/Class1_PCA_G2_v2.cer",
-	"flash0:/data/cert/Class1_PCA_G3v2.cer",
-	"flash0:/data/cert/Class1_PCA_ss_v4.cer",
-	"flash0:/data/cert/Class2_PCA_G2_v2.cer",
-	"flash0:/data/cert/Class2_PCA_G3v2.cer",
-	"flash0:/data/cert/Class2_PCA_ss_v4.cer",
-	"flash0:/data/cert/Class3_PCA_G2_v2.cer",
-	"flash0:/data/cert/Class3_PCA_G3v2.cer",
-	"flash0:/data/cert/Class3_PCA_ss_v4.cer",
-	"flash0:/data/cert/Class4_PCA_G2_v2.cer",
-	"flash0:/data/cert/Class4_PCA_G3v2.cer",
-	"flash0:/data/cert/RSA1024_v1.cer",
-	"flash0:/data/cert/RSA2048_v3.cer",
-	"flash0:/data/cert/RSA_SecureServer.cer",
-	"flash0:/data/cert/SCE_CA01.cer",
-	"flash0:/data/cert/SCE_CA02.cer",
-	"flash0:/data/cert/SCE_CA03.cer",
-	"flash0:/data/cert/SCE_CA04.cer",
-	"flash0:/data/cert/SCE_CA05.cer",
-	"flash0:/data/cert/VeriSign_TSA_CA.cer",
-	"flash0:/font/jpn0.pgf",
-	"flash0:/font/ltn0.pgf",
-	"flash0:/font/ltn10.pgf",
-	"flash0:/font/ltn11.pgf",
-	"flash0:/font/ltn12.pgf",
-	"flash0:/font/ltn13.pgf",
-	"flash0:/font/ltn14.pgf",
-	"flash0:/font/ltn15.pgf",
-	"flash0:/font/ltn1.pgf",
-	"flash0:/font/ltn2.pgf",
-	"flash0:/font/ltn3.pgf",
-	"flash0:/font/ltn4.pgf",
-	"flash0:/font/ltn5.pgf",
-	"flash0:/font/ltn6.pgf",
-	"flash0:/font/ltn7.pgf",
-	"flash0:/font/ltn8.pgf",
-	"flash0:/font/ltn9.pgf",
-	"flash0:/dic/apotp.dic",
-	"flash0:/dic/atokp.dic",
-	"flash0:/dic/aux0.dic",
-	"flash0:/dic/aux1.dic",
-	"flash0:/dic/aux2.dic",
-	"flash0:/dic/aux3.dic"
+    "flash0:/vsh/module/auth_plugin.prx",
+    "flash0:/vsh/module/chnnlsv.prx",
+    "flash0:/vsh/module/common_gui.prx",
+    "flash0:/vsh/module/common_util.prx",
+    "flash0:/vsh/module/dialogmain.prx",
+    "flash0:/vsh/module/game_plugin.prx",
+    "flash0:/vsh/module/heaparea1.prx",
+    "flash0:/vsh/module/heaparea2.prx",
+    "flash0:/vsh/module/impose_plugin.prx",
+    "flash0:/vsh/module/msgdialog_plugin.prx",
+    "flash0:/vsh/module/msvideo_plugin.prx",
+    "flash0:/vsh/module/music_plugin.prx",
+    "flash0:/vsh/module/netconf_plugin.prx",
+    "flash0:/vsh/module/netplay_client_plugin.prx",
+    "flash0:/vsh/module/netplay_server_utility.prx",
+    "flash0:/vsh/module/opening_plugin.prx",
+    "flash0:/vsh/module/osk_plugin.prx",
+    "flash0:/vsh/module/pafmini.prx",
+    "flash0:/vsh/module/paf.prx",
+    "flash0:/vsh/module/photo_plugin.prx",
+    "flash0:/vsh/module/savedata_auto_dialog.prx",
+    "flash0:/vsh/module/savedata_plugin.prx",
+    "flash0:/vsh/module/savedata_utility.prx",
+    "flash0:/vsh/module/sysconf_plugin.prx",
+    "flash0:/vsh/module/update_plugin.prx",
+    "flash0:/vsh/module/video_plugin.prx",
+    "flash0:/vsh/module/vshmain.prx",
+    "flash0:/vsh/etc/index.dat",
+    "flash0:/vsh/etc/jis2ucs.bin",
+    "flash0:/vsh/etc/jis2ucs.cbin",
+    "flash0:/vsh/etc/ucs2jis.bin",
+    "flash0:/vsh/etc/ucs2jis.cbin",
+    "flash0:/vsh/etc/version.txt",
+    "flash0:/vsh/resource/01.bmp",
+    "flash0:/vsh/resource/02.bmp",
+    "flash0:/vsh/resource/03.bmp",
+    "flash0:/vsh/resource/04.bmp",
+    "flash0:/vsh/resource/05.bmp",
+    "flash0:/vsh/resource/06.bmp",
+    "flash0:/vsh/resource/07.bmp",
+    "flash0:/vsh/resource/08.bmp",
+    "flash0:/vsh/resource/09.bmp",
+    "flash0:/vsh/resource/10.bmp",
+    "flash0:/vsh/resource/11.bmp",
+    "flash0:/vsh/resource/12.bmp",
+    "flash0:/vsh/resource/auth_plugin.rco",
+    "flash0:/vsh/resource/gameboot.pmf",
+    "flash0:/vsh/resource/game_plugin.rco",
+    "flash0:/vsh/resource/impose_plugin.rco",
+    "flash0:/vsh/resource/msgdialog_plugin.rco",
+    "flash0:/vsh/resource/msvideo_plugin.rco",
+    "flash0:/vsh/resource/music_plugin.rco",
+    "flash0:/vsh/resource/netconf_dialog.rco",
+    "flash0:/vsh/resource/netplay_plugin.rco",
+    "flash0:/vsh/resource/opening_plugin.rco",
+    "flash0:/vsh/resource/osk_plugin.rco",
+    "flash0:/vsh/resource/osk_utility.rco",
+    "flash0:/vsh/resource/photo_plugin.rco",
+    "flash0:/vsh/resource/savedata_plugin.rco",
+    "flash0:/vsh/resource/savedata_utility.rco",
+    "flash0:/vsh/resource/sysconf_plugin.rco",
+    "flash0:/vsh/resource/system_plugin_bg.rco",
+    "flash0:/vsh/resource/system_plugin_fg.rco",
+    "flash0:/vsh/resource/system_plugin.rco",
+    "flash0:/vsh/resource/topmenu_plugin.rco",
+    "flash0:/vsh/resource/update_plugin.rco",
+    "flash0:/vsh/resource/video_plugin.rco",
+    "flash0:/vsh/resource/video_plugin_videotoolbar.rco",
+    "flash0:/data/cert/Class1_PCA_G2_v2.cer",
+    "flash0:/data/cert/Class1_PCA_G3v2.cer",
+    "flash0:/data/cert/Class1_PCA_ss_v4.cer",
+    "flash0:/data/cert/Class2_PCA_G2_v2.cer",
+    "flash0:/data/cert/Class2_PCA_G3v2.cer",
+    "flash0:/data/cert/Class2_PCA_ss_v4.cer",
+    "flash0:/data/cert/Class3_PCA_G2_v2.cer",
+    "flash0:/data/cert/Class3_PCA_G3v2.cer",
+    "flash0:/data/cert/Class3_PCA_ss_v4.cer",
+    "flash0:/data/cert/Class4_PCA_G2_v2.cer",
+    "flash0:/data/cert/Class4_PCA_G3v2.cer",
+    "flash0:/data/cert/RSA1024_v1.cer",
+    "flash0:/data/cert/RSA2048_v3.cer",
+    "flash0:/data/cert/RSA_SecureServer.cer",
+    "flash0:/data/cert/SCE_CA01.cer",
+    "flash0:/data/cert/SCE_CA02.cer",
+    "flash0:/data/cert/SCE_CA03.cer",
+    "flash0:/data/cert/SCE_CA04.cer",
+    "flash0:/data/cert/SCE_CA05.cer",
+    "flash0:/data/cert/VeriSign_TSA_CA.cer",
+    "flash0:/font/jpn0.pgf",
+    "flash0:/font/ltn0.pgf",
+    "flash0:/font/ltn10.pgf",
+    "flash0:/font/ltn11.pgf",
+    "flash0:/font/ltn12.pgf",
+    "flash0:/font/ltn13.pgf",
+    "flash0:/font/ltn14.pgf",
+    "flash0:/font/ltn15.pgf",
+    "flash0:/font/ltn1.pgf",
+    "flash0:/font/ltn2.pgf",
+    "flash0:/font/ltn3.pgf",
+    "flash0:/font/ltn4.pgf",
+    "flash0:/font/ltn5.pgf",
+    "flash0:/font/ltn6.pgf",
+    "flash0:/font/ltn7.pgf",
+    "flash0:/font/ltn8.pgf",
+    "flash0:/font/ltn9.pgf",
+    "flash0:/dic/apotp.dic",
+    "flash0:/dic/atokp.dic",
+    "flash0:/dic/aux0.dic",
+    "flash0:/dic/aux1.dic",
+    "flash0:/dic/aux2.dic",
+    "flash0:/dic/aux3.dic"
 };
 
 static int N_150 = sizeof(subset150)/sizeof(subset150[0]);
@@ -334,7 +334,7 @@ static int N_150 = sizeof(subset150)/sizeof(subset150[0]);
 void ErrorExit(int milisecs, char *fmt, ...)
 {
     va_list list;
-    char msg[256];	
+    char msg[256];    
 
     va_start(list, fmt);
     vsprintf(msg, fmt, list);
@@ -416,7 +416,7 @@ static int FindTablePath(char *table, int table_size, char *number, char *szOut)
                     k++;
                 }
                 else
-                {				
+                {    			
                     szOut[k] = table[i+j+6];
                 }
             }
@@ -518,7 +518,7 @@ int GetReboot(u8 *dataOut, u8 *dataOut2, int cbExpanded, int decompress)
         if (cbExpanded <= 0)
         {
             ErrorExit(5000, "Cannot decompress reboot.bin (0x%08X)\n", cbExpanded);
-        }	
+        }    
     }
     
     return cbExpanded;
@@ -619,7 +619,7 @@ void ExtractPrxs(int cbFile)
         if (cbExpanded > 0)
         {
             if (WritePrx(name))
-            {				
+            {    			
                 CorrectPath(name);
 
                 printf("Writing %s (%d)... ", name, cbExpanded);
@@ -663,7 +663,7 @@ void ExtractPrxs(int cbFile)
                     ErrorExit(5000, "Com table buffer too small. Recompile with bigger buffer.\n");
                 }
 
-                memcpy(com_table, g_dataOut2, comtable_size);						
+                memcpy(com_table, g_dataOut2, comtable_size);    					
             }
                     
             else if (!strcmp(name, "01g:00000"))
@@ -680,7 +680,7 @@ void ExtractPrxs(int cbFile)
                     ErrorExit(5000, "1g table buffer too small. Recompile with bigger buffer.\n");
                 }
 
-                memcpy(_1g_table, g_dataOut2, _1gtable_size);						
+                memcpy(_1g_table, g_dataOut2, _1gtable_size);    					
             }
                     
             else if (!strcmp(name, "02g:00000"))
@@ -697,8 +697,8 @@ void ExtractPrxs(int cbFile)
                     ErrorExit(5000, "2g table buffer too small. Recompile with bigger buffer.\n");
                 }
 
-                memcpy(_2g_table, g_dataOut2, _2gtable_size);						
-            }			
+                memcpy(_2g_table, g_dataOut2, _2gtable_size);    					
+            }    		
         }
 
         scePowerTick(0);

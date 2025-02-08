@@ -168,14 +168,14 @@ int TSRThread(SceSize args, void *argp)
     }
 
     /*if (stop_flag == 2) {
-		//sctrlPowerRebootStart(); // NOTHING WORKS RIGHT NOW
-		vshKernelExitVSH(1);
+    	//sctrlPowerRebootStart(); // NOTHING WORKS RIGHT NOW
+    	vshKernelExitVSH(1);
     } 
-	*/
-	if (stop_flag == 4) {
-		sctrlKernelExitVSH(NULL);
+    */
+    if (stop_flag == 4) {
+    	sctrlKernelExitVSH(NULL);
     } else if (stop_flag == 3) {
-		scePowerRequestStandby();
+    	scePowerRequestStandby();
     }
 
     vpl_finish();

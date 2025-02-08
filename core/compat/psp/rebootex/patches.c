@@ -35,24 +35,24 @@ extern int UnpackBootConfigPatched(char **p_buffer, int length);
 
 int file_exists(const char *path)
 {
-	int ret;
+    int ret;
 
     #ifdef MS_IPL
     ret = MsFatOpen(path);
     #else
-	ret = (*sceBootLfatOpen)(path);
+    ret = (*sceBootLfatOpen)(path);
     #endif
 
-	if(ret >= 0) {
+    if(ret >= 0) {
         #ifdef MS_IPL
         MsFatClose(path);
         #else
-		(*sceBootLfatClose)();
+    	(*sceBootLfatClose)();
         #endif
-		return 1;
-	}
+    	return 1;
+    }
 
-	return 0;
+    return 0;
 }
 
 int loadcoreModuleStartPSP(void * arg1, void * arg2, void * arg3, int (* start)(void *, void *, void *)){
@@ -105,7 +105,7 @@ void patchRebootBuffer(){
     ark_config->recovery = 1; // enable recovery mode in vunbricker
 #endif
 #endif
-	
+    
     for (u32 addr = reboot_start; addr<reboot_end && patches; addr+=4){
         u32 data = _lw(addr);
         if (data == 0x02A0E821 || data == 0x0280E821){ // found loadcore jump on PSP
@@ -309,18 +309,18 @@ int patch_bootconf_updaterumd(char *buffer, int length)
 
 int is_fatms371(void)
 {
-	return file_exists(PATH_FATMS_HELPER + sizeof("flash0:") - 1) && file_exists(PATH_FATMS_371 + sizeof("flash0:") - 1);
+    return file_exists(PATH_FATMS_HELPER + sizeof("flash0:") - 1) && file_exists(PATH_FATMS_371 + sizeof("flash0:") - 1);
 }
 
 int patch_bootconf_fatms371(char *buffer, int length)
 {
-	int newsize;
+    int newsize;
 
-	newsize = AddPRX(buffer, "/kd/fatms.prx", PATH_FATMS_HELPER+sizeof(PATH_FLASH0)-2, 0xEF & ~VSH_RUNLEVEL);
-	RemovePrx(buffer, "/kd/fatms.prx", 0xEF & ~VSH_RUNLEVEL);
-	newsize = AddPRX(buffer, "/kd/wlan.prx", PATH_FATMS_371+sizeof(PATH_FLASH0)-2, 0xEF & ~VSH_RUNLEVEL);
+    newsize = AddPRX(buffer, "/kd/fatms.prx", PATH_FATMS_HELPER+sizeof(PATH_FLASH0)-2, 0xEF & ~VSH_RUNLEVEL);
+    RemovePrx(buffer, "/kd/fatms.prx", 0xEF & ~VSH_RUNLEVEL);
+    newsize = AddPRX(buffer, "/kd/wlan.prx", PATH_FATMS_371+sizeof(PATH_FLASH0)-2, 0xEF & ~VSH_RUNLEVEL);
 
-	return newsize;
+    return newsize;
 }
 
 #ifdef PAYLOADEX
@@ -583,14 +583,14 @@ int _sceBootLfatOpen(char * filename)
 
 #ifdef MS_IPL
     strcpy(path, "/TM/DCARK");
-	strcat(path, filename);
+    strcat(path, filename);
 
 #ifdef PAYLOADEX
     if (memcmp(filename+4, "pspbtcnf", 8) == 0)
         memcpy(&path[strlen(path) - 4], "_dc.bin", 8);
 #endif
 
-	return MsFatOpen(path);
+    return MsFatOpen(path);
 #else
 
     // patch to allow custom boot

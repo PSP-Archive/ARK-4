@@ -41,55 +41,55 @@ extern SEConfig* se_config;
 
 static SceUID load_start_usbdevice(void)
 {
-	SceUID modid = -1;
-	int ret;
-	char mod[ARK_PATH_SIZE];
-	strcpy(mod, ark_config->arkpath);
-	strcat(mod, USBDEV_PRX);
+    SceUID modid = -1;
+    int ret;
+    char mod[ARK_PATH_SIZE];
+    strcpy(mod, ark_config->arkpath);
+    strcat(mod, USBDEV_PRX);
 
-	modid = sceKernelLoadModule(mod, 0, NULL);
+    modid = sceKernelLoadModule(mod, 0, NULL);
 
-	if (modid < 0) modid = sceKernelLoadModule(USBDEV_PRX_FLASH, 0, NULL); // retry flash0
+    if (modid < 0) modid = sceKernelLoadModule(USBDEV_PRX_FLASH, 0, NULL); // retry flash0
 
-	if (modid < 0) {
-		return -1;
-	}
+    if (modid < 0) {
+    	return -1;
+    }
 
-	ret = sceKernelStartModule(modid, 0, NULL, NULL, NULL);
+    ret = sceKernelStartModule(modid, 0, NULL, NULL, NULL);
 
-	if (ret < 0) {
-		printk("%s: sceKernelStartModule -> 0x%08X\n", __func__, ret);
-		sceKernelUnloadModule(modid);
+    if (ret < 0) {
+    	printk("%s: sceKernelStartModule -> 0x%08X\n", __func__, ret);
+    	sceKernelUnloadModule(modid);
 
-		return -1;
-	}
+    	return -1;
+    }
 
-	return modid;
+    return modid;
 }
 
 static void stop_unload_usbdevice(void)
 {
-	int ret;
+    int ret;
 
-	ret = sceKernelStopModule(g_usbdevice_modid, 0, NULL, NULL, NULL);
-
-#ifdef DEBUG
-	if(ret < 0) {
-		printk("%s: sceKernelStopModule(0x%08X) -> 0x%08X\n", __func__, g_usbdevice_modid, ret);
-	}
-#endif
-
-	ret = sceKernelUnloadModule(g_usbdevice_modid);
+    ret = sceKernelStopModule(g_usbdevice_modid, 0, NULL, NULL, NULL);
 
 #ifdef DEBUG
-	if(ret < 0) {
-		printk("%s: sceKernelUnloadModule(0x%08X) -> 0x%08X\n", __func__, g_usbdevice_modid, ret);
-	}
+    if(ret < 0) {
+    	printk("%s: sceKernelStopModule(0x%08X) -> 0x%08X\n", __func__, g_usbdevice_modid, ret);
+    }
 #endif
 
-	if (ret >= 0) {
-		g_usbdevice_modid = -1;
-	}
+    ret = sceKernelUnloadModule(g_usbdevice_modid);
+
+#ifdef DEBUG
+    if(ret < 0) {
+    	printk("%s: sceKernelUnloadModule(0x%08X) -> 0x%08X\n", __func__, g_usbdevice_modid, ret);
+    }
+#endif
+
+    if (ret >= 0) {
+    	g_usbdevice_modid = -1;
+    }
 }
 
 static int (*sceUsbStartOrig)(const char *driverName, int size, void *args) = NULL;
@@ -97,58 +97,58 @@ static int (*sceUsbStopOrig)(const char *driverName, int size, void *args) = NUL
 
 static int _sceUsbStart(const char *driverName, int size, void *args)
 {
-	int ret;
-	u32 k1;
+    int ret;
+    u32 k1;
 
-	k1 = pspSdkSetK1(0);
+    k1 = pspSdkSetK1(0);
 
-	if (0 == strcmp(driverName, "USBStor_Driver")) {
-		if(se_config->usbdevice > 0 && se_config->usbdevice <= 5) {
-			if (g_usbdevice_modid < 0) {
-				g_usbdevice_modid = load_start_usbdevice();
-			}
+    if (0 == strcmp(driverName, "USBStor_Driver")) {
+    	if(se_config->usbdevice > 0 && se_config->usbdevice <= 5) {
+    		if (g_usbdevice_modid < 0) {
+    			g_usbdevice_modid = load_start_usbdevice();
+    		}
 
-			if (g_usbdevice_modid >= 0) {
-				ret = pspUsbDeviceSetDevice(se_config->usbdevice - 1, se_config->usbdevice_rdonly, 0);
-			}
-		}
-	}
+    		if (g_usbdevice_modid >= 0) {
+    			ret = pspUsbDeviceSetDevice(se_config->usbdevice - 1, se_config->usbdevice_rdonly, 0);
+    		}
+    	}
+    }
 
-	pspSdkSetK1(k1);
-	ret = (*sceUsbStartOrig)(driverName, size, args);
+    pspSdkSetK1(k1);
+    ret = (*sceUsbStartOrig)(driverName, size, args);
 
-	return ret;
+    return ret;
 }
 
 static int _sceUsbStop(const char *driverName, int size, void *args)
 {
-	int ret;
-	u32 k1;
+    int ret;
+    u32 k1;
 
-	ret = (*sceUsbStopOrig)(driverName, size, args);
-	k1 = pspSdkSetK1(0);
+    ret = (*sceUsbStopOrig)(driverName, size, args);
+    k1 = pspSdkSetK1(0);
 
-	if (0 == strcmp(driverName, "USBStor_Driver")) {
-		if(se_config->usbdevice > 0 && se_config->usbdevice <= 5) {
-			if (g_usbdevice_modid >= 0) {
-				int result;
+    if (0 == strcmp(driverName, "USBStor_Driver")) {
+    	if(se_config->usbdevice > 0 && se_config->usbdevice <= 5) {
+    		if (g_usbdevice_modid >= 0) {
+    			int result;
 
-				result = pspUsbDeviceFinishDevice();
-				stop_unload_usbdevice();
-			}
-		}
-	}
+    			result = pspUsbDeviceFinishDevice();
+    			stop_unload_usbdevice();
+    		}
+    	}
+    }
 
-	pspSdkSetK1(k1);
-	
-	return ret;
+    pspSdkSetK1(k1);
+    
+    return ret;
 }
 
 void patch_sceUSB_Driver(u32 text_addr)
 {
-	sceUsbStartOrig = (void*)sctrlHENFindFunction("sceUSB_Driver", "sceUsb", 0xAE5DE6AF);
-	sctrlHENPatchSyscall(sceUsbStartOrig, &_sceUsbStart);
+    sceUsbStartOrig = (void*)sctrlHENFindFunction("sceUSB_Driver", "sceUsb", 0xAE5DE6AF);
+    sctrlHENPatchSyscall(sceUsbStartOrig, &_sceUsbStart);
 
-	sceUsbStopOrig = (void*)sctrlHENFindFunction("sceUSB_Driver", "sceUsb", 0xC2464FA0);
-	sctrlHENPatchSyscall(sceUsbStopOrig, &_sceUsbStop);
+    sceUsbStopOrig = (void*)sctrlHENFindFunction("sceUSB_Driver", "sceUsb", 0xC2464FA0);
+    sctrlHENPatchSyscall(sceUsbStopOrig, &_sceUsbStop);
 }

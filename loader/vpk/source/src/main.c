@@ -8,29 +8,29 @@
 #include "ui.h"
 
 void waitCross(){
-	SceCtrlData pad;
-	while(1){
-		memset(&pad, 0x00, sizeof(SceCtrlData));
-		sceCtrlPeekBufferPositive(0, &pad, 1);
-		if(pad.buttons == SCE_CTRL_CROSS)
-			break;
-	}
+    SceCtrlData pad;
+    while(1){
+    	memset(&pad, 0x00, sizeof(SceCtrlData));
+    	sceCtrlPeekBufferPositive(0, &pad, 1);
+    	if(pad.buttons == SCE_CTRL_CROSS)
+    		break;
+    }
 }
 
 int main(int argc, const char *argv[]) {
-	uiInit();	
+    uiInit();	
 
-	displayMsg("Install?", "Press X to begin installation ...");
-	waitCross();
+    displayMsg("Install?", "Press X to begin installation ...");
+    waitCross();
 
-	
-	doInstall();
-	installAnalogPlugin();
-	installPS1Plugin();
-	taiReloadConfig();
+    
+    doInstall();
+    installAnalogPlugin();
+    installPS1Plugin();
+    taiReloadConfig();
 
-	displayMsg("Install Complete!", "Press X to close this application ...");
-	waitCross();
-	
-	return 0;
+    displayMsg("Install Complete!", "Press X to close this application ...");
+    waitCross();
+    
+    return 0;
 }

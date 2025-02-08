@@ -291,8 +291,8 @@ static void systemDrawer(){
             if (MusicPlayer::isPlaying()){
                 common::getIcon(FILE_MUSIC)->draw( common::getConf()->battery_percent ? 240:280, 3);
             }
-    		if(mute)
-    			drawMute();
+            if(mute)
+                drawMute();
             break;
         case 1: // draw opening animation
             drawOptionsMenuCommon();
@@ -406,12 +406,12 @@ static int controlThread(SceSize _args, void *_argp){
                 volume = new_volume;
                 common::playMenuSound();
             }
-    	} else if (pad.mute() && _sceImposeGetParam != NULL && _sceImposeSetParam != NULL) {
+        } else if (pad.mute() && _sceImposeGetParam != NULL && _sceImposeSetParam != NULL) {
             struct KernelCallArg args;
             args.arg1 = 0x8; // PSP_IMPOSE_MUTE
 
             kuKernelCall(_sceImposeGetParam, &args);
-    		mute = args.ret1;
+            mute = args.ret1;
 
 //            mute_time = clock();
 
@@ -419,17 +419,17 @@ static int controlThread(SceSize _args, void *_argp){
             // Impose will sometimes register an extra volume input press in the opposite direction
             u32 buttons = pad.get_buttons();
 
-    		if(buttons & 0x800000) {
+            if(buttons & 0x800000) {
                 args.arg1 = 0x8; // PSP_IMPOSE_MUTE
-    			args.arg2 = mute;
+                args.arg2 = mute;
                 kuKernelCall(_sceImposeSetParam, &args);
-    			//pad.update();
-    			if(mute) {
-    				drawMute();
-    			}
-    		}
+                //pad.update();
+                if(mute) {
+                	drawMute();
+                }
+            }
 
-    	} else if (!screensaver){
+        } else if (!screensaver){
             if (system_menu) systemController(&pad);
             else entries[cur_entry]->control(&pad);
         }

@@ -3,36 +3,36 @@
 
 #define VLF_DEFAULT    -1
 
-#define VLF_BATTERY_ICON_HIGH    	0
-#define VLF_BATTERY_ICON_MEDIUM    	1
-#define VLF_BATTERY_ICON_LOW    	2
-#define VLF_BATTERY_ICON_LOWEST    	3
+#define VLF_BATTERY_ICON_HIGH        0
+#define VLF_BATTERY_ICON_MEDIUM        1
+#define VLF_BATTERY_ICON_LOW        2
+#define VLF_BATTERY_ICON_LOWEST        3
 
-#define VLF_ERROR_INVALID_INPUT    		(-1)
+#define VLF_ERROR_INVALID_INPUT        	(-1)
 #define VLF_ERROR_INVALID_INPUT_DATA    (-2)
 #define VLF_ERROR_UNSUPPORTED_FORMAT    (-3)
-#define VLF_ERROR_OBJECT_OVERFLOW    	(-4)
-#define VLF_ERROR_OBJECT_NOT_FOUND    	(-5)
-#define VLF_ERROR_NO_MEMORY    			(-6)
-#define VLF_ERROR_SYSTEM    			(-7)
-#define VLF_ERROR_DUPLICATED    		(-8)
+#define VLF_ERROR_OBJECT_OVERFLOW        (-4)
+#define VLF_ERROR_OBJECT_NOT_FOUND        (-5)
+#define VLF_ERROR_NO_MEMORY        		(-6)
+#define VLF_ERROR_SYSTEM        		(-7)
+#define VLF_ERROR_DUPLICATED        	(-8)
 
 /** Fade modes */
-#define VLF_FADE_MODE_IN    	1
-#define VLF_FADE_MODE_OUT    	2
+#define VLF_FADE_MODE_IN        1
+#define VLF_FADE_MODE_OUT        2
 #define VLF_FADE_MODE_REPEAT    4
 
 /** Fade effect */
 #define VLF_FADE_EFFECT_STANDARD    0
-#define VLF_FADE_EFFECT_FAST    	1
+#define VLF_FADE_EFFECT_FAST        1
 #define VLF_FADE_EFFECT_VERY_FAST    2
-#define VLF_FADE_EFFECT_SLOW    	3
+#define VLF_FADE_EFFECT_SLOW        3
 #define VLF_FADE_EFFECT_SUPERFAST    4
 
 /* Alignment */
-#define VLF_ALIGNMENT_LEFT    		0
+#define VLF_ALIGNMENT_LEFT        	0
 #define VLF_ALIGNMENT_CENTER    0x200
-#define VLF_ALIGNMENT_RIGHT    	0x400
+#define VLF_ALIGNMENT_RIGHT        0x400
 
 enum VlfObjects
 {
@@ -105,12 +105,12 @@ enum
     VLF_SPIN_STATE_ACTIVE, // Spin control has focus, and it is active 
 };
 
-#define VLF_EV_RET_NOTHING    			0
-#define VLF_EV_RET_REMOVE_EVENT    		1 
-#define VLF_EV_RET_REMOVE_OBJECTS    	2
-#define VLF_EV_RET_REMOVE_HANDLERS    	4
-#define VLF_EV_RET_REFRESH_ON_DELAY    	8
-#define VLF_EV_RET_DELAY    			0x80000000 /* Delay VLF_EV_RET_DELAY | (X << 16), 0 <= X <= 32767 milisecs */
+#define VLF_EV_RET_NOTHING        		0
+#define VLF_EV_RET_REMOVE_EVENT        	1 
+#define VLF_EV_RET_REMOVE_OBJECTS        2
+#define VLF_EV_RET_REMOVE_HANDLERS        4
+#define VLF_EV_RET_REFRESH_ON_DELAY        8
+#define VLF_EV_RET_DELAY        		0x80000000 /* Delay VLF_EV_RET_DELAY | (X << 16), 0 <= X <= 32767 milisecs */
 
 
 enum PspCtrlExtension

@@ -199,28 +199,28 @@ char image[4];
 void *xmb_arg0, *xmb_arg1;
 
 static unsigned char signup_item[] __attribute__((aligned(16))) = {
-	0x2a, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00, 0x00, 0x46, 
-	0x55, 0x00, 0x00, 0x46, 0x59, 0x00, 0x00, 0x47, 0x43, 0x00, 0x00, 0x6d, 0x73, 0x67, 0x5f, 0x73, 
-	0x69, 0x67, 0x6e, 0x75, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x2a, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00, 0x00, 0x46, 
+    0x55, 0x00, 0x00, 0x46, 0x59, 0x00, 0x00, 0x47, 0x43, 0x00, 0x00, 0x6d, 0x73, 0x67, 0x5f, 0x73, 
+    0x69, 0x67, 0x6e, 0x75, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
 
 
 static unsigned char ps_store_item[] __attribute__((aligned(16))) = {
-	0x2c, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00, 0x00, 0x46, 
-	0x56, 0x00, 0x00, 0x46, 0x5a, 0x00, 0x00, 0x47, 0x44, 0x00, 0x00, 0x6d, 0x73, 0x67, 0x5f, 0x70, 
-	0x73, 0x5f, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x2c, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00, 0x00, 0x46, 
+    0x56, 0x00, 0x00, 0x46, 0x5a, 0x00, 0x00, 0x47, 0x44, 0x00, 0x00, 0x6d, 0x73, 0x67, 0x5f, 0x70, 
+    0x73, 0x5f, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
 
 static unsigned char information_board_item[] __attribute__((aligned(16))) = {
-	0x2e, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 
-	0x08, 0xdf, 0x09, 0x0a, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00, 0x00, 0x46, 
-	0x58, 0x00, 0x00, 0x47, 0x42, 0x00, 0x00, 0x47, 0x46, 0x00, 0x00, 0x6d, 0x73, 0x67, 0x5f, 0x69, 
-	0x6e, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x62, 0x6f, 0x61, 0x72, 0x64, 
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x2e, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 
+    0x08, 0xdf, 0x09, 0x0a, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00, 0x00, 0x46, 
+    0x58, 0x00, 0x00, 0x47, 0x42, 0x00, 0x00, 0x47, 0x46, 0x00, 0x00, 0x6d, 0x73, 0x67, 0x5f, 0x69, 
+    0x6e, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x62, 0x6f, 0x61, 0x72, 0x64, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
 
 void ClearCaches()
@@ -230,58 +230,58 @@ void ClearCaches()
 }
 
 void exec_custom_launcher() {
-	char menupath[ARK_PATH_SIZE];
-	sce_paf_private_strcpy(menupath, ark_config->arkpath);
-	strcat(menupath, VBOOT_PBP);
+    char menupath[ARK_PATH_SIZE];
+    sce_paf_private_strcpy(menupath, ark_config->arkpath);
+    strcat(menupath, VBOOT_PBP);
 
-	SceIoStat stat; int res = sceIoGetstat(menupath, &stat);
+    SceIoStat stat; int res = sceIoGetstat(menupath, &stat);
 
-	if (res >= 0){
-		struct SceKernelLoadExecVSHParam param;
-		sce_paf_private_memset(&param, 0, sizeof(param));
-		param.size = sizeof(param);
-		param.args = sce_paf_private_strlen(menupath) + 1;
-		param.argp = menupath;
-		param.key = "game";
-		sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
-	}
-	else{
-		// reboot system in proshell mode
-		ark_config->recovery = 0;
-		strcpy(ark_config->launcher, "PROSHELL"); // reboot in proshell mode
+    if (res >= 0){
+    	struct SceKernelLoadExecVSHParam param;
+    	sce_paf_private_memset(&param, 0, sizeof(param));
+    	param.size = sizeof(param);
+    	param.args = sce_paf_private_strlen(menupath) + 1;
+    	param.argp = menupath;
+    	param.key = "game";
+    	sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
+    }
+    else{
+    	// reboot system in proshell mode
+    	ark_config->recovery = 0;
+    	strcpy(ark_config->launcher, "PROSHELL"); // reboot in proshell mode
 
-		struct KernelCallArg args;
-		args.arg1 = ark_config;
-		u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
-		kuKernelCall((void*)setArkConfig, &args);
+    	struct KernelCallArg args;
+    	args.arg1 = ark_config;
+    	u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
+    	kuKernelCall((void*)setArkConfig, &args);
 
-		sctrlSESetUmdFile("");
-	    sctrlSESetBootConfFileIndex(MODE_UMD);
+    	sctrlSESetUmdFile("");
+        sctrlSESetBootConfFileIndex(MODE_UMD);
         sctrlKernelExitVSH(NULL);
-	}
+    }
 }
 
 void exec_150_reboot(void) {
-	int k1 = pspSdkSetK1(0);
-	SceUID mod = sceKernelLoadModule(ARK_DC_PATH "/150/reboot150.prx", 0, NULL);
-	if(mod < 0) {
-		pspSdkSetK1(k1);
-		return;
-	}
-	int res = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
-	pspSdkSetK1(k1);
-	sctrlKernelExitVSH(NULL);
+    int k1 = pspSdkSetK1(0);
+    SceUID mod = sceKernelLoadModule(ARK_DC_PATH "/150/reboot150.prx", 0, NULL);
+    if(mod < 0) {
+    	pspSdkSetK1(k1);
+    	return;
+    }
+    int res = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+    pspSdkSetK1(k1);
+    sctrlKernelExitVSH(NULL);
 }
 
 void exec_custom_app(char *path) {
 
-	struct SceKernelLoadExecVSHParam param;
-	sce_paf_private_memset(&param, 0, sizeof(param));
-	param.size = sizeof(param);
-	param.args = sce_paf_private_strlen(path) + 1;
-	param.argp = path;
-	param.key = "game";
-	sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
+    struct SceKernelLoadExecVSHParam param;
+    sce_paf_private_memset(&param, 0, sizeof(param));
+    param.size = sizeof(param);
+    param.args = sce_paf_private_strlen(path) + 1;
+    param.argp = path;
+    param.key = "game";
+    sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 }
 
 
@@ -477,38 +477,38 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         // Add Custom Launcher
         new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, (cur_icon)?item:information_board_item);
         AddVshItem(a0, topitem, new_item3);
-		
-		SceIoStat stat; 
-		int ebootFound;
-		if(psp_model == PSP_GO) {
-			custom_app_path[0] = 'e';
-			custom_app_path[1] = 'f';
-			ebootFound = sceIoGetstat(custom_app_path, &stat);
-			if(ebootFound < 0) {
-				custom_app_path[0] = 'm'; 
-				custom_app_path[1] = 's';
-				ebootFound = sceIoGetstat(custom_app_path, &stat);
-			}
-		}
-		else {
-			ebootFound = sceIoGetstat(custom_app_path, &stat);
-		}
+    	
+    	SceIoStat stat; 
+    	int ebootFound;
+    	if(psp_model == PSP_GO) {
+    		custom_app_path[0] = 'e';
+    		custom_app_path[1] = 'f';
+    		ebootFound = sceIoGetstat(custom_app_path, &stat);
+    		if(ebootFound < 0) {
+    			custom_app_path[0] = 'm'; 
+    			custom_app_path[1] = 's';
+    			ebootFound = sceIoGetstat(custom_app_path, &stat);
+    		}
+    	}
+    	else {
+    		ebootFound = sceIoGetstat(custom_app_path, &stat);
+    	}
 
-		if(ebootFound >= 0) {
-        	new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
-        	AddVshItem(a0, topitem, new_item4);
-		}
+    	if(ebootFound >= 0) {
+            new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
+            AddVshItem(a0, topitem, new_item4);
+    	}
 
-		SceIoStat _150_file;
-		int _1k_file = sceIoGetstat("ms0:/TM/DCARK/150/reboot150.prx", &_150_file); // Should fine a better way to handle this perhaps?
-		if((psp_model == PSP_1000) && _1k_file >= 0 && !IS_VITA_ADR(ark_config)) {
-        	new_item5 = addCustomVshItem(84, "msgtop_150_reboot", sysconf_150_reboot_arg, item);
-        	AddVshItem(a0, topitem, new_item5);
-		}
+    	SceIoStat _150_file;
+    	int _1k_file = sceIoGetstat("ms0:/TM/DCARK/150/reboot150.prx", &_150_file); // Should fine a better way to handle this perhaps?
+    	if((psp_model == PSP_1000) && _1k_file >= 0 && !IS_VITA_ADR(ark_config)) {
+            new_item5 = addCustomVshItem(84, "msgtop_150_reboot", sysconf_150_reboot_arg, item);
+            AddVshItem(a0, topitem, new_item5);
+    	}
 
     }
-	
-	return AddVshItem(a0, topitem, item);
+    
+    return AddVshItem(a0, topitem, item);
 
 }
 
@@ -550,9 +550,9 @@ int ExecuteActionPatched(int action, int action_arg)
         else if (action_arg == sysconf_custom_app_arg){
             exec_custom_app(custom_app_path);
         }
-		else if (action_arg == sysconf_150_reboot_arg){
-			exec_150_reboot();
-		}
+    	else if (action_arg == sysconf_150_reboot_arg){
+    		exec_150_reboot();
+    	}
         else is_cfw_config = 0;
     }
     if(old_is_cfw_config != is_cfw_config)
@@ -597,7 +597,7 @@ int skipSetting(int i){
     else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12);
     else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13);
     else if (psp_model != PSP_GO) return ( i == 5 || i == 9 || i == 12);
-	else if (psp_model == PSP_GO) return (i == 16);
+    else if (psp_model == PSP_GO) return (i == 16);
     return 0;
 }
 
@@ -679,72 +679,72 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0){
                 u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
-				static char file[128];
-				sce_paf_private_strcpy(file, plugin->path);
+    			static char file[128];
+    			sce_paf_private_strcpy(file, plugin->path);
 
-				char *p = sce_paf_private_strrchr(plugin->path, '/');
-				if(p)
-				{
-					char *p2 = sce_paf_private_strchr(p + 1, '.');
-					if(p2)
-					{
-						int len = (int)(p2 - (p + 1));
-						sce_paf_private_strncpy(file, p + 1, len);
-						file[len] = '\0';
-					}
-				}
+    			char *p = sce_paf_private_strrchr(plugin->path, '/');
+    			if(p)
+    			{
+    				char *p2 = sce_paf_private_strchr(p + 1, '.');
+    				if(p2)
+    				{
+    					int len = (int)(p2 - (p + 1));
+    					sce_paf_private_strncpy(file, p + 1, len);
+    					file[len] = '\0';
+    				}
+    			}
 
-				utf8_to_unicode((wchar_t *)user_buffer, file);
-				return (wchar_t *)user_buffer;
+    			utf8_to_unicode((wchar_t *)user_buffer, file);
+    			return (wchar_t *)user_buffer;
             }
             else if (sce_paf_private_strncmp(name, "plugins", 7) == 0){
                 u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
                 utf8_to_unicode((wchar_t *)user_buffer, plugin->path);
-				return (wchar_t *)user_buffer;
+    			return (wchar_t *)user_buffer;
             }
         }
         if(sce_paf_private_strcmp(name, "msgtop_sysconf_configuration") == 0)
         {
-			sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[1]);
+    		sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[1]);
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
         else if(sce_paf_private_strcmp(name, "msgtop_sysconf_plugins") == 0)
         {
-			sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[2]);
-			utf8_to_unicode((wchar_t *)user_buffer, buf);
-			return (wchar_t *)user_buffer;
+    		sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[2]);
+    		utf8_to_unicode((wchar_t *)user_buffer, buf);
+    		return (wchar_t *)user_buffer;
         }
         else if(sce_paf_private_strcmp(name, "msgtop_custom_launcher") == 0)
         {
-			if(string.items[3]) {
-				sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[3]);
-            	utf8_to_unicode((wchar_t *)user_buffer, buf);
-            	return (wchar_t *)user_buffer;
-			}
+    		if(string.items[3]) {
+    			sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[3]);
+                utf8_to_unicode((wchar_t *)user_buffer, buf);
+                return (wchar_t *)user_buffer;
+    		}
         }
-		else if(sce_paf_private_strcmp(name, "msgtop_custom_app") == 0)
+    	else if(sce_paf_private_strcmp(name, "msgtop_custom_app") == 0)
         {
-			sce_paf_private_sprintf(buf, "%s %s", STAR, settings[23]);
+    		sce_paf_private_sprintf(buf, "%s %s", STAR, settings[23]);
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
-		else if(sce_paf_private_strcmp(name, "msgtop_150_reboot") == 0)
+    	else if(sce_paf_private_strcmp(name, "msgtop_150_reboot") == 0)
         {
-			sce_paf_private_sprintf(buf, "%s %s", STAR, settings[25]);
+    		sce_paf_private_sprintf(buf, "%s %s", STAR, settings[25]);
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
 
-		else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
-		{
+    	else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
+    	{
             if (se_config.custom_update && string.items[0]) {
                 utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
                 return (wchar_t *)user_buffer;
             }
-		}
-		
+    	}
+    	
     }
 
     wchar_t *res = scePafGetText(a0, name);
@@ -761,25 +761,25 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         {
             int configs[] =
             {
-                config.usbcharge,		// 0
-                config.overclock,		// 1
-                config.powersave,		// 2
-                config.defaultclock,	// 3
-                config.launcher,		// 4
-                config.disablepause,	// 5
-                config.highmem,			// 6
-                config.mscache,			// 7
-                config.infernocache,	// 8
-                config.oldplugin,		// 9
-                config.skiplogos,		// 10
-                config.hidepics,		// 11
-                config.hibblock, 		// 12
-                config.hidemac, 		// 13
-                config.hidedlc,			// 14
-                config.noled,			// 15
-                config.noumd,			// 16
-                config.noanalog,		// 17
-                config.qaflags,		    // 18
+                config.usbcharge,    	// 0
+                config.overclock,    	// 1
+                config.powersave,    	// 2
+                config.defaultclock,    // 3
+                config.launcher,    	// 4
+                config.disablepause,    // 5
+                config.highmem,    		// 6
+                config.mscache,    		// 7
+                config.infernocache,    // 8
+                config.oldplugin,    	// 9
+                config.skiplogos,    	// 10
+                config.hidepics,    	// 11
+                config.hibblock,     	// 12
+                config.hidemac,     	// 13
+                config.hidedlc,    		// 14
+                config.noled,    		// 15
+                config.noumd,    		// 16
+                config.noanalog,    	// 17
+                config.qaflags,    	    // 18
             };
             
             int i;
@@ -796,13 +796,13 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         }
         else if (is_cfw_config == 2){
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0)
-			{
-				u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
+    		{
+    			u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
-				context_mode = PLUGINS_CONTEXT;
-				*value = plugin->active;
-				return 0;
-			}
+    			context_mode = PLUGINS_CONTEXT;
+    			*value = plugin->active;
+    			return 0;
+    		}
         }
     }
 
@@ -854,17 +854,17 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
         }
         else if (is_cfw_config == 2){
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0)
-			{
-				u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
+    		{
+    			u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
-				context_mode = PLUGINS_CONTEXT;
-				plugin->active = *value;
+    			context_mode = PLUGINS_CONTEXT;
+    			plugin->active = *value;
                 savePlugins();
                 if (*value == PLUGIN_REMOVED){
                     sctrlKernelExitVSH(NULL);
                 }
-            	return 0;
-			}
+                return 0;
+    		}
         }
         if(sce_paf_private_strcmp(name, "/CONFIG/SYSTEM/XMB/language") == 0)
         {
@@ -933,7 +933,7 @@ int PAF_Resource_GetPageNodeByID_Patched(void *resource, char *name, SceRcoEntry
 {
     int res = PAF_Resource_GetPageNodeByID(resource, name, child);
 
-	if(name)
+    if(name)
     {
         if(is_cfw_config == 1 || is_cfw_config == 2)
         {

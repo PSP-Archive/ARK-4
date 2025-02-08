@@ -157,14 +157,14 @@ int main(int argc, char * argv[])
     if (my_ver < cur_ver){
         pspDebugScreenPrintf("WARNING: downgrading to lower version\n");
         pspDebugScreenPrintf("Press X to continue to Downgrade, or press any button to QUIT!\n");
-		SceCtrlData pad;
-		while(1){
-			sceCtrlPeekBufferPositive(&pad, 1);
-			if(pad.Buttons & PSP_CTRL_CROSS) break;
-			else if(pad.Buttons & (PSP_CTRL_UP|PSP_CTRL_RIGHT|PSP_CTRL_DOWN|PSP_CTRL_LEFT|PSP_CTRL_LTRIGGER|PSP_CTRL_RTRIGGER|PSP_CTRL_CIRCLE|PSP_CTRL_TRIANGLE|PSP_CTRL_SQUARE)) sctrlKernelExitVSH(NULL);
+    	SceCtrlData pad;
+    	while(1){
+    		sceCtrlPeekBufferPositive(&pad, 1);
+    		if(pad.Buttons & PSP_CTRL_CROSS) break;
+    		else if(pad.Buttons & (PSP_CTRL_UP|PSP_CTRL_RIGHT|PSP_CTRL_DOWN|PSP_CTRL_LEFT|PSP_CTRL_LTRIGGER|PSP_CTRL_RTRIGGER|PSP_CTRL_CIRCLE|PSP_CTRL_TRIANGLE|PSP_CTRL_SQUARE)) sctrlKernelExitVSH(NULL);
 
-    	}
-	}
+        }
+    }
 
     char* eboot_path = argv[0];
 
@@ -335,62 +335,62 @@ void extractArchive(int fdr, char* dest_path, int (*filter)(char*)){
                 sceIoLseek32(fdr, filesize, PSP_SEEK_CUR); // skip file
             }
 
-			else if(strstr(filename, ARK_THEME_FILE) != NULL) {
-					int size;
-					SceUID theme;
+    		else if(strstr(filename, ARK_THEME_FILE) != NULL) {
+    				int size;
+    				SceUID theme;
 
-					char fullpath[ARK_PATH_SIZE+10];
+    				char fullpath[ARK_PATH_SIZE+10];
 
-					strcpy(fullpath, filepath);
-					strcat(fullpath, filename);
+    				strcpy(fullpath, filepath);
+    				strcat(fullpath, filename);
 
-					theme = sceIoOpen(fullpath, PSP_O_RDONLY, 0777);
+    				theme = sceIoOpen(fullpath, PSP_O_RDONLY, 0777);
 
-					if (theme < 0) {
-						goto _else;
-					}
+    				if (theme < 0) {
+    					goto _else;
+    				}
 
-					else{
+    				else{
 
-						size = sceIoLseek32(theme, sizeof(theme), PSP_SEEK_END);
-						sceIoClose(theme);
-					}
+    					size = sceIoLseek32(theme, sizeof(theme), PSP_SEEK_END);
+    					sceIoClose(theme);
+    				}
 
 
-					if (size != DEFAULT_THEME_SIZE) { // Size of default THEME (hack for now, md5/sha was not working)
-                		sceIoLseek32(fdr, filesize, PSP_SEEK_CUR); // skip file
-					}
-					else {
-						goto _else;
-					}
-					
-					
-			}
+    				if (size != DEFAULT_THEME_SIZE) { // Size of default THEME (hack for now, md5/sha was not working)
+                    	sceIoLseek32(fdr, filesize, PSP_SEEK_CUR); // skip file
+    				}
+    				else {
+    					goto _else;
+    				}
+    				
+    				
+    		}
 
             else{
-				_else:
+    			_else:
                 strcat(filepath, (filename[0]=='/')?filename+1:filename);
                 pspDebugScreenPrintf("Extracting file %s\n", filepath);
                 int fdw = sceIoOpen(filepath, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
                 if (fdw < 0){
                     pspDebugScreenPrintf("ERROR: could not open file for writing\n");
-					char *slash = strrchr(filepath, '/');
-					int length = slash-filepath-9;
-					char *res = (char*)malloc(length+1);
-					strncpy(res, filepath, length);
-					res[length] = '\0';
+    				char *slash = strrchr(filepath, '/');
+    				int length = slash-filepath-9;
+    				char *res = (char*)malloc(length+1);
+    				strncpy(res, filepath, length);
+    				res[length] = '\0';
                     pspDebugScreenPrintf("ERROR: Do you have ARK_01234 directory in %s ?\n", res);
-					free(res);
+    				free(res);
                     sceIoClose(fdr);
-					SceCtrlData pad;
+    				SceCtrlData pad;
                     pspDebugScreenPrintf("\nPress any key to exit...\n");
                     while(1){
-						sceCtrlPeekBufferPositive(&pad, 1);
-						if(pad.Buttons) sctrlKernelExitVSH(NULL);
-					}
+    					sceCtrlPeekBufferPositive(&pad, 1);
+    					if(pad.Buttons) sctrlKernelExitVSH(NULL);
+    				}
                     return;
                 }
-				
+    			
                 while (filesize>0){
                     int read = sceIoRead(fdr, buf, (filesize>BUF_SIZE)?BUF_SIZE:filesize);
                     sceIoWrite(fdw, buf, read);

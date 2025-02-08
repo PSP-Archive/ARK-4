@@ -56,8 +56,8 @@ typedef struct LIBERTAS_COMMAND
 
     union
     {
-    	LIBERTAS_GET_HW_SPEC_COMMAND	hwspec;
-    	LIBERTAS_MAC_CONTROL_COMMAND	maccontrol;
+        LIBERTAS_GET_HW_SPEC_COMMAND	hwspec;
+        LIBERTAS_MAC_CONTROL_COMMAND	maccontrol;
     } data;
 } __attribute__((packed)) LIBERTAS_COMMAND;
 

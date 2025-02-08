@@ -40,32 +40,33 @@
 SEConfig se_config = {
     .magic = ARK_CONFIG_MAGIC,
 
-	.umdmode = 0,
-	.clock = 0,
-	.disable_pause = 0,
-	.hidedlc = 0,
-	.umdregion = 0,
-	.vshregion = 0,
-	.usbdevice = 0,
-	.usbcharge = 0,
-	.hidemac = 0,
-	.launcher_mode = 0,
-	.hidepics = 0,
-	.qaflags = 0,
+    .umdmode = 0,
+    .clock = 0,
+    .disable_pause = 0,
+    .hidedlc = 0,
+    .umdregion = 0,
+    .vshregion = 0,
+    .usbdevice = 0,
+    .usbcharge = 0,
+    .hidemac = 0,
+    .launcher_mode = 0,
+    .hidepics = 0,
+    .qaflags = 0,
 
-	// unused, always true
-	.plugvsh = 1,
-	.pluggame = 1,
-	.plugpop = 1,
-	
-	.usbdevice_rdonly = 0,
-	
-	.skiplogos = 0,
-	
-	.noumd = 0,
-	.custom_update = 0, // automatic
-	.usenodrm = 1, // always true
+    // unused, always true
+    .plugvsh = 1,
+    .pluggame = 1,
+    .plugpop = 1,
+    
+    .usbdevice_rdonly = 0,
+    
+    .skiplogos = 0,
+    
+    .noumd = 0,
+    .custom_update = 0, // automatic
+    .usenodrm = 1, // always true
 
+<<<<<<< HEAD
 	.hibblock = 0,
 	.noanalog = 0,
 	.oldplugin = 0,
@@ -82,6 +83,24 @@ SEConfig se_config = {
 	.wpa2 = 0, /* not used by default */
 	.force_high_memory = 0,
 	.macspoofer = 0, // automatic
+=======
+    .hibblock = 0,
+    .noanalog = 0,
+    .oldplugin = 0,
+    .htmlviewer_custom_save_location = 0, // unused, always false
+    .hide_cfw_dirs = 1, // always true
+    .chn_iso = 1, // always true
+    .msspeed = 0,
+    .slimcolor = 0, // automatic
+    .iso_cache = 0,
+    .iso_cache_size = 0, // automatic
+    .iso_cache_num = 0,
+    .iso_cache_policy = CACHE_POLICY_LRU,
+    .noled = 0, // always false
+    .language = -1, /* -1 as autodetect */
+    .force_high_memory = 0,
+    .macspoofer = 0, // automatic
+>>>>>>> e5b5291e1877fe325f0512dcf1f5c0f2abddc542
 };
 
 char *GetUmdFile(void) __attribute__((alias("sctrlSEGetUmdFile")));
@@ -208,7 +227,7 @@ int sctrlSEGetDiscType(void)
 
 int sctrlSEGetVersion()
 {
-	return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | (ARK_MICRO_VERSION << 8) | ARK_REVISION );
+    return ( (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | (ARK_MICRO_VERSION << 8) | ARK_REVISION );
 }
 
 int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs){

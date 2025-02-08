@@ -214,10 +214,10 @@ void patchFileManagerImports(SceModule2 * mod)
 }
 
 __attribute__((noinline)) int BuildMsPathChangeFsNum(PspIoDrvFileArg *arg, const char *name, char *ms_path) {
-	sprintf(ms_path, "/flash/%d%s", (int)arg->fs_num, name);
-	int fs_num = arg->fs_num;
-	arg->fs_num = 0;
-	return fs_num;
+    sprintf(ms_path, "/flash/%d%s", (int)arg->fs_num, name);
+    int fs_num = arg->fs_num;
+    arg->fs_num = 0;
+    return fs_num;
 }
 
 // sceIoAddDrv Hook
@@ -227,26 +227,26 @@ int sceIoAddDrvHook(PspIoDrv * driver)
     if (strcmp(driver->name, "flash") == 0) {
         memcpy(&flash_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
 
-		driver->funcs->IoOpen = flashIoOpen;
-		driver->funcs->IoClose = flashIoClose;
-		driver->funcs->IoRead = flashIoRead;
-		driver->funcs->IoWrite = flashIoWrite;
-		driver->funcs->IoLseek = flashIoLseek;
-		driver->funcs->IoIoctl = flashIoIoctl;
-		driver->funcs->IoRemove = flashIoRemove;
-		driver->funcs->IoMkdir = flashIoMkdir;
-		driver->funcs->IoRmdir = flashIoRmdir;
-		driver->funcs->IoDopen = flashIoDopen;
-		driver->funcs->IoDclose = flashIoDclose;
-		driver->funcs->IoDread = flashIoDread;
-		driver->funcs->IoGetstat = flashIoGetstat;
-		driver->funcs->IoChstat = flashIoChstat;
-		driver->funcs->IoChdir = flashIoChdir;
-		driver->funcs->IoDevctl = flashIoDevctl;
+    	driver->funcs->IoOpen = flashIoOpen;
+    	driver->funcs->IoClose = flashIoClose;
+    	driver->funcs->IoRead = flashIoRead;
+    	driver->funcs->IoWrite = flashIoWrite;
+    	driver->funcs->IoLseek = flashIoLseek;
+    	driver->funcs->IoIoctl = flashIoIoctl;
+    	driver->funcs->IoRemove = flashIoRemove;
+    	driver->funcs->IoMkdir = flashIoMkdir;
+    	driver->funcs->IoRmdir = flashIoRmdir;
+    	driver->funcs->IoDopen = flashIoDopen;
+    	driver->funcs->IoDclose = flashIoDclose;
+    	driver->funcs->IoDread = flashIoDread;
+    	driver->funcs->IoGetstat = flashIoGetstat;
+    	driver->funcs->IoChstat = flashIoChstat;
+    	driver->funcs->IoChdir = flashIoChdir;
+    	driver->funcs->IoDevctl = flashIoDevctl;
 
         // Add flashfat driver
-		flashfat_drv->funcs = driver->funcs;
-		_sceIoAddDrv(flashfat_drv);
+    	flashfat_drv->funcs = driver->funcs;
+    	_sceIoAddDrv(flashfat_drv);
     }
     // "ms" Driver
     else if (strcmp(driver->name, "fatms") == 0) {
@@ -297,14 +297,14 @@ int sceIoAddDrvHook(PspIoDrv * driver)
         _sceIoAddDrv(ms_drv);
         _sceIoAddDrv(&ef_drv);
         _sceIoAddDrv(&fatef_drv);
-	}
+    }
     else if(strcmp(driver->name, "ms") == 0) {
         ms_drv = driver;
         return 0;
     }
     else if (strcmp(driver->name, "flashfat") == 0){
         flashfat_drv = driver;
-		return 0;
+    	return 0;
     }
     
     // Register Driver
@@ -312,39 +312,39 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 }
 
 int sceIoDelDrvHook(const char *drv_name) {
-	if (strcmp(drv_name, "ms") == 0 || strcmp(drv_name, "flashfat") == 0) {
-		return 0;
-	} else if (strcmp(drv_name, "fatms") == 0) {
-		_sceIoDelDrv("ms");
-	} else if (strcmp(drv_name, "flash") == 0) {
-		_sceIoDelDrv("flashfat");
-	}
+    if (strcmp(drv_name, "ms") == 0 || strcmp(drv_name, "flashfat") == 0) {
+    	return 0;
+    } else if (strcmp(drv_name, "fatms") == 0) {
+    	_sceIoDelDrv("ms");
+    } else if (strcmp(drv_name, "flash") == 0) {
+    	_sceIoDelDrv("flashfat");
+    }
 
-	return _sceIoDelDrv(drv_name);
+    return _sceIoDelDrv(drv_name);
 }
 
 int sceIoUnassignHook(const char *dev) {
-	int k1 = pspSdkSetK1(0);
+    int k1 = pspSdkSetK1(0);
 
-	if (strncmp(dev, "ms", 2) == 0 || strncmp(dev, "flash", 5) == 0) {
-		pspSdkSetK1(k1);
-		return 0;
-	}
+    if (strncmp(dev, "ms", 2) == 0 || strncmp(dev, "flash", 5) == 0) {
+    	pspSdkSetK1(k1);
+    	return 0;
+    }
 
-	pspSdkSetK1(k1);
-	return _sceIoUnassign(dev);
+    pspSdkSetK1(k1);
+    return _sceIoUnassign(dev);
 }
 
 int sceIoAssignHook(const char *dev1, const char *dev2, const char *dev3, int mode, void* unk1, long unk2) {
-	int k1 = pspSdkSetK1(0);
+    int k1 = pspSdkSetK1(0);
 
-	if (strncmp(dev1, "ms", 2) == 0 || strncmp(dev1, "flash", 5) == 0) {
-		pspSdkSetK1(k1);
-		return 0;
-	}
+    if (strncmp(dev1, "ms", 2) == 0 || strncmp(dev1, "flash", 5) == 0) {
+    	pspSdkSetK1(k1);
+    	return 0;
+    }
 
-	pspSdkSetK1(k1);
-	return _sceIoAssign(dev1, dev2, dev3, mode, unk1, unk2);
+    pspSdkSetK1(k1);
+    return _sceIoAssign(dev1, dev2, dev3, mode, unk1, unk2);
 }
 
 // Directory IO Semaphore Lock

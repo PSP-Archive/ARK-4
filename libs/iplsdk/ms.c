@@ -43,43 +43,43 @@ int ms_get_reg(int buffer, int reg);
 int ms_get_reg_int(void);
 
 void pspMsInit(void){
-	_ms_init();
+    _ms_init();
 }
 
 
 void ms_wait_unk1(void){
-	while(!(IO_MEM_STICK_STATUS & 0x2000)){};
+    while(!(IO_MEM_STICK_STATUS & 0x2000)){};
 }
 
 int parse_init_registers()
 {
-	*((volatile int*)(0xBC100054)) |= 0x00000100;
-	*((volatile int*)(0xBC100050)) |= 0x00000400;
-	*((volatile int*)(0xBC100078)) |= 0x00000010;
-	*((volatile int*)(0xBC10004C)) &= ~0x100;
+    *((volatile int*)(0xBC100054)) |= 0x00000100;
+    *((volatile int*)(0xBC100050)) |= 0x00000400;
+    *((volatile int*)(0xBC100078)) |= 0x00000010;
+    *((volatile int*)(0xBC10004C)) &= ~0x100;
 
   return 0;
 }
 
 int _ms_init(void)
 {
-	//initialize the hardware
-	parse_init_registers();
+    //initialize the hardware
+    parse_init_registers();
 
-	//reset the controller
-	IO_MEM_STICK_SYS = MSRST;
-	while(IO_MEM_STICK_SYS & MSRST){}
+    //reset the controller
+    IO_MEM_STICK_SYS = MSRST;
+    while(IO_MEM_STICK_SYS & MSRST){}
 
-	ms_check_unk2();
+    ms_check_unk2();
 
-	ms_wait_ready();
+    ms_wait_ready();
 
-	int ret;
-	do{
-		ret = ms_get_reg_int();
-	}while((ret < 0) || ( (ret & INT_REG_CED) == 0));
+    int ret;
+    do{
+    	ret = ms_get_reg_int();
+    }while((ret < 0) || ( (ret & INT_REG_CED) == 0));
 
-	return 0;
+    return 0;
 }
 
 int send_data_and_sync(int arg1, int arg2){
@@ -116,39 +116,39 @@ int ms_wait_ready(void){
   if (status & (MS_CRC_ERROR|MS_TIME_OUT))
   {
 //Kprintf("ms_wait_ready:err %08X\n",status);
-	return -1;
+    return -1;
   }
   return 0;
 }
 
 /*
-	read status register
+    read status register
 */
 int ms_check_unk2(void)
 {
-	int ret, val_a;
-	//set rw reg addrs of type reg (?)
-	IO_MEM_STICK_CMD = SET_RW_REG_ADRS | 0x4;
-	IO_MEM_STICK_DATA = 0x06100800;
-	IO_MEM_STICK_DATA = 0x00000000;
+    int ret, val_a;
+    //set rw reg addrs of type reg (?)
+    IO_MEM_STICK_CMD = SET_RW_REG_ADRS | 0x4;
+    IO_MEM_STICK_DATA = 0x06100800;
+    IO_MEM_STICK_DATA = 0x00000000;
 
 
-	ret = ms_wait_ready();
-	if (ret != 0) return -1;
+    ret = ms_wait_ready();
+    if (ret != 0) return -1;
 
-	//  ms_get_reg(0x80010A1C, 0x8);
-	ms_get_reg((int)sts_buf, 8);
-	if(sts_buf[4] != 0x01)
-	{
-		return -1;
-	}
+    //  ms_get_reg(0x80010A1C, 0x8);
+    ms_get_reg((int)sts_buf, 8);
+    if(sts_buf[4] != 0x01)
+    {
+    	return -1;
+    }
 
-	val_a = *((volatile int*)(&sts_buf[0]));
+    val_a = *((volatile int*)(&sts_buf[0]));
 
-	if (((val_a >> 16) & 0x15) != 0)
-		return -1;
+    if (((val_a >> 16) & 0x15) != 0)
+    	return -1;
 
-	return 0;
+    return 0;
 }
 
 int ms_get_reg(int buffer, int reg){
@@ -172,8 +172,8 @@ int ms_get_reg_int(void)
     if(status & MS_TIME_OUT)
     {
 //Kprintf("get_reg_int timeout\n");
-	 return -1;
-	}
+     return -1;
+    }
   }while(!(status & MS_FIFO_RW));
 
   ret = IO_MEM_STICK_DATA;
@@ -184,8 +184,8 @@ int ms_get_reg_int(void)
     if(status & MS_TIME_OUT)
     {
 //Kprintf("get_reg_int timeout\n");
-	 return -1;
-	}
+     return -1;
+    }
   }while(!(status & MS_RDY));
 
   return ret & 0xff;

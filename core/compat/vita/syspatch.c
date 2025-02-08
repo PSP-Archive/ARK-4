@@ -75,18 +75,18 @@ int ioCloseForCameraLite(int uid){
 // patch to fix volatile mem issue
 int (*_sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
 int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
-	int res = 0;
+    int res = 0;
 
-	int i;
-	for (i = 0; i < 0x10; i++) {
-		res = _sceKernelVolatileMemTryLock(unk, ptr, size);
-		if (res >= 0)
-			break;
+    int i;
+    for (i = 0; i < 0x10; i++) {
+    	res = _sceKernelVolatileMemTryLock(unk, ptr, size);
+    	if (res >= 0)
+    		break;
 
-		sceKernelDelayThread(100);
-	}
+    	sceKernelDelayThread(100);
+    }
 
-	return res;
+    return res;
 }
 
 // this patch makes sceAudioOutput2Release behave like on real PSP (audio is not released if there are still samples left)
@@ -94,7 +94,7 @@ int (*_sceAudioOutput2Release)(void);
 int (*_sceAudioOutput2GetRestSample)();
 int sceAudioOutput2ReleaseFixed(){
     if (_sceAudioOutput2GetRestSample() > 0) return -1;
-	return _sceAudioOutput2Release();
+    return _sceAudioOutput2Release();
 }
 
 void ARKVitaOnModuleStart(SceModule2 * mod){
@@ -141,34 +141,34 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
-    	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-        	hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
-			goto flush;
-		}
-	}
-	
+        if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
+            hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+    		goto flush;
+    	}
+    }
+    
     if (strcmp(mod->modname, "camera_patch_lite") == 0) {
         hookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, ioOpenForCameraLite);
         hookImportByNID(mod, "IoFileMgrForKernel", 0x810C4BC3, ioCloseForCameraLite);
         goto flush;
-	}
+    }
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
-		// perfect time to apply extra memory patch
-		if (se_config->force_high_memory) unlockVitaMemory(50);
-		else{
-			int apitype = sceKernelInitApitype();
-			if (apitype == 0x141){
-				int paramsize=4;
-				int use_highmem = 0;
-				if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-					unlockVitaMemory(50);
-					se_config->force_high_memory = 1;
-				}
-        	}
+    	// perfect time to apply extra memory patch
+    	if (se_config->force_high_memory) unlockVitaMemory(50);
+    	else{
+    		int apitype = sceKernelInitApitype();
+    		if (apitype == 0x141){
+    			int paramsize=4;
+    			int use_highmem = 0;
+    			if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
+    				unlockVitaMemory(50);
+    				se_config->force_high_memory = 1;
+    			}
+            }
         }
         goto flush;
-	}
+    }
 
     // Boot Complete Action not done yet
     if(booted == 0)
@@ -188,8 +188,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
                 int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
                 if (CacheInit){
                     se_config->iso_cache_size = 4 * 1024;
-					se_config->iso_cache_num = 16;
-					CacheInit(4 * 1024, 16, 1); // 64KB cache for Vita
+    				se_config->iso_cache_num = 16;
+    				CacheInit(4 * 1024, 16, 1); // 64KB cache for Vita
                 }
                 if (se_config->iso_cache == 2){
                     int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);

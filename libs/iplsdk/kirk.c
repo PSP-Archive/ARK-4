@@ -177,30 +177,30 @@ int kirkF(void *dst)
 int kirk_decrypt_aes(unsigned char *out, unsigned char *data, unsigned int size, unsigned char key_idx)
 {
     PspKirkRegs *const kirk = KIRK_HW_REGISTER_ADDR;
-	Kirk58Header *header = (void *) 0xBFC00C00;
-	memset(header, 0, 0x40);
-	header->mode = KIRK_MODE_DECRYPT_CBC;
-	header->keyslot = key_idx;
-	header->size = size;
-	memcpy(&header[1], data, size);
-	__asm("sync"::);
-	kirk->command = 0x07;
-	kirk->src_addr = MAKE_PHYS_ADDR(header);
-	kirk->dst_addr = MAKE_PHYS_ADDR(header);
-	kirk->proc_phase = 1;
-	__asm("sync"::);
-	while ((kirk->proc_phase & 1) != 0);
-	while (!kirk->status);
-	int res = kirk->result;
-	kirk->status_end = kirk->status & kirk->status_async;
-	__asm("sync"::);
-	
-	memcpy(out, header, size);
+    Kirk58Header *header = (void *) 0xBFC00C00;
+    memset(header, 0, 0x40);
+    header->mode = KIRK_MODE_DECRYPT_CBC;
+    header->keyslot = key_idx;
+    header->size = size;
+    memcpy(&header[1], data, size);
+    __asm("sync"::);
+    kirk->command = 0x07;
+    kirk->src_addr = MAKE_PHYS_ADDR(header);
+    kirk->dst_addr = MAKE_PHYS_ADDR(header);
+    kirk->proc_phase = 1;
+    __asm("sync"::);
+    while ((kirk->proc_phase & 1) != 0);
+    while (!kirk->status);
+    int res = kirk->result;
+    kirk->status_end = kirk->status & kirk->status_async;
+    __asm("sync"::);
+    
+    memcpy(out, header, size);
 
-	memset(header, 0, 0x400);
+    memset(header, 0, 0x400);
 
-	if (res)
-		return -1;
+    if (res)
+    	return -1;
 
-	return 0;
+    return 0;
 }

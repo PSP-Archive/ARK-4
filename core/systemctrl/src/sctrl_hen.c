@@ -76,12 +76,12 @@ PspIoDrv * sctrlHENFindDriver(char * drvname)
 
     if (driver == NULL){
         if(0 == stricmp(drvname, "msstor")) {
-			return sctrlHENFindDriver("eflash0a0f");
-		}
+    		return sctrlHENFindDriver("eflash0a0f");
+    	}
 
-		if(0 == stricmp(drvname, "msstor0p")) {
-			return sctrlHENFindDriver("eflash0a0f1p");
-		}
+    	if(0 == stricmp(drvname, "msstor0p")) {
+    		return sctrlHENFindDriver("eflash0a0f1p");
+    	}
     }
     
     // Return Driver
@@ -196,7 +196,7 @@ u32 sctrlHENGetInitControl()
 {
     if (kernel_init_apitype == NULL)
         return 0;
-	return (u32)kernel_init_apitype - 8;
+    return (u32)kernel_init_apitype - 8;
 }
 
 u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid)
@@ -283,7 +283,7 @@ void* sctrlHENRegisterMDecryptHandler(int (* func)())
 extern void (*lle_handler)(void*);
 void sctrlHENRegisterLLEHandler(void* handler)
 {
-	lle_handler = handler;
+    lle_handler = handler;
 }
 
 int sctrlHENRegisterHomebrewLoader(void* handler)
@@ -320,7 +320,7 @@ u32 sctrlHENFakeDevkitVersion(){
 int sctrlHENIsToolKit()
 {
     int ret = 0; // Retail
-	int k1 = pspSdkSetK1(0);
+    int k1 = pspSdkSetK1(0);
     int level = sctrlKernelSetUserLevel(8);
     
     if (ark_config->exec_mode == PSP_ORIG){

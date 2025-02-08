@@ -141,7 +141,7 @@ string Eboot::fullEbootPath(string path, string app){
         return path+app+VBOOT_PBP; // ARK EBOOT
     
     else if (common::getConf()->scan_dlc && common::fileExists(path+app+"/PBOOT.PBP"))
-    	return path+app+"/PBOOT.PBP"; // DLC
+        return path+app+"/PBOOT.PBP"; // DLC
 
     else if (common::fileExists(path+app+"/EBOOT.PBP"))
         return path+app+"/EBOOT.PBP"; // Normal EBOOT
@@ -246,11 +246,11 @@ void Eboot::executeHomebrew(const char* path){
     char *perc = strchr(path, '%');
     if (perc) {
         strcpy(perc, perc + 1);
-    	//path = param.argp;
+        //path = param.argp;
     }
 
     if(strstr(path, "ms0:/PSP/GAME150/") == path) {
-    	loadReboot150();
+        loadReboot150();
     }
 
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);

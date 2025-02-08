@@ -60,92 +60,92 @@ REGHANDLE lang_hk = -1;
 
 int sceRegGetKeyValuePatched(REGHANDLE hd, REGHANDLE hk, void *buffer, SceSize size)
 {
-	int res = sceRegGetKeyValue(hd, hk, buffer, size);
-	if (res >= 0 && hk == lang_hk)
-	{
-		if (*(u32 *)buffer > 8)
-			*(u32 *)buffer = 1;
-		
-		lang_hk = -1;
-	}
-	return res;
+    int res = sceRegGetKeyValue(hd, hk, buffer, size);
+    if (res >= 0 && hk == lang_hk)
+    {
+    	if (*(u32 *)buffer > 8)
+    		*(u32 *)buffer = 1;
+    	
+    	lang_hk = -1;
+    }
+    return res;
 }
 
 int sceRegGetKeyInfoPatched(REGHANDLE hd, const char *name, REGHANDLE *hk, unsigned int *type, SceSize *size)
 {
-	int res = sceRegGetKeyInfo(hd, name, hk, type, size);
+    int res = sceRegGetKeyInfo(hd, name, hk, type, size);
 
-	if (res >= 0 && strcmp(name, "language") == 0)
-	{
-		if (hk)
-			lang_hk = *hk;
-	}
+    if (res >= 0 && strcmp(name, "language") == 0)
+    {
+    	if (hk)
+    		lang_hk = *hk;
+    }
 
-	return res;
+    return res;
 }
 
 int sceDisplaySetBrightnessPatched(int level, int unk1)
 {
-	last_br = level;
-	last_unk = unk1;
+    last_br = level;
+    last_unk = unk1;
 
-	if (level < 100)
-	{
-		if (level >= 70)
-			level = 100 - level;
-		else if (level >= 35)
-			level = 100 - level - 5;
-		else
-			level = 100 - level - 10;
-	}
-	else if (level == 100)
-	{
-		level = 1;
-	}
+    if (level < 100)
+    {
+    	if (level >= 70)
+    		level = 100 - level;
+    	else if (level >= 35)
+    		level = 100 - level - 5;
+    	else
+    		level = 100 - level - 10;
+    }
+    else if (level == 100)
+    {
+    	level = 1;
+    }
 
-	return sceDisplaySetBrightness(level, unk1);
+    return sceDisplaySetBrightness(level, unk1);
 }
 
 // Module Start Handler
 static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 {
     char *moduleName = mod->modname;
-	u32 text_addr = mod->text_addr;
+    u32 text_addr = mod->text_addr;
 
-	if (strcmp(moduleName, "sceRegistry_Service") == 0)
-	{
-		_sw((u32)sceRegGetKeyInfoPatched, text_addr+0x76DC);
-		_sw((u32)sceRegGetKeyValuePatched, text_addr+0x76E0);
+    if (strcmp(moduleName, "sceRegistry_Service") == 0)
+    {
+    	_sw((u32)sceRegGetKeyInfoPatched, text_addr+0x76DC);
+    	_sw((u32)sceRegGetKeyValuePatched, text_addr+0x76E0);
 
-		flushCache();
-	}
+    	flushCache();
+    }
     else if (strcmp(moduleName, "scePower_Service") == 0)
-	{
-		_sw(0x00e02021, text_addr+0x558); //ADDU $a0 $a3 $zero
-		flushCache();
-	}
-	else if (strcmp(moduleName, "sceDisplay_Service") == 0)
-	{
-		int lcd;
-		if (sceIdStorageLookup(8, 0, &lcd, 4) >= 0 && lcd == 0x4C434470)
-		{
-			_sw((u32)sceDisplaySetBrightnessPatched, text_addr + 0x2858);
-			flushCache();
-		}
-	}
+    {
+    	_sw(0x00e02021, text_addr+0x558); //ADDU $a0 $a3 $zero
+    	flushCache();
+    }
+    else if (strcmp(moduleName, "sceDisplay_Service") == 0)
+    {
+    	int lcd;
+    	if (sceIdStorageLookup(8, 0, &lcd, 4) >= 0 && lcd == 0x4C434470)
+    	{
+    		_sw((u32)sceDisplaySetBrightnessPatched, text_addr + 0x2858);
+    		flushCache();
+    	}
+    }
     else if (strcmp(moduleName, "sceMSstor_Driver") == 0)
-	{
-		REDIRECT_FUNCTION(text_addr + 0x5138, ValidateSeekPatched);
-		REDIRECT_FUNCTION(text_addr + 0x51bc, ValidateSeekP1Patched);
-		GetMsSize = (void *)(text_addr + 0x0288);
+    {
+    	REDIRECT_FUNCTION(text_addr + 0x5138, ValidateSeekPatched);
+    	REDIRECT_FUNCTION(text_addr + 0x51bc, ValidateSeekP1Patched);
+    	GetMsSize = (void *)(text_addr + 0x0288);
 
-		flushCache();
-	}
-	else if (strcmp(moduleName, "sceLoadExec") == 0)
-	{
-		patchLoadExec();
-		flushCache();
-	}
+    	flushCache();
+    }
+    else if (strcmp(moduleName, "sceLoadExec") == 0)
+    {
+    	patchLoadExec();
+    	flushCache();
+    }
 }
 
 // Add Module Start Patcher
@@ -158,11 +158,11 @@ void syspatchInit(void)
 
 int SysEventHandler(int eventId, char *eventName, void *param, int *result)
 {
-	if (eventId == 0x1000B)
-	{
-		if (last_br == 100)
-			sceDisplaySetBrightnessPatched(last_br, last_unk);
-	}
+    if (eventId == 0x1000B)
+    {
+    	if (last_br == 100)
+    		sceDisplaySetBrightnessPatched(last_br, last_unk);
+    }
 
-	return 0;
+    return 0;
 }

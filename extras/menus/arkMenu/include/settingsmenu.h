@@ -77,9 +77,9 @@ class SettingsMenu : public SystemEntry{
             this->info = info;
         }
 
-    	void setFooter(string footer) {
-    		this->footer = footer;
-    	}
+        void setFooter(string footer) {
+        	this->footer = footer;
+        }
         
         void setName(string name){
             this->name = name;
@@ -89,9 +89,9 @@ class SettingsMenu : public SystemEntry{
             return this->info;
         }
 
-    	string getFooter() {
-    		return this->footer;
-    	}
+        string getFooter() {
+        	return this->footer;
+        }
         
         Image* getIcon(){
             return common::getImage(icon);

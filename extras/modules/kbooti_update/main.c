@@ -47,9 +47,9 @@ u32 kbooti_350_xor_key[] =
 #define KIRK1_HEADER_SIZE 0x40
 
 #define error_exit() \
-	if (ret < 0) {   \
-		goto error;  \
-	}
+    if (ret < 0) {   \
+    	goto error;  \
+    }
 
 static u8 g_buf[IPL_BLOCK_SIZE + 0x40] __attribute__((aligned(64)));
 static u8 g_buf2[IPL_BLOCK_SIZE + 0x40] __attribute__((aligned(64)));
@@ -59,259 +59,259 @@ int (*sceUtilsBufferCopyWithRange)(void* outBuf, int outSize, void* inBuf, int i
 
 void descramble_kirk_header(u32 *kirk_header)
 {
-	for (int i = 0; i < KIRK1_HEADER_SIZE/4; i++) {
-		kirk_header[i] = kirk_header[i] ^ kbooti_350_xor_key[i];
-	}
+    for (int i = 0; i < KIRK1_HEADER_SIZE/4; i++) {
+    	kirk_header[i] = kirk_header[i] ^ kbooti_350_xor_key[i];
+    }
 }
 
 void copy_kbooti_to_tachsm()
 {
-	int fd = -1, size;
+    int fd = -1, size;
 
-	fd = sceIoOpen(KBOOTI_BIN_PATH, PSP_O_RDONLY , 0777);
+    fd = sceIoOpen(KBOOTI_BIN_PATH, PSP_O_RDONLY , 0777);
 
-	if (fd < 0) {
-		goto exit;
-	}
+    if (fd < 0) {
+    	goto exit;
+    }
 
-	size = sceIoRead(fd, kbooti_buf, sizeof(kbooti_buf));
+    size = sceIoRead(fd, kbooti_buf, sizeof(kbooti_buf));
 
-	if (size < 0) {
-		goto exit;
-	}
+    if (size < 0) {
+    	goto exit;
+    }
 
-	memcpy((void*)0xBFE00000, kbooti_buf, size);
+    memcpy((void*)0xBFE00000, kbooti_buf, size);
 
 exit:
-	if (fd > 0) {
-		sceIoClose(fd);
-	}
+    if (fd > 0) {
+    	sceIoClose(fd);
+    }
 
 }
 
 int rename(const char *oldname, const char* newname)
 {
-	int ret;
-	SceUID fd, fd2;
-	SceIoStat srcstat;
+    int ret;
+    SceUID fd, fd2;
+    SceIoStat srcstat;
 
-	ret = sceIoGetstat(newname, &srcstat);
+    ret = sceIoGetstat(newname, &srcstat);
 
-	if (ret != 0x80010002) { //SCE_ERROR_ERRNO_FILE_NOT_FOUND
-		return -1;
-	}
+    if (ret != 0x80010002) { //SCE_ERROR_ERRNO_FILE_NOT_FOUND
+    	return -1;
+    }
 
-	ret = sceIoOpen(oldname, PSP_O_RDONLY , 0777);
-	error_exit();
-	fd = ret;
+    ret = sceIoOpen(oldname, PSP_O_RDONLY , 0777);
+    error_exit();
+    fd = ret;
 
-	ret = sceIoOpen(newname, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC , 0777);
-	error_exit();
-	fd2 = ret;
+    ret = sceIoOpen(newname, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC , 0777);
+    error_exit();
+    fd2 = ret;
 
-	ret = sceIoRead(fd, g_buf, 0x1000);
+    ret = sceIoRead(fd, g_buf, 0x1000);
 
-	while (ret > 0) {
-		sceIoWrite(fd2, g_buf, ret);
-		error_exit();
-		ret = sceIoRead(fd, g_buf, 0x1000);
-	}
+    while (ret > 0) {
+    	sceIoWrite(fd2, g_buf, ret);
+    	error_exit();
+    	ret = sceIoRead(fd, g_buf, 0x1000);
+    }
 
-	error_exit();
+    error_exit();
 
-	sceIoClose(fd);
-	sceIoClose(fd2);
+    sceIoClose(fd);
+    sceIoClose(fd2);
 
-	sceIoRemove(oldname);
-	error_exit();
+    sceIoRemove(oldname);
+    error_exit();
 
-	return 1;
+    return 1;
 
 error:
-	if (fd > 0) {
-		sceIoClose(fd);
-	}
-	if (fd2 > 0) {
-		sceIoClose(fd2);
-	}
+    if (fd > 0) {
+    	sceIoClose(fd);
+    }
+    if (fd2 > 0) {
+    	sceIoClose(fd2);
+    }
 
-	return ret;
+    return ret;
 }
 
 void init_flash()
 {
-	int ret;
+    int ret;
    
-	ret = sceIoUnassign("flash3:");
+    ret = sceIoUnassign("flash3:");
 
-	while(ret < 0 && ret != SCE_KERNEL_ERROR_NODEV) {
-		ret = sceIoUnassign("flash3:");
-		sceKernelDelayThread(500000);
-	}
+    while(ret < 0 && ret != SCE_KERNEL_ERROR_NODEV) {
+    	ret = sceIoUnassign("flash3:");
+    	sceKernelDelayThread(500000);
+    }
 
-	sceIoAssign("flash3:", "lflash0:0,3", "flashfat3:", 0, NULL, 0);
+    sceIoAssign("flash3:", "lflash0:0,3", "flashfat3:", 0, NULL, 0);
 }
 
 int pspKbootiUpdateGetKbootiSize()
 {
-	int k1 = pspSdkSetK1(0);
+    int k1 = pspSdkSetK1(0);
 
-	SceIoStat srcstat;
+    SceIoStat srcstat;
 
-	init_flash();
+    init_flash();
 
-	int ret = sceIoGetstat(KBOOTI_BIN_PATH, &srcstat);
+    int ret = sceIoGetstat(KBOOTI_BIN_PATH, &srcstat);
 
-	if (ret < 0)
-		goto exit;
+    if (ret < 0)
+    	goto exit;
 
-	ret = srcstat.st_size;
+    ret = srcstat.st_size;
 
 exit:
-	pspSdkSetK1(k1);
+    pspSdkSetK1(k1);
 
-	return ret; 
+    return ret; 
 }
 
 int pspKbootiUpdateKbooti(u8 *cIplBlock, u32 cIplBlockSize)
-{	
-	int k1 = pspSdkSetK1(0);
-	
-	SceUID fd = -1;
-	int ret;
-	int kbootiBinBackedUp = 0;
-	int count = 0;
-	SceIoStat srcstat;
+{    
+    int k1 = pspSdkSetK1(0);
+    
+    SceUID fd = -1;
+    int ret;
+    int kbootiBinBackedUp = 0;
+    int count = 0;
+    SceIoStat srcstat;
 
-	memset(kbooti_buf, 0, sizeof(kbooti_buf));
+    memset(kbooti_buf, 0, sizeof(kbooti_buf));
 
-	ret = sceIoGetstat(KBOOTI_BIN_BACKUP_PATH, &srcstat);
+    ret = sceIoGetstat(KBOOTI_BIN_BACKUP_PATH, &srcstat);
 
-	if (ret == 0x80010002) { //SCE_ERROR_ERRNO_FILE_NOT_FOUND
-		ret = sceIoOpen(KBOOTI_BIN_PATH, PSP_O_RDONLY , 0777);
-	}
-	else if (ret >= 0) {
-		kbootiBinBackedUp = 1;
-		ret = sceIoOpen(KBOOTI_BIN_BACKUP_PATH, PSP_O_RDONLY , 0777);
-	}
-	else {
-		goto error;
-	}
+    if (ret == 0x80010002) { //SCE_ERROR_ERRNO_FILE_NOT_FOUND
+    	ret = sceIoOpen(KBOOTI_BIN_PATH, PSP_O_RDONLY , 0777);
+    }
+    else if (ret >= 0) {
+    	kbootiBinBackedUp = 1;
+    	ret = sceIoOpen(KBOOTI_BIN_BACKUP_PATH, PSP_O_RDONLY , 0777);
+    }
+    else {
+    	goto error;
+    }
 
-	error_exit();
-	fd = ret;
+    error_exit();
+    fd = ret;
 
-	//read Lib PSP iplloader from kbooti.bin
-	ret = sceIoRead(fd, kbooti_buf, LIB_PSP_IPL_LOADER_SIZE);
+    //read Lib PSP iplloader from kbooti.bin
+    ret = sceIoRead(fd, kbooti_buf, LIB_PSP_IPL_LOADER_SIZE);
 
-	if (ret != LIB_PSP_IPL_LOADER_SIZE) {
-		ret = ret > 0 ? -1 : ret;
-		goto error;
-	}
+    if (ret != LIB_PSP_IPL_LOADER_SIZE) {
+    	ret = ret > 0 ? -1 : ret;
+    	goto error;
+    }
 
-	count += LIB_PSP_IPL_LOADER_SIZE;
+    count += LIB_PSP_IPL_LOADER_SIZE;
 
-	//Copy custom ipl block
-	memcpy(kbooti_buf + count, cIplBlock, cIplBlockSize);
-	count += cIplBlockSize;
+    //Copy custom ipl block
+    memcpy(kbooti_buf + count, cIplBlock, cIplBlockSize);
+    count += cIplBlockSize;
 
-	ret = sceIoRead(fd, g_buf + 0x40, IPL_BLOCK_SIZE);
+    ret = sceIoRead(fd, g_buf + 0x40, IPL_BLOCK_SIZE);
 
-	while (ret > 0) {
-		descramble_kirk_header(g_buf + 0x40);
+    while (ret > 0) {
+    	descramble_kirk_header(g_buf + 0x40);
 
-		//decrypt ipl block
-		ret = sceUtilsBufferCopyWithRange(g_buf2, sizeof(g_buf2), g_buf + 0x40, IPL_BLOCK_SIZE, 1);
+    	//decrypt ipl block
+    	ret = sceUtilsBufferCopyWithRange(g_buf2, sizeof(g_buf2), g_buf + 0x40, IPL_BLOCK_SIZE, 1);
 
-		error_exit();
+    	error_exit();
 
-		u32 size = ((u32 *)g_buf2)[1];
-		memcpy(kbooti_buf + count, g_buf2 + 0x10, size);
-		count += size;
+    	u32 size = ((u32 *)g_buf2)[1];
+    	memcpy(kbooti_buf + count, g_buf2 + 0x10, size);
+    	count += size;
 
-		ret = sceIoRead(fd, g_buf + 0x40, IPL_BLOCK_SIZE);
-	}
+    	ret = sceIoRead(fd, g_buf + 0x40, IPL_BLOCK_SIZE);
+    }
 
-	sceIoClose(fd);
+    sceIoClose(fd);
 
-	if (count != CKBOOTI_SIZE) {
-		ret = -1;
-		goto error;
-	}
+    if (count != CKBOOTI_SIZE) {
+    	ret = -1;
+    	goto error;
+    }
 
-	if (!kbootiBinBackedUp) {
-		ret = rename(KBOOTI_BIN_PATH, KBOOTI_BIN_BACKUP_PATH);
-		error_exit();
-	}
+    if (!kbootiBinBackedUp) {
+    	ret = rename(KBOOTI_BIN_PATH, KBOOTI_BIN_BACKUP_PATH);
+    	error_exit();
+    }
 
-	ret = sceIoOpen(KBOOTI_BIN_PATH, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC , 0777);
-	error_exit();
-	fd = ret;
+    ret = sceIoOpen(KBOOTI_BIN_PATH, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC , 0777);
+    error_exit();
+    fd = ret;
 
-	ret = sceIoWrite(fd, kbooti_buf, count);
+    ret = sceIoWrite(fd, kbooti_buf, count);
 
-	if (ret != count) {
-		ret = ret > 0 ? -1 : ret;
-	}
+    if (ret != count) {
+    	ret = ret > 0 ? -1 : ret;
+    }
 
-	sceIoClose(fd);
+    sceIoClose(fd);
 
-	copy_kbooti_to_tachsm();
+    copy_kbooti_to_tachsm();
 
-	pspSdkSetK1(k1);
-	return 1;
+    pspSdkSetK1(k1);
+    return 1;
 
 error:
-	if (fd > 0) {
-		sceIoClose(fd);
-	}
+    if (fd > 0) {
+    	sceIoClose(fd);
+    }
 
-	pspSdkSetK1(k1);
-	return ret;
+    pspSdkSetK1(k1);
+    return ret;
 }
 
 int pspKbootiUpdateRestoreKbooti()
-{	
-	int k1 = pspSdkSetK1(0);
+{    
+    int k1 = pspSdkSetK1(0);
 
-	int ret;
-	SceIoStat srcstat;
+    int ret;
+    SceIoStat srcstat;
 
-	ret = sceIoGetstat(KBOOTI_BIN_BACKUP_PATH, &srcstat);
-	error_exit();
+    ret = sceIoGetstat(KBOOTI_BIN_BACKUP_PATH, &srcstat);
+    error_exit();
 
-	if (srcstat.st_size != KBOOTI_SIZE) {
-		ret = -1;
-		goto error;
-	}
+    if (srcstat.st_size != KBOOTI_SIZE) {
+    	ret = -1;
+    	goto error;
+    }
 
-	ret = sceIoRemove(KBOOTI_BIN_PATH);
-	error_exit();
+    ret = sceIoRemove(KBOOTI_BIN_PATH);
+    error_exit();
 
-	ret = rename(KBOOTI_BIN_BACKUP_PATH, KBOOTI_BIN_PATH);
-	error_exit();
+    ret = rename(KBOOTI_BIN_BACKUP_PATH, KBOOTI_BIN_PATH);
+    error_exit();
 
-	copy_kbooti_to_tachsm();
+    copy_kbooti_to_tachsm();
 
-	pspSdkSetK1(k1);
-	return 1;
+    pspSdkSetK1(k1);
+    return 1;
 
 error:
-	pspSdkSetK1(k1);
-	return ret;
+    pspSdkSetK1(k1);
+    return ret;
 }
 
 int module_start(SceSize args, void *argp)
 {
-	sceUtilsBufferCopyWithRange = (void*)sctrlHENFindFunction("sceMemlmd", "semaphore", 0x4C537C72);
+    sceUtilsBufferCopyWithRange = (void*)sctrlHENFindFunction("sceMemlmd", "semaphore", 0x4C537C72);
 
-	if (sceUtilsBufferCopyWithRange == NULL)
-		return -1;
+    if (sceUtilsBufferCopyWithRange == NULL)
+    	return -1;
 
-	return 0;
+    return 0;
 }
 
 int module_stop(void)
 {
-	return 0;
+    return 0;
 }

@@ -45,7 +45,7 @@ void applyFixesByModule(SceModule2* mod){
     // fix black screen in Tekken 6
     if (strcmp(mod->modname, "tekken") == 0) {
         hookImportByNID(mod, "scePower", 0x34F9C463, 222); // scePowerGetPllClockFrequencyInt
-	}
+    }
 
     // remove "overclock" message in ATV PRO
     else if (strcmp(mod->modname, "ATVPRO") == 0){

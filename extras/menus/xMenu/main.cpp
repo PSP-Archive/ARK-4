@@ -20,20 +20,20 @@ int startup_thread(int argc, void* argp){
     stringstream startup_runner;
     
     for(i=0;i<startup_txt.length();i++) {
-    	startup_runner << startup_txt[i];	
+        startup_runner << startup_txt[i];    
     }
 
     while (loading){
-    	debugScreen(startup_runner.str().c_str(), 180, 130);
-    	if(dots>3) {
-    		startup_runner.str(startup_txt);
-    		dots=0;
-    	}
-    	else {
-    		startup_runner.str(startup_txt + string(dots, '.'));
-    	}
-    	dots++;
-    	sceKernelDelayThread(200000);
+        debugScreen(startup_runner.str().c_str(), 180, 130);
+        if(dots>3) {
+            startup_runner.str(startup_txt);
+            dots=0;
+        }
+        else {
+            startup_runner.str(startup_txt + string(dots, '.'));
+        }
+        dots++;
+        sceKernelDelayThread(200000);
     }
 
     return 0;

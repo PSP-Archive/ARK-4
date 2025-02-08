@@ -42,8 +42,8 @@ SfoInfo UMD::getSfoInfo(){
     unsigned int size = 0;
     string UMD_SFO_PATH;
     if(common::fileExists(UMD_GAME_SFO_PATH)) {
-    	size = common::fileSize(UMD_GAME_SFO_PATH);
-    	UMD_SFO_PATH = UMD_GAME_SFO_PATH;
+        size = common::fileSize(UMD_GAME_SFO_PATH);
+        UMD_SFO_PATH = UMD_GAME_SFO_PATH;
     }
     
     unsigned char* sfo_buffer = (unsigned char*)malloc(size);

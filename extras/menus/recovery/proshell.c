@@ -87,21 +87,21 @@ typedef struct File
 } File;
 
 typedef struct  __attribute__((packed)) {
-	u32 signature;
-	u32 version;
-	u32 fields_table_offs;
-	u32 values_table_offs;
-	int nitems;
+    u32 signature;
+    u32 version;
+    u32 fields_table_offs;
+    u32 values_table_offs;
+    int nitems;
 } SFOHeader;
 
 typedef struct __attribute__((packed)) {
-	u16 field_offs;
-	u8  unk;
-	u8  type; // 0x2 -> string, 0x4 -> number
-	u32 unk2;
-	u32 unk3;
-	u16 val_offs;
-	u16 unk4;
+    u16 field_offs;
+    u8  unk;
+    u8  type; // 0x2 -> string, 0x4 -> number
+    u32 unk2;
+    u32 unk3;
+    u16 val_offs;
+    u16 unk4;
 } SFODir;
 
 typedef struct SfoInfo {
@@ -185,7 +185,7 @@ int proshell_main()
         sceCtrlSetSamplingCycle(0);
         sceCtrlSetSamplingMode(1);
         sceCtrlReadBufferPositive(&data, 1);
-		File * file = findindex(position);
+    	File * file = findindex(position);
         
         // Other Commands
         if(filecount > 0)
@@ -584,16 +584,16 @@ int isPlugin(const char * path)
 
 int getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size){
     SFOHeader *header = (SFOHeader *)sfo_buffer;
-	SFODir *entries = (SFODir *)(sfo_buffer + sizeof(SFOHeader));
+    SFODir *entries = (SFODir *)(sfo_buffer + sizeof(SFOHeader));
     int res = 0;
-	int i;
-	for (i = 0; i < header->nitems; i++) {
-		if (strcmp((char*)sfo_buffer + header->fields_table_offs + entries[i].field_offs, param_name) == 0) {
-			memcpy(var, sfo_buffer + header->values_table_offs + entries[i].val_offs, *var_size);
+    int i;
+    for (i = 0; i < header->nitems; i++) {
+    	if (strcmp((char*)sfo_buffer + header->fields_table_offs + entries[i].field_offs, param_name) == 0) {
+    		memcpy(var, sfo_buffer + header->values_table_offs + entries[i].val_offs, *var_size);
             res = 1;
-			break;
-		}
-	}
+    		break;
+    	}
+    }
     return res;
 }
 
@@ -661,19 +661,19 @@ int getRunlevelMode(int mode)
 
 
 struct Items {
-	int mode;
-	int offset;
-	char text[64];
+    int mode;
+    int offset;
+    char text[64];
 } items[] = {
-	{ 0, 40, "Cancel" },
-	{ 1, 50, "Always" },
-	{ 2, 60, "Game" },
-	{ 3, 70, "POPS (PS1)" },
-	{ 4, 80, "VSH (XMB)" },
-	{ 5, 90, "UMD/ISO" },
-	{ 6, 100, "Homebrew" },
+    { 0, 40, "Cancel" },
+    { 1, 50, "Always" },
+    { 2, 60, "Game" },
+    { 3, 70, "POPS (PS1)" },
+    { 4, 80, "VSH (XMB)" },
+    { 5, 90, "UMD/ISO" },
+    { 6, 100, "Homebrew" },
     { 7, 110, "<LoadStart>" },
-	{ 8, 0, "-> " }
+    { 8, 0, "-> " }
 };
 
 char* plugin_runlevels[] = {"always", "game", "ps1", "xmb", "umd", "homebrew"};
@@ -682,8 +682,8 @@ void printPluginInstall(char* plugin_name, int cur){
     char title[64];
 
     pspDebugScreenClear();
-	snprintf(title, sizeof(title), "Install Plugin %s?", plugin_name);
-	printoob(title, 50, 15, FONT_COLOR);
+    snprintf(title, sizeof(title), "Install Plugin %s?", plugin_name);
+    printoob(title, 50, 15, FONT_COLOR);
 
     for (int i=0; i<NELEMS(items)-1; i++){
         if(i==cur) {
@@ -693,21 +693,21 @@ void printPluginInstall(char* plugin_name, int cur){
         }
         else {
             printoob(items[i].text, 175, items[i].offset, FONT_COLOR);
-		}
+    	}
     }
 }
 
 void pluginInstall(File *file) {
 
-	SceCtrlData pad;
+    SceCtrlData pad;
     int cur = 0;
 
     printPluginInstall(file->name, cur);
     sceKernelDelayThread(500000);
 
-	while(1){
-		sceCtrlReadBufferPositive(&pad, 1);
-		if ((pad.Buttons&PSP_CTRL_DOWN) == PSP_CTRL_DOWN){
+    while(1){
+    	sceCtrlReadBufferPositive(&pad, 1);
+    	if ((pad.Buttons&PSP_CTRL_DOWN) == PSP_CTRL_DOWN){
             if (cur < NELEMS(items)-1) cur++;
             printPluginInstall(file->name, cur);
             sceKernelDelayThread(500000);
@@ -721,7 +721,7 @@ void pluginInstall(File *file) {
             sceKernelDelayThread(500000);
             break;
         }
-	}
+    }
 
     if (!cur) return;
 
@@ -758,10 +758,10 @@ void start(void)
     // Not a valid file
     if(file == NULL || file->isFolder) return;
 
-	if(isPlugin(file->name)) {
-		pluginInstall(file);
-		return;
-	}
+    if(isPlugin(file->name)) {
+    	pluginInstall(file);
+    	return;
+    }
 
     // Load Execute Parameter
     struct SceKernelLoadExecVSHParam param;
@@ -857,7 +857,7 @@ int delete(void)
     if(strcmp(file->name, "..") == 0) return -2;
 
     char title[64];
-	SceCtrlData pad;
+    SceCtrlData pad;
     int choice = 1;
     int display = 1;
     sceKernelDelayThread(1000000);
@@ -998,7 +998,7 @@ int paste(void)
     if(identical) return -2;
 
     char title[64];
-	SceCtrlData pad;
+    SceCtrlData pad;
     int choice = 1;
     int display = 1;
     sceKernelDelayThread(1000000);
