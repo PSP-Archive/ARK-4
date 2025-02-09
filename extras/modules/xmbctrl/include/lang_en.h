@@ -49,7 +49,7 @@ char *settings[] =
     "QA Flags",
     "Custom App",
     "PSP Overclock",
-    "Reboot to 1.50 ARK",
+    "Reboot into 1.50 ARK",
 };
 
 #endif
