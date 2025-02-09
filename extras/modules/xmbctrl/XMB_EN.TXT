@@ -5,23 +5,21 @@ Custom Launcher
 USB Charge
 CPU Clock in Game
 CPU Clock in XMB
+WPA2
 Autoboot Launcher
-Disable Pause on PSP Go
 Force Extra Memory
 Memory Stick Speedup
 Inferno Cache
-Old Plugin Support on PSP Go
+Disable Pause feature
+Old Plugin Support on ef0
+Prevent hibernation deletion
 Skip Sony Logos
 Hide PIC0 and PIC1
-Prevent hibernation deletion on PSP Go
 Hide MAC Address
 Hide DLC
 Turn off LEDs
 Disable UMD Drive
 Disable Analog Stick
-WPA2
 QA Flags
 Custom App
-PSP CPU Clock in Game
-PSP CPU Clock in XMB
 Reboot into 1.50 ARK
