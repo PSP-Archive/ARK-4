@@ -24,11 +24,17 @@ enum{
     REGION_EUROPE
 };
 
+enum{
+    CLOCK_AUTO,
+    OVERCLOCK,
+    DEFAULTCLOCK,
+    POWERSAVE
+};
+
 typedef struct {
     unsigned char usbcharge;
-    unsigned char overclock;
-    unsigned char powersave;
-    unsigned char defaultclock;
+    unsigned char clock_game;
+    unsigned char clock_vsh;
     unsigned char launcher;
     unsigned char disablepause;
     unsigned char highmem;
@@ -63,6 +69,14 @@ CfwConf cfw_config;
     "Launcher" \
 }
 
+#define MAX_CLOCK_OPTIONS 4
+#define CLOCK_OPTIONS { \
+    "Auto", \
+    "OverClock", \
+    "Balanced", \
+    "PowerSave", \
+}
+
 static struct {
     char* description;
     unsigned char max_options;
@@ -83,12 +97,12 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
-} overclock = {
-    "OverClock",
-    MAX_ARK_OPTIONS,
+} clock_game = {
+    "CPU Clock in Game",
+    MAX_CLOCK_OPTIONS,
     0,
-    &(cfw_config.overclock),
-    ARK_OPTIONS
+    &(cfw_config.clock_game),
+    CLOCK_OPTIONS
 };
 
 static struct {
@@ -97,12 +111,12 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
-} pspclock = {
-    "PSP Overclock",
-    MAX_ARK_OPTIONS,
+} clock_vsh = {
+    "CPU Clock in XMB",
+    MAX_CLOCK_OPTIONS,
     0,
-    &(cfw_config.overclock),
-    ARK_OPTIONS
+    &(cfw_config.clock_vsh),
+    CLOCK_OPTIONS
 };
 
 static struct {
@@ -111,12 +125,12 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
-} powersave = {
-    "PowerSave",
-    MAX_ARK_OPTIONS,
+} psp_clock_game = {
+    "PSP CPU Clock in Game",
+    MAX_CLOCK_OPTIONS,
     0,
-    &(cfw_config.powersave),
-    ARK_OPTIONS
+    &(cfw_config.clock_game),
+    CLOCK_OPTIONS
 };
 
 static struct {
@@ -125,12 +139,12 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
-} defaultclock = {
-    "Balanced Energy Mode",
-    MAX_ARK_OPTIONS,
+} psp_clock_vsh = {
+    "PSP CPU Clock in XMB",
+    MAX_CLOCK_OPTIONS,
     0,
-    &(cfw_config.defaultclock),
-    ARK_OPTIONS
+    &(cfw_config.clock_vsh),
+    CLOCK_OPTIONS
 };
 
 static struct {
@@ -389,9 +403,8 @@ int ark_conf_max_entries = 0;
 settings_entry** ark_conf_entries = NULL;
 
 settings_entry* ark_conf_entries_1k[] = {
-    (settings_entry*)&overclock,
-    (settings_entry*)&powersave,
-    (settings_entry*)&defaultclock,
+    (settings_entry*)&clock_game,
+    (settings_entry*)&clock_vsh,
     (settings_entry*)&wpa2,
     (settings_entry*)&launcher,
     (settings_entry*)&mscache,
@@ -411,9 +424,8 @@ settings_entry* ark_conf_entries_1k[] = {
 
 settings_entry* ark_conf_entries_slim[] = {
     (settings_entry*)&usbcharge,
-    (settings_entry*)&overclock,
-    (settings_entry*)&powersave,
-    (settings_entry*)&defaultclock,
+    (settings_entry*)&clock_game,
+    (settings_entry*)&clock_vsh,
     (settings_entry*)&wpa2,
     (settings_entry*)&launcher,
     (settings_entry*)&highmem,
@@ -434,9 +446,8 @@ settings_entry* ark_conf_entries_slim[] = {
 
 settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&usbcharge,
-    (settings_entry*)&overclock,
-    (settings_entry*)&powersave,
-    (settings_entry*)&defaultclock,
+    (settings_entry*)&clock_game,
+    (settings_entry*)&clock_vsh,
     (settings_entry*)&wpa2,
     (settings_entry*)&launcher,
     (settings_entry*)&disablepause,
@@ -458,9 +469,8 @@ settings_entry* ark_conf_entries_go[] = {
 
 settings_entry* ark_conf_entries_street[] = {
     (settings_entry*)&usbcharge,
-    (settings_entry*)&overclock,
-    (settings_entry*)&powersave,
-    (settings_entry*)&defaultclock,
+    (settings_entry*)&clock_game,
+    (settings_entry*)&clock_vsh,
     (settings_entry*)&launcher,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
@@ -477,9 +487,7 @@ settings_entry* ark_conf_entries_street[] = {
 #define MAX_ARK_CONF_STREET (sizeof(ark_conf_entries_street)/sizeof(ark_conf_entries_street[0]))
 
 settings_entry* ark_conf_entries_vita[] = {
-    (settings_entry*)&pspclock,
-    (settings_entry*)&powersave,
-    (settings_entry*)&defaultclock,
+    (settings_entry*)&psp_clock_game,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
@@ -487,9 +495,8 @@ settings_entry* ark_conf_entries_vita[] = {
 #define MAX_ARK_CONF_VITA (sizeof(ark_conf_entries_vita)/sizeof(ark_conf_entries_vita[0]))
 
 settings_entry* ark_conf_entries_adr[] = {
-    (settings_entry*)&pspclock,
-    (settings_entry*)&powersave,
-    (settings_entry*)&defaultclock,
+    (settings_entry*)&psp_clock_game,
+    (settings_entry*)&psp_clock_vsh,
     (settings_entry*)&launcher,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
@@ -548,15 +555,6 @@ static unsigned char runlevelConvert(string runlevel, string enable){
 static unsigned char* configConvert(string conf){
     if (strcasecmp(conf.c_str(), "usbcharge") == 0){
         return &(cfw_config.usbcharge);
-    }
-    else if (strcasecmp(conf.c_str(), "overclock") == 0){
-        return &(cfw_config.overclock);
-    }
-    else if (strcasecmp(conf.c_str(), "powersave") == 0){
-        return &(cfw_config.powersave);
-    }
-    else if (strcasecmp(conf.c_str(), "defaultclock") == 0){
-        return &(cfw_config.defaultclock);
     }
     else if (strcasecmp(conf.c_str(), "wpa2") == 0){
         return &(cfw_config.wpa2);
@@ -625,6 +623,22 @@ static unsigned char* configConvert(string conf){
     return NULL;
 }
 
+static void convertClockConfig(unsigned char config, unsigned char value){
+    // XMB only
+    if (config == VSH_ONLY){
+        cfw_config.clock_vsh = value;
+    }
+    // XMB and Game
+    else if (config == ALWAYS_ON){
+        cfw_config.clock_game = value;
+        cfw_config.clock_vsh = value;
+    }
+    // Game only
+    else if (config != DISABLED){
+        cfw_config.clock_game = value;
+    }
+}
+
 static void processConfig(string line, string runlevel, string conf, string enable){
     unsigned char* config_ptr = configConvert(conf);
     unsigned char config = runlevelConvert(runlevel, enable);
@@ -641,6 +655,17 @@ static void processConfig(string line, string runlevel, string conf, string enab
                 if (strcasecmp(c+1, "lru") == 0) cfw_config.infernocache = 1;
                 else if (strcasecmp(c+1, "rr") == 0) cfw_config.infernocache = 2;
             }
+        }
+    }
+    else {
+        if (strcasecmp(conf.c_str(), "overclock") == 0){
+            convertClockConfig(config, OVERCLOCK);
+        }
+        else if (strcasecmp(conf.c_str(), "powersave") == 0){
+            convertClockConfig(config, POWERSAVE);
+        }
+        else if (strcasecmp(conf.c_str(), "defaultclock") == 0){
+            convertClockConfig(config, DEFAULTCLOCK);
         }
     }
 }
@@ -707,7 +732,7 @@ void loadSettings(){
         }
     }
 
-       cleanupSettings(); 
+    cleanupSettings(); 
 
     std::ifstream input((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
     for( std::string line; getline( input, line ); ){
@@ -746,13 +771,35 @@ static string processSetting(string name, unsigned char setting){
     return "always, "+name+", off";
 }
 
+static void saveClockSetting(std::ofstream& output, string category, unsigned char config){
+    if (config){
+        output << category << ", ";
+        switch (config){
+            case 1: output << "overclock, on"; break;
+            case 2: output << "defaultclock, on"; break;
+            case 3: output << "powersave, on"; break;
+            default: output << "overclock, off"; break;
+        }
+        output << endl;
+    }
+}
+
 void saveSettings(){
     ARKConfig* ark_config = common::getArkConfig();
     std::ofstream output((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
     output << processSetting("usbcharge", cfw_config.usbcharge) << endl;
-    output << processSetting("overclock", cfw_config.overclock) << endl;
-    output << processSetting("powersave", cfw_config.powersave) << endl;
-    output << processSetting("defaultclock", cfw_config.defaultclock) << endl;
+
+    if (cfw_config.clock_game == cfw_config.clock_vsh){
+        // save both at once
+        saveClockSetting(output, "always", cfw_config.clock_game);
+    }
+    else {
+        // Save CPU Clock in-game
+        saveClockSetting(output, "game", cfw_config.clock_game);
+        // Save CPU Clock in-vsh
+        saveClockSetting(output, "vsh", cfw_config.clock_vsh);
+    }
+
     output << processSetting("launcher", cfw_config.launcher) << endl;
     output << processSetting("disablepause", cfw_config.disablepause) << endl;
     output << processSetting("highmem", cfw_config.highmem) << endl;
@@ -797,32 +844,12 @@ void saveSettings(){
     }
 
     output.close();
-
-    std::ifstream input((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
-    std::string line;
-    bool exist = false;
-    while(std::getline(input, line)) {
-        if(line == "ULUS10201, infernocache, off") {
-        	exist = true;
-        	break;
-        }
-    }
-    input.close();
-    if(exist == false) {
-        std::ofstream output((string(ark_config->arkpath)+ARK_SETTINGS).c_str());
-        output << "# Luxor doesn't like Inferno Cache" << endl;
-        output << "ULUS10201, infernocache, off" << endl;
-        output.close();
-    }
-
-    
 }
 
 void resetSettings() {
     cfw_config.usbcharge = 1;
-    cfw_config.overclock = 1;
-    cfw_config.powersave = 0;
-    cfw_config.defaultclock = 0;
+    cfw_config.clock_game = OVERCLOCK;
+    cfw_config.clock_vsh = OVERCLOCK;
     cfw_config.launcher = 0;
     cfw_config.disablepause = 0;
     cfw_config.highmem = 0;
@@ -841,7 +868,11 @@ void resetSettings() {
     cfw_config.vshregion = 0;
     cfw_config.regionchange = 0;
 
-    
+    custom_config.clear();
+    custom_config.push_back("\n");
+    custom_config.push_back("# Luxor doesn't like Inferno Cache\n");
+    custom_config.push_back("ULUS10201, infernocache, off\n");
+
     saveSettings();
     
 
