@@ -35,24 +35,24 @@ typedef struct {
     unsigned char usbcharge;
     unsigned char clock_game;
     unsigned char clock_vsh;
+    unsigned char wpa2;
     unsigned char launcher;
-    unsigned char disablepause;
     unsigned char highmem;
     unsigned char mscache;
     unsigned char infernocache;
+    unsigned char disablepause;
     unsigned char oldplugin;
+    unsigned char hibblock;
     unsigned char skiplogos;
     unsigned char regionchange;
     unsigned char vshregion;
     unsigned char hidepics;
-    unsigned char hibblock;
     unsigned char hidemac;
     unsigned char hidedlc;
     unsigned char noled;
     unsigned char noumd;
     unsigned char noanalog;
     unsigned char qaflags;
-    unsigned char wpa2;
 }CfwConf;
 
 CfwConf cfw_config;
@@ -802,8 +802,8 @@ void saveSettings(){
         saveClockSetting(output, "vsh", cfw_config.clock_vsh);
     }
 
+    output << processSetting("wpa2", cfw_config.wpa2) << endl;
     output << processSetting("launcher", cfw_config.launcher) << endl;
-    output << processSetting("disablepause", cfw_config.disablepause) << endl;
     output << processSetting("highmem", cfw_config.highmem) << endl;
     output << processSetting("mscache", cfw_config.mscache) << endl;
     switch (cfw_config.infernocache){
@@ -811,17 +811,17 @@ void saveSettings(){
         case 1: output << processSetting("infernocache:lru", 1) << endl; break;
         case 2: output << processSetting("infernocache:rr", 1) << endl; break;
     }
+    output << processSetting("disablepause", cfw_config.disablepause) << endl;
     output << processSetting("oldplugin", cfw_config.oldplugin) << endl;
+    output << processSetting("hibblock", cfw_config.hibblock) << endl;
     output << processSetting("skiplogos", cfw_config.skiplogos) << endl;
     output << processSetting("hidepics", cfw_config.hidepics) << endl;
-    output << processSetting("hibblock", cfw_config.hibblock) << endl;
     output << processSetting("hidemac", cfw_config.hidemac) << endl;
     output << processSetting("hidedlc", cfw_config.hidedlc) << endl;
     output << processSetting("noled", cfw_config.noled) << endl;
     output << processSetting("noumd", cfw_config.noumd) << endl;
     output << processSetting("noanalog", cfw_config.noanalog) << endl;
     output << processSetting("qaflags", cfw_config.qaflags) << endl;
-    output << processSetting("wpa2", cfw_config.wpa2) << endl;
     
     switch (cfw_config.regionchange){
         case REGION_JAPAN:
@@ -852,15 +852,16 @@ void resetSettings() {
     cfw_config.usbcharge = 1;
     cfw_config.clock_game = OVERCLOCK;
     cfw_config.clock_vsh = OVERCLOCK;
+    cfw_config.wpa2 = 1;
     cfw_config.launcher = 0;
-    cfw_config.disablepause = 0;
     cfw_config.highmem = 0;
     cfw_config.mscache = 1;
     cfw_config.infernocache = 1;
+    cfw_config.disablepause = 0;
     cfw_config.oldplugin = 1;
+    cfw_config.hibblock = 1;
     cfw_config.skiplogos = 0;
     cfw_config.hidepics = 0;
-    cfw_config.hibblock = 1;
     cfw_config.hidemac = 1;
     cfw_config.hidedlc = 0;
     cfw_config.noled = 0;

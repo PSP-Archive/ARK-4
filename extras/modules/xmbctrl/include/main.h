@@ -44,22 +44,22 @@ typedef struct
     int usbcharge;
     int clock_game;
     int clock_vsh;
+    int wpa2;
     int launcher;
-    int disablepause;
     int highmem;
     int mscache;
     int infernocache;
+    int disablepause;
     int oldplugin;
+    int hibblock;
     int skiplogos;
     int hidepics;
-    int hibblock;
     int hidemac;
     int hidedlc;
     int noled;
     int noumd;
     int noanalog;
     int qaflags;
-    int wpa2;
 } CFWConfig;
 
 typedef struct

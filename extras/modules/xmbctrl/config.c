@@ -231,8 +231,8 @@ void saveSettings(){
         saveClockSetting(fd, "vsh", config.clock_vsh);
     }
 
+    processSetting(fd, line, "wpa2", config.wpa2);
     processSetting(fd, line, "launcher", config.launcher);
-    processSetting(fd, line, "disablepause", config.disablepause);
     processSetting(fd, line, "highmem", config.highmem);
     processSetting(fd, line, "mscache", config.mscache);
     switch (config.infernocache){
@@ -240,17 +240,17 @@ void saveSettings(){
         case 1: processSetting(fd, line, "infernocache:lru", 1); break;
         case 2: processSetting(fd, line, "infernocache:rr", 1); break;
     }
+    processSetting(fd, line, "disablepause", config.disablepause);
     processSetting(fd, line, "oldplugin", config.oldplugin);
+    processSetting(fd, line, "hibblock", config.hibblock);
     processSetting(fd, line, "skiplogos", config.skiplogos);
     processSetting(fd, line, "hidepics", config.hidepics);
-    processSetting(fd, line, "hibblock", config.hibblock);
     processSetting(fd, line, "hidemac", config.hidemac);
     processSetting(fd, line, "hidedlc", config.hidedlc);
     processSetting(fd, line, "noled", config.noled);
     processSetting(fd, line, "noumd", config.noumd);
     processSetting(fd, line, "noanalog", config.noanalog);
     processSetting(fd, line, "qaflags", config.qaflags);
-    processSetting(fd, line, "wpa2", config.wpa2);
 
     for (int i=0; i<custom_config.count; i++){
         sceIoWrite(fd, custom_config.table[i], strlen(custom_config.table[i]));
