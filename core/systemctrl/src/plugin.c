@@ -41,7 +41,8 @@ typedef struct{
 
 Plugins* plugins = NULL;
 
-int (*plugin_handler)(const char* path, int modid) = NULL;
+static int ef0PluginHandler(const char* path, int modid);
+int (*plugin_handler)(const char* path, int modid) = &ef0PluginHandler;
 
 enum {
     RUNLEVEL_UNKNOWN,
@@ -563,4 +564,57 @@ void loadSettings(){
     if (ProcessConfigFile(path, settingsEnabler, settingsDisabler) < 0) // try external settings
         ProcessConfigFile(ARK_SETTINGS_FLASH, settingsEnabler, settingsDisabler); // retry flash1 settings
     se_config.magic = ARK_CONFIG_MAGIC;
+}
+
+static void patch_devicename(SceUID modid)
+{
+    SceModule2 *mod;
+    int i;
+
+    mod = (SceModule2*)sceKernelFindModuleByUID(modid);
+
+    if(mod == NULL) {
+    	return;
+    }
+
+    for(i=0; i<mod->nsegment; ++i) {
+    	u32 addr;
+    	u32 end;
+
+    	end = mod->segmentaddr[i] + mod->segmentsize[i];
+
+    	for(addr = mod->segmentaddr[i]; addr < end; addr ++) {
+    		char *str = (char*)addr;
+
+    		if (0 == strncmp(str, "ms0", 3)) {
+    			str[0] = 'e';
+    			str[1] = 'f';
+    		} else if (0 == strncmp(str, "fatms", 5)) {
+    			str[3] = 'e';
+    			str[4] = 'f';
+    		}
+    	}
+    }
+    
+    u32 start = mod->text_addr+mod->text_size;
+    u32 end = start + mod->data_size;
+    for (u32 addr=start; addr<end; addr++){
+        char *str = (char*)addr;
+    	if (0 == strncmp(str, "ms0", 3)) {
+    		str[0] = 'e';
+    		str[1] = 'f';
+    	} else if (0 == strncmp(str, "fatms", 5)) {
+    		str[3] = 'e';
+    		str[4] = 'f';
+    	}
+    }
+
+    flushCache();
+}
+
+static int ef0PluginHandler(const char* path, int modid){
+    if(se_config.oldplugin && path[0] == 'e' && path[1] == 'f') {
+    	patch_devicename(modid);
+    }
+    return 0;
 }

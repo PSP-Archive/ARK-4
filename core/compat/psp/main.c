@@ -28,8 +28,6 @@ u32 psp_model = 0;
 ARKConfig* ark_config = NULL;
 SEConfig* se_config = NULL;
 
-extern void (*prevPluginHandler)(const char* path, int modid);
-extern void pluginHandler(const char* path, int modid);
 extern void PSPOnModuleStart(SceModule2 * mod);
 extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
@@ -79,9 +77,6 @@ int module_start(SceSize args, void * argp)
     
     // Register custom start module
     prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
-    
-    // Register plugin handler
-    prevPluginHandler = sctrlHENSetPluginHandler(&pluginHandler);
     
     // Return Success
     return 0;

@@ -491,6 +491,7 @@ settings_entry* ark_conf_entries_vita[] = {
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
+    (settings_entry*)&oldplugin,
 };
 #define MAX_ARK_CONF_VITA (sizeof(ark_conf_entries_vita)/sizeof(ark_conf_entries_vita[0]))
 

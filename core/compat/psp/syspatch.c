@@ -98,52 +98,6 @@ void patch_GameBoot(SceModule2* mod){
     _sw(0x24040002, p2 + 4);
 }
 
-static void patch_devicename(SceUID modid)
-{
-    SceModule2 *mod;
-    int i;
-
-    mod = (SceModule2*)sceKernelFindModuleByUID(modid);
-
-    if(mod == NULL) {
-    	return;
-    }
-
-    for(i=0; i<mod->nsegment; ++i) {
-    	u32 addr;
-    	u32 end;
-
-    	end = mod->segmentaddr[i] + mod->segmentsize[i];
-
-    	for(addr = mod->segmentaddr[i]; addr < end; addr ++) {
-    		char *str = (char*)addr;
-
-    		if (0 == strncmp(str, "ms0", 3)) {
-    			str[0] = 'e';
-    			str[1] = 'f';
-    		} else if (0 == strncmp(str, "fatms", 5)) {
-    			str[3] = 'e';
-    			str[4] = 'f';
-    		}
-    	}
-    }
-    
-    u32 start = mod->text_addr+mod->text_size;
-    u32 end = start + mod->data_size;
-    for (u32 addr=start; addr<end; addr++){
-        char *str = (char*)addr;
-    	if (0 == strncmp(str, "ms0", 3)) {
-    		str[0] = 'e';
-    		str[1] = 'f';
-    	} else if (0 == strncmp(str, "fatms", 5)) {
-    		str[3] = 'e';
-    		str[4] = 'f';
-    	}
-    }
-
-    flushCache();
-}
-
 int pause_disabled = 0;
 void disable_PauseGame()
 {
@@ -280,15 +234,6 @@ void processSettings(){
 
     // Disable UMD Drive
     disableUMD();
-}
-
-int (*prevPluginHandler)(const char* path, int modid) = NULL;
-int pluginHandler(const char* path, int modid){
-    if(se_config->oldplugin && psp_model == PSP_GO && path[0] == 'e' && path[1] == 'f') {
-    	patch_devicename(modid);
-    }
-    if (prevPluginHandler) return prevPluginHandler(path, modid);
-    return 0;
 }
 
 void PSPOnModuleStart(SceModule2 * mod){
