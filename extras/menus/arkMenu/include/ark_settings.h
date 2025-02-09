@@ -125,34 +125,6 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
-} psp_clock_game = {
-    "PSP CPU Clock in Game",
-    MAX_CLOCK_OPTIONS,
-    0,
-    &(cfw_config.clock_game),
-    CLOCK_OPTIONS
-};
-
-static struct {
-    char* description;
-    unsigned char max_options;
-    unsigned char selection;
-    unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
-} psp_clock_vsh = {
-    "PSP CPU Clock in XMB",
-    MAX_CLOCK_OPTIONS,
-    0,
-    &(cfw_config.clock_vsh),
-    CLOCK_OPTIONS
-};
-
-static struct {
-    char* description;
-    unsigned char max_options;
-    unsigned char selection;
-    unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
 } launcher = {
     "Autoboot Launcher",
     2,
@@ -487,7 +459,7 @@ settings_entry* ark_conf_entries_street[] = {
 #define MAX_ARK_CONF_STREET (sizeof(ark_conf_entries_street)/sizeof(ark_conf_entries_street[0]))
 
 settings_entry* ark_conf_entries_vita[] = {
-    (settings_entry*)&psp_clock_game,
+    (settings_entry*)&clock_game,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
@@ -496,8 +468,8 @@ settings_entry* ark_conf_entries_vita[] = {
 #define MAX_ARK_CONF_VITA (sizeof(ark_conf_entries_vita)/sizeof(ark_conf_entries_vita[0]))
 
 settings_entry* ark_conf_entries_adr[] = {
-    (settings_entry*)&psp_clock_game,
-    (settings_entry*)&psp_clock_vsh,
+    (settings_entry*)&clock_game,
+    (settings_entry*)&clock_vsh,
     (settings_entry*)&launcher,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,

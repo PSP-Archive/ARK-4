@@ -434,13 +434,6 @@ int LoadTextLanguage(int new_id)
 
     if(fd >= 0) sceIoClose(fd);
 
-    #if 0
-    if (IS_VITA(ark_config)){
-        sce_paf_private_free(string.options[1]);
-        string.options[1] = settings[24]; // replace "Overclock" with "PSP Overclock" on Vita
-    }
-    #endif
-
     return 1;
 }
 

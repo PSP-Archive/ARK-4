@@ -48,7 +48,6 @@ char *settings[] =
     "Disable Analog Stick",
     "QA Flags",
     "Custom App",
-    "PSP Overclock",
     "Reboot into 1.50 ARK",
 };
 
