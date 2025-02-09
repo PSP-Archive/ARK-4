@@ -3,9 +3,9 @@ Custom Firmware Settings
 Plugins Manager
 Custom Launcher
 USB Charge
-Overclock
-PowerSave
-Balanced Energy Mode
+CPU Clock in Game
+CPU Clock in XMB
+WPA2
 Autoboot Launcher
 Disable Pause on PSP Go
 Force Extra Memory

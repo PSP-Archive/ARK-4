@@ -41,6 +41,13 @@ char* ark_settings_options[] = {
 
 #define N_OPTS sizeof(ark_settings_options)/sizeof(ark_settings_options[0])
 
+char* ark_clock_settings[] = {
+    (char*)"Auto",
+    (char*)"OverClock",
+    (char*)"Balanced",
+    (char*)"PowerSave"
+};
+
 char* ark_settings_boolean[] = {
     (char*)"Off",
     (char*)"On"
@@ -55,9 +62,8 @@ char* ark_settings_infernocache[] = {
 // PSP 1K
 Setting settings_items_1k[] =
 {
-    { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
-    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
-    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 4, &(config.clock_game), "CPU Clock in Game", ark_clock_settings },
+    { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.wpa2), "WPA2", ark_settings_boolean },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
@@ -78,9 +84,8 @@ Setting settings_items_1k[] =
 Setting settings_items_slim[] =
 {
     { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
-    { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
-    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
-    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 4, &(config.clock_game), "CPU Clock in Game", ark_clock_settings },
+    { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.wpa2), "WPA2", ark_settings_boolean },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
     { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
@@ -102,9 +107,8 @@ Setting settings_items_slim[] =
 Setting settings_items_go[] =
 {
     { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
-    { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
-    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
-    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 4, &(config.clock_game), "CPU Clock in Game", ark_clock_settings },
+    { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.wpa2), "WPA2", ark_settings_boolean },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
     { 2, &(config.disablepause), "Disable Pause on PSP Go", ark_settings_boolean },
@@ -128,9 +132,8 @@ Setting settings_items_go[] =
 Setting settings_items_street[] =
 {
     { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
-    { N_OPTS, &(config.overclock), "Overclock", ark_settings_options },
-    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
-    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 4, &(config.clock_game), "CPU Clock in Game", ark_clock_settings },
+    { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
     { 2, &(config.disablepause), "Disable Pause on PSP Go", ark_settings_boolean },
     { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
@@ -149,9 +152,8 @@ Setting settings_items_street[] =
 
 Setting settings_items_adr[] =
 {
-    { N_OPTS, &(config.overclock), "PSP Overclock", ark_settings_options },
-    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
-    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 4, &(config.clock_game), "PSP CPU Clock in Game", ark_clock_settings },
+    { 4, &(config.clock_vsh), "PSP CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
     { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
@@ -170,9 +172,7 @@ Setting settings_items_adr[] =
 
 Setting settings_items_vita[] =
 {
-    { N_OPTS, &(config.overclock), "PSP Overclock", ark_settings_options },
-    { N_OPTS, &(config.powersave), "PowerSave", ark_settings_options },
-    { N_OPTS, &(config.defaultclock), "Balanced Energy Mode", ark_settings_options },
+    { 4, &(config.clock_game), "PSP CPU Clock in Game", ark_clock_settings },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
 };

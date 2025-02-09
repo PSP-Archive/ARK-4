@@ -11,10 +11,33 @@
 #include "list.h"
 #include "settings.h"
 
+enum{
+    CLOCK_AUTO,
+    OVERCLOCK,
+    DEFAULTCLOCK,
+    POWERSAVE
+};
+
 extern CFWConfig config;
 extern ARKConfig* ark_config;
 
 List custom_config;
+
+static void convertClockConfig(unsigned char cfg, unsigned char value){
+    // XMB only
+    if (cfg == VSH_ONLY){
+        config.clock_vsh = value;
+    }
+    // XMB and Game
+    else if (cfg == ALWAYS_ON){
+        config.clock_game = value;
+        config.clock_vsh = value;
+    }
+    // Game only
+    else if (cfg != DISABLED){
+        config.clock_game = value;
+    }
+}
 
 static int processConfigLine(char* runlevel, char* path, char* enabled){
     
@@ -27,15 +50,15 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         return 1;
     }
     else if (strcasecmp(path, "overclock") == 0){
-        config.overclock = opt;
+        convertClockConfig(opt, OVERCLOCK);
         return 1;
     }
     else if (strcasecmp(path, "powersave") == 0){
-        config.powersave = opt;
+        convertClockConfig(opt, OVERCLOCK);
         return 1;
     }
     else if (strcasecmp(path, "defaultclock") == 0){
-        config.defaultclock = opt;
+        convertClockConfig(opt, OVERCLOCK);
         return 1;
     }
     else if (strcasecmp(path, "wpa2") == 0){
@@ -165,6 +188,20 @@ static void processSetting(int fd, char* line, char* name, int setting){
     sceIoWrite(fd, line, strlen(line));
 }
 
+static void saveClockSetting(int output, char* category, int opt){
+    if (opt){
+        sceIoWrite(output, category, strlen(category));
+        sceIoWrite(output, ", ", 2);
+        switch (opt){
+            case 1: sceIoWrite(output, "overclock, on", 13); break;
+            case 2: sceIoWrite(output, "defaultclock, on", 16); break;
+            case 3: sceIoWrite(output, "powersave, on", 13); break;
+            default: sceIoWrite(output, "overclock, off", 14); break;
+        }
+        sceIoWrite(output, "\n", 1);
+    }
+}
+
 void saveSettings(){
 
     char path[ARK_PATH_SIZE];
@@ -182,9 +219,18 @@ void saveSettings(){
     char* line = my_malloc(LINE_BUFFER_SIZE);
 
     processSetting(fd, line, "usbcharge", config.usbcharge);
-    processSetting(fd, line, "overclock", config.overclock);
-    processSetting(fd, line, "powersave", config.powersave);
-    processSetting(fd, line, "defaultclock", config.defaultclock);
+
+    if (config.clock_game == config.clock_vsh){
+        // save both at once
+        saveClockSetting(fd, "always", config.clock_game);
+    }
+    else {
+        // Save CPU Clock in-game
+        saveClockSetting(fd, "game", config.clock_game);
+        // Save CPU Clock in-vsh
+        saveClockSetting(fd, "vsh", config.clock_vsh);
+    }
+
     processSetting(fd, line, "launcher", config.launcher);
     processSetting(fd, line, "disablepause", config.disablepause);
     processSetting(fd, line, "highmem", config.highmem);

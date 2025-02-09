@@ -42,9 +42,8 @@ typedef struct
 {
     int magic;
     int usbcharge;
-    int overclock;
-    int powersave;
-    int defaultclock;
+    int clock_game;
+    int clock_vsh;
     int launcher;
     int disablepause;
     int highmem;

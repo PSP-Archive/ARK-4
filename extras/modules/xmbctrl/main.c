@@ -49,6 +49,28 @@ static char custom_app_path[] = "ms0:/PSP/APP/CUSTOM/EBOOT.PBP";
 
 static char buf[64];
 
+enum{
+    USB_CHARGE,
+    CPU_CLOCK_GAME,
+    CPU_CLOCK_VSH,
+    AUTOBOOT_LAUNCHER,
+    DISABLE_GO_PAUSE,
+    FORCE_EXTRA_MEM,
+    MEM_STICK_SPEEDUP,
+    INFERNO_CACHE,
+    OLD_GO_PLUGINS,
+    SKIP_LOGOS,
+    HIDE_PICS,
+    NO_HIB_DELETE,
+    HIDE_MAC,
+    HIDE_DLC,
+    DISABLE_LED,
+    DISABLE_UMD,
+    DISABLE_ANALOG,
+    WPA2_SUPPORT,
+    QA_FLAGS,
+};
+
 typedef struct
 {
     int mode;
@@ -59,9 +81,9 @@ typedef struct
 GetItem GetItemes[] =
 {
     { 2, 0, "USB Charge" },
-    { 3, 0, "Overclock" },
-    { 4, 0, "PowerSave" },
-    { 5, 0, "Balanced Energy Mode" },
+    { 3, 0, "CPU Clock in Game" },
+    { 4, 0, "CPU Clock in XMB" },
+    { 5, 0, "WPA2" },
     { 6, 0, "Autoboot Launcher" },
     { 7, 0, "Disable Pause on PSP Go" },
     { 8, 0, "Force Extra Memory" },
@@ -76,8 +98,7 @@ GetItem GetItemes[] =
     { 17, 0, "Turn off LEDs" },
     { 18, 0, "Disable UMD Drive" },
     { 19, 0, "Disable Analog Stick" },
-    { 20, 0, "WPA2" },
-    { 21, 0, "QA Flags" },
+    { 20, 0, "QA Flags" },
 };
 
 #define PLUGINS_CONTEXT 1
@@ -94,6 +115,13 @@ char* ark_settings_options[] = {
 };
 
 #define N_OPTS sizeof(ark_settings_options)/sizeof(ark_settings_options[0])
+
+char* ark_clock_settings[] = {
+    (char*)"Auto",
+    (char*)"OverClock",
+    (char*)"Balanced",
+    (char*)"PowerSave"
+};
 
 char* ark_settings_boolean[] = {
     (char*)"Off",
@@ -119,9 +147,9 @@ struct {
     {0, NULL}, // None
     {3, ark_plugins_options}, // Plugins
     {N_OPTS, ark_settings_options}, // USB Charge
-    {N_OPTS, ark_settings_options}, // Overclock
-    {N_OPTS, ark_settings_options}, // PowerSave
-    {N_OPTS, ark_settings_options}, // Balanced Energy
+    {4, ark_clock_settings}, // Clock Game
+    {4, ark_clock_settings}, // Clock VSH
+    {2, ark_settings_boolean}, // WPA2 ( Thanks again @Moment )
     {2, ark_settings_boolean}, // Autoboot Launcher
     {2, ark_settings_boolean}, // Disable Go Pause
     {N_OPTS, ark_settings_options}, // Extra RAM
@@ -136,7 +164,6 @@ struct {
     {N_OPTS, ark_settings_options}, // Turn off LEDs
     {2, ark_settings_boolean}, // Disable UMD Drive
     {2, ark_settings_boolean}, // Disable Analog Stick 
-    {2, ark_settings_boolean}, // WPA2 ( Thanks again Moment )
     {2, ark_settings_boolean}, // QA Flags
 };
 
@@ -595,11 +622,36 @@ void AddSysconfContextItem(char *text, char *subtitle, char *regkey)
 }
 
 int skipSetting(int i){
-    if (IS_VITA_ADR((ark_config))) return  ( i==0 || i==5 || i==9 || i==12 || i==14 || i == 15 || i==16 || i==18);
-    else if (psp_model == PSP_1000) return ( i == 0 || i == 5 || i == 6 || i == 9 || i == 12);
-    else if (psp_model == PSP_11000) return ( i == 5 || i == 9 || i == 12 || i == 13);
-    else if (psp_model != PSP_GO) return ( i == 5 || i == 9 || i == 12);
-    else if (psp_model == PSP_GO) return (i == 16);
+    if (IS_VITA_ADR((ark_config))) return (
+        i == USB_CHARGE ||
+        i == DISABLE_GO_PAUSE ||
+        i == OLD_GO_PLUGINS ||
+        i == NO_HIB_DELETE ||
+        i == DISABLE_LED ||
+        i == DISABLE_UMD ||
+        i == WPA2_SUPPORT
+    );
+    else if (psp_model == PSP_1000) return (
+        i == USB_CHARGE ||
+        i == DISABLE_GO_PAUSE ||
+        i == FORCE_EXTRA_MEM ||
+        i == OLD_GO_PLUGINS ||
+        i == NO_HIB_DELETE
+    );
+    else if (psp_model == PSP_11000) return (
+        i == DISABLE_GO_PAUSE ||
+        i == OLD_GO_PLUGINS ||
+        i == NO_HIB_DELETE ||
+        i == HIDE_MAC
+    );
+    else if (psp_model != PSP_GO) return (
+        i == DISABLE_GO_PAUSE ||
+        i == OLD_GO_PLUGINS ||
+        i == NO_HIB_DELETE
+    );
+    else if (psp_model == PSP_GO) return (
+        i == DISABLE_UMD
+    );
     return 0;
 }
 
@@ -763,26 +815,25 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         {
             int configs[] =
             {
-                config.usbcharge,    	// 0
-                config.overclock,    	// 1
-                config.powersave,    	// 2
-                config.defaultclock,    // 3
-                config.launcher,    	// 4
-                config.disablepause,    // 5
-                config.highmem,    		// 6
-                config.mscache,    		// 7
-                config.infernocache,    // 8
-                config.oldplugin,    	// 9
-                config.skiplogos,    	// 10
-                config.hidepics,    	// 11
-                config.hibblock,     	// 12
-                config.hidemac,     	// 13
-                config.hidedlc,    		// 14
-                config.noled,    		// 15
-                config.noumd,    		// 16
-                config.noanalog,    	// 17
-                config.wpa2,    	    // 18
-                config.qaflags,    	    // 19
+                config.usbcharge,    	
+                config.clock_game,    	
+                config.clock_vsh,    	
+                config.launcher,    	
+                config.disablepause,    
+                config.highmem,    		
+                config.mscache,    		
+                config.infernocache,    
+                config.oldplugin,    	
+                config.skiplogos,    	
+                config.hidepics,    	
+                config.hibblock,     	
+                config.hidemac,     	
+                config.hidedlc,    		
+                config.noled,    		
+                config.noumd,    		
+                config.noanalog,    	
+                config.wpa2,    	    
+                config.qaflags,    	    
             };
             
             int i;
@@ -823,9 +874,8 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
             static int *configs[] =
             {
                 &config.usbcharge,
-                &config.overclock,
-                &config.powersave,
-                &config.defaultclock,
+                &config.clock_game,
+                &config.clock_vsh,
                 &config.launcher,
                 &config.disablepause,
                 &config.highmem,
