@@ -5,7 +5,6 @@ Custom Launcher
 USB Charge
 CPU Clock in Game
 CPU Clock in XMB
-WPA2
 Autoboot Launcher
 Disable Pause on PSP Go
 Force Extra Memory
@@ -20,7 +19,9 @@ Hide DLC
 Turn off LEDs
 Disable UMD Drive
 Disable Analog Stick
+WPA2
 QA Flags
 Custom App
-PSP Overclock
-Reboot 1.50 OFW
+PSP CPU Clock in Game
+PSP CPU Clock in XMB
+Reboot into 1.50 ARK
