@@ -167,26 +167,12 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
-} disablepause = {
-    "Disable PSP Go Pause",
+} highmem = {
+    "Use Extra Memory",
     2,
     0,
-    &(cfw_config.disablepause),
-    {"Off", "On"}
-};
-
-static struct {
-    char* description;
-    unsigned char max_options;
-    unsigned char selection;
-    unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
-} highmem = {
-    "Force Extra Memory",
-    MAX_ARK_OPTIONS,
-    0,
     &(cfw_config.highmem),
-    ARK_OPTIONS
+    {"Auto", "Forced"}
 };
 
 static struct {
@@ -237,6 +223,34 @@ static struct {
     unsigned char selection;
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
+} disablepause = {
+    "Disable PSP Go Pause",
+    2,
+    0,
+    &(cfw_config.disablepause),
+    {"Auto", "Forced"}
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
+} hibblock = {
+    "Prevent hibernation deletion on PSP Go",
+    2,
+    0,
+    &(cfw_config.hibblock),
+    {"Off", "On"}
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
+    char* options[MAX_ARK_OPTIONS];
 } skiplogos = {
     "Skip Sony logos in XMB",
     2,
@@ -256,20 +270,6 @@ static struct {
     2,
     0,
     &(cfw_config.hidepics),
-    {"Off", "On"}
-};
-
-static struct {
-    char* description;
-    unsigned char max_options;
-    unsigned char selection;
-    unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
-} hibblock = {
-    "Prevent hibernation deletion on PSP Go",
-    2,
-    0,
-    &(cfw_config.hibblock),
     {"Off", "On"}
 };
 
@@ -450,10 +450,10 @@ settings_entry* ark_conf_entries_go[] = {
     (settings_entry*)&clock_vsh,
     (settings_entry*)&wpa2,
     (settings_entry*)&launcher,
-    (settings_entry*)&disablepause,
     (settings_entry*)&highmem,
     (settings_entry*)&mscache,
     (settings_entry*)&infernocache,
+    (settings_entry*)&disablepause,
     (settings_entry*)&oldplugin,
     (settings_entry*)&hibblock,
     (settings_entry*)&skiplogos,
@@ -745,6 +745,7 @@ void loadSettings(){
     input.close();
 
     FIX_BOOLEAN(cfw_config.launcher);
+    FIX_BOOLEAN(cfw_config.highmem);
     FIX_BOOLEAN(cfw_config.disablepause);
     FIX_BOOLEAN(cfw_config.skiplogos);
     FIX_BOOLEAN(cfw_config.hidepics);

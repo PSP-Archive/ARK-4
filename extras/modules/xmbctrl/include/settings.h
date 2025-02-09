@@ -33,14 +33,14 @@ char *settings[] =
     "CPU Clock in XMB",
     "WPA2",
     "Autoboot Launcher",
-    "Disable Pause on PSP Go",
-    "Force Extra Memory",
+    "Use Extra Memory",
     "Memory Stick Speedup",
     "Inferno Cache",
-    "Old Plugin Support on PSP Go",
+    "Disable Pause Feature",
+    "Old Plugin Support on ef0",
+    "Prevent hibernation deletion",
     "Skip Sony Logos",
     "Hide PIC0 and PIC1",
-    "Prevent hibernation deletion on PSP Go",
     "Hide MAC Address",
     "Hide DLC",
     "Turn off LEDs",
@@ -49,7 +49,7 @@ char *settings[] =
     "QA Flags",
     "Custom App",
     "PSP Overclock",
-    "Reboot 1.50 CFW",
+    "Reboot to 1.50 ARK",
 };
 
 #endif

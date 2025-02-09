@@ -53,6 +53,11 @@ char* ark_settings_boolean[] = {
     (char*)"On"
 };
 
+char* ark_settings_boolean2[] = {
+    (char*)"Auto",
+    (char*)"Forced"
+};
+
 char* ark_settings_infernocache[] = {
     (char*)"Off",
     (char*)"LRU",
@@ -88,7 +93,7 @@ Setting settings_items_slim[] =
     { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.wpa2), "WPA2", ark_settings_boolean },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
-    { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
+    { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
     { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
@@ -111,14 +116,14 @@ Setting settings_items_go[] =
     { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.wpa2), "WPA2", ark_settings_boolean },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
-    { 2, &(config.disablepause), "Disable Pause on PSP Go", ark_settings_boolean },
-    { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
+    { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
-    { N_OPTS, &(config.oldplugin), "Old Plugin Support on PSP Go", ark_settings_options },
+    { 2, &(config.disablepause), "Disable Pause Feature", ark_settings_boolean2 },
+    { N_OPTS, &(config.oldplugin), "Old Plugin Support on ef0", ark_settings_options },
+    { 2, &(config.hibblock), "Prevent hibernation deletion", ark_settings_boolean },
     { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
     { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
-    { 2, &(config.hibblock), "Prevent hibernation deletion on PSP Go", ark_settings_boolean },
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
@@ -135,8 +140,7 @@ Setting settings_items_street[] =
     { 4, &(config.clock_game), "CPU Clock in Game", ark_clock_settings },
     { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
-    { 2, &(config.disablepause), "Disable Pause on PSP Go", ark_settings_boolean },
-    { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
+    { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
     { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
@@ -155,7 +159,7 @@ Setting settings_items_adr[] =
     { 4, &(config.clock_game), "PSP CPU Clock in Game", ark_clock_settings },
     { 4, &(config.clock_vsh), "PSP CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
-    { N_OPTS, &(config.highmem), "Force Extra Memory", ark_settings_options },
+    { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
     { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
@@ -175,15 +179,10 @@ Setting settings_items_vita[] =
     { 4, &(config.clock_game), "PSP CPU Clock in Game", ark_clock_settings },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
+    { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
 };
 
 #define N_SETTINGS_VITA (sizeof(settings_items_vita)/sizeof(settings_items_vita[0]))
-
-void logtext(char* text){
-    int fd = sceIoOpen("ms0:/log.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
-    sceIoWrite(fd, text, strlen(text));
-    sceIoClose(fd);
-}
 
 static void settings_to_text(char** names, char** states, Setting* settings_items, int size){
     for(int i = 0; i < size; i++){

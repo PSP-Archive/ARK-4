@@ -53,21 +53,21 @@ enum{
     USB_CHARGE,
     CPU_CLOCK_GAME,
     CPU_CLOCK_VSH,
+    WPA2_SUPPORT,
     AUTOBOOT_LAUNCHER,
-    DISABLE_GO_PAUSE,
-    FORCE_EXTRA_MEM,
+    USE_EXTRA_MEM,
     MEM_STICK_SPEEDUP,
     INFERNO_CACHE,
+    DISABLE_GO_PAUSE,
     OLD_GO_PLUGINS,
+    NO_HIB_DELETE,
     SKIP_LOGOS,
     HIDE_PICS,
-    NO_HIB_DELETE,
     HIDE_MAC,
     HIDE_DLC,
     DISABLE_LED,
     DISABLE_UMD,
     DISABLE_ANALOG,
-    WPA2_SUPPORT,
     QA_FLAGS,
 };
 
@@ -85,14 +85,14 @@ GetItem GetItemes[] =
     { 4, 0, "CPU Clock in XMB" },
     { 5, 0, "WPA2" },
     { 6, 0, "Autoboot Launcher" },
-    { 7, 0, "Disable Pause on PSP Go" },
     { 8, 0, "Force Extra Memory" },
     { 9, 0, "Memory Stick Speedup" },
     { 10, 0, "Inferno Cache" },
-    { 11, 0, "Old Plugin Support on PSP Go" },
+    { 7, 0, "Disable Pause feature" },
+    { 11, 0, "Old Plugin Support on ef0" },
+    { 14, 0, "Prevent hibernation deletion" },
     { 12, 0, "Skip Sony Logos" },
     { 13, 0, "Hide PIC0 and PIC1" },
-    { 14, 0, "Prevent hibernation deletion on PSP Go" },
     { 15, 0, "Hide MAC Address" },
     { 16, 0, "Hide DLC" },
     { 17, 0, "Turn off LEDs" },
@@ -128,6 +128,11 @@ char* ark_settings_boolean[] = {
     (char*)"On"
 };
 
+char* ark_settings_boolean2[] = {
+    (char*)"Auto",
+    (char*)"Forced"
+};
+
 char* ark_settings_infernocache[] = {
     (char*)"Off",
     (char*)"LRU",
@@ -151,14 +156,14 @@ struct {
     {4, ark_clock_settings}, // Clock VSH
     {2, ark_settings_boolean}, // WPA2 ( Thanks again @Moment )
     {2, ark_settings_boolean}, // Autoboot Launcher
-    {2, ark_settings_boolean}, // Disable Go Pause
-    {N_OPTS, ark_settings_options}, // Extra RAM
+    {2, ark_settings_boolean2}, // Extra RAM
     {N_OPTS, ark_settings_options}, // MS Speedup
     {3, ark_settings_infernocache}, // Inferno Cache
-    {N_OPTS, ark_settings_options}, // Go Old Plugins 
+    {2, ark_settings_boolean2}, // Disable Go Pause
+    {N_OPTS, ark_settings_options}, // Old Plugins on ef0
+    {2, ark_settings_boolean}, // Prevent hib delete
     {2, ark_settings_boolean}, // Skip Sony logos
     {2, ark_settings_boolean}, // Hide PIC0 and PIC1
-    {2, ark_settings_boolean}, // Prevent hib delete
     {2, ark_settings_boolean}, // Hide MAC
     {2, ark_settings_boolean}, // Hide DLC
     {N_OPTS, ark_settings_options}, // Turn off LEDs
@@ -634,7 +639,7 @@ int skipSetting(int i){
     else if (psp_model == PSP_1000) return (
         i == USB_CHARGE ||
         i == DISABLE_GO_PAUSE ||
-        i == FORCE_EXTRA_MEM ||
+        i == USE_EXTRA_MEM ||
         i == OLD_GO_PLUGINS ||
         i == NO_HIB_DELETE
     );
