@@ -1,24 +1,25 @@
-Aktualizator ARK-4
-Ustawienia CFW
-Menedzer wtyczek
-Niestandardowy Launcher
-Laduj przez USB
-Podkrecanie
-Oszczedzanie energii
-Zrownowazony tryb zasilania
-Uruchom automatycznie launcher ARK 
-Wylacz pauze na PSP Go
-Wymus dodatkowa pamiec
-Przyspieszenie karty pamieci
-Pamiec podreczna Inferno
-Obsluga starszych wtyczek na PSP Go
-Pomin logo Sony
+ARK-4 Updater
+Ustawienia niestandardowego oprogramowania układowego
+Menedżer wtyczek
+Niestandardowy program uruchamiający
+Ładowanie przez USB
+Zegar procesora w grze
+Zegar procesora w XMB
+WPA2
+Autoboot Launcher
+Wyłącz pauzę w PSP Go
+Użyj dodatkowej pamięci
+Przyspieszenie pamięci Memory Stick
+Inferno Cache
+Obsługa starej wtyczki w ef0
+Pomiń loga Sony w XMB
 Ukryj PIC0 i PIC1
-Zapobiegaj hibernacji na PSP Go
+Zapobiegaj usuwaniu hibernacji w PSP Go
 Ukryj adres MAC
 Ukryj DLC
-Wylacz LEDy
-Wylacz dysk UMD
-Wylacz drazek analogowy
-Aplikacja niestandardowa
-Podkrecanie PSP
+Wyłącz diody LED
+Wyłącz dysk UMD
+Wyłącz drążek analogowy
+Flagi QA
+Niestandardowa aplikacja
+Ponowne uruchomienie w 1.50 ARK

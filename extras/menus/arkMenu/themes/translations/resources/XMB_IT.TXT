@@ -1,25 +1,25 @@
-Aggiornamento ARK-4
-Configurazioni custom firmware
-Gestione plugin
-Custom launcher
-Ricarica USB
-Overclock
-Modalità risparmio energetico
-Modalità energetica bilanciata
-Avvio automatico launcher
-Disattiva funzione pausa su PSP Go
-Forza memoria Extra
-Velocizza Memory Stick
-Cache Inferno
-Correggi incompatibilità plugin su PSP Go
-Salta logo Sony
+ARK-4 Updater
+Impostazioni firmware personalizzate
+Plugin Manager
+Launcher personalizzato
+Carica USB
+Orologio CPU nel gioco
+Orologio CPU in XMB
+WPA2
+Launcher di avvio automatico
+Disabilita pausa su PSP Go
+Usa memoria extra
+Velocizzazione Memory Stick
+Inferno Cache
+Supporto vecchi plugin su ef0
+Salta loghi Sony in XMB
 Nascondi PIC0 e PIC1
-Previeni cancellazione dell'ibernazione su PSP Go
+Impedisci l'eliminazione in modalità ibernazione su PSP Go
 Nascondi indirizzo MAC
 Nascondi DLC
-Disattiva LED
-Disattiva unità UMD
-Disattiva stick analogico
+Spegni LED
+Disabilita unità UMD
+Disabilita stick analogico
 Flag QA
-Applicazione personalizzata
-Overclock PSP
+App personalizzata
+Riavvia in 1.50 ARK

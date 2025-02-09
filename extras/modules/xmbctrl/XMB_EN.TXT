@@ -7,13 +7,12 @@ CPU Clock in Game
 CPU Clock in XMB
 WPA2
 Autoboot Launcher
-Force Extra Memory
+Disable Pause on PSP Go
+Use Extra Memory
 Memory Stick Speedup
 Inferno Cache
-Disable Pause feature
 Old Plugin Support on ef0
-Prevent hibernation deletion
-Skip Sony Logos
+Skip Sony logos in XMB
 Hide PIC0 and PIC1
 Hide MAC Address
 Hide DLC
