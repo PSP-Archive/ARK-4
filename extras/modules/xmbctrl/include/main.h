@@ -22,10 +22,6 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#define MAKE_CALL(a, f) _sw(0x0C000000 | (((u32)(f) >> 2) & 0x03FFFFFF), a);
-#define REDIRECT_FUNCTION(a, f) _sw(0x08000000 | (((u32)(f) >> 2) & 0x03FFFFFF), a); _sw(0, a + 4);
-#define MAKE_DUMMY_FUNCTION0(a) _sw(0x03E00008, a); _sw(0x00001021, a + 4);
-
 #define sysconf_console_id 4
 #define sysconf_console_action 2
 #define sysconf_console_action_arg 2

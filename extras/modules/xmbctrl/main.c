@@ -908,7 +908,6 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 {
                     *configs[i] = GetItemes[i].negative ? !(*value) : *value;
                     saveSettings();
-                    vctrlVSHExitVSHMenu(&config, NULL, 0);
                     return 0;
                 }
             }
