@@ -168,7 +168,6 @@ void loadSettings(){
 
     FIX_BOOLEAN(config.launcher);
     FIX_BOOLEAN(config.disablepause);
-    FIX_BOOLEAN(config.skiplogos);
     FIX_BOOLEAN(config.hidepics);
     FIX_BOOLEAN(config.hibblock);
     FIX_BOOLEAN(config.hidemac);
@@ -249,7 +248,6 @@ void saveSettings(){
     processSetting(fd, line, "disablepause", config.disablepause);
     processSetting(fd, line, "oldplugin", config.oldplugin);
     processSetting(fd, line, "hibblock", config.hibblock);
-    //processSetting(fd, line, "skiplogos", config.skiplogos);
     switch (config.skiplogos){
         case 0: processSetting(fd, line, "skiplogos", 0); break;
         case 1: processSetting(fd, line, "skiplogos", 1); break;

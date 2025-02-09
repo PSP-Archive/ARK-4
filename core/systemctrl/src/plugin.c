@@ -503,7 +503,7 @@ static void settingsHandler(char* path, u8 enabled){
     else if (strcasecmp(path, "hibblock") == 0){ // block hibernation
         se_config.hibblock = enabled;
     }
-    else if (strncasecmp(path, "skiplogos", 12) == 0){
+    else if (strncasecmp(path, "skiplogos", 9) == 0){
         char* c = strchr(path, ':');
         se_config.skiplogos = enabled;
         if (enabled && c){
