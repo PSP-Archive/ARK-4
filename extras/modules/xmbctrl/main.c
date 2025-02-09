@@ -33,7 +33,7 @@
 
 #include "include/main.h"
 #include "include/utils.h"
-#include "include/settings.h"
+#include "include/lang_en.h"
 
 #include "list.h"
 #include "settings.h"
@@ -85,14 +85,14 @@ GetItem GetItemes[] =
     { 4, 0, "CPU Clock in XMB" },
     { 5, 0, "WPA2" },
     { 6, 0, "Autoboot Launcher" },
-    { 8, 0, "Force Extra Memory" },
-    { 9, 0, "Memory Stick Speedup" },
-    { 10, 0, "Inferno Cache" },
-    { 7, 0, "Disable Pause feature" },
+    { 7, 0, "Force Extra Memory" },
+    { 8, 0, "Memory Stick Speedup" },
+    { 9, 0, "Inferno Cache" },
+    { 10, 0, "Disable Pause feature" },
     { 11, 0, "Old Plugin Support on ef0" },
-    { 14, 0, "Prevent hibernation deletion" },
-    { 12, 0, "Skip Sony Logos" },
-    { 13, 0, "Hide PIC0 and PIC1" },
+    { 12, 0, "Prevent hibernation deletion" },
+    { 13, 0, "Skip Sony Logos" },
+    { 14, 0, "Hide PIC0 and PIC1" },
     { 15, 0, "Hide MAC Address" },
     { 16, 0, "Hide DLC" },
     { 17, 0, "Turn off LEDs" },
@@ -434,10 +434,12 @@ int LoadTextLanguage(int new_id)
 
     if(fd >= 0) sceIoClose(fd);
 
+    #if 0
     if (IS_VITA(ark_config)){
         sce_paf_private_free(string.options[1]);
         string.options[1] = settings[24]; // replace "Overclock" with "PSP Overclock" on Vita
     }
+    #endif
 
     return 1;
 }
@@ -822,22 +824,22 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
             {
                 config.usbcharge,    	
                 config.clock_game,    	
-                config.clock_vsh,    	
+                config.clock_vsh, 
+                config.wpa2,       	
                 config.launcher,    	
-                config.disablepause,    
                 config.highmem,    		
                 config.mscache,    		
-                config.infernocache,    
+                config.infernocache,   
+                config.disablepause,     
                 config.oldplugin,    	
+                config.hibblock,    
                 config.skiplogos,    	
-                config.hidepics,    	
-                config.hibblock,     	
+                config.hidepics,    	 	
                 config.hidemac,     	
                 config.hidedlc,    		
                 config.noled,    		
                 config.noumd,    		
-                config.noanalog,    	
-                config.wpa2,    	    
+                config.noanalog,    		    
                 config.qaflags,    	    
             };
             
@@ -881,21 +883,21 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.usbcharge,
                 &config.clock_game,
                 &config.clock_vsh,
+                &config.wpa2,
                 &config.launcher,
-                &config.disablepause,
                 &config.highmem,
                 &config.mscache,
                 &config.infernocache,
+                &config.disablepause,
                 &config.oldplugin,
+                &config.hibblock,
                 &config.skiplogos,
                 &config.hidepics,
-                &config.hibblock,
                 &config.hidemac,
                 &config.hidedlc,
                 &config.noled,
                 &config.noumd,
                 &config.noanalog,
-                &config.wpa2,
                 &config.qaflags,
             };
             
