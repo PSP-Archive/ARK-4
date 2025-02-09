@@ -210,7 +210,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_ARK_OPTIONS];
 } oldplugin = {
-    "Old Plugins on PSP Go",
+    "Old Plugins on ef0",
     MAX_ARK_OPTIONS,
     0,
     &(cfw_config.oldplugin),
