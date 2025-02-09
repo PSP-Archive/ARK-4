@@ -100,7 +100,7 @@ static int vshpatch_module_chain(SceModule2 *mod)
 
     if(0 == strcmp(mod->modname, "sceVshBridge_Driver")) {
         
-        if (se_config->skiplogos){
+        if (se_config->skiplogos == 1 || se_config->skiplogos == 2){
     	    patch_Gameboot(mod);
         }
 

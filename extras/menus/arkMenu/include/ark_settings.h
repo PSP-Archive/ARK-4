@@ -225,10 +225,10 @@ static struct {
     char* options[MAX_ARK_OPTIONS];
 } skiplogos = {
     "Skip Sony logos in XMB",
-    2,
+    4,
     0,
     &(cfw_config.skiplogos),
-    {"Off", "On"}
+    {"Off", "All", "GameBoot", "ColdBoot"}
 };
 
 static struct {
@@ -550,7 +550,7 @@ static unsigned char* configConvert(string conf){
     else if (strcasecmp(conf.c_str(), "oldplugin") == 0){
         return &(cfw_config.oldplugin);
     }
-    else if (strcasecmp(conf.c_str(), "skiplogos") == 0){
+    else if (strncasecmp(conf.c_str(), "skiplogos", 9) == 0){
         return &(cfw_config.skiplogos);
     }
     else if (strcasecmp(conf.c_str(), "hidepics") == 0){
@@ -627,6 +627,15 @@ static void processConfig(string line, string runlevel, string conf, string enab
             if (config && c){
                 if (strcasecmp(c+1, "lru") == 0) cfw_config.infernocache = 1;
                 else if (strcasecmp(c+1, "rr") == 0) cfw_config.infernocache = 2;
+            }
+        }
+        else if (strncasecmp(conf.c_str(), "skiplogos", 9) == 0){
+            char* c = strchr(conf.c_str(), ':');
+            FIX_BOOLEAN(config);
+            cfw_config.skiplogos = config;
+            if (config && c){
+                if (strcasecmp(c+1, "gameboot") == 0) cfw_config.skiplogos = 2;
+                else if (strcasecmp(c+1, "coldboot") == 0) cfw_config.skiplogos = 3;
             }
         }
     }
@@ -720,7 +729,6 @@ void loadSettings(){
     FIX_BOOLEAN(cfw_config.launcher);
     FIX_BOOLEAN(cfw_config.highmem);
     FIX_BOOLEAN(cfw_config.disablepause);
-    FIX_BOOLEAN(cfw_config.skiplogos);
     FIX_BOOLEAN(cfw_config.hidepics);
     FIX_BOOLEAN(cfw_config.hibblock);
     FIX_BOOLEAN(cfw_config.hidemac);
@@ -786,7 +794,12 @@ void saveSettings(){
     output << processSetting("disablepause", cfw_config.disablepause) << endl;
     output << processSetting("oldplugin", cfw_config.oldplugin) << endl;
     output << processSetting("hibblock", cfw_config.hibblock) << endl;
-    output << processSetting("skiplogos", cfw_config.skiplogos) << endl;
+    switch (cfw_config.skiplogos){
+        case 0: output << processSetting("skiplogos", 0) << endl; break;
+        case 1: output << processSetting("skiplogos", 1) << endl; break;
+        case 2: output << processSetting("skiplogos:gameboot", 1) << endl; break;
+        case 3: output << processSetting("skiplogos:coldboot", 1) << endl; break;
+    }
     output << processSetting("hidepics", cfw_config.hidepics) << endl;
     output << processSetting("hidemac", cfw_config.hidemac) << endl;
     output << processSetting("hidedlc", cfw_config.hidedlc) << endl;

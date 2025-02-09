@@ -95,8 +95,14 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.oldplugin = opt;
         return 1;
     }
-    else if (strcasecmp(path, "skiplogos") == 0){
+    else if (strncasecmp(path, "skiplogos", 9) == 0){
+        char* c = strchr(path, ':');
+        FIX_BOOLEAN(opt);
         config.skiplogos = opt;
+        if (opt && c){
+            if (strcasecmp(c+1, "gameboot") == 0) config.skiplogos = 2;
+            else if (strcasecmp(c+1, "coldboot") == 0) config.skiplogos = 3;
+        }
         return 1;
     }
     else if (strcasecmp(path, "hidepics") == 0){
@@ -243,7 +249,13 @@ void saveSettings(){
     processSetting(fd, line, "disablepause", config.disablepause);
     processSetting(fd, line, "oldplugin", config.oldplugin);
     processSetting(fd, line, "hibblock", config.hibblock);
-    processSetting(fd, line, "skiplogos", config.skiplogos);
+    //processSetting(fd, line, "skiplogos", config.skiplogos);
+    switch (config.skiplogos){
+        case 0: processSetting(fd, line, "skiplogos", 0); break;
+        case 1: processSetting(fd, line, "skiplogos", 1); break;
+        case 2: processSetting(fd, line, "skiplogos:gameboot", 1); break;
+        case 3: processSetting(fd, line, "skiplogos:coldboot", 1); break;
+    }
     processSetting(fd, line, "hidepics", config.hidepics);
     processSetting(fd, line, "hidemac", config.hidemac);
     processSetting(fd, line, "hidedlc", config.hidedlc);

@@ -64,6 +64,13 @@ char* ark_settings_infernocache[] = {
     (char*)"RR"
 };
 
+char* ark_skiplogos_options[] = {
+    (char*)"Off",
+    (char*)"All",
+    (char*)"GameBoot",
+    (char*)"ColdBoot"
+};
+
 // PSP 1K
 Setting settings_items_1k[] =
 {
@@ -73,7 +80,7 @@ Setting settings_items_1k[] =
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
-    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 4, &(config.skiplogos), "Skip Sony Logos", ark_skiplogos_options },
     { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
@@ -96,7 +103,7 @@ Setting settings_items_slim[] =
     { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
-    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 4, &(config.skiplogos), "Skip Sony Logos", ark_skiplogos_options },
     { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
@@ -122,7 +129,7 @@ Setting settings_items_go[] =
     { 2, &(config.disablepause), "Disable Pause Feature", ark_settings_boolean2 },
     { N_OPTS, &(config.oldplugin), "Old Plugin Support on ef0", ark_settings_options },
     { 2, &(config.hibblock), "Prevent hibernation deletion", ark_settings_boolean },
-    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 4, &(config.skiplogos), "Skip Sony Logos", ark_skiplogos_options },
     { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
@@ -143,7 +150,7 @@ Setting settings_items_street[] =
     { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
-    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 4, &(config.skiplogos), "Skip Sony Logos", ark_skiplogos_options },
     { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
     { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
@@ -162,7 +169,7 @@ Setting settings_items_adr[] =
     { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
     { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
-    { 2, &(config.skiplogos), "Skip Sony Logos", ark_settings_boolean },
+    { 4, &(config.skiplogos), "Skip Sony Logos", ark_skiplogos_options },
     { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },

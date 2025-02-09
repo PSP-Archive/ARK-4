@@ -123,6 +123,13 @@ char* ark_clock_settings[] = {
     (char*)"PowerSave"
 };
 
+char* ark_skiplogos_settings[] = {
+    (char*)"Off",
+    (char*)"All",
+    (char*)"GameBoot",
+    (char*)"ColdBoot"
+};
+
 char* ark_settings_boolean[] = {
     (char*)"Off",
     (char*)"On"
@@ -162,7 +169,7 @@ struct {
     {2, ark_settings_boolean2}, // Disable Go Pause
     {N_OPTS, ark_settings_options}, // Old Plugins on ef0
     {2, ark_settings_boolean}, // Prevent hib delete
-    {2, ark_settings_boolean}, // Skip Sony logos
+    {4, ark_skiplogos_settings}, // Skip Sony logos
     {2, ark_settings_boolean}, // Hide PIC0 and PIC1
     {2, ark_settings_boolean}, // Hide MAC
     {2, ark_settings_boolean}, // Hide DLC

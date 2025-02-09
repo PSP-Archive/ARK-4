@@ -287,7 +287,7 @@ void PSPOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "game_plugin_module") == 0) {
-    	if (se_config->skiplogos) {
+    	if (se_config->skiplogos == 1 || se_config->skiplogos == 2) {
     	    patch_GameBoot(mod);
         }
         goto flush;
@@ -315,7 +315,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         if (se_config->umdregion){
             patch_vsh_region_check(mod);
         }
-        if (se_config->skiplogos){
+        if (se_config->skiplogos == 1 || se_config->skiplogos == 2){
             // patch GameBoot
             hookImportByNID(sceKernelFindModuleByName("sceVshBridge_Driver"), "sceDisplay_driver", 0x3552AB11, 0);
         }
@@ -388,7 +388,7 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
-    if (se_config->skiplogos && mod != NULL && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
+    if (mod && (se_config->skiplogos == 1 || se_config->skiplogos == 3) && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
     	u32* vshmain_args = oe_malloc(1024);
 
     	memset(vshmain_args, 0, 1024);

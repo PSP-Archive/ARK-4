@@ -506,8 +506,13 @@ static void settingsHandler(char* path, u8 enabled){
     else if (strcasecmp(path, "hibblock") == 0){ // block hibernation
         se_config.hibblock = enabled;
     }
-    else if (strcasecmp(path, "skiplogos") == 0){ // skip sony logo and gameboot
+    else if (strncasecmp(path, "skiplogos", 12) == 0){
+        char* c = strchr(path, ':');
         se_config.skiplogos = enabled;
+        if (enabled && c){
+            if (strcasecmp(c+1, "gameboot") == 0) se_config.skiplogos = 2;
+            else if (strcasecmp(c+1, "coldboot") == 0) se_config.skiplogos = 3;
+        }
     }
     else if (strcasecmp(path, "hidemac") == 0){ // hide mac address
         se_config.hidemac = enabled;
