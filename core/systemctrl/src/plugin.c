@@ -303,10 +303,7 @@ static char * readLine(int fd, char * buf, unsigned int buflen)
         if(pos == 0 && buf[pos] == 0) return NULL;
         
         // Remove \r\n
-        if(buf[pos] == '\r' || buf[pos] == '\n'){
-            if (pos == 0) return NULL; // empty line
-            buf[pos] = 0;
-        }
+        if(buf[pos] == '\r' || buf[pos] == '\n') buf[pos] = 0;
         
         // Return Line Buffer
         return buf;
@@ -406,6 +403,7 @@ static int ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler
             // Read Lines
             while(readLine(fd, line, LINE_BUFFER_SIZE) != NULL)
             {
+                if (line[0] == 0) continue; // empty line
                 // Process Line
                 processLine(strtrim(line), enabler, disabler);
             }
