@@ -16,8 +16,8 @@ from zipfile import ZipFile
 
 # globals
 go = False
-local_150_filepath = ''
-local_661_filepath = ''
+local_150_filepath = None
+local_661_filepath = None
 ostype = platform.system()
 if ostype.lower() == 'win32':
     ostype = 'Windows'
