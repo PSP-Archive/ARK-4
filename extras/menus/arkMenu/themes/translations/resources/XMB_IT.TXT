@@ -1,23 +1,23 @@
-ARK-4 Updater
-Impostazioni firmware personalizzate
-Plugin Manager
-Launcher personalizzato
-Carica USB
-Orologio CPU nel gioco
-Orologio CPU in XMB
+Aggiornamento ARK-4
+Configurazioni Custom Firmware
+Gestione Plugin
+Custom Launcher
+Ricarica tramite USB
+Frequenza CPU nel gioco
+Frequenza CPU nella XMB
 WPA2
-Launcher di avvio automatico
-Disabilita pausa su PSP Go
-Usa memoria extra
-Velocizzazione Memory Stick
-Inferno Cache
+Launcher automatico
+Disattiva funzione pausa su PSP Go
+Forza uso memoria extra
+Velocizza Memory Stick
+Cache Inferno
 Supporto vecchi plugin su ef0
-Salta loghi Sony in XMB
+Salta loghi Sony nella XMB
 Nascondi PIC0 e PIC1
-Impedisci l'eliminazione in modalità ibernazione su PSP Go
+Previeni l'eliminazione dell' ibernazione su PSP Go
 Nascondi indirizzo MAC
 Nascondi DLC
-Spegni LED
+Spegni LEDs
 Disabilita unità UMD
 Disabilita stick analogico
 Flag QA
