@@ -276,8 +276,14 @@ void Browser::installTheme() {
     // Sanity checks
     if(e->getName() != "THEME.ARK" || e->getPath().substr(2) == "0:/PSP/SAVEDATA/ARK_01234/THEME.ARK") return;
 
-	if(optionsmenu)
-		optionsmenu = NULL;
+    if(optionsmenu) {
+        SystemMgr::pauseDraw();
+        OptionsMenu* aux = optionsmenu;
+        optionsmenu = NULL;
+        delete aux;
+        SystemMgr::resumeDraw();
+    }
+
     optionsmenu = new OptionsMenu("Install Theme", sizeof(options_entries)/sizeof(t_options_entry), options_entries);
     int ret = optionsmenu->control();
     OptionsMenu* aux = optionsmenu;
@@ -291,8 +297,8 @@ void Browser::installTheme() {
         common::loadTheme();
         common::stopLoadingThread();
         SystemMgr::resumeDraw();
-		return;
-	}
+        return;
+    }
 
     // load new theme
     GameManager::updateGameList(NULL);
