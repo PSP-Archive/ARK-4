@@ -54,11 +54,11 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         return 1;
     }
     else if (strcasecmp(path, "powersave") == 0){
-        convertClockConfig(opt, OVERCLOCK);
+        convertClockConfig(opt, POWERSAVE);
         return 1;
     }
     else if (strcasecmp(path, "defaultclock") == 0){
-        convertClockConfig(opt, OVERCLOCK);
+        convertClockConfig(opt, DEFAULTCLOCK);
         return 1;
     }
     else if (strcasecmp(path, "wpa2") == 0){
