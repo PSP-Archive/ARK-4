@@ -28,19 +28,6 @@ typedef struct {
     char** opts;
 } Setting;
 
-char* ark_settings_options[] = {
-    (char*)"Disabled",
-    (char*)"Always",
-    (char*)"Game",
-    (char*)"UMD/ISO",
-    (char*)"Homebrew",
-    (char*)"PS1",
-    (char*)"XMB",
-    (char*)"Launcher"
-};
-
-#define N_OPTS sizeof(ark_settings_options)/sizeof(ark_settings_options[0])
-
 char* ark_clock_settings[] = {
     (char*)"Auto",
     (char*)"OverClock",
@@ -78,13 +65,13 @@ Setting settings_items_1k[] =
     { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.wpa2), "WPA2", ark_settings_boolean },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
-    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 2, &(config.mscache), "Memory Stick Speedup", ark_settings_boolean },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
     { 4, &(config.skiplogos), "Skip Sony Logos", ark_skiplogos_options },
     { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
-    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noled), "Turn off LEDs", ark_settings_boolean },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
     { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
@@ -95,19 +82,19 @@ Setting settings_items_1k[] =
 // PSP Slim
 Setting settings_items_slim[] =
 {
-    { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
+    { 2, &(config.usbcharge), "USB Charge", ark_settings_boolean },
     { 4, &(config.clock_game), "CPU Clock in Game", ark_clock_settings },
     { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.wpa2), "WPA2", ark_settings_boolean },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
     { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
-    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 2, &(config.mscache), "Memory Stick Speedup", ark_settings_boolean },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
     { 4, &(config.skiplogos), "Skip Sony Logos", ark_skiplogos_options },
     { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
-    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noled), "Turn off LEDs", ark_settings_boolean },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
     { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
@@ -118,22 +105,22 @@ Setting settings_items_slim[] =
 // PSP GO
 Setting settings_items_go[] =
 {
-    { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
+    { 2, &(config.usbcharge), "USB Charge", ark_settings_boolean },
     { 4, &(config.clock_game), "CPU Clock in Game", ark_clock_settings },
     { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.wpa2), "WPA2", ark_settings_boolean },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
     { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
-    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 2, &(config.mscache), "Memory Stick Speedup", ark_settings_boolean },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
     { 2, &(config.disablepause), "Disable Pause Feature", ark_settings_boolean2 },
-    { N_OPTS, &(config.oldplugin), "Old Plugin Support on ef0", ark_settings_options },
+    { 2, &(config.oldplugin), "Old Plugin Support on ef0", ark_settings_boolean },
     { 2, &(config.hibblock), "Prevent hibernation deletion", ark_settings_boolean },
     { 4, &(config.skiplogos), "Skip Sony Logos", ark_skiplogos_options },
     { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
-    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noled), "Turn off LEDs", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
     { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
 };
@@ -143,17 +130,17 @@ Setting settings_items_go[] =
 // PSP 110000 (Street)
 Setting settings_items_street[] =
 {
-    { N_OPTS, &(config.usbcharge), "USB Charge", ark_settings_options },
+    { 2, &(config.usbcharge), "USB Charge", ark_settings_boolean },
     { 4, &(config.clock_game), "CPU Clock in Game", ark_clock_settings },
     { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
     { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
-    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 2, &(config.mscache), "Memory Stick Speedup", ark_settings_boolean },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
     { 4, &(config.skiplogos), "Skip Sony Logos", ark_skiplogos_options },
     { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
-    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noled), "Turn off LEDs", ark_settings_boolean },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
     { 2, &(config.qaflags), "Enable QA Flags", ark_settings_boolean },
@@ -163,17 +150,17 @@ Setting settings_items_street[] =
 
 Setting settings_items_adr[] =
 {
-    { 4, &(config.clock_game), "PSP CPU Clock in Game", ark_clock_settings },
-    { 4, &(config.clock_vsh), "PSP CPU Clock in XMB", ark_clock_settings },
+    { 4, &(config.clock_game), "CPU Clock in Game", ark_clock_settings },
+    { 4, &(config.clock_vsh), "CPU Clock in XMB", ark_clock_settings },
     { 2, &(config.launcher), "Autoboot Launcher", ark_settings_boolean },
     { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
-    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 2, &(config.mscache), "Memory Stick Speedup", ark_settings_boolean },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
     { 4, &(config.skiplogos), "Skip Sony Logos", ark_skiplogos_options },
     { 2, &(config.hidepics), "Hide PIC0 and PIC1", ark_settings_boolean },
     { 2, &(config.hidemac), "Hide MAC Address", ark_settings_boolean },
     { 2, &(config.hidedlc), "Hide DLC", ark_settings_boolean },
-    { N_OPTS, &(config.noled), "Turn off LEDs", ark_settings_options },
+    { 2, &(config.noled), "Turn off LEDs", ark_settings_boolean },
     { 2, &(config.noumd), "Disable UMD Drive", ark_settings_boolean },
     { 2, &(config.noanalog), "Disable Analog Stick", ark_settings_boolean },
     { 2, &(config.qaflags), "QA Flags", ark_settings_boolean },
@@ -183,8 +170,8 @@ Setting settings_items_adr[] =
 
 Setting settings_items_vita[] =
 {
-    { 4, &(config.clock_game), "PSP CPU Clock in Game", ark_clock_settings },
-    { N_OPTS, &(config.mscache), "Memory Stick Speedup", ark_settings_options },
+    { 4, &(config.clock_game), "CPU Clock in Game", ark_clock_settings },
+    { 2, &(config.mscache), "Memory Stick Speedup", ark_settings_boolean },
     { 3, &(config.infernocache), "Inferno Cache", ark_settings_infernocache },
     { 2, &(config.highmem), "Use Extra Memory", ark_settings_boolean2 },
 };

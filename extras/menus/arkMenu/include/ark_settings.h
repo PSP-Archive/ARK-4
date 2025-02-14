@@ -57,17 +57,9 @@ typedef struct {
 
 CfwConf cfw_config;
 
-#define MAX_ARK_OPTIONS 8
-#define ARK_OPTIONS { \
-    "Disabled", \
-    "Always", \
-    "Game", \
-    "UMD/ISO", \
-    "Homebrew", \
-    "PS1", \
-    "XMB", \
-    "Launcher" \
-}
+#define MAX_BOOLEAN_OPTIONS 2
+#define BOOLEAN_OPTIONS {"Off", "On"}
+#define BOOLEAN_2_OPTIONS {"Auto", "Forced"}
 
 #define MAX_CLOCK_OPTIONS 4
 #define CLOCK_OPTIONS { \
@@ -82,13 +74,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } usbcharge = {
     "USB Charge",
-    MAX_ARK_OPTIONS,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.usbcharge),
-    ARK_OPTIONS
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -96,7 +88,7 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_CLOCK_OPTIONS];
 } clock_game = {
     "CPU Clock in Game",
     MAX_CLOCK_OPTIONS,
@@ -110,7 +102,7 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_CLOCK_OPTIONS];
 } clock_vsh = {
     "CPU Clock in XMB",
     MAX_CLOCK_OPTIONS,
@@ -124,13 +116,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } launcher = {
     "Autoboot Launcher",
-    2,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.launcher),
-    {"Off", "On"}
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -138,13 +130,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } highmem = {
     "Use Extra Memory",
-    2,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.highmem),
-    {"Auto", "Forced"}
+    BOOLEAN_2_OPTIONS
 };
 
 static struct {
@@ -152,13 +144,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } mscache = {
     "Memory Stick Speedup",
-    MAX_ARK_OPTIONS,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.mscache),
-    ARK_OPTIONS
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -166,7 +158,7 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[3];
 } infernocache = {
     "Inferno Cache",
     3,
@@ -180,13 +172,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } oldplugin = {
     "Old Plugins on ef0",
-    MAX_ARK_OPTIONS,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.oldplugin),
-    ARK_OPTIONS
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -194,13 +186,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } disablepause = {
     "Disable PSP Go Pause",
-    2,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.disablepause),
-    {"Auto", "Forced"}
+    BOOLEAN_2_OPTIONS
 };
 
 static struct {
@@ -208,13 +200,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } hibblock = {
     "Prevent hibernation deletion on PSP Go",
-    2,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.hibblock),
-    {"Off", "On"}
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -222,7 +214,7 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[4];
 } skiplogos = {
     "Skip Sony logos in XMB",
     4,
@@ -236,13 +228,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } hidepics = {
     "Hide PIC0 and PIC1 in XMB",
-    2,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.hidepics),
-    {"Off", "On"}
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -250,13 +242,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } hidemac = {
     "Hide Mac Address",
-    2,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.hidemac),
-    {"Off", "On"}
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -264,13 +256,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } hidedlc = {
     "Hide DLC",
-    2,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.hidedlc),
-    {"Off", "On"}
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -278,13 +270,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } noled = {
     "Turn off LEDs",
-    MAX_ARK_OPTIONS,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.noled),
-    ARK_OPTIONS
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -292,13 +284,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } noumd = {
     "Disable UMD Drive",
-    2,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.noumd),
-    {"Off", "On"}
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -306,13 +298,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } noanalog = {
     "Disable Analog Stick",
-    2,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.noanalog),
-    {"Off", "On"}
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -320,13 +312,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } qaflags = {
     "QA Flags",
-    2,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.qaflags),
-    {"Off", "On"}
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -334,13 +326,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[MAX_BOOLEAN_OPTIONS];
 } wpa2 = {
     "WPA2",
-    2,
+    MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.wpa2),
-    {"Off", "On"}
+    BOOLEAN_OPTIONS
 };
 
 static struct {
@@ -348,7 +340,7 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_ARK_OPTIONS];
+    char* options[4];
 } regionchange = {
     "UMD Region Change",
     4,
@@ -726,15 +718,19 @@ void loadSettings(){
     }
     input.close();
 
+    FIX_BOOLEAN(cfw_config.usbcharge);
     FIX_BOOLEAN(cfw_config.launcher);
     FIX_BOOLEAN(cfw_config.highmem);
+    FIX_BOOLEAN(cfw_config.mscache);
     FIX_BOOLEAN(cfw_config.disablepause);
+    FIX_BOOLEAN(cfw_config.oldplugin);
     FIX_BOOLEAN(cfw_config.hidepics);
     FIX_BOOLEAN(cfw_config.hibblock);
     FIX_BOOLEAN(cfw_config.hidemac);
     FIX_BOOLEAN(cfw_config.hidedlc);
     FIX_BOOLEAN(cfw_config.noumd);
     FIX_BOOLEAN(cfw_config.noanalog);
+    FIX_BOOLEAN(cfw_config.noled);
     FIX_BOOLEAN(cfw_config.qaflags);
     FIX_BOOLEAN(cfw_config.wpa2);
 }

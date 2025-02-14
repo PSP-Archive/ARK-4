@@ -103,19 +103,6 @@ GetItem GetItemes[] =
 
 #define PLUGINS_CONTEXT 1
 
-char* ark_settings_options[] = {
-    (char*)"Disabled",
-    (char*)"Always",
-    (char*)"Game",
-    (char*)"UMD/ISO",
-    (char*)"Homebrew",
-    (char*)"PS1",
-    (char*)"XMB",
-    (char*)"Launcher"
-};
-
-#define N_OPTS sizeof(ark_settings_options)/sizeof(ark_settings_options[0])
-
 char* ark_clock_settings[] = {
     (char*)"Auto",
     (char*)"OverClock",
@@ -158,22 +145,22 @@ struct {
 } item_opts[] = {
     {0, NULL}, // None
     {3, ark_plugins_options}, // Plugins
-    {N_OPTS, ark_settings_options}, // USB Charge
+    {2, ark_settings_boolean}, // USB Charge
     {4, ark_clock_settings}, // Clock Game
     {4, ark_clock_settings}, // Clock VSH
     {2, ark_settings_boolean}, // WPA2 ( Thanks again @Moment )
     {2, ark_settings_boolean}, // Autoboot Launcher
     {2, ark_settings_boolean2}, // Extra RAM
-    {N_OPTS, ark_settings_options}, // MS Speedup
+    {2, ark_settings_boolean}, // MS Speedup
     {3, ark_settings_infernocache}, // Inferno Cache
     {2, ark_settings_boolean2}, // Disable Go Pause
-    {N_OPTS, ark_settings_options}, // Old Plugins on ef0
+    {2, ark_settings_boolean}, // Old Plugins on ef0
     {2, ark_settings_boolean}, // Prevent hib delete
     {4, ark_skiplogos_settings}, // Skip Sony logos
     {2, ark_settings_boolean}, // Hide PIC0 and PIC1
     {2, ark_settings_boolean}, // Hide MAC
     {2, ark_settings_boolean}, // Hide DLC
-    {N_OPTS, ark_settings_options}, // Turn off LEDs
+    {2, ark_settings_boolean}, // Turn off LEDs
     {2, ark_settings_boolean}, // Disable UMD Drive
     {2, ark_settings_boolean}, // Disable Analog Stick 
     {2, ark_settings_boolean}, // QA Flags

@@ -166,14 +166,19 @@ void loadSettings(){
 
     ProcessConfigFile(path, &processConfigLine, &processCustomConfig);
 
+    FIX_BOOLEAN(config.usbcharge);
     FIX_BOOLEAN(config.launcher);
+    FIX_BOOLEAN(config.highmem);
+    FIX_BOOLEAN(config.mscache);
     FIX_BOOLEAN(config.disablepause);
+    FIX_BOOLEAN(config.oldplugin);
     FIX_BOOLEAN(config.hidepics);
     FIX_BOOLEAN(config.hibblock);
     FIX_BOOLEAN(config.hidemac);
     FIX_BOOLEAN(config.hidedlc);
     FIX_BOOLEAN(config.noumd);
     FIX_BOOLEAN(config.noanalog);
+    FIX_BOOLEAN(config.noled);
     FIX_BOOLEAN(config.qaflags);
     FIX_BOOLEAN(config.wpa2);
 }
