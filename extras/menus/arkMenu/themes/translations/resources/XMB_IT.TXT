@@ -12,9 +12,9 @@ Velocizza Memory Stick
 Cache Inferno
 Disattiva funzione pausa su PSP Go
 Supporto vecchi plugin su ef0
+Previeni l'eliminazione dell' ibernazione su PSP Go
 Salta loghi Sony nella XMB
 Nascondi PIC0 e PIC1
-Previeni l'eliminazione dell' ibernazione su PSP Go
 Nascondi indirizzo MAC
 Nascondi DLC
 Spegni LEDs
