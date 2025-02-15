@@ -7,10 +7,10 @@ USB 충전
 XMB의 CPU 시계
 WPA2
 자동 부팅 런처
-PSP Go에서 일시 중지 비활성화
 추가 메모리 사용
 메모리 스틱 속도 향상
 Inferno 캐시
+PSP Go에서 일시 중지 비활성화
 ef0에서 이전 플러그인 지원
 XMB에서 Sony 로고 건너뛰기
 PIC0 및 PIC1 숨기기

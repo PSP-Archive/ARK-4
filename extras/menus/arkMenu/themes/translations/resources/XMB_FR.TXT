@@ -7,10 +7,10 @@ Horloge CPU dans le jeu
 Horloge CPU dans XMB
 WPA2
 Lanceur de démarrage automatique
-Désactiver la pause sur PSP Go
 Utiliser de la mémoire supplémentaire
 Accélération de la clé USB
 Cache Inferno
+Désactiver la pause sur PSP Go
 Prise en charge des anciens plug-ins sur ef0
 Ignorer les logos Sony dans XMB
 Masquer PIC0 et PIC1

@@ -7,10 +7,10 @@ CPU-Takt im Spiel
 CPU-Takt in XMB
 WPA2
 Autoboot-Launcher
-Pause auf PSP Go deaktivieren
 Zusätzlichen Speicher verwenden
 Memory Stick-Beschleunigung
 Inferno-Cache
+Pause auf PSP Go deaktivieren
 Unterstützung für alte Plugins auf ef0
 Sony-Logos in XMB überspringen
 PIC0 und PIC1 ausblenden

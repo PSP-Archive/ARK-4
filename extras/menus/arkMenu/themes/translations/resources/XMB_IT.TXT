@@ -7,10 +7,10 @@ Frequenza CPU nel gioco
 Frequenza CPU nella XMB
 WPA2
 Launcher automatico
-Disattiva funzione pausa su PSP Go
 Forza uso memoria extra
 Velocizza Memory Stick
 Cache Inferno
+Disattiva funzione pausa su PSP Go
 Supporto vecchi plugin su ef0
 Salta loghi Sony nella XMB
 Nascondi PIC0 e PIC1

@@ -7,10 +7,10 @@ USB 充电
 XMB 中的 CPU 时钟
 WPA2
 自动启动启动器
-禁用 PSP Go 上的暂停
 使用额外内存
 记忆棒加速
 Inferno 缓存
+禁用 PSP Go 上的暂停
 ef0 上的旧插件支持
 跳过 XMB 中的 Sony 徽标
 隐藏 PIC0 和 PIC1
