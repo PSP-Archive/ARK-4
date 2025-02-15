@@ -7,10 +7,10 @@ CPU-klok in game
 CPU-klok in XMB
 WPA2
 Autoboot Launcher
-Pauze uitschakelen op PSP Go
 Extra geheugen gebruiken
 Memory Stick Speedup
 Inferno Cache
+Pauze uitschakelen op PSP Go
 Oude plug-inondersteuning op ef0
 Sla Sony-logo's over in XMB
 Verberg PIC0 en PIC1
