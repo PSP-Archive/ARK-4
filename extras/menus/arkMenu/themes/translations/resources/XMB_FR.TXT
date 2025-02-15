@@ -12,9 +12,9 @@ Accélération de la clé USB
 Cache Inferno
 Désactiver la pause sur PSP Go
 Prise en charge des anciens plug-ins sur ef0
+Empêcher la suppression de l'hibernation sur PSP Go
 Ignorer les logos Sony dans XMB
 Masquer PIC0 et PIC1
-Empêcher la suppression de l'hibernation sur PSP Go
 Masquer l'adresse MAC
 Masquer le DLC
 Désactiver les LED

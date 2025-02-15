@@ -12,9 +12,9 @@ Aceleración de Memory Stick
 Inferno Cache
 Deshabilitar pausa en PSP Go
 Compatibilidad con complementos antiguos en ef0
+Evitar la eliminación de hibernación en PSP Go
 Omitir logotipos de Sony en XMB
 Ocultar PIC0 y PIC1
-Evitar la eliminación de hibernación en PSP Go
 Ocultar dirección MAC
 Ocultar DLC
 Apagar LED
