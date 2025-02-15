@@ -12,9 +12,9 @@ WPA2
 Inferno 缓存
 禁用 PSP Go 上的暂停
 ef0 上的旧插件支持
+防止 PSP Go 上的休眠删除
 跳过 XMB 中的 Sony 徽标
 隐藏 PIC0 和 PIC1
-防止 PSP Go 上的休眠删除
 隐藏 MAC 地址
 隐藏 DLC
 关闭 LED
