@@ -12,9 +12,9 @@ Memory Stick-Beschleunigung
 Inferno-Cache
 Pause auf PSP Go deaktivieren
 Unterstützung für alte Plugins auf ef0
+Löschen im Ruhezustand auf PSP Go verhindern
 Sony-Logos in XMB überspringen
 PIC0 und PIC1 ausblenden
-Löschen im Ruhezustand auf PSP Go verhindern
 MAC-Adresse ausblenden
 DLC ausblenden
 LEDs ausschalten
