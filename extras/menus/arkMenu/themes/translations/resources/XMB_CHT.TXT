@@ -12,9 +12,9 @@ WPA2
 地獄緩存
 停用 PSP Go 上的暫停功能
 ef0 上的舊插件支持
+防止 PSP Go 上的休眠刪除
 跳過 XMB 中的 Sony 徽標
 隱藏 PIC0 和 PIC1
-防止 PSP Go 上的休眠刪除
 隱藏 MAC 位址
 隱藏 DLC
 關閉 LED
