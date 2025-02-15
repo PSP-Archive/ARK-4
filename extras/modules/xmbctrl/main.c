@@ -636,7 +636,8 @@ int skipSetting(int i){
         i == DISABLE_GO_PAUSE ||
         i == OLD_GO_PLUGINS ||
         i == NO_HIB_DELETE ||
-        i == HIDE_MAC
+        i == HIDE_MAC ||
+        i == WPA2_SUPPORT
     );
     else if (psp_model != PSP_GO) return (
         i == DISABLE_GO_PAUSE ||
