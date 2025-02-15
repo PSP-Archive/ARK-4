@@ -12,9 +12,9 @@ Memory Stick Speedup
 Inferno Cache
 Pauze uitschakelen op PSP Go
 Oude plug-inondersteuning op ef0
+Voorkom het verwijderen van de slaapstand op PSP Go
 Sla Sony-logo's over in XMB
 Verberg PIC0 en PIC1
-Voorkom het verwijderen van de slaapstand op PSP Go
 Verberg MAC-adres
 Verberg DLC
 LED's uitschakelen
