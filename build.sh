@@ -17,9 +17,13 @@ if [[ -z ${PSPDEV} ]]; then
 	if [[ "$userInput" =~ ^(Y|y|yes|YES)$ ]]; then
 		printf "\n"
 		read -p "PSPDEV path (ex: /usr/local/pspdev): " getPath
+                if [ "$getPath" == "" ]; then 
+                    getPath="/usr/local/pspdev"
+                fi
 		export PSPDEV="$getPath" && export PATH="$PATH:$PSPDEV/bin"
 		echo "PATH=$PATH:$PSPDEV/bin" >> $HOME/.bashrc
 		echo "export PATH" >> $HOME/.bashrc
+                source $HOME/.bashrc
 	fi
 fi
 
@@ -28,7 +32,13 @@ dialogCheck=$(command -v dialog 2>/dev/null)
 
 function checkDepends {
 
-	sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev python3-pycryptodome python3-ecdsa zip
+        if [ -f "/usr/bin/apt" ]; then
+            sudo apt update
+	    sudo apt install -y build-essential mkisofs python3-pip p7zip-full zlib1g-dev libmpfr-dev python3-pycryptodome python3-ecdsa zip
+        else
+            sudo dnf update -y
+	    sudo dnf install -y mkisofs python3-pip zlib-ng-devel mpfr-devel python3-pycryptodomex python3-ecdsa zip
+        fi
 	# Use package manager instead of pip
 	#pip3 install ecdsa
 }
@@ -99,32 +109,7 @@ function original {
 	    # Should be added to .bashrc or somthing to make it static, but for now I will leave it just for the session
 		elevatePrivs chown -R $USER:$USER $PSPDEV 
 
-		# downloads mkpsxsio and installs
-		if [[ ! -f "/usr/bin/mkpsxiso" ]]; then
-				check_curl=$(command -v curl)
-				curl_ret=$?
-				check_wget=$(command -v wget)
-				wget_ret=$?
-			if [[ -f "/usr/bin/apt" ]]; then
-				if [[ $curl_ret == 0 ]]; then
-					$check_curl -OJL "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.deb" && elevatePrivs apt install ./mkpsxiso-2.03-Linux.deb
-				elif [[ $wget_ret == 0 ]]; then
-					$check_wget -O $(pwd)/mkpsxiso-2.03-Linux.deb "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.deb" && elevatePrivs apt install ./mkpsxiso-2.03-Linux.deb
-				fi
-			elif [[ -f "/usr/bin/dnf" ]]; then
-				if [[ $curl_ret == 0 ]]; then
-					$check_curl -OJL "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.rpm" && elevatePrivs dnf install ./mkpsxiso-2.03-Linux.deb
-				elif [[ $wget_ret == 0 ]]; then
-					$check_wget -O $(pwd)/mkpsxiso-2.03-Linux.deb "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.rpm "&& elevatePrivs dnf install ./mkpsxiso-2.03-Linux.deb
-				fi
 
-			fi
-
-		fi
-
-
-
-	
 	    # Signs eboots needed for ARK Loader
 	    if [[ ! -f "$PSPDEV/bin/sign_np" ]] ; then
 			echo cloning sign_np
@@ -191,7 +176,6 @@ function withDialog {
 		--backtitle "Script created by Krazynez Version: $version" \
 		--msgbox "This script will setup the correct SDK to build ARK, get sign_np dependency and mkpsxiso and temporarly setup the enivorment to build ARK-4." 10 80 
 
-$
 	dialog 	--title "Checking for existitng SDK"
 
 	if [[ -d "$PSPDEV" ]] ; then
@@ -217,6 +201,36 @@ $
 	else
 		elevatePrivs 7z x ./contrib/PC/PSPSDK/pspdev.7z -o"${PSPDEV:0:-7}" && sudo chown -R $USER:$USER $PSPDEV
 	fi
+
+        # downloads mkpsxsio and installs
+	if [[ ! -f "/usr/bin/mkpsxiso" ]]; then
+			check_curl=$(command -v curl)
+			curl_ret=$?
+			check_wget=$(command -v wget)
+			wget_ret=$?
+		if [[ -f "/usr/bin/apt" ]]; then
+			if [[ $curl_ret == 0 ]]; then
+                                rm -f ./mkpsxiso-2.03-Linux.deb
+				$check_curl -OJL "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.deb" && elevatePrivs apt install -y ./mkpsxiso-2.03-Linux.deb
+			elif [[ $wget_ret == 0 ]]; then
+                                rm -f ./mkpsxiso-2.03-Linux.deb
+				$check_wget -O $(pwd)/mkpsxiso-2.03-Linux.deb "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.deb" && elevatePrivs apt install -y ./mkpsxiso-2.03-Linux.deb
+			fi
+		elif [[ -f "/usr/bin/dnf" ]]; then
+			if [[ $curl_ret == 0 ]]; then
+                                rm -f ./mkpsxiso-2.03-Linux.rpm
+				$check_curl -OJL "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.rpm"
+                                elevatePrivs dnf install -y ./mkpsxiso-2.03-Linux.rpm
+			elif [[ $wget_ret == 0 ]]; then
+                                rm -f ./mkpsxiso-2.03-Linux.rpm
+				$check_wget -O $(pwd)/mkpsxiso-2.03-Linux.rpm "https://github.com/Lameguy64/mkpsxiso/releases/download/v2.03/mkpsxiso-2.03-Linux.rpm"
+                                elevatePrivs dnf install -y ./mkpsxiso-2.03-Linux.rpm
+			fi
+
+		fi
+
+	fi
+
 
 	if [[ ! -f "/lib/libmpfr.so.4" ]] ; then
 		if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so" ]] ; then
