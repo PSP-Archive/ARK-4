@@ -856,6 +856,8 @@ void resetSettings() {
     custom_config.push_back("\n");
     custom_config.push_back("# Luxor doesn't like Inferno Cache\n");
     custom_config.push_back("ULUS10201, infernocache, off\n");
+    custom_config.push_back("# Enable Extra RAM on GTA LCS and VCS\n");
+    custom_config.push_back("ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on\n");
 
     saveSettings();
     
