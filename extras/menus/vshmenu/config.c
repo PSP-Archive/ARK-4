@@ -202,9 +202,7 @@ void reset_ark_settings(vsh_Menu *vsh){
     	"# Luxor doesn't like Inferno Cache\n"
     	"ULUS10201, infernocache, off\n"
     	"# Enable Extra RAM on GTA LCS and VCS\n"
-    	"ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on\n"
-    	"# AC Bloodlines crashes with extra RAM\n"
-    	"ULES01367, highmem, off\n";
+    	"ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on\n";
 
     char arkMenuPath[ARK_PATH_SIZE];
     char arkSettingsPath[ARK_PATH_SIZE];
