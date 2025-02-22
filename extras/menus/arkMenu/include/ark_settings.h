@@ -858,8 +858,6 @@ void resetSettings() {
     custom_config.push_back("ULUS10201, infernocache, off\n");
     custom_config.push_back("# Enable Extra RAM on GTA LCS and VCS\n");
     custom_config.push_back("ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on\n");
-    custom_config.push_back("# AC Bloodlines crashes with extra RAM\n");
-    custom_config.push_back("ULES01367, highmem, off\n");
 
     saveSettings();
     
