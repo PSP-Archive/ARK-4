@@ -200,7 +200,9 @@ void reset_ark_settings(vsh_Menu *vsh){
     	"always, noanalog, off\n"
     	"always, qaflags, on\n"
     	"# Luxor doesn't like Inferno Cache\n"
-    	"ULUS10201, infernocache, off";
+    	"ULUS10201, infernocache, off\n"
+    	"# Enable Extra RAM on GTA LCS and VCS\n"
+    	"ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on";
 
     char arkMenuPath[ARK_PATH_SIZE];
     char arkSettingsPath[ARK_PATH_SIZE];
