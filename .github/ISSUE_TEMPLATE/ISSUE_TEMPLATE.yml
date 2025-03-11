@@ -68,62 +68,42 @@ body:
     attributes:
       label: USB Charge
       options:
-       - Disabled
-       - Always
-       - Game
-       - UMD
-       - Homebrew
-       - Pops
-       - XMB
-       - Launcher
+       - "Off"
+       - "On"
     validations:
       required: true
     
   - type: dropdown
-    id: overclock
+    id: clock-game
     attributes:
-      label: Overclock 
+      label: CPU Clock in Game
       options:
-       - Disabled
-       - Always
-       - Game
-       - UMD
-       - Homebrew
-       - Pops
-       - XMB
-       - Launcher
+       - Auto
+       - Overclock
+       - Balanced
+       - PowerSave
     validations:
       required: true
   
   - type: dropdown
-    id: power-save
+    id: clock-menu
     attributes:
       label: Power Save
       options:
-       - Disabled
-       - Always
-       - Game
-       - UMD
-       - Homebrew
-       - Pops
-       - XMB
-       - Launcher
+       - Auto
+       - Overclock
+       - Balanced
+       - PowerSave
     validations:
       required: true
 
   - type: dropdown
-    id: Balanced-Energy-Mode
+    id: wpa2
     attributes:
-      label: Balanced Energy Mode 
+      label: WPA2
       options:
-       - Disabled
-       - Always
-       - Game
-       - UMD
-       - Homebrew
-       - Pops
-       - XMB
-       - Launcher
+       - "Off"
+       - "On"
     validations:
       required: true
 
@@ -150,16 +130,10 @@ body:
   - type: dropdown
     id: unlock-extra-mem
     attributes:
-      label: Unlock Extra Memory
+      label: Use Extra Memory
       options:
-       - Disabled
-       - Always
-       - Game
-       - UMD
-       - Homebrew
-       - Pops
-       - XMB
-       - Launcher
+       - Auto
+       - Forced
     validations:
       required: true
         
@@ -168,14 +142,8 @@ body:
     attributes:
       label: Memory Stick Speedup
       options:
-       - Disabled
-       - Always
-       - Game
-       - UMD
-       - Homebrew
-       - Pops
-       - XMB
-       - Launcher
+       - "Off"
+       - "On"
     validations:
       required: true
   
@@ -196,7 +164,9 @@ body:
        label: Skip Sony Logos 
        options:
         - "Off"
-        - "On"
+        - All
+        - GameBoot
+        - ColdBoot
     validations:
        required: true
 
@@ -235,16 +205,49 @@ body:
     attributes:
        label: Turn off LEDs 
        options:
-        - Disabled
-        - Always
-        - Game
-        - UMD
-        - Homebrew
-        - Pops
-        - XMB
-        - Launcher
+        - "Off"
+        - "On"
     validations:
        required: true
+
+  - type: dropdown
+    id: umd-drive
+    attributes:
+       label: Disable UMD Drive
+       options:
+        - "Off"
+        - "On"
+    validations:
+       required: true
+
+  - type: dropdown
+    id: analog-stick
+    attributes:
+       label: Disable Analog Stick
+       options:
+        - "Off"
+        - "On"
+    validations:
+       required: true
+
+  - type: dropdown
+    id: qa-flags
+    attributes:
+       label: Enable QA Flags
+       options:
+        - "Off"
+        - "On"
+    validations:
+       required: true
+
+  - type: textarea
+    attributes:
+      label: Custom settings
+      description: "Please list all additional settings from SETTINGS.TXT here if you have any. You can learn about it [here](https://github.com/PSP-Archive/ARK-4/wiki/settings)."
+      placeholder: |
+        "ABXY01234, overclock, on" 
+        "XYAB12345, infernocache:rr, on" 
+        "etc.."
 
   - type: checkboxes
     id: terms
