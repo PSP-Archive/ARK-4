@@ -88,7 +88,7 @@ body:
   - type: dropdown
     id: clock-menu
     attributes:
-      label: Power Save
+      label: CPU Clock in XMB
       options:
        - Auto
        - Overclock
@@ -121,6 +121,26 @@ body:
     id: disable-psp-go-pause
     attributes:
       label: Disable PSP Go Pause
+      options:
+       - "Off"
+       - "On"
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: old-plugin-support
+    attributes:
+      label: Old Plugin Support on ef0
+      options:
+       - "Off"
+       - "On"
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: keep-psp-go-pause-file
+    attributes:
+      label: Prevent hibernation deletion
       options:
        - "Off"
        - "On"
