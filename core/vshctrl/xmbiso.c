@@ -108,18 +108,24 @@ static int HideDlc(char *name) {
     SceIoStat stat;
 
     for (int i=0; i<NELEMS(game_list); i++){
-        const char *hidden_path = game_list[i];
-        sprintf(path, "%s%s/PARAM.PBP", hidden_path, name);
-        memset(&stat, 0, sizeof(stat));
-        if (sceIoGetstat(path, &stat) >= 0) {
-            sprintf(path, "%s%s/EBOOT.PBP", hidden_path, name);
 
+        const char *hidden_path = game_list[i];
+        static char* dlc_files[] = {"PARAM.PBP", "PBOOT.PBP"};
+
+        for (int j=0; j<NELEMS(dlc_files); j++){
+            sprintf(path, "%s%s/%s", hidden_path, name, dlc_files[j]);
             memset(&stat, 0, sizeof(stat));
-            if (sceIoGetstat(path, &stat) < 0) {
-                strcpy(name, "__SCE"); // hide icon
-                return 1;
+            if (sceIoGetstat(path, &stat) >= 0) {
+                sprintf(path, "%s%s/EBOOT.PBP", hidden_path, name);
+
+                memset(&stat, 0, sizeof(stat));
+                if (sceIoGetstat(path, &stat) < 0) {
+                    strcpy(name, "__SCE"); // hide icon
+                    return 1;
+                }
             }
         }
+
     }
     return 0;
 }
@@ -157,7 +163,9 @@ static int is_iso_dir(const char *path)
     return 1;
 }
 
-static int is_iso_eboot(const char* path)
+#define is_iso_eboot(path) is_iso_file(path, "/EBOOT.PBP")
+#define is_iso_manual(path) is_iso_file(path, "/DOCUMENT.DAT")
+static int is_iso_file(const char* path, const char* file)
 {
     const char *p;
 
@@ -181,7 +189,7 @@ static int is_iso_eboot(const char* path)
     p = strrchr(path, '@') + 1;
     p += 8;
 
-    if (0 != strcmp(p, "/EBOOT.PBP"))
+    if (0 != strcmp(p, file))
         return 0;
 
     return 1;
@@ -209,6 +217,13 @@ static inline int is_game_dir(const char *dirname)
 
     STRCPY_S(path, dirname);
     STRCAT_S(path, "/EBOOT.PBP");
+
+    if(0 == sceIoGetstat(path, &stat)) {
+        return 0;
+    }
+
+    STRCPY_S(path, dirname);
+    STRCAT_S(path, "/PBOOT.PBP");
 
     if(0 == sceIoGetstat(path, &stat)) {
         return 0;
@@ -429,6 +444,9 @@ SceUID gameopen(const char * file, int flags, SceMode mode)
         result = vpbp_open(file, flags, mode);
         pspSdkSetK1(k1);
     } else {
+        if (is_iso_manual(file)){
+            vpbp_fixmanualpath(file);
+        }
         result = sceIoOpen(file, flags, mode);
     }
 
@@ -496,6 +514,9 @@ int gamegetstat(const char * file, SceIoStat * stat)
         result = vpbp_getstat(file, stat);
         pspSdkSetK1(k1);
     } else {
+        if (is_iso_manual(file)){
+            vpbp_fixmanualpath(file);
+        }
         result = sceIoGetstat(file, stat);
     }
 

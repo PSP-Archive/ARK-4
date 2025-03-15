@@ -918,6 +918,24 @@ int vpbp_getstat(const char * file, SceIoStat * stat)
     return ret;
 }
 
+void vpbp_gameid(const char* isopath, char* game_id){
+    // game ID is always at offset 0x8373 within the ISO
+    int lba = 16;
+    int pos = 883;
+
+    isoOpen(isopath);
+    isoRead(game_id, lba, pos, 10);
+    isoClose();
+
+    // remove the dash in the middle: ULUS-01234 -> ULUS01234
+    game_id[4] = game_id[5];
+    game_id[5] = game_id[6];
+    game_id[6] = game_id[7];
+    game_id[7] = game_id[8];
+    game_id[8] = game_id[9];
+    game_id[9] = 0;
+}
+
 int has_prometheus_module(const char *isopath)
 {
     int ret;
@@ -942,25 +960,12 @@ int has_prometheus_module(const char *isopath)
 }
 
 int has_update_file(const char* isopath, char* update_file){
-    // game ID is always at offset 0x8373 within the ISO
-    int lba = 16;
-    int pos = 883;
 
     char game_id[10];
 
     int k1 = pspSdkSetK1(0);
 
-    isoOpen(isopath);
-    isoRead(game_id, lba, pos, 10);
-    isoClose();
-
-    // remove the dash in the middle: ULUS-01234 -> ULUS01234
-    game_id[4] = game_id[5];
-    game_id[5] = game_id[6];
-    game_id[6] = game_id[7];
-    game_id[7] = game_id[8];
-    game_id[8] = game_id[9];
-    game_id[9] = 0;
+    vpbp_gameid(isopath, game_id);
 
     // try to find the update file
     static char* devs[] = {"ms0:", "ef0:"};
@@ -978,6 +983,23 @@ int has_update_file(const char* isopath, char* update_file){
     // not found
     pspSdkSetK1(k1);
     return 0;
+}
+
+void vpbp_fixmanualpath(char* file){
+
+    char game_id[10];
+    VirtualPBP* vpbp = get_vpbp_by_path(file);
+    if (vpbp == NULL) return;
+
+    int k1 = pspSdkSetK1(0);
+    vpbp_gameid(vpbp->name, game_id);
+    pspSdkSetK1(k1);
+
+    char* tmp = strrchr(file, '/');
+    *tmp = 0;
+    
+    tmp = strrchr(file, '/');
+    sprintf(tmp+1, "%s/DOCUMENT.DAT", game_id);
 }
 
 typedef struct _pspMsPrivateDirent {
