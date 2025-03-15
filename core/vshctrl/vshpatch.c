@@ -442,9 +442,14 @@ static void patch_vsh_module(SceModule2 * mod)
         }
         
     }
+
+    hookImportByNID((SceModule *)mod, "sceVshBridge", 0x21D4D038, homebrewloadexec);
+    hookImportByNID((SceModule *)mod, "sceVshBridge", 0xE533E98C, homebrewloadexec);
+    u32 vshloadexec_nids[] = {0xB8B07CAF, 0x791FCD43, 0x01730088, 0x5B7F3339};
+    for (int i=0; i<NELEMS(vshloadexec_nids); i++){
+        hookImportByNID((SceModule *)mod, "sceVshBridge", vshloadexec_nids[i], umdemuloadexec);
+    }
     
-    hookImportByNID((SceModule *)mod, "sceVshBridge", 0x21D4D038, gameloadexec);
-    hookImportByNID((SceModule *)mod, "sceVshBridge", 0xE533E98C, gameloadexec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x63E69956, umdLoadExec);
     hookImportByNID((SceModule *)mod, "sceVshBridge", 0x81682A40, umdLoadExecUpdater);
     if(psp_model == PSP_GO && has_umd_iso) {

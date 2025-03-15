@@ -618,8 +618,7 @@ int loadReboot150()
     return res;
 }
 
-//load and execute file
-int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
+int homebrewloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
     //result
     int result = -1;
@@ -627,13 +626,8 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     Fix150Path(file);
     Fix150Path(param->argp);
 
-    //virtual iso eboot detected
-    if (is_iso_eboot(file)) {
-        u32 k1 = pspSdkSetK1(0);
-        result = vpbp_loadexec(file, param);
-        pspSdkSetK1(k1);
-        return result;
-    }
+    sctrlSESetBootConfFileIndex(0);
+    sctrlSESetUmdFile("");
 
     // fix 1.50 homebrew
     char *perc = strchr(param->argp, '%');
@@ -657,6 +651,31 @@ int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 
     //forward to ef0 handler
     else result = sctrlKernelLoadExecVSHEf2(file, param);
+
+    return result;
+}
+
+int umdemuloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
+{
+    //result
+    int result = -1;
+
+    //virtual iso eboot detected
+    if (is_iso_eboot(file)) {
+        u32 k1 = pspSdkSetK1(0);
+        result = vpbp_loadexec(file, param);
+        pspSdkSetK1(k1);
+        return result;
+    }
+
+    sctrlSESetBootConfFileIndex(0);
+    sctrlSESetUmdFile("");
+
+    //forward to ms0 handler
+    if(strncmp(file, "ms", 2) == 0)
+        result = sctrlKernelLoadExecVSHWithApitype(0x123, file, param);
+    //forward to ef0 handler
+    else result = sctrlKernelLoadExecVSHWithApitype(0x125, file, param);
 
     return result;
 }

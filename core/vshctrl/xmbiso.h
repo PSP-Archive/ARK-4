@@ -59,7 +59,8 @@ int gameremove(const char * file);
 int gamermdir(const char * path);
 
 //load and execute file
-int gameloadexec(char * file, struct SceKernelLoadExecVSHParam * param);
+int homebrewloadexec(char * file, struct SceKernelLoadExecVSHParam * param);
+int umdemuloadexec(char * file, struct SceKernelLoadExecVSHParam * param);
 
 //rename file
 int gamerename(const char *oldname, const char *newfile);
