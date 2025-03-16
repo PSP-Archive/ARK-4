@@ -985,21 +985,22 @@ int has_update_file(const char* isopath, char* update_file){
     return 0;
 }
 
-void vpbp_fixmanualpath(char* file){
+void vpbp_fixisopath(char* path){
 
     char game_id[10];
-    VirtualPBP* vpbp = get_vpbp_by_path(file);
+    VirtualPBP* vpbp = get_vpbp_by_path(path);
     if (vpbp == NULL) return;
 
     int k1 = pspSdkSetK1(0);
     vpbp_gameid(vpbp->name, game_id);
     pspSdkSetK1(k1);
 
-    char* tmp = strrchr(file, '/');
+    char* tmp = strrchr(path, '/');
+    char* filename = tmp+1;
     *tmp = 0;
     
-    tmp = strrchr(file, '/');
-    sprintf(tmp+1, "%s/DOCUMENT.DAT", game_id);
+    tmp = strrchr(path, '/');
+    sprintf(tmp+1, "%s/%s", game_id, filename);
 }
 
 typedef struct _pspMsPrivateDirent {

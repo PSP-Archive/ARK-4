@@ -33,6 +33,7 @@ SUBDIRS = libs \
 	extras/modules/usbdevice \
 	extras/modules/idsregeneration \
 	extras/modules/kbooti_update \
+	extras/modules/deadef \
 	loader/live/user/linkless_payload \
 	loader/live/user/signed_eboot \
 	loader/live/user/psxloader \
@@ -307,6 +308,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/kbooti_update
 	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
+	$(Q)$(MAKE) $@ -C extras/modules/deadef
 	$(Q)$(MAKE) $@ -C extras/apps/updater/
 	$(Q)$(MAKE) $@ -C extras/apps/installer/
 	$(Q)$(MAKE) $@ -C extras/apps/uninstaller

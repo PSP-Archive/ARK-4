@@ -165,6 +165,8 @@ static int is_iso_dir(const char *path)
 
 #define is_iso_eboot(path) is_iso_file(path, "/EBOOT.PBP")
 #define is_iso_manual(path) is_iso_file(path, "/DOCUMENT.DAT")
+#define is_iso_update(path) is_iso_file(path, "/PBOOT.PBP")
+#define is_iso_dlc(path) is_iso_file(path, "/PARAM.PBP")
 static int is_iso_file(const char* path, const char* file)
 {
     const char *p;
@@ -444,8 +446,8 @@ SceUID gameopen(const char * file, int flags, SceMode mode)
         result = vpbp_open(file, flags, mode);
         pspSdkSetK1(k1);
     } else {
-        if (is_iso_manual(file)){
-            vpbp_fixmanualpath(file);
+        if (is_iso_manual(file) || is_iso_update(file)){
+            vpbp_fixisopath(file);
         }
         result = sceIoOpen(file, flags, mode);
     }
@@ -514,8 +516,8 @@ int gamegetstat(const char * file, SceIoStat * stat)
         result = vpbp_getstat(file, stat);
         pspSdkSetK1(k1);
     } else {
-        if (is_iso_manual(file)){
-            vpbp_fixmanualpath(file);
+        if (is_iso_manual(file) || is_iso_update(file)){
+            vpbp_fixisopath(file);
         }
         result = sceIoGetstat(file, stat);
     }
