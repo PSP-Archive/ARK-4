@@ -532,7 +532,7 @@ static void settingsDisabler(char* path){
 }
 
 void LoadPlugins(){
-    if (disable_plugins)
+    if (disable_plugins || sceKernelFindModuleByName("DesCemManager")!=NULL)
         return; // don't load plugins in recovery mode
     is_plugins_loading = 1;
     // allocate resources
