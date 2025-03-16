@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <kubridge.h>
+#include <pspthreadman.h>
 
 #include "scepaf.h"
 #include "vpl.h"
@@ -26,14 +27,19 @@ void exec_recovery_menu(vsh_Menu *vsh) {
     	sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
     }
     else {
+		SceUID modid = kuKernelLoadModule("ms0:/PSP/SAVEDATA/ARK_01234/RECOVERY.PRX", 0, NULL);
+		if(modid >= 0) {
+			int res = sceKernelStartModule(modid, strlen("ms0:/PSP/SAVEDATA/ARK_01234/RECOVERY.PRX"), (void*)"ms0:/PSP/SAVEDATA/ARK_01234/RECOVERY.PRX", NULL, NULL);
+		}
     	// reboot system in recovery mode
-    	vsh->config.ark.recovery = 1;
+    	/*vsh->config.ark.recovery = 1;
     	struct KernelCallArg args;
     	args.arg1 = &(vsh->config.ark);
     	u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
     	kuKernelCall((void*)setArkConfig, &args);
 
     	vsh->status.reset_vsh = 1;
+		*/
     }
 }
 
