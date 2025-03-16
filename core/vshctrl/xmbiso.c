@@ -110,7 +110,7 @@ static int HideDlc(char *name) {
     for (int i=0; i<NELEMS(game_list); i++){
 
         const char *hidden_path = game_list[i];
-        static char* dlc_files[] = {"PARAM.PBP", "PBOOT.PBP"};
+        static char* dlc_files[] = {"PARAM.PBP", "PBOOT.PBP", "DOCUMENT.DAT"};
 
         for (int j=0; j<NELEMS(dlc_files); j++){
             sprintf(path, "%s%s/%s", hidden_path, name, dlc_files[j]);
