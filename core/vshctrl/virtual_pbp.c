@@ -972,10 +972,10 @@ int has_update_file(const char* isopath, char* update_file){
 
     for (int i=0; i<2; i++){
         sprintf(update_file, "%s/PSP/GAME/%s/PBOOT.PBP", devs[i], game_id);
-        int fd = sceIoOpen(update_file, PSP_O_RDONLY, 0777);
-        if (fd >= 0){
+        SceIoStat stat;
+        int res = sceIoGetstat(update_file, &stat);
+        if (res >= 0){
             // found
-            sceIoClose(fd);
             pspSdkSetK1(k1);
             return 1;
         }
