@@ -216,25 +216,15 @@ static inline int is_game_dir(const char *dirname)
         return 0;
     }
 
-    STRCPY_S(path, dirname);
-    STRCAT_S(path, "/EBOOT.PBP");
+    static const char* game_files[] = {"/EBOOT.PBP", "/PBOOT.PBP", "/PARAM.PBP"};
 
-    if(0 == sceIoGetstat(path, &stat)) {
-        return 0;
-    }
+    for (int i=0; i<NELEMS(game_files); i++){
+        STRCPY_S(path, dirname);
+        STRCAT_S(path, game_files[i]);
 
-    STRCPY_S(path, dirname);
-    STRCAT_S(path, "/PBOOT.PBP");
-
-    if(0 == sceIoGetstat(path, &stat)) {
-        return 0;
-    }
-
-    STRCPY_S(path, dirname);
-    STRCAT_S(path, "/PARAM.PBP");
-
-    if(0 == sceIoGetstat(path, &stat)) {
-        return 0;
+        if(0 == sceIoGetstat(path, &stat)) {
+            return 0;
+        }
     }
 
     return 1;
