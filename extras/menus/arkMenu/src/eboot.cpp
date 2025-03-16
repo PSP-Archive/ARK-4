@@ -139,9 +139,6 @@ string Eboot::fullEbootPath(string path, string app){
 
     else if (common::fileExists(path+app+VBOOT_PBP))
         return path+app+VBOOT_PBP; // ARK EBOOT
-    
-    else if (common::getConf()->scan_dlc && common::fileExists(path+app+"/PBOOT.PBP"))
-        return path+app+"/PBOOT.PBP"; // DLC
 
     else if (common::fileExists(path+app+"/EBOOT.PBP"))
         return path+app+"/EBOOT.PBP"; // Normal EBOOT
@@ -262,6 +259,12 @@ void Eboot::executePSN(const char* path){
     memset(&param, 0, sizeof(param));
     
     int runlevel = (*(u32*)path == EF0_PATH)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL; // PSN games must always be redirected
+
+    string pboot_path = string(path);
+    pboot_path = pboot_path.substr(0, pboot_path.rfind('/')+1) + "PBOOT.PBP";
+    if (common::getConf()->scan_dlc && common::fileExists(pboot_path)){
+        runlevel = (*(u32*)path == EF0_PATH)? ISO_PBOOT_RUNLEVEL_GO : ISO_PBOOT_RUNLEVEL;
+    }
 
     param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
     param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
