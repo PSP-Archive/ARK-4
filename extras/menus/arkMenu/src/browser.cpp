@@ -1230,7 +1230,7 @@ void Browser::copyFolder(string path){
     if(!strncmp(path.c_str(), this->cwd.c_str(), path.length())) //avoid inception
         return;
     
-    Folder* f = new Folder(path, "");
+    Folder* f = new Folder(path);
     
     string destination = checkDestExists(path, this->cwd, f->getName().substr(0, f->getName().length()-1));
     
