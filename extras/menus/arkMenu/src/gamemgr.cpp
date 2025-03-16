@@ -522,15 +522,12 @@ void GameManager::gameOptionsMenu(){
         // create a new options menu but each entry is some info about the game
         Entry* e = this->getEntry();
         string path = e->getPath();
-        if (e->getType() == string("EBOOT")){
-            path = path.substr(0, path.rfind('/')+1);
-        }
         SfoInfo info = e->getSfoInfo();
         string game_info[] = {
             info.title,
             info.gameid,
-            e->getPath(),
-            common::beautifySize(Browser::recursiveSize(path))
+            path,
+            common::beautifySize(common::fileSize(path))
         };
         string fullname = TR("Name") + " - " + game_info[0];
         string gameid = TR("Game ID") + " - " + game_info[1];
