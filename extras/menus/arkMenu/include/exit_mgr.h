@@ -14,6 +14,7 @@ extern "C"{
 }
 
 static t_options_entry exit_opts[] = {
+    {-1, "Cancel"},
     {0, "Exit"},
     {1, "Restart"},
     {2, "Shutdown"},
@@ -23,6 +24,7 @@ class ExitManager : public SystemEntry{
 
     /* Options Menu instance, will be drawn by the draw thread if it's different from null */
     OptionsMenu* optionsmenu;
+    bool canceled;
 
     public:
         //ExitManager(){ optionsmenu = NULL; };
@@ -30,14 +32,15 @@ class ExitManager : public SystemEntry{
             if (optionsmenu) optionsmenu->draw();
         };
         void control(Controller* pad){
+            if (canceled) return;
             common::saveConf();
             if (optionsmenu){
                 int ret = optionsmenu->control();
                 switch (ret){
+                    case -1:
+                        canceled = true;
+                        break;
                     case 0:
-                        sctrlSESetUmdFile("");
-                          sctrlSESetBootConfFileIndex(MODE_UMD);
-                        sctrlKernelExitVSH(NULL);
                         break;
                     case 1:
                         scePowerRequestColdReset(0);
@@ -50,20 +53,23 @@ class ExitManager : public SystemEntry{
                 optionsmenu = NULL;
                 delete aux;
             }
-            else {
+            if (!canceled){
                 sctrlSESetUmdFile("");
-                  sctrlSESetBootConfFileIndex(MODE_UMD);
+                sctrlSESetBootConfFileIndex(MODE_UMD);
                 sctrlKernelExitVSH(NULL);
             }
         };
         void pause(){};
         void resume(){
+            canceled = false;
+            int nopts;
             if (IS_PSP(common::getArkConfig())){
-                optionsmenu = new OptionsMenu("", sizeof(exit_opts)/sizeof(t_options_entry), exit_opts);
+                nopts = sizeof(exit_opts)/sizeof(t_options_entry);
             }
             else{
-                optionsmenu = NULL;
+                nopts = 2;
             }
+            optionsmenu = new OptionsMenu("", nopts, exit_opts);
         };
         std::string getInfo(){return "Exit";};
         void setInfo(std::string info){};
