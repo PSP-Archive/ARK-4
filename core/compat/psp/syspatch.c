@@ -11,6 +11,7 @@
 #include <systemctrl_private.h>
 #include <pspiofilemgr.h>
 #include <pspgu.h>
+#include <pspsysevent.h>
 #include <functions.h>
 #include "exitgame.h"
 #include "region_free.h"
@@ -124,12 +125,14 @@ static int sceGpioPortReadPatched(void) {
     return GPRValue;
 }
 
+int (*_sceSysconCtrlLEDOrig)(int, int);
 void disableLEDs(){
     if (se_config->noled){
         int (*_sceSysconCtrlLED)(int, int);
         _sceSysconCtrlLED = sctrlHENFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x18BFBE65);
         for (int i=0; i<4; i++) _sceSysconCtrlLED(i, 0);
-        MAKE_DUMMY_FUNCTION_RETURN_0(_sceSysconCtrlLED);
+        static u32 dummy[2] = {JR_RA, LI_V0(0)};
+        HIJACK_FUNCTION(_sceSysconCtrlLED, dummy, _sceSysconCtrlLEDOrig);
         flushCache();
     }
 }
@@ -411,3 +414,19 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
     if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
     return -1;
 }
+
+static int power_event_handler(int ev_id, char *ev_name, void *param, int *result){
+    if( ev_id == 0x400000) { // resume complete
+        if (se_config->noled && _sceSysconCtrlLEDOrig){
+            for (int i=0; i<4; i++) _sceSysconCtrlLEDOrig(i, 0);
+        }
+    }
+    return 0;
+}
+
+PspSysEventHandler g_power_event = {
+    .size = sizeof(g_power_event),
+    .name = "pspSysEvent",
+    .type_mask = 0x00FFFF00, // both suspend / resume
+    .handler = &power_event_handler,
+};

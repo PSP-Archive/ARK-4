@@ -10,6 +10,7 @@
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
 #include <pspiofilemgr.h>
+#include <pspsysevent.h>
 #include <pspgu.h>
 #include <functions.h>
 #include "exitgame.h"
@@ -27,6 +28,8 @@ u32 psp_model = 0;
 
 ARKConfig* ark_config = NULL;
 SEConfig* se_config = NULL;
+
+extern PspSysEventHandler g_power_event;
 
 extern void PSPOnModuleStart(SceModule2 * mod);
 extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
@@ -77,6 +80,9 @@ int module_start(SceSize args, void * argp)
     
     // Register custom start module
     prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
+
+    // Register Power Event Handler
+    sceKernelRegisterSysEventHandler(&g_power_event);
     
     // Return Success
     return 0;
