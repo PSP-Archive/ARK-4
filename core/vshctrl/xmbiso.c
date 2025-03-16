@@ -188,8 +188,7 @@ static int is_iso_file(const char* path, const char* file)
         return 0;
     }
 
-    p = strrchr(path, '@') + 1;
-    p += 8;
+    p = strrchr(path, '@') + 9;
 
     if (0 != strcmp(p, file))
         return 0;
