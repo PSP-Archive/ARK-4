@@ -329,7 +329,7 @@ int sctrlKernelSetInitKeyConfig(int key)//old sctrlKernelSetInitMode
 int sctrlKernelMsIsEf(){
     int k1 = pspSdkSetK1(0);
     int apitype = sceKernelInitApitype();
-    int res = (apitype == 0x155 || apitype == 0x125 || apitype == 0x152);
+    int res = (apitype == 0x125 || apitype ==  0x126 || apitype == 0x152 || apitype == 0x155);
     pspSdkSetK1(k1);
     return res;
 }
