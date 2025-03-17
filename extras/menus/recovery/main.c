@@ -1,6 +1,7 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <pspdebug.h>
+#include <pspdisplay.h>
 #include <pspctrl.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
@@ -37,6 +38,53 @@ void* malloc(size_t size){
 
 void free(void* ptr){
     my_free(ptr);
+}
+
+SceUID get_thread_id(const char *name)
+{
+	int ret, count, i;
+	SceUID ids[128];
+
+	ret = sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, sizeof(ids), &count);
+
+	if(ret < 0) {
+		return -1;
+	}
+
+	for(i=0; i<count; ++i) {
+		SceKernelThreadInfo info;
+
+		info.size = sizeof(info);
+		ret = sceKernelReferThreadStatus(ids[i], &info);
+
+		if(ret < 0) {
+			continue;
+		}
+
+		if(0 == strcmp(info.name, name)) {
+			return ids[i];
+		}
+	}
+
+	return -2;
+}
+
+void suspend_thread(const char *thread_name)
+{
+	int ret;
+
+	ret = get_thread_id(thread_name);
+
+	sceKernelSuspendThread(ret);
+}
+
+void suspend_vsh_thread(void)
+{
+	sceDisplayWaitVblankStart();
+	suspend_thread("SCE_VSH_GRAPHICS");
+	suspend_thread("movie_player");
+	suspend_thread("audio_buffer");
+	suspend_thread("music_player");
 }
 
 static char* findRecoveryApp(){
@@ -190,6 +238,7 @@ static void draw(char** options, int size, int dir){
 
 int main(SceSize args, void *argp) {
 
+	suspend_vsh_thread();
     pspDebugScreenInit();
 
     if (is_launcher_mode){
