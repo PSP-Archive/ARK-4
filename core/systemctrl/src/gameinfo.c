@@ -117,6 +117,7 @@ int getGameId(char* gameid){
     return res;
 }
 
+// Fixed Game Info Getter Function
 void * SysMemForKernel_EF29061C_Fixed(void)
 {
 
