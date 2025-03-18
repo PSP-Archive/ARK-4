@@ -41,7 +41,6 @@ static void patch_vsh_module_for_pspgo_umdvideo(SceModule2 *mod)
 STMOD_HANDLER prev = NULL;
 int OnModuleStart(SceModule2* mod){
 
-
 	if (strcmp(mod->modname, "sceEFlash_driver") == 0){
 		MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr);
 		flushCache();

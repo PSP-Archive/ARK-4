@@ -112,6 +112,8 @@ copy-bin:
 	$(Q)cp extras/menus/vshmenu/satelite.prx dist/ARK_01234/VSHMENU.PRX # New Default & Advanced VSH Menu
 	$(Q)cp extras/apps/installer/EBOOT.PBP dist/PSP/ARK_Full_Installer # Full installer
 	$(Q)cp contrib/PSP/fatms371mod/*.prx dist/PSP/ARK_Full_Installer/kd/ # Full installer
+	$(Q)cp extras/modules/deadef/pspbtcnf_05g_deaf.bin dist/PSP/ARK_Full_Installer/kd/pstbtcnf_05g.bin # deadef for Full installer
+	$(Q)cp extras/modules/deadef/deadef.prx dist/PSP/ARK_Full_Installer/kd/ # deadef for Full installer
 	$(Q)cp core/compat/psp/btcnf/pstbtcnf_tt.bin dist/PSP/ARK_Full_Installer/TT/pstbtcnf.bin
 	$(Q)cp core/compat/psp/btcnf/pstbtcnf_dt.bin dist/PSP/ARK_Full_Installer/DT/pstbtcnf.bin
 	$(Q)cp contrib/PSP/pops_01g.prx dist/PSP/ARK_Full_Installer/kd/
@@ -318,7 +320,6 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/150kernel/vshctrl150
 	$(Q)$(MAKE) $@ -C extras/150kernel/tmctrl150
 	$(Q)$(MAKE) $@ -C extras/150kernel/vshmenu150
-	$(Q)$(MAKE) $@ -C extras/150kernel/vshctrl150
 	$(Q)$(MAKE) $@ -C extras/150kernel/installer
 	$(Q)$(MAKE) $@ -C loader/live/FinalSpeed
 	$(Q)$(MAKE) $@ -C loader/live/user/linkless_payload

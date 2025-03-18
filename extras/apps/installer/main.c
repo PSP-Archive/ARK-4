@@ -38,6 +38,7 @@ PSP_HEAP_SIZE_KB(4096);
 ARKConfig ark_config;
 
 static u32 fatms371_uninstall = 0;
+static u32 deadef_uninstall = 0;
 
 void open_flash();
 
@@ -191,6 +192,34 @@ void fatms371_mod(u32 _uninstall) {
     sceKernelExitGame();
 }
 
+void deadef_mod(u32 _uninstall) {
+
+    static char* deadef_files[] = { "kd/pstbtcnf_05g.bin", "kd/deadef.prx" };
+    SceIoStat stat;
+
+    open_flash();
+    for (int i=0; i<NELEMS(deadef_files); i++){
+        char flash_path[256];
+        sprintf(flash_path, "flash0:/%s", deadef_files[i]);
+    	if(!_uninstall) {
+            if (sceIoGetstat(deadef_files[i], &stat) >= 0){
+                printf("Installing %s\n", flash_path);
+                copy_file(deadef_files[i], flash_path);
+            }
+    	}
+    	else {
+    		if (sceIoGetstat(flash_path, &stat) >= 0){
+                printf("Removing %s\n", flash_path);
+    			sceIoRemove(flash_path);
+            }
+    	}
+
+    }
+    printf("\n\nExiting...\n");
+    sceKernelDelayThread(1000000);
+    sceKernelExitGame();
+}
+
 //from ospbt by cory1492
 void wait_release(unsigned int buttons)
 {
@@ -240,7 +269,7 @@ int main(int argc, char * argv[])
     while(1) {
 
     	if(kuKernelGetModel() == PSP_GO) {
-    		if(cursor > 2)
+    		if(cursor > 3)
     			cursor = 0;
     	}
     	if(sctrlHENIsToolKit()) {
@@ -248,12 +277,10 @@ int main(int argc, char * argv[])
     			cursor = 0;
     	}
     	else if(!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && cursor > 3) cursor = 0;
-    	if(cursor < 0) { 
-    		if(kuKernelGetModel() == PSP_GO)
-    			cursor = 2;
+    	if(cursor < 0) {
     		if(sctrlHENIsToolKit())
     			cursor = 4;
-    		if(!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO)
+    		else
     			cursor = 3;
     	}
 
@@ -287,19 +314,31 @@ int main(int argc, char * argv[])
     	else if((kuKernelGetModel() == PSP_GO)) {
     		if(cursor == 2)
     			setbcolor(GRAY);
-    		printfc(3, 6, " Exit                 ");
+			SceIoStat stat;
+    		int cnf_check = sceIoGetstat("flash0:/kd/pstbtcnf_05g.bin", &stat);
+    		int deadef_check = sceIoGetstat("flash0:/kd/deadef.prx", &stat);
+    		if( cnf_check >= 0 || deadef_check >= 0) {
+    			deadef_uninstall = 1;
+    			printfc(3, 6, " Uninstall DeadEf mod ");
+    		}
+    		else {
+    			printfc(3, 6, " Install DeadEf mod ");
+    		}
+			setbcolor(BLACK);
+			if(cursor == 3)
+    			setbcolor(GRAY);
+    		printfc(3, 7, " Exit                 ");
     		setbcolor(BLACK);
     	}
     	else if(!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO) {
     		if(cursor == 2)
     			setbcolor(GRAY);
-    		int fatms371_check = sceIoOpen("flash0:/kd/_fatms371.prx", PSP_O_RDONLY, 0);
-    		int fatms371_help_check = sceIoOpen("flash0:/kd/_fatmshlp.prx", PSP_O_RDONLY, 0);
+			SceIoStat stat;
+    		int fatms371_check = sceIoGetstat("flash0:/kd/_fatms371.prx", &stat);
+    		int fatms371_help_check = sceIoGetstat("flash0:/kd/_fatmshlp.prx", &stat);
     		if( fatms371_check >= 0 || fatms371_help_check >= 0) {
     			fatms371_uninstall = 1;
     			printfc(3, 6, " Uninstall fatms371_mod ");
-    			sceIoClose(fatms371_check);
-    			sceIoClose(fatms371_help_check);
     		}
     		else {
     			printfc(3, 6, " Install fatms371_mod ");
@@ -342,9 +381,13 @@ int main(int argc, char * argv[])
     		if(cursor == 2 && sctrlHENIsToolKit())
     			pops4tool();
     		if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && fatms371_uninstall == 0)
-    			fatms371_mod(NULL);
+    			fatms371_mod(0);
     		if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && fatms371_uninstall == 1)
     			fatms371_mod(1);
+			if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() == PSP_GO && deadef_uninstall == 0)
+				deadef_mod(0);
+				if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() == PSP_GO && deadef_uninstall == 1)
+				deadef_mod(1);
     		if(cursor == 2 && (kuKernelGetModel() == PSP_GO)) {
     			printf("\n\nExiting...\n");
     			sceKernelDelayThread(1000000);
@@ -356,7 +399,7 @@ int main(int argc, char * argv[])
     			sceKernelExitGame();
     		}
     		if(cursor == 3 && sctrlHENIsToolKit() && fatms371_uninstall == 0)
-    			fatms371_mod(NULL);
+    			fatms371_mod(0);
     		if(cursor == 3 && sctrlHENIsToolKit() && fatms371_uninstall == 1)
     			fatms371_mod(1);
     		if(cursor == 4 && sctrlHENIsToolKit()) {
