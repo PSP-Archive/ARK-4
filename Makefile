@@ -25,6 +25,7 @@ SUBDIRS = libs \
 	core/compat/pentazemin/rebootex \
 	core/compat/pentazemin/btcnf \
 	core/compat/pentazemin \
+	extras/modules/bsod \
 	extras/modules/iop \
 	extras/modules/ipl_update \
 	extras/modules/kpspident \
@@ -302,6 +303,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/menus/arkMenu
 	$(Q)$(MAKE) $@ -C extras/menus/vshmenu
 	$(Q)$(MAKE) $@ -C extras/menus/xMenu
+	$(Q)$(MAKE) $@ -C extras/modules/bsod
 	$(Q)$(MAKE) $@ -C extras/modules/iop
 	$(Q)$(MAKE) $@ -C extras/modules/peops
 	$(Q)$(MAKE) $@ -C extras/modules/xmbctrl
