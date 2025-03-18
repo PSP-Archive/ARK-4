@@ -122,23 +122,27 @@ void * SysMemForKernel_EF29061C_Fixed(void)
 {
 
     // Default Game ID
-    static const char * defaultid = "HOME00000";
+    static const struct {
+        unsigned char unk[0x44];
+        char id[9];
+        char empty;
+    } defaultid = { {0}, "HOME00000", '\0' };
 
     // Find Function
     void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
     
     // Function unavailable (how?!)
-    if(SysMemForKernel_EF29061C == NULL) return defaultid;
+    if(SysMemForKernel_EF29061C == NULL) return &defaultid;
     
     // Get Game Info Structure
     void * gameinfo = SysMemForKernel_EF29061C();
     
     // Structure unavailable
-    if(gameinfo == NULL) return defaultid;
+    if(gameinfo == NULL) return &defaultid;
     
     if (!getGameId(gameinfo+0x44)){
         // Set Default Game ID
-        memcpy(gameinfo + 0x44, defaultid, 9);
+        memcpy(gameinfo + 0x44, defaultid.id, 9);
     }
     
     // Return Game Info Structure
