@@ -103,8 +103,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     static int booted = 0;
 
     patchFileManagerImports(mod);
-    
-    patchGameInfoGetter(mod);
 
     if (strcmp(mod->modname, "PRO_Inferno_Driver") == 0){
         hookImportByNID(mod, "SystemCtrlForKernel", 0xAD9849FE, 0);

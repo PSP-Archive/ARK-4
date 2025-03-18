@@ -4,7 +4,6 @@ C_OBJS =    \
 	main.o   \
 	vlf.o     \
 	syspatch.o  \
-	gameinfo.o   \
 	vitaflash.o   \
 	popspatch.o    \
 	filesystem.o    \
