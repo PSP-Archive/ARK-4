@@ -21,6 +21,11 @@
 #include <pspiofilemgr.h>
 #include <psploadexec_kernel.h>
 
+#define ISO_RUNLEVEL 0x123
+#define ISO_RUNLEVEL_GO 0x125
+#define ISO_PBOOT_RUNLEVEL 0x124
+#define ISO_PBOOT_RUNLEVEL_GO 0x126
+
 //------ stage 1 - fake directory existence ------
 
 //open directory

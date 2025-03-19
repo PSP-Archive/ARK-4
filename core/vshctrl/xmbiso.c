@@ -683,13 +683,17 @@ int umdemuloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     sctrlSESetBootConfFileIndex(0);
     sctrlSESetUmdFile("");
 
-    //forward to ms0 handler
-    if(strncmp(file, "ms", 2) == 0)
-        result = sctrlKernelLoadExecVSHWithApitype(0x123, file, param);
-    //forward to ef0 handler
-    else result = sctrlKernelLoadExecVSHWithApitype(0x125, file, param);
+    static int apitypes[2][2] = {
+        {ISO_RUNLEVEL, ISO_PBOOT_RUNLEVEL},
+        {ISO_RUNLEVEL_GO, ISO_PBOOT_RUNLEVEL_GO}
+    };
 
-    return result;
+    int apitype = apitypes
+        [ (strncmp(file, "ms", 2) == 0)? 0:1 ]
+        [ (strstr(file, "/PBOOT.PBP") == NULL)? 0:1 ];
+
+    //forward
+    return sctrlKernelLoadExecVSHWithApitype(0x123, file, param);
 }
 
 int gamerename(const char *oldname, const char *newfile)
