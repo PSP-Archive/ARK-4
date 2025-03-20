@@ -44,6 +44,9 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct Sce
     // Elevate Permission Level
     unsigned int k1 = pspSdkSetK1(0);
     
+    if (apitype != PSP_INIT_APITYPE_DISC)
+        memset(rebootex_config.game_id, 0, 10);
+
     // Find Target Function
     int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
         = findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));

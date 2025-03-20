@@ -22,6 +22,7 @@
 #include <ark.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
+#include "rebootex.h"
 #include "plugin.h"
 #include "libs/graphics/graphics.h"
 
@@ -160,8 +161,8 @@ static int isPath(char* runlevel){
 }
 
 static int isGameId(char* runlevel){
-    char gameid[10]; memset(gameid, 0, sizeof(gameid));
-    getGameId(gameid);
+    char gameid[10];
+    memcpy(gameid, rebootex_config.game_id, sizeof(gameid));
     lowerString(gameid, gameid, strlen(gameid)+1);
     return (strstr(runlevel, gameid) != NULL);
 }

@@ -2,7 +2,7 @@
 #include <pspinit.h>
 #include <pspiofilemgr.h>
 #include <pspsysmem_kernel.h>
-#include <rebootconfig.h>
+#include <rebootex.h>
 #include <systemctrl.h>
 
 #include <ark.h>
@@ -20,8 +20,12 @@ struct LbaParams {
     int byte_size_last;  // 28
 };
 
-static const char* HOME_ID = "HOME00000";
-extern RebootConfigARK rebootex_config;
+// Default Game ID
+static const struct {
+    unsigned char unk[0x44];
+    char id[9];
+    int empty;
+} defaultdata = { {0}, "HOME00000", 0 };
 
 int readGameIdFromDisc(char* gameid){
     // Open Disc Identifier
@@ -82,12 +86,12 @@ int getGameId(char* gameid){
 
     int apitype = sceKernelInitApitype();
     if (apitype == 0x141 || apitype == 0x152 || apitype >= 0x200){
-        strcpy(gameid, HOME_ID);
+        strcpy(gameid, defaultdata.id);
         return 1;
     }
 
-    if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, HOME_ID, 9) == 0){
-        if (sceKernelFindModuleByName("sceImpose_Driver") != NULL){
+    if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, defaultdata.id, 9) == 0){
+        if (sceKernelFindModuleByName("sceMediaSync") != NULL){
             if (sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
                 res = readGameIdFromISO(rebootex_config.game_id);
             }
@@ -96,40 +100,33 @@ int getGameId(char* gameid){
             }
         }
     }
+    else res = 1;
 
-    if (gameid) memcpy(gameid, rebootex_config.game_id, 9);
+    if (gameid)
+        memcpy(gameid, rebootex_config.game_id, 9);
 
     return res;
 }
 
 // Fixed Game Info Getter Function
-void * SysMemForKernel_EF29061C_Fixed(void)
+void * getUMDDataFixed(void)
 {
-
-    // Default Game ID
-    static const struct {
-        unsigned char unk[0x44];
-        char id[9];
-        int empty;
-    } defaultid = { {0}, "HOME00000", 0 };
-
-    int res = getGameId(defaultid.id);
 
     // Find Function
     void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
     
     // Function unavailable (how?!)
-    if(SysMemForKernel_EF29061C == NULL) return &defaultid;
+    if(SysMemForKernel_EF29061C == NULL) return &defaultdata;
     
     // Get Game Info Structure
-    void * gameinfo = SysMemForKernel_EF29061C();
+    unsigned char * gameinfo = SysMemForKernel_EF29061C();
     
     // Structure unavailable
-    if(gameinfo == NULL) return &defaultid;
+    if(gameinfo == NULL) return &defaultdata;
     
-    if (res){
-        // Set Default Game ID
-        memcpy(gameinfo + 0x44, defaultid.id, 9);
+    // Set Game ID if we know it
+    if (rebootex_config.game_id[0] != 0){
+        memcpy(gameinfo + 0x44, rebootex_config.game_id, 9);
     }
     
     // Return Game Info Structure
@@ -143,7 +140,7 @@ void patchGameInfoGetter(SceModule2 * mod)
     if((mod->text_addr & 0x80000000) != 0)
     {
         // Hook Import
-        hookImportByNID(mod, "SysMemForKernel", 0xEF29061C, SysMemForKernel_EF29061C_Fixed);
+        hookImportByNID(mod, "SysMemForKernel", 0xEF29061C, getUMDDataFixed);
     }
 }
 

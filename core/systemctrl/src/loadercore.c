@@ -33,7 +33,7 @@
 #include "elf.h"
 #include "loadercore.h"
 #include "cryptography.h"
-#include "rebootconfig.h"
+#include "rebootex.h"
 #include "graphics.h"
 #include "libs/colordebugger/colordebugger.h"
 
@@ -257,6 +257,9 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // load plugins before starting mediasync
     if (!pluginLoaded && strcmp(modname, "sceMediaSync") == 0)
     {
+        // Read Game ID
+        if (rebootex_config.game_id[0] == 0)
+            getGameId(rebootex_config.game_id);
         // Load XMB Control
         loadXmbControl();
         // Load Plugins
