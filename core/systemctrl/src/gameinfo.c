@@ -52,7 +52,7 @@ int readGameIdFromPBP(char* gameid){
     return 1;
 }
 
-int readGameIdFromUmd(char* gameid){
+int readGameIdFromISO(char* gameid){
     struct LbaParams param;
     memset(&param, 0, sizeof(param));
 
@@ -78,36 +78,21 @@ int readGameIdFromUmd(char* gameid){
 
 int getGameId(char* gameid){
 
-    int res = 1;
-    char tmp[128];
+    int res = 0;
 
     int apitype = sceKernelInitApitype();
     if (apitype == 0x141 || apitype == 0x152 || apitype >= 0x200){
         strcpy(gameid, HOME_ID);
-        return res;
+        return 1;
     }
 
     if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, HOME_ID, 9) == 0){
-
-        // Find Function
-        void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
-        
-        // Function unavailable (how?!)
-        if(SysMemForKernel_EF29061C == NULL) return 0;
-        
-        // Get Game Info Structure
-        void * gameinfo = SysMemForKernel_EF29061C();
-        
-        // Structure unavailable
-        if(gameinfo == NULL) return 0;
-        memcpy(rebootex_config.game_id, gameinfo+0x44, 9);
-        
-        if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, HOME_ID, 9) == 0){
-            if (apitype == 0x144 || apitype == 0x155 || sceKernelFindModuleByName("sceNp9660_driver")!=NULL){ // PS1/PSN: read from PBP
-                res = readGameIdFromPBP(rebootex_config.game_id);
+        if (sceKernelFindModuleByName("sceImpose_Driver") != NULL){
+            if (sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
+                res = readGameIdFromISO(rebootex_config.game_id);
             }
             else {
-                res = readGameIdFromUmd(rebootex_config.game_id);
+                res = readGameIdFromPBP(rebootex_config.game_id);
             }
         }
     }
