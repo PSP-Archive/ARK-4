@@ -77,11 +77,13 @@ void applyFixesByGameId(){
         sctrlHENPatchSyscall(utilityGetParam, getParamFixed_ULJM05221);
     }
 
-    else if (strcasecmp("ULES01472", gameid) == 0 || strcasecmp("ULUS10543", gameid) == 0){ // WWE
+    // Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
+    else if (strcasecmp("ULES01472", gameid) == 0 || strcasecmp("ULUS10543", gameid) == 0){
         wwe_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
     }
 
-    else if (strcasecmp("ULES00590", gameid) == 0 || strcasecmp("ULJM05075", gameid) == 0){ // Aces of War
+    // Patch Aces of War anti-CFW check (UMD speed)
+    else if (strcasecmp("ULES00590", gameid) == 0 || strcasecmp("ULJM05075", gameid) == 0){
         void (*SetUmdDelay)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
         if (SetUmdDelay) SetUmdDelay(1);
     }
