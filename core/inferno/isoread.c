@@ -100,9 +100,6 @@ static u8 *g_ciso_block_buf = NULL;
 // 0x000024C4, size CISO_DEC_BUFFER_SIZE + (1 << g_CISO_hdr.align), align 64
 static u8 *g_ciso_dec_buf = NULL;
 
-// 0x00002704
-//static int g_CISO_cur_idx = 0;
-
 static u32 *g_cso_idx_cache = NULL;
 static int g_cso_idx_start_block = -1;
 static int g_cso_idx_cache_num = 0;
