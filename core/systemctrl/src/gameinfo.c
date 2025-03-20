@@ -91,13 +91,11 @@ int getGameId(char* gameid){
     }
 
     if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, defaultdata.id, 9) == 0){
-        if (sceKernelFindModuleByName("sceMediaSync") != NULL){
-            if (sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
-                res = readGameIdFromISO(rebootex_config.game_id);
-            }
-            else {
-                res = readGameIdFromPBP(rebootex_config.game_id);
-            }
+        if (sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
+            res = readGameIdFromISO(rebootex_config.game_id);
+        }
+        else {
+            res = readGameIdFromPBP(rebootex_config.game_id);
         }
     }
     else res = 1;

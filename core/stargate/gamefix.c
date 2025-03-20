@@ -68,7 +68,8 @@ void applyFixesByModule(SceModule2* mod){
 void applyFixesByGameId(){
     // Obtain game ID for other patches
     RebootConfigARK* reboot_config = sctrlHENGetRebootexConfig(NULL);
-    char* gameid = reboot_config->game_id;
+    char gameid[10]; memset(gameid, 0, sizeof(gameid));
+    strncpy(gameid, reboot_config->game_id, 9);
 
     // Fix TwinBee Portable when not using English or Japanese language
     if (strcasecmp("ULJM05221", gameid) == 0){
