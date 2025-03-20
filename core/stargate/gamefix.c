@@ -58,6 +58,8 @@ void applyFixesByModule(SceModule2* mod){
     // disable anti-CFW code
     else if (strcasecmp(mod->modname, "DJMAX") == 0) {
         hookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, 0);
+        void (*SetUmdDelay)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
+        if (SetUmdDelay) SetUmdDelay(1);
     }
 
     flushCache();
@@ -76,5 +78,9 @@ void applyFixesByGameId(){
 
     else if (strcasecmp("ULES01472", gameid) == 0 || strcasecmp("ULUS10543", gameid) == 0){
         wwe_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
+    }
+    else if (strcasecmp("ULES00590", gameid) == 0){
+        void (*SetUmdDelay)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
+        if (SetUmdDelay) SetUmdDelay(1);
     }
 }

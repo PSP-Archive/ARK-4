@@ -122,12 +122,14 @@ PSP_EXPORT_FUNC_NID(sceUmd9660_driver_7CB291E3, 0x7EB57F56)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(inferno_driver, 0x0011, 0x0001)
-#inferno_driver_CF8299BE
+# inferno_driver_CF8299BE
 PSP_EXPORT_FUNC(infernoSetDiscType)
-#inferno_driver_C0736FD6
+# inferno_driver_C0736FD6
 PSP_EXPORT_FUNC(infernoCacheSetPolicy)
-#inferno_driver_8CDE7F95
+# inferno_driver_8CDE7F95
 PSP_EXPORT_FUNC(infernoCacheInit)
+# inferno_driver_B6522E93
+PSP_EXPORT_FUNC(infernoSetUmdDelay)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS

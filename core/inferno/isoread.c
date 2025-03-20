@@ -119,6 +119,12 @@ static u32 g_ciso_total_block;
 static int is_compressed = 0;
 static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit) = NULL;
 
+static unsigned char enable_umd_delay = 0;
+
+static void umd_delay(u32 read_size){
+    sceKernelDelayThread(read_size); // 1MB/s
+}
+
 // 0x00000368
 static void wait_until_ms0_ready(void)
 {
@@ -567,5 +573,11 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
         return -1;
     }
 
+    if (enable_umd_delay) umd_delay(data_len);
+
     return retv;
+}
+
+void infernoSetUmdDelay(int enable){
+    enable_umd_delay = enable;
 }
