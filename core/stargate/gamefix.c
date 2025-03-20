@@ -9,6 +9,7 @@
 #include <systemctrl.h>
 #include <systemctrl_private.h>
 #include <macros.h>
+#include <rebootconfig.h>
 #include <ark.h>
 #include <functions.h>
 
@@ -64,9 +65,8 @@ void applyFixesByModule(SceModule2* mod){
 
 void applyFixesByGameId(){
     // Obtain game ID for other patches
-    char gameid[10];
-    memset(gameid, 0, sizeof(gameid));
-    getGameId(gameid);
+    RebootConfigARK* reboot_config = sctrlHENGetRebootexConfig(NULL);
+    char* gameid = reboot_config->game_id;
 
     // Fix TwinBee Portable when not using English or Japanese language
     if (strcasecmp("ULJM05221", gameid) == 0){

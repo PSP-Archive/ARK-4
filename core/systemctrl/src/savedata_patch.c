@@ -24,6 +24,41 @@
 
 extern ARKConfig config;
 
+/*
+  This code was used back when savedata exploits were the entry point for ARK
+  Since the savedata was crafted to load ARK, it meant the game that was used for the savedata could not be played anymore.
+  This patch redirects the savedata to a different location while using ARK.
+  We no longer offer support for actual game saves exploits so we move this code this this file for historical purposes.
+*/
+
+// Return Game Product ID of currently running Game
+int sctrlARKGetGameID(char gameid[GAME_ID_MINIMUM_BUFFER_SIZE])
+{
+    // Invalid Arguments
+    if(gameid == NULL) return -1;
+    
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
+    
+    // Fetch Game Information Structure
+    void * gameinfo = getUMDDataFixed();
+    
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+    
+    // Game Information unavailable
+    if(gameinfo == NULL) return -3;
+    
+    // Copy Product Code
+    memcpy(gameid, gameinfo + 0x44, GAME_ID_MINIMUM_BUFFER_SIZE - 1);
+    
+    // Terminate Product Code
+    gameid[GAME_ID_MINIMUM_BUFFER_SIZE - 1] = 0;
+    
+    // Return Success
+    return 0;
+}
+
 // Fix Exploit Game Save
 void fixExploitGameModule(SceModule2 * mod)
 {
