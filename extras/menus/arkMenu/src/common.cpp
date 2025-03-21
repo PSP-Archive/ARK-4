@@ -220,7 +220,7 @@ void common::resetConf(){
     config.plugins = 1;
     config.scan_save = 0;
     config.scan_cat = 0;
-    config.scan_dlc = 0;
+    config.scan_dlc = 1;
     config.swap_buttons = 0;
     config.animation = 0;
     config.main_menu = 0;

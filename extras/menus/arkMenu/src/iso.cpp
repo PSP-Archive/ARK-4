@@ -180,7 +180,7 @@ void Iso::loadAVMedia(){
 
 void Iso::doExecute(){
     static char pboot_path[256];
-    if (has_update_file(pboot_path)){
+    if (common::getConf()->scan_dlc && has_update_file(pboot_path)){
         Iso::executeISOupdated(this->path.c_str(), pboot_path);
     }
     else{
