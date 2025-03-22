@@ -168,9 +168,11 @@ struct {
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
 
+#define items_size (sizeof(settings) / sizeof(settings[0]))
+
 typedef struct
 {
-    char *items[4];
+    char *items[items_size]; 
     char *options[N_ITEMS];
 } StringContainer;
 
@@ -775,13 +777,13 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         }
     	else if(sce_paf_private_strcmp(name, "msgtop_custom_app") == 0)
         {
-    		sce_paf_private_sprintf(buf, "%s %s", STAR, settings[23]);
+    		sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[23]);
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
     	else if(sce_paf_private_strcmp(name, "msgtop_150_reboot") == 0)
         {
-    		sce_paf_private_sprintf(buf, "%s %s", STAR, settings[24]);
+    		sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[24]);
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
