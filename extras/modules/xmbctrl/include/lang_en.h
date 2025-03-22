@@ -31,7 +31,7 @@ char *settings[] =
     "USB Charge",
     "CPU Clock in Game",
     "CPU Clock in XMB",
-    "WPA2",
+    "Enable WPA2 support",
     "Autoboot Launcher",
     "Use Extra Memory",
     "Memory Stick Speedup",
