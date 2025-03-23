@@ -257,6 +257,10 @@ void Eboot::executePSN(const char* path){
     struct SceKernelLoadExecVSHParam param;
     
     memset(&param, 0, sizeof(param));
+    param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+    param.key = "umdemu";
+    sctrlSESetBootConfFileIndex(PSN_DRIVER);
+    sctrlSESetUmdFile("");
     
     int runlevel = (*(u32*)path == EF0_PATH)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL; // PSN games must always be redirected
 
@@ -264,13 +268,11 @@ void Eboot::executePSN(const char* path){
     pboot_path = pboot_path.substr(0, pboot_path.rfind('/')+1) + "PBOOT.PBP";
     if (common::getConf()->scan_dlc && common::fileExists(pboot_path)){
         runlevel = (*(u32*)path == EF0_PATH)? ISO_PBOOT_RUNLEVEL_GO : ISO_PBOOT_RUNLEVEL;
+        param.argp = (void*)pboot_path.c_str();
     }
 
-    param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
-    param.argp = (char*)"disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
-    param.key = "umdemu";
-    sctrlSESetBootConfFileIndex(PSN_DRIVER);
-    sctrlSESetUmdFile("");
+    param.args = strlen((char*)param.argp)+1;
+
     sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
 }
 
