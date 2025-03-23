@@ -40,7 +40,7 @@
 SEConfig se_config = {
     .magic = ARK_CONFIG_MAGIC,
 
-    .umdmode = 0,
+    .umdelay = 0,
     .clock = 0,
     .disable_pause = 0,
     .hidedlc = 0,
