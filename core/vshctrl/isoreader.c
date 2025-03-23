@@ -111,10 +111,14 @@ static void isoAlloc(){
 }
 
 static void isoFree(){
-    my_free(ciso_dec_buf);
-    my_free(ciso_com_buf);
-    my_free(g_sector_buffer);
-    my_free(g_CISO_idx_cache);
+    if (ciso_dec_buf) my_free(ciso_dec_buf);
+    if (ciso_com_buf) my_free(ciso_com_buf);
+    if (g_sector_buffer) my_free(g_sector_buffer);
+    if (g_CISO_idx_cache) my_free(g_CISO_idx_cache);
+    ciso_dec_buf = NULL;
+    ciso_com_buf = NULL;
+    g_sector_buffer = NULL;
+    g_CISO_idx_cache = NULL;
 }
 
 static inline u32 isoPos2LBA(u32 pos)
