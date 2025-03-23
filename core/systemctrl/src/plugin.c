@@ -499,6 +499,10 @@ static void settingsHandler(char* path, u8 enabled){
         int r = atoi(path+11);
         se_config.vshregion = (enabled)?r:0;
     }
+    else if (strncasecmp(path, "delayumd_", 11) == 0){
+        int r = atoi(path+11);
+        se_config.umdelay = (enabled)?r:0;
+    }
     else if (strcasecmp(path, "hidepics") == 0){ // hide PIC0 and PIC1
         se_config.hidepics = enabled;
     }
