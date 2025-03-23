@@ -506,8 +506,6 @@ int isoOpen(const char *path)
 {
     int ret = -1;
 
-    printf("opening ISO: %s\n", path);
-
     int k1 = pspSdkSetK1(0);
 
     if (g_isofd >= 0) {

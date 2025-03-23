@@ -975,15 +975,18 @@ int has_update_file(const char* isopath, char* update_file){
 
     // try to find the update file
     static char* devs[] = {"ms0:", "ef0:"};
+    static char* files[] = {"PBOOT.PBP", "PARAM.PBP"};
 
     for (int i=0; i<2; i++){
-        sprintf(update_file, "%s/PSP/GAME/%s/PBOOT.PBP", devs[i], game_id);
-        SceIoStat stat;
-        int res = sceIoGetstat(update_file, &stat);
-        if (res >= 0){
-            // found
-            pspSdkSetK1(k1);
-            return 1;
+        for (int j=0; j<2; j++){
+            sprintf(update_file, "%s/PSP/GAME/%s/%s", devs[i], game_id, files[j]);
+            SceIoStat stat;
+            int res = sceIoGetstat(update_file, &stat);
+            if (res >= 0){
+                // found
+                pspSdkSetK1(k1);
+                return 1;
+            }
         }
     }
     // not found

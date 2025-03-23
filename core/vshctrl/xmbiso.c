@@ -435,7 +435,7 @@ SceUID gameopen(const char * file, int flags, SceMode mode)
         result = vpbp_open(file, flags, mode);
         pspSdkSetK1(k1);
     } else {
-        if (is_iso_manual(file) || is_iso_update(file)){
+        if (is_iso_manual(file) || is_iso_update(file) || is_iso_dlc(file)){
             vpbp_fixisopath(file);
         }
         result = sceIoOpen(file, flags, mode);
@@ -505,7 +505,7 @@ int gamegetstat(const char * file, SceIoStat * stat)
         result = vpbp_getstat(file, stat);
         pspSdkSetK1(k1);
     } else {
-        if (is_iso_manual(file) || is_iso_update(file)){
+        if (is_iso_manual(file) || is_iso_update(file) || is_iso_dlc(file)){
             vpbp_fixisopath(file);
         }
         result = sceIoGetstat(file, stat);

@@ -259,7 +259,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     {
         // Read Game ID
         if (rebootex_config.game_id[0] == 0)
-            getGameId(rebootex_config.game_id);
+            getGameId(NULL);
         // Load XMB Control
         loadXmbControl();
         // Load Plugins

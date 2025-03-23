@@ -27,20 +27,20 @@ static const struct {
     int empty;
 } defaultdata = { {0}, "HOME00000", 0 };
 
-int readGameIdFromDisc(char* gameid){
+int readGameIdFromDisc(){
     // Open Disc Identifier
     int disc = sceIoOpen("disc0:/UMD_DATA.BIN", PSP_O_RDONLY, 0777);
     // Opened Disc Identifier
     if(disc >= 0)
     {
         // Read Country Code
-        sceIoRead(disc, gameid, 4);
+        sceIoRead(disc, rebootex_config.game_id, 4);
         
         // Skip Delimiter
         sceIoLseek32(disc, 1, PSP_SEEK_CUR);
         
         // Read Game ID
-        sceIoRead(disc, gameid + 0x4, 5);
+        sceIoRead(disc, rebootex_config.game_id + 0x4, 5);
         
         // Close Disc Identifier
         sceIoClose(disc);
@@ -49,14 +49,14 @@ int readGameIdFromDisc(char* gameid){
     return 0;
 }
 
-int readGameIdFromPBP(char* gameid){
+int readGameIdFromPBP(){
     int n = 9;
     int res = sctrlGetInitPARAM("DISC_ID", NULL, &n, rebootex_config.game_id);
     if (res < 0) return 0;
     return 1;
 }
 
-int readGameIdFromISO(char* gameid){
+int readGameIdFromISO(){
     struct LbaParams param;
     memset(&param, 0, sizeof(param));
 
@@ -92,16 +92,19 @@ int getGameId(char* gameid){
 
     if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, defaultdata.id, 9) == 0){
         if (sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
-            res = readGameIdFromISO(rebootex_config.game_id);
+            res = readGameIdFromISO();
         }
         else {
-            res = readGameIdFromPBP(rebootex_config.game_id);
+            res = readGameIdFromPBP();
         }
     }
     else res = 1;
 
     if (gameid)
         memcpy(gameid, rebootex_config.game_id, 9);
+
+    if (rebootex_config.game_id[0] != 0)
+        memcpy(defaultdata.id, rebootex_config.game_id, 9);
 
     return res;
 }

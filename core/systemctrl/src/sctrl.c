@@ -79,7 +79,7 @@ int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam
 
 int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param) {
     int k1 = pspSdkSetK1(0);
-    readGameIdFromDisc(rebootex_config.game_id);
+    readGameIdFromDisc();
     pspSdkSetK1(k1);
     return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_DISC, file, param);
 }
@@ -100,6 +100,7 @@ int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param)
     u32 k1;
     int ret = -1;
     k1 = pspSdkSetK1(0);
+    memset(rebootex_config.game_id, 0, 10);
     int (*_KernelExitVSH)(void*) = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
     ret = _KernelExitVSH(param);
     pspSdkSetK1(k1);
