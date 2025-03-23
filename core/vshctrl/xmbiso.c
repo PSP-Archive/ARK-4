@@ -693,7 +693,7 @@ int umdemuloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         [ (strstr(file, "/PBOOT.PBP") == NULL)? 0:1 ];
 
     //forward
-    return sctrlKernelLoadExecVSHWithApitype(0x123, file, param);
+    return sctrlKernelLoadExecVSHWithApitype(apitype, file, param);
 }
 
 int gamerename(const char *oldname, const char *newfile)
