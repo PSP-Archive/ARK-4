@@ -2,6 +2,8 @@ Actualizador de ARK-4
 Configuración de firmware personalizada
 Administrador de complementos
 Lanzador personalizado
+Aplicación personalizada
+Reiniciar en 1.50 ARK
 Carga USB
 Reloj de CPU en el juego
 Reloj de CPU en XMB
@@ -21,5 +23,3 @@ Apagar LED
 Deshabilitar unidad UMD
 Deshabilitar joystick analógico
 Indicadores de control de calidad
-Aplicación personalizada
-Reiniciar en 1.50 ARK

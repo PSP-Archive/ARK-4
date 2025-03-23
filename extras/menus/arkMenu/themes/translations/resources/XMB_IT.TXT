@@ -2,6 +2,8 @@ Aggiornamento ARK-4
 Configurazioni Custom Firmware
 Gestione Plugin
 Custom Launcher
+App personalizzata
+Riavvia in 1.50 ARK
 Ricarica tramite USB
 Frequenza CPU nel gioco
 Frequenza CPU nella XMB
@@ -21,5 +23,3 @@ Spegni LEDs
 Disabilita unità UMD
 Disabilita stick analogico
 Flag QA
-App personalizzata
-Riavvia in 1.50 ARK

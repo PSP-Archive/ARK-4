@@ -2,6 +2,8 @@ Mise à jour ARK-4
 Paramètres de micrologiciel personnalisés
 Gestionnaire de plug-ins
 Lanceur personnalisé
+Application personnalisée
+Redémarrer dans 1.50 ARK
 Charge USB
 Horloge CPU dans le jeu
 Horloge CPU dans XMB
@@ -21,5 +23,3 @@ Désactiver les LED
 Désactiver le lecteur UMD
 Désactiver le stick analogique
 Drapeaux d'assurance qualité
-Application personnalisée
-Redémarrer dans 1.50 ARK

@@ -2,6 +2,8 @@ ARK-4 Updater
 Benutzerdefinierte Firmware-Einstellungen
 Plugin-Manager
 Benutzerdefinierter Launcher
+Benutzerdefinierte App
+Neustart in 1.50 ARK
 USB-Aufladung
 CPU-Takt im Spiel
 CPU-Takt in XMB
@@ -21,5 +23,3 @@ LEDs ausschalten
 UMD-Laufwerk deaktivieren
 Analogstick deaktivieren
 QA-Flags
-Benutzerdefinierte App
-Neustart in 1.50 ARK
