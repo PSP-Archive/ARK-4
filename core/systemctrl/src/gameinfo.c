@@ -80,33 +80,32 @@ int readGameIdFromISO(){
     return 1;
 }
 
-int getGameId(char* gameid){
-
-    int res = 0;
+void findGameId(){
 
     int apitype = sceKernelInitApitype();
     if (apitype == 0x141 || apitype == 0x152 || apitype >= 0x200){
-        strcpy(gameid, defaultdata.id);
-        return 1;
+        return;
     }
 
-    if (rebootex_config.game_id[0] == 0 || strncmp(rebootex_config.game_id, defaultdata.id, 9) == 0){
+    void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
+    unsigned char * gameinfo = NULL;
+
+    if (SysMemForKernel_EF29061C && (gameinfo=SysMemForKernel_EF29061C()) && gameinfo[0x44]) {
+        memcpy(rebootex_config.game_id, gameinfo+0x44, 9);
+    }
+
+    else if (rebootex_config.game_id[0] == 0){
         if (sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
-            res = readGameIdFromISO();
+            readGameIdFromISO();
         }
         else {
-            res = readGameIdFromPBP();
+            readGameIdFromPBP();
         }
     }
-    else res = 1;
-
-    if (gameid)
-        memcpy(gameid, rebootex_config.game_id, 9);
 
     if (rebootex_config.game_id[0] != 0)
         memcpy(defaultdata.id, rebootex_config.game_id, 9);
 
-    return res;
 }
 
 // Fixed Game Info Getter Function
@@ -126,7 +125,7 @@ void * getUMDDataFixed(void)
     if(gameinfo == NULL) return &defaultdata;
     
     // Set Game ID if we know it
-    if (rebootex_config.game_id[0] != 0){
+    if (gameinfo[0x44] == 0 && rebootex_config.game_id[0] != 0){
         memcpy(gameinfo + 0x44, rebootex_config.game_id, 9);
     }
     
