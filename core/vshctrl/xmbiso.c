@@ -667,6 +667,30 @@ int homebrewloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     return result;
 }
 
+static int has_eboot_update(char* path){
+    char* file = strstr(path, "/PBOOT.PBP");
+    if (file) return 1;
+
+    file = strstr(path, "/EBOOT.PBP");
+
+    if (!file) return 0;
+
+    char bak = file[1];
+    file[1] = 'P';
+
+    u32 k1 = pspSdkSetK1(0);
+    SceIoStat stat; int res = sceIoGetstat(path, &stat);
+    pspSdkSetK1(k1);
+
+    file[1] = bak;
+
+    if (res < 0){
+        return 0;
+    }
+
+    return 1;
+}
+
 int umdemuloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
     //result
@@ -690,7 +714,7 @@ int umdemuloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 
     int apitype = apitypes
         [ (strncmp(file, "ms", 2) == 0)? 0:1 ]
-        [ (strstr(file, "/PBOOT.PBP") == NULL)? 0:1 ];
+        [ (has_eboot_update(file))? 1:0 ];
 
     //forward
     return sctrlKernelLoadExecVSHWithApitype(apitype, file, param);
