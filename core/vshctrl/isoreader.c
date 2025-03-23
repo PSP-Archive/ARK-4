@@ -504,7 +504,9 @@ static int findPath(const char *path, Iso9660DirectoryRecord *result_record)
 
 int isoOpen(const char *path)
 {
-    int ret;
+    int ret = -1;
+
+    printf("opening ISO: %s\n", path);
 
     int k1 = pspSdkSetK1(0);
 
@@ -514,7 +516,7 @@ int isoOpen(const char *path)
 
     g_filename = path;
 
-    if (reOpen() < 0) {
+    if (g_filename == NULL || reOpen() < 0) {
         #ifdef DEBUG
         printk("%s: open failed %s -> 0x%08X\n", __func__, g_filename, g_isofd);
         #endif
@@ -605,6 +607,7 @@ error:
     if (g_isofd >= 0) {
         isoClose();
     }
+    g_filename = NULL;
     pspSdkSetK1(k1);
     return ret;
 }

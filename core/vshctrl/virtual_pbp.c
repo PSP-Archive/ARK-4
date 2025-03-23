@@ -923,7 +923,13 @@ void vpbp_gameid(const char* isopath, char* game_id){
     int lba = 16;
     int pos = 883;
 
-    isoOpen(isopath);
+    int res = isoOpen(isopath);
+
+    if (res < 0){
+        game_id[0] = 0;
+        return;
+    }
+
     isoRead(game_id, lba, pos, 10);
     isoClose();
 
