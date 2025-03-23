@@ -85,7 +85,7 @@ class Iso : public Entry
         char* getType();
         char* getSubtype();
 
-        static void executeISO(const char* path, bool is_patched);
+        static void executeISO(const char* path, char* eboot_path);
         static void executeVideoISO(const char* path);
         static void executeISOupdated(const char* path, const char* pboot_path);
 
@@ -112,7 +112,7 @@ class Iso : public Entry
         void doExecute();
         bool isPatched();
 
-        int has_update_file(char* update_file);
+        int has_installed_file(const char* installed_file, char* out_path);
 };
 
 #endif

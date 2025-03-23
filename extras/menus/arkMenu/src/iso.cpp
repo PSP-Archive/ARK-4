@@ -180,11 +180,19 @@ void Iso::loadAVMedia(){
 
 void Iso::doExecute(){
     static char pboot_path[256];
-    if (common::getConf()->scan_dlc && has_update_file(pboot_path)){
+    if (common::getConf()->scan_dlc && has_installed_file("PBOOT.PBP", pboot_path)){
         Iso::executeISOupdated(this->path.c_str(), pboot_path);
     }
     else{
-        Iso::executeISO(this->path.c_str(), this->isPatched());
+        char tmp[256];
+        char* eboot_path = NULL;
+        if (has_installed_file("EBOOT.PBP", tmp))
+            eboot_path = tmp;
+        else if (isPatched())
+            eboot_path = (char*)UMD_EBOOT_OLD;
+        else
+            eboot_path = (char*)UMD_EBOOT_BIN;
+        Iso::executeISO(this->path.c_str(), eboot_path);
     }
 }
 
@@ -204,21 +212,17 @@ void Iso::executeISOupdated(const char* path, const char* pboot_path){
     sctrlKernelLoadExecVSHWithApitype(runlevel, pboot_path, &param);
 }
 
-void Iso::executeISO(const char* path, bool is_patched){
+void Iso::executeISO(const char* path, char* eboot_path){
     struct SceKernelLoadExecVSHParam param;
     
     memset(&param, 0, sizeof(param));
-
-    if (is_patched)
-        param.argp = (char*)UMD_EBOOT_OLD;
-    else
-        param.argp = (char*)UMD_EBOOT_BIN;
 
     int runlevel = (*(u32*)path == EF0_PATH && common::getConf()->redirect_ms0)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
 
     param.size = sizeof(param);
     param.key = "umdemu";
-    param.args = 33;  // lenght of "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN" + 1
+    param.argp = eboot_path;
+    param.args = strlen(eboot_path)+1;
     sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
     sctrlSESetBootConfFileIndex(ISO_DRIVER);
     sctrlSESetUmdFile((char*)path);
@@ -268,7 +272,7 @@ void Iso::executeVideoISO(const char* path)
     }
 }
 
-int Iso::has_update_file(char* update_file){
+int Iso::has_installed_file(const char* installed_file, char* out_path){
     // game ID is always at offset 0x8373 within the ISO
     int lba = 16;
     int pos = 883;
@@ -295,7 +299,7 @@ int Iso::has_update_file(char* update_file){
         if (fd >= 0){
             // found
             sceIoClose(fd);
-            if (update_file) strcpy(update_file, path);
+            if (out_path) strcpy(out_path, path);
             return 1;
         }
     }
