@@ -683,7 +683,6 @@ int umdemuloadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     sctrlSESetBootConfFileIndex(0);
     sctrlSESetUmdFile("");
 
-
     static int apitypes[2][2] = {
         {ISO_RUNLEVEL, ISO_PBOOT_RUNLEVEL},
         {ISO_RUNLEVEL_GO, ISO_PBOOT_RUNLEVEL_GO}
