@@ -399,19 +399,8 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         return 0x80000104;
     }
 
-    const char * pbpPath = NULL;
-    u32 real_magic = 0;
+    const char * pbpPath = sceKernelInitFileName();
     u32 paramOffset = 0;
-
-    int bootfrom = sceKernelBootFrom();
-    if (bootfrom == PSP_BOOT_DISC){
-        pbpPath = "disc0:/PSP_GAME/PARAM.SFO";
-        real_magic = 0x46535000; // PSF magic
-    }
-    else{
-        pbpPath = sceKernelInitFileName();
-        real_magic = 0x50425000; // PBP magic
-    }
     
     // Init Filename not found
     if (pbpPath == NULL)
@@ -421,6 +410,10 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         
         // Return Error Code
         return 0x80010002;
+    }
+
+    if (strncmp(pbpPath, "disc0", 5) == 0){
+        pbpPath = "disc0:/PSP_GAME/PARAM.SFO";
     }
     
     // Open PBP File
@@ -436,24 +429,22 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         return 0x80010002;
     }
 
-    int magic;
+    int magic = 0;
     sceIoRead(fd, &magic, sizeof(magic));
-    if (magic != real_magic){ // Invalid Format
-        // close
-        sceIoClose(fd);
-        
-        // Restore Syscall Permissions
-        pspSdkSetK1(k1);
-
-        // Return Error Code
-        return 0x80000108;
-    }
     
-    if (real_magic == 0x50425000){ // PBP
+    if (magic == 0x50425000){ // PBP
         // seek to PARAM.SFO offset variable
         sceIoLseek(fd, 0x08, PSP_SEEK_SET);
         // read PARAM.SFO offset
         sceIoRead(fd, &paramOffset, sizeof(u32));
+    }
+    else if (magic != 0x46535000){ // Invalid Format
+        // close
+        sceIoClose(fd);
+        // Restore Syscall Permissions
+        pspSdkSetK1(k1);
+        // Return Error Code
+        return 0x80000108;
     }
     
     // seek to PARAM.SFO offset

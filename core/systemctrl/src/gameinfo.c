@@ -50,7 +50,7 @@ int readGameIdFromDisc(){
 }
 
 int readGameIdFromPBP(){
-    int n = 9;
+    int n = 10;
     int res = sctrlGetInitPARAM("DISC_ID", NULL, &n, rebootex_config.game_id);
     if (res < 0) return 0;
     return 1;
@@ -90,20 +90,20 @@ void findGameId(){
     void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
     unsigned char * gameinfo = NULL;
 
-    if (SysMemForKernel_EF29061C && (gameinfo=SysMemForKernel_EF29061C()) && gameinfo[0x44]) {
-        memcpy(rebootex_config.game_id, gameinfo+0x44, 9);
+    if (sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
+        readGameIdFromISO();
     }
-    else{
-        if (sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
-            readGameIdFromISO();
-        }
-        else {
-            readGameIdFromPBP();
-        }
+    else {
+        readGameIdFromPBP();
     }
 
-    if (rebootex_config.game_id[0] != 0)
+    if (rebootex_config.game_id[0] != 0){
         memcpy(defaultdata.id, rebootex_config.game_id, 9);
+    }
+
+    if (SysMemForKernel_EF29061C && (gameinfo=SysMemForKernel_EF29061C())) {
+        memcpy(gameinfo+0x44, rebootex_config.game_id, 9);
+    }
 
 }
 
@@ -124,7 +124,7 @@ void * getUMDDataFixed(void)
     if(gameinfo == NULL) return &defaultdata;
     
     // Set Game ID if we know it
-    if (gameinfo[0x44] == 0 && rebootex_config.game_id[0] != 0){
+    if (rebootex_config.game_id[0] != 0){
         memcpy(gameinfo + 0x44, rebootex_config.game_id, 9);
     }
     
