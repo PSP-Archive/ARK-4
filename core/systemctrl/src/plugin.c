@@ -161,6 +161,7 @@ static int isPath(char* runlevel){
 }
 
 static int isGameId(char* runlevel){
+    if (rebootex_config.game_id[0] == 0) return 0;
     char gameid[10]; memset(gameid, 0, sizeof(gameid));
     memcpy(gameid, rebootex_config.game_id, 9);
     lowerString(gameid, gameid, strlen(gameid)+1);
