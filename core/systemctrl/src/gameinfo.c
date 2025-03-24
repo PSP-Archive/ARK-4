@@ -9,6 +9,17 @@
 #include "macros.h"
 #include "module2.h"
 
+struct LbaParams {
+    int unknown1; // 0
+    int cmd; // 4
+    int lba_top; // 8
+    int lba_size; // 12
+    int byte_size_total;  // 16
+    int byte_size_centre; // 20
+    int byte_size_start; // 24
+    int byte_size_last;  // 28
+};
+
 // Default Game ID
 static const struct {
     unsigned char unk[0x44];
@@ -38,6 +49,37 @@ int readGameIdFromDisc(){
     return 0;
 }
 
+int readGameIdFromPBP(){
+    int n = 9;
+    int res = sctrlGetInitPARAM("DISC_ID", NULL, &n, rebootex_config.game_id);
+    if (res < 0) return 0;
+    return 1;
+}
+
+int readGameIdFromISO(){
+    struct LbaParams param;
+    memset(&param, 0, sizeof(param));
+
+    param.cmd = 0x01E380C0;
+    param.lba_top = 16;
+    param.byte_size_total = 10;
+    param.byte_size_start = 883;
+    
+    int res = sceIoDevctl("umd:", 0x01E380C0, &param, sizeof(param), rebootex_config.game_id, sizeof(rebootex_config.game_id));
+
+    if (res < 0) return 0;
+
+    // remove the dash in the middle: ULUS-01234 -> ULUS01234
+    rebootex_config.game_id[4] = rebootex_config.game_id[5];
+    rebootex_config.game_id[5] = rebootex_config.game_id[6];
+    rebootex_config.game_id[6] = rebootex_config.game_id[7];
+    rebootex_config.game_id[7] = rebootex_config.game_id[8];
+    rebootex_config.game_id[8] = rebootex_config.game_id[9];
+    rebootex_config.game_id[9] = 0;
+
+    return 1;
+}
+
 void findGameId(){
 
     int apitype = sceKernelInitApitype();
@@ -45,16 +87,19 @@ void findGameId(){
         return;
     }
 
-    memset(rebootex_config.game_id, 0, 10);
-
     void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
     unsigned char * gameinfo = NULL;
 
     if (SysMemForKernel_EF29061C && (gameinfo=SysMemForKernel_EF29061C()) && gameinfo[0x44]) {
         memcpy(rebootex_config.game_id, gameinfo+0x44, 9);
     }
-    else {
-        int n = 9; sctrlGetInitPARAM("DISC_ID", NULL, &n, rebootex_config.game_id);
+    else{
+        if (sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
+            readGameIdFromISO();
+        }
+        else {
+            readGameIdFromPBP();
+        }
     }
 
     if (rebootex_config.game_id[0] != 0)
