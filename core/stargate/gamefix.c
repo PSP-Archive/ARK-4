@@ -59,7 +59,7 @@ void applyFixesByModule(SceModule2* mod){
     else if (strcasecmp(mod->modname, "DJMAX") == 0) {
         hookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, 0);
         void (*SetUmdDelay)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
-        if (SetUmdDelay) SetUmdDelay(2);
+        if (SetUmdDelay) SetUmdDelay(3);
     }
 
     flushCache();
