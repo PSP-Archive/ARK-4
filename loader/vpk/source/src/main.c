@@ -10,15 +10,15 @@
 void waitCross(){
     SceCtrlData pad;
     while(1){
-    	memset(&pad, 0x00, sizeof(SceCtrlData));
-    	sceCtrlPeekBufferPositive(0, &pad, 1);
-    	if(pad.buttons == SCE_CTRL_CROSS)
-    		break;
+        memset(&pad, 0x00, sizeof(SceCtrlData));
+        sceCtrlPeekBufferPositive(0, &pad, 1);
+        if(pad.buttons == SCE_CTRL_CROSS)
+        	break;
     }
 }
 
 int main(int argc, const char *argv[]) {
-    uiInit();	
+    uiInit();    
 
     displayMsg("Install?", "Press X to begin installation ...");
     waitCross();

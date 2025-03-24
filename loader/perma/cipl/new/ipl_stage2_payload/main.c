@@ -23,7 +23,7 @@ void *memcpy(void *dest, void *src, uint32_t size)
     size /= 4;
     
     while (size--)
-    	*(d++) = *(s++);
+        *(d++) = *(s++);
 
     return dest;
 }

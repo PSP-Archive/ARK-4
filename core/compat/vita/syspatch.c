@@ -79,11 +79,11 @@ int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 
     int i;
     for (i = 0; i < 0x10; i++) {
-    	res = _sceKernelVolatileMemTryLock(unk, ptr, size);
-    	if (res >= 0)
-    		break;
+        res = _sceKernelVolatileMemTryLock(unk, ptr, size);
+        if (res >= 0)
+        	break;
 
-    	sceKernelDelayThread(100);
+        sceKernelDelayThread(100);
     }
 
     return res;
@@ -141,8 +141,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
         if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
             hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
-    		goto flush;
-    	}
+        	goto flush;
+        }
     }
     
     if (strcmp(mod->modname, "camera_patch_lite") == 0) {
@@ -152,17 +152,17 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
-    	// perfect time to apply extra memory patch
-    	if (se_config->force_high_memory) unlockVitaMemory(50);
-    	else{
-    		int apitype = sceKernelInitApitype();
-    		if (apitype == 0x141){
-    			int paramsize=4;
-    			int use_highmem = 0;
-    			if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-    				unlockVitaMemory(50);
-    				se_config->force_high_memory = 1;
-    			}
+        // perfect time to apply extra memory patch
+        if (se_config->force_high_memory) unlockVitaMemory(50);
+        else{
+        	int apitype = sceKernelInitApitype();
+        	if (apitype == 0x141){
+        		int paramsize=4;
+        		int use_highmem = 0;
+        		if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
+        			unlockVitaMemory(50);
+        			se_config->force_high_memory = 1;
+        		}
             }
         }
         goto flush;
@@ -186,8 +186,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
                 int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
                 if (CacheInit){
                     se_config->iso_cache_size = 4 * 1024;
-    				se_config->iso_cache_num = 16;
-    				CacheInit(4 * 1024, 16, 1); // 64KB cache for Vita
+        			se_config->iso_cache_num = 16;
+        			CacheInit(4 * 1024, 16, 1); // 64KB cache for Vita
                 }
                 if (se_config->iso_cache == 2){
                     int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);

@@ -124,9 +124,9 @@ int sceKernelSuspendThreadPatched(SceUID thid) {
     SceKernelThreadInfo info;
     info.size = sizeof(SceKernelThreadInfo);
     if (sceKernelReferThreadStatus(thid, &info) == 0) {
-    	if (strcmp(info.name, "popsmain") == 0) {
+        if (strcmp(info.name, "popsmain") == 0) {
             start_draw_thread();
-    	}
+        }
     }
     return sceKernelSuspendThread(thid);
 }
@@ -135,9 +135,9 @@ int sceKernelResumeThreadPatched(SceUID thid) {
     SceKernelThreadInfo info;
     info.size = sizeof(SceKernelThreadInfo);
     if (sceKernelReferThreadStatus(thid, &info) == 0) {
-    	if (strcmp(info.name, "popsmain") == 0) {
-    		end_draw_thread();
-    	}
+        if (strcmp(info.name, "popsmain") == 0) {
+        	end_draw_thread();
+        }
     }
     return sceKernelResumeThread(thid);
 }
@@ -219,40 +219,40 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 
         // Configure ms driver
         memcpy(&ms_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
-    	ms_drv->funcs = driver->funcs;
+        ms_drv->funcs = driver->funcs;
 
-    	// Configure ef driver
-    	memcpy(&ef_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
-    	ef_funcs.IoOpen = sceIoEfOpenHook;
-    	ef_funcs.IoRemove = sceIoEfRemoveHook;
-    	ef_funcs.IoMkdir = sceIoEfMkdirHook;
-    	ef_funcs.IoRmdir = sceIoEfRmdirHook;
-    	ef_funcs.IoDopen = sceIoEfDopenHook;
-    	ef_funcs.IoGetstat = sceIoEfGetStatHook;
-    	ef_funcs.IoChstat = sceIoEfChStatHook;
-    	ef_funcs.IoRename = sceIoEfRenameHook;
-    	ef_funcs.IoChdir = sceIoEfChdirHook;
+        // Configure ef driver
+        memcpy(&ef_funcs, driver->funcs, sizeof(PspIoDrvFuncs));
+        ef_funcs.IoOpen = sceIoEfOpenHook;
+        ef_funcs.IoRemove = sceIoEfRemoveHook;
+        ef_funcs.IoMkdir = sceIoEfMkdirHook;
+        ef_funcs.IoRmdir = sceIoEfRmdirHook;
+        ef_funcs.IoDopen = sceIoEfDopenHook;
+        ef_funcs.IoGetstat = sceIoEfGetStatHook;
+        ef_funcs.IoChstat = sceIoEfChStatHook;
+        ef_funcs.IoRename = sceIoEfRenameHook;
+        ef_funcs.IoChdir = sceIoEfChdirHook;
 
-    	memcpy(&ef_drv, ms_drv, sizeof(PspIoDrv));
-    	ef_drv.name = "ef";
-    	ef_drv.name2 = "EF";
-    	ef_drv.funcs = &ef_funcs;
+        memcpy(&ef_drv, ms_drv, sizeof(PspIoDrv));
+        ef_drv.name = "ef";
+        ef_drv.name2 = "EF";
+        ef_drv.funcs = &ef_funcs;
 
-    	memcpy(&fatef_drv, driver, sizeof(PspIoDrv));
-    	fatef_drv.name = "fatef";
-    	fatef_drv.name2 = "FATEF";
-    	fatef_drv.funcs = &ef_funcs;
+        memcpy(&fatef_drv, driver, sizeof(PspIoDrv));
+        fatef_drv.name = "fatef";
+        fatef_drv.name2 = "FATEF";
+        fatef_drv.funcs = &ef_funcs;
 
-    	// redirect ms to ef
-    	int apitype = reboot_config->fake_apitype;
-    	if (apitype == 0x155){
-    		memcpy(ms_drv->funcs, &ef_funcs, sizeof(PspIoDrvFuncs));
-    	}
+        // redirect ms to ef
+        int apitype = reboot_config->fake_apitype;
+        if (apitype == 0x155){
+        	memcpy(ms_drv->funcs, &ef_funcs, sizeof(PspIoDrvFuncs));
+        }
 
-    	// Add drivers
-    	_sceIoAddDrv(ms_drv);
-    	_sceIoAddDrv(&ef_drv);
-    	_sceIoAddDrv(&fatef_drv);
+        // Add drivers
+        _sceIoAddDrv(ms_drv);
+        _sceIoAddDrv(&ef_drv);
+        _sceIoAddDrv(&fatef_drv);
     }
     else if(strcmp(driver->name, "ms") == 0) {
         ms_drv = driver;
@@ -271,7 +271,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceLoadExec") == 0) {
         // fix vsh exit
         HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlKernelExitVSH), popsExit, _sctrlKernelExitVSH);
-    	REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), popsExit);
+        REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), popsExit);
         REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), popsExit);
         goto flush;
     }
@@ -288,7 +288,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "sceLowIO_Driver") == 0) {
-    	// Protect pops memory
+        // Protect pops memory
         sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
         memset((void *)0x49F40000, 0, 0x80000);
         goto flush;

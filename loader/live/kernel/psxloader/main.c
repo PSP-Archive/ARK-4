@@ -138,30 +138,30 @@ int sctrlGetThreadUIDByName(const char * name)
     // Get Thread UIDs
     if(KernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, NELEMS(ids), &count) >= 0)
     {
-    	// Iterate Results
-    	int i = 0; for(; i < count; i++)
-    	{
-    		// Thread Information
-    		SceKernelThreadInfo info;
-    		
-    		// Clear Memory
-    		memset(&info, 0, sizeof(info));
-    		
-    		// Initialize Structure Size
-    		info.size = sizeof(info);
-    		
-    		// Fetch Thread Status
-    		if(KernelReferThreadStatus(ids[i], &info) == 0)
-    		{
-    			// Matching Name
-    			if(strcmp(info.name, name) == 0)
-    			{
-    				
-    				// Return Thread UID
-    				return ids[i];
-    			}
-    		}
-    	}
+        // Iterate Results
+        int i = 0; for(; i < count; i++)
+        {
+        	// Thread Information
+        	SceKernelThreadInfo info;
+        	
+        	// Clear Memory
+        	memset(&info, 0, sizeof(info));
+        	
+        	// Initialize Structure Size
+        	info.size = sizeof(info);
+        	
+        	// Fetch Thread Status
+        	if(KernelReferThreadStatus(ids[i], &info) == 0)
+        	{
+        		// Matching Name
+        		if(strcmp(info.name, name) == 0)
+        		{
+        			
+        			// Return Thread UID
+        			return ids[i];
+        		}
+        	}
+        }
     }
     
     // Thread not found

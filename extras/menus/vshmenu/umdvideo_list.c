@@ -32,19 +32,19 @@ int umdvideolist_add(UmdVideoList *list, const char *path)
     UmdVideoEntry *p;
 
     if(path == NULL)
-    	return -1;
+        return -1;
 
     newpath = vpl_strdup(path);
 
     if(newpath == NULL) {
-    	return -2;
+        return -2;
     }
 
     p = vpl_alloc(sizeof(*p));
 
     if(p == NULL) {
-    	vpl_free(newpath);
-    	return -3;
+        vpl_free(newpath);
+        return -3;
     }
 
     list->tail->next = p;
@@ -61,21 +61,21 @@ static int umdvideolist_remove(UmdVideoList *list, UmdVideoEntry *pdel)
     UmdVideoEntry *p, *prev;
 
     if(list->count == 0) {
-    	return -1;
+        return -1;
     }
 
     for(prev = &list->head, p = list->head.next; p != NULL; prev = p, p = p->next) {
-    	if(p == pdel) {
-    		break;
-    	}
+        if(p == pdel) {
+        	break;
+        }
     }
 
     if(p == NULL) {
-    	return -1;
+        return -1;
     }
 
     if(list->tail == pdel) {
-    	list->tail = prev;
+        list->tail = prev;
     }
     
     prev->next = NULL;
@@ -94,7 +94,7 @@ char *umdvideolist_get(UmdVideoList *list, size_t n)
     }
 
     if(p == NULL) {
-    	return NULL;
+        return NULL;
     }
 
     return p->path;
@@ -108,7 +108,7 @@ size_t umdvideolist_count(UmdVideoList *list)
 void umdvideolist_clear(UmdVideoList *list)
 {
     while(list->tail != &list->head) {
-    	umdvideolist_remove(list, list->tail);
+        umdvideolist_remove(list, list->tail);
     }
 }
 
@@ -118,13 +118,13 @@ int umdvideolist_find(UmdVideoList *list, const char *search)
     int i;
 
     for(i=0, p=list->head.next; p != NULL; p=p->next, ++i) {
-    	if(0 == stricmp(p->path, search)) {
-    		break;
-    	}
+        if(0 == stricmp(p->path, search)) {
+        	break;
+        }
     }
 
     if(p == NULL) {
-    	return -1;
+        return -1;
     }
 
     return i;
@@ -147,19 +147,19 @@ int get_umdvideo(UmdVideoList *list, char *path) {
     dfd = sceIoDopen(path);
 
     if(dfd < 0) 
-    	return dfd;
+        return dfd;
 
     const char *p;
     while (sceIoDread(dfd, &dir) > 0) {
-    	p = (const char *)scePaf_strrchr(dir.d_name, '.');
+        p = (const char *)scePaf_strrchr(dir.d_name, '.');
 
-    	if (p == NULL)
-    		p = dir.d_name;
+        if (p == NULL)
+        	p = dir.d_name;
 
-    	if (0 == stricmp(p, ".iso") || 0 == stricmp(p, ".img") || 0 == stricmp(p, ".cso") || 0 == stricmp(p, ".zso") || 0 == stricmp(p, ".dax") || 0 == stricmp(p, ".jso")) {
-    		scePaf_sprintf(fullpath, "%s/%s", path, dir.d_name);
-    		umdvideolist_add(list, fullpath);
-    	}
+        if (0 == stricmp(p, ".iso") || 0 == stricmp(p, ".img") || 0 == stricmp(p, ".cso") || 0 == stricmp(p, ".zso") || 0 == stricmp(p, ".dax") || 0 == stricmp(p, ".jso")) {
+        	scePaf_sprintf(fullpath, "%s/%s", path, dir.d_name);
+        	umdvideolist_add(list, fullpath);
+        }
     }
 
     sceIoDclose(dfd);

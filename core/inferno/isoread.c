@@ -76,8 +76,8 @@ typedef struct _JISOHeader {
 } JISOHeader;
 
 typedef enum {
-    JISO_METHOD_LZO		= 0,
-    JISO_METHOD_ZLIB	= 1,
+    JISO_METHOD_LZO    	= 0,
+    JISO_METHOD_ZLIB    = 1,
 } JisoMethod;
 
 // 0x00002784

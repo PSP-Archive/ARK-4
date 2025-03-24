@@ -9,7 +9,7 @@ extern int app_main(int argc, char *argv[]);
 
 int start_thread(SceSize args, void *argp)
 {
-    SceUID mod;	
+    SceUID mod;    
     
     mod = sceKernelLoadModule("flash0:/vsh/module/intraFont.prx", 0, NULL);
     mod = sceKernelStartModule(mod, args, argp, NULL, NULL);
@@ -24,7 +24,7 @@ int module_start(SceSize args, void *argp)
 {
     SceUID thid = sceKernelCreateThread("start_thread", start_thread, 0x10, 0x4000, 0, NULL);
     if (thid < 0)
-    	return thid;
+        return thid;
 
     sceKernelStartThread(thid, args, argp);
     

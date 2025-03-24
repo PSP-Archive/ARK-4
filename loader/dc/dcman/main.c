@@ -27,7 +27,7 @@ PSP_MODULE_INFO("DesCemManager", 0x1007, 1, 0);
 #define JAL_OPCODE    0x0C000000
 #define J_OPCODE    0x08000000
 #define SC_OPCODE    0x0000000C
-#define JR_RA    	0x03e00008
+#define JR_RA        0x03e00008
 
 #define NOP    0x00000000
 
@@ -73,114 +73,114 @@ static void GetHardwareInfo()
     tachyon = SysregGetTachyonVersion();
     
     if (SysconGetBaryonVersion(&baryon) < 0)
-    	baryon = 0xDADADADA;
+        baryon = 0xDADADADA;
 
     if (SysconGetPommelVersion(&pommel) < 0)
-    	pommel = 0xDADADADA;
+        pommel = 0xDADADADA;
     
     switch (tachyon)
     {
-    	case 0x00140000:
-    		switch(baryon)
-    		{
-    			case 0x00010600: mb = TA_079v1; break;
-    			case 0x00010601: mb = TMU_001v1; break;
-    			case 0x00020600: mb = TA_079v2; break;
-    			case 0x00020601: mb = TMU_001v2; break;
-    			case 0x00030600: mb = TA_079v3; break;
-    			case 0x00030601: mb = TMU_002; break;
-    		}
-    		break;
+        case 0x00140000:
+        	switch(baryon)
+        	{
+        		case 0x00010600: mb = TA_079v1; break;
+        		case 0x00010601: mb = TMU_001v1; break;
+        		case 0x00020600: mb = TA_079v2; break;
+        		case 0x00020601: mb = TMU_001v2; break;
+        		case 0x00030600: mb = TA_079v3; break;
+        		case 0x00030601: mb = TMU_002; break;
+        	}
+        	break;
 
-    	case 0x00200000:
-    		switch(baryon)
-    		{
-    			case 0x00030600: mb = TA_079v4; break;
-    			case 0x00040600: mb = TA_079v5; break;
-    		}
-    		break;
+        case 0x00200000:
+        	switch(baryon)
+        	{
+        		case 0x00030600: mb = TA_079v4; break;
+        		case 0x00040600: mb = TA_079v5; break;
+        	}
+        	break;
 
-    	case 0x00300000:
-    		switch(baryon)
-    		{
-    			case 0x00040600:
-    				switch(pommel)
-    				{
-    					case 0x00000103: mb = TA_081v1; break;
-    					case 0x00000104: mb = TA_081v2; break;
-    				}
-    				break;
-    		}
-    		break;
+        case 0x00300000:
+        	switch(baryon)
+        	{
+        		case 0x00040600:
+        			switch(pommel)
+        			{
+        				case 0x00000103: mb = TA_081v1; break;
+        				case 0x00000104: mb = TA_081v2; break;
+        			}
+        			break;
+        	}
+        	break;
 
-    	case 0x00400000:
-    		switch(baryon)
-    		{
-    			case 0x00114000: mb = TA_082; break;
-    			case 0x00121000: mb = TA_086; break;
-    		}
-    		break;
+        case 0x00400000:
+        	switch(baryon)
+        	{
+        		case 0x00114000: mb = TA_082; break;
+        		case 0x00121000: mb = TA_086; break;
+        	}
+        	break;
 
-    	case 0x00500000:
-    		switch(baryon)
-    		{
-    			case 0x0022B200: mb = TA_085v1; break;
-    			case 0x00234000: mb = TA_085v2; break;
-    			case 0x00243000:
-    				switch(pommel)
-    				{
-    					case 0x00000123: mb = TA_088v1_TA_088v2; break;
-    					case 0x00000132: mb = TA_090v1; break;
-    				}
-    				break;
-    		}
-    		break;
+        case 0x00500000:
+        	switch(baryon)
+        	{
+        		case 0x0022B200: mb = TA_085v1; break;
+        		case 0x00234000: mb = TA_085v2; break;
+        		case 0x00243000:
+        			switch(pommel)
+        			{
+        				case 0x00000123: mb = TA_088v1_TA_088v2; break;
+        				case 0x00000132: mb = TA_090v1; break;
+        			}
+        			break;
+        	}
+        	break;
 
-    	case 0x00600000:
-    		switch(baryon)
-    		{
-    			case 0x00243000: mb = TA_088v3; break;
-    			case 0x00263100:
-    				switch(pommel)
-    				{
-    					case 0x00000132: mb = TA_090v2; break;
-    					case 0x00000133: mb = TA_090v3; break;
-    				}
-    				break;
-    			case 0x00285000: mb = TA_092; break;
-    		}
-    		break;
+        case 0x00600000:
+        	switch(baryon)
+        	{
+        		case 0x00243000: mb = TA_088v3; break;
+        		case 0x00263100:
+        			switch(pommel)
+        			{
+        				case 0x00000132: mb = TA_090v2; break;
+        				case 0x00000133: mb = TA_090v3; break;
+        			}
+        			break;
+        		case 0x00285000: mb = TA_092; break;
+        	}
+        	break;
 
-    	case 0x00720000: mb = TA_091; break;
+        case 0x00720000: mb = TA_091; break;
 
-    	case 0x00800000: mb = TA_094; break;
+        case 0x00800000: mb = TA_094; break;
 
-    	case 0x00810000:
-    		switch(baryon)
-    		{
-    			case 0x002C4000:
-    				switch(pommel)
-    				{
-    					case 0x00000141: mb = TA_093v1; break;
-    					case 0x00000143: mb = TA_093v2; break;
-    				}
-    				break;
-    			case 0x002E4000: mb = TA_095v1; break;
-    			case 0x012E4000: mb = TA_095v3; break;
-    		}
-    		break;
+        case 0x00810000:
+        	switch(baryon)
+        	{
+        		case 0x002C4000:
+        			switch(pommel)
+        			{
+        				case 0x00000141: mb = TA_093v1; break;
+        				case 0x00000143: mb = TA_093v2; break;
+        			}
+        			break;
+        		case 0x002E4000: mb = TA_095v1; break;
+        		case 0x012E4000: mb = TA_095v3; break;
+        	}
+        	break;
 
 
-    	case 0x00820000: 
-    		switch(baryon)
-    		{
-    			case 0x012E4000: mb = TA_095v4; break;
-    			case 0x002E4000: mb = TA_095v2; break;
-    		}
-    		break;
+        case 0x00820000: 
+        	switch(baryon)
+        	{
+        		case 0x012E4000: mb = TA_095v4; break;
+        		case 0x002E4000: mb = TA_095v2; break;
+        	}
+        	break;
 
-    	case 0x00900000: 
-    		mb = TA_096_TA_097; break;
+        case 0x00900000: 
+        	mb = TA_096_TA_097; break;
     }
 
     fuseid = SysregGetFuseId();
@@ -193,26 +193,26 @@ int dcGetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *
 {
     int k1 = pspSdkSetK1(0);
 
-    if (ptachyon)		
-    	*ptachyon = tachyon;
+    if (ptachyon)    	
+        *ptachyon = tachyon;
 
     if (pbaryon)
-    	*pbaryon = baryon;
+        *pbaryon = baryon;
 
     if (ppommel)
-    	*ppommel = pommel;
+        *ppommel = pommel;
 
     if (pmb)
-    	*pmb = mb;
+        *pmb = mb;
     
     if (pfuseid)
-    	*pfuseid = fuseid;
+        *pfuseid = fuseid;
     
     if (pfuseconfig)
-    	*pfuseconfig = fuseconfig;
+        *pfuseconfig = fuseconfig;
 
     if (pnandsize)
-    	*pnandsize = nandsize;
+        *pnandsize = nandsize;
 
     pspSdkSetK1(k1);
     return 0;
@@ -225,16 +225,16 @@ int dcPatchModule(char *modname, int type, u32 addr, u32 word)
     SceModule2 *mod = sceKernelFindModuleByName(modname);
     if (!mod)
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     if (type == 0)
-    	_sw(word, mod->text_addr+addr);
+        _sw(word, mod->text_addr+addr);
     else if (type == 1)
-    	_sh(word, mod->text_addr+addr);
+        _sh(word, mod->text_addr+addr);
     else if (type == 2)
-    	_sb(word, mod->text_addr+addr);
+        _sb(word, mod->text_addr+addr);
 
     sceKernelDcacheWritebackAll();
     sceKernelIcacheClearAll();
@@ -253,25 +253,25 @@ int dcPatchModuleString(char *modname, char *string, char *replace)
     SceModule2 *mod = sceKernelFindModuleByName(modname);
     if (!mod)
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     int totalsize = mod->text_size+mod->data_size+mod->bss_size;
     
     for (i = 0; i < totalsize-len; i++)
     {
-    	if (memcmp((void *)mod->text_addr+i, string, len) == 0)
-    	{
-    		memcpy((void *)mod->text_addr+i, replace, len);
-    		count++;
-    	}
+        if (memcmp((void *)mod->text_addr+i, string, len) == 0)
+        {
+        	memcpy((void *)mod->text_addr+i, replace, len);
+        	count++;
+        }
     }
 
     if (count > 0)
     {
-    	sceKernelDcacheWritebackAll();
-    	sceKernelIcacheClearAll();
+        sceKernelDcacheWritebackAll();
+        sceKernelIcacheClearAll();
     }
 
     pspSdkSetK1(k1);
@@ -294,13 +294,13 @@ int dcGetNandInfo(u32 *pagesize, u32 *ppb, u32 *totalblocks)
     int k1 = pspSdkSetK1(0);
 
     if (pagesize)
-    	*pagesize = sceNandGetPageSize();
+        *pagesize = sceNandGetPageSize();
     
     if (ppb)
-    	*ppb = sceNandGetPagesPerBlock();
+        *ppb = sceNandGetPagesPerBlock();
     
     if (totalblocks)
-    	*totalblocks = sceNandGetTotalBlocks();
+        *totalblocks = sceNandGetTotalBlocks();
 
     pspSdkSetK1(k1);
     return 0;
@@ -313,11 +313,11 @@ static void SetScrambleZero()
     sceNandSetScramble = (void *)sctrlHENFindFunction("sceNAND_Updater_Driver", "sceNand_updater_driver", 0x0BEE8F36);
     if (!sceNandSetScramble)
     {
-    	sceNandSetScramble = (void *)sctrlHENFindFunction("sceLowIO_Driver", "sceNand_driver", 0x0BEE8F36);
+        sceNandSetScramble = (void *)sctrlHENFindFunction("sceLowIO_Driver", "sceNand_driver", 0x0BEE8F36);
     }
 
     if (sceNandSetScramble)
-    	sceNandSetScramble(0);
+        sceNandSetScramble(0);
 }
 
 int dcLockNand(int flag)
@@ -346,20 +346,20 @@ int dcReadNandBlock(u32 page, u8 *block)
 
     if (sceNandIsBadBlock(page))
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
     
     for (i = 0; i < ppb; i++)
     {
-    	for (j = 0; j < 4; j++)
-    	{
-    		sceNandReadPagesRawAll(page, block, NULL, 1);
-    		sceNandReadExtraOnly(page, block+512, 1);
-    	}
+        for (j = 0; j < 4; j++)
+        {
+        	sceNandReadPagesRawAll(page, block, NULL, 1);
+        	sceNandReadExtraOnly(page, block+512, 1);
+        }
 
-    	page++;
-    	block += 528;
+        page++;
+        block += 528;
     }
 
     pspSdkSetK1(k1);
@@ -376,10 +376,10 @@ int dcWriteNandBlock(u32 page, u8 *user, u8 *spare)
 
     for (i = 0; i < ppb; i++)
     {
-    	sceNandWriteAccess(page, user, spare, 1, 0x31);
-    	page++;
-    	user += 512;
-    	spare += 16;
+        sceNandWriteAccess(page, user, spare, 1, 0x31);
+        page++;
+        user += 512;
+        spare += 16;
     }
 
     pspSdkSetK1(k1);
@@ -447,10 +447,10 @@ int dcQueryRealMacAddress(u8 *macbuf)
     int res = 0;
 
     if (!mac_obtained)
-    	res = -1;
+        res = -1;
     else
     {
-    	memcpy(macbuf, mac, 6);
+        memcpy(macbuf, mac, 6);
     }
 
     pspSdkSetK1(k1);
@@ -480,7 +480,7 @@ int dcIdStorageUnformat()
     int res = sceKernelExtendKernelStack(0x4000, (void *)_dcIdStorageUnformat, NULL);
 
 
-    sctrlKernelSetUserLevel(level);	
+    sctrlKernelSetUserLevel(level);    
     pspSdkSetK1(k1);
 
     return res;
@@ -492,7 +492,7 @@ int format_res;
 int idsformat_thread(SceSize args, void *argp)
 {
     format_res = sceIdStorageFormat();
-    	
+        
     return sceKernelExitDeleteThread(0);
 }
 
@@ -502,8 +502,8 @@ int dcIdStorageFormat()
 
     if (format_thid >= 0)
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     format_thid = sceKernelCreateThread("idsformat_thread", idsformat_thread, 0x6C, 0x010000, 0, NULL);
@@ -522,7 +522,7 @@ int dcIdStorageCreateLeaf(u16 leafid)
 
     int res = sceIdStorageCreateLeaf(leafid);
 
-    sctrlKernelSetUserLevel(level);	
+    sctrlKernelSetUserLevel(level);    
     pspSdkSetK1(k1);
 
     return res;
@@ -535,7 +535,7 @@ int dcIdStorageCreateAtomicLeaves(u16 *leaves, int n)
 
     int res = sceIdStorage_driver_99ACCB71(leaves, n); //sceIdStorageCreateAtomicLeaves(leaves, n);
 
-    sctrlKernelSetUserLevel(level);	
+    sctrlKernelSetUserLevel(level);    
     pspSdkSetK1(k1);
 
     return res;
@@ -548,7 +548,7 @@ int dcIdStorageReadLeaf(u16 leafid, u8 *buf)
 
     int res = sceIdStorageReadLeaf(leafid, buf);
 
-    sctrlKernelSetUserLevel(level);	
+    sctrlKernelSetUserLevel(level);    
     pspSdkSetK1(k1);
 
     return res;
@@ -561,7 +561,7 @@ int dcIdStorageWriteLeaf(u16 leafid, u8 *buf)
 
     int res = sceIdStorageWriteLeaf(leafid, buf);
 
-    sctrlKernelSetUserLevel(level);	
+    sctrlKernelSetUserLevel(level);    
     pspSdkSetK1(k1);
 
     return res;
@@ -579,7 +579,7 @@ int dcIdStorageFlush()
 
     int res = sceKernelExtendKernelStack(0x4000, (void *)_dcIdStorageFlush, NULL);
 
-    sctrlKernelSetUserLevel(level);	
+    sctrlKernelSetUserLevel(level);    
     pspSdkSetK1(k1);
 
     return res;
@@ -617,7 +617,7 @@ static int WriteBlockPatched(void *a, int block, void *b)
 
     if (phformat_cb >= 0)
     {
-    	sceKernelNotifyCallback(phformat_cb, (block << 16) | (totalblocks-64));
+        sceKernelNotifyCallback(phformat_cb, (block << 16) | (totalblocks-64));
     }
 
     return res;
@@ -637,7 +637,7 @@ static int WlanFuncPatched(void *a, int cmd, void *out)
 static int EventHandler(int ev_id, char* ev_name, void* param, int* result)
 {
     if (ev_id == 0x100 && cancel_mode != 0)
-    	return -1;
+        return -1;
 
     return 0;
 }
@@ -648,7 +648,7 @@ u32 nandnids[NAND_NIDS] =
 {
     0x01F09203,
     0x0ADC8686,
-    0x0BEE8F36,	
+    0x0BEE8F36,    
     0x0F9BBBBD,
     0x18B78661,
     0x2674CFFE,
@@ -739,7 +739,7 @@ void RedirectNandFunc(u32 nid, void *addr)
     u32 orig = sctrlHENFindFunction("sceLowIO_Driver", "sceNand_driver", nid);
 
     if (!orig)
-    	return;
+        return;
 
     REDIRECT_FUNCTION(orig, addr);
 }
@@ -748,38 +748,38 @@ void OnModuleStart(SceModule2 *mod)
 {
     if (strcmp(mod->modname, "sceLflashFatfmt") == 0)
     {
-    	return; // avoid tmctrl patch
+        return; // avoid tmctrl patch
     }
     else if (strcmp(mod->modname, "sceLFatFs_Updater_Driver") == 0)
     {
-    	MAKE_CALL(mod->text_addr+0x89B4, WriteBlockPatched);
-    	WriteBlock = (void *)(mod->text_addr+0x8EFC);
-    	ClearCaches();
+        MAKE_CALL(mod->text_addr+0x89B4, WriteBlockPatched);
+        WriteBlock = (void *)(mod->text_addr+0x8EFC);
+        ClearCaches();
     }
     else if (strcmp(mod->modname, "sceWlan_Driver") == 0)
     {
-    	MAKE_CALL(mod->text_addr+0x4F00, WlanFuncPatched);
-    	WlanFunc = (void *)(mod->text_addr+0xCD5C);
-    	ClearCaches();
+        MAKE_CALL(mod->text_addr+0x4F00, WlanFuncPatched);
+        WlanFunc = (void *)(mod->text_addr+0xCD5C);
+        ClearCaches();
     }
     
     else if (strcmp(mod->modname, "sceNAND_Updater_Driver") == 0)
     {
-    	int i;
+        int i;
 
-    	for (i = 0; i < NAND_NIDS; i++)
-    	{
-    		if (nand_offsets[i] != 0xFFFFFFFF)
-    		{			
-    			RedirectNandFunc(nandnids[i], (void *)(mod->text_addr+nand_offsets[i]));
-    		}
-    	}
+        for (i = 0; i < NAND_NIDS; i++)
+        {
+        	if (nand_offsets[i] != 0xFFFFFFFF)
+        	{			
+        		RedirectNandFunc(nandnids[i], (void *)(mod->text_addr+nand_offsets[i]));
+        	}
+        }
 
-    	ClearCaches();
+        ClearCaches();
     }
     
     if (previous)
-    	previous(mod);
+        previous(mod);
 }
 
 static PspSysEventHandler ev_handler =
@@ -792,7 +792,7 @@ static PspSysEventHandler ev_handler =
 
 int module_start(SceSize args, void *argp)
 {
-    GetHardwareInfo();	
+    GetHardwareInfo();    
     sceKernelRegisterSysEventHandler(&ev_handler);
 
     previous = sctrlHENSetStartModuleHandler(OnModuleStart);

@@ -78,7 +78,7 @@ class SettingsMenu : public SystemEntry{
         }
 
         void setFooter(string footer) {
-        	this->footer = footer;
+            this->footer = footer;
         }
         
         void setName(string name){
@@ -90,7 +90,7 @@ class SettingsMenu : public SystemEntry{
         }
 
         string getFooter() {
-        	return this->footer;
+            return this->footer;
         }
         
         Image* getIcon(){

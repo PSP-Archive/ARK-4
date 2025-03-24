@@ -66,22 +66,22 @@ SEConfig se_config = {
     .custom_update = 0, // automatic
     .usenodrm = 1, // always true
 
-	.hibblock = 0,
-	.noanalog = 0,
-	.oldplugin = 0,
-	.htmlviewer_custom_save_location = 0, // unused, always false
-	.hide_cfw_dirs = 1, // always true
-	.chn_iso = 1, // always true
-	.msspeed = 0,
-	.slimcolor = 0, // automatic
-	.iso_cache = 0,
-	.iso_cache_size = 0, // automatic
-	.iso_cache_num = 0,
-	.iso_cache_policy = CACHE_POLICY_LRU,
-	.noled = 0, // always false
-	.wpa2 = 0, /* not used by default */
-	.force_high_memory = 0,
-	.macspoofer = 0, // automatic
+    .hibblock = 0,
+    .noanalog = 0,
+    .oldplugin = 0,
+    .htmlviewer_custom_save_location = 0, // unused, always false
+    .hide_cfw_dirs = 1, // always true
+    .chn_iso = 1, // always true
+    .msspeed = 0,
+    .slimcolor = 0, // automatic
+    .iso_cache = 0,
+    .iso_cache_size = 0, // automatic
+    .iso_cache_num = 0,
+    .iso_cache_policy = CACHE_POLICY_LRU,
+    .noled = 0, // always false
+    .wpa2 = 0, /* not used by default */
+    .force_high_memory = 0,
+    .macspoofer = 0, // automatic
 };
 
 char *GetUmdFile(void) __attribute__((alias("sctrlSEGetUmdFile")));

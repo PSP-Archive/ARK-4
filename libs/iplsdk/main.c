@@ -14,7 +14,7 @@
 int delay_us(int delay){
     int ret = 0;
     for (int i=0; i<delay; i++){
-    	ret++;
+        ret++;
     }
     return ret;
 }
@@ -54,11 +54,11 @@ int main(void)
     gpio_set(GPIO_PORT_WLAN_LED);
 
     while (1) {
-    	gpio_set(GPIO_PORT_MS_LED);
-    	gpio_clear(GPIO_PORT_WLAN_LED);
-    	delay_us(250000);
-    	gpio_clear(GPIO_PORT_MS_LED);
-    	gpio_set(GPIO_PORT_WLAN_LED);
-    	delay_us(250000);
+        gpio_set(GPIO_PORT_MS_LED);
+        gpio_clear(GPIO_PORT_WLAN_LED);
+        delay_us(250000);
+        gpio_clear(GPIO_PORT_MS_LED);
+        gpio_set(GPIO_PORT_WLAN_LED);
+        delay_us(250000);
     }
 }

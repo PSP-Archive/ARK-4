@@ -86,8 +86,8 @@ float sceClkcGetCpuFrequencyPatched() {
 
     // 221.566 -> 222
     if (res_hex == 0x435D90C8) {
-    	res_hex = 0x435E0000;
-    	memcpy(&res, &res_hex, sizeof(u32));
+        res_hex = 0x435E0000;
+        memcpy(&res, &res_hex, sizeof(u32));
     }
 
     return res;
@@ -101,8 +101,8 @@ float sceClkcGetBusFrequencyPatched() {
 
     // 166.5 -> 111
     if (res_hex == 0x43268000) {
-    	res_hex = 0x42DE0000;
-    	memcpy(&res, &res_hex, sizeof(u32));
+        res_hex = 0x42DE0000;
+        memcpy(&res, &res_hex, sizeof(u32));
     }
 
     return res;

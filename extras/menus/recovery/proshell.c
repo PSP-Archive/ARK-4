@@ -185,7 +185,7 @@ int proshell_main()
         sceCtrlSetSamplingCycle(0);
         sceCtrlSetSamplingMode(1);
         sceCtrlReadBufferPositive(&data, 1);
-    	File * file = findindex(position);
+        File * file = findindex(position);
         
         // Other Commands
         if(filecount > 0)
@@ -588,11 +588,11 @@ int getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsig
     int res = 0;
     int i;
     for (i = 0; i < header->nitems; i++) {
-    	if (strcmp((char*)sfo_buffer + header->fields_table_offs + entries[i].field_offs, param_name) == 0) {
-    		memcpy(var, sfo_buffer + header->values_table_offs + entries[i].val_offs, *var_size);
+        if (strcmp((char*)sfo_buffer + header->fields_table_offs + entries[i].field_offs, param_name) == 0) {
+        	memcpy(var, sfo_buffer + header->values_table_offs + entries[i].val_offs, *var_size);
             res = 1;
-    		break;
-    	}
+        	break;
+        }
     }
     return res;
 }
@@ -693,7 +693,7 @@ void printPluginInstall(char* plugin_name, int cur){
         }
         else {
             printoob(items[i].text, 175, items[i].offset, FONT_COLOR);
-    	}
+        }
     }
 }
 
@@ -706,8 +706,8 @@ void pluginInstall(File *file) {
     sceKernelDelayThread(500000);
 
     while(1){
-    	sceCtrlReadBufferPositive(&pad, 1);
-    	if ((pad.Buttons&PSP_CTRL_DOWN) == PSP_CTRL_DOWN){
+        sceCtrlReadBufferPositive(&pad, 1);
+        if ((pad.Buttons&PSP_CTRL_DOWN) == PSP_CTRL_DOWN){
             if (cur < NELEMS(items)-1) cur++;
             printPluginInstall(file->name, cur);
             sceKernelDelayThread(500000);
@@ -759,8 +759,8 @@ void start(void)
     if(file == NULL || file->isFolder) return;
 
     if(isPlugin(file->name)) {
-    	pluginInstall(file);
-    	return;
+        pluginInstall(file);
+        return;
     }
 
     // Load Execute Parameter

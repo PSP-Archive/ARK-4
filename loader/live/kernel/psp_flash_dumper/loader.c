@@ -5,12 +5,12 @@
 
 extern ARKConfig* ark_config;
 
-#define PSP_NAND_PAGES_PER_BLOCK    	32
-#define PSP_NAND_PAGE_USER_SIZE    	    512
-#define PSP_IPL_SIGNATURE    		    0x6DC64A38
-#define PSP_NAND_PAGE_SPARE_SIZE    	16
+#define PSP_NAND_PAGES_PER_BLOCK        32
+#define PSP_NAND_PAGE_USER_SIZE            512
+#define PSP_IPL_SIGNATURE        	    0x6DC64A38
+#define PSP_NAND_PAGE_SPARE_SIZE        16
 #define PSP_NAND_PAGE_SPARE_SMALL_SIZE    (PSP_NAND_PAGE_SPARE_SIZE-4)
-#define PSP_NAND_BLOCK_USER_SIZE    	(PSP_NAND_PAGE_USER_SIZE*PSP_NAND_PAGES_PER_BLOCK)
+#define PSP_NAND_BLOCK_USER_SIZE        (PSP_NAND_PAGE_USER_SIZE*PSP_NAND_PAGES_PER_BLOCK)
 #define PSP_NAND_BLOCK_SPARE_SMALL_SIZE    (PSP_NAND_PAGE_SPARE_SMALL_SIZE*PSP_NAND_PAGES_PER_BLOCK)
 
 u8  user[PSP_NAND_BLOCK_USER_SIZE], spare[PSP_NAND_BLOCK_SPARE_SMALL_SIZE];
@@ -131,7 +131,7 @@ void copyFile(char* path, char* destination){
     }
     else{
         size_t fsize = k_tbl->KernelIOLSeek(src, 0, PSP_SEEK_END);
-    	k_tbl->KernelIOLSeek(src, 0, PSP_SEEK_SET);
+        k_tbl->KernelIOLSeek(src, 0, PSP_SEEK_SET);
         do {
             read = k_tbl->KernelIORead(src, bigbuf, BUF_SIZE);
             k_tbl->KernelIOWrite(dst, bigbuf, read);
@@ -214,55 +214,55 @@ int copy_folder_recursive(const char * source, const char * destination)
 int pspIplGetIpl(u8 *buf)
 {
     u32 block, ppn;
-    u16	blocktable[32];
+    u16    blocktable[32];
     int i, res, nblocks, size;
 
     for (block = 4; block < 0x0C; block++)
     {
-    	ppn = block*PSP_NAND_PAGES_PER_BLOCK;		
-    	res = NandReadPagesRawAll(ppn, user, spare, 1);
-    	if (res < 0)
-    	{
-    		//Printf("   Error reading page 0x%04X.\n", ppn);
-    		return res;
-    	}
+        ppn = block*PSP_NAND_PAGES_PER_BLOCK;		
+        res = NandReadPagesRawAll(ppn, user, spare, 1);
+        if (res < 0)
+        {
+        	//Printf("   Error reading page 0x%04X.\n", ppn);
+        	return res;
+        }
 
-    	if (spare[5] == 0xFF) // if good block 
-    	{
-    		if (*(u32 *)&spare[8] == PSP_IPL_SIGNATURE)
-    			break;
-    	}
+        if (spare[5] == 0xFF) // if good block 
+        {
+        	if (*(u32 *)&spare[8] == PSP_IPL_SIGNATURE)
+        		break;
+        }
     }
 
     if (block == 0x0C)
     {
-    	//Printf("   Cannot find IPL in nand!.\n");
-    	return -1;
+        //Printf("   Cannot find IPL in nand!.\n");
+        return -1;
     }
 
     for (nblocks = 0; nblocks < 32; nblocks++)
     {
-    	blocktable[nblocks] = *(u16 *)&user[nblocks*2];
-    	
-    	if (blocktable[nblocks] == 0)
-    		break;		
+        blocktable[nblocks] = *(u16 *)&user[nblocks*2];
+        
+        if (blocktable[nblocks] == 0)
+        	break;		
     }
 
     size = 0;
 
     for (i = 0; i < nblocks; i++)
     {
-    	ppn = blocktable[i]*PSP_NAND_PAGES_PER_BLOCK;
-    	res = NandReadBlockWithRetry(ppn, buf, NULL);
-    	if (res < 0)
-    	{
-    		//Printf("   Cannot read block ppn=0x%04.\n", ppn);
-    		return res;
-    	}
+        ppn = blocktable[i]*PSP_NAND_PAGES_PER_BLOCK;
+        res = NandReadBlockWithRetry(ppn, buf, NULL);
+        if (res < 0)
+        {
+        	//Printf("   Cannot read block ppn=0x%04.\n", ppn);
+        	return res;
+        }
 
-    	buf += PSP_NAND_BLOCK_USER_SIZE;
-    	
-    	size += PSP_NAND_BLOCK_USER_SIZE;
+        buf += PSP_NAND_BLOCK_USER_SIZE;
+        
+        size += PSP_NAND_BLOCK_USER_SIZE;
     }
     
     return size;

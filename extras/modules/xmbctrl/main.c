@@ -265,25 +265,25 @@ void exec_custom_launcher() {
     SceIoStat stat; int res = sceIoGetstat(menupath, &stat);
 
     if (res >= 0){
-    	struct SceKernelLoadExecVSHParam param;
-    	sce_paf_private_memset(&param, 0, sizeof(param));
-    	param.size = sizeof(param);
-    	param.args = sce_paf_private_strlen(menupath) + 1;
-    	param.argp = menupath;
-    	param.key = "game";
-    	sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
+        struct SceKernelLoadExecVSHParam param;
+        sce_paf_private_memset(&param, 0, sizeof(param));
+        param.size = sizeof(param);
+        param.args = sce_paf_private_strlen(menupath) + 1;
+        param.argp = menupath;
+        param.key = "game";
+        sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
     }
     else{
-    	// reboot system in proshell mode
-    	ark_config->recovery = 0;
-    	strcpy(ark_config->launcher, "PROSHELL"); // reboot in proshell mode
+        // reboot system in proshell mode
+        ark_config->recovery = 0;
+        strcpy(ark_config->launcher, "PROSHELL"); // reboot in proshell mode
 
-    	struct KernelCallArg args;
-    	args.arg1 = ark_config;
-    	u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
-    	kuKernelCall((void*)setArkConfig, &args);
+        struct KernelCallArg args;
+        args.arg1 = ark_config;
+        u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
+        kuKernelCall((void*)setArkConfig, &args);
 
-    	sctrlSESetUmdFile("");
+        sctrlSESetUmdFile("");
         sctrlSESetBootConfFileIndex(MODE_UMD);
         sctrlKernelExitVSH(NULL);
     }
@@ -293,8 +293,8 @@ void exec_150_reboot(void) {
     int k1 = pspSdkSetK1(0);
     SceUID mod = sceKernelLoadModule(ARK_DC_PATH "/150/reboot150.prx", 0, NULL);
     if(mod < 0) {
-    	pspSdkSetK1(k1);
-    	return;
+        pspSdkSetK1(k1);
+        return;
     }
     int res = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
     pspSdkSetK1(k1);
@@ -500,34 +500,34 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         // Add Custom Launcher
         new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, (cur_icon)?item:information_board_item);
         AddVshItem(a0, topitem, new_item3);
-    	
-    	SceIoStat stat; 
-    	int ebootFound;
-    	if(psp_model == PSP_GO) {
-    		custom_app_path[0] = 'e';
-    		custom_app_path[1] = 'f';
-    		ebootFound = sceIoGetstat(custom_app_path, &stat);
-    		if(ebootFound < 0) {
-    			custom_app_path[0] = 'm'; 
-    			custom_app_path[1] = 's';
-    			ebootFound = sceIoGetstat(custom_app_path, &stat);
-    		}
-    	}
-    	else {
-    		ebootFound = sceIoGetstat(custom_app_path, &stat);
-    	}
+        
+        SceIoStat stat; 
+        int ebootFound;
+        if(psp_model == PSP_GO) {
+        	custom_app_path[0] = 'e';
+        	custom_app_path[1] = 'f';
+        	ebootFound = sceIoGetstat(custom_app_path, &stat);
+        	if(ebootFound < 0) {
+        		custom_app_path[0] = 'm'; 
+        		custom_app_path[1] = 's';
+        		ebootFound = sceIoGetstat(custom_app_path, &stat);
+        	}
+        }
+        else {
+        	ebootFound = sceIoGetstat(custom_app_path, &stat);
+        }
 
-    	if(ebootFound >= 0) {
+        if(ebootFound >= 0) {
             new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
             AddVshItem(a0, topitem, new_item4);
-    	}
+        }
 
-    	SceIoStat _150_file;
-    	int _1k_file = sceIoGetstat("ms0:/TM/DCARK/150/reboot150.prx", &_150_file); // Should fine a better way to handle this perhaps?
-    	if((psp_model == PSP_1000) && _1k_file >= 0 && !IS_VITA_ADR(ark_config)) {
+        SceIoStat _150_file;
+        int _1k_file = sceIoGetstat("ms0:/TM/DCARK/150/reboot150.prx", &_150_file); // Should fine a better way to handle this perhaps?
+        if((psp_model == PSP_1000) && _1k_file >= 0 && !IS_VITA_ADR(ark_config)) {
             new_item5 = addCustomVshItem(84, "msgtop_150_reboot", sysconf_150_reboot_arg, item);
             AddVshItem(a0, topitem, new_item5);
-    	}
+        }
 
     }
     
@@ -573,9 +573,9 @@ int ExecuteActionPatched(int action, int action_arg)
         else if (action_arg == sysconf_custom_app_arg){
             exec_custom_app(custom_app_path);
         }
-    	else if (action_arg == sysconf_150_reboot_arg){
-    		exec_150_reboot();
-    	}
+        else if (action_arg == sysconf_150_reboot_arg){
+        	exec_150_reboot();
+        }
         else is_cfw_config = 0;
     }
     if(old_is_cfw_config != is_cfw_config)
@@ -728,72 +728,72 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0){
                 u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
-    			static char file[128];
-    			sce_paf_private_strcpy(file, plugin->path);
+        		static char file[128];
+        		sce_paf_private_strcpy(file, plugin->path);
 
-    			char *p = sce_paf_private_strrchr(plugin->path, '/');
-    			if(p)
-    			{
-    				char *p2 = sce_paf_private_strchr(p + 1, '.');
-    				if(p2)
-    				{
-    					int len = (int)(p2 - (p + 1));
-    					sce_paf_private_strncpy(file, p + 1, len);
-    					file[len] = '\0';
-    				}
-    			}
+        		char *p = sce_paf_private_strrchr(plugin->path, '/');
+        		if(p)
+        		{
+        			char *p2 = sce_paf_private_strchr(p + 1, '.');
+        			if(p2)
+        			{
+        				int len = (int)(p2 - (p + 1));
+        				sce_paf_private_strncpy(file, p + 1, len);
+        				file[len] = '\0';
+        			}
+        		}
 
-    			utf8_to_unicode((wchar_t *)user_buffer, file);
-    			return (wchar_t *)user_buffer;
+        		utf8_to_unicode((wchar_t *)user_buffer, file);
+        		return (wchar_t *)user_buffer;
             }
             else if (sce_paf_private_strncmp(name, "plugins", 7) == 0){
                 u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
                 utf8_to_unicode((wchar_t *)user_buffer, plugin->path);
-    			return (wchar_t *)user_buffer;
+        		return (wchar_t *)user_buffer;
             }
         }
         if(sce_paf_private_strcmp(name, "msgtop_sysconf_configuration") == 0)
         {
-    		sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[1]);
+        	sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[1]);
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
         else if(sce_paf_private_strcmp(name, "msgtop_sysconf_plugins") == 0)
         {
-    		sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[2]);
-    		utf8_to_unicode((wchar_t *)user_buffer, buf);
-    		return (wchar_t *)user_buffer;
+        	sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[2]);
+        	utf8_to_unicode((wchar_t *)user_buffer, buf);
+        	return (wchar_t *)user_buffer;
         }
         else if(sce_paf_private_strcmp(name, "msgtop_custom_launcher") == 0)
         {
-    		if(string.items[3]) {
-    			sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[3]);
+        	if(string.items[3]) {
+        		sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[3]);
                 utf8_to_unicode((wchar_t *)user_buffer, buf);
                 return (wchar_t *)user_buffer;
-    		}
+        	}
         }
-    	else if(sce_paf_private_strcmp(name, "msgtop_custom_app") == 0)
+        else if(sce_paf_private_strcmp(name, "msgtop_custom_app") == 0)
         {
-    		sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[4]);
+        	sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[4]);
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
-    	else if(sce_paf_private_strcmp(name, "msgtop_150_reboot") == 0)
+        else if(sce_paf_private_strcmp(name, "msgtop_150_reboot") == 0)
         {
-    		sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[5]);
+        	sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[5]);
             utf8_to_unicode((wchar_t *)user_buffer, buf);
             return (wchar_t *)user_buffer;
         }
 
-    	else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
-    	{
+        else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
+        {
             if (se_config.custom_update && string.items[0]) {
                 utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
                 return (wchar_t *)user_buffer;
             }
-    	}
-    	
+        }
+        
     }
 
     wchar_t *res = scePafGetText(a0, name);
@@ -810,25 +810,25 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         {
             int configs[] =
             {
-                config.usbcharge,    	
-                config.clock_game,    	
+                config.usbcharge,        
+                config.clock_game,        
                 config.clock_vsh, 
-                config.wpa2,       	
-                config.launcher,    	
-                config.highmem,    		
-                config.mscache,    		
+                config.wpa2,           
+                config.launcher,        
+                config.highmem,        	
+                config.mscache,        	
                 config.infernocache,   
                 config.disablepause,     
-                config.oldplugin,    	
+                config.oldplugin,        
                 config.hibblock,    
-                config.skiplogos,    	
-                config.hidepics,    	 	
-                config.hidemac,     	
-                config.hidedlc,    		
-                config.noled,    		
-                config.noumd,    		
-                config.noanalog,    		    
-                config.qaflags,    	    
+                config.skiplogos,        
+                config.hidepics,         	
+                config.hidemac,         
+                config.hidedlc,        	
+                config.noled,        	
+                config.noumd,        	
+                config.noanalog,        	    
+                config.qaflags,            
             };
             
             int i;
@@ -845,13 +845,13 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
         }
         else if (is_cfw_config == 2){
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0)
-    		{
-    			u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
+        	{
+        		u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
-    			context_mode = PLUGINS_CONTEXT;
-    			*value = plugin->active;
-    			return 0;
-    		}
+        		context_mode = PLUGINS_CONTEXT;
+        		*value = plugin->active;
+        		return 0;
+        	}
         }
     }
 
@@ -902,17 +902,17 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
         }
         else if (is_cfw_config == 2){
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0)
-    		{
-    			u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
+        	{
+        		u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
-    			context_mode = PLUGINS_CONTEXT;
-    			plugin->active = *value;
+        		context_mode = PLUGINS_CONTEXT;
+        		plugin->active = *value;
                 savePlugins();
                 if (*value == PLUGIN_REMOVED){
                     sctrlKernelExitVSH(NULL);
                 }
                 return 0;
-    		}
+        	}
         }
         if(sce_paf_private_strcmp(name, "/CONFIG/SYSTEM/XMB/language") == 0)
         {

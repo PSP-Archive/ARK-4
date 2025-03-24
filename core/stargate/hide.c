@@ -33,9 +33,9 @@ static inline int is_in_blacklist(const char *dname)
     int i;
 
     for(i=0; i<NELEMS(g_blacklist); ++i) {
-    	if(0 == strcasecmp(dname, g_blacklist[i])) {
-    		return 1;
-    	}
+        if(0 == strcasecmp(dname, g_blacklist[i])) {
+        	return 1;
+        }
     }
 
     return 0;
@@ -47,7 +47,7 @@ int hideIoDread(SceUID fd, SceIoDirent * dir)
     int result = sceIoDread(fd, dir);
 
     if(result > 0 && is_in_blacklist(dir->d_name)) {
-    	result = sceIoDread(fd, dir);
+        result = sceIoDread(fd, dir);
     }
 
     pspSdkSetK1(k1);

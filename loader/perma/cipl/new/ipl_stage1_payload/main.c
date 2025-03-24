@@ -105,7 +105,7 @@ void *memset(void *dest, int value, size_t size)
     u8 *d = (u8 *) dest;
     
     while (size--)
-    	*(d++) = value;
+        *(d++) = value;
     
     return dest;
 }
@@ -116,7 +116,7 @@ void *memcpy(void *dest, const void *src, size_t size)
     u8 *s = (u8 *) src;
     
     while (size--)
-    	*(d++) = *(s++);
+        *(d++) = *(s++);
 
     return dest;
 }
@@ -150,7 +150,7 @@ u8 key_86[] =
 void xor(u8 *dest, u8 *src_a, u8 *src_b)
 {
     for (int i = 0; i < 16; i++)
-    	dest[i] = src_a[i] ^ src_b[i];
+        dest[i] = src_a[i] ^ src_b[i];
 }
 
 int seed_gen1(u8 *random_key, u8 *random_key_dec_resp_dec)
@@ -160,21 +160,21 @@ int seed_gen1(u8 *random_key, u8 *random_key_dec_resp_dec)
     u8 random_key_dec[16];
     int ret = kirk_decrypt_aes(random_key_dec, random_key, 16, 0x69);
     if (ret)
-    	return ret;
+        return ret;
     
     ret = syscon_send_auth(0x80, random_key_dec);
     if (ret)
-    	return ret;
+        return ret;
     
     u8 random_key_dec_resp[16];
     ret = syscon_recv_auth(0, random_key_dec_resp);
     if (ret)
-    	return ret;
+        return ret;
     
     ret = kirk_decrypt_aes(random_key_dec_resp_dec, random_key_dec_resp, 16, 0x14);
     if (ret)
-    	return ret;
-    	
+        return ret;
+        
     u8 random_key_dec_resp_dec_swapped[16];
     memcpy(random_key_dec_resp_dec_swapped, &random_key_dec_resp_dec[8], 8);
     memcpy(&random_key_dec_resp_dec_swapped[8], random_key_dec_resp_dec, 8);
@@ -182,11 +182,11 @@ int seed_gen1(u8 *random_key, u8 *random_key_dec_resp_dec)
     u8 seed_dec_resp_dec_hi_low_swapped_dec[16];
     ret = kirk_decrypt_aes(seed_dec_resp_dec_hi_low_swapped_dec, random_key_dec_resp_dec_swapped, 16, 0x69);
     if (ret)
-    	return ret;
+        return ret;
 
     ret = syscon_send_auth(0x82, seed_dec_resp_dec_hi_low_swapped_dec);
     if (ret)
-    	return ret;
+        return ret;
 
     return 0;
 }
@@ -198,28 +198,28 @@ int seed_gen2(u8 *rand_xor, u8 *key_86, u8 *random_key, u8 *random_key_dec_resp_
     
     int ret = kirk_decrypt_aes(random_key_xored, random_key_xored, 16, 0x15);
     if (ret)
-    	return ret;
-    	
+        return ret;
+        
     u8 random_key_dec_resp_dec_xored[16];
     xor(random_key_dec_resp_dec_xored, random_key_dec_resp_dec, random_key_xored);
     
     ret = syscon_send_auth(0x84, random_key_dec_resp_dec_xored);
     if (ret)
-    	return ret;
-    	
+        return ret;
+        
     ret = syscon_send_auth(0x86, key_86);
     if (ret)
-    	return ret;
+        return ret;
 
     u8 resp_2[16];
     ret = syscon_recv_auth(2, resp_2);
     if (ret)
-    	return ret;
+        return ret;
 
     u8 resp_4[16];
     ret = syscon_recv_auth(4, resp_4);
     if (ret)
-    	return ret;
+        return ret;
     
     return 0;
 }
@@ -235,11 +235,11 @@ int unlockSyscon()
     
     int ret = seed_gen1(random_key, random_key_dec_resp_dec);
     if (ret)
-    	return ret;
+        return ret;
     
     ret = seed_gen2(rand_xor, key_86, random_key, random_key_dec_resp_dec);
     if (ret)
-    	return ret;
+        return ret;
     
     kirk_hwreset();
 
@@ -263,7 +263,7 @@ u8 seed_xor[] =
 int set_seed(u8 *xor_key, u8 *random_key, u8 *random_key_dec_resp_dec)
 {
     for (int i = 0; i < sizeof(seed_xor); i++)
-    	*(u8 *) (0xBFC00210 + i) ^= seed_xor[i];
+        *(u8 *) (0xBFC00210 + i) ^= seed_xor[i];
 
     return 0;
 }
@@ -364,11 +364,11 @@ int main()
     u32 tachyon_version = syscon_get_tachyon_version();
 
     if (tachyon_version >= 0x600000)
-    	_sw(0x20070910, 0xbfc00ffc);
+        _sw(0x20070910, 0xbfc00ffc);
     else if (tachyon_version >= 0x400000)
-    	_sw(0x20050104, 0xbfc00ffc);
+        _sw(0x20050104, 0xbfc00ffc);
     else
-    	_sw(0x20040420, 0xbfc00ffc);
+        _sw(0x20040420, 0xbfc00ffc);
 
 #ifndef MSIPL
     uint32_t keys = -1;
@@ -377,17 +377,17 @@ int main()
     {
         syscon_ctrl_ms_power(1);
     
-    	MsFatMount();
+        MsFatMount();
 
-    	int res = MsFatOpen("/TM/DCARK/msipl.raw");
+        int res = MsFatOpen("/TM/DCARK/msipl.raw");
 
-    	if (res == 0){
-    		MsFatRead(0x40c0000, 0x4000);
-    		MsFatClose();
-    		Dcache();
-    		Icache();
-    		return ((int (*)()) 0x40c0000)();
-    	}
+        if (res == 0){
+        	MsFatRead(0x40c0000, 0x4000);
+        	MsFatClose();
+        	Dcache();
+        	Icache();
+        	return ((int (*)()) 0x40c0000)();
+        }
     }
 #endif
 

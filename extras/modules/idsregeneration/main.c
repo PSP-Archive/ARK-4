@@ -153,8 +153,8 @@ int idsRegenerationSetup(int tachyon, int baryon, int pommel, int mb, u64 fuseid
 
     if (region < JAPAN || region > EUROPE)
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     g_tachyon = tachyon;
@@ -166,24 +166,24 @@ int idsRegenerationSetup(int tachyon, int baryon, int pommel, int mb, u64 fuseid
 
     if (mb < TA_082)
     {
-    	psptype = 1;
+        psptype = 1;
     }
     else if (mb == TA_082 || mb == TA_086)
     {
-    	psptype = 2;
+        psptype = 2;
     }
     else
     {
-    	psptype = 3;
+        psptype = 3;
     }
 
     isslim = (psptype == 3);
     is79 = (mb <= TA_079v3);
 
     if (setparam)
-    	memcpy(setParam, setparam, 8);
+        memcpy(setParam, setparam, 8);
     else
-    	memset(setParam, 0, 8);
+        memset(setParam, 0, 8);
 
     pspSdkSetK1(k1);
     return 0;
@@ -195,481 +195,481 @@ int idsRegenerationGetIndex(IdsIndex *index, int *n)
 
     if (psptype == 1)
     {
-    	if (g_region == JAPAN)
-    	{
-    		index[0].keyfirst = 0x120;
-    		index[0].keyend = 0x13F;
-    		
-    		index[1].keyfirst = 0x10;
-    		index[1].keyend = 0x2F;
+        if (g_region == JAPAN)
+        {
+        	index[0].keyfirst = 0x120;
+        	index[0].keyend = 0x13F;
+        	
+        	index[1].keyfirst = 0x10;
+        	index[1].keyend = 0x2F;
 
-    		index[2].keyfirst = 0x0F;
-    		index[2].keyend = 0x0F;
+        	index[2].keyfirst = 0x0F;
+        	index[2].keyend = 0x0F;
 
-    		index[3].keyfirst = 0x50;
-    		index[3].keyend = 0x50;
+        	index[3].keyfirst = 0x50;
+        	index[3].keyend = 0x50;
 
-    		index[4].keyfirst = 0x45;
-    		index[4].keyend = 0x46;
+        	index[4].keyfirst = 0x45;
+        	index[4].keyend = 0x46;
 
-    		index[5].keyfirst = 0x04;
-    		index[5].keyend = 0x06;
+        	index[5].keyfirst = 0x04;
+        	index[5].keyend = 0x06;
 
-    		index[6].keyfirst = 0x41;
-    		index[6].keyend = 0x43;
+        	index[6].keyfirst = 0x41;
+        	index[6].keyend = 0x43;
 
-    		index[7].keyfirst = 0x140;
-    		index[7].keyend = 0x140;
+        	index[7].keyfirst = 0x140;
+        	index[7].keyend = 0x140;
 
-    		index[8].keyfirst = 0x44;
-    		index[8].keyend = 0x44;
+        	index[8].keyfirst = 0x44;
+        	index[8].keyend = 0x44;
 
-    		index[9].keyfirst = 0x40;
-    		index[9].keyend = 0x40;
+        	index[9].keyfirst = 0x40;
+        	index[9].keyend = 0x40;
 
-    		index[10].keyfirst = 0x30;
-    		index[10].keyend = 0x3F;
+        	index[10].keyfirst = 0x30;
+        	index[10].keyend = 0x3F;
 
-    		index[11].keyfirst = 0x100;
-    		index[11].keyend = 0x11F;
+        	index[11].keyfirst = 0x100;
+        	index[11].keyend = 0x11F;
 
-    		*n = 12;
-    	}
-    	else if (g_region == AMERICA)
-    	{
-    		// Got from american
-    		index[0].keyfirst = 0x120;
-    		index[0].keyend = 0x13F;
+        	*n = 12;
+        }
+        else if (g_region == AMERICA)
+        {
+        	// Got from american
+        	index[0].keyfirst = 0x120;
+        	index[0].keyend = 0x13F;
 
-    		index[1].keyfirst = 0x10;
-    		index[1].keyend = 0x2F;
+        	index[1].keyfirst = 0x10;
+        	index[1].keyend = 0x2F;
 
-    		index[2].keyfirst = 0x140;
-    		index[2].keyend = 0x140;
+        	index[2].keyfirst = 0x140;
+        	index[2].keyend = 0x140;
 
-    		index[3].keyfirst = 0x100;
-    		index[3].keyend = 0x11F;
+        	index[3].keyfirst = 0x100;
+        	index[3].keyend = 0x11F;
 
-    		index[4].keyfirst = 0x0F;
-    		index[4].keyend = 0x0F;
+        	index[4].keyfirst = 0x0F;
+        	index[4].keyend = 0x0F;
 
-    		index[5].keyfirst = 0x50;
-    		index[5].keyend = 0x50;
+        	index[5].keyfirst = 0x50;
+        	index[5].keyend = 0x50;
 
-    		index[6].keyfirst = 0x45;
-    		index[6].keyend = 0x46;
+        	index[6].keyfirst = 0x45;
+        	index[6].keyend = 0x46;
 
-    		index[7].keyfirst = 0x04;
-    		index[7].keyend = 0x06;
+        	index[7].keyfirst = 0x04;
+        	index[7].keyend = 0x06;
 
-    		index[8].keyfirst = 0x41;
-    		index[8].keyend = 0x44;
+        	index[8].keyfirst = 0x41;
+        	index[8].keyend = 0x44;
 
-    		index[9].keyfirst = 0x40;
-    		index[9].keyend = 0x40;
+        	index[9].keyfirst = 0x40;
+        	index[9].keyend = 0x40;
 
-    		index[10].keyfirst = 0x30;
-    		index[10].keyend = 0x3F;
+        	index[10].keyfirst = 0x30;
+        	index[10].keyend = 0x3F;
 
-    		*n = 11;
-    	}
+        	*n = 11;
+        }
     
-    	else // region 5 euro
-    	{
-    		index[0].keyfirst = 0x120;
-    		index[0].keyend = 0x13F;
+        else // region 5 euro
+        {
+        	index[0].keyfirst = 0x120;
+        	index[0].keyend = 0x13F;
 
-    		index[1].keyfirst = 0x10;
-    		index[1].keyend = 0x2F;
+        	index[1].keyfirst = 0x10;
+        	index[1].keyend = 0x2F;
 
-    		index[2].keyfirst = 0x0F;
-    		index[2].keyend = 0x0F;
+        	index[2].keyfirst = 0x0F;
+        	index[2].keyend = 0x0F;
 
-    		index[3].keyfirst = 0x50;
-    		index[3].keyend = 0x50;
+        	index[3].keyfirst = 0x50;
+        	index[3].keyend = 0x50;
 
-    		index[4].keyfirst = 0x45;
-    		index[4].keyend = 0x46;
+        	index[4].keyfirst = 0x45;
+        	index[4].keyend = 0x46;
 
-    		index[5].keyfirst = 0x04;
-    		index[5].keyend = 0x06;
+        	index[5].keyfirst = 0x04;
+        	index[5].keyend = 0x06;
 
-    		index[6].keyfirst = 0x41;
-    		index[6].keyend = 0x44;
+        	index[6].keyfirst = 0x41;
+        	index[6].keyend = 0x44;
 
-    		index[7].keyfirst = 0x40;
-    		index[7].keyend = 0x40;
+        	index[7].keyfirst = 0x40;
+        	index[7].keyend = 0x40;
 
-    		index[8].keyfirst = 0x100;
-    		index[8].keyend = 0x11F;
+        	index[8].keyfirst = 0x100;
+        	index[8].keyend = 0x11F;
 
-    		index[9].keyfirst = 0x140;
-    		index[9].keyend = 0x140;
+        	index[9].keyfirst = 0x140;
+        	index[9].keyend = 0x140;
 
-    		index[10].keyfirst = 0x30;
-    		index[10].keyend = 0x3F;
+        	index[10].keyfirst = 0x30;
+        	index[10].keyend = 0x3F;
 
-    		*n = 11;
-    	}
+        	*n = 11;
+        }
     }
 
     else if (psptype == 2)
     {
-    	if (g_mb == TA_082)
-    	{
-    		if (1)
-    		{
-    			// got from euro
-    			index[0].keyfirst = 0x120;
-    			index[0].keyend = 0x13F;
-    		
-    			index[1].keyfirst = 0x10;
-    			index[1].keyend = 0x2F;
+        if (g_mb == TA_082)
+        {
+        	if (1)
+        	{
+        		// got from euro
+        		index[0].keyfirst = 0x120;
+        		index[0].keyend = 0x13F;
+        	
+        		index[1].keyfirst = 0x10;
+        		index[1].keyend = 0x2F;
 
-    			index[2].keyfirst = 0x100;
-    			index[2].keyend = 0x11F;
+        		index[2].keyfirst = 0x100;
+        		index[2].keyend = 0x11F;
 
-    			index[3].keyfirst = 0x0F;
-    			index[3].keyend = 0x0F;
+        		index[3].keyfirst = 0x0F;
+        		index[3].keyend = 0x0F;
 
-    			index[4].keyfirst = 0x50;
-    			index[4].keyend = 0x50;
+        		index[4].keyfirst = 0x50;
+        		index[4].keyend = 0x50;
 
-    			index[5].keyfirst = 0x47;
-    			index[5].keyend = 0x47;
+        		index[5].keyfirst = 0x47;
+        		index[5].keyend = 0x47;
 
-    			index[6].keyfirst = 0x45;
-    			index[6].keyend = 0x46;
+        		index[6].keyfirst = 0x45;
+        		index[6].keyend = 0x46;
 
-    			index[7].keyfirst = 0x04;
-    			index[7].keyend = 0x06;
+        		index[7].keyfirst = 0x04;
+        		index[7].keyend = 0x06;
 
-    			index[8].keyfirst = 0x41;
-    			index[8].keyend = 0x43;
+        		index[8].keyfirst = 0x41;
+        		index[8].keyend = 0x43;
 
-    			index[9].keyfirst = 0x51;
-    			index[9].keyend = 0x51;
+        		index[9].keyfirst = 0x51;
+        		index[9].keyend = 0x51;
 
-    			index[10].keyfirst = 0x44;
-    			index[10].keyend = 0x44;
+        		index[10].keyfirst = 0x44;
+        		index[10].keyend = 0x44;
 
-    			index[11].keyfirst = 0x40;
-    			index[11].keyend = 0x40;
+        		index[11].keyfirst = 0x40;
+        		index[11].keyend = 0x40;
 
-    			index[12].keyfirst = 0x140;
-    			index[12].keyend = 0x140;
+        		index[12].keyfirst = 0x140;
+        		index[12].keyend = 0x140;
 
-    			index[13].keyfirst = 0x30;
-    			index[13].keyend = 0x3F;
+        		index[13].keyfirst = 0x30;
+        		index[13].keyend = 0x3F;
 
-    			*n = 14;
-    		}
-    	}
-    	else if (g_mb == TA_086)
-    	{
-    		if (g_region == EUROPE)
-    		{
-    			// got from euro 86
-    			index[0].keyfirst = 0x120;
-    			index[0].keyend = 0x13F;
+        		*n = 14;
+        	}
+        }
+        else if (g_mb == TA_086)
+        {
+        	if (g_region == EUROPE)
+        	{
+        		// got from euro 86
+        		index[0].keyfirst = 0x120;
+        		index[0].keyend = 0x13F;
 
-    			index[1].keyfirst = 0x10;
-    			index[1].keyend = 0x2F;
+        		index[1].keyfirst = 0x10;
+        		index[1].keyend = 0x2F;
 
-    			index[2].keyfirst = 0x140;
-    			index[2].keyend = 0x140;
+        		index[2].keyfirst = 0x140;
+        		index[2].keyend = 0x140;
 
-    			index[3].keyfirst = 0x100;
-    			index[3].keyend = 0x11F;
+        		index[3].keyfirst = 0x100;
+        		index[3].keyend = 0x11F;
 
-    			index[4].keyfirst = 0x0F;
-    			index[4].keyend = 0x0F;
+        		index[4].keyfirst = 0x0F;
+        		index[4].keyend = 0x0F;
 
-    			index[5].keyfirst = 0x50;
-    			index[5].keyend = 0x50;
+        		index[5].keyfirst = 0x50;
+        		index[5].keyend = 0x50;
 
-    			index[6].keyfirst = 0x47;
-    			index[6].keyend = 0x47;
+        		index[6].keyfirst = 0x47;
+        		index[6].keyend = 0x47;
 
-    			index[7].keyfirst = 0x45;
-    			index[7].keyend = 0x46;
+        		index[7].keyfirst = 0x45;
+        		index[7].keyend = 0x46;
 
-    			index[8].keyfirst = 0x04;
-    			index[8].keyend = 0x06;
+        		index[8].keyfirst = 0x04;
+        		index[8].keyend = 0x06;
 
-    			index[9].keyfirst = 0x08;
-    			index[9].keyend = 0x08;
+        		index[9].keyfirst = 0x08;
+        		index[9].keyend = 0x08;
 
-    			index[10].keyfirst = 0x41;
-    			index[10].keyend = 0x43;
+        		index[10].keyfirst = 0x41;
+        		index[10].keyend = 0x43;
 
-    			index[11].keyfirst = 0x51;
-    			index[11].keyend = 0x51;
+        		index[11].keyfirst = 0x51;
+        		index[11].keyend = 0x51;
 
-    			index[12].keyfirst = 0x44;
-    			index[12].keyend = 0x44;
+        		index[12].keyfirst = 0x44;
+        		index[12].keyend = 0x44;
 
-    			index[13].keyfirst = 0x07;
-    			index[13].keyend = 0x07;
+        		index[13].keyfirst = 0x07;
+        		index[13].keyend = 0x07;
 
-    			index[14].keyfirst = 0x40;
-    			index[14].keyend = 0x40;
+        		index[14].keyfirst = 0x40;
+        		index[14].keyend = 0x40;
 
-    			index[15].keyfirst = 0x30;
-    			index[15].keyend = 0x3F;
+        		index[15].keyfirst = 0x30;
+        		index[15].keyend = 0x3F;
 
-    			*n = 16;
-    		}
-    		else
-    		{
-    			// got from jap 86
-    			index[0].keyfirst = 0x120;
-    			index[0].keyend = 0x13F;
+        		*n = 16;
+        	}
+        	else
+        	{
+        		// got from jap 86
+        		index[0].keyfirst = 0x120;
+        		index[0].keyend = 0x13F;
 
-    			index[1].keyfirst = 0x10;
-    			index[1].keyend = 0x2F;
+        		index[1].keyfirst = 0x10;
+        		index[1].keyend = 0x2F;
 
-    			index[2].keyfirst = 0x100;
-    			index[2].keyend = 0x11F;
+        		index[2].keyfirst = 0x100;
+        		index[2].keyend = 0x11F;
 
-    			index[3].keyfirst = 0x0F;
-    			index[3].keyend = 0x0F;
+        		index[3].keyfirst = 0x0F;
+        		index[3].keyend = 0x0F;
 
-    			index[4].keyfirst = 0x50;
-    			index[4].keyend = 0x50;
+        		index[4].keyfirst = 0x50;
+        		index[4].keyend = 0x50;
 
-    			index[5].keyfirst = 0x47;
-    			index[5].keyend = 0x47;
+        		index[5].keyfirst = 0x47;
+        		index[5].keyend = 0x47;
 
-    			index[6].keyfirst = 0x45;
-    			index[6].keyend = 0x46;
+        		index[6].keyfirst = 0x45;
+        		index[6].keyend = 0x46;
 
-    			index[7].keyfirst = 0x04;
-    			index[7].keyend = 0x06;
+        		index[7].keyfirst = 0x04;
+        		index[7].keyend = 0x06;
 
-    			index[8].keyfirst = 0x08;
-    			index[8].keyend = 0x08;
+        		index[8].keyfirst = 0x08;
+        		index[8].keyend = 0x08;
 
-    			index[9].keyfirst = 0x41;
-    			index[9].keyend = 0x43;
+        		index[9].keyfirst = 0x41;
+        		index[9].keyend = 0x43;
 
-    			index[10].keyfirst = 0x51;
-    			index[10].keyend = 0x51;
+        		index[10].keyfirst = 0x51;
+        		index[10].keyend = 0x51;
 
-    			index[11].keyfirst = 0x44;
-    			index[11].keyend = 0x44;
+        		index[11].keyfirst = 0x44;
+        		index[11].keyend = 0x44;
 
-    			index[12].keyfirst = 0x07;
-    			index[12].keyend = 0x07;
+        		index[12].keyfirst = 0x07;
+        		index[12].keyend = 0x07;
 
-    			index[13].keyfirst = 0x40;
-    			index[13].keyend = 0x40;
+        		index[13].keyfirst = 0x40;
+        		index[13].keyend = 0x40;
 
-    			index[14].keyfirst = 0x140;
-    			index[14].keyend = 0x140;
+        		index[14].keyfirst = 0x140;
+        		index[14].keyend = 0x140;
 
-    			index[15].keyfirst = 0x30;
-    			index[15].keyend = 0x3F;
+        		index[15].keyfirst = 0x30;
+        		index[15].keyend = 0x3F;
 
-    			*n = 16;
-    		}
-    	}
-    	else
-    	{
-    		pspSdkSetK1(k1);
-    		return -1;
-    	}
+        		*n = 16;
+        	}
+        }
+        else
+        {
+        	pspSdkSetK1(k1);
+        	return -1;
+        }
     }
 
     else if (psptype == 3)
     {
-    	if (g_mb == TA_085v1 || g_mb == TA_085v2)
-    	{
-    		if (g_region == JAPAN)
-    		{
-    			index[0].keyfirst = 0x120;
-    			index[0].keyend = 0x13F;
+        if (g_mb == TA_085v1 || g_mb == TA_085v2)
+        {
+        	if (g_region == JAPAN)
+        	{
+        		index[0].keyfirst = 0x120;
+        		index[0].keyend = 0x13F;
 
-    			index[1].keyfirst = 0x0F;
-    			index[1].keyend = 0x0F;
+        		index[1].keyfirst = 0x0F;
+        		index[1].keyend = 0x0F;
 
-    			index[2].keyfirst = 0x50;
-    			index[2].keyend = 0x50;
+        		index[2].keyfirst = 0x50;
+        		index[2].keyend = 0x50;
 
-    			index[3].keyfirst = 0x52;
-    			index[3].keyend = 0x53;
+        		index[3].keyfirst = 0x52;
+        		index[3].keyend = 0x53;
 
-    			index[4].keyfirst = 0x47;
-    			index[4].keyend = 0x47;
+        		index[4].keyfirst = 0x47;
+        		index[4].keyend = 0x47;
 
-    			index[5].keyfirst = 0x45;
-    			index[5].keyend = 0x46;
+        		index[5].keyfirst = 0x45;
+        		index[5].keyend = 0x46;
 
-    			index[6].keyfirst = 0x04;
-    			index[6].keyend = 0x06;
+        		index[6].keyfirst = 0x04;
+        		index[6].keyend = 0x06;
 
-    			index[7].keyfirst = 0x08;
-    			index[7].keyend = 0x08;
+        		index[7].keyfirst = 0x08;
+        		index[7].keyend = 0x08;
 
-    			index[8].keyfirst = 0x41;
-    			index[8].keyend = 0x43;
+        		index[8].keyfirst = 0x41;
+        		index[8].keyend = 0x43;
 
-    			index[9].keyfirst = 0x51;
-    			index[9].keyend = 0x51;
+        		index[9].keyfirst = 0x51;
+        		index[9].keyend = 0x51;
 
-    			index[10].keyfirst = 0x54;
-    			index[10].keyend = 0x54;
+        		index[10].keyfirst = 0x54;
+        		index[10].keyend = 0x54;
 
-    			index[11].keyfirst = 0x140;
-    			index[11].keyend = 0x140;
+        		index[11].keyfirst = 0x140;
+        		index[11].keyend = 0x140;
 
-    			index[12].keyfirst = 0x44;
-    			index[12].keyend = 0x44;
+        		index[12].keyfirst = 0x44;
+        		index[12].keyend = 0x44;
 
-    			index[13].keyfirst = 0x07;
-    			index[13].keyend = 0x07;
+        		index[13].keyfirst = 0x07;
+        		index[13].keyend = 0x07;
 
-    			index[14].keyfirst = 0x40;
-    			index[14].keyend = 0x40;
+        		index[14].keyfirst = 0x40;
+        		index[14].keyend = 0x40;
 
-    			index[15].keyfirst = 0x100;
-    			index[15].keyend = 0x11F;
+        		index[15].keyfirst = 0x100;
+        		index[15].keyend = 0x11F;
 
-    			index[16].keyfirst = 0x30;
-    			index[16].keyend = 0x3F;
+        		index[16].keyfirst = 0x30;
+        		index[16].keyend = 0x3F;
 
-    			index[17].keyfirst = 0x10;
-    			index[17].keyend = 0x2F;
+        		index[17].keyfirst = 0x10;
+        		index[17].keyend = 0x2F;
 
-    			*n = 18;
-    		}
-    		else // america & euro
-    		{
-    			// got from american
-    			index[0].keyfirst = 0x0F;
-    			index[0].keyend = 0x0F;
+        		*n = 18;
+        	}
+        	else // america & euro
+        	{
+        		// got from american
+        		index[0].keyfirst = 0x0F;
+        		index[0].keyend = 0x0F;
 
-    			index[1].keyfirst = 0x50;
-    			index[1].keyend = 0x50;
+        		index[1].keyfirst = 0x50;
+        		index[1].keyend = 0x50;
 
-    			index[2].keyfirst = 0x52;
-    			index[2].keyend = 0x53;
+        		index[2].keyfirst = 0x52;
+        		index[2].keyend = 0x53;
 
-    			index[3].keyfirst = 0x47;
-    			index[3].keyend = 0x47;
+        		index[3].keyfirst = 0x47;
+        		index[3].keyend = 0x47;
 
-    			index[4].keyfirst = 0x45;
-    			index[4].keyend = 0x46;
+        		index[4].keyfirst = 0x45;
+        		index[4].keyend = 0x46;
 
-    			index[5].keyfirst = 0x04;
-    			index[5].keyend = 0x06;
+        		index[5].keyfirst = 0x04;
+        		index[5].keyend = 0x06;
 
-    			index[6].keyfirst = 0x08;
-    			index[6].keyend = 0x08;
+        		index[6].keyfirst = 0x08;
+        		index[6].keyend = 0x08;
 
-    			index[7].keyfirst = 0x41;
-    			index[7].keyend = 0x43;
+        		index[7].keyfirst = 0x41;
+        		index[7].keyend = 0x43;
 
-    			index[8].keyfirst = 0x51;
-    			index[8].keyend = 0x51;
+        		index[8].keyfirst = 0x51;
+        		index[8].keyend = 0x51;
 
-    			index[9].keyfirst = 0x54;
-    			index[9].keyend = 0x54;
+        		index[9].keyfirst = 0x54;
+        		index[9].keyend = 0x54;
 
-    			index[10].keyfirst = 0x140;
-    			index[10].keyend = 0x140;
+        		index[10].keyfirst = 0x140;
+        		index[10].keyend = 0x140;
 
-    			index[11].keyfirst = 0x44;
-    			index[11].keyend = 0x44;
+        		index[11].keyfirst = 0x44;
+        		index[11].keyend = 0x44;
 
-    			index[12].keyfirst = 0x07;
-    			index[12].keyend = 0x07;
+        		index[12].keyfirst = 0x07;
+        		index[12].keyend = 0x07;
 
-    			index[13].keyfirst = 0x40;
-    			index[13].keyend = 0x40;
+        		index[13].keyfirst = 0x40;
+        		index[13].keyend = 0x40;
 
-    			index[14].keyfirst = 0x120;
-    			index[14].keyend = 0x13F;
+        		index[14].keyfirst = 0x120;
+        		index[14].keyend = 0x13F;
 
-    			index[15].keyfirst = 0x100;
-    			index[15].keyend = 0x11F;
+        		index[15].keyfirst = 0x100;
+        		index[15].keyend = 0x11F;
 
-    			index[16].keyfirst = 0x30;
-    			index[16].keyend = 0x3F;
+        		index[16].keyfirst = 0x30;
+        		index[16].keyend = 0x3F;
 
-    			index[17].keyfirst = 0x10;
-    			index[17].keyend = 0x2F;
+        		index[17].keyfirst = 0x10;
+        		index[17].keyend = 0x2F;
 
-    			*n = 18;
-    		}
-    	}
-    	else // TA_88
-    	{
-    		if (1)
-    		{
-    			// got from america
-    			index[0].keyfirst = 0x120;
-    			index[0].keyend = 0x13F;
+        		*n = 18;
+        	}
+        }
+        else // TA_88
+        {
+        	if (1)
+        	{
+        		// got from america
+        		index[0].keyfirst = 0x120;
+        		index[0].keyend = 0x13F;
 
-    			index[1].keyfirst = 0x100;
-    			index[1].keyend = 0x11F;
+        		index[1].keyfirst = 0x100;
+        		index[1].keyend = 0x11F;
 
-    			index[2].keyfirst = 0x10;
-    			index[2].keyend = 0x2F;
+        		index[2].keyfirst = 0x10;
+        		index[2].keyend = 0x2F;
 
-    			index[3].keyfirst = 0x0F;
-    			index[3].keyend = 0x0F;
+        		index[3].keyfirst = 0x0F;
+        		index[3].keyend = 0x0F;
 
-    			index[4].keyfirst = 0x50;
-    			index[4].keyend = 0x50;
+        		index[4].keyfirst = 0x50;
+        		index[4].keyend = 0x50;
 
-    			index[5].keyfirst = 0x52;
-    			index[5].keyend = 0x53;
+        		index[5].keyfirst = 0x52;
+        		index[5].keyend = 0x53;
 
-    			index[6].keyfirst = 0x47;
-    			index[6].keyend = 0x47;
+        		index[6].keyfirst = 0x47;
+        		index[6].keyend = 0x47;
 
-    			index[7].keyfirst = 0x45;
-    			index[7].keyend = 0x46;
+        		index[7].keyfirst = 0x45;
+        		index[7].keyend = 0x46;
 
-    			index[8].keyfirst = 0x04;
-    			index[8].keyend = 0x06;
+        		index[8].keyfirst = 0x04;
+        		index[8].keyend = 0x06;
 
-    			index[9].keyfirst = 0x08;
-    			index[9].keyend = 0x08;
+        		index[9].keyfirst = 0x08;
+        		index[9].keyend = 0x08;
 
-    			index[10].keyfirst = 0x41;
-    			index[10].keyend = 0x43;
+        		index[10].keyfirst = 0x41;
+        		index[10].keyend = 0x43;
 
-    			index[11].keyfirst = 0x51;
-    			index[11].keyend = 0x51;
+        		index[11].keyfirst = 0x51;
+        		index[11].keyend = 0x51;
 
-    			index[12].keyfirst = 0x54;
-    			index[12].keyend = 0x54;
+        		index[12].keyfirst = 0x54;
+        		index[12].keyend = 0x54;
 
-    			index[13].keyfirst = 0x140;
-    			index[13].keyend = 0x140;
+        		index[13].keyfirst = 0x140;
+        		index[13].keyend = 0x140;
 
-    			index[14].keyfirst = 0x44;
-    			index[14].keyend = 0x44;
+        		index[14].keyfirst = 0x44;
+        		index[14].keyend = 0x44;
 
-    			index[15].keyfirst = 0x07;
-    			index[15].keyend = 0x07;
+        		index[15].keyfirst = 0x07;
+        		index[15].keyend = 0x07;
 
-    			index[16].keyfirst = 0x40;
-    			index[16].keyend = 0x40;
+        		index[16].keyfirst = 0x40;
+        		index[16].keyend = 0x40;
 
-    			index[17].keyfirst = 0x30;
-    			index[17].keyend = 0x3F;
+        		index[17].keyfirst = 0x30;
+        		index[17].keyend = 0x3F;
 
-    			*n = 18;
-    		}
-    	}
+        		*n = 18;
+        	}
+        }
     }
     else
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     pspSdkSetK1(k1);
@@ -684,26 +684,26 @@ int idsRegenerationGetHwConfigKeys(u8 *buf)
 
     if (psptype == 1)
     {
-    	memcpy(buf, baryon_type1, sizeof(baryon_type1));
-    	memcpy(buf+512, clockgen_type1, sizeof(clockgen_type1));
-    	memcpy(buf+1024, ddr_type1, sizeof(ddr_type1));
+        memcpy(buf, baryon_type1, sizeof(baryon_type1));
+        memcpy(buf+512, clockgen_type1, sizeof(clockgen_type1));
+        memcpy(buf+1024, ddr_type1, sizeof(ddr_type1));
     }
     else if (psptype == 2)
     {
-    	memcpy(buf, baryon_type2, sizeof(baryon_type2));
-    	memcpy(buf+512, clockgen_type2, sizeof(clockgen_type2));
-    	memcpy(buf+1024, ddr_type2, sizeof(ddr_type2));
+        memcpy(buf, baryon_type2, sizeof(baryon_type2));
+        memcpy(buf+512, clockgen_type2, sizeof(clockgen_type2));
+        memcpy(buf+1024, ddr_type2, sizeof(ddr_type2));
     }
     else if (psptype == 3)
     {
-    	memcpy(buf, baryon_type3, sizeof(baryon_type3));
-    	memcpy(buf+512, clockgen_type3, sizeof(clockgen_type3));
-    	memcpy(buf+1024, ddr_type3, sizeof(ddr_type3));
+        memcpy(buf, baryon_type3, sizeof(baryon_type3));
+        memcpy(buf+512, clockgen_type3, sizeof(clockgen_type3));
+        memcpy(buf+1024, ddr_type3, sizeof(ddr_type3));
     }
     else
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     pspSdkSetK1(k1);
@@ -718,20 +718,20 @@ int idsRegenerationGetMGKeys(u8 *buf)
 
     if (psptype == 1)
     {
-    	memcpy(buf, mg_81_AM_25A00D7C2958D, sizeof(mg_81_AM_25A00D7C2958D));
+        memcpy(buf, mg_81_AM_25A00D7C2958D, sizeof(mg_81_AM_25A00D7C2958D));
     }
     else if (psptype == 2)
     {
-    	memcpy(buf, mg_86_EU_PINK, sizeof(mg_86_EU_PINK));
+        memcpy(buf, mg_86_EU_PINK, sizeof(mg_86_EU_PINK));
     }
     else if (psptype == 3)
     {
-    	memcpy(buf, mg_85v2_EU_PLATA, sizeof(mg_85v2_EU_PLATA));
+        memcpy(buf, mg_85v2_EU_PLATA, sizeof(mg_85v2_EU_PLATA));
     }
     else
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     pspSdkSetK1(k1);
@@ -756,20 +756,20 @@ int idsRegenerationGetSerialKey(u8 *buf)
 
     if (psptype == 1)
     {
-    	memcpy(buf, serial_type1, sizeof(serial_type1));		
+        memcpy(buf, serial_type1, sizeof(serial_type1));		
     }
     else if (psptype == 2)
     {
-    	memcpy(buf, serial_type2, sizeof(serial_type2));
+        memcpy(buf, serial_type2, sizeof(serial_type2));
     }
     else if (psptype == 3)
     {
-    	memcpy(buf, serial_type3, sizeof(serial_type3));
+        memcpy(buf, serial_type3, sizeof(serial_type3));
     }
     else
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     buf[0x1F] = g_region;
@@ -786,32 +786,32 @@ int idsRegenerationGetWlanKey(u8 *buf)
 
     if (g_region == JAPAN)
     {
-    	buf[0] = 3;
+        buf[0] = 3;
     }
     else if (g_region == AMERICA)
     {
-    	buf[0] = 0;
+        buf[0] = 0;
     }
     else if (g_region == EUROPE)
     {
-    	buf[0] = 2;
+        buf[0] = 2;
     }
     else
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     if (!isslim)
     {
-    	buf[2] = 1;
+        buf[2] = 1;
     }
     else
     {
-    	buf[1] = 0x10;
-    	buf[2] = 1;
-    	buf[3] = 1;
-    	buf[4] = 2;
+        buf[1] = 0x10;
+        buf[2] = 1;
+        buf[3] = 1;
+        buf[4] = 2;
     }
 
     pspSdkSetK1(k1);
@@ -836,13 +836,13 @@ int idsRegenerationGetUsbKeys(u8 *buf)
 
     if (!isslim)
     {
-    	memcpy(buf, usb41_1000, sizeof(usb41_1000));
-    	memcpy(buf+1024, usb43_1000, sizeof(usb43_1000));
+        memcpy(buf, usb41_1000, sizeof(usb41_1000));
+        memcpy(buf+1024, usb43_1000, sizeof(usb43_1000));
     }
     else
     {
-    	memcpy(buf, usb41_2000, sizeof(usb41_2000));
-    	memcpy(buf+1024, usb43_2000, sizeof(usb43_2000));
+        memcpy(buf, usb41_2000, sizeof(usb41_2000));
+        memcpy(buf+1024, usb43_2000, sizeof(usb43_2000));
     }
 
     pspSdkSetK1(k1);
@@ -857,22 +857,22 @@ int idsRegenerationGetUnkKey140(u8 *buf)
 
     if (psptype == 1)
     {
-    	memcpy(buf, key140_type1, sizeof(key140_type1));
+        memcpy(buf, key140_type1, sizeof(key140_type1));
     }
 
     else if (psptype == 2)
     {
-    	memcpy(buf, key140_type2, sizeof(key140_type2));
+        memcpy(buf, key140_type2, sizeof(key140_type2));
     }
 
     else if (psptype == 3)
     {
-    	memcpy(buf, key140_type3, sizeof(key140_type3));
+        memcpy(buf, key140_type3, sizeof(key140_type3));
     }
     else
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     pspSdkSetK1(k1);
@@ -887,20 +887,20 @@ int idsRegenerationGetMGKey40(u8 *buf)
     
     if (psptype == 1)
     {
-    	memcpy(buf, mg_81_AM_25A00D7C2958D+0x88, 8);
+        memcpy(buf, mg_81_AM_25A00D7C2958D+0x88, 8);
     }
     else if (psptype == 2)
     {
-    	memcpy(buf, mg_86_EU_PINK+0x88, 8);
+        memcpy(buf, mg_86_EU_PINK+0x88, 8);
     }
     else if (psptype == 3)
     {
-    	memcpy(buf, mg_85v2_EU_PLATA+0x88, 8);
+        memcpy(buf, mg_85v2_EU_PLATA+0x88, 8);
     }
     else
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     pspSdkSetK1(k1);
@@ -923,8 +923,8 @@ int idsRegenerationGetParentalLockKey(u8 *buf)
 
     if (psptype == 1)
     {
-    	pspSdkSetK1(k1);
-    	return 0;
+        pspSdkSetK1(k1);
+        return 0;
     }
 
     memset(buf, 0, 512);
@@ -956,7 +956,7 @@ static void getUniqueId(u8 *id)
     id[7] = reg1 >>  0;
 }
 
-#define SCE_SHA1_BLOCK_SIZE    	64
+#define SCE_SHA1_BLOCK_SIZE        64
 #define SCE_SHA1_DIGEST_SIZE    20
 
 unsigned char intdigest[SCE_SHA1_DIGEST_SIZE];
@@ -980,16 +980,16 @@ static void genHmacSha1(unsigned char *secretkey, unsigned int keylen, unsigned 
     memset(keybuf, 0x00, sizeof(keybuf));
     if (keylen <= SCE_SHA1_BLOCK_SIZE) {
 
-    	memcpy(keybuf, secretkey, keylen);
+        memcpy(keybuf, secretkey, keylen);
     } else {
 
-    	sceKernelUtilsSha1Digest(secretkey, keylen, keybuf);
-    	keylen = SCE_SHA1_DIGEST_SIZE;
+        sceKernelUtilsSha1Digest(secretkey, keylen, keybuf);
+        keylen = SCE_SHA1_DIGEST_SIZE;
     }
 
 
     for (i=0; i<SCE_SHA1_BLOCK_SIZE; i++) {
-    	keybuf[i] ^= 0x36;
+        keybuf[i] ^= 0x36;
     }
     sceKernelUtilsSha1BlockInit(&ctx);
     sceKernelUtilsSha1BlockUpdate(&ctx, keybuf, SCE_SHA1_BLOCK_SIZE);
@@ -1003,7 +1003,7 @@ static void genHmacSha1(unsigned char *secretkey, unsigned int keylen, unsigned 
 
 
     for (i=0; i<SCE_SHA1_BLOCK_SIZE; i++) {
-    	keybuf[i] ^= (0x36 ^ 0x5C);
+        keybuf[i] ^= (0x36 ^ 0x5C);
     }
     sceKernelUtilsSha1BlockInit(&ctx);
     sceKernelUtilsSha1BlockUpdate(&ctx, keybuf, SCE_SHA1_BLOCK_SIZE);
@@ -1035,13 +1035,13 @@ static int genSignedHash(int size, u8 *buf, u8 *digest)
     
     /*for(i = 0; i < size; i += 8)
     {
-    	for(j = 0; j < 8; j++)
-    		g_plain[i+j] ^= pspid[j];
+        for(j = 0; j < 8; j++)
+        	g_plain[i+j] ^= pspid[j];
     }*/
     for(i = 0; i < size; i ++)
     {
-    	for(j = 0; j < 8; j++)
-    		g_plain[(i*8)+j] ^= pspid[j];
+        for(j = 0; j < 8; j++)
+        	g_plain[(i*8)+j] ^= pspid[j];
     }
 
     genHmacSha1((u8 *)"specialweek", 11, g_plain, 0x100, digest);
@@ -1059,141 +1059,141 @@ int _idsRegenerationGenerateFactoryFirmwareKey(u8 *buf)
 
     if (psptype == 1)
     {
-    	return 0;
+        return 0;
     }
 
     else if (psptype == 2)
     {
-    	if (g_mb == TA_082)
-    	{
-    		strcpy((char *)buf, "2.60");
-    		vbuf = version260;
-    		size = sizeof(version260);
-    	}
-    	else
-    	{
-    		strcpy((char *)buf, "2.81");
-    		vbuf = version281;
-    		size = sizeof(version281);
-    	}
+        if (g_mb == TA_082)
+        {
+        	strcpy((char *)buf, "2.60");
+        	vbuf = version260;
+        	size = sizeof(version260);
+        }
+        else
+        {
+        	strcpy((char *)buf, "2.81");
+        	vbuf = version281;
+        	size = sizeof(version281);
+        }
     }
 
     else if (psptype == 3)
     {
-    	if (g_mb == TA_085v1 || g_mb == TA_090v1)
-    	{
-    		strcpy((char *)buf, "3.60");
-    		vbuf = version360;
-    		size = sizeof(version360);
-    	}
-    	else if (g_mb == TA_085v2)
-    	{
-    		strcpy((char *)buf, "3.72");
-    		vbuf = version372;
-    		size = sizeof(version372);
-    	}
-    	else if (g_mb == TA_088v1_TA_088v2) 
-    	{
-    		char shippedfw[5];
-    		memset(shippedfw, 0, sizeof(shippedfw));
-    		sceIdStorageLookup(0x51, 0, shippedfw, 4);
-    		if(shippedfw[3] == '7') {
-    			strcpy((char *)buf, "3.71");
-    			vbuf = version371;
-    			size = sizeof(version371);
-    		}
-    		else
-    		{
-    			strcpy((char *)buf, "3.95");
-    			vbuf = version395;
-    			size = sizeof(version395);
-    		}
-    	}
-    	else if (g_mb == TA_088v3)
-    	{
-    		strcpy((char *)buf, "4.01");
-    		vbuf = version401;
-    		size = sizeof(version401);
-    	}
-    	else if (g_mb == TA_090v2 || g_mb == TA_090v3)
-    	{
-    		strcpy((char *)buf, "4.20");
-    		vbuf = version420;
-    		size = sizeof(version420);
-    	}
-    	else if (g_mb == TA_091) // GO
-    	{
-    		strcpy((char *)buf, "5.70");
-    		vbuf = version570GO;
-    		size = sizeof(version570GO);
-    	}
-    	else if (g_mb == TA_092)
-    	{
-    		strcpy((char *)buf, "5.03");
-    		vbuf = version503;
-    		size = sizeof(version503);
-    	}
-    	else if (g_mb == TA_093v1)
-    	{
-    		strcpy((char *)buf, "5.70");
-    		vbuf = version570;
-    		size = sizeof(version570);
-    	}
-    	else if (g_mb == TA_093v2)
-    	{
-    		strcpy((char *)buf, "6.20");
-    		vbuf = version620;
-    		size = sizeof(version620);
-    	}
-    	else if (g_mb == TA_094)
-    	{
-    		char shippedfw[5];
-    		memset(shippedfw, 0, sizeof(shippedfw));
-    		sceIdStorageLookup(0x51, 0, shippedfw, 4);
-    		if(shippedfw[3] == '0') {
-    			strcpy((char *)buf, "6.00"); // GO Strider2
-    			vbuf = version600GO;
-    			size = sizeof(version600GO);
-    		}
-    		else // GO Strider2
-    		{
-    			strcpy((char *)buf, "6.20");
-    			vbuf = version620GO;
-    			size = sizeof(version620GO);
-    		}
-    	}
-    	else if (g_mb == TA_095v1)
-    	{
-    		strcpy((char *)buf, "6.30");
-    		vbuf = version630;
-    		size = sizeof(version630);
-    	}
-    	else if (g_mb == TA_095v2 || g_mb == TA_095v3 || g_mb == TA_095v4)
-    	{
-    		strcpy((char *)buf, "6.35");
-    		vbuf = version635;
-    		size = sizeof(version635);
-    	}
-    	else if (g_mb == TA_096_TA_097)
-    	{
-    		char shippedfw[5];
-    		memset(shippedfw, 0, sizeof(shippedfw));
-    		sceIdStorageLookup(0x51, 0, shippedfw, 4);
-    		if(shippedfw[3] == '5') {
-    			strcpy((char *)buf, "6.50");
-    			vbuf = version650;
-    			size = sizeof(version650);
-    		}
-    		else {
-    			strcpy((char *)buf, "6.60");
-    			vbuf = version660;
-    			size = sizeof(version660);
-    		}
-    	}
+        if (g_mb == TA_085v1 || g_mb == TA_090v1)
+        {
+        	strcpy((char *)buf, "3.60");
+        	vbuf = version360;
+        	size = sizeof(version360);
+        }
+        else if (g_mb == TA_085v2)
+        {
+        	strcpy((char *)buf, "3.72");
+        	vbuf = version372;
+        	size = sizeof(version372);
+        }
+        else if (g_mb == TA_088v1_TA_088v2) 
+        {
+        	char shippedfw[5];
+        	memset(shippedfw, 0, sizeof(shippedfw));
+        	sceIdStorageLookup(0x51, 0, shippedfw, 4);
+        	if(shippedfw[3] == '7') {
+        		strcpy((char *)buf, "3.71");
+        		vbuf = version371;
+        		size = sizeof(version371);
+        	}
+        	else
+        	{
+        		strcpy((char *)buf, "3.95");
+        		vbuf = version395;
+        		size = sizeof(version395);
+        	}
+        }
+        else if (g_mb == TA_088v3)
+        {
+        	strcpy((char *)buf, "4.01");
+        	vbuf = version401;
+        	size = sizeof(version401);
+        }
+        else if (g_mb == TA_090v2 || g_mb == TA_090v3)
+        {
+        	strcpy((char *)buf, "4.20");
+        	vbuf = version420;
+        	size = sizeof(version420);
+        }
+        else if (g_mb == TA_091) // GO
+        {
+        	strcpy((char *)buf, "5.70");
+        	vbuf = version570GO;
+        	size = sizeof(version570GO);
+        }
+        else if (g_mb == TA_092)
+        {
+        	strcpy((char *)buf, "5.03");
+        	vbuf = version503;
+        	size = sizeof(version503);
+        }
+        else if (g_mb == TA_093v1)
+        {
+        	strcpy((char *)buf, "5.70");
+        	vbuf = version570;
+        	size = sizeof(version570);
+        }
+        else if (g_mb == TA_093v2)
+        {
+        	strcpy((char *)buf, "6.20");
+        	vbuf = version620;
+        	size = sizeof(version620);
+        }
+        else if (g_mb == TA_094)
+        {
+        	char shippedfw[5];
+        	memset(shippedfw, 0, sizeof(shippedfw));
+        	sceIdStorageLookup(0x51, 0, shippedfw, 4);
+        	if(shippedfw[3] == '0') {
+        		strcpy((char *)buf, "6.00"); // GO Strider2
+        		vbuf = version600GO;
+        		size = sizeof(version600GO);
+        	}
+        	else // GO Strider2
+        	{
+        		strcpy((char *)buf, "6.20");
+        		vbuf = version620GO;
+        		size = sizeof(version620GO);
+        	}
+        }
+        else if (g_mb == TA_095v1)
+        {
+        	strcpy((char *)buf, "6.30");
+        	vbuf = version630;
+        	size = sizeof(version630);
+        }
+        else if (g_mb == TA_095v2 || g_mb == TA_095v3 || g_mb == TA_095v4)
+        {
+        	strcpy((char *)buf, "6.35");
+        	vbuf = version635;
+        	size = sizeof(version635);
+        }
+        else if (g_mb == TA_096_TA_097)
+        {
+        	char shippedfw[5];
+        	memset(shippedfw, 0, sizeof(shippedfw));
+        	sceIdStorageLookup(0x51, 0, shippedfw, 4);
+        	if(shippedfw[3] == '5') {
+        		strcpy((char *)buf, "6.50");
+        		vbuf = version650;
+        		size = sizeof(version650);
+        	}
+        	else {
+        		strcpy((char *)buf, "6.60");
+        		vbuf = version660;
+        		size = sizeof(version660);
+        	}
+        }
     }
     else
     {
-    	return -1;
+        return -1;
     }
 
     memset(hash, 0, sizeof(hash));
@@ -1221,71 +1221,71 @@ int idsRegenerationGetLCDKey(u8 *buf)
 
     if (psptype == 1 || g_mb == TA_082)
     {
-    	pspSdkSetK1(k1);
-    	return 0;
+        pspSdkSetK1(k1);
+        return 0;
     }
 
     memset(buf, 0, 512);
 
     if (!isslim)
     {
-    	memcpy(buf, lcd_86, sizeof(lcd_86));
+        memcpy(buf, lcd_86, sizeof(lcd_86));
     }
     else
     {
-    	if (g_mb == TA_085v1)
-    	{
-    		memcpy(buf, lcd_type73, sizeof(lcd_type73));
-    	}
-    	else if (g_mb == TA_085v2)
-    	{
-    		memcpy(buf, lcd_type6C, sizeof(lcd_type6C));
-    	}
-    	// TA_090v1 missing
-    	else if(g_mb == TA_090v2)
-    	{
-    		memcpy(buf, lcd_type60_3g_v2, sizeof(lcd_type60_3g_v2));
-    	}
-    	else if(g_mb == TA_090v3)
-    	{
-    		memcpy(buf, lcd_type60_3g_v3, sizeof(lcd_type60_3g_v3));
-    	}
-    	else if(g_mb == TA_091)
-    	{
-    		memcpy(buf, lcd_type60_5g, sizeof(lcd_type60_5g));
-    	}
-    	else if(g_mb == TA_093v1)
-    	{
-    		memcpy(buf, lcd_type60_4g_v1, sizeof(lcd_type60_4g_v1));
-    	}
-    	else if(g_mb == TA_093v2)
-    	{
-    		memcpy(buf, lcd_type60_4g_v2, sizeof(lcd_type60_4g_v2));
-    	}
-    	else if(g_mb == TA_095v1)
-    	{
-    		memcpy(buf, lcd_type60_9g_v1, sizeof(lcd_type60_9g_v1));
-    	}
-    	else if(g_mb == TA_095v2)
-    	{
-    		memcpy(buf, lcd_type60_9g_v2, sizeof(lcd_type60_9g_v2));
-    	}
-    	else if(g_mb == TA_095v3)
-    	{
-    		memcpy(buf, lcd_type60_7g_v3, sizeof(lcd_type60_7g_v3));
-    	}
-    	else if(g_mb == TA_095v4)
-    	{
-    		memcpy(buf, lcd_type60_7g_v4, sizeof(lcd_type60_7g_v4));
-    	}
-    	else if(g_mb == TA_096_TA_097)
-    	{
-    		memcpy(buf, lcd_type60_11g, sizeof(lcd_type60_11g));
-    	}
-    	else
-    	{
-    		memcpy(buf, lcd_type71, sizeof(lcd_type71));
-    	}
+        if (g_mb == TA_085v1)
+        {
+        	memcpy(buf, lcd_type73, sizeof(lcd_type73));
+        }
+        else if (g_mb == TA_085v2)
+        {
+        	memcpy(buf, lcd_type6C, sizeof(lcd_type6C));
+        }
+        // TA_090v1 missing
+        else if(g_mb == TA_090v2)
+        {
+        	memcpy(buf, lcd_type60_3g_v2, sizeof(lcd_type60_3g_v2));
+        }
+        else if(g_mb == TA_090v3)
+        {
+        	memcpy(buf, lcd_type60_3g_v3, sizeof(lcd_type60_3g_v3));
+        }
+        else if(g_mb == TA_091)
+        {
+        	memcpy(buf, lcd_type60_5g, sizeof(lcd_type60_5g));
+        }
+        else if(g_mb == TA_093v1)
+        {
+        	memcpy(buf, lcd_type60_4g_v1, sizeof(lcd_type60_4g_v1));
+        }
+        else if(g_mb == TA_093v2)
+        {
+        	memcpy(buf, lcd_type60_4g_v2, sizeof(lcd_type60_4g_v2));
+        }
+        else if(g_mb == TA_095v1)
+        {
+        	memcpy(buf, lcd_type60_9g_v1, sizeof(lcd_type60_9g_v1));
+        }
+        else if(g_mb == TA_095v2)
+        {
+        	memcpy(buf, lcd_type60_9g_v2, sizeof(lcd_type60_9g_v2));
+        }
+        else if(g_mb == TA_095v3)
+        {
+        	memcpy(buf, lcd_type60_7g_v3, sizeof(lcd_type60_7g_v3));
+        }
+        else if(g_mb == TA_095v4)
+        {
+        	memcpy(buf, lcd_type60_7g_v4, sizeof(lcd_type60_7g_v4));
+        }
+        else if(g_mb == TA_096_TA_097)
+        {
+        	memcpy(buf, lcd_type60_11g, sizeof(lcd_type60_11g));
+        }
+        else
+        {
+        	memcpy(buf, lcd_type71, sizeof(lcd_type71));
+        }
     }
 
     /*u32 fp = sceIoOpen("ms0:/mb.bin", PSP_O_CREAT | PSP_O_WRONLY | PSP_O_TRUNC, 0777);
@@ -1307,34 +1307,34 @@ int _idsRegenerationGenerateCallibrationKey(u8 *buf)
 
     if (psptype == 1 || g_mb == TA_082)
     {
-    	return 0;
+        return 0;
     }
 
     memset(buf, 0, 512);
 
     /*for(i = 0; i < 3; i++)
     {
-    	res = sceSysconReceiveSetParam(1, setParam);
+        res = sceSysconReceiveSetParam(1, setParam);
 
-    	if (res == 0)
+        if (res == 0)
         {
-    		break;
+        	break;
         }
         else if (res == 0x80250011)
         {
-    		return res;
+        	return res;
         }
     }
 
     if (i == 3)
-    	return -2;*/
+        return -2;*/
 
     u32 *header = (u32*)(buf+0x00);
     header[0] = 0x41506144; // APaD
     header[1] = 1;          // type
     header[2] = 8;          // dataLen
     memcpy(buf+0x10, setParam, 8);
-    header[3] = gen_hash(0xFFFFFFFF,buf+0x10, 0x1F0);	
+    header[3] = gen_hash(0xFFFFFFFF,buf+0x10, 0x1F0);    
 
     return 1;
 }
@@ -1355,56 +1355,56 @@ int idsRegenerationGetUnkKeys5253(u8 *buf)
 
     if (!isslim)
     {
-    	pspSdkSetK1(k1);
-    	return 0;
+        pspSdkSetK1(k1);
+        return 0;
     }
 
     memset(buf, 0, 1024);
 
     if (g_mb == TA_085v1)
     {
-    	if (g_region == EUROPE)
-    	{
-    		memcpy(buf, key52_85_EU, sizeof(key52_85_EU));
-    	}
-    	else if (g_region == AMERICA)
-    	{
-    		memcpy(buf, key52_85_AM, sizeof(key52_85_AM));
-    	}
-    	else
-    	{
-    		memcpy(buf, key52_85_JAP, sizeof(key52_85_JAP));
-    	}
+        if (g_region == EUROPE)
+        {
+        	memcpy(buf, key52_85_EU, sizeof(key52_85_EU));
+        }
+        else if (g_region == AMERICA)
+        {
+        	memcpy(buf, key52_85_AM, sizeof(key52_85_AM));
+        }
+        else
+        {
+        	memcpy(buf, key52_85_JAP, sizeof(key52_85_JAP));
+        }
     }
     else if (g_mb == TA_085v2)
     {
-    	if (g_region == EUROPE)
-    	{
-    		memcpy(buf, key52_85v2_EU, sizeof(key52_85v2_EU));
-    	}
-    	else if (g_region == AMERICA)
-    	{
-    		memcpy(buf, key52_85v2_AM, sizeof(key52_85v2_AM));
-    	}
-    	else
-    	{
-    		memcpy(buf, key52_85v2_JAP, sizeof(key52_85v2_JAP));
-    	}
+        if (g_region == EUROPE)
+        {
+        	memcpy(buf, key52_85v2_EU, sizeof(key52_85v2_EU));
+        }
+        else if (g_region == AMERICA)
+        {
+        	memcpy(buf, key52_85v2_AM, sizeof(key52_85v2_AM));
+        }
+        else
+        {
+        	memcpy(buf, key52_85v2_JAP, sizeof(key52_85v2_JAP));
+        }
     }
     else
     {
-    	if (g_region == EUROPE)
-    	{
-    		memcpy(buf, key52_88_EU, sizeof(key52_88_EU));
-    	}
-    	else if (g_region == AMERICA)
-    	{
-    		memcpy(buf, key52_88_AM, sizeof(key52_88_AM));
-    	}
-    	else
-    	{
-    		memcpy(buf, key52_88_JAP, sizeof(key52_88_JAP));
-    	}
+        if (g_region == EUROPE)
+        {
+        	memcpy(buf, key52_88_EU, sizeof(key52_88_EU));
+        }
+        else if (g_region == AMERICA)
+        {
+        	memcpy(buf, key52_88_AM, sizeof(key52_88_AM));
+        }
+        else
+        {
+        	memcpy(buf, key52_88_JAP, sizeof(key52_88_JAP));
+        }
     }
 
     pspSdkSetK1(k1);
@@ -1417,8 +1417,8 @@ int idsRegenerationGetDefaultXMBColorKey(u8 *buf)
 
     if (!isslim)
     {
-    	pspSdkSetK1(k1);
-    	return 0;
+        pspSdkSetK1(k1);
+        return 0;
     }
 
     memset(buf, 0, 512);
@@ -1453,46 +1453,46 @@ void P1(u8 *buf)
 
     for (i = 0; i < 0x3C; i++)
     {
-    	for (j = 0; j < 5; j++)
-    	{
-    		u8 x;
-    		u32 y;
-    		char c;
+        for (j = 0; j < 5; j++)
+        {
+        	u8 x;
+        	u32 y;
+        	char c;
 
-    		x = 0;			
-    		c = rr[j];
-    		y = m[i];
-    		
-    		while (c != 0)
-    		{
-    			if (c & 1)
-    			{
-    				x ^= y;
-    			}
+        	x = 0;			
+        	c = rr[j];
+        	y = m[i];
+        	
+        	while (c != 0)
+        	{
+        		if (c & 1)
+        		{
+        			x ^= y;
+        		}
 
-    			y = (y << 1);
-    				
-    			if ((y & 0x0100))
-    			{
-    				y ^= 0x11D;
-    			}
+        		y = (y << 1);
+        			
+        		if ((y & 0x0100))
+        		{
+        			y ^= 0x11D;
+        		}
 
-    			c /= 2;
-    		}
+        		c /= 2;
+        	}
 
-    		ss[j] = x;
-    	}
+        	ss[j] = x;
+        }
 
-    	for (j = 0; j < 5; j++)
-    	{
-    		m[i+j] ^= ss[j]; 
-    	}
+        for (j = 0; j < 5; j++)
+        {
+        	m[i+j] ^= ss[j]; 
+        }
     }
 
     for (i = 0x3C; i < 0x40; i++)
     {
-    	buf[i] = m[i];
-    	m[i] = 0;
+        buf[i] = m[i];
+        m[i] = 0;
     }
 }
 
@@ -1501,31 +1501,31 @@ void GenerateSigncheck(SomeStructure *ss, int *b, u8 *out)
     AES_KEY ctx, ctx2; // sp+0x20
     int i, j;
     u8 sg_key1[0x10], sg_key2[0x10]; // sp, sp+0x10
-    	
+        
     AES_set_encrypt_key(idskey0, 128, &ctx);
     AES_set_decrypt_key(idskey0, 128, &ctx2);
 
     for (i = 0; i < 16; i++)
     {
-    	sg_key1[i] = sg_key2[i] = ss->buf1[i % 8];
+        sg_key1[i] = sg_key2[i] = ss->buf1[i % 8];
     }
 
     for (i = 0; i < 3; i++)
     {
-    	AES_encrypt(sg_key2, sg_key2, &ctx);
-    	AES_decrypt(sg_key1, sg_key1, &ctx2);
+        AES_encrypt(sg_key2, sg_key2, &ctx);
+        AES_decrypt(sg_key1, sg_key1, &ctx2);
     }
 
     AES_set_encrypt_key(sg_key2, 128, &ctx);
 
     for (i = 0; i < 3; i++)
     {
-    	for (j = 0; j < 3; j++)
-    	{
-    		AES_encrypt(sg_key1, sg_key1, &ctx);
-    	}
+        for (j = 0; j < 3; j++)
+        {
+        	AES_encrypt(sg_key1, sg_key1, &ctx);
+        }
 
-    	memcpy(out+(i*16), sg_key1, 0x10);		
+        memcpy(out+(i*16), sg_key1, 0x10);		
     }
 
     memcpy(out+0x30, ss->buf1, 8);
@@ -1548,63 +1548,63 @@ int EncryptRegion(u8 *scheck, u8 *in, u32 size, u8 *out)
 
     if (a != 0 || (size == 0 && (n & 1)))
     {
-    	if ((n & 2) == 0)
-    		return -1;
-    	
-    	v++;
-    	r = k1;
-    	
-    	for (i = 0; i < a; i++)
-    	{
-    		k1[i] = in[size-a+i];
-    	}
+        if ((n & 2) == 0)
+        	return -1;
+        
+        v++;
+        r = k1;
+        
+        for (i = 0; i < a; i++)
+        {
+        	k1[i] = in[size-a+i];
+        }
 
-    	k1[i++] = 0x80;
+        k1[i++] = 0x80;
 
-    	for (; i < 0x10; i++)
-    	{
-    		k1[i] = 0;
-    	}
+        for (; i < 0x10; i++)
+        {
+        	k1[i] = 0;
+        }
 
-    	a = 0x10;
+        a = 0x10;
     }
     else
     {
-    	r = (in+(v*16))-0x10;
+        r = (in+(v*16))-0x10;
     }
 
     AES_set_encrypt_key(scheck, 128, &ctx);
 
     if ((n & 1))
     {
-    	memset(out, 0, 16);
+        memset(out, 0, 16);
     }
     else if (v > 0)
     {
-    	AES_encrypt(out, out, &ctx);
+        AES_encrypt(out, out, &ctx);
     }
 
     for (i = 0; i < (v-1); i++)
     {
-    	for (j = 0; j < 16; j++)
-    	{
-    		out[j] ^= in[i*16+j];
-    	}
+        for (j = 0; j < 16; j++)
+        {
+        	out[j] ^= in[i*16+j];
+        }
 
-    	AES_encrypt(out, out, &ctx);
-    }	
+        AES_encrypt(out, out, &ctx);
+    }    
 
     if (v > 0)
     {
-    	for (i = 0; i < 0x10; i++)
-    	{
-    		out[i] ^= r[i];
-    	}
+        for (i = 0; i < 0x10; i++)
+        {
+        	out[i] ^= r[i];
+        }
     }
 
     if (!(n & 2))
     {
-    	return 0;
+        return 0;
     }
 
     memset(k2, 0, 0x10);
@@ -1614,26 +1614,26 @@ int EncryptRegion(u8 *scheck, u8 *in, u32 size, u8 *out)
     
     for (i = 0; i < a; i++)
     {
-    	u32 x = ((char)k2[0] < 0);
-    	
-    	for (j = 0; j < 15; j++)
-    	{
-    		u32 t = ((k2[j+1] >> 7) | (k2[j] << 1));
-    		k2[j] = t;
-    	}
+        u32 x = ((char)k2[0] < 0);
+        
+        for (j = 0; j < 15; j++)
+        {
+        	u32 t = ((k2[j+1] >> 7) | (k2[j] << 1));
+        	k2[j] = t;
+        }
 
-    	k2[15] <<= 1;
+        k2[15] <<= 1;
 
-    	if (x == 1)
-    	{
-    		int t = (int)k2[15] ^ 0xFFFFFF87;
-    		k2[15] = t;
-    	}
+        if (x == 1)
+        {
+        	int t = (int)k2[15] ^ 0xFFFFFF87;
+        	k2[15] = t;
+        }
     }
 
     for (i = 0; i < 0x10; i++)
     {
-    	out[i] ^= k2[i];		
+        out[i] ^= k2[i];		
     }
 
     AES_encrypt(out, out, &ctx);
@@ -1666,7 +1666,7 @@ int sub_00003E38(u32 a0, u32 a1, u32 a2, u32 a3)
 
     if (a2 >= a0)
     {
-    	return 1;
+        return 1;
     } 
   
     return 2;
@@ -5559,207 +5559,207 @@ int __sceFactoryGetUMDKey(unsigned int part1, unsigned int part2, u8* out)
 
     u8 key_00001708[16] = 
     {
-    	0x05, 0x8F, 0xE5, 0x35, 0xA0, 0x4C, 0x89, 0xB1, 0xC0, 0x12, 0xAD, 0xE7, 0xDA, 0x06, 0xD9, 0x22
+        0x05, 0x8F, 0xE5, 0x35, 0xA0, 0x4C, 0x89, 0xB1, 0xC0, 0x12, 0xAD, 0xE7, 0xDA, 0x06, 0xD9, 0x22
     };
 
     u8 key_000016D0[16] = 
     {
-    	0x80, 0x8C, 0x8D, 0xA8, 0x66, 0x65, 0x5C, 0x11, 0x35, 0x12, 0xA6, 0xBF, 0x96, 0x6D, 0x3C, 0x46
+        0x80, 0x8C, 0x8D, 0xA8, 0x66, 0x65, 0x5C, 0x11, 0x35, 0x12, 0xA6, 0xBF, 0x96, 0x6D, 0x3C, 0x46
     };
 
     u8 key_00001698[16] = 
     {
-    	0x77, 0xA5, 0x97, 0xDE, 0x0A, 0xF3, 0xEF, 0x40, 0x06, 0x96, 0x00, 0x9C, 0x03, 0x3C, 0xE3, 0xAE
+        0x77, 0xA5, 0x97, 0xDE, 0x0A, 0xF3, 0xEF, 0x40, 0x06, 0x96, 0x00, 0x9C, 0x03, 0x3C, 0xE3, 0xAE
     };
 
     u8 key_00001664[16] = 
     {
-    	0x9F, 0x26, 0xB3, 0x3D, 0x66, 0xAF, 0xFC, 0xF7, 0xC6, 0xC0, 0x1A, 0x35, 0xAB, 0x32, 0x24, 0x22
+        0x9F, 0x26, 0xB3, 0x3D, 0x66, 0xAF, 0xFC, 0xF7, 0xC6, 0xC0, 0x1A, 0x35, 0xAB, 0x32, 0x24, 0x22
     };
 
     u8 key_00001614[16] = 
     {
-    	0xAA, 0x62, 0x42, 0x04, 0x9E, 0x40, 0xFB, 0xBF, 0x91, 0x16, 0xC3, 0x23, 0x6F, 0xEA, 0x17, 0xEF
+        0xAA, 0x62, 0x42, 0x04, 0x9E, 0x40, 0xFB, 0xBF, 0x91, 0x16, 0xC3, 0x23, 0x6F, 0xEA, 0x17, 0xEF
     };
 
     u8 key_00001598[16] = 
     {
-    	0x1A, 0x4A, 0xA0, 0x55, 0x30, 0x8D, 0x2B, 0xBC, 0x63, 0x2B, 0x54, 0x68, 0xBB, 0x3A, 0x9D, 0x5B
+        0x1A, 0x4A, 0xA0, 0x55, 0x30, 0x8D, 0x2B, 0xBC, 0x63, 0x2B, 0x54, 0x68, 0xBB, 0x3A, 0x9D, 0x5B
     };
 
     u8 key_00001564[16] = 
     {
-    	0xF2, 0x2C, 0x77, 0xAA, 0x4B, 0x1C, 0x14, 0x01, 0x9D, 0xE5, 0x53, 0x23, 0xE3, 0x41, 0x3D, 0x21
+        0xF2, 0x2C, 0x77, 0xAA, 0x4B, 0x1C, 0x14, 0x01, 0x9D, 0xE5, 0x53, 0x23, 0xE3, 0x41, 0x3D, 0x21
     };
 
     u8 key_000014D0[16] = 
     {
-    	0x42, 0x01, 0x82, 0x19, 0x24, 0xFF, 0x0C, 0x34, 0xEB, 0xB4, 0x3F, 0x5D, 0xCA, 0x80, 0x7E, 0x8D
+        0x42, 0x01, 0x82, 0x19, 0x24, 0xFF, 0x0C, 0x34, 0xEB, 0xB4, 0x3F, 0x5D, 0xCA, 0x80, 0x7E, 0x8D
     };
 
     u8 key_00001498[16] = 
     {
-    	0x40, 0x78, 0x66, 0xEB, 0x9B, 0xA5, 0xE9, 0x29, 0x0B, 0x2F, 0x8E, 0x4D, 0x30, 0x11, 0x67, 0x54
+        0x40, 0x78, 0x66, 0xEB, 0x9B, 0xA5, 0xE9, 0x29, 0x0B, 0x2F, 0x8E, 0x4D, 0x30, 0x11, 0x67, 0x54
     };
 
     u8 key_00001460[16] = 
     {
-    	0x27, 0xC7, 0x59, 0xF1, 0x48, 0xD8, 0x7E, 0xA8, 0xC0, 0xC2, 0x7F, 0x01, 0x3A, 0xE6, 0xEC, 0xD6
+        0x27, 0xC7, 0x59, 0xF1, 0x48, 0xD8, 0x7E, 0xA8, 0xC0, 0xC2, 0x7F, 0x01, 0x3A, 0xE6, 0xEC, 0xD6
     };
 
     u8 key_000013F0[16] = 
     {
-    	0x3A, 0xBA, 0x2E, 0x14, 0xC1, 0x07, 0x37, 0x9F, 0x5F, 0x03, 0x3F, 0x79, 0x4D, 0xE0, 0xCE, 0x7E
+        0x3A, 0xBA, 0x2E, 0x14, 0xC1, 0x07, 0x37, 0x9F, 0x5F, 0x03, 0x3F, 0x79, 0x4D, 0xE0, 0xCE, 0x7E
     };
 
     u8 key_000013BC[16] = 
     {
-    	0x71, 0x16, 0x41, 0x21, 0xC3, 0xE0, 0x6A, 0xB5, 0x76, 0x57, 0x35, 0x90, 0xAB, 0x22, 0x3E, 0xFD
+        0x71, 0x16, 0x41, 0x21, 0xC3, 0xE0, 0x6A, 0xB5, 0x76, 0x57, 0x35, 0x90, 0xAB, 0x22, 0x3E, 0xFD
     };
 
     //printf("part1=0x%08X, part2=0x%08X\n", part1, part2);
 
     if (sub_00003E38(part1, part2, 0x1000004F, 0x80000000) == 1)
     {
-    	key = key_00001708;
+        key = key_00001708;
     } 
     
     else if (sub_00003E38(part1, part2, 0x1000004F, 0x80000000) >= 2)
     {
-    	x = sub_00003E38(part1, part2, 0x3000001F, 0x80000000);
+        x = sub_00003E38(part1, part2, 0x3000001F, 0x80000000);
 
-    	if (x == 1)
-    	{
-    		key = key_000016D0;
-    	}
+        if (x == 1)
+        {
+        	key = key_000016D0;
+        }
 
-    	else if (x >= 2)
-    	{
-    		x = sub_00003E38(part1, part2, 0x3000003F, 0x80000000);
+        else if (x >= 2)
+        {
+        	x = sub_00003E38(part1, part2, 0x3000003F, 0x80000000);
 
-    		if (x == 1)
-    		{
-    			key = key_00001698;
-    		}
-    		
-    		else if (x >= 2)
-    		{
-    			x = sub_00003E38(part1, part2, 0x3000004F, 0x80000000);
+        	if (x == 1)
+        	{
+        		key = key_00001698;
+        	}
+        	
+        	else if (x >= 2)
+        	{
+        		x = sub_00003E38(part1, part2, 0x3000004F, 0x80000000);
 
-    			if (x == 1)
-    			{
-    				key = key_00001664;
-    			}
-    			else
-    			{
-    				ret = -1;
-    			}
-    		}
-    		else
-    		{
-    			if (sub_00003E38(part1, part2, 0x3000002F, 0x80000000) == 1)
-    			{
-    				key = key_00001614;
-    			}
-    			else
-    			{
-    				ret = -1;
-    			}
-    		}
-    	}
-    	else
-    	{
-    		x = sub_00003E38(part1, part2, 0x2000000F, 0x80000000);
+        		if (x == 1)
+        		{
+        			key = key_00001664;
+        		}
+        		else
+        		{
+        			ret = -1;
+        		}
+        	}
+        	else
+        	{
+        		if (sub_00003E38(part1, part2, 0x3000002F, 0x80000000) == 1)
+        		{
+        			key = key_00001614;
+        		}
+        		else
+        		{
+        			ret = -1;
+        		}
+        	}
+        }
+        else
+        {
+        	x = sub_00003E38(part1, part2, 0x2000000F, 0x80000000);
 
-    		if (x == 1)
-    		{
-    			key = key_00001598;
-    		}
+        	if (x == 1)
+        	{
+        		key = key_00001598;
+        	}
 
-    		else if (sub_00003E38(part1, part2, 0x3000000F, 0x80000000) == 1)
-    		{
-    			key = key_00001564;
-    		}
+        	else if (sub_00003E38(part1, part2, 0x3000000F, 0x80000000) == 1)
+        	{
+        		key = key_00001564;
+        	}
 
-    		else
-    		{
-    			ret = -1;
-    		}
-    	}
+        	else
+        	{
+        		ret = -1;
+        	}
+        }
     }
     else
     {
-    	x = sub_00003E38(part1, part2, 0x1000001F, 0x80000000);
+        x = sub_00003E38(part1, part2, 0x1000001F, 0x80000000);
 
-    	if (x == 1)
-    	{
-    		key = key_000014D0;
-    	}
+        if (x == 1)
+        {
+        	key = key_000014D0;
+        }
 
-    	else if (x >= 2)
-    	{
-    		x = sub_00003E38(part1, part2, 0x1000002F, 0x80000000);
+        else if (x >= 2)
+        {
+        	x = sub_00003E38(part1, part2, 0x1000002F, 0x80000000);
 
-    		if (x == 1)
-    		{
-    			key = key_00001498;
-    		}
+        	if (x == 1)
+        	{
+        		key = key_00001498;
+        	}
 
-    		else if (sub_00003E38(part1, part2, 0x1000003F, 0x80000000) == 1)
-    		{
-    			key = key_00001460;
-    		}
+        	else if (sub_00003E38(part1, part2, 0x1000003F, 0x80000000) == 1)
+        	{
+        		key = key_00001460;
+        	}
 
-    		else
-    		{
-    			ret = -1;
-    		}
-    	}
-    	else
-    	{
-    		x = sub_00003E38(part1, part2, 1, 0x70000000);
-    		
-    		if (x == 1)
-    		{
-    			key = key_000013F0;
-    		} 
+        	else
+        	{
+        		ret = -1;
+        	}
+        }
+        else
+        {
+        	x = sub_00003E38(part1, part2, 1, 0x70000000);
+        	
+        	if (x == 1)
+        	{
+        		key = key_000013F0;
+        	} 
 
-    		else if (sub_00003E38(part1, part2, 0x1000000F, 0x80000000) == 1)
-    		{
-    			key = key_000013BC;
-    		} 
+        	else if (sub_00003E38(part1, part2, 0x1000000F, 0x80000000) == 1)
+        	{
+        		key = key_000013BC;
+        	} 
 
-    		else
-    		{
-    			ret = -1;
-    		}
-    	}
-    }	
+        	else
+        	{
+        		ret = -1;
+        	}
+        }
+    }    
 
     if (key == NULL)
     {
-    	int i;
+        int i;
 
-    	for (i = 0; i < N_KEYS; i++)
-    	{
-    		if (umdkeys[i].t == part1 && umdkeys[i].m == part2)
-    		{
-    			key = umdkeys[i].key;
-    			ret = 0;
-    			break;
-    		}
-    	}
+        for (i = 0; i < N_KEYS; i++)
+        {
+        	if (umdkeys[i].t == part1 && umdkeys[i].m == part2)
+        	{
+        		key = umdkeys[i].key;
+        		ret = 0;
+        		break;
+        	}
+        }
     }
     
     if (key == 0) 
     {
-    	Kprintf("Key not found.\n");
-    	return ret;
+        Kprintf("Key not found.\n");
+        return ret;
     }
 
     for (i = 0; i < 0x10; i++)
     {
-    	out[i] = key[i];
+        out[i] = key[i];
     }
 
     return ret;
@@ -5769,7 +5769,7 @@ int UM2(SomeStructure *ss, u8 *predata, Param3 *out, UmdIndex *m, u32 n)
 {
     u8 key[16] = 
     {
-    	0x9F, 0x46, 0xF9, 0xFC, 0xFA, 0xB2, 0xAD, 0x05, 0x69, 0xF6, 0x88, 0xD8, 0x79, 0x4B, 0x92, 0xBA
+        0x9F, 0x46, 0xF9, 0xFC, 0xFA, 0xB2, 0xAD, 0x05, 0x69, 0xF6, 0x88, 0xD8, 0x79, 0x4B, 0x92, 0xBA
     };
     
     int unk[4];            //+0
@@ -5789,23 +5789,23 @@ int UM2(SomeStructure *ss, u8 *predata, Param3 *out, UmdIndex *m, u32 n)
 
     for (i = 0; i < 0xC; i++)
     {
-    	out->buf1[i] = predata[i];
+        out->buf1[i] = predata[i];
     }
  
     for (i = 0xC; i < 0x10; i++)
     {
-    	out->buf1[i] = 0;
+        out->buf1[i] = 0;
     }
  
     for (i = 0; i < 0x10; i++)
     {
-    	out->buf2[i] = out->buf1[i];
+        out->buf2[i] = out->buf1[i];
     }
  
     for (i = 0; i < 0xB; i++)
     {
-    	AES_encrypt(out->buf1, out->buf1, &ctx1);
-    	AES_decrypt(out->buf2, out->buf2, &ctx2);
+        AES_encrypt(out->buf1, out->buf1, &ctx1);
+        AES_decrypt(out->buf2, out->buf2, &ctx2);
     }
 
     out->outbuf[0].t = -1;
@@ -5827,27 +5827,27 @@ int UM2(SomeStructure *ss, u8 *predata, Param3 *out, UmdIndex *m, u32 n)
 
     for(i = 0; i < 0x10; i++)
     {
-    	idx_end[i] = 0;
+        idx_end[i] = 0;
     }
 
     //populate the index/key tables with raw unencrypted indexes/keys.
  
     for(i = 0; i < n; i++)
     {
-    	out->outbuf[i+1].t = m[i].t;
-    	out->outbuf[i+1].m = m[i].m;
-    	ret = __sceFactoryGetUMDKey(m[i].t, m[i].m, &idx_end[0x10+(0x10*i)]);
-    	if (ret < 0) return -2;
+        out->outbuf[i+1].t = m[i].t;
+        out->outbuf[i+1].m = m[i].m;
+        ret = __sceFactoryGetUMDKey(m[i].t, m[i].m, &idx_end[0x10+(0x10*i)]);
+        if (ret < 0) return -2;
     }
  
     i++;
  
     for(j = i; j < idx_cnt; j++)
     {
-    	out->outbuf[j].t = m[0].t;
-    	out->outbuf[j].m = m[0].m;
-    	ret = __sceFactoryGetUMDKey(m[0].t, m[0].m, &idx_end[j*0x10]);
-    	if (ret < 0) return -3;
+        out->outbuf[j].t = m[0].t;
+        out->outbuf[j].m = m[0].m;
+        ret = __sceFactoryGetUMDKey(m[0].t, m[0].m, &idx_end[j*0x10]);
+        if (ret < 0) return -3;
     }
 
     //UP TO HERE IS JUST TRANSFORMATION. WE NEED TO REVERSE THE PROCESS FROM THE END UNTIL HERE TO GET SOMETHING GOOD.
@@ -5857,7 +5857,7 @@ int UM2(SomeStructure *ss, u8 *predata, Param3 *out, UmdIndex *m, u32 n)
   
     for(i = 1; i < idx_cnt; i++)
     {
-    	AES_encrypt(&idx_end[0x10*i], &idx_end[0x10*i], &ctx1);
+        AES_encrypt(&idx_end[0x10*i], &idx_end[0x10*i], &ctx1);
     }
 
     //dunno
@@ -5872,7 +5872,7 @@ int UM2(SomeStructure *ss, u8 *predata, Param3 *out, UmdIndex *m, u32 n)
     AES_set_encrypt_key(&tmp[0x20], 128, &ctx1);
     for(i = 0; i < 3; i++)
     {
-    	AES_encrypt(&tmp[0x10], &tmp[0x10], &ctx1);
+        AES_encrypt(&tmp[0x10], &tmp[0x10], &ctx1);
     }
 
     AES_set_encrypt_key(&tmp[0x10], 128, &ctx1);
@@ -5880,7 +5880,7 @@ int UM2(SomeStructure *ss, u8 *predata, Param3 *out, UmdIndex *m, u32 n)
     
     for(i = 0; i < 0x10; i++)
     {
-    	out->buf2[i] = out->buf2[i]^out->buf1[i];
+        out->buf2[i] = out->buf2[i]^out->buf1[i];
     }
 
     AES_encrypt(out->buf2, out->buf2, &ctx1); 
@@ -5888,13 +5888,13 @@ int UM2(SomeStructure *ss, u8 *predata, Param3 *out, UmdIndex *m, u32 n)
     //flush keys buffers got from O1
     for(i = 0; i < 0x40; i++)
     {
-    	tmp[i] = 0;
+        tmp[i] = 0;
     }
 
     memset(&ctx1, 0, sizeof(ctx1)); 
  
     //return total size of the data.
-    return idx_cnt*24+0x34;	
+    return idx_cnt*24+0x34;    
 }
 
 int GenKeys(SomeStructure *ss, u8 *ids_predata, int size, u8 *out, void *m, int n)
@@ -5914,38 +5914,38 @@ int GenKeys(SomeStructure *ss, u8 *ids_predata, int size, u8 *out, void *m, int 
     
     for (i = 0; i < 2; i++)
     {
-    	AES_encrypt((void *)(c+4), (void *)(c+4), &ctx);
+        AES_encrypt((void *)(c+4), (void *)(c+4), &ctx);
     }
 
     for (i = 0; i < 3; i++)
     {
-    	AES_encrypt((u8 *)c, (u8 *)c, &ctx);
+        AES_encrypt((u8 *)c, (u8 *)c, &ctx);
     }
 
     u8 *buf = out;
     
     for (i = 0; i < 6; i++)
     {
-    	AES_set_decrypt_key((u8 *)"FlashROM PreCalc", 128, &ctx2);
-    	AES_set_encrypt_key((void *)(c+4), 128, &ctx);
-    		
-    	for (j = 0; j < 32; j += 16)
-    	{
-    		AES_decrypt(buf+0xC0+j, buf+0xC0+j, &ctx2);
+        AES_set_decrypt_key((u8 *)"FlashROM PreCalc", 128, &ctx2);
+        AES_set_encrypt_key((void *)(c+4), 128, &ctx);
+        	
+        for (j = 0; j < 32; j += 16)
+        {
+        	AES_decrypt(buf+0xC0+j, buf+0xC0+j, &ctx2);
 
-    		if (j > 0)
-    		{
-    			for (k = 0; k < 16; k++)
-    			{
-    				buf[0xC0+j+k] ^= buf[0xB0+j+k];
-    			}
-    		}
-    	
-    		AES_encrypt(buf+0xC0+j, buf+0xC0+j, &ctx);		
-    	}
+        	if (j > 0)
+        	{
+        		for (k = 0; k < 16; k++)
+        		{
+        			buf[0xC0+j+k] ^= buf[0xB0+j+k];
+        		}
+        	}
+        
+        	AES_encrypt(buf+0xC0+j, buf+0xC0+j, &ctx);		
+        }
 
-    	EncryptRegion((void *)c, buf+0x38, 0xA8, buf+0xE0);	
-    	buf += 0xB8;
+        EncryptRegion((void *)c, buf+0x38, 0xA8, buf+0xE0);	
+        buf += 0xB8;
     }
 
     memset(c, 0, 64);
@@ -5970,8 +5970,8 @@ int CreateSS(SomeStructure *ss)
 
     for (i = 0; i < 4; i++)
     {
-    	ss->buf1[3-i] = ss->buf3[i];
-    	ss->buf1[7-i] = ss->buf3[4+i];
+        ss->buf1[3-i] = ss->buf3[i];
+        ss->buf1[7-i] = ss->buf3[4+i];
     }
 
     return 0;
@@ -6003,129 +6003,129 @@ int generate_thread(SceSize args, void *argp)
 
     if (is79)
     {
-    	if (g_region == JAPAN)
-    	{
-    		predata = predata_JAP_1_54398E06;
-    		m = mi_JAP_1_54398E06;
-    	}
-    	else if (g_region == AMERICA)
-    	{
-    		predata = predata_AM_1_1135060C;
-    		m = mi_AM_1_1135060C;
-    	}
-    	else
-    	{
-    		predata = predata_EU_1_8AC48706;
-    		m = mi_EU_1_8AC48706;
-    	}
+        if (g_region == JAPAN)
+        {
+        	predata = predata_JAP_1_54398E06;
+        	m = mi_JAP_1_54398E06;
+        }
+        else if (g_region == AMERICA)
+        {
+        	predata = predata_AM_1_1135060C;
+        	m = mi_AM_1_1135060C;
+        }
+        else
+        {
+        	predata = predata_EU_1_8AC48706;
+        	m = mi_EU_1_8AC48706;
+        }
     }
     else if (g_mb == TA_081v1 || g_mb == TA_081v2)
     {
-    	if (g_region == JAPAN)
-    	{
-    		predata = predata_JAP_1_54398E06;
-    		m = mi_JAP_1_54398E06;
-    	}
-    	else if (g_region == AMERICA)
-    	{
-    		predata = predata_AM_1_D7C2958D;
-    		m = mi_AM_1_D7C2958D;
-    	}
-    	else
-    	{
-    		predata = predata_EU_1_4DA9840C;
-    		m = mi_EU_1_4DA9840C;
-    	}
+        if (g_region == JAPAN)
+        {
+        	predata = predata_JAP_1_54398E06;
+        	m = mi_JAP_1_54398E06;
+        }
+        else if (g_region == AMERICA)
+        {
+        	predata = predata_AM_1_D7C2958D;
+        	m = mi_AM_1_D7C2958D;
+        }
+        else
+        {
+        	predata = predata_EU_1_4DA9840C;
+        	m = mi_EU_1_4DA9840C;
+        }
     }
     else if (g_mb == TA_082)
     {
-    	if (g_region == JAPAN)
-    	{
-    		predata = predata_JAP_2_90A8888E;
-    		m = mi_JAP_2_90A8888E;
-    	}
-    	else if (g_region == AMERICA)
-    	{
-    		predata = predata_AM_2_57B41293;
-    		m = mi_AM_2_57B41293;
-    	}
-    	else
-    	{
-    		predata = predata_EU_2_27A91195;
-    		m = mi_EU_2_27A91195;
-    	}
+        if (g_region == JAPAN)
+        {
+        	predata = predata_JAP_2_90A8888E;
+        	m = mi_JAP_2_90A8888E;
+        }
+        else if (g_region == AMERICA)
+        {
+        	predata = predata_AM_2_57B41293;
+        	m = mi_AM_2_57B41293;
+        }
+        else
+        {
+        	predata = predata_EU_2_27A91195;
+        	m = mi_EU_2_27A91195;
+        }
     }
     else if (g_mb == TA_086)
     {
-    	if (g_region == JAPAN)
-    	{
-    		predata = predata_JAP_2_10A18814;
-    		m = mi_JAP_2_10A18814;
-    	}
-    	else if (g_region == AMERICA)
-    	{
-    		predata = predata_AM_2_AEA31495;
-    		m = mi_AM_2_AEA31495;
-    	}
-    	else
-    	{
-    		predata = predata_EU_2_PINK;
-    		m = mi_EU_2_PINK;
-    	}
+        if (g_region == JAPAN)
+        {
+        	predata = predata_JAP_2_10A18814;
+        	m = mi_JAP_2_10A18814;
+        }
+        else if (g_region == AMERICA)
+        {
+        	predata = predata_AM_2_AEA31495;
+        	m = mi_AM_2_AEA31495;
+        }
+        else
+        {
+        	predata = predata_EU_2_PINK;
+        	m = mi_EU_2_PINK;
+        }
     }
     else if (g_mb == TA_085v1)
     {
-    	if (g_region == JAPAN)
-    	{
-    		predata = predata_JAP_3_A1C6818E;
-    		m = mi_JAP_3_A1C6818E;
-    	}
-    	else if (g_region == AMERICA)
-    	{
-    		predata = predata_AM_3_4B330609;
-    		m = mi_AM_3_4B330609;
-    	}
-    	else
-    	{
-    		predata = predata_EU_3_34D90F8D;
-    		m = mi_EU_3_34D90F8D;
-    	}
+        if (g_region == JAPAN)
+        {
+        	predata = predata_JAP_3_A1C6818E;
+        	m = mi_JAP_3_A1C6818E;
+        }
+        else if (g_region == AMERICA)
+        {
+        	predata = predata_AM_3_4B330609;
+        	m = mi_AM_3_4B330609;
+        }
+        else
+        {
+        	predata = predata_EU_3_34D90F8D;
+        	m = mi_EU_3_34D90F8D;
+        }
     }
     else if (g_mb == TA_085v2)
     {
-    	if (g_region == JAPAN)
-    	{
-    		predata = predata_JAP_3_BAC69087;
-    		m = mi_JAP_3_BAC69087;
-    	}
-    	else if (g_region == AMERICA)
-    	{
-    		predata = predata_AM_3_25AB118E;
-    		m = mi_AM_3_25AB118E;
-    	}
-    	else
-    	{
-    		predata = predata_EU_3_PLATA;
-    		m = mi_EU_3_PLATA;
-    	}
+        if (g_region == JAPAN)
+        {
+        	predata = predata_JAP_3_BAC69087;
+        	m = mi_JAP_3_BAC69087;
+        }
+        else if (g_region == AMERICA)
+        {
+        	predata = predata_AM_3_25AB118E;
+        	m = mi_AM_3_25AB118E;
+        }
+        else
+        {
+        	predata = predata_EU_3_PLATA;
+        	m = mi_EU_3_PLATA;
+        }
     }
     else // TA88... let's hope :p
     {
-    	if (g_region == JAPAN)
-    	{
-    		predata = predata_JAP_3_0DA18D0F;
-    		m = mi_JAP_3_0DA18D0F;
-    	}
-    	else if (g_region == AMERICA)
-    	{
-    		predata = predata_AM_3_8D561422;
-    		m = mi_AM_3_8D561422;
-    	}
-    	else
-    	{
-    		predata = predata_EU_3_1B478E18;
-    		m = mi_EU_3_1B478E18;
-    	}
+        if (g_region == JAPAN)
+        {
+        	predata = predata_JAP_3_0DA18D0F;
+        	m = mi_JAP_3_0DA18D0F;
+        }
+        else if (g_region == AMERICA)
+        {
+        	predata = predata_AM_3_8D561422;
+        	m = mi_AM_3_8D561422;
+        }
+        else
+        {
+        	predata = predata_EU_3_1B478E18;
+        	m = mi_EU_3_1B478E18;
+        }
     }
     
     g_result = CreateCertificatesAndUmd(g_buf, 0x4000, predata, m, n);
@@ -6141,8 +6141,8 @@ int idsRegenerationCreateCertificatesAndUMDKeys(u8 *buf)
 
     if (gen_thid > 0)
     {
-    	pspSdkSetK1(k1);
-    	return -1;
+        pspSdkSetK1(k1);
+        return -1;
     }
 
     g_buf = (u8 *)(0x80000000 | (u32)buf);
@@ -6150,22 +6150,22 @@ int idsRegenerationCreateCertificatesAndUMDKeys(u8 *buf)
 
     if (gen_thid < 0)
     {
-    	pspSdkSetK1(k1);
-    	return gen_thid;
+        pspSdkSetK1(k1);
+        return gen_thid;
     }
 
     int res = sceKernelStartThread(gen_thid, 0, NULL);
     if (res < 0)
     {
-    	pspSdkSetK1(k1);
-    	return res;
+        pspSdkSetK1(k1);
+        return res;
     }
 
     sceKernelWaitThreadEnd(gen_thid, NULL);
 
     sceKernelDcacheWritebackAll();
     sceKernelIcacheInvalidateAll();
-    	
+        
     pspSdkSetK1(k1);
     return g_result;
 }

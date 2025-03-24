@@ -619,7 +619,7 @@ int power_event_handler(int ev_id, char *ev_name, void *param, int *result)
 
     if (ev_id == 0x400 || ev_id == 0x4000) // sleep
     {
-    	do_umd_notify(PSP_UMD_INITING | PSP_UMD_NOT_PRESENT);
+        do_umd_notify(PSP_UMD_INITING | PSP_UMD_NOT_PRESENT);
     }
 
     if( ev_id == 0x400000) { // resume complete

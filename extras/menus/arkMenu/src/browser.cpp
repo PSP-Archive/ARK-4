@@ -1581,8 +1581,8 @@ void Browser::optionsMenu(){
             common::playMenuSound();
             do {
                 if (pEntryIndex < max_options-1){
-                	if(this->clipboard->size()<1 && pEntryIndex == 2) pEntryIndex += 2;
-                	else pEntryIndex++;
+                    if(this->clipboard->size()<1 && pEntryIndex == 2) pEntryIndex += 2;
+                    else pEntryIndex++;
                 }
                 else{
                     pEntryIndex = 0;
@@ -1594,8 +1594,8 @@ void Browser::optionsMenu(){
             common::playMenuSound();
             do {
                 if (pEntryIndex > 0){
-                	if(this->clipboard->size()<1 && pEntryIndex == 4) pEntryIndex -= 2;
-                	else pEntryIndex--;
+                    if(this->clipboard->size()<1 && pEntryIndex == 4) pEntryIndex -= 2;
+                    else pEntryIndex--;
                 }
                 else{
                     pEntryIndex = max_options-1;
@@ -1607,9 +1607,9 @@ void Browser::optionsMenu(){
             common::playMenuSound();
             do {
                 if(pEntryIndex >= (int)((max_options-1)/2))
-                	pEntryIndex = max_options-1;
+                    pEntryIndex = max_options-1;
                 else if(pEntryIndex <= (int)((max_options-1)/2))
-                	pEntryIndex = (int)((max_options-1)/2);
+                    pEntryIndex = (int)((max_options-1)/2);
             } while (pEntries[pEntryIndex] == NULL);
         }
         // Left
@@ -1617,9 +1617,9 @@ void Browser::optionsMenu(){
             common::playMenuSound();
             do {
                 if(pEntryIndex <= (int)((max_options-1)/2))
-                	pEntryIndex = 0;
+                    pEntryIndex = 0;
                 else if(pEntryIndex <= max_options-1)
-                	pEntryIndex = (int)((max_options-1)/2);
+                    pEntryIndex = (int)((max_options-1)/2);
             } while (pEntries[pEntryIndex] == NULL);
         }
         else if (pad->decline() || pad->LT()){

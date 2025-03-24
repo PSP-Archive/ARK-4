@@ -15,47 +15,47 @@ void sceNetMCopyback(int *a0, int a1, int a2, int a3, int value)
 
     if (a3 > 0) {
 printf(" 1\n");
-    	u32 v1 = a3 + a2;
-    	u32 _a1 = v1 | a3;
-    	u32 _a2 = _a1 | a2;
-    	_a1 = _a2 & 0x80000000;
+        u32 v1 = a3 + a2;
+        u32 _a1 = v1 | a3;
+        u32 _a2 = _a1 | a2;
+        _a1 = _a2 & 0x80000000;
 
-    	if (((int)_a1 >= 0) && (v1 >= 0) && (s6 > 0)) {
+        if (((int)_a1 >= 0) && (v1 >= 0) && (s6 > 0)) {
 printf(" 2\n");
-    		int s0 = s6[3];
+        	int s0 = s6[3];
 printf("s5: 0x%08X\ns0: 0x%08X\n", s5, s0);
-    		if ((s5 > s0) && (s3 >= 0)) {
+        	if ((s5 > s0) && (s3 >= 0)) {
 printf(" 3\n");
-    			int v0 = s3[0];
-    			fp += s0;
-    			s5 -= s0;
+        		int v0 = s3[0];
+        		fp += s0;
+        		s5 -= s0;
 printf("s5: 0x%08X\nfp: 0x%08X\n", s5, fp);
-    			if (v0) {
+        		if (v0) {
 printf(" 4\n");
-    				s0 = value;
+        			s0 = value;
 
-    				if (s5 > s0) {
-    					printf("loop back\n");
-    					return;
-    				}
+        			if (s5 > s0) {
+        				printf("loop back\n");
+        				return;
+        			}
 
-    				if (s2 <= 0) {
+        			if (s2 <= 0) {
 printf(" 5\n");
-    					s1 = s6[4] >> 16;
+        				s1 = s6[4] >> 16;
 
-    					if (s1 & 2) {
+        				if (s1 & 2) {
 printf(" 6\n");
-    						int _s3 = s6[6];
+        					int _s3 = s6[6];
 printf("fp: 0x%08X\ns3: 0x%08X\n", fp, _s3);
-    						if ((int)fp > _s3)
-    							s6[6] = fp;
-    						else
-    							printf("no store\n");
-    					}
-    				}
-    			}
-    		}
-    	}
+        					if ((int)fp > _s3)
+        						s6[6] = fp;
+        					else
+        						printf("no store\n");
+        				}
+        			}
+        		}
+        	}
+        }
     }
 }
 

@@ -425,7 +425,7 @@ static int controlThread(SceSize _args, void *_argp){
                 kuKernelCall(_sceImposeSetParam, &args);
                 //pad.update();
                 if(mute) {
-                	drawMute();
+                    drawMute();
                 }
             }
 

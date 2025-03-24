@@ -79,21 +79,21 @@ u32 readKram(u32 addr) {
     unsigned int res = 0;
     int bit_idx = 1;
     if (is_positive(addr)) {
-    	for (; bit_idx < 32; bit_idx++) {
-    		unsigned int value = res | (1 << (31 - bit_idx));
-    		if (is_ge_pos(addr, value))
-    			res = value;
-    	}
-    	return res;
+        for (; bit_idx < 32; bit_idx++) {
+        	unsigned int value = res | (1 << (31 - bit_idx));
+        	if (is_ge_pos(addr, value))
+        		res = value;
+        }
+        return res;
     }
     res = 0x80000000;
     for (; bit_idx < 32; bit_idx++) {
-    	unsigned int value = res | (1 << (31 - bit_idx));
-    	if (is_le_neg(addr, value))
-    		res = value;
+        unsigned int value = res | (1 << (31 - bit_idx));
+        if (is_le_neg(addr, value))
+        	res = value;
     }
     if (res == 0xFFFFFFFF)
-    	res = 0;
+        res = 0;
     return res;
 }
 

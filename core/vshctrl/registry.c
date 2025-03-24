@@ -15,24 +15,24 @@ int vctrlGetRegistryValue(const char *dir, const char *name, u32 *val)
     strcpy(reg.name, "/system");
     if(sceRegOpenRegistry(&reg, 2, &h) == 0)
     {
-    	REGHANDLE hd;
-    	if(!sceRegOpenCategory(h, dir, 2, &hd))
-    	{
-    		REGHANDLE hk;
-    		unsigned int type, size;
+        REGHANDLE hd;
+        if(!sceRegOpenCategory(h, dir, 2, &hd))
+        {
+        	REGHANDLE hk;
+        	unsigned int type, size;
 
-    		if(!sceRegGetKeyInfo(hd, name, &hk, &type, &size))
-    		{
-    			if(!sceRegGetKeyValue(hd, hk, val, 4))
-    			{
-    				ret = 1;
-    				sceRegFlushCategory(hd);
-    			}
-    		}
-    		sceRegCloseCategory(hd);
-    	}
-    	sceRegFlushRegistry(h);
-    	sceRegCloseRegistry(h);
+        	if(!sceRegGetKeyInfo(hd, name, &hk, &type, &size))
+        	{
+        		if(!sceRegGetKeyValue(hd, hk, val, 4))
+        		{
+        			ret = 1;
+        			sceRegFlushCategory(hd);
+        		}
+        	}
+        	sceRegCloseCategory(hd);
+        }
+        sceRegFlushRegistry(h);
+        sceRegCloseRegistry(h);
     }
 
     pspSdkSetK1(k1);
@@ -54,25 +54,25 @@ int vctrlSetRegistryValue(const char *dir, const char *name, u32 val)
     strcpy(reg.name, "/system");
     if(sceRegOpenRegistry(&reg, 2, &h) == 0)
     {
-    	REGHANDLE hd;
-    	if(!sceRegOpenCategory(h, dir, 2, &hd))
-    	{
-    		if(!sceRegSetKeyValue(hd, name, &val, 4))
-    		{
-    			ret = 1;
-    			sceRegFlushCategory(hd);
-    		}
-    		else
-    		{
-    			sceRegCreateKey(hd, name, REG_TYPE_INT, 4);
-    			sceRegSetKeyValue(hd, name, &val, 4);
-    			ret = 1;
-    			sceRegFlushCategory(hd);
-    		}
-    		sceRegCloseCategory(hd);
-    	}
-    	sceRegFlushRegistry(h);
-    	sceRegCloseRegistry(h);
+        REGHANDLE hd;
+        if(!sceRegOpenCategory(h, dir, 2, &hd))
+        {
+        	if(!sceRegSetKeyValue(hd, name, &val, 4))
+        	{
+        		ret = 1;
+        		sceRegFlushCategory(hd);
+        	}
+        	else
+        	{
+        		sceRegCreateKey(hd, name, REG_TYPE_INT, 4);
+        		sceRegSetKeyValue(hd, name, &val, 4);
+        		ret = 1;
+        		sceRegFlushCategory(hd);
+        	}
+        	sceRegCloseCategory(hd);
+        }
+        sceRegFlushRegistry(h);
+        sceRegCloseRegistry(h);
     }
 
     pspSdkSetK1(k1);

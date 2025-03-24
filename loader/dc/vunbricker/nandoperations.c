@@ -69,10 +69,10 @@ int OnBackFromDump(int enter)
 {
     if (!enter)
     {
-    	vlfGuiRemoveText(status);
-    	status = -1;
-    	vlfGuiCancelBottomDialog();
-    	NandOperationsMenu(0);
+        vlfGuiRemoveText(status);
+        status = -1;
+        vlfGuiCancelBottomDialog();
+        NandOperationsMenu(0);
     }
     
     return VLF_EV_RET_NOTHING;
@@ -93,9 +93,9 @@ int OnDumpComplete(void *param)
 
     if (new_x >= 0)
     {
-    	vlfGuiSetTextXY(status, new_x, new_y);
-    	new_x = -1;
-    	new_y = -1;
+        vlfGuiSetTextXY(status, new_x, new_y);
+        new_x = -1;
+        new_y = -1;
     }
 
     return VLF_EV_RET_REMOVE_HANDLERS;
@@ -105,12 +105,12 @@ int OnCancelDump(int enter)
 {
     if (!enter && vlfGuiMessageDialog("Are you sure you want to cancel?", VLF_MD_TYPE_NORMAL | VLF_MD_BUTTONS_YESNO | VLF_MD_INITIAL_CURSOR_NO) == VLF_MD_YES)
     {
-    	if (last_percentage < 100)
-    	{
-    		SetStatus("Cancelling... ");
-    		cancel_dump = 1;
-    		return VLF_EV_RET_REMOVE_HANDLERS;
-    	}
+        if (last_percentage < 100)
+        {
+        	SetStatus("Cancelling... ");
+        	cancel_dump = 1;
+        	return VLF_EV_RET_REMOVE_HANDLERS;
+        }
     }
     
     return VLF_EV_RET_NOTHING;
@@ -138,7 +138,7 @@ int dump_thread(SceSize args, void *argp)
     u32 pagesize, ppb, totalblocks, extrasize, blocksize, totalpages;
     int nbfit;
     int i, j;
-    int badblocks[28], nbb = 0;	
+    int badblocks[28], nbb = 0;    
 
     dcGetNandInfo(&pagesize, &ppb, &totalblocks);
 
@@ -155,47 +155,47 @@ int dump_thread(SceSize args, void *argp)
     fd = sceIoOpen("ms0:/nand-dump.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
     if (fd < 0)
     {
-    	DumpError("Error 0x%08X creating nand-dump.bin", fd);
+        DumpError("Error 0x%08X creating nand-dump.bin", fd);
     }
 
     for (i = 0; i < totalpages; )
     {
-    	u8 *p;
-    	memset(big_buffer, 0xff, nbfit*blocksize);
+        u8 *p;
+        memset(big_buffer, 0xff, nbfit*blocksize);
 
-    	p = big_buffer;
-    	
-    	for (j = 0; j < nbfit && i < totalpages; j++)
-    	{
-    		dcLockNand(0);
-    		
-    		if (dcReadNandBlock(i, p) == -1)
-    		{
-    			if (nbb < 28)
-    			{
-    				badblocks[nbb++] = i / ppb;
-    			}
-    		}
+        p = big_buffer;
+        
+        for (j = 0; j < nbfit && i < totalpages; j++)
+        {
+        	dcLockNand(0);
+        	
+        	if (dcReadNandBlock(i, p) == -1)
+        	{
+        		if (nbb < 28)
+        		{
+        			badblocks[nbb++] = i / ppb;
+        		}
+        	}
 
-    		dcUnlockNand();
+        	dcUnlockNand();
 
-    		if (cancel_dump)
-    		{
-    			sceIoClose(fd);
-    			sceIoRemove("ms0:/nand-dump.bin");
-    			vlfGuiAddEventHandler(0, 400000, OnCancelCompleted, NULL);
+        	if (cancel_dump)
+        	{
+        		sceIoClose(fd);
+        		sceIoRemove("ms0:/nand-dump.bin");
+        		vlfGuiAddEventHandler(0, 400000, OnCancelCompleted, NULL);
 
-    			return sceKernelExitDeleteThread(0);
-    		}
+        		return sceKernelExitDeleteThread(0);
+        	}
 
-    		i += ppb;
-    		p += (528*ppb);
+        	i += ppb;
+        	p += (528*ppb);
 
-    		SetGenericProgress(i, totalpages, 0);
-    		scePowerTick(0);
-    	}		
+        	SetGenericProgress(i, totalpages, 0);
+        	scePowerTick(0);
+        }		
 
-    	sceIoWrite(fd, big_buffer, j*blocksize);
+        sceIoWrite(fd, big_buffer, j*blocksize);
     }
 
     sceIoClose(fd);
@@ -205,31 +205,31 @@ int dump_thread(SceSize args, void *argp)
 
     if (nbb > 0)
     {
-    	strcat(end_msg, "The following bad blocks were found:\n\n");
+        strcat(end_msg, "The following bad blocks were found:\n\n");
 
-    	for (i = 0; i < nbb; i++)
-    	{
-    		if (i && (i % 7) == 0)
-    		{
-    			strcat(end_msg, "\n");
-    		}
-    		
-    		sprintf(end_msg+strlen(end_msg), "%d", badblocks[i]);
+        for (i = 0; i < nbb; i++)
+        {
+        	if (i && (i % 7) == 0)
+        	{
+        		strcat(end_msg, "\n");
+        	}
+        	
+        	sprintf(end_msg+strlen(end_msg), "%d", badblocks[i]);
 
-    		if (i == (nbb-1))
-    		{
-    			strcat(end_msg, ".");
-    		}
-    		else
-    		{
-    			strcat(end_msg, ", ");
-    		}			
-    	}
+        	if (i == (nbb-1))
+        	{
+        		strcat(end_msg, ".");
+        	}
+        	else
+        	{
+        		strcat(end_msg, ", ");
+        	}			
+        }
     }
     else
     {
-    	new_x = 150;
-    	new_y = 110;
+        new_x = 150;
+        new_y = 110;
     }
 
     vlfGuiAddEventHandler(0, 700000, OnDumpComplete, NULL);
@@ -244,7 +244,7 @@ void DumpNand()
     ClearProgress();
     status = vlfGuiAddText(80, 100, "Dumping nand...");
 
-    progress_bar = vlfGuiAddProgressBar(136);	
+    progress_bar = vlfGuiAddProgressBar(136);    
     progress_text = vlfGuiAddText(240, 148, "0%");
     vlfGuiSetTextAlignment(progress_text, VLF_ALIGNMENT_CENTER);
 
@@ -254,8 +254,8 @@ void DumpNand()
     SceUID dump_thid = sceKernelCreateThread("dump_thread", dump_thread, 0x18, 0x10000, 0, NULL);
     if (dump_thid >= 0)
     {
-    	sceKernelStartThread(dump_thid, 0, NULL);
-    }	
+        sceKernelStartThread(dump_thid, 0, NULL);
+    }    
 }
 
 int OnRestoreError(void *param)
@@ -299,7 +299,7 @@ int OnRestoreComplete(void *param)
     AddShutdownRebootBD(0);
     
     progress_bar = -1;
-    progress_text = -1;	
+    progress_text = -1;    
 
     return VLF_EV_RET_REMOVE_HANDLERS;
 }
@@ -331,85 +331,85 @@ int restore_thread(SceSize args, void *argp)
 
     if (totalsize != (33*1024*1024) && totalsize != (66*1024*1024))
     {
-    	RestoreError("Nand info not expected.\n");
+        RestoreError("Nand info not expected.\n");
     }
 
     fd = sceIoOpen("ms0:/nand-dump.bin", PSP_O_RDONLY, 0);
     if (fd < 0)
     {
-    	DumpError("Error 0x%08X opening nand-dump.bin", fd);
+        DumpError("Error 0x%08X opening nand-dump.bin", fd);
     }
 
     n = totalblocks / nbfit;
     
     if ((totalblocks % nbfit) != 0)
     {
-    	n++;
+        n++;
     }
 
     dcLockNand(1);
 
     for (i = 0; i < n; i++)
     {
-    	sceIoRead(fd, big_buffer, nbfit*blocksize);
-    	
-    	p = big_buffer;
+        sceIoRead(fd, big_buffer, nbfit*blocksize);
+        
+        p = big_buffer;
 
-    	if (i == (n-1))
-    	{
-    		m = totalblocks % nbfit;
-    		if (m == 0)
-    			m = nbfit;
-    	}
-    	else
-    	{
-    		m = nbfit;
-    	}
+        if (i == (n-1))
+        {
+        	m = totalblocks % nbfit;
+        	if (m == 0)
+        		m = nbfit;
+        }
+        else
+        {
+        	m = nbfit;
+        }
 
-    	for (j = 0; j < m; j++)
-    	{
-    		q = user;
-    		r = spare;
-    		
-    		for (k = 0; k < 32; k++)
-    		{
-    			memcpy(q, p, 512);
-    			memcpy(r, p+512, 16);
+        for (j = 0; j < m; j++)
+        {
+        	q = user;
+        	r = spare;
+        	
+        	for (k = 0; k < 32; k++)
+        	{
+        		memcpy(q, p, 512);
+        		memcpy(r, p+512, 16);
 
-    			p += 528;
-    			q += 512;
-    			r += 16;
-    		}
+        		p += 528;
+        		q += 512;
+        		r += 16;
+        	}
 
-    		if (ppn >= totalpages)
-    		{
-    			dcUnlockNand();
-    			RestoreError("Break\n");
-    		}
-    		
-    		if (1)
-    		{
-    			if (dcEraseNandBlock(ppn) >= 0)
-    			{
-    				if (dcWriteNandBlock(ppn, user, spare) < 0)
-    					error++;//printf("Error writing block 0x%08X\n", ppn);
-    			}
-    			else
-    			{
-    				error++;
-    				//printf("Error erasing block ppn=0x%08X\n", ppn);
-    			}			
-    		}
+        	if (ppn >= totalpages)
+        	{
+        		dcUnlockNand();
+        		RestoreError("Break\n");
+        	}
+        	
+        	if (1)
+        	{
+        		if (dcEraseNandBlock(ppn) >= 0)
+        		{
+        			if (dcWriteNandBlock(ppn, user, spare) < 0)
+        				error++;//printf("Error writing block 0x%08X\n", ppn);
+        		}
+        		else
+        		{
+        			error++;
+        			//printf("Error erasing block ppn=0x%08X\n", ppn);
+        		}			
+        	}
 
-    		if (error > 100)
-    		{
-    			dcUnlockNand();
-    			RestoreError("There are being too many write/erase errors.\n");
-    		}
+        	if (error > 100)
+        	{
+        		dcUnlockNand();
+        		RestoreError("There are being too many write/erase errors.\n");
+        	}
 
-    		ppn += 32;
-    		SetGenericProgress(ppn, totalpages, 0);
-    	}
+        	ppn += 32;
+        	SetGenericProgress(ppn, totalpages, 0);
+        }
     }
 
     dcUnlockNand();
@@ -432,13 +432,13 @@ int RestoreNand()
 
     if (vlfGuiMessageDialog("Physical nand restore can be dangerous if your nand has more bad blocks than when you did the dump.\nAre you sure you want to continue?", VLF_MD_TYPE_NORMAL | VLF_MD_BUTTONS_YESNO | VLF_MD_INITIAL_CURSOR_NO) != VLF_MD_YES)
     {
-    	return VLF_EV_RET_NOTHING;
+        return VLF_EV_RET_NOTHING;
     }
 
     if (sceIoGetstat("ms0:/nand-dump.bin", &stat) < 0)
     {
-    	vlfGuiMessageDialog("nand-dump.bin not found at root.", VLF_MD_TYPE_ERROR | VLF_MD_BUTTONS_NONE);
-    	return VLF_EV_RET_NOTHING;
+        vlfGuiMessageDialog("nand-dump.bin not found at root.", VLF_MD_TYPE_ERROR | VLF_MD_BUTTONS_NONE);
+        return VLF_EV_RET_NOTHING;
     }
 
     dcGetHardwareInfo(&dummy, &dummy, &dummy, &dummy, &dummy64, &dummy, &nandsize);
@@ -447,14 +447,14 @@ int RestoreNand()
     
     if (stat.st_size != nandsize)
     {
-    	vlfGuiMessageDialog("nand-dump.bin has not the correct size for this hardware.", VLF_MD_TYPE_ERROR | VLF_MD_BUTTONS_NONE);
-    	return VLF_EV_RET_NOTHING;
+        vlfGuiMessageDialog("nand-dump.bin has not the correct size for this hardware.", VLF_MD_TYPE_ERROR | VLF_MD_BUTTONS_NONE);
+        return VLF_EV_RET_NOTHING;
     }
 
     ClearProgress();
     status = vlfGuiAddText(80, 100, "Restoring nand...");
 
-    progress_bar = vlfGuiAddProgressBar(136);	
+    progress_bar = vlfGuiAddProgressBar(136);    
     progress_text = vlfGuiAddText(240, 148, "0%");
     vlfGuiSetTextAlignment(progress_text, VLF_ALIGNMENT_CENTER);
 
@@ -463,8 +463,8 @@ int RestoreNand()
     SceUID restore_thid = sceKernelCreateThread("restore_thread", restore_thread, 0x18, 0x10000, 0, NULL);
     if (restore_thid >= 0)
     {
-    	sceKernelStartThread(restore_thid, 0, NULL);
-    }	
+        sceKernelStartThread(restore_thid, 0, NULL);
+    }    
 
     return VLF_EV_RET_REMOVE_OBJECTS | VLF_EV_RET_REMOVE_HANDLERS;
 }
@@ -473,25 +473,25 @@ int OnNandOperationsSelect(int sel)
 {
     switch (sel)
     {
-    	case 0:
-    		DumpNand();
-    	break;
+        case 0:
+        	DumpNand();
+        break;
 
-    	case 1:
-    		return RestoreNand();
-    	break;
+        case 1:
+        	return RestoreNand();
+        break;
 
-    	case 2:
-    		FormatFlashPage();
-    	break;
+        case 2:
+        	FormatFlashPage();
+        break;
 
-    	case 3:
-    		vlfGuiCancelBottomDialog();
-    		vlfGuiCancelCentralMenu();
-    		IdStorageMenu(0);
-    		return VLF_EV_RET_NOTHING;
-    	break;
-    }	
+        case 3:
+        	vlfGuiCancelBottomDialog();
+        	vlfGuiCancelCentralMenu();
+        	IdStorageMenu(0);
+        	return VLF_EV_RET_NOTHING;
+        break;
+    }    
     
     return VLF_EV_RET_REMOVE_OBJECTS | VLF_EV_RET_REMOVE_HANDLERS;
 }
@@ -500,9 +500,9 @@ int OnBackToMainMenuFromNO(int enter)
 {
     if (!enter)
     {
-    	vlfGuiCancelCentralMenu();
-    	vlfGuiCancelBottomDialog();
-    	MainMenu(2);		
+        vlfGuiCancelCentralMenu();
+        vlfGuiCancelBottomDialog();
+        MainMenu(2);		
     }
 
     return VLF_EV_RET_NOTHING;
@@ -512,10 +512,10 @@ void NandOperationsMenu(int sel)
 {
     char *items[] =
     {
-    	"Dump NAND",
-    	"Restore NAND",
-    	"Format Lflash",
-    	"IDStorage tools",
+        "Dump NAND",
+        "Restore NAND",
+        "Format Lflash",
+        "IDStorage tools",
     };
 
     //vlfGuiCentralMenu(kuKernelGetModel() > 2 ? 3 : 4, items, sel, OnNandOperationsSelect, 0, -8);

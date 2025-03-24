@@ -34,11 +34,11 @@ int _pspemuLfatOpen(BootFile* file, int unk)
     }
     else if (strcmp(p, REBOOT_MODULE) == 0){
         file->buffer = reboot_conf->rtm_mod.buffer;
-    	file->size = reboot_conf->rtm_mod.size;
-    	relocateFlashFile(file);
-    	reboot_conf->rtm_mod.buffer = NULL;
+        file->size = reboot_conf->rtm_mod.size;
+        relocateFlashFile(file);
+        reboot_conf->rtm_mod.buffer = NULL;
         reboot_conf->rtm_mod.size = 0;
-    	return 0;
+        return 0;
     }
     return pspemuLfatOpen(file, unk);
 }

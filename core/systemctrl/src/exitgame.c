@@ -85,40 +85,40 @@ int exitLauncher()
     SceIoStat stat; int res = sceIoGetstat(path, &stat);
 
     if (res >= 0){
-    	// Clear Memory
-    	memset(&param, 0, sizeof(param));
+        // Clear Memory
+        memset(&param, 0, sizeof(param));
 
-    	// Configure Parameters
-    	param.size = sizeof(param);
-    	param.args = strlen(path) + 1;
-    	param.argp = path;
-    	param.key = "game";
+        // Configure Parameters
+        param.size = sizeof(param);
+        param.args = strlen(path) + 1;
+        param.argp = path;
+        param.key = "game";
 
-    	// set default mode
-    	sctrlSESetUmdFile("");
-    	sctrlSESetBootConfFileIndex(MODE_UMD);
-    	
-    	// Trigger Reboot
-    	ark_config->recovery = 0; // reset recovery mode for next reboot
-    	sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
+        // set default mode
+        sctrlSESetUmdFile("");
+        sctrlSESetBootConfFileIndex(MODE_UMD);
+        
+        // Trigger Reboot
+        ark_config->recovery = 0; // reset recovery mode for next reboot
+        sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
     }
     else if (ark_config->recovery || (strcmp(ark_config->launcher, "PROSHELL") == 0)){
-    	// no recovery app? try classic module
-    	strcpy(path, ark_config->arkpath);
-    	strcat(path, RECOVERY_PRX);
-    	res = sceIoGetstat(path, &stat);
-    	if (res < 0){
-    		// try flash0
-    		strcpy(path, RECOVERY_PRX_FLASH);
-    	}
-    	SceUID modid = sceKernelLoadModule(path, 0, NULL);
-    	if(modid >= 0) {
-    		sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
-    		ark_config->recovery = 0; // reset recovery mode for next reboot
-    		ark_config->launcher[0] = 0; // reset launcher mode for next reboot
-    		pspSdkSetK1(k1);
-    		return 0;
-    	}
+        // no recovery app? try classic module
+        strcpy(path, ark_config->arkpath);
+        strcat(path, RECOVERY_PRX);
+        res = sceIoGetstat(path, &stat);
+        if (res < 0){
+        	// try flash0
+        	strcpy(path, RECOVERY_PRX_FLASH);
+        }
+        SceUID modid = sceKernelLoadModule(path, 0, NULL);
+        if(modid >= 0) {
+        	sceKernelStartModule(modid, strlen(path) + 1, path, NULL, NULL);
+        	ark_config->recovery = 0; // reset recovery mode for next reboot
+        	ark_config->launcher[0] = 0; // reset launcher mode for next reboot
+        	pspSdkSetK1(k1);
+        	return 0;
+        }
     }
 
     ark_config->recovery = 0;
@@ -130,8 +130,8 @@ static void startExitThread(){
     int k1 = pspSdkSetK1(0);
     int intc = pspSdkDisableInterrupts();
     if (sctrlGetThreadUIDByName("ExitGamePollThread") >= 0){
-    	pspSdkEnableInterrupts(intc);
-    	return; // already exiting
+        pspSdkEnableInterrupts(intc);
+        return; // already exiting
     }
     int uid = sceKernelCreateThread("ExitGamePollThread", (exit_type)?exitVsh:exitLauncher, 1, 4096, 0, NULL);
     pspSdkEnableInterrupts(intc);
@@ -144,11 +144,11 @@ static void startExitThread(){
 static void remove_analog_input(SceCtrlData *data, int count)
 {
     if(data == NULL)
-    	return;
+        return;
     
     for (int i=0; i<count; i++){
-    	data[i].Lx = 0xFF/2;
-    	data[i].Ly = 0xFF/2;
+        data[i].Lx = 0xFF/2;
+        data[i].Ly = 0xFF/2;
     }
 }
 
@@ -162,19 +162,19 @@ int peek_positive(SceCtrlData * pad_data, int count)
     // Check for Exit Mask
     if((pad_data[0].Buttons & EXIT_MASK_CL) == EXIT_MASK_CL)
     {
-    	exit_type = 0;
-    	startExitThread();
+        exit_type = 0;
+        startExitThread();
     }
 
     // Check for Exit Mask
     if((pad_data[0].Buttons & EXIT_MASK_VSH) == EXIT_MASK_VSH)
     {
-    	exit_type = 1;
-    	startExitThread();
+        exit_type = 1;
+        startExitThread();
     }
 
     if (se_config.noanalog){
-    	remove_analog_input(pad_data, count);
+        remove_analog_input(pad_data, count);
     }
     
     // Return Number of Input Frames
@@ -191,19 +191,19 @@ int peek_negative(SceCtrlData * pad_data, int count)
     // Check for Exit Mask
     if((pad_data[0].Buttons & EXIT_MASK_CL) == 0)
     {
-    	exit_type = 0;
-    	startExitThread();
+        exit_type = 0;
+        startExitThread();
     }
     
     // Check for Exit Mask
     if((pad_data[0].Buttons & EXIT_MASK_VSH) == 0)
     {
-    	exit_type = 1;
-    	startExitThread();
+        exit_type = 1;
+        startExitThread();
     }
 
     if (se_config.noanalog){
-    	remove_analog_input(pad_data, count);
+        remove_analog_input(pad_data, count);
     }
 
     // Return Number of Input Frames
@@ -220,19 +220,19 @@ int read_positive(SceCtrlData * pad_data, int count)
     // Check for Exit Mask
     if((pad_data[0].Buttons & EXIT_MASK_CL) == EXIT_MASK_CL)
     {
-    	exit_type = 0;
-    	startExitThread();
+        exit_type = 0;
+        startExitThread();
     }
 
     // Check for Exit Mask
     if((pad_data[0].Buttons & EXIT_MASK_VSH) == EXIT_MASK_VSH)
     {
-    	exit_type = 1;
-    	startExitThread();
+        exit_type = 1;
+        startExitThread();
     }
 
     if (se_config.noanalog){
-    	remove_analog_input(pad_data, count);
+        remove_analog_input(pad_data, count);
     }
     
     // Return Number of Input Frames
@@ -249,19 +249,19 @@ int read_negative(SceCtrlData * pad_data, int count)
     // Check for Exit Mask
     if((pad_data[0].Buttons & EXIT_MASK_CL) == 0)
     {
-    	exit_type = 0;
-    	startExitThread();
+        exit_type = 0;
+        startExitThread();
     }
 
     // Check for Exit Mask
     if((pad_data[0].Buttons & EXIT_MASK_VSH) == 0)
     {
-    	exit_type = 1;
-    	startExitThread();
+        exit_type = 1;
+        startExitThread();
     }
 
     if (se_config.noanalog){
-    	remove_analog_input(pad_data, count);
+        remove_analog_input(pad_data, count);
     }
     
     // Return Number of Input Frames
@@ -277,14 +277,14 @@ static int isRecoveryMode(){
 
 void checkControllerInput(){
     if (isRecoveryMode()){
-    	disable_plugins = 1;
-    	disable_settings = 1;
+        disable_plugins = 1;
+        disable_settings = 1;
     }
     else {
-    	SceCtrlData pad_data;
-    	CtrlPeekBufferPositive(&pad_data, 1);
-    	if ((pad_data.Buttons & PSP_CTRL_START) == PSP_CTRL_START) disable_plugins = 1;
-    	if ((pad_data.Buttons & PSP_CTRL_SELECT) == PSP_CTRL_SELECT) disable_settings = 1;
+        SceCtrlData pad_data;
+        CtrlPeekBufferPositive(&pad_data, 1);
+        if ((pad_data.Buttons & PSP_CTRL_START) == PSP_CTRL_START) disable_plugins = 1;
+        if ((pad_data.Buttons & PSP_CTRL_SELECT) == PSP_CTRL_SELECT) disable_settings = 1;
     }
 }
 

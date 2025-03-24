@@ -62,15 +62,15 @@ void Fix150Path(const char *file)
     char str[256];
 
     if (strstr(file, "ms0:/PSP/GAME/") == file) {
-    	strcpy(str, (char *)file);
+        strcpy(str, (char *)file);
 
-    	char *p = strstr(str, GAME150_PATCH);
-    	
-    	if (p) {
-    		strcpy((char *)file+13, "150/");
-    		strncpy((char *)file+17, str+14, p-(str+14));
-    		strcpy((char *)file+17+(p-(str+14)), p+5);		
-    	}
+        char *p = strstr(str, GAME150_PATCH);
+        
+        if (p) {
+        	strcpy((char *)file+13, "150/");
+        	strncpy((char *)file+17, str+14, p-(str+14));
+        	strcpy((char *)file+17+(p-(str+14)), p+5);		
+        }
     }
 }
 
@@ -346,7 +346,7 @@ int gamedread(SceUID fd, SceIoDirent * dir)
             if ((result = sceIoDread(game150dfd, dir)) <= 0)
             {
                 sceIoDclose(game150dfd);
-                game150dfd = -1;    				
+                game150dfd = -1;        			
             }
             else {
                 apply150NamePatch = 1;
@@ -372,7 +372,7 @@ int gamedread(SceUID fd, SceIoDirent * dir)
         if (!patched && apply150NamePatch)
             ApplyNamePatch(dir, GAME150_PATCH);
         if (se_config->hidedlc)
-        	HideDlc(dir->d_name);
+            HideDlc(dir->d_name);
         pspSdkSetK1(k1);
     }
     #ifdef DEBUG

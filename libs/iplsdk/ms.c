@@ -76,7 +76,7 @@ int _ms_init(void)
 
     int ret;
     do{
-    	ret = ms_get_reg_int();
+        ret = ms_get_reg_int();
     }while((ret < 0) || ( (ret & INT_REG_CED) == 0));
 
     return 0;
@@ -140,13 +140,13 @@ int ms_check_unk2(void)
     ms_get_reg((int)sts_buf, 8);
     if(sts_buf[4] != 0x01)
     {
-    	return -1;
+        return -1;
     }
 
     val_a = *((volatile int*)(&sts_buf[0]));
 
     if (((val_a >> 16) & 0x15) != 0)
-    	return -1;
+        return -1;
 
     return 0;
 }

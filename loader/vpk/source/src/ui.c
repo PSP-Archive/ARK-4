@@ -16,8 +16,8 @@ vita2d_pvf *pvf;
 // calculate the total progress
 void countProgress() {
     totalProgress = 9; // Copy EBOOT.PBP, PBOOT.PBP, GAME.RIF
-    				   // PROMOTE, HASH EBOOT, GEN EBOOT SIGNATURE steps
-    					   
+        			   // PROMOTE, HASH EBOOT, GEN EBOOT SIGNATURE steps
+        				   
     totalProgress += GetTotalNeededDirectories(0); // Directories required to be created.
     totalProgress += GetTotalNeededDirectories(1); // Directories required to be created.
     totalProgress += CountTree("app0:save"); // Total number of files / dirs in ARK4 savedata.
@@ -81,7 +81,7 @@ void displayMsg(char* title, char* msg) {
     drawTextCenter(190, title);
     drawTextCenter(230, msg);
     
-    endDraw();	
+    endDraw();    
 }
 
 void updateUi(char* msg) {

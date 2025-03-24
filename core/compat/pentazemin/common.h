@@ -136,7 +136,7 @@ typedef struct __attribute__((packed)) {
 
 typedef struct BtcnfHeader {
     u32 signature; // 0
-    u32 devkit;    	// 4
+    u32 devkit;        // 4
     u32 unknown[2];  // 8
     u32 modestart;  // 0x10
     int nmodes;  // 0x14

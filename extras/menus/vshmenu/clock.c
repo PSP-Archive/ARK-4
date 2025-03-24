@@ -38,8 +38,8 @@ int cpu2no(int cpu)
     int i;
 
     for(i=0; i<NELEMS(cpu_list); i++) {
-    	if(cpu==cpu_list[i])
-    		return i;
+        if(cpu==cpu_list[i])
+        	return i;
     }
 
     return 0;
@@ -50,8 +50,8 @@ int bus2no(int cpu)
     int i;
 
     for(i=0; i<NELEMS(bus_list); i++) {
-    	if(cpu==bus_list[i])
-    		return i;
+        if(cpu==bus_list[i])
+        	return i;
     }
 
     return 0;
@@ -117,9 +117,9 @@ void change_usb(int dir) {
     
     // Enable Read Only by default for Flash files and UMD Disc (on Non GO model)
     if(sel>0)
-    	vsh->config.se.usbdevice_rdonly = 1;
+        vsh->config.se.usbdevice_rdonly = 1;
     if(sel==0)
-    	vsh->config.se.usbdevice_rdonly = 0;
+        vsh->config.se.usbdevice_rdonly = 0;
 }
 
 void change_umd_mount_idx(int dir) {
@@ -131,7 +131,7 @@ void change_umd_region(int dir, int max) {
     vsh_Menu *vsh = vsh_menu_pointer();
     
     int sel = vsh->config.se.umdregion;
-    		
+        	
     // select new
     sel = ROLL_OVER(sel+dir, 0, max);
     vsh->config.se.umdregion=sel;

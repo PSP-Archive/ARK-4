@@ -63,35 +63,35 @@ int sceUsbCamSetupStillEx_Patched(PspUsbCamSetupStillExParam *exparam) {
     param.size = sizeof(PspUsbCamSetupStillParam);
     switch(exparam->resolution)
     {
-    	case 0:
-    		param.resolution = 0;
-    	break;
-    	case 1:
-    		param.resolution = 1;
-    	break;
-    	case 2:
-    		param.resolution = 2;
-    	break;
-    	case 3:
-    		param.resolution = 3;
-    	break;
-    	case 4:
-    		param.resolution = 8;
-    	break;
-    	case 5:
-    		param.resolution = 7;
-    	break;
-    	case 6:
-    		param.resolution = 4;
-    	break;
-    	case 7:
-    		param.resolution = 5;
-    	break;
-    	case 8:
-    		// Vita camera doesn't support 1280x960
-    		param.resolution = 7;
-    		//param.resolution = 6;
-    	break;
+        case 0:
+        	param.resolution = 0;
+        break;
+        case 1:
+        	param.resolution = 1;
+        break;
+        case 2:
+        	param.resolution = 2;
+        break;
+        case 3:
+        	param.resolution = 3;
+        break;
+        case 4:
+        	param.resolution = 8;
+        break;
+        case 5:
+        	param.resolution = 7;
+        break;
+        case 6:
+        	param.resolution = 4;
+        break;
+        case 7:
+        	param.resolution = 5;
+        break;
+        case 8:
+        	// Vita camera doesn't support 1280x960
+        	param.resolution = 7;
+        	//param.resolution = 6;
+        break;
     }
 
     param.jpegsize = exparam->jpegsize;
@@ -117,35 +117,35 @@ int sceUsbCamSetupVideoEx_Patched(PspUsbCamSetupVideoExParam *exparam, void *wor
     param.size = sizeof(PspUsbCamSetupVideoParam);
     switch(exparam->resolution)
     {
-    	case 0:
-    		param.resolution = 0;
-    	break;
-    	case 1:
-    		param.resolution = 1;
-    	break;
-    	case 2:
-    		param.resolution = 2;
-    	break;
-    	case 3:
-    		param.resolution = 3;
-    	break;
-    	case 4:
-    		param.resolution = 8;
-    	break;
-    	case 5:
-    		param.resolution = 7;
-    	break;
-    	case 6:
-    		param.resolution = 4;
-    	break;
-    	case 7:
-    		param.resolution = 5;
-    	break;
-    	case 8:
-    		// Vita camera doesn't support 1280x960
-    		param.resolution = 7;
-//    		param.resolution = 6;
-    	break;
+        case 0:
+        	param.resolution = 0;
+        break;
+        case 1:
+        	param.resolution = 1;
+        break;
+        case 2:
+        	param.resolution = 2;
+        break;
+        case 3:
+        	param.resolution = 3;
+        break;
+        case 4:
+        	param.resolution = 8;
+        break;
+        case 5:
+        	param.resolution = 7;
+        break;
+        case 6:
+        	param.resolution = 4;
+        break;
+        case 7:
+        	param.resolution = 5;
+        break;
+        case 8:
+        	// Vita camera doesn't support 1280x960
+        	param.resolution = 7;
+//        	param.resolution = 6;
+        break;
     }
 
     param.framerate = exparam->framerate;

@@ -276,13 +276,13 @@ int module_start(SceSize args, void *argp)
     
     if (!PatchSyscall)
     {
-    	PatchSyscall = (void *)sctrlHENFindFunction("SystemControl", "SystemCtrlForKernel", 0x02BFCB5F);
+        PatchSyscall = (void *)sctrlHENFindFunction("SystemControl", "SystemCtrlForKernel", 0x02BFCB5F);
 
-    	if (!PatchSyscall)
-    	{
-    		asm("break\n");
-    		return 1;
-    	}
+        if (!PatchSyscall)
+        {
+        	asm("break\n");
+        	return 1;
+        }
     }
     
     PatchSyscall(sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForUser", 0x06A70004), sceIoMkdirPrivileged);

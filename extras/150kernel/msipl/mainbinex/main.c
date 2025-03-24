@@ -11,10 +11,10 @@ void patchMainBin(void)
     //ClearCache();
 
     __asm(".set noreorder\n"
-          "lui		$25, 0x0400\n"
-          "lui		$sp, 0x040F\n"
-          "jr		$25\n"
-          "ori		$sp,$sp, 0xFF00\n"
+          "lui    	$25, 0x0400\n"
+          "lui    	$sp, 0x040F\n"
+          "jr    	$25\n"
+          "ori    	$sp,$sp, 0xFF00\n"
           ".set reorder");
 }
 

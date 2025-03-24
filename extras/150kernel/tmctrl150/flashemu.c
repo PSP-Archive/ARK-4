@@ -51,14 +51,14 @@ static int DummyReturnNotSupported();
 int SceLfatfsAssign();
 
 static PspIoDrvFuncs lflashFuncs = {
-    DummyReturnZero,		 //IoInit
-    DummyReturnZero,		 //IoExit
-    DummyReturnZero,		 //IoOpen
-    DummyReturnZero,		 //IoClose
-    DummyReturnZero,		 //IoRead
-    DummyReturnZero,		 //IoWrite
-    DummyReturnZero,		 //IoLseek
-    DummyReturnZero,		 //IoIoctl
+    DummyReturnZero,    	 //IoInit
+    DummyReturnZero,    	 //IoExit
+    DummyReturnZero,    	 //IoOpen
+    DummyReturnZero,    	 //IoClose
+    DummyReturnZero,    	 //IoRead
+    DummyReturnZero,    	 //IoWrite
+    DummyReturnZero,    	 //IoLseek
+    DummyReturnZero,    	 //IoIoctl
     DummyReturnNotSupported, //IoRemove
     DummyReturnNotSupported, //IoMkdir
     DummyReturnNotSupported, //IoRmdir
@@ -71,7 +71,7 @@ static PspIoDrvFuncs lflashFuncs = {
     DummyReturnNotSupported, //IoChdir
     DummyReturnNotSupported, //IoMount
     DummyReturnNotSupported, //IoUmount
-    DummyReturnZero,		 //IoDevctl
+    DummyReturnZero,    	 //IoDevctl
     DummyReturnNotSupported //IoUnk21
 };
 
@@ -107,19 +107,19 @@ int InstallFlashEmu()
 {
     if (!installed)
     {
-    	sceIoAddDrv(&lflashDrv);
-    	sceIoAddDrv(&flashFatDrv);
-    	sceKernelRegisterSysEventHandler(&sysEventHandler);
-    	flashemuThid = sceKernelCreateThread("SceLfatfsAssign", SceLfatfsAssign, 0x64, 0x1000, 0, NULL);
-    	if (flashemuThid < 0)
-    	{
-    		return flashemuThid;
-    	}
-    	else
-    	{
-    		installed = 1;
-    		return sceKernelStartThread(flashemuThid, 0, NULL);
-    	}
+        sceIoAddDrv(&lflashDrv);
+        sceIoAddDrv(&flashFatDrv);
+        sceKernelRegisterSysEventHandler(&sysEventHandler);
+        flashemuThid = sceKernelCreateThread("SceLfatfsAssign", SceLfatfsAssign, 0x64, 0x1000, 0, NULL);
+        if (flashemuThid < 0)
+        {
+        	return flashemuThid;
+        }
+        else
+        {
+        	installed = 1;
+        	return sceKernelStartThread(flashemuThid, 0, NULL);
+        }
     }
 
     return -1;
@@ -158,13 +158,13 @@ static int FlashEmu_IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned
     switch (cmd)
     {
     case 0x5802:
-    	res = 0;
+        res = 0;
 
-    	break;
+        break;
 
     default:
-    	//Kprintf("Unknown devctl command 0x%08X\n", res);
-    	while (1);
+        //Kprintf("Unknown devctl command 0x%08X\n", res);
+        while (1);
     }
 
     return res;
@@ -304,11 +304,11 @@ static int dclose_main(PspIoDrvFileArg *arg)
     int res = sceIoDclose((SceUID)arg->arg);
     if (res < 0)
     {
-    	//Kprintf("Error 0x%08X in IoDclose.\n", res);
+        //Kprintf("Error 0x%08X in IoDclose.\n", res);
     }
     else
     {
-    	res = 0;
+        res = 0;
     }
 
     arg->arg = (void *)-1;
@@ -343,8 +343,8 @@ static int dopen_main(int *argv)
     int dfd = sceIoDopen(path);
     if (dfd < 0)
     {
-    	UnLock();
-    	return dfd;
+        UnLock();
+        return dfd;
     }
 
     arg->arg = (void *)dfd;
@@ -469,11 +469,11 @@ static int write_main(int *argv)
     Lock();
     if ((SceUID)arg->arg >= 0)
     {
-    	res = sceIoWrite((SceUID)arg->arg, data, len);
+        res = sceIoWrite((SceUID)arg->arg, data, len);
     }
     else
     {
-    	res = -1;
+        res = -1;
     }
     UnLock();
 
@@ -501,11 +501,11 @@ static int read_main(int *argv)
     Lock();
     if ((SceUID)arg->arg >= 0)
     {
-    	res = sceIoRead((SceUID)arg->arg, data, len);
+        res = sceIoRead((SceUID)arg->arg, data, len);
     }
     else
     {
-    	res = -1;
+        res = -1;
     }
 
     UnLock();
@@ -537,8 +537,8 @@ static int open_main(int *argv)
     arg->arg = (void *)fd;
     if (fd < 0)
     {
-    	UnLock();
-    	return -1;
+        UnLock();
+        return -1;
     }
 
     UnLock();
@@ -571,35 +571,35 @@ static int FlashEmu_IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata
     case 0x00008003: // FW1.50
     case 0x00208003: // FW2.00 load prx  "/vsh/module/opening_plugin.prx"
 
-    	res = 0;
+        res = 0;
 
-    	break;
+        break;
 
     case 0x00208006: // load prx
-    	res = 0;
-    	break;
+        res = 0;
+        break;
 
     case 0x00208007: // after start FW2.50
-    	res = 0;
-    	break;
+        res = 0;
+        break;
 
     case 0x00208081: // FW2.00 load prx "/vsh/module/opening_plugin.prx"
-    	res = 0;
-    	break;
+        res = 0;
+        break;
 
-    case 0x00208082:	  // FW2.80 "/vsh/module/opening_plugin.prx"
-    	res = 0x80010016; // opening_plugin.prx , mpeg_vsh,prx , impose_plugin.prx
-    	break;
+    case 0x00208082:      // FW2.80 "/vsh/module/opening_plugin.prx"
+        res = 0x80010016; // opening_plugin.prx , mpeg_vsh,prx , impose_plugin.prx
+        break;
 
     case 0x00005001: // vsh_module : system.dreg / system.ireg
-    	// Flush
-    	//res = sceKernelExtendKernelStack(0x4000, (void *)close_main, (void *)arg);
-    	res = 0;
-    	break;
+        // Flush
+        //res = sceKernelExtendKernelStack(0x4000, (void *)close_main, (void *)arg);
+        res = 0;
+        break;
 
     default:
-    	//Kprintf("Unknow ioctl 0x%08X\n", cmd);
-    	res = 0xffffffff;
+        //Kprintf("Unknow ioctl 0x%08X\n", cmd);
+        res = 0xffffffff;
     }
 
     UnLock();
@@ -612,17 +612,17 @@ static int close_main(PspIoDrvFileArg *arg)
 
     if ((SceUID)arg->arg >= 0)
     {
-    	res = sceIoClose((SceUID)arg->arg);
+        res = sceIoClose((SceUID)arg->arg);
     }
     else
     {
-    	res = 0;
+        res = 0;
     }
     arg->arg = (void *)-1;
 
     if (res < 0)
     {
-    	return res;
+        return res;
     }
 
     return 0;
@@ -647,7 +647,7 @@ static int FlashEmu_IoInit()
 void sceLfatfsWaitReady()
 {
     if (flashemuThid >= 0)
-    	sceKernelWaitThreadEnd(flashemuThid, 0);
+        sceKernelWaitThreadEnd(flashemuThid, 0);
 
     return;
 }
@@ -657,18 +657,18 @@ void WaitMS()
     SceUID dfd;
     if (msNotReady)
     {
-    	while (1)
-    	{
-    		dfd = sceIoDopen(ARK_DC_PATH);
-    		if (dfd >= 0)
-    		{
-    			sceIoDclose(dfd);
-    			break;
-    		}
-    		sceKernelDelayThreadCB(20000);
-    	}
+        while (1)
+        {
+        	dfd = sceIoDopen(ARK_DC_PATH);
+        	if (dfd >= 0)
+        	{
+        		sceIoDclose(dfd);
+        		break;
+        	}
+        	sceKernelDelayThreadCB(20000);
+        }
 
-    	msNotReady = 0;
+        msNotReady = 0;
     }
 
     return;

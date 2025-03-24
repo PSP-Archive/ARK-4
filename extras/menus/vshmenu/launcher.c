@@ -18,22 +18,22 @@ void exec_recovery_menu(vsh_Menu *vsh) {
     SceIoStat stat; int res = sceIoGetstat(menupath, &stat);
     
     if (res >= 0){
-    	struct SceKernelLoadExecVSHParam param;
-    	scePaf_memset(&param, 0, sizeof(param));
-    	param.size = sizeof(param);
-    	param.args = scePaf_strlen(menupath) + 1;
-    	param.argp = menupath;
-    	param.key = "game";
-    	sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
+        struct SceKernelLoadExecVSHParam param;
+        scePaf_memset(&param, 0, sizeof(param));
+        param.size = sizeof(param);
+        param.args = scePaf_strlen(menupath) + 1;
+        param.argp = menupath;
+        param.key = "game";
+        sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
     }
     else {
-		memset(menupath, 0, sizeof(menupath));
-		scePaf_strcpy(menupath, vsh->config.ark.arkpath);
-		strcat(menupath, RECOVERY_PRX);
-		SceUID modid = kuKernelLoadModule(menupath, 0, NULL);
-		if(modid >= 0) {
-			int res = sceKernelStartModule(modid, strlen(menupath), (void*)menupath, NULL, NULL);
-		}
+    	memset(menupath, 0, sizeof(menupath));
+    	scePaf_strcpy(menupath, vsh->config.ark.arkpath);
+    	strcat(menupath, RECOVERY_PRX);
+    	SceUID modid = kuKernelLoadModule(menupath, 0, NULL);
+    	if(modid >= 0) {
+    		int res = sceKernelStartModule(modid, strlen(menupath), (void*)menupath, NULL, NULL);
+    	}
     }
 }
 
@@ -44,8 +44,8 @@ void exec_random_game(vsh_Menu *vsh) {
     scePaf_strcpy(iso_dir, "ms0:/ISO/");
 
     if(vsh->psp_model == PSP_GO) {
-    	iso_dir[0] = 'e';
-    	iso_dir[1] = 'f';
+        iso_dir[0] = 'e';
+        iso_dir[1] = 'f';
     }
 
     SceIoDirent isos;
@@ -61,16 +61,16 @@ find_random_game:
     pri_dirent->size = sizeof(*pri_dirent);
     isos.d_private = (void*)pri_dirent;
     while(sceIoDread(iso_path, &isos) > 0) {
-    	if(isos.d_name[0] != '.' && scePaf_strcmp(isos.d_name, "VIDEO") != 0) {
-    		num_games++;
-    	}
+        if(isos.d_name[0] != '.' && scePaf_strcmp(isos.d_name, "VIDEO") != 0) {
+        	num_games++;
+        }
     }
 
     sceIoDclose(iso_path);
 
     if (num_games == 0){
-    	vpl_free(pri_dirent);
-    	return;
+        vpl_free(pri_dirent);
+        return;
     };
 
     srand(time(NULL));
@@ -84,25 +84,25 @@ find_random_game:
     pri_dirent->size = sizeof(*pri_dirent);
     isos.d_private = (void*)pri_dirent;
     while(sceIoDread(iso_path, &isos) > 0) {
-    	if(isos.d_name[0] != '.' && scePaf_strcmp(isos.d_name, "VIDEO") != 0) {
-    		if (num_games == rand_idx) break;
-    		else num_games++;
-    	}
+        if(isos.d_name[0] != '.' && scePaf_strcmp(isos.d_name, "VIDEO") != 0) {
+        	if (num_games == rand_idx) break;
+        	else num_games++;
+        }
     }
 
     sceIoDclose(iso_path);
 
     if (FIO_SO_ISDIR(isos.d_stat.st_attr)){
-    	strcat(iso_dir, isos.d_name);
-    	strcat(iso_dir, "/");
-    	goto find_random_game;
+        strcat(iso_dir, isos.d_name);
+        strcat(iso_dir, "/");
+        goto find_random_game;
     }
 
     scePaf_strcpy(game, iso_dir);
     if (pri_dirent->s_name[0])
-    	strcat(game, pri_dirent->s_name);
+        strcat(game, pri_dirent->s_name);
     else
-    	strcat(game, isos.d_name);
+        strcat(game, isos.d_name);
 
     vpl_free(pri_dirent);
 
@@ -125,34 +125,34 @@ find_random_game:
     int has_pboot = has_update_file(game, pboot_path);
 
     if (has_pboot){
-    	// configure to use dlc/update
-    	loadexec_file = param.argp = pboot_path;
-    	param.args = scePaf_strlen(pboot_path) + 1;
+        // configure to use dlc/update
+        loadexec_file = param.argp = pboot_path;
+        param.args = scePaf_strlen(pboot_path) + 1;
 
-    	if (vsh->psp_model == PSP_GO && game[0] == 'e' && game[1] == 'f') {
-    		apitype = 0x126;
-    	}
-    	else {
-    		apitype = 0x124;
-    	}
+        if (vsh->psp_model == PSP_GO && game[0] == 'e' && game[1] == 'f') {
+        	apitype = 0x126;
+        }
+        else {
+        	apitype = 0x124;
+        }
     }
     else{
-    	//reset and configure reboot parameter
-    	loadexec_file = game;
+        //reset and configure reboot parameter
+        loadexec_file = game;
 
-    	if (vsh->psp_model == PSP_GO && game[0] == 'e' && game[1] == 'f') {
-    		apitype = 0x125;
-    	}
-    	else {
-    		apitype = 0x123;
-    	}
+        if (vsh->psp_model == PSP_GO && game[0] == 'e' && game[1] == 'f') {
+        	apitype = 0x125;
+        }
+        else {
+        	apitype = 0x123;
+        }
 
-    	if (has_prometheus_module(game)) {
-    		param.argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
-    	} else {
-    		param.argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
-    	}
-    	param.args = 33;
+        if (has_prometheus_module(game)) {
+        	param.argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD";
+        } else {
+        	param.argp = "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN";
+        }
+        param.args = 33;
     }
 
     sctrlKernelLoadExecVSHWithApitype(apitype, game, &param);
@@ -165,22 +165,22 @@ void launch_umdvideo_mount(vsh_Menu *vsh) {
     int type;
 
     if(0 == vsh->status.umdvideo_idx) {
-    	if(sctrlSEGetBootConfFileIndex() == MODE_VSHUMD) {
-    		// cancel mount
-    		sctrlSESetUmdFile("");
-    		sctrlSESetBootConfFileIndex(MODE_UMD);
-    		vsh->status.reset_vsh = 1;
-    	}
-    	return;
+        if(sctrlSEGetBootConfFileIndex() == MODE_VSHUMD) {
+        	// cancel mount
+        	sctrlSESetUmdFile("");
+        	sctrlSESetBootConfFileIndex(MODE_UMD);
+        	vsh->status.reset_vsh = 1;
+        }
+        return;
     }
 
     path = umdvideolist_get(&vsh->umdlist, (size_t)(vsh->status.umdvideo_idx-1));
 
     if (path == NULL)
-    	return;
+        return;
 
     if (sceIoGetstat(path, &stat) < 0)
-    	return;
+        return;
 
     type = vshDetectDiscType(path);
     #ifdef DEBUG
@@ -188,7 +188,7 @@ void launch_umdvideo_mount(vsh_Menu *vsh) {
     #endif
 
     if (type < 0)
-    	return;
+        return;
 
     sctrlSESetUmdFile(path);
     sctrlSESetBootConfFileIndex(MODE_VSHUMD);

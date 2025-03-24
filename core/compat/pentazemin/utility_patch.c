@@ -43,8 +43,8 @@ int kermitUtilityOskInitStartPatched(SceUtilityOskParams *params) {
     int k1 = pspSdkSetK1(0);
 
     if (params->data->language == PSP_UTILITY_OSK_LANGUAGE_DEFAULT) {
-    	_sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &params->data->language);
-    	params->data->language++;
+        _sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &params->data->language);
+        params->data->language++;
     }
 
     pspSdkSetK1(k1);

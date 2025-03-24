@@ -19,10 +19,10 @@ int SysEventHandler(int eventId, char *eventName, void *param, int *result);
 
 PspSysEventHandler sysEventHandler =
     {
-    	.size = sizeof(PspSysEventHandler),
-    	.name = "",
-    	.type_mask = 0x0000FF00,
-    	.handler = SysEventHandler};
+        .size = sizeof(PspSysEventHandler),
+        .name = "",
+        .type_mask = 0x0000FF00,
+        .handler = SysEventHandler};
 
 extern SceUID flashemu_sema;
 extern int msNotReady;
@@ -42,11 +42,11 @@ int OnModuleStart(SceModule2 *mod)
     if (strcmp(moduleName, "sceLflashFatfmt") == 0)
     {
       u32 funcAddr = sctrlHENFindFunction("sceLflashFatfmt", "LflashFatfmt", 0xb7a424a4); // sceLflashFatfmtStartFatfmt
-    	if (funcAddr)
-    	{
-    		MAKE_DUMMY_FUNCTION_RETURN_0(funcAddr);
-    		ClearCaches();
-    	}
+        if (funcAddr)
+        {
+        	MAKE_DUMMY_FUNCTION_RETURN_0(funcAddr);
+        	ClearCaches();
+        }
     }
 
    if (previous)
@@ -79,7 +79,7 @@ int module_reboot_before(SceSize args, void *argp)
 int SysEventHandler(int eventId, char *eventName, void *param, int *result)
 {
     if (eventId == 0x10009) //resume
-    	msNotReady = 1;
+        msNotReady = 1;
 
     return 0;
 }

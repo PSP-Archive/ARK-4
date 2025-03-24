@@ -43,7 +43,7 @@ static void start_psp_usb(){
 
     if(se_config.usbdevice != 0) {
         int (*pspUsbDeviceSetDevice)(int, int, int) = sctrlHENFindFunction("pspUsbDev_Driver", "pspUsbDevice_driver", 0xD4D90520);
-    	if (pspUsbDeviceSetDevice){
+        if (pspUsbDeviceSetDevice){
             struct KernelCallArg args;
             memset(&args, 0, sizeof(args));
             args.arg1 = se_config.usbdevice-1;

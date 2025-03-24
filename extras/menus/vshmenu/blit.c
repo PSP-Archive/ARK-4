@@ -44,10 +44,10 @@ static u32 adjust_alpha(u32 col) {
     u32 alpha = col >> 24;
     u8 mul;
 
-    if (alpha == 0)	
-    	return col;
+    if (alpha == 0)    
+        return col;
     if (alpha == 0xff) 
-    	return col;
+        return col;
 
     c1 = col & 0x00ff00ff;
     c2 = col & 0x0000ff00;
@@ -68,7 +68,7 @@ int blit_setup(void) {
     sceDisplayGetMode(&unk, &gfx.width, &gfx.height);
     sceDisplayGetFrameBuf((void*)&gfx.vram32, &gfx.bufferwidth, &gfx.pixelformat, PSP_DISPLAY_SETBUF_NEXTFRAME);
     if ((gfx.bufferwidth == 0) || (gfx.pixelformat != 3)) 
-    	return -1;
+        return -1;
 
     gfx.fg_color = 0x00ffffff;
     gfx.bg_color = 0xff000000;
@@ -98,47 +98,47 @@ int blit_string(int sx, int sy, const char *msg) {
 
 
     if ((gfx.bufferwidth == 0) || (gfx.pixelformat != 3))
-    	return -1;
+        return -1;
     
     int max_string_width = (gfx.width / font->width);
     u32 *pixel = NULL;
     
 
     for (x = 0; msg[x] && x < max_string_width; x++) {
-    	code = (u8)msg[x]; // no truncate now
-    	bitmap_offset = code * font->width;
-    	
-    	// reset to start position
-    	vram_offset = sy * gfx.bufferwidth + sx;
-    	// move in the x direction
-    	vram_offset += x * font->width;
-    	
-    	for (y = 0; y < font->height; y++) {
-    		data = font->bitmap[bitmap_offset + y];
-    		if (y >= 7)
-    			data = 0;
-    		
-    		pixel = &gfx.vram32[vram_offset];
-    		for (p = 0; p < font->height; p++) {
-    			col = (data & 0x80) ? fg_col : bg_col;
-    			alpha = col >> 24;
-    			if (alpha == 0) 
-    				(*pixel) = col;
-    			else if (alpha != 0xff) {
-    				c2 = (*pixel);
-    				c1 = c2 & 0x00ff00ff;
-    				c2 = c2 & 0x0000ff00;
-    				c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
-    				c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
-    				(*pixel) = (col & 0xffffff) + c1 + c2;
-    			}
+        code = (u8)msg[x]; // no truncate now
+        bitmap_offset = code * font->width;
+        
+        // reset to start position
+        vram_offset = sy * gfx.bufferwidth + sx;
+        // move in the x direction
+        vram_offset += x * font->width;
+        
+        for (y = 0; y < font->height; y++) {
+        	data = font->bitmap[bitmap_offset + y];
+        	if (y >= 7)
+        		data = 0;
+        	
+        	pixel = &gfx.vram32[vram_offset];
+        	for (p = 0; p < font->height; p++) {
+        		col = (data & 0x80) ? fg_col : bg_col;
+        		alpha = col >> 24;
+        		if (alpha == 0) 
+        			(*pixel) = col;
+        		else if (alpha != 0xff) {
+        			c2 = (*pixel);
+        			c1 = c2 & 0x00ff00ff;
+        			c2 = c2 & 0x0000ff00;
+        			c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
+        			c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
+        			(*pixel) = (col & 0xffffff) + c1 + c2;
+        		}
 
-    			data <<= 1;
-    			pixel++;
-    		}
-    		// move in the y direction
-    		vram_offset += gfx.bufferwidth;
-    	}
+        		data <<= 1;
+        		pixel++;
+        	}
+        	// move in the y direction
+        	vram_offset += gfx.bufferwidth;
+        }
     }
     return sx + x * font->width;
 }
@@ -161,23 +161,23 @@ void blit_rect_fill(int sx, int sy, int w, int h) {
     pixel = &gfx.vram32[sy * gfx.bufferwidth + sx];
     
     for (y = 0; y < h; y++) {
-    	for (x = 0; x < w; x++) {
-    		if(alpha == 0)
-    			(*pixel) = col;
-    		else if (alpha != 0xff) {
-    			c2 = (*pixel);
-    			c1 = c2 & 0x00ff00ff;
-    			c2 = c2 & 0x0000ff00;
-    			c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
-    			c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
-    			(*pixel) = (col & 0xffffff) + c1 + c2;
-    		}
-    		pixel++;
-    	}
-    	// go back to start position on the x-axis
-    	pixel -= w;
-    	// increase y position
-    	pixel += gfx.bufferwidth;
+        for (x = 0; x < w; x++) {
+        	if(alpha == 0)
+        		(*pixel) = col;
+        	else if (alpha != 0xff) {
+        		c2 = (*pixel);
+        		c1 = c2 & 0x00ff00ff;
+        		c2 = c2 & 0x0000ff00;
+        		c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
+        		c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
+        		(*pixel) = (col & 0xffffff) + c1 + c2;
+        	}
+        	pixel++;
+        }
+        // go back to start position on the x-axis
+        pixel -= w;
+        // increase y position
+        pixel += gfx.bufferwidth;
     }
 }
 

@@ -21,27 +21,27 @@
 int removePath(const char *path) {
     SceUID dfd = sceIoDopen(path);
     if (dfd >= 0) {
-    	int res = 0;
+        int res = 0;
 
-    	do {
-    		SceIoDirent dir;
-    		memset(&dir, 0, sizeof(SceIoDirent));
+        do {
+        	SceIoDirent dir;
+        	memset(&dir, 0, sizeof(SceIoDirent));
 
-    		res = sceIoDread(dfd, &dir);
-    		if (res > 0) {
-    			if (dir.d_name[0] != '.') {
-    				char new_path[128];
-    				sprintf(new_path, "%s/%s", path, dir.d_name);
-    				removePath(new_path);
-    			}
-    		}
-    	} while (res > 0);
+        	res = sceIoDread(dfd, &dir);
+        	if (res > 0) {
+        		if (dir.d_name[0] != '.') {
+        			char new_path[128];
+        			sprintf(new_path, "%s/%s", path, dir.d_name);
+        			removePath(new_path);
+        		}
+        	}
+        } while (res > 0);
 
-    	sceIoDclose(dfd);
+        sceIoDclose(dfd);
 
-    	sceIoRmdir(path);
+        sceIoRmdir(path);
     } else {
-    	sceIoRemove(path);
+        sceIoRemove(path);
     }
 
     return 0;
@@ -49,15 +49,15 @@ int removePath(const char *path) {
 
 int sceLflashFatfmtStartFatfmt(int argc, char *argv[]) {
     if (argv) {
-    	if (strncmp(argv[1], "lflash0:0,", 10) == 0) {
-    		int num = argv[1][10] - '0';
+        if (strncmp(argv[1], "lflash0:0,", 10) == 0) {
+        	int num = argv[1][10] - '0';
 
-    		char path[128];
-    		sprintf(path, "ms0:/__ADRENALINE__/flash%d", num);
+        	char path[128];
+        	sprintf(path, "ms0:/__ADRENALINE__/flash%d", num);
 
-    		removePath(path);
-    		sceIoMkdir(path, 0777);
-    	}
+        	removePath(path);
+        	sceIoMkdir(path, 0777);
+        }
     }
 
     return 0;

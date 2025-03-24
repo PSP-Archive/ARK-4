@@ -88,11 +88,11 @@ int _pspemuLfatOpen(BootFile* file, u32 a1, u32 a2, u32 a3, u32 t0)
     }
     else if (strcmp(p, REBOOT_MODULE) == 0){
         file->buffer = reboot_conf->rtm_mod.buffer;
-    	file->size = reboot_conf->rtm_mod.size;
-    	relocateFlashFile(file);
-    	reboot_conf->rtm_mod.buffer = NULL;
+        file->size = reboot_conf->rtm_mod.size;
+        relocateFlashFile(file);
+        reboot_conf->rtm_mod.buffer = NULL;
         reboot_conf->rtm_mod.size = 0;
-    	return 0;
+        return 0;
     }
     int res = pspemuLfatOpen(file, a1, a2, a3, t0);
     return 0;
@@ -149,9 +149,9 @@ void patchRebootBuffer(){
     for (u32 addr = reboot_start; addr<reboot_end; addr+=4){
         u32 data = _lw(addr);
         if (data == 0xAFBF0000 && _lw(addr + 8) == 0x00000000) {
-    		pspemuLfatOpen = (void *)K_EXTRACT_CALL(addr + 4);
-    		_sw(JAL(_pspemuLfatOpen), addr + 4);
-    	}
+        	pspemuLfatOpen = (void *)K_EXTRACT_CALL(addr + 4);
+        	_sw(JAL(_pspemuLfatOpen), addr + 4);
+        }
         else if (data == 0x00600008){ // found loadcore jump on Vita
             // Move LoadCore module_start Address into third Argument
             _sw(0x00603021, addr); // move a2, v1

@@ -52,16 +52,16 @@ static SceUID load_start_usbdevice(void)
     if (modid < 0) modid = sceKernelLoadModule(USBDEV_PRX_FLASH, 0, NULL); // retry flash0
 
     if (modid < 0) {
-    	return -1;
+        return -1;
     }
 
     ret = sceKernelStartModule(modid, 0, NULL, NULL, NULL);
 
     if (ret < 0) {
-    	printk("%s: sceKernelStartModule -> 0x%08X\n", __func__, ret);
-    	sceKernelUnloadModule(modid);
+        printk("%s: sceKernelStartModule -> 0x%08X\n", __func__, ret);
+        sceKernelUnloadModule(modid);
 
-    	return -1;
+        return -1;
     }
 
     return modid;
@@ -75,7 +75,7 @@ static void stop_unload_usbdevice(void)
 
 #ifdef DEBUG
     if(ret < 0) {
-    	printk("%s: sceKernelStopModule(0x%08X) -> 0x%08X\n", __func__, g_usbdevice_modid, ret);
+        printk("%s: sceKernelStopModule(0x%08X) -> 0x%08X\n", __func__, g_usbdevice_modid, ret);
     }
 #endif
 
@@ -83,12 +83,12 @@ static void stop_unload_usbdevice(void)
 
 #ifdef DEBUG
     if(ret < 0) {
-    	printk("%s: sceKernelUnloadModule(0x%08X) -> 0x%08X\n", __func__, g_usbdevice_modid, ret);
+        printk("%s: sceKernelUnloadModule(0x%08X) -> 0x%08X\n", __func__, g_usbdevice_modid, ret);
     }
 #endif
 
     if (ret >= 0) {
-    	g_usbdevice_modid = -1;
+        g_usbdevice_modid = -1;
     }
 }
 
@@ -103,15 +103,15 @@ static int _sceUsbStart(const char *driverName, int size, void *args)
     k1 = pspSdkSetK1(0);
 
     if (0 == strcmp(driverName, "USBStor_Driver")) {
-    	if(se_config->usbdevice > 0 && se_config->usbdevice <= 5) {
-    		if (g_usbdevice_modid < 0) {
-    			g_usbdevice_modid = load_start_usbdevice();
-    		}
+        if(se_config->usbdevice > 0 && se_config->usbdevice <= 5) {
+        	if (g_usbdevice_modid < 0) {
+        		g_usbdevice_modid = load_start_usbdevice();
+        	}
 
-    		if (g_usbdevice_modid >= 0) {
-    			ret = pspUsbDeviceSetDevice(se_config->usbdevice - 1, se_config->usbdevice_rdonly, 0);
-    		}
-    	}
+        	if (g_usbdevice_modid >= 0) {
+        		ret = pspUsbDeviceSetDevice(se_config->usbdevice - 1, se_config->usbdevice_rdonly, 0);
+        	}
+        }
     }
 
     pspSdkSetK1(k1);
@@ -129,14 +129,14 @@ static int _sceUsbStop(const char *driverName, int size, void *args)
     k1 = pspSdkSetK1(0);
 
     if (0 == strcmp(driverName, "USBStor_Driver")) {
-    	if(se_config->usbdevice > 0 && se_config->usbdevice <= 5) {
-    		if (g_usbdevice_modid >= 0) {
-    			int result;
+        if(se_config->usbdevice > 0 && se_config->usbdevice <= 5) {
+        	if (g_usbdevice_modid >= 0) {
+        		int result;
 
-    			result = pspUsbDeviceFinishDevice();
-    			stop_unload_usbdevice();
-    		}
-    	}
+        		result = pspUsbDeviceFinishDevice();
+        		stop_unload_usbdevice();
+        	}
+        }
     }
 
     pspSdkSetK1(k1);

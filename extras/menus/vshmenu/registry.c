@@ -37,8 +37,8 @@
 
 void delete_hibernation(vsh_Menu *vsh) {
     if (vsh->psp_model == PSP_GO) {
-    	vshCtrlDeleteHibernation();
-    	vsh->status.reset_vsh = 1;
+        vshCtrlDeleteHibernation();
+        vsh->status.reset_vsh = 1;
     }
 }
 
@@ -52,7 +52,7 @@ int codecs_activated() {
     vctrlGetRegistryValue("/CONFIG/MUSIC", "wma_play", &wma_play);
 
     if (!flash_activated || !flash_play || !wma_play){
-    	return 0;
+        return 0;
     }
     
     return 1;
@@ -61,10 +61,10 @@ int codecs_activated() {
 int activate_codecs(vsh_Menu *vsh) {
 
     if (!codecs_activated()){
-    	vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_activated", 1);
-    	vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_play", 1);
-    	vctrlSetRegistryValue("/CONFIG/MUSIC", "wma_play", 1);
-    	vsh->status.reset_vsh = 1;
+        vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_activated", 1);
+        vctrlSetRegistryValue("/CONFIG/BROWSER", "flash_play", 1);
+        vctrlSetRegistryValue("/CONFIG/MUSIC", "wma_play", 1);
+        vsh->status.reset_vsh = 1;
     }
     
     return 0;

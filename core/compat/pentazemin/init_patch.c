@@ -42,7 +42,7 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 
     SceUID mod = sceKernelLoadModule(path, 0, NULL);
     if (mod >= 0)
-    	return mod;
+        return mod;
 
     return sceKernelLoadModuleBufferBootInitBtcnf661(info->size, buf, flags, option);
 }
@@ -58,7 +58,7 @@ SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo
 
     SceUID mod = sceKernelLoadModule(path, 0, NULL);
     if (mod >= 0)
-    	return mod;
+        return mod;
 
     return LoadModuleBufferAnchorInBtcnf(buf, (info->attr >> 8) & 1);
 }
@@ -92,10 +92,10 @@ SceModule2* patchLoaderCore(void)
     memcpy(flash_files, (void*)0x08800100, sizeof(SonyFlashFiles));
 
     for (int i=0; i<flash_files->nfiles; i++){
-    	if (strcmp(&(flash_files->bootfile[i]), "/kd/init.prx") == 0){
-    		cur_file = i+1;
-    		break;
-    	}
+        if (strcmp(&(flash_files->bootfile[i]), "/kd/init.prx") == 0){
+        	cur_file = i+1;
+        	break;
+        }
     }
 
     // Fetch Text Address

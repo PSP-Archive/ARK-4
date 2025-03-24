@@ -22,13 +22,13 @@ int ui_eat_key(SceCtrlData *pad_data, int count) {
 
     // mask buttons for LOCK VSH controll
     for(i = 0; i < count; i++) {
-    	pad_data[i].Buttons &= ~(
-    		PSP_CTRL_SELECT		|	PSP_CTRL_START		|
-    		PSP_CTRL_UP			|	PSP_CTRL_RIGHT		|	PSP_CTRL_DOWN	|	PSP_CTRL_LEFT	|
-    		PSP_CTRL_LTRIGGER	|	PSP_CTRL_RTRIGGER	|
-    		PSP_CTRL_TRIANGLE	|	PSP_CTRL_CIRCLE		|	PSP_CTRL_CROSS	|	PSP_CTRL_SQUARE	|
-    		PSP_CTRL_HOME		|	PSP_CTRL_NOTE
-    	);
+        pad_data[i].Buttons &= ~(
+        	PSP_CTRL_SELECT		|	PSP_CTRL_START		|
+        	PSP_CTRL_UP			|	PSP_CTRL_RIGHT		|	PSP_CTRL_DOWN	|	PSP_CTRL_LEFT	|
+        	PSP_CTRL_LTRIGGER	|	PSP_CTRL_RTRIGGER	|
+        	PSP_CTRL_TRIANGLE	|	PSP_CTRL_CIRCLE		|	PSP_CTRL_CROSS	|	PSP_CTRL_SQUARE	|
+        	PSP_CTRL_HOME		|	PSP_CTRL_NOTE
+        );
     }
 
     return 0;

@@ -76,12 +76,12 @@ PspIoDrv * sctrlHENFindDriver(char * drvname)
 
     if (driver == NULL){
         if(0 == stricmp(drvname, "msstor")) {
-    		return sctrlHENFindDriver("eflash0a0f");
-    	}
+        	return sctrlHENFindDriver("eflash0a0f");
+        }
 
-    	if(0 == stricmp(drvname, "msstor0p")) {
-    		return sctrlHENFindDriver("eflash0a0f1p");
-    	}
+        if(0 == stricmp(drvname, "msstor0p")) {
+        	return sctrlHENFindDriver("eflash0a0f1p");
+        }
     }
     
     // Return Driver

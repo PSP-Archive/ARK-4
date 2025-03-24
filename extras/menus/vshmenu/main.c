@@ -106,18 +106,18 @@ int TSRThread(SceSize args, void *argp) {
 
     #ifdef DEBUG
     if (micro > 0 && !rev) 
-    	scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d.%.2i DEBUG    ", major, minor, micro);
+        scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d.%.2i DEBUG    ", major, minor, micro);
     else if (rev)
-    	scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), " ARK %d.%d.%.2i r%i DEBUG ", major, minor, micro, rev);
+        scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), " ARK %d.%d.%.2i r%i DEBUG ", major, minor, micro, rev);
     else 
-    	scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d DEBUG    ", major, minor);
+        scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d DEBUG    ", major, minor);
     #else
     if (micro > 0 && !rev) 
-    	scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d.%.2i    ", major, minor, micro);
+        scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d.%.2i    ", major, minor, micro);
     else if (rev)
-    	scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), " ARK %d.%d.%.2i r%i ", major, minor, micro, rev);
+        scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), " ARK %d.%d.%.2i r%i ", major, minor, micro, rev);
     else 
-    	scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d    ", major, minor); 
+        scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d    ", major, minor); 
     #endif
     
     // load config stuff
@@ -125,7 +125,7 @@ int TSRThread(SceSize args, void *argp) {
     sctrlHENGetArkConfig(&vsh->config.ark);
     config_load(vsh);
     if(vsh->config.ark_menu.advanced_vsh)
-    	vsh->status.stop_flag = 15;
+        vsh->status.stop_flag = 15;
 
     // load font
     font_load(vsh);
@@ -133,25 +133,25 @@ int TSRThread(SceSize args, void *argp) {
     select_language();
     
     if (!IS_VITA_ADR(vsh->config.p_ark)) {
-    	umdvideolist_init(&vsh->umdlist);
-    	umdvideolist_clear(&vsh->umdlist);
-    	get_umdvideo(&vsh->umdlist, "ms0:/ISO/VIDEO");
-    	get_umdvideo(&vsh->umdlist, "ef0:/ISO/VIDEO");
-    	kuKernelGetUmdFile(umdvideo_path, sizeof(umdvideo_path));
+        umdvideolist_init(&vsh->umdlist);
+        umdvideolist_clear(&vsh->umdlist);
+        get_umdvideo(&vsh->umdlist, "ms0:/ISO/VIDEO");
+        get_umdvideo(&vsh->umdlist, "ef0:/ISO/VIDEO");
+        kuKernelGetUmdFile(umdvideo_path, sizeof(umdvideo_path));
 
-    	if (umdvideo_path[0] == '\0') {
-    		vsh->status.umdvideo_idx = 0;
-    		scePaf_strcpy(umdvideo_path, g_messages[MSG_NONE]);
-    	} else {
-    		vsh->status.umdvideo_idx = umdvideolist_find(&vsh->umdlist, umdvideo_path);
+        if (umdvideo_path[0] == '\0') {
+        	vsh->status.umdvideo_idx = 0;
+        	scePaf_strcpy(umdvideo_path, g_messages[MSG_NONE]);
+        } else {
+        	vsh->status.umdvideo_idx = umdvideolist_find(&vsh->umdlist, umdvideo_path);
 
-    		if (vsh->status.umdvideo_idx >= 0) {
-    			vsh->status.umdvideo_idx++;
-    		} else {
-    			vsh->status.umdvideo_idx = 0;
-    			scePaf_strcpy(umdvideo_path, g_messages[MSG_NONE]);
-    		}
-    	}
+        	if (vsh->status.umdvideo_idx >= 0) {
+        		vsh->status.umdvideo_idx++;
+        	} else {
+        		vsh->status.umdvideo_idx = 0;
+        		scePaf_strcpy(umdvideo_path, g_messages[MSG_NONE]);
+        	}
+        }
     }
 
     scePaf_memcpy(&vsh->config.old_se, &vsh->config.se, sizeof(vsh->config.se));
@@ -160,92 +160,92 @@ int TSRThread(SceSize args, void *argp) {
     
 resume:
     while (vsh->status.stop_flag == 0) {
-    	if (sceDisplayWaitVblankStart() < 0)
-    		break; // end of VSH ?
+        if (sceDisplayWaitVblankStart() < 0)
+        	break; // end of VSH ?
 
-    	if (vsh->status.menu_mode > 0) {
-    		menu_setup();
-    		menu_draw();
-    	}
+        if (vsh->status.menu_mode > 0) {
+        	menu_setup();
+        	menu_draw();
+        }
 
-    	button_func(vsh);
+        button_func(vsh);
     }
 
     config_check(vsh);
 
     switch (vsh->status.stop_flag) {
-    	case 2:
-    		scePowerRequestColdReset(0);
-    		break;
-    	case 3:
-    		scePowerRequestStandby();
-    		break;
-    	case 4:
-    		vsh->status.reset_vsh = 1;
-    		break;
-    	case 5:
-    		scePowerRequestSuspend();
-    		break;
-    	case 8:
-    		exec_recovery_menu(vsh);
-    		break;
-    	case 15:
-    		// AVSHMENU START
-    		while(vsh->status.sub_stop_flag == 0) {
-    			if( sceDisplayWaitVblankStart() < 0)
-    				break; // end of VSH ?
-    			if(vsh->status.submenu_mode > 0) {
-    				submenu_setup();
-    				submenu_draw();
-    			}
-    			subbutton_func(vsh);
-    		}
-    		config_check(vsh);
-    		break;
+        case 2:
+        	scePowerRequestColdReset(0);
+        	break;
+        case 3:
+        	scePowerRequestStandby();
+        	break;
+        case 4:
+        	vsh->status.reset_vsh = 1;
+        	break;
+        case 5:
+        	scePowerRequestSuspend();
+        	break;
+        case 8:
+        	exec_recovery_menu(vsh);
+        	break;
+        case 15:
+        	// AVSHMENU START
+        	while(vsh->status.sub_stop_flag == 0) {
+        		if( sceDisplayWaitVblankStart() < 0)
+        			break; // end of VSH ?
+        		if(vsh->status.submenu_mode > 0) {
+        			submenu_setup();
+        			submenu_draw();
+        		}
+        		subbutton_func(vsh);
+        	}
+        	config_check(vsh);
+        	break;
     }
 
     switch (vsh->status.sub_stop_flag) {
-    	case 1:
-    		vsh->status.stop_flag = 0;
-    		vsh->status.menu_mode = 0;
-    		vsh->status.sub_stop_flag = 0;
-    		vsh->status.submenu_mode = 0;
-    		goto resume;
-    	case 6:
-    		if (IS_VITA_ADR(vsh->config.p_ark)) 
-    			return -1;
-    		launch_umdvideo_mount(vsh);
-    		break;
-    	case 9:
-    		battery_convert(vsh->battery);
-    		break;
-    	case 10:
-    		delete_hibernation(vsh);
-    		break;
-    	case 11:
-    		activate_codecs(vsh);
-    		break;
-    	case 12:
-    		swap_buttons(vsh);
-    		break;
-    	case 13:
-    		import_classic_plugins(vsh, DEVPATH_MS0);
-    		if (vsh->psp_model == PSP_GO)
-    			import_classic_plugins(vsh, DEVPATH_EF0);
-    		break;
-    	case 14:			
-    		config_check(vsh);
-    		exec_random_game(vsh);
-    		break;
-    	case 15:
-    		reset_ark_settings(vsh);
-    		break;
+        case 1:
+        	vsh->status.stop_flag = 0;
+        	vsh->status.menu_mode = 0;
+        	vsh->status.sub_stop_flag = 0;
+        	vsh->status.submenu_mode = 0;
+        	goto resume;
+        case 6:
+        	if (IS_VITA_ADR(vsh->config.p_ark)) 
+        		return -1;
+        	launch_umdvideo_mount(vsh);
+        	break;
+        case 9:
+        	battery_convert(vsh->battery);
+        	break;
+        case 10:
+        	delete_hibernation(vsh);
+        	break;
+        case 11:
+        	activate_codecs(vsh);
+        	break;
+        case 12:
+        	swap_buttons(vsh);
+        	break;
+        case 13:
+        	import_classic_plugins(vsh, DEVPATH_MS0);
+        	if (vsh->psp_model == PSP_GO)
+        		import_classic_plugins(vsh, DEVPATH_EF0);
+        	break;
+        case 14:			
+        	config_check(vsh);
+        	exec_random_game(vsh);
+        	break;
+        case 15:
+        	reset_ark_settings(vsh);
+        	break;
     }
 
     config_check(vsh);
 
     if(!IS_VITA_ADR(vsh->config.p_ark))
-    	umdvideolist_clear(&vsh->umdlist);
+        umdvideolist_clear(&vsh->umdlist);
     clear_language();
     vpl_finish();
 
@@ -253,7 +253,7 @@ resume:
     release_font();
 
     if (vsh->status.reset_vsh) {
-    	sctrlKernelExitVSH(NULL);
+        sctrlKernelExitVSH(NULL);
     }
 
     return sceKernelExitDeleteThread(0);
@@ -267,7 +267,7 @@ int module_start(int argc, char *argv[]) {
     vsh->thread_id = thid;
 
     if (thid >= 0)
-    	sceKernelStartThread(thid, 0, 0);
+        sceKernelStartThread(thid, 0, 0);
     
     return 0;
 }
@@ -281,7 +281,7 @@ int module_stop(int argc, char *argv[]) {
     ret = sceKernelWaitThreadEnd(vsh->thread_id, &time);
 
     if (ret < 0)
-    	sceKernelTerminateDeleteThread(vsh->thread_id);
+        sceKernelTerminateDeleteThread(vsh->thread_id);
     
     return 0;
 }

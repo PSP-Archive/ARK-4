@@ -42,49 +42,49 @@ void free(void* ptr){
 
 SceUID get_thread_id(const char *name)
 {
-	int ret, count, i;
-	SceUID ids[128];
+    int ret, count, i;
+    SceUID ids[128];
 
-	ret = sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, sizeof(ids), &count);
+    ret = sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, sizeof(ids), &count);
 
-	if(ret < 0) {
-		return -1;
-	}
+    if(ret < 0) {
+    	return -1;
+    }
 
-	for(i=0; i<count; ++i) {
-		SceKernelThreadInfo info;
+    for(i=0; i<count; ++i) {
+    	SceKernelThreadInfo info;
 
-		info.size = sizeof(info);
-		ret = sceKernelReferThreadStatus(ids[i], &info);
+    	info.size = sizeof(info);
+    	ret = sceKernelReferThreadStatus(ids[i], &info);
 
-		if(ret < 0) {
-			continue;
-		}
+    	if(ret < 0) {
+    		continue;
+    	}
 
-		if(0 == strcmp(info.name, name)) {
-			return ids[i];
-		}
-	}
+    	if(0 == strcmp(info.name, name)) {
+    		return ids[i];
+    	}
+    }
 
-	return -2;
+    return -2;
 }
 
 void suspend_thread(const char *thread_name)
 {
-	int ret;
+    int ret;
 
-	ret = get_thread_id(thread_name);
+    ret = get_thread_id(thread_name);
 
-	sceKernelSuspendThread(ret);
+    sceKernelSuspendThread(ret);
 }
 
 void suspend_vsh_thread(void)
 {
-	sceDisplayWaitVblankStart();
-	suspend_thread("SCE_VSH_GRAPHICS");
-	suspend_thread("movie_player");
-	suspend_thread("audio_buffer");
-	suspend_thread("music_player");
+    sceDisplayWaitVblankStart();
+    suspend_thread("SCE_VSH_GRAPHICS");
+    suspend_thread("movie_player");
+    suspend_thread("audio_buffer");
+    suspend_thread("music_player");
 }
 
 static char* findRecoveryApp(){
@@ -133,8 +133,8 @@ static void checkArkPath(){
     fd = sceIoDopen("ms0:/SEPLUGINS");
     if (fd >= 0) {
         strcpy(ark_config->arkpath, "ms0:/SEPLUGINS/");
-    	sceIoDclose(fd);
-    	return;
+        sceIoDclose(fd);
+        return;
     }
     strcpy(ark_config->arkpath, "flash1:/");
 
@@ -176,7 +176,7 @@ static int selected_choice(u32 choice) {
         savePlugins();
         return 1;
     case 4:
-    	proshell_main();
+        proshell_main();
         return 1;
     case 5:
         {
@@ -238,7 +238,7 @@ static void draw(char** options, int size, int dir){
 
 int main(SceSize args, void *argp) {
 
-	suspend_vsh_thread();
+    suspend_vsh_thread();
     pspDebugScreenInit();
 
     if (is_launcher_mode){
@@ -284,23 +284,23 @@ int main(SceSize args, void *argp) {
         sceDisplayWaitVblankStart();
 
         sceCtrlPeekBufferPositive(&pad, 1);
-    	
-    	// CONTROLS
-    	if (pad.Buttons & PSP_CTRL_DOWN) {
+        
+        // CONTROLS
+        if (pad.Buttons & PSP_CTRL_DOWN) {
             sceKernelDelayThread(200000);
-    		dir++;
-    		if(dir>size) dir = 0;
+        	dir++;
+        	if(dir>size) dir = 0;
 
             draw(options, size, dir);
-    	}
-    	if (pad.Buttons & PSP_CTRL_UP) {
+        }
+        if (pad.Buttons & PSP_CTRL_UP) {
             sceKernelDelayThread(200000);
-    		dir--;
-    		if(dir<0) dir = size;
+        	dir--;
+        	if(dir<0) dir = size;
             
             draw(options, size, dir);
-    	}
-    	if ((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE))) {
+        }
+        if ((pad.Buttons & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE))) {
             sceKernelDelayThread(200000);
             int ret = selected_choice(dir);
             if(ret==0) break;

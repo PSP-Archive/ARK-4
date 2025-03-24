@@ -82,5 +82,5 @@ int _arkReboot(void *a0, void *a1, void *a2, void *a3)
     
     syscon_ctrl_ms_power(1);
 
-    return sceReboot(a0, a1, a2, a3);	
+    return sceReboot(a0, a1, a2, a3);    
 }

@@ -37,7 +37,7 @@ static u32 adjust_alpha(u32 col)
     u8 mul;
     u32 c1,c2;
 
-    if(alpha==0)	return col;
+    if(alpha==0)    return col;
     if(alpha==0xff) return col;
 
     c1 = col & 0x00ff00ff;
@@ -278,15 +278,15 @@ void fillImageRect(Color color, int x0, int y0, int width, int height, Image* im
     for (y = 0; y < height; y++, data += skipX) {
         for (x = 0; x < width; x++, data++){
             if(alpha == 0)
-    			*data = color;
-    		else if (alpha != 0xff) {
-    			Color c2 = *data;
-    			Color c1 = c2 & 0x00ff00ff;
-    			c2 = c2 & 0x0000ff00;
-    			c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
-    			c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
-    			*data = (color & 0xffffff) + c1 + c2;
-    		}
+        		*data = color;
+        	else if (alpha != 0xff) {
+        		Color c2 = *data;
+        		Color c1 = c2 & 0x00ff00ff;
+        		c2 = c2 & 0x0000ff00;
+        		c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
+        		c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
+        		*data = (color & 0xffffff) + c1 + c2;
+        	}
         }
     }
 }
@@ -302,15 +302,15 @@ void fillScreenRect(Color color, int x0, int y0, int width, int height)
     for (y = 0; y < height; y++, data += skipX) {
         for (x = 0; x < width; x++, data++){
             if(alpha == 0)
-    			*data = color;
-    		else if (alpha != 0xff) {
-    			Color c2 = *data;
-    			Color c1 = c2 & 0x00ff00ff;
-    			c2 = c2 & 0x0000ff00;
-    			c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
-    			c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
-    			*data = (color & 0xffffff) + c1 + c2;
-    		}
+        		*data = color;
+        	else if (alpha != 0xff) {
+        		Color c2 = *data;
+        		Color c1 = c2 & 0x00ff00ff;
+        		c2 = c2 & 0x0000ff00;
+        		c1 = ((c1 * alpha) >> 8) & 0x00ff00ff;
+        		c2 = ((c2 * alpha) >> 8) & 0x0000ff00;
+        		*data = (color & 0xffffff) + c1 + c2;
+        	}
         }
     }
 }

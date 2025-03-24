@@ -47,9 +47,9 @@ int file_exists(const char *path)
         #ifdef MS_IPL
         MsFatClose(path);
         #else
-    	(*sceBootLfatClose)();
+        (*sceBootLfatClose)();
         #endif
-    	return 1;
+        return 1;
     }
 
     return 0;

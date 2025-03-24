@@ -672,61 +672,61 @@ int LoadUpdaterModules()
 {
     SceUID mod = sceKernelLoadModule("flash0:/kd/emc_sm_updater.prx", 0, NULL);
     if (mod < 0 && mod != SCE_KERNEL_ERROR_EXCLUSIVE_LOAD)
-    	return 1;
+        return 1;
 
     if (mod >= 0)
     {
-    	mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
-    	if (mod < 0)
-    		return 2;
+        mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+        if (mod < 0)
+        	return 2;
     }
 
     mod = sceKernelLoadModule("flash0:/kd/lfatfs_updater.prx", 0, NULL);
     if (mod < 0 && mod != SCE_KERNEL_ERROR_EXCLUSIVE_LOAD)
-    	return 3;
+        return 3;
 
     dcPatchModuleString("sceLFatFs_Updater_Driver", "flash", "flach");
 
     if (mod >= 0)
     {
-    	mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
-    	if (mod < 0)
-    		return 4;
+        mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+        if (mod < 0)
+        	return 4;
     }
 
     mod = sceKernelLoadModule("flash0:/kd/lflash_fatfmt_updater.prx", 0, NULL);
     if (mod < 0 && mod != SCE_KERNEL_ERROR_EXCLUSIVE_LOAD)
-    	return 5;
+        return 5;
 
     sceKernelDelayThread(10000);
 
     if (mod >= 0)
     {
-    	mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
-    	if (mod < 0)
-    		return 6;
+        mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+        if (mod < 0)
+        	return 6;
     }
 
     mod = sceKernelLoadModule("flash0:/kd/ipl_update.prx", 0, NULL);
     if (mod < 0 && mod != SCE_KERNEL_ERROR_EXCLUSIVE_LOAD)
-    	return 7;
+        return 7;
 
     if (mod >= 0)
     {
-    	mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
-    	if (mod < 0)
-    		return 8;
+        mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+        if (mod < 0)
+        	return 8;
     }
 
     mod = sceKernelLoadModule("flash0:/kd/pspdecrypt.prx", 0, NULL);
     if (mod < 0 && mod != SCE_KERNEL_ERROR_EXCLUSIVE_LOAD)
-    	return 9;
+        return 9;
 
     if (mod >= 0)
     {
-    	mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
-    	if (mod < 0)
-    		return 10;
+        mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+        if (mod < 0)
+        	return 10;
     }
 
     return 0;
@@ -774,8 +774,8 @@ int OnInstallError(void *param)
     int sel;
     switch(fw)
     {
-    	case FW_OFW: sel = 1; break;
-    	case FW_ARK: sel = 0; break;
+        case FW_OFW: sel = 1; break;
+        case FW_ARK: sel = 0; break;
     }
 
     dcSetCancelMode(0);
@@ -809,19 +809,19 @@ int OnInstallComplete(void *param)
 
     if (fw == FW_OFW && kuKernelGetModel() == 1)
     {
-    	SetStatus("Install is complete.\n"
-    		      "A shutdown is required. A normal battery is\n"
-    			  "required to boot this firmware on this PSP.");
-    	 AddShutdownRebootBD(1);
+        SetStatus("Install is complete.\n"
+        	      "A shutdown is required. A normal battery is\n"
+        		  "required to boot this firmware on this PSP.");
+         AddShutdownRebootBD(1);
     }
     else
     {
-    	SetStatus("Install is complete.\nA shutdown or a reboot is required.");
-    	AddShutdownRebootBD(0);
+        SetStatus("Install is complete.\nA shutdown or a reboot is required.");
+        AddShutdownRebootBD(0);
     }
 
     progress_bar = -1;
-    progress_text = -1;	
+    progress_text = -1;    
 
     return VLF_EV_RET_REMOVE_HANDLERS;
 }
@@ -830,47 +830,47 @@ int CreateDirs()
 {
     int res = sceIoMkdir("flach0:/codepage", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach0:/data", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach0:/data/cert", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach0:/dic", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach0:/font", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach0:/kd", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach0:/kd/resource", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach0:/vsh", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach0:/vsh/etc", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach0:/vsh/module", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach0:/vsh/resource", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     return 0;
 }
@@ -879,31 +879,31 @@ int CreateFlash1Dirs()
 {
     int res = sceIoMkdir("flach1:/dic", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach1:/gps", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach1:/net", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach1:/net/http", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach1:/registry", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach1:/vsh", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     res = sceIoMkdir("flach1:/vsh/theme", 0777);
     if (res < 0 && res != 0x80010011)
-    	return res;
+        return res;
 
     return 0;
 }
@@ -912,55 +912,55 @@ void CopyFileList(int fw, const char **list, int file_count, int start_file_coun
 {
     for (int i = 0; i < file_count; i++)
     {
-    	char src[256];
-    	char dest[256];
-    	strcpy(src,  "flash0:/");
-    	strcpy(dest, "flach0:/");
-    	strcat(src, list[i]);
-    	strcat(dest, list[i]);
-    	
-    	SceUID fdi = sceIoOpen(src, PSP_O_RDONLY, 0);
-    	if (fdi < 0)
-    	{
-    		InstallError(fw, "Error opening %s: 0x%08X", src, fdi);
-    	}
-    	
-    	SceUID fdo = sceIoOpen(dest, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-    	if (fdo < 0)
-    	{
-    		InstallError(fw, "Error opening %s: 0x%08X", dest, fdo);
-    	}
-    	
-    	char signechecked = 0;
-    	while (1)
-    	{
-    		int read = sceIoRead(fdi, big_buffer, BIG_BUFFER_SIZE);
-    		if (read < 0)
-    		{
-    			InstallError(fw, "Error reading %s", src);
-    		}
-    		if (!read)
-    			break;
-    	
-    		if (!signechecked &&
-    			(memcmp(&list[i][strlen(list[i]) - 4], ".prx", 4) == 0 ||
-    			memcmp(list[i], "kd/pspbtcnf", 11) == 0))
-    		{
-    			pspSignCheck(big_buffer);
-    			signechecked = 1;
-    		}
+        char src[256];
+        char dest[256];
+        strcpy(src,  "flash0:/");
+        strcpy(dest, "flach0:/");
+        strcat(src, list[i]);
+        strcat(dest, list[i]);
+        
+        SceUID fdi = sceIoOpen(src, PSP_O_RDONLY, 0);
+        if (fdi < 0)
+        {
+        	InstallError(fw, "Error opening %s: 0x%08X", src, fdi);
+        }
+        
+        SceUID fdo = sceIoOpen(dest, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+        if (fdo < 0)
+        {
+        	InstallError(fw, "Error opening %s: 0x%08X", dest, fdo);
+        }
+        
+        char signechecked = 0;
+        while (1)
+        {
+        	int read = sceIoRead(fdi, big_buffer, BIG_BUFFER_SIZE);
+        	if (read < 0)
+        	{
+        		InstallError(fw, "Error reading %s", src);
+        	}
+        	if (!read)
+        		break;
+        
+        	if (!signechecked &&
+        		(memcmp(&list[i][strlen(list[i]) - 4], ".prx", 4) == 0 ||
+        		memcmp(list[i], "kd/pspbtcnf", 11) == 0))
+        	{
+        		pspSignCheck(big_buffer);
+        		signechecked = 1;
+        	}
 
-    		if (sceIoWrite(fdo, big_buffer, read) < 0)
-    		{
-    			InstallError(fw, "Error writing %s", dest);
-    		}
-    	}
-    	
-    	sceIoClose(fdi);
-    	sceIoClose(fdo);
+        	if (sceIoWrite(fdo, big_buffer, read) < 0)
+        	{
+        		InstallError(fw, "Error writing %s", dest);
+        	}
+        }
+        
+        sceIoClose(fdi);
+        sceIoClose(fdo);
 
-    	SetInstallProgress(start_file_count + i, max_file_count, 0, fw);
-    	scePowerTick(0);
+        SetInstallProgress(start_file_count + i, max_file_count, 0, fw);
+        scePowerTick(0);
     }
 }
 
@@ -980,7 +980,7 @@ void copy_file(char* orig, char* dest){
 
 int install_thread(SceSize args, void *argp)
 {
-    int fw = *(int *)argp;	
+    int fw = *(int *)argp;    
     char *argv[2];
     int res;
     int size;
@@ -995,48 +995,48 @@ int install_thread(SceSize args, void *argp)
 
     switch (model)
     {
-    	case 0:
-    		file_count += sizeof(f0_01g) / sizeof(f0_01g[0]);
-    		break;
-    	case 1:
-    		file_count += sizeof(f0_02g) / sizeof(f0_02g[0]);
-    		break;
-    	case 2:
-    		file_count += sizeof(f0_03g) / sizeof(f0_03g[0]);
-    		break;
-    	case 3:
-    		file_count += sizeof(f0_04g) / sizeof(f0_04g[0]);
-    		break;
-    	case 4:
-    		file_count += sizeof(f0_05g) / sizeof(f0_05g[0]);
-    		break;
-    	case 6:
-    		file_count += sizeof(f0_07g) / sizeof(f0_07g[0]);
-    		break;
-    	case 8:
-    		file_count += sizeof(f0_09g) / sizeof(f0_09g[0]);
-    		break;
-    	case 10:
-    		file_count += sizeof(f0_11g) / sizeof(f0_11g[0]);
-    		break;
-    	default:
-    		InstallError(fw, "Unsupported model.");
+        case 0:
+        	file_count += sizeof(f0_01g) / sizeof(f0_01g[0]);
+        	break;
+        case 1:
+        	file_count += sizeof(f0_02g) / sizeof(f0_02g[0]);
+        	break;
+        case 2:
+        	file_count += sizeof(f0_03g) / sizeof(f0_03g[0]);
+        	break;
+        case 3:
+        	file_count += sizeof(f0_04g) / sizeof(f0_04g[0]);
+        	break;
+        case 4:
+        	file_count += sizeof(f0_05g) / sizeof(f0_05g[0]);
+        	break;
+        case 6:
+        	file_count += sizeof(f0_07g) / sizeof(f0_07g[0]);
+        	break;
+        case 8:
+        	file_count += sizeof(f0_09g) / sizeof(f0_09g[0]);
+        	break;
+        case 10:
+        	file_count += sizeof(f0_11g) / sizeof(f0_11g[0]);
+        	break;
+        default:
+        	InstallError(fw, "Unsupported model.");
     }
 
     switch(LoadUpdaterModules(fw))
     {
-    	case 0: break;
-    	case 1: InstallError(fw, "Failed to load emc_sm_updater.prx"); break;
-    	case 2: InstallError(fw, "Failed to start emc_sm_updater.prx"); break;
-    	case 3: InstallError(fw, "Failed to load lfatfs_updater.prx"); break;
-    	case 4: InstallError(fw, "Failed to start lfatfs_updater.prx"); break;
-    	case 5: InstallError(fw, "Failed to load lflash_fatfmt_updater.prx"); break;
-    	case 6: InstallError(fw, "Failed to start lflash_fatfmt_updater.prx"); break;
-    	case 7: InstallError(fw, "Failed to load ipl_update.prx"); break;
-    	case 8: InstallError(fw, "Failed to start ipl_update.prx"); break;
-    	case 9: InstallError(fw, "Failed to load pspdecrypt.prx"); break;
-    	case 10: InstallError(fw, "Failed to start pspdecrypt.prx"); break;
-    	default: InstallError(fw, "Error loading updater modules.");
+        case 0: break;
+        case 1: InstallError(fw, "Failed to load emc_sm_updater.prx"); break;
+        case 2: InstallError(fw, "Failed to start emc_sm_updater.prx"); break;
+        case 3: InstallError(fw, "Failed to load lfatfs_updater.prx"); break;
+        case 4: InstallError(fw, "Failed to start lfatfs_updater.prx"); break;
+        case 5: InstallError(fw, "Failed to load lflash_fatfmt_updater.prx"); break;
+        case 6: InstallError(fw, "Failed to start lflash_fatfmt_updater.prx"); break;
+        case 7: InstallError(fw, "Failed to load ipl_update.prx"); break;
+        case 8: InstallError(fw, "Failed to start ipl_update.prx"); break;
+        case 9: InstallError(fw, "Failed to load pspdecrypt.prx"); break;
+        case 10: InstallError(fw, "Failed to start pspdecrypt.prx"); break;
+        default: InstallError(fw, "Error loading updater modules.");
     }
 
     // Unassign with error ignore (they might have been assigned in a failed attempt of install ARK/OFW)
@@ -1055,7 +1055,7 @@ int install_thread(SceSize args, void *argp)
     res = dcLflashStartFatfmt(2, argv);
     if (res < 0)
     {
-    	InstallError(fw, "Flash0 format failed: 0x%08X", res);
+        InstallError(fw, "Flash0 format failed: 0x%08X", res);
     }
 
     sceKernelDelayThread(1200000);
@@ -1068,7 +1068,7 @@ int install_thread(SceSize args, void *argp)
     res = dcLflashStartFatfmt(2, argv);
     if (res < 0)
     {
-    	InstallError(fw, "Flash1 format failed: 0x%08X", res);
+        InstallError(fw, "Flash1 format failed: 0x%08X", res);
     }
 
     sceKernelDelayThread(1200000);
@@ -1086,13 +1086,13 @@ int install_thread(SceSize args, void *argp)
     res = sceIoAssign("flach0:", "lflach0:0,0", "flachfat0:", IOASSIGN_RDWR, NULL, 0);
     if (res < 0)
     {
-    	InstallError(fw, "Flash0 assign failed: 0x%08X", res);
+        InstallError(fw, "Flash0 assign failed: 0x%08X", res);
     }
 
     res = sceIoAssign("flach1:", "lflach0:0,1", "flachfat1:", IOASSIGN_RDWR, NULL, 0);
     if (res < 0)
     {
-    	InstallError(fw, "Flash1 assign failed: 0x%08X", res);
+        InstallError(fw, "Flash1 assign failed: 0x%08X", res);
     }
 
     sceIoAssign("flach2:", "lflach0:0,2", "flachfat2:", IOASSIGN_RDWR, NULL, 0);
@@ -1104,7 +1104,7 @@ int install_thread(SceSize args, void *argp)
 
     if (CreateDirs() < 0)
     {
-    	InstallError(fw, "Directories creation failed.");
+        InstallError(fw, "Directories creation failed.");
     }
 
     sceKernelDelayThread(1200000);
@@ -1118,40 +1118,40 @@ int install_thread(SceSize args, void *argp)
     
     switch (model)
     {
-    	case 0:
-    		CopyFileList(fw, f0_01g, sizeof(f0_01g) / sizeof(f0_01g[0]), ctr, file_count);
-    		ctr += sizeof(f0_01g) / sizeof(f0_01g[0]);
-    		break;
-    	case 1:
-    		CopyFileList(fw, f0_02g, sizeof(f0_02g) / sizeof(f0_02g[0]), ctr, file_count);
-    		ctr += sizeof(f0_02g) / sizeof(f0_02g[0]);
-    		break;
-    	case 2:
-    		CopyFileList(fw, f0_03g, sizeof(f0_03g) / sizeof(f0_03g[0]), ctr, file_count);
-    		ctr += sizeof(f0_03g) / sizeof(f0_03g[0]);
-    		break;
-    	case 3:
-    		CopyFileList(fw, f0_04g, sizeof(f0_04g) / sizeof(f0_04g[0]), ctr, file_count);
-    		ctr += sizeof(f0_04g) / sizeof(f0_04g[0]);
-    		break;
-    	case 4:
-    		CopyFileList(fw, f0_05g, sizeof(f0_05g) / sizeof(f0_05g[0]), ctr, file_count);
-    		ctr += sizeof(f0_05g) / sizeof(f0_05g[0]);
-    		break;
-    	case 6:
-    		CopyFileList(fw, f0_07g, sizeof(f0_07g) / sizeof(f0_07g[0]), ctr, file_count);
-    		ctr += sizeof(f0_07g) / sizeof(f0_07g[0]);
-    		break;
-    	case 8:
-    		CopyFileList(fw, f0_09g, sizeof(f0_09g) / sizeof(f0_09g[0]), ctr, file_count);
-    		ctr += sizeof(f0_09g) / sizeof(f0_09g[0]);
-    		break;
-    	case 10:
-    		CopyFileList(fw, f0_11g, sizeof(f0_11g) / sizeof(f0_11g[0]), ctr, file_count);
-    		ctr += sizeof(f0_11g) / sizeof(f0_11g[0]);
-    		break;
-    	default:
-    		InstallError(fw, "Unsupported model.");
+        case 0:
+        	CopyFileList(fw, f0_01g, sizeof(f0_01g) / sizeof(f0_01g[0]), ctr, file_count);
+        	ctr += sizeof(f0_01g) / sizeof(f0_01g[0]);
+        	break;
+        case 1:
+        	CopyFileList(fw, f0_02g, sizeof(f0_02g) / sizeof(f0_02g[0]), ctr, file_count);
+        	ctr += sizeof(f0_02g) / sizeof(f0_02g[0]);
+        	break;
+        case 2:
+        	CopyFileList(fw, f0_03g, sizeof(f0_03g) / sizeof(f0_03g[0]), ctr, file_count);
+        	ctr += sizeof(f0_03g) / sizeof(f0_03g[0]);
+        	break;
+        case 3:
+        	CopyFileList(fw, f0_04g, sizeof(f0_04g) / sizeof(f0_04g[0]), ctr, file_count);
+        	ctr += sizeof(f0_04g) / sizeof(f0_04g[0]);
+        	break;
+        case 4:
+        	CopyFileList(fw, f0_05g, sizeof(f0_05g) / sizeof(f0_05g[0]), ctr, file_count);
+        	ctr += sizeof(f0_05g) / sizeof(f0_05g[0]);
+        	break;
+        case 6:
+        	CopyFileList(fw, f0_07g, sizeof(f0_07g) / sizeof(f0_07g[0]), ctr, file_count);
+        	ctr += sizeof(f0_07g) / sizeof(f0_07g[0]);
+        	break;
+        case 8:
+        	CopyFileList(fw, f0_09g, sizeof(f0_09g) / sizeof(f0_09g[0]), ctr, file_count);
+        	ctr += sizeof(f0_09g) / sizeof(f0_09g[0]);
+        	break;
+        case 10:
+        	CopyFileList(fw, f0_11g, sizeof(f0_11g) / sizeof(f0_11g[0]), ctr, file_count);
+        	ctr += sizeof(f0_11g) / sizeof(f0_11g[0]);
+        	break;
+        default:
+        	InstallError(fw, "Unsupported model.");
     }
     
     sceKernelDelayThread(200000);
@@ -1161,17 +1161,17 @@ int install_thread(SceSize args, void *argp)
     sceKernelDelayThread(100000);
 
     if (CreateFlash1Dirs() < 0)
-    	InstallError(fw, "Error creating flash1 directories.");
+        InstallError(fw, "Error creating flash1 directories.");
 
     if (WriteFile("flach1:/registry/init.dat", sm_buffer1, 0) < 0)
     {
-    	InstallError(fw, "Cannot write init.dat\n");
+        InstallError(fw, "Cannot write init.dat\n");
     }
 
     res = ReadFile("flash2:/registry/act.dat", 0, sm_buffer1, SMALL_BUFFER_SIZE);
     if (res > 0)
     {
-    	WriteFile("flach2:/act.dat", sm_buffer1, res);		
+        WriteFile("flach2:/act.dat", sm_buffer1, res);		
     }
 
     SetStatus("Flashing IPL...");
@@ -1184,78 +1184,78 @@ int install_thread(SceSize args, void *argp)
     
     if (fw == FW_OFW)
     {
-    	switch (model)
-    	{
-    		case 0: ipl_name = "flash0:/ipl_01g.bin"; break;
-    		case 1: ipl_name = "flash0:/ipl_02g.bin"; break;
-    		case 2: ipl_name = "flash0:/ipl_03g.bin"; ipl_key = 1; break;
-    		case 3: ipl_name = "flash0:/ipl_04g.bin"; ipl_key = 1; break;
-    		case 4: ipl_name = "flash0:/ipl_05g.bin"; ipl_key = 2; break;
-    		case 6: ipl_name = "flash0:/ipl_07g.bin"; ipl_key = 1; break;
-    		case 8: ipl_name = "flash0:/ipl_09g.bin"; ipl_key = 1; break;
-    		case 10: ipl_name = "flash0:/ipl_11g.bin"; ipl_key = 1; break;
-    		default: InstallError(fw, "Unsupported model.");
-    	}
+        switch (model)
+        {
+        	case 0: ipl_name = "flash0:/ipl_01g.bin"; break;
+        	case 1: ipl_name = "flash0:/ipl_02g.bin"; break;
+        	case 2: ipl_name = "flash0:/ipl_03g.bin"; ipl_key = 1; break;
+        	case 3: ipl_name = "flash0:/ipl_04g.bin"; ipl_key = 1; break;
+        	case 4: ipl_name = "flash0:/ipl_05g.bin"; ipl_key = 2; break;
+        	case 6: ipl_name = "flash0:/ipl_07g.bin"; ipl_key = 1; break;
+        	case 8: ipl_name = "flash0:/ipl_09g.bin"; ipl_key = 1; break;
+        	case 10: ipl_name = "flash0:/ipl_11g.bin"; ipl_key = 1; break;
+        	default: InstallError(fw, "Unsupported model.");
+        }
     }
     else
     {
-    	switch (model)
-    	{
-    		case 0:
-    			offset = 0x4000;
-    			ipl_name = "flash0:/ipl_01g.bin";
-    			memcpy(big_buffer, ipl_block_01g, 0x4000);
-    			break;
-    		case 1: 
-    			if (mb == TA_088v3){
-    				ipl_name = "flash0:/cipl_02g.bin";
-    			}
-    			else {
-    				offset = 0x4000;
-    				ipl_name = "flash0:/ipl_02g.bin";
-    				memcpy(big_buffer, ipl_block_large, 0x4000);
-    			}
-    			break;
-    		case 2: ipl_name = "flash0:/cipl_03g.bin"; break;
-    		case 3: ipl_name = "flash0:/cipl_04g.bin"; break;
-    		case 4: ipl_name = "flash0:/cipl_05g.bin"; break;
-    		case 6: ipl_name = "flash0:/cipl_07g.bin"; break;
-    		case 8: ipl_name = "flash0:/cipl_09g.bin"; break;
-    		case 10: ipl_name = "flash0:/cipl_11g.bin"; break;
-    		default: InstallError(fw, "Unsupported model.");
-    	}
+        switch (model)
+        {
+        	case 0:
+        		offset = 0x4000;
+        		ipl_name = "flash0:/ipl_01g.bin";
+        		memcpy(big_buffer, ipl_block_01g, 0x4000);
+        		break;
+        	case 1: 
+        		if (mb == TA_088v3){
+        			ipl_name = "flash0:/cipl_02g.bin";
+        		}
+        		else {
+        			offset = 0x4000;
+        			ipl_name = "flash0:/ipl_02g.bin";
+        			memcpy(big_buffer, ipl_block_large, 0x4000);
+        		}
+        		break;
+        	case 2: ipl_name = "flash0:/cipl_03g.bin"; break;
+        	case 3: ipl_name = "flash0:/cipl_04g.bin"; break;
+        	case 4: ipl_name = "flash0:/cipl_05g.bin"; break;
+        	case 6: ipl_name = "flash0:/cipl_07g.bin"; break;
+        	case 8: ipl_name = "flash0:/cipl_09g.bin"; break;
+        	case 10: ipl_name = "flash0:/cipl_11g.bin"; break;
+        	default: InstallError(fw, "Unsupported model.");
+        }
     }
 
     size = offset+ReadFile(ipl_name, 0, big_buffer+offset, BIG_BUFFER_SIZE-offset);
     if (size-offset <= 0)
     {
-    	char msg[128];
-    	sprintf(msg, "Cannot read %s\n", ipl_name);
-    	InstallError(fw, msg);
+        char msg[128];
+        sprintf(msg, "Cannot read %s\n", ipl_name);
+        InstallError(fw, msg);
     }
     
     dcPatchModuleString("IoPrivileged", "IoPrivileged", "IoPrivileged");
 
     if (pspIplUpdateClearIpl() < 0)
-    	InstallError(fw, "Error in pspIplUpdateClearIpl");
+        InstallError(fw, "Error in pspIplUpdateClearIpl");
     
     if (pspIplUpdateSetIpl(big_buffer, size, ipl_key) < 0)
-    	InstallError(fw, "Error in pspIplUpdateSetIpl");
+        InstallError(fw, "Error in pspIplUpdateSetIpl");
 
     sceKernelDelayThread(900000);
 
     if (fw != FW_OFW)
     {
-    	int file_count = file_count += sizeof(f0_ark) / sizeof(f0_ark[0]);
-    	CopyFileList(fw, f0_ark, sizeof(f0_ark) / sizeof(f0_ark[0]), 0, file_count);
-    	for (int i=0; i<(sizeof(f0_ark_extras)/sizeof(f0_ark_extras[0])); i++)
-    	{
-    		char path[ARK_PATH_SIZE];
-    		strcpy(path, "flash0:/ARK_01234/");
-    		strcat(path, f0_ark_extras[i].orig);
-    		f0_ark_extras[i].dest[3] = 'c';
-    		copy_file(path, f0_ark_extras[i].dest);
-    	}
+        int file_count = file_count += sizeof(f0_ark) / sizeof(f0_ark[0]);
+        CopyFileList(fw, f0_ark, sizeof(f0_ark) / sizeof(f0_ark[0]), 0, file_count);
+        for (int i=0; i<(sizeof(f0_ark_extras)/sizeof(f0_ark_extras[0])); i++)
+        {
+        	char path[ARK_PATH_SIZE];
+        	strcpy(path, "flash0:/ARK_01234/");
+        	strcat(path, f0_ark_extras[i].orig);
+        	f0_ark_extras[i].dest[3] = 'c';
+        	copy_file(path, f0_ark_extras[i].dest);
+        }
     }
 
     SetProgress(100, 1);
@@ -1269,14 +1269,14 @@ int Install(int fw)
     ClearProgress();
     status = vlfGuiAddText(80, 100, "Loading updater modules...");
 
-    progress_bar = vlfGuiAddProgressBar(136);	
+    progress_bar = vlfGuiAddProgressBar(136);    
     progress_text = vlfGuiAddText(240, 148, "0%");
     vlfGuiSetTextAlignment(progress_text, VLF_ALIGNMENT_CENTER);
 
     SceUID install_thid = sceKernelCreateThread("install_thread", install_thread, 0x18, 0x10000, 0, NULL);
     if (install_thid >= 0)
     {
-    	sceKernelStartThread(install_thid, 4, &fw);
+        sceKernelStartThread(install_thid, 4, &fw);
     }
 
     return VLF_EV_RET_REMOVE_OBJECTS | VLF_EV_RET_REMOVE_HANDLERS;

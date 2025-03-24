@@ -291,28 +291,28 @@ void plugins_submenu(){
         sceDisplayWaitVblankStart();
 
         sceCtrlPeekBufferPositive(&pad, 1);
-    	
-    	// CONTROLS
-    	if((pad.Buttons & PSP_CTRL_DOWN) == PSP_CTRL_DOWN) {
+        
+        // CONTROLS
+        if((pad.Buttons & PSP_CTRL_DOWN) == PSP_CTRL_DOWN) {
             sceKernelDelayThread(200000);
-    		dir++;
-    		if(dir>=size) dir = 0;
+        	dir++;
+        	if(dir>=size) dir = 0;
 
             //logtext("plugins_to_text\n");
             size = plugins_to_text(paths, states, pos, dir);
             //logtext("draw_submenu\n");
             draw_submenu(header, paths, states, size, dir);
             //logtext("done\n");
-    	}
-    	if((pad.Buttons & PSP_CTRL_UP) == PSP_CTRL_UP) {
+        }
+        if((pad.Buttons & PSP_CTRL_UP) == PSP_CTRL_UP) {
             sceKernelDelayThread(200000);
-    		dir--;
-    		if(dir<0) dir = size-1;
+        	dir--;
+        	if(dir<0) dir = size-1;
             
             size = plugins_to_text(paths, states, pos, dir);
             draw_submenu(header, paths, states, size, dir);
-    	}
-    	if( (pad.Buttons & PSP_CTRL_CROSS) == PSP_CTRL_CROSS
+        }
+        if( (pad.Buttons & PSP_CTRL_CROSS) == PSP_CTRL_CROSS
               || (pad.Buttons & PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE
               || (pad.Buttons & PSP_CTRL_LEFT) == PSP_CTRL_LEFT
               || (pad.Buttons & PSP_CTRL_RIGHT) == PSP_CTRL_RIGHT) {
@@ -346,14 +346,14 @@ void settings_submenu(){
     char* header = "Custom Firmware Settings";
 
     if(IS_VITA(ark_config)) {
-    	if(IS_VITA_ADR(ark_config)) {
-    		size = N_SETTINGS_ADR;
-    		settings_items = settings_items_adr;
-    	}
-    	else {
-    		size = N_SETTINGS_VITA;
-    		settings_items = settings_items_vita;
-    	}
+        if(IS_VITA_ADR(ark_config)) {
+        	size = N_SETTINGS_ADR;
+        	settings_items = settings_items_adr;
+        }
+        else {
+        	size = N_SETTINGS_VITA;
+        	settings_items = settings_items_vita;
+        }
     }
     else if(psp_model == PSP_1000) {
         size = N_SETTINGS_1K;
@@ -385,44 +385,44 @@ void settings_submenu(){
         sceDisplayWaitVblankStart();
 
         sceCtrlPeekBufferPositive(&pad, 1);
-    	
-    	// CONTROLS
-    	if((pad.Buttons & PSP_CTRL_DOWN) == PSP_CTRL_DOWN) {
+        
+        // CONTROLS
+        if((pad.Buttons & PSP_CTRL_DOWN) == PSP_CTRL_DOWN) {
             sceKernelDelayThread(200000);
-    		dir++;
-    		if(dir>=size) dir = 0;
+        	dir++;
+        	if(dir>=size) dir = 0;
 
             draw_submenu(header, paths, states, size, dir);
-    	}
-    	if((pad.Buttons & PSP_CTRL_UP) == PSP_CTRL_UP) {
+        }
+        if((pad.Buttons & PSP_CTRL_UP) == PSP_CTRL_UP) {
             sceKernelDelayThread(200000);
-    		dir--;
-    		if(dir<0) dir = size-1;
+        	dir--;
+        	if(dir<0) dir = size-1;
             
             draw_submenu(header, paths, states, size, dir);
-    	}
+        }
         if((pad.Buttons & PSP_CTRL_LEFT) == PSP_CTRL_LEFT) {
             sceKernelDelayThread(200000);
-    		int* value = settings_items[dir].value;
-    		int max = settings_items[dir].max;
+        	int* value = settings_items[dir].value;
+        	int max = settings_items[dir].max;
             *value = (*value) - 1;
-    		if(*value<0) *value = max-1;
+        	if(*value<0) *value = max-1;
             
             settings_to_text(paths, states, settings_items, size);
             draw_submenu(header, paths, states, size, dir);
-    	}
+        }
         if((pad.Buttons & PSP_CTRL_CROSS) == PSP_CTRL_CROSS
               || (pad.Buttons & PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE
               || (pad.Buttons & PSP_CTRL_RIGHT) == PSP_CTRL_RIGHT) {
             sceKernelDelayThread(200000);
-    		int* value = settings_items[dir].value;
-    		int max = settings_items[dir].max;
+        	int* value = settings_items[dir].value;
+        	int max = settings_items[dir].max;
             *value = (*value) + 1;
-    		if(*value>=max) *value = 0;
+        	if(*value>=max) *value = 0;
             
             settings_to_text(paths, states, settings_items, size);
             draw_submenu(header, paths, states, size, dir);
-    	}
+        }
         if((pad.Buttons & PSP_CTRL_TRIANGLE) == PSP_CTRL_TRIANGLE) {
             sceKernelDelayThread(200000);
             break;

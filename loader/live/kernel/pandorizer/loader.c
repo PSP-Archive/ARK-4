@@ -11,7 +11,7 @@ u32 eeprom_write(u8 addr, u16 data) {
     u8 param[0x60];
 
     if(addr > 0x7F) 
-    	return 0x80000102;
+        return 0x80000102;
 
     param[0x0C] = 0x73;
     param[0x0D] = 5;
@@ -22,7 +22,7 @@ u32 eeprom_write(u8 addr, u16 data) {
     res = SysconCmdExec(param, 0);
 
     if(res < 0) 
-    	return res;
+        return res;
 
     return 0;
 }
@@ -32,7 +32,7 @@ u32 eeprom_read(u8 addr) {
     u8 param[0x60];
 
     if(addr > 0x7F) 
-    	return 0x80000102;
+        return 0x80000102;
 
     param[0x0C] = 0x74;
     param[0x0D] = 3;
@@ -41,16 +41,16 @@ u32 eeprom_read(u8 addr) {
     res = SysconCmdExec(param, 0);
 
     if(res < 0) 
-    	return res;
+        return res;
 
     return (param[0x21] << 8) | param[0x20];
 }
 
 int eeprom_error_check(u32 data) {
     if ((data & 0x80250000) == 0x80250000) 
-    	return -1;
+        return -1;
     else if (data & 0xFFFF0000) 
-    	return ((data & 0xFFFF0000) >> 16);
+        return ((data & 0xFFFF0000) >> 16);
     return 0;
 }
 
@@ -58,16 +58,16 @@ int eeprom_serial_read(u16* pdata) {
     u32 data = eeprom_read(0x07);
     int err = eeprom_error_check(data);
     if(!(err < 0)) {
-    	pdata[0] = (data & 0xFFFF);
-    	data = eeprom_read(0x09);
-    	err = eeprom_error_check(data);
-    	if (!(err < 0)) 
-    		pdata[1] = (data & 0xFFFF);
-    	else 
-    		err = data;
+        pdata[0] = (data & 0xFFFF);
+        data = eeprom_read(0x09);
+        err = eeprom_error_check(data);
+        if (!(err < 0)) 
+        	pdata[1] = (data & 0xFFFF);
+        else 
+        	err = data;
     }
     else 
-    	err = data;
+        err = data;
 
     return err;
 }
@@ -75,7 +75,7 @@ int eeprom_serial_read(u16* pdata) {
 int eeprom_writeSerial(u16* pdata) {
     int err = eeprom_write(0x07, pdata[0]);
     if(!err) 
-    	err = eeprom_write(0x09, pdata[1]);
+        err = eeprom_write(0x09, pdata[1]);
 
     return err;
 }
@@ -86,14 +86,14 @@ void battery_convert(int battery) {
     u16 buffer[2];
     
     if (battery < 0 || battery > 1) 
-    	return;
+        return;
 
     if (battery) {
-    	buffer[0] = 0x1234;
-    	buffer[1] = 0x5678;
+        buffer[0] = 0x1234;
+        buffer[1] = 0x5678;
     } else {
-    	buffer[0] = 0xFFFF;
-    	buffer[1] = 0xFFFF;
+        buffer[0] = 0xFFFF;
+        buffer[1] = 0xFFFF;
     }
     eeprom_writeSerial(buffer);
 }
@@ -125,15 +125,15 @@ int battery_check(void) {
     tachyon = SysregGetTachyonVersion();
 
     if (tachyon >= 0x00500000 && baryon >= 0x00234000) 
-    	is_pandora = -1;
+        is_pandora = -1;
     else {   
-    	u16 serial[2];
-    	eeprom_serial_read(serial);
+        u16 serial[2];
+        eeprom_serial_read(serial);
     
-    	if(serial[0] == 0xFFFF && serial[1] == 0xFFFF) 
-    		is_pandora = 1;
-    	else 
-    		is_pandora = 0;
+        if(serial[0] == 0xFFFF && serial[1] == 0xFFFF) 
+        	is_pandora = 1;
+        else 
+        	is_pandora = 0;
     }
     return is_pandora;
 }

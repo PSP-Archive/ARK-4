@@ -18,18 +18,18 @@ int start_thread(SceSize args, void *argp)
 
     if (path)
     {
-    	for (i = 0; path[i]; i++)
-    	{
-    		boot_path[i] = path[i];
-    		if (path[i] == '/')
-    			last_trail = i;
-    	}
+        for (i = 0; path[i]; i++)
+        {
+        	boot_path[i] = path[i];
+        	if (path[i] == '/')
+        		last_trail = i;
+        }
     }
     
     boot_path[i] = 0;
 
     if (last_trail >= 0)
-    	boot_path[last_trail] = 0;
+        boot_path[last_trail] = 0;
 
     sceIoChdir(boot_path);
 
@@ -48,7 +48,7 @@ int module_start(SceSize args, void *argp)
 {
     SceUID thid = sceKernelCreateThread("start_thread", start_thread, 0x10, 0x4000, 0, NULL);
     if (thid < 0)
-    	return thid;
+        return thid;
 
     sceKernelStartThread(thid, args, argp);
     

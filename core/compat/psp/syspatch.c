@@ -245,9 +245,9 @@ void PSPOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
         if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-    		hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
-    		goto flush;
-    	}
+        	hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+        	goto flush;
+        }
     }
 
     if (strcmp(mod->modname, "sceUmdMan_driver") == 0) {
@@ -290,8 +290,8 @@ void PSPOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "game_plugin_module") == 0) {
-    	if (se_config->skiplogos == 1 || se_config->skiplogos == 2) {
-    	    patch_GameBoot(mod);
+        if (se_config->skiplogos == 1 || se_config->skiplogos == 2) {
+            patch_GameBoot(mod);
         }
         goto flush;
     }
@@ -341,11 +341,11 @@ void PSPOnModuleStart(SceModule2 * mod){
     {
         // Missing from SDK
         #define PSP_INIT_APITYPE_EF2 0x152
-    	if( sceKernelInitApitype() == PSP_INIT_APITYPE_EF2 )
-    	{
-    		_sw( 0x10000005, mod->text_addr + 0x0000014C );	
-    		goto flush;
-    	}
+        if( sceKernelInitApitype() == PSP_INIT_APITYPE_EF2 )
+        {
+        	_sw( 0x10000005, mod->text_addr + 0x0000014C );	
+        	goto flush;
+        }
     }
     
     if (booted == 0)
@@ -392,22 +392,22 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
 
     if (mod && (se_config->skiplogos == 1 || se_config->skiplogos == 3) && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
-    	u32* vshmain_args = oe_malloc(1024);
+        u32* vshmain_args = oe_malloc(1024);
 
-    	memset(vshmain_args, 0, 1024);
+        memset(vshmain_args, 0, 1024);
 
-    	if(argp != NULL && argsize != 0 ) {
-    		memcpy( vshmain_args , argp ,  argsize);
-    	}
+        if(argp != NULL && argsize != 0 ) {
+        	memcpy( vshmain_args , argp ,  argsize);
+        }
 
-    	vshmain_args[0] = 1024;
-    	vshmain_args[1] = 0x20;
-    	vshmain_args[16] = 1;
+        vshmain_args[0] = 1024;
+        vshmain_args[1] = 0x20;
+        vshmain_args[16] = 1;
 
-    	int ret = sceKernelStartModule(modid, 1024, vshmain_args, modstatus, opt);
-    	oe_free(vshmain_args);
+        int ret = sceKernelStartModule(modid, 1024, vshmain_args, modstatus, opt);
+        oe_free(vshmain_args);
 
-    	return ret;
+        return ret;
     }
 
     // forward to previous or default StartModule

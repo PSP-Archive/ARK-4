@@ -200,7 +200,7 @@ int kirk_decrypt_aes(unsigned char *out, unsigned char *data, unsigned int size,
     memset(header, 0, 0x400);
 
     if (res)
-    	return -1;
+        return -1;
 
     return 0;
 }

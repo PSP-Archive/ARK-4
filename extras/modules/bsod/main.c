@@ -37,11 +37,11 @@ int module_start(){
     // get ARK Config
     ark_config = sctrlHENGetArkConfig(NULL);
 
-	// Register Default Exception Handler
+    // Register Default Exception Handler
     registerExceptionHandler(NULL, NULL);
 
     // Register module handler
     previous = sctrlHENSetStartModuleHandler(OnModuleStart);
 
-	return 0;
+    return 0;
 }

@@ -42,24 +42,24 @@ static int Lflash_IoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mo
 {
     switch (device_unit)
     {
-    	case 0:
-    		file = "0,0";
-    	break;
+        case 0:
+        	file = "0,0";
+        break;
 
-    	case 1:
-    		file = "0,1";
-    	break;
+        case 1:
+        	file = "0,1";
+        break;
 
-    	case 2:
-    		file = "0,2";
-    	break;
+        case 2:
+        	file = "0,2";
+        break;
 
-    	case 3:
-    		file = "0,3";
-    	break;
+        case 3:
+        	file = "0,3";
+        break;
 
-    	default:
-    		return 0x800200d2;
+        default:
+        	return 0x800200d2;
     }
 
     return lflash_driver->funcs->IoOpen(arg, file, flags, mode);
@@ -68,9 +68,9 @@ static int Lflash_IoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mo
 static int Common_IoWrite(PspIoDrvFileArg *arg, const char *data, int len)
 {
     if (read_only)
-    	return -1;
+        return -1;
     else
-    	return lflash_driver->funcs->IoWrite(arg, data, len);
+        return lflash_driver->funcs->IoWrite(arg, data, len);
 }
 
 static u8 data_5803[96] = 
@@ -87,30 +87,30 @@ static int Common_IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, 
 {
     if (cmd == 0x02125008)
     {
-    	u32 *x = (u32 *)outdata;
-    	if (!read_only)
-    		*x = 1; // Enable writing 
-    	else
-    		*x = 0;
-    	return 0;
+        u32 *x = (u32 *)outdata;
+        if (!read_only)
+        	*x = 1; // Enable writing 
+        else
+        	*x = 0;
+        return 0;
     }
     else if (cmd == 0x02125803)
     {
-    	memcpy(outdata, data_5803, 96);
-    	return 0;
+        memcpy(outdata, data_5803, 96);
+        return 0;
     }
     else if (cmd == 0x02125006)
     {
-    	*(u32 *)outdata = device_sizes[device_unit];	
-    	return 0;
+        *(u32 *)outdata = device_sizes[device_unit];	
+        return 0;
     }
     else if (cmd == 0x0211D032)
     {
-    	return Common_IoWrite(arg, outdata, outlen);
-    }	
+        return Common_IoWrite(arg, outdata, outlen);
+    }    
     else if (cmd == 0x0201D033)
     {
-    	return 0;
+        return 0;
     }
 
     return 0;
@@ -120,15 +120,15 @@ static int Common_IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned i
 {
     if (cmd == 0x02125801)
     {
-    	u8 *data8 = (u8 *)outdata;
+        u8 *data8 = (u8 *)outdata;
 
-    	data8[0] = 1;
-    	data8[1] = 0;
-    	data8[2] = 0,
-    	data8[3] = 1;
-    	data8[4] = 0;
-    			
-    	return 0;
+        data8[0] = 1;
+        data8[1] = 0;
+        data8[2] = 0,
+        data8[3] = 1;
+        data8[4] = 0;
+        		
+        return 0;
     }
 
     return 0x80010086;
@@ -166,30 +166,30 @@ static int ReadAllocTableSector(u32 fatsec, u16 *fat)
 
     if (fatsec == 0)
     {
-    	fat[0] = 0xFFF8;
-    	fat[1] = 0xFFFF;
+        fat[0] = 0xFFF8;
+        fat[1] = 0xFFFF;
 
-    	i = 2;
-    	cluster = 0;
+        i = 2;
+        cluster = 0;
     }
     else
     {
-    	i = 0;	
-    	cluster = (0x100*fatsec)-2;
-    }	
+        i = 0;	
+        cluster = (0x100*fatsec)-2;
+    }    
 
     if (cluster >= umd_file_clusters)
-    	return 0;
+        return 0;
 
     for (; i < 0x100; i++, cluster++)
     {
-    	if (cluster == (umd_file_clusters-1))
-    	{
-    		fat[i] = 0xFFFF;
-    		break;
-    	}
+        if (cluster == (umd_file_clusters-1))
+        {
+        	fat[i] = 0xFFFF;
+        	break;
+        }
 
-    	fat[i] = (cluster+3);
+        fat[i] = (cluster+3);
     }
 
     return 0;
@@ -199,21 +199,21 @@ static int ReadUmdSector(PspIoDrvFileArg *arg, u32 sector)
 {
     if (sector == umd_last_sector)
     {
-    	return 0;
+        return 0;
     }
 
     if (umd_last_sector != (sector-1))
     {
-    	if (umd_driver->funcs->IoLseek(arg, sector, PSP_SEEK_SET) < 0)
-    	{
-    		return -1;
-    	}
+        if (umd_driver->funcs->IoLseek(arg, sector, PSP_SEEK_SET) < 0)
+        {
+        	return -1;
+        }
     }
 
     int res = umd_driver->funcs->IoRead(arg, (void *)umd_sector, 1);
     if (res >= 0)
     {
-    	umd_last_sector = sector;
+        umd_last_sector = sector;
     }
 
     return res;
@@ -223,21 +223,21 @@ static int ReadUmdVfatSector(PspIoDrvFileArg *arg, u32 sector, u8 *buf)
 {
     if (sector == 0)
     {
-    	memcpy(buf, boot_sector, 0x40);
-    	buf[0x1FE] = 0x55;
-    	buf[0x1FF] = 0xAA;
+        memcpy(buf, boot_sector, 0x40);
+        buf[0x1FE] = 0x55;
+        buf[0x1FF] = 0xAA;
     }
     else if (sector >= 8 && sector < 0xFC)
     {
-    	return ReadAllocTableSector(sector-8, (u16 *)buf);
+        return ReadAllocTableSector(sector-8, (u16 *)buf);
     }
     else if (sector >= 0xFC && sector < 0x1F0)
-    {	
-    	return ReadAllocTableSector(sector-0xFC, (u16 *)buf);
+    {    
+        return ReadAllocTableSector(sector-0xFC, (u16 *)buf);
     }
     else if (sector == 0x1F0)
     {
-    	memcpy(buf, file_entry, 0x40);
+        memcpy(buf, file_entry, 0x40);
     }
     
     return 0;
@@ -250,7 +250,7 @@ static int UmdVfat_Read(PspIoDrvFileArg *arg, char *data, int len)
     
     if (data == NULL || len == 0 || (len & 0x1FF))
     {
-    	return 0x80010016;
+        return 0x80010016;
     }
 
     memset(data, 0, len);
@@ -260,78 +260,78 @@ static int UmdVfat_Read(PspIoDrvFileArg *arg, char *data, int len)
 
     if (umd_vfat_ptr >= 0x210)
     {
-    	int s = umd_vfat_ptr-0x210;
-    	int lba = s / 4;
+        int s = umd_vfat_ptr-0x210;
+        int lba = s / 4;
 
-    	if (s < umd_file_size)
-    	{
-    		int x = (s & 3);
-    		int move = 1;
+        if (s < umd_file_size)
+        {
+        	int x = (s & 3);
+        	int move = 1;
 
-    		if (s + rem >= umd_vfat_size)
-    		{
-    			rem = umd_vfat_size-s;
-    		}
+        	if (s + rem >= umd_vfat_size)
+        	{
+        		rem = umd_vfat_size-s;
+        	}
 
-    		if (x && rem >= 0)
-    		{
-    			ReadUmdSector(arg, lba);
+        	if (x && rem >= 0)
+        	{
+        		ReadUmdSector(arg, lba);
 
-    			int m = 4-x;
+        		int m = 4-x;
 
-    			if (m > rem)
-    				m = rem;
+        		if (m > rem)
+        			m = rem;
 
-    			memcpy(data, umd_sector+(x*0x200), m*0x200);
-    			data += (m*0x200);
-    			lba++;
-    			rem -= m;
-    			move = 0;
-    			s += m;
-    		}
-    		
-    		if (rem >= 0)
-    		{
-    			if (move)
-    			{
-    				umd_driver->funcs->IoLseek(arg, lba, PSP_SEEK_SET);
-    			}
+        		memcpy(data, umd_sector+(x*0x200), m*0x200);
+        		data += (m*0x200);
+        		lba++;
+        		rem -= m;
+        		move = 0;
+        		s += m;
+        	}
+        	
+        	if (rem >= 0)
+        	{
+        		if (move)
+        		{
+        			umd_driver->funcs->IoLseek(arg, lba, PSP_SEEK_SET);
+        		}
 
-    			int nsectors = rem / 4;
+        		int nsectors = rem / 4;
 
-    			if (nsectors > 0)
-    			{
-    				if (umd_driver->funcs->IoRead(arg, data, nsectors) < 0)
-    					return -1;
+        		if (nsectors > 0)
+        		{
+        			if (umd_driver->funcs->IoRead(arg, data, nsectors) < 0)
+        				return -1;
 
-    				data += (nsectors*0x800);
-    				lba += nsectors;
-    				rem -= (nsectors * 4);
-    				s += (nsectors * 4);
-    			}
-    			
-    			if (rem > 0)
-    			{
-    				ReadUmdSector(arg, lba);
-    				memcpy(data, umd_sector, rem*0x200);
-    			}
-    		}
+        			data += (nsectors*0x800);
+        			lba += nsectors;
+        			rem -= (nsectors * 4);
+        			s += (nsectors * 4);
+        		}
+        		
+        		if (rem > 0)
+        		{
+        			ReadUmdSector(arg, lba);
+        			memcpy(data, umd_sector, rem*0x200);
+        		}
+        	}
 
-    		umd_vfat_ptr += len;
-    		return (len*0x200);
-    	}		
+        	umd_vfat_ptr += len;
+        	return (len*0x200);
+        }		
     }
 
     for (i = 0; i < len; i++)
     {
-    	if (ReadUmdVfatSector(arg, umd_vfat_ptr, (u8 *)data) != 0)
-    	{
-    		break;
-    	}
+        if (ReadUmdVfatSector(arg, umd_vfat_ptr, (u8 *)data) != 0)
+        {
+        	break;
+        }
 
-    	umd_vfat_ptr++;
-    	data += 0x200;
-    	read += 0x200;
+        umd_vfat_ptr++;
+        data += 0x200;
+        read += 0x200;
     }
 
     return read;
@@ -343,26 +343,26 @@ SceOff UmdVfat_IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
     
     if (ofs32 & 0x1FF)
     {
-    	return 0x80010016;
+        return 0x80010016;
     }
 
     int s_ofs = (ofs32/0x200);
     
     if (whence == PSP_SEEK_SET)
     {
-    	umd_vfat_ptr = s_ofs;
+        umd_vfat_ptr = s_ofs;
     }
     else if (whence == PSP_SEEK_CUR)
     {
-    	umd_vfat_ptr += s_ofs;
+        umd_vfat_ptr += s_ofs;
     }
     else if (whence == PSP_SEEK_END)
     {
-    	umd_vfat_ptr = umd_vfat_size+s_ofs;
+        umd_vfat_ptr = umd_vfat_size+s_ofs;
     }
     else
     {
-    	return 0x80010016;
+        return 0x80010016;
     }
     
     return (umd_vfat_ptr*0x200);
@@ -373,20 +373,20 @@ static void segment_patch(SceModule2 *mod)
     int i;
     for(i=0;i < mod->nsegment;i++)
     {
-    	u32 offset = mod->segmentaddr[i];
-    	u32 end = offset + mod->segmentsize[i];
+        u32 offset = mod->segmentaddr[i];
+        u32 end = offset + mod->segmentsize[i];
 
-    	while( offset <  end )
-    	{
-    		char *str = (char *)offset;
-    		if ( memcmp(str,"eflash0a0f0:" ,sizeof("eflash0a0f0:") ) == 0)
-    		{
-    			memcpy( str, "eflash0a0f1:"	, sizeof("eflash0a0f1:") );
-    			break;
-    		}
+        while( offset <  end )
+        {
+        	char *str = (char *)offset;
+        	if ( memcmp(str,"eflash0a0f0:" ,sizeof("eflash0a0f0:") ) == 0)
+        	{
+        		memcpy( str, "eflash0a0f1:"	, sizeof("eflash0a0f1:") );
+        		break;
+        	}
 
-    		offset += 4;
-    	}
+        	offset += 4;
+        }
     }
 }
 
@@ -397,8 +397,8 @@ int pspUsbDeviceSetDevice(u32 unit, int ronly, int unassign_mask)
     
     if (unit > PSP_USBDEVICE_UMD9660)
     {
-    	pspSdkSetK1(k1);
-    	return 0x80010016;
+        pspSdkSetK1(k1);
+        return 0x80010016;
     }
 
     device_unit = unit;
@@ -408,156 +408,156 @@ int pspUsbDeviceSetDevice(u32 unit, int ronly, int unassign_mask)
     if (unit == PSP_USBDEVICE_UMD9660)
     {
 
-    	if( psp_model == PSP_GO )
-    	{
-    		SceModule2 *eflash = sceKernelFindModuleByName("sceUSBStorEFlash_Driver");
-    		if( eflash != NULL )
-    		{
-    			segment_patch( eflash );
-    			sceKernelIcacheInvalidateAll();
-    			sceKernelDcacheWritebackInvalidateAll();
-    		}
+        if( psp_model == PSP_GO )
+        {
+        	SceModule2 *eflash = sceKernelFindModuleByName("sceUSBStorEFlash_Driver");
+        	if( eflash != NULL )
+        	{
+        		segment_patch( eflash );
+        		sceKernelIcacheInvalidateAll();
+        		sceKernelDcacheWritebackInvalidateAll();
+        	}
 
-    		res = 0;
-    		goto RETURN;
-    	}
+        	res = 0;
+        	goto RETURN;
+        }
 
-    	u8 *pvd;
-    	
-    	if (!sceUmdCheckMedium())
-    	{
-    		if (sceUmdWaitDriveStatCB(UMD_WAITFORDISC, 2*1000*1000) < 0)
-    		{
-    			res = 0x80210003;
-    			goto RETURN;
-    		}
-    	}
+        u8 *pvd;
+        
+        if (!sceUmdCheckMedium())
+        {
+        	if (sceUmdWaitDriveStatCB(UMD_WAITFORDISC, 2*1000*1000) < 0)
+        	{
+        		res = 0x80210003;
+        		goto RETURN;
+        	}
+        }
 
-    	sceUmdActivate(1, "disc0:"); 
-    	sceUmdWaitDriveStat(UMD_WAITFORINIT);
-    	
-    	res = sceIoDevctl("umd0:", 0x01f20002, NULL, 0, &umd_file_size, 4);
-    	if (res < 0)
-    	{
-    		goto RETURN;
-    	}
+        sceUmdActivate(1, "disc0:"); 
+        sceUmdWaitDriveStat(UMD_WAITFORINIT);
+        
+        res = sceIoDevctl("umd0:", 0x01f20002, NULL, 0, &umd_file_size, 4);
+        if (res < 0)
+        {
+        	goto RETURN;
+        }
 
-    	if (sceIoDevctl("umd0:", 0x01e28035, NULL, 0, &pvd, 4) >= 0)
-    	{
-    		if (memcmp(pvd+1, "CD001", 5) == 0)
-    		{
-    			u32 p = 0;
-    			char *ptr = strchr((char *)(pvd+0x373), '|');		
-    			
-    			if (ptr)
-    				p = (u32)((u32)ptr - (u32)(pvd+0x373));
+        if (sceIoDevctl("umd0:", 0x01e28035, NULL, 0, &pvd, 4) >= 0)
+        {
+        	if (memcmp(pvd+1, "CD001", 5) == 0)
+        	{
+        		u32 p = 0;
+        		char *ptr = strchr((char *)(pvd+0x373), '|');		
+        		
+        		if (ptr)
+        			p = (u32)((u32)ptr - (u32)(pvd+0x373));
 
-    			if (p > 11)
-    				p = 11;	
-    			
-    			memcpy(boot_sector+0x2B, pvd+0x373, p);
-    			memcpy(file_entry, pvd+0x373, p);
+        		if (p > 11)
+        			p = 11;	
+        		
+        		memcpy(boot_sector+0x2B, pvd+0x373, p);
+        		memcpy(file_entry, pvd+0x373, p);
 
-    			memcpy( &umd_file_size, pvd+0x50, 4 );
-    		}
-    	}
-    	
-    	umd_file_size *= 4;		
-    	umd_file_clusters = (umd_file_size / 0x40);
+        		memcpy( &umd_file_size, pvd+0x50, 4 );
+        	}
+        }
+        
+        umd_file_size *= 4;		
+        umd_file_clusters = (umd_file_size / 0x40);
 
-    	if (umd_file_size & 0x3F)
-    	{
-    		umd_file_clusters++;
-    	}
+        if (umd_file_size & 0x3F)
+        {
+        	umd_file_clusters++;
+        }
 
-    	umd_fpl = sceKernelCreateFpl("UmdSector", PSP_MEMORY_PARTITION_KERNEL, 0, 0x800, 1, NULL);
-    	if (umd_fpl < 0)
-    	{
-    		res = umd_fpl;
-    		goto RETURN;
-    	}
+        umd_fpl = sceKernelCreateFpl("UmdSector", PSP_MEMORY_PARTITION_KERNEL, 0, 0x800, 1, NULL);
+        if (umd_fpl < 0)
+        {
+        	res = umd_fpl;
+        	goto RETURN;
+        }
 
-    	sceKernelAllocateFpl(umd_fpl, (void *)&umd_sector, NULL);
-    	
-    	read_only = 1;
-    	device_sizes[unit] = umd_vfat_size;
-    	*(u32 *)&file_entry[0x3C] = umd_file_size*0x200;
+        sceKernelAllocateFpl(umd_fpl, (void *)&umd_sector, NULL);
+        
+        read_only = 1;
+        device_sizes[unit] = umd_vfat_size;
+        *(u32 *)&file_entry[0x3C] = umd_file_size*0x200;
     }
     else
-    {		
-    	read_only = ronly;
+    {    	
+        read_only = ronly;
     
-    	if (unassign_mask & UNASSIGN_MASK_FLASH0)
-    	{
-    		res = sceIoUnassign("flash0:");
-    		if (res >= 0)
-    		{
-    			unassigned_devices[0] = 1;
-    		}
-    		else if (res != SCE_KERNEL_ERROR_NODEV)
-    		{
-    			goto RETURN;
-    		}
-    	}
+        if (unassign_mask & UNASSIGN_MASK_FLASH0)
+        {
+        	res = sceIoUnassign("flash0:");
+        	if (res >= 0)
+        	{
+        		unassigned_devices[0] = 1;
+        	}
+        	else if (res != SCE_KERNEL_ERROR_NODEV)
+        	{
+        		goto RETURN;
+        	}
+        }
 
-    	if (unassign_mask & UNASSIGN_MASK_FLASH1)
-    	{		
-    		res = sceIoUnassign("flash1:");
-    		if (res >= 0)
-    		{
-    			unassigned_devices[1] = 1;
-    		}
-    		else if (res != SCE_KERNEL_ERROR_NODEV)
-    		{
-    			goto RETURN;
-    		}
-    	}
+        if (unassign_mask & UNASSIGN_MASK_FLASH1)
+        {		
+        	res = sceIoUnassign("flash1:");
+        	if (res >= 0)
+        	{
+        		unassigned_devices[1] = 1;
+        	}
+        	else if (res != SCE_KERNEL_ERROR_NODEV)
+        	{
+        		goto RETURN;
+        	}
+        }
 
-    	if (unassign_mask & UNASSIGN_MASK_FLASH2)
-    	{
-    		res = sceIoUnassign("flash2:");
-    		if (res >= 0)
-    		{
-    			unassigned_devices[2] = 1;
-    		}
-    		else if (res != SCE_KERNEL_ERROR_NODEV)
-    		{
-    			goto RETURN;
-    		}
-    	}
+        if (unassign_mask & UNASSIGN_MASK_FLASH2)
+        {
+        	res = sceIoUnassign("flash2:");
+        	if (res >= 0)
+        	{
+        		unassigned_devices[2] = 1;
+        	}
+        	else if (res != SCE_KERNEL_ERROR_NODEV)
+        	{
+        		goto RETURN;
+        	}
+        }
     
-    	if (unassign_mask & UNASSIGN_MASK_FLASH3)
-    	{
-    		res = sceIoUnassign("flash3:");
-    		if (res >= 0)
-    		{
-    			unassigned_devices[3] = 1;
-    		}
-    		else if (res != SCE_KERNEL_ERROR_NODEV)
-    		{
-    			goto RETURN;
-    		}
-    	}
+        if (unassign_mask & UNASSIGN_MASK_FLASH3)
+        {
+        	res = sceIoUnassign("flash3:");
+        	if (res >= 0)
+        	{
+        		unassigned_devices[3] = 1;
+        	}
+        	else if (res != SCE_KERNEL_ERROR_NODEV)
+        	{
+        		goto RETURN;
+        	}
+        }
     }
 
     int intr = sceKernelCpuSuspendIntr();
 
     if (unit == PSP_USBDEVICE_UMD9660)
     {
-    	msstor_driver->funcs->IoOpen = UmdVfat_Open;
-    	msstor_driver->funcs->IoClose = umd_driver->funcs->IoClose;
-    	msstor_driver->funcs->IoRead = UmdVfat_Read;
-    	msstor_driver->funcs->IoLseek = UmdVfat_IoLseek;
+        msstor_driver->funcs->IoOpen = UmdVfat_Open;
+        msstor_driver->funcs->IoClose = umd_driver->funcs->IoClose;
+        msstor_driver->funcs->IoRead = UmdVfat_Read;
+        msstor_driver->funcs->IoLseek = UmdVfat_IoLseek;
     }
     else
     {
-    	msstor_driver->funcs->IoOpen = Lflash_IoOpen;
-    	msstor_driver->funcs->IoClose = lflash_driver->funcs->IoClose;
-    	msstor_driver->funcs->IoRead = lflash_driver->funcs->IoRead;
-    	msstor_driver->funcs->IoLseek = lflash_driver->funcs->IoLseek;
+        msstor_driver->funcs->IoOpen = Lflash_IoOpen;
+        msstor_driver->funcs->IoClose = lflash_driver->funcs->IoClose;
+        msstor_driver->funcs->IoRead = lflash_driver->funcs->IoRead;
+        msstor_driver->funcs->IoLseek = lflash_driver->funcs->IoLseek;
     }
 
-    msstor_driver->funcs->IoWrite =  Common_IoWrite;	
+    msstor_driver->funcs->IoWrite =  Common_IoWrite;    
     msstor_driver->funcs->IoIoctl =  Common_IoIoctl;
     msstor_driver->funcs->IoDevctl = Common_IoDevctl;
 
@@ -588,45 +588,45 @@ int pspUsbDeviceFinishDevice()
 
     if (umd_sector)
     {
-    	sceKernelFreeFpl(umd_fpl, umd_sector);
-    	sceKernelDeleteFpl(umd_fpl);
-    	umd_sector = NULL;
+        sceKernelFreeFpl(umd_fpl, umd_sector);
+        sceKernelDeleteFpl(umd_fpl);
+        umd_sector = NULL;
     }
 
     if (unassigned_devices[0])
     {
-    	res = sceIoAssign("flash0:", "lflash0:0,0", "flashfat0:", IOASSIGN_RDONLY, NULL, 0);
-    	if (res < 0)
-    	{
-    		goto RETURN;
-    	}
+        res = sceIoAssign("flash0:", "lflash0:0,0", "flashfat0:", IOASSIGN_RDONLY, NULL, 0);
+        if (res < 0)
+        {
+        	goto RETURN;
+        }
     }
 
     if (unassigned_devices[1])
     {
-    	res = sceIoAssign("flash1:", "lflash0:0,1", "flashfat1:", IOASSIGN_RDWR, NULL, 0);
-    	if (res < 0)
-    	{
-    		goto RETURN;
-    	}
+        res = sceIoAssign("flash1:", "lflash0:0,1", "flashfat1:", IOASSIGN_RDWR, NULL, 0);
+        if (res < 0)
+        {
+        	goto RETURN;
+        }
     }
 
     if (unassigned_devices[2])
     {
-    	res = sceIoAssign("flash2:", "lflash0:0,2", "flashfat2:", IOASSIGN_RDWR, NULL, 0);
-    	if (res < 0)
-    	{
-    		goto RETURN;
-    	}
+        res = sceIoAssign("flash2:", "lflash0:0,2", "flashfat2:", IOASSIGN_RDWR, NULL, 0);
+        if (res < 0)
+        {
+        	goto RETURN;
+        }
     }
 
     if (unassigned_devices[3])
     {
-    	res = sceIoAssign("flash3:", "lflash0:0,3", "flashfat3:", IOASSIGN_RDWR, NULL, 0);
-    	if (res < 0)
-    	{
-    		goto RETURN;
-    	}
+        res = sceIoAssign("flash3:", "lflash0:0,3", "flashfat3:", IOASSIGN_RDWR, NULL, 0);
+        if (res < 0)
+        {
+        	goto RETURN;
+        }
     }
 
 RETURN:
@@ -640,7 +640,7 @@ int module_start(SceSize args, void *argp)
     SceUID fpl, fd;
     u8 *outdata;
     int i;
-    char dev[11];	
+    char dev[11];    
     
     strcpy(dev, "lflash0:0,0");
 
@@ -650,42 +650,42 @@ int module_start(SceSize args, void *argp)
     umd_driver = sctrlHENFindDriver("umd");
     if( psp_model == PSP_GO )
     {
-    	msstor_driver = sctrlHENFindDriver("eflash0a0f");
+        msstor_driver = sctrlHENFindDriver("eflash0a0f");
     }
     else
     {
-    	msstor_driver = sctrlHENFindDriver("msstor");
+        msstor_driver = sctrlHENFindDriver("msstor");
     }
 
     if (!lflash_driver || !msstor_driver)
     {
-    	return -1;
+        return -1;
     }
 
     fpl = sceKernelCreateFpl("", PSP_MEMORY_PARTITION_KERNEL, 0, 0x200, 1, NULL);
 
     if (fpl < 0)
     {
-    	return fpl;
+        return fpl;
     }
 
     sceKernelAllocateFpl(fpl, (void *)&outdata, NULL);
 
     for (i = 0; i < 4; i++)
     {
-    	dev[10] = '0'+i;
-    	fd = sceIoOpen(dev, PSP_O_RDONLY, 0);
-    	if (fd >= 0)
-    	{
-    		if (sceIoIoctl(fd, 0x0003d001, NULL, 0, outdata, 0x44) >= 0)
-    		{
-    			device_sizes[i] = *(u32 *)&outdata[0x14];				
-    		}
+        dev[10] = '0'+i;
+        fd = sceIoOpen(dev, PSP_O_RDONLY, 0);
+        if (fd >= 0)
+        {
+        	if (sceIoIoctl(fd, 0x0003d001, NULL, 0, outdata, 0x44) >= 0)
+        	{
+        		device_sizes[i] = *(u32 *)&outdata[0x14];				
+        	}
 
-    		sceIoClose(fd);
-    	}
+        	sceIoClose(fd);
+        }
     }
-    	
+        
     Orig_IoOpen = msstor_driver->funcs->IoOpen;
     Orig_IoClose = msstor_driver->funcs->IoClose;
     Orig_IoRead = msstor_driver->funcs->IoRead;

@@ -13,14 +13,14 @@ int sceKernelSuspendThreadPatched(SceUID thid) {
     info.size = sizeof(SceKernelThreadInfo);
     if(sceKernelReferThreadStatus(thid, &info) == 0) {
         if (strcmp(info.name, "popsmain") == 0) {
-    		void *framebuf;
+        	void *framebuf;
             int width;
-    		int pixelformat;
+        	int pixelformat;
 
-    		DisplayGetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0xEEDA2E54);
+        	DisplayGetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0xEEDA2E54);
             DisplayGetFrameBuf(&framebuf, &width, &pixelformat, 0);
             memset(framebuf, 0, width * 272 * 4);
-    	}
+        }
     }
     return sceKernelSuspendThread(thid);
 }

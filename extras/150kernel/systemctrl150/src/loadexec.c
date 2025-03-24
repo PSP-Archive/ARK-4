@@ -14,11 +14,11 @@ void patchLoadExec() {
     SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
     
     if (mod != NULL) {
-    	OrigLoadExecAction = (void *)(mod->text_addr + 0x2138);
-    	MAKE_CALL(mod->text_addr + 0x2090, LoadExecActionPatched);
-    	MAKE_CALL(mod->text_addr + 0x2344, sceKernelGzipDecompressPatched);
-    	MAKE_CALL(mod->text_addr + 0x232C, sceKernelMemsetPatched);
+        OrigLoadExecAction = (void *)(mod->text_addr + 0x2138);
+        MAKE_CALL(mod->text_addr + 0x2090, LoadExecActionPatched);
+        MAKE_CALL(mod->text_addr + 0x2344, sceKernelGzipDecompressPatched);
+        MAKE_CALL(mod->text_addr + 0x232C, sceKernelMemsetPatched);
 
-    	_sw(0x3C0188FC, mod->text_addr + 0x2384);
+        _sw(0x3C0188FC, mod->text_addr + 0x2384);
     }
 }

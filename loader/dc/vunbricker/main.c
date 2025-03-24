@@ -64,11 +64,11 @@ void SetProgress(int percentage, int force)
     int st =  sceKernelGetSystemTimeLow();
     
     if (force || (percentage > last_percentage && st >= (last_time+520000)))
-    {		
-    	sprintf(pg_text, "%d%%", percentage);
-    	last_percentage = percentage;
-    	last_time = st;
-    	vlfGuiAddEventHandler(0, -2, DoProgressUpdate, NULL);
+    {    	
+        sprintf(pg_text, "%d%%", percentage);
+        last_percentage = percentage;
+        last_time = st;
+        vlfGuiAddEventHandler(0, -2, DoProgressUpdate, NULL);
     }
 }
 
@@ -102,11 +102,11 @@ int OnShutdownOrReboot(int enter)
 
     if (enter)
     {
-    	scePowerRequestStandby();
+        scePowerRequestStandby();
     }
     else
     {
-    	scePowerRequestColdReset(0);
+        scePowerRequestColdReset(0);
     }
     
     return VLF_EV_RET_REMOVE_HANDLERS;
@@ -124,15 +124,15 @@ int OnBackToMainMenuFromHI(int enter)
 {
     if (!enter)
     {
-    	int i;
+        int i;
 
-    	for (i = 0; i < N_HI_ITEMS; i++)
-    	{
-    		vlfGuiRemoveText(hi_texts[i]);
-    	}
+        for (i = 0; i < N_HI_ITEMS; i++)
+        {
+        	vlfGuiRemoveText(hi_texts[i]);
+        }
 
-    	vlfGuiCancelBottomDialog();
-    	MainMenu(3);
+        vlfGuiCancelBottomDialog();
+        MainMenu(3);
     }
 
     return VLF_EV_RET_NOTHING;
@@ -192,15 +192,15 @@ void HardwareInfo()
     model = kuKernelGetModel();
 
     if (model == 0)
-    	model_str = "(Phat)";
+        model_str = "(Phat)";
     else if (model == 1)
-    	model_str = "(Slim)";
+        model_str = "(Slim)";
     else if (model == 4)
-    	model_str = "(Go)";
+        model_str = "(Go)";
     else if (model == 10)
-    	model_str = "(Street)";
+        model_str = "(Street)";
     else
-    	model_str = "(Bright)";
+        model_str = "(Bright)";
 
     hi_texts[0] = vlfGuiAddTextF(40, 80, "Model: %02dg %s", model+1, model_str);
     hi_texts[1] = vlfGuiAddTextF(245, 80, "Motherboard: %s", mobos[mb]);
@@ -215,7 +215,7 @@ void HardwareInfo()
     
     for (i = 0; i < N_HI_ITEMS; i++)
     {
-    	vlfGuiSetTextSize(hi_texts[i], 0.75f);
+        vlfGuiSetTextSize(hi_texts[i], 0.75f);
     }
     
     vlfGuiBottomDialog(VLF_DI_BACK, -1, 1, 0, VLF_DEFAULT, OnBackToMainMenuFromHI);
@@ -227,56 +227,56 @@ int OnMainMenuSelect(int sel)
     
     switch (sel)
     {
-    	case 0:
-    		vlfGuiCancelBottomDialog();
-    		return Install(FW_ARK);
-    	break;
+        case 0:
+        	vlfGuiCancelBottomDialog();
+        	return Install(FW_ARK);
+        break;
 
-    	case 1:
-    		vlfGuiCancelBottomDialog();
-    		return Install(FW_OFW);
-    	break;
+        case 1:
+        	vlfGuiCancelBottomDialog();
+        	return Install(FW_OFW);
+        break;
 
-    	case 2:
-    		vlfGuiCancelBottomDialog();
-    		vlfGuiCancelCentralMenu();
-    		NandOperationsMenu(0);
-    		return VLF_EV_RET_NOTHING;
-    	break;
+        case 2:
+        	vlfGuiCancelBottomDialog();
+        	vlfGuiCancelCentralMenu();
+        	NandOperationsMenu(0);
+        	return VLF_EV_RET_NOTHING;
+        break;
     
-    	case 3:
-    		vlfGuiCancelBottomDialog();
-    		HardwareInfo();
-    	break;
+        case 3:
+        	vlfGuiCancelBottomDialog();
+        	HardwareInfo();
+        break;
     
-    	case 4:
-    	{
-    		vlfGuiAddWaitIcon(&wi);
-    		sctrlKernelExitVSH(NULL);
-    		return VLF_EV_RET_REMOVE_HANDLERS;
-    	}
+        case 4:
+        {
+        	vlfGuiAddWaitIcon(&wi);
+        	sctrlKernelExitVSH(NULL);
+        	return VLF_EV_RET_REMOVE_HANDLERS;
+        }
 
-    	break;
+        break;
     
-    	case 5:
-    	{			
-    		vlfGuiAddWaitIcon(&wi);
-    		scePowerRequestStandby();
-    		return VLF_EV_RET_REMOVE_HANDLERS;
-    	}
-    		
-    	break;
+        case 5:
+        {			
+        	vlfGuiAddWaitIcon(&wi);
+        	scePowerRequestStandby();
+        	return VLF_EV_RET_REMOVE_HANDLERS;
+        }
+        	
+        break;
 
-    	case 6:
-    	{
-    		
-    		vlfGuiAddWaitIcon(&wi);
-    		scePowerRequestColdReset(0);
-    		return VLF_EV_RET_REMOVE_HANDLERS;
-    	}
-    		
-    	break;
-    }	
+        case 6:
+        {
+        	
+        	vlfGuiAddWaitIcon(&wi);
+        	scePowerRequestColdReset(0);
+        	return VLF_EV_RET_REMOVE_HANDLERS;
+        }
+        	
+        break;
+    }    
     
     return VLF_EV_RET_REMOVE_OBJECTS | VLF_EV_RET_REMOVE_HANDLERS;
 }
@@ -285,13 +285,13 @@ void MainMenu(int sel)
 {
     char *items[] =
     {
-    	"Install 6.61 ARK",
-    	"Install 6.61",
-    	"NAND operations",
-    	"Hardware Info",
-    	"Boot 6.61 ARK from MemoryStick",
-    	"Shutdown",
-    	"Reboot Device"
+        "Install 6.61 ARK",
+        "Install 6.61",
+        "NAND operations",
+        "Hardware Info",
+        "Boot 6.61 ARK from MemoryStick",
+        "Shutdown",
+        "Reboot Device"
     };
 
     vlfGuiCentralMenu(7, items, sel, OnMainMenuSelect, 0, 0);
@@ -317,29 +317,29 @@ int app_main()
     u32 md5[4];
 
     SceUID thid = sceKernelCreateThread("VUnbrickerCallbackThread", CallbackThread, 0x11, 0xFA0, 0, 0);
-    sceKernelStartThread(thid, 0, 0);	
+    sceKernelStartThread(thid, 0, 0);    
     
     dcGetHardwareInfo(NULL, NULL, NULL, NULL, NULL, NULL, &nandsize);
 
     if (nandsize < (64*1024*1024))
     {
-    	flash_sizes[0] = 24576;
-    	flash_sizes[1] = 4096;
-    	flash_sizes[2] = 1024;
-    	flash_sizes[3] = 960;
+        flash_sizes[0] = 24576;
+        flash_sizes[1] = 4096;
+        flash_sizes[2] = 1024;
+        flash_sizes[3] = 960;
     }
     else
     {
-    	flash_sizes[0] = 41984;
-    	flash_sizes[1] = 5120;
-    	flash_sizes[2] = 4096;
-    	flash_sizes[3] = 9344;
+        flash_sizes[0] = 41984;
+        flash_sizes[1] = 5120;
+        flash_sizes[2] = 4096;
+        flash_sizes[3] = 9344;
     }
 
     totalflash_size = flash_sizes[0]+flash_sizes[1]+flash_sizes[2]+flash_sizes[3];
 
     if (sceRtcGetCurrentTick(&tick) < 0)
-    	tick = sceKernelGetSystemTimeWide();
+        tick = sceKernelGetSystemTimeWide();
 
     sceKernelUtilsMd5Digest((u8 *)&tick, sizeof(u64), (u8 *)md5);
     sceKernelUtilsMt19937Init(&ctx, md5[0] ^ md5[1] ^ md5[2] ^ md5[3]);
@@ -349,18 +349,18 @@ int app_main()
 
     u32 model = kuKernelGetModel();
     if ( model == 4 )
-    	data = ReadFileAllocEx("flash0:/vsh/resource/01-12_03g.bmp", rnd*6176, 6176, NULL);
+        data = ReadFileAllocEx("flash0:/vsh/resource/01-12_03g.bmp", rnd*6176, 6176, NULL);
     else
-    	data = ReadFileAllocEx("flash0:/vsh/resource/01-12.bmp", rnd*6176, 6176, NULL);
+        data = ReadFileAllocEx("flash0:/vsh/resource/01-12.bmp", rnd*6176, 6176, NULL);
 
     if (!data || vlfGuiSetBackgroundFileBuffer(data, 6176) < 0)
     {
-    	vlfGuiSetBackgroundPlane(0xFF000000);
+        vlfGuiSetBackgroundPlane(0xFF000000);
     }
 
     if (data)
-    	free(data);
-    	
+        free(data);
+        
     vlfGuiSetLanguage(1);
     vlfGuiSetButtonConfig(1);
 
@@ -379,22 +379,22 @@ int app_main()
 
     if (!big_buffer)
     {
-    	BIG_BUFFER_SIZE = (4*1024*1024);
-    	big_buffer = malloc64(BIG_BUFFER_SIZE);
+        BIG_BUFFER_SIZE = (4*1024*1024);
+        big_buffer = malloc64(BIG_BUFFER_SIZE);
     }
 
     if (!sm_buffer1 || !sm_buffer2 || !big_buffer)
     {
-    	__asm("break\n");
-    	while (1);
+        __asm("break\n");
+        while (1);
     }
 
     MainMenu(0);
     
     while (1)
     {
-    	vlfGuiDrawFrame();
-    }	
+        vlfGuiDrawFrame();
+    }    
 
        return 0;
 }

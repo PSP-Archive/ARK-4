@@ -67,7 +67,7 @@ struct {
     {USBDEV_PRX, USBDEV_PRX_FLASH},
     {VSH_MENU, VSH_MENU_FLASH},
     {RECOVERY_PRX, RECOVERY_PRX_FLASH},
-	{UPDATER_FILE, UPDATER_FILE_FLASH},
+    {UPDATER_FILE, UPDATER_FILE_FLASH},
     {ARK_SETTINGS, ARK_SETTINGS_FLASH},
 };
 
@@ -95,18 +95,18 @@ void install(char *argv[]) {
     int len = strlen(argv[0])-8;
     char fatms[len];
     for (int i=0; i<N_FLASH_FILES; i++){
-    	if(strstr(flash_files[i].orig, "fatms") && (kuKernelGetModel() == PSP_GO)) continue;
-    	else if(strstr(flash_files[i].orig, "fatms")) {
-    		snprintf(fatms, strlen(argv[0])-8, "%s", argv[0]);
-    		strcpy(path, fatms);
-    		strcat(path, flash_files[i].orig);
-    	}
-    	else {
-    		strcpy(path, ark_config.arkpath);
-    		strcat(path, flash_files[i].orig);
-    	}
-    		printf("Installing %s to %s\n", flash_files[i].orig, flash_files[i].dest);
-    		copy_file(path, flash_files[i].dest);
+        if(strstr(flash_files[i].orig, "fatms") && (kuKernelGetModel() == PSP_GO)) continue;
+        else if(strstr(flash_files[i].orig, "fatms")) {
+        	snprintf(fatms, strlen(argv[0])-8, "%s", argv[0]);
+        	strcpy(path, fatms);
+        	strcat(path, flash_files[i].orig);
+        }
+        else {
+        	strcpy(path, ark_config.arkpath);
+        	strcat(path, flash_files[i].orig);
+        }
+        	printf("Installing %s to %s\n", flash_files[i].orig, flash_files[i].dest);
+        	copy_file(path, flash_files[i].dest);
     }
 
     // Kill Main Thread
@@ -123,13 +123,13 @@ void uninstall() {
     pspDebugScreenClear();
     open_flash();
     for (int i=0; i<N_FLASH_FILES; i++){
-    	if(sceIoGetstat(flash_files[i].dest, &stat) < 0) {
-    		return;
-    	}
-    	else {
-    		printf("Removing %s\n", flash_files[i].dest);
-    		sceIoRemove(flash_files[i].dest);
-    	}
+        if(sceIoGetstat(flash_files[i].dest, &stat) < 0) {
+        	return;
+        }
+        else {
+        	printf("Removing %s\n", flash_files[i].dest);
+        	sceIoRemove(flash_files[i].dest);
+        }
     }
 
     // Kill Main Thread
@@ -152,12 +152,12 @@ void pops4tool() {
             printf("Installing %s\n", flash_path);
             copy_file(pops_files[i], flash_path);
         }
-    	else {
-    		printf("\n\nError files not found.\n");
-    		printf("Exiting...\n");
-    		sceKernelDelayThread(1000000);
-    		sceKernelExitGame();
-    	}
+        else {
+        	printf("\n\nError files not found.\n");
+        	printf("Exiting...\n");
+        	sceKernelDelayThread(1000000);
+        	sceKernelExitGame();
+        }
     }
     printf("\n\nExiting...\n");
     sceKernelDelayThread(1000000);
@@ -173,18 +173,18 @@ void fatms371_mod(u32 _uninstall) {
     for (int i=0; i<NELEMS(fatms371_files); i++){
         char flash_path[256];
         sprintf(flash_path, "flash0:/%s", fatms371_files[i]);
-    	if(!_uninstall) {
+        if(!_uninstall) {
             if (sceIoGetstat(fatms371_files[i], &stat) >= 0){
                 printf("Installing %s\n", flash_path);
                 copy_file(fatms371_files[i], flash_path);
             }
-    	}
-    	else {
-    		if (sceIoGetstat(flash_path, &stat) >= 0){
+        }
+        else {
+        	if (sceIoGetstat(flash_path, &stat) >= 0){
                 printf("Removing %s\n", flash_path);
-    			sceIoRemove(flash_path);
+        		sceIoRemove(flash_path);
             }
-    	}
+        }
 
     }
     printf("\n\nExiting...\n");
@@ -201,18 +201,18 @@ void deadef_mod(u32 _uninstall) {
     for (int i=0; i<NELEMS(deadef_files); i++){
         char flash_path[256];
         sprintf(flash_path, "flash0:/%s", deadef_files[i]);
-    	if(!_uninstall) {
+        if(!_uninstall) {
             if (sceIoGetstat(deadef_files[i], &stat) >= 0){
                 printf("Installing %s\n", flash_path);
                 copy_file(deadef_files[i], flash_path);
             }
-    	}
-    	else {
-    		if (sceIoGetstat(flash_path, &stat) >= 0){
+        }
+        else {
+        	if (sceIoGetstat(flash_path, &stat) >= 0){
                 printf("Removing %s\n", flash_path);
-    			sceIoRemove(flash_path);
+        		sceIoRemove(flash_path);
             }
-    	}
+        }
 
     }
     printf("\n\nExiting...\n");
@@ -227,7 +227,7 @@ void wait_release(unsigned int buttons)
 
     sceCtrlReadBufferPositive(&pad, 1);
     while(pad.Buttons & buttons)
-    	sceCtrlReadBufferPositive(&pad, 1);
+        sceCtrlReadBufferPositive(&pad, 1);
 }
 
 //from ospbt by cory1492
@@ -238,10 +238,10 @@ unsigned int wait_press(unsigned int buttons)
     sceCtrlReadBufferPositive(&pad, 1);
     while(1)
     {
-    	if(pad.Buttons & buttons)
-    		return pad.Buttons & buttons;
+        if(pad.Buttons & buttons)
+        	return pad.Buttons & buttons;
 
-    	sceCtrlReadBufferPositive(&pad, 1);
+        sceCtrlReadBufferPositive(&pad, 1);
     }
 
     return 0;
@@ -268,151 +268,151 @@ int main(int argc, char * argv[])
     int cursor = 0;
     while(1) {
 
-    	if(kuKernelGetModel() == PSP_GO) {
-    		if(cursor > 3)
-    			cursor = 0;
-    	}
-    	if(sctrlHENIsToolKit()) {
-    		if(cursor > 4)
-    			cursor = 0;
-    	}
-    	else if(!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && cursor > 3) cursor = 0;
-    	if(cursor < 0) {
-    		if(sctrlHENIsToolKit())
-    			cursor = 4;
-    		else
-    			cursor = 3;
-    	}
+        if(kuKernelGetModel() == PSP_GO) {
+        	if(cursor > 3)
+        		cursor = 0;
+        }
+        if(sctrlHENIsToolKit()) {
+        	if(cursor > 4)
+        		cursor = 0;
+        }
+        else if(!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && cursor > 3) cursor = 0;
+        if(cursor < 0) {
+        	if(sctrlHENIsToolKit())
+        		cursor = 4;
+        	else
+        		cursor = 3;
+        }
 
 
-    	if(cursor == 0) setbcolor(GRAY);
-    	printfc(3, 4, " Install              ");
-    	setbcolor(BLACK);
-    	if(cursor == 1) setbcolor(GRAY);
-    	printfc(3, 5, " Uninstall            ");
-    	setbcolor(BLACK);
-    	if(cursor == 2) setbcolor(GRAY);
-    	if (sctrlHENIsToolKit()) {
-    		if(cursor == 2)
-    			setbcolor(GRAY);
-    		printfc(3, 6, " Install popsTool     ");
+        if(cursor == 0) setbcolor(GRAY);
+        printfc(3, 4, " Install              ");
+        setbcolor(BLACK);
+        if(cursor == 1) setbcolor(GRAY);
+        printfc(3, 5, " Uninstall            ");
+        setbcolor(BLACK);
+        if(cursor == 2) setbcolor(GRAY);
+        if (sctrlHENIsToolKit()) {
+        	if(cursor == 2)
+        		setbcolor(GRAY);
+        	printfc(3, 6, " Install popsTool     ");
+        	setbcolor(BLACK);
+        	if(cursor == 3)
+        		setbcolor(GRAY);
+        	int fatms371_check = sceIoOpen("flash0:/kd/_fatms371.prx", PSP_O_RDONLY, 0);
+        	int fatms371_help_check = sceIoOpen("flash0:/kd/_fatmshlp.prx", PSP_O_RDONLY, 0);
+        	if( fatms371_check >= 0 || fatms371_help_check >= 0) {
+        		fatms371_uninstall = 1;
+        		printfc(3, 7, " Uninstall fatms371_mod ");
+        		sceIoClose(fatms371_check);
+        		sceIoClose(fatms371_help_check);
+        	}
+        	else
+        		printfc(3, 7, " Install fatms371_mod ");
+        	setbcolor(BLACK);
+        }
+        else if((kuKernelGetModel() == PSP_GO)) {
+        	if(cursor == 2)
+        		setbcolor(GRAY);
+    		SceIoStat stat;
+        	int cnf_check = sceIoGetstat("flash0:/kd/pstbtcnf_05g.bin", &stat);
+        	int deadef_check = sceIoGetstat("flash0:/kd/deadef.prx", &stat);
+        	if( cnf_check >= 0 || deadef_check >= 0) {
+        		deadef_uninstall = 1;
+        		printfc(3, 6, " Uninstall DeadEf mod ");
+        	}
+        	else {
+        		printfc(3, 6, " Install DeadEf mod ");
+        	}
     		setbcolor(BLACK);
     		if(cursor == 3)
-    			setbcolor(GRAY);
-    		int fatms371_check = sceIoOpen("flash0:/kd/_fatms371.prx", PSP_O_RDONLY, 0);
-    		int fatms371_help_check = sceIoOpen("flash0:/kd/_fatmshlp.prx", PSP_O_RDONLY, 0);
-    		if( fatms371_check >= 0 || fatms371_help_check >= 0) {
-    			fatms371_uninstall = 1;
-    			printfc(3, 7, " Uninstall fatms371_mod ");
-    			sceIoClose(fatms371_check);
-    			sceIoClose(fatms371_help_check);
-    		}
-    		else
-    			printfc(3, 7, " Install fatms371_mod ");
-    		setbcolor(BLACK);
-    	}
-    	else if((kuKernelGetModel() == PSP_GO)) {
-    		if(cursor == 2)
-    			setbcolor(GRAY);
-			SceIoStat stat;
-    		int cnf_check = sceIoGetstat("flash0:/kd/pstbtcnf_05g.bin", &stat);
-    		int deadef_check = sceIoGetstat("flash0:/kd/deadef.prx", &stat);
-    		if( cnf_check >= 0 || deadef_check >= 0) {
-    			deadef_uninstall = 1;
-    			printfc(3, 6, " Uninstall DeadEf mod ");
-    		}
-    		else {
-    			printfc(3, 6, " Install DeadEf mod ");
-    		}
-			setbcolor(BLACK);
-			if(cursor == 3)
-    			setbcolor(GRAY);
-    		printfc(3, 7, " Exit                 ");
-    		setbcolor(BLACK);
-    	}
-    	else if(!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO) {
-    		if(cursor == 2)
-    			setbcolor(GRAY);
-			SceIoStat stat;
-    		int fatms371_check = sceIoGetstat("flash0:/kd/_fatms371.prx", &stat);
-    		int fatms371_help_check = sceIoGetstat("flash0:/kd/_fatmshlp.prx", &stat);
-    		if( fatms371_check >= 0 || fatms371_help_check >= 0) {
-    			fatms371_uninstall = 1;
-    			printfc(3, 6, " Uninstall fatms371_mod ");
-    		}
-    		else {
-    			printfc(3, 6, " Install fatms371_mod ");
-    		}
-    		setbcolor(BLACK);
-    	}
+        		setbcolor(GRAY);
+        	printfc(3, 7, " Exit                 ");
+        	setbcolor(BLACK);
+        }
+        else if(!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO) {
+        	if(cursor == 2)
+        		setbcolor(GRAY);
+    		SceIoStat stat;
+        	int fatms371_check = sceIoGetstat("flash0:/kd/_fatms371.prx", &stat);
+        	int fatms371_help_check = sceIoGetstat("flash0:/kd/_fatmshlp.prx", &stat);
+        	if( fatms371_check >= 0 || fatms371_help_check >= 0) {
+        		fatms371_uninstall = 1;
+        		printfc(3, 6, " Uninstall fatms371_mod ");
+        	}
+        	else {
+        		printfc(3, 6, " Install fatms371_mod ");
+        	}
+        	setbcolor(BLACK);
+        }
 
-    	if((!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO)) {
-    		if(cursor == 3)
-    			setbcolor(GRAY);
-    		printfc(3, 7, " Exit                 ");
-    		setbcolor(BLACK);
-    	}
-    	if((sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO)) {
-    		if(cursor == 4)
-    			setbcolor(GRAY);
-    		printfc(3, 8, " Exit                 ");
-    		setbcolor(BLACK);
-    	}
+        if((!sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO)) {
+        	if(cursor == 3)
+        		setbcolor(GRAY);
+        	printfc(3, 7, " Exit                 ");
+        	setbcolor(BLACK);
+        }
+        if((sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO)) {
+        	if(cursor == 4)
+        		setbcolor(GRAY);
+        	printfc(3, 8, " Exit                 ");
+        	setbcolor(BLACK);
+        }
 
-    	int i;
-    	for(i = 0; i < (sctrlHENIsToolKit() ? 5 : 4); i++)
-    		printfc(1, 4 + i, " ");
+        int i;
+        for(i = 0; i < (sctrlHENIsToolKit() ? 5 : 4); i++)
+        	printfc(1, 4 + i, " ");
 
-    	setcolor(BLUE);
-    	printfc(1, 4 + cursor, ">");
+        setcolor(BLUE);
+        printfc(1, 4 + cursor, ">");
 
-    	u32 Buttons = wait_press(PSP_CTRL_CROSS | PSP_CTRL_UP | PSP_CTRL_DOWN);
-    	wait_release(PSP_CTRL_CROSS | PSP_CTRL_UP | PSP_CTRL_DOWN);
+        u32 Buttons = wait_press(PSP_CTRL_CROSS | PSP_CTRL_UP | PSP_CTRL_DOWN);
+        wait_release(PSP_CTRL_CROSS | PSP_CTRL_UP | PSP_CTRL_DOWN);
 
-    	SceCtrlData pad;
-    	sceCtrlReadBufferPositive(&pad, 1);
-    	if (Buttons & PSP_CTRL_CROSS) {
+        SceCtrlData pad;
+        sceCtrlReadBufferPositive(&pad, 1);
+        if (Buttons & PSP_CTRL_CROSS) {
 
-    		setc(0, 9);
-    		if(cursor == 0)
-    			install(argv);
-    		if(cursor == 1)
-    			uninstall();
-    		if(cursor == 2 && sctrlHENIsToolKit())
-    			pops4tool();
-    		if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && fatms371_uninstall == 0)
-    			fatms371_mod(0);
-    		if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && fatms371_uninstall == 1)
-    			fatms371_mod(1);
-			if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() == PSP_GO && deadef_uninstall == 0)
-				deadef_mod(0);
-				if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() == PSP_GO && deadef_uninstall == 1)
-				deadef_mod(1);
-    		if(cursor == 2 && (kuKernelGetModel() == PSP_GO)) {
-    			printf("\n\nExiting...\n");
-    			sceKernelDelayThread(1000000);
-    			sceKernelExitGame();
-    		}
-    		if(cursor == 3 && !sctrlHENIsToolKit()) {
-    			printf("\n\nExiting...\n");
-    			sceKernelDelayThread(1000000);
-    			sceKernelExitGame();
-    		}
-    		if(cursor == 3 && sctrlHENIsToolKit() && fatms371_uninstall == 0)
-    			fatms371_mod(0);
-    		if(cursor == 3 && sctrlHENIsToolKit() && fatms371_uninstall == 1)
-    			fatms371_mod(1);
-    		if(cursor == 4 && sctrlHENIsToolKit()) {
-    			printf("\n\nExiting...\n");
-    			sceKernelDelayThread(1000000);
-    			sceKernelExitGame();
-    		}
+        	setc(0, 9);
+        	if(cursor == 0)
+        		install(argv);
+        	if(cursor == 1)
+        		uninstall();
+        	if(cursor == 2 && sctrlHENIsToolKit())
+        		pops4tool();
+        	if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && fatms371_uninstall == 0)
+        		fatms371_mod(0);
+        	if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() != PSP_GO && fatms371_uninstall == 1)
+        		fatms371_mod(1);
+    		if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() == PSP_GO && deadef_uninstall == 0)
+    			deadef_mod(0);
+    			if(cursor == 2 && !sctrlHENIsToolKit() && kuKernelGetModel() == PSP_GO && deadef_uninstall == 1)
+    			deadef_mod(1);
+        	if(cursor == 2 && (kuKernelGetModel() == PSP_GO)) {
+        		printf("\n\nExiting...\n");
+        		sceKernelDelayThread(1000000);
+        		sceKernelExitGame();
+        	}
+        	if(cursor == 3 && !sctrlHENIsToolKit()) {
+        		printf("\n\nExiting...\n");
+        		sceKernelDelayThread(1000000);
+        		sceKernelExitGame();
+        	}
+        	if(cursor == 3 && sctrlHENIsToolKit() && fatms371_uninstall == 0)
+        		fatms371_mod(0);
+        	if(cursor == 3 && sctrlHENIsToolKit() && fatms371_uninstall == 1)
+        		fatms371_mod(1);
+        	if(cursor == 4 && sctrlHENIsToolKit()) {
+        		printf("\n\nExiting...\n");
+        		sceKernelDelayThread(1000000);
+        		sceKernelExitGame();
+        	}
 
-    	}
-    	else if(Buttons & PSP_CTRL_UP)
-    		cursor--;
-    	else if(Buttons & PSP_CTRL_DOWN)
-    		cursor++;
+        }
+        else if(Buttons & PSP_CTRL_UP)
+        	cursor--;
+        else if(Buttons & PSP_CTRL_DOWN)
+        	cursor++;
     }
     // Exit Function
     return 0;

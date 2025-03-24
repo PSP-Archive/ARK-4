@@ -23,10 +23,10 @@ int SysEventHandler(int eventId, char *eventName, void *param, int *result);
 
 PspSysEventHandler sysEventHandler =
     {
-    	.size = sizeof(PspSysEventHandler),
-    	.name = "",
-    	.type_mask = 0x00FFFF00,
-    	.handler = SysEventHandler};
+        .size = sizeof(PspSysEventHandler),
+        .name = "",
+        .type_mask = 0x00FFFF00,
+        .handler = SysEventHandler};
 
 extern SceUID flashemu_sema;
 extern int msNotReady;
@@ -49,7 +49,7 @@ int codePagesceIoOpenPatched(const char *file, int flags, SceMode mode)
     SceModule2 *mod = (SceModule2 *)sceKernelFindModuleByName("vsh_module");
 
     if (!mod)
-    	return 0x80010018;
+        return 0x80010018;
 
     return sceIoOpen(file, flags, mode);
 }
@@ -60,41 +60,41 @@ void OnModuleStart(SceModule2 *mod)
 
     if (strcmp(moduleName, "sceUtility_Driver") == 0)
     {
-    	if (psp_model == PSP_GO){
-    		SceModule2 *mod2 = (SceModule2 *)sceKernelFindModuleByName("sceFATFS_Driver");
+        if (psp_model == PSP_GO){
+        	SceModule2 *mod2 = (SceModule2 *)sceKernelFindModuleByName("sceFATFS_Driver");
 
-    		MAKE_CALL(mod2->text_addr + 0x3144, df_openPatched);
-    		MAKE_CALL(mod2->text_addr + 0x3BEC, df_dopenPatched);
-    		MAKE_CALL(mod2->text_addr + 0x4514, df_devctlPatched);
-    	}
-    	else {
-    		SceModule2 *mod2 = (SceModule2 *)sceKernelFindModuleByName("sceMSFAT_Driver");
+        	MAKE_CALL(mod2->text_addr + 0x3144, df_openPatched);
+        	MAKE_CALL(mod2->text_addr + 0x3BEC, df_dopenPatched);
+        	MAKE_CALL(mod2->text_addr + 0x4514, df_devctlPatched);
+        }
+        else {
+        	SceModule2 *mod2 = (SceModule2 *)sceKernelFindModuleByName("sceMSFAT_Driver");
 
-    		MAKE_CALL(mod2->text_addr + 0x30fc, df_openPatched);
-    		MAKE_CALL(mod2->text_addr + 0x3ba4, df_dopenPatched);
-    		MAKE_CALL(mod2->text_addr + 0x44cc, df_devctlPatched);
-    	}
-    	ClearCaches();
+        	MAKE_CALL(mod2->text_addr + 0x30fc, df_openPatched);
+        	MAKE_CALL(mod2->text_addr + 0x3ba4, df_dopenPatched);
+        	MAKE_CALL(mod2->text_addr + 0x44cc, df_devctlPatched);
+        }
+        ClearCaches();
     }
     else if (strcmp(moduleName, "sceLflashFatfmt") == 0)
     {
-    	u32 funcAddr = sctrlHENFindFunction("sceLflashFatfmt", "LflashFatfmt", 0xb7a424a4); // sceLflashFatfmtStartFatfmt
-    	if (funcAddr)
-    	{
-    		MAKE_DUMMY_FUNCTION_RETURN_0(funcAddr);
-    		ClearCaches();
-    	}
+        u32 funcAddr = sctrlHENFindFunction("sceLflashFatfmt", "LflashFatfmt", 0xb7a424a4); // sceLflashFatfmtStartFatfmt
+        if (funcAddr)
+        {
+        	MAKE_DUMMY_FUNCTION_RETURN_0(funcAddr);
+        	ClearCaches();
+        }
     }
     else if (strcmp(moduleName, "sceCodepage_Service") == 0)
     {
-    	hookImportByNID(mod, "IoFileMgrForKernel", 0x109f50bc, codePagesceIoOpenPatched);
+        hookImportByNID(mod, "IoFileMgrForKernel", 0x109f50bc, codePagesceIoOpenPatched);
 
-    	ClearCaches();
+        ClearCaches();
     }
     else if (strcmp(moduleName, "sceMediaSync") == 0)
     {
-    	MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x135c);
-    	ClearCaches();
+        MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr + 0x135c);
+        ClearCaches();
     }
 
     if (previous) previous(mod);
@@ -129,18 +129,18 @@ int SysEventHandler(int eventId, char *eventName, void *param, int *result)
 {
     if (eventId == 0x4000) //suspend
     {
-    	int i;
-    	for(i = 0; i < MAX_FILES; i++)
-    	{
-    		if(file_handler[i].opened && file_handler[i].unk_8 == 0 && file_handler[i].flags != DIR_FLAG)
-    		{
-    			file_handler[i].offset = sceIoLseek(file_handler[i].fd, 0, PSP_SEEK_CUR);
-    			file_handler[i].unk_8 = 1;
-    			sceIoClose(file_handler[i].fd);
-    		}
-    	}
+        int i;
+        for(i = 0; i < MAX_FILES; i++)
+        {
+        	if(file_handler[i].opened && file_handler[i].unk_8 == 0 && file_handler[i].flags != DIR_FLAG)
+        	{
+        		file_handler[i].offset = sceIoLseek(file_handler[i].fd, 0, PSP_SEEK_CUR);
+        		file_handler[i].unk_8 = 1;
+        		sceIoClose(file_handler[i].fd);
+        	}
+        }
     }
     else if (eventId == 0x10009) // resume
-    	msNotReady = 1;
+        msNotReady = 1;
     return 0;
 }

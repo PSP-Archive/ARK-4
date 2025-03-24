@@ -75,23 +75,23 @@ void initAdrenalineInfo() {
 
     int keyconfig = sceKernelInitKeyConfig();
     if (keyconfig == PSP_INIT_KEYCONFIG_GAME) {
-    	getSfoTitle(adrenaline->title, 128);
+        getSfoTitle(adrenaline->title, 128);
     } else if (keyconfig == PSP_INIT_KEYCONFIG_POPS) {
-    	getSfoTitle(adrenaline->title, 128);
-    	adrenaline->pops_mode = 1;
+        getSfoTitle(adrenaline->title, 128);
+        adrenaline->pops_mode = 1;
     } else if (keyconfig == PSP_INIT_KEYCONFIG_VSH) {
-    	strcpy(adrenaline->title, "XMB\xE2\x84\xA2");
+        strcpy(adrenaline->title, "XMB\xE2\x84\xA2");
     } else {
-    	strcpy(adrenaline->title, "Unknown");
+        strcpy(adrenaline->title, "Unknown");
     }
 
     void *game_info = sceKernelGetGameInfo661();
     if (game_info)
-    	strcpy(adrenaline->titleid, game_info + 0x44);
+        strcpy(adrenaline->titleid, game_info + 0x44);
 
     char *filename = sceKernelInitFileName();
     if (filename)
-    	strcpy(adrenaline->filename, filename);
+        strcpy(adrenaline->filename, filename);
 }
 
 int adrenaline_interrupt() {
@@ -102,24 +102,24 @@ int adrenaline_interrupt() {
 
 int adrenaline_thread(SceSize args, void *argp) {
     while (1) {
-    	// Wait for semaphore signal
-    	sceKernelWaitSema(adrenaline_semaid, 1, NULL);
+        // Wait for semaphore signal
+        sceKernelWaitSema(adrenaline_semaid, 1, NULL);
 
-    	switch (adrenaline->psp_cmd) {
-    		case ADRENALINE_PSP_CMD_REINSERT_MS:
-    			sceIoDevctl("fatms0:", 0x0240D81E, NULL, 0, NULL, 0);
-    			break;
-    			
-    		case ADRENALINE_PSP_CMD_SAVESTATE:
-    			adrenaline->savestate_mode = SAVESTATE_MODE_SAVE;
-    			_scePowerSuspendOperation(0x202);
-    			break;
-    			
-    		case ADRENALINE_PSP_CMD_LOADSTATE:
-    			adrenaline->savestate_mode = SAVESTATE_MODE_LOAD;
-    			_scePowerSuspendOperation(0x202);
-    			break;
-    	}
+        switch (adrenaline->psp_cmd) {
+        	case ADRENALINE_PSP_CMD_REINSERT_MS:
+        		sceIoDevctl("fatms0:", 0x0240D81E, NULL, 0, NULL, 0);
+        		break;
+        		
+        	case ADRENALINE_PSP_CMD_SAVESTATE:
+        		adrenaline->savestate_mode = SAVESTATE_MODE_SAVE;
+        		_scePowerSuspendOperation(0x202);
+        		break;
+        		
+        	case ADRENALINE_PSP_CMD_LOADSTATE:
+        		adrenaline->savestate_mode = SAVESTATE_MODE_LOAD;
+        		_scePowerSuspendOperation(0x202);
+        		break;
+        }
     }
 
     return 0;
@@ -139,25 +139,25 @@ int __sceSasInitPatched(void *sasCore, int grainSamples, int maxVoices, int outM
 
 void ReInitSasCore() {
     if (__sceSasInit && sas_inited) {
-    	sceSasCoreExit();
-    	sceSasCoreInit();
-    	__sceSasInit(sas_args.sasCore, sas_args.grainSamples, sas_args.maxVoices, sas_args.outMode, sas_args.sampleRate);
+        sceSasCoreExit();
+        sceSasCoreInit();
+        __sceSasInit(sas_args.sasCore, sas_args.grainSamples, sas_args.maxVoices, sas_args.outMode, sas_args.sampleRate);
     }
 }
 
 int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
     // Resume completed
     if (ev_id == 0x400000) {
-    	if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-    		adrenaline->savestate_mode = SAVESTATE_MODE_NONE;
-    		ReInitSasCore();
-    		
-    		if (adrenaline->pops_mode) {
-    			int (* sceKermitPeripheralInitPops)() = (void *)FindProc("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
-    			if (sceKermitPeripheralInitPops)
-    				sceKermitPeripheralInitPops();
-    		}
-    	}
+        if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
+        	adrenaline->savestate_mode = SAVESTATE_MODE_NONE;
+        	ReInitSasCore();
+        	
+        	if (adrenaline->pops_mode) {
+        		int (* sceKermitPeripheralInitPops)() = (void *)FindProc("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
+        		if (sceKermitPeripheralInitPops)
+        			sceKermitPeripheralInitPops();
+        	}
+        }
     }
 
     return 0;
@@ -165,22 +165,22 @@ int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
 
 void VitaSyncPatched() {
     if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-    	void (* SaveStateBinary)() = (void *)0x00010000;
-    	memcpy((void *)SaveStateBinary, binary, size_binary);
-    	ClearCaches();
+        void (* SaveStateBinary)() = (void *)0x00010000;
+        memcpy((void *)SaveStateBinary, binary, size_binary);
+        ClearCaches();
 
-    	SaveStateBinary();
+        SaveStateBinary();
 
-    	// Param for uiResumePoint
-    	u32 data[53];
-    	memset(data, 0, sizeof(data));
-    	data[0] = sizeof(data);
-    	data[8] = 0xFFFF;
-    	data[9] = 0x2;
-    	data[12] = 0x4B0;
-    	uiResumePoint(data);
+        // Param for uiResumePoint
+        u32 data[53];
+        memset(data, 0, sizeof(data));
+        data[0] = sizeof(data);
+        data[8] = 0xFFFF;
+        data[9] = 0x2;
+        data[12] = 0x4B0;
+        uiResumePoint(data);
 
-    	while(1);
+        while(1);
     }
 
     VitaSync();
@@ -188,7 +188,7 @@ void VitaSyncPatched() {
 
 int SetFlag1Patched() {
     if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-    	return 0;
+        return 0;
     }
     
     return SetFlag1();
@@ -196,7 +196,7 @@ int SetFlag1Patched() {
 
 int SetFlag2Patched() {
     if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-    	return 0;
+        return 0;
     }
     
     return SetFlag2();
@@ -204,7 +204,7 @@ int SetFlag2Patched() {
 
 int sceKermitSyncDisplayPatched() {
     if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-    	return 0;
+        return 0;
     }
     
     return sceKermitSyncDisplay();
@@ -237,10 +237,10 @@ void PatchPowerService2(u32 text_addr) {
 int initAdrenaline() {
     // Register sysevent handler
     static PspSysEventHandler event_handler = {
-    	sizeof(PspSysEventHandler),
-    	"",
-    	0x00FFFF00,
-    	SysEventHandler
+        sizeof(PspSysEventHandler),
+        "",
+        0x00FFFF00,
+        SysEventHandler
     };
 
     sceKernelRegisterSysEventHandler(&event_handler);
@@ -251,12 +251,12 @@ int initAdrenaline() {
     // Create adrenaline semaphore
     adrenaline_semaid = sceKernelCreateSema("", 0, 0, 1, NULL);
     if (adrenaline_semaid < 0)
-    	return adrenaline_semaid;
+        return adrenaline_semaid;
 
     // Create and start adrenaline thread
     SceUID thid = sceKernelCreateThread("adrenaline_thread", adrenaline_thread, 0x10, 0x4000, 0, NULL);
     if (thid < 0)
-    	return thid;
+        return thid;
 
     sceKernelStartThread(thid, 0, NULL);
 

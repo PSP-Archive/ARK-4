@@ -28,7 +28,7 @@
 extern string ark_version;
 static string save_status;
 static int status_frame_count = 0; // a few seconds
-                				   //
+                    			   //
 
 SubMenu::SubMenu(Menu* menu) {
     this->index = 0;
@@ -137,17 +137,17 @@ void SubMenu::run() {
         else if (control.accept() || control.left() || control.right()){
             switch (index){
                 case 0:
-                	changeMsCacheSetting(); getItems(); break;
+                    changeMsCacheSetting(); getItems(); break;
                 case 1:
                 case 2:
                 case 3:
                 case 4:
-                	changeSetting(index); getItems(); 
-                	break;
+                    changeSetting(index); getItems(); 
+                    break;
                 case 5: 
-                	menu->fadeOut(); common::rebootMenu(); break;
+                    menu->fadeOut(); common::rebootMenu(); break;
                 case 6: 
-                	menu->fadeOut(); sceKernelExitGame(); break;
+                    menu->fadeOut(); sceKernelExitGame(); break;
             }
         }
         else if (control.up()){

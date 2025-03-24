@@ -96,58 +96,58 @@ int font_load(vsh_Menu *vsh) {
     
     // if language not found, default to english
     if (ret < 0)
-    	value = PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
+        value = PSP_SYSTEMPARAM_LANGUAGE_ENGLISH;
 
     switch (value) {
-    	case PSP_SYSTEMPARAM_LANGUAGE_RUSSIAN:
-    		// make sure we use a russian font
-    		if (vsh->config.ark_menu.vsh_font != 49){
-    			vsh->config.ark_menu.vsh_font = 49;
-    		}
-    		break;
-    	case PSP_SYSTEMPARAM_LANGUAGE_CHINESE_SIMPLIFIED:
-    		// make sure we use a specific chinese font
-    		if (vsh->config.ark_menu.vsh_font != 56){
-    			vsh->config.ark_menu.vsh_font = 56;
-    		}
-    		break;
-    	case PSP_SYSTEMPARAM_LANGUAGE_CHINESE_TRADITIONAL:
-    		// make sure we use a specific chinese font
-    		if (vsh->config.ark_menu.vsh_font != 57){
-    			vsh->config.ark_menu.vsh_font = 57;
-    		}
-    		break;
-    	case PSP_SYSTEMPARAM_LANGUAGE_JAPANESE:
-    		// make sure we use a specific chinese font
-    		if (vsh->config.ark_menu.vsh_font != 58){
-    			vsh->config.ark_menu.vsh_font = 58;
-    		}
-    		break;
+        case PSP_SYSTEMPARAM_LANGUAGE_RUSSIAN:
+        	// make sure we use a russian font
+        	if (vsh->config.ark_menu.vsh_font != 49){
+        		vsh->config.ark_menu.vsh_font = 49;
+        	}
+        	break;
+        case PSP_SYSTEMPARAM_LANGUAGE_CHINESE_SIMPLIFIED:
+        	// make sure we use a specific chinese font
+        	if (vsh->config.ark_menu.vsh_font != 56){
+        		vsh->config.ark_menu.vsh_font = 56;
+        	}
+        	break;
+        case PSP_SYSTEMPARAM_LANGUAGE_CHINESE_TRADITIONAL:
+        	// make sure we use a specific chinese font
+        	if (vsh->config.ark_menu.vsh_font != 57){
+        		vsh->config.ark_menu.vsh_font = 57;
+        	}
+        	break;
+        case PSP_SYSTEMPARAM_LANGUAGE_JAPANESE:
+        	// make sure we use a specific chinese font
+        	if (vsh->config.ark_menu.vsh_font != 58){
+        		vsh->config.ark_menu.vsh_font = 58;
+        	}
+        	break;
 
-    	case PSP_SYSTEMPARAM_LANGUAGE_KOREAN:
-    		// make sure we use a specific chinese font
-    		if (vsh->config.ark_menu.vsh_font != 59){
-    			vsh->config.ark_menu.vsh_font = 59;
-    		}
-    		break;
+        case PSP_SYSTEMPARAM_LANGUAGE_KOREAN:
+        	// make sure we use a specific chinese font
+        	if (vsh->config.ark_menu.vsh_font != 59){
+        		vsh->config.ark_menu.vsh_font = 59;
+        	}
+        	break;
 
 
 
-    	/*
-    	// use CP881 font for French
-    	case PSP_SYSTEMPARAM_LANGUAGE_FRENCH:
-    		load_external_font("CP881.pf");
-    		vsh->config.ark_menu.vsh_font = 32;
-    		break;
-    	*/
-    	default:
-    		break;
+        /*
+        // use CP881 font for French
+        case PSP_SYSTEMPARAM_LANGUAGE_FRENCH:
+        	load_external_font("CP881.pf");
+        	vsh->config.ark_menu.vsh_font = 32;
+        	break;
+        */
+        default:
+        	break;
     }
 
     // if a font is needed (ie not 0)
     if (vsh->config.ark_menu.vsh_font) {
-    	// load external font
-    	load_external_font(available_fonts[vsh->config.ark_menu.vsh_font - 1]);
+        // load external font
+        load_external_font(available_fonts[vsh->config.ark_menu.vsh_font - 1]);
     }
 
     return 0;
@@ -175,31 +175,31 @@ int load_external_font(const char *file) {
     fd = sceIoOpen(pkgpath, PSP_O_RDONLY, 0777);
 
     if(fd < 0) {
-    	return fd;
+        return fd;
     }
 
     font.mem_id = sceKernelAllocPartitionMemory(2, "proDebugScreenFontBuffer", PSP_SMEM_High, size, NULL);
 
     if(font.mem_id < 0) {
-    	sceIoClose(fd);
-    	return font.mem_id;
+        sceIoClose(fd);
+        return font.mem_id;
     }
 
     buf = sceKernelGetBlockHeadAddr(font.mem_id);
 
     if(buf == NULL) {
-    	sceKernelFreePartitionMemory(font.mem_id);
-    	sceIoClose(fd);
-    	return -2;
+        sceKernelFreePartitionMemory(font.mem_id);
+        sceIoClose(fd);
+        return -2;
     }
 
     sceIoLseek(fd, offset, PSP_SEEK_SET);
     ret = sceIoRead(fd, buf, size);
 
     if(ret != size) {
-    	sceKernelFreePartitionMemory(font.mem_id);
-    	sceIoClose(fd);
-    	return -3;
+        sceKernelFreePartitionMemory(font.mem_id);
+        sceIoClose(fd);
+        return -3;
     }
 
     sceIoClose(fd);
@@ -209,8 +209,8 @@ int load_external_font(const char *file) {
 
 void release_font(void) {
     if (font.mem_id >= 0) {
-    	sceKernelFreePartitionMemory(font.mem_id);
-    	font.mem_id = -1;
+        sceKernelFreePartitionMemory(font.mem_id);
+        font.mem_id = -1;
     }
 
     font.bitmap = msx;

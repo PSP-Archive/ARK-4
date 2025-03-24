@@ -156,11 +156,11 @@ void loadSettings(){
     strcat(path, ARK_SETTINGS);
     SceUID check = sceIoOpen(path, PSP_O_RDONLY, 0);
     if(check < 0) {
-    	memset(path, 0, sizeof(path));
+        memset(path, 0, sizeof(path));
         strcpy(path, ARK_SETTINGS_FLASH);
     }
     else {
-    	sceIoClose(check);
+        sceIoClose(check);
     }
 
 
@@ -221,7 +221,7 @@ void saveSettings(){
     int fd = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 
     if (fd < 0){
-    	memset(path, 0, sizeof(path));
+        memset(path, 0, sizeof(path));
         strcpy(path, ARK_SETTINGS_FLASH);
         fd = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
     }

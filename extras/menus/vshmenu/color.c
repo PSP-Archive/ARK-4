@@ -86,9 +86,9 @@ void color_check_random(vsh_Menu *vsh) {
     int picked;
     // Random Colors
     if ((vsh->config.ark_menu.vsh_fg_color || vsh->config.ark_menu.vsh_bg_color) == 0) {
-    	srand(time(NULL));
-    	picked = rand() % (sizeof(random_colors) / sizeof(random_colors[0]));
-    	vsh->config.ark_menu.vsh_fg_color = random_colors[picked].fg_color;
-    	vsh->config.ark_menu.vsh_bg_color = random_colors[picked].bg_color;
+        srand(time(NULL));
+        picked = rand() % (sizeof(random_colors) / sizeof(random_colors[0]));
+        vsh->config.ark_menu.vsh_fg_color = random_colors[picked].fg_color;
+        vsh->config.ark_menu.vsh_bg_color = random_colors[picked].bg_color;
     }
 }

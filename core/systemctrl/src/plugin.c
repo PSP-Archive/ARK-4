@@ -184,7 +184,7 @@ static int matchingRunlevel(char * runlevel)
     }
 
     if(isVshRunlevel()){
-    	return (strstr(runlevel, "vsh") != NULL || strstr(runlevel, "xmb") != NULL);
+        return (strstr(runlevel, "vsh") != NULL || strstr(runlevel, "xmb") != NULL);
     }
 
     if(isPopsRunlevel()){
@@ -195,10 +195,10 @@ static int matchingRunlevel(char * runlevel)
     }
     
     if(isHomebrewRunlevel()) {
-    	if (strstr(runlevel, "launcher") != NULL){
-    		// check if running custom launcher
-    		if (isLauncher()) return 1;
-    	}
+        if (strstr(runlevel, "launcher") != NULL){
+        	// check if running custom launcher
+        	if (isLauncher()) return 1;
+        }
         if (strstr(runlevel, "app") != NULL || strstr(runlevel, "homebrew") != NULL || strstr(runlevel, "game") != NULL) return 1; // homebrews only
     }
 
@@ -583,39 +583,39 @@ static void patch_devicename(SceUID modid)
     mod = (SceModule2*)sceKernelFindModuleByUID(modid);
 
     if(mod == NULL) {
-    	return;
+        return;
     }
 
     for(i=0; i<mod->nsegment; ++i) {
-    	u32 addr;
-    	u32 end;
+        u32 addr;
+        u32 end;
 
-    	end = mod->segmentaddr[i] + mod->segmentsize[i];
+        end = mod->segmentaddr[i] + mod->segmentsize[i];
 
-    	for(addr = mod->segmentaddr[i]; addr < end; addr ++) {
-    		char *str = (char*)addr;
+        for(addr = mod->segmentaddr[i]; addr < end; addr ++) {
+        	char *str = (char*)addr;
 
-    		if (0 == strncmp(str, "ms0", 3)) {
-    			str[0] = 'e';
-    			str[1] = 'f';
-    		} else if (0 == strncmp(str, "fatms", 5)) {
-    			str[3] = 'e';
-    			str[4] = 'f';
-    		}
-    	}
+        	if (0 == strncmp(str, "ms0", 3)) {
+        		str[0] = 'e';
+        		str[1] = 'f';
+        	} else if (0 == strncmp(str, "fatms", 5)) {
+        		str[3] = 'e';
+        		str[4] = 'f';
+        	}
+        }
     }
     
     u32 start = mod->text_addr+mod->text_size;
     u32 end = start + mod->data_size;
     for (u32 addr=start; addr<end; addr++){
         char *str = (char*)addr;
-    	if (0 == strncmp(str, "ms0", 3)) {
-    		str[0] = 'e';
-    		str[1] = 'f';
-    	} else if (0 == strncmp(str, "fatms", 5)) {
-    		str[3] = 'e';
-    		str[4] = 'f';
-    	}
+        if (0 == strncmp(str, "ms0", 3)) {
+        	str[0] = 'e';
+        	str[1] = 'f';
+        } else if (0 == strncmp(str, "fatms", 5)) {
+        	str[3] = 'e';
+        	str[4] = 'f';
+        }
     }
 
     flushCache();
@@ -623,7 +623,7 @@ static void patch_devicename(SceUID modid)
 
 static int ef0PluginHandler(const char* path, int modid){
     if(se_config.oldplugin && path[0] == 'e' && path[1] == 'f') {
-    	patch_devicename(modid);
+        patch_devicename(modid);
     }
     return 0;
 }

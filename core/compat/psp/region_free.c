@@ -99,99 +99,99 @@ int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pf
     
     switch (tachyon)
     {
-    	case 0x00140000:
-    		switch(baryon)
-    		{
-    			case 0x00010600: mb = TA_079v1; break;
-    			case 0x00010601: mb = TMU_001v1; break;
-    			case 0x00020600: mb = TA_079v2; break;
-    			case 0x00020601: mb = TMU_001v2; break;
-    			case 0x00030600: mb = TA_079v3; break;
-    			case 0x00030601: mb = TMU_002; break;
-    		}
-    		break;
+        case 0x00140000:
+        	switch(baryon)
+        	{
+        		case 0x00010600: mb = TA_079v1; break;
+        		case 0x00010601: mb = TMU_001v1; break;
+        		case 0x00020600: mb = TA_079v2; break;
+        		case 0x00020601: mb = TMU_001v2; break;
+        		case 0x00030600: mb = TA_079v3; break;
+        		case 0x00030601: mb = TMU_002; break;
+        	}
+        	break;
 
-    	case 0x00200000:
-    		switch(baryon)
-    		{
-    			case 0x00030600: mb = TA_079v4; break;
-    			case 0x00040600: mb = TA_079v5; break;
-    		}
-    		break;
+        case 0x00200000:
+        	switch(baryon)
+        	{
+        		case 0x00030600: mb = TA_079v4; break;
+        		case 0x00040600: mb = TA_079v5; break;
+        	}
+        	break;
 
-    	case 0x00300000:
-    		switch(baryon)
-    		{
-    			case 0x00040600:
-    				switch(pommel)
-    				{
-    					case 0x00000103: mb = TA_081v1; break;
-    					case 0x00000104: mb = TA_081v2; break;
-    				}
-    				break;
-    		}
-    		break;
+        case 0x00300000:
+        	switch(baryon)
+        	{
+        		case 0x00040600:
+        			switch(pommel)
+        			{
+        				case 0x00000103: mb = TA_081v1; break;
+        				case 0x00000104: mb = TA_081v2; break;
+        			}
+        			break;
+        	}
+        	break;
 
-    	case 0x00400000:
-    		switch(baryon)
-    		{
-    			case 0x00114000: mb = TA_082; break;
-    			case 0x00121000: mb = TA_086; break;
-    		}
-    		break;
+        case 0x00400000:
+        	switch(baryon)
+        	{
+        		case 0x00114000: mb = TA_082; break;
+        		case 0x00121000: mb = TA_086; break;
+        	}
+        	break;
 
-    	case 0x00500000:
-    		switch(baryon)
-    		{
-    			case 0x0022B200: mb = TA_085v1; break;
-    			case 0x00234000: mb = TA_085v2; break;
-    			case 0x00243000:
-    				switch(pommel)
-    				{
-    					case 0x00000123: mb = TA_088v1_TA_088v2; break;
-    					case 0x00000132: mb = TA_090v1; break;
-    				}
-    				break;
-    		}
-    		break;
+        case 0x00500000:
+        	switch(baryon)
+        	{
+        		case 0x0022B200: mb = TA_085v1; break;
+        		case 0x00234000: mb = TA_085v2; break;
+        		case 0x00243000:
+        			switch(pommel)
+        			{
+        				case 0x00000123: mb = TA_088v1_TA_088v2; break;
+        				case 0x00000132: mb = TA_090v1; break;
+        			}
+        			break;
+        	}
+        	break;
 
-    	case 0x00600000:
-    		switch(baryon)
-    		{
-    			case 0x00243000: mb = TA_088v3; break;
-    			case 0x00263100:
-    				switch(pommel)
-    				{
-    					case 0x00000132: mb = TA_090v2; break;
-    					case 0x00000133: mb = TA_090v3; break;
-    				}
-    				break;
-    			case 0x00285000: mb = TA_092; break;
-    		}
-    		break;
+        case 0x00600000:
+        	switch(baryon)
+        	{
+        		case 0x00243000: mb = TA_088v3; break;
+        		case 0x00263100:
+        			switch(pommel)
+        			{
+        				case 0x00000132: mb = TA_090v2; break;
+        				case 0x00000133: mb = TA_090v3; break;
+        			}
+        			break;
+        		case 0x00285000: mb = TA_092; break;
+        	}
+        	break;
 
-    	case 0x00720000: mb = TA_091; break;
+        case 0x00720000: mb = TA_091; break;
 
-    	case 0x00800000: mb = TA_094; break;
+        case 0x00800000: mb = TA_094; break;
 
-    	case 0x00810000:
-    		switch(baryon)
-    		{
-    			case 0x002C4000:
-    				switch(pommel)
-    				{
-    					case 0x00000141: mb = TA_093v1; break;
-    					case 0x00000143: mb = TA_093v2; break;
-    				}
-    				break;
-    			case 0x002E4000: mb = TA_095v1; break;
-    		}
-    		break;
+        case 0x00810000:
+        	switch(baryon)
+        	{
+        		case 0x002C4000:
+        			switch(pommel)
+        			{
+        				case 0x00000141: mb = TA_093v1; break;
+        				case 0x00000143: mb = TA_093v2; break;
+        			}
+        			break;
+        		case 0x002E4000: mb = TA_095v1; break;
+        	}
+        	break;
 
 
-    	case 0x00820000: mb = TA_095v2; break;
+        case 0x00820000: mb = TA_095v2; break;
 
-    	case 0x00900000: mb = TA_096_TA_097; break;
+        case 0x00900000: mb = TA_096_TA_097; break;
     }
 
     *ptachyon = tachyon;
@@ -232,8 +232,8 @@ int sctrlArkReplaceUmdKeys(){
         sctrlHENFindFunction("pspIdsRegeneration_Driver", "idsRegeneration", 0xB79A6C46);
 
     if (idsRegenerationCreateCertificatesAndUMDKeys == NULL || idsRegenerationSetup == NULL){
-    	res = -2;
-    	goto fake_ids_end;
+        res = -2;
+        goto fake_ids_end;
     }
     
     u32 tachyon, baryon, pommel, mb, region;
@@ -267,7 +267,7 @@ static int (*_idStorageLookup)(u16 key, u32 offset, void *buf, u32 len);
 static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
     // obtain buffer where UMD keys are stored in umdman.prx
     if (offset == 0 && key == 0x102){
-    	umd_buf = buf;
+        umd_buf = buf;
     }
     return _idStorageLookup(key, offset, buf, len); // passthrough
 }
@@ -297,13 +297,13 @@ static u8 get_pscode_from_region(int region)
     code = region;
     
     if(code < 12) {
-    	code += 2;
+        code += 2;
     } else {
-    	code -= 11;
+        code -= 11;
     }
 
     if(code == 2) {
-    	code = 3;
+        code = 3;
     }
 
     printk("%s: region %d code %d\n", __func__, region, code);
@@ -333,7 +333,7 @@ void patch_sceChkreg(void)
     fp = sctrlHENFindFunction("sceChkreg", "sceChkreg_driver", 0x59F8491D); 
 
     if (fp) {
-    	_sw(JUMP(_sceChkregGetPsCode), fp);
+        _sw(JUMP(_sceChkregGetPsCode), fp);
         _sw(NOP, fp+4);
     }
 }

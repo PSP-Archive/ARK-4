@@ -74,10 +74,10 @@ int OnBackFromFormat(int enter)
 {
     if (!enter)
     {
-    	vlfGuiRemoveText(status);
-    	status = -1;
-    	vlfGuiCancelBottomDialog();
-    	NandOperationsMenu(2);
+        vlfGuiRemoveText(status);
+        status = -1;
+        vlfGuiCancelBottomDialog();
+        NandOperationsMenu(2);
     }
     
     return VLF_EV_RET_NOTHING;
@@ -94,7 +94,7 @@ int OnFormatComplete(void *param)
     vlfGuiBottomDialog(VLF_DI_BACK, -1, 1, 0, VLF_DEFAULT, OnBackFromFormat);
 
     SetStatus("Format completed.");
-    vlfGuiSetTextXY(status, 150, 110);	
+    vlfGuiSetTextXY(status, 150, 110);    
 
     dcSetCancelMode(0);
 
@@ -105,55 +105,55 @@ int LoadFormatModules()
 {
     SceUID mod = sceKernelLoadModule("flash0:/kd/emc_sm_updater.prx", 0, NULL);
     if (mod < 0 && mod != SCE_KERNEL_ERROR_EXCLUSIVE_LOAD)
-    	return mod;
+        return mod;
 
     if (mod >= 0)
     {
-    	mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
-    	if (mod < 0)
-    		return mod;
+        mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+        if (mod < 0)
+        	return mod;
     }
 
     if (kuKernelGetModel() == 0)
-    	dcPatchModule("sceNAND_Updater_Driver", 1, 0x0D7E, 0xAC60);
+        dcPatchModule("sceNAND_Updater_Driver", 1, 0x0D7E, 0xAC60);
     else
-    	dcPatchModule("sceNAND_Updater_Driver", 1, 0x0D7E, 0xAC64);
+        dcPatchModule("sceNAND_Updater_Driver", 1, 0x0D7E, 0xAC64);
 
     mod = sceKernelLoadModule("flash0:/kd/lfatfs_updater.prx", 0, NULL);
     if (mod < 0 && mod != SCE_KERNEL_ERROR_EXCLUSIVE_LOAD)
-    	return mod;
+        return mod;
 
     dcPatchModuleString("sceLFatFs_Updater_Driver", "flash", "flach");
 
     if (mod >= 0)
     {
-    	mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
-    	if (mod < 0)
-    		return mod;
+        mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+        if (mod < 0)
+        	return mod;
     }
 
     mod = sceKernelLoadModule("flash0:/kd/lflash_fatfmt_updater.prx", 0, NULL);
     if (mod < 0 && mod != SCE_KERNEL_ERROR_EXCLUSIVE_LOAD)
-    	return mod;
+        return mod;
 
     sceKernelDelayThread(10000);
 
     if (mod >= 0)
     {
-    	mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
-    	if (mod < 0)
-    		return mod;
+        mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+        if (mod < 0)
+        	return mod;
     }
 
     mod = sceKernelLoadModule("flash0:/kd/lflash_fdisk.prx", 0, NULL);
     if (mod < 0 && mod != SCE_KERNEL_ERROR_EXCLUSIVE_LOAD)
-    	return mod;
+        return mod;
 
     if (mod >= 0)
     {
-    	mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
-    	if (mod < 0)
-    		return mod;
+        mod = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+        if (mod < 0)
+        	return mod;
     }
 
     return 0;
@@ -188,7 +188,7 @@ int format_thread(SceSize args, void *argp)
     
     if (LoadFormatModules() < 0)
     {
-    	FormatError("Error loading updater modules.");
+        FormatError("Error loading updater modules.");
     }
 
     sceKernelDelayThread(1200000);
@@ -201,7 +201,7 @@ int format_thread(SceSize args, void *argp)
 
     if (res < 0)
     {
-    	FormatError("Error 0x%08X in physical format.\n", res);
+        FormatError("Error 0x%08X in physical format.\n", res);
     }
 
     SetProgress(95, 1);
@@ -224,11 +224,11 @@ int format_thread(SceSize args, void *argp)
     argv[9] = "0";
     argv[10] = "0";
     argv[11] = "lflach0:0";
-    		
+        	
     res = dcLflashStartFDisk(12, argv);
     if (res < 0)
     {
-    	FormatError("Error 0x%08X in fdisk.\n", res);
+        FormatError("Error 0x%08X in fdisk.\n", res);
     }
 
     sceKernelDelayThread(1400000);
@@ -242,7 +242,7 @@ int format_thread(SceSize args, void *argp)
     res = dcLflashStartFatfmt(2, argv);
     if (res < 0)
     {
-    	FormatError("Flash0 format failed: 0x%08X", res);
+        FormatError("Flash0 format failed: 0x%08X", res);
     }
 
     sceKernelDelayThread(1200000);
@@ -255,7 +255,7 @@ int format_thread(SceSize args, void *argp)
     res = dcLflashStartFatfmt(2, argv);
     if (res < 0)
     {
-    	FormatError("Flash1 format failed: 0x%08X", res);
+        FormatError("Flash1 format failed: 0x%08X", res);
     }
 
     sceKernelDelayThread(1200000);
@@ -267,7 +267,7 @@ int format_thread(SceSize args, void *argp)
     res = dcLflashStartFatfmt(2, argv);
     if (res < 0)
     {
-    	FormatError("Flash2 format failed: 0x%08X", res);
+        FormatError("Flash2 format failed: 0x%08X", res);
     }
 
     sceKernelDelayThread(1200000);
@@ -279,7 +279,7 @@ int format_thread(SceSize args, void *argp)
     res = dcLflashStartFatfmt(2, argv);
     if (res < 0)
     {
-    	FormatError("Flash3 format failed: 0x%08X", res);
+        FormatError("Flash3 format failed: 0x%08X", res);
     }
 
     SetProgress(100, 1);
@@ -292,23 +292,23 @@ int OnBeginFormatFlash(int enter)
 {
     if (enter)
     {
-    	vlfGuiCancelPreviousPageControl();
-    	vlfGuiRemoveText(status);
-    	
-    	ClearProgress();
-    	status = vlfGuiAddText(80, 100, "Loading modules...");
+        vlfGuiCancelPreviousPageControl();
+        vlfGuiRemoveText(status);
+        
+        ClearProgress();
+        status = vlfGuiAddText(80, 100, "Loading modules...");
 
-    	progress_bar = vlfGuiAddProgressBar(136);	
-    	progress_text = vlfGuiAddText(240, 148, "0%");
-    	vlfGuiSetTextAlignment(progress_text, VLF_ALIGNMENT_CENTER);
+        progress_bar = vlfGuiAddProgressBar(136);	
+        progress_text = vlfGuiAddText(240, 148, "0%");
+        vlfGuiSetTextAlignment(progress_text, VLF_ALIGNMENT_CENTER);
 
-    	SceUID format_thid = sceKernelCreateThread("format_thread", format_thread, 0x18, 0x10000, 0, NULL);
-    	if (format_thid >= 0)
-    	{
-    		sceKernelStartThread(format_thid, 0, NULL);
-    	}	
-    	
-    	return VLF_EV_RET_REMOVE_HANDLERS | VLF_EV_RET_REMOVE_OBJECTS;
+        SceUID format_thid = sceKernelCreateThread("format_thread", format_thread, 0x18, 0x10000, 0, NULL);
+        if (format_thid >= 0)
+        {
+        	sceKernelStartThread(format_thid, 0, NULL);
+        }	
+        
+        return VLF_EV_RET_REMOVE_HANDLERS | VLF_EV_RET_REMOVE_OBJECTS;
     }
     
     return VLF_EV_RET_NOTHING;
@@ -318,14 +318,14 @@ int OnSpinSelectDown(void *param)
 {
     if (selected_spin != 3)
     {
-    	int sum;
+        int sum;
 
-    	vlfGuiSetSpinState(flash_spins[selected_spin], VLF_SPIN_STATE_NOT_FOCUS);
-    	vlfGuiSetSpinState(flash_spins[selected_spin+1], VLF_SPIN_STATE_FOCUS);
-    	
-    	selected_spin++;
-    	sum = flash_sizes[0] + flash_sizes[1] + flash_sizes[2] + flash_sizes[3];
-    	vlfGuiSetIntegerSpinMinMax(flash_spins[selected_spin], 96, flash_sizes[selected_spin]+totalflash_size-sum);
+        vlfGuiSetSpinState(flash_spins[selected_spin], VLF_SPIN_STATE_NOT_FOCUS);
+        vlfGuiSetSpinState(flash_spins[selected_spin+1], VLF_SPIN_STATE_FOCUS);
+        
+        selected_spin++;
+        sum = flash_sizes[0] + flash_sizes[1] + flash_sizes[2] + flash_sizes[3];
+        vlfGuiSetIntegerSpinMinMax(flash_spins[selected_spin], 96, flash_sizes[selected_spin]+totalflash_size-sum);
     }
 
     return VLF_EV_RET_REMOVE_EVENT;
@@ -335,14 +335,14 @@ int OnSpinSelectUp(void *param)
 {
     if (selected_spin != 0)
     {
-    	int sum;
+        int sum;
 
-    	vlfGuiSetSpinState(flash_spins[selected_spin], VLF_SPIN_STATE_NOT_FOCUS);
-    	vlfGuiSetSpinState(flash_spins[selected_spin-1], VLF_SPIN_STATE_FOCUS);
-    	
-    	selected_spin--;
-    	sum = flash_sizes[0] + flash_sizes[1] + flash_sizes[2] + flash_sizes[3];
-    	vlfGuiSetIntegerSpinMinMax(flash_spins[selected_spin], 96, flash_sizes[selected_spin]+totalflash_size-sum);
+        vlfGuiSetSpinState(flash_spins[selected_spin], VLF_SPIN_STATE_NOT_FOCUS);
+        vlfGuiSetSpinState(flash_spins[selected_spin-1], VLF_SPIN_STATE_FOCUS);
+        
+        selected_spin--;
+        sum = flash_sizes[0] + flash_sizes[1] + flash_sizes[2] + flash_sizes[3];
+        vlfGuiSetIntegerSpinMinMax(flash_spins[selected_spin], 96, flash_sizes[selected_spin]+totalflash_size-sum);
     }
 
     return VLF_EV_RET_REMOVE_EVENT;
@@ -359,11 +359,11 @@ int OnSpinEdited(int enter)
     
     if (enter)
     {
-    	vlfGuiGetIntegerSpinValue(flash_spins[selected_spin], &flash_sizes[selected_spin]);
+        vlfGuiGetIntegerSpinValue(flash_spins[selected_spin], &flash_sizes[selected_spin]);
     }
     else
     {
-    	vlfGuiSetIntegerSpinValue(flash_spins[selected_spin], flash_sizes[selected_spin]);
+        vlfGuiSetIntegerSpinValue(flash_spins[selected_spin], flash_sizes[selected_spin]);
     }
     
     return VLF_EV_RET_NOTHING;
@@ -379,20 +379,20 @@ int OnEditSpinOrBack(int enter)
     
     if (enter)
     {
-    	vlfGuiSetPageControlEnable(0);
-    	vlfGuiBottomDialog(VLF_DI_CANCEL, VLF_DI_ENTER, 1, 0, VLF_DEFAULT, OnSpinEdited);
-    	vlfGuiSetSpinState(flash_spins[selected_spin], VLF_SPIN_STATE_ACTIVE);
+        vlfGuiSetPageControlEnable(0);
+        vlfGuiBottomDialog(VLF_DI_CANCEL, VLF_DI_ENTER, 1, 0, VLF_DEFAULT, OnSpinEdited);
+        vlfGuiSetSpinState(flash_spins[selected_spin], VLF_SPIN_STATE_ACTIVE);
     }
     else
     {
-    	for (i = 0; i < 4; i++)
-    	{
-    		vlfGuiRemoveText(flash_texts[i]);
-    		vlfGuiRemoveSpinControl(flash_spins[i]);
-    	}
+        for (i = 0; i < 4; i++)
+        {
+        	vlfGuiRemoveText(flash_texts[i]);
+        	vlfGuiRemoveSpinControl(flash_spins[i]);
+        }
 
-    	vlfGuiCancelNextPageControl();		
-    	NandOperationsMenu(2);
+        vlfGuiCancelNextPageControl();		
+        NandOperationsMenu(2);
     }
     
     return VLF_EV_RET_NOTHING;
@@ -421,8 +421,8 @@ int OnFormatFlashNextPage(int page)
 
     for (i = 0; i < 4; i++)
     {
-    	vlfGuiRemoveText(flash_texts[i]);
-    	vlfGuiRemoveSpinControl(flash_spins[i]);
+        vlfGuiRemoveText(flash_texts[i]);
+        vlfGuiRemoveSpinControl(flash_spins[i]);
     }
 
     vlfGuiRemoveEventHandler(OnSpinSelectUp);
@@ -448,7 +448,7 @@ void FormatFlashPage()
     flash_spins[2] = vlfGuiAddIntegerSpinControl(240, 130, 96, totalflash_size, flash_sizes[2], 32, 0, 50, VLF_SPIN_STATE_NOT_FOCUS, NULL, " KB");
     flash_spins[3] = vlfGuiAddIntegerSpinControl(240, 155, 96, totalflash_size, flash_sizes[3], 32, 0, 50, VLF_SPIN_STATE_NOT_FOCUS, NULL, " KB");
 
-    int	sum = flash_sizes[0] + flash_sizes[1] + flash_sizes[2] + flash_sizes[3];
+    int    sum = flash_sizes[0] + flash_sizes[1] + flash_sizes[2] + flash_sizes[3];
     
     vlfGuiSetIntegerSpinMinMax(flash_spins[0], 96, flash_sizes[0]+totalflash_size-sum);
     vlfGuiSetIntegerSpinMinMax(flash_spins[1], 96, flash_sizes[1]+totalflash_size-sum);

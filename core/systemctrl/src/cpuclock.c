@@ -25,7 +25,7 @@
 #include <pspinit.h>
 #include <systemctrl.h>
 #include "macros.h"
-    	
+        
 int (* scePowerSetClockFrequency_k)(int cpufreq, int ramfreq, int busfreq);
 
 static const u32 cpu_nid_list[] = {

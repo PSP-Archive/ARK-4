@@ -43,8 +43,8 @@ int spu_thread(SceSize args, void *argp)
 {
     while(1)
     {
-    	SPUupdate();
-    	SPUwait();
+        SPUupdate();
+        SPUwait();
     }
 
     return 0;
@@ -76,28 +76,28 @@ void cdrTransferSectorPatched(u8 *sector, int mode)
 {
     if(mode == 1)
     {
-    	SPUplayCDDAchannel(sector, 0x930);
+        SPUplayCDDAchannel(sector, 0x930);
     }
     else if(mode == 2)
     {
-    	if(cdr_is_first_sector != -1)
-    	{
-    		u8 *buf = sector + 0xC;
+        if(cdr_is_first_sector != -1)
+        {
+        	u8 *buf = sector + 0xC;
 
-    		if(buf[4 + 2] & 0x4)
-    		{
-    			int ret = xa_decode_sector(&cdr_xa, buf + 4, cdr_is_first_sector);
-    			if(ret == 0)
-    			{
-    				SPUplayADPCMchannel(&cdr_xa);
-    				cdr_is_first_sector = 0;
-    			}
-    			else
-    			{
-    				cdr_is_first_sector = -1;
-    			}
-    		}
-    	}
+        	if(buf[4 + 2] & 0x4)
+        	{
+        		int ret = xa_decode_sector(&cdr_xa, buf + 4, cdr_is_first_sector);
+        		if(ret == 0)
+        		{
+        			SPUplayADPCMchannel(&cdr_xa);
+        			cdr_is_first_sector = 0;
+        		}
+        		else
+        		{
+        			cdr_is_first_sector = -1;
+        		}
+        	}
+        }
     }
 
     cdrTransferSector(sector, mode);
@@ -107,10 +107,10 @@ void cdrWriteRegisterPatched(int reg, int val)
 {
     if(reg == 0x1F801801)
     {
-    	if(val == 6 || val == 27)
-    	{
-    		cdr_is_first_sector = 1;
-    	}
+        if(val == 6 || val == 27)
+        {
+        	cdr_is_first_sector = 1;
+        }
     }
 
     cdrWriteRegister(reg, val);

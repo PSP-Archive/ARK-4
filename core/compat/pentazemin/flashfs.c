@@ -30,28 +30,28 @@ static int _flashIoOpen(u32 *args) {
     SceMode mode = (SceMode)args[3];
 
     if (strcmp(file, "/kd/mpeg_vsh.prx") == 0) {
-    	file = "/kd/mpeg.prx";
+        file = "/kd/mpeg.prx";
     }
 
     char ms_path[128];
     int fs_num = BuildMsPathChangeFsNum(arg, file, ms_path);
     int res = ms_funcs.IoOpen(arg, ms_path, flags, mode);
     if (res >= 0) {
-    	((u32 *)arg)[18] = 1;
+        ((u32 *)arg)[18] = 1;
     }
 
     if (fs_num == 1 || res >= 0)
-    	return res;
+        return res;
 
     arg->fs_num = fs_num;
 
-    return flash_funcs.IoOpen(arg, file, flags, mode);	
+    return flash_funcs.IoOpen(arg, file, flags, mode);    
 }
 
 static int _flashIoClose(PspIoDrvFileArg *arg) {
     if (((u32 *)arg)[18]) {
-    	arg->fs_num = 0;
-    	return ms_funcs.IoClose(arg);
+        arg->fs_num = 0;
+        return ms_funcs.IoClose(arg);
     }
 
     return flash_funcs.IoClose(arg);
@@ -63,8 +63,8 @@ static int _flashIoRead(u32 *args) {
     int len = args[2];
 
     if (((u32 *)arg)[18]) {
-    	arg->fs_num = 0;
-    	return ms_funcs.IoRead(arg, data, len);
+        arg->fs_num = 0;
+        return ms_funcs.IoRead(arg, data, len);
     }
 
     return flash_funcs.IoRead(arg, data, len);
@@ -76,12 +76,12 @@ static int _flashIoWrite(u32 *args) {
     int len = args[2];
 
     if (!data && len == 0) {
-    	return 0;
+        return 0;
     }
 
     if (((u32 *)arg)[18]) {
-    	arg->fs_num = 0;
-    	return ms_funcs.IoWrite(arg, data, len);
+        arg->fs_num = 0;
+        return ms_funcs.IoWrite(arg, data, len);
     }
 
     return flash_funcs.IoWrite(arg, data, len);
@@ -93,8 +93,8 @@ static SceOff _flashIoLseek(u32 *args) {
     int whence = args[2];
 
     if (((u32 *)arg)[18]) {
-    	arg->fs_num = 0;
-    	return ms_funcs.IoLseek(arg, ofs, whence);
+        arg->fs_num = 0;
+        return ms_funcs.IoLseek(arg, ofs, whence);
     }
 
     return flash_funcs.IoLseek(arg, ofs, whence);
@@ -109,7 +109,7 @@ static int _flashIoRemove(u32 *args) {
     int res = ms_funcs.IoRemove(arg, ms_path);
 
     if (fs_num == 1 || res >= 0)
-    	return res;
+        return res;
 
     arg->fs_num = fs_num;
     return flash_funcs.IoRemove(arg, name);
@@ -125,7 +125,7 @@ static int _flashIoMkdir(u32 *args) {
     int res = ms_funcs.IoMkdir(arg, ms_path, mode);
 
     if (fs_num == 1 || res >= 0)
-    	return res;
+        return res;
 
     arg->fs_num = fs_num;
     return flash_funcs.IoMkdir(arg, name, mode);
@@ -140,7 +140,7 @@ static int _flashIoRmdir(u32 *args) {
     int res = ms_funcs.IoRmdir(arg, ms_path);
 
     if (fs_num == 1 || res >= 0)
-    	return res;
+        return res;
 
     arg->fs_num = fs_num;
     return flash_funcs.IoRmdir(arg, name);
@@ -154,11 +154,11 @@ static int _flashIoDopen(u32 *args) {
     int fs_num = BuildMsPathChangeFsNum(arg, dirname, ms_path);
     int res = ms_funcs.IoDopen(arg, ms_path);
     if (res >= 0) {
-    	((u32 *)arg)[18] = 1;
+        ((u32 *)arg)[18] = 1;
     }
 
     if (fs_num == 1 || res >= 0)
-    	return res;
+        return res;
 
     arg->fs_num = fs_num;
     return flash_funcs.IoDopen(arg, dirname);
@@ -166,8 +166,8 @@ static int _flashIoDopen(u32 *args) {
 
 static int _flashIoDclose(PspIoDrvFileArg *arg) {
     if (((u32 *)arg)[18]) {
-    	arg->fs_num = 0;
-    	return ms_funcs.IoDclose(arg);
+        arg->fs_num = 0;
+        return ms_funcs.IoDclose(arg);
     }
 
     return flash_funcs.IoDclose(arg);
@@ -178,8 +178,8 @@ static int _flashIoDread(u32 *args) {
     SceIoDirent *dir = (SceIoDirent *)args[1];
 
     if (((u32 *)arg)[18]) {
-    	arg->fs_num = 0;
-    	return ms_funcs.IoDread(arg, dir);
+        arg->fs_num = 0;
+        return ms_funcs.IoDread(arg, dir);
     }
 
     return flash_funcs.IoDread(arg, dir);
@@ -195,7 +195,7 @@ static int _flashIoGetstat(u32 *args) {
     int res = ms_funcs.IoGetstat(arg, ms_path, stat);
 
     if (fs_num == 1 || res >= 0)
-    	return res;
+        return res;
 
     arg->fs_num = fs_num;
     return flash_funcs.IoGetstat(arg, file, stat);
@@ -212,7 +212,7 @@ static int _flashIoChstat(u32 *args) {
     int res = ms_funcs.IoChstat(arg, ms_path, stat, bits);
 
     if (fs_num == 1 || res >= 0)
-    	return res;
+        return res;
 
     arg->fs_num = fs_num;
     return flash_funcs.IoChstat(arg, file, stat, bits);
@@ -227,7 +227,7 @@ static int _flashIoChdir(u32 *args) {
     int res = ms_funcs.IoChdir(arg, ms_path);
 
     if (fs_num == 1 || res >= 0)
-    	return res;
+        return res;
 
     arg->fs_num = fs_num;
     return flash_funcs.IoChdir(arg, dir);
@@ -235,8 +235,8 @@ static int _flashIoChdir(u32 *args) {
 
 int NoDevicePatch(u32 cmd) {
     if ((cmd & 0x00FFFF00) == 0x00208000) {
-    	// Returning error allows pops decryption?
-    	return ((cmd & 0xFF) == 0x82) ? -1 : 0;
+        // Returning error allows pops decryption?
+        return ((cmd & 0xFF) == 0x82) ? -1 : 0;
     }
 
     return 1;
@@ -286,7 +286,7 @@ SceOff flashIoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 int flashIoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
     int res = NoDevicePatch(cmd);
     if (res <= 0)
-    	return res;
+        return res;
 
     return 0;
 }

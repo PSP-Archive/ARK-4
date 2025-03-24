@@ -26,7 +26,7 @@ void CreateDirAndUpdateUi(char* dir) {
 int WriteFile(const char *file, void *buf, int size) {
     SceUID fd = sceIoOpen(file, SCE_O_WRONLY | SCE_O_CREAT , 0777);
     if (fd < 0)
-    	return fd;
+        return fd;
 
     int written = sceIoWrite(fd, buf, size);
 
@@ -37,7 +37,7 @@ int WriteFile(const char *file, void *buf, int size) {
 int ReadFile(const char *file, void *buf, int size) {
     SceUID fd = sceIoOpen(file,SCE_O_RDONLY, 0777);
     if (fd < 0)
-    	return fd;
+        return fd;
 
     int read = sceIoRead(fd, buf, size);
 
@@ -50,7 +50,7 @@ size_t GetFileSize(const char *file) {
     
     int ret = sceIoGetstat(file, &stat);
     if(ret < 0)
-    	return ret;
+        return ret;
     
     return stat.st_size;
 }
@@ -60,14 +60,14 @@ void CopyFile(const char *file, const char* dstfile) {
     
     char* buf = malloc(sz);
     if(buf != NULL) {
-    	ReadFile(file, buf, sz);
-    	WriteFile(dstfile, buf, sz);
-    	free(buf);
+        ReadFile(file, buf, sz);
+        WriteFile(dstfile, buf, sz);
+        free(buf);
     }
 }
 
 void CopyTree(const char* src, const char* dst) {
-    SceUID dfd = sceIoDopen(src);	
+    SceUID dfd = sceIoDopen(src);    
     char* srcEnt = malloc(MAX_PATH);
     memset(srcEnt, 0x00, MAX_PATH);
     
@@ -77,22 +77,22 @@ void CopyTree(const char* src, const char* dst) {
     int dir_read_ret = 0;
     SceIoDirent* dir = malloc(sizeof(SceIoDirent));
     do{
-    	memset(dir, 0x00, sizeof(SceIoDirent));
-    	
-    	dir_read_ret = sceIoDread(dfd, dir);
-    	
-    	snprintf(srcEnt, MAX_PATH, "%s/%s", src, dir->d_name);
-    	snprintf(dstEnt, MAX_PATH, "%s/%s", dst, dir->d_name);
-    	
-    	if(SCE_S_ISDIR(dir->d_stat.st_mode)) {
-    		CreateDirAndUpdateUi(dstEnt);
-    		CopyTree(srcEnt, dstEnt);
-    	}
-    	else{
-    		CopyFileAndUpdateUi(srcEnt, dstEnt);
-    	}
-    	
-    	
+        memset(dir, 0x00, sizeof(SceIoDirent));
+        
+        dir_read_ret = sceIoDread(dfd, dir);
+        
+        snprintf(srcEnt, MAX_PATH, "%s/%s", src, dir->d_name);
+        snprintf(dstEnt, MAX_PATH, "%s/%s", dst, dir->d_name);
+        
+        if(SCE_S_ISDIR(dir->d_stat.st_mode)) {
+        	CreateDirAndUpdateUi(dstEnt);
+        	CopyTree(srcEnt, dstEnt);
+        }
+        else{
+        	CopyFileAndUpdateUi(srcEnt, dstEnt);
+        }
+        
+        
     } while(dir_read_ret > 0);
     
     
@@ -105,7 +105,7 @@ void CopyTree(const char* src, const char* dst) {
 
 size_t CountTree(const char* src) {
     size_t count = 0;
-    SceUID dfd = sceIoDopen(src);	
+    SceUID dfd = sceIoDopen(src);    
     
     char* srcEnt = malloc(MAX_PATH);
     memset(srcEnt, 0x00, MAX_PATH);
@@ -114,21 +114,21 @@ size_t CountTree(const char* src) {
     int dir_read_ret = 0;
     SceIoDirent* dir = malloc(sizeof(SceIoDirent));
     do{
-    	memset(dir, 0x00, sizeof(SceIoDirent));
-    	
-    	dir_read_ret = sceIoDread(dfd, dir);
-    	
-    	snprintf(srcEnt, MAX_PATH, "%s/%s", src, dir->d_name);
-    	
-    	if(SCE_S_ISDIR(dir->d_stat.st_mode)) {
-    		count++;
-    		count += CountTree(srcEnt);
-    	}
-    	else{
-    		count++;
-    	}
-    	
-    	
+        memset(dir, 0x00, sizeof(SceIoDirent));
+        
+        dir_read_ret = sceIoDread(dfd, dir);
+        
+        snprintf(srcEnt, MAX_PATH, "%s/%s", src, dir->d_name);
+        
+        if(SCE_S_ISDIR(dir->d_stat.st_mode)) {
+        	count++;
+        	count += CountTree(srcEnt);
+        }
+        else{
+        	count++;
+        }
+        
+        
     } while(dir_read_ret > 0);
     
     

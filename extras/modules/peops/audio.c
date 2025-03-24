@@ -39,16 +39,16 @@ static void FillAudio(unsigned char *stream, int len)
 
     while(iReadPos != iWritePos && len > 0)
     {
-    	*p++ = pSndBuffer[iReadPos++];
-    	if(iReadPos >= iBufSize) iReadPos = 0;
-    	--len;
+        *p++ = pSndBuffer[iReadPos++];
+        if(iReadPos >= iBufSize) iReadPos = 0;
+        --len;
     }
 
     // Fill remaining space with zero
     while(len > 0)
     {
-    	*p++ = 0;
-    	--len;
+        *p++ = 0;
+        --len;
     }
 }
 
@@ -58,8 +58,8 @@ int audio_thread(SceSize args, void *argp)
 
     while(1)
     {
-    	FillAudio(buf, sizeof(buf));
-    	sceAudioOutputPannedBlocking(channel, PSP_AUDIO_VOLUME_MAX, PSP_AUDIO_VOLUME_MAX, buf);
+        FillAudio(buf, sizeof(buf));
+        sceAudioOutputPannedBlocking(channel, PSP_AUDIO_VOLUME_MAX, PSP_AUDIO_VOLUME_MAX, buf);
     }
 
     return 0;
@@ -79,7 +79,7 @@ void SetupSound(void)
     pSndBuffer = (short *)malloc(iBufSize * sizeof(short));
     if(pSndBuffer == NULL)
     {
-    	return;
+        return;
     }
 
     iReadPos = 0;
@@ -92,12 +92,12 @@ void RemoveSound(void)
 
     if(audio_thid >= 0)
     {
-    	sceKernelTerminateDeleteThread(audio_thid);
+        sceKernelTerminateDeleteThread(audio_thid);
     }
 
     if(channel >= 0)
     {
-    	sceAudioChRelease(channel);
+        sceAudioChRelease(channel);
     }
 
     free(pSndBuffer);
@@ -126,13 +126,13 @@ void SoundFeedStreamData(unsigned char *pSound, long lBytes)
 
     while(lBytes > 0)
     {
-    	if(((iWritePos + 1) % iBufSize) == iReadPos) break;
+        if(((iWritePos + 1) % iBufSize) == iReadPos) break;
 
-    	pSndBuffer[iWritePos] = *p++;
+        pSndBuffer[iWritePos] = *p++;
 
-    	++iWritePos;
-    	if(iWritePos >= iBufSize) iWritePos = 0;
+        ++iWritePos;
+        if(iWritePos >= iBufSize) iWritePos = 0;
 
-    	lBytes -= sizeof(short);
+        lBytes -= sizeof(short);
     }
 }

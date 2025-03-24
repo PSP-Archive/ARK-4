@@ -32,39 +32,39 @@ int promoteCma(const char *path, const char *titleid, int type) {
 
   res = loadScePaf();
     if (res < 0) {
-    	return res;
+        return res;
     }
 
   res = sceSysmoduleLoadModuleInternal(SCE_SYSMODULE_INTERNAL_PROMOTER_UTIL);
     if (res < 0) {
-    	return res;
+        return res;
     }
 
   res = scePromoterUtilityInit();
     if (res < 0) {
-    	return res;
+        return res;
     }
 
   res = scePromoterUtilityPromoteImport(&promoteArgs);
     if (res < 0) {
-    	return res;
+        return res;
     }
 
   res = scePromoterUtilityExit();
     if (res < 0) {
-    	return res;
+        return res;
     }
 
   res = sceSysmoduleUnloadModuleInternal(SCE_SYSMODULE_INTERNAL_PROMOTER_UTIL);
     if (res < 0) {
-    	return res;
+        return res;
     }
 
 
   res = unloadScePaf();
   if (res < 0)
     if (res < 0) {
-    	return res;
+        return res;
     }
 
   return res;
