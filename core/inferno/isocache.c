@@ -19,6 +19,9 @@ static u32 read_missed = 0;
 
 static u32 cache_on = 0;
 
+static SceUID cache_ctrl = -1;
+static SceUID cache_mem = -1;
+
 #define NR_CACHE_REQ 8
 #define CACHE_MINIMUM_THRESHOLD (16 * 1024)
 
@@ -401,6 +404,15 @@ int iso_cache_read(struct IoReadArg *arg)
 int infernoCacheInit(int cache_size, int cache_num, int partition)
 {
 
+    if (cache_size == 0){ // disable cache
+        sceKernelFreePartitionMemory(cache_ctrl);
+        sceKernelFreePartitionMemory(cache_mem);
+        cache_ctrl = -1;
+        cache_mem = -1;
+        cache_on = 0;
+        return 0;
+    }
+
     if (cache_on) return 0; // cache already on
 
     SceUID memid;
@@ -416,6 +428,7 @@ int infernoCacheInit(int cache_size, int cache_num, int partition)
     }
     
     memid = sceKernelAllocPartitionMemory(partition, "infernoCacheCtl", PSP_SMEM_High, g_caches_num * sizeof(g_caches[0]), NULL);
+    cache_ctrl = memid;
 
     if(memid < 0) {
         #ifdef DEBUG
@@ -431,6 +444,7 @@ int infernoCacheInit(int cache_size, int cache_num, int partition)
     }
 
     memid = sceKernelAllocPartitionMemory(partition, "infernoCache", PSP_SMEM_High, g_caches_cap * g_caches_num + 64, NULL);
+    cache_mem = memid;
 
     if(memid < 0) {
         #ifdef DEBUG

@@ -13,6 +13,7 @@
 #include <ark.h>
 #include <functions.h>
 
+extern SEConfig* se_config;
 
 static int (*utilityGetParam)(int, int*) = NULL;
 static int getParamFixed_ULJM05221(int param, int* value){
@@ -57,9 +58,20 @@ void applyFixesByModule(SceModule2* mod){
 
     // disable anti-CFW code
     else if (strcasecmp(mod->modname, "DJMAX") == 0) {
+        // prevent detecting/deleting ISO folder
         hookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, 0);
+
+        // enable UMD reading speed
         void (*SetUmdDelay)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
-        if (SetUmdDelay) SetUmdDelay(3);
+        if (SetUmdDelay) SetUmdDelay(2);
+
+        // disable Inferno Cache
+        int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+        if (CacheInit) CacheInit(0, 0, 0);
+
+        // prevent Inferno Cache from being re-enabled
+        SEConfig* se_config = sctrlSEGetConfig(NULL);
+        se_config->iso_cache = 0;
     }
 
     flushCache();
