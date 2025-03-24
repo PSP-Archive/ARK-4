@@ -43,12 +43,14 @@ static inline int is_in_blacklist(const char *dname)
 
 int hideIoDread(SceUID fd, SceIoDirent * dir)
 {
+    int k1 = pspSdkSetK1(0);
     int result = sceIoDread(fd, dir);
 
     if(result > 0 && is_in_blacklist(dir->d_name)) {
     	result = sceIoDread(fd, dir);
     }
 
+    pspSdkSetK1(k1);
     return result;
 }
 

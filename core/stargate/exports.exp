@@ -12,6 +12,7 @@ PSP_EXPORT_START(stargate, 0x0011, 0x4001)
 PSP_EXPORT_FUNC(myUtilityLoadModule)
 PSP_EXPORT_FUNC(myUtilityUnloadModule)
 PSP_EXPORT_FUNC(myKernelLoadModule)
+PSP_EXPORT_FUNC(hideIoDread)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS

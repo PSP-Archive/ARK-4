@@ -59,6 +59,8 @@ struct MsCache
 
 // Cache Isntance
 static struct MsCache g_cache;
+static PspIoDrv* hooked_drv = NULL;
+static SceUID cache_mem = -1;
 
 // Cache Size
 int g_cacheSize = 0;
@@ -358,6 +360,35 @@ static int msstorIoUnk21Cache(PspIoDrvFileArg *arg)
 int msstorCacheInit(const char* driver)
 {
 
+    if (driver == NULL){
+        if (hooked_drv){
+            // Unhook Driver Functions
+            hooked_drv->funcs->IoRead = msstorRead;
+            hooked_drv->funcs->IoWrite = msstorWrite;
+            hooked_drv->funcs->IoOpen= msstorOpen;
+            hooked_drv->funcs->IoIoctl = msstorIoIoctl;
+            hooked_drv->funcs->IoRemove = msstorIoRemove;
+            hooked_drv->funcs->IoMkdir = msstorIoMkdir;
+            hooked_drv->funcs->IoRmdir = msstorIoRmdir;
+            hooked_drv->funcs->IoDopen = msstorIoDopen;
+            hooked_drv->funcs->IoDclose = msstorIoDclose;
+            hooked_drv->funcs->IoDread = msstorIoDread;
+            hooked_drv->funcs->IoGetstat = msstorIoGetstat;
+            hooked_drv->funcs->IoChstat = msstorIoChstat;
+            hooked_drv->funcs->IoRename = msstorIoRename;
+            hooked_drv->funcs->IoChdir = msstorIoChdir;
+            hooked_drv->funcs->IoMount = msstorIoMount;
+            hooked_drv->funcs->IoUmount = msstorIoUmount;
+            hooked_drv->funcs->IoDevctl = msstorIoDevctl;
+            hooked_drv->funcs->IoUnk21 = msstorIoUnk21;
+        }
+        sceKernelFreePartitionMemory(cache_mem);
+        cache_mem = -1;
+        g_cache.buf = NULL;
+        g_cache.bufSize = 0;
+        return 0;
+    }
+
     if (g_cacheSize > 0) return 0; // cache already on
     if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) return 0; // not needed on POPS
 
@@ -372,6 +403,7 @@ int msstorCacheInit(const char* driver)
     
     // Allocate Memory
     SceUID memid = sceKernelAllocPartitionMemory(1, "MsStorCache", PSP_SMEM_High, MSCACHE_SIZE + 64, NULL);
+    cache_mem = memid;
     
     // Allocation failed
     if(memid < 0) return -3;
@@ -392,6 +424,7 @@ int msstorCacheInit(const char* driver)
     disableCache(&g_cache);
     
     // Fetch Driver Functions
+    hooked_drv = pdrv;
     msstorRead = pdrv->funcs->IoRead;
     msstorWrite = pdrv->funcs->IoWrite;
     msstorLseek = pdrv->funcs->IoLseek;

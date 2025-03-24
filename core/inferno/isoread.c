@@ -116,7 +116,7 @@ static u32 g_ciso_total_block;
 static int is_compressed = 0;
 static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit) = NULL;
 
-static unsigned char enable_umd_delay = 0;
+unsigned char enable_umd_delay = 0;
 
 static void umd_delay(u32 read_size){
     sceKernelDelayThread(read_size*enable_umd_delay); // 1MB/s / factor

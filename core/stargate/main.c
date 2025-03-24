@@ -39,14 +39,18 @@ STMOD_HANDLER previous;
 // Module Start Handler
 void stargateSyspatchModuleOnStart(SceModule2 * mod)
 {
-    static int booted = 1;
+    static int booted = 0;
 
     // Patch game-specific modules
     applyFixesByModule(mod);
 
+    // Patch CFW dirs
+    if (booted) hide_cfw_folder(mod);
+
     // Boot Complete Action not done yet
     if (strcmp(mod->modname, "sceKernelLibrary") == 0)
     {
+        booted = 1;
         applyFixesByGameId();
     }
 
@@ -55,9 +59,6 @@ void stargateSyspatchModuleOnStart(SceModule2 * mod)
     
     // Patch LoadModule Function
     patchLoadModuleFuncs(mod);
-
-    // Patch CFW dirs
-    hide_cfw_folder(mod);
     
 }
 
