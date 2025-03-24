@@ -67,7 +67,7 @@ struct {
     {USBDEV_PRX, USBDEV_PRX_FLASH},
     {VSH_MENU, VSH_MENU_FLASH},
     {RECOVERY_PRX, RECOVERY_PRX_FLASH},
-    {UPDATER_FILE, UPDATER_FILE_FLASH},
+	{UPDATER_FILE, UPDATER_FILE_FLASH},
     {ARK_SETTINGS, ARK_SETTINGS_FLASH},
 };
 
@@ -442,7 +442,7 @@ void open_flash(){
 
 void copy_file(char* orig, char* dest){
     static u8 buf[BUF_SIZE];
-    int fdr = sceIoOpen(orig, PSP_O_RDONLY, 0777);
+    int fdr = sceIoOpen(orig, PSP_O_RDONLY, 0);
     int fdw = sceIoOpen(dest, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
     while (1){
         int read = sceIoRead(fdr, buf, BUF_SIZE);

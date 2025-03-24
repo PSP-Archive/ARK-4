@@ -44,7 +44,7 @@ void load_server_file(){
     int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
 
     if (fd < 0){ // retry from flash
-    	fd = sceIoOpen("flash1:/UPDATER.TXT", PSP_O_RDONLY, 0777);
+    	fd = sceIoOpen("flash1:/UPDATER.TXT", PSP_O_RDONLY, 0);
     }
 
     if (fd >= 0){
