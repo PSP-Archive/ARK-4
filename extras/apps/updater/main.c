@@ -170,6 +170,7 @@ int main(int argc, char * argv[])
     pspDebugScreenPrintf("Extracting ARK_01234\n");
 
     // extract ARK_01234
+	strcat(ark_config.arkpath, "/"); // fix from deletion
     extractArchive(my_fd, ark_config.arkpath, NULL);
 
     // extract FLASH0.ARK (PSP only)
