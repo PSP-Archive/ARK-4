@@ -84,11 +84,14 @@ static int isVitaFile(char* filename){
     );
 }
 
+static int lite = -1;
+
 void checkArkConfig(ARKConfig* ark_config){
     // check if ARK is using SEPLUGINS folder due to lack of savedata folder
     SceUID fd = -1;
     char path[ARK_PATH_SIZE]; strcpy(path, ark_config->arkpath); path[strlen(path)-1] = 0; // remove trailing '/' or else sceIoGetstat won't work
     if (strcmp(ark_config->arkpath, SEPLUGINS_MS0) == 0 || (fd = sceIoDopen(path)) < 0){
+		lite = 1;
         // create savedata folder, first attempt on ef0 for PSP Go
         strcpy(ark_config->arkpath, SAVEDATA_EF0 DEFAULT_ARK_FOLDER); // ef0:/PSP/SAVEDATA/ARK_01234
         sceIoMkdir(ark_config->arkpath, 0777);
@@ -111,6 +114,7 @@ void checkArkConfig(ARKConfig* ark_config){
             char* orig = SEPLUGINS_MS0 ARK_SETTINGS;
             char dest[ARK_PATH_SIZE];
             strcpy(dest, ark_config->arkpath);
+			strcat(dest, "/");
             strcat(dest, ARK_SETTINGS);
             dest[0] = ark_config->arkpath[0];
             dest[1] = ark_config->arkpath[1];
@@ -271,6 +275,35 @@ int main(int argc, char * argv[])
     char* c = strrchr(eboot_path, '/');
     *c = 0;
     sceIoRmdir(eboot_path);
+
+	// lite ARK_01234 removal
+	if(lite>0) {
+		pspDebugScreenPrintf("\nLite mode detected!\n\n");
+		char lite_path[64];
+		SceIoDirent dir;
+		SceUID lite_dir = sceIoDopen(ark_config.arkpath);
+		if (lite_dir < 0) {
+            pspDebugScreenPrintf("Failed to open directory: %s\n", ark_config.arkpath);
+			sceKernelDelayThread(5*1000*1000);
+			goto exit;
+    	}
+		memset(&dir, 0, sizeof(SceIoDirent));
+		while(sceIoDread(lite_dir, &dir) > 0) {
+		   if(dir.d_name[0] != '.') {
+			 memset(lite_path, 0, sizeof(lite_path));
+			 sprintf(lite_path, "%s%s", ark_config.arkpath, dir.d_name);
+		     pspDebugScreenPrintf("Cleaning up %s\n", lite_path);
+		     sceIoRemove(lite_path);
+		   }
+		memset(&dir, 0, sizeof(SceIoDirent));
+	   }
+	   sceIoClose(lite_dir);
+	   char *p = strrchr(ark_config.arkpath, '/');
+	   *p = 0;
+	   sceIoRmdir(ark_config.arkpath);
+	}
+
+exit:
 
     // Kill Main Thread
     sceKernelExitGame();
