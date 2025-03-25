@@ -109,19 +109,6 @@ void checkArkConfig(ARKConfig* ark_config){
             args.arg1 = ark_config;
             u32 setArkConfig = sctrlHENFindFunction("SystemControl", "SystemCtrlPrivate", 0x6EAFC03D);    
             kuKernelCall((void*)setArkConfig, &args);
-
-            // move settings file to arkpath
-            char* orig = SEPLUGINS_MS0 ARK_SETTINGS;
-            char dest[ARK_PATH_SIZE];
-            strcpy(dest, ark_config->arkpath);
-			strcat(dest, "/");
-            strcat(dest, ARK_SETTINGS);
-            dest[0] = ark_config->arkpath[0];
-            dest[1] = ark_config->arkpath[1];
-            copy_file(orig, dest);
-            sceIoRemove(orig);
-
-            strcat(ark_config->arkpath, "/");
         }
     }
     sceIoDclose(fd);
