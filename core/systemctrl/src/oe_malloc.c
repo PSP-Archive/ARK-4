@@ -21,12 +21,6 @@
 #include <malloc.h>
 #include "imports.h"
 
-// Initialize Heap
-int oe_mallocinit(void)
-{
-   return 0;
-}
-
 void* oe_malloc(size_t size){
     SceUID uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_KERNEL, "", PSP_SMEM_High, size+sizeof(SceUID), NULL);
     SceUID* ptr = sceKernelGetBlockHeadAddr(uid);
@@ -37,11 +31,4 @@ void* oe_malloc(size_t size){
 void oe_free(void* ptr){
     SceUID uid = ((SceUID*)ptr)[-1];
     sceKernelFreePartitionMemory(uid);
-}
-
-// Terminate Heap
-int oe_mallocterminate(void)
-{
-    // Forward Call
-    return 0;
 }

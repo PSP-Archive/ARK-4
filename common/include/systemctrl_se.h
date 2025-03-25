@@ -336,17 +336,11 @@ void sctrlSESetBootConfFileIndex(int index);
  */
 unsigned int sctrlSEGetBootConfFileIndex(void);
 
-// Initialize Kernel Heap
-int oe_mallocinit(void);
-
-// Allocate Memory for Kernel Heap
+// Allocate Memory in kernel space
 void * oe_malloc(unsigned int size);
 
-// Return Memory to Kernel Heap
+// Free memory
 void oe_free(void * p);
-
-// Terminate Kernel Heap
-int oe_mallocterminate(void);
 
 #ifdef __cplusplus
 }

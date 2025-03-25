@@ -45,16 +45,16 @@
 	IMPORT_FUNC  "SystemCtrlForKernel",0xCE0A654E,sctrlHENLoadModuleOnReboot
 #endif
 #ifdef F_SystemCtrlForKernel_0013
-	IMPORT_FUNC  "SystemCtrlForKernel",0x1E5436EE,oe_mallocinit
-#endif
-#ifdef F_SystemCtrlForKernel_0014
 	IMPORT_FUNC  "SystemCtrlForKernel",0xF9584CAD,oe_malloc
 #endif
-#ifdef F_SystemCtrlForKernel_0015
+#ifdef F_SystemCtrlForKernel_0014
 	IMPORT_FUNC  "SystemCtrlForKernel",0xA65E8BC4,oe_free
 #endif
+#ifdef F_SystemCtrlForKernel_0015
+    IMPORT_FUNC "SystemCtrlForKernel",0x18B687A6,sctrlHENGetRebootexConfig
+#endif
 #ifdef F_SystemCtrlForKernel_0016
-	IMPORT_FUNC  "SystemCtrlForKernel",0xE34A0D97,oe_mallocterminate
+	IMPORT_FUNC "SystemCtrlForKernel",0x646FE67F,sctrlHENSetLoadRebootOverrideHandler
 #endif
 #ifdef F_SystemCtrlForKernel_0017
 	IMPORT_FUNC  "SystemCtrlForKernel",0xBA21998E,sctrlSEGetUmdFile
@@ -289,10 +289,4 @@
 #endif
 #ifdef F_SystemCtrlForKernel_0094
     IMPORT_FUNC "SystemCtrlForKernel",0x324DF3DD,flushCache
-#endif
-#ifdef F_SystemCtrlForKernel_0095
-    IMPORT_FUNC "SystemCtrlForKernel",0x18B687A6,sctrlHENGetRebootexConfig
-#endif
-#ifdef F_SystemCtrlForKernel_0096
-	IMPORT_FUNC "SystemCtrlForKernel",0x646FE67F,sctrlHENSetLoadRebootOverrideHandler
 #endif

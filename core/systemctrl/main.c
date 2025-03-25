@@ -68,9 +68,6 @@ int module_start(SceSize args, void * argp)
     // setup NID resolver on loadercore
     setupNidResolver(loadcore);
 
-    // Initialize Malloc
-    oe_mallocinit();
-
     // Initialize Module Start Patching
     syspatchInit();
 
