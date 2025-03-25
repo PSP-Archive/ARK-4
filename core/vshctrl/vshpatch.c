@@ -183,7 +183,6 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
 {
     u32 text_addr = mod->text_addr;
     u32 top_addr = text_addr+mod->text_size;
-    u32 p = 0;
     u32 a = 0;
     u32 addr;
     char str[50];
@@ -212,32 +211,29 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
         }
     }
     
-    patches = (se_config->hidemac)? 2:1;
-    for (; addr < top_addr && patches; addr++){
-        if (strcmp(addr, "sysconf_plugin_module") == 0){
-            p = addr;
-            patches--;
-        }
-        else if (se_config->hidemac
-                && ((u8*)addr)[0] == 0x25
-                && ((u8*)addr)[1] == 0
-                && ((u8*)addr)[2] == 0x30
-                && ((u8*)addr)[3] == 0
-                && ((u8*)addr)[4] == 0x32
-                && ((u8*)addr)[5] == 0
-                && ((u8*)addr)[6] == 0x58
-                && ((u8*)addr)[7] == 0 )
-        {
-            char model[10];
-            if (IS_VITA_ADR(ark_config)){
-                model[0]='v'; model[1]='P'; model[2]='S'; model[3]='P'; model[4]=0;
+    if (se_config->hidemac){
+        for (; addr < top_addr; addr++){
+            if (se_config->hidemac
+                    && ((u8*)addr)[0] == 0x25
+                    && ((u8*)addr)[1] == 0
+                    && ((u8*)addr)[2] == 0x30
+                    && ((u8*)addr)[3] == 0
+                    && ((u8*)addr)[4] == 0x32
+                    && ((u8*)addr)[5] == 0
+                    && ((u8*)addr)[6] == 0x58
+                    && ((u8*)addr)[7] == 0 )
+            {
+                char model[10];
+                if (IS_VITA_ADR(ark_config)){
+                    model[0]='v'; model[1]='P'; model[2]='S'; model[3]='P'; model[4]=0;
+                }
+                else{
+                    sprintf(model, "%02dg", (int)psp_model+1);
+                }
+                sprintf(str, " [ Model: %s ] ", model);
+                ascii2utf16(addr, str);
+                break;
             }
-            else{
-                sprintf(model, "%02dg", (int)psp_model+1);
-            }
-            sprintf(str, " [ Model: %s ] ", model);
-            ascii2utf16(addr, str);
-            patches--;
         }
     }
     
@@ -251,6 +247,7 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
         case 2: tool = "DT"; break;
     }
 
+    void* p = vsh_malloc(50);
     sprintf(str, "%d.%d%d%s ARK-4 %s", major, minor, micro, tool, ark_config->exploit_id);
     ascii2utf16(p, str);
     

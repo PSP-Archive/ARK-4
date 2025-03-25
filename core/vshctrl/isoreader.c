@@ -104,17 +104,17 @@ static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len,
 static Iso9660DirectoryRecord g_root_record;
 
 static void isoAlloc(){
-    ciso_dec_buf = my_malloc(DAX_BLOCK_SIZE + 64);
-    ciso_com_buf = my_malloc(DAX_COMP_BUF + 64);
-    g_sector_buffer = my_malloc(SECTOR_SIZE);
-    g_CISO_idx_cache = my_malloc(4*CISO_IDX_MAX_ENTRIES);
+    ciso_dec_buf = vsh_malloc(DAX_BLOCK_SIZE + 64);
+    ciso_com_buf = vsh_malloc(DAX_COMP_BUF + 64);
+    g_sector_buffer = vsh_malloc(SECTOR_SIZE);
+    g_CISO_idx_cache = vsh_malloc(4*CISO_IDX_MAX_ENTRIES);
 }
 
 static void isoFree(){
-    if (ciso_dec_buf) my_free(ciso_dec_buf);
-    if (ciso_com_buf) my_free(ciso_com_buf);
-    if (g_sector_buffer) my_free(g_sector_buffer);
-    if (g_CISO_idx_cache) my_free(g_CISO_idx_cache);
+    if (ciso_dec_buf) vsh_free(ciso_dec_buf);
+    if (ciso_com_buf) vsh_free(ciso_com_buf);
+    if (g_sector_buffer) vsh_free(g_sector_buffer);
+    if (g_CISO_idx_cache) vsh_free(g_CISO_idx_cache);
     ciso_dec_buf = NULL;
     ciso_com_buf = NULL;
     g_sector_buffer = NULL;
