@@ -296,13 +296,13 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    if (strcmp(mod->modname, "sceUSBCam_Driver") == 0){
+    if (strcmp(mod->modname, "sceUSBCam_Driver") == 0 || strcmp(mod->modname, "sceUSBMic_Driver")){
         extern int is_usb_charging;
         extern int usb_charge_break;
         if (is_usb_charging){
             usb_charge_break = 1;
             usb_charge(100);
-            sceKernelDelayThread(200);
+            sceKernelDelayThread(2000);
         }
         goto flush;
     }
