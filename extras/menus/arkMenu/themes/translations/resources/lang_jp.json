@@ -82,8 +82,8 @@
     "Free size": "利用可能なサイズ",
 
     "Network Tools": "ネットワークツール",
-    "Press [] to check for Updates": "[]を押してアップデートを確認",
-    "[] to Reset Settings": "[] 設定をリセットする",
+    "Press [] to check for Updates": "[_]を押してアップデートを確認",
+    "[] to Reset Settings": "[_] 設定をリセットする",
     "FTP Server is stopped. Press %s to start.": "FTP サービスが停止しました。開始するには %s を押してください。",
     "FTP Server is running @ %s. Press %s to stop.": "FTP サービスは @ %s で実行中です。停止するには %s を押してください。",
     "Could not get IP address": "IPアドレスを取得できません",

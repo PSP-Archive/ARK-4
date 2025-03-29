@@ -85,8 +85,8 @@
     "Edit Line": "Epexergasia grammhj",
 
     "Network Tools": "Ergaleia Diktuou",
-    "Press [] to check for Updates": "Pathste to [] gia elegco Enhmerwsewn",
-    "[] to Reset Settings": "[] keu Reset Pengaturan",
+    "Press [] to check for Updates": "Pathste to [_] gia elegco Enhmerwsewn",
+    "[] to Reset Settings": "[_] keu Reset Pengaturan",
     "FTP Server is stopped. Press %s to start.": "O Diakomisthj Metaforaj Arceiwn ecei stamathsei. Pathste to %s gia ekkinhsh.",
     "FTP Server is running @ %s. Press %s to stop.": "O Diakomisthj Metaforaj Arceiwn ekteleitai sto %s. Pathste to %s gia diakoph",
     "Could not get IP address": "Den htan dunath h lhyh Dieuqunshj Diktuou",

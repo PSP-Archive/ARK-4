@@ -84,8 +84,8 @@
     "Edit Line": "Regel Bewerken",
 
     "Network Tools": "Netwerktools",
-    "Press [] to check for Updates": "Druk op [] om te controleren op updates",
-    "[] to Reset Settings": "[] Instellingen resetten",
+    "Press [] to check for Updates": "Druk op [_] om te controleren op updates",
+    "[] to Reset Settings": "[_] Instellingen resetten",
     "FTP Server is stopped. Press %s to start.": "FTP-server is gestopt. Druk op %s om te starten.",
     "FTP Server is running @ %s. Press %s to stop.": "FTP-server draait op %s. Druk op %s om te stoppen.",
     "Could not get IP address": "Kon IP-adres niet ophalen",
