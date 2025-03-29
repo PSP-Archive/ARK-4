@@ -87,9 +87,15 @@ static void startPlugins()
 {
     for (int i=0; i<plugins->count; i++){
         int res = 0;
-        char* path = plugins->paths[i];
+        char path[MAX_PLUGIN_PATH];
+        strcpy(path, plugins->paths[i]);
         // Load Module
         int uid = sceKernelLoadModule(path, 0, NULL);
+        if (uid<0){ // try in ARK path
+            strcpy(path, ark_config->arkpath);
+            strcat(path, plugins->paths[i]);
+            uid = sceKernelLoadModule(path, 0, NULL);
+        }
         if (uid > 0){
             // Call handler
             if (plugin_handler){
