@@ -83,8 +83,8 @@
     "Edit Line": "Editar Linha",
 
     "Network Tools": "Ferramentas de Rede",
-    "Press [] to check for Updates": "Pressione [] para checar novas atualizações",
-    "[] to Reset Settings": "[] para repor as configurações",
+    "Press [] to check for Updates": "Pressione [_] para checar novas atualizações",
+    "[] to Reset Settings": "[_] para repor as configurações",
     "FTP Server is stopped. Press %s to start.": "Servidor FTP parou. Pressione %s para iniciar.",
     "FTP Server is running @ %s. Press %s to stop.": "Servidor FTP iniciado em %s. Pressione %s para parar",
     "Could not get IP address": "Não foi possível obter o endereço IP",

@@ -84,8 +84,8 @@
     "Edit Line": "Редагувати рядок",
 
     "Network Tools": "Мережеві інструменти",
-    "Press [] to check for Updates": "Натисніть [], щоб перевірити наявність оновлень",
-    "[] to Reset Settings": "[] Параметртæ сног кæнынæн",
+    "Press [] to check for Updates": "Натисніть [_], щоб перевірити наявність оновлень",
+    "[] to Reset Settings": "[_] Параметртæ сног кæнынæн",
     "FTP Server is stopped. Press %s to start.": "FTP сервер зупинено. Натисніть %s для запуску.",
     "FTP Server is running @ %s. Press %s to stop.": "FTP сервер відкрито на %s. Натисніть %s, щоб зупинити.",
     "Could not get IP address": "Неможливо отримати IP адресу",
