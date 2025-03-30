@@ -60,7 +60,7 @@ void applyFixesByModule(SceModule2* mod){
     else if (strcasecmp(mod->modname, "DJMAX") == 0) {
         // enable UMD reading speed
         void (*SetUmdDelay)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
-        if (SetUmdDelay) SetUmdDelay(3);
+        if (SetUmdDelay) SetUmdDelay(2);
 
         // disable Inferno Cache
         int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
@@ -73,7 +73,6 @@ void applyFixesByModule(SceModule2* mod){
         SEConfig* se_config = sctrlSEGetConfig(NULL);
         se_config->iso_cache = 0;
         se_config->msspeed = 0;
-        se_config->clock = 3;
     }
 
     flushCache();

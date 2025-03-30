@@ -176,11 +176,6 @@ static int IoExit(PspIoDrvArg* arg)
 static int IoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode)
 {
     int i, ret;
-
-    if (enable_umd_delay){
-        sceKernelDelayThread(100000*enable_umd_delay);
-    }
-
     i = 0;
 
     do {
@@ -243,10 +238,6 @@ static int IoClose(PspIoDrvFileArg *arg)
 {
     int ret, retv;
     int offset;
-
-    if (enable_umd_delay){
-        sceKernelDelayThread(100000*enable_umd_delay);
-    }
 
     ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
 
@@ -385,12 +376,14 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
 
 exit:
 
+    /*
     if (ret>=0 && curr>=0 && enable_umd_delay){
         int diff = 0;
         if (ret>curr) diff = ret-curr;
         else diff = curr-ret;
         sceKernelDelayThread(diff*enable_umd_delay);
     }
+    */
 
     #ifdef DEBUG
     printk("%s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
@@ -404,10 +397,6 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
     int ret, idx;
 
     idx = (int)arg->arg;
-
-    if (enable_umd_delay){
-        sceKernelDelayThread(100000*enable_umd_delay);
-    }
 
     if(cmd == 0x01F010DB) {
         ret = 0;
@@ -515,10 +504,6 @@ static int umd_devctl_read(void *outdata, int outlen, struct LbaParams *param)
 static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen)
 {
     int ret;
-
-    if (enable_umd_delay){
-        sceKernelDelayThread(100000*enable_umd_delay);
-    }
 
     if(cmd == 0x01F00003) {
         ret = 0;

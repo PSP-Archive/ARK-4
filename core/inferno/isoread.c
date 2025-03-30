@@ -567,7 +567,18 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
         return -1;
     }
 
-    sceKernelDelayThread(data_len*enable_umd_delay); // 1MB/s / factor
+    if (enable_umd_delay){
+        // simulate laser seek
+        static int last_offset = 0;
+        int cur_offset = offset+data_len;
+        int diff = 0;
+        if (cur_offset>last_offset) diff = cur_offset-last_offset;
+        else diff = last_offset-cur_offset;
+        last_offset = cur_offset;
+        sceKernelDelayThread(diff/1024);
+        // simulate data read
+        sceKernelDelayThread(data_len*enable_umd_delay); // 1MB/s / factor
+    }
 
     return retv;
 }

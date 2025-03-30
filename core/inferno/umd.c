@@ -75,10 +75,6 @@ int sceUmdCheckMedium(void)
 {
     int ret;
 
-    if (enable_umd_delay){
-        sceKernelDelayThread(100000*enable_umd_delay);
-    }
-    
     if (g_iso_fn == NULL || g_iso_fn[0] == '\0'){
         return 0;
     }
@@ -189,10 +185,6 @@ int sceUmdGetDiscInfo(pspUmdInfo *info)
     if(!check_memory(info, sizeof(*info))) {
         ret = 0x80010016;
         goto exit;
-    }
-
-    if (enable_umd_delay){
-        sceKernelDelayThread(100000*enable_umd_delay);
     }
 
     k1 = pspSdkSetK1(0);
@@ -458,7 +450,7 @@ int sceUmdActivate(int unit, const char* drive)
     int value;
 
     if (enable_umd_delay){
-        sceKernelDelayThread(100000*enable_umd_delay);
+        sceKernelDelayThread(50000*enable_umd_delay);
     }
 
     if(!g_iso_opened) {
@@ -506,7 +498,7 @@ int sceUmdDeactivate(int unit, const char *drive)
     u32 k1;
 
     if (enable_umd_delay){
-        sceKernelDelayThread(100000*enable_umd_delay);
+        sceKernelDelayThread(50000*enable_umd_delay);
     }
 
     if(drive == NULL || !check_memory(drive, strlen(drive) + 1)) {
