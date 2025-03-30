@@ -324,12 +324,17 @@ static void systemDrawer(){
 }
 
 void SystemMgr::drawScreen(){
-    if (stillLoading()){
-        common::getImage(IMAGE_BG)->draw(0, 0);
-    }
-    else{
+	if(common::getConf()->main_menu != 0) {
         common::drawScreen();
-    }
+	}
+	else {
+    	if (stillLoading()){
+        	common::getImage(IMAGE_BG)->draw(0, 0);
+    	}
+    	else{
+        	common::drawScreen();
+    	}
+	}
     if (!screensaver){
         entries[cur_entry]->draw();
         if (!fullscreen){
