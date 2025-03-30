@@ -118,9 +118,6 @@ static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len,
 
 unsigned char enable_umd_delay = 0;
 
-static void umd_delay(u32 read_size){
-    sceKernelDelayThread(read_size*enable_umd_delay); // 1MB/s / factor
-}
 
 // 0x00000368
 static void wait_until_ms0_ready(void)
@@ -570,7 +567,7 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
         return -1;
     }
 
-    umd_delay(data_len);
+    sceKernelDelayThread(data_len*enable_umd_delay); // 1MB/s / factor
 
     return retv;
 }

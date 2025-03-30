@@ -177,6 +177,10 @@ static int IoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode)
 {
     int i, ret;
 
+    if (enable_umd_delay){
+        sceKernelDelayThread(100000*enable_umd_delay);
+    }
+
     i = 0;
 
     do {
@@ -239,6 +243,10 @@ static int IoClose(PspIoDrvFileArg *arg)
 {
     int ret, retv;
     int offset;
+
+    if (enable_umd_delay){
+        sceKernelDelayThread(100000*enable_umd_delay);
+    }
 
     ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
 
@@ -328,6 +336,7 @@ exit:
 static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
 {
     int ret, idx;
+    int curr = -1;
 
     ret = sceKernelWaitSema(g_umd9660_sema_id, 1, NULL);
 
@@ -337,6 +346,7 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
     }
 
     idx = (int)arg->arg;
+    curr = g_open_slot[idx].offset;
     
     if(whence == PSP_SEEK_SET) {
         g_open_slot[idx].offset = ofs;
@@ -374,6 +384,14 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
     ret = g_open_slot[idx].offset;
 
 exit:
+
+    if (ret>=0 && curr>=0 && enable_umd_delay){
+        int diff = 0;
+        if (ret>curr) diff = ret-curr;
+        else diff = curr-ret;
+        sceKernelDelayThread(diff*enable_umd_delay);
+    }
+
     #ifdef DEBUG
     printk("%s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
     #endif
@@ -386,6 +404,10 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
     int ret, idx;
 
     idx = (int)arg->arg;
+
+    if (enable_umd_delay){
+        sceKernelDelayThread(100000*enable_umd_delay);
+    }
 
     if(cmd == 0x01F010DB) {
         ret = 0;
@@ -425,7 +447,9 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
         }
 
         seek_cmd = (struct IoIoctlSeekCmd *)indata;
+        //int curr = ret = IoLseek(arg, 0, SEEK_CUR);
         ret = IoLseek(arg, seek_cmd->offset, seek_cmd->whence);
+
         goto exit;
     } else if(cmd == 0x01F30003) {
         u32 len;
@@ -492,6 +516,10 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 {
     int ret;
 
+    if (enable_umd_delay){
+        sceKernelDelayThread(100000*enable_umd_delay);
+    }
+
     if(cmd == 0x01F00003) {
         ret = 0;
         goto exit;
@@ -528,6 +556,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
         sector = ((u32*)(indata))[3];
         infernoCacheAdd(lba * ISO_SECTOR_SIZE, sector * ISO_SECTOR_SIZE);
         ret = 0;
+
         goto exit;
     } else if(cmd == 0x01F300A5) {
         u32 lba;
