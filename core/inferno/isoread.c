@@ -559,7 +559,10 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
     g_read_arg.offset = offset;
     g_read_arg.address = ptr;
     g_read_arg.size = data_len;
+
+    clock_t start_clock = sceKernelLibcClock();
     retv = sceKernelExtendKernelStack(0x2000, (void*)iso_reader, &g_read_arg);
+    clock_t end_clock = sceKernelLibcClock();
 
     ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
 
@@ -569,15 +572,18 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
 
     if (enable_umd_delay){
         // simulate laser seek
-        static int last_offset = 0;
-        int cur_offset = offset+data_len;
-        int diff = 0;
+        static u32 last_offset = 0;
+        u32 cur_offset = offset+data_len;
+        u32 diff = 0;
         if (cur_offset>last_offset) diff = cur_offset-last_offset;
         else diff = last_offset-cur_offset;
         last_offset = cur_offset;
-        sceKernelDelayThread(diff/1024);
+        u32 seek_time = diff/2048;
         // simulate data read
-        sceKernelDelayThread(data_len*enable_umd_delay); // 1MB/s / factor
+        u32 read_time = (end_clock-start_clock);
+        u32 delay = seek_time + (data_len*enable_umd_delay);
+        if (delay > read_time) sceKernelDelayThread(delay-read_time);
+        //sceKernelDelayThread(diff+(data_len*enable_umd_delay)+(data_len/enable_umd_delay)-((end_clock-start_clock)/3)); // 1MB/s / factor
     }
 
     return retv;

@@ -376,15 +376,6 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
 
 exit:
 
-    /*
-    if (ret>=0 && curr>=0 && enable_umd_delay){
-        int diff = 0;
-        if (ret>curr) diff = ret-curr;
-        else diff = curr-ret;
-        sceKernelDelayThread(diff*enable_umd_delay);
-    }
-    */
-
     #ifdef DEBUG
     printk("%s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
     #endif

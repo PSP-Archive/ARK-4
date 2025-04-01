@@ -449,10 +449,6 @@ int sceUmdActivate(int unit, const char* drive)
     u32 k1;
     int value;
 
-    if (enable_umd_delay){
-        sceKernelDelayThread(50000*enable_umd_delay);
-    }
-
     if(!g_iso_opened) {
         return 0x80010016;
     }
@@ -496,10 +492,6 @@ int sceUmdDeactivate(int unit, const char *drive)
 {
     int ret;
     u32 k1;
-
-    if (enable_umd_delay){
-        sceKernelDelayThread(50000*enable_umd_delay);
-    }
 
     if(drive == NULL || !check_memory(drive, strlen(drive) + 1)) {
         return 0x80010016;
