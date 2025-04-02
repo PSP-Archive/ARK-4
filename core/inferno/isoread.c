@@ -585,8 +585,7 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
     }
     if (umd_speed){
         // simulate read time
-        u32 read_size = (data_len<2048)? 2048 : data_len;
-        sceKernelDelayThread(read_size*umd_speed);
+        sceKernelDelayThread(data_len*umd_speed);
     }
 
     return retv;
