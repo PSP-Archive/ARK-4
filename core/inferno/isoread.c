@@ -116,7 +116,7 @@ static u32 g_ciso_total_block;
 static int is_compressed = 0;
 static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit) = NULL;
 
-unsigned char umd_delay = 0;
+unsigned char umd_seek = 0;
 unsigned char umd_speed = 0;
 u32 cur_offset = 0;
 u32 last_read_offset = 0;
@@ -573,14 +573,14 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
         return -1;
     }
 
-    if (umd_delay){
+    if (umd_seek){
         // simulate seek time
         u32 diff = 0;
         last_read_offset = offset+data_len;
         if (cur_offset>last_read_offset) diff = cur_offset-last_read_offset;
         else diff = last_read_offset-cur_offset;
         cur_offset = last_read_offset;
-        u32 seek_time = (diff*umd_delay)/1024;
+        u32 seek_time = (diff*umd_seek)/1024;
         sceKernelDelayThread(seek_time);
     }
     if (umd_speed){
@@ -593,6 +593,6 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
 }
 
 void infernoSetUmdDelay(int delay, int speed){
-    umd_delay = delay;
+    umd_seek = delay;
     umd_speed = speed;
 }

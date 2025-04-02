@@ -153,7 +153,7 @@ typedef struct _SEConfig
 {
     u32 magic;
 
-    s8 umdelay;
+    s8 umdseek;
     s8 umdspeed;
     s16 clock;
     s16 disable_pause;
