@@ -58,6 +58,8 @@ void applyFixesByModule(SceModule2* mod){
 
     // disable anti-CFW code
     else if (strcasecmp(mod->modname, "DJMAX") == 0) {
+        SEConfig* se_config = sctrlSEGetConfig(NULL);
+        
         if (se_config->umdseek == 0 && se_config->umdspeed == 0){
             // enable UMD reading speed
             void (*SetUmdDelay)(int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
@@ -74,7 +76,6 @@ void applyFixesByModule(SceModule2* mod){
         msstorCacheInit(NULL);
 
         // prevent Inferno Cache and MS Cache from being re-enabled
-        SEConfig* se_config = sctrlSEGetConfig(NULL);
         se_config->iso_cache = 0;
         se_config->msspeed = 0;
     }
