@@ -296,7 +296,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    if (strcmp(mod->modname, "sceUSBCam_Driver") == 0 || strcmp(mod->modname, "sceUSBMic_Driver")){
+    if (strcmp(mod->modname, "sceUSBCam_Driver") == 0 || strcmp(mod->modname, "sceUSBMic_Driver") == 0){
         extern int is_usb_charging;
         extern int usb_charge_break;
         if (is_usb_charging){

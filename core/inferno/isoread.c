@@ -117,6 +117,7 @@ static int is_compressed = 0;
 static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit) = NULL;
 
 unsigned char enable_umd_delay = 0;
+u32 last_offset = 0;
 
 
 // 0x00000368
@@ -571,20 +572,33 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
     }
 
     if (enable_umd_delay){
-        // simulate laser seek
-        static u32 last_offset = 0;
+        u32 read_size = (data_len<2048)? 2048 : data_len;
         u32 cur_offset = offset+data_len;
         u32 diff = 0;
         if (cur_offset>last_offset) diff = cur_offset-last_offset;
         else diff = last_offset-cur_offset;
         last_offset = cur_offset;
-        u32 seek_time = diff/2048;
+        if (diff > 100) sceKernelDelayThread(100000);
+        sceKernelDelayThread(read_size*enable_umd_delay);
+    }
+
+    /*
+    if (enable_umd_delay){
+        // simulate laser seek
+        u32 cur_offset = offset+data_len;
+        u32 diff = 0;
+        if (last_offset>0x38400000) last_offset /= 2; //-= 0x38400000;
+        if (cur_offset>0x38400000) cur_offset /= 2; //-= 0x38400000;
+        if (cur_offset>last_offset) diff = cur_offset-last_offset;
+        else diff = last_offset-cur_offset;
+        last_offset = cur_offset;
+        u32 seek_time = diff/1024;
         // simulate data read
         u32 read_time = (end_clock-start_clock);
         u32 delay = seek_time + (data_len*enable_umd_delay);
         if (delay > read_time) sceKernelDelayThread(delay-read_time);
-        //sceKernelDelayThread(diff+(data_len*enable_umd_delay)+(data_len/enable_umd_delay)-((end_clock-start_clock)/3)); // 1MB/s / factor
     }
+    */
 
     return retv;
 }

@@ -55,6 +55,7 @@ extern int g_total_sectors;
 extern struct IoReadArg g_read_arg;
 extern int g_disc_type;
 extern unsigned char enable_umd_delay;
+extern u32 last_offset;
 
 extern void sceUmdSetDriveStatus(int status);
 
