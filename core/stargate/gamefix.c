@@ -59,7 +59,7 @@ void applyFixesByModule(SceModule2* mod){
     // disable anti-CFW code
     else if (strcasecmp(mod->modname, "DJMAX") == 0) {
         SEConfig* se_config = sctrlSEGetConfig(NULL);
-        
+
         if (se_config->umdseek == 0 && se_config->umdspeed == 0){
             // enable UMD reading speed
             void (*SetUmdDelay)(int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
@@ -102,6 +102,7 @@ void applyFixesByGameId(){
 
     // Patch Aces of War anti-CFW check (UMD speed)
     else if (strcasecmp("ULES00590", gameid) == 0 || strcasecmp("ULJM05075", gameid) == 0){
+        SEConfig* se_config = sctrlSEGetConfig(NULL);
         if (se_config->umdseek == 0 && se_config->umdspeed == 0){
             void (*SetUmdDelay)(int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
             if (SetUmdDelay) SetUmdDelay(1, 1);
