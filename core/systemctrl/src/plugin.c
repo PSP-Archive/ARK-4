@@ -510,6 +510,10 @@ static void settingsHandler(char* path, u8 enabled){
         int r = atoi(path+9);
         se_config.umdelay = (enabled)?r:0;
     }
+    else if (strncasecmp(path, "slowumd_", 8) == 0){
+        int r = atoi(path+8);
+        se_config.umdspeed = (enabled)?r:0;
+    }
     else if (strcasecmp(path, "hidepics") == 0){ // hide PIC0 and PIC1
         se_config.hidepics = enabled;
     }

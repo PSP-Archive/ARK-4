@@ -116,8 +116,10 @@ static u32 g_ciso_total_block;
 static int is_compressed = 0;
 static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit) = NULL;
 
-unsigned char enable_umd_delay = 0;
-u32 last_offset = 0;
+unsigned char umd_delay = 0;
+unsigned char umd_speed = 0;
+u32 cur_offset = 0;
+u32 last_read_offset = 0;
 
 
 // 0x00000368
@@ -571,38 +573,26 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
         return -1;
     }
 
-    if (enable_umd_delay){
+    if (umd_delay){
+        // simulate seek time
+        u32 diff = 0;
+        last_read_offset = offset+data_len;
+        if (cur_offset>last_read_offset) diff = cur_offset-last_read_offset;
+        else diff = last_read_offset-cur_offset;
+        cur_offset = last_read_offset;
+        u32 seek_time = (diff*umd_delay)/1024;
+        sceKernelDelayThread(seek_time);
+    }
+    if (umd_speed){
+        // simulate read time
         u32 read_size = (data_len<2048)? 2048 : data_len;
-        u32 cur_offset = offset+data_len;
-        u32 diff = 0;
-        if (cur_offset>last_offset) diff = cur_offset-last_offset;
-        else diff = last_offset-cur_offset;
-        last_offset = cur_offset;
-        if (diff > 100) sceKernelDelayThread(100000);
-        sceKernelDelayThread(read_size*enable_umd_delay);
+        sceKernelDelayThread(read_size*umd_speed);
     }
-
-    /*
-    if (enable_umd_delay){
-        // simulate laser seek
-        u32 cur_offset = offset+data_len;
-        u32 diff = 0;
-        if (last_offset>0x38400000) last_offset /= 2; //-= 0x38400000;
-        if (cur_offset>0x38400000) cur_offset /= 2; //-= 0x38400000;
-        if (cur_offset>last_offset) diff = cur_offset-last_offset;
-        else diff = last_offset-cur_offset;
-        last_offset = cur_offset;
-        u32 seek_time = diff/1024;
-        // simulate data read
-        u32 read_time = (end_clock-start_clock);
-        u32 delay = seek_time + (data_len*enable_umd_delay);
-        if (delay > read_time) sceKernelDelayThread(delay-read_time);
-    }
-    */
 
     return retv;
 }
 
-void infernoSetUmdDelay(int enable){
-    enable_umd_delay = enable;
+void infernoSetUmdDelay(int delay, int speed){
+    umd_delay = delay;
+    umd_speed = speed;
 }

@@ -207,9 +207,9 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
                 patch_qaflags();
             }
 
-            if (se_config.umdelay){
-                void (*SetUmdDelay)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
-                if (SetUmdDelay) SetUmdDelay(se_config.umdelay);
+            if (se_config.umdelay || se_config.umdspeed){
+                void (*SetUmdDelay)(int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
+                if (SetUmdDelay) SetUmdDelay(se_config.umdelay, se_config.umdspeed);
             }
 
             // handle CPU speed

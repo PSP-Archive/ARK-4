@@ -379,6 +379,9 @@ exit:
     #ifdef DEBUG
     printk("%s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
     #endif
+
+    if (ret>=0) cur_offset = ret;
+
     return ret;
 }
 
@@ -428,18 +431,6 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
 
         seek_cmd = (struct IoIoctlSeekCmd *)indata;
         ret = IoLseek(arg, seek_cmd->offset, seek_cmd->whence);
-
-        /*
-        if (ret>=0){
-            u32 diff = 0;
-            if (last_offset>0x38400000) last_offset /= 2; //-= 0x38400000;
-            if (ret>0x38400000) ret /= 2; //-= 0x38400000;
-            if (ret>last_offset) diff = ret-last_offset;
-            else diff = last_offset-ret;
-            last_offset = ret;
-            sceKernelDelayThread(diff/1024);
-        }
-        */
 
         goto exit;
     } else if(cmd == 0x01F30003) {
