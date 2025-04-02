@@ -57,6 +57,7 @@ void applyFixesByModule(SceModule2* mod){
     }
 
     // disable anti-CFW code
+    /*
     else if (strcasecmp(mod->modname, "DJMAX") == 0) {
         // enable UMD reading speed
         void (*SetUmdDelay)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
@@ -74,6 +75,7 @@ void applyFixesByModule(SceModule2* mod){
         se_config->iso_cache = 0;
         se_config->msspeed = 0;
     }
+    */
 
     flushCache();
 }
