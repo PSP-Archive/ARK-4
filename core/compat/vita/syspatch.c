@@ -174,8 +174,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         // Boot is complete
         if(isSystemBooted())
         {
-            if (se_config->force_high_memory)
-                sceKernelAllocPartitionMemory(2, "protected", PSP_SMEM_Addr, 0x1000000, (void *)0x0A000000);
 
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed)

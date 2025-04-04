@@ -8,7 +8,7 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   endif()
 endif()
 
-project(ef2uma)
+project(ef2mapper)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -std=gnu99")
@@ -25,11 +25,11 @@ if (NOT ${RELEASE})
   add_definitions(-DENABLE_LOGGING)
 endif()
 
-add_executable(ef2uma
-  ef2uma.c
+add_executable(ef2mapper
+  ef2mapper.c
 )
 
-target_link_libraries(ef2uma
+target_link_libraries(ef2mapper
   taihen_stub
   SceLibKernel_stub
   SceLibc_stub_weak
@@ -43,10 +43,10 @@ target_link_libraries(ef2uma
   SceProcessmgr_stub
 )
 
-set_target_properties(ef2uma
+set_target_properties(ef2mapper
   PROPERTIES LINK_FLAGS "-nostdlib"
 )
 
-vita_create_self(ef2uma.suprx ef2uma
-  CONFIG ${CMAKE_SOURCE_DIR}/ef2uma.yml
+vita_create_self(ef2mapper.suprx ef2mapper
+  CONFIG ${CMAKE_SOURCE_DIR}/ef2mapper.yml
 )

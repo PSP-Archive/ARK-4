@@ -63,8 +63,8 @@ void applyFixesByModule(SceModule2* mod){
         if (se_config->umdseek == 0 && se_config->umdspeed == 0){
             // enable UMD reading speed
             void (*SetUmdDelay)(int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
-            if (SetUmdDelay) SetUmdDelay(2, 1);
-            se_config->umdseek = 2;
+            if (SetUmdDelay) SetUmdDelay(4, 1);
+            se_config->umdseek = 4;
             se_config->umdspeed = 1;
         }
 

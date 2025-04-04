@@ -591,7 +591,7 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
     return retv;
 }
 
-void infernoSetUmdDelay(int delay, int speed){
-    umd_seek = delay;
+void infernoSetUmdDelay(int seek, int speed){
+    umd_seek = seek;
     umd_speed = speed;
 }
