@@ -39,7 +39,7 @@
 #include "sysmem.h"
 
 // Load Execute Module via Kernel Internal Function
-int (* _sceLoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int);
+int (* _sceLoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int) = NULL;
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
 {
     // Elevate Permission Level
@@ -93,14 +93,14 @@ int sctrlKernelLoadExecVSHEf2(const char *file, struct SceKernelLoadExecVSHParam
     return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_EF2, file, param);
 }
 
+int (*_sceKernelExitVSH)(void*) = NULL;
 int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param)
 {
     u32 k1;
     int ret = -1;
     k1 = pspSdkSetK1(0);
     memset(rebootex_config.game_id, 0, 10);
-    int (*_KernelExitVSH)(void*) = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
-    ret = _KernelExitVSH(param);
+    ret = _sceKernelExitVSH(param);
     pspSdkSetK1(k1);
     return ret;
 }

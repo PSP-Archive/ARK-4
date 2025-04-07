@@ -141,6 +141,12 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param);
         u32 _LoadExecVSHWithApitype = findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
         HIJACK_FUNCTION(_LoadExecVSHWithApitype, sctrlKernelLoadExecVSHWithApitype, _sceLoadExecVSHWithApitype);
+
+        // Hijack exit calls
+        extern int (*_sceKernelExitVSH)(void*);
+        extern int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
+        u32 _KernelExitVSH = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0x08F7166C);
+        HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
         goto flush;
     }
     
