@@ -45,6 +45,14 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct Sce
     // Elevate Permission Level
     unsigned int k1 = pspSdkSetK1(0);
     
+    {
+        char temp[128];
+        sprintf(temp, "%p, %s, %s\n", apitype, file, param->argp);
+        int fd = sceIoOpen("ms0:/loadexec.txt", PSP_O_WRONLY|PSP_O_APPEND|PSP_O_CREAT, 0777);
+        sceIoWrite(fd, temp, strlen(temp));
+        sceIoClose(fd);
+    }
+
     if (apitype == PSP_INIT_APITYPE_DISC || apitype == 0x160){
         readGameIdFromDisc();
     }

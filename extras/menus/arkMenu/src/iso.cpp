@@ -179,20 +179,20 @@ void Iso::loadAVMedia(){
 }
 
 void Iso::doExecute(){
-    static char pboot_path[256];
-    if (common::getConf()->scan_dlc && has_installed_file("PBOOT.PBP", pboot_path)){
-        Iso::executeISOupdated(this->path.c_str(), pboot_path);
+    static char dlc_path[256];
+    const char* iso_path = this->path.c_str();
+    if (common::getConf()->scan_dlc && has_installed_file("PBOOT.PBP", dlc_path)){
+        Iso::executeISOupdated(iso_path, dlc_path);
     }
     else{
-        char tmp[256];
-        char* eboot_path = NULL;
-        if (has_installed_file("EBOOT.PBP", tmp))
-            eboot_path = tmp;
+        char* disc_path = NULL;
+        if (has_installed_file("EBOOT.PBP", dlc_path))
+            disc_path = dlc_path;
         else if (isPatched())
-            eboot_path = (char*)UMD_EBOOT_OLD;
+            disc_path = (char*)UMD_EBOOT_OLD;
         else
-            eboot_path = (char*)UMD_EBOOT_BIN;
-        Iso::executeISO(this->path.c_str(), eboot_path);
+            disc_path = (char*)UMD_EBOOT_BIN;
+        Iso::executeISO(this->path.c_str(), disc_path);
     }
 }
 
@@ -294,7 +294,7 @@ int Iso::has_installed_file(const char* installed_file, char* out_path){
     char* devs[] = {"ms0:", "ef0:"};
 
     for (int i=0; i<2; i++){
-        sprintf(path, "%s/PSP/GAME/%s/PBOOT.PBP", devs[i], game_id);
+        sprintf(path, "%s/PSP/GAME/%s/%s", devs[i], game_id, installed_file);
         int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
         if (fd >= 0){
             // found
