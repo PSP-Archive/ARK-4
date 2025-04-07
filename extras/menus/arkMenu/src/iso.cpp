@@ -185,13 +185,7 @@ void Iso::doExecute(){
         Iso::executeISOupdated(iso_path, dlc_path);
     }
     else{
-        char* disc_path = NULL;
-        if (has_installed_file("EBOOT.PBP", dlc_path))
-            disc_path = dlc_path;
-        else if (isPatched())
-            disc_path = (char*)UMD_EBOOT_OLD;
-        else
-            disc_path = (char*)UMD_EBOOT_BIN;
+        char* disc_path = (isPatched())? (char*)UMD_EBOOT_OLD : (char*)UMD_EBOOT_BIN;
         Iso::executeISO(this->path.c_str(), disc_path);
     }
 }
