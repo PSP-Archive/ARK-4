@@ -135,6 +135,12 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         OrigLoadReboot = (void *)mod->text_addr;
         // Patch loadexec
         patchLoadExec(mod, (u32)LoadReboot, (u32)sctrlHENFindFunction("sceThreadManager", "ThreadManForKernel", 0xF6427665), 3);
+
+        // Hijack all execute calls
+        extern int (* _sceLoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int);
+        extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param);
+        u32 _LoadExecVSHWithApitype = findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
+        HIJACK_FUNCTION(_LoadExecVSHWithApitype, sctrlKernelLoadExecVSHWithApitype, _sceLoadExecVSHWithApitype);
         goto flush;
     }
     

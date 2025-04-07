@@ -39,20 +39,21 @@
 #include "sysmem.h"
 
 // Load Execute Module via Kernel Internal Function
+int (* _sceLoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int);
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
 {
     // Elevate Permission Level
     unsigned int k1 = pspSdkSetK1(0);
     
-    if (apitype != PSP_INIT_APITYPE_DISC)
+    if (apitype == PSP_INIT_APITYPE_DISC || apitype == 0x160){
+        readGameIdFromDisc();
+    }
+    else {
         memset(rebootex_config.game_id, 0, 10);
-
-    // Find Target Function
-    int (* _LoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int)
-        = findFirstJAL(sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xD8320A28));
+    }
 
     // Load Execute Module
-    int result = _LoadExecVSHWithApitype(apitype, file, param, 0x10000);
+    int result = _sceLoadExecVSHWithApitype(apitype, file, param, 0x10000);
     
     // Restore Permission Level on Failure
     pspSdkSetK1(k1);
@@ -78,9 +79,6 @@ int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam
 }
 
 int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param) {
-    int k1 = pspSdkSetK1(0);
-    readGameIdFromDisc();
-    pspSdkSetK1(k1);
     return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_DISC, file, param);
 }
 
