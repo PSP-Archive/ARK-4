@@ -29,6 +29,9 @@ class UMD : public Entry{
     private:
         string umdname;
 
+        int readGameId(char* game_id);
+        bool hasUpdate(char* update_path);
+
     public:
     
         UMD();

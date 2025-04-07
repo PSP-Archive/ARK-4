@@ -112,12 +112,19 @@ void UMD::loadAVMedia(){
 }
 
 void UMD::doExecute(){
+    int apitype = 0x160;
+    char path[128];
+
+    if (!hasUpdate(path)){
+        apitype = 0x120;
+        strcpy(path, UMD_EBOOT_BIN);
+    }
+
     struct SceKernelLoadExecVSHParam param;
     memset(&param, 0, sizeof(param));
-    
     param.size = sizeof(param);
-    param.argp = (char*)UMD_EBOOT_BIN;
-    param.args = 33;
+    param.argp = path;
+    param.args = strlen(path)+1;
     param.key = "game";
    
     sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
@@ -125,7 +132,45 @@ void UMD::doExecute(){
 
     sctrlSESetUmdFile("");
     
-    sctrlKernelLoadExecVSHDisc(UMD_EBOOT_BIN, &param);
+    sctrlKernelLoadExecVSHWithApitype(apitype, path, &param);
+}
+
+bool UMD::hasUpdate(char* update_path){
+    char game_id[10];
+    memset(game_id, 0, sizeof(game_id));
+    readGameId(game_id);
+
+    // try to find the update file
+    sprintf(update_path, "ms0:/PSP/GAME/%s/PBOOT.PBP", game_id);
+    SceIoStat stat;
+    int res = sceIoGetstat(update_path, &stat);
+    if (res >= 0){
+        // found
+        return 1;
+    }
+    return 0;
+}
+
+int UMD::readGameId(char* game_id){
+    // Open Disc Identifier
+    int disc = sceIoOpen("disc0:/UMD_DATA.BIN", PSP_O_RDONLY, 0777);
+    // Opened Disc Identifier
+    if(disc >= 0)
+    {
+        // Read Country Code
+        sceIoRead(disc, game_id, 4);
+        
+        // Skip Delimiter
+        sceIoLseek32(disc, 1, PSP_SEEK_CUR);
+        
+        // Read Game ID
+        sceIoRead(disc, game_id + 0x4, 5);
+        
+        // Close Disc Identifier
+        sceIoClose(disc);
+        return 1;
+    }
+    return 0;
 }
 
 char* UMD::getType(){
