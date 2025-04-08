@@ -57,7 +57,9 @@ SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
                     file_pos = 0;
                     if (last_control_data){
                         u32 pad = last_control_data->Buttons;
-                        if ((pad&PSP_CTRL_CROSS)==PSP_CTRL_CROSS || (pad&PSP_CTRL_CIRCLE)==PSP_CTRL_CIRCLE){
+                        if ((pad&PSP_CTRL_CROSS)==PSP_CTRL_CROSS
+                                || (pad&PSP_CTRL_CIRCLE)==PSP_CTRL_CIRCLE
+                                || (pad&PSP_CTRL_START)==PSP_CTRL_START){
                             launch_umdvideo_mount(isopath);
                         }
                     }
