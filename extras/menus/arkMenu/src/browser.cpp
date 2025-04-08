@@ -871,6 +871,8 @@ void Browser::down(){
     if (this->entries->size() == 0)
         return;
     
+    bool fastScroll = this->animating;
+    
     if (common::getConf()->browser_icon0){
         SystemMgr::pauseDraw();
         this->get()->freeIcon();
@@ -893,7 +895,7 @@ void Browser::down(){
     this->animating = true;
     common::playMenuSound();
 
-    if (common::getConf()->browser_icon0)
+    if (common::getConf()->browser_icon0 && !fastScroll)
         this->get()->loadIcon();
 }
         
@@ -901,6 +903,8 @@ void Browser::up(){
     // Move the cursor up, this updates index and page
     if (this->entries->size() == 0)
         return;
+
+    bool fastScroll = this->animating;
 
     if (common::getConf()->browser_icon0){
         SystemMgr::pauseDraw();
@@ -924,7 +928,7 @@ void Browser::up(){
     this->animating = true;
     common::playMenuSound();
 
-    if (common::getConf()->browser_icon0)
+    if (common::getConf()->browser_icon0 && !fastScroll)
         this->get()->loadIcon();
 }
 
