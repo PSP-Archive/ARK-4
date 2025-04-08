@@ -216,7 +216,7 @@ void Iso::executeISO(const char* path, char* eboot_path){
 
 int Iso::checkAudioVideo(){
     int type = 0;
-    static u8 initial_block[SECTOR_SIZE*2];
+    u8* initial_block = (u8*)malloc(SECTOR_SIZE*2);
     (this->*read_iso_data)(initial_block, SECTOR_SIZE*2, 32926);
     for (int i=0; i<SECTOR_SIZE*2; i++){
         if (strcmp((char*)&initial_block[i], "UMD_VIDEO") == 0){
@@ -226,6 +226,7 @@ int Iso::checkAudioVideo(){
             type |= PSP_UMD_TYPE_AUDIO;
         }
     }
+    free(initial_block);
     return type;
 }
 
@@ -464,7 +465,7 @@ void* Iso::fastExtract(char* file, unsigned* size){
         return buffer;
     }
     
-    static u8 initial_block[SECTOR_SIZE*2];
+    u8* initial_block = (u8*)malloc(SECTOR_SIZE*2);
     
     (this->*read_iso_data)(initial_block, 12, 32926);
     
@@ -477,6 +478,7 @@ void* Iso::fastExtract(char* file, unsigned* size){
     for (int i=0; i<sizeof(initial_block); i++){
         if (strcasecmp((const char*)&initial_block[i], file) == 0){
             if (size == NULL){
+                free(initial_block);
                 return (void*)-1;
             }
             u8* sfo = (u8*)&initial_block[i-31];
@@ -485,6 +487,7 @@ void* Iso::fastExtract(char* file, unsigned* size){
             file_data.size = (sfo[8] + (sfo[9]<<8) + (sfo[10]<<16) + (sfo[11]<<24));
             
             if (file_data.size == 0){
+                free(initial_block);
                 return NULL;
             }
             
@@ -492,9 +495,10 @@ void* Iso::fastExtract(char* file, unsigned* size){
             *size = file_data.size;
             (this->*read_iso_data)((u8*)buffer, file_data.size, file_data.offset);
             file_cache[file] = file_data;
+            free(initial_block);
             return buffer;
         }
     }
-    
+    free(initial_block);
     return NULL;
 }
