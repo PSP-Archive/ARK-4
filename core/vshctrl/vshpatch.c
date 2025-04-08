@@ -213,15 +213,14 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     
     if (se_config->hidemac){
         for (; addr < top_addr; addr++){
-            if (se_config->hidemac
-                    && ((u8*)addr)[0] == 0x25
-                    && ((u8*)addr)[1] == 0
-                    && ((u8*)addr)[2] == 0x30
-                    && ((u8*)addr)[3] == 0
-                    && ((u8*)addr)[4] == 0x32
-                    && ((u8*)addr)[5] == 0
-                    && ((u8*)addr)[6] == 0x58
-                    && ((u8*)addr)[7] == 0 )
+            if (   ((u8*)addr)[0] == 0x25
+                && ((u8*)addr)[1] == 0
+                && ((u8*)addr)[2] == 0x30
+                && ((u8*)addr)[3] == 0
+                && ((u8*)addr)[4] == 0x32
+                && ((u8*)addr)[5] == 0
+                && ((u8*)addr)[6] == 0x58
+                && ((u8*)addr)[7] == 0 )
             {
                 char model[10];
                 if (IS_VITA_ADR(ark_config)){
