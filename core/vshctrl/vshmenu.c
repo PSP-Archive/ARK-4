@@ -41,6 +41,7 @@
 extern ARKConfig* ark_config;
 extern SEConfig* se_config;
 
+SceCtrlData *last_control_data = NULL;
 static int (*g_VshMenuCtrl) (SceCtrlData *, int);
 static SceUID g_satelite_mod_id = -1;
 
@@ -134,6 +135,7 @@ int _sceCtrlReadBufferPositive(SceCtrlData *ctrl, int count)
     u32 k1;
     SceUID modid;
 
+    last_control_data = ctrl;
     ret = (*g_sceCtrlReadBufferPositive)(ctrl, count);
     k1 = pspSdkSetK1(0);
 

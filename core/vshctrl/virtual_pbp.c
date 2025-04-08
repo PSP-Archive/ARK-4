@@ -998,12 +998,6 @@ void vpbp_fixisopath(char* path){
     sprintf(tmp+1, "%s/%s", game_id, filename);
 }
 
-typedef struct _pspMsPrivateDirent {
-    SceSize size;
-    char s_name[16];
-    char l_name[1024];
-} pspMsPrivateDirent;
-
 static int get_ISO_shortname(char *s_name, u32 size, const char *l_name)
 {
     const char *p;

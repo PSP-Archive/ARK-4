@@ -54,6 +54,12 @@ enum BootLoadFlags
     BOOTLOAD_UMDEMU = 64, /* for original NP9660 */
 };
 
+typedef struct _pspMsPrivateDirent {
+  SceSize size;
+  char s_name[16];
+  char l_name[1024];
+} pspMsPrivateDirent;
+
 // Function Name Clones (of old but gold times)
 //#define sctrlKernelQuerySystemCall sceKernelQuerySystemCall
 

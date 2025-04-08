@@ -4,6 +4,7 @@ OBJS = main.o \
 	xmbiso.o \
 	isoreader.o \
 	virtual_pbp.o \
+	virtual_mp4.o \
 	dirent_track.o \
 	disctype.o \
 	vshmenu.o \
