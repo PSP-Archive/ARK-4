@@ -38,6 +38,7 @@ ARKConfig* ark_config = NULL;
 SEConfig* se_config = NULL;
 int has_umd_iso = 0;
 int _150_addon_enabled = 0;
+char mounted_iso[64];
 
 void enable_150_addon()
 {
@@ -110,7 +111,9 @@ int module_start(SceSize args, void* argp)
     
     // always reset to NORMAL mode in VSH
     // to avoid ISO mode is used in homebrews in next reboot
-    has_umd_iso = (sctrlSEGetUmdFile()[0] != 0 && sctrlSEGetBootConfFileIndex() == MODE_VSHUMD);
+    char* umdfile = sctrlSEGetUmdFile();
+    has_umd_iso = (umdfile[0] != 0 && sctrlSEGetBootConfFileIndex() == MODE_VSHUMD);
+    if (has_umd_iso) strcpy(mounted_iso, umdfile);
     sctrlSESetUmdFile("");
     sctrlSESetBootConfFileIndex(MODE_UMD);
 

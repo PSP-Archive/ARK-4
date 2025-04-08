@@ -340,7 +340,8 @@ int umdLoadExec(char * file, struct SceKernelLoadExecVSHParam * param)
         char devicename[20];
         int apitype;
 
-        file = sctrlSEGetUmdFile();
+        extern char mounted_iso[64];
+        file = mounted_iso;
         ret = get_device_name(devicename, sizeof(devicename), file);
 
         if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
