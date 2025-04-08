@@ -275,6 +275,7 @@ cleanobj:
 clean:
 	$(Q)$(MAKE) $@ -C libs
 	$(Q)$(MAKE) $@ -C contrib/PC/minilzo
+	$(Q)$(MAKE) $@ -C contrib/PC/prxencrypter
 	$(Q)$(MAKE) $@ -C core/compat/psp/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vita/rebootex
 	$(Q)$(MAKE) $@ -C core/compat/vitapops/rebootex

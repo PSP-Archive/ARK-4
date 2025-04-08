@@ -32,12 +32,6 @@
 #include <ark.h>
 #include "macros.h"
 
-typedef struct _pspMsPrivateDirent {
-    SceSize size;
-    char s_name[16];
-    char l_name[1024];
-} pspMsPrivateDirent;
-
 static int get_ISO_longname(char *l_name, const char *s_name, u32 size)
 {
     const char *p;

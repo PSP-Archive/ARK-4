@@ -28,7 +28,6 @@
 #include "strsafe.h"
 #include "dirent_track.h"
 #include "macros.h"
-//#include "ansi_c_functions.h"
 
 #define MAGIC_DFD_FOR_DELETE 0x9000
 #define MAGIC_DFD_FOR_DELETE_2 0x9001
@@ -245,6 +244,9 @@ SceUID gamedopen(const char * dirname)
         g_iso_dir[sizeof(g_iso_dir)-1] = '\0';
         return result;
     }
+    else if (is_video_path(dirname)){
+        return videoIoDopen(dirname);
+    }
 
     if(0 == strcmp(dirname, g_temp_delete_dir)) {
         result = MAGIC_DFD_FOR_DELETE_2;
@@ -312,6 +314,10 @@ int gamedread(SceUID fd, SceIoDirent * dir)
     int result;
     int apply150NamePatch = 0;
     u32 k1;
+
+    if (is_video_folder(fd)){
+        return videoIoDread(fd, dir);
+    }
 
     if(fd == MAGIC_DFD_FOR_DELETE || fd == MAGIC_DFD_FOR_DELETE_2) {
         if (0 == g_delete_eboot_injected) {
@@ -387,6 +393,10 @@ int gamedclose(SceUID fd)
     int result;
     u32 k1;
     struct IoDirentEntry *entry;
+
+    if (is_video_folder(fd)){
+        return videoIoDclose(fd);
+    }
    
     if(fd == MAGIC_DFD_FOR_DELETE || fd == MAGIC_DFD_FOR_DELETE_2) {
         result = 0;
@@ -434,7 +444,11 @@ SceUID gameopen(const char * file, int flags, SceMode mode)
         u32 k1 = pspSdkSetK1(0);
         result = vpbp_open(file, flags, mode);
         pspSdkSetK1(k1);
-    } else {
+    }
+    else if (is_video_path(file)){
+        result = videoIoOpen(file, flags, mode);
+    }
+    else {
         if (is_iso_manual(file) || is_iso_update(file) || is_iso_dlc(file)){
             vpbp_fixisopath(file);
         }
@@ -454,7 +468,11 @@ int gameread(SceUID fd, void * data, SceSize size)
         u32 k1 = pspSdkSetK1(0);
         result = vpbp_read(fd, data, size);
         pspSdkSetK1(k1);
-    } else {
+    }
+    else if (is_video_file(fd)){
+        result = videoIoRead(fd, data, size);
+    }
+    else {
         result = sceIoRead(fd, data, size);
     }
 
@@ -470,7 +488,11 @@ int gameclose(SceUID fd)
         u32 k1 = pspSdkSetK1(0);
         result = vpbp_close(fd);
         pspSdkSetK1(k1);
-    } else {
+    }
+    else if (is_video_file(fd)){
+        result = videoIoClose(fd);
+    }
+    else {
         result = sceIoClose(fd);
     }
     
@@ -485,7 +507,11 @@ SceOff gamelseek(SceUID fd, SceOff offset, int whence)
         u32 k1 = pspSdkSetK1(0);
         result = vpbp_lseek(fd, offset, whence);
         pspSdkSetK1(k1);
-    } else {
+    }
+    else if (is_video_file(fd)){
+        result = videoIoLseek(fd, offset, whence);
+    }
+    else {
         result = sceIoLseek(fd, offset, whence);
     }
 
@@ -504,7 +530,11 @@ int gamegetstat(const char * file, SceIoStat * stat)
         u32 k1 = pspSdkSetK1(0);
         result = vpbp_getstat(file, stat);
         pspSdkSetK1(k1);
-    } else {
+    }
+    else if (is_video_path(file)){
+        result = videoIoGetstat(file, stat);
+    }
+    else {
         if (is_iso_manual(file) || is_iso_update(file) || is_iso_dlc(file)){
             vpbp_fixisopath(file);
         }

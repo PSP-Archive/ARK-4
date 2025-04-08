@@ -17,12 +17,6 @@
 
 #include "vsh.h"
 
-typedef struct _pspMsPrivateDirent {
-    SceSize size;
-    char s_name[16];
-    char l_name[1024];
-} pspMsPrivateDirent;
-
 void exec_recovery_menu(vsh_Menu *vsh);
 void exec_random_game(vsh_Menu *vsh);
 void launch_umdvideo_mount(vsh_Menu *vsh);
