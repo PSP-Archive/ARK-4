@@ -87,7 +87,6 @@ class Iso : public Entry
 
         static void executeISO(const char* path, char* eboot_path);
         static void executeVideoISO(const char* path);
-        static void executeISOupdated(const char* path, const char* pboot_path);
 
     protected:
 

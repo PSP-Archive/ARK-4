@@ -179,31 +179,15 @@ void Iso::loadAVMedia(){
 }
 
 void Iso::doExecute(){
-    static char dlc_path[256];
-    const char* iso_path = this->path.c_str();
+    char dlc_path[256];
+    char* eboot_path;
     if (common::getConf()->scan_dlc && has_installed_file("PBOOT.PBP", dlc_path)){
-        Iso::executeISOupdated(iso_path, dlc_path);
+        eboot_path = dlc_path;
     }
     else{
-        char* disc_path = (isPatched())? (char*)UMD_EBOOT_OLD : (char*)UMD_EBOOT_BIN;
-        Iso::executeISO(this->path.c_str(), disc_path);
+        eboot_path = (isPatched())? (char*)UMD_EBOOT_OLD : (char*)UMD_EBOOT_BIN;
     }
-}
-
-void Iso::executeISOupdated(const char* path, const char* pboot_path){
-    struct SceKernelLoadExecVSHParam param;
-    memset(&param, 0, sizeof(param));
-
-    sctrlSESetBootConfFileIndex(ISO_DRIVER);
-    sctrlSESetUmdFile((char*)path);
-
-    param.argp = (void*)pboot_path;
-    param.args = strlen(pboot_path) + 1;
-    param.key = "umdemu";
-
-    int runlevel = (*(u32*)pboot_path == EF0_PATH && common::getConf()->redirect_ms0)? ISO_PBOOT_RUNLEVEL_GO : ISO_PBOOT_RUNLEVEL;
-
-    sctrlKernelLoadExecVSHWithApitype(runlevel, pboot_path, &param);
+    Iso::executeISO(this->path.c_str(), eboot_path);
 }
 
 void Iso::executeISO(const char* path, char* eboot_path){
@@ -211,7 +195,14 @@ void Iso::executeISO(const char* path, char* eboot_path){
     
     memset(&param, 0, sizeof(param));
 
-    int runlevel = (*(u32*)path == EF0_PATH && common::getConf()->redirect_ms0)? ISO_RUNLEVEL_GO : ISO_RUNLEVEL;
+    static int apitypes[2][2] = {
+        {ISO_RUNLEVEL, ISO_PBOOT_RUNLEVEL},
+        {ISO_RUNLEVEL_GO, ISO_PBOOT_RUNLEVEL_GO}
+    };
+
+    int sel1 = (strncmp(path, "ms", 2) == 0)? 0:1;
+    int sel2 = (strstr(eboot_path, "/PBOOT.PBP") == NULL)? 0:1;
+    int apitype = apitypes[sel1][sel2];
 
     param.size = sizeof(param);
     param.key = "umdemu";
@@ -220,7 +211,7 @@ void Iso::executeISO(const char* path, char* eboot_path){
     sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
     sctrlSESetBootConfFileIndex(ISO_DRIVER);
     sctrlSESetUmdFile((char*)path);
-    sctrlKernelLoadExecVSHWithApitype(runlevel, path, &param);
+    sctrlKernelLoadExecVSHWithApitype(apitype, path, &param);
 }
 
 int Iso::checkAudioVideo(){
