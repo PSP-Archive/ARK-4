@@ -28,7 +28,7 @@ extern "C" {
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 20
 #define ARK_MICRO_VERSION 69
-#define ARK_REVISION      168
+#define ARK_REVISION      170
 
 // Pointers and sizes
 #define ARK_PATH_SIZE 128
@@ -53,7 +53,7 @@ extern "C" {
 #define VITA_FLASH_SIZE 0x01000000 // vita flash ramfs size
 #define EXTRA_RAM_SIZE (32 * 1024 * 1024) // size of extra ram (2k+)
 #define MAX_HIGH_MEMSIZE 55 // max ram that can be given to user
-#define FAKE_UID 0x0B00B1E5
+#define FAKE_UID 0x000B00B5
 
 // Paths and other global strings
 #define VBOOT_PBP "VBOOT.PBP" // default launcher
