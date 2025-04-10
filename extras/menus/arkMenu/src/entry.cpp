@@ -203,7 +203,7 @@ bool Entry::isMusic(const char* path){
 
 bool Entry::isVideo(const char* path){
     string ext = common::getExtension(path);
-    return (ext == "mp4" || ext == "mpg" || ext == "mpeg" || ext == "pmf" || ext == "mps");
+    return (ext == "pmf" || ext == "mps");
 }
 
 Entry::~Entry(){
