@@ -60,7 +60,6 @@
 #include "advanced.h"
 #include "registry.h"
 #include "launcher.h"
-#include "umdvideo_list.h"
 
 
 /* Define the module info section */
@@ -68,8 +67,6 @@ PSP_MODULE_INFO("VshCtrlSatelite", 0, 2, 2);
 /* Define the main thread's attribute value (optional) */
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 
-
-extern char umdvideo_path[256];
 
 
 /* Extern functions */
@@ -131,28 +128,6 @@ int TSRThread(SceSize args, void *argp) {
     font_load(vsh);
     // select menu language
     select_language();
-    
-    if (!IS_VITA_ADR(vsh->config.p_ark)) {
-        umdvideolist_init(&vsh->umdlist);
-        umdvideolist_clear(&vsh->umdlist);
-        get_umdvideo(&vsh->umdlist, "ms0:/ISO/VIDEO");
-        get_umdvideo(&vsh->umdlist, "ef0:/ISO/VIDEO");
-        kuKernelGetUmdFile(umdvideo_path, sizeof(umdvideo_path));
-
-        if (umdvideo_path[0] == '\0') {
-        	vsh->status.umdvideo_idx = 0;
-        	scePaf_strcpy(umdvideo_path, g_messages[MSG_NONE]);
-        } else {
-        	vsh->status.umdvideo_idx = umdvideolist_find(&vsh->umdlist, umdvideo_path);
-
-        	if (vsh->status.umdvideo_idx >= 0) {
-        		vsh->status.umdvideo_idx++;
-        	} else {
-        		vsh->status.umdvideo_idx = 0;
-        		scePaf_strcpy(umdvideo_path, g_messages[MSG_NONE]);
-        	}
-        }
-    }
 
     scePaf_memcpy(&vsh->config.old_se, &vsh->config.se, sizeof(vsh->config.se));
     scePaf_memcpy(&vsh->config.old_ark_menu, &vsh->config.ark_menu, sizeof(vsh->config.ark_menu));
@@ -211,11 +186,6 @@ resume:
         	vsh->status.sub_stop_flag = 0;
         	vsh->status.submenu_mode = 0;
         	goto resume;
-        case 6:
-        	if (IS_VITA_ADR(vsh->config.p_ark)) 
-        		return -1;
-        	launch_umdvideo_mount(vsh);
-        	break;
         case 9:
         	battery_convert(vsh->battery);
         	break;
@@ -233,19 +203,12 @@ resume:
         	if (vsh->psp_model == PSP_GO)
         		import_classic_plugins(vsh, DEVPATH_EF0);
         	break;
-        case 14:			
-        	config_check(vsh);
-        	exec_random_game(vsh);
-        	break;
         case 15:
         	reset_ark_settings(vsh);
         	break;
     }
 
     config_check(vsh);
-
-    if(!IS_VITA_ADR(vsh->config.p_ark))
-        umdvideolist_clear(&vsh->umdlist);
     clear_language();
     vpl_finish();
 

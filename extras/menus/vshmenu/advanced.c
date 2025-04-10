@@ -19,7 +19,6 @@
 extern char umd_path[72];
 
 extern char device_buf[13];
-extern char umdvideo_path[256];
 
 extern int xyPoint[];
 extern int xyPoint2[];
@@ -298,7 +297,6 @@ int submenu_find_longest_string(void){
 int submenu_setup(void) {
     int i;
     const char *bridge;
-    const char *umdvideo_disp;
     
     vsh_Menu *vsh = vsh_menu_pointer();
 
@@ -315,7 +313,6 @@ int submenu_setup(void) {
     if (IS_VITA_ADR(vsh->config.p_ark)){
         vsh->config.ark_menu.avm_hidden[SUBMENU_USB_DEVICE] = 1;
         vsh->config.ark_menu.avm_hidden[SUBMENU_USB_READONLY] = 1;
-        vsh->config.ark_menu.avm_hidden[SUBMENU_UMD_VIDEO] = 1;
         vsh->config.ark_menu.avm_hidden[SUBMENU_UMD_REGION_MODE] = 1;
     }
 
@@ -358,18 +355,6 @@ int submenu_setup(void) {
         bridge = device;
     }
     subitem_str[SUBMENU_USB_DEVICE] = bridge;
-
-    umdvideo_disp = (const char*)scePaf_strrchr(umdvideo_path, '/');
-
-    if (umdvideo_disp == NULL)
-        umdvideo_disp = umdvideo_path;
-    else
-        umdvideo_disp++;
-
-    if (IS_VITA_ADR(vsh->config.p_ark))
-        subitem_str[SUBMENU_UMD_VIDEO] = g_messages[MSG_UNSUPPORTED];
-    else
-        subitem_str[SUBMENU_UMD_VIDEO] = umdvideo_disp;
 
     if (vsh->config.ark_menu.vsh_font)
         subitem_str[SUBMENU_FONT] = font_list()[vsh->config.ark_menu.vsh_font - 1];
@@ -507,36 +492,12 @@ int submenu_ctrl(u32 button_on) {
         	if (direction) 
         		swap_readonly(direction);
         	break;
-        case SUBMENU_UMD_VIDEO:
-        	if (IS_VITA_ADR(vsh->config.p_ark)) 
-        		break;
-        	if (direction) {
-        	   	change_umd_mount_idx(direction);
-
-        		if(vsh->status.umdvideo_idx != 0) {
-        			char *umdpath;
-        			umdpath = umdvideolist_get(&vsh->umdlist, vsh->status.umdvideo_idx-1);
-
-        			if(umdpath != NULL) {
-        				scePaf_strncpy(umdvideo_path, umdpath, sizeof(umdvideo_path));
-        				umdvideo_path[sizeof(umdvideo_path)-1] = '\0';
-        			} else
-        				goto none;
-        		} else {
-none:
-        			scePaf_strcpy(umdvideo_path, g_messages[MSG_NONE]);
-        		}
-        	} else
-        		return 6; // Mount UMDVideo ISO flag
-        	break;
         case SUBMENU_IMPORT_CLASSIC_PLUGINS:
         	return 13; // Import Classic Plugins flag 
         case SUBMENU_DELETE_HIBERNATION:
         	return 10; // Delete Hibernation flag 
         case SUBMENU_RESET_ARK_SETTINGS:
         	return 15; // Reset ARK Settings flag
-        case SUBMENU_RANDOM_GAME:
-        	return 14; // Random Game flag 
         case SUBMENU_ACTIVATE_FLASH_WMA:
         	return 11; // Activate Flash/WMA flag 
         case SUBMENU_REGION_MODE:

@@ -12,7 +12,6 @@ OBJS = \
 	fonts.o \
 	clock.o \
 	registry.o \
-	umdvideo_list.o \
 	vpl.o \
 	trans.o \
 	trans_en.o \

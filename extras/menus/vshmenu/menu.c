@@ -45,7 +45,6 @@ int stop_stock = 0;
 char freq_buf[3+3+2] = "";
 char freq2_buf[3+3+2] = "";
 char device_buf[13] = "";
-char umdvideo_path[256] = "";
 
 
 int item_fcolor[TMENU_MAX];

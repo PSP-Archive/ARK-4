@@ -18,7 +18,5 @@
 #include "vsh.h"
 
 void exec_recovery_menu(vsh_Menu *vsh);
-void exec_random_game(vsh_Menu *vsh);
-void launch_umdvideo_mount(vsh_Menu *vsh);
 
 #endif

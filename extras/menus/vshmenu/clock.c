@@ -122,11 +122,6 @@ void change_usb(int dir) {
         vsh->config.se.usbdevice_rdonly = 0;
 }
 
-void change_umd_mount_idx(int dir) {
-    vsh_Menu *vsh = vsh_menu_pointer();
-    vsh->status.umdvideo_idx = ROLL_OVER(vsh->status.umdvideo_idx + dir, 0, umdvideolist_count(&vsh->umdlist));
-}
-
 void change_umd_region(int dir, int max) {
     vsh_Menu *vsh = vsh_menu_pointer();
     

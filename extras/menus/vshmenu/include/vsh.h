@@ -9,7 +9,6 @@
 #include <ark.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include "umdvideo_list.h"
 
 #include "../arkMenu/include/conf.h"
 
@@ -38,33 +37,23 @@ typedef struct{
 // Status stuff go here
 typedef struct _vsh_Status{
     u32 swap_xo;
-    
     int menu_mode;
     int submenu_mode;
     int stop_flag;
     int sub_stop_flag;
-    
     int reset_vsh;
-
     u8 bc_alpha;
     u8 bc_delta;
-
-    int umdvideo_idx;
 }vsh_Status;
 
 // VSH Menu struct
 typedef struct _vsh_Menu{
     char ark_version[24];
     SceUID thread_id;
-    
     vsh_Config config;
     vsh_Buttons buttons;
     vsh_Status status;
-    
-    UmdVideoList umdlist;
-    
     u32 psp_model;
-    
     int battery;
     int codecs;
 }vsh_Menu;
