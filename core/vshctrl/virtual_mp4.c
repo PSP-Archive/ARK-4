@@ -172,6 +172,7 @@ int videoIoDclose(SceUID fd){
 }
 
 SceOff videoIoLseek(SceUID fd, SceOff offset, int whence){
+    if (fd != FAKE_UID) return sceIoLseek(fd, offset, whence);
     switch (whence){
         case PSP_SEEK_SET: file_pos = offset; break;
         case PSP_SEEK_CUR: file_pos += offset; break;
