@@ -77,11 +77,11 @@ SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
 
 SceUID videoIoDopen(const char* dir){
     SceUID res = sceIoDopen(dir);
-    
 
     video_dir[0] = dir[0];
     video_dir[1] = dir[1];
     if (strcasecmp(dir, video_dir) == 0) {
+        last_control_data = NULL;
         video_dd = res;
         int k1 = pspSdkSetK1(0);
         isovideo_dir[0] = dir[0];
