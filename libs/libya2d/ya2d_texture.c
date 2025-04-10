@@ -91,12 +91,14 @@ struct ya2d_texture *ya2d_create_empty_texture(int width, int height, int pixel_
 
 void ya2d_free_texture(struct ya2d_texture *texture)
 {
-    if (texture->place == YA2D_PLACE_RAM) {
-        free(texture->data);
-    } else if (texture->place == YA2D_PLACE_VRAM){
-        vfree(texture->data);
+    if (texture) {
+        if (texture->place == YA2D_PLACE_RAM) {
+            free(texture->data);
+        } else if (texture->place == YA2D_PLACE_VRAM){
+            vfree(texture->data);
+        }
+        free(texture);
     }
-    free(texture);
 }
 
 void ya2d_set_texture(struct ya2d_texture *texture)

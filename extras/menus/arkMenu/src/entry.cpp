@@ -101,7 +101,7 @@ int Entry::getSndSize(){
 }
 
 void Entry::freeIcon(){
-    Image* aux = this->icon0;
+    register Image* aux = this->icon0;
     this->icon0 = common::getImage(IMAGE_WAITICON);
     if (aux && !common::isSharedImage(aux))
         delete aux;
