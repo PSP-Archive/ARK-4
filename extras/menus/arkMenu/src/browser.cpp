@@ -1373,13 +1373,14 @@ void Browser::rename(){
     SystemMgr::pauseDraw();
     string name = this->get()->getName();
     OSK osk;
-    char* oldname = (char*)malloc(name.length());
+    int max_size = (name.length()<255)? 255 : name.length();
+    char* oldname = (char*)malloc(max_size+1);
     if (name.at(name.length()-1) == '/')
         strcpy(oldname, name.substr(0, name.length()-1).c_str());
     else
         strcpy(oldname, name.c_str());
     
-    osk.init("New name for file/folder", oldname, 50);
+    osk.init("New name for file/folder", oldname, max_size);
     osk.loop();
     if(osk.getResult() != OSK_CANCEL)
     {

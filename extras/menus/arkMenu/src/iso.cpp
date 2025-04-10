@@ -246,7 +246,7 @@ void Iso::executeVideoISO(const char* path)
     sctrlSESetDiscType(type);
     
     ARKConfig* ark_config = common::getArkConfig();
-    if (IS_VITA(ark_config) && !IS_VITA_ADR(ark_config)){
+    if ((IS_VITA(ark_config) && !IS_VITA_ADR(ark_config)) || ark_config->launcher[0]){
         sctrlSESetBootConfFileIndex(MODE_INFERNO);
         sctrlSESetDiscType(type|PSP_UMD_TYPE_GAME);
         Eboot::executeEboot(common::getArgv()[0]);
