@@ -1,5 +1,5 @@
 ARK-4 Updater
-Aangepaste firmware-instellingen
+CFW-instellingen
 Plugins Manager
 Aangepaste Launcher
 Aangepaste app

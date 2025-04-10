@@ -1,5 +1,5 @@
 Mise à jour ARK-4
-Paramètres de micrologiciel personnalisés
+Paramètres de CFW
 Gestionnaire de plug-ins
 Lanceur personnalisé
 Application personnalisée

@@ -1,5 +1,5 @@
 Actualizador de ARK-4
-Configuración de firmware personalizada
+Configuración del CFW
 Administrador de complementos
 Lanzador personalizado
 Aplicación personalizada

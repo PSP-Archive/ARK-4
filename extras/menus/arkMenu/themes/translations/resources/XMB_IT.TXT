@@ -1,5 +1,5 @@
 Aggiornamento ARK-4
-Configurazioni Custom Firmware
+Configurazioni CFW
 Gestione Plugin
 Custom Launcher
 App personalizzata
