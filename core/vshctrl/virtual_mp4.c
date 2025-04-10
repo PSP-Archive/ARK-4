@@ -119,8 +119,7 @@ int videoIoRead(SceUID fd, void* buf, u32 size){
         return size;
     }
 
-    int res = sceIoRead(fd, buf, size);
-    return res;
+    return sceIoRead(fd, buf, size);
 }
 
 int videoIoDread(SceUID fd, SceIoDirent *dir){
@@ -147,7 +146,8 @@ int videoIoDread(SceUID fd, SceIoDirent *dir){
 }
 
 int videoIoClose(SceUID fd){
-    return 0;
+    if (fd == FAKE_UID) return 0;
+    return sceIoClose(fd);
 }
 
 int videoIoDclose(SceUID fd){
