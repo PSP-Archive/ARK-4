@@ -17,6 +17,9 @@ static SceUID video_dd = -1;
 static SceUID isovideo_fd = -1;
 extern SceCtrlData *last_control_data;
 
+static char* video_dir = "ms0:/VIDEO";
+static char* isovideo_dir = "ms0:/ISO/VIDEO";
+
 static void launch_umdvideo_mount(const char *path) {
     SceIoStat stat;
     int type;
@@ -43,7 +46,7 @@ SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
 
     if (res < 0){
         int k1 = pspSdkSetK1(0);
-        char isopath[128]; strcpy(isopath, "ms0:/ISO/VIDEO");
+        char isopath[128]; strcpy(isopath, isovideo_dir);
         isopath[0] = file[0]; isopath[1] = file[1];
         char* filename = strrchr(file, '/');
         if (filename){
@@ -74,14 +77,18 @@ SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
 
 SceUID videoIoDopen(const char* dir){
     SceUID res = sceIoDopen(dir);
-    video_dd = res;
+    
 
-    int k1 = pspSdkSetK1(0);
-    static char* isovideo_path = "ms0:/ISO/VIDEO";
-    isovideo_path[0] = dir[0];
-    isovideo_path[1] = dir[1];
-    isovideo_fd = sceIoDopen(isovideo_path);
-    pspSdkSetK1(k1);
+    video_dir[0] = dir[0];
+    video_dir[1] = dir[1];
+    if (strcasecmp(dir, video_dir) == 0) {
+        video_dd = res;
+        int k1 = pspSdkSetK1(0);
+        isovideo_dir[0] = dir[0];
+        isovideo_dir[1] = dir[1];
+        isovideo_fd = sceIoDopen(isovideo_dir);
+        pspSdkSetK1(k1);
+    }
 
     return res;
 }
@@ -91,7 +98,7 @@ int videoIoGetstat(const char* path, SceIoStat* stat){
 
     if (res < 0){
         int k1 = pspSdkSetK1(0);
-        char isopath[128]; strcpy(isopath, "ms0:/ISO/VIDEO");
+        char isopath[128]; strcpy(isopath, isovideo_dir);
         isopath[0] = path[0]; isopath[1] = path[1];
         char* filename = strrchr(path, '/');
         if (filename){
@@ -152,11 +159,13 @@ int videoIoClose(SceUID fd){
 
 int videoIoDclose(SceUID fd){
     int res = sceIoDclose(fd);
-    int k1 = pspSdkSetK1(0);
-    sceIoDclose(isovideo_fd);
-    pspSdkSetK1(k1);
-    video_dd = -1;
-    isovideo_fd = -1;
+    if (fd == video_dd){
+        int k1 = pspSdkSetK1(0);
+        sceIoDclose(isovideo_fd);
+        pspSdkSetK1(k1);
+        video_dd = -1;
+        isovideo_fd = -1;
+    }
     return res;
 }
 
@@ -170,7 +179,8 @@ SceOff videoIoLseek(SceUID fd, SceOff offset, int whence){
 }
 
 int is_video_path(const char* path){
-    return strncasecmp(path, "ms0:/VIDEO", 10) == 0 || strncasecmp(path, "ef0:/VIDEO", 10) == 0;
+    video_dir[0] = path[0]; video_dir[1] = path[1];
+    return strncasecmp(path, video_dir, 10) == 0;
 }
 
 int is_video_file(SceUID fd){
