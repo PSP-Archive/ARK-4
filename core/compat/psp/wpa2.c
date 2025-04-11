@@ -46,13 +46,13 @@ void patchSceNetWpa2(SceModule2 *mod)
     _sw(0x24050014, mod->text_addr + 0xf058);
 
     // Fill in RSN information
-    memcpy((char *)mod->text_addr + 0x11DA8, &rsn_info[0], sizeof(rsn_info));
+    memcpy((char *)mod->text_addr + 0x11DA8, rsn_info, sizeof(rsn_info));
 
     // Ensure RSN info gets copied properly
     _sw(0x24060014, mod->text_addr + 0xf06c);
 
     // Replace WPA2 seed
-    memcpy((char *)mod->text_addr + 0x11880, &wpa2_seed[0], sizeof(wpa2_seed));
+    memcpy((char *)mod->text_addr + 0x11880, wpa2_seed, sizeof(wpa2_seed));
 
     // Kill stores over our EAPOL 2 key to prevent issues
     _sw(0, mod->text_addr + 0xf07c);
