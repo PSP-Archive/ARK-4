@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "systemctrl.h"
+#include "macros.h"
 
 // Credits to @Moment
 
@@ -16,13 +17,18 @@ static unsigned char wpa2_seed[] = {
     0x8a, 0x11, 0x93, 0x07, 0x74, 0x54, 0x12, 0xf7
 };
 
+static const unsigned char rsn_info[] = { 
+    0x01, 0x00, 0x00, 0x0f, 0xac, 0x04, 0x01, 0x00, 
+    0x00, 0x0f, 0xac, 0x04, 0x01, 0x00, 0x00, 0x0f, 
+    0xac, 0x02, 0x00, 0x00 
+};
+
 // We're only interested in the WiFi network module (sceNetApctl_Library)
 void patchSceNetWpa2(SceModule2 *mod)
 {
     
     // Patch return value (li v0, 4). Then WPA2 will be recognised as WPA!
-    const unsigned char li_v0_4[4] = { 0x04, 0x00, 0x02, 0x24 }; 
-    memcpy((char *)mod->text_addr + 0x14dc, &li_v0_4[0], sizeof(li_v0_4));
+    _sw(mod->text_addr + 0x14dc, LI_V0(4));
 
     // Patch header length (0x75)
     _sw(0x24050075, mod->text_addr + 0xef88);
@@ -40,11 +46,6 @@ void patchSceNetWpa2(SceModule2 *mod)
     _sw(0x24050014, mod->text_addr + 0xf058);
 
     // Fill in RSN information
-    const unsigned char rsn_info[20] = { 
-        0x01, 0x00, 0x00, 0x0f, 0xac, 0x04, 0x01, 0x00, 
-        0x00, 0x0f, 0xac, 0x04, 0x01, 0x00, 0x00, 0x0f, 
-        0xac, 0x02, 0x00, 0x00 
-    };
     memcpy((char *)mod->text_addr + 0x11DA8, &rsn_info[0], sizeof(rsn_info));
 
     // Ensure RSN info gets copied properly
