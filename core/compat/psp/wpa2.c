@@ -28,7 +28,7 @@ void patchSceNetWpa2(SceModule2 *mod)
 {
     
     // Patch return value (li v0, 4). Then WPA2 will be recognised as WPA!
-    _sw(mod->text_addr + 0x14dc, LI_V0(4));
+    _sw(LI_V0(4), mod->text_addr + 0x14dc);
 
     // Patch header length (0x75)
     _sw(0x24050075, mod->text_addr + 0xef88);
