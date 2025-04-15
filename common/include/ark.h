@@ -53,7 +53,7 @@ extern "C" {
 #define VITA_FLASH_SIZE 0x01000000 // vita flash ramfs size
 #define EXTRA_RAM_SIZE (32 * 1024 * 1024) // size of extra ram (2k+)
 #define MAX_HIGH_MEMSIZE 55 // max ram that can be given to user
-#define FAKE_UID 0x000B00B5
+#define FAKE_UID 0x0B00B500
 
 // Paths and other global strings
 #define VBOOT_PBP "VBOOT.PBP" // default launcher

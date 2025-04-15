@@ -12,6 +12,8 @@
 
 #include "smallvid.h"
 
+#define FAKE_UID_XMB_VIDEO_ISO FAKE_UID|0xD1
+
 static int file_pos = 0;
 static SceUID video_dd = -1;
 static SceUID isovideo_fd = -1;
@@ -56,7 +58,7 @@ SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
                 SceIoStat stat;
                 strcpy(ext, ".iso");
                 if (sceIoGetstat(isopath, &stat)>=0){
-                    res = FAKE_UID;
+                    res = FAKE_UID_XMB_VIDEO_ISO;
                     file_pos = 0;
                     if (last_control_data){
                         u32 pad = last_control_data->Buttons;
@@ -122,7 +124,7 @@ int videoIoGetstat(const char* path, SceIoStat* stat){
 
 int videoIoRead(SceUID fd, void* buf, u32 size){
 
-    if (fd == FAKE_UID){
+    if (fd == FAKE_UID_XMB_VIDEO_ISO){
         memcpy(buf, &smallvid[file_pos], size);
         file_pos += size;
         return size;
@@ -155,7 +157,7 @@ int videoIoDread(SceUID fd, SceIoDirent *dir){
 }
 
 int videoIoClose(SceUID fd){
-    if (fd == FAKE_UID) return 0;
+    if (fd == FAKE_UID_XMB_VIDEO_ISO) return 0;
     return sceIoClose(fd);
 }
 
@@ -172,7 +174,7 @@ int videoIoDclose(SceUID fd){
 }
 
 SceOff videoIoLseek(SceUID fd, SceOff offset, int whence){
-    if (fd != FAKE_UID) return sceIoLseek(fd, offset, whence);
+    if (fd != FAKE_UID_XMB_VIDEO_ISO) return sceIoLseek(fd, offset, whence);
     switch (whence){
         case PSP_SEEK_SET: file_pos = offset; break;
         case PSP_SEEK_CUR: file_pos += offset; break;
@@ -187,7 +189,7 @@ int is_video_path(const char* path){
 }
 
 int is_video_file(SceUID fd){
-    return fd == FAKE_UID;
+    return fd == FAKE_UID_XMB_VIDEO_ISO;
 }
 
 int is_video_folder(SceUID dd){
