@@ -2,3 +2,14 @@
 # Ran from ARKROOT
 
 ./contrib/PC/pf_convert/bdf_to_pf.py extras/menus/arkMenu/themes/translations/resources/satelite_chs_utf8.txt contrib/PC/pf_convert/quan.bdf extras/menus/arkMenu/themes/translations/resources/satelite_chs.txt extras/menus/arkMenu/themes/translations/resources/CHS.pf
+
+# CHT
+./contrib/PC/pf_convert/bdf_to_pf.py extras/menus/arkMenu/themes/translations/resources/satelite_cht_utf8.txt contrib/PC/pf_convert/quan.bdf extras/menus/arkMenu/themes/translations/resources/satelite_cht.txt extras/menus/arkMenu/themes/translations/resources/CHT.pf
+
+
+# JP
+./contrib/PC/pf_convert/bdf_to_pf.py extras/menus/arkMenu/themes/translations/resources/satelite_jp_utf8.txt contrib/PC/pf_convert/quan.bdf extras/menus/arkMenu/themes/translations/resources/satelite_jp.txt extras/menus/arkMenu/themes/translations/resources/JP.pf
+
+# KR
+
+./contrib/PC/pf_convert/bdf_to_pf.py extras/menus/arkMenu/themes/translations/resources/satelite_kr_utf8.txt contrib/PC/pf_convert/quan.bdf extras/menus/arkMenu/themes/translations/resources/satelite_kr.txt extras/menus/arkMenu/themes/translations/resources/KR.pf
