@@ -58,7 +58,7 @@ int sctrlKernelLoadExecVSHWithApitypeFixed(int apitype, const char * file, struc
 }
 
 // patch to remove Adrenaline check in camera_patch_lite plugin
-#define FAKE_UID_CAMLITE FAKE_UID|0xC
+#define FAKE_UID_CAMLITE (FAKE_UID|0xC)
 int ioOpenForCameraLite(const char* path, int mode, int flags){
     if (strcmp(path, "flash1:/config.adrenaline") == 0){
         return FAKE_UID_CAMLITE;

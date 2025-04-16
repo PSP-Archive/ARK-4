@@ -12,7 +12,7 @@
 
 #include "smallvid.h"
 
-#define FAKE_UID_XMB_VIDEO_ISO FAKE_UID|0xD1
+#define FAKE_UID_XMB_VIDEO_ISO (FAKE_UID|0xD1)
 
 static int file_pos = 0;
 static SceUID video_dd = -1;
