@@ -188,7 +188,7 @@ void Iso::doExecute(){
     else{
         eboot_path = (isPatched())? (char*)UMD_EBOOT_OLD : (char*)UMD_EBOOT_BIN;
     }
-    Iso::executeISO(this->path.c_str(), eboot_path);
+    Iso::executeISO(this->getShortName().c_str(), eboot_path);
 }
 
 void Iso::executeISO(const char* path, char* eboot_path){
@@ -302,6 +302,39 @@ char* Iso::getSubtype(){
 
 bool Iso::isPatched(){
     return (this->fastExtract("EBOOT.OLD") != NULL);
+}
+
+string Iso::getShortName(){
+    string res = this->path;
+    if (IS_PSP(common::getArkConfig())){
+        pspMsPrivateDirent *pri_dirent = new pspMsPrivateDirent;
+        SceIoDirent *dirent = new SceIoDirent;
+        memset(pri_dirent, 0, sizeof(pspMsPrivateDirent));
+        memset(dirent, 0, sizeof(SceIoDirent));
+        pri_dirent->size = sizeof(*pri_dirent);
+        dirent->d_private = (void*)pri_dirent;
+
+        size_t lastSlash = this->path.rfind("/", string::npos);
+        string parent = this->path.substr(0, lastSlash);
+        SceUID fd = sceIoDopen(parent.c_str());
+
+        while (sceIoDread(fd, dirent) > 0){
+            if (string(dirent->d_name) == this->name){
+                if (pri_dirent->s_name[0]){
+                    SceIoStat stat;
+                    string spath = parent + "/" + string(pri_dirent->s_name);
+                    if (sceIoGetstat(spath.c_str(), &stat) >= 0){
+                        res = spath;
+                    }
+                }
+                break;
+            }
+        }
+
+        delete pri_dirent;
+        delete dirent;
+    }
+    return res;
 }
 
 SfoInfo Iso::getSfoInfo(){

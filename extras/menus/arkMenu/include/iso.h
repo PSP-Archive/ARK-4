@@ -110,6 +110,7 @@ class Iso : public Entry
         
         void doExecute();
         bool isPatched();
+        string getShortName();
 
         int has_installed_file(const char* installed_file, char* out_path);
 };
