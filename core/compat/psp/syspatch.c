@@ -230,11 +230,6 @@ void processSettings(){
     // Disable LED
     disableLEDs();
 
-    // Disable Pause feature on PSP Go
-    if (se_config->disable_pause){
-        disable_PauseGame();
-    }
-
     // Disable UMD Drive
     disableUMD();
 }
@@ -281,6 +276,12 @@ void PSPOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceImpose_Driver") == 0){
         // Handle extra ram setting
         handleExtraRam();
+        // Handle Inferno cache setting
+        enableInfernoCache();
+        // Disable Pause feature on PSP Go
+        if (se_config->disable_pause){
+            disable_PauseGame();
+        }
         goto flush;
     }
     
@@ -361,9 +362,6 @@ void PSPOnModuleStart(SceModule2 * mod){
                     "eflash0a0f1p" : "msstor0p";
                 msstorCacheInit(drv);
             }
-
-            // Handle Inferno cache setting
-            enableInfernoCache();
 
             // fix pops on toolkits
             if (sctrlHENIsToolKit() && sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS){

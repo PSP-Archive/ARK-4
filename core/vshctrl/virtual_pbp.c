@@ -1103,6 +1103,19 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         return -31;
     }
 
+    u32* vshargp = param->vshmain_args;
+    int vshargs = param->vshmain_args_size;
+    memset(param, 0, sizeof(struct SceKernelLoadExecVSHParam));
+    param->size = sizeof(struct SceKernelLoadExecVSHParam);
+    if (vshargp){
+        memset(vshargp, 0, vshargs);
+        vshargp[0] = vshargs;
+        vshargp[1] = 0x20;
+        vshargp[16] = 1;
+        param->vshmain_args = vshargp;
+        param->vshmain_args_size = vshargs;
+    }
+
     // get ISO path with non-latin1 support
     char sname[128]; sname[0] = 0;
     get_ISO_shortname(sname, sizeof(sname), vpbp->name);
