@@ -27,17 +27,10 @@ static u8* icon_data = NULL;
 static int icon_size = 0;
 
 static void launch_umdvideo_mount(const char *path) {
-    SceIoStat stat;
-    int type;
-
     if (path == NULL)
         return;
 
-    if (sceIoGetstat(path, &stat) < 0)
-        return;
-
-    type = vshDetectDiscType(path);
-
+    int type = vshDetectDiscType(path);
     if (type < 0)
         return;
 
