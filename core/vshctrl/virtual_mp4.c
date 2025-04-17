@@ -21,6 +21,10 @@ extern SceCtrlData *last_control_data;
 
 static char* video_dir = "ms0:/VIDEO";
 static char* isovideo_dir = "ms0:/ISO/VIDEO";
+static const char* video_icon_path = "/UMD_VIDEO/ICON0.PNG";
+
+static u8* icon_data = NULL;
+static int icon_size = 0;
 
 static void launch_umdvideo_mount(const char *path) {
     SceIoStat stat;
@@ -41,6 +45,68 @@ static void launch_umdvideo_mount(const char *path) {
     sctrlSESetBootConfFileIndex(MODE_VSHUMD);
     sctrlSESetDiscType(type);
     sctrlKernelExitVSH(NULL);
+}
+
+static void getIconStatFromISO(const char* isopath){
+    int res, size, lba;
+
+    icon_size = 0;
+
+    res = isoOpen(isopath);
+    if (res<0) return;
+
+    res = isoGetFileInfo(video_icon_path, &size, &lba);
+    isoClose();
+    if (res<0) return;
+    
+    icon_size = size;
+}
+
+static void readIconFromISO(const char* isopath){
+    int res, size, lba;
+
+    res = isoOpen(isopath);
+    if (res<0) return;
+
+    res = isoGetFileInfo(video_icon_path, &size, &lba);
+    if (res<0) {
+        isoClose();
+        return;
+    }
+
+    u8* data = vsh_malloc(size);
+
+    res = isoRead(data, lba, 0, size);
+    isoClose();
+
+    if (res<0){
+        vsh_free(data);
+        return;
+    }
+
+    if (icon_data){
+        vsh_free(icon_data);
+    }
+
+    icon_data = data;
+    icon_size = size;
+
+    // patch smallvid
+    size += 24;
+    smallvid[0x9DE] = icon_data[0x13];
+    smallvid[0x9E0] = icon_data[0x17];
+    smallvid[0xB19] = (unsigned char)((size&0xFF00)>>8);
+    smallvid[0xB1A] = (unsigned char)(size&0xFF);
+    smallvid[0x6E2] = 0;
+    smallvid[0x71C] = 0;
+    smallvid[0x770] = 0;
+    smallvid[0x7AC] = 0;
+    smallvid[0x7EE] = 0;
+    smallvid[0x832] = 0;
+    smallvid[0x86A] = 0;
+    smallvid[0x8AB] = 0;
+    smallvid[0x8AC] = 0;
+    smallvid[0x8AD] = 0;
 }
 
 SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
@@ -70,6 +136,7 @@ SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
                             launch_umdvideo_mount(isopath);
                         }
                     }
+                    readIconFromISO(isopath);
                 }
             }
         }
@@ -112,7 +179,8 @@ int videoIoGetstat(const char* path, SceIoStat* stat){
                 strcpy(ext, ".iso");
                 res = sceIoGetstat(isopath, stat);
                 if (res>=0){
-                    stat->st_size = sizeof(smallvid);
+                    getIconStatFromISO(isopath);
+                    stat->st_size = sizeof(smallvid) + icon_size;
                 }
             }
         }
@@ -125,7 +193,20 @@ int videoIoGetstat(const char* path, SceIoStat* stat){
 int videoIoRead(SceUID fd, void* buf, u32 size){
 
     if (fd == FAKE_UID_XMB_VIDEO_ISO){
-        memcpy(buf, &smallvid[file_pos], size);
+        if (file_pos < sizeof(smallvid)){
+            if (file_pos+size > sizeof(smallvid)){
+                int size_1 = sizeof(smallvid)-file_pos;
+                int size_2 = file_pos+size-sizeof(smallvid);
+                memcpy(buf, &smallvid[file_pos], size_1);
+                memcpy((u8*)buf+size_1, icon_data, size_2);
+            }
+            else {
+                memcpy(buf, &smallvid[file_pos], size);
+            }
+        }
+        else{
+            memcpy(buf, &icon_data[file_pos-sizeof(smallvid)], size);
+        }
         file_pos += size;
         return size;
     }
@@ -157,8 +238,15 @@ int videoIoDread(SceUID fd, SceIoDirent *dir){
 }
 
 int videoIoClose(SceUID fd){
-    if (fd == FAKE_UID_XMB_VIDEO_ISO) return 0;
-    return sceIoClose(fd);
+    if (fd != FAKE_UID_XMB_VIDEO_ISO)
+        return sceIoClose(fd);
+
+    if (icon_data){
+        vsh_free(icon_data);
+        icon_data = 0;
+        icon_size = 0;
+    }
+    return 0;
 }
 
 int videoIoDclose(SceUID fd){
@@ -178,7 +266,7 @@ SceOff videoIoLseek(SceUID fd, SceOff offset, int whence){
     switch (whence){
         case PSP_SEEK_SET: file_pos = offset; break;
         case PSP_SEEK_CUR: file_pos += offset; break;
-        case PSP_SEEK_END: file_pos = sizeof(smallvid)-offset; break;
+        case PSP_SEEK_END: file_pos = icon_size+sizeof(smallvid)-offset; break;
     }
     return file_pos;
 }
