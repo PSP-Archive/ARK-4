@@ -90,7 +90,7 @@ static void readIconFromISO(const char* isopath){
     smallvid[0x9DE] = icon_data[0x13];
     smallvid[0x9E0] = icon_data[0x17];
     smallvid[0xB1A] = (unsigned char)size;
-    smallvid[0xB19] = (unsigned char)((size&0xFF00)>>8);
+    smallvid[0xB19] = (unsigned char)(size>>8);
     smallvid[0x6E2] = 0;
     smallvid[0x71C] = 0;
     smallvid[0x770] = 0;
