@@ -28,6 +28,8 @@ char *settings[] =
     "Custom Firmware Settings",
     "Plugins Manager",
     "Custom Launcher",
+    "Custom App",
+    "Reboot into 1.50 ARK",
     "USB Charge",
     "CPU Clock in Game",
     "CPU Clock in XMB",
@@ -47,8 +49,6 @@ char *settings[] =
     "Disable UMD Drive",
     "Disable Analog Stick",
     "QA Flags",
-    "Custom App",
-    "Reboot into 1.50 ARK",
 };
 
 #endif
