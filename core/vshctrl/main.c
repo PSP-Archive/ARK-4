@@ -64,13 +64,18 @@ void sync_cache()
 void* vsh_malloc(size_t size){
     SceUID uid = sceKernelAllocPartitionMemory(2, "", PSP_SMEM_High, size+sizeof(u32), NULL);
     int* ptr = sceKernelGetBlockHeadAddr(uid);
-    ptr[0] = uid;
-    return &(ptr[1]);
+    if (ptr){
+        ptr[0] = uid;
+        return &(ptr[1]);
+    }
+    return NULL;
 }
 
 void vsh_free(int* ptr){
-    int uid = ptr[-1];
-    sceKernelFreePartitionMemory(uid);
+    if (ptr){
+        int uid = ptr[-1];
+        sceKernelFreePartitionMemory(uid);
+    }
 }
 
 int get_device_name(char *device, int size, const char* path)
