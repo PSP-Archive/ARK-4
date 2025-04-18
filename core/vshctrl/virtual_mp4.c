@@ -22,12 +22,13 @@ extern SceCtrlData *last_control_data;
 static char* video_dir = "ms0:/VIDEO";
 static char* isovideo_dir = "ms0:/ISO/VIDEO";
 static const char* video_icon_path = "/UMD_VIDEO/ICON0.PNG";
+static const char* music_icon_path = "/UMD_AUDIO/ICON0.PNG";
 
 static u8* icon_data = NULL;
 static int icon_size = 0;
 
 static void launch_umdvideo_mount(const char *path) {
-    
+
     int type = vshDetectDiscType(path);
     if (type < 0)
         return;
@@ -47,6 +48,7 @@ static void getIconStatFromISO(const char* isopath){
     if (res<0) return;
 
     res = isoGetFileInfo(video_icon_path, &size, &lba);
+    if (res<0) res = isoGetFileInfo(music_icon_path, &size, &lba);
     isoClose();
     if (res<0) return;
     
@@ -60,6 +62,7 @@ static void readIconFromISO(const char* isopath){
     if (res<0) return;
 
     res = isoGetFileInfo(video_icon_path, &size, &lba);
+    if (res<0) res = isoGetFileInfo(music_icon_path, &size, &lba);
     if (res<0) {
         isoClose();
         return;
