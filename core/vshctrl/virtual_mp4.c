@@ -304,8 +304,9 @@ int videoRemove(const char * file){
         char* filename;
         char path[256];
         // redirect file to /ISO/VIDEO/ folder
+        isovideo_dir[0] = file[0]; isovideo_dir[1] = file[1]; // redirect device (psp go)
         strcpy(path, isovideo_dir);
-        filename = strrchr(file, '/');
+        filename = strrchr(file, '/'); // find file name
         if (filename) strcat(path, filename);
         // find .mp4 extension
         filename = strstr(path, ".mp4");
