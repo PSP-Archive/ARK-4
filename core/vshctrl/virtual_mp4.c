@@ -122,10 +122,12 @@ SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
                 if (sceIoGetstat(isopath, &stat)>=0){
                     res = FAKE_UID_XMB_VIDEO_ISO;
                     file_pos = 0;
-                    if (last_control_data){
+                    if (last_control_data && video_dd < 0 && isovideo_fd < 0){
+                        u32 swap_xo;
                         u32 pad = last_control_data->Buttons;
-                        if(  (pad&PSP_CTRL_CROSS)  == PSP_CTRL_CROSS
-                          || (pad&PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE
+                        vctrlGetRegistryValue("/CONFIG/SYSTEM/XMB", "button_assign", &swap_xo);
+                        if(  ( ((pad&PSP_CTRL_CROSS)  == PSP_CTRL_CROSS) && swap_xo)
+                          || ( ((pad&PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE) && !swap_xo)
                           || (pad&PSP_CTRL_START)  == PSP_CTRL_START
                           || (pad&PSP_CTRL_RIGHT)  == PSP_CTRL_RIGHT
                         ){
@@ -189,6 +191,11 @@ int videoIoGetstat(const char* path, SceIoStat* stat){
 int videoIoRead(SceUID fd, void* buf, u32 size){
 
     if (fd == FAKE_UID_XMB_VIDEO_ISO){
+        if (file_pos >= sizeof(smallvid)+icon_size)
+            return 0; // Out of Bouds
+        if (file_pos+size > sizeof(smallvid)+icon_size)
+            size = sizeof(smallvid)+icon_size - file_pos; // more data requested than available
+        
         if (file_pos < sizeof(smallvid)){
             if (file_pos+size > sizeof(smallvid)){
                 int size_1 = sizeof(smallvid)-file_pos;
@@ -203,6 +210,7 @@ int videoIoRead(SceUID fd, void* buf, u32 size){
         else{
             memcpy(buf, &icon_data[file_pos-sizeof(smallvid)], size);
         }
+        
         file_pos += size;
         return size;
     }
@@ -265,6 +273,29 @@ SceOff videoIoLseek(SceUID fd, SceOff offset, int whence){
         case PSP_SEEK_END: file_pos = icon_size+sizeof(smallvid)-offset; break;
     }
     return file_pos;
+}
+
+int videoRemove(const char * file){
+    int res = sceIoRemove(file);
+
+    if (res<0){
+        int k1 = pspSdkSetK1(0);
+        char* filename;
+        char path[256];
+        strcpy(path, isovideo_dir);
+        filename = strrchr(file, '/');
+        if (filename) strcat(path, filename);
+        filename = strstr(path, ".mp4");
+        if (filename) strcpy(filename, ".iso");
+        res = sceIoRemove(path);
+        pspSdkSetK1(k1);
+    }
+
+    if (last_control_data){
+        last_control_data->Buttons = 0;
+    }
+
+    return res;
 }
 
 int is_video_path(const char* path){

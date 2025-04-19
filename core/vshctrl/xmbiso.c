@@ -549,6 +549,10 @@ int gameremove(const char * file)
 {
     int result;
 
+    if (is_video_path(file)){
+        return videoRemove(file);
+    }
+
     Fix150Path(file);
    
     if(g_temp_delete_dir[0] != '\0' && 
