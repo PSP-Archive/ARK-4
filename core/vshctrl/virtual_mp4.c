@@ -315,6 +315,11 @@ int videoRemove(const char * file){
         // retry sceIoRemove
         res = sceIoRemove(path);
         pspSdkSetK1(k1);
+
+        extern char mounted_iso[];
+        if (res >= 0 && strcasecmp(mounted_iso, path) == 0){
+            sctrlKernelExitVSH(NULL); // trigger reboot if we have deleted the currently mounted ISO
+        }
     }
 
     if (last_control_data){
