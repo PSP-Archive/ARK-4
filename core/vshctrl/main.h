@@ -26,6 +26,11 @@ extern u32 psp_fw_version;
 
 extern SEConfig conf;
 
+#define ISO_RUNLEVEL 0x123
+#define ISO_RUNLEVEL_GO 0x125
+#define ISO_PBOOT_RUNLEVEL 0x124
+#define ISO_PBOOT_RUNLEVEL_GO 0x126
+
 int vshpatch_init(void);
 void patch_update_plugin_module(SceModule *mod);
 void patch_SceUpdateDL_Library(u32 text_addr);

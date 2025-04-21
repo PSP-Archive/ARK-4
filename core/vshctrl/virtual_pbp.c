@@ -1138,14 +1138,14 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         info[216/4] = opn_type;
 
     param->key = "umdemu";
-    apitype = 0x123;
+    apitype = ISO_RUNLEVEL;
 
     static char pboot_path[256];
     int has_pboot = has_update_file(vpbp->name, pboot_path);
 
     if (has_pboot){
         // configure to use dlc/update
-        apitype = 0x124;
+        apitype = ISO_PBOOT_RUNLEVEL;
         param->argp = pboot_path;
         param->args = strlen(pboot_path) + 1;
         loadexec_file = param->argp;
@@ -1154,7 +1154,7 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
             char devicename[20];
             ret = get_device_name(devicename, sizeof(devicename), pboot_path);
             if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
-                apitype = 0x126;
+                apitype = ISO_PBOOT_RUNLEVEL_GO;
             }
         }
     }
@@ -1166,7 +1166,7 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
             char devicename[20];
             ret = get_device_name(devicename, sizeof(devicename), vpbp->name);
             if(ret == 0 && 0 == stricmp(devicename, "ef0:")) {
-                apitype = 0x125;
+                apitype = ISO_RUNLEVEL_GO;
             }
         }
 
