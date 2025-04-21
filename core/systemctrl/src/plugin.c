@@ -475,13 +475,11 @@ static void settingsHandler(char* path, u8 enabled){
         se_config.oldplugin = enabled;
     }
     else if (strncasecmp(path, "infernocache", 12) == 0){
-        if (apitype == 0x123 || apitype == 0x125 || (apitype >= 0x112 && apitype <= 0x115)){
-            char* c = strchr(path, ':');
-            se_config.iso_cache = enabled;
-            if (enabled && c){
-                if (strcasecmp(c+1, "lru") == 0) se_config.iso_cache = 1;
-                else if (strcasecmp(c+1, "rr") == 0) se_config.iso_cache = 2;
-            }
+        char* c = strchr(path, ':');
+        se_config.iso_cache = enabled;
+        if (enabled && c){
+            if (strcasecmp(c+1, "lru") == 0) se_config.iso_cache = 1;
+            else if (strcasecmp(c+1, "rr") == 0) se_config.iso_cache = 2;
         }
     }
     else if (strcasecmp(path, "noled") == 0){
