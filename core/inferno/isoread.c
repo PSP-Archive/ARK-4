@@ -150,22 +150,6 @@ static void wait_until_ms0_ready(void)
     }
 }
 
-// 0x00000E58
-static int get_nsector(void)
-{
-    if(g_total_sectors <= 0) {
-        SceOff off, total;
-
-        off = sceIoLseek(g_iso_fd, 0, PSP_SEEK_CUR);
-        total = sceIoLseek(g_iso_fd, 0, PSP_SEEK_END);
-        sceIoLseek(g_iso_fd, off, PSP_SEEK_SET);
-
-        g_total_sectors = total / ISO_SECTOR_SIZE;
-    }
-
-    return g_total_sectors;
-}
-
 #ifdef DEBUG
 static int io_calls = 0;
 #endif
@@ -417,7 +401,7 @@ static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 
 }
 
 // 0x00000F00
-static int is_ciso(SceUID fd)
+static int iso_type_check(SceUID fd)
 {
     int ret;
     
@@ -500,6 +484,13 @@ static int is_ciso(SceUID fd)
         }
         return 1;
     } else {
+        SceOff off, total;
+
+        off = sceIoLseek(g_iso_fd, 0, PSP_SEEK_CUR);
+        total = sceIoLseek(g_iso_fd, 0, PSP_SEEK_END);
+        sceIoLseek(g_iso_fd, off, PSP_SEEK_SET);
+
+        g_total_sectors = total / ISO_SECTOR_SIZE;
         return 0;
     }
 }
@@ -532,12 +523,11 @@ int iso_open(void)
         return -1;
     }
 
-    is_compressed = is_ciso(g_iso_fd);
+    is_compressed = iso_type_check(g_iso_fd);
 
     if (is_compressed < 0) return is_compressed;
 
     g_iso_opened = 1;
-    g_total_sectors = get_nsector();
 
     return 0;
 }
