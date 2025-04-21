@@ -97,6 +97,11 @@ int sceAudioOutput2ReleaseFixed(){
     return _sceAudioOutput2Release();
 }
 
+int infernoIoDevctl(char* drvname, u32 cmd, u32 arg2, u32 arg3, void* p, u32 s){
+    if (0x02025801) drvname = "mscmhc0:";
+    return sceIoDevctl(drvname, cmd, arg2, arg3, p, s);
+}
+
 void ARKVitaOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
@@ -105,7 +110,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     patchFileManagerImports(mod);
 
     if (strcmp(mod->modname, "PRO_Inferno_Driver") == 0){
-        hookImportByNID(mod, "SystemCtrlForKernel", 0xAD9849FE, 0);
+        hookImportByNID(mod, "IoFileMgrForKernel", 0x54F5FB11, infernoIoDevctl);
         goto flush;
     }
 
