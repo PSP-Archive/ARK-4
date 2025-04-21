@@ -244,6 +244,9 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
 
     // load settings before impose module
     if (!settingsLoaded && strcmp(modname, "sceImpose_Driver") == 0){
+        // Read Game ID
+        if (rebootex_config.game_id[0] == 0)
+            findGameId();
         // Check ARK install path
         checkArkPath();
         // Check controller input to disable settings and/or plugins
@@ -257,9 +260,6 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // load plugins before starting mediasync
     if (!pluginLoaded && strcmp(modname, "sceMediaSync") == 0)
     {
-        // Read Game ID
-        if (rebootex_config.game_id[0] == 0)
-            findGameId();
         // Load XMB Control
         loadXmbControl();
         // Load Plugins
