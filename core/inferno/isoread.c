@@ -128,15 +128,15 @@ static void wait_until_ms0_ready(void)
     int ret, status = 0;
 
     if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_VSH) return; // no wait on VSH
-
-    const char *drvname = "mscmhcemu0:";
+    if (strncmp(g_iso_fn, "ms0:", 4) != 0) return; // no wait on other devices (e.g. ef0)
 
     while( 1 ) {
-        status = 0;
+        ret = sceIoDevctl("mscmhc0:", 0x02025801, 0, 0, &status, sizeof(status));
 
-        ret = sceIoDevctl(drvname, 0x02025801, 0, 0, &status, sizeof(status));
-        
-        if(ret < 0) drvname = "mscmhc0:";
+        if(ret < 0) {
+            sceKernelDelayThread(20000);
+            continue;
+        }
 
         if(status == 4) {
             break;
