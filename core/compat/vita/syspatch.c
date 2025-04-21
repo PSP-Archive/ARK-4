@@ -98,7 +98,7 @@ int sceAudioOutput2ReleaseFixed(){
 }
 
 int infernoIoDevctl(char* drvname, u32 cmd, u32 arg2, u32 arg3, void* p, u32 s){
-    if (0x02025801) drvname = "mscmhc0:";
+    if (cmd == 0x02025801) drvname = "mscmhc0:";
     return sceIoDevctl(drvname, cmd, arg2, arg3, p, s);
 }
 
