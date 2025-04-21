@@ -37,7 +37,7 @@ extern int sceKernelSetQTGP3(void *unk0);
 extern char *GetUmdFile();
 
 // 00002790
-char g_iso_fn[255];
+char g_iso_fn[255] = {0};
 
 // 0x00002248
 u8 g_umddata[16] = {

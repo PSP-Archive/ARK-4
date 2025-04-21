@@ -75,7 +75,7 @@ int sceUmdCheckMedium(void)
 {
     int ret;
 
-    if (g_iso_fn == NULL || g_iso_fn[0] == '\0'){
+    if (g_iso_fn[0] == '\0'){
         return 0;
     }
 
