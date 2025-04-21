@@ -132,12 +132,7 @@ static void wait_until_ms0_ready(void)
 
     while( 1 ) {
         ret = sceIoDevctl("mscmhc0:", 0x02025801, 0, 0, &status, sizeof(status));
-
-        if(ret < 0) {
-            sceKernelDelayThread(20000);
-            continue;
-        }
-
+        
         if(status == 4) {
             break;
         }
