@@ -38,7 +38,6 @@ extern char *GetUmdFile();
 
 // 00002790
 char g_iso_fn[255] = {0};
-int iso_device = ISO_DEV_UNK;
 
 // 0x00002248
 u8 g_umddata[16] = {
@@ -62,19 +61,6 @@ int setup_umd_device(void)
 
     memset(g_iso_fn, 0, sizeof(g_iso_fn));
     strncpy(g_iso_fn, GetUmdFile(), sizeof(g_iso_fn));
-    
-    if (iso_device == ISO_DEV_UNK){
-        if (g_iso_fn[0] == 0){
-            int apitype = sceKernelInitApitype();
-            if (apitype == 0x125 || apitype == 0x126 || apitype == 0x152) iso_device = ISO_DEV_EF0;
-            else iso_device = ISO_DEV_MS0;
-        }
-        else if (
-            (g_iso_fn[0] == 'm' || g_iso_fn[0] == 'M') &&
-            (g_iso_fn[1] == 's' || g_iso_fn[1] == 'S')
-        ) iso_device = ISO_DEV_MS0;
-        else iso_device = ISO_DEV_EF0;
-    }
 
     infernoSetDiscType(sctrlSEGetDiscType());
 
