@@ -213,9 +213,6 @@ static void checkArkPath(){
     else{
         sceIoDclose(res);
     }
-    // invalidate rebootex game id when not using physical UMDs
-    extern RebootConfigARK rebootex_config;
-    if (sceKernelInitApitype() > PSP_INIT_APITYPE_DISC) rebootex_config.game_id[0] = 0;
 }
 
 // Init Start Module Hook
@@ -245,8 +242,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // load settings before impose module
     if (!settingsLoaded && strcmp(modname, "sceImpose_Driver") == 0){
         // Read Game ID
-        if (rebootex_config.game_id[0] == 0)
-            findGameId();
+        findGameId();
         // Check ARK install path
         checkArkPath();
         // Check controller input to disable settings and/or plugins

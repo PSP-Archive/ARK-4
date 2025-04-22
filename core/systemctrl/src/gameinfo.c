@@ -57,17 +57,14 @@ int readGameIdFromPBP(){
 }
 
 int readGameIdFromISO(){
-    struct LbaParams param;
-    memset(&param, 0, sizeof(param));
 
-    param.cmd = 0x01E380C0;
-    param.lba_top = 16;
-    param.byte_size_total = 10;
-    param.byte_size_start = 883;
-    
-    int res = sceIoDevctl("umd:", 0x01E380C0, &param, sizeof(param), rebootex_config.game_id, sizeof(rebootex_config.game_id));
+    int (*iso_read)(u32 offset, void *ptr, u32 data_len) =
+        sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB573209C);
+    if (!iso_read) return 0;
 
-    if (res < 0) return 0;
+    int res = iso_read(16*2048+883, rebootex_config.game_id, sizeof(rebootex_config.game_id));
+    if (res != sizeof(rebootex_config.game_id))
+        return 0;
 
     // remove the dash in the middle: ULUS-01234 -> ULUS01234
     rebootex_config.game_id[4] = rebootex_config.game_id[5];
@@ -83,7 +80,7 @@ int readGameIdFromISO(){
 void findGameId(){
 
     int apitype = sceKernelInitApitype();
-    if (apitype == 0x141 || apitype == 0x152 || apitype >= 0x200){
+    if (apitype == 0x141 || apitype == 0x152 || apitype >= 0x200 || apitype == 0x120 || apitype == 0x160){
         return;
     }
 

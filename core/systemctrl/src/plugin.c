@@ -136,7 +136,10 @@ static int isUmdRunlevel(){
     if (!cur_runlevel){
         // Fetch Apitype
         int apitype = sceKernelInitApitype();
-        if (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126) || apitype == 0x130 || apitype == 0x160 || (apitype >= 0x110 && apitype <= 0x115))
+        if (apitype == 0x120 || apitype == 0x160
+                || (apitype >= 0x123 && apitype <= 0x126)
+                || apitype == 0x130 || apitype == 0x160
+                || (apitype >= 0x110 && apitype <= 0x115))
             cur_runlevel = RUNLEVEL_UMD;
     }
     return cur_runlevel == RUNLEVEL_UMD;
