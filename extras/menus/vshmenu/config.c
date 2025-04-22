@@ -200,14 +200,14 @@ void reset_ark_settings(vsh_Menu *vsh){
         "always, noanalog, off\n"
         "always, qaflags, on\n"
         "\n"
-        "# The following games don't like Inferno Cache"
-        "# Luxor - The Wrath of Set (the other Luxor game works fine)"
-        "ULUS10201, infernocache, off"
-        "# Flat-Out Head On (both US and EU)"
-        "ULUS10328 ULES00968, infernocache, off"
+        "# The following games don't like Inferno Cache\n"
+        "# Luxor - The Wrath of Set (the other Luxor game works fine)\n"
+        "ULUS10201, infernocache, off\n"
+        "# Flat-Out Head On (both US and EU)\n"
+        "ULUS10328 ULES00968, infernocache, off\n"
         "\n"
-        "# Enable Extra RAM on GTA LCS and VCS for CheatDeviceRemastered"
-        "ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on"
+        "# Enable Extra RAM on GTA LCS and VCS for CheatDeviceRemastered\n"
+        "ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on\n"
     ;
 
     char arkMenuPath[ARK_PATH_SIZE];
