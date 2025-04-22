@@ -127,7 +127,7 @@ static void wait_until_ms0_ready(void)
 {
     int ret, status = 0;
 
-    if (g_iso_fn[0] == 0 || sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_VSH) return; // no wait on VSH
+    if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_VSH) return; // no wait on VSH
 
     const char *drvname = (
         (g_iso_fn[0] == 'm' || g_iso_fn[0] == 'M') &&
