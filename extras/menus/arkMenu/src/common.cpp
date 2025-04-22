@@ -229,7 +229,7 @@ void common::resetConf(){
     config.show_fps = 0;
     config.text_glow = 3;
     config.screensaver = 2;
-    config.redirect_ms0 = 0;
+    config.redirect_ms0 = 1;
     config.startbtn = 0;
     config.menusize = 2;
     config.show_path = 0;
