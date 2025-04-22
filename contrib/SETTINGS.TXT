@@ -11,7 +11,7 @@ always, oldplugin, on
 always, skiplogos, off
 always, hidepics, off
 always, hidemac, on
-always, hidedlc, off
+always, hidedlc, on
 always, noled, off
 always, noumd, off
 always, noanalog, off

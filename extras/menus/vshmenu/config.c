@@ -220,7 +220,7 @@ void reset_ark_settings(vsh_Menu *vsh){
         "always, hidepics, off\n"
         "always, hibblock, on\n"
         "always, hidemac, on\n"
-        "always, hidedlc, off\n"
+        "always, hidedlc, on\n"
         "always, noled, off\n"
         "always, noumd, off\n"
         "always, noanalog, off\n"
