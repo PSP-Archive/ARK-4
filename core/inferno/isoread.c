@@ -129,10 +129,7 @@ static void wait_until_ms0_ready(void)
 
     if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_VSH) return; // no wait on VSH
 
-    const char *drvname = (
-        (g_iso_fn[0] == 'm' || g_iso_fn[0] == 'M') &&
-        (g_iso_fn[1] == 's' || g_iso_fn[1] == 'S')
-    )? "mscmhc0:":"mscmhcemu0:";
+    const char *drvname = (iso_device==ISO_DEV_EF0)?  "mscmhcemu0:" : "mscmhc0:";
 
     while (1) {
         ret = sceIoDevctl(drvname, 0x02025801, 0, 0, &status, sizeof(status));

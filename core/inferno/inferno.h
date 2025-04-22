@@ -36,7 +36,13 @@ struct IoReadArg {
     u32 size; // 8
 };
 
-extern u32 psp_model;
+enum DeviceType{
+    ISO_DEV_UNK = -1,
+    ISO_DEV_MS0,
+    ISO_DEV_EF0,
+};
+
+extern int iso_device;
 extern u32 psp_fw_version;
 extern PspIoDrv g_iodrv;
 
