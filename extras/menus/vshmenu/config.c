@@ -180,15 +180,15 @@ void config_recreate_umd_keys(void) {
 
 
 void reset_ark_settings(vsh_Menu *vsh){
-    const char settings[] = "always, usbcharge, on\n"
+    const char settings[] =
+        "always, usbcharge, on\n"
         "always, overclock, on\n"
-        "always, powersave, off\n"
-        "always, defaultclock, off\n"
+        "always, wpa2, on\n"
         "always, launcher, off\n"
-        "always, disablepause, off\n"
         "always, highmem, off\n"
         "always, mscache, on\n"
-        "always, infernocache:lru, on\n"
+        "always, infernocache, on\n"
+        "always, disablepause, off\n"
         "always, oldplugin, on\n"
         "always, skiplogos, off\n"
         "always, hidepics, off\n"
@@ -199,10 +199,16 @@ void reset_ark_settings(vsh_Menu *vsh){
         "always, noumd, off\n"
         "always, noanalog, off\n"
         "always, qaflags, on\n"
-        "# Luxor doesn't like Inferno Cache\n"
-        "ULUS10201, infernocache, off\n"
-        "# Enable Extra RAM on GTA LCS and VCS\n"
-        "ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on";
+        "\n"
+        "# The following games don't like Inferno Cache"
+        "# Luxor - The Wrath of Set (the other Luxor game works fine)"
+        "ULUS10201, infernocache, off"
+        "# Flat-Out Head On (both US and EU)"
+        "ULUS10328 ULES00968, infernocache, off"
+        "\n"
+        "# Enable Extra RAM on GTA LCS and VCS for CheatDeviceRemastered"
+        "ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on"
+    ;
 
     char arkMenuPath[ARK_PATH_SIZE];
     char arkSettingsPath[ARK_PATH_SIZE];
