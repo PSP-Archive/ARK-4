@@ -60,7 +60,7 @@ class Eboot : public Entry{
         
         static bool isEboot(const char* path);
         static int getEbootType(const char* path);
-        static string fullEbootPath(string path, string app);
+        static string fullEbootPath(string path, string app, bool scan_dlc=false);
         
         static void executeEboot(const char* path);
         static void executeHomebrew(const char* path);

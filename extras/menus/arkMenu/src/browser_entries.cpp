@@ -177,7 +177,7 @@ void BrowserFolder::loadIcon(){
     if (common::fileExists(icon_path)){
         this->icon0 = new Image(icon_path);
     }
-    else if ((eboot_path = Eboot::fullEbootPath(parent, name)).length() > 0){
+    else if ((eboot_path = Eboot::fullEbootPath(parent, name, true)).length() > 0){
         Eboot* eboot = new Eboot(eboot_path);
         eboot->loadIcon();
         this->icon0 = eboot->getIcon();

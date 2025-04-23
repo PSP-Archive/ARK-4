@@ -129,25 +129,40 @@ int Eboot::getEbootType(const char* path){
     return ret;
 }
 
-string Eboot::fullEbootPath(string path, string app){
+string Eboot::fullEbootPath(string path, string app, bool scan_dlc){
     // Return the full path of a homebrew given only the homebrew name
+
+    static const char* EBOOT_150 = "%/EBOOT.PBP"; // 1.50 homebrew
+    static const char* EBOOT_PBP = "/EBOOT.PBP";  // Normal EBOOT
+    static const char* EBOOT_ARK = "/"VBOOT_PBP;  // ARK EBOOT
+    static const char* EBOOT_CEF = "/FBOOT.PBP";  // TN CEF EBOOT
+    static const char* EBOOT_HBL = "/WMENU.BIN";  // VHBL EBOOT
+    static const char* PBOOT_PBP = "/PBOOT.PBP";  // Update file
+    static const char* PBOOT_DLC = "/PARAM.PBP";  // DLC file
+
     if (common::fileExists(app))
         return app; // it's already a full path
 
-    else if (common::fileExists(path+app+"%/EBOOT.PBP"))
-        return path+app+"%/EBOOT.PBP"; // 1.50 homebrew
+    else if (common::fileExists(path+app+EBOOT_150))
+        return path+app+EBOOT_150; // 1.50 homebrew
 
-    else if (common::fileExists(path+app+VBOOT_PBP))
-        return path+app+VBOOT_PBP; // ARK EBOOT
+    else if (common::fileExists(path+app+EBOOT_PBP))
+        return path+app+EBOOT_PBP; // Normal EBOOT
+    
+        else if (common::fileExists(path+app+EBOOT_ARK))
+        return path+app+EBOOT_ARK; // ARK EBOOT
 
-    else if (common::fileExists(path+app+"/EBOOT.PBP"))
-        return path+app+"/EBOOT.PBP"; // Normal EBOOT
+    else if (common::fileExists(path+app+EBOOT_CEF))
+        return path+app+EBOOT_CEF; // TN CEF EBOOT
 
-    else if (common::fileExists(path+app+"/FBOOT.PBP"))
-        return path+app+"/FBOOT.PBP"; // TN CEF EBOOT
-
-    else if (common::fileExists(path+app+"/WMENU.BIN"))
-        return path+app+"/WMENU.BIN"; // VHBL EBOOT
+    else if (common::fileExists(path+app+EBOOT_HBL))
+        return path+app+EBOOT_HBL; // VHBL EBOOT
+    
+    else if (scan_dlc && common::fileExists(path+app+PBOOT_PBP))
+        return path+app+PBOOT_PBP; // Update file
+    
+    else if (scan_dlc && common::fileExists(path+app+PBOOT_DLC))
+        return path+app+PBOOT_DLC; // DLC file
 
     return "";
 }
