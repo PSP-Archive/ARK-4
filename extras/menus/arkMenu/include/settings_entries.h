@@ -112,7 +112,7 @@ static struct {
     {"Disabled", "Enabled"}
 };
 
-/* Scan DLC */
+/* Show DLC */
 static struct {
     char* description;
     unsigned char max_options;
