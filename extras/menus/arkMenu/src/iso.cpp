@@ -182,7 +182,7 @@ void Iso::loadAVMedia(){
 void Iso::doExecute(){
     char dlc_path[256];
     char* eboot_path;
-    if (common::getConf()->scan_dlc && has_installed_file("PBOOT.PBP", dlc_path)){
+    if (has_installed_file("PBOOT.PBP", dlc_path)){
         eboot_path = dlc_path;
     }
     else{

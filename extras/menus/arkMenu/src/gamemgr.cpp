@@ -206,7 +206,7 @@ void GameManager::findEboots(const char* path){
             || strcmp(dit->d_name, "ARK_Loader") == 0)
             continue; // ignore ARK launchers
         
-        string fullpath = Eboot::fullEbootPath(path, dit->d_name);
+        string fullpath = Eboot::fullEbootPath(path, dit->d_name, common::getConf()->show_dlc);
         if (fullpath == ""){
             if (common::getConf()->scan_cat){
                 findEboots((string(path) + dit->d_name + "/").c_str());
