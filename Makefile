@@ -317,6 +317,8 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/apps/updater/
 	$(Q)$(MAKE) $@ -C extras/apps/installer/
 	$(Q)$(MAKE) $@ -C extras/apps/uninstaller
+	$(Q)$(MAKE) $@ -C extras/150kernel/msipl/mainbinex
+	$(Q)$(MAKE) $@ -C extras/150kernel/msipl/stage1
 	$(Q)$(MAKE) $@ -C extras/150kernel/reboot150
 	$(Q)$(MAKE) $@ -C extras/150kernel/rebootex150
 	$(Q)$(MAKE) $@ -C extras/150kernel/systemctrl150
