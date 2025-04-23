@@ -33,3 +33,6 @@ include $(ARKROOT)/common/make/global.mak
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
 include $(ARKROOT)/common/make/beauty.mak
+
+clean:
+	$(Q)rm -rf *.o *.elf *.prx *.bin tmctrl.h
