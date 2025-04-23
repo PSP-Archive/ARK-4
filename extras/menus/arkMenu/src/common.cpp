@@ -215,7 +215,6 @@ t_conf* common::getConf(){
 void common::resetConf(){
     memset(&config, 0, sizeof(config));
     config.font = 1;
-    config.plugins = 1;
     config.sort_entries = 1;
     config.show_recovery = 1;
     config.text_glow = 3;

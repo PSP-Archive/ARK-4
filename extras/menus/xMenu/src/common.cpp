@@ -18,25 +18,13 @@ SEConfig* se_config = &_se_conf;
 
 void common::resetConf(){
     memset(&config, 0, sizeof(config));
-    config.fast_gameboot = 0;
-    config.language = 0;
     config.font = 1;
-    config.plugins = 1;
-    config.scan_save = 0;
-    config.scan_cat = 0;
-    config.scan_dlc = 0;
-    config.swap_buttons = 0;
-    config.animation = 0;
-    config.main_menu = 0;
     config.sort_entries = 1;
     config.show_recovery = 1;
-    config.show_fps = 0;
     config.text_glow = 3;
     config.screensaver = 2;
-    config.redirect_ms0 = 0;
-    config.startbtn = 0;
-    config.menusize = 0;
-    config.show_path = 0;
+    config.redirect_ms0 = 1;
+    config.menusize = 2;
     config.browser_icon0 = 1;
 }
 

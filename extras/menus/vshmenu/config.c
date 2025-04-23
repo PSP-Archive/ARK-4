@@ -28,25 +28,13 @@ int button_decline(u32 button){
 
 void config_reset(vsh_Menu *vsh){
     memset(&vsh->config.ark_menu, 0, sizeof(vsh->config.ark_menu));
-    vsh->config.ark_menu.fast_gameboot = 0;
-    vsh->config.ark_menu.language = 0;
     vsh->config.ark_menu.font = 1;
-    vsh->config.ark_menu.plugins = 1;
-    vsh->config.ark_menu.scan_save = 0;
-    vsh->config.ark_menu.scan_cat = 0;
-    vsh->config.ark_menu.scan_dlc = 1;
-    vsh->config.ark_menu.swap_buttons = 0;
-    vsh->config.ark_menu.animation = 0;
-    vsh->config.ark_menu.main_menu = 0;
     vsh->config.ark_menu.sort_entries = 1;
     vsh->config.ark_menu.show_recovery = 1;
-    vsh->config.ark_menu.show_fps = 0;
     vsh->config.ark_menu.text_glow = 3;
     vsh->config.ark_menu.screensaver = 2;
     vsh->config.ark_menu.redirect_ms0 = 1;
-    vsh->config.ark_menu.startbtn = 0;
     vsh->config.ark_menu.menusize = 2;
-    vsh->config.ark_menu.show_path = 0;
     vsh->config.ark_menu.browser_icon0 = 1;
 }
 
