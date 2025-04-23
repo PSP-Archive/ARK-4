@@ -1,7 +1,0 @@
-ULUS10041, ms0:/seplugins/lcscheatdevice.prx, on
-ULES00502, ms0:/seplugins/vcscheatdevice.prx, on
-game, ms0:/seplugins/cwcheat/cwcheat.prx, on
-pops, ms0:/seplugins/cwcheat/cwcheatpops.prx, on
-ULUS10041, ms0:/seplugins/cwcheat/cwcheat.prx, off
-ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
-always, ms0:/seplugins/PRXShot-png/PRXShot-png.prx, off
