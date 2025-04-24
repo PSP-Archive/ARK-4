@@ -84,7 +84,7 @@ int main(int argc, char** argv){
     loadSettings();
     SettingsTable cfwstab = { ark_conf_entries, ark_conf_max_entries };
     SettingsMenu* settings_menu = new SettingsMenu(&cfwstab, false, true, true);
-    settings_menu->setCallbacks(saveSettings, loadSettings, cleanupSettings, common::resetConf);
+    settings_menu->setCallbacks(saveSettings, loadSettings, cleanupSettings, resetCfwSettings);
     settings_menu->setName("CFW Settings");
     settings_menu->setInfo("ARK Custom Firmware Settings");
     settings_menu->readConf();
@@ -92,7 +92,7 @@ int main(int argc, char** argv){
 
     // Add ARK plugins manager
     SettingsMenu* plugins_menu = new SettingsMenu(&plugins_table, true, true, true);
-    plugins_menu->setCallbacks(saveSettings, loadPlugins, cleanupPlugins, resetCfwSettings);
+    plugins_menu->setCallbacks(savePlugins, loadPlugins, cleanupPlugins, NULL);
     plugins_menu->setName("Plugins");
     plugins_menu->setInfo("Installed Plugins");
     plugins_menu->setIcon(IMAGE_PLUGINS);
@@ -107,7 +107,9 @@ int main(int argc, char** argv){
     else sceIoDclose(ef0);
 
     SettingsTable stab = { settings_entries, max_settings };
-    entries[n_entries++] = new SettingsMenu(&stab, common::saveConf, false, true, true);
+    SettingsMenu* msettings_menu = new SettingsMenu(&stab, false, true, true);
+    plugins_menu->setCallbacks(common::saveConf, NULL, NULL, common::resetConf);
+    entries[n_entries++] = msettings_menu;
 
     if (recovery){
         entries[n_entries++] = Browser::getInstance();
