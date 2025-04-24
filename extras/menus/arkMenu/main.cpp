@@ -108,7 +108,7 @@ int main(int argc, char** argv){
 
     SettingsTable stab = { settings_entries, max_settings };
     SettingsMenu* msettings_menu = new SettingsMenu(&stab, false, true, true);
-    plugins_menu->setCallbacks(common::saveConf, NULL, NULL, common::resetConf);
+    msettings_menu->setCallbacks(common::saveConf, NULL, NULL, common::resetConf);
     entries[n_entries++] = msettings_menu;
 
     if (recovery){

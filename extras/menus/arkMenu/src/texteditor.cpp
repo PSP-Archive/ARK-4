@@ -35,7 +35,7 @@ TextEditor::TextEditor(string path){
 
     this->loadTextFile();
 
-    this->menu = new SettingsMenu(&(this->table), NULL, false, false, false);
+    this->menu = new SettingsMenu(&(this->table), false, false, false);
 }
 
 TextEditor::~TextEditor(){
