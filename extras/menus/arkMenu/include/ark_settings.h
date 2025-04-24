@@ -360,7 +360,11 @@ static struct {
     14,
     0,
     &(cfw_config.vshregion),
-    {"Default", "Japan", "America", "Europe", "Korea", "United Kingdom", "Latin America", "Australia", "Hong Kong", "Taiwan", "Russia", "China", "Debug I", "Debug II"}
+    {
+        "Default", "Japan", "America", "Europe", "Korea",
+        "United Kingdom", "Latin America", "Australia", "Hong Kong",
+        "Taiwan", "Russia", "China", "Debug I", "Debug II"
+    }
 };
 
 int ark_conf_max_entries = 0;
@@ -830,33 +834,28 @@ void saveSettings(){
 }
 
 void resetSettings() {
+    memset(&cfw_config, 0, sizeof(cfw_config));
     cfw_config.usbcharge = 1;
     cfw_config.clock_game = OVERCLOCK;
     cfw_config.clock_vsh = OVERCLOCK;
     cfw_config.wpa2 = 1;
-    cfw_config.launcher = 0;
-    cfw_config.highmem = 0;
     cfw_config.mscache = 1;
     cfw_config.infernocache = 1;
-    cfw_config.disablepause = 0;
     cfw_config.oldplugin = 1;
     cfw_config.hibblock = 1;
-    cfw_config.skiplogos = 0;
-    cfw_config.hidepics = 0;
     cfw_config.hidemac = 1;
-    cfw_config.hidedlc = 0;
-    cfw_config.noled = 0;
-    cfw_config.noumd = 0;
-    cfw_config.noanalog = 0;
+    cfw_config.hidedlc = 1;
     cfw_config.qaflags = 1;
-    cfw_config.vshregion = 0;
-    cfw_config.regionchange = 0;
 
     custom_config.clear();
     custom_config.push_back("\n");
-    custom_config.push_back("# Luxor doesn't like Inferno Cache\n");
+    custom_config.push_back("# The following games don't like Inferno Cache\n");
+    custom_config.push_back("# Luxor - The Wrath of Set (the other Luxor game works fine)\n");
     custom_config.push_back("ULUS10201, infernocache, off\n");
-    custom_config.push_back("# Enable Extra RAM on GTA LCS and VCS\n");
+    custom_config.push_back("# Flat-Out Head On (both US and EU)\n");
+    custom_config.push_back("ULUS10328 ULES00968, infernocache, off\n");
+    custom_config.push_back("\n");
+    custom_config.push_back("# Enable Extra RAM on GTA LCS and VCS for CheatDeviceRemastered\n");
     custom_config.push_back("ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on\n");
 
     saveSettings();
