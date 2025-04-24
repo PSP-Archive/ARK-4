@@ -269,6 +269,7 @@ void SettingsMenu::control(Controller* pad){
         }
     }
     else if (pad->square() && this->reset_callback) {
+        common::playMenuSound();
         pause();
         this->reset_callback();
         resume();
