@@ -833,7 +833,7 @@ void saveSettings(){
     output.close();
 }
 
-void resetSettings() {
+void resetCfwSettings() {
     memset(&cfw_config, 0, sizeof(cfw_config));
     cfw_config.usbcharge = 1;
     cfw_config.clock_game = OVERCLOCK;
@@ -857,10 +857,6 @@ void resetSettings() {
     custom_config.push_back("\n");
     custom_config.push_back("# Enable Extra RAM on GTA LCS and VCS for CheatDeviceRemastered\n");
     custom_config.push_back("ULUS10041 ULUS10160 ULES00151 ULES00502, highmem, on\n");
-
-    saveSettings();
-    
-
 }
 
 

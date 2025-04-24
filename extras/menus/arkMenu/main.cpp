@@ -83,8 +83,8 @@ int main(int argc, char** argv){
     // Add ARK settings manager
     loadSettings();
     SettingsTable cfwstab = { ark_conf_entries, ark_conf_max_entries };
-    SettingsMenu* settings_menu = new SettingsMenu(&cfwstab, saveSettings, false, true, true);
-    settings_menu->setCallbacks(NULL, loadSettings, cleanupSettings);
+    SettingsMenu* settings_menu = new SettingsMenu(&cfwstab, false, true, true);
+    settings_menu->setCallbacks(saveSettings, loadSettings, cleanupSettings, common::resetConf);
     settings_menu->setName("CFW Settings");
     settings_menu->setInfo("ARK Custom Firmware Settings");
     settings_menu->setFooter("[] to Reset Settings");
@@ -92,8 +92,8 @@ int main(int argc, char** argv){
     entries[n_entries++] = settings_menu;
 
     // Add ARK plugins manager
-    SettingsMenu* plugins_menu = new SettingsMenu(&plugins_table, savePlugins, true, true, true);
-    plugins_menu->setCallbacks(NULL, loadPlugins, cleanupPlugins);
+    SettingsMenu* plugins_menu = new SettingsMenu(&plugins_table, true, true, true);
+    plugins_menu->setCallbacks(saveSettings, loadPlugins, cleanupPlugins, resetCfwSettings);
     plugins_menu->setName("Plugins");
     plugins_menu->setInfo("Installed Plugins");
     plugins_menu->setIcon(IMAGE_PLUGINS);

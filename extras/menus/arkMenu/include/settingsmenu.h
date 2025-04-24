@@ -50,13 +50,14 @@ class SettingsMenu : public SystemEntry{
         void (*save_callback)();
         void (*open_callback)();
         void (*close_callback)();
+        void (*reset_callback)();
         
     public:
     
-        SettingsMenu(SettingsTable* table, void (*callback)(), bool shorten_paths, bool show_all_opts, bool show_info);
+        SettingsMenu(SettingsTable* table, bool shorten_paths, bool show_all_opts, bool show_info);
         ~SettingsMenu();
 
-        void setCallbacks(void (*save_callback)(), void (*open_callback)(), void (*close_callback)());
+        void setCallbacks(void (*save_callback)(), void (*open_callback)(), void (*close_callback)(), void (*reset_callback)());
     
         void setCustomText(string text[], int n);
         void unsetCustomText();

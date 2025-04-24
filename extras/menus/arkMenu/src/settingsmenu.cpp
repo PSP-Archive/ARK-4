@@ -9,9 +9,8 @@
 #define PAGE_SIZE 10
 
 extern string ark_version;
-extern void resetSettings();
 
-SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool shorten_paths, bool show_all_opts, bool show_info){
+SettingsMenu::SettingsMenu(SettingsTable* table, bool shorten_paths, bool show_all_opts, bool show_info){
     this->animation = -1;
     this->index = 0;
     this->start = 0;
@@ -26,9 +25,10 @@ SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool s
     this->table = table;
     this->info = "Menu Settings";
     this->name = "Settings";
-    this->save_callback = save_callback;
+    this->save_callback = NULL;
     this->open_callback = NULL;
     this->close_callback = NULL;
+    this->reset_callback = NULL;
     this->icon = IMAGE_SETTINGS;
     this->shorten_paths = shorten_paths;
     this->show_all_opts = show_all_opts;
@@ -40,10 +40,11 @@ SettingsMenu::SettingsMenu(SettingsTable* table, void (*save_callback)(), bool s
 SettingsMenu::~SettingsMenu(){
 }
 
-void SettingsMenu::setCallbacks(void (*save_callback)(), void (*open_callback)(), void (*close_callback)()){
-    if (save_callback) this->save_callback = save_callback;
-    if (open_callback) this->open_callback = open_callback;
-    if (close_callback) this->close_callback = close_callback;
+void SettingsMenu::setCallbacks(void (*save_callback)(), void (*open_callback)(), void (*close_callback)(), void (*reset_callback)()){
+    this->save_callback = save_callback;
+    this->open_callback = open_callback;
+    this->close_callback = close_callback;
+    this->reset_callback = reset_callback;
 }
 
 void SettingsMenu::setCustomText(string text[], int n){
@@ -264,10 +265,11 @@ void SettingsMenu::control(Controller* pad){
             changed = true;
         }
     }
-    else if (pad->square() && this->name == "CFW Settings") {
+    else if (pad->square() && this->reset_callback) {
         pause();
-        resetSettings();
+        this->reset_callback();
         resume();
+        if (this->save_callback) this->save_callback();
     }
 }
 
