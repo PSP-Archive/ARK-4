@@ -114,6 +114,11 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
+    if (strcmp(mod->modname, "sceLoadExec") == 0) {
+        prepatchVitaMemory();
+        goto flush;
+    }
+
     // Patch Kermit Peripheral Module to load flash0
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
     {
@@ -158,14 +163,14 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
         // perfect time to apply extra memory patch
-        if (se_config->force_high_memory) unlockVitaMemory(50);
+        if (se_config->force_high_memory) unlockVitaMemory(28);
         else{
         	int apitype = sceKernelInitApitype();
         	if (apitype == 0x141){
         		int paramsize=4;
         		int use_highmem = 0;
         		if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-        			unlockVitaMemory(50);
+        			unlockVitaMemory(28);
         			se_config->force_high_memory = 1;
         		}
             }
