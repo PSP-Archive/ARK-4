@@ -31,8 +31,8 @@ void prepatchVitaMemory(){
     SysMemPartition *partition = GetPartition(11);
     if (partition){
         partition->size = 0;
-        partition->address = 0;
-        partition->data->size = 0;
+        partition->address = EXTRA_RAM;
+        partition->data->size = 0xFC;
     }
 }
 
@@ -41,6 +41,8 @@ void unlockVitaMemory(u32 user_size_mib){
     int apitype = sceKernelInitApitype(); // prevent in pops and vsh
     if (apitype == 0x144 || apitype == 0x155 || apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300)
         return;
+
+    prepatchVitaMemory();
 
     SysMemPartition *(* GetPartition)(int partition) = findGetPartition();
     if (!GetPartition){

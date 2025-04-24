@@ -163,14 +163,14 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
         // perfect time to apply extra memory patch
-        if (se_config->force_high_memory) unlockVitaMemory(28);
+        if (se_config->force_high_memory) unlockVitaMemory(36);
         else{
         	int apitype = sceKernelInitApitype();
         	if (apitype == 0x141){
         		int paramsize=4;
         		int use_highmem = 0;
         		if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-        			unlockVitaMemory(28);
+        			unlockVitaMemory(36);
         			se_config->force_high_memory = 1;
         		}
             }
@@ -188,6 +188,11 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed)
                 msstorCacheInit("ms");
+            
+            /*
+            if (se_config->force_high_memory)
+                sceKernelAllocPartitionMemory(2, "protected", PSP_SMEM_Addr, 0x1000000, (void *)0x0A000000);
+            */
 
             // enable inferno cache
             if (se_config->iso_cache){
