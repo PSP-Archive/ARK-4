@@ -31,15 +31,16 @@ void unlockVitaMemory(u32 user_size_mib){
         return;
     }
 
+    SysMemPartition *partition;
     u32 user_size = user_size_mib * 1024 * 1024; // new p2 size
 
     // modify p2
-    SysMemPartition *partition = GetPartition(PSP_MEMORY_PARTITION_USER);
+    partition = GetPartition(PSP_MEMORY_PARTITION_USER);
     partition->size = user_size;
     partition->data->size = (((user_size >> 8) << 9) | 0xFC);
 
     // modify p11
-    SysMemPartition *partition = GetPartition(11);
+    partition = GetPartition(11);
     if (partition){
         partition->size = 0;
         partition->address = 0x88800000 + user_size;
