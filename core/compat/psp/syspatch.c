@@ -99,11 +99,10 @@ void patch_GameBoot(SceModule2* mod){
     _sw(0x24040002, p2 + 4);
 }
 
-int pause_disabled = 0;
-void disable_PauseGame()
+void disable_PauseGame(SceModule2* mod)
 {
+    static int pause_disabled = 0;
     if(psp_model == PSP_GO && !pause_disabled) {
-        SceModule2* mod = (SceModule2*)sceKernelFindModuleByName("sceImpose_Driver");
         u32 text_addr = mod->text_addr;
         for(int i=0; i<2; i++) {
             _sw(NOP, text_addr + 0x00000574 + i * 4);
@@ -247,7 +246,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         configureInfernoCache();
         // Disable Pause feature on PSP Go
         if (se_config->disable_pause){
-            disable_PauseGame();
+            disable_PauseGame(mod);
         }
         goto flush;
     }
