@@ -58,8 +58,8 @@ void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *tab
 {
     // Add flash0 ramfs as partition 11
     SetMemoryPartitionTable(sysmem_config, table);
-    table->extVshell.addr = EXTRA_RAM;
-    table->extVshell.size = EXTRA_RAM_SIZE;
+    table->extVshell.addr = 0x8A000000;
+    table->extVshell.size = 18 * 1024 * 1024;
 }
 
 int PatchSysMem(void *a0, void *sysmem_config)
@@ -67,7 +67,7 @@ int PatchSysMem(void *a0, void *sysmem_config)
     int (* module_bootstart)(SceSize args, void *sysmem_config) = (void *)_lw((u32)a0 + 0x28);
     u32 text_addr = SYSMEM_TEXT;
     u32 top_addr = text_addr+0x14000;
-    int patches = 2;
+    int patches = 1;
     for (u32 addr = text_addr; addr<top_addr && patches; addr += 4) {
         u32 data = _lw(addr);
         if (data == 0x247300FF){
@@ -75,10 +75,12 @@ int PatchSysMem(void *a0, void *sysmem_config)
             _sw(JAL(SetMemoryPartitionTablePatched), addr-20);
             patches--;
         }
+        /*
         else if (data == 0x8E86004C){
             _sw(0x2405000F, addr+16);
             patches--;
         }
+        */
     }
 
     flushCache();

@@ -102,22 +102,72 @@ int infernoIoDevctl(char* drvname, u32 cmd, u32 arg2, u32 arg3, void* p, u32 s){
     return sceIoDevctl(drvname, cmd, arg2, arg3, p, s);
 }
 
+SceUID (*_sceKernelAllocPartitionMemory)(SceUID partitionid, const char *name, int type, SceSize size, void *addr) = NULL;
+SceUID allocPartitionMemoryExtra(SceUID partitionid, const char *name, int type, SceSize size, void *addr){
+    /*
+    int res = _sceKernelAllocPartitionMemory(partitionid, name, type, size, addr);
+    
+    if (res<0 && partitionid == 2 && addr == NULL){
+        res = sceKernelAllocPartitionMemory(11, name, type, size, addr);
+    }
+    return res;
+    */
+    if (partitionid == 2 && addr == NULL){
+        int res = _sceKernelAllocPartitionMemory(11, name, type, size, addr);
+        if (res>=0) return res;
+    }
+    return _sceKernelAllocPartitionMemory(partitionid, name, type, size, addr);
+}
+
+/*
+SceUID allocPartitionMemoryExtra(SceUID partitionid, const char *name, int type, SceSize size, void *addr){
+    if (partitionid == 2 && addr == NULL){
+        int res = sceKernelAllocPartitionMemory(11, name, type, size, addr);
+        void* p = sceKernelGetBlockHeadAddr(res);
+        int k1 = pspSdkSetK1(0);
+        char txt[64]; sprintf(txt, "realloc p11: %p - %p - %d - %d\n", res, p, size, type);
+        int fd = sceIoOpen("ms0:/p11.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+        sceIoWrite(fd, txt, strlen(txt));
+        sceIoClose(fd);
+        pspSdkSetK1(k1);
+        if (res>=0) return res;
+    }
+    return sceKernelAllocPartitionMemory(partitionid, name, type, size, addr);
+}
+*/
+
 void ARKVitaOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
+    static int prot = -1;
 
     patchFileManagerImports(mod);
+
+    /*
+    if ((mod->text_addr&0x80000000) == 0 && se_config->force_high_memory){
+        int res = hookImportByNID(mod, "SysMemUserForUser", 0x237DBD4F, allocPartitionMemoryExtra);
+        
+        {
+            char txt[64]; sprintf(txt, "alloc hook: %d - %s\n",res,  mod->modname);
+            int fd = sceIoOpen("ms0:/p11.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+            sceIoWrite(fd, txt, strlen(txt));
+            sceIoClose(fd);
+        }
+    }
+    */
 
     if (strcmp(mod->modname, "PRO_Inferno_Driver") == 0){
         hookImportByNID(mod, "IoFileMgrForKernel", 0x54F5FB11, infernoIoDevctl);
         goto flush;
     }
 
+    /*
     if (strcmp(mod->modname, "sceLoadExec") == 0) {
         prepatchVitaMemory();
         goto flush;
     }
+    */
 
     // Patch Kermit Peripheral Module to load flash0
     if(strcmp(mod->modname, "sceKermitPeripheral_Driver") == 0)
@@ -163,14 +213,12 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
         // perfect time to apply extra memory patch
-        if (se_config->force_high_memory) unlockVitaMemory(36);
-        else{
-        	int apitype = sceKernelInitApitype();
+        if (!se_config->force_high_memory){
+            int apitype = sceKernelInitApitype();
         	if (apitype == 0x141){
         		int paramsize=4;
         		int use_highmem = 0;
         		if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-        			unlockVitaMemory(36);
         			se_config->force_high_memory = 1;
         		}
             }
@@ -189,9 +237,42 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             if (se_config->msspeed)
                 msstorCacheInit("ms");
             
+            //if (se_config->force_high_memory)
+            //    sceKernelAllocPartitionMemory(2, "", PSP_SMEM_Addr, 0x1000000, (void *)0x0A000000);
+
             /*
-            if (se_config->force_high_memory)
-                sceKernelAllocPartitionMemory(2, "protected", PSP_SMEM_Addr, 0x1000000, (void *)0x0A000000);
+            if (se_config->force_high_memory){
+                sctrlHENPatchSyscall(K_EXTRACT_IMPORT(sceKernelAllocPartitionMemory), allocPartitionMemoryExtra);
+            }
+            */
+
+            if (se_config->force_high_memory){
+                unlockVitaMemory(42);
+                //prot = sceKernelAllocPartitionMemory(2, "", PSP_SMEM_Addr, 0x1180000, (void *)0x0A000000);
+                /*
+                int freemem = sceKernelPartitionTotalFreeMemSize(2);
+                char txt[64]; sprintf(txt, "fremem p2: %p\n", freemem);
+                int fd = sceIoOpen("ms0:/p11.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+                sceIoWrite(fd, txt, strlen(txt));
+                sceIoClose(fd);
+                */
+                /*
+                int test = sceKernelAllocPartitionMemory(11, "", PSP_SMEM_Low, 10, NULL);
+                void* p = sceKernelGetBlockHeadAddr(test);
+                sceKernelFreePartitionMemory(test);
+                char txt[64]; sprintf(txt, "alloc p11: %p - %p\n", test, p);
+                int fd = sceIoOpen("ms0:/p11.txt", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+                sceIoWrite(fd, txt, strlen(txt));
+                sceIoClose(fd);
+                HIJACK_FUNCTION(K_EXTRACT_IMPORT(sceKernelAllocPartitionMemory), allocPartitionMemoryExtra, _sceKernelAllocPartitionMemory);
+                */
+            }
+
+            /*
+            if (prot>=0){
+                sceKernelFreePartitionMemory(prot);
+                prot = -1;
+            }
             */
 
             // enable inferno cache
