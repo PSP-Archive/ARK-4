@@ -213,7 +213,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 
             if (se_config->force_high_memory){
                 unlockVitaMemory(42);
-                //sceKernelAllocPartitionMemory(2, "", PSP_SMEM_Addr, 0x400000, (void *)0x0A000000);
+                //sceKernelAllocPartitionMemory(2, "", PSP_SMEM_Addr, 0x1000000, (void *)0x0A000000);
                 //HIJACK_FUNCTION(K_EXTRACT_IMPORT(sceKernelAllocPartitionMemory), allocPartitionMemoryExtra, _sceKernelAllocPartitionMemory);
             }
 

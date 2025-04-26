@@ -106,11 +106,6 @@ void initFileSystem(){
     dreadSema = sceKernelCreateSema("sceIoDreadSema", 0, 1, 1, NULL);
 
     // patch Driver
-    //u32 IOAddDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
-    //u32 AddDrv = findRefInGlobals("IoFileMgrForKernel", IOAddDrv, IOAddDrv);
-    // Hooking sceIoAddDrv
-    //_sw((unsigned int)sceIoAddDrvHook, AddDrv);
-
     u32 IoAddDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0x8E982A74);
     u32 IoDelDrv = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xC7F35804);
     u32 IoAssign = sctrlHENFindFunction("sceIOFileManager", "IoFileMgrForKernel", 0xB2A628C1);
@@ -121,17 +116,6 @@ void initFileSystem(){
 
     HIJACK_FUNCTION(IoUnassign, sceIoUnassignHook, _sceIoUnassign);
     HIJACK_FUNCTION(IoAssign, sceIoAssignHook, _sceIoAssign);
-}
-
-u32 UnprotectAddress(u32 addr){
-    if ((addr >= 0x0B000000 && addr < 0x0BC00000)
-        || (addr >= 0x0A000000 && addr < 0x0C000000)
-        || (addr >= 0x00010000 && addr < 0x00014000))
-        return addr | 0x80000000;
-    if ((addr >= 0x4A000000 && addr < 0x4C000000)
-        || (addr >= 0x40010000 && addr < 0x40014000))
-        return addr | 0x60000000;
-    return addr;
 }
 
 // "ms" Driver IoOpen Hook
@@ -151,35 +135,6 @@ int sceIoMsOpenHook(PspIoDrvFileArg * arg, char * file, int flags, SceMode mode)
     
     // Forward Call
     return sceIoMsOpen(arg, file, flags, mode);
-}
-
-int (* sceIoMsRead_)(PspIoDrvFileArg* arg, void* data, SceSize size);
-int sceIoMsReadHook(PspIoDrvFileArg* arg, void* data, SceSize size){
-    int ret;
-    
-    u32 addr = UnprotectAddress((u32)data);
-
-    u32 k1 = pspSdkSetK1(0);
-    ret = sceIoMsRead_(arg, (void *)(addr), size);
-    pspSdkSetK1(k1);
-
-    return ret;
-}
-
-int (* sceIoMsWrite_)(PspIoDrvFileArg* arg, const void* data, SceSize size);
-int sceIoMsWriteHook(PspIoDrvFileArg * arg, void* data, SceSize size){
-    int ret;
-
-    u32 addr = UnprotectAddress((u32)data);
-
-    if (addr) {
-        u32 k1 = pspSdkSetK1(0);
-        ret = sceIoMsWrite_(arg, (void *)(addr), size);
-        pspSdkSetK1(k1);
-
-        return ret;
-    }
-    return sceIoMsWrite_(arg, data, size);
 }
 
 void patchFileSystemDirSyscall(void)
@@ -256,12 +211,6 @@ int sceIoAddDrvHook(PspIoDrv * driver)
 
         sceIoMsOpen = driver->funcs->IoOpen;
         driver->funcs->IoOpen = sceIoMsOpenHook;
-
-        sceIoMsRead_ = driver->funcs->IoRead;
-        driver->funcs->IoRead = sceIoMsReadHook;
-
-        sceIoMsWrite_ = driver->funcs->IoWrite;
-        driver->funcs->IoWrite = sceIoMsWriteHook;
 
         ms_drv->funcs = driver->funcs;
 
