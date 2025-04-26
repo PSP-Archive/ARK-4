@@ -169,18 +169,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
-        // perfect time to apply extra memory patch
-        if (!se_config->force_high_memory){
-            int apitype = sceKernelInitApitype();
-        	if (apitype == 0x141){
-        		int paramsize=4;
-        		int use_highmem = 0;
-        		if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-        			se_config->force_high_memory = 1;
-        		}
-            }
-        }
-
         // Configure Inferno Cache
         if (se_config->force_high_memory){
             se_config->iso_cache_size = 32 * 1024;
@@ -190,7 +178,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
         else {
             se_config->iso_cache_num = 16;
         }
-
         goto flush;
     }
 

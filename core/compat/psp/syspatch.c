@@ -137,27 +137,6 @@ void disableLEDs(){
     }
 }
 
-void handleExtraRam(){
-    int apitype = sceKernelInitApitype();
-
-    // Enforce extra RAM
-    if (se_config->force_high_memory){
-        patch_partitions();
-        se_config->disable_pause = 1;
-    }
-
-    // Check if running a homebrew that requires extra RAM
-    if(!se_config->force_high_memory && (apitype == 0x141 || apitype == 0x152) ){
-        int paramsize=4;
-        int use_highmem = 0;
-        if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-            patch_partitions();
-            se_config->disable_pause = 1;
-            se_config->force_high_memory = 1;
-        }
-    }
-}
-
 void configureInfernoCache(){
     if (se_config->iso_cache && sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
         se_config->disable_pause = 1; // disable pause feature to maintain stability
@@ -260,7 +239,10 @@ void PSPOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0){
         // Handle extra ram setting
-        handleExtraRam();
+        if (se_config->force_high_memory){
+            patch_partitions();
+            se_config->disable_pause = 1;
+        }
         // Handle Inferno cache setting
         configureInfernoCache();
         // Disable Pause feature on PSP Go
