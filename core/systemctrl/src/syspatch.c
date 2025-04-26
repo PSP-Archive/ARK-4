@@ -220,12 +220,26 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
             }
 
             if (se_config.umdseek || se_config.umdspeed){
+                se_config.iso_cache = 0;
                 void (*SetUmdDelay)(int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
                 if (SetUmdDelay) SetUmdDelay(se_config.umdseek, se_config.umdspeed);
             }
 
+            if (se_config.iso_cache){
+                int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
+                if (CacheInit){
+                    CacheInit(se_config.iso_cache_size, se_config.iso_cache_num, se_config.iso_cache_partition);
+                }
+                if (se_config.iso_cache == 2){
+                    int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
+                    if (CacheSetPolicy){
+                        CacheSetPolicy(CACHE_POLICY_RR);
+                    }
+                }
+            }
+
             // handle CPU speed
-            switch (se_config.clock){
+            switch (se_config.cpubus_clock){
                 case 1: sctrlHENSetSpeed(333, 166); break;
                 case 2: sctrlHENSetSpeed(133, 66); break;
                 case 3: sctrlHENSetSpeed(222, 111); break;

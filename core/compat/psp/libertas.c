@@ -193,8 +193,6 @@ void patch_Libertas_MAC(SceModule2 * mod)
         	}
         }
     }
-
-    se_config->macspoofer = 1;
     
     // Cast Text Segment
     uint32_t * text = (uint32_t *)mod->text_addr;

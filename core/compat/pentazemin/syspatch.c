@@ -392,6 +392,10 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         		}
             }
         }
+        // configure inferno cache
+        se_config->iso_cache_size = 64 * 1024;
+        se_config->iso_cache_num = 64;
+        se_config->iso_cache_partition = (se_config->force_high_memory)? 2 : 11;
         goto flush;
     }
 
@@ -457,23 +461,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed)
         		msstorCacheInit("ms");
-
-        	// enable inferno cache
-        	if (se_config->iso_cache){
-        		int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
-        		if (CacheInit){
-        			se_config->iso_cache_size = 4 * 1024;
-        			se_config->iso_cache_num = 16;
-        			CacheInit(4 * 1024, 16, 1); // 64KB cache for Vita
-        		}
-        		if (se_config->iso_cache == 2){
-        			int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
-        			if (CacheSetPolicy){
-        				se_config->iso_cache_policy = CACHE_POLICY_RR;
-        				CacheSetPolicy(CACHE_POLICY_RR);
-        			}
-        		}
-        	}
 
             // patch bug in ePSP volatile mem
             _sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);

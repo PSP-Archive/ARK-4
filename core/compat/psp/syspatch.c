@@ -158,28 +158,13 @@ void handleExtraRam(){
     }
 }
 
-void enableInfernoCache(){
-    if (se_config->iso_cache){
-        int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
-        if (CacheInit){
-            if (psp_model==PSP_1000){
-                se_config->iso_cache_size = 4 * 1024;
-                se_config->iso_cache_num = 8;
-                CacheInit(4 * 1024, 8, 1); // 32K cache on 1K, allocated in kernel
-            }
-            else {
-                se_config->iso_cache_size = 64 * 1024;
-                se_config->iso_cache_num = 128;
-                CacheInit(64 * 1024, 128, (se_config->force_high_memory)?2:9); // 8M cache on other models
-            }
-            se_config->disable_pause = 1; // disable pause feature to maintain stability
-        }
-        if (se_config->iso_cache == 2){
-            int (*CacheSetPolicy)(int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xC0736FD6);
-            if (CacheSetPolicy){
-                se_config->iso_cache_policy = CACHE_POLICY_RR;
-                CacheSetPolicy(CACHE_POLICY_RR);
-            }
+void configureInfernoCache(){
+    if (se_config->iso_cache && sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
+        se_config->disable_pause = 1; // disable pause feature to maintain stability
+        if (psp_model>PSP_1000) { // 8M cache on other models
+            se_config->iso_cache_size = 64 * 1024;
+            se_config->iso_cache_num = 128;
+            se_config->iso_cache_partition = (se_config->force_high_memory)? 2 : 9;
         }
     }
 }
@@ -277,7 +262,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         // Handle extra ram setting
         handleExtraRam();
         // Handle Inferno cache setting
-        enableInfernoCache();
+        configureInfernoCache();
         // Disable Pause feature on PSP Go
         if (se_config->disable_pause){
             disable_PauseGame();

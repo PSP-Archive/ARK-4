@@ -152,50 +152,34 @@ enum umdregion
 typedef struct _SEConfig
 {
     u32 magic;
-
-    s8 umdseek;
-    s8 umdspeed;
-    s16 clock;
-    s16 disable_pause;
-    s16 hidedlc;
-    s16 umdregion;
-    s16 vshregion;
-    s16 usbdevice;
-    s16 usbcharge;
-    s16 hidemac;
-    s16 noanalog;
-    s16 qaflags; // enable QA flags patch
-    s16 launcher_mode;
-    s16 hidepics;
-
-    // unused, always true
-    s16 plugvsh; 
-    s16 pluggame;
-    s16 plugpop;
-    
-    s16 usbdevice_rdonly;
-    
-    s16 skiplogos;
-    
-    s16 noumd;
-    s16 custom_update; // automatic
-    s16 usenodrm; // always true
-
-    s16 hibblock;
-    s16 oldplugin;
-    s16 htmlviewer_custom_save_location; // unused, always false
-    s16 hide_cfw_dirs; // always true
-    s16 chn_iso; // always true
-    s16 msspeed;
-    s16 slimcolor; // always true
-    s16 iso_cache;
     s16 iso_cache_size; // in MB, automatic
     s16 iso_cache_num;
-    s16 iso_cache_policy;
-    s16 noled; // always false
-    s16 wpa2; // patch to use wpa2
-    s16 force_high_memory;
-    s16 macspoofer; // automatic
+    u8 iso_cache;
+    u8 iso_cache_partition;
+    u8 umdseek;
+    u8 umdspeed;
+    u8 cpubus_clock;
+    u8 disable_pause;
+    u8 hidedlc;
+    u8 umdregion;
+    u8 vshregion;
+    u8 usbdevice;
+    u8 usbcharge;
+    u8 hidemac;
+    u8 noanalog;
+    u8 qaflags; // enable QA flags patch
+    u8 launcher_mode;
+    u8 hidepics;
+    u8 usbdevice_rdonly;
+    u8 skiplogos;
+    u8 noumd;
+    u8 hibblock;
+    u8 oldplugin;
+    u8 msspeed;
+    u8 noled; // always false
+    u8 wpa2; // patch to use wpa2
+    u8 force_high_memory;
+    u8 custom_update;
 } SEConfig;
 
 /**

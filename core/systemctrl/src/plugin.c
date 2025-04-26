@@ -434,21 +434,21 @@ static void settingsHandler(char* path, u8 enabled){
     int apitype = sceKernelInitApitype();
     if (strcasecmp(path, "overclock") == 0){ // set CPU speed to max
         if (enabled)
-            se_config.clock = 1;
-        else if (se_config.clock == 1) se_config.clock = 0;
+            se_config.cpubus_clock = 1;
+        else if (se_config.cpubus_clock == 1) se_config.cpubus_clock = 0;
     }
     else if (strcasecmp(path, "powersave") == 0){ // underclock to save battery
         if (apitype != 0x144 && apitype != 0x155){ // prevent operation in pops
             if (enabled)
-                se_config.clock = 2;
-            else if (se_config.clock == 2) se_config.clock = 0;
+                se_config.cpubus_clock = 2;
+            else if (se_config.cpubus_clock == 2) se_config.cpubus_clock = 0;
         }
     }
     else if (strcasecmp(path, "defaultclock") == 0){
         if (apitype != 0x144 && apitype != 0x155){ // prevent operation in pops
             if (enabled)
-                se_config.clock = 3;
-            else if (se_config.clock == 3) se_config.clock = 0;
+                se_config.cpubus_clock = 3;
+            else if (se_config.cpubus_clock == 3) se_config.cpubus_clock = 0;
         }
     }
     else if (strcasecmp(path, "wpa2") == 0){ // wpa2 support
