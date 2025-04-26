@@ -337,7 +337,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         PatchLoadExec(mod->text_addr, mod->text_size);
         REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exit_game_patched);
         REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exit_game_patched);
-        prepatchVitaMemory();
         goto flush;
     }
 

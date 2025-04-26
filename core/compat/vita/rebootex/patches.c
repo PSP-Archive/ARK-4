@@ -115,10 +115,12 @@ void patchRebootBuffer(){
         else if ((data & 0x0000FFFF) == 0x8B00){
             _sb(0xA0, addr); // Link Filesystem Buffer to 0x8BA00000
         }
+        /*
         else if (data == 0x24040004) {
             _sw(0x02402021, addr); //move $a0, $s2
             _sw(JAL(PatchSysMem), addr + 0x64); // Patch call to SysMem module_bootstart
         }
+        */
     }
     // Flush Cache
     flushCache();
