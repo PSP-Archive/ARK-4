@@ -5,21 +5,8 @@ Simple to use and full of unique features, `ARK CFW` aims at keeping the `PSP` e
 `ARK` is now the most feature-complete `CFW` for the `PSP`, having all features from classic `CFW`
 as well as unique and exclusive new features not found anywhere else.
 
-<br>
-
-<a style="font-size: 18px;" href="https://discord.gg/bePrj9W">Join the PSP Homebrew Community Discord</a>
-<br>
-<label style="text-decoration: underline; font-size: 14px;">We are located in the <b>#ark-cfw channel</b></label>
-<br>
-<br>
-<br>
-
-
-
-### Installation Guide located in WIKI
+### More Information in WIKI
 <a style="font-weight: bold; font-size:32px; text-decoration: underline;" href="https://github.com/PSP-Archive/ARK-4/wiki">ARK-4 WIKI</a>
-<br>
-<br>
 <br>
 
 ### Table of Contents (Quick Links)
@@ -31,92 +18,57 @@ as well as unique and exclusive new features not found anywhere else.
 
 ## FEATURES:
 
-- `Core` system for unsigned code execution heavily updated from traditional CFW with robust patching algorithms and improved API.
+- Compatible with every PSP model (including testkits and devkits) and every PS Vita model.
 
-- Heavily optimized `Inferno 2` Driver compatible with all known PSP formats (ISO, CSO, ZSO, JSO, CSOv2 and DAX).
+- Support for `unsigned homebrew` and plugins made for 6.60, 6.61 or legacy 1.50 firmware (Leda and the 1.50 Kernel Addon are available).
 
-- `Popcorn` controller for custom PS1 games with support for external configuration files and anti-libcrypt protection.
+- ISO Driver `Inferno 2` compatible with all known PSP formats (ISO, CSO, ZSO, JSO, CSOv2 and DAX).
 
-- Built-in No-DRM engine `Stargate`, fixes many anti-CFW games. Expandible via other NoDRM plugins.
+- `Popcorn` controller for custom PS1 games with support for external configuration files that allows easy fixing of games.
 
-- `Plugin` support for PSP games and homebrew, PS1 games and VSH (XMB), including the ability to enable and disable plugins per-game.
+- Built-in anti-CFW engine `Stargate`, fixes some protections and bugs in games. Compatible with NoDRM plugins.
 
-- `Region Free` playback of UMD Video on all PSP models. Change the region of your UMD drive on-the-fly.
+- `New cIPL` compatible with all PSP models, for a true permanent CFW with enhanced brick protection.
 
-- Compatible with all `PSP` models on firmwares `6.60` and `6.61`.
+- Improved support for UMD Video by including UMD Region Changer for playback of region locked discs and native support of UMD Video ISO in the XMB.
 
-- Compatible with all `PS Vita` models on firmware `2.10` up to `3.74` OFW or Henkaku, including support for the `Adrenaline` pspemu mod.
+- Includes `Despertar del Cementerio Version 10` and `Time Machine`, allowing to unbrick any PSP or boot ARK entirely from Memory Stick.
 
-- Compatible with `6.60 Testing Tool` and `6.60 Development Tool` firmwares for testkit and devkit units (inlcuding `CEX2DEX` converted units).
-
-- Updated `cIPL` compatible with all PSP models, including toolkits, for truely permanent CFW.
-
-- Can be fully installed and booted on memory stick via `Time Machine`.
-
-- Can be used to unbrick any PSP model using `Despertar del Cementerio Version 10` in combination with a `Pandora Battery` or `Baryon Sweeper`.
-
-- Resistant to `bricks`, easy to recover from bad configurations, various recovery methods including being able to load `DC` via `cIPL` without any special device.
-
-- `Custom game launcher` with built-in game categories, file browser, FTP server and client, modernized look and more.
-
-- Built-in extensions allow the CFW to be managed entirely via the `XMB`.
-
-- Compatible with `PRO Online` and `Xlink Kai`.
-
-- Compatible with `Legacy Homebrew` via eLoader, Leda Plugin or the 1.50 Kernel Addon, including the classic KXploit naming format.
-
+- `Custom game launcher` with built-in file browser, FTP, plugin installer and more. Useful when the XMB isn't available or lacks a certain feature.
+ 
 - `OTA` updates. Fully updateable via the internet.
 
 
 ![CFW Settings](.github/screenshots/cfw_settings.bmp "CFW Settings")
-![Advanced VSH Menu](.github/screenshots/advanced_vsh.bmp "VSH Menu")
 ![cIPL](https://github.com/PSP-Archive/ARK-4/wiki/.res/system_settings.bmp "System Info")
 
-#### Compiling ARK ( For Developers )
-<p>
-
-    Build script will allow you to use the correct SDK that ARK was built with.
-
-- Docker container: `docker pull docker.io/krazynez/ark-4:latest`
-
-<p><b>These are utilized either with cloning the repo or using the Docker container</b></p>
-
-- Release: `./build.sh` 
-- Debug: `./build.sh --debug`
-- Manually: install the oldest possible SDK (ideally the one used to compile M33), then run `make`
-
-Use `-h` or `--help` to show all available flags 
-
-</p>
-
 #### Installation On PSP
-
-##### The instructions are as follows:
   
-- Move or copy `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
-- Move or copy `ARK_Loader` folder into `/PSP/GAME/` folder.
+- Copy `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
+- Copy `ARK_Loader` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
 - At this point `ARK` will work as a `Live CFW`, meaning that `ARK Loader` will need to be run every time the console is turned off or rebooted.
-- To convert `ARK` into a `Permanent CFW` you can use either `cIPL` or `Infinity`, along with the `Full Installer` for a complete permanent experience.
+- To convert `ARK` into a `Permanent CFW` you can use `cIPL`.
 
 
 ##### Permanent CFW via cIPL
 
-- `New cIPL`: works with every retail model (1K, 2K, 3K, Go and Street) on firmware `6.61` or `6.60`.
-- `Classic cIPL`: works with `1g` and early `2g` on firmware `6.60` or `6.61` as well as `Testkits` on `6.60 Testing Tool`.
-- `DevTool cKBOOTI`: works with `DTP-T1000` (devkits) on `6.60 Development Tool`.
+- Works on all PSP models, including testkits and devkits.
 - Installer will choose the correct version according to your model.
-- Move or copy `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
+- Some models can install either the Classic cIPL or the New cIPL.
+- Copy `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
 - Press the corresponding button in the installation page to install or remove the cIPL patch.
 
 
-##### Full Flash Installation
+##### Full Flash and Classic Installations
 
-- This allows you to install and use all of ARK's features on the console's internal flash memory, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
+- This only make sense when combined with a permanent intallation (cIPL). It doesn't make sense on PSP Go with a healthy Internal Memory.
+- This allows you to install and use all of ARK's features on the console's internal flash memory, except for Custom Launcher and translations.
 - Copy `ARK_Full_Installer` to `/PSP/GAME/` and run it from `ARK`. It will install some extra files into the console's flash.
 - If the `Custom Launcher` is not available (i.e. you delete the ARK savedata or remove the memory card), `PRO Shell` will take its place.
 - When no savedata folder is available the default ARK path used to store settings will be `ms0:/SEPLUGINS/`.
 - Even if files are stored in the console's flash memory, the ones in the savedata folder will still take priority in loading.
+- If at this point you get rid of ARK's savedata then you will have a Classic Installation (ARK will behave much like your Classic CFW such as PRO or ME).
 
 
 ##### Time Machine and Despertar del Cementerio
@@ -136,13 +88,17 @@ Use `-h` or `--help` to show all available flags
 
 #### Installation On PS Vita
 
+There are two types of installation types on PS Vita. You can use either one or both.
+<br>Stanalone works on top of the original unmodified pspemu.
+<br>You an also run ARK within Adrenaline to achieve a Hybrid CFW.
+
 
 ##### Standalone (Official PSPEmu)
 
 - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
 - Download and install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
 - Copy `FasterARK.vpk` from `PSVita/` folder anywhere on your vita and install using `VitaShell`. 
-- Open `FasterARK` and wait for the install process to finish.
+- Launch `FasterARK` and wait for the install process to finish.
 - Both `ARK` and `ARK-X` bubbles will appear in `Live Area`.
 - Use the `ARK` bubble for `PSP` games and homebrew. It can play `PS1` but with limitations related to sound playback.
 - Use the `ARK-X` bubble for `PS1` games without any sound limitations.
