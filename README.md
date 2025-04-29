@@ -18,7 +18,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 ## FEATURES:
 
-- Compatible with every PSP model (including testkits and devkits) and every PS Vita model.
+- Compatible with every `PSP` model (including testkits and devkits) and every `PS Vita` model.
 
 - Support for `unsigned homebrew` and plugins made for 6.60, 6.61 or legacy 1.50 firmware (Leda and the 1.50 Kernel Addon are available).
 
