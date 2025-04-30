@@ -118,8 +118,13 @@ int videoMpegCreate(void* Mpeg, void* pData, int iSize, void* Ringbuffer, int iF
     if (iso_launched[0]){
         launch_umdvideo_mount(iso_launched); // launch ISO file
     }
+
     // passthrough
-    return sceMpegCreate(Mpeg, pData, iSize, Ringbuffer, iFrameWidth, iUnk1, iUnk2);
+    int (*_sceMpegCreate)(void* Mpeg, void* pData, int iSize, void* Ringbuffer, int iFrameWidth, int iUnk1, int iUnk2);
+    _sceMpegCreate = sctrlHENFindFunction("sceMpegVsh_library", "sceMpeg", 0xD8C5F121);
+    if (!_sceMpegCreate) _sceMpegCreate = sctrlHENFindFunction("sceMpeg_library", "sceMpeg", 0xD8C5F121);
+    
+    return _sceMpegCreate(Mpeg, pData, iSize, Ringbuffer, iFrameWidth, iUnk1, iUnk2);
 }
 
 // sceIoOpen for Video ISO
