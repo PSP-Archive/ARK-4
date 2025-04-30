@@ -68,6 +68,8 @@ enum{
     DISABLE_LED,
     DISABLE_UMD,
     DISABLE_ANALOG,
+    UMD_REGION,
+    VSH_REGION,
     QA_FLAGS,
 };
 
@@ -98,52 +100,67 @@ GetItem GetItemes[] =
     { 17, 0, "Turn off LEDs" },
     { 18, 0, "Disable UMD Drive" },
     { 19, 0, "Disable Analog Stick" },
-    { 20, 0, "QA Flags" },
+    { 20, 0, "UMD Region" },
+    { 21, 0, "VSH Region" },
+    { 22, 0, "QA Flags" },
 };
 
 #define PLUGINS_CONTEXT 1
 
 char* ark_clock_settings[] = {
-    (char*)"Auto",
-    (char*)"OverClock",
-    (char*)"Balanced",
-    (char*)"PowerSave"
+    "Auto",
+    "OverClock",
+    "Balanced",
+    "PowerSave"
 };
 
 char* ark_skiplogos_settings[] = {
-    (char*)"Off",
-    (char*)"All",
-    (char*)"GameBoot",
-    (char*)"ColdBoot"
+    "Off",
+    "All",
+    "GameBoot",
+    "ColdBoot"
 };
 
 char* ark_hidepics_settings[] = {
-    (char*)"Off",
-    (char*)"All",
-    (char*)"PIC0",
-    (char*)"PIC1"
+    "Off",
+    "All",
+    "PIC0",
+    "PIC1"
 };
 
 char* ark_settings_boolean[] = {
-    (char*)"Off",
-    (char*)"On"
+    "Off",
+    "On"
 };
 
 char* ark_settings_boolean2[] = {
-    (char*)"Auto",
-    (char*)"Forced"
+    "Auto",
+    "Forced"
 };
 
 char* ark_settings_infernocache[] = {
-    (char*)"Off",
-    (char*)"LRU",
-    (char*)"RR"
+    "Off",
+    "LRU",
+    "RR"
 };
 
 char* ark_plugins_options[] = {
-    (char*)"Off",
-    (char*)"On",
-    (char*)"Remove",
+    "Off",
+    "On",
+    "Remove",
+};
+
+char* ark_umdregion_options[] = {
+    "Default",
+    "America",
+    "Europe",
+    "Japan",
+};
+
+char* ark_vshregion_options[] = {
+    "Default", "Japan", "America", "Europe", "Korea",
+    "United Kingdom", "Latin America", "Australia", "Hong Kong",
+    "Taiwan", "Russia", "China", "Debug I", "Debug II"
 };
 
 struct {
@@ -170,6 +187,8 @@ struct {
     {2, ark_settings_boolean}, // Turn off LEDs
     {2, ark_settings_boolean}, // Disable UMD Drive
     {2, ark_settings_boolean}, // Disable Analog Stick 
+    {NELEMS(ark_umdregion_options), ark_umdregion_options}, // UMD Region
+    {NELEMS(ark_vshregion_options), ark_vshregion_options}, // VSH Region
     {2, ark_settings_boolean}, // QA Flags
 };
 
@@ -204,7 +223,6 @@ void (* OnInitMenuPspConfig)();
 extern int GetPlugin(char *buf, int size, char *str, int *activated);
 extern int ReadLine(SceUID fd, char *str);
 extern int utf8_to_unicode(wchar_t *dest, char *src);
-
 
 u32 sysconf_unk, sysconf_option;
 
@@ -456,16 +474,7 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
 
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
-
-    #if 0
-    sceIoMkdir("ms0:/vshitems", 0777);
-    static char path[256];
-    sprintf(path, "ms0:/vshitems/%s", item->text);
-    int fd = sceIoOpen(path, PSP_O_WRONLY|PSP_O_TRUNC|PSP_O_CREAT, 0777);
-    sceIoWrite(fd, item, sizeof(SceVshItem));
-    sceIoClose(fd);
-    #endif
-
+    
     static int items_added = 0;
 
     if (sce_paf_private_strcmp(item->text, "msgtop_sysconf_console")==0){
@@ -530,7 +539,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         }
 
         SceIoStat _150_file;
-        int _1k_file = sceIoGetstat("ms0:/TM/DCARK/150/reboot150.prx", &_150_file); // Should fine a better way to handle this perhaps?
+        int _1k_file = sceIoGetstat("ms0:/TM/DCARK/150/reboot150.prx", &_150_file);
         if((psp_model == PSP_1000) && _1k_file >= 0 && !IS_VITA_ADR(ark_config)) {
             new_item5 = addCustomVshItem(84, "msgtop_150_reboot", sysconf_150_reboot_arg, item);
             AddVshItem(a0, topitem, new_item5);
@@ -834,7 +843,9 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, in
                 config.hidedlc,        	
                 config.noled,        	
                 config.noumd,        	
-                config.noanalog,        	    
+                config.noanalog,
+                config.umdregion,
+                config.vshregion,  
                 config.qaflags,            
             };
             
@@ -893,6 +904,8 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 &config.noled,
                 &config.noumd,
                 &config.noanalog,
+                &config.umdregion,
+                &config.vshregion,
                 &config.qaflags,
             };
             

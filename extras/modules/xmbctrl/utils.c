@@ -149,3 +149,7 @@ int GetPlugin(char *buf, int size, char *str, int *activated)
 
     return i;
 }
+
+int atoi(const char* txt){
+    return sce_paf_private_strtoul(txt, NULL, 10);
+}

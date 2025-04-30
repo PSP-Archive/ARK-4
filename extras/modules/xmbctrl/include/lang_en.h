@@ -48,6 +48,8 @@ char *settings[] =
     "Turn off LEDs",
     "Disable UMD Drive",
     "Disable Analog Stick",
+    "UMD Region",
+    "VSH Region",
     "QA Flags",
 };
 

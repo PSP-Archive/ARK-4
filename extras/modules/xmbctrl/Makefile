@@ -12,7 +12,6 @@ INCDIR = include/
 LIBDIR = $(ARKROOT)/libs
 
 all:
-	cp XMB_EN.TXT $(ARKROOT)/extras/menus/arkMenu/themes/translations/resources/
 	psp-packer xmbctrl.prx
 
 USE_PSPSDK_LIBS = 1

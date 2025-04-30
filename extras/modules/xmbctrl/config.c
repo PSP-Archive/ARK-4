@@ -143,6 +143,22 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.qaflags = opt;
         return 1;
     }
+    else if (strcasecmp(path, "region_us") == 0){
+        config.umdregion = 1;
+    }
+    else if (strcasecmp(path, "region_eu") == 0){
+        config.umdregion = 2;
+        return 1;
+    }
+    else if (strcasecmp(path, "region_jp") == 0){
+        config.umdregion = 3;
+        return 1;
+    }
+    else if (strncasecmp(path, "fakeregion_", 11) == 0){
+        int r = atoi(path+11);
+        config.vshregion = r;
+        return 1;
+    }
     return 0;
 }
 
@@ -155,6 +171,7 @@ static void list_cleaner(void* item){
 }
 
 void loadSettings(){
+    memset(&config, 0, sizeof(config));
     clear_list(&custom_config, &list_cleaner);
 
     char path[ARK_PATH_SIZE];
@@ -276,6 +293,16 @@ void saveSettings(){
     processSetting(fd, line, "noumd", config.noumd);
     processSetting(fd, line, "noanalog", config.noanalog);
     processSetting(fd, line, "qaflags", config.qaflags);
+    switch (config.umdregion){
+        case 1: processSetting(fd, line, "region_us", VSH_ONLY); break;
+        case 2: processSetting(fd, line, "region_eu", VSH_ONLY); break;
+        case 3: processSetting(fd, line, "region_jp", VSH_ONLY); break;
+    }
+    if (config.vshregion > 0){
+        char tmp[32];
+        snprintf(tmp, 32, "fakeregion_%d", config.vshregion);
+        processSetting(fd, line, tmp, VSH_ONLY);
+    }
 
     for (int i=0; i<custom_config.count; i++){
         sceIoWrite(fd, custom_config.table[i], strlen(custom_config.table[i]));
