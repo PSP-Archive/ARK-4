@@ -20,7 +20,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with every `PSP` model (including testkits and devkits) and every `PS Vita` model.
 
-- Support for `homebrew` and `plugins`, compatible with legacy 1.50 software via Leda or 150 Kernel Addon.
+- Support for `homebrew` and `plugins`, compatible with legacy 1.50 software.
 
 - Heavily optimized `Inferno 2` ISO Driver.
 
