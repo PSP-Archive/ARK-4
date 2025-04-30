@@ -123,7 +123,7 @@ int videoMpegCreate(void* Mpeg, void* pData, int iSize, void* Ringbuffer, int iF
     int (*_sceMpegCreate)(void* Mpeg, void* pData, int iSize, void* Ringbuffer, int iFrameWidth, int iUnk1, int iUnk2);
     _sceMpegCreate = sctrlHENFindFunction("sceMpegVsh_library", "sceMpeg", 0xD8C5F121);
     if (!_sceMpegCreate) _sceMpegCreate = sctrlHENFindFunction("sceMpeg_library", "sceMpeg", 0xD8C5F121);
-    
+
     return _sceMpegCreate(Mpeg, pData, iSize, Ringbuffer, iFrameWidth, iUnk1, iUnk2);
 }
 
@@ -178,7 +178,6 @@ SceUID videoIoDopen(const char* dir){
     video_dir[0] = dir[0]; // adjust device (psp go)
     video_dir[1] = dir[1];
     if (strcasecmp(dir, video_dir) == 0) { // check if /VIDEO/ folder has been opened
-        last_control_data = NULL;
         video_dd = res;
         int k1 = pspSdkSetK1(0);
         isovideo_dir[0] = dir[0]; // adjust device (psp go)
@@ -339,10 +338,6 @@ int videoRemove(const char * file){
         if (res >= 0 && strcasecmp(mounted_iso, path) == 0){
             sctrlKernelExitVSH(NULL); // trigger reboot if we have deleted the currently mounted ISO
         }
-    }
-
-    if (last_control_data){
-        last_control_data->Buttons = 0;
     }
 
     return res;
