@@ -20,21 +20,19 @@ as well as unique and exclusive new features not found anywhere else.
 
 - Compatible with every `PSP` model (including testkits and devkits) and every `PS Vita` model.
 
-- Support for `unsigned homebrew` and plugins made for 6.60, 6.61 or legacy 1.50 firmware (Leda and the 1.50 Kernel Addon are available).
+- Support for `homebrew` and `plugins`, compatible with legacy 1.50 software.
 
-- ISO Driver `Inferno 2` compatible with all known PSP formats (ISO, CSO, ZSO, JSO, CSOv2 and DAX).
+- Heavily optimized `Inferno 2` ISO Driver.
 
-- `Popcorn` controller for custom PS1 games with support for external configuration files that allows easy fixing of games.
+- Custom `PS1` games supported via the `Popcorn` Controller.
 
-- Built-in anti-CFW engine `Stargate`, fixes some protections and bugs in games. Compatible with NoDRM plugins.
+- Built-in game fixes using the anti-CFW engine `Stargate`.
 
 - `New cIPL` compatible with all PSP models, for a true permanent CFW with enhanced brick protection.
 
-- Improved support for UMD Video by including UMD Region Changer for playback of region locked discs and native support of UMD Video ISO in the XMB.
+- Includes `Despertar del Cementerio Version 10`, allowing to unbrick any PSP.
 
-- Includes `Despertar del Cementerio Version 10` and `Time Machine`, allowing to unbrick any PSP or boot ARK entirely from Memory Stick.
-
-- `Custom game launcher` with built-in file browser, FTP, plugin installer and more. Useful when the XMB isn't available or lacks a certain feature.
+- `Custom game launcher` useful when the XMB isn't available or lacks a certain feature.
  
 - `OTA` updates. Fully updateable via the internet.
 
