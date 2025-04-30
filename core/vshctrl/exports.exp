@@ -24,6 +24,7 @@ PSP_EXPORT_FUNC(homebrewloadexec)
 PSP_EXPORT_FUNC(umdemuloadexec)
 PSP_EXPORT_FUNC(umdLoadExec)
 PSP_EXPORT_FUNC(umdLoadExecUpdater)
+PSP_EXPORT_FUNC(videoMpegCreate)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(VshCtrlLib, 0, 0x4001)

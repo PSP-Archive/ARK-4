@@ -320,14 +320,19 @@ static void patch_msvideo_main_plugin_module(SceModule2* mod)
     for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
         u32 data = _lw(addr);
         if ((data && 0xFF00FFFF) == 0x34002C00){
+            /* Patch resolution limit to (130560) pixels (480x272) */
             _sh(0xFE00, addr);
             patches--;
         }
         else if (data == 0x2C420303 || data == 0x2C420FA1){
+            /* Patch bitrate limit (increase to 16384+2) */
             _sh(0x4003, addr);
             patches--;
         }
     }
+
+    extern int videoMpegCreate();
+    hookImportByNID(mod, "sceMpeg", 0xD8C5F121, videoMpegCreate);
 }
 
 int umdLoadExec(char * file, struct SceKernelLoadExecVSHParam * param)
