@@ -1,30 +1,29 @@
 Installation On PSP
-
-The instructions are as follows:
   
-- Move or copy `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
-- Move or copy `ARK_Loader` folder into `/PSP/GAME/` folder.
+- Copy `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
+- Copy `ARK_Loader` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
 - At this point `ARK` will work as a `Live CFW`, meaning that `ARK Loader` will need to be run every time the console is turned off or rebooted.
-- To convert `ARK` into a `Permanent CFW` you can use either `cIPL` or `Infinity`, along with the `Full Installer` for a complete permanent experience.
+- To convert `ARK` into a `Permanent CFW` you can use `cIPL`.
 
 
   Permanent CFW via cIPL
 
-  - `New cIPL`: works with every retail model (1K, 2K, 3K, Go and Street) on firmware `6.61` and `6.60`.
-  - `Classic cIPL`: works with `1g` and early `2g` on firmware `6.60` or `6.61` as well as `Testkits` on `6.60 Testing Tool`.
-  - `DevTool cKBOOTI`: works with `DTP-T1000` (devkits) on `6.60 Development Tool`.
-  - Installer will choose the correct version according to your model.
-  - Move or copy `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
-  - Press the corresponding button in the installation page to install or remove the cIPL patch.
+    - Works on all PSP models, including testkits and devkits.
+    - Installer will choose the correct version according to your model.
+    - Some models can install either the Classic cIPL or the New cIPL.
+    - Copy `ARK_cIPL` folder to `/PSP/GAME/` and run the program.
+    - Press the corresponding button in the installation page to install or remove the cIPL patch.
 
   Full Flash Installation
 
-    - This allows you to install and use all of ARK's features on the console's internal flash memory, allowing you to entirely remove the `ARK_01234` savedata folder or memory stick.
+    - This only make sense when combined with a permanent intallation (cIPL). It doesn't make sense on PSP Go with a healthy Internal Memory.
+    - This allows you to install and use all of ARK's features on the console's internal flash memory, except for Custom Launcher and translations.
     - Copy `ARK_Full_Installer` to `/PSP/GAME/` and run it from `ARK`. It will install some extra files into the console's flash.
     - If the `Custom Launcher` is not available (i.e. you delete the ARK savedata or remove the memory card), `PRO Shell` will take its place.
-    - When no savedata folder is available the default ARK path used to store settings and other Custom Firmware files will be `ms0:/SEPLUGINS/`.
+    - When no savedata folder is available the default ARK path used to store settings will be `ms0:/SEPLUGINS/`.
     - Even if files are stored in the console's flash memory, the ones in the savedata folder will still take priority in loading.
+    - If at this point you get rid of ARK's savedata then you will have a Classic Installation (ARK will behave much like your Classic CFW such as PRO or ME).
 
 
   Time Machine and Despertar del Cementerio
@@ -42,15 +41,19 @@ The instructions are as follows:
     - From here you can either boot ARK from memory stick, install 6.61 Firmware with ARK on the Nand or install 6.61 Official Firmware
 
 
+
 Installation On PS Vita
 
+There are two types of installation types on PS Vita. You can use either one or both.
+Stanalone works on top of the original unmodified pspemu.
+You an also run ARK within Adrenaline to achieve a Hybrid CFW.
 
   Standalone (Official PSPEmu)
 
     - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
     - Download and install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
     - Copy `FasterARK.vpk` from `PSVita/` folder anywhere on your vita and install using `VitaShell`. 
-    - Open `FasterARK` and wait for the install process to finish.
+    - Launch `FasterARK` and wait for the install process to finish.
     - Both `ARK` and `ARK-X` bubbles will appear in `Live Area`.
     - Use the `ARK` bubble for `PSP` games and homebrew. It can play `PS1` but with limitations related to sound playback.
     - Use the `ARK-X` bubble for `PS1` games without any sound limitations.
