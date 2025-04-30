@@ -515,9 +515,6 @@ static void settingsHandler(char* path, u8 enabled){
         int r = atoi(path+9);
         se_config.umdspeed = (enabled)?r:0;
     }
-    else if (strcasecmp(path, "hidepics") == 0){ // hide PIC0 and PIC1
-        se_config.hidepics = enabled;
-    }
     else if (strcasecmp(path, "hibblock") == 0){ // block hibernation
         se_config.hibblock = enabled;
     }
@@ -527,6 +524,14 @@ static void settingsHandler(char* path, u8 enabled){
         if (enabled && c){
             if (strcasecmp(c+1, "gameboot") == 0) se_config.skiplogos = 2;
             else if (strcasecmp(c+1, "coldboot") == 0) se_config.skiplogos = 3;
+        }
+    }
+    else if (strncasecmp(path, "hidepics", 8) == 0){ // hide PIC0 and PIC1
+        char* c = strchr(path, ':');
+        se_config.hidepics = enabled;
+        if (enabled && c){
+            if (strcasecmp(c+1, "pic0") == 0) se_config.hidepics = 2;
+            else if (strcasecmp(c+1, "pic1") == 0) se_config.hidepics = 3;
         }
     }
     else if (strcasecmp(path, "hidemac") == 0){ // hide mac address

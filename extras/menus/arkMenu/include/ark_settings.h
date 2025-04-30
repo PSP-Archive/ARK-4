@@ -228,13 +228,13 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[MAX_BOOLEAN_OPTIONS];
+    char* options[4];
 } hidepics = {
     "Hide PIC0 and PIC1 in XMB",
-    MAX_BOOLEAN_OPTIONS,
+    4,
     0,
     &(cfw_config.hidepics),
-    BOOLEAN_OPTIONS
+    {"Off", "All", "PIC0", "PIC1"}
 };
 
 static struct {
@@ -549,7 +549,7 @@ static unsigned char* configConvert(string conf){
     else if (strncasecmp(conf.c_str(), "skiplogos", 9) == 0){
         return &(cfw_config.skiplogos);
     }
-    else if (strcasecmp(conf.c_str(), "hidepics") == 0){
+    else if (strncasecmp(conf.c_str(), "hidepics", 8) == 0){
         return &(cfw_config.hidepics);
     }
     else if (strcasecmp(conf.c_str(), "hibblock") == 0){
@@ -632,6 +632,15 @@ static void processConfig(string line, string runlevel, string conf, string enab
             if (config && c){
                 if (strcasecmp(c+1, "gameboot") == 0) cfw_config.skiplogos = 2;
                 else if (strcasecmp(c+1, "coldboot") == 0) cfw_config.skiplogos = 3;
+            }
+        }
+        else if (strncasecmp(conf.c_str(), "hidepics", 8) == 0){
+            char* c = strchr(conf.c_str(), ':');
+            FIX_BOOLEAN(config);
+            cfw_config.hidepics = config;
+            if (config && c){
+                if (strcasecmp(c+1, "pic0") == 0) cfw_config.hidepics = 2;
+                else if (strcasecmp(c+1, "pic1") == 0) cfw_config.hidepics = 3;
             }
         }
     }
@@ -728,7 +737,6 @@ void loadSettings(){
     FIX_BOOLEAN(cfw_config.mscache);
     FIX_BOOLEAN(cfw_config.disablepause);
     FIX_BOOLEAN(cfw_config.oldplugin);
-    FIX_BOOLEAN(cfw_config.hidepics);
     FIX_BOOLEAN(cfw_config.hibblock);
     FIX_BOOLEAN(cfw_config.hidemac);
     FIX_BOOLEAN(cfw_config.hidedlc);
@@ -800,7 +808,12 @@ void saveSettings(){
         case 2: output << processSetting("skiplogos:gameboot", 1) << endl; break;
         case 3: output << processSetting("skiplogos:coldboot", 1) << endl; break;
     }
-    output << processSetting("hidepics", cfw_config.hidepics) << endl;
+    switch (cfw_config.hidepics){
+        case 0: output << processSetting("hidepics", 0) << endl; break;
+        case 1: output << processSetting("hidepics", 1) << endl; break;
+        case 2: output << processSetting("hidepics:pic0", 1) << endl; break;
+        case 3: output << processSetting("hidepics:pic1", 1) << endl; break;
+    }
     output << processSetting("hidemac", cfw_config.hidemac) << endl;
     output << processSetting("hidedlc", cfw_config.hidedlc) << endl;
     output << processSetting("noled", cfw_config.noled) << endl;

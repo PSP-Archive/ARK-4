@@ -302,8 +302,10 @@ static void patch_game_plugin_module(SceModule2* mod)
             patches--;
         }
         else if (data == 0x0062A023 && se_config->hidepics){
-            _sw(0x00601021, addr+36);
-            _sw(0x00601021, addr+48);
+            if (se_config->hidepics == 1 || se_config->hidepics == 2)
+                _sw(0x00601021, addr+36); // PIC0
+            if (se_config->hidepics == 1 || se_config->hidepics == 3)
+                _sw(0x00601021, addr+48); // PIC1
             patches--;
         }
     }

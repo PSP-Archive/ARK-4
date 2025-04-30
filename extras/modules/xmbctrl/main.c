@@ -117,6 +117,13 @@ char* ark_skiplogos_settings[] = {
     (char*)"ColdBoot"
 };
 
+char* ark_hidepics_settings[] = {
+    (char*)"Off",
+    (char*)"All",
+    (char*)"PIC0",
+    (char*)"PIC1"
+};
+
 char* ark_settings_boolean[] = {
     (char*)"Off",
     (char*)"On"
@@ -157,7 +164,7 @@ struct {
     {2, ark_settings_boolean}, // Old Plugins on ef0
     {2, ark_settings_boolean}, // Prevent hib delete
     {4, ark_skiplogos_settings}, // Skip Sony logos
-    {2, ark_settings_boolean}, // Hide PIC0 and PIC1
+    {4, ark_hidepics_settings}, // Hide PIC0 and PIC1
     {2, ark_settings_boolean}, // Hide MAC
     {2, ark_settings_boolean}, // Hide DLC
     {2, ark_settings_boolean}, // Turn off LEDs
