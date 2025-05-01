@@ -108,7 +108,7 @@ There are two types of installation types on PS Vita. You can use either one or 
 
 ##### Adrenaline (Patched PSPEmu)
 
-- Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and <a href="[https://github.com/LiEnby/NoPspEmuDrm/releases](https://github.com/isage/Adrenaline)">Adrenaline</a> (Isage's fork is recommended, but original will work too).
+- Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and <a href="https://github.com/isage/Adrenaline">Adrenaline</a> (Isage's fork is recommended, but original will work too).
 - (Skip this step if `Standalone` is already installed) Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Install `ARK_Loader` folder into `/PSP/GAME/` folder.
 - Use `Adrenaline Bubbles Manager` to create an autoboot bubble for `ARK Loader`: https://github.com/ONElua/AdrenalineBubbleManager/releases
