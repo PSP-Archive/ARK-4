@@ -142,10 +142,10 @@ enum InfernoCachePolicy
 enum umdregion
 {
     // UMD regions
-    UMD_REGION_DEFAULT  = 0,
-    UMD_REGION_JAPAN    = 1,
-    UMD_REGION_AMERICA  = 2,
-    UMD_REGION_EUROPE   = 3,
+    UMD_REGION_DEFAULT,
+    UMD_REGION_AMERICA,
+    UMD_REGION_EUROPE,
+    UMD_REGION_JAPAN,
 };
 
 // keep ARK's SEConfig binary compatible with PRO's
