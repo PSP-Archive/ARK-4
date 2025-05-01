@@ -458,7 +458,7 @@ static void settingsHandler(char* path, u8 enabled){
         se_config.usbcharge = enabled;
     }
     else if (strcasecmp(path, "highmem") == 0){ // enable high memory
-        if ( (apitype == 0x120 || (apitype >= 0x123 && apitype <= 0x126)) && sceKernelFindModuleByName("sceUmdCache_driver") != NULL){
+        if (sceKernelFindModuleByName("sceUmdCache_driver") != NULL){
             // don't allow high memory in UMD when cache is enabled
             return;
         }
