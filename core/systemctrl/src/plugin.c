@@ -493,14 +493,17 @@ static void settingsHandler(char* path, u8 enabled){
     else if (strcasecmp(path, "noanalog") == 0){
         se_config.noanalog = enabled;
     }
-    else if (strcasecmp(path, "region_jp") == 0){
-        se_config.umdregion = (enabled)?UMD_REGION_JAPAN:0;
-    }
-    else if (strcasecmp(path, "region_us") == 0){
-        se_config.umdregion = (enabled)?UMD_REGION_AMERICA:0;
-    }
-    else if (strcasecmp(path, "region_eu") == 0){
-        se_config.umdregion = (enabled)?UMD_REGION_EUROPE:0;
+    else if (strncasecmp(path, "region_", 7) == 0){
+        char* c = strchr(path, '_')+1;
+        if (strcasecmp(c, "jp") == 0){
+            se_config.umdregion = (enabled)?UMD_REGION_JAPAN:0;
+        }
+        else if (strcasecmp(c, "us") == 0){
+            se_config.umdregion = (enabled)?UMD_REGION_AMERICA:0;
+        }
+        else if (strcasecmp(c, "eu") == 0){
+            se_config.umdregion = (enabled)?UMD_REGION_EUROPE:0;
+        }
     }
     else if (strncasecmp(path, "fakeregion_", 11) == 0){
         int r = atoi(path+11);

@@ -573,17 +573,17 @@ static unsigned char* configConvert(string conf){
     else if (strcasecmp(conf.c_str(), "qaflags") == 0){
         return &(cfw_config.qaflags);
     }
-    else if (strcasecmp(conf.c_str(), "region_none") == 0){
-        cfw_config.regionchange = 0;
-    }
-    else if (strcasecmp(conf.c_str(), "region_jp") == 0){
-        cfw_config.regionchange = REGION_JAPAN;
-    }
-    else if (strcasecmp(conf.c_str(), "region_us") == 0){
-        cfw_config.regionchange = REGION_AMERICA;
-    }
-    else if (strcasecmp(conf.c_str(), "region_eu") == 0){
-        cfw_config.regionchange = REGION_EUROPE;
+    else if (strncasecmp(conf.c_str(), "region_", 7) == 0){
+        char* c = strchr(conf.c_str(), '_')+1;
+        if (strcasecmp(c, "jp") == 0){
+            cfw_config.regionchange = REGION_JAPAN;
+        }
+        else if (strcasecmp(c, "us") == 0){
+            cfw_config.regionchange = REGION_AMERICA;
+        }
+        else if (strcasecmp(c, "eu") == 0){
+            cfw_config.regionchange = REGION_EUROPE;
+        }
     }
     else if (strncasecmp(conf.c_str(), "fakeregion_", 11) == 0){
         int r = atoi(conf.c_str()+11);

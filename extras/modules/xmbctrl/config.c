@@ -143,16 +143,17 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
         config.qaflags = opt;
         return 1;
     }
-    else if (strcasecmp(path, "region_us") == 0){
-        config.umdregion = (opt)?1:0;
-        return 1;
-    }
-    else if (strcasecmp(path, "region_eu") == 0){
-        config.umdregion = (opt)?2:0;
-        return 1;
-    }
-    else if (strcasecmp(path, "region_jp") == 0){
-        config.umdregion = (opt)?3:0;
+    else if (strncasecmp(path, "region_", 7) == 0){
+        char* c = strchr(path, '_')+1;
+        if (strcasecmp(c, "us") == 0){
+            config.umdregion = (opt)?1:0;
+        }
+        else if (strcasecmp(c, "eu") == 0){
+            config.umdregion = (opt)?2:0;
+        }
+        else if (strcasecmp(c, "jp") == 0){
+            config.umdregion = (opt)?3:0;
+        }
         return 1;
     }
     else if (strncasecmp(path, "fakeregion_", 11) == 0){
