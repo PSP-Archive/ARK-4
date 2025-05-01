@@ -145,6 +145,7 @@ static int processConfigLine(char* runlevel, char* path, char* enabled){
     }
     else if (strcasecmp(path, "region_us") == 0){
         config.umdregion = (opt)?1:0;
+        return 1;
     }
     else if (strcasecmp(path, "region_eu") == 0){
         config.umdregion = (opt)?2:0;
