@@ -337,6 +337,28 @@ void exec_custom_app(char *path) {
     sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
 }
 
+void recreate_umd_keys(void) {
+    struct KernelCallArg args;
+    sce_paf_private_memset(&args, 0, sizeof(args));
+
+    sctrlSEGetConfig(&se_config);
+    se_config.umdregion = config.umdregion;
+    sctrlSESetConfig(&se_config);
+    
+    void* generate_umd_keys = (void*)sctrlHENFindFunction("ARKCompatLayer", "PSPCompat", 0x2EE76C36);
+    if (!generate_umd_keys) return;
+    kuKernelCall(generate_umd_keys, &args);
+
+    // patch region check if not done already
+    void* hookImport = (void*)sctrlHENFindFunction("SystemControl", "SystemCtrlForKernel", 0x869F24E9);
+    if (!hookImport) return;
+    SceModule2 mod; kuKernelFindModuleByName("vsh_module", &mod);
+    args.arg1 = (u32)&mod;
+    args.arg2 = (u32)"sceVshBridge";
+    args.arg3 = 0x5C2983C2;
+    args.arg4 = 1;
+    kuKernelCall(hookImport, &args);
+}
 
 SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
 
@@ -474,7 +496,7 @@ void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
 
 int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
 {
-    
+
     static int items_added = 0;
 
     if (sce_paf_private_strcmp(item->text, "msgtop_sysconf_console")==0){
@@ -639,7 +661,8 @@ int skipSetting(int i){
         i == NO_HIB_DELETE ||
         i == DISABLE_LED ||
         i == DISABLE_UMD ||
-        i == WPA2_SUPPORT
+        i == WPA2_SUPPORT ||
+        i == UMD_REGION
     );
     else if (psp_model == PSP_1000) return (
         i == USB_CHARGE ||
@@ -661,7 +684,8 @@ int skipSetting(int i){
         i == NO_HIB_DELETE
     );
     else if (psp_model == PSP_GO) return (
-        i == DISABLE_UMD
+        i == DISABLE_UMD ||
+        i == UMD_REGION
     );
     return 0;
 }
@@ -916,6 +940,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value)
                 {
                     *configs[i] = GetItemes[i].negative ? !(*value) : *value;
                     saveSettings();
+                    if (i == UMD_REGION && config.umdregion) recreate_umd_keys();
                     return 0;
                 }
             }

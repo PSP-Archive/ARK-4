@@ -71,9 +71,9 @@ static void* umd_buf = NULL;
 
 static int regions[] = {
     0, // default
-    3, // Japan
     4, // America
     5, // Europe
+    3, // Japan
 };
 
 int GetHardwareInfo(u32 *ptachyon, u32 *pbaryon, u32 *ppommel, u32 *pmb, u64 *pfuseid)
