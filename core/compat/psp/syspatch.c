@@ -331,8 +331,6 @@ void PSPOnModuleStart(SceModule2 * mod){
             booted = 1;
             goto flush;
         }
-
-
     }
     
 flush:
