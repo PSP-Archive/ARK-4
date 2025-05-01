@@ -136,17 +136,6 @@ void disableLEDs(){
     }
 }
 
-void configureInfernoCache(){
-    if (se_config->iso_cache && sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
-        se_config->disable_pause = 1; // disable pause feature to maintain stability
-        if (psp_model>PSP_1000) { // 8M cache on other models
-            se_config->iso_cache_size = 64 * 1024;
-            se_config->iso_cache_num = 128;
-            se_config->iso_cache_partition = (se_config->force_high_memory)? 2 : 9;
-        }
-    }
-}
-
 void disableUMD(){
     if (se_config->noumd && psp_model != PSP_GO){
         // disable UMD drive by software, only do this if not running an ISO driver
@@ -243,7 +232,11 @@ void PSPOnModuleStart(SceModule2 * mod){
             se_config->disable_pause = 1;
         }
         // Handle Inferno cache setting
-        configureInfernoCache();
+        if (psp_model>PSP_1000) { // 8M cache on other models
+            se_config->iso_cache_size = 64 * 1024;
+            se_config->iso_cache_num = 128;
+            se_config->iso_cache_partition = (se_config->force_high_memory)? 2 : 9;
+        }
         // Disable Pause feature on PSP Go
         if (se_config->disable_pause){
             disable_PauseGame(mod);

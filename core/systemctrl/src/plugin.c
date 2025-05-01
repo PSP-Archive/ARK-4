@@ -468,7 +468,7 @@ static void settingsHandler(char* path, u8 enabled){
         se_config.msspeed = enabled; // enable ms cache for speedup
     }
     else if (strcasecmp(path, "disablepause") == 0){ // disable pause game feature on psp go
-        if (apitype != 0x144 && apitype != 0x155 && apitype !=  0x210 && apitype !=  0x220) // prevent in pops and vsh
+        if (apitype != 0x144 && apitype != 0x155 && apitype <  0x200) // prevent in pops and vsh
             se_config.disable_pause = enabled;
     }
     else if (strcasecmp(path, "launcher") == 0){ // replace XMB with custom launcher
