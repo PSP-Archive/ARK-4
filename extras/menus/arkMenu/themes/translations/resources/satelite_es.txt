@@ -1,17 +1,4 @@
 Por Defecto
-Jap¢n
-Am‚rica
-Europa
-Corea
-Reino Unido
-Latinoam‚rica
-Australia
-Hong Kong
-Taiw n
-Rusia
-China
-Debug I
-Debug II
 Deshabilitado
 Habilitado
 Normal
@@ -27,8 +14,6 @@ DISE¥O DEL MENU
 MENU PRINCIPAL
 CAMBIAR BATERIA
 CAMBIAR X/O
-REGION VSH
-REGION UMD
 IMPORTAR PLUGINS CLASICOS
 ACTIVAR FLASH Y WMA
 BORRAR HIBERNACION

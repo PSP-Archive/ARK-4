@@ -1,17 +1,4 @@
 DÇfaut
-Japon
-AmÇrique
-Europe
-CorÇe
-Royaume-Uni
-AmÇrique latine
-Australie
-Hong Kong
-Taãwan
-Russie
-Chine
-DÇbogage I
-DÇbogage II
 DÇsactivÇ(e)
 ActivÇ(e)
 Normal(e)
@@ -27,8 +14,6 @@ CONCEPTION DE MENUS
 MENU PRINCIPALE
 CONVERTIR BATTERIE
 INVERSER BOUTONS X/O
-RêGION VSH
-RêGION UMD
 IMPORTER PLUGINS CLASSIQUE
 ACTIVER FLASH ET WMA
 SUPPRIMER LA MISE EN VEILLE

@@ -62,8 +62,8 @@ int submenu_draw(void) {
     int submenu_start_x, submenu_start_y;
     int window_char, window_pixel;
     int width = 0, temp = 0, i;
-    // find widest submenu up until the UMD region option
-    for (i = SUBMENU_USB_DEVICE; i <= SUBMENU_UMD_REGION_MODE; i++){
+    // find widest submenu up until the button swap option
+    for (i = SUBMENU_USB_DEVICE; i <= SUBMENU_SWAP_XO_BUTTONS; i++){
         temp = scePaf_strlen(g_messages[MSG_USB_DEVICE + i]);
         if (temp > width)
         	width = temp;
@@ -122,8 +122,8 @@ int submenu_draw(void) {
 
         temp = 0;
         int submenu_width = 0;
-        // find widest submenu up until the UMD region option
-        for (i = SUBMENU_USB_DEVICE; i <= SUBMENU_UMD_REGION_MODE; i++){
+        // find widest submenu up until the button swap option
+        for (i = SUBMENU_USB_DEVICE; i <= SUBMENU_SWAP_XO_BUTTONS; i++){
         	temp = scePaf_strlen(g_messages[MSG_USB_DEVICE + i]);
         	if (temp > submenu_width)
         		submenu_width = temp;
@@ -134,8 +134,8 @@ int submenu_draw(void) {
         	int len = 0, offset = 0, padding = 0;
         	subcur_menu = submax_menu;
         	drawn++;
-        	// submenus between USB_DEVICE and UMD_REGION are the only ones with subitems
-        	if (submax_menu >= SUBMENU_USB_DEVICE && submax_menu <= SUBMENU_UMD_REGION_MODE) {
+        	// submenus between USB_DEVICE and BUTTON_SWAP are the only ones with subitems
+        	if (submax_menu >= SUBMENU_USB_DEVICE && submax_menu <= SUBMENU_SWAP_XO_BUTTONS) {
         		int subitem_start_x = 0;
         		int space = 3;
         		
@@ -152,12 +152,7 @@ int submenu_draw(void) {
         		
         		if(subitem_str[submax_menu]) {
         			char *subitem_p = 0;
-        			// check if PSP Go or PSVita because UMD Region mode is unsupported on them
-        			if ((vsh->psp_model == PSP_GO || IS_VITA_ADR(vsh->config.p_ark)) && submax_menu == SUBMENU_UMD_REGION_MODE) {
-        				subitem_p = g_messages[MSG_UNSUPPORTED];
-        			} else {
-        				subitem_p = subitem_str[submax_menu];
-        			}
+        			subitem_p = subitem_str[submax_menu];
         			
         			// write subitem or unsupported message
         			if (!vsh->config.ark_menu.window_mode) {
@@ -246,12 +241,6 @@ int submenu_find_longest_string(void){
     if (temp > width)
         width = temp;
     
-    for (i = SUBITEM_REGION; i <= SUBITEM_REGION_END; i++) {
-        temp = scePaf_strlen(g_messages[i]);
-        if (temp > width)
-        	width = temp;
-    }
-    
     for (i = SUBITEM_USBREADONLY; i <= SUBITEM_USBREADONLY_END; i++) {
         temp = scePaf_strlen(g_messages[i]);
         if (temp > width)
@@ -313,13 +302,9 @@ int submenu_setup(void) {
     if (IS_VITA_ADR(vsh->config.p_ark)){
         vsh->config.ark_menu.avm_hidden[SUBMENU_USB_DEVICE] = 1;
         vsh->config.ark_menu.avm_hidden[SUBMENU_USB_READONLY] = 1;
-        vsh->config.ark_menu.avm_hidden[SUBMENU_UMD_REGION_MODE] = 1;
     }
 
-    if (vsh->psp_model == PSP_GO){
-        vsh->config.ark_menu.avm_hidden[SUBMENU_UMD_REGION_MODE] = 1;
-    }
-    else {
+    if (vsh->psp_model != PSP_GO){
         vsh->config.ark_menu.avm_hidden[SUBMENU_DELETE_HIBERNATION] = 1;
     }
 
@@ -395,20 +380,6 @@ int submenu_setup(void) {
     subitem_str[SUBMENU_SWAP_XO_BUTTONS] = g_messages[MSG_O_PRIM-vsh->status.swap_xo];
 
     subitem_str[SUBMENU_CONVERT_BATTERY] = (vsh->battery<2)? g_messages[MSG_NORMAL_TO_PANDORA+vsh->battery] : g_messages[MSG_UNSUPPORTED];
-
-    if (vsh->config.se.vshregion < 14){
-        subitem_str[SUBMENU_REGION_MODE] = g_messages[vsh->config.se.vshregion];
-    }
-    else {
-        subitem_str[SUBMENU_REGION_MODE] = g_messages[MSG_DISABLE];
-    }
-
-    if (vsh->config.se.umdregion < 4){
-        subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[vsh->config.se.umdregion];
-    }
-    else {
-        subitem_str[SUBMENU_UMD_REGION_MODE] = g_messages[MSG_DEFAULT];
-    }
     
     if (vsh->config.ark_menu.vsh_fg_color < 29){
         switch(vsh->config.ark_menu.vsh_fg_color){
@@ -500,16 +471,6 @@ int submenu_ctrl(u32 button_on) {
         	return 15; // Reset ARK Settings flag
         case SUBMENU_ACTIVATE_FLASH_WMA:
         	return 11; // Activate Flash/WMA flag 
-        case SUBMENU_REGION_MODE:
-        	if (direction) 
-        		change_region(direction, 13);
-        	break;
-        case SUBMENU_UMD_REGION_MODE:
-        	if (vsh->psp_model == PSP_GO || IS_VITA_ADR(vsh->config.p_ark)) 
-        		break;
-        	if (direction) 
-        		change_umd_region(direction, 3);
-        	break;
         case SUBMENU_SWAP_XO_BUTTONS:
         	return 12; // Swap X/O Buttons flag  
         case SUBMENU_CONVERT_BATTERY:

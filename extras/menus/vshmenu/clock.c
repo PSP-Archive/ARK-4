@@ -122,26 +122,6 @@ void change_usb(int dir) {
         vsh->config.se.usbdevice_rdonly = 0;
 }
 
-void change_umd_region(int dir, int max) {
-    vsh_Menu *vsh = vsh_menu_pointer();
-    
-    int sel = vsh->config.se.umdregion;
-        	
-    // select new
-    sel = ROLL_OVER(sel+dir, 0, max);
-    vsh->config.se.umdregion=sel;
-}
-
-void change_region(int dir, int max) {
-    vsh_Menu *vsh = vsh_menu_pointer();
-    
-    int sel = vsh->config.se.vshregion;
-
-    // select new
-    sel = ROLL_OVER(sel+dir, 0, max);
-    vsh->config.se.vshregion=sel;
-}
-
 void change_bool_option(int *p, int direction) {
     int sel = *p;
 

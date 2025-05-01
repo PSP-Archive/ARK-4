@@ -1,17 +1,4 @@
 Predefinito
-Giappone
-America
-Europa
-Corea
-Regno Unito
-America Latina
-Australia
-Hong Kong
-Taiwan
-Russia
-Cina
-Debug I
-Debug II
 Disabilitato
 Abilitato
 Normale
@@ -23,12 +10,10 @@ PROTEGGI USB
 COLORE CARATTERI
 COLORE SFONDO
 FONT
-STILE MENù
+STILE MENU
 MENU PRINCIPALE
 MOD BATTERIA
 MODIFICA X/O
-REGIONE VSH
-REGIONE UMD
 IMPORTA PLUGINS CLASSICI
 ATTIVA FLASH E WMA
 ELIMINA IBERNAZIONE

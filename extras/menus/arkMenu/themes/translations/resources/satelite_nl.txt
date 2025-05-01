@@ -1,17 +1,4 @@
 Standaard
-Japan
-Amerika
-Europa
-Korea
-Verenigd Koninkrijk
-Latijns-Amerika
-Australi‰
-Hong Kong
-Taiwan
-Rusland
-China
-Debug I
-Debug II
 Uit
 Aan
 Normaal
@@ -27,8 +14,6 @@ MENU-ONTWERP
 HOOFDMENU
 BATTERIJ MOD
 X/O WISSELEN
-VSH-REGIO
-UMD-REGIO
 KLASSIEKE PLUGINS IMPORTEREN
 FLASH EN WMA ACTIVEREN
 SLAAPSTAND VERWIJDEREN

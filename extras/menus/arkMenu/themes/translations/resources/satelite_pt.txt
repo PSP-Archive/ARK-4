@@ -1,17 +1,4 @@
 Padrao
-Japao
-America
-Europa
-Coreia
-Reino Unido
-America Latina
-Australia
-Hong Kong
-Taiwan
-Russia
-China
-Debug I
-Debug II
 Desativado
 Ativado
 Normal
@@ -27,8 +14,6 @@ DESENHO DO MENU
 MENU PRINCIPALE
 CONVERT BATERIA
 INVERTER X/O
-REGIAO DO VSH
-REGIAO DO UMD
 IMPORTAR PLUGINS CLASSICOS
 ATIVAR FLASH E WMA
 APAGAR HIBERNACAO

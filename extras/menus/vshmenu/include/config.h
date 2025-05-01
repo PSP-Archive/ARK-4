@@ -16,10 +16,9 @@ int button_decline(u32 button);
 
 void config_check(vsh_Menu *vsh);
 void config_load(vsh_Menu *vsh);
-void config_save(vsh_Menu *vsh, int saveumdregion, int savevshregion);
+void config_save(vsh_Menu *vsh);
 
-void config_recreate_region_setting(vsh_Menu *vsh, char* oldtext, char* newtext);
-void config_recreate_umd_keys(void);
+void reset_ark_settings(vsh_Menu *vsh);
 void import_classic_plugins(vsh_Menu *vsh, int devpath);
 
 #endif

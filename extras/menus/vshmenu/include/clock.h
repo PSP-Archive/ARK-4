@@ -12,8 +12,6 @@ void change_design(int dir);
 void change_menu(int dir);
 void change_usb(int dir);
 void change_umd_mount_idx(int dir);
-void change_umd_region(int dir, int max);
-void change_region(int dir, int max);
 void change_bool_option(int *p, int direction);
 
 

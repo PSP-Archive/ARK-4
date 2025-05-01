@@ -1,17 +1,4 @@
 Standard
-Japan
-USA
-Europa
-Korea
-Gro·britannien
-SÅdamerika
-Australien
-Hong Kong
-Taiwan
-Russland
-China
-Debugmodus I
-Debugmodus II
 Deaktiviert
 Aktiviert
 Normal
@@ -27,8 +14,6 @@ MENöGESTALTUNG
 HAUPTMENö
 BATTERIE KONV.
 X/O TAUSCHEN
-UMD-REGION
-VSH-REGION
 IMPORTIERE KLASSISCHE PLUGINS
 AKTIVIERE FLASH UND WMA
 ARK-EINSTELLUNGEN ZURöCKSETZEN
