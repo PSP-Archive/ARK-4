@@ -22,4 +22,6 @@ Masquer le DLC
 Désactiver les LED
 Désactiver le lecteur UMD
 Désactiver le stick analogique
+Région UMD
+Région VSH
 Drapeaux d'assurance qualité

@@ -22,4 +22,6 @@ Nascondi DLC
 Spegni LEDs
 Disabilita unità UMD
 Disabilita stick analogico
+Regione UMD
+Regione VSH
 Flag QA

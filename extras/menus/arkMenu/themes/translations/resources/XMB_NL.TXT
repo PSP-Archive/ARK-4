@@ -22,4 +22,6 @@ Verberg DLC
 LED's uitschakelen
 UMD-station uitschakelen
 Analoge stick uitschakelen
+UMD-Regio
+VSH-Regio
 QA-vlaggen

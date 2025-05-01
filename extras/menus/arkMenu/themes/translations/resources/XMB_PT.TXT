@@ -22,4 +22,6 @@ Ocultar DLC
 Desligar LEDs
 Desativar unidade UMD
 Desativar o analógico
+Região do UMD
+Região do VSH
 Bandeiras de QA

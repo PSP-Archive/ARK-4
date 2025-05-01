@@ -22,4 +22,6 @@ DLC ausblenden
 LEDs ausschalten
 UMD-Laufwerk deaktivieren
 Analogstick deaktivieren
+UMD-Region
+VSH-Region
 QA-Flags

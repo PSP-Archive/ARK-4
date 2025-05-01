@@ -22,4 +22,6 @@ Ocultar DLC
 Apagar LED
 Deshabilitar unidad UMD
 Deshabilitar joystick analógico
+Región UMD
+Región VSH
 Indicadores de control de calidad
