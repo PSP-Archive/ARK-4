@@ -1,3 +1,5 @@
+![LOGO](https://github.com/user-attachments/assets/e0cd5cab-ff79-4c17-a903-544a4d2dd570)
+
 # ARK-4 e/CFW for the PSP and PS Vita.
 
 New, updated, improved and modern `Custom Firmware` for the `PSP` and `PS Vita`'s `ePSP`.
