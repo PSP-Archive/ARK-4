@@ -113,6 +113,23 @@ static void readIconFromISO(const char* isopath){
     smallvid[0x8AD] = 0;
 }
 
+static int user_input(){
+    if (last_control_data){
+        u32 swap_xo;
+        u32 pad = last_control_data->Buttons;
+        vctrlGetRegistryValue("/CONFIG/SYSTEM/XMB", "button_assign", &swap_xo);
+        // detect that some button has been pressed, user will have pressed any of these when wanting to play the file
+        if(  ( ((pad&PSP_CTRL_CROSS)  == PSP_CTRL_CROSS) && swap_xo)
+          || ( ((pad&PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE) && !swap_xo)
+          ||    (pad&PSP_CTRL_START)  == PSP_CTRL_START
+          ||    (pad&PSP_CTRL_RIGHT)  == PSP_CTRL_RIGHT
+        ){
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int videoMpegCreate(void* Mpeg, void* pData, int iSize, void* Ringbuffer, int iFrameWidth, int iUnk1, int iUnk2)
 {
     if (iso_launched[0]){
@@ -147,18 +164,8 @@ SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
                     file_pos = 0; // reset file position
                     iso_launched[0] = 0;
                     // super nasty solution for detecting that you are trying to play a Video ISO file
-                    if (last_control_data && video_dd < 0 && isovideo_fd < 0){
-                        u32 swap_xo;
-                        u32 pad = last_control_data->Buttons;
-                        vctrlGetRegistryValue("/CONFIG/SYSTEM/XMB", "button_assign", &swap_xo);
-                        // detect that some button has been pressed, user will have pressed any of these when wanting to play the file
-                        if(  ( ((pad&PSP_CTRL_CROSS)  == PSP_CTRL_CROSS) && swap_xo)
-                          || ( ((pad&PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE) && !swap_xo)
-                          ||    (pad&PSP_CTRL_START)  == PSP_CTRL_START
-                          ||    (pad&PSP_CTRL_RIGHT)  == PSP_CTRL_RIGHT
-                        ){
-                            strcpy(iso_launched, isopath); // remember ISO file
-                        }
+                    if (user_input()){
+                        strcpy(iso_launched, isopath); // remember ISO file
                     }
                     // read icon0.png from the ISO to make it viable in the XMB
                     readIconFromISO(isopath);
