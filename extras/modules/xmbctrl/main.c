@@ -229,7 +229,7 @@ int unload = 0;
 u32 backup[4];
 int context_mode = 0;
 
-char user_buffer[LINE_BUFFER_SIZE];
+char user_buffer[2*LINE_BUFFER_SIZE];
 
 STMOD_HANDLER previous = NULL;
 CFWConfig config;
@@ -433,8 +433,7 @@ int LoadTextLanguage(int new_id)
 {
     static char *languages[] = { "jp", "en", "fr", "es", "de", "it", "nl", "pt", "ru", "ko", "cht", "chs" };
 
-    int id;
-    sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &id);
+    int id; sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &id);
 
     if(new_id >= 0)
     {
@@ -478,7 +477,7 @@ int LoadTextLanguage(int new_id)
 
     while (n_translated < MAX_LANG_STRINGS)
     {
-        if (sceIoLseek(fd, 0, PSP_SEEK_CUR) >= offset+size) break;
+        if (sceIoLseek32(fd, 0, PSP_SEEK_CUR) >= (int)offset+size) break;
 
         sce_paf_private_memset(line, 0, sizeof(line));
         ReadLine(fd, line);
