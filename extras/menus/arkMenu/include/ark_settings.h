@@ -216,7 +216,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[4];
 } skiplogos = {
-    "Skip Sony logos in XMB",
+    "Skip Sony logos",
     4,
     0,
     &(cfw_config.skiplogos),
@@ -230,7 +230,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[4];
 } hidepics = {
-    "Hide PIC0 and PIC1 in XMB",
+    "Hide PIC0 and PIC1",
     4,
     0,
     &(cfw_config.hidepics),
