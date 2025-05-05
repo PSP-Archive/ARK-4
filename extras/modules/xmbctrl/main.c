@@ -482,6 +482,8 @@ int LoadTextLanguage(int new_id)
         sce_paf_private_memset(line, 0, sizeof(line));
         ReadLine(fd, line);
 
+        if (strchr(line, '"') == NULL) continue;
+
         char* sep = NULL;
         char* orig = NULL;
         orig = findTranslationString(line);
