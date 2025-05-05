@@ -33,7 +33,6 @@
 
 #include "include/main.h"
 #include "include/utils.h"
-//#include "include/lang_en.h"
 
 #include "list.h"
 #include "settings.h"
