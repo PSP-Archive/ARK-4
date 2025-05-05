@@ -2,6 +2,7 @@
 #define SETTINGS_H
 
 #define LINE_BUFFER_SIZE 256
+#define LINE_TOKEN_DELIMITER ','
 #define MAX_LANG_STRINGS 128
 
 #define STAR "★"
