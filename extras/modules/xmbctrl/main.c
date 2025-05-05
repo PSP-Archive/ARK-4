@@ -33,7 +33,7 @@
 
 #include "include/main.h"
 #include "include/utils.h"
-#include "include/lang_en.h"
+//#include "include/lang_en.h"
 
 #include "list.h"
 #include "settings.h"
@@ -194,13 +194,13 @@ struct {
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
 
-typedef struct
-{
-    char *items[6]; 
-    char *options[N_ITEMS];
+#define MAX_LANG_STRINGS 64
+typedef struct {
+    char* orig;
+    char* translated;
 } StringContainer;
-
-StringContainer string;
+StringContainer language_strings[MAX_LANG_STRINGS];
+int n_translated = 0;
 
 #define N_STRINGS ((sizeof(string) / sizeof(char **)))
 
@@ -248,8 +248,8 @@ SceVshItem *new_item2;
 SceVshItem *new_item3;
 SceVshItem *new_item4;
 SceVshItem *new_item5;
-char image[4];
 void *xmb_arg0, *xmb_arg1;
+int sysconf_action = 0;
 
 static unsigned char signup_item[] __attribute__((aligned(16))) = {
     0x2a, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 
@@ -403,9 +403,33 @@ SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
     return 0;
 }
 
+static char* findTranslationString(char* line){
+    for (int i=0; i<NELEMS(GetItemes); i++){
+        if (strstr(line, GetItemes[i].item))
+            return GetItemes[i].item;
+    }
+    for (int i=0; i<NELEMS(item_opts); i++){
+        for (int j=0; j<item_opts[i].n; j++){
+            if (strstr(line, item_opts[i].c[j]))
+                return item_opts[i].c[j];
+        }
+    }
+    return NULL;
+}
+
+static char* findTranslation(char* text){
+    for (int i=0; i<n_translated; i++)
+    {
+        if (sce_paf_private_strcmp(text, language_strings[i].orig) == 0){
+            return language_strings[i].translated;
+        }
+    }
+    return NULL;
+}
+
 int LoadTextLanguage(int new_id)
 {
-    static char *languages[] = { "JP", "EN", "FR", "ES", "DE", "IT", "NL", "PT", "RU", "KO", "CHT", "CHS" };
+    static char *languages[] = { "jp", "en", "fr", "es", "de", "it", "nl", "pt", "ru", "ko", "cht", "chs" };
 
     int id;
     sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &id);
@@ -414,71 +438,92 @@ int LoadTextLanguage(int new_id)
     {
         if(new_id == id) return 0;
         id = new_id;
+        for (int i=0; i<n_translated; i++){
+            sce_paf_private_free(language_strings[i].orig);
+            sce_paf_private_free(language_strings[i].translated);
+        }
     }
 
     SceUID fd = -1;
     SceOff offset = 0;
+    unsigned size = 0;
     if (id < NELEMS(languages)){
-        unsigned size = 0;
         char file[64];
         char pkgpath[ARK_PATH_SIZE];
+    
         strcpy(pkgpath, ark_config->arkpath);
-        strcat(pkgpath, "XMB_LANG.TXT");
-
-        SceIoStat stat;
-
-        if (sceIoGetstat(pkgpath, &stat) < 0){
-            strcpy(pkgpath, ark_config->arkpath);
-            strcat(pkgpath, "LANG.ARK");
-            sce_paf_private_sprintf(file, "XMB_%s.TXT", languages[id]);
-            offset = findPkgOffset(file, &size, pkgpath);
-            if (!offset || !size)
-                pkgpath[0] = 0;
-        }
+        strcat(pkgpath, "LANG.ARK");
+        sce_paf_private_sprintf(file, "lang_%s.json", languages[id]);
+        offset = findPkgOffset(file, &size, pkgpath);
+        if (!offset && !size)
+            pkgpath[0] = 0;
+        
         fd = sceIoOpen(pkgpath, PSP_O_RDONLY, 0);
     }
 
-    if(fd >= 0)
-    {
-        /* Skip UTF8 magic */
-        u32 magic;
-        sceIoLseek32(fd, offset, PSP_SEEK_SET);
-        sceIoRead(fd, &magic, sizeof(magic));
-        sceIoLseek(fd, (magic & 0xFFFFFF) == 0xBFBBEF ? offset+3 : offset, PSP_SEEK_SET);
-    }
+    if(fd < 0) return 0;
+
+    // Skip UTF8 magic
+    u32 magic;
+    sceIoLseek32(fd, offset, PSP_SEEK_SET);
+    sceIoRead(fd, &magic, sizeof(magic));
+    sceIoLseek(fd, (magic & 0xFFFFFF) == 0xBFBBEF ? offset+3 : offset, PSP_SEEK_SET);
+
+    n_translated = 0;
+    sce_paf_private_memset(language_strings, 0, sizeof(language_strings));
 
     char line[128];
 
-    int i;
-    int j = 0;
-    for(i = 0; i < N_STRINGS; i++)
+    while (n_translated < MAX_LANG_STRINGS)
     {
+
+        if (sceIoLseek(fd, 0, PSP_SEEK_CUR) >= offset+size) break;
+
         sce_paf_private_memset(line, 0, sizeof(line));
 
-        if(fd >= 0)
-        {
-            ReadLine(fd, line);
-        }
-        else
-        {
-            sce_paf_private_strcpy(line, settings[j]); //to use the settings.h and its text entries.
-            j++;
-        }
+        ReadLine(fd, line);
+
+        char* sep = strchr(line, ':');
+        if (!sep) continue;
         
+        char* orig = NULL;
+        orig = findTranslationString(line);
+        if (orig){
+            char* aux = orig;
+            orig = sce_paf_private_malloc(strlen(aux)+1);
+            sce_paf_private_strcpy(orig, aux);
+        }
+        else {
+            char* xmbmsg = strstr(line, "xmbmsg");
+            if (!xmbmsg) continue;
+            *sep = 0;
+            orig = sce_paf_private_malloc(strlen(xmbmsg)+1);
+            sce_paf_private_strcpy(orig, xmbmsg);
+            *sep = ':';
 
-        if(((char **)&string)[i]) sce_paf_private_free(((char **)&string)[i]);
+            char* ending = strrchr(orig, '"');
+            if (ending) *ending = 0;
+        }
 
-        ((char **)&string)[i] = sce_paf_private_malloc(sce_paf_private_strlen(line) + 1);
+        char* start = strchr(sep, '"');
+        if (!start) continue;
 
-        sce_paf_private_strcpy(((char **)&string)[i], line);
+        char* translated = sce_paf_private_malloc(strlen(start+1)+1);
+        sce_paf_private_strcpy(translated, start+1);
+
+        char* ending = strrchr(translated, '"');
+        if (ending) *ending = 0;
+
+        language_strings[n_translated].orig = orig;
+        language_strings[n_translated].translated = translated;
+        n_translated++;
+
     }
 
-    if(fd >= 0) sceIoClose(fd);
+    sceIoClose(fd);
 
     return 1;
 }
-
-int sysconf_action = 0;
 
 void* addCustomVshItem(int id, char* text, int action_arg, SceVshItem* orig){
     SceVshItem* item = (SceVshItem *)sce_paf_private_malloc(sizeof(SceVshItem));
@@ -528,15 +573,15 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         }
 
         // Add CFW Settings
-        new_item = addCustomVshItem(81, "msgtop_sysconf_configuration", sysconf_tnconfig_action_arg, (cur_icon)?item:signup_item);
+        new_item = addCustomVshItem(81, "xmbmsgtop_sysconf_configuration", sysconf_tnconfig_action_arg, (cur_icon)?item:signup_item);
         AddVshItem(a0, topitem, new_item);
 
         // Add Plugins Manager
-        new_item2 = addCustomVshItem(82, "msgtop_sysconf_plugins", sysconf_plugins_action_arg, (cur_icon)?item:ps_store_item);
+        new_item2 = addCustomVshItem(82, "xmbmsgtop_sysconf_plugins", sysconf_plugins_action_arg, (cur_icon)?item:ps_store_item);
         AddVshItem(a0, topitem, new_item2);
 
         // Add Custom Launcher
-        new_item3 = addCustomVshItem(83, "msgtop_custom_launcher", sysconf_custom_launcher_arg, (cur_icon)?item:information_board_item);
+        new_item3 = addCustomVshItem(83, "xmbmsgtop_custom_launcher", sysconf_custom_launcher_arg, (cur_icon)?item:information_board_item);
         AddVshItem(a0, topitem, new_item3);
         
         SceIoStat stat; 
@@ -556,14 +601,14 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item)
         }
 
         if(ebootFound >= 0) {
-            new_item4 = addCustomVshItem(84, "msgtop_custom_app", sysconf_custom_app_arg, information_board_item);
+            new_item4 = addCustomVshItem(84, "xmbmsgtop_custom_app", sysconf_custom_app_arg, information_board_item);
             AddVshItem(a0, topitem, new_item4);
         }
 
         SceIoStat _150_file;
         int _1k_file = sceIoGetstat("ms0:/TM/DCARK/150/reboot150.prx", &_150_file);
         if((psp_model == PSP_1000) && _1k_file >= 0 && !IS_VITA_ADR(ark_config)) {
-            new_item5 = addCustomVshItem(84, "msgtop_150_reboot", sysconf_150_reboot_arg, item);
+            new_item5 = addCustomVshItem(84, "xmbmsgtop_150_reboot", sysconf_150_reboot_arg, item);
             AddVshItem(a0, topitem, new_item5);
         }
 
@@ -752,16 +797,17 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
 {
     if(name)
     {
-        if(is_cfw_config == 1)
+        if(is_cfw_config == 1 || strstr(name, "xmbmsg"))
         {
-            int i;
-            for(i = 0; i < N_ITEMS; i++)
-            {
-                if(sce_paf_private_strcmp(name, GetItemes[i].item) == 0)
-                {
-                    utf8_to_unicode((wchar_t *)user_buffer, string.options[i]);
-                    return (wchar_t *)user_buffer;
-                }
+            char* translated = findTranslation(name);
+            if (translated){
+                utf8_to_unicode((wchar_t *)user_buffer, translated);
+                return (wchar_t *)user_buffer;
+            }
+            else {
+                char* orig = findTranslationString(name);
+                utf8_to_unicode((wchar_t *)user_buffer, (orig)?orig:name);
+                return (wchar_t *)user_buffer;
             }
         }
         else if (is_cfw_config == 2){
@@ -793,6 +839,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         		return (wchar_t *)user_buffer;
             }
         }
+        /*
         if(sce_paf_private_strcmp(name, "msgtop_sysconf_configuration") == 0)
         {
         	sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[1]);
@@ -833,12 +880,10 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
                 return (wchar_t *)user_buffer;
             }
         }
-        
+        */
     }
 
-    wchar_t *res = scePafGetText(a0, name);
-
-    return res;
+    return scePafGetText(a0, name);
 }
 
 int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size, int *value)
@@ -998,10 +1043,12 @@ void HijackContext(SceRcoEntry *src, char **options, int n)
         int i;
         for(i = 0; i < n; i++)
         {
+            char* opt = options[i];
+            char* translated = findTranslation(opt);
             sce_paf_private_memcpy(item, base, base->next_entry);
 
             item_param[0] = 0xDEAD;
-            item_param[1] = (u32)options[i];
+            item_param[1] = (u32)((translated)? translated : opt);
 
             if(i != 0) item->prev_entry = item->next_entry;
             if(i == n - 1) item->next_entry = 0;
