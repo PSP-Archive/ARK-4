@@ -439,6 +439,13 @@ int LoadTextLanguage(int new_id)
         id = new_id;
     }
 
+    for (int i=0; i<n_translated; i++){
+        sce_paf_private_free(language_strings[i].orig);
+        sce_paf_private_free(language_strings[i].translated);
+    }
+    n_translated = 0;
+    sce_paf_private_memset(language_strings, 0, sizeof(language_strings));
+
     SceUID fd = -1;
     SceOff offset = 0;
     unsigned size = 0;
@@ -457,13 +464,6 @@ int LoadTextLanguage(int new_id)
     }
 
     if(fd < 0) return 0;
-
-    for (int i=0; i<n_translated; i++){
-        sce_paf_private_free(language_strings[i].orig);
-        sce_paf_private_free(language_strings[i].translated);
-    }
-    n_translated = 0;
-    sce_paf_private_memset(language_strings, 0, sizeof(language_strings));
 
     // Skip UTF8 magic
     u32 magic;
