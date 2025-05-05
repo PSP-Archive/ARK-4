@@ -176,6 +176,13 @@
     "Russia": "러시아",
     "China": "중국",
     "Debug I": "디버깅 I",
-    "Debug II": "디버깅 2"
+    "Debug II": "디버깅 2",
+
+    "xmbmsg_system_update": "ARK-4 업데이터",
+    "xmbmsgtop_sysconf_configuration": "사용자 정의 펌웨어 설정",
+    "xmbmsgtop_sysconf_plugins": "플러그인 관리자",
+    "xmbmsgtop_custom_launcher": "사용자 정의 런처",
+    "xmbmsgtop_custom_app": "사용자 정의 앱",
+    "xmbmsgtop_150_reboot": "1.50 ARK로 재부팅"
 
 }

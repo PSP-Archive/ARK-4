@@ -165,6 +165,13 @@
     "United Kingdom": "Verenigd Koninkrijk",
     "Latin America": "Latijns-Amerika",
     "Australia": "Australië",
-    "Russia": "Rusland"
+    "Russia": "Rusland",
+
+    "xmbmsg_system_update": "ARK-4 Updater",
+    "xmbmsgtop_sysconf_configuration": "CFW-instellingen",
+    "xmbmsgtop_sysconf_plugins": "Plugins Manager",
+    "xmbmsgtop_custom_launcher": "Aangepaste Launcher",
+    "xmbmsgtop_custom_app": "Aangepaste app",
+    "xmbmsgtop_150_reboot": "Opnieuw opstarten in 1.50 ARK"
 
 }

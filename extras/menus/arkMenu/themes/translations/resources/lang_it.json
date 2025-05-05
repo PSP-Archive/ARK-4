@@ -165,6 +165,13 @@
     "Korea": "Corea",
     "United Kingdom": "Regno Unito",
     "Latin America": "America Latina",
-    "China": "Cina"
+    "China": "Cina",
+
+    "xmbmsg_system_update": "Aggiornamento ARK-4",
+    "xmbmsgtop_sysconf_configuration": "Configurazioni CFW",
+    "xmbmsgtop_sysconf_plugins": "Gestione Plugin",
+    "xmbmsgtop_custom_launcher": "Custom Launcher",
+    "xmbmsgtop_custom_app": "App personalizzata",
+    "xmbmsgtop_150_reboot": "Riavvia in 1.50 ARK"
 
 }

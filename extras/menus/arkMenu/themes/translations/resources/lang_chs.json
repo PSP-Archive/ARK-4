@@ -170,6 +170,13 @@
     "Hong Kong": "香港",
     "Taiwan": "台湾",
     "Russia": "俄罗斯",
-    "China": "中国"
+    "China": "中国",
+
+    "xmbmsg_system_update": "ARK-4 更新程序",
+    "xmbmsgtop_sysconf_configuration": "自定义固件设置",
+    "xmbmsgtop_sysconf_plugins": "插件管理器",
+    "xmbmsgtop_custom_launcher": "自定义启动器",
+    "xmbmsgtop_custom_app": "自定义应用程序",
+    "xmbmsgtop_150_reboot": "重新启动进入 1.50 ARK"
     
 }

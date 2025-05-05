@@ -163,6 +163,13 @@
     "Europe": "Europa",
     "Korea": "Coreia",
     "United Kingdom": "Reino Unido",
-    "Latin America": "America Latina"
+    "Latin America": "America Latina",
+
+    "xmbmsg_system_update": "Atualizador ARK-4",
+    "xmbmsgtop_sysconf_configuration": "Configurações de CFW",
+    "xmbmsgtop_sysconf_plugins": "Gestor de plugins",
+    "xmbmsgtop_custom_launcher": "Iniciador personalizado",
+    "xmbmsgtop_custom_app": "Aplicativo personalizado",
+    "xmbmsgtop_150_reboot": "Reinicie no ARK 1.50"
 
 }

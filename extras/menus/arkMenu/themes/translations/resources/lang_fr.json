@@ -170,5 +170,12 @@
     "Russia": "Russie",
     "China": "Chine",
     "Debug I": "Débogage I",
-    "Debug II": "Débogage II"
+    "Debug II": "Débogage II",
+
+    "xmbmsg_system_update": "Mise à jour ARK-4",
+    "xmbmsgtop_sysconf_configuration": "Paramètres de CFW",
+    "xmbmsgtop_sysconf_plugins": "Gestionnaire de plug-ins",
+    "xmbmsgtop_custom_launcher": "Lanceur personnalisé",
+    "xmbmsgtop_custom_app": "Application personnalisée",
+    "xmbmsgtop_150_reboot": "Redémarrer dans 1.50 ARK"
 }

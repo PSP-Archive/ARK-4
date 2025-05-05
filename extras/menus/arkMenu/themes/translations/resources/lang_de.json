@@ -167,6 +167,13 @@
     "Australia": "Australien",
     "Russia": "Russland",
     "Debug I": "Debugmodus I",
-    "Debug II": "Debugmodus II"
+    "Debug II": "Debugmodus II",
+
+    "xmbmsg_system_update": "ARK-4 Updater",
+    "xmbmsgtop_sysconf_configuration": "Benutzerdefinierte Firmware-Einstellungen",
+    "xmbmsgtop_sysconf_plugins": "Plugin-Manager",
+    "xmbmsgtop_custom_launcher": "Benutzerdefinierter Launcher",
+    "xmbmsgtop_custom_app": "Benutzerdefinierte App",
+    "xmbmsgtop_150_reboot": "Neustart in 1.50 ARK"
 
 }

@@ -169,11 +169,11 @@
     "Taiwan": "Taiwán",
     "Russia": "Rusia",
 
+    "xmbmsg_system_update": "Actualizar ARK",
     "xmbmsgtop_sysconf_configuration": "Configuración del CFW",
     "xmbmsgtop_sysconf_plugins": "Administrador de Plugins",
     "xmbmsgtop_custom_launcher": "Lanzador Personalizado",
     "xmbmsgtop_custom_app": "Aplicación personalizada",
-    "xmbmsgtop_150_reboot": "Reiniciar a 1.50 ARK",
-    "xmbmsg_system_update": "Actualizar ARK"
+    "xmbmsgtop_150_reboot": "Reiniciar a 1.50 ARK"
 
 }

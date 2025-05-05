@@ -172,6 +172,13 @@
     "Russia": "ロシア",
     "China": "中国",
     "Debug I": "デバッグ I",
-    "Debug II": "デバッグ Ⅱ"
+    "Debug II": "デバッグ Ⅱ",
     
+    "xmbmsg_system_update": "ARK-4 アップデータ",
+    "xmbmsgtop_sysconf_configuration": "カスタム ファームウェア設定",
+    "xmbmsgtop_sysconf_plugins": "プラグイン マネージャー",
+    "xmbmsgtop_custom_launcher": "カスタム ランチャー",
+    "xmbmsgtop_custom_app": "カスタム アプリ",
+    "xmbmsgtop_150_reboot": "1.50 ARK に再起動する"
+
 }

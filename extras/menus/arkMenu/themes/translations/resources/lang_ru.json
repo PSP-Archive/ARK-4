@@ -173,6 +173,13 @@
     "Russia": "Россия",
     "China": "Китай",
     "Debug I": "Отладка I",
-    "Debug II": "Отладка II"
+    "Debug II": "Отладка II",
+
+    "xmbmsg_system_update": "Обновление ARK-4",
+    "xmbmsgtop_sysconf_configuration": "Настройки ARK-4",
+    "xmbmsgtop_sysconf_plugins": "Менеджер плагинов",
+    "xmbmsgtop_custom_launcher": "Главное меню ARK-4",
+    "xmbmsgtop_custom_app": "Пользовательское приложение",
+    "xmbmsgtop_150_reboot": "Перезагрузиться в 1.50 ARK"
     
 }
