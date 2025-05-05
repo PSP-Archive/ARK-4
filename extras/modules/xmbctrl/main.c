@@ -84,7 +84,7 @@ GetItem GetItemes[] =
     { 2, 0, "USB Charge" },
     { 3, 0, "CPU Clock in Game" },
     { 4, 0, "CPU Clock in XMB" },
-    { 5, 0, "Enable WPA2 support" },
+    { 5, 0, "WPA2" },
     { 6, 0, "Autoboot Launcher" },
     { 7, 0, "Use Extra Memory" },
     { 8, 0, "Memory Stick Speedup" },
@@ -114,22 +114,22 @@ char* ark_clock_settings[] = {
 };
 
 char* ark_skiplogos_settings[] = {
-    "Off",
-    "All",
+    "Disabled",
+    "Enabled",
     "GameBoot",
     "ColdBoot"
 };
 
 char* ark_hidepics_settings[] = {
-    "Off",
-    "All",
+    "Disabled",
+    "Enabled",
     "PIC0",
     "PIC1"
 };
 
 char* ark_settings_boolean[] = {
-    "Off",
-    "On"
+    "Disabled",
+    "Enabled"
 };
 
 char* ark_settings_boolean2[] = {
@@ -138,14 +138,14 @@ char* ark_settings_boolean2[] = {
 };
 
 char* ark_settings_infernocache[] = {
-    "Off",
+    "Disabled",
     "LRU",
     "RR"
 };
 
 char* ark_plugins_options[] = {
-    "Off",
-    "On",
+    "Disabled",
+    "Enabled",
     "Remove",
 };
 
