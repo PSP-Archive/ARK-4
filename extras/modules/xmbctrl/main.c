@@ -46,8 +46,6 @@ extern List plugins;
 
 static char custom_app_path[] = "ms0:/PSP/APP/CUSTOM/EBOOT.PBP";
 
-static char buf[64];
-
 enum{
     USB_CHARGE,
     CPU_CLOCK_GAME,
@@ -193,7 +191,7 @@ struct {
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
 
-#define MAX_LANG_STRINGS 64
+#define MAX_LANG_STRINGS 128
 typedef struct {
     char* orig;
     char* translated;
@@ -231,7 +229,7 @@ int unload = 0;
 u32 backup[4];
 int context_mode = 0;
 
-char user_buffer[2*LINE_BUFFER_SIZE];
+char user_buffer[LINE_BUFFER_SIZE];
 
 STMOD_HANDLER previous = NULL;
 CFWConfig config;
