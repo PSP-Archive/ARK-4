@@ -90,7 +90,7 @@ GetItem GetItemes[] =
     { 10, 0, "Disable PSP Go Pause" },
     { 11, 0, "Old Plugins on ef0" },
     { 12, 0, "Prevent hibernation deletion on PSP Go" },
-    { 13, 0, "Skip Sony Logos" },
+    { 13, 0, "Skip Sony logos" },
     { 14, 0, "Hide PIC0 and PIC1" },
     { 15, 0, "Hide MAC Address" },
     { 16, 0, "Hide DLC" },
@@ -402,6 +402,7 @@ SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
 static char* findTranslationString(char* line){
     char* txt_start = strchr(line, '"')+1;
     for (int i=0; i<NELEMS(GetItemes); i++){
+        if (strcmp(line, GetItemes[i].item) == 0) return GetItemes[i].item;
         char* sub = strstr(line, GetItemes[i].item);
         int l = strlen(GetItemes[i].item);
         if (sub == txt_start && sub[l] == '"')
@@ -409,6 +410,7 @@ static char* findTranslationString(char* line){
     }
     for (int i=0; i<NELEMS(item_opts); i++){
         for (int j=0; j<item_opts[i].n; j++){
+            if (strcmp(line, item_opts[i].c[j]) == 0) return item_opts[i].c[j];
             char* sub = strstr(line, item_opts[i].c[j]);
             int l = strlen(item_opts[i].c[j]);
             if (sub == txt_start && sub[l] == '"')
@@ -813,11 +815,13 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
                 else if(sce_paf_private_strcmp(name, "xmbmsgtop_150_reboot") == 0)
                     { translated = "Reboot to 1.50 ARK"; }
                 else {
-                    translated = name;
+                    translated = findTranslationString(name);
                 }
             }
-            utf8_to_unicode((wchar_t *)user_buffer, translated);
-            return (wchar_t *)user_buffer;
+            if (translated){
+                utf8_to_unicode((wchar_t *)user_buffer, translated);
+                return (wchar_t *)user_buffer;
+            }
         }
         else if (is_cfw_config == 2){
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0){
