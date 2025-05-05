@@ -158,6 +158,22 @@
 	"Disable UMD Drive": "Deshabilitar la unidad UMD",
 	"Disable Analog Stick": "Desactivar palanca analógica",
 	"Custom App": "Aplicación personalizada",
-	"QA Flags": "Banderas de control de calidad"
+	"QA Flags": "Banderas de control de calidad",
+
+    "Japan": "Japón",
+    "America": "América",
+    "Europe": "Europa",
+    "Korea": "Corea",
+    "United Kingdom": "Reino Unido",
+    "Latin America": "Latinoamérica",
+    "Taiwan": "Taiwán",
+    "Russia": "Rusia",
+
+    "xmbmsgtop_sysconf_configuration": "Configuración del CFW",
+    "xmbmsgtop_sysconf_plugins": "Administrador de Plugins",
+    "xmbmsgtop_custom_launcher": "Lanzador Personalizado",
+    "xmbmsgtop_custom_app": "Aplicación personalizada",
+    "xmbmsgtop_150_reboot": "Reiniciar a 1.50 ARK",
+    "xmbmsg_system_update": "Actualizar ARK"
 
 }

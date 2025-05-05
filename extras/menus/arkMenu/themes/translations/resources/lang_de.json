@@ -158,7 +158,15 @@
 	"Disable UMD Drive": "Deaktivieren Sie das UMD-Laufwerk",
 	"Disable Analog Stick": "Deaktivieren Sie den Analogstick",
 	"QA Flags": "QA-Flags",
-	"Custom App": "Benutzerdefinierte App"
+	"Custom App": "Benutzerdefinierte App",
 
+    "America": "Amerika",    
+    "Europe": "Europa",
+    "United Kingdom": "Großbritannien",
+    "Latin America": "Südamerika",
+    "Australia": "Australien",
+    "Russia": "Russland",
+    "Debug I": "Debugmodus I",
+    "Debug II": "Debugmodus II"
 
 }

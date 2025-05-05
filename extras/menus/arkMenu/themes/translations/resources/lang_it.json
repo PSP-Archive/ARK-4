@@ -158,6 +158,13 @@
 	"Disable UMD Drive": "Disattiva unità UMD",
 	"Disable Analog Stick": "Disattiva stick analogico",
 	"Custom App": "Applicazione personalizzata",
-	"QA Flags": "Flag QA"
+	"QA Flags": "Flag QA",
+
+    "Japan": "Giappone",
+    "Europe": "Europa",
+    "Korea": "Corea",
+    "United Kingdom": "Regno Unito",
+    "Latin America": "America Latina",
+    "China": "Cina"
 
 }

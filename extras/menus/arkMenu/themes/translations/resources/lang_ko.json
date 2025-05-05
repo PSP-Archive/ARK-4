@@ -162,6 +162,20 @@
 	"Disable UMD Drive": "UMD 드라이브 비활성화",
 	"Disable Analog Stick": "아날로그 스틱 비활성화",
 	"Custom App": "맞춤형 앱",
-	"QA Flags": "QA 플래그"
+	"QA Flags": "QA 플래그",
+
+    "Japan": "일본",
+    "America": "미국",
+    "Europe": "유럽",
+    "Korea": "한국",
+    "United Kingdom": "영국",
+    "Latin America": "라틴 아메리카",
+    "Australia": "호주",
+    "Hong Kong": "홍콩",
+    "Taiwan": "대만",
+    "Russia": "러시아",
+    "China": "중국",
+    "Debug I": "디버깅 I",
+    "Debug II": "디버깅 2"
 
 }

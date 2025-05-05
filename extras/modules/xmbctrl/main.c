@@ -800,15 +800,24 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         if(is_cfw_config == 1 || strstr(name, "xmbmsg"))
         {
             char* translated = findTranslation(name);
-            if (translated){
-                utf8_to_unicode((wchar_t *)user_buffer, translated);
-                return (wchar_t *)user_buffer;
+            if (!translated){
+                if(sce_paf_private_strcmp(name, "xmbmsgtop_sysconf_configuration") == 0)
+                    { translated = "Custom Firmware Settings"; }
+                else if(sce_paf_private_strcmp(name, "xmbmsgtop_sysconf_plugins") == 0)
+                    { translated = "Plugins Manager"; }
+                else if(sce_paf_private_strcmp(name, "xmbmsgtop_custom_launcher") == 0)
+                    { translated = "Custom Launcher"; }
+                else if(sce_paf_private_strcmp(name, "xmbmsgtop_custom_app") == 0)
+                    { translated = "Custom App"; }
+                else if(sce_paf_private_strcmp(name, "xmbmsgtop_150_reboot") == 0)
+                    { translated = "Reboot to 1.50 ARK"; }
+                else {
+                    char* orig = findTranslationString(name);
+                    translated = (orig)?orig:name;
+                }
             }
-            else {
-                char* orig = findTranslationString(name);
-                utf8_to_unicode((wchar_t *)user_buffer, (orig)?orig:name);
-                return (wchar_t *)user_buffer;
-            }
+            utf8_to_unicode((wchar_t *)user_buffer, translated);
+            return (wchar_t *)user_buffer;
         }
         else if (is_cfw_config == 2){
             if(sce_paf_private_strncmp(name, "plugin_", 7) == 0){
@@ -839,48 +848,13 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         		return (wchar_t *)user_buffer;
             }
         }
-        /*
-        if(sce_paf_private_strcmp(name, "msgtop_sysconf_configuration") == 0)
-        {
-        	sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[1]);
-            utf8_to_unicode((wchar_t *)user_buffer, buf);
-            return (wchar_t *)user_buffer;
-        }
-        else if(sce_paf_private_strcmp(name, "msgtop_sysconf_plugins") == 0)
-        {
-        	sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[2]);
-        	utf8_to_unicode((wchar_t *)user_buffer, buf);
-        	return (wchar_t *)user_buffer;
-        }
-        else if(sce_paf_private_strcmp(name, "msgtop_custom_launcher") == 0)
-        {
-        	if(string.items[3]) {
-        		sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[3]);
-                utf8_to_unicode((wchar_t *)user_buffer, buf);
-                return (wchar_t *)user_buffer;
-        	}
-        }
-        else if(sce_paf_private_strcmp(name, "msgtop_custom_app") == 0)
-        {
-        	sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[4]);
-            utf8_to_unicode((wchar_t *)user_buffer, buf);
-            return (wchar_t *)user_buffer;
-        }
-        else if(sce_paf_private_strcmp(name, "msgtop_150_reboot") == 0)
-        {
-        	sce_paf_private_sprintf(buf, "%s %s", STAR, string.items[5]);
-            utf8_to_unicode((wchar_t *)user_buffer, buf);
-            return (wchar_t *)user_buffer;
-        }
-
         else if(sce_paf_private_strcmp(name, "msg_system_update") == 0) 
         {
-            if (se_config.custom_update && string.items[0]) {
-                utf8_to_unicode((wchar_t *)user_buffer, string.items[0]);
-                return (wchar_t *)user_buffer;
-            }
+            char* translated = findTranslation("xmbmsg_system_update");
+            if (!translated) translated = "ARK-4 Updater";
+            utf8_to_unicode((wchar_t *)user_buffer, translated);
+        	return (wchar_t *)user_buffer;
         }
-        */
     }
 
     return scePafGetText(a0, name);

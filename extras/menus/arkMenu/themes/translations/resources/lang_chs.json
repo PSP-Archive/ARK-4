@@ -158,5 +158,18 @@
 	"Disable UMD Drive": "禁用 UMD 驱动",
 	"Disable Analog Stick": "禁用模拟摇杆",
 	"Custom App": "自定义应用程序",
-	"QA Flags": "QA 标志"
+	"QA Flags": "QA 标志",
+
+    "Japan": "日本",
+    "America": "美国",
+    "Europe": "欧洲",
+    "Korea": "韩国",
+    "United Kingdom": "英国",
+    "Latin America": "拉丁美洲",
+    "Australia": "澳大利亚",
+    "Hong Kong": "香港",
+    "Taiwan": "台湾",
+    "Russia": "俄罗斯",
+    "China": "中国"
+    
 }

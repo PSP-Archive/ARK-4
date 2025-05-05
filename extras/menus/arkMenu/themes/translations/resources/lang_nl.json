@@ -158,6 +158,13 @@
 	"Disable UMD Drive": "Schakel UMD-schijf uit",
 	"Disable Analog Stick": "Analoge stick uitschakelen",
 	"Custom App": "Aangepaste app",
-	"QA Flags": "QA-vlaggen"
+	"QA Flags": "QA-vlaggen",
+
+    "America": "Amerika",
+    "Europe": "Europa",
+    "United Kingdom": "Verenigd Koninkrijk",
+    "Latin America": "Latijns-Amerika",
+    "Australia": "Australië",
+    "Russia": "Rusland"
 
 }

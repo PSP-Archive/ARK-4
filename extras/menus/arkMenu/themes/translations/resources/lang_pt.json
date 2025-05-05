@@ -157,8 +157,12 @@
 	"Disable UMD Drive": "Desativar unidade UMD",
 	"Disable Analog Stick": "Desativar stick analógico",
 	"Custom App": "Aplicativo personalizado",
-	"QA Flags": "Sinalizadores de controle de qualidade"
+	"QA Flags": "Sinalizadores de controle de qualidade",
 	
-
+    "Japan": "Japão",
+    "Europe": "Europa",
+    "Korea": "Coreia",
+    "United Kingdom": "Reino Unido",
+    "Latin America": "America Latina"
 
 }

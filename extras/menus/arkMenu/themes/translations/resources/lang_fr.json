@@ -158,5 +158,17 @@
 	"Disable UMD Drive": "Désactiver le lecteur UMD",
 	"Disable Analog Stick": "Désactiver le stick analogique",
 	"Custom App": "Application personnalisée",
-	"QA Flags": "Indicateurs d'assurance qualité"
+	"QA Flags": "Indicateurs d'assurance qualité",
+
+    "Japan": "Japon",
+    "America": "Amérique",
+    "Korea": "Corée",
+    "United Kingdom": "Royaume-Uni",
+    "Latin America": "Amérique latine",
+    "Australia": "Australie",
+    "Taiwan": "Taïwan",
+    "Russia": "Russie",
+    "China": "Chine",
+    "Debug I": "Débogage I",
+    "Debug II": "Débogage II"
 }

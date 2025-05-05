@@ -159,5 +159,20 @@
 	"Disable UMD Drive": "Отключить UMD-привод",
     "Disable Analog Stick": "Отключить мини-джойстик",
 	"Custom App": "Пользовательское приложение",
-	"QA Flags": "Показать настройки XMB для QA"
+	"QA Flags": "Показать настройки XMB для QA",
+
+    "Japan": "Япония",
+    "America": "Америка",
+    "Europe": "Европа",
+    "Korea": "Корея",
+    "United Kingdom": "Великобритания",
+    "Latin America": "Латинская Америка",
+    "Australia": "Австралия",
+    "Hong Kong": "Гонконг",
+    "Taiwan": "Тайвань",
+    "Russia": "Россия",
+    "China": "Китай",
+    "Debug I": "Отладка I",
+    "Debug II": "Отладка II"
+    
 }

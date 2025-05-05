@@ -158,5 +158,20 @@
 	"Disable UMD Drive": "UMDドライブを無効にする",
 	"Disable Analog Stick": "アナログスティックを無効にする",
 	"Custom App": "アナログスティックを無効にする",
-	"QA Flags": "QAフラグ"
+	"QA Flags": "QAフラグ",
+
+    "Japan": "日本",
+    "America": "アメリカ",
+    "Europe": "ヨーロッパ",
+    "Korea": "韓国",
+    "United Kingdom": "イギリス",
+    "Latin America": "ラテンアメリカ",
+    "Australia": "オーストラリア",
+    "Hong Kong": "香港",
+    "Taiwan": "台湾",
+    "Russia": "ロシア",
+    "China": "中国",
+    "Debug I": "デバッグ I",
+    "Debug II": "デバッグ Ⅱ"
+    
 }
