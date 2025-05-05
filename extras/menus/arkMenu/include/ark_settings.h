@@ -342,7 +342,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[4];
 } regionchange = {
-    "UMD Region Change",
+    "UMD Region",
     4,
     0,
     &(cfw_config.regionchange),
@@ -356,7 +356,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[14];
 } vshregion = {
-    "VSH Region Change",
+    "VSH Region",
     14,
     0,
     &(cfw_config.vshregion),
