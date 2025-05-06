@@ -490,10 +490,10 @@ int LoadTextLanguage(int new_id)
 
         if (orig){
             char* aux = orig;
-            orig = sce_paf_private_malloc(strlen(aux)+1);
-            sce_paf_private_strcpy(orig, aux);
             sep = strchr(strchr(line, '"')+strlen(aux)+1, ':');
             if (!sep) continue;
+            orig = sce_paf_private_malloc(strlen(aux)+1);
+            sce_paf_private_strcpy(orig, aux);
         }
         else {
             char* xmbmsg = strstr(line, "xmbmsg");
@@ -511,7 +511,10 @@ int LoadTextLanguage(int new_id)
         }
 
         char* start = strchr(sep, '"');
-        if (!start) continue;
+        if (!start) {
+            sce_paf_private_free(orig);
+            continue;
+        }
 
         char* translated = sce_paf_private_malloc(strlen(start+1)+1);
         sce_paf_private_strcpy(translated, start+1);
