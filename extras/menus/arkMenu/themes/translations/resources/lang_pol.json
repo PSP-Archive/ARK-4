@@ -121,6 +121,10 @@
     "Small": "Mały",
     "Medium": "Średni",
     "Large": "Duży",
+    "Show Hidden": "Pokaż ukryte",
+    "Show File Size": "Pokaż rozmiar pliku",
+    "ICON0 in Browser": "ICON0 w przeglądarce",
+    "Show Game Path": "Pokaż ścieżkę gry",
     
     "ARK Custom Firmware Settings": "Ustawienia ARK Custom Firmware",
     "CFW Settings": "Ustawienia CFW",
@@ -148,6 +152,10 @@
     "Hide DLC": "Ukryj DLC",
     "Turn off LEDs": "Wyłącz diody LED",
     "VSH Region": "Zmiana regionu VSH",
-    "UMD Region": "Zmiana regionu UMD"
+    "UMD Region": "Zmiana regionu UMD",
+    "Disable UMD Drive": "Wyłącz napęd UMD",
+    "Disable Analog Stick": "Wyłącz drążek analogowy",
+	"Custom App": "Aplikacja niestandardowa",
+    "QA Flags": "Flagi QA"
 
 }
