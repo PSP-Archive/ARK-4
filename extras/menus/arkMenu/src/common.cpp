@@ -262,6 +262,7 @@ t_conf* common::getConf(){
 
 void common::resetConf(){
     memset(&config, 0, sizeof(config));
+    config.syslang = 1;
     config.font = 1;
     config.sort_entries = 1;
     config.show_recovery = 1;
@@ -270,7 +271,6 @@ void common::resetConf(){
     config.redirect_ms0 = 1;
     config.menusize = 2;
     config.browser_icon0 = 1;
-    config.syslang = 1;
     language_selection = 0;
 }
 

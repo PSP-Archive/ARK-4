@@ -28,6 +28,7 @@ int button_decline(u32 button){
 
 void config_reset(vsh_Menu *vsh){
     memset(&vsh->config.ark_menu, 0, sizeof(vsh->config.ark_menu));
+    vsh->config.ark_menu.syslang = 1;
     vsh->config.ark_menu.font = 1;
     vsh->config.ark_menu.sort_entries = 1;
     vsh->config.ark_menu.show_recovery = 1;
