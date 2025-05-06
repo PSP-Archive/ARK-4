@@ -5,7 +5,7 @@ typedef struct {
     unsigned char fast_gameboot; // skip pmf/at3 and gameboot animation
     unsigned char language; // default language for the menu
     unsigned char font; // default font (either the ones in flash0 or the custom one in THEME.ARK
-    unsigned char unused1; // unused field, can be reused later
+    unsigned char syslang; // use System Language
     unsigned char scan_save; // enable or disable scanning savedata
     unsigned char scan_cat; // allow scanning for categorized content in /ISO and /PSP/GAME
     unsigned char show_dlc; // allow scanning for DLC files (PBOOT.PBP)

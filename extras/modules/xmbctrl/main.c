@@ -399,25 +399,40 @@ SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){
     return 0;
 }
 
-static char* findTranslationString(char* line){
-    char* txt_start = strchr(line, '"')+1;
+static void findAllTranslatableStrings(){
+    sce_paf_private_memset(language_strings, 0, sizeof(language_strings));
+    n_translated = 0;
+
+    language_strings[n_translated++].orig = "xmbmsgtop_sysconf_configuration";
+    language_strings[n_translated++].orig = "xmbmsgtop_sysconf_plugins";
+    language_strings[n_translated++].orig = "xmbmsgtop_custom_launcher";
+    language_strings[n_translated++].orig = "xmbmsgtop_custom_app";
+    language_strings[n_translated++].orig = "xmbmsgtop_150_reboot";
+    
     for (int i=0; i<NELEMS(GetItemes); i++){
-        if (strcmp(line, GetItemes[i].item) == 0) return GetItemes[i].item;
-        char* sub = strstr(line, GetItemes[i].item);
-        int l = strlen(GetItemes[i].item);
-        if (sub == txt_start && sub[l] == '"')
-            return GetItemes[i].item;
+        language_strings[n_translated++].orig = GetItemes[i].item;
     }
+
     for (int i=0; i<NELEMS(item_opts); i++){
         for (int j=0; j<item_opts[i].n; j++){
-            if (strcmp(line, item_opts[i].c[j]) == 0) return item_opts[i].c[j];
-            char* sub = strstr(line, item_opts[i].c[j]);
-            int l = strlen(item_opts[i].c[j]);
-            if (sub == txt_start && sub[l] == '"')
-                return item_opts[i].c[j];
+            language_strings[n_translated++].orig = item_opts[i].c[j];
         }
     }
-    return NULL;
+}
+
+static int findTranslatableStringIndex(char* line){
+    char* txt_start = sce_paf_private_strchr(line, '"');
+    if (!txt_start) return -1;
+    for (int i=0; i<n_translated; i++){
+        char* item = language_strings[i].orig;
+        if (sce_paf_private_strcmp(line, item) == 0) return i;
+        char* sub = strstr(line, item);
+        if (sub == NULL) continue;
+        int l = sce_paf_private_strlen(item);
+        if (sub == txt_start+1 && sub[l] == '"')
+            return i;
+    }
+    return -1;
 }
 
 static char* findTranslation(char* text){
@@ -428,6 +443,16 @@ static char* findTranslation(char* text){
         }
     }
     return NULL;
+}
+
+static int isTranslatableString(char* text){
+    for (int i=0; i<n_translated; i++)
+    {
+        if (sce_paf_private_strcmp(text, language_strings[i].orig) == 0){
+            return 1;
+        }
+    }
+    return 0;
 }
 
 int LoadTextLanguage(int new_id)
@@ -443,11 +468,9 @@ int LoadTextLanguage(int new_id)
     }
 
     for (int i=0; i<n_translated; i++){
-        sce_paf_private_free(language_strings[i].orig);
         sce_paf_private_free(language_strings[i].translated);
+        language_strings[i].translated = NULL;
     }
-    n_translated = 0;
-    sce_paf_private_memset(language_strings, 0, sizeof(language_strings));
 
     SceUID fd = -1;
     SceOff offset = 0;
@@ -456,7 +479,7 @@ int LoadTextLanguage(int new_id)
         char file[64];
         char pkgpath[ARK_PATH_SIZE];
     
-        strcpy(pkgpath, ark_config->arkpath);
+        sce_paf_private_strcpy(pkgpath, ark_config->arkpath);
         strcat(pkgpath, "LANG.ARK");
         sce_paf_private_sprintf(file, "lang_%s.json", languages[id]);
         offset = findPkgOffset(file, &size, pkgpath);
@@ -474,57 +497,38 @@ int LoadTextLanguage(int new_id)
     sceIoRead(fd, &magic, sizeof(magic));
     sceIoLseek(fd, (magic & 0xFFFFFF) == 0xBFBBEF ? offset+3 : offset, PSP_SEEK_SET);
 
+    int counter = 0;
     char line[LINE_BUFFER_SIZE];
-    while (n_translated < MAX_LANG_STRINGS)
+    while (counter < n_translated)
     {
         if (sceIoLseek32(fd, 0, PSP_SEEK_CUR) >= (int)offset+size) break;
 
         sce_paf_private_memset(line, 0, sizeof(line));
         ReadLine(fd, line);
 
-        if (strchr(line, '"') == NULL) continue;
+        if (sce_paf_private_strchr(line, '"') == NULL) continue;
 
         char* sep = NULL;
-        char* orig = NULL;
-        orig = findTranslationString(line);
+        int text_idx = findTranslatableStringIndex(line);
 
-        if (orig){
-            char* aux = orig;
-            sep = strchr(strchr(line, '"')+strlen(aux)+1, ':');
+        if (text_idx>=0){
+            char* aux = language_strings[text_idx].orig;
+            sep = sce_paf_private_strchr(sce_paf_private_strchr(line, '"')+sce_paf_private_strlen(aux)+1, ':');
             if (!sep) continue;
-            orig = sce_paf_private_malloc(strlen(aux)+1);
-            sce_paf_private_strcpy(orig, aux);
         }
-        else {
-            char* xmbmsg = strstr(line, "xmbmsg");
-            if (!xmbmsg) continue;
-            sep = strchr(line, ':');
-            if (!sep) continue;
+        else continue;
 
-            *sep = 0;
-            orig = sce_paf_private_malloc(strlen(xmbmsg)+1);
-            sce_paf_private_strcpy(orig, xmbmsg);
-            *sep = ':';
-
-            char* ending = strrchr(orig, '"');
-            if (ending) *ending = 0;
-        }
-
-        char* start = strchr(sep, '"');
-        if (!start) {
-            sce_paf_private_free(orig);
-            continue;
-        }
+        char* start = sce_paf_private_strchr(sep, '"');
+        if (!start) continue;
 
         char* translated = sce_paf_private_malloc(strlen(start+1)+1);
         sce_paf_private_strcpy(translated, start+1);
 
-        char* ending = strrchr(translated, '"');
+        char* ending = sce_paf_private_strrchr(translated, '"');
         if (ending) *ending = 0;
 
-        language_strings[n_translated].orig = orig;
-        language_strings[n_translated].translated = translated;
-        n_translated++;
+        language_strings[text_idx].translated = translated;
+        counter++;
 
     }
 
@@ -805,23 +809,22 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
 {
     if(name)
     {
-        if(is_cfw_config == 1 || strstr(name, "xmbmsg"))
+        if(is_cfw_config == 1 || sce_paf_private_strncmp(name, "xmbmsg", 6)==0)
         {
             char* translated = findTranslation(name);
             if (!translated){
                 if(sce_paf_private_strcmp(name, "xmbmsgtop_sysconf_configuration") == 0)
-                    { translated = "Custom Firmware Settings"; }
+                    translated = "Custom Firmware Settings";
                 else if(sce_paf_private_strcmp(name, "xmbmsgtop_sysconf_plugins") == 0)
-                    { translated = "Plugins Manager"; }
+                    translated = "Plugins Manager";
                 else if(sce_paf_private_strcmp(name, "xmbmsgtop_custom_launcher") == 0)
-                    { translated = "Custom Launcher"; }
+                    translated = "Custom Launcher";
                 else if(sce_paf_private_strcmp(name, "xmbmsgtop_custom_app") == 0)
-                    { translated = "Custom App"; }
+                    translated = "Custom App";
                 else if(sce_paf_private_strcmp(name, "xmbmsgtop_150_reboot") == 0)
-                    { translated = "Reboot to 1.50 ARK"; }
-                else {
-                    translated = findTranslationString(name);
-                }
+                    translated = "Reboot to 1.50 ARK";
+                else if (isTranslatableString(name))
+                    translated = name; // should have been translated but wasn't
             }
             if (translated){
                 utf8_to_unicode((wchar_t *)user_buffer, translated);
@@ -1268,6 +1271,8 @@ int module_start(SceSize args, void *argp)
     sctrlSEGetConfig(&se_config);
 
     sctrlHENGetArkConfig(&_arkconf);
+
+    findAllTranslatableStrings();
     
     previous = sctrlHENSetStartModuleHandler(OnModuleStart);
 

@@ -73,26 +73,44 @@ char* fonts[] = {
     //"flash0:/font/kr0.pgf"
 };
 
+extern unsigned char language_selection;
+// custom languages
 static char* lang_files[] = {
-    "lang_en.json",
-    "lang_es.json",
-    "lang_de.json",
-    "lang_fr.json",
-    "lang_pt.json",
-    "lang_it.json",
-    "lang_nl.json",
-    "lang_ru.json",
-    "lang_ukr.json",
-    "lang_ro.json",
-    "lang_lat.json",
-    "lang_jp.json",
-    "lang_ko.json",
-    "lang_cht.json",
-    "lang_chs.json",
-    "lang_pol.json",
-    "lang_latgr.json"
-    //"lang_grk.json",
-    //"lang_thai.json",
+    "en",
+    "es",
+    "de",
+    "fr",
+    "pt",
+    "it",
+    "nl",
+    "ru",
+    "ukr",
+    "ro",
+    "lat",
+    "jp",
+    "ko",
+    "cht",
+    "chs",
+    "pol",
+    "latgr"
+    //"grk",
+    //"thai",
+};
+
+// system languages
+static char* system_lang[] = {
+    "jp",
+    "en",
+    "fr",
+    "es",
+    "de",
+    "it",
+    "nl",
+    "pt",
+    "ru",
+    "ko",
+    "cht",
+    "chs"
 };
 
 static t_conf config;
@@ -102,6 +120,20 @@ static volatile SceUID load_thread_id = -1;
 
 static void dummyMissingHandler(const char* filename){
 
+}
+
+static char* getLangFile(){
+    static char file[20];
+    char* lang = NULL;
+    if (config.syslang){
+        int id; sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &id);
+        lang = system_lang[id];
+    }
+    else {
+        lang = lang_files[config.language];
+    }
+    sprintf(file, "lang_%s.json", lang);
+    return file;
 }
 
 void setArgs(int ac, char** av){
@@ -119,6 +151,14 @@ void loadConfig(){
     fseek(fp, 0, SEEK_SET);
     fread(&config, 1, sizeof(t_conf), fp);
     fclose(fp);
+
+    if (config.syslang){
+        language_selection = 0;
+    }
+    else {
+        language_selection = config.language+1;
+    }
+
     if (today.tm_mday == 1 && today.tm_mon == 3)
         config.language = 10;
 }
@@ -178,11 +218,19 @@ void common::saveConf(){
     SystemMgr::pauseDraw();
 
     // reload language
-    if (currentLang != config.language){
-        if (!Translations::loadLanguage(lang_files[config.language])){
+    if (currentLang != language_selection){
+        if (language_selection == 0) {
+            config.syslang = 1;
             config.language = 0;
         }
-        currentLang = config.language;
+        else {
+            config.syslang = 0;
+            config.language = language_selection-1;
+        }
+        if (!Translations::loadLanguage(getLangFile()) && language_selection > 1){
+            config.syslang = 1;
+        }
+        currentLang = language_selection;
     }
 
     // reload font
@@ -222,6 +270,8 @@ void common::resetConf(){
     config.redirect_ms0 = 1;
     config.menusize = 2;
     config.browser_icon0 = 1;
+    config.syslang = 1;
+    language_selection = 0;
 }
 
 void common::launchRecovery(const char* path){
@@ -500,12 +550,10 @@ void common::loadData(int ac, char** av){
     loadConfig();
 
     currentFont = config.font;
-    currentLang = config.language;
+    currentLang = language_selection;
     currentApp = config.main_menu;
 
-    if (config.language){
-        Translations::loadLanguage(lang_files[config.language]);
-    }
+    Translations::loadLanguage(getLangFile());
     
     loadFont();
 

@@ -16,18 +16,20 @@ static struct {
 };
 
 /* Language entry */
+unsigned char language_selection = 0;
 static struct {
     char* description;
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[17];
+    char* options[18];
 } language = {
     "Language",
-    17,
+    18,
     0,
-    &(common::getConf()->language),
+    &language_selection,
     {
+        "Default",
         "English",
         "Español",
         "Deutsch",
