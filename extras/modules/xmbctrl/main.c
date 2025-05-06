@@ -217,7 +217,7 @@ void (* AddSysconfItem)(u32 *option, SceSysconfItem **item);
 void (* OnInitMenuPspConfig)();
 
 extern int GetPlugin(char *buf, int size, char *str, int *activated);
-extern int ReadLine(SceUID fd, char *str);
+extern int ReadLineStr(char* source, char *str);
 extern int utf8_to_unicode(wchar_t *dest, char *src);
 
 u32 sysconf_unk, sysconf_option;
@@ -491,21 +491,32 @@ int LoadTextLanguage(int new_id)
 
     if(fd < 0) return 0;
 
-    // Skip UTF8 magic
-    u32 magic;
-    sceIoLseek32(fd, offset, PSP_SEEK_SET);
-    sceIoRead(fd, &magic, sizeof(magic));
-    sceIoLseek(fd, (magic & 0xFFFFFF) == 0xBFBBEF ? offset+3 : offset, PSP_SEEK_SET);
+    u8* buf = sce_paf_private_malloc(size+1);
+    sceIoLseek(fd, offset, PSP_SEEK_SET);
+    sceIoRead(fd, buf, size);
+    sceIoClose(fd);
+    buf[size] = 0;
+    
 
     int counter = 0;
     char line[LINE_BUFFER_SIZE];
+    int buf_pos = 0;
+
+    // Skip UTF8 magic
+    u32 magic = *(u32*)buf;
+    if ((magic & 0xFFFFFF) == 0xBFBBEF){
+        buf_pos = 3;
+    }
+
     while (counter < n_translated)
     {
-        if (sceIoLseek32(fd, 0, PSP_SEEK_CUR) >= (int)offset+size) break;
+        if (buf_pos >= size) break;
 
         sce_paf_private_memset(line, 0, sizeof(line));
-        ReadLine(fd, line);
+        int n_read = ReadLineStr(buf+buf_pos, line);
+        buf_pos += n_read;
 
+        if (n_read == 0) break;
         if (sce_paf_private_strchr(line, '"') == NULL) continue;
 
         char* sep = NULL;
@@ -532,7 +543,7 @@ int LoadTextLanguage(int new_id)
 
     }
 
-    sceIoClose(fd);
+    sce_paf_private_free(buf);
 
     return 1;
 }
