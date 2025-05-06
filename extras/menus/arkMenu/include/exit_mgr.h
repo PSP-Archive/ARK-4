@@ -58,6 +58,9 @@ class ExitManager : public SystemEntry{
                 sctrlSESetBootConfFileIndex(MODE_UMD);
                 sctrlKernelExitVSH(NULL);
             }
+            else {
+                SystemMgr::changeMenuState();
+            }
         };
         void pause(){};
         void resume(){

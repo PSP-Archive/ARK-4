@@ -76,7 +76,7 @@ static int getNumPageItems(){
     return 5 - getSizeIndex(); // 5 for small, 4 for medium, and 3 for large
 }
 
-static void changeMenuState(){
+void SystemMgr::changeMenuState(){
     if (optionsDrawState == 1 || optionsDrawState == 3)
         return;
 
@@ -109,12 +109,12 @@ static void systemController(Controller* pad){
 
     if (pad->accept()){
         entries[cur_entry]->pause();
-        changeMenuState();
+        SystemMgr::changeMenuState();
         cur_entry = pEntryIndex;
         entries[cur_entry]->resume();
     }
     else if (pad->decline()){
-        changeMenuState();
+        SystemMgr::changeMenuState();
         pEntryIndex = cur_entry;
         page_start = max(0, cur_entry - getNumPageItems() + 1);
     }
@@ -381,7 +381,7 @@ static int controlThread(SceSize _args, void *_argp){
         pad.update();
 
         if (pad.triangle() && !screensaver){
-            changeMenuState();
+            SystemMgr::changeMenuState();
         } else if (pad.home()){
             screensaver = !screensaver;
             pad.flush();
