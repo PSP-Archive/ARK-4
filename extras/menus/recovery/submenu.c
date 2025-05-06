@@ -201,7 +201,8 @@ static int plugins_to_text(char** paths, char** states, int* pos, int dir){
                 paths[ret] = plugin->path;
             }
             else{
-                paths[ret] = strrchr(plugin->path, '/') + 1;
+                char* simplified = strrchr(plugin->path, '/');
+                paths[ret] = (simplified)? simplified+1 : plugin->path;
             }
             pos[ret] = i;
             states[ret++] = (plugin->active)? "On" : "Off";
