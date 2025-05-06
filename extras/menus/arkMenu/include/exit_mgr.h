@@ -9,6 +9,7 @@
 
 
 extern "C"{
+    int scePowerRequestSuspend(void);
     void scePowerRequestColdReset(int);
     void scePowerRequestStandby();
 }
@@ -16,8 +17,9 @@ extern "C"{
 static t_options_entry exit_opts[] = {
     {-1, "Cancel"},
     {0, "Exit"},
-    {1, "Restart"},
-    {2, "Shutdown"},
+    {1, "Suspend"},
+    {2, "Restart"},
+    {3, "Shutdown"},
 };
 
 class ExitManager : public SystemEntry{
@@ -43,9 +45,13 @@ class ExitManager : public SystemEntry{
                     case 0:
                         break;
                     case 1:
-                        scePowerRequestColdReset(0);
+                        canceled = true;
+                        scePowerRequestSuspend();
                         break;
                     case 2:
+                        scePowerRequestColdReset(0);
+                        break;
+                    case 3:
                         scePowerRequestStandby();
                         break;
                 }
@@ -53,13 +59,13 @@ class ExitManager : public SystemEntry{
                 optionsmenu = NULL;
                 delete aux;
             }
-            if (!canceled){
+            if (canceled) {
+                SystemMgr::changeMenuState();
+            }
+            else {
                 sctrlSESetUmdFile("");
                 sctrlSESetBootConfFileIndex(MODE_UMD);
                 sctrlKernelExitVSH(NULL);
-            }
-            else {
-                SystemMgr::changeMenuState();
             }
         };
         void pause(){};
