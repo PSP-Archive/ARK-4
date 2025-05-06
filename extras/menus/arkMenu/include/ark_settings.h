@@ -328,7 +328,7 @@ static struct {
     unsigned char* config_ptr;
     char* options[MAX_BOOLEAN_OPTIONS];
 } wpa2 = {
-    "WPA2",
+    "WPA2 Support",
     MAX_BOOLEAN_OPTIONS,
     0,
     &(cfw_config.wpa2),

@@ -82,7 +82,7 @@ GetItem GetItemes[] =
     { 2, 0, "USB Charge" },
     { 3, 0, "CPU Clock in Game" },
     { 4, 0, "CPU Clock in XMB" },
-    { 5, 0, "WPA2" },
+    { 5, 0, "WPA2 Support" },
     { 6, 0, "Autoboot Launcher" },
     { 7, 0, "Use Extra Memory" },
     { 8, 0, "Memory Stick Speedup" },
