@@ -26,7 +26,7 @@
 #include "plugin.h"
 #include "libs/graphics/graphics.h"
 
-#define LINE_BUFFER_SIZE 1024
+#define LINE_BUFFER_SIZE 256
 #define LINE_TOKEN_DELIMITER ','
 
 extern ARKConfig* ark_config;
@@ -268,64 +268,6 @@ char * strtrim(char * text)
     return text;
 }
 
-// Read Line from File Descriptor
-/*
-static char * readLine(int fd, char * buf, unsigned int buflen)
-{
-    // Valid Arguments
-    if(fd >= 0 && buf != NULL && buflen > 0)
-    {
-        // Clean Memory
-        memset(buf, 0, buflen);
-        
-        // Buffer Position
-        unsigned int pos = 0;
-        
-        // Read Text
-        while(pos < buflen - 1 && sceIoRead(fd, buf + pos, 1) == 1)
-        {
-            // Carriage Return (Windows)
-            if(buf[pos] == '\r')
-            {
-                // Next Symbol
-                char c = 0;
-                
-                // Read Next Symbol (to prevent double tapping)
-                if(sceIoRead(fd, &c, 1) == 1)
-                {
-                    // Newline
-                    if(c == '\n') break;
-                    
-                    // Rewind File
-                    sceIoLseek32(fd, -1, PSP_SEEK_CUR);
-                }
-                
-                // Handle as Newline
-                break;
-            }
-            
-            // Newline
-            if(buf[pos] == '\n') break;
-            
-            // Move Position
-            pos++;
-        }
-        
-        // End of File
-        if(pos == 0 && buf[pos] == 0) return NULL;
-        
-        // Remove \r\n
-        if(buf[pos] == '\r' || buf[pos] == '\n') buf[pos] = 0;
-        
-        // Return Line Buffer
-        return buf;
-    }
-    
-    // Invalid Arguments
-    return NULL;
-}
-*/
-
 int readLine(char* source, char *str)
 {
     u8 ch = 0;
@@ -333,13 +275,17 @@ int readLine(char* source, char *str)
     int i = 0;
     while(1)
     {
-        if( (ch = source[i]) == 0)
+        if( (ch = source[i]) == 0){
+            *str = 0;
             return n;
+        }
 
         if(ch < 0x20)
         {
-            if(n != 0)
+            if(n != 0){
+                *str = 0;
                 return n;
+            }
         }
         else
         {

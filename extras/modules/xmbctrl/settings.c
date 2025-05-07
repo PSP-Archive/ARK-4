@@ -78,13 +78,17 @@ int readLine(char* source, char *str)
     int i = 0;
     while(1)
     {
-        if( (ch = source[i]) == 0)
+        if( (ch = source[i]) == 0){
+            *str = 0;
             return n;
+        }
 
         if(ch < 0x20)
         {
-            if(n != 0)
+            if(n != 0){
+                *str = 0;
                 return n;
+            }
         }
         else
         {
@@ -186,6 +190,7 @@ void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*), void
             // Read Lines
             int nread = 0;
             int total_read = 0;
+            
             while ((nread=readLine(buf+total_read, line))>0)
             {
                 total_read += nread;
