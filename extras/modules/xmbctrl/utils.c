@@ -70,63 +70,6 @@ int utf8_to_unicode(wchar_t *dest, char *src)
     return x;
 }
 
-void trim(char *str)
-{
-    int i;
-    for(i = sce_paf_private_strlen(str) - 1; i >= 0; i--)
-    {
-        if(str[i] == 0x20 || str[i] == '\t') str[i] = 0;
-        else break;
-    }
-}
-
-int GetPlugin(char *buf, int size, char *str, int *activated)
-{
-    char ch = 0;
-    int n = 0, i = 0;
-    char *s = str;
-    
-    for(i = 0; i < size; i++)
-    {
-        ch = buf[i];
-
-        if(ch < 0x20 && ch != '\t')
-        {
-            if(n != 0)
-            {
-                i++;
-                break;
-            }
-        }
-        else
-        {
-            *str++ = ch;
-            n++;
-        }
-    }
-
-    trim(s);
-
-    *activated = 0;
-
-    if(i > 0)
-    {
-        char *p = sce_paf_private_strpbrk(s, " \t");
-        if(p)
-        {
-            char *q = p + 1;
-            while(*q < 0) q++;
-            if(sce_paf_private_strcmp(q, "1") == 0) *activated = 1;
-            *p = 0;
-        }
-    }
-
-    while((buf[i] < 0x20 || buf[i] == '\t') && i < size)
-        i++;
-
-    return i;
-}
-
 int atoi(const char* txt){
     return sce_paf_private_strtoul(txt, NULL, 10);
 }

@@ -216,7 +216,6 @@ void (* OnRetry)();
 void (* AddSysconfItem)(u32 *option, SceSysconfItem **item);
 void (* OnInitMenuPspConfig)();
 
-extern int GetPlugin(char *buf, int size, char *str, int *activated);
 extern int readLine(char* source, char *str);
 extern int utf8_to_unicode(wchar_t *dest, char *src);
 
