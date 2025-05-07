@@ -15,7 +15,7 @@
     "Exit": "終了",
     "Restart": "再起動",
     "Shutdown": "シャットダウン",
-    "Suspend": "つるす",
+    "Suspend": "スリープ",
     
     "Disabled": "無効",
     "Enabled": "有効",
@@ -139,11 +139,11 @@
     "Auto": "オート",
     "USB Charge": "USB充電",
     "CPU Clock in Game": "ゲーム中のCPUクロック",
-    "CPU Clock in XMB": "XMB の CPU クロック",
+    "CPU Clock in XMB": "XMBのCPUクロック",
     "OverClock": "オーバークロック",
-    "Balanced": "バランスのとれた",
+    "Balanced": "バランス",
     "PowerSave": "パワーセーブ",
-    "Autoboot Launcher": "カスタムランチャーで起動",
+    "Autoboot Launcher": "自動でカスタムランチャーを起動",
     "Disable PSP Go Pause": "PSP Goの一時停止を無効にする",
     "Inferno Cache": "Infernoキャッシュ",
     "WPA2 Support": "WPA2サポート",
@@ -159,10 +159,10 @@
     "Turn off LEDs": "LEDをオフにする",
     "VSH Region": "本体のリージョンを変更",
     "UMD Region": "UMDのリージョンを変更",
-	"Disable UMD Drive": "UMDドライブを無効にする",
-	"Disable Analog Stick": "アナログスティックを無効にする",
-	"Custom App": "アナログスティックを無効にする",
-	"QA Flags": "QAフラグ",
+    "Disable UMD Drive": "UMDドライブを無効にする",
+    "Disable Analog Stick": "アナログスティックを無効にする",
+    "Custom App": "アナログスティックを無効にする",
+    "QA Flags": "QAフラグ",
 
     "Japan": "日本",
     "America": "アメリカ",
@@ -178,11 +178,11 @@
     "Debug I": "デバッグ I",
     "Debug II": "デバッグ Ⅱ",
     
-    "xmbmsg_system_update": "ARK-4 アップデータ",
-    "xmbmsgtop_sysconf_configuration": "カスタム ファームウェア設定",
-    "xmbmsgtop_sysconf_plugins": "プラグイン マネージャー",
-    "xmbmsgtop_custom_launcher": "カスタム ランチャー",
-    "xmbmsgtop_custom_app": "カスタム アプリ",
-    "xmbmsgtop_150_reboot": "1.50 ARK に再起動する"
+    "xmbmsg_system_update": "ARK-4アップデート",
+    "xmbmsgtop_sysconf_configuration": "カスタムファームウェア設定",
+    "xmbmsgtop_sysconf_plugins": "プラグインマネージャー",
+    "xmbmsgtop_custom_launcher": "カスタムランチャー",
+    "xmbmsgtop_custom_app": "カスタムアプリ",
+    "xmbmsgtop_150_reboot": "1.50 ARKに再起動する"
 
 }
