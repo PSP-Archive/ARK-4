@@ -70,53 +70,6 @@ int utf8_to_unicode(wchar_t *dest, char *src)
     return x;
 }
 
-int ReadLine(SceUID fd, char *str)
-{
-    u8 ch = 0;
-    int n = 0;
-
-    while(1)
-    {
-        if(sceIoRead(fd, &ch, 1) != 1)
-            return n;
-
-        if(ch < 0x20)
-        {
-            if(n != 0)
-                return n;
-        }
-        else
-        {
-            *str++ = ch;
-            n++;
-        }
-    }
-}
-
-int ReadLineStr(char* source, char *str)
-{
-    u8 ch = 0;
-    int n = 0;
-    int i = 0;
-    while(1)
-    {
-        if( (ch = source[i]) == 0)
-            return n;
-
-        if(ch < 0x20)
-        {
-            if(n != 0)
-                return n;
-        }
-        else
-        {
-            *str++ = ch;
-            n++;
-        }
-        i++;
-    }
-}
-
 void trim(char *str)
 {
     int i;

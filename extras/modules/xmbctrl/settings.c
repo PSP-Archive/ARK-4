@@ -71,59 +71,28 @@ char * strtrim(char * text)
     return text;
 }
 
-// Read Line from File Descriptor
-char * readLine(int fd, char * buf, unsigned int buflen)
+int readLine(char* source, char *str)
 {
-    // Valid Arguments
-    if(fd >= 0 && buf != NULL && buflen > 0)
+    u8 ch = 0;
+    int n = 0;
+    int i = 0;
+    while(1)
     {
-        // Clean Memory
-        memset(buf, 0, buflen);
-        
-        // Buffer Position
-        unsigned int pos = 0;
+        if( (ch = source[i]) == 0)
+            return n;
 
-        // Read Text
-        while(pos < buflen - 1 && sceIoRead(fd, buf + pos, 1) == 1)
+        if(ch < 0x20)
         {
-            // Carriage Return (Windows)
-            if(buf[pos] == '\r')
-            {
-                // Next Symbol
-                char c = 0;
-                
-                // Read Next Symbol (to prevent double tapping)
-                if(sceIoRead(fd, &c, 1) == 1)
-                {
-                    // Newline
-                    if(c == '\n') break;
-                    
-                    // Rewind File
-                    sceIoLseek32(fd, -1, PSP_SEEK_CUR);
-                }
-                
-                // Handle as Newline
-                break;
-            }
-            
-            // Newline
-            if(buf[pos] == '\n') break;
-            
-            // Move Position
-            pos++;
+            if(n != 0)
+                return n;
         }
-        // End of File
-        if(pos == 0 && buf[pos] == 0) return NULL;
-        
-        // Remove \r\n
-        if(buf[pos] == '\r' || buf[pos] == '\n') buf[pos] = 0;
-
-        // Return Line Buffer
-        return buf;
+        else
+        {
+            *str++ = ch;
+            n++;
+        }
+        i++;
     }
-    
-    // Invalid Arguments
-    return NULL;
 }
 
 // Parse and Process Line
@@ -194,28 +163,45 @@ void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*), void
     // Opened Plugin Config
     if(fd >= 0)
     {
+
+        // allocate buffer and read entire file
+        int fsize = sceIoLseek(fd, 0, PSP_SEEK_END);
+        sceIoLseek(fd, 0, PSP_SEEK_SET);
+
+        u8* buf = vsh_malloc(fsize+1);
+        if (buf == NULL){
+            sceIoClose(fd);
+            return -1;
+        }
+
+        sceIoRead(fd, buf, fsize);
+        sceIoClose(fd);
+        buf[fsize] = 0;
+
         // Allocate Line Buffer
-        char* line = my_malloc(LINE_BUFFER_SIZE);        
+        char* line = vsh_malloc(LINE_BUFFER_SIZE);        
         // Buffer Allocation Success
         if(line != NULL)
         {
             // Read Lines
-            while(readLine(fd, line, LINE_BUFFER_SIZE) != NULL)
+            int nread = 0;
+            int total_read = 0;
+            while ((nread=readLine(buf+total_read, line))>0)
             {
+                total_read += nread;
                 if (line[0] == 0) continue; // empty line
-                char* dupline = my_malloc(strlen(line)+1);
+                char* dupline = vsh_malloc(strlen(line)+1);
                 strcpy(dupline, line);
                 // Process Line
                 if (processLine(strtrim(line), process_line)){
-                    my_free(dupline);
+                    vsh_free(dupline);
                 }
                 else{
                     process_custom(dupline);
                 }
             }
-            my_free(line);
+            vsh_free(line);
         }
-        // Close Plugin Config
-        sceIoClose(fd);
+        vsh_free(buf);
     }
 }

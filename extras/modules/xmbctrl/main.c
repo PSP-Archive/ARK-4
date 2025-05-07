@@ -217,7 +217,7 @@ void (* AddSysconfItem)(u32 *option, SceSysconfItem **item);
 void (* OnInitMenuPspConfig)();
 
 extern int GetPlugin(char *buf, int size, char *str, int *activated);
-extern int ReadLineStr(char* source, char *str);
+extern int readLine(char* source, char *str);
 extern int utf8_to_unicode(wchar_t *dest, char *src);
 
 u32 sysconf_unk, sysconf_option;
@@ -514,7 +514,7 @@ int LoadTextLanguage(int new_id)
         if (buf_pos >= size) break;
 
         sce_paf_private_memset(line, 0, sizeof(line));
-        int n_read = ReadLineStr(buf+buf_pos, line);
+        int n_read = readLine(buf+buf_pos, line);
         buf_pos += n_read;
 
         if (n_read == 0) break;

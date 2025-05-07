@@ -269,6 +269,7 @@ char * strtrim(char * text)
 }
 
 // Read Line from File Descriptor
+/*
 static char * readLine(int fd, char * buf, unsigned int buflen)
 {
     // Valid Arguments
@@ -322,6 +323,31 @@ static char * readLine(int fd, char * buf, unsigned int buflen)
     
     // Invalid Arguments
     return NULL;
+}
+*/
+
+int readLine(char* source, char *str)
+{
+    u8 ch = 0;
+    int n = 0;
+    int i = 0;
+    while(1)
+    {
+        if( (ch = source[i]) == 0)
+            return n;
+
+        if(ch < 0x20)
+        {
+            if(n != 0)
+                return n;
+        }
+        else
+        {
+            *str++ = ch;
+            n++;
+        }
+        i++;
+    }
 }
 
 // Parse and Process Line
@@ -405,6 +431,22 @@ static int ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler
     // Opened Plugin Config
     if(fd >= 0)
     {
+
+        // allocate buffer in user ram and read entire file
+        int fsize = sceIoLseek(fd, 0, PSP_SEEK_END);
+        sceIoLseek(fd, 0, PSP_SEEK_SET);
+
+        SceUID memid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_Low, fsize+1, NULL);
+        u8* buf = sceKernelGetBlockHeadAddr(memid);
+        if (buf == NULL){
+            sceIoClose(fd);
+            return -1;
+        }
+
+        sceIoRead(fd, buf, fsize);
+        sceIoClose(fd);
+        buf[fsize] = 0;
+
         // Allocate Line Buffer
         char * line = (char *)oe_malloc(LINE_BUFFER_SIZE);
         
@@ -412,8 +454,10 @@ static int ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler
         if(line != NULL)
         {
             // Read Lines
-            while(readLine(fd, line, LINE_BUFFER_SIZE) != NULL)
+            int nread = 0;
+            while ((nread=readLine(buf, line))>0)
             {
+                buf += nread;
                 if (line[0] == 0) continue; // empty line
                 // Process Line
                 processLine(strtrim(line), enabler, disabler);
@@ -422,9 +466,10 @@ static int ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler
             // Free Buffer
             oe_free(line);
         }
+
+        sceKernelFreePartitionMemory(memid);
         
         // Close Plugin Config
-        sceIoClose(fd);
         return 0;
     }
     return -1;
