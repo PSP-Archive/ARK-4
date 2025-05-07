@@ -403,6 +403,7 @@ static void findAllTranslatableStrings(){
     sce_paf_private_memset(language_strings, 0, sizeof(language_strings));
     n_translated = 0;
 
+    language_strings[n_translated++].orig = "xmbmsg_system_update";
     language_strings[n_translated++].orig = "xmbmsgtop_sysconf_configuration";
     language_strings[n_translated++].orig = "xmbmsgtop_sysconf_plugins";
     language_strings[n_translated++].orig = "xmbmsgtop_custom_launcher";
