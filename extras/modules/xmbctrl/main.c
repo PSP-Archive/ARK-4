@@ -513,7 +513,6 @@ int LoadTextLanguage(int new_id)
     {
         if (buf_pos >= size) break;
 
-        sce_paf_private_memset(line, 0, sizeof(line));
         int n_read = readLine(buf+buf_pos, line);
         buf_pos += n_read;
 
