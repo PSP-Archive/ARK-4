@@ -22,10 +22,10 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
-    char* options[18];
+    char* options[19];
 } language = {
     "Language",
-    18,
+    19,
     0,
     &language_selection,
     {
@@ -47,6 +47,7 @@ static struct {
         "Chinese (Simp.)",
         "Polski",
         "Ellhnika",
+        "Türk"
         //"Thai",
     }
 };

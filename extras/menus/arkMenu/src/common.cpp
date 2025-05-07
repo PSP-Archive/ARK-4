@@ -92,7 +92,8 @@ static char* lang_files[] = {
     "cht",
     "chs",
     "pol",
-    "latgr"
+    "latgr",
+    "tr",
     //"grk",
     //"thai",
 };
