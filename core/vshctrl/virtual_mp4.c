@@ -21,7 +21,6 @@ static SceUID video_dd = -1;
 static SceUID isovideo_fd = -1;
 static u8* icon_data = NULL;
 static int icon_size = 0;
-static char iso_launched[128] = {0};
 
 // Controller data
 extern SceCtrlData *last_control_data;
@@ -130,20 +129,6 @@ static int user_input(){
     return 0;
 }
 
-int videoMpegCreate(void* Mpeg, void* pData, int iSize, void* Ringbuffer, int iFrameWidth, int iUnk1, int iUnk2)
-{
-    if (iso_launched[0]){
-        launch_umdvideo_mount(iso_launched); // launch ISO file
-    }
-
-    // passthrough
-    int (*_sceMpegCreate)(void* Mpeg, void* pData, int iSize, void* Ringbuffer, int iFrameWidth, int iUnk1, int iUnk2);
-    _sceMpegCreate = sctrlHENFindFunction("sceMpegVsh_library", "sceMpeg", 0xD8C5F121);
-    if (!_sceMpegCreate) _sceMpegCreate = sctrlHENFindFunction("sceMpeg_library", "sceMpeg", 0xD8C5F121);
-
-    return _sceMpegCreate(Mpeg, pData, iSize, Ringbuffer, iFrameWidth, iUnk1, iUnk2);
-}
-
 // sceIoOpen for Video ISO
 SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
     SceUID res = sceIoOpen(file, flags, mode); // passthrough
@@ -162,10 +147,9 @@ SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
                 if (sceIoGetstat(isopath, &stat)>=0){ // ISO file exists
                     res = FAKE_UID_XMB_VIDEO_ISO; // adjust error value with fake uid
                     file_pos = 0; // reset file position
-                    iso_launched[0] = 0;
                     // super nasty solution for detecting that you are trying to play a Video ISO file
                     if (user_input()){
-                        strcpy(iso_launched, isopath); // remember ISO file
+                        launch_umdvideo_mount(isopath); // launch ISO file
                     }
                     // read icon0.png from the ISO to make it viable in the XMB
                     readIconFromISO(isopath);
@@ -284,7 +268,6 @@ int videoIoClose(SceUID fd){
         return sceIoClose(fd);
 
     file_pos = 0; // reset file position
-    iso_launched[0] = 0;
 
     // free icon data
     if (icon_data){

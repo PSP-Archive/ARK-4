@@ -330,10 +330,6 @@ static void patch_msvideo_main_plugin_module(SceModule2* mod)
             patches--;
         }
     }
-
-    // to mount video iso
-    extern int videoMpegCreate();
-    hookImportByNID(mod, "sceMpeg", 0xD8C5F121, videoMpegCreate);
 }
 
 int umdLoadExec(char * file, struct SceKernelLoadExecVSHParam * param)
