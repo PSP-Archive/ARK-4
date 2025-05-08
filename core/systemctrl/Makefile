@@ -33,6 +33,8 @@ OBJS = \
 	src/msstor_cache.o \
 	src/threadman.o \
 	src/setlongjmp.o \
+	debug/exception.o \
+	debug/exception_asm.o \
 	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/libs/ansi-c/lowerstring.o \
 	$(ARKROOT)/libs/ansi-c/strcasecmp.o \
@@ -63,12 +65,11 @@ USE_KERNEL_LIBS=1
 
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsemaphore
+LIBS = -lpspsemaphore -lcolordebugger -lgraphics
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
-OBJS += debug/exception.o debug/exception_asm.o debug/printk.o debug/jumper.o
-LIBS += -lcolordebugger -lgraphics
+OBJS += debug/printk.o debug/jumper.o
 else
 OBJS += debug/dummy.o
 endif

@@ -24,5 +24,4 @@ void installJALTrace(unsigned int address){}
 void installMemoryJALTrace(unsigned int start, unsigned int size){}
 void installModuleJALTrace(SceModule2 * module){}
 void dumpJAL(unsigned int target, unsigned int ra, unsigned int result){}
-void registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * regs){}
 #endif

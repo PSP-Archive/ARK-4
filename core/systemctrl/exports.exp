@@ -211,7 +211,6 @@ PSP_EXPORT_FUNC(dumpJAL)
 PSP_EXPORT_FUNC(installJALTrace)
 PSP_EXPORT_FUNC(installMemoryJALTrace)
 PSP_EXPORT_FUNC(installModuleJALTrace)
-PSP_EXPORT_FUNC(registerExceptionHandler)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS

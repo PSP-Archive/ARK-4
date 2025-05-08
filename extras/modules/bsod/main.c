@@ -8,11 +8,9 @@
 #include <string.h>
 #include <ark.h>
 
-PSP_MODULE_INFO("BlueScreenOfDeath", 0x1007, 1, 0);
+PSP_MODULE_INFO("BlueScreenOfDeath", 0x3007, 1, 0);
 
-extern void registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * regs);
-
-ARKConfig* ark_config = NULL;
+extern int registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * regs);
 
 // for screen debugging
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
@@ -34,14 +32,20 @@ int OnModuleStart(SceModule2* mod){
 
 int module_start(){
 
-    // get ARK Config
-    ark_config = sctrlHENGetArkConfig(NULL);
+    // flash green screen
+    _sw(0x44000000, 0xBC800100);
+    colorDebug(0xFF00);
 
     // Register Default Exception Handler
-    registerExceptionHandler(NULL, NULL);
+    if (registerExceptionHandler(NULL, NULL) < 0)
+        colorDebug(0xFF); // red color on init error
 
-    // Register module handler
-    previous = sctrlHENSetStartModuleHandler(OnModuleStart);
+    DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
+
+    if (!DisplaySetFrameBuf){ // can't use this function now?
+        // Register module handler, see if we can find it later
+        previous = sctrlHENSetStartModuleHandler(OnModuleStart);
+    }
 
     return 0;
 }

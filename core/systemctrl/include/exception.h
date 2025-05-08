@@ -22,7 +22,7 @@
 #include <pspdebug.h>
 
 // Register Exception Handler
-void registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * regs);
+int registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * regs);
 
 #endif
 
