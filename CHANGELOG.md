@@ -6,6 +6,56 @@
 - Can now install `cIPL` on all `PSP` models.
 - Added `FinalSpeed` for easier access to `Live` installations.
 
+#### Rev 179 - Ahab
+- https://github.com/PSP-Archive/ARK-4/releases/tag/rev179
+- General improvements and fixes.
+
+#### Rev 178 - Frank
+- https://github.com/PSP-Archive/ARK-4/releases/tag/rev178
+- Refactor and improve XMB Control translations.
+
+#### Rev 177 - Jack:
+- https://github.com/PSP-Archive/ARK-4/releases/tag/rev177
+- ???
+
+#### Rev 176 - John:
+- https://github.com/PSP-Archive/ARK-4/releases/tag/rev176
+- Cleanup and refactor.
+
+#### Rev 175 - George:
+- https://github.com/PSP-Archive/ARK-4/releases/tag/rev175
+- Small fixes and improvements.
+
+#### Rev 174 - David:
+- https://github.com/PSP-Archive/ARK-4/releases/tag/rev174
+- Fixed issues introduced by Eli.
+
+#### Rev 173 - Eli:
+- https://github.com/PSP-Archive/ARK-4/releases/tag/rev173
+- Fixed Inferno Bug on PSP Go with no ms0.
+
+#### Rev 170-172:
+- https://github.com/PSP-Archive/ARK-4/releases/tag/rev172
+- UMD Video ISO now show up as video files in the XMB, with corresponding icons.
+
+#### Rev 166-168:
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r168
+- Added UMD Delay.
+- Fixes.
+
+#### Rev 165:
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r165
+- Added `Dead ef0` mod for PSP Go.
+
+#### Rev 164:
+- https://github.com/PSP-Archive/ARK-4/releases/tag/r164
+- ISO is now treated as PSN EBOOT in XMB.
+
+#### Rev 160-163: Unexpected Release
+- https://github.com/PSP-Archive/ARK-4/releases/tag/rev160
+- Added WPA2.
+- Refactor and improvement of CFW Settings.
+
 #### Rev 155
 - Stability Fix for POPS with not normal icons
 - Stargate bug fix ( Thanks again @meetpatty )
