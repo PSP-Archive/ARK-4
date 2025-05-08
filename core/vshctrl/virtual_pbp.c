@@ -126,6 +126,10 @@ static int is_iso(SceIoDirent * dir)
         return 0;
     }
 
+    if (dir->d_name[0] == '.' && dir->d_stat.st_size < 0x8000){ // MacOS hidden file
+        return 0;
+    }
+
     //grab extension
     char * ext = dir->d_name + strlen(dir->d_name) - 4;
 
