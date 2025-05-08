@@ -34,8 +34,6 @@ extern "C" int sceKernelSetCompiledSdkVersion(int version);
 
 int main(int argc, char** argv){
 
-    _sw(0, 0);
-
     sceKernelSetCompiledSdkVersion(FW_660);
 
     // make malloc/free threadsafe
