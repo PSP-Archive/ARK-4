@@ -42,8 +42,15 @@ as well as unique and exclusive new features not found anywhere else.
 ![CFW Settings](.github/screenshots/cfw_settings.bmp "CFW Settings")
 ![cIPL](https://github.com/PSP-Archive/ARK-4/wiki/.res/system_settings.bmp "System Info")
 
-#### Installation On PSP
-  
+#### Installation from Custom Firmware
+- If PRO or ME is already installed.
+- Install DC-ARK (see bellow).
+- Install New cIPL (see bellow).
+- PowerOff console and power it back on while holding L button.
+- Use DC to do a fresh and full install of 6.61 ARK.
+
+#### Installation from Official Firmware
+- If no custom firmware is installed (PSP is original).
 - Copy `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Copy `ARK_Loader` folder into `/PSP/GAME/` folder.
 - Launch `ARK Loader`. It will install ARK modules on PSP Flash and boot the CFW.
