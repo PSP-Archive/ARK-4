@@ -82,20 +82,16 @@ int readLine(char* source, char *str)
             *str = 0;
             return n;
         }
-
+        n++; i++;
         if(ch < 0x20)
         {
-            if(n != 0){
-                *str = 0;
-                return n;
-            }
+            *str = 0;
+            return n;
         }
         else
         {
             *str++ = ch;
-            n++;
         }
-        i++;
     }
 }
 
