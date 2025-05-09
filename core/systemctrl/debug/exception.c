@@ -37,9 +37,7 @@ PspDebugErrorHandler curr_handler = NULL;
 PspDebugRegBlock * exception_regs = NULL;
 
 // ASM Exception Handler Payload
-//extern void _pspDebugExceptionHandler(void);
-void psplinkDefaultExHandler(void);
-void psplinkDebugExHandler(void);
+extern void _pspDebugExceptionHandler(void);
 
 // Bluescreen Register Snapshot
 static PspDebugRegBlock cpuRegs;
