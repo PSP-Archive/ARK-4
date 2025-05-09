@@ -138,7 +138,7 @@ void reset_ark_settings(vsh_Menu *vsh){
         sceIoRemove(arkSettingsPath);
         sceKernelDelayThread(8000);
         int settings_file = sceIoOpen(arkSettingsPath, PSP_O_CREAT | PSP_O_WRONLY, 0777);
-        sceIoWrite(settings_file, settings, sizeof(settings));
+        sceIoWrite(settings_file, settings, sizeof(settings)-1);
         sceKernelDelayThread(8000);
         sceIoClose(settings_file);
 
