@@ -9,7 +9,7 @@
 #include <ark.h>
 #include "graphics.h"
 
-PSP_MODULE_INFO("BlueScreenOfDeath", 0x3007, 1, 0);
+PSP_MODULE_INFO("BlueScreenOfDeath", 0, 1, 0);
 
 extern int registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * regs);
 
