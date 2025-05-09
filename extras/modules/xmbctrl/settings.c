@@ -190,8 +190,12 @@ void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*), void
             while ((nread=readLine(buf+total_read, line))>0)
             {
                 total_read += nread;
-                if (line[0] == 0) continue; // empty line
                 char* dupline = vsh_malloc(strlen(line)+1);
+                if (line[0] == 0) {
+                    strcpy(dupline, "\n");
+                    process_custom(dupline);
+                    continue; // empty line
+                }
                 strcpy(dupline, line);
                 // Process Line
                 if (processLine(strtrim(line), process_line)){
