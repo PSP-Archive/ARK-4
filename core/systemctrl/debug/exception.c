@@ -23,11 +23,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <systemctrl.h>
-#include <systemctrl_private.h>
 #include "imports.h"
 #include "exception.h"
 #include "graphics.h"
 #include "macros.h"
+
+extern int (* DisplaySetFrameBuf)(void*, int, int, int);
 
 // Exception Handler
 PspDebugErrorHandler curr_handler = NULL;
@@ -66,8 +67,8 @@ static const unsigned char regName[32][5] =
 // Bluescreen Exception Handler
 static void ARKExceptionHandler(PspDebugRegBlock * regs)
 {
-    _sw(0x44000000, 0xBC800100);
-    initScreen(NULL);
+    initScreen(DisplaySetFrameBuf);
+    if (DisplaySetFrameBuf == NULL) _sw(0x44000000, 0xBC800100);
     colorDebug(0xFF0000); // Blue Screen of Death
     PRTSTR("Exception caught!");
     PRTSTR1("Exception - %s", codeTxt[(regs->cause >> 2) & 31]);
@@ -75,6 +76,7 @@ static void ARKExceptionHandler(PspDebugRegBlock * regs)
     PRTSTR1("Cause     - %p", regs->cause);
     PRTSTR1("Status    - %p", regs->status);
     PRTSTR1("BadVAddr  - %p", regs->badvaddr);
+    while (1){};
     for(int i = 0; i < 32; i+=4){
         PRTSTR8("%s:%p %s:%p %s:%p %s:%p", regName[i], regs->r[i],
                 regName[i+1], regs->r[i+1], regName[i+2], regs->r[i+2], regName[i+3], regs->r[i+3]);
@@ -128,10 +130,13 @@ static void ARKExceptionHandler(PspDebugRegBlock * regs)
 // Register Exception Handler
 int registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * regs)
 {
+    int res = 0;
 
     curr_handler = (handler)? handler : &ARKExceptionHandler;
     exception_regs = (regs)? regs : &cpuRegs;
     
     // Register Exception Handler
-    return sceKernelRegisterDefaultExceptionHandler((void *)_pspDebugExceptionHandler);
+    res = sceKernelRegisterDefaultExceptionHandler(_pspDebugExceptionHandler);
+
+    return res;
 }

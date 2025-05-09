@@ -51,6 +51,7 @@ void cls()
 
 void initScreen(int (*DisplaySetFrameBuf)(void*, int, int, int))
 {
+    initColorDebug();
     if(DisplaySetFrameBuf != NULL){
         DisplaySetFrameBuf((void *)0x04000000, 512, PSP_DISPLAY_PIXEL_FORMAT_8888, 1);
     }

@@ -459,12 +459,6 @@ int main()
         ErrorExit(5000,"FW ERROR! Use on 6.60 or 6.61 only.\n");
     }
 
-    // check if running infinity
-    SceModule2 infinity_mod;
-    if (kuKernelFindModuleByName("InfinityControl", &infinity_mod) == 0){
-        ErrorExit(5000, "ERROR: uninstall Infinity first!");
-    }
-
     kpspident = pspSdkLoadStartModule("kpspident.prx", PSP_MEMORY_PARTITION_KERNEL);
 
     if (kpspident < 0) {

@@ -26,4 +26,4 @@ PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build_prx.mak
 
 clean:
-	$(Q)rm -f *.bin *.elf *.prx *.o
+	$(Q)rm -f *.bin *.elf *.prx *.o $(ARKROOT)/core/systemctrl/debug/*.o

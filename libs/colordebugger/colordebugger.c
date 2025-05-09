@@ -26,6 +26,10 @@ u32* g_vram_base = (u32*)0x44000000;
 // screen handler (for psx)
 void (*screen_handler)(u32 vram) = NULL;
 
+void initColorDebug(){
+    screen_handler = NULL;
+}
+
 // Framebuffer Painter (for debugging)
 void colorDebug(u32 color)
 {
