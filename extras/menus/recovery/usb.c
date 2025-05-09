@@ -41,14 +41,12 @@ static void start_psp_usb(){
         sceKernelStartModule(mid, 0, NULL, NULL, NULL);
     }
 
-    if(se_config.usbdevice != 0) {
-        int (*pspUsbDeviceSetDevice)(int, int, int) = sctrlHENFindFunction("pspUsbDev_Driver", "pspUsbDevice_driver", 0xD4D90520);
-        if (pspUsbDeviceSetDevice){
-            struct KernelCallArg args;
-            memset(&args, 0, sizeof(args));
-            args.arg1 = se_config.usbdevice-1;
-            kuKernelCall(pspUsbDeviceSetDevice, &args);
-        }
+    int (*pspUsbDeviceSetDevice)(int, int, int) = sctrlHENFindFunction("pspUsbDev_Driver", "pspUsbDevice_driver", 0xD4D90520);
+    if (pspUsbDeviceSetDevice){
+        struct KernelCallArg args;
+        memset(&args, 0, sizeof(args));
+        args.arg1 = se_config.usbdevice-1;
+        kuKernelCall(pspUsbDeviceSetDevice, &args);
     }
 
     sceUsbStart(PSP_USBBUS_DRIVERNAME, 0, 0);
