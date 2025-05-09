@@ -105,6 +105,7 @@ copy-bin:
 	$(Q)cp extras/modules/idsregeneration/idsregeneration.prx dist/ARK_01234/IDSREG.PRX # idsregeneration
 	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
 	$(Q)cp extras/modules/peops/peops.prx dist/ARK_01234/PS1SPU.PRX
+	$(Q)cp extras/modules/bsod/kernel/bsod.prx dist/ARK_01234/BSOD.PRX # Blue Screen of Death debugger
 	$(Q)cp extras/menus/recovery/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/arkMenu/LANG.ARK dist/ARK_01234/LANG.ARK # Translations

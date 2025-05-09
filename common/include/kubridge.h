@@ -128,6 +128,16 @@ int kuKernelGetModel(void);
 int kuKernelFindModuleByName(char *modname, SceModule2 *mod);
 
 /**
+ * Find module by arbitrary memory address
+ *
+ * @param modname - Memory address somwhere inside the module
+ * @param mod - module structure for output (actually treated as SceModule2)
+ *
+ * @return < 0 on error
+ */
+int kuKernelFindModuleByAddress(void *addr, SceModule2 *mod);
+
+/**
  * Invalidate the entire instruction cache
  */
 void kuKernelIcacheInvalidateAll(void);

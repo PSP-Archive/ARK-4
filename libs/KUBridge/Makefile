@@ -22,6 +22,7 @@ OBJS = \
 	KUBridge_0016.o \
 	KUBridge_0017.o \
 	KUBridge_0018.o \
+	KUBridge_0019.o \
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 

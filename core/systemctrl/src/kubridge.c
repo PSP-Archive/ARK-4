@@ -242,6 +242,25 @@ int kuKernelFindModuleByName(char *modname, SceModule2 *mod)
     return 0;
 }
 
+int kuKernelFindModuleByAddress(void *addr, SceModule2 *mod)
+{
+    SceModule2 *pmod;
+
+    if(addr == NULL || mod == NULL) {
+        return -1;
+    }
+
+    pmod = (SceModule2*) sceKernelFindModuleByAddress(addr);
+
+    if(pmod == NULL) {
+        return -2;
+    }
+
+    memcpy(mod, pmod, sizeof(*pmod));
+    
+    return 0;
+}
+
 int kuKernelCall(void *func_addr, struct KernelCallArg *args)
 {
     u32 k1, level;

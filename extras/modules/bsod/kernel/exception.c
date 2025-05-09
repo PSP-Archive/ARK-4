@@ -15,38 +15,25 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
-#include <pspkernel.h>
-#include <pspiofilemgr.h>
-#include <pspdisplay.h>
-#include <pspctrl.h>
-#include <psppower.h>
-#include <stdio.h>
-#include <string.h>
-#include <systemctrl.h>
-#include "imports.h"
-#include "exception.h"
-#include "graphics.h"
-#include "macros.h"
-
-extern int (* DisplaySetFrameBuf)(void*, int, int, int);
-
-// Exception Handler
-PspDebugErrorHandler curr_handler = NULL;
-
-// Register Snapshot
-PspDebugRegBlock * exception_regs = NULL;
-
-// ASM Exception Handler Payload
-//extern void _pspDebugExceptionHandler(void);
-void psplinkDefaultExHandler(void);
-void psplinkDebugExHandler(void);
-
-// Bluescreen Register Snapshot
-static PspDebugRegBlock cpuRegs;
-
-// Exception Code String Literals
-static const char * codeTxt[32] =
-{
+ #include <pspkernel.h>
+ #include <pspiofilemgr.h>
+ #include <pspdisplay.h>
+ #include <pspctrl.h>
+ #include <psppower.h>
+ #include <stdio.h>
+ #include <string.h>
+ #include <systemctrl.h>
+ #include <kubridge.h>
+ #include "imports.h"
+ #include "exception.h"
+ #include "graphics.h"
+ #include "macros.h"
+ 
+ extern int (* DisplaySetFrameBuf)(void*, int, int, int);
+ 
+ // Exception Code String Literals
+ static const char * codeTxt[32] =
+ {
     "Interrupt", "TLB modification", "TLB load/inst fetch", "TLB store",
     "Address load/inst fetch", "Address store", "Bus error (instr)",
     "Bus error (data)", "Syscall", "Breakpoint", "Reserved instruction",
@@ -55,22 +42,21 @@ static const char * codeTxt[32] =
     "Unknown 20", "Unknown 21", "Unknown 22", "Unknown 23", "Unknown 24",
     "Unknown 25", "Unknown 26", "Unknown 27", "Unknown 28", "Unknown 29",
     "Unknown 31"
-};
-
-// Register String Literals
-static const unsigned char regName[32][5] =
-{
+ };
+ 
+ // Register String Literals
+ static const unsigned char regName[32][5] =
+ {
     "zr", "at", "v0", "v1", "a0", "a1", "a2", "a3",
     "t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7",
     "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7",
     "t8", "t9", "k0", "k1", "gp", "sp", "fp", "ra"
-};
-
-// Bluescreen Exception Handler
-static void ARKExceptionHandler(PspDebugRegBlock * regs)
-{
+ };
+ 
+ // Bluescreen Exception Handler
+ void BlueScreenOfDeathHandler(PspDebugRegBlock * regs)
+ {
     initScreen(DisplaySetFrameBuf);
-    //if (DisplaySetFrameBuf == NULL) _sw(0x44000000, 0xBC800100);
     colorDebug(0xFF0000); // Blue Screen of Death
     PRTSTR("Exception caught!");
     PRTSTR1("Exception - %s", codeTxt[(regs->cause >> 2) & 31]);
@@ -91,6 +77,7 @@ static void ARKExceptionHandler(PspDebugRegBlock * regs)
             PRTSTR2("From Module: %s @ %p", mod->modname, epc-mod->text_addr);
         }
     }
+    
     u32 ra = regs->r[31];
     {        
         SceModule2* mod = sceKernelFindModuleByAddress(ra);
@@ -99,46 +86,8 @@ static void ARKExceptionHandler(PspDebugRegBlock * regs)
             PRTSTR2("From Module: %s @ %p", mod->modname, ra-mod->text_addr);
         }
     }
-    
-    // present user menu for recovery options
-    int (*CtrlPeekBufferPositive)(SceCtrlData *, int) = (void *)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x3A622550);
-    if (CtrlPeekBufferPositive){
-        PRTSTR("Press cross to soft reset");
-        PRTSTR("Press square to hard reset");
-        PRTSTR("Press triangle to shudown");
-    }
 
-    // await user input
-    SceCtrlData data;
-    memset(&data, 0, sizeof(data));
-    while (1){
-        if (CtrlPeekBufferPositive){
-            CtrlPeekBufferPositive(&data, 1);
-            if((data.Buttons & PSP_CTRL_CROSS) == PSP_CTRL_CROSS){
-                sctrlKernelExitVSH(NULL);
-            }
-            else if((data.Buttons & PSP_CTRL_SQUARE) == PSP_CTRL_SQUARE){
-                void (*ColdReset)(int) = sctrlHENFindFunction("scePower_Service", "scePower", 0x0442D852);
-                if (ColdReset) ColdReset(0);
-            }
-            else if((data.Buttons & PSP_CTRL_TRIANGLE) == PSP_CTRL_TRIANGLE){
-                void (*Shutdown)() = sctrlHENFindFunction("scePower_Service", "scePower", 0x2B7C7CF4);
-                if (Shutdown) Shutdown();
-            }
-        }
-    };
-}
-
-// Register Exception Handler
-int registerExceptionHandler(PspDebugErrorHandler handler, PspDebugRegBlock * regs)
-{
-    int res = 0;
-
-    curr_handler = (handler)? handler : &ARKExceptionHandler;
-    exception_regs = (regs)? regs : &cpuRegs;
-    
-    // Register Exception Handler
-    res = sceKernelRegisterDefaultExceptionHandler(_pspDebugExceptionHandler);
-
-    return res;
-}
+    while (1){};
+ }
+ 
+ 

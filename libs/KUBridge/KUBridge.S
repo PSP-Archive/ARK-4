@@ -51,14 +51,17 @@
 	IMPORT_FUNC  "KUBridge",0x4B321167,kuKernelFindModuleByName
 #endif
 #ifdef F_KUBridge_0015
-	IMPORT_FUNC  "KUBridge",0x9060F69D,kuKernelCall
+	IMPORT_FUNC  "KUBridge",0xCC5F0398,kuKernelFindModuleByAddress
 #endif
 #ifdef F_KUBridge_0016
-	IMPORT_FUNC  "KUBridge",0x5C6C3DBA,kuKernelCallExtendStack
+	IMPORT_FUNC  "KUBridge",0x9060F69D,kuKernelCall
 #endif
 #ifdef F_KUBridge_0017
-	IMPORT_FUNC  "KUBridge",0x219DE4D2,kuKernelIcacheInvalidateAll
+	IMPORT_FUNC  "KUBridge",0x5C6C3DBA,kuKernelCallExtendStack
 #endif
 #ifdef F_KUBridge_0018
+	IMPORT_FUNC  "KUBridge",0x219DE4D2,kuKernelIcacheInvalidateAll
+#endif
+#ifdef F_KUBridge_0019
 	IMPORT_FUNC  "KUBridge",0x501E983D,kuKernelInitMode
 #endif
