@@ -43,7 +43,8 @@ as well as unique and exclusive new features not found anywhere else.
 ![cIPL](https://github.com/PSP-Archive/ARK-4/wiki/.res/system_settings.bmp "System Info")
 
 #### Installation from Custom Firmware
-- If PRO or ME is already installed.
+- If 6.61 PRO or ME is already installed.
+- For any earlier CFW, update to latest 6.61 update and use instructions for Official Firmware.
 - Install DC-ARK (see bellow).
 - Install New cIPL (see bellow).
 - PowerOff console and power it back on while holding L button.
