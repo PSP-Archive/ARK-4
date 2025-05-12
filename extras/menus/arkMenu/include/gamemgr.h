@@ -106,6 +106,7 @@ class GameManager : public SystemEntry{
         void control(Controller* pad);
         
         void pause(){
+            while (selectedCategory == -1) sceKernelDelayThread(10000);
             for (int i=MAX_CATEGORIES; i>=0; i--){
                 this->maxDraw = i;
                 sceKernelDelayThread(60000);
