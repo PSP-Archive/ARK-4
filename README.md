@@ -44,7 +44,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 #### Installation from Custom Firmware
 - If 6.61 PRO or ME is already installed.
-- For any earlier CFW, update to latest 6.61 update and use instructions for Official Firmware.
+- For any earlier CFW, update to latest 6.61 firmware and use instructions below for Official Firmware.
 - Install DC-ARK (see bellow).
 - Install New cIPL (see bellow).
 - PowerOff console and power it back on while holding L button.
