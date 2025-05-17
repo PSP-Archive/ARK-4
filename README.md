@@ -13,7 +13,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 ### Table of Contents (Quick Links)
   * [FEATURES:](#features)
-  * [Installation on PSP](#Installation-on-PSP)
+  * [Installation on PSP](#installation-on-psp)
   * [Installation on PS Vita](#installation-on-ps-vita)
   * [Changelog](#changelog)
   * [Warnings](#warnings)
@@ -42,7 +42,9 @@ as well as unique and exclusive new features not found anywhere else.
 ![CFW Settings](.github/screenshots/cfw_settings.bmp "CFW Settings")
 ![cIPL](https://github.com/PSP-Archive/ARK-4/wiki/.res/system_settings.bmp "System Info")
 
-#### Installation from Custom Firmware
+#### Installation On PSP
+
+##### Installation from Custom Firmware
 - If 6.61 PRO or ME is already installed.
 - For any earlier CFW, update to latest 6.61 firmware and use instructions below for Official Firmware.
 - Install DC-ARK (see bellow).
@@ -50,7 +52,7 @@ as well as unique and exclusive new features not found anywhere else.
 - PowerOff console and power it back on while holding L button.
 - Use DC to do a fresh and full install of 6.61 ARK.
 
-#### Installation from Official Firmware
+##### Installation from Official Firmware
 - If no custom firmware is installed (PSP is original).
 - Copy `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
 - Copy `ARK_Loader` folder into `/PSP/GAME/` folder.
