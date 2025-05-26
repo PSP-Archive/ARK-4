@@ -205,14 +205,42 @@ static void drawOptionsMenuCommon(){
     }
 }
 
+
 static void drawDateTime() {
     pspTime date;
     sceRtcGetCurrentClockLocalTime(&date);
+    // what the fuck is a kilometer!!1!
+    int dateFormat = PSP_SYSTEMPARAM_DATE_FORMAT_YYYYMMDD;
+    int result = sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_DATE_FORMAT, &dateFormat);
 
-    char dateStr[20];
-    snprintf(dateStr, 20, "%04d/%02d/%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
+    if (result != 0) {
+        dateFormat = PSP_SYSTEMPARAM_DATE_FORMAT_YYYYMMDD;
+    }
+
+    char dateStr[24];
+
+    switch (dateFormat) {
+        case PSP_SYSTEMPARAM_DATE_FORMAT_MMDDYYYY:
+            snprintf(dateStr, sizeof(dateStr), "%02d/%02d/%04d %02d:%02d:%02d", 
+                    date.month, date.day, date.year, date.hour, date.minutes, date.seconds);
+            break;
+        case PSP_SYSTEMPARAM_DATE_FORMAT_DDMMYYYY:
+	    // ratang!
+            snprintf(dateStr, sizeof(dateStr), "%02d/%02d/%04d %02d:%02d:%02d", 
+                    date.day, date.month, date.year, date.hour, date.minutes, date.seconds);
+            break;
+        case PSP_SYSTEMPARAM_DATE_FORMAT_YYYYMMDD:
+        default:
+            snprintf(dateStr, sizeof(dateStr), "%04d/%02d/%02d %02d:%02d:%02d", 
+                    date.year, date.month, date.day, date.hour, date.minutes, date.seconds);
+            break;
+    }
+
     int x = 445 - common::calcTextWidth(dateStr, SIZE_MEDIUM, 0);
-    if (common::getConf()->battery_percent) x -= common::calcTextWidth("-100%", SIZE_MEDIUM, 0);
+    if (common::getConf()->battery_percent) {
+        x -= common::calcTextWidth("-100%", SIZE_MEDIUM, 0);
+    }
+    
     common::printText(x, 13, dateStr, LITEGRAY, SIZE_MEDIUM, 0, 0, 0);
 }
 
