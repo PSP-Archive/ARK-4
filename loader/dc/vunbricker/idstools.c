@@ -256,9 +256,21 @@ int idscreate_thread(SceSize args, void *argp)
     {
         region = 3;
     }
-    else
+    else if (selectedregion == 2)
     {
         region = 4;
+    }
+    else if (selectedregion == 3)
+    {
+        region = 9;
+    }
+	else if (selectedregion == 4)
+    {
+        region = 10;
+    }
+	else
+	{
+        region = 12;
     }
 
     dcSetCancelMode(1);    
@@ -372,6 +384,7 @@ int idscreate_thread(SceSize args, void *argp)
     {
         IdsCreateError("Certificates verification failed (0x%08X).", res);
     }
+	
 
     sceKernelDelayThread(2500000);
     SetProgress(28, 1);
@@ -432,11 +445,24 @@ int idscreate_thread(SceSize args, void *argp)
         IdsCreateError("Error in idsRegenerationGetSerialKey.");
     }
 
-    res = dcIdStorageWriteLeaf(0x0050, big_buffer);
-    if (res < 0)
-    {
-        IdsCreateError("Error 0x%08X writing key 0x0050.", res);
-    }
+    
+	res = idsRegenerationGetBTLeaf50(big_buffer);
+	if( res > 0)
+	{
+
+		res = dcIdStorageWriteLeaf(0x0050, big_buffer);
+		if( res < 0) {
+        	IdsCreateError("Error 0x%08X writing key 0x%04X.", res, 0x0050);
+		}
+	}
+	else 
+	{
+		res = dcIdStorageWriteLeaf(0x0050, big_buffer);
+    	if (res < 0)
+    	{
+        	IdsCreateError("Error 0x%08X writing key 0x0050.", res);
+    	}
+	}
 
     sceKernelDelayThread(700000);
     SetProgress(49, 1);
@@ -707,7 +733,11 @@ void PreCreateIdsPage()
     {
         "Europe",
         "Japan",
-        "America"		
+        "America",		
+        "Oceania",
+		"Latin America",
+        "China",
+        "Russia"
     };
 
     char *items[] =
@@ -921,10 +951,27 @@ int changereg_thread(SceSize args, void *argp)
     {
         region = 3;
     }
-    else
+    else if (selectedregion == 2)
     {
         region = 4;
+	}
+    else if(selectedregion == 3)
+    {
+        region = 8;
     }
+    else if(selectedregion == 4)
+    {
+        region = 9;
+    }
+	else if(selectedregion == 5)
+    {
+        region = 10;
+    }
+	else 
+	{
+        region = 12;
+
+	}
 
     dcSetCancelMode(1);    
 
@@ -1015,13 +1062,17 @@ void SelectRegionPage(int nextpage)
     {
         "Europe",
         "Japan",
-        "America"		
+        "America",	
+        "Oceania",
+		"Latin America",
+        "Chinese",
+        "Russian"
     };
 
-    selectreg_text = vlfGuiAddText(240, 60, "Select a region.");
+    selectreg_text = vlfGuiAddText(240, 40, "Select a region.");
     vlfGuiSetTextAlignment(selectreg_text, VLF_ALIGNMENT_CENTER);
 
-    vlfGuiCentralMenu(3, items, selectedregion, NULL, 0, -6);
+    vlfGuiCentralMenu(7, items, selectedregion, NULL, 0, -6);
     vlfGuiBottomDialog(VLF_DI_BACK, (nextpage) ? -1 : VLF_DI_ENTER, 1, 0, VLF_DEFAULT, SelectRegionBD);
 
     if (nextpage)

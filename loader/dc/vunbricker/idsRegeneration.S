@@ -12,6 +12,7 @@
 	STUB_FUNC  0xE37CC2E6,idsRegenerationGetWlanKey
 	STUB_FUNC  0xC44FE956,idsRegenerationGetAudioVolumeSetupKey
 	STUB_FUNC  0xBC42FEED,idsRegenerationGetUsbKeys
+	STUB_FUNC  0x3F014929,idsRegenerationGetBTLeaf50
 	STUB_FUNC  0x3F014928,idsRegenerationGetUnkKey140
 	STUB_FUNC  0x8F7EE9C0,idsRegenerationGetMGKey40
 	STUB_FUNC  0xB9156F27,idsRegenerationGetUnkKeys3X

@@ -26,6 +26,7 @@ int idsRegenerationGenerateCallibrationKey(u8 *buf);
 int idsRegenerationGetUnkKeys5253(u8 *buf);
 int idsRegenerationGetDefaultXMBColorKey(u8 *buf);
 int idsRegenerationCreateCertificatesAndUMDKeys(u8 *buf);
+int idsRegenerationGetBTLeaf50(u8 *buf);
 
 #endif
 

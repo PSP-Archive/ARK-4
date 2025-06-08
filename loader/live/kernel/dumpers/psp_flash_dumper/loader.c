@@ -177,12 +177,11 @@ int copy_folder_recursive(const char * source, const char * destination)
         while(k_tbl->KernelIODread(dir, &entry) > 0)
         {
             //skip . and .. entries
-            if (strcmp(".", entry.d_name) == 0 || strcmp("..", entry.d_name) == 0) 
+            if (!strcmp(".", entry.d_name) || !strcmp("..", entry.d_name)) 
             {
-            //	memset(&entry, 0, sizeof(SceIoDirent));
+                memset(&entry, 0, sizeof(SceIoDirent));
                 continue;
-            }
-            //memset(&entry, 0, sizeof(SceIoDirent));
+            };
 
             char src[255];
             strcpy(src, new_source);
