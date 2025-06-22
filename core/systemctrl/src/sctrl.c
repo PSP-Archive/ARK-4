@@ -371,9 +371,7 @@ int sctrlGzipDecompress(void* dest, void* src, int size){
     return ret;
 }
 
-// EBOOT.PBP Parameter Getter
-int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength, void * paramBuffer)
-{
+int sctrlGetSfoPARAM(const char* sfo_path, const char * paramName, u16 * paramType, u32 * paramLength, void * paramBuffer){
     // Enable Full Kernel Permission for Syscalls
     u32 k1 = pspSdkSetK1(0);
     
@@ -397,25 +395,28 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         return 0x80000104;
     }
 
-    const char * pbpPath = sceKernelInitFileName();
     u32 paramOffset = 0;
-    
-    // Init Filename not found
-    if (pbpPath == NULL)
-    {
-        // Restore Syscall Permissions
-        pspSdkSetK1(k1);
-        
-        // Return Error Code
-        return 0x80010002;
-    }
 
-    if (strncmp(pbpPath, "disc0", 5) == 0){
-        pbpPath = "disc0:/PSP_GAME/PARAM.SFO";
+    if (sfo_path == NULL){
+        sfo_path = sceKernelInitFileName();
+        
+        // Init Filename not found
+        if (sfo_path == NULL)
+        {
+            // Restore Syscall Permissions
+            pspSdkSetK1(k1);
+            
+            // Return Error Code
+            return 0x80010002;
+        }
+
+        if (strncmp(sfo_path, "disc0", 5) == 0){
+            sfo_path = "disc0:/PSP_GAME/PARAM.SFO";
+        }
     }
     
     // Open PBP File
-    int fd = sceIoOpen(pbpPath, PSP_O_RDONLY, 0);
+    int fd = sceIoOpen(sfo_path, PSP_O_RDONLY, 0);
     
     // PBP File not found
     if (fd < 0)
@@ -564,6 +565,12 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
     
     // Return Error Code (we just treat a missing parameter as file not found, it should work)
     return 0x80010002;
+}
+
+// EBOOT.PBP Parameter Getter
+int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength, void * paramBuffer)
+{
+    return sctrlGetSfoPARAM(NULL, paramName, paramType, paramLength, paramBuffer);
 }
 
 int sctrlKernelSetUMDEmuFile(const char *filename)
