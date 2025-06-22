@@ -20,6 +20,7 @@
 #include <systemctrl.h>
 #include <macros.h>
 #include <module2.h>
+#include <ark.h>
 
 #if DEBUG >= 2
 
