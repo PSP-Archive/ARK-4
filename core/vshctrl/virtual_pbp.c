@@ -1094,22 +1094,6 @@ exit:
     return result;
 }
 
-struct FullSceKernelLoadExecVSHParam {
-    SceSize size;
-    SceSize args;
-    void *argp;
-    const char *key;
-    u32 vshmain_args_size;
-    void *vshmain_args;
-    char *configfile;
-    u32 unk4;
-    u32 unk5;
-    u32 sfo_size;
-    void *sfo;
-    u32 reserved;
-};
-
-
 int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
     int ret;
@@ -1125,11 +1109,9 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         return -31;
     }
 
+    // fix vsh args
     u32* vshargp = param->vshmain_args;
     int vshargs = param->vshmain_args_size;
-    struct FullSceKernelLoadExecVSHParam *full_param = (struct FullSceKernelLoadExecVSHParam *)param;
-    memset(param, 0, sizeof(struct SceKernelLoadExecVSHParam));
-    param->size = sizeof(struct FullSceKernelLoadExecVSHParam);
     if (vshargp){
         memset(vshargp, 0, vshargs);
         vshargp[0] = vshargs;
@@ -1137,7 +1119,13 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
         vshargp[16] = 1;
         param->vshmain_args = vshargp;
         param->vshmain_args_size = vshargs;
-	memset((u8 *)full_param->sfo + 0x24, 0, 1);
+    }
+
+    // fix sfo title
+    u32* sfo_field = (u32)param + 36;
+    u8* sfo = (u8*)(sfo_field[1]);
+    if (sfo){
+        sfo[0x24] = 0;
     }
 
     // get ISO path with non-latin1 support
