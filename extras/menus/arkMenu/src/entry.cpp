@@ -188,7 +188,7 @@ bool Entry::isARK(const char* path){
 
 bool Entry::isTXT(const char* path){
     string ext = common::getExtension(path);
-    return (ext == "txt" || ext == "cfg" || ext == "ini");
+    return (ext == "txt" || ext == "cfg" || ext == "ini" || ext == "log" || ext == "py" || ext == "lua");
 }
 
 bool Entry::isIMG(const char* path){
