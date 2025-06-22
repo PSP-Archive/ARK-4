@@ -348,7 +348,7 @@ static void processLine(char * line, void (*enabler)(char*), void (*disabler)(ch
     runlevel = strtrim(runlevel);
     path = strtrim(path);
     enabled = strtrim(enabled);
-    
+
     // Matching Plugin Runlevel
     if(matchingRunlevel(runlevel))
     {

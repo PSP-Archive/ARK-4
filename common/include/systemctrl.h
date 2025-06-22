@@ -104,7 +104,10 @@ unsigned int sctrlKernelRand(void);
 // Register Custom init.prx sceKernelStartModule Handler, returns previous handler (if any)
 void sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt));
 
-// EBOOT.PBP Parameter Getter
+// Read parameter from an SFO file or an EBOOT.PBP file
+int sctrlGetSfoPARAM(const char* sfo_path, const char * paramName, u16 * paramType, u32 * paramLength, void * paramBuffer);
+
+// Get SFO param from currently running game/app
 int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength, void * paramBuffer);
 
 // Find UID of the specified Thread

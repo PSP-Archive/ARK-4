@@ -38,6 +38,9 @@
 #include "imports.h"
 #include "sysmem.h"
 
+// Missing from SDK
+#define PSP_INIT_APITYPE_EF2 0x152
+
 // Load Execute Module via Kernel Internal Function
 int (* _sceLoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int) = NULL;
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
@@ -45,11 +48,24 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct Sce
     // Elevate Permission Level
     unsigned int k1 = pspSdkSetK1(0);
 
+    // obtain game id
+    int n = sizeof(rebootex_config.game_id);
+    memset(rebootex_config.game_id, 0, n);
     if (apitype == PSP_INIT_APITYPE_DISC || apitype == 0x160){
         readGameIdFromDisc();
     }
     else {
-        memset(rebootex_config.game_id, 0, 10);
+        sctrlGetSfoPARAM(file, "DISC_ID", NULL, &n, rebootex_config.game_id);
+    }
+
+    // ef-aware homebrew
+    if (apitype == PSP_INIT_APITYPE_EF2){
+        int psize = sizeof(int);
+        int efaware = 0;
+        if (sctrlGetSfoPARAM(file, "EFAWARE", NULL, &psize, &efaware)>=0 && efaware){
+            apitype = PSP_INIT_APITYPE_MS2;
+            rebootex_config.fake_apitype = PSP_INIT_APITYPE_MS2;
+        }
     }
 
     // Load Execute Module
@@ -88,8 +104,6 @@ int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExec
 
 int sctrlKernelLoadExecVSHEf2(const char *file, struct SceKernelLoadExecVSHParam *param)
 {
-    // Missing from SDK
-    #define PSP_INIT_APITYPE_EF2 0x152
     return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_EF2, file, param);
 }
 
@@ -371,9 +385,7 @@ int sctrlGzipDecompress(void* dest, void* src, int size){
     return ret;
 }
 
-// EBOOT.PBP Parameter Getter
-int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength, void * paramBuffer)
-{
+int sctrlGetSfoPARAM(const char* sfo_path, const char * paramName, u16 * paramType, u32 * paramLength, void * paramBuffer){
     // Enable Full Kernel Permission for Syscalls
     u32 k1 = pspSdkSetK1(0);
     
@@ -397,25 +409,27 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
         return 0x80000104;
     }
 
-    const char * pbpPath = sceKernelInitFileName();
     u32 paramOffset = 0;
-    
-    // Init Filename not found
-    if (pbpPath == NULL)
-    {
-        // Restore Syscall Permissions
-        pspSdkSetK1(k1);
-        
-        // Return Error Code
-        return 0x80010002;
-    }
 
-    if (strncmp(pbpPath, "disc0", 5) == 0){
-        pbpPath = "disc0:/PSP_GAME/PARAM.SFO";
+    if (sfo_path == NULL){
+        sfo_path = sceKernelInitFileName();
+
+        // Init Filename not found
+        if (sfo_path == NULL)
+        {
+            // Restore Syscall Permissions
+            pspSdkSetK1(k1);
+            // Return Error Code
+            return 0x80010002;
+        }
+
+        if (strncmp(sfo_path, "disc0", 5) == 0){
+            sfo_path = "disc0:/PSP_GAME/PARAM.SFO";
+        }
     }
     
     // Open PBP File
-    int fd = sceIoOpen(pbpPath, PSP_O_RDONLY, 0);
+    int fd = sceIoOpen(sfo_path, PSP_O_RDONLY, 0);
     
     // PBP File not found
     if (fd < 0)
@@ -564,6 +578,12 @@ int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength
     
     // Return Error Code (we just treat a missing parameter as file not found, it should work)
     return 0x80010002;
+}
+
+// EBOOT.PBP Parameter Getter
+int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength, void * paramBuffer)
+{
+    return sctrlGetSfoPARAM(NULL, paramName, paramType, paramLength, paramBuffer);
 }
 
 int sctrlKernelSetUMDEmuFile(const char *filename)

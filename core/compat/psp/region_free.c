@@ -306,7 +306,9 @@ static u8 get_pscode_from_region(int region)
         code = 3;
     }
 
+    #if DEBUG >= 3
     printk("%s: region %d code %d\n", __func__, region, code);
+    #endif
 
     return code;
 }

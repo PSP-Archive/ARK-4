@@ -74,7 +74,10 @@ static int get_ISO_longname(char *l_name, const char *s_name, u32 size)
 
     strncpy(prefix, s_name, MIN(p + 1 - s_name, 512));
     prefix[MIN(p + 1 - s_name, 512-1)] = '\0';
+
+    #if DEBUG >= 3
     printk("%s: prefix %s\n", __func__, prefix);
+    #endif
 
     fd = sceIoDopen(prefix);
 
@@ -93,9 +96,10 @@ static int get_ISO_longname(char *l_name, const char *s_name, u32 size)
         			strncpy(l_name, s_name, MIN(p + 1 - s_name, size));
         			l_name[MIN(p + 1 - s_name, size-1)] = '\0';
         			strncat(l_name, dirent->d_name, size);
-        			printk("%s: final %s\n", __func__, l_name);
         			result = 0;
-
+                    #if DEBUG >= 3
+        			printk("%s: final %s\n", __func__, l_name);
+                    #endif
         			break;
         		}
         	}
@@ -103,7 +107,9 @@ static int get_ISO_longname(char *l_name, const char *s_name, u32 size)
 
         sceIoDclose(fd);
     } else {
+        #if DEBUG >= 3
         printk("%s: dopen %s -> 0x%08X\n", __func__, prefix, fd);
+        #endif
         result = -6;
         goto exit;
     }
@@ -128,7 +134,9 @@ int myIoOpen_kernel_chn(char *file, int flag, int mode)
 
         if(ret == 0) {
         	ret = sceIoOpen(filename, flag, mode);
+            #if DEBUG >= 3
         	printk("%s: %s -> 0x%08X\n", __func__, filename, ret);
+            #endif
         }
     }
 

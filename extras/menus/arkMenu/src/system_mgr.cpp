@@ -38,7 +38,7 @@ static int page_start = 0;
 static int volume = 0;
 static int mute = 0;
 static clock_t volume_time = 0;
-//static clock_t mute_time = 0;
+static int dateFormat = PSP_SYSTEMPARAM_DATE_FORMAT_YYYYMMDD;
 
 static int MAX_ENTRIES = 0;
 static SystemEntry** entries = NULL;
@@ -209,13 +209,6 @@ static void drawOptionsMenuCommon(){
 static void drawDateTime() {
     pspTime date;
     sceRtcGetCurrentClockLocalTime(&date);
-    // what the fuck is a kilometer!!1!
-    int dateFormat = PSP_SYSTEMPARAM_DATE_FORMAT_YYYYMMDD;
-    int result = sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_DATE_FORMAT, &dateFormat);
-
-    if (result != 0) {
-        dateFormat = PSP_SYSTEMPARAM_DATE_FORMAT_YYYYMMDD;
-    }
 
     char dateStr[24];
 
@@ -517,6 +510,11 @@ void SystemMgr::initMenu(SystemEntry** e, int ne){
 
     _sceImposeGetParam = (void *)sctrlHENFindFunction("sceImpose_Driver", "sceImpose_driver", 0xDC3BECFF);
     _sceImposeSetParam = (void *)sctrlHENFindFunction("sceImpose_Driver", "sceImpose_driver", 0x3C318569);
+
+    // what the fuck is a kilometer!!1!
+    if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_DATE_FORMAT, &dateFormat) < 0) {
+        dateFormat = PSP_SYSTEMPARAM_DATE_FORMAT_YYYYMMDD;
+    }
 
     stringstream version;
     version << "" << fwmajor << "." << fwminor << fwmicro;
