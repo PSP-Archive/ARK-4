@@ -38,6 +38,9 @@
 #include "imports.h"
 #include "sysmem.h"
 
+// Missing from SDK
+#define PSP_INIT_APITYPE_EF2 0x152
+
 // Load Execute Module via Kernel Internal Function
 int (* _sceLoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int) = NULL;
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param)
@@ -45,6 +48,7 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct Sce
     // Elevate Permission Level
     unsigned int k1 = pspSdkSetK1(0);
 
+    // obtain game id
     int n = sizeof(rebootex_config.game_id);
     memset(rebootex_config.game_id, 0, n);
     if (apitype == PSP_INIT_APITYPE_DISC || apitype == 0x160){
@@ -52,6 +56,16 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct Sce
     }
     else {
         sctrlGetSfoPARAM(file, "DISC_ID", NULL, &n, rebootex_config.game_id);
+    }
+
+    // ef-aware homebrew
+    if (apitype == PSP_INIT_APITYPE_EF2){
+        int psize = sizeof(int);
+        int efaware = 0;
+        if (sctrlGetSfoPARAM(file, "EFAWARE", NULL, &psize, &efaware)>=0 && efaware){
+            apitype = PSP_INIT_APITYPE_MS2;
+            rebootex_config.fake_apitype = PSP_INIT_APITYPE_MS2;
+        }
     }
 
     // Load Execute Module
@@ -90,8 +104,6 @@ int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExec
 
 int sctrlKernelLoadExecVSHEf2(const char *file, struct SceKernelLoadExecVSHParam *param)
 {
-    // Missing from SDK
-    #define PSP_INIT_APITYPE_EF2 0x152
     return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_EF2, file, param);
 }
 
