@@ -45,11 +45,13 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct Sce
     // Elevate Permission Level
     unsigned int k1 = pspSdkSetK1(0);
 
+    int n = sizeof(rebootex_config.game_id);
+    memset(rebootex_config.game_id, 0, n);
     if (apitype == PSP_INIT_APITYPE_DISC || apitype == 0x160){
         readGameIdFromDisc();
     }
     else {
-        memset(rebootex_config.game_id, 0, 10);
+        sctrlGetSfoPARAM(file, "DISC_ID", NULL, &n, rebootex_config.game_id);
     }
 
     // Load Execute Module
@@ -399,13 +401,12 @@ int sctrlGetSfoPARAM(const char* sfo_path, const char * paramName, u16 * paramTy
 
     if (sfo_path == NULL){
         sfo_path = sceKernelInitFileName();
-        
+
         // Init Filename not found
         if (sfo_path == NULL)
         {
             // Restore Syscall Permissions
             pspSdkSetK1(k1);
-            
             // Return Error Code
             return 0x80010002;
         }

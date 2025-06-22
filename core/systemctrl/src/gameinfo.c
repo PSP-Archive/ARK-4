@@ -50,7 +50,7 @@ int readGameIdFromDisc(){
 }
 
 int readGameIdFromPBP(){
-    int n = 10;
+    int n = sizeof(rebootex_config.game_id);
     int res = sctrlGetInitPARAM("DISC_ID", NULL, &n, rebootex_config.game_id);
     if (res < 0) return 0;
     return 1;
@@ -87,11 +87,13 @@ void findGameId(){
     void * (* SysMemForKernel_EF29061C)(void) = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xEF29061C);
     unsigned char * gameinfo = NULL;
 
-    if (sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
-        readGameIdFromISO();
-    }
-    else {
-        readGameIdFromPBP();
+    if (rebootex_config.game_id[0] == 0){
+        if (sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL){
+            readGameIdFromISO();
+        }
+        else {
+            readGameIdFromPBP();
+        }
     }
 
     if (rebootex_config.game_id[0] != 0){
