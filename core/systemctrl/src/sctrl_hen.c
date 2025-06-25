@@ -128,7 +128,7 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler)
     return on_module_start;
 }
 
-static unsigned int FindFunction(char * szMod, char * szLib, unsigned int nid){
+static unsigned int FindFunctionPrivate(char * szMod, char * szLib, unsigned int nid){
     // Find Target Module
     SceModule2 * pMod = (SceModule2 *)sceKernelFindModuleByName(szMod);
     
@@ -184,7 +184,7 @@ static unsigned int FindFunction(char * szMod, char * szLib, unsigned int nid){
 unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid)
 {
 
-    unsigned int res = FindFunction(szMod, szLib, nid);
+    unsigned int res = FindFunctionPrivate(szMod, szLib, nid);
 
     // Function found as is
     if (res != 0) return res;
@@ -201,7 +201,7 @@ unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid)
         nid = getNidReplacement(resolver, nid);
         
         // call again with new nid
-        return FindFunction(szMod, szLib, nid);
+        return FindFunctionPrivate(szMod, szLib, nid);
     }
     
     return 0;
