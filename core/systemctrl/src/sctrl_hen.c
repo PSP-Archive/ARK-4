@@ -128,7 +128,7 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler)
     return on_module_start;
 }
 
-static unsigned int FindFunction(){
+static unsigned int FindFunction(char * szMod, char * szLib, unsigned int nid){
     // Find Target Module
     SceModule2 * pMod = (SceModule2 *)sceKernelFindModuleByName(szMod);
     
