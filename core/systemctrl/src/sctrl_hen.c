@@ -128,19 +128,7 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler)
     return on_module_start;
 }
 
-// Find Function Address
-unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid)
-{
-    // Get NID Resolver
-    NidResolverLib * resolver = getNidResolverLib(szLib);
-    
-    // Found Resolver for Library
-    if(resolver != NULL)
-    {
-        // Resolve NID
-        nid = getNidReplacement(resolver, nid);
-    }
-    
+static unsigned int FindFunction(){
     // Find Target Module
     SceModule2 * pMod = (SceModule2 *)sceKernelFindModuleByName(szMod);
     
@@ -189,6 +177,33 @@ unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid)
     }
     
     // Function not found
+    return 0;
+}
+
+// Find Function Address
+unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid)
+{
+
+    unsigned int res = FindFunction(szMod, szLib, nid);
+
+    // Function found as is
+    if (res != 0) return res;
+
+    // Not found? Retry using NID resolver
+    
+    // Get NID Resolver
+    NidResolverLib * resolver = getNidResolverLib(szLib);
+    
+    // Found Resolver for Library
+    if(resolver != NULL)
+    {
+        // Resolve NID
+        nid = getNidReplacement(resolver, nid);
+        
+        // call again with new nid
+        return FindFunction(szMod, szLib, nid);
+    }
+    
     return 0;
 }
 
