@@ -197,17 +197,6 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
-    if (strcmp(mod->modname, "DayViewer_User") == 0){
-        // fix scePaf imports in DayViewer
-        static u32 nids[] = {
-            0x2BE8DDBB, 0xE8CCC611, 0xCDDCFFB3, 0x48BB05D5, 0x22FB4177, 0xBC8DC92B, 0xE3D530AE
-        };
-        for (int i=0; i<NELEMS(nids); i++){
-            hookImportByNID(mod, "scePaf", nids[i], sctrlHENFindFunction("scePaf_Module", "scePaf", nids[i]));
-        }
-        goto flush;
-    }
-
     // Boot Complete Action not done yet
     if(booted == 0)
     {

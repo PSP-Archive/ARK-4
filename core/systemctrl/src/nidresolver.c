@@ -210,7 +210,7 @@ int fillLibraryStubs(void * lib, unsigned int nid, void * stub, unsigned int nid
     unsigned int dest = nidPos * 8 + stubtable;
     
     // ???
-    if(_lw((unsigned int)stub+52) != 0) goto exit;
+    //if(_lw((unsigned int)stub+52) != 0) goto exit;
     
     // Find Version
     unsigned int * version = (unsigned int *)sctrlHENFindFunction((void *)_lw((unsigned int)stub+36), NULL, 0x11B97506);
