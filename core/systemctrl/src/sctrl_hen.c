@@ -128,7 +128,19 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler)
     return on_module_start;
 }
 
-static unsigned int FindFunctionPrivate(char * szMod, char * szLib, unsigned int nid){
+// Find Function Address
+unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid)
+{
+    // Get NID Resolver
+    NidResolverLib * resolver = getNidResolverLib(szLib);
+    
+    // Found Resolver for Library
+    if(resolver != NULL)
+    {
+        // Resolve NID
+        nid = getNidReplacement(resolver, nid);
+    }
+
     // Find Target Module
     SceModule2 * pMod = (SceModule2 *)sceKernelFindModuleByName(szMod);
     
@@ -177,33 +189,6 @@ static unsigned int FindFunctionPrivate(char * szMod, char * szLib, unsigned int
     }
     
     // Function not found
-    return 0;
-}
-
-// Find Function Address
-unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid)
-{
-
-    unsigned int res = FindFunctionPrivate(szMod, szLib, nid);
-
-    // Function found as is
-    if (res != 0) return res;
-
-    // Not found? Retry using NID resolver
-    
-    // Get NID Resolver
-    NidResolverLib * resolver = getNidResolverLib(szLib);
-    
-    // Found Resolver for Library
-    if(resolver != NULL)
-    {
-        // Resolve NID
-        nid = getNidReplacement(resolver, nid);
-        
-        // call again with new nid
-        return FindFunctionPrivate(szMod, szLib, nid);
-    }
-    
     return 0;
 }
 
