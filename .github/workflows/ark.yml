@@ -67,15 +67,15 @@ jobs:
           sudo zip -r ARK-4-\${{ steps.get_version.outputs.VERSION }}.zip *
           mv ARK-4-\${{ steps.get_version.outputs.VERSION }}.zip ..
 
-      - name: Making DEBUG Version
-        run: |
-          make clean
-          make DEBUG=1
-          cd ./dist
-          sudo tar czvf ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.tar.gz * 
-          mv ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.tar.gz .. 
-          sudo zip -r ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.zip * 
-          mv ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.zip ..
+      #- name: Making DEBUG Version
+      #  run: |
+      #    make clean
+      #    make DEBUG=1
+      #    cd ./dist
+      #    sudo tar czvf ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.tar.gz * 
+      #    mv ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.tar.gz .. 
+      #    sudo zip -r ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.zip * 
+      #    mv ARK-4-\${{ steps.get_version.outputs.VERSION }}-DEBUG.zip ..
     
       - name: upload ARK Release & DEBUG artifact 
         id: create_release
@@ -89,8 +89,8 @@ jobs:
           files: |
               ARK-4-${{ steps.get_version.outputs.VERSION }}.zip
               ARK-4-${{ steps.get_version.outputs.VERSION }}.tar.gz
-              ARK-4-${{ steps.get_version.outputs.VERSION }}-DEBUG.zip
-              ARK-4-${{ steps.get_version.outputs.VERSION }}-DEBUG.tar.gz
+              #ARK-4-${{ steps.get_version.outputs.VERSION }}-DEBUG.zip
+              #ARK-4-${{ steps.get_version.outputs.VERSION }}-DEBUG.tar.gz
 
       - name: Update Test Server
         # Please don't abuse this or I will have to revert back to the orginal way.
