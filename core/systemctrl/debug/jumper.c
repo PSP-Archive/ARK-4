@@ -256,7 +256,7 @@ void installJALTrace(unsigned int address)
         	_sw(JAL(jumper), address);
         	
         	// Flush Cache
-        	flushCache();
+        	sctrlFlushCache();
         	
         	// Increase Kernel Jumper Count
         	if(KERNEL_OKAY(address)) hook_count++;

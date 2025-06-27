@@ -17,7 +17,7 @@ int main(int argc, char *args[]) {
     ARKConfig*  ark_config = (ARKConfig*)ARK_CONFIG;
     pspDebugScreenInit();
     SceCtrlData pad;
-    sctrlHENGetArkConfig(ark_config);
+    sctrlArkGetConfig(ark_config);
     if(IS_VITA(ark_config) || IS_VITA_ADR(ark_config)) {
         printf("Sorry just works on the PSP for now...\n");
         sceKernelDelayThread(3000000);

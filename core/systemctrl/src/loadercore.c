@@ -234,7 +234,7 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     // VSH replacement
     if (strcmp(modname, "vsh_module") == 0){
         if (ark_config->recovery || ark_config->launcher[0]){ // system in recovery or launcher mode
-            exitLauncher(); // reboot VSH into custom menu
+            sctrlArkExitLauncher(); // reboot VSH into custom menu
             MAKE_DUMMY_FUNCTION_RETURN_0(mod->entry_addr);
         }
     }
@@ -320,7 +320,7 @@ SceModule2* patchLoaderCore(void)
     u32 ref = findRefInGlobals("LoadCoreForKernel", checkExec, checkExec);
     _sw((unsigned int)KernelCheckExecFile, ref);
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
 
     // start the dynamic patching
     for (u32 addr = start_addr; addr<topaddr; addr+=4){
@@ -352,7 +352,7 @@ SceModule2* patchLoaderCore(void)
         }
     }
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
     
     // Patch Relocation Type 7 to 0 (this makes more homebrews load)
     {
@@ -362,7 +362,7 @@ SceModule2* patchLoaderCore(void)
     }
     
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
     
     // Hook Executable Checks
     for (u32 addr=start_addr; addr<topaddr; addr+=4){
@@ -373,7 +373,7 @@ SceModule2* patchLoaderCore(void)
     }
 
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
 
     return mod;
 }

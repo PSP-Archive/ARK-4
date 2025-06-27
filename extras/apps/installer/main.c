@@ -252,7 +252,7 @@ int main(int argc, char * argv[])
 {
 
 
-    sctrlHENGetArkConfig(&ark_config);
+    sctrlArkGetConfig(&ark_config);
     
     // Initialize Screen Output
     pspDebugScreenInit();

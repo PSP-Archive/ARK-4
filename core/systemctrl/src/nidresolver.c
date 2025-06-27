@@ -356,6 +356,6 @@ void setupNidResolver(SceModule2* mod)
         }
     }
     
-    flushCache();
+    sctrlFlushCache();
 }
 

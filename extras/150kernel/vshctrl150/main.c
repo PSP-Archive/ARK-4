@@ -173,7 +173,7 @@ static void patch_sceCtrlReadBufferPositive(void)
 
 
     SceModule *mod = sceKernelFindModuleByName("sceVshBridge_Driver");
-    hookImportByNID(mod, "sceCtrl_driver", 0x1F803938, _sceCtrlReadBufferPositive);
+    sctrlHookImportByNID(mod, "sceCtrl_driver", 0x1F803938, _sceCtrlReadBufferPositive);
     g_sceCtrlReadBufferPositive = (void*)sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
     sctrlHENPatchSyscall(g_sceCtrlReadBufferPositive, _sceCtrlReadBufferPositive);
 }

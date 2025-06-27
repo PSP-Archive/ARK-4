@@ -73,14 +73,20 @@ typedef struct SceThreadContext SceThreadContext;
 typedef int (* KDEC_HANDLER)(u32 *buf, int size, int *retSize, int m);
 typedef int (* MDEC_HANDLER)(u32 *tag, u8 *keys, u32 code, u32 *buf, int size, int *retSize, int m, void *unk0, int unk1, int unk2, int unk3, int unk4);
 
-// Find Import Library Stub Table
-SceLibraryStubTable * findImportLib(SceModule2 * pMod, char * library);
+/**
+ *  Find Import Library Stub Table
+ */
+SceLibraryStubTable * sctrlFindImportLib(SceModule2 * pMod, char * library);
 
-// Find Import Function Stub Address
-unsigned int findImportByNID(SceModule2 * pMod, char * library, unsigned int nid);
+/**
+ *  Find Import Function Stub Address
+ */
+unsigned int sctrlFindImportByNID(SceModule2 * pMod, char * library, unsigned int nid);
 
-// Replace Import Function Stub
-int hookImportByNID(SceModule2 * pMod, char * library, unsigned int nid, void * func);
+/**
+ *  Replace Import Function Stub
+ */
+int sctrlHookImportByNID(SceModule2 * pMod, char * library, unsigned int nid, void * func);
 
 /**
  * Restart the vsh.
@@ -89,57 +95,102 @@ int hookImportByNID(SceModule2 * pMod, char * library, unsigned int nid, void * 
  *
  * @returns < 0 on some errors.
  *
-*/
+ */
 int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
 
-// Return Reboot Configuration UMD File
+/**
+ *  Return Reboot Configuration UMD File
+ */
 char * sctrlSEGetUmdFile(void);
 
-// Set Reboot Configuration UMD File
+/**
+ * Set Reboot Configuration UMD File
+ */
 void sctrlSESetUmdFile(char * file);
 
-// Calculate Random Number via KIRK
+/**
+ *  Calculate Random Number via KIRK
+ */
 unsigned int sctrlKernelRand(void);
 
-// Register Custom init.prx sceKernelStartModule Handler, returns previous handler (if any)
+/**
+ * Register Custom init.prx sceKernelStartModule Handler, returns previous handler (if any)
+ */
 void sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt));
 
-// Read parameter from an SFO file or an EBOOT.PBP file
+/**
+ * Read parameter from an SFO file or an EBOOT.PBP file
+ */
 int sctrlGetSfoPARAM(const char* sfo_path, const char * paramName, u16 * paramType, u32 * paramLength, void * paramBuffer);
 
-// Get SFO param from currently running game/app
+/**
+ * Get SFO param from currently running game/app
+ */
 int sctrlGetInitPARAM(const char * paramName, u16 * paramType, u32 * paramLength, void * paramBuffer);
 
-// Find UID of the specified Thread
+/**
+ * Find UID of the specified Thread
+ */
 int sctrlGetThreadUIDByName(const char * name);
 
-// Return Thread Context of specified Thread (Search by UID)
+/**
+ * Return Thread Context of specified Thread (Search by UID)
+ */
 int sctrlGetThreadContextByUID(int uid, SceKernelThreadKInfo * ctx);
 
-// Return Thread Context of specified Thread (Search by Name)
+/**
+ * Return Thread Context of specified Thread (Search by Name)
+ */
 int sctrlGetThreadContextByName(const char * name, SceKernelThreadKInfo * ctx);
 
-// Flush Instruction and Data Cache
-void flushCache(void);
+/**
+ * Flush Instruction and Data Cache
+ */
+void sctrlFlushCache(void);
 
-// Missing PSPSDK Functions
+/**
+ * Missing PSPSDK Functions
+ */
 u32 sceKernelQuerySystemCall(void * function);
 
-// Register the default VRAM handler for PSX exploit, returns the previous handler
+/**
+ * Register the default VRAM handler for PSX exploit, returns the previous handler
+ */
 void* sctrlHENSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram));
 
-// GZIP decompress
+/**
+ * DEFLATE decompress
+ */
 int sctrlDeflateDecompress(void* dest, void* src, int size);
+
+/**
+ * GZIP decompress
+ */
 int sctrlGzipDecompress(void* dest, void* src, int size);
 
-// LZ4 decompress
+/**
+ * LZ4 decompress
+ */
 int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
 
-// LZO decompress
+/**
+ * LZO decompress
+ */
 int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
 
+/**
+ * Check if currently running with ms0 being redirected to ef0.
+ */
 int sctrlKernelMsIsEf();
 
+/**
+ * LoadExec for physical UMD game.
+ *
+ * @param file - The file to execute, usually EBOOT.BIN inside disc0.
+ * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ *
+ * @returns < 0 on some errors. 
+ */
 int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
@@ -149,7 +200,7 @@ int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHPara
  *
  * @returns < 0 on some errors.
  *
-*/
+ */
 int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
 
 /**
@@ -160,7 +211,7 @@ int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
  * @returns < 0 on some errors. 
-*/
+ */
 int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
@@ -171,7 +222,7 @@ int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHPara
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
  * @returns < 0 on some errors. 
-*/
+ */
 int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
@@ -182,7 +233,7 @@ int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExec
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
  * @returns < 0 on some errors. 
-*/
+ */
 int sctrlKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
@@ -193,7 +244,7 @@ int sctrlKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
  * @returns < 0 on some errors. 
-*/
+ */
 int sctrlKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
@@ -204,7 +255,7 @@ int sctrlKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
  * @returns < 0 on some errors. 
-*/
+ */
 int sctrlKernelLoadExecVSHEf2(const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
@@ -215,7 +266,7 @@ int sctrlKernelLoadExecVSHEf2(const char *file, struct SceKernelLoadExecVSHParam
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
  * @returns < 0 on some errors. 
-*/
+ */
 int sctrlKernelLoadExecVSHMs3(const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
@@ -226,7 +277,7 @@ int sctrlKernelLoadExecVSHMs3(const char *file, struct SceKernelLoadExecVSHParam
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
  * @returns < 0 on some errors. 
-*/
+ */
 int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam *param);
 
 
@@ -238,7 +289,7 @@ int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
  * @returns < 0 on some errors. 
-*/
+ */
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
@@ -249,7 +300,7 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, struct SceK
  *
  * @Note - this will modify also the value of sceKernelBootFrom, since the value of
  * bootfrom is calculated from the apitype
-*/
+ */
 int sctrlKernelSetInitApitype(int apitype);
 
 /**
@@ -257,7 +308,7 @@ int sctrlKernelSetInitApitype(int apitype);
  *
  * @param filename - The filename to set
  * @returns 0 on success
-*/
+ */
 int sctrlKernelSetInitFileName(char * filename);
 
 /**
@@ -265,7 +316,7 @@ int sctrlKernelSetInitFileName(char * filename);
  *
  * @param key - The key code
  * @returns the previous key config
-*/
+ */
 int sctrlKernelSetInitKeyConfig(int key);
 
 /**
@@ -282,7 +333,7 @@ int sctrlKernelSetUserLevel(int level);
  * @param version - The devkit version to set
  * @return the previous devkit version
  * 
-*/
+ */
 int sctrlKernelSetDevkitVersion(int version);
 
 /**
@@ -290,7 +341,7 @@ int sctrlKernelSetDevkitVersion(int version);
  *
  * @returns 1 if we are in SE-C or later, 0 if we are in HEN-D or later,
  * and < 0 (a kernel error code) in any other case
-*/
+ */
 int sctrlHENIsSE();
 
 /**
@@ -298,7 +349,7 @@ int sctrlHENIsSE();
  *
  * @returns 1 if we are in SE-C/HEN-D for devhook  or later, 0 if we are in normal SE-C/HEN-D or later,
  * and < 0 (a kernel error code) in any other case
-*/
+ */
 int sctrlHENIsDevhook();
 
 /**
@@ -336,7 +387,7 @@ PspIoDrv *sctrlHENFindDriver(char *drvname);
  *
  * @returns - The function address or 0 if not found
  *
-*/
+ */
 unsigned int sctrlHENFindFunction(char *modname, char *libname, unsigned int nid);
 
 
@@ -378,7 +429,7 @@ unsigned int sctrlHENFindFunction(char *modname, char *libname, unsigned int nid
  * @Note2: The above example should be compiled with the flag -fno-pic
  *            in order to avoid problems with gp register that may lead to a crash.
  *
-*/
+ */
 STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler);
 
 /**
@@ -386,7 +437,7 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler);
  *
  * @param cpu - The cpu speed
  * @param bus - The bus speed
-*/
+ */
 void sctrlHENSetSpeed(int cpu, int bus);
 
 /**
@@ -398,7 +449,7 @@ void sctrlHENSetSpeed(int cpu, int bus);
  * @returns 0 on success, < 0 on error.
  * This function is only available in the slim. The function will fail
  * if p2+p8 > 52 or p2 == 0
-*/
+ */
 int sctrlHENSetMemory(u32 p2, u32 p8);
 
 int sctrlKernelQuerySystemCall(void *func_addr);
@@ -414,7 +465,7 @@ int sctrlKernelBootFrom(void);
  * @returns 0 on success, < 0 on error.
  * This function is only available in the slim. The function will fail
  * if p2+p8 > 52 or p2 == 0
-*/
+ */
 
 void sctrlHENPatchSyscall(void *addr, void *newaddr);
 
@@ -475,7 +526,7 @@ void sctrlSetCustomStartModule(int (*func)(int modid, SceSize argsize, void *arg
  * By making a module to load itself using this function, and calling 
  * sctrlHENLoadModuleOnReboot on module_start, a prx can cause itself to be resident in the modes choosen by flags.
  * If all flags are selected, the module will stay resident until a psp shutdown, or until sctrlHENLoadModuleOnReboot is not called.
-*/
+ */
 void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int flags);
 
 /**
@@ -517,6 +568,12 @@ int sctrlDeflateDecompress(void* dest, void* src, int size);
  *
  */
 void sctrlGetExploitID(char* dest);
+
+/**
+ * Exit back to ARK's Custom Launcher.
+ * If launcher is unavailable, it will do an exitVSH.
+ */
+int sctrlArkExitLauncher(void);
 
 #ifdef __cplusplus
 }

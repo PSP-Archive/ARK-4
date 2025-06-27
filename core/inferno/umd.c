@@ -341,7 +341,7 @@ int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2)
             patches--;
         }
     }
-    flushCache();
+    sctrlFlushCache();
 
     if(0 == g_00002798)
     {

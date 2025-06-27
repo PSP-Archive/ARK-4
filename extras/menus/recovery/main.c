@@ -353,7 +353,7 @@ int main(SceSize args, void *argp) {
 int module_start(int argc, void* argv){
 
     psp_model = kuKernelGetModel();
-    sctrlHENGetArkConfig(ark_config);
+    sctrlArkGetConfig(ark_config);
     sctrlSEGetConfig(&se_config);
     is_launcher_mode = (strcmp(ark_config->launcher, "PROSHELL") == 0);
 

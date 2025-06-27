@@ -247,7 +247,7 @@ SceModule2* patchMemlmd(void)
         }
     }
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
     
     return mod;
 }
@@ -268,5 +268,5 @@ void patchMesgLed(SceModule2 * mod)
         }
     }
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
 }

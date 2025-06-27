@@ -42,5 +42,5 @@ void patchSystemMemoryManager(void)
     for (i=0; i<sizeof(nids)/sizeof(u32); i++)
         _sh(0x1000, FindFirstBEQ(sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", nids[i])) + 2);
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
 }

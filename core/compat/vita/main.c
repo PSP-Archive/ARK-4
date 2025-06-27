@@ -24,7 +24,6 @@
 #include "rebootconfig.h"
 #include "functions.h"
 #include "macros.h"
-#include "exitgame.h"
 #include "libs/graphics/graphics.h"
 
 #include "core/compat/vita/rebootex/payload.h"
@@ -41,7 +40,7 @@ STMOD_HANDLER previous = NULL;
 extern void ARKVitaOnModuleStart(SceModule2 * mod);
 
 // Flush Instruction and Data Cache
-void flushCache()
+void sctrlFlushCache()
 {
     // Flush Instruction Cache
     sceKernelIcacheInvalidateAll();
@@ -64,7 +63,7 @@ int module_start(SceSize args, void * argp)
 {
 
     se_config = sctrlSEGetConfig(NULL);
-    ark_config = sctrlHENGetArkConfig(NULL);
+    ark_config = sctrlArkGetConfig(NULL);
     reboot_config = sctrlHENGetRebootexConfig(NULL);
 
     if (ark_config == NULL){
@@ -87,7 +86,7 @@ int module_start(SceSize args, void * argp)
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);
    
-    flushCache();
+    sctrlFlushCache();
     
     // Return Success
     return 0;

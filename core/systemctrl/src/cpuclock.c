@@ -44,7 +44,7 @@ void SetSpeed(int cpu, int bus)
 
     int apitype = sceKernelInitApitype();
     if(apitype ==  0x210 || apitype ==  0x220) {
-        hookImportByNID(sceKernelFindModuleByName("vsh_module"), "scePower", 0x469989AD, NULL);
+        sctrlHookImportByNID(sceKernelFindModuleByName("vsh_module"), "scePower", 0x469989AD, NULL);
     }
     else {
         MAKE_DUMMY_FUNCTION_RETURN_0((u32)scePowerSetClockFrequency_k);
@@ -55,6 +55,6 @@ void SetSpeed(int cpu, int bus)
             MAKE_DUMMY_FUNCTION_RETURN_0( patch_addr );
         }
 
-        flushCache();
+        sctrlFlushCache();
     }
 }

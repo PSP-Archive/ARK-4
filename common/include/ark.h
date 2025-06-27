@@ -28,7 +28,7 @@ extern "C" {
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 20
 #define ARK_MICRO_VERSION 69
-#define ARK_REVISION      181
+#define ARK_REVISION      182
 
 // Pointers and sizes
 #define ARK_PATH_SIZE 128
@@ -150,7 +150,7 @@ typedef struct ARKConfig{
 #define IS_VITA_POPS(ark_config) (ark_config->exec_mode==PSV_POPS)
 
 // Function to obtain ARK's execution environment configuration
-void* sctrlHENGetArkConfig(ARKConfig* conf);
+void* sctrlArkGetConfig(ARKConfig* conf);
 
 #ifdef __cplusplus
 }

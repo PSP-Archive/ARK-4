@@ -101,13 +101,13 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 
     // Fix 6.60 plugins on 6.61
     if (is_plugins_loading){
-        hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
-        hookImportByNID(mod, "SysMemUserForUser", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
+        sctrlHookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
+        sctrlHookImportByNID(mod, "SysMemUserForUser", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
     }
     
     #ifdef DEBUG
     printk("syspatch: %s(0x%04X)\r\n", mod->modname, sceKernelInitApitype());
-    hookImportByNID(mod, "KDebugForKernel", 0x84F370BC, printk);
+    sctrlHookImportByNID(mod, "KDebugForKernel", 0x84F370BC, printk);
 
     if (sceKernelFindModuleByName("vsh_module") == NULL){
         initScreen(DisplaySetFrameBuf);
@@ -170,7 +170,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 
     // unlocks mp3 variable bitrate and qwerty osk on old games/homebrew
     if (strcmp(mod->modname, "sceMp3_Library") == 0 || strcmp(mod->modname, "sceVshOSK_Module") == 0){
-        hookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion);
+        sctrlHookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion);
         goto flush;
     }
 
@@ -191,9 +191,9 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
 
     if (strcmp(mod->modname, "popsloader") == 0 || strcmp(mod->modname, "popscore") == 0){
         // fix for 6.60 check on 6.61
-        hookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
+        sctrlHookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
         // fix to prevent ME detection
-        hookImportByNID(mod, "SystemCtrlForKernel", 0x159AF5CC, &fakeFindFunction);
+        sctrlHookImportByNID(mod, "SystemCtrlForKernel", 0x159AF5CC, &fakeFindFunction);
         goto flush;
     }
 
@@ -252,7 +252,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     
 flush:
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
     
 exit:
     // Forward to previous Handler

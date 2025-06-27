@@ -31,10 +31,10 @@ static void wweModuleOnStart(SceModule2 * mod)
     // Boot Complete Action not done yet
     if (strcmp(mod->modname, "mainPSP") == 0)
     {
-        hookImportByNID(mod, "scePower", 0x34F9C463, 222); // scePowerGetPllClockFrequencyInt
-        hookImportByNID(mod, "scePower", 0x843FBF43, 0);   // scePowerSetCpuClockFrequency
-        hookImportByNID(mod, "scePower", 0xFDB5BFE9, 222); // scePowerGetCpuClockFrequencyInt
-        hookImportByNID(mod, "scePower", 0xBD681969, 111); // scePowerGetBusClockFrequencyInt
+        sctrlHookImportByNID(mod, "scePower", 0x34F9C463, 222); // scePowerGetPllClockFrequencyInt
+        sctrlHookImportByNID(mod, "scePower", 0x843FBF43, 0);   // scePowerSetCpuClockFrequency
+        sctrlHookImportByNID(mod, "scePower", 0xFDB5BFE9, 222); // scePowerGetCpuClockFrequencyInt
+        sctrlHookImportByNID(mod, "scePower", 0xBD681969, 111); // scePowerGetBusClockFrequencyInt
     }
 
     // Call Previous Module Start Handler
@@ -46,14 +46,14 @@ void applyFixesByModule(SceModule2* mod){
 
     // fix black screen in Tekken 6
     if (strcmp(mod->modname, "tekken") == 0) {
-        hookImportByNID(mod, "scePower", 0x34F9C463, 222); // scePowerGetPllClockFrequencyInt
+        sctrlHookImportByNID(mod, "scePower", 0x34F9C463, 222); // scePowerGetPllClockFrequencyInt
     }
 
     // remove "overclock" message in ATV PRO
     else if (strcmp(mod->modname, "ATVPRO") == 0){
-        hookImportByNID(mod, "scePower", 0x843FBF43, 0);   // scePowerSetCpuClockFrequency
-        hookImportByNID(mod, "scePower", 0xFDB5BFE9, 222); // scePowerGetCpuClockFrequencyInt
-        hookImportByNID(mod, "scePower", 0xBD681969, 111); // scePowerGetBusClockFrequencyInt
+        sctrlHookImportByNID(mod, "scePower", 0x843FBF43, 0);   // scePowerSetCpuClockFrequency
+        sctrlHookImportByNID(mod, "scePower", 0xFDB5BFE9, 222); // scePowerGetCpuClockFrequencyInt
+        sctrlHookImportByNID(mod, "scePower", 0xBD681969, 111); // scePowerGetBusClockFrequencyInt
     }
 
     // disable anti-CFW code
@@ -80,7 +80,7 @@ void applyFixesByModule(SceModule2* mod){
         se_config->msspeed = 0;
     }
 
-    flushCache();
+    sctrlFlushCache();
 }
 
 void applyFixesByGameId(){

@@ -20,7 +20,7 @@
 #include <psputilsforkernel.h>
 
 // Flush Instruction and Data Cache
-void flushCache()
+void sctrlFlushCache()
 {
     // Flush Instruction Cache
     sceKernelIcacheInvalidateAll();

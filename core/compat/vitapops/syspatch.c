@@ -160,7 +160,6 @@ static int vram_clear(){
     return 0;
 }
 
-extern int exitLauncher();
 int (*arkLauncher)() = NULL;
 int popsLauncher(){
     
@@ -304,15 +303,15 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     // patch to allow plugins to display (i.e. cwcheat)
     if (isLoadingPlugins() && sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
         if (mod->text_addr&0x80000000){ // kernel plugin
-            hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
-            hookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched);
+            sctrlHookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+            sctrlHookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched);
         }
         else {
-            hookImportByNID(mod, "ThreadManForUser", 0x9944F31F, sceKernelSuspendThreadPatched);
-            hookImportByNID(mod, "ThreadManForUser", 0x75156E8F, sceKernelResumeThreadPatched);
+            sctrlHookImportByNID(mod, "ThreadManForUser", 0x9944F31F, sceKernelSuspendThreadPatched);
+            sctrlHookImportByNID(mod, "ThreadManForUser", 0x75156E8F, sceKernelResumeThreadPatched);
         }
-        hookImportByNID(mod, "sceDisplay", 0x289D82FE, 0);
-        hookImportByNID(mod, "sceDisplay", 0xEEDA2E54, sceDisplayGetFrameBufPatched);
+        sctrlHookImportByNID(mod, "sceDisplay", 0x289D82FE, 0);
+        sctrlHookImportByNID(mod, "sceDisplay", 0xEEDA2E54, sceDisplayGetFrameBufPatched);
         goto flush;
     }
 
@@ -357,7 +356,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
             sceIoOpen("ms0:/__popsbooted__", 0, 0);
 
             // fix launcher exit
-            HIJACK_FUNCTION(K_EXTRACT_IMPORT(exitLauncher), popsLauncher, arkLauncher);
+            HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlArkExitLauncher), popsLauncher, arkLauncher);
 
             // Boot Complete Action done
             booted = 1;
@@ -366,7 +365,7 @@ void ARKVitaPopsOnModuleStart(SceModule2 * mod){
     }
 
 flush:
-    flushCache();
+    sctrlFlushCache();
 
 exit:
     // Forward to previous Handler

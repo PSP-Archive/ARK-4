@@ -73,21 +73,21 @@ int stargateStartModuleHandler(int modid, SceSize argsize, void * argp, int * mo
     if(mod == NULL) return -1;
     
     // Fix Prometheus Patch #1
-    SceLibraryStubTable * import = findImportLib(mod, "Kernel_LibrarZ");
+    SceLibraryStubTable * import = sctrlFindImportLib(mod, "Kernel_LibrarZ");
     if(import != NULL)
     {
         strcpy((char *)import->libname, "Kernel_Library");
     }
     
     // Fix Prometheus Patch #2
-    import = findImportLib(mod, "Kernel_Librar0");
+    import = sctrlFindImportLib(mod, "Kernel_Librar0");
     if(import != NULL)
     {
         strcpy((char* )import->libname, "Kernel_Library");
     }
     
     // Fix Prometheus Patch #3
-    import = findImportLib(mod, "sceUtilitO");
+    import = sctrlFindImportLib(mod, "sceUtilitO");
     if(import != NULL)
     {
         strcpy((char*)import->libname, "sceUtility");
@@ -149,7 +149,7 @@ int module_start(SceSize args, void * argp)
     prev_start = sctrlSetStartModuleExtra(stargateStartModuleHandler);
     
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
     
     // Module Start Success
     return 0;

@@ -69,7 +69,7 @@ void LedaModulePatch(SceModule2 *mod)
     {       
         MAKE_DUMMY_FUNCTION_RETURN_0(0x889007A8);
         _sw((u32)get_addr, 0x8891C300);
-        flushCache();
+        sctrlFlushCache();
     }
    
     if( leda_previous ) leda_previous( mod );
@@ -98,12 +98,12 @@ void patchLedaPlugin(void* handler){
 
     // patch init sceKernelLoadModuleMs2
     KernelLoadModuleMs2_orig = sctrlHENFindFunction("sceModuleManager", "ModuleMgrForKernel", 0x7BD53193);
-    hookImportByNID(init, "ModuleMgrForKernel", 0x7BD53193, sceKernelLoadModuleMs2_patched);
+    sctrlHookImportByNID(init, "ModuleMgrForKernel", 0x7BD53193, sceKernelLoadModuleMs2_patched);
 
     // register handler for custom fixes to legacy games
     leda_previous = sctrlHENSetStartModuleHandler( LedaModulePatch );
 
     leda_running = 1; // disable checkexec in modman
     
-    flushCache();
+    sctrlFlushCache();
 }

@@ -420,7 +420,7 @@ SceModule2* patchModuleManager()
     MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0xF475845D), &sceKernelStartThread);
     
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
 
     return mod;
     

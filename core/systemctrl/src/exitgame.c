@@ -58,7 +58,7 @@ static int exitVsh(){
     return res;
 }
 
-int exitLauncher()
+int sctrlArkExitLauncher()
 {
 
     int k1 = pspSdkSetK1(0);
@@ -133,7 +133,7 @@ static void startExitThread(){
         pspSdkEnableInterrupts(intc);
         return; // already exiting
     }
-    int uid = sceKernelCreateThread("ExitGamePollThread", (exit_type)?exitVsh:exitLauncher, 1, 4096, 0, NULL);
+    int uid = sceKernelCreateThread("ExitGamePollThread", (exit_type)?exitVsh:sctrlArkExitLauncher, 1, 4096, 0, NULL);
     pspSdkEnableInterrupts(intc);
     sceKernelStartThread(uid, 0, NULL);
     sceKernelWaitThreadEnd(uid, NULL);

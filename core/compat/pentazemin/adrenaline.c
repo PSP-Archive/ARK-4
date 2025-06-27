@@ -19,7 +19,7 @@
 #include "common.h"
 #include "binary.h"
 
-#define ClearCaches flushCache
+#define ClearCaches sctrlFlushCache
 #define FindProc sctrlHENFindFunction
 
 typedef struct {

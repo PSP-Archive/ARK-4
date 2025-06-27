@@ -253,7 +253,7 @@ int sctrlArkReplaceUmdKeys(){
 
     // copy the generated UMD keys to the buffer in umdman
     memcpy(umd_buf, big_buffer+(512*2), 512*5);
-    flushCache();
+    sctrlFlushCache();
 
     res = 0;
 
@@ -275,12 +275,12 @@ static int fakeIdStorageLookupForUmd(u16 key, u32 offset, void *buf, u32 len){
 void patch_umd_idslookup(SceModule2* mod){
     // this patch allows us to obtain the buffer where umdman stores the UMD keys
     _idStorageLookup = sctrlHENFindFunction("sceIdStorage_Service", "sceIdStorage_driver", 0x6FE062D1);
-    hookImportByNID(mod, "sceIdStorage_driver", 0x6FE062D1, &fakeIdStorageLookupForUmd);
+    sctrlHookImportByNID(mod, "sceIdStorage_driver", 0x6FE062D1, &fakeIdStorageLookupForUmd);
 }
 
 void patch_vsh_region_check(SceModule2* mod){
     // patch to remove region check in VSH
-    hookImportByNID(mod, "sceVshBridge", 0x5C2983C2, 1);
+    sctrlHookImportByNID(mod, "sceVshBridge", 0x5C2983C2, 1);
 }
 
 int patch_umd_thread(SceSize args, void *argp){

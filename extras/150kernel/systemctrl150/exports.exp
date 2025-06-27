@@ -13,8 +13,8 @@ PSP_EXPORT_FUNC(sctrlHENSetRebootexOverride)
 PSP_EXPORT_FUNC(sctrlHENSetStartModuleHandler)
 PSP_EXPORT_FUNC(sctrlHENPatchSyscall)
 PSP_EXPORT_FUNC(sctrlKernelExitVSH)
-PSP_EXPORT_FUNC(findImportByNID)
-PSP_EXPORT_FUNC(hookImportByNID)
+PSP_EXPORT_FUNC(sctrlFindImportByNID)
+PSP_EXPORT_FUNC(sctrlHookImportByNID)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(SystemCtrlForUser, 0, 0x4001)

@@ -8,7 +8,6 @@
 #include <ark.h> 
 #include "functions.h"
 #include "macros.h"
-#include "exitgame.h"
 #include "adrenaline_compat.h"
 
 extern SEConfig* se_config;
@@ -32,7 +31,7 @@ int exit_callback(int arg1, int arg2, void *common) {
     sctrlSESetBootConfFileIndex(MODE_UMD);
 
     if (se_config->launcher_mode)
-        exitLauncher();
+        sctrlArkExitLauncher();
     else
         sctrlKernelExitVSH(NULL);
 

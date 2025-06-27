@@ -119,7 +119,7 @@ int TSRThread(SceSize args, void *argp) {
     
     // load config stuff
     sctrlSEGetConfig(&vsh->config.se);
-    sctrlHENGetArkConfig(&vsh->config.ark);
+    sctrlArkGetConfig(&vsh->config.ark);
     config_load(vsh);
     if(vsh->config.ark_menu.advanced_vsh)
         vsh->status.stop_flag = 15;

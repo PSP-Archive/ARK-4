@@ -138,7 +138,7 @@ void patchGameInfoGetter(SceModule2 * mod)
     if((mod->text_addr & 0x80000000) != 0)
     {
         // Hook Import
-        hookImportByNID(mod, "SysMemForKernel", 0xEF29061C, getUMDDataFixed);
+        sctrlHookImportByNID(mod, "SysMemForKernel", 0xEF29061C, getUMDDataFixed);
     }
 }
 

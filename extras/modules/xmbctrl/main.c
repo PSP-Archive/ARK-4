@@ -1280,7 +1280,7 @@ int module_start(SceSize args, void *argp)
 
     sctrlSEGetConfig(&se_config);
 
-    sctrlHENGetArkConfig(&_arkconf);
+    sctrlArkGetConfig(&_arkconf);
 
     findAllTranslatableStrings();
     

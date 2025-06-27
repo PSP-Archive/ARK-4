@@ -23,7 +23,6 @@
 #include <ark.h>
 #include "functions.h"
 #include "macros.h"
-#include "exitgame.h"
 #include "libs/graphics/graphics.h"
 
 #include "core/compat/pentazemin/rebootex/payload.h"
@@ -40,16 +39,6 @@ extern void AdrenalineOnModuleStart(SceModule2 * mod);
 extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 
-// Flush Instruction and Data Cache
-void flushCache()
-{
-    // Flush Instruction Cache
-    sceKernelIcacheInvalidateAll();
-    
-    // Flush Data Cache
-    sceKernelDcacheWritebackInvalidateAll();
-}
-
 static void processArkConfig(){
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSV_ADR; // assume running on Adrenaline
@@ -61,7 +50,7 @@ int module_start(SceSize args, void * argp)
 {
 
     se_config = sctrlSEGetConfig(NULL);
-    ark_config = sctrlHENGetArkConfig(NULL);
+    ark_config = sctrlArkGetConfig(NULL);
 
     if (ark_config == NULL){
         return 1;
@@ -86,7 +75,7 @@ int module_start(SceSize args, void * argp)
     // Register custom start module
     prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
    
-    flushCache();
+    sctrlFlushCache();
     
     // Return Success
     return 0;

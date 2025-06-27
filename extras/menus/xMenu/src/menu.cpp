@@ -243,7 +243,7 @@ void Menu::loadGame(){
 void Menu::run(){
     // get ARK config and version
     sctrlSEGetConfig(se_config);
-    sctrlHENGetArkConfig(ark_config);
+    sctrlArkGetConfig(ark_config);
     u32 ver = sctrlHENGetVersion(); // ARK's full version number
     u32 major = (ver&0xFF000000)>>24;
     u32 minor = (ver&0xFF0000)>>16;

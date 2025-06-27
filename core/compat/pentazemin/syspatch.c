@@ -8,16 +8,12 @@
 #include <ark.h> 
 #include "functions.h"
 #include "macros.h"
-#include "exitgame.h"
 #include "adrenaline_compat.h"
 #include "rebootconfig.h"
 #include "libs/graphics/graphics.h"
 #include "kermit.h"
 
 extern STMOD_HANDLER previous;
-
-extern void exitLauncher();
-
 extern SEConfig* se_config;
 
 int is_vsh = 0;
@@ -74,7 +70,7 @@ int flashLoadPatch(int cmd)
         sceIoRead(fd, ARK_FLASH, MAX_FLASH0_SIZE);
         sceIoClose(fd);
 
-        flushCache();
+        sctrlFlushCache();
     }
     return ret;
 }
@@ -176,7 +172,7 @@ void PatchMemlmd() {
     // Allow 6.61 kernel modules
     MAKE_CALL(text_addr + 0x2C8, memcmp_patched);
     
-    flushCache();
+    sctrlFlushCache();
 }
 
 int ReadFile(char *file, void *buf, int size) {
@@ -302,7 +298,7 @@ void patchPops(SceModule2* mod){
 void exit_game_patched(){
     sctrlSESetBootConfFileIndex(MODE_UMD);
     if (se_config->launcher_mode)
-        exitLauncher();
+        sctrlArkExitLauncher();
     else
         sctrlKernelExitVSH(NULL);
 }
@@ -404,7 +400,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         is_vsh = 1;
         if (se_config->skiplogos == 1 || se_config->skiplogos == 2){
             // patch GameBoot
-            hookImportByNID(sceKernelFindModuleByName("sceVshBridge_Driver"), "sceDisplay_driver", 0x3552AB11, 0);
+            sctrlHookImportByNID(sceKernelFindModuleByName("sceVshBridge_Driver"), "sceDisplay_driver", 0x3552AB11, 0);
         }
         goto flush;
     }
@@ -426,8 +422,8 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
         if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-        	hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
-        	hookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched);
+        	sctrlHookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+        	sctrlHookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched);
         	goto flush;
         }
     }
@@ -459,7 +455,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         	OnSystemStatusIdle();
 
         	if (se_config->launcher_mode && is_vsh){
-        		int uid = sceKernelCreateThread("ExitGamePollThread", exitLauncher, 16 - 1, 2048, 0, NULL);
+        		int uid = sceKernelCreateThread("ExitGamePollThread", sctrlArkExitLauncher, 16 - 1, 2048, 0, NULL);
         		sceKernelStartThread(uid, 0, NULL);
         	}
 
@@ -469,7 +465,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
     }
 
 flush:
-    flushCache();
+    sctrlFlushCache();
 
 exit:
        // Forward to previous Handler

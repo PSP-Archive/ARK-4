@@ -101,7 +101,7 @@ void patchLoadModuleFuncs(SceModule2 * mod)
     unsigned int i = 0; for(; i < NELEMS(g_hookMap); ++i)
     {
         // Hook Import
-        hookImportByNID(mod, g_hookMap[i].libName, g_hookMap[i].nid, g_hookMap[i].funcAddr);
+        sctrlHookImportByNID(mod, g_hookMap[i].libName, g_hookMap[i].nid, g_hookMap[i].funcAddr);
     }
 }
 

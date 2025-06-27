@@ -59,7 +59,7 @@ void _sceMeAudio_DE630CD2(void * loopCore, void * stack)
     // _sw(LI_V0(0), text_addr + waitForAudio + 4);
     
     // Flush Cache
-    // flushCache();
+    // sctrlFlushCache();
 
     // Elevate Permission Level
     unsigned int k1 = pspSdkSetK1(0);
@@ -159,5 +159,5 @@ void patchPspPopsman(SceModule2* mod){
 // Patch for 6.60 pops to work on Vita
 void patchPspPops(SceModule2 * mod)
 {
-    if (!spu_running) hookImportByNID(mod, "sceMeAudio", 0xDE630CD2, _sceMeAudio_DE630CD2);
+    if (!spu_running) sctrlHookImportByNID(mod, "sceMeAudio", 0xDE630CD2, _sceMeAudio_DE630CD2);
 }

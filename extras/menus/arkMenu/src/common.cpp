@@ -166,7 +166,7 @@ void loadConfig(){
 
 ARKConfig* common::getArkConfig(){
     if (ark_config.magic != ARK_CONFIG_MAGIC){
-        sctrlHENGetArkConfig(&ark_config);
+        sctrlArkGetConfig(&ark_config);
     }
     return &ark_config;
 }

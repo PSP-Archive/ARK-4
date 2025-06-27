@@ -51,7 +51,7 @@ SceModule2* patchInterruptMan(void)
         }
     }
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
     return mod;
 }
 

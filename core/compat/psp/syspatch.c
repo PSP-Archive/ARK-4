@@ -13,7 +13,6 @@
 #include <pspgu.h>
 #include <pspsysevent.h>
 #include <functions.h>
-#include "exitgame.h"
 #include "region_free.h"
 #include "libs/graphics/graphics.h"
 
@@ -33,7 +32,7 @@ void patch_sceUmdMan_driver(SceModule2* mod)
 {
     int apitype = sceKernelInitApitype();
     if (apitype == 0x152 || apitype == 0x141) {
-        hookImportByNID(mod, "InitForKernel", 0x27932388, _sceKernelBootFromForUmdMan);
+        sctrlHookImportByNID(mod, "InitForKernel", 0x27932388, _sceKernelBootFromForUmdMan);
     }
 }
 
@@ -132,7 +131,7 @@ void disableLEDs(){
         for (int i=0; i<4; i++) _sceSysconCtrlLED(i, 0);
         static u32 dummy[2] = {JR_RA, LI_V0(0)};
         HIJACK_FUNCTION(_sceSysconCtrlLED, dummy, _sceSysconCtrlLEDOrig);
-        flushCache();
+        sctrlFlushCache();
     }
 }
 
@@ -192,7 +191,7 @@ void PSPOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
         if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-        	hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+        	sctrlHookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
         	goto flush;
         }
     }
@@ -280,7 +279,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         }
         if (se_config->skiplogos == 1 || se_config->skiplogos == 2){
             // patch GameBoot
-            hookImportByNID(sceKernelFindModuleByName("sceVshBridge_Driver"), "sceDisplay_driver", 0x3552AB11, 0);
+            sctrlHookImportByNID(sceKernelFindModuleByName("sceVshBridge_Driver"), "sceDisplay_driver", 0x3552AB11, 0);
         }
         goto flush;
     }
@@ -334,7 +333,7 @@ void PSPOnModuleStart(SceModule2 * mod){
     }
     
 flush:
-    flushCache();
+    sctrlFlushCache();
 
     // Forward to previous Handler
     if(previous) previous(mod);

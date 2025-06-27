@@ -480,7 +480,7 @@ int main()
 
     // check if running ARK
     memset(&ark_config, 0, sizeof(ARKConfig));
-    sctrlHENGetArkConfig(&ark_config);
+    sctrlArkGetConfig(&ark_config);
     if (ark_config.magic != ARK_CONFIG_MAGIC){
         if (sctrlHENFindFunction("SystemControl", "KUBridge", 0x9060F69D) != NULL){
         	newipl_menu("cfw=pro");

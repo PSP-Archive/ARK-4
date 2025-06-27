@@ -121,14 +121,14 @@ static void patch_sceCtrlReadBufferPositive(void)
     SceModule* mod;
 
     mod = sceKernelFindModuleByName("sceVshBridge_Driver");
-    hookImportByNID(mod, "sceCtrl_driver", 0xBE30CED0, _sceCtrlReadBufferPositive);
+    sctrlHookImportByNID(mod, "sceCtrl_driver", 0xBE30CED0, _sceCtrlReadBufferPositive);
     g_sceCtrlReadBufferPositive = (void *) sctrlHENFindFunction("sceController_Service", "sceCtrl", 0x1F803938);
     sctrlHENPatchSyscall(g_sceCtrlReadBufferPositive, _sceCtrlReadBufferPositive);
 }
 
 static void patch_Gameboot(SceModule2 *mod)
 {
-    hookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
+    sctrlHookImportByNID(mod, "sceDisplay_driver", 0x3552AB11, 0);
 }
 
 static void patch_hibblock(SceModule2 *mod)
@@ -253,7 +253,7 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     _sw(0x3C020000 | ((u32)(p) >> 16), a); // lui $v0, 
     _sw(0x34420000 | ((u32)(p) & 0xFFFF), a + 4); // or $v0, $v0, 
 
-    hookImportByNID((SceModule*)mod, "IoFileMgrForUser", 0x06A70004, myIoMkdir);
+    sctrlHookImportByNID((SceModule*)mod, "IoFileMgrForUser", 0x06A70004, myIoMkdir);
 }
 
 int fakeParamInexistance(void)
@@ -445,17 +445,17 @@ static void patch_vsh_module(SceModule2 * mod)
         
     }
 
-    hookImportByNID((SceModule *)mod, "sceVshBridge", 0x21D4D038, homebrewloadexec);
-    hookImportByNID((SceModule *)mod, "sceVshBridge", 0xE533E98C, homebrewloadexec);
+    sctrlHookImportByNID((SceModule *)mod, "sceVshBridge", 0x21D4D038, homebrewloadexec);
+    sctrlHookImportByNID((SceModule *)mod, "sceVshBridge", 0xE533E98C, homebrewloadexec);
 
     u32 vshloadexec_nids[] = {0xB8B07CAF, 0x791FCD43, 0x01730088, 0x5B7F3339};
     for (int i=0; i<NELEMS(vshloadexec_nids); i++){
-        hookImportByNID((SceModule *)mod, "sceVshBridge", vshloadexec_nids[i], umdemuloadexec);
+        sctrlHookImportByNID((SceModule *)mod, "sceVshBridge", vshloadexec_nids[i], umdemuloadexec);
     }
     
-    hookImportByNID((SceModule *)mod, "sceVshBridge", 0x63E69956, umdLoadExec);
-    hookImportByNID((SceModule *)mod, "sceVshBridge", 0x0C0D5913, umdLoadExec);
-    hookImportByNID((SceModule *)mod, "sceVshBridge", 0x81682A40, umdLoadExecUpdater);
+    sctrlHookImportByNID((SceModule *)mod, "sceVshBridge", 0x63E69956, umdLoadExec);
+    sctrlHookImportByNID((SceModule *)mod, "sceVshBridge", 0x0C0D5913, umdLoadExec);
+    sctrlHookImportByNID((SceModule *)mod, "sceVshBridge", 0x81682A40, umdLoadExecUpdater);
     if(psp_model == PSP_GO && has_umd_iso) {
         patch_vsh_module_for_pspgo_umdvideo(mod);
     }

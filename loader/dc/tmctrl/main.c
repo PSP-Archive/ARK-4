@@ -87,7 +87,7 @@ void OnModuleStart(SceModule2 *mod)
     }
     else if (strcmp(moduleName, "sceCodepage_Service") == 0)
     {
-        hookImportByNID(mod, "IoFileMgrForKernel", 0x109f50bc, codePagesceIoOpenPatched);
+        sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x109f50bc, codePagesceIoOpenPatched);
 
         ClearCaches();
     }

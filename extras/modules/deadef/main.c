@@ -43,12 +43,12 @@ int OnModuleStart(SceModule2* mod){
 
     if (strcmp(mod->modname, "sceEFlash_driver") == 0){
     	MAKE_DUMMY_FUNCTION_RETURN_0(mod->text_addr);
-    	flushCache();
+    	sctrlFlushCache();
     }
 
     if (strcmp(mod->modname, "vsh_module") == 0) {
         patch_vsh_module_for_pspgo_umdvideo(mod);
-        flushCache();
+        sctrlFlushCache();
     }
 
     if (prev) return prev(mod);

@@ -769,19 +769,19 @@ void patchPopsMgr(void)
     
     sceNpDrmGetVersionKey = (void*)sctrlHENFindFunction("scePspNpDrm_Driver", "scePspNpDrm_driver", 0x0F9547E6);
     scePspNpDrm_driver_9A34AC9F = (void*)sctrlHENFindFunction("scePspNpDrm_Driver", "scePspNpDrm_driver", 0x9A34AC9F);
-    hookImportByNID(mod, "scePspNpDrm_driver", 0x0F9547E6, _sceNpDrmGetVersionKey);
-    hookImportByNID(mod, "scePspNpDrm_driver", 0x9A34AC9F, _scePspNpDrm_driver_9A34AC9F);
+    sctrlHookImportByNID(mod, "scePspNpDrm_driver", 0x0F9547E6, _sceNpDrmGetVersionKey);
+    sctrlHookImportByNID(mod, "scePspNpDrm_driver", 0x9A34AC9F, _scePspNpDrm_driver_9A34AC9F);
 
     for(i=0; i<NELEMS(g_ioHooks); ++i)
     {
-        hookImportByNID(mod, "IoFileMgrForKernel", g_ioHooks[i].nid, g_ioHooks[i].fp);
+        sctrlHookImportByNID(mod, "IoFileMgrForKernel", g_ioHooks[i].nid, g_ioHooks[i].fp);
     }
 
     if (g_isCustomPBP)
     {
         for(i=0; i<NELEMS(g_amctrlHooks); ++i)
         {
-            hookImportByNID(mod, "sceAmctrl_driver", g_amctrlHooks[i].nid, g_amctrlHooks[i].fp);
+            sctrlHookImportByNID(mod, "sceAmctrl_driver", g_amctrlHooks[i].nid, g_amctrlHooks[i].fp);
         }
     }
 
@@ -1118,7 +1118,7 @@ int decompressData(unsigned int destSize, const unsigned char *src, unsigned cha
 static void patchPops(SceModule2 *mod)
 {
     unsigned int text_addr = mod->text_addr;
-    void* scePopsMan_0090B2C8_stub = findImportByNID(mod, "scePopsMan", 0x0090B2C8);
+    void* scePopsMan_0090B2C8_stub = sctrlFindImportByNID(mod, "scePopsMan", 0x0090B2C8);
 
     #if DEBUG >= 3
     printk("%s: patching pops\r\n", __func__);
@@ -1141,14 +1141,14 @@ static void patchPops(SceModule2 *mod)
     }
 
     if(g_isCustomPBP){
-        hookImportByNID(mod, "scePopsMan", 0x0090B2C8, decompressData);
+        sctrlHookImportByNID(mod, "scePopsMan", 0x0090B2C8, decompressData);
     }
     
     // Prevent Permission Problems
     sceMeAudio_67CD7972 = (void*)sctrlHENFindFunction("scePops_Manager", "sceMeAudio", 0x2AB4FE43);
-    hookImportByNID(mod, "sceMeAudio", 0x2AB4FE43, _sceMeAudio_67CD7972);
+    sctrlHookImportByNID(mod, "sceMeAudio", 0x2AB4FE43, _sceMeAudio_67CD7972);
 
-    flushCache();
+    sctrlFlushCache();
 }
 
 int module_start(SceSize args, void* argp)
@@ -1179,7 +1179,7 @@ int module_start(SceSize args, void* argp)
     g_previous = sctrlHENSetStartModuleHandler(&popcornSyspatch);
     patchPopsMgr();
     
-    flushCache();
+    sctrlFlushCache();
     
     return 0;
 }

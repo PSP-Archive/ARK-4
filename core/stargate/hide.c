@@ -57,5 +57,5 @@ int hideIoDread(SceUID fd, SceIoDirent * dir)
 // hide cfw folders, this avoids crashing the weird dj max portable 3 savegame algorithm
 void hide_cfw_folder(SceModule * mod)
 {
-    hookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, &hideIoDread);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, &hideIoDread);
 }

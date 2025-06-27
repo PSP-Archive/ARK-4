@@ -11,13 +11,10 @@
 #include "rebootconfig.h"
 #include "functions.h"
 #include "macros.h"
-#include "exitgame.h"
 #include "popspatch.h"
 #include "libs/graphics/graphics.h"
 
 extern STMOD_HANDLER previous;
-
-extern void exitLauncher();
 
 extern SEConfig* se_config;
 extern RebootConfigARK* reboot_config;
@@ -122,7 +119,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     patchFileManagerImports(mod);
 
     if (strcmp(mod->modname, "PRO_Inferno_Driver") == 0){
-        hookImportByNID(mod, "IoFileMgrForKernel", 0x54F5FB11, infernoIoDevctl);
+        sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x54F5FB11, infernoIoDevctl);
         goto flush;
     }
 
@@ -157,14 +154,14 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
         if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-            hookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+            sctrlHookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
         	goto flush;
         }
     }
     
     if (strcmp(mod->modname, "camera_patch_lite") == 0) {
-        hookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, ioOpenForCameraLite);
-        hookImportByNID(mod, "IoFileMgrForKernel", 0x810C4BC3, ioCloseForCameraLite);
+        sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, ioOpenForCameraLite);
+        sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x810C4BC3, ioCloseForCameraLite);
         goto flush;
     }
 
@@ -202,8 +199,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             patchFileSystemDirSyscall();
 
             // Patch sceKernelExitGame Syscalls
-            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(exitLauncher));
-            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x2AC9954B), K_EXTRACT_IMPORT(exitLauncher));
+            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x05572A5F), K_EXTRACT_IMPORT(sctrlArkExitLauncher));
+            REDIRECT_FUNCTION(sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x2AC9954B), K_EXTRACT_IMPORT(sctrlArkExitLauncher));
             
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
@@ -224,7 +221,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     }
 
 flush:
-    flushCache();
+    sctrlFlushCache();
 
 exit:
     // Forward to previous Handler

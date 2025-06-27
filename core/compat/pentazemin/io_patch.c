@@ -272,5 +272,5 @@ void PatchIoFileMgr() {
     HIJACK_FUNCTION(IoUnassign, sceIoUnassignPatched, _sceIoUnassign);
     HIJACK_FUNCTION(IoAssign, sceIoAssignPatched, _sceIoAssign);
 
-    flushCache();
+    sctrlFlushCache();
 }

@@ -8,7 +8,6 @@
 #include <ark.h> 
 #include "functions.h"
 #include "macros.h"
-#include "exitgame.h"
 #include "adrenaline_compat.h"
 #include "rebootconfig.h"
 
@@ -78,7 +77,7 @@ int AdrenalinePatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
     _sw(0x02402021, init_addr + 0x1868); //move $a0, $s2
     MAKE_CALL(init_addr + 0x1878, sceKernelLoadModuleBufferBootInitBtcnfPatched);
 
-    flushCache();
+    sctrlFlushCache();
 
     return ARKPatchInit(module_bootstart, argp);
 }
@@ -110,6 +109,6 @@ SceModule2* patchLoaderCore(void)
             break;
         }
     }
-    flushCache();
+    sctrlFlushCache();
     return mod;
 }

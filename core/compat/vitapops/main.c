@@ -47,7 +47,7 @@ int module_start(SceSize args, void * argp)
 {
 
     se_config = sctrlSEGetConfig(NULL);
-    ark_config = sctrlHENGetArkConfig(NULL);
+    ark_config = sctrlArkGetConfig(NULL);
     reboot_config = sctrlHENGetRebootexConfig(NULL);
 
     if (ark_config == NULL){

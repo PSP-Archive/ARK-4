@@ -63,7 +63,7 @@ int module_start(SceSize args, void * argp)
     SceModule2* memlmd = patchMemlmd();
 
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
 
     // setup NID resolver on loadercore
     setupNidResolver(loadcore);
@@ -82,7 +82,7 @@ int module_start(SceSize args, void * argp)
     uprotectExtraMemory();
 
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
 
     // Return Success
     return 0;

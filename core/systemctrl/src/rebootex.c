@@ -57,7 +57,7 @@ void backupRebootBuffer(void)
         memcpy(ark_config, ARK_CONFIG, sizeof(ARKConfig));
     
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
 }
 
 // Restore Reboot Buffer

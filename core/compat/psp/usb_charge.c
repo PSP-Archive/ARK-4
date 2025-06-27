@@ -103,7 +103,7 @@ void usb_charge(u32 milis)
     mod = (SceModule2*)sceKernelFindModuleByName("sceUSB_Driver");
 
     if (mod != NULL) {
-        hookImportByNID(mod, "scePower_driver", 0x72D1B53A, 0);
-        hookImportByNID(mod, "scePower_driver", 0x7EAA4247, 0);
+        sctrlHookImportByNID(mod, "scePower_driver", 0x72D1B53A, 0);
+        sctrlHookImportByNID(mod, "scePower_driver", 0x7EAA4247, 0);
     }
 }

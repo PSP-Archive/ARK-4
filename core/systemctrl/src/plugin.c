@@ -634,7 +634,7 @@ static void patch_devicename(SceUID modid)
         }
     }
 
-    flushCache();
+    sctrlFlushCache();
 }
 
 static int ef0PluginHandler(const char* path, int modid){

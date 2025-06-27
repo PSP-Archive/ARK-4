@@ -13,7 +13,6 @@
 #include <pspsysevent.h>
 #include <pspgu.h>
 #include <functions.h>
-#include "exitgame.h"
 #include "libs/graphics/graphics.h"
 
 #include "core/compat/psp/rebootex/payload.h"
@@ -35,16 +34,6 @@ extern void PSPOnModuleStart(SceModule2 * mod);
 extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 
-// Flush Instruction and Data Cache
-void flushCache()
-{
-    // Flush Instruction Cache
-    sceKernelIcacheInvalidateAll();
-    
-    // Flush Data Cache
-    sceKernelDcacheWritebackInvalidateAll();
-}
-
 void processArkConfig(){
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSP_ORIG; // assume running on PSP
@@ -59,7 +48,7 @@ int module_start(SceSize args, void * argp)
     psp_model = sceKernelGetModel();
 
     se_config = sctrlSEGetConfig(NULL);
-    ark_config = sctrlHENGetArkConfig(NULL);
+    ark_config = sctrlArkGetConfig(NULL);
 
     if (ark_config == NULL){
         return 1;

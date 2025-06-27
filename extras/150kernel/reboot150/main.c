@@ -16,7 +16,7 @@ PSP_MODULE_INFO("Reboot150", PSP_MODULE_KERNEL | PSP_MODULE_SINGLE_START | PSP_M
 
 int LoadReboot(void * arg1, unsigned int arg2, void * arg3, unsigned int arg4)
 {
-    ARKConfig *ark_config = sctrlHENGetArkConfig(NULL);
+    ARKConfig *ark_config = sctrlArkGetConfig(NULL);
     RebootConfigARK *rebootex_config = sctrlHENGetRebootexConfig(NULL);
 
     rebootex_config->boot_from_fw_version = sceKernelDevkitVersion();

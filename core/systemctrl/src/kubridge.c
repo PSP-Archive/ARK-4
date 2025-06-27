@@ -358,6 +358,6 @@ void kuKernelGetUmdFile(char *umdfile, int size)
 void kuKernelIcacheInvalidateAll(void)
 {
     u32 k1 = pspSdkSetK1(0);
-    flushCache();
+    sctrlFlushCache();
     pspSdkSetK1(k1);
 }

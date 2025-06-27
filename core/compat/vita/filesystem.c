@@ -159,13 +159,13 @@ void patchFileManagerImports(SceModule2 * mod)
         return;
     
     // Hooking sceIoDopen for Kernel Modules
-    hookImportByNID(mod, "IoFileMgrForKernel", 0xB29DDF9C, sceIoDopenHook);
+    sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0xB29DDF9C, sceIoDopenHook);
     
     // Hooking sceIoDread for Kernel Modules
-    hookImportByNID(mod, "IoFileMgrForKernel", 0xE3EB004C, sceIoDreadHook);
+    sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0xE3EB004C, sceIoDreadHook);
     
     // Hooking sceIoDclose for Kernel Modules
-    hookImportByNID(mod, "IoFileMgrForKernel", 0xEB092469, sceIoDcloseHook);
+    sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0xEB092469, sceIoDcloseHook);
 }
 
 __attribute__((noinline)) int BuildMsPathChangeFsNum(PspIoDrvFileArg *arg, const char *name, char *ms_path) {

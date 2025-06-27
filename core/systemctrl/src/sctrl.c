@@ -144,7 +144,7 @@ int sctrlKernelSetUserLevel(int level)
     _sw((level ^ 8) << 28, *(unsigned int *)(threadman_userlevel_struct) + 0x14);
     
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
     
     // Restore Permission Level
     pspSdkSetK1(k1);
@@ -168,7 +168,7 @@ int sctrlKernelSetDevkitVersion(int version)
     _sh((version & 0xFFFF), DevkitVersion+8);
     
     // Flush Cache
-    flushCache();
+    sctrlFlushCache();
     
     // Restore Permission Level
     pspSdkSetK1(k1);
@@ -196,7 +196,7 @@ int sctrlPatchModule(char * modname, unsigned int inst, unsigned int offset)
         _sw(inst, mod->text_addr + offset);
         
         // Flush Cache
-        flushCache();
+        sctrlFlushCache();
     }
     
     // Module not found
