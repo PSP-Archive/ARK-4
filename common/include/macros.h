@@ -85,16 +85,17 @@
 #define PTR_ALIGN_64(p) ((void*)((((u32)p)+64-1)&(~(64-1))))
 
 //by Davee
-#define HIJACK_FUNCTION(a, f, ptr) \
+#define HIJACK_FUNCTION(a, f, p) \
 { \
-    u32 func = a; \
-    static u32 patch_buffer[3]; \
-    _sw(_lw(func), (u32)patch_buffer); \
-    _sw(_lw(func + 4), (u32)patch_buffer + 8);\
-    MAKE_JUMP_PATCH((u32)patch_buffer + 4, func + 8); \
-    _sw(0x08000000 | (((u32)(f) >> 2) & 0x03FFFFFF), func); \
-    _sw(0, func + 4); \
-    ptr = (void *)patch_buffer; \
+    static u32 _pb_[5]; \
+    _sw(_lw((u32)(a)), (u32)_pb_); \
+    _sw(_lw((u32)(a) + 4), (u32)_pb_ + 4);\
+    _sw(NOP, (u32)_pb_ + 8);\
+    _sw(NOP, (u32)_pb_ + 16);\
+    MAKE_JUMP_PATCH((u32)_pb_ + 12, (u32)(a) + 8); \
+    _sw(0x08000000 | (((u32)(f) >> 2) & 0x03FFFFFF), (u32)(a)); \
+    _sw(0, (u32)(a) + 4); \
+    p = (void *)_pb_; \
 }
 
 #define REDIRECT_SYSCALL(a, f) \

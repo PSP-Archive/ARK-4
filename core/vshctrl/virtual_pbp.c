@@ -1145,10 +1145,9 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     sctrlSESetBootConfFileIndex(MODE_INFERNO);
 
     u32 opn_type = vpbp->opnssmp_type;
-    if( opn_type ){
-        u32 *info = (u32 *)sceKernelGetGameInfo();
+    u32 *info = (u32 *)sceKernelGetGameInfo();
+    if( opn_type )
         info[216/4] = opn_type;
-    }
 
     param->key = "umdemu";
     apitype = ISO_RUNLEVEL;

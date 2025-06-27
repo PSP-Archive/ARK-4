@@ -140,7 +140,7 @@ unsigned int sctrlHENFindFunction(char * szMod, char * szLib, unsigned int nid)
         // Resolve NID
         nid = getNidReplacement(resolver, nid);
     }
-    
+
     // Find Target Module
     SceModule2 * pMod = (SceModule2 *)sceKernelFindModuleByName(szMod);
     
