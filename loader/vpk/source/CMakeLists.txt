@@ -1,67 +1,68 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.10)  # Aggiornata la versione minima richiesta
 
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   if(DEFINED ENV{VITASDK})
     set(CMAKE_TOOLCHAIN_FILE "$ENV{VITASDK}/share/vita.toolchain.cmake" CACHE PATH "toolchain file")
   else()
-    message(FATAL_ERROR "Please define VITASDK to point to your SDK path!")
+    message(FATAL_ERROR "Please define VITASDK environment variable pointing to your SDK path!")
   endif()
 endif()
 
-project(FasterARK)
+project(FasterARK VERSION 1.0 LANGUAGES C CXX)
 
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
 set(VITA_APP_NAME "FasterARK")
-set(VITA_TITLEID  "FASTERARK")
+set(VITA_TITLEID "FASTERARK")
+set(VITA_VERSION "01.00")
 
-set(VITA_VERSION  "01.00")
-
+# Flags C e C++
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -fno-lto")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+# Vita specific flags
 set(VITA_MKSFOEX_FLAGS "${VITA_MKSFOEX_FLAGS} -s CATEGORY=gdb")
 set(VITA_MAKE_FSELF_FLAGS "${VITA_MAKE_FSELF_FLAGS}")
 
 include_directories(
+  ${PROJECT_SOURCE_DIR}/src
 )
 
 link_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-add_executable(${PROJECT_NAME}  
+add_executable(${PROJECT_NAME}
   src/ui.c
   src/install.c
   src/io.c
   src/promote.c
   src/pbp.c
-  src/sha256
+  src/sha256.c
   src/main.c
 )
 
 target_link_libraries(${PROJECT_NAME}
-	vita2d
-	z
-	c
-	m
-	png
-	jpeg
-	SceGxm_stub
-	SceSysmodule_stub 
-	ScePgf_stub
-	ScePvf_stub
-	SceCtrl_stub
-	SceCommonDialog_stub 
-	ScePower_stub
-	
-	SceLibKernel_stub
-	SceIofilemgr_stub
-	SceAppMgr_stub
-	SceDisplay_stub
-	SceVshBridge_stub
-	ScePromoterUtil_stub
-	taihen_stub
+  vita2d
+  z
+  c
+  m
+  png
+  jpeg
+  SceGxm_stub
+  SceSysmodule_stub
+  ScePgf_stub
+  ScePvf_stub
+  SceCtrl_stub
+  SceCommonDialog_stub
+  ScePower_stub
+  SceLibKernel_stub
+  SceIofilemgr_stub
+  SceAppMgr_stub
+  SceDisplay_stub
+  SceVshBridge_stub
+  ScePromoterUtil_stub
+  taihen_stub
 )
 
 vita_create_self(eboot.bin ${PROJECT_NAME} UNSAFE)
