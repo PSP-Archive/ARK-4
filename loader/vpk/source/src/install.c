@@ -37,6 +37,7 @@ int checkTaiConfig() {
     int fd = sceIoOpen("ur0:tai/config.txt", SCE_O_RDONLY, 0777);
     sceIoLseek(fd, -1, SCE_SEEK_END);
     sceIoRead(fd, &c, 1);
+    sceIoClose(fd);
     return (c == '\n');
 }
 
@@ -180,4 +181,11 @@ void doInstall() {
     placePspGameData(0);
     createBubble(0);
     copySaveFiles();
+}
+
+void taiReloadConfig(void) {
+    // Forza il reload di taiHEN config chiudendo l'app
+    updateUi("Reloading tai config, please wait...");
+    sceKernelDelayThread(1000000); // 1 secondo di pausa per visualizzare messaggio
+    sceKernelExitProcess(0);
 }
