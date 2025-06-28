@@ -346,7 +346,7 @@ int sctrlKernelMsIsEf(){
     int k1 = pspSdkSetK1(0);
     int apitype = sceKernelInitApitype();
     pspSdkSetK1(k1);
-    return (apitype == 0x125 || apitype ==  0x126 || apitype == 0x152 || apitype == 0x155) ? 1:0;
+    return (apitype == 0x125 || apitype ==  0x126 || apitype == 0x152 || apitype == 0x155) ? 1 : 0;
 }
 
 // Return Text Address of init.prx
