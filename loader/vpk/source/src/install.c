@@ -184,8 +184,9 @@ void doInstall() {
 }
 
 void taiReloadConfig(void) {
-    // Forza il reload di taiHEN config chiudendo l'app
-    updateUi("Reloading tai config, please wait...");
-    sceKernelDelayThread(1000000); // 1 secondo di pausa per visualizzare messaggio
-    sceKernelExitProcess(0);
+    // Mostra messaggio ma NON chiude l'app
+    updateUi("Reloading tai config...");
+    sceKernelDelayThread(1000000); // 1 secondo per visibilità
+    // NON chiamare sceKernelExitProcess(0);
 }
+

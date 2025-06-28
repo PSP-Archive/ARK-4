@@ -9,7 +9,7 @@
 #include "io.h"
 
 static int progress = 0;
-static int totalProgress = 0; 
+static int totalProgress = 0;
 
 static vita2d_pgf *pgf = NULL;
 static vita2d_pvf *pvf = NULL;
@@ -87,7 +87,10 @@ void waitCross(void) {
     while (1) {
         vita2d_start_drawing();
         vita2d_clear_screen();
+
+        drawTextCenter(240, "Install Complete!");
         drawTextCenter(270, "Press X to continue...");
+
         endDraw();
 
         sceCtrlPeekBufferPositive(0, &pad, 1);

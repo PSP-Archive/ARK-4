@@ -1,7 +1,13 @@
 #include <vitasdk.h>
+#include <psp2/power.h>
+#include <vita2d.h>
+#include <stdlib.h>
+#include <string.h>
 #include <psp2/ctrl.h>
-#include "ui.h"
+#include <psp2/appmgr.h>
+
 #include "install.h"
+#include "ui.h"
 
 int main(int argc, const char *argv[]) {
     uiInit();
@@ -71,8 +77,11 @@ int main(int argc, const char *argv[]) {
             return 0;
     }
 
-    displayMsg("Install Complete!", "Press X to exit...");
+    displayMsg("Install Complete!", "Press X to launch ARK-4...");
     waitCross();
+
+    // ✅ Avvia ARK-4
+    sceAppMgrLaunchAppByUri(0, "psgm:play?titleid=NPUZ01234");
 
     return 0;
 }
