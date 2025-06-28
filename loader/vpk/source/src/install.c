@@ -37,6 +37,7 @@ int checkTaiConfig() {
     int fd = sceIoOpen("ur0:tai/config.txt", SCE_O_RDONLY, 0777);
     sceIoLseek(fd, -1, SCE_SEEK_END);
     sceIoRead(fd, &c, 1);
+    sceIoClose(fd);
     return (c == '\n');
 }
 
@@ -181,3 +182,11 @@ void doInstall() {
     createBubble(0);
     copySaveFiles();
 }
+
+void taiReloadConfig(void) {
+    // Mostra messaggio ma NON chiude l'app
+    updateUi("Reloading tai config...");
+    sceKernelDelayThread(1000000); // 1 secondo per visibilità
+    // NON chiamare sceKernelExitProcess(0);
+}
+
