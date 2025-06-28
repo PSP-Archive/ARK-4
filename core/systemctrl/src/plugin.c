@@ -62,7 +62,7 @@ int isLoadingPlugins(){
     return is_plugins_loading;
 }
 
-static addPlugin(char* path){
+static void addPlugin(char* path){
     for (int i=0; i<plugins->count; i++){
         if (stricmp(plugins->paths[i], path) == 0)
             return; // plugin already added
@@ -71,7 +71,7 @@ static addPlugin(char* path){
         strcpy(plugins->paths[plugins->count++], path);
 }
 
-static removePlugin(char* path){
+static void removePlugin(char* path){
     for (int i=0; i<plugins->count; i++){
         if (stricmp(plugins->paths[i], path) == 0){
             if (--plugins->count > i){
