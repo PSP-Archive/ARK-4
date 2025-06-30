@@ -499,15 +499,5 @@ int main()
 	    case 2: devtoolipl_menu(); break;
     }
 
-//    if (baryon_ver == 0x00020601) {
-//        devtoolipl_menu();
-//    }
-//    else if(!(sctrlHkkkENIsToolKit()) || is_ta88v3()) {
-//        newipl_menu(NULL);
-//    }
-//    else {
-//        classicipl_menu();
-//    }
-
     return 0;
 }
