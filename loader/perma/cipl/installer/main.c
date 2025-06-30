@@ -153,6 +153,7 @@ void classicipl_menu(){
 
     int size;
     (void)size_ipl_block_large;
+    pspDebugScreenClear();
 
     printf("Classic cIPL installation.\n");
 
@@ -200,12 +201,10 @@ void classicipl_menu(){
         printf(" Press O to Erase cIPL and Restore Original IPL\n");
     }
 
-    printf(" Press L to use New cIPL.");
-
     printf(" Press R to cancel\n\n");
     
+    SceCtrlData pad;
     while (1) {
-        SceCtrlData pad;
         sceCtrlReadBufferPositive(&pad, 1);
 
         if (pad.Buttons & PSP_CTRL_CROSS) {
@@ -234,10 +233,6 @@ void classicipl_menu(){
         	break; 
         } else if (pad.Buttons & PSP_CTRL_RTRIGGER) {
         	ErrorExit(2000,"Cancelled by user.\n");
-        }
-        else if (pad.Buttons & PSP_CTRL_LTRIGGER) {
-        	pspDebugScreenClear();
-        	return newipl_menu(NULL);
         }
 
         sceKernelDelayThread(10000);
@@ -303,8 +298,8 @@ void devtoolipl_menu(){
 
     printf(" Press R to cancel\n\n");
     
+    SceCtrlData pad;
     while (1) {
-        SceCtrlData pad;
         sceCtrlReadBufferPositive(&pad, 1);
 
         if (pad.Buttons & PSP_CTRL_CROSS) {
@@ -338,6 +333,7 @@ void devtoolipl_menu(){
 void newipl_menu(const char* config){
     int size = NEW_CIPL_SIZE;
     u16 ipl_key = 0;
+    u8 allow_classic_install = 0;
 
     static unsigned char* ipl_table[] = {
         (unsigned char*)cipl_01G,
@@ -392,12 +388,16 @@ void newipl_menu(const char* config){
 
     printf(" Press O to restore Original IPL.\n");
 
+    if(!config && model < 2 && !is_ta88v3()) {
+	    allow_classic_install = 1;
+	    printf(" Press L to intall classic IPL.\n");
+    }
+
     printf(" Press R to cancel\n\n");
     
+    SceCtrlData pad;
     while (1) {
-        SceCtrlData pad;
         sceCtrlReadBufferPositive(&pad, 1);
-
         if (pad.Buttons & PSP_CTRL_CROSS) {
         	printf("Flashing cIPL...");
         	if(pspIplUpdateClearIpl() < 0)
@@ -422,7 +422,9 @@ void newipl_menu(const char* config){
 
         	printf("Done.\n");
         	break; 
-        } else if (pad.Buttons & PSP_CTRL_RTRIGGER) {
+        } else if ((pad.Buttons & PSP_CTRL_LTRIGGER) && allow_classic_install) {
+		return classicipl_menu();	
+    	} else if (pad.Buttons & PSP_CTRL_RTRIGGER) {
         	ErrorExit(2000,"Cancelled by user.\n");
         }
 
@@ -491,15 +493,21 @@ int main()
         return 0;
     }
 
-    if (baryon_ver == 0x00020601) {
-        devtoolipl_menu();
+    switch(sctrlHENIsToolKit()) {
+	    case 0: newipl_menu(NULL); break;
+	    case 1: classicipl_menu(); break;
+	    case 2: devtoolipl_menu(); break;
     }
-    else if(!(model == 0 || model == 1) || is_ta88v3()) {
-        newipl_menu(NULL);
-    }
-    else {
-        classicipl_menu();
-    }
+
+//    if (baryon_ver == 0x00020601) {
+//        devtoolipl_menu();
+//    }
+//    else if(!(sctrlHkkkENIsToolKit()) || is_ta88v3()) {
+//        newipl_menu(NULL);
+//    }
+//    else {
+//        classicipl_menu();
+//    }
 
     return 0;
 }
