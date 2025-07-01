@@ -99,17 +99,6 @@ int infernoIoDevctl(char* drvname, u32 cmd, u32 arg2, u32 arg3, void* p, u32 s){
     return sceIoDevctl(drvname, cmd, arg2, arg3, p, s);
 }
 
-/*
-SceUID (*_sceKernelAllocPartitionMemory)(SceUID partitionid, const char *name, int type, SceSize size, void *addr) = NULL;
-SceUID allocPartitionMemoryExtra(SceUID partitionid, const char *name, int type, SceSize size, void *addr){
-    if (partitionid == 2 && addr == NULL){
-        int res = _sceKernelAllocPartitionMemory(11, name, type, size, addr);
-        if (res>=0) return res;
-    }
-    return _sceKernelAllocPartitionMemory(partitionid, name, type, size, addr);
-}
-*/
-
 void ARKVitaOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
@@ -189,10 +178,9 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             if (se_config->msspeed)
                 msstorCacheInit("ms");
 
+            // apply extra ram patch
             if (se_config->force_high_memory){
-                unlockVitaMemory(42);
-                //sceKernelAllocPartitionMemory(2, "", PSP_SMEM_Addr, 0x1000000, (void *)0x0A000000);
-                //HIJACK_FUNCTION(K_EXTRACT_IMPORT(sceKernelAllocPartitionMemory), allocPartitionMemoryExtra, _sceKernelAllocPartitionMemory);
+                unlockVitaMemory(28);
             }
 
             // Apply Directory IO PSP Emulation
@@ -269,7 +257,7 @@ int vitaMsIsEf(){
 }
 
 void PROVitaSysPatch(){
-    
+
     // filesystem patches
     initFileSystem();
 

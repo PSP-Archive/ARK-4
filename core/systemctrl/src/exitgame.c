@@ -51,7 +51,11 @@ static int exitVsh(){
     int (*setHoldMode)(int) = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
     if (setHoldMode) setHoldMode(0);
 
+    // reset some flags
     ark_config->recovery = 0;
+    SetUmdFile(NULL);
+    sctrlSESetBootConfFileIndex(MODE_UMD);
+
     int res = sctrlKernelExitVSH(NULL);
 
     pspSdkSetK1(0);
@@ -81,6 +85,11 @@ int sctrlArkExitLauncher()
 
     int (*setHoldMode)(int) = sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
     if (setHoldMode) setHoldMode(0);
+
+    // reset some flags
+    ark_config->recovery = 0;
+    SetUmdFile(NULL);
+    sctrlSESetBootConfFileIndex(MODE_UMD);
 
     SceIoStat stat; int res = sceIoGetstat(path, &stat);
 

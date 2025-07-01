@@ -17,6 +17,7 @@ extern STMOD_HANDLER previous;
 extern SEConfig* se_config;
 
 int is_vsh = 0;
+int p11_memid = -1;
 
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
@@ -376,7 +377,9 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
         PatchImposeDriver(mod->text_addr);
         // perfect time to apply extra memory patch
-        if (se_config->force_high_memory) unlockVitaMemory(52);
+        if (se_config->force_high_memory){
+            unlockVitaMemory(52);
+        }
         // configure inferno cache
         se_config->iso_cache_size = 64 * 1024;
         se_config->iso_cache_num = 64;
@@ -502,6 +505,7 @@ int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus,
 }
 
 void AdrenalineSysPatch(){
+
     // Patch stuff
     SceModule2* loadcore = patchLoaderCore();
     PatchIoFileMgr();

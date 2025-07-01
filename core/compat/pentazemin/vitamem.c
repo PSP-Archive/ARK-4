@@ -40,12 +40,13 @@ void unlockVitaMemory(u32 user_size_mib){
     partition->data->size = (((user_size >> 8) << 9) | 0xFC);
 
     // modify p11
-    partition = GetPartition(11);
-    if (partition){
-        partition->size = 0;
-        partition->address = 0x88800000 + user_size;
-		partition->data->size = (((partition->size >> 8) << 9) | 0xFC);
+    for (int i=8; i<12; i++){
+        partition = GetPartition(i);
+        if (partition){
+            partition->size = 0;
+            partition->address = 0x88800000 + user_size;
+            partition->data->size = (((partition->size >> 8) << 9) | 0xFC);
+        }
     }
-
     sctrlHENSetMemory(user_size_mib, 0);
 }
