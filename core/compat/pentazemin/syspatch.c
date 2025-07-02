@@ -381,7 +381,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         se_config->iso_cache_num = 64;
         // perfect time to apply extra memory patch
         if (se_config->force_high_memory){
-            unlockVitaMemory(40);
+            unlockVitaMemory(56);
             se_config->iso_cache_partition = 2;
         }
         else {
