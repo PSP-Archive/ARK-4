@@ -103,7 +103,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
 
     // System fully booted Status
     static int booted = 0;
-    static int prot = -1;
 
     patchFileManagerImports(mod);
 
@@ -155,13 +154,16 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
-        // Configure Inferno Cache
         if (se_config->force_high_memory){
-            se_config->iso_cache_size = 32 * 1024;
-            se_config->iso_cache_num = 32;
-            se_config->iso_cache_partition = 11;
+            // apply extra ram patch
+            unlockVitaMemory(40);
+            // Configure Inferno Cache
+            se_config->iso_cache_partition = 2;
+            se_config->iso_cache_size = 64 * 1024;
+            se_config->iso_cache_num = 64;
         }
         else {
+            se_config->iso_cache_size = 16 * 1024;
             se_config->iso_cache_num = 16;
         }
         goto flush;
@@ -177,11 +179,6 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
             // Initialize Memory Stick Speedup Cache
             if (se_config->msspeed)
                 msstorCacheInit("ms");
-
-            // apply extra ram patch
-            if (se_config->force_high_memory){
-                unlockVitaMemory(28);
-            }
 
             // Apply Directory IO PSP Emulation
             patchFileSystemDirSyscall();
