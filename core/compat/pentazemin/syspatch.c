@@ -13,11 +13,13 @@
 #include "libs/graphics/graphics.h"
 #include "kermit.h"
 
-extern STMOD_HANDLER previous;
 extern SEConfig* se_config;
 
 extern int (*_sctrlHENSetMemory)(u32, u32);
 extern int memoryHandlerVita(u32 p2, u32 p9);
+
+// Previous Module Start Handler
+STMOD_HANDLER previous = NULL;
 
 int is_vsh = 0;
 int p11_memid = -1;
@@ -513,6 +515,12 @@ void AdrenalineSysPatch(){
 
     // initialize Adrenaline Layer
     initAdrenaline();
+
+    // Register Module Start Handler
+    previous = sctrlHENSetStartModuleHandler(AdrenalineOnModuleStart);
+
+    // Register custom start module
+    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
 
     // Implement extra memory unlock
     HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENSetMemory), memoryHandlerVita, _sctrlHENSetMemory);

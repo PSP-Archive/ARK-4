@@ -32,13 +32,6 @@ PSP_MODULE_INFO("ARKCompatLayer", 0x1007, 1, 0);
 ARKConfig* ark_config = NULL;
 SEConfig* se_config = NULL;
 
-// Previous Module Start Handler
-STMOD_HANDLER previous = NULL;
-
-extern void AdrenalineOnModuleStart(SceModule2 * mod);
-extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
-extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
-
 static void processArkConfig(){
     if (ark_config->exec_mode == DEV_UNK){
         ark_config->exec_mode = PSV_ADR; // assume running on Adrenaline
@@ -68,12 +61,6 @@ int module_start(SceSize args, void * argp)
 
     // Vita patches
     AdrenalineSysPatch();
-
-    // Register Module Start Handler
-    previous = sctrlHENSetStartModuleHandler(AdrenalineOnModuleStart);
-
-    // Register custom start module
-    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
    
     sctrlFlushCache();
     
