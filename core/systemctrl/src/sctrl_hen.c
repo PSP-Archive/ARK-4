@@ -21,12 +21,23 @@
 #include "imports.h"
 #include "sysmem.h"
 
+extern SEConfig se_config;
 
+int p2_size = 24;
 int sctrlHENSetMemory(u32 p2, u32 p9) // stub (to be highjacked and implemented by compat layer)
 {
-    static int memory_unlocked = 0;
-    if (p2>24 && !memory_unlocked){ // remember if memory has been unlocked
-        memory_unlocked = 1;
+    // check for unlock
+    if (p2 > 24){
+        if (p2_size > 24) return -2; // already enabled
+        se_config.force_high_memory = 1;
+        p2_size = p2;
+        return 0;
+    }
+    // check for default
+    else if (p2 == 24){
+        if (p2_size == 24) return -2; // already enabled
+        se_config.force_high_memory = 0;
+        p2_size = p2;
         return 0;
     }
     return -1;

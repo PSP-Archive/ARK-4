@@ -25,6 +25,9 @@ STMOD_HANDLER previous = NULL;
 
 extern int sceKernelSuspendThreadPatched(SceUID thid);
 
+extern int (*_sctrlHENSetMemory)(u32, u32);
+extern int memoryHandlerPSP(u32 p2, u32 p9);
+
 static int _sceKernelBootFromForUmdMan(void)
 {
     return 0x20;
@@ -381,16 +384,6 @@ PspSysEventHandler g_power_event = {
     .type_mask = 0x00FFFF00, // both suspend / resume
     .handler = &power_event_handler,
 };
-
-int (*_sctrlHENSetMemory)(u32, u32) = NULL;
-int memoryHandlerPSP(u32 p2, u32 p9){
-    // call orig function to determine if can unlock
-    if (_sctrlHENSetMemory(p2, p9)<0) return -1;
-
-    // unlock
-    patch_partitions();
-    return 0;
-}
 
 void PSPSyspatchStart(){
     // Register Module Start Handler

@@ -8,7 +8,10 @@
 #include <string.h>
 #include <ark.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 #include "sysmem.h"
+
+extern SEConfig* se_config;
 
 static u32 findGetPartition(){
     for (u32 addr = SYSMEM_TEXT; ; addr+=4){
@@ -19,16 +22,13 @@ static u32 findGetPartition(){
     return 0;
 }
 
-void unlockVitaMemory(u32 user_size_mib){
+int unlockVitaMemory(u32 user_size_mib){
 
     int apitype = sceKernelInitApitype(); // prevent in pops and vsh
     if (apitype == 0x144 || apitype == 0x155 || apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300)
-        return;
+        return -1;
 
     SysMemPartition *(* GetPartition)(int partition) = findGetPartition();
-    if (!GetPartition){
-        return;
-    }
 
     SysMemPartition *partition;
     u32 user_size = user_size_mib * 1024 * 1024; // new p2 size
@@ -52,14 +52,25 @@ void unlockVitaMemory(u32 user_size_mib){
     sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_FLASHFS", PSP_SMEM_Addr, 0x100000, (void*)0x0B000000);
     sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_SCRATCHPAD", PSP_SMEM_Addr, 0x100000, (void*)0x0BD00000);
     sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_VRAM", PSP_SMEM_Addr, 0x200000, (void*)0x0BE00000);
+
+    return 0;
 }
 
 int (*_sctrlHENSetMemory)(u32, u32) = NULL;
 int memoryHandlerVita(u32 p2, u32 p9){
+
+    // sanity checks
+    if (p2<=24) return -1;
+
     // call orig function to determine if can unlock
-    if (_sctrlHENSetMemory(p2, p9)<0) return -1;
+    int res = _sctrlHENSetMemory(52, 0);
+    if (res<0) return res;
 
     // unlock
-    unlockVitaMemory(52);
-    return 0;
+    res = unlockVitaMemory(52);
+    
+    // unlock fail? revert back to 24MB
+    if (res<0) _sctrlHENSetMemory(24, 0);
+
+    return res;
 }

@@ -222,6 +222,10 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
             }
 
             if (se_config.iso_cache){
+                extern int p2_size;
+                if (p2_size>24 || se_config.force_high_memory){
+                    se_config.iso_cache_partition = 2;
+                }
                 int (*CacheInit)(int, int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0x8CDE7F95);
                 if (CacheInit){
                     CacheInit(se_config.iso_cache_size, se_config.iso_cache_num, se_config.iso_cache_partition);

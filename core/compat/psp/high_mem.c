@@ -55,15 +55,13 @@ typedef struct _MemPart {
 
 int g_high_memory_enabled = 0;
 
+extern u32 psp_model;
 static u8 g_p8_size = 4;
 
 static u32 * (*get_memory_partition)(int pid) = NULL;
 
-extern u32 psp_model;
-
 static u32 findGetPartition(){
-    int found = 0;
-    for (u32 addr = SYSMEM_TEXT; !found; addr+=4){
+    for (u32 addr = SYSMEM_TEXT; ; addr+=4){
         if (_lw(addr) == 0x2C85000D){
             return addr-4;
         }
@@ -104,10 +102,10 @@ int prevent_highmem(){
     return (apitype == 0x144 || apitype == 0x155 || apitype ==  0x210 || apitype ==  0x220);
 }
 
-void prepatch_partitions(void)
+int prepatch_partitions(void)
 {
     if(prevent_highmem()){
-        return;
+        return -1;
     }
 
     MemPart p8, p11;
@@ -128,13 +126,15 @@ void prepatch_partitions(void)
     p11.size = 4;
     p11.offset = 56-4;
     modify_partition(&p11);
+
+    return 0;
 }
 
-void patch_partitions(void) 
+int patch_partitions(u32 p2_size) 
 {
 
     if(prevent_highmem()){
-        return;
+        return -1;
     }
 
     MemPart p2, p9;
@@ -143,7 +143,7 @@ void patch_partitions(void)
     p2.meminfo = get_partition(2);
     p9.meminfo = get_partition(9);
 
-    p2.size = MAX_HIGH_MEMSIZE;
+    p2.size = p2_size;
     p9.size = 0;
 
     if(get_partition(11) != NULL) {
@@ -173,4 +173,25 @@ void patch_partitions(void)
     modify_partition(&p9);
 
     g_high_memory_enabled = 1;
+
+    return 0;
+}
+
+int (*_sctrlHENSetMemory)(u32, u32) = NULL;
+int memoryHandlerPSP(u32 p2, u32 p9){
+    
+    // sanity checks
+    if (p2<=24) return -1;
+
+    // call orig function to determine if can unlock
+    int res = _sctrlHENSetMemory(MAX_HIGH_MEMSIZE, 0);
+    if (res<0) return res;
+
+    // unlock
+    res = patch_partitions(MAX_HIGH_MEMSIZE);
+
+    // unlock fail? revert back to 24MB
+    if (res<0) _sctrlHENSetMemory(24, 0);
+
+    return res;
 }
