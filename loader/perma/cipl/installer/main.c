@@ -390,7 +390,7 @@ void newipl_menu(const char* config){
 
     if(!config && model < 2 && !is_ta88v3()) {
 	    allow_classic_install = 1;
-	    printf(" Press L to intall classic IPL.\n");
+	    printf(" Press L to intall Classic IPL.\n");
     }
 
     printf(" Press R to cancel\n\n");
@@ -423,7 +423,7 @@ void newipl_menu(const char* config){
         	printf("Done.\n");
         	break; 
         } else if ((pad.Buttons & PSP_CTRL_LTRIGGER) && allow_classic_install) {
-		return classicipl_menu();	
+            return classicipl_menu();	
     	} else if (pad.Buttons & PSP_CTRL_RTRIGGER) {
         	ErrorExit(2000,"Cancelled by user.\n");
         }
