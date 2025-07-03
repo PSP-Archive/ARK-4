@@ -335,6 +335,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
 
     if (strcmp(mod->modname, "sceLoadExec") == 0) {
         PatchLoadExec(mod->text_addr, mod->text_size);
+        // fix exitgame
         REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x05572A5F), exit_game_patched);
         REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "LoadExecForUser", 0x2AC9954B), exit_game_patched);
         goto flush;
@@ -510,9 +511,9 @@ void AdrenalineSysPatch(){
     PatchIoFileMgr();
     PatchMemlmd();
 
-    // Implement extra memory unlock
-    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENSetMemory), memoryHandlerVita, _sctrlHENSetMemory);
-
     // initialize Adrenaline Layer
     initAdrenaline();
+
+    // Implement extra memory unlock
+    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENSetMemory), memoryHandlerVita, _sctrlHENSetMemory);
 }

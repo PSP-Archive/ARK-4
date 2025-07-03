@@ -25,7 +25,7 @@ static u32 findGetPartition(){
 int unlockVitaMemory(u32 user_size_mib){
 
     int apitype = sceKernelInitApitype(); // prevent in pops and vsh
-    if (apitype == 0x144 || apitype == 0x155 || apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300)
+    if (apitype == 0x144 || apitype == 0x155 || apitype >= 0x200)
         return -1;
 
     SysMemPartition *(* GetPartition)(int partition) = findGetPartition();
@@ -58,7 +58,6 @@ int unlockVitaMemory(u32 user_size_mib){
 
 int (*_sctrlHENSetMemory)(u32, u32) = NULL;
 int memoryHandlerVita(u32 p2, u32 p9){
-
     // sanity checks
     if (p2<=24) return -1;
 

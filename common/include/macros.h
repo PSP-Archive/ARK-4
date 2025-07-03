@@ -119,9 +119,25 @@
 
 #define REDIRECT_FUNCTION(a, f) \
 { \
-    u32 func = a; \
-    _sw(0x08000000 | (((u32)(f) >> 2) & 0x03FFFFFF), func); \
-    _sw(0, func + 4); \
+    _sw(0x08000000 | (((u32)(f) >> 2) & 0x03FFFFFF), (u32)(a)); \
+    _sw(0, (u32)(a) + 4); \
+}
+
+// from adrenaline
+#define FW_TO_FIRMWARE(f) ((((f >> 8) & 0xF) << 24) | (((f >> 4) & 0xF) << 16) | ((f & 0xF) << 8) | 0x10)
+#define FIRMWARE_TO_FW(f) ((((f >> 24) & 0xF) << 8) | (((f >> 16) & 0xF) << 4) | ((f >> 8) & 0xF))
+
+#define MAKE_SYSCALL_FUNCTION(a, n) \
+{ \
+    _sw(JR_RA, (u32)(a)); \
+    _sw(SYSCALL(n), (u32)(a) + 4); \
+}
+
+
+#define K_HIJACK_CALL(a, f, ptr) \
+{ \
+    ptr = (void *)K_EXTRACT_CALL(a); \
+    MAKE_CALL(a, f); \
 }
 
 #endif

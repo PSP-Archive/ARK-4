@@ -99,7 +99,7 @@ static void modify_partition(MemPart *part)
 int prevent_highmem(){
     if (psp_model == PSP_1000) return 1;
     int apitype = sceKernelInitApitype();
-    return (apitype == 0x144 || apitype == 0x155 || apitype ==  0x210 || apitype ==  0x220);
+    return (apitype == 0x144 || apitype == 0x155 || apitype > 0x200);
 }
 
 int prepatch_partitions(void)

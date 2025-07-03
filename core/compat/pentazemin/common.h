@@ -36,6 +36,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <malloc.h>
+#include <macros.h>
 
 #include "adrenaline_compat.h"
 
@@ -43,63 +44,6 @@
 #define ELF_MAGIC 0x464C457F
 #define PSP_MAGIC 0x5053507E
 #define BTCNF_MAGIC 0x0F803001
-
-#define FW_TO_FIRMWARE(f) ((((f >> 8) & 0xF) << 24) | (((f >> 4) & 0xF) << 16) | ((f & 0xF) << 8) | 0x10)
-#define FIRMWARE_TO_FW(f) ((((f >> 24) & 0xF) << 8) | (((f >> 16) & 0xF) << 4) | ((f >> 8) & 0xF))
-
-#define MAKE_JUMP(a, f) _sw(0x08000000 | (((u32)(f) & 0x0FFFFFFC) >> 2), a);
-#define MAKE_CALL(a, f) _sw(0x0C000000 | (((u32)(f) >> 2) & 0x03FFFFFF), a);
-
-#define MAKE_SYSCALL_FUNCTION(a, n) \
-{ \
-    u32 _func_ = a; \
-    _sw(0x03E00008, _func_); \
-    _sw(0x0000000C | (n << 6), _func_ + 4); \
-}
-
-#define REDIRECT_FUNCTION(a, f) \
-{ \
-    u32 _func_ = a; \
-    _sw(0x08000000 | (((u32)(f) >> 2) & 0x03FFFFFF), _func_); \
-    _sw(0, _func_ + 4); \
-}
-
-#define MAKE_DUMMY_FUNCTION(a, r) \
-{ \
-    u32 _func_ = a; \
-    if (r == 0) { \
-        _sw(0x03E00008, _func_); \
-        _sw(0x00001021, _func_ + 4); \
-    } else { \
-        _sw(0x03E00008, _func_); \
-        _sw(0x24020000 | r, _func_ + 4); \
-    } \
-}
-
-//by Davee
-#define HIJACK_FUNCTION(a, f, ptr) \
-{ \
-    u32 _func_ = a; \
-    static u32 patch_buffer[3]; \
-    _sw(_lw(_func_), (u32)patch_buffer); \
-    _sw(_lw(_func_ + 4), (u32)patch_buffer + 8);\
-    MAKE_JUMP((u32)patch_buffer + 4, _func_ + 8); \
-    _sw(0x08000000 | (((u32)(f) >> 2) & 0x03FFFFFF), _func_); \
-    _sw(0, _func_ + 4); \
-    ptr = (void *)patch_buffer; \
-}
-
-#define K_HIJACK_CALL(a, f, ptr) \
-{ \
-    ptr = (void *)K_EXTRACT_CALL(a); \
-    MAKE_CALL(a, f); \
-}
-
-//by Bubbletune
-#define U_EXTRACT_IMPORT(x) ((((u32)_lw((u32)x)) & ~0x08000000) << 2)
-#define K_EXTRACT_IMPORT(x) (((((u32)_lw((u32)x)) & ~0x08000000) << 2) | 0x80000000)
-#define U_EXTRACT_CALL(x) ((((u32)_lw((u32)x)) & ~0x0C000000) << 2)
-#define K_EXTRACT_CALL(x) (((((u32)_lw((u32)x)) & ~0x0C000000) << 2) | 0x80000000)
 
 #define ALIGN(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
 
