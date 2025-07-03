@@ -11,8 +11,7 @@
 #include "sysmem.h"
 
 static u32 findGetPartition(){
-    int found = 0;
-    for (u32 addr = SYSMEM_TEXT; !found; addr+=4){
+    for (u32 addr = SYSMEM_TEXT; ; addr+=4){
         if (_lw(addr) == 0x2C85000D){
             return addr-4;
         }
