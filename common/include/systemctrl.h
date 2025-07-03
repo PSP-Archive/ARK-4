@@ -441,18 +441,29 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler);
 void sctrlHENSetSpeed(int cpu, int bus);
 
 /**
- * Unlocks extra memory on partition 2.
+ * Unlocks extra memory on partition 2. This feature is only available in PSP 2g+ and PS Vita.
  *
  * @param p2 - The size in MB for the user partition. The actual value is ignored but must be > 24.
  * @param p8 - Unused. Set to 0.
  *
- * @returns 0 on success, < 0 on error.
- * This function is only available in PSP 2g+ and PS Vita, it will have no effect on PSP 1K even if it returns 0.
+ * @returns 0 on success, -1 if can't unlock (i.e. pops, vsh, 1k), -2 if already unlocked, -3 if too late to unlock.
  */
 int sctrlHENSetMemory(u32 p2, u32 p8);
 
+/**
+ * Obtain the syscall number of a given user-exported kernel function.
+ * 
+ * @param func_addr: absolute address of kernel function.
+ * 
+ * @returns syscall number on success, <0 on error.
+ */
 int sctrlKernelQuerySystemCall(void *func_addr);
 
+/**
+ * Obtain boot device
+ * 
+ * @returns boot device.
+ */
 int sctrlKernelBootFrom(void);
 
 /**
