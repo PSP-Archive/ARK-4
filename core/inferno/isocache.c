@@ -404,6 +404,9 @@ int iso_cache_read(struct IoReadArg *arg)
 int infernoCacheInit(int cache_size, int cache_num, int partition)
 {
 
+    int apitype = sceKernelInitApitype();
+    if (apitype == 0x141 || apitype == 0x152) return 0; // prevent ISO cache in homebrew
+
     if (cache_size == 0){ // disable cache
         sceKernelFreePartitionMemory(cache_ctrl);
         sceKernelFreePartitionMemory(cache_mem);
