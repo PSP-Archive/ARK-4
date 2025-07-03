@@ -1,8 +1,6 @@
 #include "rebootex.h"
 
-int enableFlashRedirect(){
-    return 1;
-}
+int redirect_flash = 1;
 
 int pspemuLfatOpenExtra(BootFile* file)
 {

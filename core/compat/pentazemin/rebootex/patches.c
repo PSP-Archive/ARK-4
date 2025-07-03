@@ -2,9 +2,7 @@
 
 FlashBackupList* flash_files = (FlashBackupList*)(0x08800100);
 
-int enableFlashRedirect(){
-    return 0;
-}
+int redirect_flash = 0;
 
 int findArkFlashFile(BootFile* file, const char* path){
     u32 nfiles = *(u32*)(ARK_FLASH);
@@ -50,7 +48,7 @@ int pspemuLfatOpenExtra(BootFile* file){
             relocateFlashFile(file);
         }
     }
-    
+
     strcpy(&(flash_files->bootfile[flash_files->nfiles++]), p);
     return ret;
 }

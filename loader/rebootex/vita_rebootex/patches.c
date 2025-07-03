@@ -1,6 +1,6 @@
 #include "rebootex.h"
 
-extern int enableFlashRedirect();
+extern int redirect_flash;
 
 int (*pspemuLfatOpen)(char** filename, u32 a1, u32 a2, u32 a3, u32 t0) = NULL;
 int (*SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table) = NULL;
@@ -102,7 +102,7 @@ void patchRebootBuffer(){
             _sw(0x02402021, addr); //move $a0, $s2
             _sw(JAL(PatchSysMem), addr + 0x64); // Patch call to SysMem module_bootstart
         }
-        else if ((data & 0x0000FFFF) == 0x8B00 && enableFlashRedirect()){
+        else if ((data & 0x0000FFFF) == 0x8B00 && redirect_flash){
             _sb(0xA0, addr); // Link Filesystem Buffer to 0x8BA00000
         }
     }
