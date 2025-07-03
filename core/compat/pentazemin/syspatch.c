@@ -21,13 +21,9 @@ extern int memoryHandlerVita(u32 p2, u32 p9);
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
 
-int is_vsh = 0;
-int p11_memid = -1;
-
 int (* DisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
 u64 kermit_flash_load(int cmd);
-
 
 void OnSystemStatusIdle() {
     SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
@@ -401,15 +397,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         goto flush;
     }
 
-    if (strcmp(mod->modname, "vsh_module") == 0) {
-        is_vsh = 1;
-        if (se_config->skiplogos == 1 || se_config->skiplogos == 2){
-            // patch GameBoot
-            sctrlHookImportByNID(sceKernelFindModuleByName("sceVshBridge_Driver"), "sceDisplay_driver", 0x3552AB11, 0);
-        }
-        goto flush;
-    }
-
     if (strcmp(mod->modname, "sceSAScore") == 0) {
         PatchSasCore();
         goto flush;
@@ -459,11 +446,6 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         	// Adrenaline patches
         	OnSystemStatusIdle();
 
-        	if (se_config->launcher_mode && is_vsh){
-        		int uid = sceKernelCreateThread("ExitGamePollThread", sctrlArkExitLauncher, 16 - 1, 2048, 0, NULL);
-        		sceKernelStartThread(uid, 0, NULL);
-        	}
-
             // Boot Complete Action done
             booted = 1;
         }
@@ -475,35 +457,6 @@ flush:
 exit:
        // Forward to previous Handler
     if(previous) previous(mod);
-}
-
-int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
-int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
-
-    SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
-
-    if (mod && (se_config->launcher_mode || se_config->skiplogos == 1 || se_config->skiplogos == 3) && 0 == strcmp(mod->modname, "vsh_module") ) {
-        u32* vshmain_args = oe_malloc(1024);
-
-        memset(vshmain_args, 0, 1024);
-
-        if(argp != NULL && argsize != 0 ) {
-        	memcpy( vshmain_args , argp ,  argsize);
-        }
-
-        vshmain_args[0] = 1024;
-        vshmain_args[1] = 0x20;
-        vshmain_args[16] = 1;
-
-        int ret = sceKernelStartModule(modid, 1024, vshmain_args, modstatus, opt);
-        oe_free(vshmain_args);
-
-        return ret;
-    }
-
-    // forward to previous or default StartModule
-    if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
-    return -1;
 }
 
 void AdrenalineSysPatch(){
@@ -518,9 +471,6 @@ void AdrenalineSysPatch(){
 
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(AdrenalineOnModuleStart);
-
-    // Register custom start module
-    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
 
     // Implement extra memory unlock
     HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENSetMemory), memoryHandlerVita, _sctrlHENSetMemory);

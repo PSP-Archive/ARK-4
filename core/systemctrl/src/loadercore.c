@@ -37,6 +37,8 @@
 #include "graphics.h"
 #include "libs/colordebugger/colordebugger.h"
 
+extern SEConfig se_config;
+
 // init.prx Text Address
 unsigned int sceInitTextAddr = 0;
 
@@ -229,13 +231,36 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     {
         // Forward to Handler
         result = customStartModule(modid, argsize, argp, modstatus, opt);
+        if (result>=0){ // reload module information to avoid using outdate information
+            mod = sceKernelFindModuleByName(modname);
+            modid = mod->modid;
+        }
     }
     
     // VSH replacement
     if (strcmp(modname, "vsh_module") == 0){
-        if (ark_config->recovery || ark_config->launcher[0]){ // system in recovery or launcher mode
+        // system in recovery or launcher mode
+        if (ark_config->recovery || ark_config->launcher[0] || se_config.launcher_mode){
+            int (*LoadExecForKernel_AA2029EC)() = sctrlHENFindFunction("sceLoadExec", "LoadExecForKernel", 0xAA2029EC);
+            if (LoadExecForKernel_AA2029EC) LoadExecForKernel_AA2029EC();
             sctrlArkExitLauncher(); // reboot VSH into custom menu
             MAKE_DUMMY_FUNCTION_RETURN_0(mod->entry_addr);
+        }
+        // skip bootup animation
+        if (se_config.skiplogos == 1 || se_config.skiplogos == 3) {
+            u32* vshmain_args = oe_malloc(1024);
+            memset(vshmain_args, 0, 1024);
+    
+            if(argp != NULL && argsize != 0 ) {
+                memcpy( vshmain_args , argp ,  argsize);
+            }
+    
+            vshmain_args[0] = 1024;
+            vshmain_args[1] = 0x20;
+            vshmain_args[16] = 1;
+    
+            result = sceKernelStartModule(modid, 1024, vshmain_args, modstatus, opt);
+            oe_free(vshmain_args);
         }
     }
 

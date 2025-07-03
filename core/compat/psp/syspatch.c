@@ -277,10 +277,6 @@ void PSPOnModuleStart(SceModule2 * mod){
         if (se_config->umdregion){
             patch_vsh_region_check(mod);
         }
-        if (se_config->skiplogos == 1 || se_config->skiplogos == 2){
-            // patch GameBoot
-            sctrlHookImportByNID(sceKernelFindModuleByName("sceVshBridge_Driver"), "sceDisplay_driver", 0x3552AB11, 0);
-        }
         goto flush;
     }
 
@@ -340,35 +336,6 @@ flush:
 
 }
 
-int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
-int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
-
-    SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
-
-    if (mod && (se_config->skiplogos == 1 || se_config->skiplogos == 3) && ark_config->launcher[0] == 0 && 0 == strcmp(mod->modname, "vsh_module") ) {
-        u32* vshmain_args = oe_malloc(1024);
-
-        memset(vshmain_args, 0, 1024);
-
-        if(argp != NULL && argsize != 0 ) {
-        	memcpy( vshmain_args , argp ,  argsize);
-        }
-
-        vshmain_args[0] = 1024;
-        vshmain_args[1] = 0x20;
-        vshmain_args[16] = 1;
-
-        int ret = sceKernelStartModule(modid, 1024, vshmain_args, modstatus, opt);
-        oe_free(vshmain_args);
-
-        return ret;
-    }
-
-    // forward to previous or default StartModule
-    if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
-    return -1;
-}
-
 static int power_event_handler(int ev_id, char *ev_name, void *param, int *result){
     if( ev_id == 0x400000) { // resume complete
         if (se_config->noled && _sceSysconCtrlLEDOrig){
@@ -388,9 +355,6 @@ PspSysEventHandler g_power_event = {
 void PSPSyspatchStart(){
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
-    
-    // Register custom start module
-    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
 
     // Register Power Event Handler
     sceKernelRegisterSysEventHandler(&g_power_event);

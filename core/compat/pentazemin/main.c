@@ -67,8 +67,3 @@ int module_start(SceSize args, void * argp)
     // Return Success
     return 0;
 }
-
-int module_stop(SceSize args, void *argp)
-{
-    return 0;
-}

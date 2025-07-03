@@ -460,6 +460,11 @@ static void patch_vsh_module(SceModule2 * mod)
         patch_vsh_module_for_pspgo_umdvideo(mod);
     }
 
+    if (se_config->skiplogos == 1 || se_config->skiplogos == 2){
+        // patch GameBoot
+        sctrlHookImportByNID(sceKernelFindModuleByName("sceVshBridge_Driver"), "sceDisplay_driver", 0x3552AB11, 0);
+    }
+
     #if 0
     _sb(0, mod->text_addr+0x1FF84); // enable xmb editing
     _sb(7, mod->text_addr+0x54DC9); // unlock psn sign up item
