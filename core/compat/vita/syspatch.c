@@ -21,6 +21,9 @@ extern RebootConfigARK* reboot_config;
 
 extern int sceKernelSuspendThreadPatched(SceUID thid);
 
+extern int (*_sctrlHENSetMemory)(u32, u32);
+extern int memoryHandlerVita(u32 p2, u32 p9);
+
 KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
     .KernelIcacheInvalidateAll = &sceKernelIcacheInvalidateAll,
@@ -154,10 +157,8 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
+        // Configure Inferno Cache based on memory configuration
         if (se_config->force_high_memory){
-            // apply extra ram patch
-            unlockVitaMemory(52);
-            // Configure Inferno Cache
             se_config->iso_cache_partition = 2;
             se_config->iso_cache_size = 64 * 1024;
             se_config->iso_cache_num = 64;
@@ -266,4 +267,7 @@ void PROVitaSysPatch(){
 
     // Register custom start module
     prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
+
+    // Implement extra memory unlock
+    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENSetMemory), memoryHandlerVita, _sctrlHENSetMemory);
 }

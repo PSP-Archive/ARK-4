@@ -22,9 +22,14 @@
 #include "sysmem.h"
 
 
-int sctrlHENSetMemory(u32 p2, u32 p9)
+int sctrlHENSetMemory(u32 p2, u32 p9) // stub (to be highjacked and implemented by compat layer)
 {
-    return 0;
+    static int memory_unlocked = 0;
+    if (p2>24 && !memory_unlocked){ // remember if memory has been unlocked
+        memory_unlocked = 1;
+        return 0;
+    }
+    return -1;
 }
 
 // Get HEN Version

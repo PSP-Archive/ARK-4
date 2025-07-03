@@ -589,6 +589,10 @@ void loadSettings(){
             }
         }
     }
+
+    if (se_config.force_high_memory = 1){
+        se_config.disable_pause = 1; // unless we figure out how to fix this
+    }
 }
 
 static void patch_devicename(SceUID modid)

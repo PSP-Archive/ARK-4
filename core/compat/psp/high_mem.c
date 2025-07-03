@@ -173,6 +173,4 @@ void patch_partitions(void)
     modify_partition(&p9);
 
     g_high_memory_enabled = 1;
-    
-    sctrlHENSetMemory(MAX_HIGH_MEMSIZE, 0);
 }

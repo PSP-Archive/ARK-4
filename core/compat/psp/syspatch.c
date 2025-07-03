@@ -19,7 +19,9 @@
 extern u32 psp_model;
 extern ARKConfig* ark_config;
 extern SEConfig* se_config;
-extern STMOD_HANDLER previous;
+
+// Previous Module Start Handler
+STMOD_HANDLER previous = NULL;
 
 extern int sceKernelSuspendThreadPatched(SceUID thid);
 
@@ -225,11 +227,6 @@ void PSPOnModuleStart(SceModule2 * mod){
     }
 
     if (strcmp(mod->modname, "sceImpose_Driver") == 0){
-        // Handle extra ram setting
-        if (se_config->force_high_memory){
-            patch_partitions();
-            se_config->disable_pause = 1;
-        }
         // Handle Inferno cache setting
         if (psp_model>PSP_1000) { // 8M cache on other models
             se_config->iso_cache_size = 64 * 1024;
@@ -384,3 +381,27 @@ PspSysEventHandler g_power_event = {
     .type_mask = 0x00FFFF00, // both suspend / resume
     .handler = &power_event_handler,
 };
+
+int (*_sctrlHENSetMemory)(u32, u32) = NULL;
+int memoryHandlerPSP(u32 p2, u32 p9){
+    // call orig function to determine if can unlock
+    if (_sctrlHENSetMemory(p2, p9)<0) return -1;
+
+    // unlock
+    patch_partitions();
+    return 0;
+}
+
+void PSPSyspatchStart(){
+    // Register Module Start Handler
+    previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
+    
+    // Register custom start module
+    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
+
+    // Register Power Event Handler
+    sceKernelRegisterSysEventHandler(&g_power_event);
+
+    // Implement extra memory unlock
+    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENSetMemory), memoryHandlerPSP, _sctrlHENSetMemory);
+}

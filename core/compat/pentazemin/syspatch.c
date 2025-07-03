@@ -16,6 +16,9 @@
 extern STMOD_HANDLER previous;
 extern SEConfig* se_config;
 
+extern int (*_sctrlHENSetMemory)(u32, u32);
+extern int memoryHandlerVita(u32 p2, u32 p9);
+
 int is_vsh = 0;
 int p11_memid = -1;
 
@@ -379,14 +382,7 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
         // configure inferno cache
         se_config->iso_cache_size = 64 * 1024;
         se_config->iso_cache_num = 64;
-        // perfect time to apply extra memory patch
-        if (se_config->force_high_memory){
-            unlockVitaMemory(52);
-            se_config->iso_cache_partition = 2;
-        }
-        else {
-            se_config->iso_cache_partition = 11;
-        }
+        se_config->iso_cache_partition = (se_config->force_high_memory)? 2:11;
         goto flush;
     }
 
@@ -513,6 +509,9 @@ void AdrenalineSysPatch(){
     SceModule2* loadcore = patchLoaderCore();
     PatchIoFileMgr();
     PatchMemlmd();
+
+    // Implement extra memory unlock
+    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENSetMemory), memoryHandlerVita, _sctrlHENSetMemory);
 
     // initialize Adrenaline Layer
     initAdrenaline();

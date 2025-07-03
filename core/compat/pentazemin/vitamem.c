@@ -52,6 +52,14 @@ void unlockVitaMemory(u32 user_size_mib){
     sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_FLASHFS", PSP_SMEM_Addr, 0x100000, (void*)0x0B000000);
     sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_SCRATCHPAD", PSP_SMEM_Addr, 0x100000, (void*)0x0BD00000);
     sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_VRAM", PSP_SMEM_Addr, 0x200000, (void*)0x0BE00000);
+}
 
-    sctrlHENSetMemory(user_size_mib, 0);
+int (*_sctrlHENSetMemory)(u32, u32) = NULL;
+int memoryHandlerVita(u32 p2, u32 p9){
+    // call orig function to determine if can unlock
+    if (_sctrlHENSetMemory(p2, p9)<0) return -1;
+
+    // unlock
+    unlockVitaMemory(52);
+    return 0;
 }

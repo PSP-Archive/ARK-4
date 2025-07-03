@@ -441,14 +441,13 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler);
 void sctrlHENSetSpeed(int cpu, int bus);
 
 /**
- * Sets the partition 2 and 8  memory for next loadexec.
+ * Unlocks extra memory on partition 2.
  *
- * @param p2 - The size in MB for the user partition. Must be > 0
- * @param p8 - The size in MB for partition 8. Can be 0.
+ * @param p2 - The size in MB for the user partition. The actual value is ignored but must be > 24.
+ * @param p8 - Unused. Set to 0.
  *
  * @returns 0 on success, < 0 on error.
- * This function is only available in the slim. The function will fail
- * if p2+p8 > 52 or p2 == 0
+ * This function is only available in PSP 2g+ and PS Vita, it will have no effect on PSP 1K even if it returns 0.
  */
 int sctrlHENSetMemory(u32 p2, u32 p8);
 

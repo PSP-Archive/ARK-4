@@ -19,20 +19,11 @@
 
 PSP_MODULE_INFO("ARKCompatLayer", 0x3007, 1, 0);
 
-// Previous Module Start Handler
-STMOD_HANDLER previous = NULL;
-
 // for some model specific patches
 u32 psp_model = 0;
 
 ARKConfig* ark_config = NULL;
 SEConfig* se_config = NULL;
-
-extern PspSysEventHandler g_power_event;
-
-extern void PSPOnModuleStart(SceModule2 * mod);
-extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
-extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
 
 void processArkConfig(){
     if (ark_config->exec_mode == DEV_UNK){
@@ -64,14 +55,7 @@ int module_start(SceSize args, void * argp)
     // set rebootex for PSP
     sctrlHENSetRebootexOverride(rebootbuffer_psp);
 
-    // Register Module Start Handler
-    previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
-    
-    // Register custom start module
-    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
-
-    // Register Power Event Handler
-    sceKernelRegisterSysEventHandler(&g_power_event);
+    PSPSyspatchStart();
     
     // Return Success
     return 0;

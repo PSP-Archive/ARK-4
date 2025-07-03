@@ -149,6 +149,13 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
         goto flush;
     }
+
+    if (strcmp(mod->modname, "sceImpose_Driver") == 0){
+        // Handle extra ram setting
+        if (se_config.force_high_memory){
+            sctrlHENSetMemory(MAX_HIGH_MEMSIZE, 0);
+        }
+    }
     
     // Media Sync about to start...
     if(strcmp(mod->modname, "sceMediaSync") == 0)
