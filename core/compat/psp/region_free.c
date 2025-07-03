@@ -283,13 +283,6 @@ void patch_vsh_region_check(SceModule2* mod){
     sctrlHookImportByNID(mod, "sceVshBridge", 0x5C2983C2, 1);
 }
 
-int patch_umd_thread(SceSize args, void *argp){
-    sceKernelDelayThread(1000000); // wait for system to load
-    sctrlArkReplaceUmdKeys(); // replace UMD keys
-    sceKernelExitDeleteThread(0);
-    return 0;
-}
-
 static u8 get_pscode_from_region(int region)
 {
     u8 code;

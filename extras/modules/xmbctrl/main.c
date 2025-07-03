@@ -345,14 +345,8 @@ void recreate_umd_keys(void) {
     kuKernelCall(generate_umd_keys, &args);
 
     // patch region check if not done already
-    void* hookImport = (void*)sctrlHENFindFunction("SystemControl", "SystemCtrlForKernel", 0x869F24E9);
-    if (!hookImport) return;
     SceModule2 mod; kuKernelFindModuleByName("vsh_module", &mod);
-    args.arg1 = (u32)&mod;
-    args.arg2 = (u32)"sceVshBridge";
-    args.arg3 = 0x5C2983C2;
-    args.arg4 = 1;
-    kuKernelCall(hookImport, &args);
+    sctrlHookImportByNID(&mod, "sceVshBridge", 0x5C2983C2, 1);
 }
 
 SceOff findPkgOffset(const char* filename, unsigned* size, const char* pkgpath){

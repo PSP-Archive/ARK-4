@@ -279,19 +279,7 @@ void PSPOnModuleStart(SceModule2 * mod){
         }
         goto flush;
     }
-
-    if (strcmp(mod->modname, "impose_plugin_module") == 0){
-        if (se_config->umdregion)
-        {
-            SceUID kthreadID = sceKernelCreateThread( "ark_region_change", &patch_umd_thread, 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
-            if (kthreadID >= 0){
-                // start thread and wait for it to end
-                sceKernelStartThread(kthreadID, 0, NULL);
-            }
-        }
-        goto flush;
-    }
-
+    
     if (strcmp(mod->modname, "Legacy_Software_Loader") == 0 )
     {
         // Missing from SDK
@@ -336,6 +324,19 @@ flush:
 
 }
 
+int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
+int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt){
+
+    SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
+    if (mod && strcmp(mod->modname, "sceMediaSync") == 0 && se_config->umdregion){
+        sctrlArkReplaceUmdKeys();
+    }
+
+    // forward to previous or default StartModule
+    if (prev_start) return prev_start(modid, argsize, argp, modstatus, opt);
+    return -1;
+}
+
 static int power_event_handler(int ev_id, char *ev_name, void *param, int *result){
     if( ev_id == 0x400000) { // resume complete
         if (se_config->noled && _sceSysconCtrlLEDOrig){
@@ -355,6 +356,9 @@ PspSysEventHandler g_power_event = {
 void PSPSyspatchStart(){
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(PSPOnModuleStart);
+    
+    // Register custom start module
+    prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
 
     // Register Power Event Handler
     sceKernelRegisterSysEventHandler(&g_power_event);
