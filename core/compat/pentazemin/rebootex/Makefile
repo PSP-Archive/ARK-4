@@ -23,6 +23,7 @@ REBOOT_OBJS = \
 C_OBJS = \
 	patches.o \
 	$(ARKROOT)/libs/libsploit/scanner.o \
+	$(ARKROOT)/loader/rebootex/vita_rebootex/patches.o
 
 LIBS = -L $(ARKROOT)/libs
 

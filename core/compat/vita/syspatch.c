@@ -156,7 +156,7 @@ void ARKVitaOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
         if (se_config->force_high_memory){
             // apply extra ram patch
-            unlockVitaMemory(56);
+            unlockVitaMemory(52);
             // Configure Inferno Cache
             se_config->iso_cache_partition = 2;
             se_config->iso_cache_size = 64 * 1024;

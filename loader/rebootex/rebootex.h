@@ -11,6 +11,18 @@ typedef struct {
     u32 size;
 } BootFile;
 
+typedef struct{
+    u8 filesize[4];
+    char namelen;
+    char name[1];
+} ArkFlashFile;
+
+// Sony flash0 files
+typedef struct {
+    int nfiles;
+    char bootfile[100][64]; // list of boot files
+} FlashBackupList;
+
 typedef struct {
     u32 addr;
     u32 size;
@@ -88,6 +100,7 @@ extern int (* extraPRXDecrypt)(void *, unsigned int, unsigned int *);
 extern int (* extraCheckExec)(unsigned char * addr, void * arg2);
 
 // UnpackBootConfig on PSP
+extern int UnpackBootConfigPatched(char **p_buffer, int length);
 extern int (* UnpackBootConfig)(char * buffer, int length);
 extern u32 UnpackBootConfigCall;
 extern u32 UnpackBootConfigArg;
@@ -98,6 +111,9 @@ void patchRebootBufferPSP();
 #ifdef REBOOTEX
 void patchRebootBufferVita();
 #endif
+
+// IO functions
+int pspemuLfatOpenExtra(BootFile* file);
 void patchRebootIoPSP();
 
 #endif

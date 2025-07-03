@@ -341,6 +341,7 @@ clean:
 	$(Q)$(MAKE) $@ -C loader/live/kernel/pandorizer
 	$(Q)$(MAKE) $@ -C loader/rebootex/ms_payloadex
 	$(Q)$(MAKE) $@ -C loader/rebootex/nand_payloadex
+	$(Q)$(MAKE) $@ -C loader/rebootex/vita_rebootex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/mainbinex
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/classic/combine
 	$(Q)$(MAKE) $@ -C loader/perma/cipl/new/

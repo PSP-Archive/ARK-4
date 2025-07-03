@@ -7,7 +7,7 @@ PYTHON=$(shell which python3)
 
 all: $(TARGET)
 
-CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR)) -DREBOOTEX
+CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR)) -DREBOOTEX -DREDIRECT_FLASHFS
 
 CC = psp-gcc
 LD = psp-ld
@@ -23,6 +23,7 @@ REBOOT_OBJS = \
 C_OBJS = \
 	patches.o \
 	$(ARKROOT)/libs/libsploit/scanner.o \
+	$(ARKROOT)/loader/rebootex/vita_rebootex/patches.o
 
 LIBS = -L $(ARKROOT)/libs -lcolordebugger
 
