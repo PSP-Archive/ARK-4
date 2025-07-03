@@ -1201,26 +1201,13 @@ int install_thread(SceSize args, void *argp)
     {
         switch (model)
         {
-        	case 0:
-        		offset = 0x4000;
-        		ipl_name = "flash0:/ipl_01g.bin";
-        		memcpy(big_buffer, ipl_block_01g, 0x4000);
-        		break;
-        	case 1: 
-        		if (mb == TA_088v3){
-        			ipl_name = "flash0:/cipl_02g.bin";
-        		}
-        		else {
-        			offset = 0x4000;
-        			ipl_name = "flash0:/ipl_02g.bin";
-        			memcpy(big_buffer, ipl_block_large, 0x4000);
-        		}
-        		break;
-        	case 2: ipl_name = "flash0:/cipl_03g.bin"; break;
-        	case 3: ipl_name = "flash0:/cipl_04g.bin"; break;
-        	case 4: ipl_name = "flash0:/cipl_05g.bin"; break;
-        	case 6: ipl_name = "flash0:/cipl_07g.bin"; break;
-        	case 8: ipl_name = "flash0:/cipl_09g.bin"; break;
+        	case 0:  ipl_name = "flash0:/cipl_01g.bin"; break;
+        	case 1:  ipl_name = "flash0:/cipl_02g.bin"; break;
+        	case 2:  ipl_name = "flash0:/cipl_03g.bin"; break;
+        	case 3:  ipl_name = "flash0:/cipl_04g.bin"; break;
+        	case 4:  ipl_name = "flash0:/cipl_05g.bin"; break;
+        	case 6:  ipl_name = "flash0:/cipl_07g.bin"; break;
+        	case 8:  ipl_name = "flash0:/cipl_09g.bin"; break;
         	case 10: ipl_name = "flash0:/cipl_11g.bin"; break;
         	default: InstallError(fw, "Unsupported model.");
         }
