@@ -53,8 +53,6 @@ typedef struct _MemPart {
     int size;
 } MemPart;
 
-int g_high_memory_enabled = 0;
-
 extern u32 psp_model;
 static u8 g_p8_size = 4;
 
@@ -171,8 +169,6 @@ int patch_partitions(u32 p2_size)
 
     p9.offset = p2.size;
     modify_partition(&p9);
-
-    g_high_memory_enabled = 1;
 
     return 0;
 }

@@ -80,7 +80,7 @@ int readGameIdFromISO(){
 void findGameId(){
 
     int apitype = sceKernelInitApitype();
-    if (apitype == 0x141 || apitype == 0x152 || apitype >= 0x200 || apitype == 0x120 || apitype == 0x160){
+    if (apitype == 0x141 || apitype == 0x152 || apitype == 0x120 || apitype == 0x160 || apitype >= 0x200){
         return;
     }
 
