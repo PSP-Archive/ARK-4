@@ -34,9 +34,6 @@ ARKConfig* ark_config = NULL;
 SEConfig* se_config = NULL;
 RebootConfigARK* reboot_config = NULL;
 
-// Previous Module Start Handler
-STMOD_HANDLER previous = NULL;
-
 extern void ARKVitaOnModuleStart(SceModule2 * mod);
 
 // Flush Instruction and Data Cache
@@ -82,9 +79,6 @@ int module_start(SceSize args, void * argp)
     
     // Vita patches
     PROVitaSysPatch();
-    
-    // Register Module Start Handler
-    previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);
    
     sctrlFlushCache();
     

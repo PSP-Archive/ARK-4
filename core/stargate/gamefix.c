@@ -15,6 +15,8 @@
 
 extern SEConfig* se_config;
 
+static STMOD_HANDLER game_previous;
+
 static int (*utilityGetParam)(int, int*) = NULL;
 static int getParamFixed_ULJM05221(int param, int* value){
     int res = utilityGetParam(param, value);
@@ -24,7 +26,6 @@ static int getParamFixed_ULJM05221(int param, int* value){
     return res;
 }
 
-static STMOD_HANDLER wwe_previous;
 static void wweModuleOnStart(SceModule2 * mod)
 {
 
@@ -38,7 +39,21 @@ static void wweModuleOnStart(SceModule2 * mod)
     }
 
     // Call Previous Module Start Handler
-    if(wwe_previous) wwe_previous(mod);
+    if(game_previous) game_previous(mod);
+    
+}
+
+static void pangyaModuleOnStart(SceModule2 * mod)
+{
+
+    // Boot Complete Action not done yet
+    if (strcmp(mod->modname, "projectg_psp") == 0)
+    {
+        // TODO
+    }
+
+    // Call Previous Module Start Handler
+    if(game_previous) game_previous(mod);
     
 }
 
@@ -97,7 +112,12 @@ void applyFixesByGameId(){
 
     // Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
     else if (strcasecmp("ULES01472", gameid) == 0 || strcasecmp("ULUS10543", gameid) == 0){
-        wwe_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
+        game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
+    }
+
+    // Patch anti-CFW detection in Pangya Golf
+    else if (strcasecmp("ULUS10438", gameid) == 0 || strcasecmp("ULJM05440", gameid) == 0 || strcasecmp("ULKS46164", gameid) == 0){
+        game_previous = sctrlHENSetStartModuleHandler(pangyaModuleOnStart);
     }
 
     // Patch Aces of War anti-CFW check (UMD speed)

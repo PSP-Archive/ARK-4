@@ -1024,9 +1024,8 @@ int install_iplloader()
     if (free_sectors < 32)
     {
         ErrorExit(1000, "The install failed.\n"
-        	            "Contact the Sony Computer Entertainment technical support line for assistance.\n"
-        				"(ffffffff)\n\n"
-        				"Just kidding. Use Team C+D mspformat pc tool and run the installer again.");
+        	            "Please use PSP Tool to format your memory stick.\n"
+			    "https://github.com/krazynez/psptool\n");
     }
 
     if (g_cancel)

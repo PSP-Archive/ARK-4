@@ -220,23 +220,13 @@ static void checkArkPath(){
 // Init Start Module Hook
 int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)
 {
-    char modname[32];
+    char modname[32]; memset(modname, 0, sizeof(modname));
     SceModule2* mod = (SceModule2*) sceKernelFindModuleByUID(modid);
-    strncpy(modname, mod->modname, sizeof(modname));
+    strncpy(modname, mod->modname, sizeof(mod->modname));
 
     int result = -1;
+    u32* vshmain_args = NULL;
 
-    // Custom Handler registered
-    if(customStartModule != NULL)
-    {
-        // Forward to Handler
-        result = customStartModule(modid, argsize, argp, modstatus, opt);
-        if (result>=0){ // reload module information to avoid using outdate information
-            mod = sceKernelFindModuleByName(modname);
-            modid = mod->modid;
-        }
-    }
-    
     // VSH replacement
     if (strcmp(modname, "vsh_module") == 0){
         // system in recovery or launcher mode
@@ -248,20 +238,26 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
         }
         // skip bootup animation
         if (se_config.skiplogos == 1 || se_config.skiplogos == 3) {
-            u32* vshmain_args = oe_malloc(1024);
+            vshmain_args = oe_malloc(1024);
             memset(vshmain_args, 0, 1024);
     
-            if(argp != NULL && argsize != 0 ) {
+            if (argp != NULL && argsize != 0 ) {
                 memcpy( vshmain_args , argp ,  argsize);
             }
     
             vshmain_args[0] = 1024;
             vshmain_args[1] = 0x20;
             vshmain_args[16] = 1;
-    
-            result = sceKernelStartModule(modid, 1024, vshmain_args, modstatus, opt);
-            oe_free(vshmain_args);
+            argp = vshmain_args;
+            argsize = 1024;
         }
+    }
+
+    // Custom Handler registered
+    if(customStartModule != NULL)
+    {
+        // Forward to Handler
+        result = customStartModule(modid, argsize, argp, modstatus, opt);
     }
 
     // load settings before impose module
@@ -291,6 +287,9 @@ int InitKernelStartModule(int modid, SceSize argsize, void * argp, int * modstat
     
     // start module
     if (result < 0) result = sceKernelStartModule(modid, argsize, argp, modstatus, opt);
+
+    // cleanup
+    if (vshmain_args) oe_free(vshmain_args);
 
     return result;
 }

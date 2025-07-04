@@ -14,8 +14,6 @@
 #include "popspatch.h"
 #include "libs/graphics/graphics.h"
 
-extern STMOD_HANDLER previous;
-
 extern SEConfig* se_config;
 extern RebootConfigARK* reboot_config;
 
@@ -23,6 +21,9 @@ extern int sceKernelSuspendThreadPatched(SceUID thid);
 
 extern int (*_sctrlHENSetMemory)(u32, u32);
 extern int memoryHandlerVita(u32 p2, u32 p9);
+
+// Previous Module Start Handler
+STMOD_HANDLER previous = NULL;
 
 KernelFunctions _ktbl = { // for vita flash patcher
     .KernelDcacheInvalidateRange = &sceKernelDcacheInvalidateRange,
@@ -258,6 +259,9 @@ void PROVitaSysPatch(){
 
     // patch EfIsMs
     REDIRECT_FUNCTION(K_EXTRACT_IMPORT(sctrlKernelMsIsEf), vitaMsIsEf);
+
+    // Register Module Start Handler
+    previous = sctrlHENSetStartModuleHandler(ARKVitaOnModuleStart);
 
     // Register custom start module
     prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
