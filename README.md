@@ -107,7 +107,7 @@ There are two types of installation types on PS Vita. You can use either one or 
 ##### Standalone (Official PSPEmu)
 
 - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
-- Download and install <a href="https://github.com/LiEnby/NoPspEmuDrm/releases">NoPspEmuDrm</a> (you can use `AutoPlugin`).
+- Download and install <a href="https://github.com/Kethen/NoPspEmuDrm/releases/tag/2025-07-02">NoPspEmuDrm</a>.
 - Copy `FasterARK.vpk` from `PSVita/` folder anywhere on your vita and install using `VitaShell`. 
 - Launch `FasterARK` and wait for the install process to finish.
 - Both `ARK` and `ARK-X` bubbles will appear in `Live Area`.
@@ -115,7 +115,7 @@ There are two types of installation types on PS Vita. You can use either one or 
 - Use the `ARK-X` bubble for `PS1` games without any sound limitations.
 - Once `ARK` bubbles are installed, you can delete `FasterARK`.
 - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start` (on `ARK-X` use `L2+R2+Down+Start` or `L1+R1+Start+Down` for `VitaTV`).
-- NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB`, and `Force Extra RAM` setting is known to be unstable.
+- NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB`.
 - NOTE: If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign` with a valid license. Instructions in Wiki.
 
 
