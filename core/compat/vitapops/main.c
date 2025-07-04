@@ -23,9 +23,6 @@ ARKConfig* ark_config = NULL;
 SEConfig* se_config = NULL;
 RebootConfigARK* reboot_config = NULL;
 
-extern int (*prev_start)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
-extern int StartModuleHandler(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
-
 void* sctrlARKSetPSXVramHandler(void (*handler)(u32* psp_vram, u16* ps1_vram)){
     int k1 = pspSdkSetK1(0);
     void* prev = registerPSXVramHandler(handler);

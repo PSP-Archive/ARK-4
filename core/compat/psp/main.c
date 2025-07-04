@@ -56,6 +56,8 @@ int module_start(SceSize args, void * argp)
     sctrlHENSetRebootexOverride(rebootbuffer_psp);
 
     PSPSyspatchStart();
+
+    sctrlFlushCache();
     
     // Return Success
     return 0;
