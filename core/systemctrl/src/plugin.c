@@ -590,7 +590,7 @@ void loadSettings(){
         }
     }
 
-    if (se_config.force_high_memory = 1){
+    if (se_config.force_high_memory){
         se_config.disable_pause = 1; // unless we figure out how to fix this
     }
 }
