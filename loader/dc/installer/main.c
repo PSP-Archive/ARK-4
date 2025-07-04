@@ -1023,8 +1023,10 @@ int install_iplloader()
     free_sectors = (abs_sec-0x10);
     if (free_sectors < 32)
     {
-        ErrorExit(1000, "The install failed.\n"
-        	            "Please use PSP Tool to format your memory stick.\n"
+	ErrorExit(1000, "The install failed.\n"
+        	        "Contact the Sony Computer Entertainment technical support line for assistance.\n"
+        				"(ffffffff)\n\n"
+        	            "Just kidding. Please use PSP Tool to format your memory stick.\n"
 			    "https://github.com/krazynez/psptool\n");
     }
 
