@@ -18,9 +18,6 @@ PSP_EXPORT_FUNC(hideIoDopen)
 PSP_EXPORT_FUNC(hideIoGetstat)
 PSP_EXPORT_FUNC(hideIoRemove)
 PSP_EXPORT_FUNC(hideIoRmdir)
-#PSP_EXPORT_FUNC(pangyaIoOpen)
-#PSP_EXPORT_FUNC(pangyaIoDopen)
-#PSP_EXPORT_FUNC(pangyaIoGetstat)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS
