@@ -28,7 +28,6 @@ static int getParamFixed_ULJM05221(int param, int* value){
 
 static void wweModuleOnStart(SceModule2 * mod)
 {
-
     // Boot Complete Action not done yet
     if (strcmp(mod->modname, "mainPSP") == 0)
     {
@@ -39,23 +38,9 @@ static void wweModuleOnStart(SceModule2 * mod)
     }
 
     // Call Previous Module Start Handler
-    if(game_previous) game_previous(mod);
-    
+    if(game_previous) game_previous(mod);   
 }
 
-static void pangyaModuleOnStart(SceModule2 * mod)
-{
-
-    // Boot Complete Action not done yet
-    if (strcmp(mod->modname, "projectg_psp") == 0)
-    {
-        // TODO
-    }
-
-    // Call Previous Module Start Handler
-    if(game_previous) game_previous(mod);
-    
-}
 
 void applyFixesByModule(SceModule2* mod){
 
@@ -78,9 +63,9 @@ void applyFixesByModule(SceModule2* mod){
         if (se_config->umdseek == 0 && se_config->umdspeed == 0){
             // enable UMD reading speed
             void (*SetUmdDelay)(int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
-            if (SetUmdDelay) SetUmdDelay(4, 1);
-            se_config->umdseek = 4;
-            se_config->umdspeed = 1;
+            if (SetUmdDelay) SetUmdDelay(2, 2);
+            se_config->umdseek = 2;
+            se_config->umdspeed = 2;
         }
 
         // disable Inferno Cache
@@ -113,11 +98,6 @@ void applyFixesByGameId(){
     // Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
     else if (strcasecmp("ULES01472", gameid) == 0 || strcasecmp("ULUS10543", gameid) == 0){
         game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
-    }
-
-    // Patch anti-CFW detection in Pangya Golf
-    else if (strcasecmp("ULUS10438", gameid) == 0 || strcasecmp("ULJM05440", gameid) == 0 || strcasecmp("ULKS46164", gameid) == 0){
-        game_previous = sctrlHENSetStartModuleHandler(pangyaModuleOnStart);
     }
 
     // Patch Aces of War anti-CFW check (UMD speed)

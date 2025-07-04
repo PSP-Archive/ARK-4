@@ -30,10 +30,13 @@ static char *g_blacklist[] = {
 
 static inline int is_in_blacklist(const char *dname)
 {
-    int i;
+    // lower string
+    char temp[255]; memset(temp, 0, sizeof(temp));
+    strncpy(temp, dname, sizeof(temp));
+    lowerString(temp, temp, strlen(temp)+1);
 
-    for(i=0; i<NELEMS(g_blacklist); ++i) {
-        if(0 == strcasecmp(dname, g_blacklist[i])) {
+    for (int i=0; i<NELEMS(g_blacklist); ++i) {
+        if (strstr(temp, g_blacklist[i])) {
         	return 1;
         }
     }
@@ -54,8 +57,59 @@ int hideIoDread(SceUID fd, SceIoDirent * dir)
     return result;
 }
 
+int hideIoOpen(const char *path, int flags, SceMode mode){
+    if (is_in_blacklist(path)){
+        return 0x80010002; //SCE_ERROR_ERRNO_FILE_NOT_FOUND;
+    }
+    return sceIoOpen(path, flags, mode);
+}
+
+int hideIoDopen(const char *path){
+    if (is_in_blacklist(path)){
+        return 0x80010002; //SCE_ERROR_ERRNO_FILE_NOT_FOUND;
+    }
+    return sceIoDopen(path);
+}
+
+int hideIoGetstat(const char *path, SceIoStat *stat){
+    if (is_in_blacklist(path)){
+        return 0x80010002; //SCE_ERROR_ERRNO_FILE_NOT_FOUND;
+    }
+    return sceIoGetstat(path, stat);
+}
+
+int hideIoRemove(const char *path){
+    if (is_in_blacklist(path)){
+        return 0x80010002; //SCE_ERROR_ERRNO_FILE_NOT_FOUND;
+    }
+    return sceIoRemove(path);
+}
+
+int hideIoRmdir(const char *path){
+    if (is_in_blacklist(path)){
+        return 0x80010002; //SCE_ERROR_ERRNO_FILE_NOT_FOUND;
+    }
+    return sceIoRmdir(path);
+}
+
 // hide cfw folders, this avoids crashing the weird dj max portable 3 savegame algorithm
 void hide_cfw_folder(SceModule * mod)
 {
+    // hide dread
     sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, &hideIoDread);
+
+    // hide file open
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x109F50BC, &hideIoOpen);
+
+    // hide dir open
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xB29DDF9C, &hideIoDopen);
+
+    // hide getstat
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xACE946E8, &hideIoGetstat);
+
+    // hide remove
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xF27A9C51, &hideIoRemove);
+
+    // hide rmdir
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x1117C65F, &hideIoRmdir);
 }
