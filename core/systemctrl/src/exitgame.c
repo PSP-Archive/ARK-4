@@ -95,17 +95,11 @@ int sctrlArkExitLauncher()
     if (res >= 0){
         // Clear Memory
         memset(&param, 0, sizeof(param));
-
         // Configure Parameters
         param.size = sizeof(param);
         param.args = strlen(path) + 1;
         param.argp = path;
         param.key = "game";
-
-        // set default mode
-        sctrlSESetUmdFile("");
-        sctrlSESetBootConfFileIndex(MODE_UMD);
-        
         // Trigger Reboot
         ark_config->recovery = 0; // reset recovery mode for next reboot
         sctrlKernelLoadExecVSHWithApitype(0x141, path, &param);
