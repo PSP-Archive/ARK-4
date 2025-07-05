@@ -68,13 +68,15 @@ int sctrlArkExitLauncher()
     int k1 = pspSdkSetK1(0);
 
     // Refuse Operation in Save dialog
-    if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) return 0;
-    
+    if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL){
+        pspSdkSetK1(k1);
+        return 0;
+    }
     // Refuse Operation in Dialog
-    if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) return 0;
-
-    // Load Execute Parameter
-    struct SceKernelLoadExecVSHParam param;
+    if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL){
+        pspSdkSetK1(k1);
+        return 0;
+    }
 
     // set exit app
     char path[ARK_PATH_SIZE];
@@ -91,8 +93,9 @@ int sctrlArkExitLauncher()
     sctrlSESetBootConfFileIndex(MODE_UMD);
 
     SceIoStat stat; int res = sceIoGetstat(path, &stat);
-
     if (res >= 0){
+        // Load Execute Parameter
+        struct SceKernelLoadExecVSHParam param;
         // Clear Memory
         memset(&param, 0, sizeof(param));
         // Configure Parameters
