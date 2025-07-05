@@ -87,7 +87,6 @@ int sctrlArkExitLauncher()
     if (setHoldMode) setHoldMode(0);
 
     // reset some flags
-    ark_config->recovery = 0;
     SetUmdFile(NULL);
     sctrlSESetBootConfFileIndex(MODE_UMD);
 
