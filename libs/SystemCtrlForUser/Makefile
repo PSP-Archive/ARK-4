@@ -73,7 +73,7 @@ OBJS = \
 	SystemCtrlForUser_0067.o \
 	SystemCtrlForUser_0068.o \
 	SystemCtrlForUser_0069.o \
-	
+	SystemCtrlForUser_0070.o \
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 

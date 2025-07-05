@@ -174,44 +174,47 @@
     IMPORT_FUNC "SystemCtrlForUser",0x745286D1,sctrlHENSetMemory
 #endif
 #ifdef F_SystemCtrlForUser_0056
-    IMPORT_FUNC "SystemCtrlForUser",0x053FAC1D,sctrlKernelBootFrom
+    IMPORT_FUNC "SystemCtrlForUser",0x8B2D99E4,sctrlHENApplyMemory
 #endif
 #ifdef F_SystemCtrlForUser_0057
-    IMPORT_FUNC "SystemCtrlForUser",0x56CEAF00,sctrlKernelQuerySystemCall
+    IMPORT_FUNC "SystemCtrlForUser",0x053FAC1D,sctrlKernelBootFrom
 #endif
 #ifdef F_SystemCtrlForUser_0058
-    IMPORT_FUNC "SystemCtrlForUser",0x85B520C6,sctrlSEMountUmdFromFile
+    IMPORT_FUNC "SystemCtrlForUser",0x56CEAF00,sctrlKernelQuerySystemCall
 #endif
 #ifdef F_SystemCtrlForUser_0059
-    IMPORT_FUNC "SystemCtrlForUser",0x512E0CD8,sctrlSEUmountUmd
+    IMPORT_FUNC "SystemCtrlForUser",0x85B520C6,sctrlSEMountUmdFromFile
 #endif
 #ifdef F_SystemCtrlForUser_0060
-    IMPORT_FUNC "SystemCtrlForUser",0xFFEFA034,sctrlSESetDiscOut
+    IMPORT_FUNC "SystemCtrlForUser",0x512E0CD8,sctrlSEUmountUmd
 #endif
 #ifdef F_SystemCtrlForUser_0061
-    IMPORT_FUNC "SystemCtrlForUser",0x22A45DB7,sctrlHENIsTestingTool
+    IMPORT_FUNC "SystemCtrlForUser",0xFFEFA034,sctrlSESetDiscOut
 #endif
 #ifdef F_SystemCtrlForUser_0062
-    IMPORT_FUNC "SystemCtrlForUser",0xE918D837,sctrlHENSetTestingTool
+    IMPORT_FUNC "SystemCtrlForUser",0x22A45DB7,sctrlHENIsTestingTool
 #endif
 #ifdef F_SystemCtrlForUser_0063
-    IMPORT_FUNC "SystemCtrlForUser",0x8476E2F1,sctrlArkExitLauncher
+    IMPORT_FUNC "SystemCtrlForUser",0xE918D837,sctrlHENSetTestingTool
 #endif
 #ifdef F_SystemCtrlForUser_0064
-    IMPORT_FUNC "SystemCtrlForUser",0xDA05C1E5,sctrlHENFakeDevkitVersion
+    IMPORT_FUNC "SystemCtrlForUser",0x8476E2F1,sctrlArkExitLauncher
 #endif
 #ifdef F_SystemCtrlForUser_0065
-    IMPORT_FUNC "SystemCtrlForUser",0x23833651,sctrlGetThreadUIDByName
+    IMPORT_FUNC "SystemCtrlForUser",0xDA05C1E5,sctrlHENFakeDevkitVersion
 #endif
 #ifdef F_SystemCtrlForUser_0066
-    IMPORT_FUNC "SystemCtrlForUser",0x22A45DB7,sctrlHENIsToolKit
+    IMPORT_FUNC "SystemCtrlForUser",0x23833651,sctrlGetThreadUIDByName
 #endif
 #ifdef F_SystemCtrlForUser_0067
-	IMPORT_FUNC  "SystemCtrlForUser",0xFAC22931,sctrlFindImportLib
+    IMPORT_FUNC "SystemCtrlForUser",0x22A45DB7,sctrlHENIsToolKit
 #endif
 #ifdef F_SystemCtrlForUser_0068
-	IMPORT_FUNC  "SystemCtrlForUser",0x9EFDE773,sctrlFindImportByNID
+	IMPORT_FUNC  "SystemCtrlForUser",0xFAC22931,sctrlFindImportLib
 #endif
 #ifdef F_SystemCtrlForUser_0069
+	IMPORT_FUNC  "SystemCtrlForUser",0x9EFDE773,sctrlFindImportByNID
+#endif
+#ifdef F_SystemCtrlForUser_0070
 	IMPORT_FUNC  "SystemCtrlForUser",0x72F47790,sctrlHookImportByNID
 #endif

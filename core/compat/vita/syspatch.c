@@ -19,8 +19,8 @@ extern RebootConfigARK* reboot_config;
 
 extern int sceKernelSuspendThreadPatched(SceUID thid);
 
-extern int (*_sctrlHENSetMemory)(u32, u32);
-extern int memoryHandlerVita(u32 p2, u32 p9);
+extern int (*_sctrlHENApplyMemory)(u32);
+extern int memoryHandlerVita(u32 p2);
 
 // Previous Module Start Handler
 STMOD_HANDLER previous = NULL;
@@ -267,5 +267,5 @@ void PROVitaSysPatch(){
     prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
 
     // Implement extra memory unlock
-    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENSetMemory), memoryHandlerVita, _sctrlHENSetMemory);
+    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENApplyMemory), memoryHandlerVita, _sctrlHENApplyMemory);
 }

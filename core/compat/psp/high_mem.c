@@ -173,21 +173,21 @@ int patch_partitions(u32 p2_size)
     return 0;
 }
 
-int (*_sctrlHENSetMemory)(u32, u32) = NULL;
-int memoryHandlerPSP(u32 p2, u32 p9){
+int (*_sctrlHENApplyMemory)(u32) = NULL;
+int memoryHandlerPSP(u32 p2){
     
     // sanity checks
     if (p2<=24) return -1;
 
     // call orig function to determine if can unlock
-    int res = _sctrlHENSetMemory(MAX_HIGH_MEMSIZE, 0);
+    int res = _sctrlHENApplyMemory(MAX_HIGH_MEMSIZE);
     if (res<0) return res;
 
     // unlock
     res = patch_partitions(MAX_HIGH_MEMSIZE);
 
     // unlock fail? revert back to 24MB
-    if (res<0) _sctrlHENSetMemory(24, 0);
+    if (res<0) _sctrlHENApplyMemory(24);
 
     return res;
 }

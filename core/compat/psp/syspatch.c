@@ -25,8 +25,8 @@ STMOD_HANDLER previous = NULL;
 
 extern int sceKernelSuspendThreadPatched(SceUID thid);
 
-extern int (*_sctrlHENSetMemory)(u32, u32);
-extern int memoryHandlerPSP(u32 p2, u32 p9);
+extern int (*_sctrlHENApplyMemory)(u32);
+extern int memoryHandlerPSP(u32 p2);
 
 static int _sceKernelBootFromForUmdMan(void)
 {
@@ -364,5 +364,5 @@ void PSPSyspatchStart(){
     sceKernelRegisterSysEventHandler(&g_power_event);
 
     // Implement extra memory unlock
-    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENSetMemory), memoryHandlerPSP, _sctrlHENSetMemory);
+    HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENApplyMemory), memoryHandlerPSP, _sctrlHENApplyMemory);
 }

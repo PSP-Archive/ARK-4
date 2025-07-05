@@ -441,14 +441,24 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER new_handler);
 void sctrlHENSetSpeed(int cpu, int bus);
 
 /**
+ * Unlocks extra memory on partition 2 on next reboot. This feature is only available in PSP 2g+ and PS Vita.
+ * This function has been deprecated in ARK and has no effect. Use sctrlHENApplyMemory instead.
+ *
+ * @param p2 - Size of user partition.
+ * @param p8 - Size of extra ram partion.
+ *
+ * @returns 0
+ */
+int sctrlHENSetMemory(u32 p2, u32 p8);
+
+/**
  * Unlocks extra memory on partition 2. This feature is only available in PSP 2g+ and PS Vita.
  *
  * @param p2 - The size in MB for the user partition. The actual value is ignored but must be > 24.
- * @param p8 - Unused. Set to 0.
  *
  * @returns 0 on success, -1 if can't unlock (i.e. pops, vsh, 1k), -2 if already unlocked, -3 if too late to unlock.
  */
-int sctrlHENSetMemory(u32 p2, u32 p8);
+int sctrlHENApplyMemory(u32 p2);
 
 /**
  * Obtain the syscall number of a given user-exported kernel function.

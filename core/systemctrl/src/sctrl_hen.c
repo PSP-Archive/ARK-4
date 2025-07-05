@@ -24,7 +24,12 @@
 extern SEConfig se_config;
 
 int p2_size = 24;
-int sctrlHENSetMemory(u32 p2, u32 p9) // stub (to be highjacked and implemented by compat layer)
+
+int sctrlHENSetMemory(u32 p2, u32 p9){
+    return 0; // unused in ARK
+}
+
+int sctrlHENApplyMemory(u32 p2) // stub (to be highjacked and implemented by compat layer)
 {
     // can't modify ram after boot
     if (isSystemBooted()) return -3;

@@ -56,20 +56,20 @@ int unlockVitaMemory(u32 user_size_mib){
     return 0;
 }
 
-int (*_sctrlHENSetMemory)(u32, u32) = NULL;
-int memoryHandlerVita(u32 p2, u32 p9){
+int (*_sctrlHENApplyMemory)(u32) = NULL;
+int memoryHandlerVita(u32 p2){
     // sanity checks
     if (p2<=24) return -1;
 
     // call orig function to determine if can unlock
-    int res = _sctrlHENSetMemory(52, 0);
+    int res = _sctrlHENApplyMemory(52);
     if (res<0) return res;
 
     // unlock
     res = unlockVitaMemory(52);
     
     // unlock fail? revert back to 24MB
-    if (res<0) _sctrlHENSetMemory(24, 0);
+    if (res<0) _sctrlHENApplyMemory(24);
 
     return res;
 }

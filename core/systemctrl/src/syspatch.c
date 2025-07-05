@@ -153,7 +153,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     if (strcmp(mod->modname, "sceImpose_Driver") == 0){
         // Handle extra ram setting
         if (se_config.force_high_memory){
-            sctrlHENSetMemory(MAX_HIGH_MEMSIZE, 0);
+            sctrlHENApplyMemory(MAX_HIGH_MEMSIZE);
         }
     }
     

@@ -234,41 +234,44 @@
     IMPORT_FUNC "SystemCtrlForKernel",0x745286D1,sctrlHENSetMemory
 #endif
 #ifdef F_SystemCtrlForKernel_0076
-    IMPORT_FUNC "SystemCtrlForKernel",0x2F157BAF,sctrlSEApplyConfig
+    IMPORT_FUNC "SystemCtrlForKernel",0x8B2D99E4,sctrlHENApplyMemory
 #endif
 #ifdef F_SystemCtrlForKernel_0077
-    IMPORT_FUNC "SystemCtrlForKernel",0x07232EA5,sctrlHENRegisterHomebrewLoader
+    IMPORT_FUNC "SystemCtrlForKernel",0x2F157BAF,sctrlSEApplyConfig
 #endif
 #ifdef F_SystemCtrlForKernel_0078
-    IMPORT_FUNC "SystemCtrlForKernel",0xAC0E84D1,sctrlHENRegisterKDecryptHandler
+    IMPORT_FUNC "SystemCtrlForKernel",0x07232EA5,sctrlHENRegisterHomebrewLoader
 #endif
 #ifdef F_SystemCtrlForKernel_0079
-    IMPORT_FUNC "SystemCtrlForKernel",0x1F3037FB,sctrlHENRegisterMDecryptHandler
+    IMPORT_FUNC "SystemCtrlForKernel",0xAC0E84D1,sctrlHENRegisterKDecryptHandler
 #endif
 #ifdef F_SystemCtrlForKernel_0080
-    IMPORT_FUNC "SystemCtrlForKernel",0x053FAC1D,sctrlKernelBootFrom
+    IMPORT_FUNC "SystemCtrlForKernel",0x1F3037FB,sctrlHENRegisterMDecryptHandler
 #endif
 #ifdef F_SystemCtrlForKernel_0081
-    IMPORT_FUNC "SystemCtrlForKernel",0x85B520C6,sctrlSEMountUmdFromFile
+    IMPORT_FUNC "SystemCtrlForKernel",0x053FAC1D,sctrlKernelBootFrom
 #endif
 #ifdef F_SystemCtrlForKernel_0082
-    IMPORT_FUNC "SystemCtrlForKernel",0x512E0CD8,sctrlSEUmountUmd
+    IMPORT_FUNC "SystemCtrlForKernel",0x85B520C6,sctrlSEMountUmdFromFile
 #endif
 #ifdef F_SystemCtrlForKernel_0083
-    IMPORT_FUNC "SystemCtrlForKernel",0xFFEFA034,sctrlSESetDiscOut
+    IMPORT_FUNC "SystemCtrlForKernel",0x512E0CD8,sctrlSEUmountUmd
 #endif
 #ifdef F_SystemCtrlForKernel_0084
-    IMPORT_FUNC "SystemCtrlForKernel",0x22A45DB7,sctrlHENIsToolKit
+    IMPORT_FUNC "SystemCtrlForKernel",0xFFEFA034,sctrlSESetDiscOut
 #endif
 #ifdef F_SystemCtrlForKernel_0085
-    IMPORT_FUNC "SystemCtrlForKernel",0x18B687A6,sctrlHENGetRebootexConfig
+    IMPORT_FUNC "SystemCtrlForKernel",0x22A45DB7,sctrlHENIsToolKit
 #endif
 #ifdef F_SystemCtrlForKernel_0086
-    IMPORT_FUNC "SystemCtrlForKernel",0x6A5F76B5,sctrlHENRegisterLLEHandler
+    IMPORT_FUNC "SystemCtrlForKernel",0x18B687A6,sctrlHENGetRebootexConfig
 #endif
 #ifdef F_SystemCtrlForKernel_0087
-    IMPORT_FUNC "SystemCtrlForKernel",0x23833651,sctrlGetThreadUIDByName
+    IMPORT_FUNC "SystemCtrlForKernel",0x6A5F76B5,sctrlHENRegisterLLEHandler
 #endif
 #ifdef F_SystemCtrlForKernel_0088
+    IMPORT_FUNC "SystemCtrlForKernel",0x23833651,sctrlGetThreadUIDByName
+#endif
+#ifdef F_SystemCtrlForKernel_0089
     IMPORT_FUNC "SystemCtrlForKernel",0x8476E2F1,sctrlArkExitLauncher
 #endif
