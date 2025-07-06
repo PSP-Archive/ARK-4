@@ -99,7 +99,7 @@ void hide_cfw_folder(SceModule * mod)
     sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, &hideIoDread);
 
     // hide file open
-    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x109F50BC, &hideIoOpen);
+    //sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x109F50BC, &hideIoOpen);
 
     // hide dir open
     sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xB29DDF9C, &hideIoDopen);
