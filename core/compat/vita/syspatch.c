@@ -266,6 +266,9 @@ void PROVitaSysPatch(){
     // Register custom start module
     prev_start = sctrlSetStartModuleExtra(StartModuleHandler);
 
+    // Protect Vita memory regions
+    protectVitaMemory();
+
     // Implement extra memory unlock
     HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENApplyMemory), memoryHandlerVita, _sctrlHENApplyMemory);
 }

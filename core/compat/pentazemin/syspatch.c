@@ -472,6 +472,9 @@ void AdrenalineSysPatch(){
     // Register Module Start Handler
     previous = sctrlHENSetStartModuleHandler(AdrenalineOnModuleStart);
 
+    // Protect Vita memory regions
+    protectVitaMemory();
+
     // Implement extra memory unlock
     HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENApplyMemory), memoryHandlerVita, _sctrlHENApplyMemory);
 }
