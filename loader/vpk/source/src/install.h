@@ -13,9 +13,13 @@ void createPspEmuDirectories(int _ARK_X);
 void placePspGameData(char* gameID);
 void createBubble(char* gameID);
 void copySaveFiles();
+
 void doInstall(void);
+void installARK4Only(void);
+void installARKXOnly(void);
+
 int installPS1Plugin(void);
-int installAnalogPlugin(void);       // 
-void taiReloadConfig(void);          // 
+int installAnalogPlugin(void);
+void taiReloadConfig(void);
 
 #endif
