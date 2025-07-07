@@ -13,11 +13,6 @@ PSP_EXPORT_FUNC(myUtilityLoadModule)
 PSP_EXPORT_FUNC(myUtilityUnloadModule)
 PSP_EXPORT_FUNC(myKernelLoadModule)
 PSP_EXPORT_FUNC(hideIoDread)
-PSP_EXPORT_FUNC(hideIoOpen)
-PSP_EXPORT_FUNC(hideIoDopen)
-PSP_EXPORT_FUNC(hideIoGetstat)
-PSP_EXPORT_FUNC(hideIoRemove)
-PSP_EXPORT_FUNC(hideIoRmdir)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS
