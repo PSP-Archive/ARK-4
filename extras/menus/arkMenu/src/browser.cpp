@@ -411,14 +411,30 @@ void Browser::installPlugin(){
         {0, plugins_txt},
         {1, ark_path},
     };
+    int n_path_entries = sizeof(path_entries)/sizeof(t_options_entry);
 
-    optionsmenu = new OptionsMenu("Install path", sizeof(path_entries)/sizeof(t_options_entry), path_entries);
-    int pret = optionsmenu->control();
-    aux = optionsmenu;
-    optionsmenu = NULL;
-    delete aux;
+    string plugin_path = plugin;
 
-    if (pret == OPTIONS_CANCELLED) return;
+    int plugin_location = OPTIONS_CANCELLED;
+    for (int i=1; i<n_path_entries; i++){
+        string install_path = string(path_entries[i].name);
+        string install_parent = install_path.substr(0, install_path.rfind('/'));
+        string plugin_parent = plugin_path.substr(0, install_parent.size());
+        if (strcasecmp(install_parent.c_str(), plugin_parent.c_str()) == 0){
+            plugin_location = path_entries[i].value;
+            break;
+        }
+    }
+
+    if (plugin_location < 0){
+        optionsmenu = new OptionsMenu("Install path", n_path_entries, path_entries);
+        plugin_location = optionsmenu->control();
+        aux = optionsmenu;
+        optionsmenu = NULL;
+        delete aux;
+    }
+
+    if (plugin_location == OPTIONS_CANCELLED) return;
 
     progress_desc[0] = "Installing Plugin";
     progress_desc[1] = "";
@@ -429,12 +445,11 @@ void Browser::installPlugin(){
     max_progress = 1;
     draw_progress = true;
 
-    string install_path = string(path_entries[pret+1].name);
-    string plugin_path = plugin;
+    string install_path = string(path_entries[plugin_location+1].name);
     string install_parent = install_path.substr(0, install_path.rfind('/'));
     string plugin_parent = plugin_path.substr(0, install_parent.size());
     if (strcasecmp(install_parent.c_str(), plugin_parent.c_str()) == 0){
-        plugin_path = plugin_path.substr(plugin_parent.size(), string::npos);
+        plugin_path = plugin_path.substr(plugin_parent.size()+1, string::npos);
     }
 
     int fd = sceIoOpen(install_path.c_str(), PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
