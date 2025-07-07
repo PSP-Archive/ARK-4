@@ -26,14 +26,21 @@ int main(int argc, const char *argv[]) {
         vita2d_start_drawing();
         vita2d_clear_screen();
 
-        vita2d_pgf_draw_textf(uiGetFont(), 20, 40, RGBA8(255, 255, 255, 255), 1.0f,
+        // Top title
+        vita2d_pgf_draw_textf(uiGetFont(), 20, 20, RGBA8(255, 255, 255, 255), 1.2f, "FasterArk");
+
+        // Instructions
+        vita2d_pgf_draw_textf(uiGetFont(), 20, 50, RGBA8(255, 255, 255, 255), 1.0f,
             "Select an option with Up/Down, press X to confirm:");
 
+        // Menu
         for (int i = 0; i < num_options; i++) {
-            uint32_t color = (i == selection) ? RGBA8(255, 255, 0, 255) : RGBA8(255, 255, 255, 255);
-            vita2d_pgf_draw_textf(uiGetFont(), 60, 80 + i * 30, color, 1.0f, "%s", options[i]);
+            uint32_t color = (i == selection) ? RGBA8(255, 0, 0, 255) : RGBA8(255, 255, 255, 255);
+            vita2d_pgf_draw_textf(uiGetFont(), 60, 90 + i * 30, color, 1.0f, "%s", options[i]);
         }
-        vita2d_pgf_draw_textf(uiGetFont(), 30, 80 + selection * 30, RGBA8(255, 255, 0, 255), 1.0f, "→");
+
+        // Red selection arrow
+        vita2d_pgf_draw_textf(uiGetFont(), 30, 90 + selection * 30, RGBA8(255, 0, 0, 255), 1.0f, "→");
 
         vita2d_end_drawing();
         vita2d_swap_buffers();
@@ -52,6 +59,7 @@ int main(int argc, const char *argv[]) {
         }
     }
 
+    // Perform selected action
     switch (selection) {
         case 0:
             displayMsg("Installing ARK-4", "Installing ARK-4 game...");
@@ -77,11 +85,51 @@ int main(int argc, const char *argv[]) {
             return 0;
     }
 
-    displayMsg("Install Complete!", "Press X to launch ARK-4...");
-    waitCross();
+    // Post-install launch options
+    const char *launch_options[] = {
+        "Launch ARK-4",
+        "Launch ARK-X"
+    };
+    int launch_sel = 0;
+    int launch_num = sizeof(launch_options) / sizeof(launch_options[0]);
 
-    // ✅ Avvia ARK-4
-    sceAppMgrLaunchAppByUri(0, "psgm:play?titleid=NPUZ01234");
+    while (1) {
+        vita2d_start_drawing();
+        vita2d_clear_screen();
+
+        vita2d_pgf_draw_textf(uiGetFont(), 20, 40, RGBA8(255, 255, 255, 255), 1.0f,
+            "Installation complete! Choose what to launch:");
+
+        for (int i = 0; i < launch_num; i++) {
+            uint32_t color = (i == launch_sel) ? RGBA8(255, 0, 0, 255) : RGBA8(255, 255, 255, 255);
+            vita2d_pgf_draw_textf(uiGetFont(), 60, 90 + i * 30, color, 1.0f, "%s", launch_options[i]);
+        }
+
+        vita2d_pgf_draw_textf(uiGetFont(), 30, 90 + launch_sel * 30, RGBA8(255, 0, 0, 255), 1.0f, "→");
+
+        vita2d_end_drawing();
+        vita2d_swap_buffers();
+
+        SceCtrlData pad;
+        sceCtrlPeekBufferPositive(0, &pad, 1);
+
+        if (pad.buttons & SCE_CTRL_DOWN) {
+            launch_sel = (launch_sel + 1) % launch_num;
+            sceKernelDelayThread(200 * 1000);
+        } else if (pad.buttons & SCE_CTRL_UP) {
+            launch_sel = (launch_sel - 1 + launch_num) % launch_num;
+            sceKernelDelayThread(200 * 1000);
+        } else if (pad.buttons & SCE_CTRL_CROSS) {
+            break;
+        }
+    }
+
+    // Launch ARK-4 or ARK-X and exit
+    if (launch_sel == 0) {
+        sceAppMgrLaunchAppByUri(0, "psgm:play?titleid=NPUZ01234"); // ARK-4
+    } else {
+        sceAppMgrLaunchAppByUri(0, "psgm:play?titleid=SCPS10084"); // ARK-X
+    }
 
     return 0;
 }
