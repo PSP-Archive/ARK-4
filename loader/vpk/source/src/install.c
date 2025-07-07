@@ -61,7 +61,6 @@ int installAnalogPlugin() {
         CopyFileAndUpdateUi("app0:psp/arkrightanalog.suprx", "ur0:tai/arkrightanalog.suprx");
         return 0;
     }
-
 }
 
 int installPS1Plugin() {
@@ -85,7 +84,6 @@ int installPS1Plugin() {
         CopyTree("app0:psx/GAME", "ux0:/pspemu/PSP/GAME");
         return 0;
     }
-
 }
 
 size_t GetTotalNeededDirectories(int _ARK_X) {
@@ -98,16 +96,15 @@ size_t GetTotalNeededDirectories(int _ARK_X) {
 void createPspEmuDirectories(int _ARK_X) {
     if(_ARK_X) {
         for(size_t i = 0; i < GetTotalNeededDirectories(_ARK_X); i++){
-        	CreateDirAndUpdateUi(NeededDirectoriesARKX[i]);
+            CreateDirAndUpdateUi(NeededDirectoriesARKX[i]);
         }
     }
     else {
         for(size_t i = 0; i < GetTotalNeededDirectories(0); i++){
-        	CreateDirAndUpdateUi(NeededDirectories[i]);
+            CreateDirAndUpdateUi(NeededDirectories[i]);
         }
     }
 }
-
 
 void genEbootSignature(char* ebootPath, char *gameID) {
     char ebootSigFilePath[MAX_PATH];
@@ -156,13 +153,13 @@ void placePspGameData(char *gameID) {
     }
     genEbootSignature(ebootFile, gameID);
 }
+
 void createBubble(char *gameID) {
     updateUi("Promoting ...");
     if(gameID != NULL)
         promoteCma("ux0:pspemu/temp/game", gameID, SCE_PKG_TYPE_PSP);
     else
         promoteCma("ux0:pspemu/temp/game", TITLE_ID, SCE_PKG_TYPE_PSP);
-
 }
 
 void copySaveFiles() {
@@ -170,23 +167,25 @@ void copySaveFiles() {
     CopyTree("app0:save/ARK_01234", "ux0:/pspemu/PSP/SAVEDATA/ARK_01234");
 }
 
-void doInstall() {
-    // ARK-X
-    createPspEmuDirectories(1);
-    placePspGameData("SCPS10084");
-    createBubble("SCPS10084");
-
-    // Standalone
+void installARK4Only() {
     createPspEmuDirectories(0);
-    placePspGameData(0);
-    createBubble(0);
+    placePspGameData(NULL);
+    createBubble(NULL);
     copySaveFiles();
 }
 
-void taiReloadConfig(void) {
-    // Mostra messaggio ma NON chiude l'app
-    updateUi("Reloading tai config...");
-    sceKernelDelayThread(1000000); // 1 secondo per visibilità
-    // NON chiamare sceKernelExitProcess(0);
+void installARKXOnly() {
+    createPspEmuDirectories(1);
+    placePspGameData("SCPS10084");
+    createBubble("SCPS10084");
 }
 
+void doInstall() {
+    installARK4Only();
+    installARKXOnly();
+}
+
+void taiReloadConfig(void) {
+    updateUi("Reloading tai config...");
+    sceKernelDelayThread(1000000); // 1 second for visibility
+}
