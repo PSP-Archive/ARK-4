@@ -56,6 +56,8 @@ extern "C" {
 #define FAKE_UID 0x0B00B500
 
 // Paths and other global strings
+#define FLASH0_PATH "flash0:/"
+#define FLASH1_PATH "flash1:/"
 #define VBOOT_PBP "VBOOT.PBP" // default launcher
 #define ARK_XMENU "XBOOT.PBP" // PS1 launcher
 #define ARK_RECOVERY "RECOVERY.PBP" // recovery app
@@ -76,14 +78,14 @@ extern "C" {
 #define UPDATER_FILE "UPDATER.TXT" // Update Server URL file
 #define ARK_SETTINGS "SETTINGS.TXT" // CFW Settings file
 #define MENU_SETTINGS "ARKMENU.BIN" // Settings file for CL and VSH Menu
-#define ARK_SETTINGS_FLASH "flash1:/"ARK_SETTINGS
-#define UPDATER_FILE_FLASH "flash1:/"UPDATER_FILE // Update Server URL file flash1 path
+#define ARK_SETTINGS_FLASH FLASH1_PATH ARK_SETTINGS
+#define UPDATER_FILE_FLASH FLASH1_PATH UPDATER_FILE // Update Server URL file flash1 path
 #define PLUGINS_FILE "PLUGINS.TXT" // plugins config file
 #define SEPLUGINS_MS0 "ms0:/SEPLUGINS/" // plugins folder
 #define SEPLUGINS_EF0 "ef0:/SEPLUGINS/" // plugins folder (pspgo internal)
 #define PLUGINS_PATH SEPLUGINS_MS0 PLUGINS_FILE
 #define PLUGINS_PATH_GO SEPLUGINS_EF0 PLUGINS_FILE
-#define PLUGINS_PATH_FLASH "flash0:/"PLUGINS_FILE
+#define PLUGINS_PATH_FLASH FLASH0_PATH PLUGINS_FILE
 #define ARK_THEME_FILE "THEME.ARK" // theme file for arkMenu
 #define ARK_LANG_FILE "LANG.ARK" // language files
 #define ARK_BIN "ARK.BIN" // ARK-2 payload

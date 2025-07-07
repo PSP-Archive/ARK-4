@@ -87,16 +87,10 @@ static void startPlugins()
 {
     for (int i=0; i<plugins->count; i++){
         int res = 0;
-        char path[MAX_PLUGIN_PATH];
-        strcpy(path, plugins->paths[i]);
+        char* path = plugins->paths[i];
         // Load Module
         int uid = sceKernelLoadModule(path, 0, NULL);
-        if (uid<0){ // try in ARK path
-            strcpy(path, ark_config->arkpath);
-            strcat(path, plugins->paths[i]);
-            uid = sceKernelLoadModule(path, 0, NULL);
-        }
-        if (uid > 0){
+        if (uid >= 0){
             // Call handler
             if (plugin_handler){
                 res = plugin_handler(path, uid);
@@ -293,8 +287,12 @@ int readLine(char* source, char *str)
 }
 
 // Parse and Process Line
-static void processLine(char * line, void (*enabler)(char*), void (*disabler)(char*))
-{
+static void processLine(
+    const char* parent,
+    char* line,
+    void (*enabler)(const char*),
+    void (*disabler)(const char*)
+){
     // Skip Comment Lines
     if(!enabler || line == NULL || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#')
         return;
@@ -352,21 +350,33 @@ static void processLine(char * line, void (*enabler)(char*), void (*disabler)(ch
     // Matching Plugin Runlevel
     if(matchingRunlevel(runlevel))
     {
+        char full_path[MAX_PLUGIN_PATH];
+        if (strchr(path, ':') == NULL){ // relative path
+            strcpy(full_path, parent);
+            strcat(full_path, path);
+        }
+        else{ // already full path
+            strcpy(full_path, path);
+        }
         // Enabled Plugin
         if(booleanOn(enabled))
         {
             // Start Plugin
-            enabler(path);
+            enabler(full_path);
         }
         else{
-            if (disabler) disabler(path);
+            if (disabler) disabler(full_path);
         }
     }
 }
 
 // Load Plugins
-static int ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler)(char*))
-{
+static int ProcessConfigFile(
+    const char* parent,
+    const char* path,
+    void (*enabler)(const char*),
+    void (*disabler)(const char*)
+){
 
     int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
     
@@ -402,7 +412,7 @@ static int ProcessConfigFile(char* path, void (*enabler)(char*), void (*disabler
                 buf += nread;
                 if (line[0] == 0) continue; // empty line
                 // Process Line
-                processLine(strtrim(line), enabler, disabler);
+                processLine(parent, strtrim(line), enabler, disabler);
             }
             
             // Free Buffer
@@ -553,13 +563,13 @@ void LoadPlugins(){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, PLUGINS_FILE);
-    ProcessConfigFile(path, &addPlugin, &removePlugin);
+    ProcessConfigFile(ark_config->arkpath, path, &addPlugin, &removePlugin);
     // Open Plugin Config from SEPLUGINS
-    ProcessConfigFile(PLUGINS_PATH, addPlugin, removePlugin);
+    ProcessConfigFile(SEPLUGINS_MS0, PLUGINS_PATH, addPlugin, removePlugin);
     // On PSP Go (only if ms0 isn't already redirected to ef0)
-    ProcessConfigFile(PLUGINS_PATH_GO, addPlugin, removePlugin);
+    ProcessConfigFile(SEPLUGINS_EF0, PLUGINS_PATH_GO, addPlugin, removePlugin);
     // Flash0 plugins
-    ProcessConfigFile(PLUGINS_PATH_FLASH, addPlugin, removePlugin);
+    ProcessConfigFile(FLASH0_PATH, PLUGINS_PATH_FLASH, addPlugin, removePlugin);
     // start all loaded plugins
     startPlugins();
     // free resources
@@ -575,8 +585,8 @@ void loadSettings(){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, ARK_SETTINGS);
-    if (ProcessConfigFile(path, settingsEnabler, settingsDisabler) < 0) // try external settings
-        ProcessConfigFile(ARK_SETTINGS_FLASH, settingsEnabler, settingsDisabler); // retry flash1 settings
+    if (ProcessConfigFile(ark_config->arkpath, path, settingsEnabler, settingsDisabler) < 0) // try external settings
+        ProcessConfigFile(FLASH1_PATH, ARK_SETTINGS_FLASH, settingsEnabler, settingsDisabler); // retry flash1 settings
     se_config.magic = ARK_CONFIG_MAGIC;
 
     if (!se_config.force_high_memory){
@@ -595,26 +605,44 @@ void loadSettings(){
     }
 }
 
+static int needs_devicename_patch(SceModule2* mod){
+    for (int i=0; i<mod->nsegment; ++i) {
+        u32 end = mod->segmentaddr[i] + mod->segmentsize[i];
+        for(u32 addr = mod->segmentaddr[i]; addr < end; addr ++) {
+        	char *str = (char*)addr;
+        	if (0 == strncmp(str, "ef0", 3)) {
+        		return 0;
+        	} else if (0 == strncmp(str, "fatef", 5)) {
+        		return 0;
+        	}
+        }
+    }
+    
+    u32 start = mod->text_addr+mod->text_size;
+    u32 end = start + mod->data_size;
+    for (u32 addr=start; addr<end; addr++){
+        char *str = (char*)addr;
+        if (0 == strncmp(str, "ef0", 3)) {
+        	return 0;
+        } else if (0 == strncmp(str, "fatef", 5)) {
+        	return 0;
+        }
+    }
+    return 1;
+}
+
 static void patch_devicename(SceUID modid)
 {
-    SceModule2 *mod;
-    int i;
+    SceModule2* mod = (SceModule2*)sceKernelFindModuleByUID(modid);
 
-    mod = (SceModule2*)sceKernelFindModuleByUID(modid);
-
-    if(mod == NULL) {
+    if(mod == NULL || !needs_devicename_patch(mod)) {
         return;
     }
 
-    for(i=0; i<mod->nsegment; ++i) {
-        u32 addr;
-        u32 end;
-
-        end = mod->segmentaddr[i] + mod->segmentsize[i];
-
-        for(addr = mod->segmentaddr[i]; addr < end; addr ++) {
+    for(int i=0; i<mod->nsegment; ++i) {
+        u32 end = mod->segmentaddr[i] + mod->segmentsize[i];
+        for(u32 addr = mod->segmentaddr[i]; addr < end; addr ++) {
         	char *str = (char*)addr;
-
         	if (0 == strncmp(str, "ms0", 3)) {
         		str[0] = 'e';
         		str[1] = 'f';
