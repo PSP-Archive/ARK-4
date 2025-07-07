@@ -64,7 +64,11 @@ int isLoadingPlugins(){
 
 static void addPlugin(char* path){
     for (int i=0; i<plugins->count; i++){
-        if (stricmp(plugins->paths[i], path) == 0)
+        char* cmp1 = strchr(plugins->paths[i], ':');
+        char* cmp2 = strchr(path, ':');
+        if (!cmp1) cmp1 = plugins->paths[i]; 
+        if (!cmp2) cmp2 = path;
+        if (stricmp(cmp1, cmp2) == 0)
             return; // plugin already added
     }
     if (plugins->count < MAX_PLUGINS)
