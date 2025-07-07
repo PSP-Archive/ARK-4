@@ -11,6 +11,7 @@ intraFont* font = NULL;
 intraFont* altFont = NULL;
 int altFontId = 0;
 float text_size = 1.0;
+bool non_latin_filenames = true; // allow showing file names with non-latin languages
 extern char* fonts[];
 
 bool Translations::loadLanguage(string lang_file){
@@ -60,6 +61,14 @@ bool Translations::loadLanguage(string lang_file){
         val = cJSON_GetObjectItem(cur_lang, "__textsize__");
         if (val){
             text_size = cJSON_GetNumberValue(val);
+        }
+
+        val = cJSON_GetObjectItem(cur_lang, "__nonlatinfiles__");
+        if (val){
+            non_latin_filenames = (bool)cJSON_GetNumberValue(val);
+        }
+        else {
+            non_latin_filenames = true;
         }
 
         // free resources

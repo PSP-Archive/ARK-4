@@ -676,6 +676,7 @@ void common::printText(float x, float y, const char* text, u32 color, float size
     if (font == NULL)
         return;
 
+    extern bool non_latin_filenames;
     string translated = (translate)? TR(text) : text;
     intraFont* textFont = font;
 
@@ -683,7 +684,7 @@ void common::printText(float x, float y, const char* text, u32 color, float size
         size *= text_size;
     }
     
-    if (!translate && altFont){
+    if (!translate && altFont && !non_latin_filenames){
         textFont = altFont;
     }
 

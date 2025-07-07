@@ -133,7 +133,7 @@ class GameManager : public SystemEntry{
         void drawInfo(){
             string info = getInfo();
             bool is_entry_info = (getEntry() != NULL && info == getEntry()->getName());
-            bool translate = ( !is_entry_info || info == "Recovery Menu" || info == "UMD Drive" );
+            bool translate = ( !is_entry_info || info == "Recovery Menu" || info == "UMD Drive");
             common::printText(5, 13, info.c_str(), LITEGRAY, SIZE_MEDIUM, 0, &scroll, translate);
         }
         
