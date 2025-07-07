@@ -26,14 +26,14 @@
 #include "plugin.h"
 #include "libs/graphics/graphics.h"
 
-#define LINE_BUFFER_SIZE 256
+#define LINE_BUFFER_SIZE 1024
 #define LINE_TOKEN_DELIMITER ','
 
 extern ARKConfig* ark_config;
 extern SEConfig se_config;
 
-#define MAX_PLUGINS 32
-#define MAX_PLUGIN_PATH 64
+#define MAX_PLUGINS 64
+#define MAX_PLUGIN_PATH 128
 
 typedef struct{
     int count;

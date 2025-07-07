@@ -145,8 +145,10 @@ void SettingsMenu::draw(){
                     string desc = table->settings_entries[i]->description;
                     // shorten them when asked
                     if (shorten_paths){
-                        size_t lastSlash = desc.rfind('/');
-                        desc = desc.substr(lastSlash+1, -1);
+                        size_t split = desc.rfind('/');
+                        if (split == string::npos) split = desc.find(',');
+                        desc = desc.substr(split+1, string::npos);
+                        desc = desc.erase(0, desc.find_first_not_of(" \t\n\r\f\v"));
                     }
                     else {
                         // treat as text: translate

@@ -283,7 +283,6 @@ void exec_custom_launcher() {
     strcat(menupath, VBOOT_PBP);
 
     SceIoStat stat; int res = sceIoGetstat(menupath, &stat);
-
     if (res >= 0){
         struct SceKernelLoadExecVSHParam param;
         sce_paf_private_memset(&param, 0, sizeof(param));
@@ -322,7 +321,6 @@ void exec_150_reboot(void) {
 }
 
 void exec_custom_app(char *path) {
-
     struct SceKernelLoadExecVSHParam param;
     sce_paf_private_memset(&param, 0, sizeof(param));
     param.size = sizeof(param);
@@ -843,13 +841,15 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         		sce_paf_private_strcpy(file, plugin->path);
 
         		char *p = sce_paf_private_strrchr(plugin->path, '/');
+                if (!p) p = sce_paf_private_strchr(plugin->path, ',');
         		if(p)
         		{
+                    p = strtrim(p+1);
         			char *p2 = sce_paf_private_strchr(p + 1, '.');
         			if(p2)
         			{
-        				int len = (int)(p2 - (p + 1));
-        				sce_paf_private_strncpy(file, p + 1, len);
+        				int len = (int)(p2 - p);
+        				sce_paf_private_strncpy(file, p, len);
         				file[len] = '\0';
         			}
         		}
@@ -858,9 +858,21 @@ wchar_t *scePafGetTextPatched(void *a0, char *name)
         		return (wchar_t *)user_buffer;
             }
             else if (sce_paf_private_strncmp(name, "plugins", 7) == 0){
+                char* paths[] = {
+                    "ms0:/SEPLUGINS/",
+                    "ef0:/SEPLUGINS/",
+                    ark_config->arkpath
+                };
                 u32 i = sce_paf_private_strtoul(name + 7, NULL, 10);
                 Plugin* plugin = (Plugin*)(plugins.table[i]);
-                utf8_to_unicode((wchar_t *)user_buffer, plugin->path);
+                char plugin_path[128];
+                if (sce_paf_private_strchr(plugin->path, ':') == NULL){
+                    sce_paf_private_sprintf(plugin_path, "<%s> %s", paths[plugin->place], plugin->path);
+                }
+                else{
+                    strcpy(plugin_path, plugin->path);
+                }
+                utf8_to_unicode((wchar_t *)user_buffer, plugin_path);
         		return (wchar_t *)user_buffer;
             }
         }

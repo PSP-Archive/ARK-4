@@ -102,7 +102,7 @@ void savePlugins(){
     strcpy(path, ark_config->arkpath);
     strcat(path, "PLUGINS.TXT");
 
-    int fd[3] = {
+    int fd[] = {
         sceIoOpen("ms0:/SEPLUGINS/PLUGINS.TXT", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777),
         sceIoOpen("ef0:/SEPLUGINS/PLUGINS.TXT", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777),
         sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777)

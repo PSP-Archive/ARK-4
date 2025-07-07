@@ -429,10 +429,18 @@ void Browser::installPlugin(){
     max_progress = 1;
     draw_progress = true;
 
-    int fd = sceIoOpen(path_entries[pret+1].name, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
+    string install_path = string(path_entries[pret+1].name);
+    string plugin_path = plugin;
+    string install_parent = install_path.substr(0, install_path.rfind('/'));
+    string plugin_parent = plugin_path.substr(0, install_parent.size());
+    if (strcasecmp(install_parent.c_str(), plugin_parent.c_str()) == 0){
+        plugin_path = plugin_path.substr(plugin_parent.size(), string::npos);
+    }
+
+    int fd = sceIoOpen(install_path.c_str(), PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
     sceIoWrite(fd, mode.c_str(), mode.size());
     sceIoWrite(fd, ", ", 2);
-    sceIoWrite(fd, plugin.c_str(), plugin.size());
+    sceIoWrite(fd, plugin_path.c_str(), plugin_path.size());
     sceIoWrite(fd, ", on\n", 5);
     sceIoWrite(fd, "\n", 1);
     sceIoClose(fd);
