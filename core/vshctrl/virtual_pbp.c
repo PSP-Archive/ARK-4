@@ -1004,96 +1004,6 @@ void vpbp_fixisopath(char* path){
     sprintf(tmp+1, "%s/%s", game_id, filename);
 }
 
-static int get_ISO_shortname(char *s_name, u32 size, const char *l_name)
-{
-    const char *p;
-    SceUID fd;
-    char *prefix = NULL;
-    int result = -7;
-    pspMsPrivateDirent *pri_dirent = NULL;
-    SceIoDirent *dirent = NULL;
-
-    if (s_name == NULL || l_name == NULL) {
-        result = -1;
-        goto exit;
-    }
-
-    p = strrchr(l_name, '/');
-
-    if (p == NULL) {
-        result = -2;
-        goto exit;
-    }
-
-    prefix = vsh_malloc(512);
-    pri_dirent = vsh_malloc(sizeof(*pri_dirent));
-    dirent = vsh_malloc(sizeof(*dirent));
-
-    if(prefix == NULL) {
-        result = -3;
-        goto exit;
-    }
-
-    if(pri_dirent == NULL) {
-        result = -4;
-        goto exit;
-    }
-
-    if(dirent == NULL) {
-        result = -5;
-        goto exit;
-    }
-
-    strncpy_s(prefix, 512, l_name, p + 1 - l_name);
-    prefix[MIN(p + 1 - l_name, 512-1)] = '\0';
-    #ifdef DEBUG
-    printk("%s: prefix %s\n", __func__, prefix);
-    #endif
-    fd = sceIoDopen(prefix);
-
-    if (fd >= 0) {
-        int ret;
-
-        do {
-            memset(dirent, 0, sizeof(*dirent));
-            memset(pri_dirent, 0, sizeof(*pri_dirent));
-            pri_dirent->size = sizeof(*pri_dirent);
-            dirent->d_private = (void*)pri_dirent;
-            ret = sceIoDread(fd, dirent);
-
-            if (ret >= 0) {
-                if (!strcmp(dirent->d_name, p+1)) {
-                    if (pri_dirent->s_name[0] != 0){
-                        strncpy(s_name, l_name, MIN(p + 1 - l_name, size));
-                        s_name[MIN(p + 1 - l_name, size-1)] = '\0';
-                        strcat(s_name, pri_dirent->s_name);
-                        #ifdef DEBUG
-                        printk("%s: final %s\n", __func__, s_name);
-                        #endif
-                        result = 0;
-                        break;
-                    }
-                }
-            }
-        } while (ret > 0);
-
-        sceIoDclose(fd);
-    } else {
-        #ifdef DEBUG
-        printk("%s: sceIoDopen %s -> 0x%08X\n", __func__, prefix, fd);
-        #endif
-        result = -6;
-        goto exit;
-    }
-
-exit:
-    vsh_free(prefix);
-    vsh_free(pri_dirent);
-    vsh_free(dirent);
-
-    return result;
-}
-
 int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
 {
     int ret;
@@ -1126,15 +1036,6 @@ int vpbp_loadexec(char * file, struct SceKernelLoadExecVSHParam * param)
     u8* sfo = (u8*)(sfo_field[1]);
     if (sfo){
         sfo[0x24] = 0;
-    }
-
-    // get ISO path with non-latin1 support
-    char sname[128]; sname[0] = 0;
-    get_ISO_shortname(sname, sizeof(sname), vpbp->name);
-
-    SceIoStat stat;
-    if (sceIoGetstat(sname, &stat) >= 0){
-        strcpy(vpbp->name, sname);
     }
 
     //set iso file for reboot
