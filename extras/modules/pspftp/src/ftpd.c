@@ -121,7 +121,7 @@ mftpClientHandler(SceSize argc, void *argv)
 
     mftpServerHello(con);
 
-  char messBuffer[64];
+    char messBuffer[1024];
     char readBuffer[1024];
     char lineBuffer[1024];
     int lineLen=0;
@@ -141,7 +141,7 @@ mftpClientHandler(SceSize argc, void *argv)
                   char* command=skipWS(lineBuffer);
                   trimEndingWS(command);
 
-          snprintf(messBuffer, 64, "> %s from %s", command, con->clientIp);
+          sprintf(messBuffer, "> %s from %s", command, con->clientIp);
           mftpPrint(messBuffer);
 
                   if ((errLoop=mftpDispatch(con,command))<0) break;
@@ -213,10 +213,10 @@ ftpdLoop(SceSize argc, void *argv)
       goto done;
     }
 
-    snprintf(con->clientIp, 32, "%d.%d.%d.%d",
+    sprintf(con->clientIp, "%d.%d.%d.%d",
             addrAccept.sin_addr[0], addrAccept.sin_addr[1],
             addrAccept.sin_addr[2], addrAccept.sin_addr[3]);
-    snprintf(buffer_2, 64, "Connection from %s", con->clientIp);
+    sprintf(buffer_2, "Connection from %s", con->clientIp);
     mftpPrint(buffer_2);
 
     con->sockCommand = sockClient;

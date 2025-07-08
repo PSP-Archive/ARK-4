@@ -79,8 +79,6 @@ kbd_wait_start(void)
 int
 psp_power_callback(int arg1, int arg2, void *arg3)
 {
-  pspDebugScreenPrintf("power call back call !\n");
-  //psp_exit(0);
 
   return 0;
 }

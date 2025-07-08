@@ -275,3 +275,12 @@
 #ifdef F_SystemCtrlForKernel_0089
     IMPORT_FUNC "SystemCtrlForKernel",0x8476E2F1,sctrlArkExitLauncher
 #endif
+#ifdef F_SystemCtrlForKernel_0090
+    IMPORT_FUNC "SystemCtrlForKernel",0xBC7554DF,strcasecmp
+#endif
+#ifdef F_SystemCtrlForKernel_0091
+    IMPORT_FUNC "SystemCtrlForKernel",0xAC7554DF,strncasecmp
+#endif
+#ifdef F_SystemCtrlForKernel_0092
+    IMPORT_FUNC "SystemCtrlForKernel",0x983B00FB,lowerString
+#endif

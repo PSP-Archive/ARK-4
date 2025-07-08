@@ -6,7 +6,6 @@
 #include "std.h"
 #include "ftp.h"
 #include "psp_init.h"
-//#include "nlh.h"
 #include <string.h>
 #include "psp_cfg.h"
 
@@ -49,7 +48,7 @@ psp_read_config(void)
 {
   char        cfg_filename[128];
   char        Buffer[512];
-  FILE       *CfgFile;
+  SceUID      CfgFile;
   char       *Begin;
   char       *Scan;
   mftpUser_t *NewUser;
@@ -61,10 +60,10 @@ psp_read_config(void)
   strcpy(cfg_filename,psp_home_dir);
   strcat(cfg_filename,"/psp-ftpd.cfg");
 
-  CfgFile = fopen(cfg_filename, "r");
+  CfgFile = sceIoOpen(cfg_filename, PSP_O_RDONLY, 0777);
 
-  if (CfgFile != (FILE*)0) {
-    while (fgets(Buffer,512,CfgFile) != (char *)0) {
+  if (CfgFile >= 0) {
+    while (sceIoRead(CfgFile, Buffer, 512) != (char *)0) {
       Scan = strchr(Buffer,'\n');
       if (Scan) *Scan = '\0';
       /* For this #@$% of windows ! */
@@ -96,19 +95,11 @@ psp_read_config(void)
       }
     }
 
-    fclose(CfgFile);
+    sceIoClose(CfgFile);
   }
 
   if (mftp_config.head_user == (mftpUser_t *)0) {
     NewUser = cfg_add_new_user();
-  } else {
-    pspDebugScreenPrintf("\nAdd the following user(s) to the database:\n\n");
-    for (NewUser  = mftp_config.head_user;
-         NewUser != (mftpUser_t*)0;
-         NewUser  = NewUser->next) {
-       pspDebugScreenPrintf("  > user='%s' with root='%s'\n", NewUser->user, NewUser->root);
-    }
-    sceKernelDelayThread(5000000); 
   }
 
   return 0;

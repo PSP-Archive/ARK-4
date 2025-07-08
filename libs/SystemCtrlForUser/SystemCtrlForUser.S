@@ -218,3 +218,12 @@
 #ifdef F_SystemCtrlForUser_0070
 	IMPORT_FUNC  "SystemCtrlForUser",0x72F47790,sctrlHookImportByNID
 #endif
+#ifdef F_SystemCtrlForUser_0071
+	IMPORT_FUNC  "SystemCtrlForUser",0xBC7554DF,strcasecmp
+#endif
+#ifdef F_SystemCtrlForUser_0072
+	IMPORT_FUNC  "SystemCtrlForUser",0xAC7554DF,strncasecmp
+#endif
+#ifdef F_SystemCtrlForUser_0073
+	IMPORT_FUNC  "SystemCtrlForUser",0x983B00FB,lowerString
+#endif
