@@ -9,7 +9,6 @@ SUBDIRS = \
 	iplsdk \
 	prebuilt \
 	libpspmath \
-	libunziprar \
 	libpng \
 	libjpeg \
 	libpspvram \
@@ -35,7 +34,6 @@ distclean clean:
 	$(Q)make $@ -C colordebugger $(OPT)
 	$(Q)make $@ -C iplsdk $(OPT)
 	$(Q)make $@ -C libpspmath $(OPT)
-	$(Q)make $@ -C libunziprar $(OPT)
 	$(Q)make $@ -C libpng $(OPT)
 	$(Q)make $@ -C libjpeg $(OPT)
 	$(Q)make $@ -C libpspvram $(OPT)

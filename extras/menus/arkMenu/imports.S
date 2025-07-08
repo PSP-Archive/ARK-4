@@ -11,3 +11,9 @@ STUB_END
 STUB_START "SysMemUserForUser", 0x40000011, 0x00030005
 STUB_FUNC 0x7591C7DB, sceKernelSetCompiledSdkVersion
 STUB_END
+
+#include "pspimport.s"
+
+IMPORT_START "unziprar", 0x40090000
+IMPORT_FUNC "unziprar", 0x0E063607, unzipToDir
+IMPORT_FUNC "unziprar", 0x0528D2EE, DoExtractRAR

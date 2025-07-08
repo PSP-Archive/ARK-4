@@ -6,17 +6,7 @@ extern "C"{
 /*
  * If the destpath folder doesn't exist, it'll be created
  */
-int unzipToDir(const char *zippath, const char *destpath, const char *pass);
-
-
-
-/*
- * Pass 1 to activate password use, 0 to deactivate
- */
-void SetUsepassword(int p);
-
-int GetUsePassword();
-
+void unzipToDir(const char *zippath, const char *destpath, const char *pass);
 
 
 /*

@@ -195,6 +195,7 @@ class Browser : public SystemEntry{
         void copyFile(string path);
         void copyFile(string path, string destination);
         int pspIoMove(string src, string dest);
+        int loadStartModule(string modpath, bool wait_on_ok=true);
         
         string checkDestExists(string src, string destination, string name);
         

@@ -72,7 +72,6 @@ OBJS = \
 
 
 LIBS = \
-		-lunziprar \
 		-lstdc++ \
 		-lc \
 		-lya2d \

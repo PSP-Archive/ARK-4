@@ -17,7 +17,7 @@ LIBDIR = $(ARKROOT)/libs
 LIBS = -lpspsystemctrl_user -lpspaudio
 
 all:
-	psp-packer peops.prx
+	psp-packer $(TARGET).prx
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build_prx.mak
