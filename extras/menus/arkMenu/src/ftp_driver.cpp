@@ -1,10 +1,10 @@
 #include <cstring>
 #include <algorithm>
+#include <pspftp.h>
 #include "ftp_driver.h"
 #include "osk.h"
 #include "network.h"
 #include "browser_entries.h"
-#include "ftpclient.h"
 
 static char* ANONYMOUS = "anonymous";
 
@@ -50,6 +50,7 @@ bool FTPDriver::connect(){
     if (initializeNetwork() < 0) return false;
     printf("connect to access point\n");
     if (!connect_to_apctl()) return false;
+    if (loadstartFTPlib() < 0) return false;
 
     bool ret = false;
     char tmpText[51];
@@ -130,6 +131,7 @@ bool FTPDriver::connect(){
 
 void FTPDriver::disconnect(){
     ftpDisconnect();
+    stopunloadFTPlib();
     shutdownNetwork();
     ftpClean();
     connected = false;

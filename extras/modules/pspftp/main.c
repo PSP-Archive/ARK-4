@@ -1,23 +1,6 @@
 #include <pspsdk.h>
 
-PSP_MODULE_INFO("FTPlibPSP", 0x0007, 1, 0);
-
-void* malloc(int size){
-    int uid = sceKernelAllocPartitionMemory(2, "", 1, size+sizeof(int), NULL);
-    int* ptr = sceKernelGetBlockHeadAddr(uid);
-    if (ptr){
-        ptr[0] = uid;
-        return &(ptr[1]);
-    }
-    return NULL;
-}
-
-void free(int* ptr){
-    if (ptr){
-        int uid = ptr[-1];
-        sceKernelFreePartitionMemory(uid);
-    }
-}
+PSP_MODULE_INFO("FTPlibPSP", PSP_MODULE_SINGLE_LOAD|PSP_MODULE_SINGLE_START, 1, 0);
 
 void _start() __attribute__ ((weak, alias ("module_start")));
 int module_start(){

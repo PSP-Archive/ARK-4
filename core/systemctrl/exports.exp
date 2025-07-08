@@ -193,6 +193,8 @@ PSP_EXPORT_FUNC(kuKernelIcacheInvalidateAll)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(SysclibForUser, 0, 0x4001)
+PSP_EXPORT_FUNC(user_malloc)
+PSP_EXPORT_FUNC(oe_free)
 PSP_EXPORT_FUNC_NID(strcasecmp, 0xBC7554DF)
 PSP_EXPORT_FUNC_NID(strncasecmp, 0xAC7554DF)
 PSP_EXPORT_FUNC(lowerString)

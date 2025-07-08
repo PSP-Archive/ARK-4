@@ -1,6 +1,10 @@
 #ifndef _sutils
 #define _sutils
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
     char* skipWS(char* s);
     void trimEndingWS(char* s);
     int strStartsWith(char* s, char* start);
@@ -10,4 +14,9 @@
     void strReplaceChar(char* str, char s, char d);
 
     void toUpperCase(char* s);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

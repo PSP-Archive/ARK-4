@@ -1,11 +1,23 @@
-#ifndef FTPCLIENT_H
-#define FTPCLIENT_H
+# ifndef PSP_FTPD_H
+# define PSP_FTPD_H
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-#include "my_socket.h"
+// Server
+
+extern void ftpdSetDevice(char* device);
+
+extern char* ftpdGetDevice();
+
+extern void ftpdSetMsgHandler(void (*handler)(const char*));
+
+extern int ftpdLoop(unsigned int argc, void *argv);
+
+extern int ftpdExitHandler(unsigned int argc, void *argv);
+
+// Client
 
 #define TRANSFER_BUFFER_SIZE     4096    // Buffer size for transfer
 #define MAX_FILES                 256        // MAX files in a list
@@ -27,6 +39,8 @@ extern "C"{
 #define STATUS_TRANSFERRING     10
 #define STATUS_TRANSFERFAILED    11
 #define STATUS_IDLE                12
+
+typedef unsigned int SOCKET;
 
 // connection used
 typedef struct MclientConnection {
@@ -70,31 +84,19 @@ typedef struct remoteDirent {
     struct remoteFileent files[MAX_FILES];
 } remoteDirent;
 
-// helpful net functions
-//int ftpGetWLANSwitch(void);                    // returns if WLAN switch is on or off
-//int ftpGetWLANPower(void);                    // returns if WLAN Power save is on?
-//int ftpGetEtherAddr(char *etherAddr);        // gets ethernet address, pass a pointer to a buffer of chars at least length 19
-
-// implementation functions
-//int startFTP(SceModuleInfo *modInfoPtr);    // starts the ftp thread loop and waits for a ftpConnect() call
 void ftpInit();
 void ftpClean();
 int ftpConnect(char* ip, int port);            // connects to remote address
 int ftpLogin(char* user, char* pass);        // called once connected, to login
 void ftpDisconnect(void);                    // disconnects from remote if connected
-//void quitFTP(void);                            // quits the ftp thread loop
-
 int ftpStatus(void);                        // returns the current status of the client
 int ftpExited(void);                        // returns if the client has exited the program
 int ftpConnected(void);                        // returns if currently connected
 int ftpLoggedIn(void);                        // returns 1 if currently logged in
-
 long int ftpCurrentRETR(void);                // returns downloaded size of current download
 long int ftpCurrentSTOR(void);                // returns downloaded size of current upload
 void ftpSetPASV(int enabled);                    // enable/disable PASV
 int ftpPASVEnabled(void);                        // returns if pasv is enabled
-
-// ftp commands
 int ftpRETR(char* location, char* file);    // download a file
 int ftpSTOR(char* localdir, char* file);    // uploads a file
 void ftpABOR(void);                            // sends ABOR command
@@ -107,10 +109,9 @@ void ftpDELE(char* file);                    // deletes a file
 void ftpCWD(char* dir);                        // change directory
 char* ftpPWD(void);                            // returns current directory
 remoteDirent* ftpLIST(void);                // returns a list of files
-// long int ftpSIZE(char* file);                        // gets the size of a remote file
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+# endif

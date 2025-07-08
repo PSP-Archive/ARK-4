@@ -2,10 +2,16 @@
  *  Copyright (C) 2006 Ludovic Jacomme (ludovic.jacomme@gmail.com)
  */
 
+
+
 #ifndef _PSP_CFG_H
 #define _PSP_CFG_H
 
-  typedef struct mftpUser_t  {
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+typedef struct mftpUser_t  {
     struct mftpUser_t *next;
     char               user[MAX_USER_LENGTH];
     char               password[MAX_PASS_LENGTH];
@@ -24,5 +30,9 @@
   extern int psp_read_config(void);
 
   extern mftpUser_t* cfg_get_user(char *User, char *Password);
+
+#ifdef __cplusplus
+}
+#endif
 
 # endif

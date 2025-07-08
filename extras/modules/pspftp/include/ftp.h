@@ -1,6 +1,10 @@
 # ifndef PSP_FTP_H
 # define PSP_FTP_H
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 //#include "nlh.h"
 #include "my_socket.h"
 
@@ -53,5 +57,9 @@ void mftpAddNewStatusMessage(char *Message);
 extern int mftpServerHello(MftpConnection *con);
 extern int mftpDispatch(MftpConnection *con, char* command);
 extern int mftpRestrictedCommand(MftpConnection *con, char* command) ;
+
+#ifdef __cplusplus
+}
+#endif
 
 # endif

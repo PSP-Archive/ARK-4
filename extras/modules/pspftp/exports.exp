@@ -15,6 +15,7 @@ PSP_EXPORT_FUNC(ftpdLoop)
 # FTP Client API
 PSP_EXPORT_FUNC(ftpInit)
 PSP_EXPORT_FUNC(ftpClean)
+PSP_EXPORT_FUNC(ftpConnect)
 PSP_EXPORT_FUNC(ftpLogin)
 PSP_EXPORT_FUNC(ftpDisconnect)
 PSP_EXPORT_FUNC(ftpCWD)

@@ -14,7 +14,7 @@ thread_list *mftp_thread_head = NULL;
 
 SOCKET sockListen = 0;
 
-static void (*msg_handler)(char* msg) = NULL;
+static void (*msg_handler)(const char*) = NULL;
 static char* ftpdevice = "ms0:";
 
 void ftpdSetDevice(char* device){
@@ -25,8 +25,8 @@ char* ftpdGetDevice(){
   return ftpdevice;
 }
 
-void ftpdSetMsgHandler(void* handler){
-    msg_handler = (void(*)(char*))handler;
+void ftpdSetMsgHandler(void (*handler)(const char*)){
+    msg_handler = handler;
 }
 
 void mftpPrint(char *msg){

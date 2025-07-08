@@ -15,6 +15,7 @@ SUBDIRS = \
 	libpspvram \
 	libya2d \
 	libintraFont \
+	libpspftp \
 	libvlf \
 	libsploit \
 	psid 
@@ -42,6 +43,7 @@ distclean clean:
 	$(Q)make $@ -C libya2d $(OPT)
 	$(Q)make $@ -C psid $(OPT)
 	$(Q)make $@ -C libintraFont $(OPT)
+	$(Q)make $@ -C libpspftp $(OPT)
 	$(Q)make $@ -C libsploit $(OPT)
 	$(Q)rm -rf *.a *~ | true
 

@@ -21,14 +21,25 @@
 #include <malloc.h>
 #include "imports.h"
 
+void* generic_malloc(int size, int partition){
+    int uid = sceKernelAllocPartitionMemory(partition, "", 1, size+sizeof(int), NULL);
+    int* ptr = sceKernelGetBlockHeadAddr(uid);
+    if (ptr){
+        ptr[0] = uid;
+        return &(ptr[1]);
+    }
+    return NULL;
+}
+
 void* oe_malloc(size_t size){
-    SceUID uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_KERNEL, "", PSP_SMEM_High, size+sizeof(SceUID), NULL);
-    SceUID* ptr = sceKernelGetBlockHeadAddr(uid);
-    ptr[0] = uid;
-    return &(ptr[1]);
+    return generic_malloc(size, PSP_MEMORY_PARTITION_KERNEL);
 }
 
 void oe_free(void* ptr){
     SceUID uid = ((SceUID*)ptr)[-1];
     sceKernelFreePartitionMemory(uid);
+}
+
+void* user_malloc(size_t size){
+    return generic_malloc(size, PSP_MEMORY_PARTITION_USER);
 }

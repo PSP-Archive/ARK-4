@@ -1,5 +1,6 @@
 #include <sstream>
 #include <fstream>
+#include <pspftp.h>
 
 #include "net_mgr.h"
 #include "network.h"
@@ -9,12 +10,9 @@
 #include <systemctrl.h>
 #include "eboot.h"
 #include "lang.h"
+#include "browser.h"
 
 #define MAX_LINES 9
-
-#include "ftpd.h"
-extern void setFtpMsgHandler(void*);
-extern int mftpExitHandler(SceSize argc, void *argv);
 
 static struct {
     string msg[MAX_LINES];
@@ -128,9 +126,16 @@ static void startFTP(){
         if ((ret=connect_to_apctl()) >= 0){
             ret = sceNetApctlGetInfo(8, (SceNetApctlInfo*)pspIpAddr);
             if (pspIpAddr[0] != '\0'){
-                setFtpMsgHandler((void*)&addMessage);
-                ftp_thread = sceKernelCreateThread("ftpd_main_thread", ftpdLoop, 0x18, 0x10000, 0, 0);
-                sceKernelStartThread(ftp_thread, 0, 0);
+                if (loadstartFTPlib() >=0 ){
+                    static char* device = "ms0:";
+                    const char* cwd = Browser::getCWD();
+                    device[0] = cwd[0];
+                    device[1] = cwd[1];
+                    ftpdSetMsgHandler(addMessage);
+                    ftpdSetDevice(device);
+                    ftp_thread = sceKernelCreateThread("ftpd_main_thread", ftpdLoop, 0x18, 0x10000, 0, 0);
+                    sceKernelStartThread(ftp_thread, 0, 0);
+                }
             }
             else{
                 err = "Could not get IP address";
@@ -155,9 +160,10 @@ static void startFTP(){
 
 static void stopFTP(){
     addMessage("Disconnecting FTP server");
-    mftpExitHandler(0, NULL);
+    ftpdExitHandler(0, NULL);
     sceKernelWaitThreadEnd(ftp_thread, NULL);
     sceKernelTerminateDeleteThread(ftp_thread);
+    stopunloadFTPlib();
     shutdownNetwork();
     addMessage("FTP Disconnected");
     ftp_thread = -1;

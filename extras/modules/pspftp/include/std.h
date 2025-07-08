@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 #include <pspkernel.h>
 #include <pspctrl.h>
 #include <pspdisplay.h>
@@ -15,3 +19,7 @@
 
 // don't use 'printf' or 'pspDebugScreenPrintf'
 // use my_print/my_printn instead which prints to ms0:/err.txt log file
+
+#ifdef __cplusplus
+}
+#endif
