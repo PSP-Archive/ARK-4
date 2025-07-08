@@ -355,7 +355,7 @@ static void processLine(
     if(matchingRunlevel(runlevel))
     {
         char full_path[MAX_PLUGIN_PATH];
-        if (strchr(path, ':') == NULL){ // relative path
+        if (parent && strchr(path, ':') == NULL){ // relative path
             strcpy(full_path, parent);
             strcat(full_path, path);
         }
@@ -589,8 +589,8 @@ void loadSettings(){
     char path[ARK_PATH_SIZE];
     strcpy(path, ark_config->arkpath);
     strcat(path, ARK_SETTINGS);
-    if (ProcessConfigFile(ark_config->arkpath, path, settingsEnabler, settingsDisabler) < 0) // try external settings
-        ProcessConfigFile(FLASH1_PATH, ARK_SETTINGS_FLASH, settingsEnabler, settingsDisabler); // retry flash1 settings
+    if (ProcessConfigFile(NULL, path, settingsEnabler, settingsDisabler) < 0) // try external settings
+        ProcessConfigFile(NULL, ARK_SETTINGS_FLASH, settingsEnabler, settingsDisabler); // retry flash1 settings
     se_config.magic = ARK_CONFIG_MAGIC;
 
     if (!se_config.force_high_memory){

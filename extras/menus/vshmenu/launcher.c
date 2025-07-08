@@ -26,13 +26,18 @@ void exec_recovery_menu(vsh_Menu *vsh) {
         param.key = "game";
         sctrlKernelLoadExecVSHWithApitype(0x141, menupath, &param);
     }
-    else {
+
+    memset(menupath, 0, sizeof(menupath));
+    scePaf_strcpy(menupath, vsh->config.ark.arkpath);
+    strcat(menupath, RECOVERY_PRX);
+    res = sceIoGetstat(menupath, &stat);
+    if(res < 0) {
     	memset(menupath, 0, sizeof(menupath));
-    	scePaf_strcpy(menupath, vsh->config.ark.arkpath);
-    	strcat(menupath, RECOVERY_PRX);
-    	SceUID modid = kuKernelLoadModule(menupath, 0, NULL);
-    	if(modid >= 0) {
-    		int res = sceKernelStartModule(modid, strlen(menupath), (void*)menupath, NULL, NULL);
-    	}
+    	scePaf_strcpy(menupath, RECOVERY_PRX_FLASH);
     }
+    SceUID modid = kuKernelLoadModule(menupath, 0, NULL);
+    if(modid >= 0) {
+    	int res = sceKernelStartModule(modid, strlen(menupath) + 1, menupath, NULL, NULL);
+    }
+
 }
