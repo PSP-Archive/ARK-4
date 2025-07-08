@@ -29,3 +29,15 @@ unsigned int strlen(const char * text)
     // Return String Length
     return length;
 }
+
+unsigned int strnlen(const char * text, unsigned int maxlen)
+{
+    // String Length
+    unsigned int length = 0;
+    
+    // Count Characters
+    while (text[length] != 0 && length<maxlen) length++;
+    
+    // Return String Length
+    return length;
+}

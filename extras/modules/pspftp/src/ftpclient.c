@@ -1,15 +1,11 @@
 #include <pspkernel.h>
-#include <pspdebug.h>
 #include <pspwlan.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pspnet_apctl.h>
 
-//#include "picker.h"
-//#include "debug.h"
 #include "ftpclient.h"
-//#include "nlh.h"
 #include "sutils.h"
 
 // ftp has/has not been exited
@@ -87,53 +83,6 @@ int ftpExited(void) {
     return ftpquit;
 }
 
-/*
-//Apctl Handler
-int sceNetApctlAddHandler(void *handler, void *arg );
-
-// Apctl Callback
-void ApctlCallback(int old_state, int state, int type, int unknown, void* arg) {
-
-    if (state==0) {
-        // Slight Pause
-        sceKernelDelayThread(500000);
-        // Idle => Connect
-        sceNetApctlConnect(0);
-    }
-    
-    // Various States During Network Initialization
-    char *msg="Initializing Network";
-    switch (state) {
-        case 0:
-        // Idle
-        break;
-        case 1:
-        // Initializing
-        break;
-        case 2:
-        // Associating
-        break;
-        case 3:
-        // DHCP Query  * not working *
-        break;
-        case 4:
-        // Complete
-        msg = "Ready.";
-
-        // Get Local IP
-        char ipaddress[32]; ipaddress[0]=0;
-        if (sceNetApctlGetInfo(8, ipaddress) != 0) {
-            printf("[ERROR] Impossible to get IP address of the PSP.");
-        }
-        
-        //debugTitle(ipaddress);
-        
-        break;
-    }
-    debugTitle(msg);
-}
-*/
-
 int ftpTimeoutIS(int waitstatus, int sectimeout) {
     // waits until a specified status is no longer true and returns -1 if it does not in specified timeout
     int mscount = 0;
@@ -142,7 +91,6 @@ int ftpTimeoutIS(int waitstatus, int sectimeout) {
         mscount = mscount + 50;
         if ( mscount >= (sectimeout * 1000)) {
             // timeout reached
-            printf("[ERROR] Timed out.");
             status = STATUS_IDLE;
             return -1;
         }
@@ -162,7 +110,6 @@ int ftpTimeoutISNOT(int waitstatus, int sectimeout) {
         mscount = mscount + 50;
         if ( mscount >= (sectimeout * 1000)) {
             // timeout reached
-            printf("[ERROR] Timed out.");
             status = STATUS_IDLE;
             return -1;
         }
@@ -231,7 +178,6 @@ u32 err;
         
         // send PASV command
         status = STATUS_SENDPASV;
-        printf("PASV");
         sendclientResponseLn("PASV");
         
         // wait for return/failure of pasv command
@@ -253,7 +199,7 @@ u32 err;
 
             SOCKET sockConnect = sceNetInetSocket(AF_INET, SOCK_STREAM, 0);
             if (sockConnect & 0x80000000) {
-                printf("[ERROR] Unable to create connect socket");
+                //printf("[ERROR] Unable to create connect socket");
                 return -1;
             }
         
@@ -275,7 +221,7 @@ u32 err;
             // Bind the Connect Socket
             err = sceNetInetBind(sockConnect, &addrConnect, sizeof(addrConnect));
             if (err != 0) {
-                printf("[ERROR] Unable to bind to connect socket");
+                //printf("[ERROR] Unable to bind to connect socket");
                 status = STATUS_IDLE;
                 return -1;
             }
@@ -313,7 +259,7 @@ u32 err;
         sprintf(portinfo, "%d,%d", con->data_portA, con->data_portB);
         
         // Send Port Info
-        printf("PORT %s,%s", ipinfo, portinfo);
+        //printf("PORT %s,%s", ipinfo, portinfo);
         
         // pass PORT command to remote
         sendclientResponse("PORT ");
@@ -340,7 +286,7 @@ u32 err;
         struct sockaddr_in addrListen;
         SOCKET sockListen = sceNetInetSocket(AF_INET, SOCK_STREAM, 0);
         if (sockListen & 0x80000000) {
-            printf("::error::unable to create listen socket");
+            //printf("::error::unable to create listen socket");
             status = STATUS_IDLE;
             return 0;
         }
@@ -363,14 +309,14 @@ u32 err;
         // Bind the Listen Socket
         err = sceNetInetBind(sockListen, &addrListen, sizeof(addrListen));
         if (err != 0) {
-            printf("::error::unable to bind socket");
+            //printf("::error::unable to bind socket");
             return 0;
         }
         
         // Listen to the Listen Socket
         err = sceNetInetListen(sockListen, 1);
         if (err != 0) {
-            printf("::error::unable to listen to socket");
+            //printf("::error::unable to listen to socket");
             return 0;
         }
 
@@ -408,7 +354,7 @@ int startDataAccept(void) {
             cbAddrAccept = sizeof(addrAccept);
             sockClient = sceNetInetAccept(con->listenSocket, &addrAccept, &cbAddrAccept);
             if (sockClient & 0x80000000) {
-                printf("[ERROR] Unable to create accept socket");
+                //printf("[ERROR] Unable to create accept socket");
                 return -1;
             }
             
@@ -460,16 +406,15 @@ int ftpPASVEnabled(void) {
 void ftpDisconnect(void) {
     if (status > STATUS_NOTCONNECTED) {
     
-        printf("QUIT");
+        //printf("QUIT");
         sendclientResponseLn("QUIT");
     }
     //sceNetInetClose(con->comSocket);
     status = STATUS_NOTCONNECTED;
-    
 }
 
 void ftpCHMOD(char* file, char* perm) {
-    printf("CHMOD %s %s", perm, file);
+    //printf("CHMOD %s %s", perm, file);
     sendclientResponse("SITE CHMOD ");
     sendclientResponse(perm);
     sendclientResponse(" ");
@@ -480,54 +425,54 @@ void ftpCHMOD(char* file, char* perm) {
 }
 
 void ftpSYST(void) {
-    printf("SYST");
+    //printf("SYST");
     sendclientResponseLn("SYST");
     //TODO: return system type
 }
 
 void ftpRMD(char* dir) {
-    printf("RMD %s", dir);
+    //printf("RMD %s", dir);
     sendclientResponse("RMD ");
     sendclientResponseLn(dir);
     //todo: check for return success/fail
 }
 
 void ftpMKD(char* dir) {
-    printf("MKD %s", dir);
+    //printf("MKD %s", dir);
     sendclientResponse("MKD ");
     sendclientResponseLn(dir);
     //todo: check for return success/fail
 }
 
 void ftpAPPE(char* dir) {
-    printf("MKD %s", dir);
+    //printf("MKD %s", dir);
     sendclientResponse("MKF ");
     sendclientResponseLn(dir);
     //todo: check for return success/fail
 }
 
 void ftpDELE(char* file) {
-    printf("DELE %s", file);
+    //printf("DELE %s", file);
     sendclientResponse("DELE ");
     sendclientResponseLn(file);
     //todo: check for return success/fail
 }
 
 void ftpCWD(char* dir) {
-    printf("CWD %s", dir);
+    //printf("CWD %s", dir);
     sendclientResponse("CWD ");
     sendclientResponseLn(dir);
 }
 
 char* ftpPWD(void) {
-    printf("PWD");
+    //printf("PWD");
     sendclientResponseLn("PWD");
     // TODO: return current directory
     return "/";
 }
 
 void ftpABOR(void) {
-    printf("ABOR");
+    //printf("ABOR");
     sendclientResponseLn("ABOR");
 }
 
@@ -541,13 +486,13 @@ remoteDirent *ftpLIST(void) {
     // Attempt to Open a Data Connection
     if ( openClientDataConnection() == 0 ) {
         // Unable to Open a Local Data Connection
-        printf("[ERROR] LIST - unable to open data connection");
+        //printf("[ERROR] LIST - unable to open data connection");
         return NULL;
     } else {
         // Succesfully Opened Local Data Connection
         
         // Send Request for Remote File Listing
-        printf("LIST");
+        //printf("LIST");
         sendclientResponseLn("LIST");
         
             
@@ -557,7 +502,7 @@ remoteDirent *ftpLIST(void) {
             ret = ftpTimeoutIS(STATUS_TRANSFERWAIT, ERRTIMEOUT);
             if ( ret < 0 ) {
                 // timed out waiting
-                printf("[ERROR] LIST timed out");
+                //printf("[ERROR] LIST timed out");
                 
                 // close data connection
                 closeClientDataConnection();
@@ -631,11 +576,11 @@ remoteDirent *ftpLIST(void) {
                     // print out info
                     /*
                     if (FIO_SO_ISDIR(dir.files[currFile].st_attr)) {
-                        printf("* %s", dir.files[currFile].d_name, dir.files[currFile].st_size);
+                        //printf("* %s", dir.files[currFile].d_name, dir.files[currFile].st_size);
                     } else if (FIO_SO_ISLNK(dir.files[currFile].st_attr)) {
-                        printf("%s", dir.files[currFile].d_name, dir.files[currFile].st_size);
+                        //printf("%s", dir.files[currFile].d_name, dir.files[currFile].st_size);
                     } else if (FIO_SO_ISREG(dir.files[currFile].st_attr)) {
-                        printf("%s (%s)", dir.files[currFile].d_name, dir.files[currFile].st_size);
+                        //printf("%s (%s)", dir.files[currFile].d_name, dir.files[currFile].st_size);
                     }
                     */
                     
@@ -761,11 +706,11 @@ int ftpRETR(char* localdir, char* file) {
     if ( ret < 0 ) return -1;
     
     
-    printf("TYPE I");
+    //printf("TYPE I");
     sendclientResponseLn("TYPE I");
     
     if ( openClientDataConnection() == 0 ) {
-        printf("[ERROR] RETR - Unable to open data connection");
+        //printf("[ERROR] RETR - Unable to open data connection");
         status = STATUS_IDLE;
         return 0;
     } else {
@@ -777,7 +722,7 @@ int ftpRETR(char* localdir, char* file) {
         strcat(filePath, file);
             
         // send request for file
-        printf("RETR %s (%s)", file, filePath);
+        //printf("RETR %s (%s)", file, filePath);
         sendclientResponse("RETR ");
         sendclientResponseLn(file);
 
@@ -794,7 +739,7 @@ int ftpRETR(char* localdir, char* file) {
             ret = ftpTimeoutIS(STATUS_TRANSFERWAIT, ERRTIMEOUT);
             if ( ret < 0 ) {
                 // timed out waiting
-                printf("[ERROR] RETR timed out");
+                //printf("[ERROR] RETR timed out");
                 
                 // close data connection
                 closeClientDataConnection();
@@ -813,7 +758,7 @@ int ftpRETR(char* localdir, char* file) {
         startDataConnect();
         
         if ( status >= STATUS_TRANSFERFAILED ) {
-            printf("[ERROR] RETR failed (file not found?)");
+            //printf("[ERROR] RETR failed (file not found?)");
             // file not found on server probably
             // close data connection
             closeClientDataConnection();
@@ -879,7 +824,7 @@ int ftpSTOR(char* localdir, char* file) {
     if ( ret < 0 ) return -1;
     
     // Send TYPE command for File Type (needed?)
-    printf("TYPE I");
+    //printf("TYPE I");
     sendclientResponseLn("TYPE I");
     
     // TODO: call SIZE to check for existing file, for resuming uploads/percent complete
@@ -887,7 +832,7 @@ int ftpSTOR(char* localdir, char* file) {
     // Attempt to Open a Data Connection
     if ( openClientDataConnection() == 0 ) {
         // Unable to Open a Local Data Connection
-        printf("[ERROR] STOR - Unable to open data connection");
+        //printf("[ERROR] STOR - Unable to open data connection");
         status = STATUS_IDLE;
         return -1;
     } else {
@@ -911,7 +856,7 @@ int ftpSTOR(char* localdir, char* file) {
             // *** from HERE 
             
             // Send Request to Retrieve File
-            printf("STOR %s", file);
+            //printf("STOR %s", file);
             sendclientResponse("STOR ");
             sendclientResponseLn(file);
         
@@ -921,7 +866,7 @@ int ftpSTOR(char* localdir, char* file) {
                 ret = ftpTimeoutIS(STATUS_TRANSFERWAIT, ERRTIMEOUT);
                 if ( ret < 0 ) {
                     // timed out waiting
-                    printf("[ERROR] STOR timed out");
+                    //printf("[ERROR] STOR timed out");
                     
                     // close data connection
                     closeClientDataConnection();
@@ -946,7 +891,7 @@ int ftpSTOR(char* localdir, char* file) {
                 // close data connection
                 closeClientDataConnection();
                 
-                printf("[ERROR] STOR - Transfer Failed (Permission?)");
+                //printf("[ERROR] STOR - Transfer Failed (Permission?)");
                 status = STATUS_IDLE;
                 return -1;
             } else {
@@ -975,7 +920,7 @@ int ftpSTOR(char* localdir, char* file) {
                 
                 sceIoClose(fdFile);
                 if (ftpquit == 0 ) {
-                    printf("STOR successful");
+                    //printf("STOR successful");
                 }
                 
                 // reset size of stor file uploaded to 0
@@ -986,7 +931,7 @@ int ftpSTOR(char* localdir, char* file) {
                 return 0;
             }
         } else {
-            printf("[ERROR] STOR - Transfer Failed (File Missing? Permission? Dir?)");
+            //printf("[ERROR] STOR - Transfer Failed (File Missing? Permission? Dir?)");
             // this is a Directory? ?? no permission file? file missing?
         }
 
@@ -1017,7 +962,7 @@ int ftpLogin(char* user, char* pass) {
     con->password = pass;
     
     // Send Username
-    printf("USER %s", user);
+    //printf("USER %s", user);
     sendclientResponse("USER ");
     sendclientResponseLn(user);
     
@@ -1029,7 +974,7 @@ int ftpLogin(char* user, char* pass) {
     }
     
     // Send Password
-    printf("PASS %s", pass);
+    //printf("PASS %s", pass);
     sendclientResponse("PASS ");
     sendclientResponseLn(pass);
 
@@ -1162,7 +1107,7 @@ int ftpDispatch(char* command) {
             ret = 331;
         } else if (strStartsWith(command, "421 ") || strStartsWith(command, "421")) {
             // disconnected
-            printf("Server closed connection.");
+            //printf("Server closed connection.");
             ret = 421;
             ftpDisconnect();
         } else if (strStartsWith(command, "425 ") || strStartsWith(command, "425")) {
@@ -1188,7 +1133,7 @@ int ftpDispatch(char* command) {
             ret = 550;
         } else {
             // Unimplemented
-            printf("~~ %s", command);
+            //printf("~~ %s", command);
             status = STATUS_IDLE;
             return 999;
         }
@@ -1228,9 +1173,9 @@ void ftpHandleResponses(void) {
                     
                     char* response=skipWS(lineBuffer);
                     trimEndingWS(response);
-                    printf("%s", response);
+                    //printf("%s", response);
                     if ((errLoop = ftpDispatch(response)) < 0) {
-                        printf("[ERROR] Server Response is %s",response);
+                        //printf("[ERROR] Server Response is %s",response);
                         break;
                     }
                     lineLen=0;
@@ -1286,7 +1231,7 @@ void ftpInit(){
     if(ftp_thread >= 0) {
         sceKernelStartThread(ftp_thread, 0, 0);
     } else {
-        printf("[ERROR] Impossible to create client thread.\n");
+        //printf("[ERROR] Impossible to create client thread.\n");
     }
 }
 
@@ -1301,12 +1246,12 @@ int ftpConnect(char* ip, int port) {
     struct sockaddr_in addrTo;
     SOCKET sock;
     
-    printf("Get IP Address\n");
+    //printf("Get IP Address\n");
     if (sceNetApctlGetInfo(8, (union SceNetApctlInfo*)con->localip) != 0) {
-        printf("[ERROR] Impossible to get IP address of the PSP.\n");
+        //printf("[ERROR] Impossible to get IP address of the PSP.\n");
         return 0;
     }
-    printf("Go IP: %s\n", con->localip);
+    //printf("Go IP: %s\n", con->localip);
     
     // parse remote ip address from string
     const char delimiters[] = ".";
@@ -1320,17 +1265,17 @@ int ftpConnect(char* ip, int port) {
     remoteip = strtok(NULL, delimiters);
     con->remoteip[3] = atoi(remoteip);
 
-    printf("Opening socket\n");
+    //printf("Opening socket\n");
     
     // create socket
     
     sock = sceNetInetSocket(AF_INET, SOCK_STREAM, 0);
     if (sock & 0x80000000) {
-        printf("[ERROR] Unable to create socket\n");
+        //printf("[ERROR] Unable to create socket\n");
         return 0;
     }
     
-    printf("Socket open\n");
+    //printf("Socket open\n");
     
     con->comSocket=sock;
     
@@ -1341,194 +1286,16 @@ int ftpConnect(char* ip, int port) {
     addrTo.sin_addr[2] = con->remoteip[2];
     addrTo.sin_addr[3] = con->remoteip[3];
     
-    printf("Connecting to %d.%d.%d.%d:%d\n", (unsigned char) con->remoteip[0], (unsigned char) con->remoteip[1], (unsigned char) con->remoteip[2], (unsigned char) con->remoteip[3], port);
+    //printf("Connecting to %d.%d.%d.%d:%d\n", (unsigned char) con->remoteip[0], (unsigned char) con->remoteip[1], (unsigned char) con->remoteip[2], (unsigned char) con->remoteip[3], port);
     
     int err = sceNetInetConnect(sock, &addrTo, sizeof(addrTo));
     
     WaitForConnect = 1;
     if (err) {
-        printf("[ERROR] Unable to connect to server\n");
+        //printf("[ERROR] Unable to connect to server\n");
         return 0;
     } else {
-        printf("Connected\n");
+        //printf("Connected\n");
         return 1;
     }
 }
-
-/*
-int startFTP(SceModuleInfo *modInfoPtr)  {
-
-    status = STATUS_NOTCONNECTED;
-
-    if (nlhLoadDrivers(modInfoPtr) != 0)
-    {
-        printf("[ERROR] Net driver load error");
-        quitFTP();
-    }
-        
-    u32 err;
-    int state = 0;
-    int connectionConfig = -1;
-    
-    con = (MclientConnection*) malloc(sizeof(MclientConnection));
-    con->netconn = 0;
-    
-    err = nlhInit();
-    if (err != 0) {
-        printf("[ERROR] nlhInit returned '%d'.", err);
-        quitFTP();
-    }
-
-    if ( DEBUG_USE_STATIC == 0 ) {
-    // ADD PICKER ***********
-    // enumerate connections
-        {
-            PICKER pickConn; // connection picker
-            int iNetIndex;
-            int iPick;
-            
-            my_initpicker(&pickConn, "Select Connection");
-            for (iNetIndex = 1; iNetIndex < 100; iNetIndex++) // skip the 0th connection
-            {
-                char data[128];
-                char name[128];
-                char detail[128];
-                if (sceUtilityCheckNetParam(iNetIndex) != 0)
-                    break;  // no more
-                // my_printn8("config ", (u8)iNetIndex, "\n");
-                sceUtilityGetNetParam(iNetIndex, 0, name);
-                // my_print(" NAME='"); my_print(name); my_print("'\n");
-    
-                sceUtilityGetNetParam(iNetIndex, 1, data);
-                strcpy(detail, "SSID=");
-                strcat(detail, data);
-    
-            //REVIEW: skipping over DHCP connections as a Temporary work-around
-                sceUtilityGetNetParam(iNetIndex, 4, data);
-                if (data[0])
-                {
-                    // not DHCP -- we can use it
-                    sceUtilityGetNetParam(iNetIndex, 5, data);
-                    // my_print(" IPADDR='"); my_print(data); my_print("'\n");
-    
-                    strcat(detail, " IPADDR=");
-                    strcat(detail, data);
-    
-                    name[MAX_PICK_MAINSTR] = '\0';
-                    detail[MAX_PICK_FINEPRINT] = '\0';
-                    my_addpick(&pickConn, name, detail, (u32)iNetIndex);
-    
-                    if (pickConn.pick_count >= MAX_PICK)
-                        break;  // no more
-                }
-            }
-    
-            if (pickConn.pick_count == 0)
-            {
-                printf("[ERROR] no connections found, please create a static connection.");
-                sceKernelDelayThread(3000);
-                quitFTP();
-            }
-    
-            iPick = my_picker(&pickConn);
-            if (iPick == -1) {
-                quitFTP(); // give up
-            }
-            connectionConfig = (int)(pickConn.picks[iPick].userData);
-        }
-    } else {
-        // DEBUG ENVIRONMENT
-        // temp set connection with no picker
-        connectionConfig = 1;
-    }
-        
-    if (ftpExited() == 1) {
-        return -1;
-    }
-    
-    // try first connection
-    err = sceNetApctlConnect(connectionConfig);
-    if (err != 0) {
-        printf("[ERROR] sceNetApctlConnect returned '%d'.", err);
-        quitFTP();
-    }
-    
-    printf("USING CONNECTION [%d]", connectionConfig);
-    
-
-    // wait for ready state
-    state = 0;
-    err = sceNetApctlGetState(&state);
-    //my_printn("getstate: err=", err, ", ");
-    //my_printn("state=", state, "\n");
-    if (err != 0) {
-        quitFTP();
-    }
-    
-    // TODO: timeout on ready state and return unable to start
-    
-    // wait for ready state unless exited
-    while ( ftpExited() != 1)
-    {
-        int state;
-        err = sceNetApctlGetState(&state);
-        // 4 - got IP - usable
-        if (state == 4) break;  // connected with static IP
-        sceKernelDelayThread(500*1000);
-    }
-    
-    // make sure it was not exited
-    if ( ftpExited() == 1 ) { return -1; }
-    
-    // allocate connection info
-    con->dataSocket = 0;
-    con->usePASV = 0;
-    con->data_portA = 16;
-    con->data_portB = 115;
-    con->netconn = connectionConfig;
-    
-    memset(con->comBuffer, 0, 1024);
-    memset(con->dataBuffer, 0, 1024);
-    memset(con->localip, 0, 4);
-    memset(con->remoteip, 0, 4);
-    
-    
-    
-    // begin ftp client thread
-    
-    int tmp=sceKernelCreateThread("THREAD_FTP_CLIENTLOOP", mainThread, 0x18, 0x10000, 0, NULL);
-    if(tmp >= 0) {
-        sceKernelStartThread(tmp, 0, 0);
-    } else {
-        printf("[ERROR] Impossible to create client thread.");
-    }
-
-    return 0;
-}
-
-void quitFTP(void) {
-    u32 err;
-
-    ftpquit = 1;
-    
-    // close any open data connection
-    closeClientDataConnection();
-    
-    // free connection info
-    free(con);
-    
-    err = sceNetApctlDisconnect();
-    if (err != 0) {
-        goto close_net;
-    }
-
-close_net:
-    err = nlhTerm();
-    if (err != 0) {
-        printf("[ERROR] nlhTerm returned '%d'.", err);
-    }
-    
-    //sceKernelExitDeleteThread(0);
-    
-}
-*/

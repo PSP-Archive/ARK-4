@@ -84,8 +84,11 @@ void strReplaceChar(char* str, char s, char d) {
 
 void toUpperCase(char* s) {
     while (*s!=0) {
-        *s=toupper(*s);
-
+        char c = *s;
+        if (c >= 'a' && c <= 'z'){
+            c -= 0x20;
+            *s = c;
+        }
         s++;
     }
 }

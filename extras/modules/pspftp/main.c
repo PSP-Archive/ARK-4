@@ -1,6 +1,6 @@
 #include <pspsdk.h>
 
-PSP_MODULE_INFO("FTPlibPSP", 0, 1, 0);
+PSP_MODULE_INFO("FTPlibPSP", 0x0007, 1, 0);
 
 void* malloc(int size){
     int uid = sceKernelAllocPartitionMemory(2, "", 1, size+sizeof(int), NULL);

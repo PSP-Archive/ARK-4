@@ -20,6 +20,33 @@ typedef unsigned int size_t;
 
 extern size_t strnlen(const char *s, size_t len);
 
+// Copy String Buffer
+char *strncpy(char *to, const char *from, unsigned int n)
+{
+    char *oto = to;
+    
+    // Position
+    unsigned int position = 0;
+    
+    // Copy Bytes
+    while(from[position] != 0 && n)
+    {
+        // Copy Byte
+        to[position] = from[position];
+        
+        // Change Position
+        position++;
+
+        // decrease counter
+        n--;
+    }
+    
+    // Terminate String
+    to[position] = 0;
+    
+    return oto;
+}
+
 char * strncat(char *dst, const char *src, size_t n)
 {
     if (n != 0) {

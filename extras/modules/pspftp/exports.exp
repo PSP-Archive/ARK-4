@@ -1,16 +1,16 @@
 PSP_BEGIN_EXPORTS
 
 PSP_EXPORT_START(syslib, 0, 0x8000)
-PSP_EXPORT_FUNC_HASH(module_start)
+PSP_EXPORT_FUNC(module_start)
 PSP_EXPORT_VAR_HASH(module_info)
 PSP_EXPORT_END
 
-PSP_EXPORT_START(pspftp, 0, 0x4009)
+PSP_EXPORT_START(pspftp, 0x11, 0x0001)
 # FTP Server API
-PSP_EXPORT_FUNC(setFtpMsgHandler)
+PSP_EXPORT_FUNC(ftpdSetMsgHandler)
 PSP_EXPORT_FUNC(ftpdGetDevice)
 PSP_EXPORT_FUNC(ftpdSetDevice)
-PSP_EXPORT_FUNC(mftpExitHandler)
+PSP_EXPORT_FUNC(ftpdExitHandler)
 PSP_EXPORT_FUNC(ftpdLoop)
 # FTP Client API
 PSP_EXPORT_FUNC(ftpInit)

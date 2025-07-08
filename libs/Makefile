@@ -1,6 +1,7 @@
 SUBDIRS = \
 	SystemCtrlForKernel \
 	SystemCtrlForUser \
+	SysclibForUser \
 	KUBridge \
 	VshCtrl \
 	ansi-c \
@@ -28,6 +29,7 @@ distclean clean:
 	$(Q)make $@ -C SystemCtrlForKernel $(OPT)
 	$(Q)make $@ -C SystemCtrlForUser $(OPT)
 	$(Q)make $@ -C VshCtrl $(OPT)
+	$(Q)make $@ -C SysclibForUser $(OPT)
 	$(Q)make $@ -C KUBridge $(OPT)
 	$(Q)make $@ -C ansi-c $(OPT)
 	$(Q)make $@ -C graphics $(OPT)

@@ -25,7 +25,7 @@ char* ftpdGetDevice(){
   return ftpdevice;
 }
 
-void setFtpMsgHandler(void* handler){
+void ftpdSetMsgHandler(void* handler){
     msg_handler = (void(*)(char*))handler;
 }
 
@@ -62,7 +62,7 @@ mftpDelThread(int thread_id)
 }
 
 int
-mftpExitHandler(SceSize argc, void *argv) 
+ftpdExitHandler(SceSize argc, void *argv) 
 {
   int err = 0;
   if (sockListen) {

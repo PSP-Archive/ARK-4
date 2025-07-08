@@ -75,9 +75,6 @@ PSP_EXPORT_FUNC(sctrlArkExitLauncher)
 PSP_EXPORT_FUNC(sctrlFlushCache)
 PSP_EXPORT_FUNC(sctrlHENFakeDevkitVersion)
 PSP_EXPORT_FUNC(sctrlGetThreadUIDByName)
-PSP_EXPORT_FUNC_NID(strcasecmp, 0xBC7554DF)
-PSP_EXPORT_FUNC_NID(strncasecmp, 0xAC7554DF)
-PSP_EXPORT_FUNC(lowerString)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(SystemCtrlForKernel, 0, 0x0001)
@@ -170,9 +167,6 @@ PSP_EXPORT_FUNC(sctrlFlushCache)
 PSP_EXPORT_FUNC(sctrlHENGetRebootexConfig)
 PSP_EXPORT_FUNC(sctrlGetThreadUIDByName)
 PSP_EXPORT_FUNC(sctrlHENSetLoadRebootOverrideHandler)
-PSP_EXPORT_FUNC_NID(strcasecmp, 0xBC7554DF)
-PSP_EXPORT_FUNC_NID(strncasecmp, 0xAC7554DF)
-PSP_EXPORT_FUNC(lowerString)
 PSP_EXPORT_END
 
 
@@ -198,11 +192,19 @@ PSP_EXPORT_FUNC(kuKernelCallExtendStack)
 PSP_EXPORT_FUNC(kuKernelIcacheInvalidateAll)
 PSP_EXPORT_END
 
+PSP_EXPORT_START(SysclibForUser, 0, 0x4001)
+PSP_EXPORT_FUNC_NID(strcasecmp, 0xBC7554DF)
+PSP_EXPORT_FUNC_NID(strncasecmp, 0xAC7554DF)
+PSP_EXPORT_FUNC(lowerString)
+PSP_EXPORT_FUNC(ownstrtok)
+PSP_EXPORT_FUNC(ownstrtol)
+PSP_EXPORT_FUNC(sprintf)
+PSP_EXPORT_END
+
 PSP_EXPORT_START(SystemCtrlPrivate, 0, 0x0001)
 PSP_EXPORT_FUNC_NID(msstorCacheInit, 0x5D7817CF)
 PSP_EXPORT_FUNC(msstorCacheStat)
 PSP_EXPORT_FUNC(msstorCacheDisable)
-PSP_EXPORT_FUNC_NID(sctrlHENSetArkConfig, 0x6EAFC03D)
 PSP_EXPORT_FUNC(sctrlHENSetPluginHandler)
 PSP_EXPORT_FUNC(sctrlHENSetRebootexConfig)
 PSP_EXPORT_FUNC(isSystemBooted)
