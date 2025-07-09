@@ -12,7 +12,7 @@ typedef enum{
 } PSPAV_PadState;
 
 typedef struct{
-    void* private;
+    void* priv;
     void* icon1;
     unsigned int size_icon1;
     void* at3data;
@@ -40,7 +40,7 @@ void pspavResetAt3Data();
 int pspavPlayAT3(unsigned int argc, void* argv);
 
 // PMF
-unsigned char pspavPlayGamePSPAV(PSPAVEntry* e, PSPAVCallbacks* callbacks, int x, int y);
+unsigned char pspavPlayGamePMF(PSPAVEntry* e, PSPAVCallbacks* callbacks, int x, int y);
 void pspavPlayVideoFile(const char* path, PSPAVCallbacks* callbacks);
 
 #ifdef __cplusplus

@@ -17,7 +17,8 @@
 #include "texteditor.h"
 #include "image_viewer.h"
 #include "music_player.h"
-#include "mpeg.h"
+#include "pspav.h"
+#include "pspav_wrapper.h"
 
 #define PAGE_SIZE 10 // maximum entries shown on screen
 #define BUF_SIZE 1024*16 // 16 kB buffer for copying files
@@ -177,13 +178,16 @@ void Browser::update(Entry* ent, bool skip_prompt){
         installTheme();
     }
     else if (Entry::isVideo(e->getPath().c_str())){
-        GameManager::updateGameList(NULL);
-        SystemMgr::pauseDraw();
-        common::deleteTheme();
-        mpegPlayVideoFile(e->getPath().c_str());
-        common::loadTheme();
-        common::stopLoadingThread();
-        SystemMgr::resumeDraw();
+        if (loadstartPSPAV()>=0){
+            GameManager::updateGameList(NULL);
+            SystemMgr::pauseDraw();
+            common::deleteTheme();
+            pspavPlayVideoFile(e->getPath().c_str(), &av_callbacks);
+            stopunloadPSPAV();
+            common::loadTheme();
+            common::stopLoadingThread();
+            SystemMgr::resumeDraw();
+        }
     }
     else if (e->getFileType() == FOLDER){
         string full_path = e->getFullPath();

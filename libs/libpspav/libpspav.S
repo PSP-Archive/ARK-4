@@ -18,7 +18,7 @@
 	IMPORT_FUNC  "pspav",0xC52E1F12,pspavPlayAT3
 #endif
 #ifdef F_libpspav_0004
-	IMPORT_FUNC  "pspav",0x9D74EE14,pspavPlayGamePSPAV
+	IMPORT_FUNC  "pspav",0xAD5E3793,pspavPlayGamePMF
 #endif
 #ifdef F_libpspav_0005
 	IMPORT_FUNC  "pspav",0x07EC66E6,pspavPlayVideoFile

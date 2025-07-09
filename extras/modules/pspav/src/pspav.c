@@ -377,7 +377,7 @@ void T_pspav(){
     }
 }
 
-unsigned char pspavPlayGamePSPAV(PSPAVEntry* e, PSPAVCallbacks* callbacks, int x, int y){
+unsigned char pspavPlayGamePMF(PSPAVEntry* e, PSPAVCallbacks* callbacks, int x, int y){
 
     if (!e || !callbacks) return 0;
 

@@ -16,6 +16,7 @@ INCDIR = \
 	$(LIBDIR)/libintraFont \
 	$(LIBDIR)/libjpeg \
 	$(LIBDIR)/libpspftp \
+	$(LIBDIR)/libpspav \
 
 LDFLAGS =
 EXTRA_TARGETS = EBOOT.PBP
@@ -52,6 +53,9 @@ OBJS = \
 	src/texteditor.o \
 	src/image_viewer.o \
 	src/music_player.o \
+	src/mp3.o \
+	src/ftp_driver.o \
+	src/pspav_wrapper.o \
 	src/anim/anim.o \
 	src/anim/pixel.o \
 	src/anim/wave.o \
@@ -64,14 +68,6 @@ OBJS = \
 	src/anim/snow.o \
 	src/anim/gol.o \
 	src/anim/noanim.o \
-	src/multimedia/mp3.o \
-	src/multimedia/mpeg.o \
-	src/multimedia/mpeg_video.o \
-	src/multimedia/mpeg_decoder.o \
-	src/multimedia/mpeg_audio.o \
-	src/multimedia/mpeg_reader.o \
-	src/multimedia/at3.o \
-	src/ftp_driver.o \
 
 
 LIBS = \
@@ -95,6 +91,7 @@ LIBS = \
 	-lpspmath \
 	-lpspumd \
 	-lpspmp3 \
+	-lpspav \
 	-lpspftp \
 	-lpspwlan \
 	-lpspnet \

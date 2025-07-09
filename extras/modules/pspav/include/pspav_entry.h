@@ -8,7 +8,7 @@ typedef enum{
 } PSPAV_PadState;
 
 typedef struct{
-    void* private;
+    void* priv;
     void* icon1;
     unsigned int size_icon1;
     void* at3data;
