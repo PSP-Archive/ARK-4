@@ -69,7 +69,7 @@ ar_archive *ar_open_any_archive(ar_stream *stream, const char *fileext)
     return ar;
 }
 
-int unarchiveFile(const char* filepath, const char* parent)
+int unarchiveFile(const char* filepath, const char* parent, void (*logger)(const char*))
 {
     ar_stream *stream = NULL;
     ar_archive *ar = NULL;
@@ -103,6 +103,7 @@ int unarchiveFile(const char* filepath, const char* parent)
             strcat(full_path, raw_filename);
         }
         createDirsForFile(full_path);
+        if (logger) logger(full_path);
         int fd = sceIoOpen(full_path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
         while (size > 0) {
             size_t count = size < buffer_size ? size : buffer_size;

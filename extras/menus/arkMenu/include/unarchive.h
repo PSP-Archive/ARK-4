@@ -1,3 +1,3 @@
 extern "C" {
-    int unarchiveFile(const char* filepath, const char* parent);
+    int unarchiveFile(const char* filepath, const char* parent, void (*filelogger)(const char*));
 }

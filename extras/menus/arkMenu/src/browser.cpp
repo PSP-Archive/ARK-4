@@ -506,6 +506,10 @@ void Browser::installPlugin(){
     draw_progress = false;
 }
 
+void Browser::unarchiverLogger(const char* filepath){
+    self->progress_desc[4] = string(filepath);
+}
+
 void Browser::extractArchive(){
 
     string root = get()->getPath().substr(0, 5);
@@ -546,7 +550,7 @@ void Browser::extractArchive(){
     if (!noRedraw)
         draw_progress = true;
 
-    unarchiveFile(this->get()->getPath().c_str(), dest.c_str());
+    unarchiveFile(this->get()->getPath().c_str(), dest.c_str(), unarchiverLogger);
 
     if (!noRedraw)
         draw_progress = false;

@@ -219,6 +219,7 @@ class Browser : public SystemEntry{
         void optionsMenu();
         void options();
         
+        static void unarchiverLogger(const char* filepath);
 };
 
 const char* getBrowserCWD();
