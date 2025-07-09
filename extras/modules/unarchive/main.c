@@ -81,8 +81,8 @@ int unarchiveFile(const char* filepath, const char* parent, void (*logger)(const
 
     ar = ar_open_any_archive(stream, strrchr(filepath, '.'));
 
-    unsigned int buffer_size = 8*1024;
-    unsigned char* buffer = malloc(buffer_size);
+    unsigned int buffer_size = 16*1024;
+    static unsigned char buffer[16*1024];
 
     while (ar_parse_entry(ar)) {
         size_t size = ar_entry_get_size(ar);
@@ -126,7 +126,6 @@ int unarchiveFile(const char* filepath, const char* parent, void (*logger)(const
 CleanUp:
     ar_close_archive(ar);
     ar_close(stream);
-    free(buffer_size);
     return error_step;
 }
 
