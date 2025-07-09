@@ -490,11 +490,11 @@ void *oe_realloc(void *ptr, int size)
 {
     void *p;
     
-    p = vsh_malloc(size);
+    p = user_malloc(size);
 
     if(p != NULL && ptr != NULL) {
         memcpy(p, ptr, size);
-        vsh_free(ptr);
+        oe_free(ptr);
     }
 
     return p;
@@ -527,7 +527,7 @@ static int get_sfo_section(VirtualPBP *vpbp, u32 remaining, void *data)
     char disc_id[12];
     u32 parental_level = 1;
 
-    buf = vsh_malloc(SECTOR_SIZE+64);
+    buf = user_malloc(SECTOR_SIZE+64);
 
     if (buf == NULL) {
         #ifdef DEBUG
@@ -543,21 +543,21 @@ static int get_sfo_section(VirtualPBP *vpbp, u32 remaining, void *data)
         #ifdef DEBUG
         printk("%s: isoRead -> 0x%08X\n", __func__, ret);
         #endif
-        vsh_free(buf);
+        oe_free(buf);
         return -37;
     }
 
     ret = get_sfo_string(buf_64, "TITLE", sfotitle, sizeof(sfotitle));
 
     if (ret < 0) {
-        vsh_free(buf);
+        oe_free(buf);
         return ret;
     }
 
     ret = get_sfo_string(buf_64, "DISC_ID", disc_id, sizeof(disc_id));
 
     if (ret < 0) {
-        vsh_free(buf);
+        oe_free(buf);
 
         return ret;
     }
@@ -566,7 +566,7 @@ static int get_sfo_section(VirtualPBP *vpbp, u32 remaining, void *data)
 
     get_sfo_u32(buf_64, "HRKGMP_VER", &(vpbp->opnssmp_type));
 
-    vsh_free(buf);
+    oe_free(buf);
     memcpy(virtualsfo+0x118, sfotitle, 64);
     memcpy(virtualsfo+0xf0, disc_id, 12);
     memcpy(virtualsfo+0x108, &parental_level, sizeof(parental_level));
@@ -605,7 +605,7 @@ static int get_pbp_section(VirtualPBP *vpbp, u32 remaining, int idx, void *data)
         goto out;
     }
 
-    buf = vsh_malloc(buf_size + 64);
+    buf = user_malloc(buf_size + 64);
 
     if(buf == NULL) {
         #ifdef DEBUG
@@ -640,7 +640,7 @@ static int get_pbp_section(VirtualPBP *vpbp, u32 remaining, int idx, void *data)
         pos += re;
     }
 
-    vsh_free(buf);
+    oe_free(buf);
 
 out:
     return total_re;
@@ -655,12 +655,12 @@ int vpbp_init(void)
     g_sema = sceKernelCreateSema("VPBPSema", 0, 1, 1, NULL);
 
     if (g_caches != NULL) {
-        vsh_free(g_caches);
+        oe_free(g_caches);
         g_caches_cnt = 0;
     }
 
     g_caches_cnt = CACHE_MAX_SIZE;
-    g_caches = vsh_malloc(sizeof(g_caches[0]) * g_caches_cnt);
+    g_caches = user_malloc(sizeof(g_caches[0]) * g_caches_cnt);
 
     if (g_caches == NULL) {
         g_caches_cnt = 0;
@@ -1220,14 +1220,14 @@ int vpbp_dclose(SceUID fd)
 int vpbp_reset(int cache)
 {
     if (g_vpbps != NULL) {
-        vsh_free(g_vpbps);
+        oe_free(g_vpbps);
         g_vpbps = NULL;
         g_vpbps_cnt = 0;
     }
 
     if(cache == 1) {
         if (g_caches != NULL) {
-            vsh_free(g_caches);
+            oe_free(g_caches);
             g_caches = NULL;
             g_caches_cnt = 0;
         }

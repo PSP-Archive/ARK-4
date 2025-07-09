@@ -42,8 +42,6 @@ PSP_EXPORT_FUNC(has_prometheus_module)
 PSP_EXPORT_FUNC(has_update_file)
 PSP_EXPORT_FUNC(vctrlGetRegistryValue)
 PSP_EXPORT_FUNC(vctrlSetRegistryValue)
-PSP_EXPORT_FUNC(vsh_malloc)
-PSP_EXPORT_FUNC(vsh_free)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS

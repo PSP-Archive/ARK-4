@@ -10,10 +10,8 @@ ASFLAGS = $(CFLAGS)
 BUILD_PRX = 1
 PRX_EXPORTS = exports.exp
 
-USE_KERNEL_LIBS = 0
-USE_KERNEL_LIBC = 0
-USE_PSPSDK_LIBS = 0
-USE_PSPSDK_LIBC = 0
+USE_PSPSDK_LIBS = 1
+USE_PSPSDK_LIBC = 1
 
 LIBDIR = $(ARKROOT)/libs
 LIBS = -lpspsystemctrl_user -lpspaudio -lpspsysc_user

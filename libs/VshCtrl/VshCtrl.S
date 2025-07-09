@@ -53,9 +53,3 @@
 #ifdef F_VshCtrl_0015
 	IMPORT_FUNC  "VshCtrlLib",0x3A65060D,vctrlSetRegistryValue
 #endif
-#ifdef F_VshCtrl_0016
-	IMPORT_FUNC  "VshCtrlLib",0x80E2343C,vsh_malloc
-#endif
-#ifdef F_VshCtrl_0017
-	IMPORT_FUNC  "VshCtrlLib",0xA4247A28,vsh_free
-#endif

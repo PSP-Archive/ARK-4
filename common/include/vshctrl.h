@@ -168,23 +168,5 @@ int vctrlGetRegistryValue(const char *dir, const char *name, u32 *val);
  */
 int vctrlSetRegistryValue(const char *dir, const char *name, u32 val);
 
-
-/**
- * Helper function to allocate memory on P2 (user memory).
- * 
- * @param size - amount of bytes to allocate.
- * 
- * @returns pointer to allocated buffer, or NULL on error.
- */
-void* vsh_malloc(size_t size);
-
-
-/**
- * Deallocate memory allocated by vsh_malloc.
- * 
- * @param ptr - pointer to the allocated memory.
- */
-void vsh_free(void* ptr);
-
 #endif
 

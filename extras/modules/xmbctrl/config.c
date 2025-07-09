@@ -4,6 +4,7 @@
 #include <systemctrl.h>
 #include <kubridge.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 #include <ark.h>
 
@@ -169,7 +170,7 @@ static void processCustomConfig(char* line){
 }
 
 static void list_cleaner(void* item){
-    vsh_free(item);
+    free(item);
 }
 
 void loadSettings(){
@@ -250,7 +251,7 @@ void saveSettings(){
         fd = sceIoOpen(path, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
     }
 
-    char* line = vsh_malloc(LINE_BUFFER_SIZE);
+    char* line = malloc(LINE_BUFFER_SIZE);
 
     processSetting(fd, line, "usbcharge", config.usbcharge);
 
@@ -313,7 +314,7 @@ void saveSettings(){
 
     sceIoClose(fd);
 
-    vsh_free(line);
+    free(line);
 
     //clear_list(&custom_config);
 }

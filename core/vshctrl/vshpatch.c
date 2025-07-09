@@ -245,7 +245,7 @@ static void patch_sysconf_plugin_module(SceModule2 *mod)
     }
 
     static void* p = NULL;
-    if (!p) p = vsh_malloc(50);
+    if (!p) p = user_malloc(50);
     
     sprintf(str, "%d.%d%d%s ARK-4 %s", major, minor, micro, tool, ark_config->exploit_id);
     ascii2utf16(p, str);

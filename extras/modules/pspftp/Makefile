@@ -25,10 +25,8 @@ LIBDIR = $(ARKROOT)/libs
 all:
 	psp-packer $(TARGET).prx
 
-USE_KERNEL_LIBS = 0
-USE_KERNEL_LIBC = 0
-USE_PSPSDK_LIBS = 0
-USE_PSPSDK_LIBC = 0
+USE_PSPSDK_LIBS = 1
+USE_PSPSDK_LIBC = 1
 
 LIBS = -lpspnet -lpspnet_inet -lpspnet_apctl -lpspsystemctrl_user -lpspsysc_user
 

@@ -21,10 +21,8 @@ ASFLAGS = $(CFLAGS)
 LDFLAGS = -mno-crt0 -nostartfiles
 BUILD_PRX = 1
 
-USE_KERNEL_LIBS = 0
-USE_KERNEL_LIBC = 0
-USE_PSPSDK_LIBS = 0
-USE_PSPSDK_LIBC = 0
+USE_PSPSDK_LIBS = 1
+USE_PSPSDK_LIBC = 1
 
 all: $(TARGET).prx
 	psp-packer $(TARGET).prx

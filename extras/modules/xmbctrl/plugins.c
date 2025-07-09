@@ -15,14 +15,14 @@ int cur_place = 0;
 
 static void list_cleaner(void* item){
     Plugin* plugin = (Plugin*)item;
-    vsh_free(plugin->path);
-    if (plugin->name) vsh_free(plugin->name);
-    if (plugin->surname) vsh_free(plugin->surname);
-    vsh_free(plugin);
+    free(plugin->path);
+    if (plugin->name) free(plugin->name);
+    if (plugin->surname) free(plugin->surname);
+    free(plugin);
 }
 
 static void processCustomLine(char* line){
-    Plugin* plugin = (Plugin*)vsh_malloc(sizeof(Plugin));
+    Plugin* plugin = (Plugin*)malloc(sizeof(Plugin));
     memset(plugin, 0, sizeof(Plugin));
     plugin->path = line;
     plugin->place = cur_place;
@@ -31,17 +31,17 @@ static void processCustomLine(char* line){
 
 static void processPlugin(char* runlevel, char* path, char* enabled){
     int n = plugins.count;
-    char* name = vsh_malloc(20);
+    char* name = malloc(20);
     snprintf(name, 20, "plugin_%d", n);
 
-    char* surname = vsh_malloc(20);
+    char* surname = malloc(20);
     snprintf(surname, 20, "plugins%d", n);
 
     int path_len = strlen(runlevel) + strlen(path) + 10;
-    char* full_path = (char*)vsh_malloc(path_len);
+    char* full_path = (char*)malloc(path_len);
     snprintf(full_path, path_len, "%s, %s", runlevel, path);
 
-    Plugin* plugin = (Plugin*)vsh_malloc(sizeof(Plugin));
+    Plugin* plugin = (Plugin*)malloc(sizeof(Plugin));
     plugin->name = name;
     plugin->surname = surname;
     plugin->path = full_path;
@@ -74,10 +74,10 @@ void loadPlugins(){
 
     if (plugins.count == 0){
         // Add example plugin
-        Plugin* plugin = (Plugin*)vsh_malloc(sizeof(Plugin));
-        plugin->name = (char*)vsh_malloc(20);
-        plugin->surname = (char*)vsh_malloc(20);
-        plugin->path = (char*)vsh_malloc(strlen(sample_plugin_path)+1);
+        Plugin* plugin = (Plugin*)malloc(sizeof(Plugin));
+        plugin->name = (char*)malloc(20);
+        plugin->surname = (char*)malloc(20);
+        plugin->path = (char*)malloc(strlen(sample_plugin_path)+1);
         plugin->active = 1;
         plugin->place = 0;
         strcpy(plugin->name, "plugin_0");

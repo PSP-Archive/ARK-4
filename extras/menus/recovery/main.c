@@ -32,31 +32,6 @@ extern void USB_enable();
 extern void USB_disable();
 extern int proshell_main();
 
-void* vsh_malloc(size_t size){
-    SceUID uid = sceKernelAllocPartitionMemory(2, "", PSP_SMEM_High, size+sizeof(u32), NULL);
-    int* ptr = sceKernelGetBlockHeadAddr(uid);
-    if (ptr){
-        ptr[0] = uid;
-        return &(ptr[1]);
-    }
-    return NULL;
-}
-
-void vsh_free(int* ptr){
-    if (ptr){
-        int uid = ptr[-1];
-        sceKernelFreePartitionMemory(uid);
-    }
-}
-
-void* malloc(size_t size){
-    return vsh_malloc(size);
-}
-
-void free(void* ptr){
-    vsh_free(ptr);
-}
-
 SceUID get_thread_id(const char *name)
 {
     int ret, count, i;
