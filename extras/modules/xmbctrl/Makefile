@@ -14,10 +14,12 @@ LIBDIR = $(ARKROOT)/libs
 all:
 	psp-packer $(TARGET).prx
 
-USE_PSPSDK_LIBS = 1
-USE_PSPSDK_LIBC = 1
+USE_KERNEL_LIBS = 0
+USE_KERNEL_LIBC = 0
+USE_PSPSDK_LIBS = 0
+USE_PSPSDK_LIBC = 0
 
-LIBS = -lpspsystemctrl_user -lpspkubridge -lpspvshctrl -lpspreg
+LIBS = -lpspsystemctrl_user -lpspkubridge -lpspvshctrl -lpspreg -lpspsysc_user
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build_prx.mak

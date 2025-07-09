@@ -30,11 +30,16 @@ ASFLAGS = $(CFLAGS)
 
 PRX_EXPORTS = exports.exp
 
-LIBS = -lgraphics -lpspsystemctrl_user -lpspkubridge -lpspvshctrl -lpspreg
+LIBS = -lgraphics -lpspsystemctrl_user -lpspkubridge -lpspvshctrl -lpspreg -lpspsysc_user
 LIBDIR = . $(ARKROOT)/libs
 LDFLAGS =
 
 PSP_FW_VERSION = 660
+
+USE_KERNEL_LIBS = 0
+USE_KERNEL_LIBC = 0
+USE_PSPSDK_LIBS = 0
+USE_PSPSDK_LIBC = 0
 
 vshmenu: all
 

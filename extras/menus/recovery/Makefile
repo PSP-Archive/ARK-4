@@ -14,12 +14,17 @@ CFLAGS = -std=c99 -Os -G0 -Wall
 INCDIR = $(ARKROOT)/common/include $(ARKROOT)/extras/modules/xmbctrl $(ARKROOT)/extras/modules/xmbctrl/include
 LIBDIR = $(ARKROOT)/libs
 
-LIBS = -lpspsystemctrl_user -lpspkubridge -lpspusb -lpspusbdevice_driver
+LIBS = -lpspsystemctrl_user -lpspkubridge -lpspusb -lpspusbdevice_driver -lpspsysc_user
 
 CXXFLAGS = $(CFLAGS)
 ASFLAGS = $(CFLAGS)
 LDFLAGS = -mno-crt0 -nostartfiles
 BUILD_PRX = 1
+
+USE_KERNEL_LIBS = 0
+USE_KERNEL_LIBC = 0
+USE_PSPSDK_LIBS = 0
+USE_PSPSDK_LIBC = 0
 
 all: $(TARGET).prx
 	psp-packer $(TARGET).prx
