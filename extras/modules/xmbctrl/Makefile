@@ -12,7 +12,7 @@ INCDIR = include/
 LIBDIR = $(ARKROOT)/libs
 
 all:
-	psp-packer xmbctrl.prx
+	psp-packer $(TARGET).prx
 
 USE_PSPSDK_LIBS = 1
 USE_PSPSDK_LIBC = 1

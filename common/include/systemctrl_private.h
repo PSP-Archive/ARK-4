@@ -64,9 +64,6 @@ void installMemoryJALTrace(unsigned int start, unsigned int size);
 // Install Whole-Module JAL Trace (NOT STABLE! DON'T DO IT IF NOT DESPERATE!)
 void installModuleJALTrace(SceModule2 * module);
 
-// Set ARK's execution environment configuration
-void sctrlHENSetArkConfig(ARKConfig* conf);
-
 #ifdef __cplusplus
 }
 #endif

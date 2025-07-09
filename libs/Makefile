@@ -1,6 +1,7 @@
 SUBDIRS = \
 	SystemCtrlForKernel \
 	SystemCtrlForUser \
+	SysclibForUser \
 	KUBridge \
 	VshCtrl \
 	ansi-c \
@@ -9,12 +10,13 @@ SUBDIRS = \
 	iplsdk \
 	prebuilt \
 	libpspmath \
-	libunziprar \
 	libpng \
 	libjpeg \
 	libpspvram \
 	libya2d \
 	libintraFont \
+	libpspftp \
+	libpspav \
 	libvlf \
 	libsploit \
 	psid 
@@ -29,19 +31,21 @@ distclean clean:
 	$(Q)make $@ -C SystemCtrlForKernel $(OPT)
 	$(Q)make $@ -C SystemCtrlForUser $(OPT)
 	$(Q)make $@ -C VshCtrl $(OPT)
+	$(Q)make $@ -C SysclibForUser $(OPT)
 	$(Q)make $@ -C KUBridge $(OPT)
 	$(Q)make $@ -C ansi-c $(OPT)
 	$(Q)make $@ -C graphics $(OPT)
 	$(Q)make $@ -C colordebugger $(OPT)
 	$(Q)make $@ -C iplsdk $(OPT)
 	$(Q)make $@ -C libpspmath $(OPT)
-	$(Q)make $@ -C libunziprar $(OPT)
 	$(Q)make $@ -C libpng $(OPT)
 	$(Q)make $@ -C libjpeg $(OPT)
 	$(Q)make $@ -C libpspvram $(OPT)
 	$(Q)make $@ -C libya2d $(OPT)
 	$(Q)make $@ -C psid $(OPT)
 	$(Q)make $@ -C libintraFont $(OPT)
+	$(Q)make $@ -C libpspftp $(OPT)
+	$(Q)make $@ -C libpspav $(OPT)
 	$(Q)make $@ -C libsploit $(OPT)
 	$(Q)rm -rf *.a *~ | true
 

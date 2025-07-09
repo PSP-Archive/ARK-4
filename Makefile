@@ -35,6 +35,9 @@ SUBDIRS = libs \
 	extras/modules/idsregeneration \
 	extras/modules/kbooti_update \
 	extras/modules/deadef \
+	extras/modules/pspftp \
+	extras/modules/pspav \
+	extras/modules/unarchive \
 	loader/live/user/linkless_payload \
 	loader/live/user/signed_eboot \
 	loader/live/user/psxloader \
@@ -106,6 +109,9 @@ copy-bin:
 	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
 	$(Q)cp extras/modules/peops/peops.prx dist/ARK_01234/PS1SPU.PRX
 	$(Q)cp extras/modules/bsod/kernel/bsod.prx dist/ARK_01234/BSOD.PRX # Blue Screen of Death debugger
+	$(Q)cp extras/modules/pspftp/pspftp.prx dist/ARK_01234/FTP.PRX
+	$(Q)cp extras/modules/pspav/pspav.prx dist/ARK_01234/PSPAV.PRX
+	$(Q)cp extras/modules/unarchive/unarchive.prx dist/ARK_01234/UNARCH.PRX
 	$(Q)cp extras/menus/recovery/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
 	$(Q)cp extras/menus/arkMenu/LANG.ARK dist/ARK_01234/LANG.ARK # Translations
@@ -315,6 +321,9 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/kpspident
 	$(Q)$(MAKE) $@ -C extras/modules/idsregeneration
 	$(Q)$(MAKE) $@ -C extras/modules/deadef
+	$(Q)$(MAKE) $@ -C extras/modules/pspftp
+	$(Q)$(MAKE) $@ -C extras/modules/pspav
+	$(Q)$(MAKE) $@ -C extras/modules/unarchive
 	$(Q)$(MAKE) $@ -C extras/apps/updater/
 	$(Q)$(MAKE) $@ -C extras/apps/installer/
 	$(Q)$(MAKE) $@ -C extras/apps/uninstaller

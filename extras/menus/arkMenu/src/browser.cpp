@@ -3,6 +3,7 @@
 #include <dirent.h>
 #include <algorithm>
 #include <pspiofilemgr.h>
+#include <kubridge.h>
 
 #include "browser.h"
 #include "gamemgr.h"
@@ -12,11 +13,12 @@
 
 #include "iso.h"
 #include "eboot.h"
-#include "unziprar.h"
+#include "unarchive.h"
 #include "texteditor.h"
 #include "image_viewer.h"
 #include "music_player.h"
-#include "mpeg.h"
+#include "pspav.h"
+#include "pspav_wrapper.h"
 
 #define PAGE_SIZE 10 // maximum entries shown on screen
 #define BUF_SIZE 1024*16 // 16 kB buffer for copying files
@@ -30,8 +32,6 @@ static Browser* self;
 
 typedef BrowserFile File;
 typedef BrowserFolder Folder;
-
-extern "C" int kuKernelLoadModule(const char*, int, void*);
 
 
 static char* pEntries[] = {
@@ -178,13 +178,16 @@ void Browser::update(Entry* ent, bool skip_prompt){
         installTheme();
     }
     else if (Entry::isVideo(e->getPath().c_str())){
-        GameManager::updateGameList(NULL);
-        SystemMgr::pauseDraw();
-        common::deleteTheme();
-        mpegPlayVideoFile(e->getPath().c_str());
-        common::loadTheme();
-        common::stopLoadingThread();
-        SystemMgr::resumeDraw();
+        if (loadstartPSPAV()>=0){
+            GameManager::updateGameList(NULL);
+            SystemMgr::pauseDraw();
+            common::deleteTheme();
+            pspavPlayVideoFile(e->getPath().c_str(), &av_callbacks);
+            stopunloadPSPAV();
+            common::loadTheme();
+            common::stopLoadingThread();
+            SystemMgr::resumeDraw();
+        }
     }
     else if (e->getFileType() == FOLDER){
         string full_path = e->getFullPath();
@@ -345,6 +348,47 @@ void Browser::installTheme() {
     copyFile(e->getPath(), common::getArkConfig()->arkpath);
 }
 
+int Browser::loadStartModule(string modpath, bool wait_on_ok){
+    progress_desc[0] = "LoadStart Module";
+    progress_desc[1] = "    "+modpath;
+    progress_desc[2] = "";
+    progress_desc[3] = "";
+    progress_desc[4] = "";
+    progress = 0;
+    max_progress = 1;
+    
+    bool noRedraw = draw_progress;
+    if (!noRedraw)
+        draw_progress = true;
+    
+    SceUID modid = kuKernelLoadModule(modpath.c_str(), 0, NULL);
+    int res = modid;
+    if (modid >= 0){
+        int modres = sceKernelStartModule(modid, modpath.size()+1, (void*)modpath.c_str(), NULL, NULL);
+        if (modres>=0){
+            progress_desc[3] = "OK";
+            progress = 1;
+            if (wait_on_ok) sceKernelDelayThread(5000000);
+        }
+        else {
+            res = modres;
+            char tmp[64]; sprintf(tmp, "ERROR StartModule %p", modres);
+            progress_desc[3] = string(tmp);
+            sceKernelDelayThread(5000000);
+        }
+    }
+    else {
+        char tmp[64]; sprintf(tmp, "ERROR LoadModule %p", modid);
+        progress_desc[3] = string(tmp);
+        sceKernelDelayThread(5000000);
+    }
+
+    if (!noRedraw)
+        draw_progress = false;
+
+    return res;
+}
+
 void Browser::installPlugin(){
     Entry* e = this->get();
     t_options_entry options_entries[] = {
@@ -391,9 +435,8 @@ void Browser::installPlugin(){
         if (osk_res == OSK_CANCEL) return;
     }
     else if (ret == 8){
-        const char* path = e->getPath().c_str();
-        int uid = kuKernelLoadModule(path, 0, NULL);
-        int res = sceKernelStartModule(uid, strlen(path) + 1, (void*)path, NULL, NULL);
+        string path = e->getPath();
+        loadStartModule(path);
         return;
     }
 
@@ -487,6 +530,10 @@ void Browser::extractArchive(int type){
 
     printf("extracting archive to: %s\n", dest.c_str());
 
+    string modpath = string(common::getArkConfig()->arkpath) + UNZIPRAR_PRX;
+    int modid = loadStartModule(modpath, false);
+    if (modid<0) return;
+
     sceIoMkdir(dest.c_str(), 0777);
 
     progress_desc[0] = "Extracting archive";
@@ -498,18 +545,16 @@ void Browser::extractArchive(int type){
     bool noRedraw = draw_progress;
     if (!noRedraw)
         draw_progress = true;
-    
-    if (type)
-        DoExtractRAR(this->get()->getPath().c_str(), dest.c_str(), NULL);
-    else
-        unzipToDir(this->get()->getPath().c_str(), dest.c_str(), NULL);
-    
+
+    unarchiveFile(this->get()->getPath().c_str(), dest.c_str());
+
     if (!noRedraw)
         draw_progress = false;
+
+    sceKernelStopModule(modid, 0, NULL, NULL, NULL);
+    sceKernelUnloadModule(modid);
     
     this->refreshDirs();
-    
-    //GameManager::updateGameList(dest.c_str()); // tell GameManager to update if needed
 }
 
 void logbuffer(char* path, void* buffer, u32 size){
@@ -730,13 +775,20 @@ void Browser::drawProgress(){
     for (int i=0; i<5; i++){
         if (i==4 && progress_desc[4] == ""){
             ostringstream s;
-            s<<common::beautifySize(progress)<<" / "<<common::beautifySize(max_progress);  
+            if (max_progress > 100){
+                s << common::beautifySize(progress) << " / " << common::beautifySize(max_progress);
+            }
+            else if (max_progress == 100){
+                s << progress << '%' << " / " << max_progress << '%';
+            }
+            else{
+                s << progress << " / " << max_progress;
+            }
             common::printText(x+20, yoffset, s.str().c_str());  
         }
         else common::printText(x+20, yoffset, progress_desc[i].c_str());
         yoffset+=15;
     }
-    
 }    
 
 void Browser::draw(){

@@ -253,10 +253,6 @@ void* sctrlArkGetConfig(ARKConfig* conf){
     return ark_config;
 }
 
-void sctrlHENSetArkConfig(ARKConfig* conf){
-    memcpy(ark_config, conf, sizeof(ARKConfig));
-}
-
 void sctrlHENLoadModuleOnReboot(char *module_before, void *buf, int size, int flags)
 {
     rebootex_config.rtm_mod.before = module_before;

@@ -6,7 +6,8 @@
 #include "sprites.h"
 #include "system_mgr.h"
 #include "music_player.h"
-#include "mpeg.h"
+#include "pspav.h"
+#include "pspav_wrapper.h"
 
 extern "C" int sceDisplaySetHoldMode(int);
 
@@ -304,7 +305,11 @@ bool Entry::pmfPrompt(){
     bool pmfPlayback = entry->getIcon1() != NULL || entry->getSnd() != NULL;
         
     if (pmfPlayback && !MusicPlayer::isPlaying()){
-        ret = mpegPlayGamePMF(entry, 20, 92);
+        if (loadstartPSPAV()>=0){
+            PSPAVEntry ave = convertEntry(entry);
+            ret = pspavPlayGamePMF(&ave, &av_callbacks, 20, 92);
+            stopunloadPSPAV();
+        }
     }
     else{
         Controller control;
