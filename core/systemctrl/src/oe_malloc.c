@@ -43,3 +43,14 @@ void oe_free(void* ptr){
 void* user_malloc(size_t size){
     return generic_malloc(size, PSP_MEMORY_PARTITION_USER);
 }
+
+void* user_memalign(unsigned int align, unsigned int size){
+    int uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", 1, size+sizeof(int)+align, NULL);
+    int* ptr = sceKernelGetBlockHeadAddr(uid);
+    if (ptr){
+        ptr = (void*)(((u32)ptr & (~(align-1))) + 64); // align
+        ptr[-1] = uid;
+        return ptr;
+    }
+    return NULL;
+}

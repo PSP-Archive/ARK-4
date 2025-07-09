@@ -5,7 +5,7 @@ PSP_EXPORT_FUNC(module_start)
 PSP_EXPORT_VAR_HASH(module_info)
 PSP_EXPORT_END
 
-PSP_EXPORT_START(pspftp, 0x11, 0x0001)
+PSP_EXPORT_START(pspftp, 0, 0x0001)
 # FTP Server API
 PSP_EXPORT_FUNC(ftpdSetMsgHandler)
 PSP_EXPORT_FUNC(ftpdGetDevice)

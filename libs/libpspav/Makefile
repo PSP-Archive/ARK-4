@@ -1,18 +1,15 @@
-TARGET=libpspsysc_user.a
+
+TARGET=libpspav.a
 
 all: $(TARGET)
-STUBSRC = SysclibForUser.S
+STUBSRC = libpspav.S
 OBJS = \
-	SysclibForUser_0000.o \
-	SysclibForUser_0001.o \
-	SysclibForUser_0002.o \
-	SysclibForUser_0003.o \
-	SysclibForUser_0004.o \
-	SysclibForUser_0005.o \
-	SysclibForUser_0006.o \
-	SysclibForUser_0007.o \
-	SysclibForUser_0008.o \
-	SysclibForUser_0009.o \
+	libpspav_0000.o \
+	libpspav_0001.o \
+	libpspav_0002.o \
+	libpspav_0003.o \
+	libpspav_0004.o \
+	libpspav_0005.o \
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 

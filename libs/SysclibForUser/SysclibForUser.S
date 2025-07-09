@@ -15,20 +15,23 @@
 	IMPORT_FUNC  "SysclibForUser",0xA65E8BC4,free
 #endif
 #ifdef F_SysclibForUser_0003
-	IMPORT_FUNC  "SysclibForUser",0xBC7554DF,strcasecmp
+	IMPORT_FUNC  "SysclibForUser",0xB19C939A,memalign
 #endif
 #ifdef F_SysclibForUser_0004
-	IMPORT_FUNC  "SysclibForUser",0xAC7554DF,strncasecmp
+	IMPORT_FUNC  "SysclibForUser",0xBC7554DF,strcasecmp
 #endif
 #ifdef F_SysclibForUser_0005
-	IMPORT_FUNC  "SysclibForUser",0x983B00FB,lowerString
+	IMPORT_FUNC  "SysclibForUser",0xAC7554DF,strncasecmp
 #endif
 #ifdef F_SysclibForUser_0006
-	IMPORT_FUNC  "SysclibForUser",0x7ED93D95,strtok
+	IMPORT_FUNC  "SysclibForUser",0x983B00FB,lowerString
 #endif
 #ifdef F_SysclibForUser_0007
-	IMPORT_FUNC  "SysclibForUser",0x7DF95413,strtol
+	IMPORT_FUNC  "SysclibForUser",0x7ED93D95,strtok
 #endif
 #ifdef F_SysclibForUser_0008
+	IMPORT_FUNC  "SysclibForUser",0x7DF95413,strtol
+#endif
+#ifdef F_SysclibForUser_0009
 	IMPORT_FUNC  "SysclibForUser",0x7661E728,sprintf
 #endif
