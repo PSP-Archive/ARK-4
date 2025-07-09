@@ -69,7 +69,7 @@ ar_archive *ar_open_any_archive(ar_stream *stream, const char *fileext)
     return ar;
 }
 
-int unarchiveFile(const char* filepath, const char* parent, void (*logger)(const char*))
+int unarchiveFile(const char* filepath, const char* parent, void (*logger)(const char*, int, int))
 {
     ar_stream *stream = NULL;
     ar_archive *ar = NULL;
@@ -81,7 +81,7 @@ int unarchiveFile(const char* filepath, const char* parent, void (*logger)(const
 
     ar = ar_open_any_archive(stream, strrchr(filepath, '.'));
 
-    unsigned int buffer_size = 16*1024;
+    unsigned int buffer_size = 8*1024;
     unsigned char* buffer = malloc(buffer_size);
 
     while (ar_parse_entry(ar)) {
@@ -103,15 +103,18 @@ int unarchiveFile(const char* filepath, const char* parent, void (*logger)(const
             strcat(full_path, raw_filename);
         }
         createDirsForFile(full_path);
-        if (logger) logger(full_path);
+        int cur_progress = 0;
+        int max_progress = size;
         int fd = sceIoOpen(full_path, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
+        if (logger) logger(full_path, 0, size);
         while (size > 0) {
             size_t count = size < buffer_size ? size : buffer_size;
             if (!ar_entry_uncompress(ar, buffer, count))
                 break;
             sceIoWrite(fd, buffer, count);
             size -= count;
-
+            cur_progress += count;
+            if (logger) logger(NULL, cur_progress, max_progress);
         }
         sceIoClose(fd);
         if (size > 0) {
