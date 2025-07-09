@@ -30,7 +30,7 @@ USE_KERNEL_LIBC = 1
 USE_PSPSDK_LIBS = 0
 USE_PSPSDK_LIBC = 0
 
-LIBS = -lpsppower -lpspaudio -lpspatrac3 -lpspmpeg -lpspsystemctrl_user -lpspsysc_user -lansic
+LIBS = -lpsppower -lpspaudio -lpspatrac3 -lpspmpeg -lpspsystemctrl_user -lpspsysc_user
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build_prx.mak

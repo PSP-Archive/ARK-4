@@ -30,7 +30,7 @@ USE_KERNEL_LIBC = 1
 USE_PSPSDK_LIBS = 0
 USE_PSPSDK_LIBC = 0
 
-LIBS = -lpspnet -lpspnet_inet -lpspnet_apctl -lpspsystemctrl_user -lpspsysc_user -lansic
+LIBS = -lpspnet -lpspnet_inet -lpspnet_apctl -lpspsystemctrl_user -lpspsysc_user
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build_prx.mak
