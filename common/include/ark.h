@@ -68,7 +68,7 @@ extern "C" {
 #define IDSREG_PRX "IDSREG.PRX" // idsRegeneration
 #define USBDEV_PRX "USBDEV.PRX" // Custom USB Device
 #define PS1SPU_PRX "PS1SPU.PRX" // PS1 SPU Plugin
-#define PSPFTP_PRX "FTP.PRX" // FTP Server/Client PRX library
+#define PSPFTP_PRX "PSPFTP.PRX" // FTP Server/Client PRX library
 #define PSPAV_PRX "PSPAV.PRX" // PSP AT3/PMF/MPS PRX library
 #define UNZIPRAR_PRX "UNARCH.PRX" // Unzip/Unrar PRX library
 #define RECOVERY_PRX_FLASH "flash0:/vsh/module/ark_recovery.prx" // Classic Recovery flash0 path

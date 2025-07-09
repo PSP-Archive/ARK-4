@@ -109,7 +109,7 @@ copy-bin:
 	$(Q)cp extras/modules/usbdevice/usbdevice.prx dist/ARK_01234/USBDEV.PRX # USB Device Driver
 	$(Q)cp extras/modules/peops/peops.prx dist/ARK_01234/PS1SPU.PRX
 	$(Q)cp extras/modules/bsod/kernel/bsod.prx dist/ARK_01234/BSOD.PRX # Blue Screen of Death debugger
-	$(Q)cp extras/modules/pspftp/pspftp.prx dist/ARK_01234/FTP.PRX
+	$(Q)cp extras/modules/pspftp/pspftp.prx dist/ARK_01234/PSPFTP.PRX
 	$(Q)cp extras/modules/pspav/pspav.prx dist/ARK_01234/PSPAV.PRX
 	$(Q)cp extras/modules/unarchive/unarchive.prx dist/ARK_01234/UNARCH.PRX
 	$(Q)cp extras/menus/recovery/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Default recovery menu
