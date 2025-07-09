@@ -15,9 +15,6 @@ int fileTypeByExtension(string path){
     else if (Entry::isTXT(path.c_str())){
         return FILE_TXT;
     }
-    else if (Entry::isZip(path.c_str()) || Entry::isRar(path.c_str())){
-        return FILE_ZIP;
-    }
     else if (Entry::isPRX(path.c_str())){
         return FILE_PRX;
     }
@@ -26,6 +23,9 @@ int fileTypeByExtension(string path){
     }
     else if (Entry::isMusic(path.c_str())){
         return FILE_MUSIC;
+    }
+    else if (Entry::isArchive(path.c_str())){
+        return FILE_ZIP;
     }
     return FILE_BIN;
 }

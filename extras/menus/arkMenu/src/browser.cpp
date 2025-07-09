@@ -225,7 +225,7 @@ void Browser::update(Entry* ent, bool skip_prompt){
             delete eboot;
     }
     else if (e->getFileType() == FILE_ZIP){
-        extractArchive(common::getExtension(e->getPath()) == "rar");
+        extractArchive();
     }
     else if (e->getFileType() == FILE_PRX){
         installPlugin();
@@ -506,7 +506,7 @@ void Browser::installPlugin(){
     draw_progress = false;
 }
 
-void Browser::extractArchive(int type){
+void Browser::extractArchive(){
 
     string root = get()->getPath().substr(0, 5);
     string extract_to_root = TR("Extract to")+" "+root;

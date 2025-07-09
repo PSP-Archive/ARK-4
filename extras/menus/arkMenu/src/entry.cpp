@@ -171,12 +171,11 @@ void Entry::freeTempData(){
         free(this->snd0);
 }
 
-bool Entry::isZip(const char* path){
-    return (common::getExtension(path) == "zip");
-}
-
-bool Entry::isRar(const char* path){
-    return (common::getExtension(path) == "rar");
+bool Entry::isArchive(const char* path){
+    return  common::getExtension(path) == "zip" ||
+            common::getExtension(path) == "rar" ||
+            common::getExtension(path) == "tar" ||
+            common::getExtension(path) == "7z"   ;
 }
 
 bool Entry::isPRX(const char* path){

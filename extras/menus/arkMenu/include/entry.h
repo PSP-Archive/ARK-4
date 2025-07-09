@@ -119,14 +119,13 @@ class Entry{
         virtual char* getType()=0;
         virtual char* getSubtype()=0;
         
-        static bool isZip(const char* path);
-        static bool isRar(const char* path);
         static bool isPRX(const char* path);
         static bool isARK(const char* path);
         static bool isTXT(const char* path);
         static bool isIMG(const char* path);
         static bool isMusic(const char* path);
         static bool isVideo(const char* path);
+        static bool isArchive(const char* path);
 
         static bool getSfoParam(unsigned char* sfo_buffer, int buf_size, char* param_name, unsigned char* var, int* var_size);
         
