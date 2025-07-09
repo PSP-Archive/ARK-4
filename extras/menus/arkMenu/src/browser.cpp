@@ -509,6 +509,7 @@ void Browser::installPlugin(){
 void Browser::unarchiverLogger(const char* filepath, int cur, int max){
     if (filepath){
         self->progress_desc[3] = string(filepath);
+        self->progress_desc[4] = "";
     }
     self->progress = cur;
     self->max_progress = max;
