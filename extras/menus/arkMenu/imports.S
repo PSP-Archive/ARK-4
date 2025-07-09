@@ -14,6 +14,5 @@ STUB_END
 
 #include "pspimport.s"
 
-IMPORT_START "unziprar", 0x40090000
-IMPORT_FUNC "unziprar", 0x0E063607, unzipToDir
-IMPORT_FUNC "unziprar", 0x0528D2EE, DoExtractRAR
+IMPORT_START "unarchive", 0x40090000
+IMPORT_FUNC "unarchive", 0xF6EC2A3A, unarchiveFile

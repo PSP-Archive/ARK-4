@@ -13,7 +13,7 @@
 
 #include "iso.h"
 #include "eboot.h"
-#include "unziprar.h"
+#include "unarchive.h"
 #include "texteditor.h"
 #include "image_viewer.h"
 #include "music_player.h"
@@ -546,9 +546,7 @@ void Browser::extractArchive(int type){
     if (!noRedraw)
         draw_progress = true;
 
-    void (*extractFunc)(const char*, const char*, const char*);
-    extractFunc = (type)? &DoExtractRAR : &unzipToDir;
-    extractFunc(this->get()->getPath().c_str(), dest.c_str(), NULL);
+    unarchiveFile(this->get()->getPath().c_str(), dest.c_str());
 
     if (!noRedraw)
         draw_progress = false;
