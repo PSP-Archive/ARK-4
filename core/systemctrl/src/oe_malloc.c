@@ -36,8 +36,10 @@ void* oe_malloc(size_t size){
 }
 
 void oe_free(void* ptr){
-    SceUID uid = ((SceUID*)ptr)[-1];
-    sceKernelFreePartitionMemory(uid);
+    if (ptr){
+        SceUID uid = ((SceUID*)ptr)[-1];
+        sceKernelFreePartitionMemory(uid);
+    }
 }
 
 void* user_malloc(size_t size){
