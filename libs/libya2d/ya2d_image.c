@@ -345,7 +345,7 @@ exit_error:
 
 #ifdef USE_PSP_JPEG
 
-static int get_JPEG_info(u8* data, int data_size, int* out_w, int* out_h){
+static void get_JPEG_info(u8* data, int data_size, int* out_w, int* out_h){
     int w = 0, h = 0;
     const uint8_t * buf = &data[0];
     for (int i = 2; i < data_size;) {
@@ -366,7 +366,6 @@ static int get_JPEG_info(u8* data, int data_size, int* out_w, int* out_h){
     }
     *out_w = w;
     *out_h = h;
-    return i;
 }
 
 struct ya2d_texture* ya2d_load_JPEG_buffer(void* jpegbuf, unsigned long jpeg_size, int place){
