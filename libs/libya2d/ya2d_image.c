@@ -348,8 +348,7 @@ exit_error:
 static int get_JPEG_info(u8* data, int data_size, int* out_w, int* out_h){
     int w = 0, h = 0;
     const uint8_t * buf = &data[0];
-    int i = 2
-    for (; i < data_size;) {
+    for (int i = 2; i < data_size;) {
         if (buf[i] == 0xFF) {
             i++;
             switch(buf[i]){
