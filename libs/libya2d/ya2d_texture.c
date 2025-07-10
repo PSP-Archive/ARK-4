@@ -159,8 +159,10 @@ static inline void _ya2d_draw_texture_fast(struct ya2d_texture *texture, int x, 
 void ya2d_draw_texture(struct ya2d_texture *texture, int x, int y)
 {
     if (texture){
-        if (texture->has_alpha) ya2d_draw_texture_hotspot(texture, x, y, 0, 0);
-        else ya2d_draw_texture_blend(texture, x, y, 0xFF000000);
+        if (!texture->has_alpha && texture->pixel_format == GU_PSM_8888)
+            ya2d_draw_texture_blend(texture, x, y, 0xFF000000);
+        else
+            ya2d_draw_texture_hotspot(texture, x, y, 0, 0); 
     }
 }
 
