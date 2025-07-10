@@ -373,9 +373,8 @@ static int get_JPEG_info(u8* data, int data_size, int* out_w, int* out_h){
 struct ya2d_texture* ya2d_load_JPEG_buffer(void* jpegbuf, unsigned long jpeg_size, int place){
 
     struct ya2d_texture *texture = NULL;
-    void* bufYCbCr = NULL;
+    void* bufRGB = NULL;
     int w = 0, h = 0;
-    int colorInfo = 4;
     int res = -1;
 
     sceUtilityLoadModule(PSP_MODULE_AV_MPEGBASE);
@@ -383,28 +382,39 @@ struct ya2d_texture* ya2d_load_JPEG_buffer(void* jpegbuf, unsigned long jpeg_siz
 
     get_JPEG_info(jpegbuf, jpeg_size, &w, &h);
 
+    bufRGB = malloc(4*w*h);
+    if (!bufRGB){
+        goto ya2d_load_jpeg_error;
+    }
+
     if (w <= 0 || h <= 0 || (res=sceJpegCreateMJpeg(w, h))<0) {
-        printf("w: %d, h:%d, sceJpegCreateMJpeg: %p\n", w, h, res);
         goto ya2d_load_jpeg_error;
     }
 
     texture = ya2d_create_texture(w, h, GU_PSM_8888, place);
     if (!texture){
-        printf("ya2d_create_texture FAILED\n");
         goto ya2d_load_jpeg_error;
     }
 
-    if ((res=sceJpegDecodeMJpeg(jpegbuf, jpeg_size, texture->data, 0)) < 0){
-        printf("sceJpegDecodeMJpeg: %p\n", res);
+    if ((res=sceJpegDecodeMJpeg(jpegbuf, jpeg_size, bufRGB, 0)) < 0){
         goto ya2d_load_jpeg_error;
     }
 
-    for (int i = 0; i < w*h*4; i+=4) {
-        u8* data = (u8*)(texture->data);
-        data[i+3] = 255;
+    unsigned char* tex_data = texture->data;
+    unsigned char* buf = bufRGB;
+    unsigned int wb = w*4;
+    for (int i=0; i<h; i++){
+        memcpy(tex_data, buf, wb);
+        buf += wb;
+        tex_data += texture->stride;
     }
-
+    for (int i=0; i<texture->data_size; i+=4){
+        u32* addr = (u32)texture->data + i;
+        *addr = (*addr)|0xFF000000;
+    }
     texture->has_alpha = 1;
+
+    ya2d_flush_texture(texture);
 
     goto ya2d_load_jpeg_finish;
 
@@ -412,7 +422,7 @@ struct ya2d_texture* ya2d_load_JPEG_buffer(void* jpegbuf, unsigned long jpeg_siz
     ya2d_free_texture(texture); texture = NULL;
 
     ya2d_load_jpeg_finish:
-    free(bufYCbCr);
+    free(bufRGB);
     sceJpegDeleteMJpeg();
     sceJpegFinishMJpeg();
     sceUtilityUnloadModule(PSP_MODULE_AV_MPEGBASE);
