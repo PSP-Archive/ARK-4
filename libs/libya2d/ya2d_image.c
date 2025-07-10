@@ -381,7 +381,7 @@ struct ya2d_texture* ya2d_load_JPEG_buffer(void* jpegbuf, unsigned long jpeg_siz
 
     get_JPEG_info(jpegbuf, jpeg_size, &w, &h);
     if (w <= 0 || h <= 0){
-        printf("bad image: %dx%d\n", w, h);
+        //printf("bad image: %dx%d\n", w, h);
         goto ya2d_load_jpeg_error;
     }
 
@@ -391,17 +391,17 @@ struct ya2d_texture* ya2d_load_JPEG_buffer(void* jpegbuf, unsigned long jpeg_siz
     bufRGB = malloc(4*w2*h2);
     texture = ya2d_create_texture(w, h, GU_PSM_8888, place);
     if (!bufRGB || !texture){
-        printf("alloc FAILED: %p, %p\n", bufRGB, texture);
+        //printf("alloc FAILED: %p, %p\n", bufRGB, texture);
         goto ya2d_load_jpeg_error;
     }
 
     if ((res=sceJpegCreateMJpeg(w2, h2))<0) {
-        printf("sceJpegCreateMJpeg FAILED: %p\n", res);
+        //printf("sceJpegCreateMJpeg FAILED: %p\n", res);
         goto ya2d_load_jpeg_error;
     }
 
     if ((res=sceJpegDecodeMJpeg(jpegbuf, jpeg_size, bufRGB, 0)) < 0){
-        printf("sceJpegCreateMJpeg FAILED: %p\n", res);
+        //printf("sceJpegCreateMJpeg FAILED: %p\n", res);
         goto ya2d_load_jpeg_error;
     }
 
