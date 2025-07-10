@@ -166,7 +166,11 @@ void ya2d_draw_texture(struct ya2d_texture *texture, int x, int y)
     }
 }
 
-void ya2d_draw_texture_blend(struct ya2d_texture *texture, int x, int y, unsigned int color)
+void ya2d_draw_texture_blend(struct ya2d_texture *texture, int x, int y, unsigned int color){
+    ya2d_draw_texture_blend_scale(texture, x, y, color, 1.f, 1.f);
+}
+
+void ya2d_draw_texture_blend_scale(struct ya2d_texture *texture, int x, int y, unsigned int color, float scale_x, float scale_y)
 {
     if (!texture) return;
 
@@ -184,8 +188,8 @@ void ya2d_draw_texture_blend(struct ya2d_texture *texture, int x, int y, unsigne
     vertices[1].color = color;
     vertices[1].u = texture->width;
     vertices[1].v = texture->height;
-    vertices[1].x = x + texture->width;
-    vertices[1].y = y + texture->height;
+    vertices[1].x = x + (texture->width)*scale_x;
+    vertices[1].y = y + (texture->height)*scale_y;
     vertices[1].z = 0;
     
     sceGumDrawArray(GU_SPRITES, GU_COLOR_8888|GU_TEXTURE_16BIT|GU_VERTEX_16BIT|GU_TRANSFORM_2D, 2, 0, vertices);
@@ -211,6 +215,9 @@ void ya2d_draw_texture_hotspot(struct ya2d_texture *texture, int x, int y, int c
 void ya2d_draw_texture_scale(struct ya2d_texture *texture, int x, int y, float scale_x, float scale_y)
 {
     if (!texture) return;
+
+    if (!texture->has_alpha && texture->pixel_format == GU_PSM_8888)
+        ya2d_draw_texture_blend_scale(texture, x, y, 0xFF000000, scale_x, scale_y);
 
     ya2d_set_texture(texture);
 

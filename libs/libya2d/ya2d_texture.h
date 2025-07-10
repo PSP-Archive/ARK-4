@@ -52,6 +52,7 @@ void ya2d_draw_texture_centered(struct ya2d_texture *texture, int x, int y);
 void ya2d_draw_texture_hotspot(struct ya2d_texture *texture, int x, int y, int center_x, int center_y);
 
 void ya2d_draw_texture_scale(struct ya2d_texture *texture, int x, int y, float scale_x, float scale_y);
+void ya2d_draw_texture_blend_scale(struct ya2d_texture *texture, int x, int y, unsigned int color, float scale_x, float scale_y);
 
 void ya2d_draw_texture_rotate(struct ya2d_texture *texture, int x, int y, float angle);
 void ya2d_draw_texture_rotate_hotspot(struct ya2d_texture *texture, int x, int y, float angle, int center_x, int center_y);

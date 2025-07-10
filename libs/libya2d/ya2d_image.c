@@ -408,11 +408,7 @@ struct ya2d_texture* ya2d_load_JPEG_buffer(void* jpegbuf, unsigned long jpeg_siz
         buf += wb;
         tex_data += texture->stride;
     }
-    for (int i=0; i<texture->data_size; i+=4){
-        u32* addr = (u32)texture->data + i;
-        *addr = (*addr)|0xFF000000;
-    }
-    texture->has_alpha = 1;
+    texture->has_alpha = 0;
 
     ya2d_flush_texture(texture);
 
