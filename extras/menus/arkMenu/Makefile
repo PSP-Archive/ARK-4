@@ -75,8 +75,8 @@ LIBS = \
 	-lc \
 	-lya2d \
 	-lintraFont \
-	-ljpeg \
 	-lpng \
+	-lpspjpeg \
 	-lpspvfpu \
 	-lpspmpeg \
 	-lpspaudio \

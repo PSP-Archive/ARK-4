@@ -25,9 +25,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include <pspjpeg.h>
+#include <psputility.h>
 #include <png.h>
-#include <jpeglib.h>
-
+//#include <jpeglib.h>
 
 #define YA2D_PNGSIGSIZE   (8)
 #define YA2D_BMPSIGNATURE (0x4D42)
@@ -337,6 +338,7 @@ exit_error:
     return NULL;    
 }
 
+/*
 static struct ya2d_texture* _ya2d_load_JPEG_generic(struct jpeg_decompress_struct* jinfo, struct jpeg_error_mgr* jerr, int place)
 {
     int row_bytes;
@@ -424,4 +426,79 @@ struct ya2d_texture* ya2d_load_JPEG_buffer(void* buffer, unsigned long buffer_si
     jpeg_destroy_decompress(&jinfo);
     
     return texture;
+}
+*/
+
+static int get_JPEG_info(u8* data, int data_size, int* out_c, int* out_w, int* out_h){
+    int c = 4, w = 0, h = 0;
+    const uint8_t * buf = &data[0];
+    for (int i = 2; i < data_size;) {
+        if (buf[i] == 0xFF) {
+            i++;
+            switch(buf[i]){
+                case 0xC0: case 0xC1: case 0xC2: case 0xC3: case 0xC5: case 0xC6: case 0xC7: case 0xC9: case 0xCA: case 0xCB: case 0xCD: case 0xCE: case 0xCF:
+                    i += 4;
+                    h = (buf[i] << 8) | (buf[i+1]);
+                    w = (buf[i+2] << 8) | (buf[i+3]);
+                    i = data_size; break;
+                case 0xDA: case 0xD9: break;
+                default:
+                    i += ((buf[i+1] << 8) | (buf[i+2])) + 1;
+                    break;
+            }
+        } else i++;
+    }
+    *out_c = c;
+    *out_w = w;
+    *out_h = h;
+}
+
+struct ya2d_texture* ya2d_load_JPEG_buffer(void* buffer, unsigned long buffer_size, int place){
+
+    struct ya2d_texture *texture = NULL;
+    int c = 4, w = 0, h = 0;
+
+    sceUtilityLoadModule(PSP_MODULE_AV_MPEGBASE);
+    sceJpegInitMJpeg();
+
+    get_JPEG_info(buffer, buffer_size, &c, &w, &h);
+
+    if (w <= 0 || h <= 0 || c!=4 || sceJpegCreateMJpeg(w, h)<0) {
+        goto ya2d_load_jpeg_error;
+    }
+
+    texture = ya2d_create_texture(w, h, GU_PSM_8888, place);
+    if (!texture) goto ya2d_load_jpeg_error;
+
+    if (sceJpegDecodeMJpeg(buffer, buffer_size, texture->data, 0)<0){
+        goto ya2d_load_jpeg_error;
+    }
+
+    goto ya2d_load_jpeg_finish;
+
+    ya2d_load_jpeg_error:
+    ya2d_free_texture(texture); texture = NULL;
+
+    ya2d_load_jpeg_finish:
+    sceJpegDeleteMJpeg();
+    sceJpegFinishMJpeg();
+    sceUtilityUnloadModule(PSP_MODULE_AV_MPEGBASE);
+
+    return texture;
+}
+
+struct ya2d_texture* ya2d_load_JPEG_file(const char* filename, int place){
+    SceUID fd = sceIoOpen(filename, PSP_O_RDONLY, 0777);
+    size_t filesize = sceIoLseek(fd, 0, PSP_SEEK_END);
+    sceIoLseek(fd, 0, PSP_SEEK_SET);
+
+    void* buf = malloc(filesize);
+    if (!buf) return NULL;
+
+    sceIoRead(fd, buf, filesize);
+    struct ya2d_texture* res = ya2d_load_JPEG_buffer(buf, filesize, place);
+
+    sceIoClose(fd);
+    free(buf);
+    return res;
 }

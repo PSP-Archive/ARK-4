@@ -11,7 +11,6 @@ SUBDIRS = \
 	prebuilt \
 	libpspmath \
 	libpng \
-	libjpeg \
 	libpspvram \
 	libya2d \
 	libintraFont \
@@ -39,7 +38,6 @@ distclean clean:
 	$(Q)make $@ -C iplsdk $(OPT)
 	$(Q)make $@ -C libpspmath $(OPT)
 	$(Q)make $@ -C libpng $(OPT)
-	$(Q)make $@ -C libjpeg $(OPT)
 	$(Q)make $@ -C libpspvram $(OPT)
 	$(Q)make $@ -C libya2d $(OPT)
 	$(Q)make $@ -C psid $(OPT)
