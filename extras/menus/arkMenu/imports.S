@@ -16,3 +16,6 @@ STUB_END
 
 IMPORT_START "unarchive", 0x40090000
 IMPORT_FUNC "unarchive", 0xF6EC2A3A, unarchiveFile
+
+IMPORT_START "sceJpeg",0x40090011
+IMPORT_FUNC  "sceJpeg",0x67F0ED84,sceJpegCsc

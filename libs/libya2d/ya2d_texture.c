@@ -105,12 +105,13 @@ void ya2d_free_texture(struct ya2d_texture *texture)
 
 void ya2d_set_texture(struct ya2d_texture *texture)
 {
-    sceGuEnable(GU_TEXTURE_2D);
-    sceGuTexMode(texture->pixel_format, 0, 0, texture->swizzled);
-    sceGuTexImage(0, texture->pow2_w, texture->pow2_h,
-                  texture->pow2_w, texture->data);
-    sceGuTexFunc(GU_TFX_REPLACE, texture->has_alpha ? GU_TCC_RGBA : GU_TCC_RGB);
-    sceGuTexFilter(GU_NEAREST, GU_NEAREST);   
+    if (texture){
+        sceGuEnable(GU_TEXTURE_2D);
+        sceGuTexMode(texture->pixel_format, 0, 0, texture->swizzled);
+        sceGuTexImage(0, texture->pow2_w, texture->pow2_h, texture->pow2_w, texture->data);
+        sceGuTexFunc(GU_TFX_REPLACE, texture->has_alpha ? GU_TCC_RGBA : GU_TCC_RGB);
+        sceGuTexFilter(GU_NEAREST, GU_NEAREST);
+    }
 }
 
 static inline void _ya2d_draw_texture_slow(struct ya2d_texture *texture, int x, int y, int center_x, int center_y)
@@ -132,7 +133,7 @@ static inline void _ya2d_draw_texture_slow(struct ya2d_texture *texture, int x, 
     sceGumDrawArray(GU_SPRITES, GU_TEXTURE_16BIT|GU_VERTEX_16BIT|GU_TRANSFORM_2D, 2, 0, vertices);
 }
 
-static void _ya2d_draw_texture_fast(struct ya2d_texture *texture, int x, int y, int center_x, int center_y)
+static inline void _ya2d_draw_texture_fast(struct ya2d_texture *texture, int x, int y, int center_x, int center_y)
 {    
     int i, k, slice, n_slices = texture->width/YA2D_TEXTURE_SLICE;
     if (texture->width%YA2D_TEXTURE_SLICE != 0) ++n_slices;
@@ -157,11 +158,16 @@ static void _ya2d_draw_texture_fast(struct ya2d_texture *texture, int x, int y, 
 
 void ya2d_draw_texture(struct ya2d_texture *texture, int x, int y)
 {
-    ya2d_draw_texture_hotspot(texture, x, y, 0, 0); 
+    if (texture){
+        if (texture->has_alpha) ya2d_draw_texture_hotspot(texture, x, y, 0, 0);
+        else ya2d_draw_texture_blend(texture, x, y, 0xFF000000);
+    }
 }
 
 void ya2d_draw_texture_blend(struct ya2d_texture *texture, int x, int y, unsigned int color)
 {
+    if (!texture) return;
+
     ya2d_set_texture(texture);
     
     struct ya2d_vertex_1ui2s3s *vertices = sceGuGetMemory(2 * sizeof(struct ya2d_vertex_1ui2s3s));
@@ -190,18 +196,20 @@ void ya2d_draw_texture_centered(struct ya2d_texture *texture, int x, int y)
 
 void ya2d_draw_texture_hotspot(struct ya2d_texture *texture, int x, int y, int center_x, int center_y)
 {
+    if (!texture) return;
+
     ya2d_set_texture(texture);
-    
-    //There's no need to use the fast algorithm with small textures
     if (texture->width > YA2D_TEXTURE_SLICE) {
         _ya2d_draw_texture_fast(texture, x, y, center_x, center_y);
-    } else {
+    } else { //There's no need to use the fast algorithm with small textures
         _ya2d_draw_texture_slow(texture, x, y, center_x, center_y);
     }    
 }
 
 void ya2d_draw_texture_scale(struct ya2d_texture *texture, int x, int y, float scale_x, float scale_y)
 {
+    if (!texture) return;
+
     ya2d_set_texture(texture);
 
     struct ya2d_vertex_2s3s *vertices = sceGuGetMemory(2 * sizeof(struct ya2d_vertex_2s3s));
@@ -228,6 +236,8 @@ void ya2d_draw_texture_rotate(struct ya2d_texture *texture, int x, int y, float 
 
 void ya2d_draw_texture_rotate_hotspot(struct ya2d_texture *texture, int x, int y, float angle, int center_x, int center_y)
 {
+    if (!texture) return;
+
     ya2d_set_texture(texture);
 
     struct ya2d_vertex_2s3s *vertices = sceGuGetMemory(4 * sizeof(struct ya2d_vertex_2s3s));
@@ -279,7 +289,7 @@ void ya2d_flush_texture(struct ya2d_texture *texture)
 void ya2d_swizzle_texture(struct ya2d_texture *texture)
 {
     //There's no need to use swizzle with small textures
-    if(texture->swizzled || texture->width < YA2D_TEXTURE_SLICE) return;
+    if(!texture || texture->swizzled || texture->width < YA2D_TEXTURE_SLICE) return;
     void *tmp = malloc(texture->data_size);
     swizzle_fast(tmp, texture->data, texture->stride, texture->pow2_h);
     memcpy(texture->data, tmp, texture->data_size);

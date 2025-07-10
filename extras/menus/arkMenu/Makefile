@@ -71,22 +71,26 @@ OBJS = \
 
 
 LIBS = \
+	-lstdc++ \
+	-lc \
 	-lya2d \
 	-lintraFont \
 	-lpng \
-	-lpspjpeg \
+	-lz \
+	-lm \
 	-lpspvfpu \
+	-lpspjpeg \
 	-lpspaudio \
 	-lpsppower \
 	-lpspgum \
 	-lpspgu \
 	-lpsprtc \
+	-lpspftp \
+	-lpspav \
 	-lpspvram \
 	-lpspmath \
 	-lpspumd \
 	-lpspmp3 \
-	-lpspav \
-	-lpspftp \
 	-lpspwlan \
 	-lpspnet \
 	-lpspnet_inet \
@@ -96,10 +100,6 @@ LIBS = \
 	-lpspusbdevice_driver \
 	-lpspsystemctrl_user \
 	-lpspkubridge \
-	-lstdc++ \
-	-lc \
-	-lz \
-	-lm \
 
 all: $(TARGET).prx
 	$(Q)python3 ./pkg.py

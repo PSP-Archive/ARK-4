@@ -29,7 +29,7 @@ typedef struct{
     void* (*getRawTexture)(void*);
     void* (*createTexture)(int, int);
     void (*freeTexture)(void*);
-    void (*drawTextureBlend)(void*, int, int, unsigned int);
+    void (*drawTextureBlend)(void*, int, int);
     void (*setTextureAlpha)(void*, int);
 }PSPAVCallbacks;
 

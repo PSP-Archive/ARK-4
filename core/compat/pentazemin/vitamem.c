@@ -25,6 +25,8 @@ static u32 findGetPartition(){
 void protectVitaMemory(){
     // prevent tampering with pspemu addresses
     sceKernelAllocPartitionMemory(11, "SCE_PSPEMU_FLASHFS", PSP_SMEM_Addr, 0x100000, (void*)0x8B000000);
+    //sceKernelAllocPartitionMemory(11, "SCE_PSPEMU_SCRATCHPAD", PSP_SMEM_Addr, 0x100000, (void*)0x8BD00000);
+    //sceKernelAllocPartitionMemory(11, "SCE_PSPEMU_VRAM", PSP_SMEM_Addr, 0x200000, (void*)0x8BE00000);
 }
 
 int unlockVitaMemory(u32 user_size_mib){
@@ -55,6 +57,8 @@ int unlockVitaMemory(u32 user_size_mib){
 
     // prevent tampering with pspemu addresses
     sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_FLASHFS", PSP_SMEM_Addr, 0x100000, (void*)0x0B000000);
+    //sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_SCRATCHPAD", PSP_SMEM_Addr, 0x100000, (void*)0x0BD00000);
+    //sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_VRAM", PSP_SMEM_Addr, 0x200000, (void*)0x0BE00000);
 
     return 0;
 }

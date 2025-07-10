@@ -31,7 +31,7 @@ int RenderFrame(DecoderThreadData* D)
     void* tex = image[D->Video->m_iPlayBuffer];
 
     av_callbacks->flushTexture(tex);
-    av_callbacks->drawTextureBlend(tex, dx, dy, 0xFF000000);
+    av_callbacks->drawTexture(tex, dx, dy);
 
     if (playAT3 || !playAudio)
         sceKernelDelayThread(10000);
@@ -168,7 +168,6 @@ SceInt32 InitVideo()
     //image = ya2d_create_texture(Video.m_iWidth, Video.m_iHeight, GU_PSM_8888, YA2D_PLACE_VRAM);
     for (int i=0; i<N_VIDEO_BUFFERS; i++){
         image[i] = av_callbacks->createTexture((entry)?Video.m_iWidth:768, (entry)?Video.m_iHeight:480);
-        //image[i] = ya2d_create_texture(Video.m_iWidth, Video.m_iHeight, GU_PSM_8888, YA2D_PLACE_VRAM);
         av_callbacks->setTextureAlpha(image[i], 0);
         Video.m_pVideoBuffer[i] = av_callbacks->getRawTexture(image[i]);
     }

@@ -47,7 +47,7 @@ PSPAVCallbacks av_callbacks = {
     &getRawTexture,
     &createTexture,
     (void (*)(void*))&ya2d_free_texture,
-    (void (*)(void*, int, int, unsigned int))&ya2d_draw_texture_blend,
+    (void (*)(void*, int, int))&ya2d_draw_texture,
     &setTextureAlpha,
 };
 

@@ -7,8 +7,14 @@ Image::Image(){
 }
 
 Image::Image(ya2d_texture* tex){
-    this->texture = tex;
-    this->is_system_image = false;
+    if (tex == NULL){
+        this->texture = common::getImage(IMAGE_NOICON)->texture;
+        this->is_system_image = true;
+    }
+    else {
+        this->texture = tex;
+        this->is_system_image = false;
+    }
 }
 
 Image::Image(string filename, int place){
@@ -22,6 +28,10 @@ Image::Image(string filename, int place){
     }
     else if (ext == "bmp"){
         this->texture = ya2d_load_BMP_file(filename.c_str(), place);
+    }
+    if (this->texture == NULL){
+        this->texture = common::getImage(IMAGE_NOICON)->texture;
+        this->is_system_image = true;
     }
 }
 
@@ -46,7 +56,8 @@ Image::Image(string filename, int place, SceOff offset){
 }
 
 Image::~Image(){
-    ya2d_free_texture(this->texture);
+    if (!common::isSharedImage(this))
+        ya2d_free_texture(this->texture);
 }
 
 ya2d_texture* Image::getTexture(){
@@ -54,11 +65,15 @@ ya2d_texture* Image::getTexture(){
 }
 
 int Image::getWidth(){
-    return this->texture->width;
+    if (texture)
+        return texture->width;
+    return 1;
 }
 
 int Image::getHeight(){
-    return this->texture->height;
+    if (texture)
+        return texture->height;
+    return 1;
 }
 
 void Image::swizzle(){
@@ -87,13 +102,13 @@ void Image::draw_scale(int x, int y, float scale_x, float scale_y){
 }
 
 void Image::draw_scale(int x, int y, int newWidth, int newHeight){
-    float scale_x = (float)newWidth/(float)this->texture->width;
-    float scale_y = (float)newHeight/(float)this->texture->height;
+    float scale_x = (float)newWidth/(float)getWidth();
+    float scale_y = (float)newHeight/(float)getHeight();
     ya2d_draw_texture_scale(this->texture, x, y, scale_x, scale_y);
 }
 
 void Image::draw_rotate(int x, int y, float angle){
-    ya2d_draw_texture_rotate(this->texture, x+texture->width/2, y+texture->height/2, angle);
+    ya2d_draw_texture_rotate(this->texture, x+getWidth()/2, y+getHeight()/2, angle);
 }
 
 void Image::draw_rotate_hotspot(int x, int y, float angle, int center_x, int center_y){
