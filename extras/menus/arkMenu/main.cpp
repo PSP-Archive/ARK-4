@@ -22,7 +22,7 @@
 
 PSP_MODULE_INFO("ARKMENU", 0, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH|PSP_THREAD_ATTR_VFPU);
-PSP_HEAP_SIZE_KB(10*1024);
+PSP_HEAP_SIZE_KB(17*1024);
 
 using namespace std;
 
@@ -44,8 +44,8 @@ int main(int argc, char** argv){
     sceUtilityLoadModule(PSP_MODULE_AV_PNG);
     sceUtilityLoadModule(PSP_MODULE_INTRAFONT);
 
-    intraFontInit();
     ya2d_init();
+    intraFontInit();
 
     // setup UMD disc
     sceUmdReplacePermit();

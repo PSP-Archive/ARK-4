@@ -158,7 +158,7 @@ cont:
 char * ownstrtok(char * s, const char * delim)
 {
     // Last Token
-    static char * last;
+    char* last = NULL;
     
     // Recursive Token Implementation
     return ownstrtok_r(s, delim, &last);
@@ -174,7 +174,7 @@ int ownstrtol(const char * str, int * res)
     int result = strtol(str, &endptr, 10);
     
     // Return Result in Parameter
-    *res = result;
+    if (res) *res = result;
     
     // Return Result
     return result;

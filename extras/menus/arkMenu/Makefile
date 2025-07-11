@@ -68,13 +68,14 @@ OBJS = \
 	src/anim/snow.o \
 	src/anim/gol.o \
 	src/anim/noanim.o \
+#	$(ARKROOT)/libs/guglue/exports.o
 
+#PRX_EXPORTS = $(ARKROOT)/libs/guglue/exports.exp
 
 LIBS = \
 	-lstdc++ \
 	-lc \
 	-lya2d \
-	-lintraFont \
 	-lpspvfpu \
 	-lpspjpeg \
 	-lpspaudio \
@@ -98,6 +99,7 @@ LIBS = \
 	-lpspsystemctrl_user \
 	-lpspkubridge \
 	-lpng \
+	-lintraFont \
 	-lz \
 	-lm \
 

@@ -28,7 +28,7 @@ extern "C" {
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 20
 #define ARK_MICRO_VERSION 69
-#define ARK_REVISION      192
+#define ARK_REVISION      193
 
 // Pointers and sizes
 #define ARK_PATH_SIZE 128
@@ -72,7 +72,7 @@ extern "C" {
 #define LIBPNG_PRX "LIBPNG.PRX" // PNG library
 #define PSPAV_PRX "PSPAV.PRX" // PSP AT3/PMF/MPS PRX library
 #define VLF_PRX "VLF.PRX" // PNG library
-#define INTRAFONT_PRX "INTRAFONT.PRX" // PNG library
+#define INTRAFONT_PRX "INTRAFON.PRX" // PNG library
 #define UNARCHIVE_PRX "UNARCH.PRX" // Unzip/Unrar PRX library
 #define RECOVERY_PRX_FLASH "flash0:/vsh/module/ark_recovery.prx" // Classic Recovery flash0 path
 #define IDSREG_PRX_FLASH "flash0:/kd/ark_idsreg.prx" // idsRegeneration flash0 path

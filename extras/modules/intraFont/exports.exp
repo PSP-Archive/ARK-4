@@ -1,0 +1,33 @@
+PSP_BEGIN_EXPORTS
+
+PSP_EXPORT_START(syslib, 0, 0x8000)
+PSP_EXPORT_FUNC(module_start)
+PSP_EXPORT_VAR_HASH(module_info)
+PSP_EXPORT_END
+
+PSP_EXPORT_START(intrafont, 0, 0x0001)
+PSP_EXPORT_FUNC(intraFontInit)
+PSP_EXPORT_FUNC(intraFontShutdown)
+PSP_EXPORT_FUNC(intraFontLoad)
+PSP_EXPORT_FUNC(intraFontLoadEx)
+PSP_EXPORT_FUNC(intraFontUnload)
+PSP_EXPORT_FUNC(intraFontActivate)
+PSP_EXPORT_FUNC(intraFontSetStyle)
+PSP_EXPORT_FUNC(intraFontSetEncoding)
+PSP_EXPORT_FUNC(intraFontSetAltFont)
+PSP_EXPORT_FUNC(intraFontPrintUCS2)
+PSP_EXPORT_FUNC(intraFontPrintUCS2Ex)
+PSP_EXPORT_FUNC(intraFontPrintColumnUCS2)
+PSP_EXPORT_FUNC(intraFontPrintColumnUCS2Ex)
+PSP_EXPORT_FUNC(intraFontPrint)
+PSP_EXPORT_FUNC(intraFontPrintEx)
+PSP_EXPORT_FUNC(intraFontPrintColumn)
+PSP_EXPORT_FUNC(intraFontPrintColumnEx)
+PSP_EXPORT_FUNC(intraFontPrintf)
+PSP_EXPORT_FUNC(intraFontMeasureText)
+PSP_EXPORT_FUNC(intraFontMeasureTextEx)
+PSP_EXPORT_FUNC(intraFontMeasureTextUCS2)
+PSP_EXPORT_FUNC(intraFontMeasureTextUCS2Ex)
+PSP_EXPORT_END
+
+PSP_END_EXPORTS

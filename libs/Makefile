@@ -8,6 +8,7 @@ SUBDIRS = \
 	graphics \
 	colordebugger \
 	iplsdk \
+	guglue \
 	prebuilt \
 	libpspmath \
 	libpng \
@@ -40,6 +41,7 @@ distclean clean:
 	$(Q)make $@ -C libpng $(OPT)
 	$(Q)make $@ -C libpspvram $(OPT)
 	$(Q)make $@ -C libya2d $(OPT)
+	$(Q)make $@ -C guglue $(OPT)
 	$(Q)make $@ -C psid $(OPT)
 	$(Q)make $@ -C libintraFont $(OPT)
 	$(Q)make $@ -C libpspftp $(OPT)

@@ -20,8 +20,6 @@ C_OBJS = \
 	pngwutil.o
 OBJS = $(C_OBJS)
 
-LIBS = -lz -lm -lpspsysc_user
-
 all:
 	psp-packer $(TARGET).prx
 
@@ -36,5 +34,6 @@ CXXFLAGS = $(CFLAGS)
 ASFLAGS = $(CFLAGS)
 LIBDIR = $(ARKROOT)/libs
 LDFLAGS = -mno-crt0 -nostartfiles
+LIBS = -lz -lm -lpspsysc_user
 
 include $(PSPSDK)/lib/build.mak
