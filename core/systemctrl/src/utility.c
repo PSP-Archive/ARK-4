@@ -13,6 +13,8 @@ enum{ // internal id
     MODULE_NET_FTP,
     MODULE_AV_PNG,
     MODULE_AV_PLAYER,
+    MODULE_VLF,
+    MODULE_INTRAFONT,
     MODULE_UNARCHIVER,
     N_MODULES
 };
@@ -26,8 +28,10 @@ extern ARKConfig* ark_config;
 
 static CustomUtilityModule custom_utility_modules[N_MODULES] = {
     {-1, PSPFTP_PRX},
-    {-1, PSPPNG_PRX},
+    {-1, LIBPNG_PRX},
     {-1, PSPAV_PRX},
+    {-1, VLF_PRX},
+    {-1, INTRAFONT_PRX},
     {-1, UNARCHIVE_PRX},
 };
 
@@ -83,6 +87,12 @@ static int extendedUtilityLoadModule(int module){
         case PSP_MODULE_AV_PLAYER:
             res = loadstartCustomUtilityModule(MODULE_AV_PLAYER);
             break;
+        case PSP_MODULE_VLF:
+            res = loadstartCustomUtilityModule(MODULE_VLF);
+            break;
+        case PSP_MODULE_INTRAFONT:
+            res = loadstartCustomUtilityModule(MODULE_INTRAFONT);
+            break;
         case PSP_MODULE_UNARCHIVER:
             res = loadstartCustomUtilityModule(MODULE_UNARCHIVER);
             break;
@@ -106,6 +116,12 @@ static int extendedUtilityUnloadModule(int module){
             break;
         case PSP_MODULE_AV_PLAYER:
             res = stopunloadCustomUtilityModule(MODULE_AV_PLAYER);
+            break;
+        case PSP_MODULE_VLF:
+            res = stopunloadCustomUtilityModule(MODULE_VLF);
+            break;
+        case PSP_MODULE_INTRAFONT:
+            res = stopunloadCustomUtilityModule(MODULE_INTRAFONT);
             break;
         case PSP_MODULE_UNARCHIVER:
             res = stopunloadCustomUtilityModule(MODULE_UNARCHIVER);

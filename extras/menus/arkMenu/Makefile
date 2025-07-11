@@ -75,9 +75,6 @@ LIBS = \
 	-lc \
 	-lya2d \
 	-lintraFont \
-	-lpng \
-	-lz \
-	-lm \
 	-lpspvfpu \
 	-lpspjpeg \
 	-lpspaudio \
@@ -100,6 +97,9 @@ LIBS = \
 	-lpspusbdevice_driver \
 	-lpspsystemctrl_user \
 	-lpspkubridge \
+	-lpng \
+	-lz \
+	-lm \
 
 all: $(TARGET).prx
 	$(Q)python3 ./pkg.py

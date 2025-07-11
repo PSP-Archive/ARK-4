@@ -37,6 +37,7 @@ SUBDIRS = libs \
 	extras/modules/deadef \
 	extras/modules/pspftp \
 	extras/modules/pspav \
+	extras/modules/libpng \
 	extras/modules/unarchive \
 	loader/live/user/linkless_payload \
 	loader/live/user/signed_eboot \
@@ -111,6 +112,7 @@ copy-bin:
 	$(Q)cp extras/modules/bsod/kernel/bsod.prx dist/ARK_01234/BSOD.PRX # Blue Screen of Death debugger
 	$(Q)cp extras/modules/pspftp/pspftp.prx dist/ARK_01234/PSPFTP.PRX
 	$(Q)cp extras/modules/pspav/pspav.prx dist/ARK_01234/PSPAV.PRX
+	$(Q)cp extras/modules/libpng/libpng.prx dist/ARK_01234/LIBPNG.PRX
 	$(Q)cp extras/modules/unarchive/unarchive.prx dist/ARK_01234/UNARCH.PRX
 	$(Q)cp extras/menus/recovery/ark_recovery.prx dist/ARK_01234/RECOVERY.PRX # Default recovery menu
 	$(Q)cp extras/menus/arkMenu/EBOOT.PBP dist/ARK_01234/VBOOT.PBP # Default launcher
@@ -323,6 +325,7 @@ clean:
 	$(Q)$(MAKE) $@ -C extras/modules/deadef
 	$(Q)$(MAKE) $@ -C extras/modules/pspftp
 	$(Q)$(MAKE) $@ -C extras/modules/pspav
+	$(Q)$(MAKE) $@ -C extras/modules/libpng
 	$(Q)$(MAKE) $@ -C extras/modules/unarchive
 	$(Q)$(MAKE) $@ -C extras/apps/updater/
 	$(Q)$(MAKE) $@ -C extras/apps/installer/
