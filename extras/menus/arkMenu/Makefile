@@ -76,6 +76,7 @@ LIBS = \
 	-lstdc++ \
 	-lc \
 	-lya2d \
+	-lintraFont \
 	-lpspvfpu \
 	-lpspjpeg \
 	-lpspaudio \
@@ -99,7 +100,6 @@ LIBS = \
 	-lpspsystemctrl_user \
 	-lpspkubridge \
 	-lpng \
-	-lintraFont \
 	-lz \
 	-lm \
 
