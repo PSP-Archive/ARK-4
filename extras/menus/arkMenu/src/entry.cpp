@@ -304,10 +304,10 @@ bool Entry::pmfPrompt(){
     bool pmfPlayback = entry->getIcon1() != NULL || entry->getSnd() != NULL;
         
     if (pmfPlayback && !MusicPlayer::isPlaying()){
-        if (loadstartPSPAV()>=0){
+        if (sceUtilityLoadModule(PSP_MODULE_AV_PLAYER)>=0){
             PSPAVEntry ave = convertEntry(entry);
             ret = pspavPlayGamePMF(&ave, &av_callbacks, 20, 92);
-            stopunloadPSPAV();
+            sceUtilityUnloadModule(PSP_MODULE_AV_PLAYER);
         }
     }
     else{

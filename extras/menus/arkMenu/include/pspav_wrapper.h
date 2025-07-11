@@ -5,9 +5,6 @@
 #include "entry.h"
 
 extern PSPAVCallbacks av_callbacks;
-
 PSPAVEntry convertEntry(Entry* e);
-int loadstartPSPAV();
-int stopunloadPSPAV();
 
 #endif

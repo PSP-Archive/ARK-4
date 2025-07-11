@@ -62,25 +62,3 @@ PSPAVEntry convertEntry(Entry* e){
     ave.drawIcon = PSPAVEntry_drawIcon;
     return ave;
 }
-
-int loadstartPSPAV(){
-    if (pspavmod<0){
-        string modpath = string(common::getArkConfig()->arkpath) + PSPAV_PRX;
-        pspavmod = sceKernelLoadModule(modpath.c_str(), 0, NULL);
-        if (pspavmod>=0){
-            int modres = sceKernelStartModule(pspavmod, modpath.size()+1, (void*)modpath.c_str(), NULL, NULL);
-            if (modres < 0) return modres;
-        }
-    }
-    return pspavmod;
-}
-
-int stopunloadPSPAV(){
-    int res = 0;
-    if (pspavmod>=0){
-        res = sceKernelStopModule(pspavmod, 0, NULL, NULL, NULL);
-        if (res >= 0) res = sceKernelUnloadModule(pspavmod);
-        if (res >= 0) pspavmod = -1;
-    }
-    return res;
-}

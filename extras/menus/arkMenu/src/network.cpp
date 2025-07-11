@@ -178,27 +178,3 @@ int wget(char* url, char* saveAs, SceULong64* cur_download, SceULong64* max_down
     sceHttpDeleteTemplate(tpl);
     return ret;
 }
-
-int loadstartFTPlib(){
-    if (ftpmod >= 0 && ++ftp_users > 1) return ftpmod; // already initialized
-    if (ftpmod < 0){
-        string modpath = string(common::getArkConfig()->arkpath) + PSPFTP_PRX;
-        ftpmod = sceKernelLoadModule(modpath.c_str(), 0, NULL);
-        if (ftpmod >= 0){
-            int modres = sceKernelStartModule(ftpmod, modpath.size()+1, (void*)modpath.c_str(), NULL, NULL);
-            if (modres < 0) return modres;
-        }
-    }
-    return ftpmod;
-}
-
-int stopunloadFTPlib(){
-    if (ftpmod >= 0 && --ftp_users > 0) return ftpmod; // ftplib still has users
-    int res = ftpmod;
-    if (ftpmod >= 0){
-        res = sceKernelStopModule(ftpmod, 0, NULL, NULL, NULL);
-        if (res >= 0) res = sceKernelUnloadModule(ftpmod);
-        if (res >= 0) ftpmod = -1;
-    }
-    return res;
-}

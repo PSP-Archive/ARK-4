@@ -178,12 +178,12 @@ void Browser::update(Entry* ent, bool skip_prompt){
         installTheme();
     }
     else if (Entry::isVideo(e->getPath().c_str())){
-        if (loadstartPSPAV()>=0){
+        if (sceUtilityLoadModule(PSP_MODULE_AV_PLAYER)>=0){
             GameManager::updateGameList(NULL);
             SystemMgr::pauseDraw();
             common::deleteTheme();
             pspavPlayVideoFile(e->getPath().c_str(), &av_callbacks);
-            stopunloadPSPAV();
+            sceUtilityUnloadModule(PSP_MODULE_AV_PLAYER);
             common::loadTheme();
             common::stopLoadingThread();
             SystemMgr::resumeDraw();
@@ -539,9 +539,7 @@ void Browser::extractArchive(){
 
     printf("extracting archive to: %s\n", dest.c_str());
 
-    string modpath = string(common::getArkConfig()->arkpath) + UNZIPRAR_PRX;
-    int modid = loadStartModule(modpath, false);
-    if (modid<0) return;
+    if (sceUtilityLoadModule(PSP_MODULE_UNARCHIVER)<0) return;
 
     sceIoMkdir(dest.c_str(), 0777);
 
@@ -560,8 +558,7 @@ void Browser::extractArchive(){
     if (!noRedraw)
         draw_progress = false;
 
-    sceKernelStopModule(modid, 0, NULL, NULL, NULL);
-    sceKernelUnloadModule(modid);
+    sceUtilityUnloadModule(PSP_MODULE_UNARCHIVER);
     
     this->refreshDirs();
 }

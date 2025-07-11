@@ -60,6 +60,12 @@ typedef struct _pspMsPrivateDirent {
   char l_name[1024];
 } pspMsPrivateDirent;
 
+// Custom Utility Modules
+#define PSP_MODULE_NET_FTP			  0x0107
+#define PSP_MODULE_AV_PNG   			0x0308
+#define PSP_MODULE_AV_PLAYER			0x0390
+#define PSP_MODULE_UNARCHIVER     0x0700
+
 // Function Name Clones (of old but gold times)
 //#define sctrlKernelQuerySystemCall sceKernelQuerySystemCall
 

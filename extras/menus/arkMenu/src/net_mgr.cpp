@@ -126,7 +126,7 @@ static void startFTP(){
         if ((ret=connect_to_apctl()) >= 0){
             ret = sceNetApctlGetInfo(8, (SceNetApctlInfo*)pspIpAddr);
             if (pspIpAddr[0] != '\0'){
-                if (loadstartFTPlib() >=0 ){
+                if (sceUtilityLoadModule(PSP_MODULE_NET_FTP) >=0 ){
                     static char* device = "ms0:";
                     const char* cwd = Browser::getCWD();
                     device[0] = cwd[0];
@@ -163,7 +163,7 @@ static void stopFTP(){
     ftpdExitHandler(0, NULL);
     sceKernelWaitThreadEnd(ftp_thread, NULL);
     sceKernelTerminateDeleteThread(ftp_thread);
-    stopunloadFTPlib();
+    sceUtilityUnloadModule(PSP_MODULE_NET_FTP);
     shutdownNetwork();
     addMessage("FTP Disconnected");
     ftp_thread = -1;

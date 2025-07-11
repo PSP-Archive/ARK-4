@@ -211,16 +211,22 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         if(isSystemBooted())
         {
 
+            // extend utility modules
+            extendUtilityModules();
+
+            // patch QA flags settings
             if (se_config.qaflags){
                 patch_qaflags();
             }
 
+            // handle UMD seek and UMD speed settings
             if (se_config.umdseek || se_config.umdspeed){
                 se_config.iso_cache = 0;
                 void (*SetUmdDelay)(int, int) = sctrlHENFindFunction("PRO_Inferno_Driver", "inferno_driver", 0xB6522E93);
                 if (SetUmdDelay) SetUmdDelay(se_config.umdseek, se_config.umdspeed);
             }
 
+            // handle inferno cache settings
             if (se_config.iso_cache){
                 extern int p2_size;
                 if (p2_size>24 || se_config.force_high_memory){
@@ -238,7 +244,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
                 }
             }
 
-            // handle CPU speed
+            // handle CPU speed settings
             switch (se_config.cpubus_clock){
                 case 1: sctrlHENSetSpeed(333, 166); break;
                 case 2: sctrlHENSetSpeed(133, 66); break;
