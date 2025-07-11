@@ -375,7 +375,7 @@ struct ya2d_texture* ya2d_load_JPEG_buffer(void* jpegbuf, unsigned long jpeg_siz
     int w = 0, h = 0;
     int res = -1;
 
-    sceUtilityLoadModule(PSP_MODULE_AV_MPEGBASE);
+    int utility_loaded = sceUtilityLoadModule(PSP_MODULE_AV_MPEGBASE);
     sceJpegInitMJpeg();
 
     get_JPEG_info(jpegbuf, jpeg_size, &w, &h);
@@ -425,7 +425,7 @@ struct ya2d_texture* ya2d_load_JPEG_buffer(void* jpegbuf, unsigned long jpeg_siz
     free(bufRGB);
     sceJpegDeleteMJpeg();
     sceJpegFinishMJpeg();
-    sceUtilityUnloadModule(PSP_MODULE_AV_MPEGBASE);
+    if (utility_loaded>=0) sceUtilityUnloadModule(PSP_MODULE_AV_MPEGBASE);
 
     return texture;
 }
