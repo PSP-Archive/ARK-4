@@ -1,5 +1,5 @@
 
-TARGET=libpng.a
+TARGET=libpng_prx.a
 
 all: $(TARGET)
 STUBSRC = libpng.S

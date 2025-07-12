@@ -98,8 +98,8 @@ LIBS = \
 	-lpspusbdevice_driver \
 	-lpspsystemctrl_user \
 	-lpspkubridge \
-	-lpng \
-	-lintraFont \
+	-lpng_prx \
+	-lintraFont_prx \
 	-lz \
 	-lm \
 
