@@ -61,8 +61,8 @@ typedef struct _pspMsPrivateDirent {
 } pspMsPrivateDirent;
 
 // Custom Utility Modules
-#define PSP_MODULE_NET_FTP			  0x0107
-#define PSP_MODULE_AV_PNG   			0x0308
+#define PSP_MODULE_NET_FTP			  0x0180
+#define PSP_MODULE_AV_PNG   			0x0380
 #define PSP_MODULE_AV_PLAYER			0x0390
 #define PSP_MODULE_VLF            0x0700
 #define PSP_MODULE_INTRAFONT      0x0701
