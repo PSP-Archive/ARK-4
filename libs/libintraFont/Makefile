@@ -1,4 +1,4 @@
-TARGET=libintraFont_prx.a
+TARGET=libintraFont_stub.a
 
 all: $(TARGET)
 STUBSRC = libintraFont.S
