@@ -135,7 +135,7 @@ SceUID videoIoOpen(const char* file, u32 flags, u32 mode){
 
     if (res < 0){ // failed, retry with ISO
         int k1 = pspSdkSetK1(0);
-        char isopath[128]; strcpy(isopath, isovideo_dir);
+        char isopath[255]; strcpy(isopath, isovideo_dir);
         isopath[0] = file[0]; isopath[1] = file[1]; // adjust device (psp go)
         char* filename = strrchr(file, '/');
         if (filename){ // filename found
@@ -186,7 +186,7 @@ int videoIoGetstat(const char* path, SceIoStat* stat){
 
     if (res < 0){ // failed, retry
         int k1 = pspSdkSetK1(0);
-        char isopath[128]; strcpy(isopath, isovideo_dir); // retry with /ISO/VIDEO/
+        char isopath[255]; strcpy(isopath, isovideo_dir); // retry with /ISO/VIDEO/
         isopath[0] = path[0]; isopath[1] = path[1]; // adjust device (psp go)
         char* filename = strrchr(path, '/');
         if (filename){ // file name found
