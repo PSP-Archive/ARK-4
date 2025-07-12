@@ -1,28 +1,29 @@
-TARGET = libintrafont
-
-C_OBJS = \
+TARGET = intraFont
+OBJS = \
 	main.o \
 	exports.o \
 	libccc.o   \
 	intraFont.o \
 
-OBJS = $(C_OBJS)
-LIBS = -lm -lpspsysc_user -lguglue
+
+CFLAGS = -std=c99 -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
+CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
+ASFLAGS = $(CFLAGS)
+LDFLAGS = -mno-crt0 -nostartfiles
 
 BUILD_PRX = 1
 PRX_EXPORTS = exports.exp
 
+INCDIR = include/
+LIBDIR = $(ARKROOT)/libs
+
 all:
 	psp-packer $(TARGET).prx
 
+USE_PSPSDK_LIBS = 1
+USE_PSPSDK_LIBC = 1
 
-PSPSDK=$(shell psp-config --pspsdk-path)
+LIBS = -lm -lpspsysc_user -lguglue
 
-INCDIR = $(ARKROOT)/common/include $(PSPSDK)/include
-CFLAGS = -std=c99 -G0 -O2
-CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
-ASFLAGS = $(CFLAGS)
-LDFLAGS = -mno-crt0 -nostartfiles
-LIBDIR = $(ARKROOT)/libs
-
-include $(PSPSDK)/lib/build.mak
+PSPSDK = $(shell psp-config --pspsdk-path)
+include $(PSPSDK)/lib/build_prx.mak

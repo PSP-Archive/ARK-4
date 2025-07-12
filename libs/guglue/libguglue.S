@@ -6,7 +6,7 @@
 // libguglue_XXXX.o
 
 #ifdef F_libguglue_0000
-	IMPORT_START "guglue",0x00090000
+	IMPORT_START "guglue",0x00010000
 #endif
 #ifdef F_libguglue_0001
 	IMPORT_FUNC  "guglue",0x050A7EB0,sceGuClutMode
