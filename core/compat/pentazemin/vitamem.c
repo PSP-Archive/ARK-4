@@ -48,10 +48,8 @@ int unlockVitaMemory(u32 user_size_mib){
         }
     }
 
-    // prevent tampering with pspemu addresses
+    // prevent tampering with pspemu addresses, improves stability
     sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_FLASHFS", PSP_SMEM_Addr, 0x200000, (void*)0x0B000000);
-    //sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_SCRATCHPAD", PSP_SMEM_Addr, 0x100000, (void*)0x0BD00000);
-    //sceKernelAllocPartitionMemory(2, "SCE_PSPEMU_VRAM", PSP_SMEM_Addr, 0x200000, (void*)0x0BE00000);
 
     return 0;
 }
@@ -61,12 +59,16 @@ int memoryHandlerVita(u32 p2){
     // sanity checks
     if (p2<=24) return -1;
 
+    // the first 16MB are stable and good enough for most use cases
+    // but homebrew that require extra ram will be allowed to use (some of) the upper 16MB
+    int max_vita_mem = (se_config->force_high_memory == 2)? 52 : 40;
+
     // call orig function to determine if can unlock
-    int res = _sctrlHENApplyMemory(52);
+    int res = _sctrlHENApplyMemory(max_vita_mem);
     if (res<0) return res;
 
     // unlock
-    res = unlockVitaMemory(52);
+    res = unlockVitaMemory(max_vita_mem);
     
     // unlock fail? revert back to 24MB
     if (res<0) _sctrlHENApplyMemory(24);

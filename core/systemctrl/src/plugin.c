@@ -593,14 +593,12 @@ void loadSettings(){
         ProcessConfigFile(NULL, ARK_SETTINGS_FLASH, settingsEnabler, settingsDisabler); // retry flash1 settings
     se_config.magic = ARK_CONFIG_MAGIC;
 
-    if (!se_config.force_high_memory){
-        int apitype = sceKernelInitApitype();
-        if (apitype == 0x141 || apitype == 0x152){
-            int paramsize=4;
-            int use_highmem = 0;
-            if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
-                se_config.force_high_memory = 1;
-            }
+    int apitype = sceKernelInitApitype();
+    if (apitype == 0x141 || apitype == 0x152){
+        int paramsize=4;
+        int use_highmem = 0;
+        if (sctrlGetInitPARAM("MEMSIZE", NULL, &paramsize, &use_highmem) >= 0 && use_highmem){
+            se_config.force_high_memory = 2;
         }
     }
 
