@@ -185,6 +185,16 @@ copy-bin:
 	$(Q)cp contrib/PSP/IPL/tm_msipl_legacy.bin dist/PC/MagicMemoryCreator/
 	$(Q)cp libs/libpspkubridge.a dist/PC/sdk/lib/
 	$(Q)cp libs/libpspsystemctrl*.a dist/PC/sdk/lib/
+	$(Q)cp libs/libpspav.a dist/PC/sdk/lib/
+	$(Q)cp libs/libpspftp.a dist/PC/sdk/lib/
+	$(Q)cp libs/libpng_stub.a dist/PC/sdk/lib/
+	$(Q)cp libs/libintraFont_stub.a dist/PC/sdk/lib/
+	$(Q)cp libs/libpspsysc_user.a dist/PC/sdk/lib/
+	$(Q)cp libs/libguglue.a dist/PC/sdk/lib/
+	$(Q)cp libs/libvlf*.a dist/PC/sdk/lib/
+	$(Q)cp libs/libvlf/vlf.h dist/PC/sdk/include/
+	$(Q)cp libs/libpspftp/pspftp.h dist/PC/sdk/include/
+	$(Q)cp libs/libpspav/pspav.h dist/PC/sdk/include/
 	$(Q)cp common/include/kubridge.h dist/PC/sdk/include/
 	$(Q)cp common/include/systemctrl.h dist/PC/sdk/include/
 	$(Q)cp common/include/systemctrl_se.h dist/PC/sdk/include/

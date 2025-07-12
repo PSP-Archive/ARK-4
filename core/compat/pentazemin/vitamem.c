@@ -62,11 +62,11 @@ int memoryHandlerVita(u32 p2){
     if (p2<=24) return -1;
 
     // call orig function to determine if can unlock
-    int res = _sctrlHENApplyMemory(53);
+    int res = _sctrlHENApplyMemory(52);
     if (res<0) return res;
 
     // unlock
-    res = unlockVitaMemory(53);
+    res = unlockVitaMemory(52);
     
     // unlock fail? revert back to 24MB
     if (res<0) _sctrlHENApplyMemory(24);
