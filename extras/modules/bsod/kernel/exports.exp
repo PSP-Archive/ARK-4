@@ -10,6 +10,7 @@ PSP_EXPORT_END
 
 PSP_EXPORT_START(BlueScreenOfDeathLib, 0, 0x4001)
 PSP_EXPORT_FUNC(BlueScreenOfDeathHandler)
+PSP_EXPORT_FUNC(BlueScreenOfDeathRegister)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS

@@ -31,6 +31,8 @@ void DefaultHandler(PspDebugRegBlock * regs){
     kuKernelCall(sctrlHENFindFunction("BlueScreenOfDeath_Kernel", "BlueScreenOfDeathLib", 0xCDA22F1B), &args);
 }
 
+extern void BlueScreenOfDeathHandler(PspDebugRegBlock * regs);
+
 int module_start(){
 
     // Register Default Exception Handler
@@ -41,6 +43,13 @@ int module_start(){
     struct KernelCallArg args;
     args.arg1 = _pspDebugExceptionHandler;
     kuKernelCall(sctrlHENFindFunction("sceExceptionManager", "ExceptionManagerForKernel", 0x565C0B0E), &args);
+
+    /*
+    curr_handler = &BlueScreenOfDeathHandler;
+    exception_regs = &cpuRegs;
+
+    BlueScreenOfDeathRegister(_pspDebugExceptionHandler);
+    */
 
     return 0;
 }

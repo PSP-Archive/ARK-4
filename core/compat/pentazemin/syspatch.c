@@ -379,8 +379,8 @@ void AdrenalineOnModuleStart(SceModule2 * mod){
     if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
         PatchImposeDriver(mod->text_addr);
         // configure inferno cache
-        se_config->iso_cache_size = 64 * 1024;
-        se_config->iso_cache_num = 64;
+        se_config->iso_cache_size = 32 * 1024;
+        se_config->iso_cache_num = 32;
         se_config->iso_cache_partition = (se_config->force_high_memory)? 2:11;
         goto flush;
     }

@@ -90,4 +90,12 @@
     while (1){};
  }
  
+ int BlueScreenOfDeathRegister(void* handler){
+    u32 k1 = pspSdkSetK1(0);
+    int level = sctrlKernelSetUserLevel(8);
+    int res = sceKernelRegisterDefaultExceptionHandler(handler);
+    pspSdkSetK1(k1);
+    sctrlKernelSetUserLevel(level);
+    return res;
+ }
  
