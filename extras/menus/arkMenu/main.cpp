@@ -66,11 +66,11 @@ int main(int argc, char** argv){
         const char* last_game = common::getConf()->last_game;
         if (Eboot::isEboot(last_game)){
             Eboot* eboot = new Eboot(last_game);
-            eboot->execute();
+            eboot->execute(true);
         }
         else if (Iso::isISO(last_game)){
             Iso* iso = new Iso(last_game);
-            iso->execute();
+            iso->execute(true);
         }
     }
 

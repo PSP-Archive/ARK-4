@@ -114,7 +114,7 @@ class Entry{
         void drawBG();
         
         bool pmfPrompt();
-        void execute();
+        void execute(bool isAutoboot = false);
         
         virtual char* getType()=0;
         virtual char* getSubtype()=0;
