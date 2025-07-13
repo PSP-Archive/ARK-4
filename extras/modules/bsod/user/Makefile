@@ -18,7 +18,7 @@ USE_PSPSDK_LIBS = 1
 USE_PSPSDK_LIBC = 1
 
 LIBDIR = $(ARKROOT)/libs
-LIBS =
+LIBS = -lpspsystemctrl_user -lpspkubridge
 
 all:
 	psp-packer $(TARGET).prx
