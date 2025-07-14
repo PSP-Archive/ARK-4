@@ -551,18 +551,20 @@ void common::loadData(int ac, char** av, int recovery){
     loadConfig();
 
     // check to run last game
-    Controller pad;
-    pad.update(1);
-    if (!recovery && (pad.LT() || config.app_autoboot)){
-        common::stopLoadingThread();
-        const char* last_game = common::getConf()->last_game;
-        if (Eboot::isEboot(last_game)){
-            Eboot* eboot = new Eboot(last_game);
-            eboot->execute(true);
-        }
-        else if (Iso::isISO(last_game)){
-            Iso* iso = new Iso(last_game);
-            iso->execute(true);
+    const char* last_game = common::getConf()->last_game;
+    if (last_game[0] != 0) {
+        Controller pad;
+        pad.update(1);
+        if (!recovery && (pad.LT() || config.app_autoboot)){
+            common::stopLoadingThread();
+            if (Eboot::isEboot(last_game)){
+                Eboot* eboot = new Eboot(last_game);
+                eboot->execute(true);
+            }
+            else if (Iso::isISO(last_game)){
+                Iso* iso = new Iso(last_game);
+                iso->execute(true);
+            }
         }
     }
 

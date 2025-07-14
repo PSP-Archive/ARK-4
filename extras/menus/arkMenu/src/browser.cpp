@@ -1781,7 +1781,7 @@ void Browser::control(Controller* pad){
     }
     else if (pad->start()){
         Entry* e = this->get();
-        if (conf->startbtn == 1) e = new BrowserFile(conf->last_game, "");
+        if (conf->startbtn == 1 && conf->last_game[0] != 0) e = new BrowserFile(conf->last_game, "");
         this->update(e, true);
     }
     else{
