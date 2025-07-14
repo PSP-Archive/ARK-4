@@ -155,5 +155,5 @@ There are two types of installation types on PS Vita. You can use either one or 
 
 - If this software malfunctions, you can turn it off and on again.
 
-- You may be shunned for not reading the Wiki. 
+- ARK does not delete itself.
 </p>
