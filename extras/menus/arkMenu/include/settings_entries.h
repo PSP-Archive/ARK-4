@@ -350,6 +350,20 @@ static struct {
     unsigned char max_options;
     unsigned char selection;
     unsigned char* config_ptr;
+    char* options[2];
+} app_autoboot = {
+    "AutoBoot last game",
+    2,
+    0,
+    &(common::getConf()->app_autoboot),
+    {"Disabled", "Enabled"}
+};
+
+static struct {
+    char* description;
+    unsigned char max_options;
+    unsigned char selection;
+    unsigned char* config_ptr;
     char* options[4];
 } menusize = {
     "System Menu Size",
@@ -373,7 +387,6 @@ static struct {
     {"Disabled", "Enabled"}
 };
 
-
 settings_entry* settings_entries[] = {
     (settings_entry*)&language,
     (settings_entry*)&fast_gameboot,
@@ -394,6 +407,7 @@ settings_entry* settings_entries[] = {
     (settings_entry*)&force_update,
     (settings_entry*)&battery_percent,
     (settings_entry*)&startbtn,
+    (settings_entry*)&app_autoboot,
     (settings_entry*)&menusize,
     (settings_entry*)&browser_icon0,
     (settings_entry*)&redirect_ms0,
