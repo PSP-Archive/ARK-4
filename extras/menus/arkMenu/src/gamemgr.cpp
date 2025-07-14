@@ -658,6 +658,7 @@ void GameManager::startBoot(){
     } break;
     case 1: { // Last game
         const char* last_game = common::getConf()->last_game;
+        if (last_game[0] == 0) break;
         if (Eboot::isEboot(last_game)){
             this->endAllThreads();
             Eboot* eboot = new Eboot(last_game);
