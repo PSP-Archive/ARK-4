@@ -94,7 +94,7 @@ namespace common{
     SceOff findPkgOffset(const char* filename, unsigned* size = NULL, const char* pkgpath=NULL, void (*missinghandler)(const char*) = NULL);
     extern void* readFromPKG(const char* filename, unsigned* size = NULL, const char* pkgpath=NULL);
     extern u32 getMagic(const char* filename, unsigned int offset);
-    extern void loadData(int ac, char** av);
+    extern void loadData(int ac, char** av, int recovery);
     extern void deleteData();
     extern void loadTheme();
     extern void deleteTheme();
