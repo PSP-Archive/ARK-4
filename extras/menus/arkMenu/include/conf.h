@@ -34,6 +34,7 @@ typedef struct {
     unsigned char window_mode; // Choose whether to use the Classic VSH Menu Design or the new look
     unsigned char advanced_vsh; // Choose to autoload into advanced vsh menu
     unsigned char avm_hidden[32]; // Hiden items in advanced vsh menu
+    unsigned char app_autoboot; //Don't check if user is pressing LT when autobooting last game
 } t_conf;
 
 #endif

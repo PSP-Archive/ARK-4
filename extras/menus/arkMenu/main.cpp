@@ -50,29 +50,18 @@ int main(int argc, char** argv){
     // setup UMD disc
     sceUmdReplacePermit();
 
-    // Load data (theme, config, font, etc)
-    common::loadData(argc, argv);
-
-    // check to run last game
     Controller pad;
-    int recovery = common::getArkConfig()->recovery;
-
     pad.update(1);
+
+    int recovery = 0;
     if (pad.RT()){
         recovery = 1;
     }
-    if (pad.LT()){
-        common::stopLoadingThread();
-        const char* last_game = common::getConf()->last_game;
-        if (Eboot::isEboot(last_game)){
-            Eboot* eboot = new Eboot(last_game);
-            eboot->execute();
-        }
-        else if (Iso::isISO(last_game)){
-            Iso* iso = new Iso(last_game);
-            iso->execute();
-        }
-    }
+
+    // Load data (theme, config, font, etc) and autoboot last game if necessary
+    common::loadData(argc, argv, recovery);
+
+    recovery += common::getArkConfig()->recovery;
 
     int n_entries = (recovery)?0:2;
 

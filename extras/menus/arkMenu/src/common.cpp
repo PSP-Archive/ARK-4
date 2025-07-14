@@ -13,6 +13,8 @@
 #include "system_mgr.h"
 #include "lang.h"
 #include "browser.h"
+#include "iso.h"
+#include "eboot.h"
 
 #define RESOURCES_LOAD_PLACE YA2D_PLACE_VRAM
 
@@ -522,7 +524,7 @@ void common::loadTheme(){
 
 }
 
-void common::loadData(int ac, char** av){
+void common::loadData(int ac, char** av, int recovery){
 
     argc = ac;
     argv = av;
@@ -546,9 +548,25 @@ void common::loadData(int ac, char** av){
     animations[9] = new GoLAnim();
     animations[10] = new NoAnim();
     
-    loadTheme();
-    
     loadConfig();
+
+    // check to run last game
+    Controller pad;
+    pad.update(1);
+    if (!recovery && (pad.LT() || config.app_autoboot)){
+        common::stopLoadingThread();
+        const char* last_game = common::getConf()->last_game;
+        if (Eboot::isEboot(last_game)){
+            Eboot* eboot = new Eboot(last_game);
+            eboot->execute(true);
+        }
+        else if (Iso::isISO(last_game)){
+            Iso* iso = new Iso(last_game);
+            iso->execute(true);
+        }
+    }
+
+    loadTheme();
 
     currentFont = config.font;
     currentLang = language_selection;
