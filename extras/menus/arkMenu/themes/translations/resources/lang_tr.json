@@ -85,8 +85,8 @@
     "Edit Line": "Satiri Düzenle",
 
     "Network Tools": "Ag Araçlari",
-    "Press [] to check for Updates": "Güncellemeleri denetlemek için [_] 'ye basin",
-    "[] to Reset Settings": "Ayarlari sifirlamak için [_] 'ye basin'",
+    "Press [_] to check for Updates": "Güncellemeleri denetlemek için [_] 'ye basin",
+    "[_] to Reset Settings": "Ayarlari sifirlamak için [_] 'ye basin'",
     "FTP Server is stopped. Press %s to start.": "FTP Sunucusu durduruldu. Başlatmak için %s 'e basin..",
     "FTP Server is running @ %s. Press %s to stop.": "FTP Sunucusu %s adresinde calişiyor. Durdurmak için %s 'e basin.",
     "Could not get IP address": "IP adresi alinamadi",

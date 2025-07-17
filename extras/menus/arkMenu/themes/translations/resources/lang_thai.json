@@ -81,8 +81,8 @@
     "Free size": "พื้นที่ว่าง",
 
     "Network Tools": "เครื่องมือการเชื่อมต่อ",
-    "Press [] to check for Updates": "กด [_] เพื่อตรวจสอบการอัปเดต",
-    "[] to Reset Settings": "[_] การรีเซ็ตการตั้งค่า",
+    "Press [_] to check for Updates": "กด [_] เพื่อตรวจสอบการอัปเดต",
+    "[_] to Reset Settings": "[_] การรีเซ็ตการตั้งค่า",
     "FTP Server is stopped. Press %s to start.": "เซิฟเวอร์ FTP ปิดการทำงานแล้ว. กด %s เพื่อเปิดการทำงาน.",
     "FTP Server is running @ %s. Press %s to stop.": "เซิฟเวอร์ FTP เปิดการทำงานแล้ว. กด %s เพื่อปิดการทำงาน.",
     "Could not get IP address": "ขอเลข IP ไม่ได้",

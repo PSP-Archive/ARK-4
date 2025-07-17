@@ -80,7 +80,7 @@
     "Free size": "Wolne miejsce",
     
     "Network Tools": "Narzędzia sieciowe",
-    "Press [] to check for Updates": "Naciśnij [_], aby sprawdzić aktualizacje",
+    "Press [_] to check for Updates": "Naciśnij [_], aby sprawdzić aktualizacje",
     "FTP Server is stopped. Press %s to start.": "Serwer FTP zatrzymany. Naciśnij %s, aby uruchomić.",
     "FTP Server is running @ %s. Press %s to stop.": "Serwer FTP działa @ %s. Naciśnij %s, aby zatrzymać.",
     "Could not get IP address": "Nie można uzyskać adresu IP",

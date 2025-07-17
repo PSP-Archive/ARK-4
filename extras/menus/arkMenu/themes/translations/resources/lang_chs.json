@@ -83,8 +83,8 @@
     "Free size": "可用大小",
 
     "Network Tools": "网络工具",
-    "Press [] to check for Updates": "按 [_] 检查更新",
-    "[] to Reset Settings": "[_] 重置设置",
+    "Press [_] to check for Updates": "按 [_] 检查更新",
+    "[_] to Reset Settings": "[_] 重置设置",
     "FTP Server is stopped. Press %s to start.": "FTP 服务已停止, 按 %s 启动",
     "FTP Server is running @ %s. Press %s to stop.": "FTP 服务正在运行 @ %s, 按 %s 停止",
     "Could not get IP address": "无法获取 IP 地址",
