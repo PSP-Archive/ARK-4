@@ -74,7 +74,7 @@ void NetworkManager::draw(){
         }
         static TextScroll scroll = {0, 0, 0, 430};
         common::printText(30, 50, buffer, GRAY_COLOR, SIZE_BIG, 1, &scroll);
-        common::printText(30, 70, "Press [] to check for Updates", GRAY_COLOR, SIZE_BIG, 1);
+        common::printText(30, 70, "Press [_] to check for Updates", GRAY_COLOR, SIZE_BIG, 1);
         
         y = 90;
         
