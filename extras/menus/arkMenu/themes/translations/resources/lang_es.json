@@ -85,8 +85,8 @@
     "Edit Line": "Editar Linea",
 
     "Network Tools": "Herramientas de Red",
-    "Press [] to check for Updates": "Presione [_] para buscar actualizaciones",
-    "[] to Reset Settings": "[_] Para restablecer la configuración",
+    "Press [_] to check for Updates": "Presione [_] para buscar actualizaciones",
+    "[_] to Reset Settings": "[_] Para restablecer la configuración",
     "FTP Server is stopped. Press %s to start.": "Servidor FTP apagado. Presione %s para iniciar.",
     "FTP Server is running @ %s. Press %s to stop.": "Servidor FTP iniciado en %s. Presione %s para apagar",
     "Could not get IP address": "No se pudo obtener la dirección IP",

@@ -85,8 +85,8 @@
     "Edit Line": "Править строку",
 
     "Network Tools": "Сетевые утилиты",
-    "Press [] to check for Updates": "Нажмите [_] для поиска обновлений",
-    "[] to Reset Settings": "[_] для сброса настроек",
+    "Press [_] to check for Updates": "Нажмите [_] для поиска обновлений",
+    "[_] to Reset Settings": "[_] для сброса настроек",
     "FTP Server is stopped. Press %s to start.": "FTP сервер остановлен. Нажмите %s для запуска.",
     "FTP Server is running @ %s. Press %s to stop.": "FTP сервер запущен @ %s. Нажмите %s для остановки.",
     "Could not get IP address": "Ошибка при получении IP адреса",

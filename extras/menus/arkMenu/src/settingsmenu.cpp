@@ -47,7 +47,7 @@ void SettingsMenu::setCallbacks(void (*save_callback)(), void (*open_callback)()
     this->reset_callback = reset_callback;
 
     if (reset_callback)
-        this->setFooter("[] to Reset Settings");
+        this->setFooter("[_] to Reset Settings");
 }
 
 void SettingsMenu::setCustomText(string text[], int n){

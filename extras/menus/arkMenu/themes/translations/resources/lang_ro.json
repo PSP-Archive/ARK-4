@@ -85,8 +85,8 @@
     "Edit Line": "Editați linie",
 
     "Network Tools": "Instrumente rețea",
-    "Press [] to check for Updates": "Apasă [_] pentru a căuta actualizări noi",
-    "[] to Reset Settings": "[_] pentru a reseta setările",
+    "Press [_] to check for Updates": "Apasă [_] pentru a căuta actualizări noi",
+    "[_] to Reset Settings": "[_] pentru a reseta setările",
     "FTP Server is stopped. Press %s to start.": "Server-ul FTP a fost oprit. Apăsați %s pentru a porni.",
     "FTP Server is running @ %s. Press %s to stop.": "Server-ul FTP a rulează pe %s. Apăsați %s pentru a opri.",
     "Could not get IP address": "Nu s-a putut obține adresa IP",

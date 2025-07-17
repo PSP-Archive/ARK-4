@@ -189,7 +189,7 @@ ftpdLoop(const char* szMyIPAddr)
     err = sceNetInetListen(sockListen, 1);
     if (err) goto done;
     
-  pgFramePrint(0,1,"Waiting for FTP clients, press [] to exit !", PG_TEXT_COLOR);
+  pgFramePrint(0,1,"Waiting for FTP clients, press [_] to exit !", PG_TEXT_COLOR);
   if (mftp_config.auth_required) {
     pgFramePrint(0,2,"User authentication required", PG_TEXT_COLOR);
   } else {

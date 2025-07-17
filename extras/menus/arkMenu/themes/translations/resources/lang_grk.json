@@ -87,8 +87,8 @@
     "Edit Line": "Επεξεργασία γραμμής",
 
     "Network Tools": "Εργαλεία Δικτύου",
-    "Press [] to check for Updates": "Πατήστε το [_] για έλεγχο Ενημερώσεων",
-    "[] to Reset Settings": "[_] για να επαναφέρετε τις ρυθμίσεις",
+    "Press [_] to check for Updates": "Πατήστε το [_] για έλεγχο Ενημερώσεων",
+    "[_] to Reset Settings": "[_] για να επαναφέρετε τις ρυθμίσεις",
     "FTP Server is stopped. Press %s to start.": "Ο Διακομιστής FTP έχει σταματήσει. Πατήστε το %s για εκκίνηση.",
     "FTP Server is running @ %s. Press %s to stop.": "Ο Διακομιστής FTP εκτελείται στο %s. Πατήστε το %s για διακοπή",
     "Could not get IP address": "Δεν ήταν δυνατή η λήψη διεύθυνσης IP",
