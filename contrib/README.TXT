@@ -58,16 +58,23 @@ You an also run ARK within Adrenaline to achieve a Hybrid CFW.
     - Use the `ARK` bubble for `PSP` games and homebrew. It can play `PS1` but with limitations related to sound playback.
     - Use the `ARK-X` bubble for `PS1` games without any sound limitations.
     - Once `ARK` bubbles are installed, you can delete `FasterARK`.
-    - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start` (on `ARK-X` use `L2+R2+Down+Start` or `L1+R1+Start+Down` for `VitaTV`).
+    - To `exit` from a game or homebrew back to the `custom launcher`, press `L+R+Down+Start`
+        (on `ARK-X` use `L2+R2+Down+Start` or `L1+R1+Start+Down` for `VitaTV`).
     - NOTE: Some features are not available in standalone installations, mainly the official Sony `XMB`.
     - NOTE: If you want to have an `ARK` bubble that works on `Official Firmware` you must use `ChovySign` with a valid license.
 
   Adrenaline (Patched PSPEmu)
 
-    - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and `Adrenaline` (https://github.com/TheOfficialFloW/Adrenaline).
+    - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and `Adrenaline` (https://github.com/isage/Adrenaline).
     - (Skip this step if `Standalone` is already installed) Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder.
     - Install `ARK_Loader` folder into `/PSP/GAME/` folder.
-    - Use `Adrenaline Bubbles Manager` to create an autoboot bubble for `ARK Loader`: https://github.com/ONElua/AdrenalineBubbleManager/releases
+    - To make ARK-4 automatically load with Adrenaline there are two options.
+    - (Option 1, new method) Rename `ARK_Loader` (installed previously) to `BOOT`.
+        Go to Adrenaline's Recovery Menu and in the Configuration page enable the `Autorun program` option.
+        This only works on newer Adrenaline versions as the feature isn't implemented in older versions.
+    - (Option 2, old method) Use `Adrenaline Bubbles Manager` (https://github.com/ONElua/AdrenalineBubbleManager)
+        to create an autoboot bubble for `ARK Loader`.
+        This method is deprecated as it will install an older version of Adrenaline.
     - Note: this does not permanently modify `Adrenaline` in any way.
 
 
