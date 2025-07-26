@@ -45,7 +45,7 @@ int installAnalogPlugin() {
     updateUi("Checking for ARK Right Analog Plugin ...");
     int pluginCheck = sceIoOpen("ur0:tai/arkrightanalog.suprx", SCE_O_RDONLY, 0777);
     if(pluginCheck < 0) {
-        updateUi("ARK Right Analog Plugin not found, adding to config ...");
+        updateUi("ARK Right Analog Plugin not found adding to config ...");
         CopyFileAndUpdateUi("app0:psp/arkrightanalog.suprx", "ur0:tai/arkrightanalog.suprx");
         int hasNewLine = checkTaiConfig();
         int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
@@ -54,9 +54,10 @@ int installAnalogPlugin() {
         sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine)-1);
         sceIoClose(addPlugin);
         return 1;
-    } else {
+    }
+    else {
         sceIoClose(pluginCheck);
-        updateUi("ARK Right Analog Plugin found, updating plugin only ...");
+        updateUi("ARK Right Analog Plugin found updating plugin and base game only ...");
         CopyFileAndUpdateUi("app0:psp/arkrightanalog.suprx", "ur0:tai/arkrightanalog.suprx");
         return 0;
     }
@@ -66,7 +67,7 @@ int installPS1Plugin() {
     updateUi("Checking for ARK-X PS1 Plugin ...");
     int pluginCheck = sceIoOpen("ur0:tai/ps1cfw_enabler.suprx", SCE_O_RDONLY, 0777);    
     if(pluginCheck < 0) {
-        updateUi("PS1 Plugin not found, adding to config ...");
+        updateUi("ARK-X PS1 Plugin not found adding to config ...");
         CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
         int hasNewLine = checkTaiConfig();
         int addPlugin = sceIoOpen("ur0:tai/config.txt", SCE_O_CREAT | SCE_O_WRONLY | SCE_O_APPEND, 0777);
@@ -75,9 +76,10 @@ int installPS1Plugin() {
         sceIoWrite(addPlugin, pluginLine, sizeof(pluginLine)-1);
         sceIoClose(addPlugin);
         return 1;
-    } else {
+    }
+    else {
         sceIoClose(pluginCheck);
-        updateUi("PS1 Plugin found, updating plugin and base game only ...");
+        updateUi("ARK-X PS1 Plugin found updating plugin and base game only ...");
         CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");
         CopyTree("app0:psx/GAME", "ux0:/pspemu/PSP/GAME");
         return 0;
@@ -108,20 +110,21 @@ void genEbootSignature(char* ebootPath, char *gameID) {
     char ebootSigFilePath[MAX_PATH];
     char ebootSig[0x200];    
     unsigned char pbpHash[0x20];
-    
+
     int swVer = 0;
-    
+
     memset(ebootSig, 0x00, sizeof(ebootSig));
     memset(pbpHash, 0x00, sizeof(pbpHash));
-    
+
     if(gameID != NULL)
         snprintf(ebootSigFilePath, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/__sce_ebootpbp", gameID);
     else
         snprintf(ebootSigFilePath, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/__sce_ebootpbp", TITLE_ID);
 
+    
     updateUi("Calculating EBOOT.PBP Sha256 ...");
     HashPbp(ebootPath, pbpHash);
-    
+
     updateUi("Generating EBOOT.PBP Signature ...");
     int res = _vshNpDrmEbootSigGenPsp(ebootPath, pbpHash, ebootSig, &swVer);
     if(res >= 0) {
@@ -133,7 +136,8 @@ void placePspGameData(char *gameID) {
     char ebootFile[MAX_PATH] = {0};
     char pbootFile[MAX_PATH] = {0};
     char rifFile[MAX_PATH] = {0};
-    
+
+    // get path to EBOOT.PBP and PBOOT.PBP
     if(gameID != NULL) {
         snprintf(rifFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/LICENSE/%s.rif", CONTENT_ID_ARK);
         snprintf(ebootFile, MAX_PATH, "ux0:pspemu/temp/game/PSP/GAME/%s/EBOOT.PBP", gameID);
@@ -177,17 +181,15 @@ void installARKXOnly() {
     createBubble("SCPS10084");
 }
 
+void doInstall() {
+ installARK4Only();        // 
+    installARKXOnly();        // 
+    installAnalogPlugin();    // 
+    installPS1Plugin();       // 
+    taiReloadConfig();        // 
+}
+
 void taiReloadConfig(void) {
     updateUi("Reloading tai config...");
-    sceAppMgrLoadExec("app0:reboot.self", NULL, NULL);  // reboot to apply changes
-}
-
-void doInstall() {
-    installARK4Only();        // ARK-4
-    installARKXOnly();        // ARK-X
-
-    installAnalogPlugin();    
-    installPS1Plugin();       
-
-    taiReloadConfig();        
-}
+    sceKernelDelayThread(1000000); // 1 second for visibility
+	}
