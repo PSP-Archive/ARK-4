@@ -17,7 +17,7 @@ All core files must follow these guidelines:
 
 Only a few modules and parts of the kernel are allowed to break rules:
 
-1. VshControl can break rule 2 for PSP-Go and PSP-1K checks.
+1. VshControl can break rule 2 and 3 for PSP-Go, PSP-1K and PS Vita checks.
 2. CompatLayer can break all rules.
 3. Externally loaded rebootex can break all rules.
 
