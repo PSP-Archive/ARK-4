@@ -44,14 +44,14 @@ Installation On PSP
 
 Installation On PS Vita
 
-There are two types of installation types on PS Vita. You can use either one or both.
+There are two types of installation on PS Vita. You can use either one or both.
 Stanalone works on top of the original unmodified pspemu.
 You an also run ARK within Adrenaline to achieve a Hybrid CFW.
 
   Standalone (Official PSPEmu)
 
     - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
-    - Download and install <a href="https://github.com/Kethen/NoPspEmuDrm/releases/tag/2025-07-02">NoPspEmuDrm</a>.
+    - Download and install `NoPspEmuDrm_mod` (use AutoPlugin2 or https://github.com/Kethen/NoPspEmuDrm/releases/tag/2025-07-02).
     - Copy `FasterARK.vpk` from `PSVita/` folder anywhere on your vita and install using `VitaShell`. 
     - Launch `FasterARK` and wait for the install process to finish.
     - Both `ARK` and `ARK-X` bubbles will appear in `Live Area`.

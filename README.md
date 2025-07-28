@@ -99,7 +99,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 #### Installation On PS Vita
 
-There are two types of installation types on PS Vita. You can use either one or both.
+There are two types of installation on PS Vita. You can use either one or both.
 <br>Stanalone works on top of the original unmodified pspemu.
 <br>You an also run ARK within Adrenaline to achieve a Hybrid CFW.
 
@@ -107,7 +107,7 @@ There are two types of installation types on PS Vita. You can use either one or 
 ##### Standalone (Official PSPEmu)
 
 - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
-- Download and install <a href="https://github.com/Kethen/NoPspEmuDrm/releases/tag/2025-07-02">NoPspEmuDrm</a>.
+- Download and install <a href="https://github.com/Kethen/NoPspEmuDrm/releases/tag/2025-07-02">NoPspEmuDrm_mod</a> (you can use AutoPlugin2).
 - Copy `FasterARK.vpk` from `PSVita/` folder anywhere on your vita and install using `VitaShell`. 
 - Launch `FasterARK` and wait for the install process to finish.
 - Both `ARK` and `ARK-X` bubbles will appear in `Live Area`.
@@ -122,10 +122,10 @@ There are two types of installation types on PS Vita. You can use either one or 
 ##### Adrenaline (Patched PSPEmu)
 
 - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore and <a href="https://github.com/isage/Adrenaline">Adrenaline</a> (Isage's fork is recommended, but original will work too).
-- Install `ARK_01234` folder into `/PSP/SAVEDATA/` folder if it isn't already there.
-- Install `ARK_Loader` folder into `/PSP/GAME/` folder.
+- Install `ARK_01234` folder into `pspemu/PSP/SAVEDATA/` folder if it isn't already there.
+- Install `ARK_Loader` folder into `pspemu/PSP/GAME/` folder.
 - To make ARK-4 automatically load with Adrenaline there are two options.
-- (Option 1, new method) Rename `ARK_Loader` (installed previously) to `BOOT`. Go to Adrenaline's Recovery Menu and in the Configuration page enable the `Autorun program` option. This only works on newer Adrenaline versions as the feature isn't implemented in older versions.
+- (Option 1, new method) Rename `ARK_Loader` to `BOOT`. Go to Adrenaline's Recovery Menu and in the Configuration page enable the `Autorun program` option. This only works on newer Adrenaline versions as the feature isn't implemented in older versions.
 - (Option 2, old method) Use <a href="https://github.com/ONElua/AdrenalineBubbleManager/releases">Adrenaline Bubbles Manager</a> to create an autoboot bubble for `ARK Loader`. This method is deprecated as it will install an older version of Adrenaline.
 - Note: this does not permanently modify `Adrenaline` in any way.
 
