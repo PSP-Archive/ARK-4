@@ -17,7 +17,7 @@ CFLAGS = -std=c99 -G0 -Wall -O2
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 LIBDIR =
-LDFLAGS = -lstdc++
+LDFLAGS =
 
 include $(ARKROOT)/common/make/global.mak
 include $(PSPSDK)/lib/build.mak
