@@ -107,7 +107,7 @@ There are two types of installation on PS Vita. You can use either one or both.
 ##### Standalone (Official PSPEmu)
 
 - Works on Firmware 3.60 up to 3.74, requires Henkaku/h-encore or any native hack.
-- Download and install <a href="https://github.com/Kethen/NoPspEmuDrm/releases/tag/2025-07-02">NoPspEmuDrm</a>.
+- Download and install <a href="https://github.com/Kethen/NoPspEmuDrm/releases/tag/2025-07-02">NoPspEmuDrm_mod</a> (you can use AutoPlugin2).
 - Copy `FasterARK.vpk` from `PSVita/` folder anywhere on your vita and install using `VitaShell`. 
 - Launch `FasterARK` and wait for the install process to finish.
 - Both `ARK` and `ARK-X` bubbles will appear in `Live Area`.
