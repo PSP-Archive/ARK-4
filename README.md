@@ -99,7 +99,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 #### Installation On PS Vita
 
-There are two types of installation types on PS Vita. You can use either one or both.
+There are two types of installation on PS Vita. You can use either one or both.
 <br>Stanalone works on top of the original unmodified pspemu.
 <br>You an also run ARK within Adrenaline to achieve a Hybrid CFW.
 
