@@ -44,7 +44,7 @@ Installation On PSP
 
 Installation On PS Vita
 
-There are two types of installation types on PS Vita. You can use either one or both.
+There are two types of installation on PS Vita. You can use either one or both.
 Stanalone works on top of the original unmodified pspemu.
 You an also run ARK within Adrenaline to achieve a Hybrid CFW.
 
