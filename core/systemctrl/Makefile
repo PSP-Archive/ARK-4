@@ -2,6 +2,7 @@ TARGET = systemctrl
 
 OBJS = \
 	main.o \
+	imports.o \
 	src/modulemanager.o \
 	src/elf.o \
 	src/flushcache.o \
@@ -37,8 +38,9 @@ OBJS = \
 	$(ARKROOT)/libs/libsploit/patches.o \
 	$(ARKROOT)/libs/ansi-c/lowerstring.o \
 	$(ARKROOT)/libs/ansi-c/strcasecmp.o \
-	
-	
+	$(ARKROOT)/libs/ansi-c/strsafe.o \
+
+
 all: $(TARGET).prx
 INCDIR = $(ARKROOT)/common $(ARKROOT)
 CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic
