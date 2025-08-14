@@ -89,8 +89,12 @@ function original {
 			elevatePrivs ln -s '/usr/lib/x86_64-linux-gnu/libmpfr.so.6.1.0' /lib/libmpfr.so.4
 		else if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.4" ]] ; then
 			printf "Already Exist\n"
+		else if [[ -f "/usr/lib64/libmpfr.so.4" ]] ; then
+			printf "Already Exist\n"
 		elif [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so" ]] ; then
 			elevatePrivs ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+		elif [[ -f "/usr/lib64/libmpfr.so" ]] ; then
+	        elevatePrivs ln -s /usr/lib64/libmpfr.so /usr/lib64/libmpfr.so.4
 	    elif [[ -f "/lib/libmpfr.so" ]] ; then
 	        elevatePrivs ln -s /lib/libmpfr.so /lib/libmpfr.so.4
 	    elif [[ -f "/lib/libmpfr.so*" ]] ; then 
