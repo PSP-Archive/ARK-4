@@ -4,3 +4,6 @@
 [submodule "contrib/PC/ciso/ziso_compressor"]
 	path = contrib/PC/ciso/ziso_compressor
 	url = https://github.com/Danixu/ziso_compressor
+[submodule "libs/ya2d"]
+	path = libs/ya2d
+	url = https://github.com/xerpi/ya2d

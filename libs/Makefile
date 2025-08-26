@@ -13,7 +13,6 @@ SUBDIRS = \
 	libpspmath \
 	libpng \
 	libpspvram \
-	libya2d \
 	libintraFont \
 	libpspftp \
 	libpspav \
@@ -26,6 +25,8 @@ PREBUILTDIRS = prebuilt libvlf
 
 all: subdirs
 	$(Q)cp $(addsuffix /*.a, $(SUBDIRS)) .
+	$(Q)make CC="psp-gcc -std=c99" -C ya2d/libya2d
+	$(Q)cp ya2d/libya2d/libya2d.a .
 
 distclean clean:
 	$(Q)make $@ -C SystemCtrlForKernel $(OPT)
@@ -40,7 +41,7 @@ distclean clean:
 	$(Q)make $@ -C libpspmath $(OPT)
 	$(Q)make $@ -C libpng $(OPT)
 	$(Q)make $@ -C libpspvram $(OPT)
-	$(Q)make $@ -C libya2d $(OPT)
+	$(Q)make $@ -C ya2d/libya2d $(OPT)
 	$(Q)make $@ -C guglue $(OPT)
 	$(Q)make $@ -C psid $(OPT)
 	$(Q)make $@ -C libintraFont $(OPT)

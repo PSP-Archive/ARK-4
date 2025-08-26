@@ -12,7 +12,7 @@ INCDIR = \
 	include/multimedia \
 	include/ftp \
 	$(ARKROOT)/common/include \
-	$(LIBDIR)/libya2d \
+	$(LIBDIR)/ya2d/libya2d \
 	$(LIBDIR)/libintraFont \
 	$(LIBDIR)/libjpeg \
 	$(LIBDIR)/libpspftp \
