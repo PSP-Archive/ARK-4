@@ -26,34 +26,9 @@
  *
  * To make life easier for developers, we reimplemented them and export
  * them via our NID Resolver.
+ *
+ * `strncat` on ansi-c/strsafe.c
  */
-
-// String Concatenate (with size limiter)
-char * strncat(char * dst, const char * src, size_t n)
-{
-    // Valid Copy Size
-    if (n != 0)
-       {
-           // Concatenate Pointer
-        char * d = dst + strlen(dst);
-        
-        // Source Pointer
-        const char * s = src;
-        
-        // Byte Counter
-        int i = 0; for(; i < n; i++)
-        {
-            // Copy Byte
-            *d = *s;
-            
-            // End of String
-            if(*d == 0) break;
-        }
-    }
-    
-    // Return Buffer
-    return dst;
-}
 
 // Search Needle in Haystack
 int ownstrcspn(char * str1, char * str2)
@@ -68,7 +43,7 @@ int ownstrcspn(char * str1, char * str2)
             if(str1[i] == str2[j]) break;
         }
     }
-    
+
     // Return Offset
     return i;
 }
@@ -86,7 +61,7 @@ int ownstrspn(char * str1, char * str2)
             if(str1[i] != str2[j]) break;
         }
     }
-    
+
     // Return Offset
     return i;
 }
@@ -98,40 +73,40 @@ char * ownstrtok_r(char * s, const char * delim, char ** last)
     int c = 0;
     int sc = 0;
     char * tok = NULL;
-    
+
     // Invalid Parameters
     if(s == NULL && (s = *last) == NULL) return NULL;
-    
+
 cont:
     // Move Pointer
     c = *s++;
-    
+
     // Scan for Delimiter
     for(spanp = (char *)delim; (sc = *spanp++) != 0;)
        {
         if (c == sc)
             goto cont;
     }
-    
+
     // End of String
     if(c == 0)
        {
         *last = NULL;
         return NULL;
     }
-    
+
     // Update Token
     tok = s - 1;
-    
+
     // Processing Loop
     for(;;)
        {
            // Fetch Symbol
         c = *s++;
-        
+
         // Fetch Delimtier
         spanp = (char *)delim;
-        
+
         // Process Text
         do
            {
@@ -140,13 +115,13 @@ cont:
                {
                    // End of String
                 if (c == 0) s = NULL;
-                
+
                 // Terminate String
                 else s[-1] = 0;
-                
+
                 // Update Pointer
                 *last = s;
-                
+
                 // Return Token
                 return tok;
             }
@@ -159,7 +134,7 @@ char * ownstrtok(char * s, const char * delim)
 {
     // Last Token
     char* last = NULL;
-    
+
     // Recursive Token Implementation
     return ownstrtok_r(s, delim, &last);
 }
@@ -169,13 +144,13 @@ int ownstrtol(const char * str, int * res)
 {
     // End Pointer
     char * endptr = NULL;
-    
+
     // Forward Call (with Base 10)
     int result = strtol(str, &endptr, 10);
-    
+
     // Return Result in Parameter
     if (res) *res = result;
-    
+
     // Return Result
     return result;
 }
