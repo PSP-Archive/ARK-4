@@ -245,6 +245,7 @@ PSP_EXPORT_FUNC(msstorCacheStat)
 PSP_EXPORT_FUNC(msstorCacheDisable)
 PSP_EXPORT_FUNC(sctrlHENSetPluginHandler)
 PSP_EXPORT_FUNC(sctrlHENSetRebootexConfig)
+PSP_EXPORT_FUNC_NID(sctrlArkSetConfig, 0x6EAFC03D)
 PSP_EXPORT_FUNC(isSystemBooted)
 PSP_EXPORT_FUNC(isLoadingPlugins)
 PSP_EXPORT_END
