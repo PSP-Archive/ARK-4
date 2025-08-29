@@ -25,7 +25,7 @@ PREBUILTDIRS = prebuilt libvlf
 
 all: subdirs
 	$(Q)cp $(addsuffix /*.a, $(SUBDIRS)) .
-	$(Q)make CC="psp-gcc -std=c99 -I$(ARKROOT)/libs/libpspvram -I$(ARKROOT)/libs/libpng -I$(ARKROOT)/libs/libjpeg -I$(ARKROOT)/libs/libpspmath -I$(ARKROOT)/common/include -I$(PSPSDK)/include" -C ya2d/libya2d -f Makefile -f /opt/ARK-4/common/make/global.mak -f /opt/ARK-4/common/make/beauty_lib.mak
+	$(Q)make CC="psp-gcc -std=c99 -I$(ARKROOT)/libs/libpspvram -I$(ARKROOT)/libs/libpng -I$(ARKROOT)/libs/libjpeg -I$(ARKROOT)/libs/libpspmath -I$(ARKROOT)/common/include -I$(PSPSDK)/include" -C ya2d/libya2d -f Makefile -f $(ARKROOT)/common/make/global.mak -f $(ARKROOT)/common/make/beauty_lib.mak
 	$(Q)cp ya2d/libya2d/libya2d.a .
 
 distclean clean:
