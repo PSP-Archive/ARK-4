@@ -17,15 +17,11 @@ static uint8_t dots = 0;
 static volatile bool loading = true;
 
 int startup_thread(int argc, void* argp){
-    int i;
     stringstream startup_runner;
-    
-    for(i=0;i<startup_txt.length();i++) {
-        startup_runner << startup_txt[i];    
-    }
 
     while (loading){
         debugScreen(startup_runner.str().c_str(), 180, 130);
+        dots++;
         if(dots>3) {
             startup_runner.str(startup_txt);
             dots=0;
@@ -33,7 +29,6 @@ int startup_thread(int argc, void* argp){
         else {
             startup_runner.str(startup_txt + string(dots, '.'));
         }
-        dots++;
         sceKernelDelayThread(200000);
     }
 
