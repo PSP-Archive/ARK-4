@@ -32,10 +32,10 @@ int pspemuLfatOpenExtra(BootFile* file){
             case MODE_INFERNO:
             case MODE_VSHUMD:
                 reboot_conf->iso_mode = MODE_INFERNO;
-                ret = findArkFlashFile(file, "psvbtknf.bin"); // use inferno ISO mode (psvbtknf.bin)
+                ret = findArkFlashFile(file, "psvbtjnf.bin"); // use inferno ISO mode (psvbtknf.bin)
                 break;
             default:
-                ret = findArkFlashFile(file, "psvbtjnf.bin"); // normal mode (psvbtjnf.bin)
+                ret = findArkFlashFile(file, "psvbtknf.bin"); // normal mode (psvbtjnf.bin)
                 break;
         }
         if (ret == 0){
