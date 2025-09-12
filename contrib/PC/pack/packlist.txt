@@ -1,6 +1,6 @@
 psvbtinf.bin,dist/PSVBTINF.BIN
 psvbtcnf.bin,dist/PSVBTCNF.BIN
-psvbtxnf.bin,dist/PSVBTXNF.BIN
+psxbtcnf.bin,dist/psxbtcnf.BIN
 psvbtjnf.bin,dist/PSVBTJNF.BIN
 psvbtknf.bin,dist/PSVBTKNF.BIN
 /kd/ark_systemctrl.prx,dist/SYSCTRL.BIN
