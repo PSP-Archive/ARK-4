@@ -114,7 +114,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         PRTSTR1("Module: %s", mod->modname);
     }
 
-    if(strcmp(mod->modname, "sceDisplay_Service") == 0)
+    if (strcmp(mod->modname, "sceDisplay_Service") == 0)
     {
         // can use screen now
         DisplaySetFrameBuf = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
@@ -129,7 +129,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
         goto flush;
     }
 
-    if(strcmp(mod->modname, "sceLoadExec") == 0)
+    if (strcmp(mod->modname, "sceLoadExec") == 0)
     {
         // Find Reboot Loader Function
         OrigLoadReboot = (void *)mod->text_addr;
@@ -158,7 +158,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     }
     
     // Media Sync about to start...
-    if(strcmp(mod->modname, "sceMediaSync") == 0)
+    if (strcmp(mod->modname, "sceMediaSync") == 0)
     {
         // Patch mediasync.prx
         patchMediaSync(mod);
@@ -167,7 +167,7 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     }
     
     // MesgLed Cryptography about to start...
-    if(strcmp(mod->modname, "sceMesgLed") == 0)
+    if (strcmp(mod->modname, "sceMesgLed") == 0)
     {
         // Patch mesg_led_01g.prx
         patchMesgLed(mod);
@@ -205,10 +205,10 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
     }
 
     // Boot Complete Action not done yet
-    if(booted == 0)
+    if (booted == 0)
     {
         // Boot is complete
-        if(isSystemBooted())
+        if (isSystemBooted())
         {
 
             // extend utility modules
@@ -244,11 +244,13 @@ static void ARKSyspatchOnModuleStart(SceModule2 * mod)
                 }
             }
 
-            // handle CPU speed settings
-            switch (se_config.cpubus_clock){
-                case 1: sctrlHENSetSpeed(333, 166); break;
-                case 2: sctrlHENSetSpeed(133, 66); break;
-                case 3: sctrlHENSetSpeed(222, 111); break;
+            if (sctrlHENIsToolKit() != 2){
+                // handle CPU speed settings
+                switch (se_config.cpubus_clock){
+                    case 1: sctrlHENSetSpeed(333, 166); break;
+                    case 2: sctrlHENSetSpeed(133, 66); break;
+                    case 3: sctrlHENSetSpeed(222, 111); break;
+                }
             }
             
             #ifdef DEBUG
@@ -273,7 +275,7 @@ flush:
     
 exit:
     // Forward to previous Handler
-    if(previous) previous(mod);
+    if (previous) previous(mod);
 }
 
 // Add Module Start Patcher
