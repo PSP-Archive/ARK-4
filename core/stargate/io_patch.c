@@ -33,7 +33,7 @@ static u32 myIoDevctl(const char *name, int cmd, u32 argAddr, int argLen, u32 ou
         if (sectorSize){
             u32 memStickSectorSize = 32 * 1024;
             u32 sectorCount = memStickSectorSize / sectorSize;
-            u32 freeSize = 1 * 1024 * 1024 * 1024; // pretend to have 1GB, enough for any game
+            u32 freeSize = 1900 * 1024 * 1024; // pretend to have 1.8GB, enough for any game
             u32 clusterSize = sectorSize * sectorCount;
             if (clusterSize){
                 u32 maxClusters = (u32)(freeSize / clusterSize);
