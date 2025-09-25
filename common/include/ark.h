@@ -28,7 +28,7 @@ extern "C" {
 #define ARK_MAJOR_VERSION 4
 #define ARK_MINOR_VERSION 20
 #define ARK_MICRO_VERSION 69
-#define ARK_REVISION      200
+#define ARK_REVISION      201
 
 // Pointers and sizes
 #define ARK_PATH_SIZE 128
