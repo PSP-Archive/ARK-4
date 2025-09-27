@@ -5,10 +5,10 @@
 #                                   #
 # Author  : Krazynez                #
 #                                   #
-# Date    : 2024-06-03              #
+# Date    : 2025-09-24              #
 #                                   #
 #####################################
-version=0.9.1
+version=0.9.2
 
 if [[ -z ${PSPDEV} ]]; then
 	clear
@@ -87,9 +87,9 @@ function original {
 	if [[ ! -f "/lib/libmpfr.so.4" ]] ; then
 		if [[ "$1" == "--docker" ]]; then
 			elevatePrivs ln -s '/usr/lib/x86_64-linux-gnu/libmpfr.so.6.1.0' /lib/libmpfr.so.4
-		else if [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.4" ]] ; then
+		elif [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so.4" ]] ; then
 			printf "Already Exist\n"
-		else if [[ -f "/usr/lib64/libmpfr.so.4" ]] ; then
+		elif [[ -f "/usr/lib64/libmpfr.so.4" ]] ; then
 			printf "Already Exist\n"
 		elif [[ -f "/usr/lib/x86_64-linux-gnu/libmpfr.so" ]] ; then
 			elevatePrivs ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so /usr/lib/x86_64-linux-gnu/libmpfr.so.4
@@ -104,7 +104,6 @@ function original {
 	        exit 1;
 	        fi
 	    fi
-	fi
 
 	    if [[ ! $input =~ ^(c|C)$ || "$1" == "--docker" ]] ; then
 	        elevatePrivs 7z -aoa x ./contrib/PC/PSPSDK/pspdev.7z -o"${PSPDEV:0:-7}"
