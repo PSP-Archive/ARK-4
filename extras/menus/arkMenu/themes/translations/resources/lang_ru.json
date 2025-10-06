@@ -1,6 +1,6 @@
 {
 
-    "Game": "Игра",
+    "Game": "Game",
     "Games": "Игры",
     "Files": "Файлы",
     "Network": "Сеть",
@@ -10,15 +10,15 @@
     "Recovery Menu": "Меню рекавери",
 
     "Exit": "Выход",
-    "Restart": "Перезапуск",
+    "Restart": "Перезагрузка",
     "Shutdown": "Выключение",
-    "Suspend": "Приостановить",
+    "Suspend": "Режим ожидания",
 
     "Disabled": "Отключено",
     "Enabled": "Включено",
     "Confirm": "Подтвердить",
     "Default": "По умолчанию",
-    "Remove": "удалять",
+    "Remove": "Удалить",
     "None": "Ничего",
 
     "Loading games...": "Загрузка игр...",
@@ -34,7 +34,7 @@
 
     "Folder": "Папка",
     "File": "Файл",
-    "Cancel": "Отмена",
+    "Cancel": "Отменить",
     "Copy":"Копировать",
     "Cut": "Вырезать",
     "Paste": "Вставить",
@@ -85,7 +85,7 @@
     "Edit Line": "Править строку",
 
     "Network Tools": "Сетевые утилиты",
-    "Press [_] to check for Updates": "Нажмите [_] для поиска обновлений",
+    "Press [_] to check for Updates": "Нажмите [_] для поиска обновлений.",
     "[_] to Reset Settings": "[_] для сброса настроек",
     "FTP Server is stopped. Press %s to start.": "FTP сервер остановлен. Нажмите %s для запуска.",
     "FTP Server is running @ %s. Press %s to stop.": "FTP сервер запущен @ %s. Нажмите %s для остановки.",
@@ -120,7 +120,7 @@
     "Force Update": "Принудительное обновление",
     "Display Battery Percent": "Показывать процент заряда батареи",
     "Start Button Behavior": "Действие кнопки Start",
-    "AutoBoot last game": "AutoBoot последняя игра",
+    "AutoBoot last game": "Автозапуск последней игры",
     "System Menu Size": "Размер системного меню",
     "Current": "Запуск выбранного",
     "Last Game": "Последняя игра",
@@ -138,7 +138,7 @@
     "Launcher/Recovery Settings": "Настройки меню ARK и Recovery",
     "Menu Settings": "Настройки меню",
     "Installed Plugins": "Установленные плагины",
-    "Always": "Всегда",
+    "Always": "Постоянно",
     "Auto": "Авто",
     "USB Charge": "Зарядка по USB",
     "CPU Clock in Game": "Производительность в игре",
@@ -146,6 +146,8 @@
     "OverClock": "Максимальная",
     "PowerSave": "Энергосберегающая",
     "Balanced": "Сбалансированная",
+	"GameBoot": "При запуске игры",
+    "ColdBoot": "При включении",
     "Autoboot Launcher": "Открывать меню ARK-4 автоматически",
     "Disable PSP Go Pause": "Отключить приостановку игры PSP Go",
     "Inferno Cache": "Кэш Inferno",
@@ -166,6 +168,15 @@
     "Disable Analog Stick": "Отключить мини-джойстик",
 	"Custom App": "Пользовательское приложение",
 	"QA Flags": "Показать настройки XMB для QA",
+
+	"5s": "5 сек",
+    "10s": "10 сек",
+    "20s": "20 сек",
+    "30s": "30 сек",
+    "1m": "1 мин",
+	"on": "вкл",
+	"off": "откл",
+	"all": "все",
 
     "Japan": "Япония",
     "America": "Америка",
