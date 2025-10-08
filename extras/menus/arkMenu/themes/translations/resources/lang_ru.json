@@ -4,7 +4,7 @@
     "Games": "Игры",
     "Files": "Файлы",
     "Network": "Сеть",
-    "Settings": "Настройки",
+    "Settings": "Настройки меню",
 
     "UMD Drive": "UMD-привод",
     "Recovery Menu": "Меню рекавери",
@@ -108,7 +108,7 @@
     "Downloading updater": "Загрузка приложения для обновления",
     "Running Updater": "Запуск приложения для обновления",
 
-    "Skip gameboot": "Пропускать PIC0 и PIC1 в лаунчере",
+    "Skip gameboot": "Пропускать заставку при запуске игры",
     "Language": "Язык",
     "Font style": "Стиль шрифта",
     "Scan savedata entries": "Сканировать данные сохранений",
@@ -139,8 +139,8 @@
     "ICON0 in Browser": "Показывать ICON0 у файлов игр",
     "Show Game Path": "Показать путь к игре",
 
-    "ARK Custom Firmware Settings": "Настройки ARK",
-    "CFW Settings": "Настройки ARK",
+    "ARK Custom Firmware Settings": "Настройки ARK-4",
+    "CFW Settings": "Настройки ARK-4",
     "Launcher/Recovery Settings": "Настройки меню ARK и Recovery",
     "Menu Settings": "Настройки меню",
     "Installed Plugins": "Установленные плагины",
