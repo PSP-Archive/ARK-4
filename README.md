@@ -20,7 +20,7 @@ as well as unique and exclusive new features not found anywhere else.
 
 ## FEATURES:
 
-- Compatible with every `PSP` model (including testkits and devkits) and every `PS Vita` model.
+- Compatible with every `PSP` model (including toolkits, excluding Strider2) and every `PS Vita` model.
 
 - Support for `homebrew` and `plugins`, compatible with legacy 1.50 software.
 
