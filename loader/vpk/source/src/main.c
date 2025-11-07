@@ -59,32 +59,36 @@ int main(int argc, const char *argv[]) {
     const char *options[] = {
         "Install ARK-4, ARK-X and All Plugins",
         "Install Only ARK-4 (No Plugins)",
-        "Install Only ARK-4 (No Analog Plugin)",
+        "Install ARK-4 and Analog Plugin",
         "Install Only Analog Plugin",
-        "Install Only PS1 Plugin",
+        "Install ARK-X and PS1 Plugin",
         "Exit"
     };
     int num_options = sizeof(options) / sizeof(options[0]);
 
     while (1) {
-        vita2d_start_drawing();
-        vita2d_clear_screen();
+        startDraw();
+        drawLines();
 
-        vita2d_pgf_draw_textf(uiGetFont(), 20, 20, RGBA8(255, 255, 255, 255), 1.2f, "FasterArk");
-        vita2d_pgf_draw_textf(uiGetFont(), 20, 50, RGBA8(255, 255, 255, 255), 1.0f,
-            "Select an option with Up/Down, press X to confirm:");
+        // Draw menu box
+        vita2d_draw_rectangle(100, 100, 760, 300, RGBA8(0x20, 0x20, 0x40, 180));
+        vita2d_draw_line(100, 100, 860, 100, RGBA8(0x40, 0x80, 0xFF, 255));
+        vita2d_draw_line(100, 400, 860, 400, RGBA8(0x40, 0x80, 0xFF, 255));
+        vita2d_draw_line(100, 100, 100, 400, RGBA8(0x40, 0x80, 0xFF, 255));
+        vita2d_draw_line(860, 100, 860, 400, RGBA8(0x40, 0x80, 0xFF, 255));
+
+        drawTextCenterColored(130, "Select an option with Up/Down, press X to confirm:", 0x40, 0x80, 0xFF);
 
         for (int i = 0; i < num_options; i++) {
             uint32_t color = (i == selection) ? RGBA8(255, 0, 0, 255) : RGBA8(255, 255, 255, 255);
-            vita2d_pgf_draw_textf(uiGetFont(), 60, 90 + i * 30, color, 1.0f, "%s", options[i]);
+            vita2d_pgf_draw_textf(uiGetFont(), 140, 170 + i * 30, color, 1.0f, "%s", options[i]);
         }
 
-        vita2d_pgf_draw_textf(uiGetFont(), 30, 90 + selection * 30, RGBA8(255, 0, 0, 255), 1.0f, "→");
+        vita2d_pgf_draw_textf(uiGetFont(), 110, 170 + selection * 30, RGBA8(255, 0, 0, 255), 1.0f, "→");
 
         drawBatteryAndStorage();
 
-        vita2d_end_drawing();
-        vita2d_swap_buffers();
+        endDraw();
 
         sceCtrlPeekBufferPositive(0, &pad, 1);
 
@@ -110,23 +114,28 @@ int main(int argc, const char *argv[]) {
                 int launch_num = sizeof(launch_options) / sizeof(launch_options[0]);
 
                 while (1) {
-                    vita2d_start_drawing();
-                    vita2d_clear_screen();
+                    startDraw();
+                    drawLines();
 
-                    vita2d_pgf_draw_textf(uiGetFont(), 20, 40, RGBA8(255, 255, 255, 255), 1.0f,
-                        "Installation complete! Choose what to launch:");
+                    // Draw launch box
+                    vita2d_draw_rectangle(100, 120, 760, 200, RGBA8(0x20, 0x20, 0x40, 180));
+                    vita2d_draw_line(100, 120, 860, 120, RGBA8(0x40, 0x80, 0xFF, 255));
+                    vita2d_draw_line(100, 320, 860, 320, RGBA8(0x40, 0x80, 0xFF, 255));
+                    vita2d_draw_line(100, 120, 100, 320, RGBA8(0x40, 0x80, 0xFF, 255));
+                    vita2d_draw_line(860, 120, 860, 320, RGBA8(0x40, 0x80, 0xFF, 255));
+
+                    drawTextCenterColored(150, "Installation complete! Choose what to launch:", 0x40, 0x80, 0xFF);
 
                     for (int i = 0; i < launch_num; i++) {
                         uint32_t color = (i == launch_sel) ? RGBA8(255, 0, 0, 255) : RGBA8(255, 255, 255, 255);
-                        vita2d_pgf_draw_textf(uiGetFont(), 60, 90 + i * 30, color, 1.0f, "%s", launch_options[i]);
+                        vita2d_pgf_draw_textf(uiGetFont(), 140, 190 + i * 30, color, 1.0f, "%s", launch_options[i]);
                     }
 
-                    vita2d_pgf_draw_textf(uiGetFont(), 30, 90 + launch_sel * 30, RGBA8(255, 0, 0, 255), 1.0f, "→");
+                    vita2d_pgf_draw_textf(uiGetFont(), 110, 190 + launch_sel * 30, RGBA8(255, 0, 0, 255), 1.0f, "→");
 
                     drawBatteryAndStorage();
 
-                    vita2d_end_drawing();
-                    vita2d_swap_buffers();
+                    endDraw();
 
                     sceCtrlPeekBufferPositive(0, &pad, 1);
 
@@ -159,10 +168,9 @@ int main(int argc, const char *argv[]) {
             break;
 
         case 2:
-            displayMsg("Installing ARK-4", "Installing ARK-4...");
+            displayMsg("Installing ARK-4 and Analog Plugin", "Installing ARK-4 and analog plugin...");
             installARK4Only();
-            displayMsg("Installing PS1 Plugin", "Installing PS1 plugin...");
-            installPS1Plugin();
+            installAnalogPlugin();
             taiReloadConfig();
             break;
 
@@ -173,7 +181,8 @@ int main(int argc, const char *argv[]) {
             break;
 
         case 4:
-            displayMsg("Installing PS1 Plugin", "Installing PS1 plugin...");
+            displayMsg("Installing ARK-X and PS1 Plugin", "Installing ARK-X and PS1 plugin...");
+            installARKXOnly();
             installPS1Plugin();
             taiReloadConfig();
             break;
@@ -183,14 +192,80 @@ int main(int argc, const char *argv[]) {
             return 0;
     }
 
-    vita2d_start_drawing();
-    vita2d_clear_screen();
-    vita2d_pgf_draw_textf(uiGetFont(), 20, 100, RGBA8(255, 255, 255, 255), 1.0f, "Installation complete!");
-    vita2d_pgf_draw_textf(uiGetFont(), 20, 140, RGBA8(255, 255, 255, 255), 1.0f, "Press X to exit.");
-    drawBatteryAndStorage();
-    vita2d_end_drawing();
-    vita2d_swap_buffers();
+    if (selection == 3) {
+        // For "Install Only Analog Plugin", don't launch since ARK-4 may not be installed
+        vita2d_start_drawing();
+        vita2d_clear_screen();
+        vita2d_pgf_draw_textf(uiGetFont(), 20, 100, RGBA8(255, 255, 255, 255), 1.0f, "Installation complete!");
+        vita2d_pgf_draw_textf(uiGetFont(), 20, 140, RGBA8(255, 255, 255, 255), 1.0f, "Press X to exit.");
+        drawBatteryAndStorage();
+        vita2d_end_drawing();
+        vita2d_swap_buffers();
+        waitCross();
+    } else {
+        // Launch menu
+        const char *launch_opts[2];
+        int num_launch = 0;
+        if (selection == 1) {
+            launch_opts[0] = "Launch ARK-4";
+            num_launch = 1;
+        } else if (selection == 2) {
+            launch_opts[0] = "Launch ARK-4";
+            num_launch = 1;
+        } else if (selection == 4) {
+            launch_opts[0] = "Launch ARK-X";
+            num_launch = 1;
+        }
+        int launch_sel = 0;
+        while (1) {
+            startDraw();
+            drawLines();
 
-    waitCross();
+            // Draw launch box
+            vita2d_draw_rectangle(100, 120, 760, 200, RGBA8(0x20, 0x20, 0x40, 180));
+            vita2d_draw_line(100, 120, 860, 120, RGBA8(0x40, 0x80, 0xFF, 255));
+            vita2d_draw_line(100, 320, 860, 320, RGBA8(0x40, 0x80, 0xFF, 255));
+            vita2d_draw_line(100, 120, 100, 320, RGBA8(0x40, 0x80, 0xFF, 255));
+            vita2d_draw_line(860, 120, 860, 320, RGBA8(0x40, 0x80, 0xFF, 255));
+
+            drawTextCenterColored(150, "Installation complete! Choose what to launch:", 0x40, 0x80, 0xFF);
+
+            for (int i = 0; i < num_launch; i++) {
+                uint32_t color = (i == launch_sel) ? RGBA8(255, 0, 0, 255) : RGBA8(255, 255, 255, 255);
+                vita2d_pgf_draw_textf(uiGetFont(), 140, 190 + i * 30, color, 1.0f, "%s", launch_opts[i]);
+            }
+
+            vita2d_pgf_draw_textf(uiGetFont(), 110, 190 + launch_sel * 30, RGBA8(255, 0, 0, 255), 1.0f, "→");
+
+            drawBatteryAndStorage();
+
+            endDraw();
+            sceCtrlPeekBufferPositive(0, &pad, 1);
+            if (pad.buttons & SCE_CTRL_DOWN) {
+                launch_sel = (launch_sel + 1) % num_launch;
+                sceKernelDelayThread(200 * 1000);
+            } else if (pad.buttons & SCE_CTRL_UP) {
+                launch_sel = (launch_sel - 1 + num_launch) % num_launch;
+                sceKernelDelayThread(200 * 1000);
+            } else if (pad.buttons & SCE_CTRL_CROSS) {
+                break;
+            }
+        }
+        if (num_launch == 1) {
+            if (selection == 1 || selection == 2) {
+                sceAppMgrLaunchAppByUri(0, "psgm:play?titleid=NPUZ01234"); // ARK-4
+            } else { // selection == 4
+                sceAppMgrLaunchAppByUri(0, "psgm:play?titleid=SCPS10084"); // ARK-X
+            }
+        } else { // num_launch == 2
+            if (launch_sel == 0) {
+                sceAppMgrLaunchAppByUri(0, "psgm:play?titleid=NPUZ01234"); // ARK-4
+            } else {
+                sceAppMgrLaunchAppByUri(0, "psgm:play?titleid=SCPS10084"); // ARK-X
+            }
+        }
+        sceKernelDelayThread(1000 * 1000);
+        sceKernelExitProcess(0);
+    }
     return 0;
 }
