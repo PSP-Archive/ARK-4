@@ -380,7 +380,7 @@ void newipl_menu(const char* config){
 
     printf("\nCustom IPL Flasher for 6.61 running on %dg\n\n\n", (model+1));
 
-    if (config){
+    if (config && (devkit == 0x06060010 || devkit == 0x06060110) ){
         printf("\nUsing config <%s>, if this is incorrect, DO NOT PROCEED!\n\n", config);
     }
 
@@ -458,7 +458,16 @@ int main()
 
     // check if running 6.60 or 6.61
     if(devkit != 0x06060010 && devkit != 0x06060110) {
-        ErrorExit(5000,"FW ERROR! Use on 6.60 or 6.61 only.\n");
+	int check_dcark = sceIoDopen("ms0:/TM/DCARK");
+	if(check_dcark<0) {
+        	ErrorExit(5000,"DCARK MISSING, INSTALL IT FIRST!\n");
+	}
+	else {
+		sceIoDclose(check_dcark);
+		pspDebugScreenPrintf("After install your PSP will be 'bricked', turn on holding LT ( Left Trigger ) to boot DCARK\n");
+		sceKernelDelayThread(4*1000*1000);
+		pspDebugScreenClear();
+	}
     }
 
     // check if running infinity
