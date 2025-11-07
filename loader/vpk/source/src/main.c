@@ -5,11 +5,47 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 #include <psp2/ctrl.h>
 #include <psp2/appmgr.h>
 
 #include "install.h"
 #include "ui.h"
+
+void drawMenuLayout() {
+    for (int y = 0; y < 64; y++) {
+        uint8_t alpha = (uint8_t)(255 * (1.0f - (float)y / 64.0f * 0.7f));
+        vita2d_draw_line(0, y, 960, y, RGBA8(0x20, 0x40, 0x80, alpha));
+    }
+
+    for (int y = 544 - 64; y < 544; y++) {
+        uint8_t alpha = (uint8_t)(255 * (1.0f - (float)(544 - y) / 64.0f * 0.7f));
+        vita2d_draw_line(0, y, 960, y, RGBA8(0x20, 0x40, 0x80, alpha));
+    }
+
+    vita2d_pgf_draw_text(uiGetFont(), 21, 31, RGBA8(0, 0, 0, 128), 1.2f, "FasterARK");
+    vita2d_pgf_draw_text(uiGetFont(), 20, 30, RGBA8(255, 255, 255, 255), 1.2f, "FasterARK");
+
+    vita2d_draw_line(0, 64, 960, 64, RGBA8(0x40, 0x80, 0xFF, 255));
+    vita2d_draw_line(0, 544 - 64, 960, 544 - 64, RGBA8(0x40, 0x80, 0xFF, 255));
+
+    vita2d_draw_line(0, 0, 20, 0, RGBA8(0x60, 0xA0, 0xFF, 255));
+    vita2d_draw_line(0, 0, 0, 20, RGBA8(0x60, 0xA0, 0xFF, 255));
+    vita2d_draw_line(940, 0, 960, 0, RGBA8(0x60, 0xA0, 0xFF, 255));
+    vita2d_draw_line(960, 0, 960, 20, RGBA8(0x60, 0xA0, 0xFF, 255));
+    vita2d_draw_line(0, 524, 20, 524, RGBA8(0x60, 0xA0, 0xFF, 255));
+    vita2d_draw_line(0, 524, 0, 544, RGBA8(0x60, 0xA0, 0xFF, 255));
+    vita2d_draw_line(940, 524, 960, 524, RGBA8(0x60, 0xA0, 0xFF, 255));
+    vita2d_draw_line(960, 524, 960, 544, RGBA8(0x60, 0xA0, 0xFF, 255));
+}
+
+void drawTextCenterShadow(int y, const char* text, uint8_t r, uint8_t g, uint8_t b) {
+    int width = 0, height = 0;
+    vita2d_pgf_text_dimensions(uiGetFont(), 1.0f, text, &width, &height);
+    int x = (960 / 2) - (width / 2);
+    vita2d_pgf_draw_text(uiGetFont(), x + 1, y + 1, RGBA8(0, 0, 0, 128), 1.0f, text);
+    vita2d_pgf_draw_text(uiGetFont(), x, y, RGBA8(r, g, b, 255), 1.0f, text);
+}
 
 void drawBatteryAndStorage() {
     int batteryPercent = scePowerGetBatteryLifePercent();
@@ -19,21 +55,18 @@ void drawBatteryAndStorage() {
     sceIoDevctl("ux0:", 0x3001, NULL, 0, &info, sizeof(info));
     float freeSpaceGB = ((float)info.free_size) / (1024 * 1024 * 1024);
 
-    // Determine color for free space
     uint32_t colorFree = RGBA8(0, 255, 0, 255);
     if (freeSpaceGB < 2.0f)
         colorFree = RGBA8(255, 0, 0, 255);
     else if (freeSpaceGB < 5.0f)
         colorFree = RGBA8(255, 165, 0, 255);
 
-    // Determine color for battery
     uint32_t colorBattery = RGBA8(0, 255, 0, 255);
     if (batteryPercent <= 20)
         colorBattery = RGBA8(255, 0, 0, 255);
     else if (batteryPercent <= 30)
         colorBattery = RGBA8(255, 165, 0, 255);
 
-    // Prepare text
     char freeText[64];
     snprintf(freeText, sizeof(freeText), "Free space: %.1f GB", freeSpaceGB);
 
@@ -41,11 +74,9 @@ void drawBatteryAndStorage() {
     snprintf(batteryText, sizeof(batteryText), "Battery: %d%% %s",
              batteryPercent, isCharging ? "(Charging)" : "");
 
-    // Measure width to align right
     int batteryWidth = vita2d_pgf_text_width(uiGetFont(), 1.0f, batteryText);
     int freeWidth = vita2d_pgf_text_width(uiGetFont(), 1.0f, freeText);
 
-    // Draw both
     vita2d_pgf_draw_text(uiGetFont(), 960 - freeWidth - batteryWidth - 40, 20, colorFree, 1.0f, freeText);
     vita2d_pgf_draw_text(uiGetFont(), 960 - batteryWidth - 20, 20, colorBattery, 1.0f, batteryText);
 }
@@ -70,16 +101,34 @@ int main(int argc, const char *argv[]) {
         vita2d_start_drawing();
         vita2d_clear_screen();
 
-        vita2d_pgf_draw_textf(uiGetFont(), 20, 20, RGBA8(255, 255, 255, 255), 1.2f, "FasterArk");
-        vita2d_pgf_draw_textf(uiGetFont(), 20, 50, RGBA8(255, 255, 255, 255), 1.0f,
-            "Select an option with Up/Down, press X to confirm:");
+        drawMenuLayout();
+
+        vita2d_draw_rectangle(60, 100, 840, 300, RGBA8(0x20, 0x20, 0x40, 200));
+        vita2d_draw_line(60, 100, 900, 100, RGBA8(0x40, 0x80, 0xFF, 255));
+        vita2d_draw_line(60, 400, 900, 400, RGBA8(0x40, 0x80, 0xFF, 255));
+        vita2d_draw_line(60, 100, 60, 400, RGBA8(0x40, 0x80, 0xFF, 255));
+        vita2d_draw_line(900, 100, 900, 400, RGBA8(0x40, 0x80, 0xFF, 255));
+
+        drawTextCenterShadow(120, "Select Installation Option", 0x40, 0x80, 0xFF);
+        drawTextCenterShadow(150, "Use Up/Down to navigate, X to confirm", 0x80, 0xFF, 0x80);
 
         for (int i = 0; i < num_options; i++) {
-            uint32_t color = (i == selection) ? RGBA8(255, 0, 0, 255) : RGBA8(255, 255, 255, 255);
-            vita2d_pgf_draw_textf(uiGetFont(), 60, 90 + i * 30, color, 1.0f, "%s", options[i]);
-        }
+            uint8_t r = 255, g = 255, b = 255;
+            if (i == selection) {
+                r = 0x60; g = 0xA0; b = 0xFF;
+            }
+            int width = 0, height = 0;
+            vita2d_pgf_text_dimensions(uiGetFont(), 1.0f, options[i], &width, &height);
+            int x = (960 / 2) - (width / 2);
+            vita2d_pgf_draw_text(uiGetFont(), x + 1, 185 + i * 35 + 1, RGBA8(0, 0, 0, 128), 1.0f, options[i]);
+            vita2d_pgf_draw_text(uiGetFont(), x, 185 + i * 35, RGBA8(r, g, b, 255), 1.0f, options[i]);
 
-        vita2d_pgf_draw_textf(uiGetFont(), 30, 90 + selection * 30, RGBA8(255, 0, 0, 255), 1.0f, "→");
+            if (i == selection) {
+                vita2d_draw_line(75, 182 + i * 35, 95, 182 + i * 35, RGBA8(0x60, 0xA0, 0xFF, 255));
+                vita2d_draw_line(95, 182 + i * 35, 90, 177 + i * 35, RGBA8(0x60, 0xA0, 0xFF, 255));
+                vita2d_draw_line(95, 182 + i * 35, 90, 187 + i * 35, RGBA8(0x60, 0xA0, 0xFF, 255));
+            }
+        }
 
         drawBatteryAndStorage();
 
@@ -113,15 +162,34 @@ int main(int argc, const char *argv[]) {
                     vita2d_start_drawing();
                     vita2d_clear_screen();
 
-                    vita2d_pgf_draw_textf(uiGetFont(), 20, 40, RGBA8(255, 255, 255, 255), 1.0f,
-                        "Installation complete! Choose what to launch:");
+                    drawMenuLayout();
+
+                    vita2d_draw_rectangle(80, 120, 800, 200, RGBA8(0x10, 0x30, 0x10, 220));
+                    vita2d_draw_line(80, 120, 880, 120, RGBA8(0x00, 0x80, 0x00, 255));
+                    vita2d_draw_line(80, 320, 880, 320, RGBA8(0x00, 0x80, 0x00, 255));
+                    vita2d_draw_line(80, 120, 80, 320, RGBA8(0x00, 0x80, 0x00, 255));
+                    vita2d_draw_line(880, 120, 880, 320, RGBA8(0x00, 0x80, 0x00, 255));
+
+                    drawTextCenterShadow(140, "Installation Complete!", 0x00, 0xFF, 0x00);
+                    drawTextCenterShadow(170, "Choose what to launch:", 0x80, 0xFF, 0x80);
 
                     for (int i = 0; i < launch_num; i++) {
-                        uint32_t color = (i == launch_sel) ? RGBA8(255, 0, 0, 255) : RGBA8(255, 255, 255, 255);
-                        vita2d_pgf_draw_textf(uiGetFont(), 60, 90 + i * 30, color, 1.0f, "%s", launch_options[i]);
-                    }
+                        uint8_t r = 255, g = 255, b = 255;
+                        if (i == launch_sel) {
+                            r = 0x00; g = 0xFF; b = 0x00;
+                        }
+                        int width = 0, height = 0;
+                        vita2d_pgf_text_dimensions(uiGetFont(), 1.0f, launch_options[i], &width, &height);
+                        int x = (960 / 2) - (width / 2);
+                        vita2d_pgf_draw_text(uiGetFont(), x + 1, 205 + i * 40 + 1, RGBA8(0, 0, 0, 128), 1.0f, launch_options[i]);
+                        vita2d_pgf_draw_text(uiGetFont(), x, 205 + i * 40, RGBA8(r, g, b, 255), 1.0f, launch_options[i]);
 
-                    vita2d_pgf_draw_textf(uiGetFont(), 30, 90 + launch_sel * 30, RGBA8(255, 0, 0, 255), 1.0f, "→");
+                        if (i == launch_sel) {
+                            vita2d_draw_line(85, 212 + i * 40, 105, 212 + i * 40, RGBA8(0x00, 0x80, 0x00, 255));
+                            vita2d_draw_line(105, 212 + i * 40, 100, 207 + i * 40, RGBA8(0x00, 0x80, 0x00, 255));
+                            vita2d_draw_line(105, 212 + i * 40, 100, 217 + i * 40, RGBA8(0x00, 0x80, 0x00, 255));
+                        }
+                    }
 
                     drawBatteryAndStorage();
 
@@ -185,9 +253,20 @@ int main(int argc, const char *argv[]) {
 
     vita2d_start_drawing();
     vita2d_clear_screen();
-    vita2d_pgf_draw_textf(uiGetFont(), 20, 100, RGBA8(255, 255, 255, 255), 1.0f, "Installation complete!");
-    vita2d_pgf_draw_textf(uiGetFont(), 20, 140, RGBA8(255, 255, 255, 255), 1.0f, "Press X to exit.");
+
+    drawMenuLayout();
+
+    vita2d_draw_rectangle(120, 180, 720, 140, RGBA8(0x10, 0x30, 0x10, 220));
+    vita2d_draw_line(120, 180, 840, 180, RGBA8(0x00, 0x80, 0x00, 255));
+    vita2d_draw_line(120, 320, 840, 320, RGBA8(0x00, 0x80, 0x00, 255));
+    vita2d_draw_line(120, 180, 120, 320, RGBA8(0x00, 0x80, 0x00, 255));
+    vita2d_draw_line(840, 180, 840, 320, RGBA8(0x00, 0x80, 0x00, 255));
+
+    drawTextCenterShadow(220, "Installation Complete!", 0x00, 0xFF, 0x00);
+    drawTextCenterShadow(260, "Press X to continue...", 0x80, 0xFF, 0x80);
+
     drawBatteryAndStorage();
+
     vita2d_end_drawing();
     vita2d_swap_buffers();
 
