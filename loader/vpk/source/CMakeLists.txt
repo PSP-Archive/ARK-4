@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)  # Aggiornata la versione minima richiesta
+cmake_minimum_required(VERSION 3.10)
 
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   if(DEFINED ENV{VITASDK})
@@ -79,6 +79,7 @@ vita_create_vpk(${PROJECT_NAME}.vpk ${VITA_TITLEID} eboot.bin
   FILE res/rif/psx.rif rif/psx.rif
   FILE res/psp/EBOOT.PBP psp/EBOOT.PBP
   FILE res/psp/PBOOT.PBP psp/PBOOT.PBP
+  FILE res/psp/arkrightanalog.suprx psp/arkrightanalog.suprx
   FILE res/psx/ps1cfw_enabler.suprx psx/ps1cfw_enabler.suprx
   FILE res/psx/EBOOT.PBP psx/EBOOT.PBP
   FILE res/save/ARK_01234/ARK.BIN save/ARK_01234/ARK.BIN

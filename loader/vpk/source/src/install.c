@@ -35,6 +35,13 @@ static char* NeededDirectoriesARKX[] = {
 int checkTaiConfig() {
     char c = 0;
     int fd = sceIoOpen("ur0:tai/config.txt", SCE_O_RDONLY, 0777);
+    if (fd < 0) return 1; // file doesn't exist, no need for \n
+    SceIoStat stat;
+    sceIoGetstatByFd(fd, &stat);
+    if (stat.st_size == 0) {
+        sceIoClose(fd);
+        return 1; // empty file, no need for \n
+    }
     sceIoLseek(fd, -1, SCE_SEEK_END);
     sceIoRead(fd, &c, 1);
     sceIoClose(fd);
@@ -42,6 +49,7 @@ int checkTaiConfig() {
 }
 
 int installAnalogPlugin() {
+    sceIoMkdir("ur0:tai", 0777);
     updateUi("Checking for ARK Right Analog Plugin ...");
     int pluginCheck = sceIoOpen("ur0:tai/arkrightanalog.suprx", SCE_O_RDONLY, 0777);
     if(pluginCheck < 0) {
@@ -64,8 +72,9 @@ int installAnalogPlugin() {
 }
 
 int installPS1Plugin() {
+    sceIoMkdir("ur0:tai", 0777);
     updateUi("Checking for ARK-X PS1 Plugin ...");
-    int pluginCheck = sceIoOpen("ur0:tai/ps1cfw_enabler.suprx", SCE_O_RDONLY, 0777);    
+    int pluginCheck = sceIoOpen("ur0:tai/ps1cfw_enabler.suprx", SCE_O_RDONLY, 0777);
     if(pluginCheck < 0) {
         updateUi("ARK-X PS1 Plugin not found adding to config ...");
         CopyFileAndUpdateUi("app0:psx/ps1cfw_enabler.suprx", "ur0:tai/ps1cfw_enabler.suprx");

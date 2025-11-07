@@ -9,4 +9,9 @@ void updateUi(const char* msg);
 void waitCross(void);
 vita2d_pgf* uiGetFont(void);
 
+void startDraw(void);
+void endDraw(void);
+void drawLines(void);
+void drawTextCenterColored(int y, const char* text, uint8_t r, uint8_t g, uint8_t b);
+
 #endif // UI_H
