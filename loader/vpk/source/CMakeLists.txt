@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)  # Aggiornata la versione minima richiesta
+cmake_minimum_required(VERSION 3.10)
 
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   if(DEFINED ENV{VITASDK})
