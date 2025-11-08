@@ -484,8 +484,13 @@ int main()
     }
 
     model = kuKernelGetModel();
-    if(model<0)
-	    model = 0; // Fix for lower firmwares that do not support kubridge
+    if(model<0) {
+	    u32 tachyon = sceSysregGetTachyonVersion();
+	    if(tachyon > 0x00400000 && baryon_ver <= 0x00243000)
+              model = 1; // Fix for lower firmwares that do not support kubridge, and are not Phats
+	    else
+	    	model = 0; // Fix for lower firmwares that do not support kubridge
+    }
 
     if (sceSysconGetBaryonVersion(&baryon_ver) < 0) {
         ErrorExit(5000, "Could not determine baryon version!\n");
