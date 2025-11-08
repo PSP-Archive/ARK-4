@@ -484,6 +484,8 @@ int main()
     }
 
     model = kuKernelGetModel();
+    if(model<0)
+	    model = 0; // Fix for lower firmwares that do not support kubridge
 
     if (sceSysconGetBaryonVersion(&baryon_ver) < 0) {
         ErrorExit(5000, "Could not determine baryon version!\n");
