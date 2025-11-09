@@ -367,8 +367,11 @@ void newipl_menu(const char* config){
 
     printf("New cIPL installation.\n");
 
+    if(devkit == 0x02070110)
+	    model = 0;
+
     if(model >= supported_models || ipl_table[model] == NULL) {
-        ErrorExit(5000,"This installer does not support this model.\n");
+        ErrorExit(5000,"This installer does not support this model %02d\n", model);
     }
 
     u8* ipl_block = ipl_table[model];
