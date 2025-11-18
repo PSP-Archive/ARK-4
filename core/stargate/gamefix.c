@@ -95,8 +95,8 @@ void applyFixesByGameId(){
         sctrlHENPatchSyscall(utilityGetParam, getParamFixed_ULJM05221);
     }
 
-    // Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
-    else if (strcasecmp("ULES01472", gameid) == 0 || strcasecmp("ULUS10543", gameid) == 0){
+    // Patch Smakdown vs RAW 2010 & 2011 anti-CFW check (CPU speed)
+    else if (strcasecmp("ULES01472", gameid) == 0 || strcasecmp("ULUS10543", gameid) == 0 || strcasecmp("ULES01339", gameid) == 0 || strcasecmp("ULUS10452", gameid) == 0){
         game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
     }
 
