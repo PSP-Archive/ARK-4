@@ -58,6 +58,7 @@ void applyFixesByModule(SceModule2* mod){
 
     // disable anti-CFW code
     else if (strcasecmp(mod->modname, "DJMAX") == 0) {
+	hide_cfw_folder(mod);
         SEConfig* se_config = sctrlSEGetConfig(NULL);
 
         if (se_config->umdseek == 0 && se_config->umdspeed == 0){
@@ -95,8 +96,11 @@ void applyFixesByGameId(){
         sctrlHENPatchSyscall(utilityGetParam, getParamFixed_ULJM05221);
     }
 
-    // Patch Smakdown vs RAW 2010 & 2011 anti-CFW check (CPU speed)
-    else if (strcasecmp("ULES01472", gameid) == 0 || strcasecmp("ULUS10543", gameid) == 0 || strcasecmp("ULES01339", gameid) == 0 || strcasecmp("ULUS10452", gameid) == 0){
+    // Patch Smakdown vs RAW 2009, 2010, and 2011 anti-CFW check (CPU speed)
+    else if (strcasecmp("ULES01472", gameid) == 0 || strcasecmp("ULUS10543", gameid) == 0 || 
+		    strcasecmp("ULES01339", gameid) == 0 || strcasecmp("ULUS10452", gameid) == 0 ||
+		    strcasecmp("ULKS46195", gameid) == 0 || strcasecmp("ULUS10384", gameid) == 0 ||
+	   	    strcasecmp("ULES01165", gameid) == 0){
         game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
     }
 
