@@ -103,6 +103,7 @@ static int CorruptIconPatch(char *name)
     return 0;
 }
 
+
 static int HideDlc(char *name) {
 
     char path[256] = {0};
@@ -114,11 +115,10 @@ static int HideDlc(char *name) {
         static char* dlc_files[] = {"PARAM.PBP", "PBOOT.PBP", "DOCUMENT.DAT"};
 
         for (int j=0; j<NELEMS(dlc_files); j++){
-            snprintf(path, "%s%s/%s", hidden_path, name, dlc_files[j], 256);
+            snprintf(path, sizeof(path), "%s%s/%s", hidden_path, name, dlc_files[j]);
             memset(&stat, 0, sizeof(stat));
             if (sceIoGetstat(path, &stat) >= 0) {
-                snprintf(path, "%s%s/EBOOT.PBP", hidden_path, name, 256);
-
+                snprintf(path, sizeof(path), "%s%s/EBOOT.PBP", hidden_path, name);
                 memset(&stat, 0, sizeof(stat));
                 if (sceIoGetstat(path, &stat) < 0) {
                     strcpy(name, "__SCE"); // hide icon
