@@ -104,7 +104,8 @@ static int CorruptIconPatch(char *name)
 }
 
 static int HideDlc(char *name) {
-    char path[256];
+
+    char path[256] = {0};
     SceIoStat stat;
 
     for (int i=0; i<NELEMS(game_list); i++){
@@ -113,7 +114,7 @@ static int HideDlc(char *name) {
         static char* dlc_files[] = {"PARAM.PBP", "PBOOT.PBP", "DOCUMENT.DAT"};
 
         for (int j=0; j<NELEMS(dlc_files); j++){
-            sprintf(path, "%s%s/%s", hidden_path, name, dlc_files[j]);
+            snprintf(path, "%s%s/%s", hidden_path, name, dlc_files[j], 256);
             memset(&stat, 0, sizeof(stat));
             if (sceIoGetstat(path, &stat) >= 0) {
                 sprintf(path, "%s%s/EBOOT.PBP", hidden_path, name);
@@ -378,8 +379,9 @@ int gamedread(SceUID fd, SceIoDirent * dir)
         int patched = CorruptIconPatch(dir->d_name);
         if (!patched && apply150NamePatch)
             ApplyNamePatch(dir, GAME150_PATCH);
-        if (se_config->hidedlc)
+        if (se_config->hidedlc) {
             HideDlc(dir->d_name);
+	}
         pspSdkSetK1(k1);
     }
     #ifdef DEBUG
