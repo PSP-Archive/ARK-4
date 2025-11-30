@@ -267,7 +267,11 @@ def run() -> None:
                 shutil.copytree("150\\F0\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
                 shutil.copytree("150\\F1\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
                 os.makedirs("TM\\DCARK\\150\\registry", exist_ok=True)
-                os.rename("TM\\DCARK\\150\\kd\\pspbtknf_game.txt", "TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
+                try:
+                    os.rename("TM\\DCARK\\150\\kd\\pspbtknf_game.txt", "TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
+                except:
+                    os.remove("TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
+                    os.rename("TM\\DCARK\\150\\kd\\pspbtknf_game.txt", "TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
 
         elif _150_kernel_addon.get() and local_150_filepath is not None:
             if ostype == 'Linux' or ostype == 'Darwin':
@@ -281,7 +285,11 @@ def run() -> None:
                 shutil.copytree("150\\F0\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
                 shutil.copytree("150\\F1\\", "TM\\DCARK\\150\\", dirs_exist_ok=True)
                 os.makedirs("TM\\DCARK\\150\\registry", exist_ok=True)
-                os.rename("TM\\DCARK\\150\\kd\\pspbtknf_game.txt", "TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
+                try:
+                    os.rename("TM\\DCARK\\150\\kd\\pspbtknf_game.txt", "TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
+                except:
+                    os.remove("TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
+                    os.rename("TM\\DCARK\\150\\kd\\pspbtknf_game.txt", "TM\\DCARK\\150\\kd\\pspbtcnf_game.txt")
 
     if ostype == 'Linux':
         disk = var.get() + '1'
