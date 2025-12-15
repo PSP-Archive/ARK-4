@@ -259,11 +259,15 @@ int main(int argc, char * argv[])
     }
 
     // delete updater
-    sceIoClose(my_fd);
-    sceIoRemove(eboot_path);
-    char* c = strrchr(eboot_path, '/');
-    *c = 0;
-    sceIoRmdir(eboot_path);
+    SceCtrlData pad;
+    sceCtrlPeekBufferPositive(&pad, 1);
+    if(!(pad.Buttons & PSP_CTRL_SQUARE)) {
+        sceIoClose(my_fd);
+        sceIoRemove(eboot_path);
+        char* c = strrchr(eboot_path, '/');
+        *c = 0;
+        sceIoRmdir(eboot_path);
+    }
 
 	// lite ARK_01234 removal
 	if(lite>0) {

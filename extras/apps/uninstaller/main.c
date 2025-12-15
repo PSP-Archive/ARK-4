@@ -40,54 +40,6 @@ int main(int argc, char *args[]) {
     }
     pspDebugScreenClear();
 
-    SceUID dir = sceIoDopen("ef0:/PSP/SAVEDATA/ARK_01234");
-    int go = 1;    
-    if (dir<0) {
-        dir = sceIoDopen("ms0:/PSP/SAVEDATA/ARK_01234");
-        go = 0;
-    }
-    if(dir<0) {
-        printf("Can't find ARK_01234 folder... Exiting....\n");
-        sceKernelDelayThread(3000000);
-        sceKernelExitGame();
-    }
-
-    char fullpath[60];
-    if(go)
-        snprintf(fullpath, sizeof(fullpath), "%s", "ef0:/PSP/SAVEDATA/ARK_01234/");
-    else
-        snprintf(fullpath, sizeof(fullpath), "%s", "ms0:/PSP/SAVEDATA/ARK_01234/");
-
-    printf("Removing ARK_01234");
-    SceIoDirent dirent;
-    SceUID arkDir;
-    memset(&dirent, 0, sizeof(SceIoDirent));
-    while((arkDir = sceIoDread(dir, &dirent)) > 0) {
-        if(strcmp(dirent.d_name, ".") == 0 || strcmp(dirent.d_name, "..") == 0)
-        	continue;
-        else {
-        	char fp[60] = {0};
-        	snprintf(fp, sizeof(fp), "%s%s", fullpath, dirent.d_name);
-        	sceIoRemove(fp);
-        	printf("%s\n", fp);
-        }
-    }
-
-    sceIoDclose(dir);
-    if (go) {
-        sceIoRmdir("ef0:/PSP/SAVEDATA/ARK_01234");
-        sceIoRemove("ef0:/PSP/GAME/ARK_Loader/EBOOT.PBP");
-        sceIoRemove("ef0:/PSP/GAME/ARK_Loader/K.BIN");
-        sceIoRmdir("ef0:/PSP/GAME/ARK_Loader");
-    }
-    else {
-        sceIoRmdir("ms0:/PSP/SAVEDATA/ARK_01234");
-        sceIoRemove("ms0:/PSP/GAME/ARK_Loader/EBOOT.PBP");
-        sceIoRemove("ms0:/PSP/GAME/ARK_Loader/K.BIN");
-        sceIoRmdir("ms0:/PSP/GAME/ARK_Loader");
-    }
-
-
     sceIoUnassign("flash0:");
     sceIoAssign("flash0:", "lflash0:0,0", "flashfat0:", IOASSIGN_RDWR, NULL, 0);
     sceIoRemove("flash0:/kd/ark_systemctrl.prx");
@@ -96,6 +48,10 @@ int main(int argc, char *args[]) {
     sceIoRemove("flash0:/kd/ark_stargate.prx");
     sceIoRemove("flash0:/kd/ark_popcorn.prx");
     sceIoRemove("flash0:/kd/ark_pspcompat.prx");
+    sceIoUnassign("flash1:");
+    sceIoAssign("flash1:", "lflash0:0,1", "flashfat1:", IOASSIGN_RDWR, NULL, 0);
+    sceIoRemove("flash1:/SETTINGS.TXT");
+    sceIoRemove("flash1:/UPDATER.TXT");
     asm("sync"::);
     printf("Removing Flash0 6 files...\n");
     printf("flash0:/kd/ark_systemctrl.prx\n");
@@ -104,6 +60,7 @@ int main(int argc, char *args[]) {
     printf("flash0:/kd/ark_stargate.prx\n");
     printf("flash0:/kd/ark_popcorn.prx\n");
     printf("flash0:/kd/ark_pspcompat.prx\n");
+    printf("flash1:/SETTINGS.TXT\nflash1:/UPDATER.TXT\n");
 
     sceKernelDelayThread(3000000);
 
