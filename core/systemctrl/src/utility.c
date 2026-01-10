@@ -14,7 +14,8 @@ enum{ // internal id
     MODULE_AV_PNG,
     MODULE_AV_PLAYER,
     MODULE_VLF,
-    MODULE_INTRAFONT,
+    MODULE_INTRAFONT_VLF,
+    MODULE_INTRAFONT_GU,
     MODULE_UNARCHIVER,
     N_MODULES
 };
@@ -31,6 +32,7 @@ static CustomUtilityModule custom_utility_modules[N_MODULES] = {
     {-1, LIBPNG_PRX},
     {-1, PSPAV_PRX},
     {-1, VLF_PRX},
+    {-1, "VLFFONT.PRX"},
     {-1, INTRAFONT_PRX},
     {-1, UNARCHIVE_PRX},
 };
@@ -90,8 +92,11 @@ static int extendedUtilityLoadModule(int module){
         case PSP_MODULE_VLF:
             res = loadstartCustomUtilityModule(MODULE_VLF);
             break;
-        case PSP_MODULE_INTRAFONT:
-            res = loadstartCustomUtilityModule(MODULE_INTRAFONT);
+        case PSP_MODULE_INTRAFONT_VLF:
+            res = loadstartCustomUtilityModule(MODULE_INTRAFONT_VLF);
+            break;
+        case PSP_MODULE_INTRAFONT_GU:
+            res = loadstartCustomUtilityModule(MODULE_INTRAFONT_GU);
             break;
         case PSP_MODULE_UNARCHIVER:
             res = loadstartCustomUtilityModule(MODULE_UNARCHIVER);
@@ -120,8 +125,11 @@ static int extendedUtilityUnloadModule(int module){
         case PSP_MODULE_VLF:
             res = stopunloadCustomUtilityModule(MODULE_VLF);
             break;
-        case PSP_MODULE_INTRAFONT:
-            res = stopunloadCustomUtilityModule(MODULE_INTRAFONT);
+        case PSP_MODULE_INTRAFONT_VLF:
+            res = stopunloadCustomUtilityModule(MODULE_INTRAFONT_VLF);
+            break;
+        case PSP_MODULE_INTRAFONT_GU:
+            res = stopunloadCustomUtilityModule(MODULE_INTRAFONT_GU);
             break;
         case PSP_MODULE_UNARCHIVER:
             res = stopunloadCustomUtilityModule(MODULE_UNARCHIVER);
