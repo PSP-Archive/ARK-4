@@ -42,7 +42,7 @@ int main(int argc, char** argv){
     srand(time(NULL));
 
     sceUtilityLoadModule(PSP_MODULE_AV_PNG);
-    sceUtilityLoadModule(PSP_MODULE_INTRAFONT);
+    sceUtilityLoadModule(PSP_MODULE_INTRAFONT_GU);
 
     ya2d_init();
     intraFontInit();
@@ -134,7 +134,7 @@ int main(int argc, char** argv){
     intraFontShutdown();
     ya2d_shutdown();
 
-    sceUtilityUnloadModule(PSP_MODULE_INTRAFONT);
+    sceUtilityUnloadModule(PSP_MODULE_INTRAFONT_GU);
     sceUtilityUnloadModule(PSP_MODULE_AV_PNG);
 
     sctrlKernelExitVSH(NULL);
