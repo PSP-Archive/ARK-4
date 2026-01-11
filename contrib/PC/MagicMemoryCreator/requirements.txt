@@ -1,5 +1,5 @@
 oschmod==0.3.12
-psutil==5.9.8; sys_platform == 'win32' or sys_platform == 'Windows'
+psutil==5.9.8; sys_platform == 'win32'
 requests==2.31.0
-wmi==1.5.1; sys_platform == 'win32' or sys_platform == 'Windows'
+wmi==1.5.1; sys_platform == 'win32'
 
