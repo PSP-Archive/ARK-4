@@ -19,7 +19,7 @@ go = False
 local_150_filepath = None
 local_661_filepath = None
 ostype = platform.system()
-if ostype.lower() == 'win32':
+if ostype.lower() == 'win32' or ostype.lower() == 'windows':
     ostype = 'Windows'
 
 if ostype.lower() != 'linux' and ostype.lower() != 'windows' and ostype.lower() != 'darwin':
@@ -43,6 +43,7 @@ disk_check = tk.StringVar(m)
 disk_check.set(0)
 
 if ostype.lower() != 'linux' and ostype.lower() != 'darwin':
+    print('{} detected', ostype)
     import wmi
     import psutil
     c = wmi.WMI()
@@ -53,13 +54,14 @@ if ostype.lower() != 'linux' and ostype.lower() != 'darwin':
         for part in psutil.disk_partitions():
             if 'removable' in part.opts:
                 windows_disk_letter[f'disk{str(drive.Index)}'] = part.mountpoint.split(':')[0]
-
 elif ostype.lower() == 'linux':
+    print('{} detected', ostype)
     out = subprocess.Popen(["lsblk | awk '{if ($3 == 1 && $1 ~ /^[a-zA-Z]+$/) {print $1}}'"], shell=True, stdout=subprocess.PIPE)
     out = out.stdout.read().decode().splitlines()
     for i in out:
         possible_drive.append(i)
 else:
+    print('{} detected', ostype)
     out = subprocess.Popen(["""diskutil list external | awk '/external/ { gsub(/\/dev\//, ""); print $1}'"""], shell=True, stdout=subprocess.PIPE)
     out = out.stdout.read().decode().splitlines()
     for i in out:
