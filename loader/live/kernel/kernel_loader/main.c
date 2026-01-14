@@ -127,20 +127,13 @@ int autoDetectDevice(ARKConfig* config){
             if (sctrl){
                 // SystemControl loaded mean's we're running under a Custom Firmware
                 if (k_tbl->KernelFindModuleByName("ARKCompatLayer") != NULL){
-                    // ARK-4
+                    // ARK
                     return -1;
                 }
                 else{
-                    u32 kuKernelMemcpy = k_tbl->FindFunction("SystemControl", "KUBridge", 0x6B4B577F);
-                    if (kuKernelMemcpy == 0){
-                        // Adrenaline
-                        config->exec_mode = PSV_ADR;
-                        return 0;
-                    }
-                    else {
-                        // early ARK?
-                        return -1;
-                    }
+                    // Adrenaline
+                    config->exec_mode = PSV_ADR;
+                    return 0;
                 }
             }
             else{ // no module found, must be stock pspemu
@@ -246,3 +239,4 @@ void clearBSS(void){
 u32 sctrlHENFindFunction(char* mod, char* lib, u32 nid){
     return FindFunction(mod, lib, nid);
 }
+
