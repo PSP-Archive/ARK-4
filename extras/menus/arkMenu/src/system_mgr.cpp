@@ -3,6 +3,7 @@
 #include <psppower.h>
 #include <kubridge.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 
 #include "system_mgr.h"
 #include "common.h"
