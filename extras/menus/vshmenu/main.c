@@ -95,24 +95,22 @@ int TSRThread(SceSize args, void *argp) {
     vsh->psp_model = kuKernelGetModel();
 
     // ARK Version
-    u32 ver = sctrlHENGetVersion(); // ARK's full version number
-    u32 major = (ver&0xFF000000)>>24;
-    u32 minor = (ver&0xFF0000)>>16;
-    u32 micro = (ver&0xFF00)>>8;
-    u32 rev   = sctrlHENGetMinorVersion();
+    u32 major = sctrlSEGetVersion();
+    u32 minor = sctrlHENGetVersion();
+    u32 micro = sctrlHENGetMinorVersion();
 
     #ifdef DEBUG
-    if (micro > 0 && !rev) 
+    if (micro > 0 && !ARK_REVISION) 
         scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d.%.2i DEBUG    ", major, minor, micro);
-    else if (rev)
-        scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), " ARK %d.%d.%.2i r%i DEBUG ", major, minor, micro, rev);
+    else if (major==4)
+        scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), " ARK %d.%d.%.2i r%i DEBUG ", major, minor, micro, ARK_REVISION);
     else 
         scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d DEBUG    ", major, minor);
     #else
-    if (micro > 0 && !rev) 
+    if (micro > 0 && !ARK_REVISION) 
         scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d.%.2i    ", major, minor, micro);
-    else if (rev)
-        scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), " ARK %d.%d.%.2i r%i ", major, minor, micro, rev);
+    else if (major==4)
+        scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), " ARK %d.%d.%.2i r%i ", major, minor, micro, ARK_REVISION);
     else 
         scePaf_snprintf(vsh->ark_version, sizeof(vsh->ark_version), "    ARK %d.%d    ", major, minor); 
     #endif

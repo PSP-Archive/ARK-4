@@ -136,13 +136,16 @@ int main(int argc, char * argv[])
     pspDebugScreenPrintf("ARK Updater Started\n");
 
     u32 my_ver = (ARK_MAJOR_VERSION << 24) | (ARK_MINOR_VERSION << 16) | (ARK_MICRO_VERSION << 8) | ARK_REVISION;
-    u32 cur_ver = sctrlHENGetVersion(); // ARK's full version number
-    u32 major = (cur_ver&0xFF000000)>>24;
-    u32 minor = (cur_ver&0xFF0000)>>16;
-    u32 micro = (cur_ver&0xFF00)>>8;
-    u32 rev   = sctrlHENGetMinorVersion();
+    u32 major = sctrlSEGetVersion();
+    u32 minor = sctrlHENGetVersion();
+    u32 micro = sctrlHENGetMinorVersion();
+    u32 cur_ver = (major << 24) | (minor << 16) | (micro << 8) | ARK_REVISION;
 
-    pspDebugScreenPrintf("Current Version %d.%d.%.2i r%d\n", major, minor, micro, rev);
+
+    if(major==4)
+    	pspDebugScreenPrintf("Current Version %d.%d.%.2i r%d\n", major, minor, micro, ARK_REVISION);
+    else
+    	pspDebugScreenPrintf("Current Version %d.%d.%.2i\n", major, minor, micro);
     pspDebugScreenPrintf("Update Version %d.%d.%.2i r%d\n", ARK_MAJOR_VERSION, ARK_MINOR_VERSION, ARK_MICRO_VERSION, ARK_REVISION);
 
     if (my_ver < cur_ver){
