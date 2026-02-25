@@ -4,7 +4,9 @@ OBJS = \
 	main.o \
 	flashemu.o \
 	
-all: cptbl.h $(TARGET).prx tmctrl.h
+all: $(TARGET).prx tmctrl.h
+
+$(OBJS): cptbl.h
 
 tmctrl.h: $(TARGET).prx
 	$(Q)bin2c $(TARGET).prx tmctrl.h tmctrl
