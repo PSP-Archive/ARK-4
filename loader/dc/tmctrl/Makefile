@@ -4,10 +4,13 @@ OBJS = \
 	main.o \
 	flashemu.o \
 	
-all: $(TARGET).prx tmctrl.h
+all: cptbl.h $(TARGET).prx tmctrl.h
 
 tmctrl.h: $(TARGET).prx
 	$(Q)bin2c $(TARGET).prx tmctrl.h tmctrl
+
+cptbl.h:
+	$(Q)bin2c $(ARKROOT)/contrib/PSP/cptbl.dat cptbl.h cptbl
 
 INCDIR = $(ARKROOT)/common $(ARKROOT)
 CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic -fshort-wchar
