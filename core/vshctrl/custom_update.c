@@ -74,7 +74,7 @@ void patch_update_plugin_module(SceModule2* mod)
     text_size = mod->text_size;
     top_addr = text_addr+text_size;
 
-    version = ARK_MAJOR_VERSION << 24 | ARK_MINOR_VERSION << 16 | ARK_MICRO_VERSION << 8 | ARK_REVISION;	// ARK's full version number
+    version = sctrlSEGetVersion() << 24 | sctrlHENGetVersion() << 16 | sctrlHENGetMinorVersion() << 8 | ARK_REVISION;	// ARK's full version number
 
     for (u32 addr=text_addr; addr<top_addr; addr+=4){
         if (_lw(addr) == 0x8FA40100){
