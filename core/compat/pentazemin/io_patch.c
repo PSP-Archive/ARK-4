@@ -305,9 +305,11 @@ int sceIoAddDrvPatched(PspIoDrv *drv) {
         drv->funcs->IoIoctl = msIoIoctl;
         drv->funcs->IoDevctl = msIoDevctl;
 
-        // FIXME: check if it's a PSP 1000-series here
-        if (1)
+        int model = sctrlKernelGetModel();
+        if (0 == model) // PSP 1000x series, 32MB RAM
         {
+            // extra effort to not segfault when SKUs enum. dirs on sticks Sony thought only necessary to conduct the New York Philharmonic
+            // but us launch model owners wanted Harlem back, so they got Shaft up to here!
             drv->funcs->IoDopen = psp100x_save_patch_IoDopen;
             drv->funcs->IoDclose = psp100x_save_patch_IoDclose;
             drv->funcs->IoDread = psp100x_save_patch_IoDread;
