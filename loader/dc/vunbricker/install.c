@@ -914,7 +914,7 @@ void CopyFileList(int fw, const char **list, int file_count, int start_file_coun
     {
         char src[256];
         char dest[256];
-        strcpy(src,  "flash0:/");
+        strcpy(src,  DC_ARK_PATH "/");
         strcpy(dest, "flach0:/");
         strcat(src, list[i]);
         strcat(dest, list[i]);
