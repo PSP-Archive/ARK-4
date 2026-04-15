@@ -2,6 +2,8 @@
     Adrenaline
     Copyright (C) 2016-2018, TheFloW
 
+    PSP-1000 series SAVEDATA crash patch by Niels J. de Wit (Superplek/Bypass).
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -19,6 +21,7 @@
 #include "common.h"
 #include "io_patch.h"
 #include "flashfs.h"
+#include "../../systemctrl/include/rebootex.h"
 
 PspIoDrv *ms_drv;
 PspIoDrv *flashfat_drv;
@@ -57,6 +60,27 @@ char *stristr(const char *str1, const char *str2) {
     }
 
     return 0;
+}
+
+// use 9 for n for std. SKU len
+int sku_compare(const char *s1, const char *s2, size_t n) {
+    if (0 == n) return 0; // should be an assert
+
+    for (size_t i = 0; i < n; i++) {
+        char c1 = (unsigned char)s1[i];
+        char c2 = (unsigned char)s2[i];
+
+        if (tolower(c1) != tolower(c2)) {
+            return 0; // != so not equal 
+        }
+
+        if (c1 == '\0' || c2 == '\0') {
+            return (c1 == c2); // match if both are n length
+        }
+    }
+
+    // match to n
+    return 1;
 }
 
 int _msIoOpen(u32 *args) {
@@ -168,6 +192,97 @@ int msIoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
     return sceKernelExtendKernelStack(0x4000, (void *)_msIoDevctl, args);
 }
 
+#define SKU_LEN 9
+#define PSP100X_DIO_HANDLE 0x5f3759df // (C) John Carmack, late 1990s
+
+unsigned int psp100x_dopen = 0;
+// const char *s_firstSaveGTAVCS_US = "ULUS10160S92F0"; <- first slot (test) that VCS US SKU saves to
+
+static char *get_SKU()
+{
+    // get config via this function, linked against Pentazemin
+    RebootConfigARK* reboot_config = sctrlHENGetRebootexConfig(NULL);
+
+    if (reboot_config != NULL) {
+        // VSH/XMB doesn't set a SKU
+        if (reboot_config->game_id[0] != '\0') {
+            return reboot_config->game_id;
+        }
+    }
+    
+    return NULL;
+}
+
+int psp100x_save_patch_IoDopen(PspIoDrvFileArg *arg, const char *dirname)
+{
+    int res = ms_funcs.IoDopen(arg, dirname);
+
+    if (0 == strstr(dirname, "ms0:/PSP/SAVEDATA")) 
+    {
+        // prep. for special SAVEDATA access for SKU
+        psp100x_dopen = 1;
+        arg->arg = (void*) PSP100X_DIO_HANDLE;
+    }
+
+    // no special case: call default function
+    return res;
+}
+
+int psp100x_save_patch_IoDclose(PspIoDrvFileArg *arg)
+{
+    if (1 == psp100x_dopen && ((void*) (arg->arg) == PSP100X_DIO_HANDLE))
+    {
+        // close special SAVEDATA access for SKU
+        psp100x_dopen = 0;
+    }
+    
+    // no special case: call default function
+    return ms_funcs.IoDclose(arg);
+}
+
+int _psp100x_save_patch_IoDread(u32 *args)
+{
+    PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+    SceIoDirent *dir = (SceIoDirent *)args[1];
+
+
+    if (1 == psp100x_dopen && ((void*)(arg->arg) == PSP100X_DIO_HANDLE))
+    {
+        char* curSKU = get_SKU();
+        if (curSKU != NULL)
+        {
+            int res;
+
+            // poll (still suboptimal but moving it into a contained situation like this is a win, no ping ponging between SKU and kernel)
+            while ((res = ms_funcs.IoDread(arg, dir)) > 0)
+            {
+                // anything that starts with the SKU is accepted
+                if (1 == sku_compare(dir->d_name, curSKU, SKU_LEN))
+                {
+                    return 1; // yup, belongs to running title so pass it on as-is
+                }
+            }
+            
+            // a day late and a dollar short
+            return 0;
+        }
+    }
+
+    // no special case: default function
+    return ms_funcs.IoDread(arg, dir);
+}
+
+// this call is the one that would actually stress the stack
+int psp100x_save_patch_IoDread(PspIoDrvFileArg *arg, SceIoDirent *dir)
+{
+    u32 args[2];
+    args[0] = (u32)arg;
+    args[1] = (u32)dir;
+
+    return sceKernelExtendKernelStack(0x4000, (void *)_psp100x_save_patch_IoDread, args);
+
+}
+
 __attribute__((noinline)) int BuildMsPathChangeFsNum(PspIoDrvFileArg *arg, const char *name, char *ms_path) {
     sprintf(ms_path, "/__ADRENALINE__/flash%d%s", (int)arg->fs_num, name);
 
@@ -189,6 +304,16 @@ int sceIoAddDrvPatched(PspIoDrv *drv) {
         drv->funcs->IoOpen = msIoOpen;
         drv->funcs->IoIoctl = msIoIoctl;
         drv->funcs->IoDevctl = msIoDevctl;
+
+        int model = sctrlKernelGetModel();
+        if (0 == model) // PSP 1000x series, 32MB RAM
+        {
+            // extra effort to not segfault when SKUs enum. dirs on sticks Sony thought only necessary to conduct the New York Philharmonic
+            // but us launch model owners wanted Harlem back, so they got Shaft up to here!
+            drv->funcs->IoDopen = psp100x_save_patch_IoDopen;
+            drv->funcs->IoDclose = psp100x_save_patch_IoDclose;
+            drv->funcs->IoDread = psp100x_save_patch_IoDread;
+        }
 
         // Add ms driver
         ms_drv->funcs = drv->funcs;
