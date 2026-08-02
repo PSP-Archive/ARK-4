@@ -1,5 +1,4 @@
-![LOGO](https://github.com/user-attachments/assets/e0cd5cab-ff79-4c17-a903-544a4d2dd570
-
+![LOGO](https://github.com/user-attachments/assets/e0cd5cab-ff79-4c17-a903-544a4d2dd570)
 
 # Archived: We moved over to [ARK-5](https://github.com/PSP-Arkfive/ARK-5) follow us to the future.
 
