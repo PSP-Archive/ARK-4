@@ -393,7 +393,7 @@ void newipl_menu(const char* config){
 
     if(!config && model < 2 && !is_ta88v3()) {
 	    allow_classic_install = 1;
-	    printf(" Press L to intall Classic IPL.\n");
+	    printf(" Press L to install Classic IPL.\n");
     }
 
     printf(" Press R to cancel\n\n");
